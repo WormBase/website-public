@@ -1,0 +1,22 @@
+[%#
+
+This is a generic field for part of the reference widget
+which is comprised of four different fields.
+
+TODO: Each of these independent fields should be a target, too.
+
+%]
+
+
+[% WRAPPER "boilerplate/field" title=type %]
+         <table border=0">
+          [% FOREACH paper IN $type %]
+            <tr class="row[%- loop.count % 2 -%]">
+               <td>
+                <!-- I need an anchor, too -->
+                [% INCLUDE "paper/format_paper.tt2" %]
+               </td>
+             </tr>
+          [% END %]
+       </table>
+[% END %]

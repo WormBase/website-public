@@ -1,0 +1,135 @@
+<!-- BEGIN site/header -->
+<h1 class="title">[% template.title or site.title %]</h1>
+
+<!-- BEGIN classic WormBase banner -->
+<body onLoad="goAutoComplete();sf()">
+
+  <script type="text/javascript">
+<!--
+function c(p){location.href=p;return false;}
+// -->
+</script>
+<table border="0" cellpadding="4" cellspacing="1" width="100%">
+<tr>
+<td bgcolor="#b4cbdb" align="center" style="cursor:pointer" nowrap onClick="c('/')">
+			  <a href="/" class="bactive" ><font color="#FFFF99"><b>Home</b></font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/seq/gbrowse/elegans/')">
+			  <a href="/db/seq/gbrowse/elegans/" class="binactive" onMouseOver="balloon.showTooltip(event,'Genome')"><font color="#FFFFFF">Genome</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/blast_blat')">
+			  <a href="/db/searches/blast_blat" class="binactive" onMouseOver="balloon.showTooltip(event,'Blast / Blat')"><font color="#FFFFFF">Blast / Blat</font></a></td>
+
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('http://www.wormbase.org/Multi/martview')">
+			  <a href="http://www.wormbase.org/Multi/martview" class="binactive" onMouseOver="balloon.showTooltip(event,'WormMart')"><font color="#FFFFFF">WormMart</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/advanced/dumper')">
+			  <a href="/db/searches/advanced/dumper" class="binactive" onMouseOver="balloon.showTooltip(event,'Batch Sequences')"><font color="#FFFFFF">Batch Sequences</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/strains')">
+			  <a href="/db/searches/strains" class="binactive" onMouseOver="balloon.showTooltip(event,'Markers')"><font color="#FFFFFF">Markers</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/gene/gmap')">
+			  <a href="/db/gene/gmap" class="binactive" onMouseOver="balloon.showTooltip(event,'Genetic Maps')"><font color="#FFFFFF">Genetic Maps</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/curate/submit')">
+
+			  <a href="/db/curate/submit" class="binactive" onMouseOver="balloon.showTooltip(event,'Submit')"><font color="#FFFFFF">Submit</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/misc/site_map?format=searches')">
+			  <a href="/db/misc/site_map?format=searches" class="binactive" onMouseOver="balloon.showTooltip(event,'Searches')"><font color="#FFFFFF"><b>Searches</b></font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/misc/site_map')">
+			  <a href="/db/misc/site_map" class="binactive" ><font color="#FFFFFF"><b>Site Map</b></font></a></td>
+</tr>
+</table><!-- End WormBase Header --><img align="right" border="0" src="/images/image_new_colour.jpg" alt="WormBase Banner" /><a href="/"><h3>WormBase Release WS176</h3></a><br clear="all" />
+
+
+<div class="news" id="mainSearch">
+   <div id=debug></div>
+   <form name="searchform" METHOD="GET" ACTION="/db/searches/basic">
+   <b>Find:</b>
+	  <i>
+	    <select name="class" id="class_search_menu" default="AnyGene" onChange="queryAppend(this)">
+	      <option value="Any">Anything</option>
+	      <option selected value="AnyGene">Any Gene</option>
+
+	      <option  value="Author_Person">Author/Person</option>
+	      <option  value="Variation">Allele</option>
+	      <option  value="Cell">Cell</option>
+	      <option  value="Clone">Clone</option>
+
+	      <option  value="Model">Database Model</option>
+	      <option  value="GO_term">Gene Ontology Term</option>
+
+	      <option  value="Gene_class">Gene Class</option>
+	      <option  value="Genetic_map">Genetic Map</option>
+	      <option  value="Accession_number">Genbank Accession Number</option>
+	      <option  value="Paper">Literature Search</option>
+
+	      <option  value="Microarray_results">Microarray Expression Experiment</option>
+	      <option  value="Operon">Operon</option>
+
+	      <option  value="Phenotype">Phenotype</option>
+	      <option  value="PCR_Product">Primer Pair</option>
+	      <option  value="Protein">Protein, Any</option>
+	      <option  value="Wormpep">Protein, C. elegans</option>
+	      <option  value="Motif">Protein Family or Motif</option>
+
+	      <option  value="RNAi">RNAi Experiment</option>
+
+	      <option  value="Sequence">Sequence, Any</option>
+	      <option  value="Genome_sequence">Sequence, C. elegans Genomic</option>
+	      <option  value="Strain">Strains</option>
+	      <option  value="Y2H">Y2H interaction</option>
+	    </select></i>
+
+
+	    <span id="autoCompleteSearch" style="position:relative">
+
+              <input id="autoCompleteInput" type="text" name="query" autocomplete="off"onKeyDown="skipAutoComplete(event)">
+            </span>
+	    <div id=autoCompleteContainer></div>
+            <input type="submit" id="autoCompleteSubmit" name="Search" value="Search">
+          <br><br>
+
+          <table style="margin:0px auto">
+           <tr>
+            <td style="vertical-align:bottom">
+
+	     <input type="checkbox" name="exact" value="on">
+            </td>
+            <td style="vertical-align:bottom">
+              <a class="nakedlinks"
+                  onmouseover="showTooltip(event,'Exact')"
+                 href="javascript:void(0)">Exact match</a>
+            </td>
+            <td style="vertical-align:bottom">
+	      <input type="checkbox" name="asXML" value="on">
+            </td>
+
+            <td style="vertical-align:bottom">
+              <a class="nakedlinks"
+                  onmouseover="showTooltip(event,'XML')"
+                 href="javascript:void(0)">Results as XML</a>
+            </td>
+            <td style="vertical-align:bottom">
+	      <input type="checkbox" name="searchtype" value="Paper" id="literature" onClick="setClass(this,11)">
+            </td>
+            <td style="vertical-align:bottom">
+               <a class="nakedlinks"
+	           onmouseover="showTooltip(event,'Literature')"
+href="http://www.textpresso.org/cgi-bin/wb/textpressoforwormbase.cgi?allabstracts=on&searchmode=sentence&searchtargets=Paper&searchtargets=Abstract&searchtargets=Title">Literature Search</a>
+
+	    </td>
+              <span id="autoCompleteCheckbox" style="display:none">
+               <td style="vertical-align:bottom">
+	        <input type="checkbox" id="enableAutoComplete" onClick="autoCompletion(this)">&nbsp;
+	       </td>
+               <td style="vertical-align:bottom">
+                 <a class="nakedlinks"
+                     onmouseover="showTooltip(event,'Suggest')" 
+                    href="http://www.wormbase.org/wiki/index.php/UserGuide:Autocompletion"
+                    target="_new">Wormbase Suggest</a>
+               </td>
+
+               </span>
+              </tr>
+            </table>
+    </form>
+</div>
+
+
+<!-- END site/header -->

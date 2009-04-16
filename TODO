@@ -1,0 +1,34 @@
+LOGGING and DEBUGGING
+
+BASIC FORMATTING
+
+TESTING
+	UI
+		HTTP::Recorder - mimic user session
+	All model components
+	
+
+Standardized stash
+
+
+
+
+
+Need to document protected keywords.
+
+  ie. you can have either a widget called location - which is common and means something specific - or you can have a field called location
+
+  Further, you cannot have both widgets and fields of the same name
+
+
+
+
+
+
+WWW::Folksonomy
+Introspection for testing
+Authentication/Authorization
+User DB back end
+sessions
+caching
+REST

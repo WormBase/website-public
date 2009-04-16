@@ -1,0 +1,21 @@
+<!-- START [% title %] section -->	
+
+<!-- In the Classic view originally, there was one monolithic table
+     This was too difficult to maintain in a panel approach. To restore,
+     move the table start and end out of start_section / end_section
+-->
+
+
+
+<tr class="databody" valign="top">	
+    <th class="searchtitle" colspan="2" width="125px">
+	<a name="[% title %]">[% title FILTER ucfirst %]</a>
+    </th>
+    <td>
+    <table border="0" cellspacing="4" cellpadding="0">
+         [% content %]
+     </table>
+
+   </td>
+  </tr>
+<!-- END [% title %] section -->

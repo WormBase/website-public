@@ -1,0 +1,26 @@
+<!-- the contextual navbar -->
+<table class="searchtitle" border="0" width="100%">
+      <tr valign="bottom">
+
+  <td class="small" align="center">
+       <font color="red">
+           [% page FILTER ucfirst %] Summary
+       </font>
+  </td>
+
+   <td class="small" align="center">
+           <a target="_top" href="/db/misc/etree?name=[% name %];class=[% class %]">Tree Display</a>
+    </td>
+   <td class="small" align="center">
+         <a target="_top" href="/db/misc/xml?name=[% name %];class=[% class %]">XML</a>
+   </td>
+   <td class="small" align="center">
+         <a target="_top" href="/db/misc/model?name=[% name %];class=[% class %]">Schema</a>
+   </td>
+   <td class="small" align="center">
+         <a target="_top" href="/db/misc/epic?name=[% name %];class=[% class %]">Acedb Image</a>
+   </td>
+    </tr>
+</table>
+
+<br />

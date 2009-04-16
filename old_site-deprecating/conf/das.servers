@@ -1,0 +1,3 @@
+Wormbase	http://www.wormbase.org/db/das	elegans	CHROMOSOME_I^CHROMOSOME_II^CHROMOSOME_III^CHROMOSOME_IV^CHROMOSOME_V^CHROMOSOME_X^	ATG^BLASTN_EST_briggsae^BLASTN_EST_elegans^CDS^Clone^Expr_profile^GenePairs^Queryprosite^RNAi^RNAi_injection^SL1^SL2^Transcript^Transposon^WTP^exon^hmmfs^intron^inverted^mRNA^misc_feature^operon^tRNA^tandem^wublastx_fly^wublastx_human^wublastx_slimSwissProt^wublastx_slimTrEmbl^wublastx_worm^wublastx_yeast
+Knockout_Consortium	http://das.bcgsc.ca:8080/das	Knockouts		Knockout_target
+TIGR	http://www.tigr.org/docs/tigr-scripts/nhgi_scripts/das	elegans	CHROMOSOME_I^CHROMOSOME_II^CHROMOSOME_III^CHROMOSOME_IV^CHROMOSOME_V^CHROMOSOME_X^	NP^TC^est

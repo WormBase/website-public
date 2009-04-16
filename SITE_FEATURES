@@ -1,0 +1,72 @@
+Testing
+--------
+Every component - Model, View, Controller
+Presentation (mimic user to fully test display)
+
+Configuration
+------------
+Multiple layers.
+Application wide.  Every component. Dynamic.
+Location specific (default configuration easily over-ridable).
+
+Seperation of concerns
+-------------------
+Appropriate not total, although pretty darn near total
+Models exist completely outside of the web application.
+       In doing so, we can use the business logic of the code for powerful data mining
+       completely independent of the web application!
+
+
+
+Reporting
+-----------
+Multiple log levels - development, staging, production
+Reporting severe errors via email
+
+
+Web Application features
+--------------------
+Sessions, powered by a custom back end
+Authentication / authorization
+Built from the ground up specifically with high load in mind:
+      scalability, distribution, cacheability
+
+
+Design
+-----------
+Stylesheets
+em units over pts or god-forbid pixels.
+
+Microformats
+presentational vs semantic markup
+
+
+Accessibility
+------------
+Web-services layer via REST
+Every page, every widget, every field
+
+
+
+Template-driven
+----------------
+Generic templates handle 70% of the data
+Custom templates for specific applications
+Discrete over monolithic: keeps the presentation flexible.
+Available output formats: HTML, PDF, XML, JSON, POD
+
+
+
+
+
+
+REST
+-------------
+Testing the REST interface:
+
+$ curl -X GET -H 'Content-Type: text/x-yaml' http://localhost:3000/rest/available_pages
+
+Available content types:
+YAML: text/x-yaml
+Data dumper: text/x-data-dumper
+JSON: text/x-json

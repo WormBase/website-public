@@ -1,0 +1,34 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : NCBI
+  Stash   : ncbi => { entrez  => [],
+		      refseq  => [],
+ 	  	      aceview => [],
+		    }
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="NCBI" %]
+    [% IF ncbi.entrez %]
+    [% WRAPPER "boilerplate/subfield" title="Entrez" %] 
+          [% ncbi.entrez %]
+       [% END %]
+    [% END %]
+
+    [% IF ncbi.aceview %]
+    [% WRAPPER "boilerplate/subfield" title="AceView" %] 
+             [% ncbi.aceview %]<br />
+       [% END %]
+    [% END %]
+
+    [% IF ncbi.refseq %]
+    [% WRAPPER "boilerplate/subfield" title="RefSeq" %] 
+        [% ncbi.refseq.join(', ') %]
+      [% END %]
+    [% END %]
+[% END %]
+

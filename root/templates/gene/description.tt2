@@ -1,0 +1,23 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : Concise Description
+  Stash   : description => { description => '',
+		  	     has_details => boolean,
+      			   }
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[%- WRAPPER "boilerplate/field" title="Concise Description" -%]
+      [% IF description.text %]
+        [% description.text %]
+        [% IF description.has_details %]
+           [% url.Link(item=gene text="[more details]") %]
+        [% END %]
+      [% ELSE %]
+          [% site.unknown %]
+      [% END %]
+[% END %]

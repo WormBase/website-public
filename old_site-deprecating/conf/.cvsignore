@@ -1,0 +1,4 @@
+.cvsignore
+_gbrowse.allen
+gbrowse.conf
+localdefs.pm

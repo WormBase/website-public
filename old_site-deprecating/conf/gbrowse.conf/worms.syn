@@ -1,0 +1,26 @@
+[GENERAL]
+description = Worm Synteny Browser
+
+join        = dbi:mysql:database=sheldon_synteny;host=localhost;user=nobody
+
+#     symbolic src   config file (without the ".conf")  Description
+source_map =      elegans      elegans    "C. elegans"
+                  remanei      remanei    "C. remanei"
+                  briggsae     briggsae   "C. briggsae"
+
+tmpimages     = /gbrowse/tmp
+buttons       = /gbrowse/images/buttons
+default width = 1024
+stylesheet    = /gbrowse/wormbase.css
+
+[elegans]
+tracks    = transcripts
+color     = green
+
+[remanei]
+tracks    = transcripts
+color     = red
+
+[briggsae]
+tracks    = transcripts
+color     = steelblue

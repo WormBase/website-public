@@ -1,0 +1,24 @@
+[%#
+
+  Page     : Structure_data
+  Widget  : Homology
+  Section : Homology
+  Stash    : homology => { wormpep_release => '',
+                                          display_cutoff     => '',
+					  table                    => [  [ ]  ],
+                                       }
+
+%]
+
+[% WRAPPER "boilerplate/section" title="Homology" -%]
+  [% WRAPPER "boilerplate/subsection" -%] 
+   Sequence data imported from <a href="http://targetdb.pdb.org/">TargetDB</a> and
+   <a href="http://www.rcsb.org/pdb/">PDB</a> and has been mapped to WormPep Release [%- homology.wormpep_release -%].
+
+   WormPep that map with at least [%- homology.display_cutoff -%] percent similarity are displayed.
+ 
+   <!-- TODO - need to convert this into a table, columns of WormPep Protein and Percent Similarity -->
+
+      [% homology %]
+  [% END %]
+[% END %]

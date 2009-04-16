@@ -1,0 +1,37 @@
+
+[%- WRAPPER "boilerplate/field" title="Polymorphism Assays" -%]
+
+[% FOREACH assay IN polymorphism_assay %]
+<h3>
+[% IF assay.detectable_by_rflp %]
+RFLP assay
+[% ELSE %]
+Sequence-only assay
+[% END %]
+</h3>
+
+<table>
+<tr><td>Verified PCR product</td><td>[% assay.verified_pcr_product %]</td></tr>
+<tr><td>Left Oligo</td><td>[% assay.left_oligo %]</td></tr>
+<tr><td>Right Oligo</td><td>[% assay.right_oligo %]</td></tr>
+<tr><td>PCR conditions</td><td>[% assay.pcr_conditions %]</td></tr>
+<tr><td>Sequence</td><td>[% assay.dna %]</td></tr>
+</table>
+
+
+TODO: format the sequence into FASTA.
+
+<table>
+<tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>
+<tr><td>Reference strain digest</td><td>[% assay.reference_strain_digest %]</td><td>[% assay.reference_bands %]</td><tr>
+<tr><td>Polymorphic strain digest</td><td>[% assay.polymorphic_strain_digest %]</td><td>[% assay.polymorphic_bands %]</td><tr>
+</table>
+
+[% IF assay.detectable_by_sequencing %]
+   SNP Assay: Detectable only by sequencing
+[% END %]
+</p>
+[% END %]
+
+[% END %]
+

@@ -1,0 +1,13 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+<!-- BEGIN boilerplate/banner -->
+  <div id="banner">
+    <h1>[% template.title or site.title %]</h1>
+    <p>
+       Release [% Catalyst.config.version %] -- "[% Catalyst.config.codename %]"
+       <br />
+       Database version: [% constants.acedb_version %]
+    </p>
+  </div>
+<!-- END boilerplate/banner -->

@@ -1,0 +1,41 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Interactions" %]
+
+    <!-- add a link to the interaction viewer -->
+    <!-- HARD CODED -->
+    [% url.Link(item=gene action='NBrowse' text='NBrowse<img src="/images/interaction_02.png"') %]
+
+     [[% url.Link(resource='NBrowse',text="More details") %]]
+
+   <table border="1" width="90%">
+   <tr><th>Interaction</th><th>Type</th><th width="30%">Reference(s)</th></tr>
+
+  <!-- HARD-CODING TO PRIORITIZE DISPLAY -->
+  [% FOREACH type=interactions.keys %]
+     [% FOREACH pair=interactions.$type %]
+ 	   <tr>
+              <td align="center">
+	         [% FOREACH interactor=pair.value.interactors %]
+    	            [%- url.Link(interactor) -%]
+                 [% END %]
+              </td>
+              <td align=""center">
+                 [% type %]
+              </td>           
+              <td align="center">
+                  <!-- join all unique papers in which this interaction was seen -->
+                  [% FOREACH reference=pair.value.paper %]
+                      [% SET paper=reference.0 %]
+ 		      [% SET year=reference.1 %]
+   	              [% url.Link(item=paper text=paper.Author) %] ([% year %])
+ 		  [% END %]
+              </td>
+	</tr>
+    [% END %]
+  [% END %]
+</table>
+
+
+[% END %]

@@ -1,0 +1,27 @@
+Establishing a subversion repository for wormbase projects
+
+1. brie3> svnadmin create /usr/local/svn
+
+2. import rewrite to the repository
+
+  svn import WormBase svn+ssh://brie3.cshl.edu/usr/local/svn/wormbase/website
+
+  Here, my website project directory was called WormBase. It looked like this:
+  WormBase/branches
+  WormBase/tags
+  WormBase/trunk
+
+3. check out desired projects
+
+  - check out all WormBase projects
+
+  svn checkout svn+ssh://brie3.cshl.edu/usr/local/svn/wormbase
+
+  - check out just the website
+
+  svn checkout svn+ssh://brie3.cshl.edu/usr/local/svn/wormbase/website
+
+  - check out just the trunk of the website
+  
+  svn checkout svn+ssh://brie3.cshl.edu/usr/local/svn/wormbase/website/trunk
+

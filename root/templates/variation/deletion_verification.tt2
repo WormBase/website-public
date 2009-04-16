@@ -1,0 +1,22 @@
+[%#
+
+  Widget  : 
+  Section : 
+  Stash   :     push @data,{ wt_seq   => $wt,
+		 mut_seq   => $mut,
+		 wt_label  => $wt_label,
+		 mut_label => $mut_label,};
+  }
+
+%]
+
+
+[%- WRAPPER "boilerplate/field" title="Context" -%]
+
+    [% deletion_verification %]    
+
+    TODO: This needs inclusion of evidence, too.
+
+[% END %]
+
+

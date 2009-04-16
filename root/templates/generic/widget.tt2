@@ -1,0 +1,46 @@
+[%#
+
+Generic widget. Yay!
+
+To decide on: supply either a list of fields OR
+a hash of fields and their corresponding templates
+
+%]
+
+[% Dumper.dump(stash) %]
+
+[% WRAPPER "boilerplate/widget" -%]
+
+    [%# iterate over all default fields, hiding empty ones %]
+    [% FOREACH field IN fields %]
+	[% IF $field %]
+
+           [%# Approach 1:
+                 Bring in all the fields for this widget
+                 assuming they are all custom
+           %]
+           
+          [%# mytemplate = "$class/$field" _ '.tt2' %]
+ 
+          [%# Approach 2: CURRRENTLY ACTIVE
+             Look up which template the field should use
+	     This is a macro in main
+          %]
+
+	  [%# THE MACRO DOES NOT WORK FROM HERE!? %]
+	  [%# mytemplate = select_template($field,$class) %]
+          [% IF Catalyst.config.generic_fields.$field %]
+              [% mytemplate = "generic/field.tt2" %]
+          [% ELSIF Catalyst.config.common_fields.$field %]
+              [% mytemplate = "common_fields/$field" _ ".tt2" %]
+          [% ELSE %]
+              [% mytemplate = "$class/$field" _ '.tt2' %]
+          [% END %]
+
+           [% PROCESS $mytemplate %]	
+
+       [% END %]
+   [% END %]
+
+[% END %]
+

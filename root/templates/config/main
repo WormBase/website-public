@@ -1,0 +1,377 @@
+[% # config/main
+   #
+   # This is the main View configuration template. It is processed before
+   # any other page by virtue of it being defined as a PRE_PROCESS 
+   # template.  This is the place to define any extra template variables,
+   # macros, load plugins, and perform any other template setup.
+
+   IF Catalyst.debug;
+     # define a debug() macro directed to Catalyst's log
+     MACRO debug(message) CALL Catalyst.log.debug(message);
+   END;
+
+   # Site-wide data
+   site = {
+     title          => 'WBase Reimplementation',
+     subtitle    => 'The central data repository of nematode biology',
+     copyright => '2000-2008 The WormBase Consortium',
+     unknown  => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
+   };
+
+#   # MACROs for building URLs.  I don't know how excited about
+#   # this approach I am.   
+#   MACRO external_link(href,text) BLOCK;
+#	"<a href=\"$href\">$text</a>";
+#   END;
+#
+#   # 2nd approach: using formats
+#   #   external_link = format('<a href="%s" target="_blank">%s</a>');
+#
+#   # Turn Ace objects into links
+#   MACRO object2link(objext,text) BLOCK;
+#        "<a href=\"$site.class2action.gene.action\">woohoo</a>";
+#   END;   
+
+# Dynamically select a tempate: custom, common, generic
+MACRO select_field_template(field,class) BLOCK;
+     IF Catalyst.config.generic_fields.$field;
+              "generic/field.tt2";
+     ELSIF Catalyst.config.common_fields.$field;
+              "common_fields/" _ field _ ".tt2";
+     ELSE;
+              class _ "/" _ field _ '.tt2';
+     END;
+END;
+
+MACRO select_widget_template(widget,class) BLOCK;
+     IF Catalyst.config.generic_widgets.$widget;
+              "generic/widget.tt2";
+     ELSIF Catalyst.config.common_widgets.$widget;
+              "common_widget/" _ widget _ ".tt2";
+     ELSE;
+              class _ "/" _ widget _ '.tt2';
+     END;
+END;
+
+
+   # load up any other configuration items 
+   PROCESS config/col
+         + config/url
+	 + config/external_urls
+         + config/assets
+	 + lib/debug;
+
+   # set defaults for variables, etc.
+   DEFAULT 
+     message = 'There is no message';
+
+   # Our custom URL mapping plugin.
+   # Usage: url.Link();
+   USE url;
+
+   # Data munging utilities
+   USE Util;
+
+   # Basic table formatting. Perhaps these shold be dnamic instead
+   #USE Table(list, rows=5)
+
+   # For debugging ONLY!
+   USE Dumper(Indent=1);
+
+   #######################################
+   # Define some convenient macros   
+   #######################################
+   # image: wrap a src in an image tag using the format plugin
+   USE image  = format('<img src="%s" valign="middle" />');
+   USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
+
+   # Move to lib/formatting?
+   MACRO comment(msg) BLOCK;
+      "<!-- " _ msg _ " -->";
+    END;
+ 
+    MACRO display_evidence(object) BLOCK;
+
+      data = util.parse_hash(object);
+      IF data;
+
+	# Format the evidence into a table with the intent
+	# it will be displayed as a mouseover.
+	# This is (nearly) contrary to the way it is handled
+ 	# now, where it is displayed inline in about a billion different ways.
+    # It seems to me that this should actually be a template.
+    # Can I include a template/wrapper from within a macro?
+    "<div class=\"evidence\">";
+    "<div class=\"title\">Evidence</div>";
+
+	# Conditionally format the data for each type of evidence seen
+	# I could prioritize the display by ordering the keys in the hash
+	FOREACH key IN data.keys;
+		type = data.$key;  # Stringiying an object as a hash key kills it. Need value.
+
+        "<div class=\"type\">Type: $type</div>";
+
+		# Conceal curator confirmed entries
+		NEXT IF type == "Curator_confirmed";
+
+ 		# Grab the first level entries for each.
+    		# there is additional information
+    		sources = type.col;
+
+    		# Add appropriate markup for each type of Evidence seen
+        "<div class=\"source\">";
+    	IF type == 'Paper_evidence';
+
+		    FOREACH paper IN sources;
+				# Do a short format
+				url.Link(item=paper text=paper.Title);
+				"<br>";
+			END;
+		ELSIF type == 'Published_as';
+			FOREACH item IN sources
+				url.Link(item);
+				"<br>";
+			END;
+		ELSIF type == 'Person_evidence' || type == 'Curator_confirmed';
+			FOREACH person IN sources;
+				url.Link(item=person text=person.Standard_name);
+				"<br>";
+			END;
+		ELSIF type == 'Author_evidence';
+			FOREACH author IN sources;
+				url.Link(author);
+				"<br>";
+			END;
+		ELSIF type == 'Accession_evidence';
+			FOREACH source IN sources;
+				params = source.row;
+				# my $accession_links   ||= Configuration->Protein_links;
+				# my $link_rule = $accession_links->{$database};
+				# $data = $link_rule ? a({-href=>sprintf($link_rule,$accession),
+				#-target=>'_blank'},"$database:$accession")
+			  	#: ObjectLink($accession,"$database:$accession");
+				"ACCESSION EVIDENCE NOT DONE";
+			END;
+		ELSIF type == 'Protein_id_evidence';
+      			#$data = join($join,map { a({-href=>Configuration->Entrezp},$_) } @sources);
+      			"PROTEIN ID EVIDENCE NOT DONE";
+		ELSIF type == 'GO_term_evidence'
+			|| type == 'Laboratory_evidence'
+			|| type == 'Expr_pattern_evidence'
+			|| type == 'Microarray_results_evidence'
+			|| type == 'Gene_regulation_evidence';
+			FOREACH source IN sources;
+				url.Link(source);
+				"<br>";
+			END;
+		ELSIF type == 'RNAi_evidence';
+			FOREACH source IN sources;
+				IF source.History_name;
+					mytext="$source ($source.History_name)";
+				ELSE;
+					name=source;
+				END;
+				url.Link(item=source text=mytext);
+			END;
+		ELSIF type == 'CGC_data_submission';
+		ELSIF type == 'Inferred_automatically';
+			FOREACH source IN sources;
+				"$source<br>";
+			END;
+		ELSIF type == 'Date_last_updated';
+			FOREACH source IN sources;
+				"$source<br>";
+			END;
+		END;	
+		"</div>";
+	END;
+	"</div>";
+    END;
+  END;
+
+
+    MACRO toggle(title,content,open) BLOCK;
+      "<p>";
+      '<div class="togglebox">';
+         '<div class="togglebox_title">';
+  	 '<a href="#" class="toggle">';
+              '<span class="closed">'_ image(site.toggles.closed) _ "</span> $title</a>";
+         "</div>";
+         '<div class="togglebox_content" style="display:none">';
+             content;
+         "</div>";
+       "</div>";
+    END;
+
+
+
+  ###########################################
+  # Class-to-action mapping
+  ###########################################
+  site.class2action = { 	
+	       align     = { action = '/seq/align'
+		             title  = 'alignment' }
+	       aligner   = { action = '/seq/aligner'
+                             title  = 'EST Alignments' }
+	       antibody  = { action = '/gene/antibody'
+                             title  = 'Antibody Summary' }
+	       aoterm    = { action = '/ontology/anatomy'
+                             title  = 'Anatomy Ontology' }
+	       author    = { action = '/misc/person'
+                             title =  'Author Info' }
+	       biblio    = { action = '/misc/biblio'
+                             title  = 'Bibliography' }
+	       cds       = { action = '/seq/sequence'
+                             title  = 'Sequence Summary' }
+	       cell      = { action = '/cell/cell.cgi'
+                             title  = 'Cell Summary' }
+	       clone     = { action = '/seq/clone'
+                             title  = 'Clone Summary' }
+	       expression_cluster = { action = '/microarray/expression_cluster'
+                            	      title  = 'Microarray Expression Cluster Summary' }
+
+	       expr_pattern = { action = '/gene/expression'
+                        	title  = 'Expression Pattern' }
+
+	       expr_profile = { action = '/gene/expr_profile'
+	                        title  = 'Expression profile' }
+
+	       gene       = { action = '/gene/report_by_ajax'
+                              title  = 'Gene Summary' }
+
+	       gene_name  = { action = '/gene/gene'
+                              title  = 'Gene Summary' }
+
+	       gene_class = { action = '/gene/gene_class'
+                              title  = 'Gene Class Summary' }
+	       gene_regulation = { action = '/gene/regulation'
+                    	           title  = 'Gene Regulation Summary' }
+
+	       gmap       = { action = '/misc/epic'
+                              title  = 'Genetic Map' }
+
+	       go_term    = { action = '/ontology/gene'
+                              title  = 'GO Term' }
+
+	       go_dag     = { action = '/ontology/go_dag'
+                              title  = 'GO DAG' }
+
+	       homology_group = { action = '/gene/homology_group'
+               	                  title  = 'Homology Group' }
+
+	       hunter     = { action = '/seq/gbrowse/elegans/'
+                              title  = 'Genome Browser' }
+
+	       laboratory = { action = '/misc/laboratory'
+                              title  = 'Lab Listing' }
+
+	       life_stage = { action = '/misc/life_stage'
+                              title  = 'Life Stage' }
+
+	       locus      = { action = '/gene/locus'
+                              title  = 'Locus Summary' }
+
+	       mappingdata = { action = '/gene/mapping_data'
+	                       title  = 'Map Data' }
+
+	       mapservlet  = { action = '/mapview/geneticmap'
+	                       title  = 'Clickable Map' }
+
+	       MindOfWorm  = { action = '/cell/mindofworm'
+ 	                       title  = 'Mind of Worm' }
+
+	       microarray_experiment  = {
+		               action  = '/microarray/results'
+	 	               title   = 'Microarray Summary' }
+ 
+	       microarray_results    = { action = '/microarray/results'
+	 	                         title  = 'Microarray Summary' }
+
+	       motif       = { action = '/gene/motif'
+	                       title  = 'Motif' }
+
+	       model       = { action = '/misc/model'
+	                       title  = 'Schema' }
+
+	       nbrowse     = { action = '/seq/interaction_viewer'
+ 	                       title  = 'N-Browse Interaction Viewer' }
+	       
+	       nearby_genes= { action = '/gene/genetable#pos'
+	                       title  = 'Nearby Genes' }
+	       
+	       oligo_set    = { action = '/seq/pcr'
+	                        title  = 'Microarray Oligos' }
+	       
+	       operon       = { action = '/gene/operon'
+	                        title  = 'Operon Summary' }
+	       
+	       paper        = { action = '/misc/paper'
+	                        title  = 'Citation' }
+	       
+	       pcr_product  = { action = '/seq/pcr'
+	                        title  = 'PCR Assay' }
+	       
+	       pedigree     = { action = '/searches/pedigree'
+	                        title  = 'Pedigree Browser' }
+	       
+	       person       = { action = '/misc/person'
+	                        title  = 'Person Info' }
+	       
+	       person_name  = { action = '/misc/person'
+	                        title  = 'Person Info' }
+	       
+	       phenotype    = { action = '/misc/phenotype'
+	                        title  = 'Phenotype' }
+	       
+	       pic          = { action = '/misc/epic'
+	                        title  = 'Acedb Image' }
+	       
+	       protein      = { action = '/seq/protein'
+	                        title  = 'Protein Summary' }
+	       
+	       rearrange    = { action = '/gene/rearrange'
+	                        title  = 'Rearrangement Summary' }
+	       
+	       rnai         = { action = '/seq/rnai'
+	                        title  = 'RNAi Summary' }
+	       
+	       sagetag      = { action = '/seq/sage'
+	                        title  = 'SAGE Summary' }
+	       
+	       sequence     = { action = '/seq/sequence'
+	                        title  = 'Sequence Summary' }
+	       	       
+	       strain       = { action = '/gene/strain'
+	                        title  = 'Strain Summary' }
+	       
+	       structure_data = { action = '/gene/structure_data'
+	                          title  = 'Structure_data' }
+	       
+	       synteny      = { action = '/db/misc/ebsyn'
+                                title  = 'Synteny Browser'
+                              }
+
+	       transgene    = { action = '/gene/transgene'
+	                        title  = 'Transgene Summary' }
+	       
+	       tree         = { action = '/misc/etree'
+	                        title  = 'Tree Display' }
+	       
+	       variation    = { action = '/gene/variation'
+	                        title  = 'Variation Summary' }
+	       
+	       wtp          = { action = '/seq/wtp'
+	                        title  = 'WTP Summary' }
+	       
+	       xml          = { action = '/misc/xml'
+	                        title  = 'XML' }
+	       
+	       y2h          = { action = '/seq/y2h'
+	                        title  = 'Y2H interaction' }
+	       
+	       yh           = { action = '/seq/y2h'
+	                        title  = 'YH interaction' }
+	      };
+
+
+-%]

@@ -1,0 +1,58 @@
+[GENERAL]
+description = Worm Synteny Browser (PECAN)
+
+# The synteny database
+join        = dbi:mysql:database=pecan;host=localhost;user=nobody
+
+#     symbolic src   config file (without the ".conf")  Description
+source_map =      elegans      elegans_synteny    "C. elegans"
+                  remanei      remanei_synteny     "C. remanei"
+                  briggsae     briggsae_synteny    "C. briggsae"
+
+
+tmpimages   = sub {
+                        my ($server) = $ENV{SERVER_NAME} =~ /(.*?)\..*/;
+                $server ||= 'local';
+                return
+                "/ace_images/gbrowse/$server","/var/tmp/ace_images/gbrowse";
+            }
+buttons       = /gbrowse/images/buttons
+default width = 1024
+stylesheet    = /stylesheets/wormbase.css
+cache time    = 1
+
+# example searches to display
+examples = elegans X:1050000..1150000
+	   elegans I:10762799..10789727
+           briggsae chrX:620000..670000
+           elegans zyg-1
+
+
+zoom levels = 5000 10000 25000 50000 100000 200000 400000
+#automatic classes = Transcript Locus Gene GMap PCR_product Operon Genbank Variation Allele CDS Transposon Sequence Clone
+
+# routines to compile in advance for wormbase biolerplate
+init_code = use lib '/usr/local/wormbase/cgi-perl/lib';
+            use Ace;
+            use ElegansSubs;
+
+# wormbase header  
+header = sub {
+        require ElegansSubs;
+        require CGI;
+        $Ace::Browser::AceSubs::TOP = 0;
+        return ElegansSubs::Banner();
+        }
+
+# species-specific databases
+[elegans_synteny]
+tracks    = CG
+color     = green
+
+[remanei_synteny]
+tracks    = WU_MERGED
+color     = red
+
+[briggsae_synteny]
+tracks    = WBG
+color     = steelblue

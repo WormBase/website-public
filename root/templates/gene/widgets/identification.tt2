@@ -1,0 +1,26 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+
+%]
+
+
+    [% Dumper.dump(description) %]
+
+    [% PROCESS "gene/ids.tt2" %]
+    [% PROCESS "gene/description.tt2"      IF description%]
+    [% PROCESS "gene/ncbi_kogs.tt2"        IF ncbi_kogs%]
+    [% PROCESS "common_fields/species.tt2" IF species %]
+    [% PROCESS "gene/other_sequences.tt2"  IF other_sequences%]
+    [% PROCESS "gene/ncbi.tt2"             IF ncbi %]
+    [% PROCESS "gene/gene_models.tt2"      IF gene_models %]
+
+[% END %]

@@ -1,0 +1,90 @@
+[GENERAL]
+description   = Fiedler -- in process
+db_adaptor    = Bio::DB::GFF
+db_adaptor  = Bio::DB::GFF
+db_args     = -dsn dbi:mysql:database=tristan_worm;host=localhost;user=tristan;password=dogfish1999
+
+aggregators = remanei_blastz{nucleotide_match_remanei} 
+plugins     = GFFDumper
+
+# Web site configuration info
+stylesheet  = /gbrowse/gbrowse.css
+buttons     = /gbrowse/images/buttons
+tmpimages   = /ace_images/gbrowse
+
+# where to link to when user clicks in detailed view
+link          = AUTO
+
+# what image widths to offer
+image widths  = 450 640 800 1024
+
+# default width of detailed view (pixels)
+default width = 800
+default features = BLAST
+
+# max and default segment sizes for detailed view
+max segment     = 500000000
+default segment = 50000
+
+# zoom levels
+zoom levels    = 100 200 1000 2000 5000 10000 20000 40000 100000 200000 500000 1000000
+
+# Whether to show the sources popup menu (0=false, 1=true; defaults to true)
+show sources   = 1
+
+# colors of the overview, detailed map and key
+overview bgcolor = lightgrey
+detailed bgcolor = lightgoldenrodyellow
+key bgcolor      = beige
+
+# examples to show in the introduction
+examples = I:80,000..120,000
+
+# "automatic" classes to try when an unqualified identifier is given
+automatic classes = CG Sequence CDS processed_transcript
+
+### HTML TO INSERT AT VARIOUS STRATEGIC LOCATIONS ###
+# inside the <head></head> section
+head = 
+
+# at the top...
+header =
+
+# a footer
+footer = <hr>
+	<table width="100%">
+	<TR>
+	<TD align="LEFT" class="databody">
+	Compiled by Sheldon McKay <a href="mailto:mckays@cshl.edu">mckays@cshl.edu</a>
+	For the source code for this browser, see the <a href="http://www.gmod.org">
+	Generic Model Organism Database Project.</a>  For other questions, send
+	mail to <a href="mailto:lstein@cshl.org">lstein@cshl.org</a>.
+	</TD>
+	</TR>
+	</table>
+	<hr>
+	<pre>$Id: yeast_chr1.conf,v 1.9 2004/09/09 16:21:06 lstein Exp $</pre>
+
+# Default glyph settings
+[TRACK DEFAULTS]
+glyph       = generic
+height      = 6
+bgcolor     = cyan
+fgcolor     = cyan
+label density = 25
+bump density  = 25
+
+### TRACK CONFIGURATION ####
+# the remainder of the sections configure individual tracks
+
+[RBLASTZ]
+feature      = remanei_blastz
+connector    = dashed
+glyph        = heterogeneous_segments
+fgcolor      = black
+category     = Sequence Similarity Tracks
+height       = 6
+bump         = 0
+label        = 0	
+key          = C. remanei BLASTZ
+

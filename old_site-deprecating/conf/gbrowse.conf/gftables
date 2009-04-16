@@ -1,0 +1,10 @@
+// $Id: gftables,v 1.2 2003/05/13 19:31:57 lstein Exp $
+/usr/local/wormbase/conf/gftables/newnem.codon
+/usr/local/wormbase/conf/gftables/newnem.intron3
+/usr/local/wormbase/conf/gftables/newnem.intron5
+/usr/local/wormbase/conf/gftables/zk637.trinuc
+/usr/local/wormbase/conf/gftables/newnem.atg
+/usr/local/wormbase/conf/gftables/zk637.intron3
+/usr/local/wormbase/conf/gftables/zk637.intron5
+/usr/local/wormbase/conf/gftables/zk637.atg
+/usr/local/wormbase/conf/gftables/ref.hist

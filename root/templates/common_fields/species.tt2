@@ -1,0 +1,17 @@
+[%#
+
+  Page    : *
+  Widget  : *
+  Section : Species
+  Stash   : species
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% title="Species" %]
+
+[% WRAPPER "boilerplate/field" %]
+        <span class="species">[% species %]</span>
+[% END %]

@@ -1,0 +1,21 @@
+[% WRAPPER "boilerplate/field" title="Strains" -%]
+  
+    <!-- LIBRARY-IZE THIS - ORIGINAL USES TABLIEZIE -->
+    [% FOREACH strain=strains.sort %]
+       [% SET link=url.Link(strain.0) %]
+       [% IF strain.1 && strain.2 %]
+           <i><b>[% link %]</i></b>
+       [% ELSIF strain.1 && !strain.2 %]
+           <i>[% link %]</i>
+       [% ELSIF !strain.1 && strain.2 %]
+           <b>[% link %]</b>
+       [% ELSE %]
+           [% link %]
+       [% END %]
+
+       <br>
+    [% END %]
+       Strains carrying [% bestname %] alone are listed in <b>boldface</b>.<br />
+       Strains available directly from the CGC are <i>italicized</i>.
+
+[% END %]

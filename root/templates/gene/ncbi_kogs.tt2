@@ -1,0 +1,17 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : NCBI KOGs
+  Stash   : ncbi_kogs = [ Ace::Object::Homology_group ]
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="NCBI KOGs" -%]
+     [%- FOREACH i = ncbi_kogs -%]
+  	  [%- i.Title -%] [[%- url.Link(i) -%]]<br />
+     [%- END -%]
+[% END %]
+

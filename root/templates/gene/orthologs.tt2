@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+  [% WRAPPER "boilerplate/section" title="Orthologs" -%]
+    <hr>
+    [% FOR ortholog=orthologs %]
+        <i>[% ortholog.Species %] [% url.Link(item=ortholog action="Gene") %]</i> 
+       [[%- url.Link(item=ortholog.Sequence_name
+                 action='Synteny'
+                 text='syntenic alignment') -%]]
+    [% END %]
+
+    [% UNLESS orthologs %] <!-- This will NEVER be displayed -->
+    	<i>For a description of the methodology used to assign ortholog pairs, see [% url.Link(item='WBPaper00006396'
+                                                                                             action='Paper'
+                                                                                         	   text='Stein et al., 2003') -%]</i>
+    [% END %]
+  [% END %]

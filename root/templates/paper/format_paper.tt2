@@ -1,0 +1,54 @@
+[% date = paper.Year %]
+[% temp = date.name %]
+[% year = temp.match('.*(\d\d\d\d).*') %]
+  
+  [%# Link the WormBase button to the paper object %]
+  [% url.Link(item=paper
+	      text=image(boilerplate.buttons.wormbase)) %]
+
+  [%# Likewise, link the pubmed button %]
+  [% IF paper.PMID %]
+     [% url.Link(resource="PubMed"
+		 type="fetch_paper"
+                 url_params=paper.PMID
+		 text=image(boilerplate.buttons.pubmed))
+     %]
+  [% END %]
+
+  <br />
+  [% authors = paper.Author %]
+[% FOREACH author IN authors %]
+     [% url.Link(author) %],
+[% END %].<br />
+
+[% year.0 %]. [% paper.Title %].<br />
+
+[% IF paper.In_book || paper.Erratum %] 
+    [% results = util.parse_hash(paper.In_book) %]    
+    [% IF paper.Type == "WormBook" %]
+      In: [% results.Editor.right %], eds. [% results.Title.right %], doi/[% paper.Other_name %],
+      <a href="http://www.wormbook.org">http://www.wormbook.org</a>.
+    [% ELSE %]
+      In: [% results.Editor.right %], eds. [% results.Title.right %].
+    [% END %]
+
+[% ELSE %]
+
+    [% paper.Journal %]
+    [% IF paper.Volume %]
+      [% paper.Volume %]:
+    [% END %]
+
+    [% pages = [ paper.Page ] %]
+    [% IF pages %]
+       [% pages.join('-') %]
+    [% END %]    
+
+[% END %]
+
+<br>
+<!-- THIS ISN"T THE RIGHT LINK - NEED TO LOAD THE ABSTRACT IN WINDOW -->
+  <!-- ACK HOW DO I EMBED THIS boilerplate.toggles.closed_triangle reference -->
+[%- url.Link(item=paper
+	     text=toggle(boilerplate.toggles.closed_triangle,"show abstract"))
+-%]

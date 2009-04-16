@@ -1,0 +1,28 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : Concise Description
+  Stash   :     push @data,{ wt_seq   => $wt,
+		 mut_seq   => $mut,
+		 wt_label  => $wt_label,
+		 mut_label => $mut_label,};
+  }
+
+%]
+
+
+[%- WRAPPER "boilerplate/field" title="Flanking Sequences" -%]
+
+    <pre>
+    [% FOREACH flank IN flanking_sequences %]
+        [% IF flank.length > 50 %]
+            [% util.fasta(current_object,flank,'no_spaces') %]
+        [% ELSE %]
+            [% flank %]
+        [% END %]
+    [% END %]
+    </pre>
+
+[% END %]
+
+

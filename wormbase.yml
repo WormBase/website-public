@@ -1,0 +1,257 @@
+---
+# General configuration
+# This is a combination of the old local_settings.pm
+# and elegans.pm files
+#name : WormBase Reimplementation
+
+site        : WormBase Rearchitecture
+debug       : 1
+
+# Are we a mirror, master, or development site
+site_type   : development
+byline      : Catalyst Implementation
+
+# Per-page configuration
+# Perhaps these should be split into
+# separate files?
+
+
+
+#gbrowse_conf_dir : /home/todd/projects/wormbase/website/trunk/conf/gbrowse.conf
+gbrowse_conf_dir : /Users/todd/projects/wormbase/website/trunk/conf/gbrowse.conf
+
+#pages :
+#   gene :
+#      widget_order :
+#          - [ identification, location, expression, function, gene_ontology, genetics, homology, references, similarities ]
+#      widgets :
+#           identification :
+#              - [ description, ncbi_kogs, species, other_sequences, ncbi, gene_models, cloned_by ]
+#           location :
+#              - [ genetic_position, interpolated_position, genomic_position, genomic_environs ]
+#           expression :
+#              - [ fourd_expression_movies, anatomic_expression_patterns ]
+#          function: 
+#             - [ pre_wormbase_information, rnai_phenotypes, y1h_and_y2h_interactions, interactions, microarray_ex#pression_data, expression_cluster, microarray_topology_map_position, regulation_on_expression_level, protein_doma#ins ]
+#           gene_ontology :
+#              - gene_ontology
+#           genetics :
+#              - reference_allele
+#              - alleles
+#              - strains
+#              - rearrangements
+#           homology :
+#              - inparanoid_groups
+#              - orthologs
+#              - treefam
+#           similarities :
+#              - best_blastp_matches
+#           reagents :
+#              - transgenes
+#              - orfeome_project_primers
+#              - primer_pairs
+#              - microarray_probes
+#              - sage_tags
+#              - matching_cdnas
+#              - antibodies
+#           references :
+#              - references
+#
+#				gene_class => {
+#					       widget_order => [
+#								qw/general_info genes remarks previous_genes/
+#							       ],
+#					       widgets => {
+#							   general_info => [
+#									    qw/gene_class
+#									       main_name
+#									       other_name
+#									       description
+#									       phenotype
+#									       designating_laboratory
+#									      /],
+#							   genes        => [],
+#							   remarks      => [],
+#							   previous_genes => [],
+#							  },
+#					       view_caveats => { title => 'About gene classes in C. elegans',
+#								 content => 'Please read <a href="http://www.wormbase.org/wiki/index.php/Nomenclature">guidelines</a> for further details on gene nomenclature in nematodes.'},
+#
+#					      },
+#				
+#				antibody => {
+#					     widget_order => [qw/general_information expression_patterns references/],
+#					     widgets      => {
+#							      general_information => [
+#										      qw/summary
+#											 other_name
+#											 location
+#											 corresponding_gene
+#											 clonality
+#											 antigen
+#											 animal
+#											 notes/
+#										     ],
+#							      expression_patterns => [],
+#							      references          => [],
+#							     },
+#					    },
+#			       };
+#
+
+#wormbase2blast : 'http://localhost'
+#blast2wormbase : 'http://localhost'
+
+## Where to redirect AQL queries
+wormbase2aql   : 'http://localhost'
+#aql2wormbase   : 'http://localhost'
+
+
+## By default, use WormBase's remote data sources. For faster
+## performance, install the data sources locally. You can
+## override these values in wormbase_local.yml
+
+
+Model::AceDB:
+   class: WormBase::DBH::AceDB
+   args:
+     acedb_host: aceserver.cshl.org
+     acedb_port: 2005
+     acedb_user:
+     acedb_pass:
+     cache_root: /usr/local/wormbase/cache
+     cache_expires: '3 weeks'
+     cache_size: 100000000
+     cache_auto_purge_interval: 
+
+Model::GFF:
+   class: WormBase::DBH::GFF
+   args:
+     mysql_host: localhost
+     mysql_user: root
+     mysql_pass: kentwashere
+     dsn: [elegans]
+
+Model::Anatomy_ontology:
+   class: WormBase::Model::Anatomy_ontology
+
+Model::Antibody:
+   class: WormBase::Model::Antibody
+
+Model::Cluster:
+   class: WormBase::Model::Cluster
+
+Model::Expression_cluster:
+   class: WormBase::Model::Expression_cluster
+
+Model::Gene:
+   class: WormBase::Model::Gene
+   args:
+      image_tracks: [ NG, CG, CANONICAL, MOTIFS, Allele, RNAi ]
+
+Model::Gene_class:
+   class: WormBase::Model::Gene_class
+
+Model::Gene_ontology:
+   class: WormBase::Model::Gene_ontology
+
+Model::Gene_regulation:
+   class: WormBase::Model::Gene_regulation
+
+Model::Homology_group:
+   class: WormBase::Model::Homology_group
+
+Model::Laboratory:
+   class: WormBase::Model::Laboratory
+
+Model::Motif:
+   class: WormBase::Model::Motif
+
+Model::Operon:
+   class: WormBase::Model::Operon
+   args :
+      image_tracks: [ OP, CG ]
+
+Model::Paper:
+   class: WormBase::Model::Paper
+
+Model::Phenotype_ontology:
+   class: WormBase::Model::Phenotype_ontology
+
+Model::Protein:
+   class: WormBase::Model::Protein
+   args:
+      glyphs:
+         low_complexity: generic
+         transmembrane: generic
+         signal_peptide: generic
+         tmhmm: generic
+      labels:
+         low_complexity: Low Complexity
+         transmembrane: Transmembrane Domain(s)
+         signal_peptide: Signal Peptide(s)
+         tmhmm: Transmembrane Domain(s)
+         wublastp_ensembl: BLASTP Hits on Human ENSEMBL database
+         wublastp_fly: BLASTP Hits on FlyBase database
+         wublastp_slimSwissProt: BLASTP Hits on SwissProt
+         wublastp_slimTrEmbl: BLASTP Hits on Uniprot
+         wublastp_worm: BLASTP Hits on WormPep
+      colors:
+         low_complexity: blue
+         transmembrane: green
+         signalp: gray
+         Prosite: cyan
+         seg: lightgrey
+         Pfam: wheat
+         Motif_homol: orange
+         Pep_homol: blue
+
+Model::Rearrangement:
+   class: WormBase::Model::Rearrangement
+
+Model::Sequence
+   class: WormBase::Model::Sequence
+
+Model::Structure_data:
+   class: WormBase::Model::Structure_data
+   args:
+      similarity_display_cutoff: 75
+
+Model::Transgene:
+   class: WormBase::Model::Transgene
+
+Model::Variation:
+   class: WormBase::Model::Variation   
+   args:
+      picture_width    : 500
+      unmapped_span    : 10000
+      padding          : 10
+      seq_style        : "font-size:12px;font-family:courier"
+      display_all_tags : 1
+      full_sequence_flank  : 250
+      debug                : 0
+      indel_display_limit  : 25
+      motif_picture_glyphs :  
+                  low_complexity : generic
+                  transmembrane  : generic
+                  signal_peptide : generic
+                  tmhmm          : generic
+      motif_picture_labels :
+                  low_complexity : Low Complexity
+                  transmembrane  : Transmembrane Domain(s)
+                  signal_peptide : Signal Peptide(s)
+                  tmhmm          : Transmembrane Domain(s)
+                  wublastp_ensembl : BLASTP Hits on Human ENSEMBL database
+                  wublastp_fly     : BLASTP Hits on FlyBase database
+                  wublastp_slimSwissProt : BLASTP Hits on SwissProt
+                  wublastp_slimTrEmbl    : BLASTP Hits on TREMBL
+                  wublastp_worm          : BLASTP Hits on WormPep
+      motif_picture_colors :
+                  low_complexity : blue
+                  transmembrane  : green
+                  signalp        : gray
+                  Prosite        : cyan
+                  seg            : lightgrey
+                  Pfam           : wheat
+                  Motif_homol    : orange
+                  Pep_homol      : blue

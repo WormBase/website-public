@@ -1,0 +1,50 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : IDs
+  Stash   : gene => Ace::Object::Gene;
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="IDs" %]
+
+     [% IF ids.CGC_name %]
+       [% WRAPPER "boilerplate/subfield" title="Locus (Main) name"%] 
+	   [% url.Link(item=gene text=ids.CGC_name) %]
+       	    - (<i>[%- url.Link(item=ids.Gene_class text=ids.Gene_class.Description) -%]</i>)
+           [% display_evidence(ids.CGC_name) %]
+           - 
+           [%- url.Link(resource='CGC'
+	            type='nomenclature'
+		    text="CGC nomenclature guide") -%]
+     [% END %]
+   [% END %]
+
+    [% IF ids.Sequence_name %]
+    [% WRAPPER "boilerplate/subfield" title="Sequence name"%] 
+             [% FOREACH s = ids.Sequence_name %] 
+               [% url.Link(s) %]
+             [% END %]
+      [% END %]
+    [% END %]
+
+    [% IF ids.Other_name %]
+          [% WRAPPER "boilerplate/subfield" title="Other name(s)"-%] 
+
+           [% FOREACH s = ids.Other_name %]
+    	      [% url.Link(s) %] [% display_evidence(s) %]<br />
+           [% END %]
+      [% END %]
+    [% END %]
+
+    [% WRAPPER "boilerplate/subfield" title="WB Gene ID"%] 
+       [% ids %]
+    [% END %]
+
+    [% WRAPPER "boilerplate/subfield" title="Version"%] 
+       [% ids.Version %]
+    [% END %]
+[% END %]

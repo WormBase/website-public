@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+
+
+<!-- JQuery toggle -->
+  <script type="text/javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/jquery_utils.js"></script>
+  <script type="text/javascript" src="/static/js/toggle.js"></script>
+
+<!-- link rel does not work!! pulling in some other tempalte -->
+<!-- link rel="stylesheet" href="/css/wormbase.css" type="text/css" -->
+
+  <style>
+     [% PROCESS main.css %]
+   </style>
+ </head>
+ <body>
+    [% INCLUDE boilerplate/banner %]
+ </body>
+</html>
+

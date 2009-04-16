@@ -1,0 +1,6 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Cloned by" -%]
+     [% url.Link(item=cloned_by.source text=cloned_by.evidence) %]
+[% END %]

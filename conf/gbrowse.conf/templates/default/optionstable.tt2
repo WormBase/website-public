@@ -1,0 +1,62 @@
+<input type="hidden" name="options_panel_vis" id="options_panel_vis" value="[%- IF div_visibility.options_panel_vis == 0 -%]0[%- ELSE -%]1[%- END -%]"/>
+<div class="ctl_hidden" id="options_panel_show" onclick="visibility('options_panel',1)"
+    [%- PROCESS 'div_inline.tt2' vis_value=div_visibility.options_panel_vis vis_default=1 opposite_of_value=1 -%]
+  ><img src="/gbrowse/images/buttons/plus.png">&nbsp;
+  <span class="tctl"><b>[% config.tr('display_settings') %] </b></span>
+</div>
+                                                                                                                             
+<div class="ctl_visible" id="options_panel_hide" onclick="visibility('options_panel',0)"
+    [%- PROCESS 'div_inline.tt2' vis_value=div_visibility.options_panel_vis vis_default=1 opposite_of_value=0 -%]
+  ><img src="/gbrowse/images/buttons/minus.png">&nbsp;
+  <span class="tctl"><b>[% config.tr('display_settings') %] </b></span>
+</div>
+                                                                                                                             
+<div class="el_visible" id="options_panel"
+    [%- PROCESS 'div_inline.tt2' vis_value=div_visibility.options_panel_vis vis_default=1 opposite_of_value=0 -%]
+  >
+  <table class="searchbody" border="0">
+    <tr>
+    <td>
+    <!-- IMAGE WIDTH -->
+      <b>[% config.tr('image_width') %]</b><br/>
+      [% FOREACH width = config.setting('image widths').split('\s+') %]
+      <input type="radio" name="width" value="[% width %]" [% IF(width == page_settings.width) ; 'checked="checked"' ; END %]/>[% width %]
+      [% END %]
+    </td>
+    <td>
+    <!-- KEY POSITION -->
+      <b>[% config.tr('key_position') %]</b><br/>
+      <!-- need to check if Bio::Graphics::Panel->can('auto_pad') allows left and right -->
+      [% FOREACH key_style IN ['between','bottom','left','right',] %]
+        [% IF key_style=='bottom' %] 
+          <input type="radio" name="ks" value="[% key_style %]" [% IF(key_style == page_settings.ks) ; 'checked="checked"' ; END %]/>[% config.tr('beneath') %]
+        [% ELSE %]
+          <input type="radio" name="ks" value="[% key_style %]" [% IF(key_style == page_settings.ks) ; 'checked="checked"' ; END %]/>[% config.tr(key_style) %]
+        [% END %]
+      [% END %]
+    </td>
+    <td>
+
+    <!-- TRACK NAMES -->
+        <b>[% config.tr('track_names') %]</b><br/>
+        <input type="radio" name="sk" value="sorted"   [% IF('sorted' == page_settings.sk)   ; 'checked="checked"' ; END %]>[% config.tr('alphabetic') %]</input>
+        <input type="radio" name="sk" value="unsorted" [% IF('unsorted' == page_settings.sk) ; 'checked="checked"' ; END %]>[% config.tr('varying')    %]</input>
+    </td>
+    </tr>
+    <tr>
+    <td><input type="text" name="h_feat" value="[% feature_highlights %]" </td>
+    <td><input type="text" name="h_region" value="[% region_highlights %]" </td>
+    </tr>
+    <!-- BUTTONS -->
+    <tr>
+    <td align="right" colspan="4">
+
+        <!-- FIXME do these button names need to be translated? -->
+        <input type="submit" name="Set Track Options..." value="[% config.tr('set_options') %]"/>
+        <input type="submit" name="Update Image"         value="[% config.tr('update') %]"     />
+    </td>
+    </tr>
+  </table>
+    
+</div>
+

@@ -1,0 +1,34 @@
+[%#
+
+    NAME  : field
+    TYPE   : wrapper
+    STASH : title (to become the title of the field)
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% IF classic %]
+
+  <!-- Wrap a subsection -->
+  <!-- START [% title %] subsection -->
+      <tr valign="top">
+        <th class="databody" rowspan="1" align="LEFT" valign="top">[% title %]</th>
+
+           <td class="databody">
+	     [% content %]
+           </td>
+       </tr>
+   <!-- END [% title %] subsection -->
+
+[% ELSE %]
+
+   <div class="field" id="[% title FILTER html %]">
+         <h5>[% title %]</h5>
+         <p>
+            [% content %]
+         </p>
+   </div>
+
+[% END %]

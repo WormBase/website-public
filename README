@@ -1,0 +1,204 @@
+Run script/wormbase_server.pl to test the application.
+
+Add StackTrace as an option to the Application: lib/WormBase.pm
+
+
+# Create a model for the gene class
+script/wormbase_create.pl model Gene
+
+# And a controller
+script/wormbase_create.pl controller Gene
+
+# Add a simple list method to the Gene controller that
+# serves to list all genes in a little table
+
+# Create a TT helper for views
+script/wormbase_create.pl view TT TT
+
+# Create a TT template page for Gene page list
+mkdir root/src/gene
+copy the list.tt2 from MyApp (note that we're missing boatloads of files that were created in the demo by TTSite
+
+
+
+# Er.  I'll just use TTSite to bootstrap.
+script/wormbase_create.pl view TT TTSite
+
+Edit lib/WormBase.pm:
+
+    sub message : Global {
+        my ( $self, $c ) = @_;
+        $c->stash->{template} = 'message.tt2';
+        $c->stash->{message}  ||= $c->req->param('message') || 'No message';
+    }
+    
+    sub default : Private {
+        my ( $self, $c ) = @_;
+        $c->stash->{template} = 'welcome.tt2';
+    }
+    
+    sub end : Private {
+        my ( $self, $c ) = @_;
+        $c->forward('MyApp::V::TT');
+    }
+
+
+
+
+# Create a Catalyst::Model::DBI acedb subclass
+script/wormbase_create.pl model AceDB DBI host port user password
+
+Pull in suitable parts of AcePerl (OpenDatabase, mainly)
+
+
+# Create a Catalyst::Model::DBI for the GFF database
+# Should I have one Model for each database?
+
+
+
+# For elements that should be rendered inline,
+
+use the inline View
+script/wormbase_create.pl view TT::Inline TT
+
+$c->view('TT::Inline')->render();
+
+
+
+
+Modules:
+Catalyst::View::TT - allows independent rendering of templates
+
+my $output = $c->view('TT')->render(
+    $c, 'mytemplate.tt', \%args
+);
+
+
+
+
+
+Checking out:
+svn checkout svn+ssh://brie6.cshl.edu/home/todd/svn/wormbase/website
+
+Checking in:
+
+
+
+
+
+
+Due diligence:
+
+Background:
+
+Model-View-Controller architecture separates components of an
+application making it easier to maintain and extend.
+
+Controller:
+Handles interaction with the user
+
+Model:
+Interacts with the database. 
+
+
+
+
+Specifying a template
+
+To specify a template conditionally, check for which type of data is in the stash.
+
+
+
+
+
+Issues:
+- configuration variables
+- eg: steps to adding a new section / subsection
+- object mapping
+- interactivity
+
+examples
+
+templating systems
+
+
+bestname should be a function I can call from within a template
+
+
+
+
+
+
+Installing Catalyst and dependencies (Mac OS X, intel)
+
+1. Fetch Catalyst (5.7008)
+
+> cd ~/src
+> curl -O http://search.cpan.org/CPAN/authors/id/M/MR/MRAMBERG/Catalyst-Runtime-5.7008.tar.gz
+
+> cd ~/build
+> tar xzf ../src/Catalyst*
+> cd Catalyst*
+
+Or, better yet, via CPAN:
+ sudo perl -MCPAN -e shell
+ cpan> install Task::Catalyst
+ cpan> install Catalyst::Devel
+ cpan> install Template
+
+Install extra modules
+
+Catalyst::Plugin::Session::Store::FastMmap
+Catalyst::Model::Adaptor
+Catalyst::Controller::REST
+
+XML::SAX
+
+
+
+Third party libraries
+---------------------------
+Install BioPerl
+// This script will build and install bioperl in a local path
+./install/bioperl.sh  // See script for details.
+
+-- For optional modules, choose [i] interactive.
+-- For "Install [a]ll Bioperl scripts, [n]one, or choose groups [i]nteractively? [a]" choose none.
+
+install GBrowse
+./install/gbrowse.sh // see the script...
+NOTE: this FAILS on Mac OSX.  The INSTALLSITESCRIPT option in Makefile.PL needs to be set to $OPTIONS{BIN}
+
+
+
+Models:
+One of the problems of the current approach is that get_params() cannot act easily as a search.
+It *assumes* that it will be able to retrieve an object which may be incorrect.
+
+
+
+
+
+
+DEPLOYMENT
+
+
+
+
+
+
+Overall flow.
+
+1. Request from user: /gene/ID/species
+
+2. Controller action called:
+
+WormBase::Web::Controller::species()
+
+3. Model instantiated by controller method:
+
+species():  $model= $c->model('Gene');
+
+Instantiating the model's new() method also ends up fetching the objects.
+
+4. 

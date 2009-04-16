@@ -1,0 +1,37 @@
+[%# This is *basically* generic except for a small text note. I could process that template, then add in the note except that it needs to be inside the widget %]
+
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% FOREACH field IN fields %]
+
+      [%# Questions: 
+
+      Should I hide fields if they are empty?
+      I need to standardized dynamic selection of template.  This is kind of messy.
+      Making this into a macro doesn't seem to work
+
+     This is an example of how to programatically create a widget template (with some allele specific code, too)
+
+%]
+
+       [% IF $field %]
+          [% IF Catalyst.config.generic_fields.$field %]
+              [% mytemplate = "generic/field.tt2" %]
+          [% ELSIF Catalyst.config.common_fields.$field %]
+              [% mytemplate = "common_fields/$field" _ ".tt2" %]
+          [% ELSE %]
+              [% mytemplate = "$class/$field" _ '.tt2' %]
+          [% END %]
+
+           [% INCLUDE $mytemplate %] 
+       [% END %]
+   [% END %]
+
+    [% WRAPPER "boilerplate/field" title="Note" -%]
+       Please [%- url.Link(resource="submit_forms"
+                          type="alleles"
+ 		          text="submit") -%]
+	additional alleles or molecular information to WormBase.
+    [% END %]
+
+[% END %]

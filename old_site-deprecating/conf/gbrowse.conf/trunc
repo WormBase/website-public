@@ -1,0 +1,6 @@
+my $stop;
+
+while (<>) {
+  last if /HERE/;
+  print;
+}

@@ -1,0 +1,43 @@
+[%#
+
+  Widget  : 
+  Section : 
+  Stash   :     push @data,{ wt_seq   => $wt,
+		 mut_seq   => $mut,
+		 wt_label  => $wt_label,
+		 mut_label => $mut_label,};
+  }
+
+%]
+
+
+[%- WRAPPER "boilerplate/field" title="Context" -%]
+
+    <pre>
+    ...<span class="feature_flank">[% context.left_flank %]</span> <span class="highlighted_feature">[% context.wildtype_substituted_fragment %]</span> <span class="feature_flank">[% context.right_flank %]</span>... -- Wild type
+    <br />
+    ...<span class="feature_flank">[% context.left_flank %]</span> <span class="highlighted_feature">[% context.mutant_substituted_fragment %]</span> <span class="feature_flank">[% context.right_flank %]</span>... -- <i>[% current_object %]</i>
+    <br />
+    <br />
+    <i>Note: Sequence is reported on the plus strand.</i>
+
+
+          <pre>
+TODO: These belong within a toggle section, open link as "View expanded context"
+
+> Wild type N2, with [% context.left_flank.length %] bp flanks
+[% context.wildtype_genomic_expanded %]
+	  
+> [% current_object %] with [% context.context_flank %] bp flanks
+[% context.mutant_genomic_expanded %]
+    </pre>
+
+    
+    <pre>
+DEBUGGING:
+[% context.debug.join("<br>") %]
+</pre>
+
+[% END %]
+
+

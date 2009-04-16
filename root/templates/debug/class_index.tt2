@@ -1,0 +1,109 @@
+[%#
+
+Generic Debug Index page.
+
+This lists available widgets and fields for any class when called
+without parameters.
+
+%]
+
+[% MACRO select_field_template(field,class) BLOCK;
+     IF Catalyst.config.generic_fields.$field;
+              "generic/field.tt2";
+     ELSIF Catalyst.config.common_fields.$field;
+              "common_fields/" _ field _ ".tt2";
+     ELSE;
+              class _ "/" _ field _ '.tt2';
+     END;
+END;
+%]
+
+
+[% MACRO select_widget_template(widget,class) BLOCK;
+     IF Catalyst.config.generic_widgets.$widget;
+              "generic/widget.tt2";
+     ELSIF Catalyst.config.common_widgets.$widget;
+              "common_widget/" _ widget _ ".tt2";
+     ELSE;
+              class _ "/" _ widget _ '.tt2';
+     END;
+END;
+%]
+
+[% MACRO widget_template_type(widget) BLOCK;
+     IF Catalyst.config.generic_widgets.$widget;
+            "generic";
+     ELSIF Catalyst.config.common_widgets.$widget;
+     	   "common";
+     ELSE;
+           "custom";
+     END;
+END;
+%]
+
+[% MACRO field_template_type(field) BLOCK;
+     IF Catalyst.config.generic_fields.$field;
+            "generic";
+     ELSIF Catalyst.config.common_fields.$field;
+     	   "common";
+     ELSE;
+           "custom";
+     END;
+END;
+%]
+
+
+<div id="page-header">
+<h4>Default Index/Debug Page: [% path FILTER ucfirst %]</h4>
+
+<p>
+This is the default index page and debugging screen for the <b>[% path
+ FILTER ucfirst %]</b> class.  This class provides the following
+ widgets and data fields using the specified templates.
+</p>
+</div>
+
+<p>
+[%# Weird. Can't directly access config variables. Have to iterate to
+pick the appropriate page %]
+
+
+[% FOREACH this_page IN Catalyst.config.pages.keys.sort %]
+   [% NEXT IF this_page != path %]
+
+     [% SET random_object = Catalyst.get_example_object(this_page) %]
+     <p>All examples are using a random object: [% random_object %]. Reload to select another.</p>
+
+       [% FOREACH widget IN Catalyst.config.pages.$this_page.widget_order %]
+       <div class="debug-widget-title">[% widget %]</div>
+           <div class="debug-field-list">
+
+<table width="100%">
+   <tr>
+	<td class="field-name">(widget)</td>
+                <td>
+                   <p class="[% widget_template_type(widget) %]">
+              		       <a href="[% Catalyst.uri_for('/' _ this_page,random_object,widget) %]" target="_blank">
+                                         [% select_widget_template(widget,this_page) %]
+                              </a>
+                   </p>
+           </td>
+   </tr>
+         [% FOREACH field IN Catalyst.config.pages.$this_page.widgets.$widget %]
+   <tr>
+ 	   <td class="field-name">[% field %]</td>
+           <td>
+                 <p class="[% field_template_type(field) %]">
+     		       <a href="[% Catalyst.uri_for('/' _ this_page,random_object,field) %]" target="_blank">
+                              [% select_field_template(field,this_page) %]
+                       </a>
+                 </p>
+         </td>
+   </tr>
+        [% END %]
+   </table></p>
+</div>
+
+[% END %]
+[% END %]
+</div>

@@ -1,0 +1,91 @@
+[%#
+
+  Widget  : Gene.Identification
+  Field : Gene Models
+  Stash   : model => { footnotes => [],
+		       length_spliced   => int,
+		       length_unspliced => int,
+                       protein          => '',
+		       translated_length => int,
+		    }
+
+%]
+
+[% title = "Gene Model(s)" %]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" %]
+      <table border="1" width="100%">
+      <tr>
+        <th>Gene Model</th>
+        <th>Status</th>
+        <th>Nucleotides (coding/transcript)</th>
+        <th>Protein</th>
+        <th>Amino Acids</th>
+      </tr>
+
+      [%- FOR model=gene_models.gene_models -%]
+      <tr>
+         <td align="left">
+         [%- url.Link(model.sequence) -%]
+         [%- IF model.footnotes -%]
+           <span class="superscript">
+              [%- model.footnotes -%]   
+           </span>
+       [%- END -%]
+       </td>
+       <td align="left">
+         [%- model.status -%]
+       </td>
+       <td align="center">
+          [%- IF model.length_spliced -%]
+            [%- model.length_spliced -%] / [%- model.length_unspliced -%]  bp
+          [%- END -%]
+       </td>
+       <td align="center">
+          [%- IF model.protein -%]
+              [%- Link(model.protein) -%]
+          [%- END -%]
+       </td>
+       <td align="center">
+          [%- IF model.translated_length %]
+             [%- model.translated_length%] aa
+          [%- END -%]
+       </td>
+    </tr>
+    [% END %]
+    </table>
+    <!-- The toggle macro -->
+
+    [% IF gene_models.footnotes %]         
+    [% WRAPPER "boilerplate/subfield" title="Footnotes"-%] 
+        [% toggle("Footnotes",entries.join("<br />")) %]
+           [% entries = [] %]
+           [%- FOREACH id IN gene_models.footnotes.keys.sort -%]
+              [% entries.push("<span class=\"superscript\">$id</span>" gene_models.footnotes.$id) %]
+           [%- END -%]
+       [% END %]
+    [% END %]
+
+    [% IF gene_models.other_notes %]         
+    [% WRAPPER "boilerplate/subfield" title="Other Notes"-%] 
+         [% toggle("Other Notes",gene_models.other_notes.join("<br />")) %]
+    [% END %]
+    [% END %]
+    </div>
+
+    <!-- THE HISTORY TOGGLE FIELD IS MISSING -->
+
+  [% END %]
+
+  [%- IF gene.Corresponding_pseudogene -%]
+  [% WRAPPER "boilerplate/field" title="Psuedogene"-%] 
+     [% WRAPPER "boilerplate/subfield" title="Corresponding pseudogene" -%]
+         [%- gene.Corresponding_pseudogene -%]
+     [% END %]
+    [% END %]
+  [%- END -%]
+
+

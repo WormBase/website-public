@@ -1,0 +1,139 @@
+#!/usr/bin/perl -w
+
+# name: clone_position_table (brie3: /usr/local/wormbase/cgi-perl/seq)
+# author: Marcela Tello
+# date: July 2003
+
+use strict;
+use strict 'vars';
+use lib '../lib';
+use Ace 1.51;
+#use Ace::Browser::AceSubs;
+use CGI qw(:standard);
+use ElegansSubs;
+use Bio::DB::GFF;
+
+
+print "Opening databases... \n";
+
+our $DB = Ace->connect(-host => 'brie3',
+ 		       -port => '2005')
+   || die "Connection failure: ",Ace->error;
+
+# open the c.elegans sequence database
+
+our $DBGFF = OpenGFFDB($DB,'elegans') || die "Couldn't open GFF database",Ace->error; 
+our $PMAPGFF = OpenPmapGFF($DB) || die "Couldn't open GFF database",Ace->error; 
+print "done.\n\n";
+
+my @clones = $DB->fetch(Clone => 'C27*'); #test
+
+print_positional_table(@clones);
+
+exit 0;
+
+
+#############################################################
+#############################################################
+
+sub print_positional_table {
+  my @clones = @_;
+  
+  foreach my $clone(@clones){
+    my $clone_name = $clone->name; 
+    my $gno_segment = gno_segment($clone);
+    my ($chr,$gno_start,$gno_end) = get_dbgff_coords($gno_segment) if $gno_segment;
+    my $seq_pos = "$chr:$gno_start..$gno_end bp" if ($chr,$gno_start,$gno_end);
+    my $pmap_segment = pmap_segment($clone);
+    my ($ctg,$p_start,$p_end) = get_dbgff_coords($pmap_segment) if $pmap_segment;
+    my $pmap_pos = "$ctg:$p_start..$p_end" if ($ctg,$p_start,$p_end);
+    my $gen_pos;
+    my $sequence = eval{$clone->Sequence};
+    if ($sequence) {
+      my @seq_data = $clone->follow(-tag=>'Sequence',
+				    -fill=>'Interpolated_map_position');
+      for(@seq_data){
+	my $seq_chr = $_->get('Interpolated_map_position',1);
+	my $aprox_gen = $_->get('Interpolated_map_position',1)->right;
+	$gen_pos = "$seq_chr:$aprox_gen cM";
+      }
+    }
+    my @genes = get_genes_in_clone($clone) if ($clone);
+    print join "\t",($clone_name,$seq_pos,$gen_pos,$pmap_pos,@genes),"\n"; 
+  }
+}
+
+sub gno_segment {
+  my ($clone) = @_;
+  if ($clone){
+    my $seg = $DBGFF->segment(Sequence=>$clone);
+    warn $seg," is the segment input: gomap\n";
+    return $seg if $seg;
+  }
+}
+
+sub pmap_segment {
+  my ($clone) = @_;
+  if ($clone) {
+    my $seg = $PMAPGFF->segment(Sequence=>$clone);
+    warn $seg," is the segment input: pmap\n";
+    return $seg if $seg;
+  }
+}
+
+sub get_dbgff_coords {
+  my $seg = shift;
+  if ($seg) {
+    my $ref = $seg->abs_ref;
+    my $start = $seg->abs_start;
+    my $end = $seg->abs_end;
+    return ($ref,$start,$end);
+  }
+}
+
+sub get_genes_in_clone {
+  my ($clone) = @_;
+#  my $clone_seg = $DBGFF->segment(Sequence=>$clone);
+  my @loci;
+
+
+#  my $chr = $DB->fetch(Map => $ref);
+#  warn "chr = $chr\n";
+#  my @loci_in_chr = $chr->follow(-tag=> 'Locus', -filled=>'Map');
+#  warn "loci = @loci_in_chr";
+
+# my @loci;
+#   for (@loci_in_chr) {
+#    my ($locus) = @{$_};
+#    push @loci,$locus;
+#  }
+
+#  my (@all_loci_pos,$locus_gno_pos);
+
+#  foreach my $locus(@loci_in_chr){
+#    my $seg_locus = eval {$DBGFF->segment(-class=>'Locus',-name=>$locus)};
+#    my $seg_locus = $DBGFF->segment(Sequence=>$locus);
+#    warn $seg_locus," is the segment input: clone_gnomap\n";
+#    my($chrom,$start,$end) = get_dbgff_coords($seg_locus) if $seg_locus;
+#    my $locus_gno_pos = "$locus $chrom:$start..$end bp  " if ($chrom,$start,$end);
+#  }
+#  push @all_loci_pos,$locus_gno_pos;
+#}
+
+
+#  foreach my $locus(@loci_in_clone) {
+    
+#     if ($start >= $ref_start && $start <= $ref_end) {
+#       push @loci_in_clone,$l;
+# #      $locus_gno_pos = "$l $chrom:$start..$end bp\n" ? ($chrom,$start,$end): "$l\n";
+#       warn "loci1 = @loci_in_clone\n";
+#       print "$l $chrom:$start..$end bp\n" if ($chrom,$start,$end);
+#     } 
+
+# elsif ($end <= $ref_end && $end >= $ref_start) {
+#       push @loci_in_clone,$l;
+#       $locus_gno_pos = "$l $chrom:$start..$end bp\n" ? ($chr,$start,$end): "$l\n";
+#     }
+#     warn "loci2 = @loci_in_clone\n";
+
+}

@@ -1,0 +1,952 @@
+[GENERAL]
+description   = nGASP WS160 Phase 1 Gene Predictions
+db_adaptor    = Bio::DB::GFF
+db_adaptor  = Bio::DB::GFF
+db_args     =   -adapter dba:mysqlopt
+		-dsn dbi:mysql:database=tristan_nGASP;host=localhost
+
+
+aggregators  = candidate_gene{CDS,five_prime_UTR,three_prime_UTR}
+#               gene_model{trancript,coding_exon,five_prime_UTR,three_prime_UTR}
+
+plugins     = GFFDumper FastaDumper BatchDumper
+
+search_instructions = <p>Select a blue (test) or red (training) region on the left to browse nGASP regions</p> 
+
+init_code = use lib '/usr/local/wormbase/cgi-perl/lib';
+        use Ace;
+        use ElegansSubs;
+	use constant COLOR => ( 
+		agene    => 'red',
+		augustus => 'blue',
+		craig    => 'yellow',
+		ensembl  => 'green',
+		eugene   => 'lime',
+		exonhunter => 'slateblue',
+		fgenesh    => 'violet',
+		g3a        => 'peachpuff',
+		geneid     => 'wheat',
+		genemarkhmm => 'pink',
+		glimmerhmm  => 'salmon',
+	        maker       => 'black',
+	        nscan       => 'orange',
+		sgp         => 'powderblue',
+		snap        => 'cyan',
+	);
+
+header = sub {CGI::h2("C. elegans WS160 Gene Prediction Assessment Browser")}
+
+# a footer
+footer = <hr>
+        <table width="100%">
+        <TR>
+        <TD align="LEFT" class="databody">
+        For the source code for this browser, see the <a href="http://www.gmod.org">
+        Generic Model Organism Database Project.</a>  For other questions, send
+        mail to <a href="mailto:lstein@cshl.org">lstein@cshl.org</a>.
+        </TD>
+        </TR>
+        </table>
+        <hr>
+        <pre>$Id: nGASP_submissions.conf,v 1.2 2007/02/01 02:26:11 smckay Exp $</pre>
+
+# list of tracks to turn on by default
+default features = Genes GM
+
+# The class of the objects used to establish the reference coordinates.
+reference class  = Sequence
+
+search attributes = Note
+
+# "automatic" classes to try when an unqualified identifier is given
+automatic classes = Sequence
+
+#image_padding = 60
+pad_left   = 25
+pad_right  = 25
+
+# remote GFF files to make available for optional loading
+remote sources = "ORFeome STSs"      http://localhost/elegans_sts.gff
+                 "Expression probes" http://localhost/elegans_expression.gff
+
+# DAS reference server
+das mapmaster = SELF
+
+# a footer
+footer = <hr>
+        <table width="100%">
+        <TR>
+        <TD align="LEFT" class="databody">
+        For the source code for this browser, see the <a href="http://www.gmod.org">
+        Generic Model Organism Database Project.</a>  For other questions, send
+        mail to <a href="mailto:lstein@cshl.org">lstein@cshl.org</a>.
+        </TD>
+        </TR>
+        </table>
+        <hr>
+        <pre>$Id: nGASP_submissions.conf,v 1.2 2007/02/01 02:26:11 smckay Exp $</pre>
+
+# Various places where you can insert your own HTML -- see configuration docs
+html1 = 
+html2 = 
+html3 = 
+html4 = 
+html5 = 
+html6 = 
+# what image widths to offer
+image widths  = 450 500 640
+
+# default width of detailed view (pixels)
+default width = 500
+
+# Web site configuration info
+stylesheet  = /stylesheets/wormbase.css
+buttons     = /gbrowse/images/buttons
+tmpimages   = /ace_images/gbrowse
+
+# max and default segment sizes for detailed view
+max segment     = 1000000
+default segment = 50000
+
+# zoom levels
+zoom levels    = 100 200 1000 2000 5000 10000 20000 50000 100000 200000 5000000 1000000
+
+# colors of the overview, detailed map and key
+overview bgcolor = lightgrey
+detailed bgcolor = lightgoldenrodyellow
+key bgcolor      = beige
+
+########################
+# Default glyph settings
+########################
+
+[TRACK DEFAULTS]
+glyph         = generic
+height        = 10
+bgcolor       = lightgrey
+fgcolor       = black
+font2color    = blue
+label density = 100
+bump density  = 500
+# where to link to when user clicks in detailed view
+link          = AUTO
+
+################## TRACK CONFIGURATION ####################
+# the remainder of the sections configure individual tracks
+###########################################################
+#[Genes]
+#feature      = gene_model:Coding_transcript
+#glyph        = full_transcript
+#forwardcolor = sub {
+#                  my $f = shift;
+#                  my ($p) = grep {$_->name eq $f->name} $f->features('transcript');
+#                  my ($status) = $p->each_tag_value('Prediction_status');
+#                  $status eq 'Confirmed' ? 'blue' : 'white';
+#                }
+#reversecolor = sub {
+#                  my $f = shift;
+#                  my ($p) = grep {$_->name eq $f->name} $f->features('transcript');
+#                  my ($status) = $p->each_tag_value('Prediction_status');
+#                  $status eq 'Confirmed' ? 'blue' : 'white';
+#                }
+#utr_color    = gray
+#category     = Genes
+#height       = 8
+#bgcolor      = blue
+#label        = sub {
+#		my $f = shift;
+#		my $dn = $f->display_name;
+#		my @aliases = $f->each_tag_value('Alias');
+#		foreach (@aliases) {
+#		   return "$dn ($_)" if /^\w+-\d+/;
+#		}
+#		return $dn;
+#	}
+#description  = sub {
+#                  my $f = shift;
+#		  my ($p) = grep {$_->name eq $f->name} $f->features('transcript');
+#                  my ($status) = $p->each_tag_value('Prediction_status');
+#		  $status ||= '';
+#                  return "Confirmed transcript" if $status eq 'Confirmed';
+#		  return 0;
+#		  #return "Partially confirmed transcript"  if $status eq 'Partially_confirmed';
+#		  #return "Curated transcript";
+#                }
+#link         = http://www.wormbase.org/db/get?name=$name;class=Gene
+#key          = Wormbase Transcripts	
+
+#[Genes:99000]
+#glyph        = generic
+#bump         = 0
+#maxdepth     = 1
+#stranded     = 1
+#label        = 0
+#description  = 0
+
+[CRAIG]
+feature      = candidate_gene:CRAIG
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub { 
+		 my $s = lc shift->source;
+		 $s =~ s/_.+//;
+		 $s =~ s/[^a-z]+//g;
+		 my %color = COLOR;
+		 $color{$s};
+	       }
+reversecolor = sub {
+                 my $s = lc shift->source;
+		 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+		my $f = shift;
+		my $program = lc $f->source;
+	        my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+	        $program = $cat ? "category $cat" : '';
+		$program .= " version $ver"  if $ver;
+		$program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = CRAIG
+
+
+[CRAIG:99999]
+feature      = mRNA:CRAIG
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+[AUGUSTUS]
+feature      = candidate_gene:AUGUSTUS_cat1_ver1 candidate_gene:AUGUSTUS_cat1_ver2 candidate_gene:AUGUSTUS_cat3_ver1
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = AUGUSTUS
+
+
+[AUGUSTUS:99999]
+feature      = mRNA:AUGUSTUS_cat1_ver1 mRNA:AUGUSTUS_cat1_ver2 mRNA:AUGUSTUS_cat3_ver1S
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+[ENSEMBL]
+feature      = candidate_gene:ENSEMBL_cat3_ver1 candidate_gene:ENSEMBL_cat3_ver2
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = ENSEMBL
+
+
+[ENSEMBL:99999]
+feature      = mRNA:ENSEMBL_cat3_ver1 mRNA:ENSEMBL_cat3_ver2
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+[EuGene]
+feature      = candidate_gene:EuGene_cat1_ver1 candidate_gene:EuGene_cat2_ver1 candidate_gene:EuGene_cat3_ver1 candidate_gene:EuGene_cat3_ver2
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = EuGene
+
+
+[EuGene:99999]
+feature      = mRNA:EuGene_cat1_ver1 mRNA:EuGene_cat2_ver1 mRNA:EuGene_cat3_ver1 mRNA:EuGene_cat3_ver2
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+[exonhunter]
+feature      = candidate_gene:exonhunter_cat1_ver1 candidate_gene:exonhunter_cat3_ver1 candidate_gene:exonhunter_cat3_ver2
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = EXON HUNTER
+
+[exonhunter:99999]
+feature      = mRNA:exonhunter_cat1_ver1 mRNA:exonhunter_cat3_ver1 mRNA:exonhunter_cat3_ver2
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[G3A]
+feature      = candidate_gene:G3A_cat1_ver0 candidate_gene:G3A_cat1_ver1 candidate_gene:G3A_cat1_ver2
+	       candidate_gene:G3A_cat1_ver1a candidate_gene:G3A_cat2_ver2a candidate_gene:G3A_cat1_ver1
+   	       candidate_gene:G3A_cat2_ver2 candidate_gene:G3A_cat3_ver3
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^0-9a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^0-9a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = G3A
+
+[G3A:99999]
+feature      = mRNA:G3A_cat1_ver0 mRNA:G3A_cat1_ver1 mRNA:G3A_cat1_ver2
+               mRNA:G3A_cat1_ver1a mRNA:G3A_cat2_ver2a mRNA:G3A_cat1_ver1
+               mRNA:G3A_cat2_ver2 mRNA:G3A_cat3_ver3
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[maker]
+feature      = candidate_gene:maker_cat3_ver1 candidate_gene:maker_cat3_ver2
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = MAKER
+
+[maker:99999]
+feature      = mRNA:maker_cat3_ver1 mRNA:maker_cat3_ver2
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[Fgenesh]
+feature      = candidate_gene:Fgenesh
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = FGENESH
+
+[Fgenesh:99999]
+feature      = mRNA:Fgenesh
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[Fgenesh_plus]
+feature      = candidate_gene:Fgenesh_plus
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = FGENESH++
+
+[Fgenesh_plus:99999]
+feature      = mRNA:Fgenesh_plus
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[geneid]
+feature      = candidate_gene:geneid_v1.3
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = GENEID
+
+[geneid:99999]
+feature      = mRNA:geneid_v1.3
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[GeneMark]
+feature      = candidate_gene:GeneMark.hmm
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = GENEMARK.HMM
+
+[GeneMark:99999]
+feature      = mRNA:GeneMark.hmm
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[GlimmerHMM]
+feature      = candidate_gene:GlimmerHMM
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = GLIMMER.HMM
+
+[GlimmerHMM:99999]
+feature      = mRNA:GlimmerHMM
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[NSCAN]
+feature      = candidate_gene:NSCAN
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = NSCAN
+
+[NSCAN:99999]
+feature      = mRNA:NSCAN
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[sgp2]
+feature      = candidate_gene:sgp2
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = SGP2
+
+[sgp2:99999]
+feature      = mRNA:sgp2
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+
+
+[SNAP]
+feature      = candidate_gene:snap
+glyph        = full_transcript
+category     = Submitted Phase 1 gene predictions
+height       = 8
+forwardcolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//g;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+reversecolor = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }
+utr_color    = lightgrey
+label        = 0
+description  = sub {
+                my $f = shift;
+                my $program = lc $f->source;
+                my ($cat,$ver) = $program =~ /\S+?_cat(\S+?)_ver(\S+)/;
+                $program = $cat ? "category $cat" : '';
+                $program .= " version $ver"  if $ver;
+                $program;
+  }
+citation     = For more information about this gene predictor and its nGASP submission, please see:</p>
+               the <a href=http://www.wormbase.org/wiki/index.php/Gene_finders target=_NEW>nGASP wiki</a> and the
+               <a href=ftp://ftp.wormbase.org/pub/wormbase/nGASP target=_NEW>nGASP ftp site</a>
+key          = SNAP
+
+[SNAP:99999]
+feature      = mRNA:snap
+glyph        = generic
+bump         = 0
+maxdepth     = 1
+stranded     = 1
+label        = 0
+description  = 0
+bgcolor      = sub {
+                 my $s = lc shift->source;
+                 $s =~ s/_.+//;
+                 $s =~ s/[^a-z]+//;
+                 my %color = COLOR;
+                 $color{$s};
+               }

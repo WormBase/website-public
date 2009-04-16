@@ -1,0 +1,10 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Regulation on Expression Level" -%]
+    [% FOR exp=regulation_on_expression_level %]
+	  [% exp.string %]
+ 	  [% url.Link(exp.target) %]
+	  [ [% url.Link(item=exp.target action=exp.gene_regulation text='details') %] ]<br>
+    [% END %]
+[% END %]

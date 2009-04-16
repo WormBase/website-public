@@ -1,0 +1,41 @@
+[GENERAL]
+description = C. briggsae (current release)
+adaptor     = dbi::mysqlopt
+database    = dbi:mysql:database=briggsae;host=localhost
+user        = nobody
+
+aggregators = wormbase_cds{coding_exon/CDS}
+
+tmpimages   = sub {
+                my ($server) = $ENV{SERVER_NAME} =~ /(.*?)\..*/;
+                $server ||= 'local';
+                return
+                "/ace_images/gbrowse/$server","/var/tmp/ace_images/gbrowse";
+            }
+
+
+##################################################################################
+# the remainder of the sections configure particular tracks to show
+##################################################################################
+
+[WBG]
+feature      = wormbase_cds:curated wormbase_cds:history
+glyph        = wormbase_transcript
+reversecolor = sub { pop->panel->flip ? 'violet' : 'turquoise' }
+forwardcolor = sub { pop->panel->flip ? 'turquoise' : 'violet' }
+key          = Curated ("hybrid") genes
+fgcolor      = black
+font2color   = blue
+height       = 10
+description  = sub { my @notes = shift->notes; join '; ',@notes }
+link         = /db/gene/gene?name=$name
+title        = curated gene $name
+category     = Genes
+citation     = These are "best" gene predictions that have been selected from the raw
+        gene set on several criteria: (1) whether the gene has a mutual-best-hit
+        ortholog in C. elegans; (2) whether the gene has a high-similarity hit in
+        C. elegans; (3) whether multiple gene prediction programs produce the same
+        or similar structure. The detailed method is described in
+        <a href="http://biology.plosjournals.org/perlserv/?request=get-document&doi=10.1371/journal.pbio.0000045">
+        Stein et al., 2003</a>
+

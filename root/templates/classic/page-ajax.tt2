@@ -1,0 +1,33 @@
+[%- # Provide a title to root/lib/boilerplate/header -%]
+[%- # META title = "THIS IS A DYNAMICALLY ASSIGNED PAGE TITLE" -%]
+
+[% INCLUDE "classic/page_title.tt2" %]
+
+[% IF request && name %]
+
+  <hr>
+
+    [% INCLUDE "classic/contextual_navbar.tt2" %]
+
+  <div align="center">
+  <table border="1" width="100%">
+
+     <div id="page">
+        <div id="ajaxtabs" class="flora">
+           <ul>
+           [% FOREACH widget IN widgets -%]
+	        [% IF widget=="references" %]
+     	            <li>
+   		    <a href="/references/[% object %]/[% object.class %]" name="[% widget %]" class="generic_link"><span>[% widget %]</span></a></li>
+                [% ELSE %]
+ 	            <li>
+		    <a href="/[% object_class %]/[% object %]/[% widget %]" name="[% widget %]" class="generic_link"><span>[% widget %]</span></a></li>
+	        [% END %]
+            [% END -%]
+        </ul>
+       </div>
+    </div>
+  </div>
+
+
+[% END %]

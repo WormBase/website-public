@@ -1,0 +1,15 @@
+[%#
+
+  Page    : *
+  Widget  : *
+  Section : Name
+  Stash   : name (string OR Ace::Object)
+
+%]
+
+[% PROCESS identify_templates(my_component=component.name)
+                     IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Common Name" %]
+        [% common_name %]
+[% END %]

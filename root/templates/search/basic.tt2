@@ -1,0 +1,21 @@
+	[% FormBuilder.render %]
+
+      <div id="form">
+        [% FOREACH field IN formbuilder.fields -%]
+        <p>
+            <label>
+               <span [% IF field.required %]class="required"[%END%]>[%field.label%]</span>
+            </label>
+          [% field.field %]
+          [% IF field.invalid -%]
+              <span class="error">
+                  Missing or invalid entry, please try again.
+              </span>
+          [% END %]
+          </p>
+        [% END %]
+        <div id="submit">[% formbuilder.submit %]</div>
+        <div id="reset">[% formbuilder.reset %]</div>
+        </div>
+      </div>
+      [% formbuilder.end -%]

@@ -1,0 +1,40 @@
+Need a method for stashing common model elements.
+
+These are currently:
+
+log()
+class()   // specified as __PACKAGE__ var
+
+
+args from the config
+my $args = $c->config->{"Model::$model"}->{args};
+$args->{class} = __PACKAGE__->{class};
+$args->{log}}   = $c->log;
+$args->{request} = $c->stash->{request};
+// optional model entries
+$args->{ace_model} = $c->model('AceDB');
+$args->{gff_model} = $c->model('GFF');
+
+
+# Thus model glue becomes:
+
+package WormBase::Web::Model::Structure_data;
+use base qw/Catalyst::Model::Factory/;
+
+# Fetch the default args and pass along some extras
+# including our C::Log::Log4perl
+sub prepare_arguments {
+  my ($self, $c) = @_;
+  my $args = $c->load_args(@options);
+  return $args;
+}
+
+1;
+
+package WHATEVER;
+
+sub load_args {
+    my ($self,@options) = @_;
+    ... distll args ...
+}
+

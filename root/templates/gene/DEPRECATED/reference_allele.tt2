@@ -1,0 +1,3 @@
+[% WRAPPER "boilerplate/section" title="Reference Allele" -%]
+    [% url.Link(reference_allele) IF reference_allele %]
+[% END %]

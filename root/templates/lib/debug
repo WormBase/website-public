@@ -1,0 +1,21 @@
+[%# 
+
+      Simple view debugging. Should be passed the name 
+      of the component since this is localized to the template
+      (or block). That is, it doesn't work as expected when
+      used via PROCESS or INCLUDE
+
+%]
+
+[% BLOCK identify_templates %]
+
+   [% # If called, debug_view is already set.  Is it set to comment, browser, or log %]
+
+   [% msg = "template: $this_component; caller: $template.name" %]
+
+   [% IF Catalyst.config.debug_view == "comment" %]
+      [% comment("$title; $msg") %]
+   [% ELSE %]
+        <p class="debug-view">[% "$title; $msg" %]</p>
+   [% END %]
+[% END %]

@@ -1,0 +1,6 @@
+<div class="todo">
+ TODO: This should be generic, simply creating a link (or link to external resource)/.
+ TODO: external link notation should be in configuration so I can change it easily.
+</div>
+
+<a href="[% href %]">[% target %] (external link)</a>

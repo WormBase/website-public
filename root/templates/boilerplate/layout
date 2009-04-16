@@ -1,0 +1,16 @@
+[%- # This is another wrapping layer of report pages. It sandwiches content between the banner and footer. -%]
+
+[% IF classic %]
+    <div id="header">[% PROCESS classic/banner %]</div>
+        [% content %]
+    [% PROCESS classic/footer %]
+    
+[% ELSE %]
+    [% PROCESS boilerplate/banner %]
+    <div id="content">
+      <span class="message">[% status_msg %]</span>
+      <span class="error">[% error_msg %]</span>
+           [% content %]
+    </div>
+    [% PROCESS boilerplate/footer %]    
+[% END %]

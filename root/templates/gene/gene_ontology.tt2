@@ -1,0 +1,43 @@
+[%# NOTE!  This looks like a widget... %]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% IF gene_ontology %]
+
+    [% WRAPPER "boilerplate/widget" title=Catalyst.widget  -%]
+
+      [% WRAPPER "boilerplate/section" title="" -%]
+        [% url.Link(item='WBGene00006763'
+                     action='Gene_ontology'
+                     text='Gene ontology summary') -%]
+
+        <table border="0" width="100%">   
+        [% FOREACH type=gene_ontology.keys %] 
+           <tr>
+             <th class="databody" align="LEFT" colspan="2">[% type %]</th>
+           </tr>
+           [% FOREACH entry=gene_ontology.$type.sort('title') %]
+           <tr>	
+             <td class="databody" align="LEFT">
+               [% url.Link(item=entry.term text=entry.title) %]
+             </td>	
+             <!-- evidence -->
+             <td class="databody" align="LEFT">
+               [% FOR evidence=entry.evidence %]
+                 [% SET go_code=evidence.0 %]
+                 [% SET sources=evidence.1 %]
+                 <!-- HARDOCDED -->
+                 (<a target="_blank" href="http://www.geneontology.org/GO.evidence.html">[% go_code %]</a>)
+                 [% IF sources %]
+                   via [% sources %]
+                 [% END %]
+               [% END %]
+             </td>        
+           </tr>
+         [% END %]
+       [% END %]  
+       </table>
+      [% END %]
+    [% END %]
+  [% END %]

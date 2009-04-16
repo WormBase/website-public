@@ -1,0 +1,5 @@
+[% WRAPPER "boilerplate/field" title="SAGE Tags" %]
+    [% FOR sage=sage_tags %]
+       [% url.Link(sage) %]
+    [% END %]
+[% END %]

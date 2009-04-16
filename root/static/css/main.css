@@ -1,0 +1,494 @@
+body {
+    padding: 25px;
+    margin-left:10%;
+    margin-right:5%;
+    font-family: Helvetica, sans-serif;
+    background-color: white;
+}
+
+
+a:link {
+    text-decoration: none; 
+    color: #0000FF;
+//    border-bottom:1px dotted #0000FF;
+}
+
+a:visited {
+    text-decoration: none; 
+    color: #AA0088;
+    border:none;
+}
+
+a:hover {
+//    text-decoration: underline; 
+    border:none;
+}
+
+h1,h2,h3,h4,h5,h6 { color:black; }
+
+h1 { font-size:2em;    }   /* site title */
+h2 { font-size:1.8em; }   /* page title */
+h3 { font-size:1.6em; }   /* page subtitle (if applicable) */
+h4 { font-size:1.4em; }   /* widget titles */
+h5 { font-size:1.1em; }   /* field names */
+h6 { font-size:1.0em; }   /* subfield names */
+
+p  {
+    font-size:0.9em;
+    line-height:1.1em;
+}
+
+img {
+    border:0px;
+}
+
+
+/*********************************
+   
+   Per-Page styling
+   
+*********************************/
+div#banner {
+    padding-bottom:5px;
+}
+
+#banner h1 {
+    padding-bottom:0px;
+    margin:0px;
+}
+
+#banner p {
+    font-style:italic;
+    color:gray;
+    padding:0px;
+    margin-left:0px;
+    font-size:0.9em;
+}
+
+#banner .release_date { }
+
+#page-header {
+    width:80%;
+}
+
+#page-header h4 {
+    padding-top:10px;
+}
+
+#page-header p {
+    padding: 10px 0 10px 0;
+}
+
+div#page .title { 
+    font-size:1.2em;
+}
+
+
+/* Footer Styling */
+
+#footer{
+        border-bottom: 1px dotted #BCC;
+/*      width: 760px; */
+        clear:both;
+	margin: 0 auto;
+        padding: 10px 0 0 0;
+	font-size:0.7em;
+}
+
+#footercredit {
+        text-align: left;
+        margin: 0px;
+        padding: 10px 0 10px 10px;
+	color: #878787;
+        float: left;
+        width:400px;
+}
+
+#footermeta {
+        text-align: right;
+        margin: 0px;
+        padding: 10px 10px 10px 0;
+        color: #878787;
+        float: right;
+}
+
+#footer a:link, #footer a:hover {  }
+
+#footer a:visited { }
+
+#footer a:hover {  }
+
+#footer .stbutton {
+   height:10px;
+   margin-bottom:20px;
+}
+
+
+
+div#footer {
+    clear:both;
+    padding-top:10px;
+    border-top:1px dotted gray;
+    font-size:10px;
+}
+
+div.footer_left {
+    float:left;
+}
+
+div.footer_right {
+    float:right;
+}
+
+
+/*********************************
+
+         REPORTS
+
+*********************************/
+
+/* Formatting for the main index page */
+/* These should be things like container instead */
+div.page_listing {
+    padding-bottom:5px;
+    margin-bottom:2px;
+    text-align:left;
+    /*    border-bottom:1px dotted gray; */
+}
+
+div.widget_listing {
+    margin-left:30px;
+    text-align:left;
+}
+
+
+
+/* Formatting for the debug index page */
+div.debug-widget-title {
+    font-size:1.4em;
+    padding-bottom:5px;
+    margin-bottom:2px;
+    margin-top:15px;
+    text-align:left;
+    border-bottom:1px dotted gray;
+}
+
+div.debug-field-list {
+    margin-left:15px;
+}
+
+.debug-field-list .field-name {
+    text-align:right;
+    padding-right:15px;
+    width:40%;
+}
+
+.debug-field-list p.generic a {
+    color:gray;
+    font-style:italic;    
+}
+
+.debug-field-list p.common a {
+    color:gray;
+    font-style:italic;
+}
+
+.debug-field-list p.custom a {
+    color:red; 
+    font-style:italic;
+}
+
+p.debug-view {
+    font-family:Courier;
+    font-size:0.8em;
+}
+
+
+
+
+/*********************************
+
+           WIDGETS
+ 
+   ********************************* */
+div.widget {
+    padding:5px;
+    margin:30px;
+    border:1px dotted gray;
+    background-color:seafoam;
+}
+
+/* The widget title bar. This needs to be a div so I can 
+   target it for widget controls like toggle, drag, etc.
+
+   On the other hand, these titles should maybe just be
+   structural elements such as H1. DIVs and SPANs
+   that lack presentational information, but styled with classes
+   can be confusing.
+*/
+div.widget .title {
+    border-bottom:1px solid black;
+    padding:3px 0px 3px 6px;
+
+    background-color:#BCC;
+    text-transform:uppercase;
+}
+
+.title h4 {
+    margin:1px;
+}
+
+
+/* widget sections: ie Identification > IDs */
+div.field {
+    clear:both;
+}
+
+div.field h5 {
+    float:left;
+    width:8em;
+    text-align:right;
+    margin-top:0em;   // Pitch default h2 margin and force top alignment with p content
+}
+
+div.field p {
+    margin-left:7em;
+    margin-right:10px;
+    padding-left:4em;
+}
+
+
+/* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
+div.subfield { 
+    clear:both;
+    margin-left:7em;
+}
+div.subfield h6 {   
+    float:left;
+    width:10em;
+    text-align:right;
+    margin-top:0em;   // Force top alignment with content even though we're an h element
+}
+
+div.subfield p {
+    margin-left:8em;
+}
+
+/* DEPRECATING IN FAVOR OF SUBFIELD */
+/* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
+div.subsection {}
+div.subsection h3 {
+  background-color:yellow;
+  border:none;
+}
+
+/* widget sections: ie Identification > IDs */
+/* NOTE: I am deprecating section in favor of field.... */
+div.section {
+   margin-left:25px;
+}
+
+div.section h2 {
+}
+
+
+
+
+/* Containers */
+/* Alert box */
+div#alert { 
+    background-color: #BFD5E8;
+    text-align:center;
+    border-bottom:2px solid gray;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Allele-specific markup */
+/* Markup to show when the sequence identity of an allele is known */
+span .identity_known {
+    font-weight:bold;    
+}
+
+span .identity_unknown {  }
+
+span.feature_flank {
+    text-transform:lowercase;
+}
+
+span.highlighted_feature {
+    text-transform:uppercase;
+    font-weight:bold;
+}
+
+
+
+
+
+/* Evidence Formatting */
+div.evidence {
+    background-color:#FFCCCC;
+    padding:5px;
+    font-size:12px;
+    margin-left:30px;
+}
+div.evidence .title {}   /* Currently a static title of "evidence" */
+div.evidence .type {     /* ie Paper              */
+    float:left;
+    padding-right:5px;
+}
+div.evidence .source {}  /* ie Harris et al., 2003 */
+
+
+div.evidence tr { 
+  text-align:top;
+}
+
+div.evidence td { 
+  text-align:top;
+}
+
+div.evidence tr.updated { 
+  font-weight:bold;
+  text-align:right;
+}
+
+
+
+
+
+/* obsolete? 
+table.multi       { padding: 0;
+                    border-spacing: 0;
+                    width: 100%;
+                  }
+*/
+
+/* dataheader and datacell are used in page-wide tables such as in the 
+   listing of all rearrangements by chrom on the rearrangment page */
+
+.abstract         { background-color: #FFEEEE; }
+.acetree          { font-size: small; }
+.code             { 
+                    background-color: #CCFFFF;
+                    font-family:courier;
+                    border:1px solid grey;
+                    font-size:12px;
+                    width:75%;
+                    margin:10px;
+                    padding:5px;
+}
+
+
+
+
+/* NEW MARKUP */
+.species { font-style: italic; }
+
+
+
+
+
+
+/* Generic presentation elements */
+/* List of items, displayed inline */
+.inline-list {
+    display:none;
+    margin: 2em;
+    width: 60%;
+    padding: 2px;
+}
+
+.inline-list p {
+    display: inline;
+}
+
+.inline-list ul, .inline-list li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    color: #339;
+}
+
+
+/* List of items, displayed normally */
+.standard-list {
+    display:none;
+    margin: 2em;
+    width: 60%;
+    padding: 2px;
+}
+
+.standard-list p {
+    display: block;
+}
+
+.standard-list ul, .standard-list li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    color: #339;
+}
+
+
+
+
+
+
+
+/* Ext DnD */
+.dd-ct {
+/*    position:absolute; */
+    border: 1px solid silver;
+    width: 400px;
+    height: 250px;
+    top: 32px;
+    background-color: #ffffc0;
+}
+#dd1-ct {
+    left: 64px;
+}
+#dd2-ct {
+    left: 256px;
+}
+.dd-item {
+    height: 18px;
+    border: 1px solid #a0a0a0;
+    background-color: #c4d0ff;
+    vertical-align: middle;
+    cursor: move;
+    padding: 2px;
+    z-index: 1000;
+}
+.dd-ct .dd-item {
+    margin: 2px;
+}
+.dd-proxy {
+    opacity: 0.4;
+    -moz-opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+.dd-over {
+    background-color: #ffff60;
+}
+
+
+
+
+
+#container {
+  padding:10px;
+}

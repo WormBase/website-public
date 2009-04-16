@@ -1,0 +1,17 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Alleles" -%]
+    <!-- LIBRARY-IZE THIS - ORIGINAL USES TABLIEZIE -->
+    [% FOREACH allele=alleles.sort %]
+	
+       [% IF allele.Flanking_sequences %]
+          [% class="identity_known" %]
+       [% ELSE %]
+          [% class="identity_unknown" %]
+       [% END %]
+         <span class="[% class %]">[% url.Link(allele) %]</span>
+       <br>
+    [% END %]
+       Alleles for which the sequence change is known are listed in <b>boldface</b>.
+[% END %]

@@ -1,0 +1,75 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="RNAi Phenotype(s)" -%]
+  <div class="subsection">
+
+  <div class="tabletitle">
+       Primary targets<a target="_blank" href="/db/misc/glossary?name=RNAi experiments (primary targets);options=terms">*</a>
+       <span class="tablesubtitle">(RNAi experiments whose top identity in the genome is to [% gene %])</span>
+  </div>
+
+    <table border="1" width="100%">
+    <tr>
+       <th width="35%">
+         <div class="tooltip" title="The following phenotypes were not observed: 
+              [% rnai_phenotypes.not_observed.join(', ') %]">
+	      Phenotype
+          </div>
+       </th>
+       <th>Observed
+        <div class="tooltip" title="&quot;Specific:non-specific&quot; displays the number of times a given phenotype was observed using a specific or non-specific reagent.  Specific reagents refer to those that target a single gene with greater than 95% identity over a stretch of 100 nucleotides or greater. Non-specific reagents refer to those that target both the intended gene as well as additional genes through sequence similarity. Phenotypes associated with a single experiment using a non-specific reagent should be treated with some caution.">
+   (specific:nonspecific) </div> / total experiments <span class="superscript">1</span>
+        </th>
+        <th>Cited in</th>
+      </tr>
+
+  [%- IF rnai_phenotypes.RNAi_primary -%]
+      [% FOR row=rnai_phenotypes.RNAi_primary %]
+         <tr>
+            [% FOR cell=row %]
+               <td>[% cell %]</td>
+            [% END %]
+         </tr>
+       [% END %]
+      </table>
+
+	<div class="tablefootnotes"><a href="/db/seq/rnai?name=[% gene %]">View all RNAi experiments that target [% gene %]</a></div>
+  [% ELSE %]
+      </table>
+      <div class="tablefootnotes">None identified</div>
+  [% END %]
+
+
+
+  [%- IF rnai_phenotypes.RNAi_secondary -%]
+     <div class="tabletitle">
+         Secondary targets<a target="_blank" href="/db/misc/glossary?name=RNAi experiments (secondary targets);options=terms">*</a>
+         <span class="tablesubtitle">[% bestname %] is a secondary target of the following RNAi experiments)</span>
+     </div>
+
+  <table border="1" width="100%">
+
+  <tr>
+    <th width="35%">
+    <div class="tooltip" title="The following phenotypes were not observed: 
+       [% rnai_phenotypes.not_observed.join(', ') %]">
+        Phenotype
+      </div>
+    </th>
+    <th>Observed
+    <div class="tooltip" title="&quot;Specific:non-specific&quot; displays the number of times a given phenotype was observed using a specific or non-specific reagent.  Specific reagents refer to those that target a single gene with greater than 95% identity over a stretch of 100 nucleotides or greater. Non-specific reagents refer to those that target both the intended gene as well as additional genes through sequence similarity. Phenotypes associated with a single experiment using a non-specific reagent should be treated with some caution.">
+   (specific:nonspecific) </div> / total experiments <span class="superscript">1</span>
+     </th>
+
+      [% FOR row=secondary %]
+         <tr>
+            [% FOR cell=row %]
+               <td>[% cell %]</td>
+            [% END %]
+         </tr>
+       [% END %]
+      </table>
+    [% END %]
+
+[% END %]

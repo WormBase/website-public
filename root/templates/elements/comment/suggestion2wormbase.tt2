@@ -1,0 +1,65 @@
+<!-- Suggestion Box -->
+<div class="feedback">
+   <h2>Suggestion Box</h2>
+   <form method="post" action="/db/misc/submit_feedback" enctype="application/x-www-form-urlencoded">
+     We greatly value your feedback.  If you have found
+     something incorrect, broken, or frustrating on this page,
+     let us know so that we can improve the quality of
+     annotation and the ease with which it is available.
+     <br /><br />
+
+     <b>Comments, questions, or feedback:</b>
+     <div class="indent">
+         <table border="0">
+             <tr>
+               <td colspan="3">
+                  <span class="smalldescription">
+                         Supplying your contact information
+			 is optional.  Doing so will enable us
+		         to contact you for further details
+		         and to let you know when your
+		         suggestions have been addressed.
+                 </span>
+               </td>
+             </tr>
+        
+             <tr>
+                <td rowspan="4">
+                   <textarea name="comments" rows="7" cols="60" maxlength="10" style="width:95%"></textarea>
+                </td>
+                <td>Category<i>(optional)</i>: </td>
+                <td>
+                    <select name="suggestions">
+                      <option value="general_comment">General comment</option>
+		      <option value="annotations_incorrect">Annotations are incorrect</option>
+		      <option value="annotations_incomplete">Annotations are incomplete</option>
+		      <option value="speed">The page takes too long to load</option>
+		      <option value="bug">The page has a software bug in it</option>
+		      <option value="requested_feature">Request for a new feature</option>
+		    </select>
+               </td>
+            </tr>
+            <tr>
+               <td>Submitted by:</td>
+               <td>
+                  <input type="text" name="submitted_by"  size="50">
+               </td>
+            </tr>
+            <tr>
+               <td>Institution:</td>
+               <td><input type="text" name="institution"  size="50"></td></tr>
+	    <tr>
+               <td>Email Address:</td>
+	       <td><input type="text" name="submitted_email" size="50"></td>
+	    </tr>
+	    <tr>
+	       <td colspan="2">&nbsp;</td>
+	       <td align="right">
+	       	   <input type="submit" name="Submit Comments" value="Submit Comments">
+		   <input type="reset" name="Clear Form" value="Clear Form">
+	       </td>
+            </tr>
+        </table>
+      </div>
+    </form>
+</div>

@@ -1,0 +1,69 @@
+[%#
+
+      NAME : field
+      TYPE  : generic
+      FUNCTION : generically display scalars, lists, and lists of lists
+      STASH : field_name => { field => $field,
+                                            {$field} => content,
+                                        }
+              $field acts as both a field name AND a key into the stash
+
+       NOTE: This template supports only single tier data. It does NOT use subfield.
+
+       TODO: Need to link
+
+       Items that are objects will be correctly linked.
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[%# Generically present a scalar, list, or hash. %]
+[% VIEW generic_results;
+     BLOCK hash;
+        "$item is from $item\n";
+     END; 
+
+     BLOCK list;
+          view.print(object) FOREACH object IN item;
+     END;
+
+    BLOCK text;
+        item;
+    END;
+END;
+%]
+
+[%# THIS DOESN"T WORK! NEED TO PUT THIS INTO VIEW mode for generically handling scalar, list, hash %]
+[%# WRAPPER "boilerplate/field" title=field %]
+    [%# generic_results.print(${field}) %]
+[%# END %]
+
+
+[% WRAPPER "boilerplate/field" title=field %]
+
+       [% IF $field %]
+           [%# IF $field.size > 1 %]
+              [%# USE Table($field, cols=3) %]
+           <table>
+	        [%# CRAP! Using TT Table function kills objects so they can't be linked %]
+	        [%# FOREACH row = Table.rows %]
+                      <tr>
+                      [%# FOREACH item = row %]
+                           <td>[%# item %]</td>
+                       [%# END %]
+		       </tr>
+                [%# END %]
+		</table>
+           [%# ELSE %]
+               [%# This should be a linked, and the linker should decide if it needs to be linked %]
+                   [%# url.Link(item) %]
+                   [% $field %]
+           [%# END %] 
+
+        [% ELSE %]
+	      [%# site.unknown %]
+       [% END %]
+[% END %]
+

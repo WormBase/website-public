@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+
+   <title>
+     WormBase
+     [% IF name %]
+        : [% name.class %]: [% name %]
+     [% ELSE %]
+          [% template.title or site.title %]
+     [% END %]
+   </title>
+
+[% IF classic %]
+
+
+[%#
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <link rel="stylesheet" href="http://dev.jquery.com/view/tags/ui/latest/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)">
+  <script type="text/javascript" src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.core.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.tabs.js"></script>
+
+  <script>
+  $(document).ready(function(){
+    $("#container > ul").tabs();
+  });
+  </script>
+
+%]
+
+    <!-- link rel does not work using dynamic path -->
+    <link rel="stylesheet" href="/static/css/main_classic.css" type="text/css">
+
+[% ELSE %]
+
+       [%# Use ext for the new site 
+
+    <style>
+       #actions li {
+  	   margin:.3em;
+       }
+       #actions li a {
+	   color:#666688;
+	   text-decoration:none;
+       }
+     </style>
+%]
+[%#
+       <link rel="stylesheet" type="text/css"  href="/static/js/ext/resources/css/ext-all.css" />
+       <script type="text/javascript"  src="/static/js/ext/adapter/ext/ext-base.js"></script>
+       <script type="text/javascript"  src="/static/js/ext/ext-all.js"></script>
+
+        <!-- Custom CSS and Libs -->
+        <script type="text/javascript" src="/static/js/custom/ext_tab_actions.js"></script>
+%]
+
+    <!-- link rel does not work using dynamic path -->
+    <link rel="stylesheet" href="/static/css/main.css" type="text/css">
+    <style>
+        [% PROCESS main.css %]
+    </style>
+[% END %]
+
+       <script type="text/javascript"  src="/static/js/ext/adapter/ext/ext-base.js"></script>
+       <script type="text/javascript"  src="/static/js/ext/ext-all.js"></script>
+
+        <!-- Custom CSS and Libs -->
+        <script type="text/javascript" src="/static/js/custom/ext_panels.js"></script>
+   </head>
+   <body>
+
+[%- content -%]
+
+</body>
+</html>

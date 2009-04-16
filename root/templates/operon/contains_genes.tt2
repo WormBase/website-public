@@ -1,0 +1,35 @@
+[%#
+
+  Page    : *
+  Widget  : *
+  Section : Name
+  Stash   : name (string OR Ace::Object)
+
+%]
+
+[% SET title="Contains Genes" %]
+
+ [% WRAPPER "boilerplate/field" title="Name" -%]
+	    <table>
+               <tr class="datatitle"><th>CDS</th><th>Spliced Leader (Evidence, if available)</th></tr>
+               [% FOREACH hash IN contains_genes %]
+                  [% SET gene=hash.gene %]
+                  <tr>
+                      <th><a href="/db/gene/gene?name=[% gene %]">[% gene.Sequence_name %]
+	                [% IF gene.CGC_name %]
+                           ([% gene.CGC_name %])
+                        [% END %]
+                       </th>       
+		       <td>
+		          [% FOREACH leader IN hash.splice_leaders %]
+		              [% leader.splice_leader %]
+                              [% IF leader.evidence %]
+                                 ([% leader.evidence.join(', ') %])
+                              [% END %]
+			      <br>
+			  [% END %]
+		       </td>	
+                  </tr>
+               [% END %]
+            </table>
+[% END %]

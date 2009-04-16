@@ -1,0 +1,19 @@
+[%# Note that the genomic environs image needs to be linked to the correct browser 
+
+  #  return a({-href=>$db eq $BRIGGFF ?  "/db/seq/gbrowse?source=briggsae;name=$absref:$start..$stop"
+  #  	    : HunterUrl($absref,$start,$stop)},$img);
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% SET title="Genomic Environs" %]
+
+
+
+[% WRAPPER "boilerplate/field" -%]
+      [%- genomic_environs.img -%]
+[% END %]
+
+

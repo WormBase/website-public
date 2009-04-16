@@ -1,0 +1,21 @@
+[%#
+
+   The References widget
+
+   This illustrates how to generically build a widget using the default fields listed in the stash.  This could be the general strategy - then I would only need ONE template for a widget (and not even any generic wrappers!).
+
+Strategy: iterate over all default fields (supplied by the action). remove any the user does not want to see (or place them in a div and hiude the block.
+
+The References widget itself is composed of multiple sections, each of which is handled by one template.
+
+%]
+
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% FOREACH field IN fields %]
+       [% IF $field %]
+           [% INCLUDE "generic/reference_widget_field.tt2" type=field %] 
+       [% END %]
+   [% END %]
+
+[% END %]

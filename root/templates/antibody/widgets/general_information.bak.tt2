@@ -1,0 +1,41 @@
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+        [% # Actually, it would be cool if users could just to show or hide empty sections...      %]
+    [% # Sections themselves can optionally be composed of subsections %]
+    [% INCLUDE "antibody/summary.tt2" key="summary"%]
+
+    [% IF other_name %]
+      [% INCLUDE "antibody/other_name.tt2" key="other_name" %]
+    [% END %]
+
+    [% IF location %]
+       [% INCLUDE "antibody/location.tt2" key="location" %]
+    [% END %]
+
+    [% IF generated_against_locus %]
+       [% INCLUDE "antibody/generated_against_locus.tt2" key="generated_against_locus" %]
+    [% END %]
+
+    [% IF corresponding_gene %]
+       [% INCLUDE "antibody/corresponding_gene.tt2" key="corresponding_gene" %]
+    [% END %]
+
+    [% IF clonality %]
+       [% INCLUDE "antibody/clonality.tt2" key="clonality" %]
+    [% END %]
+
+    [% IF antigen %]
+       [% INCLUDE "antibody/antigen.tt2" key="antigen" %]
+    [% END %]
+
+    [% IF animal %]
+       [% INCLUDE "antibody/animal.tt2" key="animal" %]
+    [% END %]
+
+    [% IF notes %]
+       [% INCLUDE "antibody/notes.tt2" key="notes" %]
+    [% END %]
+	
+[% END %]
+

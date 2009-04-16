@@ -1,0 +1,30 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+<div class="todo">
+   TODO: This needs programmatic markup and assignment of evidence.
+</div>
+
+<div class="todo">
+  TODO: this shares a lot of formatting with phenotypes_not_observed. I should be able to merge these two templates.
+</div>
+
+<div class="todo">
+TODO: need to draw out evidence from the row.1 entries
+</div>
+
+<p>
+The following phenotypes were observed in this experiment:
+</p>
+
+[% FOREACH entry IN phenotypes_observed %]
+  <table>
+  <tr><th></th><th>Note/Value</th><th>Evidence</th></tr>
+  <tr><td colspan="3">[% entry.node.name %]</td></tr>
+  [% FOREACH row IN entry.rows %]
+  [% row.join(' ') %]
+     [%# The second field, the note, is potentially an array. %]
+     <tr><td></td><td>[% row.0 %]</td><td>[% row.1.join('; ') %]</td></tr>
+  [% END %]
+  </table>
+[% END %]

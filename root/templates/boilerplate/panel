@@ -1,0 +1,16 @@
+[%#
+    
+   The widget wrapper
+
+%]
+
+<!-- start [% title %] widget -->
+
+<a name="[% title %]"></a>
+<div id="[% title %]" class="widget">
+  <span class="title">[% title %]</span>
+
+[% content %]
+
+</div>
+<!-- end [% title %] widget -->

@@ -1,0 +1,17 @@
+[% SET title="Genomic Position" %]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+
+[% WRAPPER "boilerplate/field" title="Genomic Position" -%]
+      [% genomic_position.chromosome %]:[% genomic_position.start %]..[% genomic_position.stop %] bp
+[% END %]
+
+[%#- This will only be populated for genes that reside within an operon -#%]
+[% IF genomic_position.operons %]   
+     [% WRAPPER "boilerplate/field" title="Part of operon" -%]
+        [% genomic_position.operons.join(', ') %]
+     [% END %]
+[%- END -%]
+

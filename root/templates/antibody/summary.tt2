@@ -1,0 +1,5 @@
+[% WRAPPER "boilerplate/section" title="summary" -%]
+    [% WRAPPER "boilerplate/subsection" -%]
+      [% summary %]
+    [% END %]
+[% END %]

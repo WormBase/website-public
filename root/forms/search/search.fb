@@ -1,0 +1,12 @@
+name: search
+title: WormBase Basic Search
+method: post
+fields:
+        query:
+            label: Query
+            type:  text
+            size:  40
+            required: 1
+        class:
+            label: class
+submit: Search WormBase

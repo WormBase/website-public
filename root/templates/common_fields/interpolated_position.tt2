@@ -1,0 +1,13 @@
+[%# TODO: formatted position previously was linked to the strains search using the following
+
+  #  my $link = a({-href=>"/db/searches/strains?start=$chrom:$pos"},sprintf("%s:%2.2f",$chrom,$pos));
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Interpolated Genetic Position" -%]
+    [% interpolated_position.formatted_position %]
+[% END %]
+

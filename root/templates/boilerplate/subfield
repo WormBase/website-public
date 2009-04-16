@@ -1,0 +1,16 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF Catalyst.config.debug_view %]
+
+[%# Wrap a subfield of a widget %]
+
+<div class="subfield">
+    [% IF title %]
+        <h6>
+	     [% title %]
+        </h6>
+    [% END %]
+
+     <p>
+        [% content %]
+     </p>
+</div> <!-- end subfield:[% title %] -->

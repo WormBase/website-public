@@ -1,0 +1,18 @@
+[%#
+
+  Page    : *
+  Widget  : *
+  Section : Name
+  Stash   : name (string OR Ace::Object)
+
+%]
+
+[%# Just a generic list %]
+[% WRAPPER "boilerplate/section" title="Remarks" -%]
+  [% WRAPPER "boilerplate/subsection"-%]
+
+       [% FOREACH remark IN remarks %]
+          [% remark %]
+      [% END %]
+  [% END %]
+[% END %]

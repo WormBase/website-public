@@ -1,0 +1,155 @@
+body {
+  height: 100%;
+  border:  0;
+  padding: 50px;
+  margin: 15px;
+  font-family:Trebouchet,sans-serif;
+  background-color: white;
+  z-index:0;
+}
+
+
+a:link            { text-decoration: none; 
+                    color: #0000FF;
+                    border:none;
+                  }
+a:visited         { text-decoration: none; 
+                    color: #AA0088;
+                    border:none;
+                  }
+a:hover           { text-decoration: underline; 
+                    border:none;
+                  }
+
+
+
+/*********************************
+
+           Per-Page styling
+
+
+*********************************/
+
+div#container { 
+  padding:30px;
+}
+
+
+div#banner {
+  padding-bottom:15px;
+}
+
+
+#banner .title { 
+  font-size:16pt;
+}
+
+#banner .release_date { 
+  font-size:10pt;
+  font-style:italic;
+  color:gray;
+}
+
+div#page .title { 
+  font-size:1.2em;
+}
+
+
+
+
+/*********************************
+
+           REPORTS
+
+
+*********************************/
+
+
+
+
+
+
+
+/*********************************
+
+           WIDGETS
+ 
+********************************* */
+div.widget {
+  padding:10px;
+  margin:30px;
+  border:1px solid gray;
+  background-color:seafoam;
+}
+
+/* The widget title bar. This needs to be a div so I can 
+   target it for widget controls like toggle, drag, etc.
+
+   On the other hand, these titles should maybe just be
+   structural elements such as H1. DIVs and SPANs
+   that lack presentational information, but styled with classes
+   can be confusing.
+*/
+div.widget .title {
+  border-bottom:1px solid black;
+  padding:3px;
+  margin-bottom:5px;
+  font-size:1.8em;
+  background-color:red;
+  text-transform:uppercase;
+}
+
+/* widget sections: ie Identification > IDs */
+div.section {
+  margin-left:25px;
+}
+div.section .title {
+  font-size:1.2em;
+  margin-bottom:10px;
+  padding-bottom:5px;
+  text-transform:none;
+  background-color:white;
+}
+
+div.section .content {
+  margin-left:50px;
+}
+
+/* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
+div.subsection {}
+div.subsection .title {
+  background-color:yellow;
+  border:none;
+}
+
+div.subsection .content {}
+
+
+
+/* Evidence Formatting */
+div.evidence {
+	background-color:#FFCCCC;
+	padding:5px;
+}
+div.evidence .title {}   /* Currently a static title of "evidence" */
+div.evidence .type {     /* ie Paper              */
+	float:left;
+	padding-right:5px;
+	}
+div.evidence .source {}  /* ie Harris et al., 2003 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

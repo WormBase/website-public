@@ -1,0 +1,10 @@
+[%- WRAPPER "boilerplate/widget" -%]
+
+    [% FOREACH field IN fields %]
+       [% IF $field %]
+           [% mytemplate = "gene/$field" _ '.tt2' %]
+           [% INCLUDE $mytemplate %] 
+       [% END %]
+   [% END %]
+
+[% END %]
