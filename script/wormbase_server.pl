@@ -3,17 +3,24 @@
 BEGIN { 
     $ENV{CATALYST_ENGINE} ||= 'HTTP';
     $ENV{CATALYST_SCRIPT_GEN} = 30;
+
+    use FindBin;
+#use lib "$FindBin::Bin/../lib.refactored";
+    use lib "$FindBin::Bin/../lib";
+    use lib "$FindBin::Bin/../extlib/lib/perl5";
+    use lib "$FindBin::Bin/../extlib/lib/perl5/x86_64-linux-gnu-thread-multi";
     require Catalyst::Engine::HTTP;
+
 }  
 
 use strict;
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
-use FindBin;
+#use FindBin;
 #use lib "$FindBin::Bin/../lib.refactored";
-use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin/../extlib";
+#use lib "$FindBin::Bin/../lib";
+#use lib "$FindBin::Bin/../extlib";
 #use lib "$FindBin::Bin/../extlib/Bio";
 
 
