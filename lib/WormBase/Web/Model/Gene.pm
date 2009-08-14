@@ -1,5 +1,5 @@
 package WormBase::Web::Model::Gene;
-use base qw/Catalyst::Model::Factory/;
+use parent qw/Catalyst::Model::Factory/;
 
 #sub prepare_arguments {
 #  my ($self, $c) = @_; # $app sometimes written as $c

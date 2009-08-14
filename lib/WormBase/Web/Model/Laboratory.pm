@@ -1,5 +1,5 @@
 package WormBase::Web::Model::Laboratory;
-use base qw/Catalyst::Model::Factory/;
+use parent qw/Catalyst::Model::Factory/;
 
 # Fetch the default args and pass along some extras
 # including our C::Log::Log4perl

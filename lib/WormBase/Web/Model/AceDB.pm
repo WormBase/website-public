@@ -1,5 +1,5 @@
 package WormBase::Web::Model::AceDB;
-use base qw/Catalyst::Model::Adaptor/;
+use parent qw/Catalyst::Model::Adaptor/;
 
 # Fetch the default args and pass along some extras
 # including our C::Log::Log4perl
