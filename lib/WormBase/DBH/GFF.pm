@@ -8,64 +8,28 @@ __PACKAGE__->mk_accessors(qw/mysql_user
 			     mysql_host
 			     mysql_pass
 			     mysql_host
-			    /);
-
-my %config = ( elegans       => {
-				 -adaptor        => 'dbi::mysqlace',
-				 -aggregator   => ['processed_transcript{coding_exon,5_UTR,3_UTR/CDS}',
-						   'full_transcript{coding_exon,five_prime_UTR,three_prime_UTR/Transcript}',
-						   'transposon{coding_exon,five_prime_UTR,three_prime_UTR}',
-						   'clone',
-						   'alignment',
-						   'waba_alignment',
-						   'coding{coding_exon}',
-						   'pseudo{exon:Pseudogene/Pseudogene}',
-						   'rna{exon/Transcript}'
-						  ],
-				},
-	       briggsae         => {
-				    -adaptor     => 'dbi::mysqlace',
-				    -aggregator  => ['wormbase_cds{coding_exon,three_prime_UTR,five_primer_UTR/CDS}',
-						     'clone',
-						     'alignment',
-						     'waba_alignment'],
-				   },
-	       remanei          => {
-				    -adaptor     => 'dbi::mysqlace',
-				    -aggregator  => [qw(wormbase_gene)],
-				   },
-	       elegans_pmap     => {
-				    -adaptor     => 'dbi::mysqlace',
-				    -aggregator  => [qw(wormbase_gene)],
-				   },
-	       elegans_gmap     => {
-				    -adaptor     => 'dbi::mysqlace',
-				    -aggregator  => [qw(wormbase_gene)],
-				   },
-	     );
+			     dsn
+ /);
 
 
 sub new {
-  my ($class,$args) = @_;
-  my $this = bless $args,$class;
-  $this->log->debug("Instantiating WormBase::DBH::GFF...");
-  
-  # Connect to each GFF/Support database
-  foreach my $species (@{$this->{dsn}}) {
-    #    $this->connect($species,$this->{dbh}) 
-    #      or $self->log->fatal("Could not connect to the GFF dbh $species");
-    $this->connect($species);
+    my ($class,$args) = @_;
+    my $this = bless $args,$class;
+    $this->log->debug("Instantiating WormBase::DBH::GFF...");
+        
+    # Connect to each GFF/Support database  
+    foreach my $dbh (keys %{$this->{dsn}}) {
+	$this->connect($dbh) or $this->log->fatal("Could not connect to the GFF database $dbh");
   }
   return $this;
 }
 
 
 sub connect {
-  my ($self,$species,$acedb) = @_;
+  my ($self,$species,$acedb) = @_;  
   $self->log->info("Connecting to the GFF database for $species:");
-  
-  my $gff_args = $config{$species};
-  
+  my $gff_args = $self->dsn->{$species};
+
   return unless ($gff_args);
   
   $gff_args->{-user} = $self->mysql_user;
@@ -93,6 +57,8 @@ sub dbh {
   my ($self,$species,$dbh) = @_;
   if ($species && $dbh) {
     $self->{$species}->{dbh} = $dbh;
+    $self->log->info("$species $dbh");
+    return $dbh;
   } else {
     
     # Do we already have a dbh?
