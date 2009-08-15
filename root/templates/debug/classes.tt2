@@ -1,4 +1,4 @@
-<h2>Debug Index: Available Models</h2>
+<h3>Debug Index: Available Classes</h3>
 
 [% FOREACH page IN c.config.pages.keys.sort %]
 [% SET count=0 %]

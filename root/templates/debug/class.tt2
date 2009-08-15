@@ -53,26 +53,35 @@ END;
 %]
 
 
+ <ul id="breadcrumbs">
+    [% FOREACH item IN c.breadcrumbs %]
+    <li>
+        [% IF loop.last %]
+            [% item.label %]
+        [% ELSE %]
+            <a href="[% c.uri_for(item.path) %]">item.label</a>
+        [% END %]
+    </li>
+    [% END %]
+ </ul>
+
 <div id="page-header">
-<h4>Default Index/Debug Page: [% path FILTER ucfirst %]</h4>
+<h4>Debug Page for the  [% page FILTER ucfirst %] class</h4>
 
 <p>
-This is the default index page and debugging screen for the <b>[% path
+This is the default index and debugging screen for the <b>[% page
  FILTER ucfirst %]</b> class.  This class provides the following
  widgets and data fields using the specified templates.
 </p>
 </div>
 
 <p>
-[%# Weird. Can't directly access config variables. Have to iterate to
-pick the appropriate page %]
-
 
 [% FOREACH this_page IN c.config.pages.keys.sort %]
-   [% NEXT IF this_page != path %]
+     [% NEXT IF this_page != page %]
 
      [% SET random_object = c.get_example_object(this_page) %]
-     <p>All examples are using a random object: [% random_object %]. Reload to select another.</p>
+     <p>All examples are use a random object. Reload to test another.</p>
 
        [% FOREACH widget IN c.config.pages.$this_page.widget_order %]
        <div class="debug-widget-title">[% widget %]</div>
