@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Paper;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use parent 'Catalyst::Controller';
 
 sub get_params : Chained('/') PathPart("paper") CaptureArgs(1) {
   my ($self,$c,$name) = @_;

@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Search;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller::FormBuilder';
+use parent 'Catalyst::Controller::FormBuilder';
 
 
 #########################################
@@ -55,22 +55,27 @@ sub search : Path Form {
 
 }
 
+=head1 basic_search
 
-#sub search : Args(2) {
-#  my ($self,$c,$class,$name) = @_;
-#  
-#  # Instantiate the Model
-#  my $model = $c->model(ucfirst($class));
-#  
-#  # Generically search a class
-#  $c->stash->{template} = "search/$class.tt2";
-#  
-#  # Pass the search form the appropriate configuration directives, too.
-#  $c->stash->{results}  = $model->search($name);
-#  
-#  # Design patterns:  Need generic search limits, fields to return,
-#  # paging, (or dynamic loading on scroll). 
-#}
+A site-wide and per-class basic search
+
+=cut
+
+sub basic : Args(2) {
+  my ($self,$c,$class,$name) = @_;
+  
+  # Instantiate the Model
+  my $model = $c->model(ucfirst($class));
+  
+  # Generically search a class
+  $c->stash->{template} = "search/$class.tt2";
+  
+  # Pass the search form the appropriate configuration directives, too.
+  $c->stash->{results}  = $model->search($name);
+  
+  # Design patterns:  Need generic search limits, fields to return,
+  # paging, (or dynamic loading on scroll). 
+}
 
 
 

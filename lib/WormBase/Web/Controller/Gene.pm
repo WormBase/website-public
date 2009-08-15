@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Gene;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use parent 'Catalyst::Controller';
 
 
 =head1 NAME
@@ -20,9 +20,9 @@ Catalyst Controller.
 # This could/should be created dynamically...
 # All it does is stash the current requested object so that I can
 # format my URLs as I choose.
-sub get_params : Chained('/') PathPart("gene") CaptureArgs(1) {
-  my ($self,$c,$name) = @_;
-  $c->stash->{request} = $name;
+sub get_params : Chained('/') :PathPart('gene') :CaptureArgs(1) {
+    my ($self,$c,$name) = @_;
+    $c->stash->{request} = $name;
 }
 
 
@@ -101,26 +101,6 @@ sub report : Chained('fetch') PathPart('report') Args(1) {
     }
 }
 
-
-sub pages {
-    my ( $self, $c ) = @_;
-    my @pages = keys %{ $c->config->{pages} };
-    return @pages;
-}
-
-sub widgets {
-    my ( $self, $page, $c ) = @_;
-    my (@widgets) = @{ $c->config->{pages}->{$page}->{widget_order} };
-    return @widgets;
-}
-
-sub fields {
-    my ( $self, $page, $widget, $c ) = @_;
-    my @fields = @{ $c->config->{pages}->{$page}->{widgets}->{$widget} };
-    return @fields;
-}
-
-
 =cut
 
 =head1 AUTHOR
@@ -133,5 +113,6 @@ This library is free software, you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
 
 1;

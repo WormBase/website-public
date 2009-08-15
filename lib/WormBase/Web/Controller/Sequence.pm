@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Sequence;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use parent 'Catalyst::Controller';
 
 =head1 NAME
 

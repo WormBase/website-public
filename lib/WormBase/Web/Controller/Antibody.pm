@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Antibody;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use parent 'Catalyst::Controller';
 
 # This should be discoverable
 #__PACKAGE__->config->{page_class} = 'Antibody';

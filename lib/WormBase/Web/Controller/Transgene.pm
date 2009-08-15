@@ -3,7 +3,7 @@ package WormBase::Web::Controller::Transgene;
 use strict;
 use warnings;
 #use base 'Catalyst::Controller';
-use base 'WormBase::Web::Controller';
+use parent 'WormBase::Web::Controller';
 
 #__PACKAGE__->config->{page_class} = 'Transgene';
 

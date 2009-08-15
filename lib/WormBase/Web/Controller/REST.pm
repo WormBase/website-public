@@ -2,7 +2,7 @@ package WormBase::Web::Controller::REST;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller::REST';
+use parent 'Catalyst::Controller::REST';
 
 =head1 NAME
 

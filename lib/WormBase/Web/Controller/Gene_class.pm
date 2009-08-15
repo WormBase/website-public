@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Gene_class;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use parent 'Catalyst::Controller';
 
 #__PACKAGE__->config->{page_class} = 'Gene_class';
 

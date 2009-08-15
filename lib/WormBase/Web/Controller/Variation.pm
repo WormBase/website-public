@@ -2,7 +2,7 @@ package WormBase::Web::Controller::Variation;
 
 use strict;
 use warnings;
-use base 'WormBase::Web::Controller';
+use parent 'WormBase::Web::Controller';
 #use base 'Catalyst::Controller';
 
 =head1 NAME
@@ -18,8 +18,8 @@ Catalyst Controller.
 =cut
 
 sub get_params : Chained('/') PathPart("variation") CaptureArgs(1) {
-  my ($self,$c,$name) = @_;
-  $c->stash->{request} = $name;
+    my ($self,$c,$name) = @_;
+    $c->stash->{request} = $name;
 #  my $ace = $c->model('AceDB');
 }
 
