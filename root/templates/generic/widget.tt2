@@ -29,9 +29,9 @@ a hash of fields and their corresponding templates
 
 	  [%# THE MACRO DOES NOT WORK FROM HERE!? %]
 	  [%# mytemplate = select_template($field,$class) %]
-          [% IF Catalyst.config.generic_fields.$field %]
+          [% IF c.config.generic_fields.$field %]
               [% mytemplate = "generic/field.tt2" %]
-          [% ELSIF Catalyst.config.common_fields.$field %]
+          [% ELSIF c.config.common_fields.$field %]
               [% mytemplate = "common_fields/$field" _ ".tt2" %]
           [% ELSE %]
               [% mytemplate = "$class/$field" _ '.tt2' %]

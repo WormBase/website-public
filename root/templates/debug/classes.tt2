@@ -1,6 +1,6 @@
 <h2>Debug Index: Available Models</h2>
 
-[% FOREACH page IN Catalyst.config.pages.keys.sort %]
+[% FOREACH page IN c.config.pages.keys.sort %]
 [% SET count=0 %]
 <div class="page_listing">
 [% count=count+1 %]
@@ -9,22 +9,22 @@
    <h4>Class: [% page %]</h4>
 
    <div class="widget_listing">
-   [% FOREACH widget IN Catalyst.config.pages.$page.widget_order %]
+   [% FOREACH widget IN c.config.pages.$page.widget_order %]
         <h5>
-	[% IF Catalyst.config.pages.$page.widgets.$widget %] 
+	[% IF c.config.pages.$page.widgets.$widget %] 
              <a href="#[% count %]" id="[% page _ widget _ 'toggle' %]" onclick='toggle("[% page _ widget %]"); return false;'><img src="/static/i/disclosure.png"> Widget: [% widget %]</a>
         [% ELSE %]
            Widget: [% widget %]
         [% END %]
         </h5>
 
-	[% IF Catalyst.config.pages.$page.widgets.$widget %] 
+	[% IF c.config.pages.$page.widgets.$widget %] 
            <!-- CSS hack for inline presentation of a list -->
    	   <div class="inline-list" id="[% page _ widget %]">
 	   <p>Fields: </p>
    	         <ul>
-   	              [% SET last=Catalyst.config.pages.$page.widgets.$widget.last %]
-                      [% FOREACH field IN Catalyst.config.pages.$page.widgets.$widget %]
+   	              [% SET last=c.config.pages.$page.widgets.$widget.last %]
+                      [% FOREACH field IN c.config.pages.$page.widgets.$widget %]
                            [%- IF loop.last -%]
                                [% field _ ". " %]
                            [% ELSE %]

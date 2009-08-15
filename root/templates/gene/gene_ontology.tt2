@@ -1,11 +1,11 @@
 [%# NOTE!  This looks like a widget... %]
 
 [% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 [% IF gene_ontology %]
 
-    [% WRAPPER "boilerplate/widget" title=Catalyst.widget  -%]
+    [% WRAPPER "boilerplate/widget" title=c.widget  -%]
 
       [% WRAPPER "boilerplate/section" title="" -%]
         [% url.Link(item='WBGene00006763'

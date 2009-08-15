@@ -1,1 +1,1 @@
-404 Error:  <pre>[% Catalyst.req.path %]</pre> not found.
+404 Error:  <pre>[% c.req.path %]</pre> not found.

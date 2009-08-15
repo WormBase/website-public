@@ -1,3 +1,14 @@
+[%#
+
+This is the basic search template.
+
+It provides a site-wide basic search as well as basic searches
+restricted to each page/class.
+
+%]
+
+<h1>Basic Search</h1>
+
 	[% FormBuilder.render %]
 
       <div id="form">

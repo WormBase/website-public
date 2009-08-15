@@ -8,7 +8,7 @@
 %]
 
 [% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF Catalyst.config.debug_view %]
+[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 [% title="Species" %]
 
