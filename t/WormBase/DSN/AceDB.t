@@ -22,12 +22,10 @@ like ( my $version = $acedb->version,
 
 
 # Test dbh caching. Should return a sace://localhost::2005 string
-is (
-     my $dbh = $acedb->dbh,
+my $dbh = $acedb->dbh;
+is ( $dbh,
      'sace://localhost:2005',
-     "Handle successfully cached " . $acedb->dbh );
-
-
+     "Handle successfully cached $dbh" );
 
 
 # Try fetching an object from the dbh via Ace::fetch
@@ -38,7 +36,7 @@ is (
      "Successfully fetched an object via Ace::fetch $variation");
 
   
-# Finally, try fetching an object via our wrapper get_object method
+# Try fetching an object via our wrapper get_object method
 # which is really just a wrapper around Ace::fetch
 my $gene_name;
 is (
