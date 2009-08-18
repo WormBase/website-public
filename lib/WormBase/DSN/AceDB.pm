@@ -1,11 +1,14 @@
 package WormBase::DSN::AceDB;
 
 # Note: For now, this module only connects to saceserver instances.
+# This is also a generic factory for WormBase::DSN::AceDB::* objects
+
 
 use Moose;
 use Ace;
-extends 'WormBase';
+use Bio::Graphics::Browser;
 
+extends 'WormBase';
 
 has 'acedb_host' => (
     is  => 'ro',
