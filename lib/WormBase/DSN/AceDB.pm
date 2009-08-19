@@ -6,7 +6,6 @@ package WormBase::DSN::AceDB;
 
 use Moose;
 use Ace;
-use Bio::Graphics::Browser;
 
 extends 'WormBase';
 
@@ -120,8 +119,9 @@ has 'version' => (
 
 #  Create a new database handle (if necessary) during object instantiation
 sub BUILD {
-    my ($self) = @_;
+    my $self = shift;
     $self->connect();
+    return $self;
 }
 
 
@@ -198,18 +198,18 @@ sub _build_dbh {
 # fetch it from the database.
 # NOTE: This is intended to only return
 # a single object. It is NOT a search!
-
-sub get_object {
-    my ($self,$class,$name) = @_;
-    
-    $self->log->debug("get_object(): class:$class name:$name");
-    
-    my $db = $self->dbh();
-    my $formatted_class = ucfirst($class);
-    my $object = $db->fetch(-class=>$formatted_class,-name=>$name,-fill=>1);  
-    
-    return $object;
-}
+#
+#sub get_object {
+#    my ($self,$class,$name) = @_;
+#    
+#    $self->log->debug("get_object(): class:$class name:$name");
+#    
+#    my $db = $self->dbh();
+#    my $formatted_class = ucfirst($class);
+#    my $object = $db->fetch(-class=>$formatted_class,-name=>$name,-fill=>1);    
+#
+#    return $object;
+#}
 
 
 
