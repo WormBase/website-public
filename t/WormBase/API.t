@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 7;
 
 use WormBase::API;
 
@@ -11,47 +11,43 @@ use WormBase::API;
 # Object construction also connects to sgifaceserver at localhost::2005
 ok ( 
     ( my $wormbase = WormBase::API->new()),
-    'Constructed WormBase::API object ok'
+    'Constructed WormBase::APIPluggable object ok'
     );
 
-
-# Check that we can fetch a version string from the object
+# Can we fetch the version and does it look like something expected?
 like ( my $version = $wormbase->version,
        qr/WS\d\d\d/,
        "Check version of database ok: " . $wormbase->version );
 
-
-# Test dbh caching. Should return a sace://localhost::2005 string
-my $dbh = $wormbase->acedb_dbh;
-is ( $dbh,
-     'sace://localhost:2005',
-     "Handle successfully cached $dbh" );
+# Have we correctly instantiated a Service::acedb?
+my $dbh = $wormbase->dbh('acedb');
+isa_ok ( $dbh,'WormBase::API::Service::acedb');
 
 
-# Try fetching an object from the dbh via Ace::fetch
-my $variation;
-is (
-     ($variation = $wormbase->fetch(-class=>'Variation',-name=>'e345')),
-     'e345',
-     "Successfully fetched an object from AceDB via fetch() delegated");
 
-isa_ok($variation,'Ace::Object');
-  
-# Try fetching an object via our wrapper get_object method
-# which is really just a wrapper around Ace::fetch
-my $gene_name;
-is (
-   $gene_name = $wormbase->get_object('gene_name','unc-26'),
+# Can we instantiate a WormBase::API::Object via fetch?
+my $variation = $wormbase->fetch(-class=>'Variation',-name=>'e345');
+isa_ok ($variation,'WormBase::API::Object::Variation');
+
+# What about the name of the variation?
+is ($variation->name,
+   'e345',
+   "Successfully called local method " . ref($variation) . "->name");
+
+
+# Try it again, this time with ::Gene
+my $gene = $wormbase->fetch(-class=>'Gene',-name=>'WBGene00006763');
+isa_ok($gene,'WormBase::API::Object::Gene');
+
+is ($gene->object->Public_name,
    'unc-26',
-   "Successfully fetched an object via get_object(): " . $gene_name->Public_name_for);
+   "Successfully called an (autoload) method " . ref($gene) . "->name");
 
+## Test out our factory
+#my $gene = $wormbase->fetch('Gene','WBGene00006763');
+#isa_ok($gene,"WormBase::API::Object::Gene");
 
-
-# Test out our factory
-my $gene = $wormbase->test_get('Gene','WBGene00006763');
-isa_ok($gene,"WormBase::API::Object::Gene");
-
-is( $gene->name,
-       'WBGene00006763',
-       "Successfully fetched object/created: " . ref($gene) . " - " . $gene->name);
+#is( $gene->name,
+#       'WBGene00006763',
+#       "Successfully fetched object/created: " . ref($gene) . " - " . $gene->name);
 
