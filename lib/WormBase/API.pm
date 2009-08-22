@@ -87,13 +87,6 @@ sub connect_to {
 
 =head1
 
-# What roles should we consume?
-with 
-    'WormBase::API::Role::Logger',           # A basic Log::Log4perl screen appender
-    'WormBase::API::Role::Service::AceDB';   # The AceDB service
-
-
-
 has 'name' => (
     is => 'ro',
     isa => 'Str',
@@ -146,12 +139,15 @@ sub BUILD {
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*
 sub fetch {
-    my ($self,%args) = @_;
-    my $class = $args{-class};
-    my $name  = $args{-name};
+    my ($self,$args) = @_;
+    my $class = $args->{class};
+    my $name  = $args->{name};
+
     my $service = $self->primary_datasource;
     my $driver = $self->_services->{$service};
     my $object = $driver->fetch(-class=>$class,-name=>$name);
+#    $self->log->debug("$driver $service $object $class $name");
+
     return WormBase::API::Factory->create($class,
 					  { object => $object });
 }
