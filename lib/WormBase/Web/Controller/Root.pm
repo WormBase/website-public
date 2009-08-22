@@ -127,8 +127,8 @@ and in turn call register_dynamic_actions().
 sub register_dynamic_actions {
     my ($self,$c) = @_;
     
-    $self->register_page_actions($c);
-    $self->register_widget_actions($c);
+#    $self->register_page_actions($c);
+#    $self->register_widget_actions($c);
     $self->register_field_actions($c);
     
 #  $self->register_rest_uris($c);  
@@ -178,7 +178,7 @@ sub register_page_actions {
 #	$self->register_basic_search($self,$c,$page);
 	
 
-	$c->log->debug("Registering get_object action for $page");
+#	$c->log->debug("Registering get_object action for $page");
 	
 	my $page_code = sub {
 	    my ( $self, $c, $name ) = @_;
@@ -324,7 +324,7 @@ sub register_widget_actions {
       # Each Controller will also have to implement a fetch().
       my $chain_to = 'get_params';
       
-      $c->log->debug("Registering action for the $page:$widget widget");
+#      $c->log->debug("Registering action for the $page:$widget widget");
       
       my $widget_code = sub {
 	my ( $self, $c ) = @_;
@@ -418,8 +418,10 @@ Here's an example of a field action once generated:
   sub common_name : Chained('get_params') PathPart('test') Args(0) {
       my ($self,$c) = @_;
       
-      # Instantiate the correct model
+      # Get the correct model (instantiated at application launch)
       my $model = $c->model('Gene');
+
+      # Pass in the acedb and gff models so I don't have to reinstantiate
       
       # Fetch the appropriate field
       $c->stash->{common_name} = $model->common_name();
@@ -442,7 +444,7 @@ sub register_field_actions {
       my @fields = $self->fields( $page, $widget, $c );
       @fields = $widget unless @fields;  # For cases where the config is empty, ie the name of the widget is also its contents.
       foreach my $field (@fields) {
-	$c->log->debug("Registering action for $page:$widget:$field");
+#	$c->log->debug("Registering action for $page:$widget:$field");
 	
 	my $code = sub {
 	  my ($self, $c) = @_;
@@ -450,42 +452,110 @@ sub register_field_actions {
 	  # Necessary?
 	  # $c->action_namespace( ucfirst($page) );
 	  
-	  # Instantiate the Model
-	  my $class = $c->model(ucfirst($page));
 	  
 	  # Choosing which template to render:
 	  # 1. Is it common field/widget?
 	  # 2. Is it a custom field/widget?
 	  # 3. Fall back to generic field/widget
-	  
-	  # Approach 1:
-	  # Most templates are custom so fall through to that state.
-	  if (defined $c->config->{common_fields}->{$field}) {
-	    $c->stash->{template} = "common_fields/$field.tt2";
-	  } elsif (defined $c->config->{generic_fields}->{$field}) {
-	    $c->stash->{template} = "generic/field.tt2";
-	  } else {  
-	    $c->stash->{template} = "$page/$field.tt2";
-	  }
-	  
-	  $c->log->debug("assigned template: " .  $c->stash->{template});
-	  # Approach 2: Most things are generic, those requiring custom fields are specified
-	  #if (defined ($c->config->{custom_fields}->{$field})) {
-	  #  $c->stash->{template} = "$page/$field.tt2";
-	  #} elsif (defined ($c->config->{common_fields}->{$field})) {
-	  #  $c->stash->{template} = "common_fields/$field.tt2";
-	  #} else {
-	  #  $c->stash->{template} = "generic/field.tt2";	  
-	  #}
-	  
+	  	  
 	  # What to store for my session
 	  #	push @{ $c->session->{field}}, $field;
 	  
 	  # Save the requested field for formatting
 	  $c->stash->{field} = $field;
-	  
-	  # Fetch the field content and stash it.
-	  $c->stash->{$field} = $class->$field();
+	  $c->stash->{class} = ucfirst($page);
+
+
+	  # Instantiate our external model directly (see below for alternate)
+	  if (1) {
+
+	      my $api = $c->model('WormBaseAPI');
+	      # Fetch the object from our driver	 
+	      $c->log->debug("WormBaseAPI model is $api " . ref($api));
+	      $c->log->debug("The requested class is " . ucfirst($page));
+	      $c->log->debug("The request is " . $c->stash->{request});
+	      
+	      # This code in essence calls the Factory for me.
+	      # It is the EXACT same thing the W::W::M::* would be doing.
+	      my $object = $api->fetch({class=> ucfirst($page),
+					name => $c->stash->{request}}) or die "$!";
+	      $c->log->debug("Instantiated an external object: " . ref($object));
+	      # $c->stash->{object} = $object;
+
+	      # To add later:
+	      # * multi-results formatting
+	      # * nothing found.
+
+	      # Fetch the field content and stash it.
+	      # This is goofy; the object of interest is wrapped inside an object...
+	      my $ace_object = $object->object;
+	      $c->log->debug("The internal object is: " . ref($ace_object));
+
+	      # Currently, I have to provide EVERY tag in my wrapper model
+	      # since I cannot find a sensible way to AUTOLOAD under Moose
+	      # (if indeed AUTOLOADing under Moose makes any sense at all...)
+#	      $c->stash->{$field} = $ace_object->$field;
+	      $c->stash->{$field} = $object->$field;
+
+	      $c->log->debug("Called a method on wrapped object->$field: " . $c->stash->{$field});
+
+	      # Approach 1:
+	      # Most templates are custom so fall through to that state.
+	      $c->log->debug("choosing template:" . $field);
+	      if (defined $c->config->{common_fields}->{$field}) {
+		  $c->stash->{template} = "common_fields/$field.tt2";
+	      } elsif (defined $c->config->{generic_fields}->{$field}) {
+		  $c->stash->{template} = "generic/field.tt2";
+	      } else {  
+		  $c->stash->{template} = "$page/$field.tt2";
+	      }
+	      
+	      $c->log->debug("assigned template: " .  $c->stash->{template});
+	      # Approach 2: Most things are generic, those requiring custom fields are specified
+	      #if (defined ($c->config->{custom_fields}->{$field})) {
+	      #  $c->stash->{template} = "$page/$field.tt2";
+	      #} elsif (defined ($c->config->{common_fields}->{$field})) {
+	      #  $c->stash->{template} = "common_fields/$field.tt2";
+	      #} else {
+	      #  $c->stash->{template} = "generic/field.tt2";	  
+	      #}
+	      
+
+	  }
+
+	  # Use Catalyst::Model::Factory to instantiate our external models.
+	  # This would be the smart way to do things, huh?
+	  if (0) {
+	      # Instantiate the Model
+	      my $class = $c->model(ucfirst($page));
+	      $c->log->debug(ref($class));
+	      
+	      # Fetch the field content and stash it.
+	      # This is goofy; the object of interest is wrapped inside an object...
+	      $c->stash->{$field} = $class->object->$field();
+
+	      # Approach 1:
+	      # Most templates are custom so fall through to that state.
+	      $c->log->debug("choosing template:" . $field);
+	      if (defined $c->config->{common_fields}->{$field}) {
+		  $c->stash->{template} = "common_fields/$field.tt2";
+	      } elsif (defined $c->config->{generic_fields}->{$field}) {
+		  $c->stash->{template} = "generic/field.tt2";
+	      } else {  
+		  $c->stash->{template} = "$page/$field.tt2";
+	      }
+	      
+	      $c->log->debug("assigned template: " .  $c->stash->{template});
+	      # Approach 2: Most things are generic, those requiring custom fields are specified
+	      #if (defined ($c->config->{custom_fields}->{$field})) {
+	      #  $c->stash->{template} = "$page/$field.tt2";
+	      #} elsif (defined ($c->config->{common_fields}->{$field})) {
+	      #  $c->stash->{template} = "common_fields/$field.tt2";
+	      #} else {
+	      #  $c->stash->{template} = "generic/field.tt2";	  
+	      #}
+
+	  }
 
 	  # My end action isn't working... 
 	  $c->forward('WormBase::Web::View::TT');
@@ -504,7 +574,8 @@ sub register_field_actions {
 					  code      => \&$code,
 					  class     => 'WormBase::Web::Controller::' . ucfirst($page),
 					 );
-	$c->dispatcher->register( $c, $action ) or warn "Couldn't register action for $page:$widget:$field: $!";	
+	$c->dispatcher->register( $c, $action ) 
+	    or warn "Couldn't register action for $page:$widget:$field: $!";	
       }
     }
   }
