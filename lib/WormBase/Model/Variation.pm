@@ -1,24 +1,10 @@
 package WormBase::Model::Variation;
 
-use strict;
-use warnings;
+use Moose;
+extends 'WormBase::Model';
+
 use Bio::Perl;
 use Bio::Graphics::Browser::Markup;
-use base qw/WormBase::Model/;
-
-# Build some accessors of configuration variables for convenience
-#__PACKAGE__->mk_accessors(qw/picture_width
-#			     unmapped_span
-#			     indel_display_limit
-#			     motif_picture_glyphs
-#			     motif_picture_labels
-#			     motif_picture_colors
-#			    /);
-
-use constant INDEL_DISPLAY_LIMIT => 25;
-use constant DEBUG_ADVANCED => 1;
-use constant SNIPPET_LENGTH => 60;
-use constant UNMAPPED_SPAN    => 10000;  # genomic span to display for alleles not mapped to genes
 
 # Multi-tiered searches for variations
 sub search {
@@ -581,7 +567,7 @@ sub genomic_environs {
       $high = $abs_stop;
     }
 
-    my $split = UNMAPPED_SPAN / 2;   
+    my $split = $self->{unmapped_span} / 2;   
 
     my $dbh = $self->dbh_gff();
     ($segment) = $dbh->segment($ref,$low-$split,$low+$split);
@@ -1005,7 +991,7 @@ sub _build_sequence_strings {
   my ($abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
   
   my @debug;
-  push @debug,"VARIATION COORDS: $abs_start $abs_stop $start $stop" if (DEBUG_ADVANCED);
+  push @debug,"VARIATION COORDS: $abs_start $abs_stop $start $stop" if ($self->{debug});
   
   # Coordinates are sometimes reported on the minus strand
   # We will report all sequence strings on the plus strand instead.
@@ -1027,7 +1013,7 @@ sub _build_sequence_strings {
 				     -stop  => $abs_stop  + $offset);
   my $dna = $full_segment->dna;
   
-  push @debug,"WT SNIPPET DNA FROM GFF: $dna" if DEBUG_ADVANCED;
+  push @debug,"WT SNIPPET DNA FROM GFF: $dna" if $self->{debug};
   
   # Visit each variation and create a formatted string
   my ($wt_fragment,$mut_fragment,$wt_plus,$mut_plus);
@@ -1046,7 +1032,7 @@ sub _build_sequence_strings {
       $extracted_wt = $seg->dna;
     }
     
-    if (DEBUG_ADVANCED) {
+    if ($self->{debug}) {
       push @debug,
 	"WT SEQUENCE EXTRACTED FROM GFF .. : $extracted_wt",
 	  "WT SEQUENCE STORED IN ACE ....... : $wt",
@@ -1066,7 +1052,7 @@ sub _build_sequence_strings {
     if ($wt eq $extracted_wt && $strand ne '-') {
       # Yes, it has.  Do nothing.
     } else {
-      push @debug,"-----> TRANSCRIPT ON - strand; revcomping" if DEBUG_ADVANCED;
+      push @debug,"-----> TRANSCRIPT ON - strand; revcomping" if $self->{debug};
       # The variation and flanks have been reported on the minus strand
       # Reverse complement the mutant sequence
       $strand = '-';  # Set the $strand flag if not already set.
@@ -1083,9 +1069,13 @@ sub _build_sequence_strings {
     $wt_plus  .= $wt;
     $mut_plus .= $mut;
     
+    # This isn't right. The external model should not need to know about the 
+    # display parameters.  All of this processing should be moved to the view.
+    my $indel_display_limit = $self->{indel_display_limit};
+
     # What is the type of mutation? If deletion or insertion,
     # check the length of the partner, then format appropriately
-    if (length $mut > INDEL_DISPLAY_LIMIT || length $wt > INDEL_DISPLAY_LIMIT) {
+    if (length $mut > $indel_display_limit || length $wt > $indel_display_limit) {
       if ($type =~ /deletion/i) {
 	my $target = length ($wt) . " bp " . lc($type);
 	$wt_fragment  .= "[$target]";
@@ -1110,7 +1100,7 @@ sub _build_sequence_strings {
   # Coordinates of the mutation within the segment
   my ($mutation_start,$mutation_length);
   if ($strand eq '-') {
-    #      print "On the minus strand",br if DEBUG_ADVANCED;
+    #      print "On the minus strand",br if $self->{debug};
     # This works for e205 substition (-)
     $mutation_start   = $offset;
     $mutation_length   = length($wt_plus);
@@ -1138,7 +1128,7 @@ sub _build_sequence_strings {
     $mutation_length = length($wt_plus);
   }
   
-  $flank ||= SNIPPET_LENGTH;
+  $flank ||= $self->{snippet_length};
   
   my $insert_length = (length $wt_fragment > length $mut_fragment) ? length $wt_fragment : length $mut_fragment;
   my $flank_length = int(($flank - $insert_length) / 2);
@@ -1147,7 +1137,7 @@ sub _build_sequence_strings {
   my $left_flank  = substr($dna,$mutation_start - $flank_length,$flank_length);
   my $right_flank = substr($dna,$mutation_start + $mutation_length,$flank_length);
   
-  if (DEBUG_ADVANCED) {
+  if ($self->{debug}) {
     push @debug,
       "WT PLUS STRAND .................. : $wt_plus",
 	"MUT PLUS STRAND ................. : $mut_plus";
@@ -1369,7 +1359,7 @@ sub _do_simple_conceptual_translation {
       . $self->_markup_variation($mut_protein,$pos-1,$mut_aa,undef,'is_peptide');
   
   my @debug;
-  if (DEBUG_ADVANCED) { 
+  if ($self->{debug}) { 
     push @debug,
       "CONCEPTUAL TRANSLATION VIA SUBSTITUTION OF STORED AA",
 	"STORED WT : $wt_aa",
@@ -1422,7 +1412,7 @@ sub _do_manual_conceptual_translation {
   $mut_nuc =~ s/\-//g;
   my @debug;
   
-  if (DEBUG_ADVANCED) {
+  if ($self->{debug}) {
     push @debug,"WT STRING ......... ............. : $wt_nuc",      
       "MUT STRING ...................... : $mut_nuc";
   }    
@@ -1435,7 +1425,7 @@ sub _do_manual_conceptual_translation {
     $mut_nuc =~ tr/[acgt]/[tgca]/;
   }
    
-  if (DEBUG_ADVANCED) {
+  if ($self->{debug}) {
     push @debug,
       "WT STRING REVCOMPED  : $wt_nuc",
 	"MUT STRING REVCOMPED : $mut_nuc";
@@ -1447,7 +1437,7 @@ sub _do_manual_conceptual_translation {
   
   my $test = $mut_unspliced =~ s/$wt_nuc/$mut_nuc/i;
   
-  if (DEBUG_ADVANCED) {
+  if ($self->{debug}) {
     if ($wt_unspliced eq $mut_unspliced && !$test) {      
       push @debug,"!!! WT_UNSPLICED eq MUT_UNSPLICED --> something went wrong";
     } else {
@@ -1473,7 +1463,7 @@ sub _do_manual_conceptual_translation {
     # Calculate the position of the amino acid change
     my $wt_trans  = translate_as_string($wt_spliced);
     my $mut_trans = translate_as_string($mut_spliced);
-    if ($mut_trans eq $wt_trans && DEBUG_ADVANCED) {
+    if ($mut_trans eq $wt_trans && $self->{debug}) {
       push @debug,"!! MUT TRANSLATION == WT TRANSLATIONS --> something went wrong...";
     }
     

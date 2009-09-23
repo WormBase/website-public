@@ -2,28 +2,41 @@ package WormBase::Web;
 
 use strict;
 use warnings;
-use Catalyst::Runtime '5.70';
 
-# Load Catalyst Plugins and set some flags for the application
+use Catalyst::Runtime '5.80';
+
+# Set flags and add application plugins
 #
 #         -Debug: activates the debug mode for very useful log messages
 # ConfigLoader: 
-#             will load the configuration from a YAML file in the
+#             will load the configuration from a Config::General file in the
 #             application's home directory
-
 #  Static::Simple:
 #             will serve static files from the application's root directory
 
-use Catalyst::Log::Log4perl; 
-use Catalyst qw/
-		 -Debug
+use parent qw/Catalyst/;
+use Catalyst qw/-Debug
 		 ConfigLoader
 		 Static::Simple
-		 StackTrace
-		 Session
-		 Session::State::Cookie
-		 Session::Store::FastMmap
+                 Unicode
 	       /;
+
+#                 Breadcrumbs
+#
+#		 StackTrace
+#		 Session
+#		 Session::State::Cookie
+#		 Session::Store::FastMmap
+
+#NOTE: we may want to dynamically set the local config file suffix:
+# * $ENV{ MYAPP_CONFIG_LOCAL_SUFFIX }
+# * $ENV{ CATALYST_CONFIG_LOCAL_SUFFIX }
+# * $c->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix }
+# Thus, we could use different configuration files for any server or developer
+# See C:Plugin::ConfigLoader for details
+
+
+use Catalyst::Log::Log4perl; 
 
 # TODO: Move to distinct configuration files
 # use Config::Any::Perl;
@@ -44,33 +57,39 @@ __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(
         __PACKAGE__->path_to( 'conf', 'log4perl.conf' )->stringify
     )
-);
+    );
 
 # $SIG{__WARN__} = sub { __PACKAGE__->log->fatal(@_); };
 
-
-# ConfigLoader::Multi
-# Configuration files include:
-#   - wormbase.yml (application base configuration)
-#   - wormbase_local.yml (overrider bas configuration)
-#__PACKAGE__->config( file => __PACKAGE__->path_to('conf') );
+__PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf' } ) or die "$!";
 
 
-# ConfigLoader
-__PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.yml' } )
-  or die "$!";
-#__PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.pl' } )
-#  or die "$!";
+#__PACKAGE__->config(
+#    breadcrumbs => {
+#	hide_index => 1,
+#	hide_home  => 0,
+##	labels     => {
+##	    '/'       => 'Home label',
+##	    '/foobar' => 'FooBar label',
+##	    ....
+##	},
+#    },
+#    );
+
+
+
+# Are we in production?  If so, select the correct configuration file using the server name
+# TODO: This needs to be a flag set during packaging/deployment as we haven't yet read in
+# the configuration file. This is a hack for now
+
+__PACKAGE__->config->{deployed} = 'under development';
+if (__PACKAGE__->config->{deployed} eq 'production') {
+    __PACKAGE__->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix } = $ENV{SERVER_NAME};
+}
 
 
 # Where will static files be located? This is a path relative to APPLICATION root
 __PACKAGE__->config->{static}->{dirs} = ['static'];
-
-# Toggle View debug messages that provide indication of our CSS nesting
-__PACKAGE__->config->{name} = 'WormBase';
-
-# Overall debug mode. Controls which index pages are shown, for example.
-__PACKAGE__->config->{debug} = 1;
 
 # View debugging. On by default if system-wide debug is on, too.
 # Toggle View debug messages that provide indication of our CSS nesting
@@ -78,9 +97,10 @@ __PACKAGE__->config->{debug} = 1;
 #     browser: in line
 #     comment: HTML comments
 #     log: logfile
-if (__PACKAGE__->config->{debug}) {
-  __PACKAGE__->config->{debug_view} = "comment";
-#  __PACKAGE__->config->{debug_view} = "browser";
+
+# Turn off view debugging if global debugging is off.
+if ( ! __PACKAGE__->config->{debug}) {
+  __PACKAGE__->config->{debug_view} = "";
 }
 
 __PACKAGE__->config->{version}  = $VERSION;
@@ -137,6 +157,12 @@ my @reference_widget_fields = qw/
 				  gazette_abstracts
 				  wormbook_abstracts
 				/;
+
+
+
+# Alternatively:
+# Introspect each model to find a list of meta methods it implements.
+# Append to that a list of available object tags or rows as necessary
 
 __PACKAGE__->config->{pages} = {
  				antibody => {
@@ -202,10 +228,10 @@ __PACKAGE__->config->{pages} = {
 									    reactome_knowledgebase
 									    other_sequences
 									    ncbi
-									    gene_models
 									    cloned_by
 									  /
 								       ],
+#									    gene_models
 						     location => [
 								  qw/genetic_position
 								     interpolated_position
@@ -617,7 +643,7 @@ __PACKAGE__->config->{common_fields} = { map { $_ => 1 } qw/alleles
 __PACKAGE__->config->{generic_fields} = { map { $_ => 1 } qw/
 							      author
 							      allele_used
-							      antibody
+							      antibodies
 							      cis_regulator
 							      condition
 							      corresponding_gene
@@ -669,7 +695,6 @@ __PACKAGE__->config->{common_widgets} =  { map { $_ => 1 } qw/
 							       remarks
 							     /};
 
-
 # We should aspire to make ALL widgets generic
 # We will still have some custom fields however
 __PACKAGE__->config->{generic_widgets} =  { map { $_ => 1 } qw/
@@ -684,431 +709,6 @@ __PACKAGE__->config->{generic_widgets} =  { map { $_ => 1 } qw/
 
 
 
-=pod
-
-__PACKAGE__->{config}->{progress} = { existing_cgis => { 
-
-
-SR_expression
-SiteDefs
-anatomy
-atlas
-autocompleter
-autocompleter2
-cell
-cisortho
-curate
-das
-entry
-gene
-generic
-get
-gmod
-hunter
-id
-lib
-list
-mapview
-mass_spec
-microarray
-misc
-nbrowse.dev
-ontology
-private
-rss
-searches
-seq
-strains
-style.xml
-surveys
-sw
-util
-validate_gff3
-
-./anatomy:
-cell
-neuron_display
-
-./atlas:
-browse
-xy
-
-./cell:
-Pedigree.pm
-cell.cgi
-make_pedigree.cgi
-mindofworm
-neato
-neuron
-neuron.cgi
-palettemap.png
-pedigree.gif
-pedigree.png
-pedigree.works
-
-./cell/neuron:
-dot2png.cgi
-img
-n.png
-neato
-neuron.cgi
-neuron_png.pl
-plain2png.pl
-
-./cisortho:
-CGIsubs.pm
-query
-results
-site_score
-
-./curate:
-base
-online_forms
-submit
-
-./entry:
-edit_gene
-
-./gene:
-allele
-antibody
-expr_map.gd
-expr_map.gif
-expr_map.png
-expr_map_small.gif
-expr_map_small.png
-expr_profile
-expression
-expression.vzhou
-gene
-gene_class
-gene_in_profile
-geneapplet
-genetable
-gmap
-homology_group
-interaction_details
-locus
-locus_new
-mapping_data
-motif
-mountains_coords.txt
-operon
-rearrange
-regulation
-sk_map
-strain
-structure_data
-transgene
-variation
-
-./generic:
-acetable
-report
-tree
-
-./lib:
-CGI
-CSS
-CSS.pm
-ElegansOligos.pm
-ElegansSubs.auto
-ElegansSubs.bak
-ElegansSubs.pm
-ElegansSubs.pm.bak
-GBsyn.pm
-GBsyn2.pm
-MerlynAO.pm
-MerlynGO.pm
-RSS
-SKMAP
-Seqview.pm
-Splicer.pm
-StandardURLDumpers.pm
-Util.pm
-WormBase
-WormBase.pm
-jack_get_homol.pl
-pICalculator.pm
-
-
-
-
-./lib/CGI:
-Explorer.pm
-
-./lib/RSS:
-DB
-ObjectHistory.pm
-README
-populate_database.pl
-sql
-test.pl
-update_static_feeds.pl
-
-./lib/RSS/DB:
-History
-History.pm
-
-./lib/RSS/DB/History:
-History.pm
-Objects.pm
-
-./lib/RSS/sql:
-create_schema.sql
-
-./lib/SKMAP:
-Config.pm
-Coordinates.pm
-Data
-Image
-Search.pm
-
-./lib/SKMAP/Image:
-Figures.pm
-
-./lib/WormBase:
-Autocomplete.pm
-AutocompleteLoad.pm
-FetchData.pm
-Formatting.pm
-GMapView.pm
-Table.pm
-Toggle.pm
-Util
-Util.pm
-
-
-./lib/WormBase/Util:
-Rearrange.pm
-
-./mapview:
-dasdraw2
-dasdraw2.conflict
-geneticmap
-sequenceapplet
-
-./mass_spec:
-experiment
-peptide
-
-./microarray:
-cluster
-download
-expression_cluster
-microarray_aff
-microarray_smd
-results
-search
-
-./misc:
-2005_survey
-acedb
-author
-author_example
-biblio
-c2c
-database_stats
-defaults
-defaults.offline
-digest
-download_features
-download_sequence
-epic
-etree
-feedback
-format_datamining_example
-gbrowse_popup
-generate_wiki_content
-geo_map_by_paper
-glossary
-help
-inline_feed
-internal_server_error
-laboratory
-life_stage
-marc
-model
-not_found
-paper
-person
-person_name
-phenotype
-random_pic
-redirect
-release_stats
-reset_cookie
-session
-site_map
-standard_urls
-submit_feedback
-test
-text
-toggle
-version
-wbtoggle
-xml
-xml_md5
-
-
-./ontology:
-anatomy
-anatomy_browser
-browse
-browse.old
-browser
-browser_lib
-gene
-go_dag
-goterm
-search
-search_data.txt
-
-./ontology/browser_lib:
-OBrowse.pm
-README
-browser.initd
-launch_ontology_sockets.sh
-ontology_server.pl
-test_sockets.pl
-
-./private:
-gbrowse
-manage_newsfeeds
-test_urls
-update_newsfeed
-
-./searches:
-advanced
-aql_query
-basic
-basic_nuke
-batch_genes
-blast0212
-blast_blat
-blast_ori
-blat
-blat.new
-blat_debug
-blat_jack
-browser
-class_query
-dasview
-download_index
-dump_laboratories
-epcr
-expr_search
-fast_facts
-gotable
-graf.cgi
-grep
-grep.dev
-hunter.cgi
-info_dump
-interval
-markers
-multi
-multi.prototype
-multi.search
-multi.search.ace
-neuron302.cgi
-neuron_display
-neuron_display_jack
-neuron_graf.cgi
-pedigree
-query
-query_nuke
-rnai_search
-search_index
-standard_urls
-strains
-test
-test_escape
-text
-text302
-wb_query
-
-./searches/advanced:
-batch_search
-debug_script
-debug_script2
-dumper
-dumper.cfg
-dumper.methods.txt
-dumper_11_05_03
-exercise
-gfServer.log
-jack_dump.gar
-tmp
-
-./seq:
-PadAlignment.pm
-align
-aligner
-clone
-clone_position_table
-contig2gff
-das
-das2
-dasdraw
-dna
-do_align
-ebsyn
-frend
-gbrowse
-gbrowse_details
-gbrowse_drag
-gbrowse_est
-gbrowse_gff_autocomplete
-gbrowse_img
-gbrowse_moby
-gbrowse_not
-gbrowse_render
-gbrowse_run
-gbrowse_seqfeature_autocomplete
-gbrowse_syn
-gbrowse_templates
-gbs
-gbsyn
-interaction
-interaction_viewer
-moby_server
-pcr
-promoter
-protein
-rnai
-sage
-sequence
-show_mult_align
-tr_script
-transcript
-wtp
-y2h
-
-./strains:
-search
-
-./surveys:
-2005_wormbase
-2006_topics_meetings
-2007_wormbase
-2007_wormbook
-dynamic_banner_stats.pl
-
-./sw:
-browse
-
-./util:
-colors
-dump_version
-wormbase.pm.defaults
-
-
-validate_gff3_online
-
-
-=cut
-
 
 # Start the application
 __PACKAGE__->setup;
@@ -1119,8 +719,6 @@ __PACKAGE__->setup;
 #   $ CATALYST_DEBUG_CONFIG=1 perl script/extjs_test.pl /
 # to check what's in your configuration after loading
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
-
-
 
 
 =pod
@@ -1137,12 +735,6 @@ sub is_ajax {
     || ( ( $headers->header('x-requested-with') || '' ) eq 'XMLHttpRequest' );
 }
 
-#### THESE ARE DEFAULTS WHICH CAN BE PURGED
-sub message : Global {
-  my ( $self, $c ) = @_;
-  $c->stash->{template} = 'message.tt2';
-  $c->stash->{message} ||= $c->req->param('message') || 'No message';
-}
 
 
 sub get_example_object {

@@ -73,7 +73,7 @@ sub default :Path {
 
 
 # /db actions
-sub generic_fields :Path("/db") Args(3) {
+sub generic_fields :Path("/fields") Args(3) {
     my ($self,$c,$class,$name,$field) = @_;
     
     # Save the requested field for formatting
@@ -222,9 +222,7 @@ sub register_dynamic_actions {
     my ($self,$c) = @_;
     
 #    $self->register_page_actions($c);
-#    $self->register_widget_actions($c);
-#    $self->register_field_actions($c);
-    
+#    $self->register_widget_actions($c);    
 #  $self->register_rest_uris($c);  
 }
 
@@ -510,13 +508,247 @@ sub configure : Chained('/') PathPart('configure') Args(1) {
 }
 
 
+############################################                                                   
+#                                                                                              
+# REST                                                                                         
+#                                                                                              
+# Approach 1: Dynamically expose REST targets                                                  
+# based on the site configuration.                                                             
+#                                                                                              
+############################################                                                   
 
-=head2 end
+=head2 $self->register_rest_uris()                                                             
+    
+    Expose REST uris for every page, widget, and field                                             
+    
+=cut                                                                                           
+    
+sub register_rest_uris {
+    my ($self,$c) = @_;
 
-Attempt to render a view, if needed.
+=pod                                                                                           
+                                                                                               
+    $c->log->debug("Registering get_object action for $page");                                
+                                                                                               
+    my $page_code = sub {                                                                   
+	my ( $self, $c, $name ) = @_;                                                       
+	$c->stash->{request} = $name;                                                       
+           # $c->action_namespace( ucfirst($page) );                                           
+           # my $namespace = $c->namespace;
+    }; 
+
+         my $page_action = $self->create_action(                                               
+                    name       => 'get_params',                                                
+                    reverse    => "rest/$page",                                                
+	            attributes => {
+                           Chained     => ['/'],                                                  
+                           PathPart    => ["rest/$page"],                                         
+                           CaptureArgs => [1],                                                    
+	            },                                                                         
+                    namespace => $page,                                                        
+                    code      => \&$page_code,                                                 
+                    class     => 'WormBase::Web::Controller::REST' . ucfirst($page),           
+                );                                                                             
+        $c->dispatcher->register( $c, $page_action );                                          
+                                                                                               
+        # These need to be registered before I build any other actions.                        
+        #$self->SUPER::register_actions(@_);    # or NEXT? 
+=cut                                                                                                                                    
+
+    my @pages = $self->pages($c);
+    foreach my $page (@pages) {
+	my @widgets = $self->widgets($page,$c);
+	foreach my $widget (@widgets) {
+	    
+	    # Fetch all available fields for this widget
+ 	    my @fields = $self->fields( $page, $widget, $c );
+	    @fields = $widget unless @fields;  # For cases where the config is empty, ie the name of the widget is also its contents. 
+	    foreach my $field (@fields) {
+		#       my $class = "WormBase::Web::Controller::" . ucfirst($page) . "::REST";
+		my $class = "WormBase::Web::Controller::REST::" . ucfirst($page);
+                #  my $class = "WormBase::Web::Controller::REST";
+
+		my $rest_noun_code = sub {
+		    my ($self,$c) = @_;
+		    $c->log->debug("here I am, in the rest noun code reference");
+		};   # It doesn't really do anything.
+		
+		############################## 
+		# APPROACH 1:
+                # methods exist in WormBase::Web::Controller::REST::PAGE namespace      
+		
+		# APPROACH 2: methods exist in ::REST namespace; get_params accepts 2 ARgs (class,name) followed by the rest target        
+		# APPROACH 2: methods exist in ::REST namespace; get_params accepts 2 ARgs (class,name) followed by the rest target
+		############################## 
+		my $class = "WormBase::Web::Controller::REST::" . ucfirst($page);
+		my $rest_noun_action = $self->create_action(
+		    name       => $field,
+		    reverse    => "rest/$page/$field",
+		    attributes => {
+#                                                                 Chained     => ['get_params'],                                        
+#                                                                 PathPart    => [$field],                                              
+			Path        => [$field],
+			CaptureArgs => [1],
+			ActionClass => ['Catalyst::Action::REST'],
+		    },
+		    namespace => "rest/$page",
+		    code      => \&$rest_noun_code,
+		    class     => $class,
+		    );
+		
+		if (0) {
+		    my $rest_noun_action = $self->create_action(
+			name       => $field,
+			reverse    => "$field",
+			attributes => {
+			    Path        => ["$page/$field"],
+			    CaptureArgs => [1],
+			    ActionClass => ['REST'],
+			},
+			namespace => "rest/$page",
+			code      => \&$rest_noun_code,
+			class     => $class,
+			);
+		}
+		$c->dispatcher->register( $c, $rest_noun_action );
+                #       $self->SUPER::register_actions(@_);
+		
+                #       # CLASS: REST or $page?
+                #       $self->_register_rest_verb($c,{name => $field;
+                #                                     reverse => $field,
+                #                                     reverse => "rest/$page/$field",
+                #                                     class   => $class,
+		#                                    });
+
+		my $rest_verb_code = sub {
+		    my ( $self, $c, $name ) = @_;
+		    
+		    # Instantiate the Model
+		    my $model = $c->model(ucfirst($class));
+                    #        $c->log->debug("here: $name");
+
+                    # Fetch the field content and stash it.                   
+                    #   $c->stash->{rest}->{$name} = $model->$name(); 
+		    $c->stash->{$field} = $model->$field();
+		    $self->status_ok( $c, entity => { $c->stash->{$field} } );
+		};
+		my $rest_verb_action = $self->create_action(
+		    name       => $field . '_GET',
+		    reverse    => "rest/$page/$field" . '_GET',
+		    attributes => { Args => [0],
+		    },
+		    namespace => "rest/$page",
+		    code      => \&$rest_verb_code,
+		    class     => $class,
+		    );
+		$c->dispatcher->register( $c, $rest_verb_action );
+	    }
+	}
+    }
+}
+
+
+=head2 $self->_register_rest_noun();                                                                                                    
+                                                                                                                                        
+Register a REST noun.                                                                                                                   
+                                                                                                                                        
+Here is an example for a field.                                                      
+  sub genetic_position : Chained('fetch') PathPart('genetic_position') CaptureArgs(1) ActionClass('REST') {}                            
+
+=cut
+
+sub _register_rest_noun {
+    my ($self,$c,$params) = @_;
+    
+    my $rest_noun_code = sub { };   # It doesn't really do anything. 
+#  my $rest_noun_action = $self->create_action(                              
+#                                             #     name       => $page . '_' . $field . "_rest",
+#                                             #     reverse    => $field . "_rest",  
+#                                             name       => $params->{name},              
+#                                             reverse    => $params->{reverse},         
+#                                             attributes => {
+#                                                            Chained  => ['get_params'], 
+#                                                            PathPart => [$params->{pathpart}],                                         
+##                                                           Args     => [0],                                                           
+#                                                           },                                                                          
+#                                             namespace => 'rest',                                                                      
+#                                             code      => \&$rest_noun_code,                                                           
+#                                             class     => $params->{class},                                                            
+#                                             #  class     => "WormBase::Web::Controller::" . ucfirst($page) . "::REST",                
+#                                             # class     => "WormBase::Web::Controller::REST::" . ucfirst($params->{class}),           
+#                                            );                                                                                         
+    
+    my $rest_noun_action = $self->create_action(
+	name       => $params->{name},
+	reverse    => $params->{reverse},
+	attributes => {
+	    Path => [$params->{pathpart}],
+	    Args => [1],
+	},
+	namespace => 'rest',
+	code      => \&$rest_noun_code,
+	class     => $params->{class},
+	);
+    
+    $c->dispatcher->register( $c, $rest_noun_action );
+    return;
+}
+
+
+=head2 $self->_register_rest_verb()                                                                    
+    
+    Register a REST URI for a given field.  For now, we are only supplying GET.
+    
+    The final result looks like this:
+    
+    sub genetic_position_GET {                                           
+	$c->stash->{genetic_position} = $c->model('WormBase::Web::Model::Gene')->genetic_position($c); 
+	$self->status_ok( $c, entity => $c->stash );
+}
 
 =cut 
 
+
+sub _register_rest_verb {
+    my ($self,$c,$params) = @_;
+    
+    my $name       = $params->{name};
+    my $this_class = $params->{class};
+    
+    my $rest_verb_code = sub {
+	my ( $self, $c, $name ) = @_;
+	
+	# Instantiate the Model                                                                                                             
+	my $model = $c->model(ucfirst($this_class));
+	$c->log->debug("here: $name");
+	
+	# Fetch the field content and stash it.                                                                                             
+	#   $c->stash->{rest}->{$name} = $model->$name();                                                                                   
+	$c->stash->{$name} = $model->$name();
+	$self->status_ok( $c, entity => { $c->stash->{$name} } );
+    };
+    
+    my $rest_verb_action = $self->create_action(
+	name       => $name . '_GET',
+	reverse    => $params->{reverse} . '_GET',
+	namespace => 'rest/gene',
+	#"WormBase::Web::Controller::REST::Gene",                                                 
+	code      => \&$rest_verb_code,
+	class     => $this_class,
+	);
+    $c->dispatcher->register( $c, $rest_verb_action );
+    return;
+}
+
+
+
+
+=head2 end
+    
+    Attempt to render a view, if needed.
+    
+=cut 
+    
 # This is a kludge.  RenderView keeps tripping over itself
 # for some Model/Controller combinations with the dynamic actions.
 #  Namespace collision?  Missing templates?  I can't figure it out.

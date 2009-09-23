@@ -27,19 +27,18 @@ has 'dsn' => (
     isa => 'ArrayRef'
     );
 
-use base qw/WormBase::Model/; 
 
-sub BUILD {
-    my $self = shift;
-    $self->log->debug("Instantiating WormBase::DBH::GFF...");
-    
-    # Connect to each GFF/Support database  
-    foreach my $dsn (keys %{$self->dsn}) {
-	$self->connect($dbh) or $self->log->fatal("Could not connect to the GFF database $sn");
-    }
-    return $self;
- ## NECESSARY?}
-}
+#sub BUILD {
+#    my $self = shift;
+#    $self->log->debug("Instantiating WormBase::DBH::GFF...");
+#    
+#    # Connect to each GFF/Support database  
+#    foreach my $dsn (keys %{$self->dsn}) {
+#	$self->connect($dbh) or $self->log->fatal("Could not connect to the GFF database $sn");
+#    }
+#    return $self;
+# ## NECESSARY?}
+#}
 
 sub connect {
   my ($self,$species,$acedb) = @_;  
@@ -69,6 +68,15 @@ sub connect {
   return $self;
 }
 
+
+
+
+
+
+
+
+
+# DBH accessor
 sub dbh {
   my ($self,$species,$dbh) = @_;
   if ($species && $dbh) {

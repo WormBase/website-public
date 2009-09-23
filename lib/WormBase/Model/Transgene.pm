@@ -1,8 +1,11 @@
 package WormBase::Model::Transgene;
 
-use strict;
-use warnings;
-use base 'WormBase::Model';
+#use strict;
+#use warnings;
+#use base 'WormBase::Model';
+use Moose;
+extends 'WormBase::Model';
+
 
 # THIS SHOULD BE GENERIC.
 # Is it an evidence hash under the Evidence tag?
