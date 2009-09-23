@@ -5,13 +5,9 @@ use Module::Pluggable::Object;
 use namespace::clean -except => 'meta';
 use WormBase::API::Factory;
 
-
-
-
 # What roles should we consume?
 with 
     'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
-
 
 # We assume that there is a single primary datasource.
 # For now this is AceDB.
@@ -23,51 +19,68 @@ has 'primary_datasource' => (
     );
 
 # Dynamically establish a list of available data services.
-# This includes any database that we may need.
+# This includes the primary_datasource and other singletons.
 has '_services' => (
     is         => 'ro',
     isa        => 'HashRef',
     lazy_build => 1,
     );
 
+#has '_gff_datasources' => (
+#    is     => 'ro',
+#    isa    => 'HashRef',
+#    lazy_build => 1,
+#    );
 
 
 # Version should either be provided by the default datasource
+# or set explicitly.
 
 # THERE SHOULD BE AN ACCESSOR FOR THE DBH OF THE DEFAULT DATASOURCE
-
 sub version {
     my $self = shift;
     my $service = $self->_services->{$self->primary_datasource};
     return $service->version;
 }
 
-sub dbh {
+sub service {
     my $self = shift;
     my $name = shift;
     return $self->_services->{$name};
 }
 
+# This is really just a convenience accessor
+# as all the gff databases are also stored under services.
+# Perhaps services should be a deeper data structure, 
+# for example, keyed by species...
+sub gff_dsn {
+    my $self    = shift;
+    my $species = shift;
+    return $self->_services->{"gff_$species"};
+}
 
-
-# Build up a hashref of services, including things like the 
+# Build a hashref of services, including things like the 
 # default datasource, GFF databases, etc.
 sub _build__services {
     my ($self) = @_;
     my $base = __PACKAGE__;
-
+        
     my $mp = Module::Pluggable::Object->new( search_path => [ $base . "::Service" ] );
-    my @classes = $mp->plugins;
+    
     my %services;
+    my @classes = $mp->plugins;
     foreach my $class (@classes) {
 	Class::MOP::load_class($class);
-
-	# Fetch the base name of the class
-	(my $name = $class) =~ s/\Q${base}::Service::\E//;
-	$services{$name} = $class->new;
-	return \%services;
+	
+	# Fetch the base name of the class. Could possibly be nested
+#	(my $name = $class) =~ s/\Q${base}::\E//;
+	$class =~ /.*::?(.*)/;	
+	$services{$1} = $class->new;
     }
-}
+    return \%services;
+} 
+
+
 
 
 # Call the connect method of the appropriate datasource.
@@ -75,13 +88,6 @@ sub connect {
     my ($self,$service) = @_;
     $self->_services->{$service}->connect();
 }
-
-
-sub connect_to {
-    my ($self,$service) = @_;
-    $self->_services->{$service}->connect();
-}
-
 
 
 
@@ -102,7 +108,10 @@ has 'class' => (
 # During instantiation, connect to our primary service (AceDB).
 sub BUILD {
     my $self = shift;
-    $self->connect($self->primary_datasource);
+    my $services = $self->_services;
+    for my $service  (keys %$services) {
+	$self->connect($service);
+    }
 }
 
 # One approach: conditionally conecting to acedb as necessary

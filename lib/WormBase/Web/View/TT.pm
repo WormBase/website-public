@@ -1,10 +1,9 @@
 package WormBase::Web::View::TT;
 
 use strict;
-use base 'Catalyst::View::TT';
+use parent 'Catalyst::View::TT';
 
 __PACKAGE__->config({
-		     CATALYST_VAR => 'Catalyst',
 		     INCLUDE_PATH => [
 #				      WormBase::Web->path_to( 'root', 'templates', 'src'    ),
 #				      WormBase::Web->path_to( 'root', 'templates', 'lib'    ),
@@ -16,7 +15,7 @@ __PACKAGE__->config({
 				     ],
 		     PRE_PROCESS  => 'config/main',
 		     WRAPPER      => 'boilerplate/wrapper',
-		     ERROR        => 'error',
+#		     ERROR        => 'error',
 		     TEMPLATE_EXTENSION => '.tt2',
 		     RECURSION    => 1,
 		     # Automatically pre- and post-chomp to keep
@@ -25,24 +24,21 @@ __PACKAGE__->config({
 		     PRE_CHOMP    => 1,
 		     POST_CHOMP   => 1,
 		     # NOT CURRENTLY IN USE!
-		     PLUGIN_BASE  => 'WormBase::Web::View::Template::Plugin',
-		     PLUGINS      => {
-				      url    => 'WormBase::Web::View::Template::Plugin::URL',
-				      image  => 'Template::Plugin::Image',
-				      format => 'Template::Plugin::Format',
-				      util   => 'WormBase::Web::View::Template::Plugin::Util',
-				     },
+#		     PLUGIN_BASE  => 'WormBase::Web::View::Template::Plugin',
+#		     PLUGINS      => {
+#				      url    => 'WormBase::Web::View::Template::Plugin::URL',
+#				      image  => 'Template::Plugin::Image',
+#				      format => 'Template::Plugin::Format',
+#				      util   => 'WormBase::Web::View::Template::Plugin::Util',
+#				     },
 #		     TIMER        => 1,
-#		     DEBUG        => 1,
+		     DEBUG        => 1,
 		     CONSTANTS    => {
 				      acedb_version => sub {
-					WormBase::Web->model('Model::AceDB')->version
+					WormBase::Web->model('WormBaseAPI')->version
 					}
 				     },
 		    });
-
-
-
 
 
 

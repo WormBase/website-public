@@ -3,11 +3,8 @@ package WormBase::Model;
 use strict;
 use warnings;
 use Bio::Graphics::Browser;
-use base qw/Class::Accessor/;
-
+use parent qw/Class::Accessor/;
 __PACKAGE__->mk_accessors(qw/current_object log/);
-			     
-
 our $AUTOLOAD;
 
 sub new {
@@ -21,11 +18,51 @@ sub new {
   # or decided dynamically.
   
   # Fetch an object and stash it
-#  my $object = $args->{dbh_ace}->get_object($args->{class},$args->{request});
   my $object = $args->{ace_model}->get_object($args->{class},$args->{request});
   $self->current_object($object) if $object;
   return $self;
 }
+
+
+
+=head1
+
+use Moose;
+extends 'WormBase';			     
+
+
+
+# Fetch an object and stash it
+has 'dbh_ace'        => (is => 'ro');
+has 'gff_handle'     => (is => 'ro');
+#			 , lazy => 1
+#			 , default => \&build_gff_handle);
+has 'name'           => (is => 'ro');
+has 'class'          => (is => 'ro');
+has 'current_object' => (is => 'ro'
+			 , lazy    => 1
+			 , default => \&build_ace_object);
+
+sub build_ace_object {
+  my $self = shift;
+  my $dbh = $self->dbh_ace;
+  my $class = $self->class;
+  my $name  = $self->name;
+  my $object = $dbh->get_object($class,$name);
+  return $object;
+}
+
+sub current_object {
+    my $self  = shift;
+    # Fetch an object and stash it
+    my $object = $self->ace_model->get_object($self->class,$self->request);
+    $self->current_object($object) if $object;
+}
+
+
+=cut
+
+
 
 
 # Conditionally fetch the correct GFF DBH according to the 
@@ -36,8 +73,8 @@ sub new {
 sub dbh_gff {
   my ($self,$dsn) = @_;
   my $object  = $self->current_object;
-  my $species = $self->parsed_species();  
-#  my $dbh     = $dsn ? $self->{dbh_gff}->dbh($dsn) : $self->{dbh_gff}->dbh($species);
+  my $species = $self->parsed_species();
+
   my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
   return $dbh;
 }
@@ -90,14 +127,14 @@ sub common_name {
 }
 
 # Parse out species "from a Genus species" string.
-# Useful for dynamically selecting data sources which
-# are based on the species name.
+# Return g_species, used primarily for dynamically
+# selecting a data source based on species identifier.
 sub parsed_species {
   my ($self) = @_;
   my $object = $self->current_object;
   my $genus_species = $object->Species;
   my ($species) = $genus_species =~ /.* (.*)/;
-  return $species;
+  return lc(substr($genus_species,0,1)) . "_$species";
 }
 
 # Ugh.  Can't autoload because singular vs plural
@@ -258,19 +295,19 @@ sub interpolated_position {
 
 # Provided with a GFF segment, return its genomic coordinates
 sub genomic_position {
-  my ($self,$segment) = @_;
-
-  my $abs_start = $segment->abs_start;
-  my $abs_stop  = $segment->abs_stop;
-  ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
-  my %data = (
-	      chromosome => $segment->abs_ref,
-	      abs_start  => $abs_start,
-	      abs_stop   => $abs_stop,
-	      start      => $segment->start,
-	      stop       => $segment->stop,
-	     );
-  return \%data;
+    my ($self,$segment) = @_;
+    
+    my $abs_start = $segment->abs_start;
+    my $abs_stop  = $segment->abs_stop;
+    ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
+    my %data = (
+	chromosome => $segment->abs_ref,
+	abs_start  => $abs_start,
+	abs_stop   => $abs_stop,
+	start      => $segment->start,
+	stop       => $segment->stop,
+	);
+    return \%data;
 }
 
 # CONVERTED TO HERE.
@@ -1303,6 +1340,7 @@ sub wormbook_abstracts {
 # hash for presentation
 #
 ################################################
+
 
 sub AUTOLOAD {
   my ($self) = @_;

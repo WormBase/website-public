@@ -1,5 +1,12 @@
 package WormBase::DBH::GFF;
 
+=head1
+
+use Moose;
+extends 'WormBase';
+
+=cut
+
 use strict;
 use Bio::DB::GFF;
 use base qw/WormBase::Model/; 

@@ -2,13 +2,6 @@ package WormBase::DSN::AceDB::Object;
 
 use Moose;
 
-has 'acedbh' => (
-    is => 'ro',
-    required => 1,
-    );
-
-
-
 #has 'current_object' => (
 #    is => 'rw',
 #    predicate => 'has_ace_object',
@@ -33,7 +26,7 @@ sub get_object {
     
     $self->log->debug("get_object(): class:$class name:$name");
     
-    my $db = $self->dbh();
+    my $db = $self->acedbh();
     my $formatted_class = ucfirst($class);
     my $object = $db->fetch(-class=>$formatted_class,-name=>$name,-fill=>1);    
 

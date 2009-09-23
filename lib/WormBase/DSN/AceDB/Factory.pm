@@ -20,14 +20,16 @@ has 'acedbh' => (
     );
 
 
+
+
 sub BUILD {
     my $self = shift;
 #    $self->log->debug("instantiating a new ...");
     my $class = "WormBase::DSN::AceDB::Object::" . $self->SUBCLASS;
     Class::MOP::load_class($class);
-    return $class->new(acedb => $self->acedbh);
+    return $class->new(acedb => $self->acedbh,
+	log => $self->log);
 #    return $self->package->new(acedbh => $self->acedbh);
-
 }
 
 1;

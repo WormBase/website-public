@@ -213,6 +213,20 @@ sub _build_dbh {
 
 
 
+sub get_object {
+    my ($self,$class,$name) = @_;
+    
+    $self->log->debug("get_object(): class:$class name:$name");
+    
+    my $db = $self->dbh();
+    my $formatted_class = ucfirst($class);
+    my $object = $db->fetch(-class=>$formatted_class,-name=>$name,-fill=>1);    
+
+    return $object;
+}
+
+
+
 =head1 NAME
 
 WormBase::Model::AceDB - AceDB Model Class

@@ -2,12 +2,18 @@ package WormBase::DSN::AceDB::Object::Gene;
 
 use Moose;
 
+#extends 'WormBase::DSN::AceDB';
+
 has 'acedbh' => (
     is => 'ro',
-    required => 1,
+#    required => 1,
     );
 
-extends 'WormBase::DSN::AceDB::Object';
+has 'log' => (
+    is => 'ro',
+    );
+
+#extends 'WormBase::DSN::AceDB::Object';
 
 
 # Should I try to fetch an object during instantiation?
@@ -25,10 +31,13 @@ extends 'WormBase::DSN::AceDB::Object';
 # Methods overriding SUPER belong here.
 ###################################################
 sub common_name {
-  my ($self) = @_;
+    my $self = shift;
+    return "my common name";
+
+  die "here we are";
 #  my $object = $self->current_object;
   my $object = $self->get_object('Gene','WBGene00006798');
-  $self->log->debug($object);
+  $self->log->debug("here we are " . $object);
   my $common_name = 
     $object->Public_name
       || $object->CGC_name

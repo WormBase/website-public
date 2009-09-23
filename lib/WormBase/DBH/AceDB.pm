@@ -1,8 +1,8 @@
 package WormBase::DBH::AceDB;
 
-use strict;
 use Ace;
 use base qw/WormBase::Model/;
+use strict;
 
 __PACKAGE__->mk_accessors(qw/acedb_host
 			     acedb_port
@@ -12,6 +12,7 @@ __PACKAGE__->mk_accessors(qw/acedb_host
 			     cache_expires
 			     cache_size
 			     cache_auto_purge_interval/);
+
 
 sub new {
     my ($class,$args) = @_;
@@ -24,18 +25,19 @@ sub new {
 sub connect {
     my ($self) = @_;
     $self->log->info("Connecting to acedb:");
-    
+
     # TODO: Should be able to select from a number of available acedb hosts
     #  my @available_hosts = $self->acedb_hosts;
     #  my $host = $available_hosts[int(rnd())];
     
-    my @auth  = (-user=>$self->acedb_user,-pass=>$self->acedb_pass) if $self->acedb_user && $self->acedb_pass;
+    my @auth  = (-user=>$self->acedb_user,
+		 -pass=>$self->acedb_pass) 
+	if $self->acedb_user && $self->acedb_pass;
     my @cache = (-cache => {
 	cache_root => $self->cache_root,
 	max_size   => $self->cache_size
 	    || $Cache::SizeAwareCache::NO_MAX_SIZE
 	    || -1,  # hardcoded $NO_MAX_SIZE constant
-	    
 	    default_expires_in  => $self->cache_expires       || '1 day',
 	    auto_purge_interval => $self->cache_auto_purge_interval || '6 hours',
 		 } 
@@ -69,7 +71,7 @@ sub dbh {
 	if ($self->{dbh} && $self->{dbh}->ping) {
 	    return $self->{dbh};
 	} else {
-	    $self->log->debug("Acedb has gone away. Trying to reconnect...");
+	    $self->{log}->debug("Acedb has gone away. Trying to reconnect...");
 	    my $dbh = $self->connect();
 	    $self->{dbh} = $dbh;
 	    return $dbh;

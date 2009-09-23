@@ -2,7 +2,7 @@ package WormBase::Web::Model::Util::EvidenceHash;
 
 use strict;
 use warnings;
-use base 'Catalyst::Model';
+use parent 'Catalyst::Model';
 
 =head1 NAME
 
