@@ -3,9 +3,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
-use WormBase::API;
+BEGIN {
+      use_ok('WormBase::API');
+}
 
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
@@ -20,8 +22,12 @@ like ( my $version = $wormbase->version,
        "Check version of database ok: " . $wormbase->version );
 
 # Have we correctly instantiated a Service::acedb?
-my $dbh = $wormbase->dbh('acedb');
-isa_ok ( $dbh,'WormBase::API::Service::acedb');
+my $service = $wormbase->servic('acedb');
+isa_ok ( $service,'WormBase::API::Service::acedb');
+
+# Have we correctly instantiated a Service::gff?
+my $gff_dbh = $wormbase->dbh('gff');
+isa_ok($gff_dbh,'WormBase::API::Service::gff');
 
 
 

@@ -10,7 +10,13 @@ use WormBase;
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
 ok ( 
-    ( my $wormbase = WormBase->new()),
+    ( my $wormbase = WormBase->new(
+    {mysql_user => 'root',
+    mysql_pass  => '3l3g@nz',
+    data_sources => { c_elegans => { adaptor => 'dbi::mysqlace',
+    		      	        aggregator => 'wormbase_gene' },
+				},
+      })),
     'Constructed WormBase object ok'
     );
 
@@ -20,33 +26,49 @@ ok (my $log = $wormbase->log,
 
 can_ok($log,'debug','info');
 
+
 # Check that we can fetch a version string from the object
-#like ( my $version = $acedb->version,
-#       qr/WS\d\d\d/,
-#       "Check version of database ok: " . $acedb->version );
+like ( my $version = $wormbase->version,
+       qr/WS\d\d\d/,
+       "Check version of database ok: " . $wormbase->version );
 
 
 # Test dbh caching. Should return a sace://localhost::2005 string
-#is (
-#     my $dbh = $acedb->dbh,
-#     'sace://localhost:2005',
-#     "Handle successfully cached " . $acedb->dbh );
-
-
+my $acedb = $wormbase->acedb_dbh;
+is ( $acedb,
+     'sace://localhost:2005',
+     "Handle successfully cached $acedb" );
 
 
 # Try fetching an object from the dbh via Ace::fetch
-#my $variation;
-#is (
-#     ($variation = $acedb->dbh->fetch(-class=>'Variation',-name=>'e345')),
-#     'e345',
-#     "Successfully fetched an object via Ace::fetch $variation");
+my $variation;
+is (
+     ($variation = $acedb->fetch(-class=>'Variation',-name=>'e345')),
+     'e345',
+     "Successfully fetched an object via Ace::fetch $variation");
 
   
-# Finally, try fetching an object via our wrapper get_object method
+# Try fetching an object via our wrapper get_object method
 # which is really just a wrapper around Ace::fetch
-#my $gene_name;
-#is (
-#   $gene_name = $acedb->get_object('gene_name','unc-26'),
-#   'unc-26',
-#   "Successfully fetched an object via get_object(): " . $gene_name->Public_name_for);
+my $gene_name = $wormbase->get_object('gene_name','unc-26');
+is ($gene_name,
+   'unc-26',
+   "Successfully fetched an object via get_object(): " . $gene_name->Public_name_for);
+
+
+my $gff_dbh = $wormbase->gff_dbh();
+ok($gff_dbh,"Recovered the GFF database handles hash - ugly object implementation here, please fix!");
+
+# Get the C. elegans GFF handle - currently poking inside the object
+my $handle = $gff_dbh->{"c_elegans"}; 
+isa_ok($handle,'Bio::DB::GFF');
+
+# Try fetching a segment from the GFF handle
+my $segment = $handle->segment('I',1 => 100000);
+ok($segment,"Testing GFF segment fetching");
+
+my @transcripts = $segment->features("transcript");
+ok(@transcripts,"Testing GFF feature fetching: retrieved "
+			 . scalar @transcripts
+			 . " transcripts"    
+			 );
