@@ -1,5 +1,12 @@
 package WormBase::API::Role::Service::AceDB;
 
+# DEPRECATED: See
+
+1;
+
+
+=pod
+
 use Moose::Role;
 use Ace;
 
@@ -228,5 +235,6 @@ sub get_object {
 }
 
 
+=cut
 
 1;
