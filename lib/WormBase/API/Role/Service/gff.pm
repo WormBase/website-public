@@ -43,10 +43,10 @@ around 'dbh' => sub {
         
     # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF?
     if ($self->has_dbh) {
-	$self->log->debug("     gff-dbh for $species exists and is alive!");
+#	$self->log->debug("     gff-dbh for $species exists and is alive!");
 	return $self->$orig;
     } else {
-	$self->log->debug("     gff-dbh for $species doesn't exist yet; trying to connect");
+#	$self->log->debug("     gff-dbh for $species doesn't exist yet; trying to connect");
 	my $dbh = $self->connect($species);
     }
 };
@@ -67,12 +67,18 @@ sub connect {
     my $species = $self->species;
     
     $self->log->info("Connecting to the GFF database for $species:");
-    my $gff_args = $self->dsn->{$species};
-    
-    return unless ($gff_args);
+    $self->log->info($species);
+    $self->log->info(keys %{$self});
+    $self->log->info($self->mysql_user);
+
+
+    # This is supposed to be provided by the configuration file
+#    my $gff_args = $self->dsn->{$species};
+#    
+#    return unless ($gff_args);
+    my $gff_args = {};
 
     # THESE ARGUMENTS ARE NOT BEING PASSED...
-
     
     $gff_args->{-user} = $self->mysql_user;
     $gff_args->{-pass} = $self->mysql_pass;
