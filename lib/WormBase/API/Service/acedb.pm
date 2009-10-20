@@ -153,7 +153,7 @@ sub connect {
 #			   @auth,
 #			   @cache);
     
-    $self->log->info("Connecting to acedb:");
+    $self->log->info("Connecting to acedb: ");
     if ($self->log->is_debug()) {
 	$self->log->debug('     using the following parameters:');
 	$self->log->debug('       ' . $self->acedb_host . ':' . $self->acedb_port);
