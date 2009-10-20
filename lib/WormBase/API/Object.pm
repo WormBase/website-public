@@ -3,26 +3,27 @@ package WormBase::API::Object;
 use Moose;
 
 use Bio::Graphics::Browser;
+extends 'WormBase::API';
 
 #use parent qw/Class::Accessor/;
-__PACKAGE__->mk_accessors(qw/current_object log/);
-our $AUTOLOAD;
+#__PACKAGE__->mk_accessors(qw/object log/);
+#our $AUTOLOAD;
 
-sub new {
-  my ($this,$args) = @_;
-  my $package = ref($this) || $this;
-  
-  my $self = bless $args,$package;
-  $self->log->debug("Instantiating $package...");
+#sub new {
+#  my ($this,$args) = @_;
+#  my $package = ref($this) || $this;
+#  
+#  my $self = bless $args,$package;
+#  $self->log->debug("Instantiating $package...");
 
-  # The class arg may either be passed in via the arguments hash in the controller
-  # or decided dynamically.
-  
-  # Fetch an object and stash it
-  my $object = $args->{ace_model}->get_object($args->{class},$args->{request});
-  $self->current_object($object) if $object;
-  return $self;
-}
+#  # The class arg may either be passed in via the arguments hash in the controller
+#  # or decided dynamically.
+#  
+#  # Fetch an object and stash it
+#  my $object = $args->{ace_model}->get_object($args->{class},$args->{request});
+#  $self->object($object) if $object;
+#  return $self;
+#}
 
 
 
@@ -40,7 +41,7 @@ has 'gff_handle'     => (is => 'ro');
 #			 , default => \&build_gff_handle);
 has 'name'           => (is => 'ro');
 has 'class'          => (is => 'ro');
-has 'current_object' => (is => 'ro'
+has 'object' => (is => 'ro'
 			 , lazy    => 1
 			 , default => \&build_ace_object);
 
@@ -53,11 +54,11 @@ sub build_ace_object {
   return $object;
 }
 
-sub current_object {
+sub object {
     my $self  = shift;
     # Fetch an object and stash it
     my $object = $self->ace_model->get_object($self->class,$self->request);
-    $self->current_object($object) if $object;
+    $self->object($object) if $object;
 }
 
 
@@ -71,18 +72,42 @@ sub current_object {
 
 # dbh_gff should be the GFF ITSELF.  Instead it's the model.
 # THIS should just return the dbh_gff. It's NOT
-sub dbh_gff {
-  my ($self,$dsn) = @_;
-  my $object  = $self->current_object;
-  my $species = $self->parsed_species();
+#sub dbh_gff {
+#  my ($self,$dsn) = @_;
+#  my $object  = $self->object;
+#  my $species = $self->parsed_species();
 
-  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
-  return $dbh;
+#  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
+#  return $dbh;
+#}
+
+
+# Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
+
+# Expects an array reference of objects (or a simple scalar object)
+sub wrap {
+    my ($self,$objects) = @_;
+
+#    print $objects ."\n\n";
+#    return;
+    # Allow for array references or scalar variables
+    $objects = eval { ref $objects =~ /ARRAY/ } ? $objects : [ $objects ];
+    
+    my @wrapped;
+    foreach my $object (@$objects) {
+	my $class = $object->class;
+	push @wrapped, WormBase::API::Factory->create($class,
+						      { object => $object });
+    }
+    
+    # User might have passed and expected just a single object
+    return wantarray ? @wrapped : $wrapped[0];
 }
 
 
 
 # Get a direct handle to the AceDB.
+# DEPRECATED?
 sub dbh_ace { shift->{ace_model}->{dbh}; }
 
 #################################################
@@ -113,38 +138,53 @@ Approach 2:
 =cut
 
 sub name {
-  my $self = shift;
-  my $object = $self->current_object;
-  my $name   = $object->name;
-  return "$name";
+    my $self = shift;
+    my $object = $self->object;
+    my $name   = $object->name;
+    return ({ name => $name });
 }
 
-# common_name defaults to the name of the object
-# This can be over-ridden as necessary.
+=head1 $object->common_name
+
+Default: name of the object
+
+=cut
+
 sub common_name {
-  my $self = shift;
-  my $name = $self->name;
-  return "$name";
+  my $self   = shift;
+  my $object = $self->object;
+  my $name   = $object->name;
+  return ({ common_name => $name });
 }
+
+sub other_name {
+    my $self = shift;
+    my $object = $self->object;
+    my $name   = eval { $self->other_name} || "none";
+    return ({ other_name => $name });
+}
+
+
+
 
 # Parse out species "from a Genus species" string.
 # Return g_species, used primarily for dynamically
 # selecting a data source based on species identifier.
 sub parsed_species {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my $genus_species = $object->Species;
   my ($species) = $genus_species =~ /.* (.*)/;
   return lc(substr($genus_species,0,1)) . "_$species";
 }
 
 # Ugh.  Can't autoload because singular vs plural
-sub remarks {
-  my ($self) = @_;
-  my $object = $self->current_object;
-  my $remarks = $object->Remark;
-  return "$remarks";
-}
+#sub remarks {
+#  my ($self) = @_;
+#  my $object = $self->object;
+#  my $remarks = $object->Remark;
+#  return "$remarks";
+#}
 
 
 #################################################
@@ -183,7 +223,7 @@ sub reactome_knowledgebase {
 # info (like is it available from the CGC).
 sub strains {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my @strains;
   foreach ($object->Strain(-filled=>1)) {
     my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
@@ -198,23 +238,23 @@ sub strains {
 
 # This could be generic. See also Variation.
 sub alleles {
-  my ($self) = @_;
-  my $object = $self->current_object;
-  # Typically fetching alleles from gene, but might also be from variation
-  $object = ($object->class eq 'Gene') ? $object : $object->Gene;
-
-  my @clean;
-  foreach ($object->Allele) {
-    unless ($_->SNP) {
-      push @clean,"$_";
+    my ($self) = @_;
+    my $object = $self->object;
+    # Typically fetching alleles from gene, but might also be from variation
+    $object = ($object->class eq 'Gene') ? $object : $object->Gene;
+    
+    my @clean;
+    foreach ($object->Allele) {
+	unless ($_->SNP) {
+	    push @clean,"$_";
+	}
     }
-  }
-  return \@clean;
+    return \@clean;
 }
 
 sub polymorphisms {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   # Typically fetching alleles from gene, but might also be from variation
   $object = ($object->class eq 'Gene') ? $object : $object->Gene;
 
@@ -263,7 +303,7 @@ sub id2species {
 # Generically fetch the genetic position for an object
 sub genetic_position {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my ($chromosome,$position,$error);
   if ($object->Interpolated_map_position) {
     ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
@@ -280,7 +320,7 @@ sub genetic_position {
 # This *might* be the same as genetic_position above.
 sub interpolated_position {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my ($chrom,$pos,$error);
   for my $cds ($object->Corresponding_CDS) {
     ($chrom,$pos,$error) = $self->_get_interpolated_position($cds);
@@ -380,7 +420,7 @@ sub best_blastp_matches {
   my ($self,$proteins) = @_;
 
   # current_object might already be a protein. If a gene, it will supply proteins.
-  push @$proteins,$self->current_object unless @$proteins;
+  push @$proteins,$self->object unless @$proteins;
 
   return unless @$proteins;
   my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
@@ -497,7 +537,7 @@ sub best_blastp_matches {
 # Return a list of phenotypes observed
 sub phenotypes_observed {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my $phenes = $self->_get_phenotypes($object);
   return $phenes;
 }
@@ -505,7 +545,7 @@ sub phenotypes_observed {
 # Return a list of phenotypes not observed
 sub phenotypes_not_observed {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   my $phenes = $self->_get_phenotypes($object,'NOT');
   return $phenes;
 }
@@ -565,7 +605,7 @@ sub best_phenotype_name {
 # TODO: This probably should be a function of the VIEW
 sub phenotype_remark {
   my ($self) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
 
   # Some inconsistency in Ace models here
   my @remarks = $object->Remark,
@@ -604,40 +644,6 @@ sub _cross_reference_remarks {
 ####    $d =~ s/\b(.+?)\b/$xref{$1} ? ObjectLink($xref{$1}) : $1/gie;
   }
   return $remarks;
-}
-
-
-# History for the ?Gene class.  Too bad this isn't generic...
-sub history {
-  my $self = shift;
-  my $object = $self->current_object;
-  my $stash;
-
-  my @history = $object->History;
-  foreach my $history (@history) {
-    my $type = $history;
-    $type =~ s/_ / /g;
-    my @versions = $history->col;
-    foreach my $version (@versions) {
-      my ($vers,$date,$curator,$event,$action,$remark,$target_object,$person);
-      # Let's just display date that comes from Version_change entries (obsolete tags at top-level of ?Gene still exist)
-      if ($history eq 'Version_change') {
-	($vers,$date,$curator,$event,$action,$remark) = $version->row; 
-	# For some cases, the remark is actually a gene object
-	if ($action eq 'Merged_into' || $action eq 'Acquires_merge'
-	    || $action eq 'Split_from' || $action eq 'Split_into') {
-	  $target_object = $remark;
-	}
-	push @{$stash},{ version => $version,
-			 action  => $action,
-			 date    => $date,
-			 curator => $curator,
-			 target_object => $remark,
-			 type    => $type,};
-      }
-    }
-  }
-  return $stash;
 }
 
 
@@ -1159,7 +1165,7 @@ sub _parse_molecular_change_hash {
 # This MIGHT also be the actual experimental position
 sub _get_interpolated_position {
   my ($self,$object) = @_;
-  $object ||= $self->current_object;
+  $object ||= $self->object;
   if ($object){
     if ($object->class eq 'CDS') {
       # Is it a query
@@ -1243,7 +1249,7 @@ sub _covered {
 # Web app: the references itself pulls in all four reference types by forward()).
 sub get_references {
   my ($self,$filter) = @_;
-  my $object = $self->current_object;
+  my $object = $self->object;
   
   # References are not standardized. They may be under the Reference or Paper tag.
   # Dynamically select the correct tag - this is a kludge until these are defined.
@@ -1328,7 +1334,7 @@ sub wormbook_abstracts {
 #
 # sub author {
 #   my ($self) = @_;
-#   my $object = $self->current_object;
+#   my $object = $self->object;
 #   return $object->Author;
 # }
 #
@@ -1342,6 +1348,7 @@ sub wormbook_abstracts {
 #
 ################################################
 
+=pod
 
 sub AUTOLOAD {
   my ($self) = @_;
@@ -1367,7 +1374,7 @@ sub AUTOLOAD {
 
     # Otherwise it's a request for an ace tag.
     # Pull out the ace object
-    my $ace_obj = $self->current_object;
+    my $ace_obj = $self->object;
 
     # Now fetch the tag, assuming array context.
     # Does this result in additional template overhead?
@@ -1379,6 +1386,7 @@ sub AUTOLOAD {
   }
 }
 
+=cut
 
 =head1 NAME
 
