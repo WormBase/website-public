@@ -8,6 +8,8 @@ use parent 'WormBase::Web::Controller';
 # so they function identically to actions created in WormBase.pm
 __PACKAGE__->config->{namespace} = '';
 
+
+
 =head1 NAME
 
 WormBase::Web::Controller::Root - Root Controller for WormBase
@@ -67,7 +69,7 @@ sub default :Path {
 # /db/class/components - list all available widgets
 #sub components :Path("/db/available") Args(1) {
 #    my ($self,$c,$class) = @_;
-#    $c->stash->{template} = '/generic/class_index.tt2';    
+#    $c->stash->{template} = 'generic/class_index.tt2';    
 #    $c->stash->{class} = $class;
 #}
 
@@ -93,6 +95,7 @@ sub generic_fields :Path("/fields") Args(3) {
 	# It is the EXACT same thing the W::W::M::* would be doing.
 	my $object = $api->fetch({class=> ucfirst($class),
 				  name => $name}) or die "$!";
+
 	$c->log->debug("Instantiated an external object: " . ref($object));
 	# $c->stash->{object} = $object;
 	
@@ -115,7 +118,7 @@ sub generic_fields :Path("/fields") Args(3) {
 	if ($object->can($field)) {
 	    $c->stash->{$field} = $object->$field;
 	} else {
-	    # We are trying to call a diret method on an Ace::Object;
+	    # We are trying to call a direct method on an Ace::Object;
 	    # Method name needs to be ucfirst.
 	    # Tags that are not specifically included in the configuration
 	    # are not currently available because they are not actions
@@ -129,6 +132,8 @@ sub generic_fields :Path("/fields") Args(3) {
 
     # Use Catalyst::Model::Factory to instantiate our external models.
     # This would be the smart way to do things, huh?
+    # Instantiate a WB::Web::Model::* would in turn instantiate an external WB::API::O::* model
+    # and in doing so, try to fetch an object.
     if (0) {
 	# Instantiate the Model
 	my $target_class = $c->model(ucfirst($class));
@@ -142,15 +147,19 @@ sub generic_fields :Path("/fields") Args(3) {
     # Select the appropriate template
     # Unless otherwise specified, use a generic template
     $c->log->debug("choosing template:" . $field);
+    # Common fields: shared among multiple pages
     if (defined $c->config->{common_fields}->{$field}) {
 	$c->stash->{template} = "common_fields/$field.tt2";
+
+	# Generic: simple fields or widgets.
+	# I should probably just get rid of these as they are confusing
     } elsif (defined $c->config->{generic_fields}->{$field}) {
 	$c->stash->{template} = "generic/field.tt2";
     } else {  
 	$c->stash->{template} = "$class/$field.tt2";
     }
 
-    $c->stash->{template} = "generic/field.tt2";
+#    $c->stash->{template} = "generic/field.tt2";
     
     $c->log->debug("assigned template: " .  $c->stash->{template});
     # Approach 2: Most things are generic, those requiring custom fields are specified
@@ -165,7 +174,120 @@ sub generic_fields :Path("/fields") Args(3) {
     # My end action isn't working... 
     $c->forward('WormBase::Web::View::TT');
 };
-		
+
+
+
+
+
+
+
+
+sub generic_widgets :Path("/widget") Args(3) {
+    my ($self,$c,$class,$name,$widget) = @_;
+    
+    # Set the name of the widget. This is used 
+    # to choose a template and label sections.
+    $c->stash->{widget} = 'overview';
+    $c->stash->{class}  = ucfirst($class);
+    
+    # Instantiate our external model directly (see below for alternate)
+    my $api = $c->model('WormBaseAPI');
+    # Fetch the object from our driver	 
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
+    
+    # This code in essence calls the Factory for me.
+    # It is the EXACT same thing the W::W::M::* would be doing.
+    my $object = $api->fetch({class=> ucfirst($class),
+			      name => $name}) or die "$!";
+    
+    $c->log->debug("Instantiated an external object: " . ref($object));
+    # $c->stash->{object} = $object;
+    
+    # To add later:
+    # * multi-results formatting
+    # * nothing found.
+    
+    # Fetch the field content and stash it.
+    
+    # Currently, I have to provide EVERY tag in my wrapper model
+    # since I cannot find a sensible way to AUTOLOAD under Moose
+    # (if indeed AUTOLOADing under Moose makes any sense at all...)
+    # This is a horrendous hack; get the field from my wrapper object
+    # if implemented, otherwise get it from the wrapped object.
+    
+    # To generically build a widget, store
+    # an ordered list of all necessary fields.
+    # page is $c->namespace;			
+    my @fields = @{ $c->config->{pages}->{gene}->{widgets}->{overview} };
+    $c->stash->{fields} = \@fields;
+    
+    # Stash the appropriate templates for each field.
+    # The widget template itself will rely on these. Necessary? Doesn't each field choose its template?
+#	foreach (@fields) {
+#	    my $template;
+#	    # Approach 1:
+#	    # Most templates are custom so fall through to that state.
+#	    if (defined $c->config->{common_fields}->{$_}) {
+#		$template = "common_fields/$_.tt2";
+#	    } elsif (defined $c->config->{generic_fields}->{$_}) {
+#		$template = "generic/field.tt2";
+#	    } else {  
+#		$template = "gene/$_.tt2";
+#	    }
+#	    # $c->stash->{fields}->{$_} = $template;
+#	}
+    
+    # Forward to each of the component fields.
+    foreach my $field (@fields) {
+	# Currently, I have to provide EVERY tag in my wrapper model
+	# since I cannot find a sensible way to AUTOLOAD under Moose
+	# (if indeed AUTOLOADing under Moose makes any sense at all...)
+	# This is a horrendous hack; get the field from my wrapper object
+	# if implemented, otherwise get it from the wrapped object.
+	
+	# This logic should probably be relocated to the external model.
+	if ($object->can($field)) {
+	    $c->stash->{$field} = $object->$field;
+	} else {
+	    # We are trying to call a direct method on an Ace::Object;
+	    # Method name needs to be ucfirst.
+	    # Tags that are not specifically included in the configuration
+	    # are not currently available because they are not actions
+	    
+	    my $method = ucfirst($field);
+	    $c->stash->{$field} = $object->object->$method;
+	}
+	$c->log->debug("Called $field...");
+    }
+    
+    # Did we request the widget by ajax?
+    # Supress boilerplate wrapping.
+#	if ( $c->is_ajax() ) {
+#	    $c->stash->{noboiler} = 1;
+#	}
+    
+    # Normally, the template defaults to action name.
+    # However, we have some generic templates. We will
+    # specify the name of the template.  
+    # MOST widgets can use a generic template.
+    if (defined $c->config->{generic_widgets}->{$widget}) {
+	$c->stash->{template} = "generic/widget.tt2";    
+	# Some are shared across Models
+    } elsif (defined $c->config->{common_widgets}->{$widget}) {
+	$c->stash->{template} = "common_widgets/$widget.tt2";
+    } else {  
+	$c->stash->{template}    = "$class/widgets/$widget.tt2"; 
+    }
+    
+    $c->log->debug("assigned template: " .  $c->stash->{template});    
+    
+    # My end action isn't working... 
+    $c->forward('WormBase::Web::View::TT');   
+};
+
+
 
 =head1 fetch_object()
 
@@ -187,44 +309,6 @@ sub fetch : Chained('/') PathPart('fetch') CaptureArgs(2) {
     }
 }
 
-
-=head1 register_actions();
-
-Over-ride Catalyst's default register_actions()
-method to programmatically create actions for
-each page, widget, field.
-
-=cut
-
-
-sub register_actions {
-    my ($self,$c) = @_;
-#    
-#    #$c->config->{debug} = { ignore_classes => [] };
-#    
-    $self->register_dynamic_actions($c) or warn "Couldn't register dynamic actions: $! $self $c";
-    return $self->Catalyst::Controller::register_actions($c);# or warn "Couldn't register_actions: $!";    # or NEXT?
-}
-
-
-=head1 register_dynamic_actions()
-
-Create actions for every page, widget, and field.
-
-These actions are created at application launch by
-over-riding Catalyst's register_actions() method, 
-and in turn call register_dynamic_actions().
-
-=cut
-
-
-sub register_dynamic_actions {
-    my ($self,$c) = @_;
-    
-#    $self->register_page_actions($c);
-#    $self->register_widget_actions($c);    
-#  $self->register_rest_uris($c);  
-}
 
 
 
@@ -251,6 +335,7 @@ Perhaps I should embed all dynamic queries under /db then chain to that.
 =cut
 
 # PAGE actions to become /reports
+
 
 sub register_page_actions {
     my ($self,$c) = @_;
@@ -329,175 +414,13 @@ sub register_basic_search {
 }
 
 
-
-=head2 $self->register_widget_actions
-
-Generate actions for every widget.
-
-Here's an example of what a widget action looks like once generated:
-
-  sub identification_widget : Chained('get_params') PathPart('identification') Args(0) {
-    my ( $self, $c ) = @_;
-    
-    # Set the name of the widget. This is used 
-    # to choose a template and label sections.
-    $c->stash->{widget} = 'identification';
-    $c->stash->{class}  = 'Gene';
-    
-    # To generically build a widget, store
-    # an ordered list of all necessary fields.
-    # page is $c->namespace;			
-    my @fields = @{ $c->config->{available_widgets}->{gene_page}->{identification} };
-    
-    $c->stash->{fields} = \@fields;
-    
-    # Stash the appropriate templates for each field.
-    # The widget template itself will rely on these. Necessary? Doesn't each field choose its template?
-    foreach (@fields) {
-      my $template;
-      # Approach 1:
-      # Most templates are custom so fall through to that state.
-      if (defined $c->config->{common_fields}->{$_}) {
-	$template = "common_fields/$_.tt2";
-      } elsif (defined $c->config->{generic_fields}->{$_}) {
-	$template = "generic/field.tt2";
-      } else {  
-	$template = "gene/$_.tt2";
-      }
-      # $c->stash->{fields}->{$_} = $template;
-    }
-    
-    # Forward to each of the component fields.
-    foreach my $field (@fields) {
-      $c->forward($field);
-    }
-    
-    # Did we request the widget by ajax?
-    # Supress boilerplate wrapping.
-    if ( $c->is_ajax() ) {
-      $c->stash->{noboiler} = 1;
-    }
-    
-    # Normally, the template defaults to action name.
-    # However, we have some generic templates. We will
-    # specify the name of the template.  
-    # MOST widgets can use a generic template.
-    if (defined $c->config->{generic_widgets}->{identification}) {
-      $c->stash->{template} = "generic/widget.tt2";    
-      # Some are shared across Models
-    } elsif (defined $c->config->{common_widgets}->{identification}) {
-      $c->stash->{template} = "common_widgets/identification.tt2";
-    } else {  
-      $c->stash->{template} = "gene/widgets/identification.tt2";
-    }
-  }
-   
-=cut 
-
-sub register_widget_actions {
-  my ($self,$c) = @_;
-  
-  my @pages = $self->pages($c);
-  foreach my $page (@pages) {  
-    my @widgets = $self->widgets($page,$c);
-    foreach my $widget (@widgets) {
-      
-      # Chaining widgets and fields
-      # Widgets and fields are both chained to the same parent.
-      # Although we *could* chain as class/widget/field, these means
-      # that users must know to which widget a field belongs.
-      
-      # To change to /gene/ID/widget, set to 'fetch';
-      # Each Controller will also have to implement a fetch().
-      my $chain_to = 'get_params';
-      
-#      $c->log->debug("Registering action for the $page:$widget widget");
-      
-      my $widget_code = sub {
-	my ( $self, $c ) = @_;
-	
-	# Set the name of the widget and save it's class.
-	# These are used to pick the correct templates for component sections.
-	# Templates are stored in the file system by its class.
-	$c->stash->{widget} = $widget;
-	$c->stash->{class}  = $page;
-	
-	# $page could possibly be $c->namespace?     
-	
-	# Store an ordered list of all available fields for
-	# the widget so we can build it generically
-	my (@fields) =
-	  @{ $c->config->{pages}->{$page}->{widgets}->{$widget} };
-	
-	$c->stash->{fields} = \@fields;
-	
-	# This is a second approach, where I actually store both
-	# the field and its required template. If I was checking for
-	# the existence of a template on the FS, this could go away
-	foreach (@fields) {
-	  my $template;
-	  # Approach 1:
-	  # Most templates are custom so fall through to that state.
-	  if (defined $c->config->{common_fields}->{$_}) {
-	    $template = "common_fields/$_.tt2";
-	  } elsif (defined $c->config->{generic_fields}->{$_}) {
-	    $template = "generic/field.tt2";
-	  } else {  
-	    $template = "$page/$_.tt2";
-	  }
-	  # $c->stash->{fields}->{$_} = $template;
-	}
-	
-	# Dealing with so-called "empty" widgets
-	@fields = $widget unless @fields;
-	foreach my $field (@fields) {
-	  $c->forward($field);
-	}
-	
-	if ( $c->is_ajax() ) {
-	  $c->stash->{noboiler} = 1;
-	}
-	
-	# MOST widgets can use a generic template.
-	if (defined $c->config->{generic_widgets}->{$widget}) {
-	  $c->stash->{template} = "generic/widget.tt2";
-	  # Some are shared across Models
-	} elsif (defined $c->config->{common_widgets}->{$widget}) {
-	  $c->stash->{template} = "common_widgets/$widget.tt2";
-	} else {  
-	  $c->stash->{template} = "$page/widgets/$widget.tt2";
-	}
-
-
-	  # My end action isn't working... 
-	  $c->forward('WormBase::Web::View::TT');
-
-      };
-      
-      # Create and register the action
-      my $widget_action = $self->create_action(
-					       name       => $widget . '_widget',
-					       reverse    => "$page/$widget",
-					       attributes => {
-							      Chained  => ["/$page/$chain_to"],
-							      PathPart => [$widget],
-							      Args     => [0],
-							     },
-					       namespace => $page,
-					       code      => \&$widget_code,
-					       class     => 'WormBase::Web::Controller::' . ucfirst($page),
-					      );
-      $c->dispatcher->register( $c, $widget_action ) or die "$!";
-    }   
-  }
-}
-
-
 #########################################
 # Configuration actions
 #########################################
 
 # Configure widgets and fields for a given page
+
+
 sub configure : Chained('/') PathPart('configure') Args(1) {
   
   # Fetch all available widgets for a page
@@ -506,7 +429,6 @@ sub configure : Chained('/') PathPart('configure') Args(1) {
   # Let users pick and choose which data bits to display
   
 }
-
 
 ############################################                                                   
 #                                                                                              
@@ -565,7 +487,7 @@ sub register_rest_uris {
 	    @fields = $widget unless @fields;  # For cases where the config is empty, ie the name of the widget is also its contents. 
 	    foreach my $field (@fields) {
 		#       my $class = "WormBase::Web::Controller::" . ucfirst($page) . "::REST";
-		my $class = "WormBase::Web::Controller::REST::" . ucfirst($page);
+#		my $class = "WormBase::Web::Controller::REST::" . ucfirst($page);
                 #  my $class = "WormBase::Web::Controller::REST";
 
 		my $rest_noun_code = sub {
@@ -694,7 +616,6 @@ sub _register_rest_noun {
     return;
 }
 
-
 =head2 $self->_register_rest_verb()                                                                    
     
     Register a REST URI for a given field.  For now, we are only supplying GET.
@@ -742,7 +663,6 @@ sub _register_rest_verb {
 
 
 
-
 =head2 end
     
     Attempt to render a view, if needed.
@@ -756,6 +676,8 @@ sub _register_rest_verb {
 # This hack requires that the template be specified
 # in the dynamic action itself.  Further, I have a list of fields
 # which use generic templates in the configuration.
+
+
 
 #sub end : Path {
 sub end : ActionClass('RenderView') {
@@ -771,6 +693,7 @@ sub end : ActionClass('RenderView') {
       
   $c->forward('WormBase::Web::View::TT');
 }
+
 
 
 #sub end : ActionClass('RenderView') {  }
