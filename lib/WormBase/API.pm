@@ -2,12 +2,12 @@ package WormBase::API;
 
 use Moose;
 use Module::Pluggable::Object;
+
 use namespace::clean -except => 'meta';
 use WormBase::API::Factory;
 
-# What roles should we consume?
-with 
-    'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
+# Roles to consume.
+with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
 # We assume that there is a single primary datasource.
 # For now this is AceDB.
@@ -20,6 +20,8 @@ has 'primary_datasource' => (
 
 # Dynamically establish a list of available data services.
 # This includes the primary_datasource and other singletons.
+
+# Then, during BUILD, we will connect to them.
 has '_services' => (
     is         => 'ro',
     isa        => 'HashRef',
@@ -39,6 +41,8 @@ has '_services' => (
 # THERE SHOULD BE AN ACCESSOR FOR THE DBH OF THE DEFAULT DATASOURCE
 sub version {
     my $self = shift;
+
+    # Fetch the dbh for the primary datasource
     my $service = $self->_services->{$self->primary_datasource};
     return $service->version;
 }
@@ -61,10 +65,11 @@ sub gff_dsn {
 
 # Build a hashref of services, including things like the 
 # default datasource, GFF databases, etc.
+# Note the double underscores...
 sub _build__services {
     my ($self) = @_;
     my $base = __PACKAGE__;
-        
+
     my $mp = Module::Pluggable::Object->new( search_path => [ $base . "::Service" ] );
     
     my %services;
@@ -149,16 +154,28 @@ sub BUILD {
 # WormBase::API::Object::*
 sub fetch {
     my ($self,$args) = @_;
-    my $class = $args->{class};
-    my $name  = $args->{name};
+    my $class  = $args->{class};
+    my $name   = $args->{name};
 
-    my $service = $self->primary_datasource;
-    my $driver = $self->_services->{$service};
-    my $object = $driver->fetch(-class=>$class,-name=>$name);
+    # We may have already fetched an object (ie by following an XREF).
+    # This is an ugly, ugly hack
+    my $object = $args->{object};
+
+    if ($object) {
+	my $class = $object->class;
+	return WormBase::API::Factory->create($class,
+					      { object => $object });
+    } else {
+	
+	# Try fetching an object
+	my $service = $self->primary_datasource;
+	my $driver = $self->_services->{$service};
+	my $object = $driver->fetch(-class=>$class,-name=>$name);
 #    $self->log->debug("$driver $service $object $class $name");
-
-    return WormBase::API::Factory->create($class,
-					  { object => $object });
+      
+	return WormBase::API::Factory->create($class,
+					      { object => $object });
+    }
 }
 
 
