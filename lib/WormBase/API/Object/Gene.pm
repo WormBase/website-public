@@ -170,6 +170,9 @@ sub search {
 =cut
 
 
+#######################################################
+# The Overview (formerly Identification) Panel
+#######################################################
 sub common_name {
     my $self = shift;
     my $object = $self->object;
@@ -184,37 +187,24 @@ sub common_name {
 	    });
 }
 
-
-
-###########################################
-# Components of the Identification widget
-###########################################
-# IDs is a convenience method that returns
-# a list of common IDs used by the object.
 sub ids {
     my $self   = shift;
     my $object = $self->object;
     
-    # Fetch NCBI DB IDs
-    my ($entrez,$aceview,$refseq) = $self->_fetch_ncbi_ids($object) if $object->Corresponding_CDS;
+    # Fetch external database IDs for the gene
+    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
     
     my $data = { ids => { %{$self->common_name},    # Have to unroll some hashes
 			  %{$self->name},
-			  entrez      => $entrez,
 			  aceview     => $aceview,
 			  refseq      => $refseq,
+			  version     => $object->Version,
 		 },
 		 description => 'various IDs that refer to this gene',
     };
     
-    # Should I inclue SwissProt here?  It's not really a GENE ID...
-#    if ($protein) {
-#	$translated_length = $protein->Peptide(2);
-#	
-#	# ick. Specifically fetch a trembl idead
-#	$swissprot = $self->_fetch_protein_ids($protein,'trembl');
-#    }
-    
+    # Should I include things like Protein Object IDs (SwissProt, Uniprot), 
+    # CDS IDs, etc?    
     return $data;
 }
 
@@ -243,7 +233,6 @@ sub concise_description {
 #      $data{has_details}++;
 #  }
     
-#  my %data = ( description => $description );
     return ({ concise_description => $description,
 	      description         => "A manually curated description of the gene's function",
 	    });
@@ -259,7 +248,7 @@ sub proteins {
 	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
 		
 	# Wrap these in WormBase API objects
-	my @wrapped = WormBase::API::Object::wrap(@proteins);
+	my @wrapped = $self->wrap(@proteins);
 	return \@wrapped;
     }
 }
@@ -273,7 +262,7 @@ sub cds {
     
     if (@cds) {
 	# Wrap these in WormBase API objects
-	my @wrapped = WormBase::API::Object::wrap(@cds);
+	my @wrapped = $self->wrap(@cds);
 	return \@wrapped;
     }
 }
@@ -293,7 +282,7 @@ sub kogs {
 	         map {$_->Homology_group} @proteins;
 	    if (@kogs) {
 		# Wrap these in WormBase API objects
-		my @wrapped = WormBase::API::Object::wrap(@kogs);
+		my @wrapped = $self->wrap(@kogs);
 		return \@wrapped;
 	    } else { 
 		return 1;
@@ -315,13 +304,16 @@ sub kogs {
 #    return $stash;
 #}
 
+# I'm not certain what to make of the Other_sequence tag.
+# It contains a mix of sequence IDs, most from other species.
+
 sub other_sequences {
     my $self   = shift;
     my $object = $self->object;
 
     if (my @seqs = $object->Other_sequence) {
 	# Wrap these in WormBase API objects
-	my @wrapped = WormBase::API::Object::wrap(@seqs);
+	my @wrapped = $self->wrap(@seqs);
 	return \@wrapped;
     } else {
 	return 1;
@@ -336,9 +328,6 @@ sub gene_models {
     my $self   = shift;
     my $object = $self->object;
     my $data = {};
-
-    # How to handle remarks?
-    my %unique_remarks;
 
     my $sequences = $self->_fetch_transcripts();
     foreach my $sequence (@$sequences) {
@@ -377,7 +366,6 @@ sub gene_models {
 	# Calculate the length of spliced/unspliced.
 	# Maybe I should just return the sequence in the data structure, too.
 #	my $species = $self->Species;	
-#	my $gff_model   = $self->service('gff_c_elegans');
 
 	my $gff_service = $self->gff_dsn('c_elegans');
 	my $gff_gene    = $gff_service->fetch_gff_gene($sequence);
@@ -411,17 +399,12 @@ sub gene_models {
 #	    $protein_description = $self->_select_protein_description($sequence,$protein);
 	}
 
-#	my @wrapped = WormBase::API::Object::wrap($sequence);
-
-	# Object wrapping isn't working here!!!!!
 	push @{$data->{gene_models}},
 	{
-#	    sequence => $sequence ? WormBase::API::Object::wrap($sequence) : '' ,
-	    sequence => $sequence,
+	    sequence => $sequence ? $self->wrap($sequence) : '' ,
 	    notes    => \@notes,
 	    status   => $status,
-	    protein  => $protein,
-#	    protein  => $protein ? WormBase::API::Object::wrap($protein) : '',
+	    protein  => $protein ? $self->wrap($protein) : '',
 #	    protein_description => $protein_description,
 	    length_translated   => $translated_length || '',
 	    length_unspliced    => $length_unspliced,
@@ -433,7 +416,6 @@ sub gene_models {
     return $data;
 }
 
-
 sub cloned_by {
     my $self   = shift;
     my $object = $self->object;
@@ -442,21 +424,19 @@ sub cloned_by {
     return 1 unless $cloned_by;
     
     my ($tag,$source) = $cloned_by->row ;
-    return ({ cloned_by => WormBase::API::Object::wrap($cloned_by),
+    return ({ cloned_by => $self->wrap($cloned_by),
 	      tag       => $tag,
 	      source    => $source,
-	      description => 'the researcher responsible for cloning this gene',
+	      description => 'the researcher noted for cloning this gene',
 	    });
 }
-
-
 
 # Object History.  This should be suitably generic and moved to Object.pm
 sub history {
     my $self   = shift;
     my $object = $self->object;
     my @history = $object->History;
-  
+
     # Present each history event as a separate item in the data struct
     my $data = {};
     foreach my $history (@history) {
@@ -465,10 +445,8 @@ sub history {
 
 	my @versions = $history->col;
 	foreach my $version (@versions) {
-	    
             #  next unless $history eq 'Version_change';    # View Logic
-	    my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);
-	    
+	    my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);	    
 	    if ($history eq 'Version_change') {
 		($vers,$date,$curator,$event,$action,$remark) = $version->row; 
 		
@@ -480,16 +458,16 @@ sub history {
 		}
 	    } else {
 		($gene) = $version->row;
-	    }
-	    
+	    }	    
+
 	    push @{$data->{history}},
 	    { type    => $type,
 	      version => $version,
 	      date    => $date,
 	      action  => $action,
 	      remark  => $remark,
-	      gene    => $gene ? WormBase::API::Object::wrap($gene) : '',
-	      curator => $gene ? WormBase::API::Object::wrap($curator) : '',
+	      object  => $gene    ? $self->wrap($gene) : '',
+	      curator => $curator ? $self->wrap($curator) : '',
 	    };
 	}
     }
@@ -1104,7 +1082,7 @@ sub alleles {
     my $object = $self->object;
     if (my @vars = $object->Allele) {
 	# Wrap these in WormBase API objects
-	my @wrapped = WormBase::API::Object::wrap(@vars);
+	my @wrapped = $self->wrap(@vars);
 	return \@wrapped;
     } else {
 	return 1;
@@ -1353,28 +1331,22 @@ sub _select_protein_description {
 # Aceview and entrez are unique to gene (although stored in CDS)
 # refseq is unique to CDS - NM_* is mRNA ID.
 # DONE
-sub _fetch_ncbi_ids {
+sub _fetch_database_ids {
     my ($self,$object) = @_;
-    my ($aceview,$entrez,@refseq);
+    my ($aceview,@refseq);
     # Fetch all DB IDs at once, uniquifying them
     # for genes at the same time
-    my @cds = $object->Corresponding_CDS;
-    foreach my $s (@cds) {
-	my @dbs = $s->Database;
-	foreach my $db (@dbs) {
-	    foreach my $col ($db->col) {
-		if ($col eq 'AceView') {
-		    $aceview = $col->right;
-		} elsif ($col eq 'RefSeq') {
-		    push (@refseq,$col->right);
-		} elsif ($col eq 'GeneID') {
-		    #	} elsif ($col eq 'GI_number') {
-		    $entrez = $col->right;
-		}
+    my @dbs = $object->Database;
+    foreach my $db (@dbs) {
+	foreach my $type ($db->col) {
+	    if ($db eq 'AceView') {
+		$aceview = $type->right;
+	    } elsif ($db eq 'RefSeq') {
+		push (@refseq,eval { $type->col });
 	    }
 	}
     }
-    return ($entrez,$aceview,\@refseq);
+    return ($aceview,\@refseq);
 }
 
 
@@ -1646,30 +1618,91 @@ sub species2url {
     
 =head1 METHODS
 
+=head2 The Overview Panel
+
 =over
 
-=item $self->common_name($object)
+=item $gene->common_name()
 
- Returns : Ace::Object::Gene_name
- Widget  : identification
+Returns:
 
-=item $self->ids($object)
+  { common_name => W::API::O::Gene_name }
 
- Returns : Ace::Object::Gene
- Widget  : identification
+=item $gene->ids();
 
-=item $self->description($object)
+This is largely a convenience method that collects commonly used
+IDs for a gene in one place. Each is accesible individually.
+ 
+ Returns : { ids => { common_name => 'string',
+                      name        => 'WBGene ID',
+                      version     => Int,
+                      refseq      => \@ of refseq IDs,
+                      aceview     => 'string, aceview ID',
+                    }
+            }
 
- Returns : hash reference with keys of
-           description and details
- Widget  : identification
+=item $gene->concise_description()
 
-=item $self->ncbi_kogs($object)
+ Returns : { concise_description => 'string' }
 
- Returns : array reference of Homology_group objects,
-           InParanoid excluded.
- Widget  : identification
- TODO    : Simple list; could be generic template
+=item $gene->proteins()
+
+ Returns : array reference of WB::API::Object::Protein objects
+           corresponding to the gene
+
+=item $gene->cds()
+
+ Returns : array reference of WB::API::Object::CDS objects
+           corresponding to the gene
+
+=item $gene->kogs()
+
+ Returns : array reference of WB::API::Object::Homolog_group objects
+           for the gene, InParanoid excluded.
+
+=item $gene->other_sequences()
+
+ Returns : array reference of WB::API::Object::Sequence objects
+           not always of the same species.
+
+=item $gene->gene_models()
+
+ Returns : array reference, each item a hash for a transcript
+    {       sequence => WB::API::O::Sequence object,
+	    notes    => \@notes,
+	    status   => 'gene model status',
+	    protein  => WB::API::O::Protein,
+	    length_translated   => 'int',
+	    length_unspliced    => 'int',
+	    length_spliced      => 'int',
+	};
+
+=item $gene->cloned_by()
+
+ Returns : { cloned_by => WB::API::Object::Author,
+             tag       => 'string',
+             source    => 'string'  }
+
+=item $gene->history()
+
+Returns : array reference, each item a hash of a history entry
+  	    { type    => 'history event',
+	      version => int,
+	      date    => $date,
+	      action  => 'history action',
+	      remark  => $remarkk,
+	      gene    => W::A::O::Gene if appropriate
+	      curator => W::A::O::Person if appropriate
+	    };
+  
+
+
+
+
+
+
+
+
 
 =item $self->reactome_knowledgebase($object)
 
@@ -1677,27 +1710,10 @@ sub species2url {
  Widget  :
  TODO    : need template and config for reactome URLs (actually URL constructor)
 
-=item $self->other_sequences($object)
 
- Returns : Array reference of Other_sequence objects
- Widget  : identification
- TODO    : Simple list; could be generic template
 
-=item $self->ncbi($object)
 
- Returns : Hash reference keyed by names of NCBI IDs
- Widget  : identification
 
-=item $self->gene_models($object)
-
- Returns : Hash reference with various entries for the gene model table
- Widget  : identification
-
-=item $self->cloned_by($object)
-
- Returns : Hash reference containing keys of evidence and source
- Widget  : identification
- TODO    : This could be a suitable generic hash
 
 =item $self->genomic_position($object)
 
