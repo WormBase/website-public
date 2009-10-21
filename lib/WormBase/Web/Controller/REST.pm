@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
 
+
+
 =head1 NAME
 
 WormBase::Web::Controller::REST - Catalyst Controller
