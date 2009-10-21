@@ -5,9 +5,6 @@ use parent 'Catalyst::View::TT';
 
 __PACKAGE__->config({
 		     INCLUDE_PATH => [
-#				      WormBase::Web->path_to( 'root', 'templates', 'src'    ),
-#				      WormBase::Web->path_to( 'root', 'templates', 'lib'    ),
-#				      WormBase::Web->path_to( 'root', 'static',    'css'    ),
 				      WormBase::Web->path_to( 'root', 'templates' ),
 				      WormBase::Web->path_to( 'root', 'templates' , 'config'),
 				      WormBase::Web->path_to( 'root', 'static',    'css'    ),
@@ -25,12 +22,12 @@ __PACKAGE__->config({
 		     POST_CHOMP   => 1,
 		     # NOT CURRENTLY IN USE!
 #		     PLUGIN_BASE  => 'WormBase::Web::View::Template::Plugin',
-#		     PLUGINS      => {
-#				      url    => 'WormBase::Web::View::Template::Plugin::URL',
+		     PLUGINS      => {
+				      url    => 'WormBase::Web::View::Template::Plugin::URL',
 #				      image  => 'Template::Plugin::Image',
 #				      format => 'Template::Plugin::Format',
 #				      util   => 'WormBase::Web::View::Template::Plugin::Util',
-#				     },
+				     },
 #		     TIMER        => 1,
 		     DEBUG        => 1,
 		     CONSTANTS    => {
