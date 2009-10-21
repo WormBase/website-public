@@ -29,11 +29,6 @@ extends 'WormBase::API';
 
 =head1
 
-use Moose;
-extends 'WormBase';			     
-
-
-
 # Fetch an object and stash it
 has 'dbh_ace'        => (is => 'ro');
 has 'gff_handle'     => (is => 'ro');
@@ -84,12 +79,13 @@ sub object {
 
 # Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
 
+
 # Expects an array reference of objects (or a simple scalar object)
+
+
 sub wrap {
     my ($self,$objects) = @_;
 
-#    print $objects ."\n\n";
-#    return;
     # Allow for array references or scalar variables
     $objects = eval { ref $objects =~ /ARRAY/ } ? $objects : [ $objects ];
     
@@ -103,6 +99,7 @@ sub wrap {
     # User might have passed and expected just a single object
     return wantarray ? @wrapped : $wrapped[0];
 }
+
 
 
 
