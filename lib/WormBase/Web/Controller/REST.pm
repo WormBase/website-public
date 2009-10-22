@@ -18,28 +18,11 @@ Catalyst Controller.
 
 =cut
 
-
-# This could/should be created dynamically...
-# All it does is stash the current requested object so that I can
-# format my URLs as I choose.
-
-# URL: 
-# /rest/CLASS/NAME/REQUESTED_DATA/FORMAT
-sub get_params : Chained('/') PathPart("rest") CaptureArgs(2) {
-
-  my ($self,$c,$class,$name) = @_;
-  $c->stash->{request} = $name;
-  $c->stash->{class}   = $class;
-  $c->log->debug("WormBase::Web::Controller::REST: $class; $name");
-  # $c->log->debug($c->model(ucfirst($class)));
-  # my $ace = $c->model('AceDB');
-}
-
 =head2 pages() pages_GET()
 
-Provide a REST URI of all available pages.
+Return a list of all available pages and their URIs
 
- GET /rest/pages
+TODO: This is currently just returning a dummy object
 
 =cut
 
@@ -48,41 +31,192 @@ sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
 sub pages_GET {
     my ($self,$c) = @_;
     my @pages = keys %{ $c->config->{pages} };
-    $self->status_ok( $c, entity => \@pages );
+
+    my %data;
+    foreach my $page (@pages) {
+	my $uri = $c->uri_for('/page',$page,'WBGene00006763');
+	$data{$page} = "$uri";
+    }
+
+    $self->status_ok( $c, entity => { data => \%data,
+				      description => 'Available (dynamic) pages at WormBase',
+		      }
+	);
 }
 
 
-=head2 widgets() widgets_GET()
 
-Provide a REST URI of all widgets available for a given page.
+######################################################
+#
+#   WIDGETS
+#
+######################################################
 
- GET /rest/widgets/[PAGE]
+=head2 available_widgets(), available_widgets_GET()
+
+For a given CLASS and OBJECT, return a list of all available WIDGETS
+
+eg http://localhost/rest/available_widgets/gene/WBGene00006763
 
 =cut
 
-sub widgets : Path('/rest/widgets') :Args(1) :ActionClass('REST') {}
+sub available_widgets : Path('/rest/available_widgets') :Args(2) :ActionClass('REST') {}
 
-sub widgets_GET {
-    my ($self,$c,$page) = @_;
-    my (@widgets) = @{ $c->config->{pages}->{$page}->{widget_order} };
-    $self->status_ok( $c, entity => \@widgets );
+sub available_widgets_GET {
+    my ($self,$c,$class,$name) = @_;
+    my (@widgets) = @{ $c->config->{pages}->{$class}->{widget_order} };
+    
+    my %data;
+    foreach my $widget (@widgets) {
+	my $uri = $c->uri_for('/widget',$class,$name,$widget);
+	$data{$widget} = "$uri";
+    }
+    
+    $self->status_ok( $c, entity => { data => \%data,
+				      description => "All widgets available for $class:$name",
+		      }
+	);
 }
 
-=head2 widgets() widgets_GET()
 
-Provide a REST URI of all fields for a given widget and page.
 
- GET /rest/fields/[WIDGET]/[PAGE]
+=head widget(), widget_GET()
+
+Provided with a class, name, and field, return its content
+
+eg http://localhost/rest/widget/[CLASS]/[NAME]/[FIELD]
 
 =cut
 
-sub fields : Path('/rest/fields') :Args(2) :ActionClass('REST') {}
+sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
-sub fields_GET {
-    my ($self,$c,$widget,$page) = @_;
-    my @fields = eval { @{ $c->config->{pages}->{$page}->{widgets}->{$widget} }; };
-    $self->status_ok( $c, entity => \@fields );
+sub widget_GET {
+    my ($self,$c,$class,$name,$widget) = @_;
+
+    # Fetch our external model
+    my $api = $c->model('WormBaseAPI');
+ 
+   # Fetch the object from our driver	 
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
+    
+    # Fetch a WormBase::API::Object::* object
+    # But wait. Some methods return lists. Others scalars...
+    my $object = $api->fetch({class=> ucfirst($class),
+			      name => $name}) or die "$!";
+
+    # TODO: Load up the data content. Should these be REST calls?
+    my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
+    my $data = {};
+    foreach my $field (@fields) {
+	$data->{$_} = $object->$field;
+    }
+    
+    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
+    # PERHAPS I SHOULD INCLUDE FIELDS?
+    # Include the full uri to the *requested* object.
+    # IE the page on WormBase where this should go.
+    my $uri = $c->uri_for("/page",$class,$name);
+    
+    $self->status_ok($c, entity => {
+	class   => $class,
+	name    => $name,
+	uri     => "$uri",
+	$widget => $data
+		     }
+	);
 }
+
+
+######################################################
+#
+#   FIELDS
+#
+######################################################
+
+=head2 available_fields(), available_fields_GET()
+
+Fetch all available fields for a given WIDGET, PAGE, NAME
+
+eg  GET /rest/fields/[WIDGET]/[PAGE]/[NAME]
+
+# This makes more sense than what I have now
+/rest/class/*/widgets  - all available widgets
+/rest/class/*/widget   - the content for a given widget
+
+/rest/class/*/widget/fields - all available fields for a widget
+/rest/class/*/widget/field
+
+=cut
+
+sub available_fields : Path('/rest/available_fields') :Args(3) :ActionClass('REST') {}
+
+sub available_fields_GET {
+    my ($self,$c,$widget,$class,$name) = @_;
+    my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
+
+    my %data;
+    foreach my $field (@fields) {
+	my $uri = $c->uri_for('/rest/field',$class,$name,$field);
+	$data{$field} = "$uri";
+    }
+    
+    $self->status_ok( $c, entity => { data => \%data,
+				      description => "All fields that comprise the $widget for $class:$name",
+		      }
+	);
+}
+
+
+=head field(), field_GET()
+
+Provided with a class, name, and field, return its content
+
+eg http://localhost/rest/field/[CLASS]/[NAME]/[FIELD]
+
+=cut
+
+sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
+
+sub field_GET {
+    my ($self,$c,$class,$name,$field) = @_;
+
+    # Fetch our external model
+    my $api = $c->model('WormBaseAPI');
+ 
+   # Fetch the object from our driver	 
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
+    
+    # Fetch a WormBase::API::Object::* object
+    # But wait. Some methods return lists. Others scalars...
+    my $object = $api->fetch({class=> ucfirst($class),
+			      name => $name}) or die "$!";
+
+    my $data = $object->$field;
+    
+    # Include the full uri to the *requested* object.
+    # IE the page on WormBase where this should go.
+    my $uri = $c->uri_for("/page",$class,$name);
+
+    $self->status_ok($c, entity => {
+	                 class  => $class,
+			 name   => $name,
+	                 uri    => "$uri",
+			 $field => $data
+		     }
+	);
+}
+
+
+
+
+
+
+
+
 
 
 
