@@ -5,12 +5,11 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 
 
+
 __PACKAGE__->config(
-#   'default' => 'text/html',
+   'default' => 'text/x-yaml',
     'map' => {
 	'text/html'        => [ 'View', 'TT' ],
-#        'application/json' => [ 'View', 'JSON' ],
-#	'application/json' => [ 'Catalyst','Action','Serialize','JSON' ],
     });
 
 =head1 NAME
@@ -121,6 +120,8 @@ sub widget_GET {
     }
     my $object = $c->stash->{object};
     
+
+
     # TODO: Load up the data content. Should these be REST calls?
     my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
     my $data = {};
@@ -206,6 +207,10 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ($self,$c,$class,$name,$field) = @_;
 
+    my $headers = $c->req->headers;
+    $c->log->debug($headers->header('Content-Type'));
+    $c->log->debug($headers);
+
     unless ($c->stash->{object}) {
 	# Fetch our external model
 	my $api = $c->model('WormBaseAPI');
@@ -221,6 +226,13 @@ sub field_GET {
 					    name => $name}) or die "$!";
     }
     
+    # Did we request the widget by ajax?
+    # Supress boilerplate wrapping.
+    if ( $c->is_ajax() ) {
+	$c->stash->{noboiler} = 1;
+    }
+
+
     my $object = $c->stash->{object};
     my $data = $object->$field;
 
