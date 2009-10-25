@@ -182,10 +182,18 @@ sub common_name {
 	|| $object->Molecular_name
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $object;
-    return ({common_name => $common_name,
+
+    # Q: Return an object or a string?
+    # Q: Data structure
+    return ({data        => "$common_name",
 	     description => 'The most commonly used name of the gene',
 	    });
+
+#    return ({common_name => "$common_name",
+#	     description => 'The most commonly used name of the gene',
+#	    });
 }
+
 
 sub ids {
     my $self   = shift;
@@ -194,13 +202,22 @@ sub ids {
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
     
-    my $data = { ids => { %{$self->common_name},    # Have to unroll some hashes
-			  %{$self->name},
-			  aceview     => $aceview,
-			  refseq      => $refseq,
-			  version     => $object->Version,
-		 },
-		 description => 'various IDs that refer to this gene',
+#    my $data = { data => { #%{$self->common_name},    # Have to unroll some hashes
+#			  #%{$self->name},
+#			   aceview    => $aceview,
+#			   refseq      => $refseq,
+#			   version     => $object->Version,			   
+#		 },
+#		 description => 'various IDs that refer to this gene',
+#    };
+
+    my $version = $object->Version;
+    my $data = { #%{$self->common_name},    # Have to unroll some hashes
+	         #%{$self->name},
+	aceview    => "$aceview",
+	refseq      => $refseq,
+	version     => $object->Version->name,
+	description => 'various IDs that refer to this gene',
     };
     
     # Should I include things like Protein Object IDs (SwissProt, Uniprot), 
@@ -1340,9 +1357,9 @@ sub _fetch_database_ids {
     foreach my $db (@dbs) {
 	foreach my $type ($db->col) {
 	    if ($db eq 'AceView') {
-		$aceview = $type->right;
+		$aceview = $type->right->name;
 	    } elsif ($db eq 'RefSeq') {
-		push (@refseq,eval { $type->col });
+		push (@refseq,map { "$_" } eval { $type->col });
 	    }
 	}
     }
