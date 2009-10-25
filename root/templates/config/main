@@ -5,17 +5,15 @@
    # template.  This is the place to define any extra template variables,
    # macros, load plugins, and perform any other template setup.
 
-   IF Catalyst.debug;
-     # define a debug() macro directed to Catalyst's log
-     MACRO debug(message) CALL Catalyst.log.debug(message);
+   IF c.config.debug;
+     # define a debug() macro directed to c's log
+     MACRO debug(message) CALL c.log.debug(message);
    END;
 
    # Site-wide data
    site = {
-     title          => 'WBase Reimplementation',
-     subtitle    => 'The central data repository of nematode biology',
      copyright => '2000-2008 The WormBase Consortium',
-     unknown  => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
+     unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
 
 #   # MACROs for building URLs.  I don't know how excited about
@@ -34,9 +32,9 @@
 
 # Dynamically select a tempate: custom, common, generic
 MACRO select_field_template(field,class) BLOCK;
-     IF Catalyst.config.generic_fields.$field;
+     IF c.config.generic_fields.$field;
               "generic/field.tt2";
-     ELSIF Catalyst.config.common_fields.$field;
+     ELSIF c.config.common_fields.$field;
               "common_fields/" _ field _ ".tt2";
      ELSE;
               class _ "/" _ field _ '.tt2';
@@ -44,9 +42,9 @@ MACRO select_field_template(field,class) BLOCK;
 END;
 
 MACRO select_widget_template(widget,class) BLOCK;
-     IF Catalyst.config.generic_widgets.$widget;
+     IF c.config.generic_widgets.$widget;
               "generic/widget.tt2";
-     ELSIF Catalyst.config.common_widgets.$widget;
+     ELSIF c.config.common_widgets.$widget;
               "common_widget/" _ widget _ ".tt2";
      ELSE;
               class _ "/" _ widget _ '.tt2';
@@ -70,7 +68,7 @@ END;
    USE url;
 
    # Data munging utilities
-   USE Util;
+   # USE Util;
 
    # Basic table formatting. Perhaps these shold be dnamic instead
    #USE Table(list, rows=5)

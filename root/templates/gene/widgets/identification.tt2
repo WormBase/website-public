@@ -9,11 +9,7 @@
     
     The template names are actually in the stash.  This should be unnecessary...
 
-
 %]
-
-
-    [% Dumper.dump(description) %]
 
     [% PROCESS "gene/ids.tt2" %]
     [% PROCESS "gene/description.tt2"      IF description%]

@@ -92,7 +92,7 @@ This is the default index and debugging screen for the <b>[% page
 	<td class="field-name">(widget)</td>
                 <td>
                    <p class="[% widget_template_type(widget) %]">
-              		       <a href="[% c.uri_for('/' _ this_page,random_object,widget) %]" target="_blank">
+              		       <a href="[% c.uri_for('/widget',this_page,random_object,widget) %]" target="_blank">
                                          [% select_widget_template(widget,this_page) %]
                               </a>
                    </p>
@@ -103,16 +103,33 @@ This is the default index and debugging screen for the <b>[% page
  	   <td class="field-name">[% field %]</td>
            <td>
                  <p class="[% field_template_type(field) %]">
-     		       <a href="[% c.uri_for('/' _ this_page,random_object,field) %]" target="_blank">
+     		       <a href="[% c.uri_for('/field',this_page,random_object,field) %]" target="_blank">
                               [% select_field_template(field,this_page) %]
                        </a>
+
+    	               <!-- The REST URI is: [% c.uri_for('/rest','field',this_page,random_object,field) %]" -->
+		       <a class="ajax" href="[% c.uri_for('/rest','field',this_page,random_object,field) %]">
+		       	    json
+                       </a>
+
+		       <a class="ajax" title="[% field %]" href="[% c.uri_for('/rest','field',this_page,random_object,field) %]">
+		       	    xml
+                       </a>
+   	               <div id="returned-data" class="[% field %]"></div>
                  </p>
          </td>
    </tr>
+
         [% END %]
    </table></p>
 </div>
 
 [% END %]
+
+
+
 [% END %]
+
 </div>
+
+

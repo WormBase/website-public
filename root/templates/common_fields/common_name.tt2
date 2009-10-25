@@ -11,5 +11,7 @@
                      IF c.config.debug_view %]
 
 [% WRAPPER "boilerplate/field" title="Common Name" %]
-        [% common_name %]
+   	[% c.stash.common_name.data %]
+	<!-- This should be a tooltip -->
+        <i>This is the description. It should be a tooltip</i>[% c.stash.common_name.description %]
 [% END %]

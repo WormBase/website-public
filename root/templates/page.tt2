@@ -15,6 +15,11 @@
    [% END %] 
 </div>
 
+
+   Hello. This is the gene page tempalte.
+
+
+
 [% IF view=="buffered" %]
     [%- # THIS IS DEPRECATED AND CAN PROBABLY BE DELETED -%]
 	

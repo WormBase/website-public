@@ -9,11 +9,11 @@
 
 [% BLOCK identify_templates %]
 
-   [% # If called, debug_view is already set.  Is it set to comment, browser, or log %]
+   [% # If called, debug_view is already set.  Is it set to comment, browser, or log? %]
 
    [% msg = "template: $this_component; caller: $template.name" %]
 
-   [% IF Catalyst.config.debug_view == "comment" %]
+   [% IF c.config.debug_view == "comment" %]
       [% comment("$title; $msg") %]
    [% ELSE %]
         <p class="debug-view">[% "$title; $msg" %]</p>

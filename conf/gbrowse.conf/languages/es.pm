@@ -1,5 +1,5 @@
 # do not remove the { } from the top and bottom of this page!!!
-# Translation by Marcela Tello-Ruiz
+# Translation by Marcela K. Tello-Ruiz
 {
 
  CHARSET =>   'ISO-8859-1',
@@ -43,6 +43,8 @@ END
    BOOKMARK => 'Marcar esta página',
 
    IMAGE_LINK => 'Ligar a imagen',
+
+   PDF_LINK   => 'Bajar PDF',
 
    SVG_LINK   => 'Imagen de alta resolución',
 
@@ -169,6 +171,8 @@ END
    ALPHABETIC  => 'Alfabético',
 
    VARYING     => 'Variando/Variante',
+
+   SHOW_GRID    => 'Mostrar Cuadr’cula',
 
    SET_OPTIONS => 'Definir Opciones para pistas...',
 
@@ -308,6 +312,8 @@ END
    # HELP PAGES
    #--------------
 
+   OK                 => 'OK',
+
    CLOSE_WINDOW => 'Cerrar esta ventana',
 
    TRACK_DESCRIPTIONS => 'Seguir la pista de descripciones & citas',
@@ -330,9 +336,11 @@ END
 
  BACK_TO_BROWSER => 'Regresar al buscador',
 
- PLUGIN_SEARCH_1   => '%s (por medio de %s búsqueda)',
+ PLUGIN_SEARCH   => 'Buscar por medio del %s accesorio (plugin)',
 
- PLUGIN_SEARCH_2   => '&lt;%s busca&gt;',
+ PLUGIN_SEARCH_1   => 'Busqueda 1 por medio del %s accesorio (plugin)',
+
+ PLUGIN_SEARCH_2   => 'Busqueda 2 por medio del %s accesorio (plugin)',
 
  CONFIGURE_PLUGIN   => 'Configurar',
 
@@ -357,5 +365,82 @@ END
  SMALL_INTERVAL    => 'Ajustando el tamaño pequeño del intervalo a %s pares de bases',
 
  NO_SOURCES        => 'No hay fuentes de datos legibles configuradas. Es posible que no tengas permiso para verlas.',
+
+ ADD_YOUR_OWN_TRACKS => 'Agrega tus propias anotaciones',
+
+ INVALID_SOURCE    => 'La fuente denominada %s es inv‡lida',
+
+ BACKGROUND_COLOR  => 'Color de llenado',
+
+ FG_COLOR          => 'Color de l’nea',
+
+ HEIGHT           => 'Altura',
+
+ PACKING          => 'Embalaje',
+
+ GLYPH            => 'Forma (glifo)',
+
+ LINEWIDTH        => 'Ancho de l’nea',
+
+ DEFAULT          => '(Por default)',
+
+ DYNAMIC_VALUE    => 'Calculado din‡micamente',
+
+ CHANGE           => 'Cambiar',
+
+ DRAGGABLE_TRACKS  => 'Pistas movibles',
+
+ CACHE_TRACKS      => 'Esconder pistas',
+
+ SHOW_TOOLTIPS     => 'Mostrar sugerencias de uso',
+
+ OPTIONS_RESET     => 'Todos los ajustes de p‡gina han sido reinicializados con sus valores originales',
+
+ OPTIONS_UPDATED   => 'Una nueva configuración del sitio est‡ en efecto; todos los ajustes de p‡gina han sido reinicializados con sus valores originales',
+
+ SEND_TO_GALAXY    => 'Enviar esta region a Galaxy',
+
+ NO_DAS            => 'Error en la instalacion: el modulo Bio::Das debe haber sido instalado primero para que los URLs de DAS funcionen. Favor de informar a su administrador de sistemas (webmaster).',
+
+ SHOW_OR_HIDE_TRACK => '<b>Mostrar o esconder esta pista</b>',
+
+ CONFIGURE_THIS_TRACK   => '<b>Presione la tecla par acambiar las opciones.</b>',
+
+ SHARE_THIS_TRACK   => '<b>Compartir esta pistak</b>',
+
+ SHARE_ALL          => 'Compartir todas las pistas',
+
+ SHARE              => 'Compartir %s',
+
+ SHARE_INSTRUCTIONS_ONE_TRACK => <<END,
+Para compartir esta pista con otro buscador de genomas GBrowse, 
+primero copie la direccion o URL de abajo, despues vaya al otro buscador de genomas GBrowse,
+pegue el URL en el espacio al final de la pagina bajo "Inserte Anotacion Remota".
+Si esta pista fue procesada desde un documento que usted subio a la red, tenga presente que 
+al compartir este URL con otro usuario, <b>todos</b> los datos en dicho documento puede pontencialmente ser vistos por dicho usuario.
+END
+
+ SHARE_INSTRUCTIONS_ALL_TRACKS => <<END,
+Para compartir todas las pistas con otro buscador de genomas GBrowse, 
+primero copie la direccion o URL de abajo, despues vaya al otro buscador de genomas GBrowse,
+pegue el URL en el espacio al final de la pagina bajo "Inserte Anotacion Remota".
+Si cualquiera de las pistas seleccionadas fueron procesadas desde un documento que usted subio a la red, tenga presente que al compartir este URL con otro usuario, <b>todos</b> los datos en dicho documento puede pontencialmente ser vistos por dicho usuario.
+END
+
+
+ SHARE_DAS_INSTRUCTIONS_ONE_TRACK => <<END,
+Para compratir esta pista con otro buscador de genomas usando 
+<a href="http://www.biodas.org" target="_new"> Distributed Annotation System (DAS)</a>,
+primero copie el URL de abajo, luego vaya al otro buscador y delo de alta como una nueva
+fuente DAS. <i>Pistas cuantitativas (documentos "wiggle") y documentos subidos a la red no pueden ser compartidos usando DAS.</i>
+END
+
+ SHARE_DAS_INSTRUCTIONS_ALL_TRACKS => <<END,
+Para compratir todas las pistas actualmente seleccionadas con otro buscador de genomas usando 
+<a href="http://www.biodas.org" target="_new"> Distributed Annotation System (DAS)</a>,
+primero copie el URL de abajo, luego vaya al otro buscador y delo de alta como una nueva
+fuente DAS. <i>Pistas cuantitativas (documentos "wiggle") y documentos subidos a la red no pueden ser compartidos usando DAS.</i>
+END
+
 
 };

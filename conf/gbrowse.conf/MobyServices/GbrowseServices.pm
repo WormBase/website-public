@@ -5,7 +5,7 @@ package MobyServices::GbrowseServices;
 # Non-modperl users should change this variable if needed to point
 # to the directory in which the configuration files are stored.
 #
-$CONF_DIR  = '/usr/local/wormbase/conf/gbrowse.conf';
+$CONF_DIR  = '/usr/local/wormbase/website-2.0/conf/gbrowse.conf';
 #
 ###################################################################
 

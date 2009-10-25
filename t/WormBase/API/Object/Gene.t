@@ -52,7 +52,7 @@ my @methods = qw/common_name
 		 cds
 		 kogs
 		 other_sequences
-		 cloned_by
+		 cloned_by		 
 		 history
 		 gene_models
 		 /;

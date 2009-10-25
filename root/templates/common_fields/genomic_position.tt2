@@ -5,7 +5,7 @@
 
 
 [% WRAPPER "boilerplate/field" title="Genomic Position" -%]
-      [% genomic_position.chromosome %]:[% genomic_position.start %]..[% genomic_position.stop %] bp
+      Chromosome [% genomic_position.chromosome %]:[% genomic_position.abs_start %]..[% genomic_position.abs_stop %] bp
 [% END %]
 
 [%#- This will only be populated for genes that reside within an operon -#%]

@@ -27,7 +27,7 @@
 </table><!-- End WormBase Header -->
 
 <!-- THIS SHOULD ONLY BE DISPLAYED ON THE HOME PAGE
-<img align="right" border="0" src="/classic/static/images/image_new_colour.jpg" alt="WormBase Banner" /><a href="/"><h3>WormBase Release [% Catalyst.stash.wbversion %]</h3></a><br clear="all" />
+<img align="right" border="0" src="/classic/static/images/image_new_colour.jpg" alt="WormBase Banner" /><a href="/"><h3>WormBase Release [% c.stash.wbversion %]</h3></a><br clear="all" />
 -->
 
 

@@ -22,7 +22,7 @@
         <th>Gene Model</th>
         <th>Status</th>
         <th>Nucleotides (coding/transcript)</th>
-        <th>Protein</th>
+        <th>Corresponding Protein</th>
         <th>Amino Acids</th>
       </tr>
 
@@ -30,6 +30,8 @@
       <tr>
          <td align="left">
          [%- url.Link(model.sequence) -%]
+
+	  <!-- Footnotes should be a pop up -->
          [%- IF model.footnotes -%]
            <span class="superscript">
               [%- model.footnotes -%]   
@@ -46,13 +48,13 @@
        </td>
        <td align="center">
           [%- IF model.protein -%]
-              [%- Link(model.protein) -%]
+              [%- url.Link(model.protein) -%]
           [%- END -%]
        </td>
        <td align="center">
-          [%- IF model.translated_length %]
-             [%- model.translated_length%] aa
-          [%- END -%]
+          [%- IF model.length_translated -%]
+             [%- model.length_translated %] aa
+	  [%- END -%]
        </td>
     </tr>
     [% END %]
@@ -74,9 +76,6 @@
          [% toggle("Other Notes",gene_models.other_notes.join("<br />")) %]
     [% END %]
     [% END %]
-    </div>
-
-    <!-- THE HISTORY TOGGLE FIELD IS MISSING -->
 
   [% END %]
 

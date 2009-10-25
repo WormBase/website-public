@@ -180,6 +180,8 @@ END
    ALPHABETIC => 'Tri alphabétique',
 
    VARYING => 'Pas de tri',
+   
+   SHOW_GRID    => 'Voir la grille',
 
    SET_OPTIONS => 'Configurer les pistes...',
 
@@ -270,7 +272,7 @@ END
 
    SETTINGS_INSTRUCTIONS => <<END,
 La boite <i>Voir</i> active ou désctive la piste. L'option
-<i>Compacter</i> force la piste à être consensée pour que 
+<i>Compacter</i> force la piste à être condensée pour que 
 les annotations se chevauchent. Les options <i>'Etendre'</i>
 et <i>Hyperétendre</i> activent un contrôle de collision qui
 utilise des algorithmes de mise en page plus lents et plus rapides.
@@ -382,5 +384,97 @@ END
  SMALL_INTERVAL    => 'Redimmensionnement du petit intervalle à %s pb',
 
  NO_SOURCES        => 'Vous n\'avez pas configuré de sources de données. Peut-être n\'avez-vous pas les droits pour les voir.',
+
+ ADD_YOUR_OWN_TRACKS => 'Ajout de vos propres pistes',
+
+ INVALID_SOURCE    => 'La source %s n\'est pas valide.',
+
+ BACKGROUND_COLOR  => 'Couleur de remplissage',
+
+ FG_COLOR          => 'Couleur de tracé',
+
+ HEIGHT           => 'Hauteur',
+
+ PACKING          => 'Disposition',
+
+ GLYPH            => 'Forme',
+
+ LINEWIDTH        => 'Largeur de ligne',
+
+ DEFAULT          => '(par défaut)',
+
+ DYNAMIC_VALUE    => 'Calcul dynamique',
+
+ CHANGE           => 'Changement',
+
+ DRAGGABLE_TRACKS  => 'Pistes déplaçables',
+
+ CACHE_TRACKS      => 'Piste en cache',
+
+ SHOW_TOOLTIPS     => 'Voir les indications',
+
+ OPTIONS_RESET     => 'Tous les paramètres de la page ont été remis à leur valeur par défaut',
+
+ OPTIONS_UPDATED   => 'Une nouvelle configuration est utilisée ; tous les paramètres de la page ont été remis à leur valeur par défaut',
+
+ CONFIGURE_THIS_TRACK   => '<b>Cliquez pour changer les paramètres de la piste.</b>',
+
+ NO_DAS            => 'Erreur d\'installation. Le module Bio::Das module doit être installé pour que les URLs DAS fonctionnent. Veuillez informer le webmaster de ce site.',
+
+ OK                 => 'OK',
+
+ PDF_LINK   => 'Téléchargement PDF',
+
+ PLUGIN_SEARCH   => 'recherche via le plugin %s',
+
+ SEND_TO_GALAXY    => 'Envoyer cette région vers Galaxy',
+
+ SHOW_OR_HIDE_TRACK => '<b>Montrer ou cacher cette piste</b>',
+
+ SHARE_THIS_TRACK   => '<b>Partager cette piste</b>',
+
+ SHARE_ALL          => 'Partager ces pistes',
+
+ SHARE              => 'Partager %s',
+
+ SHARE_INSTRUCTIONS_ONE_TRACK => <<END,
+Pour partager cette piste avec un autre Gbrowse,
+copiez d\'abord l'URL ci-dessous, ensuite allez dans l\'autre
+GBrowse et collez l\'URL dans le champ "Entrer une URL pour des 
+annotations distantes" en bas de la page. Si cette piste provient
+d\'un fichier ajouté par vous, soyez conscient que le partage de
+cette URL avec un autre utilisateur permet potentiellement que
+<b>toutes</b> vos données ajoutées soient visibles par cet 
+utilisateur.
+END
+
+ SHARE_INSTRUCTIONS_ALL_TRACKS => <<END,
+Pour partager toutes les pistes sélectionnées avec un autre Gbrowse,
+copiez d\'abord l'URL ci-dessous, ensuite allez dans l\'autre
+GBrowse et collez l\'URL dans le champ "Entrer une URL pour des 
+annotations distantes" en bas de la page. Si une de ces pistes provient
+d\'un fichier ajouté par vous, soyez conscient que le partage de
+cette URL avec un autre utilisateur permet potentiellement que
+<b>toutes</b> vos données ajoutées soient visibles par cet 
+utilisateur.
+END
+
+ SHARE_DAS_INSTRUCTIONS_ONE_TRACK => <<END,
+Pour partager cette piste avec un autre navigateur génomique
+utilisant le protocole  <a href="http://www.biodas.org" target="_new">
+Distributed Annotation System (DAS)</a>, copiez d\'abord l\'URL ci-dessous
+puis allez dans l'autre navigateur et entrez-la en tant que nouvelle
+source DAS. <i>Les pistes quantitatives (fichiers "wiggle") et les fichiers
+ajoutés ne peuvent pas êtres partagés avec DAS.</i>
+END
+
+ SHARE_DAS_INSTRUCTIONS_ALL_TRACKS => <<END,
+Pour partager toutes les pistes sélectionnées avec un autre navigateur génomique
+utilisant le protocole  <a href="http://www.biodas.org" target="_new">
+Distributed Annotation System (DAS)</a>, copiez d\'abord l\'URL ci-dessous
+puis allez dans l'autre navigateur et entrez-la en tant que nouvelle
+source DAS. <i>Les pistes quantitatives (fichiers "wiggle") et les fichiers
+ajoutés ne peuvent pas êtres partagés avec DAS.</i>
+END
 
 };

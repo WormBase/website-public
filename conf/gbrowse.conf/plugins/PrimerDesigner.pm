@@ -1,4 +1,4 @@
-# $Id: PrimerDesigner.pm,v 1.3.6.1.6.4 2007/03/31 14:16:38 sheldon_mckay Exp $
+# $Id: PrimerDesigner.pm,v 1.3.6.1.6.22 2009/05/14 21:43:47 sheldon_mckay Exp $
 
 =head1 NAME
 
@@ -25,7 +25,7 @@ http://frodo.wi.mit.edu/primer3/primer3_code.html.
 =head2 Targeting a feature or coordinate
 
 The target for PCR primer design is selected by clicking on an image map.
-For aggregate features such as gene models, etc, there is a mousover menu
+For aggregate features such as gene models, etc, there is a mouseover menu
 to select the individual part of the whole feature
 
 
@@ -39,13 +39,6 @@ products big enough to flank the target feature are found.  This will not
 necessarily find the best primers, just the first ones that produce a big 
 enough product to flank the target.  If the primers are flagged as low quality,
 more optimal optimal primers may be found by specifying a specific size-range.
-
-=head1 Bio::Graphics::Browser
-
-This plugin contains an additional package Bio::Graphics::Browser::faux.
-This class inherits from  Bio::Graphics::Browser.  Its purpose is to
-keep the  Bio::Graphics::Browser funtionality and configuration data
-while overriding image_map-related funtions required for this plugin.
 
 =head1 TO-DO
 
@@ -68,38 +61,41 @@ primer3 (http://frodo.wi.mit.edu/primer3/primer3_code.html)
 package Bio::Graphics::Browser::Plugin::PrimerDesigner;
 
 use strict;
+
 use Bio::PrimerDesigner;
 use Bio::PrimerDesigner::Tables;
 use Bio::Graphics::Browser::Plugin;
 use Bio::Graphics::Browser::Util;
-use Bio::Graphics::Browser;
 use Bio::Graphics::Feature;
 use Bio::Graphics::FeatureFile;
-use CGI qw/:standard escape/;
-use CGI::Pretty 'html3';
+use CGI qw/:standard escape html3/;
 use CGI::Carp 'fatalsToBrowser';
 use CGI::Toggle;
-use Math::Round 'nearest';
 
-use constant BINARY            => 'primer3';
-use constant BINPATH           => '/usr/local/bin';
-use constant METHOD            => 'local';
-use constant IMAGE_PAD         => 25;
-use constant MAXRANGE          => 300;
-use constant IMAGEWIDTH        => 800;
-use constant DEFAULT_SEG_SIZE  => 10000;
-use constant STYLE             => '/gbrowse/gbrowse.css';
+use constant PROGRAM          => 'primer3';
+use constant BINPATH          => '/usr/local/bin';
+use constant METHOD           => 'local';
+use constant MAXRANGE         => 300;
+use constant IMAGEWIDTH       => 800;
+use constant DEFAULT_SEG_SIZE => 10000;
+use constant ZOOM_INCREMENT   => 1000;
+use constant JS               => '/gbrowse/js';
+use constant IMAGES           => '/gbrowse/images/buttons';
+use constant CSS              => '/gbrowse/gbrowse.css';
+use constant MAX_SEGMENT      => 1_000_000;
 
 use vars '@ISA';
 
 @ISA = qw / Bio::Graphics::Browser::Plugin /;
 
-# Arg, modperl
+# modperl cleanup
 END {
   CGI::Delete_all();
 }
 
 sub name {
+  my $self = shift;
+  #$self->browser_config->tr('PCR primers') || 'PCR primers'; 
   'PCR primers';
 }
 
@@ -114,7 +110,8 @@ sub type {
 }
 
 sub verb {
-  'Design';
+  my $self = shift;
+  $self->browser_config->tr('Design') || 'Design';
 }
 
 sub mime_type {
@@ -129,26 +126,34 @@ sub reconfigure {
   my $self = shift;
   my $conf = $self->configuration;
 
+  $conf->{width} = $self->browser_config->plugin_setting('image width') || IMAGEWIDTH;
+  $conf->{isPCR} = $self->browser_config->plugin_setting('ispcr');  
+
   $conf->{size_range} = undef;
   $conf->{target}     = undef;
   $conf->{lb}         = undef;
   $conf->{rb}         = undef;
 
-  my $target = $self->config_param('target');
-  my $lb     = $self->config_param('lb');
-  my $rb     = $self->config_param('rb');
+  my $target_region = param('target_region');
+  my ($target, $lb,$rb);
+  if ($target_region) {
+    ($lb,$rb) = $target_region =~ /^\S+\:(-?\d+)\.\.(-?\d+)$/;
+  }
+  else {
+    $lb     = param('lb') || $self->config_param('lb');
+    $rb     = param('rb') || $self->config_param('rb');
+  }
 
   if ($lb && $rb) {
+    my $max_range = $self->browser_config->plugin_setting('max range') || MAXRANGE; 
     my $min_size = $rb - $lb + 40;
-    my $max_size = $min_size + MAXRANGE;
+    my $max_size = $min_size + $max_range;
 
     # round to nearest 50 bp
     $conf->{size_range} = join '-', map {$_||=50} nearest(50, $min_size, $max_size);
 
-    # make sure target is within the selected region
-    if (!$target || $target < $lb || $target > $rb) {
-      $target = int( ($lb+$rb)/2 );
-    }
+    # make sure target is always centered in the selected region
+    $target = int( ($lb+$rb)/2 );
   }
 
   $conf->{target}  = $target;
@@ -172,12 +177,22 @@ sub configure_form {
   my $self = shift;
   my ($segment,$target,$lb,$rb,$feats) = @_;
   ($segment) = @{ $self->segments } unless $segment;
-  $segment ||= fatal_error "This plugin requires a sequence region";
+  $segment ||= fatal_error("This plugin requires a sequence region");
   my $browser = $self->browser_config;
   my $conf = $self->configuration;
 
   my $no_buttons = 1 if !($lb || $rb)  || $feats;
   
+
+  # we need our own headers, so redirect config and go straight to dump
+  my $url = url(-query_string => 1);
+  my $cfg = $browser->tr('Configure');
+  my $go  = $browser->tr('Go');
+  if ($url =~ /$cfg/) {
+    $url =~ s/$cfg/$go/;
+    return "<script type='text/javascript'>window.location='$url';</script>";
+  }
+
   # make sure the target is not stale for the initial config
   delete $conf->{target} if !($lb || $rb); 
 
@@ -192,7 +207,7 @@ sub configure_form {
   my $atts = $self->primer3_params($lb,$rb) unless $no_buttons;
 
   my $table_width = IMAGEWIDTH + 50;
-  my ( $image, $map, $zoom_menu )
+  my ( $image, $zoom_menu )
       = $self->segment_map( \$segment, $feats, $lb, $rb );
   my $message = '';
 
@@ -201,56 +216,59 @@ sub configure_form {
   my $ref    = $segment->ref;
   my $name   = $conf->{name} || "$ref:$start..$end";
 
-  my $length = unit_label( $segment->length );
+  my $length = $self->browser_config->unit_label( $end - $start );
 
-  my $html   =  h2("Showing $length from $ref, positions $start to $end");
+  my $html = h2("Showing $length from $ref, positions $start to $end");
 
   $html .= hidden( -name => 'plugin',        -value => 'PrimerDesigner' )
-        . hidden( -name => 'plugin_action', -value => 'Go' )
-        . hidden( -name => 'ref', -value => $segment->ref )
-        . hidden( -name => 'start', -value => $segment->start )
-        . hidden( -name => 'stop', -value => $segment->stop );
-  $html .= hidden( -name => $self->config_name('lb'), -value => $lb) if $lb;
-  $html .= hidden( -name => $self->config_name('rb'), -value => $rb) if $rb;
-  $html .= hidden( -name => $self->config_name('target'), -value => $target) if $target;
+        .  hidden( -name => 'plugin_action', -value => 'Go' )
+        .  hidden( -name => 'ref',           -value => $segment->ref )
+        .  hidden( -name => 'start',         -value => $segment->start )
+        .  hidden( -name => 'stop',          -value => $segment->stop )
+	.  hidden( -name => 'nocache',       -value => 1 );
+  
+  $html .=  hidden( -name => 'lb', -value => $lb||'');
+  $html .=  hidden( -name => 'rb', -value => $rb||'');
+  $html .=  hidden( -name => 'target', -value => $target||'');
 
   my $map_text = $self->map_header;
 
-  my $on = 1 unless $feats;
-  my $no_target = li("There currently is no target region selected.")
-      if ($rb - $lb) < 3;
-  my $has_buttons = li("The size of potential PCR products can be adjusted via the 'Product size range' option below")
-      unless $no_buttons;
-  my $flanked = $no_target ? 'red line' : 'shaded region';
-  my $boundaries = li("The boundaries of the shaded target region can be adjusted by clicking on the lower scalebar")
-      unless $no_target;
-  my $click_feat = $no_target ? li("Click on a sequence feature to select")
-      : li("Click on a different sequence feature to change the selection");
+  my $on = $feats ? 0 : 1;
+#  my $no_target = li("There currently is no target region selected.")
+#      if ($rb - $lb) < 3;
+#  my $has_buttons = li("The size of potential PCR products can be adjusted via the 'Product size range' option below")
+#      unless $no_buttons;
+#  my $flanked = $no_target ? 'red line' : 'shaded region';
+#  my $boundaries = li("The boundaries of the shaded target region can be adjusted by clicking on the lower scalebar")
+#      unless $no_target;
+#  my $click_feat = $no_target ? li("Click on a sequence feature to select")
+#      : li("Click on a different sequence feature to change the selection");
       
 
-  my $zone = $self->toggle( { on => $on, override => 0 },
-		     'Targetting information',
-		     font( {-size => -1},
-			   ul( $no_target, 
-			       li("PCR primers will flank the $flanked."),
-			       $click_feat,
-			       $boundaries,
-			       $has_buttons
-			   ) )
-		     ) . br;
+#  my $zone = $self->toggle( { on => $on, override => 0 },
+#		     'Targetting information',
+#		     font( {-size => -1},
+#			   ul( $no_target || '', 
+#			       li("PCR primers will flank the $flanked."),
+#			       $click_feat || '',
+#			       $boundaries || '',
+#			       $has_buttons || ''
+#			   ) )
+#		     ) . br;
 
+  my $rows;
+  if ($map_text) {
+    $rows = [th($map_text) . th($zoom_menu),
+	     td( { -class => 'searchbody', -colspan => 2 }, $image . br)];
+  }
+  else {
+    $rows = td( { -class => 'searchbody', -colspan => 2 }, $image . br);
+  }
   $html .= table(
-		 { -style => "width:${table_width}px" },
-    Tr(
-       { -class => 'searchtitle' },
-      [ th($map_text) . th($zoom_menu),
-        td( { -class => 'searchbody', -colspan => 2 }, $image . br),
-        td( { -class => 'searchbody', -colspan => 2}, $zone )
-      ]
-    )
-		 );
-
-
+    { -style => "width:${table_width}px" },
+    Tr( { -class => 'searchtitle' }, $rows )
+      );
+  
   unless ($no_buttons) {
     my @col1 = grep {/Primer|Tm|Product/} keys %$atts;
     my @col2 = grep { !/Primer|Tm|Product/ } keys %$atts;
@@ -268,52 +286,30 @@ sub configure_form {
 		     [ $col1[$_], $atts->{ $col1[$_] }, $col2[$_], $atts->{ $col2[$_] } ] );
     }
     
-    $html .= table( { -style => "width:${table_width}px" }, Tr( \@rows ) );
-    $html .= br
-	  . submit( -name => 'configured', -value => 'Design Primers' )
-          . '&nbsp;'
-          . reset
-          . '&nbsp;'
-          . $self->back_button;
+    my $buttons = br
+	. submit( -name => 'configured', -value => 'Design Primers' )
+	. '&nbsp;'
+	. reset
+	. '&nbsp;'
+	. $self->back_button;
+    $html .= div({-id => 'topButtons'},$buttons) .
+	table( { -style => "width:${table_width}px" }, Tr( \@rows ) ).
+	$buttons;
   }
   
   (my $action = self_url()) =~ s/\?.+//;
-  $html = start_form(
-		     -method => 'POST',
-		     -name   => 'mainform',
-		     -action => $action
-		     ).
-		     $html.
-		     end_form;
-
-
-  # if this is the first config, exit before form and buttons
-  # are printed by gbrowse
-  if ($no_buttons && !$feats) {
-    my $style = $browser->setting('stylesheet') || STYLE;
-    print start_html( -style => $style, -title => 'PCR Primers'),
-      $html, $map, $browser->footer;
-    exit;
-  }
-
-  return $feats ? ($html,$map) : $html.$map;
+  print start_form(
+    -method => 'POST',
+    -name   => 'mainform',
+    -action => $action
+      ), $html;  
+  $self->segment_info($segment);
+  print end_form, end_html;
 }
 
 sub map_header {
-  my $recenter = a(
-    { -href  => '#',
-      -title => 'Click the top scale-bar to recenter the image'
-    },
-    'recenter'
-  );
-  my $select_t = a(
-    { -href  => '#',
-      -title => 'Click a sequence feature below to select a target'
-    },
-    'select a PCR target'
-  );
-
-  return "Click on the map to $recenter or $select_t";
+  return '' if param('configured');
+  return "Press 'Design Primers' or click and drag on the ruler to select a PCR target";
 }
 
 sub dump {
@@ -321,21 +317,36 @@ sub dump {
   my $conf = $self->configuration;
   $self->reconfigure;
 
+  my $js            = $self->browser_config->relative_path_setting('js')     || JS;
+  my $img           = $self->browser_config->relative_path_setting('images') || IMAGES;
+  my $css           = $self->browser_config->setting('stylesheet')           || CSS;
+  $css .= "/gbrowse.css" unless $css =~ /gbrowse.css/;
+
   # dumpers provide their own headers, so make sure boiler plate
   # stuff is included
-  my $style_sheet = $self->browser_config->setting('stylesheet') || STYLE;
-  print start_html( -style => $style_sheet, -title => 'PCR Primers' );
+  my $head = <<END;
+<script src="$js/yahoo-dom-event.js" type="text/javascript"></script>
+<script src="$js/rubber.js" type="text/javascript"></script>
+<script src="$js/primerSelect.js" type="text/javascript"></script>
+<script src="$js/balloon.config.js" type="text/javascript"></script>
+<script src="$js/balloon.js" type="text/javascript"></script>
+<script>
+var balloon = new Balloon;
+  balloon.images              = '$img/balloons';
+  balloon.delayTime = 200;
+</script>
+END
+
+  print start_html( 
+		    -style  => $css, 
+		    -title  => 'PCR Primers', 
+		    -onload => "Primers.prototype.initialize()", 
+		    -head   => $head,
+		    -gbrowse_images => $img,
+		    -gbrowse_js     => $js);
+
   print $self->browser_config->header;
 
-  # reset off-scale target if required
-  delete $conf->{target} if $conf->{target} 
-    && ($conf->{target} > $segment->end - 1000 || $conf->{target} < $segment->start + 1000);
-  delete $conf->{lb} if $conf->{lb} 
-    && ($conf->{lb} > $segment->end - 1000 || $conf->{lb} < $segment->start);
-  delete $conf->{rb} if $conf->{rb} 
-    && ($conf->{rb} < $segment->start + 1000 || $conf->{rb} > $segment->end);
-  delete $conf->{target} unless $conf->{lb} && $conf->{rb};
-  
   my $target = $self->focus($segment);
   my $lb = $conf->{lb} || $target;
   my $rb = $conf->{rb} || $target;
@@ -343,16 +354,17 @@ sub dump {
   # check for a zoom request
   my $segment_size = $self->is_zoom;
 
-  # Make room if target region is too close to the ends
+  # Make room if target region is not too close to the ends
   my ($new_start,$new_end);
-  if ($rb >= $segment->end - 500) {
-    $new_end = $rb + 500;
+  my ($edge)  = sort {$a <=> $b} (500,$segment->length/10);
+  if ($rb >= $segment->end - $edge) {
+    $new_end = $rb + $edge;
   }
-  if ($lb <= $segment->start + 500) {
-    $new_start = $lb - 500;
+  if ($lb <= $segment->start +$edge) {
+    $new_start = $lb - $edge;
   }
   if ($new_start || $new_end) {
-    $segment = $self->database->segment( -name  => $segment->ref,
+    ($segment) = $self->database->segment( -name  => $segment->ref,
 					 -start => ($new_start || $segment->start),
 					 -end   => ($new_end   || $segment->end) );
     $segment_size = $segment->length;
@@ -363,7 +375,7 @@ sub dump {
       if param('configured') && $self->get_primer3_params();
 
   # or print the config form
-  print $self->configure_form($segment,$target,$lb,$rb);
+  $self->configure_form($segment,$target,$lb,$rb);
 }
 
 sub design_primers {
@@ -380,8 +392,10 @@ sub design_primers {
   my $ptarget = join ',', $tstart,1;
   
   # make the segment a manageable size 
-  if (!$ptarget && $segment->length > DEFAULT_SEG_SIZE) {
-    $segment = $self->refocus($segment, $target, DEFAULT_SEG_SIZE);
+  my $default_size = $self->browser_config->plugin_setting('default segment') 
+      || DEFAULT_SEG_SIZE;
+  if (!$ptarget && $segment->length > $default_size) {
+    $segment = $self->refocus($segment, $target, $default_size);
   }
 
   my $dna = $segment->seq;
@@ -389,11 +403,11 @@ sub design_primers {
     $dna = $dna->seq;
   }
   elsif ( ref $dna ) {
-    fatal_error
-	"Unsure what to do with object $dna. I was expecting a sequence string"
+    fatal_error("Unsure what to do with object $dna. I was expecting a sequence string");
   }
-  elsif ( !$dna ) {
-    fatal_error "There is no DNA sequence in the database";
+
+  if ( !$dna ) {
+    fatal_error("There is no DNA sequence in the database");
   }
 
   # unless a product size range range is specified, just keep looking
@@ -409,29 +423,32 @@ sub design_primers {
   $atts{excluded}                  = $exclude if $exclude;
   $atts{PRIMER_PRODUCT_SIZE_RANGE} = $size_range;
 
-  # get a PCR object
-  my $pcr = Bio::PrimerDesigner->new( program => BINARY,
-				      method  => METHOD );
-  $pcr or fatal_error  pre(Bio::PrimerDesigner->error);
 
-  my $binpath = BINPATH;
-  my $method = $binpath =~ /http/i ? 'remote' : METHOD;
+  my $binpath = $self->browser_config->plugin_setting('binpath') || BINPATH;
+  my $method  = $self->browser_config->plugin_setting('method')  || METHOD;
+
+  $method  = 'remote' if $binpath =~ /http/i;
+
+  my $pcr = Bio::PrimerDesigner->new( program => PROGRAM,
+                                      method  => $method );
+  $pcr or fatal_error(pre(Bio::PrimerDesigner->error));
 
   if ( $method eq 'local' && $binpath ) {
-    $pcr->binary_path($binpath) or fatal_error pre($pcr->error);
+    $pcr->binary_path($binpath) or fatal_error(pre($pcr->error));
   }
   else {
-    $pcr->url($binpath) or fatal_error pre($pcr->error);
+    $pcr->url($binpath) or fatal_error(pre($pcr->error));
   }
 
-  my $res = $pcr->design(%atts) or fatal_error pre($pcr->error);
+  my $res = $pcr->design(%atts) or fatal_error(pre($pcr->error));
 
-  $self->primer_results( $res, $segment, $lb, $rb );
+  $self->primer_results( $res, $segment, $lb, $rb);
 }
 
 sub primer_results {
-  my ( $self, $res, $segment, $lb, $rb ) = @_;
+  my ( $self, $res, $segment, $lb, $rb) = @_;
   my $conf = $self->configuration;
+  my $isPCR_url = $conf->{isPCR};
   my $target = $self->focus($segment);
   my $offset = $segment->start;
   my $ref    = $segment->ref;
@@ -441,17 +458,17 @@ sub primer_results {
   $raw_output =~ s/^(SEQUENCE=\w{25}).+$/$1... \(truncated for display only\)/m;
 
   # Give up if primer3 failed
-  fatal_error "No primers found:".pre($raw_output) unless $res->left;
+  fatal_error("No primers found:".pre($raw_output)) unless $res->left;
 
   my @attributes = qw/ left right startleft startright tmleft tmright
       qual lqual rqual leftgc rightgc lselfany lselfend rselfany rselfend/;
   
   my ( @rows, @feats );
   
-  my $text = "This value should be less than 1 for best results but don\'t worry too much";
-  my $Primer_Pair_Quality = 'Primer_Pair_Quality '.a( { -href => 'javascript:void(0)', -title => $text}, '[?]'); 
+  my $text = "This primer pair quality value should be less than 1 for best results but don&#39;t worry too much";
+  my $Primer_Pair_Quality = 'Primer_Pair_Quality '.a( { -style=>"color:blue;cursor:pointer", -onmouseover => "balloon.showTooltip(event,'$text',0,350)"}, '[?]'); 
   my $spacer = td( {-width => 25}, '&nbsp;');
-  
+
   for my $n ( 1 .. $num ) {
     my %r;
     for (@attributes) {
@@ -481,44 +498,68 @@ sub primer_results {
       }
     }
 
-    push @feats,
-        Bio::Graphics::Feature->new(
-				    -start => $r{startleft}-20,
-				    -stop  => $r{startright}+20,
-				    -type  => 'Primer',
-				    -name  => "PCR primer set $n" );
 
-    push @rows,
-    Tr(
-      [ 
-	$spacer .
-	th(
-          { -class => 'searchtitle', -align => 'left' },
-          [ qw/Set Primer/, "Sequence (5'->3')", qw/Tm %GC Coord Quality Product/, $Primer_Pair_Quality ]
-        ),
-	$spacer .
-        td(
-          [ $n,         'left',        $r{left},  $r{tmleft},
-            $r{leftgc}, $r{startleft}, $r{lqual}, '&nbsp;',
-            '&nbsp;'
-          ]
-        ),
-	$spacer .
-        td(
-          [ '&nbsp;',    'right',        $r{right}, $r{tmright},
-            $r{rightgc}, $r{startright}, $r{rqual}, $r{prod},
-            $r{qual}
-          ]
-        ),
-	$spacer .
-        td(
-          { -colspan => 9 },
-          $self->toggle( {on => 0, override => 1},
-		  "PRIMER3-style report for set $n", 
-		  primer3_report( $self, $segment, $res, \%r )).br
-	   )
-	]
-       );
+   
+
+   
+   push @feats, Bio::Graphics::Feature->new( -ref   => $segment->ref,
+					     -start => $r{startleft}-20,
+					     -end   => $r{startright}+20,
+					     -type  => 'primers',
+                                             -name  => "set $n ");
+
+    my $isPCR = '';
+    if ($isPCR_url) {
+      $isPCR = 
+        $spacer .
+	td( {-colspan => 9},
+	    $self->toggle( {on => 0, override => 1},
+                           "UCSC In-Silico PCR results for primer set $n",
+			   iframe( {
+			     -src => "$isPCR_url&wp_size=10000&wp_target=genome&wp_f=$r{left}&wp_r=$r{right}&Submit=submit",
+                             -width => 800,
+                             -height => 400,
+                             -border => 1
+                               },
+                                   "Iframes must not be supported in your browser.  Time to upgrade..."
+                                   )
+                           )
+            );
+    }
+
+    my $cols = 
+	[
+	 $spacer .
+	 th(
+	    { -class => 'searchtitle', -align => 'left' },
+	    [ qw/Set Primer/, "Sequence (5'->3')", qw/Tm %GC Coord Quality Product/, $Primer_Pair_Quality ]
+	    ),
+	 $spacer .
+	 td(
+	    [ $n,         'left',        $r{left},  $r{tmleft},
+	      $r{leftgc}, $r{startleft}, $r{lqual}, '&nbsp;',
+	      '&nbsp;'
+	      ]
+	    ),
+	 $spacer .
+	 td(
+	    [ '&nbsp;',    'right',        $r{right}, $r{tmright},
+	      $r{rightgc}, $r{startright}, $r{rqual}, $r{prod},
+	      $r{qual}
+	      ]
+	    ),
+	 $spacer.
+	 td(
+	    { -colspan => 9 },
+	    $self->toggle( {on => 0, override => 1},
+			   "PRIMER3-style report for set $n", 
+			   primer3_report( $self, $segment, $res, \%r ))
+	    ),
+	 $isPCR . br
+	 ];
+
+    push @rows, Tr($cols);
+
   }
 
   my $featurefile = Bio::Graphics::FeatureFile->new();
@@ -526,7 +567,9 @@ sub primer_results {
     bgcolor => 'red',
     glyph   => 'primers',
     height  => 10,
-    label   => 1
+    label   => 1,
+    label_position => 'left',
+    sort_order => 'name'
   };
 
   $featurefile->add_type( 'Primers' => $options );
@@ -540,11 +583,10 @@ sub primer_results {
   unshift @rows, $back if @rows > 3;
 
   my $tlength = $rb - $lb;
-  my ($config_html, $map) = $self->configure_form($segment,$target,$lb,$rb,$featurefile);
+  my $config_html = $self->configure_form($segment,$target,$lb,$rb,$featurefile);
 
-  unshift @rows, Tr( [ $spacer . td(h1({-align => 'center'},"Predicted PCR primers ") ),
-		    $spacer . td($config_html) ] );
-
+  unshift @rows, Tr( [ $spacer . td(h1({-align => 'center'},"Predicted PCR primers ") ) ] );
+#		    $spacer . td($config_html) ] );
   print table(
 	      { -style => "width:900px" },
 	      [ @rows,
@@ -553,7 +595,7 @@ sub primer_results {
 		    ),
 		$back
 		]
-	      ), $map;
+	      ), end_html;
   exit(0);
 }
 
@@ -587,7 +629,7 @@ sub primer3_report {
   my $trunc = $sub_r{startleft} - $start - $offset;
 
   my $rs;
-  $rs = "<pre>";
+  $rs = "<pre style='background:whitesmoke;border:1px solid black;padding-left:25px'>";
   $rs .= "\n\n";
   $rs .= "No mispriming library specified\n";
   $rs .= "Using 1-based sequence positions\n\n";
@@ -666,27 +708,18 @@ sub primer3_report {
   return $rs;
 }
 
-sub unit_label {
-  my $value = shift;
-        $value >= 1e9 ? sprintf( "%.4g Gbp", $value / 1e9 )
-      : $value >= 1e6 ? sprintf( "%.4g Mbp", $value / 1e6 )
-      : $value >= 1e3 ? sprintf( "%.4g kbp", $value / 1e3 )
-      : sprintf( "%.4g bp", $value );
-}
-
 sub segment_map {
   my ( $self, $segment, $feats, $lb, $rb ) = @_;
   my $conf        = $self->configuration;
   my @tracks      = grep !/overview/, $self->selected_tracks;
 
   my $config = $self->browser_config;
-  my $render = $self->renderer($$segment);
 
   my $zoom_levels = $config->setting('zoom levels') || '1000 10000 100000 200000';
   my @zoom_levels = split /\s+/, $zoom_levels;
   my %zoom_labels;
   for my $zoom (@zoom_levels) {
-    $zoom_labels{$zoom} = $render->unit_label($zoom);
+    $zoom_labels{$zoom} = $self->browser_config->unit_label($zoom);
   }
   my $zoom_menu = $self->zoom_menu($$segment);
 
@@ -729,59 +762,22 @@ sub segment_map {
 			  $bottom, $panel->translate_color('red'));
   };
 
-  # we will be adding custom scale_bars ourselves
   my %feature_files;
   $feature_files{Primers} = $feats if $feats;
-  my $topscale    = Bio::Graphics::FeatureFile->new;
-  my $bottomscale = Bio::Graphics::FeatureFile->new;
-  $feature_files{topscale} = $topscale;
-  $feature_files{bottomscale} = $bottomscale;
-
-  my $options     = { glyph   => 'arrow',
-		      double  => 1,
-		      tick    => 2,
-		      label   => 1,
-		      units        => $render->setting('units') || '',
-		      unit_divider => $render->setting('unit_divider') || 1 };
-
-  my $options2 = {%$options};
-  $options2->{no_tick_label} = 1 if @tracks < 5;
-
-  $topscale->add_type( topscale => $options );
-  $bottomscale->add_type( bottomscale => $options2 );
-
-  my $toptext = 'Click here to recenter the image';
-  my $bottomtext = 'Click here to create or adjust the target boundaries';
-
-  my $scalebar1 = Bio::Graphics::Feature->new( -start => $$segment->start,
-					       -stop  => $$segment->end,
-					       -type  => 'topscale',
-					       -name  => $toptext,
-					       -ref   => $$segment->ref );
-  my $scalebar2 = Bio::Graphics::Feature->new( -start => $$segment->start,
-                                               -stop  => $$segment->end,
-                                               -type  => 'bottomscale',
-					       -name  => $bottomtext,
-					       -ref   => $$segment->ref );
+  my $panel_options = { 
+    -width           => $conf->{width},
+    section          => '',
+    segment          => $$segment,
+    tracks           => \@tracks,
+    postgrid         => $postgrid_callback,
+    keystyle         => 'none',
+    drag_n_drop      => 0,
+    feature_files    => \%feature_files
+      };
   
-  $topscale->add_feature( $scalebar1 => 'topscale' );
-  $bottomscale->add_feature( $scalebar2 => 'bottomscale' );
-  unshift @tracks, 'topscale';
-  push @tracks, 'bottomscale';
+  my $html = $config->render_panels($panel_options);
 
-  my @options = ( segment          => $$segment,
-		  do_map           => 1,
-		  do_centering_map => 1,
-		  tracks           => \@tracks,
-		  postgrid         => $postgrid_callback,
-		  noscale          => 1,
-		  keystyle         => 'none');
-  
-  push @options, ( feature_files => \%feature_files );
-  
-  my ( $image, $image_map ) = $render->render_html(@options);
-
-  return ( $image, $image_map, $zoom_menu );
+  return (div({-id => 'panels'},$html), $zoom_menu);
 }
 
 # center the segment on the target coordinate
@@ -938,23 +934,8 @@ END
 sub zoom_menu {
   my $self    = shift;
   my $segment = shift;
-  my $render  = $self->renderer($segment);
-  return $render->slidertable(1);
-}
-
-sub renderer {
-  my $self    = shift;
-  my $segment = shift;
-  my $config  = $self->browser_config;
-  my $render  = $self->{render};
-  if ($render) {
-    $render->current_segment($segment);
-    return $render;
-  }
-  
-  $self->{render} = Bio::Graphics::Browser::faux->new($config);
-  $self->{render}->current_segment($segment);
-  return $self->{render};
+  my $conf = $self->browser_config;
+  return $self->slidertable($segment,1);
 }
 
 sub back_button {
@@ -963,295 +944,19 @@ sub back_button {
           -name    => 'Return to Browser' );
 }
 
-1;
-
-
-# A package to override some Bio::Graphics::Browser
-# image mapping methods
-package Bio::Graphics::Browser::faux;
-use Bio::Graphics::Browser;
-use CGI qw/:standard unescape/;
-use warnings;
-use strict;
-use Bio::Root::Storable;
-use Data::Dumper;
-
-use vars '@ISA';
-
-# controls the resolution of the recentering map
-use constant RULER_INTERVALS => 100;
-use constant DEFAULT_SEG_SIZE  => 10000;
-use constant DEFAULT_FINE_ZOOM => '20%';
-use constant BUTTONSDIR        => '/gbrowse/images/buttons';
-use constant OVERVIEW_RATIO    => 0.9;
-use constant DEBUG             => 1;
-
-@ISA = qw/Bio::Graphics::Browser/;
-
-sub new {
-  my $class    = shift;
-  my $browser  = shift;
-  my %browser_data = %{$browser};  # just the config data, not the object
-  return bless \%browser_data, $class;
-}
-
-sub error {
-  '';
-}
-
-sub make_feat_link {
-  my $self = shift;
-  my $feat = shift;
-  my ($start, $end ) = @_;
-  my $fref   = $feat->ref;
-  my $fstart = $feat->start;
-  my $fend   = $feat->stop;
-  $start ||= $fstart;
-  $end   ||= $fend;
-
-  # segment >= DEFAULT_SEG_SIZE
-  my $padding = int((DEFAULT_SEG_SIZE - $feat->length)/2) + 1;
-  my ($pad) = sort {$b<=>$a} 1000, $padding;
-
-  $start  -= $pad;
-  $end    += $pad;
-
-  my $p = 'PrimerDesigner';
-  my $url = "?plugin=$p;plugin_action=Go;ref=$fref;start=$start;stop=$end;";
-  $url   .= "$p.lb=$fstart;$p.rb=$fend";
-  
-  return $url;
-}
-
-sub make_map {
-  my $self = shift;
-  my ( $boxes, $centering_map, $panel ) = @_;
-  my $map = qq(\n<map name="hmap" id="hmap">\n);
-
-  my $topruler = shift @$boxes;
-  $map .= $self->make_centering_map($topruler);
-
-  my $bottomruler = pop @$boxes;
-  $map .= $self->make_boundary_map($bottomruler);
-
-  my @link_sets;
-  my $link_set_idx = 0;
-
-  for my $box (@$boxes) {
-    my ( $feat, $x1, $y1, $x2, $y2, $track ) = @$box;
-    next unless $feat->can('primary_tag');
-    next if $feat->primary_tag eq 'Primer';
-    my $fclass = $feat->class || 'feature';
-    my $fname  = $feat->name  || 'unnamed';
-    my $fstart = $feat->start;
-    my $fend   = $feat->stop;
-    my $pl     = $panel->pad_left;
-    my $half   = int(($topruler->[5]->length/2) + 0.5);
-
-    my $link = $self->make_feat_link( $feat );
-    my $href = qq{href="$link"};
-
-    # give each subfeature its own link
-    my @parts = $feat->sub_SeqFeature if $feat->can('sub_SeqFeature');
-    if ( @parts > 1 ) {
-      my $last_end;
-      for my $part (sort {$a->start <=> $b->start} @parts) {
-        my $pstart = $part->start;
-        my $pend   = $part->end;
-	my $ptype  = lc $part->primary_tag;
-
-	my $no_overlap = 0;
-	# intervals between parts select the whole (aggregate) feature
-	$last_end ||= $pend;
-	if ($pstart > $last_end) {
-	  my $istart    = $last_end + 1;
-	  my $iend      = $pstart   - 1;
-	  my ($ix1,$ix2) = map { $_ + $pl } $panel->location2pixel( $istart, $iend );
-
-	  # skip it if the box will be less than 2 pixels wide
-	  if ($ix2 - $ix1 > 1) {
-	    my $title = qq{title="select $fclass $fname"};
-	    $map .= qq(<area shape="rect" coords="$ix1,$y1,$ix2,$y2" $href $title/>\n);
-	    $no_overlap   = $ix2;
-	  }
-	}
-
-        my ( $px1, $px2 ) = map { $_ + $pl } $panel->location2pixel( $pstart, $pend );
-	$px1++ if $px1 == $no_overlap;
-
-        my $phref = $self->make_feat_link( $part, $pstart, $pend );
-        $phref     = qq{href="$phref"};
-	my $title  = qq{title="select this $ptype"};
-	$map .= qq(<area shape="rect" coords="$px1,$y1,$px2,$y2" $phref $title/>\n);
-
-	$last_end = $pend;
-      }
-    }
-    else {
-      my $title = qq{title="select $fclass $fname"};
-      $map .= qq(<area shape="rect" coords="$x1,$y1,$x2,$y2" $href $title/>\n);
-    }
-  }
-
-  $map .= "</map>\n";
-
-  return $map;
-}
-
-sub make_centering_map {
-  my $self   = shift;
-  my $ruler  = shift;
-  my $bottom = shift; # true if this is the lower scale-bar
-
-  my ( $rfeat, $x1, $y1, $x2, $y2, $track ) = @$ruler;
-
-  my $rlength = $x2 - $x1 or return;
-  my $length  = $rfeat->length;
-  my $start   = $rfeat->start;
-  my $stop    = $rfeat->stop;
-  my $panel   = $track->panel;
-  my $pl      = $panel->pad_left;
-  my $middle;
-
-  if ($bottom) {
-    $middle = param('PrimerDesigner.target');
-    $middle ||= int(($start+$stop)/2 + 0.5);
-  }
-
-  # divide into RULER_INTERVAL intervals
-  my $portion  = $length / RULER_INTERVALS;
-  my $rportion = $rlength / RULER_INTERVALS;
-
-  my $ref    = $rfeat->seq_id;
-  my $source = $self->source;
-  my $plugin = 'PrimerDesigner';
-  my $offset = $start - int( $length / 2 );
-
-  my @lines;
-
-  while (1) {
-    my $end    = $offset + $length;
-    my $center = $offset + $length/2;
-    my $sstart = $center - $portion/2;
-    my $send   = $center + $portion/2;
-    
-    $_ = int $_ for ($start,$end,$center,$sstart,$send);
-
-    my ( $X1, $X2 )
-        = map { $_ + $pl } $panel->location2pixel( $sstart, $send );
-
-    # fall of the end...
-    last if $center >= $stop + ($length / 2);
-
-    my ($url,$title_text);
-
-    my $p = 'PrimerDesigner';
-    my $rb = param("$p.rb");
-    $rb = $1 if $rb && $rb =~ /\=(\d+)/;
-    my $lb = param("$p.lb");
-    $lb = $1 if $lb && $lb =~ /\=(\d+)/;
-    my $target = param("$p.target");
-    
-    # left side of the lower ruler
-    if ($middle && $sstart <= $middle) {
-      $url = "?ref=$ref;start=$start;stop=$stop;plugin=$plugin;plugin_action=Go;$p.lb=$center;";
-      $url .= "$p.rb=$rb;" if $rb;
-      $url .= "$p.target=$target;" if $target;
-      $url = qq(href="$url");
-      $title_text = "set left target boundary to $center";
-    }
-    # right side of the lower ruler
-    elsif ($middle) {
-      $url = "?ref=$ref;start=$start;stop=$stop;plugin=$plugin;plugin_action=Go;$p.rb=$center";
-      $url .= ";$p.lb=$lb" if $lb;
-      $url .= "$p.target=$target;" if $target;
-      $url = qq(href="$url");
-      $title_text = "set right target boundary to $center";
-    }
-    # top ruler
-    else {
-      $url = "?ref=$ref;start=$offset;stop=$end;plugin=$plugin;plugin_action=Go;";
-
-      # We can retain an off-center target if it is still reasonable
-      if ($target && $target > $offset + 1000 && $target < $end - 1000 ) {
-	$url .= "$p.target=$target;";
-      }
-      if ($lb  && $lb > $offset + 500) {
-	$url .= "$p.lb=$lb;";
-      }
-      if ($rb  && $rb < $end - 500) {
-        $url .= "$p.rb=$rb;";
-      }
-
-      $url = qq(href="$url");
-      $title_text = "recenter at $center";
-    }
-    my $map_line
-        = qq(<area shape="rect" coords="$X1,$y1,$X2,$y2" $url );
-    $map_line .= qq(title="$title_text" alt="recenter" />\n);
-    push @lines, $map_line;
-
-    $offset += int $portion;
-  }
-
-  return join '', @lines;
-}
-
-sub make_boundary_map {
-  my $self = shift;
-  $self->make_centering_map(@_, 1);
-}
-
-sub current_segment {
-  my $self = shift;
-  my $segment = shift;
-  return $self->{segment} = $segment if $segment;
-  return $self->{segment};
-}
-
-sub unit_label {
-  my ( $self, $value ) = @_;
-  my $unit    = $self->setting('units')        || 'bp';
-  my $divider = $self->setting('unit_divider') || 1;
-  $value /= $divider;
-  my $abs = abs($value);
-  my $label;
-        $label = $abs >= 1e9 ? sprintf( "%.4g G%s", $value / 1e9, $unit )
-      : $abs >= 1e6  ? sprintf( "%.4g M%s", $value / 1e6, $unit )
-      : $abs >= 1e3  ? sprintf( "%.4g k%s", $value / 1e3, $unit )
-      : $abs >= 1    ? sprintf( "%.4g %s",  $value,       $unit )
-      : $abs >= 1e-2 ? sprintf( "%.4g c%s", $value * 100, $unit )
-      : $abs >= 1e-3 ? sprintf( "%.4g m%s", $value * 1e3, $unit )
-      : $abs >= 1e-6 ? sprintf( "%.4g u%s", $value * 1e6, $unit )
-      : $abs >= 1e-9 ? sprintf( "%.4g n%s", $value * 1e9, $unit )
-      : sprintf( "%.4g p%s", $value * 1e12, $unit );
-  if (wantarray) {
-    return split ' ', $label;
-  }
-  else {
-    return $label;
-  }
-}
-
 sub slidertable {
   my $self       = shift;
+  my $segment    = shift;
   my $small_pan  = shift;    
-  my $buttons    = $self->setting('buttons') || BUTTONSDIR;
-  my $segment    = $self->current_segment or fatal_error("No segment defined");
+  my $buttons    = $self->browser_config->relative_path_setting('buttons');
   my $span       = $small_pan ? int $segment->length/2 : $segment->length;
-  my $half_title = $self->unit_label( int $span / 2 );
-  my $full_title = $self->unit_label($span);
+  my $half_title = $self->browser_config->unit_label( int $span / 2 );
+  my $full_title = $self->browser_config->unit_label($span);
   my $half       = int $span / 2;
   my $full       = $span;
   my $fine_zoom  = $self->get_zoomincrement();
   Delete($_) foreach qw(ref start stop);
   my @lines;
-  push @lines,
-  hidden( -name => 'start', -value => $segment->start, -override => 1 );
-  push @lines,
-  hidden( -name => 'stop', -value => $segment->end, -override => 1 );
-  push @lines,
-  hidden( -name => 'ref', -value => $segment->seq_id, -override => 1 );
   push @lines, (
 		image_button(
 			     -src    => "$buttons/green_l2.gif",
@@ -1272,7 +977,7 @@ sub slidertable {
 			     -border => 0,
 			     -title  => "zoom out $fine_zoom"
 			     ),
-		'&nbsp;', $self->zoomBar, '&nbsp;',
+		'&nbsp;', $self->zoomBar($segment), '&nbsp;',
 		image_button(
 			     -src    => "$buttons/plus.gif",
 			     -name   => "zoom in $fine_zoom",
@@ -1296,19 +1001,21 @@ sub slidertable {
   return join( '', @lines );
 }
 
+
 sub get_zoomincrement {
   my $self = shift;
-  my $zoom = $self->setting('fine zoom') || DEFAULT_FINE_ZOOM;
+  my $zoom = $self->browser_config->setting('zoom increment') || ZOOM_INCREMENT;
   $zoom;
 }
 
 sub zoomBar {
   my $self    = shift;
-  my $segment = $self->current_segment;
-  my ($show)  = $self->tr('Show');
+  my $segment = shift;
+  my $conf = $self->browser_config;
+  my ($show)  = $conf->tr('Show');
   my %seen;
-  my @ranges = grep { !$seen{$_}++ } sort { $b <=> $a } ($segment->length, $self->get_ranges());
-  my %labels = map { $_ => $show . ' ' . $self->unit_label($_) } @ranges;
+  my @ranges = grep { !$seen{$_}++ } sort { $b <=> $a } ($segment->length, $conf->get_ranges());
+  my %labels = map { $_ => $show . ' ' . $conf->unit_label($_) } @ranges;
 
   return popup_menu(
     -class    => 'searchtitle',
@@ -1321,4 +1028,38 @@ sub zoomBar {
   );
 }
 
-1;
+sub _hide {
+  my ($name,$value) = @_;
+  print hidden( -name     => $name,
+                -value    => $value,
+                -override => 1 ), "\n";
+}
+
+sub segment_info {
+  my ($self,$segment) = @_;
+  my $conf     = $self->configuration;
+  my $config   = $self->browser_config;
+  my $settings = $self->page_settings;
+  my $pad_left   = $config->setting('pad_left')  || $config->image_padding;
+  my $pad_right  = $config->setting('pad_right') || $config->image_padding;
+
+  _hide(segment              => $segment->ref .':'. $segment->start .'..'. $segment->end);
+  _hide(image_padding        => $pad_left);
+  _hide(details_pixel_ratio  => $segment->length/$conf->{width});
+  _hide(detail_width         => $conf->{width} + $pad_left + $pad_right);
+  _hide(max_segment          => MAX_SEGMENT);
+}
+
+
+# nearest function appropriated from Math::Round
+sub nearest {
+  my $targ = abs(shift);
+  my $half = 0.50000000000008;
+  my @res  = map {
+    if ($_ >= 0) { $targ * int(($_ + $half * $targ) / $targ); }
+    else { $targ * POSIX::ceil(($_ - $half * $targ) / $targ); }
+  } @_;
+
+  return (wantarray) ? @res : $res[0];
+}
+
