@@ -237,12 +237,12 @@ sub widget :Path("/widget") Args(3) {
 #   Params    : class, object, page
 # 
 ##############################################################
-sub page :Path("/page") Args(3) {
-    my ($self,$c,$class,$name,$page) = @_;
+sub page :Path("/reports") Args(2) {
+    my ($self,$c,$class,$name) = @_;
     
     # Set the name of the widget. This is used 
     # to choose a template and label sections.
-    $c->stash->{page}  = $page;    # Um. Necessary?
+#    $c->stash->{page}  = $class;    # Um. Necessary?
     $c->stash->{class} = $class;
     
     # Instantiate our external model directly (see below for alternate)
@@ -251,12 +251,18 @@ sub page :Path("/page") Args(3) {
     # TODO
     # I may not want to actually fetch an object.
     # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
-    
+
+
+
+    # I don't think I need to fetch an object.  I just need to return the appropriate page template.
+    # Then, each widget will make calls to the rest API.
     my $object = $api->fetch({class=> ucfirst($class),
 			      name => $name}) or die "$!";
     
     # $c->log->debug("Instantiated an external object: " . ref($object));
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+
+=head
     
     # To add later:
     # * multi-results formatting
@@ -273,9 +279,20 @@ sub page :Path("/page") Args(3) {
     # To generically build a widget, store
     # an ordered list of all necessary fields.
     # page is $c->namespace;			
+
+=cut
+
+    
+    # Stash all widgets that comprise this page. We will build pages generically.
     my @widgets = @{ $c->config->{pages}->{$class}->{widget_order} };
     $c->stash->{widgets} = \@widgets;
 
+    # Is any of this actually necessary?
+
+    
+    # All of the fields will be called dynamically from the template
+
+=head
 
     # This approach means that EVERY widget and EVERY field will be rendered
     # at once for a report.
@@ -307,6 +324,8 @@ sub page :Path("/page") Args(3) {
 	    $c->log->debug("Called $field...");
 	}
     }
+
+=cut
     
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
