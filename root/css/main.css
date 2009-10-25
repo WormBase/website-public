@@ -186,7 +186,7 @@ div.debug-field-list {
 .debug-field-list .field-name {
     text-align:right;
     padding-right:15px;
-    width:40%;
+    width:300px;
 }
 
 .debug-field-list p.generic a {
@@ -209,11 +209,22 @@ p.debug-view {
     font-size:0.8em;
 }
 
-
+.description {
+   font-style:italic;
+}
 
 
 
 #returned-data {
+    font-family:Courier;
+    width:800px;
+    padding:25px;
+    background:#FFFFCC;
+    border:1px solid black;
+    display:none;
+}
+
+.returned-data {
     font-family:Courier;
     width:800px;
     padding:25px;
