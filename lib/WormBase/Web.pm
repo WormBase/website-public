@@ -749,8 +749,7 @@ template wrapping.
 sub is_ajax {
   my $c       = shift;
   my $headers = $c->req->headers;
-  return $headers->header('x-dojo-version')
-    || ( ( $headers->header('x-requested-with') || '' ) eq 'XMLHttpRequest' );
+  return $headers->header('X-Requested-With');
 }
 
 
