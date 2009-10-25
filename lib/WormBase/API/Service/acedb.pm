@@ -85,7 +85,9 @@ around 'dbh' => sub {
 	
 	# If so, is it alive?	
 	if ($dbh->ping) {
-	    $self->log->debug("     ace-dbh has been set and is alive!");
+#	    $self->log->debug("     ace-dbh has been set and is alive! $self $orig $dbh");
+#	    return $self->$orig;
+	    print STDERR "acedbb has been set we should not be calling connect\n";
 	    return $self->$orig;
 	} else {
 	    $self->log->debug("     ace-dbh has been set but is dead; trying to resurrect it");
@@ -100,9 +102,10 @@ around 'dbh' => sub {
     } else {
 	$self->log->debug("We haven't connected to acedb yet; trying...");
     }
-    
-    # For some reason, dbh() is not yet set. Call connect().
-    $self->connect();
+       
+	# For some reason, dbh() is not yet set. Call connect().
+	$self->connect();	
+
     return $self;
 };
     
@@ -147,12 +150,16 @@ sub connect {
 		 } 
 	) if $self->cache_root;
     
+#    my $dbh = $self->dbh();
+#    return $dbh if $dbh;
+
+
     my $dbh = Ace->connect(-host => $self->acedb_host,
 			   -port => $self->acedb_port);
 #			   -timeout => 50);
 #			   @auth,
 #			   @cache);
-    
+    print STDERR "here we are claling connect\n";
     $self->log->info("Connecting to acedb: ");
     if ($self->log->is_debug()) {
 	$self->log->debug('     using the following parameters:');
@@ -172,7 +179,7 @@ sub connect {
 # I wonder if this is actually necessary now with around method modifier.
 #sub _build_dbh {
 #    my $self = shift;
-##    my $dbh = $self->dbh;
+#    my $dbh = $self->dbh;
 #     my $dbh;
 #    # Do we have a live dbh? Just return it.
 #    if ($dbh && $dbh->ping) {
@@ -185,14 +192,6 @@ sub connect {
 #	return $dbh;
 #    }
 #}
-
-
-#sub set_dbh {
-#    my ($self,$dbh) = @_;
-#    $self->log->debug("setting dbh to $dbh");
-#    $self->dbh($dbh);
-#}
-
 
 
 
