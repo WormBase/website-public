@@ -8,7 +8,8 @@ use parent 'Catalyst::Controller::REST';
 __PACKAGE__->config(
 #   'default' => 'text/html',
     'map' => {
-	'text/html' => [ 'View', 'TT' ],
+	'text/html'        => [ 'View', 'TT' ],
+#        'application/json' => [ 'View', 'JSON' ],
 #	'application/json' => [ 'Catalyst','Action','Serialize','JSON' ],
     });
 
