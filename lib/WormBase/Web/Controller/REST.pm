@@ -5,6 +5,12 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 
 
+__PACKAGE__->config(
+#   'default' => 'text/html',
+    'map' => {
+	'text/html' => [ 'View', 'TT' ],
+#	'application/json' => [ 'Catalyst','Action','Serialize','JSON' ],
+    });
 
 =head1 NAME
 
@@ -66,14 +72,18 @@ sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
     my (@widgets) = @{ $c->config->{pages}->{$class}->{widget_order} };
     
-    my %data;
+    my @data;
     foreach my $widget (@widgets) {
 	my $uri = $c->uri_for('/widget',$class,$name,$widget);
-	$data{$widget} = "$uri";
+	push @data,{ widgetname => $widget,
+				widgeturl  => "$uri"
+	};
     }
-    
-    $self->status_ok( $c, entity => { data => \%data,
-				      description => "All widgets available for $class:$name",
+
+    # Retain the widget order
+    $self->status_ok( $c, entity => {
+	data => \@data,
+	description => "All widgets available for $class:$name",
 		      }
 	);
 }
@@ -91,26 +101,36 @@ eg http://localhost/rest/widget/[CLASS]/[NAME]/[FIELD]
 sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
-    my ($self,$c,$class,$name,$widget) = @_;
+    my ($self,$c,$class,$name,$widget) = @_; 
 
-    # Fetch our external model
-    my $api = $c->model('WormBaseAPI');
- 
-   # Fetch the object from our driver	 
-    $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    $c->log->debug("The requested class is " . ucfirst($class));
-    $c->log->debug("The request is " . $name);
+    unless ($c->stash->{object}) {
+	
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
+	
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+					   name => $name}) or die "$!";
+    }
+    my $object = $c->stash->{object};
     
-    # Fetch a WormBase::API::Object::* object
-    # But wait. Some methods return lists. Others scalars...
-    my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) or die "$!";
-
     # TODO: Load up the data content. Should these be REST calls?
     my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
     my $data = {};
     foreach my $field (@fields) {
-	$data->{$_} = $object->$field;
+	my $data = $object->$field;
+	$data->{$_} = $data;
+
+	# Conditionally load up the stash (for now) for HTML requests.
+	# Eventually, I can ust format the return JSON.
+	$c->stash->{$_} = $data;
+      
     }
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
@@ -119,6 +139,8 @@ sub widget_GET {
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
     
+    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+
     $self->status_ok($c, entity => {
 	class   => $class,
 	name    => $name,
@@ -139,13 +161,14 @@ sub widget_GET {
 
 Fetch all available fields for a given WIDGET, PAGE, NAME
 
-eg  GET /rest/fields/[WIDGET]/[PAGE]/[NAME]
+eg  GET /rest/fields/[WIDGET]/[CLASS]/[NAME]
 
-# This makes more sense than what I have now
-/rest/class/*/widgets  - all available widgets
+
+# This makes more sense than what I have now:
+/rest/class/*/available_widgets  - all available widgets
 /rest/class/*/widget   - the content for a given widget
 
-/rest/class/*/widget/fields - all available fields for a widget
+/rest/class/*/widget/available_fields - all available fields for a widget
 /rest/class/*/widget/field
 
 =cut
@@ -182,24 +205,37 @@ sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 sub field_GET {
     my ($self,$c,$class,$name,$field) = @_;
 
-    # Fetch our external model
-    my $api = $c->model('WormBaseAPI');
+    unless ($c->stash->{object}) {
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
  
-   # Fetch the object from our driver	 
-    $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    $c->log->debug("The requested class is " . ucfirst($class));
-    $c->log->debug("The request is " . $name);
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
+					    name => $name}) or die "$!";
+    }
     
-    # Fetch a WormBase::API::Object::* object
-    # But wait. Some methods return lists. Others scalars...
-    my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) or die "$!";
-
+    my $object = $c->stash->{object};
     my $data = $object->$field;
+
+    # Should be conditional based on content type (only need to populate the stash for HTML)
+    $c->stash->{$field} = $data;
+
+    # Anything in $c->stash->{rest} will automatically be serialized
+#    $c->stash->{rest} = $data;
+
     
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
+
+    $c->stash->{template} = $self->_select_template($c,$field,$class,'field'); 
+
 
     $self->status_ok($c, entity => {
 	                 class  => $class,
@@ -211,32 +247,50 @@ sub field_GET {
 }
 
 
+# Template assignment is a bit of a hack.
+# Maybe I should just maintain
+# a hash, where each field/widget lists its corresponding template
+sub _select_template {
+    my ($self,$c,$render_target,$class,$type) = @_;
 
+    # Normally, the template defaults to action name.
+    # However, we have some generic templates. We will
+    # specify the name of the template.  
+    # MOST widgets can use a generic template.
+    if ($type eq 'field') {
+	if (defined $c->config->{generic_fields}->{$render_target}) {
+	    return "generic/$type.tt2";    
+	    # Some are shared across Models
+	} elsif (defined $c->config->{common_fields}->{$render_target}) {
+	    return "common_fields/$render_target.tt2";
+	} else {  
+	    return "$class/$render_target.tt2";
+	}
+    } else {
+	# Widget template selection
+	if (defined $c->config->{generic_widgets}->{$render_target}) {
+	    return "generic/$type.tt2";    
+	    # Some are shared across Models
+	} elsif (defined $c->config->{common_widgets}->{$render_target}) {
+	    return "common_widgets/$render_target.tt2";
+	} else {  
+	    return "$class/widgets/$render_target.tt2"; 
+	}
+    }
 
-
-
-
-
-
-
-
-#sub genetic_position : Chained('get_params') PathPart('gene/genetic_position') CaptureArgs(1) ActionClass('REST') {}
-
-=head1
-
-sub genetic_position : Path('gene/genetic_position') CaptureArgs(1) ActionClass('REST') {}
-
-sub genetic_position_GET {
-  my ($self,$c,$name) = @_;
-  $c->stash->{request} = $name; 
-
-  # Instantiate the Model
-  my $model = $c->model(ucfirst('Gene'));
-
-  $c->stash->{genetic_position} = $model->genetic_position($c);
-  $c->log->debug($c->stash->{genetic_position});
-  $self->status_ok( $c, entity => $c->stash->{genetic_position} );
+    # Approach 2: Most things are generic, those requiring custom fields are specified
+    #if (defined ($c->config->{custom_fields}->{$field})) {
+    #  $c->stash->{template} = "$page/$field.tt2";
+    #} elsif (defined ($c->config->{common_fields}->{$field})) {
+    #  $c->stash->{template} = "common_fields/$field.tt2";
+    #} else {
+    #  $c->stash->{template} = "generic/field.tt2";	  
+    #}
+   
 }
+
+
+
 
 =cut
 
