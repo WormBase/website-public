@@ -66,12 +66,14 @@ END;
  </ul>
 
 <div id="page-header">
-<h4>Debug Page for the  [% page FILTER ucfirst %] class</h4>
+<h4>Debug View for the [% page FILTER ucfirst %] class</h4>
+
+[% PROCESS generic_debug_info() %]
 
 <p>
 This is the default index and debugging screen for the <b>[% page
- FILTER ucfirst %]</b> class.  This class provides the following
- widgets and data fields using the specified templates.
+ FILTER ucfirst %]</b> class.  From here, you can test the REST
+interface of every available field and widget.
 </p>
 </div>
 
@@ -81,7 +83,7 @@ This is the default index and debugging screen for the <b>[% page
      [% NEXT IF this_page != page %]
 
      [% SET random_object = c.get_example_object(this_page) %]
-     <p>All examples are use a random object. Reload to test another.</p>
+     <p>All examples use a randomly selected object. Reload to test another.</p>
 
        [% FOREACH widget IN c.config.pages.$this_page.widget_order %]
        <div class="debug-widget-title">[% widget %]</div>
@@ -102,21 +104,22 @@ This is the default index and debugging screen for the <b>[% page
    <tr>
  	   <td class="field-name">[% field %]</td>
            <td>
-                 <p class="[% field_template_type(field) %]">
-     		       <a href="[% c.uri_for('/field',this_page,random_object,field) %]" target="_blank">
-                              [% select_field_template(field,this_page) %]
-                       </a>
+                   <p class="[% field_template_type(field) %]">	                   
+                      [% FOREACH type IN c.config.api.content_type %]
+
 
     	               <!-- The REST URI is: [% c.uri_for('/rest','field',this_page,random_object,field) %]" -->
-		       <a class="ajax" href="[% c.uri_for('/rest','field',this_page,random_object,field) %]">
-		       	    json
-                       </a>
+		       <a class="ajax [%- field -%]" href="[% c.uri_for('/rest','field',this_page,random_object,field) %]">[%- type -%]</a>
+		       
+ 		        [% IF type == "html" %]
+                              - [% select_field_template(field,this_page) %]
+			[% END %]
+			
+		       [% END %]
 
-		       <a class="ajax" title="[% field %]" href="[% c.uri_for('/rest','field',this_page,random_object,field) %]">
-		       	    xml
-                       </a>
-   	               <div id="returned-data" class="[% field %]"></div>
-                 </p>
+
+		       <div id="[%- field -%]" class="returned-data"></div>
+		       </p>
          </td>
    </tr>
 

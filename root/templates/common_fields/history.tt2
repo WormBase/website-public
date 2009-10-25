@@ -1,0 +1,38 @@
+[%#
+
+  Page    : *
+  Widget  : *
+  Section : History
+  Stash   :
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER "boilerplate/field" title="Curation History" %]
+
+   <table>
+   <tr>
+   <th>Version</th>
+   <th>Revision Type</th>
+   <th>Date</th>
+   <th>Action</th>
+   <th>Remark</th>
+   <th>Object</th>
+   <th>Curator</th>
+   </tr>
+
+   [% FOREACH entry IN history.history %]
+      <tr>
+      <td>[% entry.version %]</td>
+      <td>[% entry.type    %]</td>
+      <td>[% entry.date    %]</td>
+      <td>[% entry.action  %]</td>
+      <td>[% entry.remark  %]</td>
+      <td>[% url.Link(entry.object)  %]</td>
+      <td>[% url.Link(entry.curator) %]</td>
+      </tr>
+   [% END %]
+   </table>   
+[% END %]
