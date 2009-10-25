@@ -10,8 +10,8 @@
 <div id="page">
 <div class="title">
    [% title %]
-   [%- IF current_object -%]
-     : [%- current_object -%]
+   [%- IF object -%]
+     [% class %] Report: [%- object.common_name.common_name -%]
    [% END %] 
 </div>
 
@@ -71,31 +71,9 @@
   [% END -%]
 
 
-  <!-- DOJO; This has a lot of non-functional Dijix markup, too -->
-  <!--
-  <h2>Section loading using Dojo</h2>
-
-  <div dojoType="dijit.layout.LayoutContainer" id="mainDiv">
-
-  <div dojoType="dijit.layout.SplitContainer" orientation="horizontal">
-  <div dojoType="dijit.layout.Accordion">
-  [%# FOREACH section IN sections -%]
-    <div class="section_title">
-       <a href="[%# section %]" name="[%# section %]" onclick="loadSectionDojo(this.name); return false;">[%# section %]
-       </a>
-    </div>
-    <div dojoType="dijit.layout.ContentPane" id="[%# section %]_dojo"></div>
-  [%# END -%]
-  </div>
-  </div>
-  </div>
-  </table>
-  -->
-
-[% ELSIF view=="portlets" %]
-
-
+<!-- TABBED VIEW -->
 [% ELSIF view=="tabs" %]
+
 
      <div id="ajaxtabs" class="flora">
         <ul>
@@ -111,14 +89,29 @@
         </ul>
     </div>
 
-[% ELSIF view=="lazy_tabs" %]
+<!-- lazy load tabs - will need to call sections by ajax -->
+[% ELSE %]
 
-     <div id="ajaxtabs" class="flora">
-         <ul>
+
+
+
+<div id="tabs">
+<div class="ui-tabs">
+     <ul class="ui-tabs-nav">
         [% FOREACH widget IN widgets -%]
- 	    <li><a href="/gene/[% object %]/[% widget %]" name="[% widget %]" class="generic_link"><span>[% widget %]</span></a></li>
-        [% END -%]
-        </ul>
-    </div>
+             <li>
+                   <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
+                         <span>[% widget %]</span>
+                   </a>
+             </li>
+
+	 [% END %]
+     </ul>
+</div>
+</div>
+
+	     <div id="results"></div>
+	     <a href="" id="loadme">loadme</a>
+	     <div id="results2"></div>
 
 [% END %]

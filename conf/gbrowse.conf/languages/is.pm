@@ -3,7 +3,7 @@
 
 #Icelandic translation done by Gudmundur A. Thorisson <mummi@cshl.edu>
 
-#$Id: is.pm,v 1.4.6.3 2005/10/24 22:10:59 mummi Exp $
+#$Id: is.pm,v 1.4.6.3.6.3 2009/04/02 15:55:17 scottcain Exp $
 
  CHARSET =>   'ISO-8859-1',
 
@@ -47,16 +47,18 @@ END
 
    IMAGE_LINK => 'Fá vefslóð á mynd',
 
-   SVG_LINK   => 'Mynd sem hentar til birtingar',
+   PDF_LINK   => 'Vista sem PDF',
+
+   SVG_LINK   => 'Mynd í hárri upplausn',
 
    SVG_DESCRIPTION => <<END,
 <p>
-Eftirfarandi slóð mynd býr til þessa sömu mynd á Scalable Vector Graphic (SVG) sniði. SVG býður upp á nokkra umfram "raster"-byggðar myndir eins og jpeg eða png.
+Eftirfarandi slóð mynd býr til þessa sömu mynd á Scalable Vector Graphic (SVG) sniði. SVG býður upp á nokkra möguleika umfram "raster"-byggðar myndir eins og jpeg eða png:
 </p>
 <ul>
 <li>hægt að breyta stærð án þess að tapa upplausn
 <li>hægt að vinna með myndirnar í myndvinnsluforritum sem höndla vector-grafík, til dæmis færa til annoteringar ef vill
-<li>ef nauðsyn krefur er hægt að breyta yfir í EPS-snið til að senda til birtingar í vísindaritum
+<li>ef nauðsyn krefur er hægt að breyta yfir í EPS- eða PDF-snið til að senda til birtingar í vísindaritum
 </ul>
 <p>
 Til að skoða SVG-myndir þarftu að hafa vafra sem styður SVG-sniðið, td. Adobe "plugin" fyrir vefvafra, eða Adobe Illustrator myndvinnsluforritið.
@@ -78,7 +80,7 @@ END
 
    IMAGE_DESCRIPTION => <<END,
 <p>
-Til að setja þessa mynd á heimasíðu, afritið þessa vefslóð og setjið í HTML-kóðann svona:
+Til að setja þessa mynd á heimasíðu, afritið eftirfarandi vefslóð og setjið í HTML-kóðann á síðunni:
 </p>
 <pre>
 &lt;IMAGE src="%s" /&gt;
@@ -95,7 +97,7 @@ Ef aðeins yfirlitsmyndin  sést að ofan, reynið að minnka stærðina á svæðinu</p>
 END
 
    TIMEOUT  => <<'END',
-Fyrirspurn þín tók of langan tíma. Þú gætir hafa valið svæði sem er of stórt til að sýna. Prófaðu að slökkva á einhverjum brautanna, eða minnka svæðið. Ef þetta gerist trekk í trekk, vinsamlega ýttu á "Endursetja" takkann.
+Fyrirspurn þín tók of langan tíma. Þú gætir hafa valið svæði sem er of stórt til að sýna. Prófaðu að slökkva á einhverjum brautanna, eða minnka svæðið. Ef þetta gerist ítrekað, vinsamlega ýttu á "Endursetja" takkann.
 END
 
    GO       => 'Keyra',
@@ -122,9 +124,9 @@ END
 
    DOWNLOAD         => 'Vista',
 
-   DISPLAY_SETTINGS => 'Stillinga glugga',
+   DISPLAY_SETTINGS => 'Stillingar',
 
-   TRACKS   => 'Brautir',
+   TRACKS   => 'Brautir (e. tracks)',
 
    EXTERNAL_TRACKS => "(Utanaðkomandi brautir skáletraðar)<br><sup>*</sup>Yfirlitsbraut",
 
@@ -200,7 +202,7 @@ END
 
    PRESETS      => '--Velja fyrirfram uppsettar vefslóðir--',
 
-   FEATURES_TO_HIGHLIGHT  => 'Kennileiti sem merkja á (kennileiti1, kennileiti2...)',
+   FEATURES_TO_HIGHLIGHT  => 'Merkja kennileiti (kennileiti1, kennileiti2...)',
      
    FEATURES_TO_HIGHLIGHT_HINT  => 'Vísbending: notaðu kennileiti@litur til að velja litinn, t.d. \'NUT21@lightblue\' ',
 
@@ -256,14 +258,14 @@ END
 
    SETTINGS_INSTRUCTIONS => <<END,
  <i>Sýna</i> segir til um hvort braut er sýnileg eða ekki.
- <I>Samþjappað</i> þjappar brautinni saman a eina línu
+ <I>Samanþjappað</i> þjappar brautinni saman á eina línu
  þannig að annoteringar munu skarast. 
 <i>Breiða úr</i> og <i>Breiða meira úr</i>  hindra annoteringar í að rekast
- hver á aðra, með  hægvirkari og hraðvirkari algorithmum
+ hver á aðra, með  hægvirkari og hraðvirkari algorithmum.
  <i>Breiða úr & merkja</i> og  <i>Breiða meira úr & mergja</i>  setur 
 merki (e. labels) á allar annoteringar. Ef <i>Sjálfvirkt</i> er valið 
 eru árekstrar- og merkjastillingar settar eftir því sem pláss leyfir.
- Til að breyta því hvernig brautirnar raðast upp, notið <i>Breyta uppöðun brauta</i>
+ Til að breyta því hvernig brautirnar raðast upp, notið <i>Breyta uppröðun brauta</i>
  til að setja tiltekna annoteringu á brautina. Til að takmarka hversu margar 
 annoteringar af tiltekinni tegund eru sýndar, notið 
 <i>Takmarka fjölda</i> valmyndina.
@@ -285,7 +287,7 @@ END
 
    AUTO => 'Sjálfvirkt',
 
-   COMPACT => 'Samþjappað',
+   COMPACT => 'Samanþjappað',
 
    EXPAND => 'Breiða úr',
 
@@ -303,9 +305,9 @@ END
 
    DETAILS  => 'Nánar',
 
-   ALL_OFF => 'Virkja allar',
+   ALL_OFF => 'Afvirkja allar',
 
-   ALL_ON  => 'Afvirkja allar',
+   ALL_ON  => 'Virkja allar',
 
    ANALYSIS  => 'Greining',
 
@@ -315,6 +317,8 @@ END
    #--------------
    # HELP PAGES
    #--------------
+
+   OK                 => 'Í lagi',
 
    CLOSE_WINDOW => 'Loka þessum glugga',
 
@@ -338,9 +342,7 @@ END
 
  BACK_TO_BROWSER => 'Aftur til GBrowse',
 
- PLUGIN_SEARCH_1   => '%s (leit með %s)',
-
- PLUGIN_SEARCH_2   => '&lt;%s leit&gt;',
+ PLUGIN_SEARCH   => 'leita með %s',
 
  CONFIGURE_PLUGIN   => 'Stilla',
 
@@ -365,11 +367,97 @@ END
 
  SMALL_INTERVAL    => 'Breyti stærð svæðis í %s bp',
           
-CLEAR_HIGHLIGHTING  => 'Fjarlægja merkingar',
+ CLEAR_HIGHLIGHTING  => 'Fjarlægja merkingar',
 
-CONFIGURE_TRACKS  => 'Stilla brautir...', 
+ CONFIGURE_TRACKS  => 'Stilla brautir...', 
      
-NO_SOURCES  => 'Engar aðgengilegar gagnalindir stilltar. Kannske hefur þú ekki leyfi til að skoða þær',
+ NO_SOURCES  => 'Engar aðgengilegar gagnalindir stilltar. Kannske hefur þú ekki leyfi til að skoða þær',
+
+ ADD_YOUR_OWN_TRACKS => 'Bæta við eigin brautum',
+
+ BACKGROUND_COLOR => 'Litur á bakgrunni',
+
+ CHANGE => 'Breyta',
+
+ DEFAULT => 'Sjálfgefið',
+
+ DYNAMIC_VALUE => 'Breytilegt gildi (reiknað út)',
+
+ FG_COLOR => 'Litur á forgrunni',
+
+ GLYPH => 'Tákn',
+
+ HEIGHT => 'Hæð',
+
+ INVALID_SOURCE => '%s er ekki gild gagnalind.',
+
+ LINEWIDTH => 'Línubreidd',
+
+ PACKING => 'Pökkun',
+
+ SHOW_GRID => 'Sýna rúðunet',
+
+ DRAGGABLE_TRACKS  => 'Draganlegar brautir',
+
+ CACHE_TRACKS      => 'Brautir í flýtiminni',
+
+ SHOW_TOOLTIPS     => 'Sýna ábendingar (e. tooltips)',
+
+ OPTIONS_RESET     => 'Allar stillingar hafa verið settar aftur á sjálfgefin gildi (e. defaults)',
+
+ OPTIONS_UPDATED   => 'Ný uppsetning er orðin virk; allar stillingar hafa verið settar aftur á sjálfgefin gildi (e. defaults)',
+
+ SEND_TO_GALAXY    => 'Senda svæði til Galaxy',
+
+ NO_DAS            => 'Villa í uppsetningu: vantar Bio::Das pakkann til að fá DAS slóðir til að virka. Vinsamlega látið vefumsjónarmann vita',
+
+ SHOW_OR_HIDE_TRACK => '<b>Sýna eða fela þessa braut</b>',
+
+ CONFIGURE_THIS_TRACK   => '<b>Smellið til að breyta stillingum fyrir braut</b>',
+
+ SHARE_THIS_TRACK   => '<b>Deila braut</b>',
+
+ SHARE_ALL          => 'Deila þessum brautum',
+
+ SHARE              => 'Deila %s',
+
+ SHARE_INSTRUCTIONS_ONE_TRACK => <<END,
+Til að deila þessari braut með öðrum GBrowse vafra, afritaðu 
+fyrst slóðina fyrir neðan, farðu síðan í hinn GBrowse-inn 
+og límdu slóðina í "utanaðkomandi annoteringar" (e. Enter Remote Annotation) 
+reitinn neðarlega á síðunni. Ef þessi braut kemur frá skrá
+sem þú hlóðst inn, hafðu í huga að ef þú deilir þessari slóð með öðrum 
+notanda þá getur viðkomandi hugsanlega séð <b>öll</b> upphlöðnu
+gögnin þín.
+END
+
+ SHARE_INSTRUCTIONS_ALL_TRACKS => <<END,
+Til að deila öllum virkum brautum með öðrum GBrowse vafra, afritaðu
+fyrst slóðina fyrir neðan, farðu síðan í hinn GBrowse-inn 
+og límdu slóðina í "utanaðkomandi annoteringar" (e. Enter Remote Annotation) 
+reitinn neðarlega á síðunni. Ef einhverjar af þessum brautum
+koma frá skrá sem þú hlóðst inn, hafðu í huga að ef þú deilir þessari slóð með öðrum 
+notanda þá getur viðkomandi hugsanlega séð <b>öll</b> upphlöðnu
+gögnin þín.
+END
+
+ SHARE_DAS_INSTRUCTIONS_ONE_TRACK => <<END,
+Til að deila þessari braut með öðrum vafra gegnum <a href="http://www.biodas.org" target="_new">
+Distributed Annotation System (DAS)</a>, afritaðu fyrst slóðina fyrir neðan,
+farðu síðan í hinn vafrann og bættu henni við sem nýrri DAS gagnalind
+(e. source). <i>Það er hvorki hægt að deila magnbundnum brautum (e. quantitative tracks, s.k. "wiggle"
+skrám) né upphlöðnum skrám gegnum DAS</i>
+END
+
+ SHARE_DAS_INSTRUCTIONS_ALL_TRACKS => <<END,
+Til að deila öllum völdum brautum með öðrum vafra gegnum <a href="http://www.biodas.org" target="_new">
+Distributed Annotation System (DAS)</a>, afritaðu fyrst slóðina fyrir neðan,
+farðu síðan í hinn vafrann og bættu henni við sem nýrri DAS gagnalind
+(e. source). <i>Það er hvorki hægt að deila magnbundnum brautum (e. quantitative tracks, s.k. "wiggle"
+skrám) né upphlöðnum skrám gegnum DAS</i>
+n not be shared using DAS.</i>
+END
+
 
 };
 

@@ -41,6 +41,10 @@ END;
 [%# END %]
 
 
+
+
+[%# $field here is now actually the HASH %]
+
 [% WRAPPER "boilerplate/field" title=field %]
 
        [% IF $field %]
@@ -59,7 +63,7 @@ END;
            [%# ELSE %]
                [%# This should be a linked, and the linker should decide if it needs to be linked %]
                    [%# url.Link(item) %]
-                   [% $field %]
+                   [% $field.common_name %]
            [%# END %] 
 
         [% ELSE %]

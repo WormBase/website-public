@@ -1,1 +1,16 @@
-404 Error:  <pre>[% c.req.path %]</pre> not found.
+<h3>
+Oh my heck. We've encountered an error.
+</h3>
+
+<p>
+In this case, the page that you were looking for ([% c.req.path %]) could not be found.
+</p>
+
+<p>
+If you think this page SHOULD exist, copy and paste the following information and send us an email:
+</p>
+
+<p>
+Expected URL: [% c.req.path %]<br />
+Server Error: 404
+</p>

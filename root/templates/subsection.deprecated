@@ -1,4 +1,4 @@
-[% IF Catalyst.config.classic %]
+[% IF c.config.classic %]
 
 <tr valign="top"><th class="databody" rowspan="1" align="LEFT" valign="top">
     <th>[% title %]</th
@@ -15,13 +15,13 @@
     <div class="subsection">
       [% IF title %]
           <h3>
-               [% IF Catalyst.config.debug_view %]THIS IS A SUBSECTION TITLE: [% END %][% title %]
+               [% IF c.config.debug_view %]THIS IS A SUBSECTION TITLE: [% END %][% title %]
           </h3>
       [% END %]
 
       <!-- Load up the content passed by the WRAPPER caller -->
       <div class="content">
-         [% IF Catalyst.config.debug_view %]BEGIN SUBSECTION CONTENT<br>[% END %]       
+         [% IF c.config.debug_view %]BEGIN SUBSECTION CONTENT<br>[% END %]       
           [% content %]
       </div>
     </div>

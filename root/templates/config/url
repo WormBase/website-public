@@ -1,4 +1,4 @@
-[% base = Catalyst.req.base;
+[% base = c.req.base;
 
 #   site.url = {
 #     base    = base

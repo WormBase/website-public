@@ -29,7 +29,7 @@ Om de huidige pagina te bewaren,
 END
 
    EDIT_INSTRUCTIONS => <<END,
-Geuploadede annotatiegegeves kunnen hier aangepast worden.
+Geuploade annotatiegegeves kunnen hier aangepast worden.
 Velden kunnen afgescheiden worden door tabs of spaties,
 maar velden met witruimte dienen tussen enkelvoudige of dubbele
 aanhalingstekens te staan
@@ -51,11 +51,13 @@ END
 
    RIGHT       => 'Rechts',
 
-   TRACK_NAMES => 'Lijst Baannamen',
+   TRACK_NAMES => 'Lijst tracknamen',
 
    ALPHABETIC  => 'Alfabetisch',
 
    VARYING     => 'Willekeurig',
+
+   SHOW_GRID => 'Toon grid',
 
    FLIP      => 'Omkeren',
 
@@ -105,7 +107,7 @@ rasterbeelden zoals jpeg of png.
 </ul>
 <p>
 Om SVG beelden te bekijken moet, ofwel je browser SVG ondersteunen, 
-ofwel moet de Adobe SVG browser plugin, of andere SVG applicatie zoals Adobe Illustrator, geïnstalleerd zijn. 
+ofwel moet de Adobe SVG browser plugin, of andere SVG applicatie zoals Adobe Illustrator, geinstalleerd zijn. 
 </p>
 <p>
 Adobe's SVG browser plugin: <a
@@ -127,7 +129,7 @@ END
 
    TIMEOUT   => <<'END',
 Uw vraag heeft de ingestelde blokkeertijd overschreden. Misschien heeft u een gebied geselecteerd dat te groot is om afgebeeld te worden.
-Probeer opnieuw na het deselecteren van een aantal banen of beperk uw selectie tot een kleiner gebied.
+Probeer opnieuw na het deselecteren van een aantal tracks of beperk uw selectie tot een kleiner gebied.
 Indien dergelijke blokkeringen zich hardnekkig blijven manifesteren, gelieve op de rode "Reset" knop te drukken.
 END
 
@@ -153,9 +155,9 @@ END
 
    DISPLAY_SETTINGS => 'Weergave Instellingen',
 
-   TRACKS   => 'Banen',
+   TRACKS   => 'Tracks',
 
-   EXTERNAL_TRACKS => '(Externe banen cursief)',
+   EXTERNAL_TRACKS => '(Externe tracks cursief)',
 
    EXAMPLES => 'Voorbeelden',
 
@@ -173,7 +175,7 @@ END
 
    CONFIGURE   => 'Configureren...',
 
-   CONFIGURE_TRACKS   => 'Configuren banen...',
+   CONFIGURE_TRACKS   => 'Configuren tracks...',
 
    EDIT       => 'Aanpassen Bestand...',
 
@@ -183,7 +185,7 @@ END
 
    IMAGE_WIDTH => 'Beeldbreedte',
 
-   SET_OPTIONS => 'Baaninstellingen...',
+   SET_OPTIONS => 'Trackinstellingen...',
 
    CLEAR_HIGHLIGHTING => 'Fluo Markering afzetten',
 
@@ -243,15 +245,13 @@ END
 
    REGION      => 'Gebied',
 
-   NO_SOURCES => 'Geen gegevensbronnen',
-
    OVERVIEW => 'Overzicht',
 
-   OVERVIEW_TRACKS => 'Overzichtsbanen',
+   OVERVIEW_TRACKS => 'Overzichtstracks',
 
-   REGION_TRACKS => '<sup>**</sup>Gebiedsbanen',
+   REGION_TRACKS => '<sup>**</sup>Gebiedstracks',
 
-   UPLOAD_TRACKS => 'Upload banen',
+   UPLOAD_TRACKS => 'Upload tracks',
 
 
    #----------------------
@@ -286,25 +286,25 @@ END
 
    ACCEPT_RETURN   => 'Aanvaarden en Terug...',
 
-   OPTIONS_TITLE => 'Baaninstellingen',
+   OPTIONS_TITLE => 'Trackinstellingen',
 
    SETTINGS_INSTRUCTIONS => <<END,
-De <i>Toon</i> checkbox zet een baan aan of uit. In de <i>Formaat</i> kolom kan via de 
-<i>Compact</i> optie de baan gecondenseerd worden, zodat 
+De <i>Toon</i> checkbox zet een track aan of uit. In de <i>Formaat</i> kolom kan via de 
+<i>Compact</i> optie de track gecondenseerd worden, zodat 
 annotaties elkaar overlappen. De <i>Uitgeklapt</i> en <i>Extra Uitgeklapt</i>
 opties zetten de 'botsingscontrole' aan, gebruik makend van tragere en snellere layout 
 algorithmen. De <i>Uitgeklapt</i> &amp; <i>Label</i> en <i>Extra Uitgeklapt
 &amp; Label</i> opties zorgen ervoor dat de annotaties daarbij ook nog worden gelabeled. Bij de
 selectie van <i>Auto</i>, gebeuren de 'botsingscontrole' en label opties automatisch,
-enkel indien voldoende ruimte voorhanden is. Om de volgorde van de banen te veranderen
+enkel indien voldoende ruimte voorhanden is. Om de volgorde van de tracks te veranderen
 gebruik het <i>Volgorde Veranderen</i> popup menu waar een annotatie kan toegekend worden
-aan een baan. Om het aantal getoonde annotaties van dit type te beperken, verander
+aan een track. Om het aantal getoonde annotaties van dit type te beperken, verander
 de waarde via het <i>Grens</i> menu.
 END
 
-   TRACK  => 'Baan',
+   TRACK  => 'Track',
 
-   TRACK_TYPE => 'Baantype',
+   TRACK_TYPE => 'Tracktype',
 
    SHOW => 'Tonen',
 
@@ -338,13 +338,13 @@ END
 
    CLOSE_WINDOW => 'Sluit dit venster',
 
-   TRACK_DESCRIPTIONS => 'Baanbeschrijvingen & Citaties',
+   TRACK_DESCRIPTIONS => 'Trackbeschrijvingen & referenties',
 
-   BUILT_IN           => 'Banen in deze Server ingebouwd',
+   BUILT_IN           => 'Tracks in deze server ingebouwd',
 
-   EXTERNAL           => 'Banen met Externe Annotaties',
+   EXTERNAL           => 'Tracks met externe annotaties',
 
-   ACTIVATE           => 'Gelieve deze baan te activeren om de informatie te kunnen bekijken.',
+   ACTIVATE           => 'Gelieve deze track te activeren om de informatie te kunnen bekijken.',
 
    NO_EXTERNAL        => 'Geen externe kenmerken geladen.',
 
@@ -383,5 +383,95 @@ END
  TOO_MANY_LANDMARKS => '%d mijlpalen.  Te veel om op te lijsten.',
 
  SMALL_INTERVAL    => 'Grootte van klein interval bijgesteld tot %s bp',
+
+ NO_SOURCES        => 'Er zijn geen leesbare gegevensbronnen geconfigureerd. Misschien heeft u geen toestemming om deze te bekijken.',
+
+ ADD_YOUR_OWN_TRACKS => 'Voeg uw eigen tracks toe',
+
+ INVALID_SOURCE    => 'De bron %s is ongeldig.',
+
+ BACKGROUND_COLOR  => 'Vulkleur',
+
+ FG_COLOR          => 'Lijnkleur',
+
+ HEIGHT           => 'Hoogte',
+
+ PACKING          => 'Packing',
+
+ GLYPH            => 'Vorm',
+
+ LINEWIDTH        => 'Lijn dikte',
+
+ DEFAULT          => '(standaard)',
+
+ DYNAMIC_VALUE    => 'Dynamisch berekend',
+
+ CHANGE           => 'Verandering',
+
+ DRAGGABLE_TRACKS  => 'Sleepbare tracks',
+
+ CACHE_TRACKS      => 'Cache tracks',
+
+ SHOW_TOOLTIPS     => 'Toon tips',
+
+ OPTIONS_RESET     => 'Alle pagina instellingen zijn terug op hun standaardwaarden gezet.',
+
+ OPTIONS_UPDATED   => 'De website is geherconfigureerd; alle pagina instelling zijn op hun standaardwaarden gezet.',
+
+ SEND_TO_GALAXY    => 'Stuur deze region naar Galaxy',
+
+ NO_DAS            => 'Installatiefout: de Bio::Das module moet geinstalleerd zijn als u gebruik wil maken van DAS URLs. Gelieve de webmaster te contacteren.',
+
+ CONFIGURE_THIS_TRACK => '<b>Klik om track settings te veranderen.</b>',
+
+ OK => 'OK',
+
+ PDF_LINK => 'PDF link',
+
+ PLUGIN_SEARCH => 'Zoek plugin',
+
+ SHARE => 'Deel %s',
+
+ SHARE_ALL => 'Deel alles',
+
+ SHARE_DAS_INSTRUCTIONS_ALL_TRACKS => <<END,
+Om alle geselecteerde tracks te delen met een andere GBrowse genome browser
+met behulp van het <a href="http://ww.biodas.org" target="_new">Distributed
+Annotation System (DAS)</a>, copieer eerst de URL hieronder, ga dan naar de
+andere browser en geef de URL in als een nieuwe DAS bron. <i>Quantitatieve
+tracks ("wiggle" bestanden) en upgeloade bestanden kunnen niet gedeeld worden
+met DAS.</i>
+END
+
+ SHARE_DAS_INSTRUCTIONS_ONE_TRACK => <<END,
+Om deze track te delen met een andere GBrowse genome browser met behulp
+van het <a href="http://ww.biodas.org" target="_new">Distributed Annotation 
+System (DAS)</a>, copieer eerst de URL hieronder, ga dan naar de andere
+browser en geef de URL in als een nieuwe DAS bron. <i>Quantitatieve tracks
+("wiggle" bestanden) en upgeloade bestanden kunnen niet gedeeld worden met
+DAS.</i>
+END
+
+ SHARE_INSTRUCTIONS_ALL_TRACKS => <<END,
+Om alle geselecteerde tracks te delen met een andere GBrowse genome browser,
+copieer eerst de URL hieronder, ga dan naar de andere GBrowse en
+plak the URL in het "Enter Remote Annotation" veld onderaan de pagina.
+Als een van deze tracks afkomstig is van een upgeloade file, let er dan op dat
+het delen van deze URL met een andere gebruiker er kan toe leiden dat
+<b>al</b> jouw upgeloade gegevens beschikbaar worden voor die gebruiken.
+END
+
+ SHARE_INSTRUCTIONS_ONE_TRACK => <<END,
+Om deze track te delen met een andere GBrowse genome browser,
+copieer eerst de URL hieronder, ga dan naar de andere GBrowse en
+plak the URL in het "Enter Remote Annotation" veld onderaan de pagina.
+Als deze track afkomstig is van een upgeloade file, let er dan op dat
+het delen van deze URL met een andere gebruiker er kan toe leiden dat
+<b>al</b> jouw upgeloade gegevens beschikbaar worden voor die gebruiken.
+END
+
+ SHARE_THIS_TRACK => '<b>Deel deze track</b>',
+
+ SHOW_OR_HIDE_TRACK => '<b>Toon of verberg track</b>',
 
 };

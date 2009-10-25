@@ -2,7 +2,7 @@
 
   Widget  : Gene.Identification
   Section : IDs
-  Stash   : gene => Ace::Object::Gene;
+  Stash   : ids => { 
 
 %]
 
@@ -40,11 +40,31 @@
       [% END %]
     [% END %]
 
-    [% WRAPPER "boilerplate/subfield" title="WB Gene ID"%] 
-       [% ids %]
+    [% c.stash.keys.join("<br>") %]
+
+    <!-- The common name for the gene (should probably be a link) -->
+    [% WRAPPER "boilerplate/subfield" title="Common Name" %]
+        [% ids.common_name.data %]
+    [% END %]
+
+    <!-- The WormBase Gene ID -->
+    [% WRAPPER "boilerplate/subfield" title="WormBase ID" %]
+        [% ids.ids.name %]
     [% END %]
 
     [% WRAPPER "boilerplate/subfield" title="Version"%] 
-       [% ids.Version %]
+       [% ids.ids.version %]
     [% END %]
+
+    <!-- External IDs -->
+    [% WRAPPER "boilerplate/subfield" title="NCBI RefSeq" %]
+       [% ids.ids.refseq.join(", ") %]
+    [% END %]
+
+    [% WRAPPER "boilerplate/subfield" title="AceView" %]
+       [% ids.ids.aceview %]
+    [% END %]
+
+
+
 [% END %]
