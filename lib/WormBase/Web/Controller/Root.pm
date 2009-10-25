@@ -214,11 +214,9 @@ sub widget :Path("/widget") Args(3) {
     
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
-#	if ( $c->is_ajax() ) {
-#	    $c->stash->{noboiler} = 1;
-#	}
-
-    $c->stash->{noboiler} = 1;    
+    if ( $c->is_ajax() ) {
+         $c->stash->{noboiler} = 1;
+    }
     
     # Fetch the appropriate template for the widget
     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget');
