@@ -1,8 +1,10 @@
 package WormBase::Web;
 
+#use Moose;
+
+
 use strict;
 use warnings;
-
 use Catalyst::Runtime '5.80';
 
 # Set flags and add application plugins
@@ -63,6 +65,14 @@ __PACKAGE__->log(
 
 __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf' } ) or die "$!";
 
+__PACKAGE__->config->{static}->{dirs} = [
+    qw|css
+       js
+       img       
+      |]; 
+
+__PACKAGE__->config->{static}->{debug} = 1;
+
 
 #__PACKAGE__->config(
 #    breadcrumbs => {
@@ -97,11 +107,6 @@ __PACKAGE__->config->{static}->{dirs} = ['static'];
 #     browser: in line
 #     comment: HTML comments
 #     log: logfile
-
-# Turn off view debugging if global debugging is off.
-if ( ! __PACKAGE__->config->{debug}) {
-  __PACKAGE__->config->{debug_view} = "";
-}
 
 __PACKAGE__->config->{version}  = $VERSION;
 __PACKAGE__->config->{codename} = $CODENAME;
@@ -165,73 +170,81 @@ my @reference_widget_fields = qw/
 # Append to that a list of available object tags or rows as necessary
 
 __PACKAGE__->config->{pages} = {
- 				antibody => {
- 					     widget_order => [qw/identification expression_patterns notes references/],
- 					     widgets      => {
- 							      identification => [
-										 @identification_widget_fields,
-										 qw/
-										     other_name
-										     summary
-										     location
-										     generated_against_locus
-										     corresponding_gene
-										     clonality	  
-										     antigen
-										     animal
-										     /
-										],
- 							      expression      => [qw/expression_patterns/],
-							      notes        => [qw/remarks/], 
-							      references      => \@reference_widget_fields,
- 							     },
-					    },
-				expression_cluster => { widget_order => [qw/identification
-									    clustered_data
-									    notes
-									    references
-									   /],
-							widgets => { identfication => [@identification_widget_fields,
-										       qw/description
-											  algorithm/],
-								     clustered_data => [qw/microarray_results
-											   sage_results/],
-								     references      => \@reference_widget_fields,
-								   },
-						      },
-				gene => {
-					 browse       => { limits => [qw/Species
+    antibody => {
+	widget_order => [qw/identification expression_patterns notes references/],
+	widgets      => {
+	    identification => [
+		@identification_widget_fields,
+		qw/other_name
+                   summary
+	           location
+		   generated_against_locus
+		   corresponding_gene
+		   clonality	  
+		   antigen
+		   animal
+	          /
+		],
+		  expression      => [qw/expression_patterns/],
+		  notes           => [qw/remarks/], 
+		  references      => \@reference_widget_fields,
+	},
+    },
+		  
+		  expression_cluster => { 
+		      widget_order => [qw/identification
+					  clustered_data
+					  notes
+				          references
+				       /],
+		      widgets => { identfication => [@identification_widget_fields,
+						     qw/description
+						        algorithm/],
+							 clustered_data => [qw/microarray_results
+									       sage_results/],
+							 references      => \@reference_widget_fields,
+		  },
+	      },
+							 gene => {
+							     browse       => { limits => [qw/Species
 									 Gene_class/],
 							 },
 					 # Fields to return for searches
 					 search => [qw/name common_name species description/],
 					 widget_order => [
-							  qw/identification
-							     location
-							     expression
-							     function
-							     gene_ontology
-							     genetics
-							     homology
-							     similarities
-							     reagents
-							     references/
-							 ],
-					 widgets => {
-						     identification => [
-									@identification_widget_fields,
-									qw/
-									    ids
-									    description
-									    ncbi_kogs
-									    species
-									    reactome_knowledgebase
-									    other_sequences
-									    ncbi
-									    cloned_by
-									  /
-								       ],
-#									    gene_models
+					     qw/overview
+overview2
+                                                 /],
+#							     location
+#							     expression
+#							     function
+#							     gene_ontology
+#							     genetics
+#							     homology
+#							     similarities
+#							     reagents
+#							     references/
+#					 ],
+							     widgets => {
+					     overview => [
+						 qw/
+                                                   ids
+						   concise_description
+
+     					           gene_models
+                                                   history
+						   /],
+#                                                   species
+
+#						   sequences => [
+#						       qw/gene_models
+#                                                         /],
+
+#
+#                                                          unspliced
+#                                                          spliced
+#                                                          translated
+
 						     location => [
 								  qw/genetic_position
 								     interpolated_position
@@ -626,6 +639,7 @@ __PACKAGE__->config->{common_fields} = { map { $_ => 1 } qw/alleles
 							    genetic_position
 							    genomic_position
 							    genomic_environs
+                                                            history
 							    interpolated_position
 							    name
 							    phenotypes_observed
@@ -708,10 +722,14 @@ __PACKAGE__->config->{generic_widgets} =  { map { $_ => 1 } qw/
 							      /};
 
 
+__PACKAGE__->config->{'View::JSON'} = {
+    expose_stash => 'data' };
+
 
 
 # Start the application
 __PACKAGE__->setup;
+
 
 
 
@@ -739,18 +757,19 @@ sub is_ajax {
 
 sub get_example_object {
   my ($self,$class) = @_;
-  my $ace_model = $self->model('AceDB');
-  my $dbh   = $ace_model->dbh;
-  my $total = $dbh->fetch(-class => ucfirst($class),
+  my $api = $self->model('WormBaseAPI');
+
+  my $ace = $api->service('acedb');
+  # Fetch the total number of objects
+  my $total = $ace->fetch(-class => ucfirst($class),
 			  -name  => '*');
   
   my $object_index = 1 + int rand($total-1);
 
   # Fetch one object starting from the randomly determined one
-  my ($object) = $dbh->fetch(ucfirst($class),'*',1,$object_index);
+  my ($object) = $ace->fetch(ucfirst($class),'*',1,$object_index);
   return $object;
 }
-
 
 
 =head1 NAME
