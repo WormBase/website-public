@@ -13,11 +13,11 @@
 
     </title>
     
-<script type="text/javascript" src="/static/js/jquery/jquery-1.3.2.min.js"></script>  
-<script type="text/javascript" src="/static/js/jquery/jquery-ui-1.7.2.custom.min.js"></script> 
+<script type="text/javascript" src="/js/jquery/jquery-1.3.2.min.js"></script>  
+<script type="text/javascript" src="/js/jquery/jquery-ui-1.7.2.custom.min.js"></script> 
 
-<link href="/static/js/development-bundle/themes/smoothness/ui.theme.css" rel="stylesheet" type="text/css" />  
-<link href="/static/js/development-bundle/themes/smoothness/ui.tabs.css" rel="stylesheet" type="text/css" />  
+<link href="/js/development-bundle/themes/smoothness/ui.theme.css" rel="stylesheet" type="text/css" />  
+<link href="/js/development-bundle/themes/smoothness/ui.tabs.css" rel="stylesheet" type="text/css" />  
 
 <script type="text/javascript">
   $(function() {
@@ -29,73 +29,47 @@
 <script>
 
   $(document).ready(function(){
-
+  
   // Load a (specific) field by ajax
   $("a.ajax").click(function() {
-          var url     = $(this).attr("href");
-          var format  = $(this).text();
-          var mytitle = $(this).attr("title");
-          new_url = url + "?content-type=application/json";
-           $.ajax({
+      var url     = $(this).attr("href");
+      var format  = $(this).text();
+  
+      // Multiple classes specified. Split so I can rejoin.
+      var mytitle = $(this).attr("class").split(" ");
+      if (format == "yml") {
+      format = "text/x-yaml";
+  }
+
+     $.ajax({
                  type: "GET",
-                 url : new_url,
-//                 contentType: $(this).text(),
-//                 dataType: $(this).text(),
-//                 dataType: "json",
-//                 contentType: "json",
-//                 dataType: "application/" + format,
-//                 contentType: "application/" + format,
+                 url : url,
+                 contentType: 'application/x-www-form-urlencoded',
+                 dataType: format,
                  success: function(data){
-                       alert(mytitle);
-                         
- //                      $(".returned-data." + mytitle).toggleClass(".data-box").show();
-                       $("#returned-data." + mytitle).show();
-                       $("#returned-data." + mytitle).replaceWith(data);                     
+                      //  Add some description prior to dumping the content
+                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
+                       $("#" + mytitle[1] + ".returned-data").show();
+                       $("#" + mytitle[1] + ".returned-data").html(content);                         
+
+                        // Embed in <pre> if this is not html
+                        if (format == "html") {
+                        } else { 
+                          data = "<pre>" + data + "</pre>";
+                        }
+
+                       $("#" + mytitle[1] + ".returned-data").append(data);
                  },
                  error: function(request,status,error) {
                        alert(request + " " + status + " " + error + " " + format);
                   }
         });
-
   return false;
   });
 
+
+
 });
-
-
-
-
-//  // Load a (specific) field by ajax
-//  $(document).ready(function(){
-//  $.get("http://dev.wormbase.org:8080/rest/field/gene/WBGene00006763/common_name",
-//         {},
-//        function(data,status){
-//          alert(status);
-//          $("#results").append(data);
-//        },
-//        "html"
-//     );
-//});
-
-
-
-
-  // Load a generic field by ajax
-  // This would typically be called onClick
-  // Need to set the host as appropriate, too  
-//  $("#loadme").click(function(class,name,field) {
-//  class="gene";
-//  field="common_name";
-//  name="WBGene00006763";
-//  $.get("http://dev.wormbase.org:8080/rest/field/" + class "/" + name + "/" + field + "/",
-//         {},
-//        function(data,status){
-//          alert(status);
-//          $("#results2").append(data);
-//        },
-//        "html"
-//     );
-//});
 
   </script>
 

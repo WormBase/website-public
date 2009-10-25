@@ -1,11 +1,14 @@
 [% IF template.name.match('\.(css|js|txt)');
      debug("Passing page through as text: $template.name");
      content;
-   ELSIF (template.name.match('report'));   	 
-         content WRAPPER boilerplate/html + boilerplate/layout;
+
    ELSIF (c.stash.noboiler);
      debug("Passing page through without wrapping: $template.name");
      content;
+
+   ELSIF (template.name.match('report'));   	 
+         content WRAPPER boilerplate/html + boilerplate/layout;
+
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");
      content;

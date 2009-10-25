@@ -1,0 +1,20 @@
+[%#
+
+  Widget  : Gene.Identification
+  Section : Concise Description
+  Stash   : concise_description => { concise_description => 'text',
+		  	             description         => 'help text'
+      			           }
+
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[%- WRAPPER "boilerplate/field" title="Concise Description" -%]
+    [% IF concise_description.concise_description %]
+        [% concise_description.concise_description %]
+    [% ELSE %]
+          [% site.unknown %]
+    [% END %]
+[% END %]

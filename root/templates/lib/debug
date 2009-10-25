@@ -19,3 +19,11 @@
         <p class="debug-view">[% "$title; $msg" %]</p>
    [% END %]
 [% END %]
+
+[% BLOCK generic_debug_info %]
+   <h5>General information:</h5>
+   <pre>
+   Catalyst action : [% c.controller.action_for(this) %]<br />
+          template : [% template.name %]
+   </pre>
+[% END %]
