@@ -101,7 +101,7 @@ sub connect {
     #my $dbh = Bio::DB::GFF->new(%$gff_args) or die;  
     # How to set the dbh?  This is different
     # the acedb dbh which is a scalar (actually, even that should be a list of available datasources to pick at random)
-    $self->set_dbh($dbh);
+    $self->set_dbh($dbh);    
     return $self;
 }
 
