@@ -4,6 +4,11 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 
+=head1 TODO
+
+Add methods for evidence via API
+Standardize data structure
+
 =head1 NAME
 
 WormBase::Web::Controller::Debug - Catalyst Controller
@@ -19,25 +24,13 @@ Simple controller actions to assist in development and debugging.
 
 =head2 index
 
-The debug index patch simply lists all available classes.
+Display an index of varioous debugging tools.
 
 =cut
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     $c->response->body('Matched WormBase::Web::Controller::Debug in Debug.');
-}
-
-=head1 classes
-
-Show a simple list of all available classes (pages) and their widgets
-
-=cut
-
-sub classes :Local :Args(0) {
-    my ( $self, $c ) = @_;
-    $c->response->body('Matched WormBase::Web::Controller::Debug in Debug.');
-#    $c->stash->{template} = 'debug/models.tt2';
 }
 
 =head1 class
@@ -47,8 +40,7 @@ demonstration links to each widget and field.
 
 =cut
 
-
-sub class :Chained : Path("classes") :Args(1) {
+sub class :Chained : Path("class") :Args(1) {
     my ($self,$c,$class) = @_;
     $c->stash->{page} = $class;
 }    
