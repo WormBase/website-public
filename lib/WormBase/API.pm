@@ -47,6 +47,7 @@ sub version {
     return $service->version;
 }
 
+# Fetch a service by name
 sub service {
     my $self = shift;
     my $name = shift;
@@ -110,7 +111,8 @@ has 'class' => (
 
 =cut
 
-# During instantiation, connect to our primary service (AceDB).
+# During BUILD, connect to all available services.
+# This might be overkill.
 sub BUILD {
     my $self = shift;
     my $services = $self->_services;
@@ -167,12 +169,22 @@ sub fetch {
 					      { object => $object });
     } else {
 	
-	# Try fetching an object
-	my $service = $self->primary_datasource;
-	my $driver = $self->_services->{$service};
-	my $object = $driver->fetch(-class=>$class,-name=>$name);
-#    $self->log->debug("$driver $service $object $class $name");
-      
+	# Try fetching an object (from the primary data source)
+	my $service_symbolic  = $self->primary_datasource;
+
+	my $service_instance = $self->_services->{$service_symbolic};
+
+#	my $driver = $self->service($service);
+	print STDERR "CALLING CONNECT? $service_instance\n";
+	
+	my $dbh = $service_instance->dbh;
+	print STDERR "FETCH DBH - DID IT CALL CONNECT $dbh?\n";
+
+	my $object = $service_instance->fetch(-class=>$class,-name=>$name);
+#	my $object = $dbh->fetch(-class=>$class,-name=>$name);
+	print STDERR "SEARCH - DID IT CALL CONNECT\n";
+
+	# For some reason, this ends up calling the connect method of ALL services...
 	return WormBase::API::Factory->create($class,
 					      { object => $object });
     }
