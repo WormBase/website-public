@@ -138,7 +138,8 @@ sub name {
     my $self = shift;
     my $object = $self->object;
     my $name   = $object->name;
-    return ({ name => $name });
+    return $name;
+    return ({ name => $name });   # OR THIS?
 }
 
 =head1 $object->common_name
