@@ -30,8 +30,21 @@ Display an index of varioous debugging tools.
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    $c->response->body('Matched WormBase::Web::Controller::Debug in Debug.');
+    $c->response->body('Matched WormBase::Web::Controller::Debug.');
 }
+
+
+=head1 classes
+
+A list of available classes
+
+=cut
+
+sub classes :Path('classes') :Args(0) {
+    my ( $self, $c ) = @_;
+    $c->response->body('Matched WormBase::Web::Controller::Debug::classes.');
+}
+
 
 =head1 class
 

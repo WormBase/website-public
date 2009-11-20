@@ -1,7 +1,10 @@
 package WormBase::Web::View::TT;
 
-use strict;
-use parent 'Catalyst::View::TT';
+#use strict;
+#use parent 'Catalyst::View::TT';
+use Moose;
+extends 'Catalyst::View::TT';
+
 
 __PACKAGE__->config({
 		     INCLUDE_PATH => [
