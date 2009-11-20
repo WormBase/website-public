@@ -185,13 +185,11 @@ sub common_name {
 
     # Q: Return an object or a string?
     # Q: Data structure
-    return ({data        => "$common_name",
-	     description => 'The most commonly used name of the gene',
-	    });
-
-#    return ({common_name => "$common_name",
-#	     description => 'The most commonly used name of the gene',
-#	    });
+    my $data = { resultset => { data => "$common_name",
+				description => 'The most commonly used name of the gene'
+		 }
+    };
+    return $data;
 }
 
 
@@ -212,12 +210,21 @@ sub ids {
 #    };
 
     my $version = $object->Version;
-    my $data = { #%{$self->common_name},    # Have to unroll some hashes
-	         #%{$self->name},
-	aceview    => "$aceview",
-	refseq      => $refseq,
-	version     => $object->Version->name,
-	description => 'various IDs that refer to this gene',
+    my $locus   = $object->CGC_name;
+    my $common  = $object->Public_name;
+    my $data = { 
+	resultset => {
+	    common_name   => "$common",
+	    locus_name    => "$locus",
+	    gene_class    => $object->Gene_class,
+	    other_name    => $object->Other_name,
+	    sequence_name => $object->Sequence_name,
+	    wormbase_id   => "$object",
+	    aceview_id    => "$aceview",
+	    refseq_id     => $refseq,
+	    version       => "$version",
+	    description   => 'various IDs that refer to this gene',
+	}
     };
     
     # Should I include things like Protein Object IDs (SwissProt, Uniprot), 
@@ -249,10 +256,11 @@ sub concise_description {
 #		|| $object->Corresponding_CDS->Detailed_description}) {
 #      $data{has_details}++;
 #  }
-    
-    return ({ concise_description => $description,
-	      description         => "A manually curated description of the gene's function",
-	    });
+    my $data = { resultset => { concise_description => "$description",
+				description         => "A manually curated description of the gene's function",
+		 }
+    };
+    return $data;
 }
 
 # Fetch all proteins associated with a gene.

@@ -81,8 +81,6 @@ sub object {
 
 
 # Expects an array reference of objects (or a simple scalar object)
-
-
 sub wrap {
     my ($self,$objects) = @_;
 
@@ -168,6 +166,19 @@ sub other_name {
 # Parse out species "from a Genus species" string.
 # Return g_species, used primarily for dynamically
 # selecting a data source based on species identifier.
+sub taxonomy {
+    my $self = shift;
+    my $object = $self->object;
+    my $genus_species = $object->Species;
+    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
+    my $data = { resultset => { genus   => $genus,
+				species => $species,
+		 }
+    };
+    return $data;
+}
+
+
 sub parsed_species {
   my ($self) = @_;
   my $object = $self->object;
