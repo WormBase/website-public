@@ -7,10 +7,21 @@
 
 %]
 
-[% PROCESS identify_templates(my_component=component.name)
-                     IF c.config.debug_view %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
 
 [% WRAPPER "boilerplate/field" title="Common Name" %]
-   [% c.common_name %]
-        [% common_name %]
+	<a href="[% c.uri_for('/report','gene',common_name.resultset.data) %]" 
+	   title="[% common_name.resultset.description %]">
+	           [% common_name.resultset.data %]
+	</a>
+
+1. Once the template has loaded make an AJAX call for the field
+
+
+
+
+
+
+
 [% END %]
