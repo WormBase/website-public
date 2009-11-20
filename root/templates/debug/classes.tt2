@@ -6,7 +6,7 @@
 [% count=count+1 %]
 
    <div id="[% page %]">
-   <h4>Class: [% page %]</h4>
+   <h4>Class: <a href="[% c.uri_for("class",page) %]">[% page %]</a></h4>
 
    <div class="widget_listing">
    [% FOREACH widget IN c.config.pages.$page.widget_order %]

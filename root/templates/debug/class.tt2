@@ -79,28 +79,44 @@ interface of every available field and widget.
 
 <p>
 
+
 [% FOREACH this_page IN c.config.pages.keys.sort %]
+
      [% NEXT IF this_page != page %]
 
      [% SET random_object = c.get_example_object(this_page) %]
      <p>All examples use a randomly selected object. Reload to test another.</p>
 
-       [% FOREACH widget IN c.config.pages.$this_page.widget_order %]
-       <div class="debug-widget-title">[% widget %]</div>
+       [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+       <div class="debug-widget-title">[% widget.name %]</div>
            <div class="debug-field-list">
 
 <table width="100%">
    <tr>
 	<td class="field-name">(widget)</td>
                 <td>
-                   <p class="[% widget_template_type(widget) %]">
-              		       <a href="[% c.uri_for('/widget',this_page,random_object,widget) %]" target="_blank">
-                                         [% select_widget_template(widget,this_page) %]
-                              </a>
-                   </p>
+
+                   <p class="[% widget_template_type(widget.name) %]">	                   
+                      [% FOREACH type IN c.config.api.content_type %]
+
+    	               <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+		       <a class="ajax [%- widget -%]" href="[% c.uri_for('/rest','widget',this_page,random_object,widget.name) %]">[%- type -%]</a>
+		       
+ 		        [% IF type == "html" %]
+                              - [% select_widget_template(widget.name,this_page) %]
+			[% END %]
+			
+		       [% END %]
+
+
+		       <div id="[%- widget -%]" class="returned-data"></div>
+		       </p>
+
            </td>
    </tr>
-         [% FOREACH field IN c.config.pages.$this_page.widgets.$widget %]
+         [%# FOREACH field IN c.config.pages.$this_page.widgets.$widget.fields %]
+         [% FOREACH field IN widget.fields %]
+
    <tr>
  	   <td class="field-name">[% field %]</td>
            <td>
