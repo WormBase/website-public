@@ -115,13 +115,13 @@ sub field :Path("/field") Args(3) {
     
     # This logic should probably be relocated to the external model.
     if ($object->can($field)) {
-	$c->stash->{$field} = $object->$field;
+	$c->stash->{$field} = $object->$field;	
     } else {
 	# We are trying to call a direct method on an Ace::Object;
 	# Method name needs to be ucfirst.
 	# Tags that are not specifically included in the configuration
 	# are not currently available because they are not actions
-	
+	$c->log->warn("HERE WE ARE!");
 	my $method = ucfirst($field);
 	$c->stash->{$field} = $object->object->$method;
     }
@@ -186,11 +186,27 @@ sub widget :Path("/widget") Args(3) {
     # this widget from the app configuration.
 
     # The templates for each field are actually specified in the widget.
-    my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
-    $c->stash->{fields} = \@fields;
+#    my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
+
+
+    # DOH!  Cannot access widgets by name now...
+    my $fields = $self->_get_widget_fields($c,$class,$widget);
+#    my %widgets = $c->config->{pages}->{$class}->{widgets};
+#    $c->log->warn(keys %widgets);
+#    foreach (keys %widgets) {
+#	$c->log->warn(" yep " . $_);
+#	next unless $_->{widget}->{name} eq $widget; 
+#	@fields = @{ $_->fields };
+#    foreach (@fields) {
+#	$c->log->warn($_->[0]);
+#    }
+	$c->log->warn(join(" ",@$fields));
+#    }
+    $c->stash->{fields} = $fields;
+
 
     # Forward to each of the component fields.
-    foreach my $field (@fields) {
+    foreach my $field (@$fields) {
 	# Currently, I have to provide EVERY tag in my wrapper model
 	# since I cannot find a sensible way to AUTOLOAD under Moose
 	# (if indeed AUTOLOADing under Moose makes any sense at all...)
@@ -225,6 +241,15 @@ sub widget :Path("/widget") Args(3) {
     $c->forward('WormBase::Web::View::TT');   
 };
 
+
+# For a given PAGE and WIDGET, fetch all available FIELDS
+sub _get_widget_fields {
+    my ($self,$c,$page,$widget) = @_;
+    my $index = $c->config->{pages}->{$page}->{widget_index}->{$widget};
+    my $widget_config = $c->config->{pages}->{$page}->{widgets}->{widget}->[$index];
+    my @fields = @{$widget_config->{fields}};
+    return \@fields;
+}
 
 
 
