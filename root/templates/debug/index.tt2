@@ -11,15 +11,22 @@
 <h5>Available Debugging Views</h5>
 
 <h6>Full list of classes</h6>
-	
+
 <ul>
 [% FOREACH page IN c.config.pages.keys.sort %]
     <li><a href="[% c.uri_for("class",page) %]">[% page %]</a></li>
 [% END %]
+
+    <li>
+         <span class="description"> 
+	 ... or view a complete, expanded list of <a href="[% c.uri_for('/','debug','classes') %]">
+     	        all available classes</a>
+         </span>
+    </li>
+
 </ul>
 
+	
 
-<ul>
-    <li><a href="[% c.uri_for('/','debug','classes') %]">List of Classes</a>
-         <span class="description"> -- a complete list of all available classes</span></li>
-</ul>
+
+

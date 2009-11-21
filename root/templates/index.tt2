@@ -1,40 +1,5 @@
-<h2>Debug Index: Available Models</h2>
+<h1>Where To From Here?</h1>
 
-[% FOREACH page IN c.config.pages.keys.sort %]
-[% SET count=0 %]
-<div class="page_listing">
-[% count=count+1 %]
-
-   <div id="[% page %]">
-   <h4>Class: [% page %]</h4>
-
-   <div class="widget_listing">
-   [% FOREACH widget IN c.config.pages.$page.widget_order %]
-        <h5>
-	[% IF c.config.pages.$page.widgets.$widget %] 
-             <a href="#[% count %]" id="[% page _ widget _ 'toggle' %]" onclick='toggle("[% page _ widget %]"); return false;'><img src="/static/img/disclosure.png"> Widget: [% widget %]</a>
-        [% ELSE %]
-           Widget: [% widget %]
-        [% END %]
-        </h5>
-
-	[% IF c.config.pages.$page.widgets.$widget %] 
-           <!-- CSS hack for inline presentation of a list -->
-   	   <div class="inline-list" id="[% page _ widget %]">
-	   <p>Fields: </p>
-   	         <ul>
-   	              [% SET last=c.config.pages.$page.widgets.$widget.last %]
-                      [% FOREACH field IN c.config.pages.$page.widgets.$widget %]
-                           [%- IF loop.last -%]
-                               [% field _ ". " %]
-                           [% ELSE %]
-                                [% field _ ", " %]
-                           [% END %]
-                      [% END %]
-                  </ul>
-             <p></p>
-           </div>
-        [% END %]
-     [% END %]
-</div>
-[% END %]
+<ul>
+    <li><a href="[% c.uri_for('/','debug') %]">Debugging Index</a>
+</ul>

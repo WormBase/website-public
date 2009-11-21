@@ -1,5 +1,5 @@
 body {
-    padding: 25px;
+    padding: 15px;
     margin-left:10%;
     margin-right:5%;
     font-family: Helvetica, sans-serif;
@@ -89,16 +89,15 @@ div#page .byline {
 }
 
 
-
-/* Footer Styling */
-
-#footer{
-        border-bottom: 1px dotted #BCC;
-/*      width: 760px; */
+/* ************************************
+     Footer Styling                       
+   ************************************ */
+div#footer{
         clear:both;
 	margin: 0 auto;
-        padding: 10px 0 0 0;
+        padding: 0.1em 0 0 0;
 	font-size:0.7em;
+        border-top: 1px solid #BCC;
 }
 
 #footercredit {
@@ -119,24 +118,8 @@ div#page .byline {
 }
 
 #footer a:link, #footer a:hover {  }
-
 #footer a:visited { }
-
 #footer a:hover {  }
-
-#footer .stbutton {
-   height:10px;
-   margin-bottom:20px;
-}
-
-
-
-div#footer {
-    clear:both;
-    padding-top:10px;
-    border-top:1px dotted gray;
-    font-size:10px;
-}
 
 div.footer_left {
     float:left;

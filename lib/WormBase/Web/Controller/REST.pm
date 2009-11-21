@@ -44,8 +44,10 @@ sub pages_GET {
 	$data{$page} = "$uri";
     }
 
-    $self->status_ok( $c, entity => { data => \%data,
-				      description => 'Available (dynamic) pages at WormBase',
+    $self->status_ok( $c,
+		      entity => { resultset => {  data => \%data,
+						  description => 'Available (dynamic) pages at WormBase',
+				  }
 		      }
 	);
 }
@@ -75,10 +77,11 @@ sub available_widgets_GET {
     my @data;
     foreach my $widget (@widgets) {
 	my $uri = $c->uri_for('/widget',$class,$name,$widget);
-	push @data,{ widgetname => $widget,
+	push @data, { widgetname => $widget,
 				widgeturl  => "$uri"
 	};
     }
+    
 
     # Retain the widget order
     $self->status_ok( $c, entity => {
@@ -122,8 +125,15 @@ sub widget_GET {
     
 
 
-    # TODO: Load up the data content. Should these be REST calls?
-    my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
+    # TODO: Load up the data content.
+    # The widget itself could make a series of REST calls for each field
+    my @fields;
+    foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
+	next unless $widget_config->{name} eq $widget; 
+	@fields = @{ $widget_config->fields };
+	$c->log->warn(@fields);
+    }
+#$c->config->{pages}->{$class}->{widgets}->{$widget} };
     my $data = {};
     foreach my $field (@fields) {
 	my $data = $object->$field;
@@ -151,6 +161,8 @@ sub widget_GET {
 		     }
 	);
 }
+
+
 
 
 ######################################################

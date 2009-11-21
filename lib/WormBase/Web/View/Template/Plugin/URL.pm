@@ -59,7 +59,7 @@ sub object_href {
 # Linking should also accept an optional parameter, evidence.  This will control
 # whether or not a bit of evidence exists for this item.
 sub Link {
-    my ($self,$hash,$text) = @_;
+    my ($self,$hash,$text,$tooltip) = @_;
     return unless $hash;
     
     

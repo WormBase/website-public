@@ -12,8 +12,8 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [%- WRAPPER "boilerplate/field" title="Concise Description" -%]
-    [% IF concise_description.concise_description %]
-        [% concise_description.concise_description %]
+    [% IF concise_description.resultset.concise_description %]
+        [% concise_description.resultset.concise_description %]
     [% ELSE %]
           [% site.unknown %]
     [% END %]

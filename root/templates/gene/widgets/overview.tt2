@@ -11,10 +11,12 @@
 
 %]
 
+[% c.stash.fields.join(" ") %]
+
     [% PROCESS "gene/ids.tt2" %]
-    [% PROCESS "gene/concise_description.tt2"      IF concise_description %]
-    [% PROCESS "common_fields/species.tt2" IF species %]
-    [% PROCESS "gene/gene_models.tt2"      IF gene_models %]
+    [% PROCESS "gene/concise_description.tt2" IF c.stash.concise_description %]
+    [% PROCESS "common_fields/taxonomy.tt2"   IF taxonomy %]
+    [% PROCESS "gene/gene_models.tt2"         IF gene_models %]
     [% PROCESS "common_fields/history.tt2" %]
 
 [% END %]
