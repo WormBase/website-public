@@ -28,6 +28,13 @@ has '_services' => (
     lazy_build => 1,
     );
 
+has 'stringified_responses' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+    default  => 1,
+    );
+
 #has '_gff_datasources' => (
 #    is     => 'ro',
 #    isa    => 'HashRef',
