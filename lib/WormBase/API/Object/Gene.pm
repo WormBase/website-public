@@ -183,16 +183,18 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $object;
 
-    # Q: Return an object or a string?
-    # Q: Data structure
-    my $data = { resultset => { data => "$common_name",
-				description => 'The most commonly used name of the gene'
-		 }
-    };
-    return $data;
+
+    # This should all be handled in build_data_structure.
+    # (or even in the view)
+    if ($self->stringified_responses) {
+	my $data = $self->build_data_structure("$common_name",
+					       'The most commonly used name of the gene');    
+	return $data;
+    } else {
+	return $self->wrap($common_name);
+    }
 }
-
-
+    
 sub ids {
     my $self   = shift;
     my $object = $self->object;
@@ -200,36 +202,42 @@ sub ids {
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
     
-#    my $data = { data => { #%{$self->common_name},    # Have to unroll some hashes
-#			  #%{$self->name},
-#			   aceview    => $aceview,
-#			   refseq      => $refseq,
-#			   version     => $object->Version,			   
-#		 },
-#		 description => 'various IDs that refer to this gene',
-#    };
-
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
-    my $data = { 
-	resultset => {
-	    common_name   => "$common",
-	    locus_name    => "$locus",
-	    gene_class    => $object->Gene_class,
-	    other_name    => $object->Other_name,
-	    sequence_name => $object->Sequence_name,
-	    wormbase_id   => "$object",
-	    aceview_id    => "$aceview",
-	    refseq_id     => $refseq,
-	    version       => "$version",
-	    description   => 'various IDs that refer to this gene',
-	}
-    };
-    
-    # Should I include things like Protein Object IDs (SwissProt, Uniprot), 
-    # CDS IDs, etc?    
-    return $data;
+
+    if ($self->stringified_responses) {
+	my $data = $self->build_data_structure(
+	    {	
+		common_name   => "$common",
+		locus_name    => "$locus",
+		gene_class    => $object->Gene_class,
+		other_name    => join(', ',map { "$_" } $object->Other_name,
+		sequence_name => join(', ',map { "$_" } $object->Sequence_name,
+		wormbase_id   => "$object",
+		aceview_id    => "$aceview",
+		refseq_id     => $refseq,
+		version       => "$version",
+	    },
+	    'various IDs that refer to this gene',
+	    
+	    );
+	return $data;
+    } else {
+	return 
+	    ({	
+		common_name   => $self->wrap($common),
+		locus_name    => $self->wrap($locus),
+		gene_class    => $self->wrap($object->Gene_class),
+		other_name    => $self->wrap($object->Other_name),
+		sequence_name => $self->wrap($object->Sequence_name),
+		wormbase_id   => "$object",
+		aceview_id    => $aceview,
+		refseq_id     => $refseq,
+		version       => "$version",
+	     });
+    }
+
 }
 
 sub concise_description {
@@ -248,19 +256,14 @@ sub concise_description {
 	my $common_name = $self->common_name;
 	$description = $common_name->{common_name} . ' gene';
     }
-    
-    # NONE OF THIS IS NECESSARY  - SHOULD BE PUSHED ONTO TEMPLATE.
-#  if (eval {$object->Provisional_description
-#		|| $object->Detailed_description
-#		|| $object->Corresponding_CDS->Provisional_description
-#		|| $object->Corresponding_CDS->Detailed_description}) {
-#      $data{has_details}++;
-#  }
-    my $data = { resultset => { concise_description => "$description",
-				description         => "A manually curated description of the gene's function",
-		 }
-    };
-    return $data;
+
+    if ($self->stringified_responses) {
+	my $data = $self->build_data_structure("$description",
+					       "A manually curated description of the gene's function");
+	return $data;
+    } else {
+	return $description;
+    }
 }
 
 # Fetch all proteins associated with a gene.
@@ -270,11 +273,16 @@ sub proteins {
     my $object = $self->object;
     my @cds    = $object->Corresponding_CDS;
     if (@cds) {
-	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
-		
-	# Wrap these in WormBase API objects
-	my @wrapped = $self->wrap(@proteins);
-	return \@wrapped;
+	my @proteins  = map { $_->Corresponding_protein } @cds;
+
+	# Return a list of protein object names made by this gene.
+	if ($self->stringified_responses) {
+	    my $data = $self->build_data_structure({ orine
+	} else {
+	    # Wrap these in WormBase API objects
+	    my @wrapped = $self->wrap(@proteins);
+	    return \@wrapped;
+	}	
     }
 }
 
@@ -288,6 +296,8 @@ sub cds {
     if (@cds) {
 	# Wrap these in WormBase API objects
 	my @wrapped = $self->wrap(@cds);
+	my $data = { resultset => { cds => \@wrapped } };
+	return $data;
 	return \@wrapped;
     }
 }
@@ -308,6 +318,9 @@ sub kogs {
 	    if (@kogs) {
 		# Wrap these in WormBase API objects
 		my @wrapped = $self->wrap(@kogs);
+
+		my $data = { resultset => { kogs => \@wrapped } };
+		return $data;
 		return \@wrapped;
 	    } else { 
 		return 1;
@@ -339,6 +352,9 @@ sub other_sequences {
     if (my @seqs = $object->Other_sequence) {
 	# Wrap these in WormBase API objects
 	my @wrapped = $self->wrap(@seqs);
+
+	my $data = { resultset => { sequences => \@wrapped } };
+	return $data;
 	return \@wrapped;
     } else {
 	return 1;
@@ -445,15 +461,25 @@ sub cloned_by {
     my $self   = shift;
     my $object = $self->object;
     
-    my $cloned_by = $object->Cloned_by;
+    my @cloned_by = $object->Cloned_by;
     return 1 unless $cloned_by;
     
     my ($tag,$source) = $cloned_by->row ;
-    return ({ cloned_by => $self->wrap($cloned_by),
-	      tag       => $tag,
-	      source    => $source,
-	      description => 'the researcher noted for cloning this gene',
-	    });
+    
+    my @data;
+    foreach (@cloned_by) {
+	my $name = $cloned_by->Full_name;
+	push @data,{cloned_by => "$_",
+		    full_name => "$name",
+		    tag       => "$tag",
+		    source    => "$source",		    
+	};
+    }
+    
+    my $data = $self->build_data_structure(\@data,
+					   'the researchers noted for cloning this gene');
+    
+    return $data;
 }
 
 # Object History.  This should be suitably generic and moved to Object.pm
@@ -524,12 +550,8 @@ sub genomic_position {
     # corresponding to a Locus that has a CDS but no corresponding GFF segment. (rds-2)
     my $longest = $self->_longest_segment(\@segments);
     
-    my $stash = $self->SUPER::genomic_position($longest);
-    
-    # Contained in an operon?
-    my @operons = map {eval { $_->Contained_in_operon } } @$sequences;
-    $stash->{operons} = (@operons) ? \@operons : undef;
-    return $stash;
+    my $data = $self->SUPER::genomic_position($longest);
+    return $data;
 }
 
 
@@ -582,7 +604,7 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     
-    my %stash;
+    my @data;
     my @all_ep     = $object->Expr_pattern;
     my @no_image   = grep{!$self->_pattern_thumbnail($_)} @all_ep;
     my @have_image = grep{ $self->_pattern_thumbnail($_)} @all_ep;
@@ -606,14 +628,15 @@ sub pre_wormbase_information {
     my $self   = shift;
     my $object = $self->object;
     
-    # fetch the description (phenotype) lines
+    # Description comes from Phenotype.
     my @description = $object->Phenotype or return;
     
     my @xref = $object->Allele;
     push @xref,$object->Strain;
+
+# TODO: Create a template (or javascript) that marks up arbitrary text
+# with arbitrary symbols
     
-    # cross-reference laboratories
-    # TODO!!
 #  foreach my $d (@description) {
 #    $d =~ s/;\s+([A-Z]{2})(?=[;\]])
 #      /"; ".$c->object2linkmanual($1,'Laboratory')
@@ -628,7 +651,9 @@ sub pre_wormbase_information {
 #    my %xref = map {$_=>$_} @xref;
 #    $d =~ s/\b(.+?)\b/$xref{$1} ? $c->object2link($xref{$1}) : $1/gie;
 #  }
-    return \@description;
+    my $data = $self->build_data_structure(\@description,
+					   'information from C. elegans I/II');
+    return $data;
 }
 
 
@@ -755,11 +780,8 @@ sub rnai_phenotypes {
 		
 	    }
 	}
-	@{$stash{not_observed}} = @not_observed ? join(", ", map {$self->best_phenotype_name($not_observed{$_})} keys %not_observed) : "";
-	
-	#####      @rows ? map { TR(td(\@$_)) } @rows : TR(td({-colspan=>3}, qq[No observed phenotype is found. For a list of phenotypes that were not observed,
-	#####                                                                             mouseover to "Phenotype" header above. For more information, please follow the link below 
-	#####                                                                             for the RNAi report of this gene.])));
+	@{$stash{not_observed}} = @not_observed 
+	    ? join(", ", map {$self->best_phenotype_name($not_observed{$_})} keys %not_observed) : "";
     }
     
     return \%stash;
@@ -880,7 +902,7 @@ sub interactions {
     ##     my %seen = ();
     ##      $table .= TR(td({-align=>'center'},$pair),
     ##		   td({-align=>'center'},$type),
-    ###		   td({-width=>'30%'},join('; ',
+    ##		   td({-width=>'30%'},join('; ',
     ##					   sort { $a cmp $b }
     ##					   grep { !$seen{$_}++ } 
     ##					   grep { $_ ne 'n/a' }  # Ignor empty papers
@@ -919,6 +941,7 @@ sub regulation_on_expression_level {
     return unless ($object->Gene_regulation);
     
     my @stash;
+
     # Explore the relationship in both directions.
     foreach my $tag (qw/Trans_regulator Trans_target/) {
 	my $join = ($tag eq 'Trans_regulator') ? 'regulated by' : 'regulates';
@@ -1117,9 +1140,6 @@ sub alleles {
 
 
 
-
-
-# NOT FINISHED!
 sub rearrangements {
     my $self   = shift;
     my $object = $self->object;
@@ -1164,14 +1184,14 @@ sub treefam {
     my $object = $self->object;
     my $proteins = $self->_fetch_proteins($object);
     
-    my @stash;
+    my @data;
     foreach my $protein (@$proteins) {
 	my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 	# Ignore proteins that lack a Treefam ID
 	next unless $treefam;
 	my $id = $object->Sequence_name || $treefam;
-	push @stash,[$id,$treefam];
+	push @data,[$id,$treefam];
     }
     return \@stash;
 }
@@ -1195,7 +1215,8 @@ sub best_blastp_matches {
 sub transgenes {
     my $self       = shift;
     my $object = $self->object;
-    return [ $object->Drives_Transgene ];
+    my @transgenes = $self->wrap($object->Drives_Transgene);
+    my $data = $self->build_data_structure(\@transgenes,'transgenes driven by this gene');
 }
 
 sub orfeome_project_primers {
@@ -1437,6 +1458,7 @@ sub _pattern_thumbnail {
     return ([$ep,$terms]);
 }
 
+# Meh. This is a view component and doesn't belong here.
 sub _is_cached {
     my ($self,$ep) = @_;
     my $WORMVIEW_IMG = '/usr/local/wormbase/html/images/expression/assembled/';
@@ -1453,7 +1475,8 @@ sub _y2h_data {
     my %results;
     foreach my $tag (keys %tags) {
 	if (my @data = $object->$tag) {
-	    # Map baits/targets to CDSs
+	    
+# Map baits/targets to CDSs
 	    my $subtag = $tags{$tag};
 	    my %seen = ();
 	    foreach (@data) {

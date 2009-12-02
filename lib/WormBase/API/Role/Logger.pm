@@ -4,6 +4,7 @@ use Log::Log4perl;
 use FindBin qw/$Bin/;
 
 use Moose::Role;
+use FindBin qw/$Bin/;
 
 =head1 ATTRIBUTES
 
@@ -25,7 +26,10 @@ has 'log' => (
 
 sub _build_log {
     my $self = shift;
-    Log::Log4perl::init("/usr/local/wormbase/website-2.0/conf/log4perl-screen.conf");    
+
+    # Use the default log4perl.conf file supplied with the web app
+    # This is not ideal at the moment as it is specific to t/WormBase/API/Object
+    Log::Log4perl::init("$Bin/../../../../conf/log4perl-screen.conf");
     my $log = Log::Log4perl::get_logger();
     return $log;
 }
