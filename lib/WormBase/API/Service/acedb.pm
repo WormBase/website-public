@@ -87,7 +87,7 @@ around 'dbh' => sub {
 	if ($dbh->ping) {
 #	    $self->log->debug("     ace-dbh has been set and is alive! $self $orig $dbh");
 #	    return $self->$orig;
-	    print STDERR "acedbb has been set we should not be calling connect\n";
+#	    print STDERR "acedbb has been set we should not be calling connect\n";
 	    return $self->$orig;
 	} else {
 	    $self->log->debug("     ace-dbh has been set but is dead; trying to resurrect it");
@@ -103,12 +103,12 @@ around 'dbh' => sub {
 	$self->log->debug("We haven't connected to acedb yet; trying...");
     }
        
-	# For some reason, dbh() is not yet set. Call connect().
-	$self->connect();	
-
+    # For some reason, dbh() is not yet set. Call connect().
+    $self->connect();	
+    
     return $self;
 };
-    
+
 
 has 'version' => (
     is  => 'ro',
@@ -159,7 +159,7 @@ sub connect {
 #			   -timeout => 50);
 #			   @auth,
 #			   @cache);
-    print STDERR "here we are claling connect\n";
+#    print STDERR "here we are claling connect\n";
     $self->log->info("Connecting to acedb: ");
     if ($self->log->is_debug()) {
 	$self->log->debug('     using the following parameters:');

@@ -182,19 +182,12 @@ sub common_name {
 	|| $object->Molecular_name
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $object;
-
-
-    # This should all be handled in build_data_structure.
-    # (or even in the view)
-    if ($self->stringified_responses) {
-	my $data = $self->build_data_structure("$common_name",
-					       'The most commonly used name of the gene');    
-	return $data;
-    } else {
-	return $self->wrap($common_name);
-    }
-}
     
+    my $data = $self->build_data_structure("$common_name",
+					   'The most commonly used name of the gene');
+    return $data;
+}
+
 sub ids {
     my $self   = shift;
     my $object = $self->object;
@@ -205,39 +198,35 @@ sub ids {
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
-
-    if ($self->stringified_responses) {
-	my $data = $self->build_data_structure(
-	    {	
-		common_name   => "$common",
-		locus_name    => "$locus",
-		gene_class    => $object->Gene_class,
-		other_name    => join(', ',map { "$_" } $object->Other_name,
-		sequence_name => join(', ',map { "$_" } $object->Sequence_name,
-		wormbase_id   => "$object",
-		aceview_id    => "$aceview",
-		refseq_id     => $refseq,
-		version       => "$version",
-	    },
-	    'various IDs that refer to this gene',
-	    
-	    );
-	return $data;
-    } else {
-	return 
-	    ({	
-		common_name   => $self->wrap($common),
-		locus_name    => $self->wrap($locus),
-		gene_class    => $self->wrap($object->Gene_class),
-		other_name    => $self->wrap($object->Other_name),
-		sequence_name => $self->wrap($object->Sequence_name),
-		wormbase_id   => "$object",
-		aceview_id    => $aceview,
-		refseq_id     => $refseq,
-		version       => "$version",
-	     });
-    }
-
+    
+    my $data = $self->build_data_structure({	
+	common_name   => "$common",
+	locus_name    => "$locus",
+	gene_class    => $object->Gene_class,
+	other_name    => join(', ',map { "$_" } $object->Other_name),
+	sequence_name => join(', ',map { "$_" } $object->Sequence_name),
+	wormbase_id   => "$object",
+	aceview_id    => "$aceview",
+	refseq_id     => $refseq,
+	version       => "$version",},
+					   'various IDs that refer to this gene',	
+	);
+    return $data;
+#} else {
+#	return 
+#	    ({	
+#		common_name   => $self->wrap($common),
+#		locus_name    => $self->wrap($locus),
+#		gene_class    => $self->wrap($object->Gene_class),
+##		other_name    => $self->wrap($object->Other_name),
+#		sequence_name => $self->wrap($object->Sequence_name),
+#		wormbase_id   => "$object",
+#		aceview_id    => $aceview,
+#		refseq_id     => $refseq,
+#		version       => "$version",
+#	     });
+#    }
+    
 }
 
 sub concise_description {
@@ -257,13 +246,9 @@ sub concise_description {
 	$description = $common_name->{common_name} . ' gene';
     }
 
-    if ($self->stringified_responses) {
-	my $data = $self->build_data_structure("$description",
-					       "A manually curated description of the gene's function");
-	return $data;
-    } else {
-	return $description;
-    }
+    my $data = $self->build_data_structure("$description",
+					   "A manually curated description of the gene's function");
+    return $data;
 }
 
 # Fetch all proteins associated with a gene.
@@ -274,15 +259,8 @@ sub proteins {
     my @cds    = $object->Corresponding_CDS;
     if (@cds) {
 	my @proteins  = map { $_->Corresponding_protein } @cds;
-
-	# Return a list of protein object names made by this gene.
-	if ($self->stringified_responses) {
-	    my $data = $self->build_data_structure({ orine
-	} else {
-	    # Wrap these in WormBase API objects
-	    my @wrapped = $self->wrap(@proteins);
-	    return \@wrapped;
-	}	
+	my @wrapped = $self->wrap(@proteins);
+	return \@wrapped;
     }
 }
 
@@ -296,8 +274,6 @@ sub cds {
     if (@cds) {
 	# Wrap these in WormBase API objects
 	my @wrapped = $self->wrap(@cds);
-	my $data = { resultset => { cds => \@wrapped } };
-	return $data;
 	return \@wrapped;
     }
 }
@@ -461,22 +437,20 @@ sub cloned_by {
     my $self   = shift;
     my $object = $self->object;
     
-    my @cloned_by = $object->Cloned_by;
+    my $cloned_by = $object->Cloned_by;
     return 1 unless $cloned_by;
     
     my ($tag,$source) = $cloned_by->row ;
     
     my @data;
-    foreach (@cloned_by) {
-	my $name = $cloned_by->Full_name;
-	push @data,{cloned_by => "$_",
-		    full_name => "$name",
-		    tag       => "$tag",
-		    source    => "$source",		    
-	};
-    }
+    my $name = $cloned_by->Full_name;
+    my %data  = {cloned_by => "$cloned_by",
+		 full_name => "$name",
+		 tag       => "$tag",
+		 source    => "$source",		    
+    };
     
-    my $data = $self->build_data_structure(\@data,
+    my $data = $self->build_data_structure(\%data,
 					   'the researchers noted for cloning this gene');
     
     return $data;
@@ -604,16 +578,16 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     
-    my @data;
+    my $data = {};
     my @all_ep     = $object->Expr_pattern;
     my @no_image   = grep{!$self->_pattern_thumbnail($_)} @all_ep;
     my @have_image = grep{ $self->_pattern_thumbnail($_)} @all_ep;
     
     my $s = @all_ep > 1 ? 's' : '';
     
-    push @{$stash{no_image}},@no_image;
-    push @{$stash{have_image}},@have_image;
-    return \%stash;
+    push @{$data->{no_image}},@no_image;
+    push @{$data->{have_image}},@have_image;
+    return $data;
 }
 
 
@@ -1193,7 +1167,7 @@ sub treefam {
 	my $id = $object->Sequence_name || $treefam;
 	push @data,[$id,$treefam];
     }
-    return \@stash;
+    return \@data;
 }
 
 

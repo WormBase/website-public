@@ -182,14 +182,14 @@ sub fetch {
 	my $service_instance = $self->_services->{$service_symbolic};
 
 #	my $driver = $self->service($service);
-	print STDERR "CALLING CONNECT? $service_instance\n";
+#	print STDERR "CALLING CONNECT? $service_instance\n";
 	
 	my $dbh = $service_instance->dbh;
-	print STDERR "FETCH DBH - DID IT CALL CONNECT $dbh?\n";
+#	print STDERR "FETCH DBH - DID IT CALL CONNECT $dbh?\n";
 
 	my $object = $service_instance->fetch(-class=>$class,-name=>$name);
 #	my $object = $dbh->fetch(-class=>$class,-name=>$name);
-	print STDERR "SEARCH - DID IT CALL CONNECT\n";
+#	print STDERR "SEARCH - DID IT CALL CONNECT\n";
 
 	# For some reason, this ends up calling the connect method of ALL services...
 	return WormBase::API::Factory->create($class,

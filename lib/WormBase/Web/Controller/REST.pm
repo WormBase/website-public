@@ -91,7 +91,88 @@ sub available_widgets_GET {
 	);
 }
 
+#
+# The OLD widget approach,
+# compiled from an independent 
+# set of templates
+#
+ 
+=head widget(), widget_GET()
 
+Provided with a class, name, and field, return its content
+
+eg http://localhost/rest/widget/[CLASS]/[NAME]/[FIELD]
+
+=cut
+
+sub widget_compiled :Path('/rest/widget_compiled') :Args(3) :ActionClass('REST') {}
+
+sub widget_compiled_GET {
+    my ($self,$c,$class,$name,$widget) = @_; 
+
+    unless ($c->stash->{object}) {
+	
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
+	
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+					   name => $name}) or die "$!";
+    }
+    my $object = $c->stash->{object};
+    
+
+
+    # TODO: Load up the data content.
+    # The widget itself could make a series of REST calls for each field
+    my @fields;
+    foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
+	next unless $widget_config->{name} eq $widget; 
+	@fields = @{ $widget_config->fields };
+	$c->log->warn(@fields);
+    }
+#$c->config->{pages}->{$class}->{widgets}->{$widget} };
+    my $data = {};
+    foreach my $field (@fields) {
+	my $data = $object->$field;
+	$data->{$_} = $data;
+
+	# Conditionally load up the stash (for now) for HTML requests.
+	# Eventually, I can ust format the return JSON.
+	$c->stash->{$_} = $data;
+      
+    }
+    
+    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
+    # PERHAPS I SHOULD INCLUDE FIELDS?
+    # Include the full uri to the *requested* object.
+    # IE the page on WormBase where this should go.
+    my $uri = $c->uri_for("/page",$class,$name);
+    
+    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+
+    $self->status_ok($c, entity => {
+	class   => $class,
+	name    => $name,
+	uri     => "$uri",
+	$widget => $data
+		     }
+	);
+}
+
+
+#
+# The new widget approach, where all 
+# widget template has everything we
+# need.
+# Really, all that changes is the nature of the template
+# (and how component fields are called)
 
 =head widget(), widget_GET()
 
