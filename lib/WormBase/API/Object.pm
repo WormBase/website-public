@@ -2,7 +2,7 @@ package WormBase::API::Object;
 
 use Moose;
 
-use Bio::Graphics::Browser;
+#use Bio::Graphics::Browser;
 extends 'WormBase::API';
 
 #use parent qw/Class::Accessor/;
@@ -107,14 +107,8 @@ sub wrap {
 # instead of leaving an open-ended
 # data access end-point.
 sub build_data_structure {
-    my ($self,$data,$descripition) = @_;
+    my ($self,$data,$description) = @_;
         
-#    my $structure = { resultset => { data        => $data,
-#				     description => $description,
-#		      }
-#    };
-    
-    # WITHOUT using the nested data structure
     my $structure = { resultset => { $data,
 				     description => $description,
 		      }
@@ -385,7 +379,7 @@ sub genomic_position {
 	stop       => $segment->stop,
 	);
 
-    my $data = $self->build_data_structure(\%position
+    my $data = $self->build_data_structure(\%position,
 					   'The genomic position of the object (if known)');
     
     return $data;

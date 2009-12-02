@@ -5,14 +5,12 @@ use Moose::Role;
 has 'mysql_user' => (
     is => 'ro',
     isa => 'Str',
-#    default => 'root',
     default => 'nobody',
     );
 
 has 'mysql_pass' => (
     is => 'ro',
     isa => 'Str',
-#    default => '3l3g@nz',
     );
     
 has 'mysql_host' => (
@@ -68,21 +66,23 @@ sub connect {
     my $species = $self->species;
     
     $self->log->info("Connecting to the GFF database for $species:");
-    $self->log->info($species);
-    $self->log->info(keys %{$self});
-    $self->log->info($self->mysql_user);
 
+#    $self->log->info($species);
+#    $self->log->info(keys %{$self});
+#    $self->log->info($self->mysql_user);
 
     # This is supposed to be provided by the configuration file
 #    my $gff_args = $self->dsn->{$species};
 #    
 #    return unless ($gff_args);
+    
+    
+    # TODO: MYSQL ARGUMENTS ARE NOT BEING EXTRACTED CORRECTLY FROM THE CONF FILE!
     my $gff_args = {};
-
-    # THESE ARGUMENTS ARE NOT BEING PASSED...
+    $self->log->debug($self->mysql_host);
     
     $gff_args->{-user} = $self->mysql_user;
-    $gff_args->{-pass} = $self->mysql_pass;
+    $gff_args->{-pass} = $self->mysql_pass if $self->mysql_pass;
     $gff_args->{-dsn}  = "dbi:mysql:database=$species;host=" . $self->mysql_host;
     
     if ($self->log->is_debug()) {
