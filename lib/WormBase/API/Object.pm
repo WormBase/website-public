@@ -98,6 +98,33 @@ sub wrap {
     return wantarray ? @wrapped : $wrapped[0];
 }
 
+# Is this a rest-style request (in which case I shoudln't return
+# WormBase::API or their internal Ace::Objects)
+# but stringified versions of the objects.
+# Unfrtunately this isn't possible because of the complexity of
+# of the data structures.
+# For REST, I try to return all possible available data
+# instead of leaving an open-ended
+# data access end-point.
+sub build_data_structure {
+    my ($self,$data,$descripition) = @_;
+        
+#    my $structure = { resultset => { data        => $data,
+#				     description => $description,
+#		      }
+#    };
+    
+    # WITHOUT using the nested data structure
+    my $structure = { resultset => { $data,
+				     description => $description,
+		      }
+    };
+    return $structure;
+}
+
+
+
+
 
 
 
@@ -350,14 +377,18 @@ sub genomic_position {
     my $abs_start = $segment->abs_start;
     my $abs_stop  = $segment->abs_stop;
     ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
-    my %data = (
+    my %position = (
 	chromosome => $segment->abs_ref,
 	abs_start  => $abs_start,
 	abs_stop   => $abs_stop,
 	start      => $segment->start,
 	stop       => $segment->stop,
 	);
-    return \%data;
+
+    my $data = $self->build_data_structure(\%position
+					   'The genomic position of the object (if known)');
+    
+    return $data;
 }
 
 # CONVERTED TO HERE.

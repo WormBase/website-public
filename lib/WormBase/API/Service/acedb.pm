@@ -9,7 +9,7 @@ with 'WormBase::API::Role::Logger';
 has 'acedb_host' => (
     is  => 'ro',
     isa => 'Str',
-    default => 'localhost',
+    default => 'aceserver.cshl.edu',
     );
 
 has 'acedb_port' => (

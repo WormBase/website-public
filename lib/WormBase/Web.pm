@@ -1,10 +1,8 @@
 package WormBase::Web;
 
-use strict;
-#use Moose;
-use warnings;
-use Catalyst::Runtime '5.80';
-
+#use strict;
+#use warnings;
+#use Catalyst::Runtime '5.80';
 # Set flags and add application plugins
 #
 #         -Debug: activates the debug mode for very useful log messages
@@ -14,12 +12,25 @@ use Catalyst::Runtime '5.80';
 #  Static::Simple:
 #             will serve static files from the application's root directory
 
-use parent qw/Catalyst/;
+#use parent qw/Catalyst/;
+#use Catalyst qw/-Debug
+#		 ConfigLoader
+#		 Static::Simple
+#                 Unicode
+#	       /;
+
+
+
+use Moose;
+use namespace::autoclean;
+# your roles and plugins
 use Catalyst qw/-Debug
 		 ConfigLoader
 		 Static::Simple
                  Unicode
 	       /;
+extends 'Catalyst';
+
 
 #                 Breadcrumbs
 #

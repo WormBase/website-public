@@ -5,19 +5,20 @@ use Moose::Role;
 has 'mysql_user' => (
     is => 'ro',
     isa => 'Str',
-    default => 'root',
+#    default => 'root',
+    default => 'nobody',
     );
 
 has 'mysql_pass' => (
     is => 'ro',
     isa => 'Str',
-    default => '3l3g@nz',
+#    default => '3l3g@nz',
     );
     
 has 'mysql_host' => (
     is => 'ro',
     isa => 'Str',
-    default => 'localhost'
+    default => 'aceserver.cshl.edu'
     );
 
 has 'dsn' => (

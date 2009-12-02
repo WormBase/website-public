@@ -27,13 +27,12 @@ has 'log' => (
 
 sub _build_log {
   my $self = shift;
-  Log::Log4perl::init("/usr/local/wormbase/website-2.0/conf/log4perl-screen.conf");    
+  
+  # Use the default log4perl that is supplied with the webapp
+  Log::Log4perl::init("../conf/log4perl-screen.conf");
   my $log = Log::Log4perl::get_logger();
   return $log;
 }
-
-800 747-5150
-6568439
 
 =head1
 
