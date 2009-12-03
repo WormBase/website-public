@@ -1,27 +1,26 @@
 package WormBase::API;
 
-use Moose;
-use Module::Pluggable::Object;
+use Moose;                       # Moosey goodness
+use Module::Pluggable::Object;   # Support for pluggable services
 
 use namespace::clean -except => 'meta';
-use WormBase::API::Factory;
+use WormBase::API::Factory;      # Our object factory
 
-# Roles to consume.
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
-# We assume that there is a single primary datasource.
+
+# We assume that there is a single default data source.
 # For now this is AceDB.
-has 'primary_datasource' => (
+has 'default_datasource' => (
     is       => 'ro',
-#    isa      => 'Str',
-#    required => 1,
+    isa      => 'Str',
+    required => 1,
     default  => 'acedb',
     );
 
 # Dynamically establish a list of available data services.
-# This includes the primary_datasource and other singletons.
-
-# Then, during BUILD, we will connect to them.
+# This includes the default_datasource and other singletons.
+# During BUILD we will establish data handles to each.
 has '_services' => (
     is         => 'ro',
     isa        => 'HashRef',
@@ -35,26 +34,24 @@ has 'stringified_responses' => (
     default  => 1,
     );
 
-#has '_gff_datasources' => (
-#    is     => 'ro',
-#    isa    => 'HashRef',
-#    lazy_build => 1,
-#    );
+# This is just the configuration directory
+# for instantiating Log::Log4perl object. Janky.
+has conf_dir => (
+    is       => 'ro',
+    required => 1,
+    );
 
 
-# Version should either be provided by the default datasource
-# or set explicitly.
-
-# THERE SHOULD BE AN ACCESSOR FOR THE DBH OF THE DEFAULT DATASOURCE
+# Version should be provided by the default datasource or set explicitly.
 sub version {
     my $self = shift;
-
-    # Fetch the dbh for the primary datasource
-    my $service = $self->_services->{$self->primary_datasource};
+    
+    # Fetch the dbh for the default datasource
+    my $service = $self->_services->{$self->default_datasource};
     return $service->version;
 }
 
-# Fetch a service by name
+# Fetch a service object by its symbolic name
 sub service {
     my $self = shift;
     my $name = shift;
@@ -88,7 +85,12 @@ sub _build__services {
 	# Fetch the base name of the class. Could possibly be nested
 #	(my $name = $class) =~ s/\Q${base}::\E//;
 	$class =~ /.*::?(.*)/;	
-	$services{$1} = $class->new;
+
+	# Instantiate the service providing it with
+	# access to some of our configuration variables
+	$services{$1} = $class->new({conf_dir => $self->conf_dir,
+				     log      => $self->log,
+				    });
     }
     return \%services;
 } 
@@ -102,22 +104,6 @@ sub connect {
     $self->_services->{$service}->connect();
 }
 
-
-
-=head1
-
-has 'name' => (
-    is => 'ro',
-    isa => 'Str',
-    );
-has 'class' => (
-    is => 'ro',
-    isa => 'Str',
-    );
-
-
-=cut
-
 # During BUILD, connect to all available services.
 # This might be overkill.
 sub BUILD {
@@ -128,37 +114,7 @@ sub BUILD {
     }
 }
 
-# One approach: conditionally conecting to acedb as necessary
-# Skip the process if we have been passed a database handle
-
-=head1
-
-sub BUILD {
-    my $self = shift;
-    # Refresh the acedb connection (if we have been
-    # passed an WormBase::API object)
-    if ($self->has_acedb_dbh) {       
-	$self->acedb_dbh();
-    
-    # Otherwise, connect and stash.
-    } else {
-	$self->connect();
-    }
-
-    # HACK! If provided with a name and class, trying to instantiate an object
-    if ($self->name) {
-	my $object = $self->test_get($self->class,$self->name);
-
-	return $object;
-    } else {
-	return $self;
-    }
-}
-
-=cut
-
-
-# Wrapper around the driver's fetch method
+# Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*
 sub fetch {
@@ -169,31 +125,36 @@ sub fetch {
     # We may have already fetched an object (ie by following an XREF).
     # This is an ugly, ugly hack
     my $object = $args->{object};
-
+    
     if ($object) {
 	my $class = $object->class;
 	return WormBase::API::Factory->create($class,
 					      { object => $object });
     } else {
 	
-	# Try fetching an object (from the primary data source)
-	my $service_symbolic  = $self->primary_datasource;
-
-	my $service_instance = $self->_services->{$service_symbolic};
-
-#	my $driver = $self->service($service);
-#	print STDERR "CALLING CONNECT? $service_instance\n";
+	# Try fetching an object (from the default data source)
+	my $service_symbolic = $self->default_datasource;
 	
+	my $service_instance = $self->_services->{$service_symbolic};
+	
+#	my $driver = $self->service($service);
 	my $dbh = $service_instance->dbh;
-#	print STDERR "FETCH DBH - DID IT CALL CONNECT $dbh?\n";
-
+	
 	my $object = $service_instance->fetch(-class=>$class,-name=>$name);
 #	my $object = $dbh->fetch(-class=>$class,-name=>$name);
-#	print STDERR "SEARCH - DID IT CALL CONNECT\n";
-
-	# For some reason, this ends up calling the connect method of ALL services...
+	
+	# TODO!!
+	# Calling my factory causes instantiation of new Service::* objects
+	# (ie new ddatabase connections).  This is bad.
+	# - It also *requires* that we pass the conf_dir
+	#   which is only used for setting up the log object
+	
+	# To get around this (for now) I'm passing the conf_dir
+	# but this is SERIOUSLY NOT OPTIMAL
 	return WormBase::API::Factory->create($class,
-					      { object => $object });
+					      { object   => $object,
+						conf_dir => $self->conf_dir,
+					      });
     }
 }
 
