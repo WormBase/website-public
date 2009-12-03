@@ -1,16 +1,21 @@
-package WormBase::API::Service::gff::gff_c_elegans;
+package WormBase::API::Service::gff_c_elegans;
 
 use Moose;
 use Bio::DB::GFF;
 
 with 'WormBase::API::Role::Service::gff';    # Must come first as it provides connect();
 with 'WormBase::API::Role::Service';
-with 'WormBase::API::Role::Logger';
+#with 'WormBase::API::Role::Logger';
 
 has 'species' => (
     is => 'ro',
     isa => 'Str',
     default => 'c_elegans',
+    );
+
+has function => (
+    is => 'ro',
+    default => 'fjfkdfk',
     );
 
 
@@ -26,7 +31,7 @@ sub fetch_gff_gene {
     
     my $dbh = $self->dbh;
 
-    ($trans)      = grep {$_->method eq 'full_transcript'} $dbh->fetch_group(Transcript => $transcript) unless $trans;
+    ($trans) = grep {$_->method eq 'full_transcript'} $dbh->fetch_group(Transcript => $transcript) unless $trans;
     
     # Now pseudogenes
     ($trans) = grep {$_->method eq 'pseudo'} $dbh->fetch_group(Pseudogene => $transcript) unless ($trans);
