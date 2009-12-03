@@ -2,18 +2,20 @@
 
 use strict;
 use warnings;
+use FindBin qw/$Bin/;
 use feature "switch";	     
 
 use Test::More;
 
 BEGIN {
+      # This will cause a new connection to database(s)
       use_ok('WormBase::API');
 }
 
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
 ok ( 
-    ( my $wormbase = WormBase::API->new()),
+    ( my $wormbase = WormBase::API->new({conf_dir => "$Bin/../../../../conf"})),
     'Constructed WormBase::API object ok'
     );
 
