@@ -1,0 +1,10 @@
+<mockup version="1.0" skin="sketch" measuredW="1116" measuredH="519" mockupW="872" mockupH="471">
+  <controls>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::TabBar" x="248" y="38" w="858" h="471" measuredW="536" measuredH="100" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Identification%2C%20Sequences%2C%20Location%2C%20Genetics%2C%20Expression%2C%20References</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::VRule" x="234" y="38" w="-1" h="471" measuredW="5" measuredH="100" zOrder="1" locked="false" isInGroup="-1"/>
+  </controls>
+</mockup>
