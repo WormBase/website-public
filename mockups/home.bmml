@@ -1,0 +1,28 @@
+<mockup version="1.0" skin="sketch" measuredW="1144" measuredH="531" mockupW="989" mockupH="512">
+  <controls>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="145" y="9" w="989" h="512" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>WormBase</text>
+      </controlProperties>
+    </control>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::SearchBox" x="468" y="246" w="340" h="-1" measuredW="93" measuredH="25" zOrder="1" locked="false" isInGroup="-1"/>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Label" x="166" y="93" w="-1" h="-1" measuredW="302" measuredH="23" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>WormBase%20Version%20WS210%3B%20Released%2015%20Dec%202009</text>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::LinkBar" x="875" y="93" w="-1" h="-1" measuredW="227" measuredH="23" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Howdy%5C%2C%20Todd%21%2C%20Settings%2C%20Log%20Out</text>
+      </controlProperties>
+    </control>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::HRule" x="157" y="153" w="962" h="-1" measuredW="100" measuredH="5" zOrder="4" locked="false" isInGroup="-1"/>
+    <control controlID="11" controlTypeID="com.balsamiq.mockups::Link" x="816" y="238" w="-1" h="-1" measuredW="44" measuredH="18" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Advanced</text>
+        <size>9</size>
+      </controlProperties>
+    </control>
+    <control controlID="13" controlTypeID="com.balsamiq.mockups::Canvas" x="202" y="286" w="279" h="193" measuredW="100" measuredH="70" zOrder="6" locked="false" isInGroup="-1"/>
+  </controls>
+</mockup>

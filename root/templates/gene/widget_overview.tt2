@@ -1,0 +1,98 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+%]
+
+
+[% WRAPPER "boilerplate/field" title="IDs" %]
+
+
+   [% c.stash.keys.join("<br />") %]
+
+   <table>
+
+   <tr>
+      <td>Common Name</td>
+      <td>[% ids.resultset.common_name %]</td>
+   </tr>
+
+   <tr>
+      <td>Locus name</td>
+      <td>
+	[% IF ids.resultset.locus_name %]
+	   [% url.Link(item=gene text=ids.resultset.locus_name) %]
+       	    - (<i>[%- url.Link(item=ids.resultset.gene_class text=ids.resultset.gene_class.Description) -%]</i>)
+           [% display_evidence(ids.CGC_name) %]
+           - 
+           [%- url.Link(resource='CGC'
+	            type='nomenclature'
+		    text="CGC nomenclature guide") -%]
+        [% END %]
+     </td>
+   </tr>
+
+   <tr>
+     <td>Sequence Name</td>
+     <td>
+         [% IF ids.resultset.sequence_name %]
+             [% FOREACH s = ids.resultset.sequence_name %] 
+	       [% s %]
+             [% END %]
+        [% END %]
+     </td>
+   </tr>
+
+   <tr>
+    <td>Other names</td>
+    <td>
+        [% IF ids.resultset.other_name %]
+             [% FOREACH s = ids.resultset.other_name %]
+	     	[% s %]<p><p> [% display_evidence(s) %]<br />
+             [% END %]
+        [% END %]
+      </td>
+    </tr>
+ 
+
+    <!-- The WormBase Gene ID -->
+    <tr>
+       <td>WormBase ID</td>
+       <td>[% ids.resultset.wormbase_id %]</td>
+    </tr>
+
+    <tr>
+       <td>Version</td>
+       <td>[% ids.resultset.version %]</td>
+    </tr>
+ 
+
+    <!-- External IDs -->
+    <tr>
+       <td>NCBI RefSeq</td>
+       <td>[% ids.resultset.refseq_id.join(", ") %]</td>
+    </tr>
+
+    <tr>
+       <td>AceView</td>
+       <td>[% ids.resultset.aceview_id %]</td>
+    </tr>
+</table>
+[% END %]
+
+
+
+    [%# PROCESS "gene/ids.tt2" %]
+    [%# PROCESS "gene/concise_description.tt2" IF c.stash.concise_description %]
+    [%# PROCESS "common_fields/taxonomy.tt2"   IF taxonomy %]
+    [%# PROCESS "gene/gene_models.tt2"         IF gene_models %]
+    [%# PROCESS "common_fields/history.tt2" %]
+
+[% END %]
