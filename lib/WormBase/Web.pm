@@ -23,6 +23,7 @@ package WormBase::Web;
 
 use Moose;
 use namespace::autoclean;
+
 # your roles and plugins
 use Catalyst qw/-Debug
 		 ConfigLoader
