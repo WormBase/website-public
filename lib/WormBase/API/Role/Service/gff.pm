@@ -37,30 +37,21 @@ has 'dbh' => (
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;
-
+    
     my $species = $self->species;
-        
+    
     # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF?
     if ($self->has_dbh) {
-#	$self->log->debug("     gff-dbh for $species exists and is alive!");
+	$self->log->debug("     gff-dbh for $species exists and is alive!");
 	return $self->$orig;
     } else {
-#	$self->log->debug("     gff-dbh for $species doesn't exist yet; trying to connect");
+	$self->log->debug("     gff-dbh for $species doesn't exist yet; trying to connect");
 	my $dbh = $self->connect($species);
     }
 };
 
 
-has 'version' => (
-    is  => 'ro',
-    isa => 'Str',
-    lazy => 1,
-    default => sub {
-	my $self = shift;
-	return $self->dbh->version;
-    },
-    );
-
+# Provide the required connect method
 sub connect {
     my $self    = shift;
     my $species = $self->species;
@@ -82,7 +73,7 @@ sub connect {
     $self->log->debug($self->mysql_host);
     
     $gff_args->{-user} = $self->mysql_user;
-    $gff_args->{-pass} = $self->mysql_pass if $self->mysql_pass;
+    $gff_args->{-pass} = $self->mysql_pass; #if $self->mysql_pass;
     $gff_args->{-dsn}  = "dbi:mysql:database=$species;host=" . $self->mysql_host;
     
     if ($self->log->is_debug()) {

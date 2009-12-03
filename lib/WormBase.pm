@@ -6,33 +6,33 @@ use FindBin qw/$Bin/;
 #use Bio::DB::GFF;
 use Moose;
 
-
-=head1 ATTRIBUTES
-
-=head2 log
-
-Status : optional
-Type   : A Log::Log4perl object
-
-If not specified, a default Log::Log4Perl object will
-be created that appends STDOUT to the screen.
-
-=cut
-
-has 'log' => (
-	      is   => 'ro',
-	      lazy => 1,
-	      builder => '_build_log'
-	     );
-
-sub _build_log {
-  my $self = shift;
-  
-  # Use the default log4perl that is supplied with the webapp
-  Log::Log4perl::init("../conf/log4perl-screen.conf");
-  my $log = Log::Log4perl::get_logger();
-  return $log;
-}
+#
+#=head1 ATTRIBUTES
+#
+#=head2 log
+#
+#Status : optional
+#Type   : A Log::Log4perl object
+#
+#If not specified, a default Log::Log4Perl object will
+#be created that appends STDOUT to the screen.
+#
+#=cut
+#
+#has 'log' => (
+#	      is   => 'ro',
+#	      lazy => 1,
+#	      builder => '_build_log'
+#	     );
+#
+#sub _build_log {
+#  my $self = shift;
+#  
+#  # Use the default log4perl that is supplied with the webapp
+#  Log::Log4perl::init("../conf/log4perl-screen.conf");
+#  my $log = Log::Log4perl::get_logger();
+#  return $log;
+#}
 
 =head1
 
