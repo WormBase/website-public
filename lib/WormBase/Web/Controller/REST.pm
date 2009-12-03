@@ -96,18 +96,9 @@ sub available_widgets_GET {
 # compiled from an independent 
 # set of templates
 #
- 
-=head widget(), widget_GET()
+sub widget_compiled :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
-Provided with a class, name, and field, return its content
-
-eg http://localhost/rest/widget/[CLASS]/[NAME]/[FIELD]
-
-=cut
-
-sub widget_compiled :Path('/rest/widget_compiled') :Args(3) :ActionClass('REST') {}
-
-sub widget_compiled_GET {
+sub widget_conpiled_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
 
     unless ($c->stash->{object}) {
@@ -164,7 +155,10 @@ sub widget_compiled_GET {
 	$widget => $data
 		     }
 	);
-}
+} 
+
+
+
 
 
 #
@@ -186,7 +180,7 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-
+    
     unless ($c->stash->{object}) {
 	
 	# Fetch our external model
@@ -204,19 +198,22 @@ sub widget_GET {
     }
     my $object = $c->stash->{object};
     
-
-
     # TODO: Load up the data content.
     # The widget itself could make a series of REST calls for each field
     my @fields;
     foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
+	
+	# Janky-tastic.
+	$c->log->warn("widget is $widget");
 	next unless $widget_config->{name} eq $widget; 
 	@fields = @{ $widget_config->fields };
-	$c->log->warn(@fields);
     }
 #$c->config->{pages}->{$class}->{widgets}->{$widget} };
+
     my $data = {};
+    $c->log->warn("fields are " . @fields);
     foreach my $field (@fields) {
+	$c->log->warn($field);
 	my $data = $object->$field;
 	$data->{$_} = $data;
 
@@ -232,7 +229,8 @@ sub widget_GET {
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
     
-    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+#    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+    $c->stash->{template} = "gene/widget_overview.tt2";
 
     $self->status_ok($c, entity => {
 	class   => $class,
