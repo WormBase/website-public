@@ -3,8 +3,14 @@ package WormBase::API::Service::acedb;
 use Moose;
 use Ace;
 
+# Roles to consume.
 with 'WormBase::API::Role::Service';
-with 'WormBase::API::Role::Logger';
+#with 'WormBase::API::Role::Logger';
+
+has function => (
+    is => 'ro',
+    default => 'The primary acedb database',
+    );
 
 has 'acedb_host' => (
     is  => 'ro',
@@ -110,15 +116,6 @@ around 'dbh' => sub {
 };
 
 
-has 'version' => (
-    is  => 'ro',
-    isa => 'Str',
-    lazy => 1,
-    default => sub {
-	my $self = shift;
-	return $self->dbh->version;
-    },
-    );
 
 #  Create a new database handle (if necessary) during object instantiation
 #sub BUILD {
