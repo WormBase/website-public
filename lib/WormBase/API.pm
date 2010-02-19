@@ -27,6 +27,11 @@ has '_services' => (
     lazy_build => 1,
     );
 
+has '_classes' => (
+    is         => 'rw',
+    isa        => 'HashRef',
+    );
+
 has 'stringified_responses' => (
     is       => 'ro',
     isa      => 'Str',
@@ -65,7 +70,16 @@ sub service {
 sub gff_dsn {
     my $self    = shift;
     my $species = shift;
-    return $self->_services->{"gff_$species"};
+
+    unless(exists $self->_services->{"gff_$species"}) {
+      my $class=$self->_classes->{"gff"};
+      $self->_services->{"gff_$species"} = $class->new({conf_dir => $self->conf_dir,
+			      log      => $self->log,
+			      species => $species,
+				    });
+    }
+    return $self->_services->{"gff_".$species}; 
+
 }
 
 # Build a hashref of services, including things like the 
@@ -78,41 +92,29 @@ sub _build__services {
     my $mp = Module::Pluggable::Object->new( search_path => [ $base . "::Service" ] );
     
     my %services;
+    my %api_classes;
     my @classes = $mp->plugins;
     foreach my $class (@classes) {
+	$class =~ /.*::?(.*)/;	
 	Class::MOP::load_class($class);
 	
 	# Fetch the base name of the class. Could possibly be nested
 #	(my $name = $class) =~ s/\Q${base}::\E//;
 	$class =~ /.*::?(.*)/;	
-
+	my $type=$1;
+	$api_classes{$type}= $class;
 	# Instantiate the service providing it with
 	# access to some of our configuration variables
-	$services{$1} = $class->new({conf_dir => $self->conf_dir,
+	my $new = $class->new({conf_dir => $self->conf_dir,
 				     log      => $self->log,
 				    });
+	$type=$new->species? $type.'_'.$new->species:$type;
+	$services{$type} = $new; 
     }
+    $self->_classes(\%api_classes);
     return \%services;
 } 
 
-
-
-
-# Call the connect method of the appropriate datasource.
-sub connect {
-    my ($self,$service) = @_;
-    $self->_services->{$service}->connect();
-}
-
-# During BUILD, connect to all available services.
-# This might be overkill.
-sub BUILD {
-    my $self = shift;
-    my $services = $self->_services;
-    for my $service  (keys %$services) {
-	$self->connect($service);
-    }
-}
 
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
@@ -134,15 +136,13 @@ sub fetch {
 	
 	# Try fetching an object (from the default data source)
 	my $service_symbolic = $self->default_datasource;
-	
+	 
 	my $service_instance = $self->_services->{$service_symbolic};
-	
-#	my $driver = $self->service($service);
+#	my $driver = $self->service($service)
 	my $dbh = $service_instance->dbh;
-	
+	  
 	my $object = $service_instance->fetch(-class=>$class,-name=>$name);
 #	my $object = $dbh->fetch(-class=>$class,-name=>$name);
-	
 	# TODO!!
 	# Calling my factory causes instantiation of new Service::* objects
 	# (ie new ddatabase connections).  This is bad.
