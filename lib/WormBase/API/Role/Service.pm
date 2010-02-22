@@ -77,11 +77,11 @@ around 'dbh' => sub {
     my $self = shift;
     
     my $species = $self->species;
-     
+    my $dbh = $self->$orig;
     # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
-    if ($self->has_dbh && defined $self->$orig) { 
+    if ($self->has_dbh && defined $dbh && $self->ping($dbh)) { 
       $self->log->debug( $self->symbolic_name." dbh for specie $species exists and is alive!");
-      return $self->$orig;
+      return $dbh;
     } 
     $self->log->debug( $self->symbolic_name." dbh for specie $species doesn't exist or is not alive; trying to connect");
     return $self->reconnect();
@@ -92,18 +92,6 @@ around 'dbh' => sub {
 
 sub reconnect {
     my $self = shift;
-    # Establish the cache during configuration
-=pod
-    my @cache = (-cache => {
-	cache_root => $self->cache_root,
-	max_size   => $self->cache_size
-	    || $Cache::SizeAwareCache::NO_MAX_SIZE
-	    || -1,  # hardcoded $NO_MAX_SIZE constant
-	    default_expires_in  => $self->cache_expires,
-	    auto_purge_interval => $self->cache_auto_purge_interval,
-		 } 
-	) if $self->cache_root;
-=cut
     my $ReconnectMaxTries=5; # get this from configuration file!
     my $tries=0;
     my $dbh;
