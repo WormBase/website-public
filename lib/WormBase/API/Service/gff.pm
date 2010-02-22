@@ -8,7 +8,7 @@ has 'dbh' => (
     isa       => 'Bio::DB::GFF',   # Could also be a seq feature store, eh?
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-#    handles   => [qw/fetch/],
+    handles   => [qw/fetch/],
     );
 
 
@@ -23,6 +23,12 @@ sub BUILD {
     $self->hosts([qw/aceserver.cshl.edu/]);
     $self->user("nobody");
     $self->pass("");
+
+}
+
+sub ping {
+  my $self= shift;
+  return @_;
 
 }
 
