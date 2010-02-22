@@ -73,6 +73,12 @@ sub connect {
     #			   @cache);
 }
 
+sub ping {
+  my ($self,$dbh)=@_;
+  return $dbh->ping;
+
+}
+
 sub BUILD {
     my $self = shift;
     $self->symbolic_name("acedb");
