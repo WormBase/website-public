@@ -109,9 +109,9 @@ sub wrap {
 sub build_data_structure {
     my ($self,$data,$description) = @_;
         
-    my $structure = { resultset => { $data,
+    my $structure = { resultset =>  $data,
 				     description => $description,
-		      }
+		      
     };
     return $structure;
 }
