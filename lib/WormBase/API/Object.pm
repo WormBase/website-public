@@ -110,7 +110,7 @@ sub build_data_structure {
     my ($self,$data,$description) = @_;
         
     my $structure = { resultset =>  $data,
-				     description => $description,
+	              description => $description,
 		      
     };
     return $structure;
