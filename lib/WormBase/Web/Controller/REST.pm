@@ -201,12 +201,12 @@ sub widget_GET {
     # TODO: Load up the data content.
     # The widget itself could make a series of REST calls for each field
     my @fields;
-    foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
+    foreach my $widget_config (@{$c->config->{pages}->{$class}->{widgets}->{widget}}) {
 	
 	# Janky-tastic.
 	$c->log->warn("widget is $widget");
 	next unless $widget_config->{name} eq $widget; 
-	@fields = @{ $widget_config->fields };
+	@fields = @{ $widget_config->{fields} };
     }
 #$c->config->{pages}->{$class}->{widgets}->{$widget} };
 
@@ -219,7 +219,7 @@ sub widget_GET {
 
 	# Conditionally load up the stash (for now) for HTML requests.
 	# Eventually, I can ust format the return JSON.
-	$c->stash->{$_} = $data;
+	$c->stash->{$field} = $data;
       
     }
     
