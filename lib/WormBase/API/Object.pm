@@ -3,7 +3,7 @@ package WormBase::API::Object;
 use Moose;
 
 #use Bio::Graphics::Browser;
-extends 'WormBase::API';
+# extends 'WormBase::API';
 
 #use parent qw/Class::Accessor/;
 #__PACKAGE__->mk_accessors(qw/object log/);
@@ -91,7 +91,9 @@ sub wrap {
     foreach my $object (@$objects) {
 	my $class = $object->class;
 	push @wrapped, WormBase::API::Factory->create($class,
-						      { object => $object });
+						      { object => $object,
+							dsn => $self->dsn,
+					      });
     }
     
     # User might have passed and expected just a single object
