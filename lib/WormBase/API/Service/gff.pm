@@ -1,28 +1,27 @@
 package WormBase::API::Service::gff;
 
 use Moose;
-use Bio::DB::GFF;
+use Bio::DB::GFF ();
 
 has 'dbh' => (
     is        => 'rw',
     isa       => 'Bio::DB::GFF',   # Could also be a seq feature store, eh?
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-    handles   => [qw/fetch/],
     );
 
 
 with 'WormBase::API::Role::Service';
-#with 'WormBase::API::Role::Logger';
 
 sub BUILD {
     my $self = shift;
     $self->symbolic_name("gff");
     $self->function("get connection to GFF database");
     # record all the info from Conf file $self->conf_dir
-    $self->hosts([qw/aceserver.cshl.edu/]);
-    $self->user("nobody");
-    $self->pass("");
+#     push @hosts ,$self->conf->{mysql_host};
+    $self->hosts([$self->conf->{mysql_host}]);
+    $self->user($self->conf->{mysql_user});
+    $self->pass($self->conf->{mysql_pass});
 
 }
 
@@ -34,9 +33,9 @@ sub ping {
 
 sub connect {
     my $self = shift;
-    my ($host,$port,$user,$pass)=@_;
-    return Bio::DB::GFF->new( -user => $user,
-			      -pass => $pass,
+    my ($host)=@_;
+    return Bio::DB::GFF->new( -user => $self->user,
+			      -pass => $self->pass,
 			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $host,
     );
 }
