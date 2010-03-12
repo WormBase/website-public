@@ -206,7 +206,7 @@ sub get_example_object {
   my ($self,$class) = @_;
   my $api = $self->model('WormBaseAPI');
 
-  my $ace = $api->service('acedb');
+  my $ace = $api->_services->{acedb};
   # Fetch the total number of objects
   my $total = $ace->fetch(-class => ucfirst($class),
 			  -name  => '*');
