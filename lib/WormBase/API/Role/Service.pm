@@ -6,11 +6,6 @@ use Moose::Role;
 requires 'dbh';    # a database handel for the service
 requires 'connect';    # a database connection for the service
 
-# A connect method
-# has dbh => (
-#     is => 'rw',
-#     );
-
 has symbolic_name => (
     is => 'rw',
     isa => 'Str',
@@ -33,7 +28,7 @@ has version => (
     },
     );
 
-has conf_dir => (
+has conf => (
     is => 'ro',
     required => 1,
     );
@@ -80,10 +75,10 @@ around 'dbh' => sub {
     my $dbh = $self->$orig;
     # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
     if ($self->has_dbh && defined $dbh && $self->ping($dbh)) { 
-      $self->log->debug( $self->symbolic_name." dbh for specie $species exists and is alive!");
+      $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
-    $self->log->debug( $self->symbolic_name." dbh for specie $species doesn't exist or is not alive; trying to connect");
+    $self->log->debug( $self->symbolic_name." dbh for species $species doesn't exist or is not alive; trying to connect");
     return $self->reconnect();
      
 };
@@ -92,18 +87,18 @@ around 'dbh' => sub {
 
 sub reconnect {
     my $self = shift;
-    my $ReconnectMaxTries=5; # get this from configuration file!
+    my $ReconnectMaxTries=$self->conf->{reconnect}; # get this from configuration file!
     my $tries=0;
     my $dbh;
     while($tries<$ReconnectMaxTries) {
 	$tries++;
 	my $host = $self->hosts->[ rand @{$self->hosts} ];
-	$dbh = $self->connect($host,$self->port,$self->user,$self->pass);
+	$dbh = $self->connect($host);
 			   
 	$self->log->info("trytime $tries: Connecting to  ".$self->symbolic_name);
 	if ($self->log->is_debug()) {
 	    $self->log->debug('     using the following parameters:');
-	    $self->log->debug('       ' . $host . ':' . $self->port);
+	    $self->log->debug('       ' . $host . ':' . (defined $self->port?$self->port:''));
 	}
 	if($dbh) {
 	    $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $host);
