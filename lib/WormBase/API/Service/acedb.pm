@@ -63,8 +63,8 @@ sub BUILD {
     # record all the info from Conf file $self->conf_dir
     my @hosts;
 #     push @hosts ,$self->conf->{acedb_host};
-    $self->hosts([$self->conf->{acedb_host}]);
-    $self->port($self->conf->{acedb_port});
+    $self->hosts([$self->conf->{host}]);
+    $self->port($self->conf->{port});
 
 }
 
