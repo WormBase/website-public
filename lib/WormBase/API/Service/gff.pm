@@ -19,9 +19,9 @@ sub BUILD {
     $self->function("get connection to GFF database");
     # record all the info from Conf file $self->conf_dir
 #     push @hosts ,$self->conf->{mysql_host};
-    $self->hosts([$self->conf->{mysql_host}]);
-    $self->user($self->conf->{mysql_user});
-    $self->pass($self->conf->{mysql_pass});
+    $self->hosts([$self->conf->{host}]);
+    $self->user($self->conf->{user});
+    $self->pass($self->conf->{pass});
 
 }
 
