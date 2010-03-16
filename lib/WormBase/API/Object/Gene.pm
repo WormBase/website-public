@@ -188,7 +188,118 @@ sub common_name {
     return $data;
 }
 
+
+
+
+
+sub ids_complex {
+    my $self   = shift;
+    my $object = $self->object; ## shift
+    
+    my %data;
+    my %data_pack;
+    my %data_lists;
+    
+    # Fetch external database IDs for the gene
+    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    
+    my $version = $object->Version;
+    my $locus   = $object->CGC_name;
+    my $common  = $object->Public_name;
+    
+    my $object_data = {	
+	common_name   => "$common",
+	locus_name    => "$locus",
+	gene_class    => $object->Gene_class,
+	wormbase_id   => "$object",
+	aceview_id    => "$aceview",
+	refseq_id     => $refseq,
+	version       => "$version",
+	};
+	
+	my %gene2sequence_name;
+	my %gene2other_name;
+	
+	my @other_names = $object->Other_name;
+	
+	foreach my $other_name (@other_names) {
+	
+		$gene2other_name{$object}{$other_name} = 1;
+	
+	}
+		
+	my @sequence_names = $object->Sequence_name;
+	
+	foreach my $sequence_name (@sequence_names) {
+	
+		$gene2sequence_name{$object}{$sequence_name} = 1;
+	
+	}
+
+	$data_pack{$object} = $object_data;
+	$data_lists{'gene2sequence_name'} = \%gene2sequence_name;
+	$data_lists{'gene2other_name'} = \%gene2other_name;
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'data_lists'} = \%data_lists;
+	$data{'count'} = 'complex';
+	$data{'desc'} = "Data for gene $object";
+	
+    return \%data;
+}
+
+
 sub ids {
+    my $self   = shift;
+    my $object = $self->object; ## shift
+    
+    my %data;
+    my %data_pack;
+    my %data_lists;
+    
+    # Fetch external database IDs for the gene
+    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+
+    my $version = $object->Version;
+    my $locus   = $object->CGC_name;
+    my $common  = $object->Public_name;
+    
+    my %data;
+    my @data_pack;
+    
+    my @other_names = $object->Other_name;
+    my @sequence_names = $object->Sequence_name;
+    
+    my @other_names_str = map {$_ = "$_"} @other_names;
+    my @sequence_names_str = map {$_ = "$_"} @sequence_names;
+    
+    my $object_data = {
+    
+		common_name   => "$common",
+		locus_name    => "$locus",
+		wormbase_id   => "$object",
+		version       => "$version",
+		aceview_id    => "$aceview",
+		refseq_id     => $refseq,
+		version       => "$version",
+		other_names	  => \@other_names,
+		sequence_names => \@sequence_names
+
+	};	
+	
+	push @data_pack, $object_data;
+
+	$data{'data_pack'} = \@data_pack;
+	$data{'count'} = 1;
+	$data{'desc'} = "Data for gene $object";
+
+    return \%data;
+    
+}
+
+
+
+sub ids_old {
     my $self   = shift;
     my $object = $self->object;
     
