@@ -11,82 +11,16 @@
 
 %]
 
+[% FOREACH field IN c.stash.keys -%]
+  [% WRAPPER "boilerplate/field" title=field %]
+     [% data_pack = c.stash.$field.0 %]
 
-[% WRAPPER "boilerplate/field" title="IDs" %]
-
-
-   [% c.stash.keys.join("<br />") %]
-
-   <table>
-
-   <tr>
-      <td>Common Name</td>
-      <td>[% ids.resultset.common_name %]</td>
-   </tr>
-
-   <tr>
-      <td>Locus name</td>
-      <td>
-	[% IF ids.resultset.locus_name %]
-	   [% url.Link(item=gene text=ids.resultset.locus_name) %]
-       	    - (<i>[%- url.Link(item=ids.resultset.gene_class text=ids.resultset.gene_class.Description) -%]</i>)
-           [% display_evidence(ids.CGC_name) %]
-           - 
-           [%- url.Link(resource='CGC'
-	            type='nomenclature'
-		    text="CGC nomenclature guide") -%]
-        [% END %]
-     </td>
-   </tr>
-
-   <tr>
-     <td>Sequence Name</td>
-     <td>
-         [% IF ids.resultset.sequence_name %]
-             [% FOREACH s = ids.resultset.sequence_name %] 
-	       [% s %]
-             [% END %]
-        [% END %]
-     </td>
-   </tr>
-
-   <tr>
-    <td>Other names</td>
-    <td>
-        [% IF ids.resultset.other_name %]
-             [% FOREACH s = ids.resultset.other_name %]
-	     	[% s %]<p><p> [% display_evidence(s) %]<br />
-             [% END %]
-        [% END %]
-      </td>
-    </tr>
- 
-
-    <!-- The WormBase Gene ID -->
-    <tr>
-       <td>WormBase ID</td>
-       <td>[% ids.resultset.wormbase_id %]</td>
-    </tr>
-
-    <tr>
-       <td>Version</td>
-       <td>[% ids.resultset.version %]</td>
-    </tr>
- 
-
-    <!-- External IDs -->
-    <tr>
-       <td>NCBI RefSeq</td>
-       <td>[% ids.resultset.refseq_id.join(", ") %]</td>
-    </tr>
-
-    <tr>
-       <td>AceView</td>
-       <td>[% ids.resultset.aceview_id %]</td>
-    </tr>
-</table>
-[% END %]
-
+     [% FOREACH i IN data_pack.keys -%]
+        [% i %]: [% data_pack.$i.join(", ") %] <br />
+     [% END -%]
+   
+  [% END %]
+[% END -%]
 
 
     [%# PROCESS "gene/ids.tt2" %]
