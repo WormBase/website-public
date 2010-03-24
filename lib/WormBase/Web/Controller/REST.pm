@@ -197,26 +197,26 @@ sub widget_GET {
 					   name => $name}) or die "$!";
     }
     my $object = $c->stash->{object};
-    
+
     # TODO: Load up the data content.
     # The widget itself could make a series of REST calls for each field
     my @fields;
     foreach my $widget_config (@{$c->config->{pages}->{$class}->{widgets}->{widget}}) {
 	
 	# Janky-tastic.
-	$c->log->warn("widget is $widget");
+# 	$c->log->warn("widget is $widget");
 	next unless $widget_config->{name} eq $widget; 
 	@fields = @{ $widget_config->{fields} };
     }
 #$c->config->{pages}->{$class}->{widgets}->{$widget} };
-
+ 
     my $data = {};
     $c->log->warn("fields are " . @fields);
     foreach my $field (@fields) {
 	$c->log->warn($field);
-	my $data = $object->$field;
-	$data->{$_} = $data;
-
+	my $data = $object->$field->{'data_pack'};
+# 	$data->{$_} = $data;
+# $c->log->warn($data);
 	# Conditionally load up the stash (for now) for HTML requests.
 	# Eventually, I can ust format the return JSON.
 	$c->stash->{$field} = $data;
