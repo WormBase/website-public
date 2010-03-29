@@ -263,7 +263,7 @@ sub ids {
     my $common  = $object->Public_name;
     
     my %data;
-    
+    my %data_pack;
     
     my @other_names = $object->Other_name;
     my @sequence_names = $object->Sequence_name;
@@ -284,9 +284,8 @@ sub ids {
 
 	};	
 	
-	
-	
-	$data{$object} = $object_data;
+	$data_pack{$object} = $object_data;
+	$data{'data_pack'} = \%data_pack; 
 	$data{'desc'} = "Data for gene $object";
 
     return \%data;
