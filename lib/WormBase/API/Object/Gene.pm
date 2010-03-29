@@ -254,8 +254,6 @@ sub ids {
     my $object = $self->object; ## shift
     
     my %data;
-    my %data_pack;
-    my %data_lists;
     
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
@@ -265,7 +263,7 @@ sub ids {
     my $common  = $object->Public_name;
     
     my %data;
-    my @data_pack;
+    
     
     my @other_names = $object->Other_name;
     my @sequence_names = $object->Sequence_name;
@@ -277,7 +275,6 @@ sub ids {
     
 		common_name   => "$common",
 		locus_name    => "$locus",
-		wormbase_id   => "$object",
 		version       => "$version",
 		aceview_id    => "$aceview",
 		refseq_id     => $refseq,
@@ -287,10 +284,9 @@ sub ids {
 
 	};	
 	
-	push @data_pack, $object_data;
-
-	$data{'data_pack'} = \@data_pack;
-	$data{'count'} = 1;
+	
+	
+	$data{$object} = $object_data;
 	$data{'desc'} = "Data for gene $object";
 
     return \%data;
