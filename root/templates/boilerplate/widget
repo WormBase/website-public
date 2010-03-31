@@ -1,7 +1,5 @@
 [%#
-    
-   The widget wrapper
-
+   # The widget wrapper
 %]
 
 <!-- start [% widget %] widget -->

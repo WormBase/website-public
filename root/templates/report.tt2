@@ -11,7 +11,7 @@
 <div class="title">
    [% title %]
    [%- IF object -%]
-     [% class %] Report: [%- object.common_name.common_name -%]
+     [% class %] Report: [%- object.common_name.resultset -%]
    [% END %] 
 </div>
 
@@ -103,7 +103,15 @@
                    <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
                          <span>[% widget %]</span>
                    </a>
+
              </li>
+
+<!--    <div class="widget_title">
+	  <a href="[% widget %]" name="[% widget %]" class="generic_link" onclick="loadWidgetJQuery(this.name);">[% widget %]
+	  </a>
+    </div>
+    <div id="widget_content">
+    </div>-->
 
 	 [% END %]
      </ul>

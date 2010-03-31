@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER "boilerplate/widget" -%]
+[% WRAPPER "boilerplate/widget" title="Overview" -%]
 
     [% # Pull in all sections - each of these should be conditional but under what parameters? %]
 	[% # Users could just to show or hide empty sections...      %]
@@ -9,16 +9,22 @@
     
     The template names are actually in the stash.  This should be unnecessary...
 
-%]
+    %]
 
-[% FOREACH field IN c.stash.keys -%]
+[% FOREACH field IN c.stash.fields.keys -%]
   [% WRAPPER "boilerplate/field" title=field %]
-     [% data_pack = c.stash.$field.0 %]
-
-     [% FOREACH i IN data_pack.keys -%]
-        [% i %]: [% data_pack.$i.join(", ") %] <br />
+     [% data_pack = c.stash.fields.$field %]
+     
+     <table>
+     [% FOREACH obj IN data_pack.keys -%]
+        [% FOREACH i IN data_pack.$obj.keys -%]
+            <tr>
+            <td>[% i %]:</td>
+            <td>[% data_pack.$obj.$i.join(', ') %] </td>
+            </tr>
+        [% END -%]
      [% END -%]
-   
+     </table>
   [% END %]
 [% END -%]
 
