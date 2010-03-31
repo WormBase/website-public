@@ -72,7 +72,10 @@ sub available_widgets : Path('/rest/available_widgets') :Args(2) :ActionClass('R
 
 sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
-    my (@widgets) = @{ $c->config->{pages}->{$class}->{widget_order} };
+#     my (@widgets) = @{ $c->config->{pages}->{$class}->{widget_order} };
+
+    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
+    @widgets = map{$_->{name}} @widgets;
     
     my @data;
     foreach my $widget (@widgets) {
@@ -95,67 +98,67 @@ sub available_widgets_GET {
 # The OLD widget approach,
 # compiled from an independent 
 # set of templates
-#
-sub widget_compiled :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
-
-sub widget_conpiled_GET {
-    my ($self,$c,$class,$name,$widget) = @_; 
-
-    unless ($c->stash->{object}) {
-	
-	# Fetch our external model
-	my $api = $c->model('WormBaseAPI');
-	
-	# Fetch the object from our driver	 
-	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-	$c->log->debug("The requested class is " . ucfirst($class));
-	$c->log->debug("The request is " . $name);
-	
-	# Fetch a WormBase::API::Object::* object
-	# But wait. Some methods return lists. Others scalars...
-	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
-					   name => $name}) or die "$!";
-    }
-    my $object = $c->stash->{object};
-    
-
-
-    # TODO: Load up the data content.
-    # The widget itself could make a series of REST calls for each field
-    my @fields;
-    foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
-	next unless $widget_config->{name} eq $widget; 
-	@fields = @{ $widget_config->fields };
-	$c->log->warn(@fields);
-    }
-#$c->config->{pages}->{$class}->{widgets}->{$widget} };
-    my $data = {};
-    foreach my $field (@fields) {
-	my $data = $object->$field;
-	$data->{$_} = $data;
-
-	# Conditionally load up the stash (for now) for HTML requests.
-	# Eventually, I can ust format the return JSON.
-	$c->stash->{$_} = $data;
-      
-    }
-    
-    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
-    # PERHAPS I SHOULD INCLUDE FIELDS?
-    # Include the full uri to the *requested* object.
-    # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for("/page",$class,$name);
-    
-    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
-
-    $self->status_ok($c, entity => {
-	class   => $class,
-	name    => $name,
-	uri     => "$uri",
-	$widget => $data
-		     }
-	);
-} 
+# #
+# sub widget_compiled :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
+# 
+# sub widget_conpiled_GET {
+#     my ($self,$c,$class,$name,$widget) = @_; 
+# 
+#     unless ($c->stash->{object}) {
+# 	
+# 	# Fetch our external model
+# 	my $api = $c->model('WormBaseAPI');
+# 	
+# 	# Fetch the object from our driver	 
+# 	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+# 	$c->log->debug("The requested class is " . ucfirst($class));
+# 	$c->log->debug("The request is " . $name);
+# 	
+# 	# Fetch a WormBase::API::Object::* object
+# 	# But wait. Some methods return lists. Others scalars...
+# 	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+# 					   name => $name}) or die "$!";
+#     }
+#     my $object = $c->stash->{object};
+#     
+# 
+# 
+#     # TODO: Load up the data content.
+#     # The widget itself could make a series of REST calls for each field
+#     my @fields;
+#     foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
+# 	next unless $widget_config->{name} eq $widget; 
+# 	@fields = @{ $widget_config->fields };
+# 	$c->log->warn(@fields);
+#     }
+# #$c->config->{pages}->{$class}->{widgets}->{$widget} };
+#     my $data = {};
+#     foreach my $field (@fields) {
+# 	my $data = $object->$field;
+# 	$data->{$_} = $data;
+# 
+# 	# Conditionally load up the stash (for now) for HTML requests.
+# 	# Eventually, I can ust format the return JSON.
+# 	$c->stash->{$_} = $data;
+#       
+#     }
+#     
+#     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
+#     # PERHAPS I SHOULD INCLUDE FIELDS?
+#     # Include the full uri to the *requested* object.
+#     # IE the page on WormBase where this should go.
+#     my $uri = $c->uri_for("/page",$class,$name);
+#     
+#     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+# 
+#     $self->status_ok($c, entity => {
+# 	class   => $class,
+# 	name    => $name,
+# 	uri     => "$uri",
+# 	$widget => $data
+# 		     }
+# 	);
+# } 
 
 
 
@@ -202,25 +205,20 @@ sub widget_GET {
     # The widget itself could make a series of REST calls for each field
     my @fields;
     foreach my $widget_config (@{$c->config->{pages}->{$class}->{widgets}->{widget}}) {
-	
 	# Janky-tastic.
-# 	$c->log->warn("widget is $widget");
 	next unless $widget_config->{name} eq $widget; 
 	@fields = @{ $widget_config->{fields} };
     }
-#$c->config->{pages}->{$class}->{widgets}->{$widget} };
  
     my $data = {};
     $c->log->warn("fields are " . @fields);
+    $c->stash->{'widget'} = $widget;
     foreach my $field (@fields) {
 	$c->log->warn($field);
-	my $data = $object->$field->{'data_pack'};
-# 	$data->{$_} = $data;
-# $c->log->warn($data);
+	$data = $object->$field->{'data_pack'};  #modified for Norie's data_pack
 	# Conditionally load up the stash (for now) for HTML requests.
 	# Eventually, I can ust format the return JSON.
-	$c->stash->{$field} = $data;
-      
+	$c->stash->{'fields'}->{$field} = $data;
     }
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
@@ -228,9 +226,9 @@ sub widget_GET {
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
-    
-#    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
-    $c->stash->{template} = "gene/widget_overview.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+$c->forward('WormBase::Web::View::TT');
 
     $self->status_ok($c, entity => {
 	class   => $class,
@@ -378,7 +376,8 @@ sub _select_template {
 	} elsif (defined $c->config->{common_widgets}->{$render_target}) {
 	    return "common_widgets/$render_target.tt2";
 	} else {  
-	    return "$class/widgets/$render_target.tt2"; 
+# 	    return "$class/widgets/$render_target.tt2"; 
+            return "$class/widget.tt2"; 
 	}
     }
 

@@ -11,7 +11,7 @@
 <div class="title">
    [% title %]
    [%- IF object -%]
-     [% class %] Report: [%- object.common_name.common_name -%]
+     [% class %] Report: [%- object.common_name.resultset -%]
    [% END %] 
 </div>
 
@@ -74,7 +74,6 @@
 <!-- TABBED VIEW -->
 [% ELSIF view=="tabs" %]
 
-
      <div id="ajaxtabs" class="flora">
         <ul>
         [% FOREACH widget IN widgets -%]
@@ -94,7 +93,6 @@
 
 
 
-
 <div id="tabs">
 <div class="ui-tabs">
      <ul class="ui-tabs-nav">
@@ -103,6 +101,7 @@
                    <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
                          <span>[% widget %]</span>
                    </a>
+
              </li>
 
 	 [% END %]
