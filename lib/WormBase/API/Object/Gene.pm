@@ -15,165 +15,24 @@ extends 'WormBase::API::Object';
 # It returns both a Gene object, as well as a text string
 # corresponding to the best name of the gene
 
-=head1
 
-sub search {
-  my ($self,$query) = @_;  
-  my $dbh = $self->ace_model;
-  my (@results,%seen);
-  
-  # 1. Are we trying to fetch a WB* unique ID?
-  if ($query =~ /^WBG.*\d+/) {
-    @results = $dbh->fetch(-class=>'Gene',-name=>$query,-fill=>1);
-    
-    # What should the searches really be returning? This should be
-    # specified in the configuration.
-    # That is: I should have fields in a table, for example.
-        
-    # Probably no longer necessary as protein names are now Gene_name objects, too
-    #    # 2. User is searching via a WormPep ID
-    #  } elsif ($query =~ /^CE\d+/) {
-    #    # Enable searches via a WormPep ID
-    #    # allow users to type "CE12345" rather than "WP:CE12345"
-    #    $query = "WP:$query" if $query =~ /^CE\d+/;
-    #    if (my $protein = $DB->fetch(-class=>'Protein',-name=>$query,-fill=>1)) {
-    #      my $CDS = $protein->Corresponding_CDS;
-    #      # Fetch the corresponding gene for this CDS
-    #      @genes = $CDS->Gene(-filled=>1) if $CDS;
-    #    }
-    # 3. Loci (unc-26) and Molecular IDs (R13A5.12)
-    # Try searching the Gene_name class.  This should work for
-    #   approved CGC names, non-approved names, genes, etc
-  } elsif (my @gene_names = $dbh->fetch(-class=>'Gene_name',-name=>$query,-fill=>1)) {
-    # HACK!  For cases in which a gene is assigned to more than one Public_name_for.
-    @results = grep { !$seen{$_}++} map { $_->Public_name_for } @gene_names;
-    
-    @results = grep {!$seen{$_}++} map {$_->Sequence_name_for
-					|| $_->Molecular_name_for
-					  || $_->Other_name_for
-					} @gene_names unless @results;
-    undef @gene_names;
-  } elsif (my @gene_classes = $dbh->fetch(-class=>'Gene_class',-name=>$query,-fill=>1)) {
-    @results = map { $_->Genes } @gene_classes;
-  } elsif (my @ests = $dbh->fetch(-class=>'Sequence',-name=>$query,-fill=>1)) {
-    foreach (@ests) {
-      if (my $gene = $_->Gene(-filled=>1)) {
-	push @results,$gene;
-      } elsif (my $cds = $_->Matching_CDS(-filled=>1)) {
-	my $gene = $cds->Gene(-filled=>1);
-	push @results,$gene if $gene;
-      }
-    }   
-  } elsif (my @variations = $dbh->fetch(-class=>'Variation',-name=>$query,-fill=>1)) {
-    @results = map { eval { $_->Gene} } @variations;
-  }
-  
-  # Try finding genes using general terms
-  # 1. Homology_group
-  # 2. Concise_description
-  # 3. Gene_class
-  
-  unless (@results) {
-    my @homol = $dbh->fetch(-query=>qq{find Homology_group where Title=*$query*});
-    @results = map { eval { $_->Protein->Corresponding_CDS->Gene } } @homol;
-    push (@results,map { $_->Genes } $dbh->fetch(-query=>qq{find Gene_class where Description="*$query*"}));
-    push (@results,$dbh->fetch(-query=>qq{find Gene where Concise_description=*$query*}));
-  }
-  
-  # DEPRECATED!
-  # Try fetching pseudogenes that have never been classified as loci
-  # Is this still necessary?
-  #  unless (@results) {
-  #    my @transcripts = $dbh->fetch(-class=>'Pseudogene',-name=>$query);
-  #	     my %seen;
-  #    @results = map {$_->fetch} grep {!$seen{$_}++} map {$_->Gene} @transcripts;
-  #  }
-  
-  # These may be gene predictions which remain only as CDS objects
-  unless (@results) {
-#    warn "CACHE: $query empty; falling through to CDS check";
-    if (my $cds = $dbh->fetch(-class=>'CDS',-name=>$query)) {
-      # HACK HACK HACK
-      # FetchGene is called by the sequence page
-      # Unfortunately, there are orphan CDSs with no attached Gene objects
-      # and that are not tagged as history
-      # The code below results in an endless Redirect
-#      my $url = url();
-#      if ($cds->Method eq 'twinscan') {
-#	if ($url !~ /sequence/) {
-#	  AceRedirect('sequence' => $cds);
-#	} else {
-#	  return $cds;
-#	}
-#      }
-#      
-#      # This could also test for the absence of a method
-#      if ($url =~ /sequence/) {
-#	AceRedirect('gene' => $cds) unless ($cds->Method eq 'history' || $cds->Method eq 'Genefinder' || $cds->Method eq '');
-#      } else {
-#	# We won't redirect to the sequence display if this is a history object
-#	# In that case the Gene Page has a built in history display
-#	AceRedirect('sequence'=>$cds) unless ($cds->Method eq 'history');
-#      }
-    }
-  }
-  
-  # Analyze the Other_name_for of the Gene_name to see if the gene
-  # corresponds to another named gene.
-  my (@unique_genes);
-  %seen = ();
-  foreach my $gene (@results) {
-    next if defined $seen{$gene};
-    my $gene_name  = $gene->Public_name;
-    my @other_names = eval { $gene_name->Other_name_for; };
-    foreach my $other_name (@other_names) {
-      if ($other_name ne $gene) {
-	#warn "other: $other_name";
-        #warn "gene: $gene";
-#	push (@unique_genes,$other_name) unless defined $seen{$other_name};
-	$seen{$other_name}++;
-      }
-    }
-
-
-    push (@unique_genes,$gene);
-    $seen{$gene}++;
-  }
-
-#  if (@unique_genes > 1 && !$suppress_multiples) {
-#    MultipleChoices($query,\@unique_genes,$query);
-#    exit 0;
-#  }
-
-  my $common_name = $self->common_name($unique_genes[0]);
-  
-  # See "searches/basic" for rational on this redirect over 
-  # simply returning the object
-  return unless @unique_genes > 0;
-#  my $url = url();
-#  my $abs = url(-query=>1);
-#  if ($url =~ /gene\/gene/ && $url !~ /genetable/ && $abs !~ /details/) {
-#      my $gene = $unique_genes[0];
-#      redirect("/db/gene/gene?name=$gene;class=Gene");
-#  } else {
-  #  my @return;
-  #  push @return, { public_name => $unique_genes[0]->name,
-#		  description => $unique_genes[0]->Concise_description,
-#		  name        => $unique_genes[0]->name,
-#		};
-#  return @return;
-
-  # Store the gene for access in the template
-  return \@results;
-}
-
-=cut
-
+#### rebuilt methods #####
+# common_name
+# ids
+# concise_description
+# kogs
+# genomic_position
+# anatomic_expression_patterns
+# transgenes
 
 #######################################################
 # The Overview (formerly Identification) Panel
 #######################################################
 sub common_name {
+
+	my %data;
+	my %data_pack;
+	
     my $self = shift;
     my $object = $self->object;
     my $common_name = 
@@ -183,14 +42,16 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $object;
     
-    my $data = $self->build_data_structure("$common_name",
-					   'The most commonly used name of the gene');
-    return $data;
+    $data_pack{$object} = $common_name;
+    
+    my $desc = 'The most commonly used name of the gene';
+    
+    
+    $data{'desc'} = $desc;
+    $data{'$data_pack'} = \%data_pack;
+    
+    return \%data;
 }
-
-
-
-
 
 sub ids_complex {
     my $self   = shift;
@@ -254,7 +115,8 @@ sub ids {
     my $object = $self->object; ## shift
     
     my %data;
-    
+    my %data_pack;
+     
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
 
@@ -262,8 +124,7 @@ sub ids {
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
     
-    my %data;
-    my %data_pack;
+   
     
     my @other_names = $object->Other_name;
     my @sequence_names = $object->Sequence_name;
@@ -318,27 +179,14 @@ sub ids_old {
 					   'various IDs that refer to this gene',	
 	);
     return $data;
-#} else {
-#	return 
-#	    ({	
-#		common_name   => $self->wrap($common),
-#		locus_name    => $self->wrap($locus),
-#		gene_class    => $self->wrap($object->Gene_class),
-##		other_name    => $self->wrap($object->Other_name),
-#		sequence_name => $self->wrap($object->Sequence_name),
-#		wormbase_id   => "$object",
-#		aceview_id    => $aceview,
-#		refseq_id     => $refseq,
-#		version       => "$version",
-#	     });
-#    }
-    
 }
 
 sub concise_description {
+
     my $self   = shift;
     my $object = $self->object;  
     my %data;
+    my %data_pack;
     
     # The description, dervied from the Gene, the CDS, or the Gene_class.
     my $description = 
@@ -348,17 +196,20 @@ sub concise_description {
     
     # No description? Just describe it by its common name
     unless ($description) {
-	my $common_name = $self->common_name;
-	$description = $common_name->{common_name} . ' gene';
+	my $common_name_dp = $self->common_name;
+	$description = $common_name_dp->{data_pack}->{$object} . ' gene';
     }
 
-    my $data = $self->build_data_structure("$description",
-					   "A manually curated description of the gene's function");
-    return $data;
+    $data{'desc'} = "A manually curated description of the gene's function";
+	$data_pack{$object} = $description;
+	$data{'data_pack'} = \%data_pack;
+    return \%data;
 }
 
+
 # Fetch all proteins associated with a gene.
-# Return a list of W::A::O::Protein objects.
+## NB: figure out the naming convention for proteins
+
 sub proteins {
     my $self   = shift;
     my $object = $self->object;
@@ -370,8 +221,11 @@ sub proteins {
     }
 }
 
+
+
 # Fetch all CDSs associated with a gene.
-# Return a list of W::A::O::CDS objects.
+## figure out naming convention for CDs
+
 sub cds {
     my $self   = shift;
     my $object = $self->object;
@@ -387,10 +241,14 @@ sub cds {
 # Fetch Homology Group Objects for this gene.
 # Each is associated with a protein and we should probably
 # retain that relationship
+
 sub kogs {
     my $self     = shift;
     my $object   = $self->object;
     my @cds    = $object->Corresponding_CDS;
+    my %data;
+    my %data_pack;
+    
     if (@cds) {
 	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
 	if (@proteins) {
@@ -398,34 +256,26 @@ sub kogs {
 	    my @kogs = grep {$_->Group_type ne 'InParanoid_group' } grep {!$seen{$_}++} 
 	         map {$_->Homology_group} @proteins;
 	    if (@kogs) {
-		# Wrap these in WormBase API objects
-		my @wrapped = $self->wrap(@kogs);
+	    	
+	    	$data_pack{$object} = \@kogs;
+			$data{'data_pack'} = \%data_pack;
 
-		my $data = { resultset => { kogs => \@wrapped } };
-		return $data;
-		return \@wrapped;
 	    } else { 
-		return 1;
+	    
+	    	$data_pack{$object} = 1;
+	    
 	    }
 	}
     } else {
-	return 1;
+		$data_pack{$object} = 1;	
     }
+    
+    $data{'desc'} = "KOGs related to gene; data_pack->{gene_name} = array_ref of related KOGs or 1 indicating absence of data";
+ 	return \%data;
 }
 
 
-# BROKEN!
-#sub reactome_knowledgebase {
-#    my $self     = shift;
-#    my $object   = $self->object;
-#    my $proteins = $self->_fetch_proteins($object);
-#    
-#    my $stash = $self->SUPER::reactome_knowledgebase($proteins);
-#    return $stash;
-#}
 
-# I'm not certain what to make of the Other_sequence tag.
-# It contains a mix of sequence IDs, most from other species.
 
 sub other_sequences {
     my $self   = shift;
@@ -562,6 +412,9 @@ sub cloned_by {
     return $data;
 }
 
+
+
+
 # Object History.  This should be suitably generic and moved to Object.pm
 sub history {
     my $self   = shift;
@@ -617,25 +470,39 @@ sub history {
 # Note: Most of these are generic and located
 # in the Model.pm
 ###########################################
+
 sub genomic_position {
     my $self      = shift;
     my $object    = $self->object;
     my $sequences = $self->_fetch_sequences();
     
-    return unless @$sequences;
+    my %data;
+    my %data_pack;
+   
     
-    my @segments = $self->_fetch_segments($sequences);
+	if(@$sequences) {
+	
+		my @segments = $self->_fetch_segments($sequences);
+		
+		# per TH: This is a kludge to handle situations where I've fetched an Ace object
+    	# corresponding to a Locus that has a CDS but no corresponding GFF segment. (rds-2)
+    	
+    	my $longest = $self->_longest_segment(\@segments);
+    	$data_pack{$longest} = $self->SUPER::genomic_position($longest);
+	}
+	
+    else {
     
-    # This is a kludge to handle situations where I've fetched an Ace object
-    # corresponding to a Locus that has a CDS but no corresponding GFF segment. (rds-2)
-    my $longest = $self->_longest_segment(\@segments);
+    }
     
-    my $data = $self->SUPER::genomic_position($longest);
-    return $data;
+  	$data{'desc'} = 'genomic position for gene; structure data{\'data_pack\'}{longest_segment_id} = genomic position for longest segment';
+  	$data{'data_pack'} = \%data_pack;
+  	
+    return \%data;
 }
 
 
-=head1 AWAITING DBH GFF service
+=head1 AWAITING DBH GFF serviceßß
 
 sub genomic_environs {
     my $self   = shift;
@@ -669,6 +536,7 @@ sub genomic_environs {
 ###########################################
 # Components of the Expression panel
 ###########################################
+
 sub fourd_expression_movies {
     my $self   = shift;
     my $object = $self->object;
@@ -683,17 +551,27 @@ sub fourd_expression_movies {
 sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
+    my %data;
+    my %data_pack;
     
-    my $data = {};
-    my @all_ep     = $object->Expr_pattern;
-    my @no_image   = grep{!$self->_pattern_thumbnail($_)} @all_ep;
-    my @have_image = grep{ $self->_pattern_thumbnail($_)} @all_ep;
+    my @eps = $object->Expr_pattern;
     
-    my $s = @all_ep > 1 ? 's' : '';
+    foreach my $ep (@eps) {
+    	if ($self->_pattern_thumbnail($ep)) {
+    	
+    		$data_pack{$ep}{'image'} = 1;
+    	}
+    	
+    	else 
+    	
+    	{
+    		$data_pack{$ep}{image} = 0;
+    	}
+    }
     
-    push @{$data->{no_image}},@no_image;
-    push @{$data->{have_image}},@have_image;
-    return $data;
+    $data{'desc'} = 'expression pattern image data for gene; structure data_pack{\'expression_pattern_id\'}{\'image\'} = 1 or 0 depending on availability of image.'. 
+    
+    return \%data;
 }
 
 
@@ -1000,6 +878,7 @@ sub microarray_expression_data {
     return [ $object->Microarray_results ];
 }
 
+
 sub microarray_topology_map_position {
     my $self   = shift;
     my $object = $self->object;
@@ -1295,8 +1174,26 @@ sub best_blastp_matches {
 sub transgenes {
     my $self       = shift;
     my $object = $self->object;
-    my @transgenes = $self->wrap($object->Drives_Transgene);
-    my $data = $self->build_data_structure(\@transgenes,'transgenes driven by this gene');
+    my %data;
+    my %data_pack;
+    
+    
+    my @transgenes = $object->Drives_Transgene;
+    
+    foreach my $transgene (@transgenes) {
+    	$data_pack{$transgene} = {
+    								'common_name' => $transgene,
+    								'class' => 'Transgene'
+    								};
+    }
+    
+    my $desc = 'transgenes driven by this gene; data_pack{transgene_id} = {\'common_name\' => transgene_id, \'class\' => \'Transgene\'}';
+    
+    $data{'desc'} = $desc;
+    $data{'data_pack'} = \%data_pack;
+    
+    return \%data;
+    
 }
 
 sub orfeome_project_primers {
@@ -1340,13 +1237,28 @@ sub microarray_probes {
 sub sage_tags {
     my $self   = shift;
     my $object = $self->object;
+    my %data;
+    my %data_pack;
     
     # Only include those that have been unambiguosly mapped.
     # (Actually, will safe this for the display layer)
     # my @stash = grep {$_->Unambiguously_mapped(0) || $_->Most_three_prime(0)} $object->SAGE_tag;
     my @tags = $object->SAGE_tag;
 
-    return ({ sage_tags => \@tags });
+	foreach my $tag (@tags) {
+	
+		$data_pack{$tag} = {
+							'common_name' => $tag,
+							'class' => 'SAGE_tag'
+							};
+	}
+    
+    $data{'desc'} = 'SAGE_tags for the gene; data_pack{tag_id} = {\'common_name\'=>tag_id, \'class\' => \'SAGE_tag\'}';
+    
+    $data{'data_pack'} = \%data_pack;
+    
+    
+    return \%data;
 }
 
 # Return a list of matching cDNAs
