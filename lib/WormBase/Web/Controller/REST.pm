@@ -226,8 +226,9 @@ sub widget_GET {
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
-    
+    $c->stash->{noboiler} = 1;
     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
+$c->forward('WormBase::Web::View::TT');
 
     $self->status_ok($c, entity => {
 	class   => $class,

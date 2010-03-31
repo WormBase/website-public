@@ -74,7 +74,6 @@
 <!-- TABBED VIEW -->
 [% ELSIF view=="tabs" %]
 
-
      <div id="ajaxtabs" class="flora">
         <ul>
         [% FOREACH widget IN widgets -%]
@@ -94,7 +93,6 @@
 
 
 
-
 <div id="tabs">
 <div class="ui-tabs">
      <ul class="ui-tabs-nav">
@@ -105,13 +103,6 @@
                    </a>
 
              </li>
-
-<!--    <div class="widget_title">
-	  <a href="[% widget %]" name="[% widget %]" class="generic_link" onclick="loadWidgetJQuery(this.name);">[% widget %]
-	  </a>
-    </div>
-    <div id="widget_content">
-    </div>-->
 
 	 [% END %]
      </ul>

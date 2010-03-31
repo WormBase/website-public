@@ -307,14 +307,6 @@ sub report :Path("/reports") Args(2) {
     my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
     @widgets = map{$_->{name}} @widgets;
 
-   foreach my $widget (@widgets) {
-#        my @fields = $widget->{fields};
-#        foreach my $field (@fields) {
-# 	    $c->log->warn($field);
-# 	    my $data = $object->$field->{'data_pack'};  #modified for Norie's data_pack
-# 	    $c->stash->{'fields'}->{$field} = $data;
-#        }
-   }
 
 
     $c->stash->{widgets} = \@widgets;
