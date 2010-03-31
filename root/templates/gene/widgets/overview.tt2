@@ -9,7 +9,7 @@
     
     The template names are actually in the stash.  This should be unnecessary...
 
-%]
+    %]
 
 [% c.stash.fields.join(" ") %]
 

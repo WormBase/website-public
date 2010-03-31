@@ -306,7 +306,23 @@ sub report :Path("/reports") Args(2) {
     # Stash all widgets that comprise this page. We will build pages generically.
     my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
     @widgets = map{$_->{name}} @widgets;
+
+   foreach my $widget (@widgets) {
+#        my @fields = $widget->{fields};
+#        foreach my $field (@fields) {
+# 	    $c->log->warn($field);
+# 	    my $data = $object->$field->{'data_pack'};  #modified for Norie's data_pack
+# 	    $c->stash->{'fields'}->{$field} = $data;
+#        }
+   }
+
+
     $c->stash->{widgets} = \@widgets;
+
+
+
+
+
 
     # Is any of this actually necessary?
 
@@ -351,7 +367,7 @@ sub report :Path("/reports") Args(2) {
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     #if ( $c->is_ajax() ) {
-	    $c->stash->{noboiler} = 1;
+#	    $c->stash->{noboiler} = 1;
 #	}
     
     # Normally, the template defaults to action name.
