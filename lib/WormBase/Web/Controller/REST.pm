@@ -12,6 +12,7 @@ __PACKAGE__->config(
 	'text/html'        => [ 'View', 'TT' ],
     });
 
+
 =head1 NAME
 
 WormBase::Web::Controller::REST - Catalyst Controller
@@ -210,15 +211,22 @@ sub widget_GET {
 	@fields = @{ $widget_config->{fields} };
     }
  
-    my $data = {};
+
     $c->log->warn("fields are " . @fields);
     $c->stash->{'widget'} = $widget;
     foreach my $field (@fields) {
 	$c->log->warn($field);
-	$data = $object->$field->{'data_pack'};  #modified for Norie's data_pack
+        my $data = {};
+	$data = $object->$field->{'data_pack'} if defined $object->$field->{'data_pack'};  #modified for Norie's data_pack
 	# Conditionally load up the stash (for now) for HTML requests.
 	# Eventually, I can ust format the return JSON.
-	$c->stash->{'fields'}->{$field} = $data;
+	$c->stash->{'fields'}->{$field}->{'data_pack'} = $data;
+        
+
+        foreach my $keys (%$data){
+	   $c->stash->{'fields'}->{$field}->{'data_type'} = ref($data->{$keys}) unless $c->stash->{'fields'}->{$field}->{'data_type'};
+        	$c->log->warn($data->{$keys});
+        }
     }
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
@@ -228,13 +236,12 @@ sub widget_GET {
     my $uri = $c->uri_for("/page",$class,$name);
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
-$c->forward('WormBase::Web::View::TT');
+    $c->forward('WormBase::Web::View::TT');
 
     $self->status_ok($c, entity => {
 	class   => $class,
 	name    => $name,
-	uri     => "$uri",
-	$widget => $data
+	uri     => "$uri"
 		     }
 	);
 }
