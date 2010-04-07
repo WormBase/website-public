@@ -5,17 +5,6 @@ use Moose;
 with    'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
-###########################################
-# Searches
-#
-# I think searches belong in their own class
-###########################################
-# This subroutine enables multi-tiered searches for Gene objects
-# It returns both a Gene object, as well as a text string
-# corresponding to the best name of the gene
-
-
 #### rebuilt methods #####
 # common_name
 # ids
@@ -24,6 +13,82 @@ extends 'WormBase::API::Object';
 # genomic_position
 # anatomic_expression_patterns
 # transgenes
+# sage_tags
+# matching_cdnas
+# gene_ontology
+# rearrangements
+# strains
+
+### on going 
+# snps
+# alleles
+# paralogs
+
+### to do ### 
+
+## from id
+# gene_models
+# species
+# other_sequences
+# cloned_by
+# history
+
+## from location
+# genetic_position
+
+## from Function
+# phenotypes
+# sites_of_action
+# interactions
+# expression_cluster
+# micro_array_data
+# micro_array_pos
+# expression
+# protein_domains
+
+## GO
+
+## Genetics
+# reference_allele
+
+## Homology
+
+# similarities
+# orthologs
+# other_orthologs
+# in_paranoid
+# treefam
+
+## Reagents
+# primer_pairs
+
+
+
+#####################
+##### template ######
+
+sub template {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
+#### end template #####
+
 
 #######################################################
 # The Overview (formerly Identification) Panel
@@ -50,62 +115,6 @@ sub common_name {
     $data{'desc'} = $desc;
     $data{'$data_pack'} = \%data_pack;
     
-    return \%data;
-}
-
-sub ids_complex {
-    my $self   = shift;
-    my $object = $self->object; ## shift
-    
-    my %data;
-    my %data_pack;
-    my %data_lists;
-    
-    # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
-    
-    my $version = $object->Version;
-    my $locus   = $object->CGC_name;
-    my $common  = $object->Public_name;
-    
-    my $object_data = {	
-	common_name   => "$common",
-	locus_name    => "$locus",
-	gene_class    => $object->Gene_class,
-	wormbase_id   => "$object",
-	aceview_id    => "$aceview",
-	refseq_id     => $refseq,
-	version       => "$version",
-	};
-	
-	my %gene2sequence_name;
-	my %gene2other_name;
-	
-	my @other_names = $object->Other_name;
-	
-	foreach my $other_name (@other_names) {
-	
-		$gene2other_name{$object}{$other_name} = 1;
-	
-	}
-		
-	my @sequence_names = $object->Sequence_name;
-	
-	foreach my $sequence_name (@sequence_names) {
-	
-		$gene2sequence_name{$object}{$sequence_name} = 1;
-	
-	}
-
-	$data_pack{$object} = $object_data;
-	$data_lists{'gene2sequence_name'} = \%gene2sequence_name;
-	$data_lists{'gene2other_name'} = \%gene2other_name;
-
-	$data{'data_pack'} = \%data_pack;
-	$data{'data_lists'} = \%data_lists;
-	$data{'count'} = 'complex';
-	$data{'desc'} = "Data for gene $object";
-	
     return \%data;
 }
 
@@ -153,34 +162,6 @@ sub ids {
     
 }
 
-
-
-sub ids_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
-    
-    my $version = $object->Version;
-    my $locus   = $object->CGC_name;
-    my $common  = $object->Public_name;
-    
-    my $data = $self->build_data_structure({	
-	common_name   => "$common",
-	locus_name    => "$locus",
-	gene_class    => $object->Gene_class,
-	other_name    => join(', ',map { "$_" } $object->Other_name),
-	sequence_name => join(', ',map { "$_" } $object->Sequence_name),
-	wormbase_id   => "$object",
-	aceview_id    => "$aceview",
-	refseq_id     => $refseq,
-	version       => "$version",},
-					   'various IDs that refer to this gene',	
-	);
-    return $data;
-}
-
 sub concise_description {
 
     my $self   = shift;
@@ -197,7 +178,7 @@ sub concise_description {
     # No description? Just describe it by its common name
     unless ($description) {
 	my $common_name_dp = $self->common_name;
-	$description = $common_name_dp->{data_pack}->{$object} . ' gene';
+		$description = $common_name_dp->{data_pack}->{$object} . ' gene';
     }
 
     $data{'desc'} = "A manually curated description of the gene's function";
@@ -273,8 +254,6 @@ sub kogs {
     $data{'desc'} = "KOGs related to gene; data_pack->{gene_name} = array_ref of related KOGs or 1 indicating absence of data";
  	return \%data;
 }
-
-
 
 
 sub other_sequences {
@@ -412,9 +391,6 @@ sub cloned_by {
     return $data;
 }
 
-
-
-
 # Object History.  This should be suitably generic and moved to Object.pm
 sub history {
     my $self   = shift;
@@ -459,11 +435,6 @@ sub history {
     $data->{description} = 'curatorial history for this gene';
     return $data;
 }
-
-
-
-
-
 
 ###########################################
 # Components of the Location panel
@@ -1055,57 +1026,244 @@ sub protein_domains {
 ###########################################
 # Components of the Gene Ontology panel
 ###########################################
+
 sub gene_ontology {
+
     my $self     = shift;
     my $object = $self->object; 
-    
-    my %stash;
-    
-    # Preferentially use GO_terms attached to genes, but also look for
-    # those attached to CDS. Eventually, they should all propagate to
-    # gene objects.
-    my %seen;
-    my @ontology_terms = grep {!$seen{$_}++} $object->GO_term();
-    push (@ontology_terms,grep {!$seen{$_}++} map {$_->GO_term()} $object->Corresponding_CDS);
-    
-    return unless (@ontology_terms);
-    
-    foreach my $term (@ontology_terms) {
-	my @evidence = $self->_go_evidence_code($term);
-	my $type = $term->Type;
-	push @{$stash{$type}},{ term => $term,
-				title => $term->Term,
-				evidence => \@evidence };
-    }
-    return \%stash;
+    my %data;
+    my %data_pack;
+	my $desc = 'gene ontology terms for gene; structure
+				data{\'data_pack\'} = {
+					<term_id> => {
+									\'term\' => <GO_term>,
+									\'term_type\' => <Type>,
+									\'class\' => <class>,
+									\'evidence\' => {
+														<evidence_code>  => {
+														
+															\'method\' => <method>,
+															\'detail\' => <detail>
+														}	
+													}
+								}
+				}';
+	
+	## get go terms for the gene
+
+	my @go_terms = $object->GO_term;
+	
+	## get term details
+	
+	foreach my $go_term (@go_terms){
+			
+		$data_pack{$go_term}{'term'} = $go_term->Term;
+		$data_pack{$go_term}{'term_type'} = $go_term->Type;
+		$data_pack{$go_term}{'class'} = $go_term->class;
+		
+		my %evidence;
+		
+	  	foreach my $code ($go_term->col){
+		
+			my ($evidence_code,$method,$detail) = $code->row;		
+			$evidence{$evidence_code}{'method'} = $method;
+			$evidence{$evidence_code}{'detail'} = $detail;
+			
+	  	}
+	  	
+	  	$data_pack{'evidence'} = \%evidence;
+	}
+	
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	
+	return \%data;	
 }
+
 
 ###########################################
 # Components of the Alleles panel
 ###########################################
 # This could be generic. See also Variation.
+
+
 sub alleles {
-    my $self = shift;
+
+	my $self = shift;
     my $object = $self->object;
-    if (my @vars = $object->Allele) {
-	# Wrap these in WormBase API objects
-	my @wrapped = $self->wrap(@vars);
-	return \@wrapped;
-    } else {
-	return 1;
-    }
+	my %data;
+	my $desc = 'alleles for gene;
+				data structure = data{\'pack\'} = {
+				
+													<allelel_id> => {
+																		\'available_seq\' => 0 or 1
+																		NB: depending on the availability of sequence data.
+																	}
+				}';
+
+	my %data_pack;
+
+	#### get alleles
+	## NB: datapull for classic page includes this map line: map 
+    ## @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele;
+    
+    my @all_alleles = $object->Allele; 
+
+    foreach my $allele (@all_alleles) {
+    	if ($allele->CGC_name) {
+    		my $available_seq = 0;
+    		
+    			if($allele->Flanking_sequence) {
+    				$available_seq = 1;
+    			} 
+				
+				my $class = $allele->class;
+				
+    			$data_pack{$allele} = {
+    									'available_seq' => $available_seq,
+    									'class' => $class
+    									}	
+    	}
+
+	
+	}
+	
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
+sub snps {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'snps related to gene ;
+				data structure = data{\'pack\'} = {
+													<snp_id> => {
+																 \'class\' =>\'\'		
+													
+																}
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	
+
+
+	####
+	
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+
 }
 
 
+sub strains {
 
-
-sub rearrangements {
-    my $self   = shift;
+	my $self = shift;
     my $object = $self->object;
-    return unless $object->Allele || $object->Reference_allele;
-    return 1;  # True: we have alleles and therefore *may* have rearrangements.
+	my %data;
+	my $desc = 'strains carrying gene ;
+				data structure = data{\'pack\'} = {
+										
+												<strain_id> => {
+												
+																\'class\' => \'Strain\',
+																\'gene_alone\' => 0 or 1, if stain carries this gene alone	
+																\'cgc_available\' => 0 or 1, if strain is available for CGC
+																}
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	## from gene ##
+	
+	  my (@singletons,@cgc,@others);
+	  
+	  foreach my $strain $($object->Strain(-filled=>1)) {
+		my @genes = $strain->Gene;
+		my $cgc  = ($strain->Location eq 'CGC') ? 1 : 0;
+		my $gene_alone = 0;
+		my $cgc_available = 0;
+		
+		
+		if (@genes == 1 && !$strain->Transgene) {
+			
+			$gene_alone = 1;
+		}
+		
+		if ($cgc) {
+			
+			$cgc_available = 1;
+		}
+		
+		if ($gene_alone || $cgc_available) {
+		
+			$data{'data_pack'}{$sorted_strain} = {'class' => 'Strain',
+	  												'gene_alone' => $gene_alone,
+	  												'cgc_available' => cgc_available
+	  											};
+		}
+		else {
+			
+			$data{'data_pack'}{$sorted_strain} = {'class' => 'Strain',
+	  												'gene_alone' => 0,
+	  												'cgc_available' => 0
+	  											};
+		}		
+	  }
+	####
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+
 }
 
+
+sub rearrangements{
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} => {
+										$object => {
+												
+												\'rearrangmens\' = 0, or 1 if rearrangement data is available;
+										}
+				}';
+
+	my %data_pack;
+	my $rearrangement = 0;
+
+	#### data pull and packaging
+
+	if ($object->Allele || $object->Reference_allele) {
+	
+		$rearrangement = 1;
+	}
+
+	%data_pack = {
+					$object => {
+					
+								'rearrangement' => $rearrangement
+								}
+	
+				};
+
+	####
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
 
 ###########################################
 # Components of the Homology panel
@@ -1130,15 +1288,106 @@ sub inparanoid_groups {
     return \%stash;
 }
 
+sub paralogs {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'data_pack\'} = {				
+												<paralog_id> => { \'class\' => \'Protein\',
+																	\'common_name\' => <name>
+																}
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @paralogs = $gene_object->Paralog;
+	
+	foreach my $paralog (@paralogs) {
+	
+			## upgrade code to get protein common name
+			
+			my $common_name;
+			
+	
+			$data_pack{$paralog} = {
+									'common_name' => $common_name,
+									'class' => 'Protein'
+									};
+	
+	}
+	
+	#### end data pull ###
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
 
 sub orthologs {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+	
+	## classic code ##
+	
+	
+	
+	## end classic code ##
+	
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
+sub orthologs_old {
     my $self     = shift;
     my $object = $self->object;
     return [ $object->Ortholog ];
 }
 
-
 sub treefam {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+	
+	## classic code ##
+	
+	
+	
+	## end classic code ##
+	
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
+sub treefam_old {
     my $self     = shift;
     my $object = $self->object;
     my $proteins = $self->_fetch_proteins($object);
@@ -1154,6 +1403,62 @@ sub treefam {
     }
     return \@data;
 }
+
+sub other_orthologs {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+	
+	## classic code ##
+	
+	
+	
+	## end classic code ##
+	
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
+
+sub in_paranoid {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+	
+	## classic code ##
+	
+	
+	
+	## end classic code ##
+	
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
+
 
 
 ###########################################
@@ -1262,26 +1567,183 @@ sub sage_tags {
 }
 
 # Return a list of matching cDNAs
+
 sub matching_cdnas {
     my $self     = shift;
     my $object = $self->object;
+    my %data;
+    my %data_pack;
+    
     my %unique;
-    my @stash = grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
-    return \@stash if @stash;
+    my @mcdnas = grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
+	
+	foreach my $mcdna (@mcdnas) {
+		
+		$data_pack{$mcdna} = {
+								'common_name' => $mcdna,
+								'class' => 'Sequence'
+		
+								};
+	}
+	
+	$data{'desc'} = 'matching cDNAs for gene data_pack{sequence_id} = {\'common_name\'=> sequence_id, \'class\' => \'Sequence\'}';
+
+	$data{'data_pack'} = \%data_pack;
+	
+	return \%data;
 }
 
 sub antibodies {
     my $self     = shift;
     my $object = $self->object;
-    my @stash;
+    my %data;
+    my %data_pack;
+      
     foreach my $antibody ($object->Antibody) {
-    my $comment = $antibody->Summary;
-    $comment    =~ s/^(.{100}).+/$1.../ if length $comment > 100;
-    push @stash,[$antibody,$comment];
-  }
-  return \@stash;
+    
+  	  	my $comment = $antibody->Summary;
+    	$comment    =~ s/^(.{100}).+/$1.../ if length $comment > 100;
+   		$data_pack{$antibody} = {
+   									'class' => 'Antibody',
+   									'comment' => $comment,
+   									'common_name' => $antibody
+   								};
+   	}	
+   	
+   	$data{'desc'} = '';
+  	return \%data;
+}
+  
+  
+  
+##### old superceded subs ###
+
+sub ids_complex {
+    my $self   = shift;
+    my $object = $self->object; ## shift
+    
+    my %data;
+    my %data_pack;
+    my %data_lists;
+    
+    # Fetch external database IDs for the gene
+    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    
+    my $version = $object->Version;
+    my $locus   = $object->CGC_name;
+    my $common  = $object->Public_name;
+    
+    my $object_data = {	
+	common_name   => "$common",
+	locus_name    => "$locus",
+	gene_class    => $object->Gene_class,
+	wormbase_id   => "$object",
+	aceview_id    => "$aceview",
+	refseq_id     => $refseq,
+	version       => "$version",
+	};
+	
+	my %gene2sequence_name;
+	my %gene2other_name;
+	
+	my @other_names = $object->Other_name;
+	
+	foreach my $other_name (@other_names) {
+	
+		$gene2other_name{$object}{$other_name} = 1;
+	
+	}
+		
+	my @sequence_names = $object->Sequence_name;
+	
+	foreach my $sequence_name (@sequence_names) {
+	
+		$gene2sequence_name{$object}{$sequence_name} = 1;
+	
+	}
+
+	$data_pack{$object} = $object_data;
+	$data_lists{'gene2sequence_name'} = \%gene2sequence_name;
+	$data_lists{'gene2other_name'} = \%gene2other_name;
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'data_lists'} = \%data_lists;
+	$data{'count'} = 'complex';
+	$data{'desc'} = "Data for gene $object";
+	
+    return \%data;
+}
+  
+sub ids_old {
+    my $self   = shift;
+    my $object = $self->object;
+    
+    # Fetch external database IDs for the gene
+    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    
+    my $version = $object->Version;
+    my $locus   = $object->CGC_name;
+    my $common  = $object->Public_name;
+    
+    my $data = $self->build_data_structure({	
+	common_name   => "$common",
+	locus_name    => "$locus",
+	gene_class    => $object->Gene_class,
+	other_name    => join(', ',map { "$_" } $object->Other_name),
+	sequence_name => join(', ',map { "$_" } $object->Sequence_name),
+	wormbase_id   => "$object",
+	aceview_id    => "$aceview",
+	refseq_id     => $refseq,
+	version       => "$version",},
+					   'various IDs that refer to this gene',	
+	);
+    return $data;
 }
 
+sub gene_ontology_old {
+    my $self     = shift;
+    my $object = $self->object; 
+    
+    my %stash;
+    
+    # Preferentially use GO_terms attached to genes, but also look for
+    # those attached to CDS. Eventually, they should all propagate to
+    # gene objects.
+    my %seen;
+    my @ontology_terms = grep {!$seen{$_}++} $object->GO_term();
+    push (@ontology_terms,grep {!$seen{$_}++} map {$_->GO_term()} $object->Corresponding_CDS);
+    
+    return unless (@ontology_terms);
+    
+    foreach my $term (@ontology_terms) {
+	my @evidence = $self->_go_evidence_code($term);
+	my $type = $term->Type;
+	push @{$stash{$type}},{ term => $term,
+				title => $term->Term,
+				evidence => \@evidence };
+    }
+    return \%stash;
+}
+
+sub alleles_old {
+    my $self = shift;
+    my $object = $self->object;
+    if (my @vars = $object->Allele) {
+	# Wrap these in WormBase API objects
+	my @wrapped = $self->wrap(@vars);
+	return \@wrapped;
+    } else {
+	return 1;
+    }
+}
+
+
+sub rearrangements_old {
+    my $self   = shift;
+    my $object = $self->object;
+    return unless($object->Allele || $object->Reference_allele) ;
+    return 1;  # True: we have alleles and therefore *may* have rearrangements.
+}
 
 #########################################
 #
