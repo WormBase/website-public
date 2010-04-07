@@ -1186,7 +1186,7 @@ sub strains {
 	
 	  my (@singletons,@cgc,@others);
 	  
-	  foreach my $strain $($object->Strain(-filled=>1)) {
+	  foreach my $strain ($object->Strain(-filled=>1)) {
 		my @genes = $strain->Gene;
 		my $cgc  = ($strain->Location eq 'CGC') ? 1 : 0;
 		my $gene_alone = 0;
@@ -1205,14 +1205,14 @@ sub strains {
 		
 		if ($gene_alone || $cgc_available) {
 		
-			$data{'data_pack'}{$sorted_strain} = {'class' => 'Strain',
+			$data{'data_pack'}{$strain} = {'class' => 'Strain',
 	  												'gene_alone' => $gene_alone,
-	  												'cgc_available' => cgc_available
+	  												'cgc_available' => $cgc_available
 	  											};
 		}
 		else {
 			
-			$data{'data_pack'}{$sorted_strain} = {'class' => 'Strain',
+			$data{'data_pack'}{$strain} = {'class' => 'Strain',
 	  												'gene_alone' => 0,
 	  												'cgc_available' => 0
 	  											};
@@ -1304,7 +1304,7 @@ sub paralogs {
 
 	#### data pull and packaging
 	
-	my @paralogs = $gene_object->Paralog;
+	my @paralogs = $object->Paralog;
 	
 	foreach my $paralog (@paralogs) {
 	
@@ -1421,8 +1421,6 @@ sub other_orthologs {
 	
 	## classic code ##
 	
-	
-	
 	## end classic code ##
 	
 
@@ -1448,8 +1446,6 @@ sub in_paranoid {
 	####
 	
 	## classic code ##
-	
-	
 	
 	## end classic code ##
 	
