@@ -19,4 +19,11 @@ sub gff_dsn {
     my $species = shift;
     return $self->dsn->{"gff_".$species}; 
 }
+
+sub ace_dsn{
+    my $self    = shift;
+    return $self->dsn->{"acedb"}; 
+}
+
+
 1;
