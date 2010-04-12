@@ -333,6 +333,149 @@ sub flanking_pcr_products {
 
 
 
+############################################################
+#
+# The Location widget
+#
+############################################################
+sub genetic_position {
+    my $self = shift;
+    my $object = $self->object;
+
+   my ($chrom,$position,$error);
+   if ($object->Interpolated_map_position) {
+     ($chrom,$position,$error) = $object->Interpolated_map_position(1)->row;
+   } elsif ($object->Map) {
+     ($chrom,undef,$position,undef,$error) = $object->Map(1)->row;
+   }
+    
+    unless ($chrom) {
+	# Try fetching from sequence
+	if (my $sequence = $object->Sequence) {
+	    $chrom = $sequence->Interpolated_map_position(1);
+	    $position = $sequence->Interpolated_map_position(2);
+	} 
+    }
+    
+    unless $chrom {
+	if (my $gene = $object->Gene) {
+	    if (my $m = $gene->get('Map')) {
+		($chrom,undef,$position,undef,$error) = $gene->Map(1)->row;
+	    } else {
+		if (my $m = $gene->get('Interpolated_map_position')) {
+		    ($chrom,$position,$error) = $m->right->row;
+		}
+	    }
+	}
+    }
+
+    # Build a link to the genome browser. Not optimal here.
+    my $gb_url;
+
+    my ($start,$stop) = ($position-0.5,$position+0.5);
+    my $gb_url = 
+	$position
+ 	  ? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
+ 	      sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
+ 	  : a({-href=>Url('pic',"name=$chrom;class=Map")},
+ 	      $chrom);
+    
+    my $data = { description => 'the genetic position of the variation (if known)',
+		 data        => { chromosome => $chrom,
+				  position   => $position,
+				  error      => $error,
+				  gb_url     => $gb_url,
+		 },
+    };
+
+    return $data;
+}
+
+
+sub genomic_position {
+    my $self = shift;
+    my $object = $self->object;
+    my $chrom_coords = $data->chrom_coordinates(-link => 1);
+    my $data = { description => 'the genomic coordinates of the variation',
+		 data        => $chrom_coords
+    };
+    return $data;
+}
+
+# Create a genomic picture
+# This is far simpler than the manual approach below but doesn't give me as much
+# flexibility
+sub genomic_image {
+    my $self = shift;
+    my $var  = $self->object;
+    my $gene = $var->Gene;
+    #  my $segment = $GFFDB->segment(Gene => $gene);
+    my $segment;
+    
+    # By default, lets just center the image on the variation itself.
+    # What segment should be used to determine the baseline coordinates?
+    # Use a CDS segment if one is provided, else just show the genomic environs
+    unless ($segment) {
+	# Try fetching a generic segment
+	my ($ref,$low,$high) =  $self->_chrom_coordinates;
+	my $split = UNMAPPED_SPAN / 2;
+	
+	($segment) = $GFFDB->segment($ref,$low-$split,$low+$split);
+    }
+    return unless $segment;
+ 
+   my $absref   = $segment->abs_ref;
+   my $absstart = $segment->abs_start;
+   my $absend   = $segment->abs_end;
+   ($absstart,$absend) = ($absend,$absstart) if $absstart > $absend;
+   my $length = $segment->length;
+ 
+   # add another 10% to left and right
+   my $start = int($absstart - 0.1*$length);
+   my $stop  = int($absend   + 0.1*$length);
+   my $db = $segment->factory;
+   my ($new_segment) = $db->segment(-name=>$absref,
+ 				   -start=>$start,
+ 				   -stop=>$stop);
+   $BROWSER->source('elegans');
+ 
+   # This should contain one track for the current allele,
+   # and a seperate track for additional alleles
+    my $img = $BROWSER->render_panels(
+ 				    {
+ 				      segment       => $new_segment,
+ 				      drag_n_drop   => 0,
+ 				      options       => { ESTB => 2 },
+ 				      tracks        => [
+ 							'CG',
+ 							'Allele'
+ 							'TRANSPOSONS',
+ 							# 'CANONICAL',
+ 							],
+ 				      title  => "Genomic segment: $absref:$absstart..$absend",
+ 				      do_map  => 0,
+ 					  # Purge post WS182 - functionality provided by gBrowse now
+ 					  # tmpdir  => AppendImagePath('variation'),
+ 					  label_scale => 1
+				      }
+ 				    );
+   $img =~ s/border="0"/border="1"/;
+   $img =~ s/detailed view/browse region/g;
+   $img =~ s/usemap=\S+//;
+ 
+#++   return a({-href=>HunterUrl($absref,$start,$stop)},$img);
+    
+    my $data = { description => 'a link to the genome browser',
+		 data        => { absref => $absref,
+				  start  => $start,
+				  stop   => $stop,
+				  img    => $img,
+		 },
+    };
+    return $data;
+    
+}
+
 
 
 ############################################################
@@ -912,6 +1055,37 @@ sub _fetch_coords_in_feature {
      }
 }
 
+
+
+sub _chrom_coordinates {
+    my ($self,@p) = @_;
+    my ($link) = rearrange([qw/LINK/],@p);
+    my $segment = $self->genomic_segment('wt_variation');
+    return unless $segment;
+    $segment->absolute(1);
+    my $abs_ref   = $segment->abs_ref;
+    my $abs_start = $segment->start;
+    my $abs_stop  = $segment->stop;
+    ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
+   my ($low,$high);
+   if ($abs_stop - $abs_start < 100) {
+     $low   = $abs_start - 50;
+     $high  = $abs_stop  + 50;
+   } else {
+     $low = $abs_start;
+     $high = $abs_stop;
+   }
+ 
+   my $ref = $segment->ref;
+   $segment->absolute(0);
+   if ($link) {
+     my $link = "/db/seq/gbrowse/wormbase/?ref=$ref;start=$low;stop=$high;label=CG-Allele";
+     my $url = a({-href=>$link},"$ref:",$abs_start.'..'.$abs_stop);
+     return $url;
+   } else {
+     return ($abs_ref,$abs_start,$abs_stop);
+   }
+}
 
 
 

@@ -126,6 +126,9 @@ $BROWSER->config->set('general','keystyle'     => 'none');
 #++ 
 
 
+
+
+
 #++     location();
 #++     genetic_info();
 #++     polymorphism_details() if $var->SNP(0) or $var->RFLP(0);
@@ -310,45 +313,10 @@ sub submit {
 #++ 
 #++ 
 #++ sub location {
-#++   StartSection('Location');
-#++   # Some alleles are assigned to sequences but have no position
-#++   unless ($data->flanking_sequences || $var->Sequence) {
-#++       SubSection('',no_info('location'));
-#++       EndSection();
-#++       return;
-#++   }
-#++   
-#++   # Fetch the genetic position either from the variation itself or from the gene
-#++   my ($chrom,$position,$error) = fetch_map_position($var);
-#++   if ($chrom) {
-#++       my ($start,$stop) = ($position-0.5,$position+0.5);
-#++       my $genetic_position = 
-#++ 	  $position
-#++ 	  ? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
-#++ 	      sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-#++ 	  : a({-href=>Url('pic',"name=$chrom;class=Map")},
-#++ 	      $chrom);
-#++       
-#++ #    my $genetic_position = a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
-#++ #			  sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error));
-#++       SubSection('Genetic position',$genetic_position . i(" (Not necessarily derived from mapping experiments with $var)"));
-#++   }
-#++   
-#++   my $chrom_coords = $data->chrom_coordinates(-link => 1);
-#++   SubSection('Physical position',$chrom_coords) if ($chrom_coords);
-#-- VIEW-SPECIFIC
-#--  SubSection('',i(a({-href=>"/db/searches/strains?recenter=$var"},
-#--		    'Browse nearby genes, SNPs, transposons (including strains)')));
-#--  SubSection('',i(a({-href=>"/db/gene/genetable?name=$var"},
-#--		    'Browse nearby genetically-defined loci only (text)')));
-#++  
-#++   SubSection('',hr);
+# STOPPING POINT - PIZZA'S HERE!
 #++   # Display the genomic environs of the allele, relative to a CDS if appropriate
 #++   SubSection('Genomic environs',genomic_picture());
-#++   #  SubSection('Genomic environs',genomic_picture_manual());
-#++ }
-#++ 
-#++ 
+#++ } 
 
 
 
@@ -519,210 +487,7 @@ sub submit {
 #++ #  IMAGES
 #++ #####################################
 #++ 
-#++ # Create a genomic picture
-#++ # This is far simpler than the manual approach below but doesn't give me as much
-#++ # flexibility
-#++ sub genomic_picture {
-#++   my $gene = $var->Gene;
-#++ #  my $segment = $GFFDB->segment(Gene => $gene);
-#++   my $segment;
-#++ 
-#++   # By default, lets just center the image on the variation itself.
-#++   # What segment should be used to determine the baseline coordinates?
-#++   # Use a CDS segment if one is provided, else just show the genomic environs
-#++   unless ($segment) {
-#++     # Try fetching a generic segment
-#++     my ($ref,$low,$high) =  $data->chrom_coordinates;
-#++     my $split = UNMAPPED_SPAN / 2;
-#++     
-#++     ($segment) = $GFFDB->segment($ref,$low-$split,$low+$split);
-#++   }
-#++   return unless $segment;
-#++ 
-#++   my $absref   = $segment->abs_ref;
-#++   my $absstart = $segment->abs_start;
-#++   my $absend   = $segment->abs_end;
-#++   ($absstart,$absend) = ($absend,$absstart) if $absstart > $absend;
-#++   my $length = $segment->length;
-#++ 
-#++   # add another 10% to left and right
-#++   my $start = int($absstart - 0.1*$length);
-#++   my $stop  = int($absend   + 0.1*$length);
-#++   my $db = $segment->factory;
-#++   my ($new_segment) = $db->segment(-name=>$absref,
-#++ 				   -start=>$start,
-#++ 				   -stop=>$stop);
-#++   $BROWSER->source('elegans');
-#++ 
-#++   # This should contain one track for the current allele,
-#++   # and a seperate track for additional alleles
-#++   my $img = $BROWSER->render_panels(
-#++ 				    {
-#++ 				      segment       => $new_segment,
-#++ 				      drag_n_drop   => 0,
-#++ 				      options       => { ESTB => 2 },
-#++ 				      tracks        => [
-#++ 							'CG',
-#++ 							'Allele',
-#++ 							'TRANSPOSONS',
-#++ 							# 'CANONICAL',
-#++ 							],
-#++ 				      title  => "Genomic segment: $absref:$absstart..$absend",
-#++ 				      do_map  => 0,
-#++ 					  # Purge post WS182 - functionality provided by gBrowse now
-#++ 					  # tmpdir  => AppendImagePath('variation'),
-#++ 					  label_scale => 1
-#++ 				      }
-#++ 				    );
-#++   $img =~ s/border="0"/border="1"/;
-#++   $img =~ s/detailed view/browse region/g;
-#++   $img =~ s/usemap=\S+//;
-#++ 
-#++   # Append the full URL so that tmp images are appropriately referenced
-#++   # It should be possible to do this in Bio::Graphics.  Unfortunately, specifying the
-#++   # protocol, host, and port in the conf file does not work (tries to create a tmp 
-#++   # directory using those values)
-#++   # NOW USING SQUID
-#++   #my $host = CGI->url(-base=>1);
-#++   #$img =~ s/\/ace_images/$host\/ace_images/g;
-#++   return a({-href=>HunterUrl($absref,$start,$stop)},$img);
-#++ }
-#++ 
-#++ 
 #++
-#++ ## THIS IS -- AFAIK -- DEPRECATED...
-#++ # What segment should be used to determine the baseline coordinates?
-#++ # Use a gene if the allele has been mapped, else just show
-#++ # the genomic environs for the region
-#++ sub genomic_picture_manual {
-#++   my $gene = $var->Gene;
-#++   my $segment = $GFFDB->segment(Gene => $gene);
-#++   unless ($segment) {
-#++     # Try fetching a generic segment
-#++     my ($ref,$low,$high) =  $data->chrom_coordinates;
-#++     my $split = UNMAPPED_SPAN / 2;
-#++     $segment = $GFFDB->segment($ref,$low-$split,$low+$split);
-#++   }
-#++   return unless $segment;
-#++ 
-#++   # Conditionally flip the image for features on the (-) strand
-#++   my $flip = ($segment->abs_start > $segment->abs_stop) ? 1 : 0;
-#++   
-#++   my $absref   = $segment->abs_ref;
-#++   my $absstart = $segment->abs_start;
-#++   my $absend   = $segment->abs_end;
-#++   
-#++   ($absstart,$absend) = ($absend,$absstart)   if $absstart > $absend;
-#++   my $length = $segment->length;
-#++   
-#++   # add another 10% to left and right
-#++   my $start = int($absstart - 0.1*$length);
-#++   my $stop  = int($absend   + 0.1*$length);
-#++   my ($new_segment) = $GFFDB->segment(-name=>$absref,
-#++ 				      -start=>$start,
-#++ 				      -stop=>$stop
-#++ 				     );
-#++   # Fetch all (curated) gene models for this region
-#++   my @features = grep { $_->source eq 'curated' } $new_segment->features('wormbase_cds');
-#++ 
-#++   my $ftr = 'Bio::Graphics::Feature';
-#++   my $panel = Bio::Graphics::Panel->new(-segment   => $new_segment,
-#++ 					-key       => 'Genomic Environs',
-#++ 					-key_style => 'between',
-#++ 					-key_align => 'left',
-#++ 					-grid      => 1,
-#++ 					-width     => PICTURE_WIDTH,
-#++ 					-flip      => $flip);
-#++   $panel->pad_bottom(PADDING);
-#++   $panel->pad_left(PADDING);
-#++   $panel->pad_right(PADDING);
-#++   $panel->pad_top(PADDING);
-#++   
-#++   $panel->add_track(arrow => $new_segment,
-#++     		    -label => "Genomic segment " . $new_segment->abs_ref . ':' . $new_segment->start . '-' . $new_segment->end,
-#++   		    -arrowstyle =>'regular',
-#++ 		    -tick       => 5,
-#++     		   );
-#++ 
-#++   my @genes = $new_segment->features(qw/gene gene:RNA gene:miRNA/);
-#++   $panel->add_track(arrow        => [@genes],
-#++ 		    -base        => 1,
-#++ 		    -fgcolor     => 'red',
-#++ 		    -height      => 5,
-#++ 		    -linewidth   => 2,
-#++ 		    -label       => 1,
-#++ 		    -description => 1,
-#++ 		   );
-#++ 
-#++   # Gene models
-#++   $panel->add_track(wormbase_transcript   => [ @features ],
-#++ 		    -label       => 1,
-#++ 		    -bump        => 1,
-#++ 		    -linewidth   => 1,
-#++ 		    -height      => sub {
-#++ 		      my $feature = shift;
-#++ 		      return $feature->method =~  /transcript|CDS|UTR|coding_exon/i ? 10 : 6;
-#++ 		    },
-#++ 		    -description => sub {
-#++ 		      my $feature = shift;
-#++ 		      my $notes = join ' ',$feature->notes;
-#++ 		      if ($feature->method eq 'pseudo') {
-#++ 			$notes = $notes ? " (pseudogene)" : "(pseudogene)";
-#++ 		      }
-#++ 		      $notes;
-#++ 		    },
-#++ 		    -bgcolor      => 'white',
-#++ 		    -fgcolor      => 'black',
-#++ 		    -forwardcolor => 'violet',
-#++ 		    -reversecolor => 'turquoise',
-#++ 		    -utr_color    => 'gray',
-#++ 		    -font2color   => 'blue',
-#++ 		   );
-#++ 
-#++   # Add seperate tracks for main allele, other alleles, and SNPs
-#++   # All this rigamarole just to hilight the primary allele!
-#++   # And even then, I've lost the gff source and method
-#++   my $variation_segment = $data->variation_segment;
-#++   my @seg  = $ftr->new(-start=> $variation_segment->abs_start,
-#++ 		       -end  => $variation_segment->abs_end,
-#++ 		       -name => $var);
-#++ 
-#++   my @alleles = grep {$_->name ne $var } $new_segment->features(qw/Allele:Allele 
-#++ 							      deletion:Allele insertion:Allele
-#++ 							      sequence_variant:Allele
-#++ 							      substitution:Allele
-#++ 							      transposable_element_insertion_site:Allele
-#++ 							      transposable_element_insertion_site:Mos_insertion
-#++ 							      Complex_change_in_nucleotide_sequence:Allele
-#++ 								/);
-#++ 
-#++   my @snps = grep {$_->name ne $var } $new_segment->features('SNP:Allele');
-#++   add_track($panel,\@seg);
-#++   add_track($panel,\@alleles);
-#++   add_track($panel,\@snps);
-#++ 
-#++   # turn some of the features into urls
-#++   my $boxes = $panel->boxes;
-#++   my $map   = '';
-#++   foreach (@$boxes) {
-#++     my ($feature,@coords) = @$_;
-#++     my $name = $feature->name;
-#++     my $url  = hit_to_url($name) or next;
-#++     my $coords    = join ',',@coords;
-#++     $map   .= qq(<area shape="rect" target="_new" coords="$coords" href="$url" />\n);
-#++   }
-#++   
-#++   my $gd = $panel->gd;
-#++   my $url = AceImage($gd);
-#++ 
-#++   my $img = img({-src    => $url,
-#++ 		 -align  => 'center',
-#++ 		 -usemap => '#protein_domains',
-#++ 		 -border => 0,
-#++ 		});
-#++   my $note = ($flip == 1) ? i("Note: " . Bestname($gene) . " is on the (-) strand") : '';
-#++   return ($img,qq(\n<map name="protein_domains">\n),$map,qq(</map>\n),$note);
-#++ }
 #++ 
 #++ sub add_track {
 #++   my ($panel,$features) = @_;
@@ -1183,34 +948,6 @@ sub hit_to_url {
 #++ }
 #++ 
 #++ 
-#++ sub fetch_map_position {
-#++   my $var = shift;
-#++   my ($chrom,$position,$error);
-#++   if ($var->Interpolated_map_position) {
-#++     ($chrom,$position,$error) = $var->Interpolated_map_position(1)->row;
-#++   } elsif ($var->Map) {
-#++     ($chrom,undef,$position,undef,$error) = $var->Map(1)->row;
-#++   }
-#++   return ($chrom,$position,$error) if $chrom;
-#++   # Try fetching from sequence
-#++   if (my $sequence = $var->Sequence) {
-#++     $chrom = $sequence->Interpolated_map_position(1);
-#++     $position = $sequence->Interpolated_map_position(2);
-#++     return ($chrom,$position,$error) if $chrom;
-#++   } 
-#++ 
-#++   if (my $gene = $var->Gene) {
-#++       if (my $m = $gene->get('Map')) {
-#++ 	  ($chrom,undef,$position,undef,$error) = $gene->Map(1)->row;
-#++       } else {
-#++ 	  if (my $m = $gene->get('Interpolated_map_position')) {
-#++ 	      ($chrom,$position,$error) = $m->right->row;
-#++ 	      return ($chrom,$position,$error) if $chrom;
-#++ 	  }
-#++       }
-#++   }
-#++   return ($chrom,$position,$error) if $chrom;
-#++ }
 #++ 
 #++ 
 #++ # Generic message for situtations where no information is found
@@ -1324,42 +1061,6 @@ sub hit_to_url {
 #++ #  $segment->refseq($cds_segment);
 #++ #  return ($segment->low,$segment->high);
 #++ #}
-#++ 
-#++ 
-#++ # CONVERTED
-#++ sub chrom_coordinates {
-#++   my ($self,@p) = @_;
-#++   my ($link) = rearrange([qw/LINK/],@p);
-#++   my $segment = $self->variation_segment;
-#++   return unless $segment;
-#++   $segment->absolute(1);
-#++   my $abs_ref   = $segment->abs_ref;
-#++   my $abs_start = $segment->start;
-#++   my $abs_stop  = $segment->stop;
-#++   ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
-#++   my ($low,$high);
-#++   if ($abs_stop - $abs_start < 100) {
-#++     $low   = $abs_start - 50;
-#++     $high  = $abs_stop  + 50;
-#++   } else {
-#++     $low = $abs_start;
-#++     $high = $abs_stop;
-#++   }
-#++ 
-#++   my $ref = $segment->ref;
-#++   $segment->absolute(0);
-#++   if ($link) {
-#++     my $link = "/db/seq/gbrowse/wormbase/?ref=$ref;start=$low;stop=$high;label=CG-Allele";
-#++     my $url = a({-href=>$link},"$ref:",$abs_start.'..'.$abs_stop);
-#++     return $url;
-#++   } else {
-#++     return ($abs_ref,$abs_start,$abs_stop);
-#++   }
-#++ }
-#++
-#++
-#++
-#++ 
 #++ 
 #++ 
 #++ 
