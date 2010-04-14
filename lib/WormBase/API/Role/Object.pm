@@ -16,7 +16,7 @@ has 'dsn' => (
 
 sub gff_dsn {
     my $self    = shift;
-    my $species = shift;
+    my $species = shift || $self->parsed_species;
     return $self->dsn->{"gff_".$species}; 
 }
 
