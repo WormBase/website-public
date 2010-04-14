@@ -1284,7 +1284,7 @@ sub _covered {
 # Classes that DON'T use Reference: Interaction, Person, Author, Journal
 
 # Web app: the references itself pulls in all four reference types by forward()).
-sub get_references {
+sub _get_references {
   my ($self,$filter) = @_;
   my $object = $self->object;
   
@@ -1297,30 +1297,30 @@ sub get_references {
   my $class = $object->class;
   my @references;
   if ( $filter eq 'all' ) {
-    @references = $object->$tag;
+      @references = $object->$tag;
   } elsif ( $filter eq 'gazette_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag WBG_abstract",
-			      -fill  => 1);
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WBG_abstract",
+	  -fill  => 1);
   } elsif ( $filter eq 'published_literature' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag PMID",
-			      -fill => 1);
-    
-    #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
-    #      @$references;
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag PMID",
+	  -fill => 1);
+      
+      #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
+      #      @$references;
   } elsif ( $filter eq 'meeting_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag Meeting_abstract",
-			      -fill => 1
-			     );
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag Meeting_abstract",
+	  -fill => 1
+	  );
   } elsif ( $filter eq 'wormbook_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag WormBook",
-			      -fill => 1
-			     );
-    # Hmm.  I don't know how to do this yet...
-    #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WormBook",
+	  -fill => 1
+	  );
+      # Hmm.  I don't know how to do this yet...
+      #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
   }
   return \@references;
 }
@@ -1328,33 +1328,48 @@ sub get_references {
 # This is a convenience method for returning all methods. It
 # isn't a field itself and is not included in the References widget.
 sub all_references {
-  my $self = shift;
-  my $references = $self->get_references('all');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('all');
+    my $result = { description => 'all references for the object',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub published_literature {
-  my $self = shift;
-  my $references = $self->get_references('published_literarture');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('published_literarture');
+    my $result = { description => 'published references only, no abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub meeting_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('meeting_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('meeting_abstracts');
+    my $result = { description => 'meeting abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub gazette_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('gazette_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('gazette_abstracts');
+    my $result = { description => 'gazette abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub wormbook_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('wormbook_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('wormbook_abstracts');
+    my $result = { description => 'wormbook abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 
