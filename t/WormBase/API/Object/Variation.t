@@ -28,59 +28,29 @@ my $variation = $wormbase->fetch({class => 'Variation',
 isa_ok($variation,'WormBase::API::Object::Variation');
 
 
-# Manually introspect the class
+# Dynamically build a list of methods or specify it manually.
+#my @methods = build_method_list($variation);
 my @methods = qw/
-   name
-   common_name
-   cgc_name
-   other_names
-   taxonomy
-   variation_type
-   remarks
+name
+common_name
+cgc_name
+other_names
+taxonomy
+variation_type
+remarks
+type_of_mutation
+nucleotide_change
+flanking_sequences
+cgh_deleted_probes
+context
+deletion_verification
+features_affected
+flanking_pcr_product
+/;
    
-   type_of_mutation
-   nucleotide_change
-   variation_coordinates
-   flanking_sequences
-   cgh_deleted_probes
-   context
-   deletion_verification
-   features_affected
-   flanking_pcr_products
-
-   genetic_position
-   genomic_position
-   genomic_image
-   /;
-
-#alleles
-#best_blastp_matches
-#best_phenotype_name
-#build_data_structure
-#dbh_ace
-#dsn
-#dump
-#fasta
-#gazette_abstracts
-#get_references
-#gff_dsn
-#id2species
-#interpolated_position
-#markup
-#meeting_abstracts
-#parsed_species
-#phenotype_remark
-#phenotypes_not_observed
-#phenotypes_observed
-#polymorphisms
-#published_literature
-#reactome_knowledgebase
-#strains
-#wormbook_abstracts
-#all_references
-
-
 for my $method ( @methods ) {
+    note("Testing $method()...");
+
     my $result = test_method($method);
     test_description($result);
     my $data = get_data($result);
@@ -97,40 +67,55 @@ for my $method ( @methods ) {
 	    # The nucleotide change type
 	    is($nucleotide_change->{type},
 	       'Substitution',
-	       $indent . "variation type: " . $nucleotide_change->{type}
+	       format_message("variation type: " . $nucleotide_change->{type}),
 		);
 	
 	    # The wildtype nucleotide change
 	    is($nucleotide_change->{wildtype},
 	       'g',
-	       $indent . "wildtype nucleotide change: " . $nucleotide_change->{wildtype},
+	       format_message("wildtype nucleotide change: " . $nucleotide_change->{wildtype}),
 		);
-
+	    
 	    # The mutant nucleotide change
 	    is($nucleotide_change->{mutant},
 	       'a',
-	       $indent . "mutant nucleotide change: " . $nucleotide_change->{mutant},
+	       format_message("mutant nucleotide change: " . $nucleotide_change->{mutant}),
 		);
-
+	    
 	    # The wildtype label
 	    is($nucleotide_change->{wildtype_label},
 	       'wild type',
-	       $indent . "wildtype label/source: " . $nucleotide_change->{wildtype_label},
+	       format_message("wildtype label/source: " . $nucleotide_change->{wildtype_label}),
 		);
-
+	    
 	    # The mutant label
 	    is($nucleotide_change->{mutant_label},
 	       'mutant',
-	       $indent . "mutant label/source: " . $nucleotide_change->{mutant_label},
+	       format_message("mutant label/source: " . $nucleotide_change->{mutant_label}),
 		);
-	}
+	}	
+    } elsif ($method eq 'flanking_sequences') {
+	is ($data->{left_flank} . ':' . $data->{right_flank},
+	    'agctgagcaaattcgacgatggcgatctat:gattgtactgaatagtggagaaatggcatt',
+	    format_message('flanking sequences: ' . $data->{left_flank} . ':' . $data->{right_flank}));
+	
+    } elsif ($method eq 'context') {
+	# Context is a biggie containing lots of meta information
+	# But we need to call other methods to adequately test / display informative debug information
+	my $coords = $variation->genomic_position;
 
-    } elsif ($method eq 'variation_coordinates') {
-	# Chromosome: start, stop
-	is ($data->{chromosome} . ':' . $data->{start} . '..' . $data->{stop}
-	    'IV:XXXXX..XXXXX',
-	    'chromosome: ' . $data->{chromosome} . ':' . $data->{start} . '..' . $data->{stop} );
+note("VARIATION COORDS: " .
+join("\t",$coords->{data}->{abs_start},
+$coords->{data}->{abs_stop},
+$coords->{data}->{start},
+$coords->{data}->{stop}));
 
+    } elsif ($method eq 'genomic_position') {
+	# chromosome:start..stop
+	is ($data->{chromosome} . ':' . $data->{start} . '..' . $data->{stop},
+	    'IV:13263584..13263584',
+	    format_message('chromosome: ' . $data->{chromosome} . ':' . $data->{start} . '..' . $data->{stop} ));
+	
     } else {
 	generically_test_method($method,$data);
     }
@@ -145,7 +130,8 @@ done_testing((scalar @methods) + 4);
 sub test_method {
     my $method = shift;
     my $result = $variation->$method;
-    ok($result,"testing $method()...");
+    ok($result,
+       format_message("called $method()"));
     return $result;
 }
 
@@ -153,9 +139,13 @@ sub test_method {
 sub test_description {
     my $result = shift;
     my $description = $result->{description};
-    ok($description,$indent . "description populated: $description");
+    ok($description,format_message("description populated: $description"));
 }
 
+sub format_message {
+    my $msg = shift;
+    return "$indent$msg";
+}
 
 sub get_data {
     my $result = shift;
@@ -189,20 +179,47 @@ sub generically_test_method {
     my $msg;
     given ($data) {
 	when (ref $data eq 'HASH')  { $msg = 'HASH; namesake keyed element contains ' . $data->{$method}; }
-	when (ref $data eq 'ARRAY') { $msg = 'ARRAY; first element is '  . $data->[0]  }
-	when ($data)                { $msg = "returned true: $data";                   }
+	when (ref $data eq 'ARRAY' && scalar @$data > 0) { $msg = 'ARRAY; first element is '  . $data->[0]  }
+	when ($data ne '')          { $msg = "simple scalar: $data";                   }
 	when ($data eq '')          { $msg = "return true, but no data";               }
 	default                     { $msg = 'RETURNED FALSE. FAIL!';                  }
     }
-    ok ($data,"$indent$msg");
+    ok ($data,format_message($msg));
 }
 
 
 
+# Get a list of all methods.
+sub build_method_list {
+    my $object = shift;
+    my @methods = $object->meta->get_all_methods;
+    
+    my %to_test;    
+    for my $method (sort { $a->name cmp $b->name }  @methods ) {
+    	my $name = $method->name;
+        
+	# Skip some methods...
+    	next if $name =~ /                   # Ignore Moose internals
+    	     	       BUILDARGS
+		     | BUILDALL
+   		     | DESTROY
+		     | DEMOLISHALL
+                     | DOES                 # Ignore Class::MOP internals
+		     | meta
+		     | new                  # Ignore constructor (already tested)
+		     | wrap                 # Ignore the superclass meta method wrap. Starting to accumulate...
+ 		     /x;
+    	next if $name =~ /^_/;               # Ignore private methods
+	$to_test{$name}++;	
+    }
+    return sort { $a cmp $b } keys %to_test;
+}
+
 
 # Try introspecting the object automatically.
-# This probably won't work for all objects
-# and isn't very thorough.
+# This probably won't work for all object/method combinations
+# and since it doesn't test the contents of the data
+# structure isn't very thorough.
 sub introspect {
     my $object = shift;	
     # Fetch all available methods by introspection.
