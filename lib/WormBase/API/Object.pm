@@ -190,12 +190,13 @@ sub other_name {
 # Return g_species, used primarily for dynamically
 # selecting a data source based on species identifier.
 sub taxonomy {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my $genus_species = $object->Species;
     my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { resultset => { genus   => $genus,
-				species => $species,
+    my $data = { description => 'the genus and species of the current object',
+		 data        => { genus   => $genus,
+				  species => $species,
 		 }
     };
     return $data;
@@ -1355,6 +1356,55 @@ sub wormbook_abstracts {
   my $references = $self->get_references('wormbook_abstracts');
   return $references;
 }
+
+
+
+
+
+
+# The rearrange helper method
+sub rearrange {
+    my ($self,$order,@param) = @_;
+    return unless @param;
+    my %param;
+
+    if (ref $param[0] eq 'HASH') {
+      %param = %{$param[0]};
+    } else {
+      # Named parameter must begin with hyphen
+      return @param unless (defined($param[0]) && substr($param[0],0,1) eq '-');
+
+      my $i;
+      for ($i=0;$i<@param;$i+=2) {
+        $param[$i]=~s/^\-//;     # get rid of initial - if present
+        $param[$i]=~tr/a-z/A-Z/; # parameters are upper case
+      }
+
+      %param = @param;                # convert into associative array
+    }
+
+    my(@return_array);
+
+    local($^W) = 0;
+    my($key)='';
+    foreach $key (@$order) {
+        my($value);
+        if (ref($key) eq 'ARRAY') {
+            foreach (@$key) {
+                last if defined($value);
+                $value = $param{$_};
+                delete $param{$_};
+            }
+        } else {
+            $value = $param{$key};
+            delete $param{$key};
+        }
+        push(@return_array,$value);
+    }
+    push (@return_array,{%param}) if %param;
+    return @return_array;
+}
+
 
 
 
