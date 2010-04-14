@@ -84,7 +84,6 @@ use WormBase::Toggle;
 #++ #my %HIT_CACHE;
 #++ 
 #++ use constant PICTURE_WIDTH    => 500;
-#++ use constant UNMAPPED_SPAN    => 10000;  # genomic span to display for alleles not mapped to genes
 #++ use constant PADDING          => 10;
 #++ use constant SEQ_STYLE        => 'font-size:12px;font-family:courier';
 #++ use constant DISPLAY_ALL_TAGS => 1;
@@ -974,7 +973,6 @@ sub hit_to_url {
 #++ 
 #++ # Number of bases of an indel to display before using "TYPE bp"
 #++ use constant INDEL_DISPLAY_LIMIT  => '25';
-#++ use constant SNIPPET_LENGTH       => 60;  # Maximum length of sequence snippet to display
 #++ use constant DEBUG_ADVANCED       => 0;  # Debug advanced features
 #++ use constant VARIATION_HILITE => 'color:#FFFFCC';
 #++ 
