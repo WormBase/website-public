@@ -4,33 +4,43 @@ use Moose;
 with    'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-#### rebuilt methods #####
-# common_name
+#### passed test #####
+# common_name 
 # ids
 # concise_description
-# kogs
-# genomic_position
-# anatomic_expression_patterns
+# kogs 
+# anatomic_expression_patterns 
 # transgenes
-# sage_tags
 # matching_cdnas
-# gene_ontology
+# sage_tags
+# paralogs
+# treefam
 # rearrangements
+# history
+# gene_ontology
+# interactions 
+# other_sequences
+# orthologs
+# cds
+# microarray_expression_data
+# inparanoid_groups
+
+
+#### rebuilt methods  trouble shooting #####
+
+# genomic_position - need _fetch_sequences
 # strains
 # proteins
-# other_sequences
 # cloned_by
-# history
 # in_paranoid_groups
-# treefam
-# orthologs
 # orfeome_project_primers
-# paralogs
+# microarray_topology_map_position
+
 
 ### on going 
-# snps
+# snps 
 # alleles
-# microarray_topology_map_position  -- check nature of features
+
 
 ### to do ### 
 
@@ -43,10 +53,7 @@ extends 'WormBase::API::Object';
 ### from Function
 # sites_of_action
 # expression_cluster
-# micro_array_data
-# micro_array_pos
 # expression
-
 
 ## GO
 
@@ -56,13 +63,9 @@ extends 'WormBase::API::Object';
 ## Homology
 # similarities
 
-
 ## Reagents
 
 ### complex transform
-# phenotype
-# interactions *
-# other_orthologs *
 # gene_models *
 # protein_domains*
 # rnai_phenotypes *
@@ -70,6 +73,24 @@ extends 'WormBase::API::Object';
 ### for implementation in view
 # fourd_expression_movies 
 # anatomic_expression_patterns
+
+
+#####################
+
+### configuration items
+
+my $version = 'WS212';	
+
+our $interaction_data_dir = "/usr/local/wormbase/databases/$version/interaction";
+our $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
+our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+our $rnai_details_file = "rnai_data.txt";
+our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
+our $gene_variation_phene_file = "variation_data.txt";
+our $phenotype_name_file = "phenotype_id2name.txt";
+our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
+
+
 #####################
 ##### template ######
 
@@ -101,10 +122,10 @@ sub template {
 #######################################################
 
 sub public_name {
- 
-    my ($self,$object,$class) = @_;
-    my $common_name;
     
+	my ($self,$object,$class) = @_;
+    my $common_name;    
+   
     if ($class =~ /gene/i) {
 		$common_name = 
 		$object->Public_name
@@ -136,8 +157,11 @@ sub basic_package {
 	
 	foreach my $object (@$data_ar) {
 				
-				my $class = $object->Class;
-				my $common_name = public_name($object, $class);
+				
+				my $class;
+				eval{$class = $object->class;};
+
+				my $common_name = $object;  ## public_name(,$class)
 				$package{$object} = {
 										'class' => $class,
 										'common_name' => $common_name
@@ -154,12 +178,13 @@ sub common_name {
 	
     my $self = shift;
     my $object = $self->object;
+    my $cm_text = "$object";
     my $common_name = 
 	$object->Public_name
 	|| $object->CGC_name
 	|| $object->Molecular_name
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
-    || $object;
+    || $cm_text;
     
     $data_pack{$object} = $common_name;
     
@@ -268,7 +293,7 @@ sub proteins {
 		
 		foreach my $protein (@proteins){
 			
-			my $public_name = public_name($protein, $protein->Class);
+			my $public_name = $self->public_name($protein, $protein->class);
 			$data_pack{$protein} => {
 									'class' => 'Protein',
 									'common_name' => $public_name
@@ -277,7 +302,7 @@ sub proteins {
 		
 	####
 
-	$data{'data_pack'} = \%data_pack;
+	$data{'data_pack'} = %data_pack;
 	$data{'desc'} = $desc;
 	return \%data;
 }
@@ -303,7 +328,7 @@ sub cds {
 	#### data pull and packaging
 	
 	my @cds = $object->Corresponding_CDS;
-	my $data_pack = basic_package(\@cds);
+	my $data_pack = $self->basic_package(\@cds);
 	
 	####
 
@@ -312,6 +337,42 @@ sub cds {
 	return \%data;
 }
 
+sub cds_test {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my %data_pack;
+	
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+										
+										<cd_id> => {
+													\'class\' => <Class>,
+													\'common_name\' => <common_name>
+										}
+				}';
+
+	#### data pull and packaging
+
+	my @cds = $object->Corresponding_CDS;
+
+	foreach my $object (@cds) {
+				
+				my $class = $object->class;
+				my $common_name = $object; ##public_name(,$class)
+				$data_pack{$object} = {
+										'class' => $class,
+										'common_name' => $common_name
+										}	
+	}
+
+	####
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+}
 
 
 # Fetch Homology Group Objects for this gene.
@@ -369,7 +430,7 @@ sub other_sequences {
 	#### data pull and packaging
 
 	my @seqs = $object->Other_sequence;
-	$data_pack = basic_package(\@seqs);
+	$data_pack = $self->basic_package(\@seqs);
 
 	####
 
@@ -384,7 +445,6 @@ sub cloned_by {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
 											cloned_by => <cloned_by>,
 		 									full_name => <$name>,
 		 									tag       => <tag>,
@@ -395,14 +455,19 @@ sub cloned_by {
 
 	#### data pull and packaging
 	
-	my $cloned_by = $object->Cloned_by;
-    my ($tag,$source) = $cloned_by->row ;
-    
-    my $name = $cloned_by->Full_name;
-    %data_pack  = {cloned_by => "$cloned_by",
-		 full_name => "$name",
-		 tag       => "$tag",
-		 source    => "$source",		    
+	my $cloned_by;
+	my $source;
+	my $name;	
+	my $tag;	
+
+	eval{$cloned_by = $object->Cloned_by;};	
+	eval{($tag,$source) = $cloned_by->row ;};    
+   eval{$name = $cloned_by->Full_name;};
+   
+    %data_pack  = {'cloned_by' => $cloned_by,
+		 'full_name' => $name,
+		 'tag'       => $tag,
+		 'source'    => $source	    
     };	
 
 	####
@@ -521,8 +586,6 @@ sub genomic_position {
 }
 
 
-
-
 ###########################################
 # Components of the Function panel
 ###########################################
@@ -546,12 +609,26 @@ sub pre_wormbase_information {
 }
 
 
-
 sub microarray_expression_data {
-    my $self   = shift;
+
+	my $self = shift;
     my $object = $self->object;
-    
-    return [ $object->Microarray_results ];
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{\'pack\'} = {
+				}';
+
+	my $data_pack;
+
+	#### data pull and packaging
+	my @microarray_results = $object->Microarray_results;	
+	$data_pack = $self->basic_package(\@microarray_results, 'Microarray_results');
+
+	####
+
+	$data{'data_pack'} = $data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
 }
 
 sub microarray_topology_map_position {
@@ -587,7 +664,101 @@ sub microarray_topology_map_position {
 }
 
 
-
+#sub phenotype {
+#
+#	my ($gene,$positive_results) = @_;
+#	my $rnai_details = "$gene_pheno_datadir/$rnai_details_file";
+#	my %rnai_phenotypes;
+#	my %rnai_genotype;
+#	my %rnai_ref;
+#	
+#	
+#	open RNAI_DATA, "<$rnai_details" or die "Cannot open RNAi details file\n";
+#	
+#	foreach my $rnai_data_line (<RNAI_DATA>) {
+#	
+#		chomp $rnai_data_line;
+#		my ($rnai,$genotype,$ref) = split /\|/,$rnai_data_line;
+#		# print "$rnai_data_line\n";
+#		
+#		$rnai_genotype{$rnai} = $genotype;
+#		$rnai_ref{$rnai} = $ref;
+#		
+#	}
+#	
+#	my $gene_phenotype_data;
+#	
+#	if($positive_results) {
+#	
+#		$gene_phenotype_data = `grep $gene $gene_pheno_datadir/$gene_rnai_phene_file | grep -v Not `;
+#	
+#	} else {
+#	
+#		$gene_phenotype_data = `grep $gene $gene_pheno_datadir/$gene_rnai_phene_file | grep Not `;
+#	
+#	}
+#	
+#
+#	#print "$gene_phenotype_data\n";
+#	my @gene_phenotype_data = split /\n/,$gene_phenotype_data;
+#	my %rnai_pheno_data;
+#	my %pheno_rnai_data;
+#	foreach my $gene_phenotype_data_line (@gene_phenotype_data) {
+#	
+#		#print "\=\>$gene_phenotype_data_line\n";
+#		
+#		my ($gene_id,$rnai_id,$pheno_id) = split /\|/,$gene_phenotype_data_line;
+#		
+#		$rnai_pheno_data{$rnai_id}{$pheno_id} = 1;
+#		$pheno_rnai_data{$pheno_id}{$rnai_id} = 1;
+#	
+#	}
+#
+#	my @rnais  = keys %rnai_pheno_data;
+#	#my @details;
+#	
+#	my %data_pack_rnai_details;
+#	my %data_pack_phenotype;
+#		
+#	#my @phenotype_return;
+#	
+#	
+#	
+#	foreach my $rnai (@rnais) {
+#	
+#		my $pheno_ids_hr =  $rnai_pheno_data{$rnai};
+#		my $pheno_ids = join "&", keys %$pheno_ids_hr;
+#	
+#		$data_pack_rnai_details{$rnai} = {
+#											'class' => 'RNAi',
+#											'common_name' => $rnai,
+#											'pheno_ids' => $pheno_ids,
+#											'rnai_genotype' => $rnai_genotype{$rnai},
+#											'rnai_ref' => $rnai_ref{$rnai}
+#		
+#											}
+#	}
+#	
+#	
+#	
+#	
+#	foreach my $phenotype (keys %pheno_rnai_data) {
+#	
+#		my $rnai_ids_hr = $pheno_rnai_data{$phenotype};
+#		my @rnai_ids = keys %$rnai_ids_hr;
+#		my $rnai_id_count = @rnai_ids;
+#		
+#		$data_pack_phenotype{$phenotype} = {
+#											'class' => 'Phenotype',
+#											'common_name' => $phenotype,
+#											'$rnai_id_count' => $rnai_id_count
+#	
+#											};
+#	}
+#	
+#	return \%data_pack_rnai_details, \%data_pack_phenotype; 
+#}
+	
 
 # Gene regulation
 sub regulation_on_expression_level {
@@ -642,6 +813,95 @@ sub regulation_on_expression_level {
     }
     return \@stash;
 }
+
+
+sub interactions {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my %data_pack;
+	my $desc = "notes ;
+				data structure = data{'data_pack'} = {
+				
+										<interaction_id> => {
+																'class' => 'Interaction',
+																'common_name'=> <common_name>
+															}
+				}";
+
+	#### data pull and packaging
+	
+	my $gene_data_lines = `grep $object $datafile`;
+	my @gene_data_lines = split /\n/,$gene_data_lines;
+	
+	my @interaction_data;
+	foreach my $dataline (@gene_data_lines){
+		
+		chomp $dataline;
+		my @dataline_set = split /\|/,$dataline;
+		push @interaction_data,$dataline_set[0];
+	}
+
+	#my $data_pack = $self->basic_package(\a);
+
+	foreach my $interaction_name (@interaction_data) {
+	
+			$data_pack{$interaction_name} = {
+														'class' => 'Interaction',
+														'common_name' => $interaction_name
+			
+														} 
+	
+	
+	}
+
+
+	###############################
+
+	$data{'data_pack'} = \%data_pack;
+	$data{'desc'} = $desc;
+	return \%data;
+
+}
+
+
+#sub print_gene_interaction_data {
+#
+#	my ($data,$gene_id) = @_;
+#	my $gene_data_lines = `grep $gene_id $data`;
+#	my @gene_data_lines = split /\n/,$gene_data_lines;
+#	
+#	my @interaction_data;
+#	foreach my $dataline (@gene_data_lines){
+#		
+#		chomp $dataline;
+#		#print "$dataline\n";
+#		my @dataline_set = split /\|/,$dataline;
+#		#print "$dataline_set[0]\n";
+#		push @interaction_data,$dataline_set[0];
+#	}
+#
+#
+#	my @first_ten = @interaction_data[0 .. 9];
+#	# print "@first_ten\n";
+#
+#	my $interaction_count = @interaction_data;  # 
+#	if (@interaction_data ) { ## && ($interaction_count > 10)
+#		my @truncated_interactions_list = @interaction_data[0 .. 9];
+#		my $last_int_index = $interaction_count - 1;
+#		my @rest_of_interactions = @interaction_data[10 .. $last_int_index];
+#		
+#		# SubSection("Interactions",	hr,"@truncated_interactions_list",hr);
+#		my $rest_of_interactions = @rest_of_interactions;
+#		my $interaction_list_url = "/db/gene/interaction?list=".$gene_id;
+#		SubSection("Interactions","There are(is) ".$interaction_count." ".a({-href=>$interaction_list_url},"interaction(s)")." in which this gene is involved. ",hr);
+#	}
+#	else{
+#		SubSection("Interactions","@interaction_data",hr);	
+#	}
+#}
+
 
 
 ###########################################
@@ -913,8 +1173,10 @@ sub inparanoid_groups {
 	my %data_pack;
 
 	#### data pull and packaging
+	
+	my $proteins;
 
-    my $proteins = $self->_fetch_proteins($object);
+    eval{$proteins = $self->_fetch_proteins($object);};
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
     map {$_->Homology_group} @$proteins;
@@ -970,7 +1232,7 @@ sub paralogs {
 	
 			## upgrade code to get protein common name
 			
-			my $common_name = public_name($paralog,'Protein');
+			my $common_name = $object->Name; ##public_name($paralog,'Protein')
 			$data_pack{$paralog} = {
 									'common_name' => $common_name,
 									'class' => 'Protein'
@@ -997,7 +1259,7 @@ sub orthologs {
 	#### data pull and packaging
 
 	my @orthologs = $object->Ortholog;
-	my $data_pack = basic_package(\@orthologs);
+	my $data_pack = $self->basic_package(\@orthologs);
 
 	####
 
@@ -1372,59 +1634,7 @@ sub y1h_and_y2h_interactions {
 }
 
 
-sub interactions {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my $stash = {};
-    
-    # This is an extremely bizarre layout - 
-    # reflecting the rather bizarre nature of interaction objects
-    # Each interaction is specific to one paper, NOT to an interaction pair
-    my @interactions = $object->Interaction;
-    return unless @interactions;
-    
-    # Compress interactions by type, gene-gene, references
-    foreach my $interaction (@interactions) {
-	
-	# Create a unique key corresponding to interactors
-	my @genes = $interaction->Interactor;
-	my $pair  = join('-',@genes);
-	
-	my $paper = $interaction->Paper;
-	$paper    = $paper->Merged_into if $paper->Merged_into;
-	
-	my $year  = parse_year($paper->Year) if $paper;
-	my $type  = $interaction->Interaction_type;
-	
-	# Have we seen this interaction type for this pair of interactors before?
-	# If so, save another paper...
-#    if (defined $data{$type}->{$pair}) {
-#      push @{$data{$type}->{$pair}->{paper}},$paper;
-#    } else {
-	$stash->{$type}->{$pair} =
-	{
-	    paper       => [[$paper,parse_year($year)]],
-	    interactor  => $interaction,
-	    interactors => [ $interaction->Interactor ],
-	};
-    }
-    #  }
-    ##  # Prioritize the display of types in the template
-    ##  foreach my $type (qw/genetic regulatory predicted_interaction/) {
-    ##    foreach my $pair (sort keys %{$interactions{$type}}) {
-    ##     my %seen = ();
-    ##      $table .= TR(td({-align=>'center'},$pair),
-    ##		   td({-align=>'center'},$type),
-    ##		   td({-width=>'30%'},join('; ',
-    ##					   sort { $a cmp $b }
-    ##					   grep { !$seen{$_}++ } 
-    ##					   grep { $_ ne 'n/a' }  # Ignor empty papers
-    ##					   @{$interactions{$type}{$pair}})));
-    ##   }
-    ##}
-    return $stash;
-}
+
 
 
 sub rnai_phenotypes {
@@ -1654,6 +1864,68 @@ sub gene_models {
 
   
 ##### old superceded subs ###
+
+sub interactions_old {
+    my $self   = shift;
+    my $object = $self->object;
+    
+    my $stash = {};
+    
+    # This is an extremely bizarre layout - 
+    # reflecting the rather bizarre nature of interaction objects
+    # Each interaction is specific to one paper, NOT to an interaction pair
+    my @interactions = $object->Interaction;
+    return unless @interactions;
+    
+    # Compress interactions by type, gene-gene, references
+    foreach my $interaction (@interactions) {
+	
+	# Create a unique key corresponding to interactors
+	my @genes = $interaction->Interactor;
+	my $pair  = join('-',@genes);
+	
+	my $paper = $interaction->Paper;
+	$paper    = $paper->Merged_into if $paper->Merged_into;
+	
+	my $year  = parse_year($paper->Year) if $paper;
+	my $type  = $interaction->Interaction_type;
+	
+	# Have we seen this interaction type for this pair of interactors before?
+	# If so, save another paper...
+#    if (defined $data{$type}->{$pair}) {
+#      push @{$data{$type}->{$pair}->{paper}},$paper;
+#    } else {
+	$stash->{$type}->{$pair} =
+	{
+	    paper       => [[$paper,parse_year($year)]],
+	    interactor  => $interaction,
+	    interactors => [ $interaction->Interactor ],
+	};
+    }
+    #  }
+    ##  # Prioritize the display of types in the template
+    ##  foreach my $type (qw/genetic regulatory predicted_interaction/) {
+    ##    foreach my $pair (sort keys %{$interactions{$type}}) {
+    ##     my %seen = ();
+    ##      $table .= TR(td({-align=>'center'},$pair),
+    ##		   td({-align=>'center'},$type),
+    ##		   td({-width=>'30%'},join('; ',
+    ##					   sort { $a cmp $b }
+    ##					   grep { !$seen{$_}++ } 
+    ##					   grep { $_ ne 'n/a' }  # Ignor empty papers
+    ##					   @{$interactions{$type}{$pair}})));
+    ##   }
+    ##}
+    return $stash;
+}
+
+
+sub microarray_expression_data_old {
+    my $self   = shift;
+    my $object = $self->object;
+    
+    return [ $object->Microarray_results ];
+}
 
 sub microarray_topology_map_position_old {
     my $self   = shift;
