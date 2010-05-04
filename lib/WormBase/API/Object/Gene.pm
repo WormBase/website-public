@@ -32,7 +32,6 @@ extends 'WormBase::API::Object';
 # strains
 # proteins
 # cloned_by
-# in_paranoid_groups
 # orfeome_project_primers
 # microarray_topology_map_position
 
@@ -79,7 +78,9 @@ extends 'WormBase::API::Object';
 
 ### configuration items
 
-my $version = 'WS212';	
+my $version = 'WS213';	
+#my $version = $self->ace_dsn->dbh->version;
+
 
 our $interaction_data_dir = "/usr/local/wormbase/databases/$version/interaction";
 our $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
@@ -100,7 +101,7 @@ sub template {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
+				data structure = data{"data"} = {
 				}';
 
 	my %data_pack;
@@ -109,8 +110,8 @@ sub template {
 
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -191,8 +192,8 @@ sub common_name {
     my $desc = 'The most commonly used name of the gene';
     
     
-    $data{'desc'} = $desc;
-    $data{'$data_pack'} = \%data_pack;
+    $data{'description'} = $desc;
+    $data{'$data'} = \%data_pack;
     
     return \%data;
 }
@@ -234,8 +235,8 @@ sub ids {
 	};	
 	
 	$data_pack{$object} = $object_data;
-	$data{'data_pack'} = \%data_pack; 
-	$data{'desc'} = "Data for gene $object";
+	$data{'data'} = \%data_pack; 
+	$data{'description'} = "ID data for gene $object";
 
     return \%data;
     
@@ -260,9 +261,9 @@ sub concise_description {
 		$description = $common_name_dp->{data_pack}->{$object} . ' gene';
     }
 
-    $data{'desc'} = "A manually curated description of the gene's function";
+    $data{'description'} = "A manually curated description of the gene's function";
 	$data_pack{$object} = $description;
-	$data{'data_pack'} = \%data_pack;
+	$data{'data'} = \%data_pack;
     return \%data;
 }
 
@@ -275,14 +276,7 @@ sub proteins {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-										<protein_id> => {
-														\'class\' => \'Protein\'\',
-														\'common_name\' => <common_name>
-														}
-			
-				}';
+	my $desc = 'proteins related to gene';
 
 	my %data_pack;
 
@@ -302,8 +296,8 @@ sub proteins {
 		
 	####
 
-	$data{'data_pack'} = %data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = %data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -316,14 +310,7 @@ sub cds {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-										
-										<cd_id> => {
-													\'class\' => <Class>,
-													\'common_name\' => <common_name>
-										}
-				}';
+	my $desc = 'cds related to the gene';
 
 	#### data pull and packaging
 	
@@ -332,47 +319,40 @@ sub cds {
 	
 	####
 
-	$data{'data_pack'} = $data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
-sub cds_test {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my %data_pack;
-	
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-										
-										<cd_id> => {
-													\'class\' => <Class>,
-													\'common_name\' => <common_name>
-										}
-				}';
-
-	#### data pull and packaging
-
-	my @cds = $object->Corresponding_CDS;
-
-	foreach my $object (@cds) {
-				
-				my $class = $object->class;
-				my $common_name = $object; ##public_name(,$class)
-				$data_pack{$object} = {
-										'class' => $class,
-										'common_name' => $common_name
-										}	
-	}
-
-	####
-
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
-	return \%data;
-}
+#sub cds_test {
+#
+#	my $self = shift;
+#    my $object = $self->object;
+#	my %data;
+#	my %data_pack;
+#	
+#	my $desc = '';
+#
+#	#### data pull and packaging
+#
+#	my @cds = $object->Corresponding_CDS;
+#
+#	foreach my $object (@cds) {
+#				
+#				my $class = $object->class;
+#				my $common_name = $object; ##public_name(,$class)
+#				$data_pack{$object} = {
+#										'class' => $class,
+#										'common_name' => $common_name
+#										}	
+#	}
+#
+#	####
+#
+#	$data{'data'} = \%data_pack;
+#	$data{'description'} = $desc;
+#	return \%data;
+#}
 
 
 # Fetch Homology Group Objects for this gene.
@@ -395,7 +375,7 @@ sub kogs {
 	    if (@kogs) {
 	    	
 	    	$data_pack{$object} = \@kogs;
-			$data{'data_pack'} = \%data_pack;
+			$data{'data'} = \%data_pack;
 
 	    } else { 
 	    
@@ -407,7 +387,7 @@ sub kogs {
 		$data_pack{$object} = 1;	
     }
     
-    $data{'desc'} = "KOGs related to gene; data_pack->{gene_name} = array_ref of related KOGs or 1 indicating absence of data";
+    $data{'description'} = "KOGs related to gene";
  	return \%data;
 }
 
@@ -416,14 +396,7 @@ sub other_sequences {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-										
-										<sequence_id> => {
-													\'class\' => <Class>,
-													\'common_name\' => <common_name>
-										}
-				}';
+	my $desc = 'Other sequences associated with gene';
 
 	my $data_pack;
 
@@ -434,8 +407,8 @@ sub other_sequences {
 
 	####
 
-	$data{'data_pack'} = $data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -444,12 +417,7 @@ sub cloned_by {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-											cloned_by => <cloned_by>,
-		 									full_name => <$name>,
-		 									tag       => <tag>,
-		 									source    => <source>		
-				}';
+	my $desc = 'Personnel who cloned gene';
 
 	my %data_pack;
 
@@ -472,8 +440,8 @@ sub cloned_by {
 
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -482,19 +450,7 @@ sub history {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = { 
-										<history> => {
-														<version> => {
-																	type    => <type>,
-																    date    => <date>,
-	      															action  => <action>,
-	     															remark  => <remark>,
-	      															object  => <gene>,
-	      															curator => <curator>,  
-														}
-										}
-				}';
+	my $desc = 'Information on the history of the gene';
 
 	my %data_pack;
 
@@ -540,8 +496,8 @@ sub history {
 
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -579,8 +535,8 @@ sub genomic_position {
     
     }
     
-  	$data{'desc'} = 'genomic position for gene; structure data{\'data_pack\'}{longest_segment_id} = genomic position for longest segment';
-  	$data{'data_pack'} = \%data_pack;
+  	$data{'description'} = 'genomic position for gene';
+  	$data{'data'} = \%data_pack;
   	
     return \%data;
 }
@@ -614,9 +570,7 @@ sub microarray_expression_data {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				}';
+	my $desc = 'gene expression determined via microarray analysis';
 
 	my $data_pack;
 
@@ -626,8 +580,8 @@ sub microarray_expression_data {
 
 	####
 
-	$data{'data_pack'} = $data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -636,9 +590,7 @@ sub microarray_topology_map_position {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				}';
+	my $desc = 'notes';
 
 	my %data_pack;
 
@@ -658,8 +610,8 @@ sub microarray_topology_map_position {
 
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -821,14 +773,7 @@ sub interactions {
     my $object = $self->object;
 	my %data;
 	my %data_pack;
-	my $desc = "notes ;
-				data structure = data{'data_pack'} = {
-				
-										<interaction_id> => {
-																'class' => 'Interaction',
-																'common_name'=> <common_name>
-															}
-				}";
+	my $desc = "interactions gene is involved in";
 
 	#### data pull and packaging
 	
@@ -859,8 +804,8 @@ sub interactions {
 
 	###############################
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 
 }
@@ -914,21 +859,7 @@ sub gene_ontology {
     my $object = $self->object; 
     my %data;
     my %data_pack;
-	my $desc = 'gene ontology terms for gene; structure
-				data{\'data_pack\'} = {
-					<term_id> => {
-									\'term\' => <GO_term>,
-									\'term_type\' => <Type>,
-									\'class\' => <class>,
-									\'evidence\' => {
-														<evidence_code>  => {
-														
-															\'method\' => <method>,
-															\'detail\' => <detail>
-														}	
-													}
-								}
-				}';
+	my $desc = 'gene ontology terms to which gene is annotated';
 	
 	## get go terms for the gene
 
@@ -955,8 +886,8 @@ sub gene_ontology {
 	  	$data_pack{'evidence'} = \%evidence;
 	}
 	
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	
 	return \%data;	
 }
@@ -973,21 +904,16 @@ sub alleles {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'alleles for gene;
-				data structure = data{\'pack\'} = {
-				
-													<allelel_id> => {
-																		\'available_seq\' => 0 or 1
-																		NB: depending on the availability of sequence data.
-																	}
-				}';
+	my $desc = 'alleles for gene';
 
+	my $dbh = $self->ace_dsn->dbh;
+	
 	my %data_pack;
 
 	#### get alleles
 	## NB: datapull for classic page includes this map line: map 
-    ## @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele;
-    
+    ## my @all_alleles = map {$dbh->fetch(Variation => $_) } @alleles;
+
     my @all_alleles = $object->Allele; 
 
     foreach my $allele (@all_alleles) {
@@ -1009,23 +935,19 @@ sub alleles {
 	
 	}
 	
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
 sub snps {
 
 	my $self = shift;
+	
     my $object = $self->object;
+    
 	my %data;
-	my $desc = 'snps related to gene ;
-				data structure = data{\'pack\'} = {
-													<snp_id> => {
-																 \'class\' =>\'\'		
-													
-																}
-				}';
+	my $desc = 'snps related to gene';
 
 	my %data_pack;
 
@@ -1036,8 +958,8 @@ sub snps {
 
 	####
 	
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 
 }
@@ -1048,16 +970,7 @@ sub strains {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'strains carrying gene ;
-				data structure = data{\'pack\'} = {
-										
-												<strain_id> => {
-												
-																\'class\' => \'Strain\',
-																\'gene_alone\' => 0 or 1, if stain carries this gene alone	
-																\'cgc_available\' => 0 or 1, if strain is available for CGC
-																}
-				}';
+	my $desc = 'strains carrying gene';
 
 	my %data_pack;
 
@@ -1086,14 +999,14 @@ sub strains {
 		
 		if ($gene_alone || $cgc_available) {
 		
-			$data{'data_pack'}{$strain} = {'class' => 'Strain',
+			$data{'data'}{$strain} = {'class' => 'Strain',
 	  												'gene_alone' => $gene_alone,
 	  												'cgc_available' => $cgc_available
 	  											};
 		}
 		else {
 			
-			$data{'data_pack'}{$strain} = {'class' => 'Strain',
+			$data{'data'}{$strain} = {'class' => 'Strain',
 	  												'gene_alone' => 0,
 	  												'cgc_available' => 0
 	  											};
@@ -1101,8 +1014,8 @@ sub strains {
 	  }
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 
 }
@@ -1113,13 +1026,7 @@ sub rearrangements{
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} => {
-										$object => {
-												
-												\'rearrangmens\' = 0, or 1 if rearrangement data is available;
-										}
-				}';
+	my $desc = 'rearrangements involving this gene';
 
 	my %data_pack;
 	my $rearrangement = 0;
@@ -1141,8 +1048,8 @@ sub rearrangements{
 
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -1155,20 +1062,7 @@ sub inparanoid_groups {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				
-							<inparanoid_group> => {
-													"common_name" => <in_paranoid_group>,
-													"class" => "Homology_group",
-													"proteins" =>{
-																<protein> => {
-																	"common_name" => <name>,
-																	"class" => "Protein",
-																	"species" => <species>
-																}
-													}
-				}';
+	my $desc = 'homology groups for this gene determined via inparanoid method';
 
 	my %data_pack;
 
@@ -1202,8 +1096,8 @@ sub inparanoid_groups {
 								};
 	}
 		
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 }	
@@ -1215,12 +1109,7 @@ sub paralogs {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'data_pack\'} = {				
-												<paralog_id> => { \'class\' => \'Protein\',
-																	\'common_name\' => <name>
-																}
-				}';
+	my $desc = 'This genes paralogs';
 
 	my %data_pack;
 
@@ -1242,8 +1131,8 @@ sub paralogs {
 	
 	#### end data pull ###
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -1252,9 +1141,7 @@ sub orthologs {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				}';
+	my $desc = 'this genes orthologs';
 				
 	#### data pull and packaging
 
@@ -1263,8 +1150,8 @@ sub orthologs {
 
 	####
 
-	$data{'data_pack'} = $data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -1274,13 +1161,7 @@ sub treefam {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-										
-										<protein_id> => {
-															"treefam_id" => <sequence_id>
-														}	
-				}';
+	my $desc = 'data associated with gene for rendering treefam data';
 
 	my %data_pack;
 
@@ -1301,8 +1182,8 @@ sub treefam {
 	}
 	## end classic code ##
 	
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -1340,10 +1221,10 @@ sub transgenes {
     								};
     }
     
-    my $desc = 'transgenes driven by this gene; data_pack{transgene_id} = {\'common_name\' => transgene_id, \'class\' => \'Transgene\'}';
+    my $desc = 'transgenes driven by this gene';
     
-    $data{'desc'} = $desc;
-    $data{'data_pack'} = \%data_pack;
+    $data{'description'} = $desc;
+    $data{'data'} = \%data_pack;
     
     return \%data;
     
@@ -1380,8 +1261,8 @@ sub orfeome_project_primers {
     
 	####
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -1435,9 +1316,9 @@ sub sage_tags {
 							};
 	}
     
-    $data{'desc'} = 'SAGE_tags for the gene; data_pack{tag_id} = {\'common_name\'=>tag_id, \'class\' => \'SAGE_tag\'}';
+    $data{'description'} = 'SAGE_tags for the gene';
     
-    $data{'data_pack'} = \%data_pack;
+    $data{'data'} = \%data_pack;
     
     
     return \%data;
@@ -1462,9 +1343,9 @@ sub matching_cdnas {
 								};
 	}
 	
-	$data{'desc'} = 'matching cDNAs for gene data_pack{sequence_id} = {\'common_name\'=> sequence_id, \'class\' => \'Sequence\'}';
+	$data{'description'} = 'matching cDNAs for gene';
 
-	$data{'data_pack'} = \%data_pack;
+	$data{'data'} = \%data_pack;
 	
 	return \%data;
 }
@@ -1486,7 +1367,7 @@ sub antibodies {
    								};
    	}	
    	
-   	$data{'desc'} = '';
+   	$data{'description'} = '';
   	return \%data;
 }
   
@@ -1512,8 +1393,8 @@ sub other_orthologs {
 	## end classic code ##
 	
 
-	$data{'data_pack'} = \%data_pack;
-	$data{'desc'} = $desc;
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
 	return \%data;
 }
 
@@ -2133,10 +2014,10 @@ sub ids_complex {
 	$data_lists{'gene2sequence_name'} = \%gene2sequence_name;
 	$data_lists{'gene2other_name'} = \%gene2other_name;
 
-	$data{'data_pack'} = \%data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'data_lists'} = \%data_lists;
 	$data{'count'} = 'complex';
-	$data{'desc'} = "Data for gene $object";
+	$data{'description'} = "Data for gene $object";
 	
     return \%data;
 }
@@ -2264,9 +2145,9 @@ sub anatomic_expression_patterns {
     	}
     }
     
-    $data{'desc'} = 'expression pattern image data for gene; structure data_pack{\'expression_pattern_id\'}{\'image\'} = 1 or 0 depending on availability of image.';
+    $data{'description'} = 'expression pattern image data for gene';
     
-    $data{'data_pack'} = \%data_pack;
+    $data{'data'} = \%data_pack;
     return \%data;
 }
 
