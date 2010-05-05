@@ -14,6 +14,11 @@ has 'dsn' => (
     required => 1,
     );
 
+has log => (
+    is => 'ro',
+    );
+
+
 sub gff_dsn {
     my $self    = shift;
     my $species = shift || $self->parsed_species;
