@@ -2,7 +2,7 @@ package WormBase::API::Service::acedb;
 
 use Moose;
 use Ace ();
-
+#database handel
 has 'dbh' => (
     is        => 'rw',
     isa       => 'Ace',

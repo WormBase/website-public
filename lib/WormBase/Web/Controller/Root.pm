@@ -260,9 +260,9 @@ sub _get_widget_fields {
 #   Params    : class, object, page
 # 
 ##############################################################
-sub page :Path("/reports") Args(2) {
+sub report :Path("/reports") Args(2) {
     my ($self,$c,$class,$name) = @_;
-    
+
     # Set the name of the widget. This is used 
     # to choose a template and label sections.
 #    $c->stash->{page}  = $class;    # Um. Necessary?
@@ -276,17 +276,15 @@ sub page :Path("/reports") Args(2) {
     # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
 
 
-
     # I don't think I need to fetch an object.  I just need to return the appropriate page template.
     # Then, each widget will make calls to the rest API.
     my $object = $api->fetch({class=> ucfirst($class),
 			      name => $name}) or die "$!";
-    
+
     # $c->log->debug("Instantiated an external object: " . ref($object));
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
 
 =head
-    
     # To add later:
     # * multi-results formatting
     # * nothing found.
@@ -305,55 +303,63 @@ sub page :Path("/reports") Args(2) {
 
 =cut
 
-    
     # Stash all widgets that comprise this page. We will build pages generically.
-    my @widgets = @{ $c->config->{pages}->{$class}->{widget_order} };
+    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
+    @widgets = map{$_->{name}} @widgets;
+
+
+
     $c->stash->{widgets} = \@widgets;
+
+
+
+
+
 
     # Is any of this actually necessary?
 
-    
     # All of the fields will be called dynamically from the template
 
 =head
-
     # This approach means that EVERY widget and EVERY field will be rendered
     # at once for a report.
     # This is PROBABLY NOT what I want to settle with
-    foreach my $widget (@widgets) {
-
-	my @fields = qw/ids concise_description/;
-#	print $widget;
-#	my @fields = @{ $c->config->{pages}->{$class}->{$widget} };
-	$c->stash->{fields} = \@fields;
-	
-	$c->log->debug($widget);	
-
-	# Call each of the component fields in turn
-	# PROBABLY NOT WHAT I WANT TO DO!
-	foreach my $field (@fields) {	    
-	    # This logic should probably be relocated to the external model.
-	    if ($object->can($field)) {
-		$c->stash->{$field} = $object->$field;
-	    } else {
-		# We are trying to call a direct method on an Ace::Object;
-		# Method name needs to be ucfirst.
-		# Tags that are not specifically included in the configuration
-		# are not currently available because they are not actions
-		
-		my $method = ucfirst($field);
-		$c->stash->{$field} = $object->object->$method;
-	    }
-	    $c->log->debug("Called $field...");
-	}
-    }
+#     foreach my $widget (@widgets) {
+# 
+# 	my @fields = qw/ids concise_description/;
+#         my @fields = $widget->{fields};
+# 
+# #	print $widget;
+# #	my @fields = @{ $c->config->{pages}->{$class}->{$widget} };
+# 	$c->stash->{fields} = \@fields;
+# 	
+# 	$c->log->debug($widget->{name});	
+# 
+# 	# Call each of the component fields in turn
+# 	# PROBABLY NOT WHAT I WANT TO DO!
+# 	foreach my $field (@fields) {	    
+# 	    # This logic should probably be relocated to the external model.
+# 	    if ($object->can($field)) {
+# 		$c->stash->{$field} = $object->$field;
+# 	    } else {
+# 		# We are trying to call a direct method on an Ace::Object;
+# 		# Method name needs to be ucfirst.
+# 		# Tags that are not specifically included in the configuration
+# 		# are not currently available because they are not actions
+# 		
+# 		my $method = ucfirst($field);
+# 		$c->stash->{$field} = $object->object->$method;
+# 	    }
+# 	    $c->log->debug("Called $field...");
+# 	}
+#     }
 
 =cut
     
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     #if ( $c->is_ajax() ) {
-	    $c->stash->{noboiler} = 1;
+#	    $c->stash->{noboiler} = 1;
 #	}
     
     # Normally, the template defaults to action name.
@@ -361,11 +367,12 @@ sub page :Path("/reports") Args(2) {
     # specify the name of the template.  
     # MOST widgets can use a generic template.
     
-    $c->stash->{template} = "report.tt2";
-    $c->log->debug("assigned template: " .  $c->stash->{template});    
+#     $c->stash->{template} = "report.tt2";
+#     $c->log->debug("assigned template: " .  $c->stash->{template});    
     
     # My end action isn't working... 
-    $c->forward('WormBase::Web::View::TT');   
+#     $c->forward('WormBase::Web::View::TT');
+#     $c->log->debug("end of report method");   
 }
 
 
