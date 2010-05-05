@@ -217,16 +217,11 @@ sub widget_GET {
     foreach my $field (@fields) {
 	$c->log->warn($field);
         my $data = {};
-	$data = $object->$field->{'data_pack'} if defined $object->$field->{'data_pack'};  #modified for Norie's data_pack
+	$data = $object->$field if defined $object->$field;
 	# Conditionally load up the stash (for now) for HTML requests.
 	# Eventually, I can ust format the return JSON.
-	$c->stash->{'fields'}->{$field}->{'data_pack'} = $data;
-        
-
-        foreach my $keys (%$data){
-	   $c->stash->{'fields'}->{$field}->{'data_type'} = ref($data->{$keys}) unless $c->stash->{'fields'}->{$field}->{'data_type'};
-        	$c->log->warn($data->{$keys});
-        }
+	$c->stash->{'fields'}->{$field} = $data;
+ 
     }
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
