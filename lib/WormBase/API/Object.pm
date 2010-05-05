@@ -2,6 +2,12 @@ package WormBase::API::Object;
 
 use Moose;
 
+use overload '~~' => \&_overload_ace, fallback => 0;
+
+sub _overload_ace {
+    my ($self,$param)=@_;
+    return $self->object->$param;
+} 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
 
@@ -190,12 +196,13 @@ sub other_name {
 # Return g_species, used primarily for dynamically
 # selecting a data source based on species identifier.
 sub taxonomy {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my $genus_species = $object->Species;
     my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { resultset => { genus   => $genus,
-				species => $species,
+    my $data = { description => 'the genus and species of the current object',
+		 data        => { genus   => $genus,
+				  species => $species,
 		 }
     };
     return $data;
@@ -1283,7 +1290,7 @@ sub _covered {
 # Classes that DON'T use Reference: Interaction, Person, Author, Journal
 
 # Web app: the references itself pulls in all four reference types by forward()).
-sub get_references {
+sub _get_references {
   my ($self,$filter) = @_;
   my $object = $self->object;
   
@@ -1296,30 +1303,30 @@ sub get_references {
   my $class = $object->class;
   my @references;
   if ( $filter eq 'all' ) {
-    @references = $object->$tag;
+      @references = $object->$tag;
   } elsif ( $filter eq 'gazette_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag WBG_abstract",
-			      -fill  => 1);
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WBG_abstract",
+	  -fill  => 1);
   } elsif ( $filter eq 'published_literature' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag PMID",
-			      -fill => 1);
-    
-    #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
-    #      @$references;
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag PMID",
+	  -fill => 1);
+      
+      #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
+      #      @$references;
   } elsif ( $filter eq 'meeting_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag Meeting_abstract",
-			      -fill => 1
-			     );
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag Meeting_abstract",
+	  -fill => 1
+	  );
   } elsif ( $filter eq 'wormbook_abstracts' ) {
-    @references = $dbh->fetch(
-			      -query => "find $class $object; follow $tag WormBook",
-			      -fill => 1
-			     );
-    # Hmm.  I don't know how to do this yet...
-    #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WormBook",
+	  -fill => 1
+	  );
+      # Hmm.  I don't know how to do this yet...
+      #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
   }
   return \@references;
 }
@@ -1327,34 +1334,98 @@ sub get_references {
 # This is a convenience method for returning all methods. It
 # isn't a field itself and is not included in the References widget.
 sub all_references {
-  my $self = shift;
-  my $references = $self->get_references('all');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('all');
+    my $result = { description => 'all references for the object',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub published_literature {
-  my $self = shift;
-  my $references = $self->get_references('published_literarture');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('published_literarture');
+    my $result = { description => 'published references only, no abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub meeting_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('meeting_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('meeting_abstracts');
+    my $result = { description => 'meeting abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub gazette_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('gazette_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('gazette_abstracts');
+    my $result = { description => 'gazette abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
 
 sub wormbook_abstracts {
-  my $self = shift;
-  my $references = $self->get_references('wormbook_abstracts');
-  return $references;
+    my $self = shift;
+    my $references = $self->_get_references('wormbook_abstracts');
+    my $result = { description => 'wormbook abstracts',
+		   data        => $references,
+    };
+    return $result;
 }
+
+
+
+
+
+
+# The rearrange helper method
+sub rearrange {
+    my ($self,$order,@param) = @_;
+    return unless @param;
+    my %param;
+
+    if (ref $param[0] eq 'HASH') {
+      %param = %{$param[0]};
+    } else {
+      # Named parameter must begin with hyphen
+      return @param unless (defined($param[0]) && substr($param[0],0,1) eq '-');
+
+      my $i;
+      for ($i=0;$i<@param;$i+=2) {
+        $param[$i]=~s/^\-//;     # get rid of initial - if present
+        $param[$i]=~tr/a-z/A-Z/; # parameters are upper case
+      }
+
+      %param = @param;                # convert into associative array
+    }
+
+    my(@return_array);
+
+    local($^W) = 0;
+    my($key)='';
+    foreach $key (@$order) {
+        my($value);
+        if (ref($key) eq 'ARRAY') {
+            foreach (@$key) {
+                last if defined($value);
+                $value = $param{$_};
+                delete $param{$_};
+            }
+        } else {
+            $value = $param{$key};
+            delete $param{$key};
+        }
+        push(@return_array,$value);
+    }
+    push (@return_array,{%param}) if %param;
+    return @return_array;
+}
+
 
 
 
