@@ -1,0 +1,35 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+    %]
+
+[% WRAPPER "boilerplate/field" title="Name" %]
+  [% c.stash.fields.name.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Remark(s)" %]
+  [% c.stash.fields.remarks.data.join('<br>') %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Variation Type" %]
+  [% c.stash.fields.variation_type.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Taxonomy" %]
+  <i>[% c.stash.fields.taxonomy.data.genus %][% " " %][% c.stash.fields.taxonomy.data.species %]</i>
+[% END %]
+[% WRAPPER "boilerplate/field" title="CGC Name" %]
+  [% c.stash.fields.cgc_name.data %]
+[% END %]
+[% IF c.stash.fields.other_names.data.keys > 0 %]
+  [% WRAPPER "boilerplate/field" title="Other Names" %]
+    [% c.stash.fields.other_names.data.join(', ') %]
+  [% END %]
+[% END %]
+[% END %]
