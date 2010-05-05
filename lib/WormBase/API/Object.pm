@@ -2,9 +2,9 @@ package WormBase::API::Object;
 
 use Moose;
 
-use overload '~~' => \&_overload_ace, fallback => 0;
+use overload '~~' => \&overload_ace, fallback => 1;
 
-sub _overload_ace {
+sub overload_ace {
     my ($self,$param)=@_;
     return $self->object->$param;
 } 
