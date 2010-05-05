@@ -19,22 +19,15 @@
     [% # Generic way to print all widgets.  Will probably have to change to add links and such different things. %]    
 
 
-     [% data_type = c.stash.fields.$field.data_type %]
-     [% data_pack = c.stash.fields.$field.data_pack %]
+     [% data_pack = c.stash.fields.$field %]
      <table>
      [% FOREACH obj IN data_pack.keys -%]
-        [% IF data_type.search('HASH') %]
              [% FOREACH i IN data_pack.$obj.keys -%] 
                 <tr>
                 <td>[% i %]:</td>
-                <td>[% data_pack.$obj.$i.join(', ') %] </td>
+                <td>[% data_pack.$obj.$i %] </td>
                 </tr>
             [% END %]
-        [% ELSE %]
-               <tr>
-               <td>[% data_pack.$obj %]</td>
-               </tr>
-        [% END %]
      [% END -%]
      </table>
   [% END %]
