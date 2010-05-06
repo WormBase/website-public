@@ -128,8 +128,11 @@ sub public_name {
     	$common_name = $object;
     }
 	
-	my $data = $common_name;
-    return $data;
+	my %data;
+        $data{'description'} = "add a description";
+        $data{'data'} = $common_name;
+
+    return \%data;
 
 
 }
@@ -158,7 +161,6 @@ sub basic_package {
 sub common_name {
 
 	my %data;
-	my $data_pack;
 	
     my $self = shift;
     my $object = $self->object;
@@ -170,13 +172,12 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $cm_text;
     
-    $data_pack = $common_name;
     
     my $desc = 'The most commonly used name of the gene';
     
     
     $data{'description'} = $desc;
-    $data{'$data'} = $data_pack;
+    $data{'data'} = $common_name;
     
     return \%data;
 }
@@ -246,8 +247,7 @@ sub concise_description {
     }
 
     $data{'description'} = "A manually curated description of the gene's function";
-	$data_pack{$object} = $description;
-	$data{'data'} = \%data_pack;
+	$data{'data'} = $description;
     return \%data;
 }
 
@@ -1710,8 +1710,7 @@ sub gene_models {
 	    # Assign a protein description. Does this belong here?
 #	    $protein_description = $self->_select_protein_description($sequence,$protein);
 	}
-
-	push @{$data->{gene_models}},
+        $data->{'data'}->{$sequence} =
 	{
 	    sequence => $sequence ? $self->wrap($sequence) : '' ,
 	    notes    => \@notes,
