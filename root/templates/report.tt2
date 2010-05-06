@@ -11,7 +11,7 @@
 <div class="title">
    [% title %]
    [%- IF object -%]
-     [% class %] Report: [%- object.common_name.resultset -%]
+     [% class %] Report: [%- object.common_name.data -%]
    [% END %] 
 </div>
 
