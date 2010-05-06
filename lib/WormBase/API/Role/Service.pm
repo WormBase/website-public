@@ -92,12 +92,20 @@ has 'species' => (
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;
-    
+    my $signal = shift || 0;
+
     my $species = $self->species;
     my $dbh = $self->$orig;
  
+    if($signal) {
+	return unless $self->has_dbh;
+	if(defined $dbh && $dbh) {
+	  $self->mark_host($self->host,'up',-1) or return;
+	}
+	return;
+    }
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
-    if (!$self->select_host && $self->has_dbh && defined $dbh && $self->ping($dbh) ) {   
+    if (!$self->select_host && $self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) ) {   
       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
@@ -171,7 +179,7 @@ sub select_host {
     my @up = keys %{$host_status->{$rank[0]}};
     $host = $up[rand @up];
     $self->mark_host($host,'up',+1,$dbfile) or return;
-    $self->log->debug("chose host:$host for connecting, it current has ".$rank[0]." connections");
+    $self->log->debug("choose host:$host for connecting, it currently has ".$rank[0]." connections");
     $self->host($host);
     return $host;
 }
@@ -211,6 +219,7 @@ sub dbfile {
     tie (%h,'DB_File::Lock',$path,$mode,$perms,$DB_HASH,$locking);
     return \%h;
 }
+
 
 
 1;
