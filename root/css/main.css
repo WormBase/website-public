@@ -105,6 +105,7 @@ div#page .byline {
 #front-menu, #login-menu {
 	margin: 0;
 	padding:0;
+
 	}
 
 #front-menu ul, #login-menu ul {
@@ -135,8 +136,26 @@ div#page .byline {
 #login-menu li {
 	font-size: 1em;
 	padding-right: 0.5em;
+  color: #999999;
 }
 
+
+.form input{  
+    font-size: 1.3em;  
+}  
+.form input.text{  
+    font-weight: normal;  
+    color: #565656;  
+    border: 1px solid #9c9c9c;  
+    padding: 2px;  
+    margin-bottom: 5px;  
+    text-align: left;  
+    width:300px;
+}  
+.form input.text.active{  
+    background: #ddeff6;  
+    border: 1px solid #0099d4;  
+}  
 
 
 /* ************************************

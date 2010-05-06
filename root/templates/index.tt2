@@ -19,7 +19,7 @@
 
 <div id="main">
   <h1>WormBase</h1>
-  <form method="post" class="form" id="form1">
+  <form method="post" class="form" id="form">
     <input class="text" id="search" type="text" value="search..."> 
     <input id="search" type="submit" value="Search">
   </form>
