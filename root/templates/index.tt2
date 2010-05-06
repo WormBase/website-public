@@ -1,5 +1,31 @@
-<h1>Where To From Here?</h1>
-
+<div id="front-menu">
 <ul>
-    <li><a href="[% c.uri_for('/','debug') %]">Debugging Index</a>
+  <li>Home</li>
+  <li><a href="db/gb2/gbrowse/c_elegans">Genome</a></li>
+  <li><a href="db/searches/blast_blat">Blast/Blat</a></li>
+  <li><a href="biomart/martview">WormMart</a></li>
+  <li><a href="db/gene/gmap">Genetic map</a></li>
+  <li><a href="db/curate/submit">Submit</a></li>
+  <li><a href="db/misc/site_map">Site map</a></li>
 </ul>
+</div>
+
+<div id="login-menu">
+<ul>
+  <li><a href="">Sign up</a></li>
+  <li><a href="">Login</a> |</li>
+</ul>
+</div>
+
+<div id="main">
+  <h1>WormBase</h1>
+  <form method="post" class="form" id="form1">
+    <input class="text" id="search" type="text" value="search..."> 
+    <input id="search" type="submit" value="Search">
+  </form>
+</div>
+
+<div id="main">
+  <a href="http://www.wormbase.org/wiki/index.php/WormBaseWiki:Copyrights">copyright </a> |
+  <a href="http://www.wormbase.org/wiki/index.php/Acceptable_use_policy#Privacy_statement">privacy</a>
+</div> 

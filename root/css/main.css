@@ -57,6 +57,19 @@ div#banner {
     margin:0px;
 }
 
+#main {
+  padding-top:100px;
+  text-align:center;
+  color: #999999;
+}
+#main h1 {
+  font-size:5em;
+}
+#main a {
+    text-decoration: none; 
+    color: #6666EE;
+}
+
 #banner p {
     font-style:italic;
     color:gray;
@@ -87,6 +100,43 @@ div#page .title {
 div#page .byline {
     font-style:italic;
 }
+
+
+#front-menu, #login-menu {
+	margin: 0;
+	padding:0;
+	}
+
+#front-menu ul, #login-menu ul {
+	margin:0;
+	padding:0;
+	list-style-type: none;
+	}
+	
+#front-menu ul li {
+	float: left;
+	}
+	
+#front-menu li {
+	font-size: 1em;
+	padding-right: 1em;
+}
+		
+#front-menu li a, #login-menu li a {
+    text-decoration: underline; 
+    color: #6666EE;
+}
+
+	
+#login-menu ul li {
+	float: right;
+	}
+	
+#login-menu li {
+	font-size: 1em;
+	padding-right: 0.5em;
+}
+
 
 
 /* ************************************

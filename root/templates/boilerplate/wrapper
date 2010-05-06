@@ -5,6 +5,8 @@
    ELSIF (c.stash.noboiler);
      debug("Passing page through without wrapping: $template.name");
      content;
+   ELSIF (template.name.match('index'));
+         content WRAPPER boilerplate/html;
 
    ELSIF (template.name.match('report'));   	 
          content WRAPPER boilerplate/html + boilerplate/layout;
