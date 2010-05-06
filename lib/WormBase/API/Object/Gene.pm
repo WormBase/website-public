@@ -24,6 +24,7 @@ extends 'WormBase::API::Object';
 # cds
 # microarray_expression_data
 # inparanoid_groups
+# alleles
 
 
 #### rebuilt methods  trouble shooting #####
@@ -38,7 +39,7 @@ extends 'WormBase::API::Object';
 
 ### on going 
 # snps 
-# alleles
+
 
 
 ### to do ### 
@@ -72,24 +73,6 @@ extends 'WormBase::API::Object';
 ### for implementation in view
 # fourd_expression_movies 
 # anatomic_expression_patterns
-
-
-#####################
-
-### configuration items
-
-my $version = 'WS213';	
-#my $version = $self->ace_dsn->dbh->version;
-
-
-our $interaction_data_dir = "/usr/local/wormbase/databases/$version/interaction";
-our $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-our $rnai_details_file = "rnai_data.txt";
-our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
-our $gene_variation_phene_file = "variation_data.txt";
-our $phenotype_name_file = "phenotype_id2name.txt";
-our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
 
 
 #####################
@@ -175,7 +158,7 @@ sub basic_package {
 sub common_name {
 
 	my %data;
-	my %data_pack;
+	my $data_pack;
 	
     my $self = shift;
     my $object = $self->object;
@@ -187,13 +170,13 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $cm_text;
     
-    $data_pack{$object} = $common_name;
+    $data_pack = $common_name;
     
     my $desc = 'The most commonly used name of the gene';
     
     
     $data{'description'} = $desc;
-    $data{'$data'} = \%data_pack;
+    $data{'$data'} = $data_pack;
     
     return \%data;
 }
@@ -204,7 +187,7 @@ sub ids {
     my $object = $self->object; ## shift
     
     my %data;
-    my %data_pack;
+    my $data_pack;
      
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
@@ -223,6 +206,7 @@ sub ids {
     
     my $object_data = {
     
+    	object_id	=> $object,
 		common_name   => "$common",
 		locus_name    => "$locus",
 		version       => "$version",
@@ -234,8 +218,8 @@ sub ids {
 
 	};	
 	
-	$data_pack{$object} = $object_data;
-	$data{'data'} = \%data_pack; 
+	$data_pack = $object_data;
+	$data{'data'} = $data_pack; 
 	$data{'description'} = "ID data for gene $object";
 
     return \%data;
@@ -775,6 +759,10 @@ sub interactions {
 	my %data_pack;
 	my $desc = "interactions gene is involved in";
 
+	my $dbh = $self->ace_dsn->dbh;
+	my $version = $dbh->version;
+	my $interaction_data_dir = "/usr/local/wormbase/databases/$version/interaction";
+	my $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
 	#### data pull and packaging
 	
 	my $gene_data_lines = `grep $object $datafile`;
@@ -919,20 +907,19 @@ sub alleles {
     foreach my $allele (@all_alleles) {
     	if ($allele->CGC_name) {
     		my $available_seq = 0;
-    		
-    			if($allele->Flanking_sequence) {
-    				$available_seq = 1;
-    			} 
+			my $flanking_sequence;
+			eval {$flanking_sequence = $allele->Flanking_sequence;};
+    		if($flanking_sequence) {
+    			$available_seq = 1;
+    		} 
 				
-				my $class = $allele->class;
+			my $class = $allele->class;
 				
-    			$data_pack{$allele} = {
-    									'available_seq' => $available_seq,
-    									'class' => $class
-    									}	
-    	}
-
-	
+    		$data_pack{$allele} = {
+    								'available_seq' => $available_seq,
+    								'class' => $class
+    								};	
+    	}	
 	}
 	
 	$data{'data'} = \%data_pack;
