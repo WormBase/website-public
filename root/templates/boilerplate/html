@@ -26,6 +26,32 @@
 
 </script>
 
+
+
+<script type="text/javascript">
+//Searchbox functions - focusing and hiding the text
+$(document).ready(function(){
+	var searchBox = $("#search");
+	var searchBoxDefault = "search...";
+
+	searchBox.focus(function(e){
+		$(this).addClass("active");
+	});
+	searchBox.blur(function(e){
+		$(this).removeClass("active");
+	});
+	
+	//show/hide default text if needed
+	searchBox.focus(function(){
+		if($(this).attr("value") == searchBoxDefault) $(this).attr("value", "");
+	});
+	searchBox.blur(function(){
+		if($(this).attr("value") == "") $(this).attr("value", searchBoxDefault);
+	});
+});
+</script> 
+
+
 <script>
 
   $(document).ready(function(){
