@@ -10,14 +10,16 @@
       [% ELSE %]    
          : [% template.title or c.config.site_byline %]      
       [% END %]
-
     </title>
-    
-<script type="text/javascript" src="/js/jquery/jquery-1.3.2.min.js"></script>  
-<script type="text/javascript" src="/js/jquery/jquery-ui-1.7.2.custom.min.js"></script> 
 
-<link href="/js/development-bundle/themes/smoothness/ui.theme.css" rel="stylesheet" type="text/css" />  
-<link href="/js/development-bundle/themes/smoothness/ui.tabs.css" rel="stylesheet" type="text/css" />  
+
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>    
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.1.custom.min.js"></script>
+<!-- script type="text/javascript" src="/js/jquery/plugins/jquery.tools.min.js"></script> -->
+
+<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link type="text/css" href="/css/main.css" rel="stylesheet">
+
 
 <script type="text/javascript">
   $(function() {
@@ -27,9 +29,45 @@
 </script>
 
 <script>
+  $(document).ready(function() {  
 
-  $(document).ready(function(){
-  
+      // Hide all sequence containers. They're ugly.
+      $(".sequence-container").hide();
+
+ 
+     // Tooltips
+     $("a[title]").tooltip({
+
+  // use div.tooltip as our tooltip
+  //  tip: '.tooltip',
+
+  // use the fade effect instead of the default
+  effect: 'fade',
+
+  // make fadeOutSpeed similar to the browser's default
+  fadeOutSpeed: 100,
+
+  // the time before the tooltip is shown
+  predelay: 400,
+
+  // tweak the position
+   position: "bottom right",
+   offset: [-50, -80]
+  });
+
+
+
+  // show/hide sequence containers on pages.
+  // Assumes that the link comes BEFORE the container
+  $(function(){
+      var this = $(this); 
+      $(".toggle-sequence-container").click(function() {
+           $(this.next()).toggle();
+           return false;
+        })
+    });
+
+
   // Load a (specific) field by ajax
   $("a.ajax").click(function() {
       var url     = $(this).attr("href");
@@ -41,7 +79,7 @@
       format = "text/x-yaml";
   }
 
-     $.ajax({
+  $.ajax({
                  type: "GET",
                  url : url,
                  contentType: 'application/x-www-form-urlencoded',
@@ -67,16 +105,9 @@
   return false;
   });
 
-
-
 });
 
   </script>
-
-
-
-    <!-- link rel does not work using dynamic path -->
-    <link rel="stylesheet" href="/css/main.css" type="text/css">
   </head>
 
   <body>
