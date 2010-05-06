@@ -362,6 +362,7 @@ sub _select_template {
     # specify the name of the template.  
     # MOST widgets can use a generic template.
     if ($type eq 'field') {
+return "common_fields/common_name.tt2";
 	if (defined $c->config->{generic_fields}->{$render_target}) {
 	    return "generic/$type.tt2";    
 	    # Some are shared across Models
