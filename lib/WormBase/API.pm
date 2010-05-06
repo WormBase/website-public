@@ -102,7 +102,6 @@ sub _build__services {
     return \%services;
 } 
 
-
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*
@@ -123,6 +122,7 @@ sub fetch {
 	my $service_instance = $self->_services->{$self->default_datasource}; 
 	$object = $service_instance->fetch(-class=>$class,-name=>$name);
     }
+    
     return WormBase::API::Factory->create($class,
 					      { object   => $object,
 						log => $self->log,
@@ -132,7 +132,13 @@ sub fetch {
 }
 
 
-
+sub update_services {
+    my $self = shift;
+    for my $service (keys %{$self->_services}){
+	  my $db = $self->_services->{$service};
+	  $db->dbh(1) if(defined $db && $db->has_dbh);
+     }
+}
 
 1;
 
