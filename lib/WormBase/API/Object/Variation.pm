@@ -2,7 +2,6 @@ package WormBase::API::Object::Variation;
 
 use Moose;
 use Bio::Graphics::Browser::Markup;
-use CGI qw/:standard :html3/;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -218,7 +217,6 @@ sub features_affected {
  	    my $parsed_data;
  	    foreach my $entry (@entries) {
  		my @data = $entry->col;
-next;
  		next unless @data;
 		my $hash_data  = ParseHash(-nodes => $entry);
  		
@@ -363,14 +361,10 @@ sub genetic_position {
     my ($start,$stop) = ($position-0.5,$position+0.5);
     my $gb_url = 
 	$position
-	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
+	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
 	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-	: a({-href=>"name=$chrom;class=Map"},
+	: a({-href=>Url('pic',"name=$chrom;class=Map")},
 	    $chrom);
-# 	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
-# 	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-# 	: a({-href=>Url('pic',"name=$chrom;class=Map")},
-# 	    $chrom);
     
     my $data = { description => 'the genetic position of the variation (if known)',
 		 data        => { chromosome => $chrom,
@@ -421,7 +415,7 @@ sub genomic_image {
     my $self = shift;
     my $object  = $self->object;
     my $gene    = $object->Gene;
-next;
+
     # Fetch a GF handle
     my $gffdb   = $self->gff_dbh($self->Species);
     my $segment = $gffdb->segment(Gene => $gene);
@@ -1036,7 +1030,6 @@ sub _fetch_coords_in_feature {
 
     # TODO: Correct accessor?
     # TODO: Shouldn't be hard-coded
-
     my $gffdb = $self->dbh_gff('c_elegans');
     # Kludge for chromosome    
     if ($tag eq 'Chromosome') {
