@@ -64,7 +64,7 @@ our $CODENAME     = 'Troncones';
 # Create a log4perl instance
 __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(
-        __PACKAGE__->path_to( 'conf', 'log4perl.conf' )->stringify
+        __PACKAGE__->path_to( 'conf', 'log4perl-screen.conf' )->stringify
     )
     );
 
@@ -176,12 +176,16 @@ foreach (my $page_config = __PACKAGE__->config->{pages}) {
     }
 }
 
+$SIG{'INT'} = sub {
+      my $self=WormBase::Web->model('WormBaseAPI'); 
+      $self->update_services(); 
+      exit(0);
+}; 
 
 # Start the application
 __PACKAGE__->setup;
 
-
-#use
+ #use
 #   $ CATALYST_DEBUG_CONFIG=1 perl script/extjs_test.pl /
 # to check what's in your configuration after loading
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
