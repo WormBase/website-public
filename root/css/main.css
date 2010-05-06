@@ -26,12 +26,12 @@ a:hover {
 
 h1,h2,h3,h4,h5,h6 { color:black; }
 
-h1 { font-size:2em;    }   /* site title */
-h2 { font-size:1.8em; }   /* page title */
-h3 { font-size:1.6em; }   /* page subtitle (if applicable) */
-h4 { font-size:1.4em; }   /* widget titles */
-h5 { font-size:1.1em; }   /* field names */
-h6 { font-size:1.0em; }   /* subfield names */
+h1 {  }  /* page title ; should reflect <title> */
+h2 {  }  /* widget or section heading */
+h3 {  }  /*  */
+h4 {  }   /* widget titles */
+h5 {  }   /* field names */
+h6 {  }   /* subfield names */
 
 p  {
     font-size:0.9em;
@@ -226,7 +226,7 @@ p.debug-view {
 div.widget {
     padding:5px;
     margin:30px;
-    border:1px dotted gray;
+/*    border:1px dotted gray; */
     background-color:seafoam;
 }
 
@@ -241,17 +241,16 @@ div.widget {
 div.widget .title {
     border-bottom:1px solid black;
     padding:3px 0px 3px 6px;
-
     background-color:#BCC;
     text-transform:uppercase;
 }
 
-.title h4 {
+.title h2 {
     margin:1px;
 }
 
 
-/* widget sections: ie Identification > IDs */
+/* widget field titles: ie Identification > IDs */
 div.field {
     clear:both;
 }
@@ -507,4 +506,36 @@ table.multi       { padding: 0;
 
 #container {
   padding:10px;
+}
+
+
+
+
+
+
+
+
+/* SEQUENCE STYLING */
+
+/* .inline-sequence-string
+    a snippet of sequence in the context of a page
+*/
+
+.sequence {
+   font-family:courier;
+}
+
+.sequence .inline {
+   font-size:0.6em;
+}
+
+
+
+/* an expandable sequence container */
+.sequence-container {
+   
+}
+
+.fasta-sequence {
+   font-family:courier;
 }

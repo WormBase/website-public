@@ -9,26 +9,18 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
-[% IF classic %]
+<div class="field" id="[% title FILTER html %]">
+     <h5>
+        [% IF fields.$key.description %]
+           <a title="[% fields.$key.description %]">
+             [% title %]
+           </a>
+        [% ELSE %]
+            [% title %]
+        [% END %]
+     </h5>
 
-  <!-- Wrap a subsection -->
-  <!-- START [% title %] subsection -->
-      <tr valign="top">
-        <th class="databody" rowspan="1" align="LEFT" valign="top">[% title %]</th>
-
-           <td class="databody">
-	     [% content %]
-           </td>
-       </tr>
-   <!-- END [% title %] subsection -->
-
-[% ELSE %]
-
-   <div class="field" id="[% title FILTER html %]">
-         <h5>[% title %]</h5>
-         <p>
-            [% content %]
-         </p>
-   </div>
-
-[% END %]
+     <p>
+        [% content %]
+     </p>
+</div>

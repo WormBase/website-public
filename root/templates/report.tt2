@@ -11,7 +11,7 @@
 <div class="title">
    [% title %]
    [%- IF object -%]
-     [% class %] Report: [%- object.common_name.data -%]
+     <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data -%]</h2>
    [% END %] 
 </div>
 
@@ -92,16 +92,14 @@
 [% ELSE %]
 
 
-
 <div id="tabs">
 <div class="ui-tabs">
      <ul class="ui-tabs-nav">
         [% FOREACH widget IN widgets -%]
              <li>
                    <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
-                         <span>[% widget %]</span>
+                         <span>[% widget FILTER ucfirst %]</span>
                    </a>
-
              </li>
 
 	 [% END %]
@@ -109,8 +107,5 @@
 </div>
 </div>
 
-	     <div id="results"></div>
-	     <a href="" id="loadme">loadme</a>
-	     <div id="results2"></div>
 
 [% END %]

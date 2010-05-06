@@ -2,17 +2,25 @@
    # The widget wrapper
 %]
 
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
 <!-- start [% widget %] widget -->
 
 <a name="[% widget %]"></a>
+
+[% # Uniquely identify the widget for future ajaxification %]
 <div class="widget" id="[% widget %]">
-  <div class="title">
-     <h4>
-	[% widget %]
-     </h4>
-  </div>
 
-[% content %]
+  [%# Include a header, but only if we are viewing this as a full page %]
+  [% IF c.config.view_full_page %]
+      <div class="title">
+        <h2>
+	   [% widget %]
+        </h2>
+      </div>
+   [% END %]
 
+  [% content %]
 </div>
 <!-- end [% widget %] widget -->
