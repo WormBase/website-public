@@ -89,6 +89,14 @@ div#page .byline {
 }
 
 
+/* A list of available views */
+div#page #available-views {
+    float:right;
+    color:black;
+    font-size:0.7em;
+}
+
+
 /* ************************************
      Footer Styling                       
    ************************************ */
@@ -245,9 +253,26 @@ div.widget .title {
     text-transform:uppercase;
 }
 
+/* Links to download widgets in a variety of formats */
+div.download-links {
+    float:right;
+    font-size:0.7em;    
+}
+
 .title h2 {
     margin:1px;
 }
+
+
+/* Formatting for the debug index page */
+div.widget-section-header {
+    padding-bottom:5px;
+    margin-bottom:2px;
+    margin-top:15px;
+    text-align:left;
+    border-bottom:1px dotted gray;
+}
+
 
 
 /* widget field titles: ie Identification > IDs */
