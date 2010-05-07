@@ -168,8 +168,6 @@ sub cgh_deleted_probes {
 
 
 # Show the variation in context.
-# This method contains substantive view logic.
-# Oh well, it's still useful.
 sub context {
     my $self   = shift;
     my $object = $self->object;
@@ -182,8 +180,8 @@ sub context {
 				  wildtype_full     => $wt_full,
 				  mutant_fragment   => $mut,
 				  mutant_full       => $mut_full,
-				  wildtype_header   => "> Wild type N2, with $flank bp flanks<br>$wt_full",
-				  mutant_header     => "> $object with $flank bp flanks<br>$mut_full"
+				  wildtype_header   => "> Wild type N2, with $flank bp flanks",
+				  mutant_header     => "> $object with $flank bp flanks"
 		 },
     };
     return $data;
@@ -425,7 +423,7 @@ sub genomic_image {
     my $self = shift;
     my $object  = $self->object;
     my $gene    = $object->Gene;
-next;
+
     # Fetch a GF handle
     my $gffdb   = $self->gff_dsn($self->Species);
     my $segment = $gffdb->segment(Gene => $gene);
@@ -544,9 +542,9 @@ sub _compile_nucleotide_changes {
 	    $mut_label = 'mutant';
 	}
 	
-	push @variations,{ type           => $type,
-			   wildtype       => $wt,
-			   mutant         => $mut,
+	push @variations,{ type           => "$type",
+			   wildtype       => "$wt",
+			   mutant         => "$mut",
 			   wildtype_label => $wt_label,
 			   mutant_label   => $mut_label,
 	};

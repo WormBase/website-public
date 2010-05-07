@@ -9,18 +9,9 @@
 
 <a name="[% widget %]"></a>
 
+
 [% # Uniquely identify the widget for future ajaxification %]
 <div class="widget" id="[% widget %]">
-
-  [%# Include a header, but only if we are viewing this as a full page %]
-  [% IF c.config.view_full_page %]
-      <div class="title">
-        <h2>
-	   [% widget %]
-        </h2>
-      </div>
-   [% END %]
-
   [% content %]
 </div>
 <!-- end [% widget %] widget -->
