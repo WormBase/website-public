@@ -10,19 +10,24 @@
 </ul>
 </div>
 
+
+<!-- This should probably be removed until we have sign-in functionality -->
 <div id="login-menu">
 <ul>
-  <li><a href="">Sign up</a></li>
-  <li><a href="">Login</a> |</li>
+  <li><a href="">Register</a></li>
+  <li><a href="">Sign in</a> |</li>
 </ul>
 </div>
 
+
+
 <div id="main">
   <h1>WormBase</h1>
-  <form method="post" class="form" id="form">
-    <input class="text" id="search" type="text" value="search..."> 
-    <input id="search" type="submit" value="Search">
+  <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search/gene/'+this.query.value;">
+    <input class="text" id="Search" name="query" type="text" value="search..."> 
+    <input id="Search" type="submit" value="Search">
   </form>
+  <span id="searchMsg"></span>
 </div>
 
 <div id="main">

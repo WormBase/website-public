@@ -131,6 +131,19 @@ sub fetch {
     
 }
 
+sub fetch_search {
+  my ($self,$args) = @_;
+  my $class  = $args->{class};
+  my $pattern   = $args->{pattern};
+  my $service_instance = $self->_services->{$self->default_datasource}; 
+
+  my ($count,@objs);
+  @objs = $service_instance->fetch(	-class=>$class,
+			                -pattern=>$pattern,
+			                -total=>\$count);
+  return (\@objs) if @objs;
+}
+
 
 sub update_services {
     my $self = shift;
