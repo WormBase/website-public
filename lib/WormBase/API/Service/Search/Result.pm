@@ -43,7 +43,7 @@ around BUILDARGS => sub {
                             type => _set_type($_[0]), 
                          details => _set_details($_[0])});
     }
-    # this part doesn't work yet...
+    # this part doesn't work yet... do we need it?
 #     elsif (@_->{ace_obj}){
 #         my $ace_obj = @_->{ace_obj}; 
 #         @_->{id} = _set_id($ace_obj) unless @_->{id};
@@ -69,7 +69,9 @@ sub _set_id {
 # ret: string, object name
 sub _set_name {
     my $ace_obj = shift;
-    return "" . $ace_obj->Public_name;
+    my $name = $ace_obj->Public_name ||
+      $ace_obj->CGC_name || $ace_obj->Molecular_name || eval { $ace_obj->Corresponding_CDS->Corresponding_protein } || $ace_obj;
+    return "" . $name;
 }
 
 # set type from ace object
@@ -77,10 +79,7 @@ sub _set_name {
 # ret: string, object type
 sub _set_type {
     my $ace_obj = shift;
-
-# figure out how to get object type from acedb object!
-
-    return "gene";
+    return lcfirst($ace_obj->class);
 }
 
 # set description from ace object.  Use config settings to find
@@ -90,13 +89,13 @@ sub _set_type {
 sub _set_details {
     my $ace_obj = shift;
 
-# Dear Abby,
-#
-# Finish implementing this to use the config to find out
-# what to place here.  Don't just leave it on Concise_description.
-#
-# Love,
-# your past self
+    # Dear Abby,
+    #
+    # Finish implementing this to use the config to find out
+    # what to place here.  Don't just leave it on Concise_description.
+    #
+    # Love,
+    # your past self
 
     my $desc = "" . $ace_obj->Concise_description;
     return $desc;

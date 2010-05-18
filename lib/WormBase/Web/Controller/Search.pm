@@ -32,7 +32,7 @@ sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
 
     # fix your redirect to not be stupid.  Change to just call action.
     if(scalar @$objs == 1) {
-      $c->res->redirect('/reports/gene/' . @$objs[0]);
+      $c->res->redirect('/reports/gene/' . @$objs[0]->id);
     }
 
     $c->stash->{'results'} = $objs;
