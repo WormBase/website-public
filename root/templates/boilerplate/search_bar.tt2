@@ -1,0 +1,6 @@
+<div id="search-bar">
+  <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search/gene/'+this.query.value;">
+    <input class="text" id="Search" name="query" type="text" value="[% c.stash.query %]"> 
+    <input id="Search" type="submit" value="Search">
+  </form>
+</div>
