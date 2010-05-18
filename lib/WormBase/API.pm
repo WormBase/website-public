@@ -5,6 +5,7 @@ use Moose;                       # Moosey goodness
 use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
 use Config::General;
+use WormBase::API::Service::Search;
 
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
@@ -51,6 +52,12 @@ has tmp_dir => (
     required => 1,
     );
 
+has search => (
+    is     => 'rw',
+    isa    => 'WormBase::API::Service::Search',
+    lazy_build      => 1,
+    );
+
 # this is here just for the testing script to load database configuration
 # may be removed or changed in furutre! 
 sub _build_database {
@@ -61,6 +68,12 @@ sub _build_database {
 				  -InterPolateVars => 1
     );
     return $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
+}
+
+sub _build_search {
+  my $self = shift;
+  my $service_instance = $self->_services->{$self->default_datasource}; 
+  return WormBase::API::Service::Search->new({ dbh => $service_instance}); 
 }
  
 
@@ -130,20 +143,6 @@ sub fetch {
 					      });
     
 }
-
-sub fetch_search {
-  my ($self,$args) = @_;
-  my $class  = $args->{class};
-  my $pattern   = $args->{pattern};
-  my $service_instance = $self->_services->{$self->default_datasource}; 
-
-  my ($count,@objs);
-  @objs = $service_instance->fetch(	-class=>$class,
-			                -pattern=>$pattern,
-			                -total=>\$count);
-  return (\@objs) if @objs;
-}
-
 
 sub update_services {
     my $self = shift;
