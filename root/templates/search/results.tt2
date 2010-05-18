@@ -21,7 +21,7 @@
   [% IF item.details %]
       [% item.details %] <br />
   [% END %]
-  <a class="result-url" href="[% url %]">[% url %]</a>
+  <a class="forest-green" href="[% url %]">[% url %]</a>
 [% END %]
 </ul>
 
