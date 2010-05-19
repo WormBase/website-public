@@ -95,9 +95,6 @@ sub gene {
   my $result = __PACKAGE__ . "::Result";
   @unique_genes = map { $result->new($_)} @unique_genes;
 
-  # don't bother formatting object if we're going to redirect
-  if(scalar @unique_genes == 1){ return \@unique_genes;} 
-
   return (\@unique_genes) if @unique_genes;
 }
 

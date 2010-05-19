@@ -30,7 +30,7 @@ sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
     my $api = $c->model('WormBaseAPI');
     my $objs = $api->search->gene({pattern => $query});
 
-    # fix your redirect to not be stupid.  Change to just call action.
+    # fix your redirect to just call action.  Find out how to do this.
     if(scalar @$objs == 1) {
       $c->res->redirect('/reports/gene/' . @$objs[0]->id);
     }
@@ -47,11 +47,6 @@ sub variation_search :Chained('search') :PathPart('variation') :Args(1) {
 
     my $api = $c->model('WormBaseAPI');
     my $objs = $api->search->variation({pattern => $query});
-
-    # fix your redirect to not be stupid.  Change to just call action.
-    if(scalar @$objs == 1) {
-      $c->res->redirect('/reports/gene/' . @$objs[0]);
-    }
 
     $c->stash->{'results'} = $objs;
 
