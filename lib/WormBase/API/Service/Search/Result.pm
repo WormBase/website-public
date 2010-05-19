@@ -2,10 +2,38 @@ package WormBase::API::Service::Search::Result;
 
 use Moose;
 
-# This class can be constructed:
-# WormBase::API::Service::Search::Result->new($ace_obj);
-# WormBase::API::Service::Search::Result->new({ace_obj => $ace_obj}); ! doesn't work yet
-# WormBase::API::Service::Search::Result->new({id => $id, name => $name, description => $description});
+=head1 SYNOPSIS 
+This class can be constructed in several ways:
+
+1) give an acedb object as a parameter 
+       WormBase::API::Service::Search::Result->new($ace_obj);
+   This will construct the result object, setting attributes by getting info
+   from the acedb object
+
+2) give an acedb object AND attributes as a parameter
+       WormBase::API::Service::Search::Result->new({ace_obj => $ace_obj, id => $id, name => $name, details => $details, type => $type});
+   if you specify both an ace object and other params, the params you specify will override
+   the default attribute contents from the acedb obj - except for details.  
+   The default details will be appended to the details you specify.
+
+3) just give attributes as parameters
+      WormBase::API::Service::Search::Result->new({id => $id, name => $name, details => $details, type => $type});
+   This will set the attributes without using an acedb object
+
+
+CONSTRUCTOR ATTRIBUTES:
+
+ace_obj => an acedb object - will be used to set undefined attributes
+
+id      => String, id used in the uri for the object
+
+name    => String, name to be displayed in the search results
+
+details => String, details for the object
+
+type    => type of object, all lowercase (eg gene, variation, etc) 
+
+=cut
 
 # id used in uri for the object
 has 'id' => (
@@ -37,24 +65,33 @@ around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
 
-    if ( @_ == 1 ) {
-        return $class->$orig({id => _set_id($_[0]), 
-                            name => _set_name($_[0]), 
-                            type => _set_type($_[0]), 
-                         details => _set_details($_[0])});
+    if ( @_ == 1 && ref $_[0] ne 'HASH') {
+        return $class->$orig(_create_construct_hash($_[0]));
     }
-    # this part doesn't work yet... do we need it?
-#     elsif (@_->{ace_obj}){
-#         my $ace_obj = @_->{ace_obj}; 
-#         @_->{id} = _set_id($ace_obj) unless @_->{id};
-#         @_->{name} = _set_name($ace_obj) unless @_->{name};
-#         @_->{description} = _set_description($ace_obj) unless @_->{description};
-#         return $class->$orig(@_);
-#     }
-    else {
-        return $class->$orig(@_);
+    my $ret = $_[0];
+    if(ref $_[0] ne 'HASH') {
+      my %hash = @_;
+      $ret = \%hash;
     }
+    if(exists $ret->{ace_obj}) {
+       $ret = _create_construct_hash($ret->{ace_obj}, $ret);
+    }
+    return $class->$orig($ret);
 };
+
+# takes in an acedb object and the constructor arguments, and sets the arguments
+# based on the current contents and the acedb info.
+# params: acedb object, the constructor arguments as a hash reference
+# ret: hash reference of the modified constructor arguemnts
+sub _create_construct_hash {
+    my $ace_obj = shift;
+    my $hash = shift;
+        $hash->{id} = _set_id($ace_obj) unless $hash->{id};
+        $hash->{name} = _set_name($ace_obj) unless $hash->{name};
+        $hash->{details} = $hash->{details} . _set_details($ace_obj);
+        $hash->{type} = _set_type($ace_obj) unless $hash->{type};
+    return $hash;
+}
 
 # set id from ace object
 # param: acedb obj
@@ -62,17 +99,21 @@ around BUILDARGS => sub {
 sub _set_id {
     my $ace_obj = shift;
     return "" . $ace_obj;
-}
+};
 
 # set name from ace object
+### TODO this might only work for genes right now!!!
 # param: acedb obj
 # ret: string, object name
 sub _set_name {
     my $ace_obj = shift;
     my $name = $ace_obj->Public_name ||
-      $ace_obj->CGC_name || $ace_obj->Molecular_name || eval { $ace_obj->Corresponding_CDS->Corresponding_protein } || $ace_obj;
+               $ace_obj->CGC_name || 
+               $ace_obj->Molecular_name || 
+        eval { $ace_obj->Corresponding_CDS->Corresponding_protein } || 
+               $ace_obj;
     return "" . $name;
-}
+};
 
 # set type from ace object
 # param: acedb obj
@@ -80,7 +121,7 @@ sub _set_name {
 sub _set_type {
     my $ace_obj = shift;
     return lcfirst($ace_obj->class);
-}
+};
 
 # set description from ace object.  Use config settings to find
 # what should be placed in the description
@@ -99,7 +140,7 @@ sub _set_details {
 
     my $desc = "" . $ace_obj->Concise_description;
     return $desc;
-}
+};
 
 no Moose;
 

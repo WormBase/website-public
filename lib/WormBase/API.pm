@@ -70,6 +70,7 @@ sub _build_database {
     return $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
 }
 
+# builds a search object with the default datasource
 sub _build_search {
   my $self = shift;
   my $service_instance = $self->_services->{$self->default_datasource}; 
