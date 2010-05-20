@@ -3,6 +3,7 @@ package WormBase::API::Object::Protein;
 use Moose;
 use Bio::Tools::pICalculator;
 use Bio::Tools::SeqStats;
+use Bio::PrimarySeq;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
  
@@ -26,11 +27,12 @@ has 'peptide' => (
 
 has 'cds' => (
     is  => 'ro',
-    isa => 'Ace::Object',
+#     isa => 'Ace::Object',
     lazy => 1,
     default => sub {
 	my $self = shift;
-	return $self ~~ 'Corresponding_CDS' ;
+	my @cds= $self->object->Corresponding_CDS ;
+	return \@cds;
     }
 );
 
@@ -50,9 +52,9 @@ sub name {
 
 }
 
-sub title {
+sub common_name {
     my $self = shift;
-    my $name = eval { $self->cds->Gene->CGC_name };
+    my $name = eval { $self->cds->[0]->Gene->CGC_name };
     my $data = { description => 'The title of the protein',
 		 data        => $name ? uc($name) : $self ~~ 'name',
     };
@@ -63,23 +65,22 @@ sub title {
 sub species {
     my $self = shift;
     my $data = { description => 'The species of the protein',
-		 data        => $self ~~ 'Species' || eval { $self->cds->Species },
+		 data        => $self ~~ 'Species' || eval { $self->cds->[0]->Species },
     }; 
     return $data;
 }
 
 sub homology_groups {
     my $self = shift;
-    my @kogs = $self ~~ 'Homology_group' || 'not assigned';
     my $data = { description => 'The homology groups of the protein',
-		 data        => \@kogs,
+		 data        => [$self->object->Homology_group],
     }; 
     return $data;
 }
 
 sub genes {
     my $self = shift;
-    my @genes = map {$_->Gene||$_}  grep{$_->Method ne 'history'}  $self->cds;
+    my @genes = map {$_->Gene||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
     my $data = { description => 'The genes or CDS associated with the protein',
 		 data        => \@genes,
     }; 
@@ -89,7 +90,7 @@ sub genes {
 
 sub transcripts {
     my $self = shift;
-    my @transcripts = grep{$_->Method ne 'history'} $self->cds;
+    my @transcripts = grep{$_->Method ne 'history'} @{$self->cds};
     push @transcripts, map {$_->Corresponding_transcript}  @transcripts;
     my $data = { description => 'The transcripts related with the protein',
 		 data        => \@transcripts,
@@ -102,7 +103,7 @@ sub transcripts {
 sub type {
     my $self = shift;
     my $data = { description => 'The type of the protein',
-		 data        =>  $self->cds->Method || 'None (see remark)' ,
+		 data        =>  $self->cds->[0]->Method || 'None (see remark)' ,
     }; 
     return $data;
 }
@@ -111,7 +112,7 @@ sub type {
 sub ortholog_genes {
     my $self = shift;
     my $data = { description => 'The orthology genes of the protein',
-		 data        =>  $self ~~ 'Ortholog_gene' || 'not assigned' ,
+		 data        =>  [$self->object->Ortholog_gene]  ,
     }; 
     return $data;
 }
@@ -198,32 +199,31 @@ sub amino_acid_composition{
 }
 
 
-
+ 
 ############################################################
 #
 # The Protein History widget, this is actaully on a field level but not widget
 #
 ############################################################
-sub protein_history{
+sub history{
     my $self = shift;
-
-    my $history = {};
-    my @wormpep_versions = $self ~~ 'History';
-     
-    foreach (@wormpep_versions) {
-	  my ($status,$prediction) = $_->row(1);
-	  $history->{version}->{$_}=$_;
-	  $history->{status}->{$_}=$status;
-	  $history->{prediction}->{$_}=$prediction;
+   
+    my %history ;
+    my @wormpep_versions = $self->object->History;
+    foreach my $obj (@wormpep_versions) {
+	  my ($status,$prediction) = $obj->row(1);
+	  $history{version}{$obj}=$obj;
+	  $history{status}{$obj}=$status;
+	  $history{prediction}{$obj}=$prediction;
     }
     
     my $data = { description => 'The history information of the protein',
-		 data        =>  $history ,
+		 data        =>  \%history ,
     }; 
     return $data;
 }
 
-
+ 
 
 ############################################################
 #
