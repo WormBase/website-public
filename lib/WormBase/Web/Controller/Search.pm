@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller::FormBuilder';
 
+
 ##############################################################
 #
 #   Search
@@ -14,20 +15,41 @@ use parent 'Catalyst::Controller::FormBuilder';
 sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug("search method...");
-#     my $api = $c->model('WormBaseAPI');
+  
+    #all search results will end up at the search/results template.
+    $c->stash->{template} = "search/results.tt2";
 }
 
+# a gene search
 sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
     my ($self, $c, $query) = @_;
     $c->log->debug("gene_search method");
     $c->stash->{'query'} = $query;
-    $c->stash->{template} = "search/gene.tt2";
     $c->log->debug(join(', ', @{$c->req->args}));
+
     my $api = $c->model('WormBaseAPI');
-    my @objs = $api->fetch_search({class=> 'Gene',
-			      pattern => '*' . $query . '*'}) or die "$!";
-    $c->stash->{'results'} = \@objs;
-    
+    my $objs = $api->search->gene({pattern => $query});
+
+    # fix your redirect to just call action.  Find out how to do this.
+    if(scalar @$objs == 1) {
+      $c->res->redirect('/reports/gene/' . @$objs[0]->id);
+    }
+
+    $c->stash->{'results'} = $objs;
+
+}
+# a variation search
+sub variation_search :Chained('search') :PathPart('variation') :Args(1) {
+    my ($self, $c, $query) = @_;
+    $c->log->debug("variation_search method");
+    $c->stash->{'query'} = $query;
+    $c->log->debug(join(', ', @{$c->req->args}));
+
+    my $api = $c->model('WormBaseAPI');
+    my $objs = $api->search->variation({pattern => $query});
+
+    $c->stash->{'results'} = $objs;
+
 }
 
 

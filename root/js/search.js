@@ -1,3 +1,9 @@
+/***************************/
+// Search Bar functions
+// author: Abigail Cabunoc
+// abigail.cabunoc@oicr.on.ca      
+/***************************/
+
 //The search bar methods
 $(document).ready(function(){
   var searchBox = $("#Search"),
@@ -20,7 +26,7 @@ $(document).ready(function(){
     if($(this).attr("value") == "") $(this).attr("value", searchBoxDefault);
   });
   
-  //display the error msg if the use didn't input a search query
+  //display the error msg if the user didn't input a search query
   searchForm.submit(function(){
     if (searchBox.val() == searchBoxDefault || !searchBox.val()) {
       $("#searchMsg").text(searchMsgText).show().fadeOut(2000);

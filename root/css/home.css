@@ -1,4 +1,4 @@
-
+/* The center divs on the home page */
 #main {
   padding-top:100px;
   text-align:center;
@@ -13,13 +13,36 @@
     color: #6666EE;
 }
 
-#front-menu, #login-menu {
+
+/* Seach bar and results page */
+#results ul li{
+   padding-top:1em;
+   font-size:1.2em;
+}
+#results a.forest-green{
+   color: #228B22;
+}
+#search-bar {
+  padding-top:2em;
+  text-align:center;
+}
+#search-bar .form input.text {
+   width:300px;
+}
+
+
+#fade {
+   color: #999999;
+   font-size: 0.8em;
+}
+
+/* Menus on the top of the screen - home page */
+#front-menu, #login-menu, #results{
 	margin: 0;
 	padding:0;
-
 	}
 
-#front-menu ul, #login-menu ul {
+#front-menu ul, #login-menu ul, #results ul {
 	margin:0;
 	padding:0;
 	list-style-type: none;
@@ -51,15 +74,17 @@
 }
 
 
+/* The search bar form */
 .form input{  
     font-size: 1.3em;  
     height: 2em;
+    vertical-align:top;
 }  
 .form input.text{  
     font-weight: normal;  
     color: #565656;  
     border: 1px solid #9c9c9c;  
-    padding: 5px;  
+    padding: 7px;  
     margin-bottom: 5px;  
     text-align: left;  
     width:300px;
