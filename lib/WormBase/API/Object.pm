@@ -787,6 +787,59 @@ Returns
 
 =cut
 #'
+sub _parse_year {
+    my $date = shift;
+    $date =~ /.*(\d\d\d\d).*/;
+    my $year = $1 || $date;
+    return $year;
+}
+
+sub _get_evidence {
+    my ($self,@nodes,$evidence_type)=@_;
+    my %data;
+    
+    foreach my $node (@nodes) {
+	foreach my $type ($node->col) {
+	    next if ($type eq 'CGC_data_submission') ;
+	     #if only extracting one/more specific evidence types
+	    if(defined $evidence_type) {
+		next unless(grep /^$type$/ , @$evidence_type);
+	    }
+	    #the goal is to deal label and link seperately?
+	    foreach my $evidence ($type->col) {
+		my $label = $evidence;
+		my $class = eval { $evidence->class } ;
+		if ($type eq 'Paper_evidence') {
+		    my @authors    = eval { $evidence->Author };
+		    my $authors    = @authors <= 2 ? (join ' and ',@authors) : "$authors[0] et al.";
+		    my $year       = _parse_year($evidence->Publication_date);
+		    $label = "$authors, $year";
+		} elsif  ($type eq 'Person_evidence' || $type eq 'Curator_confirmed') {
+		    $label = $evidence->Standard_name;
+		} elsif ($type eq 'Accession_evidence') {
+		    my ($database,$accession) = $evidence->row;
+		    if(defined $accession && $accession) {
+			($evidence,$class) = ($accession,$database);
+			 $label = "$database:$accession";
+		    }     
+		} elsif ($type eq 'Protein_id_evidence') {
+		    $class = "Entrezp";
+		} elsif ($type eq 'RNAi_evidence') {
+		    $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
+		} elsif ($type eq 'Date_last_updated') { 
+		    $label =~ s/\s00:00:00//;
+		    undef $class;
+		}  
+		$type =~ s/_/ /g;
+		$data{$type}{$evidence}{label} = $label; 
+		$data{$type}{$evidence}{link} = lc($class) if(defined $class);
+	    }
+
+	}
+    }
+   return \%data;
+}
+
 
 sub _parse_hash {
   my ($self,$nodes) = @_;
