@@ -93,8 +93,6 @@ has 'species' => (
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;
-    my $signal = shift || 0;
-
     my $species = $self->species;
     my $dbh = $self->$orig;
     
