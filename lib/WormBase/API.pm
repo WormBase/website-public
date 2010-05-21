@@ -145,13 +145,7 @@ sub fetch {
     
 }
 
-sub update_services {
-    my $self = shift;
-    for my $service (keys %{$self->_services}){
-	  my $db = $self->_services->{$service};
-	  $db->dbh(1) if(defined $db && $db->has_dbh);
-     }
-}
+ 
 
 1;
 
