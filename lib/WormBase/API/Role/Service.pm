@@ -3,6 +3,7 @@ package WormBase::API::Role::Service;
 use Moose::Role;
 use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
+use LWP::UserAgent;
 
 use constant INITIAL_DELAY => 600;
 
@@ -96,38 +97,30 @@ around 'dbh' => sub {
 
     my $species = $self->species;
     my $dbh = $self->$orig;
- 
-    if($signal) {
-	return unless $self->has_dbh;
-	if(defined $dbh && $dbh) {
-	  $self->mark_host($self->host,'up',-1) or return;
-	}
-	return;
-    }
+    
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
-    if (!$self->select_host && $self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) ) {   
+    if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
     $self->log->debug( $self->symbolic_name." dbh for species $species doesn't exist or is not alive; trying to connect");
+    undef $dbh; #release the current connection if exists
     return $self->reconnect();
      
 };
 
 sub reconnect {
     my $self = shift;
-    my $ReconnectMaxTries=$self->conf->{reconnect}; # get this from configuration file!
     my $tries=0;
     my $dbh;
-
-    do {
-	$tries++;
-	$dbh = eval {$self->connect() };
+    my @hosts = $self->select_host;
+    while(@hosts && $tries < $self->conf->{reconnect} && $self->host(shift @hosts) ) {
+	$tries++; 
 	$self->log->info("trytime $tries: Connecting to  ".$self->symbolic_name);
-	if ($self->log->is_debug()) {
-	    $self->log->debug('     using the following parameters:');
-	    $self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
-	}
+	$self->log->debug('     using the following parameters:');
+	$self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
+	
+	$dbh = eval {$self->connect() };
 	if(defined $dbh && $dbh) {
 	    $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $self->host);
 	    # Cache my handle
@@ -135,76 +128,66 @@ sub reconnect {
 	    return $dbh;
 	} 
 	else { 
-	    $self->log->fatal($self->host." is down!");
-	    $self->mark_host($self->host,'down');
+	    $self->mark_host($self->host,0);
 	    $self->host(0);
+	    $self->log->fatal($self->host." is down!");
 	}
-    }while($tries < $ReconnectMaxTries && $self->select_host);
-
+    } 
     $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
 }
 
 sub select_host {
-    my $self   = shift;
-    # open berkeley db(which stores the db hosts status information) handle once   
-    # in order to prevent multiple reopenings of the database
+    my ($self,$current)   = shift;
+    my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>30 );
+    # if the current connected host is not too busy then continue using it
+    # number 40 is arbitrary and needs to be adjusted in future!
+    if(defined $current) {
+	return 0 if($self->check_cpu_load($ua,$self->host)<40) ;
+	return 1;
+    }
+    # open berkeley db(which stores the db hosts status:on/off information)  
     my $dbfile     = $self->dbfile(1);
-    my $host_status;
-    my $host;
+    my $host_loads;
     foreach my $host ( @{$self->hosts} ) {
-# 	$self->log->debug('scan host: '.$host);
 	my ($status,$last_checked)=(0,0);
 	if( my $pack = $dbfile->{$host}) {
 	  ($status,$last_checked) = unpack('lL',$pack); 
-	   if($status < 0) {
-		if( (time() - $last_checked) >= INITIAL_DELAY ) {$status=0;}
+	   unless($status) {
+		if( (time() - $last_checked) >= INITIAL_DELAY ) {
+			$self->mark_host($host,1,$dbfile);
+		}
 		else {next;}
 	    }
 	}   
-	$host_status->{$status}->{$host}=$last_checked ;
+	$host_loads->{$host} = $self->check_cpu_load($ua,$host);
+	$self->log->debug("host $host CPU Load: ".$host_loads->{$host}."%");
     }
-    defined $host_status or return;
-    my @rank = sort {$a<=>$b} keys %{$host_status};
-    
-    if($self->host){
-	unless(exists $host_status->{0}->{$self->host}) { 
-	  if($rank[$#rank]- $rank[0] >= 2 && exists $host_status->{$rank[$#rank]}->{$self->host}) {
-	    $self->mark_host($self->host,'up',-1,$dbfile) or return; 
-	    $self->log->debug("give up current host  ".$self->host);
-	    $self->host(0);
-	  }
-	  else {return ;}
-	}
+    defined $host_loads or return;
+    return sort {$host_loads->{$a}<=>$host_loads->{$b}} keys %{$host_loads};
+}
+
+sub check_cpu_load {
+    my ($self,$ua,$host) = @_;
+    my $response = $ua->get("http://".$host."/server-status");
+    my $load = -1;  # this is set temporarily since the server-status module is not enabled on hosts now
+    if($response->is_success) {
+	$response->content =~ /CPU Usage.*- (.*) CPU load/i;
+	$load = $1;
+	$load =~ s/%// if(defined $load);
     }
-    my @up = keys %{$host_status->{$rank[0]}};
-    $host = $up[rand @up];
-    $self->mark_host($host,'up',+1,$dbfile) or return;
-    $self->log->debug("choose host:$host for connecting, it currently has ".$rank[0]." connections");
-    $self->host($host);
-    return $host;
+    else {
+	$self->log->debug("not able to retrieve host $host status through http!");
+    }
+    return $load;
 }
 
 sub mark_host {
     my $self   = shift;
     my $host	= shift || return;
     my $mode	= shift;
-    my $connection = shift;
     my $dbfile	= shift || $self->dbfile(1) || return ;
-    
-    $self->log->info("marking $host $mode");  
-  
-    if($mode eq 'down') {
-	$dbfile->{$host} = pack('lL',-1,time(),INITIAL_DELAY);
-    }
-    else {
-	 my ($status,$last_checked)=(0,0);
-	if(my $pack = $dbfile->{$host}) {
-	     ($status,$last_checked) = unpack('lL',$pack); 
-	}
-	$status+=$connection;
-	$status = 0 if($status<0);
-	$dbfile->{$host} = pack('lL',$status,time());
-    }
+    $self->log->info("marking $host ".$mode? 'up':'down');  
+    $dbfile->{$host} = pack('lL',$mode,time());
 }
 
 sub dbfile {
