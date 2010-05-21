@@ -3,7 +3,6 @@ package WormBase::API::Role::Service;
 use Moose::Role;
 use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
-use LWP::UserAgent;
 
 use constant INITIAL_DELAY => 600;
 
@@ -169,8 +168,7 @@ sub check_cpu_load {
     my $response = $ua->get("http://".$host."/server-status");
     my $load = -1;  # this is set temporarily since the server-status module is not enabled on hosts now
     if($response->is_success) {
-	$response->content =~ /CPU Usage.*- (.*) CPU load/i;
-	$load = $1;
+	($load)=$response->content =~ /CPU Usage.*- (.*) CPU load/i;
 	$load =~ s/%// if(defined $load);
     }
     else {
