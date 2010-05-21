@@ -176,11 +176,6 @@ foreach (my $page_config = __PACKAGE__->config->{pages}) {
     }
 }
 
-$SIG{'INT'} = sub {
-      my $self=WormBase::Web->model('WormBaseAPI'); 
-      $self->update_services(); 
-      exit(0);
-}; 
 
 # Start the application
 __PACKAGE__->setup;
