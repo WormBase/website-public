@@ -46,10 +46,8 @@ has database => (
     lazy_build => 1,
     );
 
-has tmp_dir => (
-    is       => 'ro',
-    default => '/tmp/',
-    required => 1,
+has tmp_base => (
+    is       => 'rw',
     );
 
 has search => (
@@ -67,7 +65,8 @@ sub _build_database {
 				  -ConfigFile      => "$root/../wormbase.conf",
 				  -InterPolateVars => 1
     );
-    return $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
+    $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
+    return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
 }
 
 # builds a search object with the default datasource
@@ -94,6 +93,7 @@ sub _build__services {
     my ($self) = @_;
     my %services;
     for my $dbn (sort keys %{$self->database}) {
+      next if($dbn eq 'tmp');
       my $class = __PACKAGE__ . "::Service::$dbn" ;	
       Class::MOP::load_class($class);
       # Instantiate the service providing it with
@@ -106,7 +106,7 @@ sub _build__services {
 					log      => $self->log,
 					species	 => $sp,
 					symbolic_name => $dbn,
-					path => $self->tmp_dir,
+					path => $self->database->{tmp},
 				      });
 	  my $type=$sp? $dbn.'_'.$sp:$dbn;
 	  $services{$type} = $new; 
@@ -141,6 +141,7 @@ sub fetch {
 					      { object   => $object,
 						log => $self->log,
 						dsn	 => $self->_services,
+						tmp_base  => $self->tmp_base,
 					      });
     
 }
