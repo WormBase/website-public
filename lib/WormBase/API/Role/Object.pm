@@ -14,7 +14,11 @@ has 'dsn' => (
     required => 1,
     );
 
-has log => (
+has 'log' => (
+    is => 'ro',
+    );
+
+has 'tmp_base' => (
     is => 'ro',
     );
 
