@@ -1,6 +1,8 @@
 package WormBase::API::Object;
 
 use Moose;
+use File::Path 'mkpath';
+
 
 use overload '~~' => \&_overload_ace, fallback => 1;
 
@@ -81,6 +83,19 @@ sub object {
 #  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
 #  return $dbh;
 #}
+
+sub tmp_dir {
+    my $self       = shift;
+    my @sub_dirs = @_;
+    my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
+    mkpath($path,0,0777) unless -d $path;
+    return $path;    
+};
+
+sub tmp_image_dir {
+    my $self  = shift;
+    return $self->tmp_dir('images',@_);
+}
 
 
 # Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
