@@ -1,9 +1,12 @@
 package WormBase::API::Object::Protein;
 
 use Moose;
-use Bio::Tools::pICalculator;
 use Bio::Tools::SeqStats;
-use Bio::PrimarySeq;
+use pICalculator;
+use Bio::Graphics::Feature;
+use Bio::Graphics::Panel;
+use Digest::MD5 'md5_hex';
+
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
  
@@ -125,6 +128,31 @@ sub ortholog_genes {
 ############################################################
 
 sub homology_image{
+    my $self=shift;
+    my $panel=$self->_draw_image($self->object,1);
+    my $gd=$panel->gd;
+ 
+    my ($suffix,$img,$boxes);
+    if ($gd->isa('Ace::Object')) {
+      $suffix = 'gif';
+      ($img,$boxes) = $gd->asGif(@_);
+    } else {
+      $suffix   = $gd->can('png') ? 'png' : 'gif';
+      $img     = $gd->can('png') ? $gd->png : $gd->gif;
+    }
+    my $basename = md5_hex($img);
+    my $dirs = substr($basename,0,6) ;
+    $dirs    =~ s!^(.{2})(.{2})(.{2})!$1/$2/$3!g;
+    my $path = $self->tmp_image_dir($dirs)."/$basename.$suffix";
+    unless(-s $path) {
+      open (F,">$path") ;
+      print F $img;
+      close F;
+    }
+    my $data = { description => 'The homology image of the protein',
+		 data        => "$dirs/$basename.$suffix",
+    }; 
+    return $data;
 }
 
 sub motif_homologies{}
@@ -161,12 +189,10 @@ sub estimated_molecular_weight{
 sub estimated_isoelectric_point{
     my $self = shift;
   
-    my $pic     = Bio::Tools::pICalculator->new();
-    my $selenocysteine_count =  (my $hack_seq = $self->peptide) =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
+    my $pic     = pICalculator->new();
     my $seq     = Bio::PrimarySeq->new($self->peptide);
     $pic->seq($seq);
     my $iep     = $pic->iep;
-
     my $data = { description => 'The estimated isoelectric point of the protein',
 		 data        =>  $iep,
     }; 
@@ -176,21 +202,20 @@ sub estimated_isoelectric_point{
 sub amino_acid_composition{
     my $self = shift;
 
-    my $selenocysteine_count =  (my $hack_seq = $self->peptide) =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
-    my $seq     = Bio::PrimarySeq->new($self->peptide);
+    my $selenocysteine_count =  (my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
+    my $seq     = Bio::PrimarySeq->new($hack_seq);
     my $stats   = Bio::Tools::SeqStats->new($seq);
 
     my %abbrev = (A=>'Ala',R=>'Arg',N=>'Asn',D=>'Asp',C=>'Cys',E=>'Glu',
 		Q=>'Gln',G=>'Gly',H=>'His',I=>'Ile',L=>'Leu',K=>'Lys',
 		M=>'Met',F=>'Phe',P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
-		Y=>'Tyr',V=>'Val',U=>'Sec<sup>*</sup>',X=>'Xaa');
+		Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa');
     # Amino acid content
     my $composition = $stats->count_monomers;
     if ($selenocysteine_count > 0) {
       $composition->{C} -= $selenocysteine_count;
       $composition->{U} += $selenocysteine_count;
     }
-
     my %aminos = map {$abbrev{$_}=>$composition->{$_}} keys %$composition;
     my $data = { description => 'The amino acid composition of the protein',
 		 data        =>  \%aminos ,
@@ -254,11 +279,11 @@ sub _draw_image {
 
   # Get out the gene - will use to extract the exons, then map them
   # onto the protein backbone.
-  my $gene    = $obj->cds;
+  my $gene    = $self->cds->[0];
   my @exons;
   
   my $gffdb = $self->gff_dsn();
-  my ($seq_obj) = $gffdb->segment(CDS => $gene);
+  my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene);
   @exons = $seq_obj->features('exon:curated') if $seq_obj;
   @exons = grep { $_->name eq $gene } @exons;
 
@@ -266,8 +291,8 @@ sub _draw_image {
   # contributions from the different exons.
   my ($count,$end_holder);
   my @segmented_exons;
-  local $^W = 0;  # kill uninitialized variable warning
-
+#   local $^W = 0;  # kill uninitialized variable warning
+  $end_holder=0;
   foreach my $exon (sort { $a->start <=> $b->start } @exons) {
 
     $count++;
@@ -371,16 +396,18 @@ sub _draw_image {
       }
 
       # add descriptive information for each of the best ones
-      local $^W = 0; #kill uninit variable warning
+#       local $^W = 0; #kill uninit variable warning
       for my $feature ($best_only ? values %best : @{$features{'BLASTP Homologies'}}) {
 	my $homol = $HIT_CACHE{$feature->name};
-	my $description = $homol->Species;
+	my $species =  $homol->Species||"";
+	my $description = $species;
 	my $score       = sprintf("%7.3G",10**-$feature->score);
 	$description    =~ s/^(\w)\w* /$1. /;
 	$description   .= " ";
-	$description   .= $homol->Description || $homol->Gene_name;
-	$description   .= eval{$homol->Corresponding_CDS->Brief_identification}
-	  if $homol->Species =~ /elegans|briggsae/;
+# 	my $desc= $homol->Description} || $homol->Gene_name || "";
+	$description   .= $homol->Description || $homol->Gene_name || "";
+	$description   .=  $homol->Corresponding_CDS->Brief_identification ||""
+	  if $species =~ /elegans|briggsae/;
 	my $t = $best_only ? "best hit, " : '';
 	$feature->desc("$description (${t}e-val=$score)") if $description;
       }
@@ -422,14 +449,6 @@ sub _draw_image {
     }
   }
 
-  ## diagnostic ####
-  # print "<pre>";
-#   foreach my $dmotif (@{$features{'Motifs'}}) {
-#   	print "$dmotif<br>";
-#   }
-#   print "</pre>";
-  ### end diagnostic ###
-  
   
   foreach my $key (sort keys %features) {
     # Get the glyph
@@ -456,29 +475,50 @@ sub _draw_image {
 		     );
   }
   
-  # turn some of the features into urls
-  my $boxes = $panel->boxes;
-  my $map   = '';
-  foreach (@$boxes) {
-    my ($feature,@coords) = @$_;
-    my $name = $feature->name;
-    my $url  = hit_to_url($name) or next;
-    # print $url, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>br";
-    my $coords    = join ',',@coords;
-    $map   .= qq(<area shape="rect" target="_new" coords="$coords" href="$url" />\n);
-  }
-
-  my $gd = $panel->gd;
-  my $url = AceImage($gd);
-   
-  # Create a url suitable for passing through squid
-  # Remove protocol and host
-  my ($stripped_url) = $url =~ /http:\/\/.*?(\/.*)/;
-  # TODO!! Need to edit ace tmp image path so that I can
-  # redirect via squid
-  #  $stripped_url =~ s|/ace_images/|/ace_images/protein/|;
-
-  return ($stripped_url,$map);
+  return $panel;
 
 }
+sub wrestle_blast {
+  my $hits = shift;
+  my $as_features = shift;
+
+  my (@hits,%cached_features);
+  my %seen;
+  for my $homol (@$hits) {
+    for my $type ($homol->col) {
+      for my $score ($type->col) {
+	for my $start ($score->col) {
+	  for my $end ($start->col) {
+	    my ($tstart,$tend) = $end->row(1);
+
+	    next if ($seen{"$start$end$homol"}++);
+
+	    $HIT_CACHE{$homol} = $homol;
+
+	    if ($as_features) {
+	      my $f = $cached_features{$type}{$homol};
+	      if (!$f) {
+		$f
+		  = $cached_features{$type}{$homol}
+		    = Bio::Graphics::Feature->new(-name     => "$homol",   # quotes and +0 stringifies ace object
+						  -type     => "$type",
+						  -score    => $score+0);
+		push @hits,$f;
+	      }
+	      $f->add_segment(Bio::Graphics::Feature->new(-start => $start+0,
+							  -end   => $end+0,
+							  -score => $score+0,
+							 ));
+	    } else {
+	      push @hits,{hit=>$homol,type=>$type,score=>$score,source=>"$start..$end",target=>"$tstart..$tend"};
+	    }
+	  }
+	}
+      }
+    }
+  }
+  @hits;
+}
+
+
 1;
