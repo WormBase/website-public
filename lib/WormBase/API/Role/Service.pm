@@ -125,9 +125,9 @@ sub reconnect {
 	    return $dbh;
 	} 
 	else { 
-	    $self->mark_host($self->host,0);
-	    $self->host(0);
+	    $self->mark_down($self->host);
 	    $self->log->fatal($self->host." is down!");
+	    $self->host(0);
 	}
     } 
     $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
@@ -151,7 +151,8 @@ sub select_host {
 	  ($status,$last_checked) = unpack('lL',$pack); 
 	   unless($status) {
 		if( (time() - $last_checked) >= INITIAL_DELAY ) {
-			$self->mark_host($host,1,$dbfile);
+			undef $dbfile->{$host};
+# 			$self->mark_host($host,1,$dbfile);
 		}
 		else {next;}
 	    }
@@ -177,13 +178,12 @@ sub check_cpu_load {
     return $load;
 }
 
-sub mark_host {
+sub mark_down {
     my $self   = shift;
     my $host	= shift || return;
-    my $mode	= shift;
     my $dbfile	= shift || $self->dbfile(1) || return ;
-    $self->log->info("marking $host ".$mode? 'up':'down');  
-    $dbfile->{$host} = pack('lL',$mode,time());
+    $self->log->info("marking $host down");  
+    $dbfile->{$host} = pack('L',time());
 }
 
 sub dbfile {
