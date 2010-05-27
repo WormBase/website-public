@@ -83,7 +83,8 @@ sub homology_groups {
 
 sub genes {
     my $self = shift;
-    my @genes = map {$_->Gene||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
+    my %seen;
+    my @genes = grep {!$seen{$_}++} map {$_->Gene||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
     my $data = { description => 'The genes or CDS associated with the protein',
 		 data        => \@genes,
     }; 
@@ -93,10 +94,11 @@ sub genes {
 
 sub transcripts {
     my $self = shift;
+    my %seen;
     my @transcripts = grep{$_->Method ne 'history'} @{$self->cds};
     push @transcripts, map {$_->Corresponding_transcript}  @transcripts;
     my $data = { description => 'The transcripts related with the protein',
-		 data        => \@transcripts,
+		 data        => [grep {!$seen{$_}++}  @transcripts],
     }; 
     return $data;
 
@@ -106,7 +108,7 @@ sub transcripts {
 sub type {
     my $self = shift;
     my $data = { description => 'The type of the protein',
-		 data        =>  $self->cds->[0]->Method || 'None (see remark)' ,
+		 data        =>  eval {$self->cds->[0]->Method} || 'None (see remark)' ,
     }; 
     return $data;
 }
@@ -120,6 +122,14 @@ sub ortholog_genes {
     return $data;
 }
 
+sub phosphopep_link {
+    
+    my $data = { description => 'The orthology genes of the protein',
+		 data        =>  eval{shift->cds->[0]}  ,
+    }; 
+    return $data;
+ 
+}
 
 ############################################################
 #
@@ -127,7 +137,7 @@ sub ortholog_genes {
 #
 ############################################################
 
-sub homology_image{
+sub homology_image {
     my $self=shift;
     my $panel=$self->_draw_image($self->object,1);
     my $gd=$panel->gd;
@@ -155,11 +165,28 @@ sub homology_image{
     return $data;
 }
 
-sub motif_homologies{}
+sub motif_homologies {
+    my $self = shift;
+    my $obj = $self->object;
+    my (%motif);
+    my @homol = $obj->Motif_homol;
+    my %hash;
+    my @row;
+    foreach (@homol) {
+      my $title = $_->Title;
+      my ($database,$description,$accession) = $_->Database->row if $_->Database;
+      $hash{database}{$_} = $database;
+      $hash{description}{$_} = $title||$_;
+      $hash{accession}{$_} = $_;
+    }
+    my $data = { description => 'The motif summary of the protein',
+		 data        => \%hash,
+    }; 
+    return $data;
+}	  
+	
 
-sub best_blastp_matches{}
-
-sub protein_sequence{
+sub protein_sequence {
     my $self = shift;
     my $peptide = $self->peptide;
     my $data = { description => 'The peptide sequence of the protein',
@@ -167,6 +194,7 @@ sub protein_sequence{
 				  'length' => length $peptide,
 				}
     }; 
+    return $data;
 }
  
  
@@ -201,7 +229,7 @@ sub estimated_isoelectric_point{
 
 sub amino_acid_composition{
     my $self = shift;
-
+    return unless($self->peptide);
     my $selenocysteine_count =  (my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
     my $seq     = Bio::PrimarySeq->new($hack_seq);
     my $stats   = Bio::Tools::SeqStats->new($seq);
