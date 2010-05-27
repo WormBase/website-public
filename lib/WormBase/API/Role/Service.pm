@@ -147,16 +147,14 @@ sub select_host {
     my $host_loads;
     foreach my $host ( @{$self->hosts} ) {
 	my ($status,$last_checked)=(0,0);
-	if( my $pack = $dbfile->{$host}) {
-	  ($status,$last_checked) = unpack('lL',$pack); 
-	   unless($status) {
-		if( (time() - $last_checked) >= INITIAL_DELAY ) {
-			undef $dbfile->{$host};
-# 			$self->mark_host($host,1,$dbfile);
-		}
-		else {next;}
-	    }
-	}   
+	if( my $pack = $dbfile->{$host}) {  
+	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
+		  undef $dbfile->{$host};
+  # 		$self->mark_host($host,1,$dbfile);
+	  }
+	  else {next;}
+	   
+	} 
 	$host_loads->{$host} = $self->check_cpu_load($ua,$host);
 	$self->log->debug("host $host CPU Load: ".$host_loads->{$host}."%");
     }
