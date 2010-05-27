@@ -30,12 +30,7 @@
   [% c.stash.fields.estimated_isoelectric_point.data %]
 [% END %]
 [% WRAPPER "boilerplate/field" title="Amino Acid Composition" %]
-  [% keys = c.stash.fields.amino_acid_composition.data.keys.sort  %]
-  <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>
-  <tr>
-  [% FOREACH key IN keys %]
-    <td>[% c.stash.fields.amino_acid_composition.data.$key %]</td>
-  [% END %]
-  </tr></table>
+  [% data = c.stash.fields.amino_acid_composition.data  %]
+  [% INCLUDE protein/simple_table.tt2 %]
 [% END %]
 [% END %]
