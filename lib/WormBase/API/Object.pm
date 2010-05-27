@@ -478,20 +478,22 @@ sub best_blastp_matches {
   my ($self,$proteins) = @_;
 
   # current_object might already be a protein. If a gene, it will supply proteins.
-  push @$proteins,$self->object unless @$proteins;
+  $proteins = [$self->object] unless $proteins;
 
   return unless @$proteins;
   my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
-
+  
   my @pep_homol = $biggest->Pep_homol;
   my $length    = $biggest->Peptide(2);
   
-  my @hits;
+  my %hits;
   
   # find the best pep_homol in each category
   my %best;
   return "" unless @pep_homol;
   for my $hit (@pep_homol) {
+        # Ignore mass spec hits
+    next if ($hit =~ /^MSP/);
     next if $hit eq $biggest;         # Ignore self hits
     my ($method,$score) = $hit->row(1) or next;
     
@@ -516,20 +518,21 @@ sub best_blastp_matches {
   # in sorting hash values.  But I can't replicate this outside of a
   # mod_perl environment
   # Adding the +0 forces numeric context
+  my $id=0;
   foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
     my $method = $_;
     my $hit = $best{$_}{hit};
-    
+   
     # Try fetching the species first with the identification
     # then method then the embedded species
     my $species = $self->id2species($hit);
     $species  ||= $self->id2species($method);
-    
+     
     # Not all proteins are populated with the species 
     $species ||= $best{$method}{hit}->Species;
-    $species =~ s/^(\w)\w* /$1. /;
+    $species =~ s/^(\w)\w* /$1. / ;
     my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-    if ($method =~ /worm|briggsae/) {
+    if ($method =~ /worm|briggsae|remanei|japonica|brenneri/) {
       $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
       # Kludge: display a description using the CDS
       if (!$description) {
@@ -540,10 +543,7 @@ sub best_blastp_matches {
       }
     }
     
-    # Ignore mass spec hits
-    next if ($hit =~ /^MSP/);
-    
-    next if ($seen{$species}++);
+#     next if ($seen{$species}++);
     
     if ($hit =~ /(\w+):(.+)/) {
       my $prefix    = $1;
@@ -569,20 +569,35 @@ sub best_blastp_matches {
       # TH: 1/2006 - remanei not yet in the database but blast hits available
       # Generate links to the remanei browser
       # This will not work for mirror sites, of course...
-      if ($species =~ /remanei/) {
-	$accession =~ s/^RP://;
-	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
-	$hit .= qq{<br><i>Note: <b>C. remanei</b> predictions are based on an early assembly of the genome. Predictions subject to possibly dramatic revision pending final assembly. Sequences available on the <a href="ftp://ftp.wormbase.org/pub/wormbase/genomes/remanei">WormBase FTP site</a>.};
-      } else {
-	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
-      }
+#       if ($species =~ /remanei/) {
+# 	$accession =~ s/^RP://;
+# 	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
+# 	$hit .= qq{<br><i>Note: <b>C. remanei</b> predictions are based on an early assembly of the genome. Predictions subject to possibly dramatic revision pending final assembly. Sequences available on the <a href="ftp://ftp.wormbase.org/pub/wormbase/genomes/remanei">WormBase FTP site</a>.};
+#       } else {
+# 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
+#       }
     }
-    
-    push @hits,[$species,$hit,$description,
-		sprintf("%7.3g",10**-$best{$_}{score}),
-		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
+#       $hits{$hit}{species}=$species;
+#       $hits{$hit}{hit}=$hit;
+#       $hits{$hit}{description}=$description;
+#       $hits{$hit}{evalue}=sprintf("%7.3g",10**-$best{$_}{score});
+#       $hits{$hit}{plength}=sprintf("%2.1f",100*($best{$_}{covered})/$length);
+ 	$hits{species}{$id}=$species;
+        $hits{hit}{$id}=$hit;
+        $hits{description}{$id}=$description;
+        $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
+        $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
+	$id++;
+#      push @hits,[$species,$hit,$description,
+#  		sprintf("%7.3g",10**-$best{$_}{score}),
+#  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
-  return \@hits;
+ 
+  my $data = { description => 'Best BLAST Hits from Selected Species',
+		data        => \%hits,
+    }; 
+  return $data;
+  
 }
 
 
