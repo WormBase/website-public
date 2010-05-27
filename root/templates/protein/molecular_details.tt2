@@ -31,6 +31,13 @@
 [% END %]
 [% WRAPPER "boilerplate/field" title="Amino Acid Composition" %]
   [% data = c.stash.fields.amino_acid_composition.data  %]
-  [% INCLUDE protein/simple_table.tt2 %]
+  [% keys = data.keys.sort  %]
+  <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>
+  <tr>
+  [% FOREACH key IN keys %]
+  <td>[% data.$key %]</td>
+  [% END %]
+  </tr>
+  </table>
 [% END %]
 [% END %]
