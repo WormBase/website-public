@@ -53,6 +53,8 @@
   [% END %]
   </table>
 [% END %]
-
-
+[% WRAPPER "boilerplate/field" title="Provisional description" %]
+[% evidence = fields.provisional_description.data %]
+[% INCLUDE   evidence.tt2  %] 
+[% END %]
 [% END %]
