@@ -1,0 +1,14 @@
+[% FOREACH type IN evidence.keys -%] 
+    [% FOREACH object IN evidence.$type.keys %] 
+	   <br><b>[% type %]</b>:  
+	   [% IF evidence.$type.$object.link.defined %]
+	      <a href="[% c.uri_for_action('report', evidence.$type.$object.link , object ) %]">[% evidence.$type.$object.label%]</a>
+	   [% ELSE %]
+	      [% evidence.$type.$object.label%]  
+	   [% END%]
+    [% END %] 
+[% END %] 
+
+
+
+
