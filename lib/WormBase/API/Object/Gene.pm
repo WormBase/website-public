@@ -78,6 +78,16 @@ extends 'WormBase::API::Object';
 #####################
 ##### template ######
 
+sub provisional_description {
+    my $self   = shift;
+    my $node = $self ~~ 'Provisional_description';
+    my $data = { description => 'The Provisional description the gene',
+		 data        =>  $self->_get_evidence($node)
+    };
+    return $data;
+}
+
+
 sub template {
 
 	my $self = shift;
