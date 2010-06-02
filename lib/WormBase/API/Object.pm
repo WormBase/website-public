@@ -97,7 +97,82 @@ sub tmp_image_dir {
     return $self->tmp_dir('images',@_);
 }
 
+sub bestname {
+  my ($self,$gene) = @_;
+  return unless $gene && $gene->class eq 'Gene';
+  my $name = $gene->Public_name ||
+      $gene->CGC_name || $gene->Molecular_name || eval { $gene->Corresponding_CDS->Corresponding_protein } || $gene;
+  return $name;
+}
 
+sub hunter_url {
+  my ($self,$ref,$start,$stop);
+
+  # can call with three args (ref,start,stop)
+  if (@_ == 4) {
+    ($self,$ref,$start,$stop) = @_;
+  }
+
+  # or with a sequence object
+  else {
+    my ($self,$seq_obj) = @_ or return;
+    $seq_obj->abs(1);
+    $start      = $seq_obj->start;
+    $stop       = $seq_obj->stop;
+    $ref        = $seq_obj->refseq;
+  }
+
+  $ref =~ s/^CHROMOSOME_//;
+  my $length = abs($stop - $start)+1;
+  $start = int($start - 0.05*$length) if $length < 500;
+  $stop  = int($stop  + 0.05*$length) if $length < 500;
+  ($start,$stop) = ($stop,$start) if $start > $stop;
+  $ref .= ":$start..$stop";
+  return $ref;
+}
+
+# get the interpolated position of a sequence on the genetic map
+# returns ($chromosome, $position)
+# position is in genetic map coordinates
+# Lots of cruft here from pre-WS124
+sub GetInterpolatedPosition {
+  my ($self,$obj) = @_;
+  my ($full_name,$chromosome,$position);
+  if ($obj){
+      if ($obj->class eq 'CDS') {
+	  # Is it a query
+	  # wquery/genelist.def:Tag Locus_genomic_seq
+	  # wquery/new_wormpep.def:Tag Locus_genomic_seq
+	  # wquery/wormpep.table.def:Tag Locus_genomic_seq
+	  # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
+	  
+	  # Fetch the interpolated map position if it exists...
+	  # if (my $m = $obj->get('Interpolated_map_position')) {
+	  if (my $m = eval {$obj->get('Interpolated_map_position') }) {
+	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
+	      ($chromosome,$position) = $m->right->row;
+	      return ($chromosome,$position) if $chromosome;
+	  } elsif (my $l = $obj->Gene) {
+	      return $self->GetInterpolatedPosition($l);
+	  }
+      } elsif ($obj->class eq 'Sequence') {
+	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
+	  my $chromosome = $obj->get(Interpolated_map_position=>1);
+	  my $position   = $obj->get(Interpolated_map_position=>2);
+	  return ($chromosome,$position) if $chromosome;
+      } else {
+	  $chromosome = $obj->get(Map=>1);
+	  $position   = $obj->get(Map=>3);
+	  return ($chromosome,$position) if $chromosome;
+	  if (my $m = $obj->get('Interpolated_map_position')) {	     
+	      my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row unless $position;
+	      ($chromosome,$position) = $m->right->row unless $position;
+	      return ($chromosome,$position) if $chromosome;
+	  }
+      }
+  }
+  return;
+}
 # Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
 
 
@@ -223,6 +298,9 @@ sub taxonomy {
     return $data;
 }
 
+sub species {
+    return eval {shift ~~ 'Species'} ;
+}
 
 sub parsed_species {
   my ($self) = @_;
