@@ -19,7 +19,9 @@
   [% c.stash.fields.species.data %]
 [% END %]
 [% WRAPPER "boilerplate/field" title="Homology Groups" %]
-  [% c.stash.fields.homology_groups.data.join('<br>') %]
+  [% FOREACH obj IN c.stash.fields.homology_groups.data %]
+    <a href="[% c.uri_for_action('report', 'homology_group' , obj ) %]">[% obj %] </a><br>
+  [% END %]
 [% END %]
 [% WRAPPER "boilerplate/field" title="Genes" %]
   [% FOREACH obj IN c.stash.fields.genes.data %]
