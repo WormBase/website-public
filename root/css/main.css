@@ -1,6 +1,7 @@
 body {
-    padding: 10px;
-    padding-top:5px;
+    padding: 15px;
+    margin-left:10%;
+    margin-right:5%;
     font-family: Helvetica, sans-serif;
     background-color: white;
 }
@@ -101,18 +102,19 @@ div#page .byline {
 }
 
 
-<<<<<<< local
+
 /* A list of available views */
 div#page #available-views {
     float:right;
     color:black;
     font-size:0.7em;
-=======
+}
+
+/*
 #front-menu, #login-menu {
 	margin: 0;
 	padding:0;
-
-	}
+}
 
 #front-menu ul, #login-menu ul {
 	margin:0;
@@ -161,6 +163,7 @@ div#page #available-views {
     border: 1px solid #0099d4;  
 }  
 
+*/
 
 /* ************************************
      Footer Styling                       

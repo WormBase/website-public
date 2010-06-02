@@ -2,6 +2,8 @@ package WormBase::API::Object::Variation;
 
 use Moose;
 use Bio::Graphics::Browser::Markup;
+# I shouldn't need to use CGI here.
+use CGI qw/:standard :html3/;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -363,10 +365,15 @@ sub genetic_position {
     my ($start,$stop) = ($position-0.5,$position+0.5);
     my $gb_url = 
 	$position
-	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
+	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
 	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-	: a({-href=>Url('pic',"name=$chrom;class=Map")},
+	: a({-href=>"name=$chrom;class=Map"},
 	    $chrom);
+#	$position
+#	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
+#	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
+#	: a({-href=>Url('pic',"name=$chrom;class=Map")},
+#	    $chrom);
     
     my $data = { description => 'the genetic position of the variation (if known)',
 		 data        => { chromosome => $chrom,
