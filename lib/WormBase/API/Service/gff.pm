@@ -8,6 +8,11 @@ has 'dbh' => (
     isa       => 'Bio::DB::GFF',   # Could also be a seq feature store, eh?
     predicate => 'has_dbh',
     writer    => 'set_dbh',
+    handles => [qw/segment search_notes fetch_group /],
+#      handels => sub { my ($self,$meta) = @_; $self->dbh; return map  { $_->name }  # NOTE: !never! delegate &meta
+#                grep { $_->package_name ne 'Moose::Object' && $_->name ne 'meta' }
+#                     $meta->get_all_methods;
+# }
     );
 
 
