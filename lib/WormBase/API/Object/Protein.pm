@@ -48,9 +48,11 @@ has 'cds' => (
 
 sub name {
     my $self = shift;
-    my $ace  = $self->object;
-#    $self->log->debug("here we are " . $self->ace_object);
-    return $ace->name;
+    my $data = { description => 'The object name of the protein',
+		 data        =>  $self ~~ 'name',
+    };
+    return $data;
+
 }
 
 sub common_name {

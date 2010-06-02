@@ -43,9 +43,6 @@ END;
 
 [% IF view=="sidebar" %]
 
-
-
-
 [% # Sections/accordion view, loaded onClick %]
 [% ELSIF view=="sections" %]
    <div id="tabs">
@@ -96,12 +93,15 @@ END;
 
 [% # All widgets on one page, loaded by ajax %]
 [% ELSIF view=="page" %]
+
      [% FOREACH this_page IN c.config.pages.keys.sort %]
 
          [% # Wow. Stupid hack since pages are a hash not array %]
          [% NEXT IF this_page != class %]
 
          [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+
+
                <div class="widget-section-header">
                    <div class="download-links">
                         Download: 

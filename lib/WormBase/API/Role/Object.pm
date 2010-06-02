@@ -14,7 +14,6 @@ has 'dsn' => (
     required => 1,
     );
 
-
 has 'log' => (
     is => 'ro',
     );
@@ -26,7 +25,7 @@ has 'tmp_base' => (
 
 sub gff_dsn {
     my $self    = shift;
-    my $species = shift;
+    my $species = shift || $self->parsed_species;
     return $self->dsn->{"gff_".$species}; 
 }
 
