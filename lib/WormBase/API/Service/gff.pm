@@ -20,10 +20,11 @@ with 'WormBase::API::Role::Service';
 
 sub BUILD {
     my $self = shift;
-#     $self->symbolic_name("gff");
+    $self->symbolic_name("gff");
     $self->function("get connection to GFF database");
     # record all the info from Conf file $self->conf_dir
-#     $self->hosts([$self->conf->{host}]);
+#     push @hosts ,$self->conf->{mysql_host};
+    $self->hosts([$self->conf->{host}]);
     $self->user($self->conf->{user});
     $self->pass($self->conf->{pass});
 
@@ -37,10 +38,10 @@ sub ping {
 
 sub connect {
     my $self = shift;
-     
+    my ($host)=@_;
     return Bio::DB::GFF->new( -user => $self->user,
 			      -pass => $self->pass,
-			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $self->host,
+			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $host,
     );
 }
 

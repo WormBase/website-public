@@ -1,12 +1,7 @@
-<div id="front-menu">
+<h1>Where To From Here?</h1>
+
 <ul>
-  <li>Home</li>
-  <li><a href="db/gb2/gbrowse/c_elegans">Genome</a></li>
-  <li><a href="db/searches/blast_blat">Blast/Blat</a></li>
-  <li><a href="biomart/martview">WormMart</a></li>
-  <li><a href="db/gene/gmap">Genetic map</a></li>
-  <li><a href="db/curate/submit">Submit</a></li>
-  <li><a href="db/misc/site_map">Site map</a></li>
+    <li><a href="[% c.uri_for('/','debug') %]">Debugging Index</a>
 </ul>
 </div>
 
@@ -34,3 +29,4 @@
   <a href="http://www.wormbase.org/wiki/index.php/WormBaseWiki:Copyrights">copyright </a> |
   <a href="http://www.wormbase.org/wiki/index.php/Acceptable_use_policy#Privacy_statement">privacy</a>
 </div> 
+

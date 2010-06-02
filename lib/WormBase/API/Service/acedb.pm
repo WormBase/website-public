@@ -31,6 +31,7 @@ has 'query_timeout' => (
 
 sub connect {
     my $self = shift;
+    my ($host)=@_;
     my @cache = (-cache => {
 	cache_root => $self->conf->{cache_root},
 	max_size   => $self->conf->{cache_size}
@@ -41,7 +42,7 @@ sub connect {
 		 } 
 	) if $self->conf->{cache_root};
     
-    return Ace->connect(-host => $self->host,
+    return Ace->connect(-host => $host,
 			      -port => $self->port,
 			      -user=>$self->user,
 			      -pass=>$self->pass,
@@ -57,12 +58,12 @@ sub ping {
 
 sub BUILD {
     my $self = shift;
-#     $self->symbolic_name("acedb");
+    $self->symbolic_name("acedb");
     $self->function("get connection to AceDB database");
     # record all the info from Conf file $self->conf_dir
     my @hosts;
 #     push @hosts ,$self->conf->{acedb_host};
-#     $self->hosts([split($self->conf->{host}]);
+    $self->hosts([$self->conf->{host}]);
     $self->port($self->conf->{port});
 
 }
@@ -70,6 +71,7 @@ sub BUILD {
 sub fetch {
   my $self = shift;
   return $self->dbh->fetch(@_);
+
 }
 
 1;

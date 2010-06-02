@@ -2,6 +2,8 @@ package WormBase::API::Object::Variation;
 
 use Moose;
 use Bio::Graphics::Browser::Markup;
+# I shouldn't need to use CGI here.
+use CGI qw/:standard :html3/;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -34,8 +36,8 @@ sub common_name {
 sub cgc_name {
     my $self = shift;
     my $object = $self->object;
-    my $cgc_name = $object->CGC_name;
-    my $data = { description => 'The Caenorhabditis Genetics Center (CGC) name for the gene',
+    my $cgc_name = $object->CGC_name || "unknown";
+    my $data = { description => 'The Caenorhabditis Genetics Center (CGC) name for the variation',
 		 data        => "$cgc_name",
     };
     return $data;
@@ -141,7 +143,7 @@ sub flanking_sequences {
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
     my $data = { description => 'probes used for CGH of deletion alleles',
-		 data        => { left_flank => $left_flank,
+		 data        => { left_flank  => $left_flank,
 				  right_flank => $right_flank,
 		 },
     };
@@ -167,8 +169,6 @@ sub cgh_deleted_probes {
 
 
 # Show the variation in context.
-# This method contains substantive view logic.
-# Oh well, it's still useful.
 sub context {
     my $self   = shift;
     my $object = $self->object;
@@ -181,8 +181,8 @@ sub context {
 				  wildtype_full     => $wt_full,
 				  mutant_fragment   => $mut,
 				  mutant_full       => $mut_full,
-				  wildtype_header   => "> Wild type N2, with $flank bp flanks<br>$wt_full",
-				  mutant_header     => "> $object with $flank bp flanks<br>$mut_full"
+				  wildtype_header   => "> Wild type N2, with $flank bp flanks",
+				  mutant_header     => "> $object with $flank bp flanks"
 		 },
     };
     return $data;
@@ -306,8 +306,12 @@ sub features_affected {
 sub flanking_pcr_products {
     my $self = shift;
     my $object = $self->object;
+
+    my @pcr_products = $object->PCR_product;
+
+
     my $data = { description => 'PCR products that flank the variation',
-		 data        => { $object->PCR_product }
+		 data        => \@pcr_products
     };
     return $data;
 }
@@ -361,10 +365,15 @@ sub genetic_position {
     my ($start,$stop) = ($position-0.5,$position+0.5);
     my $gb_url = 
 	$position
-	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
+	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
 	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-	: a({-href=>Url('pic',"name=$chrom;class=Map")},
+	: a({-href=>"name=$chrom;class=Map"},
 	    $chrom);
+#	$position
+#	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
+#	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
+#	: a({-href=>Url('pic',"name=$chrom;class=Map")},
+#	    $chrom);
     
     my $data = { description => 'the genetic position of the variation (if known)',
 		 data        => { chromosome => $chrom,
@@ -417,7 +426,7 @@ sub genomic_image {
     my $gene    = $object->Gene;
 
     # Fetch a GF handle
-    my $gffdb   = $self->gff_dbh($self->Species);
+    my $gffdb   = $self->gff_dsn($self->Species);
     my $segment = $gffdb->segment(Gene => $gene);
     
     # By default, lets just center the image on the variation itself.
@@ -534,9 +543,9 @@ sub _compile_nucleotide_changes {
 	    $mut_label = 'mutant';
 	}
 	
-	push @variations,{ type           => $type,
-			   wildtype       => $wt,
-			   mutant         => $mut,
+	push @variations,{ type           => "$type",
+			   wildtype       => "$wt",
+			   mutant         => "$mut",
 			   wildtype_label => $wt_label,
 			   mutant_label   => $mut_label,
 	};
@@ -798,8 +807,7 @@ sub _build_sequence_strings {
     #    my $left_length = length($reported_left_flank);
     #    my $right_length = length($reported_right_flank);
     $reported_left_flank = (length $reported_left_flank > 25) ? substr($reported_left_flank,-25,25) :  $reported_left_flank;
-    $reported_right_flank = (length $reported_right_flank > 25) ? substr($reported_right_flank,0,25) :  $reported_right_flank;
-    
+    $reported_right_flank = (length $reported_right_flank > 25) ? substr($reported_right_flank,0,25) :  $reported_right_flank;    
     
     # Create a full length mutant dna string so that I can mark it up.
     my $mut_dna = 
@@ -811,6 +819,7 @@ sub _build_sequence_strings {
     my $wt_full = $self->_do_markup($dna,$mutation_start,$wt_plus,length($reported_left_flank));
     my $mut_full = $self->_do_markup($mut_dna,$mutation_start,$mut_plus,length($reported_right_flank));
     
+    # TO DO: This markup belongs as part of the view, not here.
     # Return the full sequence on the plus strand
     if ($with_markup) {
  	my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
@@ -1028,9 +1037,10 @@ sub _fetch_coords_in_feature {
     # Fetch a GFF segment of the containing feature
     my $containing_segment;
 
-    # TODO: Correct accessor?
-    # TODO: Shouldn't be hard-coded
-    my $gffdb = $self->dbh_gff('c_elegans');
+    my $species = $self->parsed_species;
+    my $gffdb   = $self->gff_dsn($species);
+#    my $gffdb   = $db_obj->dbh;
+
     # Kludge for chromosome    
     if ($tag eq 'Chromosome') {
  	($containing_segment) = $gffdb->segment(-class=>'Sequence',-name=>$entry);

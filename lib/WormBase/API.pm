@@ -46,6 +46,7 @@ has database => (
     lazy_build => 1,
     );
 
+
 has tmp_base => (
     is       => 'rw',
     );
@@ -116,6 +117,7 @@ sub _build__services {
     return \%services;
 } 
 
+
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*
@@ -139,7 +141,6 @@ sub fetch {
 	    $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
 	}
     }
-    
     return WormBase::API::Factory->create($class,
 					      { object   => $object,
 						log => $self->log,
@@ -149,7 +150,6 @@ sub fetch {
     
 }
 
- 
 
 1;
 

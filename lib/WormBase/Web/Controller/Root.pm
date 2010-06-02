@@ -154,9 +154,10 @@ sub widget :Path("/widget") Args(3) {
     
     # Set the name of the widget. This is used 
     # to choose a template and label sections.
-    $c->stash->{widget} = $widget;
-    $c->stash->{class}  = $class;
-    
+    $c->stash->{widget}    = $widget;
+    $c->stash->{class}     = $class;
+        
+
     # Fetch our external model
     my $api = $c->model('WormBaseAPI');
 
@@ -279,6 +280,11 @@ sub report :Path("/reports") Args(2) {
     }
     $c->stash->{class} = $class;
     
+    # For now, a quick hack. A query parameter that let's us
+    # change the reports view from tabs, to sections, to a single page
+    # An optional view type can be passed as a query parameter
+    $c->stash->{view} = $c->request->query_parameters->{view};
+
     # Instantiate our external model directly (see below for alternate)
     my $api = $c->model('WormBaseAPI');
 
