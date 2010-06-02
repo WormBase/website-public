@@ -42,7 +42,7 @@ has 'cds' => (
  
 ############################################################
 #
-# The Indentification widget
+# The Overview widget
 #
 ############################################################
 
@@ -58,7 +58,7 @@ sub name {
 sub common_name {
     my $self = shift;
     my $name = eval { $self->cds->[0]->Gene->CGC_name };
-    my $data = { description => 'The title of the protein',
+    my $data = { description => 'The public name  of the protein',
 		 data        => $name ? uc($name) : $self ~~ 'name',
     };
     return $data;
@@ -84,7 +84,7 @@ sub homology_groups {
 sub genes {
     my $self = shift;
     my %seen;
-    my @genes = grep {!$seen{$_}++} map {$_->Gene||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
+    my @genes = grep {!$seen{$_}++} map {$self->bestname($_->Gene)||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
     my $data = { description => 'The genes or CDS associated with the protein',
 		 data        => \@genes,
     }; 
