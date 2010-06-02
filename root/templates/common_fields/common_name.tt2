@@ -16,8 +16,6 @@
 	       tooltip=common_name.resultset.description
 	       ) -%]
 
-	[% c.stash.fields.common_name.data %]
-        [% c.stash.common_name.data %]
-        [% c.stash.object %]
+	[% common_name.resultset.data %]
         <i>This is the description. It should be a tooltip</i>[% common_name.resultset.description %]
 [% END %]
