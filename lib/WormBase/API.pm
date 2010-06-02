@@ -135,6 +135,9 @@ sub fetch {
 	# Try fetching an object (from the default data source)
 	my $service_instance = $self->_services->{$self->default_datasource}; 
 	$object = $service_instance->fetch(-class=>$class,-name=>$name);
+        if($class eq 'Sequence') {
+	    $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
+	}
     }
     
     return WormBase::API::Factory->create($class,
