@@ -7,109 +7,143 @@
 [%- # Provide a title to root/lib/boilerplate/header -%]
 [%- # META title = "THIS IS A DYNAMICALLY ASSIGNED PAGE TITLE" -%]
 
+
+[% MACRO select_widget_template(widget,class) BLOCK;
+     IF c.config.generic_widgets.$widget;
+              "generic/widget.tt2";
+     ELSIF c.config.common_widgets.$widget;
+              "common_widget/" _ widget _ ".tt2";
+     ELSE;
+              class _ "/" _ widget _ '.tt2';
+     END;
+END;
+%]
+
+
 <div id="page">
+
+<div id="available-views">
+   View as:
+   [% # HARD-CODED! %]   
+   [% SET my_url = join("/","reports",class,$object.object.name,'/?view=') %]
+   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=tabs">tabs</a> |
+   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=sections">sections</a> |
+   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=page">page</a>
+</div>
+
+
+
 <div class="title">
    [% title %]
    [%- IF object -%]
-     [% class %] Report: [%- object.common_name.data -%]
+     <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data -%]</h2>
    [% END %] 
 </div>
 
-[% IF view=="buffered" %]
-    [%- # THIS IS DEPRECATED AND CAN PROBABLY BE DELETED -%]
-	
-  <table border="1">
 
-  [% # Include templates according to the data contained in stash -%]
-  [% # Render some sections by default; These are now all rendered independently -%]
+[% IF view=="sidebar" %]
 
 
-  [% PROCESS "gene/widgets/identification.tt2" %]
-  [% PROCESS "gene/widgets/location.tt2" %]
-  [% PROCESS "gene/widgets/expression.tt2" %]
-  [% PROCESS "gene/widgets/function.tt2" %]
-  [% PROCESS "gene/widgets/gene_ontology.tt2" %]
-  [% PROCESS "gene/widgets/genetics.tt2" %]
-  [% PROCESS "gene/widgets/homology.tt2" %]
-  [% PROCESS "gene/widgets/similarities.tt2" %]
-  [% PROCESS "gene/widgets/reagents.tt2" %]
-
-  </table>
-  </table>
-
-[% ELSIF view=="sidebar" %]
-
-  [% # Include templates according to the data contained in stash -%]
-  [% # Render some sections by default; These are now all rendered independently -%]
-
-  <table border="1">
-
-  <!-- YUI -->
-  <!--
-  <h2>Gene Page Widgets</h2>
-  [%# FOREACH widget IN widgets -%]
-    <div class="widget_title">
-      <a href="[%# widget %]" name="[%# widget %]" 
-	    	onclick="loadSectionYUI(this.name); return false;">[%# widget %]
-      </a>
-    </div>
-    <div id="[%# widget %]_yui">
-    </div>
-  [%# END -%]
-  -->
 
 
-  <!-- JQuery -->
-  <h2>Gene Page Widgets</h2>
-  [% FOREACH widget IN widgets -%]
-    <div class="widget_title">
-	  <a href="[% widget %]" name="[% widget %]" class="generic_link" onclick="loadWidgetJQuery(this.name);">[% widget %]
-	  </a>
-    </div>
-    <div id="widget_content">
-    </div>
-  [% END -%]
+[% # Sections/accordion view, loaded onClick %]
+[% ELSIF view=="sections" %]
+   <div id="tabs">
+      <div class="ui-tabs">
+          <ul class="ui-tabs-nav">
+             [% FOREACH widget IN widgets -%]
+                <li>
+                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
+                           <span>[% widget FILTER ucfirst %]</span>
+                      </a>
+                </li>
+    	     [% END %]
+          </ul>
+       </div>
+   </div>
 
 
-<!-- TABBED VIEW -->
+
+[% # Tabbed View, loaded onClick %]
 [% ELSIF view=="tabs" %]
+   <div id="tabs">
+      <div class="ui-tabs">
+          <ul class="ui-tabs-nav">
+             [% FOREACH widget IN widgets -%]
+                <li>
+                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
+                           <span>[% widget FILTER ucfirst %]</span>
+                      </a>
+                </li>
+    	     [% END %]
+          </ul>
 
-     <div id="ajaxtabs" class="flora">
-        <ul>
-        [% FOREACH widget IN widgets -%]
-	    [% IF widget=="references" %]
-     	       <li>
-		<a href="/references/[% object %]/[% object.class %]" name="[% widget %]" class="generic_link"><span>[% widget %]</span></a></li>
-            [% ELSE %]
- 	       <li>
-		<a href="/[% object_class %]/[% object %]/[% widget %]" name="[% widget %]" class="generic_link"><span>[% widget %]</span></a></li>
-	    [% END %]
-        [% END -%]
-        </ul>
-    </div>
+       </div>
+   </div>
 
-<!-- lazy load tabs - will need to call sections by ajax -->
-[% ELSE %]
+        <div class="download-links">
+               Download: 
+               [% FOREACH type IN c.config.api.content_type %]
+                     <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget) %]" -->
+                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget) %]">[%- type -%]</a>
+                       [% UNLESS loop.last %] | [% END %]       
+               [% END %]
+        </div>
 
 
-<div id="tabs">
-<div class="ui-tabs">
-     <ul class="ui-tabs-nav">
-        [% FOREACH widget IN widgets -%]
-             <li>
-                   <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
-                         <span>[% widget %]</span>
-                   </a>
 
-             </li>
 
-	 [% END %]
-     </ul>
-</div>
-</div>
 
-	     <div id="results"></div>
-	     <a href="" id="loadme">loadme</a>
-	     <div id="results2"></div>
+[% # All widgets on one page, loaded by ajax %]
+[% ELSIF view=="page" %]
+     [% FOREACH this_page IN c.config.pages.keys.sort %]
 
+         [% # Wow. Stupid hack since pages are a hash not array %]
+         [% NEXT IF this_page != class %]
+
+         [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+               <div class="widget-section-header">
+                   <div class="download-links">
+                        Download: 
+                        [% FOREACH type IN c.config.api.content_type %]
+                              <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget) %]" -->
+                                  <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget) %]">[%- type -%]</a>
+                             [% UNLESS loop.last %] | [% END %]
+                        [% END %]
+                   </div>
+
+                   <div class="title">[% widget.title %]</div>
+
+                </div>
+                 
+                    <div class="debug-field-list">
+
+                    <table width="100%">
+                        <tr>
+                           <td>
+                               <p class="[% widget_template_type(widget.name) %]"> 
+
+          	                  <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+		                  <div id="[%- widget.name -%]2"></div>
+                                  <script>
+                                      $("#[%- widget.name -%]2").load("[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]",
+				            function(response, status, xhr) {
+                                                if (status == "error") {
+                                                     var msg = "Sorry but there was an error: ";
+                                                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                                }
+                                      });
+                                  </script>
+    	                       </p>
+                           </td>
+                      </tr>
+              </table>
+          </div>
+      [% END %]
+  [% END %]
 [% END %]
+
+</div>
+
+
+
