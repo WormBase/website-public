@@ -939,6 +939,7 @@ sub _get_evidence {
 		    undef $class;
 		}  
 		$type =~ s/_/ /g;
+		$data{$type}{$evidence}{id} = $evidence; 
 		$data{$type}{$evidence}{label} = $label; 
 		$data{$type}{$evidence}{link} = lc($class) if(defined $class);
 	    }
