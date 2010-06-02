@@ -1,0 +1,98 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+   [% WRAPPER "boilerplate/field" title="Type of Mutation" key="type_of_mutation" %]
+      [% fields.type_of_mutation.data %]
+   [% END %]
+
+   [% # Nucleotide change: one or more possible changes for this allele %]
+   [% WRAPPER "boilerplate/field" title="Nucleotide Change" key="nucleotide_change" %]
+
+       [% FOREACH change IN fields.nucleotide_change.data %]
+
+           [% # Let's only display deletions/insertions < 100 bp %]
+           [% IF change.wildtype.length < 100 %]
+                  [% change.wildtype %]
+           [% ELSE %]      
+                  [% change.wildtype.lenth %] bp deletion
+           [% END %]
+           /
+           [% IF change.mutant.length < 100 %]
+                  [% change.mutant %]
+           [% ELSE %]      
+                  [% change.mutant.length %] bp insertion
+           [% END %]
+           ([% change.wildtype_label %]/[% change.mutant_label %])<br />
+       [% END %]
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Flanking Sequences" key="flanking_sequences" %]
+      <div class="sequence">
+          <span class="inline">
+           5' flank -- [% fields.flanking_sequences.data.left_flank %]  [% fields.flanking_sequences.data.right_flank %] -- 3' flank
+          </span>           
+     </div>
+   [% END %]
+
+   [% IF fields.cgh_deleted_probes.data %]
+       [% WRAPPER "boilerplate/field" title="CGH Deleted Probes" key="CGH Deleted Probes" %]
+          <div class="sequence">
+             <span class="inline">
+              5' flank -- [% fields.flanking_sequences.data.left_flank %]  [% fields.flanking_sequences.data.right_flank %] -- 3' flank
+             </span>           
+          </div>
+       [% END %]
+   [% END %]
+
+
+   [% WRAPPER "boilerplate/field" title="Context" key="context" %]
+      <div class="sequence">
+        <div class="inline">
+            [% fields.context.data.wildtype_fragment %] -- wild type<br>
+            [% fields.context.data.mutant_fragment %] -- mutant
+            <p>Note: sequence is reported on the (+) strand.</p>
+    	    <a class="toggle-sequence-container">View expanded context</a>
+            <div class="sequence-container">
+               <div class="sequence">
+                   [% fields.context.data.wildtype_header %]<br />
+                   [% fields.context.data.wildtype_full %]<br />
+               </div>
+               <div class="sequence">
+                  [% fields.context.data.mutant_header %]<br />
+                  [% fields.context.data.mutant_full %]<br />
+   	       </div>
+            </div>
+        </div>
+     </div>
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Deletion Verification" key="deletion_verification" %]
+      [% fields.deletion_verification.data %]
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Features Affected" key="features_affected" %]
+        <table>
+       [% FOREACH feature_type IN fields.features_affected.data.keys %]
+                [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
+                <tr>
+                   <td>[% feature_type %]</td>   
+                   <td>[% feature %]</td>
+                   <td>[% feature.abs_start %]</td>
+                   <td>[% feature.abs_stop %]</td>
+                   <td>[% feature.fstart %]</td>
+                   <td>[% feature.fstop %]</td>
+                   <td>[% feature.start %]</td>
+                   <td>[% feature.stop %]</td>
+                 </tr>    
+               [% END %]
+       [% END %]   
+     </table>
+   [% END %]
+
+
+
+
+[% END %]

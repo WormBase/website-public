@@ -1,10 +1,6 @@
 package WormBase::API::Role::Service;
 
 use Moose::Role;
-use Fcntl qw(:flock O_RDWR O_CREAT);
-use DB_File::Lock;
-
-use constant INITIAL_DELAY => 600;
 
 # Every service should provide a:
 requires 'dbh';    # a database handel for the service
@@ -13,7 +9,6 @@ requires 'connect';    # a database connection for the service
 has symbolic_name => (
     is => 'rw',
     isa => 'Str',
-    required => 1,
     documentation => 'A simple symbolic name for the service, typically a single word, e.g. "acedb"',
     );
 
@@ -33,12 +28,6 @@ has version => (
     },
     );
 
-has path => (
-    is => 'ro',
-    required => 1,
-    default => '/tmp/',
-    );
-
 has conf => (
     is => 'ro',
     required => 1,
@@ -51,18 +40,7 @@ has log => (
 has 'hosts' => (
     is  => 'rw',
     isa => 'ArrayRef[Str]',
-    lazy => 1,
-    default => sub {
-	my $self = shift;
-	return [split(/\s+|\t/,$self->conf->{host})];
-    }
 #     default => [qw/aceserver.cshl.edu/],
-    );
-
-has 'host' => (
-    is  => 'rw',
-    isa => 'Str',
-    default    => 0,
     );
 
 has 'port' => (
@@ -97,6 +75,7 @@ around 'dbh' => sub {
     
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
     if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
+
       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
@@ -105,6 +84,8 @@ around 'dbh' => sub {
     return $self->reconnect();
      
 };
+
+
 
 sub reconnect {
     my $self = shift;
@@ -120,6 +101,7 @@ sub reconnect {
 	$dbh = eval {$self->connect() };
 	if(defined $dbh && $dbh) {
 	    $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $self->host);
+
 	    # Cache my handle
 	    $self->set_dbh($dbh);
 	    return $dbh;
@@ -131,7 +113,9 @@ sub reconnect {
 	}
     } 
     $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
+
 }
+
 
 sub select_host {
     my ($self,$current)   = shift;
@@ -162,6 +146,8 @@ sub select_host {
     return sort {$host_loads->{$a}<=>$host_loads->{$b}} keys %{$host_loads};
 }
 
+
+
 sub check_cpu_load {
     my ($self,$ua,$host) = @_;
     my $response = $ua->get("http://".$host."/server-status");
@@ -183,20 +169,6 @@ sub mark_down {
     $self->log->info("marking $host down");  
     $dbfile->{$host} = pack('L',time());
 }
-
-sub dbfile {
-    my $self  = shift;
-    my $write = shift;
-
-    my $locking    = $write ? 'write' : 'read';
-    my $mode       = $write ? O_CREAT|O_RDWR : O_RDONLY;
-    my $perms      = 0666;
-    my $path	   = $self->path.'/WormBase_'.$self->symbolic_name;
-    my %h;
-    tie (%h,'DB_File::Lock',$path,$mode,$perms,$DB_HASH,$locking);
-    return \%h;
-}
-
 
 
 1;

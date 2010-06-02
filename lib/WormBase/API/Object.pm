@@ -4,12 +4,6 @@ use Moose;
 use File::Path 'mkpath';
 
 
-use overload '~~' => \&_overload_ace, fallback => 1;
-
-sub _overload_ace {
-    my ($self,$param)=@_;
-    return $self->object->$param;
-} 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
 
