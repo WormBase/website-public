@@ -14,7 +14,7 @@
     %]
 
 [% WRAPPER "boilerplate/field" title="Image" %]
-  <img src= "[% c.config.tmp_img_url %]/[% c.stash.fields.homology_image.data %]" />
+    [% image(c.config.tmp_img_url _'/' _ c.stash.fields.homology_image.data) %]
 [% END %]
 [% WRAPPER "boilerplate/field" title="Motif Summary" %]
   [% data = c.stash.fields.motif_homologies.data %] 
