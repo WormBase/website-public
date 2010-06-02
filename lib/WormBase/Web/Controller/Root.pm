@@ -261,10 +261,16 @@ sub _get_widget_fields {
 ##############################################################
 sub report :Path("/reports") Args(2) {
     my ($self,$c,$class,$name) = @_;
-
+#        $c->response->redirect('http://www.hotmail.com');
+ 
     # Set the name of the widget. This is used 
     # to choose a template and label sections.
 #    $c->stash->{page}  = $class;    # Um. Necessary?
+    unless ($c->config->{pages}->{$class}) {
+	my $link = $c->config->{external_url}->{$class};
+	$c->response->redirect(sprintf($link,split(',',$name)));
+	$c->detach;
+    }
     $c->stash->{class} = $class;
     
     # Instantiate our external model directly (see below for alternate)
