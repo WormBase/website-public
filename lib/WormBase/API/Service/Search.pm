@@ -10,7 +10,7 @@ has 'dbh' => (
 
 sub basic {
   my ($self,$args) = @_;
-  my $class  = $args->{class};
+  my $class     = $args->{class};
   my $pattern   = $args->{pattern};
   my @objs = $self->dbh->fetch(-class=>$class,
 			    -pattern=>$pattern);
@@ -100,8 +100,18 @@ sub gene {
 
 # Search for variataion objects
 sub variation {
-  return;
+    my ($self,$args) = @_;
+    my $query = $args->{pattern};
+    
+    my $DB = $self->dbh;
+    my @vars = $DB->fetch(-class => 'Variation',
+			   -name  => $query);
+      
+    my $result = __PACKAGE__ . "::Result";
+    my @vars = map { $result->new($_)} @vars;
+    return \@vars;
 }
+
 
 no Moose;
 # __PACKAGE__->meta->make_immutable;

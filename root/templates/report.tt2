@@ -27,8 +27,7 @@ END;
    [% # HARD-CODED! %]   
    [% SET my_url = join("/","reports",class,$object.object.name,'/?view=') %]
    <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=tabs">tabs</a> |
-   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=sections">sections</a> |
-   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=page">page</a>
+   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=page">full page</a>
 </div>
 
 
