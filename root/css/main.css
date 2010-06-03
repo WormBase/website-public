@@ -26,12 +26,12 @@ a:hover {
 
 h1,h2,h3,h4,h5,h6 { color:black; }
 
-h1 {  }  /* page title ; should reflect <title> */
-h2 {  }  /* widget or section heading */
-h3 {  }  /*  */
-h4 {  }   /* widget titles */
-h5 {  }   /* field names */
-h6 {  }   /* subfield names */
+h1 { font-size:2em;   }  /* site title */
+h2 { font-size:1.8em; }  /* page title */
+h3 { font-size:1.6em; }  /* page subtitle (if applicable) */  
+h4 { font-size:1.4em; }  /* widget titles */
+h5 { font-size:1.1em; }  /* field names */
+h6 { font-size:1.0em; }  /* subfield names */
 
 p  {
     font-size:0.9em;
