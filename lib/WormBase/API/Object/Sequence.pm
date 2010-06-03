@@ -46,7 +46,8 @@ has 'segments' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my @seg = shift->_get_segments;
+	my $self=shift;
+	my @seg = $self->_get_segments;
 	return \@seg;
     }
 );
@@ -267,7 +268,7 @@ sub genomic_location {
     return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
     my @a;
     for my $segment (@{$self->segments}) {
-      $segment->absolute(1);
+#       $segment->absolute(1);
       my $ref = $segment->ref;
       my $start = $segment->start;
       my $stop  = $segment->stop;
@@ -354,40 +355,14 @@ sub remarks {
     return $data;    
 }
 
-sub analysis {
-    my $self = shift;
-	my %so_data;
-	my $analysis = eval{$self ~~ 'Analysis'};
-	
-	if ($analysis) {
-	
-		$so_data{'Object'} = $analysis;
-		$so_data{'Description'} = $analysis->Description;
-		$so_data{'DB Info'} = $analysis->DB_info;
-		$so_data{'WB Release'} = $analysis->Based_on_WB_Release;
-		$so_data{'DB Release'} = $analysis->Based_on_DB_Release;	
-		$so_data{'Sample'} = $analysis->Sample;
-		$so_data{'Paper'} = $analysis->Reference;
-		$so_data{'Conducted y'} = $analysis->Conducted_by;
-		$so_data{'Url'} = $analysis->URL;
-	} else {
-		return ;
-	}
-
-    my $data = { description => 'The Analysis info of the sequence',
-		 data        => \%so_data,
-    };
-    return $data;    
-}
-
 sub genomic_picture {
     my $self = shift;
     my $seq = $self->object;
-    return unless(defined $self->segment && $self->segment->[0]->length< 100_0000);
-    my $do_rnas = $self->type=~/EST|cDNA/;
+    return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
+ 
     my $source = $self->species;
-    my $segment = $self->segment->[0];
-
+    my $segment = $self->segments->[0];
+    
     my $ref   = $segment->ref;
     my $start = $segment->start;
     my $stop  = $segment->stop;
@@ -420,6 +395,7 @@ sub genomic_picture {
     $new_segment ||= $segments[0];
     $new_segment ||= $segment;
     return unless $segment;
+     
     my $type = $source =~ /elegans/ ? "t=NG;t=CG;t=CDS;t=PG;t=PCR;t=SNP;t=TcI;t=MOS;t=CLO":"";
     my $position = (defined $start)?"$ref:$start..$stop":$ref;
     
@@ -431,6 +407,7 @@ sub genomic_picture {
 				   id	=> $id,
 				},
     };
+     
     return $data;    
 }
 
@@ -534,8 +511,39 @@ sub external_links {
     };
     return $data;    
 }
- 
 
+### to be written...... ####
+#sub print_long_description {
+#
+#}
+
+
+############## this is depricated? ################
+sub analysis {
+    my $self = shift;
+	my %so_data;
+	my $analysis = eval{$self ~~ 'Analysis'};
+	
+	if ($analysis) {
+	
+		$so_data{'Object'} = $analysis;
+		$so_data{'Description'} = $analysis->Description;
+		$so_data{'DB Info'} = $analysis->DB_info;
+		$so_data{'WB Release'} = $analysis->Based_on_WB_Release;
+		$so_data{'DB Release'} = $analysis->Based_on_DB_Release;	
+		$so_data{'Sample'} = $analysis->Sample;
+		$so_data{'Paper'} = $analysis->Reference;
+		$so_data{'Conducted y'} = $analysis->Conducted_by;
+		$so_data{'Url'} = $analysis->URL;
+	} else {
+		return ;
+	}
+
+    my $data = { description => 'The Analysis info of the sequence',
+		 data        => \%so_data,
+    };
+    return $data;    
+}
 ############################################################
 #
 # The DNA sequence widget
@@ -566,6 +574,11 @@ sub is_gap {
     return $self->object =~ /(\b|_)GAP(\b|_)/i;
 }
 
+sub is_merged {
+    my $self = shift;
+    return $self->object =~ /LINK|CHROMOSOME/i;
+}
+
 sub _get_segments {
   my $self    = shift;
   my $object = $self->object;
@@ -582,7 +595,7 @@ sub _get_segments {
 	  }
       }
   }
-  return sort {$b->length<=>$a->length} $GFF->segment($object->class => $object);
+  return  map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $GFF->segment($object->class => $object);
 }
 
 sub find_ac {
