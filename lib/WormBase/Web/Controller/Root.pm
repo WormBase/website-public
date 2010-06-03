@@ -268,7 +268,7 @@ sub report :Path("/reports") Args(2) {
 #    $c->stash->{page}  = $class;    # Um. Necessary?
     unless ($c->config->{pages}->{$class}) {
 	my $link = $c->config->{external_url}->{uc($class)};
-	if($link =~ /\%s/) {
+	if($link =~ /\%s/ ) {
 	  $link=sprintf($link,split(',',$name));
 	}
 	else {
