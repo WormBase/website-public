@@ -33,8 +33,6 @@
 [% END %]
 [% WRAPPER "boilerplate/field" title="Genomic Picture" %]
    [% data= c.stash.fields.genomic_picture.data %]
-   [% link = c.config.external_url.genomic_location _ '/' _ data.label %]
-  [% link %]
       <a href="[% c.config.external_url.genomic_location _ data.id  %]"> [% image(c.config.external_url.gbrowse_image _ data.label) %] 
 [% END %]
  [% END %]
