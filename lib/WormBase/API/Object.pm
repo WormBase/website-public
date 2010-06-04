@@ -8,7 +8,8 @@ use overload '~~' => \&_overload_ace, fallback => 1;
 
 sub _overload_ace {
     my ($self,$param)=@_;
-    return $self->object->$param;
+    if($param =~ s/^@//) {my @results=$self->object->$param; return \@results;}
+    else { return $self->object->$param;}
 } 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
@@ -309,6 +310,23 @@ sub parsed_species {
   my ($species) = $genus_species =~ /.* (.*)/;
   return lc(substr($genus_species,0,1)) . "_$species";
 }
+
+sub FindPosition {
+  my ($self,$seq) = @_;
+  my $db = $self->gff_dsn($seq->Species);
+  my $name  = "$seq";
+  my $class = eval{$seq->class} || 'Sequence';
+  my @s = $db->segment($class=>$name) or return;
+  my @result;
+  foreach (@s) {
+    my $ref = $_->abs_ref;
+    $ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
+    push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
+  }
+  return unless @result;
+  return wantarray ? @{$result[0]} : \@result;
+}
+
 
 # Ugh.  Can't autoload because singular vs plural
 #sub remarks {
