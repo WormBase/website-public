@@ -34,8 +34,7 @@ has 'cds' => (
     lazy => 1,
     default => sub {
 	my $self = shift;
-	my @cds= $self->object->Corresponding_CDS ;
-	return \@cds;
+	return $self ~~ '@Corresponding_CDS';
     }
 );
 
@@ -76,7 +75,7 @@ sub species {
 sub homology_groups {
     my $self = shift;
     my $data = { description => 'The homology groups of the protein',
-		 data        => [$self->object->Homology_group],
+		 data        => $self ~~ '@Homology_group',
     }; 
     return $data;
 }
@@ -117,7 +116,7 @@ sub type {
 sub ortholog_genes {
     my $self = shift;
     my $data = { description => 'The orthology genes of the protein',
-		 data        =>  [$self->object->Ortholog_gene]  ,
+		 data        =>  $self ~~ 'Ortholog_gene'  ,
     }; 
     return $data;
 }
@@ -167,12 +166,10 @@ sub homology_image {
 
 sub motif_homologies {
     my $self = shift;
-    my $obj = $self->object;
     my (%motif);
-    my @homol = $obj->Motif_homol;
     my %hash;
     my @row;
-    foreach (@homol) {
+    foreach (@{$self ~~ '@Motif_homol'}) {
       my $title = $_->Title;
       my ($database,$description,$accession) = $_->Database->row if $_->Database;
       $hash{database}{$_} = $database;
@@ -262,8 +259,7 @@ sub history{
     my $self = shift;
    
     my %history ;
-    my @wormpep_versions = $self->object->History;
-    foreach my $obj (@wormpep_versions) {
+    foreach my $obj (@{$self ~~ '@History'}) {
 	  my ($status,$prediction) = $obj->row(1);
 	  $history{version}{$obj}=$obj;
 	  $history{status}{$obj}=$status;
