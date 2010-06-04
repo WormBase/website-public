@@ -11,6 +11,15 @@ has 'type' => (
     lazy_build => 1,
 );
 
+has 'gff' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	return $self->gff_dsn;
+    }
+);
+
 has 'sequence' => (
     is  => 'ro',
 #     isa => 'Ace::Object',
@@ -37,7 +46,7 @@ has 'genes' => (
     default => sub {
 	my $self = shift;
 	my %seen;
-	my @genes  = grep {!$seen{$_}++} eval { $self->object->Locus };
+	my @genes  = grep {!$seen{$_}++} eval { $self ~~ '@Locus' };
 	return \@genes;
     }
 );
@@ -108,9 +117,8 @@ sub common_name {
 ############################################################
 sub identity {
    my $self = shift;
-   my $object = $self->object;
    my $print = eval{ join(', ', @{$self->genes});};
-   my $iden = $object->Brief_identification ;
+   my $iden = $self ~~ 'Brief_identification' ;
    if($iden) {
     if($print) {
 	$print.=", ".$iden;
@@ -224,7 +232,7 @@ sub briggsae_orthologs {
     my $object = $self->object;
     my @briggsae;
     if ($self->species =~ /briggsae/) {
-	@briggsae = map {$_->[0]} grep {$_->[1] =~ /\Q$object/} $self->gff_dsn->search_notes($object);
+	@briggsae = map {$_->[0]} grep {$_->[1] =~ /\Q$object/} $self->gff->search_notes($object);
     }
     return unless  @briggsae;
     my $data = { description => 'The Briggsae Orthologs of the sequence',
@@ -285,7 +293,7 @@ sub genomic_location {
 
 sub interpolated_genetic_position {
     my $self = shift;
-    return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
+    return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
     my ($chrom,$pos) = $self->GetInterpolatedPosition($self->object);
     
     if ($chrom && $pos) {
@@ -304,7 +312,7 @@ sub interpolated_genetic_position {
 
 sub transcripts {
     my $self = shift;
-    return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
+    return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
     return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
     
     my @transcripts = sort {$b cmp $a } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
@@ -317,7 +325,7 @@ sub transcripts {
 
 sub microarray_assays {
     my $self = shift;
-    return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
+    return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
     return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
     
     my @microarrays = sort {$a cmp $b } map {$_->info} map { $_->features('reagent:Oligo_set') } @{$self->segments} ;
@@ -371,12 +379,11 @@ sub genomic_picture {
     $start = int($start - 0.05*($stop-$start));
     $stop  = int($stop  + 0.05*($stop-$start));
     my @segments;
-    my $GFF = $self->gff_dsn;
     if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
 	my $gene = eval { $seq->Gene;};
 	$gene ||= $seq;
-	@segments = $GFF->segment(-class=>'Coding_transcript',-name=>$gene);
-	@segments      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(CDS => $seq) unless @segments;  # CB discontinuity
+	@segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+	@segments      = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq) unless @segments;  # CB discontinuity
     }
     # In cases where more than one segment is retrieved
     # (ie with EST or OST mappings)
@@ -546,10 +553,132 @@ sub analysis {
 }
 ############################################################
 #
-# The DNA sequence widget
+# The Sequence widget
 #
 ############################################################
+=pod
+sub print_link_parts {
+    my $self = shift;
+    
+    
+    my $data = { description => 'The Analysis info of the sequence',
+		 data        =>  ,
+    };
+    return $data; 
+}
 
+sub print_sequence {
+    my $self = shift;
+    my $s = $self->object;
+
+    my $seq_obj;
+    if ($self->species =~ /briggsae/) {
+      ($seq_obj) = sort {$b->length<=>$a->length}
+	$self->type =~ /^(genomic|confirmed gene|predicted coding sequence)$/i
+	  ? grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(Transcript => $s),
+	    : '';
+    } else {
+      ($seq_obj) = sort {$b->length<=>$a->length}
+	grep {$_->method eq 'full_transcript'} $self->gff->fetch_group(Transcript => $s);
+
+      # BLECH!  If provided with a gene ID and alt splices are present just guess
+      # and fetch the first CDS or Transcript
+      # We really should display a list for all of these.
+      ($seq_obj) ||= sort {$b->length<=>$a->length}
+	grep {$_->method eq 'full_transcript'} $self->gff->fetch_group(Transcript => "$s.a");
+      ($seq_obj) ||= sort {$b->length<=>$a->length}
+	grep {$_->method eq 'full_transcript'} $self->gff->fetch_group(Transcript => "$s.1");
+    }
+    
+    ($seq_obj) ||= $self->gff->fetch_group(Pseudogene => $s) ;
+    # Haven't fetched a GFF segment? Try Ace.
+    if (!$seq_obj || length($seq_obj->dna) < 2) { # miserable broken workaround
+      # try to use acedb
+      if (my $fasta = $s->asDNA) {
+  #      print blockquote(pre($fasta));
+	  print pre($fasta);
+	return (length $fasta);
+      } else {
+	print p("Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3");
+	return;
+      }
+    }
+
+      print_genomic_position($s,$type);
+
+    if (eval { $s->Properties eq 'cDNA'} ){
+      # try to use acedb
+      if (my $fasta = $s->asDNA) {
+	print pre($fasta);
+      }
+      return;
+    }
+
+    my $unspliced = lc $seq_obj->dna;
+    my $length = length($unspliced);
+    if (eval { $s->Coding_pseudogene } || eval {$s->Coding} || eval {$s->Corresponding_CDS}) {
+      my $markup = Bio::Graphics::Browser::Markup->new;
+      $markup->add_style('utr'  => 'FGCOLOR gray');
+      $markup->add_style('cds'  => 'BGCOLOR cyan');
+      $markup->add_style('cds0' => 'BGCOLOR yellow');
+      $markup->add_style('cds1' => 'BGCOLOR orange');
+      $markup->add_style('uc'   => 'UPPERCASE');
+      $markup->add_style('newline' => "\n");
+      $markup->add_style('space'   => ' ');
+      my %seenit;
+
+      my @features;
+      if ($s->Species =~ /briggsae/) {
+	$seq_obj->ref($seq_obj);  # local coordinates
+	@features = sort {$a->start <=> $b->start}
+	  grep { $_->info eq $s && !$seenit{$_->start}++ }
+	    $seq_obj->features('coding_exon:curated','UTR');
+      } else {
+	$seq_obj->ref($seq_obj);  # local coordinates
+	# Is the genefinder specific formatting cruft?
+	@features =
+	  sort {$a->start <=> $b->start}
+	    grep { $_->info eq $s && !$seenit{$_->start}++ }
+	      ($s->Method eq 'Genefinder') ?
+		$seq_obj->features('coding_exon:' . $s->Method,'five_prime_UTR','three_prime_UTR')
+		  :
+		    $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
+      }
+      print_unspliced($markup,$seq_obj,$unspliced,@features);
+      print_spliced($markup,@features);
+      print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+    } else {
+      # Otherwise we've got genomic DNA here
+      if ($length < SEQ_DISPLAY_LIMIT) {
+	print pre(to_fasta($s,$unspliced));
+      } else {
+	my $url = self_url();
+	print blockquote(a({-href=>"$url;details=1;dna=$s",-target=>'_blank'},
+			  img({-src=>'/ico/right_arrow.gif',-border=>0,-align=>'BOTTOM'}),
+			  "Display sequence ($length bp) in a new window."));
+      }
+    }
+    return $length;
+
+    my $data = { description => 'The Analysis info of the sequence',
+		 data        => \%so_data,
+    };
+    return $data; 
+}
+
+sub print_blast {
+
+}
+
+
+sub print_structure {
+
+}
+
+sub print_feature {
+
+}
+=cut
 ############################################################
 #
 # The Map position widget
@@ -583,19 +712,18 @@ sub _get_segments {
   my $self    = shift;
   my $object = $self->object;
   # special case: return the union of 3' and 5' EST if possible
-  my $GFF = $self->gff_dsn;
   if ($self->type =~ /EST/) {
       if ($object =~ /(.+)\.[35]$/) {
 	  my $base = $1;
-	  my ($seg_start) = $GFF->segment(Sequence => "$base.3");
-	  my ($seg_stop)  = $GFF->segment(Sequence => "$base.5");
+	  my ($seg_start) = $self->gff->segment(Sequence => "$base.3");
+	  my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
 	  if ($seg_start && $seg_stop) {
 	      my $union = $seg_start->union($seg_stop);
 	      return $union if $union;
 	  }
       }
   }
-  return  map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $GFF->segment($object->class => $object);
+  return  map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object);
 }
 
 sub find_ac {
@@ -644,5 +772,43 @@ sub find_wormpd {
   return $genes[0] if @genes; # oh well
   return $s;
 }
+=pod
+sub print_genomic_position {
+  my $self = shift;
+  
+  my ($begin,$end,$reference) = FindPosition($self->object);
+  my $ref = $reference;
+  my $positions = FindPosition($self->object);
+  if ($positions) {
+    print b('Genomic Position(s): ');
+    print i('Pending full synteny analysis, use the Similarity listings below to',
+	    'see where C. briggsae maps onto C. elegans.')
+      if $type =~ /briggsae/;
+    print start_ul();
+    foreach (@$positions) {
+      my ($begin,$end,$reference) = @$_;
+      my $ref = $reference;
+      if (my $chroms = Configuration->Chromosome_tables) {
+	my $genomic_table_length = Configuration->Chromosome_table_length;
+	my $subscript = ('a'..'z')[$begin/$genomic_table_length];
+	(my $anchor = $s) =~ s/\..*$//;
+	my $href = "$chroms/$reference$subscript.html#$anchor";
+	$ref = a({-href=>$href},$reference);
+      }
+      print li("$ref: $begin-$end. ",
+	       a({-href=>hunter_url($reference,$begin,$end)},' [Browse map] '),
+	       eval { $s->Coding } ?
+	       a({-href=>Url('aligner',"name=$s;class=CDS"),-target=>"_blank"},' [View EST alignments]')
+	       : ''
+	      );
+    } # end foreach
+    print end_ul();
+  } else {
+    print b(a({-href=>"/db/gb2/gbrowse?name=$s"},'[Search for this Sequence on Genome]'));
+  }
+   
+}
+=cut
+
 
 1;
