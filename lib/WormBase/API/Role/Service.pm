@@ -134,7 +134,7 @@ sub reconnect {
 }
 
 sub select_host {
-    my ($self,$current)   = shift;
+    my ($self,$current)   = @_;
     my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>30 );
     # if the current connected host is not too busy then continue using it
     # number 40 is arbitrary and needs to be adjusted in future!
