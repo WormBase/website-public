@@ -291,7 +291,8 @@ sub genomic_location {
       my $stop  = $segment->stop;
       next unless abs($stop-$start) > 0;
       my $url = $self->hunter_url($ref,$start,$stop);
-      push @a,$url;
+      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, link=>'genomic_location' };
+      push @a, $hash ;
     }
     return unless @a;
     my $data = { description => 'The Genomic Location of the sequence',
@@ -415,8 +416,8 @@ sub genomic_picture {
     my $type = $source =~ /elegans/ ? "t=NG;t=CG;t=CDS;t=PG;t=PCR;t=SNP;t=TcI;t=MOS;t=CLO":"";
     my $position = (defined $start)?"$ref:$start..$stop":$ref;
     
-    my $link_gb=$self->parsed_species."/?name=$position;$type;width=700";
-    my $id=$self->parsed_species."/?name=$position";
+    my $link_gb=$self->parsed_species."?name=$position;$type;width=700";
+    my $id="name=$position;source=".$self->parsed_species;
     my $data = { description => 'The Inline Image of the sequence',
 		 data        => {  link => 'genomic_location',
 				   label => $link_gb,
@@ -575,6 +576,18 @@ sub print_link_parts {
     };
     return $data; 
 }
+sub print_blast {
+    my $self = shift;
+    my @target = ('Elegans genome');
+    push @target,"WormPep" if( $self ~~ 'Coding');
+    my $data = { description => 'The Analysis info of the sequence',
+		 data        =>  {
+					source => $self ~~ 'name',
+					target => \@target,
+				  },
+    };
+    return $data; 
+}
 
 sub print_sequence {
     my $self = shift;
@@ -675,9 +688,7 @@ sub print_sequence {
     return $data; 
 }
 
-sub print_blast {
 
-}
 
 
 sub print_structure {
