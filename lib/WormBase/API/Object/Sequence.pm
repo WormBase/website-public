@@ -691,12 +691,192 @@ sub print_sequence {
 
 
 
-sub print_structure {
+sub print_homologies {
+    my $self = shift;
+    my $seq = $self->object;
+    
+    # Restructuring into the ?CDS class partially kills this query
+    # Transcripts are not sequence features any more...
+    my $gff = $self->ace_dsn->raw_query("gif seqget $seq -coords 1 ".$self->length." ; seqfeatures")
+      if $self->length > 0;
+    return unless $gff;
+
+    my ($origin,$extent,%HITS);
+    foreach (split("\n",$gff)) {
+      next if m!^//!;  # ignore comments
+	next if m!^\0!;  # ignore ACEDB noise/grunge
+      if (/^\#\#sequence-region \S+ (\d+) (\d+)/) {
+	($origin,$extent) = ($1,$2);
+	next;
+      }
+      next if /^\#/;
+      my ($junk,$description,$type,@data) = split("\t");  # parse
+      # This might be broken with WS121 restructuring
+      next unless $type eq 'similarity';
+      push @{$HITS{$description}},\@data;
+    }
+   
+    my (%hit_objs);
+    my ($dnas,$proteins);  # jalview flags
+    my @rows;
+    for my $type (sort keys %HITS) {
+      my $label = $type=~ /hmmfs/ ? 'Motif' : $type;
+      # without stepping through whole array, figure out whether
+      # we have any protein or DNA alignments to display.
+      my ($class) = $HITS{$type}->[0]->[$#{$HITS{$type}->[0]}] =~ /^([^:]+)/;
+      $dnas++      if $class eq 'Sequence';
+      $proteins++  if $class eq 'Protein';
+ 
+      for my $hit (sort {$a->[0] <=> $b->[0] } @{$HITS{$type}}) {
+	my ($s_start,$s_end,$score,$strand,$frame,$packed_stuff) = @$hit;
+	my (undef,$xref,$t_start,$t_end) = split(/\s+/,$packed_stuff);
+
+	# obscure feature in gff 1a format: the name of the hit
+	# is preceded by the name of the class and a colon
+	my $class;
+	($class,$xref) = $xref =~ /"([^:]+):(.+)"/;
+	$class ||= 'Homol';
+	$s_start -= ($origin - 1);
+	$s_end   -= ($origin - 1);
+	
+	my ($title);
+	my $obj = $hit_objs{"$class:$xref"} ||= $self->ace_dsn->fetch(-class=>$class,-name=>$xref,-fill=>1);
+	if (ref($obj)) {
+	  $title = $obj->get(Title=>1) ||
+	    $obj->get(DB_remark=>1) ||
+	      $obj->get(Remark=>1);
+	}
+	
+	$title ||= 'Genomic' if $type =~ /brig/i;
+	$title ||= 'EST'     if $type =~ /EST/;
+	$title ||= 'Genomic' if $type =~ /cosmid/i;
+	$title ||= 'Protein' if $type =~ /blastx/i;
+	$title ||= '&nbsp;';
+ 
+	push @rows, {	method => $label,
+			similarity => ref($obj) ?  {label => $obj, id=>$obj, link=>$obj->class}: $obj,
+			type => $title,
+			score => $score,
+			genomic_region => "$s_start&nbsp;-&nbsp;$s_end",
+			hit_region => "$t_start&nbsp;-&nbsp;$t_end",
+			strand => $strand,
+			frame => $frame,
+		      };
+	 
+	 
+      }
+    }
+    my $data = { description => 'The Homology info of the sequence',
+		 data        => \@rows,
+    };
+    return $data; 
 
 }
 
+sub print_cdna {
+    my $self = shift;
+    my @cDNA = $self->object->get('Matching_cDNA');
+    return unless @cDNA;
+    my @array;
+    foreach (@cDNA) {
+      push @array, {   id => $_,
+		      label => $_,
+		      link=>'sequence',
+		    };
+    }
+     my $data = { description => 'The Matching cDNAs  of the sequence',
+		 data        => \@array,
+    };
+    return $data; 
+}
 sub print_feature {
+    my $self = shift;
+    my $s = $self->object;
+    my %hash;
+     
+    # NB: This is not completely functional - it doesn't display cloned, named genes
+    # (The pre-WS116 version didn't either).
+    # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
+    if (my @genes = $s->get('Transcript')) {
+      print h3('Predicted Genes & Transcriptional Units');
+      my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
+      my @rows;
+      foreach (sort {$a->right <=> $b->right} @genes) {
+	my $gene = $data{$_};
+# 	my $href = a({ -href=>Object2URL($gene) },$gene);
+	next unless defined $gene;
+	my $CDS    = $gene->Corresponding_CDS;
 
+	# Fetch the information from the CDS if it exists, else from the transcript
+	my $class = ($CDS) ? $CDS : $gene;
+	my $locus  = eval { $class->Locus };
+	my ($desc) = $class->Brief_identification;
+	($desc)    ||= $class->Remark ;
+	($desc)    ||= $class->DB_remark ;
+	
+	# this sounds like important information - why is it undef'd?
+	#  undef $desc if $desc =~ /possible trans-splice site at \d+/;
+	$desc ||= '&nbsp;';
+	my ($start,$end)=$_->right->row;
+	push @rows, {	start=>$start,
+			end=>$end,
+			name=>{	label => $gene, id=>$gene, link=>$gene->class},
+			gene=>$locus ? {label => $locus, id=>$locus, link=>$locus->class} : '-',
+			predicted_type=>=> $gene || '?',
+			comment=>$desc,
+		      };
+      }
+      $hash{predicted_units}{rows}=\@rows;
+    }
+
+    if (my @exons = $s->get('Source_Exons')) {
+    my ($start,$orientation,$parent) = $self->_get_parent_coords($s);
+    
+    # This is just 1 or -1. Should have better formatting.
+#    print p("orientation is $orientation");  
+      my $index = 1;
+      my $last;
+      my @rows;
+      foreach (@exons) {
+	my ($es,$ee) = $_->row;
+	my $as = $orientation >= 0 ? $start+$es-1 : $start-$es+1;
+	my $ae = $orientation >= 0 ? $start+$ee-1 : $start-$ee+1;
+	my $last = $ee;
+	
+	push @rows, {	no=>$index++,
+			start=>$es,
+			end=>$ee,
+			ref_start=>$as,
+			ref_end=>=> $ae,
+		      }; 
+      }
+      $hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation};
+    }
+
+
+    my @feature = $s->get('Feature');
+    if (@feature) {
+      print h3("Other features");
+     my @rows;
+      for my $f (@feature) {
+	  (my $label = $f) =~ s/(inverted|tandem)/$1 repeat/;
+	  for my $i ($f->col) {
+	    my @fields = $i->row;
+	    push @rows, {	
+				start=>$fields[0],
+				end=>$fields[1],
+				score=>$fields[2],
+				comment=>=> $fields[3],
+		      }; 
+	  }
+	  $hash{features}={ rows=>\@rows, label =>$label};
+      }
+      
+    }
+    my $data = { description => 'The Feature info of the sequence',
+		 data        => \%hash,
+    };
+    return $data; 
 }
 
 ############################################################
@@ -922,6 +1102,31 @@ sub _to_fasta {
     $dna =~ s/^\s+//;
     $dna =~ s/\*$//;
     return "&gt;$name\n$dna";
+}
+
+# get coordinates of parent for exons etc
+sub _get_parent_coords {
+  my ($self,$s) = @_;
+  my ($parent) = $self->sequence;
+  return unless $parent;
+  #  my $subseq = $parent->get('Subsequence');  # prevent automatic dereferencing
+
+  # Escape the sequence name for fetching
+  $s =~ s/\./\\./g;
+  # We may be dealing with transcripts, too.
+  my $se;
+  foreach my $tag (qw/CDS_child Transcript/) {
+      my $subseq = $parent->get($tag);  # prevent automatic dereferencing
+      if ($subseq) {
+	  $se = $subseq->at($s);
+	  if ($se) {
+	      my ($start,$stop) = $se->right->row;
+	      my $orientation = $start <=> $stop;
+	      return ($start,-$orientation,$parent);
+	  }
+      }
+  }
+  return;
 }
 
 1;
