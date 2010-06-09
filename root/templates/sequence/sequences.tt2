@@ -14,9 +14,18 @@
 
 [% WRAPPER "boilerplate/field" title="Genomic Position(s)" %]
      [% FOREACH key IN  c.stash.fields.genomic_location.data %]
-      CHROMOSOME_[% key %] <a href="[% c.uri_for_action('report','genomic_location' ,key ) %]"> [Browse map] </a> 
+      CHROMOSOME_[% key.label %] [% tag2link(key,"[Browse map]") %] 
       [% tag2link(c.stash.fields.print_sequence.data.est) %] <br>
    [% END %]
+[% END %] 
+[% WRAPPER "boilerplate/field" title="Blast" %]
+    [% data= c.stash.fields.print_blast.data %]
+     <form method="post" action= [% c.external_url.blast_blat %] enctype="multipart/form-data">
+	 [% FOREACH key IN  data.target %]
+	<input type="submit" name="autoload" value="Blast [% data.source %] against [% key %]" />
+	[% END %] 
+    </form>
+
 [% END %] 
 [% WRAPPER "boilerplate/field" title="Sequence" %]
   [% IF c.stash.fields.print_sequence.data.dna.defined %]
