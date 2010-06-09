@@ -30,9 +30,13 @@
 #        "<a href=\"$site.class2action.gene.action\">woohoo</a>";
 #   END;   
 
-    MACRO tag2link(data) BLOCK;  
+    MACRO tag2link(data,text) BLOCK;  
       link = '/reports/' _ data.link _ '/' _ data.id ;
-      "<a href=\"$link\">  $data.label </a>";
+      IF text;
+	"<a href=\"$link\">  $text </a>";;
+      ELSE;
+	"<a href=\"$link\">  $data.label </a>";
+      END;
     END; 
 
 # Dynamically select a tempate: custom, common, generic
