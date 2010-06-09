@@ -55,7 +55,7 @@
 [% END %]
 [% WRAPPER "boilerplate/field" title="Genomic Location" %]
    [% FOREACH key IN  c.stash.fields.genomic_location.data %]
-      <a href="[% c.uri_for_action('report','genomic_location' ,key ) %]">[% key %]</a><br>
+      [% tag2link(key) %]<br>
    [% END %]
 [% END %]
 [% WRAPPER "boilerplate/field" title="Interpolated Genetic Position" %]
