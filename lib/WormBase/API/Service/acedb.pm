@@ -8,7 +8,7 @@ has 'dbh' => (
     isa       => 'Ace',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-#     handles   => [qw/fetch/],
+    handles   => [qw/fetch raw_query/],
     );
 
 # Roles to consume.
@@ -67,9 +67,5 @@ sub BUILD {
 
 }
 
-sub fetch {
-  my $self = shift;
-  return $self->dbh->fetch(@_);
-}
 
 1;
