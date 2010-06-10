@@ -30,6 +30,15 @@
 #        "<a href=\"$site.class2action.gene.action\">woohoo</a>";
 #   END;   
 
+    MACRO tag2link(data,text) BLOCK;  
+      link = '/reports/' _ data.link _ '/' _ data.id ;
+      IF text;
+	"<a href=\"$link\">  $text </a>";;
+      ELSE;
+	"<a href=\"$link\">  $data.label </a>";
+      END;
+    END; 
+
 # Dynamically select a tempate: custom, common, generic
 MACRO select_field_template(field,class) BLOCK;
      IF c.config.generic_fields.$field;
@@ -82,7 +91,9 @@ END;
    # image: wrap a src in an image tag using the format plugin
    USE image  = format('<img src="%s" valign="middle" />');
    USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
-
+   
+   USE link = format('<a href="%s" target="_blank">%s</a>');
+   
    # Move to lib/formatting?
    MACRO comment(msg) BLOCK;
       "<!-- " _ msg _ " -->";

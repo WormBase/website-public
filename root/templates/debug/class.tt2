@@ -100,7 +100,7 @@ interface of every available field and widget.
                       [% FOREACH type IN c.config.api.content_type %]
 
     	               <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
-		       <a class="ajax [%- widget -%]" href="[% c.uri_for('/rest','widget',this_page,random_object,widget.name) %]">[%- type -%]</a>
+		       <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',this_page,random_object,widget.name) %]">[%- type -%]</a>
 		       
  		        [% IF type == "html" %]
                               - [% select_widget_template(widget.name,this_page) %]
@@ -109,7 +109,7 @@ interface of every available field and widget.
 		       [% END %]
 
 
-		       <div id="[%- widget -%]" class="returned-data"></div>
+		       <div id="[%- widget.name -%]" class="returned-data"></div>
 		       </p>
 
            </td>

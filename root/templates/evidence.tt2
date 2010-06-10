@@ -1,0 +1,14 @@
+[% FOREACH type IN evidence.keys -%] 
+    [% FOREACH object IN evidence.$type.keys %] 
+	   <br><b>[% type %]</b>:  
+	   [% IF evidence.$type.$object.link.defined %]
+	      [% tag2link(evidence.$type.$object) %]
+	   [% ELSE %]
+	      [% evidence.$type.$object.label%]  
+	   [% END%]
+    [% END %] 
+[% END %] 
+
+
+
+

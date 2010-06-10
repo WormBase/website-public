@@ -1,7 +1,16 @@
 package WormBase::API::Object;
 
 use Moose;
+use File::Path 'mkpath';
 
+
+use overload '~~' => \&_overload_ace, fallback => 1;
+
+sub _overload_ace {
+    my ($self,$param)=@_;
+    if($param =~ s/^@//) {my @results=$self->object->$param; return \@results;}
+    else { return $self->object->$param;}
+} 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
 
@@ -76,7 +85,95 @@ sub object {
 #  return $dbh;
 #}
 
+sub tmp_dir {
+    my $self       = shift;
+    my @sub_dirs = @_;
+    my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
+    mkpath($path,0,0777) unless -d $path;
+    return $path;    
+};
 
+sub tmp_image_dir {
+    my $self  = shift;
+    return $self->tmp_dir('images',@_);
+}
+
+sub bestname {
+  my ($self,$gene) = @_;
+  return unless $gene && $gene->class eq 'Gene';
+  my $name = $gene->Public_name ||
+      $gene->CGC_name || $gene->Molecular_name || eval { $gene->Corresponding_CDS->Corresponding_protein } || $gene;
+  return $name;
+}
+
+sub hunter_url {
+  my ($self,$ref,$start,$stop);
+
+  # can call with three args (ref,start,stop)
+  if (@_ == 4) {
+    ($self,$ref,$start,$stop) = @_;
+  }
+
+  # or with a sequence object
+  else {
+    my ($self,$seq_obj) = @_ or return;
+    $seq_obj->abs(1);
+    $start      = $seq_obj->start;
+    $stop       = $seq_obj->stop;
+    $ref        = $seq_obj->refseq;
+  }
+
+  $ref =~ s/^CHROMOSOME_//;
+  my $length = abs($stop - $start)+1;
+  $start = int($start - 0.05*$length) if $length < 500;
+  $stop  = int($stop  + 0.05*$length) if $length < 500;
+  ($start,$stop) = ($stop,$start) if $start > $stop;
+  $ref .= ":$start..$stop";
+  return $ref;
+}
+
+# get the interpolated position of a sequence on the genetic map
+# returns ($chromosome, $position)
+# position is in genetic map coordinates
+# Lots of cruft here from pre-WS124
+sub GetInterpolatedPosition {
+  my ($self,$obj) = @_;
+  my ($full_name,$chromosome,$position);
+  if ($obj){
+      if ($obj->class eq 'CDS') {
+	  # Is it a query
+	  # wquery/genelist.def:Tag Locus_genomic_seq
+	  # wquery/new_wormpep.def:Tag Locus_genomic_seq
+	  # wquery/wormpep.table.def:Tag Locus_genomic_seq
+	  # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
+	  
+	  # Fetch the interpolated map position if it exists...
+	  # if (my $m = $obj->get('Interpolated_map_position')) {
+	  if (my $m = eval {$obj->get('Interpolated_map_position') }) {
+	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
+	      ($chromosome,$position) = $m->right->row;
+	      return ($chromosome,$position) if $chromosome;
+	  } elsif (my $l = $obj->Gene) {
+	      return $self->GetInterpolatedPosition($l);
+	  }
+      } elsif ($obj->class eq 'Sequence') {
+	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
+	  my $chromosome = $obj->get(Interpolated_map_position=>1);
+	  my $position   = $obj->get(Interpolated_map_position=>2);
+	  return ($chromosome,$position) if $chromosome;
+      } else {
+	  $chromosome = $obj->get(Map=>1);
+	  $position   = $obj->get(Map=>3);
+	  return ($chromosome,$position) if $chromosome;
+	  if (my $m = $obj->get('Interpolated_map_position')) {	     
+	      my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row unless $position;
+	      ($chromosome,$position) = $m->right->row unless $position;
+	      return ($chromosome,$position) if $chromosome;
+	  }
+      }
+  }
+  return;
+}
 # Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
 
 
@@ -202,6 +299,9 @@ sub taxonomy {
     return $data;
 }
 
+sub species {
+    return eval {shift ~~ 'Species'} ;
+}
 
 sub parsed_species {
   my ($self) = @_;
@@ -210,6 +310,23 @@ sub parsed_species {
   my ($species) = $genus_species =~ /.* (.*)/;
   return lc(substr($genus_species,0,1)) . "_$species";
 }
+
+sub FindPosition {
+  my ($self,$seq) = @_;
+  my $db = $self->gff_dsn($seq->Species);
+  my $name  = "$seq";
+  my $class = eval{$seq->class} || 'Sequence';
+  my @s = $db->segment($class=>$name) or return;
+  my @result;
+  foreach (@s) {
+    my $ref = $_->abs_ref;
+    $ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
+    push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
+  }
+  return unless @result;
+  return wantarray ? @{$result[0]} : \@result;
+}
+
 
 # Ugh.  Can't autoload because singular vs plural
 #sub remarks {
@@ -457,20 +574,22 @@ sub best_blastp_matches {
   my ($self,$proteins) = @_;
 
   # current_object might already be a protein. If a gene, it will supply proteins.
-  push @$proteins,$self->object unless @$proteins;
+  $proteins = [$self->object] unless $proteins;
 
   return unless @$proteins;
   my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
-
+  
   my @pep_homol = $biggest->Pep_homol;
   my $length    = $biggest->Peptide(2);
   
-  my @hits;
+  my %hits;
   
   # find the best pep_homol in each category
   my %best;
   return "" unless @pep_homol;
   for my $hit (@pep_homol) {
+        # Ignore mass spec hits
+    next if ($hit =~ /^MSP/);
     next if $hit eq $biggest;         # Ignore self hits
     my ($method,$score) = $hit->row(1) or next;
     
@@ -495,20 +614,21 @@ sub best_blastp_matches {
   # in sorting hash values.  But I can't replicate this outside of a
   # mod_perl environment
   # Adding the +0 forces numeric context
+  my $id=0;
   foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
     my $method = $_;
     my $hit = $best{$_}{hit};
-    
+   
     # Try fetching the species first with the identification
     # then method then the embedded species
     my $species = $self->id2species($hit);
     $species  ||= $self->id2species($method);
-    
+     
     # Not all proteins are populated with the species 
     $species ||= $best{$method}{hit}->Species;
-    $species =~ s/^(\w)\w* /$1. /;
+    $species =~ s/^(\w)\w* /$1. / ;
     my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-    if ($method =~ /worm|briggsae/) {
+    if ($method =~ /worm|briggsae|remanei|japonica|brenneri/) {
       $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
       # Kludge: display a description using the CDS
       if (!$description) {
@@ -519,10 +639,7 @@ sub best_blastp_matches {
       }
     }
     
-    # Ignore mass spec hits
-    next if ($hit =~ /^MSP/);
-    
-    next if ($seen{$species}++);
+#     next if ($seen{$species}++);
     
     if ($hit =~ /(\w+):(.+)/) {
       my $prefix    = $1;
@@ -548,20 +665,35 @@ sub best_blastp_matches {
       # TH: 1/2006 - remanei not yet in the database but blast hits available
       # Generate links to the remanei browser
       # This will not work for mirror sites, of course...
-      if ($species =~ /remanei/) {
-	$accession =~ s/^RP://;
-	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
-	$hit .= qq{<br><i>Note: <b>C. remanei</b> predictions are based on an early assembly of the genome. Predictions subject to possibly dramatic revision pending final assembly. Sequences available on the <a href="ftp://ftp.wormbase.org/pub/wormbase/genomes/remanei">WormBase FTP site</a>.};
-      } else {
-	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
-      }
+#       if ($species =~ /remanei/) {
+# 	$accession =~ s/^RP://;
+# 	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
+# 	$hit .= qq{<br><i>Note: <b>C. remanei</b> predictions are based on an early assembly of the genome. Predictions subject to possibly dramatic revision pending final assembly. Sequences available on the <a href="ftp://ftp.wormbase.org/pub/wormbase/genomes/remanei">WormBase FTP site</a>.};
+#       } else {
+# 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
+#       }
     }
-    
-    push @hits,[$species,$hit,$description,
-		sprintf("%7.3g",10**-$best{$_}{score}),
-		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
+#       $hits{$hit}{species}=$species;
+#       $hits{$hit}{hit}=$hit;
+#       $hits{$hit}{description}=$description;
+#       $hits{$hit}{evalue}=sprintf("%7.3g",10**-$best{$_}{score});
+#       $hits{$hit}{plength}=sprintf("%2.1f",100*($best{$_}{covered})/$length);
+ 	$hits{species}{$id}=$species;
+        $hits{hit}{$id}=$hit;
+        $hits{description}{$id}=$description;
+        $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
+        $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
+	$id++;
+#      push @hits,[$species,$hit,$description,
+#  		sprintf("%7.3g",10**-$best{$_}{score}),
+#  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
-  return \@hits;
+ 
+  my $data = { description => 'Best BLAST Hits from Selected Species',
+		data        => \%hits,
+    }; 
+  return $data;
+  
 }
 
 
@@ -781,6 +913,60 @@ Returns
 
 =cut
 #'
+sub _parse_year {
+    my $date = shift;
+    $date =~ /.*(\d\d\d\d).*/;
+    my $year = $1 || $date;
+    return $year;
+}
+
+sub _get_evidence {
+    my ($self,@nodes,$evidence_type)=@_;
+    my %data;
+    
+    foreach my $node (@nodes) {
+	foreach my $type ($node->col) {
+	    next if ($type eq 'CGC_data_submission') ;
+	     #if only extracting one/more specific evidence types
+	    if(defined $evidence_type) {
+		next unless(grep /^$type$/ , @$evidence_type);
+	    }
+	    #the goal is to deal label and link seperately?
+	    foreach my $evidence ($type->col) {
+		my $label = $evidence;
+		my $class = eval { $evidence->class } ;
+		if ($type eq 'Paper_evidence') {
+		    my @authors    = eval { $evidence->Author };
+		    my $authors    = @authors <= 2 ? (join ' and ',@authors) : "$authors[0] et al.";
+		    my $year       = _parse_year($evidence->Publication_date);
+		    $label = "$authors, $year";
+		} elsif  ($type eq 'Person_evidence' || $type eq 'Curator_confirmed') {
+		    $label = $evidence->Standard_name;
+		} elsif ($type eq 'Accession_evidence') {
+		    my ($database,$accession) = $evidence->row;
+		    if(defined $accession && $accession) {
+			($evidence,$class) = ($accession,$database);
+			 $label = "$database:$accession";
+		    }     
+		} elsif ($type eq 'Protein_id_evidence') {
+		    $class = "Entrezp";
+		} elsif ($type eq 'RNAi_evidence') {
+		    $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
+		} elsif ($type eq 'Date_last_updated') { 
+		    $label =~ s/\s00:00:00//;
+		    undef $class;
+		}  
+		$type =~ s/_/ /g;
+		$data{$type}{$evidence}{id} = $evidence; 
+		$data{$type}{$evidence}{label} = $label; 
+		$data{$type}{$evidence}{link} = lc($class) if(defined $class);
+	    }
+
+	}
+    }
+   return \%data;
+}
+
 
 sub _parse_hash {
   my ($self,$nodes) = @_;

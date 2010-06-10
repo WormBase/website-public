@@ -8,6 +8,11 @@ has 'dbh' => (
     isa       => 'Bio::DB::GFF',   # Could also be a seq feature store, eh?
     predicate => 'has_dbh',
     writer    => 'set_dbh',
+    handles => [qw/segment search_notes fetch_group /],
+#      handels => sub { my ($self,$meta) = @_; $self->dbh; return map  { $_->name }  # NOTE: !never! delegate &meta
+#                grep { $_->package_name ne 'Moose::Object' && $_->name ne 'meta' }
+#                     $meta->get_all_methods;
+# }
     );
 
 
@@ -15,11 +20,10 @@ with 'WormBase::API::Role::Service';
 
 sub BUILD {
     my $self = shift;
-    $self->symbolic_name("gff");
+#     $self->symbolic_name("gff");
     $self->function("get connection to GFF database");
     # record all the info from Conf file $self->conf_dir
-#     push @hosts ,$self->conf->{mysql_host};
-    $self->hosts([$self->conf->{host}]);
+#     $self->hosts([$self->conf->{host}]);
     $self->user($self->conf->{user});
     $self->pass($self->conf->{pass});
 
@@ -33,10 +37,10 @@ sub ping {
 
 sub connect {
     my $self = shift;
-    my ($host)=@_;
+     
     return Bio::DB::GFF->new( -user => $self->user,
 			      -pass => $self->pass,
-			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $host,
+			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $self->host,
     );
 }
 
