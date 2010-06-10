@@ -1,0 +1,61 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+    %]
+
+[% WRAPPER "boilerplate/field" title="Genomic Position(s)" %]
+     [% FOREACH key IN  c.stash.fields.genomic_location.data %]
+      CHROMOSOME_[% key.label %] [% tag2link(key,"[Browse map]") %] 
+      [% tag2link(c.stash.fields.print_sequence.data.est) %] <br>
+   [% END %]
+[% END %] 
+
+[% WRAPPER "boilerplate/field" title="Predicted Exon Structure" %]
+  [% data = c.stash.fields.print_feature.data.exons %]
+  NOTE: Transcript is on ([% data.orientation%]) strand.<br>
+  <table>
+    <tr><th></th><th colspan=2>Relative to Itself</th><th colspan=2>Relative to [%data.parent%]</th></tr>
+    <tr><th>Exon #</th><th>Start</th><th>End</th><th>Start</th><th>End</th></tr>
+     [% FOREACH row IN  data.rows %]
+     <tr align='RIGHT'><td>[% row.no %]</td><td>[% row.start %]</td><td>[% row.end %]</td><td>[% row.ref_start %]</td><td>[% row.ref_end %]</td></tr>
+     [% END %] 
+  </table>
+[% END %] 
+
+[% WRAPPER "boilerplate/field" title="Matching cDNAs" %]
+   [% FOREACH key IN  c.stash.fields.print_cdna.data %]
+      [% tag2link(key) %]<br>
+   [% END %] 
+[% END %] 
+[% WRAPPER "boilerplate/field" title="Blast" %]
+    [% data= c.stash.fields.print_blast.data %]
+     <form method="post" action= [% c.external_url.blast_blat %] enctype="multipart/form-data">
+	 [% FOREACH key IN  data.target %]
+	<input type="submit" name="autoload" value="Blast [% data.source %] against [% key %]" />
+	[% END %] 
+    </form>
+
+[% END %] 
+[% WRAPPER "boilerplate/field" title="Sequence" %]
+  [% IF c.stash.fields.print_sequence.data.dna.defined %]
+      <pre>[% c.stash.fields.print_sequence.data.dna %]
+  [% ELSE %]
+      <table align="right"><tr>
+      <pre>[% c.stash.fields.print_sequence.data.unspliced %]</pre> 
+      <br><pre>[% c.stash.fields.print_sequence.data.spliced %]</pre>
+      <br><pre>[% c.stash.fields.print_sequence.data.protein %]</pre></tr></table>
+
+  [% END %]
+[% END %]
+
+[% END %]
+ 

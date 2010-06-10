@@ -77,7 +77,8 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
 __PACKAGE__->config->{static}->{dirs} = [
     qw|css
        js
-       img       
+       img
+	tmp
       |]; 
 
 __PACKAGE__->config->{static}->{debug} = 1;

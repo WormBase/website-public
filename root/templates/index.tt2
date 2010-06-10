@@ -1,5 +1,32 @@
-<h1>Where To From Here?</h1>
-
+<div id="front-menu">
 <ul>
-    <li><a href="[% c.uri_for('/','debug') %]">Debugging Index</a>
+  <li>Home</li>
+  <li><a href="db/gb2/gbrowse/c_elegans">Genome</a></li>
+  <li><a href="db/searches/blast_blat">Blast/Blat</a></li>
+  <li><a href="biomart/martview">WormMart</a></li>
+  <li><a href="db/gene/gmap">Genetic map</a></li>
+  <li><a href="db/curate/submit">Submit</a></li>
+  <li><a href="db/misc/site_map">Site map</a></li>
+  <li><a href="[% c.uri_for('/','debug') %]">Debugging Index</a></li>
 </ul>
+</div>
+
+
+
+<div id="login-menu">
+<ul>
+  <li><a href="">Sign up</a></li>
+  <li><a href="">Login</a> |</li>
+</ul>
+</div>
+
+
+
+<div id="main">
+  <h1>WormBase</h1>
+  <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search/gene/'+this.query.value;">
+    <input class="text" id="Search" name="query" type="text" value="search..."> 
+    <input id="Search" type="submit" value="Search">
+  </form>
+  <span id="searchMsg"></span>
+</div>

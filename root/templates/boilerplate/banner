@@ -12,7 +12,8 @@
 
        [% # The version of the database that we're running, stored by our view as a constant %]
        Database version: [% constants.acedb_version %]
-
     </p>
+
   </div>
+
 <!-- END boilerplate/banner -->

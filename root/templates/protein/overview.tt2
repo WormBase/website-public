@@ -1,0 +1,54 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+    %]
+
+[% WRAPPER "boilerplate/field" title="Name" %]
+  [% c.stash.fields.name.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Species" %]
+  [% c.stash.fields.species.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Homology Groups" %]
+  [% FOREACH obj IN c.stash.fields.homology_groups.data %]
+    <a href="[% c.uri_for_action('report', 'homology_group' , obj ) %]">[% obj %] </a><br>
+  [% END %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Genes" %]
+  [% FOREACH obj IN c.stash.fields.genes.data %]
+   <a href="[% c.uri_for_action('report', 'gene' , obj ) %]">[% obj %] </a><br>
+  [% END %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Transcripts" %]
+   [% FOREACH obj IN c.stash.fields.transcripts.data %]
+  <a href="[% c.uri_for_action('report', 'sequence' , obj ) %]">[% obj %] </a><br>
+  [% END %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Type" %]
+  [% c.stash.fields.type.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Ortholog Genes" %]
+  [% c.stash.fields.ortholog_genes.data.join('<br>') %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Curation History" %]
+[% data = fields.history.data %]
+   <table  border= 0, width= '100%' >
+   <tr align= 'left'><th>WormPep Version</th><th>Event</th><th>Predicted Gene</th></tr>
+   [% FOREACH obj IN data.version.sort %]
+   <tr><td>[% data.version.$obj %]</td><td>[% data.status.$obj %]</td><td>[% data.prediction.$obj %]</a></td></tr>
+   [% END %]
+   </table>   
+[% END %]
+[% WRAPPER "boilerplate/field" title="Phosphopep Link" %]
+<a href="[% c.uri_for_action('report', 'phosphopep' ,  c.stash.fields.phosphopep_link.data ) %]">Access Phosphorylation Information in Phosphopep</a>
+[% END %]
+[% END %]

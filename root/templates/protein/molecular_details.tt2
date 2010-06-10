@@ -1,0 +1,43 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
+	[% # Users could just to show or hide empty sections...      %]
+    [%# Sections themselves can optionally be composed of subsections 
+    
+    The template names are actually in the stash.  This should be unnecessary...
+
+    %]
+
+[% WRAPPER "boilerplate/field" title="Protein Length" %]
+  [% c.stash.fields.protein_sequence.data.length %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Protein Sequence" %]
+  [% seq = c.stash.fields.protein_sequence.data.seq %]
+  <table width= '100%' >
+  [% FOREACH line IN seq.chunk(80) %]
+     <tr><td><pre>[% line.chunk(10).join(' ') %]</pre></td> </tr>
+  [% END %]
+  </table>
+[% END %]
+[% WRAPPER "boilerplate/field" title="Estimated Molecular Weight" %]
+  [% c.stash.fields.estimated_molecular_weight.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Estimated Isoelectric Point" %]
+  [% c.stash.fields.estimated_isoelectric_point.data %]
+[% END %]
+[% WRAPPER "boilerplate/field" title="Amino Acid Composition" %]
+  [% data = c.stash.fields.amino_acid_composition.data  %]
+  [% keys = data.keys.sort  %]
+  <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>
+  <tr>
+  [% FOREACH key IN keys %]
+  <td>[% data.$key %]</td>
+  [% END %]
+  </tr>
+  </table>
+[% END %]
+[% END %]

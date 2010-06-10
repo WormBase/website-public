@@ -10,14 +10,27 @@
       [% ELSE %]    
          : [% template.title or c.config.site_byline %]      
       [% END %]
-
     </title>
-    
-<script type="text/javascript" src="/js/jquery/jquery-1.3.2.min.js"></script>  
-<script type="text/javascript" src="/js/jquery/jquery-ui-1.7.2.custom.min.js"></script> 
 
+
+
+
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>    
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.1.custom.min.js"></script>
+<!-- script type="text/javascript" src="/js/jquery/plugins/jquery.tools.min.js"></script> -->
+<script type="text/javascript" src="/js/search.js"></script> 
+
+<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link type="text/css" href="/css/main.css" rel="stylesheet" />
+<link href="/css/home.css" rel="stylesheet" type="text/css" />
+
+
+<!--
 <link href="/js/development-bundle/themes/smoothness/ui.theme.css" rel="stylesheet" type="text/css" />  
 <link href="/js/development-bundle/themes/smoothness/ui.tabs.css" rel="stylesheet" type="text/css" />  
+
+-->
+
 
 <script type="text/javascript">
   $(function() {
@@ -27,21 +40,59 @@
 </script>
 
 <script>
+  $(document).ready(function() {  
 
-  $(document).ready(function(){
-  
-  // Load a (specific) field by ajax
+      // Hide all sequence containers. They're ugly.
+   //      $(".sequence-container").hide();
+   //
+   // 
+   //     // Tooltips
+   //     $("a[title]").tooltip({
+   //
+   //  // use div.tooltip as our tooltip
+   //  //  tip: '.tooltip',
+   //
+   //  // use the fade effect instead of the default
+   //  effect: 'fade',
+   //
+   //  // make fadeOutSpeed similar to the browser's default
+   //  fadeOutSpeed: 100,
+   //
+   //  // the time before the tooltip is shown
+   //  predelay: 400,
+   //
+   //  // tweak the position
+   //   position: "bottom right",
+   //   offset: [-50, -80]
+   //  });
+
+
+  // show/hide sequence containers on pages.
+  // Assumes that the link comes BEFORE the container
+  //  $(function(){
+  //      var this = $(this); 
+  //      $(".toggle-sequence-container").click(function() {
+  //           $(this.next()).toggle();
+  //           return false;
+  //        })
+  //    });
+
+
+  // Load a (specific) field or widget dynamically onClick.
   $("a.ajax").click(function() {
+
       var url     = $(this).attr("href");
       var format  = $(this).text();
+//          format  = $(this).text();
   
+
       // Multiple classes specified. Split so I can rejoin.
       var mytitle = $(this).attr("class").split(" ");
       if (format == "yml") {
-      format = "text/x-yaml";
-  }
+          format = "text/x-yaml";
+      }
 
-     $.ajax({
+      $.ajax({
                  type: "GET",
                  url : url,
                  contentType: 'application/x-www-form-urlencoded',
@@ -59,10 +110,47 @@
                         }
 
                        $("#" + mytitle[1] + ".returned-data").append(data);
-                 },
-                 error: function(request,status,error) {
-                       alert(request + " " + status + " " + error + " " + format);
-                  }
+                   },
+                   error: function(request,status,error) {
+                         alert(request + " " + status + " " + error + " " + format);
+                   }
+        });
+  return false;
+  });
+
+
+  // Load a (specific) field or widget dynamically onLoad
+  $("a.ajax").click(function() {
+      var url     = $(this).attr("href");
+      var format  = $(this).text();
+      // Multiple classes specified. Split so I can rejoin.
+      var mytitle = $(this).attr("class").split(" ");
+      if (format == "yml") {
+          format = "text/x-yaml";
+      }
+
+      $.ajax({
+                 type: "GET",
+                 url : url,
+                 contentType: 'application/x-www-form-urlencoded',
+                 dataType: format,
+                 success: function(data){
+                      //  Add some description prior to dumping the content
+                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
+                       $("#" + mytitle[1] + ".returned-data").show();
+                       $("#" + mytitle[1] + ".returned-data").html(content);                         
+
+                        // Embed in <pre> if this is not html
+                        if (format == "html") {
+                        } else { 
+                          data = "<pre>" + data + "</pre>";
+                        }
+
+                       $("#" + mytitle[1] + ".returned-data").append(data);
+                   },
+                   error: function(request,status,error) {
+                         alert(request + " " + status + " " + error + " " + format);
+                   }
         });
   return false;
   });
@@ -72,11 +160,6 @@
 });
 
   </script>
-
-
-
-    <!-- link rel does not work using dynamic path -->
-    <link rel="stylesheet" href="/css/main.css" type="text/css">
   </head>
 
   <body>

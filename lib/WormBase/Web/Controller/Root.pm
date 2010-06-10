@@ -121,7 +121,6 @@ sub field :Path("/field") Args(3) {
 	# Method name needs to be ucfirst.
 	# Tags that are not specifically included in the configuration
 	# are not currently available because they are not actions
-	$c->log->warn("HERE WE ARE!");
 	my $method = ucfirst($field);
 	$c->stash->{$field} = $object->object->$method;
     }
@@ -262,11 +261,30 @@ sub _get_widget_fields {
 ##############################################################
 sub report :Path("/reports") Args(2) {
     my ($self,$c,$class,$name) = @_;
-
+#        $c->response->redirect('http://www.hotmail.com');
+ 
     # Set the name of the widget. This is used 
     # to choose a template and label sections.
 #    $c->stash->{page}  = $class;    # Um. Necessary?
+    unless ($c->config->{pages}->{$class}) {
+	my $link = $c->config->{external_url}->{uc($class)};
+	$link ||= $c->config->{external_url}->{lc($class)};
+	if($link =~ /\%s/) {
+	  $link=sprintf($link,split(',',$name));
+	}
+	else {
+	  $link.=$name;
+	}
+	$c->response->redirect($link);
+	$c->detach;
+    }
     $c->stash->{class} = $class;
+    $c->log->debug($name);
+
+    # For now, a quick hack. A query parameter that let's us
+    # change the reports view from tabs, to sections, to a single page
+    # An optional view type can be passed as a query parameter
+    $c->stash->{view} = $c->request->query_parameters->{view};
     
     # Instantiate our external model directly (see below for alternate)
     my $api = $c->model('WormBaseAPI');
@@ -311,68 +329,6 @@ sub report :Path("/reports") Args(2) {
 
     $c->stash->{widgets} = \@widgets;
 
-
-
-
-
-
-    # Is any of this actually necessary?
-
-    # All of the fields will be called dynamically from the template
-
-=head
-    # This approach means that EVERY widget and EVERY field will be rendered
-    # at once for a report.
-    # This is PROBABLY NOT what I want to settle with
-#     foreach my $widget (@widgets) {
-# 
-# 	my @fields = qw/ids concise_description/;
-#         my @fields = $widget->{fields};
-# 
-# #	print $widget;
-# #	my @fields = @{ $c->config->{pages}->{$class}->{$widget} };
-# 	$c->stash->{fields} = \@fields;
-# 	
-# 	$c->log->debug($widget->{name});	
-# 
-# 	# Call each of the component fields in turn
-# 	# PROBABLY NOT WHAT I WANT TO DO!
-# 	foreach my $field (@fields) {	    
-# 	    # This logic should probably be relocated to the external model.
-# 	    if ($object->can($field)) {
-# 		$c->stash->{$field} = $object->$field;
-# 	    } else {
-# 		# We are trying to call a direct method on an Ace::Object;
-# 		# Method name needs to be ucfirst.
-# 		# Tags that are not specifically included in the configuration
-# 		# are not currently available because they are not actions
-# 		
-# 		my $method = ucfirst($field);
-# 		$c->stash->{$field} = $object->object->$method;
-# 	    }
-# 	    $c->log->debug("Called $field...");
-# 	}
-#     }
-
-=cut
-    
-    # Did we request the widget by ajax?
-    # Supress boilerplate wrapping.
-    #if ( $c->is_ajax() ) {
-#	    $c->stash->{noboiler} = 1;
-#	}
-    
-    # Normally, the template defaults to action name.
-    # However, we have some generic templates. We will
-    # specify the name of the template.  
-    # MOST widgets can use a generic template.
-    
-#     $c->stash->{template} = "report.tt2";
-#     $c->log->debug("assigned template: " .  $c->stash->{template});    
-    
-    # My end action isn't working... 
-#     $c->forward('WormBase::Web::View::TT');
-#     $c->log->debug("end of report method");   
 }
 
 

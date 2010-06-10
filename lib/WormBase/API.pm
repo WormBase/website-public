@@ -5,6 +5,7 @@ use Moose;                       # Moosey goodness
 use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
 use Config::General;
+use WormBase::API::Service::Search;
 
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
@@ -45,6 +46,16 @@ has database => (
     lazy_build => 1,
     );
 
+has tmp_base => (
+    is       => 'rw',
+    );
+
+has search => (
+    is     => 'rw',
+    isa    => 'WormBase::API::Service::Search',
+    lazy_build      => 1,
+    );
+
 # this is here just for the testing script to load database configuration
 # may be removed or changed in furutre! 
 sub _build_database {
@@ -54,7 +65,15 @@ sub _build_database {
 				  -ConfigFile      => "$root/../wormbase.conf",
 				  -InterPolateVars => 1
     );
-    return $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
+    $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
+    return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
+}
+
+# builds a search object with the default datasource
+sub _build_search {
+  my $self = shift;
+  my $service_instance = $self->_services->{$self->default_datasource}; 
+  return WormBase::API::Service::Search->new({ dbh => $service_instance}); 
 }
  
 
@@ -74,6 +93,7 @@ sub _build__services {
     my ($self) = @_;
     my %services;
     for my $dbn (sort keys %{$self->database}) {
+      next if($dbn eq 'tmp');
       my $class = __PACKAGE__ . "::Service::$dbn" ;	
       Class::MOP::load_class($class);
       # Instantiate the service providing it with
@@ -85,6 +105,8 @@ sub _build__services {
 	  my $new = $class->new({	conf => $self->database->{$dbn},
 					log      => $self->log,
 					species	 => $sp,
+					symbolic_name => $dbn,
+					path => $self->database->{tmp},
 				      });
 	  my $type=$sp? $dbn.'_'.$sp:$dbn;
 	  $services{$type} = $new; 
@@ -93,7 +115,6 @@ sub _build__services {
     }
     return \%services;
 } 
-
 
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
@@ -114,17 +135,21 @@ sub fetch {
 	# Try fetching an object (from the default data source)
 	my $service_instance = $self->_services->{$self->default_datasource}; 
 	$object = $service_instance->fetch(-class=>$class,-name=>$name);
+        if($class eq 'Sequence') {
+	    $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
+	}
     }
+    
     return WormBase::API::Factory->create($class,
 					      { object   => $object,
 						log => $self->log,
 						dsn	 => $self->_services,
+						tmp_base  => $self->tmp_base,
 					      });
     
 }
 
-
-
+ 
 
 1;
 
