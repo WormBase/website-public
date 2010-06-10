@@ -39,98 +39,91 @@ sub details {
 }
 
 
-##NB create transgene method:
+sub expr_patterns{
 
-#sub make_link {
-#  my ($object) = shift;
-#  if ($object->class eq 'Expr_pattern') {
-#    my $gene = eval { $object->Gene};
-#    my $bestname = Bestname($gene) if $gene;
-#    my $pattern = substr($object->Pattern,0,75);
-#    $pattern .= '...' if length($object->Pattern) > 75;
-#    my $evidence;
-#    return (ObjectLink($object),ObjectLink($gene,$bestname),$pattern,$evidence);
-#  } elsif ($object->class eq 'GO_term') {
-#    my $term = $object->Term;
-#    my $type = $object->Type;
-#    my $ao_code = $object->right;
-#    my (@evidence) = GetEvidence(-obj=>$ao_code,-dont_link=>1);
-#    my $evidence = join(';',@evidence);
-#    return (ObjectLink($object),$CODES{$type},$term,$evidence);
-#  }
-##### new code for function
-#	elsif ($object->class eq 'Anatomy_function'){
-#		my $phenotype = $object->Phenotype;
-#		my $phenotype_name = $phenotype->Primary_name;
-#		my $gene = eval{$object->Gene;};
-#		if ($gene) {
-#		
-#			my $gene_name = $gene->CGC_name;  ## $gene_name = eval {}; ;
-#			
-#			if(!($gene_name)){
-#				
-#				$gene_name = $gene->Sequence_name;
-#			}
-#			my $gene_url = "../gene/gene?Class=Gene;name=" . $gene;
-#			my $gene_link = a({-href=>$gene_url},$gene_name);
-#			
-#			$phenotype_name =~ s/_/ /g;
-#			my $gene = $object->Gene;
-#			return (b("Gene\: ") . $gene_link,b("Phenotype\: ") . $phenotype_name, b("via Anatomy function\: ") . ObjectLink($object), "");
-#		}
-#		
-#		
-#	}
-#	elsif ($object->class eq 'Expression_cluster'){
-#		my $description = substr($object->Description,0,65);
-#		$description .= '...' if length($object->Description) > 65;
-#		return (ObjectLink($object),$description,"","");
-#	}
-#}
+  my $self = shift;
+  my $object = $self->object;
+  my %data;
+  my $desc = 'notes';
+  my %data_pack;
 
+  #### data pull and packaging
 
-#	SubSection('Transgene' ,Tableize([map{$_->Transgene} grep {/marker/i&& defined $_->Transgene} $term->Expr_pattern],0,10)) if ($term->Expr_pattern) ;
-#  EndSection;
+	my @eps = $object->Expr_pattern;
+		
+		foreach my $expr_pattern (@eps) {
+		
+		my $ep_gene;
+		my $ep_pattern;
+		my $ep_xgene;
+		
+		
+		eval {$ep_gene= $object->Gene};
+		eval {$ep_pattern= $object->Pattern};
+		eval {$ep_xgene= $object->Transgene};
+		
+		
+		my $gene_name = public_name($ep_gene);
+		
+		$data_pack{$expr_pattern} = {
+		
+									'expr_pattern' => $expr_pattern,
+									'gene' => {
+												'ace_id' => $ep_gene,
+												'name' => $gene_name,
+												'class' => 'Gene'
+												},
+									'pattern' => $ep_pattern,
+									'transgene' =>{
+													'xgene_id' => $ep_xgene,
+													'class' => 'Transgene'
+													}
+									};
+	}
 
+  ####
 
-##### tags
-### Expr_pattern GO_term Reference Anatomy_function Anatomy_function_not Expression_cluster
-
-#sub expr_patterns{
-
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
-
-#  #### data pull and packaging
-
-#  ####
-
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+  $data{'data'} = \%data_pack;
+  $data{'description'} = $desc;
+  return \%data;
+}
 
 
 
-#sub go_term {
+sub go_terms {
 
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
+  my $self = shift;
+  my $object = $self->object;
+  my %data;
+  my $desc = 'notes';
+  my %data_pack;
 
-#  #### data pull and packaging
+  #### data pull and packaging
 
-#  ####
+	my @go_terms = $object->GO_term;
+	
+	foreach my $go_term (@go_terms) {
+	
+	my $term = $go_term->Term;
+	my $type = $go_term->Type;
+	my $ao_code = $go_term->right;
+	my $evidence;
+	
+	$data_pack{$go_term} = {
+							'ace_id' => $go_term,
+							'term' => $term,
+							'ao_code' => $ao_code,
+							'class' => 'GO_term',
+							'evidence' => $evidence
+							}
+	};
 
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+  ####
+
+  $data{'data'} = \%data_pack;
+  $data{'description'} = $desc;
+  return \%data;
+}
 
 
 
@@ -153,60 +146,130 @@ sub details {
 
 
 
-#sub anatomy_fn {
+sub anatomy_fn {
 
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
+  my $self = shift;
+  my $object = $self->object;
+  my %data;
+  my $desc = 'notes';
+  my %data_pack;
 
-#  #### data pull and packaging
+	my @anatomy_funtions = $object->Anatomy_function;
+	
+	foreach my $af (@anatomy_funtions) {
+		
+		my $phenotype = $af->Phenotype;
+		my $phenotype_name = $phenotype->Primary_name;
+		my $gene = eval{$af->Gene;};
+		my $gene_name = eval{public_name($gene);};
+		my $af_not;
+	
+		$data_pack{$af} = {
+							'ace_id' => $af,
+							'phenotype' => {
+								 			'phenotype_id' => $phenotype,
+								 			'phenotype_name' => $phenotype_name,
+								 			'class' => 'phenotype'
+											},
+							'gene' => {
+										'gene_id' => $gene,
+										'gene_name' => $gene_name,
+										'class' => 'Gene'
+										},
+							'not' => $af_not
+							};
+	}
 
-#  ####
-
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+	
 
 
+  $data{'data'} = \%data_pack;
+  $data{'description'} = $desc;
+  return \%data;
+}
 
-#sub anatomy_fn_not {
+sub expr_clusters {
 
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
-
-#  #### data pull and packaging
-
-#  ####
-
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+  my $self = shift;
+  my $object = $self->object;
+  my %data;
+  my $desc = 'notes';
+  my %data_pack;
 
 
+	my @expr_clusters = $object->Expression_cluster;
+	
+	foreach my $ec (@expr_clusters) {
+	
+		my $ec_description = $ec->Description;
+	
+		$data_pack{$ec} = {
+		
+						'expr_cluster_id' => $ec,
+						'class' => 'Expression_cluster',
+						'description' => $ec_description
+						}
+	}
 
-#sub expr_cluster {
+  $data{'data'} = \%data_pack;
+  $data{'description'} = $desc;
+  return \%data;
+}
 
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
 
-#  #### data pull and packaging
 
-#  ####
 
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+### copied and pasted, need to get to work in Object.pm
+
+
+sub basic_package {
+
+	my ($self,$data_ar) = @_;
+	my %package;
+	
+	foreach my $object (@$data_ar) {
+				
+				
+				my $class;
+				eval{$class = $object->class;};
+
+				my $common_name = public_name($object,$class);  ## 
+				$package{$object} = 	{
+										'class' => $class,
+										'common_name' => $common_name
+										}	
+	}
+	return \%package;
+}
+
+sub public_name {
+    
+	my ($object,$class) = @_;
+    my $common_name;    
+   
+    if ($class =~ /gene/i) {
+		$common_name = 
+		$object->Public_name
+		|| $object->CGC_name
+		|| $object->Molecular_name
+		|| eval { $object->Corresponding_CDS->Corresponding_protein}
+		|| $object;
+    }
+    elsif ($class =~ /protein/i) {
+    	$common_name = 
+    	$object->Gene_name
+    	|| eval { $object->Corresponding_CDS->Corresponding_protein}
+    	||$object;
+    }
+    else {
+    	$common_name = $object;
+    }
+	
+	my $data = $common_name;
+    return $data;
+
+
+}
 
 
 1;
