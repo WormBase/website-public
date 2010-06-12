@@ -15,28 +15,24 @@
 
 
 
-<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>    
-<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.1.custom.min.js"></script>
-<!-- script type="text/javascript" src="/js/jquery/plugins/jquery.tools.min.js"></script> -->
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>
+<!--<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.1.custom.min.js"></script>-->
+<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>
 <script type="text/javascript" src="/js/search.js"></script> 
 
-<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
+<!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
+<link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
 <link type="text/css" href="/css/main.css" rel="stylesheet" />
 <link href="/css/home.css" rel="stylesheet" type="text/css" />
 
 
-<!--
-<link href="/js/development-bundle/themes/smoothness/ui.theme.css" rel="stylesheet" type="text/css" />  
-<link href="/js/development-bundle/themes/smoothness/ui.tabs.css" rel="stylesheet" type="text/css" />  
-
--->
-
 
 <script type="text/javascript">
+  // Tabs
   $(function() {
   $(".ui-tabs").tabs()
   });
-
 </script>
 
 <script>
@@ -119,41 +115,54 @@
   });
 
 
-  // Load a (specific) field or widget dynamically onLoad
-  $("a.ajax").click(function() {
-      var url     = $(this).attr("href");
-      var format  = $(this).text();
-      // Multiple classes specified. Split so I can rejoin.
-      var mytitle = $(this).attr("class").split(" ");
-      if (format == "yml") {
-          format = "text/x-yaml";
-      }
+//  // Load a (specific) field or widget dynamically onLoad
+//  $("a.ajax").click(function() {
+//      var url     = $(this).attr("href");
+//      var format  = $(this).text();
+//      // Multiple classes specified. Split so I can rejoin.
+//      var mytitle = $(this).attr("class").split(" ");
+//      if (format == "yml") {
+//          format = "text/x-yaml";
+//      }
+//
+//      $.ajax({
+//                 type: "GET",
+//                 url : url,
+//                 contentType: 'application/x-www-form-urlencoded',
+//                 dataType: format,
+//                 success: function(data){
+//                      //  Add some description prior to dumping the content
+//                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
+//                       $("#" + mytitle[1] + ".returned-data").show();
+//                       $("#" + mytitle[1] + ".returned-data").html(content);                         
+//
+//                       // Embed in <pre> if this is not html
+//                        if (format == "html") {
+//                        } else { 
+//                          data = "<pre>" + data + "</pre>";
+//                        }
+//
+//                       $("#" + mytitle[1] + ".returned-data").append(data);
+//                   },
+//                   error: function(request,status,error) {
+//                         alert(request + " " + status + " " + error + " " + format);
+//                   }
+//        });
+//  return false;
+//  });
 
-      $.ajax({
-                 type: "GET",
-                 url : url,
-                 contentType: 'application/x-www-form-urlencoded',
-                 dataType: format,
-                 success: function(data){
-                      //  Add some description prior to dumping the content
-                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
-                       $("#" + mytitle[1] + ".returned-data").show();
-                       $("#" + mytitle[1] + ".returned-data").html(content);                         
 
-                        // Embed in <pre> if this is not html
-                        if (format == "html") {
-                        } else { 
-                          data = "<pre>" + data + "</pre>";
-                        }
 
-                       $("#" + mytitle[1] + ".returned-data").append(data);
-                   },
-                   error: function(request,status,error) {
-                         alert(request + " " + status + " " + error + " " + format);
-                   }
-        });
-  return false;
-  });
+// Our loading animation
+      $('#loadingDiv')
+          .hide()  // hide it initially
+          .ajaxStart(function() {
+           $(this).show();
+      })
+      .ajaxStop(function() {
+          $(this).hide();
+      });
+
 
 
 

@@ -52,7 +52,7 @@ use Catalyst::Log::Log4perl;
 
 our $VERSION      = '0.01';
 our $PERL_VERSION = '5.010000';
-our $CODENAME     = 'Troncones';
+our $CODENAME     = 'Rincon';
 
 # Configure the application.
 # Default application-wide configuration is located in

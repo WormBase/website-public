@@ -7,11 +7,9 @@
     <p>
 
        [% # The current release of the software and its codename %]
-       Release [% c.config.version %] "[% c.config.codename %]"
+       Software version [% c.config.version %] "[% c.config.codename %]"
        <br />
-
-       [% # The version of the database that we're running, stored by our view as a constant %]
-       Database version: [% constants.acedb_version %]
+       Database version [% constants.acedb_version %]
     </p>
 
   </div>
