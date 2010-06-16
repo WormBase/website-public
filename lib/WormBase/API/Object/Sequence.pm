@@ -1054,7 +1054,7 @@ sub _print_unspliced {
     my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
     $markup->markup(\$unspliced,\@markup);
     return {
-	     download => $download,
+	     #download => $download,
 	     header=>"unspliced + UTR - $length bp",
 	     content=>">$name (unspliced + UTR - $length bp)\n".$unspliced,
 	  };
@@ -1086,8 +1086,8 @@ sub _print_spliced {
   my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
   $markup->markup(\$spliced,\@markup);
    
-  return {   download => $download ,
-	     header=>"spliced + UTR - $splen",
+  return {  # download => $download ,
+	     header=>"spliced + UTR - $splen bp",
 	     content=>">$name (spliced + UTR - $splen bp)\n".$spliced,
 	  } if $name;
    
@@ -1109,7 +1109,7 @@ sub _print_protein {
   $markup->markup(\$peptide,\@markup);
   $peptide =~ s/^\s+//;
    
-  return {   download => $download,
+  return {  # download => $download,
 	     header=>"conceptual translation - $plen aa",
 	     content=>">$name (conceptual translation - $plen aa)\n".$peptide,
 	  };
