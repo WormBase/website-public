@@ -41,7 +41,11 @@
 
 <script>
   $(document).ready(function() {  
-
+       $(".toggle").live('click',function() {
+		  //$(this).click(function(){
+		  $(this).toggleClass("active").next().slideToggle("slow");
+		  return false;
+	}); 
       // Hide all sequence containers. They're ugly.
    //      $(".sequence-container").hide();
    //
