@@ -32,6 +32,21 @@ Return a list of all available pages and their URIs
 TODO: This is currently just returning a dummy object
 
 =cut
+sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
+
+sub download_GET {
+    my ($self,$c) = @_;
+     
+     
+    $c->response->header('Content-Type' => 'application/x-apple-diskimage');
+    $c->response->header('Content-Disposition' => 'attachment; filename=testing.dmg');
+    $c->response->header('Content-Description' => 'A test file.'); # Optional line
+#         $c->serve_static_file('root/test.html');
+    $c->response->body($c->req->param("sequence"));
+#      $c->response->body("aa");
+}
+
+
 
 sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
 
