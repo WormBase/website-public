@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
+[% widget = c.stash.widget toggle = 1%]
 [% WRAPPER "boilerplate/widget" -%]
 
     [% # Pull in all sections - each of these should be conditional but under what parameters? %]
@@ -43,18 +43,29 @@
 	<input type="submit" name="autoload" value="Blast [% data.source %] against [% key %]" />
 	[% END %] 
     </form>
-
 [% END %] 
-[% WRAPPER "boilerplate/field" title="Sequence" %]
-  [% IF c.stash.fields.print_sequence.data.dna.defined %]
-      <pre>[% c.stash.fields.print_sequence.data.dna %]
-  [% ELSE %]
-      <table align="right"><tr>
-      <pre>[% c.stash.fields.print_sequence.data.unspliced %]</pre> 
-      <br><pre>[% c.stash.fields.print_sequence.data.spliced %]</pre>
-      <br><pre>[% c.stash.fields.print_sequence.data.protein %]</pre></tr></table>
 
+[% WRAPPER "boilerplate/field" title="Sequence" %]
+     [% data= c.stash.fields.print_sequence.data %]
+    [% FOREACH key IN  data.keys.sort %]
+	[% IF data.$key.header.defined %]
+	<div class="sequence-section" >
+               <div class="sequence-download">
+                        <form  action="/rest/download/">
+			  <input type="hidden" name="type" value="[% data.$key.header %]" >
+			  <input type="hidden" name="sequence" value="[% data.$key.download %]" >
+			  <input type="submit" value="download"> 
+		      </form>
+               </div>
+               <div class="toggle">[% data.$key.header %]</div>
+	       <div class="sequence-container" >
+		  <pre>[% data.$key.content %]</pre>
+	       </div>
+        </div>
+    [% END %]
   [% END %]
+  
+
 [% END %]
 
 [% END %]
