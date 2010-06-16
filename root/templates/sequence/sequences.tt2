@@ -51,9 +51,9 @@
 	[% IF data.$key.header.defined %]
 	<div class="sequence-section" >
                <div class="sequence-download">
-                        <form  action="/rest/download/">
-			  <input type="hidden" name="type" value="[% data.$key.header %]" >
-			  <input type="hidden" name="sequence" value="[% data.$key.download %]" >
+                        <form action="/rest/download/">
+			  <input type="hidden" name="type" value="[% data.$key.header %].fa" >
+			  <input type="hidden" name="sequence" value="[% data.$key.content.remove('<span.*?>|</span>') %]" >
 			  <input type="submit" value="download"> 
 		      </form>
                </div>
