@@ -3,7 +3,7 @@
      content;
 
    ELSIF (c.stash.noboiler);
-     debug("Passing page through without wrapping: $template.name");
+     debug("Passing request through without wrapping: $template.name");
      content;
 
    ELSIF (template.name.match('report'));   	 

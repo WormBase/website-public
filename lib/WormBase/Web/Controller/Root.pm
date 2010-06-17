@@ -268,19 +268,18 @@ sub report :Path("/reports") Args(2) {
 #    $c->stash->{page}  = $class;    # Um. Necessary?
     unless ($c->config->{pages}->{$class}) {
 	my $link = $c->config->{external_url}->{uc($class)};
-	$link ||= $c->config->{external_url}->{lc($class)};
-	if($link =~ /\%s/) {
-	  $link=sprintf($link,split(',',$name));
-	}
-	else {
-	  $link.=$name;
+	$link  ||= $c->config->{external_url}->{lc($class)};
+	if ($link =~ /\%s/) {
+	    $link=sprintf($link,split(',',$name));
+	} else {
+	    $link.=$name;
 	}
 	$c->response->redirect($link);
 	$c->detach;
     }
     $c->stash->{class} = $class;
     $c->log->debug($name);
-
+    
     # For now, a quick hack. A query parameter that let's us
     # change the reports view from tabs, to sections, to a single page
     # An optional view type can be passed as a query parameter
@@ -288,23 +287,23 @@ sub report :Path("/reports") Args(2) {
     
     # Instantiate our external model directly (see below for alternate)
     my $api = $c->model('WormBaseAPI');
-
+    
     # TODO
     # I may not want to actually fetch an object.
     # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
-
-
+    
+    
     # I don't think I need to fetch an object.  I just need to return the appropriate page template.
     # Then, each widget will make calls to the rest API.
     my $object = $api->fetch({class=> ucfirst($class),
 			      name => $name}) or die "$!";
-
+    
     # $c->log->debug("Instantiated an external object: " . ref($object));
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-
+    
 =head
-    # To add later:
-    # * multi-results formatting
+	# To add later:
+	# * multi-results formatting
     # * nothing found.
     
     # Fetch the field content and stash it.
@@ -322,13 +321,14 @@ sub report :Path("/reports") Args(2) {
 =cut
 
     # Stash all widgets that comprise this page. We will build pages generically.
+    # This is the default order.
     my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
-    @widgets = map{$_->{name}} @widgets;
 
+    # Return just the symbolic name of the widgets
+    # @widgets = map{$_->{name}} @widgets;
 
-
+    # Or the full widget config
     $c->stash->{widgets} = \@widgets;
-
 }
 
 
