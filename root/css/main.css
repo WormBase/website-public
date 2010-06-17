@@ -4,9 +4,30 @@ body {
     margin-right:5%;
     font-family: Helvetica, sans-serif;
     background-color: white;
+    font-size:75%     /* Set the default font size from browser medium (16px) to 12px */
 }
 
 
+h1,h2,h3,h4,h5,h6 { color:gray; }
+
+h1 { font-size:2em;   }  /* 24px   ; site title */
+h2 { font-size:1.8em; }  /* 21.6px ; page title */
+h3 { font-size:1.6em; }  /* 19.2px ; page subtitle (if applicable) */  
+h4 { font-size:1.4em; }  /* 16.8px ; widget titles */
+h5 { font-size:0.8em; }  /* 13.2px ; field names */
+h6 { font-size:0.8em;    /* 12px; subfield names */
+     font-weight:bold;
+}  
+
+
+/* IE hack: Force tables and input forms to inherit our default size */
+input, select, th, td { font-size:1em; }
+
+
+
+
+
+/* Global Links */
 a:link {
     text-decoration: none; 
     color: #0000FF;
@@ -24,14 +45,9 @@ a:hover {
     border:none;
 }
 
-h1,h2,h3,h4,h5,h6 { color:black; }
 
-h1 { font-size:2em;   }  /* site title */
-h2 { font-size:1.8em; }  /* page title */
-h3 { font-size:1.6em; }  /* page subtitle (if applicable) */  
-h4 { font-size:1.4em; }  /* widget titles */
-h5 { font-size:1.1em; }  /* field names */
-h6 { font-size:1.0em; }  /* subfield names */
+
+
 
 p  {
     font-size:0.9em;
@@ -62,7 +78,6 @@ div#banner {
     color:gray;
     padding:0px;
     margin-left:0px;
-    font-size:0.9em;
 }
 
 #banner .release_date { }
@@ -79,19 +94,11 @@ div#banner {
     padding: 10px 0 10px 0;
 }
 
-div#page .title { 
-    font-size:1.2em;
-}
-
-
-div#page .byline {
-    font-style:italic;
-}
 
 
 
 /* A list of available views */
-div#page #available-views {
+div#content #available-views {
     float:right;
     color:black;
     font-size:0.7em;
@@ -225,6 +232,24 @@ p.debug-view {
 }
 
 
+/*********************************
+
+   Panes - The paned window view
+
+   ********************************* */
+
+div#sidebar {
+   float:left;
+   width:200px;
+}
+
+div#content-pane {
+   float:right;
+   padding:5px;
+}
+
+
+
 
 /*********************************
 
@@ -232,8 +257,8 @@ p.debug-view {
  
    ********************************* */
 div.widget {
-    padding:5px;
-    margin:30px;
+    padding:1px;
+    margin:2px;
 /*    border:1px dotted gray; */
     background-color:seafoam;
 }
@@ -254,12 +279,12 @@ div.widget .title {
 }
 
 /* Links to download widgets in a variety of formats */
-div.download-links {
+div.downloadable-formats {
     float:right;
-    font-size:0.7em;    
+    font-size:0.9em;    
 }
 
-.title h2 {
+.title h3 {
     margin:1px;
 }
 
@@ -292,6 +317,22 @@ div.field .field-content {
     margin-right:10px;
     padding-left:4em;
 }
+
+div.field-title {
+		float:left;
+		text-align:right;
+		width:200px;
+		background-color:blue;
+		height:auto;
+		}
+
+div.field-content {
+/*		  float:right; */
+		  text-align:left;
+		  width:auto;
+		  margin-left:20px;
+}
+		
 
 
 /* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
@@ -569,6 +610,7 @@ table.multi       { padding: 0;
    font-family:courier;
 }
 
+
 .sequence-download {
    float:right;        
 }
@@ -587,4 +629,6 @@ table.multi       { padding: 0;
 }
 .active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
- 
+
+/* Ajax loading animations */
+#loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
