@@ -37,10 +37,11 @@ sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
 sub download_GET {
     my ($self,$c) = @_;
      
-     
-    $c->response->header('Content-Type' => 'application/x-apple-diskimage');
-    $c->response->header('Content-Disposition' => 'attachment; filename=testing.dmg');
-    $c->response->header('Content-Description' => 'A test file.'); # Optional line
+    my $filename=$c->req->param("type");
+    $filename =~ s/\s/_/g;
+    $c->response->header('Content-Type' => 'text/html');
+    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
+#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
 #         $c->serve_static_file('root/test.html');
     $c->response->body($c->req->param("sequence"));
 #      $c->response->body("aa");
