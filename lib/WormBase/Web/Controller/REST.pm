@@ -49,8 +49,11 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
 	my $objs = $api->search->$search({class => $class, pattern => $query});
+	 
 	if(defined $c->req->param("count") ) {
-	    $c->response->body(scalar @$objs);
+	    my $count=0;
+	    $count= scalar @$objs if($objs);
+	    $c->response->body($count);
 	}
 	$c->stash->{'type'} = $type; 
 	$c->stash->{'results'} = $objs;
