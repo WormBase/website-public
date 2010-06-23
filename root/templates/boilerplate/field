@@ -20,7 +20,7 @@
         [% END %]
      </h5>
 
-     <p>
+     <div class="field-content">
         [% content %]
-     </p>
+     </div>
 </div>

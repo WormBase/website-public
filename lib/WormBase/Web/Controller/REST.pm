@@ -32,6 +32,110 @@ Return a list of all available pages and their URIs
 TODO: This is currently just returning a dummy object
 
 =cut
+ 
+sub search_new :Path('/search_new')  :Args(2) {
+    my ($self, $c, $type, $query) = @_;
+     
+    $c->stash->{'query'} = $query;
+    if($type eq 'all') {
+	$c->log->debug(" search all kinds...");
+	$c->stash->{template} = "search/full_list.tt2";
+	$c->stash->{type} =  [keys %{ $c->config->{pages} } ];
+    } else {
+	$c->log->debug("$type search");
+	 
+	my $api = $c->model('WormBaseAPI');
+	my $class =  $c->req->param("class") || 'gene'; #temporary for paper search
+	my $search = $type;
+	$search = "basic" unless  $api->search->meta->has_method($type);
+	my $objs = $api->search->$search({class => $class, pattern => $query});
+	 
+	if(defined $c->req->param("count") ) {
+	    my $count=0;
+	    $count= scalar @$objs if($objs);
+	    $c->response->body($count);
+	}
+	$c->stash->{'type'} = $type; 
+	$c->stash->{'results'} = $objs;
+	$c->stash->{noboiler} =  (defined $c->req->param("inline") ) ? 1:0;
+# 	if($type eq 'paper') {
+	    $c->stash->{template} = "search/single_list.tt2";
+# 	} else {
+# 	     $c->stash->{template} = "search/other_results.tt2";
+# 	}
+    }
+}
+
+ 
+sub search :Path('/rest/search') :Args(2) :ActionClass('REST') {}
+
+sub search_GET {
+    my ($self,$c,$class,$name) = @_; 
+   
+    unless ($c->stash->{object}) {
+	
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
+	
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+					   name => $name}) or die "$!";
+    }
+    my $object = $c->stash->{object};
+
+    # TODO: Load up the data content.
+    # The widget itself could make a series of REST calls for each field
+    
+    foreach my $field (@{$c->config->{pages}->{$class}->{search}->{fields}}) {
+	my $data = $object->$field if  $object->meta->has_method($field);
+	$c->stash->{'fields'}->{$field} = $data;
+    }
+ 
+ 
+    my $uri = $c->uri_for("/rest/search",$class,$name);
+    $c->stash->{type}=$class;
+    $c->stash->{id}=$name;
+    $c->stash->{noboiler} = 1;
+    if($class eq 'paper') {
+	$c->stash->{template} = "search/$class.tt2";
+    } else {
+	$c->stash->{template} = "search/generic.tt2";
+    }
+    $c->forward('WormBase::Web::View::TT');
+
+    $self->status_ok($c, entity => {
+	class   => $class,
+	name    => $name,
+	uri     => "$uri"
+		     }
+	);
+}
+
+
+
+
+
+sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
+
+sub download_GET {
+    my ($self,$c) = @_;
+     
+    my $filename=$c->req->param("type");
+    $filename =~ s/\s/_/g;
+    $c->response->header('Content-Type' => 'text/html');
+    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
+#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
+#         $c->serve_static_file('root/test.html');
+    $c->response->body($c->req->param("sequence"));
+}
+
+
 
 sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
 
@@ -184,7 +288,13 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-    
+    if($widget eq "references") {
+      
+      my $url= $c->uri_for("/search_new/paper/$name",{class=>$class,,inline=>1});
+      $c->response->redirect($url);
+      $c->detach;
+#        $c->detach('/rest/search',['paper',$class,$name]);
+    }
     unless ($c->stash->{object}) {
 	
 	# Fetch our external model

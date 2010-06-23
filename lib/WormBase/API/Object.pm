@@ -914,7 +914,7 @@ Returns
 =cut
 #'
 sub _parse_year {
-    my $date = shift;
+    my ($self,$date) = @_;
     $date =~ /.*(\d\d\d\d).*/;
     my $year = $1 || $date;
     return $year;
@@ -938,7 +938,7 @@ sub _get_evidence {
 		if ($type eq 'Paper_evidence') {
 		    my @authors    = eval { $evidence->Author };
 		    my $authors    = @authors <= 2 ? (join ' and ',@authors) : "$authors[0] et al.";
-		    my $year       = _parse_year($evidence->Publication_date);
+		    my $year       = $self->_parse_year($evidence->Publication_date);
 		    $label = "$authors, $year";
 		} elsif  ($type eq 'Person_evidence' || $type eq 'Curator_confirmed') {
 		    $label = $evidence->Standard_name;
