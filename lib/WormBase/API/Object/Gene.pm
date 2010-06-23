@@ -161,26 +161,7 @@ sub public_name {
 
 }
 
-sub basic_package {
 
-	my ($self,$data_ar) = @_;
-	my %package;
-	
-	foreach my $object (@$data_ar) {
-				
-				
-				my $class;
-				eval{$class = $object->class;};
-
-				my $common_name = $object;  ## public_name(,$class)
-				$package{$object} = {
-										'class' => $class,
-										'common_name' => $common_name
-										}	
-	}
-
-	return \%package;
-}
 
 sub common_name {
 
@@ -865,7 +846,7 @@ sub interactions {
 
 sub gene_ontology {
 
-    my $self     = shift;
+    my $self = shift;
     my $object = $self->object; 
     my %data;
     my %data_pack;
