@@ -3,6 +3,7 @@ package WormBase::API::Service::Search;
 use Moose;
 use WormBase::API::Service::Search::Result;
 
+
 has 'dbh' => (
     is         => 'ro',
     isa        => 'WormBase::API::Service::acedb',
@@ -15,6 +16,46 @@ sub basic {
   my @objs = $self->dbh->fetch(-class=>$class,
 			    -pattern=>$pattern);
   return (\@objs) if @objs;
+}
+# Search for paper objects
+sub paper {
+    my ($self,$args) = @_;
+   
+    my @references = ();
+    my $class = $args->{class};
+    my $name = $args->{pattern};
+   
+    my $DB = $self->dbh;
+      # Keywords are treated specially because of Ace query language
+      # deficiencies (bugs?)
+      my $follow = $class =~ /keyword/i ?
+	'Quoted_in' : ($class =~ /author/i || $class =~ /person/i) ? 'Paper' : 'Reference';
+      @references = $DB->find(-query=>qq{$class IS "$name" ; >$follow},
+			      -fill=>1);
+      @references = grep ($_->class eq 'Paper',@references) if $class =~  /keyword/i;
+    
+    my (%year,%author,%month,%day);
+    foreach (@references) { 
+    my ($yr) = $_->Publication_date; # note array context
+    # some older references encode the publication year in the name
+#     $yr =~ /.*(\d\d\d\d)\s.*/;
+    $yr =~ /(\d\d\d\d)(-(\d\d)(-(\d\d))?)?/;
+    $yr = $1;
+    my $mo = $3;
+    my $day = $5;
+
+    $yr ||= 0;
+    $mo ||= 0;
+    $day ||= 0;
+    $year{$_} = "$yr";
+    $month{$_} = "$mo";
+    $day{$_} = "$day";
+    ($author{$_}) = $_->Author;  # note array context
+  }
+    my @sorted = sort { ($year{$b} <=> $year{$a}) ||  ($month{$b} <=> $month{$a}) ||  ($day{$b} <=> $day{$a}) || ($author{$a} cmp $author{$b})
+		  } @references;
+      return \@sorted;
+
 }
 
 # Search for gene objects
@@ -92,8 +133,8 @@ sub gene {
     $seen{$gene}++;
   }
 
-  my $result = __PACKAGE__ . "::Result";
-  @unique_genes = map { $result->new($_)} @unique_genes;
+#   my $result = __PACKAGE__ . "::Result";
+#   @unique_genes = map { $result->new($_)} @unique_genes;
 
   return (\@unique_genes) if @unique_genes;
 }
