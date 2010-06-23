@@ -1,0 +1,25 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+
+<ul>
+[% FOREACH type IN c.stash.type.list %]
+  
+[% path = "/search_new/" _ type _ "/" _ c.stash.query %]
+
+     <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]">    
+                                  <script>
+                                      $("#[%- type -%]2").load("[% path _ "?count=1" %]",
+				            function(response, status, xhr) {
+                                                if (status == "error") {
+                                                     var msg = "Sorry but there was an error: ";
+                                                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                                } 
+                                      });
+                                  </script>
+				 </a>
+            </li>
+[% END %]
+ </ul>
+
