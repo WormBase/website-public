@@ -581,8 +581,8 @@ table.multi       { padding: 0;
 .toggle {
 	padding: 0px 0 0 30px;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
-	font-size: 1.2em;
-	font-weight: normal;
+/* 	font-size: 1.2em; */
+/* 	font-weight: normal; */
 	 
 }
 .active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
