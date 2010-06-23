@@ -15,7 +15,9 @@ sub basic {
   my $pattern   = $args->{pattern};
   my @objs = $self->dbh->fetch(-class=>$class,
 			    -pattern=>$pattern);
-  return (\@objs) if @objs;
+   
+  return (\@objs)   if @objs;
+   
 }
 # Search for paper objects
 sub paper {
@@ -148,8 +150,8 @@ sub variation {
     my @vars = $DB->fetch(-class => 'Variation',
 			   -name  => $query);
       
-    my $result = __PACKAGE__ . "::Result";
-    my @vars = map { $result->new($_)} @vars;
+#     my $result = __PACKAGE__ . "::Result";
+#     my @vars = map { $result->new($_)} @vars;
     return \@vars;
 }
 
