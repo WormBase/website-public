@@ -1,0 +1,23 @@
+[%#
+   # The search-bar wrapper
+%]
+
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+ 
+
+<div class="search-bar">
+   <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.type.value+'/'+this.query.value ;">
+    <select class="my-select" name="type" >
+        <option id="all" value="all"  >Everything</option>
+	<option id="gene" value="gene">Gene</option>  
+	<option id="variation" value="variation">Variation</option>
+	<option id="protein" value="protein">Protein</option>
+	<option id="sequence" value="sequence">Sequence</option>  
+        <option id="paper" value="paper">Paper</option>
+    </select>
+    <input class="text" id="Search" name="query" type="text" value="[% query %]"> 
+    <input id="Search" type="submit" value="Search">
+  </form>
+</div>
+  [% content %]
