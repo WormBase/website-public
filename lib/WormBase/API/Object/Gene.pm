@@ -4,6 +4,7 @@ use Moose;
 with    'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+
 #### passed test #####
 # common_name 
 # ids
@@ -24,61 +25,33 @@ extends 'WormBase::API::Object';
 # cds
 # microarray_expression_data
 # inparanoid_groups
-
-
-#### rebuilt methods  trouble shooting #####
-
-# genomic_position - need _fetch_sequences
-# strains
 # proteins
-# cloned_by
-# orfeome_project_primers
-# microarray_topology_map_position
-
-
-### on going 
-# snps 
 # alleles
-
-
-### to do ### 
-
-### from id
-
-
-### from location
+# genomic_position 
+# microarray_topology_map_position
 # genetic_position
+# orfeome_project_primers -- check somemore
+# expression_cluster
 
 ### from Function
-# sites_of_action
-# expression_cluster
-# expression
+# anatomy_function
 
-## GO
+
 
 ## Genetics
 # reference_allele
 
-## Homology
-# similarities
-
-## Reagents
-
 ### complex transform
 # gene_models *
-# protein_domains*
 # rnai_phenotypes *
-
-### for implementation in view
-# fourd_expression_movies 
-# anatomic_expression_patterns
+# protein_domain
 
 
 #####################
 
 ### configuration items
 
-my $version = 'WS213';	
+my $version = 'WS215';	
 #my $version = $self->ace_dsn->dbh->version;
 
 
@@ -132,6 +105,7 @@ sub template {
 # The Overview (formerly Identification) Panel
 #######################################################
 
+
 sub public_name {
     
 	my ($self,$object,$class) = @_;
@@ -161,8 +135,6 @@ sub public_name {
 
 }
 
-
-
 sub common_name {
 
 	my %data;
@@ -178,12 +150,13 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $cm_text;
     
+    $data_pack{$object} = $common_name;
     
     my $desc = 'The most commonly used name of the gene';
     
     
     $data{'description'} = $desc;
-    $data{'data'} = $common_name;
+    $data{'$data'} = \%data_pack;
     
     return \%data;
 }
@@ -232,9 +205,6 @@ sub ids {
     
 }
 
-sub description{
-  return shift->concise_description;
-}
 sub concise_description {
 
     my $self   = shift;
@@ -255,8 +225,8 @@ sub concise_description {
     }
 
     $data{'description'} = "A manually curated description of the gene's function";
-# 	$data_pack{$object} = $description;
-	$data{'data'} = $description;
+	$data_pack{$object} = $description;
+	$data{'data'} = \%data_pack;
     return \%data;
 }
 
@@ -281,7 +251,7 @@ sub proteins {
 		foreach my $protein (@proteins){
 			
 			my $public_name = $self->public_name($protein, $protein->class);
-			$data_pack{$protein} => {
+			$data_pack{$protein} = {
 									'class' => 'Protein',
 									'common_name' => $public_name
 									};
@@ -289,7 +259,7 @@ sub proteins {
 		
 	####
 
-	$data{'data'} = %data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -317,36 +287,187 @@ sub cds {
 	return \%data;
 }
 
-#sub cds_test {
-#
-#	my $self = shift;
-#    my $object = $self->object;
-#	my %data;
-#	my %data_pack;
-#	
-#	my $desc = '';
-#
-#	#### data pull and packaging
-#
-#	my @cds = $object->Corresponding_CDS;
-#
-#	foreach my $object (@cds) {
-#				
-#				my $class = $object->class;
-#				my $common_name = $object; ##public_name(,$class)
-#				$data_pack{$object} = {
-#										'class' => $class,
-#										'common_name' => $common_name
-#										}	
-#	}
-#
-#	####
-#
-#	$data{'data'} = \%data_pack;
-#	$data{'description'} = $desc;
-#	return \%data;
-#}
 
+
+
+sub gene_models {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+#
+#sub gene_model_table {
+#  # Column order
+#  #  my @order = qw/model status remark nucleotides nucleotides_unspliced protein swissprot structure aa/;
+#  my @order = qw/model status remark nucleotides nucleotides_unspliced protein swissprot aa/;
+#  my %headers = (model => 'Gene Model',
+#		 status => 'Status',
+#		 #####		 remark => 'Remark',
+#		 nucleotides => 'Nucleotides (coding/transcript)',
+#		 protein => 'Protein',
+#		 swissprot => 'Swissprot',
+#		 #		 structure => 'Structure Data',
+#		 aa => 'Amino Acids');
+#  my @rows;
+#  my %headers_seen; # Track the headers that we have seen (keys of %headers)
+#  
+#  my $url = url(-absolute=>1,-query=>1);
+#  # $sequence could potentially be a Transcript, CDS, Pseudogene - but
+#  # I still need to fetch some details from sequence
+#  # Fetch a variety of information about all transcripts / CDS prior to printing
+#  # These will be stored using the following keys (which correspond to column headers)
+#  my $unique_remarks = 0;
+#  my %unique_remarks;
+#  my %footnotes;
+#  foreach my $sequence (sort { $a cmp $b } @$SEQUENCES) {
+#    my %data = ();
+#    my $model = ObjectDisplay('sequence',$sequence,$sequence);
+#    my $gff = fetch_gff_gene($sequence) or next;
+#    my $cds = ($sequence->class eq 'CDS') ? $sequence : eval { $sequence->Corresponding_CDS };
+#
+#    my ($confirm,$remark,$protein,@matching_cdna);
+#    if ($cds) {
+#      $confirm = $cds->Prediction_status; # with or without being confirmed
+#      @matching_cdna = $cds->Matching_cDNA; # with or without matching_cdna
+#      $protein = $cds->Corresponding_protein(-fill=>1);
+#    }
+#
+#    # Fetch all the notes for this given sequence / CDS
+#    my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
+#    foreach (@notes) {
+#      # Assign a number to each unique remark seen (or use that already assigned)
+#	my ($evi) = GetEvidence(-obj => [ $_ ],-dont_link=>1);
+#	my $count = $unique_remarks{$evi};
+#	$count ||= ++$unique_remarks;
+#	$unique_remarks{$evi} = $count;
+#	
+#      # Now track all notes seen for a given CDS.
+#      $footnotes{$model}->{$count}++;
+#    }
+#
+#    if ($confirm eq 'Confirmed') {
+#      $data{status} = "confirmed by " .a({-href=>"#Reagents"}, "cDNA(s)");
+#    } elsif (@matching_cdna && $confirm eq 'Partially_confirmed') {
+#      $data{status} = "partially confirmed by ".a({-href=>"#Reagents"}, "cDNA(s)");
+#    } elsif ($confirm eq 'Partially_confirmed') {
+#	$data{status} = "partially confirmed";
+#    } elsif ($cds && $cds->Method eq 'history') {
+#      $data{status} = 'historical';
+#    } else {
+#      $data{status} = "predicted";
+#    }
+#
+#    my $len_unspliced  = $gff->length;
+#    my $len_spliced = 0;
+#
+#    for ($gff->features('coding_exon')) {
+#
+#	if ($SPECIES =~ /elegans/) {
+#	    next unless $_->source eq 'Coding_transcript';
+#	} else {	    
+#	    next unless $_->method =~ /coding_exon/ && $_->source eq 'Coding_transcript';
+#	}
+#	next unless $_->name eq $sequence;
+#	$len_spliced += $_->length;
+#    }
+#    # Try calculating the spliced length for pseudogenes
+#    if (!$len_spliced) {
+#      my $flag = eval { $GENE->Corresponding_Pseudogene } || $cds;
+#      for ($gff->features('exon:Pseudogene')) {
+#	next unless ($_->name eq $flag);
+#	$len_spliced += $_->length;
+#      }
+#    }
+#    $len_spliced ||= '-';
+#    $data{nucleotides} = a({-href=>"$url;details=1;dna=$sequence",-target=>'_blank'},"$len_spliced/$len_unspliced bp")
+#      if $len_unspliced;
+#
+#    if ($protein) {
+#      warning($protein);
+#      # my $pep   = $protein->asPeptide;
+#      # my $pep = 'abcdefg';
+#      # $pep    =~ s/^>.+//;
+#      # $pep    =~ s/\n//g;
+#      # my $peplen = length $pep;
+#      my $peplen = $protein->Peptide(2);
+#      my $aa   = a({-href=>"$url;details=1;peptide=$protein",-target=>'_blank'},"$peplen aa");
+#      $data{aa} = $aa if $aa;
+#      my $swiss = find_protein_dbs($protein,'trembl');
+#      my $swiss_url = a({-href=>sprintf(Configuration->Trembl,$swiss),-target=>'_blank'},
+#			$swiss) if $swiss;
+#      $data{swissprot} = $swiss_url if $swiss_url;
+#    }
+#    my $protein_desc = select_protein_description($sequence,$protein);
+#    $data{model}  = $model    if $model;
+#    $data{protein} = $protein_desc if $protein_desc;
+#    #####    $data{remark} = $remark    if $remark;
+#
+#    $data{model}  = eval {$footnotes{$model}}
+#      ? "$model " . '<span class="superscript">'
+#	. join(", ",sort {$a <=> $b } keys %{$footnotes{$model}} ) . '</span>' 
+#	: $model
+#	  if $model;
+#
+#    #    my ($protein_id) = $data{protein} =~ /WP:([A-Z0-9]+)/;
+#    #    $data{structure} = get_data($protein_id);
+#    
+#    # Track column headers that have been seen.
+#    # Must be done foreach transcript to prevent empty cells
+#    # from throwing things off.
+#    # (an alternative approach would be to save everything, eliminating empty columns
+#    # by position)
+#
+#    foreach (keys %data) {
+#      $headers_seen{$_}++;
+#    }
+#    push @rows,\%data;
+#  }
+#  
+#  my $table = start_table({-border=>1,-width=>'100%'});
+#  $table .= start_TR({-class=>'datatitle'});
+#  my @headers;
+#  foreach my $column (@order) {
+#    next unless defined $headers_seen{$column};
+#    $table .= th($headers{$column});
+#  }
+#  
+#  $table .= end_TR;
+#
+#  foreach my $data (@rows) {
+#    $table .= start_TR();
+#    foreach my $column (@order) {
+#      next unless defined $headers_seen{$column};
+#      my $val = $data->{$column};
+#      my $align;
+#      if ($column eq 'model' || $column eq 'status' || $column eq 'remark') {
+#	$align = 'left';
+#      } else {
+#	$align = 'center';
+#      }
+#      $table .= td({-align=>$align},$val);
+#    }
+#    $table .= end_TR;
+#  }
+#  $table .= end_table;
+#
+#  return ($table,\%unique_remarks);
+#}
 
 # Fetch Homology Group Objects for this gene.
 # Each is associated with a protein and we should probably
@@ -391,16 +512,26 @@ sub other_sequences {
 	my %data;
 	my $desc = 'Other sequences associated with gene';
 
-	my $data_pack;
+	my %data_pack;
 
 	#### data pull and packaging
 
 	my @seqs = $object->Other_sequence;
-	$data_pack = $self->basic_package(\@seqs);
-
+	
+	foreach my $seq (@seqs) {
+	
+		$data_pack{$seq} = 
+		
+							{
+							'class' => 'Sequence',
+							'ace_id' => $seq
+							};
+	}
+	
+	
 	####
 
-	$data{'data'} = $data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -421,15 +552,16 @@ sub cloned_by {
 	my $name;	
 	my $tag;	
 
+	
 	eval{$cloned_by = $object->Cloned_by;};	
 	eval{($tag,$source) = $cloned_by->row ;};    
-   eval{$name = $cloned_by->Full_name;};
+   	eval{$name = $cloned_by->Full_name;};
    
-    %data_pack  = {'cloned_by' => $cloned_by,
-		 'full_name' => $name,
-		 'tag'       => $tag,
-		 'source'    => $source	    
-    };	
+    %data_pack  = ('cloned_by' => $cloned_by,
+		 			'full_name' => $name,
+		 			'tag' => $tag,
+		 			'source' => $source	    
+    				);	
 
 	####
 
@@ -507,7 +639,7 @@ sub history {
 sub genomic_position {
     my $self      = shift;
     my $object    = $self->object;
-    my $sequences = $self->_fetch_sequences();
+    my $sequences = $self->fetch_sequences();
     
     my %data;
     my %data_pack;
@@ -532,6 +664,36 @@ sub genomic_position {
   	$data{'data'} = \%data_pack;
   	
     return \%data;
+}
+
+
+
+sub genetic_position {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row};
+
+	my %data_pack = (
+					'link_group'=>$link_group,
+					'position' => $position,
+					'error'=>$error
+					);
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
 }
 
 
@@ -589,7 +751,7 @@ sub microarray_topology_map_position {
 
 	#### data pull and packaging
 
-	my $sequences = $self->_fetch_sequences();
+	my $sequences = $self->fetch_sequences();
     my @segments = $self->_fetch_segments($sequences);
     my $seg = $segments[0];
     my @features;
@@ -608,6 +770,116 @@ sub microarray_topology_map_position {
 	return \%data;
 }
 
+sub expression_cluster {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my @expr_clusters = $object->Expression_cluster;
+	
+	foreach my $ec (@expr_clusters) {
+	
+		$data_pack{$ec} = {
+							'class' => 'Expression_cluster',
+							'name' => $ec
+		
+							};
+	
+	}
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub anatomy_function {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my @anatomy_fns = $object->Anatomy_function;
+	
+	foreach my $af (@anatomy_fns) {
+
+    	my $afn_phenotype = $af->Phenotype;
+	    my $phenotype_prime_name = $afn_phenotype->Primary_name;
+	
+		$data_pack{$af} = (
+							'ace_id' => $af,
+							'class' => 'Anatomy_function',
+							'phenotype_id' => $afn_phenotype,
+							'phenotype_name' => $phenotype_prime_name
+		);
+	
+	}
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+#{
+#    my ($gene) = @_;
+#    my @data;
+#    my @anatomy_fns = $gene->
+#    foreach my $anatomy_fn (@anatomy_fns){
+#	my %anatomy_fn_data;
+#	my $afn_bodypart_set = $anatomy_fn->Body_part;
+#	if($afn_bodypart_set =~ m/Not_involved/){
+#	    next;
+#	}
+#	else{
+#	    my $afn_phenotype = $anatomy_fn->Phenotype;
+#	    my $phenotype_prime_name = $afn_phenotype->Primary_name;
+#	    $anatomy_fn_data{'anatomy_fn'} = $anatomy_fn;
+#	    $anatomy_fn_data{'phenotype_id'} = $afn_phenotype;
+#	    $anatomy_fn_data{'phenotype'} = $phenotype_prime_name;
+#	    my @afn_bodyparts = $afn_bodypart_set->col if $afn_bodypart_set;
+#	    # print "$anatomy_fn\n$afn_phenotype\n$phenotype_prime_name\n";
+#	    my @ao_terms;
+#	    foreach my $afn_bodypart (@afn_bodyparts){
+#		my %ao_term_details;
+#		my @afn_bp_row = $afn_bodypart->row;
+#		my ($ao_id,$sufficiency,$description) = @afn_bp_row;
+#		if( ($sufficiency=~ m/Insufficient/)){
+#		    next;
+#		}
+#		else{
+#		    my $term = $ao_id->Term;
+#		    $ao_term_details{'term_id'} = $ao_id;
+#		    $ao_term_details{'term'} = $term;
+#		    # print "\t$ao_id\n\t$term\n\t$sufficiency\n\t$description\n";
+#		}
+#		push @ao_terms,\%ao_term_details;
+#	    }
+#	    $anatomy_fn_data{'terms'} = \@ao_terms;
+#	    # print "****\n";	
+#	}
+#	push @data, \%anatomy_fn_data;
+#    }
+#    return \@data;
+#}
 
 #sub phenotype {
 #
@@ -781,8 +1053,6 @@ sub interactions {
 		push @interaction_data,$dataline_set[0];
 	}
 
-	#my $data_pack = $self->basic_package(\a);
-
 	foreach my $interaction_name (@interaction_data) {
 	
 			$data_pack{$interaction_name} = {
@@ -913,7 +1183,10 @@ sub alleles {
     	if ($allele->CGC_name) {
     		my $available_seq = 0;
     		
-    			if($allele->Flanking_sequence) {
+    			my $flanking_seq;
+    			eval {$flanking_seq = $allele->Flanking_sequence};
+    		
+    			if($flanking_seq) {
     				$available_seq = 1;
     			} 
 				
@@ -923,9 +1196,7 @@ sub alleles {
     									'available_seq' => $available_seq,
     									'class' => $class
     									}	
-    	}
-
-	
+    	}	
 	}
 	
 	$data{'data'} = \%data_pack;
@@ -933,29 +1204,7 @@ sub alleles {
 	return \%data;
 }
 
-sub snps {
 
-	my $self = shift;
-	
-    my $object = $self->object;
-    
-	my %data;
-	my $desc = 'snps related to gene';
-
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	
-
-
-	####
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
 
 
 sub strains {
@@ -1007,7 +1256,7 @@ sub strains {
 	  }
 	####
 
-	$data{'data'} = \%data_pack;
+	#$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 
@@ -1235,15 +1484,18 @@ sub orfeome_project_primers {
 	my %data_pack;
 
 	#### data pull and packaging
-    my $sequences = $self->_fetch_sequences();
+    my $sequences = $self->fetch_sequences();
     
     my @segments = $self->_fetch_segments($sequences);
     
     foreach my $segment (@segments) {
     
-    	my $class = $segment->Class;
+    	my $class;
+    	eval{$class = $segment->Class;};
+    	
     	my $feature = $segment->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome');
-    	my $info = $feature->info;
+    	my $info;
+    	eval{$info = $feature->info;};
    
    		$data_pack{$segment} = {
    									'common_name' => public_name($segment,$class),
@@ -2187,8 +2439,8 @@ sub _fetch_segments {
     my ($self,$sequences) = @_;
     
     # Dynamically fetch a DBH for the correct species
-#    my $dbh = $self->dbh_gff();
-    my $dbh = $self->service('gff_c_elegans');
+    my $dbh = $self->gff_dsn();
+#    my $dbh = $self->service('gff_c_elegans');
     my $object = $self->object;
     my $species = $object->Species;
     
@@ -2732,6 +2984,25 @@ it under the same terms as Perl itself.
 
 
 
+sub fetch_sequences {
+	my $self = shift;
+	my $GENE = $self->object;
+    my %seen;
+    my @seqs = grep { !$seen{$_}++} $GENE->Corresponding_transcript;
+    my @cds = $GENE->Corresponding_CDS;
+    foreach (@cds) {
+	next if defined $seen{$_};
+	my @transcripts = grep {!$seen{$_}++} $_->Corresponding_transcript;
+	push (@seqs,(@transcripts)? @transcripts : $_);
+    }
+    @seqs = $GENE->Corresponding_Pseudogene unless @seqs;
+    return \@seqs;
+    
+    #  my @cds = $GENE->Corresponding_CDS;
+    #  @cds = $GENE->Corresponding_Transcript unless @cds;
+    #  @cds = $GENE->Corresponding_Pseudogene unless @cds;
+    #  return \@cds;
+}
 
 
 
