@@ -6,15 +6,15 @@
      debug("Passing page through without wrapping: $template.name");
      content;
 
-   ELSIF (template.name.match('report'));   	 
+   ELSIF (template.name.match('index'));   	 
          content WRAPPER boilerplate/html + boilerplate/layout;
-
+  
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");
      content;
    ELSE;
      debug("Applying HTML page layout wrappers to $template.name\n");
-     content WRAPPER boilerplate/html + boilerplate/layout;     
+     content WRAPPER boilerplate/html + boilerplate/layout + boilerplate/search;     
    END;
 -%]
 
