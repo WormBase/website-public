@@ -178,13 +178,12 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $cm_text;
     
-    $data_pack{$object} = $common_name;
     
     my $desc = 'The most commonly used name of the gene';
     
     
     $data{'description'} = $desc;
-    $data{'$data'} = \%data_pack;
+    $data{'data'} = $common_name;
     
     return \%data;
 }
@@ -233,6 +232,9 @@ sub ids {
     
 }
 
+sub description{
+  return shift->concise_description;
+}
 sub concise_description {
 
     my $self   = shift;
@@ -253,8 +255,8 @@ sub concise_description {
     }
 
     $data{'description'} = "A manually curated description of the gene's function";
-	$data_pack{$object} = $description;
-	$data{'data'} = \%data_pack;
+# 	$data_pack{$object} = $description;
+	$data{'data'} = $description;
     return \%data;
 }
 

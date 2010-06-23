@@ -112,6 +112,15 @@ sub _build_type {
     return $type;
 }
 
+sub name {
+    my $self = shift;
+    my $data = { description => 'The object name of the sequence',
+		 data        =>  $self ~~ 'name',
+    };
+    return $data;
+
+}
+
 sub common_name {
     my $data = { description => 'The public name of the sequence',
 		 data        => shift ~~ 'name',
@@ -1027,7 +1036,7 @@ sub _print_unspliced {
   my $length   = length $unspliced;
   if ($length > 0) {
     # mark up the feature locations
-    my $prefasta = $unspliced;
+    
     my @markup;
     my $offset = $seq_obj->start;
     my $counter = 0;
@@ -1040,10 +1049,15 @@ sub _print_unspliced {
       push @markup,[$style,$start,$start+$length];
       push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
     }
-    push @markup,map {['space',10*$_]}   (1..length($prefasta)/10);
-    push @markup,map {['newline',80*$_]} (1..length($prefasta)/80);
-    $markup->markup(\$prefasta,\@markup);
-    return ">$name (unspliced + UTR - $length bp)\n$prefasta\n";
+    push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
+    push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
+    my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
+    $markup->markup(\$unspliced,\@markup);
+    return {
+	     #download => $download,
+	     header=>"unspliced + UTR - $length bp",
+	     content=>">$name (unspliced + UTR - $length bp)\n".$unspliced,
+	  };
   }
 }
 
@@ -1068,9 +1082,15 @@ sub _print_spliced {
   
   push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
   push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
-  $markup->markup(\$prefasta,\@markup);
   my $name = eval { $features[0]->refseq->name } ;
-  return ">$name (spliced + UTR - $splen)\n$prefasta" if $name;
+  my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
+  $markup->markup(\$spliced,\@markup);
+   
+  return {  # download => $download ,
+	     header=>"spliced + UTR - $splen bp",
+	     content=>">$name (spliced + UTR - $splen bp)\n".$spliced,
+	  } if $name;
+   
 }
 
 sub _print_protein {
@@ -1084,10 +1104,15 @@ sub _print_protein {
   
   @markup = map {['space',10*$_]}      (1..length($peptide)/10);
   push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
+  my $name = eval { $features->[0]->refseq->name };
+  my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
   $markup->markup(\$peptide,\@markup);
   $peptide =~ s/^\s+//;
-  my $name = eval { $features->[0]->refseq->name };
-  return ">$name (conceptual translation - $plen aa)\n$peptide";
+   
+  return {  # download => $download,
+	     header=>"conceptual translation - $plen aa",
+	     content=>">$name (conceptual translation - $plen aa)\n".$peptide,
+	  };
 }
 
 ##use this or template to format sequence?
@@ -1098,12 +1123,22 @@ sub _to_fasta {
     for (my $i=0; $i < length $dna; $i += 10) {
       push (@markup,[$i,$i % 80 ? ' ':"\n"]);
     }
-    markup(\$dna,\@markup);
+    _markup(\$dna,\@markup);
     $dna =~ s/^\s+//;
     $dna =~ s/\*$//;
     return "&gt;$name\n$dna";
 }
 
+# insert HTML tags into a string without disturbing order
+sub _markup {	
+  my $string = shift;
+  my $markups = shift;
+  for my $m (sort {$b->[0]<=>$a->[0]} @$markups) { #insert later tags first so position remains correct
+    my ($position,$markup) = @$m;
+    next unless $position <= length $$string;
+    substr($$string,$position,0) = $markup;
+  }
+}
 # get coordinates of parent for exons etc
 sub _get_parent_coords {
   my ($self,$s) = @_;
