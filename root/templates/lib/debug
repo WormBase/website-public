@@ -18,6 +18,10 @@
    [% ELSE %]
         <p class="debug-view">[% "$title; $msg" %]</p>
    [% END %]
+
+
+    [% c.stash.keys.join("--") %]
+
 [% END %]
 
 [% BLOCK generic_debug_info %]

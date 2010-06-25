@@ -9,9 +9,17 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
+# TODO:
+# Mapping data
+# Marked_rearrangement
+# Polymorphism details
+
+# Q: should we re-organize the model under Phenotype?
+# Q: Nonsense, missense, all seem to overlap with Molecular_change hash?
+
 ############################################################
 #
-# The Overview widget
+# OVERVIEW
 #
 ############################################################
 sub name {
@@ -47,16 +55,6 @@ sub other_names {
     my $self   = shift;
     my $object = $self->object;
     my @others = $object->Other_name;
-    my %others;
-
-    # Return a hash of objects?
-#    foreach (@others) {
-#	$others{$_->name} = 'Variation_name';
-#    }
-#    my $data   = { description => 'other possible names for the variation',
-#		   data        => \%others,
-#    };
-
     my $data   = { description => 'other possible names for the variation',
 		   data        => \@others,
     };
@@ -68,21 +66,49 @@ sub variation_type {
     my $self = shift;
     my $object = $self->object;
     my $type;
+
+#    # Can this be combinatorial?
+#    if ($object->KO_consortium_allele(0)) {
+#	$type = "Knockout Consortium allele";
+#    } elsif ($object->SNP(0) && $object->RFLP(0)) {
+#	$type = 'polymorphism; RFLP';
+#	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";       
+#    } elsif ($object->SNP(0) && !$object->RFLP(0)) {
+#	$type  = 'polymorphism';
+#	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
+#    } elsif ($object->Natural_variant) {
+#	$type = 'natural variant';
+#    } else {
+#	$type = 'allele';
+#    }
+
+    my @types;
     if ($object->KO_consortium_allele(0)) {
-	$type = "Knockout Consortium allele";
-    } elsif ($object->SNP(0) && $object->RFLP(0)) {
-	$type = 'polymorphism; RFLP';
-	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";       
-    } elsif ($object->SNP(0) && !$object->RFLP(0)) {
-	$type  = 'polymorphism';
-	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-    } elsif ($object->Natural_variant) {
-	$type = 'natural variant';
-    } else {
-	$type = 'allele';
+	push @types,"Knockout Consortium allele";
     }
+      
+    if ($object->SNP(0) && $object->RFLP(0)) {	
+	my $type = 'polymorphism; RFLP';
+	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";       
+	push @types,$type;
+    }
+
+    if ($object->SNP(0) && !$object->RFLP(0)) {
+	my $type  = 'polymorphism';
+	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
+	push @types,$type;
+    }
+    
+    if ($object->Natural_variant) {
+	push @types, 'natural variant';
+    }
+
+    if (@types == 0) {
+	push @types,'allele';
+    }
+    
     my $data = { description => 'the general type of the variation',
-		 data        => $type
+		 data        => \@types,
     };
     return $data;
 }
@@ -99,12 +125,23 @@ sub remarks {
     return $data;
 }
 
+sub status {
+    my $self    = shift;
+    my $object  = $self->object;
+
+    my $data    = { description  => 'curator remarks for the variation',
+		    data         => $object->Status,
+    };
+    return $data;
+}
+
 
 ############################################################
 #
-# The Molecular Details widget
+# MOLECULAR_DETAILS
 #
 ############################################################
+# TODO: Evidence
 sub type_of_mutation {
     my $self   = shift;
     my $object = $self->object;
@@ -119,6 +156,29 @@ sub type_of_mutation {
     };
     return $data;
 }    
+
+sub sequencing_status {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'sequencing status of the variation',
+	     data        => $object->SeqStatus };
+}
+
+sub five_prime_gap {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'five prime gap',
+	     data        => $object->FivePrimeGap };
+}
+
+sub three_prime_gap {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'three prime gap',
+	     data        => $object->ThreePrimeGap };
+}
+	
+
 
 # Returns a data structure containing
 # wild type sequence - the wild type (or reference) sequence
@@ -210,28 +270,42 @@ sub features_affected {
     # This is mostly constructed from Molecular_change hash associated with
     # tags in Affects, with the exception of Clone and Chromosome
     my $affects = {};
-    foreach my $tag (qw/Pseudogene Transcript Predicted_CDS Gene Clone Chromosome/) {
+    
+    # Clone and Chromosome are calculated, not provided in the DB.
+    # Feature and Interactor are handled a bit differently.
+
+    foreach my $tag (qw/Pseudogene Transcript Predicted_CDS Gene Clone Chromosome Feature Interactor/) {
  	my @container;
  	if (my @entries = eval { $object->$tag }) {
- 	    # Parse the Molecular_change hash for each feature
+
+	    # Parse the Molecular_change hash for each feature
  	    my $parsed_data;
  	    foreach my $entry (@entries) {
  		my @data = $entry->col;
+
+		# Genes ONLY have gene
+		if ($tag eq 'Gene') {
+		    $affects->{$tag}->{$entry}++;
+		    next;
+		}
+
  		next unless @data;
-		my $hash_data  = ParseHash(-nodes => $entry);
+		my $hash_data  = $self->_parse_hash($entry);
  		
  		# do_translation is a flag controlling whether or not
  		# we should undertake a conceptual translation for this affected feature
  		# See FormatMolecularChangeHash for details
- 		my ($cells,$do_translation) = FormatMolecularChangeHash(-data => $hash_data,
- 									-tag  => $tag);
+		# $protein_effects & $location_effects contain things like missense and coding_exon, respectively.
+ 		my ($protein_effects,$location_effects,$do_translation) = $self->_format_molecular_change_hash({data => $hash_data,
+										    tag  => $tag});
 		
- 		# Um. What *exactly* is @$cells?
- 		if ($cells) {
- 		    foreach (@$cells) {
-			push @{$affects->{$tag}->{$entry}->{affects}},map { $_ } @$_;
- 		    }
+ 		if ($protein_effects) {
+		    $affects->{$tag}->{$entry}->{protein_effects} = $protein_effects;
  		}
+
+ 		if ($location_effects) {
+		    $affects->{$tag}->{$entry}->{location_effects} = $location_effects;
+		}
  		
  		# Display a conceptual translation, but only for Missense
  		# Nonsense, and Frameshift alleles within exons
@@ -242,24 +316,23 @@ sub features_affected {
  		    if ($aa_type) {
  			my ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug);
  			($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug) 
- 			    = $self->_do_simple_conceptual_translation(-cds => $entry);
- 			unless ($wt_snippet) {
- 			    ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug) 
- 				= $self->_do_manual_conceptual_translation(-cds => $entry);
- 			}
-			
-			$affects->{$tag}->{$entry}->{wildtype_trnaslation_snippet} = $wt_snippet;
-			$affects->{$tag}->{$entry}->{mutant_translation_snippet} = $mut_snippet;
-			$affects->{$tag}->{$entry}->{wildtype_translation_full} = $wt_full;
-			$affects->{$tag}->{$entry}->{mutant_translation_full} = $mut_full;
-			
+ 			    = $self->_do_simple_conceptual_translation($entry);
+# 			unless ($wt_snippet) {
+# 			    ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug) 
+# 				= $self->_do_manual_conceptual_translation($entry);
+# 			}
+
+			$affects->{$tag}->{$entry}->{wildtype_conceptual_translation} = $wt_full;
+			$affects->{$tag}->{$entry}->{mutant_conceptual_translation}   = $mut_full;			
 		    }
 		}
 		
-		# Get the coordinates in the feature
+		# Get the coordinates in absolute coordinates
+		# the coordinates of the containing feature,
+		# and the coordinates of the variation WITHIN the feature.
  		my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$entry);
 		$affects->{$tag}->{$entry}->{abs_start} = $abs_start;
-		$affects->{$tag}->{$entry}->{abs_start} = $abs_stop;
+		$affects->{$tag}->{$entry}->{abs_stop}  = $abs_stop;
 		$affects->{$tag}->{$entry}->{fstart} = $fstart;
 		$affects->{$tag}->{$entry}->{fstop} = $fstop;
 		$affects->{$tag}->{$entry}->{start} = $start;
@@ -270,18 +343,17 @@ sub features_affected {
 		
  	    }
  	} else {
-	    # Include the coordinates of the Variation
-	    # in a Clone (via Sequence) or a Chromosome.	    
- 	    my @affects;
+	    # Clone and Chromosome are not provided in the DB - we calculate them here.
+ 	    my @affects_this;   # BLECH!
  	    if ($tag eq 'Clone') {
- 		@affects = $object->Sequence if $object->Sequence;
+ 		@affects_this = $object->Sequence if $object->Sequence;
  	    }  elsif ($tag eq 'Chromosome') {
 		# And fetch the chromosome from the Clone
 		my ($chrom) = eval { $object->Sequence->Interpolated_map_position(1) };
-		@affects = $chrom->name if $chrom;
+		@affects_this = $chrom;
 	    }
 	    
- 	    foreach (@affects) { 				
+ 	    foreach (@affects_this) { 				
 		$affects->{$tag}->{$_}->{class} = $_->class;
  		
  		my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$_);
@@ -291,7 +363,6 @@ sub features_affected {
 		$affects->{$tag}->{$_}->{fstop} = $fstop;
 		$affects->{$tag}->{$_}->{start} = $start;
 		$affects->{$tag}->{$_}->{stop} = $stop;
-		
  	    }
  	} 	
     }
@@ -303,19 +374,60 @@ sub features_affected {
 }
 
 
+sub possibly_affects {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = {  description => 'genes that may be affected by the variation but have not been experimentally tested',
+		  data        => $object->Possibly_affects ,
+    };
+    return $data;
+}
+
+
 sub flanking_pcr_products {
     my $self = shift;
     my $object = $self->object;
 
     my @pcr_products = $object->PCR_product;
-
-
     my $data = { description => 'PCR products that flank the variation',
 		 data        => \@pcr_products
     };
     return $data;
 }
 
+# TODO: Needs evidence
+sub affects_splice_site {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = {};
+    $data->{description} = 'does this variation affect a splice site?';
+    $data->{data} = { donor    => $object->Donor,
+		      acceptor => $object->Acceptor,
+    };
+    return $data;
+}    
+
+sub causes_frameshift {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = {};
+    $data->{description} = 'does this variation affect a splice site?';
+    $data->{data} = $object->Frameshift;
+    return $data;
+}    
+
+
+
+
+##### The following methods all pertain to polymorphisms
+sub detection_method {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'detection method for polymorphism',
+	     data        => $object->Detection_method,
+    };
+}
+	       
 
 
 
@@ -327,7 +439,7 @@ sub flanking_pcr_products {
 
 ############################################################
 #
-# The Location widget
+# LOCATION
 #
 ############################################################
 sub genetic_position {
@@ -470,12 +582,754 @@ sub genomic_image {
 }
 
 
+############################################################
+#
+# PHENOTYPE
+#
+############################################################
+sub nature_of_variation {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'nature of the variation',
+	     data        => $object->Nature_of_variation,
+    };
+}
+       
+# Q: Model needs to be organized under a single Dominance tag
+# Q: is this one or many?
+sub dominance {
+    my $self = shift;
+    my $object = $self->object;
+    my $dominance = 
+	$object->Recessive
+	|| $object->Semi_dominant
+	|| $object->Dominant	
+	|| $object->Partially_penetrant
+	|| $object->Completely_penetrant;
+    my $data = { description => 'dominance of the variation',
+		 data => $dominance,
+    };
+    return $data;
+}
+
+sub phenotype_remark {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = { description => 'phenotype remark',
+		 data        => $object->Phenotype_remark
+    };
+    return $data;
+}
+
+# TODO: needs evidence
+sub temperature_sensitivity {
+    my $self = shift;
+    my $object = $self->object;
+    my $sensitivity = $object->Cold_sensitive
+	|| $object->Heat_sensitive
+	|| "";
+    my $data = { description => 'temperature sensitive',
+		 data        => $sensitivity,
+    };
+    return $data;
+}
+		 
+
+if (0) {
+    sub pull_phenotype_data {
+	
+	my $object = shift @_;
+	my @phenotype_data;   ## return data structure contains set of : not, phenotype_id; array ref for each characteristic in each element
+	my @phenotypes = $object->Phenotype;
+	
+	foreach my $phenotype (@phenotypes) {
+	    my %p_data;   ### data holder for not, phenotype, remark, and array ref of characteristics, loaded into @phenotype_data for each phenotype related to the variation.
+	    my @phenotype_subtags = $phenotype->col ; ## 0
+	    my $phenotype_not = grep {$_ =~ m/Not/} @phenotype_subtags;
+	    
+	    
+	    my @psubtag_data;
+	    my @ps_data;
+	   	    
+	    my %tagset = (
+    		'Paper_evidence' => 1,
+    		'Remark' => 1,
+#    		'Person_evidence' => 1,
+#		  'Phenotype_assay' => 1,
+#		  'Penetrance' => 1,			
+#		  'Temperature_sensitive' => 1,
+#		  'Anatomy_term' => 1,
+#		  'Recessive' => 1,
+#		  'Semi_dominant' => 1,
+#		  'Dominant' => 1,
+#		  'Haplo_insufficient' => 1,
+# 		  'Loss_of_function' => 1,
+#		  'Gain_of_function' => 1,
+#		  'Maternal' => 1,
+#		  'Paternal' => 1
+		
+		); ### extra data commented out off data pull system 20090922 to simplify table build and data pull
+	    
+	    my %extra_tier = ( 'Phenotype_assay' => 1,
+			       'Temperature_sensitive' => 1
+		);#'Penetrance' => 1,
+	    
+	    my %gof_set = {
+		'Gain_of_function' => 1
+		    , 'Maternal' => 1
+		    #, 'Paternal' => 1
+	    };
+	    
+	    my %no_details = (
+		'Recessive' => 1,
+		'Semi_dominant' => 1,
+		'Dominant' => 1,
+		'Haplo_insufficient' => 1,
+		'Paternal' => 1
+		
+		);	 # 		, 'Loss_of_function' => 1'Gain_of_function' => 1,
+	    
+	    
+	    foreach my $phenotype_subtag  (@phenotype_subtags) {
+		
+		if (!($tagset{$phenotype_subtag})) {
+		    next;
+		}
+		else{
+		    
+		    my @ps_column = $phenotype_subtag->col;
+		    
+		    ## data to be incorporated into @ps_data;
+		    
+		    my $character;
+		    my $remark;
+		    my $evidence_line;
+		    
+		    ## process Penetrance data
+		    if ($phenotype_subtag =~ m/Penetrance/) {
+			foreach my $ps_column_element (@ps_column) {
+			    
+			    
+			    
+			    if ($ps_column_element =~ m/Range/) {
+				next;
+				
+			    } 
+			    else {
+				my ($char,$text,$evidence) = $ps_column_element->row;
+				my @pen_evidence = $evidence-> col;
+				$character = "$phenotype_subtag"; #\:
+				$remark = $char; #$text
+				
+				my @pen_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @pen_evidence}; # ;
+				
+				$evidence_line =  join "; ", @pen_links;
+			    }
+			}
+		    }
+		    
+		    ## get remark
+		    
+		    
+		    elsif ($phenotype_subtag =~ m/Remark/) {
+			
+			my @remarks = $phenotype_subtag->col;
+			my $remarks = join "; ", @remarks;
+			my $details_url = "/db/misc/etree?name=$phenotype;class=Phenotype";
+			my $details_link = a({-href=>$details_url},'[Details]');
+			$remarks = "$remarks\ $details_link";
+			$p_data{'remark'} = $remarks; #$phenotype_subtag->right
+			next;
+			
+		    }
+		    
+		    
+		    
+		    ## get evidences
+		    elsif ($phenotype_subtag =~ m/Paper_evidence/) {
+			
+			my @phenotype_paper_evidence = $phenotype_subtag->col;
+			my @phenotype_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @phenotype_paper_evidence}; #; 
+			$p_data{'paper_evidence'} = join "; ", @phenotype_paper_links;
+			next;
+		    }
+		    
+		    
+		    ## process Anatomy_term data
+		    
+		    elsif ($phenotype_subtag =~ m/Anatomy_term/) {
+			my ($char,$text,$evidence) = $phenotype_subtag ->row;
+			my @at_evidence = $phenotype_subtag -> right -> right -> col;
+			
+			# my $at_link;
+			my $at_term = $text->Term;
+			my $at_url = "/db/ontology/anatomy?name=" . $text;
+			my $at_link = a({-href => $at_url}, $at_term);
+			
+			$character = $char;
+			$remark = $at_link; #$text
+			
+			my @at_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @at_evidence}; #;
+			
+			$evidence_line = join "; ", @at_links;
+			
+		    }
+		    
+		    ## process extra tier data
+		    
+		    elsif ($phenotype_subtag =~ m/Phenotype_assay/) {
+			foreach my $character_detail (@ps_column) {
+			    my $cd_info = $character_detail->right; # right @cd_info
+			    my @cd_evidence = $cd_info->right->col;
+			    $character = "$character_detail";  #$phenotype_subtag\:
+			    # = $cd_info->col;
+			    $remark =  $cd_info; # join "; ", @cd_info;
+			    
+			    my @cd_links= eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
+			    
+			    $evidence_line = join "; ", @cd_links;
+			    
+			    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+			    push  @ps_data, $phenotype_st_line ; 
+			    
+			}
+			next;
+		    }
+		    
+		    elsif ($phenotype_subtag =~ m/Temperature_sensitive/) {
+			foreach my $character_detail (@ps_column) {
+			    my $cd_info = $character_detail->right;
+			    my @cd_evidence = $cd_info->right->col;
+			    
+			    my @cd_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
+			    
+			    $character = "$character_detail";  #$phenotype_subtag\:
+			    $remark = $cd_info;
+			    $evidence_line = join "; ", @cd_links ;
+			    
+			    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+			    push  @ps_data, $phenotype_st_line ; 
+			}
+			
+			next;
+		    }
+		    
+		    elsif ( $phenotype_subtag =~ m/Gain_of_function/) { # $gof_set{}
+			my ($char,$text,$evidence) = $phenotype_subtag->row;
+			my @gof_evidence;
+			
+			eval{
+			    @gof_evidence = $evidence-> col;
+			}; 
+			#\:
+			$remark = $text; #$char
+			
+			if(!(@gof_evidence)){
+			    $character = $phenotype_subtag;
+			    $remark = '';
+			    $evidence_line = $p_data{'paper_evidence'};
+			    
+			    
+			    
+			}
+			#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
+			else {
+			    $character = $phenotype_subtag;
+			    $remark = $char;
+			    my @gof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @gof_evidence}; #  ;
+			    
+			    $evidence_line =  join "; ", @gof_paper_links;
+			}
+			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+			push  @ps_data, $phenotype_st_line ; 
+			next;
+			
+			
+		    }
+		    
+		    elsif ( $phenotype_subtag =~ m/Loss_of_function/) { # $gof_set{}
+			my ($char,$text,$evidence) = $phenotype_subtag->row;
+			my @lof_evidence;
+			
+			eval{
+			    @lof_evidence = $evidence-> col;
+			}; 
+			#\:
+			$remark = $text; #$char
+			
+			if(!(@lof_evidence)){
+			    $character = $phenotype_subtag;
+			    $remark = $text;
+			    $evidence_line = $p_data{'paper_evidence'};
+			    
+			    
+			    
+			}
+			#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
+			else {
+			    $character = $phenotype_subtag;
+			    $remark = $text;
+			    my @lof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @lof_evidence}; ; #
+			    
+			    $evidence_line =  join "; ", @lof_paper_links;
+			}
+			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+			push  @ps_data, $phenotype_st_line ; 
+			next;
+			
+		    }
+		    
+		    
+		    elsif ( $phenotype_subtag =~ m/Maternal/) { # $gof_set{}
+			my ($char,$text,$evidence) = $phenotype_subtag->row;
+			
+			my @mom_evidence;
+			
+			eval {
+			    
+			    @mom_evidence = $evidence->col;
+			    
+			};
+			
+			
+			if(!(@mom_evidence)){
+			    $character = $phenotype_subtag;
+			    $remark = '';
+			    $evidence_line = $p_data{'paper_evidence'};
+			    
+			}
+			else {
+			    $character = $phenotype_subtag;
+			    $remark = '';
+			    my @mom_paper_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @mom_evidence} ; #;
+			    $evidence_line =  join "; ", @mom_paper_links;
+			    
+			}
+			
+			
+			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+			push  @ps_data, $phenotype_st_line ; 
+			next;
+			
+			
+		    }
+		    
+		    
+		    ## process no details data
+		    elsif ($no_details{$phenotype_subtag}) {
+			my @nd_evidence;
+			eval {
+			    @nd_evidence = $phenotype_subtag->right->col;
+			};
+			
+			$character = $phenotype_subtag;
+			$remark = "";
+			if (@nd_evidence){
+			    
+			    my @nd_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @nd_evidence ; }; # 
+			    
+			    $evidence_line = join "; ", @nd_links;
+			}
+			
+			
+		    }
+		    
+		    
+		    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+		    push  @ps_data, $phenotype_st_line ;  ## let @ps_data evolve to include characteristic; remarks; and evidence line
+		}
+		
+	    }
+	    
+	    my $phenotype_name = $phenotype->Primary_name;
+	    my $phenotype_url = Object2URL($phenotype);
+	    my $phenotype_link = b(a({-href=>$phenotype_url},$phenotype_name));
+	    
+	    $p_data{'not'} = $phenotype_not;
+	    $p_data{'phenotype'} = $phenotype_link;
+	    $p_data{'ps'} = \@ps_data;
+	    
+	    
+	    push @phenotype_data, \%p_data;
+	    
+	}
+	
+	
+	#  my @phenotype_data = @phenotypes;
+	
+	
+	return \@phenotype_data;
+	
+    }
+}
+
+
+
+
+
+
+
+############################################################
+#
+# GENETICS
+#  NEEDS: Mapping data
+############################################################
+
+sub gene_class {
+    my $self   = shift;
+    my $object = $self->object;    
+    return { description => 'the gene class for this variation',
+	     data        => $object->Gene_class,
+    };
+}
+
+
+# This should return the CGC name, sequence name (if name), and WBGeneID...
+sub corresponding_gene {
+    my $self   = shift;
+    my $object = $self->object;    
+    my $gene = $object->Gene;
+    return { description => 'gene in which this variation is found (if any)',
+	     data        => { gene => $gene } };
+}   
+
+# TODO: This needs to return public name AND WBvariation
+sub reference_allele {
+    my $self      = shift;
+    my $object    = $self->object;
+    my $gene      = $object->Gene;
+    return { description => 'the reference allele for the containing gene (if any)',	    
+	     data        => { allele => $gene ? $gene->Reference_allele : "" },
+    };
+}
+
+sub other_alleles {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $gene    = $object->Gene;
+    my $data = { };
+    if ($gene) {    
+	my @alleles = grep {$_ ne ($object || '')} $gene->Allele;
+	
+	foreach (@alleles) {
+	    if ($_->SNP(0)) {
+		push @{$data->{data}->{polymorphisms}},$_;
+	    } else {
+		
+		if ($_->Sequence || $_->Flanking_sequences) {
+		    push @{$data->{data}->{unsequenced_alleles}},$_;
+		} else {		    
+		    push @{$data->{data}->{sequenced_alleles}},$_;
+		}
+	    }
+	}
+    }
+    $data->{description} = 'other alleles of the containing gene (if known)';
+    return $data;
+}
+
+
+sub strains {
+    my $self   = shift;
+    my $object = $self->object;
+    my $data = {};
+    
+    foreach ($object->Strain) {
+	my @genes = $_->Gene;
+	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+	push @{$data->{data}->{all_strains}},$_;
+
+	# Some hash lookups for formatting
+	$data->{data}->{cgc_strains}->{$_}++ if $cgc;
+	$data->{data}->{strains_only_carrying_this_allele}->{$_}++ if (@genes == 1);	       
+    }
+    $data->{description} = 'strains carrying this variation';    
+    return $data;
+}
+
+
+sub rescued_by_transgene {
+    my $self   = shift;
+    my $object = $self->object;
+    my $data = { description => 'transgenes that rescue phenotype(s) caused by this variation',
+		 data        => $object->Rescued_by_Transgene,
+    };
+    return $data;
+}
+
+
+
+
+
+############################################################
+#
+# HISTORY
+#
+############################################################
+sub laboratory_of_origin {
+    my $self = shift;
+    my $object = $self->object;
+    
+    #my @formatted;
+    # foreach ($var->Laboratory) {
+    #my $name  = eval { $_->Representative->Standard_name };
+    #my $place = eval { $_->Mail };
+    #push @formatted, ($name) ? ObjectLink($_) . ' (' . ObjectLink($name) . ', ' . $place . ')' : ObjectLink($_);
+    #}
+    #my $formatted = join(br,@formatted);
+    # SubSection('Laboratory of origin',$formatted || UNKNOWN);
+    return { description => 'the laboratory that generated the variation',
+	     data        => $object->Laboratory };
+}
+
+sub isolated_by_author {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'the author credited with generating the mutation',
+	     data        => $object->Author };
+}
+
+sub isolated_by {
+    my $self = shift;
+    my $object = $self->object;
+#  my $person = join("; ",map { ObjectLink($_,$_->Full_name || $_->Standard_name) } $var->Person) if $var->Person;
+#  $person ||= UNKNOWN;
+#  SubSection('Person',$person);
+    return { description => 'the person credited with generating the mutation',
+	     data        => $object->Person };
+}
+
+
+sub date_isolated {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'date the mutation was isolated',
+	     data        => $object->Date };
+}
+
+
+sub mutagen {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'mutagen used to generate the variation',
+	     data        => $object->Mutagen };
+}
+
+# Q: What are the contents of this tag?
+sub isolated_via_forward_genetics {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'was the mutation isolated by forward genetics?',
+	     data        => $object->Forward_genetics };
+}
+
+# Q: what are the contents of this tag?
+sub isolated_via_reverse_genetics {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'was the mutation isolated by reverse genetics?',
+	     data        => $object->Reverse_genetics };
+}
+
+sub transposon_excision {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'was the variation generated by a transposon excision event, and if so, of which family?',
+	     data        => $object->Transposon_excision,
+    };
+}
+
+sub transposon_insertion {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'was the variation generated by a transposon insertion event, and if so, of which family?',
+	     data        => $object->Transposon_insertion,
+    };
+}
+
+
+# Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
+sub source_database {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $source_db = $object->Database;
+    my ($remote_url,$remote_text);
+    if ($source_db) {
+	my $name = $source_db->Name;      
+	my $id   = $object->Database(3);
+
+	# Using the URL constructor in the database (for now)
+	# TODO: Should probably pull these out and keep URLs in config
+	my $url  = $source_db->URL_constructor;
+	# Create a direct link to the external site
+
+	if ($url && $id) {
+	    $name =~ s/_/ /g;
+	    $remote_url = sprintf($url,$id);
+	    $remote_text = "$name";
+	} 
+    }
+    my $data = { description => 'remote source database, if known',
+		 data        => { remote_url => $remote_url,
+				  remote_text => $remote_text,
+		 }
+    };
+    return $data;
+}	
+  
+sub derived_from {
+    my $self = shift;
+    my $object = $self->object;
+    return { description => 'variation from which this one was derived',
+	     data        => $object->Derived_from,
+    };
+}
+
+sub derivative {
+    my $self   = shift;
+    my $object = $self->object;
+    my @derivatives = $object->Derivative;
+    return { description => 'variations derived from this variation',
+	     data        => \@derivatives,
+    };
+}
+       
+
+
+
+
+
+
 
 ############################################################
 #
 # PRIVATE METHODS
 #
 ############################################################
+
+
+
+##########################################
+# MolecularChangeHash
+##########################################
+
+# Draw out what the effects are on proteins
+# and where the mutation occurs.
+sub _format_molecular_change_hash {   
+    my ($self,$params) = @_;
+    my $data = $params->{data};
+    my $tag  = $params->{tag};
+    
+    return unless $data && eval { @$data >= 1 };   # Nothing to build a table from
+
+    my @types     = qw/Missense Nonsense Frameshift Silent Splice_site/;
+    my @locations = qw/Intron Coding_exon Noncoding_exon Promoter UTR_3 UTR_5 Genomic_neighbourhood/;
+    
+    # Select items that we will try and translate
+    # Currently, this needs to be
+    # 1. Affects Predicted_CDS
+    # 2. A missense or nonsense allele
+    # 3. Contained in a coding_exon
+    my %parameters_seen;
+    my %do_translation = map { $_ => 1 } (qw/Missense Nonsense/);
+    # Under no circumstances try and translate the following
+    my %no_translation = map { $_ => 1 } (qw/Frameshift Deletion Insertion/);
+    
+    # The following entries should be examined for the presence
+    # of associated Evidence hashes
+    my @with_evidence = 
+	qw/
+	Missense
+	Silent
+	Nonsense
+	Splice_site
+	Frameshift
+	Intron
+	Coding_exon
+	Noncoding_exon
+	Promoter
+	UTR_3
+	UTR_5	
+	Genomic_neighbourhood
+	/; 
+    
+    my (@protein_effects,@location_effects);
+    foreach my $entry (@$data) {  
+	my $hash  = $entry->{hash};
+	my $node  = $entry->{node};
+
+	# Conditionally format the data for each type of evidence
+	# Curation often has the type of change and its location
+	
+	# What type of change is this?
+	foreach my $type (@types) {
+	    my $obj = $hash->{$type};
+	    my @data = eval { $obj->row };
+	    next unless @data;
+	    my $clean_tag = ucfirst($type);
+	    $clean_tag    =~ s/_/ /g;
+	    $parameters_seen{$type}++;
+	    
+	    my ($pos,$text,$evi,$evi_method,$description);
+	    if ($type eq 'Missense') {
+		($type,$description,$text,$evi) = @data;
+	    } elsif ($type eq 'Nonsense' || $type eq 'Splice_site') {
+		($type,$description,$text,$evi) = @data;		
+	    } elsif ($type eq 'Frameshift') {
+		($type,$text,$evi) = @data;
+	    } else { 
+		($type,$text,$evi) = @data;
+	    }	    
+
+#	    # NOT DONE!  Haven't added evidence parsing yet. Should be global
+#	    if ($evi) {
+#		($evi_method) = GetEvidenceNew(-object => $text,
+#					       -format => 'inline',
+#					       -display_label => 1,
+#					       );
+#    	     }
+	    my $evi_method = '';
+	    push @protein_effects,{ effect_on_protein    => $clean_tag,
+				    description => $description,
+				    text        => $text,
+				    evidence    => $evi_method
+	    };
+	}
+	
+	# *Where* is this change located?
+	foreach my $location (@locations) {
+	    my $obj = $hash->{$location};
+	    my @data = eval { $obj->col };
+	    next unless @data;
+	    
+	    $parameters_seen{$location}++;
+	    
+	    # NOT DONE! Need to add in evidence parsing
+#	    my ($evidence) = GetEvidenceNew(-object => $obj,
+#					    -format => 'inline',
+#					    -display_label => 1
+#					    );
+	    
+	    my $clean_tag = ucfirst($location);
+	    $clean_tag    =~ s/_/ /g;
+	    
+	    my $evidence = '';
+	    push @location_effects,{ location => $clean_tag,
+				     evidence => $evidence,
+	    };
+	}
+    }
+    
+    my $do_translation;
+    foreach (keys %parameters_seen) {
+	$do_translation++ if (defined $do_translation{$_}  && !defined $no_translation{$_});
+    }
+    return (\@protein_effects,\@location_effects,$do_translation);
+}
+
+
+
 
 # What is the length of the mutation?
 sub _compile_nucleotide_changes {
@@ -602,12 +1456,13 @@ sub _get_genomic_segment {
 # Return the genomic coordinates of a provided span
 sub _coordinates {
     my ($self,$segment) = @_;
-    $segment->absolute(1);
     my $ref       = $segment->abs_ref;
-    my $abs_start = $segment->abs_start;
-    my $abs_stop  = $segment->abs_stop;
     my $start     = $segment->start;
     my $stop      = $segment->stop;
+
+    $segment->absolute(1);
+    my $abs_start = $segment->abs_start;
+    my $abs_stop  = $segment->abs_stop;
     ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
     $segment->absolute(0);
     return ($ref,$abs_start,$abs_stop,$start,$stop);
@@ -901,7 +1756,7 @@ sub _aa_type {
     # AA type change, if known, will be located under the Predicted_CDS
     my @types     = qw/Missense Nonsense Frameshift Silent Splice_site/;
     foreach my $cds ($object->Predicted_CDS) {
- 	my $data = ParseHash(-nodes => $cds);
+ 	my $data = $self->_parse_hash($cds);
  	foreach (@$data) {
  	    my $hash = $_->{hash};
  	    
@@ -914,8 +1769,7 @@ sub _aa_type {
 
 # Need to generalize this for all alleles
 sub _do_simple_conceptual_translation {
-    my ($self,@p) = @_;
-    my ($cds) = $self->rearrange([qw/CDS/],@p);
+    my ($self,$cds) = @_;
      
     my ($pos,$formatted_change,$type) = $self->_get_aa_position($cds);
     my $wt_protein = eval { $cds->Corresponding_protein->asPeptide };
@@ -998,12 +1852,12 @@ sub _do_simple_conceptual_translation {
 ## For missense and non_sense alleles only
 ## Actually, the position is ONLY stored for
 ## missense alleles
-    sub _get_aa_position {
+sub _get_aa_position {
     my ($self,$cds) = @_;
-     my @types = qw/Missense Nonsense/;
-     my $data = ParseHash(-nodes => $cds);
-     foreach my $entry (@$data) {
-	 my $hash = $entry->{hash};
+    my @types = qw/Missense Nonsense/;
+    my $data = $self->_parse_hash($cds);
+    foreach my $entry (@$data) {
+	my $hash = $entry->{hash};
  	my $node = $entry->{node};
  	foreach my $type (@types) {
 	    
@@ -1012,6 +1866,7 @@ sub _do_simple_conceptual_translation {
  	    if ($obj) {
  		if ($type eq 'Missense') {
  		    my ($type,$pos,$text,$evi) = @data;
+		    $self->log->warn("getting aa positiong $pos $text $type");
  		    return ($pos,$text,$type);
  		} 
 		
@@ -1021,14 +1876,15 @@ sub _do_simple_conceptual_translation {
 #		}
  	    }
  	}
-     }
-     return;
+    }
+    return;
 }
 
 
 
 
 # Fetch the coordinates of the variation in a given feature
+# Much in here could be generic
 sub _fetch_coords_in_feature {
     my ($self,$tag,$entry) = @_;
     # Fetch the variation segment
@@ -1039,7 +1895,6 @@ sub _fetch_coords_in_feature {
 
     my $species = $self->parsed_species;
     my $gffdb   = $self->gff_dsn($species);
-#    my $gffdb   = $db_obj->dbh;
 
     # Kludge for chromosome    
     if ($tag eq 'Chromosome') {
@@ -1061,8 +1916,7 @@ sub _fetch_coords_in_feature {
 # 	warn "Containing seg coordinates " . join(' ',$data->coordinates($containing_segment)) if DEBUG;
  	
  	my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_coordinates($containing_segment);
- 	my ($var_chrom,$abs_start,$abs_stop,$start,$stop)     = $self->_coordinates($variation_segment);
-#	      ($fstart,$fstop) = (qw/- -/) if ($tag eq 'Chromosome');
+ 	my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($variation_segment);
  	($start,$stop) = ($stop,$start) if ($start > $stop);
  	return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
      }
