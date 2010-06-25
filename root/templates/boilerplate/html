@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
-  <head>
-    
+  <head>    
+    <meta charset="UTF-8">
+
     <title>
-      WormBase
-      
+      WormBase      
       [% IF name %]
            :  [% name.class %]: [% name %]
       [% ELSE %]    
@@ -35,57 +35,21 @@
   });
 </script>
 
-<script>
+<script type="text/javascript">
   $(document).ready(function() {  
        $(".toggle").live('click',function() {
 		  //$(this).click(function(){
-		  $(this).toggleClass("active").next().slideToggle("slow");
-		  return false;
-	}); 
-      // Hide all sequence containers. They're ugly.
-   //      $(".sequence-container").hide();
-   //
-   // 
-   //     // Tooltips
-   //     $("a[title]").tooltip({
-   //
-   //  // use div.tooltip as our tooltip
-   //  //  tip: '.tooltip',
-   //
-   //  // use the fade effect instead of the default
-   //  effect: 'fade',
-   //
-   //  // make fadeOutSpeed similar to the browser's default
-   //  fadeOutSpeed: 100,
-   //
-   //  // the time before the tooltip is shown
-   //  predelay: 400,
-   //
-   //  // tweak the position
-   //   position: "bottom right",
-   //   offset: [-50, -80]
-   //  });
-
-
-  // show/hide sequence containers on pages.
-  // Assumes that the link comes BEFORE the container
-  //  $(function(){
-  //      var this = $(this); 
-  //      $(".toggle-sequence-container").click(function() {
-  //           $(this.next()).toggle();
-  //           return false;
-  //        })
-  //    });
-
+              $(this).toggleClass("active").next().slideToggle("slow");
+              return false;
+        })
+  })
 
   // Load a (specific) field or widget dynamically onClick.
   $("a.ajax").click(function() {
-
       var url     = $(this).attr("href");
       var format  = $(this).text();
-//          format  = $(this).text();
+//    format  = $(this).text();
   
-
       // Multiple classes specified. Split so I can rejoin.
       var mytitle = $(this).attr("class").split(" ");
       if (format == "yml") {
@@ -116,63 +80,55 @@
                    }
         });
   return false;
-  });
+  })
 
-
-//  // Load a (specific) field or widget dynamically onLoad
-//  $("a.ajax").click(function() {
-//      var url     = $(this).attr("href");
-//      var format  = $(this).text();
-//      // Multiple classes specified. Split so I can rejoin.
-//      var mytitle = $(this).attr("class").split(" ");
-//      if (format == "yml") {
-//          format = "text/x-yaml";
-//      }
-//
-//      $.ajax({
-//                 type: "GET",
-//                 url : url,
-//                 contentType: 'application/x-www-form-urlencoded',
-//                 dataType: format,
-//                 success: function(data){
-//                      //  Add some description prior to dumping the content
-//                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
-//                       $("#" + mytitle[1] + ".returned-data").show();
-//                       $("#" + mytitle[1] + ".returned-data").html(content);                         
-//
-//                       // Embed in <pre> if this is not html
-//                        if (format == "html") {
-//                        } else { 
-//                          data = "<pre>" + data + "</pre>";
-//                        }
-//
-//                       $("#" + mytitle[1] + ".returned-data").append(data);
-//                   },
-//                   error: function(request,status,error) {
-//                         alert(request + " " + status + " " + error + " " + format);
-//                   }
-//        });
-//  return false;
-//  });
-
-
-
-// Our loading animation
-      $('#loadingDiv')
-          .hide()  // hide it initially
-          .ajaxStart(function() {
-           $(this).show();
-      })
-      .ajaxStop(function() {
-          $(this).hide();
-      });
-
-
-
-
+    $("h1").each(function(i) {
+//        var url = $(i).attr("href");
+//        var widget = $(i).text();  
+    alert("help");
+//         $("#widget").load("url"),
+//   		                   function(response, status, xhr) {
+//                                          if (status == "error") {
+//                                             var msg = "Sorry but there was an error: ";
+//                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+//                                          } 
+//                                    }
 });
 
-  </script>
+
+
+
+    
+
+
+   //     // Tooltips
+   //     $("a[title]").tooltip({
+   //
+   //  // use div.tooltip as our tooltip
+   //  //  tip: '.tooltip',
+   //
+   //  // use the fade effect instead of the default
+   //  effect: 'fade',
+   //
+   //  // make fadeOutSpeed similar to the browser's default
+   //  fadeOutSpeed: 100,
+   //
+   //  // the time before the tooltip is shown
+   //  predelay: 400,
+   //
+   //  // tweak the position
+   //   position: "bottom right",
+   //   offset: [-50, -80]
+   //  });
+
+</script>
+
+
+
+
+
+
+
   </head>
 
   <body>

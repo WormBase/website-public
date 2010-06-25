@@ -61,26 +61,104 @@ img {
 
 /*********************************
    
-   Per-Page styling
+   Headers
    
 *********************************/
-div#banner {
+header#page {
     padding-bottom:5px;
 }
 
-#banner h1 {
+header#page h1 {
     padding-bottom:0px;
     margin:0px;
 }
 
-#banner p {
+header p {
     font-style:italic;
     color:gray;
     padding:0px;
     margin-left:0px;
 }
 
-#banner .release_date { }
+header#page .release_date { }
+
+/* user warnings */
+.caveat-emptor {
+    font-style:italic;
+    color:gray;
+}
+
+
+/*********************************
+   
+   Sections
+   
+*********************************/
+section.widget .primary-container {
+    padding:5px;
+    margin:2px;
+    margin-bottom:10px;
+    overflow:hidden;
+    border:1px solid gray;    
+}
+
+section.widget header h3 {
+    padding-bottom:5px;
+    margin-bottom:4px;
+    border-bottom:1px dotted gray;
+}
+
+section.widget footer {
+    float:right;
+    font-size:0.9em;    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* The widget title bar. This needs to be a div so I can 
+   target it for widget controls like toggle, drag, etc.
+
+   On the other hand, these titles should maybe just be
+   structural elements such as H1. DIVs and SPANs
+   that lack presentational information, but styled with classes
+   can be confusing.
+*/
+div.widget .title {
+    border-bottom:1px solid black;
+    padding:3px 0px 3px 6px;
+    background-color:#BCC;
+    text-transform:uppercase;
+}
+
+/* Links to download widgets in a variety of formats */
+div.downloadable-formats {
+    float:right;
+    font-size:0.9em;    
+}
+
+.title h3 {
+    margin:1px;
+}
+
+
+
+
+
+/*********************************
+   
+   Per-Page styling
+   
+*********************************/
 
 #page-header {
     width:80%;
@@ -289,6 +367,13 @@ div.downloadable-formats {
 }
 
 
+
+
+
+
+
+
+
 /* Formatting for the debug index page */
 div.widget-section-header {
     padding-bottom:5px;
@@ -313,24 +398,26 @@ div.field h5 {
 }
 
 div.field .field-content {
-    margin-left:7em;
+    margin-left:3em;
     margin-right:10px;
-    padding-left:4em;
+    padding-left:1em;
 }
 
 div.field-title {
-		float:left;
-		text-align:right;
-		width:200px;
-		background-color:blue;
-		height:auto;
-		}
+	float        : left;
+	text-align   : right; 
+	font-size    : 1.1em;
+	padding-right: 2em;
+	width        : 200px;
+	height       : auto;
+	}
 
 div.field-content {
 /*		  float:right; */
 		  text-align:left;
 		  width:auto;
 		  margin-left:20px;
+		  overflow:hidden;
 }
 		
 
@@ -465,7 +552,7 @@ table.multi       { padding: 0;
 .acetree          { font-size: small; }
 .code             { 
                     background-color: #CCFFFF;
-                    font-family:courier;
+                    font-family:"Courier New";
                     border:1px solid grey;
                     font-size:12px;
                     width:75%;
@@ -479,6 +566,14 @@ table.multi       { padding: 0;
 /* NEW MARKUP */
 .species { font-style: italic; }
 
+/* The variation summary */
+.cgc-strain {   /* strains available from the CGC */
+    font-style:italic;
+}
+
+.strains-with-single-variation {
+     font-weight:bold;
+}
 
 
 
@@ -583,31 +678,24 @@ table.multi       { padding: 0;
 
 /* SEQUENCE STYLING */
 
-/* .inline-sequence-string
-    a snippet of sequence in the context of a page
-*/
-
-.sequence {
-   font-family:courier;
-}
-
-.sequence .inline {
+/* a snippet of sequence displayed inline */
+.inline-sequence {
+   font-family:"Courier New";
    font-size:0.6em;
 }
 
-
-
 /* an expandable sequence container */
 .sequence-container {
-    font-size: 1em;
+    font-family:"Courier New";
+    font-size: 0.8em;
     overflow: hidden;
     width: 80%; 
     clear: both;
-    display: none;
+    display: none;   /* Hidden by default */
 }
 
 .fasta-sequence {
-   font-family:courier;
+   font-family:C"ourier New";
 }
 
 
@@ -620,10 +708,16 @@ table.multi       { padding: 0;
     margin-top:15px;
     text-align:left;
 }
+
+
+
+
+
+
 .toggle {
 	padding: 0px 0 0 30px;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
-	font-size: 1.2em;
+	font-size: 1em;
 	font-weight: normal;
 	 
 }

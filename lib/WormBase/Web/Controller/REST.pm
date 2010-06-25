@@ -217,7 +217,7 @@ sub widget_GET {
 					   name => $name}) or die "$!";
     }
     my $object = $c->stash->{object};
-
+    
     # TODO: Load up the data content.
     # The widget itself could make a series of REST calls for each field
     my @fields;
@@ -226,18 +226,19 @@ sub widget_GET {
 	next unless $widget_config->{name} eq $widget; 
 	@fields = @{ $widget_config->{fields} };
     }
- 
-
-    $c->log->warn("fields are " . @fields);
+    
+    
+    $c->log->debug("fields are " . @fields);
     $c->stash->{'widget'} = $widget;
+
     foreach my $field (@fields) {
-	$c->log->warn($field);
+	$c->log->debug($field);
         my $data = {};
 	$data = $object->$field if defined $object->$field;
+
 	# Conditionally load up the stash (for now) for HTML requests.
-	# Eventually, I can ust format the return JSON.
-	$c->stash->{'fields'}->{$field} = $data;
- 
+	# Eventually, I can just format the return JSON.
+	$c->stash->{fields}->{$field} = $data; 
     }
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT

@@ -4,24 +4,40 @@
 [% widget = widget %]
 [% WRAPPER "boilerplate/widget" -%]
 
+   <p class="caveat-emptor">Lots of redundancy here; what names do we need to show?</p>
+
    [% WRAPPER "boilerplate/field" title="Name" key="name" %]
       [% fields.name.data %]
    [% END %]
 
    [% PROCESS "common_fields/species.tt2" %]
 
-   [% WRAPPER "boilerplate/field" title="Variation Type" key="variation_type" %]
-      [% fields.variation_type.data %]
+   [% WRAPPER "boilerplate/field" title="Corresponding Gene" key="corresponding_gene" %]
+         <a href="[% c.uri_for_action('report', 'gene' , fields.corresponding_gene.data.gene ) %]">[% fields.corresponding_gene.data.gene %]</a>
    [% END %]
 
    [% WRAPPER "boilerplate/field" title="CGC Name" key="cgc_name"%]
       [% fields.cgc_name.data %]
    [% END %]
 
-   [% IF c.stash.fields.other_names.data.size > 0 %]
-      [% WRAPPER "boilerplate/field" title="Other Names" key="other_names" %]
-          [% fields.other_names.data.join(', ') %]
-      [% END %]
+   [% WRAPPER "boilerplate/field" title="Common Name" key="common_name"%]
+      [% fields.cgc_name.data %]
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Other Names" key="other_names" %]
+      [% fields.other_names.data.join(', ') %]
+   [% END %]
+
+   <p class="caveat-emptor">This is the general variation_type. Should we elaborate here? </p>
+
+   [% WRAPPER "boilerplate/field" title="Variation Type" key="variation_type" %]
+      [% fields.variation_type.data.join("; ") %]
+   [% END %]
+
+   <p class="caveat-emptor">How is Status used? What does suppressed mean in this context?</p>
+
+   [% WRAPPER "boilerplate/field" title="Status" key="status" %]
+      [% fields.status.data %]
    [% END %]
 
    [% WRAPPER "boilerplate/field" title="Remark(s)" key="remarks" %]

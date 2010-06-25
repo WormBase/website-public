@@ -1,0 +1,76 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = widget %]
+[% WRAPPER "boilerplate/widget" -%]
+
+   <p class="caveat-emptor">This should also include mapping data</p>
+
+   [% WRAPPER "boilerplate/field" title="Corresponding Gene" key="corresponding_gene" %]
+         <a href="[% c.uri_for_action('report', 'gene' , fields.corresponding_gene.data.gene ) %]">[% fields.corresponding_gene.data.gene %]</a>
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Reference Allele" key="reference_allele" %]
+         <a href="[% c.uri_for_action('report', 'variation' , fields.reference_allele.data.allele ) %]">[% fields.reference_allele.data.allele %]</a>
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Other Alleles" key="other_allele" %]
+
+          <p class="caveat-emptor">Haven't established subfield handling yet.</p>
+
+	  <section>
+	      <h5>Sequenced alleles</h5>
+	      <div>
+	       <p class="allele">[% fields.other_alleles.data.sequenced_alleles.join(", ") %]</p>
+   	       </div>
+	  </section>
+
+ 	  <section>		      
+	       <h5>Unsequenced alleles</h5>
+	       <div>
+	       <p class="allele">[% fields.other_alleles.data.unsequenced_alleles.join(", ") %]</p>
+	       </div>
+	  </section>
+
+	  <section>
+	       <h5>Polymorphisms</h5>
+	       <div>
+	       <p class="allele">[% fields.other_alleles.data.polymorphisms.join(", ") %]</p>
+	       </div>
+	  </section>
+
+   [% END %]
+   
+
+   [% WRAPPER "boilerplate/field" title="Strains" key="strains" %]
+             [% FOREACH strain IN fields.strains.data.all_strains %]
+                [% IF fields.strains.data.cgc_strains.$strain %]
+		    <span class="cgc-strain">		    
+	        [% END %]
+
+		[% IF fields.strains.data.strains_carrying_only_this_allele.$strain %]
+                    <span class="strains-with-single-variation">
+	        [% END %]
+		  
+		[% strain %]
+
+		[% IF fields.strains.data.strains_carrying_only_this_allele.$strain %]
+		    </span>
+	        [% END %]
+
+                [% IF fields.strains.data.cgc_strains.$strain %]
+		    </span>
+	        [% END %]
+             [% END %]
+	     <p>
+	     Strains available from the CGC are shown in <span class="cgc-strain">italics</span>.<br />
+	     Strains carrying this variation alone are shown in <span class="strains-with-single-variation">boldface</span>.
+	     </p>
+
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Rescued By Transgene" key="rescued_by_transgene" %]
+         <a href="[% c.uri_for_action('report', 'transgene' , fields.rescued_by_transgene.data ) %]">[% fields.rescued_by_transgene.data %]</a>
+   [% END %]
+
+[% END %]
