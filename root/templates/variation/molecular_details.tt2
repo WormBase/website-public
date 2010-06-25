@@ -1,11 +1,27 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
+[% widget = c.stash.widget toggle = 1%]
+
 [% widget = widget %]
 [% WRAPPER "boilerplate/widget" -%]
 
    [% WRAPPER "boilerplate/field" title="Type of Mutation" key="type_of_mutation" %]
       [% fields.type_of_mutation.data %]
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="Sequencing Status" key="sequencing_status" %]
+      [% fields.sequencing_status.data %]
+   [% END %]
+
+   <p class="caveat-emptor">How/where are these tags used?</p>
+
+   [% WRAPPER "boilerplate/field" title="5' gap" key="five_prime_gap" %]
+      [% fields.five_prime_gap.data %]
+   [% END %]
+
+   [% WRAPPER "boilerplate/field" title="3' gap" key="three_prime_gap" %]
+      [% fields.three_prime_gap.data %]
    [% END %]
 
    [% # Nucleotide change: one or more possible changes for this allele %]
@@ -31,68 +47,142 @@
 
    [% WRAPPER "boilerplate/field" title="Flanking Sequences" key="flanking_sequences" %]
       <div class="sequence">
-          <span class="inline">
-           5' flank -- [% fields.flanking_sequences.data.left_flank %]  [% fields.flanking_sequences.data.right_flank %] -- 3' flank
+          <span class="inline-sequence">
+           5' flank -- [% fields.flanking_sequences.data.left_flank %]  &nbsp; [% fields.flanking_sequences.data.right_flank %] -- 3' flank
           </span>           
      </div>
    [% END %]
 
-   [% IF fields.cgh_deleted_probes.data %]
-       [% WRAPPER "boilerplate/field" title="CGH Deleted Probes" key="CGH Deleted Probes" %]
+   [% WRAPPER "boilerplate/field" title="CGH Deleted Probes" key="CGH Deleted Probes" %]
+
+     [% IF fields.cgh_deleted_probes.data > 0 %]
           <div class="sequence">
-             <span class="inline">
-              5' flank -- [% fields.flanking_sequences.data.left_flank %]  [% fields.flanking_sequences.data.right_flank %] -- 3' flank
+             <span class="inline-sequence">
+              5' flank -- [% fields.cgh_deleted_probes.data.left_flank %]  [% fields.cgh_deleted_probes.data.right_flank %] -- 3' flank
              </span>           
           </div>
-       [% END %]
+      [% END %]
    [% END %]
 
+   [% WRAPPER "boilerplate/field" title="Flanking PCR Products" key="flanking_pcr_products" %]
+           [% fields.flanking_pcr_products.data.join(", ") %]
+   [% END %]
 
    [% WRAPPER "boilerplate/field" title="Context" key="context" %]
-      <div class="sequence">
-        <div class="inline">
+     <div class="inline-sequence">
             [% fields.context.data.wildtype_fragment %] -- wild type<br>
             [% fields.context.data.mutant_fragment %] -- mutant
-            <p>Note: sequence is reported on the (+) strand.</p>
-    	    <a class="toggle-sequence-container">View expanded context</a>
-            <div class="sequence-container">
-               <div class="sequence">
-                   [% fields.context.data.wildtype_header %]<br />
-                   [% fields.context.data.wildtype_full %]<br />
-               </div>
-               <div class="sequence">
-                  [% fields.context.data.mutant_header %]<br />
-                  [% fields.context.data.mutant_full %]<br />
-   	       </div>
-            </div>
-        </div>
+            <p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>
+     </div>
+     <div class="toggle">View expanded context</div>
+	   <div class="sequence-container">
+	       <p>
+                       [% fields.context.data.wildtype_header %]<br />
+                       [% fields.context.data.wildtype_full %]<br />
+	       </p>
+               <p>
+                       [% fields.context.data.mutant_header %]<br />
+                       [% fields.context.data.mutant_full %]<br />
+               </p>
      </div>
    [% END %]
+
+   <p class="caveat-emptor">How/where are these tags used?</p>
 
    [% WRAPPER "boilerplate/field" title="Deletion Verification" key="deletion_verification" %]
       [% fields.deletion_verification.data %]
    [% END %]
 
    [% WRAPPER "boilerplate/field" title="Features Affected" key="features_affected" %]
-        <table>
+
+
+       <table border="1">
+	  	<tr>
+			<td>feature type</td>
+			<td>feature</td>
+			<td>details</td>
+		</tr>
+
+
        [% FOREACH feature_type IN fields.features_affected.data.keys %]
                 [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
+		
                 <tr>
-                   <td>[% feature_type %]</td>   
-                   <td>[% feature %]</td>
-                   <td>[% feature.abs_start %]</td>
-                   <td>[% feature.abs_stop %]</td>
-                   <td>[% feature.fstart %]</td>
-                   <td>[% feature.fstop %]</td>
-                   <td>[% feature.start %]</td>
-                   <td>[% feature.stop %]</td>
+                   <td>[% feature_type %]</td>
+	           <td><a href="[% c.uri_for_action('report', feature.class , feature ) %]">[% feature %] </a></td>
+		   <td>
+
+     		      [% IF fields.features_affected.data.$feature_type.$feature.protein_effects %]
+		   	   [% FOREACH affects IN fields.features_affected.data.$feature_type.$feature.protein_effects %]
+			        Effect on protein: [% affects.effect_on_protein %][% affects.text %]<br />
+                           [% END %]
+                      [% END %]
+
+     		      [% IF fields.features_affected.data.$feature_type.$feature.location_effects %]	
+		   	   [% FOREACH affects IN fields.features_affected.data.$feature_type.$feature.location_effects %]
+			        Contained in: [% affects.location %]<br />
+                           [% END %]
+                      [% END %]
+
+
+     		      [% IF fields.features_affected.data.$feature_type.$feature.abs_start %]
+		           <div class="toggle">View coordinates</div>
+			        <div class="sequence-container">
+				     <table border="1">
+				         <tr>
+						<td>absolute start</td>
+						<td>absolute stop</td>
+						<td>feature start</td>
+						<td>feature stop</td>
+						<td>start relative to feature</td>
+						<td>stop relative to feature</td>
+					  </tr>
+
+					   <tr>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.abs_start %]</td>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.abs_stop %]</td>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.fstart %]</td>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.fstop %]</td>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.start %]</td>
+			                   <td>[% fields.features_affected.data.$feature_type.$feature.stop %]</td>
+					   </tr>
+				    </table>
+			       </div>
+			   </div>
+                      [% END %]
+		
+
+     		      [% IF fields.features_affected.data.$feature_type.$feature.wildtype_translation_full %]
+		           <div class="toggle">View conceptual translation</div>
+			        <div class="sequence-container">
+				 <pre>> wildtype<br />[% fields.features_affected.data.$feature_type.$feature.wildtype_translation_full %]</pre>
+				 <pre>> wildtype<br />[% fields.features_affected.data.$feature_type.$feature.mutant_translation_full %]</pre>
+				 </div>
+			 </div>
+
+
+                      [% END %]
+
+
+		   </td>
+
                  </tr>    
                [% END %]
        [% END %]   
      </table>
    [% END %]
 
+   [% WRAPPER "boilerplate/field" title="Detection Method" key="detection_method" %]
+      [% fields.detection_method.data %]
+   [% END %]
 
+   [% WRAPPER "boilerplate/field" title="Affects Splice Site" key="affects_splice_site" %]
+         <p>Acceptor: [% fields.affects_splice_site.data.acceptor %]</p>
+         <p>Donor: [% fields.affects_splice_site.data.donor %]</p>
+   [% END %]
 
-
+   [% WRAPPER "boilerplate/field" title="Causes Frameshift" key="causes_frameshift" %]
+      [% fields.causes_frameshift.data %]
+   [% END %]
+   
 [% END %]
