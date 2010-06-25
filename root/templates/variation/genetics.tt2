@@ -24,7 +24,7 @@
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.sequenced_alleles %]
     	                  <span class="allele">
-                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
 			  </span>
 		      [% END %]
    	          </div>
@@ -37,7 +37,7 @@
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.unsequenced_alleles %]
     	                  <span class="allele">
-                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
 			  </span>
 		      [% END %]
 	          </div>
@@ -50,7 +50,7 @@
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.polymorphisms %]
     	                  <span class="allele">
-                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
 			  </span>
 		      [% END %]
                   </div>

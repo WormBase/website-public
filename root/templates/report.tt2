@@ -40,12 +40,6 @@ END;
 
 
 
-[% IF view=="page" %]
-    <div class="all-on-a-page">
-[% ELSE %]
-    </div>
-[% END %]
-
 [%# A two panel selector view.
      The sidebar contains panels
     A paned view with a sidebar TOC and content displayed in the main pane onClick %]
