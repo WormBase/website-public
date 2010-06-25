@@ -20,15 +20,14 @@ END;
 %]
 
 
-<div id="page">
-
-<div id="available-views">
+<nav id="available-views">
    View as:
    [% # HARD-CODED! %]   
    [% SET my_url = join("/","reports",class,$object.object.name,'/?view=') %]
    <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=tabs">tabs</a> |
+   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=paned">paned</a> |
    <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=page">full page</a>
-</div>
+</nav>
 
 
 
@@ -40,51 +39,75 @@ END;
 </div>
 
 
-[% IF view=="sidebar" %]
 
-[% # Sections/accordion view, loaded onClick %]
-[% ELSIF view=="sections" %]
+[% IF view=="page" %]
+    <div class="all-on-a-page">
+[% ELSE %]
+    </div>
+[% END %]
+
+[%# A two panel selector view.
+     The sidebar contains panels
+    A paned view with a sidebar TOC and content displayed in the main pane onClick %]
+
+[% IF view=="paned" %]
+
+   <div id="sidebar">
+        <ul class="">
+             [% FOREACH widget IN widgets -%]
+              <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+                    <li>
+                        <a class="ajax content-pane" href="[% c.uri_for('/rest','widget',class,object.object.name,widget.name) %]">
+                           <span>[% widget.title FILTER ucfirst %]</span>
+                        </a>
+                   </li>
+             [% END %]
+         </ul>
+    </div>
+
+      <div id="content-pane"></div>
+                     <script>
+                            $("#content-pane").load("[% c.uri_for('/rest','widget',this_page,object.object.name,widget.name) %]",
+	                           function(response, status, xhr) {
+                                            if (status == "error") {
+                                                var msg = "Sorry but there was an error: ";
+                                                $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                            } 
+                                     });
+                            </script>
+
+
+[% # Tabbed View, loaded onClick; this is also the default view %]
+[% ELSIF view=="tabs" || view == "" %]
+
    <div id="tabs">
       <div class="ui-tabs">
           <ul class="ui-tabs-nav">
              [% FOREACH widget IN widgets -%]
                 <li>
-                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
-                           <span>[% widget FILTER ucfirst %]</span>
-                      </a>
-                </li>
-    	     [% END %]
-          </ul>
-       </div>
-   </div>
-
-
-
-[% # Tabbed View, loaded onClick %]
-[% ELSIF view=="tabs" %]
-   <div id="tabs">
-      <div class="ui-tabs">
-          <ul class="ui-tabs-nav">
-             [% FOREACH widget IN widgets -%]
-                <li>
-                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget %]">
-                           <span>[% widget FILTER ucfirst %]</span>
+                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget.name %]">
+                           <span>[% widget.title %]</span>  [%# TODO: This should be using the title from the configuration file %]
                       </a>
                 </li>
     	     [% END %]
           </ul>
 
-       </div>
-   </div>
+<!--
+   This doesn't really work in the tabbed context. (only prints the last tab)
 
-        <div class="download-links">
+       <div class="downloadable-formats">
                Download: 
                [% FOREACH type IN c.config.api.content_type %]
-                     <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget) %]" -->
-                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget) %]">[%- type -%]</a>
+                     <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
+                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">[%- type -%]</a>
                        [% UNLESS loop.last %] | [% END %]       
                [% END %]
-        </div>
+       </div>
+-->
+
+
+       </div>
+   </div>
 
 
 
@@ -99,50 +122,47 @@ END;
          [% NEXT IF this_page != class %]
 
          [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+	       <section class="widget">
+	            <div class="primary-container">
+                         <header>		         
+                               <h3>[% widget.title %]</h3>
+                         </header>
+                
+                    <!-- <p class="[% widget_template_type(widget.name) %]"></p> -->
+
+                    <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+   		    <div id="[%- widget.name -%]"></div>
+
+		    [%# This is a work in progress: I want to sequentially load widgets.
+		        Firefox does this using the existing code, but other browsers do not.			
+			%] 
+		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]">[% widget.name %]</a></div>-->
+
+                    <script>
+                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]",
+   		                   function(response, status, xhr) {
+                                          if (status == "error") {
+                                             var msg = "Sorry but there was an error: ";
+                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                           } 
+                                    })				      
+                   </script>
 
 
-               <div class="widget-section-header">
-                   <div class="download-links">
+
+                   <footer>
                         Download: 
                         [% FOREACH type IN c.config.api.content_type %]
-                              <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget) %]" -->
-                                  <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget) %]">[%- type -%]</a>
+                              <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
+                                  <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">[%- type -%]</a>
                              [% UNLESS loop.last %] | [% END %]
                         [% END %]
+                    </footer>
                    </div>
-
-                   <div class="title">[% widget.title %]</div>
-
-                </div>
-                 
-                    <div class="debug-field-list">
-
-                    <table width="100%">
-                        <tr>
-                           <td>
-                               <p class="[% widget_template_type(widget.name) %]"> 
-
-          	                  <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
-		                  <div id="[%- widget.name -%]2"></div>
-                                  <script>
-                                      $("#[%- widget.name -%]2").load("[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]",
-				            function(response, status, xhr) {
-                                                if (status == "error") {
-                                                     var msg = "Sorry but there was an error: ";
-                                                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
-                                                } 
-                                      });
-                                  </script>
-    	                       </p>
-                           </td>
-                      </tr>
-              </table>
-          </div>
+                 </section>
       [% END %]
   [% END %]
 [% END %]
-
-</div>
 
 
 

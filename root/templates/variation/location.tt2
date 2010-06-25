@@ -12,17 +12,18 @@
 
     %]
 
-[% WRAPPER "boilerplate/field" title="Genetic Position" %]
-  [% c.stash.fields.genetic_position.data.gb_url %]
-[% END %]
-[% WRAPPER "boilerplate/field" title="Genomic Position" %]
-<a href="[% c.stash.fields.genomic_position.data.gbrowse_link %]">
-[% c.stash.fields.genomic_position.data.chromosome %]:[% c.stash.fields.genomic_position.data.start %]..[% c.stash.fields.genomic_position.data.stop %]
-</a>
-[% END %]
-[% WRAPPER "boilerplate/field" title="Genomic Image" %]
-  [% c.stash.fields.genomic_image.data %]
-  Images coming soon!
-[% END %]
+    [% WRAPPER "boilerplate/field" title="Genetic Position" %]
+        [% fields.genetic_position.data.gb_url %]
+    [% END %]
+
+    [% WRAPPER "boilerplate/field" title="Genomic Position" %]
+          <a href="[% fields.genomic_position.data.gbrowse_link %]">
+               [% fields.genomic_position.data.chromosome %]:[% fields.genomic_position.data.start %]..[% fields.genomic_position.data.stop %]
+          </a>
+    [% END %]
+
+    [% WRAPPER "boilerplate/field" title="Genomic Image" %]
+          [% fields.genomic_image.data %] (This will be the inline genomic environs image)
+    [% END %]
 
 [% END %]

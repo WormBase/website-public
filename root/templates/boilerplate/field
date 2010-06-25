@@ -10,7 +10,9 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <div class="field" id="[% title FILTER html %]">
-     <h5>
+     <div class="field-title">
+
+        [%# Is there a description? Set it as a tool tip %]
         [% IF fields.$key.description %]
            <a title="[% fields.$key.description %]">
              [% title %]
@@ -18,8 +20,8 @@
         [% ELSE %]
             [% title %]
         [% END %]
-     </h5>
 
+       </div>
      <div class="field-content">
         [% content %]
      </div>
