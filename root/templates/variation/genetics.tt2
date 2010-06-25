@@ -19,23 +19,41 @@
           <p class="caveat-emptor">Haven't established subfield handling yet.</p>
 
 	  <section>
-	      <h5>Sequenced alleles</h5>
-	      <div>
-	       <p class="allele">[% fields.other_alleles.data.sequenced_alleles.join(", ") %]</p>
-   	       </div>
+	      <div class="subfield">
+    	          <div class="subfield-title">Sequenced alleles</div>
+	          <div class="subfield-content">
+		      [% FOREACH variation IN fields.other_alleles.data.sequenced_alleles %]
+    	                  <span class="allele">
+                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+			  </span>
+		      [% END %]
+   	          </div>
+              </div>
 	  </section>
 
  	  <section>		      
-	       <h5>Unsequenced alleles</h5>
-	       <div>
-	       <p class="allele">[% fields.other_alleles.data.unsequenced_alleles.join(", ") %]</p>
-	       </div>
+	      <div class="subfield">
+    	          <div class="subfield-title">Unsequenced alleles</div>
+	          <div class="subfield-content">
+		      [% FOREACH variation IN fields.other_alleles.data.unsequenced_alleles %]
+    	                  <span class="allele">
+                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+			  </span>
+		      [% END %]
+	          </div>
+              </div>
 	  </section>
 
 	  <section>
-	       <h5>Polymorphisms</h5>
-	       <div>
-	       <p class="allele">[% fields.other_alleles.data.polymorphisms.join(", ") %]</p>
+	      <div class="subfield">
+    	          <div class="subfield-title">Polymorphisms</div>
+	          <div class="subfield-content">
+		      [% FOREACH variation IN fields.other_alleles.data.polymorphisms %]
+    	                  <span class="allele">
+                              [% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+			  </span>
+		      [% END %]
+                  </div>
 	       </div>
 	  </section>
 

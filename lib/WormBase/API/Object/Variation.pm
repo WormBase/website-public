@@ -168,14 +168,14 @@ sub five_prime_gap {
     my $self = shift;
     my $object = $self->object;
     return { description => 'five prime gap',
-	     data        => $object->FivePrimeGap };
+	     data        => $object->FivePrimeGap || "" };
 }
 
 sub three_prime_gap {
     my $self = shift;
     my $object = $self->object;
     return { description => 'three prime gap',
-	     data        => $object->ThreePrimeGap };
+	     data        => $object->ThreePrimeGap || "" };
 }
 	
 
@@ -253,7 +253,7 @@ sub deletion_verification {
     my $object = $self->object;
     
     my $data = { description => 'the method used to verify deletion alleles',
-		 data        => $object->Deletion_verification,
+		 data        => $object->Deletion_verification || "",
     };
     return $data;
 }
@@ -590,8 +590,9 @@ sub genomic_image {
 sub nature_of_variation {
     my $self = shift;
     my $object = $self->object;
+    my $nature = $object->Nature_of_variation || "";
     return { description => 'nature of the variation',
-	     data        => $object->Nature_of_variation,
+	     data        => "$nature",
     };
 }
        
@@ -978,8 +979,9 @@ if (0) {
 sub gene_class {
     my $self   = shift;
     my $object = $self->object;    
+    my $gene_class = $object->Gene_class || "";
     return { description => 'the gene class for this variation',
-	     data        => $object->Gene_class,
+	     data        => "$gene_class",
     };
 }
 
@@ -988,7 +990,7 @@ sub gene_class {
 sub corresponding_gene {
     my $self   = shift;
     my $object = $self->object;    
-    my $gene = $object->Gene;
+    my $gene = $object->Gene;    
     return { description => 'gene in which this variation is found (if any)',
 	     data        => { gene => $gene } };
 }   
@@ -1009,17 +1011,16 @@ sub other_alleles {
     my $gene    = $object->Gene;
     my $data = { };
     if ($gene) {    
-	my @alleles = grep {$_ ne ($object || '')} $gene->Allele;
+	my @alleles = grep {$_ ne ($object || '')} $gene->Allele(-fill=>1);
 	
 	foreach (@alleles) {
-	    if ($_->SNP(0)) {
-		push @{$data->{data}->{polymorphisms}},$_;
-	    } else {
-		
+	    if ($_->SNP) {
+		push @{$data->{data}->{polymorphisms}},"$_";
+	    } else {		
 		if ($_->Sequence || $_->Flanking_sequences) {
-		    push @{$data->{data}->{unsequenced_alleles}},$_;
+		    push @{$data->{data}->{unsequenced_alleles}},"$_";
 		} else {		    
-		    push @{$data->{data}->{sequenced_alleles}},$_;
+		    push @{$data->{data}->{sequenced_alleles}},"$_";
 		}
 	    }
 	}
@@ -1289,7 +1290,7 @@ sub _format_molecular_change_hash {
 #					       -display_label => 1,
 #					       );
 #    	     }
-	    my $evi_method = '';
+
 	    push @protein_effects,{ effect_on_protein    => $clean_tag,
 				    description => $description,
 				    text        => $text,

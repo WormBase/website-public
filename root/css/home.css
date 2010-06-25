@@ -77,7 +77,7 @@
 /* The search bar form */
 .form input{  
     font-size: 1.3em;  
-    height: 2em;
+/*    height: 2em; */
     vertical-align:top;
 }  
 .form input.text{  

@@ -113,7 +113,10 @@ section.widget footer {
     font-size:0.9em;    
 }
 
+/* These are subfields */
+section.widget .secondary-container {
 
+}
 
 
 
@@ -385,6 +388,9 @@ div.widget-section-header {
 
 
 
+
+/* CURRENTLY LIVE: Added by boilerplate/field */
+
 /* widget field titles: ie Identification > IDs */
 div.field {
     clear:both;
@@ -425,7 +431,7 @@ div.field-content {
 /* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
 div.subfield { 
     clear:both;
-    margin-left:7em;
+    margin-left:0em;
 }
 div.subfield h6 {   
     float:left;
@@ -435,25 +441,33 @@ div.subfield h6 {
 }
 
 div.subfield p {
-    margin-left:8em;
+    margin-left:1em;
 }
 
-/* DEPRECATING IN FAVOR OF SUBFIELD */
-/* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
-div.subsection {}
-div.subsection h3 {
-  background-color:yellow;
-  border:none;
+div.subfield .subfield-content {
+    margin-left:3em;
+    margin-right:10px;
+    padding-left:1em;
 }
 
-/* widget sections: ie Identification > IDs */
-/* NOTE: I am deprecating section in favor of field.... */
-div.section {
-   margin-left:25px;
+div.subfield-title {
+	float        : left;
+	text-align   : right; 
+	font-size    : 1em;
+	padding-right: 2em;
+	width        : 30px;
+	height       : auto;
+	}
+
+div.subfield-content {
+/*		  float:right; */
+		  text-align:left;
+		  width:auto;
+		  margin-left:10px;
+		  overflow:hidden;
 }
 
-div.section h2 {
-}
+
 
 
 
