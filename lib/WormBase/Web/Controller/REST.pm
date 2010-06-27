@@ -477,7 +477,7 @@ sub _select_template {
 
 # 2010.06.28
 # I don't believe the generic field/widget templates are in use any longer
-#    if ($type eq 'field') {
+    if ($type eq 'field') {
 #	if (defined $c->config->{generic_fields}->{$render_target}) {
 #	    return "generic/$type.tt2";    
         # Some templates are shared across Models
