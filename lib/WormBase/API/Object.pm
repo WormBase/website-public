@@ -69,6 +69,24 @@ sub object {
 =cut
 
 
+# Provided with a list of objects, turn them into a data structure like
+#  data => { obj1 => { id    => 'OBJECT ID',
+#                      label => 'text label'  // generically object name
+#                      class => 'OBJECT CLASS',
+#                     },
+#           }
+sub _pack_objects { 
+    my ($self,$objects) = @_;
+    my $data = {};
+    foreach (@$objects) {
+	$data->{obj1} = { id => "$_",
+			  label => "$_",
+			  class => $_->class,
+	};
+    }
+    return $data;
+}
+
 
 
 # Conditionally fetch the correct GFF DBH according to the 

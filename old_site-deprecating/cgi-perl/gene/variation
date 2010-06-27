@@ -1,4 +1,3 @@
-#++ use strict;
 #++ use vars qw($DB $GFFDB $BROWSER $var $data $WORMBASE $CONFIG %EXT_LINKS);
 #++ use Ace;
 #++ use Ace::Browser::AceSubs qw(:DEFAULT !TypeSelector AceRedirect AceMultipleChoices Configuration);
@@ -76,7 +75,6 @@ $BROWSER->config->set('general','keystyle'     => 'none');
 
 #++     location();
 #++     genetic_info();
-#++     polymorphism_details() if $var->SNP(0) or $var->RFLP(0);
 #++    phenotype();      # Needs work - need to display evidence, etc
 #++    references();     # done
 #++     history();        # done
@@ -258,7 +256,6 @@ sub submit {
 #++ 
 #++ 
 #++ sub location {
-# STOPPING POINT - PIZZA'S HERE!
 #++   # Display the genomic environs of the allele, relative to a CDS if appropriate
 #++   SubSection('Genomic environs',genomic_picture());
 #++ } 
@@ -316,117 +313,7 @@ sub submit {
 #++ }
 #++
 #++ 
-#++ This is handled generically in the reimplementation
-#++ sub references {
-#++   my @refs = $var->Reference;
-#++   StartSection('References');
-#++   if (@refs) {
-#++     format_references(-references=>\@refs,-format=>'long',-pubmed_link=>'image',-curator=>url_param('curator'),-suppress_years=>1);
-#++   } else {
-#++     SubSection('',i("No publications refer to $var or they have not yet been entered into WormBase."));
-#++   }
-#++   EndSection;
-#++ }
-#++ 
-#++ # Display some information specific to polymorphisms
-#++ 
-#++ sub polymorphism_details {
-#++   StartSection('Polymorphism details');
-#++   # What type of polymorphism is this?
-#++   my $type;
-#++   if ($var->SNP(0) && $var->RFLP(0)) {
-#++     $type = 'SNP and RFLP'
-#++   } elsif ($var->SNP(0)) {
-#++     $type = 'SNP';
-#++   } else {
-#++     $type = $var->Transposon_insertion . ' transposon insertion';
-#++   }
-#++   SubSection('Polymorphism type',$type);
-#++   SubSection('Reference strains',$var->Strain);
-#++   SubSection('Status',($var->Confirmed_SNP(0) ? 'confirmed' : 'predicted'));
-#++   SubSection('',hr);
-#++   
-#++   my @pcr_product = $var->PCR_product;
-#++ 
-#++   # Ugh.  Have to access RFLP by indexing into an array! Blech!
-#++   my @ref_enzymes = eval { $var->Reference_strain_digest->col(0) };
-#++   my @ref_digests;
-#++   foreach my $enz (@ref_enzymes) {
-#++       my @bands = $enz->col;
-#++       foreach (@bands) {
-#++ 	  push (@ref_digests,[$enz,$_]);
-#++       }
-#++   }
-#++   
-#++   my @poly_enzymes = eval { $var->Polymorphic_strain_digest->col(0) };
-#++   my @poly_digests;
-#++   foreach my $enz (@poly_enzymes) {
-#++       my @bands = $enz->col;
-#++       foreach (@bands) {
-#++ 	  push (@poly_digests,[$enz,$_]);
-#++       }
-#++   }
-#++   
-#++   my $index = 0;
-#++   foreach my $pcr_product (@pcr_product) {
-#++     # If this is an RFLP, extract digest conditions
-#++     my $assay_table;
-#++     if ($var->RFLP(0) && @ref_digests) {	
-#++ 	my ($ref_digest,$ref_bands)   = @{$ref_digests[$index]};
-#++ 	my ($poly_digest,$poly_bands) = @{$poly_digests[$index]};
-#++ 	
-#++ 	$assay_table = 
-#++ 	    b('RFLP analysis') .
-#++ 	    table({-border=>1},
-#++ 		  TR(th('Source'),th('Enzyme'),th('Resulting band(s)')),
-#++ 		  TR(td("Reference strain digest"),td($ref_digest),td($ref_bands)),
-#++ 		  TR(td("Polymorphic strain digest"),td($poly_digest),td($poly_bands)));
-#++     }
-#++ 
-#++     # Heinous hack. Some SNPs listed as RFLPs have no assay conditions
-#++     $assay_table ||= 'SNP Assay: Detectable only by sequencing.' unless $var->RFLP(0);
-#++ 
-#++     my ($left_oligo,$right_oligo);
-#++     if (my @oligos = $pcr_product->Oligo) {
-#++       $left_oligo  = $oligos[0]->Sequence;
-#++       $right_oligo = $oligos[1]->Sequence;
-#++     }
-#++ 
-#++     my $pcr_conditions = $pcr_product->Assay_conditions;
-#++ 
-#++     # Fetch the sequence of the PCR_product
-#++     my $sequence = eval { $var->Sequence };
-#++ 
-#++     my @pcrs = eval { $sequence->PCR_product };
-#++     my ($start,$stop,@pos);
-#++     foreach (@pcrs) {
-#++       next if ($_ ne $pcr_product);
-#++       @pos = $_->row;
-#++       $start        = $pos[1];
-#++       $stop         = $pos[2];
-#++     }
-#++     my ($segment) = $GFFDB->segment(-name=>$sequence,
-#++ 				    -offset=>$start,
-#++ 				    -length=>($stop-$start)) if ($start && $stop);
-#++     my $dna   = $segment->dna if $segment;
-#++     my $fasta = pre($data->to_fasta($sequence,$dna));
-#++ 
-#++     my $pcr_table = table(
-#++ 			  TR(td('Verified PCR product'),td(ObjectLink($pcr_product))),
-#++ 			  TR(td('Left oligo'),td($left_oligo)),
-#++ 			  TR(td('Right oligo'),td($right_oligo)),
-#++ 			  ($pcr_conditions) ? TR(td('PCR conditions'),td($pcr_conditions)) : '',
-#++ 			  ($dna) ? TR(td('Sequence'),td($fasta)) : ''
-#++ 			 );
-#++     SubSection('SNP Assay',
-#++ 	       $pcr_table,
-#++ 	       $assay_table
-#++ 	      );
-#++     $index++;
-#++   }
-#++ }
-#++ 
-#++ 
+
 #++ 
 #++ #####################################
 #++ #  IMAGES
@@ -868,28 +755,6 @@ sub hit_to_url {
 #++   my $newlocus = shift;
 #++   AceRedirect('gene',$newlocus);
 #++   exit 0;
-#++ }
-#++ 
-#++ 
-#++ 
-#++ #####################################
-#++ #  Classification
-#++ #####################################
-#++ # What broad type of allele is this?
-#++ sub broad_classification {
-#++ 
-#++     if ($var->KO_consortium_allele(0)) {
-#++ 	return "Knockout Consortium allele";
-#++     } elsif ($var->SNP(0) && $var->RFLP(0)) {
-#++ 	my $string = 'Polymorphism; RFLP';
-#++ 	$string .= $var->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-#++ 	return $string;
-#++     } elsif ($var->SNP(0) && !$var->RFLP(0)) {
-#++ 	my $string = 'Polymorphism';
-#++ 	$string .= $var->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-#++     } else {
-#++ 	return 'allele';
-#++     }
 #++ }
 #++ 
 #++ 

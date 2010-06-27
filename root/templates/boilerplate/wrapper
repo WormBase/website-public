@@ -14,7 +14,13 @@
      content;
    ELSE;
      debug("Applying HTML page layout wrappers to $template.name\n");
-     content WRAPPER boilerplate/html + boilerplate/layout + boilerplate/search;     
+
+     IF is_classic;
+          content WRAPPER boilerplate/html + boilerplate/layout;
+     ELSE;
+          content WRAPPER boilerplate/html + boilerplate/layout + boilerplate/search;     
+     END;
+
    END;
 -%]
 

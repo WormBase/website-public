@@ -13,8 +13,6 @@
     </title>
 
 
-
-
 <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>
 <!--<script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.1.custom.min.js"></script>-->
 <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>
@@ -23,10 +21,14 @@
 <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
 <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
 <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
+
+
 <link type="text/css" href="/css/main.css" rel="stylesheet" />
+[% IF is_classic %]
+    <link type="text/css" href="/css/main_classic.css" rel="stylesheet" />
+[% END %]
+
 <link href="/css/home.css" rel="stylesheet" type="text/css" />
-
-
 
 <script type="text/javascript">
   // Tabs
@@ -122,12 +124,6 @@
    //  });
 
 </script>
-
-
-
-
-
-
 
   </head>
 

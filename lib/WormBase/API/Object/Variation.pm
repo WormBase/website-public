@@ -25,28 +25,39 @@ extends 'WormBase::API::Object';
 sub name {
     my $self = shift;
     my $ace  = $self->object;
-    my $data = { description => 'The object name of the variation',
-		 data        =>  $ace->name,
+    my $data = { description => 'The internal WormBase referential ID of the variation',
+		 data        =>  { id    => "$ace",
+				   label => $ace->name,
+				   class => $ace->class
+		 },
     };
     return $data;
 }
 
+# This should be the Public name || object name
 sub common_name {
     my $self = shift;
     my $object = $self->object;
     my $name = $object->Public_name;
     my $data = { description => 'The public name of the variation',
-		 data        => "$name",
+		 data        => { id    => "$name",
+				  label => $name->name,
+				  class => $name->class,
+		 },
     };
     return $data;
 }
 
+# THIS METHOD IS PROBABLY DEPRECATED
 sub cgc_name {
     my $self = shift;
     my $object = $self->object;
     my $cgc_name = $object->CGC_name || "unknown";
     my $data = { description => 'The Caenorhabditis Genetics Center (CGC) name for the variation',
-		 data        => "$cgc_name",
+		 data        => { id    => "$cgc_name",
+				  label => $cgc_name->name,
+				  class => $cgc_name->class,
+		 },
     };
     return $data;
 }
@@ -55,32 +66,23 @@ sub other_names {
     my $self   = shift;
     my $object = $self->object;
     my @others = $object->Other_name;
+
+    my $packed = $self->_pack_objects(\@others);
+
     my $data   = { description => 'other possible names for the variation',
-		   data        => \@others,
+		   data        => $packed,
     };
     return $data;
 }
 
-# What broad type of allele is this? EG KO, SNP, allele, etc
+
+# A unified classification of the type of variation
+# general class: SNP, allele, etc
+# physical class: deletion, insertion, etc
+# TODO: EVidence
 sub variation_type {
     my $self = shift;
     my $object = $self->object;
-    my $type;
-
-#    # Can this be combinatorial?
-#    if ($object->KO_consortium_allele(0)) {
-#	$type = "Knockout Consortium allele";
-#    } elsif ($object->SNP(0) && $object->RFLP(0)) {
-#	$type = 'polymorphism; RFLP';
-#	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";       
-#    } elsif ($object->SNP(0) && !$object->RFLP(0)) {
-#	$type  = 'polymorphism';
-#	$type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-#    } elsif ($object->Natural_variant) {
-#	$type = 'natural variant';
-#    } else {
-#	$type = 'allele';
-#    }
 
     my @types;
     if ($object->KO_consortium_allele(0)) {
@@ -106,9 +108,18 @@ sub variation_type {
     if (@types == 0) {
 	push @types,'allele';
     }
-    
+
+    my $type = join("; ",@types);
+
+    my $physical_type   = $object->Type_of_mutation;
+    if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
+	$physical_type = 'transposon insertion';
+    }
+        
     my $data = { description => 'the general type of the variation',
-		 data        => \@types,
+		 data        => { general_class  => $type,
+				  physical_class => $physical_type
+		 },
     };
     return $data;
 }
@@ -141,22 +152,6 @@ sub status {
 # MOLECULAR_DETAILS
 #
 ############################################################
-# TODO: Evidence
-sub type_of_mutation {
-    my $self   = shift;
-    my $object = $self->object;
-    my $type   = $object->Type_of_mutation;
-
-    if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
-	$type = 'transposon insertion';
-    }
-    
-    my $data = { description => 'the type of mutation and its molecular change',
-		 data        => "$type",				  
-    };
-    return $data;
-}    
-
 sub sequencing_status {
     my $self = shift;
     my $object = $self->object;
@@ -232,6 +227,7 @@ sub cgh_deleted_probes {
 sub context {
     my $self   = shift;
     my $object = $self->object;
+    my $name   = $object->Public_name;
 
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
@@ -242,7 +238,7 @@ sub context {
 				  mutant_fragment   => $mut,
 				  mutant_full       => $mut_full,
 				  wildtype_header   => "> Wild type N2, with $flank bp flanks",
-				  mutant_header     => "> $object with $flank bp flanks"
+				  mutant_header     => "> $name with $flank bp flanks"
 		 },
     };
     return $data;
@@ -417,9 +413,6 @@ sub causes_frameshift {
 }    
 
 
-
-
-##### The following methods all pertain to polymorphisms
 sub detection_method {
     my $self = shift;
     my $object = $self->object;
@@ -427,7 +420,150 @@ sub detection_method {
 	     data        => $object->Detection_method,
     };
 }
-	       
+
+
+
+############################################################
+#
+# POLYMORPHISM DETAILS
+#
+############################################################
+sub polymorphism_type {
+    my $self = shift;
+    my $object = $self->object;
+
+    # What type of polymorphism is this?
+    my $type;
+    if ($object->SNP(0) && $object->RFLP(0)) {
+	$type = 'SNP and RFLP';
+    } elsif ($object->SNP(0)) {
+	$type = 'SNP';
+    } elsif ($object->Transposon_insertion) {
+	$type = $object->Transposon_insertion . ' transposon insertion';
+    } else { }
+    my $data = { description => 'the general class of this polymorphism',
+		 data        => $type, };
+    return $data;
+}
+    
+sub polymorphism_status {
+    my $self = shift;
+    my $object = $self->object;
+    my $status = $object->Confirmed_SNP(0) ? 'confirmed' : 'predicted';
+    my $data  = { description => 'experimental status of this polymorphism',
+		  data        => $status,		  
+    };
+    return $data;
+}
+
+sub reference_strain {
+    my $self   = shift;
+    my $object = $self->object;
+    my $strain = $object->Strain;
+    my $data = { description => 'the reference strain for the polymorphism',
+		 data        => { id    => "$strain",
+				  label => "$strain",
+				  class => $strain->class,
+		 },
+    };
+    return $data;
+}
+
+
+
+# Details related to assaying polymorphisms	       
+sub polymorphism_assays {
+    my $self = shift;
+    my $object = $self->object;
+    
+    my $data = {};
+    my @pcr_product = $object->PCR_product;
+    
+    # Ugh.  Have to access RFLP by indexing into an array! Blech!
+    my @ref_enzymes = eval { $object->Reference_strain_digest->col(0) };
+    my @ref_digests;
+    foreach my $enz (@ref_enzymes) {
+	my @bands = $enz->col;
+	foreach (@bands) {
+	    push (@ref_digests,[$enz,$_]);
+	}
+    }
+    
+    my @poly_enzymes = eval { $object->Polymorphic_strain_digest->col(0) };
+    my @poly_digests;
+    foreach my $enz (@poly_enzymes) {
+	my @bands = $enz->col;
+	foreach (@bands) {
+	    push (@poly_digests,[$enz,$_]);
+	}
+    }
+    
+    my $index = 0;
+    foreach my $pcr_product (@pcr_product) {
+	# If this is an RFLP, extract digest conditions
+	my $assay_table;
+
+	# Are we an RFLP?
+#	if ($object->RFLP(0) && @ref_digests) {	
+	if ($object->RFLP && @ref_digests) {	
+	    my ($ref_digest,$ref_bands)   = @{$ref_digests[$index]};
+	    my ($poly_digest,$poly_bands) = @{$poly_digests[$index]};
+	    
+	    $data->{data}->{$pcr_product} = { reference_strain_digest => $ref_digest,
+					      reference_strain_bands  => $ref_bands,
+					      polymorphic_strain_digest => $poly_digest,
+					      polymorphic_strain_bands  => $poly_bands,
+					      assay_type                => 'rflp',
+	    };	    	   
+	} else {
+	    $data->{data}->{$pcr_product}->{assay_type} = 'sequence';
+	}
+
+	my ($left_oligo,$right_oligo);
+	if (my @oligos = $pcr_product->Oligo) {
+	    $left_oligo  = $oligos[0]->Sequence;
+	    $right_oligo = $oligos[1]->Sequence;
+	}
+	
+	my $pcr_conditions = $pcr_product->Assay_conditions;
+	
+	# Fetch the sequence of the PCR_product
+	my $sequence = eval { $object->Sequence };
+	
+	my @pcrs = eval { $sequence->PCR_product };
+	my ($start,$stop,@pos);
+	foreach (@pcrs) {
+	    next if ($_ ne $pcr_product);
+	    @pos = $_->row;
+	    $start        = $pos[1];
+	    $stop         = $pos[2];
+	}
+
+	my $gffdb   = $self->gff_dsn($self->parsed_species);
+
+	my ($segment) = $gffdb->segment(-name=>$sequence,
+					-offset=>$start,
+					-length=>($stop-$start)) if ($start && $stop);
+	my $dna   = $segment->dna if $segment;
+
+	# TODO: Should be handled in the template
+#	my $fasta = pre($data->to_fasta($sequence,$dna));
+	my $fasta = $dna;
+
+	$data->{data}->{$pcr_product}->{pcr_product} = {  id => "$pcr_product",
+							  label => $pcr_product,
+							  class => $pcr_product->class,
+							  left_oligo => $left_oligo,
+							  right_oligo => $right_oligo,
+							  pcr_conditions => $pcr_conditions,
+							  dna            => $fasta,
+							  
+	};
+	$index++;
+    }
+    $data->{description} = 'experimental assays for detecting this polymorphism';
+    return $data;
+}
 
 
 
@@ -990,9 +1126,14 @@ sub gene_class {
 sub corresponding_gene {
     my $self   = shift;
     my $object = $self->object;    
-    my $gene = $object->Gene;    
-    return { description => 'gene in which this variation is found (if any)',
-	     data        => { gene => $gene } };
+    my $description = 'gene in which this variation is found (if any)';
+    my $gene   = $object->Gene or return { description => $description };
+    return { description => $description,
+	     data        => { id    => "$gene",
+			      label => $gene->Public_name,
+			      class => $gene->class,
+	     },
+    };
 }   
 
 # TODO: This needs to return public name AND WBvariation
@@ -1641,7 +1782,7 @@ sub _build_sequence_strings {
     }
      
     # TODO: Make the snippet length configurable.
-    my $SNIPPET_LENGTH = 60;
+    my $SNIPPET_LENGTH = 100;
     $flank ||= $SNIPPET_LENGTH;
     
     my $insert_length = (length $wt_fragment > length $mut_fragment) ? length $wt_fragment : length $mut_fragment;

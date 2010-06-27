@@ -4,10 +4,27 @@
 
   <td class="small" align="center">
        <font color="red">
-           [% page FILTER ucfirst %] Summary
+           [% class FILTER ucfirst %] Summary
        </font>
   </td>
 
+  [% IF class.search("variation") %]
+       <td class="small" align="center">
+               <a target="_top" href="/db/gene/gene?name=[% name %];class=[% class %]">Gene Summary</a>
+       </td>
+
+       <td class="small" align="center">
+               <a target="_top" href="/db/gene/locus?name=[% name %];class=[% class %]">Locus Summary</a>
+       </td>
+
+       <td class="small" align="center">
+               <a target="_top" href="/db/gb2/gbrowse/c_elegans?name=[% name %];class=[% class %]">Genome Browser</a>
+       </td>
+
+  [% END %]  
+ 
+
+   [%# Default navbar elements %]
    <td class="small" align="center">
            <a target="_top" href="/db/misc/etree?name=[% name %];class=[% class %]">Tree Display</a>
     </td>
@@ -24,3 +41,8 @@
 </table>
 
 <br />
+
+
+
+
+

@@ -338,6 +338,81 @@ sub report :Path("/reports") Args(2) {
 
 
 
+##############################################################
+#
+#   "CLASSIC" PAGES
+#   URL space : /db
+#   Params    : class, object, page
+#
+#   Serve up pages using classic formatting so we don't
+#   have to maintain two codebases
+#   
+#   Old-style URLs have the format of
+#   /db/DIRECTORY/[CLASS]?name=[NAME]
+# 
+##############################################################
+sub classic_report :Path("/db") Args(2) {
+    my ($self,$c,$directory,$class) = @_;
+
+    # $directory is not really necessary. We don't use it.
+ 
+    # Set the name of the widget. This is used 
+    # to choose a template and label sections.
+#    $c->stash->{page}  = $class;    # Um. Necessary?
+#    unless ($c->config->{pages}->{$class}) {
+#	my $link = $c->config->{external_url}->{uc($class)};
+#	$link  ||= $c->config->{external_url}->{lc($class)};
+#	if ($link =~ /\%s/) {
+#	    $link=sprintf($link,split(',',$name));
+#	} else {
+#	    $link.=$name;
+#	}
+#	$c->response->redirect($link);
+#	$c->detach;
+#    }
+
+    $c->stash->{class} = $class;
+    
+    # Let's set a stash parameter to enable classic wrapping
+    $c->stash->{is_classic}++;
+
+    # Save the query name
+    $c->stash->{query} = $c->request->query_parameters->{name} || "";
+
+    # Instantiate our external model directly (see below for alternate)
+    my $api = $c->model('WormBaseAPI');
+    
+    # TODO
+    # I may not want to actually fetch an object.
+    # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
+        
+    # I don't think I need to fetch an object.  I just need to return the appropriate page template.
+    # Then, each widget will make calls to the rest API.
+    
+    if ($c->stash->{query}) {
+	my $object = $api->fetch({class=> ucfirst($class),
+				  name => $c->stash->{query}
+				 }) or die "$!";
+	
+	# $c->log->debug("Instantiated an external object: " . ref($object));
+	$c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+    }
+
+    # Stash all widgets that comprise this page. We will build pages generically.
+    # This is the default order.
+    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
+
+    # Return just the symbolic name of the widgets
+    # @widgets = map{$_->{name}} @widgets;
+
+    # Or the full widget config
+    $c->stash->{widgets} = \@widgets;
+
+    # Set the classic template
+    $c->stash->{template} = 'report.tt2';
+}
+
+
 
 
 #######################################################

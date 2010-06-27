@@ -5,13 +5,57 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-<!-- start [% widget %] widget -->
-
-<a name="[% widget %]"></a>
+<!-- start [% widget.name %] widget -->
 
 
-[% # Uniquely identify the widget for future ajaxification %]
-<div class="widget" id="[% widget %]">
-  [% content %]
-</div>
+[% IF c.request.referer.search("/db/") OR is_classic %]
+
+<tr class="databody" valign="top">	
+    <th class="searchtitle" colspan="2" width="125px">
+	<a name="[% widget.title %]">[% widget.title FILTER ucfirst %]</a>
+    </th>
+    <td>
+    <table border="0" cellspacing="4" cellpadding="0">
+    <section class="widget">
+         <div class="primary-container">
+              [% content %]
+
+[% ELSE %]
+
+<section class="widget">
+       <div class="primary-container">
+              <header>         
+                   <h3>[% widget.title %]</h3>
+              </header>
+
+	      [%# Porque? %]
+              <a name="[% widget.name %]"></a>
+
+              [% content %]
+
+              <footer>
+                  Download: 
+                  [% FOREACH type IN c.config.api.content_type %]
+                      <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
+                      <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">
+                           [%- type -%]
+                      </a>
+                      [% UNLESS loop.last %] | [% END %]
+                   [% END %]
+              </footer>
+
+[% END %]
+
+
+     </div>
+</section>
+
+
+[% IF c.request.referer.search("/db/") OR is_classic %]
+     </table>
+   </td>
+  </tr>
+<!-- END [% title %] section -->
+[% END %]
+
 <!-- end [% widget %] widget -->

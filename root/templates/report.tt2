@@ -19,22 +19,30 @@
 END;
 %]
 
+[% SET this_object_id    = object.name.data.id %]
+[% SET this_object_label = object.common_name.data.label %]
 
+
+[% UNLESS is_classic %]
 <nav id="available-views">
    View as:
    [% # HARD-CODED! %]   
-   [% SET my_url = join("/","reports",class,$object.object.name,'/?view=') %]
-   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=tabs">tabs</a> |
-   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=paned">paned</a> |
-   <a href="/reports/[%- class _ '/' _ object.object.name -%]/?view=page">full page</a>
+   [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
+   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
+   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
+   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a>
 </nav>
+[% END %]
 
 
+[% IF is_classic %]
+        [% INCLUDE "classic/contextual_navbar.tt2" %]
+[% END %]
 
 <div class="title">
    [% title %]
    [%- IF object -%]
-     <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data -%]</h2>
+     <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data.label -%]</h2>
    [% END %] 
 </div>
 
@@ -51,7 +59,7 @@ END;
              [% FOREACH widget IN widgets -%]
               <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
                     <li>
-                        <a class="ajax content-pane" href="[% c.uri_for('/rest','widget',class,object.object.name,widget.name) %]">
+                        <a class="ajax content-pane" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">
                            <span>[% widget.title FILTER ucfirst %]</span>
                         </a>
                    </li>
@@ -61,7 +69,7 @@ END;
 
       <div id="content-pane"></div>
                      <script>
-                            $("#content-pane").load("[% c.uri_for('/rest','widget',this_page,object.object.name,widget.name) %]",
+                            $("#content-pane").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
 	                           function(response, status, xhr) {
                                             if (status == "error") {
                                                 var msg = "Sorry but there was an error: ";
@@ -72,14 +80,14 @@ END;
 
 
 [% # Tabbed View, loaded onClick; this is also the default view %]
-[% ELSIF view=="tabs" || view == "" %]
+[% ELSIF view=="tabs" || (view == "" && !is_classic) %]
 
    <div id="tabs">
       <div class="ui-tabs">
           <ul class="ui-tabs-nav">
              [% FOREACH widget IN widgets -%]
                 <li>
-                      <a href="/rest/widget/[% class %]/[% object.object.name %]/[% widget.name %]">
+                      <a href="/rest/widget/[% class %]/[% this_object_id %]/[% widget.name %]">
                            <span>[% widget.title %]</span>  [%# TODO: This should be using the title from the configuration file %]
                       </a>
                 </li>
@@ -96,10 +104,15 @@ END;
 
 
 
-
-
 [% # All widgets on one page, loaded by ajax %]
-[% ELSIF view=="page" %]
+[% ELSIF view=="page" OR is_classic %]
+
+[%# Set up the classic view nested tables %]
+[% IF is_classic %]
+        <div align="center">
+         <table border="1" width="100%">
+[% END %]
+
 
      [% FOREACH this_page IN c.config.pages.keys.sort %]
 
@@ -107,24 +120,34 @@ END;
          [% NEXT IF this_page != class %]
 
          [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
-	       <section class="widget">
-	            <div class="primary-container">
-                         <header>		         
-                               <h3>[% widget.title %]</h3>
-                         </header>
-                
-                    <!-- <p class="[% widget_template_type(widget.name) %]"></p> -->
 
-                    <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+	    [%# I *should* move the widget wrapper to each widget template.
+	        It makes the most sense for these templates to start and 
+		end with that wrapper. 
+
+		Each individual request for a widget is thus complete.
+
+		Additionally, that's what the 
+		user would expect when requesting a widget by REST in html 
+
+		So I'm not completely satisfied with the layout of widget wrapping ATM.
+
+		%]
+
+
+             [% WRAPPER "boilerplate/widget" -%]
+                
+                    [% # Uniquely identify the widget for future ajaxification %]
+		    [%# This doesn't belong in the widget wrapper - it's a target for an ajax event %]
    		    <div id="[%- widget.name -%]"></div>
 
 		    [%# This is a work in progress: I want to sequentially load widgets.
 		        Firefox does this using the existing code, but other browsers do not.			
 			%] 
-		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]">[% widget.name %]</a></div>-->
+		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
 
                     <script>
-                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,object.name.data,widget.name) %]",
+                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
@@ -133,20 +156,16 @@ END;
                                     })				      
                    </script>
 
-
-
-                   <footer>
-                        Download: 
-                        [% FOREACH type IN c.config.api.content_type %]
-                              <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
-                                  <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">[%- type -%]</a>
-                             [% UNLESS loop.last %] | [% END %]
-                        [% END %]
-                    </footer>
-                   </div>
-                 </section>
+           [% END %]
       [% END %]
   [% END %]
+
+
+  [% IF is_classic %] [%# Need to close the table based layout. %]
+          </table>
+       </div>
+  [% END %]
+
 [% END %]
 
 
