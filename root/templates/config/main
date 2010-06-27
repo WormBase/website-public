@@ -31,11 +31,14 @@
 #   END;   
 
     MACRO tag2link(data,text) BLOCK;  
-      link = '/reports/' _ data.link _ '/' _ data.id ;
+      class =  data.class FILTER lower;
+      link = '/reports/' _ class _ '/' _ data.id ;
+#      link = '/reports/' _ data.link _ '/' _ data.id ;
+
       IF text;
-	"<a href=\"$link\">  $text </a>";;
+	"<a href=\"$link\" class=\"$data.class\">  $text </a>";;
       ELSE;
-	"<a href=\"$link\">  $data.label </a>";
+	"<a href=\"$link\" class=\"$data.class\">  $data.label </a>";
       END;
     END; 
 

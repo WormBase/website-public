@@ -2,15 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = c.stash.widget %]
-[% WRAPPER "boilerplate/widget" -%]
-
-    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
-	[% # Users could just to show or hide empty sections...      %]
-    [%# Sections themselves can optionally be composed of subsections 
-    
-    The template names are actually in the stash.  This should be unnecessary...
-
-    %]
+[%# WRAPPER "boilerplate/widget" -%]
 
     [% WRAPPER "boilerplate/field" title="Genetic Position" %]
         [% fields.genetic_position.data.gb_url %]
@@ -26,4 +18,4 @@
           [% fields.genomic_image.data %] (This will be the inline genomic environs image)
     [% END %]
 
-[% END %]
+[%# END %]

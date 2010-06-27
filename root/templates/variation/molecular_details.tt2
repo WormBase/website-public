@@ -4,28 +4,28 @@
 [% widget = c.stash.widget toggle = 1%]
 
 [% widget = widget %]
-[% WRAPPER "boilerplate/widget" -%]
+[% subfield_template = 'boilerplate/field' %]
 
-   [% WRAPPER "boilerplate/field" title="Type of Mutation" key="type_of_mutation" %]
-      [% fields.type_of_mutation.data %]
-   [% END %]
+            [% WRAPPER "$subfield_template" title="Variation Type" key="variation_type" %]
+                [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
+            [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Sequencing Status" key="sequencing_status" %]
-      [% fields.sequencing_status.data %]
-   [% END %]
 
-   <p class="caveat-emptor">How/where are these tags used?</p>
+[% WRAPPER "$subfield_template" title="Sequencing Status" key="sequencing_status" %]
+    [% fields.sequencing_status.data %]
+[% END %]
 
-   [% WRAPPER "boilerplate/field" title="5' gap" key="five_prime_gap" %]
-      [% fields.five_prime_gap.data %]
-   [% END %]
+   
+[% # WRAPPER "$subfield_template" title="5' gap" key="five_prime_gap" %]
+[% # fields.five_prime_gap.data %]
+[% # END %]
 
-   [% WRAPPER "boilerplate/field" title="3' gap" key="three_prime_gap" %]
-      [% fields.three_prime_gap.data %]
-   [% END %]
+[% # WRAPPER "$subfield_template" title="3' gap" key="three_prime_gap" %]
+[% # fields.three_prime_gap.data %]
+[% # END %]
 
    [% # Nucleotide change: one or more possible changes for this allele %]
-   [% WRAPPER "boilerplate/field" title="Nucleotide Change" key="nucleotide_change" %]
+   [% WRAPPER "$subfield_template" title="Nucleotide Change" key="nucleotide_change" %]
 
        [% FOREACH change IN fields.nucleotide_change.data %]
 
@@ -45,7 +45,7 @@
        [% END %]
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Flanking Sequences" key="flanking_sequences" %]
+   [% WRAPPER "$subfield_template" title="Flanking Sequences" key="flanking_sequences" %]
       <div class="sequence">
           <span class="inline-sequence">
            5' flank -- [% fields.flanking_sequences.data.left_flank %]  &nbsp; [% fields.flanking_sequences.data.right_flank %] -- 3' flank
@@ -53,22 +53,11 @@
      </div>
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="CGH Deleted Probes" key="CGH Deleted Probes" %]
-
-     [% IF fields.cgh_deleted_probes.data > 0 %]
-          <div class="sequence">
-             <span class="inline-sequence">
-              5' flank -- [% fields.cgh_deleted_probes.data.left_flank %]  [% fields.cgh_deleted_probes.data.right_flank %] -- 3' flank
-             </span>           
-          </div>
-      [% END %]
-   [% END %]
-
-   [% WRAPPER "boilerplate/field" title="Flanking PCR Products" key="flanking_pcr_products" %]
+   [% WRAPPER "$subfield_template" title="Flanking PCR Products" key="flanking_pcr_products" %]
            [% fields.flanking_pcr_products.data.join(", ") %]
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Context" key="context" %]
+   [% WRAPPER "$subfield_template" title="Context" key="context" %]
      <div class="inline-sequence">
             [% fields.context.data.wildtype_fragment %] -- wild type<br>
             [% fields.context.data.mutant_fragment %] -- mutant
@@ -87,22 +76,29 @@
      </div>
    [% END %]
 
-   <p class="caveat-emptor">How/where are these tags used?</p>
+   [% # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field %]
+   [% IF fields.cgh_deleted_probes.data > 0 %]
+       [% WRAPPER "$subfield_template" title="CGH Deleted Probes" key="CGH Deleted Probes" %]
+          <div class="sequence">
+             <span class="inline-sequence">
+              5' flank -- [% fields.cgh_deleted_probes.data.left_flank %]  [% fields.cgh_deleted_probes.data.right_flank %] -- 3' flank
+             </span>           
+          </div>
+       [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Deletion Verification" key="deletion_verification" %]
-      [% fields.deletion_verification.data %]
+       [% WRAPPER "$subfield_template" title="Deletion Verification" key="deletion_verification" %]
+          [% fields.deletion_verification.data %]
+       [% END %]
+
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Features Affected" key="features_affected" %]
-
-
+   [% WRAPPER "$subfield_template" title="Features Affected" key="features_affected" %]
        <table border="1">
 	  	<tr>
 			<td>feature type</td>
 			<td>feature</td>
 			<td>details</td>
 		</tr>
-
 
        [% FOREACH feature_type IN fields.features_affected.data.keys %]
                 [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
@@ -172,17 +168,16 @@
      </table>
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Detection Method" key="detection_method" %]
+   [% WRAPPER "$subfield_template" title="Detection Method" key="detection_method" %]
       [% fields.detection_method.data %]
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Affects Splice Site" key="affects_splice_site" %]
+   [% WRAPPER "$subfield_template" title="Affects Splice Site" key="affects_splice_site" %]
          <p>Acceptor: [% fields.affects_splice_site.data.acceptor %]</p>
          <p>Donor: [% fields.affects_splice_site.data.donor %]</p>
    [% END %]
 
-   [% WRAPPER "boilerplate/field" title="Causes Frameshift" key="causes_frameshift" %]
+   [% WRAPPER "$subfield_template" title="Causes Frameshift" key="causes_frameshift" %]
       [% fields.causes_frameshift.data %]
    [% END %]
-   
-[% END %]
+

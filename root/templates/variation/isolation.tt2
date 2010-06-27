@@ -2,7 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = widget %]
-[% WRAPPER "boilerplate/widget" -%]
+[%# WRAPPER "boilerplate/widget" -%]
 
    [% WRAPPER "boilerplate/field" title="Laboratory Of Origin" key="laboratory_of_origin" %]
          <a href="[% c.uri_for_action('report', 'laboratory' , fields.laboratory_of_origin.data ) %]">[% fields.laboratory_of_origin.data %]</a>
@@ -54,4 +54,4 @@
       	      [% fields.derivative.data.join(" ") %]
    [% END %]
 
-[% END %]
+[%# END %]

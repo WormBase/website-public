@@ -2,7 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = widget %]
-[% WRAPPER "boilerplate/widget" -%]
+[%# WRAPPER "boilerplate/widget" -%]
 
    <p class="caveat-emptor">This should also include mapping data</p>
 
@@ -91,4 +91,4 @@
          <a href="[% c.uri_for_action('report', 'transgene' , fields.rescued_by_transgene.data ) %]">[% fields.rescued_by_transgene.data %]</a>
    [% END %]
 
-[% END %]
+[%# END %]

@@ -6,7 +6,6 @@
 -->
 
 
-
 <tr class="databody" valign="top">	
     <th class="searchtitle" colspan="2" width="125px">
 	<a name="[% title %]">[% title FILTER ucfirst %]</a>
