@@ -4,24 +4,11 @@
 [%- #    widgets - a list of widgets supported by the page -%]
 [%- #    title   - the title of the page                   -%]
 
-[%- # Provide a title to root/lib/boilerplate/header -%]
-[%- # META title = "THIS IS A DYNAMICALLY ASSIGNED PAGE TITLE" -%]
-
-
-[% MACRO select_widget_template(widget,class) BLOCK;
-     IF c.config.generic_widgets.$widget;
-              "generic/widget.tt2";
-     ELSIF c.config.common_widgets.$widget;
-              "common_widget/" _ widget _ ".tt2";
-     ELSE;
-              class _ "/" _ widget _ '.tt2';
-     END;
-END;
-%]
-
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.common_name.data.label %]
 
+[%# Available views, but we don't want classic page viewers to
+    be able to select the new pages (yet) %]
 
 [% UNLESS is_classic %]
 <nav id="available-views">
@@ -30,13 +17,13 @@ END;
    [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
-   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a>
+   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
+   [% tag2link(object.name.data,'classic','is_classic') %]
 </nav>
 [% END %]
 
-
 [% IF is_classic %]
-        [% INCLUDE "classic/contextual_navbar.tt2" %]
+     [% PROCESS "classic/contextual_navbar.tt2" %]
 [% END %]
 
 <div class="title">
@@ -46,6 +33,11 @@ END;
    [% END %] 
 </div>
 
+[%# Add in the prompt %]
+[% IF is_classic %]
+     [% PROCESS classic/prompt.tt2(object.name.data.class) %]
+     [% PROCESS "classic/report_toc.tt2" %]
+[% END %]
 
 
 [%# A two panel selector view.
@@ -88,31 +80,25 @@ END;
              [% FOREACH widget IN widgets -%]
                 <li>
                       <a href="/rest/widget/[% class %]/[% this_object_id %]/[% widget.name %]">
-                           <span>[% widget.title %]</span>  [%# TODO: This should be using the title from the configuration file %]
+                           <span>[% widget.title %]</span>
                       </a>
                 </li>
     	     [% END %]
           </ul>
-
-<!--
-   This doesn't really work in the tabbed context. (only prints the last tab)
--->
-
-
        </div>
    </div>
 
 
 
-[% # All widgets on one page, loaded by ajax %]
+[%# All widgets on one page, loaded by ajax. This is esentially 
+    what the current site is, less the ajax loading %]
+
 [% ELSIF view=="page" OR is_classic %]
 
-[%# Set up the classic view nested tables %]
-[% IF is_classic %]
-        <div align="center">
+    [%# Set up the nested tables of the classic view %]
+    [% IF is_classic %]
          <table border="1" width="100%">
-[% END %]
-
+    [% END %]
 
      [% FOREACH this_page IN c.config.pages.keys.sort %]
 
@@ -121,25 +107,24 @@ END;
 
          [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
 
-	    [%# I *should* move the widget wrapper to each widget template.
-	        It makes the most sense for these templates to start and 
-		end with that wrapper. 
+                    [% WRAPPER "boilerplate/widget" -%]
+                          [%#- This is a little goofy. Let me explain.
+                               What we are doing here is preparing the widget
+                               and markup as a target for an ajax request.
+                               This lets us display widget headers above
+                               containers which are then filled by ajax.
+			       
+			       For the classic view, this includes building 
+			       a nested table structure.
 
-		Each individual request for a widget is thus complete.
+                               Although we could place the WRAPPER in each widget
+                               template proper, widget headers are then displayed
+                               once the content has returned.
 
-		Additionally, that's what the 
-		user would expect when requesting a widget by REST in html 
-
-		So I'm not completely satisfied with the layout of widget wrapping ATM.
-
-		%]
-
-
-             [% WRAPPER "boilerplate/widget" -%]
-                
-                    [% # Uniquely identify the widget for future ajaxification %]
-		    [%# This doesn't belong in the widget wrapper - it's a target for an ajax event %]
-   		    <div id="[%- widget.name -%]"></div>
+			       The upshot of this is that widgets are not self-contained.
+			       I'm not entirely psyched about that. Something to ponder.
+			       %]                               
+                    [% END %]
 
 		    [%# This is a work in progress: I want to sequentially load widgets.
 		        Firefox does this using the existing code, but other browsers do not.			
@@ -156,14 +141,13 @@ END;
                                     })				      
                    </script>
 
-           [% END %]
+
       [% END %]
   [% END %]
 
 
   [% IF is_classic %] [%# Need to close the table based layout. %]
           </table>
-       </div>
   [% END %]
 
 [% END %]

@@ -25,31 +25,54 @@
 #   # 2nd approach: using formats
 #   #   external_link = format('<a href="%s" target="_blank">%s</a>');
 #
-#   # Turn Ace objects into links
-#   MACRO object2link(objext,text) BLOCK;
-#        "<a href=\"$site.class2action.gene.action\">woohoo</a>";
-#   END;   
 
-    MACRO tag2link(data,text) BLOCK;  
+    MACRO tag2link(data,text,is_classic) BLOCK;  
       class =  data.class FILTER lower;
-      link = '/reports/' _ class _ '/' _ data.id ;
-#      link = '/reports/' _ data.link _ '/' _ data.id ;
 
-      IF text;
-	"<a href=\"$link\" class=\"$data.class\">  $text </a>";;
+       # Classic page URLs.
+       IF is_classic;
+          url  = site.class2action.$class.action;
+          IF text;
+	   "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">  $text </a>";
+          ELSE;
+	   "<a href=\"$url\?name=" _ data.id _ "\" class=\"$data.class\">  $data.label </a>";
+          END;
       ELSE;
-	"<a href=\"$link\" class=\"$data.class\">  $data.label </a>";
-      END;
-    END; 
+          link = '/reports/' _ class _ '/' _ data.id ;
+   #      link = '/reports/' _ data.link _ '/' _ data.id ;
+         IF text;
+	   "<a href=\"$link\" class=\"$data.class\">  $text </a>";;
+         ELSE;
+	   "<a href=\"$link\" class=\"$data.class\">  $data.label </a>";
+         END;
+      END; 
+   END;
+
+# Like tag2link, bt for cases where we only have text and no object.
+# You must provide both the id and text.
+# An optional fourth parameter, is_classic, will be classic WormBase
+# URLs
+    MACRO text2link(class,id,text,is_classic) BLOCK;  
+       class =  class FILTER lower;
+
+       # Classic page URLs.
+       IF is_classic;
+          url  = site.class2action.$class.action;
+	   "<a href=\"$url\?name=$id\" class=\"$class\">$text</a>";
+      ELSE;
+	   "<a href=\"/reports/$class/$id\" class=\"$class\">$text</a>";
+      END; 
+   END;
+
 
 # Dynamically select a tempate: custom, common, generic
 MACRO select_field_template(field,class) BLOCK;
      IF c.config.generic_fields.$field;
               "generic/field.tt2";
      ELSIF c.config.common_fields.$field;
-              "common_fields/" _ field _ ".tt2";
+              "shared/fields/" _ field _ ".tt2";
      ELSE;
-              class _ "/" _ field _ '.tt2';
+              "classes/" _ class _ "/" _ field _ '.tt2';
      END;
 END;
 
@@ -57,9 +80,9 @@ MACRO select_widget_template(widget,class) BLOCK;
      IF c.config.generic_widgets.$widget;
               "generic/widget.tt2";
      ELSIF c.config.common_widgets.$widget;
-              "common_widget/" _ widget _ ".tt2";
+              "shared/widgets/" _ widget _ ".tt2";
      ELSE;
-              class _ "/" _ widget _ '.tt2';
+              "classes/" _ class _ "/" _ widget _ '.tt2';
      END;
 END;
 
@@ -82,7 +105,7 @@ END;
    # Data munging utilities
    # USE Util;
 
-   # Basic table formatting. Perhaps these shold be dnamic instead
+   # Basic table formatting. Perhaps these should be dynamic instead
    #USE Table(list, rows=5)
 
    # For debugging ONLY!
@@ -94,7 +117,6 @@ END;
    # image: wrap a src in an image tag using the format plugin
    USE image  = format('<img src="%s" valign="middle" />');
    USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
-   
    USE link = format('<a href="%s" target="_blank">%s</a>');
 
 
@@ -217,174 +239,133 @@ END;
     END;
 
 
-
   ###########################################
   # Class-to-action mapping
+  # Map classes to their old school URLs
+  # This is only used by the classic view
   ###########################################
   site.class2action = { 	
-	       align     = { action = '/seq/align'
+	       align     = { action = '/db/seq/align'
 		             title  = 'alignment' }
-	       aligner   = { action = '/seq/aligner'
+	       aligner   = { action = '/db/seq/aligner'
                              title  = 'EST Alignments' }
-	       antibody  = { action = '/gene/antibody'
+	       antibody  = { action = '/db/gene/antibody'
                              title  = 'Antibody Summary' }
-	       aoterm    = { action = '/ontology/anatomy'
+	       aoterm    = { action = '/db/ontology/anatomy'
                              title  = 'Anatomy Ontology' }
-	       author    = { action = '/misc/person'
+	       author    = { action = '/db/misc/person'
                              title =  'Author Info' }
-	       biblio    = { action = '/misc/biblio'
+	       biblio    = { action = '/db/misc/biblio'
                              title  = 'Bibliography' }
-	       cds       = { action = '/seq/sequence'
+	       cds       = { action = '/db/seq/sequence'
                              title  = 'Sequence Summary' }
-	       cell      = { action = '/cell/cell.cgi'
+	       cell      = { action = '/db/cell/cell.cgi'
                              title  = 'Cell Summary' }
-	       clone     = { action = '/seq/clone'
+	       clone     = { action = '/db/seq/clone'
                              title  = 'Clone Summary' }
-	       expression_cluster = { action = '/microarray/expression_cluster'
+	       expression_cluster = { action = '/db/microarray/expression_cluster'
                             	      title  = 'Microarray Expression Cluster Summary' }
 
-	       expr_pattern = { action = '/gene/expression'
+	       expr_pattern = { action = '/db/gene/expression'
                         	title  = 'Expression Pattern' }
 
-	       expr_profile = { action = '/gene/expr_profile'
+	       expr_profile = { action = '/db/gene/expr_profile'
 	                        title  = 'Expression profile' }
 
-	       gene       = { action = '/gene/report_by_ajax'
+	       gene       = { action = '/db/gene/report_by_ajax'
                               title  = 'Gene Summary' }
 
-	       gene_name  = { action = '/gene/gene'
+	       gene_name  = { action = '/db/gene/gene'
                               title  = 'Gene Summary' }
 
-	       gene_class = { action = '/gene/gene_class'
+	       gene_class = { action = '/db/gene/gene_class'
                               title  = 'Gene Class Summary' }
-	       gene_regulation = { action = '/gene/regulation'
+	       gene_regulation = { action = '/db/gene/regulation'
                     	           title  = 'Gene Regulation Summary' }
-
-	       gmap       = { action = '/misc/epic'
+	       gmap       = { action = '/db/misc/epic'
                               title  = 'Genetic Map' }
-
-	       go_term    = { action = '/ontology/gene'
+	       go_term    = { action = '/db/ontology/gene'
                               title  = 'GO Term' }
-
-	       go_dag     = { action = '/ontology/go_dag'
+	       go_dag     = { action = '/db/ontology/go_dag'
                               title  = 'GO DAG' }
-
-	       homology_group = { action = '/gene/homology_group'
+	       homology_group = { action = '/db/gene/homology_group'
                	                  title  = 'Homology Group' }
-
-	       hunter     = { action = '/seq/gbrowse/elegans/'
+	       hunter     = { action = '/db/seq/gbrowse/elegans/'
                               title  = 'Genome Browser' }
-
-	       laboratory = { action = '/misc/laboratory'
+	       laboratory = { action = '/db/misc/laboratory'
                               title  = 'Lab Listing' }
-
-	       life_stage = { action = '/misc/life_stage'
+	       life_stage = { action = '/db/misc/life_stage'
                               title  = 'Life Stage' }
-
-	       locus      = { action = '/gene/locus'
+	       locus      = { action = '/db/gene/locus'
                               title  = 'Locus Summary' }
-
 	       mappingdata = { action = '/gene/mapping_data'
 	                       title  = 'Map Data' }
-
-	       mapservlet  = { action = '/mapview/geneticmap'
+	       mapservlet  = { action = '/db/mapview/geneticmap'
 	                       title  = 'Clickable Map' }
-
-	       MindOfWorm  = { action = '/cell/mindofworm'
+	       MindOfWorm  = { action = '/db/cell/mindofworm'
  	                       title  = 'Mind of Worm' }
-
 	       microarray_experiment  = {
-		               action  = '/microarray/results'
+		               action  = '/db/microarray/results'
 	 	               title   = 'Microarray Summary' }
- 
-	       microarray_results    = { action = '/microarray/results'
+	       microarray_results    = { action = '/db/microarray/results'
 	 	                         title  = 'Microarray Summary' }
-
-	       motif       = { action = '/gene/motif'
+	       motif       = { action = '/db/gene/motif'
 	                       title  = 'Motif' }
-
-	       model       = { action = '/misc/model'
+	       model       = { action = '/db/misc/model'
 	                       title  = 'Schema' }
-
-	       nbrowse     = { action = '/seq/interaction_viewer'
- 	                       title  = 'N-Browse Interaction Viewer' }
-	       
-	       nearby_genes= { action = '/gene/genetable#pos'
+	       nbrowse     = { action = '/db/seq/interaction_viewer'
+ 	                       title  = 'N-Browse Interaction Viewer'}
+	       nearby_genes= { action = '/db/gene/genetable#pos'
 	                       title  = 'Nearby Genes' }
-	       
-	       oligo_set    = { action = '/seq/pcr'
+	       oligo_set    = { action = '/db/seq/pcr'
 	                        title  = 'Microarray Oligos' }
-	       
-	       operon       = { action = '/gene/operon'
-	                        title  = 'Operon Summary' }
-	       
-	       paper        = { action = '/misc/paper'
-	                        title  = 'Citation' }
-	       
-	       pcr_product  = { action = '/seq/pcr'
-	                        title  = 'PCR Assay' }
-	       
-	       pedigree     = { action = '/searches/pedigree'
-	                        title  = 'Pedigree Browser' }
-	       
-	       person       = { action = '/misc/person'
-	                        title  = 'Person Info' }
-	       
-	       person_name  = { action = '/misc/person'
-	                        title  = 'Person Info' }
-	       
-	       phenotype    = { action = '/misc/phenotype'
-	                        title  = 'Phenotype' }
-	       
-	       pic          = { action = '/misc/epic'
-	                        title  = 'Acedb Image' }
-	       
-	       protein      = { action = '/seq/protein'
-	                        title  = 'Protein Summary' }
-	       
-	       rearrange    = { action = '/gene/rearrange'
-	                        title  = 'Rearrangement Summary' }
-	       
-	       rnai         = { action = '/seq/rnai'
-	                        title  = 'RNAi Summary' }
-	       
-	       sagetag      = { action = '/seq/sage'
-	                        title  = 'SAGE Summary' }
-	       
-	       sequence     = { action = '/seq/sequence'
-	                        title  = 'Sequence Summary' }
-	       	       
-	       strain       = { action = '/gene/strain'
-	                        title  = 'Strain Summary' }
-	       
-	       structure_data = { action = '/gene/structure_data'
-	                          title  = 'Structure_data' }
-	       
+	       operon       = { action = '/db/gene/operon'
+	                        title  = 'Operon Summary' }	       
+	       paper        = { action = '/db/misc/paper'
+	                        title  = 'Citation' }	       
+	       pcr_product  = { action = '/db/seq/pcr'
+	                        title  = 'PCR Assay' }	       
+	       pedigree     = { action = '/db/searches/pedigree'
+	                        title  = 'Pedigree Browser' }	       
+	       person       = { action = '/db/misc/person'
+	                        title  = 'Person Info' }	       
+	       person_name  = { action = '/db/misc/person'
+	                        title  = 'Person Info' }	       
+	       phenotype    = { action = '/db/misc/phenotype'
+	                        title  = 'Phenotype' }	       
+	       pic          = { action = '/db/misc/epic'
+	                        title  = 'Acedb Image' }	       
+	       protein      = { action = '/db/seq/protein'
+	                        title  = 'Protein Summary' }	       
+	       rearrange    = { action = '/db/gene/rearrange'
+	                        title  = 'Rearrangement Summary' }	       
+	       rnai         = { action = '/db/seq/rnai'
+	                        title  = 'RNAi Summary' }	       
+	       sagetag      = { action = '/db/seq/sage'
+	                        title  = 'SAGE Summary' }	       
+	       sequence     = { action = '/db/seq/sequence'
+	                        title  = 'Sequence Summary' }	       	       
+	       strain       = { action = '/db/gene/strain'
+	                        title  = 'Strain Summary' }	       
+	       structure_data = { action = '/db/gene/structure_data'
+	                          title  = 'Structure_data' }	       
 	       synteny      = { action = '/db/misc/ebsyn'
                                 title  = 'Synteny Browser'
                               }
-
-	       transgene    = { action = '/gene/transgene'
-	                        title  = 'Transgene Summary' }
-	       
-	       tree         = { action = '/misc/etree'
-	                        title  = 'Tree Display' }
-	       
-	       variation    = { action = '/gene/variation'
-	                        title  = 'Variation Summary' }
-	       
-	       wtp          = { action = '/seq/wtp'
-	                        title  = 'WTP Summary' }
-	       
-	       xml          = { action = '/misc/xml'
-	                        title  = 'XML' }
-	       
-	       y2h          = { action = '/seq/y2h'
-	                        title  = 'Y2H interaction' }
-	       
-	       yh           = { action = '/seq/y2h'
+	       transgene    = { action = '/db/gene/transgene'
+	                        title  = 'Transgene Summary' }	       
+	       tree         = { action = '/db/misc/etree'
+	                        title  = 'Tree Display' }	       
+	       variation    = { action = '/db/gene/variation'
+	                        title  = 'Variation Summary' }	       
+	       wtp          = { action = '/db/seq/wtp'
+	                        title  = 'WTP Summary' }	       
+	       xml          = { action = '/db/misc/xml'
+	                        title  = 'XML' }	       
+	       y2h          = { action = '/db/seq/y2h'
+	                        title  = 'Y2H interaction' }	       
+	       yh           = { action = '/db/seq/y2h'
 	                        title  = 'YH interaction' }
 	      };
-
 
 -%]

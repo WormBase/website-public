@@ -12,10 +12,6 @@ extends 'WormBase::API::Object';
 # TODO:
 # Mapping data
 # Marked_rearrangement
-# Polymorphism details
-
-# Q: should we re-organize the model under Phenotype?
-# Q: Nonsense, missense, all seem to overlap with Molecular_change hash?
 
 ############################################################
 #
@@ -155,22 +151,25 @@ sub status {
 sub sequencing_status {
     my $self = shift;
     my $object = $self->object;
+    my $status = $object->SeqStatus;
     return { description => 'sequencing status of the variation',
-	     data        => $object->SeqStatus };
+	     data        => "$status" };
 }
 
 sub five_prime_gap {
     my $self = shift;
     my $object = $self->object;
+    my $gap    = $object->FivePrimeGap || '';
     return { description => 'five prime gap',
-	     data        => $object->FivePrimeGap || "" };
+	     data        => "$gap" };
 }
 
 sub three_prime_gap {
     my $self = shift;
     my $object = $self->object;
+    my $gap     = $object->ThreePrimeGap || '';
     return { description => 'three prime gap',
-	     data        => $object->ThreePrimeGap || "" };
+	     data        => "$gap" };
 }
 	
 
@@ -198,8 +197,8 @@ sub flanking_sequences {
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
     my $data = { description => 'probes used for CGH of deletion alleles',
-		 data        => { left_flank  => $left_flank,
-				  right_flank => $right_flank,
+		 data        => { left_flank  => "$left_flank",
+				  right_flank => "$right_flank",
 		 },
     };
     return $data;    

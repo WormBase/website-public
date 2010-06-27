@@ -15,13 +15,14 @@
         [%# Is there a description? Set it as a tool tip %]
         [% IF fields.$key.description %]
            <a title="[% fields.$key.description %]">
-             [% title %]
+             [% title %]:
            </a>
         [% ELSE %]
-            [% title %]
+            [% title %]:
         [% END %]
 
        </div>
+
      <div class="field-content">
         [% content %]
      </div>

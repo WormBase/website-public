@@ -83,20 +83,6 @@ __PACKAGE__->config->{static}->{dirs} = [
 
 __PACKAGE__->config->{static}->{debug} = 1;
 
-
-#__PACKAGE__->config(
-#    breadcrumbs => {
-#	hide_index => 1,
-#	hide_home  => 0,
-##	labels     => {
-##	    '/'       => 'Home label',
-##	    '/foobar' => 'FooBar label',
-##	    ....
-##	},
-#    },
-#    );
-
-
 # Are we in production?  If so, select the correct configuration file using the server name
 # TODO: This needs to be a flag set during packaging/deployment as we haven't yet read in
 # the configuration file. This is a hack for now

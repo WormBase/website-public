@@ -4,9 +4,6 @@
 [% widget = widget %]
 [% subfield_template = 'boilerplate/field' %]
 
-[% Dumper.dump(c.stash) %]
-
-
 
 [% # WRAPPER "boilerplate/widget" -%]
 
