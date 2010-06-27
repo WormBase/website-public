@@ -12,12 +12,13 @@
 
 <tr class="databody" valign="top">	
     <th class="searchtitle" colspan="2" width="125px">
-	<a name="[% widget.title %]">[% widget.title FILTER ucfirst %]</a>
+	<a name="[% widget.name %]">[% widget.title FILTER ucfirst %]</a>
     </th>
     <td>
     <table border="0" cellspacing="4" cellpadding="0">
     <section class="widget">
          <div class="primary-container">
+              <div id="[%- widget.name -%]"></div>
               [% content %]
 
 [% ELSE %]
@@ -31,6 +32,7 @@
 	      [%# Porque? %]
               <a name="[% widget.name %]"></a>
 
+              <div id="[%- widget.name -%]"></div>
               [% content %]
 
               <footer>

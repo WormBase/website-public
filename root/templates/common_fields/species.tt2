@@ -12,8 +12,8 @@
 
 [% # Don't display unless we have a genus and species %]
 
-   [% IF c.stash.fields.taxonomy.data.genus %]
+   [% IF fields.taxonomy.data.genus %]
       [% WRAPPER "boilerplate/field" title="Taxonomy" key="taxonomy" %]
-            <span class="species">[% c.stash.fields.taxonomy.data.genus %][% " " %][% c.stash.fields.taxonomy.data.species %]</span>
+            <span class="species">[% fields.taxonomy.data.genus %][% " " %][% fields.taxonomy.data.species %]</span>
       [% END %]
    [% END %]

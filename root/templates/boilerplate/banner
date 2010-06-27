@@ -2,9 +2,6 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- BEGIN boilerplate/banner -->
-[% IF is_classic %]
-    [% INCLUDE classic/banner %]
-[% ELSE %]
     <header id="page">
         <h1>[% template.title or c.config.site_byline %]</h1>
            <p>  
@@ -15,4 +12,3 @@
            </p>
       </header>
 <!-- END boilerplate/banner -->
-[% END %]

@@ -1,3 +1,16 @@
+/* 
+
+  WormBase - primary stylesheet
+
+  Contents:
+
+  DOCUMENT - document level formatting
+
+*/  
+
+
+/* = DOCUMENT ========================== */
+
 body {
     padding: 15px;
     margin-left:10%;
@@ -185,9 +198,9 @@ div#content #available-views {
     font-size:0.7em;
 }
 
-/* ************************************
-     Footer Styling                       
-   ************************************ */
+/* =========================================
+   FOOTER ================================== */
+
 div#footer{
         clear:both;
 	margin: 0 auto;
@@ -394,6 +407,7 @@ div.widget-section-header {
 /* widget field titles: ie Identification > IDs */
 div.field {
     clear:both;
+    line-height:1.1em;
 }
 
 div.field h5 {
@@ -401,12 +415,6 @@ div.field h5 {
     width:8em;
     text-align:right;
     margin-top:0em;   // Pitch default h2 margin and force top alignment with p content
-}
-
-div.field .field-content {
-    margin-left:3em;
-    margin-right:10px;
-    padding-left:1em;
 }
 
 div.field-title {
@@ -420,6 +428,9 @@ div.field-title {
 
 div.field-content {
 /*		  float:right; */
+                  margin-left:3em;
+                  margin-right:10px;
+                  padding-left:1em;
 		  text-align:left;
 		  width:auto;
 		  margin-left:20px;
@@ -576,9 +587,14 @@ table.multi       { padding: 0;
 
 
 
+/* ===============================================
 
-/* NEW MARKUP */
+       Data-specific styles
+
+   =============================================== */
 .species { font-style: italic; }
+
+
 
 /* The variation summary */
 .cgc-strain {   /* strains available from the CGC */
@@ -638,42 +654,6 @@ table.multi       { padding: 0;
 
 
 
-
-/* Ext DnD */
-.dd-ct {
-/*    position:absolute; */
-    border: 1px solid silver;
-    width: 400px;
-    height: 250px;
-    top: 32px;
-    background-color: #ffffc0;
-}
-#dd1-ct {
-    left: 64px;
-}
-#dd2-ct {
-    left: 256px;
-}
-.dd-item {
-    height: 18px;
-    border: 1px solid #a0a0a0;
-    background-color: #c4d0ff;
-    vertical-align: middle;
-    cursor: move;
-    padding: 2px;
-    z-index: 1000;
-}
-.dd-ct .dd-item {
-    margin: 2px;
-}
-.dd-proxy {
-    opacity: 0.4;
-    -moz-opacity: 0.4;
-    filter: alpha(opacity=40);
-}
-.dd-over {
-    background-color: #ffff60;
-}
 
 
 

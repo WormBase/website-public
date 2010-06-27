@@ -462,6 +462,7 @@ sub field_GET {
 }
 
 
+# WHY IS THIS DUPLICATED HERE?  Also in Root.pm
 # Template assignment is a bit of a hack.
 # Maybe I should just maintain
 # a hash, where each field/widget lists its corresponding template
@@ -472,39 +473,31 @@ sub _select_template {
     # However, we have some generic templates. We will
     # specify the name of the template.  
     # MOST widgets can use a generic template.
-    if ($type eq 'field') {
-	if (defined $c->config->{generic_fields}->{$render_target}) {
-	    return "generic/$type.tt2";    
-	    # Some are shared across Models
-	} elsif (defined $c->config->{common_fields}->{$render_target}) {
-	    return "common_fields/$render_target.tt2";
+
+
+# 2010.06.28
+# I don't believe the generic field/widget templates are in use any longer
+#    if ($type eq 'field') {
+#	if (defined $c->config->{generic_fields}->{$render_target}) {
+#	    return "generic/$type.tt2";    
+        # Some templates are shared across Models
+	if (defined $c->config->{common_fields}->{$render_target}) {
+	    return "shared/fields/$render_target.tt2";
 	} else {  
-	    return "$class/$render_target.tt2";
+	    return "classes/$class/$render_target.tt2";
 	}
     } else {
 	# Widget template selection
-return "$class/$render_target.tt2"; 
-	if (defined $c->config->{generic_widgets}->{$render_target}) {
-	    return "generic/$type.tt2";    
-	    # Some are shared across Models
-	} elsif (defined $c->config->{common_widgets}->{$render_target}) {
-	    return "common_widgets/$render_target.tt2";
+ return "classes/$class/$render_target.tt2"; 
+	#if (defined $c->config->{generic_widgets}->{$render_target}) {
+	#    return "generic/$type.tt2";    
+	#    # Some are shared across Models
+	if (defined $c->config->{common_widgets}->{$render_target}) {
+	    return "shared/widgets/$render_target.tt2";
 	} else {  
-	    return "$class/$render_target.tt2"; 
-# 	    return "$class/widgets/$render_target.tt2"; 
-#             return "$class/widget.tt2"; 
+	    return "classes/$class/$render_target.tt2"; 
 	}
-    }
-
-    # Approach 2: Most things are generic, those requiring custom fields are specified
-    #if (defined ($c->config->{custom_fields}->{$field})) {
-    #  $c->stash->{template} = "$page/$field.tt2";
-    #} elsif (defined ($c->config->{common_fields}->{$field})) {
-    #  $c->stash->{template} = "common_fields/$field.tt2";
-    #} else {
-    #  $c->stash->{template} = "generic/field.tt2";	  
-    #}
-   
+    }   
 }
 
 
