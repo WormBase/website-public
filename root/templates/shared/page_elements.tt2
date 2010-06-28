@@ -1,0 +1,216 @@
+####################################################
+#
+#  Widgets, Fields, Subfields
+#
+####################################################
+[% BLOCK field_block %]
+    <div class="field" id="[% title FILTER html %]">
+         <div class="field-title">
+
+              [%# Is there a description? Set it as a tool tip %]
+               [% IF fields.$key.description %]
+                <a title="[% fields.$key.description %]">
+                 [% title %]:
+                 </a>
+              [% ELSE %]
+                  [% title %]:
+              [% END %]
+
+          </div>
+
+          <div class="field-content">
+             [% content %]
+          </div>
+     </div>
+[% END %]
+
+
+
+[% BLOCK widget_block %]
+   <!-- start [% widget.name %] widget -->
+
+   [% IF c.request.referer.search("/db/") OR is_classic %]
+
+   <tr class="databody" valign="top">	
+       <th class="searchtitle" colspan="2" width="125px">
+	   <a name="[% widget.name %]">[% widget.title FILTER ucfirst %]</a>
+       </th>
+       <td>
+       <table border="0" cellspacing="4" cellpadding="0">
+       <section class="widget">
+            <div class="primary-container">
+                <div id="[%- widget.name -%]"></div>
+                 [% content %]
+
+   [% ELSE %]
+
+   <section class="widget">
+          <div class="primary-container">
+                <header>         
+                     <h3>[% widget.title %]</h3>
+                </header>
+
+	        [%# Porque? %]
+                <a name="[% widget.name %]"></a>
+
+                <div id="[%- widget.name -%]"></div>
+                [% content %]
+
+                <footer>
+                    Download: 
+                    [% FOREACH type IN c.config.api.content_type %]
+                        <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
+                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">
+                             [%- type -%]
+                        </a>
+                        [% UNLESS loop.last %] | [% END %]
+                     [% END %]
+                </footer>
+      [% END %]
+
+      </div>
+   </section>
+
+    [% IF c.request.referer.search("/db/") OR is_classic %]
+       </table>
+      </td>
+     </tr>
+     <!-- END [% title %] section -->
+     [% END %]
+
+     <!-- end [% widget %] widget -->
+[% END %]
+
+
+
+####################################################
+#
+#  GA
+#
+####################################################
+[% BLOCK google_analytics %]
+   <!-- GA -->
+   <script type="text/javascript">
+
+       var _gaq = _gaq || [];
+       _gaq.push(['_setAccount', 'UA-16257183-1']);
+       _gaq.push(['_setDomainName', '.wormbase.org']);
+       _gaq.push(['_trackPageview']);
+
+       (function() {
+       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+     })();
+   </script>
+[% END %]
+
+
+####################################################
+#
+#  ShareThis
+#
+####################################################
+[% BLOCK share_this %]
+   <!-- ShareThis. Or not. -->
+
+   <script type="text/javascript"
+   src="http://w.sharethis.com/widget/?tabs=web%2Cpost%2Cemail&amp;charset=utf-8&amp;services=reddit%2Cdigg%2Cfacebook%2Cmyspace%2Cdelicious%2Cstumbleupon%2Ctechnorati%2Cgoogle_bmarks%2Cyahoo_bmarks%2Cslashdot&amp;style=default&amp;publisher=7ab86fe8-5972-4c0c-b8d5-e8a0240bc09d&amp;popup=true">
+   </script>
+[% END %]
+
+
+
+
+####################################################
+#
+#  COMMENTS
+#
+####################################################
+[% BLOCK disqus_comments %]
+<!-- Commenting powered by Disqus -->
+<script type="text/javascript">
+//<![CDATA[
+(function() {
+    var links = document.getElementsByTagName('a');
+    var query = '?';
+    for(var i = 0; i < links.length; i++) {
+        if(links[i].href.indexOf('#disqus_thread') >= 0) {
+            query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
+        }
+    }
+    document.write('<script type="text/javascript" src="http://disqus.com/forums/wormbase/get_num_replies.js' + query + '"></' + 'script>');
+})();
+//]]>
+</script>
+[% END %]
+
+
+
+[% BLOCK suggestions2wormbase %]
+<!-- Suggestion Box -->
+<div class="feedback">
+   <h2>Suggestion Box</h2>
+   <form method="post" action="/db/misc/submit_feedback" enctype="application/x-www-form-urlencoded">
+     We greatly value your feedback.  If you have found
+     something incorrect, broken, or frustrating on this page,
+     let us know so that we can improve the quality of
+     annotation and the ease with which it is available.
+     <br /><br />
+
+     <b>Comments, questions, or feedback:</b>
+     <div class="indent">
+         <table border="0">
+             <tr>
+               <td colspan="3">
+                  <span class="smalldescription">
+                         Supplying your contact information
+			 is optional.  Doing so will enable us
+		         to contact you for further details
+		         and to let you know when your
+		         suggestions have been addressed.
+                 </span>
+               </td>
+             </tr>
+        
+             <tr>
+                <td rowspan="4">
+                   <textarea name="comments" rows="7" cols="60" maxlength="10" style="width:95%"></textarea>
+                </td>
+                <td>Category<i>(optional)</i>: </td>
+                <td>
+                    <select name="suggestions">
+                      <option value="general_comment">General comment</option>
+		      <option value="annotations_incorrect">Annotations are incorrect</option>
+		      <option value="annotations_incomplete">Annotations are incomplete</option>
+		      <option value="speed">The page takes too long to load</option>
+		      <option value="bug">The page has a software bug in it</option>
+		      <option value="requested_feature">Request for a new feature</option>
+		    </select>
+               </td>
+            </tr>
+            <tr>
+               <td>Submitted by:</td>
+               <td>
+                  <input type="text" name="submitted_by"  size="50">
+               </td>
+            </tr>
+            <tr>
+               <td>Institution:</td>
+               <td><input type="text" name="institution"  size="50"></td></tr>
+	    <tr>
+               <td>Email Address:</td>
+	       <td><input type="text" name="submitted_email" size="50"></td>
+	    </tr>
+	    <tr>
+	       <td colspan="2">&nbsp;</td>
+	       <td align="right">
+	       	   <input type="submit" name="Submit Comments" value="Submit Comments">
+		   <input type="reset" name="Clear Form" value="Clear Form">
+	       </td>
+            </tr>
+        </table>
+      </div>
+    </form>
+</div>
+[% END %]

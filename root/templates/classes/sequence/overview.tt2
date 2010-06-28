@@ -3,83 +3,83 @@
 
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_template title="Identity" %]
+[% WRAPPER $field_block title="Identity" %]
   [% c.stash.fields.identity.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Description" %]
+[% WRAPPER $field_block title="Description" %]
   [% c.stash.fields.description.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Sequence Type" %]
+[% WRAPPER $field_block title="Sequence Type" %]
   [% c.stash.fields.sequence_type.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Corresponding Gene" %]
+[% WRAPPER $field_block title="Corresponding Gene" %]
   [% tag2link(c.stash.fields.corresponding_gene.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Corresponding Protein" %]
+[% WRAPPER $field_block title="Corresponding Protein" %]
   [% tag2link(c.stash.fields.corresponding_protein.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Matching CDS" %]
+[% WRAPPER $field_block title="Matching CDS" %]
   [% c.stash.fields.matching_cds.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Matching Transcript" %]
+[% WRAPPER $field_block title="Matching Transcript" %]
   [% c.stash.fields.matching_transcript.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Origin" %]
+[% WRAPPER $field_block title="Origin" %]
   [% tag2link(c.stash.fields.origin.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Available From" %]
+[% WRAPPER $field_block title="Available From" %]
   [% tag2link(c.stash.fields.available_from.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Sequence Method" %]
+[% WRAPPER $field_block title="Sequence Method" %]
   [% c.stash.fields.sequence_method.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Briggsae Orthologs" %]
+[% WRAPPER $field_block title="Briggsae Orthologs" %]
   [% c.stash.fields.briggsae_orthologs.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_template title="ORFeome Assays" %]
+[% WRAPPER $field_block title="ORFeome Assays" %]
   [% FOREACH key IN c.stash.fields.orfeome_assays.data.keys.sort %]
     [% tag2link(c.stash.fields.orfeome_assays.data.$key) %]<br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_template title="Source Clone" %]
+[% WRAPPER $field_block title="Source Clone" %]
   [% c.stash.fields.source_clone.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Genomic Location" %]
+[% WRAPPER $field_block title="Genomic Location" %]
    [% FOREACH key IN  c.stash.fields.genomic_location.data %]
       [% tag2link(key) %]<br>
    [% END %]
 [% END %]
 
-[% WRAPPER $field_template title="Interpolated Genetic Position" %]
+[% WRAPPER $field_block title="Interpolated Genetic Position" %]
   [% tag2link(c.stash.fields.interpolated_genetic_position.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Transcripts" %]
+[% WRAPPER $field_block title="Transcripts" %]
   [% FOREACH key IN  c.stash.fields.transcripts.data %]
       <a href="[% c.uri_for_action('report','sequence' ,key ) %]">[% key %]</a><br>
    [% END %]
 [% END %]
 
-[% WRAPPER $field_template title="Microarray Assays" %]
+[% WRAPPER $field_block title="Microarray Assays" %]
   [% FOREACH key IN  c.stash.fields.microarray_assays.data %]
       <a href="[% c.uri_for_action('report','oligo_set' ,key ) %]">[% key %]</a><br>
    [% END %]
 [% END %]
 
-[% WRAPPER $field_template title="Transgene Constructs" %]
+[% WRAPPER $field_block title="Transgene Constructs" %]
   [% FOREACH key IN  c.stash.fields.transgene_constructs.data %]
       <a href="[% c.uri_for_action('report','transgene' ,key ) %]">[% key %]</a><br>
    [% END %]

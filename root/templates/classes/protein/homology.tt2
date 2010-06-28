@@ -3,11 +3,11 @@
  
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_template title="Image" %]
+[% WRAPPER $field_block title="Image" %]
     [% image(c.config.tmp_img_url _'/' _ c.stash.fields.homology_image.data) %]
 [% END %]
 
-[% WRAPPER $field_template title="Motif Summary" %]
+[% WRAPPER $field_block title="Motif Summary" %]
   [% data = c.stash.fields.motif_homologies.data %] 
    <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Database</th><th>Description</th><th>Accession</th></tr>
@@ -18,7 +18,7 @@
    </table>   
 [% END %]
 
-[% WRAPPER $field_template title="Best BLAST Hits" %]
+[% WRAPPER $field_block title="Best BLAST Hits" %]
   [% data = c.stash.fields.best_blastp_matches.data %] 
    <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>

@@ -3,7 +3,7 @@
 
 [% widget = c.stash.widget %]
  
-[% WRAPPER $field_template title="External Link" %]
+[% WRAPPER $field_block title="External Link" %]
   
   [% FOREACH tag IN c.stash.fields.external_links.data.keys.sort %]
       [% tag %]: [% tag2link(c.stash.fields.external_links.data.$tag) %] <br>
@@ -11,17 +11,17 @@
    
 [% END %]
 
-[% WRAPPER $field_template title="Remarks" %]
+[% WRAPPER $field_block title="Remarks" %]
   [% c.stash.fields.remarks.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_template title="Analysis" %]
+[% WRAPPER $field_block title="Analysis" %]
   [% FOREACH key IN c.stash.fields.analysis.data.keys.sort %]
     [% key %]:[% c.stash.fields.analysis.data.$key %]<br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_template title="Genomic Picture" %]
+[% WRAPPER $field_block title="Genomic Picture" %]
    [% data= c.stash.fields.genomic_picture.data %]
       [% tag2link(data, image(c.config.external_url.gbrowse_image _ data.label))%] 
 [% END %]

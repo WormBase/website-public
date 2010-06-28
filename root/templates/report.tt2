@@ -88,7 +88,7 @@
 
          [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
 
-                    [% WRAPPER "boilerplate/widget" -%]
+                    [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
                                What we are doing here is preparing the widget
                                and markup as a target for an ajax request.

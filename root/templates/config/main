@@ -99,7 +99,8 @@ END;
      message = 'There is no message';
 
    # Set some default templates
-   DEFAULT field_template = "boilerplate/field";
+   DEFAULT field_block  = "field_block";
+   DEFAULT widget_block = "widget_block";
 
    # Our custom URL mapping plugin.
    # Usage: url.Link();

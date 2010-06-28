@@ -3,37 +3,37 @@
 
    [% widget = widget %]
 
-   [% WRAPPER $field_template title="Name"-%] 
+   [% WRAPPER $field_block title="Name"-%] 
             [% tag2link(fields.common_name.data) %]
    [% END %]
 
-   [% WRAPPER $field_template title="WormBase Referential ID"-%] 
+   [% WRAPPER $field_block title="WormBase Referential ID"-%] 
            [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
 
-   [% WRAPPER $field_template title="Variation Type" key="variation_type" %]
+   [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
            [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
    [% END %]
 
    [% PROCESS "shared/fields/species.tt2" %]
 
-   [% WRAPPER $field_template title="Corresponding Gene" key="corresponding_gene" %]
+   [% WRAPPER $field_block title="Corresponding Gene" key="corresponding_gene" %]
           [% tag2link(fields.corresponding_gene.data) %]
    [% END %]
 
-   [% WRAPPER $field_template title="Other Names" key="other_names" %]
+   [% WRAPPER $field_block title="Other Names" key="other_names" %]
           [% FOREACH other_name IN fields.other_names.data %]
 	      [% tag2link(other_name) %]
                     [% UNLESS loop.last %], [% END %]
           [% END %]
    [% END %]
 
-   [% WRAPPER $field_template title="Status" key="status" %]
+   [% WRAPPER $field_block title="Status" key="status" %]
          [%# TODO: We should COMPLETELY hide variations with status of suppressed, but this would include searches... %]
          [% fields.status.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Remark(s)" key="remarks" %]
+   [% WRAPPER $field_block title="Remark(s)" key="remarks" %]
          [% fields.remarks.data.join('<br>') %]
    [% END %]
 

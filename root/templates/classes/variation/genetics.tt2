@@ -5,15 +5,15 @@
 
    <p class="caveat-emptor">This should also include mapping data</p>
 
-   [% WRAPPER $field_template title="Corresponding Gene" key="corresponding_gene" %]
+   [% WRAPPER $field_block title="Corresponding Gene" key="corresponding_gene" %]
          <a href="[% c.uri_for_action('report', 'gene' , fields.corresponding_gene.data.gene ) %]">[% fields.corresponding_gene.data.gene %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Reference Allele" key="reference_allele" %]
+   [% WRAPPER $field_block title="Reference Allele" key="reference_allele" %]
          <a href="[% c.uri_for_action('report', 'variation' , fields.reference_allele.data.allele ) %]">[% fields.reference_allele.data.allele %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Other Alleles" key="other_allele" %]
+   [% WRAPPER $field_block title="Other Alleles" key="other_allele" %]
 
           <p class="caveat-emptor">Haven't established subfield handling yet.</p>
 
@@ -59,7 +59,7 @@
    [% END %]
    
 
-   [% WRAPPER $field_template title="Strains" key="strains" %]
+   [% WRAPPER $field_block title="Strains" key="strains" %]
              [% FOREACH strain IN fields.strains.data.all_strains %]
                 [% IF fields.strains.data.cgc_strains.$strain %]
 		    <span class="cgc-strain">		    
@@ -86,7 +86,7 @@
 
    [% END %]
 
-   [% WRAPPER $field_template title="Rescued By Transgene" key="rescued_by_transgene" %]
+   [% WRAPPER $field_block title="Rescued By Transgene" key="rescued_by_transgene" %]
          <a href="[% c.uri_for_action('report', 'transgene' , fields.rescued_by_transgene.data ) %]">[% fields.rescued_by_transgene.data %]</a>
    [% END %]
 
