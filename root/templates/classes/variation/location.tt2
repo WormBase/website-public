@@ -3,17 +3,17 @@
 
 [% widget = c.stash.widget %]
 
-    [% WRAPPER $field_template title="Genetic Position" %]
+    [% WRAPPER $field_block title="Genetic Position" %]
         [% fields.genetic_position.data.gb_url %]
     [% END %]
 
-    [% WRAPPER $field_template title="Genomic Position" %]
+    [% WRAPPER $field_block title="Genomic Position" %]
           <a href="[% fields.genomic_position.data.gbrowse_link %]">
                [% fields.genomic_position.data.chromosome %]:[% fields.genomic_position.data.start %]..[% fields.genomic_position.data.stop %]
           </a>
     [% END %]
 
-    [% WRAPPER $field_template title="Genomic Image" %]
+    [% WRAPPER $field_block title="Genomic Image" %]
           [% fields.genomic_image.data %] (This will be the inline genomic environs image)
     [% END %]
 

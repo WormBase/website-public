@@ -3,52 +3,52 @@
 
 [% widget = widget %]
 
-   [% WRAPPER $field_template title="Laboratory Of Origin" key="laboratory_of_origin" %]
+   [% WRAPPER $field_block title="Laboratory Of Origin" key="laboratory_of_origin" %]
          <a href="[% c.uri_for_action('report', 'laboratory' , fields.laboratory_of_origin.data ) %]">[% fields.laboratory_of_origin.data %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Isolate By (author)" key="isolated_by_author" %]
+   [% WRAPPER $field_block title="Isolate By (author)" key="isolated_by_author" %]
          <a href="[% c.uri_for_action('report', 'person' , fields.isolated_by_author ) %]">[% fields.isolated_by_author %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Isolated By" key="isolated_by" %]
+   [% WRAPPER $field_block title="Isolated By" key="isolated_by" %]
          <a href="[% c.uri_for_action('report', 'person' , fields.isolated_by ) %]">[% fields.isolated_by %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Source Database" key="source_database" %]
+   [% WRAPPER $field_block title="Source Database" key="source_database" %]
 	 <a href="[% fields.source_database.data.remote_url %]">[% fields.source_database.data.remote_text %]</a>
    [% END %]
 
-   [% WRAPPER $field_template title="Date Isolated" key="date_isolated" %]
+   [% WRAPPER $field_block title="Date Isolated" key="date_isolated" %]
         [% fields.date_isolated.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Mutagen" key="mutagen" %]
+   [% WRAPPER $field_block title="Mutagen" key="mutagen" %]
       	      [% fields.mutagen.data %]
    [% END %]
 
    <p class="caveat-emptor">How are these tags used?</p>
 
-   [% WRAPPER $field_template title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics" %]
+   [% WRAPPER $field_block title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics" %]
       	      [% fields.isolated_via_forward_genetics.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Isolated Via Reverse Genetics" key="isolated_via_reverse_genetics" %]
+   [% WRAPPER $field_block title="Isolated Via Reverse Genetics" key="isolated_via_reverse_genetics" %]
       	      [% fields.isolated_via_reverse_genetics.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Transposon Excision" key="transposon_excision" %]
+   [% WRAPPER $field_block title="Transposon Excision" key="transposon_excision" %]
       	      [% fields.transposon_excision.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Transposon Insertion" key="transposon_insertion" %]
+   [% WRAPPER $field_block title="Transposon Insertion" key="transposon_insertion" %]
       	      [% fields.transposon_insertion.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Derived From" key="derived_from" %]
+   [% WRAPPER $field_block title="Derived From" key="derived_from" %]
       	      [% fields.derived_from.data %]
    [% END %]
 
-   [% WRAPPER $field_template title="Derivate" key="derivative" %]
+   [% WRAPPER $field_block title="Derivate" key="derivative" %]
       	      [% fields.derivative.data.join(" ") %]
    [% END %]

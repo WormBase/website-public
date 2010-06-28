@@ -3,14 +3,14 @@
 
 [% widget = c.stash.widget toggle = 1%]
 
-[% WRAPPER $field_template title="Genomic Position(s)" %]
+[% WRAPPER $field_block title="Genomic Position(s)" %]
      [% FOREACH key IN  c.stash.fields.genomic_location.data %]
       CHROMOSOME_[% key.label %] [% tag2link(key,"[Browse map]") %] 
       [% tag2link(c.stash.fields.print_sequence.data.est) %] <br>
    [% END %]
 [% END %] 
 
-[% WRAPPER $field_template title="Predicted Exon Structure" %]
+[% WRAPPER $field_block title="Predicted Exon Structure" %]
   [% data = c.stash.fields.print_feature.data.exons %]
   NOTE: Transcript is on ([% data.orientation%]) strand.<br>
   <table>
@@ -22,13 +22,13 @@
   </table>
 [% END %] 
 
-[% WRAPPER $field_template title="Matching cDNAs" %]
+[% WRAPPER $field_block title="Matching cDNAs" %]
    [% FOREACH key IN  c.stash.fields.print_cdna.data %]
       [% tag2link(key) %]<br>
    [% END %] 
 [% END %] 
 
-[% WRAPPER $field_template title="Blast" %]
+[% WRAPPER $field_block title="Blast" %]
     [% data= c.stash.fields.print_blast.data %]
      <form method="post" action= [% c.external_url.blast_blat %] enctype="multipart/form-data">
 	 [% FOREACH key IN  data.target %]
@@ -37,7 +37,7 @@
     </form>
 [% END %] 
 
-[% WRAPPER $field_template title="Sequence" %]
+[% WRAPPER $field_block title="Sequence" %]
      [% data= c.stash.fields.print_sequence.data %]
     [% FOREACH key IN  data.keys.sort %]
 	[% IF data.$key.header.defined %]

@@ -3,11 +3,11 @@
 
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_template title="Protein Length" %]
+[% WRAPPER $field_block title="Protein Length" %]
   [% c.stash.fields.protein_sequence.data.length %]
 [% END %]
 
-[% WRAPPER $field_template title="Protein Sequence" %]
+[% WRAPPER $field_block title="Protein Sequence" %]
   [% seq = c.stash.fields.protein_sequence.data.seq %]
   <table width= '100%' >
   [% FOREACH line IN seq.chunk(80) %]
@@ -16,15 +16,15 @@
   </table>
 [% END %]
 
-[% WRAPPER $field_template title="Estimated Molecular Weight" %]
+[% WRAPPER $field_block title="Estimated Molecular Weight" %]
   [% c.stash.fields.estimated_molecular_weight.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Estimated Isoelectric Point" %]
+[% WRAPPER $field_block title="Estimated Isoelectric Point" %]
   [% c.stash.fields.estimated_isoelectric_point.data %]
 [% END %]
 
-[% WRAPPER $field_template title="Amino Acid Composition" %]
+[% WRAPPER $field_block title="Amino Acid Composition" %]
   [% data = c.stash.fields.amino_acid_composition.data  %]
   [% keys = data.keys.sort  %]
   <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>
