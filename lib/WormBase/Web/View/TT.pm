@@ -14,7 +14,7 @@ __PACKAGE__->config({
 				      WormBase::Web->path_to( 'root', 'static',    'css', 'flora'    ),
 				     ],
 		     PRE_PROCESS  => 'config/main',
-		     WRAPPER      => 'boilerplate/wrapper',
+		     WRAPPER      => 'wrapper',
 #		     ERROR        => 'error',
 		     TEMPLATE_EXTENSION => '.tt2',
 		     RECURSION    => 1,
