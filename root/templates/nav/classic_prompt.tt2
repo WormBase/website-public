@@ -1,0 +1,16 @@
+[%# Set up the old school prompt %]
+
+<div id="autoComplete2">
+<form method="post" action="[%- site.class2action(class) -%]" enctype="multipart/form-data">
+<span class="caption">Specify a [% class FILTER lower %] such as 
+
+[% SWITCH class %]
+   [% CASE 'variation' %]
+      [%- text2link(class,'e307','e307','is_classic') -%], 
+      [%- text2link(class,'n2559','n2559','is_classic') -%], 
+      [%- text2link(class,'e345','e345','is_classic') -%], or 
+      [%- text2link(class,'pkP6112','pkP6112','is_classic') -%].
+   [%- END -%]
+[%- # Now build the prompt -%]
+<input type="text" name="name" size="20" /><input type="hidden" name="class" value="[%- class -%]"  /></span></form></div>
+

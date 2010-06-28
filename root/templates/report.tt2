@@ -23,7 +23,7 @@
 [% END %]
 
 [% IF is_classic %]
-     [% PROCESS "classic/contextual_navbar.tt2" %]
+     [% PROCESS "nav/classic_contextual_navbar.tt2" %]
 [% END %]
 
 <div class="title">
@@ -35,8 +35,8 @@
 
 [%# Add in the prompt %]
 [% IF is_classic %]
-     [% PROCESS classic/prompt.tt2(object.name.data.class) %]
-     [% PROCESS "classic/report_toc.tt2" %]
+     [% PROCESS nav/classic_prompt.tt2(object.name.data.class) %]
+     [% PROCESS "nav/classic_report_toc.tt2" %]
 [% END %]
 
 
