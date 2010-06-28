@@ -92,7 +92,7 @@ END;
          + config/url
 	 + config/external_urls
          + config/assets
-	 + lib/debug;
+	 + config/debug;
 
    # set defaults for variables, etc.
    DEFAULT 
