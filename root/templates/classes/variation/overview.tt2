@@ -16,7 +16,7 @@
            [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
    [% END %]
 
-   [% PROCESS "common_fields/species.tt2" %]
+   [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER "$subfield_template" title="Corresponding Gene" key="corresponding_gene" %]
           [% tag2link(fields.corresponding_gene.data) %]
