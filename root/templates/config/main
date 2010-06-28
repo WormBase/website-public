@@ -12,7 +12,7 @@
 
    # Site-wide data
    site = {
-     copyright => '2000-2008 The WormBase Consortium',
+     copyright => '2000-2010 The WormBase Consortium',
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
 
@@ -97,6 +97,9 @@ END;
    # set defaults for variables, etc.
    DEFAULT 
      message = 'There is no message';
+
+   # Set some default templates
+   DEFAULT field_template = "boilerplate/field";
 
    # Our custom URL mapping plugin.
    # Usage: url.Link();

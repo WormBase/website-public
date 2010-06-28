@@ -1,4 +1,4 @@
-[%- THIS IS THE PRIMARY WRAPPER, ROUTING REQUESTS TO THE APPROPRIATE LAYOUT -%]
+[%#- THIS IS THE PRIMARY WRAPPER, ROUTING REQUESTS TO THE APPROPRIATE LAYOUT -%]
 
 [% IF template.name.match('\.(css|js|txt)');
      debug("Passing page through as text: $template.name");
@@ -18,9 +18,9 @@
      debug("Applying HTML page layout wrappers to $template.name\n");
 
      IF is_classic;
-          content WRAPPER boilerplate/html + boilerplate/layout;
+          content WRAPPER boilerplate/html;
      ELSE;
-          content WRAPPER boilerplate/html + boilerplate/layout + boilerplate/search;     
+          content WRAPPER boilerplate/html + layout/default + boilerplate/search;
      END;
 
    END;
