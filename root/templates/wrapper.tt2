@@ -9,7 +9,7 @@
      content;
 
    ELSIF (template.name.match('index'));   	 
-         content WRAPPER boilerplate/html + layout/default;
+         content WRAPPER boilerplate/html + layout/default.tt2;
   
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");
@@ -20,7 +20,7 @@
      IF is_classic;
           content WRAPPER boilerplate/html;
      ELSE;
-          content WRAPPER boilerplate/html + layout/default + boilerplate/search;
+          content WRAPPER boilerplate/html + layout/default.tt2 + boilerplate/search;
      END;
 
    END;
