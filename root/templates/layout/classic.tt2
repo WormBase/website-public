@@ -1,0 +1,80 @@
+[%# This is the classic report page layout 
+    It mixes the template directory layout 
+    structure a bit since it doesn't have a layout
+    template.  This template is specified by the 
+    action and wrapped in html by wrapper.tt2    
+-%]
+
+[% SET this_object_id    = object.name.data.id %]
+[% SET this_object_label = object.common_name.data.label %]
+
+[% PROCESS header/classic.tt2 %]
+
+    <div id="content">
+
+     [% PROCESS "nav/classic_contextual_navbar.tt2" %]
+
+     <div class="title">
+         [% title %]
+         [%- IF object -%]
+             <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data.label -%]</h2>
+         [% END %] 
+      </div>
+
+      [%# Add in the prompt and per-class horizontal nav %]
+      [% PROCESS nav/classic_prompt.tt2(object.name.data.class) %]
+      [% PROCESS "nav/classic_report_toc.tt2" %]
+
+      <table border="1" width="100%">
+
+      [% FOREACH this_page IN c.config.pages.keys.sort %]
+
+         [% # Wow. Stupid hack since pages are a hash not array %]
+         [% NEXT IF this_page != class %]
+
+         [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+
+                    [% WRAPPER $widget_block -%]
+                          [%#- This is a little goofy. Let me explain.
+                               What we are doing here is preparing the widget
+                               and markup as a target for an ajax request.
+                               This lets us display widget headers above
+                               containers which are then filled by ajax.
+			       
+			       For the classic view, this includes building 
+			       a nested table structure.
+
+                               Although we could place the WRAPPER in each widget
+                               template proper, widget headers are then displayed
+                               once the content has returned.
+
+			       The upshot of this is that widgets are not self-contained.
+			       I'm not entirely psyched about that. Something to ponder.
+			       %]                               
+                    [% END %]
+
+		    [%# This is a work in progress: I want to sequentially load widgets.
+		        Firefox does this using the existing code, but other browsers do not.			
+			%] 
+		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
+
+                    <script>
+                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
+   		                   function(response, status, xhr) {
+                                          if (status == "error") {
+                                             var msg = "Sorry but there was an error: ";
+                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                           } 
+                                    })				      
+                   </script>
+
+
+              [% END %]
+          [% END %]
+
+        </table>
+
+     [% content %]
+   </div>
+
+[% PROCESS footer/default.tt2 %]

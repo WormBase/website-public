@@ -1,0 +1,13 @@
+[%- # This is the default layout -%]
+
+
+    [% PROCESS header/default.tt2 %]
+
+    <div id="content">
+      <span class="message">[% status_msg %]</span>
+      <span class="error">[% error_msg %]</span>
+           [% content %]
+    </div>
+
+    [% PROCESS footer/default.tt2 %]    
+
