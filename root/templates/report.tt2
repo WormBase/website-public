@@ -7,10 +7,6 @@
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.common_name.data.label %]
 
-[%# Available views, but we don't want classic page viewers to
-    be able to select the new pages (yet) %]
-
-[% UNLESS is_classic %]
 <nav id="available-views">
    View as:
    [% # HARD-CODED! %]   
@@ -20,11 +16,7 @@
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
    [% tag2link(object.name.data,'classic','is_classic') %]
 </nav>
-[% END %]
 
-[% IF is_classic %]
-     [% PROCESS "nav/classic_contextual_navbar.tt2" %]
-[% END %]
 
 <div class="title">
    [% title %]
@@ -32,12 +24,6 @@
      <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data.label -%]</h2>
    [% END %] 
 </div>
-
-[%# Add in the prompt %]
-[% IF is_classic %]
-     [% PROCESS nav/classic_prompt.tt2(object.name.data.class) %]
-     [% PROCESS "nav/classic_report_toc.tt2" %]
-[% END %]
 
 
 [%# A two panel selector view.
@@ -72,7 +58,7 @@
 
 
 [% # Tabbed View, loaded onClick; this is also the default view %]
-[% ELSIF view=="tabs" || (view == "" && !is_classic) %]
+[% ELSIF view=="tabs" || (view == "") %]
 
    <div id="tabs">
       <div class="ui-tabs">
@@ -93,12 +79,7 @@
 [%# All widgets on one page, loaded by ajax. This is esentially 
     what the current site is, less the ajax loading %]
 
-[% ELSIF view=="page" OR is_classic %]
-
-    [%# Set up the nested tables of the classic view %]
-    [% IF is_classic %]
-         <table border="1" width="100%">
-    [% END %]
+[% ELSIF view=="page" %]
 
      [% FOREACH this_page IN c.config.pages.keys.sort %]
 
@@ -141,13 +122,7 @@
                                     })				      
                    </script>
 
-
       [% END %]
-  [% END %]
-
-
-  [% IF is_classic %] [%# Need to close the table based layout. %]
-          </table>
   [% END %]
 
 [% END %]

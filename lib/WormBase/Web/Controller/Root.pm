@@ -409,7 +409,7 @@ sub classic_report :Path("/db") Args(2) {
     $c->stash->{widgets} = \@widgets;
 
     # Set the classic template
-    $c->stash->{template} = 'report.tt2';
+    $c->stash->{template} = 'layout/classic.tt2';
 }
 
 

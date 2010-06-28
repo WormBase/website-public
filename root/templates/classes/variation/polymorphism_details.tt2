@@ -2,24 +2,22 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = widget %]
-[% subfield_template = 'boilerplate/field' %]
-
 
 [% # WRAPPER "boilerplate/widget" -%]
 
-   [% WRAPPER "$subfield_template" title="Polymorphism type" -%] 
+   [% WRAPPER $field_template title="Polymorphism type" -%] 
                 [% fields.polymorphism_type.data %]
    [% END %]
 
-   [% WRAPPER "$subfield_template" title="Reference strain" -%] 
+   [% WRAPPER $field_template title="Reference strain" -%] 
                 [% tag2link(fields.reference_strain.data) %]
    [% END %]
 
-   [% WRAPPER "$subfield_template" title="Polymorphism status" -%] 
+   [% WRAPPER $field_template title="Polymorphism status" -%] 
                 [% fields.polymorphism_status.data %]
    [% END %]
 
-   [% WRAPPER "$subfield_template" title="Assays" -%] 
+   [% WRAPPER $field_template title="Assays" -%] 
 
        [% FOREACH assay IN fields.polymorphism_assays.data %]
            <h5>
@@ -50,6 +48,3 @@
        [% END %]
 
     [% END %]
-
-
-[% #END %]

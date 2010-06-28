@@ -2,20 +2,18 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = c.stash.widget %]
-[%# WRAPPER "boilerplate/widget" -%]
 
-    [% WRAPPER "boilerplate/field" title="Genetic Position" %]
+    [% WRAPPER $field_template title="Genetic Position" %]
         [% fields.genetic_position.data.gb_url %]
     [% END %]
 
-    [% WRAPPER "boilerplate/field" title="Genomic Position" %]
+    [% WRAPPER $field_template title="Genomic Position" %]
           <a href="[% fields.genomic_position.data.gbrowse_link %]">
                [% fields.genomic_position.data.chromosome %]:[% fields.genomic_position.data.start %]..[% fields.genomic_position.data.stop %]
           </a>
     [% END %]
 
-    [% WRAPPER "boilerplate/field" title="Genomic Image" %]
+    [% WRAPPER $field_template title="Genomic Image" %]
           [% fields.genomic_image.data %] (This will be the inline genomic environs image)
     [% END %]
 
-[%# END %]

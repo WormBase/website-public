@@ -1,22 +1,13 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
  
-
 [% widget = c.stash.widget %]
-[% WRAPPER "boilerplate/widget" -%]
 
-    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
-	[% # Users could just to show or hide empty sections...      %]
-    [%# Sections themselves can optionally be composed of subsections 
-    
-    The template names are actually in the stash.  This should be unnecessary...
-
-    %]
-
-[% WRAPPER "boilerplate/field" title="Image" %]
+[% WRAPPER $field_template title="Image" %]
     [% image(c.config.tmp_img_url _'/' _ c.stash.fields.homology_image.data) %]
 [% END %]
-[% WRAPPER "boilerplate/field" title="Motif Summary" %]
+
+[% WRAPPER $field_template title="Motif Summary" %]
   [% data = c.stash.fields.motif_homologies.data %] 
    <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Database</th><th>Description</th><th>Accession</th></tr>
@@ -26,7 +17,8 @@
    [% END %]
    </table>   
 [% END %]
-[% WRAPPER "boilerplate/field" title="Best BLAST Hits" %]
+
+[% WRAPPER $field_template title="Best BLAST Hits" %]
   [% data = c.stash.fields.best_blastp_matches.data %] 
    <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
@@ -37,4 +29,4 @@
   [% END %]
    </table>   
 [% END %]
-[% END %]
+
