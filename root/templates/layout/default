@@ -1,0 +1,10 @@
+[%- # This wrapper sandwiches content between the banner and footer -%]
+
+[% PROCESS boilerplate/banner %]
+    <div id="content">
+      <span class="message">[% status_msg %]</span>
+      <span class="error">[% error_msg %]</span>
+           [% content %]
+    </div>
+[% PROCESS boilerplate/footer %]    
+

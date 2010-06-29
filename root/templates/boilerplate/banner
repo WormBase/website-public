@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
+
+<!-- BEGIN boilerplate/banner -->
+<header id="page">
+    <h1>[% template.title or c.config.site_byline %]</h1>
+    <p>  
+           [% # The current release of the software and its codename %]
+           Software version [% c.config.version %] "[% c.config.codename %]"
+           <br />
+           Database version [% constants.acedb_version %]
+     </p>        
+
+ <svg> <circle r="50" cx="50" cy="50" fill="green"/> </svg>
+
+
+</header>
+<!-- END boilerplate/banner -->
