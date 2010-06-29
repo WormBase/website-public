@@ -4,16 +4,16 @@
 [% widget = c.stash.widget %]
 
 [% WRAPPER $field_block title="Name" %]
-  [% c.stash.fields.name.data %]
+  [% tag2link(c.stash.fields.name.data) %]
 [% END %]
 
-[% WRAPPER $field_block title="Species" %]
+ 
    [% PROCESS "shared/fields/species.tt2" %]
-[% END %]
+ 
 
 [% WRAPPER $field_block title="Homology Groups" %]
   [% FOREACH obj IN c.stash.fields.homology_groups.data %]
-    <a href="[% c.uri_for_action('report', 'homology_group' , obj ) %]">[% obj %] </a><br>
+     [% obj.type %]:[% obj.title %] [[% tag2link(obj.link) %]]<br>
   [% END %]
 [% END %]
 
