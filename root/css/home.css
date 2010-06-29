@@ -75,10 +75,12 @@
 
 
 /* The search bar form */
-.form input{  
+.form input, select{  
     font-size: 1.3em;  
-/*    height: 2em; */
-    vertical-align:top;
+    height: 35px; 
+   vertical-align:top;
+    padding: 5px;  
+/*     margin-bottom: 5px;  */
 }  
 .form input.text{  
     font-weight: normal;  
@@ -88,6 +90,7 @@
     margin-bottom: 5px;  
     text-align: left;  
     width:300px;
+    height:20px;
 }  
 .form input.text.active{  
     background: #ddeff6;  
