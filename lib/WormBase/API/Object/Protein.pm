@@ -47,18 +47,25 @@ has 'cds' => (
 
 sub name {
     my $self = shift;
-    my $data = { description => 'The object name of the protein',
-		 data        =>  $self ~~ 'name',
+    my $ace  = $self->object;
+    my $data = { description => 'The internal WormBase referential ID of the protein',
+		 data        =>  { id    => "$ace",
+				   label => $ace->name,
+				   class => $ace->class
+		 },
     };
     return $data;
-
 }
 
 sub common_name {
     my $self = shift;
-    my $name = eval { $self->cds->[0]->Gene->CGC_name };
+    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $self->object;
     my $data = { description => 'The public name  of the protein',
-		 data        => $name ? uc($name) : $self ~~ 'name',
+		 data        => { id    => "$ace",
+				   label => $ace->name,
+				   class => $ace->class
+		 },
+
     };
     return $data;
 }
@@ -74,8 +81,20 @@ sub species {
 
 sub homology_groups {
     my $self = shift;
+    my $kogs= $self ~~ '@Homology_group';
+    my @hg;
+    foreach my $k (@$kogs) {
+	push @hg ,{ type=>$k->Group_type||'',
+		     title=>$k->Title||'',
+		     link => { id=>"$k",
+                             label=>$k->name,
+                             class=>$k->class,
+				}
+		   };
+    }
+    @hg = ('not assigned') unless(@hg);
     my $data = { description => 'The homology groups of the protein',
-		 data        => $self ~~ '@Homology_group',
+		 data        => \@hg,
     }; 
     return $data;
 }
