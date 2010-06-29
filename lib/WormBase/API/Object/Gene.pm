@@ -31,11 +31,8 @@ extends 'WormBase::API::Object';
 # microarray_topology_map_position
 # genetic_position
 # orfeome_project_primers -- check somemore
-# expression_cluster
-
-### from Function
 # anatomy_function
-
+# expression_cluster
 
 
 ## Genetics
@@ -302,6 +299,16 @@ sub gene_models {
 	my %data_pack;
 
 	#### data pull and packaging
+	
+	my $seqs = $self->fetch_sequences();
+	
+	foreach my $seq (@$seqs) {
+	
+	
+		$data_pack{$seq} = 1;
+	
+	}
+
 
 	####
 
@@ -467,7 +474,7 @@ sub gene_models {
 #  $table .= end_table;
 #
 #  return ($table,\%unique_remarks);
-#}
+#x}
 
 # Fetch Homology Group Objects for this gene.
 # Each is associated with a protein and we should probably
@@ -1894,7 +1901,7 @@ sub rnai_phenotypes {
 
 # Build up the Gene Models data structure
 # This is kind of a mess
-sub gene_models {
+sub gene_models_old {
     my $self   = shift;
     my $object = $self->object;
     my $data = {};
@@ -2765,226 +2772,8 @@ sub species2url {
 }
 
 
-=head1 NAME
-    
-    WormBase::Model::Gene - Catalyst Model
-    
-=head1 DESCRIPTION
-    
-    Catalyst Model for the AceDB Gene class
-    
-=head1 METHODS
-
-=head2 The Overview Panel
-
-=over
-
-=item $gene->common_name()
-
-Returns:
-
-  { common_name => W::API::O::Gene_name }
-
-=item $gene->ids();
-
-This is largely a convenience method that collects commonly used
-IDs for a gene in one place. Each is accesible individually.
- 
- Returns : { ids => { common_name => 'string',
-                      name        => 'WBGene ID',
-                      version     => Int,
-                      refseq      => \@ of refseq IDs,
-                      aceview     => 'string, aceview ID',
-                    }
-            }
-
-=item $gene->concise_description()
-
- Returns : { concise_description => 'string' }
-
-=item $gene->proteins()
-
- Returns : array reference of WB::API::Object::Protein objects
-           corresponding to the gene
-
-=item $gene->cds()
-
- Returns : array reference of WB::API::Object::CDS objects
-           corresponding to the gene
-
-=item $gene->kogs()
-
- Returns : array reference of WB::API::Object::Homolog_group objects
-           for the gene, InParanoid excluded.
-
-=item $gene->other_sequences()
-
- Returns : array reference of WB::API::Object::Sequence objects
-           not always of the same species.
-
-=item $gene->gene_models()
-
- Returns : array reference, each item a hash for a transcript
-    {       sequence => WB::API::O::Sequence object,
-	    notes    => \@notes,
-	    status   => 'gene model status',
-	    protein  => WB::API::O::Protein,
-	    length_translated   => 'int',
-	    length_unspliced    => 'int',
-	    length_spliced      => 'int',
-	};
-
-=item $gene->cloned_by()
-
- Returns : { cloned_by => WB::API::Object::Author,
-             tag       => 'string',
-             source    => 'string'  }
-
-=item $gene->history()
-
-Returns : array reference, each item a hash of a history entry
-  	    { type    => 'history event',
-	      version => int,
-	      date    => $date,
-	      action  => 'history action',
-	      remark  => $remarkk,
-	      gene    => W::A::O::Gene if appropriate
-	      curator => W::A::O::Person if appropriate
-	    };
-  
-
-
-
-
-
-
-
-
-
-=item $self->reactome_knowledgebase($object)
-
- Returns : Array reference of reactome IDs
- Widget  :
- TODO    : need template and config for reactome URLs (actually URL constructor)
-
-
-
-
-
-
-=item $self->genomic_position($object)
-
- Returns : Hash reference containing keys of:
-             chromosome
-             start
-             stop
-             operons (as an array ref)
- Widget  : location
- TODO    : This should probably become a generic template and perhaps method (current version is quite gene specific)
-
-=item $self->genomic_environs($object)
-
- Returns : Hash reference containing keys of:
-             img
-             start
-             stop
-             species    -- for linking image
-             chromosome -- for linking image 
- Widget  : location
- TODO    : This could reasonably be a generic tempalte and method,
-           configurable based on the reference object or range
-           There are also some hard-coded values that should be placed in configuration.
-           Are temporary paths working as expected?
-
-=item $self->fourd_expression_movies($object)
-
- Returns : array reference of 4-D expression patterns
- Widget  : expression
- TODO    : The template needs to link to the movies correctly.
-
-=item $self->anatomic_expression_patterns($object)
-
- Returns : hash of arrays of expression patterns with images or without
-           keys:
-               have_image
-               no_image
- Widget  : expression
-
-=item $self->pre_wormbase_information($object)
-
- Returns : Array reference of pre-wormbase legacy descriptions
- Widget  : function
- TODO    : Need to markup genes, alleles, etc
-
-=item $self->rnai_phenotypes($object)
-
- Returns : A big complicated data structure as a hash ref
- Widget  : function
- TODO    : Properly describe the return value. Check template.
-
-=item $self->y1h_and_y2h_interactions($object)
-
- Returns : An array reference corresponding to a table of interactions.
- Widget  : function
- TODO    : Fold in Payan's new code; move parse year to a template function?
-            Purge the need for $c from _y2_interactions
-
-=item $self->interactions($object)
-
- Returns : 
- Widget  : function
- TODO    : Fold in Payan's new code; move parse year to a template function?
-
-=item $self->microarray_expression_data($object)
-
- Returns : Array reference of microarray_results objects
- Widget  : function
- TODO    : Check template.  Could be suitably generic. Just a table.
-
-=item $self->expression_cluster($object)
-
- Returns : Array reference of expression_cluster objects
- Widget  : function
- TODO    : Check template.  Could be suitably generic. Just a table.
-
-=item $self->microarray_topology_map_position($object)
-
- Returns : Array reference corresponding to a list of experimental_result_regions from the GFF.
- Widget  : function
- TODO    : Check template.
-
-=item $self->regulation_on_expression_level($object)
-
- Returns : Array of hashes
-             keys:
-                  string
-                  target
-                  Gene_regulation object
- Widget  : function
- TODO    : Check template.
-
-=item $self->protein_domains($object)
-
- Returns : RETURN VALUE IN FLUX FOR NOW
- Widget  : function
- TODO    : TONS to do here.  Need to b=purge formatting and javascript. Move paths to configuration.
-
-=head1 MIGRATION NOTES
-
-=head1 AUTHOR
-
-Todd W. Harris, Ph.D. (todd@five2three.com)
-
-=head1 LICENSE
-
-This library is free software, you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-
-
-
 sub fetch_sequences {
+
 	my $self = shift;
 	my $GENE = $self->object;
     my %seen;
@@ -2998,10 +2787,6 @@ sub fetch_sequences {
     @seqs = $GENE->Corresponding_Pseudogene unless @seqs;
     return \@seqs;
     
-    #  my @cds = $GENE->Corresponding_CDS;
-    #  @cds = $GENE->Corresponding_Transcript unless @cds;
-    #  @cds = $GENE->Corresponding_Pseudogene unless @cds;
-    #  return \@cds;
 }
 
 
