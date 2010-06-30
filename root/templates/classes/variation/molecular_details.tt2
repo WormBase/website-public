@@ -3,8 +3,6 @@
 
 [% widget = c.stash.widget toggle = 1%]
 
-[% widget = widget %]
-
    [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
         [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
    [% END %]
@@ -14,13 +12,13 @@
    [% END %]
 
    
-[% # WRAPPER $field_block title="5' gap" key="five_prime_gap" %]
-[% # fields.five_prime_gap.data %]
-[% # END %]
+   [% # WRAPPER $field_block title="5' gap" key="five_prime_gap" %]
+   [% # fields.five_prime_gap.data %]
+   [% # END %]
 
-[% # WRAPPER $field_block title="3' gap" key="three_prime_gap" %]
-[% # fields.three_prime_gap.data %]
-[% # END %]
+   [% # WRAPPER $field_block title="3' gap" key="three_prime_gap" %]
+   [% # fields.three_prime_gap.data %]
+   [% # END %]
 
    [% # Nucleotide change: one or more possible changes for this allele %]
    [% WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change" %]
@@ -103,7 +101,7 @@
 		
                 <tr>
                    <td>[% feature_type %]</td>
-	           <td><a href="[% c.uri_for_action('report', feature.class , feature ) %]">[% feature %] </a></td>
+	           <td>[% tag2link(fields.features_affected.data.$feature_type.$feature) %]</td>
 		   <td>
 
      		      [% IF fields.features_affected.data.$feature_type.$feature.protein_effects %]

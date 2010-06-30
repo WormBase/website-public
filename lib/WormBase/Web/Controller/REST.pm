@@ -488,9 +488,9 @@ sub _select_template {
 	}
     } else {
 	# Widget template selection
- return "classes/$class/$render_target.tt2"; 
-	#if (defined $c->config->{generic_widgets}->{$render_target}) {
-	#    return "generic/$type.tt2";    
+# return "classes/$class/$render_target.tt2"; 
+#	if (defined $c->config->{generic_widgets}->{$render_target}) {
+#	    return "generic/$type.tt2";    
 	#    # Some are shared across Models
 	if (defined $c->config->{common_widgets}->{$render_target}) {
 	    return "shared/widgets/$render_target.tt2";
