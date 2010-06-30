@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
+[% widget = c.stash.widget toggle = 1 %]
 
 [% WRAPPER $field_block title="Protein Length" %]
   [% c.stash.fields.protein_sequence.data.length %]
@@ -9,11 +9,23 @@
 
 [% WRAPPER $field_block title="Protein Sequence" %]
   [% seq = c.stash.fields.protein_sequence.data.seq %]
-  <table width= '100%' >
+  [% format_seq = "" %]
   [% FOREACH line IN seq.chunk(80) %]
-     <tr><td><pre>[% line.chunk(10).join(' ') %]</pre></td> </tr>
+     [% format_seq = format_seq _ line.chunk(10).join(' ')  %]
+     [% UNLESS loop.last %] [% format_seq = format_seq _ "\n" %] [% END %]  
   [% END %]
-  </table>
+    <div class="sequence-download">
+                        <form action="/rest/download/">
+			  <input type="hidden" name="type" value="protein_sequence.fa" >
+			  <input type="hidden" name="sequence" value="[% format_seq %]" >
+			  <input type="submit" value="download"> 
+		      </form>
+    </div>
+
+      <div class="toggle">View expanded context</div>
+     <div class="sequence-container">
+ 		<pre> [% format_seq %]</pre>       
+     </div>
 [% END %]
 
 [% WRAPPER $field_block title="Estimated Molecular Weight" %]
