@@ -1,4 +1,4 @@
-package WormBase::API::Object::Strain;
+package WormBase::API::Object::Transgene;
 use Moose;
 
 with 'WormBase::API::Role::Object';
@@ -15,32 +15,6 @@ has 'ao_template' => (
     	return $ao_object;
   	}
 );
-
-
-has 'laboratory' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $laboratory = $self->Location;
-    	return $laboratory;
-  	}
-);
-
-has 'reference' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $reference = $self->Reference;
-    	return $reference;
-  	}
-);
-
 
 #######
 
@@ -82,95 +56,184 @@ sub template_simple {
 	return \%data;
 }
 
-
-########
-
-sub genotype {
+sub isolation {
 
 	my $self = shift;
-    my $object = $self->object;
+    my $transg = $self->object;
 	my %data;
-	my $desc = 'genotype of the strain';
-	my $data_pack;
+	my $desc = 'notes';
+	my %data_pack;
 
 	#### data pull and packaging
 
-	$data_pack = $object->Genotype;
-
-	####
+	my $author;
+	my $clone;
+	my $fragment;
+	my $injected_into_cgc_strain;
+	my $injected_into;
+	my $integrated_by;
+	my $int_by_check;
+	my $other;
 	
+	$author = $transg->Author;
+	$clone = $transg->Clone;
+	eval{$fragment = transg->Fragment;};
+	$injected_into_cgc_strain = $transg->Injected_into_CGC_strain;
+	$injected_into = $transg->Injected_into;
+	$other= $transg->Integrated_by;
+	
+    if ($other =~ /Other_integration_method/) {
+    
+    	$integrated_by = $transg->Integrated_by->right;
+	} 	
+	else {
+	
+		$integrated_by = $transg->Integrated_by;
+	}
 
-	$data{'data'} = $data_pack;
+	%data_pack = (
+					'Author' 	=> $author,
+					'Clone' 	=> $clone,
+					'Fragment'  => $fragment,
+					'Injected_into_CGC_strain' => $injected_into_cgc_strain,
+					'Injected_into' => $injected_into,
+					'Integrated_by' => $integrated_by
+				);	
+	####
+
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
 
-sub made_by {
-
+sub details {
 
 	my $self = shift;
-    my $object = $self->object;
+    my $transg = $self->object;
 	my %data;
-	my $desc = 'developer of the strain';
-	my $data_pack;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my $transgene_evidence;
+	my $summary;
+	my $driven_by;
+	my $transgene_driven_by;
+	my $driven_by_gene;
+	my @reporter_products;
+	my $gene;
+	my $cds;
+	my $remark;
+	my $species;
+	my $rescue;
+	
+	eval{$transgene_evidence = $transg->Evidence;};
+	eval{$summary = $transg->Summary;};
+	$driven_by = $transg->Driven_by_gene;
+	eval{$transgene_driven_by = $transg->Driven_by_CDS_promoter;};
+	$transg->Driven_by_gene;
+	@reporter_products = $transg->Reporter_product;
+	$gene = $transg->Gene;
+	eval{$cds = $transg->CDS;};
+	$remark = $transg->Remark;
+	$species = $transg->Species;
+	$rescue = $transg->Rescue;
+	
+	%data_pack = (
+					'ace_id' => $transg,
+					'summary' => $summary,
+					'driven_by' => $driven_by,
+					'transgene_driven_by' => $transgene_driven_by,
+					'driven_by_gene' => $driven_by_gene,
+					'reporter_products' => \@reporter_products,
+					'gene' => {
+								'gene_id' => $gene,
+								'class' => 'Gene'
+								},
+					'cds' =>{
+							 'cds_id' => $cds,
+							 'class' => 'CDS'
+							},
+					'remark'=>$remark,
+					'species'=>$species,
+					'rescue'=>$rescue
+					
+					);
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub phenotypes {
+
+	my $self = shift;
+    my $transg = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
 
 	#### data pull and packaging
 
-	$data_pack = $object->Made_by;
+	my @phenotypes;
+	@phenotypes = $transg->Phenotype;
+	
+	foreach my $phenotype (@phenotypes) {
+
+		my $remark;
+		my $not;
+		my $phenotype_name;
+		my $paper_evidence;
+	
+		$phenotype_name = $phenotype->Phenotype_name;
+		$remark = $phenotype->get('Remark');
+		$not = $phenotype->at('Not');
+		$paper_evidence = $phenotype->at('Paper_evidence');
+	
+		$data_pack{$phenotype} = (
+									'phenotype_name'=>$phenotype_name,
+									'remark'=>$remark,
+									'not'=>$not,
+									'paper_evidence'=>$paper_evidence
+									);
+	}
 
 	####
-	
 
-	$data{'data'} = $data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
-
-
 }
 
-sub remark {
 
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'remarks';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Remark;
-
-	####
-	
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-
-}
-
-sub description {
+sub expr_pattern {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my $data_pack;
+	my %data_pack;
 
 	#### data pull and packaging
+	my $expr_pattern;
+	
+	$expr_pattern = $object->Expr_pattern;
+	
+	$data_pack{$expr_pattern} = {
+								'ace_id' => $expr_pattern,
+								'class' => 'Expr_pattern'
+								};
 
-	$data_pack = {
-					'common_name' => $object,
-					'class' => 'Strain',
-					'ace_id' => $object
-				};
 	####
 	
-	$data{'data'} = $data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+########
+
 
 1;
