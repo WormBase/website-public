@@ -16,19 +16,13 @@
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
 
-#   # MACROs for building URLs.  I don't know how excited about
-#   # this approach I am.   
-#   MACRO external_link(href,text) BLOCK;
-#	"<a href=\"$href\">$text</a>";
-#   END;
-#
+#   # MACROs for building URLs.
 #   # 2nd approach: using formats
 #   #   external_link = format('<a href="%s" target="_blank">%s</a>');
 #
 
     MACRO tag2link(data,text,is_classic) BLOCK;  
       class =  data.class FILTER lower;
-
        # Classic page URLs.
        IF is_classic;
           url  = site.class2action.$class.action;

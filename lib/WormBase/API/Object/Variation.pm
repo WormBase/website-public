@@ -196,7 +196,7 @@ sub flanking_sequences {
     my $object = $self->object;
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
-    my $data = { description => 'probes used for CGH of deletion alleles',
+    my $data = { description => 'sequences flanking the variation',
 		 data        => { left_flank  => "$left_flank",
 				  right_flank => "$right_flank",
 		 },
@@ -278,9 +278,13 @@ sub features_affected {
  	    foreach my $entry (@entries) {
  		my @data = $entry->col;
 
+		# Save the class of the feature for template linking.
+		$affects->{$tag}->{$entry}->{class} = $entry->class;
+		$affects->{$tag}->{$entry}->{label} = $entry->class eq 'Gene' ? ($entry->Public_name) : "$entry";
+
 		# Genes ONLY have gene
 		if ($tag eq 'Gene') {
-		    $affects->{$tag}->{$entry}++;
+		    $affects->{$tag}->{$entry}->{entry}++;
 		    next;
 		}
 
@@ -291,8 +295,9 @@ sub features_affected {
  		# we should undertake a conceptual translation for this affected feature
  		# See FormatMolecularChangeHash for details
 		# $protein_effects & $location_effects contain things like missense and coding_exon, respectively.
- 		my ($protein_effects,$location_effects,$do_translation) = $self->_format_molecular_change_hash({data => $hash_data,
-										    tag  => $tag});
+ 		my ($protein_effects,$location_effects,$do_translation) 
+		    = $self->_format_molecular_change_hash({data => $hash_data,
+							    tag  => $tag});
 		
  		if ($protein_effects) {
 		    $affects->{$tag}->{$entry}->{protein_effects} = $protein_effects;
@@ -331,11 +336,7 @@ sub features_affected {
 		$affects->{$tag}->{$entry}->{fstart} = $fstart;
 		$affects->{$tag}->{$entry}->{fstop} = $fstop;
 		$affects->{$tag}->{$entry}->{start} = $start;
-		$affects->{$tag}->{$entry}->{stop} = $stop;
-		
-		# Save the class of the feature for template linking.
-		$affects->{$tag}->{$entry}->{class} = $entry->class;
-		
+		$affects->{$tag}->{$entry}->{stop} = $stop;	       
  	    }
  	} else {
 	    # Clone and Chromosome are not provided in the DB - we calculate them here.
@@ -350,6 +351,7 @@ sub features_affected {
 	    
  	    foreach (@affects_this) { 				
 		$affects->{$tag}->{$_}->{class} = $_->class;
+		$affects->{$tag}->{$_}->{label} = "$_";
  		
  		my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$_);
 		$affects->{$tag}->{$_}->{abs_start} = $abs_start;
@@ -407,7 +409,7 @@ sub causes_frameshift {
     my $object = $self->object;
     my $data = {};
     $data->{description} = 'does this variation affect a splice site?';
-    $data->{data} = $object->Frameshift;
+    $data->{data} = $object->Frameshift || "";
     return $data;
 }    
 
@@ -415,8 +417,9 @@ sub causes_frameshift {
 sub detection_method {
     my $self = shift;
     my $object = $self->object;
+    my $detection_method = $object->Detection_method || "";
     return { description => 'detection method for polymorphism',
-	     data        => $object->Detection_method,
+	     data        => $detection_method,
     };
 }
 
@@ -455,6 +458,7 @@ sub polymorphism_status {
     return $data;
 }
 
+# For polymorphisms
 sub reference_strain {
     my $self   = shift;
     my $object = $self->object;
@@ -613,7 +617,7 @@ sub genetic_position {
     my $gb_url = 
 	$position
 	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
-	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
+	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error || 0))
 	: a({-href=>"name=$chrom;class=Map"},
 	    $chrom);
 #	$position
@@ -752,7 +756,7 @@ sub phenotype_remark {
     my $self = shift;
     my $object = $self->object;
     my $data = { description => 'phenotype remark',
-		 data        => $object->Phenotype_remark
+		 data        => $object->Phenotype_remark || "",
     };
     return $data;
 }
@@ -1193,7 +1197,7 @@ sub rescued_by_transgene {
     my $self   = shift;
     my $object = $self->object;
     my $data = { description => 'transgenes that rescue phenotype(s) caused by this variation',
-		 data        => $object->Rescued_by_Transgene,
+		 data        => $object->Rescued_by_Transgene || "",
     };
     return $data;
 }
@@ -1559,9 +1563,10 @@ sub _compile_nucleotide_changes {
 sub _get_genomic_segment {
     my ($self,@p) = @_;
     my ($class,$start,$stop,$refseq,$key) = $self->rearrange([qw/CLASS START STOP REFSEQ KEY/],@p);
-   
-    if (my $segment = $self->{segments}->{$key}) {
-	return $segment;
+
+    # We may have already fetched this segment and stashed it.
+    if ($key && $self->{segments}->{$key}) {
+	return $self->{segments}->{$key};
     }
 
     # Fetch the object
@@ -1589,7 +1594,7 @@ sub _get_genomic_segment {
 	$segment = $db->segment($class => $object);
     }
     
-    $self->{segments}->{$key} = $segment if $segment;
+    $self->{segments}->{$key} = $segment if $segment && $key;
     return $segment;
 }
 
