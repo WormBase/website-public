@@ -125,6 +125,7 @@ __PACKAGE__->config->{codename} = $CODENAME;
 __PACKAGE__->config->{common_widgets} =  { map { $_ => 1 } qw/
 							       references
 							       remarks
+                                                               location
 							     /};
 
 # We should aspire to make ALL widgets generic
@@ -134,7 +135,6 @@ __PACKAGE__->config->{generic_widgets} =  { map { $_ => 1 } qw/
 								expression
 								function
 								homology
-								location
 								reagents
 								similarities
 							      /};
