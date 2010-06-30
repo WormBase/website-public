@@ -4,7 +4,7 @@
 [% results = c.stash.results %]
 <div id="results">
 
-[% PROCESS "boilerplate/search_bar.tt2" %]
+<!--[% PROCESS "boilerplate/search_bar.tt2" %]-->
 
 [% IF results.size > 1 %]
   <div id="fade">found [% results.size %] results</div>
@@ -27,7 +27,7 @@
 
 <br />
 
-[% PROCESS "boilerplate/search_bar.tt2" %]
+<!-- [% PROCESS "boilerplate/search_bar.tt2" %] -->
 
 
 </div>
