@@ -304,18 +304,55 @@ sub gene_models {
 	
 	foreach my $seq (@$seqs) {
 	
+	## deal with CDS class sequences
 	
-		$data_pack{$seq} = 1;
-	
+		my $cds;
+		my $seq_class;
+		my $corresponding_cds;
+		my $corresponding_protein;
+		my @matching_cdna;
+		
+		$seq_class = $seq->class;
+		
+		if ($seq_class=~ /'CDS'/) {
+			
+			$corresponding_cds = $seq->Corresponding_CDS;
+			@matching_cdna = $cds->Matching_cDNA;
+			$corresponding_protein = $corresponding_cds->Corresponding_protein;
+		}
+		else {
+			$corresponding_cds = 'n/a';
+			@matching_cdna = ();
+			$corresponding_protein = 'n/a';
+		
+		}
+		
+		$data_pack{$seq} = {
+		
+							'ace_id' => $seq
+							,'class' =>$seq_class
+							,'corresponding_cds'=>$corresponding_cds
+							,'matching_cdna'=>\@matching_cdna
+							,'corresponding_protein'=>$corresponding_protein
+							#,''=>
+		
+							};
 	}
-
-
+	
 	####
 
 	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+
+#    if ($cds) {
+#      $confirm = $cds->Prediction_status; # with or without being confirmed
+#      @matching_cdna = $cds->Matching_cDNA; # with or without matching_cdna
+#      $protein = $cds->(-fill=>1);
+#    }
+
 
 
 #
@@ -348,12 +385,7 @@ sub gene_models {
 #    my $gff = fetch_gff_gene($sequence) or next;
 #    my $cds = ($sequence->class eq 'CDS') ? $sequence : eval { $sequence->Corresponding_CDS };
 #
-#    my ($confirm,$remark,$protein,@matching_cdna);
-#    if ($cds) {
-#      $confirm = $cds->Prediction_status; # with or without being confirmed
-#      @matching_cdna = $cds->Matching_cDNA; # with or without matching_cdna
-#      $protein = $cds->Corresponding_protein(-fill=>1);
-#    }
+#    
 #
 #    # Fetch all the notes for this given sequence / CDS
 #    my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
