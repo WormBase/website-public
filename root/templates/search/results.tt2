@@ -6,7 +6,7 @@
 
 <!--[% PROCESS "boilerplate/search_bar.tt2" %]-->
 
-[% IF results.size > 1 %]
+[% IF results.size > 0 %]
   <div id="fade">found [% results.size %] results</div>
 [% ELSE %]
   Sorry, no results found for the search <strong>[% c.stash.query %]</strong>
@@ -16,12 +16,50 @@
 <ul>
 [% FOREACH item IN results %]
   [% url = c.uri_for_action('report',item.type, item.id) %]
-  <li><a href="[% url %]">[% item.name %]</a>
-  <span id="fade">([% item.id %])</span></li>
-  [% IF item.details %]
-      [% item.details %] <br />
+
+<!-- THESE SECTIONS CAN PROBABLY BE MERGED TOGETHER ONCE THE API IS STANDARD -->
+
+<!--   GENES -->
+  [% IF item.type == 'gene' %]
+    <li><span id="fade">[% item.type %]:</span>
+      <a href="[% url %]">[% item.name %]</a>
+    </li>
+	[% item.data.species %] <br />
+	[% item.data.description.data %] <br />
+    <a class="forest-green" href="[% url %]">[% url %]</a>
+
+<!-- VARIATION -->
+  [% ELSIF item.type == 'variation' %]
+    <li><span id="fade">[% item.type %]:</span>
+      <a href="[% url %]">[% item.data.common_name.data.label %]</a>
+    </li>
+	[% item.data.species %] <br />
+	[% item.data.status.data %] <br />
+	[% item.data.variation_type.data.general_class %]: [% item.data.variation_type.data.physical_class %] <br />
+    <a class="forest-green" href="[% url %]">[% url %]</a>
+
+<!-- PAPER -->
+  [% ELSIF item.type == 'paper' %]
+    <li><a href="[% c.uri_for_action('report', 'paper', tem.data.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
+    [% FOREACH author IN  item.data.authors.data %]
+    [% tag2link(author) %], 
+    [% END %]
+    </li>
+    <br>[% item.data.year.data %]. [% item.data.title.data %]
+    [% abstract=item.data.abstract.data.chunk(100) %]
+    <br><div class="toggle">Abstract: [% abstract.first %]</div>
+	       <div class="sequence-container" >
+		  <pre>[% abstract.join('<br>') %]</pre>
+	       </div>   
+    <br>
+
+<!-- OTHER -->
+  [% ELSE %]
+    <li><span id="fade">[% item.type %]:</span>
+      <a href="[% url %]">[% item.name %]</a>
+    </li>
+    <a class="forest-green" href="[% url %]">[% url %]</a>
   [% END %]
-  <a class="forest-green" href="[% url %]">[% url %]</a>
 [% END %]
 </ul>
 

@@ -1,7 +1,6 @@
 package WormBase::API::Service::Search::Result;
 
 use Moose;
-
 =head1 SYNOPSIS 
 This class can be constructed in several ways:
 
@@ -48,10 +47,10 @@ has 'name' => (
      );
 
 # any details to display in the search results, along with object
-has 'details' => (
-     is       => 'rw',
-     isa      => 'Str',
-     );
+# has 'details' => (
+#      is       => 'rw',
+#      isa      => 'Str',
+#      );
 
 # type of object the result is
 has 'type' => (
@@ -59,7 +58,13 @@ has 'type' => (
      isa   => 'Str',
      );
 
-# overloads constructor to allow for a singer parameter (an acedb object)
+has 'data' => (
+     is    => 'rw',
+     isa   => 'HashRef',
+     );
+
+
+# overloads constructor to allow for a single parameter (an acedb object)
 # it will then use the acedb object to set values for all the other attributes
 around BUILDARGS => sub {
     my $orig = shift;
@@ -84,12 +89,18 @@ around BUILDARGS => sub {
 # params: acedb object, the constructor arguments as a hash reference
 # ret: hash reference of the modified constructor arguemnts
 sub _create_construct_hash {
-    my $ace_obj = shift;
-    my $hash = shift;
+    my($ace_obj, $hash) = @_;
+
+      my $c = $hash->{config};
+      my $api = $c->model('WormBaseAPI');
+      my $object = $api->fetch({class=> $ace_obj->class,
+			      name => $ace_obj}) or die "$!";
+
         $hash->{id} = _set_id($ace_obj) unless $hash->{id};
-        $hash->{name} = _set_name($ace_obj) unless $hash->{name};
-        $hash->{details} = $hash->{details} . _set_details($ace_obj);
+        $hash->{name} = _set_name($object) unless $hash->{name};
         $hash->{type} = _set_type($ace_obj) unless $hash->{type};
+#         $hash->{details} = $hash->{details} . _set_details($ace_obj);
+        $hash->{data} = _set_data($c, $object, $ace_obj);
     return $hash;
 }
 
@@ -102,17 +113,19 @@ sub _set_id {
 };
 
 # set name from ace object
-### TODO this might only work for genes right now!!!
 # param: acedb obj
 # ret: string, object name
 sub _set_name {
-    my $ace_obj = shift;
-    my $name = $ace_obj->Public_name ||
-               $ace_obj->CGC_name || 
-               $ace_obj->Molecular_name || 
-        eval { $ace_obj->Corresponding_CDS->Corresponding_protein } || 
-               $ace_obj;
-    return "" . $name;
+    my $object = shift;
+    return "" . $object->common_name->{data};
+
+#    my $ace_obj = shift;
+#     my $name = $ace_obj->Public_name ||
+#                $ace_obj->CGC_name || 
+#                $ace_obj->Molecular_name || 
+#         eval { $ace_obj->Corresponding_CDS->Corresponding_protein } || 
+#                $ace_obj;
+#     return "" . $name;
 };
 
 # set type from ace object
@@ -127,19 +140,23 @@ sub _set_type {
 # what should be placed in the description
 # param: acedb obj
 # ret: string, object description
-sub _set_details {
-    my $ace_obj = shift;
+# sub _set_details {
+#     my $ace_obj = shift;
+# 
+#     my $desc = "" . $ace_obj->Concise_description;
+#     return $desc;
+# };
 
-    # Dear Abby,
-    #
-    # Finish implementing this to use the config to find out
-    # what to place here.  Don't just leave it on Concise_description.
-    #
-    # Love,
-    # your past self
+sub _set_data {
+   my ($c, $object, $ace_obj) = @_;
+    my $fields =  $c->config->{pages}->{lcfirst($ace_obj->class)}->{search}->{fields};
+    my %data;
+    foreach my $field (@$fields) {
+      my $field_data = $object->$field;
+      $data{$field} = $field_data;
+    }
+    return \%data;
 
-    my $desc = "" . $ace_obj->Concise_description;
-    return $desc;
 };
 
 no Moose;

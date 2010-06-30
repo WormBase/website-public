@@ -26,7 +26,7 @@ sub paper {
     my @references = ();
     my $class = $args->{class};
     my $name = $args->{pattern};
-   
+    my $c = $args->{config};
     my $DB = $self->dbh;
       # Keywords are treated specially because of Ace query language
       # deficiencies (bugs?)
@@ -58,14 +58,17 @@ sub paper {
 		  } @references;
       return \@sorted;
 
+  my $result = __PACKAGE__ . "::Result";
+  @sorted = map { $result->new({ace_obj => $_, config => $c})} @sorted;
+
 }
 
 # Search for gene objects
 sub gene {
   my ($self,$args) = @_;
   my $query   = $args->{pattern};
+  my $c = $args->{config};
 #   my ($count,@objs);
-
   my $DB = $self->dbh;
   my (@genes,%seen);
 
@@ -135,8 +138,8 @@ sub gene {
     $seen{$gene}++;
   }
 
-#   my $result = __PACKAGE__ . "::Result";
-#   @unique_genes = map { $result->new($_)} @unique_genes;
+  my $result = __PACKAGE__ . "::Result";
+  @unique_genes = map { $result->new({ace_obj => $_, config => $c})} @unique_genes;
 
   return (\@unique_genes) if @unique_genes;
 }
@@ -145,16 +148,28 @@ sub gene {
 sub variation {
     my ($self,$args) = @_;
     my $query = $args->{pattern};
-    
+    my $c = $args->{config};
     my $DB = $self->dbh;
     my @vars = $DB->fetch(-class => 'Variation',
 			   -name  => $query);
       
-#     my $result = __PACKAGE__ . "::Result";
-#     my @vars = map { $result->new($_)} @vars;
+    my $result = __PACKAGE__ . "::Result";
+    @vars = map { $result->new({ace_obj => $_, config => $c})} @vars;
     return \@vars;
 }
 
+#just a test of concept... remember to remove this
+sub all {
+    my ($self,$args) = @_;
+    my $query = $args->{pattern};
+    my $c = $args->{config};
+
+    my @results;
+    push(@results, @{variation($self,$args)});
+    push(@results, @{gene($self,$args)});
+    push(@results, @{paper($self,$args)});
+   return \@results;
+}
 
 no Moose;
 # __PACKAGE__->meta->make_immutable;
