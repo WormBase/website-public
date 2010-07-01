@@ -681,15 +681,25 @@ table.multi       { padding: 0;
 /* an expandable sequence container */
 .sequence-container {
     font-family:"Courier New";
-    font-size: 0.8em;
+    font-size: 1em;
     overflow: hidden;
     width: 80%; 
     clear: both;
     display: none;   /* Hidden by default */
 }
 
+/*expandable text container */
+.abstract-container {
+    font-size: 1em;
+    overflow: hidden;
+    width:620px;
+    clear: both;
+    display: none;   /* Hidden by default */
+    padding-left: 30px;
+}
+
 .fasta-sequence {
-   font-family:C"ourier New";
+   font-family:"Courier New";
 }
 
 
@@ -709,10 +719,11 @@ table.multi       { padding: 0;
 
 
 .toggle {
-	padding: 0px 0 0 30px;
+	padding: 5px 0 0 30px;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
 	font-size: 1em;
 	font-weight: normal;
+        height:16px;
 /* 	font-size: 1.2em; */
 /* 	font-weight: normal; */
 	 

@@ -8,18 +8,18 @@
   
 [% path = "/search_new/" _ type _ "/" _ c.stash.query %]
 
-     <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]">    
-                                  <script>
-                                      $("#[%- type -%]2").load("[% path _ "?count=1" %]",
-				            function(response, status, xhr) {
-                                                if (status == "error") {
-                                                     var msg = "Sorry but there was an error: ";
-                                                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
-                                                } 
-                                      });
-                                  </script>
-				 </a>
-            </li>
+    <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]">    
+				  <script>
+				      $("#[%- type -%]2").load("[% path _ "?count=1" %]",
+					    function(response, status, xhr) {
+						if (status == "error") {
+						    var msg = "Sorry but there was an error: ";
+						    $("#error").html(msg + xhr.status + " " + xhr.statusText);
+						} 
+				      });
+				  </script>
+				</a>
+	    </li>
 [% END %]
- </ul>
+</ul>
 

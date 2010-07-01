@@ -6,8 +6,9 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
  
 
-<div class="search-bar">
-   <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.type.value+'/'+this.query.value ;">
+<div id="search-bar">
+  [% PROCESS "boilerplate/search_bar.tt2" %]
+<!--   <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.type.value+'/'+this.query.value ;">
     <select class="my-select" name="type" >
         <option id="all" value="all"  >Everything</option>
 	<option id="gene" value="gene">Gene</option>  
@@ -19,5 +20,6 @@
     <input class="text" id="Search" name="query" type="text" value="[% query %]"> 
     <input id="Search" type="submit" value="Search">
   </form>
+  <span id="searchMsg"></span>-->
 </div>
   [% content %]

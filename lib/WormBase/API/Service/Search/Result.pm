@@ -152,7 +152,7 @@ sub _set_data {
     my $fields =  $c->config->{pages}->{lcfirst($ace_obj->class)}->{search}->{fields};
     my %data;
     foreach my $field (@$fields) {
-      my $field_data = $object->$field;
+      my $field_data = $object->$field;# if  $object->meta->has_method($field);
       $data{$field} = $field_data;
     }
     return \%data;
