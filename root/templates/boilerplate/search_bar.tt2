@@ -1,6 +1,18 @@
-<div id="search-bar">
-  <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search/gene/'+this.query.value;">
-    <input class="text" id="Search" name="query" type="text" value="[% c.stash.query %]"> 
+   <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.type.value+'/'+this.query.value ;">
+    <select class="my-select" name="type" >
+        <option id="all" value="all"  >Everything</option>
+	<option id="gene" value="gene">Gene</option>  
+	<option id="variation" value="variation">Variation</option>
+	<option id="protein" value="protein">Protein</option>
+	<option id="sequence" value="sequence">Sequence</option>  
+        <option id="paper" value="paper">Paper</option>
+    </select>
+    [% val = "search..." %]
+    [% IF query %]
+       [% val = query %]
+    [% END %]
+    <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
     <input id="Search" type="submit" value="Search">
+
   </form>
-</div>
+  <span id="searchMsg"></span>

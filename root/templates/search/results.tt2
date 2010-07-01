@@ -25,7 +25,7 @@
       <a href="[% url %]">[% item.name %]</a>
     </li>
 	[% item.data.species %] <br />
-	[% item.data.description.data %] <br />
+	[% item.data.concise_description.data %] <br />
     <a class="forest-green" href="[% url %]">[% url %]</a>
 
 <!-- VARIATION -->
@@ -34,23 +34,26 @@
       <a href="[% url %]">[% item.data.common_name.data.label %]</a>
     </li>
 	[% item.data.species %] <br />
-	[% item.data.status.data %] <br />
-	[% item.data.variation_type.data.general_class %]: [% item.data.variation_type.data.physical_class %] <br />
+	[% item.data.status.data %], [% item.data.variation_type.data.general_class %]
+        [% IF item.data.variation_type.data.physical_class %]
+           ([% item.data.variation_type.data.physical_class %])
+        [% END %]
+        <br />
     <a class="forest-green" href="[% url %]">[% url %]</a>
 
 <!-- PAPER -->
   [% ELSIF item.type == 'paper' %]
     <li><a href="[% c.uri_for_action('report', 'paper', tem.data.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
     [% FOREACH author IN  item.data.authors.data %]
-    [% tag2link(author) %], 
+      [% tag2link(author)%],
     [% END %]
     </li>
-    <br>[% item.data.year.data %]. [% item.data.title.data %]
-    [% abstract=item.data.abstract.data.chunk(100) %]
-    <br><div class="toggle">Abstract: [% abstract.first %]</div>
-	       <div class="sequence-container" >
-		  <pre>[% abstract.join('<br>') %]</pre>
-	       </div>   
+    [% item.data.year.data %]. [% item.data.title.data %]
+    [% abstract = item.data.abstract.data.chunk(100) %]<br />
+    <div class="toggle"><b>Abstract:</b> [% abstract.first %]</div>
+    <div class="abstract-container" >
+      [% abstract.join('') %]
+    </div>   
     <br>
 
 <!-- OTHER -->
