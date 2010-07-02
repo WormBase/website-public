@@ -695,6 +695,7 @@ table.multi       { padding: 0;
     width:620px;
     clear: both;
     display: none;   /* Hidden by default */
+    margin-top: -0.5em;
     padding-left: 30px;
 }
 
@@ -719,7 +720,7 @@ table.multi       { padding: 0;
 
 
 .toggle {
-	padding: 5px 0 0 30px;
+	padding: 5px 0 5px 30px;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
 	font-size: 1em;
 	font-weight: normal;
