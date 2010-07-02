@@ -19,7 +19,7 @@
 
 [% WRAPPER $field_block title="Genes" %]
   [% FOREACH obj IN c.stash.fields.genes.data %]
-   <a href="[% c.uri_for_action('report', 'gene' , obj ) %]">[% obj %] </a><br>
+    [% tag2link(obj) %]<br>
   [% END %]
 [% END %]
 

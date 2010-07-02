@@ -102,9 +102,16 @@ sub homology_groups {
 sub genes {
     my $self = shift;
     my %seen;
-    my @genes = grep {!$seen{$_}++} map {$self->bestname($_->Gene)||$_}  grep{$_->Method ne 'history'}  @{$self->cds};
+    my @result;
+    my @genes = grep {!$seen{$_}++}   grep{$_->Method ne 'history'}  @{$self->cds};
+    foreach (@genes) {
+   		push @result, { id=>$_->Gene,
+						label=>$self->bestname($_->Gene)||$_,
+						class=>'gene',
+						}; 
+    }
     my $data = { description => 'The genes or CDS associated with the protein',
-		 data        => \@genes,
+		 data        => \@result,
     }; 
     return $data;
 }

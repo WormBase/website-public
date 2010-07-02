@@ -114,19 +114,30 @@ sub _build_type {
 
 sub name {
     my $self = shift;
-    my $data = { description => 'The object name of the sequence',
-		 data        =>  $self ~~ 'name',
+    my $ace  = $self->object;
+    my $data = { description => 'The internal WormBase referential ID of the sequence',
+		 data        =>  { id    => "$ace",
+				   label => $ace->name,
+				   class => $ace->class
+		 },
     };
     return $data;
-
 }
 
 sub common_name {
-    my $data = { description => 'The public name of the sequence',
-		 data        => shift ~~ 'name',
+     my $self = shift;
+    my $ace  = $self->object;
+    my $data = { description => 'The publice name of the sequence',
+		 data        =>  { id    => "$ace",
+				   label => $ace->name,
+				   class => $ace->class
+		 },
     };
     return $data;
 }
+
+
+ 
 
 ############################################################
 #
@@ -180,7 +191,7 @@ sub corresponding_gene {
     my $data = { description => 'The Corresponding gene of the sequence',
 		 data        => { label => $label,
 				  id => $gene,
-				  link => 'gene',
+				  class => 'gene',
 				},
     };
     return $data;    
@@ -191,7 +202,7 @@ sub corresponding_protein {
     my $data = { description => 'The Corresponding protein of the sequence',
 		 data        => { label => $protein,
 				  id => $protein,
-				  link => 'protein',
+				  class => 'protein',
 				},
     };
     return $data;    
@@ -219,7 +230,7 @@ sub origin {
     my $data = { description => 'The Origin of the sequence',
 		 data        => { label => $origin->get(Mail=>1),
 				  id => $origin,
-				  link => 'laboratory'
+				  class => 'laboratory'
 				},
     };
     return $data;    
@@ -229,7 +240,7 @@ sub available_from {
     return unless(shift->method eq 'Vancouver_fosmid');
     my $data = { description => 'The Vancouver_fosmid source of the sequence',
 		 data        => { label => 'GeneService',
-				  link => 'Geneservice_fosmids',
+				  class => 'Geneservice_fosmids',
 				},
     };
     return $data;    
@@ -272,7 +283,7 @@ sub orfeome_assays {
 	$hash{id}= $id;
 	$hash{label}= $id. " (".($id->Amplified(1) ? "PCR assay amplified" 
                                     : font({-color=>'red'},"PCR assay did NOT amplify")).")";
-	$hash{link}='pcr';
+	$hash{class}='pcr';
     }
     my $data = { description => 'The ORFeome Assays of the sequence',
 		 data        => \%hash,
@@ -300,7 +311,7 @@ sub genomic_location {
       my $stop  = $segment->stop;
       next unless abs($stop-$start) > 0;
       my $url = $self->hunter_url($ref,$start,$stop);
-      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, link=>'genomic_location' };
+      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, class=>'genomic_location' };
       push @a, $hash ;
     }
     return unless @a;
@@ -321,7 +332,7 @@ sub interpolated_genetic_position {
     else { return;}
     
     my $data = { description => 'The Interpolated Genetic Position of the sequence',
-		 data        => {  link => $chrom->class, #should be Map?
+		 data        => {  class => $chrom->class, #should be Map?
 				   label => $pos,
 				    id => $chrom,
 				},
@@ -428,7 +439,7 @@ sub genomic_picture {
     my $link_gb=$self->parsed_species."?name=$position;$type;width=700";
     my $id="name=$position;source=".$self->parsed_species;
     my $data = { description => 'The Inline Image of the sequence',
-		 data        => {  link => 'genomic_location',
+		 data        => {  class => 'genomic_location',
 				   label => $link_gb,
 				   id	=> $id,
 				},
@@ -455,7 +466,7 @@ sub external_links {
     if( keys(%{$ac_number}) > 0 ) {
       $hash{'GenBank/EMBL'}{label}=$ac_number->{GI_number};
       $hash{'GenBank/EMBL'}{id}=$ac_number->{GI_number};
-      $hash{'GenBank/EMBL'}{link}='Entrez';
+      $hash{'GenBank/EMBL'}{class}='Entrez';
 
     } else {
       $ac_number = find_ac($s, 'EMBL');
@@ -463,49 +474,49 @@ sub external_links {
       if( keys(%{$ac_number}) > 0 ) {
 	$hash{'GenBank/EMBL'}{label}=$ac_number->{NDB_AC};
 	$hash{'GenBank/EMBL'}{id}=$ac_number->{NDB_AC};
-	$hash{'GenBank/EMBL'}{link}='Entrez';
+	$hash{'GenBank/EMBL'}{class}='Entrez';
       }
     }
  
     if ($ac_protein) {
 	$hash{'GenPep'}{label}=$ac_protein;
 	$hash{'GenPep'}{id}=$ac_protein;
-	$hash{'GenPep'}{link}='Entrezp';
+	$hash{'GenPep'}{class}='Entrezp';
     }
     if (defined $uniprot->{UniProtAcc}) {
 	$hash{'Uniprot Accession number'}{label}=$uniprot->{UniProtAcc};
 	$hash{'Uniprot Accession number'}{id}=$uniprot->{UniProtAcc};
-	$hash{'Uniprot Accession number'}{link}='Trembl';
+	$hash{'Uniprot Accession number'}{class}='Trembl';
     }
     if (eval { $s->Coding(0) }) {
 	$hash{'Intronerator'}{label}="Intronerator: $s";
 	$hash{'Intronerator'}{id}=$s;
-	$hash{'Intronerator'}{link}='Intronerator';
+	$hash{'Intronerator'}{class}='Intronerator';
     } 
     
     if ($swissprot) {
 	$hash{'SwissProt/TrEMBL'}{label}=$swissprot;
 	$hash{'SwissProt/TrEMBL'}{id}=$swissprot;
-	$hash{'SwissProt/TrEMBL'}{link}='Uniprot';
+	$hash{'SwissProt/TrEMBL'}{class}='Uniprot';
     } 
     if ($self->type eq 'predicted coding sequence' or $self->type eq 'confirmed gene') {
 	$hash{'Eugenes'}{label}="ACEPRED:$s";
 	$hash{'Eugenes'}{id}=$s;
-	$hash{'Eugenes'}{link}='Meow_predicted';
+	$hash{'Eugenes'}{class}='Meow_predicted';
 
 	$hash{'NextDB'}{label}=$s;
 	$hash{'NextDB'}{id}=$s;
-	$hash{'NextDB'}{link}='Nextdb';
+	$hash{'NextDB'}{class}='Nextdb';
     } 
     if ($s =~ /^OST/) {
 	$hash{'ORFeome Project'}{label}="WORFDB: $s";
 	$hash{'ORFeome Project'}{id}=$s;
-	$hash{'ORFeome Project'}{link}='Orfeome';
+	$hash{'ORFeome Project'}{class}='Orfeome';
     } 
      if ($wormpd_id) {
 	$hash{'WormPD (fee required)'}{label}=$wormpd_id;
 	$hash{'WormPD (fee required)'}{id}="$wormpd_id.html";
-	$hash{'WormPD (fee required)'}{link}='Proteome';
+	$hash{'WormPD (fee required)'}{class}='Proteome';
     } 
     
   
@@ -514,7 +525,7 @@ sub external_links {
     if ($s =~ /^RST/) {
 	$hash{'RACE project page at WORFDB'}{label}=$s;
 	$hash{'RACE project page at WORFDB'}{id}="";
-	$hash{'RACE project page at WORFDB'}{link}='WORFDB';
+	$hash{'RACE project page at WORFDB'}{class}='WORFDB';
 	
 	 
     }
@@ -527,7 +538,7 @@ sub external_links {
 	$clone =~ s/YK//i;  # Strip the YK from the ID      
         $hash{'NextDB EXPRESSION'}{label}=$clone;
 	$hash{'NextDB EXPRESSION'}{id}=$clone;
-	$hash{'NextDB EXPRESSION'}{link}='Nextdb_EXPRESSION';
+	$hash{'NextDB EXPRESSION'}{class}='Nextdb_EXPRESSION';
     }
     
 
@@ -640,7 +651,7 @@ sub print_sequence {
 #     print_genomic_position($s,$type);
      
     $hash{est}{id} = "name=$s;class=CDS";
-    $hash{est}{link} = 'aligner';
+    $hash{est}{class} = 'aligner';
      $hash{est}{label} = '[View EST alignments]';
 
     if (eval { $s->Properties eq 'cDNA'} ){
@@ -763,7 +774,7 @@ sub print_homologies {
 	$title ||= '&nbsp;';
  
 	push @rows, {	method => $label,
-			similarity => ref($obj) ?  {label => $obj, id=>$obj, link=>$obj->class}: $obj,
+			similarity => ref($obj) ?  {label => $obj, id=>$obj, class=>$obj->class}: $obj,
 			type => $title,
 			score => $score,
 			genomic_region => "$s_start&nbsp;-&nbsp;$s_end",
@@ -790,7 +801,7 @@ sub print_cdna {
     foreach (@cDNA) {
       push @array, {   id => $_,
 		      label => $_,
-		      link=>'sequence',
+		      class=>'sequence',
 		    };
     }
      my $data = { description => 'The Matching cDNAs  of the sequence',
@@ -829,8 +840,8 @@ sub print_feature {
 	my ($start,$end)=$_->right->row;
 	push @rows, {	start=>$start,
 			end=>$end,
-			name=>{	label => $gene, id=>$gene, link=>$gene->class},
-			gene=>$locus ? {label => $locus, id=>$locus, link=>$locus->class} : '-',
+			name=>{	label => $gene, id=>$gene, class=>$gene->class},
+			gene=>$locus ? {label => $locus, id=>$locus, class=>$locus->class} : '-',
 			predicted_type=>=> $gene || '?',
 			comment=>$desc,
 		      };
@@ -1001,11 +1012,11 @@ sub print_genomic_position {
 	my $href = "$reference$subscript.html#$anchor";
 	     
       my %entry;
-      $entry{chrom}{link} = 'Chromosome_tables';
+      $entry{chrom}{class} = 'Chromosome_tables';
       $entry{chrom}{id} = $href;
       $entry{chrom}{label} = $reference;
 
-      $entry{browse}{link} = 'genomic_location';
+      $entry{browse}{class} = 'genomic_location';
       $entry{browse}{id} = "?name=$s";
       $entry{browse}{label} = '[Search for this Sequence on Genome]';
       print li("$ref: $begin-$end. ",
@@ -1018,7 +1029,7 @@ sub print_genomic_position {
     } 
   } else {
     my %entry;
-    $entry{browse}{link} = 'genomic_location';
+    $entry{browse}{class} = 'genomic_location';
     $entry{browse}{id} = "?name=$s";
     $entry{browse}{label} = '[Search for this Sequence on Genome]';
     push @array,$entry;
