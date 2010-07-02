@@ -15,4 +15,4 @@
     <input id="Search" type="submit" value="Search">
 
   </form>
-  <span id="searchMsg"></span>
+  <center><span id="searchMsg"></span></center>
