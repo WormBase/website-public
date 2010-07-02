@@ -39,30 +39,29 @@
            ([% item.data.variation_type.data.physical_class %])
         [% END %]
         <br />
-    <a class="forest-green" href="[% url %]">[% url %]</a>
 
 <!-- PAPER -->
   [% ELSIF item.type == 'paper' %]
-    <li><a href="[% c.uri_for_action('report', 'paper', tem.data.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
+    <li><a href="[% c.uri_for_action('report', 'paper', item.data.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
     [% FOREACH author IN  item.data.authors.data %]
-      [% tag2link(author)%],
+      [% tag2link(author) %], 
     [% END %]
     </li>
     [% item.data.year.data %]. [% item.data.title.data %]
     [% abstract = item.data.abstract.data.chunk(100) %]<br />
     <div class="toggle"><b>Abstract:</b> [% abstract.first %]</div>
     <div class="abstract-container" >
-      [% abstract.join('') %]
-    </div>   
-    <br>
+      [% item.data.abstract.data.substr(100) %]
+    </div>
 
 <!-- OTHER -->
   [% ELSE %]
     <li><span id="fade">[% item.type %]:</span>
       <a href="[% url %]">[% item.name %]</a>
     </li>
-    <a class="forest-green" href="[% url %]">[% url %]</a>
+    
   [% END %]
+  <a class="forest-green" href="[% url %]">[% url %]</a>
 [% END %]
 </ul>
 
