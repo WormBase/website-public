@@ -48,7 +48,7 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $class =  $c->req->param("class") || $type;
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
-	my $objs = $api->search->$search({class => $class, pattern => $query, config => $c});
+	my $objs = $api->search->$search({class => $class, pattern => $query});
 	 
 	if(defined $c->req->param("count") ) {
 	    my $count=0;

@@ -1,6 +1,7 @@
 package WormBase::API::Service::Search;
 
 use Moose;
+use Config::General;
 
 
 has 'dbh' => (
@@ -8,16 +9,37 @@ has 'dbh' => (
     isa        => 'WormBase::API::Service::acedb',
     );
 
+has 'api' => (
+    is         => 'ro',
+    isa        => 'WormBase::API',
+    );
+
+has conf_dir => (
+    is       => 'ro',
+    required => 1,
+    );
+
+
+sub _fields {
+  my ($self, $class) = @_;
+  my $root  = $self->conf_dir;
+  my $config = new Config::General(
+				  -ConfigFile      => "$root/../wormbase.conf",
+				  -InterPolateVars => 1
+    );
+  my $fields = $config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
+  return $fields;
+}
+
+
 sub basic {
   my ($self,$args) = @_;
   my $class     = $args->{class};
   my $pattern   = $args->{pattern};
   my @objs = $self->dbh->fetch(-class=>$class,
 			    -pattern=>$pattern);
-   
-#   return (\@objs)   if @objs;
 
-  return _wrap_objs(\@objs, $class, $args->{config});
+  return _wrap_objs($self, \@objs, $class);
    
 }
 # Search for paper objects
@@ -27,7 +49,6 @@ sub paper {
     my @references = ();
     my $class = $args->{class};
     my $name = $args->{pattern};
-    my $c = $args->{config};
     my $DB = $self->dbh;
       # Keywords are treated specially because of Ace query language
       # deficiencies (bugs?)
@@ -57,14 +78,13 @@ sub paper {
   }
     my @sorted = sort { ($year{$b} <=> $year{$a}) ||  ($month{$b} <=> $month{$a}) ||  ($day{$b} <=> $day{$a}) || ($author{$a} cmp $author{$b})
 		  } @references;
-    return _wrap_objs(\@sorted, 'paper', $c);
+    return _wrap_objs($self, \@sorted, 'paper');
 }
 
 # Search for gene objects
 sub gene {
   my ($self,$args) = @_;
   my $query   = $args->{pattern};
-  my $c = $args->{config};
 #   my ($count,@objs);
   my $DB = $self->dbh;
   my (@genes,%seen);
@@ -134,31 +154,35 @@ sub gene {
     push (@unique_genes,$gene);
     $seen{$gene}++;
   }
-  return _wrap_objs(\@unique_genes, 'gene', $c);
+  return _wrap_objs($self, \@unique_genes, 'gene');
 }
 
 # Search for variataion objects
 sub variation {
     my ($self,$args) = @_;
     my $query = $args->{pattern};
-    my $c = $args->{config};
     my $DB = $self->dbh;
     my @vars = $DB->fetch(-class => 'Variation',
 			   -name  => $query);
-    return _wrap_objs(\@vars, 'variation', $c);
+    return _wrap_objs($self, \@vars, 'variation');
 }
 
 # input: list of ace objects
 # output: list of Result objects
 sub _wrap_objs {
+  my $self = shift;
   my $list = shift;
   my $class = shift;
-  my $c = shift;
+  
+  # don't get config info if nothing to config
+  return $list if (@$list < 1); 
+  
+  my $api = $self->api;
 
-  my $api = $c->model('WormBaseAPI');
-  my $fields = $c->config->{pages}->{$class}->{search}->{fields};
+  my $fields = _fields($self, $class);
+
+  # default fields for all objects
   push(@$fields, qw/name common_name/);
-
 
   my @ret;
   foreach my $ace_obj (@$list) {
