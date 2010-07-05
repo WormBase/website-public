@@ -161,12 +161,10 @@ sub _wrap_objs {
 
 
   my @ret;
-  my $object = {};
-  my %data;
   foreach my $ace_obj (@$list) {
-    $object = $api->fetch({class => $ace_obj->class, 
+    my $object = $api->fetch({class => $ace_obj->class, 
                             name => $ace_obj}) or die "$!";
-    
+    my %data;
     foreach my $field (@$fields) {
       my $field_data = $object->$field;# if  $object->meta->has_method($field);
       $field_data = $field_data->{data} if $field_data->{data};
