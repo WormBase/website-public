@@ -1,7 +1,6 @@
 package WormBase::API::Service::Search;
 
 use Moose;
-use WormBase::API::Service::Search::Result;
 
 
 has 'dbh' => (
@@ -16,7 +15,9 @@ sub basic {
   my @objs = $self->dbh->fetch(-class=>$class,
 			    -pattern=>$pattern);
    
-  return (\@objs)   if @objs;
+#   return (\@objs)   if @objs;
+
+  return _wrap_objs(\@objs, $class, $args->{config});
    
 }
 # Search for paper objects
@@ -56,11 +57,7 @@ sub paper {
   }
     my @sorted = sort { ($year{$b} <=> $year{$a}) ||  ($month{$b} <=> $month{$a}) ||  ($day{$b} <=> $day{$a}) || ($author{$a} cmp $author{$b})
 		  } @references;
-#       return \@sorted;
-
-  my $result = __PACKAGE__ . "::Result";
-  @sorted = map { $result->new({ace_obj => $_, config => $c})} @sorted;
- return \@sorted;
+    return _wrap_objs(\@sorted, 'paper', $c);
 }
 
 # Search for gene objects
@@ -137,11 +134,7 @@ sub gene {
     push (@unique_genes,$gene);
     $seen{$gene}++;
   }
-
-  my $result = __PACKAGE__ . "::Result";
-  @unique_genes = map { $result->new({ace_obj => $_, config => $c})} @unique_genes;
-
-  return (\@unique_genes) if @unique_genes;
+  return _wrap_objs(\@unique_genes, 'gene', $c);
 }
 
 # Search for variataion objects
@@ -152,26 +145,62 @@ sub variation {
     my $DB = $self->dbh;
     my @vars = $DB->fetch(-class => 'Variation',
 			   -name  => $query);
-      
-    my $result = __PACKAGE__ . "::Result";
-    @vars = map { $result->new({ace_obj => $_, config => $c})} @vars;
-    return \@vars;
+    return _wrap_objs(\@vars, 'variation', $c);
+}
+
+# input: list of ace objects
+# output: list of Result objects
+sub _wrap_objs {
+  my $list = shift;
+  my $class = shift;
+  my $c = shift;
+
+  my $api = $c->model('WormBaseAPI');
+  my $fields = $c->config->{pages}->{$class}->{search}->{fields};
+  push(@$fields, qw/name common_name/);
+
+
+  my @ret;
+  my $object = {};
+  my %data;
+  foreach my $ace_obj (@$list) {
+    $object = $api->fetch({class => $ace_obj->class, 
+                            name => $ace_obj}) or die "$!";
+    
+    foreach my $field (@$fields) {
+      my $field_data = $object->$field;# if  $object->meta->has_method($field);
+      $field_data = $field_data->{data} if $field_data->{data};
+      $data{$field} = $field_data;
+    }
+    $data{'class'} = $class;
+    push(@ret, \%data);
+  }
+  return \@ret;
 }
 
 #just a test of concept... remember to remove this
 sub all {
     my ($self,$args) = @_;
-    my $query = $args->{pattern};
-    my $c = $args->{config};
 
     my @results;
     push(@results, @{variation($self,$args)});
     push(@results, @{gene($self,$args)});
     push(@results, @{paper($self,$args)});
+
+   foreach my $class (qw(sequence expression_cluster gene_class protein antibody)) {
+      $args->{'class'} = $class;
+      push(@results, @{basic($self,$args)});
+      push(@results, @{paper($self,$args)});
+   }
+   foreach my $class2 (qw(gene variation)){
+      $args->{'class'} = $class2;
+      push(@results, @{paper($self,$args)});
+   }
+
    return \@results;
 }
 
 no Moose;
-# __PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable;
 
 1;
