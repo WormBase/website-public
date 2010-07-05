@@ -314,7 +314,12 @@ sub widget_GET {
     foreach my $widget_config (@{$c->config->{pages}->{$class}->{widgets}->{widget}}) {
 	# Janky-tastic.
 	next unless $widget_config->{name} eq $widget; 
-	@fields = @{ $widget_config->{fields} };
+       if(ref $widget_config->{fields} ne "ARRAY") {
+		@fields = ($widget_config->{fields});
+ 	}
+	else {
+		@fields = @{ $widget_config->{fields} };
+	}
     }
     
     
