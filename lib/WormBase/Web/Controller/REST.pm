@@ -37,7 +37,7 @@ sub search_new :Path('/search_new')  :Args(2) {
     my ($self, $c, $type, $query) = @_;
      
     $c->stash->{'query'} = $query;
-    if($type eq 'all') {
+    if($type eq 'all' && !(defined $c->req->param("view"))) {
 	$c->log->debug(" search all kinds...");
 	$c->stash->{template} = "search/full_list.tt2";
 	$c->stash->{type} =  [keys %{ $c->config->{pages} } ];
@@ -45,7 +45,7 @@ sub search_new :Path('/search_new')  :Args(2) {
 	$c->log->debug("$type search");
 	 
 	my $api = $c->model('WormBaseAPI');
-	my $class =  $c->req->param("class") || 'gene'; #temporary for paper search
+	my $class =  $c->req->param("class") || $type;
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
 	my $objs = $api->search->$search({class => $class, pattern => $query, config => $c});
@@ -54,6 +54,7 @@ sub search_new :Path('/search_new')  :Args(2) {
 	    my $count=0;
 	    $count= scalar @$objs if($objs);
 	    $c->response->body($count);
+#  	    $c->response->body($objs);
 	}
 
 	$c->stash->{'type'} = $type; 

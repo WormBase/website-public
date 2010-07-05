@@ -73,6 +73,36 @@ sub title {
     return $data;    
 }
 
+sub journal {
+    my $self = shift;
+    my $journal = eval {$self ~~ 'Journal'} || return;
+    $journal =~ s/\.*$//;
+    my $data = { description => 'The journal the paper was published in',
+		 data        => $journal,
+    };
+    return $data;    
+}
+
+sub page {
+    my $self = shift;
+    my $page = eval {$self ~~ 'Page'} || return;
+    $page =~ s/\.*$//;
+    my $data = { description => 'The page numbers of the paper',
+		 data        => $page,
+    };
+    return $data;    
+}
+
+sub volume {
+    my $self = shift;
+    my $volume = eval {$self ~~ 'Volume'} || return;
+    $volume =~ s/\.*$//;
+    my $data = { description => 'The volume teh paper was published in',
+		 data        => $volume,
+    };
+    return $data;    
+}
+
 sub year {
     my $self = shift;
     my $year = $self->_parse_year($self ~~ 'Publication_date');
