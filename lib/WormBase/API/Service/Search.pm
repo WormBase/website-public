@@ -14,20 +14,15 @@ has 'api' => (
     isa        => 'WormBase::API',
     );
 
-has conf_dir => (
-    is       => 'ro',
-    required => 1,
+has config => (
+    is     => 'ro',
+    isa    => 'Config::General',
     );
 
 
 sub _fields {
   my ($self, $class) = @_;
-  my $root  = $self->conf_dir;
-  my $config = new Config::General(
-				  -ConfigFile      => "$root/../wormbase.conf",
-				  -InterPolateVars => 1
-    );
-  my $fields = $config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
+  my $fields = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
   return $fields;
 }
 
@@ -50,6 +45,7 @@ sub paper {
     my $class = $args->{class};
     my $name = $args->{pattern};
     my $DB = $self->dbh;
+    if ($class ne 'paper' && $class ne 'all') {
       # Keywords are treated specially because of Ace query language
       # deficiencies (bugs?)
       my $follow = $class =~ /keyword/i ?
@@ -57,6 +53,17 @@ sub paper {
       @references = $DB->find(-query=>qq{$class IS "$name" ; >$follow},
 			      -fill=>1);
       @references = grep ($_->class eq 'Paper',@references) if $class =~  /keyword/i;
+    } else {
+      my @ref = ();
+      foreach my $class2 (qw(gene variation)) {
+	my $follow = $class2 =~ /keyword/i ?
+	  'Quoted_in' : ($class2 =~ /author/i || $class2 =~ /person/i) ? 'Paper' : 'Reference';
+	@ref = $DB->find(-query=>qq{$class2 IS "$name" ; >$follow},
+				-fill=>1);
+        @ref = grep ($_->class eq 'Paper',@ref) if $class2 =~  /keyword/i;
+        push(@references, @ref);
+      }
+    }
     
     my (%year,%author,%month,%day);
     foreach (@references) { 
@@ -212,10 +219,6 @@ sub all {
    foreach my $class (qw(sequence expression_cluster gene_class protein antibody)) {
       $args->{'class'} = $class;
       push(@results, @{basic($self,$args)});
-      push(@results, @{paper($self,$args)});
-   }
-   foreach my $class2 (qw(gene variation)){
-      $args->{'class'} = $class2;
       push(@results, @{paper($self,$args)});
    }
 
