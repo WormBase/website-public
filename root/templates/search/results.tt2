@@ -33,7 +33,7 @@
         [% IF item.variation_type.physical_class %]
            ([% item.variation_type.physical_class %])
         [% END %]
-        [% IF item.corresponding_gene %]
+        [% IF item.corresponding_gene.defined('label') %]
             <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
         [% END %]
         [% IF item.remarks.size > 0 %]
