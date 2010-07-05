@@ -28,7 +28,7 @@ sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
     $c->log->debug(join(', ', @{$c->req->args}));
 
     my $api = $c->model('WormBaseAPI');
-    my $objs = $api->search->gene({pattern => $query, config => $c});
+    my $objs = $api->search->gene({pattern => $query});
 
     # fix your redirect to just call action.  Find out how to do this.
     if(scalar @$objs == 1) {
