@@ -73,7 +73,12 @@ sub _build_database {
 sub _build_search {
   my $self = shift;
   my $service_instance = $self->_services->{$self->default_datasource}; 
-  return WormBase::API::Service::Search->new({ dbh => $service_instance}); 
+  my $root  = $self->conf_dir;
+  my $config = new Config::General(
+				  -ConfigFile      => "$root/../wormbase.conf",
+				  -InterPolateVars => 1
+    );
+  return WormBase::API::Service::Search->new({ dbh => $service_instance, api => $self, config => $config}); 
 }
  
 

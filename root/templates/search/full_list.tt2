@@ -8,7 +8,8 @@
   
 [% path = "/search_new/" _ type _ "/" _ c.stash.query %]
 
-    <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]">    
+    <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]"> 
+                         [% objs =  [] %]
 				  <script>
 				      $("#[%- type -%]2").load("[% path _ "?count=1" %]",
 					    function(response, status, xhr) {
@@ -18,8 +19,13 @@
 						} 
 				      });
 				  </script>
+
+
 				</a>
 	    </li>
 [% END %]
+<li><a href= [% "/search_new/all/" _ c.stash.query _ "?view=1" %]>View all...</a></li>
 </ul>
+  
+
 
