@@ -22,10 +22,8 @@
 <b>[% item.volume %]</b>: [% item.page %]<br />
 
 [% IF item.abstract.length > 0 %]
-  [% #Figure out regex stuff so you can split the abstract hint at a word %]
-  [% abstract = item.abstract.chunk(80) %]
   <div class="results-abstract">
-    <div class="toggle"><b>Abstract: </b>[% abstract.first %]...</div>
+    <div class="toggle"><b>Abstract: </b>[% item.abstract.substr(0,80) %]...</div>
     <div class="abstract-container" >
       [% item.abstract %]
     </div>
