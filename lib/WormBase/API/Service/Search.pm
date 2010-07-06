@@ -208,7 +208,7 @@ sub all {
     push(@results, @{gene($self,$args)});
     push(@results, @{paper($self,$args)});
 
-   foreach my $class (qw(sequence expression_cluster gene_class protein antibody)) {
+   foreach my $class (qw(sequence expression_cluster gene_class protein antibody phenotype)) {
       $args->{'class'} = $class;
       push(@results, @{basic($self,$args)});
       push(@results, @{paper($self,$args)});
