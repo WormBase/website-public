@@ -36,11 +36,18 @@
 
 <script type="text/javascript">
   $(document).ready(function() {  
-       $(".toggle").live('click',function() {
+       
+        $(".toggle.prev").live('click',function() {
+		  //$(this).click(function(){
+              $(this).toggleClass("active").prev().slideToggle("fast");
+	      
+              return false;
+        });
+	 $(".toggle").live('click',function() {
 		  //$(this).click(function(){
               $(this).toggleClass("active").next().slideToggle("fast");
               return false;
-        })
+        });
   })
 
   // Load a (specific) field or widget dynamically onClick.
