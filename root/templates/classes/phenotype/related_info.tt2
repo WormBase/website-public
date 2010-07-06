@@ -1,0 +1,91 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+
+[% widget = widget %]
+
+[% WRAPPER $field_block  title="Phenotypes" key="related_phenotypes" %]
+    <table border=1>
+      <tr>[% FOREACH key IN fields.related_phenotypes.data.keys.sort %]
+	  <th>[% key %]</th> [% END %]
+       </tr>
+      <tr><td>[% FOREACH key IN fields.related_phenotypes.data.keys.sort %]
+	    [% FOREACH obj IN fields.related_phenotypes.data.$key %]
+	     [% tag2link(obj) %]
+		[% UNLESS loop.last %]<br>[% END %]		
+	  [% END %]     
+      </td>[% END %]
+      </tr>
+     </table> 
+[% END %]
+ 
+[% WRAPPER $field_block  title="RNAi" key="rnai" %]
+		[% FOREACH type IN fields.rnai.data.keys.nsort  %]
+		<p> phenotype [% IF type ==1 %]NOT [% END %]observed in the following [% fields.rnai.data.$type.keys.size %] RNAi entries </p>
+		    [% count = 0 %]
+		    [% FOREACH obj IN fields.rnai.data.$type.keys.sort %]
+			[% count = count + 1 %]
+			[% IF count == 16 %]
+			      <div class="toggle">..more</div> 
+			      <div class="sequence-container">
+			[% END %]
+			 <br>[% tag2link(fields.rnai.data.$type.$obj) %] 
+			 
+		    [% END %]
+		    [% IF count >= 16 %]</div>[% END %]
+		   
+	      [% END %]
+[% END %]
+ 
+[% WRAPPER $field_block  title="Variation" key="variation" %]
+		[% FOREACH type IN fields.variation.data.keys.nsort  %]
+		 <p>  phenotype [% IF type ==1 %]NOT [% END %]observed in the following [% fields.variation.data.$type.keys.size %] Variation entries</p>
+		    [% count = 0 %]
+		    [% FOREACH obj IN fields.variation.data.$type.keys.sort %]
+			[% count = count + 1 %]
+			[% IF count == 16 %]
+			      <br> <div class="toggle">..more</div>
+			      <div class="sequence-container">
+			[% END %]
+			<br>[% tag2link(fields.variation.data.$type.$obj) %]
+			 
+		    [% END %]
+		    [% IF count >= 16 %]</div>[% END %]
+		   
+	      [% END %]
+[% END %]
+ 
+[% WRAPPER $field_block  title="Transgene" key="transgene" %]
+		   phenotype observed in the following [% fields.transgene.data.keys.size %] Transgene entries 
+		    [% count = 0 %]
+		    [% FOREACH obj IN fields.transgene.data.keys.sort %]
+			[% count = count + 1 %]
+			[% IF count == 16 %]
+			     <div class="toggle">..more</div>
+			      <div class="sequence-container">
+			[% END %]
+			<br>[% tag2link(fields.transgene.data.$obj) %]
+		    [% END %]
+		    [% IF count >= 16 %]</div>[% END %]
+[% END %]
+ 
+[% WRAPPER $field_block  title="Go_term" key="go_term" %]
+		   phenotype observed in the following [% fields.go_term.data.keys.size %] Go_term entries 
+		     [% count = 0 %]
+		    [% FOREACH obj IN fields.go_term.data.keys.sort %]
+			[% count = count + 1 %]
+			[% IF count == 16 %]
+			      <div class="toggle">..more</div>
+			      <div class="sequence-container">
+			[% END %]
+			<br>[% tag2link(fields.go_term.data.$obj) %]
+			[% IF loop.last %]<p>[% END %]		
+		    [% END %]
+		    [% IF count >= 16 %]</div>[% END %]
+[% END %]
+ 
+[% WRAPPER $field_block  title="Anatomy Ontology" key="anatomy_ontology" %] 
+     Anatomy Ontology term associated with this Phenotype <br>
+    [% tag2link(fields.anatomy_ontology.data) %]
+[% END %]
