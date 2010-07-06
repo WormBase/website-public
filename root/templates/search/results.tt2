@@ -5,9 +5,9 @@
 <div id="results">
 
 [% IF results.size > 0 %]
-  <div id="fade">found [% results.size %] results</div>
+  <div id="fade">found <span id="count">[% results.size %]</span> results</div>
 [% ELSE %]
-  Sorry, no results found for the search <strong>[% c.stash.query %]</strong>
+  Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
 [% END %]
 
 <ul>
