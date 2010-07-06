@@ -10,7 +10,7 @@ extends 'WormBase::API::Object';
 sub name {
     my $self = shift;
     my $data = { description => 'The object name of the paper',
-		 data        =>  $self ~~ 'name',
+		 data        =>  { label => $self ~~ 'name'},
     };
     return $data;
 
@@ -126,7 +126,7 @@ sub authors {
 	  }
 	  push(@authors,{
 			  id=>$obj,
-			  link=>$obj->class,
+			  class=>$obj->class,
 			  label =>$author ,
 		      });
     }
@@ -141,7 +141,8 @@ sub abstract {
     my $abs = $self ~~ 'Abstract';
     my $abstext = $self->ace_dsn->fetch(LongText=>$abs);
     my $text = "";
-    if ($abstext) { 
+
+    if ($abstext =~ /WBPaper/i ) { 
 	 $text = $abstext->right;
 	 $text=~s/^\n+//gs;
 	 $text=~s/\n+$//gs;

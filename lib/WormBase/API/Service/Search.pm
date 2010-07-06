@@ -20,13 +20,6 @@ has config => (
     );
 
 
-sub _fields {
-  my ($self, $class) = @_;
-  my $fields = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
-  return $fields;
-}
-
-
 sub basic {
   my ($self,$args) = @_;
   my $class     = $args->{class};
@@ -185,8 +178,7 @@ sub _wrap_objs {
   return $list if (@$list < 1); 
   
   my $api = $self->api;
-
-  my $fields = _fields($self, $class);
+  my $fields = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
 
   # default fields for all objects
   push(@$fields, qw/name common_name/);
