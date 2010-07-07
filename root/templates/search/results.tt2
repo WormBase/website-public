@@ -41,6 +41,15 @@
         [% END %]
         <br />
 
+  [% # SEQUENCE %]
+  [% ELSIF item.class == 'sequence' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
+    </li>
+	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+	[% item.description %] <br />
+
+
   [% ELSIF item.class == 'paper' %]
     [% PROCESS "search/paper.tt2" %]
 
@@ -55,7 +64,6 @@
 [% END %]
 </ul>
 
-<br />
 
 
 </div>
