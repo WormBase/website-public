@@ -46,8 +46,10 @@
     <li><span id="fade">[% item.class %]:</span>
       <a href="[% url %]">[% item.common_name.label %]</a>
     </li>
+        [% IF item.taxonomy %]
 	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-	[% item.description %] <br />
+	[% END %]
+        [% item.description %] <br />
 
 
   [% ELSIF item.class == 'paper' %]
