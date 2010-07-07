@@ -162,8 +162,20 @@ sub variation {
     my ($self,$args) = @_;
     my $query = $args->{pattern};
     my $DB = $self->dbh;
-    my @vars = $DB->fetch(-class => 'Variation',
-			   -name  => $query);
+    my @vars;
+    my %seen;
+
+    @vars  = $self->dbh->fetch(-class=>'Variation',
+			    -name=>$query);
+
+#     @vars = $self->dbh->fetch(-class=>'Variation',
+#                               -Public_name=>$query) 
+    unless (@vars) {
+    my @var_name = $self->dbh->fetch(-class=>'Variation_name',-name=>$query,-fill=>1); 
+      # HACK!  For cases in which a gene is assigned to more than one Public_name_for.
+      @vars = grep { !$seen{$_}++} map { $_->Public_name_for } @var_name;
+    }
+
     return _wrap_objs($self, \@vars, 'variation');
 }
 
