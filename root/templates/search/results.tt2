@@ -68,7 +68,7 @@
     </li>
     
   [% END %]
-  <a class="forest-green" href="[% url %]">[% url %]</a>
+  <span class="forest-green">[% url %]</span>
 [% END %]
 </ul>
 
