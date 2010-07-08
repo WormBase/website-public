@@ -23,9 +23,8 @@
    color: #228B22;
 }
 #search-bar {
-  text-align:center;
   height:50px;
-  width:503px;
+  width:540px;
 }
 #search-bar .form input.text {
    width:300px;

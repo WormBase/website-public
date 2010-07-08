@@ -570,7 +570,7 @@ table.multi       { padding: 0;
 /* dataheader and datacell are used in page-wide tables such as in the 
    listing of all rearrangements by chrom on the rearrangment page */
 
-.abstract         { background-color: #FFEEEE; }
+.abstract         { background-color: #FFEEEE;     padding-bottom:5px;}
 .acetree          { font-size: small; }
 .code             { 
                     background-color: #CCFFFF;
@@ -689,16 +689,23 @@ table.multi       { padding: 0;
 .abstract-container {
     font-size: 1em;
     overflow: hidden;
-    width:620px;
     clear: both;
     display: none;   /* Hidden by default */
-    padding-left: 30px;
+    position:relative;
+    left:30px;
+    background-color: #EEEEFF;
+    border: 1px solid black;
+    padding: 5px;
+    width:80%;
+}
+
+.results-abstract {
+    padding-bottom:5px;
 }
 
 .fasta-sequence {
    font-family:"Courier New";
 }
-
 
 .sequence-download {
    float:right;        
@@ -709,7 +716,6 @@ table.multi       { padding: 0;
     margin-top:15px;
     text-align:left;
 }
-
 
 
 

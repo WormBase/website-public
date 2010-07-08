@@ -2,24 +2,24 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-
-<ul>
 [% FOREACH type IN c.stash.type.list %]
+  [% path = "/search_new/" _ type _ "/" _ c.stash.query %]
+  <div class="toggle"> [% type %]: <a id="[%- type -%]2" href="[% path %]"> <span id="fade">searching</span></a></div>
   
-[% path = "/search_new/" _ type _ "/" _ c.stash.query %]
-
-    <li>  [% type %]:    <a id="[%- type -%]2" href="[% path %]">    
-				  <script>
-				      $("#[%- type -%]2").load("[% path _ "?count=1" %]",
-					    function(response, status, xhr) {
-						if (status == "error") {
-						    var msg = "Sorry but there was an error: ";
-						    $("#error").html(msg + xhr.status + " " + xhr.statusText);
-						} 
-				      });
-				  </script>
-				</a>
-	    </li>
+  <div id="[%- type -%]-container" style="display:none;padding-left:30px">
+				    <script>
+					$("#[%- type -%]-container").load("[% path _ "?inline=1" %]",
+					      function(response, status, xhr) {
+						  if (status == "error") {
+						      $("#[%- type -%]2").html(xhr.status + " " + xhr.statusText);
+						  }
+						  //try to find a better way to do this...
+						  var count = response.split("<span id=\"count\">")[1].split("</span>")[0];
+						  $("#[%- type -%]2").text(count); 
+					});
+					
+				    </script>
+  </div>
 [% END %]
-</ul>
-
+<br />
+<a href= [% "/search_new/all/" _ c.stash.query _ "?view=1" %]>View all...</a><br />

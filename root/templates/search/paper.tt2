@@ -11,15 +11,21 @@
 
     %]
 
-<a href="[% c.uri_for_action('report', 'paper', c.stash.fields.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
-[% FOREACH author IN  c.stash.fields.authors.data %]
-  [% tag2link(author) %], 
+<li><a href="[% url %]" ><img src="/img/buttons/wormbase.gif" /></a>
+[% authors = [] %]
+[% FOREACH author IN  item.authors %]
+  [% authors.push(tag2link(author)) %]
 [% END %]
-<br>[% c.stash.fields.year.data %]. [% c.stash.fields.title.data %]
- [% abstract=c.stash.fields.abstract.data.chunk(100) %]
-<br><div class="toggle">Abstract: [% abstract.first %]</div>
-	       <div class="sequence-container" >
-		  <pre>[% abstract.join('<br>') %]</pre>
-	       </div>   
-<br>
- 
+[% authors.join(', ') %]
+</li>
+[% item.year %]. [% item.title %]. [% item.journal %] 
+<b>[% item.volume %]</b>: [% item.page %]<br />
+
+[% IF item.abstract.length > 0 %]
+  <div class="results-abstract">
+    <div class="toggle"><b>Abstract: </b>[% item.abstract.substr(0,80) %]...</div>
+    <div class="abstract-container" >
+      [% item.abstract %]
+    </div>
+  </div>
+[% END %]

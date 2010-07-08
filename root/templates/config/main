@@ -32,12 +32,14 @@
 	   "<a href=\"$url\?name=" _ data.id _ "\" class=\"$data.class\">  $data.label </a>";
           END;
       ELSE;
-          link = '/reports/' _ class _ '/' _ data.id ;
+	  link = c.uri_for_action('report', class , data.id);
+   #       link = '/reports/' _ class _ '/' _ data.id ;
    #      link = '/reports/' _ data.link _ '/' _ data.id ;
          IF text;
 	   "<a href=\"$link\" class=\"$data.class\">  $text </a>";;
          ELSE;
-	   "<a href=\"$link\" class=\"$data.class\">  $data.label </a>";
+	#   "<a href=\"$link\" class=\"$data.class\"> $data.label</a>";
+           "<a href=\"$link\" class=\"$data.class\"> $data.label</a>";
          END;
       END; 
    END;
@@ -113,7 +115,7 @@ END;
    # Define some convenient macros   
    #######################################
    # image: wrap a src in an image tag using the format plugin
-   USE image  = format('<img src="%s" valign="middle" style="width: 95%; " />');
+   USE image  = format('<img src="%s" valign="middle" >');
    USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
    USE link = format('<a href="%s" target="_blank">%s</a>');
 
