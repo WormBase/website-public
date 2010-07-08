@@ -1,74 +1,72 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
+<!-- begin result list -->
 [% results = c.stash.results %]
 <div id="results">
 
-<!--[% PROCESS "boilerplate/search_bar.tt2" %]-->
-
 [% IF results.size > 0 %]
-  <div id="fade">found [% results.size %] results</div>
+  <div id="fade">found <span id="count">[% results.size %]</span> results</div>
 [% ELSE %]
-  Sorry, no results found for the search <strong>[% c.stash.query %]</strong>
+  Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
 [% END %]
 
-<br />
 <ul>
 [% FOREACH item IN results %]
-  [% url = c.uri_for_action('report',item.type, item.id) %]
+  [% url = c.uri_for_action('report',item.class, item.name.label) %]
 
-<!-- THESE SECTIONS CAN PROBABLY BE MERGED TOGETHER ONCE THE API IS STANDARD -->
 
-<!--   GENES -->
-  [% IF item.type == 'gene' %]
-    <li><span id="fade">[% item.type %]:</span>
-      <a href="[% url %]">[% item.name %]</a>
+  [% # GENES %]
+  [% IF item.class == 'gene' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
     </li>
-	[% item.data.species %] <br />
-	[% item.data.concise_description.data %] <br />
-    <a class="forest-green" href="[% url %]">[% url %]</a>
+	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+	[% item.concise_description %] <br />
 
-<!-- VARIATION -->
-  [% ELSIF item.type == 'variation' %]
-    <li><span id="fade">[% item.type %]:</span>
-      <a href="[% url %]">[% item.data.common_name.data.label %]</a>
+  [% # VARIATION %]
+  [% ELSIF item.class == 'variation' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
     </li>
-	[% item.data.species %] <br />
-	[% item.data.status.data %], [% item.data.variation_type.data.general_class %]
-        [% IF item.data.variation_type.data.physical_class %]
-           ([% item.data.variation_type.data.physical_class %])
+	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
+	[% item.status %], [% item.variation_type.general_class %]
+        [% IF item.variation_type.physical_class %]
+           ([% item.variation_type.physical_class %])
+        [% END %]
+        [% IF item.corresponding_gene.defined('label') %]
+            <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
+        [% END %]
+        [% IF item.remarks.size > 0 %]
+           <br />[% item.remarks.join('<br>') %]
         [% END %]
         <br />
-    <a class="forest-green" href="[% url %]">[% url %]</a>
 
-<!-- PAPER -->
-  [% ELSIF item.type == 'paper' %]
-    <li><a href="[% c.uri_for_action('report', 'paper', tem.data.name.data) %]" ><img src="/img/buttons/wormbase.gif" /></a>
-    [% FOREACH author IN  item.data.authors.data %]
-      [% tag2link(author)%],
-    [% END %]
+  [% # SEQUENCE %]
+  [% ELSIF item.class == 'sequence' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
     </li>
-    [% item.data.year.data %]. [% item.data.title.data %]
-    [% abstract = item.data.abstract.data.chunk(100) %]<br />
-    <div class="toggle"><b>Abstract:</b> [% abstract.first %]</div>
-    <div class="abstract-container" >
-      [% abstract.join('') %]
-    </div>   
-    <br>
+        [% IF item.taxonomy %]
+	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+	[% END %]
+        [% item.description %] <br />
 
-<!-- OTHER -->
+
+  [% ELSIF item.class == 'paper' %]
+    [% PROCESS "search/paper.tt2" %]
+
+  [% # OTHER %]
   [% ELSE %]
-    <li><span id="fade">[% item.type %]:</span>
-      <a href="[% url %]">[% item.name %]</a>
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
     </li>
-    <a class="forest-green" href="[% url %]">[% url %]</a>
+    
   [% END %]
+  <a class="forest-green" href="[% url %]">[% url %]</a>
 [% END %]
 </ul>
 
-<br />
-
-<!-- [% PROCESS "boilerplate/search_bar.tt2" %] -->
 
 
 </div>
+<!-- End result list -->

@@ -10,7 +10,7 @@ extends 'WormBase::API::Object';
 sub name {
     my $self = shift;
     my $data = { description => 'The object name of the paper',
-		 data        =>  $self ~~ 'name',
+		 data        =>  { label => $self ~~ 'name'},
     };
     return $data;
 
@@ -73,6 +73,36 @@ sub title {
     return $data;    
 }
 
+sub journal {
+    my $self = shift;
+    my $journal = eval {$self ~~ 'Journal'} || return;
+    $journal =~ s/\.*$//;
+    my $data = { description => 'The journal the paper was published in',
+		 data        => $journal,
+    };
+    return $data;    
+}
+
+sub page {
+    my $self = shift;
+    my $page = eval {$self ~~ 'Page'} || return;
+    $page =~ s/\.*$//;
+    my $data = { description => 'The page numbers of the paper',
+		 data        => $page,
+    };
+    return $data;    
+}
+
+sub volume {
+    my $self = shift;
+    my $volume = eval {$self ~~ 'Volume'} || return;
+    $volume =~ s/\.*$//;
+    my $data = { description => 'The volume teh paper was published in',
+		 data        => $volume,
+    };
+    return $data;    
+}
+
 sub year {
     my $self = shift;
     my $year = $self->_parse_year($self ~~ 'Publication_date');
@@ -96,7 +126,7 @@ sub authors {
 	  }
 	  push(@authors,{
 			  id=>$obj,
-			  link=>$obj->class,
+			  class=>$obj->class,
 			  label =>$author ,
 		      });
     }
@@ -111,7 +141,8 @@ sub abstract {
     my $abs = $self ~~ 'Abstract';
     my $abstext = $self->ace_dsn->fetch(LongText=>$abs);
     my $text = "";
-    if ($abstext) { 
+
+    if ($abstext =~ /WBPaper/i ) { 
 	 $text = $abstext->right;
 	 $text=~s/^\n+//gs;
 	 $text=~s/\n+$//gs;
