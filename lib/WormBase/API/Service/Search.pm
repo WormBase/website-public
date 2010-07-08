@@ -52,9 +52,14 @@ sub paper {
       @references = map {eval {$_->Reference} } @genes if (@genes == 1);
 
       unless(@references){
-      my @vars = $DB->fetch(-class=>'Varation',-pattern=>$name);
-      @vars = map { $_->Public_name_for } $DB->fetch(-class=>'Variation_name',-name=>$name, -fill=>1) unless @vars;
-      @references = map {eval {$_->Reference} } @vars if (@vars == 1);
+	my @vars = $DB->fetch(-class=>'Varation',-pattern=>$name);
+	@vars = map { $_->Public_name_for } $DB->fetch(-class=>'Variation_name',-name=>$name, -fill=>1) unless @vars;
+	@references = map {eval {$_->Reference} } @vars if (@vars == 1);
+      }
+      unless(@references){
+	if ($name =~ /^WBPaper.*\d+/) {
+	  @references = $DB->fetch(-class=>'Paper', -name=>$name);
+        }
       }
     }
     
@@ -173,7 +178,8 @@ sub variation {
       my @genes = $DB->fetch(-class=>'Gene',-pattern=>$query);
       @genes = map { $_->Public_name_for } $DB->fetch(-class=>'Gene_name',-name=>$query, -fill=>1) unless @genes;
       @vars = map {eval {$_->Allele} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
-    }
+#       @vars = map {$DB->fetch(-query=>"find Variation Gene=" . $_)} @genes if (@genes == 1); #only loo 
+   }
 
     return _wrap_objs($self, \@vars, 'variation');
 }
