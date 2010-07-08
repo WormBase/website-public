@@ -37,6 +37,7 @@ sub search_new :Path('/search_new')  :Args(2) {
     my ($self, $c, $type, $query) = @_;
      
     $c->stash->{'query'} = $query;
+    $c->stash->{'class'} = $type;
     if($type eq 'all' && !(defined $c->req->param("view"))) {
 	$c->log->debug(" search all kinds...");
 	$c->stash->{template} = "search/full_list.tt2";
@@ -97,7 +98,7 @@ sub search_GET {
  
  
     my $uri = $c->uri_for("/rest/search",$class,$name);
-    $c->stash->{type}=$class;
+    $c->stash->{class}=$class;
     $c->stash->{id}=$name;
     $c->stash->{noboiler} = 1;
     if($class eq 'paper') {
