@@ -51,6 +51,12 @@
 	[% END %]
         [% item.description %] <br />
 
+  [% # PHENOTYPE %]
+  [% ELSIF item.class == 'phenotype' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.primary_name %]</a>
+    </li>
+    [% IF item.description.des %][% item.description.des %] <br />[% END %]
 
   [% ELSIF item.class == 'paper' %]
     [% PROCESS "search/paper.tt2" %]
