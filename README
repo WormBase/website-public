@@ -1,3 +1,18 @@
+Todo:
+
+What if a field is empty or not known?  Perhaps return a hash lacking 'data'?
+
+Anaotmy of a widget, illustrating fields, subfields and wrapping
+
+List of shared widgets
+List of shared fields
+
+Migrate shared fields to Object.pm
+
+Error trapping; right nowif lib throws an error, it tries to render the default template. Bad!
+
+-----
+
 Run script/wormbase_server.pl to test the application.
 
 Add StackTrace as an option to the Application: lib/WormBase.pm

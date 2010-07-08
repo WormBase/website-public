@@ -27,10 +27,9 @@
 
 
 <img align="right" border="0" src="/img/classic_banner.jpg" alt="WormBase Banner" />
-
 <a href="/"><h3>WormBase Release [% constants.acedb_version %]</h3></a>
 
-<img align="right" border="0" src="/static/i/classic_banner_logo.jpg" /><div id="mainSearch" style="text-align:left"><form method="post" action="http://www.wormbase.org/db/searches/basic" enctype="multipart/form-data">
+<div id="mainSearch" style="text-align:left"><form method="post" action="http://www.wormbase.org/db/searches/basic" enctype="multipart/form-data">
  <b>Find:</b> <input type="text" name="name" value="WBGene00006763" size="20" /> <i><select name="class"  id="class_search_menu">
 <option value="Any">Anything</option>
 <option value="AnyGene">Any Gene</option>
