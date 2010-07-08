@@ -98,7 +98,7 @@ END;
 
    # Our custom URL mapping plugin.
    # Usage: url.Link();
-   USE url;
+   # USE url;
 
    # Data munging utilities
    # USE Util;

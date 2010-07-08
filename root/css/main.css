@@ -126,7 +126,7 @@ section.widget footer {
     font-size:0.9em;    
 }
 
-/* These are subfields */
+/* These are subfields - NOT IN USE? */
 section.widget .secondary-container {
 
 }
@@ -439,7 +439,7 @@ div.field-content {
 		
 
 
-/* Widget subsections: ie Sequence names of the IDs section of the Identification widget */
+/* Subfields - structure mimics that of fields */
 div.subfield { 
     clear:both;
     margin-left:0em;
@@ -455,22 +455,19 @@ div.subfield p {
     margin-left:1em;
 }
 
-div.subfield .subfield-content {
-    margin-left:3em;
-    margin-right:10px;
-    padding-left:1em;
-}
-
 div.subfield-title {
 	float        : left;
 	text-align   : right; 
 	font-size    : 1em;
 	padding-right: 2em;
-	width        : 30px;
-	height       : auto;
+	width        : 100px;
+	height       : auto;	
 	}
 
-div.subfield-content {
+div.subfield .subfield-content {
+    margin-left:3em;
+    margin-right:10px;
+    padding-left:1em;
 /*		  float:right; */
 		  text-align:left;
 		  width:auto;
@@ -725,9 +722,19 @@ table.multi       { padding: 0;
 	font-weight: normal;
         height:16px;
 /* 	font-size: 1.2em; */
-/* 	font-weight: normal; */
-	 
+/* 	font-weight: normal; */ 
 }
+
+.toggle-container {
+    font-family:"Courier New";
+    font-size: 0.8em;
+    overflow: hidden;
+    width: 80%; 
+    clear: both;
+    display: none;   /* Hidden by default */
+}
+
+
 .active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 

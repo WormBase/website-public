@@ -27,6 +27,34 @@
 [% END %]
 
 
+[% 
+  # For dsiplaying a list of objects in a field
+  # Should probably be expanded to included some actual formatting,
+  # What to do if there are too many objects, etc
+%]
+[% MACRO object_list(objects) BLOCK %]
+
+     [%# More than 5? Display 5, and list more %]
+     [% IF objects > 5 %]
+
+           [% FOREACH object IN objects.keys %]	             
+                     [%- IF loop.last -%]
+		     	  and [% loop.count - loop.size %] more...			
+		     [% ELSE %]
+		        [%- tag2link(objects.$object) -%],  
+		     [% END %]
+            [% END %]           
+
+      [% ELSE %]
+
+            [% FOREACH object IN objects.keys %]
+	         [%- tag2link(objects.$object) -%]
+                     [%- UNLESS loop.last -%], [% END %]
+            [% END %]
+
+      [% END %]
+
+[% END %]
 
 [% BLOCK widget_block %]
    <!-- start [% widget.name %] widget -->
@@ -219,3 +247,5 @@
     </form>
 </div>
 [% END %]
+
+

@@ -23,6 +23,7 @@ requires 'Bio::Graphics';
 requires 'Catalyst::Devel';                  # REQ'D FOR DEVELOPMENT ONLY
 requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
 requires 'Catalyst::Action::REST';           
+requires 'Catalyst::Action::RenderView::ErrorHandler';
 requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Log::Log4perl';

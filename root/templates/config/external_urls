@@ -12,55 +12,64 @@
 	search - the path to the search facility - with variable
 	         substitution as needed
 
-   # Some of these are links to external resources using Protein IDs
-
 %]
 	
 
 
 [% site.external_urls = {
-	CGC      = { base         = 'http://www.cbs.umn.edu/CGC/'
-		     nomenclature = 'http://biosci.umn.edu/CGC/strains/'
+	cgc      = { description  = 'The C. elegans Genetics Center',
+	             maintainer   = '',
+		     base         = 'http://www.cbs.umn.edu/CGC/'
+		     nomenclature = 'http://biosci.umn.edu/CGC/strains/',	     
  	           }
 
-	NCBI     = { base              = 'http://www.ncbi.nlm.nih.gov'
-		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
+        flybase = { description = 'The central data repository for D. melanogaster and related species',
+		    maintainer  = '',
+		    base        = 'http://flybase.net/'
+                    search      = 'http://flybase.net/reports/%s.html'
 		   }
-	
-	PubMed   = { base        = 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
-		     fetch_paper = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
-		    }
 
-	Treefam  = { base         = 'http://www.treefam.org/'
+
+	treefam  = { base         = 'http://www.treefam.org/'
 		     search       = 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
 		     image        = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
 		   }
 
-	GADFLY  = { base = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
+	gadfly  = { base = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
                             search = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
                           }
 
-        FLYBASE = { base = 'http://flybase.net/'
-                            search = 'http://flybase.net/reports/%s.html'
-			 }
 
-        ENSEMBL = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
+
+        ensembl = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
+
+	ncbi_genbank     = { base              = 'http://www.ncbi.nlm.nih.gov'
+		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
+		   }
 	
-        SGD     = { base=  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s' }
+	ncbi_pubmed   = { base        = 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
+		     fetch_paper = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
+		    }
+
+	ncbi_refseq  ={ base = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept' }
+
+
+	
+        sgd     = { base=  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s' }
 		 
-        WP      ={ base = '/db/seq/protein?class=Protein;name=WP:%s' }
+        wp      ={ base = '/db/seq/protein?class=Protein;name=WP:%s' }
 		  
-        BP      ={ base = '/db/seq/protein?class=Protein;name=BP:%s' }
+        bp      ={ base = '/db/seq/protein?class=Protein;name=BP:%s' }
 		  
-        VG      ={ base = 'http://vega.sanger.ac.uk/Homo_sapiens/protview?peptide=%s&amp;db=core' }
+        vg      ={ base = 'http://vega.sanger.ac.uk/Homo_sapiens/protview?peptide=%s&amp;db=core' }
 		  
-        SW      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
+        sw      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
 		  
-        SPTREMBL={ base = 'http://www.ebi.uniprot.org/entry/%s' }
+        sptrembl ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
 		  
-        TR      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
+        tr      ={ base = 'http://www.ebi.uniprot.org/entry/%s' }
 		  
-        PFAM    ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?%s' }
+        pfam    ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?%s' }
 		  
         PS      ={ base = 'http://www.expasy.ch/cgi-bin/prosite-search-de?%s' }
 		  
@@ -70,7 +79,7 @@
 		  
         EMBL ={ base =     'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=%s' }
 		  
-        REFSEQ  ={ base = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept' }
+
 		  
         TARGETDB       ={ base = 'http://targetdb.pdb.org/servlet/TargetSearch?seqname=Query&id=%s&pdbid=&pfamid=&status=&which_lab=%s&which_seq=ALL&Aftermonth=&Afterday=&Afteryear=&Beforemonth=&Beforeday=&Beforeyear=&p_name=&org_name=&Sequence=&evalue=10&format=html&cp=1' }
 		  
@@ -82,6 +91,12 @@
 		  
         PFAM_WITH_PDB  ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?acc=%s&pdb=%s' }
 	
+
+	phosphopep     = { base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s',
+		       	   search = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s',
+			   description = 'a database of phosphorylation sites',
+			   maintainer  = '',
+			   }, 
 
 	submit_forms = { base      = ''
                          alleles   = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/allele.cgi'
