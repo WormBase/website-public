@@ -203,41 +203,23 @@ div#content #available-views {
 
 div#footer{
         clear:both;
-	margin: 0 auto;
-        padding: 0.1em 0 0 0;
+	color: #878787;
+        padding: 1em;
+        margin-top:1em;
 	font-size:0.7em;
         border-top: 1px solid #BCC;
 }
 
 #footercredit {
         text-align: left;
-        margin: 0px;
-        padding: 10px 0 10px 10px;
-	color: #878787;
         float: left;
         width:400px;
 }
 
 #footermeta {
         text-align: right;
-        margin: 0px;
-        padding: 10px 10px 10px 0;
-        color: #878787;
         float: right;
 }
-
-#footer a:link, #footer a:hover {  }
-#footer a:visited { }
-#footer a:hover {  }
-
-div.footer_left {
-    float:left;
-}
-
-div.footer_right {
-    float:right;
-}
-
 
 /*********************************
 
