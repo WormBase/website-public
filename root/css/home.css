@@ -16,10 +16,11 @@
 
 /* Seach bar and results page */
 #results ul li{
-   padding-top:1em;
+   padding-top:0.5em;
    font-size:1.5em;
+    text-decoration: auto; 
 }
-#results a.forest-green{
+#results span.forest-green{
    color: #228B22;
 }
 #search-bar {

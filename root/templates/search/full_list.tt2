@@ -3,7 +3,7 @@
 
 
 [% FOREACH type IN c.stash.type.list %]
-  [% path = "/search_new/" _ type _ "/" _ c.stash.query %]
+  [% path = c.uri_for('/search_new', type, c.stash.query) %]
   <div class="toggle"> [% type %]: <a id="[%- type -%]2" href="[% path %]"> <span id="fade">searching</span></a></div>
   
   <div id="[%- type -%]-container" style="display:none;padding-left:30px">
@@ -22,4 +22,5 @@
   </div>
 [% END %]
 <br />
-<a href= [% "/search_new/all/" _ c.stash.query _ "?view=1" %]>View all...</a><br />
+  [% path = c.uri_for('/search_new', 'all', c.stash.query) %]
+<a href= [% path _ "?view=1" %]>View all...</a><br />
