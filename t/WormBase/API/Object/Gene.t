@@ -7,6 +7,16 @@ use feature "switch";
 
 use Test::More;
 
+my $indent = " " x 6;
+
+##t/WormBase/API/Object/Gene.t
+#
+#use strict;
+#use Ace;
+#use warnings;
+#use Test::More;
+#use Data::Dumper;
+
 BEGIN {
       # This will cause a new connection to database(s)
       use_ok('WormBase::API');
@@ -15,108 +25,221 @@ BEGIN {
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
 ok ( 
-    ( my $wormbase = WormBase::API->new({conf_dir => "$Bin/../../../../conf"})),
+    ( my $wormbase = WormBase::API->new({conf_dir => "./conf"})),
     'Constructed WormBase::API object ok'
     );
 
 
-# Instantiate a WormBase::API::Object::* wrapper object
-my $gene = $wormbase->fetch({class=>'Gene',name=>'WBGene00006763'});
+##Instantiate a WormBase::API::Object::* wrapper object
+
+
+my $gene_name = 'WBGene00006763';
+
+my $gene = $wormbase->fetch({class=>'Gene',name=>$gene_name}); 
 isa_ok($gene,'WormBase::API::Object::Gene');
 
 
-#my @methods = (qw/name
-#		  common_name
-#		  ids
-#		  description
-#		  proteins
-#		  /);
-#
-
-#for my $method ( @methods ) {
-#    print "$method: " . $gene->$method . "\n";
-#    }
-
-#exit;
-#
-#
-#1;
+#### method list
+my @methods = qw/
 
 
-# Do some introspection of the class.
-#my @methods = $gene->meta->get_all_methods;
+phenotype
+ /;
 
-my @methods = qw/common_name
-   	         name
-   	         ids
-		 concise_description
-		 proteins
-		 cds
-		 kogs
-		 other_sequences
-		 cloned_by		 
-		 history
-		 gene_models
-		 /;
 
-for ( @methods ) {
-#    my $method = $_->name;
-     my $method = $_;
+# genomic_position genetic_position expression_cluster anatomy_function microarray_topology_map_position gene_models
+# 
 
-    # Skip some methods...
-    next if $method =~ /does/i;            # Ignore Class::MOP internals
-    next if $method =~ /                   # Ignore Moose internals
-    	    	       BUILDARGS
-		     | BUILDALL
-   		     | DESTROY
-		     | DEMOLISHALL
-		     | meta
-		     /x;
-    next if $method eq 'new';   		 # Ignore constructor (already tested)
-    next if $method =~ /^_/;               # Ignore private methods    
-    next if $method eq 'wrap';             # Ignore the superclass meta method wrap. Starting to accumulate...
+# gene_ontology
+# paralogs
+# concise_description
+# kogs
+# anatomic_expression_patterns
+# transgenes
+# sage_tags
+# matching_cdnas
+# rearrangements
+# interactions
+# treefam
+# inparanoid_groups
+# common_name
+# ids
+# history
+# strains
+# other_sequences
+# proteins
+# cloned_by
+#protein_domains
+#proteins
+#orfeome_project_primers
+### test runs ####
 
-#    print "$method: " . $gene->$method . "\n";
+foreach my $method (@methods) {
+	print "\n#######\n";
+    note("Testing $method()...");
+    my $result = test_method($method);
+    print_data($result);
+}
 
-    if ($method eq 'proteins') {
-        # Now let's try XREF from one Ace::Object to another, but wrapped in a W::A::O
-	# Fetch all of the proteins for unc-26
-	my $proteins = $gene->proteins();
-	foreach my $protein (@$proteins) {
-   		isa_ok($protein,'WormBase::API::Object::Protein');
 
-			   like ( my $name = $protein->name,
-   	        	   qr/WP:CE/,
-			   "We successfully fetched a protein " . $protein->name);
-			   last;
-             }
-	} else {
+
+
+sub test_method {
+    my $method = shift;
+    my $result = $gene->$method;
+    ok($result, "$method() worked fine");
+    return $result;
+}
+
+
+done_testing(4);
+
+
+sub print_array{
+	my ($array_ref) = @_;
+	foreach my $element (@{$array_ref}){
+		print "$element\n";
+	}
+}
+
+sub print_hash{
+	my ($hash_ref) = @_;
+	foreach my $key (keys %{$hash_ref}){
+		print "$key\:\:${$hash_ref}{$key}\n";
+	}
+}
+
+sub print_object_name{
+	my ($object) = @_;
+	my $object_name;
+	if($object){
+		$object_name = $object->name;
+	}
+	else{
+		$object_name = 'none';
+	}
+	print "$object_name\n";
+}
+
+sub print_object_data{
+	my ($object,$method) = @_;
+	my $object_name;
+	my $object_data;
 	
-	    # Call the method
- 	    my $data = $gene->$method;
+	if($object){
+	
+		$object_data = $object->$method;
+	}
+	else{
+	
+	$object_data = 'none';
+	}
+	print "$object_data\n";
+}
 
-	    # We may get
-	    #    HASHes - a data structure for processing
-	    #    ARRAYs - Lists of WormBase::API::Object::* objects
-	    #        or true/false (successful no data / method failed)
-	    # Handle each case:
-	    #    HASHes - print the primary keyed element (ie name for $method eq 'name')
-	    #    ARRAYS - print the 0th element
-	    #    true   - method scuccesful but no data
-            #    false  - method failed
-	    my $msg;
-	    given ($data) {
-	       	 when (ref $data eq 'HASH')  { $msg = 'HASH; namesake keyed element contains ' . $data->{$method}; }
-		 when (ref $data eq 'ARRAY') { $msg = 'ARRAY; first element is '  . $data->[0]; }
-		 when ($data)                { $msg = 'returned true, but no data';             }
-		 default                     { $msg = 'RETURNED FALSE. FAIL!';                  }
-		 }
+sub print_array_of_hashes {
+	my ($array_ref) = @_;
+	foreach my $element (@{$array_ref}){
+		print_hash ($element);
+	}
+}
 
-    	    ok ($data,$method . "(): " . $msg);
+sub print_hash_of_hashes {
+	my ($hash_ref) = @_;
+	foreach my $key (keys %{$hash_ref}){
+		print "$key\=\>n";
+		print_hash(${$hash_ref}{$key});
+	}
+}
+		
+sub print_hash_of_arrays {
+	print "print_hash_of_arrays \=\> TBD\n";
+}
+	
+sub print_array_of_arrays {
+	print "print_array_of_arrays \=\> TBD\n";
+}
+
+sub print_hash_of_objects {
+	print "print_hash_of_objects \=\> TBD\n";
+}
+
+sub print_array_of_objects {
+	my ($array_ref,$method) = @_;
+	foreach my $element (@{$array_ref}){
+		print_object_data ($element,$method);
+	}
+}
+
+sub data_type {
+					
+	my ($ref) = @_;
+	my $data_type;
+	
+	my (@data,%data,$data,$object_name);
+
+	eval{$object_name = $ref->name;};
+	eval{%data = %{$ref};};
+	eval{@data = @{$ref};};
+	eval{$data = ${$ref};};
+	
+	if($object_name){
+		$data_type = 'OBJECT';		
+	}else {
+		if (%data){
+				$data_type = 'HASH';
+		}
+		elsif (@data){
+				$data_type = 'ARRAY';
+		}
+		else{
+				$data_type = 'SCALAR';
+		}
+	}
+	
+	return $data_type;
+}
+# kogs - ok
+
+
+sub print_data {
+	my ($data, $level) = @_;
+			if (!($level)) {
+			$level = 0
+		}
+		$level++;
+		
+		my $spacer = "";
+		
+		for (1 .. $level) {
+			$spacer = $spacer . "\t";
+		}
+	
+	my $data_type = data_type($data);
+	
+	if ($data_type eq 'OBJECT'){
+		print "$data";
+	}
+	elsif ($data_type eq 'SCALAR'){
+		print "$data";
+	}
+	elsif($data_type eq 'ARRAY'){
+		print "ARRAY:";
+		foreach my $array_datum  (@{$data}){
+			print "\n$spacer";	
+			print_data($array_datum);
+		}		
+	}
+	elsif($data_type eq 'HASH'){
+		
+		foreach my $key (keys %{$data}){
+
+			print "\n$spacer";			
+			print "$key\=\>";
+			print_data(${$data}{$key}, $level);
+		}
 	}
 }
 
 
-# The total number of tests is that identified through introspection
-# plus a few extras.
-done_testing((scalar @methods) + 4);
+
