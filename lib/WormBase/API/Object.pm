@@ -135,18 +135,20 @@ sub hunter_url {
   # or with a sequence object
   else {
     my ($self,$seq_obj) = @_ or return;
-    $seq_obj->abs(1);
-    $start      = $seq_obj->start;
-    $stop       = $seq_obj->stop;
-    $ref        = $seq_obj->refseq;
+    $seq_obj->absolute(1); 
+    $start      = $seq_obj->abs_start;
+    $stop       = $seq_obj->abs_stop;
+    $ref        = $seq_obj->abs_ref;
   }
 
   $ref =~ s/^CHROMOSOME_//;
-  my $length = abs($stop - $start)+1;
-  $start = int($start - 0.05*$length) if $length < 500;
-  $stop  = int($stop  + 0.05*$length) if $length < 500;
-  ($start,$stop) = ($stop,$start) if $start > $stop;
-  $ref .= ":$start..$stop";
+  if(defined $start) {
+      my $length = abs($stop - $start)+1;
+      $start = int($start - 0.05*$length) if $length < 500;
+      $stop  = int($stop  + 0.05*$length) if $length < 500;
+      ($start,$stop) = ($stop,$start) if $start > $stop;
+      $ref .= ":$start..$stop";
+  }
   return $ref;
 }
 
@@ -500,6 +502,28 @@ sub interpolated_position {
 	      position            => "$pos",
 	      formatted_position => sprintf("%s:%2.2f",$chrom,$pos));
   return \%data;
+}
+
+#generic method for getting genomic pictures
+#it requires the object calling this method having a segments attribute which is an array ref storing the gff sequences
+#it also requires the object having a type attribute which is also an array ref storing the tracks to display
+sub genomic_picture {
+    my $self = shift;
+    my $segment = $self->pic_segment;
+    return unless(defined $segment);
+      
+    my $species = $self->parsed_species;
+    my $position = $self->hunter_url($segment);
+    my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
+    my $gbrowse_img = "name=$position;source=$species;$type;width=700";
+    my $id = "name=$position;source=$species";
+    my $data = { description => 'The Inline Image of the sequence',
+		 data        => {  class => 'genomic_location',
+				   label => $gbrowse_img,
+				   id	=> $id,
+				},
+    };  
+    return $data;    
 }
 
 # Provided with a GFF segment, return its genomic coordinates
