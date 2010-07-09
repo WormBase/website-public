@@ -70,6 +70,62 @@ has 'segments' => (
     }
 );
 
+has 'pic_segment' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	my $seq = $self->object;
+	return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
+    
+	my $source = $self->species;
+	my $segment = $self->segments->[0];
+	
+	my $ref   = $segment->ref;
+	my $start = $segment->start;
+	my $stop  = $segment->stop;
+	
+	# add another 10% to left and right
+	$start = int($start - 0.05*($stop-$start));
+	$stop  = int($stop  + 0.05*($stop-$start));
+	my @segments;
+	if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
+	    my $gene = eval { $seq->Gene;};
+	    $gene ||= $seq;
+	    @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+	    @segments      = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq) unless @segments;  # CB discontinuity
+	}
+	# In cases where more than one segment is retrieved
+	# (ie with EST or OST mappings)
+	# choose that which matches the original segment.
+	# This is slightly bizarre but expedient fix.
+	my $new_segment;
+	if (@segments > 1) {
+	foreach (@segments) {
+
+	    if ($_->start == $start && $_->stop == $stop) {
+	      $new_segment = $_;
+	      last;
+	    }
+	  }
+	}
+	$new_segment ||= $segments[0];
+	$new_segment ||= $segment;
+	return  $new_segment;
+  }
+);
+
+
+has 'tracks' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	my @type = $self->species =~ /elegans/ ? qw/NG CG CDS PG PCR SNP TcI MOS CLO/:qw//;
+	return \@type;
+    }
+);
+
 sub _build_type {
     my $self = shift;
     my $s = $self->object;
@@ -392,7 +448,7 @@ sub remarks {
     };
     return $data;    
 }
-
+=pod
 sub genomic_picture {
     my $self = shift;
     my $seq = $self->object;
@@ -431,7 +487,7 @@ sub genomic_picture {
     }
     $new_segment ||= $segments[0];
     $new_segment ||= $segment;
-    return unless $segment;
+    return unless $new_segment;
      
     my $type = $source =~ /elegans/ ? "t=NG;t=CG;t=CDS;t=PG;t=PCR;t=SNP;t=TcI;t=MOS;t=CLO":"";
     my $position = (defined $start)?"$ref:$start..$stop":$ref;
@@ -447,7 +503,7 @@ sub genomic_picture {
      
     return $data;    
 }
-
+=cut
 
 sub external_links {
     my $self = shift;
