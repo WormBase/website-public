@@ -50,13 +50,6 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
 	my $objs = $api->search->$search({class => $class, pattern => $query});
-	 
-	if(defined $c->req->param("count") ) {
-	    my $count=0;
-	    $count= scalar @$objs if($objs);
-	    $c->response->body($count);
-#  	    $c->response->body($objs);
-	}
 
 	$c->stash->{'type'} = $type; 
 	$c->stash->{'results'} = $objs;
@@ -65,57 +58,57 @@ sub search_new :Path('/search_new')  :Args(2) {
     }
 }
 
- 
-sub search :Path('/rest/search') :Args(2) :ActionClass('REST') {}
-
-sub search_GET {
-    my ($self,$c,$class,$name) = @_; 
-   
-    unless ($c->stash->{object}) {
-	
-	# Fetch our external model
-	my $api = $c->model('WormBaseAPI');
-	
-	# Fetch the object from our driver	 
-	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-	$c->log->debug("The requested class is " . ucfirst($class));
-	$c->log->debug("The request is " . $name);
-	
-	# Fetch a WormBase::API::Object::* object
-	# But wait. Some methods return lists. Others scalars...
-	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
-					   name => $name}) or die "$!";
-    }
-    my $object = $c->stash->{object};
-
-    # TODO: Load up the data content.
-    # The widget itself could make a series of REST calls for each field
-    
-    foreach my $field (@{$c->config->{pages}->{$class}->{search}->{fields}}) {
-	my $data = $object->$field if  $object->meta->has_method($field);
-	$c->stash->{'fields'}->{$field} = $data;
-    }
- 
- 
-    my $uri = $c->uri_for("/rest/search",$class,$name);
-    $c->stash->{class}=$class;
-    $c->stash->{id}=$name;
-    $c->stash->{noboiler} = 1;
-    if($class eq 'paper') {
-	$c->stash->{template} = "search/$class.tt2";
-    } else {
-	$c->stash->{template} = "search/generic.tt2";
-    }
-    $c->forward('WormBase::Web::View::TT');
-
-    $self->status_ok($c, entity => {
-	class   => $class,
-	name    => $name,
-	uri     => "$uri"
-		     }
-	);
-}
-
+#  
+# sub search :Path('/rest/search') :Args(2) :ActionClass('REST') {}
+# 
+# sub search_GET {
+#     my ($self,$c,$class,$name) = @_; 
+#    
+#     unless ($c->stash->{object}) {
+# 	
+# 	# Fetch our external model
+# 	my $api = $c->model('WormBaseAPI');
+# 	
+# 	# Fetch the object from our driver	 
+# 	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+# 	$c->log->debug("The requested class is " . ucfirst($class));
+# 	$c->log->debug("The request is " . $name);
+# 	
+# 	# Fetch a WormBase::API::Object::* object
+# 	# But wait. Some methods return lists. Others scalars...
+# 	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+# 					   name => $name}) or die "$!";
+#     }
+#     my $object = $c->stash->{object};
+# 
+#     # TODO: Load up the data content.
+#     # The widget itself could make a series of REST calls for each field
+#     
+#     foreach my $field (@{$c->config->{pages}->{$class}->{search}->{fields}}) {
+# 	my $data = $object->$field if  $object->meta->has_method($field);
+# 	$c->stash->{'fields'}->{$field} = $data;
+#     }
+#  
+#  
+#     my $uri = $c->uri_for("/rest/search",$class,$name);
+#     $c->stash->{class}=$class;
+#     $c->stash->{id}=$name;
+#     $c->stash->{noboiler} = 1;
+#     if($class eq 'paper') {
+# 	$c->stash->{template} = "search/$class.tt2";
+#     } else {
+# 	$c->stash->{template} = "search/generic.tt2";
+#     }
+#     $c->forward('WormBase::Web::View::TT');
+# 
+#     $self->status_ok($c, entity => {
+# 	class   => $class,
+# 	name    => $name,
+# 	uri     => "$uri"
+# 		     }
+# 	);
+# }
+# 
 
 
 
