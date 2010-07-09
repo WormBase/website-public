@@ -12,6 +12,63 @@ extends 'WormBase::API::Object';
 # TODO:
 # Mapping data
 # Marked_rearrangement
+has 'pic_segment' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub { 
+	my $self=shift;
+	my $object  = $self->object;
+	my $gene    = $object->Gene;
+
+	# Fetch a GF handle
+	my $gffdb   = $self->gff_dsn();
+	my ($segment) =  $gffdb->segment(Gene => $gene);
+	
+	# By default, lets just center the image on the variation itself.
+	# What segment should be used to determine the baseline coordinates?
+	# Use a CDS segment if one is provided, else just show the genomic environs
+
+	# TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+	my $UNMAPPED_SPAN = 10000;
+	unless ($segment) {
+	    # Try fetching a generic segment corresponding to a span flanking the variation
+
+	    my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+	    
+	    # Generate a link to the genome browser
+	    # This is hard-coded and needs to be cleaned up.
+	    # Is the segment smaller than 100? Let's adjust
+	    my ($low,$high);
+	    if ($abs_stop - $abs_start < 100) {
+		$low   = $abs_start - 50;
+		$high  = $abs_stop  + 50;
+	    } else {
+		$low = $abs_start;
+		$high = $abs_stop;
+	    }
+
+	    my $split = $UNMAPPED_SPAN / 2;	
+	    ($segment) =   $gffdb->segment($ref,$low-$split,$low+$split);
+	}
+	
+	return $segment;
+	 
+    }
+);
+
+has 'tracks' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	 my @tracks = qw/
+		CG
+		Allele
+		TRANSPOSONS/;
+	return \@tracks;
+    }
+);
+ 
 
 ############################################################
 #
@@ -614,6 +671,7 @@ sub genetic_position {
     
     # Build a link to the genome browser. Not optimal here.
     my ($start,$stop) = ($position-0.5,$position+0.5);
+=pod 
     my $gb_url = 
 	$position
 	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
@@ -625,7 +683,7 @@ sub genetic_position {
 #	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
 #	: a({-href=>Url('pic',"name=$chrom;class=Map")},
 #	    $chrom);
-    
+   
     my $data = { description => 'the genetic position of the variation (if known)',
 		 data        => { chromosome => $chrom,
 				  position   => $position,
@@ -633,7 +691,23 @@ sub genetic_position {
 				  gb_url     => $gb_url,
 		 },
     };
-    
+=cut
+    my ($id,$label);
+    if($position) {
+	$label= sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error || 0);
+	$id = "name=$chrom;map_start=$start;map_stop=$stop";
+    } else {
+	$label= $chrom;
+	$id = "name=$chrom";
+    }
+     
+    my $data = { description => 'the genetic position of the variation (if known)',
+		 data        => {  
+				  id   => $id,
+				  class      => 'Map',
+				  label     => $label,
+		 },
+    };
     return $data;
 }
 
@@ -656,7 +730,7 @@ sub genomic_position {
 	$low = $abs_start;
 	$high = $abs_stop;
     }
-    
+=pod 
     my $link = "/db/seq/gbrowse/elegans/?ref=$chrom;start=$low;stop=$high;label=CG-Allele";
     my $data = { description => 'the genomic coordinates of the variation',
 		 data        => { chromosome => $chrom,
@@ -665,61 +739,71 @@ sub genomic_position {
 				  gbrowse_link => $link,
 		 },
     };
+=cut
+    my $url = $self->hunter_url($chrom,$low,$high);
+    my $data = { description => 'the genomic coordinates of the variation',
+		 data        => { id => "name=".$url.";source=".$self->parsed_species,,
+				  class      => 'genomic_location',
+				  label       => $url, 
+		 },
+    };
     return $data;
 }
 
 # Create a genomic picture
 # This is far simpler than the manual approach below but doesn't give me as much
 # flexibility
+=pod
 sub genomic_image {
     my $self = shift;
+     
     my $object  = $self->object;
-    my $gene    = $object->Gene;
+	my $gene    = $object->Gene;
 
-    # Fetch a GF handle
-    my $gffdb   = $self->gff_dsn($self->Species);
-    my $segment = $gffdb->segment(Gene => $gene);
-    
-    # By default, lets just center the image on the variation itself.
-    # What segment should be used to determine the baseline coordinates?
-    # Use a CDS segment if one is provided, else just show the genomic environs
-
-    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-    my $UNMAPPED_SPAN = 10000;
-    unless ($segment) {
-	# Try fetching a generic segment corresponding to a span flanking the variation
-
-	my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+	# Fetch a GF handle
+	my $gffdb   = $self->gff_dsn();
+	my ($segment) =  $gffdb->segment(Gene => $gene);
 	
-	# Generate a link to the genome browser
-	# This is hard-coded and needs to be cleaned up.
-	# Is the segment smaller than 100? Let's adjust
-	my ($low,$high);
-	if ($abs_stop - $abs_start < 100) {
-	    $low   = $abs_start - 50;
-	    $high  = $abs_stop  + 50;
-	} else {
-	    $low = $abs_start;
-	    $high = $abs_stop;
-	}
+	# By default, lets just center the image on the variation itself.
+	# What segment should be used to determine the baseline coordinates?
+	# Use a CDS segment if one is provided, else just show the genomic environs
 
-	my $split = $UNMAPPED_SPAN / 2;	
-	($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
-    }
-    return unless $segment;
+	# TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+	my $UNMAPPED_SPAN = 10000;
+	unless ($segment) {
+	    # Try fetching a generic segment corresponding to a span flanking the variation
+
+	    my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+	    
+	    # Generate a link to the genome browser
+	    # This is hard-coded and needs to be cleaned up.
+	    # Is the segment smaller than 100? Let's adjust
+	    my ($low,$high);
+	    if ($abs_stop - $abs_start < 100) {
+		$low   = $abs_start - 50;
+		$high  = $abs_stop  + 50;
+	    } else {
+		$low = $abs_start;
+		$high = $abs_stop;
+	    }
+
+	    my $split = $UNMAPPED_SPAN / 2;	
+	    ($segment) =   $gffdb->segment($ref,$low-$split,$low+$split);
+	}
+	
+
     my @tracks = qw/
 		CG
 		Allele
 		TRANSPOSONS/;
    
     my $image_data = $self->build_gbrowse_img($segment,\@tracks,undef,800);
-    
     my $data = { description => 'a link to the genome browser',
-		 data        => $image_data
+		 data        => $segment,
     };
     return $data;   
 }
-
+=cut
 
 ############################################################
 #
