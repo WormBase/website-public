@@ -189,33 +189,4 @@ sub go  {
 
 
 
-#{
-#    my $text = start_table({-border=>1}) . TR(th('Term'),th('Description'),th('GO code'),th('Evidence'));
-#    
-#    # In order to display evidence, I actually need to visit each gene or CDS object,
-#    # fetch all GO_terms and find the one which corresponds to the current one
-#    my $evidence;
-#    foreach my $go ($motif->) {
-#	($evidence) = $go->right . 
-#	    (($go->right) ?
-#	     ': '. join(br,GetEvidenceNew(-object=>$go->right,-format => 'inline'))
-#	     : '');
-#
-#	my $desc = $go->Definition;
-#	$text .= TR(
-#		    td(ObjectLink($go)),
-#		    td($desc),
-#		    td($go->right),
-#		    td($evidence),
-#		    );
-#    }
-#    $text .= end_table;
-#	StartSection('Gene Ontology term associations');
-#    SubSection('',
-#	       i('This motif has been associated with the following Gene Ontology Terms'),
-#	       $text);
-#	EndSection();
-#}
-
-
 1;
