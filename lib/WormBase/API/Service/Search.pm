@@ -122,10 +122,10 @@ my $DB = $self->dbh;
   # 3. Gene_class
 
   unless (@genes) {
-      my @homol = $DB->fetch(-query=>qq{find Homology_group where Title=*$query*});
+      my @homol = $DB->fetch(-query=>qq{find Homology_group where Title="*$query*"});
       @genes = map { eval { $_->Protein->Corresponding_CDS->Gene } } @homol;
       push (@genes,map { $_->Genes } $DB->fetch(-query=>qq{find Gene_class where Description="*$query*"}));
-      push (@genes,$DB->fetch(-query=>qq{find Gene where Concise_description=*$query*}));
+      push (@genes,$DB->fetch(-query=>qq{find Gene where Concise_description="*$query*"}));
   }
 
   unless (@genes) {
@@ -205,33 +205,44 @@ sub variation {
       my @genes = @{fetchGene($self, $query)};
       @vars = map {eval {$_->Allele} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
    }
-
+    unless (@vars){ #do we want variables associated to phenotypes...?
+      my @phenes = @{fetchPhen($self, $query)};
+      @vars = map {eval {$_->Variation} } @phenes if (@phenes == 1); #only lookup for exact matches (shoudl we allow more??)
+   }
     return _wrap_objs($self, \@vars, 'variation');
+}
+
+sub fetchPhen {
+  my $self = shift;
+  my $name = shift;
+  my $DB = $self->dbh;
+  my @phenes = $DB->fetch(-class=>'Phenotype',-name => $name,-fill=>1) ;
+    
+    # 2. Try text searching the Phenotype class
+    unless (@phenes) {
+	my @obj = $DB->fetch(-class=>'Phenotype_name',-name=>$name,-fill=>1);
+        @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$name*",-fill=>1) unless @obj;
+        if ($name =~ m/ / && @obj == 0) {
+	  my $query = $name;
+	  $query =~ s/ /_/g;
+          @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"$query",-fill=>1) unless @obj;
+	  @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$query*",-fill=>1) unless @obj;
+	}
+        @phenes = map { $_->Primary_name_for || $_->Synonym_for || $_->Short_name_for } @obj;	
+    }
+  return \@phenes;
 }
 
 sub phenotype {
     my ($self, $args) = @_;
     my $name = $args->{pattern};
     my $DB = $self->dbh;
-    
-    # Get them all if requested
-#     return $DB->fetch(-class=>'Phenotype',-name=>'*') if $name eq '*';
+   
         
     # 1. Simplest case: assume a WBPhene ID
-    my @phenes = $DB->fetch(-class=>'Phenotype',-name => $name,-fill=>1) ;
-    
-    # 2. Try text searching the Phenotype class
-    unless (@phenes) {
-	my @obj = $DB->fetch(-class=>'Phenotype_name',-name=>$name,-fill=>1);
-        @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$name*",-fill=>1) unless @obj;
-        if ($name =~ m/ /) {
-	  my $query = $name;
-	  $query =~ s/ /_/g;
-	  @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$query*",-fill=>1) unless @obj;
-	}
-        @phenes = map { $_->Primary_name_for || $_->Synonym_for || $_->Short_name_for } @obj;
-	@phenes = $DB->fetch(-query=>qq{find Phenotype where Description=\"*$name*\"}) unless @phenes;	
-    }
+    my @phenes = @{fetchPhen($self, $name)};
+    @phenes = $DB->fetch(-query=>qq{find Phenotype where Description=\"*$name*\"}) unless @phenes;	
+
     
     # 3. Perhaps we searched with one of the main classes
     # Variation, Transgene, or RNAi
