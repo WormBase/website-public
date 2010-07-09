@@ -560,7 +560,7 @@ sub end : ActionClass('RenderView') {
   # Forward to our view FIRST.
   # If we catach any errors, direct to
   # an appropriate error template.
-  # $c->forward('WormBase::Web::View::TT');
+  $c->forward('WormBase::Web::View::TT');
 
   # 404 errors will be caught in default.
   #$c->stash->{template} = 'status/404.tt2';
