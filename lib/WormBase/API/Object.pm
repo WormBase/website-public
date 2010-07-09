@@ -965,8 +965,9 @@ sub _parse_year {
 sub _get_evidence {
     my ($self,@nodes,$evidence_type)=@_;
     my %data;
-    
+
     foreach my $node (@nodes) {
+        next unless $node;
 	foreach my $type ($node->col) {
 	    next if ($type eq 'CGC_data_submission') ;
 	     #if only extracting one/more specific evidence types

@@ -52,9 +52,14 @@ sub paper {
       @references = map {eval {$_->Reference} } @genes if (@genes == 1);
 
       unless(@references){
-      my @vars = $DB->fetch(-class=>'Varation',-pattern=>$name);
-      @vars = map { $_->Public_name_for } $DB->fetch(-class=>'Variation_name',-name=>$name, -fill=>1) unless @vars;
-      @references = map {eval {$_->Reference} } @vars if (@vars == 1);
+	my @vars = $DB->fetch(-class=>'Varation',-pattern=>$name);
+	@vars = map { $_->Public_name_for } $DB->fetch(-class=>'Variation_name',-name=>$name, -fill=>1) unless @vars;
+	@references = map {eval {$_->Reference} } @vars if (@vars == 1);
+      }
+      unless(@references){
+	if ($name =~ /^WBPaper.*\d+/) {
+	  @references = $DB->fetch(-class=>'Paper', -name=>$name);
+        }
       }
     }
     
@@ -86,22 +91,13 @@ sub gene {
   my ($self,$args) = @_;
   my $query   = $args->{pattern};
 #   my ($count,@objs);
-  my $DB = $self->dbh;
+my $DB = $self->dbh;
   my (@genes,%seen);
 
-  if ($query =~ /^WBG.*\d+/) {
-    @genes = $self->dbh->fetch(-class=>'Gene',
-			    -pattern=>$query);
-  } elsif (my @gene_names = $DB->fetch(-class=>'Gene_name',-name=>$query,-fill=>1)) {
-      # HACK!  For cases in which a gene is assigned to more than one Public_name_for.
-      @genes = grep { !$seen{$_}++} map { $_->Public_name_for } @gene_names;
 
-      @genes = grep {!$seen{$_}++} map {$_->Sequence_name_for
-					    || $_->Molecular_name_for
-					    || $_->Other_name_for
-					} @gene_names unless @genes;
-      undef @gene_names;
-  } elsif (my @gene_classes = $DB->fetch(-class=>'Gene_class',-name=>$query,-fill=>1)) {
+  @genes = @{fetchGene($self, $query)};
+  unless(@genes) {
+  if (my @gene_classes = $DB->fetch(-class=>'Gene_class',-name=>$query,-fill=>1)) {
       @genes = map { $_->Genes } @gene_classes;
   } elsif (my @transcripts = $DB->fetch(-class=>'Transcript',-name=>$query,-fill=>1)) {
       @genes = map { eval { $_->Corresponding_CDS->Gene } } @transcripts;
@@ -116,8 +112,10 @@ sub gene {
     }
   }elsif (my @variations = $DB->fetch(-class=>'Variation',-name=>$query,-fill=>1)) {
       @genes = map { eval { $_->Gene} } @variations;
+  }elsif (@variations = $DB->fetch(-class=>'Variation_name',-name=>$query, -fill=>1)) {
+      @genes = map { eval { $_->Public_name_for->Gene} } @variations;
   }
-
+  }
 # Try finding genes using general terms
   # 1. Homology_group
   # 2. Concise_description
@@ -154,13 +152,37 @@ sub gene {
     push (@unique_genes,$gene);
     $seen{$gene}++;
   }
+  
   return _wrap_objs($self, \@unique_genes, 'gene');
 }
 
-# Search for variataion objects
-sub variation {
-    my ($self,$args) = @_;
-    my $query = $args->{pattern};
+#get aceobj gene, only look at name
+sub fetchGene {
+  my $self = shift;
+  my $query = shift;
+  my $DB = $self->dbh;
+  my (@genes,%seen);
+
+  if ($query =~ /^WBG.*\d+/) {
+    @genes = $self->dbh->fetch(-class=>'Gene',
+			    -pattern=>$query);
+  } elsif (my @gene_names = $DB->fetch(-class=>'Gene_name',-name=>$query,-fill=>1)) {
+      # HACK!  For cases in which a gene is assigned to more than one Public_name_for.
+      @genes = grep { !$seen{$_}++} map { $_->Public_name_for } @gene_names;
+
+      @genes = grep {!$seen{$_}++} map {$_->Sequence_name_for
+					    || $_->Molecular_name_for
+					    || $_->Other_name_for
+					} @gene_names unless @genes;
+      undef @gene_names;
+  } 
+  return \@genes;
+}
+
+#get aceobj var, only look at name
+sub fetchVar {
+    my $self = shift;
+    my $query = shift;
     my $DB = $self->dbh;
     my @vars;
     @vars  = $DB->fetch(-class=>'Variation',
@@ -169,13 +191,89 @@ sub variation {
       my @var_name = $DB->fetch(-class=>'Variation_name',-name=>$query,-fill=>1); 
       @vars = map { $_->Public_name_for } @var_name;
     }
+
+    return \@vars;
+}
+
+# Search for variataion objects
+sub variation {
+    my ($self,$args) = @_;
+    my $query = $args->{pattern};
+    my $DB = $self->dbh;
+    my @vars = @{fetchVar($self, $query)};
     unless (@vars){
-      my @genes = $DB->fetch(-class=>'Gene',-pattern=>$query);
-      @genes = map { $_->Public_name_for } $DB->fetch(-class=>'Gene_name',-name=>$query, -fill=>1) unless @genes;
+      my @genes = @{fetchGene($self, $query)};
       @vars = map {eval {$_->Allele} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
-    }
+   }
 
     return _wrap_objs($self, \@vars, 'variation');
+}
+
+sub phenotype {
+    my ($self, $args) = @_;
+    my $name = $args->{pattern};
+    my $DB = $self->dbh;
+    
+    # Get them all if requested
+#     return $DB->fetch(-class=>'Phenotype',-name=>'*') if $name eq '*';
+        
+    # 1. Simplest case: assume a WBPhene ID
+    my @phenes = $DB->fetch(-class=>'Phenotype',-name => $name,-fill=>1) ;
+    
+    # 2. Try text searching the Phenotype class
+    unless (@phenes) {
+	my @obj = $DB->fetch(-class=>'Phenotype_name',-name=>$name,-fill=>1);
+        @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$name*",-fill=>1) unless @obj;
+        if ($name =~ m/ /) {
+	  my $query = $name;
+	  $query =~ s/ /_/g;
+	  @obj = $DB->fetch(-class=>'Phenotype_name',-name=>"*$query*",-fill=>1) unless @obj;
+	}
+        @phenes = map { $_->Primary_name_for || $_->Synonym_for || $_->Short_name_for } @obj;
+	@phenes = $DB->fetch(-query=>qq{find Phenotype where Description=\"*$name*\"}) unless @phenes;	
+    }
+    
+    # 3. Perhaps we searched with one of the main classes
+    # Variation, Transgene, or RNAi
+    unless (@phenes) {
+        my @vars =  @{fetchVar($self, $name)};
+        @phenes = map {$_->Phenotype} @vars if @vars==1; #only if one variation
+
+	foreach my $class (qw/Transgene RNAi GO_term/) {
+	    if (my @objects = $DB->fetch($class => $name)) {
+		# Try fetching phenotype objects from these
+		push @phenes, map { $_->Phenotype } @objects;
+	    }
+	}
+    }
+    
+    # 4. Okay, maybe user entered a gene or sequence
+    unless (@phenes) {
+	my $gene = fetchGene($self,$name);
+        if (@$gene == 1) {
+# 	if ($gene) {
+            $gene = @$gene[0];
+	    my (@objects,$query_class);
+
+	    # Fetch all RNAi objects that map to this gene
+	    push @objects,
+	    $DB->fetch(-query=>qq{find RNAi where Gene=$gene});
+
+	    # ...or attached to transgenes
+	    push @objects,
+	    $DB->fetch(-query=>qq{find Transgene where Driven_by_gene=$gene});
+				      
+	    # ...or perhaps even variations
+	    push @objects,
+	    $DB->fetch(-query=>qq{find Transgene where Gene=$gene});
+
+# 	    my %seen;
+	    @phenes = map { $_->Phenotype } @objects;
+	}
+    }
+    my %seen;
+    @phenes = grep(!$seen{$_}++, @phenes);
+    return _wrap_objs($self, \@phenes, 'phenotype');
 }
 
 # input: list of ace objects
