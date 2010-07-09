@@ -26,7 +26,7 @@ __PACKAGE__->config({
 		     # NOT CURRENTLY IN USE!
 #		     PLUGIN_BASE  => 'WormBase::Web::View::Template::Plugin',
 		     PLUGINS      => {
-				      url    => 'WormBase::Web::View::Template::Plugin::URL',
+#				      url    => 'WormBase::Web::View::Template::Plugin::URL',
 #				      image  => 'Template::Plugin::Image',
 #				      format => 'Template::Plugin::Format',
 #				      util   => 'WormBase::Web::View::Template::Plugin::Util',

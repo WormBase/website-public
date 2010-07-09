@@ -6,6 +6,7 @@
 	<option id="protein" value="protein">Protein</option>
 	<option id="sequence" value="sequence">Sequence</option>  
         <option id="paper" value="paper">Paper</option>
+        <option id="phenotype" value="phenotype">Phenotype</option>
     </select>
     [% val = "search..." %]
     [% IF query %]

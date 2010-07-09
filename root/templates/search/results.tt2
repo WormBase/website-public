@@ -5,9 +5,9 @@
 <div id="results">
 
 [% IF results.size > 0 %]
-  <div id="fade">found [% results.size %] results</div>
+  <div id="fade">found <span id="count">[% results.size %]</span> results</div>
 [% ELSE %]
-  Sorry, no results found for the search <strong>[% c.stash.query %]</strong>
+  Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
 [% END %]
 
 <ul>
@@ -41,6 +41,17 @@
         [% END %]
         <br />
 
+  [% # SEQUENCE %]
+  [% ELSIF item.class == 'sequence' %]
+    <li><span id="fade">[% item.class %]:</span>
+      <a href="[% url %]">[% item.common_name.label %]</a>
+    </li>
+        [% IF item.taxonomy %]
+	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+	[% END %]
+        [% item.description %] <br />
+
+
   [% ELSIF item.class == 'paper' %]
     [% PROCESS "search/paper.tt2" %]
 
@@ -55,7 +66,6 @@
 [% END %]
 </ul>
 
-<br />
 
 
 </div>
