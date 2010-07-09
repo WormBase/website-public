@@ -11,7 +11,7 @@
 
     %]
 
-<li><a href="[% url %]" ><img src="/img/buttons/wormbase.gif" /></a>
+<li><a href="[% url %]" ><img src="/img/buttons/wormbase.gif" height=12/></a>
 [% authors = [] %]
 [% FOREACH author IN  item.authors %]
   [% authors.push(tag2link(author)) %]
