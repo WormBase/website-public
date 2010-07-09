@@ -313,6 +313,36 @@ sub get_evidence {
 }
 
 
+
+
+ sub sequence {
+
+  my $self = shift;
+  my $tag = shift;
+  my $term = $self->object;
+  my %data;
+  my $desc = 'notes';
+  my %data_pack;
+
+  #### data pull and packaging
+	my @motifs;
+	my @tag_data;
+	eval {@tag_data = $term->Sequence;};
+	
+	foreach my $tag_datum (@tag_data) {
+	
+		my $tag_datum_desc = $tag_datum->Description;
+		my ($evidence_code, $evidence_details) = get_evidence($term,$tag_datum);
+		$data_pack{$tag_datum} = {
+								'term' =>$tag_datum,
+								'description' => $tag_datum_desc,
+								'class' => $tag,
+								'evidence_code' => $evidence_code,
+								'evidence_details' => $evidence_details
+								};
+	}	
+}
+
 ### copied and pasted, need to get to work in Object.pm
 
 
