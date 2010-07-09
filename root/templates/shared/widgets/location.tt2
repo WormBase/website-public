@@ -4,16 +4,18 @@
 [% widget = c.stash.widget %]
 
     [% WRAPPER $field_block title="Genetic Position" %]
-        [% fields.genetic_position.data.gb_url %]
+        [% tag2link(fields.genetic_position.data) %]
     [% END %]
 
     [% WRAPPER $field_block title="Genomic Position" %]
-          <a href="[% fields.genomic_position.data.gbrowse_link %]">
-               [% fields.genomic_position.data.chromosome %]:[% fields.genomic_position.data.start %]..[% fields.genomic_position.data.stop %]
-          </a>
+        [%# label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop %]
+	[% tag2link(fields.genomic_position.data) %]
+    [% END %]
+    
+    [% IF fields.genomic_picture.data %]
+      [% WRAPPER $field_block title="Genomic Image" key="genomic_picture" %]
+	[% tag2link(fields.genomic_picture.data, image(c.config.external_url.gbrowse_image _ fields.genomic_picture.data.label))%] 
+      [% END %]
     [% END %]
 
-    [% WRAPPER $field_block title="Genomic Image" %]
-          [% fields.genomic_image.data %] (This will be the inline genomic environs image)
-    [% END %]
-
+    
