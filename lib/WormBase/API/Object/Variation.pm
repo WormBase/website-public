@@ -266,13 +266,12 @@ sub cgh_deleted_probes {
     my $self  = shift;
     my $object = $self->object;
 
-    my ($left_flank,$right_flank);    
-    $left_flank  = $object->CGH_deleted_probes(1);
-    $right_flank = $object->CGH_deleted_probes(2);       
-
+    my $left_flank  = $object->CGH_deleted_probes(1) || "";
+    my $right_flank = $object->CGH_deleted_probes(2) || ""; 
+    
     my $data = { description => 'probes used for CGH of deletion alleles',
-		 data        => { left_flank => $left_flank,
-				  right_flank => $right_flank,
+		 data        => { left_flank  => "$left_flank",
+				  right_flank => "$right_flank",
 		 },
     };
     return $data;
@@ -443,8 +442,9 @@ sub flanking_pcr_products {
     my $object = $self->object;
 
     my @pcr_products = $object->PCR_product;
+    my $packed = $self->_pack_objects(\@pcr_products);
     my $data = { description => 'PCR products that flank the variation',
-		 data        => \@pcr_products
+		 data        => $packed,
     };
     return $data;
 }
@@ -1198,13 +1198,16 @@ if (0) {
 # GENETICS
 #  NEEDS: Mapping data
 ############################################################
-
+# TO DO: What if it is empty or not known? Perhaps DATA
 sub gene_class {
     my $self   = shift;
     my $object = $self->object;    
     my $gene_class = $object->Gene_class || "";
-    return { description => 'the gene class for this variation',
-	     data        => "$gene_class",
+    return { description => 'the class of the gene the variation falls in, if any',
+	     data        => { id    => "$gene_class",
+			      label => "$gene_class",
+			      class => $gene_class->class,
+	     },
     };
 }
 

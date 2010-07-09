@@ -32,33 +32,37 @@ sub index :Path Args(0) {
 
 =head2 DEFAULT
 
-The default action. Before we 404 bomb out, let's check and see if we
-are trying to display a class index page. This isn't optimal.
+The default action is run last when no other action matches.
 
 =cut
 
 sub default :Path {
     my ($self,$c) = @_;
-    $c->log->warn("couldn't find a path");
+    $c->log->warn("DEFAULT: couldn't find an appropriate action");
     
     my $path = $c->request->path;
-    
+
+    # A user may be trying to request the top level page
+    # for a class. Capturing that here saves me
+    # having to create a separate index for each class.
+    my ($class) = $path =~ /reports\/(.*)/;
+
     # Does this path exist as one of our pages?
     # This saves me from having to add an index action for
     # each class.  Each class will have a single default screen.
-    if ($c->config->{pages}->{lc($path)}) {
+    if ($c->config->{pages}->{$class}) {
 	
 	# Use the debug index pages.
 	if ($c->config->{debug}) {
 	} else {
-	    $c->stash->{template} = 'generic/index.tt2';
+#	    $c->stash->{template} = 'generic/index.tt2';
+	    $c->stash->{template} = 'report.tt2';
 	    $c->stash->{path} = $c->request->path;
 	}
     } else {
-# $c->response->body('Page not found (server error 404)');
+	# 404: Page not found...
 	$c->stash->{template} = 'status/404.tt2';
 	$c->response->status(404);
-	$c->forward('WormBase::Web::View::TT');
     }
 }
 
@@ -133,7 +137,8 @@ sub field :Path("/field") Args(3) {
     $c->log->debug("assigned template: " .  $c->stash->{template});
     
     # My end action isn't working... 
-    $c->forward('WormBase::Web::View::TT');
+    # TH 2010.07.02: no longer necessary but still testing
+    # $c->forward('WormBase::Web::View::TT');
 };
 
 
@@ -236,8 +241,10 @@ sub widget :Path("/widget") Args(3) {
     # Fetch the appropriate template for the widget
     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget');
     
+
     # My end action isn't working... 
-    $c->forward('WormBase::Web::View::TT');   
+    # TH 2010.07.02: no longer necessary but still testing
+    # $c->forward('WormBase::Web::View::TT');
 };
 
 
@@ -548,17 +555,34 @@ sub configure : Chained('/') PathPart('configure') Args(1) {
 
 #sub end : Path {
 sub end : ActionClass('RenderView') {
-  my ($self,$c) = @_;
+  my ($self,$c) = @_;      
+  
+  # Forward to our view FIRST.
+  # If we catach any errors, direct to
+  # an appropriate error template.
+  # $c->forward('WormBase::Web::View::TT');
+
+  # 404 errors will be caught in default.
+  #$c->stash->{template} = 'status/404.tt2';
+  #$c->response->status(404);
 
   # 5xx
-  my $errors = scalar @{$c->error};
-  if ($errors) {
-      $c->res->status(500);
-      $c->res->body('Internal Server Error!');
-      $c->clear_errors;
-  }
-      
-  $c->forward('WormBase::Web::View::TT');
+#  if ( my @errors = @{ $c->errors } ) {
+#      $c->response->content_type( 'text/html' );
+#      $c->response->status( 500 );
+#      $c->response->body( qq{
+#                        <html>
+#                        <head>
+#                        <title>Error!</title>
+#                        </head>
+#                        <body>
+#                                <h1>Oh no! An Error!</h1>
+#			  } . ( map { "<p>$_</p>" } @errors ) . qq{
+#                        </body>
+#                        </html>
+#			  } );
+#  }
+
 }
 
 
@@ -567,7 +591,7 @@ sub end : ActionClass('RenderView') {
 
 =head1 AUTHOR
 
-Todd Harris (todd@five2three.com)
+Todd Harris (info@toddharris.net)
 
 =head1 LICENSE
 

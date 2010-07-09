@@ -77,14 +77,14 @@ sub object {
 #           }
 sub _pack_objects { 
     my ($self,$objects) = @_;
-    my $data = {};
+    my %data;
     foreach (@$objects) {
-	$data->{obj1} = { id => "$_",
-			  label => "$_",
-			  class => $_->class,
+	$data{"$_"} = { id => "$_",
+			label => "$_",
+			class => $_->class,
 	};
     }
-    return $data;
+    return \%data;
 }
 
 

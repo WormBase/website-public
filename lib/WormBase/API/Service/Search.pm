@@ -47,14 +47,14 @@ sub paper {
 			      -fill=>1);
       @references = grep ($_->class eq 'Paper',@references) if $class =~  /keyword/i;
     } else {
-      my @ref = ();
-      foreach my $class2 (qw(gene variation)) {
-	my $follow = $class2 =~ /keyword/i ?
-	  'Quoted_in' : ($class2 =~ /author/i || $class2 =~ /person/i) ? 'Paper' : 'Reference';
-	@ref = $DB->find(-query=>qq{$class2 IS "$name" ; >$follow},
-				-fill=>1);
-        @ref = grep ($_->class eq 'Paper',@ref) if $class2 =~  /keyword/i;
-        push(@references, @ref);
+      my @genes = $DB->fetch(-class=>'Gene',-pattern=>$name);
+      @genes = map { $_->Public_name_for } $DB->fetch(-class=>'Gene_name',-name=>$name, -fill=>1) unless @genes;
+      @references = map {eval {$_->Reference} } @genes if (@genes == 1);
+
+      unless(@references){
+      my @vars = $DB->fetch(-class=>'Varation',-pattern=>$name);
+      @vars = map { $_->Public_name_for } $DB->fetch(-class=>'Variation_name',-name=>$name, -fill=>1) unless @vars;
+      @references = map {eval {$_->Reference} } @vars if (@vars == 1);
       }
     }
     
@@ -162,8 +162,19 @@ sub variation {
     my ($self,$args) = @_;
     my $query = $args->{pattern};
     my $DB = $self->dbh;
-    my @vars = $DB->fetch(-class => 'Variation',
-			   -name  => $query);
+    my @vars;
+    @vars  = $DB->fetch(-class=>'Variation',
+			    -name=>$query);
+    unless (@vars) {
+      my @var_name = $DB->fetch(-class=>'Variation_name',-name=>$query,-fill=>1); 
+      @vars = map { $_->Public_name_for } @var_name;
+    }
+    unless (@vars){
+      my @genes = $DB->fetch(-class=>'Gene',-pattern=>$query);
+      @genes = map { $_->Public_name_for } $DB->fetch(-class=>'Gene_name',-name=>$query, -fill=>1) unless @genes;
+      @vars = map {eval {$_->Allele} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
+    }
+
     return _wrap_objs($self, \@vars, 'variation');
 }
 
@@ -208,7 +219,7 @@ sub all {
     push(@results, @{gene($self,$args)});
     push(@results, @{paper($self,$args)});
 
-   foreach my $class (qw(sequence expression_cluster gene_class protein antibody)) {
+   foreach my $class (qw(sequence expression_cluster gene_class protein antibody phenotype)) {
       $args->{'class'} = $class;
       push(@results, @{basic($self,$args)});
       push(@results, @{paper($self,$args)});

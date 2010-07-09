@@ -41,16 +41,18 @@
        [% END %]
    [% END %]
 
-   [% WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences" %]
+   <!-- flanking sequences OFF: 2010.06
+   [%# WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences" %]
       <div class="sequence">
           <span class="inline-sequence">
            5' flank -- [% fields.flanking_sequences.data.left_flank %]  &nbsp; [% fields.flanking_sequences.data.right_flank %] -- 3' flank
           </span>           
      </div>
-   [% END %]
+   [%# END %]
+   -->
 
    [% WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products" %]
-           [% fields.flanking_pcr_products.data.join(", ") %]
+       [% object_list(fields.flanking_pcr_products.data) %]
    [% END %]
 
    [% WRAPPER $field_block title="Context" key="context" %]
@@ -73,7 +75,7 @@
    [% END %]
 
    [% # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field %]
-   [% IF fields.cgh_deleted_probes.data > 0 %]
+   [% IF fields.cgh_deleted_probes.data.left_flank != "" %]
        [% WRAPPER $field_block title="CGH Deleted Probes" key="CGH Deleted Probes" %]
           <div class="sequence">
              <span class="inline-sequence">
