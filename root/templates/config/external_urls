@@ -1,44 +1,75 @@
 [%#  External URLs currently referenced by WormBase
-     Usage: site.external_url.CGC.base	
+     Usage: site.external_url.[symbolic_name].base	
 
      When adding, the primary hash key should be the name
      of the site, added in ALPHABETICAL ORDER!
 
-     Minimally you should provide the base URL with
-     protocol.  Other support URLs can be added as needed.
+     Minimally you should provide the following information:
+        base -> the home page for the resource
+        description -> a brief description of the resource
+ 
+     Optional parameters
+ 	search -> the path to the search facility - with variable
+	          substitution as needed
 
-     categories:
-	base - the base URL to the resource
-	search - the path to the search facility - with variable
-	         substitution as needed
+        [custom] -> custom pages or searches at the resource
 
 %]
 	
 
 
 [% site.external_urls = {
-	cgc      = { description  = 'The C. elegans Genetics Center',
-	             maintainer   = '',
+	cgc      = { description  = 'The C. elegans Genetics Center'
+	             maintainer   = ''
 		     base         = 'http://www.cbs.umn.edu/CGC/'
-		     nomenclature = 'http://biosci.umn.edu/CGC/strains/',	     
+		     strains      = 'http://biosci.umn.edu/CGC/strains/'
+		     nomenclature = 'http://biosci.umn.edu/CGC/Nomenclature/nomenguid.htm'
  	           }
 
-        flybase = { description = 'The central data repository for D. melanogaster and related species',
-		    maintainer  = '',
+        flybase = { description = 'The central data repository for D. melanogaster and related species'
+		    maintainer  = ''
 		    base        = 'http://flybase.net/'
                     search      = 'http://flybase.net/reports/%s.html'
 		   }
 
+	gadfly  = { description = 'gadfly'
+		    maintainer  = ''
+                    base        = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
+                    search = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
+                   }
 
-	treefam  = { base         = 'http://www.treefam.org/'
-		     search       = 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
-		     image        = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
+	phosphopep = { description = 'a database of phosphorylation sites'
+		       maintainer  = ''
+		       base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
+	               search = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
+		     }
+
+	reactome = { description = 'an online resource of curated pathways'
+		     maintainer  = ''
+		     base        = 'http://www.reactome.org/'
+		     search      = 'http://www.reactome.org/cgi-bin/search?QUERY=%s&QUERY_CLASS=DatabaseIdentifier'
+		     }
+
+	treefam  = { description = 'treefam: protein family trees'
+		     maintainer  = ''
+		     base        = 'http://www.treefam.org/'
+		     search      = 'http://www.treefam.org/cgi-bin/TFinfo.pl?ac=%s'
+		     image       = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
 		   }
 
-	gadfly  = { base = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
-                            search = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
-                          }
+	wormbook = { description = 'WormBook: The online reference for C. elegans and related nematodes'
+		     maintainer  = 'help@wormbook.org'
+		     base        = 'http://www.wormbook.org/'
+		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
+	}
 
+   }
+
+-%]
+
+
+
+[%# MIGRATING THESE URLs ON AN AS-NEEDED BASIS 
 
 
         ensembl = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
@@ -92,23 +123,11 @@
         PFAM_WITH_PDB  ={ base = 'http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?acc=%s&pdb=%s' }
 	
 
-	phosphopep     = { base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s',
-		       	   search = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s',
-			   description = 'a database of phosphorylation sites',
-			   maintainer  = '',
-			   }, 
+
 
 	submit_forms = { base      = ''
                          alleles   = 'http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/allele.cgi'
 		       }
-
-   }
-
--%]
-
-
-
-[%# MIGRATING THESE URLs ON AN AS-NEEDED BASIS 
 
 
 	Interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
@@ -166,7 +185,6 @@ $ACEVIEW        = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=wo
 $PROTEOME       = 'http://www.proteome.com/WormPD/';
 $SWISSPROT      = 'http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?db=p&form=1&field=Sequence+ID&term=';
 
-
 $MEOW_CONFIRMED = 'http://iubio.bio.indiana.edu/meow/.bin/moquery?dbid=ACEDB:';
 $MEOW_PREDICTED = 'http://iubio.bio.indiana.edu/meow/.bin/moquery?dbid=ACEPRED:';
 $GENESERVICE    = 'http://www.hgmp.mrc.ac.uk/geneservice/reagents/products/descriptions/Celegans.shtml';
@@ -177,22 +195,15 @@ $OPENBIO         = 'http://www.openbiosystems.com/Query/dfci.harvard.php?clone=%
 $TEXTPRESSO     = 'http://www.textpresso.org/cgi-bin/wb/textpressoforwormbase.cgi?allabstracts=on&searchmode=sentence&searchtargets=Paper&searchtargets=Abstract';
 # $TREMBL         = 'http://www.expasy.org/cgi-bin/get-sprot-entry?';
 $TREMBL         = 'http://www.ebi.uniprot.org/entry/%s',
-$CGC            = 'http://biosci.umn.edu/CGC/Nomenclature/nomenguid.htm';
-$CGC_HOME       = 'http://www.cbs.umn.edu/CGC/CGChomepage.htm';
-$REACTOME       = 'http://www.genomeknowledge.org/cgi-bin/search?QUERY=%s&QUERY_CLASS=DatabaseIdentifier';
 $WBG            = 'http://elegans.swmed.edu/wli/';
 $KIM_MOUNTAINS  = 'http://www.sciencemag.org/feature/data/kim1061603/gl/gene_list.html';
 
 # The DOI resolver for WormBook chapters
-$WORMBOOK        = 'http://www.wormbook.org/';
-$WORMBOOK_SEARCH = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s';
 $DOI             = 'http://dx.doi.org/';
 
 
 ###################### PROTEIN LINKS #################
 # This is a misnomer.  It is now being used for all sorts of external database links.
-
-# This has now been migrated.
 
 %PROTEIN_LINKS = (
 		  GADFLY  => 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s',

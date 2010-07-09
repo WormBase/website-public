@@ -33,6 +33,7 @@ requires 'Catalyst::Plugin::Session::State';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::View::JSON';
+requires 'Catalyst::View::Email';
 requires 'DBI';
 requires 'DBD::mysql';
 requires 'GD';
