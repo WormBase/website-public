@@ -131,18 +131,8 @@ sub template {
 #######################################################
 # The Overview (formerly Identification) Panel
 #######################################################
-sub name {
-    my $self = shift;
-    my $ace  = $self->object;
-    my $data = { description => 'The internal WormBase referential ID of the variation',
-		 data        =>  { id    => "$ace",
-				   label => $ace->name,
-				   class => $ace->class
-		 },
-    };
-    return $data;
-}
 
+# do we need public_name?  We already have name with label -AC
 sub public_name {
     
 	my ($self,$object,$class) = @_;
@@ -156,7 +146,7 @@ sub public_name {
 		|| eval { $object->Corresponding_CDS->Corresponding_protein }
 		|| $object;
     }
-    elsif ($class =~ /protein/i) {
+    elsif ($class =~ /protein/i) { #do we need this here?  This is the gene class... AC
     	$common_name = 
     	$object->Gene_name
     	|| eval { $object->Corresponding_CDS->Corresponding_protein }
@@ -172,12 +162,7 @@ sub public_name {
 
 }
 
-
-
-sub common_name {
-
-	my %data;
-	my %data_pack;
+sub name {
 	
     my $self = shift;
     my $object = $self->object;
@@ -189,30 +174,23 @@ sub common_name {
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
     || $cm_text;
     
-    
-    my $desc = 'The most commonly used name of the gene';
-    
-    
-#     $data{'description'} = $desc;
-#     $data{'data'} = $common_name;
-#     
-#     return \%data;
 
     my $data = { description => 'The most commonly used name of the gene',
-		 data        => { id    => "$common_name",
-				  label => $common_name,
+		 data        =>  { id    => "$object",
+				   label => "$common_name",
+				   class => $object->class
 		 },
     };
     return $data;
 }
 
 
+# A lot of stuff is repeated in here.  Like, from other methods. Do we need that? -AC
 sub ids {
     my $self   = shift;
     my $object = $self->object; ## shift
     
     my %data;
-    my %data_pack;
      
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = $self->_fetch_database_ids($object);
@@ -221,7 +199,6 @@ sub ids {
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
     
-   
     
     my @other_names = $object->Other_name;
     my @sequence_names = $object->Sequence_name;
@@ -236,14 +213,12 @@ sub ids {
 		version       => "$version",
 		aceview_id    => "$aceview",
 		refseq_id     => $refseq,
-		version       => "$version",
 		other_names	  => \@other_names,
 		sequence_names => \@sequence_names
 
 	};	
-	
-	$data_pack{$object} = $object_data;
-	$data{'data'} = \%data_pack; 
+
+	$data{'data'} = $object_data; 
 	$data{'description'} = "ID data for gene $object";
 
     return \%data;
@@ -253,12 +228,11 @@ sub ids {
 sub description{
   return shift->concise_description;
 }
-sub concise_description {
 
+sub concise_description {
     my $self   = shift;
     my $object = $self->object;  
     my %data;
-    my %data_pack;
     
     # The description, dervied from the Gene, the CDS, or the Gene_class.
     my $description = 
@@ -268,13 +242,11 @@ sub concise_description {
     
     # No description? Just describe it by its common name
     unless ($description) {
-	my $common_name_dp = $self->common_name;
-		$description = $common_name_dp->{data_pack}->{$object} . ' gene';
+	$description = $self->name->{data}->{label} . ' gene';
     }
 
     $data{'description'} = "A manually curated description of the gene's function";
-# 	$data_pack{$object} = $description;
-	$data{'data'} = $description;
+    $data{'data'} = $description;
     return \%data;
 }
 
@@ -301,7 +273,8 @@ sub proteins {
 			my $public_name = $self->public_name($protein, $protein->class);
 			$data_pack{$protein} = {
 									'class' => 'Protein',
-									'common_name' => $public_name
+									'label' => $public_name,
+                                                                        'id' => "$protein"
 									};
 
 									
