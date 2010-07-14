@@ -166,7 +166,9 @@ sub fetchGene {
   if ($query =~ /^WBG.*\d+/) {
     @genes = $self->dbh->fetch(-class=>'Gene',
 			    -pattern=>$query);
-  } elsif (my @gene_names = $DB->fetch(-class=>'Gene_name',-name=>$query,-fill=>1)) {
+  } else {
+      my @gene_names = $DB->fetch(-class=>'Gene_name',-name=>$query,-fill=>1);
+      @gene_names = $DB->fetch(-class=>'Gene_name',-name=>"*$query*",-fill=>1) unless @gene_names;
       # HACK!  For cases in which a gene is assigned to more than one Public_name_for.
       @genes = grep { !$seen{$_}++} map { $_->Public_name_for } @gene_names;
 
@@ -301,7 +303,7 @@ sub _wrap_objs {
   my $fields = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
 
   # default fields for all objects
-  push(@$fields, qw/name common_name/);
+  push(@$fields, 'name');
 
   my @ret;
   foreach my $ace_obj (@$list) {
@@ -327,8 +329,9 @@ sub all {
     push(@results, @{variation($self,$args)});
     push(@results, @{gene($self,$args)});
     push(@results, @{paper($self,$args)});
+    push(@results, @{phenotype($self,$args)});
 
-   foreach my $class (qw(sequence expression_cluster gene_class protein antibody phenotype)) {
+   foreach my $class (qw(sequence expression_cluster gene_class protein antibody)) {
       $args->{'class'} = $class;
       push(@results, @{basic($self,$args)});
       push(@results, @{paper($self,$args)});

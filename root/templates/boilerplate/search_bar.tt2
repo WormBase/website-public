@@ -1,12 +1,12 @@
    <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.class.value+'/'+this.query.value ;">
     <select class="my-select" name="class">
-        <option id="all" value="all"  >Everything</option>
-	<option id="gene" value="gene" [% IF class=='gene' %]selected[% END %]>Gene</option>  
-	<option id="variation" value="variation"[% IF class=='variation' %]selected[% END %]>Variation</option>
-	<option id="protein" value="protein"[% IF class=='protein' %]selected[% END %]>Protein</option>
-	<option id="sequence" value="sequence"[% IF class=='sequence' %]selected[% END %]>Sequence</option>  
-        <option id="paper" value="paper"[% IF class=='paper' %]selected[% END %]>Paper</option>
-        <option id="phenotype" value="phenotype"[% IF class=='phenotype' %]selected[% END %]>Phenotype</option>
+        <option value="all"  >Everything</option>
+	<option value="gene" [% IF class=='gene' %]selected[% END %]>Gene</option>  
+	<option value="variation"[% IF class=='variation' %]selected[% END %]>Variation</option>
+	<option value="protein"[% IF class=='protein' %]selected[% END %]>Protein</option>
+	<option value="sequence"[% IF class=='sequence' %]selected[% END %]>Sequence</option>  
+        <option value="paper"[% IF class=='paper' %]selected[% END %]>Paper</option>
+        <option value="phenotype"[% IF class=='phenotype' %]selected[% END %]>Phenotype</option>
     </select>
     [% val = "search..." %]
     [% IF query %]

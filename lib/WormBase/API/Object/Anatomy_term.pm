@@ -236,7 +236,8 @@ sub basic_package {
 				my $common_name = public_name($object,$class);  ## 
 				$package{$object} = 	{
 										'class' => $class,
-										'common_name' => $common_name
+										'label' => $common_name,
+                                                                                'id' => "$object"
 										}	
 	}
 	return \%package;
