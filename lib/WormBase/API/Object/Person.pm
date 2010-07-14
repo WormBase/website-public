@@ -19,6 +19,20 @@ has 'ao_template' => (
 
 #######
 
+
+sub name {
+    my $self = shift;
+    my $object = $self->object;
+    my $name   = $object->name;
+    my $data = { description => 'The name of the person',
+		 data        =>  { id    => $name,
+				   label => $object->Standard_name,
+				   class => $object->class
+		 },
+    };
+    return $data;
+}
+
 sub template {
 
 	my $self = shift;
