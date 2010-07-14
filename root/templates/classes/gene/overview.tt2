@@ -5,8 +5,16 @@
             [% tag2link(fields.name.data) %]
    [% END %]
 
-   [% WRAPPER $field_block title="WormBase Referential ID"-%] 
-           [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% WRAPPER $field_block title="Other names" %]
+        [% fields.ids.data.other_names.join('<br />') %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Aceview ID" %]
+        [% fields.ids.data.aceview_id %]
+   [% END %]
+
+   [% WRAPPER $field_block title="RefSeq ID" %]
+        [% fields.ids.data.refseq_id.join(', ') %]
    [% END %]
 
    [% PROCESS "shared/fields/species.tt2" %]
@@ -15,23 +23,37 @@
          [% fields.concise_description.data %]
    [% END %]
 
-   [% WRAPPER $field_block title="IDs" %]
-         Version: [% fields.ids.data.version %]<br />
-         Aceview ID: [% fields.ids.data.aceview_id %]<br />
-         RefSeq ID: [% fields.ids.data.refseq_id.join(', ') %]<br />
-         Other names: [% fields.ids.data.other_names.join(', ') %]<br />
-         Sequence names: [% fields.ids.data.sequence_names.join(', ') %]
-   [% END %]
 
-
-   [% WRAPPER $field_block title="Provisional Description" %]
-         [% FOREACH pd IN fields.provisional_description.data.keys %]
-               [% pd %]: [% fields.provisional_description.data.$pd.keys.join(', ') %]<br />
-         [% END %]
-   [% END %]
 
    [% WRAPPER $field_block title="History" %]
+        <table border=1 class="history">
+           [% # find a better way to do this:%]
+           <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
          [% FOREACH history IN fields.history.data.keys %]
-               [% history %]: [% fields.history.data.$history.keys.join(', ') %]<br />
+               <tr>
+	       [% FOREACH h IN fields.history.data.$history.keys %]
+                    <td>[% fields.history.data.$history.$h.type %]</td>
+                    <td>[% h %]</td>
+                    <td>[% fields.history.data.$history.$h.date %]</td>
+                    <td>[% fields.history.data.$history.$h.action %]</td>
+                    <td>[% fields.history.data.$history.$h.remark %]</td>
+                    <td>[% fields.history.data.$history.$h.gene %]</td>
+                    <td>[% tag2link(fields.history.data.$history.$h.curator.data) %]</td>
+               [% END %]
+              </tr>
          [% END %]
+         </table>
+   [% END %]
+
+   [% FOREACH p IN fields.provisional_description.data.pairs %]
+        [% WRAPPER $field_block title=p.key %]
+             [% IF p.key=="Paper evidence" %]
+             <span id=fade>What is this?  Why is it here??</span>
+             [% END %]
+             [% p.value.keys.join(', ') %]<br />
+	[% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="WormBase Referential ID"-%] 
+           [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]

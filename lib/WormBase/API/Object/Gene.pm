@@ -440,13 +440,14 @@ sub history {
 			{
 					($gene) = $version->row;
 			}	    
+
 	
 			$data_pack{$history}{$version} =
 											{ type    => $type,
 											  date    => $date,
 											  action  => $action,
 											  remark  => $remark,
-											  curator => $curator ? $self->wrap($curator) : '',
+											  curator => $curator ? $self->wrap($curator)->name : '',
 											};
 		}
     }
