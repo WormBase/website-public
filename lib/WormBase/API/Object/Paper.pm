@@ -10,56 +10,19 @@ extends 'WormBase::API::Object';
 sub name {
     my $self = shift;
     my $data = { description => 'The object name of the paper',
-		 data        =>  { label => $self ~~ 'name'},
+		 data        =>  { id    => $self ~~ 'name',
+				   label => $self ~~ 'name',
+				   class => $self ~~ 'class'
+		 },
     };
     return $data;
 
-}
-
-sub common_name {
-    my $data = { description => 'The public name of the paper',
-		 data        => shift ~~ 'name',
-    };
-    return $data;
-}
-
-############################################################
-#
-# The Overview widget
-#
-############################################################
-sub identity {
-   my $self = shift;
-   my $print = eval{ join(', ', @{$self->genes});};
-   my $iden = $self ~~ 'Brief_identification' ;
-   if($iden) {
-    if($print) {
-	$print.=", ".$iden;
-    }
-    else {
-      $print=$iden;
-    }
-   }
-   return unless $print;
-    my $data = { description => 'The identity of the sequence',
-		 data        => "Identified as ". $print. $self->type eq 'pseudogene' ? ' (pseudogene)' : '',
-    };
-    return $data;
-}
-
-sub description {
-    my $self = shift;
-    my $title = eval {$self ~~ 'Title'} || return;
-    my $data = { description => 'The description of the sequence',
-		 data        => $title,
-    };
-    return $data;    
 }
 
 
 ############################################################
 #
-# The Search widget
+# The Overview widget
 #
 ############################################################
 
@@ -97,7 +60,7 @@ sub volume {
     my $self = shift;
     my $volume = eval {$self ~~ 'Volume'} || return;
     $volume =~ s/\.*$//;
-    my $data = { description => 'The volume teh paper was published in',
+    my $data = { description => 'The volume the paper was published in',
 		 data        => $volume,
     };
     return $data;    
@@ -107,7 +70,7 @@ sub year {
     my $self = shift;
     my $year = $self->_parse_year($self ~~ 'Publication_date');
     return unless $year;
-    my $data = { description => 'The title of the paper',
+    my $data = { description => 'The publication year of the paper',
 		 data        => $year,
     };
     return $data;    
