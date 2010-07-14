@@ -1,0 +1,37 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Name"-%] 
+            [% tag2link(fields.name.data) %]
+   [% END %]
+
+   [% WRAPPER $field_block title="WormBase Referential ID"-%] 
+           [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% END %]
+
+   [% PROCESS "shared/fields/species.tt2" %]
+
+   [% WRAPPER $field_block title="Concise Description" %]
+         [% fields.concise_description.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="IDs" %]
+         Version: [% fields.ids.data.version %]<br />
+         Aceview ID: [% fields.ids.data.aceview_id %]<br />
+         RefSeq ID: [% fields.ids.data.refseq_id.join(', ') %]<br />
+         Other names: [% fields.ids.data.other_names.join(', ') %]<br />
+         Sequence names: [% fields.ids.data.sequence_names.join(', ') %]
+   [% END %]
+
+
+   [% WRAPPER $field_block title="Provisional Description" %]
+         [% FOREACH pd IN fields.provisional_description.data.keys %]
+               [% pd %]: [% fields.provisional_description.data.$pd.keys.join(', ') %]<br />
+         [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="History" %]
+         [% FOREACH history IN fields.history.data.keys %]
+               [% history %]: [% fields.history.data.$history.keys.join(', ') %]<br />
+         [% END %]
+   [% END %]
