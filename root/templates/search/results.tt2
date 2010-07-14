@@ -18,7 +18,7 @@
   [% # GENES %]
   [% IF item.class == 'gene' %]
     <li><span id="fade">[% item.class %]:</span>
-      <a href="[% url %]">[% item.name.label %]</a>
+      [% tag2link(item.name) %]
     </li>
 	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
 	[% item.concise_description %] <br />
@@ -26,7 +26,7 @@
   [% # VARIATION %]
   [% ELSIF item.class == 'variation' %]
     <li><span id="fade">[% item.class %]:</span>
-      <a href="[% url %]">[% item.name.label %]</a>
+      [% tag2link(item.name) %]
     </li>
 	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
 	[% item.status %], [% item.variation_type.general_class %]
@@ -44,7 +44,7 @@
   [% # SEQUENCE %]
   [% ELSIF item.class == 'sequence' %]
     <li><span id="fade">[% item.class %]:</span>
-      <a href="[% url %]">[% item.name.label %]</a>
+      [% tag2link(item.name) %]
     </li>
         [% IF item.taxonomy %]
 	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
@@ -64,7 +64,7 @@
   [% # OTHER %]
   [% ELSE %]
     <li><span id="fade">[% item.class %]:</span>
-      <a href="[% url %]">[% item.name.label %]</a>
+      [% tag2link(item.name) %]
     </li>
     
   [% END %]
