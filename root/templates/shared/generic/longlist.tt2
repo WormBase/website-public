@@ -1,0 +1,43 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
+
+ 
+ 
+ 
+<script type="text/javascript">
+	  $('.thetable').tableScroll();
+</script>  
+<table class="thetable"> 
+  
+      <thead> 
+	    <tr>
+	       [% FOREACH header IN data.header %]
+		  <td>[% header %]</td> 
+		[% END %]
+	    </tr>
+      </thead> 
+      <tbody> 
+	    [% FOREACH obj IN data.content.keys.sort %]
+	      <tr>
+		  [% FOREACH item IN data.content.$obj %]
+		  <td>
+		     [% IF item.class.defined %]
+		      [% tag2link(item) %]
+		     [% ELSE %] [% item %]
+		     [% END %]
+		  </td>
+		  [% END %]
+	      </tr>     
+	    [% END %]
+      </tbody>
+      <tfoot>
+	  [% data.content.keys.size %] entries
+	      [% IF data.detail.defined %]
+		out of total:[% data.number %] <a class="update table_[% field %]"  href="[% c.uri_for('/rest','field','phenotype','WBPhenotype:0000039',field,'longlist') %]">(show full list)</a>
+	      [% END %]
+	   
+      </tfoot>
+</table>
+
+
+ 
