@@ -3,6 +3,7 @@ package WormBase::API::Object;
 use Moose;
 use File::Path 'mkpath';
 
+ 
 
 use overload '~~' => \&_overload_ace, fallback => 1;
 
@@ -1002,7 +1003,7 @@ sub _get_evidence {
 		$type =~ s/_/ /g;
 		$data{$type}{$evidence}{id} = $evidence; 
 		$data{$type}{$evidence}{label} = $label; 
-		$data{$type}{$evidence}{link} = lc($class) if(defined $class);
+		$data{$type}{$evidence}{class} = lc($class) if(defined $class);
 	    }
 
 	}
