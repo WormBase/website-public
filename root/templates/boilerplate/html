@@ -16,11 +16,12 @@
    <!-- <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>-->
     <script type="text/javascript" src="/js/search.js"></script> 
+    <script type="text/javascript" src="/js/jquery.tablescroll.js"></script>
 
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
     <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
-
+    <link rel="stylesheet" type="text/css" href="/css/jquery.tablescroll.css"/>
 
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
     [% IF is_classic %]
@@ -48,13 +49,7 @@ function recordOutboundLink(link, category, action) {
 
 <script type="text/javascript">
   $(document).ready(function() {  
-       
-        $(".toggle.prev").live('click',function() {
-		  //$(this).click(function(){
-              $(this).toggleClass("active").prev().slideToggle("fast");
-	      
-              return false;
-        });
+    
 	 $(".toggle").live('click',function() {
 		  //$(this).click(function(){
               $(this).toggleClass("active").next().slideToggle("fast");
@@ -62,6 +57,22 @@ function recordOutboundLink(link, category, action) {
         });
   })
 
+  $("a.update").live('click',function() {
+
+	$(this).text("updating").show();
+	var url     = $(this).attr("href");
+	// Multiple classes specified. Split so I can rejoin.
+	var mytitle = $(this).attr("class").split(" ");
+	$("#" + mytitle[1]).load(url,
+				    function(response, status, xhr) {
+					      if (status == "error") {
+						  var msg = "Sorry but there was an error: ";
+						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
+					      }
+				      });
+	
+  return false;
+  });
   // Load a (specific) field or widget dynamically onClick.
   $("a.ajax").click(function() {
       var url     = $(this).attr("href");
