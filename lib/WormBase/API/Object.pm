@@ -992,7 +992,10 @@ sub _get_evidence {
 			($evidence,$class) = ($accession,$database);
 			 $label = "$database:$accession";
 		    }     
-		} elsif ($type eq 'Protein_id_evidence') {
+		} elsif($type eq 'GO_term_evidence') {
+		    my $desc = $evidence->Term || $evidence->Definition;
+		    $label .= (($desc) ? "($desc)" : '');
+		}elsif ($type eq 'Protein_id_evidence') {
 		    $class = "Entrezp";
 		} elsif ($type eq 'RNAi_evidence') {
 		    $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
@@ -1000,7 +1003,7 @@ sub _get_evidence {
 		    $label =~ s/\s00:00:00//;
 		    undef $class;
 		}  
-		$type =~ s/_/ /g;
+# 		$type =~ s/_/ /g;
 		$data{$type}{$evidence}{id} = $evidence; 
 		$data{$type}{$evidence}{label} = $label; 
 		$data{$type}{$evidence}{class} = lc($class) if(defined $class);
