@@ -19,7 +19,7 @@
    [% END %]
 
    [% WRAPPER $field_block  title="Description" key="description" %]
-      [% fields.description.data.des %]
+      [% fields.description.data.des %]<br>
       
       [% evidence = fields.description.data.evidence %]
       [% INCLUDE   evidence.tt2  %] 
