@@ -400,10 +400,10 @@ eg http://localhost/rest/field/[CLASS]/[NAME]/[FIELD]
 
 =cut
 
-sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
+sub field :Path('/rest/field') :Args(4) :ActionClass('REST') {}
 
 sub field_GET {
-    my ($self,$c,$class,$name,$field) = @_;
+    my ($self,$c,$class,$name,$field,$template) = @_;
 
     my $headers = $c->req->headers;
     $c->log->debug($headers->header('Content-Type'));
@@ -432,11 +432,12 @@ sub field_GET {
 
 
     my $object = $c->stash->{object};
-    my $data = $object->$field;
+    my $data = $object->$field($template);
 
     # Should be conditional based on content type (only need to populate the stash for HTML)
-    $c->stash->{$field} = $data;
-
+#     $c->stash->{$field} = $data;
+     $c->stash->{data} = $data->{data};
+    $c->stash->{field} = $field;
     # Anything in $c->stash->{rest} will automatically be serialized
 #    $c->stash->{rest} = $data;
 
@@ -445,7 +446,7 @@ sub field_GET {
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
 
-    $c->stash->{template} = $self->_select_template($c,$field,$class,'field'); 
+    $c->stash->{template} = $self->_select_template($c,$field,$class,'field',$template); 
 
 
     $self->status_ok($c, entity => {
@@ -463,7 +464,7 @@ sub field_GET {
 # Maybe I should just maintain
 # a hash, where each field/widget lists its corresponding template
 sub _select_template {
-    my ($self,$c,$render_target,$class,$type) = @_;
+    my ($self,$c,$render_target,$class,$type,$template) = @_;
 
     # Normally, the template defaults to action name.
     # However, we have some generic templates. We will
@@ -477,7 +478,9 @@ sub _select_template {
 #	if (defined $c->config->{generic_fields}->{$render_target}) {
 #	    return "generic/$type.tt2";    
         # Some templates are shared across Models
-	if (defined $c->config->{common_fields}->{$render_target}) {
+	if(defined $template){
+	    return "shared/generic/$template.tt2";
+	}elsif(defined $c->config->{common_fields}->{$render_target}) {
 	    return "shared/fields/$render_target.tt2";
 	} else {  
 	    return "classes/$class/$render_target.tt2";
