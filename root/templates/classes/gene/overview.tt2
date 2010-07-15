@@ -21,6 +21,9 @@
 
    [% WRAPPER $field_block title="Concise Description" %]
          [% fields.concise_description.data %]
+
+         [% evidence = fields.provisional_description.data %]
+         [% INCLUDE evidence.tt2 %]
    [% END %]
 
 
@@ -43,15 +46,6 @@
               </tr>
          [% END %]
          </table>
-   [% END %]
-
-   [% FOREACH p IN fields.provisional_description.data.pairs %]
-        [% WRAPPER $field_block title=p.key %]
-             [% IF p.key=="Paper evidence" %]
-             <span id=fade>What is this?  Why is it here??</span>
-             [% END %]
-             [% p.value.keys.join(', ') %]<br />
-	[% END %]
    [% END %]
 
    [% WRAPPER $field_block title="WormBase Referential ID"-%] 

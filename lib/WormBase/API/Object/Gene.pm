@@ -447,6 +447,7 @@ sub history {
 											  date    => $date,
 											  action  => $action,
 											  remark  => $remark,
+											  gene	  => $gene,
 											  curator => $curator ? $self->wrap($curator)->name : '',
 											};
 		}
