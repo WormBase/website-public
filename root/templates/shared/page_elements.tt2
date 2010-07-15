@@ -26,6 +26,28 @@
      </div>
 [% END %]
 
+[% 
+  # For dsiplaying a list of evidence
+  # Should probably be expanded to included some actual formatting,
+  # eg tooltip,inframe, etc
+%]
+[% MACRO evidence_list(evidence) BLOCK %]
+
+  [% FOREACH type IN evidence.keys -%] 
+      <b>[% type %]</b>:  
+      [% FOREACH object IN evidence.$type.keys %] 
+	      
+	    [% IF evidence.$type.$object.class.defined %]
+		[% tag2link(evidence.$type.$object) %]
+	    [% ELSE %]
+		[% evidence.$type.$object.label%]  
+	    [% END%]
+	    [% UNLESS loop.last %];[% END %]
+      [% END %] 
+      [% UNLESS loop.last %]<br>[% END %]
+  [% END %] 
+[% END %] 
+
 
 [% 
   # For dsiplaying a list of objects in a field
