@@ -34,14 +34,14 @@
 [% MACRO evidence_list(evidence) BLOCK %]
 
   [% FOREACH type IN evidence.keys -%] 
-      <b>[% type %]</b>:  
+      <b>[% type.replace('_',' ') %]</b>:  
       [% FOREACH object IN evidence.$type.keys %] 
 	      
 	    [% IF evidence.$type.$object.class.defined %]
 		[% tag2link(evidence.$type.$object) %]
 	    [% ELSE %]
-		[% evidence.$type.$object.label%]  
-	    [% END%]
+		[% evidence.$type.$object.label %]  
+	    [% END %]
 	    [% UNLESS loop.last %];[% END %]
       [% END %] 
       [% UNLESS loop.last %]<br>[% END %]
