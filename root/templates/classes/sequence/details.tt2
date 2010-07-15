@@ -21,9 +21,6 @@
   [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Genomic Picture" %]
-   [% data= c.stash.fields.genomic_picture.data %]
-      [% tag2link(data, image(c.config.external_url.gbrowse_image _ data.label))%] 
-[% END %]
+[% PROCESS "shared/fields/genomic_picture.tt2" %]
 
  
