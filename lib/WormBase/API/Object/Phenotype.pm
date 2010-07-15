@@ -246,6 +246,7 @@ sub _format_objects {
 	  }
 	}
 =cut
+	my @array;
 	my $str=$_;
 	if ($tag eq 'RNAi') {
 	    my $cds  = $_->Predicted_gene;
@@ -273,6 +274,11 @@ sub _format_objects {
 	     
 	} elsif ($tag eq 'Variation') {
 		 $is_not = _is_not($_,$phenotype);
+		 my $gene = $_->Gene;
+		 push @array,{id    => "$gene",
+			      label => $gene->Public_name,
+			      class => $gene->class,};
+		
 	} 
 =pod
 	if(defined $is_not) {
@@ -284,11 +290,14 @@ sub _format_objects {
 			id => $_, };
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
 # 	else { $result{content}{$str} = $hash;$count++;}
-	if(defined $is_not) { $result{content}{$str} = [$hash,$is_not];}
-	else {$result{content}{$str} = [$hash];}
+	unshift @array, $is_not if(defined $is_not);
+	unshift @array,$hash;
+	$result{content}{$str} = \@array;
     }
-    if(defined $is_not) {  $result{header} = [('name', 'phenotype observed in this experiment')];}
+    if($tag eq 'Variation') {  $result{header} = [('name', 'phenotype observed in this experiment','corresponding gene')];}
+    elsif(defined $is_not) {  $result{header} = [('name', 'phenotype observed in this experiment')];}
     else {  $result{header} = [qw/name/];}
+     
     return \%result;
 }
 
