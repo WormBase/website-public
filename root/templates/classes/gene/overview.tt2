@@ -5,8 +5,14 @@
             [% tag2link(fields.name.data) %]
    [% END %]
 
+   [% WRAPPER $field_block title="Sequence name"-%] 
+        [% tag2link(fields.ids.data.sequence_name)%]
+   [% END %]
+
    [% WRAPPER $field_block title="Other names" %]
-        [% fields.ids.data.other_names.join('<br />') %]
+        [% FOREACH name IN fields.ids.data.other_names %]
+            [% tag2link(fields.name.data, name) %]
+        [% END %]
    [% END %]
 
    [% WRAPPER $field_block title="Aceview ID" %]
@@ -29,6 +35,7 @@
 
 
    [% WRAPPER $field_block title="History" %]
+        <span id="fade">Make a less ugly table. Standardize history.</span>
         <table border=1 class="history">
            [% # find a better way to do this:%]
            <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
@@ -40,8 +47,8 @@
                     <td>[% fields.history.data.$history.$h.date %]</td>
                     <td>[% fields.history.data.$history.$h.action %]</td>
                     <td>[% fields.history.data.$history.$h.remark %]</td>
-                    <td>[% fields.history.data.$history.$h.gene %]</td>
-                    <td>[% tag2link(fields.history.data.$history.$h.curator.data) %]</td>
+                    <td>[% tag2link(fields.history.data.$history.$h.gene) %]</td>
+                    <td>[% tag2link(fields.history.data.$history.$h.curator) %]</td>
                [% END %]
               </tr>
          [% END %]
