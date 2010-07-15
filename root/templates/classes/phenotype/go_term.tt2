@@ -6,16 +6,8 @@
 [% widget = widget %]
  
 
-[% WRAPPER $field_block  title="phenotype observed in the following " _ fields.go_term.data.keys.size _ " Go_term entries" key="go_term" %]
-		    [% count = 0 %]
-		    [% FOREACH obj IN fields.go_term.data.keys.sort %]
-			[% count = count + 1 %]
-			[% IF count == 16 %]
-			      <div class="toggle">..more</div>
-			      <div class="sequence-container">
-			[% END %]
-			[% tag2link(fields.go_term.data.$obj) %]
-			[% UNLESS loop.last %]<br>[% END %]	
-		    [% END %]
-		    [% IF count >= 16 %]</div>[% END %]
+[% WRAPPER $field_block  title="phenotype observed in the Go_term entries" key="go_term" %]
+  [% data = fields.go_term.data %]
+    [% field = "go_term" %]
+    [% INCLUDE shared/generic/longlist.tt2 %]
 [% END %]
