@@ -9,7 +9,11 @@
    [% WRAPPER $field_block  title="Primary name" key="primary_name" %]
       [% fields.primary_name.data %]
    [% END %]
-
+    
+   [% WRAPPER $field_block  title="Wormbase ID" key="wb_id" %]
+      [% tag2link(fields.wb_id.data) %]
+   [% END %]
+   
    [% WRAPPER $field_block  title="Short name" key="short_name" %]
       [% fields.short_name.data %]
    [% END %]
@@ -20,25 +24,8 @@
 
    [% WRAPPER $field_block  title="Description" key="description" %]
       [% fields.description.data.des %]<br>
-      
-      [% evidence = fields.description.data.evidence %]
-      [% INCLUDE   evidence.tt2  %] 
- 
+      [% evidence_list(fields.description.data.evidence) %]
    [% END %]
-
-   [% WRAPPER $field_block  title="Assay" key="assay" %]
-   	[% fields.assay.data %]
-   [% END %]
-
-   [% WRAPPER $field_block  title="Remark"  key="remark" %]
-      [% fields.remark.data %]
-   [% END %]
-
-    
-    [% WRAPPER $field_block  title="Wormbase ID" key="wb_id" %]
-      [% tag2link(fields.wb_id.data) %]
-    [% END %]
-    
 
    [% IF fields.is_dead.data.id.defined %]
      [% WRAPPER $field_block  title="Note" key="is_dead" %]
