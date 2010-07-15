@@ -26,10 +26,8 @@
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Concise Description" %]
-         [% fields.concise_description.data %]
-
-         [% evidence = fields.provisional_description.data %]
-         [% INCLUDE evidence.tt2 %]
+         [% fields.concise_description.data %]<br />
+         [% evidence_list(fields.provisional_description.data) %]
    [% END %]
 
 
@@ -40,8 +38,8 @@
            [% # find a better way to do this:%]
            <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
          [% FOREACH history IN fields.history.data.keys %]
-               <tr>
 	       [% FOREACH h IN fields.history.data.$history.keys %]
+               <tr>
                     <td>[% fields.history.data.$history.$h.type %]</td>
                     <td>[% h %]</td>
                     <td>[% fields.history.data.$history.$h.date %]</td>
@@ -49,8 +47,8 @@
                     <td>[% fields.history.data.$history.$h.remark %]</td>
                     <td>[% tag2link(fields.history.data.$history.$h.gene) %]</td>
                     <td>[% tag2link(fields.history.data.$history.$h.curator) %]</td>
-               [% END %]
-              </tr>
+               </tr>
+            [% END %]
          [% END %]
          </table>
    [% END %]
