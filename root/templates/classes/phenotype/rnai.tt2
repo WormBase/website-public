@@ -4,22 +4,11 @@
 [% widget = c.stash.widget %]
 
 [% widget = widget %]
- 
-[% FOREACH type IN fields.rnai.data.keys.nsort  %]
-[% title = "phenotype" %]
-[% IF type ==1 %][% title =  title _ " NOT" %] [% END %]
-[% title= title _ " observed in the following "_ fields.rnai.data.$type.keys.size _ " RNAi entries" %]
-[% WRAPPER $field_block  title=title key="rnai" %]
-		    [% count = 0 %]
-		    [% FOREACH obj IN fields.rnai.data.$type.keys.sort %]
-			[% count = count + 1 %]
-			[% IF count == 16 %]
-			      <div class="sequence-container">
-			[% END %]
-			[% tag2link(fields.rnai.data.$type.$obj) %] 
-			[% UNLESS loop.last %]<br>[% END %]	
-		    [% END %]
-		    [% IF count >= 16 %]</div> <div class="toggle prev"></div> [% END %]
-		   
-[% END %]
+
+[% WRAPPER $field_block  title="realted RNAi information" key="rnai" %] 
+    [% data = fields.rnai.data %]
+    [% field = "rnai" %]
+<div id="table_[% field %]">
+    [% INCLUDE shared/generic/longlist.tt2 %]    
+</div>
 [% END %]
