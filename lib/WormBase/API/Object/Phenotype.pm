@@ -157,17 +157,17 @@ sub related_phenotypes {
 
  
 sub rnai {
-
+   my ($self,$detail) = @_;
    my $data = { description => "The related phenotypes of the phenotype",
-		 	data        => shift->_format_objects('RNAi') , 
+		 	data        => shift->_format_objects('RNAi',$detail) , 
     };
    return $data;
 }
 
 sub variation {
-
+   my ($self,$detail) = @_;
    my $data = { description => "The related variation of the phenotype",
-		 	data        => shift->_format_objects('Variation') , 
+		 	data        => shift->_format_objects('Variation',$detail) , 
     };
    return $data;
 }
@@ -212,11 +212,40 @@ sub anatomy_ontology {
 #
 ############################################################
 sub _format_objects {
-    my ($self,$tag) = @_;
+    my ($self,$tag,$detail) = @_;
     my $phenotype = $self->object;
     my %result;
-    foreach ($phenotype->$tag){
-	my $is_not;
+    my $count;
+    my $is_not;
+    my @items=$phenotype->$tag;
+    $result{number}=scalar(@items);
+    foreach (@items){
+      unless(defined $detail) {
+	$count++;
+	if ($count > $self->MAX_DISPLAY_NUM) {
+		  $result{detail}=1;
+		  last;
+	}
+      }
+=pod
+	if(defined $count && !defined $detail) {
+	  if(defined $is_not){
+	    my $flag=0;
+	    for my $key (keys %$count){
+		  if($count->{$key}>=$self->MAX_DISPLAY_NUM){
+		     $result{$key}{detail}=1;
+		     $flag++;
+		  }
+	     }
+	    last if($flag==2);
+	  }else { 
+	    if ($count >= $self->MAX_DISPLAY_NUM) {
+		$result{detail}=1;
+		last;
+	    }
+	  }
+	}
+=cut
 	my $str=$_;
 	if ($tag eq 'RNAi') {
 	    my $cds  = $_->Predicted_gene;
@@ -245,12 +274,21 @@ sub _format_objects {
 	} elsif ($tag eq 'Variation') {
 		 $is_not = _is_not($_,$phenotype);
 	} 
+=pod
+	if(defined $is_not) {
+	    next if(exists $result{$is_not}{detail});
+	}
+=cut
 	my $hash = {    label=> $str,
 			class => $tag,
 			id => $_, };
-	if(defined $is_not) { $result{$is_not}{$str} = $hash;}
-	else { $result{$str} = $hash;}
+# 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
+# 	else { $result{content}{$str} = $hash;$count++;}
+	if(defined $is_not) { $result{content}{$str} = [$hash,$is_not];}
+	else {$result{content}{$str} = [$hash];}
     }
+    if(defined $is_not) {  $result{header} = [('name', 'phenotype observed in this experiment')];}
+    else {  $result{header} = [qw/name/];}
     return \%result;
 }
 
@@ -261,8 +299,8 @@ sub _is_not {
     foreach (@phenes)  {
 	next unless $_ eq $phene;
 	my %keys = map { $_ => 1 } $_->col;
-	return 1 if $keys{Not};
-	return 0;
+	return 'No' if $keys{Not};
+	return 'Yes';
     }
 }
 
