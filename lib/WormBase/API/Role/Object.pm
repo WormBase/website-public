@@ -2,6 +2,11 @@ package WormBase::API::Role::Object;
 
 use Moose::Role;
 
+has 'MAX_DISPLAY_NUM' => (
+      is => 'ro',
+      default => 10,
+    );
+
 has 'object' => (
     is  => 'ro',
     isa => 'Ace::Object',
