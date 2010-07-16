@@ -1,0 +1,22 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Gene model(s)" %]
+        <table border=1>
+        [% FOREACH seq IN fields.gene_models.data.pairs %]
+             <tr>
+                 <td>[% tag2link(seq.value.name) %]</td>
+                 <td>[% seq.value.corresponding_protein %]</td>
+             </tr>
+        [% END %]
+        </table>
+   [% END %]
+
+   [% WRAPPER $field_block title="Other sequences" %]
+<!--        <div class="toggle">Toggle</div>
+        <div class="standard-list">-->
+        [% FOREACH seq IN fields.other_sequences.data %]
+              [% tag2link(seq.name.data) %] [% seq.description.data %] <br />
+        [% END %]
+<!--         </div> -->
+   [% END %]

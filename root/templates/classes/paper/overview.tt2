@@ -1,0 +1,22 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Name"-%] 
+            [% tag2link(fields.name.data) %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Title"-%] 
+            [% fields.title.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Authors"-%] 
+          [% authors = [] %]
+          [% FOREACH author IN  fields.authors.data %]
+            [% authors.push(tag2link(author)) %]
+          [% END %]
+          [% authors.join(', ') %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Abstract"-%] 
+            [% fields.abstract.data %]
+   [% END %]

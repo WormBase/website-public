@@ -177,8 +177,8 @@ sub name {
 
     my $data = { description => 'The most commonly used name of the gene',
 		 data        =>  { id    => "$object",
-				   label => "$common_name",
-				   class => $object->class
+				           label => "$common_name",
+				           class => $object->class
 		 },
     };
     return $data;
@@ -201,11 +201,10 @@ sub ids {
     
     
     my @other_names = $object->Other_name;
-    my @sequence_names = $object->Sequence_name;
+    my $sequence = $object->Sequence_name;
     
-    my @other_names_str = map {$_ = "$_"} @other_names;
-    my @sequence_names_str = map {$_ = "$_"} @sequence_names;
-    
+    my $sequence_ret = { id => "$sequence", label => "$sequence", class=>"sequence"};
+   
     my $object_data = {
     
 		common_name   => "$common",
@@ -214,7 +213,7 @@ sub ids {
 		aceview_id    => "$aceview",
 		refseq_id     => $refseq,
 		other_names	  => \@other_names,
-		sequence_names => \@sequence_names
+		sequence_name => $sequence_ret
 
 	};	
 
@@ -349,25 +348,15 @@ sub kogs {
  	return \%data;
 }
 
+# should we return entire sequence obj or just linking/description info? -AC
 sub other_sequences {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'Other sequences associated with gene';
-
-	my $data_pack;
-
-	#### data pull and packaging
-
-	my @seqs = $object->Other_sequence;
-	$data_pack = $self->basic_package(\@seqs);
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my @seqs = map {$self->wrap($_)} $object->Other_sequence;
+    my $data = { description => 'Other sequences associated with gene',
+                 data        => \@seqs
+    };
+	return $data;
 }
 
 sub cloned_by {
@@ -440,15 +429,25 @@ sub history {
 			{
 					($gene) = $version->row;
 			}	    
-
-	
+			my $cu;
+			if($curator){
+				$cu->{id} = "$curator";
+				$cu->{label} = $curator->Standard_name || $curator->Full_name;
+                                $cu->{class} = $curator->class;
+			}
+			my $ge;
+			if($gene){
+				$ge->{id} = "$gene";
+				$ge->{label} = $gene->Public_name;
+                                $ge->{class} = $gene->class;
+			}
 			$data_pack{$history}{$version} =
 											{ type    => $type,
 											  date    => $date,
 											  action  => $action,
 											  remark  => $remark,
-											  gene	  => $gene,
-											  curator => $curator ? $self->wrap($curator)->name : '',
+											  gene	  => $ge,
+											  curator => $cu,
 											};
 		}
     }
@@ -1693,17 +1692,15 @@ sub gene_models {
 	
 	my $seqs = $self->_fetch_sequences();
 	
-	foreach my $seq (@$seqs) {
+    foreach my $seq (sort { $a cmp $b } @$seqs) {
 	
 	## deal with CDS class sequences
 	
 		my $cds;
-		my $seq_class;
 		my $corresponding_cds;
 		my $corresponding_protein;
 		my @matching_cdna;
-		
-		$seq_class = $seq->class;
+		my $seq_class = $seq->class;
 		
 		if ($seq_class=~ /'CDS'/) {
 			
@@ -1717,11 +1714,10 @@ sub gene_models {
 			$corresponding_protein = 'n/a';
 		
 		}
+        my $seq_hash = {id => $seq, label => "$seq", class => $seq_class};
 		
 		$data_pack{$seq} = {
-		
-							'ace_id' => $seq
-							,'class' =>$seq_class
+		                    'name' => $seq_hash
 							,'corresponding_cds'=>$corresponding_cds
 							,'matching_cdna'=>\@matching_cdna
 							,'corresponding_protein'=>$corresponding_protein
