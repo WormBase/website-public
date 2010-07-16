@@ -280,11 +280,14 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
     if($widget eq "references") {
-      
-      my $url= $c->uri_for("/search_new/paper/$name",{class=>$class,,inline=>1});
-      $c->response->redirect($url);
-      $c->detach;
-#        $c->detach('/rest/search',['paper',$class,$name]);
+        $c->stash->{class} = $class;
+        $c->stash->{query} = $name;
+        $c->stash->{noboiler} = 1;
+
+        # looking up the config was really slow...
+        $c->stash->{template} = "shared/widgets/references.tt2";
+        $c->forward('WormBase::Web::View::TT');
+        return;
     }
     unless ($c->stash->{object}) {
 	

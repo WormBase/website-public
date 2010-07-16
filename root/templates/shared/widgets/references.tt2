@@ -9,13 +9,15 @@ Strategy: iterate over all default fields (supplied by the action). remove any t
 The References widget itself is composed of multiple sections, each of which is handled by one template.
 
 %]
+[% path = c.uri_for('/search_new', 'paper', c.stash.query) %]
+  <div id="reference-results"><span id="fade">Loading...</span>
+                    <script>
+                    $("#reference-results").load("[% path _ "?class=" _ c.stash.class _ ";inline=1" %]",
+                          function(response, status, xhr) {
+                          if (status == "error") {
+                              $("reference-results").html(xhr.status + " " + xhr.statusText);
+                          }
+                    });
+                    </script>
+  </div>
 
-[% WRAPPER "boilerplate/widget" -%]
-
-    [% FOREACH field IN fields %]
-       [% IF $field %]
-           [% INCLUDE "generic/reference_widget_field.tt2" type=field %] 
-       [% END %]
-   [% END %]
-
-[% END %]
