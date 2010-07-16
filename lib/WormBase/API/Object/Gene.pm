@@ -95,14 +95,7 @@ our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
 #####################
 ##### template ######
 
-sub provisional_description {
-    my $self   = shift;
-    my $node = $self ~~ 'Provisional_description';
-    my $data = { description => 'The Provisional description the gene',
-		 data        =>  $self->_get_evidence($node)
-    };
-    return $data;
-}
+
 
 
 sub template {
@@ -2714,5 +2707,53 @@ sub build_hash{
 	}
 	return %hash;
 }
+
+
+#######################################################
+# The Details Panel
+#######################################################
+
+sub provisional_description {
+    my $self   = shift;
+    my $data = { description => 'The Provisional description the gene',
+                 data        =>  $self->_structured_description("Provisional_description")
+    };
+    return $data;
+}
+
+sub other_description {
+    my $self   = shift;
+    my $data = { description => 'The other description the gene',
+                 data        =>  $self->_structured_description("Other_description")
+    };
+    return $data;
+}
+
+sub sequence_features {
+    my $self   = shift;
+    my $data = { description => 'The sequence features the gene',
+                 data        =>  $self->_structured_description("Sequence_features")
+    };
+    return $data;
+}
+
+sub biological_process {
+    my $self   = shift;
+    my $data = { description => 'The biological processes the gene',
+                 data        =>  $self->_structured_description("Biological_process")
+    };
+    return $data;
+}
+
+sub _structured_description {
+   my $self = shift;
+   my $type = shift;
+
+   my @nodes = $self ~~ $type;
+   @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
+   return \@nodes;
+}
+
+
 
 1;

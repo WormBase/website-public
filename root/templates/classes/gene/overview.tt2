@@ -26,8 +26,7 @@
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Concise Description" %]
-         [% fields.concise_description.data %]<br />
-         [% evidence_list(fields.provisional_description.data) %]
+         [% fields.concise_description.data %]
    [% END %]
 
 
