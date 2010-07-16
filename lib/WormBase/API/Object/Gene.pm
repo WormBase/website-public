@@ -2737,10 +2737,49 @@ sub sequence_features {
     return $data;
 }
 
+sub functional_pathway {
+    my $self   = shift;
+    my $data = { description => 'The sequence features the gene',
+                 data        =>  $self->_structured_description("Functional_pathway")
+    };
+    return $data;
+}
+
+sub functional_physical_interaction {
+    my $self   = shift;
+    my $data = { description => 'The sequence features the gene',
+                 data        =>  $self->_structured_description("Functional_physical_interaction")
+    };
+    return $data;
+}
+
+sub molecular_function {
+    my $self   = shift;
+    my $data = { description => 'The sequence features the gene',
+                 data        =>  $self->_structured_description("Molecular_function")
+    };
+    return $data;
+}
+
+sub sequence_features {
+    my $self   = shift;
+    my $data = { description => 'The sequence features the gene',
+                 data        =>  $self->_structured_description("Sequence_features")
+    };
+    return $data;
+}
 sub biological_process {
     my $self   = shift;
     my $data = { description => 'The biological processes the gene',
                  data        =>  $self->_structured_description("Biological_process")
+    };
+    return $data;
+}
+
+sub expression {
+    my $self   = shift;
+    my $data = { description => 'The biological processes the gene',
+                 data        =>  $self->_structured_description("Expression")
     };
     return $data;
 }
