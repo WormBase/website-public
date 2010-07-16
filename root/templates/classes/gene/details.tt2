@@ -1,0 +1,39 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Provisional Description"-%] 
+         [% FOREACH pd IN fields.provisional_description.data %]
+                 [% pd.text %]
+                 <div class="evidence">
+                 [% evidence_list(pd.evidence) %]
+                 </div>
+                 <br />
+         [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Other Description"-%] 
+         [% FOREACH od IN fields.other_description.data %]
+                 [% od.text %]
+                 <div class="evidence">
+                 [% evidence_list(od.evidence) %]
+                 </div>
+         [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Sequence features"-%] 
+         [% FOREACH sf IN fields.sequence_features.data %]
+                 [% sf.text %]
+                 <div class="evidence">
+                 [% evidence_list(sf.evidence) %]
+                 </div>
+         [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Biological Process"-%] 
+         [% FOREACH bp IN fields.biological_process.data %]
+                 [% bp.text %]
+                 <div class="evidence">
+                 [% evidence_list(bp.evidence) %]
+                 </div>
+         [% END %]
+   [% END %]
