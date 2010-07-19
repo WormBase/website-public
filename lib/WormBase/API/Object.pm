@@ -1661,6 +1661,75 @@ sub rearrange {
 
 
 
+sub history {
+
+    my $self = shift;
+    my $object = $self->object;
+    my %data;
+    my $desc = 'Information on the history of the gene';
+
+    my %data_pack;
+
+    #### data pull and packaging
+
+    my @history = $object->History;
+
+    # Present each history event as a separate item in the data struct
+    my $data = {};
+    foreach my $history (@history) {
+    my $type = $history;
+    $type =~ s/_ / /g;  
+
+    my @versions = $history->col;
+        foreach my $version (@versions) {
+                #  next unless $history eq 'Version_change';    # View Logic
+            my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);     
+            if ($history eq 'Version_change') {
+            ($vers,$date,$curator,$event,$action,$remark) = $version->row; 
+            
+                # For some cases, the remark is actually a gene object
+                if ($action eq 'Merged_into' || $action eq 'Acquires_merge'
+                    || $action eq 'Split_from' || $action eq 'Split_into') {
+                        $gene = $remark;
+                        $remark = undef;
+                }
+            } 
+            else 
+            {
+                    ($gene) = $version->row;
+            }       
+            my $cu;
+            if($curator){
+                $cu->{id} = "$curator";
+                $cu->{label} = $curator->Standard_name || $curator->Full_name;
+                                $cu->{class} = $curator->class;
+            }
+            my $ge;
+            if($gene){
+                $ge->{id} = "$gene";
+                $ge->{label} = $gene->Public_name;
+                                $ge->{class} = $gene->class;
+            }
+            $data_pack{$history}{$version} =
+                                            { type    => $type,
+                                              date    => $date,
+                                              action  => $action,
+                                              remark  => $remark,
+                                              gene    => $ge,
+                                              curator => $cu,
+                                            };
+        }
+    }
+
+
+    ####
+
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
+}
+
+
 #################################################
 #
 #   SINGLETON TAGS

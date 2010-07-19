@@ -7,9 +7,12 @@
        [% WRAPPER $field_block title=String.capital-%] 
           [% FOREACH ev IN fields.$sd.data %]
             [% ev.text %]
-            <div class="evidence">
-              [% evidence_list(ev.evidence) %]
-            </div>
+            [% IF ev.evidence.size > 0 %]
+              <div class="evidence">
+                [% evidence_list(ev.evidence) %]
+              </div>
+            [% ELSE %] <br />
+            [% END %]
             <br />
           [% END %]
       [% END %]
