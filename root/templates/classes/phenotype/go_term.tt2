@@ -7,7 +7,5 @@
  
 
 [% WRAPPER $field_block  title="phenotype observed in the Go_term entries" key="go_term" %]
-  [% data = fields.go_term.data %]
-    [% field = "go_term" %]
-    [% INCLUDE shared/generic/longlist.tt2 %]
+   [% short_list(fields.go_term.data.aaData) %]
 [% END %]
