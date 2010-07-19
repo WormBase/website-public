@@ -1,6 +1,7 @@
 package WormBase::API::Object::Phenotype;
 
 use Moose;
+use JSON;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -157,17 +158,17 @@ sub related_phenotypes {
 
  
 sub rnai {
-   my ($self,$detail) = @_;
-   my $data = { description => "The related phenotypes of the phenotype",
-		 	data        => shift->_format_objects('RNAi',$detail) , 
-    };
-   return $data;
+    
+    my $data = { description => 'The homology image of the protein',
+		 data        => shift->_get_json_data('RNAi'),
+    }; 
+    return $data;
 }
 
 sub variation {
    my ($self,$detail) = @_;
    my $data = { description => "The related variation of the phenotype",
-		 	data        => shift->_format_objects('Variation',$detail) , 
+		 	data        => shift->_get_json_data('Variation') , 
     };
    return $data;
 }
@@ -211,23 +212,43 @@ sub anatomy_ontology {
 # The Private Methods
 #
 ############################################################
+
+sub _get_json_data {
+   my ($self,$tag)=@_;
+   my $result;
+   my $file = $self->tmp_acedata_dir()."/".$self->object.".$tag.txt";
+   if(-s $file) {
+       open (F,"<$file") ;
+	$result = from_json(<F>);
+	close F;
+   }
+   else{
+      $result=$self->_format_objects($tag);
+      open (F,">$file") ;
+      print F to_json($result);
+      close F;
+    }
+  return $result;
+}
+
 sub _format_objects {
-    my ($self,$tag,$detail) = @_;
+    my ($self,$tag) = @_;
     my $phenotype = $self->object;
     my %result;
-    my $count;
+#     my $count;
     my $is_not;
     my @items=$phenotype->$tag;
-    $result{number}=scalar(@items);
+#     $result{number}=scalar(@items);
+    my @content_array;
     foreach (@items){
+=pod
       unless(defined $detail) {
 	$count++;
 	if ($count > $self->MAX_DISPLAY_NUM) {
-		  $result{detail}=1;
+# 		  $result{detail}=1;
 		  last;
 	}
       }
-=pod
 	if(defined $count && !defined $detail) {
 	  if(defined $is_not){
 	    my $flag=0;
@@ -249,11 +270,19 @@ sub _format_objects {
 	my @array;
 	my $str=$_;
 	if ($tag eq 'RNAi') {
-	    my $cds  = $_->Predicted_gene;
+	    my $cds  = $_->Predicted_gene||"";
 	    my $gene = $_->Gene;    
-	    my $cgc  = eval{$gene->CGC_name};
-	    $str  = $cgc ? "$cds ($cgc)" : $cds;
-	    $str.="[$_]";
+	    my $cgc  = eval{$gene->CGC_name} ||"";
+# 	    $str  = $cgc ? "$cds ($cgc)" : $cds;
+# 	    $str.="[$_]";
+	    
+	    push @array,{     id    => "$cds",
+			      label => "$cds",
+			      class => $cds->class,
+			};
+	    push @array,{     id    => "$gene",
+			      label => "$cgc",
+			      class => $gene->class,};
 	    $is_not = _is_not($_,$phenotype);
 	}elsif ($tag eq 'GO_term') {
 
@@ -275,29 +304,34 @@ sub _format_objects {
 	} elsif ($tag eq 'Variation') {
 		 $is_not = _is_not($_,$phenotype);
 		 my $gene = $_->Gene;
-		 push @array,{id    => "$gene",
-			      label => $gene->Public_name,
-			      class => $gene->class,};
-		
+		 if(defined $gene) {
+		  push @array,{id    => "$gene",
+				label => $gene->Public_name->name,
+				class => $gene->class,};
+		 } else { push @array,""; }
 	} 
 =pod
 	if(defined $is_not) {
 	    next if(exists $result{$is_not}{detail});
 	}
-=cut
-	my $hash = {    label=> $str,
+=cut 
+	my $hash = {    label=> "$str",
 			class => $tag,
-			id => $_, };
+			id => "$_", };
+ 
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
 # 	else { $result{content}{$str} = $hash;$count++;}
 	unshift @array, $is_not if(defined $is_not);
 	unshift @array,$hash;
-	$result{content}{$str} = \@array;
+# 	$result{content}{$str} = \@array;
+	push @content_array, \@array;
     }
+=pod
     if($tag eq 'Variation') {  $result{header} = [('name', 'phenotype observed in this experiment','corresponding gene')];}
     elsif(defined $is_not) {  $result{header} = [('name', 'phenotype observed in this experiment')];}
     else {  $result{header} = [qw/name/];}
-     
+=cut  
+    $result{"aaData"}=\@content_array;
     return \%result;
 }
 
