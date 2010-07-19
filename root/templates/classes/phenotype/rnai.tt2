@@ -2,13 +2,9 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% widget = c.stash.widget %]
-
+ 
 [% widget = widget %]
-
-[% WRAPPER $field_block  title="realted RNAi information" key="rnai" %] 
-    [% data = fields.rnai.data %]
-    [% field = "rnai" %]
-<div id="table_[% field %]">
-    [% INCLUDE shared/generic/longlist.tt2 %]    
-</div>
+ 
+[% WRAPPER $field_block  title="realted RNAi information" key="rnai" %]  
+   [% dataTable_list(['name','phenotype observed in this experiment engine','cds','gene'],fields.rnai.data.aaData,'table_rnai') %]
 [% END %]

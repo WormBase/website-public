@@ -117,6 +117,11 @@ sub tmp_image_dir {
     return $self->tmp_dir('images',@_);
 }
 
+sub tmp_acedata_dir {
+    my $self  = shift;
+    return $self->tmp_dir('acedata',@_);
+}
+
 sub bestname {
   my ($self,$gene) = @_;
   return unless $gene && $gene->class eq 'Gene';
