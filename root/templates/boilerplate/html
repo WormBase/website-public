@@ -17,12 +17,15 @@
     <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>-->
     [% FOREACH item IN JavaScripts %]
      <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
-   [% END %] 
+    [% END %] 
 
+    <script type="text/javascript" src="/js/jquery/plugins/dataTables/jquery.dataTables.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/demo_table.css"/>
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
     <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
     <link type="text/css" rel="stylesheet" href="/css/jquery.tablescroll.css"/>
+     
 
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
     [% IF is_classic %]
@@ -30,9 +33,12 @@
     [% END %]
     <link href="/css/home.css" rel="stylesheet" type="text/css" />
   
+
   </head>
 
   <body>
+  
+
     [%- content -%]    
   </body>
 </html>
