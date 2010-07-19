@@ -2710,87 +2710,68 @@ sub build_hash{
 
 
 #######################################################
-# The Details Panel
+# The Details Panel (Structural Description)
 #######################################################
 
 sub provisional_description {
     my $self   = shift;
-    my $data = { description => 'The Provisional description the gene',
-                 data        =>  $self->_structured_description("Provisional_description")
-    };
-    return $data;
+    return $self->_structured_description("Provisional_description", "The provisional description of the gene");
 }
 
 sub other_description {
     my $self   = shift;
-    my $data = { description => 'The other description the gene',
-                 data        =>  $self->_structured_description("Other_description")
-    };
-    return $data;
+    return $self->_structured_description("Other_description", "The other description of the gene");
 }
 
 sub sequence_features {
     my $self   = shift;
-    my $data = { description => 'The sequence features the gene',
-                 data        =>  $self->_structured_description("Sequence_features")
-    };
-    return $data;
+    return $self->_structured_description("Sequence_features", "The sequence features of the gene");
 }
 
 sub functional_pathway {
     my $self   = shift;
-    my $data = { description => 'The sequence features the gene',
-                 data        =>  $self->_structured_description("Functional_pathway")
-    };
-    return $data;
+    return $self->_structured_description("Functional_pathway", "The Functional pathway of the gene");
 }
 
 sub functional_physical_interaction {
     my $self   = shift;
-    my $data = { description => 'The sequence features the gene',
-                 data        =>  $self->_structured_description("Functional_physical_interaction")
-    };
-    return $data;
+    return $self->_structured_description("Functional_physical_interaction", "The Functional physical interaction of the gene");
 }
 
 sub molecular_function {
     my $self   = shift;
-    my $data = { description => 'The sequence features the gene',
-                 data        =>  $self->_structured_description("Molecular_function")
-    };
-    return $data;
+    return $self->_structured_description("Molecular_function", "The Molecular function of the gene");
 }
 
 sub sequence_features {
     my $self   = shift;
-    my $data = { description => 'The sequence features the gene',
-                 data        =>  $self->_structured_description("Sequence_features")
-    };
-    return $data;
+    return $self->_structured_description("Sequence_features", "The Sequence features of the gene");
 }
 sub biological_process {
     my $self   = shift;
-    my $data = { description => 'The biological processes the gene',
-                 data        =>  $self->_structured_description("Biological_process")
-    };
-    return $data;
+    return $self->_structured_description("Biological_process", "The Biological process of the gene");
 }
 
 sub expression {
     my $self   = shift;
-    my $data = { description => 'The biological processes the gene',
-                 data        =>  $self->_structured_description("Expression")
-    };
-    return $data;
+    return $self->_structured_description("Expression", "The Expression of the gene");
+}
+
+sub detailed_description {
+    my $self   = shift;
+    return $self->_structured_description("Detailed_description", "The detailed description of the gene");
 }
 
 sub _structured_description {
    my $self = shift;
    my $type = shift;
-
-   my @nodes = $self ~~ $type;
+   my $desc = shift;
+   my @nodes = $self->object->$type;
    @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
-   return \@nodes;
+   my $data = { description => $desc,
+                data        =>  \@nodes
+   };
+   return $data;
 }
 
 
