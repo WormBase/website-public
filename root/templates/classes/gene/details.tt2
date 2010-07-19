@@ -3,13 +3,14 @@
 
    [% FOREACH sd IN fields.keys %]
      [% IF fields.$sd.data.first.text.length > 0 %]
-      [% WRAPPER $field_block title=sd-%] 
+       [% USE String(sd.replace('_', ' ')) %]
+       [% WRAPPER $field_block title=String.capital-%] 
           [% FOREACH ev IN fields.$sd.data %]
-                 [% ev.text %]
-                 <div class="evidence">
-                 [% evidence_list(ev.evidence) %]
-                 </div>
-                 <br />
+            [% ev.text %]
+            <div class="evidence">
+              [% evidence_list(ev.evidence) %]
+            </div>
+            <br />
           [% END %]
       [% END %]
      [% END %]
