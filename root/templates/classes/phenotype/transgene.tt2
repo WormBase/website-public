@@ -7,7 +7,5 @@
  
 
 [% WRAPPER $field_block  title="phenotype observed in the Transgene entries" key="transgene" %]
-    [% data = fields.transgene.data %]
-    [% field = "transgene" %]
-    [% INCLUDE shared/generic/longlist.tt2 %]
+    [% object_list(fields.transgene.data.aaData) %]
 [% END %]
