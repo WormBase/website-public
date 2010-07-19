@@ -49,6 +49,63 @@
 [% END %] 
 
 
+[% MACRO dataTable_list(header,data,table) BLOCK %]
+  [% IF data.size>0 %]
+<script type="text/javascript" >
+	$(document).ready(function() {
+	    $('#[% table %]').dataTable();
+      } );
+</script>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table %]">
+	<thead>
+		<tr>
+		    [% FOREACH item IN header %]  
+			<th>[% item %]</th>
+		    [% END %]
+		</tr>
+	</thead>
+	<tbody>
+	    [% FOREACH row IN data %]
+		<tr> 
+		      [% FOREACH item IN row %]
+		      <td>[% IF item.class.defined %]
+			    [% tag2link(item) %]
+			   [% ELSE %][% item %]
+			   [% END %]
+		      </td>
+		      [% END %]
+		</tr>
+	    [% END %]
+	</tbody>
+	<tfoot>
+		<tr>
+			 [% FOREACH item IN header %]  
+			<th>[% item %]</th>
+			[% END %]
+		</tr>
+	</tfoot>
+</table>
+[% END %] 
+
+[% END %] 
+
+[% MACRO short_list(objects) BLOCK %]
+
+   [% FOREACH row IN objects.list %]	
+       [% FOREACH item IN row %]
+	 [% IF item.class.defined %]
+			    [% tag2link(item) %]
+			   [% ELSE %][% item %]
+	[% END %]
+	  [% UNLESS loop.last %];[% END %]
+      [% END %]
+      [% UNLESS loop.last %]<br>[% END %]
+   [% END %]           
+
+    
+
+[% END %]
+
 [% 
   # For dsiplaying a list of objects in a field
   # Should probably be expanded to included some actual formatting,
