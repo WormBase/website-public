@@ -398,34 +398,32 @@ div.widget-section-header {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-    clear:both;
-    line-height:1.1em;
-    padding:0.2em;
+/*   clear:both; */
+  line-height:1.1em;
+  padding:0.2em;
+  height:1%;
+  overflow:auto;
 }
 
 div.field h5 {
-    float:left;
-    width:8em;
-    text-align:right;
-    margin-top:0em;   /* Pitch default h2 margin and force top alignment with p content */
+  float:left;
+  width:8em;
+  text-align:right;
+  margin-top:0em;   /* Pitch default h2 margin and force top alignment with p content */
 }
 
 div.field-title {
   float        : left;
   text-align   : right; 
   font-size    : 1.1em;
-  padding-right: 1em;
+  padding-right: 0.8em;
   width        : 175px;
   height       : auto;
 }
 
 div.field-content {
-/*   margin-left:2em; */
-  text-align:left;
-/*   margin-left:20px; */
   overflow:hidden;
 }
-		
 
 
 /* Subfields - structure mimics that of fields */
