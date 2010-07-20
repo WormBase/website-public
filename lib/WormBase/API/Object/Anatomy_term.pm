@@ -47,7 +47,7 @@ sub expr_patterns{
   my $desc = 'notes';
   my %data_pack;
 
-  #### data pull and packaging
+		  #### data pull and packaging
 
 	my @eps = $object->Expr_pattern;
 		
@@ -57,16 +57,15 @@ sub expr_patterns{
 		my $ep_pattern;
 		my $ep_xgene;
 		
+		eval {$ep_gene= $expr_pattern->Gene};
+		eval {$ep_pattern= $expr_pattern->Pattern};
+		eval {$ep_xgene= $expr_pattern->Transgene};
 		
-		eval {$ep_gene= $object->Gene};
-		eval {$ep_pattern= $object->Pattern};
-		eval {$ep_xgene= $object->Transgene};
+		
+		my $gene_name = public_name($ep_gene,'Gene');
 		
 		
-		my $gene_name = public_name($ep_gene);
-		
-		$data_pack{$expr_pattern} = {
-		
+		$data_pack{$expr_pattern} = (
 									'expr_pattern' => $expr_pattern,
 									'gene' => {
 												'ace_id' => $ep_gene,
@@ -78,7 +77,7 @@ sub expr_patterns{
 													'xgene_id' => $ep_xgene,
 													'class' => 'Transgene'
 													}
-									};
+									);
 	}
 
   ####
@@ -107,17 +106,16 @@ sub go_terms {
 	my $term = $go_term->Term;
 	my $type = $go_term->Type;
 	my $ao_code = $go_term->right;
-	my $evidence;
 	
 	$data_pack{$go_term} = {
 							'ace_id' => $go_term,
 							'term' => $term,
 							'ao_code' => $ao_code,
-							'class' => 'GO_term',
-							'evidence' => $evidence
+							'class' => 'GO_term'
 							}
 	};
-
+	
+	
   ####
 
   $data{'data'} = \%data_pack;
@@ -142,6 +140,15 @@ sub go_terms {
 #  $data{'data'} = \%data_pack;
 #  $data{'description'} = $desc;
 #  return \%data;
+#}
+
+
+#sub ao_evidences {
+#
+#	my $evidences_hr;
+#	my @tags = /GO_term /;
+#	$evidences_hr = _get_evidences(@tags);
+#	return $evidences_hr;
 #}
 
 
