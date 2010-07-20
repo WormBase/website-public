@@ -307,6 +307,16 @@ p.debug-view {
     display:none;
 }
 
+.returned {
+   position:relative;
+   left:30px;
+   width:90%;
+   display:none;
+   border:1px solid black;
+   background:#EEE;
+   padding:5px;
+}
+
 
 /*********************************
 

@@ -2713,65 +2713,17 @@ sub build_hash{
 # The Details Panel (Structural Description)
 #######################################################
 
-sub provisional_description {
-    my $self   = shift;
-    return $self->_structured_description("Provisional_description", "The provisional description of the gene");
-}
-
-sub other_description {
-    my $self   = shift;
-    return $self->_structured_description("Other_description", "The other description of the gene");
-}
-
-sub sequence_features {
-    my $self   = shift;
-    return $self->_structured_description("Sequence_features", "The sequence features of the gene");
-}
-
-sub functional_pathway {
-    my $self   = shift;
-    return $self->_structured_description("Functional_pathway", "The Functional pathway of the gene");
-}
-
-sub functional_physical_interaction {
-    my $self   = shift;
-    return $self->_structured_description("Functional_physical_interaction", "The Functional physical interaction of the gene");
-}
-
-sub molecular_function {
-    my $self   = shift;
-    return $self->_structured_description("Molecular_function", "The Molecular function of the gene");
-}
-
-sub sequence_features {
-    my $self   = shift;
-    return $self->_structured_description("Sequence_features", "The Sequence features of the gene");
-}
-sub biological_process {
-    my $self   = shift;
-    return $self->_structured_description("Biological_process", "The Biological process of the gene");
-}
-
-sub expression {
-    my $self   = shift;
-    return $self->_structured_description("Expression", "The Expression of the gene");
-}
-
-sub detailed_description {
-    my $self   = shift;
-    return $self->_structured_description("Detailed_description", "The detailed description of the gene");
-}
-
-# params: Scalar ace method, Scalar description content
-# ret: hash ref
-sub _structured_description {
+sub structured_description {
    my $self = shift;
-   my $type = shift;
-   my $desc = shift;
-   my @nodes = $self->object->$type;
-   @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
-   my $data = { description => $desc,
-                data        =>  \@nodes
+   my %ret;
+   my @types = qw(Provisional_description Other_description Sequence_features Functional_pathway Functional_physical_interaction Molecular_function Sequence_features Biological_process Expression Detailed_description);
+   foreach my $type (@types){
+      my @nodes = $self->object->$type;
+      @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
+      $ret{$type} = \@nodes;
+   }
+   my $data = { description => "The structural description of the gene",
+                data        =>  \%ret
    };
    return $data;
 }
