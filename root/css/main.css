@@ -308,13 +308,11 @@ p.debug-view {
 }
 
 .returned {
-   position:relative;
-   left:30px;
-   width:90%;
    display:none;
-   border:1px solid black;
    background:#EEE;
+   margin-top:5px;
    padding:5px;
+   padding-right:10px;
 }
 
 
@@ -417,7 +415,7 @@ div.field-title {
   text-align   : right; 
   font-size    : 1.1em;
   padding-right: 0.8em;
-  width        : 175px;
+  width        : 12em;
   height       : auto;
 }
 
@@ -443,23 +441,16 @@ div.subfield p {
 }
 
 div.subfield-title {
-	float        : left;
-	text-align   : right; 
 	font-size    : 1em;
-	padding-right: 2em;
-	width        : 100px;
+    padding-bottom: 0.5em;
 	height       : auto;	
 	}
 
 div.subfield .subfield-content {
-    margin-left:3em;
-    margin-right:10px;
-    padding-left:1em;
-/*		  float:right; */
-		  text-align:left;
-		  width:auto;
-		  margin-left:10px;
-		  overflow:hidden;
+  margin-left:3em;
+  text-align:left;
+  width:auto;
+  overflow:hidden;
 }
 
 

@@ -98,6 +98,7 @@ END;
 
    # Set some default templates
    DEFAULT field_block  = "field_block";
+   DEFAULT subfield_block  = "subfield_block";
    DEFAULT widget_block = "widget_block";
 
    # Our custom URL mapping plugin.
