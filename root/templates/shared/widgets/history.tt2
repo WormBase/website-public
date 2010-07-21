@@ -7,6 +7,7 @@
       <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
     [% FOREACH history IN fields.history.data.keys %]
       [% FOREACH h IN fields.history.data.$history.keys %]
+          [% NEXT UNLESS fields.history.data.$history.$h.type == "Version_change" %]
           <tr>
               <td>[% fields.history.data.$history.$h.type %]</td>
               <td>[% h %]</td>
