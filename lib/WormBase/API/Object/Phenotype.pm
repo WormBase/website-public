@@ -346,6 +346,7 @@ sub _format_objects {
 }
 
 
+
 sub _is_not {
     my ($obj,$phene) = @_;
     my @phenes = $obj->Phenotype;
