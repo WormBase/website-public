@@ -5,7 +5,10 @@
  
 [% widget = widget %]
 
-[% WRAPPER $field_block  title="realted Variation information" key="variation" %] 
-    [% dataTable_list(['name','phenotype observed in this experiment engine','gene'],fields.variation.data.aaData,'table_variation') %]
+[% WRAPPER $field_block  title="phenotype observed in the Variation experiment" key="variation" %] 
+    [% dataTable_list(['name','gene'],fields.variation.data.0.aaData,'table_variation_0') %]
 [% END %]
- 
+
+[% WRAPPER $field_block  title="phenotype NOT observed in the Variation experiment" key="variation" %] 
+    [% dataTable_list(['name','gene'],fields.variation.data.1.aaData,'table_variation_1') %]
+[% END %] 
