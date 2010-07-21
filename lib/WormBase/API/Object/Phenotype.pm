@@ -240,6 +240,7 @@ sub _format_objects {
     my @items=$phenotype->$tag;
 #     $result{number}=scalar(@items);
     my @content_array;
+    my @content_array_not;
     foreach (@items){
 =pod
       unless(defined $detail) {
@@ -321,17 +322,26 @@ sub _format_objects {
  
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
 # 	else { $result{content}{$str} = $hash;$count++;}
-	unshift @array, $is_not if(defined $is_not);
+# 	unshift @array, $is_not if(defined $is_not);
 	unshift @array,$hash;
 # 	$result{content}{$str} = \@array;
-	push @content_array, \@array;
+	if($is_not) {
+	    push @content_array_not, \@array;
+	}else {
+	    push @content_array, \@array;
+	}
     }
 =pod
     if($tag eq 'Variation') {  $result{header} = [('name', 'phenotype observed in this experiment','corresponding gene')];}
     elsif(defined $is_not) {  $result{header} = [('name', 'phenotype observed in this experiment')];}
     else {  $result{header} = [qw/name/];}
 =cut  
-    $result{"aaData"}=\@content_array;
+    if(defined $is_not) {
+	$result{0}{"aaData"}=\@content_array;
+	$result{1}{"aaData"}=\@content_array_not;
+    }else {
+      $result{"aaData"}=\@content_array;
+    }
     return \%result;
 }
 
@@ -342,8 +352,8 @@ sub _is_not {
     foreach (@phenes)  {
 	next unless $_ eq $phene;
 	my %keys = map { $_ => 1 } $_->col;
-	return 'No' if $keys{Not};
-	return 'Yes';
+	return 1 if $keys{Not};
+	return 0;
     }
 }
 
