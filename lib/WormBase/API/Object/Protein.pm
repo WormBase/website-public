@@ -45,25 +45,17 @@ has 'cds' => (
 #
 ############################################################
 
+
+
 sub name {
     my $self = shift;
-    my $ace  = $self->object;
-    my $data = { description => 'The internal WormBase referential ID of the protein',
-		 data        =>  { id    => "$ace",
+    my $id = $self->object;
+    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $id;
+    
+    my $data = { description => 'The name of the protein',
+		 data        => { id    => "$id",
 				   label => $ace->name,
-				   class => $ace->class
-		 },
-    };
-    return $data;
-}
-
-sub common_name {
-    my $self = shift;
-    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $self->object;
-    my $data = { description => 'The public name  of the protein',
-		 data        => { id    => "$ace",
-				   label => $ace->name,
-				   class => $ace->class
+				   class => $id->class
 		 },
 
     };
@@ -71,34 +63,19 @@ sub common_name {
 }
 
 
-sub species {
+sub taxonomy {
     my $self = shift;
-    my $data = { description => 'The species of the protein',
-		 data        => $self ~~ 'Species' || eval { $self->cds->[0]->Species },
-    }; 
+    my $genus_species = $self ~~ 'Species' || eval { $self->cds->[0]->Species };
+    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
+    my $data = { description => 'the genus and species of the protein object',
+		 data        => { genus   => $genus,
+				  species => $species,
+		 }
+    };
     return $data;
 }
 
-sub homology_groups {
-    my $self = shift;
-    my $kogs= $self ~~ '@Homology_group';
-    my @hg;
-    foreach my $k (@$kogs) {
-	push @hg ,{ type=>$k->Group_type||'',
-		     title=>$k->Title||'',
-		     link => { id=>"$k",
-                             label=>$k->name,
-                             class=>$k->class,
-				}
-		   };
-    }
-    @hg = ('not assigned') unless(@hg);
-    my $data = { description => 'The homology groups of the protein',
-		 data        => \@hg,
-    }; 
-    return $data;
-}
-
+ 
 sub genes {
     my $self = shift;
     my %seen;
@@ -123,7 +100,7 @@ sub transcripts {
     my @transcripts = grep{$_->Method ne 'history'} @{$self->cds};
     push @transcripts, map {$_->Corresponding_transcript}  @transcripts;
     my $data = { description => 'The transcripts related with the protein',
-		 data        => [grep {!$seen{$_}++}  @transcripts],
+		 data        => [map {my $hash = { id => $_,label=>$_,class=>$_->class} ;$_=$hash;} grep {!$seen{$_}++}  @transcripts],
     }; 
     return $data;
 
@@ -133,11 +110,79 @@ sub transcripts {
 sub type {
     my $self = shift;
     my $data = { description => 'The type of the protein',
-		 data        =>  eval {$self->cds->[0]->Method} || 'None (see remark)' ,
+		 data        =>  eval {$self->cds->[0]->Method} || 'None' ,
     }; 
     return $data;
 }
 
+sub remarks {   
+    my $data = { description => 'The remark of the protein',
+		 data        =>  shift ~~ 'Remark'  ,
+    }; 
+    return $data;
+}
+
+sub status {
+    
+    my $data = { description => 'The status of the protein',
+		 data        =>  shift ~~ 'Status' ,
+    }; 
+    return $data;
+}
+
+sub description {
+     
+    my $data = { description => 'The description of the protein',
+		 data        =>  shift ~~ 'Description'  ,
+    }; 
+    return $data;
+}
+
+############################################################
+#
+# The External link widget
+#
+############################################################ 
+
+sub external_links {
+    my $id = eval{shift->cds->[0]}  ;
+    my $data = { description => 'The orthology genes of the protein',
+		 data        =>  { 'Information in Phosphopep' =>
+				      { id => $id  ,
+					label=>$id,
+					class=>'phosphopep',
+				      }
+				  }
+    }; 
+    return $data;
+ 
+}
+
+ 
+############################################################
+#
+# The Homology widget
+#
+############################################################
+sub homology_groups {
+    my $self = shift;
+    my $kogs= $self ~~ '@Homology_group';
+    my @hg;
+    foreach my $k (@$kogs) {
+	push @hg ,{ type=>$k->Group_type||'',
+		     title=>$k->Title||'',
+		     link => { id=>"$k",
+                             label=>$k->name,
+                             class=>$k->class,
+				}
+		   };
+    }
+    @hg = ('not assigned') unless(@hg);
+    my $data = { description => 'The homology groups of the protein',
+		 data        => \@hg,
+    }; 
+    return $data;
+}
 
 sub ortholog_genes {
     my $self = shift;
@@ -146,21 +191,6 @@ sub ortholog_genes {
     }; 
     return $data;
 }
-
-sub phosphopep_link {
-    
-    my $data = { description => 'The orthology genes of the protein',
-		 data        =>  eval{shift->cds->[0]}  ,
-    }; 
-    return $data;
- 
-}
-
-############################################################
-#
-# The Homology widget
-#
-############################################################
 
 sub homology_image {
     my $self=shift;
@@ -209,6 +239,100 @@ sub motif_homologies {
 }	  
 	
 
+sub motif_details {
+    my $self = shift;
+    my $obj = $self->object;
+    my $seq   = $self->cds->[0];
+    
+    my @raw_features = $self ~~ '@Feature';
+    my @motif_homol = $self ~~ '@Motif_homol';
+    
+    #  return unless $obj->Feature;
+    
+    print br();
+    print a({-name=>'motif_sum'}, "");
+    
+    # Summary by Motif
+    my @tot_positions;
+    
+    if (@raw_features > 0 || @motif_homol > 0) {
+	my %positions;
+	foreach my $feature (@raw_features) {
+	    %positions = map {$_ => $_->right(1)} $feature->col;
+	    foreach my $start (sort {$a <=> $b} keys %positions) {			
+		push @tot_positions,{ feature => $feature,
+				      start   => $start,
+				      stop    => $positions{$start},
+				      range   => $start."_to_".$positions{$start}  ### add range to total position
+				  };
+	    }
+	}
+	
+	# Now deal with the motif_homol features
+	foreach my $feature (@motif_homol) {
+	    my $score = $feature->right->col;
+
+	    my $start = $feature->right(3);
+	    my $stop  = $feature->right(4);
+	    my $type = $feature->right;
+	    $type  ||= 'Interpro' if $feature =~ /IPR/;
+	    (my $accession = $feature) =~ s/^[^:]+://;
+	    my $label = "$type&nbsp;$accession";
+	    my $link = make_ext_link($feature,$label);
+
+	    # Are the multiple occurences of this feature?
+	    my @multiple = $feature->right->right->col;
+	    if (@multiple > 1) {
+		foreach my $start (@multiple) {
+		    my $stop = $start->right;
+		    push @tot_positions,{ feature => $link,
+					  start   => $start,
+					  stop    => $stop,
+					  range   => $start."_to_".$stop  ### add range to total position
+				      };
+		}
+	    } else {
+		push @tot_positions,{ feature => $link,
+				      start   => $start,
+				      stop    => $stop,
+				      range   => $start."_to_".$stop  ### add range to total position
+				  };
+	    }
+
+	}
+
+	print start_table({-border =>1, -width=>'100%'});
+	
+	print TR({-class=>'datatitle',-valign=>'top'},
+		 th({-colspan=>3},'Motif Details'));
+	print TR({-class=>'datatitle',-valign=>'top'},
+		 th('Feature'),
+		 th('Start'),
+		 th('End'));
+	
+
+	
+	foreach my $feature (sort {$a->{start} <=> $b->{start} } @tot_positions) 
+	{
+	    # Print the by Motif table
+	    print TR({-class=>'databody'},
+		     td($feature->{feature}),
+		     td($feature->{start}),
+		     td($feature->{stop}));
+	}
+	
+	
+	print end_table;
+    }
+    return;
+}
+
+############################################################
+#
+# The Molecular Details widget
+#
+############################################################
+
 sub protein_sequence {
     my $self = shift;
     my $peptide = $self->peptide;
@@ -220,14 +344,6 @@ sub protein_sequence {
     return $data;
 }
  
- 
-
-############################################################
-#
-# The Protein Statistics widget
-#
-############################################################
-
 
 sub estimated_molecular_weight{
     my $self = shift;
@@ -415,11 +531,11 @@ sub _draw_image {
   my %colors   = ('low_complexity' => 'blue',
 		  'transmembrane'  => 'green',
 		  'signalp'        => 'gray',
-		  'Prosite'        => 'cyan',
+		  'prosite'        => 'cyan',
 		  'seg'            => 'lightgrey',
-		  'Pfam'           => 'wheat',
-		  'Motif_homol'    => 'orange',
-		  'Pep_homol'      => 'blue'
+		  'pfam'           => 'wheat',
+		  'motif_homol'    => 'orange',
+		  'wublastp_remanei'      => 'blue'
 		 );
   
   foreach ($obj->Homol) {
@@ -503,11 +619,12 @@ sub _draw_image {
   foreach my $key (sort keys %features) {
     # Get the glyph
     my $type  = $features{$key}[0]->type;
+    
     my $label = $labels{$key}  || $key;
     my $glyph = $glyphs{$key}  || 'graded_segments';
-    my $color = $colors{$type} || 'green';
+    my $color = $colors{lc($type)} || 'green';
     my $connector = $key eq 'Pep_homol' ? 'solid' : 'none';
-    
+     $self->log->debug("aaaaaaaaaaaaaaaaa $type $label $key");
     $panel->add_track(segments     => $features{$key},
 		      -glyph       => $glyph,
 		      -label       => ($label =~ /Features/) ? 0 : 1,
