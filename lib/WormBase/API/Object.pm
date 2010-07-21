@@ -1682,7 +1682,6 @@ sub history {
 
     my @versions = $history->col;
         foreach my $version (@versions) {
-                #  next unless $history eq 'Version_change';    # View Logic
             my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);     
             if ($history eq 'Version_change') {
             ($vers,$date,$curator,$event,$action,$remark) = $version->row; 
