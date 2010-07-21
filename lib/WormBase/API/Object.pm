@@ -9,8 +9,8 @@ use overload '~~' => \&_overload_ace, fallback => 1;
 
 sub _overload_ace {
     my ($self,$param)=@_;
-    if($param =~ s/^@//) {my @results=$self->object->$param; return \@results;}
-    else { return $self->object->$param;}
+    if($param =~ s/^@//) {my @results=eval {$self->object->$param}; return \@results;}
+    else { return eval {$self->object->$param};}
 } 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
@@ -637,7 +637,7 @@ sub best_blastp_matches {
   return "" unless @pep_homol;
   for my $hit (@pep_homol) {
         # Ignore mass spec hits
-    next if ($hit =~ /^MSP/);
+#     next if ($hit =~ /^MSP/);
     next if $hit eq $biggest;         # Ignore self hits
     my ($method,$score) = $hit->row(1) or next;
     
