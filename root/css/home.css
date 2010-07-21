@@ -76,13 +76,13 @@
 
 
 /* The search bar form */
-.form input, select{  
+#searchForm input, .search-select{  
     font-size: 1.3em;  
     height: 35px; 
    vertical-align:top;
     padding: 5px;  
 }  
-.form input.text{  
+#searchForm input.text{  
     font-weight: normal;  
     color: #565656;  
     border: 1px solid #9c9c9c;  
@@ -92,7 +92,7 @@
     width:300px;
     height:20px;
 }  
-.form input.text.active{  
+#searchForm input.text.active{  
     background: #ddeff6;  
     border: 1px solid #0099d4;  
 }  

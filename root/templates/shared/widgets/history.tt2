@@ -1,0 +1,21 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+  <span id="fade">Make a less ugly table. Standardize history.</span>
+  <table border=1 class="history">
+      [% # find a better way to do this:%]
+      <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
+    [% FOREACH history IN fields.history.data.keys %]
+      [% FOREACH h IN fields.history.data.$history.keys %]
+          <tr>
+              <td>[% fields.history.data.$history.$h.type %]</td>
+              <td>[% h %]</td>
+              <td>[% fields.history.data.$history.$h.date %]</td>
+              <td>[% fields.history.data.$history.$h.action %]</td>
+              <td>[% fields.history.data.$history.$h.remark %]</td>
+              <td>[% tag2link(fields.history.data.$history.$h.gene) %]</td>
+              <td>[% tag2link(fields.history.data.$history.$h.curator) %]</td>
+          </tr>
+      [% END %]
+    [% END %]
+    </table>
