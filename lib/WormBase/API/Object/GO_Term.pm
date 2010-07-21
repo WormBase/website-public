@@ -47,7 +47,7 @@ sub genes {
 	
 		foreach my $gene (@genes) {
 		
-			my ($evidence_code, $evidence_details) = get_evidence($object,$gene);
+			my ($evidence_code, $evidence_details) = get_GO_evidence($object,$gene);
 			$data_pack{$gene} = {
 								'ace_id' => $gene,
 								'common_name' => public_name($gene,'Gene'),
@@ -82,7 +82,7 @@ sub cds {
 	
 	foreach my $gene (@genes) {
 	
-			my ($evidence_code, $evidence_details) = get_evidence($object,$gene);		
+			my ($evidence_code, $evidence_details) = get_GO_evidence($object,$gene);		
 			$data_pack{$gene} = {
 								'ace_id' => $gene,
 								'common_name' => public_name($gene,'CDS'),
@@ -161,9 +161,9 @@ sub genes_n_cds {
 			my $desc = $gene->Concise_description || $gene->Provisional_description;
 			
 					
-			my ($evidence_code, $evidence_details) = get_evidence($term,$gene);
+			my ($evidence_code, $evidence_details) = get_GO_evidence($term,$gene);
 			
-			$data_pack{$gene} = {
+			$data_pack{$gene} = (
 								'ace_id' => $gene,
 								'common_name' => public_name($gene,'Gene'),
 								'class' => 'Gene',
@@ -172,7 +172,7 @@ sub genes_n_cds {
 								'description' => $desc,
 								'evidence_code' => $evidence_code,
 								'evidence_details' => $evidence_details
-								};
+								);
 	}
 	
   ####
@@ -202,7 +202,7 @@ sub phenotype {
 		
 		
 		
-		my ($evidence_code, $evidence_details) = get_evidence($term,$phenotype);
+		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$phenotype);
 		
 		
 		$data_pack{$phenotype} = {
@@ -238,7 +238,7 @@ sub motif {
 	foreach my $motif (@motifs) {
 	
 		my $motif_desc = $motif->Description;
-		my ($evidence_code, $evidence_details) = get_evidence($term,$motif);
+		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$motif);
 		$data_pack{$motif} = {
 								'term' =>$motif,
 								'description' => $motif_desc,
@@ -292,7 +292,7 @@ sub motif {
 }
   
 
-sub get_evidence {
+sub get_GO_evidence {
 
 	my ($term,$gene) = @_;
 	my @go_terms;
@@ -332,7 +332,7 @@ sub get_evidence {
 	foreach my $tag_datum (@tag_data) {
 	
 		my $tag_datum_desc = $tag_datum->Description;
-		my ($evidence_code, $evidence_details) = get_evidence($term,$tag_datum);
+		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$tag_datum);
 		$data_pack{$tag_datum} = {
 								'term' =>$tag_datum,
 								'description' => $tag_datum_desc,
