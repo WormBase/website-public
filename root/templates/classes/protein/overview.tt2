@@ -39,9 +39,9 @@
   [% fields.description.data %]
 [% END %]
 [%# END %] 
-
   <script type="text/javascript">
-$('a.basic').cluetip({activation: 'click', arrows: true,width: '900px',positionBy: 'bottomTop'
- });
+$('a.basic').cluetip({cluetipClass: 'rounded',activation: 'click',width: '850px',height:'400px',arrows: true});
+ 
  </script>
-<a class="basic" href="/rest/widget/phenotype/WBPhenotype:0000019/rnai" titile="just a test" rel="/rest/widget/phenotype/WBPhenotype:0000019/rnai">just a test</a>
+
+<a class="basic" href="/rest/widget/phenotype/WBPhenotype:0000019/rnai" rel="/rest/widget/phenotype/WBPhenotype:0000019/rnai">just a test</a>
