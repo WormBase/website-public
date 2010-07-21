@@ -4,49 +4,44 @@
 [% widget = c.stash.widget %]
 
 [% WRAPPER $field_block title="Name" %]
-  [% tag2link(c.stash.fields.name.data) %]
+  [% tag2link(fields.name.data,fields.name.data.id) %]
 [% END %]
 
  
    [% PROCESS "shared/fields/species.tt2" %]
- 
-
-[% WRAPPER $field_block title="Homology Groups" %]
-  [% FOREACH obj IN c.stash.fields.homology_groups.data %]
-     [% obj.type %]:[% obj.title %] [[% tag2link(obj.link) %]]<br>
-  [% END %]
-[% END %]
 
 [% WRAPPER $field_block title="Genes" %]
-  [% FOREACH obj IN c.stash.fields.genes.data %]
-    [% tag2link(obj) %]<br>
+  [% FOREACH obj IN fields.genes.data %]
+    [% tag2link(obj) %]  <br>
   [% END %]
 [% END %]
 
 [% WRAPPER $field_block title="Transcripts" %]
-   [% FOREACH obj IN c.stash.fields.transcripts.data %]
-  <a href="[% c.uri_for_action('report', 'sequence' , obj ) %]">[% obj %] </a><br>
+   [% FOREACH obj IN  fields.transcripts.data %]
+   [% tag2link(obj) %]<br>
   [% END %]
 [% END %]
 
 [% WRAPPER $field_block title="Type" %]
-  [% c.stash.fields.type.data %]
+  [% fields.type.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Ortholog Genes" %]
-  [% c.stash.fields.ortholog_genes.data.join('<br>') %]
-[% END %]
+ [% PROCESS "shared/fields/remarks.tt2" %]
 
-[% WRAPPER $field_block title="Curation History" %]
-[% data = fields.history.data %]
-   <table  border= 0, width= '100%' >
-   <tr align= 'left'><th>WormPep Version</th><th>Event</th><th>Predicted Gene</th></tr>
-   [% FOREACH obj IN data.version.sort %]
-   <tr><td>[% data.version.$obj %]</td><td>[% data.status.$obj %]</td><td>[% data.prediction.$obj %]</a></td></tr>
-   [% END %]
-   </table>   
+[%# IF fields.status.data.defined %]
+[% WRAPPER $field_block title="Status" %]
+  [% fields.status.data %]
 [% END %]
+[%# END %]
 
-[% WRAPPER $field_block title="Phosphopep Link" %]
-<a href="[% c.uri_for_action('report', 'phosphopep' ,  c.stash.fields.phosphopep_link.data ) %]">Access Phosphorylation Information in Phosphopep</a>
+[%# IF fields.description.data.defined %]
+[% WRAPPER $field_block title="Description" %]
+  [% fields.description.data %]
 [% END %]
+[%# END %] 
+
+  <script type="text/javascript">
+$('a.basic').cluetip({activation: 'click', arrows: true,width: '900px',positionBy: 'bottomTop'
+ });
+ </script>
+<a class="basic" href="/rest/widget/phenotype/WBPhenotype:0000019/rnai" titile="just a test" rel="/rest/widget/phenotype/WBPhenotype:0000019/rnai">just a test</a>
