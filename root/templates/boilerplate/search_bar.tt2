@@ -1,5 +1,5 @@
-   <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.class.value+'/'+this.query.value ;">
-    <select class="my-select" name="class">
+   <form method="post" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.class.value+'/'+this.query.value ;">
+    <select class="search-select" name="class">
         <option value="all"  >Everything</option>
 	<option value="gene" [% IF class=='gene' %]selected[% END %]>Gene</option>  
 	<option value="variation"[% IF class=='variation' %]selected[% END %]>Variation</option>

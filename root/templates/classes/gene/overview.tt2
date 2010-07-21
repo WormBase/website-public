@@ -27,29 +27,26 @@
 
    [% WRAPPER $field_block title="Concise Description" %]
          [% fields.concise_description.data %]
-   [% END %]
-
-
-
-   [% WRAPPER $field_block title="History" %]
-        <span id="fade">Make a less ugly table. Standardize history.</span>
-        <table border=1 class="history">
-           [% # find a better way to do this:%]
-           <tr><td>Type</td><td>Version</td><td>Date</td><td>Action</td><td>Remark</td><td>Gene</td><td>Curator</td></tr>
-         [% FOREACH history IN fields.history.data.keys %]
-	       [% FOREACH h IN fields.history.data.$history.keys %]
-               <tr>
-                    <td>[% fields.history.data.$history.$h.type %]</td>
-                    <td>[% h %]</td>
-                    <td>[% fields.history.data.$history.$h.date %]</td>
-                    <td>[% fields.history.data.$history.$h.action %]</td>
-                    <td>[% fields.history.data.$history.$h.remark %]</td>
-                    <td>[% tag2link(fields.history.data.$history.$h.gene) %]</td>
-                    <td>[% tag2link(fields.history.data.$history.$h.curator) %]</td>
-               </tr>
+         
+         <div style="padding-bottom:5px">
+         <div class="toggle">Details:</div>
+         <div class="returned">
+        [% FOREACH sd IN fields.structured_description.data.keys %]
+          [% IF fields.structured_description.data.$sd.first.text.length > 0 %]
+            [% USE String(sd.replace('_', ' ')) %]
+            [% WRAPPER $field_block title=String.capital-%] 
+                [% FOREACH ev IN fields.structured_description.data.$sd %]
+                  [% ev.text %]
+                  [% IF ev.evidence.size > 0 %]
+                      [% evidence_list(ev.evidence) %]
+                  [% ELSE %] <br />
+                  [% END %] <br />
+                [% END %]
             [% END %]
-         [% END %]
-         </table>
+          [% END %]
+        [% END %]
+         </div>
+         </div>
    [% END %]
 
    [% WRAPPER $field_block title="WormBase Referential ID"-%] 
