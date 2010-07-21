@@ -25,24 +25,16 @@
 
     MACRO tag2link(data,text,is_classic) BLOCK;  
       class =  data.class FILTER lower;
+      UNLESS text;
+        text = data.label;
+      END;
        # Classic page URLs.
        IF is_classic;
           url  = site.class2action.$class.action;
-          IF text;
-	   "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">  $text </a>";
-          ELSE;
-	   "<a href=\"$url\?name=" _ data.id _ "\" class=\"$data.class\">  $data.label </a>";
-          END;
+	      "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">$text</a>";
       ELSE;
-	  link = c.uri_for_action('report', class , data.id);
-   #       link = '/reports/' _ class _ '/' _ data.id ;
-   #      link = '/reports/' _ data.link _ '/' _ data.id ;
-         IF text;
-	   "<a href=\"$link\" class=\"$data.class\">  $text </a>";;
-         ELSE;
-	#   "<a href=\"$link\" class=\"$data.class\"> $data.label</a>";
-           "<a href=\"$link\" class=\"$data.class\"> $data.label</a>";
-         END;
+	       link = c.uri_for_action('report', class , data.id);
+           "<a href=\"$link\" class=\"$data.class\">$text</a>";
       END; 
    END;
 
@@ -61,6 +53,12 @@
 	   "<a href=\"/reports/$class/$id\" class=\"$class\">$text</a>";
       END; 
    END;
+
+
+    MACRO external_link(link, text, id) BLOCK;
+        url = c.config.external_url.$link;
+       "<a href=\"$url$id\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url$id\');\">$text</a>";
+    END;
 
 
 # Dynamically select a tempate: custom, common, generic

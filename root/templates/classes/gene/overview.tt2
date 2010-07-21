@@ -10,9 +10,7 @@
    [% END %]
 
    [% WRAPPER $field_block title="Other names" %]
-        [% FOREACH name IN fields.ids.data.other_names %]
-            [% tag2link(fields.name.data, name) %]
-        [% END %]
+        [% tag2link(fields.name.data, fields.ids.data.other_names.join(', ')) %]
    [% END %]
 
    [% WRAPPER $field_block title="Aceview ID" %]
@@ -26,25 +24,22 @@
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Concise Description" key="concise_description"%]
-         [% fields.concise_description.data %]
+         [% desc = '' _ fields.concise_description.data %]
+         [% desc.replace('OMIM:(\d+)', external_link('OMIM','OMIM:$1', '$1')) %]
          
          [% IF fields.structured_description.data.size > 0 %]
          <div class="toggle">Details:</div>
          <div class="returned">
           [% FOREACH sd IN fields.structured_description.data.keys %]
-            [% IF fields.structured_description.data.$sd.first.text.length > 0 %]
               [% USE String(sd.replace('_', ' ')) %]
               [% WRAPPER $subfield_block title=String.capital-%] 
                   [% FOREACH ev IN fields.structured_description.data.$sd %]
-                    <div style="padding:0.5em">
-                    [% ev.text %]
-                    [% IF ev.evidence.size > 0 %]
-                        [% evidence_list(ev.evidence) %]
-                    [% END %]
+                    <div style="margin:0.5em">
+                      [% ev.text %]
+                      [% evidence_list(ev.evidence) %]
                     </div>
                   [% END %]
               [% END %]
-            [% END %]
           [% END %]
          </div>
          [% END %]

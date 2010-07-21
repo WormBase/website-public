@@ -53,6 +53,7 @@
   # eg tooltip,inframe, etc
 %]
 [% MACRO evidence_list(evidence) BLOCK %]
+  [% IF evidence.size > 0 %]
   <div class="evidence">
   [% FOREACH type IN evidence.keys -%] 
       <b>[% type.replace('_',' ') %]</b>:  
@@ -68,6 +69,7 @@
       [% UNLESS loop.last %]<br>[% END %]
   [% END %] 
   </div>
+  [% END %]
 [% END %] 
 
 
