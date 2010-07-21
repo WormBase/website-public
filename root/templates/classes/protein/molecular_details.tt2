@@ -4,7 +4,7 @@
 [% widget = c.stash.widget toggle = 1 %]
 
 [% WRAPPER $field_block title="Protein Length" %]
-  [% c.stash.fields.protein_sequence.data.length %]
+  [% c.stash.fields.protein_sequence.data.length %] aa
 [% END %]
 
 [% WRAPPER $field_block title="Protein Sequence" %]
@@ -16,7 +16,7 @@
   [% END %]
     <div class="sequence-download">
                         <form action="/rest/download/">
-			  <input type="hidden" name="type" value="protein_sequence.fa" >
+			  <input type="hidden" name="type" value="[% object.name.data.id %].fa" >
 			  <input type="hidden" name="sequence" value="[% format_seq %]" >
 			  <input type="submit" value="download"> 
 		      </form>
