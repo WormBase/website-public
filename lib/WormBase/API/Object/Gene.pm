@@ -509,7 +509,7 @@ sub genetic_position {
 
 	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row};
 
-	my %data_pack = (
+	%data_pack = (
 					'link_group'=>$link_group,
 					'position' => $position,
 					'error'=>$error
@@ -1537,7 +1537,286 @@ sub protein_domains_old {
 #}
 
 
+sub rnai_phenotypes {
 
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @rnai = $object->RNAi_result;    
+    foreach my $rnai (@rnai) {
+#    	print "\t$rnai\n";
+		my @phenotypes = $rnai->Phenotype;
+	
+		foreach my $interaction ($rnai->Interaction) {
+	    	my @types = $interaction->Interaction_type;
+	    	foreach (@types) {
+	   
+			push @phenotypes,map { $_->right } grep { $_ eq 'Interaction_phenotype' } $_->col;
+	    		}
+		}
+		#print "\t\t@phenotypes\n";
+		foreach my $phenotype (@phenotypes) {
+			my $not_attribute = $phenotype->right;
+			my $na;
+			my $phenotype_name = $phenotype->Primary_name; ### 'pn'
+			if ($not_attribute =~ m/not/i){
+			
+				$na = $not_attribute;
+			
+			} else {
+			
+				$na = "";
+			
+			}
+			
+			#print "$object\|$rnai\|$phenotype\|$na\n";
+	
+		$data_pack{$rnai} = {
+								'ace_id'=>$rnai,
+								'phenotype'=>$phenotype,	
+								'phenotype_name'=>$phenotype_name,
+								'not_attribute'=>$na,		
+								'class'=>'RNAi'
+								};
+		}	
+	}
+
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub variation_phenotypes {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @variations = $object->Allele;
+	foreach my $variation (@variations) {
+
+		my $seq_status = $variation->SeqStatus;
+		my $variation_name = $variation->Public_name;	
+		my @phenotypes = $variation->Phenotype;
+		
+			foreach my $phenotype (@phenotypes) {
+			    
+			    my @attributes = $phenotype->col;
+			    my $na = "";
+			    my $phenotype_name = $phenotype->Primary_name;
+			    foreach my $attribute (@attributes) {
+			    
+			    	if ($attribute =~ m/^not$/i){
+    
+				    	$na = $attribute;
+  			  
+			    	} else {
+    					
+				    next;
+    
+			    	}
+			    }
+			
+			
+			$data_pack{$variation} = {
+										"ace_id"=>$variation,
+										"phenotype"=>$phenotype,
+										"not_attribute"=>$na,
+										"seq_status"=>$seq_status,
+										"variation_name"=>$variation_name,
+										"phenotype_name"=>$phenotype_name,
+										'class'=>'Variation'
+										
+									};
+			}
+	}
+
+
+
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub transgene_phenotypes {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my %lines;
+	
+	my @xgenes = $object->Drives_Transgene;
+	my @xgene_product = $object->Transgene_product;
+	my @xgene_rescue = $object->Rescued_by_transgene;
+	
+	push @xgenes,@xgene_product;
+	push @xgenes,@xgene_rescue;
+	
+    foreach my $xgene (@xgenes) {
+    
+		my @phenotypes = $xgene->Phenotype;
+		foreach my $phenotype (@phenotypes) {
+			my $not_attribute = $phenotype->right;
+			my $phenotype_name = $phenotype->Primary_name;
+			my $na;
+			
+			if ($not_attribute =~ m/not/i){
+			
+				$na = $not_attribute;
+			} else {
+			
+				$na = "";
+			}
+			
+			$lines{"$object\|$xgene\|$phenotype\|$na\|$phenotype_name"} = 1;
+		}
+	}
+
+	foreach my $line (keys %lines) {
+
+		my($gene,$xgene,$phenotype,$na,$phenotype_name) = split /\|/,$line;
+		
+		$data_pack{$xgene} = {
+							
+							'ace_id'=>$xgene,
+							'class'=>'Transgene',
+							'phenotype'=>$phenotype,
+							'phenotype_name'=>$phenotype_name,
+							'not_attribute'=>$na
+						};
+		
+		
+	}
+
+
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub rnai_details {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+				
+	my %data_pack;
+
+	#### data pull and packaging
+	my %rnais;
+	my @rnais  = $object->RNAi_result;   
+	
+	foreach my $rnai_id (@rnais) { ##keys %$rnai_phenotype_data_hr
+
+		$rnais{$rnai_id} = $rnai_id;
+
+	}
+	
+	foreach my $rnai_object (values %rnais) {
+	
+	#my $rnai_object = $DB->fetch(-class => 'RNAi', -name =>$unique_rnai); #, , -count => 20, -offset=>6800
+	
+	my $ref;
+	$ref = eval{$rnai_object->Reference};
+	my $genotype;
+	my @experimental_details = eval{$rnai_object->Experiment};
+	
+	
+	
+	foreach my $experimental_detail (@experimental_details) {
+			
+		if($experimental_detail =~ m/Genotype/) {
+		
+			$genotype = $experimental_detail->right;
+			# print "$rnai_object\|$genotype\|$ref\n";
+			
+			$data_pack{$rnai_object} = {
+										'ace_id'=>$rnai_object,
+										'class'=>'RNAi',
+										'genotype'=>$genotype,
+										'genotype_class'=>$experimental_detail,
+										'reference'=>$ref
+										};
+			
+			
+			
+		}
+		
+		if($experimental_detail =~ m/Strain/) {
+		
+			my $strain = $experimental_detail->right;
+			$genotype = $strain->Genotype;
+			#print "$rnai_object\|$genotype\|$ref\n";
+			$data_pack{$rnai_object} = {
+										'ace_id'=>$rnai_object,
+										'class'=>'RNAi',
+										'genotype'=>$genotype,
+										'genotype_class'=>$experimental_detail,
+										'reference'=>$ref
+										};
+		}	
+	} 
+
+	if(!($genotype)) {
+		
+		#print "$rnai_object\|$genotype\|$ref\n";
+		$data_pack{$rnai_object} = {
+										'ace_id'=>$rnai_object,
+										'class'=>'RNAi',
+										'genotype'=>$genotype,
+										'genotype_class'=>"",
+										'reference'=>$ref
+										};
+	
+	
+	} else {
+	
+		next;
+	}
+}
+
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 
 sub rnai_phenotypes_old {
