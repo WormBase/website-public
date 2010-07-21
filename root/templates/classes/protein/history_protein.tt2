@@ -1,0 +1,23 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+
+[% WRAPPER $field_block title="Curation History" %]
+ 
+   [% types = fields.history.data.keys.sort %]
+   <table  border= 0, width= '100%' >
+   <tr align= 'left'>
+   [% FOREACH type IN types %]
+      <th> [% type %] </th>
+   [% END %]
+   </tr>
+   [% FOREACH obj IN fields.history.data.version.keys %]
+   <tr>
+      [% FOREACH type IN types %]
+	  <td>[% fields.history.data.$type.$obj %]</td>
+      [% END %]
+   </tr>
+   [% END %]
+   </table>   
+[% END %]
