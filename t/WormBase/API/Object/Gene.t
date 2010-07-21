@@ -42,7 +42,10 @@ isa_ok($gene,'WormBase::API::Object::Gene');
 #### method list
 my @methods = qw/
 
-
+rnai_details
+transgene_phenotypes
+variation_phenotypes
+rnai_phenotypes
 phenotype
  /;
 
