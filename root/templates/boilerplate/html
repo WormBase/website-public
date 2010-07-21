@@ -21,6 +21,10 @@
 
    <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/jquery.dataTables.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/demo_table.css"/>
+   
+    <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/>
+   
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
     <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
