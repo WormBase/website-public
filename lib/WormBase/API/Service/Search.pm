@@ -98,6 +98,9 @@ sub protein {
   # first look for a Protein
   @objs = $DB->fetch(-class=>'Wormpep',-pattern=>$pattern);
   return _wrap_objs($self, \@objs, 'protein') if @objs;
+  # first look for a Protein
+  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>"*$pattern*");
+  return _wrap_objs($self, \@objs, 'protein') if @objs;
 
   # now look for a sequence 
   @objs = $DB->fetch(-query=>qq(find CDS IS "$pattern"; follow Corresponding_protein));

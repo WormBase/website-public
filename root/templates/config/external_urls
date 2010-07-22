@@ -62,6 +62,11 @@
 		     base        = 'http://www.wormbook.org/'
 		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
 	}
+    OMIM      = { description = 'OMIM: the Online Mendelian Inheritance in Man'
+                  maintainer  = ''
+                  base        = 'http://www.ncbi.nlm.nih.gov/omim/'
+                  search      = 'http://www.ncbi.nlm.nih.gov/omim/%s'
+                }
 
    }
 
