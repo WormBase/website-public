@@ -56,8 +56,11 @@
 
 
     MACRO external_link(link, text, id) BLOCK;
-        url = c.config.external_url.$link;
-       "<a href=\"$url$id\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url$id\');\" target=\"_blank\">$text</a>";
+        url = site.external_urls.$link.search;
+        desc = site.external_urls.$link.description;
+        USE String(url);
+        url = String.replace('%s', id);
+       "<a href=\"$url\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" target=\"_blank\" title=\"$desc\">$text</a> ";
     END;
 
 
