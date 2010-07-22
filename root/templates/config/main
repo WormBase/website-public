@@ -55,11 +55,19 @@
    END;
 
 
+# Use to create outgoing links from the site
+# params: link          - the ID for the link found in root/templates/config/external_urls
+#         text          - text displayed in the link
+#         id (optional) - the unique id needed in the url.  If not provided, base url is used.
     MACRO external_link(link, text, id) BLOCK;
-        url = site.external_urls.$link.search;
-        desc = site.external_urls.$link.description;
-        USE String(url);
-        url = String.replace('%s', id);
+        IF id;
+          url = site.external_urls.$link.search;
+          desc = site.external_urls.$link.description;
+          USE String(url);
+          url = String.replace('%s', id);
+       ELSE;
+          url = site.external_urls.$link.base;
+       END;
        "<a href=\"$url\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" target=\"_blank\" title=\"$desc\">$text</a> ";
     END;
 
