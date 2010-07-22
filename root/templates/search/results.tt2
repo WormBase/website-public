@@ -58,6 +58,19 @@
     </li>
     [% IF item.description.des %][% item.description.des %] <br />[% END %]
 
+  [% # PROTEIN %]
+  [% ELSIF item.class == 'protein' %]
+    <li><span id="fade">[% item.class %]:</span>
+      [% tag2link(item.name) %]
+    </li>
+    [% IF item.taxonomy %]
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+    [% END %]
+        [% IF item.type %]
+           [% item.type %]<br />
+        [% END %]
+    
+
   [% ELSIF item.class == 'paper' %]
     [% PROCESS "search/paper.tt2" %]
 
