@@ -1,0 +1,10 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+[% FOREACH tag IN fields.external_links.data.keys.sort %]
+ [% WRAPPER $field_block title=tag %]
+        [% tag2link(fields.external_links.data.$tag) %]  
+  [% END %]
+[% END %]
+   
