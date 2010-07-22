@@ -21,7 +21,7 @@
       [% tag2link(item.name) %]
     </li>
 	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-	[% item.concise_description %] <br />
+	[% markup_omim(item.concise_description) %] <br />
 
   [% # VARIATION %]
   [% ELSIF item.class == 'variation' %]
