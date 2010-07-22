@@ -1,0 +1,6 @@
+<div class="toggle">View Motif Details</div>  
+<div  id="motif_details_dataTable">
+ 	[% dataTable_list(['Feature','Type','Start','End'],motif_details.data,'motif_details_dataTable') %] 
+</div>
+ 
+    
