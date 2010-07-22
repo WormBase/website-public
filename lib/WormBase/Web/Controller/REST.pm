@@ -403,7 +403,7 @@ eg http://localhost/rest/field/[CLASS]/[NAME]/[FIELD]
 
 =cut
 
-sub field :Path('/rest/field') :Args(4) :ActionClass('REST') {}
+sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 
 sub field_GET {
     my ($self,$c,$class,$name,$field) = @_;
