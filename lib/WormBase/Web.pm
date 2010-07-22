@@ -126,6 +126,7 @@ __PACKAGE__->config->{common_widgets} =  { map { $_ => 1 } qw/
 							       references
 							       remarks
                                                                location
+							       external_links
 							     /};
 
 # We should aspire to make ALL widgets generic
