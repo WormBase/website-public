@@ -13,30 +13,38 @@
   [% fields.ortholog_genes.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_block title="Image" %]
+[% WRAPPER $field_block title="Genomic Image" %]
     [% image(c.config.tmp_img_url _'/' _ fields.homology_image.data) %]
 [% END %]
 
+
 [% WRAPPER $field_block title="Motif Summary" %]
-  [% data = c.stash.fields.motif_homologies.data %] 
-   <table  border= 0, width= '100%' >
+  <div id="motif_details"><a class="update motif_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]">[View Details]</a></div> 
+   
+  <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Database</th><th>Description</th><th>Accession</th></tr>
-   [% FOREACH obj IN data.accession.sort %]
-   <tr><td>[% data.database.$obj %]</td><td>[% data.description.$obj %]</td>
-    <td><a href= "[% c.uri_for_action('report', 'motif' , data.accession.$obj ) %]">[% data.accession.$obj %]</a></td></tr>
+   [% FOREACH row IN fields.motif_homologies.data %]
+    <tr>	
+	[% FOREACH obj IN row %]
+	  <td> [% IF obj.class.defined %] [% tag2link(obj) %] [% ELSE %] [% obj %] [% END %]</td>
+	 [% END %]
+    </tr>
    [% END %]
    </table>   
 [% END %]
-
+    
 [% WRAPPER $field_block title="Best BLAST Hits" %]
-  [% data = fields.best_blastp_matches.data %] 
-   <table  border= 0, width= '100%' >
-   <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
-   [% FOREACH obj IN data.hit.keys.nsort %]
-   <tr><td>[% data.species.$obj %]</td>
-    <td><a href= "[% c.uri_for_action('report', 'protein' , data.hit.$obj ) %]">[% data.hit.$obj %]</a></td>
-    <td width=45%>[% data.description.$obj %]</td><td>[% data.evalue.$obj %]</td><td>[% data.plength.$obj %]</td> </tr>
-  [% END %]
+  <div id="blast_details"><a class="update blast_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') %]">[Full List]</a></div> 
+   
+  <table  border= 0, width= '100%' >
+  <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
+   [% FOREACH row IN fields.best_blastp_matches.data %]
+    <tr>	
+	[% FOREACH obj IN row %]
+	  <td> [% IF obj.class.defined %] [% tag2link(obj) %] [% ELSE %] [% obj %] [% END %]</td>
+	 [% END %]
+    </tr>
+   [% END %]
    </table>   
 [% END %]
 
