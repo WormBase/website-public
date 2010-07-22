@@ -57,7 +57,7 @@
 
     MACRO external_link(link, text, id) BLOCK;
         url = c.config.external_url.$link;
-       "<a href=\"$url$id\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url$id\');\">$text</a>";
+       "<a href=\"$url$id\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url$id\');\" target=\"_blank\">$text</a>";
     END;
 
 
