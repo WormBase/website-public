@@ -630,7 +630,7 @@ sub best_blastp_matches {
   my @pep_homol = $biggest->Pep_homol;
   my $length    = $biggest->Peptide(2);
   
-  my %hits;
+  my @hits;
   
   # find the best pep_homol in each category
   my %best;
@@ -686,9 +686,9 @@ sub best_blastp_matches {
 	}
       }
     }
-    
+    $description=$best{$method}{hit}->right(1) if ($hit =~ /^MSP/);
 #     next if ($seen{$species}++);
-    
+=pod   
     if ($hit =~ /(\w+):(.+)/) {
       my $prefix    = $1;
       my $accession = $2;
@@ -705,11 +705,11 @@ sub best_blastp_matches {
 	  }
 	}
       }
-      
+     
       # NOT HANDLED YET!
 #      my $link_rule = $links->{$prefix};
-      my $link_rule = '%s';
-      my $url       = sprintf($link_rule,$accession);
+#       my $link_rule = '%s';
+#       my $url       = sprintf($link_rule,$accession);
       # TH: 1/2006 - remanei not yet in the database but blast hits available
       # Generate links to the remanei browser
       # This will not work for mirror sites, of course...
@@ -721,24 +721,27 @@ sub best_blastp_matches {
 # 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
 #       }
     }
+=cut  
 #       $hits{$hit}{species}=$species;
 #       $hits{$hit}{hit}=$hit;
 #       $hits{$hit}{description}=$description;
 #       $hits{$hit}{evalue}=sprintf("%7.3g",10**-$best{$_}{score});
 #       $hits{$hit}{plength}=sprintf("%2.1f",100*($best{$_}{covered})/$length);
+=pod
  	$hits{species}{$id}=$species;
-        $hits{hit}{$id}=$hit;
+        $hits{hit}{$id}={label=>$hit,id=>$hit,class=>'protein'};
         $hits{description}{$id}=$description;
         $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
-#      push @hits,[$species,$hit,$description,
-#  		sprintf("%7.3g",10**-$best{$_}{score}),
-#  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
+=cut
+      push @hits,[$species,{label=>$hit,id=>$hit,class=>'protein'},"$description",
+  		sprintf("%7.3g",10**-$best{$_}{score}),
+ 		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
  
   my $data = { description => 'Best BLAST Hits from Selected Species',
-		data        => \%hits,
+		data        => \@hits,
     }; 
   return $data;
   
@@ -1682,6 +1685,7 @@ sub history {
 
     my @versions = $history->col;
         foreach my $version (@versions) {
+                #  next unless $history eq 'Version_change';    # View Logic
             my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);     
             if ($history eq 'Version_change') {
             ($vers,$date,$curator,$event,$action,$remark) = $version->row; 
