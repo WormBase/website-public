@@ -11,7 +11,7 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
  
 
-use vars qw(%HIT_CACHE @tags);
+use vars qw(%HIT_CACHE);
 %HIT_CACHE=();
 
 
@@ -145,14 +145,22 @@ sub description {
 ############################################################ 
 
 sub external_links {
-    my $id = eval{shift->cds->[0]}  ;
-    my $data = { description => 'The orthology genes of the protein',
-		 data        =>  { 'Information in Phosphopep' =>
-				      { id => $id  ,
+    my $self=shift;
+    my $id = eval{$self->cds->[0]}  ;
+    my $hash;
+    foreach (@{$self ~~ '@Database'}){
+	next if($_ eq 'WORMPEP');
+	$hash->{$_}={ class=>$_,
+		      id=>$_->right(2),
+		      label=>$_->right(2),
+		      };
+    }
+    $hash->{'Information in Phosphopep'}= { id => $id  ,
 					label=>$id,
 					class=>'phosphopep',
-				      }
-				  }
+				      } if( $id);
+    my $data = { description => 'The external links of the protein',
+		 data        => $hash,
     }; 
     return $data;
  
@@ -177,7 +185,6 @@ sub homology_groups {
 				}
 		   };
     }
-    @hg = ('not assigned') unless(@hg);
     my $data = { description => 'The homology groups of the protein',
 		 data        => \@hg,
     }; 
@@ -223,17 +230,19 @@ sub homology_image {
 sub motif_homologies {
     my $self = shift;
     my (%motif);
-    my %hash;
+#     my %hash;
     my @row;
     foreach (@{$self ~~ '@Motif_homol'}) {
       my $title = $_->Title;
       my ($database,$description,$accession) = $_->Database->row if $_->Database;
-      $hash{database}{$_} = $database;
-      $hash{description}{$_} = $title||$_;
-      $hash{accession}{$_} = $_;
+      $title||=$_;
+      push @row,[("$database","$title",{ label=>"$_", id=>"$_", class=>$_->class})];
+#       $hash{database}{$_} = $database;
+#       $hash{description}{$_} = $title||$_;
+#       $hash{accession}{$_} = { label=>$_, id=>$_, class=>$_->class};
     }
     my $data = { description => 'The motif summary of the protein',
-		 data        => \%hash,
+		 data        => \@row,
     }; 
     return $data;
 }	  
@@ -241,92 +250,114 @@ sub motif_homologies {
 
 sub motif_details {
     my $self = shift;
-    my $obj = $self->object;
-    my $seq   = $self->cds->[0];
     
-    my @raw_features = $self ~~ '@Feature';
-    my @motif_homol = $self ~~ '@Motif_homol';
+    my $raw_features = $self ~~ '@Feature';
+    my $motif_homol = $self ~~ '@Motif_homol';
     
     #  return unless $obj->Feature;
-    
-    print br();
-    print a({-name=>'motif_sum'}, "");
     
     # Summary by Motif
     my @tot_positions;
     
-    if (@raw_features > 0 || @motif_homol > 0) {
+    if (@$raw_features > 0 || @$motif_homol > 0) {
 	my %positions;
-	foreach my $feature (@raw_features) {
+ 
+	foreach my $feature (@$raw_features) {
 	    %positions = map {$_ => $_->right(1)} $feature->col;
 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
-		push @tot_positions,{ feature => $feature,
-				      start   => $start,
-				      stop    => $positions{$start},
-				      range   => $start."_to_".$positions{$start}  ### add range to total position
-				  };
+		my $stop =  $positions{$start};
+		push @tot_positions,[ ( "$feature",'',
+				       "$start",
+				       "$stop")
+				  ];
 	    }
 	}
-	
+ 	
 	# Now deal with the motif_homol features
-	foreach my $feature (@motif_homol) {
+	foreach my $feature (@$motif_homol) {
 	    my $score = $feature->right->col;
 
 	    my $start = $feature->right(3);
 	    my $stop  = $feature->right(4);
-	    my $type = $feature->right;
+	    my $type = $feature->right ||"";
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
-	    (my $accession = $feature) =~ s/^[^:]+://;
-	    my $label = "$type&nbsp;$accession";
-	    my $link = make_ext_link($feature,$label);
+	    (my $label =$feature) =~ s/^[^:]+://;
+	    $type = "$type";
 
 	    # Are the multiple occurences of this feature?
 	    my @multiple = $feature->right->right->col;
+ 
 	    if (@multiple > 1) {
 		foreach my $start (@multiple) {
 		    my $stop = $start->right;
-		    push @tot_positions,{ feature => $link,
-					  start   => $start,
-					  stop    => $stop,
-					  range   => $start."_to_".$stop  ### add range to total position
-				      };
+		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$type},$type,
+					   "$start",
+					   "$stop")
+					];
 		}
 	    } else {
-		push @tot_positions,{ feature => $link,
-				      start   => $start,
-				      stop    => $stop,
-				      range   => $start."_to_".$stop  ### add range to total position
-				  };
+		push @tot_positions,[  ({label=>$label,id=>$label,class=>$type},$type,
+				       "$start",
+				       "$stop")
+				  ];
 	    }
-
 	}
 
-	print start_table({-border =>1, -width=>'100%'});
-	
-	print TR({-class=>'datatitle',-valign=>'top'},
-		 th({-colspan=>3},'Motif Details'));
-	print TR({-class=>'datatitle',-valign=>'top'},
-		 th('Feature'),
-		 th('Start'),
-		 th('End'));
-	
-
-	
-	foreach my $feature (sort {$a->{start} <=> $b->{start} } @tot_positions) 
-	{
-	    # Print the by Motif table
-	    print TR({-class=>'databody'},
-		     td($feature->{feature}),
-		     td($feature->{start}),
-		     td($feature->{stop}));
-	}
-	
-	
-	print end_table;
     }
-    return;
+    my $data = { description => 'The motif details of the protein',
+		 data        => \@tot_positions,
+    }; 
+   
 }
 
+sub blast_details {
+  my $self = shift;
+#   local $^W = 0;  # to avoid loads of uninit variable warnings
+
+  my $homol = $self ~~ '@Pep_homol';
+  # wrestle blast hits into a workable data structure!!
+  my @hits = wrestle_blast($homol);
+  # sort by score
+#   @hits = sort {$b->{score}<=>$a->{score} || $a->{source}<=>$b->{source}} @hits;
+  my @rows;
+  for my $h (@hits) {
+#     my ($url,$id) = hit_to_url($h->{hit}) or next;
+    my $id = $h->{hit};
+    next if ($id =~ /^MSP/); # skip for mass-spec objects, not sure if this is right?
+    my $method = $h->{type};
+
+    my $species =
+      $method =~ /ensembl/ ? 'Homo sapiens'
+	: $method =~ /fly/ ? 'Drosophila melanogaster'
+	  : $method =~ /worm/ ? 'Caenorhabditis elegans'
+	    : $method =~ /briggsae/ ? 'Caenorhabditis briggsae'
+	    : $h->{hit}->Species||"";
+    $species =~ s/^(\w)\w* /$1. /;
+
+    $species = 'C. elegans' if $h->{hit} =~ /^WP:/; # workaround for C. briggsae
+    $species = 'C. briggsae' if $h->{hit} =~ /^BP:/; # workaround for C. briggsae
+    
+     my $description="";
+     if($method =~ /worm|briggsae/) { 
+	 if(my $cds= eval{ $h->{hit}->Corresponding_CDS}){
+	    $description = eval {$cds->Brief_identification} ||("gene " . $cds);
+	  }
+     }else {
+		$description=  $h->{hit}->Description ;	#->Title does not exist
+     }
+    $description ||="";
+    # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
+    my $eval = $h->{score};
+    push @rows,[({label=>"$id",class=>"protein",id=>"$id"},"$species","$description",sprintf("%7.3g",10**-$eval),
+		$h->{source},
+		$h->{target})];
+      
+  }
+  my $data = { description => 'The Blast details of the protein',
+		 data        => \@rows,
+    }; 
+   
+}
 ############################################################
 #
 # The Molecular Details widget
@@ -624,7 +655,7 @@ sub _draw_image {
     my $glyph = $glyphs{$key}  || 'graded_segments';
     my $color = $colors{lc($type)} || 'green';
     my $connector = $key eq 'Pep_homol' ? 'solid' : 'none';
-     $self->log->debug("aaaaaaaaaaaaaaaaa $type $label $key");
+    
     $panel->add_track(segments     => $features{$key},
 		      -glyph       => $glyph,
 		      -label       => ($label =~ /Features/) ? 0 : 1,
@@ -687,5 +718,14 @@ sub wrestle_blast {
   @hits;
 }
 
+sub hit_to_url {
+  my $name = shift;
+  $name =~ /(\w+):(\w+)/ or return; # was $name =~ /(\w+):(.+)/ or return;
+  my $prefix    = $1;
+  my $accession = $2;
+  # Hack for flybase IDs
+  $accession =~ s/CG/00/ if ($prefix =~ /FLYBASE/);
+  return ($prefix,$accession);
+}
 
 1;
