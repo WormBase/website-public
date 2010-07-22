@@ -86,6 +86,52 @@ sub paper {
     return _wrap_objs($self, \@sorted, 'paper');
 }
 
+
+
+sub protein {
+  my ($self,$args) = @_;
+  my $pattern = $args->{pattern};
+  my $offset;
+  my ($count,@objs);
+  my $DB = $self->dbh;
+
+  # first look for a Protein
+  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>$pattern);
+  return _wrap_objs($self, \@objs, 'protein') if @objs;
+
+  # now look for a sequence 
+  @objs = $DB->fetch(-query=>qq(find CDS IS "$pattern"; follow Corresponding_protein));
+  return _wrap_objs($self, \@objs, 'protein') if @objs;
+
+  # now look for a locus
+  @objs = $DB->fetch(-query=>qq(find Locus IS "$pattern"; follow Genomic_sequence; follow Corresponding_protein));
+  return _wrap_objs($self, \@objs, 'protein') if @objs;
+
+  my @genes = @{fetchGene($self, $pattern)};
+  @objs = map {eval {$_->Corresponding_CDS} } @genes if (@genes == 1);
+  @objs = map{ eval {$_->Corresponding_protein} } @objs;
+  return _wrap_objs($self, \@objs, 'protein') if @objs;
+
+  do_accession_search($self, 'Protein',$pattern,$offset);
+}
+
+sub do_accession_search {
+  my ($self,$class,$pattern,$offset) = @_;
+  my $DB = $self->dbh;
+  my @acc = $DB->fetch(-class=>'Accession_number',-pattern=>$pattern);
+  my $search_class = $class;
+  $search_class = 'Sequence' if $class =~ /^(Predicted_gene|Genome_sequence)$/;
+  my @objs;
+  push @objs,grep {$_->class eq $search_class} $_->Entry(2) foreach @acc;
+  my $count = @objs;
+  unless (@acc) {
+    @objs = $DB->fetch(-class=>'Transcript',-pattern=>$pattern);
+  }
+#   return (\@objs,$count);
+  return _wrap_objs($self, \@objs, lc($class)) if @objs;
+}
+
+
 # Search for gene objects
 sub gene {
   my ($self,$args) = @_;
@@ -339,6 +385,9 @@ sub all {
 
    return \@results;
 }
+
+
+
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
