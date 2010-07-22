@@ -24,8 +24,7 @@
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Concise Description" key="concise_description"%]
-         [% desc = '' _ fields.concise_description.data %]
-         [% desc.replace('OMIM:(\d+)', external_link('OMIM','OMIM:$1', '$1')) %]
+         [% markup_omim(fields.concise_description.data) %]
          [% IF fields.structured_description.data.size > 0 %]
          <div class="toggle">Details:</div>
          <div class="returned">
@@ -34,7 +33,7 @@
               [% WRAPPER $subfield_block title=String.capital-%] 
                   [% FOREACH ev IN fields.structured_description.data.$sd %]
                     <div style="margin:0.5em">
-                      [% ev.text %]
+                      [% markup_omim(ev.text) %]
                       [% evidence_list(ev.evidence) %]
                     </div>
                   [% END %]

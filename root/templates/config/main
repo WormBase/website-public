@@ -28,13 +28,13 @@
       UNLESS text;
         text = data.label;
       END;
-       # Classic page URLs.
-       IF is_classic;
-          url  = site.class2action.$class.action;
-	      "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">$text</a>";
+      # Classic page URLs.
+      IF is_classic;
+        url  = site.class2action.$class.action;
+        "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">$text</a>";
       ELSE;
-	       link = c.uri_for_action('report', class , data.id);
-           "<a href=\"$link\" class=\"$data.class\">$text</a>";
+        link = c.uri_for_action('report', class , data.id);
+        "<a href=\"$link\" class=\"$data.class\">$text</a>";
       END; 
    END;
 
@@ -59,18 +59,28 @@
 # params: link          - the ID for the link found in root/templates/config/external_urls
 #         text          - text displayed in the link
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
+# ret: formatted html to link using url and description from config.  
+#      Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
-        IF id;
-          url = site.external_urls.$link.search;
-          desc = site.external_urls.$link.description;
-          USE String(url);
+       UNLESS text; RETURN; END;
+       desc = site.external_urls.$link.description;
+       IF id;
+          USE String(site.external_urls.$link.search);
           url = String.replace('%s', id);
        ELSE;
           url = site.external_urls.$link.base;
        END;
-       "<a href=\"$url\" onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" target=\"_blank\" title=\"$desc\">$text</a> ";
+       "<a href=\"$url\" 
+           onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
+           target=\"_blank\" 
+           title=\"$desc\">$text</a>";
     END;
 
+# Markup any OMIM reference in a text
+    MACRO markup_omim(text) BLOCK;
+      text = '' _ text;
+      text.replace('OMIM:(\d+)((, )(\d+))?', external_link('OMIM','OMIM:$1', '$1') _ '$3' _ external_link('OMIM', '$4', '$4'));
+    END;
 
 # Dynamically select a tempate: custom, common, generic
 MACRO select_field_template(field,class) BLOCK;
