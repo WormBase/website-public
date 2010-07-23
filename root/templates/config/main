@@ -25,10 +25,9 @@
 
     MACRO tag2link(data,text,is_classic) BLOCK;  
       class =  data.class FILTER lower;
-      UNLESS text;
-        text = data.label;
-      END;
+      UNLESS text; text = data.label; END;
       # Classic page URLs.
+      IF c.request.referer.search("/db/"); is_classic = 1; END;
       IF is_classic;
         url  = site.class2action.$class.action;
         "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">$text</a>";
@@ -44,7 +43,7 @@
 # URLs
     MACRO text2link(class,id,text,is_classic) BLOCK;  
        class =  class FILTER lower;
-
+       IF c.request.referer.search("/db/"); is_classic = 1; END;
        # Classic page URLs.
        IF is_classic;
           url  = site.class2action.$class.action;
@@ -77,8 +76,11 @@
     END;
 
 # Markup any OMIM reference in a text
+# marks up ALL references in the format OMIM:(\d+)
+# only works for up to two references listed in a row with OMIM before only the first one
+# eg. OMIM:604297, 309000
     MACRO markup_omim(text) BLOCK;
-      text = '' _ text;
+      text = '' _ text; # for some reason, this has to be here to work
       text.replace('OMIM:(\d+)((, )(\d+))?', external_link('OMIM','OMIM:$1', '$1') _ '$3' _ external_link('OMIM', '$4', '$4'));
     END;
 
@@ -294,7 +296,7 @@ END;
 	       expr_profile = { action = '/db/gene/expr_profile'
 	                        title  = 'Expression profile' }
 
-	       gene       = { action = '/db/gene/report_by_ajax'
+	       gene       = { action = '/db/gene/gene'
                               title  = 'Gene Summary' }
 
 	       gene_name  = { action = '/db/gene/gene'
