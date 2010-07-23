@@ -1,5 +1,5 @@
 
-  $("a.update").live('click',function() {
+  $(".update").live('click',function() {
 
 	$(this).text("updating").show();
 	var url     = $(this).attr("href");
@@ -11,7 +11,9 @@
 						  var msg = "Sorry but there was an error: ";
 						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
 					      }
+					      $(this).children(".toggle").toggleClass("active");
 				      });
+        
 	
   return false;
   });
