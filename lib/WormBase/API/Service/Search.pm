@@ -356,7 +356,9 @@ sub _wrap_objs {
 
   my @ret;
   foreach my $ace_obj (@$list) {
-    my $object = $api->fetch({object => $ace_obj}) or die "$!";
+    # this is faster than passing the ace_obj.  I know, weird.
+    my $object = $api->fetch({class => $ace_obj->class, 
+                            name => $ace_obj}) or die "$!";
     my %data;
     foreach my $field (@$fields) {
       my $field_data = $object->$field;# if  $object->meta->has_method($field);

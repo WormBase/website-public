@@ -126,23 +126,24 @@ sub _build__services {
 # WormBase::API::Object::*
 sub fetch {
     my ($self,$args) = @_;
-    my $class  = $args->{class};
-    my $name   = $args->{name};
-
     # We may have already fetched an object (ie by following an XREF).
     # This is an ugly, ugly hack
-    my $object = $args->{object};
-    
-    if ($object) {
-	$class = $object->class;
+    my $object;
+    my $class;
+
+    if ($args->{object}) {
+      $object = $args->{object};
+      $class = $object->class;
     }
     else {
-	# Try fetching an object (from the default data source)
-	my $service_instance = $self->_services->{$self->default_datasource}; 
-	$object = $service_instance->fetch(-class=>$class,-name=>$name);
-        if($class eq 'Sequence') {
-	    $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
-	}
+      $class  = $args->{class};
+      my $name   = $args->{name};
+      # Try fetching an object (from the default data source)
+      my $service_instance = $self->_services->{$self->default_datasource}; 
+      $object = $service_instance->fetch(-class=>$class,-name=>$name);
+          if($class eq 'Sequence') {
+          $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
+      }
     }
     
     return WormBase::API::Factory->create($class,
