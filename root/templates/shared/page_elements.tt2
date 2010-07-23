@@ -26,35 +26,13 @@
      </div>
 [% END %]
 
-[% BLOCK subfield_block %]
-    <div class="subfield" id="[% title FILTER html %]">
-         <div class="subfield-title">
-
-              [%# Is there a description? Set it as a tool tip %]
-               [% IF fields.$key.description %]
-                <a title="[% fields.$key.description %]">
-                 [% title %]:
-                 </a>
-              [% ELSE %]
-                  [% title %]:
-              [% END %]
-
-          </div>
-
-          <div class="subfield-content">
-             [% content %]
-          </div>
-     </div>
-[% END %]
-
 [% 
   # For dsiplaying a list of evidence
   # Should probably be expanded to included some actual formatting,
   # eg tooltip,inframe, etc
 %]
 [% MACRO evidence_list(evidence) BLOCK %]
-  [% IF evidence.size > 0 %]
-  <div class="evidence">
+
   [% FOREACH type IN evidence.keys -%] 
       <b>[% type.replace('_',' ') %]</b>:  
       [% FOREACH object IN evidence.$type.keys %] 
@@ -68,20 +46,19 @@
       [% END %] 
       [% UNLESS loop.last %]<br>[% END %]
   [% END %] 
-  </div>
-  [% END %]
 [% END %] 
 
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
   [% IF data.size>0 %]
-<script type="text/javascript" >
+ 
+    <script type="text/javascript" >
 	$(document).ready(function() {
 	    $('#[% table %]').dataTable({
-          [% style %]
-          } );
+		[% style %]
+	} );
       } );
-</script>
+    </script>
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table %]">
 	<thead>
 		<tr>
@@ -92,9 +69,11 @@
 	</thead>
 	<tbody>
 	    [% FOREACH row IN data %]
-		<tr> 
-		      [% FOREACH item IN row %]
-		      <td>[% IF item.class.defined %]
+		<tr>
+		      [% FOREACH item IN row %]   
+		      <td> [% IF item.species.defined %]
+				<span class="species">[% item.genus %].[% item.species %]</span>
+			   [% ELSIF item.class.defined %]
 			    [% tag2link(item) %]
 			   [% ELSE %][% item %]
 			   [% END %]
