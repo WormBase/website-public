@@ -686,7 +686,12 @@ sub best_blastp_matches {
 	}
       }
     }
-    $description=$best{$method}{hit}->right(1) if ($hit =~ /^MSP/);
+    if ($hit =~ /^MSP/) {
+	 $description = $best{$method}{hit}->right(1);
+	 $species = "C. elegans";
+    }
+     $species =~ /(.*)\.(.*)/;
+    my $taxonomy = {genus=>$1,species=>$2};
 #     next if ($seen{$species}++);
 =pod   
     if ($hit =~ /(\w+):(.+)/) {
@@ -735,7 +740,7 @@ sub best_blastp_matches {
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
 =cut
-      push @hits,[$species,{label=>$hit,id=>$hit,class=>'protein'},"$description",
+      push @hits,[$taxonomy,{label=>$hit,id=>$hit,class=>'protein'},"$description",
   		sprintf("%7.3g",10**-$best{$_}{score}),
  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
