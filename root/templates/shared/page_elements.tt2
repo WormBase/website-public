@@ -142,8 +142,10 @@
 
 [% BLOCK widget_block %]
    <!-- start [% widget.name %] widget -->
-
-   [% IF c.request.referer.search("/db/") OR is_classic %]
+   [% IF c.request.referer.search("/db/") %]
+      [% is_classic = 1 %]
+   [% END %]
+   [% IF is_classic %]
 
    <tr class="databody" valign="top">	
        <th class="searchtitle" colspan="2" width="125px">
@@ -185,7 +187,7 @@
       </div>
    </section>
 
-    [% IF c.request.referer.search("/db/") OR is_classic %]
+    [% IF is_classic %]
        </table>
       </td>
      </tr>
