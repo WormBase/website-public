@@ -32,10 +32,11 @@
      
 
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
+    <link href="/css/home.css" rel="stylesheet" type="text/css" />
     [% IF is_classic %]
         <link type="text/css" href="/css/wormbase_classic.css" rel="stylesheet" />
     [% END %]
-    <link href="/css/home.css" rel="stylesheet" type="text/css" />
+    
   
 
   </head>

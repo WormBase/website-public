@@ -25,21 +25,7 @@
 
   [% # VARIATION %]
   [% ELSIF item.class == 'variation' %]
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
-	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
-	[% item.status %], [% item.variation_type.general_class %]
-        [% IF item.variation_type.physical_class %]
-           ([% item.variation_type.physical_class %])
-        [% END %]
-        [% IF item.corresponding_gene.defined('label') %]
-            <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
-        [% END %]
-        [% IF item.remarks.size > 0 %]
-           <br />[% item.remarks.join('<br>') %]
-        [% END %]
-        <br />
+    [% PROCESS "search/variation.tt2" %]
 
   [% # SEQUENCE %]
   [% ELSIF item.class == 'sequence' %]
