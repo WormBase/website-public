@@ -10,7 +10,7 @@
  
    [% PROCESS "shared/fields/species.tt2" %]
 
-[% WRAPPER $field_block title="Genes" %]
+[% WRAPPER $field_block title="Gene" %]
   [% FOREACH obj IN fields.genes.data %]
     [% tag2link(obj) %]  <br>
   [% END %]
@@ -28,14 +28,14 @@
 
  [% PROCESS "shared/fields/remarks.tt2" %]
 
-[%# IF fields.status.data.defined %]
+[% IF fields.status.data.defined %]
 [% WRAPPER $field_block title="Status" %]
   [% fields.status.data %]
 [% END %]
-[%# END %]
+[% END %]
 
-[%# IF fields.description.data.defined %]
+[% IF fields.description.data.defined %]
 [% WRAPPER $field_block title="Description" %]
   [% fields.description.data %]
 [% END %]
-[%# END %] 
+[% END %] 
