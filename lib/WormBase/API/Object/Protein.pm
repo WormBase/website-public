@@ -155,7 +155,7 @@ sub external_links {
 		      label=>$_->right(2),
 		      };
     }
-    $hash->{'Information in Phosphopep'}= { id => $id  ,
+    $hash->{'Phosphopep'}= { id => $id  ,
 					label=>$id,
 					class=>'phosphopep',
 				      } if( $id);
@@ -336,7 +336,9 @@ sub blast_details {
 
     $species = 'C. elegans' if $h->{hit} =~ /^WP:/; # workaround for C. briggsae
     $species = 'C. briggsae' if $h->{hit} =~ /^BP:/; # workaround for C. briggsae
-    
+    $species =~ /(.*)\.(.*)/;
+    my $taxonomy = {genus=>$1,species=>$2};
+
      my $description="";
      if($method =~ /worm|briggsae/) { 
 	 if(my $cds= eval{ $h->{hit}->Corresponding_CDS}){
@@ -348,7 +350,7 @@ sub blast_details {
     $description ||="";
     # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
     my $eval = $h->{score};
-    push @rows,[({label=>"$id",class=>"protein",id=>"$id"},"$species","$description",sprintf("%7.3g",10**-$eval),
+    push @rows,[({label=>"$id",class=>"protein",id=>"$id"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
 		$h->{source},
 		$h->{target})];
       
