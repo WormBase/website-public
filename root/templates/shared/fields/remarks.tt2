@@ -2,10 +2,10 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 
-[%# IF fields.remarks.data.defined %]
+[% IF fields.remarks.data.defined %]
   [% WRAPPER $field_block title="Remarks" key="remark" %]
 	[% FOREACH remark IN fields.remarks.data %]
 	    [% remark %]
 	[% END %]
   [% END %]
-[%# END %]
+[% END %]
