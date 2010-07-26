@@ -1949,60 +1949,172 @@ sub rnai_phenotypes_old {
 }
 
 
+# sub gene_models {
+# 
+# 	my $self = shift;
+#     my $object = $self->object;
+# 	my %data;
+# 	my $desc = 'notes ;
+# 				data structure = data{"data"} = {
+# 				}';
+# 
+# 	my %data_pack;
+# 
+# 	#### data pull and packaging
+# 	
+# 	my $seqs = $self->_fetch_sequences();
+# 	
+#     foreach my $seq (sort { $a cmp $b } @$seqs) {
+# 	
+# 	## deal with CDS class sequences
+# 	
+# 		my $cds;
+# 		my $corresponding_cds;
+# 		my $corresponding_protein;
+# 		my @matching_cdna;
+# 		my $seq_class = $seq->class;
+# 		
+# 		if ($seq_class=~ /'CDS'/) {
+# 			
+# 			$corresponding_cds = $seq->Corresponding_CDS;
+# 			@matching_cdna = $cds->Matching_cDNA;
+# 			$corresponding_protein = $corresponding_cds->Corresponding_protein;
+# 		}
+# 		else {
+# 			$corresponding_cds = 'n/a';
+# 			@matching_cdna = ();
+# 			$corresponding_protein = 'n/a';
+# 		
+# 		}
+#         my $seq_hash = {id => $seq, label => "$seq", class => $seq_class};
+# 		
+# 		$data_pack{$seq} = {
+# 		                    'name' => $seq_hash
+# 							,'corresponding_cds'=>$corresponding_cds
+# 							,'matching_cdna'=>\@matching_cdna
+# 							,'corresponding_protein'=>$corresponding_protein
+# 							#,''=>
+# 		
+# 							};
+# 	}
+# 	
+# 	####
+# 
+# 	$data{'data'} = \%data_pack;
+# 	$data{'description'} = $desc;
+# 	return \%data;
+# }
+
+
 sub gene_models {
+  my $self = shift;
+  my $object = $self->object;
+  my $seqs = $self->_fetch_sequences();
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+  my @rows;
 
-	my %data_pack;
+  # $sequence could potentially be a Transcript, CDS, Pseudogene - but
+  # I still need to fetch some details from sequence
+  # Fetch a variety of information about all transcripts / CDS prior to printing
+  # These will be stored using the following keys (which correspond to column headers)
+  my %footnotes;
+  my $footnote_count = 0;
+  foreach my $sequence (sort { $a cmp $b } @$seqs) {
+    my %data = ();
+#     my $model = ObjectDisplay('sequence',$sequence,$sequence);
+    my $model = $sequence->name;
+    my $gff = $self->fetch_gff_gene($sequence) or next;
+    my $cds = ($sequence->class eq 'CDS') ? $sequence : eval { $sequence->Corresponding_CDS };
 
-	#### data pull and packaging
-	
-	my $seqs = $self->_fetch_sequences();
-	
-    foreach my $seq (sort { $a cmp $b } @$seqs) {
-	
-	## deal with CDS class sequences
-	
-		my $cds;
-		my $corresponding_cds;
-		my $corresponding_protein;
-		my @matching_cdna;
-		my $seq_class = $seq->class;
-		
-		if ($seq_class=~ /'CDS'/) {
-			
-			$corresponding_cds = $seq->Corresponding_CDS;
-			@matching_cdna = $cds->Matching_cDNA;
-			$corresponding_protein = $corresponding_cds->Corresponding_protein;
-		}
-		else {
-			$corresponding_cds = 'n/a';
-			@matching_cdna = ();
-			$corresponding_protein = 'n/a';
-		
-		}
-        my $seq_hash = {id => $seq, label => "$seq", class => $seq_class};
-		
-		$data_pack{$seq} = {
-		                    'name' => $seq_hash
-							,'corresponding_cds'=>$corresponding_cds
-							,'matching_cdna'=>\@matching_cdna
-							,'corresponding_protein'=>$corresponding_protein
-							#,''=>
-		
-							};
-	}
-	
-	####
+    my ($confirm,$remark,$protein,@matching_cdna);
+    if ($cds) {
+      $confirm = $cds->Prediction_status; # with or without being confirmed
+      @matching_cdna = $cds->Matching_cDNA; # with or without matching_cdna
+      $protein = $cds->Corresponding_protein(-fill=>1);
+    }
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    # Fetch all the notes for this given sequence / CDS
+    my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
+    foreach (@notes) {
+      $footnotes{$model}{++$footnote_count}{'note'} = $_;
+      $footnotes{$model}{$footnote_count}{'evidence'} = $self->_get_evidence($_);
+    }
+
+    if ($confirm eq 'Confirmed') {
+      $data{status} = "confirmed by cDNA(s)";
+    } elsif (@matching_cdna && $confirm eq 'Partially_confirmed') {
+      $data{status} = "partially confirmed by cDNA(s)";
+    } elsif ($confirm eq 'Partially_confirmed') {
+    $data{status} = "partially confirmed";
+    } elsif ($cds && $cds->Method eq 'history') {
+      $data{status} = 'historical';
+    } else {
+      $data{status} = "predicted";
+    }
+
+    my $len_unspliced  = $gff->length;
+    my $len_spliced = 0;
+
+    for ($gff->features('coding_exon')) {
+
+    if ($object->Species =~ /elegans/) {
+        next unless $_->source eq 'Coding_transcript';
+    } else {        
+        next unless $_->method =~ /coding_exon/ && $_->source eq 'Coding_transcript';
+    }
+    next unless $_->name eq $sequence;
+    $len_spliced += $_->length;
+    }
+#     Try calculating the spliced length for pseudogenes
+    if (!$len_spliced) {
+      my $flag = eval { $object->Corresponding_Pseudogene } || $cds;
+      for ($gff->features('exon:Pseudogene')) {
+        next unless ($_->name eq $flag);
+        $len_spliced += $_->length;
+      }
+    }
+    $len_spliced ||= '-';
+    $data{nucleotides} = "$len_spliced/$len_unspliced bp"
+      if $len_unspliced;
+
+    if ($protein) {
+      my $peplen = $protein->Peptide(2);
+      my $aa   = "$peplen aa";
+      $data{aa} = $aa if $aa;
+    }
+    my $protein_desc = "$protein";
+    $data{model}  = $model    if $model;
+    $data{protein} = $protein_desc if $protein_desc;
+
+    push @rows,\%data;
+  }
+
+   # data is returned in this structure for use with dataTables macro
+   my $data = { description => "The gene models table info",
+                data        =>  { rows => \@rows,
+                                  remarks => \%footnotes
+                                }
+   };
+   return $data;
+}
+
+sub fetch_gff_gene {
+ my ($self,$transcript) = @_;
+
+  my $trans;
+  my $GFF = $self->gff_dsn();
+
+  if ($self->object->Species =~ /briggsae/) {
+      ($trans)      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript);
+  }
+  ($trans)      = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript) unless $trans;
+
+  # Now pseudogenes
+  ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript) unless ($trans);
+
+  # RNA transcripts - this is getting out of hand
+  ($trans) = $GFF->segment(Transcript => $transcript) unless ($trans);
+  return $trans;
 }
 
   
@@ -2460,6 +2572,7 @@ sub _fetch_segments {
     
     # Dynamically fetch a DBH for the correct species
     my $dbh = $self->gff_dsn();
+
 #    my $dbh = $self->service('gff_c_elegans');
     my $object = $self->object;
     my $species = $object->Species;
