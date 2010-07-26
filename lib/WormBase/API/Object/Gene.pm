@@ -2024,7 +2024,7 @@ sub gene_models {
       my $aa   = "$peplen aa";
       $data{aa} = $aa if $aa;
     }
-    my $protein_desc = "$protein";
+    my $protein_desc = { label => $protein->name, id => $protein->name, class=>$protein->class};
     $data{model}  = $model    if $model;
     $data{protein} = $protein_desc if $protein_desc;
 

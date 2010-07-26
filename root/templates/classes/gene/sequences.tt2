@@ -18,6 +18,8 @@
           [% IF o == 'model' %]
             [% id = val.id %]
             [% val = tag2link(val) _ "<span class=\"superscript\">" _ fields.gene_models.data.remarks.$id.keys.nsort.join(',') _ "</span>" %]
+          [% ELSIF o =='protein' %]
+            [% val = tag2link(val) %]
           [% END %]
           [% row.push(val) %]
         [% END %]
