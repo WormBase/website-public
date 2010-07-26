@@ -318,8 +318,8 @@ sub phenotype {
 	    my (@objects,$query_class);
 
 	    # Fetch all RNAi objects that map to this gene
-	    push @objects,
-	    $DB->fetch(-query=>qq{find RNAi where Gene=$gene});
+# 	    push @objects,
+# 	    $DB->fetch(-query=>qq{find RNAi where Gene=$gene});
 
 	    # ...or attached to transgenes
 	    push @objects,
