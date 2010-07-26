@@ -1949,63 +1949,6 @@ sub rnai_phenotypes_old {
 }
 
 
-# sub gene_models {
-# 
-# 	my $self = shift;
-#     my $object = $self->object;
-# 	my %data;
-# 	my $desc = 'notes ;
-# 				data structure = data{"data"} = {
-# 				}';
-# 
-# 	my %data_pack;
-# 
-# 	#### data pull and packaging
-# 	
-# 	my $seqs = $self->_fetch_sequences();
-# 	
-#     foreach my $seq (sort { $a cmp $b } @$seqs) {
-# 	
-# 	## deal with CDS class sequences
-# 	
-# 		my $cds;
-# 		my $corresponding_cds;
-# 		my $corresponding_protein;
-# 		my @matching_cdna;
-# 		my $seq_class = $seq->class;
-# 		
-# 		if ($seq_class=~ /'CDS'/) {
-# 			
-# 			$corresponding_cds = $seq->Corresponding_CDS;
-# 			@matching_cdna = $cds->Matching_cDNA;
-# 			$corresponding_protein = $corresponding_cds->Corresponding_protein;
-# 		}
-# 		else {
-# 			$corresponding_cds = 'n/a';
-# 			@matching_cdna = ();
-# 			$corresponding_protein = 'n/a';
-# 		
-# 		}
-#         my $seq_hash = {id => $seq, label => "$seq", class => $seq_class};
-# 		
-# 		$data_pack{$seq} = {
-# 		                    'name' => $seq_hash
-# 							,'corresponding_cds'=>$corresponding_cds
-# 							,'matching_cdna'=>\@matching_cdna
-# 							,'corresponding_protein'=>$corresponding_protein
-# 							#,''=>
-# 		
-# 							};
-# 	}
-# 	
-# 	####
-# 
-# 	$data{'data'} = \%data_pack;
-# 	$data{'description'} = $desc;
-# 	return \%data;
-# }
-
-
 sub gene_models {
   my $self = shift;
   my $object = $self->object;
@@ -2021,8 +1964,7 @@ sub gene_models {
   my $footnote_count = 0;
   foreach my $sequence (sort { $a cmp $b } @$seqs) {
     my %data = ();
-#     my $model = ObjectDisplay('sequence',$sequence,$sequence);
-    my $model = $sequence->name;
+    my $model = { label => $sequence->name, class => $sequence->class, id => $sequence->name};
     my $gff = $self->fetch_gff_gene($sequence) or next;
     my $cds = ($sequence->class eq 'CDS') ? $sequence : eval { $sequence->Corresponding_CDS };
 
@@ -2036,8 +1978,8 @@ sub gene_models {
     # Fetch all the notes for this given sequence / CDS
     my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
     foreach (@notes) {
-      $footnotes{$model}{++$footnote_count}{'note'} = $_;
-      $footnotes{$model}{$footnote_count}{'evidence'} = $self->_get_evidence($_);
+      $footnotes{$sequence->name}{++$footnote_count}{'note'} = $_;
+      $footnotes{$sequence->name}{$footnote_count}{'evidence'} = $self->_get_evidence($_);
     }
 
     if ($confirm eq 'Confirmed') {
