@@ -29,6 +29,9 @@ use Catalyst qw/-Debug
 		 ConfigLoader
 		 Static::Simple
                  Unicode
+		   Session
+		  Session::Store::FastMmap
+		  Session::State::Cookie
 	       /;
 extends 'Catalyst';
 
