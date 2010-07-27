@@ -74,7 +74,7 @@
 
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
-  [% IF data.size>0 %]
+  [% IF data && data.size>0 %]
  
     <script type="text/javascript" >
 	$(document).ready(function() {
