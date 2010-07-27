@@ -6,6 +6,10 @@
               $(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
+      
+	$(".tooltip").live('mouseover',function() {
+	    $(this).cluetip({activation: 'click',sticky: true, cluetipClass: 'jtip',dropShadow: false, closePosition: 'title',arrows: true, height: '80px',width: '450px',hoverIntent: false});
+	});
   });
 
    //     // Tooltips
