@@ -315,7 +315,9 @@ p.debug-view {
    padding-right:10px;
 }
 
-
+.superscript      { vertical-align:super; 
+                    font-size:0.8em;
+                  }
 /*********************************
 
    Panes - The paned window view
