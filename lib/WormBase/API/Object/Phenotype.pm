@@ -10,50 +10,27 @@ extends 'WormBase::API::Object';
 sub name {
     my $self = shift;
     my $ace  = $self->object;
-    my $data = { description => 'The internal WormBase referential ID of the protein',
+    my $name = ($ace  =~ /WBPheno.*/) ? $ace->Primary_name : $ace ;
+    $name =~ s/_/ /g;
+    my $short_name = $self ~~ 'Short_name';
+    $name = "$short_name ($name)" if(defined $short_name);
+    my $data = { description => 'The name of the phenotype',
 		 data        =>  { id    => "$ace",
-				   label => $ace->name,
+				   label => "$name",
 				   class => $ace->class
 		 },
     };
     return $data;
 }
 
-sub common_name {
-    my $self = shift;
-    my $ace  = $self->object;
-    my $data = { description => 'The internal WormBase referential ID of the protein',
-		 data        =>  { id    => "$ace",
-				   label => $ace->name,
-				   class => $ace->class
-		 },
-    };
-    return $data;
-}
+
 
 ############################################################
 #
 # The Details widget
 #
 ############################################################
-sub primary_name {
-   my $object = shift->object;
-   my $clean_name = ($object  =~ /WBPheno.*/) ? $object->Primary_name : $object ;
-   $clean_name =~ s/_/ /g;
-   
-   my $data = { description => 'The primary name of the phenotype ',
-		 	data        => $clean_name  ,
-    };
-   return $data;
-}
 
-sub short_name {
-    
-   my $data = { description => 'The primary name of the phenotype ',
-		 	data        => shift ~~ 'Short_name'  ,
-    };
-   return $data;
-}
 
 sub synonym  {
     
@@ -66,15 +43,17 @@ sub synonym  {
 sub description {
    my $self=shift;
    my $des= $self ~~ 'Description';
- 
+  
    my $data = { description => 'The description of the phenotype ',
 		 	data        => {      des=>$des ,
-					      evidence=>$self->_get_evidence($des) ,
+					      evidence=>{ flag=> $self->check_empty($des),
+							  tag=>"Description",
+							}
 				      },
     };
    return $data;
 }
-
+=pod
 sub assay {
     
    my $data = { description => 'The Assay of the phenotype ',
@@ -91,18 +70,7 @@ sub remark {
    return $data;
 }
 
-sub wb_id {
-   my $object = shift->object;
-    
-   my $data = { description => 'The WormBase ID of the phenotype ',
-		 	data        => {
-					     id => $object,
-					     label => $object,
-					     class => 'phenotype',
-					  } , 
-    };
-   return $data;
-}
+=cut
 
 
 sub is_dead {
@@ -184,7 +152,7 @@ sub go_term {
 sub transgene {
   
    my $data = { description => "The related transgene of the phenotype ",
-		 	data        => shift->_format_objects('Transgene') , 
+		 	data        => shift->_get_json_data('Transgene') , 
     };
    return $data;
 }
@@ -235,55 +203,32 @@ sub _format_objects {
     my ($self,$tag) = @_;
     my $phenotype = $self->object;
     my %result;
-#     my $count;
     my $is_not;
     my @items=$phenotype->$tag;
-#     $result{number}=scalar(@items);
     my @content_array;
     my @content_array_not;
     foreach (@items){
-=pod
-      unless(defined $detail) {
-	$count++;
-	if ($count > $self->MAX_DISPLAY_NUM) {
-# 		  $result{detail}=1;
-		  last;
-	}
-      }
-	if(defined $count && !defined $detail) {
-	  if(defined $is_not){
-	    my $flag=0;
-	    for my $key (keys %$count){
-		  if($count->{$key}>=$self->MAX_DISPLAY_NUM){
-		     $result{$key}{detail}=1;
-		     $flag++;
-		  }
-	     }
-	    last if($flag==2);
-	  }else { 
-	    if ($count >= $self->MAX_DISPLAY_NUM) {
-		$result{detail}=1;
-		last;
-	    }
-	  }
-	}
-=cut
 	my @array;
 	my $str=$_;
 	if ($tag eq 'RNAi') {
 	    my $cds  = $_->Predicted_gene||"";
 	    my $gene = $_->Gene;    
 	    my $cgc  = eval{$gene->CGC_name} ||"";
-# 	    $str  = $cgc ? "$cds ($cgc)" : $cds;
-# 	    $str.="[$_]";
-	    
-	    push @array,{     id    => "$cds",
-			      label => "$cds",
-			      class => $cds->class,
-			};
-	    push @array,{     id    => "$gene",
-			      label => "$cgc",
-			      class => $gene->class,};
+	    if($gene){
+	      push @array,{     id    => "$gene",
+				label => "$cgc",
+				class => $gene->class,};
+	    }else { push @array, "";}
+	    if($cds){
+	      push @array,{     id    => "$cds",
+				label => "$cds",
+				class => $cds->class,
+			  };
+	    }else { push @array, "";}
+	    $_->Species =~ /(.*) (.*)/;
+	    push @array, {	genus=>$1,
+				species=>$2,
+			    };
 	    $is_not = _is_not($_,$phenotype);
 	}elsif ($tag eq 'GO_term') {
 
@@ -305,17 +250,35 @@ sub _format_objects {
 	} elsif ($tag eq 'Variation') {
 		 $is_not = _is_not($_,$phenotype);
 		 my $gene = $_->Gene;
-		 if(defined $gene) {
+		 if($gene) {
 		  push @array,{id    => "$gene",
-				label => $gene->Public_name->name,
-				class => $gene->class,};
-		 } else { push @array,""; }
-	} 
-=pod
-	if(defined $is_not) {
-	    next if(exists $result{$is_not}{detail});
+				  label => $gene->Public_name->name,
+				  class => $gene->class,};
+		 }else { push @array, "";}
+		  $str = $_->Public_name;
+		  $_->Species =~ /(.*) (.*)/;
+		  push @array, {	genus=>$1,
+				      species=>$2,
+				  };
+		 
+	} elsif ($tag eq 'Transgene') {
+	    #need to deal to Phenotype evidence hash, write more generic code in future/or maybe this already exist
+		foreach my $ph ($_->Phenotype){
+		    next unless ($ph eq $phenotype);
+		    foreach my $tag ($ph->col){
+			next unless($tag eq "Caused_by");
+			my $gene=$ph->$tag;
+			 if($gene) {
+			    push @array,{   id    => "$gene",
+					    label => $gene->Public_name->name,
+					    class => $gene->class,};
+			  }else { push @array, "";}
+		    }
+		}
+		my $genotype = $_->Summary;
+		push @array,$genotype  if($genotype) ;
+		 $is_not = _is_not($_,$phenotype);
 	}
-=cut 
 	my $hash = {    label=> "$str",
 			class => $tag,
 			id => "$_", };
@@ -323,7 +286,7 @@ sub _format_objects {
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
 # 	else { $result{content}{$str} = $hash;$count++;}
 # 	unshift @array, $is_not if(defined $is_not);
-	unshift @array,$hash;
+	push @array,$hash;
 # 	$result{content}{$str} = \@array;
 	if($is_not) {
 	    push @content_array_not, \@array;
