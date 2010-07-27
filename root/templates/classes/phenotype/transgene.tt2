@@ -3,9 +3,12 @@
 
 [% widget = c.stash.widget %]
 
-[% widget = widget %]
- 
-
-[% WRAPPER $field_block  title="phenotype observed in the Transgene entries" key="transgene" %]
-    [% object_list(fields.transgene.data.aaData) %]
+[% WRAPPER $field_block  title="Overexpression of these genes results in a(an) " _ tag2link(object.name.data) _ " phenotype" key="variation" %] 
+    [% dataTable_list(['gene','species','allele'],fields.transgene.data.0.aaData,'table_transgene_0') %]
 [% END %]
+[% fields.transgene.data.1.aaData.first.first %]
+[% fields.transgene.data.0.aaData.first.first %]
+[% WRAPPER $field_block  title="Overexpression of these genes DOES NOT results in a(an) " _ tag2link(object.name.data) _ " phenotype" key="variation" %] 
+    [% dataTable_list(['Gene','Species','Allele'],fields.transgene.data.1.aaData,'table_transgene_1') %]
+[% END %] 
+ 
