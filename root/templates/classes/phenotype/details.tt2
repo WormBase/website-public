@@ -6,27 +6,27 @@
 [% widget = widget %]
  
 
-   [% WRAPPER $field_block  title="Primary name" key="primary_name" %]
-      [% fields.primary_name.data %]
+   [% WRAPPER $field_block  title="Name" key="name" %]
+      [% fields.name.data.label %]
    [% END %]
     
-   [% WRAPPER $field_block  title="Wormbase ID" key="wb_id" %]
-      [% tag2link(fields.wb_id.data) %]
+   [% WRAPPER $field_block  title="Wormbase ID" key="name" %]
+      [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
    
-   [% WRAPPER $field_block  title="Short name" key="short_name" %]
-      [% fields.short_name.data %]
-   [% END %]
 
    [% WRAPPER $field_block  title="Synonym"  key="synonym" %]
       [% fields.synonym.data.join("<br>") %]
    [% END %]
-
+  
    [% WRAPPER $field_block  title="Description" key="description" %]
-      [% fields.description.data.des %]<br>
-      [% evidence_list(fields.description.data.evidence) %]
+    [% c.stash.object= object %]
+      [% fields.description.data.des %]
+      [% IF fields.description.data.evidence.flag %]
+	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/[% fields.description.data.evidence.tag %]>evidence</a>
+      [% END %]
    [% END %]
-
+ 
    [% IF fields.is_dead.data.id.defined %]
      [% WRAPPER $field_block  title="Note" key="is_dead" %]
       [% tag2link(fields.is_dead.data) %]
