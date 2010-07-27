@@ -8,7 +8,22 @@
         });
       
 	$(".tooltip").live('mouseover',function() {
-	    $(this).cluetip({activation: 'click',sticky: true, cluetipClass: 'jtip',dropShadow: false, closePosition: 'title',arrows: true, height: '80px',width: '450px',hoverIntent: false});
+	   // var employee_id = $(this).attr("id");
+	    $(this).cluetip({
+		activation: 'click',
+		sticky: true, 
+		cluetipClass: 'jtip',
+		dropShadow: false, 
+		closePosition: 'title',
+		arrows: true, 
+		height: '80px',
+		width: '450px',
+		hoverIntent: false,
+		//ajaxSettings : {
+	     //       type : "GET",
+		//    data : "id=" + employee_id,
+		//},
+	      });
 	});
   });
 
