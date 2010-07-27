@@ -693,6 +693,7 @@ sub best_blastp_matches {
     if ($hit =~ /^MSP/) {
 	 $description = $best{$method}{hit}->right(1);
 	 $species = "C. elegans";
+     $class = 'protein';
     }
      $species =~ /(.*)\.(.*)/;
     my $taxonomy = {genus=>$1,species=>$2};

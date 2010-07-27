@@ -3047,6 +3047,7 @@ sub build_hash{
 # The Details Panel (Structural Description)
 #######################################################
 
+
 sub structured_description {
    my $self = shift;
    my %ret;
@@ -3054,7 +3055,7 @@ sub structured_description {
    foreach my $type (@types){
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
-      @nodes = map { {text => "$_", evidence => { flag => $self->check_empty($node), tag => $type }}} @nodes;
+      @nodes = map { {text => "$_", evidence => $self->check_empty($node)}} @nodes;
       $ret{$type} = \@nodes if (@nodes > 0);
    }
    my $data = { description => "The structural description of the gene",
@@ -3062,6 +3063,7 @@ sub structured_description {
    };
    return $data;
 }
+
 
 
 
