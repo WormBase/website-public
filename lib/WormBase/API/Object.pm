@@ -676,7 +676,10 @@ sub best_blastp_matches {
     $species ||= $best{$method}{hit}->Species;
     $species =~ s/^(\w)\w* /$1. / ;
     my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-    if ($method =~ /worm|briggsae|remanei|japonica|brenneri/) {
+    my $class;
+
+    # this doesn't seem optimal... maybe there should be something in config?
+    if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
       $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
       # Kludge: display a description using the CDS
       if (!$description) {
@@ -685,6 +688,7 @@ sub best_blastp_matches {
 	  $description ||= "gene $cds";
 	}
       }
+      $class = 'protein';
     }
     if ($hit =~ /^MSP/) {
 	 $description = $best{$method}{hit}->right(1);
@@ -693,23 +697,25 @@ sub best_blastp_matches {
      $species =~ /(.*)\.(.*)/;
     my $taxonomy = {genus=>$1,species=>$2};
 #     next if ($seen{$species}++);
-=pod   
+    my $id;
     if ($hit =~ /(\w+):(.+)/) {
       my $prefix    = $1;
       my $accession = $2;
-      
+      $id = $accession unless $class;
+      $class = $prefix unless $class;
+
       # Try fetching accessions directly from the protein object
-      my @dbs = $hit->Database;
-      foreach my $db (@dbs) {
-	if ($db eq 'FLYBASE') {
-	  foreach my $col ($db->col) {
-	    if ($col eq 'FlyBase_gn') {
-	      $accession = $col->right;
-	      last;
-	    }
-	  }
-	}
-      }
+#       my @dbs = $hit->Database;
+#       foreach my $db (@dbs) {
+# 	if ($db eq 'FLYBASE') {
+# 	  foreach my $col ($db->col) {
+# 	    if ($col eq 'FlyBase_gn') {
+# 	      $accession = $col->right;
+# 	      last;
+# 	    }
+# 	  }
+# 	}
+#       }
      
       # NOT HANDLED YET!
 #      my $link_rule = $links->{$prefix};
@@ -726,7 +732,7 @@ sub best_blastp_matches {
 # 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
 #       }
     }
-=cut  
+
 #       $hits{$hit}{species}=$species;
 #       $hits{$hit}{hit}=$hit;
 #       $hits{$hit}{description}=$description;
@@ -740,7 +746,8 @@ sub best_blastp_matches {
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
 =cut
-      push @hits,[$taxonomy,{label=>$hit,id=>$hit,class=>'protein'},"$description",
+
+      push @hits,[$taxonomy,{label=>$hit,id=>($id ? $id : $hit),class=>$class},"$description",
   		sprintf("%7.3g",10**-$best{$_}{score}),
  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
