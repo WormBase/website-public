@@ -5,10 +5,12 @@
  
 [% widget = widget %]
  
-[% WRAPPER $field_block  title="phenotype observed in the RNAi experimen" key="rnai" %]  
-   [% dataTable_list(['name','cds','gene'],fields.rnai.data.0.aaData,'table_rnai_0') %]
+[% WRAPPER $field_block  title="Gene knockdown (via RNAi) results in a(an) " _ tag2link(object.name.data) _ " phenotype in these
+experiments" key="rnai" %]  
+   [% dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.0.aaData,'table_rnai_0') %]
 [% END %]
 
-[% WRAPPER $field_block  title="phenotype NOT observed in the RNAi experiment" key="rnai" %]  
-   [% dataTable_list(['name','cds','gene'],fields.rnai.data.1.aaData,'table_rnai_1') %]
+[% WRAPPER $field_block  title="Gene knockdown (via RNAi) DOES NOT result in a(an) " _ tag2link(object.name.data) _ " phenotype in
+these experiments" key="rnai" %]  
+   [% dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.1.aaData,'table_rnai_1') %]
 [% END %]
