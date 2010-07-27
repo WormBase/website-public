@@ -819,7 +819,7 @@ sub best_phenotype_name {
   my ($self,$phenotype) = @_;
   my $name = ($phenotype =~ /WBPheno.*/) ? $phenotype->Primary_name : $phenotype;
   $name =~ s/_/ /g;
-  $name .= ' (' . $phenotype->Short_name . ')' if $phenotype->Short_name;
+  $name =  $phenotype->Short_name . " ($name)" if $phenotype->Short_name;
   return $name;
 }
 
@@ -975,12 +975,33 @@ sub _parse_year {
     my $year = $1 || $date;
     return $year;
 }
+sub check_empty {
+  # if flag == 0 meaning empty to the right
+    my ($self,$nodes)=@_;
+    $nodes = [$nodes] unless ref $nodes eq 'ARRAY';
+    my $flag = 0;
+    foreach my $node (@$nodes) {
+	foreach my $type ($node->col) {
+	    $flag = 1;
+	    last;
+	}
+	last if($flag);
+    }
+    return $flag;
+}
+
+sub evidence {
+  my ($self,$tag)=@_;
+  my @nodes=$self->object->$tag;
+  return $self->_get_evidence(@nodes);
+}
 
 sub _get_evidence {
-    my ($self,@nodes,$evidence_type)=@_;
+    my ($self,$nodes,$evidence_type)=@_;
+    $nodes = [$nodes] unless ref $nodes eq 'ARRAY';
     my %data;
 
-    foreach my $node (@nodes) {
+    foreach my $node (@$nodes) {
         next unless $node;
 	foreach my $type ($node->col) {
 	    next if ($type eq 'CGC_data_submission') ;
