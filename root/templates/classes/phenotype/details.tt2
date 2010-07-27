@@ -20,10 +20,11 @@
    [% END %]
   
    [% WRAPPER $field_block  title="Description" key="description" %]
-    [% c.stash.object= object %]
+     
       [% fields.description.data.des %]
-      [% IF fields.description.data.evidence.flag %]
-	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/[% fields.description.data.evidence.tag %]>evidence</a>
+      [% IF fields.description.data.evidence %]
+	[% c.session.des= fields.description.data.des; c.session.object= object.object %]
+	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/des %]>evidence</a>
       [% END %]
    [% END %]
  
