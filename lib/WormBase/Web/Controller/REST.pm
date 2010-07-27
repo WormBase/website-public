@@ -36,12 +36,12 @@ TODO: This is currently just returning a dummy object
 sub evidence :Path('/rest/evidence') :Args(3) :ActionClass('REST') {}
 
 sub evidence_GET {
-    my ($self,$c,$class,$name,$tag) = @_;
+    my ($self,$c,$class,$name,$id) = @_;
 
     my $headers = $c->req->headers;
     $c->log->debug($headers->header('Content-Type'));
     $c->log->debug($headers);
-
+   
     unless ($c->stash->{object}) {
 	# Fetch our external model
 	my $api = $c->model('WormBaseAPI');
@@ -54,7 +54,7 @@ sub evidence_GET {
 	# Fetch a WormBase::API::Object::* object
 	# But wait. Some methods return lists. Others scalars...
 	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
-					    name => $name}) or die "$!";
+					    name => $name,object=>$c->session->{object}}) or die "$!";
     }
     
     # Did we request the widget by ajax?
@@ -64,7 +64,8 @@ sub evidence_GET {
     }
 
     my $object = $c->stash->{object};
-    my $data = $object->evidence($tag);
+#     my $data = $object->evidence($tag);
+    my $data = $object-> _get_evidence($c->session->{$id});
     $c->stash->{evidence} = $data;
     $c->stash->{template} = "shared/generic/evidence.tt2"; 
 
