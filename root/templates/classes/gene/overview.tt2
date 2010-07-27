@@ -31,18 +31,14 @@
           [% FOREACH sd IN fields.structured_description.data.keys %]
               [% USE String(sd.replace('_', ' ')) %]
               [% WRAPPER $subfield_block title=String.capital-%] 
-                  [%# FOREACH ev IN fields.structured_description.data.$sd %]
-
-		  [% ev =fields.structured_description.data.$sd %]
+                  [% FOREACH ev IN fields.structured_description.data.$sd %]
                     <div style="margin:0.5em">
                       [% markup_omim(ev.text) %]
-                      [%# evidence_list(ev.evidence) %]
-		       [% IF ev.evidence.flag %] 
-		      <a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/gene/[% object.name.data.id %]/[% ev.evidence.tag %]">evidence</a>
-		      [% END %]
+                      [% IF ev.evidence.flag %] 
+                        <a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/gene/[% object.name.data.id %]/[% ev.evidence.tag %]">evidence</a>
+                      [% END %]
                     </div>
-
-                  [%# END %]
+                  [% END %]
               [% END %]
           [% END %]
          </div>
