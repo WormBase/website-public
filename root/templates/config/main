@@ -83,7 +83,7 @@
 # eg. OMIM:604297, 309000
     MACRO markup_omim(text) BLOCK;
       text = '' _ text; # for some reason, this has to be here to work
-      text.replace('OMIM:(\d+)((, )(\d+))?', external_link('OMIM','OMIM:$1', '$1') _ '$3' _ external_link('OMIM', '$4', '$4'));
+      text.replace('OMIM:(\d+)((, )(\d+))?', text.search('OMIM:(\d+)((, )(\d+))') ? external_link('OMIM','OMIM:$1', '$1') _  '$3' _ external_link('OMIM', '$4', '$4') : external_link('OMIM','OMIM:$1', '$1'));
     END;
 
 # Dynamically select a tempate: custom, common, generic
