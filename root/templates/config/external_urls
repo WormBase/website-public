@@ -84,6 +84,9 @@
                       search = 'http://www.ebi.uniprot.org/entry/%s'
                         base = 'http://www.ebi.ac.uk/uniprot'
                }
+          HI = { description = 'H-InvDB: Annotated Human Gene Database'
+                      search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
+               }
    }
 
 -%]

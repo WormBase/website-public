@@ -34,8 +34,8 @@
                   [% FOREACH ev IN fields.structured_description.data.$sd %]
                     <div style="margin:0.5em">
                       [% markup_omim(ev.text) %]
-                      [% IF ev.evidence.flag %] 
-                        <a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/gene/[% object.name.data.id %]/[% ev.evidence.tag %]">evidence</a>
+                      [% IF ev.evidence %] 
+                        <a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/gene/[% object.name.data.id %]/[% sd %]">evidence</a>
                       [% END %]
                     </div>
                   [% END %]
