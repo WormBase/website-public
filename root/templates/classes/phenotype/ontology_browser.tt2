@@ -5,7 +5,7 @@
 
 [% widget = widget %]
  
-[% link=c.config.external_url.tree_lister _ fields.wb_id.data.id %]
+[% link=c.config.external_url.tree_lister _ object.name.data.id %]
  
  				       
      <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
