@@ -721,3 +721,9 @@ table.multi       { padding: 0;
 
 /* Ajax loading animations */
 #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
+
+.tooltip {
+	 padding: 0 0 0 20px;
+	background: url(/img/ui_widgets/Magnifying-Glass-icon.png) no-repeat ;
+	  
+}
