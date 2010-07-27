@@ -45,7 +45,10 @@
 	[% FOREACH obj IN row %]
 	  <td>[% IF obj.species.defined %]
 		<span class="species">[% obj.genus %].[% obj.species %]</span>
-	       [% ELSIF obj.class.defined %] [% tag2link(obj) %] [% ELSE %] [% obj %] [% END %]</td>
+	       [% ELSIF obj.class == 'protein' %] [% tag2link(obj) %] 
+           [% ELSIF obj.class.defined %] [% external_link(obj.class, obj.label, obj.id)  %] 
+           [% ELSE %] [% obj %]
+           [% END %]</td>
 	 [% END %]
     </tr>
    [% END %]

@@ -62,12 +62,28 @@
 		     base        = 'http://www.wormbook.org/'
 		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
 	}
-    OMIM      = { description = 'OMIM: Online Mendelian Inheritance in Man'
+    OMIM     = { description = 'OMIM: Online Mendelian Inheritance in Man'
                   maintainer  = 'info@ncbi.nlm.nih.gov'
                   base        = 'http://www.ncbi.nlm.nih.gov/omim/'
                   search      = 'http://www.ncbi.nlm.nih.gov/omim/%s'
                 }
-
+    
+    FLYBASE  = { description = 'FlyBase: a database for drosophila genetics and molecular biology'
+                        base = 'http://www.flybase.org'
+                      search = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
+               }
+     ENSEMBL = { description = 'The Ensembl Project'
+                      search = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s'
+                        base = 'http://www.ensembl.org'
+               }
+         SGD = { description = 'GO Term finder - Stanford University'
+                      search =  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
+                        base =  'http://genome-www4.stanford.edu'
+               }
+     UNIPROT = { description = 'UniProt | The Universal Protein Resource | EBI'
+                      search = 'http://www.ebi.uniprot.org/entry/%s'
+                        base = 'http://www.ebi.ac.uk/uniprot'
+               }
    }
 
 -%]

@@ -62,7 +62,8 @@
 # ret: formatted html to link using url and description from config.  
 #      Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
-       UNLESS text; RETURN; END;
+       UNLESS text; text = id; UNLESS text; RETURN; END; END;
+       IF (link == 'SW' OR link == 'SPTREMBL' OR link == 'TR'); link = 'UNIPROT'; END;
        desc = site.external_urls.$link.description;
        IF id;
           USE String(site.external_urls.$link.search);
