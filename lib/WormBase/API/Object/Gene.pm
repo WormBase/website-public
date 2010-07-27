@@ -3055,7 +3055,7 @@ sub structured_description {
    foreach my $type (@types){
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
-      @nodes = map { {text => "$_", evidence => $self->check_empty($node)}} @nodes;
+      @nodes = map { {text => $_, evidence => $self->check_empty($_)}} @nodes;
       $ret{$type} = \@nodes if (@nodes > 0);
    }
    my $data = { description => "The structural description of the gene",
