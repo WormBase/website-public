@@ -2997,9 +2997,15 @@ sub structured_description {
    my %ret;
    my @types = qw(Provisional_description Other_description Sequence_features Functional_pathway Functional_physical_interaction Molecular_function Sequence_features Biological_process Expression Detailed_description);
    foreach my $type (@types){
-      my @nodes = $self->object->$type;
-      @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
-      $ret{$type} = \@nodes if (@nodes > 0);
+	my $node = $self->object->$type or next;
+	 
+	$ret{$type} = { text => $node, evidence => {	flag=>$self->check_empty($node),
+							tag=>$type,
+						  }
+		      }
+#       my @nodes = $self->object->$type;
+#       @nodes = map { {text => "$_", evidence => $self->_get_evidence($_)}} @nodes;
+#       $ret{$type} = \@nodes if (@nodes > 0);
    }
    my $data = { description => "The structural description of the gene",
                 data        =>  \%ret
