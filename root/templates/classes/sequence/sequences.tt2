@@ -3,16 +3,13 @@
 
 [% widget = c.stash.widget toggle = 1%]
 
-[% WRAPPER $field_block title="Genomic Position(s)" %]
-     [% FOREACH key IN  c.stash.fields.genomic_location.data %]
-      CHROMOSOME_[% key.label %] [% tag2link(key,"[Browse map]") %] 
-      [% tag2link(c.stash.fields.print_sequence.data.est) %] <br>
-   [% END %]
+[% WRAPPER $field_block title="ESTs" %]
+     <button onclick="window.location='[% c.external_url.aligner _ fields.print_sequence.data.est %]'" >View EST alignments</button>
 [% END %] 
 
 [% WRAPPER $field_block title="Predicted Exon Structure" %]
   [% data = c.stash.fields.print_feature.data.exons %]
-  NOTE: Transcript is on ([% data.orientation%]) strand.<br>
+  NOTE: Transcript is on ([% data.orientation %]) strand.<br>
   <table>
     <tr><th></th><th colspan=2>Relative to Itself</th><th colspan=2>Relative to [%data.parent%]</th></tr>
     <tr><th>Exon #</th><th>Start</th><th>End</th><th>Start</th><th>End</th></tr>
@@ -22,11 +19,7 @@
   </table>
 [% END %] 
 
-[% WRAPPER $field_block title="Matching cDNAs" %]
-   [% FOREACH key IN  c.stash.fields.print_cdna.data %]
-      [% tag2link(key) %]<br>
-   [% END %] 
-[% END %] 
+ 
 
 [% WRAPPER $field_block title="Blast" %]
     [% data= c.stash.fields.print_blast.data %]
