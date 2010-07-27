@@ -1,0 +1,25 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+ 
+  [% IF evidence.size > 0 %]
+  <div class="evidence">
+  [% FOREACH type IN evidence.keys -%] 
+      <b>[% type.replace('_',' ') %]</b>:  
+      [% FOREACH object IN evidence.$type.keys %] 
+          
+        [% IF evidence.$type.$object.class.defined %]
+        [% tag2link(evidence.$type.$object) %]
+        [% ELSE %]
+        [% evidence.$type.$object.label %]  
+        [% END %]
+        [% UNLESS loop.last %];[% END %]
+      [% END %] 
+      [% UNLESS loop.last %]<br>[% END %]
+  [% END %] 
+  </div>
+  [% END %]
+      
+      
+
+
+ 
