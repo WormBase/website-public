@@ -46,9 +46,8 @@ sub description {
   
    my $data = { description => 'The description of the phenotype ',
 		 	data        => {      des=>$des ,
-					      evidence=>{ flag=> $self->check_empty($des),
-							  tag=>"Description",
-							}
+					      evidence=> $self->check_empty($des),
+							
 				      },
     };
    return $data;
