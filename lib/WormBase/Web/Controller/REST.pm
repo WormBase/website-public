@@ -32,7 +32,52 @@ Return a list of all available pages and their URIs
 TODO: This is currently just returning a dummy object
 
 =cut
+
+sub evidence :Path('/rest/evidence') :Args(3) :ActionClass('REST') {}
+
+sub evidence_GET {
+    my ($self,$c,$class,$name,$tag) = @_;
+
+    my $headers = $c->req->headers;
+    $c->log->debug($headers->header('Content-Type'));
+    $c->log->debug($headers);
+
+    unless ($c->stash->{object}) {
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
  
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
+					    name => $name}) or die "$!";
+    }
+    
+    # Did we request the widget by ajax?
+    # Supress boilerplate wrapping.
+    if ( $c->is_ajax() ) {
+	$c->stash->{noboiler} = 1;
+    }
+
+    my $object = $c->stash->{object};
+    my $data = $object->evidence($tag);
+    $c->stash->{evidence} = $data;
+    $c->stash->{template} = "shared/generic/evidence.tt2"; 
+
+    my $uri = $c->uri_for("/page",$class,$name);
+    $self->status_ok($c, entity => {
+	                 class  => $class,
+			 name   => $name,
+	                 uri    => "$uri",
+			 evidence => $data
+		     }
+	);
+}
+
 sub search_new :Path('/search_new')  :Args(2) {
     my ($self, $c, $type, $query) = @_;
      
