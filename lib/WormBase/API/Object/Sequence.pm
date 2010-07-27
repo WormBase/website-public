@@ -171,7 +171,7 @@ sub _build_type {
 sub name {
     my $self = shift;
     my $ace  = $self->object;
-    my $data = { description => 'The internal WormBase referential ID of the sequence',
+    my $data = { description => 'The name of the sequence',
 		 data        =>  { id    => "$ace",
 				   label => $ace->name,
 				   class => $ace->class
@@ -179,22 +179,7 @@ sub name {
     };
     return $data;
 }
-
-sub common_name {
-     my $self = shift;
-    my $ace  = $self->object;
-    my $data = { description => 'The publice name of the sequence',
-		 data        =>  { id    => "$ace",
-				   label => $ace->name,
-				   class => $ace->class
-		 },
-    };
-    return $data;
-}
-
-
  
-
 ############################################################
 #
 # The Overview widget
@@ -239,10 +224,11 @@ sub sequence_type {
 sub corresponding_gene {
     my $self = shift;
     my $gene = $self ~~ 'Gene';
-    my $bestname = $self->bestname($gene) || '';
+    my $bestname = $self->bestname($gene);
     my $label;
-    $label = ($self->method ne 'Coding_transcript' )
-		? "$bestname ($gene)" : $bestname if($gene && $self->method ne 'Genefinder');
+#     $label = ($self->method ne 'Coding_transcript' )
+# 		? "$bestname ($gene)" : $bestname if($gene && $self->method ne 'Genefinder');
+    $label = $bestname || $gene;
     return unless $label;
     my $data = { description => 'The Corresponding gene of the sequence',
 		 data        => { label => $label,
@@ -356,7 +342,7 @@ sub source_clone {
     return $data;    
 }
 
-sub genomic_location {
+sub genomic_position {
     my $self = shift;
     return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
     my @a;
@@ -377,7 +363,7 @@ sub genomic_location {
     return $data;    
 }
 
-sub interpolated_genetic_position {
+sub genetic_position {
     my $self = shift;
     return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
     my ($chrom,$pos) = $self->GetInterpolatedPosition($self->object);
@@ -441,7 +427,6 @@ sub transgene_constructs {
 sub remarks {
     my $self = shift;
     my @remarks =map {ucfirst($_)} map { $self->object->get($_) } qw(Remark DB_remark);
-    return unless @remarks;
    
     my $data = { description => 'The Remarks of the sequence',
 		 data        => \@remarks,
@@ -545,7 +530,7 @@ sub external_links {
 	$hash{'Uniprot Accession number'}{class}='Trembl';
     }
     if (eval { $s->Coding(0) }) {
-	$hash{'Intronerator'}{label}="Intronerator: $s";
+	$hash{'Intronerator'}{label}=$s;
 	$hash{'Intronerator'}{id}=$s;
 	$hash{'Intronerator'}{class}='Intronerator';
     } 
@@ -655,7 +640,7 @@ sub print_link_parts {
 sub print_blast {
     my $self = shift;
     my @target = ('Elegans genome');
-    push @target,"WormPep" if( $self ~~ 'Coding');
+    push @target,"Elegans protein" if( $self ~~ 'Coding');
     my $data = { description => 'The Analysis info of the sequence',
 		 data        =>  {
 					source => $self ~~ 'name',
@@ -706,9 +691,8 @@ sub print_sequence {
 
 #     print_genomic_position($s,$type);
      
-    $hash{est}{id} = "name=$s;class=CDS";
-    $hash{est}{class} = 'aligner';
-     $hash{est}{label} = '[View EST alignments]';
+    $hash{est} = "name=$s;class=CDS";
+   
 
     if (eval { $s->Properties eq 'cDNA'} ){
       # try to use acedb

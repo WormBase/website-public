@@ -29,6 +29,12 @@
   [% c.stash.fields.matching_cds.data %]
 [% END %]
 
+[% WRAPPER $field_block title="Matching cDNAs" %]
+   [% FOREACH key IN  c.stash.fields.print_cdna.data %]
+      [% tag2link(key) %]<br>
+   [% END %] 
+[% END %] 
+
 [% WRAPPER $field_block title="Matching Transcript" %]
   [% c.stash.fields.matching_transcript.data %]
 [% END %]
@@ -49,40 +55,17 @@
   [% c.stash.fields.briggsae_orthologs.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_block title="ORFeome Assays" %]
-  [% FOREACH key IN c.stash.fields.orfeome_assays.data.keys.sort %]
-    [% tag2link(c.stash.fields.orfeome_assays.data.$key) %]<br>
-  [% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Source Clone" %]
-  [% c.stash.fields.source_clone.data %]
-[% END %]
-
-[% WRAPPER $field_block title="Genomic Location" %]
-   [% FOREACH key IN  c.stash.fields.genomic_location.data %]
-      [% tag2link(key) %]<br>
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Interpolated Genetic Position" %]
-  [% tag2link(c.stash.fields.interpolated_genetic_position.data) %]
-[% END %]
 
 [% WRAPPER $field_block title="Transcripts in this region" %]
   [% FOREACH key IN  c.stash.fields.transcripts.data %]
       <a href="[% c.uri_for_action('report','sequence' ,key ) %]">[% key %]</a><br>
    [% END %]
 [% END %]
+ 
+[% PROCESS "shared/fields/remarks.tt2" %]
 
-[% WRAPPER $field_block title="Microarray Assays" %]
-  [% FOREACH key IN  c.stash.fields.microarray_assays.data %]
-      <a href="[% c.uri_for_action('report','oligo_set' ,key ) %]">[% key %]</a><br>
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Transgene Constructs" %]
-  [% FOREACH key IN  c.stash.fields.transgene_constructs.data %]
-      <a href="[% c.uri_for_action('report','transgene' ,key ) %]">[% key %]</a><br>
-   [% END %]
+[% WRAPPER $field_block title="Analysis" %]
+  [% FOREACH key IN c.stash.fields.analysis.data.keys.sort %]
+    [% key %]:[% c.stash.fields.analysis.data.$key %]<br>
+  [% END %]
 [% END %]
