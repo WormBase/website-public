@@ -225,10 +225,13 @@ sub _format_objects {
 				class => $cds->class,
 			  };
 	    }else { push @array, "";}
-	    $_->Species =~ /(.*) (.*)/;
-	    push @array, {	genus=>$1,
-				species=>$2,
-			    };
+	    if(my $sp = $_->Species){
+	      $sp =~ /(.*) (.*)/;
+	      push @array, {	genus=>$1,
+				  species=>$2,
+			      };
+	    }else { push @array, "";}
+
 	    $is_not = _is_not($_,$phenotype);
 	}elsif ($tag eq 'GO_term') {
 
@@ -256,10 +259,12 @@ sub _format_objects {
 				  class => $gene->class,};
 		 }else { push @array, "";}
 		  $str = $_->Public_name;
-		  $_->Species =~ /(.*) (.*)/;
-		  push @array, {	genus=>$1,
-				      species=>$2,
-				  };
+		  if(my $sp = $_->Species){
+		    $sp =~ /(.*) (.*)/;
+		    push @array, {	genus=>$1,
+					species=>$2,
+				    };
+		  }else { push @array, "";}
 		 
 	} elsif ($tag eq 'Transgene') {
 	    #need to deal to Phenotype evidence hash, write more generic code in future/or maybe this already exist
