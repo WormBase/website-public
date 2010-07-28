@@ -22,5 +22,5 @@
 </div>
 <!-- end boilerplate/footer -->
 
-[% google_analytics %]
+[% INCLUDE google_analytics %]
 
