@@ -1,6 +1,8 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
+
+
 <!-- begin boilerplate/footer -->
 <div id="footer">
     <div id="footercredit">
@@ -20,5 +22,5 @@
 </div>
 <!-- end boilerplate/footer -->
 
-
+[% google_analytics %]
 
