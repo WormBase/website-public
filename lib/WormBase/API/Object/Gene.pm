@@ -1962,6 +1962,9 @@ sub gene_models {
   # These will be stored using the following keys (which correspond to column headers)
   my %footnotes;
   my $footnote_count = 0;
+
+  my $unique_remarks = 0;
+  my %unique_remarks;
   foreach my $sequence (sort { $a cmp $b } @$seqs) {
     my %data = ();
     my $model = { label => $sequence->name, class => $sequence->class, id => $sequence->name};
@@ -1978,8 +1981,15 @@ sub gene_models {
     # Fetch all the notes for this given sequence / CDS
     my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
     foreach (@notes) {
-      $footnotes{$sequence->name}{++$footnote_count}{'note'} = $_;
-      $footnotes{$sequence->name}{$footnote_count}{'evidence'} = $self->_get_evidence($_);
+      my $count = $unique_remarks{$_};
+      unless ($count) {
+        $count = ++$unique_remarks;
+        $footnotes{$sequence->name}{$count}{'note'} = $_;
+        $footnotes{$sequence->name}{$count}{'evidence'} = $self->_get_evidence($_);
+      } else {
+        $footnotes{$sequence->name}{$count}++;
+      }
+      $unique_remarks{$_} = $count;
     }
 
     if ($confirm eq 'Confirmed') {
