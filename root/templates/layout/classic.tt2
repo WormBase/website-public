@@ -56,7 +56,6 @@
 		    [%# This is a work in progress: I want to sequentially load widgets.
 		        Firefox does this using the existing code, but other browsers do not.			
 			%] 
-		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
                     <script>
                              $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
