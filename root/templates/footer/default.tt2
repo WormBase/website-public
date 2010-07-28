@@ -14,8 +14,8 @@
      </div>
     <div id="footermeta">
           [%# INCLUDE elements/social/sharethis.tt2 %]
-          <a href="http://www.wormbase.org/wiki/index.php/WormBaseWiki:Copyrights">Copyright </a> |
-          <a href="http://www.wormbase.org/wiki/index.php/Acceptable_use_policy#Privacy_statement">Privacy</a>
+          <a href="http://wiki.wormbase.org/index.php/WormBaseWiki:Copyrights">Copyright </a> |
+          <a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy</a>
     </div>
 </div>
 <!-- end boilerplate/footer -->
