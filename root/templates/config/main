@@ -24,17 +24,20 @@
 #
 
     MACRO tag2link(data,text,is_classic) BLOCK;  
-      class =  data.class FILTER lower;
       UNLESS text; text = data.label; END;
-      # Classic page URLs.
+      url = get_url(data.class, data.id, is_classic);
+      "<a href=\"$url\" class=\"$data.class-link\">$text</a>";
+   END;
+
+   MACRO get_url(class, id, is_classic) BLOCK;
+      class =  class FILTER lower;
       IF c.request.referer.search("/db/"); is_classic = 1; END;
       IF is_classic;
         url  = site.class2action.$class.action;
-        "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class-link\">$text</a>";
+        "$url\?name=" _ id;
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
-        link = c.uri_for_action('report', class , data.id);
-        "<a href=\"$link\" class=\"$data.class-link\">$text</a>";
+        c.uri_for_action('report', class , id);
       END; 
    END;
 
@@ -44,14 +47,8 @@
 # URLs
     MACRO text2link(class,id,text,is_classic) BLOCK;  
        class =  class FILTER lower;
-       IF c.request.referer.search("/db/"); is_classic = 1; END;
-       # Classic page URLs.
-       IF is_classic;
-          url  = site.class2action.$class.action;
-	   "<a href=\"$url\?name=$id\" class=\"$class-link\">$text</a>";
-      ELSE;
-	   "<a href=\"/reports/$class/$id\" class=\"$class-link\">$text</a>";
-      END; 
+       url = get_url(class, id, is_classic);
+       "<a href=\"$url\" class=\"$class-link\">$text</a>";
    END;
 
 

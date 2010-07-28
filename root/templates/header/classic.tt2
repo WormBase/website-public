@@ -3,14 +3,14 @@
 <td bgcolor="#b4cbdb" align="center" style="cursor:pointer" nowrap onClick="c('/')">
 			  <a href="http://www.wormbase.org/" class="bactive" ><font color="#FFFF99"><b>Home</b></font></a></td>
 <td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/seq/gbrowse/c_elegans/')">
-			  <a href="http://www.wormbase.org/db/seq/gbrowse/elegans/" class="binactive" onMouseOver="balloon.showTooltip(event,'Genome')"><font color="#FFFFFF">Genome</font></a></td>
+			  <a href="http://www.wormbase.org/db/gb2/gbrowse/c_elegans/" class="binactive" onMouseOver="balloon.showTooltip(event,'Genome')"><font color="#FFFFFF">Genome</font></a></td>
+<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/cgi-bin/gbrowse_syn/compara/')">
+              <a href="http://www.wormbase.org/cgi-bin/gbrowse_syn/compara/" class="binactive" onMouseOver="balloon.showTooltip(event,'Synteny')"><font color="#FFFFFF">Synteny</font></a></td>
 <td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/blast_blat')">
 			  <a href="http://www.wormbase.org/db/searches/blast_blat" class="binactive" onMouseOver="balloon.showTooltip(event,'Blast / Blat')"><font color="#FFFFFF">Blast / Blat</font></a></td>
 
 <td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('http://www.wormbase.org/Multi/martview')">
 			  <a href="http://www.wormbase.org/biomart/martview" class="binactive" onMouseOver="balloon.showTooltip(event,'WormMart')"><font color="#FFFFFF">WormMart</font></a></td>
-<td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/advanced/dumper')">
-			  <a href="http://www.wormbase.org/db/searches/advanced/dumper" class="binactive" onMouseOver="balloon.showTooltip(event,'Batch Sequences')"><font color="#FFFFFF">Batch Sequences</font></a></td>
 <td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/searches/strains')">
 			  <a href="http://www.wormbase.org/db/searches/strains" class="binactive" onMouseOver="balloon.showTooltip(event,'Markers')"><font color="#FFFFFF">Markers</font></a></td>
 <td bgcolor="#5870a3" align="center" style="cursor:pointer" nowrap onClick="c('/db/gene/gmap')">
