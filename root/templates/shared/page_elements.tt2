@@ -218,7 +218,7 @@
      <!-- END [% title %] section -->
      [% END %]
 
-     <!-- end [% widget %] widget -->
+     <!-- end [% widget.name %] widget -->
 [% END %]
 
 

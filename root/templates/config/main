@@ -30,11 +30,11 @@
       IF c.request.referer.search("/db/"); is_classic = 1; END;
       IF is_classic;
         url  = site.class2action.$class.action;
-        "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class\">$text</a>";
+        "<a href=\"$url\?name=" _ data.id  _ "\" class=\"$data.class-link\">$text</a>";
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
         link = c.uri_for_action('report', class , data.id);
-        "<a href=\"$link\" class=\"$data.class\">$text</a>";
+        "<a href=\"$link\" class=\"$data.class-link\">$text</a>";
       END; 
    END;
 
@@ -48,9 +48,9 @@
        # Classic page URLs.
        IF is_classic;
           url  = site.class2action.$class.action;
-	   "<a href=\"$url\?name=$id\" class=\"$class\">$text</a>";
+	   "<a href=\"$url\?name=$id\" class=\"$class-link\">$text</a>";
       ELSE;
-	   "<a href=\"/reports/$class/$id\" class=\"$class\">$text</a>";
+	   "<a href=\"/reports/$class/$id\" class=\"$class-link\">$text</a>";
       END; 
    END;
 
