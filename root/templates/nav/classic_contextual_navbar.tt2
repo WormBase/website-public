@@ -10,15 +10,15 @@
 
   [% IF class.search("variation") %]
        <td class="small" align="center">
-               <a target="_top" href="/db/gene/gene?name=[% name %];class=[% class %]">Gene Summary</a>
+               <a target="_top" href="/db/gene/gene?name=[% this_object_id %];class=[% class %]">Gene Summary</a>
        </td>
 
        <td class="small" align="center">
-               <a target="_top" href="/db/gene/locus?name=[% name %];class=[% class %]">Locus Summary</a>
+               <a target="_top" href="/db/gene/locus?name=[% this_object_id %];class=[% class %]">Locus Summary</a>
        </td>
 
        <td class="small" align="center">
-               <a target="_top" href="/db/gb2/gbrowse/c_elegans?name=[% name %];class=[% class %]">Genome Browser</a>
+               <a target="_top" href="/db/gb2/gbrowse/c_elegans?name=[% this_object_id %];class=[% class %]">Genome Browser</a>
        </td>
 
   [% END %]  
@@ -26,16 +26,16 @@
 
    [%# Default navbar elements %]
    <td class="small" align="center">
-           <a target="_top" href="/db/misc/etree?name=[% name %];class=[% class %]">Tree Display</a>
+           <a target="_top" href="/db/misc/etree?name=[% this_object_id %];class=[% class %]">Tree Display</a>
     </td>
    <td class="small" align="center">
-         <a target="_top" href="/db/misc/xml?name=[% name %];class=[% class %]">XML</a>
+         <a target="_top" href="/db/misc/xml?name=[% this_object_id %];class=[% class %]">XML</a>
    </td>
    <td class="small" align="center">
-         <a target="_top" href="/db/misc/model?name=[% name %];class=[% class %]">Schema</a>
+         <a target="_top" href="/db/misc/model?name=[% this_object_id %];class=[% class %]">Schema</a>
    </td>
    <td class="small" align="center">
-         <a target="_top" href="/db/misc/epic?name=[% name %];class=[% class %]">Acedb Image</a>
+         <a target="_top" href="/db/misc/epic?name=[% this_object_id %];class=[% class %]">Acedb Image</a>
    </td>
     </tr>
 </table>

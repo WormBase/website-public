@@ -12,7 +12,8 @@
 
 <ul>
 [% FOREACH item IN results %]
-  [% url = c.uri_for_action('report',item.class, item.name.id) %]
+  [%# url = c.uri_for_action('report',item.class, item.name.id) %]
+  [% url = get_url(item.class, item.name.id) %]
 
 
   [% # GENES %]
@@ -67,7 +68,7 @@
     </li>
     
   [% END %]
-<!--  <span class="forest-green">[% url %]</span>-->
+ <span class="forest-green">[% url %]</span>
 [% END %]
 </ul>
 

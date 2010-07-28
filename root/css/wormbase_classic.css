@@ -443,10 +443,10 @@ div#alert {
 .smalldescription { font-style: italic;
                     font-size: small;
                   }
-.superscript      { vertical-align:super; 
+/*.superscript      { vertical-align:super; 
                     font-size:10pt;
                     color:black;
-                  }
+                  }*/
 .technicalinfo    { background-color: #FFFFFF; }
 .toggle           { color: #3366FF; }
 .warning          { color: red;      }

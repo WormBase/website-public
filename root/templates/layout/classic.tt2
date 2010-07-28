@@ -6,7 +6,7 @@
 -%]
 
 [% SET this_object_id    = object.name.data.id %]
-[% SET this_object_label = object.common_name.data.label %]
+[% SET this_object_label = object.name.data.label %]
 
 [% PROCESS header/classic.tt2 %]
 
@@ -17,7 +17,7 @@
      <div class="title">
          [% title %]
          [%- IF object -%]
-             <h2>[% class FILTER ucfirst %] Report: [%- object.common_name.data.label -%]</h2>
+             <h2>[% class FILTER ucfirst %] Report: [%- this_object_label -%]</h2>
          [% END %] 
       </div>
 
