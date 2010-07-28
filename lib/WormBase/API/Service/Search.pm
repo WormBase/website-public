@@ -349,7 +349,8 @@ sub _wrap_objs {
   return $list if (@$list < 1); 
   
   my $api = $self->api;
-  my $fields = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
+  my $fields;
+  push(@$fields, $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields});
 
   # default fields for all objects
   push(@$fields, 'name');

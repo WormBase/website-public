@@ -480,9 +480,9 @@ sub _draw_image {
   # onto the protein backbone.
   my $gene    = $self->cds->[0];
   my @exons;
-  
-  my $gffdb = $self->gff_dsn();
-  my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene);
+  my $gffdb = $self->gff_dsn($self->parsed_species);
+# print $gffdb;
+  my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene) || die;
   @exons = $seq_obj->features('exon:curated') if $seq_obj;
   @exons = grep { $_->name eq $gene } @exons;
 
