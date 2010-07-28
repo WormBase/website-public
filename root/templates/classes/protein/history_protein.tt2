@@ -9,7 +9,11 @@
    <table  border= 0, width= '100%' >
    <tr align= 'left'>
    [% FOREACH type IN types %]
-      <th> [% type %] </th>
+      [% IF type == 'prediction' %]<th>Predicted Gene</th>
+      [% ELSIF type == 'status' %]<th>Event</th>
+      [% ELSIF type == 'version' %]<th>WormPep Version</th>
+      [% ELSE %] <th> [% type %] </th>
+      [% END %]
    [% END %]
    </tr>
    [% FOREACH obj IN fields.history.data.version.keys %]

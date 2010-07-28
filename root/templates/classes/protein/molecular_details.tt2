@@ -12,7 +12,7 @@
   [% format_seq = "" %]
   [% FOREACH line IN seq.chunk(80) %]
      [% format_seq = format_seq _ line.chunk(10).join(' ')  %]
-     [% UNLESS loop.last %] [% format_seq = format_seq _ "\n" %] [% END %]  
+     [% UNLESS loop.last %] [% format_seq = format_seq _ "<br />" %] [% END %]  
   [% END %]
     <div class="sequence-download">
                         <form action="/rest/download/">
@@ -24,7 +24,7 @@
 
       <div class="toggle">View expanded context</div>
      <div class="sequence-container">
- 		<pre> [% format_seq %]</pre>       
+ 		[% format_seq %]    
      </div>
 [% END %]
 

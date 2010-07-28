@@ -657,13 +657,14 @@ table.multi       { padding: 0;
 
 /* an expandable sequence container */
 .sequence-container {
-    font-family:"Courier New";
-    font-size: 1em;
+    font-family: Courier, monospace;
+    font-size: 0.8em;
     overflow: hidden;
-    width: 80%; 
     clear: both;
+    padding: 5px;
     display: none;   /* Hidden by default */
 }
+
 
 /*expandable text container */
 .abstract-container {
