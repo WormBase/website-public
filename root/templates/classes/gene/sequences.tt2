@@ -33,11 +33,13 @@
       <div class="returned">
       [% FOREACH i IN fields.gene_models.data.remarks.keys.sort %]
         [% FOREACH j IN fields.gene_models.data.remarks.$i.keys.nsort %] 
-        <div style="margin:5px">
-          <span class="superscript">[% j %]</span>
-          [% fields.gene_models.data.remarks.$i.$j.note %]
-          [% evidence_list(fields.gene_models.data.remarks.$i.$j.evidence) %]
-        </div>
+          [% IF fields.gene_models.data.remarks.$i.$j.size != 1 %]
+          <div style="margin:5px">
+            <span class="superscript">[% j %]</span>
+            [% fields.gene_models.data.remarks.$i.$j.note %]
+            [% evidence_list(fields.gene_models.data.remarks.$i.$j.evidence) %]
+          </div>
+          [% END %]
         [% END %]
       [% END %]
       </div>
