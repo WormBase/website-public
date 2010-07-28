@@ -44,7 +44,8 @@
                </div>
                <div class="toggle">[% data.$key.header %]</div>
 	       <div class="sequence-container" >
-		  <pre>[% data.$key.content %]</pre>
+              [% content = data.$key.content.replace('\n', '<br />') %]
+		  [% content %]
 	       </div>
         </div>
     [% END %]
