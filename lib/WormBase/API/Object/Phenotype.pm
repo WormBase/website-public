@@ -267,21 +267,21 @@ sub _format_objects {
 		 
 	} elsif ($tag eq 'Transgene') {
 	    #need to deal to Phenotype evidence hash, write more generic code in future/or maybe this already exist
-		foreach my $ph ($_->Phenotype){
-		    next unless ($ph eq $phenotype);
-		    foreach my $tag ($ph->col){
-			next unless($tag eq "Caused_by");
-			my $gene=$ph->$tag;
-			 if($gene) {
-			    push @array,{   id    => "$gene",
-					    label => $gene->Public_name->name,
-					    class => $gene->class,};
-			  }else { push @array, "";}
-		    }
-		}
-		my $genotype = $_->Summary;
-		push @array,$genotype  if($genotype) ;
-		 $is_not = _is_not($_,$phenotype);
+# 		foreach my $ph ($_->Phenotype){
+# 		    next unless ($ph eq $phenotype);
+# 		    foreach my $tag ($ph->col){
+# 			next unless($tag eq "Caused_by");
+# 			my $gene=$ph->$tag;
+# 			 if($gene) {
+# 			    push @array,{   id    => "$gene",
+# 					    label => $gene->Public_name->name,
+# 					    class => $gene->class,};
+# 			  }else { push @array, "";}
+# 		    }
+# 		}
+		my $genotype = $_->Summary || "";
+		push @array,"$genotype";
+		$is_not = _is_not($_,$phenotype);
 	}
 	my $hash = {    label=> "$str",
 			class => $tag,
