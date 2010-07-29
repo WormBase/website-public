@@ -61,7 +61,7 @@
             [% fields.context.data.mutant_fragment %] -- mutant
             <p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>
      </div>
-     <div class="toggle">View expanded context</div>
+     <div class="toggle">View Sequence</div>
 	   <div class="sequence-container">
 	       <p>
                        [% fields.context.data.wildtype_header %]<br />
