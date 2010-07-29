@@ -39,7 +39,7 @@
   <div id="blast_details"><a class="update blast_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') %]">[Full List]</a></div> 
    
   <table  border= 0, width= '100%' >
-  <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th width=50px>BLAST E-value</th><th>% Length</th></tr>
+  <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
    [% FOREACH row IN fields.best_blastp_matches.data %]
     <tr>	
 	[% FOREACH obj IN row %]
@@ -47,6 +47,7 @@
 		<span class="species">[% obj.genus %].[% obj.species %]</span>
 	       [% ELSIF obj.class == 'protein' %] [% tag2link(obj) %] 
            [% ELSIF obj.class.defined %] [% external_link(obj.class, obj.label, obj.id)  %] 
+           [% ELSIF obj.match('(\d+)e[-](\d+)') %] <span class="no-wrap">[% obj %]</span>
            [% ELSE %] [% obj %]
            [% END %]</td>
 	 [% END %]

@@ -571,7 +571,7 @@ table.multi       { padding: 0;
    =============================================== */
 .species { font-style: italic; }
 
-
+.no-wrap { white-space: nowrap; }
 
 /* The variation summary */
 .cgc-strain {   /* strains available from the CGC */
@@ -658,7 +658,7 @@ table.multi       { padding: 0;
 /* an expandable sequence container */
 .sequence-container {
     font-family: Courier, monospace;
-    font-size: 0.8em;
+    font-size: 1em;
     overflow: hidden;
     clear: both;
     margin: 5px;

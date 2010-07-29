@@ -1462,3 +1462,8 @@ div.field-title {
 	width        : 175px;
 	font-weight  : bold;
 	}
+
+/* Seach bar and results page */
+#results ul li{
+   font-size:1em;
+}

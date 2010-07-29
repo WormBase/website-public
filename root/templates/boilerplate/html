@@ -3,8 +3,8 @@
   <head>    
     <meta charset="UTF-8">
 
-    <title>WormBase      
-      [%- IF name -%]:  [%- name.class -%]: [%- name -%]
+    <title>WormBase
+      [%- IF object -%]:  [%- object.name.data.class -%] Summary: [%- object.name.data.label -%]
       [% ELSE %]    
          : [% template.title or c.config.site_byline %]      
       [% END %]
