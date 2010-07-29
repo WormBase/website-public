@@ -22,7 +22,7 @@
 		      </form>
     </div>
 
-      <div class="toggle">View expanded context</div>
+      <div class="toggle">View Sequence</div>
      <div class="sequence-container">
  		[% format_seq %]    
      </div>
