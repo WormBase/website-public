@@ -18,15 +18,12 @@
   
    JavaScripts = ['ajax','effect','log','style','search','jquery.tablescroll','miscellaneous']  ;
 
-#   # MACROs for building URLs.
-#   # 2nd approach: using formats
-#   #   external_link = format('<a href="%s" target="_blank">%s</a>');
-#
-
+  # MACROs for building URLs.
+  # 2nd approach: using formats
+  #   external_link = format('<a href="%s" target="_blank">%s</a>');
     MACRO tag2link(data,text,is_classic) BLOCK;  
       UNLESS text; text = data.label; END;
-      url = get_url(data.class, data.id, is_classic);
-      "<a href=\"$url\" class=\"$data.class-link\">$text</a>";
+      text2link(data.class, data.id, text, is_classic);
    END;
 
    MACRO get_url(class, id, is_classic) BLOCK;
@@ -34,7 +31,9 @@
       IF c.request.referer.search("/db/"); is_classic = 1; END;
       IF is_classic;
         url  = site.class2action.$class.action;
-        "$url\?name=" _ id;
+        url = "$url\?name=" _ id;
+        IF (class == 'motif'); url = url _ ";class=Motif"; END; #hack to get motif links to work
+        url;
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
         c.uri_for_action('report', class , id);
@@ -46,9 +45,13 @@
 # An optional fourth parameter, is_classic, will be classic WormBase
 # URLs
     MACRO text2link(class,id,text,is_classic) BLOCK;  
-       class =  class FILTER lower;
-       url = get_url(class, id, is_classic);
-       "<a href=\"$url\" class=\"$class-link\">$text</a>";
+ IF (class == 'SW' OR class == 'SPTREMBL' OR class == 'TR'); class = 'UNIPROT'; END; #HACK: maybe do this somewhere else
+       IF site.external_urls.$class.defined; 
+          external_link(class, text, id);
+       ELSE;
+          url = get_url(class, id, is_classic);
+          "<a href=\"$url\" class=\"$class-link\">$text</a>";
+       END;
    END;
 
 
@@ -60,7 +63,7 @@
 #      Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
-       IF (link == 'SW' OR link == 'SPTREMBL' OR link == 'TR'); link = 'UNIPROT'; END;
+       IF (link == 'SW' OR link == 'SPTREMBL' OR link == 'TR'); link = 'UNIPROT'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
           USE String(site.external_urls.$link.search);

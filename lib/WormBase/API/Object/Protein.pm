@@ -281,7 +281,8 @@ sub motif_details {
 	    my $stop  = $feature->right(4);
 	    my $type = $feature->right ||"";
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
-	    (my $label =$feature) =~ s/^[^:]+://;
+# 	    (my $label =$feature) =~ s/^[^:]+://;
+        my $label = "$feature";
 	    $type = "$type";
 
 	    # Are the multiple occurences of this feature?
@@ -290,13 +291,13 @@ sub motif_details {
 	    if (@multiple > 1) {
 		foreach my $start (@multiple) {
 		    my $stop = $start->right;
-		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$type},$type,
+		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,
 					   "$start",
 					   "$stop")
 					];
 		}
 	    } else {
-		push @tot_positions,[  ({label=>$label,id=>$label,class=>$type},$type,
+		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,
 				       "$start",
 				       "$stop")
 				  ];
@@ -326,31 +327,46 @@ sub blast_details {
     next if ($id =~ /^MSP/); # skip for mass-spec objects, not sure if this is right?
     my $method = $h->{type};
 
-    my $species =
-      $method =~ /ensembl/ ? 'Homo sapiens'
-	: $method =~ /fly/ ? 'Drosophila melanogaster'
-	  : $method =~ /worm/ ? 'Caenorhabditis elegans'
-	    : $method =~ /briggsae/ ? 'Caenorhabditis briggsae'
-	    : $h->{hit}->Species||"";
+    # Try fetching the species first with the identification
+    # then method then the embedded species
+    my $species = $self->id2species($h);
+    $species  ||= $self->id2species($method);
+     
+    # Not all proteins are populated with the species 
+    $species ||= $h->{hit}->Species;
     $species =~ s/^(\w)\w* /$1. /;
-
-    $species = 'C. elegans' if $h->{hit} =~ /^WP:/; # workaround for C. briggsae
-    $species = 'C. briggsae' if $h->{hit} =~ /^BP:/; # workaround for C. briggsae
     $species =~ /(.*)\.(.*)/;
+
     my $taxonomy = {genus=>$1,species=>$2};
 
-     my $description="";
-     if($method =~ /worm|briggsae/) { 
-	 if(my $cds= eval{ $h->{hit}->Corresponding_CDS}){
-	    $description = eval {$cds->Brief_identification} ||("gene " . $cds);
-	  }
-     }else {
-		$description=  $h->{hit}->Description ;	#->Title does not exist
-     }
-    $description ||="";
+
+ my $description = $h->{hit}->Description || $h->{hit}->Gene_name;
+    my $class;
+
+    # this doesn't seem optimal... maybe there should be something in config?
+    if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
+      $description ||= eval{$h->{hit}->Corresponding_CDS->Brief_identification};
+      # Kludge: display a description using the CDS
+      if (!$description) {
+        for my $cds (eval { $h->{hit}->Corresponding_CDS }) {
+          next if $cds->Method eq 'history';
+          $description ||= "gene $cds";
+        }
+      }
+      $class = 'protein';
+    }
+
+    my $id_link = $id;
+    if ($id =~ /(\w+):(.+)/) {
+      my $prefix    = $1;
+      my $accession = $2;
+      $id_link = $accession unless $class;
+      $class = $prefix unless $class;
+    }
+
     # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
     my $eval = $h->{score};
-    push @rows,[({label=>"$id",class=>"protein",id=>"$id"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
+    push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
 		$h->{source},
 		$h->{target})];
       
