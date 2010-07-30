@@ -40,7 +40,7 @@
 
 	phosphopep = { description = 'a database of phosphorylation sites'
 		       maintainer  = ''
-		       base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
+		       base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi',
 	               search = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
 		     }
 
@@ -57,11 +57,19 @@
 		     image       = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
 		   }
 
+        uniprot = { description = 'UniProt | The Universal Protein Resource | EBI'
+                    maintainer  = ''
+                    base        = 'http://www.ebi.ac.uk/uniprot'
+                    search      = 'http://www.ebi.uniprot.org/entry/%s'
+                   }
+
 	wormbook = { description = 'WormBook: The online reference for C. elegans and related nematodes'
 		     maintainer  = 'help@wormbook.org'
 		     base        = 'http://www.wormbook.org/'
 		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
 	}
+
+
     OMIM     = { description = 'OMIM: Online Mendelian Inheritance in Man'
                   maintainer  = 'info@ncbi.nlm.nih.gov'
                   base        = 'http://www.ncbi.nlm.nih.gov/omim/'
@@ -80,10 +88,7 @@
                       search =  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
                         base =  'http://genome-www4.stanford.edu'
                }
-     UNIPROT = { description = 'UniProt | The Universal Protein Resource | EBI'
-                      search = 'http://www.ebi.uniprot.org/entry/%s'
-                        base = 'http://www.ebi.ac.uk/uniprot'
-               }
+
           HI = { description = 'H-InvDB: Annotated Human Gene Database'
                       search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
                }

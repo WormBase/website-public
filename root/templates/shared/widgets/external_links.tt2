@@ -3,8 +3,7 @@
 
 [% widget = c.stash.widget %]
 [% FOREACH tag IN fields.external_links.data.keys.sort %]
- [% WRAPPER $field_block title=tag %]
-        [% tag2link(fields.external_links.data.$tag) %]  
-  [% END %]
+    [% WRAPPER $field_block title=tag %]
+	  [% external_link(fields.external_links.data.$tag.class,fields.external_links.data.$tag.label,fields.external_links.data.$tag.id) %]
+    [% END %]
 [% END %]
-   

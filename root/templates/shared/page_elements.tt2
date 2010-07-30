@@ -11,9 +11,9 @@
 
               [%# Is there a description? Set it as a tool tip %]
                [% IF fields.$key.description %]
-                <a title="[% fields.$key.description %]">
-                 [% title %]:
-                 </a>
+                  <a title="[% fields.$key.description %]">
+                     [% title %]:
+                   </a>
               [% ELSE %]
                   [% title %]:
               [% END %]
