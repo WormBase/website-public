@@ -337,7 +337,7 @@ sub features_affected {
 		# Save the class of the feature for template linking.
 		$affects->{$tag}->{$entry}->{class} = $entry->class;
 		$affects->{$tag}->{$entry}->{label} = $entry->class eq 'Gene' ? ($entry->Public_name) : "$entry";
-
+        $affects->{$tag}->{$entry}->{id} = "$entry";
 		# Genes ONLY have gene
 		if ($tag eq 'Gene') {
 		    $affects->{$tag}->{$entry}->{entry}++;
@@ -408,6 +408,7 @@ sub features_affected {
  	    foreach (@affects_this) { 				
 		$affects->{$tag}->{$_}->{class} = $_->class;
 		$affects->{$tag}->{$_}->{label} = "$_";
+        $affects->{$tag}->{$_}->{id} = "$_";
  		
  		my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$_);
 		$affects->{$tag}->{$_}->{abs_start} = $abs_start;

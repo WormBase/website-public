@@ -47,31 +47,6 @@
      </div>
 [% END %]
 
-[% 
-  # For dsiplaying a list of evidence
-  # Should probably be expanded to included some actual formatting,
-  # eg tooltip,inframe, etc
-%]
-[% MACRO evidence_list(evidence) BLOCK %]
-  [% IF evidence.size > 0 %]
-  <div class="evidence">
-  [% FOREACH type IN evidence.keys -%] 
-      <b>[% type.replace('_',' ') %]</b>:  
-      [% FOREACH object IN evidence.$type.keys %] 
-          
-        [% IF evidence.$type.$object.class.defined %]
-        [% tag2link(evidence.$type.$object) %]
-        [% ELSE %]
-        [% evidence.$type.$object.label %]  
-        [% END %]
-        [% UNLESS loop.last %];[% END %]
-      [% END %] 
-      [% UNLESS loop.last %]<br>[% END %]
-  [% END %] 
-  </div>
-  [% END %]
-[% END %] 
-
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
   [% IF data && data.size>0 %]
