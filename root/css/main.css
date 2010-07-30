@@ -698,6 +698,9 @@ table.multi       { padding: 0;
     text-align:left;
 }
 
+.locus {
+font-style:italic;
+}
 
 .toggle {
 	padding: 5px 0 0 30px;
