@@ -150,20 +150,19 @@ sub external_links {
     my $hash;
     foreach (@{$self ~~ '@Database'}){
 	next if($_ eq 'WORMPEP');
-	$hash->{$_}={ class=>$_,
+	$hash->{$_}={ class => lc($_),
 		      id=>$_->right(2),
 		      label=>$_->right(2),
-		      };
+	};
     }
     $hash->{'Phosphopep'}= { id => $id  ,
-					label=>$id,
-					class=>'phosphopep',
-				      } if( $id);
-    my $data = { description => 'The external links of the protein',
+			     label=>$id,
+			     class=>'phosphopep',
+    } if( $id);
+    my $data = { description => 'Protein links from third party sites',
 		 data        => $hash,
     }; 
-    return $data;
- 
+    return $data;  
 }
 
  
