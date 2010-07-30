@@ -652,7 +652,7 @@ table.multi       { padding: 0;
 /* a snippet of sequence displayed inline */
 .inline-sequence {
    font-family: Courier, monospace;
-   font-size:0.6em;
+   font-size:0.8em;
 }
 
 /* an expandable sequence container */
