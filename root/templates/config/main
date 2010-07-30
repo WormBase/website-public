@@ -45,8 +45,9 @@
 # An optional fourth parameter, is_classic, will be classic WormBase
 # URLs
     MACRO text2link(class,id,text,is_classic) BLOCK;  
- IF (class == 'SW' OR class == 'SPTREMBL' OR class == 'TR'); class = 'UNIPROT'; END; #HACK: maybe do this somewhere else
-       IF site.external_urls.$class.defined; 
+      class =  class FILTER lower;
+      IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
+      IF site.external_urls.$class.defined; 
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, is_classic);
@@ -63,7 +64,8 @@
 #      Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
-       IF (link == 'SW' OR link == 'SPTREMBL' OR link == 'TR'); link = 'UNIPROT'; END; #HACK: maybe do this somewhere else
+       link =  link FILTER lower;
+       IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
           USE String(site.external_urls.$link.search);
