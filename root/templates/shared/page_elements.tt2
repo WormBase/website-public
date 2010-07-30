@@ -140,6 +140,7 @@
 [% END %]
 
 [% BLOCK widget_block %]
+   <!-- AceDB version: [% constants.acedb_version %]  -->
    <!-- start [% widget.name %] widget -->
    [% IF c.request.referer.search("/db/") %]
       [% is_classic = 1 %]
@@ -158,7 +159,6 @@
                  [% content %]
 
    [% ELSE %]
-
    <section class="widget">
           <div class="primary-container">
                 <header>         
