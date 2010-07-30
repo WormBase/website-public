@@ -51,7 +51,8 @@
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, is_classic);
-          IF text.match('^[A-Za-z]{2,3}-(\d){1,3}$');
+          text = "$text";
+          IF (class == 'gene' AND text.match('^[A-Za-z]{3,4}-(\d){1,3}$'));
             text = "<span class=\"locus\">$text</span>";
           END;
           "<a href=\"$url\" class=\"$class-link\">$text</a>";
