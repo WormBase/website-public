@@ -81,12 +81,13 @@
 
 [% ELSIF view=="page" %]
 
-     [% FOREACH this_page IN c.config.pages.keys.sort %]
+     [%# FOREACH this_page IN c.config.pages.keys.sort %]
 
-         [% # Wow. Stupid hack since pages are a hash not array %]
-         [% NEXT IF this_page != class %]
+         [%# # Wow. Stupid hack since pages are a hash not array %]
+         [%# NEXT IF this_page != class %]
 
-         [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+         [% FOREACH widget IN c.config.pages.$class.widgets.widget %]
+         [%# FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
 
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
@@ -110,10 +111,10 @@
 		    [%# This is a work in progress: I want to sequentially load widgets.
 		        Firefox does this using the existing code, but other browsers do not.			
 			%] 
-		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
+		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
 
                     <script>
-                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
+                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
@@ -123,7 +124,7 @@
                    </script>
 
       [% END %]
-  [% END %]
+  [%# END %]
 
 [% END %]
 
