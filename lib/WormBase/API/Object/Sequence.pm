@@ -596,7 +596,8 @@ sub external_links {
 #}
 
 
-############## this is depricated? ################
+############## this is deprecated? ################
+# TH 2010.08.01: No, just not widly supported
 sub analysis {
     my $self = shift;
 	my %so_data;
