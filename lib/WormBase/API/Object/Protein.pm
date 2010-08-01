@@ -68,12 +68,12 @@ sub taxonomy {
     my $self = shift;
     my $genus_species = $self ~~ 'Species' || eval { $self->cds->[0]->Species };
     my $data = $self->taxonomy($genus_species);
-#    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-#    my $data = { description => 'the genus and species of the protein object',
-#		 data        => { genus   => $genus,
-#				  species => $species,
-#		 }
-#    };
+    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
+    my $data = { description => 'the genus and species of the protein object',
+		 data        => { genus   => $genus,
+				  species => $species,
+		 }
+    };
     return $data;
 }
 
