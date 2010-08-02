@@ -681,7 +681,10 @@ sub print_sequence {
     if (!$seq_obj || length($seq_obj->dna) < 2) { # miserable broken workaround
       # try to use acedb
       if (my $fasta = $s->asDNA) {
-	  $hash{dna} = $fasta;
+	  $hash{dna} = { 	header=>"FASTA Sequence",
+	     				content=>"$fasta\n"
+	  				}; ##$fasta;
+	  
 	  $self->length(length $fasta);
       } else {
 	$hash{dna} =  "<p>Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3</p>"; 
@@ -1167,6 +1170,7 @@ sub _print_protein {
 }
 
 ##use this or template to format sequence?
+
 sub _to_fasta {
     my ($name,$dna) = @_;
     $dna ||= '';
@@ -1177,7 +1181,9 @@ sub _to_fasta {
     _markup(\$dna,\@markup);
     $dna =~ s/^\s+//;
     $dna =~ s/\*$//;
-    return "&gt;$name\n$dna";
+    return  { 	header=>"Genomic Sequence",
+	     		content=>"&gt;$name\n$dna"
+	  		}; 
 }
 
 # insert HTML tags into a string without disturbing order
