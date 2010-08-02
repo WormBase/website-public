@@ -51,10 +51,7 @@
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, is_classic);
-          text = "$text";
-          IF ((class == 'gene' OR class=='protein') AND text.match('^[A-Za-z]{3,4}-(\d){1,3}[a-z]?$'));
-            text = "<span class=\"locus\">$text</span>";
-          END;
+          text = markup_locus("$text");
           "<a href=\"$url\" class=\"$class-link\">$text</a>";
        END;
    END;
@@ -96,13 +93,16 @@
 # [A-Za-z]{3,4}-(\d){1,3}[a-z]?
     MACRO markup_locus(text) BLOCK;
       text = "$text";
-      text.replace('(([^A-Za-z]|^)[A-Za-z]{3,4}-(\d){1,3}[a-z]?)', '<span class="locus">$1</span>');
+      text.replace('(\b([A-Z][a-z]{2}\-)?[A-Za-z]{3,4}-(\d+(\.\d+)?)[A-Za-z]*)', '<span class="locus">$1</span>');
     END;
 
 #  Add params to have options on what to markup.  ie. omim, locus...
-    MACRO markup(text) BLOCK;
-      text = markup_locus(text);
-      markup_omim(text);
+    MACRO markup(text, omim, locus) BLOCK;
+      UNLESS omim.defined; omim = 1; END;
+      UNLESS locus.defined; locus = 1; END;
+      IF locus; text = markup_locus(text); END;
+      IF omim; text = markup_omim(text); END;
+      text;
     END;
 
 # Dynamically select a tempate: custom, common, generic
