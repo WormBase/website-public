@@ -71,7 +71,7 @@
 		<tr>
 		      [% FOREACH item IN row %]   
 		      <td> [% IF item.species.defined %]
-				<span class="species">[% item.genus %].[% item.species %]</span>
+				<span class="species">[% item.genus.chunk(1).0 %]. [% item.species %]</span>
 			   [% ELSIF item.class.defined %]
 			    [% tag2link(item) %]
 			   [% ELSE %][% item %]

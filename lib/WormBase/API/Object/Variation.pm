@@ -1207,7 +1207,7 @@ sub gene_class {
     return { description => 'the class of the gene the variation falls in, if any',
 	     data        => { id    => "$gene_class",
 			      label => "$gene_class",
-			      class => $gene_class->class,
+			      class => $gene_class,
 	     },
     };
 }
