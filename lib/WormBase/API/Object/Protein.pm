@@ -50,12 +50,13 @@ has 'cds' => (
 sub name {
     my $self = shift;
     my $id = $self->object;
-    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $id;
+#    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $id;
     
     my $data = { description => 'The name of the protein',
 		 data        => { id    => "$id",
-				   label => $ace->name,
-				   class => $id->class
+#				  label => $ace->name,
+				  label => "$id",
+				  class => $id->class
 		 },
 
     };
@@ -66,6 +67,7 @@ sub name {
 sub taxonomy {
     my $self = shift;
     my $genus_species = $self ~~ 'Species' || eval { $self->cds->[0]->Species };
+#    my $data = $self->taxonomy($genus_species);
     my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
     my $data = { description => 'the genus and species of the protein object',
 		 data        => { genus   => $genus,
@@ -150,20 +152,19 @@ sub external_links {
     my $hash;
     foreach (@{$self ~~ '@Database'}){
 	next if($_ eq 'WORMPEP');
-	$hash->{$_}={ class=>$_,
-		      id=>$_->right(2),
-		      label=>$_->right(2),
-		      };
+	$hash->{$_}={ class => $_,
+		      id    =>$_->right(2),
+		      label =>$_->right(2),
+	};
     }
-    $hash->{'Phosphopep'}= { id => $id  ,
-					label=>$id,
-					class=>'phosphopep',
-				      } if( $id);
-    my $data = { description => 'The external links of the protein',
+    $hash->{'Phosphopep'}= { id    => $id,
+			     label => $id,
+			     class => 'phosphopep',
+    } if( $id);
+    my $data = { description => 'Protein links from third party sites',
 		 data        => $hash,
     }; 
-    return $data;
- 
+    return $data;  
 }
 
  

@@ -313,9 +313,13 @@ sub other_name {
 # Return g_species, used primarily for dynamically
 # selecting a data source based on species identifier.
 sub taxonomy {
-    my $self   = shift;
-    my $object = $self->object;
-    my $genus_species = $object->Species;
+    my ($self,$genus_species) = @_;
+
+    # We may have already been passed a string to parse
+    unless ($genus_species) {
+	my $object = $self->object;
+	$genus_species = $object->Species;
+    }
     my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
     my $data = { description => 'the genus and species of the current object',
 		 data        => { genus   => $genus,
