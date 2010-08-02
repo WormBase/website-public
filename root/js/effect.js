@@ -16,8 +16,8 @@
 		dropShadow: false, 
 		closePosition: 'title',
 		arrows: true, 
-		height: '80px',
-		width: '450px',
+// 		height: '80px',
+// 		width: '450px',
 		hoverIntent: false,
 		//ajaxSettings : {
 	     //       type : "GET",

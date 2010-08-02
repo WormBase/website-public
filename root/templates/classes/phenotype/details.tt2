@@ -24,7 +24,7 @@
       [% fields.description.data.des %]
       [% IF fields.description.data.evidence %]
 	[% c.session.des= fields.description.data.des; c.session.object= object.object %]
-	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/des %]>evidence</a>
+	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/des %]></a>
       [% END %]
    [% END %]
  

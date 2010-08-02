@@ -11,9 +11,9 @@
 
               [%# Is there a description? Set it as a tool tip %]
                [% IF fields.$key.description %]
-                <a title="[% fields.$key.description %]">
-                 [% title %]:
-                 </a>
+                  <a title="[% fields.$key.description %]">
+                     [% title %]:
+                   </a>
               [% ELSE %]
                   [% title %]:
               [% END %]
@@ -46,31 +46,6 @@
           </div>
      </div>
 [% END %]
-
-[% 
-  # For dsiplaying a list of evidence
-  # Should probably be expanded to included some actual formatting,
-  # eg tooltip,inframe, etc
-%]
-[% MACRO evidence_list(evidence) BLOCK %]
-  [% IF evidence.size > 0 %]
-  <div class="evidence">
-  [% FOREACH type IN evidence.keys -%] 
-      <b>[% type.replace('_',' ') %]</b>:  
-      [% FOREACH object IN evidence.$type.keys %] 
-          
-        [% IF evidence.$type.$object.class.defined %]
-        [% tag2link(evidence.$type.$object) %]
-        [% ELSE %]
-        [% evidence.$type.$object.label %]  
-        [% END %]
-        [% UNLESS loop.last %];[% END %]
-      [% END %] 
-      [% UNLESS loop.last %]<br>[% END %]
-  [% END %] 
-  </div>
-  [% END %]
-[% END %] 
 
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
@@ -165,6 +140,7 @@
 [% END %]
 
 [% BLOCK widget_block %]
+   <!-- AceDB version: [% constants.acedb_version %]  -->
    <!-- start [% widget.name %] widget -->
    [% IF c.request.referer.search("/db/") %]
       [% is_classic = 1 %]
@@ -183,7 +159,6 @@
                  [% content %]
 
    [% ELSE %]
-
    <section class="widget">
           <div class="primary-container">
                 <header>         

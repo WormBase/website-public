@@ -27,12 +27,13 @@
 
       <table border="1" width="100%">
 
-      [% FOREACH this_page IN c.config.pages.keys.sort %]
+      [%# FOREACH this_page IN c.config.pages.keys.sort %]
 
-         [% # Wow. Stupid hack since pages are a hash not array %]
-         [% NEXT IF this_page != class %]
+         [%# # Wow. Stupid hack since pages are a hash not array %]
+         [%# NEXT IF this_page != class %]
 
-         [% FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+         [%# FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
+         [% FOREACH widget IN c.config.pages.$class.widgets.widget %]
 
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
@@ -57,7 +58,7 @@
 		        Firefox does this using the existing code, but other browsers do not.			
 			%] 
                     <script>
-                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
+                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
@@ -68,7 +69,7 @@
 
 
               [% END %]
-          [% END %]
+          [%# END %]
 
         </table>
 
