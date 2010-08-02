@@ -51,10 +51,7 @@
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, is_classic);
-          text = "$text";
-          IF (class == 'gene' AND text.match('^[A-Za-z]{3,4}-(\d){1,3}$'));
-            text = "<span class=\"locus\">$text</span>";
-          END;
+          text = markup_locus("$text");
           "<a href=\"$url\" class=\"$class-link\">$text</a>";
        END;
    END;
@@ -90,6 +87,22 @@
     MACRO markup_omim(text) BLOCK;
       text = "$text";
       text.replace('OMIM:(\d+)((, )(\d+))?', text.search('OMIM:(\d+)((, )(\d+))') ? external_link('OMIM','OMIM:$1', '$1') _  '$3' _ external_link('OMIM', '$4', '$4') : external_link('OMIM','OMIM:$1', '$1'));
+    END;
+
+# Markup any locus reference in text
+# [A-Za-z]{3,4}-(\d){1,3}[a-z]?
+    MACRO markup_locus(text) BLOCK;
+      text = "$text";
+      text.replace('(\b([A-Z][a-z]{2}\-)?[A-Za-z]{3,4}-(\d+(\.\d+)?)[A-Za-z]*)', '<span class="locus">$1</span>');
+    END;
+
+#  Add params to have options on what to markup.  ie. omim, locus...
+    MACRO markup(text, omim, locus) BLOCK;
+      UNLESS omim.defined; omim = 1; END;
+      UNLESS locus.defined; locus = 1; END;
+      IF locus; text = markup_locus(text); END;
+      IF omim; text = markup_omim(text); END;
+      text;
     END;
 
 # Dynamically select a tempate: custom, common, generic
