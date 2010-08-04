@@ -52,7 +52,7 @@
        ELSE;
           url = get_url(class, id, is_classic);
           IF (class =='gene'); text = markup_locus("$text"); END;
-          IF (class =='variation'); text = markup_var("$text"); END;         
+          IF (class =='variation' || class=='variation_name'); text = markup_var("$text"); END;         
           "<a href=\"$url\" class=\"$class-link\">$text</a>";
        END;
    END;
@@ -99,7 +99,7 @@
 
     MACRO markup_var(text) BLOCK;
       text = "$text";
-      text.replace('(\b(\()?[a-z]{1,2}\d+(\))?)', '<span class="locus">$1</span>');
+      text.replace('(\b(\()?(eTi|stP|stEx|mdIs|nDp|uaDf|hIn|eT|mnC|[a-z]{1,2})\d+(\))?)', '<span class="locus">$1</span>');
     END;
 
 

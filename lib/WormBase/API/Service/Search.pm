@@ -242,7 +242,10 @@ sub fetchVar {
       my @var_name = $DB->fetch(-class=>'Variation_name',-name=>$query,-fill=>1); 
       @vars = map { $_->Public_name_for } @var_name;
     }
-
+    unless (@vars) {
+      my @var_name = $DB->fetch(-class=>'Variation_name',-name=>"*$query*",-fill=>1); 
+      @vars = map { $_->Public_name_for } @var_name;
+    }
     return \@vars;
 }
 
