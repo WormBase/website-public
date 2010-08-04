@@ -80,7 +80,7 @@ sub name {
     my $ace  = $self->object;
     my $data = { description => 'The internal WormBase referential ID of the variation',
 		 data        =>  { id    => "$ace",
-				   label => $ace->name,
+				   label => $ace->Public_name->name,
 				   class => $ace->class
 		 },
     };
