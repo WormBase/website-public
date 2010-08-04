@@ -22,9 +22,7 @@
     	          <div class="subfield-title">Sequenced alleles</div>
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.sequenced_alleles %]
-    	                  <span class="allele">
-                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
-			  </span>
+                [% tag2link(variation) %]
 		      [% END %]
    	          </div>
               </div>
@@ -35,9 +33,7 @@
     	          <div class="subfield-title">Unsequenced alleles</div>
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.unsequenced_alleles %]
-    	                  <span class="allele">
-                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
-			  </span>
+                [% tag2link(variation) %]
 		      [% END %]
 	          </div>
               </div>

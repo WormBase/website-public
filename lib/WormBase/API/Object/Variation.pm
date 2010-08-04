@@ -1246,13 +1246,16 @@ sub other_alleles {
 	my @alleles = grep {$_ ne ($object || '')} $gene->Allele(-fill=>1);
 	
 	foreach (@alleles) {
+        my $d = { id => "$_",
+                  label => $_->Public_name->name,
+                  class => 'variation', };
 	    if ($_->SNP) {
-		push @{$data->{data}->{polymorphisms}},"$_";
+		push @{$data->{data}->{polymorphisms}}, $d;
 	    } else {		
 		if ($_->Sequence || $_->Flanking_sequences) {
-		    push @{$data->{data}->{unsequenced_alleles}},"$_";
+		    push @{$data->{data}->{unsequenced_alleles}},$d;
 		} else {		    
-		    push @{$data->{data}->{sequenced_alleles}},"$_";
+		    push @{$data->{data}->{sequenced_alleles}},$d;
 		}
 	    }
 	}
