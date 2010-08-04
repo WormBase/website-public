@@ -34,8 +34,9 @@
 
    <div id="sidebar">
         <ul class="">
-             [% FOREACH widget IN widgets -%]
-              <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
+             [% FOREACH widget_name IN widgets -%]
+       	        [% widget = c.config.pages.$class.widgets.$widget_name %]
+                <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
                     <li>
                         <a class="ajax content-pane" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">
                            <span>[% widget.title FILTER ucfirst %]</span>
@@ -63,12 +64,13 @@
    <div id="tabs">
       <div class="ui-tabs">
           <ul class="ui-tabs-nav">
-             [% FOREACH widget IN widgets -%]
-                <li>
-                      <a href="/rest/widget/[% class %]/[% this_object_id %]/[% widget.name %]">
-                           <span>[% widget.title %]</span>
-                      </a>
-                </li>
+             [% FOREACH widget_name IN widgets -%]
+       	          [% widget = c.config.pages.$class.widgets.$widget_name %]
+                  <li>
+                       <a href="/rest/widget/[% class %]/[% this_object_id %]/[% widget.name %]">
+                             <span>[% widget.title %]</span>
+                       </a>
+                  </li>
     	     [% END %]
           </ul>
        </div>
@@ -81,14 +83,8 @@
 
 [% ELSIF view=="page" %]
 
-     [%# FOREACH this_page IN c.config.pages.keys.sort %]
-
-         [%# # Wow. Stupid hack since pages are a hash not array %]
-         [%# NEXT IF this_page != class %]
-
-         [% FOREACH widget IN c.config.pages.$class.widgets.widget %]
-         [%# FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
-
+           [% FOREACH widget IN c.config.pages.$class.widget_order %]
+              [% widget = c.config.pages.$class.$widgets.$widget_name %]
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
                                What we are doing here is preparing the widget
@@ -124,8 +120,6 @@
                    </script>
 
       [% END %]
-  [%# END %]
-
 [% END %]
 
 

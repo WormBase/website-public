@@ -29,9 +29,10 @@ use Catalyst qw/-Debug
 		 ConfigLoader
 		 Static::Simple
                  Unicode
-		   Session
-		  Session::Store::FastMmap
-		  Session::State::Cookie
+		 Session
+		 Session::Store::FastMmap
+	         Session::State::Cookie
+                 Cache
 	       /;
 extends 'Catalyst';
 
@@ -110,7 +111,7 @@ __PACKAGE__->config->{version}  = $VERSION;
 __PACKAGE__->config->{codename} = $CODENAME;
 
 
-  
+
 # These widgets can all use a single generic widget template.
 # Note that this is still page specific since the field templates
 # are included in the widget template.  This should be a variable, too.
@@ -148,28 +149,59 @@ __PACKAGE__->config->{'View::JSON'} = {
     expose_stash => 'data' };
 
 
+# Dynamically configure our cache, but only if we are a production server.
+# Here's a typical example for Cache::Memcached::libmemcached
+if (0) {
+    if (__PACKAGE__->config->{deployed} eq 'production') {
+	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	    class   => "Cache::Memcached::libmemcached",
+	    servers => ['127.0.0.1:11211'],
+	    debug   => 2,
+	};
+    }
+}
 
-# In the configuration file, widgets are an ordered array.
-# In order to enable fetching the contents of a widget
-# by widget name, let's create a look up table.
-# This will map widget name to position in the conf file.
-# Not ideal, but at least this let's me keep configuration simple.
-foreach (my $page_config = __PACKAGE__->config->{pages}) {    
-    foreach my $page (keys %$page_config) {
-	my $c = 0;
-	my @widgets = @{__PACKAGE__->config->{pages}->{$page}->{widgets}->{widget}};
+# FastMmap. WORKS, although I'm uncertain of how well it will scale.
+if (0) {
+    if (__PACKAGE__->config->{deployed} eq 'production') {
+	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	    class => "Cache::FastMmap",
+	    share_file => "/Users/todd/tmp_cache",
+	    cache_size => "64m",
+	    num_pages  => '1039',  # Should be a prime number for best hashing.
+	    page_size  => '128k',	
+	};
+    }
+}
 
-	foreach my $widget (@widgets) {
-	    my $name = $widget->{name};
-	    __PACKAGE__->config->{pages}->{$page}->{widget_index}->{$name} = $c;
-	    $c++;
-	}
+# FastMmap as a store; Uses Catalyst::Plugin::Cache::Store::FMmap which must be loaded.
+# Sets up default share_file and other params.
+if (0) {
+    if (__PACKAGE__->config->{deployed} eq 'production') {
+	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	    store => "FastMmap",
+	};
+    }
+}
+    
+# CHI-powered on-disk file cache: default.
+if (1) {
+    if (__PACKAGE__->config->{deployed} eq 'production') {
+	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	    class  => "CHI",
+	    driver => 'File',
+	    root_dir => '/tmp/wormbase/file_cache_chi',
+	    depth    => '3',
+	    max_key_length => '32',
+	};
     }
 }
 
 
 # Start the application
 __PACKAGE__->setup;
+
+
 
 
 #use

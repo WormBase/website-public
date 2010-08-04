@@ -194,7 +194,9 @@ sub widget :Path("/widget") Args(3) {
 
 
     # DOH!  Cannot access widgets by name now...
-    my $fields = $self->_get_widget_fields($c,$class,$widget);
+#    my $fields = $self->_get_widget_fields($c,$class,$widget);
+    my $fields = @{$c->config->{pages}->{$class}->{widgets}->{$widget}->{fields}};
+
 #    my %widgets = $c->config->{pages}->{$class}->{widgets};
 #    $c->log->warn(keys %widgets);
 #    foreach (keys %widgets) {
@@ -249,13 +251,13 @@ sub widget :Path("/widget") Args(3) {
 
 
 # For a given PAGE and WIDGET, fetch all available FIELDS
-sub _get_widget_fields {
-    my ($self,$c,$page,$widget) = @_;
-    my $index = $c->config->{pages}->{$page}->{widget_index}->{$widget};
-    my $widget_config = $c->config->{pages}->{$page}->{widgets}->{widget}->[$index];
-    my @fields = @{$widget_config->{fields}};
-    return \@fields;
-}
+#sub _get_widget_fields {
+#    my ($self,$c,$page,$widget) = @_;
+#    my $index = $c->config->{pages}->{$page}->{widget_index}->{$widget};
+#    my $widget_config = $c->config->{pages}->{$page}->{widgets}->{widget}->[$index];
+#    my @fields = @{$widget_config->{fields}};
+#    return \@fields;
+#}
 
 
 
@@ -327,14 +329,8 @@ sub report :Path("/reports") Args(2) {
 
 =cut
 
-    # Stash all widgets that comprise this page. We will build pages generically.
-    # This is the default order.
-    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
-
-    # Return just the symbolic name of the widgets
-    # @widgets = map{$_->{name}} @widgets;
-
-    # Or the full widget config
+    # Stash the symbolic name of all widgets that comprise this page in default order.
+    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     $c->stash->{widgets} = \@widgets;
 }
 
@@ -405,14 +401,8 @@ sub classic_report :Path("/db") Args(2) {
 	$c->stash->{object} = $object;  # Store the internal ace object. Goofy.
     }
 
-    # Stash all widgets that comprise this page. We will build pages generically.
-    # This is the default order.
-    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
-
-    # Return just the symbolic name of the widgets
-    # @widgets = map{$_->{name}} @widgets;
-
-    # Or the full widget config
+    # Stash the symbolic name of all widgets that comprise this page in default order.
+    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     $c->stash->{widgets} = \@widgets;
 
     # Set the classic template
