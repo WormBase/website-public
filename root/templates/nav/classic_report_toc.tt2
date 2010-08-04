@@ -1,7 +1,8 @@
 [%# The per-page horizontal table of contents, called from report.tt2 %]
 
 <div align="center"><table><tr>
-   [% FOREACH widget IN widgets %]
-        <th><a href="#[%- widget.name -%]">[[% widget.title FILTER lower %]]</a></th> 
+   [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
+         [% widget = c.config.pages.$class.$widgets.$widget_name %]
+         <th><a href="#[%- widget.name -%]">[[% widget.title FILTER lower %]]</a></th> 
    [% END %]
 </tr></table></div>

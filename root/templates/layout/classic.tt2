@@ -27,14 +27,8 @@
 
       <table border="1" width="100%">
 
-      [%# FOREACH this_page IN c.config.pages.keys.sort %]
-
-         [%# # Wow. Stupid hack since pages are a hash not array %]
-         [%# NEXT IF this_page != class %]
-
-         [%# FOREACH widget IN c.config.pages.$this_page.widgets.widget %]
-         [% FOREACH widget IN c.config.pages.$class.widgets.widget %]
-
+         [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
+              [% widget = c.config.pages.$class.$widgets.$widget_name %]
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
                                What we are doing here is preparing the widget

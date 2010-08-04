@@ -3,11 +3,11 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
-
+use Data::Dumper;
 
 
 __PACKAGE__->config(
-   'default' => 'text/x-yaml',
+    'default' => 'text/x-yaml',
     'map' => {
 	'text/html'        => [ 'View', 'TT' ],
     });
@@ -325,68 +325,112 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-    if($widget eq "references") {
-      $c->stash->{class} = $class;
-      $c->stash->{query} = $name;
-      $c->stash->{noboiler} = 1;
 
-      # looking up the config was really slow...
-      $c->stash->{template} = "shared/widgets/references.tt2";
-      $c->forward('WormBase::Web::View::TT');
-      return;
-    }
+    my $id = join("_",$class,$widget,$name);
+
+    # It seems silly to fetch an object if we are going to be pulling
+    # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
+	# Fetch our external model
+	my $api = $c->model('WormBaseAPI');
 	
-      # Fetch our external model
-      my $api = $c->model('WormBaseAPI');
-      
-      # Fetch the object from our driver	 
-      $c->log->debug("WormBaseAPI model is $api " . ref($api));
-      $c->log->debug("The requested class is " . ucfirst($class));
-      $c->log->debug("The request is " . $name);
-      
-      # Fetch a WormBase::API::Object::* object
-      # But wait. Some methods return lists. Others scalars...
-      $c->stash->{object} = $api->fetch({class=> ucfirst($class),
-                        name => $name}) or die "$!";
+	# Fetch the object from our driver	 
+	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+	$c->log->debug("The requested class is " . ucfirst($class));
+	$c->log->debug("The request is " . $name);
+	
+	# Fetch a WormBase::API::Object::* object
+	# But wait. Some methods return lists. Others scalars...
+	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+					   name => $name}) or die "$!";
     }
     my $object = $c->stash->{object};
-    
-    # TODO: Load up the data content.
-    # The widget itself could make a series of REST calls for each field
-    my @fields;
-    foreach my $widget_config (@{$c->config->{pages}->{$class}->{widgets}->{widget}}) {
-	# Janky-tastic.
-	next unless $widget_config->{name} eq $widget; 
-      if(ref $widget_config->{fields} ne "ARRAY") {
-        @fields = ($widget_config->{fields});
-      } else {
-		@fields = @{ $widget_config->{fields} };
-      }
+
+    my $cache = $c->cache;
+    my $result;
+
+    # The cache ONLY includes the fields of the widget, nothing else.
+    # This is because most backend caches cannot store globs.
+    if ( $result = $cache->get( $id ) ) {
+	$c->log->debug("CACHE: $class:$widget:$name: ALREADY CACHED; retrieving.");
+	$c->stash->{fields} = $result;	
+    } else {
+	$c->log->debug("CACHE: $class:$widget:$name: NOT PRESENT; generating widget.");
+
+	# No result? Generate and cache the widget.		
+	if ($widget eq "references") {
+	    $c->stash->{class} = $class;
+	    $c->stash->{query} = $name;
+	    $c->stash->{noboiler} = 1;
+	    
+	    # looking up the config was really slow...
+	    $c->stash->{template} = "shared/widgets/references.tt2";
+	    $c->forward('WormBase::Web::View::TT');
+	    return;
+	}
+
+
+#    unless ($c->stash->{object}) {
+#	# Fetch our external model
+#	my $api = $c->model('WormBaseAPI');
+#	
+#	# Fetch the object from our driver	 
+#	$c->log->debug("WormBaseAPI model is $api " . ref($api));
+#	$c->log->debug("The requested class is " . ucfirst($class));
+#	$c->log->debug("The request is " . $name);
+#	
+#	# Fetch a WormBase::API::Object::* object
+#	# But wait. Some methods return lists. Others scalars...
+#	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
+#					   name => $name}) or die "$!";
+#    }
+#    my $object = $c->stash->{object};
+
+	
+	# Load the stash with the field contents for this widget.
+	# The widget itself could make a series of REST calls for each field but that could quickly become unwieldy.
+	my @fields;
+
+	# Widgets accessible by name
+	if (ref $c->config->{pages}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
+	    @fields = ($c->config->{pages}->{$class}->{widgets}->{$widget}->{fields});
+	} else {
+	    @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget}->{fields} };
+	}
+
+	$c->log->debug("fields are " . @fields);
+       		
+	foreach my $field (@fields) {
+	    $c->log->debug($field);
+	    my $data = {};
+	    $data = $object->$field if defined $object->$field;
+	    
+	    # Conditionally load up the stash (for now) for HTML requests.
+	    # Alternatively, we could return JSON and have the client format it.
+	    $c->stash->{fields}->{$field} = $data; 
+	}
+		
+	# Cache the field data for this widget.
+	$c->cache->set( $id, $c->stash->{fields} ) or $c->log->warn( "couldn't stash fields" );
     }
     
-    
-    $c->log->debug("fields are " . @fields);
-    $c->stash->{'widget'} = $widget;
+    # Save the name of the widget.
+    $c->stash->{widget} = $widget;
 
-    foreach my $field (@fields) {
-      $c->log->debug($field);
-      my $data = {};
-      $data = $object->$field if defined $object->$field;
+    # No boiler since this is an XHR request.
+    $c->stash->{noboiler} = 1;
 
-      # Conditionally load up the stash (for now) for HTML requests.
-      # Eventually, I can just format the return JSON.
-      $c->stash->{fields}->{$field} = $data; 
-    }
+    # Set the template
+    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 	
+
+    # Forward to the view for rendering HTML.
+    $c->forward('WormBase::Web::View::TT');
     
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
-    $c->stash->{noboiler} = 1;
-    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
-    $c->forward('WormBase::Web::View::TT');
 
     $self->status_ok($c, entity => {
 	class   => $class,
@@ -395,7 +439,6 @@ sub widget_GET {
 		     }
 	);
 }
-
 
 
 
@@ -495,7 +538,6 @@ sub field_GET {
     my $uri = $c->uri_for("/page",$class,$name);
 
     $c->stash->{template} = $self->_select_template($c,$field,$class,'field'); 
-
 
     $self->status_ok($c, entity => {
 	                 class  => $class,
