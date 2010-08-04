@@ -2,7 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
    [% WRAPPER $field_block title="Name"-%] 
-            [% tag2link(fields.common_name.data) %]
+            [% tag2link(fields.name.data) %]
    [% END %]
 
    [% WRAPPER $field_block title="WormBase Referential ID"-%] 

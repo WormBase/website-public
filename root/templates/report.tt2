@@ -21,7 +21,7 @@
 <div class="title">
    [% title %]
    [%- IF object -%]
-     <h2>[% class FILTER ucfirst %] Report: [%- object.name.data.label -%]</h2>
+     <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
    [% END %] 
 </div>
 
