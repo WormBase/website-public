@@ -100,7 +100,8 @@
 # Markup any variation name in text
     MACRO markup_var(text) BLOCK;
       text = "$text";
-      text.replace('(\b(\()?(eTi|stP|stEx|mdIs|nDp|uaDf|hIn|eT|mnC|[a-z]{1,3})\d+(\))?)', '<span class="var">$1</span>');
+      text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+(\))?)+)', '<span class="var">$1</span>');
+#       text.replace('(\b((\()?(eTi|ttTi|stP|stEx|mdIs|nDp|uaDf|hIn|eT|mnC|[a-z]{1,3}|[a-z]*CE2-)\d+(\))?)+)', '<span class="var">$1</span>');
     END;
 
 

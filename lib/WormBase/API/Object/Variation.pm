@@ -1227,13 +1227,15 @@ sub corresponding_gene {
     };
 }   
 
-# TODO: This needs to return public name AND WBvariation
 sub reference_allele {
     my $self      = shift;
     my $object    = $self->object;
     my $gene      = $object->Gene;
+    my $allele    = $gene ? $gene->Reference_allele : "";
     return { description => 'the reference allele for the containing gene (if any)',	    
-	     data        => { allele => $gene ? $gene->Reference_allele : "" },
+	     data        => { label => $gene ? $gene->Reference_allele->Public_name->name : $allele,
+                          id    => $allele,
+                          class => 'variation' },
     };
 }
 
