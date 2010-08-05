@@ -80,7 +80,7 @@ sub name {
     my $ace  = $self->object;
     my $data = { description => 'The internal WormBase referential ID of the variation',
 		 data        =>  { id    => "$ace",
-				   label => $ace->name,
+				   label => $ace->Public_name->name,
 				   class => $ace->class
 		 },
     };
@@ -1227,13 +1227,15 @@ sub corresponding_gene {
     };
 }   
 
-# TODO: This needs to return public name AND WBvariation
 sub reference_allele {
     my $self      = shift;
     my $object    = $self->object;
     my $gene      = $object->Gene;
+    my $allele    = $gene ? $gene->Reference_allele : "";
     return { description => 'the reference allele for the containing gene (if any)',	    
-	     data        => { allele => $gene ? $gene->Reference_allele : "" },
+	     data        => { label => $gene ? $gene->Reference_allele->Public_name->name : $allele,
+                          id    => $allele,
+                          class => 'variation' },
     };
 }
 
@@ -1246,13 +1248,16 @@ sub other_alleles {
 	my @alleles = grep {$_ ne ($object || '')} $gene->Allele(-fill=>1);
 	
 	foreach (@alleles) {
+        my $d = { id => "$_",
+                  label => $_->Public_name->name,
+                  class => 'variation', };
 	    if ($_->SNP) {
-		push @{$data->{data}->{polymorphisms}},"$_";
+		push @{$data->{data}->{polymorphisms}}, $d;
 	    } else {		
 		if ($_->Sequence || $_->Flanking_sequences) {
-		    push @{$data->{data}->{unsequenced_alleles}},"$_";
+		    push @{$data->{data}->{unsequenced_alleles}},$d;
 		} else {		    
-		    push @{$data->{data}->{sequenced_alleles}},"$_";
+		    push @{$data->{data}->{sequenced_alleles}},$d;
 		}
 	    }
 	}
