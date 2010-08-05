@@ -702,6 +702,10 @@ table.multi       { padding: 0;
 font-style:italic;
 }
 
+.var {
+font-style:italic;
+}
+
 .toggle {
 	padding: 5px 0 0 30px;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
