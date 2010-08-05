@@ -575,6 +575,9 @@ sub end : ActionClass('RenderView') {
 
 }
 
+# /quit, used for profiling so that NYTProf can exit cleanly.
+sub quit :Global { exit(0) }
+
 
 
 #sub end : ActionClass('RenderView') {  }

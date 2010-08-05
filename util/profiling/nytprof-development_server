@@ -1,0 +1,13 @@
+#!/bin/bash
+
+URL=$1
+
+cd /usr/local/wormbase/website-sync
+perl -d:NYTProf script/wormbase_server.pl &
+sleep 10
+ab -n 10000 http://127.0.0.1:3000/$URL
+GET http://127.0.0.1:3000/quit
+nytprofile --file /usr/local/wormbase/website-sync/nytprof.out --out nytprof --delete
+open nytprof/index.html
+
+
