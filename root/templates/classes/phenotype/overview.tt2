@@ -1,0 +1,37 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+
+[% widget = widget %]
+ 
+
+   [% WRAPPER $field_block  title="Name" key="name" %]
+      [% fields.name.data.label %]
+   [% END %]
+    
+   [% WRAPPER $field_block  title="Wormbase ID" key="name" %]
+      [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% END %]
+   
+
+   [% WRAPPER $field_block  title="Synonym"  key="synonym" %]
+      [% fields.synonym.data.join("<br>") %]
+   [% END %]
+  
+   [% WRAPPER $field_block  title="Description" key="description" %]
+     
+      [% fields.description.data.des %]
+      [% IF fields.description.data.evidence %]
+	[% c.session.des= fields.description.data.des; c.session.object= object.object %]
+	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/des %]></a>
+      [% END %]
+   [% END %]
+ 
+   [% IF fields.is_dead.data.id.defined %]
+     [% WRAPPER $field_block  title="Note" key="is_dead" %]
+      [% tag2link(fields.is_dead.data) %]
+     [% END %]
+   [% END %]
+
+
