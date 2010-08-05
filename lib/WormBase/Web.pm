@@ -186,7 +186,7 @@ if (0) {
     
 # CHI-powered on-disk file cache: default.
 if (1) {
-    if (__PACKAGE__->config->{deployed} eq 'production') {
+#    if (__PACKAGE__->config->{deployed} eq 'production') {
 	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
 	    class  => "CHI",
 	    driver => 'File',
@@ -194,7 +194,7 @@ if (1) {
 	    depth    => '3',
 	    max_key_length => '32',
 	};
-    }
+#    }
 }
 
 
