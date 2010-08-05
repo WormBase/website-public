@@ -118,7 +118,7 @@
 [% MACRO object_list(objects) BLOCK %]
 
      [%# More than 5? Display 5, and list more %]
-     [% IF objects > 5 %]
+     [% IF objects.size > 5 %]
 
            [% FOREACH object IN objects.keys %]	             
                      [%- IF loop.last -%]
