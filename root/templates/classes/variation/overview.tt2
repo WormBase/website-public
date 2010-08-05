@@ -29,6 +29,6 @@
    [% END %]
 
    [% WRAPPER $field_block title="Remark(s)" key="remarks" %]
-         [% fields.remarks.data.join('<br>') %]
+         [% markup(fields.remarks.data.join('<br>'),0) %]
    [% END %]
 

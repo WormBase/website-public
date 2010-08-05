@@ -23,6 +23,6 @@
             <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
         [% END %]
         [% IF item.remarks.size > 0 %]
-           <br />[% item.remarks.join('<br>') %]
+           <br />[% markup(item.remarks.join('<br>'), 0, 1, 1) %]
         [% END %]
         <br />

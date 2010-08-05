@@ -103,7 +103,11 @@
 		
                 <tr>
                    <td>[% feature_type %]</td>
+               [% IF feature_type == 'Chromosome' %]
+                <td>[% fields.features_affected.data.$feature_type.$feature.label %]</td>
+               [% ELSE %]
 	           <td>[% tag2link(fields.features_affected.data.$feature_type.$feature) %]</td>
+               [% END %]
 		   <td>
 
      		      [% IF fields.features_affected.data.$feature_type.$feature.protein_effects %]
