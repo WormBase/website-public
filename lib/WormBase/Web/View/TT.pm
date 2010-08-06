@@ -34,10 +34,10 @@ __PACKAGE__->config({
 #		     TIMER        => 1,
 		     DEBUG        => 1,
 		     CONSTANTS    => {
-				      acedb_version => sub {
-					WormBase::Web->model('WormBaseAPI')->version
-					}
-				     },
+			 acedb_version => sub {
+			     WormBase::Web->model('WormBaseAPI')->version
+			 }
+		     },
 		    });
 
 
