@@ -406,6 +406,7 @@ sub features_affected {
 	    }
 	    
  	    foreach (@affects_this) { 				
+        next unless $_;
 		$affects->{$tag}->{$_}->{class} = $_->class;
 		$affects->{$tag}->{$_}->{label} = "$_";
         $affects->{$tag}->{$_}->{id} = "$_";
@@ -1233,7 +1234,7 @@ sub reference_allele {
     my $gene      = $object->Gene;
     my $allele    = $gene ? $gene->Reference_allele : "";
     return { description => 'the reference allele for the containing gene (if any)',	    
-	     data        => { label => $gene ? $gene->Reference_allele->Public_name->name : $allele,
+	     data        => { label => $gene->Reference_allele ? $gene->Reference_allele->Public_name->name : $allele,
                           id    => $allele,
                           class => 'variation' },
     };
