@@ -3,15 +3,12 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
-use Data::Dumper;
-
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
     'map' => {
 	'text/html'        => [ 'View', 'TT' ],
     });
-
 
 =head1 NAME
 
@@ -25,13 +22,6 @@ Catalyst Controller.
 
 =cut
 
-=head2 pages() pages_GET()
-
-Return a list of all available pages and their URIs
-
-TODO: This is currently just returning a dummy object
-
-=cut
 
 sub evidence :Path('/rest/evidence') :Args(3) :ActionClass('REST') {}
 
@@ -173,6 +163,13 @@ sub download_GET {
 }
 
 
+=head2 pages() pages_GET()
+
+Return a list of all available pages and their URIs
+
+TODO: This is currently just returning a dummy object
+
+=cut
 
 sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
 
@@ -214,104 +211,33 @@ sub available_widgets : Path('/rest/available_widgets') :Args(2) :ActionClass('R
 
 sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
-#     my (@widgets) = @{ $c->config->{pages}->{$class}->{widget_order} };
 
-    my @widgets = @{$c->config->{pages}->{$class}->{widgets}->{widget}};
-    @widgets = map{$_->{name}} @widgets;
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$data) = $c->check_cache('available_widgets');
+
+    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     
-    my @data;
     foreach my $widget (@widgets) {
 	my $uri = $c->uri_for('/widget',$class,$name,$widget);
-	push @data, { widgetname => $widget,
-				widgeturl  => "$uri"
+	push @$data, { widgetname => $widget,
+		       widgeturl  => "$uri"
 	};
+	$c->cache->set($cache_id,$data);
     }
     
-
     # Retain the widget order
     $self->status_ok( $c, entity => {
-	data => \@data,
+	data => $data,
 	description => "All widgets available for $class:$name",
 		      }
 	);
 }
 
-#
-# The OLD widget approach,
-# compiled from an independent 
-# set of templates
-# #
-# sub widget_compiled :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
-# 
-# sub widget_conpiled_GET {
-#     my ($self,$c,$class,$name,$widget) = @_; 
-# 
-#     unless ($c->stash->{object}) {
-# 	
-# 	# Fetch our external model
-# 	my $api = $c->model('WormBaseAPI');
-# 	
-# 	# Fetch the object from our driver	 
-# 	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-# 	$c->log->debug("The requested class is " . ucfirst($class));
-# 	$c->log->debug("The request is " . $name);
-# 	
-# 	# Fetch a WormBase::API::Object::* object
-# 	# But wait. Some methods return lists. Others scalars...
-# 	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
-# 					   name => $name}) or die "$!";
-#     }
-#     my $object = $c->stash->{object};
-#     
-# 
-# 
-#     # TODO: Load up the data content.
-#     # The widget itself could make a series of REST calls for each field
-#     my @fields;
-#     foreach (my $widget_config = $c->config->{pages}->{$class}->{widgets}) {
-# 	next unless $widget_config->{name} eq $widget; 
-# 	@fields = @{ $widget_config->fields };
-# 	$c->log->warn(@fields);
-#     }
-# #$c->config->{pages}->{$class}->{widgets}->{$widget} };
-#     my $data = {};
-#     foreach my $field (@fields) {
-# 	my $data = $object->$field;
-# 	$data->{$_} = $data;
-# 
-# 	# Conditionally load up the stash (for now) for HTML requests.
-# 	# Eventually, I can ust format the return JSON.
-# 	$c->stash->{$_} = $data;
-#       
-#     }
-#     
-#     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
-#     # PERHAPS I SHOULD INCLUDE FIELDS?
-#     # Include the full uri to the *requested* object.
-#     # IE the page on WormBase where this should go.
-#     my $uri = $c->uri_for("/page",$class,$name);
-#     
-#     $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 
-# 
-#     $self->status_ok($c, entity => {
-# 	class   => $class,
-# 	name    => $name,
-# 	uri     => "$uri",
-# 	$widget => $data
-# 		     }
-# 	);
-# } 
 
 
-
-
-
-#
-# The new widget approach, where all 
-# widget template has everything we
-# need.
-# Really, all that changes is the nature of the template
-# (and how component fields are called)
+# Request a widget by REST. Gathers all component fields
+# into a single data structure, passing it to a unified
+# widget template.
 
 =head widget(), widget_GET()
 
@@ -326,8 +252,6 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
 			     
-    my $id = join("_",$class,$widget,$name,$c->model('WormBaseAPI')->version);
-
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
@@ -346,17 +270,14 @@ sub widget_GET {
     }
     my $object = $c->stash->{object};
 
-    my $cache = $c->cache;
-    my $result;
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
 
-    # The cache ONLY includes the fields of the widget, nothing else.
+    # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
-    if ( $result = $cache->get( $id ) ) {
-	$c->log->debug("CACHE: $class:$widget:$name: ALREADY CACHED; retrieving.");
-	$c->stash->{fields} = $result;	
+    if ($cached_data) {
+	$c->stash->{fields} = $cached_data;
     } else {
-	$c->log->debug("CACHE: $class:$widget:$name: NOT PRESENT; generating widget.");
-
 	# No result? Generate and cache the widget.		
 	if ($widget eq "references") {
 	    $c->stash->{class} = $class;
@@ -411,7 +332,7 @@ sub widget_GET {
 	}
 		
 	# Cache the field data for this widget.
-	$c->cache->set( $id, $c->stash->{fields} ) or $c->log->warn( "couldn't stash fields" );
+	$c->set_cache($cache_id,$c->stash->{fields});
     }
     
     # Save the name of the widget.
@@ -442,6 +363,8 @@ sub widget_GET {
 
 
 
+
+
 ######################################################
 #
 #   FIELDS
@@ -468,15 +391,22 @@ sub available_fields : Path('/rest/available_fields') :Args(3) :ActionClass('RES
 
 sub available_fields_GET {
     my ($self,$c,$widget,$class,$name) = @_;
-    my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
 
-    my %data;
-    foreach my $field (@fields) {
-	my $uri = $c->uri_for('/rest/field',$class,$name,$field);
-	$data{$field} = "$uri";
+
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$data) = $c->check_cache('available_fields');
+
+    unless ($data) {	
+	my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
+	
+	foreach my $field (@fields) {
+	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
+	    $data->{$field} = "$uri";
+	}
+	$c->set_cache($cache_id,$data);
     }
     
-    $self->status_ok( $c, entity => { data => \%data,
+    $self->status_ok( $c, entity => { data => $data,
 				      description => "All fields that comprise the $widget for $class:$name",
 		      }
 	);
@@ -575,6 +505,7 @@ sub _select_template {
 	}
     }   
 }
+
 
 
 
