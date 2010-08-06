@@ -2,7 +2,7 @@
 
 <div align="center"><table><tr>
    [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
-         [% widget = c.config.pages.$class.$widgets.$widget_name %]
+         [% widget = c.config.pages.$class.widgets.$widget_name %]
          <th><a href="#[%- widget.name -%]">[[% widget.title FILTER lower %]]</a></th> 
    [% END %]
 </tr></table></div>
