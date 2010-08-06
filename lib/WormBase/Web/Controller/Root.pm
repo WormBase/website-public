@@ -132,7 +132,6 @@ sub field :Path("/field") Args(3) {
     $c->log->debug("Called a method on wrapped object->$field: " . $c->stash->{$field});
 
     # Select the appropriate template
-    # Unless otherwise specified, use a generic template
     $c->stash->{template} = $self->_select_template($c,$field,$class,'field');    
     $c->log->debug("assigned template: " .  $c->stash->{template});
     
@@ -425,30 +424,17 @@ sub _select_template {
     my ($self,$c,$render_target,$class,$type) = @_;
 
     # Normally, the template defaults to action name.
-    # However, we have some generic templates. We will
-    # specify the name of the template.  
-    # MOST widgets can use a generic template.
-    if ($type eq 'field') {
-
-
-# 2010.06.28
-# I don't believe the generic templates are in use any longer
-#	if (defined $c->config->{generic_fields}->{$render_target}) {
-#	    return "generic/$type.tt2";    
+    # However, we have some shared templates which are
+    # not located under root/classes/CLASS
+    if ($type eq 'field') {	
 	# Some templates are shared across Models
 	if (defined $c->config->{common_fields}->{$render_target}) {
 	    return "shared/fields/$render_target.tt2";
-	# Others are specific
+	    # Others are specific
 	} else {
 	    return "classes/$class/$render_target.tt2";
 	}
-    } else {
-
-# 2010.06.28
-# I don't believe the generic templates are in use any longer       
-	# Widget template selection
-#	if (defined $c->config->{generic_widgets}->{$render_target}) {
-#	    return "generic/$type.tt2";    
+    } else {       
 	# Some widgets are shared across Models
 	if (defined $c->config->{common_widgets}->{$render_target}) {
 	    return "shared/widgets/$render_target.tt2";
@@ -538,8 +524,7 @@ sub configure : Chained('/') PathPart('configure') Args(1) {
 #  Namespace collision?  Missing templates?  I can't figure it out.
 
 # This hack requires that the template be specified
-# in the dynamic action itself.  Further, I have a list of fields
-# which use generic templates in the configuration.
+# in the dynamic action itself. 
 
 
 

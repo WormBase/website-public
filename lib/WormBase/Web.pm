@@ -1,69 +1,33 @@
 package WormBase::Web;
 
-#use strict;
-#use warnings;
-#use Catalyst::Runtime '5.80';
-# Set flags and add application plugins
-#
-#         -Debug: activates the debug mode for very useful log messages
-# ConfigLoader: 
-#             will load the configuration from a Config::General file in the
-#             application's home directory
-#  Static::Simple:
-#             will serve static files from the application's root directory
-
-#use parent qw/Catalyst/;
-#use Catalyst qw/-Debug
-#		 ConfigLoader
-#		 Static::Simple
-#                 Unicode
-#	       /;
-
-
-
 use Moose;
 use namespace::autoclean;
 
-# your roles and plugins
+# Set flags, roles, and plugins
+#  -Debug
+#      Activates the debug mode for very useful log messages
+#  ConfigLoader
+#      Loads a Config::General config file from the application root
+#  Static::Simple:
+#      Will serve static files from the application's root directory
+# StackTrace
 use Catalyst qw/-Debug
 		 ConfigLoader
-		 Static::Simple
-                 Unicode
+                 Cache
 		 Session
 		 Session::Store::FastMmap
 	         Session::State::Cookie
-                 Cache
+		 Static::Simple
+                 Unicode
 	       /;
+
 extends 'Catalyst';
-
-
-#                 Breadcrumbs
-#
-#		 StackTrace
-#		 Session
-#		 Session::State::Cookie
-#		 Session::Store::FastMmap
-
-#NOTE: we may want to dynamically set the local config file suffix:
-# * $ENV{ MYAPP_CONFIG_LOCAL_SUFFIX }
-# * $ENV{ CATALYST_CONFIG_LOCAL_SUFFIX }
-# * $c->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix }
-# Thus, we could use different configuration files for any server or developer
-# See C:Plugin::ConfigLoader for details
-
 
 use Catalyst::Log::Log4perl; 
 
-our $VERSION      = '0.01';
+our $VERSION      = '0.02';
 our $PERL_VERSION = '5.010000';
-our $CODENAME     = 'El Rancho';
-
-# Configure the application.
-# Default application-wide configuration is located in
-# wormbase.yml.
-# Defaults can be overriden in wormbase_local.yml for
-# local or production deployment.
-
+our $CODENAME     = 'La Saladita';
 
 # Create a log4perl instance
 __PACKAGE__->log(
@@ -72,141 +36,106 @@ __PACKAGE__->log(
     )
     );
 
-# $SIG{__WARN__} = sub { __PACKAGE__->log->fatal(@_); };
+# What type of installation are we: development | mirror | local | production ?
+# Unfortunately, we set it here instead of in
+# our configuration file that hasn't been loaded yet.
+__PACKAGE__->config->{installation_type} = 'development';
 
+# Configure the application based on the type of installation.
+# Application-wide configuration is located in wormbase.conf
+# which can be over-ridden by wormbase_local.conf.
 __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
 						 driver => { 'General' => { -InterPolateVars => 1} },
 		     } ) or die "$!";
 
+# For non-development installations, set the local configuration 
+# file suffix to the name of the server. Not currently in use
+# but I'm keeping it around just in case.
+#if (__PACKAGE__->config->{installation_type} eq 'production') {    
+#    __PACKAGE__->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix } = $ENV{SERVER_NAME};
+#}
+
+
+# Where will static files be located? This is a path relative to APPLICATION root
 __PACKAGE__->config->{static}->{dirs} = [
     qw|css
        js
        img
-	tmp
+       tmp
       |]; 
 
-__PACKAGE__->config->{static}->{debug} = 1;
-
-# Are we in production?  If so, select the correct configuration file using the server name
-# TODO: This needs to be a flag set during packaging/deployment as we haven't yet read in
-# the configuration file. This is a hack for now
-
-__PACKAGE__->config->{deployed} = 'under development';
-if (__PACKAGE__->config->{deployed} eq 'production') {
-    __PACKAGE__->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix } = $ENV{SERVER_NAME};
-}
-
-
-# Where will static files be located? This is a path relative to APPLICATION root
-__PACKAGE__->config->{static}->{dirs} = ['static'];
-
-# View debugging. On by default if system-wide debug is on, too.
-# Toggle View debug messages that provide indication of our CSS nesting
-# View debugging messages:
-#     browser: in line
-#     comment: HTML comments
-#     log: logfile
-
+# Store the version and codename in the configuration object. Oh, the vanity.
 __PACKAGE__->config->{version}  = $VERSION;
 __PACKAGE__->config->{codename} = $CODENAME;
 
+# Huh?  What is this?
+__PACKAGE__->config->{static}->{debug} = 1;
 
-
-# These widgets can all use a single generic widget template.
-# Note that this is still page specific since the field templates
-# are included in the widget template.  This should be a variable, too.
-
-# But this is weird. If I request a single field, the template is specified there.
-# How can I access this?  Or rather, why override the specified template
-# for the field in the widget template?
-
-#####  ----->
-# in other words: any widget that mixes generic and specific field templates
-# CANNOT use the generic widget.  Annoying.
-
-# As above, common_widgets are used throughout the model
-  # but still require custom markup.
-__PACKAGE__->config->{common_widgets} =  { map { $_ => 1 } qw/
-							       references
-							       remarks
-                                                               location
-							       external_links
-							     /};
-
-# We should aspire to make ALL widgets generic
-# We will still have some custom fields however
-__PACKAGE__->config->{generic_widgets} =  { map { $_ => 1 } qw/
-								identification
-								expression
-								function
-								homology
-								reagents
-								similarities
-							      /};
-
-
+# Which elements of the data structure should be exposed in JSON renders?
 __PACKAGE__->config->{'View::JSON'} = {
     expose_stash => 'data' };
 
+##################################################
+#
+#   Dynamically establish the cache backend
+#
+##################################################
+# First, if we are a development site, we still want
+# to test the caching mechanism, we just don't want 
+# it to persist.
+my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
+    ? '4 weeks'
+    : '3 seconds';
 
-# Dynamically configure our cache, but only if we are a production server.
+# CHI-powered on-disk file cache: default.
+if (1) {	
+    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	class          => "CHI",
+	driver         => 'File',
+	root_dir       => '/tmp/wormbase/file_cache_chi',
+	depth          => '3',
+	max_key_length => '32',	
+	expires_in     => $expires_in,
+    };
+}
+
+
 # Here's a typical example for Cache::Memcached::libmemcached
 if (0) {
-    if (__PACKAGE__->config->{deployed} eq 'production') {
-	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-	    class   => "Cache::Memcached::libmemcached",
-	    servers => ['127.0.0.1:11211'],
-	    debug   => 2,
-	};
-    }
+    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	class   => "Cache::Memcached::libmemcached",
+	servers => ['127.0.0.1:11211'],
+	debug   => 2,
+    };
 }
 
 # FastMmap. WORKS, although I'm uncertain of how well it will scale.
 if (0) {
-    if (__PACKAGE__->config->{deployed} eq 'production') {
-	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-	    class => "Cache::FastMmap",
-	    share_file => "/Users/todd/tmp_cache",
-	    cache_size => "64m",
-	    num_pages  => '1039',  # Should be a prime number for best hashing.
-	    page_size  => '128k',	
-	};
-    }
+    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	class => "Cache::FastMmap",
+	share_file => "/Users/todd/tmp_cache",
+	cache_size => "64m",
+	num_pages  => '1039',  # Should be a prime number for best hashing.
+	page_size  => '128k',	
+    };
 }
 
 # FastMmap as a store; Uses Catalyst::Plugin::Cache::Store::FMmap which must be loaded.
 # Sets up default share_file and other params.
 if (0) {
-    if (__PACKAGE__->config->{deployed} eq 'production') {
-	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-	    store => "FastMmap",
-	};
-    }
+    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+	store => "FastMmap",
+    };
 }
     
-# CHI-powered on-disk file cache: default.
-if (1) {
-#    if (__PACKAGE__->config->{deployed} eq 'production') {
-	__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-	    class  => "CHI",
-	    driver => 'File',
-	    root_dir => '/tmp/wormbase/file_cache_chi',
-	    depth    => '3',
-	    max_key_length => '32',
-	};
-#    }
-}
 
 
-# Start the application
+# Finally! Start the application!
 __PACKAGE__->setup;
 
 
 
-
-#use
-#   $ CATALYST_DEBUG_CONFIG=1 perl script/extjs_test.pl /
-# to check what's in your configuration after loading
+#if __PACKAGE__->config->{debug}
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
 
 
