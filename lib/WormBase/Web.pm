@@ -85,7 +85,8 @@ __PACKAGE__->config->{'View::JSON'} = {
 # it to persist.
 my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
     ? '4 weeks'
-    : '3 seconds';
+    : '1 day';
+
 
 # CHI-powered on-disk file cache: default.
 if (1) {	
@@ -169,6 +170,58 @@ sub get_example_object {
   my ($object) = $ace->fetch(ucfirst($class),'*',1,$object_index);
   return $object;
 }
+
+
+
+########################################
+#
+#  Helper methods for interacting 
+#  with the cache.
+#
+########################################
+sub check_cache {
+    my ($self,@keys) = @_;
+    
+    # First get the cache
+    my $cache = $self->cache;
+
+    # Now get the database version from the cache. Heh.
+    my $version;
+    unless ($version = $cache->get('wormbase_version')) {
+	# The version isn't cached. So on this our first
+	# check of the cache, stash the database version.
+	
+	$version = $self->model('WormBaseAPI')->version;
+	$cache->set('wormbase_version',$version);
+    }
+	
+    # Build a cache key that includes the version.
+    my $cache_id = join("_",@keys,$version);
+
+    # Now check the cache for the data we are looking for.
+    my $cached_data = $cache->get($cache_id);
+
+    if ($cached_data) {
+	$self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving.");
+    } else {
+	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+    }
+
+    return ($cache_id,$cached_data);
+}
+
+# Provided with a pregenerated cache_id and (probably hash reference) of data,
+# store it in the cache.
+sub set_cache {
+    my ($self,$cache_id,$data) = @_;
+    $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
+    return;
+}
+
+
+
+
+
 
 
 =head1 NAME
