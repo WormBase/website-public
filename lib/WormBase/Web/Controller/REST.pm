@@ -325,8 +325,8 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-
-    my $id = join("_",$class,$widget,$name);
+			     
+    my $id = join("_",$class,$widget,$name,$c->model('WormBaseAPI')->version);
 
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
@@ -557,16 +557,8 @@ sub _select_template {
     my ($self,$c,$render_target,$class,$type) = @_;
 
     # Normally, the template defaults to action name.
-    # However, we have some generic templates. We will
-    # specify the name of the template.  
-    # MOST widgets can use a generic template.
-
-
-# 2010.06.28
-# I don't believe the generic field/widget templates are in use any longer
+    # But we also have a series of shared templates across models.
     if ($type eq 'field') {
-#	if (defined $c->config->{generic_fields}->{$render_target}) {
-#	    return "generic/$type.tt2";    
         # Some templates are shared across Models
 	if(defined $c->config->{common_fields}->{$render_target}) {
 	    return "shared/fields/$render_target.tt2";
@@ -575,10 +567,7 @@ sub _select_template {
 	}
     } else {
 	# Widget template selection
-# return "classes/$class/$render_target.tt2"; 
-#	if (defined $c->config->{generic_widgets}->{$render_target}) {
-#	    return "generic/$type.tt2";    
-	#    # Some are shared across Models
+	# Some are shared across Models
 	if (defined $c->config->{common_widgets}->{$render_target}) {
 	    return "shared/widgets/$render_target.tt2";
 	} else {  
