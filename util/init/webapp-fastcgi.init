@@ -16,7 +16,7 @@
 
 APPNAME=WormBase
 UNIXNAME=$(echo $APPNAME | perl -pe 's/::/_/;$_=lc')
-APPDIR=/usr/local/wormbase/website-2.0
+APPDIR=/usr/local/wormbase/website
 PROCS=10
 # TCP socket
 #SOCKET=127.0.0.1:3001
@@ -32,7 +32,7 @@ GROUP=
 PIDSUFFIX=
 
 # local::lib path, if you want to use it.
-LOCALLIB=/usr/local/wormbase/website-2.0/extlib
+LOCALLIB=/usr/local/wormbase/website/extlib
 
 if [ -f "/etc/default/"$UNIXNAME ]; then
 . "/etc/default/"$UNIXNAME

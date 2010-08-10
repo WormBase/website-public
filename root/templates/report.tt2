@@ -84,7 +84,7 @@
 [% ELSIF view=="page" %]
 
            [% FOREACH widget IN c.config.pages.$class.widget_order %]
-              [% widget = c.config.pages.$class.$widgets.$widget_name %]
+              [% widget = c.config.pages.$class.widgets.$widget_name %]
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
                                What we are doing here is preparing the widget
