@@ -39,6 +39,7 @@ requires 'Catalyst::View::Email';
 requires 'CHI';                              # Cache backend
 requires 'DBI';
 requires 'DBD::mysql';
+requires 'DB_File::Lock';
 requires 'GD';
 requires 'GD::SVG';
 requires 'Module::Install';
