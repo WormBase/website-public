@@ -114,7 +114,12 @@ sub _pack_obj {
 sub tmp_dir {
     my $self       = shift;
     my @sub_dirs = @_;
-    my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
+
+    # append the hostname so that I can correctly direct traffic through the proxy
+    my $host = `hostname`;
+    chomp $host;
+    $host ||= 'local';
+    my $path = File::Spec->catfile($self->tmp_base,$host,@sub_dirs);
     mkpath($path,0,0777) unless -d $path;
     return $path;    
 };
