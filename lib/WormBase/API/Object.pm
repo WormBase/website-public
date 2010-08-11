@@ -123,12 +123,13 @@ sub tmp_dir {
     mkpath($path,0,0777) unless -d $path;
  
     my ($uri) = $path =~ /.*\/(tmp.*)/;
-   return ($path,$uri);    
+    return ($path,$uri);    
 };
 
 sub tmp_image_dir {
     my $self  = shift;
-    return $self->tmp_dir('images',@_);
+    my ($path,$uri) = $self->tmp_dir('images',@_);
+    return ($path,$uri);
 }
 
 sub tmp_acedata_dir {
