@@ -80,12 +80,19 @@ sub _pack_objects {
     my ($self,$objects) = @_;
     my %data;
     foreach (@$objects) {
-	$data{"$_"} = { id => "$_",
-			label => "$_",
-			class => $_->class,
-	};
+      $data{"$_"} = $self->_pack_obj($_);
     }
     return \%data;
+}
+
+sub _pack_obj {
+    my ($self,$object, $label) = @_;
+    $label = "$object" unless $label;
+    my $data = { id => "$object",
+              label => $label,
+              class => $object->class,
+    };
+    return $data;
 }
 
 

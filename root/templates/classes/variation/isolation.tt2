@@ -4,15 +4,15 @@
 [% widget = widget %]
 
    [% WRAPPER $field_block title="Laboratory Of Origin" key="laboratory_of_origin" %]
-         <a href="[% c.uri_for_action('report', 'laboratory' , fields.laboratory_of_origin.data ) %]">[% fields.laboratory_of_origin.data %]</a>
+         [% tag2link(fields.laboratory_of_origin.data) %]
    [% END %]
 
-   [% WRAPPER $field_block title="Isolate By (author)" key="isolated_by_author" %]
-         <a href="[% c.uri_for_action('report', 'person' , fields.isolated_by_author ) %]">[% fields.isolated_by_author %]</a>
+   [% WRAPPER $field_block title="Isolated By (author)" key="isolated_by_author" %]
+         [% tag2link(fields.isolated_by_author.data) %]
    [% END %]
 
    [% WRAPPER $field_block title="Isolated By" key="isolated_by" %]
-         <a href="[% c.uri_for_action('report', 'person' , fields.isolated_by ) %]">[% fields.isolated_by %]</a>
+                 [% tag2link(fields.isolated_by.data) %]
    [% END %]
 
    [% WRAPPER $field_block title="Source Database" key="source_database" %]
