@@ -130,11 +130,27 @@ if (0) {
 }
     
 
+# Dynamically set the base URL for 
+if (__PACKAGE__->config->{installation_type} eq 'production') {
+    __PACKAGE__->config->{base} = 'http://206.108.125.175/';
+} else {
+    __PACKAGE__->config->{base} = '';
+}
+
 
 # Finally! Start the application!
 __PACKAGE__->setup;
 
 
+
+# There's a problem with c.uri_for when running behind a reverse proxy.
+# We need to reset the base URL.
+# We set the base URL above (which should probably be dynamic...)
+after prepare_path => sub {
+    my $c = shift;
+    $c->req->base(URI->new->($c->config->{base}));
+};
+    
 
 #if __PACKAGE__->config->{debug}
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
