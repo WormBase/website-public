@@ -81,8 +81,7 @@ if (__PACKAGE__->config->{installation_type} eq 'production') {
 }
 
 # Conditionally set the using front end proxy flag
-# Damn. This approach doesn't seem to work...
-#__PACKAGE__->config->{using_frontend_proxy} = 1;
+__PACKAGE__->config->{using_frontend_proxy} = 1;
 
 
 
@@ -169,7 +168,7 @@ __PACKAGE__->setup;
 after prepare_path => sub {
     my $c = shift;
     if ($c->config->{base}) {
-	$c->req->base(URI->new->($c->config->{base}));
+	$c->req->base(URI->new($c->config->{base}));
     }
 };
     
