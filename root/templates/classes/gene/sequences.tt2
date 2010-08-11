@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Gene model(s)" %]
+   [% WRAPPER $field_block title="Gene model(s)" key="gene_models"%]
       [% order = ['model','status','nucleotides','protein','aa'] %]
       [% headers = {    model => 'Gene Model',
                         status => 'Status',
@@ -45,11 +45,6 @@
       </div>
    [% END %]
 
-   [% WRAPPER $field_block title="Other sequences" %]
-<!--        <div class="toggle">Toggle</div>
-        <div class="standard-list">-->
-        [% FOREACH seq IN fields.other_sequences.data %]
-              [% tag2link(seq.name.data) %] [% seq.description.data %] <br />
-        [% END %]
-<!--         </div> -->
+   [% WRAPPER $field_block title="Other sequences" key="other_sequences"%]
+        [% dataTable_list(['sequence', 'description'], fields.other_sequences.data, 'table_other_sequences') %]
    [% END %]

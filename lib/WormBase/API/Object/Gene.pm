@@ -345,7 +345,7 @@ sub kogs {
 sub other_sequences {
 	my $self = shift;
     my $object = $self->object;
-	my @seqs = map {$self->wrap($_)} $object->Other_sequence;
+    my @seqs = map { [$self->_pack_obj($_), "". $_->Title] } $object->Other_sequence;
     my $data = { description => 'Other sequences associated with gene',
                  data        => \@seqs
     };
@@ -2275,23 +2275,6 @@ sub cloned_by_old {
 }
 
 
-sub other_sequences_old {
-    my $self   = shift;
-    my $object = $self->object;
-
-    if (my @seqs = $object->Other_sequence) {
-	# Wrap these in WormBase API objects
-	my @wrapped = $self->wrap(@seqs);
-
-	my $data = { resultset => { sequences => \@wrapped } };
-	return $data;
-	return \@wrapped;
-    } else {
-	return 1;
-    }
-}
-
-
 sub ids_complex {
     my $self   = shift;
     my $object = $self->object; ## shift
@@ -2459,19 +2442,14 @@ sub anatomic_expression_patterns {
     my @eps = $object->Expr_pattern;
     
     foreach my $ep (@eps) {
-    	if ($self->_pattern_thumbnail($ep)) {
-    	
-    		$data_pack{$ep}{'image'} = 1;
-    	}
-    	
-    	else 
-    	
-    	{
-    		$data_pack{$ep}{image} = 0;
-    	}
+        $data_pack{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+        my $pattern =  join '', ($ep->Pattern(-filled=>1), $ep->Subcellular_localization(-filled=>1));
+        $pattern    =~ s/(.{384}).+/$1\.\.\. /;
+        $data_pack{"$ep"}{details} = $pattern;
+        $data_pack{"$ep"}{object} = $self->_pack_obj($ep);
     }
     
-    $data{'description'} = 'expression pattern image data for gene';
+    $data{'description'} = 'expression pattern data for gene';
     
     $data{'data'} = \%data_pack;
     return \%data;

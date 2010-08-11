@@ -16,8 +16,6 @@
 
    [% WRAPPER $field_block title="Other Alleles" key="other_allele" %]
 
-          <p class="caveat-emptor">Haven't established subfield handling yet.</p>
-
 	  <section>
 	      <div class="subfield">
     	          <div class="subfield-title">Sequenced alleles</div>
