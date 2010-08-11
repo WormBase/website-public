@@ -53,7 +53,7 @@ requires 'Test::Pod::Coverage';
 requires 'WWW::Mechanize';
 requires 'YAML';
 
-catalyst;
+#catalyst;
 
 install_script glob('script/*.pl');
 auto_install;
