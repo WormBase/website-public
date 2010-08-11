@@ -210,21 +210,21 @@ sub homology_image {
       $suffix = 'gif';
       ($img,$boxes) = $gd->asGif(@_);
     } else {
-      $suffix   = $gd->can('png') ? 'png' : 'gif';
-      $img     = $gd->can('png') ? $gd->png : $gd->gif;
+	$suffix  = $gd->can('png') ? 'png' : 'gif';
+	$img     = $gd->can('png') ? $gd->png : $gd->gif;
     }
     my $basename = md5_hex($img);
     my $dirs = substr($basename,0,6) ;
     $dirs    =~ s!^(.{2})(.{2})(.{2})!$1/$2/$3!g;
-    my $path = $self->tmp_image_dir($dirs)."/$basename.$suffix";
-    unless(-s $path) {
-      open (F,">$path") ;
-      print F $img;
-      close F;
+    my $path = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
+    unless (-s $path) {
+	open (F,">$path") ;
+	print F $img;
+	close F;
     }
     my $data = { description => 'The homology image of the protein',
 		 data        => "$dirs/$basename.$suffix",
-    }; 
+    };
     return $data;
 }
 
@@ -693,8 +693,8 @@ sub _draw_image {
   }
   
   return $panel;
-
 }
+
 sub wrestle_blast {
   my $hits = shift;
   my $as_features = shift;
