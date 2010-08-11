@@ -121,7 +121,9 @@ sub tmp_dir {
     $host ||= 'local';
     my $path = File::Spec->catfile($self->tmp_base,$host,@sub_dirs);
     mkpath($path,0,0777) unless -d $path;
-    return $path;    
+ 
+    my ($uri) = $path =~ /.*\/(tmp.*)/;
+   return ($path,$uri);    
 };
 
 sub tmp_image_dir {
