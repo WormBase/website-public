@@ -406,6 +406,7 @@ sub features_affected {
 	    }
 	    
  	    foreach (@affects_this) { 				
+        next unless $_;
 		$affects->{$tag}->{$_}->{class} = $_->class;
 		$affects->{$tag}->{$_}->{label} = "$_";
         $affects->{$tag}->{$_}->{id} = "$_";
@@ -1233,7 +1234,7 @@ sub reference_allele {
     my $gene      = $object->Gene;
     my $allele    = $gene ? $gene->Reference_allele : "";
     return { description => 'the reference allele for the containing gene (if any)',	    
-	     data        => { label => $gene ? $gene->Reference_allele->Public_name->name : $allele,
+	     data        => { label => $gene->Reference_allele ? $gene->Reference_allele->Public_name->name : $allele,
                           id    => $allele,
                           class => 'variation' },
     };
@@ -1307,24 +1308,19 @@ sub rescued_by_transgene {
 sub laboratory_of_origin {
     my $self = shift;
     my $object = $self->object;
-    
-    #my @formatted;
-    # foreach ($var->Laboratory) {
-    #my $name  = eval { $_->Representative->Standard_name };
-    #my $place = eval { $_->Mail };
-    #push @formatted, ($name) ? ObjectLink($_) . ' (' . ObjectLink($name) . ', ' . $place . ')' : ObjectLink($_);
-    #}
-    #my $formatted = join(br,@formatted);
-    # SubSection('Laboratory of origin',$formatted || UNKNOWN);
     return { description => 'the laboratory that generated the variation',
-	     data        => $object->Laboratory };
+	     data        => { id => $object->Laboratory,
+                          label => $object->Laboratory . ": " . $object->Laboratory->Representative->Standard_name,
+                          class => 'laboratory'}};
 }
 
 sub isolated_by_author {
     my $self = shift;
     my $object = $self->object;
     return { description => 'the author credited with generating the mutation',
-	     data        => $object->Author };
+         data        => { id => $object->Author,
+                          label => $object->Author,
+                          class => 'person'}};
 }
 
 sub isolated_by {
@@ -1334,7 +1330,9 @@ sub isolated_by {
 #  $person ||= UNKNOWN;
 #  SubSection('Person',$person);
     return { description => 'the person credited with generating the mutation',
-	     data        => $object->Person };
+         data        => { id => $object->Person,
+                          label => $object->Person,
+                          class => 'person'}};
 }
 
 
