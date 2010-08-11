@@ -223,8 +223,7 @@ sub homology_image {
     my $host = `hostname`;
     chomp $host;
 
-    my $path = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
-    my ($uri) = $path =~ /.*\/(tmp.*)/;
+    my ($path,$uri) = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
 
     unless (-s $path) {
 	open (F,">$path") ;
