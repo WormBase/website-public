@@ -66,6 +66,10 @@ __PACKAGE__->log(
     );
 
 
+# Set up static directories that will be ignored by the restart engine
+__PACKAGE__->config->{static}->{dirs} = [qw/ css js img tmp/];
+
+
 # THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
 # What type of installation are we: development | mirror | local | production ?
 # Unfortunately, we set it here instead of in

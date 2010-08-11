@@ -216,14 +216,24 @@ sub homology_image {
     my $basename = md5_hex($img);
     my $dirs = substr($basename,0,6) ;
     $dirs    =~ s!^(.{2})(.{2})(.{2})!$1/$2/$3!g;
+
+    # Include the host for proper squid routing.
+    # This is also added to the file-system path
+    # so I do not need to employ extra apache-fu.
+    my $host = `hostname`;
+    chomp $host;
+
     my $path = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
+    my ($uri) = $path =~ /.*\/(tmp.*)/;
+
     unless (-s $path) {
 	open (F,">$path") ;
 	print F $img;
 	close F;
     }
     my $data = { description => 'The homology image of the protein',
-		 data        => "$dirs/$basename.$suffix",
+#		 data        => "$dirs/$basename.$suffix",
+		 data        => "$uri",
     };
     return $data;
 }
