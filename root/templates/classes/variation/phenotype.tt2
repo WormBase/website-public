@@ -1,0 +1,15 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Nature" key="nature_of_variation" %]
+       [% fields.nature_of_variation.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Dominance" key="dominance" %]
+         [% fields.dominance.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Phenotype Remark" key="phenotype_remark" %]
+         [% fields.phenotype_remark.data %]
+   [% END %]
+

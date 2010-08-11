@@ -25,7 +25,7 @@
   <div class="results-abstract">
     <div class="toggle"><b>Abstract: </b>[% item.abstract.substr(0,80) %]...</div>
     <div class="abstract-container" >
-      [% item.abstract %]
+      [% markup(item.abstract,0) %]
     </div>
   </div>
 [% END %]
