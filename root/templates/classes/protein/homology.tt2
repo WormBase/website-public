@@ -13,8 +13,9 @@
   [% fields.ortholog_genes.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_block title="Genomic Image" %]
+[% WRAPPER $field_block title="Protein Schematic" %]
     [% image(fields.homology_image.data) %]
+    [% fields.homology_image.data %]
 [% END %]
 
 
