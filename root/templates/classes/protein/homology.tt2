@@ -15,7 +15,6 @@
 
 [% WRAPPER $field_block title="Protein Schematic" %]
     [% image(fields.homology_image.data) %]
-    [% fields.homology_image.data %]
 [% END %]
 
 
