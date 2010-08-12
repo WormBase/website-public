@@ -54,7 +54,7 @@ sub name {
     
     my $data = { description => 'The name of the protein',
 		 data        => { id    => "$id",
-#				  label => $ace->name,
+				  #				  label => $ace->name,
 				  label => "$id",
 				  class => $id->class
 		 },
@@ -67,7 +67,7 @@ sub name {
 sub taxonomy {
     my $self = shift;
     my $genus_species = $self ~~ 'Species' || eval { $self->cds->[0]->Species };
-#    my $data = $self->taxonomy($genus_species);
+    #    my $data = $self->taxonomy($genus_species);
     my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
     my $data = { description => 'the genus and species of the protein object',
 		 data        => { genus   => $genus,
@@ -77,17 +77,17 @@ sub taxonomy {
     return $data;
 }
 
- 
+
 sub genes {
     my $self = shift;
     my %seen;
     my @result;
     my @genes = grep {!$seen{$_}++}   grep{$_->Method ne 'history'}  @{$self->cds};
     foreach (@genes) {
-   		push @result, { id=>$_->Gene,
-						label=>$self->bestname($_->Gene)||$_,
-						class=>'gene',
-						}; 
+	push @result, { id=>$_->Gene,
+			label=>$self->bestname($_->Gene)||$_,
+			class=>'gene',
+	}; 
     }
     my $data = { description => 'The genes or CDS associated with the protein',
 		 data        => \@result,
@@ -104,8 +104,7 @@ sub transcripts {
     my $data = { description => 'The transcripts related with the protein',
 		 data        => [map {my $hash = { id => $_,label=>$_,class=>$_->class} ;$_=$hash;} grep {!$seen{$_}++}  @transcripts],
     }; 
-    return $data;
-
+    return $data;    
 }
 
 
@@ -124,8 +123,7 @@ sub remarks {
     return $data;
 }
 
-sub status {
-    
+sub status {    
     my $data = { description => 'The status of the protein',
 		 data        =>  shift ~~ 'Status' ,
     }; 
@@ -133,7 +131,7 @@ sub status {
 }
 
 sub description {
-     
+    
     my $data = { description => 'The description of the protein',
 		 data        =>  shift ~~ 'Description'  ,
     }; 
@@ -167,7 +165,7 @@ sub external_links {
     return $data;  
 }
 
- 
+
 ############################################################
 #
 # The Homology widget
@@ -179,12 +177,12 @@ sub homology_groups {
     my @hg;
     foreach my $k (@$kogs) {
 	push @hg ,{ type=>$k->Group_type||'',
-		     title=>$k->Title||'',
-		     link => { id=>"$k",
-                             label=>$k->name,
-                             class=>$k->class,
-				}
-		   };
+		    title=>$k->Title||'',
+		    link => { id=>"$k",
+			      label=>$k->name,
+			      class=>$k->class,
+		    }
+	};
     }
     my $data = { description => 'The homology groups of the protein',
 		 data        => \@hg,
@@ -204,11 +202,11 @@ sub homology_image {
     my $self=shift;
     my $panel=$self->_draw_image($self->object,1);
     my $gd=$panel->gd;
- 
+    
     my ($suffix,$img,$boxes);
     if ($gd->isa('Ace::Object')) {
-      $suffix = 'gif';
-      ($img,$boxes) = $gd->asGif(@_);
+	$suffix = 'gif';
+	($img,$boxes) = $gd->asGif(@_);
     } else {
 	$suffix  = $gd->can('png') ? 'png' : 'gif';
 	$img     = $gd->can('png') ? $gd->png : $gd->gif;
@@ -216,22 +214,19 @@ sub homology_image {
     my $basename = md5_hex($img);
     my $dirs = substr($basename,0,6) ;
     $dirs    =~ s!^(.{2})(.{2})(.{2})!$1/$2/$3!g;
-
-    # Include the host for proper squid routing.
-    # This is also added to the file-system path
-    # so I do not need to employ extra apache-fu.
-    my $host = `hostname`;
-    chomp $host;
-
-    my ($path,$uri) = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
-
+        
+    my $path = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
+    
     unless (-s $path) {
 	open (F,">$path") ;
 	print F $img;
 	close F;
     }
+
+    # Grab only the URI components in the path
+    my ($uri) = $path =~ m!.*(/tmp.*)!;
+
     my $data = { description => 'The homology image of the protein',
-#		 data        => "$dirs/$basename.$suffix",
 		 data        => "$uri",
     };
     return $data;

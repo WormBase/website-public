@@ -112,24 +112,24 @@ sub _pack_obj {
 #}
 
 sub tmp_dir {
-    my $self       = shift;
+    my $self     = shift;
     my @sub_dirs = @_;
 
     # append the hostname so that I can correctly direct traffic through the proxy
     my $host = `hostname`;
     chomp $host;
     $host ||= 'local';
+
     my $path = File::Spec->catfile($self->tmp_base,$host,@sub_dirs);
     mkpath($path,0,0777) unless -d $path;
- 
-    my ($uri) = $path =~ /.*\/(tmp.*)/;
-    return ($path,$uri);    
+    
+    return $path;
 };
 
 sub tmp_image_dir {
     my $self  = shift;
-    my ($path,$uri) = $self->tmp_dir('images',@_);
-    return ($path,$uri);
+    my $path = $self->tmp_dir('images',@_);
+    return $path;
 }
 
 sub tmp_acedata_dir {
