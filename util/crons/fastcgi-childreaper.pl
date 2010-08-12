@@ -13,7 +13,7 @@ my ($ppid, $bytes) = @ARGV;
 die "Usage: kidreaper PPID ram_limit_in_bytes\n" unless $ppid;
 
 # 250 MB limit for now
-$bytes ||= '262144000' unless $by
+$bytes ||= '262144000';
 
 my $kids;
 
