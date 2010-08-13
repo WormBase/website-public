@@ -22,7 +22,7 @@
 </div>
 <!-- end boilerplate/footer -->
 
-[% INCLUDE server_details title="report" %]
+[% server_details(title="report") %]
 
 [% INCLUDE google_analytics %]
 
