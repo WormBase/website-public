@@ -1,7 +1,7 @@
 package WormBase::API::Object::Variation;
 
 use Moose;
-use Bio::Graphics::Browser::Markup;
+use Bio::Graphics::Browser2::Markup;
 # I shouldn't need to use CGI here.
 use CGI qw/:standard :html3/;
 
