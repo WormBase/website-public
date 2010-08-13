@@ -273,10 +273,15 @@ sub widget_GET {
     # Does the data for this widget already exist in the cache?
     my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
 
+
+    my $status;
+
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
 	$c->stash->{fields} = $cached_data;
+	$c->res->status(304);
+	return 1;
     } else {
 	# No result? Generate and cache the widget.		
 	if ($widget eq "references") {
