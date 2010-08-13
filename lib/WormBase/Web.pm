@@ -127,7 +127,7 @@ if (1) {
 	driver         => 'File',
 	root_dir       => '/tmp/wormbase/file_cache_chi',
 	depth          => '3',
-	max_key_length => '32',	
+	max_key_length => '64',	
 	expires_in     => $expires_in,
     };
 }
@@ -161,6 +161,14 @@ if (0) {
     };
 }
     
+
+##################################################
+#
+#   Set headers for squid
+#
+##################################################
+
+
 
 # Finally! Start the application!
 __PACKAGE__->setup;
