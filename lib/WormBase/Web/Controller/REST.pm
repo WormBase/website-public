@@ -280,8 +280,6 @@ sub widget_GET {
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
 	$c->stash->{fields} = $cached_data;
-	$c->res->status(304);
-	return 1;
     } else {
 	# No result? Generate and cache the widget.		
 	if ($widget eq "references") {
@@ -357,7 +355,7 @@ sub widget_GET {
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
-
+    
     $self->status_ok($c, entity => {
 	class   => $class,
 	name    => $name,
