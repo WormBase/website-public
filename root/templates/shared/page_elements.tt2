@@ -208,7 +208,7 @@
  #
  ####################################################
 %]
-[% BLOCK server_details(title) %]
+[% MACRO server_details(title) BLOCK %]
 
    [% PERL %]
       $host = `hostname`;
