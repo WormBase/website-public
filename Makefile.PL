@@ -20,6 +20,7 @@ requires 'Config::General';
 requires 'Ace';
 requires 'Bio::Perl';                        # This should be 1.60 or greater
 requires 'Bio::Graphics';
+requires 'Bio::Grapics::Browser2::Markup';   # Sequece Summary page
 requires 'Catalyst::Devel';                  # REQ'D FOR DEVELOPMENT ONLY
 requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
 #requires 'Cache::Memcached::libmemcached';
