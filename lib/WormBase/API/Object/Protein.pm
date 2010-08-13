@@ -215,19 +215,20 @@ sub homology_image {
     my $dirs = substr($basename,0,6) ;
     $dirs    =~ s!^(.{2})(.{2})(.{2})!$1/$2/$3!g;
         
+    # Fetch the full path to the file
     my $path = $self->tmp_image_dir($dirs) . "/$basename.$suffix";
     
+    # Write out the file unless it already exists
     unless (-s $path) {
 	open (F,">$path") ;
 	print F $img;
 	close F;
     }
-
-    # Grab only the URI components in the path
-    my ($uri) = $path =~ m!.*(/tmp.*)!;
-
+    
+    # Return the URI to the temporary image file.
+    # It should be something like
     my $data = { description => 'The homology image of the protein',
-		 data        => "$uri",
+		 data        => $self->tmp_image_uri($path),
     };
     return $data;
 }

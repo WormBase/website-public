@@ -66,8 +66,18 @@ __PACKAGE__->log(
     );
 
 
-# Set up static directories that will be ignored by the restart engine
-__PACKAGE__->config->{static}->{dirs} = [qw/ css js img tmp/];
+# Set configuration for static files
+# Force specific directories to be handled by Static::Simple.
+# These should ALWAYS be served in static mode.
+__PACKAGE__->config(
+    static => {
+	dirs => [qw/ css js img tmp /],
+	include_path => [ '/tmp/wormbase',
+			  __PACKAGE__->config->{root},
+	    ],	
+#	logging  => 1,
+    });
+
 
 
 # THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
@@ -269,7 +279,55 @@ sub set_cache {
 
 
 
+#######################################################
+#
+#    TEMPLATE SELECTION
+#
+#######################################################
 
+# Template assignment is a bit of a hack.
+# Maybe I should just maintain
+# a hash, where each field/widget lists its corresponding template
+sub _select_template {
+    my ($self,$render_target,$class,$type) = @_;
+
+    # Normally, the template defaults to action name.
+    # However, we have some shared templates which are
+    # not located under root/classes/CLASS
+    if ($type eq 'field') {	
+	# Some templates are shared across Models
+	if (defined $self->config->{common_fields}->{$render_target}) {
+	    return "shared/fields/$render_target.tt2";
+	    # Others are specific
+	} else {
+	    return "classes/$class/$render_target.tt2";
+	}
+    } else {       
+	# Widget template selection
+	# Some widgets are shared across Models
+	if (defined $self->config->{common_widgets}->{$render_target}) {
+	    return "shared/widgets/$render_target.tt2";
+	} else {  
+	    return "classes/$class/$render_target.tt2"; 
+	}
+    }   
+}
+
+
+
+sub _get_widget_fields {
+    my ($self,$class,$widget) = @_;
+
+    my @fields;
+    # Widgets accessible by name
+    if (ref $self->config->{pages}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
+	@fields = ($self->config->{pages}->{$class}->{widgets}->{$widget}->{fields});
+    } else {
+	@fields = @{ $self->config->{pages}->{$class}->{widgets}->{$widget}->{fields} };
+    }
+    $self->log->debug("The $widget widget is composed of: " . join(", ",@fields));
+    return @fields;
+}
 
 
 
