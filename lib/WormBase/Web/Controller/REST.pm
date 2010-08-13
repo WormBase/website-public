@@ -281,18 +281,21 @@ sub widget_GET {
     if ($cached_data) {
 	$c->stash->{fields} = $cached_data;
     } else {
+
 	# No result? Generate and cache the widget.		
+
+	# Is this a request for the references widget?
+	# Return it (of course, this will ONLY be HTML).
 	if ($widget eq "references") {
-	    $c->stash->{class} = $class;
-	    $c->stash->{query} = $name;
+	    $c->stash->{class}    = $class;
+	    $c->stash->{query}    = $name;
 	    $c->stash->{noboiler} = 1;
 	    
-	    # looking up the config was really slow...
+	    # Looking up the template is slow; hard-coded here.
 	    $c->stash->{template} = "shared/widgets/references.tt2";
 	    $c->forward('WormBase::Web::View::TT');
 	    return;
 	}
-
 
 #    unless ($c->stash->{object}) {
 #	# Fetch our external model
@@ -313,17 +316,8 @@ sub widget_GET {
 	
 	# Load the stash with the field contents for this widget.
 	# The widget itself could make a series of REST calls for each field but that could quickly become unwieldy.
-	my @fields;
-
-	# Widgets accessible by name
-	if (ref $c->config->{pages}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
-	    @fields = ($c->config->{pages}->{$class}->{widgets}->{$widget}->{fields});
-	} else {
-	    @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget}->{fields} };
-	}
-
-	$c->log->debug("fields are " . @fields);
-       		
+	my @fields = $c->_get_widget_fields($class,$widget);
+	       		
 	foreach my $field (@fields) {
 	    $c->log->debug($field);
 	    my $data = {};
@@ -345,7 +339,7 @@ sub widget_GET {
     $c->stash->{noboiler} = 1;
 
     # Set the template
-    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget'); 	
+    $c->stash->{template} = $c->_select_template($widget,$class,'widget'); 	
 
     # Forward to the view for rendering HTML.
     $c->forward('WormBase::Web::View::TT');
@@ -470,43 +464,15 @@ sub field_GET {
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
 
-    $c->stash->{template} = $self->_select_template($c,$field,$class,'field'); 
+    $c->stash->{template} = $c->_select_template($field,$class,'field'); 
 
     $self->status_ok($c, entity => {
-	                 class  => $class,
+	class  => $class,
 			 name   => $name,
 	                 uri    => "$uri",
 			 $field => $data
 		     }
 	);
-}
-
-
-# WHY IS THIS DUPLICATED HERE?  Also in Root.pm
-# Template assignment is a bit of a hack.
-# Maybe I should just maintain
-# a hash, where each field/widget lists its corresponding template
-sub _select_template {
-    my ($self,$c,$render_target,$class,$type) = @_;
-
-    # Normally, the template defaults to action name.
-    # But we also have a series of shared templates across models.
-    if ($type eq 'field') {
-        # Some templates are shared across Models
-	if(defined $c->config->{common_fields}->{$render_target}) {
-	    return "shared/fields/$render_target.tt2";
-	} else {  
-	    return "classes/$class/$render_target.tt2";
-	}
-    } else {
-	# Widget template selection
-	# Some are shared across Models
-	if (defined $c->config->{common_widgets}->{$render_target}) {
-	    return "shared/widgets/$render_target.tt2";
-	} else {  
-	    return "classes/$class/$render_target.tt2"; 
-	}
-    }   
 }
 
 

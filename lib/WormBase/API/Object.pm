@@ -111,25 +111,49 @@ sub _pack_obj {
 #  return $dbh;
 #}
 
+
+# Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
     my $self     = shift;
     my @sub_dirs = @_;
+    my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
 
-    # append the hostname so that I can correctly direct traffic through the proxy
-    my $host = `hostname`;
-    chomp $host;
-    $host ||= 'local';
-
-    my $path = File::Spec->catfile($self->tmp_base,$host,@sub_dirs);
-    mkpath($path,0,0777) unless -d $path;
-    
+    mkpath($path,0,0777) unless -d $path;    
     return $path;
 };
 
 sub tmp_image_dir {
     my $self  = shift;
-    my $path = $self->tmp_dir('images',@_);
+
+    # Include the hostname for images. Necessary for proxying and apache configuration.
+    my $host = `hostname`;
+    chomp $host;
+    $host ||= 'local';
+
+    my $path = $self->tmp_dir('images',$host,@_);
     return $path;
+}
+
+# Create a URI to a temporary image.
+# Routing will be handled by Static::Simple in development
+# and apache in production.
+sub tmp_image_uri {
+    my ($self,$path_and_file) = @_;
+    
+#    # append the hostname so that I can correctly direct traffic through the proxy
+#    my $host = `hostname`;
+#    chomp $host;
+#    $host ||= 'local';
+    
+    my $tmp_base = $self->tmp_base;
+    
+    # Purge the temp base from the path_and_file    
+    # eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
+    $path_and_file =~ s/$tmp_base//;
+    
+    # URI: /images/wb-web1/00/00/00...
+    my $uri = '/' . $path_and_file;
+    return $uri;    
 }
 
 sub tmp_acedata_dir {

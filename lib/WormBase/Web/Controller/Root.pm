@@ -132,7 +132,7 @@ sub field :Path("/field") Args(3) {
     $c->log->debug("Called a method on wrapped object->$field: " . $c->stash->{$field});
 
     # Select the appropriate template
-    $c->stash->{template} = $self->_select_template($c,$field,$class,'field');    
+    $c->stash->{template} = $c->_select_template($field,$class,'field');    
     $c->log->debug("assigned template: " .  $c->stash->{template});
     
     # My end action isn't working... 
@@ -165,18 +165,18 @@ sub widget :Path("/widget") Args(3) {
     my $api = $c->model('WormBaseAPI');
 
     # Fetch the object from our driver	 
-#    $c->log->debug("WormBaseAPI model is $api " . ref($api));
-#    $c->log->debug("The requested class is " . ucfirst($class));
-#    $c->log->debug("The request is " . $name);
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
     
     my $object = $api->fetch({class=> ucfirst($class),
 			      name => $name}) or die "$!";
-
+    
     $c->log->debug("Instantiated an external object: " . ref($object));
-
+    
     # Should I stash the object so I only need to fetch it once?
-    # $c->stash->{object} = $object;
-        
+    $c->stash->{object} = $object;
+    
     # Fetch the field content and stash it.
     
     # Currently, I have to provide EVERY tag in my wrapper model
@@ -185,33 +185,18 @@ sub widget :Path("/widget") Args(3) {
     # This is a horrendous hack; get the field from my wrapper object
     # if implemented, otherwise get it from the wrapped object.
     
-    # Fetch all of the fields in order that comprise
+    # Fetch all of the fields (in order) that comprise
     # this widget from the app configuration.
-
+    
     # The templates for each field are actually specified in the widget.
 #    my @fields = @{ $c->config->{pages}->{$class}->{widgets}->{$widget} };
 
 
-    # DOH!  Cannot access widgets by name now...
-#    my $fields = $self->_get_widget_fields($c,$class,$widget);
-    my $fields = @{$c->config->{pages}->{$class}->{widgets}->{$widget}->{fields}};
+    # Access the component fields of this widget by name
+    my @fields = $c->_get_widget_fields($class,$widget);
 
-#    my %widgets = $c->config->{pages}->{$class}->{widgets};
-#    $c->log->warn(keys %widgets);
-#    foreach (keys %widgets) {
-#	$c->log->warn(" yep " . $_);
-#	next unless $_->{widget}->{name} eq $widget; 
-#	@fields = @{ $_->fields };
-#    foreach (@fields) {
-#	$c->log->warn($_->[0]);
-#    }
-	$c->log->warn(join(" ",@$fields));
-#    }
-    $c->stash->{fields} = $fields;
-
-
-    # Forward to each of the component fields.
-    foreach my $field (@$fields) {
+    # Call each of the component field method and stash the data.
+    foreach my $field (@fields) {
 	# Currently, I have to provide EVERY tag in my wrapper model
 	# since I cannot find a sensible way to AUTOLOAD under Moose
 	# (if indeed AUTOLOADing under Moose makes any sense at all...)
@@ -240,7 +225,7 @@ sub widget :Path("/widget") Args(3) {
     }
     
     # Fetch the appropriate template for the widget
-    $c->stash->{template} = $self->_select_template($c,$widget,$class,'widget');
+    $c->stash->{template} = $c->_select_template($widget,$class,'widget');
     
 
     # My end action isn't working... 
@@ -249,21 +234,12 @@ sub widget :Path("/widget") Args(3) {
 };
 
 
-# For a given PAGE and WIDGET, fetch all available FIELDS
-#sub _get_widget_fields {
-#    my ($self,$c,$page,$widget) = @_;
-#    my $index = $c->config->{pages}->{$page}->{widget_index}->{$widget};
-#    my $widget_config = $c->config->{pages}->{$page}->{widgets}->{widget}->[$index];
-#    my @fields = @{$widget_config->{fields}};
-#    return \@fields;
-#}
-
 
 
 ##############################################################
 #
-#   Pages (composites of widgets)
-#   URL space : /page
+#   Reports (composites of widgets)
+#   URL space : /reports
 #   Params    : class, object, page
 # 
 ##############################################################
@@ -310,8 +286,9 @@ sub report :Path("/reports") Args(2) {
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
     
 =head
-	# To add later:
-	# * multi-results formatting
+
+    # To add later:
+    # * multi-results formatting
     # * nothing found.
     
     # Fetch the field content and stash it.
@@ -406,42 +383,6 @@ sub classic_report :Path("/db") Args(2) {
 
     # Set the classic template
     $c->stash->{template} = 'layout/classic.tt2';
-}
-
-
-
-
-#######################################################
-#
-#     HELPER METHODS, NOT ACTIONS
-#
-#######################################################
-
-# Template assignment is a bit of a hack.
-# Maybe I should just maintain
-# a hash, where each field/widget lists its corresponding template
-sub _select_template {
-    my ($self,$c,$render_target,$class,$type) = @_;
-
-    # Normally, the template defaults to action name.
-    # However, we have some shared templates which are
-    # not located under root/classes/CLASS
-    if ($type eq 'field') {	
-	# Some templates are shared across Models
-	if (defined $c->config->{common_fields}->{$render_target}) {
-	    return "shared/fields/$render_target.tt2";
-	    # Others are specific
-	} else {
-	    return "classes/$class/$render_target.tt2";
-	}
-    } else {       
-	# Some widgets are shared across Models
-	if (defined $c->config->{common_widgets}->{$render_target}) {
-	    return "shared/widgets/$render_target.tt2";
-	} else {  
-	    return "classes/$class/widgets/$render_target.tt2"; 
-	}
-    }   
 }
 
 
