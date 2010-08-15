@@ -14,6 +14,10 @@
 
 . /lib/lsb/init-functions
 
+# Need sbin in our path
+PATH=$PATH:/sbin
+export PATH
+
 APPNAME=WormBase
 UNIXNAME=$(echo $APPNAME | perl -pe 's/::/_/;$_=lc')
 APPDIR=/usr/local/wormbase/website
