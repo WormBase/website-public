@@ -93,7 +93,7 @@
 # eg. OMIM:604297, 309000
     MACRO markup_omim(text) BLOCK;
       text = "$text";
-      text.replace('OMIM:(\d+)((, )(\d+))?', text.search('OMIM:(\d+)((, )(\d+))') ? external_link('OMIM','OMIM:$1', '$1') _  '$3' _ external_link('OMIM', '$4', '$4') : external_link('OMIM','OMIM:$1', '$1'));
+      text.replace('OMIM:(\d{6})((, )(\d{6}))?', text.search('OMIM:(\d{6})((, )(\d{6}))') ? external_link('OMIM','OMIM:$1', '$1') _  '$3' _ external_link('OMIM', '$4', '$4') : external_link('OMIM','OMIM:$1', '$1'));
     END;
 
 # Markup any locus reference in text
