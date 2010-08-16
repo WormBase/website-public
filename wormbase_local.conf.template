@@ -45,63 +45,63 @@ installation_type   = development
     #    tmp_base    = __path_to(root)__/tmp/
     #    tmp_base      = /tmp/wormbase
     <database>
-    #	tmp = /tmp/wormbase
-	<acedb>
-	 	# Acedb configuration
-		reconnect = 5
-		host = localhost mining.wormbase.org aceserver.cshl.edu
-		port = 2005
-		user =
-		pass =
-		cache_root = __path_to(root)__/cache/
-		cache_expires = 3 weeks
-		cache_size    = 100000000
-		cache_auto_purge_interval =
-	</acedb>
-	<gff>
-	# MySQL configuration
-	reconnect = 3
-	host  = mining.wormbase.org aceserver.cshl.edu localhost
-	user  = nobody
-	pass  = 
-	  <data_sources>
-	      <c_elegans>
-		  adaptor = dbi::mysqlace
-		  aggregator = processed_transcript{coding_exon,5_UTR,3_UTR/CDS}
-		  aggregator = full_transcript{coding_exon,five_prime_UTR,three_prime_UTR/Transcript}
-		  aggregator = transposon{coding_exon,five_prime_UTR,three_prime_UTR}
-		  aggregator = clone
-		  aggregator = alignment
-		  aggregator = waba_alignment
-		  aggregator = coding{coding_exon}
-		  aggregator = pseudo{exon:Pseudogene/Pseudogene}
-		  aggregator = rna{exon/Transcript}
-	      </c_elegans>
-	      <c_briggsae>
-		  adaptor    = dbi::mysqlace
-		  aggregator = wormbase_cds{coding_exon,three_prime_UTR,five_primer_UTR/CDS}
-		  aggregator = clone
-		  aggregator = alignment
-		  aggregator = waba_alignment
-	      </c_briggsae>
-	      <c_brenneri>
-		  adaptor    = dbi::mysqlace
-		  aggregator = wormbase_gene
-	      </c_brenneri>
-	       <c_remanei>
-		  adaptor    = dbi::mysqlace
-		  aggregator = wormbase_gene
-	      </c_remanei>
-	      <c_elegans_pmap>
-		  adaptor    = dbi::mysqlace
-		  aggregator = wormbase_gene
-	      </c_elegans_pmap>
-	      <c_elegans_gmap>
-		  adaptor    = dbi::mysqlace
-		  aggregator = wormbase_gene
-	      </c_elegans_gmap>
-	  </data_sources>
-	</gff>
+    #   tmp = /tmp/wormbase
+    <acedb>
+        # Acedb configuration
+        reconnect = 5
+        host = localhost mining.wormbase.org aceserver.cshl.edu
+        port = 2005
+        user =
+        pass =
+        cache_root = __path_to(root)__/cache/
+        cache_expires = 3 weeks
+        cache_size    = 100000000
+        cache_auto_purge_interval =
+    </acedb>
+    <gff>
+    # MySQL configuration
+    reconnect = 3
+    host  = mining.wormbase.org aceserver.cshl.edu localhost
+    user  = nobody
+    pass  = 
+      <data_sources>
+          <c_elegans>
+          adaptor = dbi::mysqlace
+          aggregator = processed_transcript{coding_exon,5_UTR,3_UTR/CDS}
+          aggregator = full_transcript{coding_exon,five_prime_UTR,three_prime_UTR/Transcript}
+          aggregator = transposon{coding_exon,five_prime_UTR,three_prime_UTR}
+          aggregator = clone
+          aggregator = alignment
+          aggregator = waba_alignment
+          aggregator = coding{coding_exon}
+          aggregator = pseudo{exon:Pseudogene/Pseudogene}
+          aggregator = rna{exon/Transcript}
+          </c_elegans>
+          <c_briggsae>
+          adaptor    = dbi::mysqlace
+          aggregator = wormbase_cds{coding_exon,three_prime_UTR,five_primer_UTR/CDS}
+          aggregator = clone
+          aggregator = alignment
+          aggregator = waba_alignment
+          </c_briggsae>
+          <c_brenneri>
+          adaptor    = dbi::mysqlace
+          aggregator = wormbase_gene
+          </c_brenneri>
+           <c_remanei>
+          adaptor    = dbi::mysqlace
+          aggregator = wormbase_gene
+          </c_remanei>
+          <c_elegans_pmap>
+          adaptor    = dbi::mysqlace
+          aggregator = wormbase_gene
+          </c_elegans_pmap>
+          <c_elegans_gmap>
+          adaptor    = dbi::mysqlace
+          aggregator = wormbase_gene
+          </c_elegans_gmap>
+      </data_sources>
+    </gff>
       </database>
   </args>
 </Model::WormBaseAPI>
