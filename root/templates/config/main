@@ -57,6 +57,11 @@
        END;
    END;
 
+    MACRO searchlink(class, id, text) BLOCK;
+       url = c.uri_for('/search_new', class, id);
+       "<a href=\"$url\" class=\"$class-link\">$text</a>";
+    END;
+
 
 # Use to create outgoing links from the site
 # params: link          - the ID for the link found in root/templates/config/external_urls
@@ -75,6 +80,7 @@
        ELSE;
           url = site.external_urls.$link.base;
        END;
+       UNLESS url; url = link; END;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" 

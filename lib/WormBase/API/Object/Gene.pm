@@ -78,7 +78,7 @@ extends 'WormBase::API::Object';
 
 ### configuration items
 
-my $version = 'WS217';	
+my $version = 'WS217';  
 
 our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
 our $rnai_details_file = "rnai_data.txt";
@@ -541,22 +541,12 @@ sub pre_wormbase_information {
 
 
 sub microarray_expression_data {
-
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'gene expression determined via microarray analysis';
-
-	my $data_pack;
-
-	#### data pull and packaging
 	my @microarray_results = $object->Microarray_results;	
-	$data_pack = $self->basic_package(\@microarray_results, 'Microarray_results');
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
+	$data{'data'} = $self->_pack_objects(\@microarray_results);
+	$data{'description'} = 'gene expression determined via microarray analysis';
 	return \%data;
 }
 
@@ -592,134 +582,113 @@ sub microarray_topology_map_position {
 
 
 sub expression_cluster {
-
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @expr_clusters = $object->Expression_cluster;
-	
-	foreach my $ec (@expr_clusters) {
-	
-		$data_pack{$ec} = {
-							'class' => 'Expression_cluster',
-							'name' => $ec
-		
-							};
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my %data;
+    my @expr_clusters = $object->Expression_cluster;  
+    $data{'data'} = $self->_pack_objects(\@expr_clusters);
+    $data{'description'} = 'expression cluster data';
+    return \%data;
 }
 
 
 
 sub anatomy_function {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+    my %data;
+    my $desc = 'notes ;
+                data structure = data{"data"} = {
+                }';
 
-	my %data_pack;
+    my %data_pack;
 
-	#### data pull and packaging
+    #### data pull and packaging
 
-	my @anatomy_fns = $object->Anatomy_function;
-	
-	foreach my $af (@anatomy_fns) {
+    my @anatomy_fns = $object->Anatomy_function;
+    
+    foreach my $af (@anatomy_fns) {
 
-    	my $afn_phenotype = $af->Phenotype;
-	    my $phenotype_prime_name = $afn_phenotype->Primary_name;
-	
-		$data_pack{$af} = {
-							'ace_id' => $af,
-							'class' => 'Anatomy_function',
-							'phenotype_id' => $afn_phenotype,
-							'phenotype_name' => $phenotype_prime_name
-							};	
-	}
+        my $afn_phenotype = $af->Phenotype;
+        my $phenotype_prime_name = $afn_phenotype->Primary_name;
+    
+        $data_pack{$af} = {
+                            'ace_id' => $af,
+                            'class' => 'Anatomy_function',
+                            'phenotype_id' => $afn_phenotype,
+                            'phenotype_name' => $phenotype_prime_name
+                            };  
+    }
 
-	####
+    ####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 }
 
 
 sub phenotype {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+    my %data;
+    my $desc = 'notes ;
+                data structure = data{"data"} = {
+                }';
 
-	my %data_pack;
+    my %data_pack;
 
-	#### data pull and packaging
-	
-	my ($details,$rnai_id_data) = _get_phenotype_data($object, 1);  
-	my $variation_data = _get_variation_data($object, 1);
-	my %variation_data;
-	my %rnai_count_data;
-	
-	foreach my $rnai_id_data_line (@$rnai_id_data) {
-		
-		my ($phenotype_id, $rnai_count) = split /\|/, $rnai_id_data_line;
-		$rnai_count_data{$phenotype_id} = $rnai_count;
-	}
-	
-	
-	foreach my $variation_data_line (@$variation_data) {
+    #### data pull and packaging
+    
+    my ($details,$rnai_id_data) = _get_phenotype_data($object, 1);  
+    my $variation_data = _get_variation_data($object, 1);
+    my %variation_data;
+    my %rnai_count_data;
+    
+    foreach my $rnai_id_data_line (@$rnai_id_data) {
+        
+        my ($phenotype_id, $rnai_count) = split /\|/, $rnai_id_data_line;
+        $rnai_count_data{$phenotype_id} = $rnai_count;
+    }
+    
+    
+    foreach my $variation_data_line (@$variation_data) {
 
-		my ($phenotype_id, $variation_info) = split /\|/, $variation_data_line;
-		my @variation_data = split "&", $variation_info;
+        my ($phenotype_id, $variation_info) = split /\|/, $variation_data_line;
+        my @variation_data = split "&", $variation_info;
 
-		foreach my $variation_datum (@variation_data) {
-			
-			my ($variation, $status) = split /\+/, $variation_datum;	
-			$variation_data{$phenotype_id}{$variation} = {
-				
-				'status' => $status,
-				'variation_name' => 'TBD',
-				'class' => 'Variation'
-			}									
-		}
-	} 
+        foreach my $variation_datum (@variation_data) {
+            
+            my ($variation, $status) = split /\+/, $variation_datum;    
+            $variation_data{$phenotype_id}{$variation} = {
+                
+                'status' => $status,
+                'variation_name' => 'TBD',
+                'class' => 'Variation'
+            }                                   
+        }
+    } 
 
-	# my $variation_data_line = join ',' , @$variation_data;
-	my $phenotype_names_hr  = _get_phenotype_names($details,$variation_data);
+    # my $variation_data_line = join ',' , @$variation_data;
+    my $phenotype_names_hr  = _get_phenotype_names($details,$variation_data);
 
-		foreach my $pheno_id (keys %$phenotype_names_hr) {
+        foreach my $pheno_id (keys %$phenotype_names_hr) {
 
-		$data_pack{$pheno_id} = {
-			'phenotype' => $phenotype_names_hr->{$pheno_id},
-			'class' => 'Phenotype',
-			'variation_data' => $variation_data{$pheno_id},
-			'rnai_count' => $rnai_count_data{$pheno_id}
-		};
-	}
+        $data_pack{$pheno_id} = {
+            'phenotype' => $phenotype_names_hr->{$pheno_id},
+            'class' => 'Phenotype',
+            'variation_data' => $variation_data{$pheno_id},
+            'rnai_count' => $rnai_count_data{$pheno_id}
+        };
+    }
 
-	####
+    ####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 }
 
 
@@ -781,45 +750,45 @@ sub regulation_on_expression_level {
 
 sub interactions {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my %data_pack;
-	my $desc = "interactions gene is involved in";
-	
-	my $version = $self->ace_dsn->dbh->version;
-	my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
-	my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-	
-	#### data pull and packaging
-	
-	my $gene_data_lines = `grep $object $datafile`;
-	my @gene_data_lines = split /\n/,$gene_data_lines;
-	
-	my @interaction_data;
-	foreach my $dataline (@gene_data_lines){
-		
-		chomp $dataline;
-		my @dataline_set = split /\|/,$dataline;
-		push @interaction_data,$dataline_set[0];
-	}
+    my %data;
+    my %data_pack;
+    my $desc = "interactions gene is involved in";
+    
+    my $version = $self->ace_dsn->dbh->version;
+    my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
+    my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
+    
+    #### data pull and packaging
+    
+    my $gene_data_lines = `grep $object $datafile`;
+    my @gene_data_lines = split /\n/,$gene_data_lines;
+    
+    my @interaction_data;
+    foreach my $dataline (@gene_data_lines){
+        
+        chomp $dataline;
+        my @dataline_set = split /\|/,$dataline;
+        push @interaction_data,$dataline_set[0];
+    }
 
-	#my $data_pack = $self->basic_package(\a);
+    #my $data_pack = $self->basic_package(\a);
 
-	foreach my $interaction_name (@interaction_data) {
-	
-			$data_pack{$interaction_name} = {
-											'class' => 'Interaction',
-											'common_name' => $interaction_name
-											};
-	}
+    foreach my $interaction_name (@interaction_data) {
+    
+            $data_pack{$interaction_name} = {
+                                            'class' => 'Interaction',
+                                            'common_name' => $interaction_name
+                                            };
+    }
 
 
-	###############################
+    ###############################
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 
 }
 
@@ -1036,33 +1005,33 @@ sub strains {
 
 sub rearrangements{
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'rearrangements involving this gene';
+    my %data;
+    my $desc = 'rearrangements involving this gene';
 
-	my %data_pack;
-	my $rearrangement = 0;
+    my %data_pack;
+    my $rearrangement = 0;
 
-	#### data pull and packaging
+    #### data pull and packaging
 
-	if ($object->Allele || $object->Reference_allele) {
-	
-		$rearrangement = 1;
-	}
+    if ($object->Allele || $object->Reference_allele) {
+    
+        $rearrangement = 1;
+    }
 
-	%data_pack = {
-					$object => {
-								'rearrangement' => $rearrangement
-								}
-	
-				};
+    %data_pack = {
+                    $object => {
+                                'rearrangement' => $rearrangement
+                                }
+    
+                };
 
-	####
+    ####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 }
 
 ###########################################
@@ -1214,7 +1183,6 @@ sub best_blastp_matches {
 ###########################################
 # Components of the Reagents panel
 ###########################################
-
 sub transgenes {
     my $self       = shift;
     my $object = $self->object;
@@ -1558,6 +1526,26 @@ sub protein_domains_old {
 #    return \@stash;
 #}
 
+sub _get_phenotype_data {
+
+# should we read in precompiled file and get gene->phen data?
+
+#    my ($gene,$positive_results) = @_;
+#    my @phenotype_return;
+#     
+#     
+#     foreach my $phenotype (keys %pheno_rnai_data) {
+#     
+#         my $rnai_ids_hr = $pheno_rnai_data{$phenotype};
+#         my @rnai_ids = keys %$rnai_ids_hr;
+#         my $rnai_id_count = @rnai_ids;
+#         push @phenotype_return, "$phenotype\|$rnai_id_count";
+#     }
+#     
+#     return \@phenotype_return;
+# 
+
+}
 
 sub rnai_phenotypes {
 
@@ -1610,6 +1598,7 @@ sub rnai_phenotypes {
 								};
 		}	
 	}
+
 
 	####
 
@@ -1669,6 +1658,9 @@ sub variation_phenotypes {
 									};
 			}
 	}
+
+
+
 
 	####
 
@@ -2144,14 +2136,6 @@ sub interactions_old {
     return $stash;
 }
 
-
-sub microarray_expression_data_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    return [ $object->Microarray_results ];
-}
-
 sub microarray_topology_map_position_old {
     my $self   = shift;
     my $object = $self->object;
@@ -2443,12 +2427,23 @@ sub cds_old {
 sub fourd_expression_movies {
     my $self   = shift;
     my $object = $self->object;
+
+    my %data;
+    my %data_pack;
     
-    my @all_ep = $object->Expr_pattern;
-    my @mohler = eval{grep {($_->Author =~ /Mohler/ && $_->MovieURL)} @all_ep};
-    @all_ep = eval{grep {!($_->Author =~ /Mohler/ && $_->MovieURL)} @all_ep};
-    return '' unless @all_ep || @mohler;
-    return \@mohler;
+    my @eps = $object->Expr_pattern;
+    @eps = eval{grep {($_->Author =~ /Mohler/ && $_->MovieURL)} @eps};
+    
+    foreach my $ep (@eps) {
+        $data_pack{"$ep"}{movie} = $ep->MovieURL;
+        $data_pack{"$ep"}{details} = $ep->Pattern;
+        $data_pack{"$ep"}{object} = $self->_pack_obj($ep);
+    }
+    
+    $data{'description'} = 'Interactive 4D expression movies';
+    
+    $data{'data'} = \%data_pack;
+    return \%data;
 }
 
 sub anatomic_expression_patterns {
@@ -2458,6 +2453,7 @@ sub anatomic_expression_patterns {
     my %data_pack;
     
     my @eps = $object->Expr_pattern;
+    @eps = eval{grep {!($_->Author =~ /Mohler/ && $_->MovieURL)} @eps};
     
     foreach my $ep (@eps) {
         $data_pack{"$ep"}{image} = $self->_pattern_thumbnail($ep);
@@ -2482,137 +2478,134 @@ sub anatomic_expression_patterns {
 #   INTERNAL METHODS
 #
 #########################################
-
-
 sub _gene_ontology_web {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+    my %data;
+    my $desc = 'notes ;
+                data structure = data{"data"} = {
+                }';
 
-	my %data_pack;
+    my %data_pack;
 
-	#### data pull and packaging
+    #### data pull and packaging
 
-	#my %go_terms;
-	my @go_terms = $object->GO_term;
-	
-	my %annotation_bases  = (
-		'EXP' , 'x',
-		'IDA' , 'x',
-		'IPI' , 'x',
-		'IMP' , 'x',
-		'IGI' , 'x',
-		'IEP' , 'x',
-		'ND' , 'x',
-		
-		'IEA' , 'p',
-		'ISS' , 'p',
-		'ISO' , 'p',
-		'ISA' , 'p',
-		'ISM' , 'p',
-		'IGC' , 'p',
-		'RCA' , 'p',
-		'IC' , 'p'
-	);
+    #my %go_terms;
+    my @go_terms = $object->GO_term;
+    
+    my %annotation_bases  = (
+        'EXP' , 'x',
+        'IDA' , 'x',
+        'IPI' , 'x',
+        'IMP' , 'x',
+        'IGI' , 'x',
+        'IEP' , 'x',
+        'ND' , 'x',
+        
+        'IEA' , 'p',
+        'ISS' , 'p',
+        'ISO' , 'p',
+        'ISA' , 'p',
+        'ISM' , 'p',
+        'IGC' , 'p',
+        'RCA' , 'p',
+        'IC' , 'p'
+    );
 
-	
+    
 
-	foreach my $go_term (@go_terms){
-	  foreach my $code ($go_term->col){
-		my @row = $code->row;
-		my ($evidence_code,$method,$detail) = @row;
-		my $display_method = method_detail($method,$detail);
-		my $term = $go_term->Term;
-		my $term_type = $go_term->Type;
-		my $annotation_basis =  $annotation_bases{$evidence_code};
-		my %data = (
-			'display_method' => $display_method,
-			'evidence_code' => $evidence_code,
-			'term' => $term,
-			'go_term' => $go_term
-			); 
-		
-		my @data = ($display_method,$evidence_code,$term,$go_term); 
-		my $data_line = join ";",@data;
-		$data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
-	  }
-	}
+    foreach my $go_term (@go_terms){
+      foreach my $code ($go_term->col){
+        my @row = $code->row;
+        my ($evidence_code,$method,$detail) = @row;
+        my $display_method = method_detail($method,$detail);
+        my $term = $go_term->Term;
+        my $term_type = $go_term->Type;
+        my $annotation_basis =  $annotation_bases{$evidence_code};
+        my %data = (
+            'display_method' => $display_method,
+            'evidence_code' => $evidence_code,
+            'term' => $term,
+            'go_term' => $go_term
+            ); 
+        
+        my @data = ($display_method,$evidence_code,$term,$go_term); 
+        my $data_line = join ";",@data;
+        $data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
+      }
+    }
 
 
-	####
+    ####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 }
 
 #
 #sub get_go_data {
-#	my $object = shift @_;
-#	my %go_terms;
-#	my @go_terms = $object->GO_term;
-#	
-#	my %annotation_bases  = (
-#		'EXP' , 'x',
-#		'IDA' , 'x',
-#		'IPI' , 'x',
-#		'IMP' , 'x',
-#		'IGI' , 'x',
-#		'IEP' , 'x',
-#		'ND' , 'x',
-#		
-#		'IEA' , 'p',
-#		'ISS' , 'p',
-#		'ISO' , 'p',
-#		'ISA' , 'p',
-#		'ISM' , 'p',
-#		'IGC' , 'p',
-#		'RCA' , 'p',
-#		'IC' , 'p'
-#	);
+#   my $object = shift @_;
+#   my %go_terms;
+#   my @go_terms = $object->GO_term;
+#   
+#   my %annotation_bases  = (
+#       'EXP' , 'x',
+#       'IDA' , 'x',
+#       'IPI' , 'x',
+#       'IMP' , 'x',
+#       'IGI' , 'x',
+#       'IEP' , 'x',
+#       'ND' , 'x',
+#       
+#       'IEA' , 'p',
+#       'ISS' , 'p',
+#       'ISO' , 'p',
+#       'ISA' , 'p',
+#       'ISM' , 'p',
+#       'IGC' , 'p',
+#       'RCA' , 'p',
+#       'IC' , 'p'
+#   );
 #
-#	foreach my $go_term (@go_terms){
-#	  foreach my $code ($go_term->col){
-#		my @row = $code->row;
-#		my ($evidence_code,$method,$detail) = @row;
-#		my $display_method = method_detail($method,$detail);
-#		my $term = $go_term->Term;
-#		my $term_type = $go_term->Type;
-#		my $annotation_basis =  $annotation_bases{$evidence_code};
-#		my @data = ($display_method,$evidence_code,$term,$go_term); 
-#		my $data_line = join ";",@data;
-#		
-#		$go_terms{$annotation_basis}{$term_type}{$data_line} = 1;
-#	  }
-#	}
-#	return \%go_terms;
+#   foreach my $go_term (@go_terms){
+#     foreach my $code ($go_term->col){
+#       my @row = $code->row;
+#       my ($evidence_code,$method,$detail) = @row;
+#       my $display_method = method_detail($method,$detail);
+#       my $term = $go_term->Term;
+#       my $term_type = $go_term->Type;
+#       my $annotation_basis =  $annotation_bases{$evidence_code};
+#       my @data = ($display_method,$evidence_code,$term,$go_term); 
+#       my $data_line = join ";",@data;
+#       
+#       $go_terms{$annotation_basis}{$term_type}{$data_line} = 1;
+#     }
+#   }
+#   return \%go_terms;
 #}
 
 sub method_detail {
-	my ($method,$detail) = @_;
-	my $return;
-	if ($method =~ m/Paper/){
-		$return = "a_Manual";
-	}
-	elsif($detail =~ m/phenotype/i){
-		$return = "b_Phenotype to GO Mapping";
-	}
-	elsif($detail =~ m/interpro/i){
-		$return = "c_Interpro to GO Mapping";
-	}
-	elsif($detail =~ m/tmhmm/i){
-		$return = "d_TMHMM to GO Mapping";
-	}
-	else {
-		$return = "z_No Method"
-	}
-	return $return;
+    my ($method,$detail) = @_;
+    my $return;
+    if ($method =~ m/Paper/){
+        $return = "a_Manual";
+    }
+    elsif($detail =~ m/phenotype/i){
+        $return = "b_Phenotype to GO Mapping";
+    }
+    elsif($detail =~ m/interpro/i){
+        $return = "c_Interpro to GO Mapping";
+    }
+    elsif($detail =~ m/tmhmm/i){
+        $return = "d_TMHMM to GO Mapping";
+    }
+    else {
+        $return = "z_No Method"
+    }
+    return $return;
 }
-
 
 # PROTEINS HERE WILL NOT PERSIST AND NEED TO BE FETCHED EACH GO 'ROUND
 # THIS ALSO WILL NOT RETURN OBJECTS - stash() treats them as hashrefs
@@ -2622,6 +2615,10 @@ sub _fetch_proteins {
     my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
     return \@proteins;
 }
+
+
+
+
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
@@ -2972,6 +2969,8 @@ sub species2url {
     return (sprintf($url,$id)) if $url;
 }
 
+
+
 sub _fetch_sequences {
 
 	my $self = shift;
@@ -2988,6 +2987,8 @@ sub _fetch_sequences {
     return \@seqs;
     
 }
+
+
 
 ### get phenotype ids from outputs of get_phenotype_data() and get_variation_data() and provides corresponding phenotype names
 ### syntax: $phene_id2name_hr = get_phenotype_names(rnai_ar,var_ar)
