@@ -64,6 +64,9 @@
   [% ELSIF item.class == 'microarray_results' %]
     [% PROCESS "search/microarray_results.tt2" %]
 
+  [% ELSIF item.class == 'expression_cluster' %]
+    [% PROCESS "search/expression_cluster.tt2" %]
+
   [% # OTHER %]
   [% ELSE %]
     <li><span id="fade">[% item.class %]:</span>
