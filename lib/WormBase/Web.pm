@@ -5,10 +5,10 @@ use namespace::autoclean;
 
 # Set flags, roles, and plugins
 #  -Debug
-#      Activates the debug mode for useful log messages
+#      Activates the debug mode for very useful log messages
 #  ConfigLoader
 #      Loads a Config::General config file from the application root
-#  Static::Simple
+#  Static::Simple:
 #      Will serve static files from the application's root directory
 # StackTrace
 use Catalyst qw/-Debug
@@ -25,38 +25,9 @@ extends 'Catalyst';
 
 use Catalyst::Log::Log4perl; 
 
-our $VERSION = '0.02';
- 
-
-=pod
-
-Instead of config loader, I might write my own configuration parser/loader.
-I hate not being able to use logic in the configuration file
-as well as having configuration tied to application setup.
-
-Here's an example from D rolsky
-
-use R2::Config;
-use Moose;
-
-my $Config;
-
-BEGIN
-{
-    extends 'Catalyst';
-
-    $Config = R2::Config->new();
-
-    Catalyst->import( @{ $Config->catalyst_imports() } );
-}
-
-__PACKAGE__->config( name => 'R2',
-                     %{ $Config->catalyst_config() },
-    );
-
-=cut
-
-
+our $VERSION      = '0.02';
+our $PERL_VERSION = '5.010000';
+our $CODENAME     = 'La Saladita';
 
 # Create a log4perl instance
 __PACKAGE__->log(
@@ -65,29 +36,10 @@ __PACKAGE__->log(
     )
     );
 
-
-# THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
 # What type of installation are we: development | mirror | local | production ?
 # Unfortunately, we set it here instead of in
-# our configuration file since it isn't loaded until application setup.
+# our configuration file that hasn't been loaded yet.
 __PACKAGE__->config->{installation_type} = 'development';
-
-# THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
-# Dynamically set the base URL for production; also requires the prepare_path
-if (__PACKAGE__->config->{installation_type} eq 'production') {
-    __PACKAGE__->config->{base} = 'http://206.108.125.175/';
-} else {
-#    __PACKAGE__->config->{base} = '';
-}
-
-# Conditionally set the using front end proxy flag
-# Damn. This approach doesn't seem to work...
-#__PACKAGE__->config->{using_frontend_proxy} = 1;
-
-
-
-
-
 
 # Configure the application based on the type of installation.
 # Application-wide configuration is located in wormbase.conf
@@ -96,9 +48,28 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
 						 driver => { 'General' => { -InterPolateVars => 1} },
 		     } ) or die "$!";
 
+# For non-development installations, set the local configuration 
+# file suffix to the name of the server. Not currently in use
+# but I'm keeping it around just in case.
+#if (__PACKAGE__->config->{installation_type} eq 'production') {    
+#    __PACKAGE__->config->{ 'Plugin::ConfigLoader' }->{ config_local_suffix } = $ENV{SERVER_NAME};
+#}
 
 
+# Where will static files be located? This is a path relative to APPLICATION root
+__PACKAGE__->config->{static}->{dirs} = [
+    qw|css
+       js
+       img
+       tmp
+      |]; 
 
+# Store the version and codename in the configuration object. Oh, the vanity.
+__PACKAGE__->config->{version}  = $VERSION;
+__PACKAGE__->config->{codename} = $CODENAME;
+
+# Huh?  What is this?
+__PACKAGE__->config->{static}->{debug} = 1;
 
 # Which elements of the data structure should be exposed in JSON renders?
 __PACKAGE__->config->{'View::JSON'} = {
@@ -113,8 +84,8 @@ __PACKAGE__->config->{'View::JSON'} = {
 # to test the caching mechanism, we just don't want 
 # it to persist.
 my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
-    ? '4 weeks'
-    : '1 day';
+    ? '1 seconds'
+    : '1 seconds';
 
 
 # CHI-powered on-disk file cache: default.
@@ -159,20 +130,11 @@ if (0) {
 }
     
 
+
 # Finally! Start the application!
 __PACKAGE__->setup;
 
 
-# There's a problem with c.uri_for when running behind a reverse proxy.
-# We need to reset the base URL.
-# We set the base URL above (which should probably be dynamic...)
-after prepare_path => sub {
-    my $c = shift;
-    if ($c->config->{base}) {
-	$c->req->base(URI->new->($c->config->{base}));
-    }
-};
-    
 
 #if __PACKAGE__->config->{debug}
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
