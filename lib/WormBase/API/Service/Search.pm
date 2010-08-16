@@ -287,6 +287,30 @@ sub fetchPhen {
   return \@phenes;
 }
 
+sub microarray_results {
+  my ($self, $args) = @_;
+  my $query = $args->{pattern};
+  my $DB = $self->dbh;
+
+  my @genes = @{fetchGene($self, $query)};
+  my @mr = map {eval {$_->Microarray_results} } @genes if (@genes == 1);
+
+ return _wrap_objs($self, \@mr, 'microarray_results');
+}
+
+
+sub expression_cluster {
+  my ($self, $args) = @_;
+  my $query = $args->{pattern};
+  my $DB = $self->dbh;
+
+  my @genes = @{fetchGene($self, $query)};
+  my @ec = map {eval {$_->Expression_cluster} } @genes if (@genes == 1);
+
+ return _wrap_objs($self, \@ec, 'expression_cluster');
+}
+
+
 sub phenotype {
     my ($self, $args) = @_;
     my $name = $args->{pattern};

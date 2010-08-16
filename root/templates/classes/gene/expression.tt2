@@ -3,7 +3,29 @@
 
    [% WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns"%]
 <span id="fade">Figure out images</span>
-        <ul>[% FOREACH ep IN fields.anatomic_expression_patterns.data %]
+        <ul>
+        [% FOREACH ep IN fields.anatomic_expression_patterns.data %]
               <li>[% ep.value.image %][% tag2link(ep.value.object) %]: [% markup(ep.value.details,0) %]</li>
-        [% END %]</ul>
+        [% END %]
+         </ul>
+   [% END %]
+
+   [% IF fields.fourd_expression_movies.data.keys.size >0 %]
+   [% WRAPPER $field_block title="4D (QVTR) expression movies" key="fourd_expression_movies"%]
+        <ul>
+        [% FOREACH mv IN fields.fourd_expression_movies.data %]
+              <li>[% tag2link(mv.value.object) %]: [% mv.value.details %]<br />[% external_link(mv.value.movie, mv.value.movie) %]</li>
+        [% END %]
+        </ul>
+   [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Expression Cluster" key="expression_cluster"%]
+      [% IF fields.expression_cluster.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
+       Found [% searchlink("expression_cluster", c.stash.object.name.data.id, fields.expression_cluster.data.keys.size _ " expression cluster object" _ s) %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
+      [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
+       Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]
    [% END %]

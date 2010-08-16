@@ -545,22 +545,12 @@ sub pre_wormbase_information {
 
 
 sub microarray_expression_data {
-
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'gene expression determined via microarray analysis';
-
-	my $data_pack;
-
-	#### data pull and packaging
 	my @microarray_results = $object->Microarray_results;	
-	$data_pack = $self->basic_package(\@microarray_results, 'Microarray_results');
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
+	$data{'data'} = $self->_pack_objects(\@microarray_results);
+	$data{'description'} = 'gene expression determined via microarray analysis';
 	return \%data;
 }
 
@@ -596,35 +586,13 @@ sub microarray_topology_map_position {
 
 
 sub expression_cluster {
-
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @expr_clusters = $object->Expression_cluster;
-	
-	foreach my $ec (@expr_clusters) {
-	
-		$data_pack{$ec} = {
-							'class' => 'Expression_cluster',
-							'name' => $ec
-		
-							};
-	
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my %data;
+    my @expr_clusters = $object->Expression_cluster;  
+    $data{'data'} = $self->_pack_objects(\@expr_clusters);
+    $data{'description'} = 'expression cluster data';
+    return \%data;
 }
 
 
@@ -1536,6 +1504,26 @@ sub protein_domains_old {
 #    return \@stash;
 #}
 
+sub _get_phenotype_data {
+
+# should we read in precompiled file and get gene->phen data?
+
+#    my ($gene,$positive_results) = @_;
+#    my @phenotype_return;
+#     
+#     
+#     foreach my $phenotype (keys %pheno_rnai_data) {
+#     
+#         my $rnai_ids_hr = $pheno_rnai_data{$phenotype};
+#         my @rnai_ids = keys %$rnai_ids_hr;
+#         my $rnai_id_count = @rnai_ids;
+#         push @phenotype_return, "$phenotype\|$rnai_id_count";
+#     }
+#     
+#     return \@phenotype_return;
+# 
+
+}
 
 sub rnai_phenotypes {
 
@@ -2126,14 +2114,6 @@ sub interactions_old {
     return $stash;
 }
 
-
-sub microarray_expression_data_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    return [ $object->Microarray_results ];
-}
-
 sub microarray_topology_map_position_old {
     my $self   = shift;
     my $object = $self->object;
@@ -2425,12 +2405,23 @@ sub cds_old {
 sub fourd_expression_movies {
     my $self   = shift;
     my $object = $self->object;
+
+    my %data;
+    my %data_pack;
     
-    my @all_ep = $object->Expr_pattern;
-    my @mohler = eval{grep {($_->Author =~ /Mohler/ && $_->MovieURL)} @all_ep};
-    @all_ep = eval{grep {!($_->Author =~ /Mohler/ && $_->MovieURL)} @all_ep};
-    return '' unless @all_ep || @mohler;
-    return \@mohler;
+    my @eps = $object->Expr_pattern;
+    @eps = eval{grep {($_->Author =~ /Mohler/ && $_->MovieURL)} @eps};
+    
+    foreach my $ep (@eps) {
+        $data_pack{"$ep"}{movie} = $ep->MovieURL;
+        $data_pack{"$ep"}{details} = $ep->Pattern;
+        $data_pack{"$ep"}{object} = $self->_pack_obj($ep);
+    }
+    
+    $data{'description'} = 'Interactive 4D expression movies';
+    
+    $data{'data'} = \%data_pack;
+    return \%data;
 }
 
 sub anatomic_expression_patterns {
@@ -2440,6 +2431,7 @@ sub anatomic_expression_patterns {
     my %data_pack;
     
     my @eps = $object->Expr_pattern;
+    @eps = eval{grep {!($_->Author =~ /Mohler/ && $_->MovieURL)} @eps};
     
     foreach my $ep (@eps) {
         $data_pack{"$ep"}{image} = $self->_pattern_thumbnail($ep);

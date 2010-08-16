@@ -118,26 +118,10 @@
 %]
 [% MACRO object_list(objects) BLOCK %]
 
-     [%# More than 5? Display 5, and list more %]
-     [% IF objects.size > 5 %]
-
-           [% FOREACH object IN objects.keys %]	             
-                     [%- IF loop.last -%]
-		     	  and [% loop.count - loop.size %] more...			
-		     [% ELSE %]
-		        [%- tag2link(objects.$object) -%],  
-		     [% END %]
-            [% END %]           
-
-      [% ELSE %]
-
             [% FOREACH object IN objects.keys %]
 	         [%- tag2link(objects.$object) -%]
                      [%- UNLESS loop.last -%], [% END %]
             [% END %]
-
-      [% END %]
-
 [% END %]
 
 [% BLOCK widget_block %]
