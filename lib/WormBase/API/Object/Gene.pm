@@ -78,12 +78,8 @@ extends 'WormBase::API::Object';
 
 ### configuration items
 
-my $version = 'WS215';	
-#my $version = $self->ace_dsn->dbh->version;
+my $version = 'WS217';	
 
-
-our $interaction_data_dir = "/usr/local/wormbase/databases/$version/interaction";
-our $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
 our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
 our $rnai_details_file = "rnai_data.txt";
 our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
@@ -617,7 +613,6 @@ sub expression_cluster {
 							'name' => $ec
 		
 							};
-	
 	}
 
 	####
@@ -649,13 +644,12 @@ sub anatomy_function {
     	my $afn_phenotype = $af->Phenotype;
 	    my $phenotype_prime_name = $afn_phenotype->Primary_name;
 	
-		$data_pack{$af} = (
+		$data_pack{$af} = {
 							'ace_id' => $af,
 							'class' => 'Anatomy_function',
 							'phenotype_id' => $afn_phenotype,
 							'phenotype_name' => $phenotype_prime_name
-		);
-	
+							};	
 	}
 
 	####
@@ -679,16 +673,46 @@ sub phenotype {
 
 	#### data pull and packaging
 	
-	my ($details,$phenotype_data) = _get_phenotype_data($object, 1);  
-	my $variation_data = _get_variation_data($object, 1); 
-	my $phenotype_names_hr  = _get_phenotype_names($phenotype_data,$variation_data);
-
-	foreach my $pheno_id (keys %$phenotype_names_hr) {
+	my ($details,$rnai_id_data) = _get_phenotype_data($object, 1);  
+	my $variation_data = _get_variation_data($object, 1);
+	my %variation_data;
+	my %rnai_count_data;
 	
+	foreach my $rnai_id_data_line (@$rnai_id_data) {
+		
+		my ($phenotype_id, $rnai_count) = split /\|/, $rnai_id_data_line;
+		$rnai_count_data{$phenotype_id} = $rnai_count;
+	}
+	
+	
+	foreach my $variation_data_line (@$variation_data) {
+
+		my ($phenotype_id, $variation_info) = split /\|/, $variation_data_line;
+		my @variation_data = split "&", $variation_info;
+
+		foreach my $variation_datum (@variation_data) {
+			
+			my ($variation, $status) = split /\+/, $variation_datum;	
+			$variation_data{$phenotype_id}{$variation} = {
+				
+				'status' => $status,
+				'variation_name' => 'TBD',
+				'class' => 'Variation'
+			}									
+		}
+	} 
+
+	# my $variation_data_line = join ',' , @$variation_data;
+	my $phenotype_names_hr  = _get_phenotype_names($details,$variation_data);
+
+		foreach my $pheno_id (keys %$phenotype_names_hr) {
+
 		$data_pack{$pheno_id} = {
-									'phenotype' => $phenotype_names_hr->{$pheno_id},
-									'class' => 'Phenotype'
-									};
+			'phenotype' => $phenotype_names_hr->{$pheno_id},
+			'class' => 'Phenotype',
+			'variation_data' => $variation_data{$pheno_id},
+			'rnai_count' => $rnai_count_data{$pheno_id}
+		};
 	}
 
 	####
@@ -762,7 +786,11 @@ sub interactions {
 	my %data;
 	my %data_pack;
 	my $desc = "interactions gene is involved in";
-
+	
+	my $version = $self->ace_dsn->dbh->version;
+	my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
+	my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
+	
 	#### data pull and packaging
 	
 	my $gene_data_lines = `grep $object $datafile`;
@@ -781,12 +809,9 @@ sub interactions {
 	foreach my $interaction_name (@interaction_data) {
 	
 			$data_pack{$interaction_name} = {
-														'class' => 'Interaction',
-														'common_name' => $interaction_name
-			
-														} 
-	
-	
+											'class' => 'Interaction',
+											'common_name' => $interaction_name
+											};
 	}
 
 
@@ -1028,7 +1053,6 @@ sub rearrangements{
 
 	%data_pack = {
 					$object => {
-					
 								'rearrangement' => $rearrangement
 								}
 	
@@ -1175,9 +1199,6 @@ sub treefam {
 	return \%data;
 }
 
-
-
-
 ###########################################
 # Components of the Similarities panel
 ###########################################
@@ -1193,6 +1214,7 @@ sub best_blastp_matches {
 ###########################################
 # Components of the Reagents panel
 ###########################################
+
 sub transgenes {
     my $self       = shift;
     my $object = $self->object;
@@ -1589,7 +1611,6 @@ sub rnai_phenotypes {
 		}	
 	}
 
-
 	####
 
 	$data{'data'} = \%data_pack;
@@ -1648,9 +1669,6 @@ sub variation_phenotypes {
 									};
 			}
 	}
-
-
-
 
 	####
 
@@ -2465,6 +2483,137 @@ sub anatomic_expression_patterns {
 #
 #########################################
 
+
+sub _gene_ontology_web {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	#my %go_terms;
+	my @go_terms = $object->GO_term;
+	
+	my %annotation_bases  = (
+		'EXP' , 'x',
+		'IDA' , 'x',
+		'IPI' , 'x',
+		'IMP' , 'x',
+		'IGI' , 'x',
+		'IEP' , 'x',
+		'ND' , 'x',
+		
+		'IEA' , 'p',
+		'ISS' , 'p',
+		'ISO' , 'p',
+		'ISA' , 'p',
+		'ISM' , 'p',
+		'IGC' , 'p',
+		'RCA' , 'p',
+		'IC' , 'p'
+	);
+
+	
+
+	foreach my $go_term (@go_terms){
+	  foreach my $code ($go_term->col){
+		my @row = $code->row;
+		my ($evidence_code,$method,$detail) = @row;
+		my $display_method = method_detail($method,$detail);
+		my $term = $go_term->Term;
+		my $term_type = $go_term->Type;
+		my $annotation_basis =  $annotation_bases{$evidence_code};
+		my %data = (
+			'display_method' => $display_method,
+			'evidence_code' => $evidence_code,
+			'term' => $term,
+			'go_term' => $go_term
+			); 
+		
+		my @data = ($display_method,$evidence_code,$term,$go_term); 
+		my $data_line = join ";",@data;
+		$data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
+	  }
+	}
+
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+#
+#sub get_go_data {
+#	my $object = shift @_;
+#	my %go_terms;
+#	my @go_terms = $object->GO_term;
+#	
+#	my %annotation_bases  = (
+#		'EXP' , 'x',
+#		'IDA' , 'x',
+#		'IPI' , 'x',
+#		'IMP' , 'x',
+#		'IGI' , 'x',
+#		'IEP' , 'x',
+#		'ND' , 'x',
+#		
+#		'IEA' , 'p',
+#		'ISS' , 'p',
+#		'ISO' , 'p',
+#		'ISA' , 'p',
+#		'ISM' , 'p',
+#		'IGC' , 'p',
+#		'RCA' , 'p',
+#		'IC' , 'p'
+#	);
+#
+#	foreach my $go_term (@go_terms){
+#	  foreach my $code ($go_term->col){
+#		my @row = $code->row;
+#		my ($evidence_code,$method,$detail) = @row;
+#		my $display_method = method_detail($method,$detail);
+#		my $term = $go_term->Term;
+#		my $term_type = $go_term->Type;
+#		my $annotation_basis =  $annotation_bases{$evidence_code};
+#		my @data = ($display_method,$evidence_code,$term,$go_term); 
+#		my $data_line = join ";",@data;
+#		
+#		$go_terms{$annotation_basis}{$term_type}{$data_line} = 1;
+#	  }
+#	}
+#	return \%go_terms;
+#}
+
+sub method_detail {
+	my ($method,$detail) = @_;
+	my $return;
+	if ($method =~ m/Paper/){
+		$return = "a_Manual";
+	}
+	elsif($detail =~ m/phenotype/i){
+		$return = "b_Phenotype to GO Mapping";
+	}
+	elsif($detail =~ m/interpro/i){
+		$return = "c_Interpro to GO Mapping";
+	}
+	elsif($detail =~ m/tmhmm/i){
+		$return = "d_TMHMM to GO Mapping";
+	}
+	else {
+		$return = "z_No Method"
+	}
+	return $return;
+}
+
+
 # PROTEINS HERE WILL NOT PERSIST AND NEED TO BE FETCHED EACH GO 'ROUND
 # THIS ALSO WILL NOT RETURN OBJECTS - stash() treats them as hashrefs
 sub _fetch_proteins {
@@ -2473,10 +2622,6 @@ sub _fetch_proteins {
     my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
     return \@proteins;
 }
-
-
-
-
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
@@ -2827,8 +2972,6 @@ sub species2url {
     return (sprintf($url,$id)) if $url;
 }
 
-
-
 sub _fetch_sequences {
 
 	my $self = shift;
@@ -2845,8 +2988,6 @@ sub _fetch_sequences {
     return \@seqs;
     
 }
-
-
 
 ### get phenotype ids from outputs of get_phenotype_data() and get_variation_data() and provides corresponding phenotype names
 ### syntax: $phene_id2name_hr = get_phenotype_names(rnai_ar,var_ar)
