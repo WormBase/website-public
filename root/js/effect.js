@@ -1,6 +1,9 @@
  
   $(document).ready(function() {  
-    
+
+    $("#sortable").sortable();
+    $("#sortable").disableSelection();
+
 	 $(".toggle").live('click',function() {
 		  //$(this).click(function(){
               $(this).toggleClass("active").next().slideToggle("fast");

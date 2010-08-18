@@ -17,6 +17,33 @@
 	
   return false;
   });
+
+
+  // used in sidebar view, to open and close widgets when selected
+  $(".module-load").live('click',function() {
+    var mytitle = "#" + $(this).attr("class").split(" ")[1];
+    if ($(this).attr("load") == 1){
+      if($(mytitle).text() == ""){
+        var url     = $(this).attr("href");
+        $(mytitle).html("<span id=\"fade\">loading...</span>").show();
+        $(mytitle).load(url,
+                        function(response, status, xhr) {
+                              if (status == "error") {
+                              $(mytitle).html(xhr.status + " " + xhr.statusText);
+                              }
+                          });
+      }
+      $(mytitle).parent(".primary-container").show();
+      $(this).attr("load", 0);
+      $(this).addClass("ui-selected").show();
+    } else {
+      $(mytitle).parent(".primary-container").hide();
+      $(this).removeClass("ui-selected").show();
+      $(this).attr("load", 1);
+    }
+  return false;
+  });
+
   // Load a (specific) field or widget dynamically onClick.
   $("a.ajax").click(function() {
       var url     = $(this).attr("href");

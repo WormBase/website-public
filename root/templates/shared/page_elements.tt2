@@ -143,7 +143,9 @@
                  [% content %]
 
    [% ELSE %]
+   <li>
    <section class="widget">
+          
           <div class="primary-container">
                 <header>         
                      <h3>[% widget.title %]</h3>
@@ -165,11 +167,13 @@
                         [% UNLESS loop.last %] | [% END %]
                      [% END %]
                 </footer>
-      [% END %]
+
 
       </div>
+      
    </section>
-
+   </li>
+      [% END %]
     [% IF is_classic %]
        </table>
       </td>

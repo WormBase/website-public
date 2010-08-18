@@ -1,6 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
+   [% IF fields.anatomic_expression_patterns.data.keys.size >0 %]
    [% WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns"%]
 <span id="fade">Figure out images</span>
         <ul>
@@ -8,6 +9,7 @@
               <li>[% ep.value.image %][% tag2link(ep.value.object) %]: [% markup(ep.value.details,0) %]</li>
         [% END %]
          </ul>
+   [% END %]
    [% END %]
 
    [% IF fields.fourd_expression_movies.data.keys.size >0 %]
@@ -26,6 +28,11 @@
    [% END %]
 
    [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
-      [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
+      <div style="width:75%;background-color:#CCCCFF;margin-right:auto;padding:10px;border:2px solid blue;margin-bottom:5px">
+        <h3>SPELL Microarray Resource now available</h3> 
+        <p>Interested users may also wish to try the C. elegans <a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> which provides much greater sophistication in query and display of microarray data.</p> 
+        <p>For details, please see <a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a> on the <a href="http://wiki.wormbase.org/">WormBase Wiki</a>.</p>
+      </div>
+     [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
        Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]
    [% END %]

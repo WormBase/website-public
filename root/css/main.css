@@ -113,6 +113,8 @@ section.widget .primary-container {
     margin-bottom:10px;
     overflow:hidden;
     border:1px solid gray;    
+    display:none;
+    background-color:#FFFFFF;
 }
 
 section.widget header h3 {
@@ -737,3 +739,55 @@ font-style:italic;
 	background: url(/img/ui_widgets/Magnifying-Glass-icon.png) no-repeat ;
 	  
 }
+
+
+/*********************************
+   
+   Navigation for sidebar view
+   
+*********************************/
+
+#navigation {
+  width: 150px;
+  float: left;
+  height: 100%;
+}
+
+#navigation ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+#widget-holder {
+  overflow:hidden;
+  margin: 0px;
+  padding: 0px;
+}
+
+#sortable {
+  list-style: none;
+}
+
+#selectable .ui-selected { 
+  background: gray; 
+  color: white; 
+}
+
+#selectable { 
+  list-style-type: none; 
+  margin: 0; 
+  padding: 0;
+  width: 100%;
+}
+
+#selectable li { 
+  margin: 3px; 
+  padding: 0.4em; 
+  font-size: 1em; 
+  height: 1.4em;
+  border:1px solid gray;  
+  vertical-align:center;
+}
+
+
