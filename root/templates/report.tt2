@@ -11,6 +11,7 @@
    View as:
    [% # HARD-CODED! %]   
    [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
+   <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=sidebar">sidebar</a> |
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
@@ -57,9 +58,32 @@
                                      });
                             </script>
 
+[% # Sidebar View %]
+[% ELSIF view=="sidebar" || (view == "") %]
+  <div id="navigation">
+    <ul id="selectable">
+    [% FOREACH widget_name IN widgets -%]
+      [% widget = c.config.pages.$class.widgets.$widget_name %]
+      <li class="module-load [% widget_name %]" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" load=1>[% widget.title %]</li>
+    [% END %]
+    </ul>
+  </div>
+
+  <div id="widget-holder">
+      <ul id="sortable">
+      [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
+          [% widget = c.config.pages.$class.widgets.$widget_name %]
+          [% WRAPPER $widget_block -%]                        
+          [% END %]
+      [% END %]
+      </ul>
+  </div>
+
+
+
 
 [% # Tabbed View, loaded onClick; this is also the default view %]
-[% ELSIF view=="tabs" || (view == "") %]
+[% ELSIF view=="tabs" %]
 
    <div id="tabs">
       <div class="ui-tabs">
