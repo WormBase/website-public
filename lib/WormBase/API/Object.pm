@@ -130,9 +130,9 @@ sub tmp_image_dir {
 #    my $host = `hostname`;
 #    chomp $host;
 #    $host ||= 'local';
-#    my $path = $self->tmp_dir('images',$host,@_);
+#    my $path = $self->tmp_dir('media/images',$host,@_);
 
-    my $path = $self->tmp_dir('images',@_);
+    my $path = $self->tmp_dir('media/images',@_);
     return $path;
 }
 
