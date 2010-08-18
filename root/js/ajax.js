@@ -33,11 +33,11 @@
                               }
                           });
       }
-      $(mytitle).parent(".primary-container").show();
+      $(mytitle).parent(".widget-container").show();
       $(this).attr("load", 0);
       $(this).addClass("ui-selected").show();
     } else {
-      $(mytitle).parent(".primary-container").hide();
+      $(mytitle).parent(".widget-container").hide();
       $(this).removeClass("ui-selected").show();
       $(this).attr("load", 1);
     }

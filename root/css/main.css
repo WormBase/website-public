@@ -113,8 +113,16 @@ section.widget .primary-container {
     margin-bottom:10px;
     overflow:hidden;
     border:1px solid gray;    
+}
+
+section.widget .widget-container {
+    padding:5px;
+    margin:2px;
+    margin-bottom:10px;
+    overflow:hidden;
+    border:1px solid gray;    
     display:none;
-    background-color:#FFFFFF;
+    background-color:#FFFFFF; 
 }
 
 section.widget header h3 {

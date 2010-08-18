@@ -73,7 +73,7 @@
       <ul id="sortable">
       [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
           [% widget = c.config.pages.$class.widgets.$widget_name %]
-          [% WRAPPER $widget_block -%]                        
+          [% WRAPPER widget_sortable_block -%]                        
           [% END %]
       [% END %]
       </ul>
