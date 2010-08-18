@@ -72,7 +72,10 @@ __PACKAGE__->log(
 __PACKAGE__->config(
     static => {
     dirs => [qw/ css js img tmp /],
-    include_path => [ '/tmp/wormbase',
+#    include_path => [ '/tmp/wormbase',
+#              __PACKAGE__->config->{root},
+#        ],  
+    include_path => [ '/usr/local/wormbase/shared/tmp',
               __PACKAGE__->config->{root},
         ],  
 #   logging  => 1,
@@ -135,7 +138,8 @@ if (1) {
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'File',
-    root_dir       => '/tmp/wormbase/file_cache_chi',
+#    root_dir       => '/tmp/wormbase/file_cache_chi',
+    root_dir       => '/usr/local/wormbase/shared/cache',
     depth          => '3',
     max_key_length => '64', 
     expires_in     => $expires_in,
