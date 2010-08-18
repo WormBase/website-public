@@ -125,12 +125,14 @@ sub tmp_dir {
 sub tmp_image_dir {
     my $self  = shift;
 
+    # 2010.08.18: hostname no longer required in URI; tmp images stored in NFS mount
     # Include the hostname for images. Necessary for proxying and apache configuration.
-    my $host = `hostname`;
-    chomp $host;
-    $host ||= 'local';
+#    my $host = `hostname`;
+#    chomp $host;
+#    $host ||= 'local';
+#    my $path = $self->tmp_dir('media/images',$host,@_);
 
-    my $path = $self->tmp_dir('images',$host,@_);
+    my $path = $self->tmp_dir('media/images',@_);
     return $path;
 }
 
@@ -148,10 +150,12 @@ sub tmp_image_uri {
     my $tmp_base = $self->tmp_base;
     
     # Purge the temp base from the path_and_file    
-    # eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
+    # pre-NFS: eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
+    # eg /tmp/wormbase/images/00/00/00/filename.jpg -> images/00/00/00/filename.jpg
     $path_and_file =~ s/$tmp_base//;
     
-    # URI: /images/wb-web1/00/00/00...
+    # URI (pre-NFS): /images/wb-web1/00/00/00...
+    # URI: /images/00/00/00...
     my $uri = '/' . $path_and_file;
     return $uri;    
 }
