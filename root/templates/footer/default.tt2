@@ -18,11 +18,13 @@
           [%# INCLUDE elements/social/sharethis.tt2 %]
           <a href="http://wiki.wormbase.org/index.php/WormBaseWiki:Copyrights">Copyright </a> |
           <a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy</a>
+          [% IF c.config.debug %]
+               [% server_details("") %]
+          [% END %]
+
     </div>
 </div>
 <!-- end boilerplate/footer -->
-
-[% server_details("report summary") %]
 
 [% INCLUDE google_analytics %]
 
