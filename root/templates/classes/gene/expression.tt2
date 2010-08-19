@@ -28,7 +28,7 @@
    [% END %]
 
    [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
-      <div style="width:75%;background-color:#CCCCFF;margin-right:auto;padding:10px;border:2px solid blue;margin-bottom:5px">
+      <div style="background-color:#CCCCFF;margin-right:auto;padding:10px;border:2px solid blue;margin-bottom:5px">
         <h3>SPELL Microarray Resource now available</h3> 
         <p>Interested users may also wish to try the C. elegans <a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> which provides much greater sophistication in query and display of microarray data.</p> 
         <p>For details, please see <a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a> on the <a href="http://wiki.wormbase.org/">WormBase Wiki</a>.</p>

@@ -1,8 +1,8 @@
  
   $(document).ready(function() {  
 
-    $("#sortable").sortable();
-    $("#sortable").disableSelection();
+    $("#widget-holder").sortable();
+    $("#widget-holder").disableSelection();
 
 	 $(".toggle").live('click',function() {
 		  //$(this).click(function(){

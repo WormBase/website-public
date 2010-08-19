@@ -143,7 +143,7 @@
                  [% content %]
 
    [% ELSE %]
-   <li>
+
    <section class="widget">
           
           <div class="primary-container">
@@ -172,7 +172,7 @@
       </div>
       
    </section>
-   </li>
+
       [% END %]
     [% IF is_classic %]
        </table>
@@ -191,7 +191,7 @@
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
  
-   <li>
+
    <section class="widget">
           
           <div class="widget-container">
@@ -199,12 +199,8 @@
                      <h3>[% widget.title %]</h3>
                 </header>
 
-            [%# Porque? %]
-                <a name="[% widget.name %]"></a>
-
-                <div id="[%- widget.name -%]"></div>
+                <div id="[%- widget.name -%]" class="content"></div>
                 [% content %]
-
                 <footer>
                     Download: 
                     [% FOREACH type IN c.config.api.content_type %]
@@ -218,7 +214,7 @@
       </div>
       
    </section>
-   </li>
+
      <!-- end [% widget.name %] widget -->
 
 [% END %]
