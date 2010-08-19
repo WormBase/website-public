@@ -190,10 +190,7 @@
 
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
- 
-
    <section class="widget">
-          
           <div class="widget-container">
                 <header>         
                      <h3>[% widget.title %]</h3>
@@ -201,22 +198,19 @@
 
                 <div id="[%- widget.name -%]" class="content"></div>
                 [% content %]
+
                 <footer>
                     Download: 
                     [% FOREACH type IN c.config.api.content_type %]
-                        <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
-                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">
+                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data.id,widget.name) %]">
                              [%- type -%]
                         </a>
                         [% UNLESS loop.last %] | [% END %]
                      [% END %]
                 </footer>
       </div>
-      
    </section>
-
-     <!-- end [% widget.name %] widget -->
-
+   <!-- end [% widget.name %] widget -->
 [% END %]
 
 
