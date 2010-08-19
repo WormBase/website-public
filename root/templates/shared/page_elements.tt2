@@ -190,13 +190,14 @@
 
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
+   <li>
    <section class="widget">
           <div class="widget-container">
                 <header>         
                      <h3>[% widget.title %]</h3>
                 </header>
 
-                <div id="[%- widget.name -%]" class="content"></div>
+                <div id="[%- widget.name -%]"></div>
                 [% content %]
 
                 <footer>
@@ -210,6 +211,7 @@
                 </footer>
       </div>
    </section>
+</li>
    <!-- end [% widget.name %] widget -->
 [% END %]
 

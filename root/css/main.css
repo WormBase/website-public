@@ -775,6 +775,7 @@ font-style:italic;
   overflow:hidden;
   margin: 0px;
   padding: 0px;
+  list-style: none;
 }
 
 #selectable .ui-selected { 
@@ -793,9 +794,9 @@ font-style:italic;
   margin-bottom: 5px; 
   padding: 0.4em; 
   font-size: 1em; 
-  height: 1.4em;
+  height: 1.2em;
   border:1px solid gray;  
-  vertical-align:center;
+  vertical-align:middle;
 }
 
 
