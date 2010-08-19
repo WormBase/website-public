@@ -1,7 +1,9 @@
  
   $(document).ready(function() {  
 
-    $("#widget-holder").sortable();
+    $("#widget-holder").sortable({
+      handle: 'header, footer'
+    });
     $("#widget-holder").disableSelection();
 
 	 $(".toggle").live('click',function() {

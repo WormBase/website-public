@@ -127,6 +127,9 @@ section.widget .widget-container {
 }
 
 section.widget header h3 {
+    margin:0px;
+    padding:0px;
+    padding-top: 0.5em;
     padding-bottom:5px;
     margin-bottom:4px;
     border-bottom:1px dotted gray;
