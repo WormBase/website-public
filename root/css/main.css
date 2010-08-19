@@ -117,8 +117,9 @@ section.widget .primary-container {
 
 section.widget .widget-container {
     padding:5px;
-    margin:2px;
-    margin-bottom:10px;
+    margin:10px;
+    margin-top:0px;
+    margin-right:0px;
     overflow:hidden;
     border:1px solid gray;    
     display:none;
@@ -756,7 +757,7 @@ font-style:italic;
 *********************************/
 
 #navigation {
-  width: 150px;
+  width: 120px;
   float: left;
   height: 100%;
 }
@@ -773,10 +774,6 @@ font-style:italic;
   padding: 0px;
 }
 
-#sortable {
-  list-style: none;
-}
-
 #selectable .ui-selected { 
   background: gray; 
   color: white; 
@@ -790,7 +787,7 @@ font-style:italic;
 }
 
 #selectable li { 
-  margin: 3px; 
+  margin-bottom: 5px; 
   padding: 0.4em; 
   font-size: 1em; 
   height: 1.4em;
