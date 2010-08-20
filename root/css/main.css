@@ -41,7 +41,7 @@ h6 { font-size:0.8em;    /* 12px; subfield names */
 input, select, th, td { font-size:1em; }
 
 #wrap {
-  width:750px;
+  width:890px;
   margin: 0px auto;
   padding: 0px 10px;
   background:white;
@@ -155,6 +155,10 @@ section.widget footer {
     font-size:0.9em;    
 }
 
+.controls {
+    float:right;
+}
+
 /* These are subfields - NOT IN USE? */
 section.widget .secondary-container {
 
@@ -170,30 +174,7 @@ section.widget .secondary-container {
 
 
 
-/* The widget title bar. This needs to be a div so I can 
-   target it for widget controls like toggle, drag, etc.
 
-   On the other hand, these titles should maybe just be
-   structural elements such as H1. DIVs and SPANs
-   that lack presentational information, but styled with classes
-   can be confusing.
-*/
-div.widget .title {
-    border-bottom:1px solid black;
-    padding:3px 0px 3px 6px;
-    background-color:#BCC;
-    text-transform:uppercase;
-}
-
-/* Links to download widgets in a variety of formats */
-div.downloadable-formats {
-    float:right;
-    font-size:0.9em;    
-}
-
-.title h3 {
-    margin:1px;
-}
 
 
 
@@ -217,15 +198,14 @@ div.downloadable-formats {
     padding: 10px 0 10px 0;
 }
 
-
-
-
 /* A list of available views */
 div#content #available-views {
     float:right;
     color:black;
-    font-size:0.7em;
+    overflow:hidden;
 }
+
+
 
 /* =========================================
    FOOTER ================================== */
@@ -239,7 +219,7 @@ div#footer{
     border-top: 1px solid #BCC;
     overflow:auto;
     position:absolute;
-    width: 735px;
+    width: 875px;
     bottom:0px;
     height: 5.3em;
 }
@@ -252,7 +232,7 @@ div#footer{
 #footercredit {
     text-align: left;
     float: left;
-    width:40em;
+    width:43em;
     overflow:hidden;
 }
 
@@ -366,6 +346,7 @@ p.debug-view {
    ********************************* */
 
 div#sidebar {
+   clear:both;
    float:left;
    width:200px;
 }
@@ -411,16 +392,10 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
-.title h3 {
-    margin:1px;
+.title{
+    overflow:hidden;
+    padding-bottom:10px;
 }
-
-
-
-
-
-
-
 
 
 /* Formatting for the debug index page */
@@ -576,7 +551,6 @@ div.evidence tr.updated {
   font-weight:bold;
   text-align:right;
 }
-
 
 
 
