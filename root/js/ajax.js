@@ -18,28 +18,46 @@
   return false;
   });
 
+  $(".module-min").live('click', function() {
+    var mytitle = "#" + $(this).attr("class").split(" ")[1];
+    if ($(this).attr("show") == 0){
+      $(mytitle).hide();
+      $(mytitle).next().hide();
+      $(this).attr("show", 1);
+      $(this).text("[ + ]");
+    }else{
+      $(mytitle).show();
+      $(mytitle).next().show();
+      $(this).attr("show", 0);
+      $(this).text("[ - ]");
+    }
+  });
+
 
   // used in sidebar view, to open and close widgets when selected
   $(".module-load").live('click',function() {
-    var mytitle = "#" + $(this).attr("class").split(" ")[1];
-    if ($(this).attr("load") == 1){
-      if($(mytitle).text() == ""){
-        var url     = $(this).attr("href");
-        $(mytitle).html("<span id=\"fade\">loading...</span>").show();
-        $(mytitle).load(url,
+    var content = $(this).attr("class").split(" ")[1];
+    var nav = "#nav-" + content;
+    content = "#" + content;
+    if ($(nav).attr("load") == 1){
+      if($(content).text() == ""){
+        var url     = $(nav).attr("href");
+        $(content).html("<span id=\"fade\">loading...</span>").show();
+        $(content).load(url,
                         function(response, status, xhr) {
                               if (status == "error") {
-                              $(mytitle).html(xhr.status + " " + xhr.statusText);
+                              $(content).html(xhr.status + " " + xhr.statusText);
                               }
                           });
       }
-      $(mytitle).parent(".widget-container").show();
-      $(this).attr("load", 0);
-      $(this).addClass("ui-selected").show();
+      
+      $(nav).attr("load", 0);
+      $(nav).addClass("ui-selected").show();
+      $(content).parent(".widget-container").hide().show();
     } else {
-      $(mytitle).parent(".widget-container").hide();
-      $(this).removeClass("ui-selected").show();
-      $(this).attr("load", 1);
+      $(content).parent(".widget-container").hide();
+      $(nav).removeClass("ui-selected").show();
+      $(nav).attr("load", 1);
     }
   return false;
   });
