@@ -11,13 +11,17 @@
 
 /* = DOCUMENT ========================== */
 
-body {
-    padding: 15px;
+body, html {
+/*    padding: 15px;
     margin-left:10%;
-    margin-right:5%;
+    margin-right:5%;*/
+    padding: 0px;
+    margin: 0px;
     font-family: Helvetica, sans-serif;
-    background-color: white;
-    font-size:75%     /* Set the default font size from browser medium (16px) to 12px */
+    background-color: #DDD;
+/*     background-color: white; */
+    font-size:75%;     /* Set the default font size from browser medium (16px) to 12px */
+    height:100%;
 }
 
 
@@ -36,6 +40,17 @@ h6 { font-size:0.8em;    /* 12px; subfield names */
 /* IE hack: Force tables and input forms to inherit our default size */
 input, select, th, td { font-size:1em; }
 
+#wrap {
+  width:750px;
+  margin: 0px auto;
+  padding: 0px 10px;
+  background:white;
+  min-height: 100%;
+  height: audo !important;
+  border-right: 1px solid gray;
+  border-left: 1px solid gray;
+  position: relative;
+}
 
 
 
@@ -216,23 +231,35 @@ div#content #available-views {
    FOOTER ================================== */
 
 div#footer{
-        clear:both;
+    clear:both;
 	color: #878787;
-        padding: 1em;
-        margin-top:1em;
+    padding: 1em;
+    margin-top:1em;
 	font-size:0.7em;
-        border-top: 1px solid #BCC;
+    border-top: 1px solid #BCC;
+    overflow:auto;
+    position:absolute;
+    width: 735px;
+    bottom:0px;
+    height: 5em;
+}
+
+#spacer {
+    clear:both;
+    height: 5.5em;
 }
 
 #footercredit {
-        text-align: left;
-        float: left;
-        width:400px;
+    text-align: left;
+    float: left;
+    width:40em;
+    overflow:hidden;
 }
 
 #footermeta {
-        text-align: right;
-        float: right;
+    text-align: right;
+    float: right;
+    overflow:hidden;
 }
 
 /*********************************
