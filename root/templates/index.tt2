@@ -24,6 +24,5 @@
 
 <div id="main">
   <h1>WormBase</h1>
- <!-- <form method="post" class="form" id="searchForm" action="" onsubmit="this.action='/search/gene/'+this.query.value;"> -->
   [% PROCESS "boilerplate/search_bar.tt2" %]
 </div>
