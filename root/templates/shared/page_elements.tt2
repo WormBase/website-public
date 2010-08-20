@@ -194,7 +194,10 @@
    <section class="widget">
           <div class="widget-container">
                 <header>         
-                     <h3>[% widget.title %]</h3>
+                    <div class="controls">
+                      <span class="module-min [% widget.name %]" show=0>[ - ]</span> 
+                      <span class="module-load [% widget.name %]">[ x ]</span></div>
+                    <h3>[% widget.title %]</h3>
                 </header>
 
                 <div id="[%- widget.name -%]"></div>
@@ -211,8 +214,10 @@
                 </footer>
       </div>
    </section>
+
 </li>
    <!-- end [% widget.name %] widget -->
+
 [% END %]
 
 
