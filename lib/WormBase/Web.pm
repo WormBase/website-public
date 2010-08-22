@@ -11,14 +11,14 @@ use namespace::autoclean;
 #  Static::Simple
 #      Will serve static files from the application's root directory
 # StackTrace
-use Catalyst qw/-Debug
+use Catalyst qw/
          ConfigLoader
-                 Cache
+         Cache
          Session
          Session::Store::FastMmap
-             Session::State::Cookie
+         Session::State::Cookie
          Static::Simple
-                 Unicode
+         Unicode
            /;
 
 extends 'Catalyst';
