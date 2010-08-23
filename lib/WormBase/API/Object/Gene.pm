@@ -12,7 +12,7 @@ extends 'WormBase::API::Object';
 # anatomic_expression_patterns 
 # transgenes
 # matching_cdnas
-# sage_tags
+# sage_tagsf
 # paralogs
 # treefam
 # rearrangements
@@ -78,14 +78,14 @@ extends 'WormBase::API::Object';
 
 ### configuration items
 
-my $version = 'WS217';  
-
-our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-our $rnai_details_file = "rnai_data.txt";
-our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
-our $gene_variation_phene_file = "variation_data.txt";
-our $phenotype_name_file = "phenotype_id2name.txt";
-our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
+# my $version = 'WS213';  
+# 
+# our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+# our $rnai_details_file = "rnai_data.txt";
+# our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
+# our $gene_variation_phene_file = "variation_data.txt";
+# our $phenotype_name_file = "phenotype_id2name.txt";
+# our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
 
 
 #####################
@@ -380,78 +380,6 @@ sub cloned_by {
 	$data{'description'} = $desc;
 	return \%data;
 }
-# 
-# sub history {
-# 
-# 	my $self = shift;
-#     my $object = $self->object;
-# 	my %data;
-# 	my $desc = 'Information on the history of the gene';
-# 
-# 	my %data_pack;
-# 
-# 	#### data pull and packaging
-# 
-# 	my @history = $object->History;
-# 
-#     # Present each history event as a separate item in the data struct
-#     my $data = {};
-#     foreach my $history (@history) {
-# 	my $type = $history;
-# 	$type =~ s/_ / /g;	
-# 
-# 	my @versions = $history->col;
-# 		foreach my $version (@versions) {
-# 				#  next unless $history eq 'Version_change';    # View Logic
-# 			my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);	    
-# 			if ($history eq 'Version_change') {
-# 			($vers,$date,$curator,$event,$action,$remark) = $version->row; 
-# 			
-# 				# For some cases, the remark is actually a gene object
-# 				if ($action eq 'Merged_into' || $action eq 'Acquires_merge'
-# 					|| $action eq 'Split_from' || $action eq 'Split_into') {
-# 						$gene = $remark;
-# 						$remark = undef;
-# 				}
-# 			} 
-# 			else 
-# 			{
-# 					($gene) = $version->row;
-# 			}	    
-# 			my $cu;
-# 			if($curator){
-# 				$cu->{id} = "$curator";
-# 				$cu->{label} = $curator->Standard_name || $curator->Full_name;
-#                                 $cu->{class} = $curator->class;
-# 			}
-# 			my $ge;
-# 			if($gene){
-# 				$ge->{id} = "$gene";
-# 				$ge->{label} = $gene->Public_name;
-#                                 $ge->{class} = $gene->class;
-# 			}
-# 			$data_pack{$history}{$version} =
-# 											{ type    => $type,
-# 											  date    => $date,
-# 											  action  => $action,
-# 											  remark  => $remark,
-# 											  gene	  => $ge,
-# 											  curator => $cu,
-# 											};
-# 		}
-#     }
-# 
-# 
-# 	####
-# 
-# 	$data{'data'} = \%data_pack;
-# 	$data{'description'} = $desc;
-# 	return \%data;
-# }
-
-
-# Object History.  This should be suitably generic and moved to Object.pm
-
 
 ###########################################
 # Components of the Location panel
@@ -631,6 +559,24 @@ sub anatomy_function {
 
 sub phenotype {
 
+
+### notes on cleaning  up pointing to files by figuring out version in the 
+## appropriate subs:
+# _get_phenotype_data
+# _get_variation_data
+
+# my $version = $self->ace_dsn->dbh->version;
+# my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
+# my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
+
+# our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+# our $rnai_details_file = "rnai_data.txt";
+# our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
+# our $gene_variation_phene_file = "variation_data.txt";
+# our $phenotype_name_file = "phenotype_id2name.txt";
+# our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
+
+
     my $self = shift;
     my $object = $self->object;
     my %data;
@@ -641,9 +587,10 @@ sub phenotype {
     my %data_pack;
 
     #### data pull and packaging
+ 
     
-    my ($details,$rnai_id_data) = _get_phenotype_data($object, 1);  
-    my $variation_data = _get_variation_data($object, 1);
+    my ($details,$rnai_id_data) = $self->_get_phenotype_data($object, 1);  
+    my ($variation_data,$varid2name) = $self->_get_variation_data($object, 1);
     my %variation_data;
     my %rnai_count_data;
     
@@ -661,18 +608,19 @@ sub phenotype {
 
         foreach my $variation_datum (@variation_data) {
             
+	    
             my ($variation, $status) = split /\+/, $variation_datum;    
             $variation_data{$phenotype_id}{$variation} = {
                 
                 'status' => $status,
-                'variation_name' => 'TBD',
+                'variation_name' => $$varid2name{$variation},
                 'class' => 'Variation'
             }                                   
         }
     } 
 
     # my $variation_data_line = join ',' , @$variation_data;
-    my $phenotype_names_hr  = _get_phenotype_names($details,$variation_data);
+    my $phenotype_names_hr  = $self->_get_phenotype_names($details,$variation_data);
 
         foreach my $pheno_id (keys %$phenotype_names_hr) {
 
@@ -791,45 +739,6 @@ sub interactions {
     return \%data;
 
 }
-
-
-#sub print_gene_interaction_data {
-#
-#	my ($data,$gene_id) = @_;
-#	my $gene_data_lines = `grep $gene_id $data`;
-#	my @gene_data_lines = split /\n/,$gene_data_lines;
-#	
-#	my @interaction_data;
-#	foreach my $dataline (@gene_data_lines){
-#		
-#		chomp $dataline;
-#		#print "$dataline\n";
-#		my @dataline_set = split /\|/,$dataline;
-#		#print "$dataline_set[0]\n";
-#		push @interaction_data,$dataline_set[0];
-#	}
-#
-#
-#	my @first_ten = @interaction_data[0 .. 9];
-#	# print "@first_ten\n";
-#
-#	my $interaction_count = @interaction_data;  # 
-#	if (@interaction_data ) { ## && ($interaction_count > 10)
-#		my @truncated_interactions_list = @interaction_data[0 .. 9];
-#		my $last_int_index = $interaction_count - 1;
-#		my @rest_of_interactions = @interaction_data[10 .. $last_int_index];
-#		
-#		# SubSection("Interactions",	hr,"@truncated_interactions_list",hr);
-#		my $rest_of_interactions = @rest_of_interactions;
-#		my $interaction_list_url = "/db/gene/interaction?list=".$gene_id;
-#		SubSection("Interactions","There are(is) ".$interaction_count." ".a({-href=>$interaction_list_url},"interaction(s)")." in which this gene is involved. ",hr);
-#	}
-#	else{
-#		SubSection("Interactions","@interaction_data",hr);	
-#	}
-#}
-
-
 
 ###########################################
 # Components of the Gene Ontology panel
@@ -1024,7 +933,6 @@ sub rearrangements{
                     $object => {
                                 'rearrangement' => $rearrangement
                                 }
-    
                 };
 
     ####
@@ -1526,7 +1434,7 @@ sub protein_domains_old {
 #    return \@stash;
 #}
 
-sub _get_phenotype_data {
+#sub _get_phenotype_data {
 
 # should we read in precompiled file and get gene->phen data?
 
@@ -1545,7 +1453,7 @@ sub _get_phenotype_data {
 #     return \@phenotype_return;
 # 
 
-}
+#}
 
 sub rnai_phenotypes {
 
@@ -1553,8 +1461,8 @@ sub rnai_phenotypes {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+		data structure = data{"data"} = {
+		}';
 
 	my %data_pack;
 
@@ -1672,7 +1580,7 @@ sub variation_phenotypes {
 sub transgene_phenotypes {
 
 	my $self = shift;
-    my $object = $self->object;
+	my $object = $self->object;
 	my %data;
 	my $desc = 'notes ;
 				data structure = data{"data"} = {
@@ -2544,47 +2452,6 @@ sub _gene_ontology_web {
     return \%data;
 }
 
-#
-#sub get_go_data {
-#   my $object = shift @_;
-#   my %go_terms;
-#   my @go_terms = $object->GO_term;
-#   
-#   my %annotation_bases  = (
-#       'EXP' , 'x',
-#       'IDA' , 'x',
-#       'IPI' , 'x',
-#       'IMP' , 'x',
-#       'IGI' , 'x',
-#       'IEP' , 'x',
-#       'ND' , 'x',
-#       
-#       'IEA' , 'p',
-#       'ISS' , 'p',
-#       'ISO' , 'p',
-#       'ISA' , 'p',
-#       'ISM' , 'p',
-#       'IGC' , 'p',
-#       'RCA' , 'p',
-#       'IC' , 'p'
-#   );
-#
-#   foreach my $go_term (@go_terms){
-#     foreach my $code ($go_term->col){
-#       my @row = $code->row;
-#       my ($evidence_code,$method,$detail) = @row;
-#       my $display_method = method_detail($method,$detail);
-#       my $term = $go_term->Term;
-#       my $term_type = $go_term->Type;
-#       my $annotation_basis =  $annotation_bases{$evidence_code};
-#       my @data = ($display_method,$evidence_code,$term,$go_term); 
-#       my $data_line = join ";",@data;
-#       
-#       $go_terms{$annotation_basis}{$term_type}{$data_line} = 1;
-#     }
-#   }
-#   return \%go_terms;
-#}
 
 sub method_detail {
     my ($method,$detail) = @_;
@@ -2615,10 +2482,6 @@ sub _fetch_proteins {
     my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
     return \@proteins;
 }
-
-
-
-
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
@@ -2719,7 +2582,6 @@ sub _fetch_protein_ids {
     }
     return;
 }
-
 
 # TODO: This could logically be moved into a template
 sub _other_notes {
@@ -2995,10 +2857,12 @@ sub _fetch_sequences {
 
 sub _get_phenotype_names {
 
-	my ($rnai_ar,$var_ar) = @_;
-	
+	my ($self, $rnai_ar, $var_ar) = @_;
 	my %phene_master;
-	
+	my $version = $self->ace_dsn->dbh->version;
+	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+	my $phenotype_name_file = "phenotype_id2name.txt";  
+
 	foreach my $rnai_phene_line (@$rnai_ar) {
 	
 		my ($phene_id, $disc) = split /\|/,$rnai_phene_line;
@@ -3024,11 +2888,16 @@ sub _get_phenotype_names {
 
 sub _get_phenotype_data {
 
-	my ($gene,$positive_results) = @_;
-	my $rnai_details = "$gene_pheno_datadir/$rnai_details_file";
+	my ($self,$gene,$positive_results) = @_;
+	
 	my %rnai_phenotypes;
 	my %rnai_genotype;
 	my %rnai_ref;
+	my $version = $self->ace_dsn->dbh->version;	
+	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+	my $rnai_details_file = "rnai_data.txt";
+	my $rnai_details = "$gene_pheno_datadir/$rnai_details_file";
+	my  $gene_rnai_phene_file = "gene_rnai_pheno.txt";
 
 	open RNAI_DATA, "<$rnai_details" or die "Cannot open RNAi details file: $rnai_details\n";
 	
@@ -3102,11 +2971,12 @@ sub _get_phenotype_data {
 
 sub _get_variation_data {
 
-	my ($gene, $positive_results) = @_; ## , $phenotype_ar
-	
+	my ($self,$gene, $positive_results) = @_; ## , $phenotype_ar
 	my $gene_variation_data; ## = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file`;
-	
-	
+	my $version = $self->ace_dsn->dbh->version;
+	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
+	my $gene_variation_phene_file = "variation_data.txt";
+    
 	if($positive_results) {
 	
 		$gene_variation_data = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file | grep -v Not `;
@@ -3122,13 +2992,14 @@ sub _get_variation_data {
 	my @gene_variation_data = split /\n/, $gene_variation_data;
 	
 	my %phenotype_variation;
-	
+	my %variation_id2name;
+
 	foreach my $var_data_line (@gene_variation_data) {
 	
-		my ($gene,$var,$phenotype,$not,$seq_stat)  = split /\|/, $var_data_line;
+		my ($gene,$var,$phenotype,$not,$seq_stat,$var_name)  = split /\|/, $var_data_line;
+		$variation_id2name{$var} = $var_name;
 		$var = $var . "+" . $seq_stat;
-		$phenotype_variation{$phenotype}{$var} = 1;
-		
+		$phenotype_variation{$phenotype}{$var} = 1;	
 	}
 	
 	my @return_data;
@@ -3153,7 +3024,7 @@ sub _get_variation_data {
 		my $vars_line = join "&", @vars;
 		push @return_data, "$phene\|$vars_line";
 	}
-	return \@return_data;
+	return \@return_data, \%variation_id2name	;
 	
 }
 
