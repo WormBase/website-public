@@ -41,8 +41,6 @@ extends 'WormBase::API::Object';
 # alleles
 
 
-### to do ### 
-
 ### from id
 
 
@@ -100,8 +98,8 @@ sub template {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+		    data structure = data{"data"} = {
+		     }';
 
 	my %data_pack;
 
@@ -161,15 +159,15 @@ sub name {
 	|| $object->CGC_name
 	|| $object->Molecular_name
 	|| eval { $object->Corresponding_CDS->Corresponding_protein }
-    || $cm_text;
+	|| $cm_text;
     
-
     my $data = { description => 'The most commonly used name of the gene',
 		 data        =>  { id    => "$object",
 				           label => "$common_name",
 				           class => $object->class
 		 },
     };
+    
     return $data;
 }
 
@@ -245,7 +243,7 @@ sub concise_description {
 sub proteins {
 
 	my $self = shift;
-    my $object = $self->object;
+	my $object = $self->object;
 	my %data;
 	my $desc = 'proteins related to gene';
 
@@ -260,13 +258,10 @@ sub proteins {
 			
 			my $public_name = $self->public_name($protein, $protein->class);
 			$data_pack{$protein} = {
-									'class' => 'Protein',
-									'label' => $public_name,
-                                                                        'id' => "$protein"
-									};
-
-									
-									
+			  'class' => 'Protein',
+			  'label' => $public_name,
+                          'id' => "$protein"
+			};						
 		}
 		
 	####
@@ -339,23 +334,25 @@ sub kogs {
 
 # should we return entire sequence obj or just linking/description info? -AC
 sub other_sequences {
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
     my @seqs = map { [$self->_pack_obj($_), "". $_->Title] } $object->Other_sequence;
-    my $data = { description => 'Other sequences associated with gene',
-                 data        => \@seqs
-    };
-	return $data;
+    my $data = { 
+	 description => 'Other sequences associated with gene',
+	  data        => \@seqs
+      };
+
+    return $data;
 }
 
 sub cloned_by {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'Personnel who cloned gene';
+    my %data;
+    my $desc = 'Personnel who cloned gene';
 
-	my %data_pack;
+    my %data_pack;
 
 	#### data pull and packaging
 	
@@ -708,10 +705,11 @@ sub interactions {
 
     foreach my $interaction_name (@interaction_data) {
     
-            $data_pack{$interaction_name} = {
-                                            'class' => 'Interaction',
-                                            'common_name' => $interaction_name
-                                            };
+            $data_pack{$interaction_name} = 
+	      {
+	      'class' => 'Interaction',
+	      'common_name' => $interaction_name
+              };
     }
 
 
@@ -772,58 +770,102 @@ sub gene_ontology {
 ###########################################
 # This could be generic. See also Variation.
 
+########
+## TODO: reference_allele sub
+## SubSection('Reference allele',(eval {$GENE->Reference_allele->Flanking_sequences}) ? b($ref_allele) : $ref_allele);
+
+sub reference_allele {
+
+	my $self = shift;
+	my $object = $self->object;
+	my %data;
+	my $desc = 'notes ;
+				data structure = data{"data"} = {
+				}';
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my $reference_allele = $object->Reference_allele;
+	my $ref_allele_name = $reference_allele->Public_name;
+	my $flanking_sequence = $reference_allele->Flanking_sequences;
+	
+	%data_pack = (
+	    'reference_allele'=> $reference_allele,
+	    'ref_allele_name' => $ref_allele_name,
+	    'flanking_sequence' => $flanking_sequence
+	    );
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
 
 sub alleles {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'alleles for gene';
-
-	my $dbh = $self->ace_dsn->dbh;
-	
-	my %data_pack;
-
-	#### get alleles
-	## NB: datapull for classic page includes this map line: map 
-    ## my @all_alleles = map {$dbh->fetch(Variation => $_) } @alleles;
-
-    my @all_alleles = $object->Allele; 
+    my %data;
+    my $desc = 'alleles for gene';
+    my $dbh = $self->ace_dsn->dbh;
+    my %data_pack;
+    
+    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
 
     foreach my $allele (@all_alleles) {
     	if ($allele->CGC_name) {
     		my $available_seq = 0;
-    		
-    			if($allele->Flanking_sequence) {
-    				$available_seq = 1;
-    			} 
-				
-				my $class = $allele->class;
-				
-    			$data_pack{$allele} = {
-    									'available_seq' => $available_seq,
-    									'class' => $class
-    									}	
-    	}
-
+    		my $flanking_sequence;
+		$flanking_sequence = eval {$allele->Flanking_sequence;};
+		
+		if($flanking_sequence) {
+		    $available_seq = 1;
+		} 
 	
+		my $class = $allele->class;
+		    $data_pack{$allele} = {
+		    'available_seq' => $available_seq,
+		    'class' => $class
+		}				
 	}
+    }
 	
 	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
 
+## TODO ##
+## snps sub
+
+#    my @all_alleles = map {$DB->fetch(Variation => $_) } $GENE->Allele;
+#     my (@alleles,@snps,@rflps,@insertions);
+#     foreach (sort @all_alleles) {
+# 	my $name = $_->Public_name;
+# 	push @alleles,($_->Flanking_sequences ? b(ObjectLink($_,$name)) : ObjectLink($_,$name)) if $_->CGC_name;
+# 	push @snps,       ObjectLink($_,$name) if $_->SNP(0) && !$_->RFLP(0);
+# 	push @snps,       ObjectLink($_,$name) if $_->RFLP(0);
+# 	push @insertions, ObjectLink($_,$name) if $_->Transposon_insertion;
+#     }
+
+## Notes:
+## gets @all_alleles 
+## create a has_a $all_alleles_ar for this and sub alleles
+
+
+#######
+
 sub snps {
 
-	my $self = shift;
-	
+    my $self = shift;
     my $object = $self->object;
-    
-	my %data;
-	my $desc = 'snps related to gene';
-
-	my %data_pack;
+    my %data;
+    my $desc = 'snps related to gene';
+    my %data_pack;
 
 	#### data pull and packaging
 	
@@ -979,7 +1021,7 @@ sub inparanoid_groups {
 sub paralogs {
 
 	my $self = shift;
-    my $object = $self->object;
+	my $object = $self->object;
 	my %data;
 	my $desc = 'This genes paralogs';
 
