@@ -79,7 +79,7 @@ extends 'WormBase::API::Object';
 ### configuration items
 
 # my $version = 'WS213';  
-# 
+
 # our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
 # our $rnai_details_file = "rnai_data.txt";
 # our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
@@ -558,24 +558,6 @@ sub anatomy_function {
 
 
 sub phenotype {
-
-
-### notes on cleaning  up pointing to files by figuring out version in the 
-## appropriate subs:
-# _get_phenotype_data
-# _get_variation_data
-
-# my $version = $self->ace_dsn->dbh->version;
-# my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
-# my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-
-# our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-# our $rnai_details_file = "rnai_data.txt";
-# our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
-# our $gene_variation_phene_file = "variation_data.txt";
-# our $phenotype_name_file = "phenotype_id2name.txt";
-# our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
-
 
     my $self = shift;
     my $object = $self->object;
