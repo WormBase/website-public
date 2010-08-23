@@ -560,6 +560,7 @@ sub anatomy_function {
 sub phenotype {
 
     my $self = shift;
+    my $not = shift;
     my $object = $self->object;
     my %data;
     my $desc = 'notes ;
@@ -571,8 +572,8 @@ sub phenotype {
     #### data pull and packaging
  
     
-    my ($details,$rnai_id_data) = $self->_get_phenotype_data($object, 1);  
-    my ($variation_data,$varid2name) = $self->_get_variation_data($object, 1);
+    my ($details,$rnai_id_data) = $self->_get_phenotype_data($object, $not);  
+    my ($variation_data,$varid2name) = $self->_get_variation_data($object, $not);
     my %variation_data;
     my %rnai_count_data;
     
