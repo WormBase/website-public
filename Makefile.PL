@@ -35,6 +35,7 @@ requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::State';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
+requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
 requires 'CHI';                              # Cache backend

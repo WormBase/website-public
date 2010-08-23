@@ -17,6 +17,7 @@ use Catalyst qw/
          Session
          Session::Store::FastMmap
          Session::State::Cookie
+         StackTrace
          Static::Simple
          Unicode
            /;
