@@ -807,26 +807,22 @@ sub reference_allele {
 
 sub alleles {
 
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'alleles for gene';
-
-	my $dbh = $self->ace_dsn->dbh;
-	
-	my %data_pack;
-
-	#### get alleles
-	## NB: datapull for classic page includes this map line: map 
-    ## my @all_alleles = map {$dbh->fetch(Variation => $_) } @alleles;
-
-    my @all_alleles = $object->Allele; 
+    my %data;
+    my $desc = 'alleles for gene';
+    my $dbh = $self->ace_dsn->dbh;
+    my %data_pack;
+    
+    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
 
     foreach my $allele (@all_alleles) {
     	if ($allele->CGC_name) {
     		my $available_seq = 0;
-    		
-		if($allele->Flanking_sequence) {
+    		my $flanking_sequence;
+		$flanking_sequence = eval {$allele->Flanking_sequence;};
+		
+		if($flanking_sequence) {
 		    $available_seq = 1;
 		} 
 	
@@ -856,18 +852,20 @@ sub alleles {
 # 	push @insertions, ObjectLink($_,$name) if $_->Transposon_insertion;
 #     }
 
+## Notes:
+## gets @all_alleles 
+## create a has_a $all_alleles_ar for this and sub alleles
+
+
 #######
 
 sub snps {
 
-	my $self = shift;
-	
+    my $self = shift;
     my $object = $self->object;
-    
-	my %data;
-	my $desc = 'snps related to gene';
-
-	my %data_pack;
+    my %data;
+    my $desc = 'snps related to gene';
+    my %data_pack;
 
 	#### data pull and packaging
 	
