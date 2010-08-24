@@ -122,7 +122,7 @@ sub template {
 # do we need public_name?  We already have name with label -AC
 sub public_name {
     
-	my ($self,$object,$class) = @_;
+    my ($self,$object,$class) = @_;
     my $common_name;    
    
     if ($class =~ /gene/i) {
@@ -782,8 +782,6 @@ sub gene_ontology {
         $data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
       }
     }
-
-
     ####
 
     $data{'data'} = \%data_pack;
@@ -837,9 +835,6 @@ sub gene_ontology {
 ###########################################
 # This could be generic. See also Variation.
 
-########
-## TODO: reference_allele sub
-## SubSection('Reference allele',(eval {$GENE->Reference_allele->Flanking_sequences}) ? b($ref_allele) : $ref_allele);
 
 sub reference_allele {
 
@@ -906,24 +901,6 @@ sub alleles {
 	return \%data;
 }
 
-## TODO ##
-## snps sub
-
-#    my @all_alleles = map {$DB->fetch(Variation => $_) } $GENE->Allele;
-#     my (@alleles,@snps,@rflps,@insertions);
-#     foreach (sort @all_alleles) {
-# 	my $name = $_->Public_name;
-# 	push @alleles,($_->Flanking_sequences ? b(ObjectLink($_,$name)) : ObjectLink($_,$name)) if $_->CGC_name;
-# 	push @snps,       ObjectLink($_,$name) if $_->SNP(0) && !$_->RFLP(0);
-# 	push @snps,       ObjectLink($_,$name) if $_->RFLP(0);
-# 	push @insertions, ObjectLink($_,$name) if $_->Transposon_insertion;
-#     }
-
-## Notes:
-## gets @all_alleles 
-## create a has_a $all_alleles_ar for this and sub alleles
-
-
 #######
 
 sub snps {
@@ -932,13 +909,26 @@ sub snps {
     my $object = $self->object;
     my %data;
     my $desc = 'snps related to gene';
+    my $dbh = $self->ace_dsn->dbh;
     my %data_pack;
+
+    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
+
 
 	#### data pull and packaging
 	
-	
-
-
+    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele;
+    my @snps;  ##(@alleles,,@rflps,@insertions);
+     
+    foreach my $allele (sort @all_alleles) {
+	if($allele->SNP(0) && !$allele->RFLP(0)) {
+  
+	  $data_pack{$allele} = {
+	    'class' => 'Allele',
+	    'ace_id' => $allele
+	  };
+	}
+    }
 	####
 	
 	$data{'data'} = \%data_pack;
@@ -1084,7 +1074,6 @@ sub inparanoid_groups {
 }	
 
 
-
 sub paralogs {
 
 	my $self = shift;
@@ -1117,25 +1106,64 @@ sub paralogs {
 	return \%data;
 }
 
+
 sub orthologs {
+
+	my $self = shift;
+	    my $object = $self->object;
+	my %data;
+	my $desc = 'this genes orthologs';
+	my %data_pack;
+			  
+	#### data pull and packaging
+
+	my @orthologs = $object->Ortholog;
+	#my $data_pack = $self->basic_package(\@orthologs);
+
+	foreach my $ortholog (@orthologs) {
+
+	  my $ortholog_name = $self->public_name($ortholog,'Gene');
+	  my $species = $ortholog->right;
+	  my @analyses = $ortholog->right->right->col;
+	 
+	  $data_pack{$ortholog} = {
+	    'ace_id' => $ortholog,
+	    'ortholog_name' => $ortholog_name,
+	    'species' => $species,
+	    'analyses' => \@analyses,
+	    'class' => 'Gene'
+	  };
+	}
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub ortholog_other {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'this genes orthologs';
-				
+	my $desc = 'number of other ortologs';
+
+	my $data_pack;
+
 	#### data pull and packaging
 
-	my @orthologs = $object->Ortholog;
-	my $data_pack = $self->basic_package(\@orthologs);
-
+	my @ortholog_others = $object->Ortholog_other;
+	my $ortholog_others_count = @ortholog_others;
+	$data_pack = $ortholog_others_count;
+  
 	####
 
 	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
-}
 
+}
 
 sub treefam {
 
