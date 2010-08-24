@@ -728,41 +728,108 @@ sub interactions {
 sub gene_ontology {
 
     my $self = shift;
-    my $object = $self->object; 
+    my $object = $self->object;
     my %data;
-    my %data_pack;
-	my $desc = 'gene ontology terms to which gene is annotated';
-	
-	## get go terms for the gene
+    my $desc = 'notes ;
+                data structure = data{"data"} = {
+                }';
 
-	my @go_terms = $object->GO_term;
-	
-	## get term details
-	
-	foreach my $go_term (@go_terms){
-			
-		$data_pack{$go_term}{'term'} = $go_term->Term;
-		$data_pack{$go_term}{'term_type'} = $go_term->Type;
-		$data_pack{$go_term}{'class'} = $go_term->class;
-		
-		my %evidence;
-		
-	  	foreach my $code ($go_term->col){
-		
-			my ($evidence_code,$method,$detail) = $code->row;		
-			$evidence{$evidence_code}{'method'} = $method;
-			$evidence{$evidence_code}{'detail'} = $detail;
-			
-	  	}
-	  	
-	  	$data_pack{'evidence'} = \%evidence;
-	}
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	
-	return \%data;	
+    my %data_pack;
+
+    #### data pull and packaging
+
+    #my %go_terms;
+    my @go_terms = $object->GO_term;
+    
+    my %annotation_bases  = (
+        'EXP' , 'x',
+        'IDA' , 'x',
+        'IPI' , 'x',
+        'IMP' , 'x',
+        'IGI' , 'x',
+        'IEP' , 'x',
+        'ND' , 'x',
+        
+        'IEA' , 'p',
+        'ISS' , 'p',
+        'ISO' , 'p',
+        'ISA' , 'p',
+        'ISM' , 'p',
+        'IGC' , 'p',
+        'RCA' , 'p',
+        'IC' , 'p'
+    );
+
+    
+
+    foreach my $go_term (@go_terms){
+      foreach my $code ($go_term->col){
+        my @row = $code->row;
+        my ($evidence_code,$method,$detail) = @row;
+        my $display_method = method_detail($method,$detail);
+        my $term = $go_term->Term;
+        my $term_type = $go_term->Type;
+        my $annotation_basis =  $annotation_bases{$evidence_code};
+        my %data = (
+            'display_method' => $display_method,
+            'evidence_code' => $evidence_code,
+            'term' => $term,
+            'go_term' => $go_term
+            ); 
+        
+        my @data = ($display_method,$evidence_code,$term,$go_term); 
+        my $data_line = join ";",@data;
+        $data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
+      }
+    }
+
+
+    ####
+
+    $data{'data'} = \%data_pack;
+    $data{'description'} = $desc;
+    return \%data;
 }
+
+
+# gene_ontology_simple {
+# 
+#     my $self = shift;
+#     my $object = $self->object; 
+#     my %data;
+#     my %data_pack;
+# 	my $desc = 'gene ontology terms to which gene is annotated';
+# 	
+# 	## get go terms for the gene
+# 
+# 	my @go_terms = $object->GO_term;
+# 	
+# 	## get term details
+# 	
+# 	foreach my $go_term (@go_terms){
+# 			
+# 		$data_pack{$go_term}{'term'} = $go_term->Term;
+# 		$data_pack{$go_term}{'term_type'} = $go_term->Type;
+# 		$data_pack{$go_term}{'class'} = $go_term->class;
+# 		
+# 		my %evidence;
+# 		
+# 	  	foreach my $code ($go_term->col){
+# 		
+# 			my ($evidence_code,$method,$detail) = $code->row;		
+# 			$evidence{$evidence_code}{'method'} = $method;
+# 			$evidence{$evidence_code}{'detail'} = $detail;
+# 			
+# 	  	}
+# 	  	
+# 	  	$data_pack{'evidence'} = \%evidence;
+# 	}
+# 	
+# 	$data{'data'} = \%data_pack;
+# 	$data{'description'} = $desc;
+# 	
+# 	return \%data;	
+# }
 
 
 ###########################################
@@ -2411,72 +2478,6 @@ sub anatomic_expression_patterns {
 #   INTERNAL METHODS
 #
 #########################################
-sub _gene_ontology_web {
-
-    my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'notes ;
-                data structure = data{"data"} = {
-                }';
-
-    my %data_pack;
-
-    #### data pull and packaging
-
-    #my %go_terms;
-    my @go_terms = $object->GO_term;
-    
-    my %annotation_bases  = (
-        'EXP' , 'x',
-        'IDA' , 'x',
-        'IPI' , 'x',
-        'IMP' , 'x',
-        'IGI' , 'x',
-        'IEP' , 'x',
-        'ND' , 'x',
-        
-        'IEA' , 'p',
-        'ISS' , 'p',
-        'ISO' , 'p',
-        'ISA' , 'p',
-        'ISM' , 'p',
-        'IGC' , 'p',
-        'RCA' , 'p',
-        'IC' , 'p'
-    );
-
-    
-
-    foreach my $go_term (@go_terms){
-      foreach my $code ($go_term->col){
-        my @row = $code->row;
-        my ($evidence_code,$method,$detail) = @row;
-        my $display_method = method_detail($method,$detail);
-        my $term = $go_term->Term;
-        my $term_type = $go_term->Type;
-        my $annotation_basis =  $annotation_bases{$evidence_code};
-        my %data = (
-            'display_method' => $display_method,
-            'evidence_code' => $evidence_code,
-            'term' => $term,
-            'go_term' => $go_term
-            ); 
-        
-        my @data = ($display_method,$evidence_code,$term,$go_term); 
-        my $data_line = join ";",@data;
-        $data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
-      }
-    }
-
-
-    ####
-
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
-}
-
 
 sub method_detail {
     my ($method,$detail) = @_;
