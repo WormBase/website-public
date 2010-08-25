@@ -33,7 +33,6 @@
     }
   });
 
-
   // used in sidebar view, to open and close widgets when selected
   $(".module-load").live('click',function() {
     var content = $(this).attr("class").split(" ")[1];
