@@ -71,12 +71,16 @@
   <div id="widget-holder">
       [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
           [% widget = c.config.pages.$class.widgets.$widget_name %]
-          [% WRAPPER widget_sortable_block -%]                        
+          <li>
+          [% WRAPPER widget_sortable_block -%]
           [% END %]
+          </li>                        
+
       [% END %]
   </div>
 
   <script>
+  [% # open widgets TODO: config defaults, read widget preferences from session %]
    $("#nav-overview").trigger('click');
    $("#nav-history").trigger('click');
    $("#nav-history_protein").trigger('click');
