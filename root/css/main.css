@@ -18,7 +18,7 @@ body, html {
     padding: 0px;
     margin: 0px;
     font-family: Helvetica, sans-serif;
-    background-color: #DDD;
+/*     background-color: #DDD; */
 /*     background-color: white; */
     font-size:75%;     /* Set the default font size from browser medium (16px) to 12px */
     height:100%;
@@ -41,14 +41,14 @@ h6 { font-size:0.8em;    /* 12px; subfield names */
 input, select, th, td { font-size:1em; }
 
 #wrap {
-  width:890px;
+/*   width:890px; */
   margin: 0px auto;
-  padding: 0px 10px;
+  padding: 0px 1em;
   background:white;
   min-height: 100%;
   height: audo !important;
-  border-right: 1px solid gray;
-  border-left: 1px solid gray;
+/*  border-right: 1px solid gray;
+  border-left: 1px solid gray;*/
   position: relative;
 }
 
@@ -131,10 +131,10 @@ section.widget .primary-container {
 }
 
 section.widget .widget-container {
-    padding:5px;
-    margin:10px;
-    margin-top:0px;
-    margin-right:0px;
+    padding:0.5em;
+    margin:0em;
+    margin-left:1em;
+    margin-bottom:1em;
     overflow:hidden;
     border:1px solid gray;    
     display:none;
@@ -211,35 +211,34 @@ div#content #available-views {
    FOOTER ================================== */
 
 div#footer{
-    clear:both;
 	color: #878787;
-    padding: 1em;
-    margin-top:1em;
-	font-size:0.7em;
+    padding: 0.8em 0;
+    margin: 0 -1.5em;
+	font-size:0.8em;
     border-top: 1px solid #BCC;
     overflow:auto;
     position:absolute;
-    width: 875px;
+    width: 100%;
     bottom:0px;
-    height: 5.3em;
 }
 
-#spacer {
+#footer, #spacer {
     clear:both;
-    height: 5.5em;
+    height: 6.2em;
 }
 
 #footercredit {
     text-align: left;
     float: left;
-    width:43em;
     overflow:hidden;
+    margin-left:1em;
 }
 
 #footermeta {
     text-align: right;
     float: right;
     overflow:hidden;
+    margin-right: 1em;
 }
 
 /*********************************
@@ -792,7 +791,7 @@ font-style:italic;
 }
 
 #selectable li { 
-  margin-bottom: 5px; 
+  margin-bottom: 0.5em; 
   padding: 0.4em; 
   font-size: 1em; 
   height: 1.2em;
