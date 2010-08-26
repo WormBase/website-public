@@ -7,15 +7,13 @@
     $("#widget-holder").disableSelection();
 
 	 $(".toggle").live('click',function() {
-		  //$(this).click(function(){
               $(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
 
-  $("#nav-min").click(function() {
-    $("#navigation").animate({width: 'toggle'});
-  });
-
+    $("#nav-min").click(function() {
+      $("#navigation").animate({width: 'toggle'});
+    });
    
 	$(".tooltip").live('mouseover',function() {
 	   // var employee_id = $(this).attr("id");

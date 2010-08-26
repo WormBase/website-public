@@ -8,6 +8,7 @@
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.name.data.label %]
 
+<div id="wrap">
 [% PROCESS header/classic.tt2 %]
 
     <div id="content">
@@ -68,6 +69,8 @@
         </table>
 
      [% content %]
+      <div id="spacer" />
    </div>
 
 [% PROCESS footer/default.tt2 %]
+</div>
