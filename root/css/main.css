@@ -12,14 +12,9 @@
 /* = DOCUMENT ========================== */
 
 body, html {
-/*    padding: 15px;
-    margin-left:10%;
-    margin-right:5%;*/
     padding: 0px;
     margin: 0px;
     font-family: Helvetica, sans-serif;
-/*     background-color: #DDD; */
-/*     background-color: white; */
     font-size:75%;     /* Set the default font size from browser medium (16px) to 12px */
     height:100%;
 }
@@ -40,15 +35,13 @@ h6 { font-size:0.8em;    /* 12px; subfield names */
 /* IE hack: Force tables and input forms to inherit our default size */
 input, select, th, td { font-size:1em; }
 
+/* This wrap is needed to keep the footer at the bottom in all browsers */
 #wrap {
-/*   width:890px; */
-  margin: 0px auto;
-  padding: 0px 1em;
+  margin: 0;
+  padding: 0 0 0 1em;
   background:white;
   min-height: 100%;
-  height: audo !important;
-/*  border-right: 1px solid gray;
-  border-left: 1px solid gray;*/
+  height: auto !important;
   position: relative;
 }
 
@@ -93,7 +86,7 @@ img {
    
 *********************************/
 header#page {
-    padding-bottom:5px;
+    padding: 1em 0;
 }
 
 header#page h1 {
@@ -133,7 +126,7 @@ section.widget .primary-container {
 section.widget .widget-container {
     padding:0.5em;
     margin:0em;
-    margin-left:1em;
+/*     margin-left:1em; */
     margin-bottom:1em;
     overflow:hidden;
     border:1px solid gray;    
@@ -200,12 +193,12 @@ section.widget .secondary-container {
 
 /* A list of available views */
 div#content #available-views {
-    float:right;
     color:black;
     overflow:hidden;
+    position:absolute;
+    bottom:1em;
+    right:1em;
 }
-
-
 
 /* =========================================
    FOOTER ================================== */
@@ -218,7 +211,7 @@ div#footer{
     border-top: 1px solid #BCC;
     overflow:auto;
     position:absolute;
-    width: 100%;
+    width:100%;
     bottom:0px;
 }
 
@@ -227,11 +220,12 @@ div#footer{
     height: 6.2em;
 }
 
+
 #footercredit {
     text-align: left;
     float: left;
     overflow:hidden;
-    margin-left:1em;
+    margin-left:1.4em;
 }
 
 #footermeta {
@@ -391,9 +385,16 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
-.title{
+.title {
     overflow:hidden;
-    padding-bottom:10px;
+    padding:1em;
+    position:relative;
+  background-color:#CDCDCD;
+}
+.title h2 {
+    padding:0;
+    margin:0;
+    float:left;
 }
 
 
@@ -760,37 +761,22 @@ font-style:italic;
 *********************************/
 
 #navigation {
-  width: 120px;
+  width: 13em;
   float: left;
-  height: 100%;
 }
 
-#navigation ul {
-  margin: 0px;
-  padding: 0px;
-  list-style: none;
-}
-
-#widget-holder {
-  overflow:hidden;
-  margin: 0px;
-  padding: 0px;
-  list-style: none;
-}
-
-#selectable .ui-selected { 
+#navigation .ui-selected { 
   background: gray; 
   color: white; 
 }
 
-#selectable { 
+#navigation ul { 
   list-style-type: none; 
-  margin: 0; 
+  margin: 4em 0 0 0; 
   padding: 0;
-  width: 100%;
 }
 
-#selectable li { 
+#navigation ul li { 
   margin-bottom: 0.5em; 
   padding: 0.4em; 
   font-size: 1em; 
@@ -798,5 +784,30 @@ font-style:italic;
   border:1px solid gray;  
   vertical-align:middle;
 }
+
+#nav-min{
+  background:#EFEFEF;
+  height:100%;
+  width:1em;
+  overflow:auto;
+  position: absolute;
+  left:0;
+  top:0;
+/*   top: -1em; */
+}
+
+#nav-min:hover {
+  background: #DDD;
+}
+
+#widget-holder {
+  overflow:hidden;
+  margin: 0px;
+  padding: 0 1em;
+  list-style: none;
+  position:relative;
+}
+
+
 
 

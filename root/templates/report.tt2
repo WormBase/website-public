@@ -8,6 +8,55 @@
 [% SET this_object_label = object.name.data.label %]
 
 
+[% # Sidebar View %]
+[% IF view=="sidebar" || (view == "") %]
+  <div id="navigation">
+    <ul>
+    [% FOREACH widget_name IN widgets -%]
+      [% widget = c.config.pages.$class.widgets.$widget_name %]
+      <li id="nav-[% widget_name %]" class="module-load [% widget_name %]" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" load=1>[% widget.title %]</li>
+    [% END %]
+    </ul>
+
+  </div>
+  
+
+    <div class="title">
+      [% title %]
+      [%- IF object -%]
+        <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
+      [% END %] 
+      <nav id="available-views">
+        View as:
+        [% # HARD-CODED! %]   
+        [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
+        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=sidebar">sidebar</a> |
+        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
+        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
+        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
+        [% tag2link(object.name.data,'classic','is_classic') %]
+      </nav>
+    </div>
+
+   <div id="widget-holder">
+   <div id="nav-min"> </div>
+      [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
+          [% widget = c.config.pages.$class.widgets.$widget_name %]
+          <li>
+          [% WRAPPER widget_sortable_block -%]
+          [% END %]
+          </li>                        
+
+      [% END %]
+  </div>
+  <script>
+  [% # open widgets TODO: config defaults, read widget preferences from session %]
+   $("#nav-overview").trigger('click');
+   $("#nav-history").trigger('click');
+   $("#nav-history_protein").trigger('click');
+  </script>
+[% ELSE %]
+
 <div class="title">
    [% title %]
    [%- IF object -%]
@@ -57,34 +106,7 @@
                                      });
                             </script>
 
-[% # Sidebar View %]
-[% ELSIF view=="sidebar" || (view == "") %]
-  <div id="navigation">
-    <ul id="selectable">
-    [% FOREACH widget_name IN widgets -%]
-      [% widget = c.config.pages.$class.widgets.$widget_name %]
-      <li id="nav-[% widget_name %]" class="module-load [% widget_name %]" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" load=1>[% widget.title %]</li>
-    [% END %]
-    </ul>
-  </div>
-  
-  <div id="widget-holder">
-      [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
-          [% widget = c.config.pages.$class.widgets.$widget_name %]
-          <li>
-          [% WRAPPER widget_sortable_block -%]
-          [% END %]
-          </li>                        
 
-      [% END %]
-  </div>
-
-  <script>
-  [% # open widgets TODO: config defaults, read widget preferences from session %]
-   $("#nav-overview").trigger('click');
-   $("#nav-history").trigger('click');
-   $("#nav-history_protein").trigger('click');
-  </script>
 
 
 
@@ -152,6 +174,6 @@
 
       [% END %]
 [% END %]
-
+[% END %]
 
 
