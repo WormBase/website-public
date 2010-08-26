@@ -11,7 +11,12 @@
               $(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
-      
+
+  $("#nav-min").click(function() {
+    $("#navigation").animate({width: 'toggle'});
+  });
+
+   
 	$(".tooltip").live('mouseover',function() {
 	   // var employee_id = $(this).attr("id");
 	    $(this).cluetip({

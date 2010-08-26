@@ -10,5 +10,5 @@
                 <br />
                 Database version [% constants.acedb_version %]
            </p>
-      </header>
+    </header>
 <!-- END boilerplate/banner -->
