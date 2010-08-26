@@ -17,10 +17,12 @@
       <li id="nav-[% widget_name %]" class="module-load [% widget_name %]" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" load=1>[% widget.title %]</li>
     [% END %]
     </ul>
-
   </div>
   
 
+
+
+   <div id="widget-holder">
     <div class="title">
       [% title %]
       [%- IF object -%]
@@ -37,9 +39,7 @@
         [% tag2link(object.name.data,'classic','is_classic') %]
       </nav>
     </div>
-
-   <div id="widget-holder">
-   <div id="nav-min"> </div>
+     <div id="nav-min"> </div>
       [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
           [% widget = c.config.pages.$class.widgets.$widget_name %]
           <li>

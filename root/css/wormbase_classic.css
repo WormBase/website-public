@@ -312,7 +312,9 @@ td.datacell        { border:1px solid grey; }
 table.incontainer { margin:0px 10px 5px 40px; }
 
 
-
+#content {
+  padding-right:1em;
+}
 
 .abstract         { background-color: #FFEEEE; }
 .acetree          { font-size: small; }
@@ -1353,63 +1355,16 @@ table.pie_chart_legend {
 }
 
 
-
-
-/* Footer Styling */
-
-#footer{
-        border-bottom: 1px dotted #BCC;
-/*      width: 760px; */
-        clear:both;
-	margin: 0 auto;
-        padding: 10px 0 0 0;
-	font-size:0.7em;
+#footer, #spacer {
+    height: 7em;
+    margin-top: 10px;
 }
 
-#footercredit {
-        text-align: left;
-        margin: 0px;
-        padding: 10px 0 10px 10px;
-	color: #878787;
-        float: left;
-        width:400px;
+.title {
+  background-color:white;
+  padding:1em 0 0 0;
 }
 
-#footermeta {
-        text-align: right;
-        margin: 0px;
-        padding: 10px 10px 10px 0;
-        color: #878787;
-        float: right;
-}
-
-#footer a:link, #footer a:hover {  }
-
-#footer a:visited { }
-
-#footer a:hover {  }
-
-#footer .stbutton {
-   height:10px;
-   margin-bottom:20px;
-}
-
-
-
-div#footer {
-    clear:both;
-    padding-top:10px;
-    border-top:1px dotted gray;
-    font-size:10px;
-}
-
-div.footer_left {
-    float:left;
-}
-
-div.footer_right {
-    float:right;
-}
 
 
 /* NEW MARKUP */

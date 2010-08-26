@@ -125,9 +125,7 @@ section.widget .primary-container {
 
 section.widget .widget-container {
     padding:0.5em;
-    margin:0em;
-/*     margin-left:1em; */
-    margin-bottom:1em;
+    margin:0 1em 1em 0;
     overflow:hidden;
     border:1px solid gray;    
     display:none;
@@ -770,9 +768,18 @@ font-style:italic;
   color: white; 
 }
 
+#navigation .ui-selected:hover { 
+  background-color:#AAA;
+  color: white; 
+}
+
+#navigation ul li:hover {
+  background: #EFEFEF;
+}
+
 #navigation ul { 
   list-style-type: none; 
-  margin: 4em 0 0 0; 
+  margin: 0 0 0 0; 
   padding: 0;
 }
 
@@ -793,19 +800,19 @@ font-style:italic;
   position: absolute;
   left:0;
   top:0;
-/*   top: -1em; */
 }
 
 #nav-min:hover {
-  background: #DDD;
+  background:#CDCDCD;
 }
 
 #widget-holder {
   overflow:hidden;
   margin: 0px;
-  padding: 0 1em;
+  padding: 0 0 0 1em;
   list-style: none;
   position:relative;
+  background:#EFEFEF;
 }
 
 

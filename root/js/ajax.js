@@ -20,13 +20,12 @@
 
   $(".module-min").live('click', function() {
     var mytitle = "#" + $(this).attr("class").split(" ")[1];
+    $(mytitle).slideToggle("fast");
     if ($(this).attr("show") == 0){
-      $(mytitle).hide();
       $(mytitle).next().hide();
       $(this).attr("show", 1);
       $(this).text("[ + ]");
     }else{
-      $(mytitle).show();
       $(mytitle).next().show();
       $(this).attr("show", 0);
       $(this).text("[ - ]");
