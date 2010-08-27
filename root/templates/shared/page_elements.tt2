@@ -192,11 +192,9 @@
    <!-- start [% widget.name %] widget -->
    <section class="widget">
           <div class="widget-container">
-                <header>         
-                    <div class="controls">
-                      <span class="module-min [% widget.name %]" show=0>[ - ]</span> 
-                      <span class="module-load [% widget.name %]">[ x ]</span></div>
-                    <h3>[% widget.title %]</h3>
+                <header>        
+                    <div class="module-close [% widget.name %]"></div>
+                    <h3><div class="module-min [% widget.name %]" show=0></div>[% widget.title %]</h3>
                 </header>
 
                 <div id="[%- widget.name -%]"></div>

@@ -313,7 +313,7 @@ table.incontainer { margin:0px 10px 5px 40px; }
 
 
 #content {
-  padding-right:1em;
+  padding:0;
 }
 
 .abstract         { background-color: #FFEEEE; }
