@@ -13,7 +13,7 @@
        [% val = query %]
     [% END %]
     <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
-    <input id="Search" type="submit" value="Search">
-
+    <input id="Search" type="submit" value="Search"><br />
+    <center><span id="searchMsg"></span></center>
   </form>
-  <center><span id="searchMsg"></span></center>
+  

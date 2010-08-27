@@ -2,11 +2,12 @@
   $(document).ready(function() {  
 
     $("#widget-holder").sortable({
-      handle: 'header, footer'
+      handle: 'header, footer',
+      items:'li'
     });
     $("#widget-holder").disableSelection();
 
-    $(".widget-container").addClass('ui-corner-all');
+//     $(".widget-container").addClass('ui-corner-all');
 //     $("#navigaion").children("li").addClass('ui-corner-all');
 
 	 $(".toggle").live('click',function() {
@@ -26,11 +27,13 @@
     $(mytitle).next().slideToggle("fast");
     if ($(this).attr("show") == 0){
       $(this).attr("show", 1);
+      $(this).parent().addClass("minimized");
       $(this).removeClass("ui-icon ui-icon-circle-triangle-s");
       $(this).removeClass("ui-icon ui-icon-triangle-1-s");
       $(this).addClass("ui-icon ui-icon-circle-triangle-e");
     }else{
       $(this).attr("show", 0);
+      $(this).parent().removeClass("minimized");
       $(this).removeClass("ui-icon ui-icon-circle-triangle-e");
       $(this).addClass("ui-icon ui-icon-circle-triangle-s");
     }

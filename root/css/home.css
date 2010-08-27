@@ -25,13 +25,6 @@
 #results span.forest-green{
    color: #228B22;
 }
-#search-bar {
-  height:50px;
-  width:540px;
-}
-#search-bar .form input.text {
-   width:300px;
-}
 
 
 #fade {
@@ -78,23 +71,25 @@
 
 
 /* The search bar form */
+#searchForm {
+  padding:1em;
+  width:45em;
+  height:4em;
+}
 #searchForm input, .search-select{  
-    font-size: 1.3em;  
-    height: 35px; 
+    font-size: 1.2em;  
+   height:3em;
    vertical-align:top;
-    padding: 5px;  
+    padding: 0.5em;  
 }  
 #searchForm input.text{  
-    font-weight: normal;  
     color: #565656;  
-    border: 1px solid #9c9c9c;  
-    padding: 7px;  
-    margin-bottom: 5px;  
+    border: 1px solid gray;  
+    padding: 0.5em; 
     text-align: left;  
-    width:300px;
-    height:20px;
+    width:20em;
+    height:2em;
 }  
 #searchForm input.text.active{  
     background: #ddeff6;  
-    border: 1px solid #0099d4;  
 }  
