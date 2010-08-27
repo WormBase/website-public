@@ -6,7 +6,5 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
  
 
-<div id="search-bar">
   [% PROCESS "boilerplate/search_bar.tt2" %]
-</div>
   [% content %]

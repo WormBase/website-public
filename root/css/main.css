@@ -38,7 +38,7 @@ input, select, th, td { font-size:1em; }
 /* This wrap is needed to keep the footer at the bottom in all browsers */
 #wrap {
   margin: 0;
-  padding: 0 0 0 1em;
+  padding: 0 0 0 0em;
   background:white;
   min-height: 100%;
   height: auto !important;
@@ -116,38 +116,51 @@ header#page .release_date { }
    
 *********************************/
 section.widget .primary-container {
-    padding:5px;
+    padding:0.5em 0.5em 1.5em 0.5em;
     margin:2px;
     margin-bottom:10px;
     overflow:hidden;
     border:1px solid gray;    
+    position:relative;
 }
 
 section.widget .widget-container {
-    padding:0.5em;
+    padding:0.5em 0.5em 1em 0.5em;
     margin:0 1em 1em 0;
     overflow:hidden;
-    border:1px solid gray;    
+/*     border:1px solid gray;     */
     display:none;
     background-color:#FFFFFF; 
+    position:relative;
 }
 
 section.widget header h3 {
     margin:0px;
-    padding:0px;
-    padding-top: 0.5em;
-    padding-bottom:5px;
-    margin-bottom:4px;
+    padding:0.5em 0;
+    margin-bottom:0.5em;
     border-bottom:1px dotted gray;
+    height:1em;
+}
+
+section.widget header h3.minimized{
+    border:0;
+    margin:0;
 }
 
 section.widget footer {
-    float:right;
     font-size:0.9em;    
+    position:absolute;
+    bottom:0.5em;
+    right:0.5em;
+    opacity:0.8;
 }
-
-.controls {
-    float:right;
+.module-close {
+  float:right;
+  opacity:0.3;
+}
+.module-min {
+  float:left;
+  opacity:0.3;
 }
 
 /* These are subfields - NOT IN USE? */
@@ -204,7 +217,8 @@ div#content #available-views {
 div#footer{
 	color: #878787;
     padding: 0.8em 0;
-    margin: 0 -1.5em;
+/*     margin: 0 -1.5em; */
+    margin:0;
 	font-size:0.8em;
     border-top: 1px solid #BCC;
     overflow:auto;
@@ -764,8 +778,8 @@ font-style:italic;
 }
 
 #navigation .ui-selected { 
-  background: gray; 
-  color: white; 
+  background: #CDCDCD; 
+  color: black; 
 }
 
 #navigation .ui-selected:hover { 
@@ -774,32 +788,51 @@ font-style:italic;
 }
 
 #navigation ul li:hover {
-  background: #EFEFEF;
+  background: #EEE;
 }
 
 #navigation ul { 
   list-style-type: none; 
-  margin: 0 0 0 0; 
+  margin: 0 0 0 0em; 
   padding: 0;
 }
 
 #navigation ul li { 
-  margin-bottom: 0.5em; 
+/*   margin-bottom: 0.5em;  */
   padding: 0.4em; 
+  padding-left: 1.4em;
   font-size: 1em; 
   height: 1.2em;
-  border:1px solid gray;  
+/*   border:1px solid gray;   */
   vertical-align:middle;
 }
 
 #nav-min{
-  background:#EFEFEF;
   height:100%;
   width:1em;
   overflow:auto;
   position: absolute;
   left:0;
   top:0;
+}
+
+#nav-min-icon{
+  position: absolute;
+  left:0;
+  top:50%;
+  width:1em;
+  height:16px;
+  margin-top:-8px;
+}
+
+.nav-min-close{
+  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
+  background-position: -100px -16px;
+}
+
+.nav-min-open{
+  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
+  background-position: -37px -16px;
 }
 
 #nav-min:hover {
@@ -812,7 +845,7 @@ font-style:italic;
   padding: 0 0 0 1em;
   list-style: none;
   position:relative;
-  background:#EFEFEF;
+  background:#EEE;
 }
 
 
