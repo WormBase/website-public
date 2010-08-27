@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-
+<div class="padding">
 [% FOREACH type IN c.stash.type.list %]
   [% path = c.uri_for('/search_new', type, c.stash.query) %]
   <div class="toggle"> [% type %]: <a id="[%- type -%]2" href="[% path %]"> <span id="fade">searching</span></a></div>
@@ -24,3 +24,4 @@
 <br />
   [% path = c.uri_for('/search_new', 'all', c.stash.query) %]
 <a href= [% path _ "?view=1" %]>View all...</a><br />
+</div>
