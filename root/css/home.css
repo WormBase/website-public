@@ -33,9 +33,9 @@
 }
 
 /* Menus on the top of the screen - home page */
-#front-menu, #login-menu, #results{
+#front-menu, #login-menu, #results, .padding{
 	margin: 0;
-	padding:0;
+	padding:0 1em;
 	}
 
 #front-menu ul, #login-menu ul, #results ul {

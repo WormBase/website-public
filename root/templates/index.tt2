@@ -24,5 +24,7 @@
 
 <div id="main">
   <h1>WormBase</h1>
+   <center>
   [% PROCESS "boilerplate/search_bar.tt2" %]
+  </center>
 </div>
