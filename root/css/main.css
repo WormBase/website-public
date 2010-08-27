@@ -150,6 +150,14 @@ section.widget footer {
     float:right;
 }
 
+section.widget {
+  position:relative;
+}
+
+.module-min, .module-close {
+  float:right;
+}
+
 /* These are subfields - NOT IN USE? */
 section.widget .secondary-container {
 
@@ -793,13 +801,32 @@ font-style:italic;
 }
 
 #nav-min{
-  background:#EFEFEF;
+/*   background:#EFEFEF; */
   height:100%;
   width:1em;
   overflow:auto;
   position: absolute;
   left:0;
   top:0;
+}
+
+#nav-min-icon{
+  position: absolute;
+  left:0;
+  top:50%;
+  width:1em;
+  height:16px;
+  margin-top:-8px;
+}
+
+.nav-min-close{
+  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
+  background-position: -100px -16px;
+}
+
+.nav-min-open{
+  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
+  background-position: -36px -16px;
 }
 
 #nav-min:hover {
