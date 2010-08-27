@@ -39,7 +39,7 @@
         [% tag2link(object.name.data,'classic','is_classic') %]
       </nav>
     </div>
-     <div id="nav-min"> </div>
+     <div id="nav-min"><div id="nav-min-icon"></div></div>
       [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
           [% widget = c.config.pages.$class.widgets.$widget_name %]
           <li>

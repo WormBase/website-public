@@ -18,22 +18,10 @@
   return false;
   });
 
-  $(".module-min").live('click', function() {
-    var mytitle = "#" + $(this).attr("class").split(" ")[1];
-    $(mytitle).slideToggle("fast");
-    if ($(this).attr("show") == 0){
-      $(mytitle).next().hide();
-      $(this).attr("show", 1);
-      $(this).text("[ + ]");
-    }else{
-      $(mytitle).next().show();
-      $(this).attr("show", 0);
-      $(this).text("[ - ]");
-    }
-  });
+ 
 
   // used in sidebar view, to open and close widgets when selected
-  $(".module-load").live('click',function() {
+  $(".module-load, .module-close").live('click',function() {
     var content = $(this).attr("class").split(" ")[1];
     var nav = "#nav-" + content;
     content = "#" + content;
