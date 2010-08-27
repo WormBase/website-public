@@ -124,12 +124,13 @@ section.widget .primary-container {
 }
 
 section.widget .widget-container {
-    padding:0.5em;
+    padding:0.5em 0.5em 1em  0.5em;
     margin:0 1em 1em 0;
     overflow:hidden;
     border:1px solid gray;    
     display:none;
     background-color:#FFFFFF; 
+    position:relative;
 }
 
 section.widget header h3 {
@@ -139,23 +140,23 @@ section.widget header h3 {
     padding-bottom:5px;
     margin-bottom:4px;
     border-bottom:1px dotted gray;
+    height:1em;
 }
 
 section.widget footer {
-    float:right;
+/*     float:right; */
     font-size:0.9em;    
+    position:absolute;
+    bottom:0.5em;
+    right:0.5em;
 }
-
-.controls {
-    float:right;
-}
-
-section.widget {
-  position:relative;
-}
-
-.module-min, .module-close {
+.module-close {
   float:right;
+  opacity:0.5;
+}
+.module-min {
+  float:left;
+  opacity:0.5;
 }
 
 /* These are subfields - NOT IN USE? */
@@ -801,7 +802,6 @@ font-style:italic;
 }
 
 #nav-min{
-/*   background:#EFEFEF; */
   height:100%;
   width:1em;
   overflow:auto;
@@ -826,7 +826,7 @@ font-style:italic;
 
 .nav-min-open{
   background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
-  background-position: -36px -16px;
+  background-position: -37px -16px;
 }
 
 #nav-min:hover {
