@@ -71,7 +71,7 @@ a:hover {
 
 
 p  {
-    font-size:0.9em;
+    font-size:1em;
     line-height:1.1em;
 }
 
@@ -83,25 +83,24 @@ img {
 /*********************************
    
    Headers
+
+Note: firefox seems to render header objects funny
    
 *********************************/
 header#page {
-    padding: 1em;
-    position:relative;
+    padding:0;
 }
 
 header#page h1 {
-    padding-bottom:0;
+    padding: 0.6em 0 0 0.6em;
     margin:0;
 }
 
 header p {
     font-style:italic;
     color:gray;
-    position:absolute;
-    right:1em;
-    top:0;
-    text-align:right;
+    padding:0 0 0 1.2em;
+    margin:0;
 }
 
 header#page .release_date { }
@@ -131,7 +130,6 @@ section.widget .widget-container {
     padding:0.5em 0.5em 1.5em 0.5em;
     margin:0 1em 1em 0;
     overflow:hidden;
-/*     border:1px solid gray;     */
     display:none;
     background-color:#FFFFFF; 
     position:relative;
@@ -148,6 +146,7 @@ section.widget header h3 {
 section.widget header h3.minimized{
     border:0;
     margin:0;
+    padding:0.5em 0 0 0;
 }
 
 section.widget footer {
@@ -171,39 +170,11 @@ section.widget .secondary-container {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*********************************
    
    Per-Page styling
    
 *********************************/
-
-#page-header {
-    width:80%;
-}
-
-#page-header h4 {
-    padding-top:10px;
-}
-
-#page-header p {
-    padding: 10px 0 10px 0;
-}
 
 /* A list of available views */
 div#content #available-views {
@@ -220,7 +191,6 @@ div#content #available-views {
 div#footer{
 	color: #878787;
     padding: 0.8em 0;
-/*     margin: 0 -1.5em; */
     margin:0;
 	font-size:0.8em;
     border-top: 1px solid #BCC;
@@ -232,7 +202,7 @@ div#footer{
 
 #footer, #spacer {
     clear:both;
-    height: 6.2em;
+    height: 6.5em;
 }
 
 
@@ -347,24 +317,6 @@ p.debug-view {
 .superscript      { vertical-align:super; 
                     font-size:0.8em;
                   }
-/*********************************
-
-   Panes - The paned window view
-
-   ********************************* */
-
-div#sidebar {
-   clear:both;
-   float:left;
-   width:200px;
-}
-
-div#content-pane {
-   float:right;
-   padding:5px;
-}
-
-
 
 
 /*********************************
@@ -728,11 +680,7 @@ table.multi       { padding: 0;
     text-align:left;
 }
 
-.locus {
-font-style:italic;
-}
-
-.var {
+.locus, .var {
 font-style:italic;
 }
 
@@ -744,6 +692,7 @@ font-style:italic;
     height:16px;
 /* 	font-size: 1.2em; */
 /* 	font-weight: normal; */ 
+/*   background-position:left top; */
 }
 
 .toggle-container {
@@ -756,7 +705,7 @@ font-style:italic;
 }
 
 
-.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
+div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 
 /* Ajax loading animations */
@@ -765,7 +714,6 @@ font-style:italic;
 .tooltip {
 	 padding: 0 0 0 20px;
 	background: url(/img/ui_widgets/Magnifying-Glass-icon.png) no-repeat ;
-	  
 }
 
 
@@ -801,19 +749,17 @@ font-style:italic;
 }
 
 #navigation ul li { 
-/*   margin-bottom: 0.5em;  */
   padding: 0.4em; 
   padding-left: 1.4em;
   font-size: 1em; 
   height: 1.2em;
-/*   border:1px solid gray;   */
   vertical-align:middle;
 }
 
 #nav-min{
   height:100%;
   width:1em;
-  overflow:auto;
+  overflow:hidden;
   position: absolute;
   left:0;
   top:0;
@@ -821,21 +767,12 @@ font-style:italic;
 
 #nav-min-icon{
   position: absolute;
-  left:0;
+  left:-5px;
   top:50%;
-  width:1em;
+  width:16px;
   height:16px;
   margin-top:-8px;
-}
-
-.nav-min-close{
-  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
-  background-position: -100px -16px;
-}
-
-.nav-min-open{
-  background-image: url(/js/jquery/current-theme/development-bundle/themes/base/images/ui-icons_888888_256x240.png);
-  background-position: -37px -16px;
+  opacity:0.5;
 }
 
 #nav-min:hover {
