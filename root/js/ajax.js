@@ -36,15 +36,14 @@
                               }
                           });
       }
-      
       $(nav).attr("load", 0);
-      $(nav).addClass("ui-selected").show();
       $(content).parent(".widget-container").hide().show();
     } else {
       $(content).parent(".widget-container").hide();
-      $(nav).removeClass("ui-selected").show();
       $(nav).attr("load", 1);
     }
+    $(nav).toggleClass("ui-selected");
+    $.get($(nav).attr("log"));
   return false;
   });
 

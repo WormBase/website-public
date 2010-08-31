@@ -156,11 +156,13 @@ section.widget footer {
     right:0.5em;
     opacity:0.8;
 }
-.module-close {
+
+section.widget header div.ui-icon {
   float:right;
   opacity:0.3;
 }
-.module-min {
+
+section.widget header h3 div.module-min {
   float:left;
   opacity:0.3;
 }
@@ -190,7 +192,7 @@ div#content #available-views {
 
 div#footer{
 	color: #878787;
-    padding: 0.8em 0;
+    padding: 1.2em 0 0.4em 0;
     margin:0;
 	font-size:0.8em;
     border-top: 1px solid #BCC;
@@ -754,6 +756,12 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   font-size: 1em; 
   height: 1.2em;
   vertical-align:middle;
+}
+
+#navigation ul li.spacer { 
+  padding: 0; 
+  height: 1em;
+  background: #EEE;
 }
 
 #nav-min{
