@@ -73,22 +73,23 @@
 /* The search bar form */
 #searchForm {
   padding:1em;
-  width:45em;
-  height:4em;
+  width:30em;
+  height:3em;
+/*   float:right; */
 }
 #searchForm input, .search-select{  
-    font-size: 1.2em;  
-   height:3em;
+   font-size: 1.2em;  
+   height:2em;
    vertical-align:top;
-    padding: 0.5em;  
+    padding: 0.25em;  
 }  
 #searchForm input.text{  
     color: #565656;  
     border: 1px solid gray;  
     padding: 0.5em; 
     text-align: left;  
-    width:20em;
-    height:2em;
+    width:10em;
+    height:1em;
 }  
 #searchForm input.text.active{  
     background: #ddeff6;  

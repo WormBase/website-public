@@ -36,8 +36,8 @@ sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
     }
 
     $c->stash->{'results'} = $objs;
-
 }
+
 # a variation search
 sub variation_search :Chained('search') :PathPart('variation') :Args(1) {
     my ($self, $c, $query) = @_;
