@@ -14,8 +14,14 @@
     <ul>
     [% FOREACH widget_name IN widgets -%]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
-      <li id="nav-[% widget_name %]" class="module-load [% widget_name %]" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" load=1>[% widget.title %]</li>
+      <li id="nav-[% widget_name %]" 
+          class="module-load [% widget_name %]" 
+          href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" 
+          log="[% c.uri_for('/widget/toggle', class, widget_name) %]"
+          load=1>[% widget.title %]</li>
     [% END %]
+      <li class="spacer"> </li>
+      <li>Related [% object.name.data.class %]s...</li>
     </ul>
   </div>
   
@@ -45,15 +51,24 @@
           <li>
           [% WRAPPER widget_sortable_block -%]
           [% END %]
-          </li>                        
+          </li>   
 
       [% END %]
   </div>
   <script>
-  [% # open widgets TODO: config defaults, read widget preferences from session %]
+  [% FOREACH widget_name IN c.session.$class.keys %]
+    [% IF c.session.$class.$widget_name == 1 %]
+      [% c.session.$class.$widget_name = 0 %]
+      $("#nav-[% widget_name %]").trigger('click');
+    [% END %]
+  [% END %]
+
+  [%# maybe set this in config somewhere?? %]
+  [% UNLESS c.session.$class.defined %]
    $("#nav-overview").trigger('click');
    $("#nav-history").trigger('click');
    $("#nav-history_protein").trigger('click');
+  [% END %]
   </script>
 [% ELSE %]
 

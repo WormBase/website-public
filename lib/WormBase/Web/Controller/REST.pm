@@ -235,6 +235,7 @@ sub available_widgets_GET {
 
 
 
+
 # Request a widget by REST. Gathers all component fields
 # into a single data structure, passing it to a unified
 # widget template.
@@ -357,8 +358,6 @@ sub widget_GET {
 		     }
 	);
 }
-
-
 
 
 
