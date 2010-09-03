@@ -14,7 +14,6 @@
 					      $(this).children(".toggle").toggleClass("active");
 				      });
         
-	
   return false;
   });
 
@@ -26,14 +25,15 @@
 
     if (nav.attr("load") == 1){
       nav.attr("load", 0);
+      $(content).parent(".widget-container").show();
       if($(content).text() == ""){
         var widget = $(content).closest("li");
         var widget_html = widget.html();
         widget.remove();
         $("#widget-holder").append('<li id="'+widget_name+'">'+widget_html+'</li>');
-        addWidgetEffects();
-        var url     = $(nav).attr("href");
         var content = $(content);
+        addWidgetEffects(content.parent(".widget-container"));
+        var url     = $(nav).attr("href");
         content.html("<span id=\"fade\">loading...</span>").show();
         content.load(url,
                         function(response, status, xhr) {
@@ -42,7 +42,6 @@
                               }
                           });
       }
-      $(content).parent(".widget-container").show();
     } else {
       nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
@@ -52,12 +51,12 @@
   return false;
   });
 
-    function addWidgetEffects() {
-      $(".module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
-      $(".module-close").addClass("ui-icon ui-icon-close").hide();
-      $(".widget-container").children("footer").hide();
+    function addWidgetEffects(widget_container) {
+      widget_container.find("div.module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
+      widget_container.find("div.module-close").addClass("ui-icon ui-icon-close").hide();
+      widget_container.children("footer").hide();
 
-    $(".widget-container").hover(
+    widget_container.hover(
         function () {
           $(this).children("header").children(".ui-icon").show();
           if($(this).children("header").children("h3").children(".module-min").attr("show") != 1){
@@ -70,7 +69,7 @@
         }
       );
 
-      $(".module-min").hover(
+       widget_container.find("div.module-min").hover(
         function () {
           if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-circle-triangle-s");
           }else{ $(this).addClass("ui-icon-circle-triangle-e");}
@@ -82,7 +81,7 @@
         }
       );
 
-      $(".module-close").hover(
+       widget_container.find("div.module-close").hover(
         function () {
           $(this).addClass("ui-icon-circle-close");
         }, 
