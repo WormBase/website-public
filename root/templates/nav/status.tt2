@@ -1,0 +1,30 @@
+<script type="text/javascript" >
+$(".lightbox_inline").colorbox({inline:true});	
+$(".lightbox").colorbox();
+  
+</script>        
+
+<div id="login-menu">
+<ul>
+[% IF c.user_exists %]
+
+[%# should creat a fullname in database in future! %]
+ [% IF c.user.first_name.defined %]
+ [% name = c.user.first_name %]
+ [% END %] 
+ [% IF c.user.last_name.defined %]
+ [% name = name _ ' ' _ c.user.last_name %]
+ [% END %] 
+  <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
+  <li>Welcome<a href="[% c.uri_for('/profile') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %]</a> |</li>
+[% ELSE %]
+  <li><a class='lightbox_inline' href="#login" title="WormBase user login!" >Login</a></li>
+[% END %]
+</ul>
+</div>
+
+<div style='display:none' >
+<div id='login'  style=' padding:10px;' > 
+[% INCLUDE auth/login.tt2 %]
+</div>
+</div>
