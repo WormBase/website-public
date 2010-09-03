@@ -6,8 +6,13 @@
     <div id="content">
       <span class="message">[% status_msg %]</span>
       <span class="error">[% error_msg %]</span>
+
+      <div class="status-bar" ></div>
+    
+       
            [% content %]
     </div>
-
+     
+ 
     [% PROCESS footer/default.tt2 %]    
 
