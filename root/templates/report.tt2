@@ -3,9 +3,15 @@
 [%- #    current_object - the object being displayed       -%]
 [%- #    widgets - a list of widgets supported by the page -%]
 [%- #    title   - the title of the page                   -%]
+ 
 
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.name.data.label %]
+  
+   [% path = 'reports' _ '/' _ class _ '/' _ this_object_id %]
+     
+   [% PROCESS workbench/status.tt2 %]
+ 
 
 
 [% # Sidebar View %]
@@ -35,6 +41,7 @@
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
       [% END %] 
       <nav id="available-views">
+    
         View as:
         [% # HARD-CODED! %]   
         [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]

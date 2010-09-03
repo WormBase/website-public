@@ -1,0 +1,11 @@
+<div id="testa">
+<a class="bench_update" href="/rest/workbench" ref="[% path %]" >
+
+[% IF c.user_session.bench.defined && c.user_session.bench.register.defined && c.user_session.bench.register.$path.defined %]
+  remove from bench <img src="/img/ui_widgets/basket_color.png" /> 
+[% ELSE %]
+  add to bench <img src="/img/ui_widgets/basket_gray.png" /> 
+[% END %]
+
+</a> 
+</div>
