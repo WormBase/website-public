@@ -47,14 +47,13 @@
 
     if (nav.attr("load") == 1){
       nav.attr("load", 0);
-      $(content).parent(".widget-container").hide().show();
       if($(content).text() == ""){
         var widget = $(content).closest("li");
         var widget_html = widget.html();
         widget.remove();
         $("#widget-holder").append('<li id="'+widget_name+'">'+widget_html+'</li>');
         var content = $(content);
-        addWidgetEffects(content.parent(".widget-container"));
+        addWidgetEffects(content.parent(".widget-container").hide());
         var url     = $(nav).attr("href");
         content.html("<span id=\"fade\">loading...</span>").show();
         content.load(url,
@@ -64,6 +63,7 @@
                               }
                           });
       }
+      $(content).parent(".widget-container").show();
     } else {
       nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
