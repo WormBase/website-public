@@ -43,6 +43,7 @@ input, select, th, td { font-size:1em; }
   min-height: 100%;
   height: auto !important;
   position: relative;
+  min-width: 600px;
 }
 
 
@@ -141,6 +142,7 @@ section.widget header h3 {
     margin-bottom:0.5em;
     border-bottom:1px dotted gray;
     height:1em;
+    cursor:pointer;
 }
 
 section.widget header h3.minimized{
@@ -160,6 +162,7 @@ section.widget footer {
 section.widget header div.ui-icon {
   float:right;
   opacity:0.3;
+  cursor:pointer;
 }
 
 section.widget header h3 div.module-min {
@@ -204,7 +207,7 @@ div#footer{
 
 #footer, #spacer {
     clear:both;
-    height: 6.5em;
+    height: 6.8em;
 }
 
 
@@ -387,7 +390,7 @@ div.field {
   line-height:1.1em;
   padding:0.2em;
   height:1%;
-  overflow:auto;
+  overflow:hidden;
 }
 
 div.field h5 {
@@ -756,12 +759,15 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   font-size: 1em; 
   height: 1.2em;
   vertical-align:middle;
+  overflow:hidden;
+  cursor:pointer;
 }
 
 #navigation ul li.spacer { 
   padding: 0; 
   height: 1em;
   background: #EEE;
+  cursor:auto;
 }
 
 #nav-min{
@@ -771,6 +777,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position: absolute;
   left:0;
   top:0;
+  cursor:pointer;
 }
 
 #nav-min-icon{

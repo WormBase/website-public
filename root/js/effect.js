@@ -1,10 +1,30 @@
  
   $(document).ready(function() {  
 
+//       $(".toggle").addClass("ui-icon ui-icon-plus").show();
+      $(".module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
+      $(".module-close").addClass("ui-icon ui-icon-close").hide();
+      $(".widget-container").children("footer").hide();
+      $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+
     $("#widget-holder").sortable({
       handle: 'header, footer',
-      items:'li'
+      items:'li',
+      update: function() { 
+                //storing the order in session
+                var order = $(this).sortable("toArray");
+                var class = $(this).attr("class");
+                var log_url = $(this).attr("log");
+                var count = 1;
+                for(i=0; i<order.length; i++) {
+                  if ($("#nav-" + order[i]).attr("load") == 0){
+                    $.get(log_url + "/" + order[i] + "/" + count++);
+                  }
+                }
+                $.get(log_url + "/" + count);
+              }
     });
+    $("#widget-holder").children("header").disableSelection();
 
 // TODO:get jquery icons working for toggle
 // 	 $(".toggle").live('click',function() {
@@ -21,34 +41,24 @@
 
     $("#nav-min").click(function() {
       $("#navigation").animate({width: 'toggle'});
-      $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w");
-      $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-e");
+      $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
 
     $(".module-min").live('click', function() {
-        var mytitle = "#" + $(this).attr("class").split(" ")[1];
-        $(mytitle).slideToggle("fast");
-        $(mytitle).next().slideToggle("fast");
+        var module = $("div#" + $(this).attr("class").split(" ")[1]);
+        module.slideToggle("fast");
+        module.next().slideToggle("fast");
         $(this).parent().toggleClass("minimized");
         if ($(this).attr("show") != 1){
-          $(this).attr("show", 1);
-          $(this).attr("title", "maximize");
-          $(this).removeClass("ui-icon-circle-triangle-s");
-          $(this).removeClass("ui-icon-triangle-1-s");
+          $(this).attr("show", 1).attr("title", "maximize");
+          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
           $(this).addClass("ui-icon-circle-triangle-e");
         }else{
-          $(this).attr("show", 0);
-          $(this).attr("title", "minimize");
+          $(this).attr("show", 0).attr("title", "minimize");
           $(this).removeClass("ui-icon-circle-triangle-e");
           $(this).addClass("ui-icon-circle-triangle-s");
         }
       });
-
-//       $(".toggle").addClass("ui-icon ui-icon-plus").show();
-      $(".module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
-      $(".module-close").addClass("ui-icon ui-icon-close").hide();
-      $(".widget-container").children("footer").hide();
-      $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
 
       $(".widget-container").hover(
         function () {
@@ -69,8 +79,7 @@
           }else{ $(this).addClass("ui-icon-circle-triangle-e");}
         }, 
         function () {
-          $(this).removeClass("ui-icon-circle-triangle-s");
-          $(this).removeClass("ui-icon-circle-triangle-e");
+          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
           if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-triangle-1-s");
           }else{ $(this).addClass("ui-icon-triangle-1-e");}
         }
@@ -81,8 +90,7 @@
           $(this).addClass("ui-icon-circle-close");
         }, 
         function () {
-          $(this).removeClass("ui-icon-circle-close");
-          $(this).addClass("ui-icon-close");
+          $(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
         }
       );
    

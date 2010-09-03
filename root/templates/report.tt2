@@ -28,7 +28,7 @@
 
 
 
-   <div id="widget-holder">
+   <div id="widget-holder" class="[% class %]" log="[% c.uri_for('/widget/order', class ) %]">
     <div class="title">
       [% title %]
       [%- IF object -%]
@@ -46,23 +46,30 @@
       </nav>
     </div>
      <div id="nav-min"><div id="nav-min-icon"></div></div>
-      [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
-          [% widget = c.config.pages.$class.widgets.$widget_name %]
-          <li>
-          [% WRAPPER widget_sortable_block -%]
-          [% END %]
-          </li>   
 
+      [%  IF c.session.$class.defined; c.session.$class.count = 0; END; %]
+      [% FOREACH widget_name IN c.session.$class.nsort %]
+        [% IF (widget_name == 'count'); NEXT; END; %]
+        [% widget = c.config.pages.$class.widgets.$widget_name %]
+        <li id="[% widget_name %]">
+        [% WRAPPER widget_sortable_block -%]
+        [% END %]
+        </li>   
+        [% c.session.$class.$widget_name = -1 %]
+        <script>$("#nav-[% widget_name %]").trigger('click');</script>
       [% END %]
+
+      [% FOREACH widget_name IN widgets %]
+        [% IF (c.session.$class.$widget_name.defined); NEXT; END; %]
+        [% widget = c.config.pages.$class.widgets.$widget_name %]
+        <li id="[% widget_name %]">
+        [% WRAPPER widget_sortable_block -%]
+        [% END %]
+        </li>   
+      [% END %]
+
   </div>
   <script>
-  [% FOREACH widget_name IN c.session.$class.keys %]
-    [% IF c.session.$class.$widget_name == 1 %]
-      [% c.session.$class.$widget_name = 0 %]
-      $("#nav-[% widget_name %]").trigger('click');
-    [% END %]
-  [% END %]
-
   [%# maybe set this in config somewhere?? %]
   [% UNLESS c.session.$class.defined %]
    $("#nav-overview").trigger('click');
