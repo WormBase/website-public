@@ -21,34 +21,77 @@
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
     var widget_name = $(this).attr("class").split(" ")[1];
-    var nav = "#nav-" + widget_name;
+    var nav = $("#nav-" + widget_name);
     var content = "div#" + widget_name;
 
-    if ($(nav).attr("load") == 1){
-      $(nav).attr("load", 0);
+    if (nav.attr("load") == 1){
+      nav.attr("load", 0);
       if($(content).text() == ""){
         var widget = $(content).closest("li");
         var widget_html = widget.html();
         widget.remove();
         $("#widget-holder").append('<li id="'+widget_name+'">'+widget_html+'</li>');
+        addWidgetEffects();
         var url     = $(nav).attr("href");
-        $(content).html("<span id=\"fade\">loading...</span>").show();
-        $(content).load(url,
+        var content = $(content);
+        content.html("<span id=\"fade\">loading...</span>").show();
+        content.load(url,
                         function(response, status, xhr) {
                               if (status == "error") {
-                              $(content).html(xhr.status + " " + xhr.statusText);
+                              content.html(xhr.status + " " + xhr.statusText);
                               }
                           });
       }
       $(content).parent(".widget-container").show();
     } else {
-      $(nav).attr("load", 1);
+      nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
     }
-    $(nav).toggleClass("ui-selected");
-    $.get($(nav).attr("log"));
+    nav.toggleClass("ui-selected");
+    $.get(nav.attr("log"));
   return false;
   });
+
+    function addWidgetEffects() {
+      $(".module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
+      $(".module-close").addClass("ui-icon ui-icon-close").hide();
+      $(".widget-container").children("footer").hide();
+
+    $(".widget-container").hover(
+        function () {
+          $(this).children("header").children(".ui-icon").show();
+          if($(this).children("header").children("h3").children(".module-min").attr("show") != 1){
+            $(this).children("footer").show();
+          }
+        }, 
+        function () {
+          $(this).children("header").children(".ui-icon").hide();
+          $(this).children("footer").hide();
+        }
+      );
+
+      $(".module-min").hover(
+        function () {
+          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-circle-triangle-s");
+          }else{ $(this).addClass("ui-icon-circle-triangle-e");}
+        }, 
+        function () {
+          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
+          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-triangle-1-s");
+          }else{ $(this).addClass("ui-icon-triangle-1-e");}
+        }
+      );
+
+      $(".module-close").hover(
+        function () {
+          $(this).addClass("ui-icon-circle-close");
+        }, 
+        function () {
+          $(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
+        }
+      );
+    }
+
 
   // Load a (specific) field or widget dynamically onClick.
   $("a.ajax").click(function() {
