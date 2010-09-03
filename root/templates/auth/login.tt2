@@ -1,0 +1,36 @@
+
+<!-- Login form -->
+<form method="post" action=" [% c.uri_for('/auth/login') %] ">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    
+     <tr>
+       <td align="right" width="45%"><b>Username:</b></td>
+       <td align="left"><input id="username" type="text" name="username" size="15"></td>
+     </tr>
+     <tr>
+       <td align="right"><b>Password:</b></td>
+       <td align="left"><input id="password" type="password" name="password" size="15"></td>
+     </tr>
+     <tr>
+        <td colspan="2" align="center">
+           <input type="checkbox" id="remember" name="remember" size="10">Remember me on this computer.</input>
+        </td>
+     </tr>
+     <tr>
+        <td colspan="2" align="center">
+           <input type="submit" value="Login" id="login" style="width:76px;"/>
+	</td>
+     </tr>
+     <tr>
+       <td colspan="2" align="center" valig="bottom">
+	  <a href="#">Forgot Password?</a>&nbsp;&nbsp;<a href="#">Register</a>
+       </td>
+     </tr>
+     <tr>
+       <td colspan="2" align="center" valign="top">
+          <a class="lightbox"  href="/openid" >login with your OpenID</a>
+       </td>
+     </tr>
+</table>
+</form>
+
