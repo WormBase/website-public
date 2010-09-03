@@ -1,0 +1,6 @@
+
+[% FOREACH id IN cart.register.keys %]
+  [% id %]:[% cart.register.$id %]<br>
+[% END %]
+  
+ 
