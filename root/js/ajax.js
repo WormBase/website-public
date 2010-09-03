@@ -47,7 +47,7 @@
 
     if (nav.attr("load") == 1){
       nav.attr("load", 0);
-      $(content).parent(".widget-container").show();
+      $(content).parent(".widget-container").hide().show();
       if($(content).text() == ""){
         var widget = $(content).closest("li");
         var widget_html = widget.html();
