@@ -18,14 +18,13 @@
   return false;
   });
 
- 
-
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
     var content = $(this).attr("class").split(" ")[1];
     var nav = "#nav-" + content;
-    content = "#" + content;
+    content = "div#" + content;
     if ($(nav).attr("load") == 1){
+      $(nav).attr("load", 0);
       if($(content).text() == ""){
         var url     = $(nav).attr("href");
         $(content).html("<span id=\"fade\">loading...</span>").show();
@@ -36,11 +35,10 @@
                               }
                           });
       }
-      $(nav).attr("load", 0);
-      $(content).parent(".widget-container").hide().show();
+      $(content).parent(".widget-container").hide().show(); //bug in chrome, had to add hide()
     } else {
-      $(content).parent(".widget-container").hide();
       $(nav).attr("load", 1);
+      $(content).parent(".widget-container").hide();
     }
     $(nav).toggleClass("ui-selected");
     $.get($(nav).attr("log"));
@@ -51,7 +49,6 @@
   $("a.ajax").click(function() {
       var url     = $(this).attr("href");
       var format  = $(this).text();
-//    format  = $(this).text();
   
       // Multiple classes specified. Split so I can rejoin.
       var mytitle = $(this).attr("class").split(" ");
