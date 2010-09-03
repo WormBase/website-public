@@ -21,7 +21,46 @@ Catalyst Controller.
 =head1 METHODS
 
 =cut
+ 
+sub workbench :Path("/rest/workbench") Args(0) :ActionClass('REST') {}
+sub workbench_GET {
+        my ( $self, $c) = @_;
+	my $path = $c->req->params->{ref};
+	
+        my ($type, $class, $id) = split(/\//,$path); 
+	my $flag=0;
+	if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{register}{$path}){
+		  delete $c->user_session->{bench}{register}{$path};
+		  $c->user_session->{bench}{$type}--;
+	} else{
+		  $c->user_session->{bench}{$type}++;
+		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{$type};
+		  $flag=1;
+=pod		 
+		  my $num = ++$c->user_session->{bench}{$type}{count};
+		  $c->user_session->{bench}{$type}{$num}{url}= "/$type/$class/$id";
+		  $c->user_session->{bench}{$type}{$num}{label}= $label;
+		  $c->user_session->{bench}{$type}{$num}{class}= $class;
+		  $c->user_session->{bench}{$type}{$num}{id}= $num;
+=cut
+	}
+	
+  	$c->stash->{path} = $path; 
+ 	$c->stash->{noboiler} = 1;
+  	$c->stash->{template} = "workbench/status.tt2";  
+} 
+ 
 
+sub auth :Path('/rest/auth') :Args(0) :ActionClass('REST') {}
+
+sub auth_GET {
+    my ($self,$c) = @_;   
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "nav/status.tt2"; 
+    $self->status_ok($c,entity => {
+			 
+		     });
+}
 
 sub evidence :Path('/rest/evidence') :Args(3) :ActionClass('REST') {}
 

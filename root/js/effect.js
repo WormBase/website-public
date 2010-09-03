@@ -4,6 +4,9 @@
 //       $(".toggle").addClass("ui-icon ui-icon-plus").show();
 //       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+     openid.init('openid_identifier');
+     $("#openid_identifier").focus();
+
 
 
     $("#widget-holder").sortable({

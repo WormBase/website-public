@@ -1,0 +1,33 @@
+<script type="text/javascript" >
+$(document).ready(function() {  
+    openid.init('openid_identifier');
+     $("#openid_identifier").focus();
+  });
+</script>    
+<!-- Simple OpenID Selector -->
+
+<div id="login">
+<p>OpenID is service that allows you to log-on to many different websites using a single indentity.</p>
+<p>Find out <a href="http://openid.net/what/">more about OpenID</a> and <a href="http://openid.net/get/">how to get an OpenID enabled account</a>.</p>
+   <form id="openid_form" action="[% c.uri_for('/auth/openid') %]" method="post">
+
+      <input type="text" />
+      <input type="submit" value="Login" />
+
+      <fieldset>
+         <legend>Alternately, click your account provider</legend>
+          <div id="openid_choice">
+             <div id="openid_btns"></div>
+          </div>
+          <div id="openid_input_area"></div>
+       </fieldset>
+
+       <div style="clear:both; margin-bottom:20px;"></div>
+       <p>Don't forget to <b>enable OpenID support</b> with your preferred provider first!</p>
+   </form>
+<!-- /Simple OpenID Selector -->
+</div>
+ 
+ 
+ 
+ 

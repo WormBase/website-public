@@ -29,7 +29,7 @@ sub index :Path Args(0) {
     $c->stash->{template} = 'index.tt2';
 }
 
-
+ 
 =head2 DEFAULT
 
 The default action is run last when no other action matches.
@@ -73,8 +73,15 @@ sub default :Path {
 #    $c->stash->{template} = 'generic/class_index.tt2';    
 #    $c->stash->{class} = $class;
 #}
+ 
+sub cart :Path("/cart") Args(0) {
+        my ( $self, $c ) = @_;
+         my $cart = $c->user_session->{bench} || {};
 
-
+        $c->stash->{cart} = $cart;
+	$c->stash->{template} = 'cart.tt2';
+	 
+} 
 ##############################################################
 #
 #   Fields

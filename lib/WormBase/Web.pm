@@ -12,14 +12,19 @@ use namespace::autoclean;
 #      Will serve static files from the application's root directory
 # StackTrace
 use Catalyst qw/
-         ConfigLoader
-         Cache
-         Session
-         Session::Store::FastMmap
-         Session::State::Cookie
+	  ConfigLoader
+	  Cache
+	  Static::Simple
+	  Unicode
+
+	  Authentication
+	  Authorization::Roles
+	  
+	  Session
+	  Session::PerUser
+	  Session::Store::FastMmap
+	  Session::State::Cookie
          StackTrace
-         Static::Simple
-         Unicode
            /;
 
 extends 'Catalyst';
@@ -66,6 +71,76 @@ __PACKAGE__->log(
     )
     );
 
+=pod
+# __PACKAGE__->config->{authentication}->{dbic}->{user_class} = 'MyAppDB::User';
+# __PACKAGE__->config->{authentication}->{dbic}->{user_field} = 'username';
+# __PACKAGE__->config->{authentication}->{dbic}->{password_field} = 'password';
+=cut
+
+__PACKAGE__->config->{authentication} =
+                    {
+                        default_realm => 'default',
+                        realms => {
+                            default => {
+                                credential => {
+                                    class => 'Password',
+                                    password_field => 'password',
+                                    password_type => 'clear'
+                                },
+                                store => {
+                                    class => 'DBIx::Class',
+                                    user_model => 'Schema::User',
+                                    role_relation => 'roles',
+                                    role_field => 'role',
+                                  #  ignore_fields_in_find => [ 'remote_name' ],
+                                  #  use_userdata_from_session => 1,
+                                }
+                            },
+			    openid => {
+                                credential => {
+                                    class => 'OpenID',
+				    ua_class => 'LWP::UserAgent',
+				    extensions => [
+					  'http://openid.net/srv/ax/1.0' => {
+					      mode => 'fetch_request',
+					      'type.nickname' => 'http://axschema.org/namePerson/friendly',
+					      'type.email' => 'http://axschema.org/contact/email',
+					     # 'type.fullname' => 'http://axschema.org/namePerson',
+					      'type.firstname' => 'http://axschema.org/namePerson/first',
+					      'type.lastname' => 'http://axschema.org/namePerson/last',
+					     # 'type.dob' => 'http://axschema.org/birthDate',
+					      'type.gender' => 'http://axschema.org/person/gender',
+					      'type.country' => 'http://axschema.org/contact/country/home',
+					      'type.language' => 'http://axschema.org/pref/language',
+					      'type.timezone' => 'http://axschema.org/pref/timezone',
+					      required => 'nickname,email,firstname,lastname',
+					      if_available => 'gender,country,language,timezone',
+				      },
+				     ],  
+                                },
+                            },
+			    members => {
+                                credential => {
+                                    class => 'Password',
+                                    password_field => 'password',
+                                    password_type => 'none'
+                                },
+                                store => {
+                                    class => 'DBIx::Class',
+                                    user_model => 'Schema::User',
+                                    role_relation => 'roles',
+                                    role_field => 'role',
+                                  #  use_userdata_from_session => 1,
+                                }
+                            },
+			  
+			}
+                    };
+
+__PACKAGE__->config->{user_session} = {
+# 	migrate=>'off',
+#         merge_type => 'RETAINMENT_PRECEDENT',
+    }; 
 
 # Set configuration for static files
 # Force specific directories to be handled by Static::Simple.
