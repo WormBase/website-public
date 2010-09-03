@@ -69,14 +69,16 @@
       [% END %]
 
   </div>
-  <script>
+  
   [%# maybe set this in config somewhere?? %]
   [% UNLESS c.session.$class.defined %]
-   $("#nav-overview").trigger('click');
-   $("#nav-history").trigger('click');
-   $("#nav-history_protein").trigger('click');
+    <script>
+    $("#nav-overview").trigger('click');
+    $("#nav-history").trigger('click');
+    $("#nav-history_protein").trigger('click');
+    </script>
   [% END %]
-  </script>
+
 [% ELSE %]
 
 <div class="title">
