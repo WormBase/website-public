@@ -20,12 +20,17 @@
 
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
-    var content = $(this).attr("class").split(" ")[1];
-    var nav = "#nav-" + content;
-    content = "div#" + content;
+    var widget_name = $(this).attr("class").split(" ")[1];
+    var nav = "#nav-" + widget_name;
+    var content = "div#" + widget_name;
+
     if ($(nav).attr("load") == 1){
       $(nav).attr("load", 0);
       if($(content).text() == ""){
+        var widget = $(content).closest("li");
+        var widget_html = widget.html();
+        widget.remove();
+        $("#widget-holder").append('<li id="'+widget_name+'">'+widget_html+'</li>');
         var url     = $(nav).attr("href");
         $(content).html("<span id=\"fade\">loading...</span>").show();
         $(content).load(url,
@@ -35,7 +40,7 @@
                               }
                           });
       }
-      $(content).parent(".widget-container").hide().show(); //bug in chrome, had to add hide()
+      $(content).parent(".widget-container").show();
     } else {
       $(nav).attr("load", 1);
       $(content).parent(".widget-container").hide();
