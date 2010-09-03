@@ -2,10 +2,9 @@
   $(document).ready(function() {  
 
 //       $(".toggle").addClass("ui-icon ui-icon-plus").show();
-      $(".module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
-      $(".module-close").addClass("ui-icon ui-icon-close").hide();
-      $(".widget-container").children("footer").hide();
+//       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+
 
     $("#widget-holder").sortable({
       handle: 'header, footer',
@@ -60,39 +59,7 @@
         }
       });
 
-      $(".widget-container").hover(
-        function () {
-          $(this).children("header").children(".ui-icon").show();
-          if($(this).children("header").children("h3").children(".module-min").attr("show") != 1){
-            $(this).children("footer").show();
-          }
-        }, 
-        function () {
-          $(this).children("header").children(".ui-icon").hide();
-          $(this).children("footer").hide();
-        }
-      );
-
-      $(".module-min").hover(
-        function () {
-          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-circle-triangle-s");
-          }else{ $(this).addClass("ui-icon-circle-triangle-e");}
-        }, 
-        function () {
-          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
-          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-triangle-1-s");
-          }else{ $(this).addClass("ui-icon-triangle-1-e");}
-        }
-      );
-
-      $(".module-close").hover(
-        function () {
-          $(this).addClass("ui-icon-circle-close");
-        }, 
-        function () {
-          $(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
-        }
-      );
+  
    
 	$(".tooltip").live('mouseover',function() {
 	    $(this).cluetip({
