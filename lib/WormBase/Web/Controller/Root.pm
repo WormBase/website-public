@@ -74,12 +74,12 @@ sub default :Path {
 #    $c->stash->{class} = $class;
 #}
  
-sub cart :Path("/cart") Args(0) {
+sub bench :Path("/bench") Args(0) {
         my ( $self, $c ) = @_;
-         my $cart = $c->user_session->{bench} || {};
+         my $bench = $c->user_session->{bench} || {};
 
-        $c->stash->{cart} = $cart;
-	$c->stash->{template} = 'cart.tt2';
+        $c->stash->{bench} = $bench;
+	$c->stash->{template} = 'workbench/index.tt2';
 	 
 } 
 ##############################################################
