@@ -1,11 +1,12 @@
-<div id="testa">
-<a class="bench_update" href="/rest/workbench" ref="[% path %]" >
+<div id="bench_status">
 
+<a class="bench_update"  href="/rest/workbench" ref="[% path %]" >
 [% IF c.user_session.bench.defined && c.user_session.bench.register.defined && c.user_session.bench.register.$path.defined %]
-  remove from bench <img src="/img/ui_widgets/basket_color.png" /> 
+   <div class="ui-icon ui-icon-cart ui-state-default"></div>remove from bench
 [% ELSE %]
-  add to bench <img src="/img/ui_widgets/basket_gray.png" /> 
+  <div class="ui-icon ui-icon-cart ui-state-active"></div>add to bench
 [% END %]
+</a>   
 
-</a> 
+Items on your bench: <a href="/bench">([% c.user_session.bench.register.size %])</a>
 </div>
