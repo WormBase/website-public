@@ -803,6 +803,11 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   background:#EEE;
 }
 
+div.ui-icon-cart{
+  clear:both;
+  float:left;
+}
 
-
-
+#bench_status {
+   margin-bottom:10px;
+}
