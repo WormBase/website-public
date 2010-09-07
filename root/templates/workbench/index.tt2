@@ -2,8 +2,9 @@
 [% FOREACH type IN bench.store.keys %]
   
     <th>[% type %]</th>
-    <tr>
+     
       [% FOREACH path IN bench.store.$type.nsort %] 
+      <tr>
       <td> [% bench.store.$type.$path %]</td>
 	  [% FOREACH p IN path.split('\/') %]
 	      [% UNLESS loop.first %]
@@ -11,9 +12,9 @@
 	      [% END %]
 	  [% END %]
       <td><a href="[% path %]">go to page</a></td>
-      [% END %]
+       
     </tr>
-  
+    [% END %]
 [% END %]
 </table>
   
