@@ -1,6 +1,14 @@
-
-[% FOREACH id IN cart.register.keys %]
-  [% id %]:[% cart.register.$id %]<br>
+<table>
+[% FOREACH type IN cart.store.keys %]
+  
+    <th>[% type %]</th>
+    <tr>
+      [% FOREACH no IN cart.store.$type.nsort %] 
+      <td>[% no %]: [% cart.store.$type.$no %]</td>
+      [% END %]
+    </tr>
+  
 [% END %]
+</table>
   
  
