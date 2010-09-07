@@ -1,0 +1,14 @@
+<table>
+[% FOREACH type IN bench.store.keys %]
+  
+    <th>[% type %]</th>
+    <tr>
+      [% FOREACH no IN bench.store.$type.nsort %] 
+      <td>[% no %]: [% bench.store.$type.$no %]</td>
+      [% END %]
+    </tr>
+  
+[% END %]
+</table>
+  
+ 
