@@ -28,14 +28,16 @@ sub workbench_GET {
 	my $path = $c->req->params->{ref};
 	
         my ($type, $class, $id) = split(/\//,$path); 
-	my $flag=0;
+	
 	if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{register}{$path}){
 		  delete $c->user_session->{bench}{register}{$path};
-		  $c->user_session->{bench}{$type}--;
+		  $c->user_session->{bench}{type}{$type}--;
+		  delete $c->user_session->{bench}{store}{$type}{$path};
 	} else{
-		  $c->user_session->{bench}{$type}++;
-		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{$type};
-		  $flag=1;
+		  $c->user_session->{bench}{type}{$type}++;
+		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{store}{$type};
+		  $c->user_session->{bench}{store}{$type}{$path}=$c->user_session->{bench}{type}{$type};
+		  
 =pod		 
 		  my $num = ++$c->user_session->{bench}{$type}{count};
 		  $c->user_session->{bench}{$type}{$num}{url}= "/$type/$class/$id";
