@@ -568,7 +568,7 @@ sub genomic_picture {
     my $species = $self->parsed_species;
     my $position = $self->hunter_url($segment);
     my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
-    my $gbrowse_img = "$species/?name=$position;width=700";
+    my $gbrowse_img = "name=$position;source=$species;$type;width=700";
     my $id = "name=$position;source=$species";
     my $data = { description => 'The Inline Image of the sequence',
 		 data        => {  class => 'genomic_location',
@@ -581,23 +581,26 @@ sub genomic_picture {
 
 # Provided with a GFF segment, return its genomic coordinates
 sub genomic_position {
-    my ($self,$segment) = @_;
-    
-    my $abs_start = $segment->abs_start;
-    my $abs_stop  = $segment->abs_stop;
-    ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
-    my %position = (
-	chromosome => $segment->abs_ref,
-	abs_start  => $abs_start,
-	abs_stop   => $abs_stop,
-	start      => $segment->start,
-	stop       => $segment->stop,
-	);
-
-    my $data = $self->build_data_structure(\%position,
-					   'The genomic position of the object (if known)');
-    
-    return $data;
+    my ($self,$segments) = @_;
+    $segments ||= $self->segments;
+    return unless $segments;
+    $segments = [$segments] unless ref $segments eq 'ARRAY';
+    my @a;
+    for my $segment (@$segments) {
+       $segment->absolute(1);
+      my $ref = $segment->ref;
+      my $start = $segment->start;
+      my $stop  = $segment->stop;
+      next unless abs($stop-$start) > 0;
+      my $url = $self->hunter_url($ref,$start,$stop);
+      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, class=>'genomic_location' };
+      push @a, $hash ;
+    }
+    return unless @a;
+    my $data = { description => 'The Genomic Location of the sequence',
+		 data        => \@a,
+    };
+    return $data;    
 }
 
 # CONVERTED TO HERE.
