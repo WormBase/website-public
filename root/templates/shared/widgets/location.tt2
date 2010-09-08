@@ -4,9 +4,13 @@
 [% widget = c.stash.widget %]
 
     [% WRAPPER $field_block title="Genetic Position" %]
-	 [% FOREACH obj IN fields.genetic_position.data %]
-	    [% tag2link(obj) %] 
-	 [% END %]
+	[% IF fields.genetic_position.data.id.defined  %]
+	 [% tag2link(fields.genetic_position.data) %]
+	[% ELSE %]
+	  [% FOREACH obj IN fields.genetic_position.data %]
+	      [% tag2link(obj) %] 
+	  [% END %]
+	[% END %]
     [% END %]
 
     [% WRAPPER $field_block title="Genomic Position" %]
