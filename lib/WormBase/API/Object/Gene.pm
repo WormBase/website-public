@@ -88,9 +88,46 @@ extends 'WormBase::API::Object';
 
 #####################
 ##### template ######
+has 'sequences' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my @seq = $self->_fetch_sequences;
+	return \@seq;
+    }
+);
 
+has 'segments' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my @seg = $self->_fetch_segments;
+	return \@seg;
+    }
+);
 
+has 'pic_segment' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	my $seq = $self->object;
+	return unless(defined $self->segments);
+	return $self->_longest_segment($self->segments);  
+    }
+);
 
+has 'tracks' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	my @type = $self->species =~ /elegans/ ? qw/CG CANONICAL Allele RNAi/:qw//;
+	return \@type;
+    }
+);
 
 sub template {
 
@@ -386,61 +423,40 @@ sub cloned_by {
 
 sub genomic_position {
     my $self      = shift;
-    my $object    = $self->object;
-    my $sequences = $self->_fetch_sequences();
-    
-    my %data;
-    my %data_pack;
-   
-    
-	if(@$sequences) {
-	
-		my @segments = $self->_fetch_segments($sequences);
-		
-		# per TH: This is a kludge to handle situations where I've fetched an Ace object
-    	# corresponding to a Locus that has a CDS but no corresponding GFF segment. (rds-2)
-    	
-    	my $longest = $self->_longest_segment(\@segments);
-    	$data_pack{$longest} = $self->SUPER::genomic_position($longest);
-	}
-	
-    else {
-    
-    }
-    
-  	$data{'description'} = 'genomic position for gene';
-  	$data{'data'} = \%data_pack;
-  	
-    return \%data;
+    return $self->SUPER::genomic_position($self->_longest_segment($self->segments)); 
 }
 
 
 sub genetic_position {
 
 	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+	my $object = $self->object;
+	my $LOCUS = $object->CGC_name || $object->Other_name;
+	 
+	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row} or return;
+	
+	my $map_data = { class=>'locus',
+			 id=>"name=$LOCUS#Mapping%20Data",
+			  lable=>'[mapping data]',
+			};
+	 
+	my $label;
+	if($position == 0) {
+	    $label= $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;
+	    
+	} else {
+	    $label=$link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
+	}			       
+	 my $data = { description => 'The Interpolated Genetic Position of the gene',
+		 data        => [	{  class => 'Map',
+					   label => $label,
+					   id => "name=$object;class=Gene",
+					},$map_data],
+	};
 
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row};
-
-	%data_pack = (
-					'link_group'=>$link_group,
-					'position' => $position,
-					'error'=>$error
-					);
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	$self->log->debug("aaaaaaaaaaaaaaaaaaaaaaaaaaa$data");
+	return $data;    
+ 
 }
 ###########################################
 # Components of the Function panel
@@ -486,8 +502,8 @@ sub microarray_topology_map_position {
 
 	#### data pull and packaging
 
-	my $sequences = $self->_fetch_sequences();
-    my @segments = $self->_fetch_segments($sequences);
+	
+    my @segments = $self->_fetch_segments;
     my $seg = $segments[0];
     my @features;
     
@@ -1248,9 +1264,9 @@ sub orfeome_project_primers {
 	my %data_pack;
 
 	#### data pull and packaging
-    my $sequences = $self->_fetch_sequences();
+   
     
-    my @segments = $self->_fetch_segments($sequences);
+    my @segments = $self->_fetch_segments;
     
     foreach my $segment (@segments) {
     
@@ -1279,10 +1295,10 @@ sub orfeome_project_primers {
 sub primer_pairs {
     my $self     = shift;
     my $object = $self->object;
-    my $sequences = $self->_fetch_sequences();
-    return unless @$sequences;
     
-    my @segments = $self->_fetch_segments($sequences);
+    return unless @{$self->sequences};
+    
+    my @segments = $self->_fetch_segments;
     my @stash =  map {$_->info} map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
     return \@stash if @stash;
 }
@@ -2167,10 +2183,10 @@ sub interactions_old {
 sub microarray_topology_map_position_old {
     my $self   = shift;
     my $object = $self->object;
-    my $sequences = $self->_fetch_sequences();
-    return unless $sequences;
+     
+    return unless @{$self->sequences};
     
-    my @segments = $self->_fetch_segments($sequences);
+    my @segments = $self->_fetch_segments;
     
     my $seg = $segments[0] or return;
     my @stash = map {$_->info} $seg->features('experimental_result_region:Expr_profile') ;
@@ -2188,10 +2204,10 @@ sub orthologs_old {
 sub orfeome_project_primers_old {
     my $self     = shift;
     my $object = $self->object;
-    my $sequences = $self->_fetch_sequences();
-    return unless @$sequences;
     
-    my @segments = $self->_fetch_segments($sequences);
+    return unless @{$self->sequences};
+    
+    my @segments = $self->_fetch_segments;
     my @stash =  map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments;
     return \@stash;
 }
@@ -2557,8 +2573,8 @@ sub _fetch_transcripts {
 # totally specific for genes and CDSs
 # Provided with a gene and array of sequences, fetch an array of GFF segments
 sub _fetch_segments {
-    my ($self,$sequences) = @_;
-    
+    my ($self) = @_;
+    my $sequences = $self->sequences;
     # Dynamically fetch a DBH for the correct species
     my $dbh = $self->gff_dsn();
 
