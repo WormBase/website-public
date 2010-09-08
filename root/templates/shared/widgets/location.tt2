@@ -4,12 +4,14 @@
 [% widget = c.stash.widget %]
 
     [% WRAPPER $field_block title="Genetic Position" %]
-        [% tag2link(fields.genetic_position.data) %]
+	 [% FOREACH obj IN fields.genetic_position.data %]
+	    [% tag2link(obj) %] 
+	 [% END %]
     [% END %]
 
     [% WRAPPER $field_block title="Genomic Position" %]
         [%# label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop %]
-	[% c.stash.data=fields.genomic_position.data %]
+	[%# c.stash.data=fields.genomic_position.data %]
 
 [%# there could be multiple genomic positions eg. sequence object, for now just check if id exsits to tell if it is more than one.. %]
 	[% IF fields.genomic_position.data.id.defined  %]
