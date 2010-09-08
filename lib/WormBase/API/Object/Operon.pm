@@ -17,6 +17,7 @@ has 'ao_template' => (
 );
 
 
+
 #######
 
 sub template {
@@ -101,16 +102,35 @@ sub description {
 sub structure {
 
 	my $self = shift;
-	my $object = $self->object;
+	my $operon = $self->object;
 	my %data;
 	my $desc = 'notes';
 	my %data_pack;
 
 	#### data pull and packaging
+	
+	my %genes;
+	my @gene_list;
+	my @member_gene = $operon->Contains_gene;
+ 
+	foreach my $gene (@member_gene) {
+
+	  my $gene_name = $self->bestname($gene);
+	  my %spliced_leader;
+
+	    foreach my $sl ($gene->col) {
+
+	      my @evidence = $sl->col;
+	      #@evidence = get_evidence_names(\@evidence);
+	      $spliced_leader{$sl} = \@evidence;      # each spliced leader key is linked to an array of evidence 
+	    }
+    
+	    $genes{$gene_name} = \%spliced_leader;      # each gene key is linked to a hash of splioed leaders for the gene
+	 } 
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \%genes;
 	$data{'description'} = $desc;
 	return \%data;
 
@@ -120,19 +140,7 @@ sub structure {
 #   my %data;
 #  
 #   # get data on genes in operon 
-#   my %genes;
-#   my @gene_list;
-#   foreach my $gene (sort by_loc $operon->Contains_gene) {
-#     my $gene_name = a({-href=>Object2URL($gene)}, $gene->CGC_name || $gene->Sequence_name);
-#     push(@gene_list, $gene_name);		# get list of gene names in order
-#     my %spliced_leader;
-#     foreach my $sl ($gene->col) {
-#         my @evidence = $sl->col;
-#         @evidence = get_evidence_names(\@evidence);
-#         $spliced_leader{$sl} = \@evidence;      # each spliced leader key is linked to an array of evidence 
-#     }
-#     $genes{$gene_name} = \%spliced_leader;      # each gene key is linked to a hash of splioed leaders for the gene
-#   } 
+
 #   $data{'Genes'} = \%genes;
 #   $data{'Gene_List'} = \@gene_list;
 #   
@@ -213,13 +221,11 @@ sub history {
 
 	  foreach my $h ($history_type->col) {
 	     my @evidence = $h->col;	     
-	     #@evidence = get_evidence_names(\@evidence);
-        
- 
+	     @evidence = _get_evidence_names(\@evidence);
 	    $histories{$h} = \@evidence;                    #Each history has an array of evidences
 	  }
 	    
-	    $data_pack{$history_type} = \%histories;        #Each history_type is linked to a hash of histories
+	  $data_pack{$history_type} = \%histories;        #Each history_type is linked to a hash of histories
 	}
 	####
 
@@ -267,9 +273,69 @@ sub history {
 ############
 
 
+sub remarks {
+
+	my $self = shift;
+    my $operon = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @remarks = $operon->Remark;
+	my %remark_evidence;
+  	
+	for my $remark (@remarks) {
+
+	  my @evidence = $remark->col;
+	  $data_pack{$remark} = \@evidence;
+
+  	}
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+# sub get_all_remark_data {
+#   my %data;
+#   # get remarks and remark evidence data
+#   
+#   $data{'Remark_Evidence'} = \%remark_evidence;
+#   return \%data;
+# }
+
+
+
 ############
 ## Internal
 ############
+
+sub _get_evidence_names {
+  my ($evidences)=shift;
+  my @ret;
+  
+  foreach my $ev (@$evidences) {
+    my @names = $ev->col;
+    if($ev eq "Person_evidence" || $ev eq "Author_evidence" || $ev eq "Curator_confirmed") {    
+      $ev =~ /(.*)_(evidence|confirmed)/;  #find a better way to do this?    
+      @names =  map{$1 . ': ' . $_->Full_name || $_} @names;
+    }elsif ($ev eq "Paper_evidence"){
+      @names = map{'Paper: ' . $_->Brief_citation || $_} @names;
+    }elsif ($ev eq "Feature_evidence"){
+      @names = map{'Feature: '.  $_->Visible->right || $_} @names;
+    }elsif ($ev eq "From_analysis"){
+      @names = map{'Analysis: '. $_->Description || $_} @names;
+    }else {
+      @names = map{$ev . ': ' . $_} @names;
+    }
+    push(@ret, @names);
+  }
+  return @ret;
+}
 
 
 1;
