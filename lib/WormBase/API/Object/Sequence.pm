@@ -345,22 +345,7 @@ sub source_clone {
 sub genomic_position {
     my $self = shift;
     return unless ($self->object->Structure(0) || $self->method eq 'Vancouver_fosmid') ;
-    my @a;
-    for my $segment (@{$self->segments}) {
-#       $segment->absolute(1);
-      my $ref = $segment->ref;
-      my $start = $segment->start;
-      my $stop  = $segment->stop;
-      next unless abs($stop-$start) > 0;
-      my $url = $self->hunter_url($ref,$start,$stop);
-      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, class=>'genomic_location' };
-      push @a, $hash ;
-    }
-    return unless @a;
-    my $data = { description => 'The Genomic Location of the sequence',
-		 data        => \@a,
-    };
-    return $data;    
+    return $self->SUPER::genomic_position;
 }
 
 sub genetic_position {
