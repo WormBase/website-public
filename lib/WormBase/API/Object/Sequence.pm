@@ -361,7 +361,7 @@ sub genetic_position {
     my $data = { description => 'The Interpolated Genetic Position of the sequence',
 		 data        => {  class => $chrom->class, #should be Map?
 				   label => $pos,
-				    id => $chrom,
+				    id => "$chrom",
 				},
     };
     return $data;    
