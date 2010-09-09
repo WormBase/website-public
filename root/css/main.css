@@ -15,7 +15,7 @@ body, html {
     padding: 0px;
     margin: 0px;
     font-family: Helvetica, sans-serif;
-    font-size:75%;     /* Set the default font size from browser medium (16px) to 12px */
+    /*font-size:75%; */    /* Set the default font size from browser medium (16px) to 12px */
     height:100%;
 }
 
@@ -131,7 +131,7 @@ section.widget .primary-container {
 
 section.widget .widget-container {
     padding:0.5em 0.5em 1.5em 0.5em;
-    margin:0 1em 1em 0;
+    margin:0 0.8em 0.8em 0;
     overflow:hidden;
     display:none;
     background-color:#FFFFFF; 
@@ -145,6 +145,7 @@ section.widget header h3 {
     border-bottom:1px dotted gray;
     height:1em;
     cursor:pointer;
+/*     border:1px solid green; */
 }
 
 section.widget header h3.minimized{
@@ -161,7 +162,7 @@ section.widget footer {
     opacity:0.8;
 }
 
-section.widget header div.ui-icon {
+section.widget header div.ui-icon-large {
   float:right;
   opacity:0.3;
   cursor:pointer;
@@ -170,6 +171,8 @@ section.widget header div.ui-icon {
 section.widget header h3 div.module-min {
   float:left;
   opacity:0.3;
+  margin:3px;
+/*   border:1px solid red; */
 }
 
 /* These are subfields - NOT IN USE? */
@@ -767,14 +770,14 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #navigation ul li.spacer { 
   padding: 0; 
-  height: 1em;
+  height: 0.8em;
   background: #EEE;
   cursor:auto;
 }
 
 #nav-min{
   height:100%;
-  width:1em;
+  width:0.8em;
   overflow:hidden;
   position: absolute;
   left:0;
@@ -784,12 +787,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #nav-min-icon{
   position: absolute;
-  left:-5px;
+  left:-4px;
   top:50%;
-  width:16px;
-  height:16px;
+/*  width:16px;
+  height:16px;*/
   margin-top:-8px;
-  opacity:0.5;
+  opacity:0.8;
+/*   border:1px solid green; */
 }
 
 #nav-min:hover {
@@ -799,9 +803,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 #widget-holder {
   overflow:hidden;
   margin: 0px;
-  padding: 0 0 0 1em;
+  padding: 0 0 0 0.8em;
   list-style: none;
   position:relative;
   background:#EEE;
+/*   border-left:1px solid #CDCDCD; */
 }
 

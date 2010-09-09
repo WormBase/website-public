@@ -1,7 +1,7 @@
  
   $(document).ready(function() {  
 
-//       $(".toggle").addClass("ui-icon ui-icon-plus").show();
+//       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
      openid.init('openid_identifier');

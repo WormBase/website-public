@@ -1424,15 +1424,9 @@ sub other_orthologs {
 }
 
 sub protein_domains {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
 
-
-	my %data_pack;
-
-	#### data pull and packaging
 	my $proteins = $self->_fetch_proteins($object);
     my %unique_motifs;
     for my $protein (@$proteins) {
@@ -1442,150 +1436,13 @@ sub protein_domains {
           $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
 		}
 	}
-	####
 
-	$data{'data'} = \%unique_motifs;
-	$data{'description'} = "protein domains";
-	return \%data;
+    my $data = { description => "protein domains of the gene",
+                 data => \%unique_motifs
+                };
+	return $data;
 }
 
-
-sub protein_domains_old {
-    my $self     = shift;
-    my $object = $self->object;
-    return unless ($object->Gene_regulation);
-    
-    my $stash = {};
-    
-    # In order to associate each pfam id with a protein structure we need
-    # a lookup table, which is loaded into memory at this step
-    
-    my %pfam2prot;
-#  my $pfam2prot_table = Configuration->Wormbase . '/html/' . Configuration->Pfam_images_dir . '/pfam2prot_table';
-    my $pfam2prot_table = '/pfam2prot_table';
-    # THIS IS HARCODED!
-    ##  open (PFAMTOPROT, "<$pfam2prot_table") or AceError("Cannot read pfam2prot table ($pfam2prot_table): $!");
-    open(PFAMTOPROT,"<$pfam2prot_table");
-    while (my $line = <PFAMTOPROT>) {
-	chomp $line;
-	my ($pfam_id, $pdb_id) = split("\t", $line);
-	push @{$pfam2prot{$pfam_id}}, $pdb_id;
-    }
-    close PFAMTOPROT;
-    
-    # In this step, we load an index to memory to assign titles to structures
-### THIS IS HARD_CODED!
-    my %pdb_id_titles;
-#  my $pdb_id_table = Configuration->Wormbase . '/html/' . Configuration->Pfam_images_dir . '/compound.idx';
-    my $pdb_id_table = '/compound.idx';
-    open (PDBIDS, "<$pdb_id_table"); #or AceError("Cannot read file ($pdb_id_table): $!");
-    my $line;
-    while ($line = <PDBIDS>) {
-	chomp $line;
-	my ($pdb_id, $title) = $line =~ /^([A-Z0-9]{4})\s+(.*)/;
-	next unless $pdb_id;
-	$pdb_id_titles{lc($pdb_id)} = $title;
-    }
-    close PDBIDS;
-    
-    # Generate a unique list of motifs instead
-    my %motifs;
-    
-    my $proteins = $self->_fetch_proteins($object);
-    
-    for my $protein (@$proteins) {
-	foreach my $motif ($protein->Motif_homol) {
-	    
-	    my ($tooltip_content,$balloon_tooltip);
-	    unless (defined $motifs{$motif->Title}) {
-		# Check if this is a PFAM motif, if so, select randomly an associated protein and make balloon content
-		my $trimmed_motif = $motif;
-		$trimmed_motif =~ s/^PFAM://;
-		
-		if ($motif =~ /^PF/ and $pfam2prot{$trimmed_motif}) {
-		    my $random_idx = int(rand scalar(@{$pfam2prot{$trimmed_motif}}));
-		    my $pdb_id = $pfam2prot{$trimmed_motif}[$random_idx];
-		    my $pdb_id_image = Configuration->Pfam_images_dir . "/$pdb_id-image-thumbnail.png";
-		    my $pdb_id_link  = sprintf(Configuration->Protein_links->{PFAM_WITH_PDB}, $trimmed_motif, $pdb_id);
-		    my $pdb_id_title = $pdb_id_titles{$pdb_id} || '[Title not available]';
-		    my $uc_pdb_id = uc($pdb_id);
-		    
-		    # This markup really belongs in the template
-		    my $motif_title = $motif->Title;
-		    $tooltip_content = qq[<table width=220 class="small">
-                                     <tr>
-                                       <td colspan="2"><b>$motif_title ($trimmed_motif)</b></a></td>
-                                     </tr>
-                                     <tr>
-                                       <td colspan="2">Sample protein that contains this domain:</td>
-                                     </tr>
-                                     <tr>
-                                       <td align="center">
-                                         <img height=50 src="$pdb_id_image"/>
-                                         <a href="$pdb_id_link" target="_blank">[Pfam]</a>
-                                       </td>
-                                       <td><b>$uc_pdb_id</b> $pdb_id_title</td>
-                                     </tr>
-                                   </table>
-                                   ];
-		    $tooltip_content = CGI::escape($tooltip_content);
-		    
-		    $balloon_tooltip =  ObjectLink($motif,'[more ...]');
-		    $balloon_tooltip =~ s/\>/ onmouseover="balloon.showTooltip(event,'$tooltip_content', 1)">/;
-#	  
-#          $motif_link .= " $balloon_toolip";
-		}
-	    }
-	    
-	    # Group motifs by title
-	    # We ONLY store start and stop for displaying protein motifs.  Probably unnecessary details
-#      push @{$stash->{$motif->Title}},
-#	{ protein => $protein,
-#	  start   => $motif->right(3),
-#	  stop    => $motif->right(4),
-#	  balloon_tooltip => $balloon_tooltip,
-#	};
-	    push @{$stash->{$motif->Title}->{$motif}},$balloon_tooltip;
-	}
-    }
-    return $stash;
-}
-
-
-#sub y1h_and_y2h_interactions {
-#    my $self   = shift;
-#    my $object = $self->object;
-#    
-#    # KLDUGE!   _y2h_data still needs $c. suckage.
-#    my ($bait_lists,$target_lists) = $self->_y2h_data($object,3);  # Limit to three baits/targets TEMPLATE
-#    
-#    my @stash;
-#    foreach my $entry (eval {@$bait_lists},eval {@$target_lists}) {
-#	push @stash,[$object,$entry->[0],$entry->[1],eval {$entry->[1]->Author . ' (' . parse_year($entry->[1]->Year) . ')' }];
-#    }
-#    return \@stash;
-#}
-
-#sub _get_phenotype_data {
-
-# should we read in precompiled file and get gene->phen data?
-
-#    my ($gene,$positive_results) = @_;
-#    my @phenotype_return;
-#     
-#     
-#     foreach my $phenotype (keys %pheno_rnai_data) {
-#     
-#         my $rnai_ids_hr = $pheno_rnai_data{$phenotype};
-#         my @rnai_ids = keys %$rnai_ids_hr;
-#         my $rnai_id_count = @rnai_ids;
-#         push @phenotype_return, "$phenotype\|$rnai_id_count";
-#     }
-#     
-#     return \@phenotype_return;
-# 
-
-#}
 
 sub rnai_phenotypes {
 
