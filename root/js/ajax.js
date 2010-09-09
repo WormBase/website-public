@@ -74,19 +74,19 @@
   });
 
     function addWidgetEffects(widget_container) {
-      widget_container.find("div.module-min").addClass("ui-icon ui-icon-triangle-1-s").attr("title", "minimize");;
-      widget_container.find("div.module-close").addClass("ui-icon ui-icon-close").hide();
+      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");;
+      widget_container.find("div.module-close").addClass("ui-icon-large ui-icon-close").hide();
       widget_container.children("footer").hide();
 
     widget_container.hover(
         function () {
-          $(this).children("header").children(".ui-icon").show();
+          $(this).children("header").children(".ui-icon-large").show();
           if($(this).children("header").children("h3").children(".module-min").attr("show") != 1){
             $(this).children("footer").show();
           }
         }, 
         function () {
-          $(this).children("header").children(".ui-icon").hide();
+          $(this).children("header").children(".ui-icon-large").hide();
           $(this).children("footer").hide();
         }
       );

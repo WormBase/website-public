@@ -41,7 +41,7 @@
         <link type="text/css" href="/css/wormbase_classic.css" rel="stylesheet" />
     [% END %]
     
-  
+  <link type="text/css" href="/css/icons.css" rel="stylesheet" />
 
   </head>
 
