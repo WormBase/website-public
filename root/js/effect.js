@@ -7,8 +7,6 @@
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
 
-
-
     $("#widget-holder").sortable({
       handle: 'header, footer',
       items:'li',

@@ -10,7 +10,7 @@
   
    [% path = 'reports' _ '/' _ class _ '/' _ this_object_id %]
      
-   [% PROCESS workbench/status.tt2 %]
+<!--    [% PROCESS workbench/status.tt2 %] -->
  
 
 
@@ -74,7 +74,6 @@
         [% END %]
         </li>   
       [% END %]
-
   </div>
   
   [%# maybe set this in config somewhere?? %]

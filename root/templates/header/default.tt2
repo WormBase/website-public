@@ -2,13 +2,18 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- BEGIN boilerplate/banner -->
-    <header id="page">
-        <h1>[% template.title or c.config.site_byline %]</h1>
+    <div id="page">
+      <div class="status-bar login-menu" ></div>
+        <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
            <p>  
                 [% # The current release of the software and its codename %]
                 Software version [% c.config.version %] "[% c.config.codename %]"
                 <br />
                 Database version [% constants.acedb_version %]
            </p>
-    </header>
+
+<div style="position:absolute; right:0; bottom:0;">
+[% PROCESS "boilerplate/search_bar.tt2" %]
+</div>
+    </div>
 <!-- END boilerplate/banner -->
