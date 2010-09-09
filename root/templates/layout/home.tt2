@@ -1,0 +1,31 @@
+[%- # This is the default layout -%]
+
+    <div id="wrap">
+<!-- BEGIN boilerplate/banner -->
+    <div id="page">
+      <div class="status-bar login-menu" ></div>
+        <h1><a href="/">[% template.title or c.config.site_byline %]</a></h1>
+           <p>  
+                [% # The current release of the software and its codename %]
+                Software version [% c.config.version %] "[% c.config.codename %]"
+                <br />
+                Database version [% constants.acedb_version %]
+           </p>
+
+
+    </div>
+<!-- END boilerplate/banner -->
+
+    <div id="content">
+      <span class="message">[% status_msg %]</span>
+      <span class="error">[% error_msg %]</span>
+
+
+
+           [% content %]
+      <div id="spacer" />
+    </div>
+     
+ 
+    [% PROCESS footer/default.tt2 %]    
+    </div>
