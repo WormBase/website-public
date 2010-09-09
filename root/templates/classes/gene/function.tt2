@@ -1,0 +1,15 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="Regulation on Expression Level" key="regulation_on_expression_level"-%] 
+      [% FOREACH item IN fields.regulation_on_expression_level.data %]
+        [% item.string %] [% tag2link(item.target) %] [[% tag2link(item.gene_regulation, "details") %]]
+        <br />
+      [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Protein domains" key="protein_domains"-%] 
+      [% FOREACH i IN fields.protein_domains.data.keys.sort %]
+        [% tag2link(fields.protein_domains.data.$i) %] <br />
+      [% END %]
+   [% END %]
