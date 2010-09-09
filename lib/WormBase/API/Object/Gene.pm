@@ -665,14 +665,17 @@ sub regulation_on_expression_level {
 			: 'Negatively regulated by ';
 		}
 		
-		my $common_name     = $self->common_name($target) || $target;
+		my $common_name     = $target->Public_name || "$target";
 		push @stash,{ string => $string,
-			      target => $common_name,
-			      gene_regulation => $gene_reg};
+			      target => $self->_pack_obj($target, $common_name),
+			      gene_regulation => $self->_pack_obj($gene_reg)};
 	    }
 	}
     }
-    return \@stash;
+    my $data = { description => 'Regulation on expression level',
+         data        => \@stash,
+    };
+    return $data;
 }
 
 
@@ -1409,31 +1412,24 @@ sub protein_domains {
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+
 
 	my %data_pack;
 
 	#### data pull and packaging
 	my $proteins = $self->_fetch_proteins($object);
-    
+    my %unique_motifs;
     for my $protein (@$proteins) {
     	my @motifs;
     	@motifs	= $protein->Motif_homol;
 		foreach my $motif (@motifs) {
-			
-			$data_pack{$protein}{$motif} =  
-								 			{
-								 			'ace_id' => $motif
-								  			,'class' => 'Motif'
-								 			};
+          $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
 		}
 	}
 	####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
+	$data{'data'} = \%unique_motifs;
+	$data{'description'} = "protein domains";
 	return \%data;
 }
 

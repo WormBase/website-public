@@ -88,23 +88,25 @@ img {
 Note: firefox seems to render header objects funny
    
 *********************************/
-header#page {
-    padding:0;
+div#page {
+    padding:0 0 1em 1em;
+    position:relative;
 }
 
-header#page h1 {
-    padding: 0.6em 0 0 0.6em;
+div#page h1 a, h1{
+    padding: 0;
     margin:0;
+    color:gray;
 }
 
-header p {
+div#page p {
     font-style:italic;
     color:gray;
-    padding:0 0 0 1.2em;
+    padding:0;
     margin:0;
 }
 
-header#page .release_date { }
+div#page .release_date { }
 
 /* user warnings */
 .caveat-emptor {
@@ -776,7 +778,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   overflow:hidden;
   position: absolute;
   left:0;
-  top:0;
+  top:16px;
   cursor:pointer;
 }
 
@@ -802,7 +804,4 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
   background:#EEE;
 }
-
-
-
 
