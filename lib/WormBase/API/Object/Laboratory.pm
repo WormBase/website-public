@@ -97,14 +97,14 @@ sub gene_classes {
 	#### data pull and packaging
 
 	my @genes;
-	@genes = $lab->get('Gene_classes');
+	@gene_classes = $lab->get('Gene_classes');
 
-	foreach my $gene(@genes) {
+	foreach my $gene_class (@gene_classes) {
 	    
 	  my $phenotype = $gene->Phenotype;
 	  my $description = $gene->Description;
 
-	  $data_pack{$gene} = {
+	  $data_pack{$gene_class} = {
 	    'phenotype' => $phenotype,
 	    'description' => $description
 	  };
@@ -119,16 +119,29 @@ sub gene_classes {
 	return \%data;
 }
 
-sub allele_prefix {
+sub allele_prefixes {
 
 	my $self = shift;
-    my $object = $self->object;
+    my $lab = $self->object;
 	my %data;
 	my $desc = 'notes';
 	my %data_pack;
 
 	#### data pull and packaging
 
+	my @alleles = $lab->get('Allele_designation');
+	
+	foreach my $allele (@alleles) {
+
+	  my $allele_name = $allele->Public_name;
+  
+	 $data_pack{$allele} = {
+	  'ace_id' => $allele,
+	  'public_name' => $allele_name,
+	  'class' => 'Variation'
+	  }
+
+	 }
 	####
 
 	$data{'data'} = \%data_pack;
@@ -176,4 +189,4 @@ sub past_members {
   }
 
 
-1;
+1; 
