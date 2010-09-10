@@ -1,11 +1,50 @@
   $(document).ready(function() {   
+      
+      $(".bench_update").live('click',function() {
+	var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
+	$("#bench_status").load(url,   function(response, status, xhr) {
+					      if (status == "error") {
+						  var msg = "Sorry but there was an error: ";
+						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
+					      }
+					    
+				      });
+	return false;
+      });
+       $(".status-bar").load("/rest/auth", function(response, status, xhr) {
+	if (status == "error") {
+	  var msg = "Sorry but there was an error: ";
+	  $("#error").html(msg + xhr.status + " " + xhr.statusText);
+	}
+      });
+
+
+    });
+
+  $(".update").live('click',function() {
+
+	$(this).text("updating").show();
+	var url     = $(this).attr("href");
+	// Multiple classes specified. Split so I can rejoin.
+	var mytitle = $(this).attr("class").split(" ");
+	$("#" + mytitle[1]).load(url,
+				    function(response, status, xhr) {
+					      if (status == "error") {
+						  var msg = "Sorry but there was an error: ";
+						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
+					      }
+					      $(this).children(".toggle").toggleClass("active");
+				      });
+        
+  return false;
+  });
 
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
-alert("clicked...");
     var widget_name = $(this).attr("class").split(" ")[1];
     var nav = $("#nav-" + widget_name);
     var content = "div#" + widget_name;
+
     if (nav.attr("load") == 1){
       nav.attr("load", 0);
       if($(content).text() == ""){
@@ -111,28 +150,8 @@ alert("clicked...");
         });
   return false;
   });
+ 
 
 
 
-  $(".update").live('click',function() {
-
-    $(this).text("updating").show();
-    var url     = $(this).attr("href");
-    // Multiple classes specified. Split so I can rejoin.
-    var mytitle = $(this).attr("class").split(" ");
-    $("#" + mytitle[1]).load(url,
-                    function(response, status, xhr) {
-                          if (status == "error") {
-                          var msg = "Sorry but there was an error: ";
-                          $("#error").html(msg + xhr.status + " " + xhr.statusText);
-                          }
-                          $(this).children(".toggle").toggleClass("active");
-                      });
-        
-  return false;
-  });
-
-
-
-    });
 

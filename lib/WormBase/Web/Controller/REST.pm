@@ -50,7 +50,8 @@ sub workbench_GET {
   	$c->stash->{path} = $path; 
  	$c->stash->{noboiler} = 1;
 #   	$c->stash->{template} = "workbench/status.tt2";   
-    $c->response->body("(" . keys(%{$c->user_session->{bench}{register}}) . ")");
+    my $count = scalar(keys(%{$c->user_session->{bench}{register}})) || 0;
+    $c->response->body("($count)");
 } 
  
 

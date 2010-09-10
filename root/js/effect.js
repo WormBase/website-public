@@ -79,28 +79,6 @@
 		//},
 	      });
 	});
-
- 
-      
-    $(".bench_update").live('click',function() {
-      var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
-      $("#bench_status").load(url,   function(response, status, xhr) {
-                            if (status == "error") {
-                            var msg = "Sorry but there was an error: ";
-                            $("#error").html(msg + xhr.status + " " + xhr.statusText);
-                            }
-                          
-                        });
-      return false;
-    });
-
-    $(".status-bar").load("/rest/auth", function(response, status, xhr) {
-      if (status == "error") {
-        var msg = "Sorry but there was an error: ";
-        $("#error").html(msg + xhr.status + " " + xhr.statusText);
-      }
-    });
-
   });
 
 
