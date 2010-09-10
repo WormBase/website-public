@@ -49,7 +49,8 @@ sub workbench_GET {
 	
   	$c->stash->{path} = $path; 
  	$c->stash->{noboiler} = 1;
-  	$c->stash->{template} = "workbench/status.tt2";  
+#   	$c->stash->{template} = "workbench/status.tt2";   
+    $c->response->body("(" . keys(%{$c->user_session->{bench}{register}}) . ")");
 } 
  
 

@@ -89,8 +89,9 @@ Note: firefox seems to render header objects funny
    
 *********************************/
 div#page {
-    padding:0 0 1em 1em;
+    padding:1em 0 1em 1em;
     position:relative;
+    height:6em;
 }
 
 div#page h1 a, h1{

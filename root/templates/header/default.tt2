@@ -3,7 +3,10 @@
 
 <!-- BEGIN boilerplate/banner -->
     <div id="page">
-      <div class="status-bar login-menu" ></div>
+<div style="position:absolute; right:0; top:0; width:20em">
+ <span class="status-bar"></span> | 
+<button id="my-cart"></button> <a id="bench_status" href="/bench">([% c.user_session.bench.register.size %])</a>
+</div>
         <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
            <p>  
                 [% # The current release of the software and its codename %]

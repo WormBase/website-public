@@ -9,7 +9,7 @@ sub toggle :Path('/widget/toggle')  {
     my ( $self, $c, $class, $widget_name) = @_;
     my $curr = $c->user_session->{$class}->{$widget_name};
     $curr = -1 unless defined $curr;
-    $c->user_session->{$class}->{'count'} ||= 0;
+    $c->user_session->{$class}->{'count'} ||= 1;
     if ($curr == -1) { 
       my $count = $c->user_session->{$class}->{'count'}++; 
       $c->user_session->{$class}->{$widget_name} = $count;

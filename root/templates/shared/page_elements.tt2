@@ -124,6 +124,13 @@
             [% END %]
 [% END %]
 
+
+[% BLOCK status_bar %]
+<div style="float:right;padding:1em;"> | 
+<button id="my-cart"></button> <a href="/bench">([% c.user_session.bench.register.size %])</a>
+</div>
+[% END %]
+
 [% BLOCK widget_block %]
    <!-- start [% widget.name %] widget -->
    [% IF c.request.referer.search("/db/") %]

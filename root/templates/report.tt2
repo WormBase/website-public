@@ -53,7 +53,9 @@
       </nav>
     </div>
      <div id="nav-min"><div id="nav-min-icon"></div></div>
-
+[% FOREACH widget_name IN c.user_session.$class.nsort %]
+  [% widget_name %]: [% c.user_session.$class.$widget_name %]
+[% END %]
       [%  IF c.user_session.$class.defined; c.user_session.$class.count = 0; END; %]
       [% FOREACH widget_name IN c.user_session.$class.nsort %]
         [% IF (widget_name == 'count'); NEXT; END; %]
@@ -75,15 +77,7 @@
         </li>   
       [% END %]
   </div>
-  
-  [%# maybe set this in config somewhere?? %]
-  [% UNLESS c.user_session.$class.defined %]
-    <script>
-    $("#nav-overview").trigger('click');
-    $("#nav-history").trigger('click');
-    $("#nav-history_protein").trigger('click');
-    </script>
-  [% END %]
+
 
 [% ELSE %]
 
@@ -204,6 +198,15 @@
 
       [% END %]
 [% END %]
+
 [% END %]
 
-
+  
+  [%# maybe set this in config somewhere?? %]
+  [% UNLESS c.user_session.$class.defined %]
+    <script>
+    $("#nav-overview").trigger('click');
+    $("#nav-history").trigger('click');
+    $("#nav-history_protein").trigger('click');
+    </script>
+  [% END %]
