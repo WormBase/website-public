@@ -88,6 +88,27 @@ extends 'WormBase::API::Object';
 
 #####################
 ##### template ######
+has 'database_ids' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my ($aceview,@refseq);
+	# Fetch all DB IDs at once, uniquifying them
+	# for genes at the same time
+	foreach my $db (@{$self ~~ '@Database'}) {
+	    foreach my $type ($db->col) {
+		if ($db eq 'AceView') {
+		    $aceview = $type->right->name;
+		} elsif ($db eq 'RefSeq') {
+		    push (@refseq,map { "$_" } eval { $type->col });
+		}
+	    }
+	}
+	return [$aceview,\@refseq];
+    }
+);
+
 has 'sequences' => (
     is  => 'ro',
     lazy => 1,
@@ -217,7 +238,7 @@ sub ids {
     my %data;
      
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
 
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -454,7 +475,6 @@ sub genetic_position {
 					},$map_data],
 	};
 
-	$self->log->debug("aaaaaaaaaaaaaaaaaaaaaaaaaaa$data");
 	return $data;    
  
 }
@@ -703,7 +723,7 @@ sub interactions {
     my %data_pack;
     my $desc = "interactions gene is involved in";
     
-    my $version = $self->ace_dsn->dbh->version;
+    my $version = $self->ace_dsn->version;
     my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
     my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
     
@@ -761,22 +781,22 @@ sub gene_ontology {
     my @go_terms = $object->GO_term;
     
     my %annotation_bases  = (
-        'EXP' , 'x',
-        'IDA' , 'x',
-        'IPI' , 'x',
-        'IMP' , 'x',
-        'IGI' , 'x',
-        'IEP' , 'x',
-        'ND' , 'x',
+        'EXP' , 'p',
+        'IDA' , 'p',
+        'IPI' , 'p',
+        'IMP' , 'p',
+        'IGI' , 'p',
+        'IEP' , 'p',
+        'ND'  , 'p',
         
-        'IEA' , 'p',
-        'ISS' , 'p',
-        'ISO' , 'p',
-        'ISA' , 'p',
-        'ISM' , 'p',
-        'IGC' , 'p',
-        'RCA' , 'p',
-        'IC' , 'p'
+        'IEA' , 'x',
+        'ISS' , 'x',
+        'ISO' , 'x',
+        'ISA' , 'x',
+        'ISM' , 'x',
+        'IGC' , 'x',
+        'RCA' , 'x',
+        'IC'  , 'x'
     );
 
     
@@ -789,11 +809,12 @@ sub gene_ontology {
         my $term = $go_term->Term;
         my $term_type = $go_term->Type;
         my $annotation_basis =  $annotation_bases{$evidence_code};
+	$display_method =~ m/.*_(.*)/;
         my %data = (
-            'display_method' => $display_method,
+            'display_method' => $1,
             'evidence_code' => $evidence_code,
-            'term' => $term,
-            'go_term' => $go_term
+            'term' => {id=>"$go_term", label=>"$term", class=>$go_term->class}
+            
             ); 
         
         my @data = ($display_method,$evidence_code,$term,$go_term); 
@@ -2183,7 +2204,7 @@ sub ids_complex {
     my %data_lists;
     
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
     
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -2235,7 +2256,7 @@ sub ids_old {
     my $object = $self->object;
     
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
     
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -2477,12 +2498,13 @@ sub _select_protein_description {
 # Aceview and entrez are unique to gene (although stored in CDS)
 # refseq is unique to CDS - NM_* is mRNA ID.
 # DONE
+=pod
 sub _fetch_database_ids {
-    my ($self,$object) = @_;
+    my ($self) = @_;
     my ($aceview,@refseq);
     # Fetch all DB IDs at once, uniquifying them
     # for genes at the same time
-    my @dbs = $object->Database;
+    my @dbs = $self->object->Database;
     foreach my $db (@dbs) {
 	foreach my $type ($db->col) {
 	    if ($db eq 'AceView') {
@@ -2492,9 +2514,9 @@ sub _fetch_database_ids {
 	    }
 	}
     }
-    return ($aceview,\@refseq);
+    return [$aceview,\@refseq];
 }
-
+=cut
 
 # This is really inefficient
 sub _fetch_protein_ids {
