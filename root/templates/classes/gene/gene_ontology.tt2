@@ -1,0 +1,21 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   
+[% FOREACH annotation_basis IN fields.gene_ontology.data.keys.sort %]
+  [% FOREACH term_type IN fields.gene_ontology.data.$annotation_basis.keys.sort %]  
+   [% WRAPPER $field_block title="$term_type" %]
+       <table>
+        [% FOREACH data IN fields.gene_ontology.data.$annotation_basis.$term_type.keys.sort %]
+	      [% obj = fields.gene_ontology.data.$annotation_basis.$term_type.$data	%]
+              <tr><td>[% obj.display_method %]</td>
+		  
+		  <td>[% tag2link(obj.term) %]</td>
+		   <td>[% obj.evidence_code %]</td>
+	      </tr>
+        [% END %]
+       </table>
+   [% END %]
+  [% END %] 
+[% END %]
+  
