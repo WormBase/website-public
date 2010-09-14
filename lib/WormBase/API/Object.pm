@@ -492,6 +492,13 @@ sub polymorphisms {
   return \@poly;
 }
 
+sub wb_protein {
+  my ($self,$species) = @_;
+  
+  return 1 if ($species =~ /elegans|briggsae|pacificus|brenneri|jacchus|hapla|japonica|remanei|malayi|brenneri|incognita|contortus/i);
+
+  return 0;
+}
 
 # Map a given ID to a species (This might also be a method instead of an ID)
 # Because of recpirocal BLASTing with elegans and briggsae and database XREFs
