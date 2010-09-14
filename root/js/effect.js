@@ -59,8 +59,6 @@
           $(this).addClass("ui-icon-circle-triangle-s");
         }
       });
-
-  
    
 	$(".tooltip").live('mouseover',function() {
 	    $(this).cluetip({

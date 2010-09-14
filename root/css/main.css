@@ -91,7 +91,8 @@ Note: firefox seems to render header objects funny
 div#page {
     padding:1em 0 1em 1em;
     position:relative;
-    height:6em;
+    height:5em;
+    margin-bottom:0.5em;
 }
 
 div#page h1 a, h1{
@@ -192,8 +193,9 @@ div#content #available-views {
     color:black;
     overflow:hidden;
     position:absolute;
-    bottom:1em;
+    bottom:0.5em;
     right:1em;
+    font-size:0.8em;
 }
 
 /* =========================================
@@ -790,11 +792,8 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position: absolute;
   left:-4px;
   top:50%;
-/*  width:16px;
-  height:16px;*/
   margin-top:-8px;
   opacity:0.8;
-/*   border:1px solid green; */
 }
 
 #nav-min:hover {
@@ -808,6 +807,4 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   list-style: none;
   position:relative;
   background:#EEE;
-/*   border-left:1px solid #CDCDCD; */
 }
-

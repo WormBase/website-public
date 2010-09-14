@@ -4,8 +4,7 @@
 <!-- BEGIN boilerplate/banner -->
     <div id="page">
 <div style="position:absolute; right:0; top:0; width:20em">
- <span class="status-bar"></span> | 
-<button id="my-cart"></button> <a id="bench_status" href="/bench">([% IF c.user_session.bench.register.defined; c.user_session.bench.register.size; ELSE; "0"; END; %])</a>
+ <span class="status-bar"></span>
 </div>
         <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
            <p>  
@@ -19,4 +18,5 @@
 [% PROCESS "boilerplate/search_bar.tt2" %]
 </div>
     </div>
+
 <!-- END boilerplate/banner -->

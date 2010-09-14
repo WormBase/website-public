@@ -9,13 +9,23 @@
 [% SET this_object_label = object.name.data.label %]
   
    [% path = 'reports' _ '/' _ class _ '/' _ this_object_id %]
-     
-   [% PROCESS workbench/status.tt2 %]
- 
 
 
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
+<div style="width:100%; position:relative;">
+  <nav id="available-views">
+
+    View as:
+    [% # HARD-CODED! %]   
+    [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
+    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=sidebar">sidebar</a> |
+    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
+    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
+    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
+    [% tag2link(object.name.data,'classic','is_classic') %]
+  </nav> 
+</div>
   <div id="navigation">
     <ul>
     [% FOREACH widget_name IN widgets -%]
@@ -40,17 +50,7 @@
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
       [% END %] 
-      <nav id="available-views">
-    
-        View as:
-        [% # HARD-CODED! %]   
-        [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
-        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=sidebar">sidebar</a> |
-        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
-        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
-        <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
-        [% tag2link(object.name.data,'classic','is_classic') %]
-      </nav>
+   [% PROCESS workbench/status.tt2 %]
     </div>
      <div id="nav-min"><div id="nav-min-icon"></div></div>
 

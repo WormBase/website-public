@@ -55,14 +55,14 @@
 }
 		
 #front-menu li a, #login-menu li a {
-    text-decoration: underline; 
     color: #6666EE;
 }
-
-/*	
+#front-menu li a {
+    text-decoration: underline; 
+}
 #login-menu ul li {
 	float: right;
-	}*/
+	}
 	
 #login-menu li {
 	font-size: 1em;
@@ -70,6 +70,9 @@
   color: #999999;
 }
 
+#my-cart {
+  float:left;
+}
 
 /* The search bar form */
 #searchForm {

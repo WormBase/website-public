@@ -1,10 +1,10 @@
 <div>
 
-<a class="bench_update"  href="/rest/workbench" ref="[% path %]" >
+<a class="bench_update"  href="/rest/workbench" ref="[% path %]" style="float:right">
+<div id="save" class="ui-icon ui-icon-star ui-state-default 
 [% IF c.user_session.bench.defined && c.user_session.bench.register.defined && c.user_session.bench.register.$path.defined %]
-   <div class="ui-icon ui-icon-cart ui-state-default"></div>remove from bench
-[% ELSE %]
-  <div class="ui-icon ui-icon-cart ui-state-active"></div>add to bench
+  ui-state-active
 [% END %]
+"></div>
 </a>   
 </div>
