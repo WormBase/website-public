@@ -879,157 +879,76 @@ sub gene_ontology {
 sub reference_allele {
 
 	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+	my $ref_alleles = $self ~~ '@Reference_allele' ;
+	return unless $ref_alleles; 
+	my @array;
+	foreach my $reference_allele (@{$ref_alleles}) {
+	    my $flanking_sequence = eval {$reference_allele->Flanking_sequences};
+	    push @array, $self->_pack_obj($reference_allele,$reference_allele->Public_name,flanking_sequence=>"$flanking_sequence");
+	}
+	 
+	 
+	my $data = { description => 'The reference allele of the gene',
+		 data        => \@array,
+	};
 
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my $reference_allele = $object->Reference_allele;
-	my $ref_allele_name = $reference_allele->Public_name;
-	my $flanking_sequence = $reference_allele->Flanking_sequences;
-	
-	%data_pack = (
-	    'reference_allele'=> $reference_allele,
-	    'ref_allele_name' => $ref_allele_name,
-	    'flanking_sequence' => $flanking_sequence
-	    );
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return $data;    
 }
 
 
 sub alleles {
 
     my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'alleles for gene';
-    my $dbh = $self->ace_dsn->dbh;
-    my %data_pack;
-    
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
+    my $ace = $self->ace_dsn;
+    my @all_alleles = map {$ace->fetch(Variation => $_) } @{$self ~~ '@Allele'}; 
 
-    foreach my $allele (@all_alleles) {
-    	if ($allele->CGC_name) {
-    		my $available_seq = 0;
-    		my $flanking_sequence;
-		$flanking_sequence = eval {$allele->Flanking_sequence;};
-		
-		if($flanking_sequence) {
-		    $available_seq = 1;
-		} 
-	
-		my $class = $allele->class;
-		    $data_pack{$allele} = {
-		    'available_seq' => $available_seq,
-		    'class' => $class
-		}				
-	}
-    }
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-#######
-
-sub snps {
-
-    my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'snps related to gene';
-    my $dbh = $self->ace_dsn->dbh;
-    my %data_pack;
-
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
-
-
-	#### data pull and packaging
-	
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele;
-    my @snps;  ##(@alleles,,@rflps,@insertions);
-     
+    my (@alleles,@snps,@rflps,@insertions);
     foreach my $allele (sort @all_alleles) {
-	if($allele->SNP(0) && !$allele->RFLP(0)) {
-  
-	  $data_pack{$allele} = {
-	    'class' => 'Allele',
-	    'ace_id' => $allele
-	  };
+	my $name = $allele->Public_name;
+    	if ($allele->CGC_name) {
+    		my $flanking_sequence = eval {$allele->Flanking_sequences};
+    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>"$flanking_sequence");	
 	}
+	push @snps, $self->_pack_obj($allele,$name) if $allele->SNP(0) && !$allele->RFLP(0);
+	push @rflps, $self->_pack_obj($allele,$name) if $allele->RFLP(0);
+	push @insertions, $self->_pack_obj($allele,$name)  if $allele->Transposon_insertion;
     }
-	####
 	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $data = { description => 'The alleles, snps, rflps? and insertions of the gene',
+		 data        => {	alleles=>\@alleles,
+					snps=>\@snps,
+					rflps=>\@rflps,
+					insertions=>\@insertions,
+				}
+    };
 
+    return $data;  
 }
 
 
 sub strains {
 
 	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'strains carrying gene';
+	my $object = $self->object;
 
-	my %data_pack;
+	my (@strains,@singletons,@cgc,@others);
+	foreach ($object->Strain(-filled=>1)) {
+	  my @genes = $_->Gene;
+	  my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+	 
+	  push @singletons,$self->_pack_obj($_) if (@genes == 1 && !$_->Transgene);
+	  push @cgc,$self->_pack_obj($_) if $cgc;
+	  push @others,$self->_pack_obj($_);
+	}
+	push @strains, map { $_->{boldface}=1;$_ } sort { $a->{id} cmp $b->{id} } @singletons;
+	push @strains, map { $_->{italicized}=1;$_ } sort { $a->{id} cmp $b->{id} } @cgc;
+	push @strains,sort { $a->{id} cmp $b->{id} } @others;
 
-	#### data pull and packaging
+	my $data = { description => 'strains carrying gene',
+		    data        => \@strains,
+	};
 
-	## from gene ##
-	
-	  my (@singletons,@cgc,@others);
-	  
-	  foreach my $strain ($object->Strain(-filled=>1)) {
-		my @genes = $strain->Gene;
-		my $cgc  = ($strain->Location eq 'CGC') ? 1 : 0;
-		my $gene_alone = 0;
-		my $cgc_available = 0;
-		
-		
-		if (@genes == 1 && !$strain->Transgene) {
-			
-			$gene_alone = 1;
-		}
-		
-		if ($cgc) {
-			
-			$cgc_available = 1;
-		}
-		
-		if ($gene_alone || $cgc_available) {
-		
-			$data{'data'}{$strain} = {'class' => 'Strain',
-	  												'gene_alone' => $gene_alone,
-	  												'cgc_available' => $cgc_available
-	  											};
-		}
-		else {
-			
-			$data{'data'}{$strain} = {'class' => 'Strain',
-	  												'gene_alone' => 0,
-	  												'cgc_available' => 0
-	  											};
-		}		
-	  }
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return $data;  
 
 }
 
@@ -1037,31 +956,20 @@ sub strains {
 sub rearrangements{
 
     my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'rearrangements involving this gene';
+     
+    my @rearrangement;
+    my $gene=$self->name;
+    my $id=$gene->{data}->{id};
+    my $name = $gene->{data}->{label};
+    push @rearrangement, { class=>'rearrangement',id=>"$id?position=include",label=>'include'};
+    push @rearrangement, { class=>'rearrangement',id=>"$id?position=exclude",label=>'exclude'};
+    push @rearrangement, { class=>'rearrangement',id=>$id,label=>"either include or exclude $name"};
 
-    my %data_pack;
-    my $rearrangement = 0;
+    my $data = { description => 'rearrangements involving this gene',
+		    data        => \@rearrangement,
+	};
 
-    #### data pull and packaging
-
-    if ($object->Allele || $object->Reference_allele) {
-    
-        $rearrangement = 1;
-    }
-
-    %data_pack = {
-                    $object => {
-                                'rearrangement' => $rearrangement
-                                }
-                };
-
-    ####
-
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
+   return $data;  
 }
 
 ###########################################
