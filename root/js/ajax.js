@@ -1,17 +1,22 @@
   $(document).ready(function() {   
       
       $(".bench_update").live('click',function() {
-	var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
-	$("#bench_status").load(url,   function(response, status, xhr) {
-					      if (status == "error") {
-						  var msg = "Sorry but there was an error: ";
-						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
-					      }
-					    
-				      });
-$(this).children("#save").toggleClass("ui-state-active");
-
-	return false;
+        var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
+        $("#bench_status").load(url,   function(response, status, xhr) {
+                              if (status == "error") {
+                              var msg = "Sorry but there was an error: ";
+                              $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                              }
+                            
+                          });
+        var star = $(this).children("#save");
+        star.toggleClass("ui-state-highlight");
+        if(star.attr("title") == "add this report to your workbench"){
+          star.attr("title","remove this report from your workbench");
+        }else{
+          star.attr("title","add this report to your workbench");
+        }
+      return false;
       });
        $(".status-bar").load("/rest/auth", function(response, status, xhr) {
 	if (status == "error") {

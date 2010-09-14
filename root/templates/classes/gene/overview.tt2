@@ -50,3 +50,12 @@
    [% WRAPPER $field_block title="WormBase Referential ID"-%] 
            [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
+
+   [% WRAPPER $field_block title="Legacy Information" key="legacy_information"-%] 
+         <div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>
+         <div class="returned">
+           [% FOREACH desc IN fields.legacy_information.data %]
+              [% markup(desc, 0) %]<br />
+            [% END %]
+         </div>
+   [% END %]

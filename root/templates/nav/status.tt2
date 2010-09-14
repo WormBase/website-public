@@ -20,8 +20,7 @@ $(".lightbox").colorbox();
 [% ELSE %]
   <li><a class='lightbox_inline' href="#login" title="WormBase user login!" >Login</a></li>
 [% END %]
-<li><a href="/bench"><div id="my-cart" class="ui-icon ui-icon-cart"></div> <span href="/bench" id="bench_status">([% IF c.user_session.bench.register.defined; c.user_session.bench.register.size; ELSE; "0"; END; %])</span></a> | </li>
-<!--<li><a href="/bench"><div id="my-cart" class="ui-icon ui-icon-cart"></div></a></li>-->
+<li><a href="/bench" title="go to your workbench"><div id="my-cart" class="ui-icon ui-icon-cart"></div> <span href="/bench" id="bench_status">([% IF c.user_session.bench.register.defined; c.user_session.bench.register.size; ELSE; "0"; END; %])</span></a> | </li>
 </ul>
 </div>
 
