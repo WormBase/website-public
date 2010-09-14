@@ -1,0 +1,81 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   
+ 
+[% WRAPPER $field_block title="Reference allele" key="reference_allele" %]
+       
+        [% FOREACH obj IN fields.reference_allele.data %]
+	 
+	  [% IF obj.flanking_sequence %] 
+	      <b>[%  tag2link(obj) %]</b>   
+	  [% ELSE %]
+	     [%  tag2link(obj) %]
+	  [% END %]
+	  
+        [% END %]
+       
+[% END %]
+
+[% IF fields.alleles.data.alleles.size>0 %]
+  [% WRAPPER $field_block title="Alleles" %]
+    [% FOREACH obj IN fields.alleles.data.alleles %]
+	 [% IF obj.flanking_sequence %] 
+	      <b>[%  tag2link(obj) %]</b>   
+	  [% ELSE %]
+	     [%  tag2link(obj) %]
+	  [% END %]
+    [% END %]
+  <br>Alleles for which the sequence change is known are listed in <b>boldface</b>
+  [% END %]
+[% END %]
+ 
+[% IF fields.alleles.data.snps.size>0 %]
+  [% WRAPPER $field_block title="SNPs" %]
+    [% FOREACH obj IN fields.alleles.data.snps %]
+	 [%  tag2link(obj) %] 
+    [% END %]
+  [% END %]
+[% END %]
+
+[% IF fields.alleles.data.rflps.size>0 %]
+  [% WRAPPER $field_block title="RFLPs" %]
+    [% FOREACH obj IN fields.alleles.data.rflps %]
+	 [%  tag2link(obj) %] 
+    [% END %]
+  [% END %]
+[% END %]
+
+[% IF fields.alleles.data.insertions.size>0 %]
+  [% WRAPPER $field_block title="Transposon insertions" %]
+    [% FOREACH obj IN fields.alleles.data.insertions %]
+	 [%  tag2link(obj) %] 
+    [% END %]
+  [% END %]
+[% END %] 
+
+[% WRAPPER $field_block title="Strains carrying $object.name.label" %]
+    [% FOREACH obj IN fields.strains.data %]
+	  [% IF obj.boldface.defined %] 
+	      <b>[%  tag2link(obj) %]</b>   
+	  [% ELSIF  obj.italicized.defined %]
+	     <i>[%  tag2link(obj) %]</i>
+	  [% ELSE %]
+	       [%  tag2link(obj) %]
+	  [% END %]
+    [% END %]
+  <br>Strains carrying [% object.name.label %] alone are listed in <b>boldface</b>.
+  <br>Strains available directly from the CGC are <i>italicized</i>.
+[% END %]
+
+[% WRAPPER $field_block title="Rearrangements" %]
+    Browse for rearrangements known to:
+    [% FOREACH obj IN fields.rearrangements.data %]
+	 [%  tag2link(obj) %] 
+	[% UNLESS loop.last %],[% END %]
+    [% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Note" %]
+   Please <a href='http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/allele.cgi'>submit</a> additional alleles or molecular information to WormBase.
+[% END %]
