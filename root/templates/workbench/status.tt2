@@ -1,10 +1,11 @@
 <div>
-
 <a class="bench_update"  href="/rest/workbench" ref="[% path %]" style="float:right">
-<div id="save" class="ui-icon ui-icon-star ui-state-default 
+<div id="save" class="ui-icon ui-icon-star
 [% IF c.user_session.bench.defined && c.user_session.bench.register.defined && c.user_session.bench.register.$path.defined %]
-  ui-state-active
+  ui-state-active" title="remove this report from your workbench" 
+[% ELSE %]
+  " title="add this report to your workbench" 
 [% END %]
-"></div>
+></div>
 </a>   
 </div>
