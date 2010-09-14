@@ -984,6 +984,10 @@ sub inparanoid_groups {
 			   $class    = $1;
 			   $id = $2;
 			} 
+			if($class eq 'ENSEMBL') {
+			      (my $sp=$species) =~ s/ /_/g;
+			      $id="$sp&$id" ;
+			}
 	   		push @{$proteins{$species}} , {
 	   								'class' => "$class",
 	   								'id' => "$id" ,
