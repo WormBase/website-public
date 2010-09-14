@@ -192,51 +192,13 @@ sub template {
 # The Overview (formerly Identification) Panel
 #######################################################
 
-# do we need public_name?  We already have name with label -AC
-sub public_name {
-    
-    my ($self,$object,$class) = @_;
-    my $common_name;    
-   
-    if ($class =~ /gene/i) {
-		$common_name = 
-		$object->Public_name
-		|| $object->CGC_name
-		|| $object->Molecular_name
-		|| eval { $object->Corresponding_CDS->Corresponding_protein }
-		|| $object;
-    }
-    elsif ($class =~ /protein/i) { #do we need this here?  This is the gene class... AC
-    	$common_name = 
-    	$object->Gene_name
-    	|| eval { $object->Corresponding_CDS->Corresponding_protein }
-    	||$object;
-    }
-    else {
-    	$common_name = $object;
-    }
-	
-	my $data = $common_name;
-    return $data;
-
-
-}
 
 sub name {
-	
     my $self = shift;
     my $object = $self->object;
-    my $cm_text = "$object";
-    my $common_name = 
-	$object->Public_name
-	|| $object->CGC_name
-	|| $object->Molecular_name
-	|| eval { $object->Corresponding_CDS->Corresponding_protein }
-	|| $cm_text;
-    
     my $data = { description => 'The most commonly used name of the gene',
 		 data        =>  { id    => "$object",
-				           label => "$common_name",
+				           label => $self->_public_name($object),
 				           class => $object->class
 		 },
     };
@@ -451,6 +413,16 @@ sub cloned_by {
 	return \%data;
 }
 
+sub legacy_information {
+  my $self = shift;
+  my $object = $self->object;
+  my @description = $object->Legacy_information or return;
+  my $data = {  description => "legacy information for the gene",
+                data => \@description
+            };
+  return $data;
+}
+
 ###########################################
 # Components of the Location panel
 # Note: Most of these are generic and located
@@ -530,30 +502,20 @@ sub microarray_topology_map_position {
 
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
 
-	my %data_pack;
-
-	#### data pull and packaging
-
-	
+    my @sequences = $self->sequences;
+    return unless @sequences;
     my @segments = $self->_fetch_segments;
-    my $seg = $segments[0];
-    my @features;
-    
-   	@features = eval {map {$_->info} $seg->features('experimental_result_region:Expr_profile');};
+    my $seg = @segments[0] or return;
+    my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
+    return unless @p;
+    my %data;
+    map {$data{"$_"} = $self->_pack_obj($_,eval{'Mountain '.$_->Expr_map->Mountain}||$_)} @p;
 
-	foreach my $feature (@features) {
-	
-		$data_pack{$feature} = 1;
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data = {description =>"microarray topology map",
+                data => \%data
+                };
+	return $data;
 }
 
 
@@ -716,7 +678,7 @@ sub regulation_on_expression_level {
 			: 'Negatively regulated by ';
 		}
 		
-		my $common_name     = $target->Public_name || "$target";
+		my $common_name     = $self->_public_name($target);
 		push @stash,{ string => $string,
 			      target => $self->_pack_obj($target, $common_name),
 			      gene_regulation => $self->_pack_obj($gene_reg)};
@@ -774,6 +736,7 @@ sub interactions {
     return \%data;
 
 }
+
 
 ###########################################
 # Components of the Gene Ontology panel
@@ -1365,7 +1328,6 @@ sub protein_domains {
           $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
 		}
 	}
-
     my $data = { description => "protein domains of the gene",
                  data => \%unique_motifs
                 };
@@ -2887,6 +2849,39 @@ sub build_hash{
 		$hash{$key} = $value;
 	}
 	return %hash;
+}
+
+
+
+# helper method, retrieve public name from objects
+sub _public_name {
+    
+    my ($self,$object) = @_;
+    my $common_name;    
+    my $class = $object->class;
+   
+    if ($class =~ /gene/i) {
+        $common_name = 
+        $object->Public_name
+        || $object->CGC_name
+        || $object->Molecular_name
+        || eval { $object->Corresponding_CDS->Corresponding_protein }
+        || $object;
+    }
+    elsif ($class =~ /protein/i) { #do we need this here?  This is the gene class... AC
+        $common_name = 
+        $object->Gene_name
+        || eval { $object->Corresponding_CDS->Corresponding_protein }
+        ||$object;
+    }
+    else {
+        $common_name = $object;
+    }
+    
+    my $data = $common_name;
+    return $data;
+
+
 }
 
 
