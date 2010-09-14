@@ -88,6 +88,21 @@ extends 'WormBase::API::Object';
 
 #####################
 ##### template ######
+
+ 
+has 'proteins' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my $cds = $self ~~ '@Corresponding_CDS';
+	return undef unless $cds;
+	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @$cds  ;
+	return \@proteins;
+    }
+);
+ 
+
 has 'database_ids' => (
     is  => 'ro',
     lazy => 1,
@@ -987,12 +1002,10 @@ sub inparanoid_groups {
 
 	#### data pull and packaging
 	
-	my $proteins;
-
-    eval{$proteins = $self->_fetch_proteins($object);};
+	 
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @$proteins;
+    map {$_->Homology_group} @{$self->proteins};
     
     foreach my $cluster (@inp) {
     
@@ -1124,9 +1137,9 @@ sub treefam {
 
 	#### data pull and packaging
 	
-	my $proteins = $self->_fetch_proteins($object);
+	 
 
-    foreach my $protein (@$proteins) {
+    foreach my $protein (@{$self->proteins}) {
 		my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 		# Ignore proteins that lack a Treefam ID
@@ -1149,9 +1162,7 @@ sub treefam {
 ###########################################
 sub best_blastp_matches {
     my $self     = shift;
-    my $object = $self->object;
-    my $proteins = $self->_fetch_proteins($object);
-    return [ $self->SUPER::best_blastp_matches($proteins) ];
+    return  $self->SUPER::best_blastp_matches($self->proteins) ;
 }
 
 
@@ -1356,9 +1367,9 @@ sub protein_domains {
 	my $self = shift;
     my $object = $self->object;
 
-	my $proteins = $self->_fetch_proteins($object);
+	 
     my %unique_motifs;
-    for my $protein (@$proteins) {
+    for my $protein (@{$self->proteins}) {
     	my @motifs;
     	@motifs	= $protein->Motif_homol;
 		foreach my $motif (@motifs) {
@@ -1998,10 +2009,10 @@ sub orfeome_project_primers_old {
 sub treefam_old {
     my $self     = shift;
     my $object = $self->object;
-    my $proteins = $self->_fetch_proteins($object);
+    
     
     my @data;
-    foreach my $protein (@$proteins) {
+    foreach my $protein (@{$self->proteins}) {
 	my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 	# Ignore proteins that lack a Treefam ID
@@ -2017,10 +2028,10 @@ sub inparanoid_groups_old {
     my $self     = shift;
     my $object = $self->object;
     my %stash;
-    my $proteins = $self->_fetch_proteins($object);
+     
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @$proteins;
+    map {$_->Homology_group} @{$self->proteins};
     
     foreach my $cluster (@inp) {
 	my @proteins = $cluster->Protein;
@@ -2326,14 +2337,7 @@ sub method_detail {
     return $return;
 }
 
-# PROTEINS HERE WILL NOT PERSIST AND NEED TO BE FETCHED EACH GO 'ROUND
-# THIS ALSO WILL NOT RETURN OBJECTS - stash() treats them as hashrefs
-sub _fetch_proteins {
-    my ($self,$object) = @_;
-    my @cds = $object->Corresponding_CDS;
-    my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
-    return \@proteins;
-}
+ 
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
