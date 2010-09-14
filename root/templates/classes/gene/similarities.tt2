@@ -1,0 +1,19 @@
+[% WRAPPER $field_block title="Best BLAST Hits" %]
+ 
+   
+  <table  border= 0, width= '100%' >
+  <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
+   [% FOREACH row IN fields.best_blastp_matches.data %]
+    <tr>	
+	[% FOREACH obj IN row %]
+	  <td>[% IF obj.species.defined %]
+		<span class="species">[% obj.genus %].[% obj.species %]</span>
+	       [% ELSIF obj.class.defined %] [% tag2link(obj) %] 
+           [% ELSIF obj.match('(\d+)e[-](\d+)') %] <span class="no-wrap">[% obj %]</span>
+           [% ELSE %] [% obj %]
+           [% END %]</td>
+	 [% END %]
+    </tr>
+   [% END %]
+   </table>   
+[% END %]

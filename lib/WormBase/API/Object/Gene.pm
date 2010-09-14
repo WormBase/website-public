@@ -88,6 +88,42 @@ extends 'WormBase::API::Object';
 
 #####################
 ##### template ######
+
+ 
+has 'proteins' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my $cds = $self ~~ '@Corresponding_CDS';
+	return undef unless $cds;
+	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @$cds  ;
+	return \@proteins;
+    }
+);
+ 
+
+has 'database_ids' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my ($aceview,@refseq);
+	# Fetch all DB IDs at once, uniquifying them
+	# for genes at the same time
+	foreach my $db (@{$self ~~ '@Database'}) {
+	    foreach my $type ($db->col) {
+		if ($db eq 'AceView') {
+		    $aceview = $type->right->name;
+		} elsif ($db eq 'RefSeq') {
+		    push (@refseq,map { "$_" } eval { $type->col });
+		}
+	    }
+	}
+	return [$aceview,\@refseq];
+    }
+);
+
 has 'sequences' => (
     is  => 'ro',
     lazy => 1,
@@ -217,7 +253,7 @@ sub ids {
     my %data;
      
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
 
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -454,7 +490,6 @@ sub genetic_position {
 					},$map_data],
 	};
 
-	$self->log->debug("aaaaaaaaaaaaaaaaaaaaaaaaaaa$data");
 	return $data;    
  
 }
@@ -703,7 +738,7 @@ sub interactions {
     my %data_pack;
     my $desc = "interactions gene is involved in";
     
-    my $version = $self->ace_dsn->dbh->version;
+    my $version = $self->ace_dsn->version;
     my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
     my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
     
@@ -761,22 +796,22 @@ sub gene_ontology {
     my @go_terms = $object->GO_term;
     
     my %annotation_bases  = (
-        'EXP' , 'x',
-        'IDA' , 'x',
-        'IPI' , 'x',
-        'IMP' , 'x',
-        'IGI' , 'x',
-        'IEP' , 'x',
-        'ND' , 'x',
+        'EXP' , 'p',
+        'IDA' , 'p',
+        'IPI' , 'p',
+        'IMP' , 'p',
+        'IGI' , 'p',
+        'IEP' , 'p',
+        'ND'  , 'p',
         
-        'IEA' , 'p',
-        'ISS' , 'p',
-        'ISO' , 'p',
-        'ISA' , 'p',
-        'ISM' , 'p',
-        'IGC' , 'p',
-        'RCA' , 'p',
-        'IC' , 'p'
+        'IEA' , 'x',
+        'ISS' , 'x',
+        'ISO' , 'x',
+        'ISA' , 'x',
+        'ISM' , 'x',
+        'IGC' , 'x',
+        'RCA' , 'x',
+        'IC'  , 'x'
     );
 
     
@@ -789,11 +824,12 @@ sub gene_ontology {
         my $term = $go_term->Term;
         my $term_type = $go_term->Type;
         my $annotation_basis =  $annotation_bases{$evidence_code};
+	$display_method =~ m/.*_(.*)/;
         my %data = (
-            'display_method' => $display_method,
+            'display_method' => $1,
             'evidence_code' => $evidence_code,
-            'term' => $term,
-            'go_term' => $go_term
+            'term' => {id=>"$go_term", label=>"$term", class=>$go_term->class}
+            
             ); 
         
         my @data = ($display_method,$evidence_code,$term,$go_term); 
@@ -858,157 +894,76 @@ sub gene_ontology {
 sub reference_allele {
 
 	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
+	my $ref_alleles = $self ~~ '@Reference_allele' ;
+	return unless $ref_alleles; 
+	my @array;
+	foreach my $reference_allele (@{$ref_alleles}) {
+	    my $flanking_sequence = eval {$reference_allele->Flanking_sequences};
+	    push @array, $self->_pack_obj($reference_allele,$reference_allele->Public_name,flanking_sequence=>$flanking_sequence?1:0);
+	}
+	 
+	 
+	my $data = { description => 'The reference allele of the gene',
+		 data        => \@array,
+	};
 
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my $reference_allele = $object->Reference_allele;
-	my $ref_allele_name = $reference_allele->Public_name;
-	my $flanking_sequence = $reference_allele->Flanking_sequences;
-	
-	%data_pack = (
-	    'reference_allele'=> $reference_allele,
-	    'ref_allele_name' => $ref_allele_name,
-	    'flanking_sequence' => $flanking_sequence
-	    );
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return $data;    
 }
 
 
 sub alleles {
 
     my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'alleles for gene';
-    my $dbh = $self->ace_dsn->dbh;
-    my %data_pack;
-    
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
+    my $ace = $self->ace_dsn;
+    my @all_alleles = map {$ace->fetch(Variation => $_) } @{$self ~~ '@Allele'}; 
 
-    foreach my $allele (@all_alleles) {
-    	if ($allele->CGC_name) {
-    		my $available_seq = 0;
-    		my $flanking_sequence;
-		$flanking_sequence = eval {$allele->Flanking_sequence;};
-		
-		if($flanking_sequence) {
-		    $available_seq = 1;
-		} 
-	
-		my $class = $allele->class;
-		    $data_pack{$allele} = {
-		    'available_seq' => $available_seq,
-		    'class' => $class
-		}				
-	}
-    }
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-#######
-
-sub snps {
-
-    my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'snps related to gene';
-    my $dbh = $self->ace_dsn->dbh;
-    my %data_pack;
-
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele; 
-
-
-	#### data pull and packaging
-	
-    my @all_alleles = map {$dbh->fetch(Variation => $_) } $object->Allele;
-    my @snps;  ##(@alleles,,@rflps,@insertions);
-     
+    my (@alleles,@snps,@rflps,@insertions);
     foreach my $allele (sort @all_alleles) {
-	if($allele->SNP(0) && !$allele->RFLP(0)) {
-  
-	  $data_pack{$allele} = {
-	    'class' => 'Allele',
-	    'ace_id' => $allele
-	  };
+	my $name = $allele->Public_name;
+    	if ($allele->CGC_name) {
+    		my $flanking_sequence = eval {$allele->Flanking_sequences};
+    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0);	
 	}
+	push @snps, $self->_pack_obj($allele,$name) if $allele->SNP(0) && !$allele->RFLP(0);
+	push @rflps, $self->_pack_obj($allele,$name) if $allele->RFLP(0);
+	push @insertions, $self->_pack_obj($allele,$name)  if $allele->Transposon_insertion;
     }
-	####
 	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $data = { description => 'The alleles, snps, rflps? and insertions of the gene',
+		 data        => {	alleles=>\@alleles,
+					snps=>\@snps,
+					rflps=>\@rflps,
+					insertions=>\@insertions,
+				}
+    };
 
+    return $data;  
 }
 
 
 sub strains {
 
 	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'strains carrying gene';
+	my $object = $self->object;
 
-	my %data_pack;
+	my (@strains,@singletons,@cgc,@others);
+	foreach ($object->Strain(-filled=>1)) {
+	  my @genes = $_->Gene;
+	  my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+	 
+	  push @singletons,$self->_pack_obj($_) if (@genes == 1 && !$_->Transgene);
+	  push @cgc,$self->_pack_obj($_) if $cgc;
+	  push @others,$self->_pack_obj($_);
+	}
+	push @strains, map { $_->{boldface}=1;$_ } sort { $a->{id} cmp $b->{id} } @singletons;
+	push @strains, map { $_->{italicized}=1;$_ } sort { $a->{id} cmp $b->{id} } @cgc;
+	push @strains,sort { $a->{id} cmp $b->{id} } @others;
 
-	#### data pull and packaging
+	my $data = { description => 'strains carrying gene',
+		    data        => \@strains,
+	};
 
-	## from gene ##
-	
-	  my (@singletons,@cgc,@others);
-	  
-	  foreach my $strain ($object->Strain(-filled=>1)) {
-		my @genes = $strain->Gene;
-		my $cgc  = ($strain->Location eq 'CGC') ? 1 : 0;
-		my $gene_alone = 0;
-		my $cgc_available = 0;
-		
-		
-		if (@genes == 1 && !$strain->Transgene) {
-			
-			$gene_alone = 1;
-		}
-		
-		if ($cgc) {
-			
-			$cgc_available = 1;
-		}
-		
-		if ($gene_alone || $cgc_available) {
-		
-			$data{'data'}{$strain} = {'class' => 'Strain',
-	  												'gene_alone' => $gene_alone,
-	  												'cgc_available' => $cgc_available
-	  											};
-		}
-		else {
-			
-			$data{'data'}{$strain} = {'class' => 'Strain',
-	  												'gene_alone' => 0,
-	  												'cgc_available' => 0
-	  											};
-		}		
-	  }
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return $data;  
 
 }
 
@@ -1016,31 +971,20 @@ sub strains {
 sub rearrangements{
 
     my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'rearrangements involving this gene';
+     
+    my @rearrangement;
+    my $gene=$self->name;
+    my $id=$gene->{data}->{id};
+    my $name = $gene->{data}->{label};
+    push @rearrangement, { class=>'rearrangement',id=>"$id?position=include",label=>'include'};
+    push @rearrangement, { class=>'rearrangement',id=>"$id?position=exclude",label=>'exclude'};
+    push @rearrangement, { class=>'rearrangement',id=>$id,label=>"either include or exclude $name"};
 
-    my %data_pack;
-    my $rearrangement = 0;
+    my $data = { description => 'rearrangements involving this gene',
+		    data        => \@rearrangement,
+	};
 
-    #### data pull and packaging
-
-    if ($object->Allele || $object->Reference_allele) {
-    
-        $rearrangement = 1;
-    }
-
-    %data_pack = {
-                    $object => {
-                                'rearrangement' => $rearrangement
-                                }
-                };
-
-    ####
-
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
+   return $data;  
 }
 
 ###########################################
@@ -1058,12 +1002,10 @@ sub inparanoid_groups {
 
 	#### data pull and packaging
 	
-	my $proteins;
-
-    eval{$proteins = $self->_fetch_proteins($object);};
+	 
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @$proteins;
+    map {$_->Homology_group} @{$self->proteins};
     
     foreach my $cluster (@inp) {
     
@@ -1195,9 +1137,9 @@ sub treefam {
 
 	#### data pull and packaging
 	
-	my $proteins = $self->_fetch_proteins($object);
+	 
 
-    foreach my $protein (@$proteins) {
+    foreach my $protein (@{$self->proteins}) {
 		my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 		# Ignore proteins that lack a Treefam ID
@@ -1220,9 +1162,7 @@ sub treefam {
 ###########################################
 sub best_blastp_matches {
     my $self     = shift;
-    my $object = $self->object;
-    my $proteins = $self->_fetch_proteins($object);
-    return [ $self->SUPER::best_blastp_matches($proteins) ];
+    return  $self->SUPER::best_blastp_matches($self->proteins) ;
 }
 
 
@@ -1427,9 +1367,9 @@ sub protein_domains {
 	my $self = shift;
     my $object = $self->object;
 
-	my $proteins = $self->_fetch_proteins($object);
+	 
     my %unique_motifs;
-    for my $protein (@$proteins) {
+    for my $protein (@{$self->proteins}) {
     	my @motifs;
     	@motifs	= $protein->Motif_homol;
 		foreach my $motif (@motifs) {
@@ -2069,10 +2009,10 @@ sub orfeome_project_primers_old {
 sub treefam_old {
     my $self     = shift;
     my $object = $self->object;
-    my $proteins = $self->_fetch_proteins($object);
+    
     
     my @data;
-    foreach my $protein (@$proteins) {
+    foreach my $protein (@{$self->proteins}) {
 	my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 	# Ignore proteins that lack a Treefam ID
@@ -2088,10 +2028,10 @@ sub inparanoid_groups_old {
     my $self     = shift;
     my $object = $self->object;
     my %stash;
-    my $proteins = $self->_fetch_proteins($object);
+     
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @$proteins;
+    map {$_->Homology_group} @{$self->proteins};
     
     foreach my $cluster (@inp) {
 	my @proteins = $cluster->Protein;
@@ -2183,7 +2123,7 @@ sub ids_complex {
     my %data_lists;
     
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
     
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -2235,7 +2175,7 @@ sub ids_old {
     my $object = $self->object;
     
     # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = $self->_fetch_database_ids($object);
+    my ($aceview,$refseq) = @{$self->database_ids};
     
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
@@ -2397,14 +2337,7 @@ sub method_detail {
     return $return;
 }
 
-# PROTEINS HERE WILL NOT PERSIST AND NEED TO BE FETCHED EACH GO 'ROUND
-# THIS ALSO WILL NOT RETURN OBJECTS - stash() treats them as hashrefs
-sub _fetch_proteins {
-    my ($self,$object) = @_;
-    my @cds = $object->Corresponding_CDS;
-    my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
-    return \@proteins;
-}
+ 
 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
@@ -2477,12 +2410,13 @@ sub _select_protein_description {
 # Aceview and entrez are unique to gene (although stored in CDS)
 # refseq is unique to CDS - NM_* is mRNA ID.
 # DONE
+=pod
 sub _fetch_database_ids {
-    my ($self,$object) = @_;
+    my ($self) = @_;
     my ($aceview,@refseq);
     # Fetch all DB IDs at once, uniquifying them
     # for genes at the same time
-    my @dbs = $object->Database;
+    my @dbs = $self->object->Database;
     foreach my $db (@dbs) {
 	foreach my $type ($db->col) {
 	    if ($db eq 'AceView') {
@@ -2492,9 +2426,9 @@ sub _fetch_database_ids {
 	    }
 	}
     }
-    return ($aceview,\@refseq);
+    return [$aceview,\@refseq];
 }
-
+=cut
 
 # This is really inefficient
 sub _fetch_protein_ids {

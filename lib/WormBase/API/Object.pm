@@ -86,13 +86,15 @@ sub _pack_objects {
 }
 
 sub _pack_obj {
-    my ($self,$object, $label) = @_;
+    my ($self,$object,$label,%args) = @_;
     $label = "$object" unless $label;
-    my $data = { id => "$object",
+     
+    my %data = ( id => "$object",
               label => $label,
               class => $object->class,
-    };
-    return $data;
+    );
+    @data{ keys %args } = values %args if(%args);
+    return \%data;
 }
 
 
