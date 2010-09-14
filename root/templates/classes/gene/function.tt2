@@ -12,4 +12,5 @@
       [% FOREACH i IN fields.protein_domains.data.keys.sort %]
         [% tag2link(fields.protein_domains.data.$i) %] <br />
       [% END %]
+      [% external_link('phosphopep', '...access more phosphorylation information in phosphopep') %]
    [% END %]
