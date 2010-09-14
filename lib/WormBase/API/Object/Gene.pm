@@ -502,30 +502,20 @@ sub microarray_topology_map_position {
 
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
 
-	my %data_pack;
-
-	#### data pull and packaging
-
-	
+    my @sequences = $self->sequences;
+    return unless @sequences;
     my @segments = $self->_fetch_segments;
-    my $seg = $segments[0];
-    my @features;
-    
-   	@features = eval {map {$_->info} $seg->features('experimental_result_region:Expr_profile');};
+    my $seg = @segments[0] or return;
+    my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
+    return unless @p;
+    my %data;
+    map {$data{"$_"} = $self->_pack_obj($_,eval{'Mountain '.$_->Expr_map->Mountain}||$_)} @p;
 
-	foreach my $feature (@features) {
-	
-		$data_pack{$feature} = 1;
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data = {description =>"microarray topology map",
+                data => \%data
+                };
+	return $data;
 }
 
 

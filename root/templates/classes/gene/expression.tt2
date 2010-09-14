@@ -36,3 +36,9 @@
      [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
        Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]
    [% END %]
+
+   [% WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_topology_map_position"%]
+      [% FOREACH ma IN fields.microarray_topology_map_position.data.keys %]
+        [% tag2link(fields.microarray_topology_map_position.data.$ma) %]<br />
+      [% END %]
+   [% END %]
