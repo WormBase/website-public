@@ -10,7 +10,7 @@
                             
                           });
         var star = $(this).children("#save");
-        star.toggleClass("ui-state-active");
+        star.toggleClass("ui-state-highlight");
         if(star.attr("title") == "add this report to your workbench"){
           star.attr("title","remove this report from your workbench");
         }else{
