@@ -90,7 +90,7 @@ extends 'WormBase::API::Object';
 ##### template ######
 
  
-has 'proteins' => (
+has 'all_proteins' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
@@ -1005,7 +1005,7 @@ sub inparanoid_groups {
 	 
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @{$self->proteins};
+    map {$_->Homology_group} @{$self->all_proteins};
     
     foreach my $cluster (@inp) {
     
@@ -1139,7 +1139,7 @@ sub treefam {
 	
 	 
 
-    foreach my $protein (@{$self->proteins}) {
+    foreach my $protein (@{$self->all_proteins}) {
 		my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 		# Ignore proteins that lack a Treefam ID
@@ -1162,7 +1162,7 @@ sub treefam {
 ###########################################
 sub best_blastp_matches {
     my $self     = shift;
-    return  $self->SUPER::best_blastp_matches($self->proteins) ;
+    return  $self->SUPER::best_blastp_matches($self->all_proteins) ;
 }
 
 
@@ -1369,7 +1369,7 @@ sub protein_domains {
 
 	 
     my %unique_motifs;
-    for my $protein (@{$self->proteins}) {
+    for my $protein (@{$self->all_proteins}) {
     	my @motifs;
     	@motifs	= $protein->Motif_homol;
 		foreach my $motif (@motifs) {
@@ -2012,7 +2012,7 @@ sub treefam_old {
     
     
     my @data;
-    foreach my $protein (@{$self->proteins}) {
+    foreach my $protein (@{$self->all_proteins}) {
 	my $treefam = $self->_fetch_protein_ids($protein,'treefam');
 	
 	# Ignore proteins that lack a Treefam ID
@@ -2031,7 +2031,7 @@ sub inparanoid_groups_old {
      
     my %seen;
     my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @{$self->proteins};
+    map {$_->Homology_group} @{$self->all_proteins};
     
     foreach my $cluster (@inp) {
 	my @proteins = $cluster->Protein;
