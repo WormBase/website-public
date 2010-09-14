@@ -9,6 +9,8 @@
 					      }
 					    
 				      });
+$(this).children("#save").toggleClass("ui-state-active");
+
 	return false;
       });
        $(".status-bar").load("/rest/auth", function(response, status, xhr) {
