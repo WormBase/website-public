@@ -884,7 +884,7 @@ sub reference_allele {
 	my @array;
 	foreach my $reference_allele (@{$ref_alleles}) {
 	    my $flanking_sequence = eval {$reference_allele->Flanking_sequences};
-	    push @array, $self->_pack_obj($reference_allele,$reference_allele->Public_name,flanking_sequence=>"$flanking_sequence");
+	    push @array, $self->_pack_obj($reference_allele,$reference_allele->Public_name,flanking_sequence=>$flanking_sequence?1:0);
 	}
 	 
 	 
@@ -907,7 +907,7 @@ sub alleles {
 	my $name = $allele->Public_name;
     	if ($allele->CGC_name) {
     		my $flanking_sequence = eval {$allele->Flanking_sequences};
-    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>"$flanking_sequence");	
+    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0);	
 	}
 	push @snps, $self->_pack_obj($allele,$name) if $allele->SNP(0) && !$allele->RFLP(0);
 	push @rflps, $self->_pack_obj($allele,$name) if $allele->RFLP(0);
