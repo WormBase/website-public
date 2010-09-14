@@ -81,7 +81,7 @@
                       search = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
                }
      ensembl = { description = 'The Ensembl Project'
-                      search = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s'
+                      search = 'http://www.ensembl.org/%s/protview?peptide=%s'
                         base = 'http://www.ensembl.org'
                }
          sgd = { description = 'GO Term finder - Stanford University'
