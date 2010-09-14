@@ -75,8 +75,14 @@
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
-          USE String(site.external_urls.$link.search);
-          url = String.replace('%s', id);
+          USE String=format(site.external_urls.$link.search);
+	  IF (link == 'ensembl');
+	    UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
+	    array=id.split('&');
+	    url = String(array.first array.last);
+	  ELSE;
+	    url = String(id);
+	  END;
        ELSE;
           url = site.external_urls.$link.base;
        END;
