@@ -310,6 +310,19 @@ sub expression_cluster {
  return _wrap_objs($self, \@ec, 'expression_cluster');
 }
 
+sub interaction {
+  my ($self, $args) = @_;
+  my $query = $args->{pattern};
+  my $DB = $self->dbh;
+
+  my @interactions;
+  my @genes = @{fetchGene($self, $query)};
+  @interactions = map {eval {$_->Interaction} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
+
+  return unless @interactions;
+  return _wrap_objs($self, \@interactions, 'interaction');
+}
+
 
 sub phenotype {
     my ($self, $args) = @_;
