@@ -703,9 +703,8 @@ sub interactions {
     my $version = $self->ace_dsn->version;
     my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
     my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-    
-    #### data pull and packaging
-    
+
+
     my $gene_data_lines = `grep $object $datafile`;
     my @gene_data_lines = split /\n/,$gene_data_lines;
     
@@ -717,21 +716,10 @@ sub interactions {
         push @interaction_data,$dataline_set[0];
     }
 
-    #my $data_pack = $self->basic_package(\a);
-
-    foreach my $interaction_name (@interaction_data) {
+    my %interaction_ret;
+    map {$interaction_ret{"$_"} = $self->_pack_obj($_)} @interaction_data;
     
-            $data_pack{$interaction_name} = 
-	      {
-	      'class' => 'Interaction',
-	      'common_name' => $interaction_name
-              };
-    }
-
-
-    ###############################
-
-    $data{'data'} = \%data_pack;
+    $data{'data'} = \%interaction_ret;
     $data{'description'} = $desc;
     return \%data;
 
