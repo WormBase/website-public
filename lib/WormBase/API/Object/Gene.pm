@@ -535,34 +535,47 @@ sub anatomy_function {
 
     my $self = shift;
     my $object = $self->object;
-    my %data;
-    my $desc = 'notes ;
-                data structure = data{"data"} = {
-                }';
 
-    my %data_pack;
 
-    #### data pull and packaging
 
+
+    my @data;
     my @anatomy_fns = $object->Anatomy_function;
-    
-    foreach my $af (@anatomy_fns) {
-
-        my $afn_phenotype = $af->Phenotype;
-        my $phenotype_prime_name = $afn_phenotype->Primary_name;
-    
-        $data_pack{$af} = {
-                            'ace_id' => $af,
-                            'class' => 'Anatomy_function',
-                            'phenotype_id' => $afn_phenotype,
-                            'phenotype_name' => $phenotype_prime_name
-                            };  
+    foreach my $anatomy_fn (@anatomy_fns){
+      my %anatomy_fn_data;
+      my $afn_bodypart_set = $anatomy_fn->Body_part;
+      if($afn_bodypart_set =~ m/Not_involved/){
+          next;
+      }
+      else{
+          my $afn_phenotype = $anatomy_fn->Phenotype;
+          $anatomy_fn_data{'anatomy_fn'} = $self->_pack_obj($anatomy_fn);
+          $anatomy_fn_data{'phenotype'} = $self->_pack_obj($afn_phenotype, $afn_phenotype->Primary_name); #$phenotype_prime_name;
+          my @afn_bodyparts = $afn_bodypart_set->col if $afn_bodypart_set;
+          my @ao_terms;
+          foreach my $afn_bodypart (@afn_bodyparts){
+            my $ao_term_details;
+            my @afn_bp_row = $afn_bodypart->row;
+            my ($ao_id,$sufficiency,$description) = @afn_bp_row;
+            if( ($sufficiency=~ m/Insufficient/)){
+                next;
+            }
+            else{
+                my $term = $ao_id->Term;
+                $ao_term_details = $self->_pack_obj($term);
+            }
+            push @ao_terms,$ao_term_details;
+          }
+          $anatomy_fn_data{'terms'} = \@ao_terms;
+      }
+      push @data, \%anatomy_fn_data;
     }
 
-    ####
 
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
+    my %data;
+
+    $data{'data'} = \@data;
+    $data{'description'} = "anatomy function";
     return \%data;
 }
 

@@ -15,15 +15,15 @@
       [% external_link('phosphopep', '...access more phosphorylation information in phosphopep') %]
    [% END %]
 
-   [% WRAPPER $field_block title="Interactions" key="interactions"-%]
-      [%# FOREACH item IN fields.interactions.data %]
-        [%# tag2link(item) %]
-      [%# END %]
-      There
-      [% IF fields.interactions.data.size == 1 %]
-        is [% searchlink('interaction', object.name.data.id, fields.interactions.data.size) %] interaction which involves
-      [% ELSE %]
-        are [% searchlink('interaction', object.name.data.id, fields.interactions.data.size) %] interactions which involve
+
+   [% WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"-%] 
+      [% FOREACH i IN fields.anatomy_function.data %]<br />
+        Anatomical Site(s): 
+          [% FOREACH term IN i.terms %]
+            [% tag2link(term) %], 
+          [% END %]
+          <br />
+        Phenotype: [% tag2link(i.phenotype) %] <br />
+        via Anatomy Function: [% tag2link(i.anatomy_fn) %]<br />
       [% END %]
-      [% tag2link(object.name.data) %]
    [% END %]
