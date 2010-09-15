@@ -17,13 +17,21 @@
 
 
    [% WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"-%] 
-      [% FOREACH i IN fields.anatomy_function.data %]<br />
-        Anatomical Site(s): 
+
+  <table border=1 class="anatomy_function">
+      <tr><th>Anatomical Site(s)</th><th>Phenotype</th><th>via Anatomy Function</th></tr>
+    [% FOREACH i IN fields.anatomy_function.data %]
+          <tr>
+              <td>
           [% FOREACH term IN i.terms %]
             [% tag2link(term) %], 
           [% END %]
-          <br />
-        Phenotype: [% tag2link(i.phenotype) %] <br />
-        via Anatomy Function: [% tag2link(i.anatomy_fn) %]<br />
-      [% END %]
+              </td>
+              <td>[% tag2link(i.phenotype) %]</td>
+              <td>[% tag2link(i.anatomy_fn) %]</td>
+          </tr>
+    [% END %]
+    </table>
+
+
    [% END %]
