@@ -690,7 +690,7 @@ sub regulation_on_expression_level {
 			? 'Negatively regulates '
 			: 'Negatively regulated by ';
 		}
-		
+	
 		my $common_name     = $self->_public_name($target);
 		push @stash,{ string => $string,
 			      target => $self->_pack_obj($target, $common_name),
@@ -730,7 +730,7 @@ sub interactions {
     }
 
     my %interaction_ret;
-    map {$interaction_ret{"$_"} = $self->_pack_obj($_)} @interaction_data;
+    map {$interaction_ret{"$_"} = { id => "$_", class => "interaction", label => "$_" }} @interaction_data;
     
     $data{'data'} = \%interaction_ret;
     $data{'description'} = $desc;
@@ -2863,7 +2863,7 @@ sub _public_name {
     
     my ($self,$object) = @_;
     my $common_name;    
-    my $class = $object->class;
+    my $class = eval{$object->class} || "";
    
     if ($class =~ /gene/i) {
         $common_name = 

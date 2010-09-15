@@ -87,6 +87,7 @@ sub _pack_objects {
 
 sub _pack_obj {
     my ($self,$object,$label,%args) = @_;
+    return unless defined $object;
     $label = "$object" unless $label;
      
     my %data = ( id => "$object",
