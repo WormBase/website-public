@@ -35,6 +35,10 @@ has 'stringified_responses' => (
 
 # This is just the configuration directory
 # for instantiating Log::Log4perl object. Janky.
+has pre_compile => (
+    is       => 'ro',
+    );
+
 has conf_dir => (
     is       => 'ro',
     required => 1,
@@ -66,6 +70,7 @@ sub _build_database {
 				  -InterPolateVars => 1
     );
     $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
+    $self->pre_compile($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile});
     return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
 }
 
@@ -151,6 +156,7 @@ sub fetch {
 						log => $self->log,
 						dsn	 => $self->_services,
 						tmp_base  => $self->tmp_base,
+						pre_compile  => $self->pre_compile,
 					      });
     
 }
