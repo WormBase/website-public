@@ -26,6 +26,10 @@ has 'log' => (
 has 'tmp_base' => (
     is => 'ro',
     );
+ 
+has 'pre_compile' => (
+    is => 'ro',
+    );
 
 
 sub gff_dsn {

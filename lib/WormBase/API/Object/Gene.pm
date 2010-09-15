@@ -85,7 +85,16 @@ extends 'WormBase::API::Object';
 # our $phenotype_name_file = "phenotype_id2name.txt";
 # our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
 
-
+has 'gene_pheno_datadir' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my $version = $self->ace_dsn->version;
+	return $self->pre_compile->{base}.$version.$self->pre_compile->{gene};
+    }
+);
+ 
 #####################
 ##### template ######
 
@@ -583,69 +592,168 @@ sub anatomy_function {
 sub phenotype {
 
     my $self = shift;
-    my $not = shift;
-    my $object = $self->object;
-    my %data;
-    my $desc = 'notes ;
-                data structure = data{"data"} = {
-                }';
-
-    my %data_pack;
+#     my $not = shift;
+    my $GENE = $self->object;
+   
 
     #### data pull and packaging
  
-    
-    my ($details,$rnai_id_data) = $self->_get_phenotype_data($object, $not);  
-    my ($variation_data,$varid2name) = $self->_get_variation_data($object, $not);
-    my %variation_data;
-    my %rnai_count_data;
-    
-    foreach my $rnai_id_data_line (@$rnai_id_data) {
-        
-        my ($phenotype_id, $rnai_count) = split /\|/, $rnai_id_data_line;
-        $rnai_count_data{$phenotype_id} = $rnai_count;
-    }
-    
-    
-    foreach my $variation_data_line (@$variation_data) {
+    my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
+    my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
+    my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
+    my ($variation_data_not, $variation_name_hr_not) = $self->_get_variation_data($GENE);
+    my $xgene_data = $self->_get_xgene_data($GENE, 1);
+    my $xgene_data_not = $self->_get_xgene_data($GENE);
 
-        my ($phenotype_id, $variation_info) = split /\|/, $variation_data_line;
-        my @variation_data = split "&", $variation_info;
+    my $phenotype_names_hr  = $self->_get_phenotype_names($phenotype_data,$variation_data);
+    my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
 
-        foreach my $variation_datum (@variation_data) {
-            
-	    
-            my ($variation, $status) = split /\+/, $variation_datum;    
-            $variation_data{$phenotype_id}{$variation} = {
-                
-                'status' => $status,
-                'variation_name' => $$varid2name{$variation},
-                'class' => 'Variation'
-            }                                   
-        }
-    } 
+    my $pheno_table = $self->_print_phenotype_table($phenotype_data,
+						$variation_data,
+						$phenotype_names_hr,
+						$xgene_data,
+						$variation_name_hr);
+    my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
+						$variation_data_not,
+						$phenotype_names_not_hr,
+						$xgene_data_not,
+						$variation_name_hr_not);
+    my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
+    my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
 
-    # my $variation_data_line = join ',' , @$variation_data;
-    my $phenotype_names_hr  = $self->_get_phenotype_names($details,$variation_data);
 
-        foreach my $pheno_id (keys %$phenotype_names_hr) {
+    my $data = { description => 'The Phenotype summary of the gene',
+		 data        => { pheno=>$pheno_table,	
+				  pheno_not=>$pheno_table_not,
+				  rnai=>$rnai_details_table,
+				  rnai_not=>$rnai_not_details_table,
+				},
+	};
 
-        $data_pack{$pheno_id} = {
-            'phenotype' => $phenotype_names_hr->{$pheno_id},
-            'class' => 'Phenotype',
-            'variation_data' => $variation_data{$pheno_id},
-            'rnai_count' => $rnai_count_data{$pheno_id}
-        };
-    }
-
-    ####
-
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
+    return $data;    
+ 
 }
 
+sub _print_rnai_details_table {
 
+	my ($self, $rnai_details_ar, $phene_id2name_hr) = @_;
+	my @array;
+	foreach my $rnai_detail (@$rnai_details_ar) {
+	
+		my ($rnaix,$phenes,$genotype,$ref) = split /\|/,$rnai_detail;
+		my @phenes = split /\&/, $phenes;
+		my $ref_obj = $self->ace_dsn->fetch(-class=>'Paper', -name=>$ref);
+		my $paper = $self->wrap($ref_obj);
+		my $formated_ref = $paper->authors->{data}[0]->{label};	
+
+		my @phenotype_set;
+		my @row;
+
+		foreach my $phene (@phenes) {
+			push @phenotype_set,{  class=>'phenotype',
+					      id=>$phene,
+					    label=>$$phene_id2name_hr{$phene},
+					    };
+		
+		}
+		
+		 
+		 
+		push @array, {rnai=> {  class=>'rnai',
+					      id=>$rnaix,
+					    label=>"$rnaix"
+						},
+			      phenotype=>\@phenotype_set,
+			      genotype=>$genotype,
+			      cite=>$self->_pack_obj($ref_obj,"$formated_ref et al."),
+			};
+		
+	}
+	
+	 
+	return \@array;
+}
+
+sub _print_phenotype_table {
+
+    ## get data
+
+    my ($self,$rnai_data_ar, $var_data_ar, $phenotype_id2name_hr, $xgene_data_ar, $var_id2name_hr) = @_;
+
+    ## build data structures
+
+    my %rnai_data;
+    foreach my $rnai_data_line (@$rnai_data_ar) {
+
+	    my ($phenotype_id,$experiment_count) = split /\|/,$rnai_data_line;
+	    $rnai_data{$phenotype_id} = $experiment_count;
+
+    }
+
+    my %var_data;
+    foreach my $var_data_line (@$var_data_ar) {
+
+	    my ($phenotype_id,$var_list) = split /\|/,$var_data_line;
+	    $var_data{$phenotype_id} = $var_list;
+
+    }
+
+    my %xgene_data;
+    foreach my $xgene_data_line (@$xgene_data_ar) {
+
+	    my ($phenotype_id,$xgene_list) = split /\|/,$xgene_data_line;
+	    $xgene_data{$phenotype_id} = $xgene_list;
+
+    }
+    my @data;
+    ## consolidate phenotype list and get phenotype names
+    foreach my $phenotype_id (keys %$phenotype_id2name_hr ){ 
+
+	    my $phenotype_link = {  class=>'phenotype',
+				    id=>$phenotype_id,
+				    label=>$$phenotype_id2name_hr{$phenotype_id},
+				};
+	    my $supporting_evidence;
+	    ## variation evidence
+	  
+	    my @allele_links;
+	    if ($var_data{$phenotype_id}) {
+		    my @allele_set = split /\&/, $var_data{$phenotype_id};
+		    foreach my $allele_data (@allele_set) {
+			    my ($allele, $seq_status) = split /\+/,$allele_data;
+			    my $var_name = $var_id2name_hr->{$allele};
+			    my $boldface = ($seq_status =~ m/sequenced/i) ;
+			    push @allele_links, {  class=>'variation',
+				    id=>$allele,
+				    label=>$var_name,boldface=>$boldface
+				}; 
+		    }
+	    }
+		    
+	    $supporting_evidence->{allele} = \@allele_links;;
+	    
+	    ### xgene evidence
+	    my @xgene_links;
+	    if ($xgene_data{$phenotype_id}) { ###
+		    my @xgene_set = split /\&/, $xgene_data{$phenotype_id};
+		    my @xgene_links;
+		    foreach my $xgene_data (@xgene_set) {
+			    my ($xgene, $seq_status) = split /\+/,$xgene_data;	
+			    push @xgene_links,  $self->__pack_obj($xgene);    
+		    }
+	    }
+
+	    $supporting_evidence->{transgene} = \@xgene_links;; 
+	    if ($rnai_data{$phenotype_id}) {
+		    $supporting_evidence->{rnai} = $rnai_data{$phenotype_id} ;
+	    }
+	    push @data, {	id => $phenotype_link,
+				evidence => $supporting_evidence,
+			  }
+    }
+
+    return \@data;
+} 
 
 # Gene regulation
 sub regulation_on_expression_level {
@@ -2672,10 +2780,7 @@ sub _get_phenotype_names {
 
 	my ($self, $rnai_ar, $var_ar) = @_;
 	my %phene_master;
-	my $version = $self->ace_dsn->dbh->version;
-	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-	my $phenotype_name_file = "phenotype_id2name.txt";  
-
+	
 	foreach my $rnai_phene_line (@$rnai_ar) {
 	
 		my ($phene_id, $disc) = split /\|/,$rnai_phene_line;
@@ -2689,7 +2794,7 @@ sub _get_phenotype_names {
 	}
 	
 	my %phene_id2name;
-	my %fullset_phene_id2name = build_hash("$gene_pheno_datadir/$phenotype_name_file");
+	my %fullset_phene_id2name = build_hash($self->gene_pheno_datadir.$self->pre_compile->{phenotype_name_file});
 	foreach my $phene_id (keys %phene_master) {
 				
 		$phene_id2name{$phene_id} = $fullset_phene_id2name{$phene_id};  ## $phene_primary_name
@@ -2698,6 +2803,50 @@ sub _get_phenotype_names {
 	return \%phene_id2name;
 }
 
+#transgene info?
+sub _get_xgene_data {
+
+	my ($self, $gene, $positive_results) = @_; ## , $phenotype_ar
+	
+	my $gene_xgene_data; ## = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file`;
+	my $gene_xgene_phene_file = $self->gene_pheno_datadir.$self->pre_compile->{gene_xgene_phene_file};
+	
+	if($positive_results) {
+	
+		$gene_xgene_data = `grep $gene  $gene_xgene_phene_file | grep -v Not `;
+	
+	} else {
+	
+		$gene_xgene_data = `grep $gene $gene_xgene_phene_file | grep Not `;
+	
+	}
+	
+	#print "$gene_variation_data\n";
+	
+	my @gene_xgene_data = split /\n/, $gene_xgene_data;
+	
+	my %phenotype_xgene;
+	
+	foreach my $xgene_data_line (@gene_xgene_data) {
+	
+		my ($gene,$xgene,$phenotype,$not,$seq_stat)  = split /\|/, $xgene_data_line;
+		$xgene = $xgene . "+" . $seq_stat;
+		$phenotype_xgene{$phenotype}{$xgene} = 1;
+		
+	}
+	
+	my @return_data;
+
+	foreach my $phene (keys %phenotype_xgene) {
+	
+		my $xgenes_hr = $phenotype_xgene{$phene};
+		my @xgenes = keys %$xgenes_hr;
+		my $xgenes_line = join "&", @xgenes;
+		push @return_data, "$phene\|$xgenes_line";
+	}
+
+	return \@return_data;	
+}
 
 sub _get_phenotype_data {
 
@@ -2706,11 +2855,9 @@ sub _get_phenotype_data {
 	my %rnai_phenotypes;
 	my %rnai_genotype;
 	my %rnai_ref;
-	my $version = $self->ace_dsn->dbh->version;	
-	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-	my $rnai_details_file = "rnai_data.txt";
-	my $rnai_details = "$gene_pheno_datadir/$rnai_details_file";
-	my  $gene_rnai_phene_file = "gene_rnai_pheno.txt";
+
+	my $rnai_details = $self->gene_pheno_datadir.$self->pre_compile->{rnai_details_file};
+	my  $gene_rnai_phene_file = $self->gene_pheno_datadir.$self->pre_compile->{gene_rnai_phene_file};
 
 	open RNAI_DATA, "<$rnai_details" or die "Cannot open RNAi details file: $rnai_details\n";
 	
@@ -2729,11 +2876,11 @@ sub _get_phenotype_data {
 	
 	if($positive_results) {
 	
-		$gene_phenotype_data = `grep $gene $gene_pheno_datadir/$gene_rnai_phene_file | grep -v Not `;
+		$gene_phenotype_data = `grep $gene $gene_rnai_phene_file | grep -v Not `;
 	
 	} else {
 	
-		$gene_phenotype_data = `grep $gene $gene_pheno_datadir/$gene_rnai_phene_file | grep Not `;
+		$gene_phenotype_data = `grep $gene $gene_rnai_phene_file | grep Not `;
 	
 	}
 	
@@ -2786,17 +2933,16 @@ sub _get_variation_data {
 
 	my ($self,$gene, $positive_results) = @_; ## , $phenotype_ar
 	my $gene_variation_data; ## = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file`;
-	my $version = $self->ace_dsn->dbh->version;
-	my $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-	my $gene_variation_phene_file = "variation_data.txt";
+	 
+	my $gene_variation_phene_file = $self->gene_pheno_datadir.$self->pre_compile->{gene_variation_phene_file};
     
 	if($positive_results) {
 	
-		$gene_variation_data = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file | grep -v Not `;
+		$gene_variation_data = `grep $gene $gene_variation_phene_file | grep -v Not `;
 	
 	} else {
 	
-		$gene_variation_data = `grep $gene $gene_pheno_datadir/$gene_variation_phene_file | grep Not `;
+		$gene_variation_data = `grep $gene $gene_variation_phene_file | grep Not `;
 	
 	}
 	
