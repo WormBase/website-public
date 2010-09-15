@@ -36,8 +36,8 @@
                     <div style="margin:0.5em">
                       [% markup(ev.text) %]
                       [% IF ev.evidence %] 
-                        [% id = id+1; c.session.$id= ev.text; c.session.object= object.object %]
-                        <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/[% id %]"></a>
+                        [% id = id+1; c.user_session.evidence.des.$id= ev.text; c.user_session.object= object.object %]
+                        <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/des/[% id %]"></a>
                       [% END %]
                     </div>
                   [% END %]

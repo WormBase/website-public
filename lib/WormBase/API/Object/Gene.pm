@@ -958,11 +958,11 @@ sub rearrangements{
 sub inparanoid_groups {
 
 	my $self = shift;
-    my $object = $self->object;
+	my $object = $self->object;
 	my %data;
 	my $desc = 'homology groups for this gene determined via inparanoid method';
 
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 	
@@ -972,30 +972,37 @@ sub inparanoid_groups {
     map {$_->Homology_group} @{$self->all_proteins};
     
     foreach my $cluster (@inp) {
-    
-		my @proteins = $cluster->Protein;
 		my %proteins;
-		foreach my $protein (@proteins) {
+		foreach my $protein ($cluster->Protein) {
 		
 	   		my $species = $protein->Species || $self->id2species($protein) || 'unknown';
-	   		my $common_name = public_name($protein,'Protein');
-	   		$proteins{'proteins'} = {
-	   								'class' => 'Protein',
-	   								'common_name' => $common_name,
-	   								'species' => $species
+			my ($class,$id);
+			if($self->wb_protein($species)){
+			    $class    = "protein";
+			   $id = $protein;
+			}else{
+			   $protein =~ /(\w+):(.+)/ ;
+			   $class    = $1;
+			   $id = $2;
+			} 
+			if($class eq 'ENSEMBL') {
+			      (my $sp=$species) =~ s/ /_/g;
+			      $id="$sp&$id" ;
+			}
+	   		push @{$proteins{$species}} , {
+	   								'class' => "$class",
+	   								'id' => "$id" ,
+	   								'label' => "$protein",
 	   								};
 	   								
-			$data_pack{$cluster} = {
-								'class' => 'Homology_group',
-								'common_name' => $cluster,
-								'proteins' => \%proteins
-								};
-	}
-		
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+	      }
+	      push @data_pack, $self->_pack_obj($cluster,'',proteins=>\%proteins);
+	}							 
+  
+  $data{'data'} = \@data_pack;
+  $data{'description'} = $desc;
+  return \%data;
+ 
 }	
 
 
@@ -1006,27 +1013,16 @@ sub paralogs {
 	my %data;
 	my $desc = 'This genes paralogs';
 
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 	
 	my @paralogs = $object->Paralog;
-	
-	foreach my $paralog (@paralogs) {
-	
-			## upgrade code to get protein common name
-			
-			my $common_name = $object->Name; ##public_name($paralog,'Protein')
-			$data_pack{$paralog} = {
-									'common_name' => $common_name,
-									'class' => 'Protein'
-									};
-	
-	}
-	
-	#### end data pull ###
+	@data_pack = map {$self->bestname($_);} @paralogs;
+	 
+	 
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -1038,31 +1034,33 @@ sub orthologs {
 	    my $object = $self->object;
 	my %data;
 	my $desc = 'this genes orthologs';
-	my %data_pack;
+	my @data_pack;
 			  
 	#### data pull and packaging
 
 	my @orthologs = $object->Ortholog;
+# 	 my @orthologs = $object->at("Gene_info.Ortholog");
 	#my $data_pack = $self->basic_package(\@orthologs);
 
 	foreach my $ortholog (@orthologs) {
 
-	  my $ortholog_name = $self->public_name($ortholog,'Gene');
+# 	  my $ortholog_name = $self->public_name($ortholog,'Gene');
 	  my $species = $ortholog->right;
-	  my @analyses = $ortholog->right->right->col;
-	 
-	  $data_pack{$ortholog} = {
-	    'ace_id' => $ortholog,
-	    'ortholog_name' => $ortholog_name,
-	    'species' => $species,
-	    'analyses' => \@analyses,
-	    'class' => 'Gene'
-	  };
+# 	  my @analyses = $ortholog->right->right->col;
+	  push @data_pack, {	 species=>$species,
+				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
+				 sequence=>{ class=>'ebsyn',
+					      id=>$ortholog->Sequence_name,
+					      label=>'syntenic alignment',
+					  },
+				 evidence=>$self->check_empty($species),
+			    }
+	   
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -1097,26 +1095,21 @@ sub treefam {
 	my %data;
 	my $desc = 'data associated with gene for rendering treefam data';
 
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 	
 	 
 
-    foreach my $protein (@{$self->all_proteins}) {
-		my $treefam = $self->_fetch_protein_ids($protein,'treefam');
-	
+	foreach  (@{$self->all_proteins}) {
+		my $treefam = $self->_fetch_protein_ids($_,'treefam');
 		# Ignore proteins that lack a Treefam ID
 		next unless $treefam;
-		my $id = $object->Sequence_name || $treefam;
-		
-		$data_pack{$protein} = {
-								'treefam_id' => $id
-								};
-	}
+		push @data_pack, $treefam;
+	}			
 	## end classic code ##
 	
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
