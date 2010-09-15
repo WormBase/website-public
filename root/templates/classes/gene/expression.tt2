@@ -43,14 +43,3 @@
       [% END %]
    [% END %]
 
-   [% WRAPPER $field_block title="Interactions" key="interactions"-%]
-      [%# FOREACH item IN fields.interactions.data %]
-        [%# tag2link(item) %]
-      [%# END %]
-      Fount
-      [% IF fields.interactions.data.size == 1 %]
-        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interaction") %]
-      [% ELSE %]
-        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interactions") %]
-      [% END %]
-   [% END %]
