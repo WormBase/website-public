@@ -4,15 +4,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'interactors' => (
-    is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-	my $self = shift;
-	return $self ~~ 'Interactor' ;
-    }
-);
 
 
 has 'interaction_type' => (
@@ -69,27 +60,42 @@ has 'non_directional_interactors' => (
 );
 
 
-#######
-
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
 
 ########
+
+
+### I added methods cause I needed them -AC ###
+sub name {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = { description => 'The name of the interaction',
+         data        => $self->_pack_obj($object),
+    };
+    return $data;
+}
+
+sub interactor {
+    my $self = shift;
+    my $object = $self->object;
+    my @genes = $object->Interactor;
+    my $data = { description => 'The genes in this interaction',
+         data        =>  map{$self->_pack_obj($_, $_->Public_name)} @genes, 
+    };
+    return $data;
+}
+
+sub remark {
+    my $self = shift;
+    my $object = $self->object;
+    my $data = { description => 'The remark on this interaction',
+         data        => $object->Remark,
+    };
+    return $data;
+}
+### END METHODS ADDED BY AC ###
+
+
+
 
 sub description {
 
