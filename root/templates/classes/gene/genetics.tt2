@@ -56,7 +56,7 @@
 
 [% WRAPPER $field_block title="Strains carrying $object.name.label" %]
     [% FOREACH obj IN fields.strains.data %]
-	  [% IF obj.boldface.defined %] 
+	  [% IF obj.boldface %] 
 	      <b>[%  tag2link(obj) %]</b>   
 	  [% ELSIF  obj.italicized.defined %]
 	     <i>[%  tag2link(obj) %]</i>
