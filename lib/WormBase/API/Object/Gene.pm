@@ -738,6 +738,16 @@ sub interactions {
 
 }
 
+sub interaction_count {
+    my $self = shift;
+    my $object = $self->object;
+    my @interactions = $object->Interaction;
+    my $data = { description => "interactions the gene is involved in",
+                    data => scalar(@interactions)
+    };
+    return $data;
+}
+
 
 ###########################################
 # Components of the Gene Ontology panel

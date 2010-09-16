@@ -6,19 +6,6 @@ extends 'WormBase::API::Object';
 
 
 
-has 'interaction_type' => (
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $object = $self->object;
-    	my $interaction_type = $object->Interaction_type;
-    	return $interaction_type;
-  	}
-);
-
 has 'effector' => (    
 	is  => 'ro',
     isa => 'Ace::Object',
@@ -78,8 +65,9 @@ sub interactor {
     my $self = shift;
     my $object = $self->object;
     my @genes = $object->Interactor;
+    @genes = map{$self->_pack_obj($_, $_->Public_name)} @genes;
     my $data = { description => 'The genes in this interaction',
-         data        =>  map{$self->_pack_obj($_, $_->Public_name)} @genes, 
+         data        =>  \@genes, 
     };
     return $data;
 }
@@ -89,6 +77,27 @@ sub remark {
     my $object = $self->object;
     my $data = { description => 'The remark on this interaction',
          data        => $object->Remark,
+    };
+    return $data;
+}
+
+sub interaction_type {
+    my $self = shift;
+    my $object = $self->object;
+    my $type = $object->Interaction_type;
+
+    my %interaction_info;
+    $interaction_info{'effector'} = $self->_pack_obj($type->Effector) if $type->Effector;
+    $interaction_info{'effected'} = $self->_pack_obj($type->Effected) if $type->Effected;
+    if ($type->Non_directional){
+      my @genes = map{$self->_pack_obj($_)} $type->Non_directional;
+      $interaction_info{'non_directional'} = \@genes;
+    }
+
+    my $data = { description => 'The remark on this interaction',
+                 data        => { type  =>  "$type",
+                                  interaction_info  =>  \%interaction_info,
+                                },
     };
     return $data;
 }
