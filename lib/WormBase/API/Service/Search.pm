@@ -317,7 +317,7 @@ sub interaction {
 
   my @interactions;
   my @genes = @{fetchGene($self, $query)};
-  @interactions = map {eval {$_->Interaction} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
+  @interactions = map {eval { map { my $t = $_->Interaction_type; ("$t" eq "No_interaction")? "": $_;} $_->Interaction} } @genes if (@genes == 1); #only lookup for exact matches (shoudl we allow more??)
 
   return unless @interactions;
   return _wrap_objs($self, \@interactions, 'interaction');
@@ -398,6 +398,7 @@ sub _wrap_objs {
 
   my @ret;
   foreach my $ace_obj (@$list) {
+    next unless eval{$ace_obj->class};
     # this is faster than passing the ace_obj.  I know, weird.
     my $object = $api->fetch({class => $ace_obj->class, 
                             name => $ace_obj}) or die "$!";
@@ -407,7 +408,6 @@ sub _wrap_objs {
       $field_data = $field_data->{data};
       $data{$field} = $field_data;
     }
-    $data{'class'} = $class;
     push(@ret, \%data);
   }
   return \@ret;

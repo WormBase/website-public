@@ -1,9 +1,0 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
-[% WRAPPER "boilerplate/field" title="Expression Cluster" -%]
-    <!-- Just a list of objects.  This should be generalized / tableized -->
-    [% FOR e=expression_cluster %]
-        [% url.Link(e) %]<br />
-    [% END %]
-[% END %]

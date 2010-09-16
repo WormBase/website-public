@@ -1,8 +1,6 @@
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
 
-    [% item.interaction_type.type %]:
+
+    <span id="fade">[% item.interaction_type.type %]:</span>
     [% IF item.interaction_type.interaction_info.effector %]
       [% tag2link(item.interaction_type.interaction_info.effector) %] -->
       [% tag2link(item.interaction_type.interaction_info.effected) %] 
@@ -10,6 +8,5 @@
       [% tag2link(item.interaction_type.interaction_info.non_directional.0) %] <-->
       [% tag2link(item.interaction_type.interaction_info.non_directional.1) %]
     [% END %]
-
-    <br />
-    [% item.remark %] <br />
+    </li>
+    [% tag2link(item.name) %] <br/>

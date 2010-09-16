@@ -1,6 +1,0 @@
-[% WRAPPER "boilerplate/section" title="Antibodies" %]
-    [% FOR entry=antibodies %]
-       [% url.Link(item=entry.0 text="For more details see: ${entry}.1") %]
-    [% END %]
-[% END %]
-
