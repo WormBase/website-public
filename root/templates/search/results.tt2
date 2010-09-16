@@ -14,61 +14,10 @@
 [% FOREACH item IN results %]
   [%# url = c.uri_for_action('report',item.class, item.name.id) %]
   [% url = get_url(item.class, item.name.id) %]
-
-
-  [% # GENES %]
-  [% IF item.class == 'gene' %]
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
-	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-	[% markup(item.concise_description) %] <br />
-
-  [% # VARIATION %]
-  [% ELSIF item.class == 'variation' %]
-    [% PROCESS "search/variation.tt2" %]
-
-  [% # SEQUENCE %]
-  [% ELSIF item.class == 'sequence' %]
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
-        [% IF item.taxonomy %]
-	<span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-	[% END %]
-        [% item.description %] <br />
-
-  [% # PHENOTYPE %]
-  [% ELSIF item.class == 'phenotype' %]
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
-    [% IF item.description.des %][% item.description.des %] <br />[% END %]
-
-  [% # PROTEIN %]
-  [% ELSIF item.class == 'protein' %]
-    <li><span id="fade">[% item.class %]:</span>
-      [% tag2link(item.name) %]
-    </li>
-    [% IF item.taxonomy %]
-    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-    [% END %]
-        [% IF item.type %]
-           [% item.type %]<br />
-        [% END %]
-    
-
-  [% ELSIF item.class == 'paper' %]
-    [% PROCESS "search/paper.tt2" %]
-
-  [% ELSIF item.class == 'microarray_results' %]
-    [% PROCESS "search/microarray_results.tt2" %]
-
-  [% ELSIF item.class == 'expression_cluster' %]
-    [% PROCESS "search/expression_cluster.tt2" %]
-
-  [% # OTHER %]
-  [% ELSE %]
+  [% TRY %]
+    [% file = "search/" _ item.class _ ".tt2" %]
+    [% PROCESS "$file" %]
+  [% CATCH %]
     <li><span id="fade">[% item.class %]:</span>
       [% tag2link(item.name) %]
     </li>

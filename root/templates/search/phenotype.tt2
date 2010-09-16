@@ -1,0 +1,4 @@
+    <li><span id="fade">[% item.class %]:</span>
+      [% tag2link(item.name) %]
+    </li>
+    [% IF item.description.des %][% item.description.des %] <br />[% END %]

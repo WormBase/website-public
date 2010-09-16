@@ -88,7 +88,9 @@ sub _pack_objects {
 sub _pack_obj {
     my ($self,$object,$label,%args) = @_;
     return unless defined $object;
-    $label = "$object" unless $label;
+    unless($label){
+      $label = eval{$object->Public_name} || "$object";
+    }
      
     my %data = ( id => "$object",
               label => $label,
