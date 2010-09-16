@@ -1,8 +1,0 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
-[% WRAPPER "boilerplate/field" title="Primer pairs" %]
-    [% FOR primers=primer_pairs %]
-       [%# url.Link(item=primers action="PCR_product") %]
-    [% END %]
-[% END %]

@@ -11,7 +11,7 @@
 
     %]
 
-<li>[% text2link(item.name.class, item.name.id, '<img src="/img/buttons/wormbase.gif" height=12/>') %]
+[% text2link(item.name.class, item.name.id, '<img src="/img/buttons/wormbase.gif" height=12/>') %]
 [% authors = [] %]
 [% FOREACH author IN  item.authors %]
   [% authors.push(tag2link(author)) %]

@@ -101,6 +101,16 @@ sub interaction_type {
     };
     return $data;
 }
+
+sub paper {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $data = { description => 'The paper for this interactions',
+                 data        => $self->_pack_obj($object->Paper, $object->Paper->Brief_citation),
+    };
+    return $data;
+}
 ### END METHODS ADDED BY AC ###
 
 

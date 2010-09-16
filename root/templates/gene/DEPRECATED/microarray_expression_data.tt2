@@ -1,6 +1,0 @@
-[% WRAPPER "boilerplate/section" title="Microarray Expression Data" -%]
-    <!-- Just a list of objects.  This should be generalized / tableized -->
-    [% FOR m=microarray_expression_data %]
-        [% url.Link(m) %]<br />
-    [% END %]
-[% END %]

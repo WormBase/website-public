@@ -1,7 +1,0 @@
-[%# DEPRECATED IN FAVOR OF GENERIC FIELD %]
-
-[% WRAPPER "boilerplate/field" title="ORFeome Project primers & sequences" %]
-    [% FOREACH orfeome IN orfeome_project_primers %]
-     [%# url.Link(orfeome) %]
-    [% END %]
-[% END %]

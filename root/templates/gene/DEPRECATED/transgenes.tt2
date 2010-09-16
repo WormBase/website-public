@@ -1,9 +1,0 @@
-[%# DEPRECATED IN FAVOR OF GENERIC FIELD %]
-
-[% WRAPPER "boilerplate/field" title="Transgene Strains" %]
-    [% FOR transgene=transgenes %]
-       [% url.Link(transgene) %]
-    [% END %]
-[% END %]
-
-

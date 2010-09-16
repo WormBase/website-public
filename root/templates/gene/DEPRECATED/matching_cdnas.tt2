@@ -1,5 +1,0 @@
-[% WRAPPER "boilerplate/field" title="Matching cDNAs" %]
-    [% FOR cdna=matching_cdnas %]
-       [% url.Link(cdna) %]
-    [% END %]
-[% END %]
