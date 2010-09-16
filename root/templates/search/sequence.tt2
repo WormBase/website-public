@@ -1,0 +1,7 @@
+    <li><span id="fade">[% item.class %]:</span>
+      [% tag2link(item.name) %]
+    </li>
+        [% IF item.taxonomy %]
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
+    [% END %]
+        [% item.description %] <br />

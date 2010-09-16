@@ -36,14 +36,11 @@
 
    [% END %]
 
-   [% WRAPPER $field_block title="Interactions" key="interactions"-%]
-      [%# FOREACH item IN fields.interactions.data %]
-        [%# tag2link(item) %]
-      [%# END %]
+   [% WRAPPER $field_block title="Interactions" key="interaction_count"-%]
       Found
-      [% IF fields.interactions.data.size == 1 %]
-        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interaction") %]
+      [% IF fields.interaction_count.data == 1 %]
+        [% searchlink('interaction', object.name.data.id, fields.interaction_count.data _ " interaction") %]
       [% ELSE %]
-        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interactions") %]
+        [% searchlink('interaction', object.name.data.id, fields.interaction_count.data _ " interactions") %]
       [% END %]
    [% END %]
