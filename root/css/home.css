@@ -98,3 +98,24 @@
 #searchForm input.text.active{  
     background: #ddeff6;  
 }  
+
+#notifications {
+  display:none;
+  position:fixed;
+  top:0em;
+  left:50%;
+  width:25em;
+  margin-left: -12.5em;
+  padding: 0.5em;
+  background: #FFFFBB;
+  border: 4px solid #FFFF33;
+  border-top: none;
+  text-align:center;
+  z-index:9999;
+  font-weight:bold;
+  color:#707070;
+}
+
+.highlight {
+  background: #FFFF33;
+}

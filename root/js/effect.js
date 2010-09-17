@@ -4,6 +4,7 @@
 //       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+    $(".tooltip").addClass("ui-icon ui-icon-lightbulb");
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
 
@@ -59,7 +60,7 @@
           $(this).addClass("ui-icon-circle-triangle-s");
         }
       });
-   
+
 	$(".tooltip").live('mouseover',function() {
 	    $(this).cluetip({
 		activation: 'click',
