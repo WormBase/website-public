@@ -1,5 +1,5 @@
   $(document).ready(function() {   
-      
+      var notify = "";
       $(".bench_update").live('click',function() {
         var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
         $("#bench_status").load(url,   function(response, status, xhr) {
@@ -9,13 +9,19 @@
                               }
                             
                           });
+        $("#bench_status").parent().addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
+
         var star = $(this).children("#save");
         star.toggleClass("ui-state-highlight");
         if(star.attr("title") == "add this report to your workbench"){
           star.attr("title","remove this report from your workbench");
+          notify = "this report has been added to your workbench";
         }else{
           star.attr("title","add this report to your workbench");
+          notify = "this report has been removed from your workbench";
         }
+        displayNotification(notify);
+//          $("#bench_status").toggleClass("highlight");
       return false;
       });
        $(".status-bar").load("/rest/auth", function(response, status, xhr) {
@@ -27,6 +33,11 @@
 
 
     });
+
+  //this function displayes the notification message at the top of the report page
+  function displayNotification(message){
+        $("#notifications").text(message).show().delay(3000).fadeOut(400);
+  }
 
   $(".update").live('click',function() {
 

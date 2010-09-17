@@ -10,7 +10,6 @@
   
    [% path = 'reports' _ '/' _ class _ '/' _ this_object_id %]
 
-
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
 <div style="width:100%; position:relative;">
