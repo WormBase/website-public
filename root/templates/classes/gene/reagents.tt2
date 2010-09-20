@@ -1,0 +1,48 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% t = pluralize("Drives Transgene", fields.transgenes.data.size) %]
+   [% WRAPPER $field_block title="$t" key="transgenes"-%] 
+      [% FOREACH item IN fields.transgenes.data %]
+        [% tag2link(item) %]<br />
+      [% END %]
+   [% END %]
+
+   [% t = pluralize("Expressed in Transgene", fields.transgene_products.data.size) %]
+   [% WRAPPER $field_block title="$t" key="transgene_products"-%] 
+      [% FOREACH item IN fields.transgene_products.data %]
+        [% tag2link(item) %]<br />
+      [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="ORFeome Project primers & sequences" key="orfeome_project_primers"-%] 
+      [% FOREACH item IN fields.orfeome_project_primers.data %]
+        [% tag2link(item) %]<br />
+      [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Primer pairs" key="primer_pairs"-%] 
+      Found [% searchlink('pcr_product', object.name.data.id, fields.primer_pairs.data.size _ " primer pairs") %]
+<span id="fade">TODO: implement primer pair search</span>
+   [% END %]
+
+   [% WRAPPER $field_block title="SAGE tags" key="sage_tags"-%] 
+      Found [% searchlink('sage_tag', object.name.data.id, fields.sage_tags.data.size _ " SAGE tags") %]
+<span id="fade">TODO: implement SAGE tag search</span>
+   [% END %]
+
+   [% WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas"-%] 
+      Found [% searchlink('sequence', object.name.data.id, fields.matching_cdnas.data.size _ " matching cDNAs") %]
+<span id="fade">TODO: check if sequence search working</span>
+   [% END %]
+
+   [% WRAPPER $field_block title="Antibodies" key="antibodies"-%] 
+      Found [% searchlink('antibody', object.name.data.id, fields.antibodies.data.size _ " antibodies") %]
+<span id="fade">TODO: implement antibody search</span>
+   [% END %]
+
+   [% WRAPPER $field_block title="Microarray probes" key="microarray_probes"-%] 
+      [% FOREACH item IN fields.microarray_probes.data %]
+        [% tag2link(item) %]<br />
+      [% END %]
+   [% END %]
