@@ -63,6 +63,15 @@
     END;
 
 
+# use this to pluraize a word
+# todo: add logic for words that need more than an additional 's'
+    MACRO pluralize(word, size) BLOCK;
+      IF (size > 1);
+        word = word _ "s";
+      END;
+      word;
+    END;
+
 # Use to create outgoing links from the site
 # params: link          - the ID for the link found in root/templates/config/external_urls
 #         text          - text displayed in the link
