@@ -1297,16 +1297,21 @@ sub microarray_probes {
     my $self     = shift;
     my $object = $self->object;
     my %seen;
-    my @oligos = grep {!$seen{$_}++}
-    grep {$_->Remark =~ /microarray\sprobe/}
+
+    my @oligos =  
+    grep {!$seen{$_}++}
+    grep {$_->Type =~ /microarray_probe/}
     map {$_->Corresponding_oligo_set} $object->Corresponding_CDS if ($object->Corresponding_CDS);
     my @stash;
     foreach (@oligos) {
-	my $comment = ($_->Remark =~ /GSC/) ? 'GSC' : 
-	    ($_->Remark =~ /Agilent/ ? 'Agilent' : 'Affymetrix');
-	push @stash,[$_,$comment];
+      my $comment = ($_->Type =~ /GSC/) ? 'GSC' : 
+      ($_->Type =~ /Agilent/ ? 'Agilent' : 'Affymetrix');
+      push @stash,$self->_pack_obj($_,"$_ [$comment]");
     }
-    return \@stash if @stash;
+    my $data = { description => "microarray probes",
+                  data => \@stash
+                };
+    return $data;
 }
 
 sub sage_tags {
