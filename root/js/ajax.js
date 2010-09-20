@@ -9,7 +9,7 @@
                               }
                             
                           });
-        $("#bench_status").parent().addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
+        $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
 
         var star = $(this).children("#save");
         star.toggleClass("ui-state-highlight");
