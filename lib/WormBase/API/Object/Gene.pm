@@ -739,7 +739,7 @@ sub _print_phenotype_table {
 		    my @xgene_links;
 		    foreach my $xgene_data (@xgene_set) {
 			    my ($xgene, $seq_status) = split /\+/,$xgene_data;	
-			    push @xgene_links,  $self->__pack_obj($xgene);    
+			    push @xgene_links,  {id=>$xgene, label=>$xgene, class=>'gene'};#$self->_pack_obj($xgene);    
 		    }
 	    }
 
