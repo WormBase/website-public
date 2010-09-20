@@ -1239,65 +1239,43 @@ sub transgenes {
     my $self       = shift;
     my $object = $self->object;
     my %data;
-    my %data_pack;
     
     
     my @transgenes = $object->Drives_Transgene;
-    
-    foreach my $transgene (@transgenes) {
-    	$data_pack{$transgene} = {
-    								'common_name' => $transgene,
-    								'class' => 'Transgene'
-    								};
-    }
+    @transgenes = map {$self->_pack_obj($_)} @transgenes;
     
     my $desc = 'transgenes driven by this gene';
     
     $data{'description'} = $desc;
-    $data{'data'} = \%data_pack;
+    $data{'data'} = \@transgenes;
     
     return \%data;
     
 }
 
+sub transgene_products {
+  my $self = shift;
+  my $object = $self->object;
+
+  my @transgene_products = map {$self->_pack_obj($_)} $object->Transgene_product;
+
+  my $data = {  description =>  "Transgenes that express this gene",
+                data    =>  \@transgene_products
+              };
+  return $data;
+}
+
 sub orfeome_project_primers {
+  my $self = shift;
+  my $object = $self->object;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				}';
+  my @segments = @{$self->segments};
+  my @ost = map {$self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
 
-	my %data_pack;
-
-	#### data pull and packaging
-   
-    
-    my @segments = $self->_fetch_segments;
-    
-    foreach my $segment (@segments) {
-    
-    	my $class;
-    	my $feature;
-    	my $info;
-   
-   		eval{$class = $segment->Class;};
-    	eval{$feature = $segment->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome');};
-    	eval{$info = $feature->info;};
-   
-   		$data_pack{$segment} = {
-   									'common_name' => public_name($segment,$class),
-   									'class' => $class,
-   									'info' => $info
-   								};
-    }
-    
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+  my $data =    {   description =>  "ORFeome Project primers and sequences",
+                    data    =>  \@ost
+                };
+  return $data;
 }
 
 sub primer_pairs {
@@ -1306,9 +1284,13 @@ sub primer_pairs {
     
     return unless @{$self->sequences};
     
-    my @segments = $self->_fetch_segments;
-    my @stash =  map {$_->info} map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
-    return \@stash if @stash;
+    my @segments = @{$self->segments};
+    my @primer_pairs =  map {$self->_pack_obj($_)} map {$_->info} map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
+
+    my $data =    {   description =>  "Primer pairs",
+                      data    =>  \@primer_pairs
+                  };
+    return $data;
 }
 
 sub microarray_probes {
@@ -1328,30 +1310,15 @@ sub microarray_probes {
 }
 
 sub sage_tags {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data;
-    my %data_pack;
-    
-    # Only include those that have been unambiguosly mapped.
-    # (Actually, will safe this for the display layer)
-    # my @stash = grep {$_->Unambiguously_mapped(0) || $_->Most_three_prime(0)} $object->SAGE_tag;
-    my @tags = $object->SAGE_tag;
+  my $self = shift;
+  my $object = $self->object;
 
-	foreach my $tag (@tags) {
-	
-		$data_pack{$tag} = {
-							'common_name' => $tag,
-							'class' => 'SAGE_tag'
-							};
-	}
-    
-    $data{'description'} = 'SAGE_tags for the gene';
-    
-    $data{'data'} = \%data_pack;
-    
-    
-    return \%data;
+  my @sage_tags = map {$self->_pack_obj($_)} $object->Sage_tag;
+
+  my $data = {  description =>  "SAGE tags identified",
+                data    =>  \@sage_tags
+              };
+  return $data;
 }
 
 # Return a list of matching cDNAs
@@ -1360,45 +1327,27 @@ sub matching_cdnas {
     my $self     = shift;
     my $object = $self->object;
     my %data;
-    my %data_pack;
     
     my %unique;
-    my @mcdnas = grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
-	
-	foreach my $mcdna (@mcdnas) {
-		
-		$data_pack{$mcdna} = {
-								'common_name' => $mcdna,
-								'class' => 'Sequence'
-								};
-	}
+    my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
 	
 	$data{'description'} = 'matching cDNAs for gene';
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@mcdnas;
 	
 	return \%data;
 }
 
 sub antibodies {
-    my $self     = shift;
-    my $object = $self->object;
-    my %data;
-    my %data_pack;
-      
-    foreach my $antibody ($object->Antibody) {
-    
-  	  	my $comment = $antibody->Summary;
-    	$comment    =~ s/^(.{100}).+/$1.../ if length $comment > 100;
-   		$data_pack{$antibody} = {
-   									'class' => 'Antibody',
-   									'comment' => $comment,
-   									'common_name' => $antibody
-   								};
-   	}	
-   	
-   	$data{'description'} = '';
-  	return \%data;
+  my $self = shift;
+  my $object = $self->object;
+
+  my @antibodies = map {$self->_pack_obj($_)} $object->Antibody;
+
+  my $data = {  description =>  "antibodies",
+                data    =>  \@antibodies
+              };
+  return $data;
 }
   
 #### complex transformation ####
