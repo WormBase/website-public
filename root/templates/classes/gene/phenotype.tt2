@@ -4,14 +4,13 @@
 
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
-  <div class="toggle">Phenotype Summary</div> 
-  <div class="toggle-container">
-  <br>Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
+  <span id="fade">TODO: Change after talking to curators</span><br />
+  Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
   [% FOREACH type IN ['pheno','pheno_not'] %]
     [% IF fields.phenotype.data.$type.size>0 %]
    <br> <i>The following phenotypes have been 
 	[% IF type == "pheno_not" %] reported as NOT [% END %]
-      observed in [% object.name.label %]</i><br.
+      observed in [% object.name.data.label %]</i><br/>
     <table border=1 >
     <tr><th>Phenotype</th><th>Supporting Evidence</th></tr>
       [% FOREACH obj IN fields.phenotype.data.$type %]
@@ -30,7 +29,7 @@
 		Transgene(s):[% FOREACH evidence IN obj.evidence.transgene %] [% tag2link(evidence) %] [% END %]<br>
 		[% END %]
 		[% IF obj.evidence.rnai %]
-		Supported by [% obj.evidence.rnai %] RNAi experiment(s)
+		Supported by [% obj.evidence.rnai %] RNAi [% pluralize("experiment", obj.evidence.rnai) %]
 		[% END %]
 		</td>
 	  </tr> 
@@ -38,38 +37,5 @@
     </table>
     [% END %]
    [% END %]
-  </div>
-
-  <div class="toggle">RNAi Details</div> 
-  <div class="toggle-container">
-  
-  [% FOREACH type IN ['rnai','rnai_not'] %]
-    [% IF fields.phenotype.data.$type.size>0 %]
-   <br>  
-	[% IF type == "rnai" %] 
-	  <i>The following phenotypes were observed via RNAi of [% object.name.label %]</i>
-	[% ELSE %]
-	  <i>No abnormalities were observed in the following experiments</i>
-	[% END %]
-       
-    <table border=1 >
-      <tr><th>Experiment</th><th>Phenotypes</th><th>Strain/Genotype</th><th>Cited in</th></tr>
-      [% FOREACH row IN fields.phenotype.data.$type %]
-	  <tr>
-	       
-	      <td>[% tag2link(row.rnai) %]</td>
-	      <td>[% FOREACH obj IN row.phenotype %] 
-		  [% tag2link(obj) %]
-		  [% UNLESS loop.last %]<br>[% END %]
-		  [% END %]
-	      </td>
-	      <td>[% row.genotype %]</td>
-	      <td>[% tag2link(row.cite) %]</td>
-	  </tr> 
-      [% END %]
-    </table>
-    [% END %]
-   [% END %]
-  </div>
 [% END %]
 

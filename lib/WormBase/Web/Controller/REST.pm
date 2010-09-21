@@ -61,9 +61,7 @@ sub auth_GET {
     my ($self,$c) = @_;   
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
-    $self->status_ok($c,entity => {
-			 
-		     });
+    $self->status_ok($c,entity => {});
 }
 
 sub evidence :Path('/rest/evidence') :Args(4) :ActionClass('REST') {}

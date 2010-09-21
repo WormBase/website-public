@@ -1,0 +1,37 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+
+[% WRAPPER $field_block title="RNAi Summary" key="rnai" %]
+
+    <span id="fade">TODO: Change after talking to curators</span>
+  [% FOREACH type IN ['rnai','rnai_not'] %]
+    [% IF fields.rnai.data.$type.size>0 %]
+<br />
+    [% IF type == "rnai" %] 
+      <i>The following phenotypes were observed via RNAi of [% object.name.data.label %]</i>
+    [% ELSE %]
+      <i>No abnormalities were observed in the following experiments</i>
+    [% END %]
+       
+    <table border=1 >
+      <tr><th>Experiment</th><th>Phenotypes</th><th>Strain/Genotype</th><th>Cited in</th></tr>
+      [% FOREACH row IN fields.rnai.data.$type %]
+      <tr>
+           
+          <td>[% tag2link(row.rnai) %]</td>
+          <td>[% FOREACH obj IN row.phenotype %] 
+          [% tag2link(obj) %]
+          [% UNLESS loop.last %]<br>[% END %]
+          [% END %]
+          </td>
+          <td>[% row.genotype %]</td>
+          <td>[% tag2link(row.cite) %]</td>
+      </tr> 
+      [% END %]
+    </table>
+    [% END %]
+   [% END %]
+[% END %]
+
