@@ -174,6 +174,17 @@ has 'tracks' => (
     }
 );
 
+has 'phen_data' => (
+    is => 'ro',
+    isa => 'HashRef',
+    lazy => 1,
+    default => sub {
+      my $self=shift;
+      my $ret = $self->_build_phen_data;
+      return $ret;
+    }
+);
+
 sub template {
 
 	my $self = shift;
@@ -588,16 +599,10 @@ sub anatomy_function {
     return \%data;
 }
 
-
-sub phenotype {
-
+sub _build_phen_data {
     my $self = shift;
-#     my $not = shift;
     my $GENE = $self->object;
-   
 
-    #### data pull and packaging
- 
     my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
     my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
     my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
@@ -609,29 +614,45 @@ sub phenotype {
     my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
 
     my $pheno_table = $self->_print_phenotype_table($phenotype_data,
-						$variation_data,
-						$phenotype_names_hr,
-						$xgene_data,
-						$variation_name_hr);
+                        $variation_data,
+                        $phenotype_names_hr,
+                        $xgene_data,
+                        $variation_name_hr);
     my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
-						$variation_data_not,
-						$phenotype_names_not_hr,
-						$xgene_data_not,
-						$variation_name_hr_not);
+                        $variation_data_not,
+                        $phenotype_names_not_hr,
+                        $xgene_data_not,
+                        $variation_name_hr_not);
     my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
     my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
 
+    my $ret = { pheno_table => $pheno_table,
+                pheno_table_not => $pheno_table_not,
+                rnai_details_table => $rnai_details_table,
+                rnai_not_details_table => $rnai_not_details_table,
+    };
+}
 
+sub phenotype {
+    my $self = shift;
     my $data = { description => 'The Phenotype summary of the gene',
-		 data        => { pheno=>$pheno_table,	
-				  pheno_not=>$pheno_table_not,
-				  rnai=>$rnai_details_table,
-				  rnai_not=>$rnai_not_details_table,
+		 data        => { pheno=>$self->phen_data->{pheno_table},	
+				  pheno_not=>$self->phen_data->{pheno_table_not},
 				},
 	};
 
     return $data;    
- 
+}
+
+sub rnai {
+    my $self = shift;
+    my $data = { description => 'The RNAi summary of the gene',
+         data        => { rnai=>$self->phen_data->{rnai_details_table},
+                  rnai_not=>$self->phen_data->{rnai_not_details_table},
+                },
+    };
+
+    return $data;    
 }
 
 sub _print_rnai_details_table {
