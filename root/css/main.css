@@ -122,7 +122,7 @@ div#page .release_date { }
    Sections
    
 *********************************/
-section.widget .primary-container {
+.primary-container {
     padding:0.5em 0.5em 1.5em 0.5em;
     margin:2px;
     margin-bottom:10px;
@@ -131,7 +131,7 @@ section.widget .primary-container {
     position:relative;
 }
 
-section.widget .widget-container {
+.widget-container {
     padding:0.5em 0.5em 1.5em 0.5em;
     margin:0 0.8em 0.8em 0;
     overflow:hidden;
@@ -140,7 +140,7 @@ section.widget .widget-container {
     position:relative;
 }
 
-section.widget header h3 {
+h3 {
     margin:0px;
     padding:0.5em 0;
     margin-bottom:0.5em;
@@ -150,29 +150,35 @@ section.widget header h3 {
 /*     border:1px solid green; */
 }
 
-section.widget header h3.minimized{
+h3.minimized{
     border:0;
     margin:0;
     padding:0.5em 0 0 0;
 }
 
-section.widget footer {
+.widget-container #widget-footer {
     font-size:0.9em;    
     position:absolute;
     bottom:0.5em;
     right:0.5em;
     opacity:0.8;
+    filter:alpha(opacity=80);
+    -moz-opacity:0.8;
 }
 
-section.widget header div.ui-icon-large {
+div.ui-icon-large {
   float:right;
   opacity:0.3;
+  filter:alpha(opacity=30);
+  -moz-opacity:0.3;
   cursor:pointer;
 }
 
-section.widget header h3 div.module-min {
+h3 div.module-min {
   float:left;
   opacity:0.3;
+  filter:alpha(opacity=30);
+  -moz-opacity:0.3;
   margin:3px;
 /*   border:1px solid red; */
 }
@@ -189,7 +195,7 @@ section.widget .secondary-container {
 *********************************/
 
 /* A list of available views */
-div#content #available-views {
+#available-views {
     color:black;
     overflow:hidden;
     position:absolute;
@@ -794,6 +800,8 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   top:50%;
   margin-top:-8px;
   opacity:0.8;
+  filter:alpha(opacity=80);
+  -moz-opacity:0.8;
 }
 
 #nav-min:hover {

@@ -9,12 +9,11 @@
      $("#openid_identifier").focus();
 
     $("#widget-holder").sortable({
-      handle: 'header, footer',
+      handle: '#widget-header, #widget-footer',
       items:'li',
       update: function() { 
                 //storing the order in session
                 var order = $(this).sortable("toArray");
-                var class = $(this).attr("class");
                 var log_url = $(this).attr("log");
                 var count = 1;
                 for(i=0; i<order.length; i++) {
@@ -25,7 +24,7 @@
                 $.get(log_url + "/" + count);
               }
     });
-    $("#widget-holder").children("header").disableSelection();
+    $("#widget-holder").children("#widget-header").disableSelection();
 
 // TODO:get jquery icons working for toggle
 // 	 $(".toggle").live('click',function() {

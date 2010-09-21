@@ -200,14 +200,17 @@
    <section class="widget">
           <div class="widget-container">
                 <header>    
+                <div id="widget-header">
                     <div class="module-close [% widget.name %]" title="close"></div>
                     <h3><div class="module-min [% widget.name %]"></div>[% widget.title %]</h3>
+                </div>
                 </header>
 
                 <div id="[%- widget.name -%]"></div>
                 [% content %]
 
                 <footer>
+                <div id="widget-footer">
                     Download: 
                     [% FOREACH type IN c.config.api.content_type %]
                         <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data.id,widget.name) %]">
@@ -215,6 +218,7 @@
                         </a>
                         [% UNLESS loop.last %] | [% END %]
                      [% END %]
+                </div>
                 </footer>
       </div>
    </section>

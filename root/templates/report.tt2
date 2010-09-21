@@ -13,7 +13,7 @@
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
 <div style="width:100%; position:relative;">
-  <nav id="available-views">
+  <div id="available-views">
 
     View as:
     [% # HARD-CODED! %]   
@@ -23,7 +23,7 @@
     <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
     <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
     [% tag2link(object.name.data,'classic','is_classic') %]
-  </nav> 
+  </div> 
 </div>
   <div id="navigation">
     <ul>
