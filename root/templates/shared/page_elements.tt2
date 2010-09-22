@@ -5,7 +5,11 @@
 #
 ####################################################
 %]
+
+[% # adding print="always" to field wrapper will make the field print even if there is no data%]
 [% BLOCK field_block %]
+    [% TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
+
     <div class="field" id="[% title FILTER html %]">
          <div class="field-title">
 
@@ -165,16 +169,16 @@
                 [% content %]
 
                 <footer>
+                <div id="widget-footer">
                     Download: 
                     [% FOREACH type IN c.config.api.content_type %]
-                        <!-- The REST URI is: [% c.uri_for('/rest','widget',object.class,object.name,widget.name) %]" -->
-                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data,widget.name) %]">
+                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data.id,widget.name) %]">
                              [%- type -%]
                         </a>
                         [% UNLESS loop.last %] | [% END %]
                      [% END %]
+                </div>
                 </footer>
-
 
       </div>
       
@@ -209,17 +213,8 @@
                 <div id="[%- widget.name -%]"></div>
                 [% content %]
 
-                <footer>
-                <div id="widget-footer">
-                    Download: 
-                    [% FOREACH type IN c.config.api.content_type %]
-                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data.id,widget.name) %]">
-                             [%- type -%]
-                        </a>
-                        [% UNLESS loop.last %] | [% END %]
-                     [% END %]
-                </div>
-                </footer>
+[% # footer code removed.  look in widget_block if you want it %]
+
       </div>
    </section>
    <!-- end [% widget.name %] widget -->

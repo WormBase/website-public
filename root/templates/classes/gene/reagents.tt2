@@ -36,7 +36,7 @@
 <span id="fade">TODO: check if sequence search working</span>
    [% END %]
 
-   [% WRAPPER $field_block title="Antibodies" key="antibodies"-%] 
+   [% WRAPPER $field_block title="Antibodies" key="antibodies" print="always"-%] 
       Found [% searchlink('antibody', object.name.data.id, fields.antibodies.data.size _ " antibodies") %]
 <span id="fade">TODO: implement antibody search</span>
    [% END %]

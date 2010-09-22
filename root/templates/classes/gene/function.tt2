@@ -24,10 +24,10 @@
       [% external_link('phosphopep', '...access more phosphorylation information in phosphopep') %]
    [% END %]
 
-
+   [% #IF fields.anatomy_function.data.size > 0 %]
    [% WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"-%] 
 
-  <table border=1 class="anatomy_function">
+    <table border=1 class="anatomy_function">
       <tr><th>Anatomical Site(s)</th><th>Phenotype</th><th>via Anatomy Function</th></tr>
     [% FOREACH i IN fields.anatomy_function.data %]
           <tr>
@@ -41,6 +41,5 @@
           </tr>
     [% END %]
     </table>
-
-
    [% END %]
+  [% #END %]

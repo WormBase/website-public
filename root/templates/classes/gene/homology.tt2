@@ -1,5 +1,4 @@
-[% WRAPPER $field_block title="Paralog(s)" key="paralogs" %]
-      
+[% WRAPPER $field_block title=pluralize("Paralog", fields.paralog.data.size) key="paralogs" %]
      [% FOREACH obj IN fields.paralogs.data %]
 	[% obj %]
       [% END %]
@@ -7,7 +6,7 @@
 [% END %]
 
 
-[% WRAPPER $field_block title="Orthologs(s)" key="orthologs" %]
+[% WRAPPER $field_block title=pluralize("Ortholog", fields.orthologs.data.size) key="orthologs" %]
      [% id=0 %]
      [% FOREACH obj IN fields.orthologs.data %]
 	[% obj.species %]: [% tag2link(obj.ortholog) %] [[% tag2link(obj.sequence) %]] 
@@ -19,7 +18,7 @@
       [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="InParanoid group(s)" key="inparanoid_groups" %]
+[% WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) key="inparanoid_groups" %]
 
    <div class="toggle">[% fields.inparanoid_groups.data.size %] InParanoid groups for [% object.name.label %]</div> 
   <div class="toggle-container">

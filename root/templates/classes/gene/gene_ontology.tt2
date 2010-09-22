@@ -4,7 +4,8 @@
    
 [% FOREACH annotation_basis IN fields.gene_ontology.data.keys.sort %]
   [% FOREACH term_type IN fields.gene_ontology.data.$annotation_basis.keys.sort %]  
-   [% WRAPPER $field_block title="$term_type" %]
+    [% USE String(term_type.replace('_', ' ')) %]
+   [% WRAPPER $field_block title=String %]
        <table>
         [% FOREACH data IN fields.gene_ontology.data.$annotation_basis.$term_type.keys.sort %]
 	      [% obj = fields.gene_ontology.data.$annotation_basis.$term_type.$data	%]
