@@ -287,7 +287,7 @@ sub concise_description {
     }
 
     $data{'description'} = "A manually curated description of the gene's function";
-    $data{'data'} = $description;
+    $data{'data'} = "$description";
     return \%data;
 }
 
@@ -555,9 +555,6 @@ sub anatomy_function {
 
     my $self = shift;
     my $object = $self->object;
-
-
-
 
     my @data;
     my @anatomy_fns = $object->Anatomy_function;
