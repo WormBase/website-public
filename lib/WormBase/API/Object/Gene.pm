@@ -1035,22 +1035,46 @@ sub strains {
 
 	my $self = shift;
 	my $object = $self->object;
-
-	my (@strains,@singletons,@cgc,@others);
+    
+	my (@strains,@singletons,@cgc,@others,@both, $count);
 	foreach ($object->Strain(-filled=>1)) {
+      $count++;
 	  my @genes = $_->Gene;
 	  my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
 	 
-	  push @singletons,$self->_pack_obj($_) if (@genes == 1 && !$_->Transgene);
-	  push @cgc,$self->_pack_obj($_) if $cgc;
-	  push @others,$self->_pack_obj($_);
+# 	  push @singletons,$self->_pack_obj($_) if (@genes == 1 && !$_->Transgene);
+# 	  push @cgc,$self->_pack_obj($_) if $cgc;
+# 	  push @others,$self->_pack_obj($_);
+# 
+#       my $ret = $self->_pack_obj($_);
+#       $ret->{singleton}=1 if (@genes == 1 && !$_->Transgene);
+#       $ret->{cgc}=1 if $cgc;
+# 
+#       push @strains, $ret;
+
+
+      if (@genes == 1 && !$_->Transgene){
+        if ($cgc){
+          push @both, $self->_pack_obj($_);
+        }
+        push @singletons, $self->_pack_obj($_);
+      }elsif($cgc){
+        push @cgc, $self->_pack_obj($_);
+      }else{
+        push @others, $self->_pack_obj($_);
+      }
 	}
-	push @strains, map { $_->{boldface}=1;$_ } sort { $a->{id} cmp $b->{id} } @singletons;
-	push @strains, map { $_->{italicized}=1;$_ } sort { $a->{id} cmp $b->{id} } @cgc;
-	push @strains,sort { $a->{id} cmp $b->{id} } @others;
+# 	push @strains, map { $_->{boldface}=1;$_ } sort { $a->{id} cmp $b->{id} } @singletons;
+# 	push @strains, map { $_->{italicized}=1;$_ } sort { $a->{id} cmp $b->{id} } @cgc;
+# 	push @strains,sort { $a->{id} cmp $b->{id} } @others;
 
 	my $data = { description => 'strains carrying gene',
-		    data        => \@strains,
+		    data        => { singleton => \@singletons,
+                             both => \@both,
+                             cgc => \@cgc,
+                             other => \@others,
+                             total => $count,
+                            }
 	};
 
 	return $data;  
@@ -1173,7 +1197,7 @@ sub orthologs {
 # 	  my $ortholog_name = $self->public_name($ortholog,'Gene');
 	  my $species = $ortholog->right;
 # 	  my @analyses = $ortholog->right->right->col;
-	  push @data_pack, {	 species=>$species,
+	  push @data_pack, {	 species=>"$species",
 				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
 				 sequence=>{ class=>'ebsyn',
 					      id=>$ortholog->Sequence_name,

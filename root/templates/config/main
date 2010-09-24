@@ -71,6 +71,42 @@
       END;
       word;
     END;
+    
+# create venn type diagram with tables and colours
+    MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none) BLOCK;
+    ret = "<br/><table cellspacing=\"0\" cellpadding=\"5\">";
+    ret =  ret _ "<tr class=\"venn-a\"><th colspan=\"2\">$title_a</th></tr>";
+          ret =  ret _ "<tr><th class=\"venn-a\"></th>";
+          ret =  ret _ "<th class=\"venn-ab\"></th>";
+          ret =  ret _ "<th class=\"venn-b\">$title_b</th>";
+          ret =  ret _ "<th>$title_none</th>";
+          ret =  ret _ "</tr>";
+          ret =  ret _ "<tr><td class=\"venn-a\">";
+        FOREACH obj IN list_a;
+               ret =  ret _ "<b>" _ tag2link(obj) _ " </b>";
+        END;
+          ret =  ret _ "</td>";
+          ret =  ret _ "<td class=\"venn-ab\">";
+        FOREACH obj IN list_ab;
+               ret =  ret _ "<b><i>" _ tag2link(obj) _ " </i></b>";
+        END;
+          ret =  ret _ "</td>";
+          ret =  ret _ "<td class=\"venn-b\">";
+        FOREACH obj IN list_b;
+               ret =  ret _ "<i>" _ tag2link(obj) _ " </i>";
+        END;
+          ret =  ret _ "</td>";
+          ret =  ret _ "<td>";
+    
+        FOREACH obj IN list_none;
+               ret =  ret _ tag2link(obj) _ " ";
+        END;
+          ret =  ret _ "</td></tr>";
+        ret =  ret _ "<tr><td></td><td class=\"venn-b\" colspan=2></td></tr>";
+    ret =  ret _ "</table>";
+    ret;
+    END;
+
 
 # Use to create outgoing links from the site
 # params: link          - the ID for the link found in root/templates/config/external_urls
@@ -123,6 +159,11 @@
       text = "$text";
       text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+(\))?)+)', '<span class="var">$1</span>');
 #       text.replace('(\b((\()?(eTi|ttTi|stP|stEx|mdIs|nDp|uaDf|hIn|eT|mnC|[a-z]{1,3}|[a-z]*CE2-)\d+(\))?)+)', '<span class="var">$1</span>');
+    END;
+
+# format taxonomy
+    MACRO taxonomy(genus, species) BLOCK;
+      "<span class=\"species\">$genus $species</span>";
     END;
 
 

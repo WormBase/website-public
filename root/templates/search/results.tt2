@@ -12,12 +12,13 @@
 [% ELSE %]
   Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
 [% END %]
-
+  [% IF search_type == 'all' %]
+    <span id="fade">NOTE: This is just temporary for the bench stuff... I'll make it look more bench-like soon</span>
+  [% END %]
 <ul>
 [% FOREACH item IN results %]
   <li>
   [% USE String(item.name.class); class = String.lower; %]
-  [% url = get_url(class, item.name.id) %]
 
   [% IF search_type == 'all' %]
     <span id="fade">[% class %]:</span>
@@ -32,9 +33,7 @@
     </li>
     
   [% END %]
-  [% IF search_type == 'all' %]
-   <span class="forest-green">[% url %]</span>
-  [% END %]
+
 [% END %]
 </ul>
 

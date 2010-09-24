@@ -9,7 +9,7 @@
 [% WRAPPER $field_block title=pluralize("Ortholog", fields.orthologs.data.size) key="orthologs" %]
      [% id=0 %]
      [% FOREACH obj IN fields.orthologs.data %]
-	[% obj.species %]: [% tag2link(obj.ortholog) %] [[% tag2link(obj.sequence) %]] 
+	[% taxonomy(obj.species) %]: [% tag2link(obj.ortholog) %] [[% tag2link(obj.sequence) %]] 
 	[% IF obj.evidence %] 
            [% id = id+1; c.user_session.evidence.ortho.$id= obj.species; c.user_session.object= object.object %]
            <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/ortho/[% id %]"></a>
