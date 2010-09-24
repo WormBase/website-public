@@ -33,18 +33,14 @@ sub workbench_GET {
 		  delete $c->user_session->{bench}{register}{$path};
 		  $c->user_session->{bench}{type}{$type}--;
 		  delete $c->user_session->{bench}{store}{$type}{$path};
+
+          delete $c->user_session->{bench}{$class}{$id};
 	} else{
 		  $c->user_session->{bench}{type}{$type}++;
 		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{store}{$type};
 		  $c->user_session->{bench}{store}{$type}{$path}=$c->user_session->{bench}{type}{$type};
-		  
-=pod		 
-		  my $num = ++$c->user_session->{bench}{$type}{count};
-		  $c->user_session->{bench}{$type}{$num}{url}= "/$type/$class/$id";
-		  $c->user_session->{bench}{$type}{$num}{label}= $label;
-		  $c->user_session->{bench}{$type}{$num}{class}= $class;
-		  $c->user_session->{bench}{$type}{$num}{id}= $num;
-=cut
+
+          $c->user_session->{bench}{reports}{$class}{$id}="";
 	}
 	
   	$c->stash->{path} = $path; 

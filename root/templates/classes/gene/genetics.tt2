@@ -17,8 +17,7 @@
        
 [% END %]
 
-[% IF fields.alleles.data.alleles.size>0 %]
-  [% WRAPPER $field_block title="Alleles" %]
+  [% WRAPPER $field_block title="Alleles" key="alleles"%]
     [% FOREACH obj IN fields.alleles.data.alleles %]
 	 [% IF obj.flanking_sequence %] 
 	      <b>[%  tag2link(obj) %]</b>   
@@ -28,23 +27,15 @@
     [% END %]
   <br>Alleles for which the sequence change is known are listed in <b>boldface</b>
   [% END %]
-[% END %]
  
-[% IF fields.alleles.data.snps.size>0 %]
   [% WRAPPER $field_block title="SNPs" %]
     [% FOREACH obj IN fields.alleles.data.snps %]
 	 [%  tag2link(obj) %] 
     [% END %]
-  [% END %]
-[% END %]
-
-[% IF fields.alleles.data.rflps.size>0 %]
-  [% WRAPPER $field_block title="RFLPs" %]
     [% FOREACH obj IN fields.alleles.data.rflps %]
-	 [%  tag2link(obj) %] 
+    	 [%  tag2link(obj) %] 
     [% END %]
   [% END %]
-[% END %]
 
 [% IF fields.alleles.data.insertions.size>0 %]
   [% WRAPPER $field_block title="Transposon insertions" %]
@@ -54,18 +45,15 @@
   [% END %]
 [% END %] 
 
-[% WRAPPER $field_block title="Strains carrying $object.name.label" %]
-    [% FOREACH obj IN fields.strains.data %]
-	  [% IF obj.boldface %] 
-	      <b>[%  tag2link(obj) %]</b>   
-	  [% ELSIF  obj.italicized.defined %]
-	     <i>[%  tag2link(obj) %]</i>
-	  [% ELSE %]
-	       [%  tag2link(obj) %]
-	  [% END %]
-    [% END %]
-  <br>Strains carrying [% object.name.label %] alone are listed in <b>boldface</b>.
-  <br>Strains available directly from the CGC are <i>italicized</i>.
+[% strain_title = "Strains carrying " _ tag2link(object.name.data) %]
+[% WRAPPER $field_block title=strain_title %]
+  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _ " strains") %]</div>
+  <div class="toggle-container">
+    [% venn("Carrying " _ tag2link(object.name.data) _ " alone", fields.strains.data.singletons, 
+    	    "Available from the CGC", fields.strains.data.cgc, 
+    	    "", fields.strains.data.both, 
+    	    "Other strains", fields.strains.data.other) %]
+  </div>
 [% END %]
 
 [% WRAPPER $field_block title="Rearrangements" %]

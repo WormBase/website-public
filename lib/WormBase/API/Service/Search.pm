@@ -384,7 +384,7 @@ sub _wrap_objs {
   my $self = shift;
   my $list = shift;
   my $class = shift;
-  
+
   # don't get config info if nothing to config
   return $list if (@$list < 1); 
   
@@ -398,10 +398,14 @@ sub _wrap_objs {
 
   my @ret;
   foreach my $ace_obj (@$list) {
-    next unless eval{$ace_obj->class};
-    # this is faster than passing the ace_obj.  I know, weird.
-    my $object = $api->fetch({class => $ace_obj->class, 
+    my $object;
+    if (eval{$ace_obj->class}){
+      # this is faster than passing the ace_obj.  I know, weird.
+      $object = $api->fetch({class => $ace_obj->class, 
                             name => $ace_obj}) or die "$!";
+    } else {
+      $object = $ace_obj;
+    }
     my %data;
     foreach my $field (@$fields) {
       my $field_data = $object->$field;# if  $object->meta->has_method($field);

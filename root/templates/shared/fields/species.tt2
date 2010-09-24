@@ -14,6 +14,6 @@
 
    [% IF fields.taxonomy.data.genus %]
       [% WRAPPER $field_block title="Taxonomy" key="taxonomy" %]
-            <span class="species">[% fields.taxonomy.data.genus %][% " " %][% fields.taxonomy.data.species %]</span>
+            [% taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species) %]
       [% END %]
    [% END %]

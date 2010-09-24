@@ -724,6 +724,7 @@ font-style:italic;
 }
 
 
+
 div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 
@@ -815,4 +816,22 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   list-style: none;
   position:relative;
   background:#EEE;
+}
+
+
+/*Strain table*/
+table tr.venn-a, table th.venn-a, table td.venn-a {
+  background:#BBEEFF;
+  min-height:1em;
+  min-width:1em;
+}
+
+table tr.venn-b, table th.venn-b, table td.venn-b {
+  background:#EEFF88;
+  min-height:1em;
+  min-width:1em;
+}
+
+table tr.venn-ab, table th.venn-ab, table td.venn-ab {
+  background:#BBFFAA;
 }

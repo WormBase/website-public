@@ -79,7 +79,23 @@ sub bench :Path("/bench") Args(0) {
          my $bench = $c->user_session->{bench} || {};
 
         $c->stash->{bench} = $bench;
-	$c->stash->{template} = 'workbench/index.tt2';
+# 	$c->stash->{template} = 'workbench/index.tt2';
+    my $api = $c->model('WormBaseAPI');
+
+
+    my @ret;
+    foreach my $class (keys(%{$c->user_session->{bench}{reports}})){
+      my @objs;
+      foreach my $id (keys(%{$c->user_session->{bench}{reports}{$class}})){
+        my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+        push(@objs, $obj);
+      }
+      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+    }
+    $c->stash->{'results'} = \@ret;
+    $c->stash->{'type'} = 'all'; 
+    $c->stash->{template} = "search/results.tt2";
 	 
 } 
 ##############################################################
