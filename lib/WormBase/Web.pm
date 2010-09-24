@@ -67,7 +67,7 @@ __PACKAGE__->config( name => 'R2',
 # Create a log4perl instance
 __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(
-        __PACKAGE__->path_to( 'conf', 'log4perl-screen.conf' )->stringify
+        __PACKAGE__->path_to( 'conf', 'log4perl.conf' )->stringify
     )
     );
 
@@ -87,7 +87,7 @@ __PACKAGE__->config->{authentication} =
                                     password_field => 'password',
                                     #password_type => 'clear'
                                     password_type => 'salted_hash',
-									password_salt_len => 4,
+				    password_salt_len => 4,
                                 },
                                 store => {
                                     class => 'DBIx::Class',
