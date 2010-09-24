@@ -43,6 +43,7 @@ requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
+requires 'Crypt::SaltedHash';
 requires 'CHI';                              # Cache backend
 requires 'DBI';
 requires 'DBD::mysql';

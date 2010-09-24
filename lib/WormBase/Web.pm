@@ -85,7 +85,9 @@ __PACKAGE__->config->{authentication} =
                                 credential => {
                                     class => 'Password',
                                     password_field => 'password',
-                                    password_type => 'clear'
+                                    #password_type => 'clear'
+                                    password_type => 'salted_hash',
+				    password_salt_len => 4,
                                 },
                                 store => {
                                     class => 'DBIx::Class',
