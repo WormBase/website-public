@@ -12,6 +12,7 @@
 
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
+
 <div style="width:100%; position:relative;">
   <div id="available-views">
 
@@ -27,6 +28,7 @@
 </div>
   <div id="navigation">
     <ul>
+    [%# UNLESS widgets; widgets = ['reports', 'sequences', 'clipboard']; class = 'bench'; END; %]
     [% FOREACH widget_name IN widgets -%]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
@@ -36,7 +38,7 @@
           load=1>[% widget.title %]</li>
     [% END %]
       <li class="spacer"> </li>
-      <li>Related [% object.name.data.class %]s...</li>
+      [% IF object %]<li>Related [% object.name.data.class %]s...</li>[% END %]
     </ul>
   </div>
   
@@ -48,25 +50,28 @@
       [% title %]
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-      [% END %] 
    [% PROCESS workbench/status.tt2 %]
+      [% ELSE %]
+        <h2>Your Workbench</h2>
+      [% END %] 
+
     </div>
      <div id="nav-min"><div id="nav-min-icon"></div></div>
 
-      [%  IF c.user_session.$class.defined; c.user_session.$class.count = 0; END; %]
-      [% FOREACH widget_name IN c.user_session.$class.nsort %]
+      [%  IF c.user_session.display.$class.defined; c.user_session.display.$class.count = 0; END; %]
+      [% FOREACH widget_name IN c.user_session.display.$class.nsort %]
         [% IF (widget_name == 'count'); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
         <li id="[% widget_name %]">
         [% WRAPPER widget_sortable_block -%]
         [% END %]
         </li>   
-        [% c.user_session.$class.$widget_name = -1 %]
+        [% c.user_session.display.$class.$widget_name = -1 %]
         <script>$("#nav-[% widget_name %]").trigger('click');</script>
       [% END %]
 
       [% FOREACH widget_name IN widgets %]
-        [% IF (c.user_session.$class.$widget_name.defined); NEXT; END; %]
+        [% IF (c.user_session.display.$class.$widget_name.defined); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
         <li id="[% widget_name %]">
         [% WRAPPER widget_sortable_block -%]
@@ -76,11 +81,12 @@
   </div>
   
   [%# maybe set this in config somewhere?? %]
-  [% UNLESS c.user_session.$class.defined %]
+  [% UNLESS c.user_session.display.$class.defined %]
     <script>
     $("#nav-overview").trigger('click');
     $("#nav-history").trigger('click');
     $("#nav-history_protein").trigger('click');
+    $("#nav-reports").trigger('click');
     </script>
   [% END %]
 
