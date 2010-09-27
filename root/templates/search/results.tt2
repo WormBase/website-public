@@ -12,9 +12,7 @@
 [% ELSE %]
   Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
 [% END %]
-  [% IF search_type == 'all' %]
-    <span id="fade">NOTE: This is just temporary for the bench stuff... I'll make it look more bench-like soon</span>
-  [% END %]
+
 <ul>
 [% FOREACH item IN results %]
   <li>
@@ -27,6 +25,7 @@
   [% TRY %]
     [% file = "search/" _ class _ ".tt2" %]
     [% PROCESS "$file" %]
+    <span id="fade">[% item.footer %]</span>
   [% CATCH %]
     <span id="fade">[% class %]:</span>
       [% tag2link(item.name) %]

@@ -34,13 +34,13 @@ sub workbench_GET {
 		  $c->user_session->{bench}{type}{$type}--;
 		  delete $c->user_session->{bench}{store}{$type}{$path};
 
-          delete $c->user_session->{bench}{$class}{$id};
+          delete $c->user_session->{bench}{reports}{$class}{$id};
 	} else{
 		  $c->user_session->{bench}{type}{$type}++;
 		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{store}{$type};
 		  $c->user_session->{bench}{store}{$type}{$path}=$c->user_session->{bench}{type}{$type};
 
-          $c->user_session->{bench}{reports}{$class}{$id}="";
+          $c->user_session->{bench}{reports}{$class}{$id}=localtime();
 	}
 	
   	$c->stash->{path} = $path; 
@@ -49,7 +49,32 @@ sub workbench_GET {
     my $count = scalar(keys(%{$c->user_session->{bench}{register}})) || 0;
     $c->response->body("($count)");
 } 
- 
+
+sub _bench {
+    my ($self,$c, $widget) = @_; 
+    my $api = $c->model('WormBaseAPI');
+    my @ret;
+    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
+      my @objs;
+      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
+        my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+        push(@objs, $obj);
+      }
+      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+    }
+    @ret = map{
+            my $class = lcfirst($_->{name}->{class});
+            my $id = $_->{name}->{id};
+            $_->{footer} = "added to bench " . $c->user_session->{bench}{$widget}{$class}{$id};
+            $_;
+              } @ret;
+    $c->stash->{'results'} = \@ret;
+    $c->stash->{'type'} = 'all'; 
+    $c->stash->{template} = "search/results.tt2";
+    $c->stash->{noboiler} = 1;
+}
+
 
 sub auth :Path('/rest/auth') :Args(0) :ActionClass('REST') {}
 
@@ -289,6 +314,11 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
+
+    if($class eq "bench"){
+      $self->_bench($c, $widget);
+      return;
+    }
 			     
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.

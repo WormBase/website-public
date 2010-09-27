@@ -76,26 +76,34 @@ sub default :Path {
  
 sub bench :Path("/bench") Args(0) {
         my ( $self, $c ) = @_;
-         my $bench = $c->user_session->{bench} || {};
+#          my $bench = $c->user_session->{bench} || {};
 
-        $c->stash->{bench} = $bench;
-# 	$c->stash->{template} = 'workbench/index.tt2';
-    my $api = $c->model('WormBaseAPI');
+#         $c->stash->{bench} = $bench;
+
+## 	$c->stash->{template} = 'workbench/index.tt2';
+#     my $api = $c->model('WormBaseAPI');
+#     my @ret;
+#     foreach my $class (keys(%{$c->user_session->{bench}{reports}})){
+#       my @objs;
+#       foreach my $id (keys(%{$c->user_session->{bench}{reports}{$class}})){
+#         my $obj = $api->fetch({class=> ucfirst($class),
+#                           name => $id}) or die "$!";
+#         push(@objs, $obj);
+#       }
+#       push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+#     }
+#     $c->stash->{'results'} = \@ret;
+#     $c->stash->{'type'} = 'all'; 
+#     $c->stash->{template} = "search/results.tt2";
 
 
-    my @ret;
-    foreach my $class (keys(%{$c->user_session->{bench}{reports}})){
-      my @objs;
-      foreach my $id (keys(%{$c->user_session->{bench}{reports}{$class}})){
-        my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-        push(@objs, $obj);
-      }
-      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
-    }
-    $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = 'all'; 
-    $c->stash->{template} = "search/results.tt2";
+
+    my $class = 'bench';
+    $c->stash->{'class'} = $class;
+    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+    $c->stash->{widgets} = \@widgets;
+    $c->stash->{template} = "report.tt2";
+
 	 
 } 
 ##############################################################
@@ -274,15 +282,15 @@ sub report :Path("/reports") Args(2) {
     # to choose a template and label sections.
 #    $c->stash->{page}  = $class;    # Um. Necessary?
     unless ($c->config->{pages}->{$class}) {
-	my $link = $c->config->{external_url}->{uc($class)};
-	$link  ||= $c->config->{external_url}->{lc($class)};
-	if ($link =~ /\%s/) {
-	    $link=sprintf($link,split(',',$name));
-	} else {
-	    $link.=$name;
-	}
-	$c->response->redirect($link);
-	$c->detach;
+      my $link = $c->config->{external_url}->{uc($class)};
+      $link  ||= $c->config->{external_url}->{lc($class)};
+      if ($link =~ /\%s/) {
+          $link=sprintf($link,split(',',$name));
+      } else {
+          $link.=$name;
+      }
+      $c->response->redirect($link);
+      $c->detach;
     }
     $c->stash->{class} = $class;
     $c->log->debug($name);
