@@ -60,6 +60,14 @@ has search => (
     lazy_build      => 1,
     );
 
+has _tools => (
+    is       => 'ro',
+    lazy_build      => 1,
+    );
+
+has tool => (
+    is       => 'ro',
+    );
 # this is here just for the testing script to load database configuration
 # may be removed or changed in furutre! 
 sub _build_database {
@@ -71,6 +79,7 @@ sub _build_database {
     );
     $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
     $self->pre_compile($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile});
+    $self->tool($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tool});
     return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
 }
 
@@ -123,9 +132,29 @@ sub _build__services {
 	  $self->log->debug( "service $type registered but not connected yet");
       }
     }
+ 
     return \%services;
 } 
 
+sub _build__tools {
+    my ($self) = @_;
+     my %tools;
+#register all the tools
+    for my $tool (sort keys %{$self->tool}) {
+      my $class = __PACKAGE__ . "::Service::$tool" ;	
+      Class::MOP::load_class($class);
+      # Instantiate the service providing it with
+      # access to some of our configuration variables
+     
+      $tools{$tool}  = $class->new({	pre_compile => $self->tool->{$tool},
+					log      => $self->log,
+					dsn	 => $self->_services, 
+					tmp_base  => $self->tmp_base,
+				      });
+      $self->log->debug( "service $tool registered");
+    }
+    return \%tools;
+}
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*
