@@ -1,8 +1,7 @@
 
 <head>
-    
     <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
-    <script src="/js/display_results.js"></script>
+    <script src="/js/blast_blat/display_results.js"></script>
 </head> 
 
 <div align="center">
@@ -14,7 +13,7 @@
 
             <td>
             <div id="back_button">
-                <a href="/db/searches/blast_blat" onClick="history.go(-1); return false;">Back</a>
+                <a href="[% c.uri_for('tools','blast_blat') %]" onClick="history.go(-1); return false;">Back</a>
             </div>
             </td>
 
