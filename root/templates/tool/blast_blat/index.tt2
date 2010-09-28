@@ -1,3 +1,6 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />  
+</head>
  
 
 <form method="POST" action="[% c.uri_for('tools','blast_blat','run') %]">
@@ -17,8 +20,8 @@
 <div class="small_container">
     <font class="bold">1) Enter Your Query Sequence:</font> 
     <p/>
-    <img id="sample_nucleotide" src="/blast_blat/sample_nucleotide.png"></img>
-    <img id="sample_peptide" src="/blast_blat/sample_peptide.png"></img>
+    <img id="sample_nucleotide" src="/img/blast_blat/sample_nucleotide.png"></img>
+    <img id="sample_peptide" src="/img/blast_blat/sample_peptide.png"></img>
     <br/>
     <textarea id="query_sequence" name="query_sequence" rows="12" cols="80">[% query_sequence %]</textarea>
     <br/>
@@ -204,9 +207,9 @@ Documentation
 </div>
 
 
-
 </div>
 
 </form>
-
+ 
+<script src="/js/blast_blat/search_form.js"></script>
  
