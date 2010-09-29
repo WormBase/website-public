@@ -35,10 +35,14 @@
           class="module-load [% widget_name %]" 
           href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" 
           log="[% c.uri_for('/widget/toggle', class, widget_name) %]"
-          load=1>[% widget.title %]</li>
+          load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
       <li class="spacer"> </li>
-      [% IF object %]<li>Related [% object.name.data.class %]s...</li>[% END %]
+      [% IF object %]<li>Related [% object.name.data.class %]s...</li>
+      <li class="spacer"> </li>
+      <li>Recently activity:</li>
+      <div class="user-history"></div>
+      [% END %]
     </ul>
   </div>
   

@@ -1,4 +1,14 @@
   $(document).ready(function() {   
+
+
+
+        $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $("#error").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+
       var notify = "";
       $(".bench_update").live('click',function() {
         var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");

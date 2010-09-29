@@ -818,6 +818,12 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   background:#EEE;
 }
 
+#navigation div.user-history li{
+  font-size:0.8em;
+  height:1em;
+  padding-left:1.8em;
+}
+
 
 /*Strain table*/
 table tr.venn-a, table th.venn-a, table td.venn-a {

@@ -19,4 +19,13 @@
 </div>
     </div>
 
+<script>
+  
+        $.ajax({
+                 type: "PUT",
+                 url : "/rest/history?ref=" + window.location.pathname + "&name=[% object.name.data.label %]",
+        });
+
+</script>
+
 <!-- END boilerplate/banner -->

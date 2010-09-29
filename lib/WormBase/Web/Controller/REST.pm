@@ -3,6 +3,7 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
+use Time::Duration;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -54,6 +55,17 @@ sub _bench {
     my ($self,$c, $widget) = @_; 
     my $api = $c->model('WormBaseAPI');
     my @ret;
+    if($widget=~m/user_history/){
+#       my $history = $c->user_session->{history};
+#       my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
+#       my @ret = map {$history->{$_}} @history_keys;
+#       $c->stash->{history} = \@ret;
+#       $c->stash->{noboiler} = 1;
+#       $c->stash->{template} = "shared/fields/user_history.tt2"; 
+#       $self->status_ok($c,entity => {});
+      $self->history_GET($c);
+      return;
+    }
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
       my @objs;
       foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
@@ -66,7 +78,7 @@ sub _bench {
     @ret = map{
             my $class = lcfirst($_->{name}->{class});
             my $id = $_->{name}->{id};
-            $_->{footer} = "added to bench " . $c->user_session->{bench}{$widget}{$class}{$id};
+            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
             $_;
               } @ret;
     $c->stash->{'results'} = \@ret;
@@ -84,6 +96,53 @@ sub auth_GET {
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
 }
+
+
+sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
+
+sub history_GET {
+    my ($self,$c) = @_;
+    my $history = $c->user_session->{history};
+    my $size = (scalar keys(%{$history})) -1;
+    my $count = $c->req->params->{count} || $size;
+    if($count > $size) { $count = $size; }
+    $count == $size ? my $start = 0 : my $start = 1;
+    my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
+    my @ret = map {$history->{$_}} @history_keys[$start..$count];
+    @ret = map {
+      my $t = (time() - @{$_->{time}}[-1]); 
+      $t = concise(ago($t, 1));#localtime($t);
+      $_->{time_lapse} = $t;
+      $_ } @ret;
+    $c->stash->{history} = \@ret;
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "shared/fields/user_history.tt2"; 
+    $self->status_ok($c,entity => {});
+}
+
+
+sub history_PUT {
+    my ($self,$c) = @_;
+    $c->log->debug("history logging");
+    my $path = $c->req->params->{ref};
+    my $name = $c->req->params->{name};
+    unless($c->user_session->{history}->{$path}){
+      my ($i,$type, $class, $id) = split(/\//,$path); 
+      $c->log->debug("type: $type, class:$class, id:$id");
+      if($type=~m/reports/){
+        $c->user_session->{history}->{$path}->{name} = { label => $name || $id, class => $class, id => $id };
+      }elsif($type=~m/search/){
+        $c->user_session->{history}->{$path}->{search} = { id => $id, class => $class};
+      }elsif($type=~m/bench/){
+        $c->user_session->{history}->{$path}->{bench} = "";
+      }
+    }
+
+    push(@{$c->user_session->{history}->{$path}->{time}}, time());
+
+
+}
+
 
 sub evidence :Path('/rest/evidence') :Args(4) :ActionClass('REST') {}
 
