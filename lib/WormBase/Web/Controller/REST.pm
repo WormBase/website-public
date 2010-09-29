@@ -107,7 +107,7 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
     my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-    my @ret = map {$history->{$_}} @history_keys[0..$count];
+    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count];
     @ret = map {
       my $t = (time() - @{$_->{time}}[-1]); 
       $t = concise(ago($t, 1));#localtime($t);
