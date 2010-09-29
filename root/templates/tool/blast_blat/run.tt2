@@ -2,75 +2,38 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
     <script src="/js/blast_blat/display_results.js"></script>
+ 
 </head> 
 
-<div align="center">
-    <table border="0">
-        <tr>
-            <td colspan="2" align="center">
-                <h1>BLAST/BLAT RESULTS</h1>
-            </td>
+<select class="blast_blat" >
+    [% count = 0 %]
+    [% FOREACH obj IN data %]
+	[% count = count + 1  %]
+	<option id="[% count %]">[% count _ ":" _ obj.query_name %]</option>
+    [% END %] 
+</select>
+ 
 
-            <td>
-            <div id="back_button">
-                <a href="[% c.uri_for('tools','blast_blat') %]" onClick="history.go(-1); return false;">Back</a>
-            </div>
-            </td>
+[% count = 0 %] 
+[% FOREACH obj IN data %]
+  [% count = count + 1  %]
+  [% INCLUDE tool/blast_blat/display.tt2 %] 
+[% END %]
 
-        </tr>
-        <tr>
-            <td valign="top">
-                <div class="kviewer_container">
-                    [% IF kviewer_image_content %]
-                        <font class="bold"><font class="italic">C. elegans</font> Chromosome Viewer</font>
-                        <br/>
-                        [% kviewer_image_content %]
-                        [% kviewer_imagemap %]
-                        <br/>
-<!--
-                        <font class="small">
-                        * Chromosome viewer is limited to top [% kviewer_add_limit %] hits, and
-                        links to the Genome Browser are limited to the top [% hsp_genome_link_part_limit %] HSPs<br/>
--->
-                        </font>
-                        <br/>
-                    [% ELSE %]
-                        <div class="spacer">&nbsp;</div>
-                    [% END %]
-                </div>    
-            </td>
-            <td valign="top">
-                <div class="report_images">
-                    <img src="[% score_key_image_url %]"/>
-                    <p/>
-                    <img src="[% alignment_image_url %]" usemap="#alignment"/>
-                    <br/>
-                    <font class="small">
-                    * Links to the Genome Browser and alignment image are limited to top hits.<br/>
-                    </font>
-                    <map name="alignment">
-                        [% FOREACH image_map_piece IN image_map_pieces %]
-                            <area shape="rect" coords="[% image_map_piece.coords %]" href="[% image_map_piece.href %]">
-                        [% END %]
-                    </map>
-                </div>
-                <br/>
-                <div class="fixed_width">
-                    [% result_file_content %]
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-                <div id="back_button">
-                    <a href="/db/searches/blast_blat" onClick="history.go(-1); return false;">Back</a>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
 
+<script type="text/javascript">
+ 
+
+    $(".blast_blat").change(function () {
+          
+	   
+	  $(".blast_container:visible").hide();
+           
+           var str = $(".blast_blat option:selected").attr("id");
+            
+          $("." + str).show();
+	  
+        })
+        .change();
+ 
+</script> 
