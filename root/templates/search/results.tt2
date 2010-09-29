@@ -7,7 +7,7 @@
 
 [% IF results.size > 0 %]
   <div id="fade">found <span id="count">[% results.size %]</span> 
-    [% UNLESS search_type == 'all'; search_type _ 's for ' _ c.stash.query; ELSE; 'results'; END; %]
+    [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' for ' _ c.stash.query; ELSE; 'results'; END; %]
   </div>
 [% ELSE %]
   Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>

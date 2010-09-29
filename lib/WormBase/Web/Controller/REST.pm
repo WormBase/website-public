@@ -106,9 +106,8 @@ sub history_GET {
     my $size = (scalar keys(%{$history})) -1;
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
-    $count == $size ? my $start = 0 : my $start = 1;
     my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-    my @ret = map {$history->{$_}} @history_keys[$start..$count];
+    my @ret = map {$history->{$_}} @history_keys[0..$count];
     @ret = map {
       my $t = (time() - @{$_->{time}}[-1]); 
       $t = concise(ago($t, 1));#localtime($t);
