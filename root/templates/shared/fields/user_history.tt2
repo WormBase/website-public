@@ -1,0 +1,13 @@
+
+[% FOREACH h IN c.stash.history %]
+  <li>
+    [% IF h.name.defined; tag2link(h.name); END; %]
+    [% IF h.search.defined; searchlink(h.search.class, h.search.id, 'search: ' _ h.search.id); END; %]
+    [% IF h.bench.defined; "<a href=\"" _ c.uri_for_action('bench') _ "\">your bench</a>"; END; %]
+    
+   <span id="fade"> - [% h.time_lapse %] 
+  [% IF h.time.size > 1 %]([% h.time.size %] visits) [% END %]
+  </span>
+
+  </li>
+[% END %]
