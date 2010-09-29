@@ -410,6 +410,7 @@ sub _wrap_objs {
     foreach my $field (@$fields) {
       my $field_data = $object->$field;# if  $object->meta->has_method($field);
       $field_data = $field_data->{data};
+      $field_data =~ s/((.){200})(.)*/$1.../;
       $data{$field} = $field_data;
     }
     push(@ret, \%data);
