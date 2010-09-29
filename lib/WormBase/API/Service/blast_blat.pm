@@ -326,52 +326,73 @@ sub display_results {
     my $blast_app   = $cgi->{"blast_app"} || '';
 
     # Generate (i)Alignment Image URL and (ii)Karyotype Viewer URL
-    my ($alignment_image,  $kviewer_adds_ref, $genome_links_ref,
-        $expand_links_ref, $image_map_pieces_ref
-      )
-      = $self->process_result_file(
+#     my ($alignment_image,  $kviewer_adds_ref, $genome_links_ref,
+#         $expand_links_ref, $image_map_pieces_ref
+#       )
+    my $data = $self->process_result_file(
         $query_file,  $query_type, $result_file,
         $search_type, $blast_app
       );
-    my ($alignment_image_file_name) = $alignment_image =~ /([^\/]+)$/;
 
-    my $alignment_image_url = $self->tmp_image_uri($self->image_dir."/$alignment_image_file_name");
-    my $score_key_image_url = $self->tmp_image_uri($self->image_dir."/".$self->pre_compile->{SCORE_KEY_IMAGE});
-
-    # Retrieve kviewer image and imagemap
-
-    my $kviewer_image_content;
-    my $kviewer_imagemap;
-    my $address = $ENV{REMOTE_ADDR};
-  
     
-    # Slurp result file
-    my $result_file_content =
-	$self->result2html($result_file, $genome_links_ref, $expand_links_ref);
-    
-    $self->log->debug( "$address: processing results file: done" );
-    
- 
-    my $vars = {
-        kviewer_image_content      => $kviewer_image_content,
-        kviewer_imagemap           => $kviewer_imagemap,
-        score_key_image_url        => $score_key_image_url,
-        alignment_image_url        => $alignment_image_url,
-        image_map_pieces           => $image_map_pieces_ref,
-        result_file_content        => $result_file_content,
-        hsp_genome_link_part_limit => $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT},
-        hsp_alignment_image_limit  => $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT},
-    };
+    my $pattern;
+    my @result_file_array;
+#    warn "$address done slurping" if DEBUG;
+    my $stream = slurp($result_file);
+#note!!!!!!! this will not work currately if the format of the out put change.
+    $blast_app=uc($blast_app);
+    foreach my $file (split /$blast_app/, $stream) {
+	next unless($file);
+	push @result_file_array, $blast_app.$file;	 
+    }
+    my @final;
 
-    return $vars;
+    foreach (@$data) {
+	my ($query_name, $alignment_image,  $score_key_image, $kviewer_adds_ref, $genome_links_ref,
+	    $expand_links_ref, $image_map_pieces_ref) = @$_;
+	my ($alignment_image_file_name) = $alignment_image =~ /([^\/]+)$/;
+	my ($score_key_image_file_name) = $score_key_image =~ /([^\/]+)$/;
+
+	my $alignment_image_url = $self->tmp_image_uri($self->image_dir."/$alignment_image_file_name");
+	my $score_key_image_url = $self->tmp_image_uri($self->image_dir."/$score_key_image_file_name");
+
+	# Retrieve kviewer image and imagemap
+
+	my $kviewer_image_content;
+	my $kviewer_imagemap;
+	my $address = $ENV{REMOTE_ADDR};
+      
+	
+	# Slurp result file
+	my $result_file_content =
+	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref);
+	
+	$self->log->debug( "$address: processing results file: done" );
+	
+    
+	my $vars = {
+	    query_name 	       => $query_name,
+	    kviewer_image_content      => $kviewer_image_content,
+	    kviewer_imagemap           => $kviewer_imagemap,
+	    score_key_image_url        => $score_key_image_url,
+	    alignment_image_url        => $alignment_image_url,
+	    image_map_pieces           => $image_map_pieces_ref,
+	    result_file_content        => $result_file_content,
+	    hsp_genome_link_part_limit => $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT},
+	    hsp_alignment_image_limit  => $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT},
+	};
+      push @final, $vars;
+    }
+
+    return {data=>\@final};
 }
 
 sub result2html {
-    my ($self,$result_file, $genome_links_ref, $expand_links_ref) = @_;
+    my ($self,$result, $genome_links_ref, $expand_links_ref) = @_;
     
     my $address = $ENV{REMOTE_ADDR};
  #   warn "$address: the result file is: $result_file" if DEBUG;
-    my $result = slurp($result_file);
+   
     
 #    warn "$address done slurping" if DEBUG;
     
@@ -657,306 +678,317 @@ sub a {
 sub process_result_file {
     my ($self,$query_file, $query_type, $result_file, $search_type, $blast_app) =
 	@_;
-    
-    # Determine query length
-    my $in = Bio::SeqIO->new(-file => $query_file, -format => "Fasta");
-    my $query_seq = $in->next_seq;
-    my $query_length = $query_seq->length;
-    my $query_name   = $query_seq->id;
-    
-    # Generate score key colors
-    my @score_key_colors;
-    for my $i (0 .. 4) {
-        my $h_value = 251 * (255 / 360);
-        my $s_value = $i * 25 * (255 / 100);
-        my $v_value = 100 * (255 / 100);
-	
-        my @rgb_values = GD::Simple->HSVtoRGB($h_value, $s_value, $v_value);
-	
-        push @score_key_colors, sprintf("#%.2x%.2x%.2x", @rgb_values);
-    }
-    
-    # Store hits
-    my @piece_refs;
-    
-    # Store genome links/positions during processing
-    my %genome_links;
-    my %expand_links;
-    
-    # Create image panels
-    my $panel = Bio::Graphics::Panel->new(
-					  -length     => $query_length,
-					  -width      => 500,
-					  -pad_left   => 10,
-					  -pad_right  => 10,
-					  -pad_top    => 10,
-					  -pad_bottom => 10,
-					  -key_style  => "left",
-					  );
-    
-    my $score_key = Bio::Graphics::Panel->new(
-					      -length     => $query_length,
-					      -width      => 532,
-					      -pad_left   => 1,
-					      -pad_right  => 1,
-					      -pad_top    => 1,
-					      -pad_bottom => 1,
-					      -key_style  => "left",
-					      );
-    
-    # Score key
-    my @score_key;
-    
-    for my $i (0 .. 19) {
-        my $display_name = ' ';
-        $display_name = '0 bits'    if $i == 0;
-        $display_name = '800+ bits' if $i == 18;
-        my $feature = Bio::SeqFeature::Generic->new(
-						    -score => $i * (800 / 19),
-						    -start => $i ? ($query_length / 20) * $i : 1,
-						    -end => ($query_length / 20) * $i + ($query_length / 20),
-						    -display_name => $display_name,
-						    );
-        push @score_key, $feature;
-    }
-    
-    my $track = $score_key->add_track(
-				      -glyph      => 'graded_segments',
-				      -key        => '    SCORE KEY: ',
-				      -fgcolor    => 'gray',
-				      -max_score  => 800,
-				      -min_score  => 0,
-				      -sort_order => 'high_score',
-				      -bgcolor    => 'blue',
-				      -label      => 1,
-				      -height     => 16,
-				      -bump       => 0,
-				      );
-    $track->add_feature(@score_key);
-    
-    # Query sequence
-    my $query = Bio::SeqFeature::Generic->new(
-					      -start        => 1,
-					      -end          => $query_length,
-					      -display_name => "QUERY: $query_name",
-					      );
-    $panel->add_track(
-		      $query,
-		      -glyph   => "arrow",
-		      -tick    => 2,
-		      -fgcolor => "black",
-		      -double  => 1,
-		      -label   => 1,
-		      );
-    
-    # Process BLAST/BLAT output - both are provided in blast format
+    my @data;
+
+    my $searchio;
     if ($search_type eq "blast" or $search_type eq "blat") {
-        my $searchio = new Bio::SearchIO(
+        $searchio = new Bio::SearchIO(
 					 -format => "blast",
 					 -file   => $result_file
 					 );
-	
-        my $result = $searchio->next_result;
-	
-        if (!$result && $search_type eq "blat")
-        {    # Blat does not provide output when no hits
-            error("No hits were found!");
-        }
-	
-        my $hsp_counter = 0;
-	
-        $result->rewind;
-	
-        while (my $hit = $result->next_hit) {
-	    
-            next
-		if $hit->num_hsps < 1;  # Work-around, BLAT producing blank hits
-	    
-            my @hsps_in_track;
-            my $clustered_plus_strand_hsps  = Bio::SeqFeature::Generic->new;
-            my $clustered_minus_strand_hsps = Bio::SeqFeature::Generic->new;
-
-            my $name = $hit->name;
-            my ($formatted_name) = $name =~ /([^\/]+)$/;
-
-            if (length($formatted_name) > 20) {
-                $formatted_name =~ s/^(.{16})(.*)/$1 .../;
-            }
-            $formatted_name = sprintf("%20s", $formatted_name);
-
-            my $description = $hit->description;
-            $description =~ s!^/!!;
-
-            my @formatted_parts;
-            foreach my $part (split(" /", $description)) {
-                my ($key, $value) = split("=", $part);
-                if ($key eq "id" or $key eq "tentative_id") {
-                    push @formatted_parts, "/$key=$value";
-                }
-            }
-            my $formatted_parts = join " ", @formatted_parts;
-            my $formatted_description =
-              length($formatted_parts) < 96
-              ? $formatted_parts
-              : substr($formatted_parts, 0, 92) . " ...";
-
-            # my $start = $hit->start;
-            # my $end = $hit->end;
-
-            my ($piece_refs_ref, $hit_genome_link, $hit_expand_link) =
-              $self->extract_hit_info($hit, $query_name, $query_type);
-            push @piece_refs, @{$piece_refs_ref} if @{$piece_refs_ref};
-
-            $genome_links{$hit->name} = $hit_genome_link;
-            $expand_links{$hit->name} = $hit_expand_link;
-
-            $self->sort_hits($hit, $blast_app);    # Sort hits and add a cluster tag
-
-            my $hsp_count_per_hit = 0;
-
-            $hit->rewind;
-            while (my $hsp = $hit->next_hsp) {
-                $hsp_counter++;
-
-                next if $hsp_count_per_hit > $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT};
-                $hsp_count_per_hit++;
-
-                my $hsp_strand =
-                  $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
-
-                $hsp_strand = $hsp->strand('hit')
-                  if $blast_app =~ /^tblastn/;    # Exception
-                $hsp_strand = $hsp->strand('query')
-                  if $blast_app =~ /^blastx/;     # Exception
-
-                my ($hsp_cluster) = $hsp->get_tag_values('cluster');
-
-                my $feature = Bio::SeqFeature::Generic->new(
-                    -display_name => $hsp->hit->start . '..'
-                      . $hsp->hit->end,           # . '(' . $hsp->score . ')',
-                    -score  => $hsp->bits,                      # $hsp->score,
-                    -start  => $hsp->start,
-                    -end    => $hsp->end,
-                    -strand => $hsp_strand,
-                    -tag    => {anchor => "anchor$hsp_counter"},
-                );
-
-                if ($hsp_cluster && $hsp_strand eq '1') {
-                    $clustered_plus_strand_hsps->add_sub_SeqFeature(
-                        $feature,
-                        'EXPAND'
-                    );
-                    $clustered_plus_strand_hsps->score(
-                        $clustered_plus_strand_hsps->score + $feature->score);
-                }
-                elsif ($hsp_cluster && $hsp_strand eq '-1') {
-                    $clustered_minus_strand_hsps->add_sub_SeqFeature(
-                        $feature,
-                        'EXPAND'
-                    );
-                    $clustered_minus_strand_hsps->score(
-                        $clustered_minus_strand_hsps->score +
-                          $feature->score);
-                }
-                else {
-                    push @hsps_in_track, $feature;
-                }
-            }
-
-            my $track = $panel->add_track(
-                -glyph        => 'graded_segments',
-                -connector    => 'dashed',
-                -max_score    => 800,
-                -min_score    => 0,
-                -sort_order   => 'high_score',
-                -key          => "$formatted_name ",
-                -bgcolor      => 'blue',
-                -strand_arrow => 1,
-                -height       => 7,
-                -label        => 0,
-                -pad_bottom   => 3,
-            );
-
-            $track->add_feature($clustered_plus_strand_hsps)
-              if $clustered_plus_strand_hsps->start;
-            $track->add_feature($clustered_minus_strand_hsps)
-              if $clustered_minus_strand_hsps->start;
-            $track->add_feature(@hsps_in_track) if @hsps_in_track;
-        }
     }
 
     else {
         error("Unreconized search type ($search_type)!");
     }
+    # Determine query length
+    my $in = Bio::SeqIO->new(-file => $query_file, -format => "Fasta");
+    for (my $count=1;my $query_seq = $in->next_seq;$count++) {
+    
+	my $query_length = $query_seq->length;
+	my $query_name   = $query_seq->id;
+	
+	# Generate score key colors
+	my @score_key_colors;
+	for my $i (0 .. 4) {
+	    my $h_value = 251 * (255 / 360);
+	    my $s_value = $i * 25 * (255 / 100);
+	    my $v_value = 100 * (255 / 100);
+	    
+	    my @rgb_values = GD::Simple->HSVtoRGB($h_value, $s_value, $v_value);
+	    
+	    push @score_key_colors, sprintf("#%.2x%.2x%.2x", @rgb_values);
+	}
+	
+	# Store hits
+	my @piece_refs;
+	
+	# Store genome links/positions during processing
+	my %genome_links;
+	my %expand_links;
+	
+	# Create image panels
+	my $panel = Bio::Graphics::Panel->new(
+					      -length     => $query_length,
+					      -width      => 500,
+					      -pad_left   => 10,
+					      -pad_right  => 10,
+					      -pad_top    => 10,
+					      -pad_bottom => 10,
+					      -key_style  => "left",
+					      );
+	
+	my $score_key = Bio::Graphics::Panel->new(
+						  -length     => $query_length,
+						  -width      => 532,
+						  -pad_left   => 1,
+						  -pad_right  => 1,
+						  -pad_top    => 1,
+						  -pad_bottom => 1,
+						  -key_style  => "left",
+						  );
+	
+	# Score key
+	my @score_key;
+	
+	for my $i (0 .. 19) {
+	    my $display_name = ' ';
+	    $display_name = '0 bits'    if $i == 0;
+	    $display_name = '800+ bits' if $i == 18;
+	    my $feature = Bio::SeqFeature::Generic->new(
+							-score => $i * (800 / 19),
+							-start => $i ? ($query_length / 20) * $i : 1,
+							-end => ($query_length / 20) * $i + ($query_length / 20),
+							-display_name => $display_name,
+							);
+	    push @score_key, $feature;
+	}
+	
+	my $track = $score_key->add_track(
+					  -glyph      => 'graded_segments',
+					  -key        => '    SCORE KEY: ',
+					  -fgcolor    => 'gray',
+					  -max_score  => 800,
+					  -min_score  => 0,
+					  -sort_order => 'high_score',
+					  -bgcolor    => 'blue',
+					  -label      => 1,
+					  -height     => 16,
+					  -bump       => 0,
+					  );
+	$track->add_feature(@score_key);
+	
+	# Query sequence
+	my $query = Bio::SeqFeature::Generic->new(
+						  -start        => 1,
+						  -end          => $query_length,
+						  -display_name => "QUERY: $query_name",
+						  );
+	$panel->add_track(
+			  $query,
+			  -glyph   => "arrow",
+			  -tick    => 2,
+			  -fgcolor => "black",
+			  -double  => 1,
+			  -label   => 1,
+			  );
+	
+	# Process BLAST/BLAT output - both are provided in blast format
+	
+	    my $result = $searchio->next_result;
+	    
+	    if (!$result && $search_type eq "blat")
+	    {    # Blat does not provide output when no hits
+		error("No hits were found!");
+	    }
+	    
+	    my $hsp_counter = 0;
+	    
+	    $result->rewind;
+	    
+	    while (my $hit = $result->next_hit) {
+		
+		next
+		    if $hit->num_hsps < 1;  # Work-around, BLAT producing blank hits
+		
+		my @hsps_in_track;
+		my $clustered_plus_strand_hsps  = Bio::SeqFeature::Generic->new;
+		my $clustered_minus_strand_hsps = Bio::SeqFeature::Generic->new;
 
-    # Write image to a temp file
-    my $temp_file = File::Temp->new(
-        TEMPLATE => "alignment_XXXXX",
-        DIR      => $self->image_dir,
-        SUFFIX   => ".png",
-        UNLINK   => 0,
-    );
+		my $name = $hit->name;
+		my ($formatted_name) = $name =~ /([^\/]+)$/;
 
-    my $alignment_image = $temp_file->filename;
+		if (length($formatted_name) > 20) {
+		    $formatted_name =~ s/^(.{16})(.*)/$1 .../;
+		}
+		$formatted_name = sprintf("%20s", $formatted_name);
 
-    # Generate image map
-    my @image_map_pieces;
+		my $description = $hit->description;
+		$description =~ s!^/!!;
 
-    #     my @boxes = $panel->boxes;
-    #     foreach my $map_component (@boxes) {
-    #         my ($feature, $x1, $y1, $x2, $y2, $track) = @{$map_component};
-    #
-    #         my ($anchor) = $feature->get_tag_values('anchor');
-    #         $x1 += 142;
-    #         $x2 += 142;
-    #         push @image_map_pieces, { coords => qq[$x1, $y1, $x2, $y2], href => qq[#$anchor] } if $anchor; # Padding (temporary)
-    #     }
+		my @formatted_parts;
+		foreach my $part (split(" /", $description)) {
+		    my ($key, $value) = split("=", $part);
+		    if ($key eq "id" or $key eq "tentative_id") {
+			push @formatted_parts, "/$key=$value";
+		    }
+		}
+		my $formatted_parts = join " ", @formatted_parts;
+		my $formatted_description =
+		  length($formatted_parts) < 96
+		  ? $formatted_parts
+		  : substr($formatted_parts, 0, 92) . " ...";
 
-    # Print out images
-    my $score_key_image =  $self->image_dir."/".$self->pre_compile->{SCORE_KEY_IMAGE};
-    if (!-e $score_key_image) {
-        open(IMAGE, ">$score_key_image")
-          or error("Cannot write file ($score_key_image): $!");
-        print IMAGE $score_key->png;
-        $score_key->finished;
-        close IMAGE;
+		# my $start = $hit->start;
+		# my $end = $hit->end;
+
+		my ($piece_refs_ref, $hit_genome_link, $hit_expand_link) =
+		  $self->extract_hit_info($hit, $query_name, $query_type);
+		push @piece_refs, @{$piece_refs_ref} if @{$piece_refs_ref};
+
+		$genome_links{$hit->name} = $hit_genome_link;
+		$expand_links{$hit->name} = $hit_expand_link;
+
+		$self->sort_hits($hit, $blast_app);    # Sort hits and add a cluster tag
+
+		my $hsp_count_per_hit = 0;
+
+		$hit->rewind;
+		while (my $hsp = $hit->next_hsp) {
+		    $hsp_counter++;
+
+		    next if $hsp_count_per_hit > $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT};
+		    $hsp_count_per_hit++;
+
+		    my $hsp_strand =
+		      $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
+
+		    $hsp_strand = $hsp->strand('hit')
+		      if $blast_app =~ /^tblastn/;    # Exception
+		    $hsp_strand = $hsp->strand('query')
+		      if $blast_app =~ /^blastx/;     # Exception
+
+		    my ($hsp_cluster) = $hsp->get_tag_values('cluster');
+
+		    my $feature = Bio::SeqFeature::Generic->new(
+			-display_name => $hsp->hit->start . '..'
+			  . $hsp->hit->end,           # . '(' . $hsp->score . ')',
+			-score  => $hsp->bits,                      # $hsp->score,
+			-start  => $hsp->start,
+			-end    => $hsp->end,
+			-strand => $hsp_strand,
+			-tag    => {anchor => "anchor$hsp_counter"},
+		    );
+
+		    if ($hsp_cluster && $hsp_strand eq '1') {
+			$clustered_plus_strand_hsps->add_sub_SeqFeature(
+			    $feature,
+			    'EXPAND'
+			);
+			$clustered_plus_strand_hsps->score(
+			    $clustered_plus_strand_hsps->score + $feature->score);
+		    }
+		    elsif ($hsp_cluster && $hsp_strand eq '-1') {
+			$clustered_minus_strand_hsps->add_sub_SeqFeature(
+			    $feature,
+			    'EXPAND'
+			);
+			$clustered_minus_strand_hsps->score(
+			    $clustered_minus_strand_hsps->score +
+			      $feature->score);
+		    }
+		    else {
+			push @hsps_in_track, $feature;
+		    }
+		}
+
+		my $track = $panel->add_track(
+		    -glyph        => 'graded_segments',
+		    -connector    => 'dashed',
+		    -max_score    => 800,
+		    -min_score    => 0,
+		    -sort_order   => 'high_score',
+		    -key          => "$formatted_name ",
+		    -bgcolor      => 'blue',
+		    -strand_arrow => 1,
+		    -height       => 7,
+		    -label        => 0,
+		    -pad_bottom   => 3,
+		);
+
+		$track->add_feature($clustered_plus_strand_hsps)
+		  if $clustered_plus_strand_hsps->start;
+		$track->add_feature($clustered_minus_strand_hsps)
+		  if $clustered_minus_strand_hsps->start;
+		$track->add_feature(@hsps_in_track) if @hsps_in_track;
+	    }
+	
+      
+	# Write image to a temp file
+	my $temp_file = File::Temp->new(
+	    TEMPLATE => "alignment_XXXXX",
+	    DIR      => $self->image_dir,
+	    SUFFIX   => ".png",
+	    UNLINK   => 0,
+	);
+
+	my $alignment_image = $temp_file->filename;
+	
+	$temp_file = File::Temp->new(
+	    TEMPLATE => "score_key_XXXXX",
+	    DIR      => $self->image_dir,
+	    SUFFIX   => ".png",
+	    UNLINK   => 0,
+	);
+
+	my $score_key_image = $temp_file->filename;
+	  # Print out images
+	open(IMAGE, ">$alignment_image")
+	  or error("Cannot write file ($alignment_image): $!");
+	print IMAGE $panel->png;
+	$panel->finished;
+	close IMAGE;
+
+	open(IMAGE, ">$score_key_image")
+	  or error("Cannot write file ($score_key_image): $!");
+	print IMAGE $score_key->png;
+	$score_key->finished;
+	close IMAGE;
+
+	# Generate image map
+	my @image_map_pieces;
+
+	#     my @boxes = $panel->boxes;
+	#     foreach my $map_component (@boxes) {
+	#         my ($feature, $x1, $y1, $x2, $y2, $track) = @{$map_component};
+	#
+	#         my ($anchor) = $feature->get_tag_values('anchor');
+	#         $x1 += 142;
+	#         $x2 += 142;
+	#         push @image_map_pieces, { coords => qq[$x1, $y1, $x2, $y2], href => qq[#$anchor] } if $anchor; # Padding (temporary)
+	#     }
+
+	# kviewer_string
+	my %kviewer_adds;
+	my $kviewer_adds = 0;
+	foreach (@piece_refs) {
+	    next unless $_->{pos};
+
+	    $kviewer_adds++;
+
+	    my $kviewer_add;
+
+	    my $chr  = $_->{chr};
+	    my $name = $_->{name};
+	    my $type = $_->{type};
+	    my $pos  = $_->{pos};
+	    my $link = CGI::escape($_->{genome_link});    # ***
+
+	    my $name_string = join(",", @{$name});
+
+	    $kviewer_add =
+	      qq[$type ${name_string}-$kviewer_adds ${pos}]
+	      ;    # Zero-length markers do not work
+
+	    push @{$kviewer_adds{$chr}}, $kviewer_add;
+	}
+
+	my $result=  [$query_name,$alignment_image,$score_key_image, \%kviewer_adds,
+	      \%genome_links, \%expand_links, \@image_map_pieces];
+	push  @data,$result;
     }
 
-    open(IMAGE, ">$alignment_image")
-      or error("Cannot write file ($alignment_image): $!");
-    print IMAGE $panel->png;
-    $panel->finished;
-    close IMAGE;
-
-    # kviewer_string
-    my %kviewer_adds;
-    my $kviewer_adds = 0;
-    foreach (@piece_refs) {
-        next unless $_->{pos};
-
-        $kviewer_adds++;
-
-        my $kviewer_add;
-
-        my $chr  = $_->{chr};
-        my $name = $_->{name};
-        my $type = $_->{type};
-        my $pos  = $_->{pos};
-        my $link = CGI::escape($_->{genome_link});    # ***
-
-        my $name_string = join(",", @{$name});
-
-        $kviewer_add =
-          qq[$type ${name_string}-$kviewer_adds ${pos}]
-          ;    # Zero-length markers do not work
-
-        push @{$kviewer_adds{$chr}}, $kviewer_add;
-    }
-
-    return (
-        $alignment_image, \%kviewer_adds, \%genome_links,
-        \%expand_links,   \@image_map_pieces
-    );
+    return \@data;
 }
 
 sub extract_hit_info {
