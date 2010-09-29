@@ -1,0 +1,39 @@
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />
+    <script src="/js/blast_blat/display_results.js"></script>
+ 
+</head> 
+
+<select class="blast_blat" >
+    [% count = 0 %]
+    [% FOREACH obj IN data %]
+	[% count = count + 1  %]
+	<option id="[% count %]">[% count _ ":" _ obj.query_name %]</option>
+    [% END %] 
+</select>
+ 
+
+[% count = 0 %] 
+[% FOREACH obj IN data %]
+  [% count = count + 1  %]
+  [% INCLUDE tool/blast_blat/display.tt2 %] 
+[% END %]
+
+
+<script type="text/javascript">
+ 
+
+    $(".blast_blat").change(function () {
+          
+	   
+	  $(".blast_container:visible").hide();
+           
+           var str = $(".blast_blat option:selected").attr("id");
+            
+          $("." + str).show();
+	  
+        })
+        .change();
+ 
+</script> 
