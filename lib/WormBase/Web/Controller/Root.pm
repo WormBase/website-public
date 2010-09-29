@@ -483,8 +483,12 @@ sub end : ActionClass('RenderView') {
   # Forward to our view FIRST.
   # If we catach any errors, direct to
   # an appropriate error template.
-  $c->forward('WormBase::Web::View::TT');
-
+  my $path = $c->req->path;
+  if($path =~ /\.html/){
+	$c->serve_static_file($c->path_to("root/static/$path"));
+  } else{
+  	$c->forward('WormBase::Web::View::TT') unless($c->req->path =~ /cgi-bin|cgibin/i);
+ }
   # 404 errors will be caught in default.
   #$c->stash->{template} = 'status/404.tt2';
   #$c->response->status(404);
