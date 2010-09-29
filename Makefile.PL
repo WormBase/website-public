@@ -58,6 +58,7 @@ requires 'SVG';
 requires 'Task::Weaken';
 requires 'Test::YAML::Valid';
 requires 'Test::Pod::Coverage';
+requires 'Time::Duration';
 requires 'WWW::Mechanize';
 requires 'YAML';
 
