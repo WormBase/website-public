@@ -9,7 +9,8 @@
           }
         });
 
-      var notify = "";
+
+
       $(".bench_update").live('click',function() {
         var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
         $("#bench_status").load(url,   function(response, status, xhr) {
@@ -23,6 +24,7 @@
 
         var star = $(this).children("#save");
         star.toggleClass("ui-state-highlight");
+        var notify = "";
         if(star.attr("title") == "add this report to your workbench"){
           star.attr("title","remove this report from your workbench");
           notify = "this report has been added to your workbench";
@@ -140,6 +142,15 @@
         }
       );
     }
+
+function history_clear(){
+        $("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
+                              if (status == "error") {
+                              var msg = "Sorry but there was an error: ";
+                              $("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
+                              }
+    });
+}
 
 
   // Load a (specific) field or widget dynamically onClick.
