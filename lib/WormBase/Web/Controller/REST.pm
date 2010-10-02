@@ -56,13 +56,6 @@ sub _bench {
     my $api = $c->model('WormBaseAPI');
     my @ret;
     if($widget=~m/user_history/){
-#       my $history = $c->user_session->{history};
-#       my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-#       my @ret = map {$history->{$_}} @history_keys;
-#       $c->stash->{history} = \@ret;
-#       $c->stash->{noboiler} = 1;
-#       $c->stash->{template} = "shared/fields/user_history.tt2"; 
-#       $self->status_ok($c,entity => {});
       $self->history_GET($c);
       return;
     }
@@ -102,16 +95,17 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 
 sub history_GET {
     my ($self,$c) = @_;
+    my $clear = $c->req->params->{clear};
+    if($clear){ delete $c->user_session->{history};}
     my $history = $c->user_session->{history};
-    my $size = (scalar keys(%{$history})) -1;
+    my $size = (scalar keys(%{$history}));
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
     my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count];
+    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count-1];
     @ret = map {
       my $t = (time() - @{$_->{time}}[-1]); 
-      $t = concise(ago($t, 1));#localtime($t);
-      $_->{time_lapse} = $t;
+      $_->{time_lapse} = concise(ago($t, 1));
       $_ } @ret;
     $c->stash->{history} = \@ret;
     $c->stash->{noboiler} = 1;
@@ -120,26 +114,17 @@ sub history_GET {
 }
 
 
-sub history_PUT {
+sub history_POST {
     my ($self,$c) = @_;
     $c->log->debug("history logging");
     my $path = $c->req->params->{ref};
-    my $name = $c->req->params->{name};
     unless($c->user_session->{history}->{$path}){
       my ($i,$type, $class, $id) = split(/\//,$path); 
-      $c->log->debug("type: $type, class:$class, id:$id");
-      if($type=~m/reports/){
-        $c->user_session->{history}->{$path}->{name} = { label => $name || $id, class => $class, id => $id };
-      }elsif($type=~m/search/){
-        $c->user_session->{history}->{$path}->{search} = { id => $id, class => $class};
-      }elsif($type=~m/bench/){
-        $c->user_session->{history}->{$path}->{bench} = "";
-      }
+      my $name = $c->req->params->{name} || $id;
+      $c->log->debug("type:$type, class:$class, id:$id, name:$name");
+      $c->user_session->{history}->{$path}->{data} = { label => $name, class => $class, id => $id, type => $type };
     }
-
     push(@{$c->user_session->{history}->{$path}->{time}}, time());
-
-
 }
 
 

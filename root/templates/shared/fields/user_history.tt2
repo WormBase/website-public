@@ -1,9 +1,9 @@
 
 [% FOREACH h IN c.stash.history %]
   <li>
-    [% IF h.name.defined; tag2link(h.name);%]
-    [% ELSIF h.search.defined; searchlink(h.search.class, h.search.id, h.search.class _ ' search: ' _ h.search.id); %]
-    [% ELSIF h.bench.defined; "<a href=\"" _ c.uri_for_action('bench') _ "\">your bench</a>";%]
+    [% IF h.data.type == 'reports'; tag2link(h.data);%]
+    [% ELSIF h.data.type == 'search_new'; searchlink(h.data.class, h.data.id, h.data.class _ ' search: ' _ h.data.id); %]
+    [% ELSIF h.data.type == 'bench'; "<a href=\"" _ c.uri_for_action('bench') _ "\">your bench</a>";%]
     [% ELSE %] <a href="[% h.path %]">[% h.path %]</a>
     [% END %]
     
@@ -13,3 +13,4 @@
 
   </li>
 [% END %]
+  <li><a id="fade" onclick="history_clear()">clear history</span></li>

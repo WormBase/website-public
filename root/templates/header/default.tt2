@@ -22,7 +22,7 @@
 <script>
   
         $.ajax({
-                 type: "PUT",
+                 type: "POST",
                  url : "/rest/history?ref=" + window.location.pathname + "&name=[% object.name.data.label %]",
         });
 
