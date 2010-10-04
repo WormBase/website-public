@@ -9,9 +9,9 @@
         <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
            <p>  
                 [% # The current release of the software and its codename %]
-                Software version [% c.config.version %] "[% c.config.codename %]"
-                <br />
                 Database version [% constants.acedb_version %]
+                <br />
+                Software version [% c.config.version %] "[% c.config.codename %]"
            </p>
 
 <div style="position:absolute; right:0; bottom:0;">

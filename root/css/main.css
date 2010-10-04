@@ -785,6 +785,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   cursor:auto;
 }
 
+#navigation ul li.title { 
+  background: #EEE;
+  cursor:auto;
+  font-weight: bold;
+  color: gray;
+}
+
 #nav-min{
   height:100%;
   width:0.8em;

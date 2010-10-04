@@ -53,6 +53,7 @@ sub workbench_GET {
 
 sub _bench {
     my ($self,$c, $widget) = @_; 
+    $c->log->debug("getting bench widget");
     my $api = $c->model('WormBaseAPI');
     my @ret;
     if($widget=~m/user_history/){
@@ -359,10 +360,11 @@ sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
 
     if($class eq "bench"){
+      $c->log->debug("this is a bench page widget");
       $self->_bench($c, $widget);
       return;
     }
-			     
+    $c->log->debug("this is NOT a bench page widget");
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
