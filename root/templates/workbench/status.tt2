@@ -1,11 +1,9 @@
-<div>
-<a class="bench_update"  href="/rest/workbench" ref="[% path %]" style="float:right">
+<a class="bench_update"  href="/rest/workbench" ref="[% c.stash.path %]" style="float:right">
 <div id="save" class="ui-icon ui-icon-star
-[% IF c.user_session.bench.defined && c.user_session.bench.register.defined && c.user_session.bench.register.$path.defined %]
+[% IF c.stash.star == 1 %]
   ui-state-highlight" title="remove this report from your workbench" 
 [% ELSE %]
   " title="add this report to your workbench" 
 [% END %]
 ></div>
 </a>   
-</div>

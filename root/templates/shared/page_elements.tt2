@@ -201,7 +201,7 @@
 
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
-   <section class="widget">
+   <section class="widget" name="[% widget.name %]">
           <div class="widget-container">
                 <header>    
                 <div id="widget-header">
@@ -212,8 +212,6 @@
 
                 <div id="[%- widget.name -%]"></div>
                 [% content %]
-
-[% # footer code removed.  look in widget_block if you want it %]
 
       </div>
    </section>

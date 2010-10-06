@@ -21,7 +21,7 @@
 </div>
   <div id="navigation">
     <ul>
-      <li class="title">Page content</li>
+      <li class="title">Page Content</li>
     [% widgets = c.config.pages.$class.widgets.keys.sort %]
     [% IF object; widgets.unshift('overview'); END; %]
     [% FOREACH widget_name IN widgets.unique -%]
@@ -33,11 +33,11 @@
           load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
       [% IF object %]
-      <li class="title">External links</li>
+      <li class="title">External Links</li>
       <li>...</li>
-      <li class="title">Related [% object.name.data.class %]s...</li>
+      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>
-      <li class="title">Recently activity:</li>
+      <li class="title">Recently Activity</li>
       <div class="user-history" id="user_history"></div>
       [% END %]
     </ul>
@@ -51,7 +51,12 @@
       [% title %]
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-   [% PROCESS workbench/status.tt2 %]
+          <div id="workbench-status"></div>
+
+          <script>
+          $("#workbench-status").load("/rest/workbench/star?ref=[% path %]");
+          </script>
+
       [% ELSE %]
         <h2>Your Workbench</h2>
       [% END %] 
@@ -68,7 +73,7 @@
         [% END %]
         </li>   
         [% c.user_session.display.$class.$widget_name = -1 %]
-        <script>$("#nav-[% widget_name %]").trigger('click');</script>
+        <script>$("#nav-[% widget_name %]").trigger('open');</script>
       [% END %]
 
       [% FOREACH widget_name IN widgets %]

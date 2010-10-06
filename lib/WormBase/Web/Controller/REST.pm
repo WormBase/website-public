@@ -23,33 +23,48 @@ Catalyst Controller.
 
 =cut
  
-sub workbench :Path("/rest/workbench") Args(0) :ActionClass('REST') {}
+sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
-        my ( $self, $c) = @_;
+    my ( $self, $c) = @_;
 	my $path = $c->req->params->{ref};
-	
-        my ($type, $class, $id) = split(/\//,$path); 
-	
-	if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{register}{$path}){
-		  delete $c->user_session->{bench}{register}{$path};
-		  $c->user_session->{bench}{type}{$type}--;
-		  delete $c->user_session->{bench}{store}{$type}{$path};
-
-          delete $c->user_session->{bench}{reports}{$class}{$id};
-	} else{
-		  $c->user_session->{bench}{type}{$type}++;
-		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{store}{$type};
-		  $c->user_session->{bench}{store}{$type}{$path}=$c->user_session->{bench}{type}{$type};
-
-          $c->user_session->{bench}{reports}{$class}{$id}=localtime();
-	}
-	
-  	$c->stash->{path} = $path; 
+	if($path){
+      my ($type, $class, $id) = split(/\//,$path); 
+      if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+            $c->user_session->{bench}{count}--;
+            delete $c->user_session->{bench}{$type}{$class}{$id};
+            $c->stash->{notify} = "this report has been removed from your workbench"; 
+      } else{
+            $c->user_session->{bench}{count}++;
+            $c->user_session->{bench}{$type}{$class}{$id}=localtime();
+            $c->stash->{notify} = "this report has been added to your workbench"; 
+      }
+      $c->stash->{path} = $path; 
+    }
  	$c->stash->{noboiler} = 1;
-#   	$c->stash->{template} = "workbench/status.tt2";   
-    my $count = scalar(keys(%{$c->user_session->{bench}{register}})) || 0;
-    $c->response->body("($count)");
+
+    my $count = scalar($c->user_session->{bench}{count}) || 0;
+    $c->stash->{count} = $count;
+#     $c->response->body("($count)");
+    $c->stash->{template} = "workbench/count.tt2";
 } 
+
+sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {}
+
+sub workbench_star_GET{
+    my ( $self, $c) = @_;
+    $c->log->debug("workbench_star method");
+    my $path = $c->req->params->{ref};
+    my ($type, $class, $id) = split(/\//,$path); 
+    if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+          $c->stash->{star} = 1;
+    } else{
+        $c->stash->{star} = 0;
+    }
+    $c->stash->{path} = $path;
+    $c->stash->{template} = "workbench/status.tt2";
+    $c->stash->{noboiler} = 1;
+}
+
 
 sub _bench {
     my ($self,$c, $widget) = @_; 
