@@ -78,8 +78,8 @@ sub bench :Path("/bench") Args(0) {
     my ( $self, $c ) = @_;
     my $class = 'bench';
     $c->stash->{'class'} = $class;
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    $c->stash->{widgets} = \@widgets;
+#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+#     $c->stash->{widgets} = \@widgets;
     $c->stash->{template} = "report.tt2";
 } 
 ##############################################################
@@ -313,8 +313,8 @@ sub report :Path("/reports") Args(2) {
 =cut
 
     # Stash the symbolic name of all widgets that comprise this page in default order.
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    $c->stash->{widgets} = \@widgets;
+#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+#     $c->stash->{widgets} = \@widgets;
 }
 
 
