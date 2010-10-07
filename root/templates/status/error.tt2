@@ -1,0 +1,27 @@
+ 
+
+<div>  
+
+<h3>
+<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
+Oh my heck. We've encountered an error.
+</h3>
+
+<p>
+You may also send us an <a href="mailto:feedback@wormbase.org">WormBase</a> an email to report this error:
+</p>
+
+<p>
+Expected URL: [% c.req.path %]<br>
+Server Error: 500 <br>
+Error Message:
+<span class="error">
+  [% FOREACH e IN c.error %]
+    [% e %]<br>
+  [% END %]
+</span>
+</p>
+
+</div>
+
+
