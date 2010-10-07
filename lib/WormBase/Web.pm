@@ -16,6 +16,7 @@ use Catalyst qw/
 	  Cache
 	  Static::Simple
 	  Unicode
+	  ErrorCatcher
 
 	  Authentication
 	  Authorization::Roles
@@ -30,6 +31,8 @@ use Catalyst qw/
 extends 'Catalyst';
 
 use Catalyst::Log::Log4perl; 
+use HTTP::Status qw(:constants :is status_message);
+
 
 our $VERSION = '0.02';
  
@@ -62,7 +65,7 @@ __PACKAGE__->config( name => 'R2',
 
 =cut
 
-
+ 
 
 # Create a log4perl instance
 __PACKAGE__->log(
@@ -260,11 +263,21 @@ if (0) {
 #
 ##################################################
 
+ 
 
 
 # Finally! Start the application!
 __PACKAGE__->setup;
 
+sub finalize_error {
+	my $c = shift;
+	$c->config->{'response_status'}=$c->response->status;
+	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
+      
+ 	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_error($c->config->{'response_status'})); 
+	$c->maybe::next::method; 
+}
+ 
 
 # There's a problem with c.uri_for when running behind a reverse proxy.
 # We need to reset the base URL.
@@ -280,6 +293,8 @@ after prepare_path => sub {
 #if __PACKAGE__->config->{debug}
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
 
+
+ 
 
 =pod
 
