@@ -64,7 +64,7 @@ sub default :Path {
 	# 404: Page not found...
 #   	$c->stash->{template} = 'status/404.tt2';
 	$c->error('page not found');
-	$c->response->status(501);
+	$c->response->status(404);
     }
 }
 
