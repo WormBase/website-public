@@ -1,19 +1,30 @@
+<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">  
+
 <h3>
-Oh my heck. We've encountered an error.
+<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
+The page you requested was not found
 </h3>
 
+You may have clicked an expired link or mistyped the address.
+
+<ul>
+<li><a href="http://www.wormbase.org">Return Home</a></li>
+<li><a href = "javascript:history.back()">Go Back</a></li>
+</ul>
+
 <p>
-In this case, the page that you were looking for ([% c.req.path %]) could not be found.
+If you think this page SHOULD exist, copy and paste the following information and send <a href="mailto:feedback@wormbase.org">WormBase</a> an email:
 </p>
 
 <p>
-If you think this page SHOULD exist, copy and paste the following information and send us an email:
+Expected URL: [% c.req.path %]<br>
+Server Error: 404 <br>
+Error Message:
+<span class="error">
+  [% FOREACH e IN c.error %]
+    [% e %]<br>
+  [% END %]
+</span>
 </p>
 
-<p>
-Expected URL: [% c.req.path %]<br />
-Server Error: 404
-
-Here's the error message, on the off-chance that it means something to you: <span class="error">[% error %]</span>
-
-</p>
+</div>
