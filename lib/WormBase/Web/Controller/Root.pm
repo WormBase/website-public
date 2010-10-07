@@ -50,10 +50,11 @@ sub default :Path {
     # Does this path exist as one of our pages?
     # This saves me from having to add an index action for
     # each class.  Each class will have a single default screen.
-    if ($c->config->{pages}->{$class}) {
+    if (defined $class && $c->config->{pages}->{$class}) {
 	
 	# Use the debug index pages.
 	if ($c->config->{debug}) {
+	  $c->stash->{template} = 'debug/index.tt2';
 	} else {
 #	    $c->stash->{template} = 'generic/index.tt2';
 	    $c->stash->{template} = 'report.tt2';
@@ -61,8 +62,9 @@ sub default :Path {
 	}
     } else {
 	# 404: Page not found...
-	$c->stash->{template} = 'status/404.tt2';
-	$c->response->status(404);
+#   	$c->stash->{template} = 'status/404.tt2';
+	$c->error('page not found');
+	$c->response->status(501);
     }
 }
 
@@ -511,8 +513,9 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
 	$c->serve_static_file($c->path_to("root/static/$path"));
   } else{
-  	$c->forward('WormBase::Web::View::TT') unless($c->req->path =~ /cgi-bin|cgibin/i);
+  	$c->forward('WormBase::Web::View::TT') unless(  $c->req->path =~ /cgi-bin|cgibin/i);
  }
+
   # 404 errors will be caught in default.
   #$c->stash->{template} = 'status/404.tt2';
   #$c->response->status(404);
