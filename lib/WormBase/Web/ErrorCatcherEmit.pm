@@ -7,8 +7,11 @@ sub emit {
     my ($class, $c, $output) = @_;
     
     my $status=$c->config->{'response_status'};   
-    my $template  = "error.tt2";
-    $template  = "status/$status.tt2" if($status =~ /301|400|404|500|502/);
+    my $template  = "status/$status.tt2";
+     
+    unless(-e $c->config->{root}."/templates/$template") {  
+      $template  = "status/error.tt2";
+    }
 	 
     eval {
 	$c->response->body($c->view('TT')->render($c,$template)); 
