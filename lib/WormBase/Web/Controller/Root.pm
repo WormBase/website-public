@@ -77,36 +77,12 @@ sub default :Path {
 #}
  
 sub bench :Path("/bench") Args(0) {
-        my ( $self, $c ) = @_;
-#          my $bench = $c->user_session->{bench} || {};
-
-#         $c->stash->{bench} = $bench;
-
-## 	$c->stash->{template} = 'workbench/index.tt2';
-#     my $api = $c->model('WormBaseAPI');
-#     my @ret;
-#     foreach my $class (keys(%{$c->user_session->{bench}{reports}})){
-#       my @objs;
-#       foreach my $id (keys(%{$c->user_session->{bench}{reports}{$class}})){
-#         my $obj = $api->fetch({class=> ucfirst($class),
-#                           name => $id}) or die "$!";
-#         push(@objs, $obj);
-#       }
-#       push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
-#     }
-#     $c->stash->{'results'} = \@ret;
-#     $c->stash->{'type'} = 'all'; 
-#     $c->stash->{template} = "search/results.tt2";
-
-
-
+    my ( $self, $c ) = @_;
     my $class = 'bench';
     $c->stash->{'class'} = $class;
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    $c->stash->{widgets} = \@widgets;
+#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+#     $c->stash->{widgets} = \@widgets;
     $c->stash->{template} = "report.tt2";
-
-	 
 } 
 ##############################################################
 #
@@ -339,8 +315,8 @@ sub report :Path("/reports") Args(2) {
 =cut
 
     # Stash the symbolic name of all widgets that comprise this page in default order.
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    $c->stash->{widgets} = \@widgets;
+#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+#     $c->stash->{widgets} = \@widgets;
 }
 
 

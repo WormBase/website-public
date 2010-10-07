@@ -185,27 +185,6 @@ has 'phen_data' => (
     }
 );
 
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-		    data structure = data{"data"} = {
-		     }';
-
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-#### end template #####
 
 
 #######################################################
@@ -266,9 +245,6 @@ sub ids {
     
 }
 
-sub description{
-  return shift->concise_description;
-}
 
 sub concise_description {
     my $self   = shift;
@@ -295,6 +271,7 @@ sub concise_description {
 # Fetch all proteins associated with a gene.
 ## NB: figure out the naming convention for proteins
 
+# NOTE: this method is not used
 sub proteins {
 
 	my $self = shift;
@@ -302,26 +279,16 @@ sub proteins {
 	my %data;
 	my $desc = 'proteins related to gene';
 
-	my %data_pack;
 
 	#### data pull and packaging
 
 		my @cds    = $object->Corresponding_CDS;
-		my @proteins  = map { $_->Corresponding_protein } @cds if @cds;
-		
-		foreach my $protein (@proteins){
-			
-			my $public_name = $self->public_name($protein, $protein->class);
-			$data_pack{$protein} = {
-			  'class' => 'Protein',
-			  'label' => $public_name,
-                          'id' => "$protein"
-			};						
-		}
+		my @proteins  = map { $_->Corresponding_protein } @cds;
+        @proteins = map {$self->_pack_obj($_, $self->public_name($_, $_->class))} @proteins;
 		
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@proteins;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -330,6 +297,7 @@ sub proteins {
 # Fetch all CDSs associated with a gene.
 ## figure out naming convention for CDs
 
+# NOTE: this method is not used
 sub cds {
 
 	my $self = shift;
@@ -355,6 +323,7 @@ sub cds {
 # Each is associated with a protein and we should probably
 # retain that relationship
 
+# NOTE: this method is not used
 sub kogs {
     my $self     = shift;
     my $object   = $self->object;
@@ -400,6 +369,7 @@ sub other_sequences {
     return $data;
 }
 
+# NOTE: this method is not used
 sub cloned_by {
 
     my $self = shift;
@@ -492,6 +462,7 @@ sub genetic_position {
 # This has some rather complicated markup.
 # Pre-process here before hitting the template
 # (This could also be a function for the template)
+# NOTE: this method makes no sense.
 sub pre_wormbase_information {
     my $self   = shift;
     my $object = $self->object;
@@ -935,45 +906,6 @@ sub gene_ontology {
 }
 
 
-# gene_ontology_simple {
-# 
-#     my $self = shift;
-#     my $object = $self->object; 
-#     my %data;
-#     my %data_pack;
-# 	my $desc = 'gene ontology terms to which gene is annotated';
-# 	
-# 	## get go terms for the gene
-# 
-# 	my @go_terms = $object->GO_term;
-# 	
-# 	## get term details
-# 	
-# 	foreach my $go_term (@go_terms){
-# 			
-# 		$data_pack{$go_term}{'term'} = $go_term->Term;
-# 		$data_pack{$go_term}{'term_type'} = $go_term->Type;
-# 		$data_pack{$go_term}{'class'} = $go_term->class;
-# 		
-# 		my %evidence;
-# 		
-# 	  	foreach my $code ($go_term->col){
-# 		
-# 			my ($evidence_code,$method,$detail) = $code->row;		
-# 			$evidence{$evidence_code}{'method'} = $method;
-# 			$evidence{$evidence_code}{'detail'} = $detail;
-# 			
-# 	  	}
-# 	  	
-# 	  	$data_pack{'evidence'} = \%evidence;
-# 	}
-# 	
-# 	$data{'data'} = \%data_pack;
-# 	$data{'description'} = $desc;
-# 	
-# 	return \%data;	
-# }
-
 
 ###########################################
 # Components of the Alleles panel
@@ -1215,6 +1147,7 @@ sub orthologs {
 	return \%data;
 }
 
+# NOTE: this is not used in display
 sub ortholog_other {
 
 	my $self = shift;
@@ -1399,30 +1332,6 @@ sub antibodies {
   
 #### complex transformation ####
 
-sub other_orthologs {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{\'pack\'} = {
-				}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-	
-	## classic code ##
-	
-	## end classic code ##
-	
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 sub protein_domains {
 	my $self = shift;
@@ -1444,416 +1353,8 @@ sub protein_domains {
 }
 
 
-sub rnai_phenotypes {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-		data structure = data{"data"} = {
-		}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @rnai = $object->RNAi_result;    
-    foreach my $rnai (@rnai) {
-#    	print "\t$rnai\n";
-		my @phenotypes = $rnai->Phenotype;
-	
-		foreach my $interaction ($rnai->Interaction) {
-	    	my @types = $interaction->Interaction_type;
-	    	foreach (@types) {
-	   
-			push @phenotypes,map { $_->right } grep { $_ eq 'Interaction_phenotype' } $_->col;
-	    		}
-		}
-		#print "\t\t@phenotypes\n";
-		foreach my $phenotype (@phenotypes) {
-			my $not_attribute = $phenotype->right;
-			my $na;
-			my $phenotype_name = $phenotype->Primary_name; ### 'pn'
-			if ($not_attribute =~ m/not/i){
-			
-				$na = $not_attribute;
-			
-			} else {
-			
-				$na = "";
-			
-			}
-			
-			#print "$object\|$rnai\|$phenotype\|$na\n";
-	
-		$data_pack{$rnai} = {
-								'ace_id'=>$rnai,
-								'phenotype'=>$phenotype,	
-								'phenotype_name'=>$phenotype_name,
-								'not_attribute'=>$na,		
-								'class'=>'RNAi'
-								};
-		}	
-	}
 
 
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub variation_phenotypes {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @variations = $object->Allele;
-	foreach my $variation (@variations) {
-
-		my $seq_status = $variation->SeqStatus;
-		my $variation_name = $variation->Public_name;	
-		my @phenotypes = $variation->Phenotype;
-		
-			foreach my $phenotype (@phenotypes) {
-			    
-			    my @attributes = $phenotype->col;
-			    my $na = "";
-			    my $phenotype_name = $phenotype->Primary_name;
-			    foreach my $attribute (@attributes) {
-			    
-			    	if ($attribute =~ m/^not$/i){
-    
-				    	$na = $attribute;
-  			  
-			    	} else {
-    					
-				    next;
-    
-			    	}
-			    }
-			
-			
-			$data_pack{$variation} = {
-										"ace_id"=>$variation,
-										"phenotype"=>$phenotype,
-										"not_attribute"=>$na,
-										"seq_status"=>$seq_status,
-										"variation_name"=>$variation_name,
-										"phenotype_name"=>$phenotype_name,
-										'class'=>'Variation'
-										
-									};
-			}
-	}
-
-
-
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub transgene_phenotypes {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
-
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my %lines;
-	
-	my @xgenes = $object->Drives_Transgene;
-	my @xgene_product = $object->Transgene_product;
-	my @xgene_rescue = $object->Rescued_by_transgene;
-	
-	push @xgenes,@xgene_product;
-	push @xgenes,@xgene_rescue;
-	
-    foreach my $xgene (@xgenes) {
-    
-		my @phenotypes = $xgene->Phenotype;
-		foreach my $phenotype (@phenotypes) {
-			my $not_attribute = $phenotype->right;
-			my $phenotype_name = $phenotype->Primary_name;
-			my $na;
-			
-			if ($not_attribute =~ m/not/i){
-			
-				$na = $not_attribute;
-			} else {
-			
-				$na = "";
-			}
-			
-			$lines{"$object\|$xgene\|$phenotype\|$na\|$phenotype_name"} = 1;
-		}
-	}
-
-	foreach my $line (keys %lines) {
-
-		my($gene,$xgene,$phenotype,$na,$phenotype_name) = split /\|/,$line;
-		
-		$data_pack{$xgene} = {
-							
-							'ace_id'=>$xgene,
-							'class'=>'Transgene',
-							'phenotype'=>$phenotype,
-							'phenotype_name'=>$phenotype_name,
-							'not_attribute'=>$na
-						};
-		
-		
-	}
-
-
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub rnai_details {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes ;
-				data structure = data{"data"} = {
-				}';
-				
-	my %data_pack;
-
-	#### data pull and packaging
-	my %rnais;
-	my @rnais  = $object->RNAi_result;   
-	
-	foreach my $rnai_id (@rnais) { ##keys %$rnai_phenotype_data_hr
-
-		$rnais{$rnai_id} = $rnai_id;
-
-	}
-	
-	foreach my $rnai_object (values %rnais) {
-	
-	#my $rnai_object = $DB->fetch(-class => 'RNAi', -name =>$unique_rnai); #, , -count => 20, -offset=>6800
-	
-	my $ref;
-	$ref = eval{$rnai_object->Reference};
-	my $genotype;
-	my @experimental_details = eval{$rnai_object->Experiment};
-	
-	
-	
-	foreach my $experimental_detail (@experimental_details) {
-			
-		if($experimental_detail =~ m/Genotype/) {
-		
-			$genotype = $experimental_detail->right;
-			# print "$rnai_object\|$genotype\|$ref\n";
-			
-			$data_pack{$rnai_object} = {
-										'ace_id'=>$rnai_object,
-										'class'=>'RNAi',
-										'genotype'=>$genotype,
-										'genotype_class'=>$experimental_detail,
-										'reference'=>$ref
-										};
-			
-			
-			
-		}
-		
-		if($experimental_detail =~ m/Strain/) {
-		
-			my $strain = $experimental_detail->right;
-			$genotype = $strain->Genotype;
-			#print "$rnai_object\|$genotype\|$ref\n";
-			$data_pack{$rnai_object} = {
-										'ace_id'=>$rnai_object,
-										'class'=>'RNAi',
-										'genotype'=>$genotype,
-										'genotype_class'=>$experimental_detail,
-										'reference'=>$ref
-										};
-		}	
-	} 
-
-	if(!($genotype)) {
-		
-		#print "$rnai_object\|$genotype\|$ref\n";
-		$data_pack{$rnai_object} = {
-										'ace_id'=>$rnai_object,
-										'class'=>'RNAi',
-										'genotype'=>$genotype,
-										'genotype_class'=>"",
-										'reference'=>$ref
-										};
-	
-	
-	} else {
-	
-		next;
-	}
-}
-
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-sub rnai_phenotypes_old {
-    my $self   = shift;
-    my $object = $self->object;
-    return unless $object->RNAi_result;
-    
-    my %stash = (common_name => $self->common_name($object));
-    
-    # Collate RNAi results according to
-    # 1. its Evidence (primary or secondary)
-    # 2. its Phenotype
-    # 3. (Optional - could also collate by reference)
-    
-    my (%phenes,$total_experiments,%phenes2count,%phenes2total_count);
-    my (@observed,@not_observed);
-    my (%global_observed, %global_not_observed);
-    
-    foreach ($object->RNAi_result) {
-	# Fetch the evidence string (RNAI_primary or secondary)
-	my ($evidence) = $_->right(2);
-	
-	my ($author,$date,$target);
-	# Preferentially draw author information from a reference
-	if (my $reference = $_->Reference) {
-	    $author = $reference->Author;
-	    $date   = parse_year($reference->Year);
-	    $target = $reference;
-	} else {
-	    $author = $_->Author;
-	    $date   = $_->Date;
-	    $date    =~ s/ 00:00:00$//;
-	    $target = $_->Author;
-	}
-	
-	# Create some lookup hashes so I can purge phenotypes that are NOT
-	my @phenotypes = $_->Phenotype;
-	
-	# The aim of this horrible bit of code is to create an aggregated view of
-	# phenotype associated with RNAi experiments.  It's scary.
-	# TH: All of this logic belongs in the VIEW	
-	my $data = $self->_parse_hash(\@phenotypes);
-	my ($positives,$negatives) = $self->_is_NOT_phene($data);
-	
-	# The return value is actually a more complicated list.
-	# For our purposes, we just need object names
-	push @observed,map { $_->{node} } @$positives;
-	push @not_observed,map { $_->{node} } @$negatives;
-	
-	%{$global_observed{$_}}     = map { $_->{node} => 1 } @$positives;
-	%{$global_not_observed{$_}} = map { $_->{node} => 1} @$negatives;
-	
-	foreach my $phenotype (@phenotypes) {
-	    
-	    push @{$phenes{$evidence}->{$phenotype}->{$_}},"$target - $author $date";
-	    $phenes2count{$evidence}{$phenotype}++ if $global_observed{$_}{$phenotype};
-	    $phenes2total_count{$phenotype}++;
-	}
-	$total_experiments++;
-    }
-    
-    if (%phenes) {
-	my %observed     = map { $_ => 1 } @observed;
-	# To be in the "not observed" category it should never have been observed across all
-	# experiments, not just one
-	my %not_observed = map { $_ => $_ } grep { !$observed{$_} } @not_observed;
-	
-	foreach my $evidence (qw/RNAi_primary RNAi_secondary/) {
-	    if ($evidence eq 'RNAi_primary') {
-		next unless (defined $phenes{$evidence});
-	    }
-	    
-	    # Suppress the secondary display altogether since it's rare
-	    if ($evidence eq 'RNAi_secondary') {
-		# Do nothing
-		next unless (defined $phenes{$evidence});
-	    }
-	    
-	    my $display_footnotes;
-	    foreach my $phene (sort { $phenes2count{$evidence}{$b}
-				      <=> $phenes2count{$evidence}{$a}
-			       } keys %{$phenes2count{$evidence}}) {
-		next if $not_observed{$phene};  # Display those that were scored but not observed later
-		
-		# How many experiments scored this assigned this phenotype?
-		# This should really link to a popup window that collates all of this information together
-		
-		my @experiments = keys %{$phenes{$evidence}->{$phene}};	  
-		# ... and from which references?
-		my (%references,%reagents,$reagents_specific,$reagents_nonspecific);
-		foreach my $experiment  (@experiments) {
-		    foreach (@{$phenes{$evidence}->{$phene}->{$experiment}}) {
-			$references{$_}++;
-		    }
-		    
-		    # Does this experiment also potentially target other genes?
-		    # I THINK THAT ALL OF THIS BELONGS IN THE VIEW
-#		    my $dbh = $self->service('acedb');
-#		    $experiment = $dbh->fetch(RNAi => $experiment);
-#		    $phene      = $dbh->fetch(Phenotype => $phene);
-#		    
-#		    if ($evidence eq 'RNAi_primary' && $global_observed{$experiment}{$phene}) {
-#			my @inhibits = $experiment->Gene;
-#			if (@inhibits > 1) {
-#			    $reagents_nonspecific++;
-#			} else {
-#			    $reagents_specific++;
-#			}
-#		    }
-		}
-		
-#	push @{$stash{$evidence}},[$c->object2link($phene,_best_phenotype_name($phene)),
-		push @{$stash{$evidence}},[$phene,
-					   # Link the tally of experiments to the RNAi report page
-					   qq{<a href="/db/seq/rnai?name=$object;phenotype=$phene">
-			       $phenes2count{$evidence}{$phene}}
-					   . ' (' . ($reagents_specific || 0)
-					   . ':'  . ($reagents_nonspecific || 0)
-					   . ') '
-					   . "/ " . $phenes2total_count{$phene} . '</a>',
-					   join(', ',keys %references)];
-		
-	    }
-	}
-	@{$stash{not_observed}} = @not_observed 
-	    ? join(", ", map {$self->best_phenotype_name($not_observed{$_})} keys %not_observed) : "";
-    }
-    
-    return \%stash;
-}
 
 
 sub gene_models {
@@ -1976,346 +1477,7 @@ sub fetch_gff_gene {
   return $trans;
 }
 
-  
-##### old superceded subs ###
 
-sub interactions_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my $stash = {};
-    
-    # This is an extremely bizarre layout - 
-    # reflecting the rather bizarre nature of interaction objects
-    # Each interaction is specific to one paper, NOT to an interaction pair
-    my @interactions = $object->Interaction;
-    return unless @interactions;
-    
-    # Compress interactions by type, gene-gene, references
-    foreach my $interaction (@interactions) {
-	
-	# Create a unique key corresponding to interactors
-	my @genes = $interaction->Interactor;
-	my $pair  = join('-',@genes);
-	
-	my $paper = $interaction->Paper;
-	$paper    = $paper->Merged_into if $paper->Merged_into;
-	
-	my $year  = parse_year($paper->Year) if $paper;
-	my $type  = $interaction->Interaction_type;
-	
-	# Have we seen this interaction type for this pair of interactors before?
-	# If so, save another paper...
-#    if (defined $data{$type}->{$pair}) {
-#      push @{$data{$type}->{$pair}->{paper}},$paper;
-#    } else {
-	$stash->{$type}->{$pair} =
-	{
-	    paper       => [[$paper,parse_year($year)]],
-	    interactor  => $interaction,
-	    interactors => [ $interaction->Interactor ],
-	};
-    }
-    #  }
-    ##  # Prioritize the display of types in the template
-    ##  foreach my $type (qw/genetic regulatory predicted_interaction/) {
-    ##    foreach my $pair (sort keys %{$interactions{$type}}) {
-    ##     my %seen = ();
-    ##      $table .= TR(td({-align=>'center'},$pair),
-    ##		   td({-align=>'center'},$type),
-    ##		   td({-width=>'30%'},join('; ',
-    ##					   sort { $a cmp $b }
-    ##					   grep { !$seen{$_}++ } 
-    ##					   grep { $_ ne 'n/a' }  # Ignor empty papers
-    ##					   @{$interactions{$type}{$pair}})));
-    ##   }
-    ##}
-    return $stash;
-}
-
-sub microarray_topology_map_position_old {
-    my $self   = shift;
-    my $object = $self->object;
-     
-    return unless @{$self->sequences};
-    
-    my @segments = $self->_fetch_segments;
-    
-    my $seg = $segments[0] or return;
-    my @stash = map {$_->info} $seg->features('experimental_result_region:Expr_profile') ;
-    return \@stash;
-}
-
-
-
-sub orthologs_old {
-    my $self     = shift;
-    my $object = $self->object;
-    return [ $object->Ortholog ];
-}
-
-sub orfeome_project_primers_old {
-    my $self     = shift;
-    my $object = $self->object;
-    
-    return unless @{$self->sequences};
-    
-    my @segments = $self->_fetch_segments;
-    my @stash =  map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments;
-    return \@stash;
-}
-
-
-sub treefam_old {
-    my $self     = shift;
-    my $object = $self->object;
-    
-    
-    my @data;
-    foreach my $protein (@{$self->all_proteins}) {
-	my $treefam = $self->_fetch_protein_ids($protein,'treefam');
-	
-	# Ignore proteins that lack a Treefam ID
-	next unless $treefam;
-	my $id = $object->Sequence_name || $treefam;
-	push @data,[$id,$treefam];
-    }
-    return \@data;
-}
-
-
-sub inparanoid_groups_old {
-    my $self     = shift;
-    my $object = $self->object;
-    my %stash;
-     
-    my %seen;
-    my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @{$self->all_proteins};
-    
-    foreach my $cluster (@inp) {
-	my @proteins = $cluster->Protein;
-	foreach my $protein (@proteins) {
-	    my $species = $protein->Species || $self->id2species($protein) || 'unknown';
-	    # Key by species
-	    push @{$stash{$cluster}->{$species}},$protein;
-	}
-    }
-    return \%stash;
-}
-
-
-sub history_old {
-    my $self   = shift;
-    my $object = $self->object;
-    my @history = $object->History;
-
-    # Present each history event as a separate item in the data struct
-    my $data = {};
-    foreach my $history (@history) {
-	my $type = $history;
-	$type =~ s/_ / /g;	
-
-	my @versions = $history->col;
-	foreach my $version (@versions) {
-            #  next unless $history eq 'Version_change';    # View Logic
-	    my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);	    
-	    if ($history eq 'Version_change') {
-		($vers,$date,$curator,$event,$action,$remark) = $version->row; 
-		
-                # For some cases, the remark is actually a gene object
-		if ($action eq 'Merged_into' || $action eq 'Acquires_merge'
-		    || $action eq 'Split_from' || $action eq 'Split_into') {
-		    $gene = $remark;
-		    $remark = undef;
-		}
-	    } else {
-		($gene) = $version->row;
-	    }	    
-
-	    push @{$data->{history}},
-	    { type    => $type,
-	      version => $version,
-	      date    => $date,
-	      action  => $action,
-	      remark  => $remark,
-	      object  => $gene    ? $self->wrap($gene) : '',
-	      curator => $curator ? $self->wrap($curator) : '',
-	    };
-	}
-    }
-
-    $data->{description} = 'curatorial history for this gene';
-    return $data;
-}
-
-
-sub cloned_by_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my $cloned_by = $object->Cloned_by;
-    return 1 unless $cloned_by;
-    
-    my ($tag,$source) = $cloned_by->row ;
-    
-    my @data;
-    my $name = $cloned_by->Full_name;
-    my %data  = {cloned_by => "$cloned_by",
-		 full_name => "$name",
-		 tag       => "$tag",
-		 source    => "$source",		    
-    };
-    
-    my $data = $self->build_data_structure(\%data,
-					   'the researchers noted for cloning this gene');
-    
-    return $data;
-}
-
-
-sub ids_complex {
-    my $self   = shift;
-    my $object = $self->object; ## shift
-    
-    my %data;
-    my %data_pack;
-    my %data_lists;
-    
-    # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = @{$self->database_ids};
-    
-    my $version = $object->Version;
-    my $locus   = $object->CGC_name;
-    my $common  = $object->Public_name;
-    
-    my $object_data = {	
-	common_name   => "$common",
-	locus_name    => "$locus",
-	gene_class    => $object->Gene_class,
-	wormbase_id   => "$object",
-	aceview_id    => "$aceview",
-	refseq_id     => $refseq,
-	version       => "$version",
-	};
-	
-	my %gene2sequence_name;
-	my %gene2other_name;
-	
-	my @other_names = $object->Other_name;
-	
-	foreach my $other_name (@other_names) {
-	
-		$gene2other_name{$object}{$other_name} = 1;
-	
-	}
-		
-	my @sequence_names = $object->Sequence_name;
-	
-	foreach my $sequence_name (@sequence_names) {
-	
-		$gene2sequence_name{$object}{$sequence_name} = 1;
-	
-	}
-
-	$data_pack{$object} = $object_data;
-	$data_lists{'gene2sequence_name'} = \%gene2sequence_name;
-	$data_lists{'gene2other_name'} = \%gene2other_name;
-
-	$data{'data'} = \%data_pack;
-	$data{'data_lists'} = \%data_lists;
-	$data{'count'} = 'complex';
-	$data{'description'} = "Data for gene $object";
-	
-    return \%data;
-}
-  
-sub ids_old {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = @{$self->database_ids};
-    
-    my $version = $object->Version;
-    my $locus   = $object->CGC_name;
-    my $common  = $object->Public_name;
-    
-    my $data = $self->build_data_structure({	
-	common_name   => "$common",
-	locus_name    => "$locus",
-	gene_class    => $object->Gene_class,
-	other_name    => join(', ',map { "$_" } $object->Other_name),
-	sequence_name => join(', ',map { "$_" } $object->Sequence_name),
-	wormbase_id   => "$object",
-	aceview_id    => "$aceview",
-	refseq_id     => $refseq,
-	version       => "$version",},
-					   'various IDs that refer to this gene',	
-	);
-    return $data;
-}
-
-sub gene_ontology_old {
-    my $self     = shift;
-    my $object = $self->object; 
-    
-    my %stash;
-    
-    # Preferentially use GO_terms attached to genes, but also look for
-    # those attached to CDS. Eventually, they should all propagate to
-    # gene objects.
-    my %seen;
-    my @ontology_terms = grep {!$seen{$_}++} $object->GO_term();
-    push (@ontology_terms,grep {!$seen{$_}++} map {$_->GO_term()} $object->Corresponding_CDS);
-    
-    return unless (@ontology_terms);
-    
-    foreach my $term (@ontology_terms) {
-	my @evidence = $self->_go_evidence_code($term);
-	my $type = $term->Type;
-	push @{$stash{$type}},{ term => $term,
-				title => $term->Term,
-				evidence => \@evidence };
-    }
-    return \%stash;
-}
-
-sub alleles_old {
-    my $self = shift;
-    my $object = $self->object;
-    if (my @vars = $object->Allele) {
-	# Wrap these in WormBase API objects
-	my @wrapped = $self->wrap(@vars);
-	return \@wrapped;
-    } else {
-	return 1;
-    }
-}
-
-
-sub rearrangements_old {
-    my $self   = shift;
-    my $object = $self->object;
-    return unless($object->Allele || $object->Reference_allele) ;
-    return 1;  # True: we have alleles and therefore *may* have rearrangements.
-}
-
-sub cds_old {
-    my $self   = shift;
-    my $object = $self->object;
-    my @cds    = $object->Corresponding_CDS;
-    
-    if (@cds) {
-	# Wrap these in WormBase API objects
-	my @wrapped = $self->wrap(@cds);
-	return \@wrapped;
-    }
-}
-
-#### end old versions ###
-
-### implementation in view ####
 
 ###########################################
 # Components of the Expression panel
@@ -3015,7 +2177,7 @@ sub _public_name {
         || eval { $object->Corresponding_CDS->Corresponding_protein }
         || $object;
     }
-    elsif ($class =~ /protein/i) { #do we need this here?  This is the gene class... AC
+    elsif ($class =~ /protein/i) { 
         $common_name = 
         $object->Gene_name
         || eval { $object->Corresponding_CDS->Corresponding_protein }

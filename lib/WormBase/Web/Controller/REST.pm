@@ -3,6 +3,7 @@ package WormBase::Web::Controller::REST;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
+use Time::Duration;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -22,38 +23,62 @@ Catalyst Controller.
 
 =cut
  
-sub workbench :Path("/rest/workbench") Args(0) :ActionClass('REST') {}
+sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
-        my ( $self, $c) = @_;
+    my ( $self, $c) = @_;
 	my $path = $c->req->params->{ref};
-	
-        my ($type, $class, $id) = split(/\//,$path); 
-	
-	if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{register}{$path}){
-		  delete $c->user_session->{bench}{register}{$path};
-		  $c->user_session->{bench}{type}{$type}--;
-		  delete $c->user_session->{bench}{store}{$type}{$path};
-
-          delete $c->user_session->{bench}{reports}{$class}{$id};
-	} else{
-		  $c->user_session->{bench}{type}{$type}++;
-		  $c->user_session->{bench}{register}{$path}=$c->user_session->{bench}{store}{$type};
-		  $c->user_session->{bench}{store}{$type}{$path}=$c->user_session->{bench}{type}{$type};
-
-          $c->user_session->{bench}{reports}{$class}{$id}=localtime();
-	}
-	
-  	$c->stash->{path} = $path; 
+	if($path){
+      my ($type, $class, $id) = split(/\//,$path); 
+    $c->log->debug("type: $type, class: $class, id: $id");
+      if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+            $c->user_session->{bench}{count}--;
+            delete $c->user_session->{bench}{$type}{$class}{$id};
+            $c->stash->{notify} = "this report has been removed from your workbench"; 
+      } else{
+            $c->user_session->{bench}{count}++;
+            $c->user_session->{bench}{$type}{$class}{$id}=localtime();
+            $c->stash->{notify} = "this report has been added to your workbench"; 
+      }
+      $c->stash->{path} = $path; 
+    }
  	$c->stash->{noboiler} = 1;
-#   	$c->stash->{template} = "workbench/status.tt2";   
-    my $count = scalar(keys(%{$c->user_session->{bench}{register}})) || 0;
-    $c->response->body("($count)");
+
+    my $count = scalar($c->user_session->{bench}{count}) || 0;
+    $c->stash->{count} = $count;
+#     $c->response->body("($count)");
+    $c->stash->{template} = "workbench/count.tt2";
 } 
+
+sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {}
+
+sub workbench_star_GET{
+    my ( $self, $c) = @_;
+    $c->log->debug("workbench_star method");
+    my $path = $c->req->params->{ref};
+    my $id = $c->req->params->{id};
+    $c->log->debug("workbench_star method: path = $path");
+    my ($type, $class, $id) = split(/\//,$path); 
+    if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+          $c->stash->{star} = 1;
+    } else{
+        $c->stash->{star} = 0;
+    }
+    $c->stash->{path} = $path;
+    $c->stash->{id} = $id;
+    $c->stash->{template} = "workbench/status.tt2";
+    $c->stash->{noboiler} = 1;
+}
+
 
 sub _bench {
     my ($self,$c, $widget) = @_; 
+    $c->log->debug("getting bench widget");
     my $api = $c->model('WormBaseAPI');
     my @ret;
+    if($widget=~m/user_history/){
+      $self->history_GET($c);
+      return;
+    }
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
       my @objs;
       foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
@@ -66,7 +91,7 @@ sub _bench {
     @ret = map{
             my $class = lcfirst($_->{name}->{class});
             my $id = $_->{name}->{id};
-            $_->{footer} = "added to bench " . $c->user_session->{bench}{$widget}{$class}{$id};
+            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
             $_;
               } @ret;
     $c->stash->{'results'} = \@ret;
@@ -84,6 +109,44 @@ sub auth_GET {
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
 }
+
+
+sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
+
+sub history_GET {
+    my ($self,$c) = @_;
+    my $clear = $c->req->params->{clear};
+    if($clear){ delete $c->user_session->{history};}
+    my $history = $c->user_session->{history};
+    my $size = (scalar keys(%{$history}));
+    my $count = $c->req->params->{count} || $size;
+    if($count > $size) { $count = $size; }
+    my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
+    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count-1];
+    @ret = map {
+      my $t = (time() - @{$_->{time}}[-1]); 
+      $_->{time_lapse} = concise(ago($t, 1));
+      $_ } @ret;
+    $c->stash->{history} = \@ret;
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "shared/fields/user_history.tt2"; 
+    $self->status_ok($c,entity => {});
+}
+
+
+sub history_POST {
+    my ($self,$c) = @_;
+    $c->log->debug("history logging");
+    my $path = $c->req->params->{ref};
+    unless($c->user_session->{history}->{$path}){
+      my ($i,$type, $class, $id) = split(/\//,$path); 
+      my $name = $c->req->params->{name} || $id;
+      $c->log->debug("type:$type, class:$class, id:$id, name:$name");
+      $c->user_session->{history}->{$path}->{data} = { label => $name, class => $class, id => $id, type => $type };
+    }
+    push(@{$c->user_session->{history}->{$path}->{time}}, time());
+}
+
 
 sub evidence :Path('/rest/evidence') :Args(4) :ActionClass('REST') {}
 
@@ -316,10 +379,11 @@ sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
 
     if($class eq "bench"){
+      $c->log->debug("this is a bench page widget");
       $self->_bench($c, $widget);
       return;
     }
-			     
+    $c->log->debug("this is NOT a bench page widget");
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {

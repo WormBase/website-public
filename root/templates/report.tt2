@@ -15,30 +15,31 @@
 
 <div style="width:100%; position:relative;">
   <div id="available-views">
-
-    View as:
-    [% # HARD-CODED! %]   
     [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
-    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=sidebar">sidebar</a> |
-    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=tabs">tabs</a> |
-    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=paned">paned</a> |
-    <a href="/reports/[%- class _ '/' _ this_object_id -%]/?view=page">full page</a> |
-    [% tag2link(object.name.data,'classic','is_classic') %]
+    [% tag2link(object.name.data,'classic view','is_classic') %]
   </div> 
 </div>
   <div id="navigation">
     <ul>
-    [%# UNLESS widgets; widgets = ['reports', 'sequences', 'clipboard']; class = 'bench'; END; %]
-    [% FOREACH widget_name IN widgets -%]
+      <li class="title">Page Content</li>
+    [% widgets = c.config.pages.$class.widgets.keys.sort %]
+    [% IF object; widgets.unshift('overview'); END; %]
+    [% FOREACH widget_name IN widgets.unique -%]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
           class="module-load [% widget_name %]" 
           href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" 
           log="[% c.uri_for('/widget/toggle', class, widget_name) %]"
-          load=1>[% widget.title %]</li>
+          load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
-      <li class="spacer"> </li>
-      [% IF object %]<li>Related [% object.name.data.class %]s...</li>[% END %]
+      [% IF object %]
+      <li class="title">External Links</li>
+      <li>...</li>
+      <li class="title">Related [% object.name.data.class %]s</li>
+      <li>...</li>
+      <li class="title">Recently Activity</li>
+      <div class="user-history" id="user_history"></div>
+      [% END %]
     </ul>
   </div>
   
@@ -50,7 +51,12 @@
       [% title %]
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-   [% PROCESS workbench/status.tt2 %]
+          <div id="workbench-status-[% this_object_id %]"></div>
+
+          <script>
+          $("#workbench-status-[% this_object_id %]").load("/rest/workbench/star?ref=[% path %]&id=[% item.name.id %]");
+          </script>
+
       [% ELSE %]
         <h2>Your Workbench</h2>
       [% END %] 
@@ -67,13 +73,13 @@
         [% END %]
         </li>   
         [% c.user_session.display.$class.$widget_name = -1 %]
-        <script>$("#nav-[% widget_name %]").trigger('click');</script>
+        <script>$("#nav-[% widget_name %]").trigger('open');</script>
       [% END %]
 
       [% FOREACH widget_name IN widgets %]
         [% IF (c.user_session.display.$class.$widget_name.defined); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
-        <li id="[% widget_name %]">
+        <li id="[% widget_name %]" class="sortable">
         [% WRAPPER widget_sortable_block -%]
         [% END %]
         </li>   
@@ -83,10 +89,10 @@
   [%# maybe set this in config somewhere?? %]
   [% UNLESS c.user_session.display.$class.defined %]
     <script>
-    $("#nav-overview").trigger('click');
-    $("#nav-history").trigger('click');
-    $("#nav-history_protein").trigger('click');
-    $("#nav-reports").trigger('click');
+    $("#nav-overview").trigger('open');
+    $("#nav-history").trigger('open');
+    $("#nav-history_protein").trigger('open');
+    $("#nav-reports").trigger('open');
     </script>
   [% END %]
 
