@@ -1,15 +1,29 @@
+
+<div class="ui-state-error ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">  
+
 <h3>
-Oh my heck. We've encountered an error.
+<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
+Internal Server Error
 </h3>
 
+In this case, one of our servers made a mistake.<br>
+The WormBase team has been notified of this problem and we are working to resolve the issue.
+
 <p>
-In this case, one of our servers made a mistake.
+You may also send us an <a href="mailto:feedback@wormbase.org">WormBase</a> an email to report this error:
 </p>
 
 <p>
-Expected URL: [% c.req.path %]<br />
-Server Error: 404
-
-Here's the error message, on the off-chance that it means something to you: <span class="error">[% error %]</span>
-
+Expected URL: [% c.req.path %]<br>
+Server Error: 500 <br>
+Error Message:
+<span class="error">
+  [% FOREACH e IN c.error %]
+    [% e %]<br>
+  [% END %]
+</span>
 </p>
+
+</div>
+
+
