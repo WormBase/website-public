@@ -1,7 +1,20 @@
   $(document).ready(function() {   
-      var notify = "";
+
+
+
+        $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $("#error").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+
+
+
       $(".bench_update").live('click',function() {
-        var url     = $(this).attr("href") + '?ref=' + $(this).attr("ref");
+        var ref     = $(this).attr("ref");
+        var id     = $(this).attr("wbid");
+        var url     = $(this).attr("href") + '?ref=' + ref;
         $("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
@@ -10,20 +23,10 @@
                             
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
-
-        var star = $(this).children("#save");
-        star.toggleClass("ui-state-highlight");
-        if(star.attr("title") == "add this report to your workbench"){
-          star.attr("title","remove this report from your workbench");
-          notify = "this report has been added to your workbench";
-        }else{
-          star.attr("title","add this report to your workbench");
-          notify = "this report has been removed from your workbench";
-        }
-        displayNotification(notify);
-//          $("#bench_status").toggleClass("highlight");
+        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref);
       return false;
       });
+
        $(".status-bar").load("/rest/auth", function(response, status, xhr) {
 	if (status == "error") {
 	  var msg = "Sorry but there was an error: ";
@@ -67,7 +70,6 @@
       nav.attr("load", 0);
       if($(content).text() == ""){
         var widget = $(content).closest("li");
-//         var widget_html = widget.html();
         $("#widget-holder").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
         widget.remove();
         var content = $(content);
@@ -82,6 +84,7 @@
                           });
       }
       $(content).parent(".widget-container").show();
+      location.href = "#" + widget_name;
     } else {
       nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
@@ -89,6 +92,27 @@
     nav.toggleClass("ui-selected");
     $.get(nav.attr("log"));
   return false;
+  });
+
+  // used in sidebar view, to open and close widgets when selected
+  $(".module-load, .module-close").live('open',function() {
+    var widget_name = $(this).attr("class").split(" ")[1];
+    var nav = $("#nav-" + widget_name);
+    var content = $("div#" + widget_name);
+    nav.attr("load", 0);
+    addWidgetEffects(content.parent(".widget-container").hide());
+    var url     = $(nav).attr("href");
+    content.html("<span id=\"fade\">loading...</span>").show();
+    content.load(url,
+                    function(response, status, xhr) {
+                          if (status == "error") {
+                          content.html(xhr.status + " " + xhr.statusText);
+                          }
+                      });
+    content.parent(".widget-container").show();
+    nav.toggleClass("ui-selected");
+    $.get(nav.attr("log"));
+    return false;
   });
 
     function addWidgetEffects(widget_container) {
@@ -130,6 +154,15 @@
         }
       );
     }
+
+function history_clear(){
+        $("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
+                              if (status == "error") {
+                              var msg = "Sorry but there was an error: ";
+                              $("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
+                              }
+    });
+}
 
 
   // Load a (specific) field or widget dynamically onClick.

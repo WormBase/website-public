@@ -1,0 +1,16 @@
+
+[% FOREACH h IN c.stash.history %]
+  <li>
+    [% IF h.data.type == 'reports'; tag2link(h.data);%]
+    [% ELSIF h.data.type == 'search_new'; searchlink(h.data.class, h.data.id, h.data.class _ ' search: ' _ h.data.id); %]
+    [% ELSIF h.data.type == 'bench'; "<a href=\"" _ c.uri_for_action('bench') _ "\">your bench</a>";%]
+    [% ELSE %] <a href="[% h.path %]">[% h.path %]</a>
+    [% END %]
+    
+   <span id="fade"> - [% h.time_lapse %] 
+  [% IF h.time.size > 1 %]([% h.time.size %] visits) [% END %]
+  </span>
+
+  </li>
+[% END %]
+  <li><a id="fade" onclick="history_clear()">clear history</span></li>

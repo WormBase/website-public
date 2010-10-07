@@ -10,7 +10,7 @@
 
     $("#widget-holder").sortable({
       handle: '#widget-header, #widget-footer',
-      items:'li',
+      items:'li, .sortable',
       update: function() { 
                 //storing the order in session
                 var order = $(this).sortable("toArray");

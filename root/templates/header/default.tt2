@@ -3,20 +3,29 @@
 
 <!-- BEGIN boilerplate/banner -->
     <div id="page">
-<div style="position:absolute; right:0; top:0; width:20em">
+<div style="position:absolute; right:0; top:0; width:50%">
  <span class="status-bar"></span>
 </div>
         <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
            <p>  
                 [% # The current release of the software and its codename %]
-                Software version [% c.config.version %] "[% c.config.codename %]"
-                <br />
                 Database version [% constants.acedb_version %]
+                <br />
+                Software version [% c.config.version %] "[% c.config.codename %]"
            </p>
 
 <div style="position:absolute; right:0; bottom:0;">
 [% PROCESS "boilerplate/search_bar.tt2" %]
 </div>
     </div>
+
+<script>
+  
+        $.ajax({
+                 type: "POST",
+                 url : "/rest/history?ref=" + window.location.pathname + "&name=[% object.name.data.label %]",
+        });
+
+</script>
 
 <!-- END boilerplate/banner -->

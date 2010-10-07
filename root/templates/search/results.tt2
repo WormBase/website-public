@@ -7,7 +7,7 @@
 
 [% IF results.size > 0 %]
   <div id="fade">found <span id="count">[% results.size %]</span> 
-    [% UNLESS search_type == 'all'; search_type _ 's for ' _ c.stash.query; ELSE; 'results'; END; %]
+    [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' for ' _ c.stash.query; ELSE; 'results'; END; %]
   </div>
 [% ELSE %]
   Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
@@ -15,8 +15,16 @@
 
 <ul>
 [% FOREACH item IN results %]
+ [% USE String(item.name.class); class = String.lower; %]
+ [% url = 'reports/' _ class _ '/' _ item.name.id %]
   <li>
-  [% USE String(item.name.class); class = String.lower; %]
+          <div id="workbench-status-[% item.name.id %]"></div>
+
+          <script>
+          $("#workbench-status-[% item.name.id %]").load("/rest/workbench/star?ref=[% url %]&id=[% item.name.id %]");
+          </script>
+
+ 
 
   [% IF search_type == 'all' %]
     <span id="fade">[% class %]:</span>
