@@ -8,7 +8,7 @@
 
 [% # adding print="always" to field wrapper will make the field print even if there is no data%]
 [% BLOCK field_block %]
-    [%# TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
+    [% TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
 
     <div class="field" id="[% title FILTER html %]">
          <div class="field-title">
