@@ -13,6 +13,7 @@
 
       $(".bench_update").live('click',function() {
         var ref     = $(this).attr("ref");
+        var id     = $(this).attr("wbid");
         var url     = $(this).attr("href") + '?ref=' + ref;
         $("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
@@ -22,7 +23,7 @@
                             
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
-        $("#workbench-status").load("/rest/workbench/star?ref=" + ref);
+        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref);
       return false;
       });
 

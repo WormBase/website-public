@@ -3,7 +3,7 @@
 
 <!-- BEGIN boilerplate/banner -->
     <div id="page">
-<div style="position:absolute; right:0; top:0; width:20em">
+<div style="position:absolute; right:0; top:0; width:50%">
  <span class="status-bar"></span>
 </div>
         <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
