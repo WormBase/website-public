@@ -24,6 +24,7 @@
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
         $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref);
+        $("div#reports").load("rest/widget/bench//reports");
       return false;
       });
 

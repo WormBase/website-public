@@ -51,10 +51,12 @@
       [% title %]
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-          <div id="workbench-status-[% this_object_id %]"></div>
+          [% wbid = this_object_id.remove(':') %]
+          <div id="workbench-status-[% wbid %]"></div>
 
           <script>
-          $("#workbench-status-[% this_object_id %]").load("/rest/workbench/star?ref=[% path %]&id=[% item.name.id %]");
+          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]");
+          $("#workbench-status-[% wbid %]").text("TESTING");
           </script>
 
       [% ELSE %]
