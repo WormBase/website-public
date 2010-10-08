@@ -56,7 +56,7 @@ sub workbench_star_GET{
     my ( $self, $c) = @_;
     $c->log->debug("workbench_star method");
     my $path = $c->req->params->{ref};
-    my $id = $c->req->params->{id};
+    my $wbid = $c->req->params->{id};
     $c->log->debug("workbench_star method: path = $path");
     my ($type, $class, $id) = split(/\//,$path); 
     $type = "my_library" if ($class eq 'paper');
@@ -66,7 +66,7 @@ sub workbench_star_GET{
         $c->stash->{star} = 0;
     }
     $c->stash->{path} = $path;
-    $c->stash->{id} = $id;
+    $c->stash->{id} = $wbid;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
 }

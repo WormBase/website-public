@@ -837,6 +837,21 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border: 3px solid #FF0;
 }
 
+.star-yellow{
+  background: url(/img/star-yellow.JPG)  no-repeat center;
+  height:20px;
+  width:20px;
+/*     background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ; */
+
+}
+
+.star-grey{
+  background: url(/img/star-grey.JPG)  no-repeat center;
+  height:20px;
+  width:20px;
+/*   background: url(/img/star-grey.JPG); */
+}
+
 
 /*Strain table*/
 table tr.venn-a, table th.venn-a, table td.venn-a {
