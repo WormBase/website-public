@@ -833,6 +833,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   padding-left:1.8em;
 }
 
+.ui-state-highlight {
+  border: 3px solid #FF0;
+}
+
 
 /*Strain table*/
 table tr.venn-a, table th.venn-a, table td.venn-a {
