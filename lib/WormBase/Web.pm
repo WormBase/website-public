@@ -273,8 +273,7 @@ sub finalize_error {
 	my $c = shift;
 	$c->config->{'response_status'}=$c->response->status;
 	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
-      
- 	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_error($c->config->{'response_status'})); 
+ 	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_server_error($c->config->{'response_status'})); 
 	$c->maybe::next::method; 
 }
  
