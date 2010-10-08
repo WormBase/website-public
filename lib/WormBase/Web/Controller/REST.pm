@@ -29,8 +29,9 @@ sub workbench_GET {
 	my $path = $c->req->params->{ref};
 	if($path){
       my ($type, $class, $id) = split(/\//,$path); 
-    $c->log->debug("type: $type, class: $class, id: $id");
-      if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+      $c->log->debug("type: $type, class: $class, id: $id");
+      $type = "my_library" if ($class eq 'paper');
+      if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
             $c->user_session->{bench}{count}--;
             delete $c->user_session->{bench}{$type}{$class}{$id};
             $c->stash->{notify} = "this report has been removed from your workbench"; 
@@ -58,7 +59,8 @@ sub workbench_star_GET{
     my $id = $c->req->params->{id};
     $c->log->debug("workbench_star method: path = $path");
     my ($type, $class, $id) = split(/\//,$path); 
-    if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{reports}{$class}{$id}){
+    $type = "my_library" if ($class eq 'paper');
+    if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
           $c->stash->{star} = 1;
     } else{
         $c->stash->{star} = 0;
