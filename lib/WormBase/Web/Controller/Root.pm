@@ -36,6 +36,7 @@ The default action is run last when no other action matches.
 
 =cut
 
+ 
 sub default :Path {
     my ($self,$c) = @_;
     $c->log->warn("DEFAULT: couldn't find an appropriate action");
@@ -270,6 +271,7 @@ sub report :Path("/reports") Args(2) {
       $c->response->redirect($link);
       $c->detach;
     }
+    $c->stash->{query_name} = $name;
     $c->stash->{class} = $class;
     $c->log->debug($name);
     
@@ -289,8 +291,8 @@ sub report :Path("/reports") Args(2) {
     # I don't think I need to fetch an object.  I just need to return the appropriate page template.
     # Then, each widget will make calls to the rest API.
     my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) or die "$!";
-    
+			      name => $name}) || $self->error_custom($c, 505, "can't connect to database");
+     
     # $c->log->debug("Instantiated an external object: " . ref($object));
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
     
