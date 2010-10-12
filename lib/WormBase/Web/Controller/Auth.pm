@@ -23,11 +23,12 @@ sub openid :Path("/openid") {
 
 sub auth : Chained('/') PathPart('auth')  CaptureArgs(0) {
      my ( $self, $c) = @_;
-      $c->stash->{noboiler} = 1; 
+     $c->stash->{noboiler} = 1;  
 }
 
 sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my ( $self, $c) = @_;
+     
      $c->stash->{'template'}='auth/login.tt2';
      my $user     = $c->req->params->{username};
      my $password = $c->req->params->{password}; 
@@ -37,7 +38,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                                      password => $password } ) ) {
 		
                 $c->stash->{'status_msg'}='Username login was successful.'. $c->user->get("firstname") ;
-		$c->res->redirect('/');
+		$c->res->redirect($c->flash->{redirect_after_login});
             } else {
                 $c->stash->{'status_msg'}='Login incorrect.';
             }
@@ -51,6 +52,8 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
      my $param = $c->req->params;
+     $c->user_session->{redirect_after_login} ||= $c->flash->{redirect_after_login} ;
+     
      $c->stash->{'template'}='auth/openid.tt2';
   # eval necessary because LWPx::ParanoidAgent
   # croaks if invalid URL is specified
@@ -82,7 +85,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
         $c->stash->{'status_msg'}='Local Login was also successful.';
-	$c->res->redirect('/');
+	$c->res->redirect($c->user_session->{redirect_after_login});
       }
       else {
         $c->stash->{'error_msg'}='Local login failed.';
@@ -107,7 +110,8 @@ sub logout :Path("/logout") {
     $c->logout;
     $c->stash->{template} = 'index.tt2';
     # Send the user to the starting point
-    $c->response->redirect($c->uri_for('/'));
+    $c->res->redirect($c->flash->{redirect_after_login});
+    
  
 }
 
