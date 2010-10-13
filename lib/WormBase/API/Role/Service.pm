@@ -29,7 +29,8 @@ has version => (
     lazy => 1,
     default => sub {
 	my $self = shift;
-	return $self->dbh->version;
+	my $dbh = $self->dbh || return "?";
+	return $dbh->version;
     },
     );
 
@@ -131,6 +132,7 @@ sub reconnect {
 	}
     } 
     $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
+    return 0;
 }
 
 sub select_host {
