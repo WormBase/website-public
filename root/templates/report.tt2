@@ -3,7 +3,24 @@
 [%- #    current_object - the object being displayed       -%]
 [%- #    widgets - a list of widgets supported by the page -%]
 [%- #    title   - the title of the page                   -%]
- 
+
+[% IF object == -1 %]
+  <h4> can't find the object [% query_name %], maybe you are looking for:</h4>
+  <div id="search_guide"> 
+   
+ [% path = c.uri_for('/search_new', class, query_name _ '*') %]
+  <span id="fade">Loading...</span>
+                    <script>
+                    $("#search_guide").load("[% path _ "?inline=1" %]",
+                          function(response, status, xhr) {
+                          if (status == "error") {
+                              $("reference-results").html(xhr.status + " " + xhr.statusText);
+                          }
+                    });
+  </script>
+</div>
+
+[% ELSE %]
 
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.name.data.label %]
@@ -216,5 +233,5 @@
       [% END %]
 [% END %]
 [% END %]
-
+[% END %]
 
