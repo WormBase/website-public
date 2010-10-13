@@ -110,7 +110,7 @@ sub logout :Path("/logout") {
     $c->logout;
     $c->stash->{template} = 'index.tt2';
     # Send the user to the starting point
-    $c->res->redirect($c->flash->{redirect_after_login});
+    $c->res->redirect($c->req->param("continue"));
     
  
 }
