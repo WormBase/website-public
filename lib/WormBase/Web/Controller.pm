@@ -7,6 +7,14 @@ use parent 'Catalyst::Controller';
 #########################################
 # Accessors for configuration variables #
 #########################################
+sub error_custom{
+     my ( $self, $c, $status,$message ) = @_;
+	$c->res->status($status);
+	$c->error($message) ;
+	$c->detach();
+     
+}
+
 sub pages {
     my ( $self, $c ) = @_;
     my @pages = keys %{ $c->config->{pages} };
