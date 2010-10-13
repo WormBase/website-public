@@ -5,7 +5,7 @@
         $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $("#error").html(msg + xhr.status + " " + xhr.statusText);
+            $(".user-history").html(msg + xhr.status + " " + xhr.statusText);
           }
         });
 
@@ -22,8 +22,8 @@
                               }
                             
                           });
-        $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});
-        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref);
+        $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
+        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id);
         $("div#reports").load("rest/widget/bench//reports");
         $("div#my_library").load("rest/widget/bench//my_library");
       return false;

@@ -20,12 +20,12 @@ body, html {
 }
 
 
-h1,h2,h3,h4,h5,h6 { color:gray; }
+h1,h2,h3,h4,h5,h6 { color:black; }
 
 h1 { font-size:2em;   }  /* 24px   ; site title */
-h2 { font-size:1.8em; }  /* 21.6px ; page title */
-h3 { font-size:1.6em; }  /* 19.2px ; page subtitle (if applicable) */  
-h4 { font-size:1.4em; }  /* 16.8px ; widget titles */
+h2 { font-size:1.3em; }  /* 21.6px ; page title */
+h3 { font-size:1.2em; }  /* 19.2px ; page subtitle (if applicable) */  
+h4 { font-size:1em; }  /* 16.8px ; widget titles */
 h5 { font-size:0.8em; }  /* 13.2px ; field names */
 h6 { font-size:0.8em;    /* 12px; subfield names */
      font-weight:bold;
@@ -91,7 +91,7 @@ Note: firefox seems to render header objects funny
 div#page {
     padding:1em 0 1em 1em;
     position:relative;
-    height:5em;
+    height:4em;
     margin-bottom:0.5em;
 }
 
@@ -132,28 +132,33 @@ div#page .release_date { }
 }
 
 .widget-container {
-    padding:0.5em 0.5em 1.5em 0.5em;
-    margin:0 0.8em 0.8em 0;
+    padding:0.5em 0.5em 1em 0.5em;
+    margin:0 0em 3px 0;
     overflow:hidden;
     display:none;
     background-color:#FFFFFF; 
     position:relative;
+    border:1px solid #CDCDCD;
+}
+
+.content {
+  padding-bottom:0.7em;
 }
 
 h3 {
     margin:0px;
     padding:0.5em 0;
     margin-bottom:0.5em;
-    border-bottom:1px dotted gray;
+    border-bottom:1px dotted #CDCDCD;
     height:1em;
     cursor:pointer;
-/*     border:1px solid green; */
 }
 
 h3.minimized{
     border:0;
     margin:0;
     padding:0.5em 0 0 0;
+
 }
 
 .widget-container #widget-footer {
@@ -179,8 +184,8 @@ h3 div.module-min {
   opacity:0.3;
   filter:alpha(opacity=30);
   -moz-opacity:0.3;
-  margin:3px;
-/*   border:1px solid red; */
+  margin:2px;
+
 }
 
 /* These are subfields - NOT IN USE? */
@@ -327,10 +332,10 @@ p.debug-view {
 
 .returned {
    display:none;
-   background:#EEE;
-   margin-top:5px;
-   padding:5px;
-   padding-right:10px;
+/*    background:#EEE; */
+/*    margin-top:5px; */
+/*    padding:5px; */
+/*    padding-right:10px; */
 }
 
 .superscript      { vertical-align:super; 
@@ -371,11 +376,12 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
-.title {
+div.title {
     overflow:hidden;
-    padding:1em;
+    padding:0 1em 0.2em;
     position:relative;
-  background-color:#CDCDCD;
+  background-color:white;
+  border-bottom:1px solid #CDCDCD;
 }
 .title h2 {
     padding:0;
@@ -744,36 +750,43 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 *********************************/
 
 #navigation {
-  width: 12em;
+  width: 9.5em;
   float: left;
+  position:relative;
+  margin:3px 0;
+  border-bottom:1px solid #CDCDCD;
 }
 
 #navigation .ui-selected { 
-  background: #CDCDCD; 
+  background: #C2D1DF; 
   color: black; 
 }
 
 #navigation .ui-selected:hover { 
-  background-color:#AAA;
-  color: white; 
+/*  background-color:#AAA;
+  color: white; */
+  background: #C2D1DF; 
+  color: black; 
 }
 
 #navigation ul li:hover {
-  background: #EEE;
+  background: #FFD;
 }
 
 #navigation ul { 
   list-style-type: none; 
   margin: 0 0 0 0em; 
   padding: 0;
+  overflow: hidden;
 }
 
 #navigation ul li { 
-  padding: 0.4em; 
+  padding: 0.5em; 
   padding-left: 1.4em;
-  font-size: 1em; 
-  height: 1.2em;
-  vertical-align:middle;
+  padding-bottom:0.6em;
+  font-size: 0.9em; 
+  height: 1em;
+/*   vertical-align:middle; */
   overflow:hidden;
   cursor:pointer;
 }
@@ -786,27 +799,31 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #navigation ul li.title { 
-  background: #EEE;
-  font-size: 1.1em; 
+  background: #FFF;
+  font-size: 0.9em; 
   cursor:auto;
   font-weight: bold;
-  color: gray;
-  padding-left: 1.2em;
+  padding-left: 1em;
+  border-top:1px solid #CDCDCD;
 }
 
 #nav-min{
   height:100%;
-  width:0.8em;
+  width:10px;
   overflow:hidden;
   position: absolute;
-  left:0;
+  right:-11px;
   top:0;
   cursor:pointer;
+  background: #EEE;
+  border-left:1px solid #CDCDCD;
+  border-top:1px solid #CDCDCD;
+  z-index:1000;
 }
 
 #nav-min-icon{
   position: absolute;
-  left:-4px;
+  left:-6px;
   top:50%;
   margin-top:-8px;
   opacity:0.8;
@@ -820,21 +837,27 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #widget-holder {
   overflow:hidden;
-  margin: 0px;
-  padding: 0 0 0 0.8em;
+  margin: 3px 0 0;
+  padding: 0;
   list-style: none;
   position:relative;
-  background:#EEE;
+/*  border-left:1px solid #CDCDCD; */
+  border-left:10px solid #EEE;
 }
 
 #navigation div.user-history li{
-  font-size:0.8em;
+  font-size:0.7em;
   height:1em;
-  padding-left:1.8em;
+/*   padding-left:1.8em; */
 }
 
 .ui-state-highlight {
   border: 3px solid #FF0;
+}
+
+.text-width {
+  min-width:25em;
+  max-width:35em;
 }
 
 
