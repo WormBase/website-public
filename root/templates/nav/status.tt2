@@ -2,9 +2,12 @@
 $(".lightbox_inline").colorbox({inline:true});	
 $(".lightbox").colorbox();
 $("#bench_status").load("/rest/workbench");
-  
+$(".continue").attr("href", function() {
+  return this.href + "?continue=" + window.location.pathname;
+});
+</script>   
 </script>        
-
+ 
 <div id="login-menu">
 <ul>
 [% IF c.user_exists %]
@@ -16,7 +19,7 @@ $("#bench_status").load("/rest/workbench");
  [% IF c.user.last_name.defined %]
  [% name = name _ ' ' _ c.user.last_name %]
  [% END %] 
-  <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
+  <li><a class="continue" href="[% c.uri_for('/logout') %]">Logout</a></li>
   <li>Welcome<a href="[% c.uri_for('/profile') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %]</a> |</li>
 [% ELSE %]
   <li><a class='lightbox_inline' href="#login" title="WormBase user login!" >Login</a></li>
