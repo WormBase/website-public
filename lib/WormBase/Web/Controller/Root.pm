@@ -291,7 +291,7 @@ sub report :Path("/reports") Args(2) {
     # I don't think I need to fetch an object.  I just need to return the appropriate page template.
     # Then, each widget will make calls to the rest API.
     my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) || $self->error_custom($c, 505, "can't connect to database");
+			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
      
     # $c->log->debug("Instantiated an external object: " . ref($object));
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
