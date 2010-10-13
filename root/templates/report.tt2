@@ -106,9 +106,7 @@
   [% UNLESS c.user_session.display.$class.defined %]
     <script>
     $("#nav-overview").trigger('open');
-    $("#nav-history").trigger('open');
     $("#nav-location").trigger('open');
-    $("#nav-history_protein").trigger('open');
     $("#nav-reports").trigger('open');
     </script>
   [% END %]
