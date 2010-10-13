@@ -24,7 +24,7 @@
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Concise Description" key="concise_description"%]
-         [% markup(fields.concise_description.data) %]
+         <div class="text-width">[% markup(fields.concise_description.data) %]</div>
          [% IF fields.structured_description.data.size > 0 %]
          <div class="toggle">Details:</div>
          <div class="returned">
@@ -33,7 +33,7 @@
               [% USE String(sd.replace('_', ' ')) %]
               [% WRAPPER $subfield_block title=String.capital-%]  
                   [% FOREACH ev IN fields.structured_description.data.$sd %]
-                    <div style="margin:0.5em">
+                    <div class="text-width" style="margin:0.5em">
                       [% markup(ev.text) %]
                       [% IF ev.evidence %] 
                         [% id = id+1; c.user_session.evidence.des.$id= ev.text; c.user_session.object= object.object %]

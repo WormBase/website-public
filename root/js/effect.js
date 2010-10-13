@@ -40,7 +40,10 @@
         });
 
     $("#nav-min").click(function() {
-      $("#navigation").animate({width: 'toggle'});
+      var nav = $("#navigation");
+      var w = nav.width();
+      if(w == 0){ w = '9.5em'; }else { w = 0;}
+      nav.animate({width: w, display: 'block'});
       $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
 

@@ -13,12 +13,23 @@
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
 
-<div style="width:100%; position:relative;">
-  <div id="available-views">
-    [% SET my_url = join("/","reports",class,$object.this_object_id,'/?view=') %]
-    [% tag2link(object.name.data,'classic view','is_classic') %]
-  </div> 
-</div>
+    <div class="title">
+      [% title %]
+      [%- IF object -%]
+        <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
+          [% wbid = this_object_id.remove(':') %]
+          <div id="workbench-status-[% wbid %]"></div>
+
+          <script>
+          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]");
+          </script>
+
+      [% ELSE %]
+        <h2>Your Workbench</h2>
+      [% END %] 
+
+    </div>
+
   <div id="navigation">
     <ul>
       <li class="title">Page Content</li>
@@ -42,29 +53,15 @@
       <div class="user-history" id="user_history"></div>
       [% END %]
     </ul>
+    <div id="nav-min"><div id="nav-min-icon"></div></div>
   </div>
   
 
 
 
    <div id="widget-holder" class="[% class %]" log="[% c.uri_for('/widget/order', class ) %]">
-    <div class="title">
-      [% title %]
-      [%- IF object -%]
-        <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
-          [% wbid = this_object_id.remove(':') %]
-          <div id="workbench-status-[% wbid %]"></div>
 
-          <script>
-          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]");
-          </script>
-
-      [% ELSE %]
-        <h2>Your Workbench</h2>
-      [% END %] 
-
-    </div>
-     <div id="nav-min"><div id="nav-min-icon"></div></div>
+     
 
       [%  IF c.user_session.display.$class.defined; c.user_session.display.$class.count = 0; END; %]
       [% FOREACH widget_name IN c.user_session.display.$class.nsort %]
@@ -93,6 +90,7 @@
     <script>
     $("#nav-overview").trigger('open');
     $("#nav-history").trigger('open');
+    $("#nav-location").trigger('open');
     $("#nav-history_protein").trigger('open');
     $("#nav-reports").trigger('open');
     </script>
