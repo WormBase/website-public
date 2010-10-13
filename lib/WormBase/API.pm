@@ -36,7 +36,7 @@ has 'stringified_responses' => (
 # This is just the configuration directory
 # for instantiating Log::Log4perl object. Janky.
 has pre_compile => (
-    is       => 'ro',
+    is       => 'rw',
     );
 
 has conf_dir => (
@@ -66,7 +66,7 @@ has _tools => (
     );
 
 has tool => (
-    is       => 'ro',
+    is       => 'rw',
     );
 # this is here just for the testing script to load database configuration
 # may be removed or changed in furutre! 
@@ -173,13 +173,13 @@ sub fetch {
       $class  = $args->{class};
       my $name   = $args->{name};
       # Try fetching an object (from the default data source)
-      my $service_instance = $self->_services->{$self->default_datasource}; 
-      $object = $service_instance->fetch(-class=>$class,-name=>$name);
+      my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0; 
+      $object = $service_dbh->fetch(-class=>$class,-name=>$name);
           if($class eq 'Sequence') {
-          $object ||= $service_instance->fetch(-class=>'CDS',-name=>$name);
+          $object ||= $service_dbh->fetch(-class=>'CDS',-name=>$name);
       }
     }
-    
+    return -1 unless(defined $object);
     return WormBase::API::Factory->create($class,
 					      { object   => $object,
 						log => $self->log,
