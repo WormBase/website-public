@@ -23,7 +23,7 @@
 
    [% PROCESS "shared/fields/species.tt2" %]
 
-   [% WRAPPER $field_block title="Concise Description" key="concise_description"%]
+   [% WRAPPER $field_block title="Description" key="concise_description"%]
          <div class="text-width">[% markup(fields.concise_description.data) %]</div>
          [% IF fields.structured_description.data.size > 0 %]
          <div class="toggle">Details:</div>
@@ -47,7 +47,7 @@
          [% END %]
    [% END %]
 
-   [% WRAPPER $field_block title="WormBase Referential ID"-%] 
+   [% WRAPPER $field_block title="WormBase ID"-%] 
            [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
 
