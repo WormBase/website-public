@@ -133,7 +133,8 @@ div#page .release_date { }
 
 .widget-container {
     padding:0.5em 0.5em 1em 0.5em;
-    margin:0 0em 3px 0;
+    padding:0;
+    margin:0em 0.5em 0.5em 1em;
     overflow:hidden;
     display:none;
     background-color:#FFFFFF; 
@@ -142,22 +143,24 @@ div#page .release_date { }
 }
 
 .content {
-  padding-bottom:0.7em;
+  padding:0.5em;
+  padding-bottom:1.7em;
 }
 
 h3 {
     margin:0px;
-    padding:0.5em 0;
-    margin-bottom:0.5em;
+    padding:0.5em;
+/*     margin-bottom:0.5em; */
     border-bottom:1px dotted #CDCDCD;
     height:1em;
     cursor:pointer;
+    background: #EEE;
 }
 
 h3.minimized{
     border:0;
-    margin:0;
-    padding:0.5em 0 0 0;
+/*     margin:0; */
+/*     padding:0.5em 0 0 0; */
 
 }
 
@@ -177,6 +180,7 @@ div.ui-icon-large {
   filter:alpha(opacity=30);
   -moz-opacity:0.3;
   cursor:pointer;
+  margin:0.5em;
 }
 
 h3 div.module-min {
@@ -407,7 +411,7 @@ div.widget-section-header {
 /* widget field titles: ie Identification > IDs */
 div.field {
 /*   clear:both; */
-  line-height:1.1em;
+  line-height:1em;
   padding:0.2em;
   height:1%;
   overflow:hidden;
@@ -423,9 +427,9 @@ div.field h5 {
 div.field-title {
   float        : left;
   text-align   : right; 
-  font-size    : 1.1em;
+  font-size    : 1em;
   padding-right: 0.8em;
-  width        : 12em;
+  width        : 9em;
   height       : auto;
 }
 
@@ -753,7 +757,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   width: 9.5em;
   float: left;
   position:relative;
-  margin:3px 0;
+  margin:0.5em 0;
   border-bottom:1px solid #CDCDCD;
 }
 
@@ -791,13 +795,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   cursor:pointer;
 }
 
-#navigation ul li.spacer { 
-  padding: 0; 
-  height: 0.8em;
-  background: #EEE;
-  cursor:auto;
-}
-
 #navigation ul li.title { 
   background: #FFF;
   font-size: 0.9em; 
@@ -809,15 +806,14 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #nav-min{
   height:100%;
-  width:10px;
+  width:7px;
   overflow:hidden;
   position: absolute;
-  right:-11px;
+  right:-8px;
   top:0;
   cursor:pointer;
   background: #EEE;
-  border-left:1px solid #CDCDCD;
-  border-top:1px solid #CDCDCD;
+  border:1px solid #CDCDCD;
   z-index:1000;
 }
 
@@ -837,12 +833,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #widget-holder {
   overflow:hidden;
-  margin: 3px 0 0;
+  margin: 0.5em 0 0;
   padding: 0;
   list-style: none;
   position:relative;
-/*  border-left:1px solid #CDCDCD; */
-  border-left:10px solid #EEE;
 }
 
 #navigation div.user-history li{
