@@ -22,9 +22,8 @@
    [% WRAPPER $field_block  title="Description" key="description" %]
      
       [% fields.description.data.des %]
-      [% IF fields.description.data.evidence %]
-	[% c.user_session.evidence.des.1= fields.description.data.des; c.user_session.object= object.object %]
-	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/des/1 %]></a>
+      [% IF fields.description.data.evidence.check %]
+	<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/[% object.name.data.id %]/[% fields.description.data.evidence.tag %]></a>
       [% END %]
    [% END %]
  
