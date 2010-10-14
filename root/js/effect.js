@@ -52,7 +52,7 @@
     });
 
     $(".module-min").live('click', function() {
-        var module = $("div#" + $(this).attr("class").split(" ")[1]);
+        var module = $("div#" + $(this).attr("class").split(" ")[1] + "-content");
         module.slideToggle("fast");
         module.next().slideToggle("fast");
         $(this).parent().toggleClass("minimized");
