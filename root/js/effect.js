@@ -11,6 +11,8 @@
     $("#widget-holder").sortable({
       handle: '#widget-header, #widget-footer',
       items:'li, .sortable',
+      placeholder: 'placeholder ui-corner-top',
+      forcePlaceholderSize: true,
       update: function() { 
                 //storing the order in session
                 var order = $(this).sortable("toArray");

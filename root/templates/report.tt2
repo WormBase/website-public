@@ -70,7 +70,7 @@
       <div class="user-history" id="user_history"></div>
       [% END %]
     </ul>
-    <div id="nav-min"><div id="nav-min-icon"></div></div>
+    <div id="nav-min" class="ui-corner-right"><div id="nav-min-icon"></div></div>
   </div>
   
 
