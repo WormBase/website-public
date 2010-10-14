@@ -202,7 +202,7 @@
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
    <section class="widget" name="[% widget.name %]">
-          <div class="widget-container">
+          <div class="widget-container ui-corner-top">
                 <header>    
                 <div id="widget-header">
                     <div class="module-close [% widget.name %]" title="close"></div>
