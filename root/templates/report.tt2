@@ -38,7 +38,7 @@
           <div id="workbench-status-[% wbid %]"></div>
 
           <script>
-          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]");
+          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
           </script>
 
       [% ELSE %]
