@@ -36,7 +36,7 @@
                     <div class="text-width" style="margin:0.5em">
                       [% markup(obj.text) %]
                       [% IF obj.evidence.check %] 
-                        <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/[% obj.evidence.tag %]/[% obj.evidence.index %]/[% obj.evidence.right %]"></a>
+                        <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/[% obj.evidence.tag %]/[% obj.evidence.index %]"></a>
                       [% END %]
                     </div>
                   [% END %]
