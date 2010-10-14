@@ -22,7 +22,7 @@
           <div id="workbench-status-[% wbid %]"></div>
 
           <script>
-          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% url %]&id=[% wbid %]");
+          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% url %]&id=[% wbid %]&name=[% item.name.label %]");
           </script>
 
  

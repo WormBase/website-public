@@ -31,14 +31,15 @@ sub workbench_GET {
       my ($type, $class, $id) = split(/\//,$path); 
       $c->log->debug("type: $type, class: $class, id: $id");
       $type = "my_library" if ($class eq 'paper');
+      my $name = $c->req->params->{name} || "this $class";
       if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
             $c->user_session->{bench}{count}--;
             delete $c->user_session->{bench}{$type}{$class}{$id};
-            $c->stash->{notify} = "this report has been removed from your workbench"; 
+            $c->stash->{notify} = "$name has been removed from your workbench"; 
       } else{
             $c->user_session->{bench}{count}++;
             $c->user_session->{bench}{$type}{$class}{$id}=localtime();
-            $c->stash->{notify} = "this report has been added to your workbench"; 
+            $c->stash->{notify} = "$name has been added to your workbench"; 
       }
       $c->stash->{path} = $path; 
     }
@@ -57,6 +58,7 @@ sub workbench_star_GET{
     $c->log->debug("workbench_star method");
     my $path = $c->req->params->{ref};
     my $wbid = $c->req->params->{id};
+    my $name = $c->req->params->{name};
     $c->log->debug("workbench_star method: path = $path");
     my ($type, $class, $id) = split(/\//,$path); 
     $type = "my_library" if ($class eq 'paper');
@@ -67,6 +69,7 @@ sub workbench_star_GET{
     }
     $c->stash->{path} = $path;
     $c->stash->{id} = $wbid;
+    $c->stash->{name} = $name;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
 }

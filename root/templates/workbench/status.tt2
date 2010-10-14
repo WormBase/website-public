@@ -1,4 +1,4 @@
-<a class="bench_update" wbid="[% c.stash.id %]" href="/rest/workbench" ref="[% c.stash.path %]" style="float:right">
+<a class="bench_update" wbid="[% c.stash.id %]" href="/rest/workbench" ref="[% c.stash.path %]" name="[% c.stash.name %]" style="float:right">
 <div id="save" class="ui-icon ui-icon-star
 [% IF c.stash.star == 1 %]
   ui-state-highlight" title="remove this report from your workbench" 
