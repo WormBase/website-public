@@ -692,7 +692,7 @@ table.multi       { padding: 0;
     background-color: #EEEEFF;
     border: 1px solid black;
     padding: 5px;
-    width:80%;
+/*     width:80%; */
 }
 
 .results-abstract {

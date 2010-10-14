@@ -14,7 +14,8 @@
       $(".bench_update").live('click',function() {
         var ref     = $(this).attr("ref");
         var id     = $(this).attr("wbid");
-        var url     = $(this).attr("href") + '?ref=' + ref;
+        var label     = $(this).attr("name");
+        var url     = $(this).attr("href") + '?ref=' + ref  + "&name=" + label;
         $("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
@@ -23,7 +24,7 @@
                             
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
-        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id);
+        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + label);
         $("div#reports").load("rest/widget/bench//reports");
         $("div#my_library").load("rest/widget/bench//my_library");
       return false;
