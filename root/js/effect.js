@@ -44,8 +44,10 @@
     $("#nav-min").click(function() {
       var nav = $("#navigation");
       var w = nav.width();
-      if(w == 0){ w = '9.5em'; }else { w = 0;}
+      var msg = "open sidebar";
+      if(w == 0){ w = '9.5em'; msg = "close sidebar"; }else { w = 0;}
       nav.animate({width: w, display: 'block'});
+      $(this).attr("title", msg);
       $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
 
