@@ -86,14 +86,14 @@
                           });
       }
       $(content).parent(".widget-container").show();
-      location.href = "#" + widget_name;s
+      location.href = "#" + widget_name;
     } else {
       nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
     }
     nav.toggleClass("ui-selected");
     $.get(nav.attr("log"));
-  return false;
+    return false;
   });
 
   // used in sidebar view, to open and close widgets when selected
