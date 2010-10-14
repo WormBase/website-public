@@ -43,3 +43,24 @@
       [% END %]
    [% END %]
 
+
+   [% #IF fields.anatomy_function.data.size > 0 %]
+   [% WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"-%] 
+
+    <table border=1 class="anatomy_function">
+      <tr><th>Anatomical Site(s)</th><th>Phenotype</th><th>via Anatomy Function</th></tr>
+    [% FOREACH i IN fields.anatomy_function.data %]
+          <tr>
+              <td>
+          [% FOREACH term IN i.terms %]
+            [% tag2link(term) %], 
+          [% END %]
+              </td>
+              <td>[% tag2link(i.phenotype) %]</td>
+              <td>[% tag2link(i.anatomy_fn) %]</td>
+          </tr>
+    [% END %]
+    </table>
+   [% END %]
+  [% #END %]
+

@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title="Interactions" key="interactions"-%]
+      Found
+      [% IF fields.interactions.data.size == 1 %]
+        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interaction") %]
+      [% ELSE %]
+        [% searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interactions") %]
+      [% END %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Regulation on Expression Level" key="regulation_on_expression_level"-%] 
+      [% FOREACH item IN fields.regulation_on_expression_level.data %]
+        [% item.string %] [% tag2link(item.target) %] [[% tag2link(item.gene_regulation, "details") %]]
+        <br />
+      [% END %]
+   [% END %]
