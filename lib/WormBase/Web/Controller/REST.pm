@@ -187,6 +187,7 @@ sub evidence_GET {
     my $object = $c->stash->{object};
     my @node = $object->object->$tag; 
     $right ||= 0;
+    $index ||= 0;
     my $data = $object-> _get_evidence($node[$index]->right($right));
     $c->stash->{evidence} = $data;
     $c->stash->{template} = "shared/generic/evidence.tt2"; 
