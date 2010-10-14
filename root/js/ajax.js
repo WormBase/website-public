@@ -67,11 +67,10 @@
   $(".module-load, .module-close").live('click',function() {
     var widget_name = $(this).attr("class").split(" ")[1];
     var nav = $("#nav-" + widget_name);
-    var content = "div#" + widget_name;
-
+    var content = "div#" + widget_name + "-content";
     if (nav.attr("load") == 1){
       nav.attr("load", 0);
-      if($(content).text() == ""){
+      if($(content).text().length < 4){
         var widget = $(content).closest("li");
         $("#widget-holder").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
         widget.remove();
@@ -87,7 +86,7 @@
                           });
       }
       $(content).parent(".widget-container").show();
-      location.href = "#" + widget_name;
+      location.href = "#" + widget_name;s
     } else {
       nav.attr("load", 1);
       $(content).parent(".widget-container").hide();
@@ -101,7 +100,7 @@
   $(".module-load, .module-close").live('open',function() {
     var widget_name = $(this).attr("class").split(" ")[1];
     var nav = $("#nav-" + widget_name);
-    var content = $("div#" + widget_name);
+    var content = $("div#" + widget_name + "-content");
     nav.attr("load", 0);
     addWidgetEffects(content.parent(".widget-container").hide());
     var url     = $(nav).attr("href");
