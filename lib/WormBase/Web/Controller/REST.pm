@@ -154,10 +154,10 @@ sub history_POST {
 }
 
 
-sub evidence :Path('/rest/evidence') :Args(4) :ActionClass('REST') {}
+sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
 
 sub evidence_GET {
-    my ($self,$c,$class,$name,$type,$id) = @_;
+    my ($self,$c,$class,$name,$tag,$index,$right) = @_;
 
     my $headers = $c->req->headers;
     $c->log->debug($headers->header('Content-Type'));
@@ -175,7 +175,7 @@ sub evidence_GET {
 	# Fetch a WormBase::API::Object::* object
 	# But wait. Some methods return lists. Others scalars...
 	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
-					    name => $name,object=>$c->user_session->{object}}) or die "$!";
+					    name => $name}) or die "$!";
     }
     
     # Did we request the widget by ajax?
@@ -185,12 +185,13 @@ sub evidence_GET {
     }
 
     my $object = $c->stash->{object};
-#     my $data = $object->evidence($tag);
-    my $data = $object-> _get_evidence($c->user_session->{evidence}->{$type}->{$id});
+    my @node = $object->object->$tag; 
+    $right ||= 0;
+    my $data = $object-> _get_evidence($node[$index]->right($right));
     $c->stash->{evidence} = $data;
     $c->stash->{template} = "shared/generic/evidence.tt2"; 
 
-    my $uri = $c->uri_for("/page",$class,$name);
+    my $uri = $c->uri_for("/reports",$class,$name);
     $self->status_ok($c, entity => {
 	                 class  => $class,
 			 name   => $name,
