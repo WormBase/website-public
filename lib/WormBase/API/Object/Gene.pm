@@ -1123,21 +1123,25 @@ sub orthologs {
 	my @orthologs = $object->Ortholog;
 # 	 my @orthologs = $object->at("Gene_info.Ortholog");
 	#my $data_pack = $self->basic_package(\@orthologs);
-
-	foreach my $ortholog (@orthologs) {
-
+	 
+	for(my $index=0; my $ortholog=shift @orthologs;$index++) {
+	   
 # 	  my $ortholog_name = $self->public_name($ortholog,'Gene');
 	  my $species = $ortholog->right;
-# 	  my @analyses = $ortholog->right->right->col;
+# 	  my @analyses = $_->right->right->col;
 	  push @data_pack, {	 species=>"$species",
 				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
 				 sequence=>{ class=>'ebsyn',
 					      id=>$ortholog->Sequence_name,
 					      label=>'syntenic alignment',
 					  },
-				 evidence=>$self->check_empty($species),
-			    }
-	   
+				 evidence=>{	check=>$self->check_empty($species),
+						tag=>"Ortholog",
+						index=>$index,
+						right=>1,
+					    }
+			    };
+	    
 	}
 
 	####
@@ -2206,7 +2210,8 @@ sub structured_description {
    foreach my $type (@types){
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
-      @nodes = map { {text => $_, evidence => $self->check_empty($_)}} @nodes;
+      my $index=-1;
+      @nodes = map {$index++; {text=>"$_", evidence=> {tag => $type,index=>$index, check => $self->check_empty($_)}}} @nodes;
       $ret{$type} = \@nodes if (@nodes > 0);
    }
    my $data = { description => "The structural description of the gene",
