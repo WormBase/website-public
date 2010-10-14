@@ -8,7 +8,7 @@ The page you requested was not found
 You may have clicked an expired link or mistyped the address.
 
 <ul>
-<li><a href="http://www.wormbase.org">Return Home</a></li>
+<li><a href="[% c.uri_for("/") %]">Return Home</a></li>
 <li><a href = "javascript:history.back()">Go Back</a></li>
 </ul>
 
