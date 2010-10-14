@@ -210,8 +210,9 @@
                 </div>
                 </header>
 
-                <div id="[%- widget.name -%]" class="content"></div>
+                <div id="[%- widget.name -%]-content" class="content">
                 [% content %]
+                </div>
                 <footer>
                 <div id="widget-footer">
 
