@@ -12,7 +12,16 @@ sub emit {
     unless(-e $c->config->{root}."/templates/$template") {  
       $template  = "status/error.tt2";
     }
-	 
+
+    #trim out unwanted line
+    my @errors;
+    foreach (@{$c->error}) {
+	push @errors, split /\n/, $_;
+	last if $#errors >= 2 ;
+    }
+    $c->error(0);
+    $c->error(@errors[0..2]);
+
     eval {
 	$c->response->body($c->view('TT')->render($c,$template)); 
 	};
