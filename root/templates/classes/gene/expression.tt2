@@ -28,10 +28,11 @@
    [% END %]
 
    [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
-     [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
-       Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]<br />
-    [% END %]
+     [%# IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
+       Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray " _ pluralize("result", fields.microarray_expression_data.data.keys.size)) %]<br />
         <a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)
+    [% END %]
+
 
    [% WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_topology_map_position"%]
       [% FOREACH ma IN fields.microarray_topology_map_position.data.keys %]
