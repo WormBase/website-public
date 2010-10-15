@@ -741,7 +741,7 @@ sub genomic_position {
 =cut
     my $url = $self->hunter_url($chrom,$low,$high);
     my $data = { description => 'the genomic coordinates of the variation',
-		 data        => { id => "name=".$url.";source=".$self->parsed_species,,
+		 data        => { id => $self->parsed_species."/?name=".$url,
 				  class      => 'genomic_location',
 				  label       => $url, 
 		 },
