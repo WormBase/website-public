@@ -171,13 +171,19 @@ h3.minimized{
     position:absolute;
     bottom:0.5em;
     right:0.5em;
-    opacity:0.8;
-    filter:alpha(opacity=80);
-    -moz-opacity:0.8;
 }
 
 .widget-container #widget-footer a{
   float:right;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+.widget-container #widget-footer a:hover{
+    opacity:1;
+    filter:alpha(opacity=100);
+    -moz-opacity:1;
 }
 
 div.ui-icon-large {
