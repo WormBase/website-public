@@ -407,6 +407,7 @@ sub _wrap_objs {
       $object = $ace_obj;
     }
     my %data;
+    $data{obj_name}=$ace_obj;
     foreach my $field (@$fields) {
       my $field_data = $object->$field;# if  $object->meta->has_method($field);
       $field_data = $field_data->{data};
