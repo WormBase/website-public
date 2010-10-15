@@ -521,7 +521,7 @@ sub genomic_position {
       my $stop  = $segment->stop;
       next unless abs($stop-$start) > 0;
       my $url = $self->hunter_url($ref,$start,$stop);
-      my $hash = { label => $url, id=>"name=".$url.";source=".$self->parsed_species, class=>'genomic_location' };
+      my $hash = { label => $url, id=>$self->parsed_species."/?name=".$url, class=>'genomic_location' };
       push @a, $hash ;
     }
     return unless @a;
