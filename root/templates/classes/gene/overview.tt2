@@ -13,13 +13,13 @@
         [% tag2link(fields.name.data, fields.ids.data.other_names.join(', ')) %]
    [% END %]
 
-   [% WRAPPER $field_block title="Aceview ID" %]
-        [% fields.ids.data.aceview_id %]
-   [% END %]
+   [%# WRAPPER $field_block title="Aceview ID" %]
+        [%# fields.ids.data.aceview_id %]
+   [%# END %]
 
-   [% WRAPPER $field_block title="RefSeq ID" %]
-        [% fields.ids.data.refseq_id.join(', ') %]
-   [% END %]
+   [%# WRAPPER $field_block title="RefSeq ID" %]
+        [% #fields.ids.data.refseq_id.join(', ') %]
+   [%# END %]
 
    [% PROCESS "shared/fields/species.tt2" %]
 

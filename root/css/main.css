@@ -176,6 +176,10 @@ h3.minimized{
     -moz-opacity:0.8;
 }
 
+.widget-container #widget-footer a{
+  float:right;
+}
+
 div.ui-icon-large {
   float:right;
   opacity:0.3;
@@ -396,7 +400,7 @@ div.title {
     padding:0 1em 0.2em;
     position:relative;
   background-color:white;
-  border-bottom:1px solid #CDCDCD;
+/*   border-bottom:1px solid #CDCDCD; */
 }
 .title h2 {
     padding:0;
