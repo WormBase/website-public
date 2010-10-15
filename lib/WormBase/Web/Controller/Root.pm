@@ -294,8 +294,9 @@ sub report :Path("/reports") Args(2) {
 			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
      
     # $c->log->debug("Instantiated an external object: " . ref($object));
+    $c->res->redirect($c->uri_for('/search_new',$class,"$name")."?redirect=1")  if($object == -1 );
+  
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-    
 =head
 
     # To add later:
