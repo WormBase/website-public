@@ -22,8 +22,10 @@
   # 2nd approach: using formats
   #   external_link = format('<a href="%s" target="_blank">%s</a>');
     MACRO tag2link(data,text,is_classic) BLOCK;  
-      UNLESS text; text = data.label; END;
-      text2link(data.class, data.id, text, is_classic);
+      IF data.defined ;
+	UNLESS text; text = data.label; END;
+	text2link(data.class, data.id, text, is_classic);
+      END;
    END;
 
    MACRO get_url(class, id, is_classic) BLOCK;
