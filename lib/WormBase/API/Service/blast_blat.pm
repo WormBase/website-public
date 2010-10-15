@@ -425,8 +425,9 @@ sub result2html {
     # CHECK BELOW FOR "FASTA WARNING"
 
     # Reformat the summary table of the BLAST report    
+    my ($hash);
     foreach my $line (split("<br/>\n", $result)) {
-
+	my $link;
 	#print STDERR "\n\nPROCESSING $line\n" if DEBUG;
         if ($current_type eq 'header' && $current_sub_type eq 'summary') {
             if ($line =~ /^WARNING/) {
@@ -435,7 +436,7 @@ sub result2html {
 	    
 	    # FASTA WARNING!
 #            if (!$end_header_parsing && $line =~ /^([^&>]+?)\#/) {
-            if (!$end_header_parsing && $line =~ /^([^&>]+?)[\#&]+?/) {
+            if (!$end_header_parsing && $line =~ /^([^&>]+?)[\#&]+?/) { 
                 my $hit = $1;
 #		print STDERR "HERE: hit is $hit\n" if DEBUG;
 		
@@ -448,21 +449,20 @@ sub result2html {
                     $corr_gene_link) = $self->make_links($hit);
 		
                 my $expand_link    = $expand_links_ref->{$hit};
-                my $alignment_link =
-		    a(  "#hit_anchor_${hit}" , '[Alignment]');
-                my $genome_link =
-		    a(  $genome_links_ref->{$hit} , '[Genome View]');
-
+                my $alignment_link = "#hit_anchor_${hit}";
+		my $genome_link;     
+                $genome_link = {class=>'genomic_location', id=>$genome_links_ref->{$hit} , label=>'[Genome View]'} if $genome_links_ref->{$hit};
 
 		# Replace the Gene name in the report with a link to the sequence.
-		$line =~ s/^$hit/$sequence_link/;
+		$line =~ s/^$hit//;
 		$line =~ s/\#/ /g;
 
 		# Highlight the hit.
+=pod 
 		$line = qq[<font class="bold">] . $line . qq[</font>];
-
+ 
 		$line .= qq[<br/>\n];
-		$line .=
+ 		$line .=
 		    qq[<img class="expand_button" expand_area_count="$expand_area_counter" src="/blast_blat/blank.png"/>]
 		    if $expand_link;
 		$line .= qq[$alignment_link];
@@ -474,14 +474,26 @@ sub result2html {
 		$line .=
 		    qq[<div class="expand_area"  expand_area_count="$expand_area_counter" expand_link="$expand_link"></div>\n]
 		    if $expand_link;
+=cut
+		$link= $hash->{$hit} = {	
+							    #expand_area_counter=>$expand_area_counter,
+								sequence_link=> $sequence_link,
+								expand_link=>$expand_link,
+								alignment_link=>$alignment_link,
+								genome_link=>$genome_link,
+								gene_link=>$gene_link,
+								protein_link=>$protein_link,
+								corr_gene_link=>$corr_gene_link
+							  };
             }
         }
+	 
 #	print STDERR "TYPE: $current_type; SUBTYPE: $current_sub_type\n" if DEBUG;
 	
         if ($current_type eq 'hit' && $line !~ /^>/) {
             $line =~ s!/([^&=]+)=!<font class="red">$1</font>=!g;
         }
-	
+
         if ($end_parsing) {
 	    
             # Do nothing
@@ -497,21 +509,25 @@ sub result2html {
 
             $line =~ s!/([^&=]+)=!<font class="red">$1</font>=!g;
 
-            my ($sequence_link, $gene_link, $protein_link, $corr_gene_link) =
-		$self->make_links($current_hit);
-
+#             my ($sequence_link, $gene_link, $protein_link, $corr_gene_link) =
+# 		$self->make_links($current_hit);
+	    
 	    $current_hit =~ s/[\[\]]/--/g;
 
-            $line =~ s/^>$current_hit/>${sequence_link}/;
+            $line =~ s/^>$current_hit//;
 	    $line =~ s/\#/ /g;
 	    $line =~ s/\n/ /g;
 	    $line =~ s/<br\/>/ /g;
             $current_sub_type = "";    # Close summary sub_type
             $current_idx++;
             $current_type = "hit";
-            push @{$content[$current_idx]->{html}},
-	    qq[<a name="hit_anchor_${current_hit}"></a>\n];
+#             push @{$content[$current_idx]->{html}},
+	     $link= {hit_sequence_link=> $hash->{$current_hit}->{sequence_link},current_hit=>$current_hit };
+# 	    qq[<a name="hit_anchor_${current_hit}"></a>\n];
         } elsif ($line =~ /Length\&nbsp;=/) {
+# 	   $line .= qq[<br/>\n];
+           
+=pod
             my ($sequence_link, $gene_link, $protein_link, $corr_gene_link) =
 		$self->make_links($current_hit);
 	    
@@ -524,7 +540,6 @@ sub result2html {
 				);
 	    
             $line .= qq[<br/>\n];
-            $line .= qq[<br/>\n];
             $line .=
 		qq[<img class="expand_button" expand_area_count="$expand_area_counter" src="/blast_blat/blank.png"/>]
 		if $expand_link;
@@ -536,6 +551,10 @@ sub result2html {
             $line .=
 		qq[<div class="expand_area"  expand_area_count="$expand_area_counter" expand_link="$expand_link"></div>\n]
 		if $expand_link;
+=cut	
+	  
+	   $link= $hash->{$current_hit};
+
         } elsif ($line =~ /Strand\&nbsp;HSPs:/) {
 	    
             # $current_idx++;
@@ -555,27 +574,14 @@ sub result2html {
         }
 	
         $content[$current_idx]->{type} = $current_type;
+	 
+	$line={ line=>$line,link=>$link} if($link) ;
+	 
         push @{$content[$current_idx]->{html}}, $line;
     }
     
-#    warn "$address: done parsing blast report" if DEBUG;
-    
-    # Format content
-    my @formatted_result;
-    foreach my $i (0 .. $#content) {
-        my $type = $content[$i]->{type};
-	
-        my $html = join("<br/>\n", @{$content[$i]->{html}});
-	
-        my $formatted_html =
-            qq[<div class="report_$type">\n] . $html
-	    . qq[</div>\n]
-	    . qq[<br/>\n];
-	
-        push @formatted_result, $formatted_html;
-    }
-    
-    return join("\n", @formatted_result);
+#    warn "$address: done parsing blast report" if DEBUG; 
+    return \@content;
 }
 
 sub make_links {
@@ -603,8 +609,7 @@ sub make_links {
     
     # elegans
     if ($hit =~ /^(CHROMOSOME_|)([IVX]+|MtDNA)/) {
-        $sequence_link =
-	    a( "/report/sequence/CHROMOSOME_$2", $hit);
+        $sequence_link = { class=>"sequence", id=>"CHROMOSOME_$2", label=>$hit};
     }
     
     # cb3
@@ -624,10 +629,9 @@ sub make_links {
     
     # briggpep
     elsif ($hit =~ /^BP:/i) {
-        $sequence_link = a("/report/sequence/$hit", $hit);
-        $gene_link = a( "/report/gene/$hit", '[Gene Summary]');
-        $protein_link =
-	    a("/report/protein/$hit", '[Protein Summary]');
+        $sequence_link =  { class=>"sequence", id=>$hit, label=>$hit};
+        $gene_link =  { class=>"gene", id=>$hit, label=>'[Gene Summary]'};
+        $protein_link = { class=>"protein", id=>$hit, label=>'[Protein Summary]'};
     }
     
     # remanei
@@ -639,15 +643,15 @@ sub make_links {
     
     # wormpep
     elsif ($hit =~ /\./i && $hit !~ /^yk/) {
-        $sequence_link = a("/report/sequence/$hit", $hit);
-        $gene_link = a( "/report/gene/$hit", '[Gene Summary]');
-        $protein_link =
-	    a("/report/protein/$hit", '[Protein Summary]');
+        $sequence_link = { class=>"sequence", id=>$hit, label=>$hit};
+        $gene_link = { class=>"gene", id=>$hit, label=>'[Gene Summary]'};
+        $protein_link = { class=>"protein", id=>$hit, label=>'[Protein Summary]'};
+	   
     }
     
     # est
     else {
-        $sequence_link = a( "/report/sequence/$hit" , $hit);
+        $sequence_link = { class=>"sequence", id=>$hit, label=>$hit};
 	
         my ($object) = $self->dsn->{acedb}->fetch('Sequence' => $hit);
         my ($corr_gene) = $object->Gene if $object;
@@ -657,22 +661,14 @@ sub make_links {
         }
         my $corr_gene_name = $self->bestname($corr_gene) if $corr_gene;
 	
-        $corr_gene_link = a(
-			     "/report/gene/$corr_gene_name"  ,
-			    "[Corr. Gene: $corr_gene_name]"
-			    )
+        $corr_gene_link = { class=>"gene", id=>$corr_gene_name, label=>"[Corr. Gene: $corr_gene_name]"}	    
 	    if $corr_gene_name;
     }
     
     return ($sequence_link, $gene_link, $protein_link, $corr_gene_link);
 }
 
-sub a {
-  my ($href,$label)=@_;
-  return qq{<a href="$href">$label</a>};
-
-}
-
+ 
  
 
 sub process_result_file {
@@ -1017,10 +1013,10 @@ sub extract_hit_info {
         $gbrowse_root_id = 'c_elegans';
     }
 
-    my $gbrowse_root = qq[/db/gb2/gbrowse/$gbrowse_root_id]
+    my $gbrowse_root = qq[$gbrowse_root_id/]
       if $gbrowse_root_id;
     my $expand_root =
-      qq[http://www.wormbase.org/db/gb2/gbrowse_img/$gbrowse_root_id]
+      qq[$gbrowse_root_id/]
       if $gbrowse_root_id;
 
     # Scenario 1 - decription contains chromosome location; C. elegans
@@ -1057,7 +1053,8 @@ sub extract_hit_info {
         $hit_expand_link = $expand_root . qq[?]
           . join(
             ";",
-            'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
+#             'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
+	    'width=450', qq[name=${hit_name}], @hsp_genome_link_parts
           )
           if $expand_root;
 
@@ -1142,7 +1139,8 @@ sub extract_hit_info {
         $hit_expand_link = $expand_root . qq[?]
           . join(
             ";",
-            'type=CG;width=450',
+#             'type=CG;width=450',
+	    'width=450',
             qq[name=${hit_name}:${view_start}..${view_end}],
             @hsp_genome_link_parts
           )
@@ -1216,7 +1214,8 @@ sub extract_hit_info {
         $hit_expand_link = $expand_root . qq[?]
           . join(
             ";",
-            'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
+            'width=450', qq[name=${hit_name}], @hsp_genome_link_parts
+# 	    'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
           )
           if $expand_root;
 

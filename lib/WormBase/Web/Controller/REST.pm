@@ -204,9 +204,8 @@ sub evidence_GET {
 
 sub search_new :Path('/search_new')  :Args(2) {
     my ($self, $c, $type, $query) = @_;
-     
-    $c->stash->{'query'} = $query;
-    $c->stash->{'class'} = $type;
+      
+    $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
     if($type eq 'all' && !(defined $c->req->param("view"))) {
 	$c->log->debug(" search all kinds...");
 	$c->stash->{template} = "search/full_list.tt2";
@@ -219,12 +218,22 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
 	my $objs = $api->search->$search({class => $class, pattern => $query});
-
+	if(@$objs<1) { #this may not be optimal
+	  $query.="*";
+	  $objs = $api->search->$search({class => $class, pattern => $query}) ;
+	}
 	$c->stash->{'type'} = $type; 
 	$c->stash->{'results'} = $objs;
-	$c->stash->{noboiler} =  (defined $c->req->param("inline") ) ? 1:0;
+	if(defined $c->req->param("inline")) {
+	  $c->stash->{noboiler} = 1;
+	} elsif(@$objs==1 ) {
+	    $c->res->redirect($c->uri_for('/reports',$type,$objs->[0]->{obj_name}));
+	} 
         $c->stash->{template} = "search/results.tt2";
     }
+    $c->stash->{'query'} = $query;
+    $c->stash->{'class'} = $type;
+     
 }
 
 #  
