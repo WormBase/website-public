@@ -1,4 +1,4 @@
- 
+ <a href="javascript: window.location.reload()">Reload Window</a>
 
 <div class="blast_container [% count %]" align="center">
     <table border="0">
@@ -52,7 +52,37 @@
                 </div>
                 <br/>
                 <div class="fixed_width">
-                    [% obj.result_file_content %]
+		    [% expand_area_counter=0 %]
+                    [% FOREACH re IN obj.result_file_content %]
+			  <div class="report_[% re.type %]"> 
+			    [% FOREACH line IN re.html %]
+				[% IF line.link.defined %]
+				   
+				  [% IF re.type == "header" %]<font class="bold">[% tag2link(line.link.sequence_link) %][% line.line %]</font><br/>
+				  [% ELSIF line.link.hit_sequence_link %]<a name="hit_anchor_[% line.link.current_hit %]"></a> >[% tag2link(line.link.hit_sequence_link) %][% line.line %]
+				  [% ELSE %][% line.line %]<br/><br/>
+				  [% END %]
+				  [% IF line.link.expand_link %]
+				     <img class="expand_button" expand_area_count="[% expand_area_counter %]" src="/blast_blat/blank.png"/>
+				  [% END %]  
+				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link %]">[Alignment]</a>[% END %]
+				  [% tag2link(line.link.genome_link) %]
+				  [% tag2link(line.link.gene_link) %]
+				  [% tag2link(line.link.protein_link) %]
+				  [% tag2link(line.link.corr_gene_link) %]
+				  
+				  [% IF line.link.expand_link %]
+				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter %]" expand_link="[% site.external_urls.gbrowse_image.base _ line.link.expand_link %]"></div>
+				    [% expand_area_counter = expand_area_counter+1 %]
+				   [% END %]  
+				    
+				[% ELSE %]	[% line %]
+				[% END %]
+			    [% UNLESS loop.last %]<br/> [% END %]
+			    [% END %]
+			  </div> 
+			  <br/> 
+		    [% END %]
                 </div>
             </td>
         </tr>
