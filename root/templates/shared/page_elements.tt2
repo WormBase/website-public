@@ -202,11 +202,11 @@
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
    <section class="widget" name="[% widget.name %]">
-          <div class="widget-container ui-corner-top">
+          <div class="widget-container ui-corner-all">
                 <header>    
                 <div id="widget-header">
                     <div class="module-close [% widget.name %]" title="close"></div>
-                    <h3><div class="module-min [% widget.name %]"></div>[% widget.title %]</h3>
+                    <h3><div class="module-min [% widget.name %]"></div><span>[% widget.title %]</span><span class="ui-icon ui-icon-arrow-4"></span></h3>
                 </div>
                 </header>
 

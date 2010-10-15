@@ -122,6 +122,15 @@
       widget_container.find("div.module-close").addClass("ui-icon-large ui-icon-close").hide();
       widget_container.find("#widget-footer").hide();
 
+    widget_container.find("#widget-header").hover(
+      function () {
+        $(this).children("h3").children("span").show();
+      },
+      function () {
+        $(this).children("h3").children("span.ui-icon").hide();
+      }
+    );
+
     widget_container.hover(
         function () {
           $(this).find("#widget-header").children(".ui-icon-large").show();

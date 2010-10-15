@@ -6,7 +6,7 @@
     <div id="content">
       <span class="message">[% status_msg %]</span>
       <span class="error">[% error_msg %]</span>
-      <div id="notifications" class="ui-corner-bottom"></div>
+      <div id="notifications" class="ui-corner-bottom"><div class="module-close" title="close"></div></div>
 
 
 
