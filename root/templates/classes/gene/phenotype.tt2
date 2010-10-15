@@ -4,13 +4,17 @@
 
 
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
-  <span id="fade">TODO: Change after talking to curators</span><br />
   Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
   [% FOREACH type IN ['pheno','pheno_not'] %]
     [% IF fields.phenotype.data.$type.size>0 %]
-   <br> <i>The following phenotypes have been 
-	[% IF type == "pheno_not" %] reported as NOT [% END %]
-      observed in [% object.name.data.label %]</i><br/>
+      [% IF type == "pheno_not" %]<br />
+    <div class="toggle"><i>The following phenotypes have been reported as NOT observed in [% object.name.data.label %]</i></div>
+    <div class="returned">
+      [% ELSE %]
+<i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
+      [% END %]
+
+   
     <table border=1 >
     <tr><th>Phenotype</th><th>Supporting Evidence</th></tr>
       [% FOREACH obj IN fields.phenotype.data.$type %]
@@ -36,13 +40,15 @@
       [% END %]
     </table>
     [% END %]
+      [% IF type == "pheno_not"; "</div>"; END %]
    [% END %]
 [% END %]
 
 
-[% WRAPPER $field_block title="RNAi Summary" key="rnai" %]
+[% WRAPPER $field_block title="RNAi" key="rnai" %]
 
-    <span id="fade">TODO: Change after talking to curators</span>
+    <div class="toggle">RNAi Summary</div>
+    <div class="returned">
   [% FOREACH type IN ['rnai','rnai_not'] %]
     [% IF fields.rnai.data.$type.size>0 %]
 <br />
@@ -70,5 +76,6 @@
     </table>
     [% END %]
    [% END %]
+    </div>
 [% END %]
 

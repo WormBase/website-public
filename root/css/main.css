@@ -144,6 +144,7 @@ div#page .release_date { }
 
 .widget-container:hover {
     border:1px solid #888;
+    padding:0;
 }
 
 .content {
@@ -153,7 +154,7 @@ div#page .release_date { }
 
 h3 {
     margin:0px;
-    padding:0.5em;
+    padding:0.3em 0.3em 0.5em;
 /*     margin-bottom:0.5em; */
     border-bottom:1px dotted #CDCDCD;
     height:1em;
@@ -163,9 +164,6 @@ h3 {
 
 h3.minimized{
     border:0;
-/*     margin:0; */
-/*     padding:0.5em 0 0 0; */
-
 }
 
 .widget-container #widget-footer {
@@ -184,7 +182,7 @@ div.ui-icon-large {
   filter:alpha(opacity=30);
   -moz-opacity:0.3;
   cursor:pointer;
-  margin:0.5em;
+  margin:0.3em;
 }
 
 h3 div.module-min {
@@ -193,6 +191,15 @@ h3 div.module-min {
   filter:alpha(opacity=30);
   -moz-opacity:0.3;
   margin:2px;
+}
+
+h3 span {
+  float:left;
+}
+
+h3 span.ui-icon {
+  margin:0.2em;
+  display:none;
 }
 
 
@@ -816,7 +823,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   right:-8px;
   top:0;
   cursor:pointer;
-  background: #EEE;
+  background: #DADADA;
   border:1px solid #CDCDCD;
   z-index:1000;
 }
@@ -832,7 +839,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #nav-min:hover {
-  background:#CDCDCD;
+  background:#BBB;
 }
 
 #widget-holder {
