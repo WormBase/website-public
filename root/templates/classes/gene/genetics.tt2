@@ -63,7 +63,3 @@
 	[% UNLESS loop.last %],[% END %]
     [% END %]
 [% END %]
-
-[% WRAPPER $field_block title="Note" %]
-   Please <a href='http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/allele.cgi'>submit</a> additional alleles or molecular information to WormBase.
-[% END %]

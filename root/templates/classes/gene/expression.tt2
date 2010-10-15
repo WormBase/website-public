@@ -28,14 +28,10 @@
    [% END %]
 
    [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
-      <div style="background-color:#CCCCFF;margin-right:auto;padding:10px;border:2px solid blue;margin-bottom:5px">
-        <h3>SPELL Microarray Resource now available</h3> 
-        <p>Interested users may also wish to try the C. elegans <a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> which provides much greater sophistication in query and display of microarray data.</p> 
-        <p>For details, please see <a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a> on the <a href="http://wiki.wormbase.org/">WormBase Wiki</a>.</p>
-      </div>
      [% IF fields.microarray_expression_data.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
-       Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]
-   [% END %]
+       Found [% searchlink("microarray_results", c.stash.object.name.data.id, fields.microarray_expression_data.data.keys.size _ " microarray result" _ s) %]<br />
+    [% END %]
+        <a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)
 
    [% WRAPPER $field_block title="Microarray \"topology map\" data" key="microarray_topology_map_position"%]
       [% FOREACH ma IN fields.microarray_topology_map_position.data.keys %]
