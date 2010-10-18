@@ -18,8 +18,13 @@
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
           [% wbid = this_object_id.remove(':') %]
-          <div id="workbench-status-[% wbid %]"></div>
 
+          <div id="workbench-status-[% wbid %]"></div>
+          <div class="columns">
+          <a href="#" onClick="columns(100, 0);"> one | </a>
+          <a href="#" onClick="columns(50, 50);">50:50 | </a>
+          <a href="#" onClick="columns(70, 30);">70:30</a>
+          </div>
           <script>
           $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
           </script>
@@ -60,9 +65,7 @@
 
 
    <div id="widget-holder" class="[% class %]" log="[% c.uri_for('/widget/order', class ) %]">
-
-     
-
+<div class="sortable left">
       [%  IF c.user_session.display.$class.defined; c.user_session.display.$class.count = 0; END; %]
       [% FOREACH widget_name IN c.user_session.display.$class.nsort %]
         [% IF (widget_name == 'count'); NEXT; END; %]
@@ -78,13 +81,19 @@
       [% FOREACH widget_name IN widgets %]
         [% IF (c.user_session.display.$class.$widget_name.defined); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
-        <li id="[% widget_name %]" class="sortable">
+        <li id="[% widget_name %]">
         [% WRAPPER widget_sortable_block -%]
         [% END %]
         </li>   
       [% END %]
+
+</div>
+<div class="sortable right">
+     
+
+
   </div>
-  
+  </div>
   [%# maybe set this in config somewhere?? %]
   [% UNLESS c.user_session.display.$class.defined %]
     <script>

@@ -8,10 +8,11 @@
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
 
-    $("#widget-holder").sortable({
+    $(".sortable").sortable({
       handle: '#widget-header, #widget-footer',
       items:'li, .sortable',
       placeholder: 'placeholder ui-corner-all',
+      connectWith: '.sortable',
       forcePlaceholderSize: true,
       update: function() { 
                 //storing the order in session
@@ -40,6 +41,8 @@
               $(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
+
+
 
     $("#nav-min").click(function() {
       var nav = $("#navigation");
