@@ -26,7 +26,7 @@ requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
 #requires 'Cache::Memcached::libmemcached';
 requires 'Catalyst::Action::REST';           
 requires 'Catalyst::Action::RenderView::ErrorHandler';
-requires 'Catalyst::Authentication::Credential::OpenID';
+requires 'Catalyst::Authentication::Credential::OpenID';   # will need to install Math::BigInt::GMP first 
 requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Model::Adaptor';
@@ -44,12 +44,14 @@ requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
 requires 'Crypt::SaltedHash';
+requires 'Crypt::SSLeay'; 					#for openid to work for (https)
 requires 'CHI';                              # Cache backend
 requires 'DBI';
 requires 'DBD::mysql';
 requires 'DB_File::Lock';
 requires 'GD';
 requires 'GD::SVG';
+requires 'Math::BigInt::GMP';				# will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Module::Install';
 requires 'Moose';
 requires 'MooseX::AbstractFactory';
