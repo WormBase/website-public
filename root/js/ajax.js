@@ -63,6 +63,11 @@
   return false;
   });
 
+    function columns(leftWidth, rightWidth){
+      $("#widget-holder").children(".left").css("width",leftWidth + "%");
+      $("#widget-holder").children(".right").css("width",rightWidth + "%");
+      }
+
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
     var widget_name = $(this).attr("class").split(" ")[1];

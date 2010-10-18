@@ -43,7 +43,7 @@ input, select, th, td { font-size:1em; }
   min-height: 100%;
   height: auto !important;
   position: relative;
-  min-width: 600px;
+  min-width: 800px;
 }
 
 
@@ -179,6 +179,10 @@ h3.minimized{
   opacity:0.5;
   filter:alpha(opacity=50);
   -moz-opacity:0.5;
+}
+
+.widget-container #widget-footer a span{
+  float:left;
 }
 
 .widget-container #widget-footer a:hover{
@@ -408,6 +412,11 @@ div.title {
     position:relative;
   background-color:white;
 /*   border-bottom:1px solid #CDCDCD; */
+}
+
+div.title div.columns{
+  float:right;
+  margin:0 0.5em;
 }
 .title h2 {
     padding:0;
@@ -880,7 +889,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .placeholder {
   background: #FAF7DE;
   margin: 0 0.5em 0.4em 0em;
-  border:1px dotted gray;
+  border:1px dashed gray;
 }
 
 #navigation div.user-history li{

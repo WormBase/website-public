@@ -35,8 +35,13 @@
       [%- IF object -%]
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
           [% wbid = this_object_id.remove(':') %]
-          <div id="workbench-status-[% wbid %]"></div>
 
+          <div id="workbench-status-[% wbid %]"></div>
+          <div class="columns">
+          <a href="#" onClick="columns(100, 0);"> one | </a>
+          <a href="#" onClick="columns(50, 50);">50:50 | </a>
+          <a href="#" onClick="columns(70, 30);">70:30</a>
+          </div>
           <script>
           $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
           </script>
