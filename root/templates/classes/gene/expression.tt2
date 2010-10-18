@@ -23,8 +23,7 @@
    [% END %]
 
    [% WRAPPER $field_block title="Expression Cluster" key="expression_cluster"%]
-      [% IF fields.expression_cluster.data.keys.size > 1; s = 's'; ELSE; s = ''; END; %]
-       Found [% searchlink("expression_cluster", c.stash.object.name.data.id, fields.expression_cluster.data.keys.size _ " expression cluster object" _ s) %]
+       Found [% searchlink("expression_cluster", c.stash.object.name.data.id, fields.expression_cluster.data.keys.size _ " expression cluster " _ pluralize("object", fields.expression_cluster.data.keys.size)) %]
    [% END %]
 
    [% WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data"%]
