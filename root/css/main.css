@@ -885,7 +885,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   width:0%;
 }
 
-
 .placeholder {
   background: #FAF7DE;
   margin: 0 0.5em 0.4em 0em;
@@ -903,7 +902,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .text-width {
-  min-width:25em;
+/*   min-width:25em; */
   max-width:35em;
 }
 

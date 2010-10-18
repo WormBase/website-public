@@ -14,7 +14,7 @@
         <p>A dialog is a floating window that contains a title bar and a content area. The dialog window can be moved, resized and closed with the 'x' icon by default.</p>
 <p>If the content length exceeds the maximum height, a scrollbar will automatically appear.</p>
 <p>A bottom button bar and semi-transparent modal overlay layer are common options that can be added.</p>
-<p>A call to <code>$(foo).dialog()</code> will initialize a dialog instance and will auto-open the dialog by default. If you want to reuse a dialog, the easiest way is to disable the "auto-open" option with: <code>$(foo).dialog({ autoOpen: false })</code> and open it with <code>$(foo).dialog('open')</code>. To close it, use <code>$foo.dialog('close')</code>. A more in-depth explanation with a full demo is available on <a href="http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/" class="external text" title="http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/">the Nemikor blog</a>.</p>
+<p>A call to <code>$(foo).dialog()</code> will initialize a dialog instance and will auto-open the dialog by default. If you want to reuse a dialog, the easiest way is to disable the "auto-open" option with: <code>$(foo).dialog({ autoOpen: false })</code> and open it with <code>$(foo).dialog('open')</code>. To close it, use <code>$(foo).dialog('close')</code>. A more in-depth explanation with a full demo is available on <a href="http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/" class="external text" title="http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/">the Nemikor blog</a>.</p>
     </div>
     <div id="overview-dependencies">
         <h3>Dependencies</h3>
@@ -833,7 +833,7 @@ $( ".selector" ).dialog( "option", "stack", false );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Specifies the title of the dialog. The title can also be specified by the title attribute on the dialog source element.</p>
+    <p>Specifies the title of the dialog. Any valid HTML may be set as the title. The title can also be specified by the title attribute on the dialog source element.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -951,33 +951,33 @@ $( ".selector" ).dialog( "option", "zIndex", 3999 );</code></pre>
     <h2 class="top-header">Events</h2>
     <ul class="events-list">
       
-<li class="event" id="event-beforeclose">
+<li class="event" id="event-beforeClose">
   <div class="event-header">
-    <h3 class="event-name"><a href="#event-beforeclose">beforeclose</a></h3>
+    <h3 class="event-name"><a href="#event-beforeClose">beforeClose</a></h3>
     <dl>
       <dt class="event-type-label">Type:</dt>
         <dd class="event-type">dialogbeforeclose</dd>
     </dl>
   </div>
   <div class="event-description">
-    <p>This event is triggered when a dialog attempts to close. If the beforeclose event handler (callback function) returns false, the close will be prevented.</p>
+    <p>This event is triggered when a dialog attempts to close. If the beforeClose event handler (callback function) returns false, the close will be prevented.</p>
   </div>
   <div class="event-examples">
     <h4>Code examples</h4>
     <dl class="event-examples-list">
     
 <dt>
-  Supply a callback function to handle the <code>beforeclose</code> event as an init option.
+  Supply a callback function to handle the <code>beforeClose</code> event as an init option.
 </dt>
 <dd>
 <pre><code>$( &quot;.selector&quot; ).dialog({
-   beforeclose: function(event, ui) { ... }
+   beforeClose: function(event, ui) { ... }
 });</code></pre>
 </dd>
 
     
 <dt>
-  Bind to the <code>beforeclose</code> event by type: <code>dialogbeforeclose</code>.
+  Bind to the <code>beforeClose</code> event by type: <code>dialogbeforeclose</code>.
 </dt>
 <dd>
 <pre><code>$( &quot;.selector&quot; ).bind( &quot;dialogbeforeclose&quot;, function(event, ui) {
@@ -1595,9 +1595,9 @@ $( ".selector" ).dialog( "option", "zIndex", 3999 );</code></pre>
 
 </p><!-- 
 Pre-expand include size: 63516 bytes
-Post-expand include size: 106924 bytes
-Template argument size: 59239 bytes
+Post-expand include size: 107006 bytes
+Template argument size: 59321 bytes
 Maximum: 2097152 bytes
 -->
 
-<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3775-1!1!0!!en!2 and timestamp 20100520115502 -->
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3775-1!1!0!!en!2 and timestamp 20100910144113 -->

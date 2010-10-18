@@ -52,8 +52,8 @@
       [% IF object %]
       <li class="title">External Links</li>
       <li>...</li>
-      <li class="title">Related [% object.name.data.class %]s</li>
-      <li>...</li>
+<!--      <li class="title">Related [% object.name.data.class %]s</li>
+      <li>...</li>-->
       <li class="title">Recently Activity</li>
       <div class="user-history" id="user_history"></div>
       [% END %]
