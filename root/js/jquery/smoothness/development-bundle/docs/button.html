@@ -14,6 +14,7 @@
         <p>Button enhances standard form elements like button, input of type submit or reset or anchors to themable buttons with appropiate mouseover and active styles.</p>
 <p>In addition to basic push buttons, radio buttons and checkboxes (inputs of type radio and checkbox) can be converted to buttons: Their associated label is styled to appear as the button, while the underlying input is updated on click.</p>
 <p>In order to group radio buttons, Button also provides an additional widget-method, called Buttonset. Its used by selecting a container element (which contains the radio buttons) and calling buttonset(). Buttonset will also provide visual grouping, and therefore should be used whenever you have a group of buttons. It works by selecting all descendents and applying button() to them. You can enable and disable a buttonset, which will enable and disable all contained buttons. Destroying a buttonset also calls the button's destroy method.</p>
+<p>When using an input of type button, submit or reset, support is limited to plain text labels with no icons.</p>
     </div>
     <div id="overview-dependencies">
         <h3>Dependencies</h3>
@@ -193,7 +194,7 @@ $( ".selector" ).button( "option", "text", false );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Icons to display, with or without text (see text option). The primary icon is displayed on the left of the label text, the secondary on the right. Value for the primary and secondary properties must be a classname (String), eg. "ui-icon-gear". For using only a primary icon: icons: {primary:'ui-icon-locked'}. For using both primary and secondary icon: icons: {primary:'ui-icon-gear',secondary:'ui-icon-triangle-1-s'}</p>
+    <p>Icons to display, with or without text (see text option). The primary icon is displayed by default on the left of the label text, the secondary by default is on the right. Value for the primary and secondary properties must be a classname (String), eg. "ui-icon-gear". For using only one icon: icons: {primary:'ui-icon-locked'}. For using two icons: icons: {primary:'ui-icon-gear',secondary:'ui-icon-triangle-1-s'}</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -452,9 +453,9 @@ $( ".selector" ).button( "option", "label", "custom label" );</code></pre>
 
 </p><!-- 
 Pre-expand include size: 23021 bytes
-Post-expand include size: 28995 bytes
-Template argument size: 13372 bytes
+Post-expand include size: 29105 bytes
+Template argument size: 13482 bytes
 Maximum: 2097152 bytes
 -->
 
-<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3767-1!1!0!!en!2 and timestamp 20100520115500 -->
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3767-1!1!0!!en!2 and timestamp 20100909204132 -->
