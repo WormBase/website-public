@@ -134,8 +134,8 @@ div#page .release_date { }
 .widget-container {
     padding:0.5em 0.5em 1em 0.5em;
     padding:0;
-    margin:0em 0.5em 0.5em 1em;
-    overflow:hidden;
+    margin:0em 0.5em 0.5em 0;
+/*     overflow:hidden; */
     display:none;
     background-color:#FFFFFF; 
     position:relative;
@@ -145,6 +145,7 @@ div#page .release_date { }
 .widget-container:hover {
     border:1px solid #888;
     padding:0;
+    background:#FAFAFA;
 }
 
 .content {
@@ -192,7 +193,7 @@ div.ui-icon-large {
   filter:alpha(opacity=30);
   -moz-opacity:0.3;
   cursor:pointer;
-  margin:0.3em;
+  margin:0.4em;
 }
 
 h3 div.module-min {
@@ -854,16 +855,31 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #widget-holder {
   overflow:hidden;
-  margin: 0.5em 0 0;
-  padding: 0;
+  margin: 0.5em 0 0 0;
+  padding: 0 0 0 1em;
   list-style: none;
   position:relative;
+}
+
+.sortable{
+  min-height:20em;
+  width:50%;
+  float:left;
+  position:relative;
+}
+
+.left {
+  width:100%;
+}
+
+.right {
+  width:0%;
 }
 
 
 .placeholder {
   background: #FAF7DE;
-  margin: 0 0.5em 0.5em 1em;
+  margin: 0 0.5em 0.4em 0em;
   border:1px dotted gray;
 }
 

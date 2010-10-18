@@ -8,10 +8,11 @@
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
 
-    $("#widget-holder").sortable({
+    $(".sortable").sortable({
       handle: '#widget-header, #widget-footer',
       items:'li, .sortable',
       placeholder: 'placeholder ui-corner-all',
+      connectWith: '.sortable',
       forcePlaceholderSize: true,
       update: function() { 
                 //storing the order in session
