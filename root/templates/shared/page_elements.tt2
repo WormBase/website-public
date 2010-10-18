@@ -217,9 +217,9 @@
                 </div>
                 <footer>
                 <div id="widget-footer">
-                    <a href="#" class="ui-icon ui-icon-comment" title="comment"></a>
-                    <a href="#" class="ui-icon ui-icon-notice" title="report a problem"></a>
-                    <a href="#" class="ui-icon ui-icon-help" title="help"></a>
+                    <a href="#" title="comment"><span class="ui-icon ui-icon-comment"></span></a>
+                    <a href="#" title="report a problem"><span class="ui-icon ui-icon-notice"></span></a>
+                    <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
                 </footer>
       </div>

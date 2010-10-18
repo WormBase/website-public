@@ -42,6 +42,8 @@
               return false;
         });
 
+
+
     $("#nav-min").click(function() {
       var nav = $("#navigation");
       var w = nav.width();
