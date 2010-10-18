@@ -25,8 +25,8 @@
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
         $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + label);
-        $("div#reports").load("rest/widget/bench//reports");
-        $("div#my_library").load("rest/widget/bench//my_library");
+        $("div#reports-content").load("rest/widget/bench//reports");
+        $("div#my_library-content").load("rest/widget/bench//my_library");
       return false;
       });
 
@@ -72,7 +72,7 @@
       nav.attr("load", 0);
       if($(content).text().length < 4){
         var widget = $(content).closest("li");
-        $("#widget-holder").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
+        $("#widget-holder").children(".left").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
         widget.remove();
         var content = $(content);
         addWidgetEffects(content.parent(".widget-container").hide());
