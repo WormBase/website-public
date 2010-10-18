@@ -942,7 +942,7 @@ sub alleles {
     my (@alleles,@snps,@rflps,@insertions);
     foreach my $allele (sort @all_alleles) {
 	my $name = $allele->Public_name;
-    	if ($allele->CGC_name) {
+    	if (eval {$allele->CGC_name}) {
     		my $flanking_sequence = eval {$allele->Flanking_sequences};
     		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0);	
 	}
