@@ -65,6 +65,7 @@
 
     function columns(leftWidth, rightWidth){
       $("#widget-holder").children(".left").css("width",leftWidth + "%");
+      if(rightWidth==0){rightWidth=100;}
       $("#widget-holder").children(".right").css("width",rightWidth + "%");
       }
 

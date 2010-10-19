@@ -151,6 +151,13 @@ div#page .release_date { }
 .content {
   padding:0.5em;
   padding-bottom:1.7em;
+  overflow:auto;
+  list-style:disc outside none;
+}
+
+.content h2 {
+  margin:0.3em;
+  float:left;
 }
 
 h3 {
@@ -364,7 +371,8 @@ p.debug-view {
    display:none;
 /*    background:#EEE; */
 /*    margin-top:5px; */
-/*    padding:5px; */
+   padding:5px;
+   padding-left:30px;
 /*    padding-right:10px; */
 }
 
@@ -416,8 +424,24 @@ div.title {
 
 div.title div.columns{
   float:right;
-  margin:0 0.5em;
+  margin:0 0.4em;
 }
+
+div.title div.columns div{
+  float:left;
+  display:inline;
+  margin:0 0.2em;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+div.title div.columns div:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
 .title h2 {
     padding:0;
     margin:0;
@@ -866,23 +890,15 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   overflow:hidden;
   margin: 0.5em 0 0 0;
   padding: 0 0 0 1em;
-  list-style: none;
+ list-style: none;
   position:relative;
 }
 
 .sortable{
-  min-height:20em;
-  width:50%;
+  min-height:10em;
+  width:100%;
   float:left;
   position:relative;
-}
-
-.left {
-  width:100%;
-}
-
-.right {
-  width:0%;
 }
 
 .placeholder {
@@ -902,10 +918,21 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .text-width {
-/*   min-width:25em; */
+  min-width:10em;
   max-width:35em;
 }
 
+div.details {
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  padding: 0.5em;
+  float:right;
+  margin:0 0 0.5em 0.5em;
+}
+
+div.details div.field div.field-title {
+  width: 6.5em;
+}
 
 /*Strain table*/
 table tr.venn-a, table th.venn-a, table td.venn-a {
