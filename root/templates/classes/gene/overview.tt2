@@ -1,15 +1,16 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Name" key="name"-%] 
-            [% tag2link(fields.name.data) %]
-   [% END %]
+<h2>[% tag2link(fields.name.data) %]</h2>
 
-   [% WRAPPER $field_block title="Sequence name"-%] 
+<div class="details ui-corner-all">
+   [% PROCESS "shared/fields/species.tt2" %]
+
+   [% WRAPPER $field_block title="Sequence"-%] 
         [% tag2link(fields.ids.data.sequence_name)%]
    [% END %]
 
-   [% WRAPPER $field_block title="Other names" %]
+   [% WRAPPER $field_block title=pluralize("Other name", fields.ids.data.other_names.size) %]
         [% tag2link(fields.name.data, fields.ids.data.other_names.join(', ')) %]
    [% END %]
 
@@ -21,12 +22,18 @@
         [% #fields.ids.data.refseq_id.join(', ') %]
    [%# END %]
 
-   [% PROCESS "shared/fields/species.tt2" %]
+   [% WRAPPER $field_block title="WormBase ID"-%] 
+           [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% END %]
 
-   [% WRAPPER $field_block title="Description" key="concise_description"%]
-         <div class="text-width">[% markup(fields.concise_description.data) %]</div>
-         [% IF fields.structured_description.data.size > 0 %]
-         <div class="toggle">Details:</div>
+</div>
+
+
+
+<div class="text-width" style="clear:left">
+[% markup(fields.concise_description.data) %]</div>
+  [% IF fields.structured_description.data.keys.size > 0 %]
+    <div class="toggle">Details:</div>
          <div class="returned">
           [% id =0 %]
           [% FOREACH sd IN fields.structured_description.data.keys %]
@@ -43,18 +50,14 @@
               [% END %]
           [% END %]
          </div>
-         [% END %]
-   [% END %]
+  [% END %]
 
-   [% WRAPPER $field_block title="WormBase ID"-%] 
-           [% tag2link(fields.name.data,fields.name.data.id) %]
-   [% END %]
 
-   [% WRAPPER $field_block title="Legacy Information" key="legacy_information"-%] 
+   [% IF fields.legacy_information.data.size > 0 %]
          <div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>
          <div class="returned">
            [% FOREACH desc IN fields.legacy_information.data %]
-              [% markup(desc, 0) %]<br />
+              <li>[% markup(desc, 0) %]</li>
             [% END %]
          </div>
-   [% END %]
+    [% END %]

@@ -62,3 +62,11 @@
 .ui-icon-grip-solid-horizontal.ui-icon-large { background-position: -60px -280px; }
 .ui-icon-gripsmall-diagonal-se.ui-icon-large { background-position: -80px -280px; }
 .ui-icon-grip-diagonal-se.ui-icon-large { background-position: -100px -280px; }
+
+
+.ui-icon-column { width: 16px; height: 16px; background-image: url(../img/columns.png);}
+
+.ui-icon-1 { background-position: 0px 0px; }
+.ui-icon-1-1 { background-position: -16px 0px; }
+.ui-icon-2-1 { background-position: -32px 0px; }
+.ui-icon-1-2 { background-position: -48px 0px; }

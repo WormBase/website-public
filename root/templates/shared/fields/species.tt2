@@ -13,7 +13,7 @@
 [% # Don't display unless we have a genus and species %]
 
    [% IF fields.taxonomy.data.genus %]
-      [% WRAPPER $field_block title="Taxonomy" key="taxonomy" %]
+      [% WRAPPER $field_block title="Species" key="taxonomy" %]
             [% taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species) %]
       [% END %]
    [% END %]
