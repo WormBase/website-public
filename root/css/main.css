@@ -144,7 +144,6 @@ div#page .release_date { }
 
 .widget-container:hover {
     border:1px solid #888;
-    padding:0;
     background:#FAFAFA;
 }
 
@@ -184,6 +183,7 @@ h3.minimized{
     position:absolute;
     bottom:0.5em;
     right:0.5em;
+    display:none;
 }
 
 .widget-container #widget-footer a{
@@ -905,6 +905,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   width:100%;
   float:left;
   position:relative;
+}
+
+.left{
+  min-height:0;
 }
 
 .placeholder {

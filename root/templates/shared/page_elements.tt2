@@ -215,13 +215,13 @@
                 <div id="[%- widget.name -%]-content" class="content">
                 [% content %]
                 </div>
-                <footer>
+
                 <div id="widget-footer">
                     <a href="#" title="comment"><span class="ui-icon ui-icon-comment"></span></a>
                     <a href="#" title="report a problem"><span class="ui-icon ui-icon-notice"></span></a>
                     <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
-                </footer>
+
       </div>
    </section>
    <!-- end [% widget.name %] widget -->
