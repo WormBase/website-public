@@ -70,3 +70,35 @@
 .ui-icon-1-1 { background-position: -16px 0px; }
 .ui-icon-2-1 { background-position: -32px 0px; }
 .ui-icon-1-2 { background-position: -48px 0px; }
+
+.ui-icon-stars { width: 20px; height: 20px; background-image: url(../img/stars.png);}
+
+.ui-icon-star-filled { background-position: 0px 0px; }
+.ui-icon-star-outline  { background-position: -20px 0px; }
+/* .ui-icon-star-yellow { background-position: -60px 0px; } */
+
+.ui-icon-star-gray  { 
+  background-position: -40px 0px; 
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+.ui-icon-star-gray:hover  { 
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
+.ui-icon-star-yellow  { 
+  background-position: -60px 0px; 
+  opacity:0.7;
+  filter:alpha(opacity=70);
+  -moz-opacity:0.7;
+}
+
+.ui-icon-star-yellow:hover  { 
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
