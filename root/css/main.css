@@ -155,6 +155,11 @@ div#page .release_date { }
   list-style:disc outside none;
 }
 
+div#overview-content {
+/*   max-width:50em; */
+/*   padding:0 0 1.7em 0; */
+}
+
 .content h2 {
   margin:0.3em;
   float:left;
@@ -424,7 +429,8 @@ div.title {
 
 div.title div.columns{
   float:right;
-  margin:0 0.4em;
+  margin:0 0.5em;
+  padding:0.3em 0 0;
 }
 
 div.title div.columns div{
@@ -469,7 +475,7 @@ div.field {
   line-height:1em;
   padding:0.2em;
   height:1%;
-  overflow:hidden;
+  overflow:auto;
 }
 
 div.field h5 {
@@ -485,10 +491,10 @@ div.field-title {
   font-size    : 1em;
   padding-right: 0.8em;
   width        : 9em;
-  height       : auto;
 }
 
 div.field-content {
+  float:left;
   overflow:hidden;
 }
 
@@ -516,7 +522,7 @@ div.subfield-title {
 	}
 
 div.subfield .subfield-content {
-  margin-left:3em;
+  margin-left:0.5em;
   text-align:left;
   width:auto;
   overflow:hidden;
@@ -913,13 +919,9 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 /*   padding-left:1.8em; */
 }
 
-.ui-state-highlight {
-  border: 3px solid #FF0;
-}
-
 .text-width {
-  min-width:10em;
   max-width:35em;
+/*   margin:0.5em; */
 }
 
 div.details {
@@ -927,11 +929,13 @@ div.details {
   background:#E9EEF2;
   padding: 0.5em;
   float:right;
-  margin:0 0 0.5em 0.5em;
+  margin:0.5em;
+
 }
 
 div.details div.field div.field-title {
   width: 6.5em;
+  padding-right: 0.5em;
 }
 
 /*Strain table*/

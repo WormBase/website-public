@@ -78,7 +78,7 @@
       nav.attr("load", 0);
       if($(content).text().length < 4){
         var widget = $(content).closest("li");
-        $("#widget-holder").children(".left").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
+        $("#widget-holder").children(".right").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
         widget.remove();
         var content = $(content);
         addWidgetEffects(content.parent(".widget-container").hide());
@@ -106,7 +106,12 @@
   $(".module-load, .module-close").live('open',function() {
     var widget_name = $(this).attr("class").split(" ")[1];
     var nav = $("#nav-" + widget_name);
-    var content = $("div#" + widget_name + "-content");
+    var content = "div#" + widget_name + "-content";
+       var widget = $(content).closest("li");
+        $("#widget-holder").children(".left").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
+        widget.remove();
+        var content = $(content);
+
     nav.attr("load", 0);
     addWidgetEffects(content.parent(".widget-container").hide());
     var url     = $(nav).attr("href");

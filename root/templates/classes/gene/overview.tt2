@@ -33,7 +33,7 @@
 <div class="text-width" style="clear:left">
 [% markup(fields.concise_description.data) %]</div>
   [% IF fields.structured_description.data.keys.size > 0 %]
-    <div class="toggle">Details:</div>
+    <div class="toggle">Details</div>
          <div class="returned">
           [% id =0 %]
           [% FOREACH sd IN fields.structured_description.data.keys %]
