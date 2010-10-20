@@ -56,8 +56,8 @@
 
     $(".module-min").live('click', function() {
         var module = $("div#" + $(this).attr("class").split(" ")[1] + "-content");
-        module.slideToggle("fast");
         module.next().slideToggle("fast");
+        module.slideToggle("fast");
         $(this).parent().toggleClass("minimized");
         if ($(this).attr("show") != 1){
           $(this).attr("show", 1).attr("title", "maximize");
