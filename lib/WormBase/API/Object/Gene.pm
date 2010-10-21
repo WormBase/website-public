@@ -942,9 +942,11 @@ sub alleles {
     my (@alleles,@snps,@rflps,@insertions);
     foreach my $allele (sort @all_alleles) {
 	my $name = $allele->Public_name;
-    	if (eval {$allele->CGC_name}) {
+	my $var_type = $allele->Variation_type;
+    	if ($var_type=~ /allele/i) {
     		my $flanking_sequence = eval {$allele->Flanking_sequences};
-    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0);	
+    		my $mutation_type = $allele->Type_of_mutation;
+    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0,mutaion_type=>$mutation_type);	
 	}
 	push @snps, $self->_pack_obj($allele,$name) if $allele->SNP(0) && !$allele->RFLP(0);
 	push @rflps, $self->_pack_obj($allele,$name) if $allele->RFLP(0);
