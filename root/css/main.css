@@ -230,6 +230,8 @@ h3 span.ui-icon {
 }
 
 
+
+
 /* These are subfields - NOT IN USE? */
 section.widget .secondary-container {
 
@@ -494,7 +496,7 @@ div.field-title {
 }
 
 div.field-content {
-  float:left;
+/*   float:left; */
   overflow:hidden;
 }
 
@@ -772,6 +774,8 @@ table.multi       { padding: 0;
 
 .locus, .var {
 font-style:italic;
+display:inline;
+white-space:nowrap;
 }
 
 .toggle {
@@ -780,9 +784,6 @@ font-style:italic;
 	font-size: 1em;
 	font-weight: normal;
     height:16px;
-/* 	font-size: 1.2em; */
-/* 	font-weight: normal; */ 
-/*   background-position:left top; */
 }
 
 .toggle-container {
@@ -901,14 +902,14 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .sortable{
-  min-height:10em;
+  min-height:1em;
   width:100%;
   float:left;
   position:relative;
 }
 
-.left{
-  min-height:0;
+.right{
+  min-height:10em;
 }
 
 .placeholder {
@@ -940,6 +941,10 @@ div.details {
 div.details div.field div.field-title {
   width: 6.5em;
   padding-right: 0.5em;
+}
+
+div.details div.field div.field-content{
+  float:left;
 }
 
 /*Strain table*/
