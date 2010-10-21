@@ -9,14 +9,15 @@ extends 'WormBase::API::Object';
 
 sub name {
     my $self = shift;
+    my $title = eval {$self ~~ 'Title'} || $self ~~ 'name';
+    $title =~ s/\.*$//;
     my $data = { description => 'The object name of the paper',
 		 data        =>  { id    => $self ~~ 'name',
-				   label => $self ~~ 'name',
+				   label => $title,
 				   class => $self ~~ 'class'
 		 },
     };
     return $data;
-
 }
 
 

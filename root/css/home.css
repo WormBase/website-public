@@ -16,10 +16,12 @@
 /* Seach bar and results page */
 #results {
   max-width:49em;
+  font-size:0.8em;
 }
 #results ul li{
    padding-top:0.5em;
    font-size:1.2em;
+   height:1.3em;
 }
 
 #results ul li a{
@@ -29,6 +31,51 @@
    color: #228B22;
 }
 
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;  
+  text-overflow: ellipsis;
+}
+
+.text-min {
+  height:2.6em;
+  overflow:hidden;
+  width:auto;
+    text-overflow: ellipsis;
+}
+
+div.more {
+  position:relative;
+  margin:0 5%;
+  height:4px;
+  border-top:1px solid gray;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+}
+
+div.more:hover {
+    opacity:1;
+    filter:alpha(opacity=100);
+    -moz-opacity:1;
+}
+
+div.opaque {
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
+div.more.open {
+  border-top:none;
+  border-bottom:1px solid gray;
+}
+
+div.more .ui-icon {
+  position:absolute;
+  top:-7px;
+  left:50%;
+}
 
 #fade {
    color: #999999;

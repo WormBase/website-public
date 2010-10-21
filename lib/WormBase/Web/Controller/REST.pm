@@ -80,10 +80,12 @@ sub _bench {
     $c->log->debug("getting bench widget");
     my $api = $c->model('WormBaseAPI');
     my @ret;
+    my $type;
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
     }
+    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
       my @objs;
       foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
@@ -100,7 +102,7 @@ sub _bench {
             $_;
               } @ret;
     $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = 'all'; 
+    $c->stash->{'type'} = $type; 
     $c->stash->{template} = "search/results.tt2";
     $c->stash->{noboiler} = 1;
 }

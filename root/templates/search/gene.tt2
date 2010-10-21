@@ -1,4 +1,9 @@
       [% tag2link(item.name) %]
     </li>
-    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-    [% markup(item.concise_description) %] <br />
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
+<div class="text-min">
+  [% markup(item.concise_description) %]    
+</div>
+<div class="more">
+<div class="ui-icon ui-icon-triangle-1-s"></div>
+</div>

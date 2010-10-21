@@ -12,7 +12,7 @@
     %]
 
       [% tag2link(item.name) %]
-    </li>
+    </li>zzz
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
     [% item.status %], [% item.variation_type.general_class %]
         [% IF item.variation_type.physical_class %]
