@@ -13,7 +13,9 @@
 
       [% tag2link(item.name) %]
     </li>
+
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
+
     [% item.status %], [% item.variation_type.general_class %]
         [% IF item.variation_type.physical_class %]
            ([% item.variation_type.physical_class %])
@@ -22,6 +24,6 @@
             <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
         [% END %]
         [% IF item.remarks.size > 0 %]
-           <br />[% markup(item.remarks.join('<br>'), 0, 1, 1) %]
+           [% markup(item.remarks.join('<br>'), 0, 1, 1) %]
+
         [% END %]
-        <br />

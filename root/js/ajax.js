@@ -10,12 +10,27 @@
         });
 
 
+    $("div.text-min").live('click',function() {expand($(this), $(this).next());});
+    $("div.more").live('click',function() {expand($(this).prev(), $(this));});
+    function expand(txt, more){
+         var h = txt.height();
+         if(h<35){h='100%';}else{h='2.6em';}
+         txt.animate({height:h});
+         more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
+         more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
+         more.toggleClass('open');
+    }
+
+    $("div.text-min").live('mouseover mouseout',function() {
+      $(this).next().toggleClass('opaque');
+    });
+
 
       $(".bench_update").live('click',function() {
         var ref     = $(this).attr("ref");
         var id     = $(this).attr("wbid");
         var label     = $(this).attr("name");
-        var url     = $(this).attr("href") + '?ref=' + ref  + "&name=" + label;
+        var url     = $(this).attr("href") + '?ref=' + ref  + "&name=" + escape(label);
         $("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
@@ -24,7 +39,7 @@
                             
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
-        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + label);
+        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
         $("div#reports-content").load("rest/widget/bench//reports");
         $("div#my_library-content").load("rest/widget/bench//my_library");
       return false;

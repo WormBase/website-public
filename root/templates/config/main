@@ -21,10 +21,10 @@
   # MACROs for building URLs.
   # 2nd approach: using formats
   #   external_link = format('<a href="%s" target="_blank">%s</a>');
-    MACRO tag2link(data,text,is_classic) BLOCK;  
+    MACRO tag2link(data,text,is_classic,title) BLOCK;  
       IF data.defined ;
 	UNLESS text; text = data.label; END;
-	text2link(data.class, data.id, text, is_classic);
+	text2link(data.class, data.id, text, is_classic, title);
       END;
    END;
 
@@ -46,7 +46,7 @@
 # You must provide both the id and text.
 # An optional fourth parameter, is_classic, will be classic WormBase
 # URLs
-    MACRO text2link(class,id,text,is_classic) BLOCK;  
+    MACRO text2link(class,id,text,is_classic,title) BLOCK;  
       class =  class FILTER lower;
       IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
@@ -55,7 +55,7 @@
           url = get_url(class, id, is_classic);
           IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
           IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;         
-          "<a href=\"$url\" class=\"$class-link\">$text</a>";
+          "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
        END;
    END;
 
