@@ -11,21 +11,20 @@
 
     %]
 
-[% text2link(item.name.class, item.name.id, '<img src="/img/buttons/wormbase.gif" height=12/>') %]
+<div class="ellipsis">[% tag2link(item.name,"","",item.name.label)%]</div>
+</li>
 [% authors = [] %]
 [% FOREACH author IN  item.authors %]
   [% authors.push(tag2link(author)) %]
 [% END %]
 [% authors.join(', ') %]
-</li>
-[% item.year %]. [% item.title %]. [% item.journal %] 
-<b>[% item.volume %]</b>: [% item.page %]<br />
-
+  [[% item.journal %], [% item.year %]]
+<br />
 [% IF item.abstract.length > 0 %]
-  <div class="results-abstract">
-    <div class="toggle"><b>Abstract: </b>[% item.abstract.substr(0,80) %]...</div>
-    <div class="abstract-container" >
-      [% markup(item.abstract,0) %]
-    </div>
-  </div>
+<div class="text-min">
+  [% markup(item.abstract,0) %]    
+</div>
+<div class="more">
+<div class="ui-icon ui-icon-triangle-1-s"></div>
+</div>
 [% END %]

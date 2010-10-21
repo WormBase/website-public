@@ -20,12 +20,7 @@
           [% wbid = this_object_id.remove(':') %]
 
           <div id="workbench-status-[% wbid %]"></div>
-          <div class="columns"><span id="fade" style="float:left">Layout:</span>
-          <div class="ui-icon-column ui-icon-1" onClick="columns(100, 100)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-1-1" onClick="columns(50, 50)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-2-1" onClick="columns(70, 30)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-1-2" onClick="columns(30, 70)"></div>
-          </div>
+
 <!--           <div class="ui-icon ui-icon-triangle-1-e"></div> -->
           <script>
           $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
@@ -34,7 +29,12 @@
       [% ELSE %]
         <h2>Your Workbench</h2>
       [% END %] 
-
+          <div class="columns"><span id="fade" style="float:left">Layout:</span>
+          <div class="ui-icon-column ui-icon-1" onClick="columns(100, 100)"></div>
+          <div class="ui-icon ui-icon-column ui-icon-1-1" onClick="columns(50, 50)"></div>
+          <div class="ui-icon ui-icon-column ui-icon-2-1" onClick="columns(70, 30)"></div>
+          <div class="ui-icon ui-icon-column ui-icon-1-2" onClick="columns(30, 70)"></div>
+          </div>
     </div>
 
   <div id="navigation">
