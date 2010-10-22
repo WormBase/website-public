@@ -15,10 +15,17 @@
     function expand(txt, more){
          var h = txt.height();
          if(h<35){h='100%';}else{h='2.6em';}
+         txt.css("max-height", "none");
          txt.animate({height:h});
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
          more.toggleClass('open');
+
+         //expand the shorted items before the text, also
+         txt.prev()
+            .add(txt.prev().prev().prev())
+            .add(txt.prev().prev().prev().prev().children('.paper-title'))
+            .toggleClass('ellipsis');
     }
 
     $("div.text-min").live('mouseover mouseout',function() {

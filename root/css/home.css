@@ -21,7 +21,7 @@
 #results ul li{
    padding-top:0.5em;
    font-size:1.2em;
-   height:1.3em;
+/*    height:1.3em; */
 }
 
 #results ul li a{
@@ -35,13 +35,15 @@
   white-space: nowrap;
   overflow: hidden;  
   text-overflow: ellipsis;
+  display:block;
 }
 
 .text-min {
+  clear:both;
   height:2.6em;
   overflow:hidden;
   width:auto;
-    text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 div.more {
@@ -167,5 +169,5 @@ div.more .ui-icon {
 }
 
 .highlight {
-  background: #FFFF33;
+  font-weight:bold
 }
