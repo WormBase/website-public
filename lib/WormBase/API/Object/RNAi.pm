@@ -240,42 +240,42 @@ sub laboratory_details {
 ## EXPERIMENTAL CONDITIONS
 ################
 
-sub experimental_conditions {
-
-	my $self = shift;
-    my $exp = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my $species = $exp->Species;
-	my $genotype = $exp->Genotype;
-	my $strain = $exp->Strain;
-	my $treatment = $exp->Treatment;
-	my $life_stage = $exp->Life_stage;
-	my $delivered_by = $exp->Delivered_by;
-	
-	my $interaction = $exp->Interaction;
-	my $interactor = eval{$interaction->Interactor;};
-	
-	%data_pack = (
-					'species' => $species,
-					'genotype' => $genotype,
-					'strain' => $strain,
-					'treatment' => $treatment,
-					'life_stage' => $life_stage,
-					'delivered_by' => $delivered_by,
-					'interaction' => $interaction,
-					'interactor' => $interactor
-					);
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+#sub experimental_conditions {
+#
+#	my $self = shift;
+#    my $exp = $self->object;
+#	my %data;
+#	my $desc = 'notes';
+#	my %data_pack;
+#
+#	#### data pull and packaging
+#
+#	my $species = $exp->Species;
+#	my $genotype = $exp->Genotype;
+#	my $strain = $exp->Strain;
+#	my $treatment = $exp->Treatment;
+#	my $life_stage = $exp->Life_stage;
+#	my $delivered_by = $exp->Delivered_by;
+#	
+#	my $interaction = $exp->Interaction;
+#	my $interactor = eval{$interaction->Interactor;};
+#	
+#	%data_pack = (
+#					'species' => $species,
+#					'genotype' => $genotype,
+#					'strain' => $strain,
+#					'treatment' => $treatment,
+#					'life_stage' => $life_stage,
+#					'delivered_by' => $delivered_by,
+#					'interaction' => $interaction,
+#					'interactor' => $interactor
+#					);
+#	####
+#
+#	$data{'data'} = \%data_pack;
+#	$data{'description'} = $desc;
+#	return \%data;
+#}
 
 
 ###############
@@ -302,7 +302,6 @@ sub phenotypes {
 									'phenotype_id' => $phenotype,
 									'class' => 'Phenotype',
 									'phenotype_name' => $phenotype_name,
-									'not' => 'TBD'  ## TODO: include not status as appropriate
 								};
 	}
 
@@ -312,6 +311,38 @@ sub phenotypes {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+
+sub phenotype_nots {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my @phenotypes = $object->Phenotype_not_observed;
+
+	foreach my $phenotype (@phenotypes) {
+		
+		my $phenotype_name = $phenotype->Primary_name;
+		
+		$data_pack{$phenotype} = {
+									'phenotype_id' => $phenotype,
+									'class' => 'Phenotype',
+									'phenotype_name' => $phenotype_name,
+								};
+	}
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
 
 
 ###############
@@ -343,7 +374,7 @@ sub movies {
 ###############
 
 
-{
+sub genomic_environs {
 
 	my $self = shift;
     my $object = $self->object;
@@ -391,7 +422,7 @@ sub display_notes{
 	stretch of at least 200 nucleotides to the RNAi probe. Targets (and
 	overlapping genes) that satisfy these criteria may or may not be
 	susceptible to an RNAi effect with the given probe and represent
-	secondary (unintended) genomic targets of an RNAi experiment.'
+	secondary (unintended) genomic targets of an RNAi experiment.';
 
 	####
 
