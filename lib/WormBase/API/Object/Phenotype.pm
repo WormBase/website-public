@@ -127,8 +127,16 @@ sub related_phenotypes {
  
 sub rnai {
     
-    my $data = { description => 'The homology image of the protein',
+    my $data = { description => 'RNAi experiments in which Phenotype is observed',
 		 data        => shift->_get_json_data('RNAi'),
+    }; 
+    return $data;
+}
+
+sub rnai_not {
+    
+    my $data = { description => 'RNAi experiments in which Phenotype is not observed',
+		 data        => shift->_get_json_data('Not_in_RNAi'),
     }; 
     return $data;
 }
@@ -208,32 +216,47 @@ sub _format_objects {
     my @content_array;
     my @content_array_not;
     foreach (@items){
-	my @array;
-	my $str=$_;
-	if ($tag eq 'RNAi') {
-	    my $cds  = $_->Predicted_gene||"";
-	    my $gene = $_->Gene;    
-	    my $cgc  = eval{$gene->CGC_name} ||"";
-	    if($gene){
-	      push @array,{     id    => "$gene",
-				label => "$cgc",
-				class => $gene->class,};
-	    }else { push @array, "";}
-	    if($cds){
-	      push @array,{     id    => "$cds",
+    
+		my @array;
+		my $str=$_;
+		if ($tag=~ m/rnai/i) {
+	   
+	   		my $cds  = $_->Predicted_gene||"";
+	    	my $gene = $_->Gene;    
+	    	my $cgc  = eval{$gene->CGC_name} ||"";
+	    
+	    	if($gene){
+	      		push @array,{     id    => "$gene",
+					label => "$cgc",
+					class => $gene->class,};
+	    	}else { push @array, "";}
+	    	
+	    	if($cds){
+	    
+	      	push @array,{     id    => "$cds",
 				label => "$cds",
 				class => $cds->class,
-			  };
-	    }else { push @array, "";}
-	    if(my $sp = $_->Species){
-	      $sp =~ /(.*) (.*)/;
-	      push @array, {	genus=>$1,
-				  species=>$2,
-			      };
-	    }else { push @array, "";}
+			};
+	
+			}else { push @array, "";}
+	    
+	    	if(my $sp = $_->Species){
+	    
+	      		$sp =~ /(.*) (.*)/;
+	      		push @array, {	genus=>$1,
+				species=>$2,
+			};
+			}else { push @array, "";}
 
-	    $is_not = _is_not($_,$phenotype);
-	}elsif ($tag eq 'GO_term') {
+	    		#$is_not = _is_not($_,$phenotype);
+	    	if ($tag=~ m/not/i) {
+	    		$is_not = 0;
+	    	} else {
+	    		$is_not = 1;
+	    	}
+		} 
+		
+		elsif ($tag eq 'GO_term') {
 
 	    my $joined_evidence;
 =pod	need an exmple!!
