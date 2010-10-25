@@ -205,6 +205,20 @@ sub name {
     return $data;
 }
 
+sub external_links {
+  my $self = shift;
+  my $object = $self->object;
+
+
+  my ($aceview,$refseq) = @{$self->database_ids};
+  my $data = { description => 'External links',
+                      data => { 'aceview'     => $aceview,
+                                'ncbi_refseq' => $refseq,
+                              },
+             };
+  return $data;
+}
+
 
 # A lot of stuff is repeated in here.  Like, from other methods. Do we need that? -AC
 sub ids {

@@ -46,18 +46,37 @@
     [% FOREACH widget_name IN widgets -%]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
-          class="module-load [% widget_name %]" 
+          class="module-load [% widget_name %] [% class %]" 
           href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" 
           log="[% c.uri_for('/widget/toggle', class, widget_name) %]"
           load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
       [% IF object %]
       <li class="title">External Links</li>
-      <li>...</li>
+      <div class="small">
+      [% external_links = c.stash.external_links %]
+      [% PROCESS links_block %]
+      </div>
 <!--      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>-->
+      <li class="title">Your Workspace</li>
+      <li id="nav-reports" 
+          class="module-load reports bench" 
+          href="[% c.uri_for('/rest','widget','bench','','reports') %]" 
+          log="[% c.uri_for('/widget/toggle', 'bench', 'reports') %]"
+          load=1>Saved Reports</li>
+      <li id="nav-my_library" 
+          class="module-load my_library bench" 
+          href="[% c.uri_for('/rest','widget','bench','','my_library') %]" 
+          log="[% c.uri_for('/widget/toggle', 'bench', 'my_library') %]"
+          load=1>Library</li>
       <li class="title">Recently Activity</li>
-      <div class="user-history" id="user_history"></div>
+      <div class="user-history small" id="user_history"></div>
+      <li id="nav-user_history" 
+          class="module-load user_history bench" 
+          href="[% c.uri_for('/rest','widget','bench','','user_history') %]" 
+          log="[% c.uri_for('/widget/toggle', 'bench', 'user_history') %]"
+          load=1>view all activity</li>
       [% END %]
     </ul>
     <div id="nav-min" class="ui-corner-right" title="close sidebar"><div id="nav-min-icon"></div></div>
@@ -73,22 +92,35 @@
         [% IF (widget_name == 'count'); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
         <li id="[% widget_name %]">
-        [% WRAPPER widget_sortable_block -%]
-        [% END %]
+        [% PROCESS widget_sortable_block type="$class"-%]
         </li>   
         [% c.user_session.display.$class.$widget_name = -1 %]
         <script>$("#nav-[% widget_name %]").trigger('open');</script>
       [% END %]
 
+
       [% FOREACH widget_name IN widgets %]
         [% IF (c.user_session.display.$class.$widget_name.defined); NEXT; END; %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
         <li id="[% widget_name %]">
-        [% WRAPPER widget_sortable_block -%]
-        [% END %]
+        [% PROCESS widget_sortable_block type="$class"-%]
         </li>   
       [% END %]
 
+      [% IF object %]
+        [% widget = c.config.pages.bench.widgets.reports %]
+        <li id="reports">
+        [% PROCESS widget_sortable_block type="bench"-%]
+        </li>  
+        [% widget = c.config.pages.bench.widgets.my_library %]
+        <li id="my_library">
+        [% PROCESS widget_sortable_block type="bench"-%]
+        </li>  
+        [% widget = c.config.pages.bench.widgets.user_history %]
+        <li id="user_history">
+        [% PROCESS widget_sortable_block type="bench"-%]
+        </li>  
+      [% END %]
 </div>
 <div class="sortable right">
      

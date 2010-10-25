@@ -135,6 +135,18 @@
 </div>
 [% END %]
 
+[% BLOCK links_block %]
+  [% FOREACH link IN external_links.data.keys %]
+    [% IF link == 'aceview' %]
+      <li>[% external_link(link,'AceView', external_links.data.$link) %]</li>
+    [% ELSIF link == 'ncbi_refseq'%]
+      [% FOREACH ref_link IN external_links.data.$link %]
+      <li>[% external_link(link,ref_link, ref_link) %]</li>
+      [% END %]
+    [% END %]
+  [% END %]
+[% END %]
+
 [% BLOCK widget_block %]
    <!-- start [% widget.name %] widget -->
    [% IF c.request.referer.search("/db/") %]
@@ -202,8 +214,8 @@
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
    <section class="widget" name="[% widget.name %]">
-          <div class="widget-container ui-corner-all">
-                <header>    
+          <div class="widget-container ui-corner-all [% type %]">
+                <header> 
                 <div id="widget-header">
                     <div class="module-close [% widget.name %]" title="close"></div>
                     <h3><div class="module-min [% widget.name %]"></div><span>[% widget.title %]</span>
