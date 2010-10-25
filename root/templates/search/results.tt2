@@ -14,7 +14,7 @@
     [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' for ' _ c.stash.query; ELSE; 'results'; END; %]
   </div>
 [% ELSE %]
-  Sorry, <span id="count">[% results.size %]</span> results found for the search <strong>[% c.stash.query %]</strong>
+  Sorry, <span id="count">[% results.size %]</span> results found for the search [% c.stash.query %]
 [% END %]
 
 <ul>
@@ -50,6 +50,12 @@
 </ul>
 
 
-
 </div>
+
+<script>
+[% FOREACH q IN c.stash.query.split('\*') %]
+  $("div#results").highlight('[% q %]');
+[% END %]
+
+</script>
 <!-- End result list -->
