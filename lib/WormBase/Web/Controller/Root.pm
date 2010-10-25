@@ -297,7 +297,7 @@ sub report :Path("/reports") Args(2) {
     $c->res->redirect($c->uri_for('/search_new',$class,"$name")."?redirect=1")  if($object == -1 );
   
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-    $c->stash->{external_links} = $object->external_links if $object->meta->has_method("external_links");
+    $c->stash->{external_links} = $object->external_links if $class eq 'gene'; #if $object->meta->has_method("external_links") 
 =head
 
     # To add later:

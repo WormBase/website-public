@@ -141,7 +141,7 @@
       <li>[% external_link(link,'AceView', external_links.data.$link) %]</li>
     [% ELSIF link == 'ncbi_refseq'%]
       [% FOREACH ref_link IN external_links.data.$link %]
-      <li>[% external_link(link,ref_link, ref_link) %]</li>
+      <li>[% external_link(link, "NCBI: " _ ref_link, ref_link) %]</li>
       [% END %]
     [% END %]
   [% END %]
