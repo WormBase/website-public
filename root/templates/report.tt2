@@ -52,11 +52,13 @@
           load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
       [% IF object %]
+      [% external_links = c.stash.external_links %]
+      [% IF external_links.keys.size > 0 %]
       <li class="title">External Links</li>
       <div class="small">
-      [% external_links = c.stash.external_links %]
       [% PROCESS links_block %]
       </div>
+      [% END %]
 <!--      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>-->
       <li class="title">Your Workspace</li>
@@ -64,12 +66,12 @@
           class="module-load reports bench" 
           href="[% c.uri_for('/rest','widget','bench','','reports') %]" 
           log="[% c.uri_for('/widget/toggle', 'bench', 'reports') %]"
-          load=1>Saved Reports</li>
+          load=1>My Reports</li>
       <li id="nav-my_library" 
           class="module-load my_library bench" 
           href="[% c.uri_for('/rest','widget','bench','','my_library') %]" 
           log="[% c.uri_for('/widget/toggle', 'bench', 'my_library') %]"
-          load=1>Library</li>
+          load=1>My Library</li>
       <li class="title">Recently Activity</li>
       <div class="user-history small" id="user_history"></div>
       <li id="nav-user_history" 
