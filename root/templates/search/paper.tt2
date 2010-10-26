@@ -18,8 +18,12 @@
   [% authors.push(tag2link(author)) %]
 [% END %]
 <div class="ellipsis" style="padding-right:0.5em;max-width:60%;float:left;">[% authors.join(', ') %]</div>
+[% IF ((item.journal.length >0) OR (item.year.length > 0)) %]
 <div style="float:left">[</div><div class="ellipsis" style="float:left;padding-right:0.2em;max-width:32%;">
-  [% item.journal %], </div>[% item.year %]]
+  [% item.journal %]
+  [% IF ((item.journal.length > 0) AND (item.year.length > 0)); ","; END %] 
+  </div>[% item.year %]]
+[% END %]
 
 <!-- <br style="clear:both;"/> -->
 [% IF item.abstract.length > 0 %]
