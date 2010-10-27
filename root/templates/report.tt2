@@ -37,6 +37,7 @@
           <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
           <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
           <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
+          <li onClick="resetLayout(['references'], ['my_library'], 50)"><div id="fade">citations</div></li>
           <li><div id="fade">save layout</div></li>
           </ul>
           </div>
