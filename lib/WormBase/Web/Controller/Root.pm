@@ -100,7 +100,9 @@ sub field :Path("/field") Args(3) {
     # Save the requested field for formatting
     $c->stash->{field} = $field;
     $c->stash->{class} = ucfirst($class);
-        
+
+    $c->stash->{noboiler} = 1;
+ 
     # Fetch our external model
     my $api = $c->model('WormBaseAPI');
     # Fetch the object from our driver	 
