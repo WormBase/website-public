@@ -30,6 +30,11 @@
 			      base         = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
 			      search      = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'   
 			    }
+	pfam    ={ search = 'http://pfam.sanger.ac.uk/family/%s' }
+		  
+        
+		  
+        INTERPRO ={ search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
 
 	cgc      = { description  = 'The C. elegans Genetics Center'
 	             maintainer   = ''
