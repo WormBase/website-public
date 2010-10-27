@@ -85,26 +85,52 @@
   return false;
   });
 
-    function columns(leftWidth, rightWidth){
-      $("#widget-holder").children(".left").css("width",leftWidth + "%");
-      if(rightWidth==0){rightWidth=100;}
-      $("#widget-holder").children(".right").css("width",rightWidth + "%");
-      }
 
   // used in sidebar view, to open and close widgets when selected
   $(".module-load, .module-close").live('click',function() {
-    var widget_name = $(this).attr("class").split(" ")[1];
+    var widget_name = $(this).attr("wname");
     var nav = $("#nav-" + widget_name);
     var content = "div#" + widget_name + "-content";
     if (nav.attr("load") == 1){
-      nav.attr("load", 0);
       if($(content).text().length < 4){
+          openWidget(widget_name, nav, content, ".right");
+      }else{
+        nav.attr("load", 0);
+        $(content).parents("li").addClass("visible");
+        nav.addClass("ui-selected");
+      }
+      location.href = "#" + widget_name;
+    } else {
+      nav.attr("load", 1);
+      nav.removeClass("ui-selected");
+      $(content).parents("li").removeClass("visible"); 
+    }
+
+    updateLayout();
+    return false;
+  });
+
+  // used in sidebar view, to open and close widgets when selected
+  $(".module-load, .module-close").live('open',function() {
+    var widget_name = $(this).attr("wname");
+    var nav = $("#nav-" + widget_name);
+    var content = "div#" + widget_name + "-content";
+
+    openWidget(widget_name, nav, content, ".left");
+
+    updateLayout();
+    return false;
+  });
+
+   
+    function openWidget(widget_name, nav, content, column){
+        nav.attr("load", 0);
         var widget = $(content).closest("li");
-        $("#widget-holder").children(".right").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
+        $("#widget-holder").children(column).append('<li id="'+widget_name+'">'+widget.html()+'</li>');
         widget.remove();
         var content = $(content);
-        addWidgetEffects(content.parent(".widget-container").hide());
-        var url     = $(nav).attr("href");
+        addWidgetEffects(content.parent(".widget-container"));
+        var url     = nav.attr("href");
         content.html("<span id=\"fade\">loading...</span>").show();
         content.load(url,
                         function(response, status, xhr) {
@@ -112,43 +138,13 @@
                               content.html(xhr.status + " " + xhr.statusText);
                               }
                           });
-      }
-      $(content).parent(".widget-container").show();
-      location.href = "#" + widget_name;
-    } else {
-      nav.attr("load", 1);
-      $(content).parent(".widget-container").hide();
+        nav.addClass("ui-selected");
+        content.parents("li").addClass("visible");
+        return false;
     }
-    nav.toggleClass("ui-selected");
-    $.get(nav.attr("log"));
-    return false;
-  });
 
-  // used in sidebar view, to open and close widgets when selected
-  $(".module-load, .module-close").live('open',function() {
-    var widget_name = $(this).attr("class").split(" ")[1];
-    var nav = $("#nav-" + widget_name);
-    var content = "div#" + widget_name + "-content";
-       var widget = $(content).closest("li");
-        $("#widget-holder").children(".left").append('<li id="'+widget_name+'">'+widget.html()+'</li>');
-        widget.remove();
-        var content = $(content);
 
-    nav.attr("load", 0);
-    addWidgetEffects(content.parent(".widget-container").hide());
-    var url     = $(nav).attr("href");
-    content.html("<span id=\"fade\">loading...</span>").show();
-    content.load(url,
-                    function(response, status, xhr) {
-                          if (status == "error") {
-                          content.html(xhr.status + " " + xhr.statusText);
-                          }
-                      });
-    content.parent(".widget-container").show();
-    nav.toggleClass("ui-selected");
-    $.get(nav.attr("log"));
-    return false;
-  });
+
 
     function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");;

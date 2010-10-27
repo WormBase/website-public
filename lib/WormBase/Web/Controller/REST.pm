@@ -74,6 +74,18 @@ sub workbench_star_GET{
     $c->stash->{noboiler} = 1;
 }
 
+sub layout :Path('/rest/layout') :Args(1) :ActionClass('REST') {}
+
+sub layout_POST {
+  my ( $self, $c, $class) = @_;
+  my $left = $c->request->body_parameters->{'left[]'};
+  my $right = $c->request->body_parameters->{'right[]'};  
+  my $leftWidth = $c->request->body_parameters->{'leftWidth'};
+  $c->user_session->{'layout'}->{$class}->{'left'} = $left;
+  $c->user_session->{'layout'}->{$class}->{'right'} = $right;
+  $c->user_session->{'layout'}->{$class}->{'leftWidth'} = $leftWidth;
+}
+
 
 sub _bench {
     my ($self,$c, $widget) = @_; 
