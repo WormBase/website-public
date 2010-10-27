@@ -93,7 +93,18 @@
     var content = "div#" + widget_name + "-content";
     if (nav.attr("load") == 1){
       if($(content).text().length < 4){
-          openWidget(widget_name, nav, content, ".right");
+          var column = ".left";
+          var holder = $("#widget-holder");
+          if(getLeftWidth(holder) == 100){
+            if(holder.children(".right").children(".visible").size() != 0){
+              column = ".right";
+            }
+          }else{
+            var leftHeight = parseFloat(holder.children(".left").css("height"));
+            var rightHeight = parseFloat(holder.children(".right").css("height"));
+            if (rightHeight < leftHeight){ column = ".right"; }
+          }
+          openWidget(widget_name, nav, content, column);
       }else{
         nav.attr("load", 0);
         $(content).parents("li").addClass("visible");
