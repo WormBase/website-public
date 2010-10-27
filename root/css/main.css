@@ -131,15 +131,18 @@ div#page .release_date { }
     position:relative;
 }
 
-.widget-container {
+li div.widget-container {
     padding:0.5em 0.5em 1em 0.5em;
     padding:0;
     margin:0em 0.5em 0.5em 0;
-/*     overflow:hidden; */
     display:none;
     background-color:#FFFFFF; 
     position:relative;
     border:1px solid #CDCDCD;
+}
+
+li.visible div.widget-container {
+  display:block;
 }
 
 .widget-container:hover {
@@ -901,7 +904,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   overflow:hidden;
   margin: 0.5em 0 0 0;
   padding: 0 0 0 1em;
- list-style: none;
+  list-style: none;
   position:relative;
 }
 

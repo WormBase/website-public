@@ -16,7 +16,7 @@
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
   
-   JavaScripts = ['ajax','effect','log','style','search','jquery.tablescroll','miscellaneous']  ;
+   JavaScripts = ['ajax','layout','effect','log','style','search','jquery.tablescroll','miscellaneous']  ;
 
   # MACROs for building URLs.
   # 2nd approach: using formats

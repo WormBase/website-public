@@ -10,24 +10,16 @@
 
     $(".sortable").sortable({
       handle: '#widget-header, #widget-footer',
-      items:'li, .sortable',
+      items:'li',
       placeholder: 'placeholder ui-corner-all',
       connectWith: '.sortable',
       forcePlaceholderSize: true,
-      update: function() { 
-                //storing the order in session
-                var order = $(this).sortable("toArray");
-                var log_url = $(this).attr("log");
-                var count = 1;
-                for(i=0; i<order.length; i++) {
-                  if ($("#nav-" + order[i]).attr("load") == 0){
-                    $.get(log_url + "/" + order[i] + "/" + count++);
-                  }
-                }
-                $.get(log_url + "/" + count);
-              }
+      update: updateLayout,
     });
     $("#widget-holder").children("#widget-header").disableSelection();
+
+
+
 
 // TODO:get jquery icons working for toggle
 // 	 $(".toggle").live('click',function() {
