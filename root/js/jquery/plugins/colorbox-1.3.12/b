@@ -1,0 +1,1079 @@
+# Binding sites:
+
+
+[Snyder_GFP_BS_DPY27_emb_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_DPY27_emb_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_DPY27_emb_GFP]
+feature       = binding_site:4088_DPY27_emb_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2416 
+track source  = 4088 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites DPY-27 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_CEH14_L2_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_CEH14_L2_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_CEH14_L2_GFP]
+feature       = binding_site:4169_CEH14_L2_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 734 
+track source  = 4169 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites CEH-14 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_ALR1_L2_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_ALR1_L2_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_ALR1_L2_GFP]
+feature       = binding_site:4178_ALR1_L2_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2434 
+track source  = 4178 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites ALR-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_HLH8_L3_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_HLH8_L3_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_HLH8_L3_GFP]
+feature       = binding_site:4184_HLH8_L3_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2418 
+track source  = 4184 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites HLH-8 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_AMA1_L4YA_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_AMA1_L4YA_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_AMA1_L4YA_GFP]
+feature       = binding_site:4206_AMA1_L4YA_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 589 
+track source  = 4206 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites AMA-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_UNC130_L1_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_UNC130_L1_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_UNC130_L1_GFP]
+feature       = binding_site:4254_UNC130_L1_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2430 
+track source  = 4254 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites UNC-130 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_LIN11_L2_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_LIN11_L2_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_LIN11_L2_GFP]
+feature       = binding_site:4264_LIN11_L2_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2429 
+track source  = 4264 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites LIN-11 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_EOR1_L3_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_EOR1_L3_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_EOR1_L3_GFP]
+feature       = binding_site:4267_EOR1_L3_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2417 
+track source  = 4267 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites EOR-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_MAB5_L3_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_MAB5_L3_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_MAB5_L3_GFP]
+feature       = binding_site:4279_MAB5_L3_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 593 
+track source  = 4279 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites MAB-5 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_DAF16_L4YA_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_DAF16_L4YA_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_DAF16_L4YA_GFP]
+feature       = binding_site:4294_DAF16_L4YA_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 591 
+track source  = 4294 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites DAF-16 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_HLH1_emb_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_HLH1_emb_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_HLH1_emb_GFP]
+feature       = binding_site:4315_HLH1_emb_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2431 
+track source  = 4315 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites HLH-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_LIN39_L3_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_LIN39_L3_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_LIN39_L3_GFP]
+feature       = binding_site:4320_LIN39_L3_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2432 
+track source  = 4320 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites LIN-39 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_NHR6_L2_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_NHR6_L2_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_NHR6_L2_GFP]
+feature       = binding_site:4351_NHR6_L2_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2433 
+track source  = 4351 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites NHR-6 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_GEI11_L4_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_GEI11_L4_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_GEI11_L4_GFP]
+feature       = binding_site:4360_GEI11_L4_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2451 
+track source  = 4360 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites GEI-11 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_PES1_L4_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_PES1_L4_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_PES1_L4_GFP]
+feature       = binding_site:4374_PES1_L4_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2450 
+track source  = 4374 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites PES-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_EGL5_L3_GFP:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_EGL5_L3_GFP:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_EGL5_L3_GFP]
+feature       = binding_site:4385_EGL5_L3_GFP 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2453 
+track source  = 4385 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites EGL-5 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_MDL1_GFP_L1:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_MDL1_GFP_L1:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_MDL1_GFP_L1]
+feature       = binding_site:5382_MDL1_GFP_L1 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2601 
+track source  = 5388 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites MDL-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_MEP1_GFP_emb:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_MEP1_GFP_emb:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_MEP1_GFP_emb]
+feature       = binding_site:5396_MEP1_GFP_emb 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2600 
+track source  = 5403 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites MEP-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_ELT3_GFP_L1:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_ELT3_GFP_L1:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_ELT3_GFP_L1]
+feature       = binding_site:5408_ELT3_GFP_L1 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2599 
+track source  = 5404 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites ELT-3 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_LIN13_GFP_emb:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_LIN13_GFP_emb:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_LIN13_GFP_emb]
+feature       = binding_site:5417_LIN13_GFP_emb 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2598 
+track source  = 5406 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites LIN-13 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_BLMP1_GFP_L1:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_BLMP1_GFP_L1:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_BLMP1_GFP_L1]
+feature       = binding_site:5418_BLMP1_GFP_L1 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2614 
+track source  = 5415 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites BLMP-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_SKN1_GFP_L1:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_SKN1_GFP_L1:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_SKN1_GFP_L1]
+feature       = binding_site:5423_SKN1_GFP_L1 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2613 
+track source  = 5425 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites SKN-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_CEH30_GFP_lemb:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_CEH30_GFP_lemb:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_CEH30_GFP_lemb]
+feature       = binding_site:5438_CEH30_GFP_lemb 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2612 
+track source  = 5426 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites CEH-30 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_EGL27_GFP_L1:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_EGL27_GFP_L1:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_EGL27_GFP_L1]
+feature       = binding_site:5448_EGL27_GFP_L1 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2622 
+track source  = 5427 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites EGL-27 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_PQM1_GFP_L3:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_PQM1_GFP_L3:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_PQM1_GFP_L3]
+feature       = binding_site:5447_PQM1_GFP_L3 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2620 
+track source  = 5446 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites PQM-1 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+
+[Snyder_GFP_BS_NHR105_GFP_L3:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_NHR105_GFP_L3:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_NHR105_GFP_L3]
+feature       = binding_site:5460_NHR105_GFP_L3 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2621 
+track source  = 5452 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites NHR-105 (GFP ChIP) 
+group_on =
+citation = <h1>
+
+
+[Snyder_GFP_BS_LIN15B_GFP_L3:200000]
+vary_fg       = 1
+
+[Snyder_GFP_BS_LIN15B_GFP_L3:50000]
+fgcolor       = lightgrey
+
+[Snyder_GFP_BS_LIN15B_GFP_L3]
+feature       = binding_site:5466_LIN15B_GFP_L3 
+glyph         = heat_map
+vary_fg       = sub{ return shift->score>=0.00225 ? 0 : 1; }
+fgcolor       = black
+start_color   = blue
+end_color     = lightblue
+data source   = 2623 
+track source  = 5454 
+stranded      = 0
+connector     = false
+bump density  = 250
+label density = 100
+box_subparts  = 1
+#remote renderer = none
+database      = snyder
+category      = modENCODE Tracks : Snyder Group: GFP Chip: Binding Sites
+balloon hover = sub{my $f = shift;
+                    my $score = $f->score;
+                    my $img_url = "/cgi-bin/gb2/gbrowse_key_img?min=0;max=0.002;start_c=blue;end_c=lightblue";
+                    return $score ? join (" ","<img width=120 height=23 src=\"".$img_url."\"/>",$f->name,"(q-value:".$score.")") : $f->name;}
+label         = sub{my $name = shift->name; 
+                    $name =~ s/_GFP//;
+                    $name =~ s/_/ /g;
+		    $name =~ s/Starved/Stv/;
+                    return $name =~ /(.+?) (.+)/ ? sprintf("%-6s %-5s",$1,$2) : sprintf("%-5s",$name); }
+label_position = left
+sort_order    = sub ($$) {shift->feature->name cmp shift->feature->name}
+key           = Binding Sites LIN-15B (GFP ChIP) 
+group_on =
+citation = <h1>
