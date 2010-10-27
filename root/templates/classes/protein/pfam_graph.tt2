@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">google.load("prototype", "1.6.1");</script>
+
+    <!-- the following libraries are all hosted on the Pfam site, but can obviously be
+         retrieved and served locally -->
+
+    <!-- the domain graphics library -->
+    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/domain_graphics.js"></script>
+
+    <!-- in order to standardize the look of text, and in order to make it work at
+         all in older browsers (and IE), we need the canvas text library. And, in turn,
+         that library uses a font description in a separate javascript file -->
+    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/canvas.text.js?reimplement=true&amp;dontUseMoz=true"></script>
+    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/faces/optimer-bold-normal.js"></script>
+
+    <!-- we use the (non-free) prototip2 library to add tooltips. It's not free, but
+         nearly. The domain graphics code should cope if it's not loaded, so you
+         could just omit the prototip load -->
+    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/prototip.js"></script>
+
+    <!-- prototip allows for configuring a "style", which is done here -->
+    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/tip_definition.js"></script>
+
+    <!-- stylesheets. We only really need the rules that are specific to the tooltips -->
+    <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/pfam.css" type="text/css" />
+    <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/prototip.css" type="text/css" />
+
+    <!-- IE, being IE, needs extra help. In particular we need to add an extra library
+         that implements <canvas> using the VML drawing layer in IE. And, so that 
+         "console.log" calls don't screw everything up, we include the firebug-lite 
+         script -->
+    <!--[if IE]>
+      <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/excanvas.js"></script>
+      <script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+      body  { 
+	background-color:transparent;
+        margin: 2em 5em 0 0; 
+      }
+      #dg canvas { 
+        margin: 2em; 
+      }
+      #errors {
+        border: 1px solid red;
+        margin: 1em 0;
+        padding: 0.4em;
+	display: none;
+      }
+
+      textarea {
+	  display: none;
+      }
+    </style>
+
+</head>
+ 
+    
+<script type="text/javascript">
+  
+       
+      var generate = function(dg, seq) {
+	var pg = new PfamGraphic();
+        $("errors").hide();
+        if ( $(dg).select("canvas").size() > 0 ) {
+          $(dg).select("canvas").first().remove();
+        }
+
+        try {
+          sequence = eval( "sequence = " + $(seq).getValue() );
+        } catch ( e ) {
+          $("errors").update( e ).show();
+          return;
+        }
+
+        pg.setParent( dg );
+
+        pg.setImageParams( {
+          xscale: 1.0,
+          yscale: 1.0
+        } );
+
+        try {
+          pg.setSequence( sequence );
+          pg.render();
+        } catch ( e ) {
+          $("errors").update( e ).show();
+          return;
+        }
+      };
+
+      document.observe( "dom:loaded", function() {
+         $$('div[class="pfam_graph"]').each(function(element) {generate(element.id,"seq_" + element.id);});
+      } );
+
+      // ]]>
+</script>
+
+ 
+<body>  
+<div id="errors"></div>
+
+[% id=0 %]
+[% FOREACH type IN pfam_graph.data.keys.sort %]
+[% id= id + 1 %]
+<div class="pfam_graph" id="dg[% id %]"></div>
+<textarea id="seq_dg[% id %]"> 
+      [% FOREACH line IN pfam_graph.data.$type.split(',') %]
+	[%  match = line.match('href\":\"(.*)/(.*)\"') %] 
+	[% IF match %]
+	    [% type = match.0 %] [% acc=match.1 %]
+	    "href":"[% site.external_urls.$type.search.replace("%s",acc) %]"
+	[% ELSE %][% line %][% END %]
+	[% UNLESS loop.last %],[% END %]
+      [% END %]
+</textarea> <p>
+[% END %]
+
+</body>
+  
