@@ -53,10 +53,10 @@
       });
 
        $(".status-bar").load("/rest/auth?path=" + window.location.pathname, function(response, status, xhr) {
-	if (status == "error") {
-	  var msg = "Sorry but there was an error: ";
-	  $("#error").html(msg + xhr.status + " " + xhr.statusText);
-	}
+    if (status == "error") {
+      var msg = "Sorry but there was an error: ";
+      $("#error").html(msg + xhr.status + " " + xhr.statusText);
+    }
       });
 
 
@@ -69,18 +69,18 @@
 
   $(".update").live('click',function() {
 
-	$(this).text("updating").show();
-	var url     = $(this).attr("href");
-	// Multiple classes specified. Split so I can rejoin.
-	var mytitle = $(this).attr("class").split(" ");
-	$("#" + mytitle[1]).load(url,
-				    function(response, status, xhr) {
-					      if (status == "error") {
-						  var msg = "Sorry but there was an error: ";
-						  $("#error").html(msg + xhr.status + " " + xhr.statusText);
-					      }
-					      $(this).children(".toggle").toggleClass("active");
-				      });
+    $(this).text("updating").show();
+    var url     = $(this).attr("href");
+    // Multiple classes specified. Split so I can rejoin.
+    var mytitle = $(this).attr("class").split(" ");
+    $("#" + mytitle[1]).load(url,
+                    function(response, status, xhr) {
+                          if (status == "error") {
+                          var msg = "Sorry but there was an error: ";
+                          $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                          }
+                          $(this).children(".toggle").toggleClass("active");
+                      });
         
   return false;
   });
@@ -93,7 +93,18 @@
     var content = "div#" + widget_name + "-content";
     if (nav.attr("load") == 1){
       if($(content).text().length < 4){
-          openWidget(widget_name, nav, content, ".right");
+          var column = ".left";
+          var holder = $("#widget-holder");
+          if(getLeftWidth(holder) == 100){
+            if(holder.children(".right").children(".visible").size() != 0){
+              column = ".right";
+            }
+          }else{
+            var leftHeight = parseFloat(holder.children(".left").css("height"));
+            var rightHeight = parseFloat(holder.children(".right").css("height"));
+            if (rightHeight < leftHeight){ column = ".right"; }
+          }
+          openWidget(widget_name, nav, content, column);
       }else{
         nav.attr("load", 0);
         $(content).parents("li").addClass("visible");

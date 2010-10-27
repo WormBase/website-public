@@ -18,11 +18,13 @@
     });
     $("#widget-holder").children("#widget-header").disableSelection();
 
-
+    $("div.columns").live('click', function() {
+      $(this).children("ul").toggle();
+    });
 
 
 // TODO:get jquery icons working for toggle
-// 	 $(".toggle").live('click',function() {
+//   $(".toggle").live('click',function() {
 //               $(this).next().slideToggle("fast");
 //               $(this).toggleClass("ui-icon-triangle-1-e");
 //               $(this).toggleClass("ui-icon-triangle-1-s");
@@ -61,23 +63,23 @@
         }
       });
 
-	$(".tooltip").live('mouseover',function() {
-	    $(this).cluetip({
-		activation: 'click',
-		sticky: true, 
-		cluetipClass: 'jtip',
-		dropShadow: false, 
-		closePosition: 'title',
-		arrows: true, 
-// 		height: '80px',
-// 		width: '450px',
-		hoverIntent: false,
-		//ajaxSettings : {
-	     //       type : "GET",
-		//    data : "id=" + employee_id,
-		//},
-	      });
-	});
+    $(".tooltip").live('mouseover',function() {
+        $(this).cluetip({
+        activation: 'click',
+        sticky: true, 
+        cluetipClass: 'jtip',
+        dropShadow: false, 
+        closePosition: 'title',
+        arrows: true, 
+//      height: '80px',
+//      width: '450px',
+        hoverIntent: false,
+        //ajaxSettings : {
+         //       type : "GET",
+        //    data : "id=" + employee_id,
+        //},
+          });
+    });
   });
 
 

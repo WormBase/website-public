@@ -29,14 +29,18 @@
       [% ELSE %]
         <h2>Your Workbench</h2>
       [% END %] 
-          <div class="columns"><span id="fade" style="float:left">Layout:</span>
-          <div class="ui-icon-column ui-icon-1" onClick="columns(100, 100)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-1-1" onClick="columns(50, 50)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-2-1" onClick="columns(70, 30)"></div>
-          <div class="ui-icon ui-icon-column ui-icon-1-2" onClick="columns(30, 70)"></div>
-          </div>
     </div>
-
+          <div class="columns"><span id="fade" style="float:left">Layout</span>
+          <div class="ui-icon ui-icon-triangle-1-s"></div>
+          <ul>
+          <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
+          <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
+          <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
+          <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
+          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
+          <li><div id="fade">save layout</div></li>
+          </ul>
+          </div>
   <div id="navigation">
     <ul>
       <li class="title">Page Content</li>
@@ -62,16 +66,14 @@
 <!--      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>-->
       <li class="title">Your Workspace</li>
-      <li id="nav-reports" 
-          class="module-load bench" 
-          wname="reports"
-          href="[% c.uri_for('/rest','widget','bench','','reports') %]" 
-          load=1>My Reports</li>
-      <li id="nav-my_library" 
-          class="module-load bench" 
-          wname="my_library"
-          href="[% c.uri_for('/rest','widget','bench','','my_library') %]" 
-          load=1>My Library</li>
+      [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+      [% widget = c.config.pages.bench.widgets.$widget_name %]
+      <li id="nav-[% widget_name %]" 
+          class="module-load bench"
+          wname="[% widget_name %]"
+          href="[% c.uri_for('/rest','widget','bench','',widget_name) %]" 
+          load=1>[% widget.title %]</li>
+      [% END %]
       <li class="title">Recently Activity</li>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
@@ -79,8 +81,7 @@
           class="module-load bench" 
           wname="user_history"
           href="[% c.uri_for('/rest','widget','bench','','user_history') %]" 
-          load=1>see more...</li>
-      </div>
+          load=1>see more...</li></div>
       [% END %]
     </ul>
     <div id="nav-min" class="ui-corner-right" title="close sidebar"><div id="nav-min-icon"></div></div>
@@ -115,7 +116,8 @@
   [% UNLESS c.user_session.layout.$class.defined %]
     $("#nav-overview").trigger('open');
     $("#nav-location").trigger('open');
-    $("#nav-reports").trigger('open');
+//     $("#nav-reports").trigger('open');
+//     resetLayout(["location"], ["overview"], 70);
   [% ELSE %]
     var leftList = ["[% c.user_session.layout.$class.left.join('", "') %]"];
     var rightList = ["[% c.user_session.layout.$class.right.join('", "') %]"];
@@ -154,7 +156,7 @@
    <div id="sidebar">
         <ul class="">
              [% FOREACH widget_name IN widgets -%]
-       	        [% widget = c.config.pages.$class.widgets.$widget_name %]
+                [% widget = c.config.pages.$class.widgets.$widget_name %]
                 <!-- The REST URI is: [% c.uri_for('/rest','widget',this_page,random_object,widget) %]" -->
                     <li>
                         <a class="ajax content-pane" href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">
@@ -168,7 +170,7 @@
       <div id="content-pane"></div>
                      <script>
                             $("#content-pane").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
-	                           function(response, status, xhr) {
+                               function(response, status, xhr) {
                                             if (status == "error") {
                                                 var msg = "Sorry but there was an error: ";
                                                 $("#error").html(msg + xhr.status + " " + xhr.statusText);
@@ -188,13 +190,13 @@
       <div class="ui-tabs">
           <ul class="ui-tabs-nav">
              [% FOREACH widget_name IN widgets -%]
-       	          [% widget = c.config.pages.$class.widgets.$widget_name %]
+                  [% widget = c.config.pages.$class.widgets.$widget_name %]
                   <li>
                        <a href="/rest/widget/[% class %]/[% this_object_id %]/[% widget.name %]">
                              <span>[% widget.title %]</span>
                        </a>
                   </li>
-    	     [% END %]
+             [% END %]
           </ul>
        </div>
    </div>
@@ -214,32 +216,32 @@
                                and markup as a target for an ajax request.
                                This lets us display widget headers above
                                containers which are then filled by ajax.
-			       
-			       For the classic view, this includes building 
-			       a nested table structure.
+                   
+                   For the classic view, this includes building 
+                   a nested table structure.
 
                                Although we could place the WRAPPER in each widget
                                template proper, widget headers are then displayed
                                once the content has returned.
 
-			       The upshot of this is that widgets are not self-contained.
-			       I'm not entirely psyched about that. Something to ponder.
-			       %]                               
+                   The upshot of this is that widgets are not self-contained.
+                   I'm not entirely psyched about that. Something to ponder.
+                   %]                               
                     [% END %]
 
-		    [%# This is a work in progress: I want to sequentially load widgets.
-		        Firefox does this using the existing code, but other browsers do not.			
-			%] 
-		   <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
+            [%# This is a work in progress: I want to sequentially load widgets.
+                Firefox does this using the existing code, but other browsers do not.           
+            %] 
+           <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
 
                     <script>
                              $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
-   		                   function(response, status, xhr) {
+                           function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
                                              $("#error").html(msg + xhr.status + " " + xhr.statusText);
                                            } 
-                                    })				      
+                                    })                    
                    </script>
 
       [% END %]
