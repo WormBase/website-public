@@ -20,7 +20,11 @@
 
 [% WRAPPER $field_block title="Motif Summary" %]
   <div id="motif_details"><a class="update motif_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]">[View Details]</a></div> 
-   
+     
+  <iframe src ="[% c.uri_for('/field','protein',object.name.data.id,'pfam_graph') %]" width="100%" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
+  <p>Your browser does not support iframes.</p>
+  </iframe> 
+
   <table  border= 0, width= '100%' >
    <tr align= 'left'><th>Database</th><th>Description</th><th>Accession</th></tr>
    [% FOREACH row IN fields.motif_homologies.data %]

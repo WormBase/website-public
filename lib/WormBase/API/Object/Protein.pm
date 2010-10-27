@@ -6,6 +6,7 @@ use pICalculator;
 use Bio::Graphics::Feature;
 use Bio::Graphics::Panel;
 use Digest::MD5 'md5_hex';
+use JSON;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -252,7 +253,96 @@ sub motif_homologies {
     }; 
     return $data;
 }	  
-	
+
+sub pfam_graph {
+    my $self = shift;
+    my @COLORS = qw(#2dcf00 #ff5353 #e469fe #ffa500 #00ffff #86bcff #ff7ff0 #f2ff7f #7ff2ff);
+    my $motif_homol = $self ~~ '@Motif_homol';
+    my $hash;
+    for( my $i=0;my $feature=shift @$motif_homol;$i++) {
+    
+	    my $score = $feature->right(2);
+	    my $start = $feature->right(3);
+	    my $stop  = $feature->right(4);
+	    my $type = $feature->right ||"";
+	    $type  ||= 'Interpro' if $feature =~ /IPR/;
+ 
+	    # Are the multiple occurences of this feature?
+	    my @multiple = $feature->right->right->col;
+	    @multiple = map {$_->right} $feature->right->col if(@multiple <= 1);
+	     
+	    if (@multiple > 1) {
+		my @scores = $feature->right->col;
+		for( my $count=0; $start=shift @multiple;$count++) {
+ 		    $score= $scores[$count] if($#scores>=$count && $scores[$count]);
+		    my $stop = $start->right;
+		   push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
+		}
+	    } else {
+		    push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
+		 
+	    }
+	}
+ 
+    my @markups;
+    foreach my $type (sort keys %$hash){
+	my @array = grep { $_->{length} >1  } @{$hash->{$type}};
+	unless(@array) {
+	    push @markups, @{$hash->{$type}} ;
+	    delete $hash->{$type};
+	}
+    }
+    foreach my $type (sort keys %$hash){
+	if(@markups) {
+	    push @{$hash->{$type}}, @markups;
+	    undef @markups;
+	}
+	my $graph;
+	my @sort = sort { $b->{length} <=> $a->{length} } @{$hash->{$type}};
+	foreach my $obj (@sort) {
+	     
+	    my $feature = $obj->{feature};
+	    (my $label = $feature) =~ s/.*://;
+	    my $desc = $feature->Title ||$feature ;
+	    $feature =~ m/(.*):(.*)/;
+	    my $href= "$1/$2";
+	    my $identifier="$feature(e-value:".$obj->{score}.")";
+	    my $graph_hash= { 	     colour => $obj->{colour},
+				     start=>$obj->{start},
+				     href=>$href,
+				     metadata => {
+						  database=>$obj->{type}, 	
+						  description=>"$desc",
+						  start=>$obj->{start},
+						  identifier=>$identifier,		
+						},
+			    };
+	    my $graph_type = "regions";
+	    if($obj->{length} == 1 ) {
+		    $graph_type = "markups";
+		    $graph_hash->{headStyle} = "diamond";
+		   
+	    } else {
+		    $graph_hash->{end} = $obj->{end};
+		    $graph_hash->{startStyle} = "straight";
+		    $graph_hash->{endStyle} = "straight";
+		    $graph_hash->{text} = ucfirst(substr($desc,0,3));
+		    $graph_hash->{metadata}->{end} = $obj->{end};
+	    }
+
+	    push @{$graph->{$graph_type}} ,$graph_hash;
+	}
+	$graph->{length}= (length $self->peptide);
+	$hash->{$type} = to_json ($graph);
+    }
+
+    
+   my $data = { description => 'The motif graph of the protein',
+		  data        => $hash,
+		}; 
+}
+ 
+
 
 sub motif_details {
     my $self = shift;
