@@ -33,7 +33,9 @@
     }
 
     function resetLayout(leftList, rightList, leftWidth){
-//       $("#widget-holder").children().children("li").removeClass("visible");
+      $("div#navigation").children("ul").children("li").removeClass("ui-selected");
+      $("#widget-holder").children().children("li").removeClass("visible");
+
       columns(leftWidth, (100-leftWidth), 1);
       for(widget in leftList){
         var widget_name = leftList[widget];
