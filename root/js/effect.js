@@ -18,7 +18,9 @@
     });
     $("#widget-holder").children("#widget-header").disableSelection();
 
-
+    $("div.columns").live('click', function() {
+      $(this).children("ul").toggle();
+    });
 
 
 // TODO:get jquery icons working for toggle
