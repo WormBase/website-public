@@ -219,6 +219,12 @@ div.ui-icon-large {
   margin:0.4em;
 }
 
+#widget-header div.ui-icon:hover {
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
 h3 div.module-min {
   float:left;
   opacity:0.3;
@@ -233,9 +239,16 @@ h3 span {
 
 h3 span.ui-icon {
   margin:0.2em;
-  display:none;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
 }
 
+h3 span.ui-icon:hover {
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
 
 
 

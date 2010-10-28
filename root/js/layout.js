@@ -13,7 +13,9 @@
       if(!noUpdate){ updateLayout(); }
     }
 
-    function updateLayout(){
+    function updateLayout(layout){
+      var l = layout;
+      if(!layout){ l = 'default'; }
       var holder =  $("#widget-holder");
       var class = holder.attr("class");
       var left = holder.children(".left").children(".visible")
@@ -23,11 +25,12 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
-      $.post("/rest/layout/" + class, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
+      $.post("/rest/layout/" + class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
     }
 
     function getLeftWidth(holder){
       var totWidth = parseFloat(holder.css("width"));
+//       var leftWidth = parseFloat(holder.children(".left").css("width"));
       var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
       return leftWidth
     }

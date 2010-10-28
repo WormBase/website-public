@@ -23,10 +23,10 @@
  [% url = 'reports/' _ class _ '/' _ item.name.id %]
   <li>
           [% wbid = item.name.id.remove(':') %]
-          <div id="workbench-status-[% wbid %]"></div>
+          <div class="workbench-status-[% wbid %]"></div>
 
           <script>
-          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% url %]&id=[% wbid %]&name=[% item.name.label | uri %]");
+          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% url %]&id=[% wbid %]&name=[% item.name.label | uri %]");
           </script>
 
  
