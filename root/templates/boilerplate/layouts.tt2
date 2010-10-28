@@ -1,0 +1,18 @@
+          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
+          [% FOREACH layout IN c.stash.layouts %]
+            [% UNLESS layout; NEXT; END; %]
+         <li id="[% layout %]">
+              <div class="ui-icon ui-icon-close" onClick="deleteLayout('[% layout %]')"></div>
+              <div id="fade">[% layout %]</div></li>
+          [% END %]
+          <form onsubmit="updateLayout(this.layout.value);"><input id="layout-input" type="text" name="layout" value="save layout">
+          </form>
+
+<script>
+    $("#layout-input").focus(function(){
+      if($(this).attr("value") == "save layout") $(this).attr("value", "");
+    });
+  $("#layout-input").blur(function(){
+    if($(this).attr("value") == "") $(this).attr("value", "save layout");
+  });
+</script>

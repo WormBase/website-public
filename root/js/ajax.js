@@ -9,7 +9,7 @@
           }
         });
 
-    $(".list-layouts").load("/rest/layout_list", function(response, status, xhr) {
+    $(".list-layouts").load("/rest/layout_list/" + $(".list-layouts").attr("type"), function(response, status, xhr) {
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
             $(".user-history").html(msg + xhr.status + " " + xhr.statusText);
@@ -218,14 +218,14 @@
       );
     }
 
-function history_clear(){
+    function history_clear(){
         $("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
                               $("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
                               }
-    });
-}
+        });
+      }
 
 
   // Load a (specific) field or widget dynamically onClick.
