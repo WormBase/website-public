@@ -218,8 +218,10 @@
                 <header> 
                 <div id="widget-header">
                     <div class="module-close" wname="[% widget.name %]" title="close"></div>
+                   
                     <h3><div class="module-min [% widget.name %]" wname="[% widget.name %]"></div><span>[% widget.title %]</span>
-                        <span class="ui-icon ui-icon-arrow-4" title="move"></span>
+        [% IF (type == 'bench') %]<span wname="[% widget.name %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
+                        <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
                 </div>
                 </header>

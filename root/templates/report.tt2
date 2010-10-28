@@ -19,11 +19,10 @@
         <h2>[% class FILTER ucfirst %] Report: [%- tag2link(object.name.data) -%]</h2>
           [% wbid = this_object_id.remove(':') %]
 
-          <div id="workbench-status-[% wbid %]"></div>
+          <div class="workbench-status-[% wbid %]"></div>
 
-<!--           <div class="ui-icon ui-icon-triangle-1-e"></div> -->
           <script>
-          $("#workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
+          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?ref=[% path %]&id=[% wbid %]&name=[% object.name.data.label %]");
           </script>
 
       [% ELSE %]
@@ -37,8 +36,9 @@
           <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
           <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
           <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
-          <li><div id="fade">save layout</div></li>
+          <div class="list-layouts"></div>
+<!--          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
+          <li><div id="fade">save layout</div></li>-->
           </ul>
           </div>
   <div id="navigation">
@@ -116,12 +116,13 @@
   [% UNLESS c.user_session.layout.$class.defined %]
     $("#nav-overview").trigger('open');
     $("#nav-location").trigger('open');
-//     $("#nav-reports").trigger('open');
-//     resetLayout(["location"], ["overview"], 70);
+    [% UNLESS object %]
+      resetLayout(["reports"], ["my_library"], 50);
+    [% END %]
   [% ELSE %]
-    var leftList = ["[% c.user_session.layout.$class.left.join('", "') %]"];
-    var rightList = ["[% c.user_session.layout.$class.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% c.user_session.layout.$class.leftWidth %]);
+    var leftList = ["[% c.user_session.layout.$class.default.left.join('", "') %]"];
+    var rightList = ["[% c.user_session.layout.$class.default.right.join('", "') %]"];
+    resetLayout(leftList, rightList, [% c.user_session.layout.$class.default.leftWidth %]);
   [% END %]
 
     </script>

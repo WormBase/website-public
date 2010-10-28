@@ -9,6 +9,13 @@
           }
         });
 
+    $(".list-layouts").load("/rest/layout_list", function(response, status, xhr) {
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $(".user-history").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+
 
     $("div.text-min").live('click',function() {expand($(this), $(this).next());});
     $("div.more").live('click',function() {expand($(this).prev(), $(this));});
@@ -32,6 +39,10 @@
       $(this).next().toggleClass('opaque');
     });
 
+    $(".reload").live('click', function() {
+      var widget_name = $(this).attr("wname");
+      $("div#" + widget_name + "-content").load("/rest/widget/bench//" + widget_name);
+    });
 
       $(".bench_update").live('click',function() {
         var ref     = $(this).attr("ref");
@@ -46,9 +57,9 @@
                             
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
-        $("#workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
-        $("div#reports-content").load("rest/widget/bench//reports");
-        $("div#my_library-content").load("rest/widget/bench//my_library");
+        $(".workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
+//         $("div#reports-content").load("/rest/widget/bench//reports");
+//         $("div#my_library-content").load("/rest/widget/bench//my_library");
       return false;
       });
 
@@ -158,28 +169,29 @@
 
 
     function addWidgetEffects(widget_container) {
-      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");;
-      widget_container.find("div.module-close").addClass("ui-icon-large ui-icon-close").hide();
+      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
+      widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
       widget_container.find("#widget-footer").hide();
+      widget_container.find("#widget-header").children("h3").children("span.hide").hide();
 
     widget_container.find("#widget-header").hover(
       function () {
         $(this).children("h3").children("span").show();
       },
       function () {
-        $(this).children("h3").children("span.ui-icon").hide();
+        $(this).children("h3").children("span.hide").hide();
       }
     );
 
     widget_container.hover(
         function () {
-          $(this).find("#widget-header").children(".ui-icon-large").show();
+          $(this).find("#widget-header").children(".ui-icon").show();
           if($(this).find("#widget-header").children("h3").children(".module-min").attr("show") != 1){
             $(this).find("#widget-footer").show();
           }
         }, 
         function () {
-          $(this).find("#widget-header").children(".ui-icon-large").hide();
+          $(this).find("#widget-header").children(".ui-icon").hide();
           $(this).find("#widget-footer").hide();
         }
       );

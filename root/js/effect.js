@@ -21,6 +21,9 @@
     $("div.columns").live('click', function() {
       $(this).children("ul").toggle();
     });
+    $("div.columns ul div div").live('click', function() {
+      $(this).closest("ul").hide();
+    });
 
 
 // TODO:get jquery icons working for toggle
@@ -48,7 +51,7 @@
     });
 
     $(".module-min").live('click', function() {
-        var module = $("div#" + $(this).attr("class").split(" ")[1] + "-content");
+        var module = $("div#" + $(this).attr("wname") + "-content");
         module.next().slideToggle("fast");
         module.slideToggle("fast");
         $(this).parent().toggleClass("minimized");
