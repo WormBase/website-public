@@ -87,12 +87,24 @@ sub layout_POST {
   $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'} = $leftWidth;
 }
 
-sub layout_list :Path('/rest/layout_list') :Args(0) :ActionClass('REST') {}
+sub layout_GET {
+  my ( $self, $c, $class, $layout) = @_;
+  my $delete = $c->req->params->{delete};
+  delete $c->user_session->{'layout'}->{$class}->{$layout} if $delete;
+}
+
+sub layout_list :Path('/rest/layout_list') :Args(1) :ActionClass('REST') {}
 
 sub layout_list_GET {
-  my ( $self, $c ) = @_;
+  my ( $self, $c, $class ) = @_;
+
+  my @layouts = keys(%{$c->user_session->{'layout'}->{$class}});
+my( $index )= grep { $layouts[$_] eq "default" } 0..$#layouts;
+  delete $layouts[$index];
+  $c->log->debug("layout list:" . @layouts);
+  $c->stash->{layouts} = \@layouts;
   $c->stash->{template} = "boilerplate/layouts.tt2";
-    $c->stash->{noboiler} = 1;
+  $c->stash->{noboiler} = 1;
 }
 
 

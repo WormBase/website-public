@@ -13,6 +13,12 @@
       if(!noUpdate){ updateLayout(); }
     }
 
+    function deleteLayout(layout){
+      var class = $("#widget-holder").attr("class");
+      $("div.columns ul div li#" + layout).remove();
+      $.get("/rest/layout/" + class + "/" + layout + "?delete=1");
+    }
+
     function updateLayout(layout){
       var l = layout;
       if(!layout){ l = 'default'; }

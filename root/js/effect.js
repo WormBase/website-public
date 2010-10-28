@@ -21,8 +21,7 @@
     $("div.columns").live('click', function() {
       $(this).children("ul").toggle();
     });
-    $("div.columns ul div div").live('click', function() {
-      $(this).closest("ul").hide();
+    $("div.columns ul div input").live('click', function() {
     });
 
 
