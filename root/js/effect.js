@@ -1,6 +1,6 @@
  
   $(document).ready(function() {  
-
+var layoutFocused = true;
 //       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
@@ -18,10 +18,8 @@
     });
     $("#widget-holder").children("#widget-header").disableSelection();
 
-    $("div.columns").live('click', function() {
-      $(this).children("ul").toggle();
-    });
-    $("div.columns ul div input").live('click', function() {
+    $("div.columns span, div.columns div.ui-icon, div.columns ul li").live('click', function() {
+      $("div.columns ul").toggle();
     });
 
 

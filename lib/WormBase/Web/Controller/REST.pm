@@ -4,12 +4,16 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller::REST';
 use Time::Duration;
+use XML::Simple;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
+    'stash_key' => 'rest',
     'map' => {
-	'text/html'        => [ 'View', 'TT' ],
-    });
+      'text/html'        => [ 'View', 'TT' ],
+      'text/xml' => 'XML::Simple',
+    }
+);
 
 =head1 NAME
 
@@ -91,6 +95,26 @@ sub layout_GET {
   my ( $self, $c, $class, $layout) = @_;
   my $delete = $c->req->params->{delete};
   delete $c->user_session->{'layout'}->{$class}->{$layout} if $delete;
+    $c->stash->{noboiler} = 1;
+
+  my $left = $c->user_session->{'layout'}->{$class}->{$layout}->{'left'};
+  my $right = $c->user_session->{'layout'}->{$class}->{$layout}->{'right'};
+  my $leftWidth = $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'};
+
+  if(ref($left) eq 'ARRAY') {$left = join(',', @$left);}
+  if(ref($right) eq 'ARRAY') {$right = join(',', @$right);}
+
+  $c->log->debug("left:" . $left);
+  $c->log->debug("right:" . $right);
+  $c->log->debug("leftWidth:" . $leftWidth);
+
+  $self->status_ok(
+      $c,
+      entity =>  {left => $left,
+          right => $right,
+          leftWidth => $leftWidth,
+      },
+  );
 }
 
 sub layout_list :Path('/rest/layout_list') :Args(1) :ActionClass('REST') {}
