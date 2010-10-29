@@ -19,6 +19,25 @@
       $.get("/rest/layout/" + class + "/" + layout + "?delete=1");
     }
 
+    function setLayout(layout){
+      var class = $("#widget-holder").attr("class");
+      $.get("/rest/layout/" + class + "/" + layout, function(data) {
+        var nodeList = data.childNodes[0].childNodes;
+        var len = nodeList.length;
+        for(i=0; i<len; i++){
+          var node = nodeList.item(i);
+          if(node.nodeName == "data"){
+            var leftList = node.attributes.getNamedItem('left').nodeValue.split(',');
+            var rightList = node.attributes.getNamedItem('right').nodeValue.split(',');
+            var leftWidth = node.attributes.getNamedItem('leftWidth').nodeValue;
+            resetLayout(leftList, rightList, leftWidth);
+          }
+        }
+      }
+, "xml"
+);
+    }
+
     function updateLayout(layout){
       var l = layout;
       if(!layout){ l = 'default'; }

@@ -478,16 +478,10 @@ div.columns ul li{
   float:none;
   padding:0.2em;
   margin:0;
-  opacity:0.5;
-  filter:alpha(opacity=50);
-  -moz-opacity:0.5;
 }
 
 div.columns ul li:hover{
   background: #FAF7DE;
-  opacity:1;
-  filter:alpha(opacity=100);
-  -moz-opacity:1;
 }
 
 div.columns ul li div{
