@@ -1265,19 +1265,44 @@ sub other_alleles {
 sub strains {
     my $self   = shift;
     my $object = $self->object;
-    my $data = {};
-    
+    my (@strains,@singletons,@cgc,@others,@both, $count);
     foreach ($object->Strain) {
-	my @genes = $_->Gene;
-	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
-	push @{$data->{data}->{all_strains}},$_;
-
-	# Some hash lookups for formatting
-	$data->{data}->{cgc_strains}->{$_}++ if $cgc;
-	$data->{data}->{strains_only_carrying_this_allele}->{$_}++ if (@genes == 1);	       
+      $count++;
+      my @genes = $_->Gene;
+      my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+      if (@genes == 1){
+        if ($cgc){push @both, $self->_pack_obj($_);}
+        push @singletons, $self->_pack_obj($_);
+      }elsif($cgc){
+        push @cgc, $self->_pack_obj($_);
+      }else{
+        push @others, $self->_pack_obj($_);
+      }
     }
-    $data->{description} = 'strains carrying this variation';    
-    return $data;
+    my $data = { description => 'strains carrying this variation',
+            data        => { singleton => \@singletons,
+                             both => \@both,
+                             cgc => \@cgc,
+                             other => \@others,
+                             total => $count,
+                            }
+    };
+
+    return $data;  
+# 
+#     my $data = {};
+#     
+#     foreach ($object->Strain) {
+# 	my @genes = $_->Gene;
+# 	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+# 	push @{$data->{data}->{all_strains}},$_;
+# 
+# 	# Some hash lookups for formatting
+# 	$data->{data}->{cgc_strains}->{$_}++ if $cgc;
+# 	$data->{data}->{strains_only_carrying_this_allele}->{$_}++ if (@genes == 1);	       
+#     }
+#     $data->{description} = 'strains carrying this variation';    
+#     return $data;
 }
 
 

@@ -54,29 +54,13 @@
    
 
    [% WRAPPER $field_block title="Strains" key="strains" %]
-             [% FOREACH strain IN fields.strains.data.all_strains %]
-                [% IF fields.strains.data.cgc_strains.$strain %]
-		    <span class="cgc-strain">		    
-	        [% END %]
-
-		[% IF fields.strains.data.strains_carrying_only_this_allele.$strain %]
-                    <span class="strains-with-single-variation">
-	        [% END %]
-		  
-		[% strain %]
-
-		[% IF fields.strains.data.strains_carrying_only_this_allele.$strain %]
-		    </span>
-	        [% END %]
-
-                [% IF fields.strains.data.cgc_strains.$strain %]
-		    </span>
-	        [% END %]
-             [% END %]
-	     <p>
-	     Strains available from the CGC are shown in <span class="cgc-strain">italics</span>.<br />
-	     Strains carrying this variation alone are shown in <span class="strains-with-single-variation">boldface</span>.
-	     </p>
+  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _ " strains") %]</div>
+  <div class="toggle-container">
+    [% venn("Carrying " _ tag2link(object.name.data) _ " alone", fields.strains.data.singletons, 
+            "Available from the CGC", fields.strains.data.cgc, 
+            "", fields.strains.data.both, 
+            "Other strains", fields.strains.data.other) %]
+  </div>
 
    [% END %]
 

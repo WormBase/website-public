@@ -953,14 +953,14 @@ sub alleles {
     my $ace = $self->ace_dsn;
     my @all_alleles = map {$ace->fetch(Variation => $_) } @{$self ~~ '@Allele'}; 
 
-    my (@alleles,@snps,@rflps,@insertions);
+    my (%alleles,@snps,@rflps,@insertions);
     foreach my $allele (sort @all_alleles) {
 	my $name = $allele->Public_name;
 	my $var_type = $allele->Variation_type;
-    	if ($var_type=~ /allele/i) {
-    		my $flanking_sequence = eval {$allele->Flanking_sequences};
-    		my $mutation_type = $allele->Type_of_mutation;
-    		push @alleles, $self->_pack_obj($allele,$name,flanking_sequence=>$flanking_sequence?1:0,mutaion_type=>$mutation_type);	
+    if ($var_type=~ /allele/i) {
+        my $flanking_sequence = eval {$allele->Flanking_sequences};
+        my $mutation_type = $allele->Type_of_mutation || "Other";
+        push @{$alleles{$mutation_type}}, $self->_pack_obj($allele,$name,(flanking_sequence=>$flanking_sequence?1:0));	
 	}
 	push @snps, $self->_pack_obj($allele,$name) if $allele->SNP(0) && !$allele->RFLP(0);
 	push @rflps, $self->_pack_obj($allele,$name) if $allele->RFLP(0);
@@ -968,7 +968,7 @@ sub alleles {
     }
 	
     my $data = { description => 'The alleles, snps, rflps? and insertions of the gene',
-		 data        => {	alleles=>\@alleles,
+		 data        => {	alleles=>\%alleles,
 					snps=>\@snps,
 					rflps=>\@rflps,
 					insertions=>\@insertions,

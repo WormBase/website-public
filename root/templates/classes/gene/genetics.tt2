@@ -6,24 +6,27 @@
 [% WRAPPER $field_block title="Reference allele" key="reference_allele" %]
        
         [% FOREACH obj IN fields.reference_allele.data %]
-	 
 	  [% IF obj.flanking_sequence %] 
 	      <b>[%  tag2link(obj) %]</b>   
 	  [% ELSE %]
 	     [%  tag2link(obj) %]
 	  [% END %]
-	  
+
         [% END %]
        
 [% END %]
 
   [% WRAPPER $field_block title="Alleles" key="alleles"%]
-    [% FOREACH obj IN fields.alleles.data.alleles %]
-	 [% IF obj.flanking_sequence %] 
-	      <b>[%  tag2link(obj) %]</b>   
-	  [% ELSE %]
-	     [%  tag2link(obj) %]
-	  [% END %]
+    [% FOREACH list IN fields.alleles.data.alleles.keys %]
+      [% list %]:
+      [% FOREACH obj IN fields.alleles.data.alleles.$list %]
+        [% IF obj.flanking_sequence %] 
+            <b>[%  tag2link(obj) %]</b>   
+        [% ELSE %]
+          [%  tag2link(obj) %]
+        [% END %]
+      [% END %]
+      <br />
     [% END %]
   <br>Alleles for which the sequence change is known are listed in <b>boldface</b>
   [% END %]
