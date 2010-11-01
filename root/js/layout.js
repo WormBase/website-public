@@ -15,32 +15,32 @@
 
     function deleteLayout(layout){
       var class = $("#widget-holder").attr("class");
-      $("div.columns ul div li#" + layout).remove();
       $.get("/rest/layout/" + class + "/" + layout + "?delete=1");
+      $("div.columns ul div li#layout-" + layout).remove();
     }
 
     function setLayout(layout){
       var class = $("#widget-holder").attr("class");
       $.get("/rest/layout/" + class + "/" + layout, function(data) {
-        var nodeList = data.childNodes[0].childNodes;
-        var len = nodeList.length;
-        for(i=0; i<len; i++){
-          var node = nodeList.item(i);
-          if(node.nodeName == "data"){
-            var leftList = node.attributes.getNamedItem('left').nodeValue.split(',');
-            var rightList = node.attributes.getNamedItem('right').nodeValue.split(',');
-            var leftWidth = node.attributes.getNamedItem('leftWidth').nodeValue;
-            resetLayout(leftList, rightList, leftWidth);
+          var nodeList = data.childNodes[0].childNodes;
+          var len = nodeList.length;
+          for(i=0; i<len; i++){
+            var node = nodeList.item(i);
+            if(node.nodeName == "data"){
+              var leftList = node.attributes.getNamedItem('left').nodeValue.split(',');
+              var rightList = node.attributes.getNamedItem('right').nodeValue.split(',');
+              var leftWidth = node.attributes.getNamedItem('leftWidth').nodeValue;
+              resetLayout(leftList, rightList, leftWidth);
+            }
           }
-        }
-      }
-, "xml"
-);
+        }, "xml");
     }
 
     function updateLayout(layout){
-      var l = layout;
-      if(!layout){ l = 'default'; }
+      l = 'default';
+      if((layout) && !(layout === "")){ 
+        l = escape(layout); 
+      }
       var holder =  $("#widget-holder");
       var class = holder.attr("class");
       var left = holder.children(".left").children(".visible")
@@ -82,5 +82,6 @@
           openWidget(widget_name, nav, content, ".right");
         }
       }
+      updateLayout();
     }
 
