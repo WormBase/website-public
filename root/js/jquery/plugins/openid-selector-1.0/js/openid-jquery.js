@@ -4,6 +4,7 @@ http://code.google.com/p/openid-selector/
 
 This code is licenced under the New BSD License.
 */
+ 
 
 var providers_large = {
     google: {
@@ -14,23 +15,32 @@ var providers_large = {
         name: 'Yahoo',      
         url: 'https://me.yahoo.com/'
     },    
-    aol: {
-        name: 'AOL',     
-        label: 'Enter your AOL screenname.',
-        url: 'http://openid.aol.com/{username}/'
-    },
     openid: {
         name: 'OpenID',     
-        label: 'Enter your OpenID.',
+        label: 'Enter your OpenID',
         url: null
-    }
-};
-var providers_small = {
-    myopenid: {
-        name: 'MyOpenID',
-        label: 'Enter your MyOpenID username.',
-        url: 'http://{username}.myopenid.com/'
+    }, 
+    facebook: {
+        name: 'Facebook',      
+        url:  'http://facebook.anyopenid.com/'
+    }, 
+    twitter: {
+        name: 'Twitter',     
+        url: 'http://twitter.com/oauth/authenticate'
     },
+    
+    wordpress: {
+        name: 'Wordpress',
+        label: 'Enter your Wordpress.com username',
+        url: 'http://{username}.wordpress.com/'
+    },     
+    
+    aol: {
+        name: 'AOL',     
+        label: 'Enter your AOL screenname',
+        url: 'http://openid.aol.com/{username}/'
+    },
+     
     livejournal: {
         name: 'LiveJournal',
         label: 'Enter your Livejournal username.',
@@ -38,46 +48,38 @@ var providers_small = {
     },
     flickr: {
         name: 'Flickr',        
-        label: 'Enter your Flickr username.',
+        label: 'Enter your Flickr username',
         url: 'http://flickr.com/{username}/'
-    },
-    technorati: {
-        name: 'Technorati',
-        label: 'Enter your Technorati username.',
-        url: 'http://technorati.com/people/technorati/{username}/'
-    },
-    wordpress: {
-        name: 'Wordpress',
-        label: 'Enter your Wordpress.com username.',
-        url: 'http://{username}.wordpress.com/'
-    },
+    }, 
     blogger: {
         name: 'Blogger',
         label: 'Your Blogger account',
         url: 'http://{username}.blogspot.com/'
     },
+    myopenid: {
+        name: 'MyOpenID',
+        label: 'Enter your MyOpenID username',
+        url: 'http://{username}.myopenid.com/'
+    }, 
+    myspace: {
+        name: 'MySpace',   
+	label: 'Enter your MySpace username',
+        url: 'http://www.myspace.com/{username}/'
+    },
+    technorati: {
+        name: 'Technorati',
+        label: 'Enter your Technorati username',
+        url: 'http://technorati.com/people/technorati/{username}/'
+    },
     verisign: {
         name: 'Verisign',
         label: 'Your Verisign username',
         url: 'http://{username}.pip.verisignlabs.com/'
     },
-    vidoop: {
-        name: 'Vidoop',
-        label: 'Your Vidoop username',
-        url: 'http://{username}.myvidoop.com/'
-    },
-    verisign: {
-        name: 'Verisign',
-        label: 'Your Verisign username',
-        url: 'http://{username}.pip.verisignlabs.com/'
-    },
-    claimid: {
-        name: 'ClaimID',
-        label: 'Your ClaimID username',
-        url: 'http://claimid.com/{username}'
-    }
+    
 };
-var providers = $.extend({}, providers_large, providers_small);
+ 
+var providers = $.extend({}, providers_large);
 
 var openid = {
 
@@ -85,7 +87,7 @@ var openid = {
 	cookie_name: 'openid_provider',
 	cookie_path: '/',
 	
-	img_path: '/js/jquery/plugins/openid-selector-1.0/images/',
+	img_path: '/img/logos/',
 	
 	input_id: null,
 	provider_url: null,
@@ -100,18 +102,13 @@ var openid = {
         $('#openid_input_area').empty();
         
         // add box for each provider
+	var array = ['','',''];
+	var i=0;
         for (id in providers_large) {
-        
-           	openid_btns.append(this.getBoxHTML(providers_large[id], 'large', '.gif'));
+		array[i%3] = array[i%3] + this.getBoxHTML(providers_large[id], 'large', '.png'); 
+		i++;
         }
-        if (providers_small) {
-        	openid_btns.append('<br/>');
-        	
-	        for (id in providers_small) {
-	        
-	           	openid_btns.append(this.getBoxHTML(providers_small[id], 'small', '.ico'));
-	        }
-        }
+        openid_btns.append(array.join('<br/>') ); 
         
         $('#openid_form').submit(this.submit);
         
@@ -138,20 +135,38 @@ var openid = {
 		
 		this.highlight(box_id);
 		this.setCookie(box_id);
-		
-		// prompt user for input?
+
+		$('#openid_form').attr("target", "popup");
+		var pop_url = '/auth/popup?id='+box_id;
+		  
 		if (provider['label']) {
-			
-			this.useInputBox(provider);
-			this.provider_url = provider['url'];
+			pop_url = pop_url + '&label=' + provider['label'] + '&url=' + provider['url'] ;
+// 			this.useInputBox(provider);
+// 			this.provider_url = provider['url'];
+			if (! onload) {
+				this.popupWin(pop_url);
+			}
 			
 		} else {
 			
 			this.setOpenIdUrl(provider['url']);
 			if (! onload) {
+				this.popupWin(pop_url);
 				$('#openid_form').submit();
 			}	
 		}
+
+		 
+    },
+
+    popupWin: function(url) {
+	var h = 400;
+	var w = 600;
+	var screenx = (screen.width/2) - (w/2 );
+	var screeny = (screen.height/2) - (h/2);
+	//Open the window.
+	var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
+	win2.focus();
     },
     /* Sign-in button click */
     submit: function() {
