@@ -38,7 +38,7 @@
 
     function updateLayout(layout){
       l = 'default';
-      if((layout) && !(layout === "")){ 
+      if((typeof layout) == 'string'){
         l = escape(layout); 
       }
       var holder =  $("#widget-holder");
@@ -51,6 +51,7 @@
                         .get();
       var leftWidth = getLeftWidth(holder);
       $.post("/rest/layout/" + class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
+//       return false;
     }
 
     function getLeftWidth(holder){
