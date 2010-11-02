@@ -3,33 +3,42 @@ package WormBase::Web::Controller::Auth;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
+use Net::Twitter;
 
 __PACKAGE__->config->{namespace} = '';
  
-=pod
+ 
 sub login :Path("/login") {
      my ( $self, $c ) = @_;
      $c->stash->{noboiler} = 1;
      $c->stash->{'template'}='auth/login.tt2';
+     $c->stash->{'continue'}=$c->req->params->{continue};
 }
-=cut
-
+ 
+=pod
 sub openid :Path("/openid") {
      my ( $self, $c ) = @_;
      $c->stash->{noboiler} = 1;
      $c->stash->{'template'}='auth/openid.tt2';
 }
-
+=cut
 
 sub auth : Chained('/') PathPart('auth')  CaptureArgs(0) {
      my ( $self, $c) = @_;
      $c->stash->{noboiler} = 1;  
+     $c->stash->{'template'}='auth/login.tt2';
+}
+
+sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
+     my ( $self, $c) = @_;
+     $c->stash->{'template'}='auth/popup.tt2';
+     $c->stash->{'provider'}= $c->req->params;
+    
 }
 
 sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my ( $self, $c) = @_;
-     
-     $c->stash->{'template'}='auth/login.tt2';
+    
      my $user     = $c->req->params->{username};
      my $password = $c->req->params->{password}; 
      if (   $user   &&  $password  )
@@ -38,7 +47,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                                      password => $password } ) ) {
 		
                 $c->stash->{'status_msg'}='Username login was successful.'. $c->user->get("firstname") ;
-		$c->res->redirect($c->flash->{redirect_after_login});
+ 		$c->res->redirect($c->req->params->{continue});
             } else {
                 $c->stash->{'status_msg'}='Login incorrect.';
             }
@@ -52,27 +61,81 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
      my $param = $c->req->params;
-     $c->user_session->{redirect_after_login} ||= $c->flash->{redirect_after_login} ;
-     
-     $c->stash->{'template'}='auth/openid.tt2';
-  # eval necessary because LWPx::ParanoidAgent
-  # croaks if invalid URL is specified
-#  eval {
-    # Authenticate against OpenID to get user URL
-    $c->config->{user_session}->{migrate}=0;
-    if ( $c->authenticate({}, 'openid' ) ) {
-      my $email=$param->{'openid.ext1.value.email'};
-      $c->stash->{'status_msg'}='OpenID login was successful.';
+#      $c->user_session->{redirect_after_login} ||= $param->{'continue'};
+#      $c->stash->{'template'}='auth/openid.tt2';
 
+     if(defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
+	  my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
+				    consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
+				    consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",
+
+	  );
+	  my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
+
+	  $c->response->cookies->{oauth} = {
+	      value => {
+		  token => $nt->request_token,
+		  token_secret => $nt->request_token_secret,
+	      },
+	  };
+	  $c->response->redirect($url);
+
+    } else {
+	# eval necessary because LWPx::ParanoidAgent
+	# croaks if invalid URL is specified
+      #  eval {
+	  # Authenticate against OpenID to get user URL
+	  $c->config->{user_session}->{migrate}=0;
+	  
+	  if ( $c->authenticate({}, 'openid' ) ) {
+	    my $email=$param->{'openid.ext1.value.email'};
+	    $c->stash->{'status_msg'}='OpenID login was successful.';
+	    $self->auth_local($c,$c->user->url,$email,$param->{'openid.ext1.value.firstname'}, $param->{'openid.ext1.value.lastname'} );
+	  
+	  }
+	  else {
+	    $c->stash->{'error_msg'}='Failure during OpenID login';
+	  }
+      #  };
+
+      #  if ($@) {
+      #    $c->log->error("Failure during login: " . $@);
+      #    $c->stash->{'error_msg'}='Failure during login: ' . $@;
+      #  }
+    }
+}
+
+sub auth_twitter : Chained('auth') PathPart('twitter')  Args(0){
+      my($self, $c) = @_;
+#       $c->stash->{'template'}='auth/openid.tt2';
+      my %cookie = $c->request->cookies->{oauth}->value;
+      my $verifier = $c->req->params->{oauth_verifier};
+
+      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
+				consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
+				consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",
+				);
+      $nt->request_token($cookie{token});
+      $nt->request_token_secret($cookie{token_secret});
+
+      my($access_token, $access_token_secret, $user_id, $screen_name)
+          = $nt->request_access_token(verifier => $verifier);
+
+      $self->auth_local($c,$access_token,undef,$screen_name);
+}
+
+
+sub auth_local {
+     my ($self, $c,$id,$email,$first_name,$last_name) = @_;
       # Create basic user entry unless already found
       # (or use auto_create_user: 1)	
       my ($openid,$user);
-      $openid =  $c->model('Schema::OpenID')->find_or_create({ openid_url => $c->user->url });
+      $openid =  $c->model('Schema::OpenID')->find_or_create({ openid_url => $id });
       unless ($openid->user_id) {
 	$user=$c->model('Schema::User')->find({email_address=>$email}) if($email);
 	unless($user){
 	    $user= $c->model('Schema::User')->create(
-	    { username => $c->user->url, email_address=>$email, first_name=>$param->{'openid.ext1.value.firstname'}, last_name=>$param->{'openid.ext1.value.lastname'} 
+	    { username => $id, email_address=>$email, first_name=>$first_name, last_name=>$last_name 
 	    });
 	    my $role=$c->model('Schema::Role')->find({role=>'user'}) ;
 	    $c->model('Schema::UserRole')->create({user_id=>$user->id,role_id=>$role->id});
@@ -85,34 +148,23 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
         $c->stash->{'status_msg'}='Local Login was also successful.';
-	$c->res->redirect($c->user_session->{redirect_after_login});
+	$c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
+#   	$c->res->redirect($c->user_session->{redirect_after_login});
       }
       else {
         $c->stash->{'error_msg'}='Local login failed.';
          
       }
-    }
-    else {
-       $c->stash->{'error_msg'}='Failure during OpenID login';
-    }
-#  };
-
-#  if ($@) {
-#    $c->log->error("Failure during login: " . $@);
-#    $c->stash->{'error_msg'}='Failure during login: ' . $@;
-#  }
 }
+
 
 sub logout :Path("/logout") {
     my ($self, $c) = @_;
-
     # Clear the user's state
     $c->logout;
-    $c->stash->{template} = 'index.tt2';
-    # Send the user to the starting point
-    $c->res->redirect($c->req->param("continue"));
-    
- 
+    $c->stash->{noboiler} = 1;  
+    $c->stash->{'template'}='auth/login.tt2';
+    $c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
 }
 
 sub profile :Path("/profile") {
