@@ -1,12 +1,12 @@
 <script type="text/javascript" >
-$(".lightbox_inline").colorbox({inline:true});	
-$(".lightbox").colorbox();
+$("#lightbox").colorbox();
 $("#bench_status").load("/rest/workbench");
-$(".continue").attr("href", function() {
-  return this.href + "?continue=" + window.location.pathname;
-});
+
+function popWin() {
+  var win = window.open('/logout','pop');
+  win.blur();
+};
 </script>   
-</script>        
  
 <div id="login-menu">
 <ul>
@@ -19,17 +19,13 @@ $(".continue").attr("href", function() {
  [% IF c.user.last_name.defined %]
  [% name = name _ ' ' _ c.user.last_name %]
  [% END %] 
-  <li><a class="continue" href="[% c.uri_for('/logout') %]">Logout</a></li>
+  <li><a href="" onClick="popWin()">Logout</a></li>
   <li>Welcome<a href="[% c.uri_for('/profile') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %]</a> |</li>
 [% ELSE %]
-  <li><a class='lightbox_inline' href="#login" title="WormBase user login!" >Login</a></li>
+  <li><a  id='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
 [% END %]
 <li><a href="/bench" title="go to your workbench"><div id="my-cart" class="ui-icon ui-icon-cart"></div> <span href="/bench" id="bench_status"></span></a> | </li>
 </ul>
 </div>
 
-<div style='display:none' >
-<div id='login'  style=' padding:10px;' > 
-[% INCLUDE auth/login.tt2 %]
-</div>
-</div>
+ 
