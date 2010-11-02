@@ -1,0 +1,41 @@
+
+
+      <form id="openid_form" action="[% c.uri_for('/auth/openid') %]" method="post" onsubmit="this.openid_identifier.value=this.openid_identifier.value.replace('{username}', this.name.value);">
+        <div class="snlink_spacer">
+        </div>
+        <table style="width: 100%;">
+            <tr>
+                <td align="center" valign="bottom" style="padding-bottom: 10px;">
+                    <img src="/img/logos/[% provider.id %]_Logo.gif" id="imgUserName" class="imglogo" />
+
+                </td>
+            </tr>
+            <tr>
+                <td style="line-height: 30px; font-family: verdana; font-size: small;">
+                    <center>
+                        <div class="holder">
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="username">
+				    
+                                       [% provider.label %]:
+                                    </td><input id="openid_identifier" name="openid_identifier"  type="hidden"   value="[% provider.url %]"/>
+                                </tr>
+				<tr>
+                                    <td>
+                                        <input name="name"   />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <input id="openid_submit" type="submit" value="Sign In"/>
+                                    </td>
+                                </tr> 
+                            </table>
+                        </div>
+                    </center>
+                </td>
+            </tr>
+        </table>
+        </form>

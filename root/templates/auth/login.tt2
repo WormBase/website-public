@@ -1,36 +1,103 @@
+[% script %]
+
+<script type="text/javascript" >
+$(document).ready(function() {  
+    openid.init('openid_identifier');
+     $("#openid_identifier").focus();
+	 
+    $("#left").click(function(){
+      $("#openid_choice").animate({"left": "+=76px"}, "fast");
+    });
+
+    $("#right").click(function(){
+      $("#openid_choice").animate({"left": "-=76px"}, "fast");
+    });
+
+});
+</script> 
+   
+<style>
+
+#openid_form {
+margin-left:2em ;
+width:170px;
+float:right;
+position:relative;
+}
+
+#content-slider {
+  
+  width:79px;
+  margin-left:25px;
+  height: 115px;
+  overflow: hidden;
+}
+
+#openid_choice {
+  width: 800px;
+  position:relative;
+}
+
+#left {
+  float: left;
+  margin-top:50px; 
+  margin-left:5px;
+  position:absolute;
+} 
+
+#right {
+  float: left;
+  margin-top:50px; 
+  margin-left:102px; 
+  position:absolute;
+} 
+
+</style>
 
 <!-- Login form -->
-<form method="post" action=" [% c.uri_for('/auth/login') %] ">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-    
-     <tr>
-       <td align="right" width="45%"><b>Username:</b></td>
-       <td align="left"><input id="username" type="text" name="username" size="15"></td>
-     </tr>
-     <tr>
-       <td align="right"><b>Password:</b></td>
-       <td align="left"><input id="password" type="password" name="password" size="15"></td>
-     </tr>
-     <tr>
-        <td colspan="2" align="center">
-           <input type="checkbox" id="remember" name="remember" size="10">Remember me on this computer.</input>
-        </td>
-     </tr>
-     <tr>
-        <td colspan="2" align="center">
-           <input type="submit" value="Login" id="login" style="width:76px;"/>
-	</td>
-     </tr>
-     <tr>
-       <td colspan="2" align="center" valig="bottom">
-	  <a href="#">Forgot Password?</a>&nbsp;&nbsp;<a href="#">Register</a>
-       </td>
-     </tr>
-     <tr>
-       <td colspan="2" align="center" valign="top">
-          <a class="lightbox"  href="/openid" >login with your OpenID</a>
-       </td>
-     </tr>
+<form method="post" action=" [% c.uri_for('/auth/login') %] " onsubmit="window.location.reload();" style="float:left;">
+<h4>Sign in with your WormBase credentials</h4>
+<input type="hidden" name="continue" value="[% continue %]"/>
+<table>
+  <tr>
+    <th >Username:</th>
+    <td><input id="username" type="text" name="username" size="15"/></td> 
+  <tr>
+  <tr>
+    <th>Password:</th>
+    <td><input id="password" type="password" name="password" size="15"/></td>
+  </tr>
+  <div style="height: 9px; overflow: hidden;"> </div>
+  <tr>
+    <td ><input type="checkbox" id="remember" name="remember" size="10">Remember me</input></td>
+    <td align="right"><input type="submit" value="Login" id="login"  /></td>
+  </tr>
+  <tr>
+    <td colspan="2" id="login-menu">
+	<ul>
+	<li><a href="#">Register</a></li>
+	<li><a href="#">Forgot Password</a>  |</li> 
+	</ul>
+    </td>
+  </tr>
 </table>
 </form>
 
+<!-- Simple OpenID Selector -->
+<form id="openid_form" action="[% c.uri_for('/auth/openid') %]" method="post">
+<h4><span id="fade">or Sign in with your third-party account</span></h4>
+
+<span id="left" class="ui-icon ui-icon-triangle-1-w"></span>  
+<span id="right" class="ui-icon ui-icon-triangle-1-e"></span> 
+<div id="content-slider"  >
+  <div id="openid_choice">
+    <div id="openid_btns"></div>
+  </div>   
+</div>
+
+</form>
+<!-- /Simple OpenID Selector -->
+ 
+ 
+ 
+ 

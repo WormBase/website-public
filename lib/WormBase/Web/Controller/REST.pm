@@ -184,7 +184,6 @@ sub auth :Path('/rest/auth') :Args(0) :ActionClass('REST') {}
 
 sub auth_GET {
     my ($self,$c) = @_;   
-     $c->flash->{redirect_after_login}=$c->req->param('path');
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
