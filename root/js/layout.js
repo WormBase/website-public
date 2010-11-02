@@ -36,6 +36,18 @@
         }, "xml");
     }
 
+    function newLayout(layout){
+      updateLayout(layout);
+    $(".list-layouts").load("/rest/layout_list/" + $(".list-layouts").attr("type"), function(response, status, xhr) {
+        $("#layout-input").focus(); 
+         if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+      return false;
+    }
+
     function updateLayout(layout){
       l = 'default';
       if((typeof layout) == 'string'){
@@ -51,7 +63,6 @@
                         .get();
       var leftWidth = getLeftWidth(holder);
       $.post("/rest/layout/" + class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
-//       return false;
     }
 
     function getLeftWidth(holder){
