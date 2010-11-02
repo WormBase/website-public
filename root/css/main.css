@@ -456,6 +456,7 @@ div.columns{
   position:absolute;
   right:2em;
   top:6.5em;
+  cursor:pointer;
 }
 
 div.columns ul {
