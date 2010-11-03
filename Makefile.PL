@@ -55,6 +55,7 @@ requires 'Math::BigInt::GMP';				# will need to install gmp.h header file first(
 requires 'Module::Install';
 requires 'Moose';
 requires 'MooseX::AbstractFactory';
+requires 'Net::Twitter';
 requires 'namespace::clean';
 requires 'SVG';
 requires 'Task::Weaken';
