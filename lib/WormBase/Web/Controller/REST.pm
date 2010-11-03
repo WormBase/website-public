@@ -561,7 +561,8 @@ sub widget_GET {
     $c->stash->{noboiler} = 1;
 
     # Set the template
-    $c->stash->{template} = $c->_select_template($widget,$class,'widget'); 	
+    $c->stash->{template}="shared/generic/rest_widget.tt2";
+    $c->stash->{child_template} = $c->_select_template($widget,$class,'widget'); 	
 
     # Forward to the view for rendering HTML.
     $c->forward('WormBase::Web::View::TT');
