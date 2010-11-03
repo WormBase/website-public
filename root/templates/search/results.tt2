@@ -8,7 +8,6 @@
 [% results = c.stash.results %]
 [% search_type = c.stash.type %]
 <div id="results">
-
 [% IF results.size > 0 %]
   <div id="fade">found <span id="count">[% results.size %]</span> 
     [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' for ' _ c.stash.query; ELSE; 'results'; END; %]
@@ -49,7 +48,8 @@
 [% END %]
 </ul>
 
-
+[% PROCESS timer IF noboiler %] 	
+ 
 </div>
 
 <script>

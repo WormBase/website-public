@@ -5,6 +5,15 @@
 #
 ####################################################
 %]
+ 
+[% BLOCK timer %]
+  [% IF c.check_user_roles('admin') %]
+    <div class="ui-state-highlight ui-corner-all" style="position:absolute;top:0.5em;right:40em; ">
+    <span class="ui-icon ui-icon-clock" style="float: left; margin-right: .3em;"></span>
+    [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
+    </div>
+  [% END %]
+[% END %]
 
 [% # adding print="always" to field wrapper will make the field print even if there is no data%]
 [% BLOCK field_block %]
