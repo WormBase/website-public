@@ -409,7 +409,7 @@ sub motif_details {
 	    %positions = map {$_ => $_->right(1)} $feature->col;
 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
 		my $stop =  $positions{$start};
-		push @tot_positions,[ ( "$feature",'',
+		push @tot_positions,[ ( "$feature",'','',
 				       "$start",
 				       "$stop")
 				  ];
@@ -425,22 +425,22 @@ sub motif_details {
 	    my $type = $feature->right ||"";
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
 # 	    (my $label =$feature) =~ s/^[^:]+://;
-        my $label = "$feature";
+	    my $label = "$feature";
 	    $type = "$type";
-
+	    my $desc = $feature->Title ||$feature ;
 	    # Are the multiple occurences of this feature?
 	    my @multiple = $feature->right->right->col;
- 
+	    @multiple = map {$_->right} $feature->right->col if(@multiple <= 1);
 	    if (@multiple > 1) {
 		foreach my $start (@multiple) {
 		    my $stop = $start->right;
-		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,
+		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
 					   "$start",
 					   "$stop")
 					];
 		}
 	    } else {
-		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,
+		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
 				       "$start",
 				       "$stop")
 				  ];
