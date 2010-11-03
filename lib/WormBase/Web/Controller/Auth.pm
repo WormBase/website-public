@@ -47,7 +47,8 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                                      password => $password } ) ) {
 		
                 $c->stash->{'status_msg'}='Username login was successful.'. $c->user->get("firstname") ;
- 		$c->res->redirect($c->req->params->{continue});
+		$self->reload($c);
+#  		$c->res->redirect($c->req->params->{continue});
             } else {
                 $c->stash->{'status_msg'}='Login incorrect.';
             }
@@ -148,7 +149,7 @@ sub auth_local {
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
         $c->stash->{'status_msg'}='Local Login was also successful.';
-	$c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
+	$self->reload($c) ;
 #   	$c->res->redirect($c->user_session->{redirect_after_login});
       }
       else {
@@ -157,6 +158,11 @@ sub auth_local {
       }
 }
 
+sub reload {
+  my ($self, $c) = @_;
+  $c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
+  return;
+}
 
 sub logout :Path("/logout") {
     my ($self, $c) = @_;
@@ -164,7 +170,7 @@ sub logout :Path("/logout") {
     $c->logout;
     $c->stash->{noboiler} = 1;  
     $c->stash->{'template'}='auth/login.tt2';
-    $c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
+    $self->reload($c) ;
 }
 
 sub profile :Path("/profile") {

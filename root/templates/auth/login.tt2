@@ -55,7 +55,7 @@ position:relative;
 </style>
 
 <!-- Login form -->
-<form method="post" action=" [% c.uri_for('/auth/login') %] " onsubmit="window.location.reload();" style="float:left;">
+<form method="post"  onsubmit="popWin('/auth/login?username='+this.username.value+'&password='+this.password.value)" style="float:left;">
 <h4>Sign in with your WormBase credentials</h4>
 <input type="hidden" name="continue" value="[% continue %]"/>
 <table>
