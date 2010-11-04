@@ -39,7 +39,8 @@
     function newLayout(layout){
       updateLayout(layout);
     $(".list-layouts").load("/rest/layout_list/" + $(".list-layouts").attr("type"), function(response, status, xhr) {
-        $("#layout-input").focus(); 
+//         $("#layout-input").focus(); 
+//           $("div.columns ul").show().delay(3000).hide();
          if (status == "error") {
             var msg = "Sorry but there was an error: ";
             $(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
