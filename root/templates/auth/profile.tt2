@@ -1,4 +1,5 @@
  
+[% IF c.user %]
 <form id="profile" action="[% c.uri_for('/profile_update') %]" method="post">
   <fieldset id="basicinfo-field">
     <h4>Basic Information</h4>
@@ -10,3 +11,6 @@
  
   <input type="submit" value="Update"/>
 </div>
+[% ELSE %]
+<div>Plese log in to edit your profile</div>
+[% END %]
