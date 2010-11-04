@@ -54,7 +54,7 @@
    
 
    [% WRAPPER $field_block title="Strains" key="strains" %]
-  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _ " strains") %]</div>
+  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _ " " _ pluralize("strain", fields.strains.data.total)) %]</div>
   <div class="toggle-container">
     [% venn("Carrying " _ tag2link(object.name.data) _ " alone", fields.strains.data.singletons, 
             "Available from the CGC", fields.strains.data.cgc, 

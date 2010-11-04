@@ -108,8 +108,9 @@ sub layout_GET {
     delete $c->user_session->{'layout'}->{$class}->{$layout};
     return;
   }
-
-
+  unless (defined $c->user_session->{'layout'}->{$class}->{$layout}){
+    $layout = 0;
+  }
   my $left = $c->user_session->{'layout'}->{$class}->{$layout}->{'left'};
   my $right = $c->user_session->{'layout'}->{$class}->{$layout}->{'right'};
   my $leftWidth = $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'};
@@ -137,11 +138,9 @@ sub layout_list_GET {
   my ( $self, $c, $class ) = @_;
   my @layouts = keys(%{$c->user_session->{'layout'}->{$class}});
   my %l;
-  map {$l{$_} = $c->user_session->{'layout'}->{$class}->{$_}->{'name'};
-       $c->log->debug($c->user_session->{'layout'}->{$class}->{$_}->{'name'});
-      } @layouts;
+  map {$l{$_} = $c->user_session->{'layout'}->{$class}->{$_}->{'name'};} @layouts;
   $c->log->debug("layout list:" . join(',',@layouts));
-  $c->stash->{layouts} = \%l;#\@layouts;
+  $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
 }
