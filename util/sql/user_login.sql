@@ -5,9 +5,9 @@ USE wormbase_user;
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
             id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
-            username      TEXT,
-            password      char(225),
-            email_address char(225),
+            username      char(255),
+            password      char(255),
+            email_address char(255),
             first_name    char(100),
             last_name     char(100),
 	    active        int(11) 
@@ -28,7 +28,7 @@ CREATE TABLE users_to_roles (
 
 DROP TABLE IF EXISTS openid;
 CREATE TABLE openid (
-            openid_url TEXT PRIMARY KEY,
+            openid_url char(255) PRIMARY KEY,
             user_id INTEGER
             
 );
