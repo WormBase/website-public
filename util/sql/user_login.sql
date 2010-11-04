@@ -5,8 +5,8 @@ USE wormbase_user;
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
             id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
-            username      char(25),
-            password      char(25),
+            username      char(100),
+            password      char(255),
             email_address char(35),
             first_name    char(35),
             last_name     char(35),
