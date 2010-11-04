@@ -7,8 +7,8 @@ __PACKAGE__->config(
     schema_class => 'WormBase::Schema',
     
     connect_info => {
-        dsn => 'dbi:mysql:myapp',
-        user => 'tutorial',
+        dsn => 'dbi:mysql:wormbase_user',
+        user => 'wb',
         password => '',
     }
 );
