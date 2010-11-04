@@ -173,10 +173,10 @@ sub logout :Path("/logout") {
     $self->reload($c) ;
 }
 
-sub profile :Path("/profile") {
-     my ( $self, $c ) = @_;
-     $c->stash->{'template'}='auth/profile.tt2';
-} 
+# sub profile :Path("/profile") {
+#      my ( $self, $c ) = @_;
+#      $c->stash->{'template'}='auth/profile.tt2';
+# } 
 
 sub profile_update :Path("/profile_update") {
      my ( $self, $c ) = @_;

@@ -48,6 +48,7 @@
     [% IF object; widgets.unshift('overview'); END; %]
     [% widgets = widgets.unique %]
     [% FOREACH widget_name IN widgets -%]
+      [% IF ((widget_name == 'profile') AND (NOT (c.user_exists))); NEXT; END; %]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
           class="module-load [% class %]"

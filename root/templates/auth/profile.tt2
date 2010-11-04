@@ -1,5 +1,5 @@
  
-[% IF c.user %]
+[% IF c.user_exists  %]
 <form id="profile" action="[% c.uri_for('/profile_update') %]" method="post">
   <fieldset id="basicinfo-field">
     <h4>Basic Information</h4>
