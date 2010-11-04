@@ -16,8 +16,9 @@
   Sorry, <span id="count">[% results.size %]</span> results found for the search [% c.stash.query %]
 [% END %]
 
-<ul>
+<ul class="results-sort">
 [% FOREACH item IN results %]
+  <div class="result">
  [% USE String(item.name.class); class = String.lower; %]
  [% url = 'reports/' _ class _ '/' _ item.name.id %]
   <li>
@@ -44,7 +45,7 @@
     </li>
     
   [% END %]
-
+  </div>
 [% END %]
 </ul>
 
@@ -56,6 +57,13 @@
 [% FOREACH q IN c.stash.query.split('\*') %]
   $("div#results").highlight('[% q %]');
 [% END %]
+
+    $(".results-sort").sortable({
+      items:'div.result',
+      connectWith: '.results-sort',
+      placeholder: 'placeholder ui-corner-all',
+      forcePlaceholderSize: true,
+    });
 
 </script>
 <!-- End result list -->
