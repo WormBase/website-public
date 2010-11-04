@@ -32,4 +32,4 @@ CREATE TABLE openid (
             user_id INTEGER
             
 );
-
+INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user');
