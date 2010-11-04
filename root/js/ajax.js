@@ -12,7 +12,7 @@
     $(".list-layouts").load("/rest/layout_list/" + $(".list-layouts").attr("type"), function(response, status, xhr) {
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $(".user-history").html(msg + xhr.status + " " + xhr.statusText);
+            $(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
           }
         });
 
