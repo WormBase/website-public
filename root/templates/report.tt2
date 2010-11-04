@@ -94,7 +94,7 @@
   <div class="sortable left">
       [% FOREACH widget_name IN widgets %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
-        <li id="[% widget_name %]">
+        <li id="[% widget_name %]" class="widget">
         [% PROCESS widget_sortable_block type="$class"-%]
         </li>   
       [% END %]
@@ -102,7 +102,7 @@
       [% IF object %]
         [% FOREACH bench_name IN ['reports', 'my_library', 'user_history'] %]
           [% widget = c.config.pages.bench.widgets.$bench_name %]
-          <li id="[% bench_name %]">
+          <li id="[% bench_name %]" class="widget">
           [% PROCESS widget_sortable_block type="bench"-%]
           </li>  
         [% END %]

@@ -148,7 +148,7 @@
     function openWidget(widget_name, nav, content, column){
         nav.attr("load", 0);
         var widget = $(content).closest("li");
-        $("#widget-holder").children(column).append('<li id="'+widget_name+'">'+widget.html()+'</li>');
+        $("#widget-holder").children(column).append('<li id="'+widget_name+'" class="widget">'+widget.html()+'</li>');
         widget.remove();
         var content = $(content);
         addWidgetEffects(content.parent(".widget-container"));

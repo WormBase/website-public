@@ -8,9 +8,16 @@ var layoutFocused = true;
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
 
+    $(".results-sort").sortable({
+      items:'div.result',
+      connectWith: '.results-sort',
+      placeholder: 'placeholder ui-corner-all',
+      forcePlaceholderSize: true,
+    });
+
     $(".sortable").sortable({
       handle: '#widget-header, #widget-footer',
-      items:'li',
+      items:'li.widget',
       placeholder: 'placeholder ui-corner-all',
       connectWith: '.sortable',
       forcePlaceholderSize: true,
