@@ -58,7 +58,7 @@
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
         $(".workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
-        $("div#reports-content").load("/rest/widget/bench//reports");
+//         $("div#reports-content").load("/rest/widget/bench//reports");
         $("div#my_library-content").load("/rest/widget/bench//my_library");
       return false;
       });

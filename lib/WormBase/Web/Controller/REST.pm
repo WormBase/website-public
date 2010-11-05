@@ -59,11 +59,9 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 
 sub workbench_star_GET{
     my ( $self, $c) = @_;
-    $c->log->debug("workbench_star method");
     my $path = $c->req->params->{ref};
     my $wbid = $c->req->params->{id};
     my $name = $c->req->params->{name};
-    $c->log->debug("workbench_star method: path = $path");
     my ($type, $class, $id) = split(/\//,$path); 
     $type = "my_library" if ($class eq 'paper');
     if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
@@ -152,6 +150,7 @@ sub _bench {
     my $api = $c->model('WormBaseAPI');
     my @ret;
     my $type;
+    $c->stash->{'bench'} = 1;
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;

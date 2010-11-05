@@ -31,6 +31,12 @@
    color: #228B22;
 }
 
+div.result {
+  max-width:49em;
+  z-index:99;
+/*   background:white; */
+}
+
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;  

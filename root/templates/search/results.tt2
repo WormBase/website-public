@@ -18,7 +18,7 @@
 
 <ul class="results-[% search_type %]">
 [% FOREACH item IN results %]
-  <div class="result">
+ [% UNLESS c.stash.bench %]<div class="result">[% END %]
  [% USE String(item.name.class); class = String.lower; %]
  [% url = 'reports/' _ class _ '/' _ item.name.id %]
   <li>
@@ -45,7 +45,7 @@
     </li>
     
   [% END %]
-  </div>
+ [% UNLESS c.stash.bench %]</div>[% END %]
 [% END %]
 </ul>
 
@@ -58,16 +58,17 @@
   $("div#results").highlight('[% q %]');
 [% END %]
 
-  $(".results-[% search_type %]").sortable({
-    items:'div.result',
-    connectWith: 'div.bench div.content .results-[% search_type %]',
-    placeholder: 'placeholder ui-corner-all',
-    forcePlaceholderSize: true,
-    remove: function(event, ui){
-          ui.item.find(".bench_update").trigger('click');
-          $(this).sortable('cancel');
-      },
+[% IF search_type == 'paper' %]
+  $(".results-[% search_type %] div.result").draggable({
+       start: function(event,ui) {
+        $(this).parent().disableSelection();
+       },
+       end: function(event,ui) {
+        $(this).parent().enableSelection();
+       },
+       helper: "clone",
   });
+[% END %]
 
 </script>
 <!-- End result list -->
