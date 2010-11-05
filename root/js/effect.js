@@ -63,6 +63,17 @@ var layoutFocused = true;
         }
       });
 
+
+
+  $("div.bench div.content").droppable({
+      accept: ".results-paper div.result",
+      hoverClass: 'placeholder ui-corner-all',
+      drop: function(event, ui){
+                ui.draggable.find(".bench_update").trigger('click');
+            },
+      
+  });
+
     $(".tooltip").live('mouseover',function() {
         $(this).cluetip({
         activation: 'click',
