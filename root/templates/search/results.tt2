@@ -16,7 +16,7 @@
   Sorry, <span id="count">[% results.size %]</span> results found for the search [% c.stash.query %]
 [% END %]
 
-<ul class="results-sort">
+<ul class="results-[% search_type %]">
 [% FOREACH item IN results %]
   <div class="result">
  [% USE String(item.name.class); class = String.lower; %]
@@ -58,12 +58,16 @@
   $("div#results").highlight('[% q %]');
 [% END %]
 
-    $(".results-sort").sortable({
-      items:'div.result',
-      connectWith: '.results-sort',
-      placeholder: 'placeholder ui-corner-all',
-      forcePlaceholderSize: true,
-    });
+  $(".results-[% search_type %]").sortable({
+    items:'div.result',
+    connectWith: 'div.bench div.content .results-[% search_type %]',
+    placeholder: 'placeholder ui-corner-all',
+    forcePlaceholderSize: true,
+    remove: function(event, ui){
+          ui.item.find(".bench_update").trigger('click');
+          $(this).sortable('cancel');
+      },
+  });
 
 </script>
 <!-- End result list -->
