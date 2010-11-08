@@ -155,6 +155,12 @@ sub _bench {
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
+    } elsif($widget=~m/user_profile/){
+      
+        $c->res->redirect('/profile');
+#       $c->stash->{template} = "auth/profile.tt2"; 
+#       $self->status_ok($c,entity => {});
+      return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
@@ -225,6 +231,20 @@ sub history_POST {
     push(@{$c->user_session->{history}->{$path}->{time}}, time());
 }
 
+ 
+sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
+
+sub update_role_POST {
+      my ($self,$c,$id,$value,$checked) = @_;
+       
+      my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
+      my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
+      
+      my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+      $users_to_roles->delete()  unless($checked eq 'true');
+      $users_to_roles->update();
+       
+}
 
 sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
 
