@@ -155,7 +155,7 @@ sub _bench {
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
-    } elsif($widget=~m/user_profile/){
+    } elsif($widget=~m/profile/){
 	$c->stash->{noboiler} = 1;
         $c->res->redirect('/profile');
 	return;
