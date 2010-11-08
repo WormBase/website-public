@@ -10,7 +10,7 @@ var layoutFocused = true;
 
     $(".sortable").sortable({
       handle: '#widget-header, #widget-footer',
-      items:'li',
+      items:'li.widget',
       placeholder: 'placeholder ui-corner-all',
       connectWith: '.sortable',
       forcePlaceholderSize: true,
