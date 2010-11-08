@@ -1,12 +1,45 @@
- 
+<script> 
+$(document).ready(function() {   
+  $('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
+  $('input:checkbox').click(function() {
+      
+      $.ajax({
+                 type: "POST",
+                 url : "/rest/update/role/"+$(this).attr('id')+"/"+$(this).attr('value')+"/"+$(this).attr('checked'), 
+                 error: function(request,status,error) {
+                         alert(request + " " + status + " " + error );
+                   }
+        });
+  });
+});
+</script>
+
+
 <form id="profile" action="[% c.uri_for('/profile_update') %]" method="post">
   <fieldset id="basicinfo-field">
-    <h4>Basic Information</h4>
+    <legend>Basic Information</legend>
         <dl><dt>Full name <input type="text" name="first_name" value ="[% c.user.first_name %]" /> <input type="text" name="last_name" value ="[% c.user.last_name %]" /> </dt></dl>            
-        <dl><dt>Display Name/OpenID URL <input size="70" type="text" name="username" value ="[% c.user.username %]" />   </dt></dl>  
+        <dl><dt>Display Name/OpenID URL <input size="50" type="text" name="username" value ="[% c.user.username %]" />   </dt></dl>  
 	<dl><dt>Email <input type="text" name="email_address" value ="[% c.user.email_address %]" />   </dt></dl> 
-	<dl><dt>Role <input type="text" name="role" value ="[% c.user.roles %]" />   </dt></dl> 
- 
- 
   <input type="submit" value="Update"/>
-</div>
+</fieldset>
+</form>
+
+[%#- admin section -%]
+[% IF c.check_user_roles('admin') %]
+<fieldset >
+ <legend>List of All User Information</legend> 
+[% rows = [];FOREACH obj IN users %]
+    [% admin = "<input type='checkbox' value='admin' id='" _ obj.id _ "' />" ;
+     IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
+    curator = "<input type='checkbox' value='curator' id='" _ obj.id _ "' />" ;
+    IF obj.curator ;curator=curator.replace('id=','checked id=') ; END %]
+    [% rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator]) %]
+[% END %]
+[% dataTable_list(['username','email','first name','last name','admin','curator'],rows,'user_list') %]
+ 
+</fieldset>
+[% END %]
+[%#- curator section -%]
+[% IF c.check_user_roles('curator') %]
+[% END %]

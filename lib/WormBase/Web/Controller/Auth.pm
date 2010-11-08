@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
 use Net::Twitter;
+use Data::Dumper;
 
 __PACKAGE__->config->{namespace} = '';
  
@@ -174,8 +175,28 @@ sub logout :Path("/logout") {
 }
 
 sub profile :Path("/profile") {
-     my ( $self, $c ) = @_;
-     $c->stash->{'template'}='auth/profile.tt2';
+    my ( $self, $c ) = @_;
+    $c->stash->{noboiler} = 1;
+    $c->stash->{'template'}='auth/profile.tt2';
+    my @array;
+    if($c->check_user_roles('admin')){
+      my $iter=$c->model('Schema::User') ;
+      while( my $user= $iter->next){
+	  my $hash = { username=>$user->username,
+			email=>$user->email_address,
+			first_name=>$user->first_name,
+			last_name=>$user->last_name,
+			id=>$user->id,
+		      };
+	  my @roles =$user->roles;
+	    
+	  map{$hash->{$_->role}=1;} @roles;
+	  push @array,$hash;
+      }
+      
+      $c->stash->{users}=\@array;
+    }
+  
 } 
 
 sub profile_update :Path("/profile_update") {
@@ -187,6 +208,7 @@ sub profile_update :Path("/profile_update") {
       }
       $c->user->update();
       $c->stash->{'status_msg'}='User inforamtion udpated!';
+      $c->res->redirect('/bench');
 } 
 =head1 AUTHOR
 
