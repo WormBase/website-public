@@ -26,7 +26,7 @@
           </script>
 
       [% ELSE %]
-        <h2>Your Workbench</h2>
+        <h2>My Workspace</h2>
       [% END %] 
     </div>
           <div class="columns"><span id="fade" style="float:left">Layout</span>
@@ -48,6 +48,7 @@
     [% IF object; widgets.unshift('overview'); END; %]
     [% widgets = widgets.unique %]
     [% FOREACH widget_name IN widgets -%]
+      [% IF ((widget_name == 'profile') AND (NOT (c.user_exists))); NEXT; END; %]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
           class="module-load [% class %]"
@@ -65,7 +66,7 @@
       [% END %]
 <!--      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>-->
-      <li class="title">Your Workspace</li>
+      <li class="title">My Workspace</li>
       [% FOREACH widget_name IN ['reports', 'my_library'] -%]
       [% widget = c.config.pages.bench.widgets.$widget_name %]
       <li id="nav-[% widget_name %]" 
@@ -94,7 +95,7 @@
   <div class="sortable left">
       [% FOREACH widget_name IN widgets %]
         [% widget = c.config.pages.$class.widgets.$widget_name %]
-        <li id="[% widget_name %]">
+        <li id="[% widget_name %]" class="widget">
         [% PROCESS widget_sortable_block type="$class"-%]
         </li>   
       [% END %]
@@ -102,7 +103,7 @@
       [% IF object %]
         [% FOREACH bench_name IN ['reports', 'my_library', 'user_history'] %]
           [% widget = c.config.pages.bench.widgets.$bench_name %]
-          <li id="[% bench_name %]">
+          <li id="[% bench_name %]" class="widget">
           [% PROCESS widget_sortable_block type="bench"-%]
           </li>  
         [% END %]

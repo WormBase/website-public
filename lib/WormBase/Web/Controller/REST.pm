@@ -156,11 +156,9 @@ sub _bench {
       $self->history_GET($c);
       return;
     } elsif($widget=~m/user_profile/){
-      
+	$c->stash->{noboiler} = 1;
         $c->res->redirect('/profile');
-#       $c->stash->{template} = "auth/profile.tt2"; 
-#       $self->status_ok($c,entity => {});
-      return;
+	return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){

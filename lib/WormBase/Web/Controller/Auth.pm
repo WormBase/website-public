@@ -174,6 +174,7 @@ sub logout :Path("/logout") {
     $self->reload($c) ;
 }
 
+
 sub profile :Path("/profile") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
@@ -198,6 +199,7 @@ sub profile :Path("/profile") {
     }
   
 } 
+ 
 
 sub profile_update :Path("/profile_update") {
      my ( $self, $c ) = @_;
