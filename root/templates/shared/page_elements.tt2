@@ -8,7 +8,7 @@
  
 [% BLOCK timer %]
   [% IF c.check_user_roles('admin') %]
-    <div class="ui-state-highlight ui-corner-all" style="position:absolute;top:0.5em;right:40em; ">
+    <div class="ui-state-highlight ui-corner-all" style="position:absolute; left:50%; top:0.6em;">
     <span class="ui-icon ui-icon-clock" style="float: left; margin-right: .3em;"></span>
     [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
     </div>
