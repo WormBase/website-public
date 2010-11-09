@@ -307,10 +307,26 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $class =  $c->req->param("class") || $type;
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
-	my $objs = $api->search->$search({class => $class, pattern => $query});
+	my $objs;
+
+	# Does the data for this widget already exist in the cache?
+	my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+	unless($cached_data) {  
+	    $cached_data = $api->search->$search({class => $class, pattern => $query});
+	    $c->set_cache($cache_id,$cached_data);
+	}  
+	$objs = $cached_data;
+
 	if(@$objs<1) { #this may not be optimal
 	  $query.="*";
 	  $objs = $api->search->$search({class => $class, pattern => $query}) ;
+	  ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+	  unless($cached_data) {  
+	      $cached_data = $api->search->$search({class => $class, pattern => $query});
+	      $c->set_cache($cache_id,$cached_data);
+	  } 
+	  $objs = $cached_data;
+
 	}
 	$c->stash->{'type'} = $type; 
 	$c->stash->{'results'} = $objs;
