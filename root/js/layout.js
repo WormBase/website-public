@@ -76,6 +76,7 @@
     function resetLayout(leftList, rightList, leftWidth){
       $("div#navigation").children("ul").children("li").removeClass("ui-selected");
       $("#widget-holder").children().children("li").removeClass("visible");
+      $("div#navigation").children("ul").children("li").children("span.ui-icon").remove();
 
       columns(leftWidth, (100-leftWidth), 1);
       for(widget in leftList){

@@ -11,11 +11,11 @@
     [% FOREACH title IN c.config.nav_bar.order.name %]
       <li><a href="[% c.config.nav_bar.$title.link %]">[% c.config.nav_bar.$title.title %]</a>
         [% IF c.config.nav_bar.$title.option.size > 0 %]
-        <ul>
-        [% FOREACH option IN c.config.nav_bar.$title.option %]
-          <li>[% option %]</li>
-        [% END %]
-        </ul>
+          <ul>
+          [% FOREACH option IN c.config.nav_bar.$title.option %]
+            <li>[% option %]</li>
+          [% END %]
+          </ul>
         [% END %]
       </li>
     [% END %]
