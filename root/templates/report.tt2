@@ -50,6 +50,7 @@
     [% FOREACH widget_name IN widgets -%]
       [% IF ((widget_name == 'profile') AND (NOT (c.user_exists))); NEXT; END; %]
       [% widget = c.config.pages.$class.widgets.$widget_name %]
+      [% IF class=='bench'; this_object_id = 'a'; END %]
       <li id="nav-[% widget_name %]" 
           class="module-load [% class %]"
           wname="[% widget_name %]"
@@ -72,7 +73,7 @@
       <li id="nav-[% widget_name %]" 
           class="module-load bench"
           wname="[% widget_name %]"
-          href="[% c.uri_for('/rest','widget','bench','',widget_name) %]" 
+          href="[% c.uri_for('/rest','widget','bench','a',widget_name) %]" 
           load=1>[% widget.title %]</li>
       [% END %]
       <li class="title">Recently Activity</li>
@@ -81,7 +82,7 @@
       <li id="nav-user_history" 
           class="module-load bench" 
           wname="user_history"
-          href="[% c.uri_for('/rest','widget','bench','','user_history') %]" 
+          href="[% c.uri_for('/rest','widget','bench','a','user_history') %]" 
           load=1>see more...</li></div>
       [% END %]
     </ul>
