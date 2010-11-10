@@ -66,7 +66,11 @@
        end: function(event,ui) {
         $(this).parent().enableSelection();
        },
+//        cancel: ".text-min",
+       distance: 30,
        helper: "clone",
+       scroll:false,
+       zIndex: 10,
   });
 [% END %]
 

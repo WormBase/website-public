@@ -22,8 +22,8 @@ body, html {
 
 h1,h2,h3,h4,h5,h6 { color:black; }
 
-h1 { font-size:2em;   }  /* 24px   ; site title */
-h2 { font-size:1.3em; }  /* 21.6px ; page title */
+h1 { font-size:1.8em;   }  /* 24px   ; site title */
+h2 { font-size:1.4em; }  /* 21.6px ; page title */
 h3 { font-size:1.2em; }  /* 19.2px ; page subtitle (if applicable) */  
 h4 { font-size:1em; }  /* 16.8px ; widget titles */
 h5 { font-size:0.8em; }  /* 13.2px ; field names */
@@ -46,6 +46,9 @@ input, select, th, td { font-size:1em; }
   min-width: 800px;
 }
 
+#content {
+  background:white;
+}
 
 
 
@@ -89,23 +92,25 @@ Note: firefox seems to render header objects funny
    
 *********************************/
 div#page {
-    padding:1em 0 1em 1em;
+/*     padding:1em 0 1em 1em; */
+    padding:0;
     position:relative;
-    height:4em;
-    margin-bottom:0.5em;
+/*     height:4em; */
+    margin-bottom:0;
 }
 
 div#page h1 a, h1{
     padding: 0;
     margin:0;
-    color:gray;
+    color:black;
 }
 
 div#page p {
     font-style:italic;
-    color:gray;
+/*     color:gray; */
     padding:0;
     margin:0;
+    font-size:0.8em;
 }
 
 div#page .release_date { }
@@ -116,6 +121,105 @@ div#page .release_date { }
     color:gray;
 }
 
+
+/* Header */
+
+/*div#page div#stat-bg {
+  background:#D7D8D9;
+  height:1.5em;
+  width:100%;
+}*/
+
+div#page div#nav-bar {
+  background:#6D869E;
+  width:100%;
+  height:2.5em;
+  margin-top:1.5em;
+  margin-bottom:0;
+}
+
+ul.nav-bar {
+  margin:0;
+  padding-left: 10em;
+  list-style-type: none;
+  font-size:1.2em;
+}
+
+ul.nav-bar li {
+  float:left;
+  position:relative;
+}
+
+ul.nav-bar li a{
+  float:left;
+  padding:0.5em 0.7em 0;
+  margin:0;
+  color:#CDCDCD;
+  height:1.4em;
+}
+
+ul.nav-bar li span {
+  float:right;
+  margin:0.3em 0;
+  visibility:hidden;
+}
+
+
+
+ul.nav-bar li a.hover, ul.nav-bar li a.selected{
+  color:white;
+  border-bottom:5px solid #CDCDCD;
+}
+
+ul.nav-bar li a.hover span, ul.nav-bar li a.selected span{
+  visibility:visible;
+}
+
+ul.dropdown {
+  margin:0;
+  display:none;
+  position:absolute;
+  top:2.1em;
+  left:0px;
+  background:white;
+  border:1px solid gray;
+  z-index:99;
+  padding:0;
+  min-width:100%;
+}
+
+ul.dropdown li{
+  float:none;
+  padding:0.3em;
+  font-size:0.8em;
+  list-style: none; 
+}
+
+ul.dropdown li:hover{
+  background:#CDCDCD;
+}
+
+div#page div#breadcrumbs-bar {
+  
+  background:#C2D1DF;
+  width:100%;
+  height:0.5em;
+  margin-top:0;
+/*   margin-bottom:0.6em; */
+  margin-bottom:2.5em;
+}
+
+div#page div#title {
+  position:absolute;
+  left:0.5em;
+  top:0.5em;
+  border:1px solid gray;
+  background:#EFEFEF;
+  padding:1em 0.5em;
+  height:4.5em;
+  z-index:5;
+  text-align: center;
+}
 
 /*********************************
    
@@ -443,9 +547,11 @@ div.downloadable-formats {
 
 div.title {
     overflow:hidden;
-    padding:0 1em 0.2em;
+    padding:0em 1em 0.2em 12em;
     position:relative;
-  background-color:white;
+    background-color:white;
+    margin-top:-2em;
+/*   width:100%; */
 /*   border-bottom:1px solid #CDCDCD; */
 }
 
@@ -455,7 +561,7 @@ div.columns{
   padding:0.3em 0 0;
   position:absolute;
   right:2em;
-  top:6.5em;
+  top:5.5em;
   cursor:pointer;
 }
 
@@ -935,6 +1041,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border-top:1px solid #CDCDCD;
 }
 
+#navigation ul li span.ui-icon{ 
+  float:right;
+}
+
 #nav-min{
   height:100%;
   width:7px;
@@ -1036,3 +1146,5 @@ table tr.venn-b, table th.venn-b, table td.venn-b {
 table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#BBFFAA;
 }
+
+
