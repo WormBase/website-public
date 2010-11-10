@@ -23,7 +23,7 @@ function popWin(url) {
   <li>Welcome<a href="[% c.uri_for('/bench') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %] <span href="/bench" id="bench_status"></span></a> |</li>
 [% ELSE %]
   <li><a  id='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
-  <li><a href="/bench" title="go to your workbench"><div id="my-cart" class="ui-icon ui-icon-cart"></div> <span href="/bench" id="bench_status"></span></a> | </li>
+  <li><a href="/bench" title="go to your workspace">My WormBase <span href="/bench" id="bench_status"></span></a> | </li>
 [% END %]
 
 </ul>

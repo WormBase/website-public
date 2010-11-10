@@ -41,7 +41,7 @@
 
     $(".reload").live('click', function() {
       var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/bench//" + widget_name);
+      $("div#" + widget_name + "-content").load("/rest/widget/bench/a/" + widget_name);
     });
 
       $(".bench_update").live('click',function() {
@@ -120,12 +120,14 @@
         nav.attr("load", 0);
         $(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
+        nav.append($('<span class="ui-icon ui-icon-triangle-1-e"></span>'));
       }
       location.href = "#" + widget_name;
     } else {
       nav.attr("load", 1);
       nav.removeClass("ui-selected");
       $(content).parents("li").removeClass("visible"); 
+      nav.children("span.ui-icon").remove();
     }
 
     updateLayout();
@@ -160,6 +162,7 @@
                           });
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
+        nav.append($('<span class="ui-icon ui-icon-triangle-1-e"></span>'));
         return false;
     }
 

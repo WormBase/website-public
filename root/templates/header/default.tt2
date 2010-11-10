@@ -2,23 +2,44 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- BEGIN boilerplate/banner -->
-    <div id="page">
-<div style="position:absolute; right:0; top:0; width:50%">
- <span class="status-bar"></span>
-</div>
-        <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_byline %]</a></h1>
-           <p>  
-                [% # The current release of the software and its codename %]
-                Database version [% constants.acedb_version %]
-                <br />
-                Software version [% c.config.version %] "[% c.config.codename %]"
-           </p>
+<div id="page">
+  <span class="status-bar"></span>
+<!--   <div id="stat-bg"></div> -->
+  <div id="nav-bar">
+    <ul class="nav-bar">
 
-<div style="position:absolute; right:0; bottom:0;">
-[% PROCESS "boilerplate/search_bar.tt2" %]
-</div>
+    [% FOREACH title IN c.config.nav_bar.order.name %]
+      <li><a href="[% c.config.nav_bar.$title.link %]">[% c.config.nav_bar.$title.title %]</a>
+        [% IF c.config.nav_bar.$title.option.size > 0 %]
+        <ul>
+        [% FOREACH option IN c.config.nav_bar.$title.option %]
+          <li>[% option %]</li>
+        [% END %]
+        </ul>
+        [% END %]
+      </li>
+    [% END %]
 
-[% PROCESS timer %]
+  [% PROCESS "boilerplate/search_bar.tt2" %]
+
+  </div>
+  <div id="breadcrumbs-bar">
+  </div>
+
+
+  <div id="title" class="ui-corner-all">
+  <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_name %]</a></h1>
+      <p>  
+          [% # The current release of the software and its codename %]
+          Database version [% constants.acedb_version %]
+          <br />
+          Software version [% c.config.version %] <br />
+          "[% c.config.codename %]"
+      </p>
+  </div>
+
+
+  [% PROCESS timer %]
 </div>
 
 <script>

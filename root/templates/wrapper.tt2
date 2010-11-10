@@ -9,7 +9,7 @@
      content;
 
    ELSIF (template.name.match('index'));   	 
-         content WRAPPER boilerplate/html + layout/home.tt2;
+         content WRAPPER boilerplate/html + layout/default.tt2;
   
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");

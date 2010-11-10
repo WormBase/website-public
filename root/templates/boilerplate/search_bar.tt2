@@ -1,5 +1,5 @@
-   <form method="post" id="searchForm" action="" onsubmit="this.action='/search_new/'+this.class.value+'/'+this.query.value ;">
-    <select class="search-select" name="class">
+   <form method="post" id="searchForm" action="" onsubmit="this.action='/search_new/'+'gene'+'/'+this.query.value ;">
+<!--    <select class="search-select" name="class">
     <option value="gene" selected>Gene</option> 
         <option value="all"  >Everything</option>
 	<option value="variation"[% IF class=='variation' %]selected[% END %]>Variation</option>
@@ -7,13 +7,13 @@
 	<option value="sequence"[% IF class=='sequence' %]selected[% END %]>Sequence</option>  
         <option value="paper"[% IF class=='paper' %]selected[% END %]>Paper</option>
         <option value="phenotype"[% IF class=='phenotype' %]selected[% END %]>Phenotype</option>
-    </select>
+    </select>-->
     [% val = "search..." %]
     [% IF query %]
        [% val = query %]
     [% END %]
-    <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
-    <input id="Search" type="submit" value="Search"><br />
-    <center><span id="searchMsg"></span></center>
+    <input class="text ui-corner-all" id="Search" name="query" type="text" value="[% val %]"> 
+<!--     <input id="Search" type="submit" value="Search"><br /> -->
+<!--     <center><span id="searchMsg"></span></center> -->
   </form>
   
