@@ -18,8 +18,10 @@ var layoutFocused = true;
     });
     $("#widget-holder").children("#widget-header").disableSelection();
 
-    $("div.columns span, div.columns div.ui-icon, div.columns ul li").live('click', function() {
-      $("div.columns ul").toggle();
+    $("div.columns").hover(function () {
+      $("div.columns ul").show();
+    }, function () {
+      $("div.columns ul").hide();
     });
 
 
