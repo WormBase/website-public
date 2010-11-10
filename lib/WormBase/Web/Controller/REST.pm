@@ -154,10 +154,10 @@ sub _bench {
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
-    }elsif($widget=~m/profile/){
-      $c->stash->{noboiler} = 1;
-      $c->stash->{'template'}='auth/profile.tt2';
-      return;
+    } elsif($widget=~m/profile/){
+	$c->stash->{noboiler} = 1;
+        $c->res->redirect('/profile');
+	return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
@@ -228,6 +228,20 @@ sub history_POST {
     push(@{$c->user_session->{history}->{$path}->{time}}, time());
 }
 
+ 
+sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
+
+sub update_role_POST {
+      my ($self,$c,$id,$value,$checked) = @_;
+       
+      my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
+      my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
+      
+      my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+      $users_to_roles->delete()  unless($checked eq 'true');
+      $users_to_roles->update();
+       
+}
 
 sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
 
@@ -292,10 +306,26 @@ sub search_new :Path('/search_new')  :Args(2) {
 	my $class =  $c->req->param("class") || $type;
 	my $search = $type;
 	$search = "basic" unless  $api->search->meta->has_method($type);
-	my $objs = $api->search->$search({class => $class, pattern => $query});
+	my $objs;
+
+	# Does the data for this widget already exist in the cache?
+	my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+	unless($cached_data) {  
+	    $cached_data = $api->search->$search({class => $class, pattern => $query});
+	    $c->set_cache($cache_id,$cached_data);
+	}  
+	$objs = $cached_data;
+
 	if(@$objs<1) { #this may not be optimal
 	  $query.="*";
 	  $objs = $api->search->$search({class => $class, pattern => $query}) ;
+	  ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+	  unless($cached_data) {  
+	      $cached_data = $api->search->$search({class => $class, pattern => $query});
+	      $c->set_cache($cache_id,$cached_data);
+	  } 
+	  $objs = $cached_data;
+
 	}
 	$c->stash->{'type'} = $type; 
 	$c->stash->{'results'} = $objs;
