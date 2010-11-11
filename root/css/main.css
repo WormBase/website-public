@@ -92,25 +92,22 @@ Note: firefox seems to render header objects funny
    
 *********************************/
 div#page {
-/*     padding:1em 0 1em 1em; */
-    padding:0;
-    position:relative;
-/*     height:4em; */
-    margin-bottom:0;
+  padding:0;
+  position:relative;
+  background:#6D869E;
 }
 
 div#page h1 a, h1{
-    padding: 0;
-    margin:0;
-    color:black;
+  padding: 0;
+  margin:0;
+  color:white;
 }
 
 div#page p {
-    font-style:italic;
-/*     color:gray; */
-    padding:0;
-    margin:0;
-    font-size:0.8em;
+  padding:0;
+  margin:0;
+  font-size:0.8em;
+  color:white;
 }
 
 div#page .release_date { }
@@ -124,23 +121,15 @@ div#page .release_date { }
 
 /* Header */
 
-/*div#page div#stat-bg {
-  background:#D7D8D9;
-  height:1.5em;
-  width:100%;
-}*/
-
 div#page div#nav-bar {
-  background:#6D869E;
-  width:100%;
+  background:#C2D1DF;
   height:2.5em;
-  margin-top:1.5em;
-  margin-bottom:0;
+  margin: 1.5em 0 0.5em 12em;
 }
 
 ul.nav-bar {
   margin:0;
-  padding-left: 10em;
+  padding-left:0.5em;
   list-style-type: none;
   font-size:1.2em;
 }
@@ -154,7 +143,7 @@ ul.nav-bar li a{
   float:left;
   padding:0.5em 0.7em 0;
   margin:0;
-  color:#CDCDCD;
+  color:gray;
   height:1.4em;
 }
 
@@ -164,10 +153,8 @@ ul.nav-bar li span {
   visibility:hidden;
 }
 
-
-
 ul.nav-bar li a.hover, ul.nav-bar li a.selected{
-  color:white;
+  color:black;
   border-bottom:5px solid #CDCDCD;
 }
 
@@ -199,25 +186,10 @@ ul.dropdown li:hover{
   background:#CDCDCD;
 }
 
-div#page div#breadcrumbs-bar {
-  
-  background:#C2D1DF;
-  width:100%;
-  height:0.5em;
-  margin-top:0;
-/*   margin-bottom:0.6em; */
-  margin-bottom:2.5em;
-}
-
 div#page div#title {
   position:absolute;
-  left:0.5em;
+  left:1em;
   top:0.5em;
-  border:1px solid gray;
-  background:#EFEFEF;
-  padding:1em 0.5em;
-  height:4.5em;
-  z-index:5;
   text-align: center;
 }
 
@@ -226,14 +198,6 @@ div#page div#title {
    Sections
    
 *********************************/
-.primary-container {
-    padding:0.5em 0.5em 1.5em 0.5em;
-    margin:2px;
-    margin-bottom:10px;
-    overflow:hidden;
-    border:1px solid gray;    
-    position:relative;
-}
 
 li div.widget-container {
     padding:0.5em 0.5em 1em 0.5em;
@@ -261,11 +225,6 @@ li.visible div.widget-container {
   list-style:disc outside none;
 }
 
-div#overview-content {
-/*   max-width:50em; */
-/*   padding:0 0 1.7em 0; */
-}
-
 .content h2 {
   margin:0.3em;
   float:left;
@@ -274,7 +233,6 @@ div#overview-content {
 #widget-header h3 {
     margin:0px;
     padding:0.3em 0.3em 0.5em;
-/*     margin-bottom:0.5em; */
     border-bottom:1px dotted #CDCDCD;
     height:1em;
     cursor:pointer;
@@ -546,23 +504,23 @@ div.downloadable-formats {
 }
 
 div.title {
-    overflow:hidden;
-    padding:0em 1em 0.2em 12em;
+    overflow:visible;
+    padding:0em 1em 0.2em 1em;
     position:relative;
     background-color:white;
-    margin-top:-2em;
-/*   width:100%; */
-/*   border-bottom:1px solid #CDCDCD; */
+    height:1.5em;
 }
 
-div.columns{
+div.columns {
   float:right;
   margin:0 0.5em;
   padding:0.3em 0 0;
-  position:absolute;
-  right:2em;
-  top:5.5em;
+  position:relative;
+/*   position:absolute; */
+/*   right:2em; */
+/*   top:5.5em; */
   cursor:pointer;
+/*   clear:both; */
 }
 
 div.columns ul {
@@ -991,6 +949,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 *********************************/
 
 #navigation {
+  clear:both;
   width: 9.5em;
   float: left;
   position:relative;

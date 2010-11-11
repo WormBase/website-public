@@ -28,7 +28,7 @@
       [% ELSE %]
         <h2>My Workspace</h2>
       [% END %] 
-    </div>
+
           <div class="columns"><span id="fade" style="float:left">Layout</span>
           <div class="ui-icon ui-icon-triangle-1-s"></div>
           <ul>
@@ -37,10 +37,10 @@
           <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
           <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
           <div class="list-layouts" type="[% class %]"></div>
-<!--          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
-          <li><div id="fade">save layout</div></li>-->
           </ul>
           </div>
+    </div>
+
   <div id="navigation">
     <ul>
       <li class="title">Page Content</li>

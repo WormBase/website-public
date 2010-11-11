@@ -5,7 +5,7 @@
 <div id="page">
   <span class="status-bar"></span>
 <!--   <div id="stat-bg"></div> -->
-  <div id="nav-bar">
+  <div id="nav-bar" class="ui-corner-large-tl">
     <ul class="nav-bar">
 
     [% FOREACH title IN c.config.nav_bar.order.name %]
@@ -23,18 +23,16 @@
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
   </div>
-  <div id="breadcrumbs-bar">
-  </div>
 
 
-  <div id="title" class="ui-corner-all">
+  <div id="title">
   <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_name %]</a></h1>
       <p>  
           [% # The current release of the software and its codename %]
           Database version [% constants.acedb_version %]
           <br />
-          Software version [% c.config.version %] <br />
-          "[% c.config.codename %]"
+<!--          Software version [% c.config.version %] <br />
+          "[% c.config.codename %]"-->
       </p>
   </div>
 

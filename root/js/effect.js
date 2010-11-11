@@ -1,6 +1,6 @@
  
   $(document).ready(function() {  
-var layoutFocused = true;
+// var layoutFocused = true;
 //       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
       $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
