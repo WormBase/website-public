@@ -87,42 +87,31 @@ div.more .ui-icon {
 }
 
 /* Menus on the top of the screen - home page */
-#front-menu, #login-menu, .padding{
-	margin: 0;
-	padding:0em;
-   font-size: 0.9em;
-	}
-
-#front-menu ul, #login-menu ul, #results ul {
+#login-menu, .padding{
 	margin:0;
 	padding:0;
-    padding-top:0.5em;
+	}
+
+#login-menu ul, #results ul {
+	margin:0;
+	padding:0;
+    padding-top:0.3em;
 	list-style-type: none;
 	}
-	
-#front-menu ul li {
-	float: left;
-	}
-	
-#front-menu li {
-	font-size: 1em;
-	padding-right: 1em;
-}
-		
-#front-menu li a, #login-menu li a {
-    color: #6666EE;
-}
-#front-menu li a {
-    text-decoration: underline; 
-}
+
 #login-menu ul li {
-	float: right;
-	}
-	
-#login-menu li {
-	font-size: 1em;
-	padding-right: 0.5em;
-  color: #999999;
+  float: right;
+  font-size: 0.8em;
+  padding-right: 0.5em;
+  color: #EEE;
+}
+
+#login-menu ul li a {
+  color:#EEE;
+}
+
+#login-menu ul li a:hover {
+  color:white;
 }
 
 #my-cart {
@@ -139,7 +128,7 @@ div.more .ui-icon {
     border: 1px solid gray;  
     padding: 0.5em; 
     text-align: left;  
-    height:1em;
+    height:0.6em;
 }  
 
 
