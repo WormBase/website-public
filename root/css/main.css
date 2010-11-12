@@ -43,7 +43,7 @@ input, select, th, td { font-size:1em; }
   min-height: 100%;
   height: auto !important;
   position: relative;
-  min-width: 800px;
+  min-width: 600px;
 }
 
 #content {
@@ -94,7 +94,9 @@ Note: firefox seems to render header objects funny
 div#page {
   padding:0;
   position:relative;
-  background:#6D869E;
+  background:#768694;
+/*   border-bottom:1px solid gray; */
+  margin-bottom:0.5em;
 }
 
 div#page h1 a, h1{
@@ -110,6 +112,13 @@ div#page p {
   color:white;
 }
 
+div#page div#title {
+  position:absolute;
+  left:0.8em;
+  top:0.4em;
+  text-align: center;
+}
+
 div#page .release_date { }
 
 /* user warnings */
@@ -123,8 +132,10 @@ div#page .release_date { }
 
 div#page div#nav-bar {
   background:#C2D1DF;
+/*   background:#96A0A8; */
   height:2.5em;
-  margin: 1.5em 0 0.5em 12em;
+  margin: 1.3em 0 0em 11em;
+  border:1px solid gray;
 }
 
 ul.nav-bar {
@@ -143,8 +154,10 @@ ul.nav-bar li a{
   float:left;
   padding:0.5em 0.7em 0;
   margin:0;
-  color:gray;
+  color:#555;
+/*   color:black; */
   height:1.4em;
+  font-weight:bold;
 }
 
 ul.nav-bar li span {
@@ -162,36 +175,56 @@ ul.nav-bar li a.hover span, ul.nav-bar li a.selected span{
   visibility:visible;
 }
 
-ul.dropdown {
+ul.nav-bar ul.dropdown {
+/*   background:#C2D1DF; */
+  float:none;
   margin:0;
   display:none;
   position:absolute;
   top:2.1em;
   left:0px;
   background:white;
+/*   border:1px solid #CDCDCD; */
   border:1px solid gray;
   z-index:99;
   padding:0;
-  min-width:100%;
+  width:100%;
+  list-style-type: none;
 }
 
-ul.dropdown li{
-  float:none;
-  padding:0.3em;
+ul.nav-bar ul.dropdown li {
+  padding:0.2em 0;
+  width:100%;
   font-size:0.8em;
-  list-style: none; 
+  list-style: none;
+}
+
+ul.nav-bar ul.dropdown li.selected {
+  padding:0.2em 0;
+  width:100%;
+  font-size:0.8em;
+  list-style: none;
+  background:#C2D1DF;
+}
+
+ul.nav-bar ul.dropdown li a{
+  float:none;
+  border:none;
+  height:auto;
+  color:black;
+  font-weight:normal;
+}
+
+ul.nav-bar form#searchForm ul.dropdown {
+  width:8em;
+  top:1.8em;
+  left:0.5em;
 }
 
 ul.dropdown li:hover{
-  background:#CDCDCD;
+  background:#FAF7DE;
 }
 
-div#page div#title {
-  position:absolute;
-  left:1em;
-  top:0.5em;
-  text-align: center;
-}
 
 /*********************************
    
@@ -230,22 +263,27 @@ li.visible div.widget-container {
   float:left;
 }
 
+#widget-header {
+    background: #C2D1DF;
+}
+
 #widget-header h3 {
     margin:0px;
     padding:0.3em 0.3em 0.5em;
     border-bottom:1px dotted #CDCDCD;
     height:1em;
     cursor:pointer;
-    background: #C2D1DF;
+
 }
 
 #widget-header h3.minimized{
     border:0;
 }
 
-.widget-container.bench #widget-header h3 {
-  background:#D0DEC1;
+.widget-container.bench  #widget-header {
+    background: #D0DEC1;
 }
+
 
 .widget-container #widget-footer {
     font-size:0.9em;    
@@ -504,10 +542,7 @@ div.downloadable-formats {
 }
 
 div.title {
-    overflow:visible;
-    padding:0em 1em 0.2em 1em;
-    position:relative;
-    background-color:white;
+    padding:0.5em 1em 0.7em 1.5em;
     height:1.5em;
 }
 
@@ -516,11 +551,7 @@ div.columns {
   margin:0 0.5em;
   padding:0.3em 0 0;
   position:relative;
-/*   position:absolute; */
-/*   right:2em; */
-/*   top:5.5em; */
   cursor:pointer;
-/*   clear:both; */
 }
 
 div.columns ul {
@@ -843,12 +874,6 @@ table.multi       { padding: 0;
 
 
 
-#container {
-  padding:10px;
-}
-
-
-
 
 
 
@@ -949,11 +974,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 *********************************/
 
 #navigation {
-  clear:both;
-  width: 9.5em;
+  width: 10em;
   float: left;
   position:relative;
-  margin:0.5em 0;
+  margin:0 0 0.5em;
   border-bottom:1px solid #CDCDCD;
 }
 
@@ -963,8 +987,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #navigation .ui-selected:hover { 
-/*  background-color:#AAA;
-  color: white; */
   background: #C2D1DF; 
   color: black; 
 }
@@ -981,12 +1003,9 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #navigation ul li { 
-  padding: 0.5em; 
-  padding-left: 1.4em;
-  padding-bottom:0.6em;
+  padding:0.5em 0.5em 0.6em 1.4em;
   font-size: 0.9em; 
   height: 1em;
-/*   vertical-align:middle; */
   overflow:hidden;
   cursor:pointer;
 }
@@ -1064,6 +1083,11 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   font-size:0.7em;
   line-height:1em;
 /*   padding-left:1.8em; */
+}
+
+div#widgets {
+  clear:both;
+  width:100%;
 }
 
 .text-width {

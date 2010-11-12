@@ -11,24 +11,17 @@ $(document).ready(function(){
   var i=0;
   var nav = $("#nav-bar").children("ul").children("li").first();
   for(i=0; i<navLen; i++){
-    if(nav.children().length > 1){
-      $('<span class="ui-icon ui-icon-triangle-1-s"></span>').prependTo(nav.children("a"));
-    }else{
-      nav.children("a").css("padding", "0.5em 1.5em 0");
-    }
-    nav.children("ul").addClass("dropdown");
+    $('<span class="ui-icon ui-icon-triangle-1-s"></span>').prependTo(nav.children("a"));
     nav = nav.next();
   }
+  $(".dropdown").addClass("ui-corner-bottom");
+  $(".dropdown").children("li").last().addClass("ui-corner-bottom");
 
-//   $("#nav-bar ul li").live('hover', function(){
-//     $(this).children("ul").toggle();
-//   });
-
-  $("#nav-bar ul li").hover(function () {
-      $(this).children("ul").show();
+  $("#nav-bar ul li, #searchForm").hover(function () {
+      $(this).children("ul.dropdown").show();
       $(this).children("a").addClass("hover");
     }, function () {
-      $(this).children("ul").hide();
+      $(this).children("ul.dropdown").hide();
       $(this).children("a").removeClass("hover");
     });
 

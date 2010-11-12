@@ -43,6 +43,7 @@
               return false;
         });
 
+  $("#searchForm dropdown li input").button();
 
     $("#nav-min").click(function() {
       var nav = $("#navigation");

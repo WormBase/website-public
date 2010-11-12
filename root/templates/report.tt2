@@ -40,7 +40,7 @@
           </ul>
           </div>
     </div>
-
+<div id="widgets">
   <div id="navigation">
     <ul>
       <li class="title">Page Content</li>
@@ -129,7 +129,7 @@
 
     </script>
 
-
+</div>
 [% ELSE %]
 
 <div class="title">
