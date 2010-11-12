@@ -114,14 +114,12 @@ div.more .ui-icon {
   color:white;
 }
 
-#my-cart {
-  float:left;
-}
 
 /* The search bar form */
 #searchForm {
-  padding:0.25em;
+  padding:0.25em 0.1em;
   float:right;
+  position:relative;
 }
 #searchForm input.text{  
     color: #565656;  

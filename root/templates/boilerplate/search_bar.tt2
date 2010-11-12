@@ -1,19 +1,19 @@
-   <form method="post" id="searchForm" action="" onsubmit="this.action='/search_new/'+'gene'+'/'+this.query.value ;">
-<!--    <select class="search-select" name="class">
-    <option value="gene" selected>Gene</option> 
-        <option value="all"  >Everything</option>
-	<option value="variation"[% IF class=='variation' %]selected[% END %]>Variation</option>
-	<option value="protein"[% IF class=='protein' %]selected[% END %]>Protein</option>
-	<option value="sequence"[% IF class=='sequence' %]selected[% END %]>Sequence</option>  
-        <option value="paper"[% IF class=='paper' %]selected[% END %]>Paper</option>
-        <option value="phenotype"[% IF class=='phenotype' %]selected[% END %]>Phenotype</option>
-    </select>-->
+   <form method="post" id="searchForm" action="" onsubmit="search(); return false;">
+
     [% val = "search..." %]
     [% IF query %]
        [% val = query %]
     [% END %]
     <input class="text ui-corner-all" id="Search" name="query" type="text" value="[% val %]"> 
-<!--     <input id="Search" type="submit" value="Search"><br /> -->
-<!--     <center><span id="searchMsg"></span></center> -->
+          <ul class="dropdown">
+
+    <li id="gene" class="selected" onclick="search_change('gene')"><a href="javascript:void(0)">Gene</a></li>
+    <li id="variation" onclick="search_change('variation')"><a href="javascript:void(0)">Variation</a></li>
+    <li id="phenotype" onclick="search_change('phenotype')"><a href="javascript:void(0)">Phenotype</a></li>
+    <li id="paper" onclick="search_change('paper')"><a href="javascript:void(0)">Paper</a></li>
+
+
+          </ul>
+
   </form>
   

@@ -225,7 +225,7 @@
 <!--    <section class="widget" name="[% widget.name %]"> -->
           <div class="widget-container ui-corner-all [% type %]">
                 <header> 
-                <div id="widget-header">
+                <div id="widget-header" class="ui-corner-top">
                     <div class="module-close" wname="[% widget.name %]" title="close"></div>
                    
                     <h3><div class="module-min [% widget.name %]" wname="[% widget.name %]"></div><span>[% widget.title %]</span>

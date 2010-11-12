@@ -4,16 +4,15 @@
 <!-- BEGIN boilerplate/banner -->
 <div id="page">
   <span class="status-bar"></span>
-<!--   <div id="stat-bg"></div> -->
-  <div id="nav-bar" class="ui-corner-large-tl">
+  <div id="nav-bar" class="ui-corner-tl">
     <ul class="nav-bar">
 
     [% FOREACH title IN c.config.nav_bar.order.name %]
       <li><a href="[% c.config.nav_bar.$title.link %]">[% c.config.nav_bar.$title.title %]</a>
         [% IF c.config.nav_bar.$title.option.size > 0 %]
-          <ul>
+          <ul class="dropdown ui-corner-bottom">
           [% FOREACH option IN c.config.nav_bar.$title.option %]
-            <li>[% option %]</li>
+            <li><a href="">[% option %]</a></li>
           [% END %]
           </ul>
         [% END %]

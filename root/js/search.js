@@ -8,8 +8,7 @@
 $(document).ready(function(){
   var searchBox = $("#Search"),
       searchBoxDefault = "search...",
-      searchForm = $("#searchForm"),
-      searchMsgText = "enter a value";
+      searchForm = $("#searchForm")
 
   searchBox.focus(function(e){
     $(this).addClass("active");
@@ -25,14 +24,25 @@ $(document).ready(function(){
   searchBox.blur(function(){
     if($(this).attr("value") == "") $(this).attr("value", searchBoxDefault);
   });
-  
-  //display the error msg if the user didn't input a search query
-  searchForm.submit(function(){
-    if (searchBox.val() == searchBoxDefault || !searchBox.val()) {
-      $("#searchMsg").text(searchMsgText).show().fadeOut(2000);
-      return false;
-    }
-    return true;
-  });
-
+ 
 });
+
+
+var cur_search_type = 'gene';
+
+function search() {
+    var f = $("#Search").attr("value");
+    f = encodeURIComponent(f);
+    f = f.replace('%26', '&');
+    f = f.replace('%2F', '/');
+
+    location.href = '/search_new/' + cur_search_type + '/' + f;
+}
+
+function search_change(new_search) {
+  $("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
+  cur_search_type = new_search;
+  $("#searchForm ul.dropdown li#" + new_search).addClass("selected");
+
+  
+}
