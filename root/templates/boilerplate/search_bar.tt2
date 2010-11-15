@@ -9,9 +9,10 @@
 
     <li id="gene" class="selected" onclick="search_change('gene')"><a href="javascript:void(0)">Gene</a></li>
     <li id="variation" onclick="search_change('variation')"><a href="javascript:void(0)">Variation</a></li>
+   <li id="protein" onclick="search_change('protein')"><a href="javascript:void(0)">Protein</a></li>
+   <li id="sequence" onclick="search_change('sequence')"><a href="javascript:void(0)">Sequence</a></li>
     <li id="phenotype" onclick="search_change('phenotype')"><a href="javascript:void(0)">Phenotype</a></li>
     <li id="paper" onclick="search_change('paper')"><a href="javascript:void(0)">Paper</a></li>
-
 
           </ul>
 
