@@ -4,7 +4,7 @@
 <!-- BEGIN boilerplate/banner -->
 <div id="page">
   <span class="status-bar"></span>
-  <div id="nav-bar" class="ui-corner-tl">
+  <div id="nav-bar" class="ui-corner-large-tl">
     <ul class="nav-bar">
 
     [% FOREACH title IN c.config.nav_bar.order.name %]
