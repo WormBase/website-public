@@ -7,7 +7,7 @@
 <div id="footer">
     <div id="footercredit">
           Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
-          <a href="/db/misc/feedback">web form</a>
+          <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
           <p>
            WormBase is supported by a grant from the National Human Genome Research Institute <br />
            at the US National Institutes of Health # P41 HG02223 and the British Medical Research Council.
