@@ -1,6 +1,80 @@
   $(document).ready(function() {   
+      $(".role-update").live('click',function() {
+	$.ajax({
+		  type: "POST",
+		  url : "/rest/update/role/"+$(this).attr('id')+"/"+$(this).attr('value')+"/"+$(this).attr('checked'), 
+		  error: function(request,status,error) {
+			  alert(request + " " + status + " " + error );
+		    }
+	  });
+    });
 
+     $(".issue-delete").live('click',function() {
+	  var url= $(this).attr("rel");
+	   
+	  var id=new Array();
+	  $(".ui-icon-circle-minus").each(function(){
+	     id.push($(this).attr('name'));
+	  });
+	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
+	  if(answer){
+	    var reload = $(this).closest('.widget-container').find('.reload');
+	    $.ajax({
+		      type: "POST",
+		      url : url,
+		      data: {method:"delete",issues:id.join('_')}, 
+		      success: function(data){
+			      reload.trigger('click');
+			},
+		      error: function(request,status,error) {
+			      alert(request + " " + status + " " + error );
+			}
+	      });
+	  } 
+    }); 
 
+    
+    $(".issue-submit").live('click',function() {
+	    var url= $(this).attr("rel");
+	    var page= $(this).attr("page");
+	    var feed = $(this).closest('#issues-new');
+	    $.ajax({
+	      type: 'POST',
+	      url: url,
+	      data: {title:feed.find("#id_title").attr("value"), location: page, content: feed.find("#content").attr("value")},
+	      success: function(data){
+			    feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 
+			    feed.closest('#widget-feed').fadeOut(2000,function() {feed.empty()}); 
+		      },
+	      error: function(request,status,error) {
+			    alert(request + " " + status + " " + error);
+		      }
+	    });
+
+	    return false;
+
+    });
+
+    $(".issue-update").live('click',function() {
+	if("[% c.user_exists %]") {
+	      var url= $(this).attr("rel");
+	      $.ajax({
+		type: 'POST',
+		url: url,
+		data: {content: $("textarea").attr('value'),issue:"[% issue.id %]"},
+		success: function(data){
+			     window.location.reload();  
+			},
+		error: function(request,status,error) {
+			      alert(request + " " + status + " " + error);
+			}
+	      });
+	}else{
+	    alert("you need to login to use this function");
+	}
+	    return false;
+
+    });
 
         $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
           if (status == "error") {

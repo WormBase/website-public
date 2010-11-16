@@ -1,5 +1,17 @@
  
-  $(document).ready(function() {  
+  $(document).ready(function() {
+
+     $(".add-delete").live('click',function() {
+	$(this).toggleClass( "ui-icon-circle-minus"); 
+    });
+
+    $(".feed").live('click',function() {
+	var url=$(this).attr("rel");
+	var div=$(this).parent().next("#widget-feed");
+	div.filter(":hidden").load(url);
+	div.slideToggle('fast');
+    });
+
 // var layoutFocused = true;
 //       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
