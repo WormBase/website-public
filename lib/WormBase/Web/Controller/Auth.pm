@@ -139,7 +139,11 @@ sub auth_local {
 	    $user= $c->model('Schema::User')->create(
 	    { username => $id, email_address=>$email, first_name=>$first_name, last_name=>$last_name 
 	    });
-	    my $role=$c->model('Schema::Role')->find({role=>'user'}) ;
+	    #assing curator role to wormbase.org domain user
+	    my $role_str="user";
+	    $role_str="curator" if($email && $email =~ /\@wormbase\.org/);
+	    $role_str="admin" if($email && $email =~ /lincoln\.stein/);
+	    my $role=$c->model('Schema::Role')->find({role=>$role_str}) ;
 	    $c->model('Schema::UserRole')->create({user_id=>$user->id,role_id=>$role->id});
 	}
 	$openid->user_id($user->id);

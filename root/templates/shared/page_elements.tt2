@@ -5,7 +5,30 @@
 #
 ####################################################
 %]
+[% MACRO username(user) BLOCK %]
+[% IF user %]
+ [% IF user.first_name.defined ; name = user.first_name; END;
+    IF user.last_name.defined; name = name _ ' ' _ user.last_name; END; %] 
+[% IF name.defined %][% name %][% ELSE %] [% user.username.substr(0,10) %] [% END %] 
+[%- END %]
+[%- END %]
  
+[% MACRO issue_table(issues) BLOCK %]
+[% IF issues %]
+[% USE time_dir = Time.Duration %]
+  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th><th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th></tr>
+      [% FOREACH IS IN issues %]
+	 [% array=IS.location.split('/') %]
+	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for('/issue',IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
+	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td><td><span class="add-delete ui-icon ui-icon-circle-plus" name="[% IS.id %]"><span></td>
+	  </tr>
+      [% END %]
+      </table>
+  [% ELSE %]
+   <span id="fade"> no issues have been found</span>
+  [% END %]
+[% END %]
+
 [% BLOCK timer %]
   [% IF c.check_user_roles('admin') %]
     <div class="ui-state-highlight ui-corner-all" style="position:absolute; left:50%; top:0.6em;">
@@ -238,14 +261,15 @@
                 <div id="[%- widget.name -%]-content" class="content">
                 [% content %]
                 </div>
-
+		 
                 <div id="widget-footer">
-                    <a href="#" title="comment"><span class="ui-icon ui-icon-comment"></span></a>
-                    <a href="#" title="report a problem"><span class="ui-icon ui-icon-notice"></span></a>
+                    <a   title="comment" class="feed"  rel="[% c.uri_for('rest','feed','comment',class,this_object_id,widget.name,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
+                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('rest','feed','issue',class,this_object_id,widget.name,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
                     <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
+		<div id="widget-feed"></div>  
 
-      </div>
+      </div> 
 <!--    </section> -->
    <!-- end [% widget.name %] widget -->
 
