@@ -1,0 +1,85 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% UNLESS class %]
+      [% issue_table(issues) %]
+[% ELSE %]
+ 
+<style>
+#issues-new-responsible {
+    position: absolute;
+    right: 0;
+    top: 15px;
+    margin-left: 30px;
+    width: 380px;
+}
+#issues-new-responsible td {
+    padding: 2px 2px 2px 0;
+    text-align: right;
+}
+
+#issues-new-responsible th {
+    padding: 2px 10px 2px 0;
+}
+
+.layout-box {
+    border: 1px solid #ddd;
+    padding: 15px 24px;
+}
+#issues-new-form {
+    position: relative;
+    margin: 0 auto;
+    background: #eee;
+}
+
+#issues-new-form #id_title {
+    width: 430px !important;
+}
+
+#issues-new-form #id_content {
+    width: 430px !important;
+}
+
+#issues-new-form h3 {
+    margin-top: 20px;
+}
+
+</style>
+
+    <div id="issues-new" class="layout-box">
+    [% IF issues %]
+     <h4>Existing Issues</h4>
+      [% issue_table(issues) %]
+    [% END %]
+    <form>
+	<h4>Create new issue</h4>
+			<table>
+				<tr>
+					<th>Title:</th>
+					<td><input id="id_title" maxlength="255" type="text" name="title"  /></td>
+				</tr>
+				<tr>
+					<th>Content:</th>
+					<td>
+						<textarea id="content" rows="10" cols="40" name="content"  ></textarea>
+					</td>
+				</tr>
+			</table>
+
+				<p>
+					<input type='checkbox' name='follow' checked='checked'/> Follow issue updates
+				</p>
+			
+			<p>
+				<input type='submit' value='Report issue' class="issue-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
+			        <input type='reset' value='Reset'  />
+			</p>
+			
+		</form>
+	 
+
+    </div>
+[% END %]
+
+ 
+ 
