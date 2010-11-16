@@ -38,10 +38,32 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 <form>
 <textarea rows="10" cols="40" id="content"></textarea>
 <p>
-<input type='submit' value='Add' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
+<input type='submit' value='Add' class="issue-update" id="[% issue.id %]" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
  <input type='reset' value='Reset' />
 </p>
 </form>
 </div>
 </div>
- 
+<script>
+ $(".issue-update").live('click',function() {
+	if("[% c.user_exists %]") {
+	      var url= $(this).attr("rel");
+	       
+	      $.ajax({
+		type: 'POST',
+		url: url,
+		data: {content: $("textarea").attr('value'),issue:"[% issue.id %]"},
+		success: function(data){
+			     window.location.reload();  
+			},
+		error: function(request,status,error) {
+			      alert(request + " " + status + " " + error);
+			}
+	      });
+	}else{
+	    alert("you need to login to use this function");
+	}
+	    return false;
+
+    });
+</script>
