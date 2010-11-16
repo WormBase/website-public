@@ -21,11 +21,11 @@ function popWin(url) {
  [% END %] 
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
   <li>|</li>
-  <li>Welcome<a href="[% c.uri_for('/bench') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %] <span href="/bench" id="bench_status"></span></a></li>
+  <li>Welcome<a href="[% c.uri_for('/me') %]">  [% IF name.defined %] [% name %] [% ELSE %] [% c.user.username %] [% END %] <span href="/bench" id="bench_status"></span></a></li>
 [% ELSE %]
   <li><a  id='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
   <li>|</li>
-  <li><a href="/bench" title="go to your workspace">My WormBase <span href="/bench" id="bench_status"></span></a></li>
+  <li><a href="/me" title="go to your workspace">My WormBase <span href="/me" id="bench_status"></span></a></li>
 [% END %]
 
 </ul>

@@ -60,7 +60,7 @@
    END;
 
     MACRO searchlink(class, id, text) BLOCK;
-       url = c.uri_for('/search_new', class, id);
+       url = c.uri_for('/search', class, id);
        "<a href=\"$url\" class=\"$class-link\">$text</a>";
     END;
 

@@ -12,44 +12,62 @@ use parent 'Catalyst::Controller::FormBuilder';
 #   Params    : class, query
 #
 ##############################################################
-sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
-    my ($self, $c) = @_;
-    $c->log->debug("search method...");
-  
-    #all search results will end up at the search/results template.
-    $c->stash->{template} = "search/results.tt2";
-}
+# sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
+#     my ($self, $c) = @_;
+#     $c->log->debug("search method...");
+#   
+#     #all search results will end up at the search/results template.
+#     $c->stash->{template} = "search/results.tt2";
+# }
 
-# a gene search
-sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
-    my ($self, $c, $query) = @_;
-    $c->log->debug("gene_search method");
-    $c->stash->{'query'} = $query;
-    $c->log->debug(join(', ', @{$c->req->args}));
-
+sub search :Path('/search')  :Args(2) {
+    my ($self, $c, $type, $query) = @_;
+      
+    $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
+    if($type eq 'all' && !(defined $c->req->param("view"))) {
+    $c->log->debug(" search all kinds...");
+    $c->stash->{template} = "search/full_list.tt2";
+    $c->stash->{type} =  [keys %{ $c->config->{pages} } ];
+    } else {
+    $c->log->debug("$type search");
+     
     my $api = $c->model('WormBaseAPI');
-    my $objs = $api->search->gene({pattern => $query});
+    my $class =  $c->req->param("class") || $type;
+    my $search = $type;
+    $search = "basic" unless  $api->search->meta->has_method($type);
+    my $objs;
 
-    # fix your redirect to just call action.  Find out how to do this.
-    if(scalar @$objs == 1) {
-      $c->res->redirect('/reports/gene/' . @$objs[0]->id);
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+    unless($cached_data) {  
+        $cached_data = $api->search->$search({class => $class, pattern => $query});
+        $c->set_cache($cache_id,$cached_data);
+    }  
+    $objs = $cached_data;
+
+    if(@$objs<1) { #this may not be optimal
+      $query.="*";
+      $objs = $api->search->$search({class => $class, pattern => $query}) ;
+      ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+      unless($cached_data) {  
+          $cached_data = $api->search->$search({class => $class, pattern => $query});
+          $c->set_cache($cache_id,$cached_data);
+      } 
+      $objs = $cached_data;
+
     }
-
+    $c->stash->{'type'} = $type; 
     $c->stash->{'results'} = $objs;
-}
-
-# a variation search
-sub variation_search :Chained('search') :PathPart('variation') :Args(1) {
-    my ($self, $c, $query) = @_;
-    $c->log->debug("variation_search method");
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    } elsif(@$objs==1 ) {
+        $c->res->redirect($c->uri_for('/reports',$type,$objs->[0]->{obj_name}));
+    } 
+        $c->stash->{template} = "search/results.tt2";
+    }
     $c->stash->{'query'} = $query;
-    $c->log->debug(join(', ', @{$c->req->args}));
-
-    my $api = $c->model('WormBaseAPI');
-    my $objs = $api->search->variation({pattern => $query});
-
-    $c->stash->{'results'} = $objs;
-
+    $c->stash->{'class'} = $type;
+     
 }
 
 
