@@ -61,7 +61,13 @@ sub search :Path('/search')  :Args(2) {
     if(defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     } elsif(@$objs==1 ) {
-        $c->res->redirect($c->uri_for('/reports',$type,$objs->[0]->{obj_name}));
+        my $url;
+        if(defined $c->config->{'sections'}->{'species'}->{$class}){
+          $url = $c->uri_for('/species',$type,$objs->[0]->{obj_name});
+        }else{
+          $url = $c->uri_for('/resources',$type,$objs->[0]->{obj_name});
+        }
+        $c->res->redirect($url);
     } 
         $c->stash->{template} = "search/results.tt2";
     }

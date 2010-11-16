@@ -8,11 +8,11 @@
     <ul class="nav-bar">
 
     [% FOREACH title IN c.config.nav_bar.order.name %]
-      <li><a href="[% c.config.nav_bar.$title.link %]">[% c.config.nav_bar.$title.title %]</a>
+      <li><a href="/[% title %]">[% c.config.nav_bar.$title.title %]</a>
         [% IF c.config.nav_bar.$title.option.size > 0 %]
           <ul class="dropdown ui-corner-bottom">
           [% FOREACH option IN c.config.nav_bar.$title.option %]
-            <li><a href="">[% option %]</a></li>
+            <li><a href="/[% title %]/[% option %]">[% option %]</a></li>
           [% END %]
           </ul>
         [% END %]
