@@ -55,26 +55,7 @@
 
     });
 
-    $(".issue-update").live('click',function() {
-	if("[% c.user_exists %]") {
-	      var url= $(this).attr("rel");
-	      $.ajax({
-		type: 'POST',
-		url: url,
-		data: {content: $("textarea").attr('value'),issue:"[% issue.id %]"},
-		success: function(data){
-			     window.location.reload();  
-			},
-		error: function(request,status,error) {
-			      alert(request + " " + status + " " + error);
-			}
-	      });
-	}else{
-	    alert("you need to login to use this function");
-	}
-	    return false;
-
-    });
+    
 
         $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
           if (status == "error") {
@@ -115,7 +96,7 @@
 
     $(".reload").live('click', function() {
       var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/bench/a/" + widget_name);
+      $("div#" + widget_name + "-content").load("/rest/widget/bench//" + widget_name);
     });
 
       $(".bench_update").live('click',function() {
@@ -132,7 +113,7 @@
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
         $(".workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
-//         $("div#reports-content").load("/rest/widget/bench//reports");
+        $("div#reports-content").load("/rest/widget/bench//reports");
         $("div#my_library-content").load("/rest/widget/bench//my_library");
       return false;
       });
@@ -194,14 +175,12 @@
         nav.attr("load", 0);
         $(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
-        nav.append($('<span class="ui-icon ui-icon-triangle-1-e"></span>'));
       }
       location.href = "#" + widget_name;
     } else {
       nav.attr("load", 1);
       nav.removeClass("ui-selected");
       $(content).parents("li").removeClass("visible"); 
-      nav.children("span.ui-icon").remove();
     }
 
     updateLayout();
@@ -236,7 +215,6 @@
                           });
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
-        nav.append($('<span class="ui-icon ui-icon-triangle-1-e"></span>'));
         return false;
     }
 
