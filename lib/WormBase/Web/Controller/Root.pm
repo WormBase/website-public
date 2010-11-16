@@ -75,11 +75,9 @@ sub issue :Path("/issue") Args(1) {
     my $issue = $c->model('Schema::Issue')->find($id);
     $c->stash->{issue} = $issue;
     my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id ASC' } ); 
-     $c->log->debug("aaaaaaaaaaaaa",$id,"bbbbbbbbbbbbbbbb",@threads);
     $c->stash->{current_time}=time();
     my $last;
     if(@threads){
-      $c->log->debug("cccccccccccccccccc",$id,"bbbbbbbbbbbbbbbb",@threads);
       $c->stash->{threads} = \@threads ;
       $last = $threads[scalar @threads -1];
       $c->stash->{last_edit}=$last->user ;
