@@ -159,6 +159,9 @@ sub _bench {
 	$c->stash->{noboiler} = 1;
         $c->res->redirect('/profile');
 	return;
+    }elsif($widget=~m/issue/){
+	$self->feed_GET($c,"issue");
+	return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
@@ -410,7 +413,67 @@ sub download_GET {
     $c->response->body($c->req->param("sequence"));
 }
 
+sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
+sub feed_GET {
+    my ($self,$c,$type,$class,$name,$widget,$label) = @_;
+    $c->stash->{noboiler} = 1;
+    my $page = "/rest/widget/$class/$name/$widget/$label";
+    $c->stash->{page} = $page;
+    $c->stash->{class}=$class;
+    if($type eq "issue"){
+      unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
+      my @issues;
+      if( $class) {
+	  @issues= $c->user->issues->search({location=>$page});
+      }else {
+	  @issues= $c->user->issues;
+      }
+      $c->stash->{issues} = \@issues if(@issues);  
+      $c->stash->{current_time}=time();
+    }
+     
+    $c->stash->{template} = "feed/$type.tt2"; 
+    $self->status_ok($c,entity => {});
+}
+
+sub feed_POST {
+    my ($self,$c,$type) = @_;
+    if($type eq 'issue'){
+	if($c->req->params->{method} eq 'delete'){
+	  my $id = $c->req->params->{issues};
+	  if($id){
+	    foreach (split('_',$id) ) {
+		my $issue = $c->model('Schema::Issue')->find($_);
+		$c->log->debug("delete issue #",$issue->id);
+		$issue->delete();
+		$issue->update();
+	    }
+	  }
+	}else{
+	  my $content= $c->req->params->{content};
+	  my $title= $c->req->params->{title};
+	  my $location= $c->req->params->{location};
+	  if( $title && $content && $location) { 
+	      
+	      $c->log->debug("create new issue $content ",$c->user->id);
+	      my $issue = $c->model('Schema::Issue')->find_or_create({report_user=>$c->user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
+	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$c->user->id,issue_id=>$issue->id}) ;
+	  }
+	}
+    }elsif($type eq 'thread'){
+	my $content= $c->req->params->{content};
+	my $issue= $c->req->params->{issue};
+	if($issue && $content) { 
+	    $c->log->debug("create new thread for issue #$issue!!!");
+	     my @threads= $c->model('Schema::Issue')->find($issue)->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
+	     my $thread_id=1;
+	     $thread_id = $threads[0]->thread_id +1 if(@threads);
+	     $c->model('Schema::IssueThread')->create({issue_id=>$issue,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$c->user->id});
+	       
+	}
+    }
+}
 =head2 pages() pages_GET()
 
 Return a list of all available pages and their URIs

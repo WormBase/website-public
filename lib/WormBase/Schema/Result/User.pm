@@ -82,5 +82,7 @@ __PACKAGE__->has_many(users_to_roles=>'WormBase::Schema::Result::UserRole', 'use
 __PACKAGE__->has_many(open_ids=>'WormBase::Schema::Result::OpenID', 'user_id');
 __PACKAGE__->many_to_many(roles => 'users_to_roles', 'role');
 
+__PACKAGE__->many_to_many(issues => 'users_to_issues', 'issue');
+__PACKAGE__->has_many(users_to_issues=>'WormBase::Schema::Result::UserIssue', 'user_id');
 # You can replace this text with custom content, and it will be preserved on regeneration
 1;
