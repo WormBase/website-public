@@ -58,7 +58,7 @@
           load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
     [% END %]
       [% IF object %]
-      [% external_links = c.stash.external_links %]
+      [%# external_links = c.stash.external_links %]
       [%# IF external_links.keys.size > 0 %]
 <!--      <li class="title">External Links</li>
       <div class="small">
