@@ -59,12 +59,12 @@
     [% END %]
       [% IF object %]
       [% external_links = c.stash.external_links %]
-      [% IF external_links.keys.size > 0 %]
-      <li class="title">External Links</li>
+      [%# IF external_links.keys.size > 0 %]
+<!--      <li class="title">External Links</li>
       <div class="small">
-      [% PROCESS links_block %]
-      </div>
-      [% END %]
+      [%# PROCESS links_block %]
+      </div>-->
+      [%# END %]
 <!--      <li class="title">Related [% object.name.data.class %]s</li>
       <li>...</li>-->
       <li class="title">My Workspace</li>

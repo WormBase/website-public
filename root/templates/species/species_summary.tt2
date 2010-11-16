@@ -1,0 +1,8 @@
+THIS IS A SPECIES SUMMARY PAGE <br />
+[% species = c.stash.species %]
+
+[% IF c.config.species_list.$species.defined %]
+<span class="species">[% c.config.species_list.$species.Title %]</span>
+[% ELSE; species; END; %]
+<br />
+[% c.stash.message %]

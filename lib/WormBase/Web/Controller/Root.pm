@@ -77,8 +77,9 @@ sub default :Path {
 #    $c->stash->{class} = $class;
 #}
  
-sub bench :Path("/bench") Args(0) {
+sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
+    $c->stash->{'section'} = 'me';
     my $class = 'bench';
     $c->stash->{'class'} = $class;
 #     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
@@ -296,7 +297,7 @@ sub report :Path("/reports") Args(2) {
 			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
      
     # $c->log->debug("Instantiated an external object: " . ref($object));
-    $c->res->redirect($c->uri_for('/search_new',$class,"$name")."?redirect=1")  if($object == -1 );
+    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
   
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
 if($object != -1 ){
@@ -326,6 +327,39 @@ if($object != -1 ){
 #     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
 #     $c->stash->{widgets} = \@widgets;
 }
+
+
+##############################################################
+#
+#   Resources
+#   URL space : /resources
+#   Params    : class, object
+# 
+##############################################################
+sub resources :Path("/resources") Args(2) {
+    my ($self,$c,$class,$name) = @_;
+
+    $c->stash->{section} = 'resources';
+    $c->stash->{template} = 'report.tt2';
+
+    unless ($c->config->{sections}->{resources}->{$class}) { 
+      # class doens't exist in this section
+      $c->detach;
+    }
+
+    $c->stash->{query_name} = $name;
+    $c->stash->{class} = $class;
+    $c->log->debug($name);
+    
+    my $api = $c->model('WormBaseAPI');
+    my $object = $api->fetch({class=> ucfirst($class),
+                  name => $name}) || $self->error_custom($c, 500, "can't connect to database");
+     
+    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+
+    $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+}
+
 
 
 
