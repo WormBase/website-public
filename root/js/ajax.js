@@ -43,7 +43,8 @@
 	      url: url,
 	      data: {title:feed.find("#id_title").attr("value"), location: page, content: feed.find("#content").attr("value")},
 	      success: function(data){
-			    feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 
+			    displayNotification("Problem Submitted! We will be in touch soon.");
+			    //feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 
 			    feed.closest('#widget-feed').fadeOut(2000,function() {feed.empty()}); 
 		      },
 	      error: function(request,status,error) {
