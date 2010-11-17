@@ -45,7 +45,7 @@
 	      success: function(data){
 			    displayNotification("Problem Submitted! We will be in touch soon.");
 			    //feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 
-			    feed.closest('#widget-feed').fadeOut(2000,function() {feed.empty()}); 
+			    feed.closest('#widget-feed').hide(); 
 		      },
 	      error: function(request,status,error) {
 			    alert(request + " " + status + " " + error);
@@ -97,7 +97,7 @@
 
     $(".reload").live('click', function() {
       var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/bench//" + widget_name);
+      $("div#" + widget_name + "-content").load("/rest/widget/bench/a/" + widget_name);
     });
 
       $(".bench_update").live('click',function() {
