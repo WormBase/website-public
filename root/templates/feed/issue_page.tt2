@@ -1,3 +1,27 @@
+<script>
+ $(".issue-update").live('click',function() {
+	if("[% c.user_exists %]") {
+	      var url= $(this).attr("rel");
+	       
+	      $.ajax({
+		type: 'POST',
+		url: url,
+		data: {content: $("textarea").attr('value'),issue:[% issue.id %]},
+		success: function(data){
+			     window.location.reload();  
+			},
+		error: function(request,status,error) {
+			      alert(request + " " + status + " " + error);
+			}
+	      });
+	}else{
+	    alert("you need to login to use this function");
+	}
+	    return false;
+
+    });
+</script>
+
 <style>
 .issue-content{
   position:relative;
@@ -9,7 +33,8 @@
 <div style=" margin:0 3em " >
 <div class="issue-content">
 <h2>#[% issue.id %] [% issue.title %] 
-<br><font size="2">Reported by <a href="#">[% username(issue.owner) %],</a> 
+ [% array=issue.location.split('/') %]
+<br><font size="2">Reported by <a href="#">[% username(issue.owner) %],</a> on <a href="[% c.uri_for('reports',array.3,array.4) %]">[% array.6 %] [% array.3 %] page [% array.5 %] section</a>
 [% USE time_dir = Time.Duration %]
 created <span id="fade">[% time_dir.ago(current_time - issue.submit_time) %]</span>
 last edited by <a href="#">[% username(last_edit) %]</a> 
@@ -38,32 +63,10 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 <form>
 <textarea rows="10" cols="40" id="content"></textarea>
 <p>
-<input type='submit' value='Add' class="issue-update" id="[% issue.id %]" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
+<input type='submit' value='Add' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
  <input type='reset' value='Reset' />
 </p>
 </form>
 </div>
 </div>
-<script>
- $(".issue-update").live('click',function() {
-	if("[% c.user_exists %]") {
-	      var url= $(this).attr("rel");
-	       
-	      $.ajax({
-		type: 'POST',
-		url: url,
-		data: {content: $("textarea").attr('value'),issue:"[% issue.id %]"},
-		success: function(data){
-			     window.location.reload();  
-			},
-		error: function(request,status,error) {
-			      alert(request + " " + status + " " + error);
-			}
-	      });
-	}else{
-	    alert("you need to login to use this function");
-	}
-	    return false;
-
-    });
-</script>
+ 
