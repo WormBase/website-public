@@ -70,6 +70,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "last_name",
   { data_type => "text", is_nullable => 1 },
+  "gtalk_key",
+  { data_type => "text", is_nullable => 1 },
   "active",
   { data_type => "integer", is_nullable => 1 },
 );

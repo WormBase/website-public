@@ -20,10 +20,14 @@
     [% admin = "<input type='checkbox' class='role-update' value='admin' id='" _ obj.id _ "' />" ;
 	IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
 	curator = "<input type='checkbox' class='role-update' value='curator' id='" _ obj.id _ "' />" ;
-	IF obj.curator ;curator=curator.replace('id=','checked id=') ; END %]
-	[% rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator]) %]
+	IF obj.curator ;curator=curator.replace('id=','checked id=') ; END;
+	operator = "<input type='checkbox' class='role-update' value='operator' id='" _ obj.id _ "' />" ;
+	IF obj.operator ; operator=operator.replace('id=','checked id='); END ;
+
+    %]
+	[% rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator,operator]); %]
     [% END %]
-[% dataTable_list(['username','email','first name','last name','admin','curator'],rows,'user_list') %]
+[% dataTable_list(['username','email','first name','last name','admin','curator','operator'],rows,'user_list') %]
 </fieldset>
 
 [% END %]

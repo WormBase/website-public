@@ -8,7 +8,7 @@
     $(".feed").live('click',function() {
 	var url=$(this).attr("rel");
 	var div=$(this).parent().next("#widget-feed");
-	div.filter(":hidden").load(url);
+	div.filter(":hidden").empty().load(url);
 	div.slideToggle('fast');
     });
 

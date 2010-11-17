@@ -192,6 +192,7 @@ sub profile :Path("/profile") {
 			first_name=>$user->first_name,
 			last_name=>$user->last_name,
 			id=>$user->id,
+			operator=>$user->active,
 		      };
 	  my @roles =$user->roles;
 	    
