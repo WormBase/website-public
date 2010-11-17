@@ -69,8 +69,16 @@ sub default :Path {
     }
 }
 
-sub issue :Path("/issue") Args(1) {
+sub issue :Path("/issue") Args {
     my ( $self, $c ,$id) = @_;
+    unless($id) {
+      $c->stash->{template} = "feed/issue.tt2";
+      my @issues = $c->model('Schema::Issue')->search(undef);
+      $c->stash->{issues} = \@issues;
+      $c->stash->{issues_type} = "all";
+      $c->stash->{current_time}=time();
+      return;
+    }
     $c->stash->{template} = "feed/issue_page.tt2";
     my $issue = $c->model('Schema::Issue')->find($id);
     $c->stash->{issue} = $issue;
