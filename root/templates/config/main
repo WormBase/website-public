@@ -38,7 +38,12 @@
         url;
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
-        c.uri_for_action('report', class , id);
+#         c.uri_for_action('report', class , id);
+        IF c.config.sections.species.$class.defined;
+          c.uri_for('/species', class, id);
+        ELSE;
+          c.uri_for('/resources', class, id);
+        END;
       END; 
    END;
 
@@ -60,7 +65,7 @@
    END;
 
     MACRO searchlink(class, id, text) BLOCK;
-       url = c.uri_for('/search_new', class, id);
+       url = c.uri_for('/search', class, id);
        "<a href=\"$url\" class=\"$class-link\">$text</a>";
     END;
 

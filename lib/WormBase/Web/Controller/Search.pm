@@ -12,44 +12,89 @@ use parent 'Catalyst::Controller::FormBuilder';
 #   Params    : class, query
 #
 ##############################################################
-sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
-    my ($self, $c) = @_;
-    $c->log->debug("search method...");
-  
-    #all search results will end up at the search/results template.
-    $c->stash->{template} = "search/results.tt2";
-}
+# sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
+#     my ($self, $c) = @_;
+#     $c->log->debug("search method...");
+#   
+#     #all search results will end up at the search/results template.
+#     $c->stash->{template} = "search/results.tt2";
+# }
 
-# a gene search
-sub gene_search :Chained('search') :PathPart('gene') :Args(1) {
-    my ($self, $c, $query) = @_;
-    $c->log->debug("gene_search method");
-    $c->stash->{'query'} = $query;
-    $c->log->debug(join(', ', @{$c->req->args}));
-
+sub search :Path('/search')  :Args(2) {
+    my ($self, $c, $type, $query) = @_;
+      
+    $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
+    if($type eq 'all' && !(defined $c->req->param("view"))) {
+    $c->log->debug(" search all kinds...");
+    $c->stash->{template} = "search/full_list.tt2";
+    $c->stash->{type} =  [keys %{ $c->config->{pages} } ];
+    } else {
+    $c->log->debug("$type search");
+     
     my $api = $c->model('WormBaseAPI');
-    my $objs = $api->search->gene({pattern => $query});
+    my $class =  $c->req->param("class") || $type;
+    my $search = $type;
+    $search = "basic" unless  $api->search->meta->has_method($type);
+    my $objs;
 
-    # fix your redirect to just call action.  Find out how to do this.
-    if(scalar @$objs == 1) {
-      $c->res->redirect('/reports/gene/' . @$objs[0]->id);
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+    unless($cached_data) {  
+        $cached_data = $api->search->$search({class => $class, pattern => $query});
+        $c->set_cache($cache_id,$cached_data);
+    }  
+    $objs = $cached_data;
+
+    if(@$objs<1) { #this may not be optimal
+      $query.="*";
+      $objs = $api->search->$search({class => $class, pattern => $query}) ;
+      ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+      unless($cached_data) {  
+          $cached_data = $api->search->$search({class => $class, pattern => $query});
+          $c->set_cache($cache_id,$cached_data);
+      } 
+      $objs = $cached_data;
+
     }
-
+    $c->stash->{'type'} = $type; 
     $c->stash->{'results'} = $objs;
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    } elsif(@$objs==1 ) {
+        my $url;
+        if(defined $c->config->{'sections'}->{'species'}->{$class}){
+          $url = $c->uri_for('/species',$type,$objs->[0]->{obj_name});
+        }else{
+          $url = $c->uri_for('/resources',$type,$objs->[0]->{obj_name});
+        }
+        $c->res->redirect($url);
+    } 
+        $c->stash->{template} = "search/results.tt2";
+    }
+    $c->stash->{'query'} = $query;
+    $c->stash->{'class'} = $type;
+     
 }
 
-# a variation search
-sub variation_search :Chained('search') :PathPart('variation') :Args(1) {
-    my ($self, $c, $query) = @_;
-    $c->log->debug("variation_search method");
-    $c->stash->{'query'} = $query;
-    $c->log->debug(join(', ', @{$c->req->args}));
+sub search_preview :Path('/search/preview')  :Args(2) {
+    my ($self, $c, $type, $species) = @_;
 
+    $c->log->debug("search preview");
+
+    $c->stash->{template} = "search/results.tt2";
     my $api = $c->model('WormBaseAPI');
-    my $objs = $api->search->variation({pattern => $query});
+    my $class =  $type;
+    my $begin = $c->req->param("begin") || 0;
+    my $end = $c->req->param("end") ||10;
+    my $objs;
+    $objs = $api->search->preview({class => $class, species => $species, begin=>$begin, end=>$end});
 
+    $c->stash->{'type'} = $type; 
     $c->stash->{'results'} = $objs;
+    $c->stash->{noboiler} = 1;
 
+    $c->stash->{'query'} = $species;
+    $c->stash->{'class'} = $type;
 }
 
 

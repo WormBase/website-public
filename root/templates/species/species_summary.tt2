@@ -1,0 +1,16 @@
+
+[% species = c.stash.species %]
+
+[% IF c.config.species_list.$species.defined %]
+<span class="species">[% c.config.species_list.$species.Title %]</span>
+[% ELSE; species; END; %] summary page
+<br />
+
+
+<br />
+Classes:
+<br />
+
+          [% FOREACH option IN c.config.sections.species.keys %]
+            <li><a href="/species/[% species _ "/" _ option %]">[% option %]</a></li>
+          [% END %]

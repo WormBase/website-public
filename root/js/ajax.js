@@ -97,7 +97,7 @@
 
     $(".reload").live('click', function() {
       var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/bench/a/" + widget_name);
+      $("div#" + widget_name + "-content").load("/rest/widget/me/a/" + widget_name);
     });
 
       $(".bench_update").live('click',function() {

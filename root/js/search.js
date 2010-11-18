@@ -36,7 +36,7 @@ function search() {
     f = f.replace('%26', '&');
     f = f.replace('%2F', '/');
 
-    location.href = '/search_new/' + cur_search_type + '/' + f;
+    location.href = '/search/' + cur_search_type + '/' + f;
 }
 
 function search_change(new_search) {

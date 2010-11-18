@@ -1,0 +1,40 @@
+
+<div id="widgets">
+  <div id="navigation">
+    <ul>
+    [% FOREACH w IN widgets -%]
+      <li id="nav-[% w.id %]" 
+         class="
+          [% IF w.type != "title" %]
+            module-load
+          [% END %]
+          [% w.type %]"
+          wname="[% w.id %]"
+          href="[% w.href %]" 
+          load=1>[% w.title %]</li>
+    [% END %]
+  
+      <li class="title">Recently Activity</li>
+      <div class="user-history small" id="user_history"></div>
+      <div class="small">
+      <li id="nav-user_history" 
+          class="module-load bench" 
+          wname="user_history"
+          href="[% c.uri_for('/rest','widget','bench','a','user_history') %]" 
+          load=1>see more...</li></div>
+    </ul>
+    <div id="nav-min" class="ui-corner-right" title="close sidebar"><div id="nav-min-icon"></div></div>
+  </div>
+
+  <div id="widget-holder" class="[% class %]">
+    <div class="sortable left">
+      [% FOREACH w IN widgets -%]
+          [% IF w.type == "title"; NEXT; END; %]
+          <li id="[% w.id %]" class="widget">
+          [% PROCESS widget_sortable_block type=w.type-%]
+          </li>   
+      [% END %]
+    </div>
+    <div class="sortable right"></div>
+  </div>
+</div>
