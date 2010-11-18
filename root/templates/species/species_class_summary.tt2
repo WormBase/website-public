@@ -1,0 +1,39 @@
+
+[% species = c.stash.species %]
+
+<span class="highlight">[% c.stash.class %]</span> class summary page
+
+[% IF species %]
+for 
+<span class="species">[% c.config.species_list.$species.Title %]</span>
+
+[% END %]
+
+<br />
+<br />
+TODO: add search;
+<br />
+<br />
+<div id="preview"></div>
+<br />
+<div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% c.stash.class %]s</a></div>
+
+<script>
+        var begin = 0;
+        var end = 10;
+  function load_preview(){
+
+        $("#message").html("<span id=\"fade\">loading...</span>");
+        var div = $("<div></div>");
+        div.load("/search/preview/[% c.stash.class %]/*[% c.config.species_list.$species.full_name %]?begin=" + begin + "&end=" + end, function(response, status, xhr) {
+          $("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
+          begin = begin + 10;
+          end = end +10;
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $("#preview").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+        div.appendTo($("#preview"));
+  }
+</script>

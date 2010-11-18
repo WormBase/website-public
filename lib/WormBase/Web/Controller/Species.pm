@@ -25,7 +25,8 @@ sub species_summary :Path('/species') :Args(1)  {
       $c->stash->{section} = 'species';
       $c->stash->{species} = $species;
     }elsif(defined $c->config->{'sections'}->{'species'}->{$species}){
-      $c->stash->{message} = 'class sumary page ' . $species;
+      $c->stash->{template} = 'species/species_class_summary.tt2';
+        $c->stash->{class} = $species;
     }else{
       $c->detach;
     }
@@ -35,9 +36,9 @@ sub species_class_summary :Path("/species") Args(2) {
     my ($self,$c,$class,$name) = @_;
     if(defined $c->config->{'species_list'}->{$class}){
       if(defined $c->config->{'sections'}->{'species'}->{$name}){
-        $c->stash->{template} = 'species/species_summary.tt2';
+        $c->stash->{template} = 'species/species_class_summary.tt2';
         $c->stash->{species} = $class;
-        $c->stash->{message} = 'species class sumary page ' . $name;
+        $c->stash->{class} = $name;
       }else{
         # maybe search class names?
         $c->detach;
