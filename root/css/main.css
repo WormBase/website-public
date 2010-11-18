@@ -1040,7 +1040,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 #navigation ul li span.ui-icon{ 
   float:right;
+  visibility:hidden;
 }
+
+#navigation ul li.ui-selected span.ui-icon, #navigation ul li:hover span.ui-icon  { 
+  visibility:visible;
+}
+
 
 #nav-min{
   height:100%;
