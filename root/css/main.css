@@ -152,12 +152,13 @@ ul.nav-bar li {
 
 ul.nav-bar li a{
   float:left;
-  padding:0.5em 0.7em 0;
+  padding:0.5em 1.1em 0;
   margin:0;
   color:#555;
 /*   color:black; */
   height:1.4em;
   font-weight:bold;
+  white-space:nowrap;
 }
 
 ul.nav-bar li span {
@@ -193,10 +194,28 @@ ul.nav-bar ul.dropdown {
 }
 
 ul.nav-bar ul.dropdown li {
-  padding:0.2em 0;
+  padding:0.3em 0;
   width:100%;
   font-size:0.8em;
   list-style: none;
+}
+
+ul.nav-bar ul.dropdown ul.dropdown {
+  position:absolute;
+  top:0em;
+  left:100%;
+  width:10em;
+}
+
+ul.nav-bar ul.dropdown ul.dropdown li {
+  width:10em;
+  font-size:1em;
+}
+
+ul.nav-bar ul.dropdown li a span.ui-icon{
+  position:absolute;
+  right:0;
+  top:0;
 }
 
 ul.nav-bar ul.dropdown li.selected {
@@ -210,9 +229,9 @@ ul.nav-bar ul.dropdown li.selected {
 ul.nav-bar ul.dropdown li a{
   float:none;
   border:none;
-  height:auto;
   color:black;
   font-weight:normal;
+  padding:0.5em;
 }
 
 ul.nav-bar form#searchForm ul.dropdown {

@@ -28,8 +28,36 @@ sub basic {
 			    -pattern=>$pattern);
 
   return _wrap_objs($self, \@objs, $class);
-   
 }
+
+sub preview {
+  my ($self,$args) = @_;
+  my $class     = $args->{class};
+  my $species   = $args->{species};
+  my $begin = $args->{begin};
+  my $end = $args->{end};
+  my $ace_class = ucfirst($class);
+  my $query = "find $ace_class where Species=$species";
+  my $itr;
+  if($species){
+#   $itr = $self->dbh->fetch_many(-query=>qq(find $ace_class where Species=$species));
+    $itr = $self->dbh->fetch_many($ace_class=>'*');
+  }else{
+    $itr = $self->dbh->fetch_many($ace_class=>'*');
+  }
+  my $i = 0;
+  my @objs;
+  my $obj;
+  while(($obj = $itr->next) && ($i < $end)){
+    if($i>= $begin){
+      push(@objs, $obj);
+    }
+    $i++;
+  }
+
+  return _wrap_objs($self, \@objs, $class);
+}
+
 # Search for paper objects
 sub paper {
     my ($self,$args) = @_;

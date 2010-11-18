@@ -12,7 +12,6 @@
 
 [% # Sidebar View %]
 [% IF view=="sidebar" || (view == "") %]
-
     <div class="title">
       [% title %]
       [%- IF object -%]
@@ -28,7 +27,6 @@
       [% ELSE %]
         <h2>My Workspace</h2>
       [% END %] 
-
           <div class="columns"><span id="fade" style="float:left">Layout</span>
           <div class="ui-icon ui-icon-triangle-1-s"></div>
           <ul>
@@ -40,79 +38,41 @@
           </ul>
           </div>
     </div>
-<div id="widgets">
-  <div id="navigation">
-    <ul>
-      <li class="title">Page Content</li>
-    [% widgets = c.config.pages.$class.widgets.keys.sort %]
-    [% IF object; widgets.unshift('overview'); END; %]
-    [% widgets = widgets.unique %]
-    [% FOREACH widget_name IN widgets -%]
-      [% IF ((widget_name == 'profile') AND (NOT (c.user_exists))); NEXT; END; %]
-      [% widget = c.config.pages.$class.widgets.$widget_name %]
-      [% IF class=='bench'; this_object_id = 'a'; END %]
-      <li id="nav-[% widget_name %]" 
-          class="module-load [% class %]"
-          wname="[% widget_name %]"
-          href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]" 
-          load=1>[% widget.title; IF (class == 'bench'); ' <span class="get_count" href="bench.$widget_name"></span>'; END; %]</li>
-    [% END %]
-      [% IF object %]
-      [% external_links = c.stash.external_links %]
-      [% IF external_links.keys.size > 0 %]
-      <li class="title">External Links</li>
-      <div class="small">
-      [% PROCESS links_block %]
-      </div>
-      [% END %]
-<!--      <li class="title">Related [% object.name.data.class %]s</li>
-      <li>...</li>-->
-      <li class="title">My Workspace</li>
-      [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+
+  [% widgets = [] %]
+  [% widgets.push({ title="Page Content" type="title"}) %]
+  [% widget_list = c.config.pages.$class.widgets.keys.sort %]
+  [% IF object; widget_list.unshift('overview'); END; %]
+  [% widget_list = widget_list.unique %]
+  [% FOREACH widget_name IN widget_list -%]
+    [% IF ((widget_name == 'profile') AND (NOT (c.user_exists))); NEXT; END; %]
+
+    
+    [% widget = c.config.pages.$class.widgets.$widget_name %]
+    [% w = { id = widget_name
+             title = widget.title
+             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+             type = class
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+
+  [% IF object %]
+    [% widgets.push({ title="My Workspace" type="title"}) %]
+    [% FOREACH widget_name IN ['reports', 'my_library'] -%]
       [% widget = c.config.pages.bench.widgets.$widget_name %]
-      <li id="nav-[% widget_name %]" 
-          class="module-load bench"
-          wname="[% widget_name %]"
-          href="[% c.uri_for('/rest','widget','bench','a',widget_name) %]" 
-          load=1>[% widget.title %]</li>
-      [% END %]
-      <li class="title">Recently Activity</li>
-      <div class="user-history small" id="user_history"></div>
-      <div class="small">
-      <li id="nav-user_history" 
-          class="module-load bench" 
-          wname="user_history"
-          href="[% c.uri_for('/rest','widget','bench','a','user_history') %]" 
-          load=1>see more...</li></div>
-      [% END %]
-    </ul>
-    <div id="nav-min" class="ui-corner-right" title="close sidebar"><div id="nav-min-icon"></div></div>
-  </div>
-  
+      [% w = { id = widget_name
+              title = widget.title
+              href =  c.uri_for('/rest','widget','bench','a',widget_name)
+              type = "bench"
+              };
+      %]
+      [% widgets.push(w) %]
+    [% END %]
+  [% END %]
 
-
-
-   <div id="widget-holder" class="[% class %]">
-  <div class="sortable left">
-      [% FOREACH widget_name IN widgets %]
-        [% widget = c.config.pages.$class.widgets.$widget_name %]
-        <li id="[% widget_name %]" class="widget">
-        [% PROCESS widget_sortable_block type="$class"-%]
-        </li>   
-      [% END %]
-
-      [% IF object %]
-        [% FOREACH bench_name IN ['reports', 'my_library', 'user_history'] %]
-          [% widget = c.config.pages.bench.widgets.$bench_name %]
-          <li id="[% bench_name %]" class="widget">
-          [% PROCESS widget_sortable_block type="bench"-%]
-          </li>  
-        [% END %]
-      [% END %]
-  </div>
-  <div class="sortable right"></div>
-  </div>
-  [%# maybe set this in config somewhere?? %]
+[% PROCESS "shared/sidebar_structure.tt2" widgets=widgets%]
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
@@ -129,7 +89,6 @@
 
     </script>
 
-</div>
 [% ELSE %]
 
 <div class="title">
