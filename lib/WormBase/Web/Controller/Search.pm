@@ -76,6 +76,27 @@ sub search :Path('/search')  :Args(2) {
      
 }
 
+sub search_preview :Path('/search/preview')  :Args(2) {
+    my ($self, $c, $type, $species) = @_;
+
+    $c->log->debug("search preview");
+
+    $c->stash->{template} = "search/results.tt2";
+    my $api = $c->model('WormBaseAPI');
+    my $class =  $type;
+    my $begin = $c->req->param("begin") || 0;
+    my $end = $c->req->param("end") ||10;
+    my $objs;
+    $objs = $api->search->preview({class => $class, species => $species, begin=>$begin, end=>$end});
+
+    $c->stash->{'type'} = $type; 
+    $c->stash->{'results'} = $objs;
+    $c->stash->{noboiler} = 1;
+
+    $c->stash->{'query'} = $species;
+    $c->stash->{'class'} = $type;
+}
+
 
 #########################################
 # Search actions

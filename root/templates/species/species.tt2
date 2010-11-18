@@ -1,3 +1,15 @@
-THIS IS THE SPECIES TEMPLATE
+Species:
 <br />
-list species or something
+
+          [% FOREACH option IN c.config.species_list.keys %]
+            <li><a href="/species/[% option %]">[% c.config.species_list.$option.Title %]</a></li>
+          [% END %]
+
+
+<br />
+Classes:
+<br />
+
+          [% FOREACH option IN c.config.sections.species.keys %]
+            <li><a href="/species/[% option %]">[% option %]</a></li>
+          [% END %]
