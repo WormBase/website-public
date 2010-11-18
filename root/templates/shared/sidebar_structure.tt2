@@ -3,6 +3,9 @@
   <div id="navigation">
     <ul>
     [% FOREACH w IN widgets -%]
+      [% IF w.type == "title" %]
+      <li class="title">[% w.title %]</li>
+      [% ELSE %]
       <li id="nav-[% w.id %]" 
          class="
           [% IF w.type != "title" %]
@@ -11,7 +14,9 @@
           [% w.type %]"
           wname="[% w.id %]"
           href="[% w.href %]" 
-          load=1>[% w.title %]</li>
+          load=1>[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+      </li>
+      [% END %]
     [% END %]
   
       <li class="title">Recently Activity</li>
