@@ -299,10 +299,13 @@ li.visible div.widget-container {
     border:0;
 }
 
-.widget-container.bench  #widget-header {
+.widget-container.me  #widget-header {
     background: #D0DEC1;
 }
 
+#navigation .me.ui-selected{
+  background: #D0DEC1;
+}
 
 .widget-container #widget-footer {
     font-size:0.9em;    
@@ -1090,10 +1093,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
 }
 
-#navigation .bench.ui-selected{
-  background: #D0DEC1;
-}
-
 .right{
   min-height:10em;
 }
@@ -1136,6 +1135,10 @@ div.details div.field div.field-title {
 
 div.details div.field div.field-content{
   float:left;
+}
+
+.bench_update {
+  float:right;
 }
 
 /*Strain table*/

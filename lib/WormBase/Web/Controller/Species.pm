@@ -59,7 +59,7 @@ sub species_report :Path("/species") Args(3) {
 sub get_report {
     my ($self,$c,$class,$name) = @_;
     $c->stash->{section} = 'species';
-    $c->stash->{template} = 'report.tt2';
+    $c->stash->{template} = 'species/report.tt2';
 
     unless ($c->config->{sections}->{species}->{$class}) { 
       # class doens't exist in this section

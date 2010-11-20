@@ -105,9 +105,7 @@ sub me :Path("/me") Args(0) {
     $c->stash->{'section'} = 'me';
     my $class = 'bench';
     $c->stash->{'class'} = $class;
-#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-#     $c->stash->{widgets} = \@widgets;
-    $c->stash->{template} = "report.tt2";
+    $c->stash->{template} = "me.tt2";
 } 
 ##############################################################
 #
