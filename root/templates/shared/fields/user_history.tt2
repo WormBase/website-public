@@ -1,7 +1,8 @@
 
 [% FOREACH h IN c.stash.history %]
   <li><div class="ellipsis">
-    [% IF h.data.type == 'reports'; tag2link(h.data);%]
+    [% IF h.data.type == 'species'; tag2link(h.data);%]
+    [% ELSIF h.data.type == 'resources'; tag2link(h.data);%]
     [% ELSIF h.data.type == 'search'; searchlink(h.data.class, h.data.id, h.data.class _ ' search: ' _ h.data.id); %]
     [% ELSIF h.data.type == 'me'; "<a href=\"" _ c.uri_for_action('me') _ "\">my wormbase</a>";%]
     [% ELSE %] <a href="[% h.path %]">[% h.path %]</a>

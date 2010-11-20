@@ -30,9 +30,10 @@ Catalyst Controller.
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
-	my $path = $c->req->params->{ref};
-	if($path){
-      my ($type, $class, $id) = split(/\//,$path); 
+    my $id = $c->req->params->{id};
+	if($id){
+      my $class = $c->req->params->{class};
+      my $type = $c->req->params->{type};
       $c->log->debug("type: $type, class: $class, id: $id");
       $type = "my_library" if ($class eq 'paper');
       my $name = $c->req->params->{name} || "this $class";
@@ -45,13 +46,10 @@ sub workbench_GET {
             $c->user_session->{bench}{$type}{$class}{$id}=localtime();
             $c->stash->{notify} = "$name has been added to your favourites"; 
       }
-      $c->stash->{path} = $path; 
     }
  	$c->stash->{noboiler} = 1;
-
     my $count = scalar($c->user_session->{bench}{count}) || 0;
     $c->stash->{count} = $count;
-#     $c->response->body("($count)");
     $c->stash->{template} = "workbench/count.tt2";
 } 
 
@@ -59,19 +57,23 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 
 sub workbench_star_GET{
     my ( $self, $c) = @_;
-    my $path = $c->req->params->{ref};
-    my $wbid = $c->req->params->{id};
+    my $wbid = $c->req->params->{wbid};
     my $name = $c->req->params->{name};
-    my ($type, $class, $id) = split(/\//,$path); 
+    my $class = $c->req->params->{class};
+    my $type = $c->req->params->{type};
+    my $id = $c->req->params->{id};
+
     $type = "my_library" if ($class eq 'paper');
     if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
-          $c->stash->{star} = 1;
+          $c->stash->{star}->{value} = 1;
     } else{
-        $c->stash->{star} = 0;
+        $c->stash->{star}->{value} = 0;
     }
-    $c->stash->{path} = $path;
-    $c->stash->{id} = $wbid;
-    $c->stash->{name} = $name;
+    $c->stash->{star}->{wbid} = $wbid;
+    $c->stash->{star}->{name} = $name;
+    $c->stash->{star}->{class} = $class;
+    $c->stash->{star}->{id} = $id;
+    $c->stash->{star}->{type} = $type;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
 }
@@ -144,46 +146,6 @@ sub layout_list_GET {
 }
 
 
-sub _bench {
-    my ($self,$c, $widget) = @_; 
-    $c->log->debug("getting bench widget");
-    my $api = $c->model('WormBaseAPI');
-    my @ret;
-    my $type;
-    $c->stash->{'bench'} = 1;
-    if($widget=~m/user_history/){
-      $self->history_GET($c);
-      return;
-    } elsif($widget=~m/profile/){
-	$c->stash->{noboiler} = 1;
-        $c->res->redirect('/profile');
-	return;
-    }elsif($widget=~m/issue/){
-	$self->feed_GET($c,"issue");
-	return;
-    }
-    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
-    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
-      my @objs;
-      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
-        my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-        push(@objs, $obj);
-      }
-      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
-    }
-    @ret = map{
-            my $class = lcfirst($_->{name}->{class});
-            my $id = $_->{name}->{id};
-            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
-            $_;
-              } @ret;
-    $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = $type; 
-    $c->stash->{template} = "search/results.tt2";
-    $c->stash->{noboiler} = 1;
-}
-
 
 sub auth :Path('/rest/auth') :Args(0) :ActionClass('REST') {}
 
@@ -221,10 +183,14 @@ sub history_GET {
 sub history_POST {
     my ($self,$c) = @_;
     $c->log->debug("history logging");
-    my $path = $c->req->params->{ref};
+    my $path = $c->request->body_parameters->{'ref'};
     unless($c->user_session->{history}->{$path}){
-      my ($i,$type, $class, $id) = split(/\//,$path); 
-      my $name = $c->req->params->{name} || $id;
+#       my ($i,$type, $class, $id) = split(/\//,$path); 
+      my $id = $c->request->body_parameters->{'id'};
+      my $class = $c->request->body_parameters->{'class'};
+      my $type = $c->request->body_parameters->{'type'};
+      my $name = $c->request->body_parameters->{'name'} || $id;
+#       my $name = $c->req->params->{name} || $id;
       $c->log->debug("type:$type, class:$class, id:$id, name:$name");
       $c->user_session->{history}->{$path}->{data} = { label => $name, class => $class, id => $id, type => $type };
     }
@@ -293,56 +259,6 @@ sub evidence_GET {
 		     }
 	);
 }
-# 
-# sub search_new :Path('/search_new')  :Args(2) {
-#     my ($self, $c, $type, $query) = @_;
-#       
-#     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
-#     if($type eq 'all' && !(defined $c->req->param("view"))) {
-# 	$c->log->debug(" search all kinds...");
-# 	$c->stash->{template} = "search/full_list.tt2";
-# 	$c->stash->{type} =  [keys %{ $c->config->{pages} } ];
-#     } else {
-# 	$c->log->debug("$type search");
-# 	 
-# 	my $api = $c->model('WormBaseAPI');
-# 	my $class =  $c->req->param("class") || $type;
-# 	my $search = $type;
-# 	$search = "basic" unless  $api->search->meta->has_method($type);
-# 	my $objs;
-# 
-# 	# Does the data for this widget already exist in the cache?
-# 	my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
-# 	unless($cached_data) {  
-# 	    $cached_data = $api->search->$search({class => $class, pattern => $query});
-# 	    $c->set_cache($cache_id,$cached_data);
-# 	}  
-# 	$objs = $cached_data;
-# 
-# 	if(@$objs<1) { #this may not be optimal
-# 	  $query.="*";
-# 	  $objs = $api->search->$search({class => $class, pattern => $query}) ;
-# 	  ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
-# 	  unless($cached_data) {  
-# 	      $cached_data = $api->search->$search({class => $class, pattern => $query});
-# 	      $c->set_cache($cache_id,$cached_data);
-# 	  } 
-# 	  $objs = $cached_data;
-# 
-# 	}
-# 	$c->stash->{'type'} = $type; 
-# 	$c->stash->{'results'} = $objs;
-# 	if(defined $c->req->param("inline")) {
-# 	  $c->stash->{noboiler} = 1;
-# 	} elsif(@$objs==1 ) {
-# 	    $c->res->redirect($c->uri_for('/reports',$type,$objs->[0]->{obj_name}));
-# 	} 
-#         $c->stash->{template} = "search/results.tt2";
-#     }
-#     $c->stash->{'query'} = $query;
-#     $c->stash->{'class'} = $type;
-#      
-# }
 
 
 sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
@@ -622,6 +538,92 @@ sub widget_GET {
 		     }
 	);
 }
+
+
+sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
+
+sub widget_me_GET {
+    my ($self,$c,$widget) = @_; 
+    $c->log->debug("getting me widget");
+    my $api = $c->model('WormBaseAPI');
+    my @ret;
+    my $type;
+    $c->stash->{'bench'} = 1;
+    if($widget=~m/user_history/){
+      $self->history_GET($c);
+      return;
+    } elsif($widget=~m/profile/){
+    $c->stash->{noboiler} = 1;
+        $c->res->redirect('/profile');
+    return;
+    }elsif($widget=~m/issue/){
+    $self->feed_GET($c,"issue");
+    return;
+    }
+    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
+    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
+      my @objs;
+      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
+        my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+        push(@objs, $obj);
+      }
+      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+    }
+    @ret = map{
+            my $class = lcfirst($_->{name}->{class});
+            my $id = $_->{name}->{id};
+            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
+            $_;
+              } @ret;
+    $c->stash->{'results'} = \@ret;
+    $c->stash->{'type'} = $type; 
+    $c->stash->{template} = "search/results.tt2";
+    $c->stash->{noboiler} = 1;
+
+}
+
+
+sub _bench {
+    my ($self,$c, $widget) = @_; 
+    $c->log->debug("getting bench widget");
+    my $api = $c->model('WormBaseAPI');
+    my @ret;
+    my $type;
+    $c->stash->{'bench'} = 1;
+    if($widget=~m/user_history/){
+      $self->history_GET($c);
+      return;
+    } elsif($widget=~m/profile/){
+    $c->stash->{noboiler} = 1;
+        $c->res->redirect('/profile');
+    return;
+    }elsif($widget=~m/issue/){
+    $self->feed_GET($c,"issue");
+    return;
+    }
+    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
+    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
+      my @objs;
+      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
+        my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+        push(@objs, $obj);
+      }
+      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+    }
+    @ret = map{
+            my $class = lcfirst($_->{name}->{class});
+            my $id = $_->{name}->{id};
+            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
+            $_;
+              } @ret;
+    $c->stash->{'results'} = \@ret;
+    $c->stash->{'type'} = $type; 
+    $c->stash->{template} = "search/results.tt2";
+    $c->stash->{noboiler} = 1;
+}
+
 
 
 

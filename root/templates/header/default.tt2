@@ -16,7 +16,7 @@
               <ul class="dropdown ui-corner-bottom">  
                 <li><a href="#">Browse Genome</a></li>
               [% FOREACH class IN c.config.sections.species.keys %]
-                <li><a href="/species/[% option %]/[% class %]">[% class %]</a></li>
+                <li><a href="/species/[% option %]/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
               [% END %]
               </ul>
             </li>
@@ -51,12 +51,7 @@
 </div>
 
 <script>
-  $.ajax({
-    type: "POST",
-    url : "/rest/history?ref=" 
-            + window.location.pathname 
-            + "&name=[% object.name.data.label %]",
-  });
+$.post("/rest/history", { 'ref': window.location.pathname , 'name' : "[% object.name.data.label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
 </script>
 
 <!-- END boilerplate/banner -->

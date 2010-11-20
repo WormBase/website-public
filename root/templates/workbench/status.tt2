@@ -1,6 +1,12 @@
-<a class="bench_update" wbid="[% c.stash.id %]" href="/rest/workbench" ref="[% c.stash.path %]" name="[% c.stash.name %]" style="float:right">
+<a class="bench_update" 
+    wbid="[% c.stash.star.wbid %]" 
+    href="/rest/workbench" 
+    name="[% c.stash.star.name %]" 
+    objclass="[% c.stash.star.class %]" 
+    id="[% c.stash.star.id %]" 
+    type="[% c.stash.star.type %]">
 <div id="save" class="ui-icon ui-icon-stars
-[% IF c.stash.star == 1 %]
+[% IF c.stash.star.value == 1 %]
   ui-icon-star-yellow" title="remove this report from your workbench" 
 [% ELSE %]
   ui-icon-star-gray" title="add this report to your workbench" 

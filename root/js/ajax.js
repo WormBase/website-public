@@ -97,25 +97,26 @@
 
     $(".reload").live('click', function() {
       var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/me/a/" + widget_name);
+      $("div#" + widget_name + "-content").load("/rest/widget/me/" + widget_name);
     });
 
       $(".bench_update").live('click',function() {
-        var ref     = $(this).attr("ref");
-        var id     = $(this).attr("wbid");
+        var wbid     = $(this).attr("wbid");
+        var id     = $(this).attr("id");
+        var class     = $(this).attr("objclass");
+        var type     = $(this).attr("type");
         var label     = $(this).attr("name");
-        var url     = $(this).attr("href") + '?ref=' + ref  + "&name=" + escape(label);
+        var url     = $(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type;
         $("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
-                              $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                              $("#bench_status").html(msg + xhr.status + " " + xhr.statusText);
                               }
-                            
                           });
         $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
-        $(".workbench-status-" + id).load("/rest/workbench/star?ref=" + ref + "&id=" + id + "&name=" + escape(label));
-        $("div#reports-content").load("/rest/widget/bench//reports");
-        $("div#my_library-content").load("/rest/widget/bench//my_library");
+        $(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type);
+        $("div#reports-content").load("/rest/widget/me/reports");
+        $("div#my_library-content").load("/rest/widget/me/my_library");
       return false;
       });
 
