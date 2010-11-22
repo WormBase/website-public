@@ -499,6 +499,7 @@ sub widget_GET {
 	my @fields = $c->_get_widget_fields($class,$widget);
 	       		
 	foreach my $field (@fields) {
+        unless ($field) { next;}
 	    $c->log->debug($field);
 	    my $data = {};
 	    $data = $object->$field if defined $object->$field;
@@ -553,14 +554,15 @@ sub widget_me_GET {
       $self->history_GET($c);
       return;
     } elsif($widget=~m/profile/){
-    $c->stash->{noboiler} = 1;
-        $c->res->redirect('/profile');
-    return;
+      $c->stash->{noboiler} = 1;
+      $c->res->redirect('/profile');
+      return;
     }elsif($widget=~m/issue/){
-    $self->feed_GET($c,"issue");
-    return;
+      $self->feed_GET($c,"issue");
+      return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
+    if($widget=~m/reports/){ $widget = 'species';}
     foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
       my @objs;
       foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){

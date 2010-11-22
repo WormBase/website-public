@@ -277,77 +277,77 @@ sub widget :Path("/widget") Args(3) {
 #   Params    : class, object, page
 # 
 ##############################################################
-sub report :Path("/reports") Args(2) {
-    my ($self,$c,$class,$name) = @_;
-#        $c->response->redirect('http://www.hotmail.com');
- 
-    # Set the name of the widget. This is used 
-    # to choose a template and label sections.
-#    $c->stash->{page}  = $class;    # Um. Necessary?
-    unless ($c->config->{pages}->{$class}) {
-      my $link = $c->config->{external_url}->{uc($class)};
-      $link  ||= $c->config->{external_url}->{lc($class)};
-      if ($link =~ /\%s/) {
-          $link=sprintf($link,split(',',$name));
-      } else {
-          $link.=$name;
-      }
-      $c->response->redirect($link);
-      $c->detach;
-    }
-    $c->stash->{query_name} = $name;
-    $c->stash->{class} = $class;
-    $c->log->debug($name);
-    
-    # For now, a quick hack. A query parameter that let's us
-    # change the reports view from tabs, to sections, to a single page
-    # An optional view type can be passed as a query parameter
-    $c->stash->{view} = $c->request->query_parameters->{view};
-    
-    # Instantiate our external model directly (see below for alternate)
-    my $api = $c->model('WormBaseAPI');
-    
-    # TODO
-    # I may not want to actually fetch an object.
-    # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
-    
-    
-    # I don't think I need to fetch an object.  I just need to return the appropriate page template.
-    # Then, each widget will make calls to the rest API.
-    my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
-     
-    # $c->log->debug("Instantiated an external object: " . ref($object));
-    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
-  
-    $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-if($object != -1 ){
-    $c->stash->{external_links} = $object->external_links if $class eq 'gene'; #if $object->meta->has_method("external_links") 
-}
-=head
-
-    # To add later:
-    # * multi-results formatting
-    # * nothing found.
-    
-    # Fetch the field content and stash it.
-    
-    # Currently, I have to provide EVERY tag in my wrapper model
-    # since I cannot find a sensible way to AUTOLOAD under Moose
-    # (if indeed AUTOLOADing under Moose makes any sense at all...)
-    # This is a horrendous hack; get the field from my wrapper object
-    # if implemented, otherwise get it from the wrapped object.
-    
-    # To generically build a widget, store
-    # an ordered list of all necessary fields.
-    # page is $c->namespace;			
-
-=cut
-
-    # Stash the symbolic name of all widgets that comprise this page in default order.
-#     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-#     $c->stash->{widgets} = \@widgets;
-}
+# sub report :Path("/reports") Args(2) {
+#     my ($self,$c,$class,$name) = @_;
+# #        $c->response->redirect('http://www.hotmail.com');
+#  
+#     # Set the name of the widget. This is used 
+#     # to choose a template and label sections.
+# #    $c->stash->{page}  = $class;    # Um. Necessary?
+#     unless ($c->config->{pages}->{$class}) {
+#       my $link = $c->config->{external_url}->{uc($class)};
+#       $link  ||= $c->config->{external_url}->{lc($class)};
+#       if ($link =~ /\%s/) {
+#           $link=sprintf($link,split(',',$name));
+#       } else {
+#           $link.=$name;
+#       }
+#       $c->response->redirect($link);
+#       $c->detach;
+#     }
+#     $c->stash->{query_name} = $name;
+#     $c->stash->{class} = $class;
+#     $c->log->debug($name);
+#     
+#     # For now, a quick hack. A query parameter that let's us
+#     # change the reports view from tabs, to sections, to a single page
+#     # An optional view type can be passed as a query parameter
+#     $c->stash->{view} = $c->request->query_parameters->{view};
+#     
+#     # Instantiate our external model directly (see below for alternate)
+#     my $api = $c->model('WormBaseAPI');
+#     
+#     # TODO
+#     # I may not want to actually fetch an object.
+#     # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
+#     
+#     
+#     # I don't think I need to fetch an object.  I just need to return the appropriate page template.
+#     # Then, each widget will make calls to the rest API.
+#     my $object = $api->fetch({class=> ucfirst($class),
+# 			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
+#      
+#     # $c->log->debug("Instantiated an external object: " . ref($object));
+#     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+#   
+#     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+# if($object != -1 ){
+#     $c->stash->{external_links} = $object->external_links if $class eq 'gene'; #if $object->meta->has_method("external_links") 
+# }
+# =head
+# 
+#     # To add later:
+#     # * multi-results formatting
+#     # * nothing found.
+#     
+#     # Fetch the field content and stash it.
+#     
+#     # Currently, I have to provide EVERY tag in my wrapper model
+#     # since I cannot find a sensible way to AUTOLOAD under Moose
+#     # (if indeed AUTOLOADing under Moose makes any sense at all...)
+#     # This is a horrendous hack; get the field from my wrapper object
+#     # if implemented, otherwise get it from the wrapped object.
+#     
+#     # To generically build a widget, store
+#     # an ordered list of all necessary fields.
+#     # page is $c->namespace;			
+# 
+# =cut
+# 
+#     # Stash the symbolic name of all widgets that comprise this page in default order.
+# #     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
+# #     $c->stash->{widgets} = \@widgets;
+# }
 
 
 ##############################################################
@@ -357,34 +357,34 @@ if($object != -1 ){
 #   Params    : class, object
 # 
 ##############################################################
-sub resources :Path("/resources") Args(2) {
-    my ($self,$c,$class,$name) = @_;
-
-    $c->stash->{section} = 'resources';
-    $c->stash->{template} = 'report.tt2';
-
-    unless ($c->config->{sections}->{resources}->{$class}) { 
-      # class doens't exist in this section
-      $c->detach;
-    }
-
-    $c->stash->{query_name} = $name;
-    $c->stash->{class} = $class;
-    $c->log->debug($name);
-    
-    my $api = $c->model('WormBaseAPI');
-    my $object = $api->fetch({class=> ucfirst($class),
-                  name => $name}) || $self->error_custom($c, 500, "can't connect to database");
-     
-    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
-
-    $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-}
-
-
-
-
-
+# sub resources :Path("/resources") Args(2) {
+#     my ($self,$c,$class,$name) = @_;
+# 
+#     $c->stash->{section} = 'resources';
+#     $c->stash->{template} = 'report.tt2';
+# 
+#     unless ($c->config->{sections}->{resources}->{$class}) { 
+#       # class doens't exist in this section
+#       $c->detach;
+#     }
+# 
+#     $c->stash->{query_name} = $name;
+#     $c->stash->{class} = $class;
+#     $c->log->debug($name);
+#     
+#     my $api = $c->model('WormBaseAPI');
+#     my $object = $api->fetch({class=> ucfirst($class),
+#                   name => $name}) || $self->error_custom($c, 500, "can't connect to database");
+#      
+#     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+# 
+#     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+# }
+# 
+# 
+# 
+# 
+# 
 
 
 

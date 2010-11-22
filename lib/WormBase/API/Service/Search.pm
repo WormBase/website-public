@@ -418,8 +418,13 @@ sub _wrap_objs {
   
   my $api = $self->api;
   my $fields;
-  my $f = $self->config->{'DefaultConfig'}->{pages}->{$class}->{search}->{fields};
-  push(@$fields, @$f);
+  my $f;
+  if($self->config->{'DefaultConfig'}->{sections}->{species}->{$class}){
+    $f = $self->config->{'DefaultConfig'}->{sections}->{species}->{$class}->{search}->{fields};
+  }else{
+    $f = $self->config->{'DefaultConfig'}->{sections}->{resources}->{$class}->{search}->{fields};
+  }
+  push(@$fields, @$f) if $f;
 
   # default fields for all objects
   push(@$fields, 'name');

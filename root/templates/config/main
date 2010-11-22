@@ -145,6 +145,15 @@
            title=\"$desc\">$text</a>";
     END;
 
+
+    MACRO get_section(class) BLOCK;
+      IF (c.config.sections.species.$class.defined);
+        'species';
+      ELSE;
+        'resources';
+      END;
+    END;
+
 # Markup any OMIM reference in a text
 # marks up ALL references in the format OMIM:(\d+)
 # only works for up to two references listed in a row with OMIM before only the first one

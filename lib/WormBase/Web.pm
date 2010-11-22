@@ -414,12 +414,21 @@ sub _select_template {
 sub _get_widget_fields {
     my ($self,$class,$widget) = @_;
 
+    my $section;
+    if($self->config->{sections}->{species}->{$class}){
+      $section = 'species';
+    }else{
+      $section = 'resources';
+    }
+
+
+
     my @fields;
     # Widgets accessible by name
-    if (ref $self->config->{pages}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
-    @fields = ($self->config->{pages}->{$class}->{widgets}->{$widget}->{fields});
+    if (ref $self->config->{sections}->{$section}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
+    @fields = ($self->config->{sections}->{$section}->{$class}->{widgets}->{$widget}->{fields});
     } else {
-    @fields = @{ $self->config->{pages}->{$class}->{widgets}->{$widget}->{fields} };
+    @fields = @{ $self->config->{sections}->{$section}->{$class}->{widgets}->{$widget}->{fields} };
     }
     $self->log->debug("The $widget widget is composed of: " . join(", ",@fields));
     return @fields;

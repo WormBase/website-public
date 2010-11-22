@@ -1,7 +1,23 @@
+[%# Should be predefined:                                                       %]
+[%# title   =   title appearing at the top of the page                          %]
+[%# no_layout   =   if true, the layout dropdown will not be displayed          %]
+[%# widgets =   an array of hashrefs corresponding to widgets that will appear  %]
+[%#             in the sidebar and on the page                                  %]
+[%#             each widget:                                                    %]
+[%#             { id = widget id                                                %]
+[%#               title = widget title                                          %]
+[%#               href =  url to load the widget                                %]
+[%#               type = section the widget belongs to (for colour coding)      %]
+[%#             }                                                               %]
+[%#             for a title to appear in sidebar:                               %]
+[%#             { title = title to display                                      %]
+[%#               type = "title"                                                %]
+[%#             }                                                               %]
+
     <div class="title">
       <h2>[% title %]</h2>
 
-      [% UNLESS no_star %]
+      [% IF object %]
           [% wbid = this_object_id.remove(':') %]
 
           <div class="workbench-status-[% wbid %]"></div>
@@ -10,7 +26,7 @@
           $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
           </script>
        [% END %]
-
+       [% UNLESS no_layout %]
           <div class="columns"><span id="fade" style="float:left">Layout</span>
           <div class="ui-icon ui-icon-triangle-1-s"></div>
           <ul>
@@ -21,6 +37,7 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
+      [% END %]
     </div>
 
 <div id="widgets">
