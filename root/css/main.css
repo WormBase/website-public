@@ -275,6 +275,7 @@ li.visible div.widget-container {
   padding-bottom:1.7em;
   overflow:auto;
   list-style:disc outside none;
+  clear:both;
 }
 
 .content h2 {
@@ -299,12 +300,12 @@ li.visible div.widget-container {
     border:0;
 }
 
-.widget-container.me  #widget-header {
+.widget-container.me  #widget-header, #navigation .me.ui-selected {
     background: #D0DEC1;
 }
-
-#navigation .me.ui-selected{
-  background: #D0DEC1;
+.widget-container.resources  #widget-header, #navigation .resources.ui-selected {
+    background: #FFEECC; 
+/* PICK A BETTER COLOR */
 }
 
 .widget-container #widget-footer {
@@ -1003,18 +1004,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border-bottom:1px solid #CDCDCD;
 }
 
-#navigation .ui-selected { 
-  background: #C2D1DF; 
-  color: black; 
-}
-
-#navigation .ui-selected:hover { 
-  background: #C2D1DF; 
-  color: black; 
-}
-
 #navigation ul li:hover {
   background: #FAF7DE;
+}
+
+#navigation ul li.ui-selected { 
+  background: #C2D1DF; 
+  color: black; 
 }
 
 #navigation ul { 

@@ -27,7 +27,6 @@ sub search :Path('/search')  :Args(2) {
     if($type eq 'all' && !(defined $c->req->param("view"))) {
     $c->log->debug(" search all kinds...");
     $c->stash->{template} = "search/full_list.tt2";
-    $c->stash->{type} =  [keys %{ $c->config->{pages} } ];
     } else {
     $c->log->debug("$type search");
      

@@ -27,9 +27,9 @@
       [% PROCESS "nav/classic_report_toc.tt2" %]
 
       <table border="1" width="100%">
-
-         [% FOREACH widget_name IN c.config.pages.$class.widget_order %]
-              [% widget = c.config.pages.$class.widgets.$widget_name %]
+        [% section = get_section($class) %]
+         [% FOREACH widget_name IN c.config.sections.$section.$class.widget_order %]
+              [% widget = c.config.sections.$section.$class.widgets.$widget_name %]
                     [% WRAPPER $widget_block -%]
                           [%#- This is a little goofy. Let me explain.
                                What we are doing here is preparing the widget
