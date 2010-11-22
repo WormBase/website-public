@@ -37,7 +37,7 @@ sub resources_report :Path("/resources") Args(2) {
 
 sub get_report {
     my ($self,$c,$class,$name) = @_;
-    $c->stash->{section} = 'species';
+    $c->stash->{section} = 'resources';
     $c->stash->{template} = 'resources/report.tt2';
 
     unless ($c->config->{sections}->{resources}->{$class}) { 

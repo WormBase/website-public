@@ -86,38 +86,22 @@ div.more .ui-icon {
    font-size: 0.8em;
 }
 
-/* Menus on the top of the screen - home page */
-#login-menu, .padding{
+.padding{
 	margin:0;
 	padding:0;
 	}
 
-#login-menu ul, #results ul {
+#results ul {
 	margin:0;
 	padding:0;
     padding-top:0.3em;
 	list-style-type: none;
 	}
 
-#login-menu ul li {
-  float: right;
-  font-size: 0.8em;
-  padding-right: 0.5em;
-  color: #EEE;
-}
-
-#login-menu ul li a {
-  color:#EEE;
-}
-
-#login-menu ul li a:hover {
-  color:white;
-}
-
 
 /* The search bar form */
 #searchForm {
-  padding:0.25em 0.1em;
+  padding:0.5em 0.5em;
   float:right;
   position:relative;
 }
@@ -126,7 +110,7 @@ div.more .ui-icon {
     border: 1px solid gray;  
     padding: 0.2em; 
     text-align: left;  
-    height:1.2em;
+    height:1.5em;
 }  
 
 
