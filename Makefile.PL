@@ -51,6 +51,7 @@ requires 'DBD::mysql';
 requires 'DB_File::Lock';
 requires 'GD';
 requires 'GD::SVG';
+requires 'Badge::GoogleTalk';
 requires 'Math::BigInt::GMP';				# will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Module::Install';
 requires 'Moose';
