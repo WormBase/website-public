@@ -70,7 +70,7 @@ __PACKAGE__->config( name => 'R2',
 # Create a log4perl instance
 __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(
-        __PACKAGE__->path_to( 'conf', 'log4perl-screen.conf' )->stringify
+        __PACKAGE__->path_to( 'conf', 'log4perl.conf' )->stringify
     )
     );
 
@@ -215,7 +215,7 @@ my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
 
 
 # CHI-powered on-disk file cache: default.
-if (1) {    
+if (0) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'File',
@@ -227,6 +227,14 @@ if (1) {
     };
 }
 
+if (1) {    
+    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+    class          => "CHI",
+    driver         => 'Memcached',
+    servers => ['127.0.0.1:11211'], 
+     expires_in     => $expires_in,
+    };
+}
 
 # Here's a typical example for Cache::Memcached::libmemcached
 if (0) {
