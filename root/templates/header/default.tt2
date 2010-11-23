@@ -17,10 +17,9 @@
 
   <div id="nav-bar">
     <ul class="nav-bar">
-
-    [% FOREACH title IN c.config.nav_bar.order.name %]
+    [% FOREACH title IN c.config.sections.nav_bar.option %]
       <li><a href="/[% title %]" class="section-[% title %] [% IF(c.stash.section == title); 'selected'; END;%]">
-          [% c.config.nav_bar.$title.title %]</a>
+          [% c.config.sections.$title.title %]</a>
           <ul class="dropdown ui-corner-bottom">
         [% IF (title == 'species') %]
           [% FOREACH option IN c.config.species_list.sort() %]
@@ -28,14 +27,16 @@
               <ul class="dropdown ui-corner-bottom">  
                 <li><a href="#">Browse Genome</a></li>
               [% FOREACH class IN c.config.sections.species.keys %]
+                [% IF class == 'title'; NEXT; END; %]
                 <li><a href="/species/[% option %]/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
               [% END %]
               </ul>
             </li>
           [% END %]
         [% ELSE %]
-          [% FOREACH option IN c.config.nav_bar.$title.option %]
-            <li><a href="/[% title %]/[% option %]">[% option %]</a></li>
+          [% FOREACH option IN c.config.sections.$title.sort() %]
+            [% IF option == 'title'; NEXT; END; %]
+            <li><a href="/[% title %]/[% option %]">[% c.config.sections.$title.$option.title %]</a></li>
           [% END %]
         [% END %]
           </ul>
