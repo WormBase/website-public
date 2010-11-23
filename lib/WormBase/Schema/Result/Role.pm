@@ -44,6 +44,6 @@ __PACKAGE__->set_primary_key("id");
 # Created by DBIx::Class::Schema::Loader v0.07001 @ 2010-08-20 14:27:11
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:XWqI6tiCaGUj75+wZZDcgg
 __PACKAGE__->has_many(users_to_roles=>'WormBase::Schema::Result::UserRole', 'role_id');
- 
+__PACKAGE__->many_to_many(users => 'users_to_roles', 'user'); 
 # You can replace this text with custom content, and it will be preserved on regeneration
 1;

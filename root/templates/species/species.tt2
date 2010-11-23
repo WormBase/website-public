@@ -11,5 +11,6 @@ Classes:
 <br />
 
           [% FOREACH option IN c.config.sections.species.keys %]
+            [% IF option == 'title'; NEXT; END; %]
             <li><a href="/species/[% option %]">[% option %]</a></li>
           [% END %]
