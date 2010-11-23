@@ -230,7 +230,7 @@ if (0) {
 if (1) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
-    driver         => 'Memcached',
+    driver         => 'Memcached::libmemcached',
     servers => ['127.0.0.1:11211'], 
      expires_in     => $expires_in,
     };
