@@ -68,12 +68,6 @@ sub default :Path {
 	$c->response->status(404);
     }
 }
-sub operator :Path("/operator") Args {
-    my ( $self, $c) = @_;
-     
-    $c->stash->{template} = "auth/operator.tt2";
-
-}
 
  
 
