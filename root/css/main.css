@@ -152,7 +152,7 @@ ul.nav-bar li a{
   padding:0.4em 1.3em 0;
   margin:0;
   color:#555;
-  height:1.4em;
+  height:1.3em;
   font-weight:bold;
   white-space:nowrap;
 }
@@ -192,15 +192,13 @@ ul.nav-bar li a.hover span, ul.nav-bar li a.selected span{
 }
 
 ul.nav-bar ul.dropdown, form#searchForm ul.dropdown {
-/*   background:#C2D1DF; */
   float:none;
   margin:0;
   display:none;
   position:absolute;
-  top:2.1em;
-  left:0px;
+  top:1.9em;
+  left:-1px;
   background:white;
-/*   border:1px solid #CDCDCD; */
   border:1px solid #CDCDCD;
   z-index:99;
   padding:0;
@@ -236,11 +234,7 @@ ul.nav-bar ul.dropdown li a span.ui-icon{
 }
 
 form#searchForm ul.dropdown li.selected {
-  padding:0.2em 0;
-  width:100%;
-  font-size:0.8em;
-  list-style: none;
-  background:#C2D1DF;
+  background:#CDCDCD;
 }
 
 ul.nav-bar ul.dropdown li a, form#searchForm ul.dropdown li a{
