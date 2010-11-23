@@ -1,13 +1,22 @@
+<style type="text/css">	
+	.fg-button { outline: 0; margin:0 4px 0 0; padding: .4em 1em; text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
+	.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
+	
+	a.fg-button { float:left; }
+	
+	
+</style>	
+ 
 
 <div class="gtalk-badge">
-<script>$(".gtalk-badge").load("/rest/gtalk_badge")</script>
+<script>$(".gtalk-badge").load("[% c.uri_for('rest/gtalk_badge') %]")</script>
 </div>
 <p>
 [% IF c.user_exists  %]
-If you would like to become an operator, please go to this <a href="http://www.google.com/talk/service/badge/New" target="_blank"><b>link</b></a>
+If you would like to become an operator, please go to this <a href="http://www.google.com/talk/service/badge/New?nickname=helpdesk" target="_blank"><b>link</b></a>
 <br>
 and copy paste the html code into here:<br>
-<form method="POST" onsubmit="window.location.href='[% c.uri_for('/add_operator') %]' + '?content='+ escape(this.content.value);return false;">
+<form method="POST" onsubmit="window.location.href='[% c.uri_for('add_operator') %]' + '?content='+ escape(this.content.value);return false;">
 <textarea id="content" rows="10" cols="80" ></textarea>
 <p>
 <input type='submit' value='Let me help'/> 
@@ -17,3 +26,4 @@ and copy paste the html code into here:<br>
 [% ELSE %]
 <div>Plese log in</div>
 [% END %]
+ 
