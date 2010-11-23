@@ -21,7 +21,9 @@ __PACKAGE__->table("issues");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_nullable => 0 },
-  "report_user",
+  "reporter",
+  { data_type => "integer", is_nullable => 0 },
+  "responser",
   { data_type => "integer", is_nullable => 0 },
   "title",
   { data_type => "text", is_nullable => 1 },
@@ -41,5 +43,6 @@ __PACKAGE__->set_primary_key("id");
 #__PACKAGE__->add_unique_constraint([ 'openid_url' ]);
 __PACKAGE__->has_many(users_to_issues=>'WormBase::Schema::Result::UserIssue', 'issue_id');
 __PACKAGE__->has_many(issues_to_threads=>'WormBase::Schema::Result::IssueThread', 'issue_id'); 
-__PACKAGE__->belongs_to(owner=>'WormBase::Schema::Result::User','report_user');
+__PACKAGE__->belongs_to(owner=>'WormBase::Schema::Result::User','reporter');
+__PACKAGE__->belongs_to(responser=>'WormBase::Schema::Result::User','responser');
 1;

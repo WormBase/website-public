@@ -5,6 +5,8 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
+use List::Util qw(shuffle);
+use Badge::GoogleTalk;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -27,6 +29,7 @@ Catalyst Controller.
 
 =cut
  
+
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
@@ -202,13 +205,13 @@ sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
 
 sub update_role_POST {
       my ($self,$c,$id,$value,$checked) = @_;
-       
-      my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
-      my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
       
-      my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
-      $users_to_roles->delete()  unless($checked eq 'true');
-      $users_to_roles->update();
+	my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
+	my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
+	
+	my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+	$users_to_roles->delete()  unless($checked eq 'true');
+	$users_to_roles->update();
        
 }
 
@@ -274,6 +277,33 @@ sub download_GET {
 #         $c->serve_static_file('root/test.html');
     $c->response->body($c->req->param("sequence"));
 }
+ 
+sub gtalk_badge :Path('/rest/gtalk_badge') :Args :ActionClass('REST') {}
+sub gtalk_badge_GET  {
+    my ( $self, $c) = @_;
+    my $role= $c->model('Schema::Role')->find({role=>"operator"});
+    my $flag=0;
+    foreach my $op ( shuffle $role->users){
+      $c->log->debug("assigning operator to user_id:", $op->id);
+      next unless($op->gtalk_key );
+      my $my_object = Badge::GoogleTalk->new( key => $op->gtalk_key);
+      my $online_status = $my_object->is_online();
+      my $status = $my_object->get_status();
+      my $away_status = $my_object->is_away();
+      if($online_status && $status ne 'Busy' && !$away_status) {
+	  $c->log->debug("get gtalk badge for ",$op->username);
+	  my $badge = $my_object->get_badge();
+	  $c->res->body($badge);
+	  $flag=1;
+	  last;
+      }
+
+    }
+    $c->res->body("no operators available now") unless($flag) ;
+}
+
+
+ 
 
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
