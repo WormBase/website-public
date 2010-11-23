@@ -165,18 +165,10 @@ sub auth_local {
 
 sub reload {
   my ($self, $c,$logout) = @_;
-  my $addition="opener.location.reload( true );";
-  unless($logout){
-      
-      $addition = qq{ var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
-		      if(answer) { opener.location.href ="/operator"; }
-		      else {opener.location.reload( true ); };
-		      
-		    } if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
-  }
-		 
-  $c->stash->{script} = qq{<script> }.$addition.qq{ window.close();</script>};
    
+  $c->stash->{reload}=1;
+  $c->stash->{logout}=1 if($logout);		    
+  $c->stash->{operate}=1 if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
   return;
 }
 
@@ -241,7 +233,7 @@ sub add_operator :Path("/add_operator") {
       $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->id,role_id=>$role->id});
       $c->user->set_columns({"gtalk_key"=>$key});
       $c->user->update();
-      $c->res->redirect($c->uri_for("/bench"));
+      $c->res->redirect($c->uri_for("me"));
     }else {
 	 $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
     }

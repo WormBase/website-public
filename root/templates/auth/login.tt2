@@ -1,4 +1,17 @@
-[% script %]
+[% IF reload %]
+<script> 
+  [% UNLESS logout %]
+       if( [% operate %])   { 
+	  var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
+		      if(answer) { opener.location.href ="[% c.uri_for(c.controller('tool').action_for('operator')) %]"; }
+		      else {opener.location.reload( true ); };
+		      
+      }    
+  [% ELSE %]opener.location.reload( true );
+  [% END %] 
+  window.close();
+</script>
+[% END %]
 
 <script type="text/javascript" >
 $(document).ready(function() {  
