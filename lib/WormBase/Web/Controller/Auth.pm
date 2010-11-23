@@ -164,18 +164,30 @@ sub auth_local {
 }
 
 sub reload {
-  my ($self, $c) = @_;
-  $c->stash->{script} = qq{<script>window.close();opener.location.reload( true ); </script>!};
+  my ($self, $c,$logout) = @_;
+  my $addition="opener.location.reload( true );";
+  unless($logout){
+      
+      $addition = qq{ var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
+		      if(answer) { opener.location.href ="/operator"; }
+		      else {opener.location.reload( true ); };
+		      
+		    } if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
+  }
+		 
+  $c->stash->{script} = qq{<script> }.$addition.qq{ window.close();</script>};
+   
   return;
 }
 
+ 
 sub logout :Path("/logout") {
     my ($self, $c) = @_;
     # Clear the user's state
     $c->logout;
     $c->stash->{noboiler} = 1;  
     $c->stash->{'template'}='auth/login.tt2';
-    $self->reload($c) ;
+    $self->reload($c,1) ;
 }
 
 
@@ -216,6 +228,24 @@ sub profile_update :Path("/profile_update") {
       $c->stash->{'status_msg'}='User inforamtion udpated!';
       $c->res->redirect('/bench');
 } 
+
+
+sub add_operator :Path("/add_operator") {
+    my ( $self, $c) = @_;
+    $c->stash->{template} = "auth/operator.tt2";
+    if($c->req->params->{content}){
+      (my $key= $c->req->params->{content})=~ s/.*\?tk=//;
+      $key =~ s/\&amp.*//;
+      $c->log->debug("get the $key");
+      my $role=$c->model('Schema::Role')->find({role=>"operator"}) ;
+      $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->id,role_id=>$role->id});
+      $c->user->set_columns({"gtalk_key"=>$key});
+      $c->user->update();
+      $c->res->redirect($c->uri_for("/bench"));
+    }else {
+	 $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
+    }
+}
 =head1 AUTHOR
 
 xiaoqi shi

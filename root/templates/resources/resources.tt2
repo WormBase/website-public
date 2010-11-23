@@ -3,5 +3,6 @@ Classes:
 <br />
 
           [% FOREACH option IN c.config.sections.resources.keys %]
+            [% IF option == 'title'; NEXT; END; %]
             <li><a href="/resources/[% option %]">[% option %]</a></li>
           [% END %]
