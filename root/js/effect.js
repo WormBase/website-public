@@ -1,6 +1,6 @@
  
   $(document).ready(function() {
-
+  
      $(".add-delete").live('click',function() {
 	$(this).toggleClass( "ui-icon-circle-minus"); 
     });
