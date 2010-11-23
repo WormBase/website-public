@@ -51,4 +51,12 @@ sub issue :Path("tools/issues") Args {
      
 } 
 
+sub operator :Path("tools/operator") Args {
+    my ( $self, $c) = @_;
+     
+    $c->stash->{template} = "auth/operator.tt2";
+
+}
+
+
 1;
