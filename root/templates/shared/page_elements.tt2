@@ -19,7 +19,8 @@
   <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th>
     <th>[% IF issues_type %]Report by
 	[% ELSE %]<button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button>[% END %]
-    </th></tr>
+    </th>
+    <th>Responsible</th></tr>
       [% FOREACH IS IN issues %]
 	 [% array=IS.location.split('/') %]
 	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for('/issue',IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
@@ -27,6 +28,7 @@
 	    <td>[% IF issues_type %][% username(IS.owner) %]
 	    [% ELSE %]<span class="add-delete ui-icon ui-icon-circle-plus" name="[% IS.id %]"><span>[% END %]
 	    </td>
+	    <td>[% username(IS.responser) %]</td>
 	  </tr>
       [% END %]
       </table>

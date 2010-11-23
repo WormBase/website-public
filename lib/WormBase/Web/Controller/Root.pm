@@ -70,6 +70,7 @@ sub default :Path {
 }
 sub operator :Path("/operator") Args {
     my ( $self, $c) = @_;
+     
     $c->stash->{template} = "auth/operator.tt2";
 
 }

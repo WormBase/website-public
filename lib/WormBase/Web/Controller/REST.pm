@@ -5,6 +5,7 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
+use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 
 __PACKAGE__->config(
@@ -238,21 +239,14 @@ sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
 
 sub update_role_POST {
       my ($self,$c,$id,$value,$checked) = @_;
-      if($value eq 'operator'){
-	  my $active=0;
-	  $active=1 if($checked eq 'true');
-	  my $user=$c->model('Schema::User')->find($id) if($id);
-	  $user->set_column("active"=>$active);
-	  $user->update();
-      }
-      else{
+      
 	my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
 	my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
 	
 	my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
 	$users_to_roles->delete()  unless($checked eq 'true');
 	$users_to_roles->update();
-      } 
+       
 }
 
 sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
@@ -424,16 +418,17 @@ sub download_GET {
 sub gtalk_badge :Path('/rest/gtalk_badge') :Args :ActionClass('REST') {}
 sub gtalk_badge_GET  {
     my ( $self, $c) = @_;
-    my @operators= $c->model('Schema::User')->search({"active"=>1});
+    my $role= $c->model('Schema::Role')->find({role=>"operator"});
     my $flag=0;
-    foreach my $op (@operators){
+    foreach my $op ( shuffle $role->users){
+      $c->log->debug("assigning operator to user_id:", $op->id);
+      next unless($op->gtalk_key );
       my $my_object = Badge::GoogleTalk->new( key => $op->gtalk_key);
       my $online_status = $my_object->is_online();
       my $status = $my_object->get_status();
       my $away_status = $my_object->is_away();
-      
-      if($online_status && $status ne 'Busy') {
-	  $c->log->debug("aaaaaaaaaaa");
+      if($online_status && $status ne 'Busy' && !$away_status) {
+	  $c->log->debug("get gtalk badge for ",$op->username);
 	  my $badge = $my_object->get_badge();
 	  $c->res->body($badge);
 	  $flag=1;
@@ -445,16 +440,7 @@ sub gtalk_badge_GET  {
 }
 
 
-sub add_operator :Path('/rest/add_operator') :Args :ActionClass('REST') {}
-sub add_operator_GET  {
-    my ( $self, $c) = @_;
-    $c->stash->{template} = "auth/operator.tt2";
-    (my $key= $c->req->params->{content})=~ s/.*\?tk=//;
-    $key =~ s/\&amp.*//;
-    $c->log->debug("get the $key");
-    $c->user->set_columns({"gtalk_key"=>$key,"active"=>1});
-    $c->user->update();
-}
+ 
 
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
