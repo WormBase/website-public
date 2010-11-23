@@ -37,7 +37,7 @@ sub search :Path('/search')  :Args(2) {
     my $objs;
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+    my ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
     unless($cached_data) {  
         $cached_data = $api->search->$search({class => $class, pattern => $query});
         $c->set_cache($cache_id,$cached_data);
@@ -47,7 +47,7 @@ sub search :Path('/search')  :Args(2) {
     if(@$objs<1) { #this may not be optimal
       $query.="*";
       $objs = $api->search->$search({class => $class, pattern => $query}) ;
-      ($cache_id,$cached_data) = $c->check_cache($class,'search',$query);
+      ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
       unless($cached_data) {  
           $cached_data = $api->search->$search({class => $class, pattern => $query});
           $c->set_cache($cache_id,$cached_data);
