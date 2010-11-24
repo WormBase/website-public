@@ -34,7 +34,7 @@
 <div class="issue-content">
 <h2>#[% issue.id %] [% issue.title %] 
  [% array=issue.location.split('/') %]
-<br><font size="2">Reported by <a href="#">[% username(issue.owner) %],</a> on <a href="[% c.uri_for('reports',array.3,array.4) %]">[% array.6 %] [% array.3 %] page [% array.5 %] section</a>
+<br><font size="2">Reported by <a href="#">[% username(issue.owner) %],</a> on [% text2link('gene',array.4, array.6 _ ' ' _ array.3 _ ' page ' _ array.5 _ ' section') %]
 [% USE time_dir = Time.Duration %]
 created <span id="fade">[% time_dir.ago(current_time - issue.submit_time) %]</span>
 last edited by <a href="#">[% username(last_edit) %]</a> 

@@ -271,8 +271,8 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   title="comment" class="feed"  rel="[% c.uri_for('rest','feed','comment',class,this_object_id,widget.name,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
-                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('rest','feed','issue',class,this_object_id,widget.name,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
+                    <a   title="comment" class="feed"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,widget.name,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
+                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,widget.name,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
                     <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
 		<div id="widget-feed"></div>  
