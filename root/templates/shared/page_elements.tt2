@@ -23,7 +23,7 @@
     <th>Responsible</th></tr>
       [% FOREACH IS IN issues %]
 	 [% array=IS.location.split('/') %]
-	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for('/issue',IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
+	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>
 	    <td>[% IF issues_type %][% username(IS.owner) %]
 	    [% ELSE %]<span class="add-delete ui-icon ui-icon-circle-plus" name="[% IS.id %]"><span>[% END %]
