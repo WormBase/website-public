@@ -9,7 +9,7 @@
 [% IF user %]
  [% IF user.first_name.defined ; name = user.first_name; END;
     IF user.last_name.defined; name = name _ ' ' _ user.last_name; END; %] 
-[% IF name.defined %][% name %][% ELSE %] [% user.username.substr(0,10) %] [% END %] 
+[% IF name.defined %][% name %][% ELSE %]Anonymous[% END %] 
 [%- END %]
 [%- END %]
  
