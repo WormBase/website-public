@@ -1,8 +1,4 @@
- [% UNLESS provider.label  %]
-<script>
-window.location.href = "[% c.uri_for('/auth/openid') %]" + "?openid_identifier=" + "[% provider.url %]";
-</script>
-[% END %]
+ 
       <form name="openid_form" action="[% c.uri_for('/auth/openid') %]" method="post" onsubmit="this.openid_identifier.value=this.openid_identifier.value.replace('{username}', this.name.value);">
         
         <table style="width: 100%;">

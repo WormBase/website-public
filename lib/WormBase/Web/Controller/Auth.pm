@@ -32,8 +32,13 @@ sub auth : Chained('/') PathPart('auth')  CaptureArgs(0) {
 
 sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
      my ( $self, $c) = @_;
-     $c->stash->{'template'}='auth/popup.tt2';
-     $c->stash->{'provider'}= $c->req->params;
+     if($c->req->params->{label}) {
+      $c->stash->{'template'}='auth/popup.tt2';
+      $c->stash->{'provider'}= $c->req->params;
+    }else{
+	$c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url});
+
+    }
     
 }
 
