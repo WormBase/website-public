@@ -313,6 +313,9 @@ li.visible div.widget-container {
 #widget-header h3.minimized{
     border:0;
 }
+#widget-feed{
+    display:none;
+}
 
 .widget-container.me  #widget-header, #navigation .me.ui-selected {
     background: #D0DEC1;
