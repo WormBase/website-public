@@ -149,15 +149,17 @@ sub auth_local {
 	$openid->user_id($user->id);
 	$openid->update();
       }
-
+     $c->log->debug('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.');
       # Re-authenticate against local DBIx store
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
         $c->stash->{'status_msg'}='Local Login was also successful.';
+	 $c->log->debug('Local Login was also successful.');
 	$self->reload($c) ;
 #   	$c->res->redirect($c->user_session->{redirect_after_login});
       }
       else {
+	 $c->log->debug('Local login failed');
         $c->stash->{'error_msg'}='Local login failed.';
          
       }
@@ -165,8 +167,10 @@ sub auth_local {
 
 sub reload {
   my ($self, $c,$logout) = @_;
-   
+  $c->stash->{operate}=0; 
+  $c->stash->{logout}=0;
   $c->stash->{reload}=1;
+
   $c->stash->{logout}=1 if($logout);		    
   $c->stash->{operate}=1 if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
   return;

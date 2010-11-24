@@ -4,12 +4,15 @@
        if( [% operate %])   { 
 	  var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
 		      if(answer) { opener.location.href ="[% c.uri_for(c.controller('tool').action_for('operator')) %]"; }
-		      else {opener.location.reload( true ); };
+		      else { opener.location.reload();}
 		      
-      }    
-  [% ELSE %]opener.location.reload( true );
+	} else {
+	  opener.location.reload();   
+	}
+  [% ELSE %]  opener.location.reload();   
   [% END %] 
-  window.close();
+    
+    window.close();
 </script>
 [% END %]
 
@@ -31,7 +34,7 @@ $(document).ready(function() {
    
 <style>
 
-#openid_form {
+#openid {
 margin-left:2em ;
 width:170px;
 float:right;
@@ -97,7 +100,7 @@ position:relative;
 </form>
 
 <!-- Simple OpenID Selector -->
-<form id="openid_form" action="[% c.uri_for('/auth/openid') %]" method="post">
+<div id="openid">
 <h4><span id="fade">or Sign in with your third-party account</span></h4>
 
 <span id="left" class="ui-icon ui-icon-triangle-1-w"></span>  
@@ -108,7 +111,7 @@ position:relative;
   </div>   
 </div>
 
-</form>
+</div>
 <!-- /Simple OpenID Selector -->
  
  

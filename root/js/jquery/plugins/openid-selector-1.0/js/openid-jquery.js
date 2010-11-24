@@ -135,25 +135,16 @@ var openid = {
 	 
 
 		$('#openid_form').attr("target", "popup");
-		var pop_url = '/auth/popup?id='+box_id;
-		  
+		
+		var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']   ;
+		 
+		 
 		if (provider['label']) {
-			pop_url = pop_url + '&label=' + provider['label'] + '&url=' + provider['url'] ;
-// 			this.useInputBox(provider);
-// 			this.provider_url = provider['url'];
-			if (! onload) {
+			 pop_url += '&label=' + provider['label'];	
+		} 
+		if (! onload) {
 				this.popupWin(pop_url);
-			}
-			
-		} else {
-			
-			this.setOpenIdUrl(provider['url']);
-			if (! onload) {
-				this.popupWin(pop_url);
-				$('#openid_form').submit();
-			}	
 		}
-
 		 
     },
 
@@ -166,7 +157,7 @@ var openid = {
 	 
 	var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
 	win2.focus();
-	$("#lightbox").colorbox.close();
+	//$("#lightbox").colorbox.close();
 	
     },
     /* Sign-in button click */
