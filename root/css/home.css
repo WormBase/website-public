@@ -101,7 +101,7 @@ div.more .ui-icon {
 
 /* The search bar form */
 #searchForm {
-  padding:0.5em 0.5em;
+  padding:0.7em;
   float:right;
   position:relative;
 }
@@ -110,7 +110,7 @@ div.more .ui-icon {
     border: 1px solid gray;  
     padding: 0.2em; 
     text-align: left;  
-    height:1.5em;
+    height:1.2em;
 }  
 
 
