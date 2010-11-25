@@ -23,7 +23,7 @@
           <div class="workbench-status-[% wbid %]"></div>
 
           <script>
-          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
+          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
           </script>
        [% END %]
        [% UNLESS no_layout %]
@@ -42,6 +42,13 @@
 
 <div id="widgets">
   <div id="navigation">
+    <div id="title"><h2 class="ellipsis">
+      [% IF object %]
+        [% tag2link(object.name.data) %]
+      [% ELSE %]
+        WormBase
+      [% END %]</h2>
+    </div>
     <ul>
     [% FOREACH w IN widgets -%]
       [% IF w.type == "title" %]
@@ -69,7 +76,7 @@
           href="[% c.uri_for('/rest','widget','bench','a','user_history') %]" 
           load=1>see more...</li></div>
     </ul>
-    <div id="nav-min" class="ui-corner-right" title="close sidebar"><div id="nav-min-icon"></div></div>
+    <div id="nav-min" title="close sidebar"><div id="nav-min-icon"></div></div>
   </div>
 
   <div id="widget-holder" class="[% class %]">

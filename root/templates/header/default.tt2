@@ -20,11 +20,11 @@
     [% FOREACH title IN c.config.sections.nav_bar.option %]
       <li><a href="/[% title %]" class="section-[% title %] [% IF(c.stash.section == title); 'selected'; END;%]">
           [% c.config.sections.$title.title %]</a>
-          <ul class="dropdown ui-corner-bottom">
+          <ul class="dropdown">
         [% IF (title == 'species') %]
           [% FOREACH option IN c.config.species_list.sort() %]
             <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
-              <ul class="dropdown ui-corner-bottom">  
+              <ul class="dropdown">  
                 <li><a href="#">Browse Genome</a></li>
               [% FOREACH class IN c.config.sections.species.keys %]
                 [% IF class == 'title'; NEXT; END; %]

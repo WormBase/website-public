@@ -19,7 +19,6 @@ body, html {
     height:100%;
 }
 
-
 h1,h2,h3,h4,h5,h6 { color:black; }
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
@@ -43,7 +42,7 @@ input, select, th, td { font-size:1em; }
   min-height: 100%;
   height: auto !important;
   position: relative;
-  min-width: 600px;
+  min-width: 630px;
 }
 
 #content {
@@ -55,19 +54,22 @@ input, select, th, td { font-size:1em; }
 /* Global Links */
 a:link {
     text-decoration: none; 
-    color: #0000FF;
+/*     color: #0000FF; */
+    color:#89001D;
 //    border-bottom:1px dotted #0000FF;
 }
 
 a:visited {
     text-decoration: none; 
-    color: #AA0088;
+/*     color: #AA0088; */
+    color:#89001D;
     border:none;
 }
 
 a:hover {
 //    text-decoration: underline; 
     border:none;
+    color:#3D000D;
 }
 
 
@@ -98,15 +100,18 @@ div#header {
   margin-bottom:0.5em;
 }
 
-div#header h1 a, h1{
-  padding: 0;
+div#header h1 a, div#header h1 {
+  padding: 0.2em;
   margin:0;
   color:white;
   display:inline;
 }
 
+div#header h1:hover{
+  background:#555;
+}
+
 div#header p {
-  padding:1em;
   margin:0;
   font-size:0.8em;
   color:white;
@@ -132,7 +137,6 @@ div#header div#nav-bar {
   background:#EEE;
   height:2em;
   margin:0;
-/*   border:1px solid gray; */
 }
 
 ul.nav-bar {
@@ -160,6 +164,8 @@ ul.nav-bar li a{
 ul.nav-bar span.status-bar {
   float:right;
   clear:right;
+  margin:0;
+  padding:0;
 }
 
 ul.nav-bar li span.ui-icon {
@@ -177,13 +183,13 @@ ul.nav-bar li a.section-species {
   border-color:#C2D1DF;
 }
 ul.nav-bar li a.section-resources {
-  border-color:#DECFC1;
+  border-color:#D0DEC1;
 }
 ul.nav-bar li a.section-tools {
   border-color:#DEC1D0;
 }
 ul.nav-bar span.status-bar li a.section-me {
-  border-color:#D0DEC1;
+  border-color:#E3DDC5;
 }
 
 
@@ -207,7 +213,7 @@ ul.nav-bar ul.dropdown, form#searchForm ul.dropdown {
 }
 
 ul.nav-bar ul.dropdown li, form#searchForm ul.dropdown li {
-  padding:0.3em 0;
+  padding:0.5em 0;
   width:100%;
   font-size:0.9em;
   list-style: none;
@@ -219,22 +225,14 @@ ul.nav-bar ul.dropdown ul.dropdown {
   left:100%;
   width:10em;
   z-index:9999;
+  font-size:1.1em;
 }
 
-
-ul.nav-bar ul.dropdown ul.dropdown li {
-  width:10em;
-  font-size:1em;
-}
 
 ul.nav-bar ul.dropdown li a span.ui-icon{
   position:absolute;
   right:0;
   top:0;
-}
-
-form#searchForm ul.dropdown li.selected {
-  background:#CDCDCD;
 }
 
 ul.nav-bar ul.dropdown li a, form#searchForm ul.dropdown li a{
@@ -248,16 +246,19 @@ ul.nav-bar ul.dropdown li a, form#searchForm ul.dropdown li a{
 
 form#searchForm ul.dropdown {
   width:8em;
-  top:2.5em;
+  top:2.3em;
   left:1em;
 }
 
 
 
 ul.dropdown li:hover{
-  background:#FAF7DE;
+  background:#FFFFDF;
 }
 
+ul.dropdown li.selected {
+  background:#CDCDCD;
+}
 
 /*********************************
    
@@ -268,11 +269,11 @@ ul.dropdown li:hover{
 li div.widget-container {
     padding:0.5em 0.5em 1em 0.5em;
     padding:0;
-    margin:0em 0.5em 0.5em 0;
+    margin:0.5em 0 0 0.5em;
     display:none;
     background-color:#FFFFFF; 
     position:relative;
-    border:1px solid #CDCDCD;
+    border:1px solid #999;
 }
 
 li.visible div.widget-container {
@@ -315,10 +316,10 @@ li.visible div.widget-container {
 }
 
 .widget-container.me  #widget-header, #navigation .me.ui-selected {
-    background: #D0DEC1;
+    background: #E3DDC5;
 }
 .widget-container.resources  #widget-header, #navigation .resources.ui-selected {
-    background: #DECFC1; 
+    background: #D0DEC1;
 }
 .widget-container.tools  #widget-header, #navigation .tools.ui-selected {
     background: #DEC1D0; 
@@ -417,15 +418,20 @@ section.widget .secondary-container {
    FOOTER ================================== */
 
 div#footer{
-	color: #878787;
+/* 	color: #878787; */
+    color:white;
+    background: #333;
     padding: 1.2em 0 0.4em 0;
     margin:0;
 	font-size:0.8em;
-    border-top: 1px solid #BCC;
+/*     border-top: 1px solid #BCC; */
     overflow:auto;
     position:absolute;
     width:100%;
     bottom:0px;
+}
+div#footer a{
+  color:white;
 }
 
 #footer, #spacer {
@@ -582,8 +588,10 @@ div.downloadable-formats {
 }
 
 div.title {
-    padding:0.5em 1em 0.7em 1.5em;
+    padding:0.5em 0 0.7em 0.5em;
     height:1.5em;
+    margin:0 1em;
+    border-bottom:0.5em solid #EEE;
 }
 
 div.columns {
@@ -1012,17 +1020,39 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
    Navigation for sidebar view
    
 *********************************/
+#widgets {
+  background:#EEE;
+  margin:0 1em 1em;
+  padding:0 0.5em 0.5em 0.5em;
+  position:relative;
+  clear:both;
+  overflow:hidden;
+}
 
 #navigation {
   width: 10em;
   float: left;
   position:relative;
-  margin:0 0 0.5em;
-  border-bottom:1px solid #CDCDCD;
+  margin:-2em 0 0 0;
+/*   border-bottom:1px solid #CDCDCD; */
+  background:white;
+}
+
+#navigation #title{
+  background:#333;
+  height:2em;
+  color:white;
+}
+#navigation h2, #navigation h2 a{
+/*   background:#333; */
+/*   height:2em; */
+  color:white;
+  padding:0 0.5em;
+  margin:0;
 }
 
 #navigation ul li:hover {
-  background: #FAF7DE;
+  background: #FFFFDF;
 }
 
 #navigation ul li.ui-selected { 
@@ -1072,7 +1102,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   right:-8px;
   top:0;
   cursor:pointer;
-  background: #DADADA;
+  background: #AAA;
   border:1px solid #CDCDCD;
   z-index:9;
 }
@@ -1088,31 +1118,34 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #nav-min:hover {
-  background:#BBB;
+  background:#777;
 }
 
 #widget-holder {
   overflow:hidden;
-  margin: 0.5em 0 0 0;
-  padding: 0 0 0 1em;
   list-style: none;
   position:relative;
+  background:white;
+  padding:0 0.5em 0.5em 0em;
+  border-left:0.5em solid #EEE;
 }
 
 .sortable{
-  min-height:1em;
+/*   min-height:1em; */
   width:100%;
   float:left;
   position:relative;
+  margin:0;
 }
-
+/*
 .right{
   min-height:10em;
-}
+}*/
 
 .placeholder {
   background: #FAF7DE;
-  margin: 0 0.5em 0.4em 0em;
+  padding:0 1em 0 0.5em;
+  margin:0.5em 0 0 0.5em;
   border:1px dashed gray;
 }
 
@@ -1120,11 +1153,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   font-size:0.7em;
   line-height:1em;
 /*   padding-left:1.8em; */
-}
-
-div#widgets {
-  clear:both;
-  width:100%;
 }
 
 .text-width {
