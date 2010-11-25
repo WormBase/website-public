@@ -23,7 +23,7 @@ requires 'Bio::Graphics';
 requires 'Bio::Grapics::Browser2::Markup';   # Sequece Summary page
 requires 'Catalyst::Devel';                  # REQ'D FOR DEVELOPMENT ONLY
 requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
-#requires 'Cache::Memcached::libmemcached';
+requires 'Cache::Memcached::libmemcached';
 requires 'Catalyst::Action::REST';           
 requires 'Catalyst::Action::RenderView::ErrorHandler';
 requires 'Catalyst::Authentication::Credential::OpenID';   # will need to install Math::BigInt::GMP first 
@@ -46,6 +46,7 @@ requires 'Catalyst::View::Email';
 requires 'Crypt::SaltedHash';
 requires 'Crypt::SSLeay'; 					#for openid to work for (https)
 requires 'CHI';                              # Cache backend
+requires 'CHI::Driver::Memcached::libmemcached';                              
 requires 'DBI';
 requires 'DBD::mysql';
 requires 'DB_File::Lock';
