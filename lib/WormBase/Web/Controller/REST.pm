@@ -5,8 +5,6 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
-use List::Util qw(shuffle);
-use Badge::GoogleTalk;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -277,42 +275,6 @@ sub download_GET {
 #         $c->serve_static_file('root/test.html');
     $c->response->body($c->req->param("sequence"));
 }
- 
-sub gtalk_badge :Path('/rest/gtalk_badge') :Args :ActionClass('REST') {}
-sub gtalk_badge_GET  {
-    my ( $self, $c) = @_;
-    my $role= $c->model('Schema::Role')->find({role=>"operator"});
-    my $flag=0;
-    my $badge_html = qq{
-	<div class="ui-state-disabled">
-	<img src="http://www.google.com/talk/service/resources/chaticon.gif" alt="" width="24" height="20">
-	<a title="Click here to chat with helpdesk" target="_blank" >Chat with helpdesk</a>
-	</div>};
-    foreach my $op ( shuffle $role->users){
-      $c->log->debug("assigning operator to user_id:", $op->id);
-      next unless($op->gtalk_key );
-      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
-      my $online_status = $badge->is_online();
-      my $status = $badge->get_status();
-      my $away_status = $badge->is_away();
-      if($online_status && $status ne 'Busy' && !$away_status) {
-	  $c->log->debug("get gtalk badge for ",$op->username);
-  	  $badge_html = $badge->get_badge();
-# 	  $badge_html =~ s/disabled/primary/;
-# 	  my $href= "href='".$badge->get_chat_box_link."'";
-# 	  $badge_html =~ s/a title/a $href title/;
-	  
-	  $c->log->debug($badge_html);
-# 	  $c->res->body($badge_html);
-# 	  $flag=1;
-	  last;
-      }
-
-    }
-    $c->res->body($badge_html)  ;
-}
-
-
  
 
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}

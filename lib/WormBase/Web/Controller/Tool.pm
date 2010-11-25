@@ -4,6 +4,8 @@ package WormBase::Web::Controller::Tool;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
+use List::Util qw(shuffle);
+use Badge::GoogleTalk;
 
 __PACKAGE__->config->{namespace} = '';
 
@@ -53,9 +55,26 @@ sub issue :Path("tools/issues") Args {
 
 sub operator :Path("tools/operator") Args {
     my ( $self, $c) = @_;
-     
+    $c->stash->{be_operator}=1 if($c->user_exists && !$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ; 
     $c->stash->{template} = "auth/operator.tt2";
-
+ 
+    my $role= $c->model('Schema::Role')->find({role=>"operator"});
+    
+    foreach my $op ( shuffle $role->users){
+      next unless($op->gtalk_key );
+      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
+      my $online_status = $badge->is_online();
+      my $status = $badge->get_status();
+      my $away_status = $badge->is_away();
+      if($online_status && $status ne 'Busy' && !$away_status) {
+	  $c->log->debug("get gtalk badge for ",$op->username);
+  	  $c->stash->{badge_html}  = $badge->get_badge();
+	  $c->stash->{operator}  = $op;
+	  $c->log->debug($c->stash->{badge_html});
+	  last;
+      }
+    }
+    
 }
 
 
