@@ -7,6 +7,11 @@
 //The layout methods
 
     function columns(leftWidth, rightWidth, noUpdate){
+      if(leftWidth>99){
+        $("#widget-holder").children(".sortable").css('min-height', '0');
+      }else{
+        $("#widget-holder").children(".sortable").css('min-height', '10em');
+      }
       $("#widget-holder").children(".left").css("width",leftWidth + "%");
       if(rightWidth==0){rightWidth=100;}
       $("#widget-holder").children(".right").css("width",rightWidth + "%");
@@ -98,3 +103,36 @@
       updateLayout();
     }
 
+
+
+
+
+
+$(function() {
+
+    var $sidebar   = $("#navigation"),
+        $window    = $(window),
+        offset     = 100,
+        at_default = 0-($sidebar.children("#title").outerHeight() + 5);
+
+    $window.scroll(function() {
+      var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight() -2;
+      if( bottomPos < at_default )
+          bottomPos = at_default;
+      var objBiggerThanWindow = $sidebar.outerHeight() > $(window).height();
+      if (objBiggerThanWindow){ return; }
+      if ($window.scrollTop() > offset) {
+          var newpos = $window.scrollTop() - offset + 3 + at_default;
+          if (newpos > bottomPos)
+              newpos = bottomPos;
+              $sidebar.stop().css(
+              'margin-top', newpos
+          );
+      } else {
+          $sidebar.stop().css(
+              'margin-top', at_default
+          );
+      }
+    });
+
+});
