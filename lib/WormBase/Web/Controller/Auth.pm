@@ -52,16 +52,17 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
             if ( $c->authenticate( { username => $user,
                                      password => $password } ) ) {
 		
-                $c->stash->{'status_msg'}='Username login was successful.'. $c->user->get("firstname") ;
+                $c->log->debug('Username login was successful.'. $c->user->get("firstname"));
 		$self->reload($c);
 #  		$c->res->redirect($c->req->params->{continue});
             } else {
-                $c->stash->{'status_msg'}='Login incorrect.';
+		$c->log->debug('Login incorrect.');
+                $c->stash->{'error_notice'}='Login incorrect.';
             }
      }
      else {
             # invalid form input
-	    $c->stash->{'status_msg'}='Invalid username or password.';
+	    $c->stash->{'error_notice'}='Invalid username or password.';
      }
 }
 
@@ -101,7 +102,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 	  
 	  }
 	  else {
-	    $c->stash->{'error_msg'}='Failure during OpenID login';
+	    $c->stash->{'error_notice'}='Failure during OpenID login';
 	  }
       #  };
 
@@ -154,7 +155,7 @@ sub auth_local {
 	$openid->user_id($user->id);
 	$openid->update();
       }
-     $c->log->debug('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.');
+    
       # Re-authenticate against local DBIx store
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
@@ -165,19 +166,19 @@ sub auth_local {
       }
       else {
 	 $c->log->debug('Local login failed');
-        $c->stash->{'error_msg'}='Local login failed.';
-         
+        $c->stash->{'error_notice'}='Local login failed.';
+       
       }
 }
 
 sub reload {
   my ($self, $c,$logout) = @_;
-  $c->stash->{operate}=0; 
+  $c->stash->{operator}=0; 
   $c->stash->{logout}=0;
   $c->stash->{reload}=1;
 
   $c->stash->{logout}=1 if($logout);		    
-  $c->stash->{operate}=1 if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
+  $c->stash->{operator}=1 if(!$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ;
   return;
 }
 

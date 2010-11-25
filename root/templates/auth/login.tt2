@@ -1,20 +1,19 @@
-[% IF reload %]
+[% IF reload || error_notice  %] 
 <script> 
-  [% UNLESS logout %]
-       if( [% operate %])   { 
-	  var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
-		      if(answer) { opener.location.href ="[% c.uri_for(c.controller('tool').action_for('operator')) %]"; }
-		      else { opener.location.reload();}
-		      
-	} else {
-	  opener.location.reload();   
-	}
-  [% ELSE %]  opener.location.reload();   
+   
+   [% IF error_notice %]
+      alert("Login not successful!");
+   [% ELSIF logout || ! operator %]
+      opener.location.reload(1); 
+   [% ELSE %]
+      var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
+      if(answer) { opener.location.href ="[% c.uri_for(c.controller('tool').action_for('operator')) %]"; }
+      else { opener.location.reload(1);}
   [% END %] 
-    
-    window.close();
+  window.close();
+
 </script>
-[% END %]
+[% END %]  
 
 <script type="text/javascript" >
 $(document).ready(function() {  
@@ -83,17 +82,16 @@ position:relative;
     <th>Password:</th>
     <td><input id="password" type="password" name="password" size="15"/></td>
   </tr>
-  <div style="height: 9px; overflow: hidden;"> </div>
+  <div style="height: 0.8em; overflow: hidden;"> </div>
   <tr>
     <td ><input type="checkbox" id="remember" name="remember" size="10">Remember me</input></td>
     <td align="right"><input type="submit" value="Login" id="login"  /></td>
   </tr>
   <tr>
-    <td colspan="2" id="login-menu">
-	<ul>
-	<li><a href="#">Register</a></li>
-	<li><a href="#">Forgot Password</a>  |</li> 
-	</ul>
+    <td colspan="2" align="center">
+	<div style="height: 1em; overflow: hidden;"> </div>
+	<a href="#">Forgot Password</a>  | <a href="#">Register</a>
+	 
     </td>
   </tr>
 </table>
