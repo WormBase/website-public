@@ -23,7 +23,7 @@ use Catalyst qw/
 	  
 	  Session
 	  Session::PerUser
-	  Session::Store::FastMmap
+	  Session::Store::DBI
 	  Session::State::Cookie
          StackTrace
            /;
@@ -74,11 +74,15 @@ __PACKAGE__->log(
     )
     );
 
-=pod
-# __PACKAGE__->config->{authentication}->{dbic}->{user_class} = 'MyAppDB::User';
-# __PACKAGE__->config->{authentication}->{dbic}->{user_field} = 'username';
-# __PACKAGE__->config->{authentication}->{dbic}->{password_field} = 'password';
-=cut
+
+__PACKAGE__->config->{'Plugin::Session'} = {
+              expires   => 3600,
+	      dbi_dbh   => 'Schema', 
+	      dbi_table => 'sessions',
+	      dbi_id_field => 'id',
+	      dbi_data_field => 'session_data',
+	      dbi_expires_field => 'expires',
+};
 
 __PACKAGE__->config->{authentication} =
                     {
@@ -98,7 +102,7 @@ __PACKAGE__->config->{authentication} =
                                     role_relation => 'roles',
                                     role_field => 'role',
                                   #  ignore_fields_in_find => [ 'remote_name' ],
-                                  #  use_userdata_from_session => 1,
+                                  #  use_userdata_from_session => 0,
                                 }
                             },
 			    openid => {
@@ -135,17 +139,13 @@ __PACKAGE__->config->{authentication} =
                                     user_model => 'Schema::User',
                                     role_relation => 'roles',
                                     role_field => 'role',
-                                  #  use_userdata_from_session => 1,
+                                   # use_userdata_from_session => 0,
                                 }
                             },
 			  
 			}
                     };
 
-__PACKAGE__->config->{user_session} = {
-# 	migrate=>'off',
-#         merge_type => 'RETAINMENT_PRECEDENT',
-    }; 
 
 # Set configuration for static files
 # Force specific directories to be handled by Static::Simple.
