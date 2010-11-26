@@ -39,18 +39,24 @@ sub workbench_GET {
       $type = "my_library" if ($class eq 'paper');
       my $name = $c->req->params->{name} || "this $class";
       if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
-            $c->user_session->{bench}{count}--;
+#             $c->user_session->{bench}{count}--;
             delete $c->user_session->{bench}{$type}{$class}{$id};
             $c->stash->{notify} = "$name has been removed from your favourites"; 
       } else{
-            $c->user_session->{bench}{count}++;
+#             $c->user_session->{bench}{count}++;
             $c->user_session->{bench}{$type}{$class}{$id}=localtime();
             $c->stash->{notify} = "$name has been added to your favourites"; 
       }
     }
  	$c->stash->{noboiler} = 1;
-    my $count = scalar($c->user_session->{bench}{count}) || 0;
+    my $count; # this seems a bit silly but to make sure numbers adds up after login, otherwise it shows the counts incorrect.. xiaoqi
+    foreach my $type (keys %{$c->user_session->{bench}} ){
+      foreach my $class (keys %{$c->user_session->{bench}{$type}} ){
+	  $count += scalar(keys %{$c->user_session->{bench}{$type}{$class}});
+      }
+    }
     $c->stash->{count} = $count;
+    $c->log->debug("kkkkkkkkkkkkkkkkkkkkkk",$c->user->supports("session_data") );
     $c->stash->{template} = "workbench/count.tt2";
 } 
 
