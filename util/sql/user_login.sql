@@ -64,3 +64,10 @@ CREATE TABLE issues_threads (
 );
 
 INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator');
+
+DROP TABLE IF EXISTS sessions;
+CREATE TABLE sessions (
+        id           char(72) primary key,
+        session_data text,
+        expires      int(10)
+    );
