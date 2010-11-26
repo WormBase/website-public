@@ -56,7 +56,6 @@ sub workbench_GET {
       }
     }
     $c->stash->{count} = $count;
-    $c->log->debug("kkkkkkkkkkkkkkkkkkkkkk",$c->user->supports("session_data") );
     $c->stash->{template} = "workbench/count.tt2";
 } 
 
