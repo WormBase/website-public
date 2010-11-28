@@ -823,17 +823,19 @@ sub nature_of_variation {
 sub dominance {
     my $self = shift;
     my $object = $self->object;
-    my $dominance = 
-	$object->Recessive
+    my $dominance = $object->Recessive
 	|| $object->Semi_dominant
-	|| $object->Dominant	
-	|| $object->Partially_penetrant
-	|| $object->Completely_penetrant;
+	|| $object->Dominant
+	|| eval{$object->Partially_penetrant}
+	|| eval{$object->Completely_penetrant};	
+	
     my $data = { description => 'dominance of the variation',
 		 data => "$dominance",
     };
     return $data;
 }
+
+## || ;
 
 sub phenotype_remark {
     my $self = shift;
@@ -856,335 +858,367 @@ sub temperature_sensitivity {
     };
     return $data;
 }
-		 
 
-if (0) {
-    sub pull_phenotype_data {
+sub pull_phenotype_data_test {
+
+	my $self = shift @_;
+	my %test_data = (
+		'description' => "Test",
+		'data_pack' => [
+				{"phenotype" => "the", 
+				"remark" => "quick"},
+				{"phenotype" => "brown", 
+				"remark" => "fox"},
+				{"phenotype" => "jumps", 
+				"remark" => "over"},
+				{"phenotype" => "lazy", 
+				"remark" => "dog"}
+			]
+		);
+					
+	return \%test_data;				
+}
+
+sub pull_phenotype_data {
 	
-	my $object = shift @_;
+	my $self = shift @_;
+	my $object = $self->object;  ##shift @_;
+	my %return_data;
+	
+	
 	my @phenotype_data;   ## return data structure contains set of : not, phenotype_id; array ref for each characteristic in each element
-	my @phenotypes = $object->Phenotype;
 	
-	foreach my $phenotype (@phenotypes) {
-	    my %p_data;   ### data holder for not, phenotype, remark, and array ref of characteristics, loaded into @phenotype_data for each phenotype related to the variation.
-	    my @phenotype_subtags = $phenotype->col ; ## 0
-	    my $phenotype_not = grep {$_ =~ m/Not/} @phenotype_subtags;
-	    
-	    
-	    my @psubtag_data;
-	    my @ps_data;
-	   	    
-	    my %tagset = (
-    		'Paper_evidence' => 1,
-    		'Remark' => 1,
-#    		'Person_evidence' => 1,
-#		  'Phenotype_assay' => 1,
-#		  'Penetrance' => 1,			
-#		  'Temperature_sensitive' => 1,
-#		  'Anatomy_term' => 1,
-#		  'Recessive' => 1,
-#		  'Semi_dominant' => 1,
-#		  'Dominant' => 1,
-#		  'Haplo_insufficient' => 1,
-# 		  'Loss_of_function' => 1,
-#		  'Gain_of_function' => 1,
-#		  'Maternal' => 1,
-#		  'Paternal' => 1
-		
-		); ### extra data commented out off data pull system 20090922 to simplify table build and data pull
-	    
-	    my %extra_tier = ( 'Phenotype_assay' => 1,
-			       'Temperature_sensitive' => 1
-		);#'Penetrance' => 1,
-	    
-	    my %gof_set = {
-		'Gain_of_function' => 1
-		    , 'Maternal' => 1
-		    #, 'Paternal' => 1
-	    };
-	    
-	    my %no_details = (
-		'Recessive' => 1,
-		'Semi_dominant' => 1,
-		'Dominant' => 1,
-		'Haplo_insufficient' => 1,
-		'Paternal' => 1
-		
-		);	 # 		, 'Loss_of_function' => 1'Gain_of_function' => 1,
-	    
-	    
-	    foreach my $phenotype_subtag  (@phenotype_subtags) {
-		
-		if (!($tagset{$phenotype_subtag})) {
-		    next;
-		}
-		else{
-		    
-		    my @ps_column = $phenotype_subtag->col;
-		    
-		    ## data to be incorporated into @ps_data;
-		    
-		    my $character;
-		    my $remark;
-		    my $evidence_line;
-		    
-		    ## process Penetrance data
-		    if ($phenotype_subtag =~ m/Penetrance/) {
-			foreach my $ps_column_element (@ps_column) {
-			    
-			    
-			    
-			    if ($ps_column_element =~ m/Range/) {
+	my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
+  
+  	foreach my $phenotype_tag (@phenotype_tags) {
+  
+		my @phenotypes = $object->$phenotype_tag;
+
+		foreach my $phenotype (@phenotypes) {
+			my %p_data;   ### data holder for not, phenotype, remark, and array ref of characteristics, loaded into @phenotype_data for each phenotype related to the variation.
+			my @phenotype_subtags = $phenotype->col ; ## 0
+			
+			my @psubtag_data;
+			my @ps_data;
+				
+			my %tagset = (
+				'Paper_evidence' => 1,
+				'Remark' => 1,
+	#    		'Person_evidence' => 1,
+	#		  'Phenotype_assay' => 1,
+	#		  'Penetrance' => 1,			
+	#		  'Temperature_sensitive' => 1,
+	#		  'Anatomy_term' => 1,
+	#		  'Recessive' => 1,
+	#		  'Semi_dominant' => 1,
+	#		  'Dominant' => 1,
+	#		  'Haplo_insufficient' => 1,
+	# 		  'Loss_of_function' => 1,
+	#		  'Gain_of_function' => 1,
+	#		  'Maternal' => 1,
+	#		  'Paternal' => 1
+			
+			); ### extra data commented out off data pull system 20090922 to simplify table build and data pull
+			
+			my %extra_tier = (
+			
+						'Phenotype_assay' => 1,
+						'Temperature_sensitive' => 1
+			);#'Penetrance' => 1,
+			
+			my %gof_set = (
+				
+				'Gain_of_function' => 1,
+				'Maternal' => 1
+				#, 'Paternal' => 1
+			);
+			
+			my %no_details = (
+				
+				'Recessive' => 1,
+				'Semi_dominant' => 1,
+				'Dominant' => 1,
+				'Haplo_insufficient' => 1,
+				'Paternal' => 1
+			);	 # 		, 'Loss_of_function' => 1'Gain_of_function' => 1,
+			
+			
+			foreach my $phenotype_subtag  (@phenotype_subtags) {
+			
+			if (!($tagset{$phenotype_subtag})) {
+				next;
+			}
+			else{
+				
+				my @ps_column = $phenotype_subtag->col;
+				
+				## data to be incorporated into @ps_data;
+				
+				my $character;
+				my $remark;
+				my $evidence_line;
+				
+				## process Penetrance data
+				if ($phenotype_subtag =~ m/Penetrance/) {
+				foreach my $ps_column_element (@ps_column) {
+					
+					
+					
+					if ($ps_column_element =~ m/Range/) {
+					next;
+					
+					} 
+					else {
+					my ($char,$text,$evidence) = $ps_column_element->row;
+					my @pen_evidence = $evidence-> col;
+					$character = "$phenotype_subtag"; #\:
+					$remark = $char; #$text
+					
+					my @pen_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @pen_evidence}; # ;
+					
+					$evidence_line =  join "; ", @pen_links;
+					}
+				}
+				}
+				
+				## get remark
+				
+				
+				elsif ($phenotype_subtag =~ m/Remark/) {
+				
+				my @remarks = $phenotype_subtag->col;
+				my $remarks = join "; ", @remarks;
+				my $details_url = "/db/misc/etree?name=$phenotype;class=Phenotype";
+				my $details_link = a({-href=>$details_url},'[Details]');
+				$remarks = "$remarks\ $details_link";
+				$p_data{'remark'} = $remarks; #$phenotype_subtag->right
 				next;
 				
-			    } 
-			    else {
-				my ($char,$text,$evidence) = $ps_column_element->row;
-				my @pen_evidence = $evidence-> col;
-				$character = "$phenotype_subtag"; #\:
-				$remark = $char; #$text
+				}
 				
-				my @pen_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @pen_evidence}; # ;
 				
-				$evidence_line =  join "; ", @pen_links;
-			    }
-			}
-		    }
-		    
-		    ## get remark
-		    
-		    
-		    elsif ($phenotype_subtag =~ m/Remark/) {
-			
-			my @remarks = $phenotype_subtag->col;
-			my $remarks = join "; ", @remarks;
-			my $details_url = "/db/misc/etree?name=$phenotype;class=Phenotype";
-			my $details_link = a({-href=>$details_url},'[Details]');
-			$remarks = "$remarks\ $details_link";
-			$p_data{'remark'} = $remarks; #$phenotype_subtag->right
-			next;
-			
-		    }
-		    
-		    
-		    
-		    ## get evidences
-		    elsif ($phenotype_subtag =~ m/Paper_evidence/) {
-			
-			my @phenotype_paper_evidence = $phenotype_subtag->col;
-			my @phenotype_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @phenotype_paper_evidence}; #; 
-			$p_data{'paper_evidence'} = join "; ", @phenotype_paper_links;
-			next;
-		    }
-		    
-		    
-		    ## process Anatomy_term data
-		    
-		    elsif ($phenotype_subtag =~ m/Anatomy_term/) {
-			my ($char,$text,$evidence) = $phenotype_subtag ->row;
-			my @at_evidence = $phenotype_subtag -> right -> right -> col;
-			
-			# my $at_link;
-			my $at_term = $text->Term;
-			my $at_url = "/db/ontology/anatomy?name=" . $text;
-			my $at_link = a({-href => $at_url}, $at_term);
-			
-			$character = $char;
-			$remark = $at_link; #$text
-			
-			my @at_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @at_evidence}; #;
-			
-			$evidence_line = join "; ", @at_links;
-			
-		    }
-		    
-		    ## process extra tier data
-		    
-		    elsif ($phenotype_subtag =~ m/Phenotype_assay/) {
-			foreach my $character_detail (@ps_column) {
-			    my $cd_info = $character_detail->right; # right @cd_info
-			    my @cd_evidence = $cd_info->right->col;
-			    $character = "$character_detail";  #$phenotype_subtag\:
-			    # = $cd_info->col;
-			    $remark =  $cd_info; # join "; ", @cd_info;
-			    
-			    my @cd_links= eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
-			    
-			    $evidence_line = join "; ", @cd_links;
-			    
-			    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-			    push  @ps_data, $phenotype_st_line ; 
-			    
-			}
-			next;
-		    }
-		    
-		    elsif ($phenotype_subtag =~ m/Temperature_sensitive/) {
-			foreach my $character_detail (@ps_column) {
-			    my $cd_info = $character_detail->right;
-			    my @cd_evidence = $cd_info->right->col;
-			    
-			    my @cd_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
-			    
-			    $character = "$character_detail";  #$phenotype_subtag\:
-			    $remark = $cd_info;
-			    $evidence_line = join "; ", @cd_links ;
-			    
-			    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-			    push  @ps_data, $phenotype_st_line ; 
-			}
-			
-			next;
-		    }
-		    
-		    elsif ( $phenotype_subtag =~ m/Gain_of_function/) { # $gof_set{}
-			my ($char,$text,$evidence) = $phenotype_subtag->row;
-			my @gof_evidence;
-			
-			eval{
-			    @gof_evidence = $evidence-> col;
-			}; 
-			#\:
-			$remark = $text; #$char
-			
-			if(!(@gof_evidence)){
-			    $character = $phenotype_subtag;
-			    $remark = '';
-			    $evidence_line = $p_data{'paper_evidence'};
-			    
-			    
-			    
-			}
-			#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
-			else {
-			    $character = $phenotype_subtag;
-			    $remark = $char;
-			    my @gof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @gof_evidence}; #  ;
-			    
-			    $evidence_line =  join "; ", @gof_paper_links;
-			}
-			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-			push  @ps_data, $phenotype_st_line ; 
-			next;
-			
-			
-		    }
-		    
-		    elsif ( $phenotype_subtag =~ m/Loss_of_function/) { # $gof_set{}
-			my ($char,$text,$evidence) = $phenotype_subtag->row;
-			my @lof_evidence;
-			
-			eval{
-			    @lof_evidence = $evidence-> col;
-			}; 
-			#\:
-			$remark = $text; #$char
-			
-			if(!(@lof_evidence)){
-			    $character = $phenotype_subtag;
-			    $remark = $text;
-			    $evidence_line = $p_data{'paper_evidence'};
-			    
-			    
-			    
-			}
-			#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
-			else {
-			    $character = $phenotype_subtag;
-			    $remark = $text;
-			    my @lof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @lof_evidence}; ; #
-			    
-			    $evidence_line =  join "; ", @lof_paper_links;
-			}
-			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-			push  @ps_data, $phenotype_st_line ; 
-			next;
-			
-		    }
-		    
-		    
-		    elsif ( $phenotype_subtag =~ m/Maternal/) { # $gof_set{}
-			my ($char,$text,$evidence) = $phenotype_subtag->row;
-			
-			my @mom_evidence;
-			
-			eval {
-			    
-			    @mom_evidence = $evidence->col;
-			    
-			};
-			
-			
-			if(!(@mom_evidence)){
-			    $character = $phenotype_subtag;
-			    $remark = '';
-			    $evidence_line = $p_data{'paper_evidence'};
-			    
-			}
-			else {
-			    $character = $phenotype_subtag;
-			    $remark = '';
-			    my @mom_paper_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @mom_evidence} ; #;
-			    $evidence_line =  join "; ", @mom_paper_links;
-			    
-			}
-			
-			
-			my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-			push  @ps_data, $phenotype_st_line ; 
-			next;
-			
-			
-		    }
-		    
-		    
-		    ## process no details data
-		    elsif ($no_details{$phenotype_subtag}) {
-			my @nd_evidence;
-			eval {
-			    @nd_evidence = $phenotype_subtag->right->col;
-			};
-			
-			$character = $phenotype_subtag;
-			$remark = "";
-			if (@nd_evidence){
-			    
-			    my @nd_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @nd_evidence ; }; # 
-			    
-			    $evidence_line = join "; ", @nd_links;
+				
+				## get evidences
+				elsif ($phenotype_subtag =~ m/Paper_evidence/) {
+				
+				my @phenotype_paper_evidence = $phenotype_subtag->col;
+				my @phenotype_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @phenotype_paper_evidence}; #; 
+				$p_data{'paper_evidence'} = join "; ", @phenotype_paper_links;
+				next;
+				}
+				
+				
+				## process Anatomy_term data
+				
+				elsif ($phenotype_subtag =~ m/Anatomy_term/) {
+				my ($char,$text,$evidence) = $phenotype_subtag ->row;
+				my @at_evidence = $phenotype_subtag -> right -> right -> col;
+				
+				# my $at_link;
+				my $at_term = $text->Term;
+				my $at_url = "/db/ontology/anatomy?name=" . $text;
+				my $at_link = a({-href => $at_url}, $at_term);
+				
+				$character = $char;
+				$remark = $at_link; #$text
+				
+				my @at_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @at_evidence}; #;
+				
+				$evidence_line = join "; ", @at_links;
+				
+				}
+				
+				## process extra tier data
+				
+				elsif ($phenotype_subtag =~ m/Phenotype_assay/) {
+				foreach my $character_detail (@ps_column) {
+					my $cd_info = $character_detail->right; # right @cd_info
+					my @cd_evidence = $cd_info->right->col;
+					$character = "$character_detail";  #$phenotype_subtag\:
+					# = $cd_info->col;
+					$remark =  $cd_info; # join "; ", @cd_info;
+					
+					my @cd_links= eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
+					
+					$evidence_line = join "; ", @cd_links;
+					
+					my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+					push  @ps_data, $phenotype_st_line ; 
+					
+				}
+				next;
+				}
+				
+				elsif ($phenotype_subtag =~ m/Temperature_sensitive/) {
+				foreach my $character_detail (@ps_column) {
+					my $cd_info = $character_detail->right;
+					my @cd_evidence = $cd_info->right->col;
+					
+					my @cd_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @cd_evidence }; #  ;
+					
+					$character = "$character_detail";  #$phenotype_subtag\:
+					$remark = $cd_info;
+					$evidence_line = join "; ", @cd_links ;
+					
+					my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+					push  @ps_data, $phenotype_st_line ; 
+				}
+				
+				next;
+				}
+				
+				elsif ( $phenotype_subtag =~ m/Gain_of_function/) { # $gof_set{}
+				my ($char,$text,$evidence) = $phenotype_subtag->row;
+				my @gof_evidence;
+				
+				eval{
+					@gof_evidence = $evidence-> col;
+				}; 
+				#\:
+				$remark = $text; #$char
+				
+				if(!(@gof_evidence)){
+					$character = $phenotype_subtag;
+					$remark = '';
+					$evidence_line = $p_data{'paper_evidence'};
+					
+					
+					
+				}
+				#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
+				else {
+					$character = $phenotype_subtag;
+					$remark = $char;
+					my @gof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @gof_evidence}; #  ;
+					
+					$evidence_line =  join "; ", @gof_paper_links;
+				}
+				my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+				push  @ps_data, $phenotype_st_line ; 
+				next;
+				
+				
+				}
+				
+				elsif ( $phenotype_subtag =~ m/Loss_of_function/) { # $gof_set{}
+				my ($char,$text,$evidence) = $phenotype_subtag->row;
+				my @lof_evidence;
+				
+				eval{
+					@lof_evidence = $evidence-> col;
+				}; 
+				#\:
+				$remark = $text; #$char
+				
+				if(!(@lof_evidence)){
+					$character = $phenotype_subtag;
+					$remark = $text;
+					$evidence_line = $p_data{'paper_evidence'};
+					
+					
+					
+				}
+				#my @pen_links = map {format_reference(-reference=>$_,-format=>'short');} @pen_evidence;
+				else {
+					$character = $phenotype_subtag;
+					$remark = $text;
+					my @lof_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @lof_evidence}; ; #
+					
+					$evidence_line =  join "; ", @lof_paper_links;
+				}
+				my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+				push  @ps_data, $phenotype_st_line ; 
+				next;
+				
+				}
+				
+				
+				elsif ( $phenotype_subtag =~ m/Maternal/) { # $gof_set{}
+				my ($char,$text,$evidence) = $phenotype_subtag->row;
+				
+				my @mom_evidence;
+				
+				eval {
+					
+					@mom_evidence = $evidence->col;
+					
+				};
+				
+				
+				if(!(@mom_evidence)){
+					$character = $phenotype_subtag;
+					$remark = '';
+					$evidence_line = $p_data{'paper_evidence'};
+					
+				}
+				else {
+					$character = $phenotype_subtag;
+					$remark = '';
+					my @mom_paper_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @mom_evidence} ; #;
+					$evidence_line =  join "; ", @mom_paper_links;
+					
+				}
+				
+				
+				my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+				push  @ps_data, $phenotype_st_line ; 
+				next;
+				
+				
+				}
+				
+				
+				## process no details data
+				elsif ($no_details{$phenotype_subtag}) {
+				my @nd_evidence;
+				eval {
+					@nd_evidence = $phenotype_subtag->right->col;
+				};
+				
+				$character = $phenotype_subtag;
+				$remark = "";
+				if (@nd_evidence){
+					
+					my @nd_links = eval{map {format_reference(-reference=>$_,-format=>'short') if $_;} @nd_evidence ; }; # 
+					
+					$evidence_line = join "; ", @nd_links;
+				}
+				
+				
+				}
+				
+				
+				my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+				push  @ps_data, $phenotype_st_line ;  ## let @ps_data evolve to include characteristic; remarks; and evidence line
 			}
 			
+			}
 			
-		    }
-		    
-		    
-		    my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-		    push  @ps_data, $phenotype_st_line ;  ## let @ps_data evolve to include characteristic; remarks; and evidence line
+			my $phenotype_name = $phenotype->Primary_name;
+			#my $phenotype_url = Object2URL($phenotype);
+			#my $phenotype_link = b(a({-href=>$phenotype_url},$phenotype_name));
+			
+			
+			if ($phenotype_tag eq 'Phenotype_not_observed') {
+ 	
+				$p_data{'not'} = 1; 		
+ 			}
+			
+			$p_data{'phenotype'} = "$phenotype_name"; ## $phenotype_link
+			$p_data{'ps'} = \@ps_data;
+			
+			
+			push @phenotype_data, \%p_data;
+			
 		}
-		
-	    }
-	    
-	    my $phenotype_name = $phenotype->Primary_name;
-	    my $phenotype_url = Object2URL($phenotype);
-	    my $phenotype_link = b(a({-href=>$phenotype_url},$phenotype_name));
-	    
-	    $p_data{'not'} = $phenotype_not;
-	    $p_data{'phenotype'} = $phenotype_link;
-	    $p_data{'ps'} = \@ps_data;
-	    
-	    
-	    push @phenotype_data, \%p_data;
-	    
 	}
+
+	$return_data{'data_pack'} = \@phenotype_data;
+	$return_data{'description'} = "Phenotypes for this variation";
 	
+	return \%return_data;
 	
-	#  my @phenotype_data = @phenotypes;
-	
-	
-	return \@phenotype_data;
-	
-    }
-}
+	}
 
 
 
