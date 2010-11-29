@@ -254,9 +254,9 @@
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
 <!--    <section class="widget" name="[% widget.name %]"> -->
-          <div class="widget-container ui-corner-all [% w.type %]">
+          <div class="widget-container ui-corner-all">
                 <header> 
-                <div id="widget-header" class="ui-corner-top">
+                <div id="widget-[% w.type %]" class="ui-corner-top widget-header">
                     <div class="module-close" wname="[% w.id %]" title="close"></div>
                    
                     <h3><div class="module-min [% w.id %]" wname="[% w.id %]"></div><span>[% w.title %]</span>
