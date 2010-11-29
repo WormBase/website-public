@@ -21,7 +21,7 @@
      $("#openid_identifier").focus();
 
     $(".sortable").sortable({
-      handle: '#widget-header, #widget-footer',
+      handle: '.widget-header, #widget-footer',
       items:'li.widget',
       placeholder: 'placeholder ui-corner-all',
       connectWith: '.sortable',
@@ -63,6 +63,7 @@
       var msg = "open sidebar";
       if(w == 0){ w = '9.5em'; msg = "close sidebar"; }else { w = 0;}
       nav.animate({width: w, display: 'block'});
+      nav.children("#title").children("div").toggle();
       $(this).attr("title", msg);
       $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
