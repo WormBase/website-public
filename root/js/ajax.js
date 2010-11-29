@@ -227,9 +227,9 @@
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
       widget_container.find("#widget-footer").hide();
-      widget_container.find("#widget-header").children("h3").children("span.hide").hide();
+      widget_container.find(".widget-header").children("h3").children("span.hide").hide();
 
-    widget_container.find("#widget-header").hover(
+    widget_container.find(".widget-header").hover(
       function () {
         $(this).children("h3").children("span").show();
       },
@@ -240,13 +240,13 @@
 
     widget_container.hover(
         function () {
-          $(this).find("#widget-header").children(".ui-icon").show();
-          if($(this).find("#widget-header").children("h3").children(".module-min").attr("show") != 1){
+          $(this).find(".widget-header").children(".ui-icon").show();
+          if($(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
             $(this).find("#widget-footer").show();
           }
         }, 
         function () {
-          $(this).find("#widget-header").children(".ui-icon").hide();
+          $(this).find(".widget-header").children(".ui-icon").hide();
           $(this).find("#widget-footer").hide();
         }
       );
