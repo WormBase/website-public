@@ -9,50 +9,21 @@
 [% search_type = c.stash.type %]
 <div id="results">
 [% IF results.size > 0 %]
-  <div id="fade">found <span id="count">[% results.size %]</span> 
-    [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' for ' _ c.stash.query; ELSE; 'results'; END; %]
+  <div id="fade">found <span id="count">[% c.stash.count%]</span> 
+    [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
   </div>
 [% ELSE %]
   Sorry, <span id="count">[% results.size %]</span> results found for the search [% c.stash.query %]
 [% END %]
 
 <ul class="results-[% search_type %]">
-[% FOREACH item IN results %]
- [% UNLESS c.stash.bench %]<div class="result">[% END %]
- [% USE String(item.name.class); class = String.lower; %]
-
-  [% type = get_section(class) %]
-
-  <li>
-          [% wbid = item.name.id.remove(':') %]
-          <div class="workbench-status-[% wbid %]"></div>
-
-          <script>
-          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% class %]&type=[% type %]&id=[% item.name.id %]");
-          </script>
-
- 
-
-  [% IF search_type == 'all' %]
-    <span id="fade">[% class %]:</span>
-  [% END %]
-
-  [% TRY %]
-    [% file = "search/" _ class _ ".tt2" %]
-    [% PROCESS "$file" %]
-    <span id="fade">[% item.footer %]</span>
-  [% CATCH %]
-<!--     <span id="fade">[% class %]:</span> -->
-      [% tag2link(item.name) %]
-    </li>
-    <span id="fade">[% item.footer %]</span>
-  [% END %]
- [% UNLESS c.stash.bench %]</div>[% END %]
-[% END %]
+  [% PROCESS "search/result_list.tt2" %]
 </ul>
 
 [% PROCESS timer IF noboiler %] 	
- 
+  [% IF c.stash.count > 10 %]
+  <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query %]?inline=1">more results<span class="ui-icon ui-icon-triangle-1-s"></span></div>
+  [% END %]
 </div>
 
 <script>
@@ -76,5 +47,36 @@
   });
 [% END %]
 
+    var total = [% c.stash.count %];
+    var begin = 10;
+    var end = 19;
+    $(".load-results").live('click', function() {
+      if(begin > total){ return; }
+      var url= $(this).attr("href") + "&begin=" + begin + "&end=" + end;
+
+      $("#load-results").html("<span id=\"fade\">loading...</span>");
+      $(this).removeClass("load-results");
+
+        var div = $("<div></div>");
+        div.load(url, function(response, status, xhr) {
+          begin = begin + 10;
+          end = end +10;
+        if(begin <= total){
+          $("#load-results").html('more results<span class="ui-icon ui-icon-triangle-1-s"></span>');
+        }else{
+          $("#load-results").html('');
+        }
+          $("#load-results").addClass("load-results");
+          $("#load-results").html('more results<span class="ui-icon ui-icon-triangle-1-s"></span>');
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $(this).html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+        
+
+        div.appendTo($(this).parent().children("ul"));
+
+    });
 </script>
 <!-- End result list -->

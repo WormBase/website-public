@@ -33,7 +33,10 @@
 	  } 
     }); 
 
-    
+
+
+
+
     $(".issue-submit").live('click',function() {
 	    var url= $(this).attr("rel");
 	    var page= $(this).attr("page");

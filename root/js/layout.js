@@ -119,7 +119,7 @@ $(function() {
       var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
       if( bottomPos < at_default )
           bottomPos = at_default;
-      var objBiggerThanWindow = $sidebar.outerHeight() > $(window).height();
+      var objBiggerThanWindow = $sidebar.outerHeight() > $window.height();
       if (objBiggerThanWindow){ return; }
       if ($window.scrollTop() > offset) {
           var newpos = $window.scrollTop() - offset + 10 + at_default;
@@ -132,6 +132,13 @@ $(function() {
           $sidebar.stop().css(
               'margin-top', at_default
           );
+      }
+
+      var results = $("#results");
+      var rHeight = results.height() + results.offset().top;
+      var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
+      if(rBottomPos < 100) {
+        results.children(".load-results").trigger('click');
       }
     });
 
