@@ -55,6 +55,7 @@ sub workbench_GET {
 	  $count += scalar(keys %{$c->user_session->{bench}{$type}{$class}});
       }
     }
+    unless($count){$count = 0; } #otherwise empty brackets show
     $c->stash->{count} = $count;
     $c->stash->{template} = "workbench/count.tt2";
 } 
