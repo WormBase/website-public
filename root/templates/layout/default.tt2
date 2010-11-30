@@ -11,7 +11,7 @@
 
 
            [% content %]
-      <div id="spacer" />
+      <div id="spacer"></div>
     </div>
      
  

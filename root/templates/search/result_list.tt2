@@ -1,0 +1,32 @@
+[% FOREACH item IN results %]
+ [% UNLESS c.stash.bench %]<div class="result">[% END %]
+ [% USE String(item.name.class); class = String.lower; %]
+
+  [% type = get_section(class) %]
+
+  <li>
+          [% wbid = item.name.id.remove(':') %]
+          <div class="workbench-status-[% wbid %]"></div>
+
+          <script>
+          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% class %]&type=[% type %]&id=[% item.name.id %]");
+          </script>
+
+ 
+
+  [% IF search_type == 'all' %]
+    <span id="fade">[% class %]:</span>
+  [% END %]
+
+  [% TRY %]
+    [% file = "search/" _ class _ ".tt2" %]
+    [% PROCESS "$file" %]
+    <span id="fade">[% item.footer %]</span>
+  [% CATCH %]
+<!--     <span id="fade">[% class %]:</span> -->
+      [% tag2link(item.name) %]
+    </li>
+    <span id="fade">[% item.footer %]</span>
+  [% END %]
+ [% UNLESS c.stash.bench %]</div>[% END %]
+[% END %]
