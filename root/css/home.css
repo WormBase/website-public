@@ -101,17 +101,32 @@ div.more .ui-icon {
 
 /* The search bar form */
 #searchForm {
-  padding:0.7em;
+/*   padding:0.7em; */
   float:right;
   position:relative;
+  padding:0;
+  margin:0.6em 1em 0;
+  background:#FFF;
 }
 #searchForm input.text{  
     color: #565656;  
-    border: 1px solid gray;  
-    padding: 0.2em; 
+    border:none;
+    padding: 0.3em; 
     text-align: left;  
-    height:1.2em;
+    height:18px;
+    margin: 0;
+    background:transparent;
+  border-right:1px dotted gray;
 }  
+
+#searchForm input.button{
+  margin:0.3em 0.5em 0 0;
+  padding:0;
+  background-color:transparent;
+  cursor:pointer;
+  border:none;
+  display:inline;
+}
 
 
 #notifications {

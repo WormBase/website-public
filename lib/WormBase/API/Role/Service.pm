@@ -98,7 +98,7 @@ around 'dbh' => sub {
     
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
     if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
-      $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
+#       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
     $self->log->debug( $self->symbolic_name." dbh for species $species doesn't exist or is not alive; trying to connect");
@@ -173,7 +173,7 @@ sub check_cpu_load {
 	$load =~ s/%// if(defined $load);
     }
     else {
-	$self->log->debug("not able to retrieve host $host status through http!");
+# 	$self->log->debug("not able to retrieve host $host status through http!");
     }
     return $load;
 }
