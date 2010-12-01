@@ -21,7 +21,7 @@ fi
 export APPDIR="/usr/local/wormbase/website/$APP"
 export PIDDIR=/tmp
 export PIDFILE=$PIDDIR/${APP}.pid
-export STARMAN="/usr/local/wormbase/website/production/starman-wormbase.sh"
+export STARMAN="$APPDIR/bin/starman-wormbase.sh"
 
 if [ ! -d $APPDIR ]; then
     echo "$APPDIR does not exist"
@@ -46,12 +46,12 @@ _start() {
   --chdir $APPDIR --startas $STARMAN
 
   echo ""
-  echo "Waiting for $APPNAME to start..."
+  echo "Waiting for $APP to start..."
 
   for i in 1 2 3 4 ; do
     sleep 1
     if check_running ; then
-      echo "$APPNAME is now starting up"
+      echo "$APP is now starting up"
       return 0
     fi
   done
@@ -64,7 +64,7 @@ _start() {
   for i in 1 2 3 4 ; do
     sleep 1
     if check_running ; then
-      echo "$APPNAME is now starting up"
+      echo "$APP is now starting up"
       return 0
     fi
   done
