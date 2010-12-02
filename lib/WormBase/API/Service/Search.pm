@@ -88,6 +88,7 @@ sub fetchPerson {
     @objs = $DB->fetch(-class =>'Person', -pattern  => "*$query*",-fill  => 1,) unless @objs;
   } else {
    $query    =~ s/,/ /g;
+   $query    =~ s/\./\*/g;
    $query    =~ s/  / /g;
    my @fields = split(/\s/,$query);
    
@@ -110,11 +111,12 @@ sub fetchPerson {
 
 
 
-    unless(@objs){
+#     unless(@objs){
    @objs = person_fields($self, $query);
    foreach (stemming($self, $query)){ push(@objs, person_fields($self, $_));}
+   foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
    if(@fields > 1 && !@objs){
-    foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
+#     foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
     foreach (stemming($self, join('*', reverse(@fields)))){ push(@objs, person_fields($self, $_));}
     unless(@objs){
      foreach my $qu (@fields){
@@ -124,7 +126,7 @@ sub fetchPerson {
       }
     }
    }
-    }
+#     }
 
   }
 
