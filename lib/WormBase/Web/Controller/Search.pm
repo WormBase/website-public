@@ -37,27 +37,28 @@ sub search :Path('/search')  :Args(2) {
     my $objs;
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
+my $cached_data;
+#     my ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
     unless($cached_data) {  
         $cached_data = $api->search->$search({class => $class, pattern => $query});
-        $c->set_cache($cache_id,$cached_data);
+#         $c->set_cache($cache_id,$cached_data);
     }  
     $objs = $cached_data;
 
-
-    if(@$objs<1) { #this may not be optimal
-      $query.="*";
-      $objs = $api->search->$search({class => $class, pattern => $query}) ;
-      ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
-      unless($cached_data) {  
-          $cached_data = $api->search->$search({class => $class, pattern => $query});
-          $c->set_cache($cache_id,$cached_data);
-      } 
-      $objs = $cached_data;
-    }
+# 
+#     if(@$objs<1) { #this may not be optimal
+#       $query.="*";
+#       $objs = $api->search->$search({class => $class, pattern => $query}) ;
+#       ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
+#       unless($cached_data) {  
+#           $cached_data = $api->search->$search({class => $class, pattern => $query});
+#           $c->set_cache($cache_id,$cached_data);
+#       } 
+#       $objs = $cached_data;
+#     }
 
     my $begin = $c->req->param("begin") || 0;
-    my $end = $c->req->param("end") || 9;
+    my $end = $c->req->param("end") || 19;
     my $count = scalar(@$objs);
     if($end > ($count-1)){ $end = $count - 1;}
 
@@ -100,11 +101,17 @@ sub search_preview :Path('/search/preview')  :Args(2) {
     my $objs;
     $objs = $api->search->preview({class => $class, species => $species, begin=>$begin, end=>$end});
 
+#     $c->stash->{'type'} = $type; 
+#     $c->stash->{'results'} = $objs;
+#     $c->stash->{noboiler} = 1;
+# 
+#     $c->stash->{'query'} = $species;
+#     $c->stash->{'class'} = $type;
     $c->stash->{'type'} = $type; 
     $c->stash->{'results'} = $objs;
     $c->stash->{noboiler} = 1;
 
-    $c->stash->{'query'} = $species;
+    $c->stash->{'query'} = $species || "*";
     $c->stash->{'class'} = $type;
 }
 
