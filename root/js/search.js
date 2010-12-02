@@ -32,6 +32,10 @@ var cur_search_type = 'gene';
 
 function search() {
     var f = $("#Search").attr("value");
+    if(f == "search..." || f == "*" || !f){
+      location.href= '/search/preview/' + cur_search_type + '/*';
+      return;
+    }
     f = encodeURIComponent(f);
     f = f.replace('%26', '&');
     f = f.replace('%2F', '/');

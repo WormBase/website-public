@@ -283,10 +283,11 @@ li.visible div.widget-container {
 
 .content {
   padding:0.5em;
-  padding-bottom:1.7em;
+  padding-bottom:2em;
   overflow:auto;
   list-style:disc outside none;
   clear:both;
+  font-size:0.9em;
 }
 
 .content h2 {
@@ -332,20 +333,17 @@ li.visible div.widget-container {
 
 .widget-container #widget-footer a{
   float:right;
-  opacity:0.5;
-  filter:alpha(opacity=50);
-  -moz-opacity:0.5;
-}
-
-.widget-container #widget-footer a span{
-  float:left;
+  height:1.2em;
+  margin:0 0.2em;
+  border:1px solid #BBB;
+  background:#EEE;
+  padding:0 0.3em;
 }
 
 .widget-container #widget-footer a:hover{
-    opacity:1;
-    filter:alpha(opacity=100);
-    -moz-opacity:1;
+  background:#BBB;
 }
+
 
 div.ui-icon-large {
   float:right;
@@ -433,6 +431,7 @@ div#footer a{
 #footer, #spacer {
     clear:both;
     height: 6.8em;
+    margin-top:1em;
 }
 
 
@@ -698,7 +697,7 @@ div.field-title {
   float        : left;
   text-align   : right; 
   font-size    : 1em;
-  padding-right: 0.8em;
+  padding-right: 0.5em;
   width        : 9em;
 }
 
@@ -1017,7 +1016,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 *********************************/
 #widgets {
   background:#EEE;
-  margin:0 0 1em;
+  margin:0;
   padding:0 0.5em 0.5em 0.5em;
   position:relative;
   clear:both;
@@ -1131,16 +1130,11 @@ padding:0;
 }
 
 .sortable{
-/*   min-height:1em; */
   width:100%;
   float:left;
   position:relative;
   margin:0;
 }
-/*
-.right{
-  min-height:10em;
-}*/
 
 .placeholder {
   background: #FAF7DE;
@@ -1180,6 +1174,11 @@ div.details div.field div.field-content{
 
 .bench_update {
   float:right;
+}
+
+.disabled {
+  background:#EEE;
+  color:#AAA;
 }
 
 /*Strain table*/

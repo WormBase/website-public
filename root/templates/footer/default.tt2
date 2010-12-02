@@ -13,7 +13,9 @@
            at the US National Institutes of Health # P41 HG02223 and the British Medical Research Council.
 
 	   <br />
-	    [% server_details("") %]
+	    [% server_details("") %] 
+	  <br /> Loading Time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
+     
           </p>
 
      </div>
