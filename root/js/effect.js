@@ -95,6 +95,13 @@
       
   });
 
+  $("#widget-footer").children("button").button({
+            icons: {
+                primary: "ui-icon-comment"
+            }
+        });
+
+
     $(".tooltip").live('mouseover',function() {
         $(this).cluetip({
         activation: 'click',
