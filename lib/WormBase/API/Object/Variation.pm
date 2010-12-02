@@ -205,6 +205,7 @@ sub status {
 # MOLECULAR_DETAILS
 #
 ############################################################
+
 sub sequencing_status {
     my $self = shift;
     my $object = $self->object;
@@ -230,12 +231,12 @@ sub three_prime_gap {
 }
 	
 
-
 # Returns a data structure containing
 # wild type sequence - the wild type (or reference) sequence
 # mutant sequence - the mutant sequence
 # wild type label - the source (background) of the wild type sequence
 # mutant label    - the source (background) of the mutation
+
 sub nucleotide_change {
     my $self   = shift;
     my $object = $self->object;
@@ -809,6 +810,7 @@ sub genomic_image {
 # PHENOTYPE
 #
 ############################################################
+
 sub nature_of_variation {
     my $self = shift;
     my $object = $self->object;
@@ -859,38 +861,33 @@ sub temperature_sensitivity {
     return $data;
 }
 
-sub pull_phenotype_data_test {
+sub phenotype {
 
-	my $self = shift @_;
-	my %test_data = (
-		'description' => "Test",
-		'data_pack' => [
-				{"phenotype" => "the", 
-				"remark" => "quick"},
-				{"phenotype" => "brown", 
-				"remark" => "fox"},
-				{"phenotype" => "jumps", 
-				"remark" => "over"},
-				{"phenotype" => "lazy", 
-				"remark" => "dog"}
-			]
-		);
-					
-	return \%test_data;				
+	my $self = shift;
+	my $phenotype_data = $self->pull_phenotype_data('Phenotype');
+	return $phenotype_data;
+
+}
+
+sub phenotype_not {
+
+	my $self = shift;
+	my $phenotype_data = $self->pull_phenotype_data('Phenotype_not_observed');
+	return $phenotype_data;
 }
 
 sub pull_phenotype_data {
 	
 	my $self = shift @_;
+	my $phenotype_tag = shift @_;
 	my $object = $self->object;  ##shift @_;
 	my %return_data;
 	
 	
 	my @phenotype_data;   ## return data structure contains set of : not, phenotype_id; array ref for each characteristic in each element
 	
-	my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
-  
-  	foreach my $phenotype_tag (@phenotype_tags) {
+	#my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
+  	#foreach my $phenotype_tag (@phenotype_tags) {
   
 		my @phenotypes = $object->$phenotype_tag;
 
@@ -1211,7 +1208,7 @@ sub pull_phenotype_data {
 			push @phenotype_data, \%p_data;
 			
 		}
-	}
+#	}
 
 	$return_data{'data_pack'} = \@phenotype_data;
 	$return_data{'description'} = "Phenotypes for this variation";
@@ -1237,7 +1234,7 @@ sub gene_class {
     my $object = $self->object;    
     my $gene_class = $object->Gene_class || "";
     return { description => 'the class of the gene the variation falls in, if any',
-	     data        => { id    => "$gene_class",
+	     data => { id    => "$gene_class",
 			      label => "$gene_class",
 			      class => $gene_class,
 	     },
@@ -1262,9 +1259,11 @@ sub reference_allele {
     my $gene      = $object->Gene;
     my $allele    = $gene ? $gene->Reference_allele : "";
     return { description => 'the reference allele for the containing gene (if any)',	    
-	     data        => { label => $gene->Reference_allele ? $gene->Reference_allele->Public_name->name : $allele,
-                          id    => $allele,
-                          class => 'variation' },
+	     data=> { 
+	     	label => 
+	     		$gene->Reference_allele ? $gene->Reference_allele->Public_name->name : $allele,
+            id    => $allele,
+            class => 'variation' },
     };
 }
 
@@ -1281,13 +1280,13 @@ sub other_alleles {
                   label => $_->Public_name->name,
                   class => 'variation', };
 	    if ($_->SNP) {
-		push @{$data->{data}->{polymorphisms}}, $d;
+			push @{$data->{data}->{polymorphisms}}, $d;
 	    } else {		
-		if ($_->Sequence || $_->Flanking_sequences) {
-		    push @{$data->{data}->{unsequenced_alleles}},$d;
-		} else {		    
-		    push @{$data->{data}->{sequenced_alleles}},$d;
-		}
+			if ($_->Sequence || $_->Flanking_sequences) {
+		    	push @{$data->{data}->{unsequenced_alleles}},$d;
+			} else {		    
+		    	push @{$data->{data}->{sequenced_alleles}},$d;
+			}
 	    }
 	}
     }
@@ -1358,6 +1357,7 @@ sub rescued_by_transgene {
 # HISTORY
 #
 ############################################################
+
 sub laboratory_of_origin {
     my $self = shift;
     my $object = $self->object;
