@@ -15,7 +15,7 @@
 
 <!--    <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>
-   -->
+  --> 
     [% FOREACH item IN JavaScripts %]
      <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
     [% END %] 

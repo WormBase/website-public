@@ -10,7 +10,7 @@
       if(leftWidth>99){
         $("#widget-holder").children(".sortable").css('min-height', '0');
       }else{
-        $("#widget-holder").children(".sortable").css('min-height', '10em');
+        $("#widget-holder").children(".sortable").css('min-height', '5em');
       }
       $("#widget-holder").children(".left").css("width",leftWidth + "%");
       if(rightWidth==0){rightWidth=100;}
@@ -119,25 +119,25 @@ $(function() {
       var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
       if( bottomPos < at_default )
           bottomPos = at_default;
-      var objBiggerThanWindow = $sidebar.outerHeight() > $window.height();
-      if (objBiggerThanWindow){ return; }
-      if ($window.scrollTop() > offset) {
-          var newpos = $window.scrollTop() - offset + 10 + at_default;
-          if (newpos > bottomPos)
-              newpos = bottomPos;
-              $sidebar.stop().css(
-              'margin-top', newpos
-          );
-      } else {
-          $sidebar.stop().css(
-              'margin-top', at_default
-          );
+      var objBiggerThanWindow = $sidebar.outerHeight() < $window.height();
+      if (objBiggerThanWindow){
+        if ($window.scrollTop() > offset) {
+            var newpos = $window.scrollTop() - offset + 10 + at_default;
+            if (newpos > bottomPos)
+                newpos = bottomPos;
+                $sidebar.stop().css(
+                'margin-top', newpos
+            );
+        } else {
+            $sidebar.stop().css(
+                'margin-top', at_default
+            );
+        }
       }
-
       var results = $("#results");
       var rHeight = results.height() + results.offset().top;
       var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
-      if(rBottomPos < 100) {
+      if(rBottomPos < 300) {
         results.children(".load-results").trigger('click');
       }
     });

@@ -49,7 +49,12 @@
 [% BLOCK field_block %]
     [%# TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
 
-    <div class="field" id="[% title FILTER html %]">
+    <div class="field
+
+    [% TRY; IF (fields.$key.data.size == 0 ); " disabled "; END; END;%]
+
+
+" id="[% title FILTER html %]">
          <div class="field-title">
 
               [%# Is there a description? Set it as a tool tip %]

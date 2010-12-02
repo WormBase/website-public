@@ -287,6 +287,7 @@ li.visible div.widget-container {
   overflow:auto;
   list-style:disc outside none;
   clear:both;
+  font-size:0.9em;
 }
 
 .content h2 {
@@ -433,6 +434,7 @@ div#footer a{
 #footer, #spacer {
     clear:both;
     height: 6.8em;
+    margin-top:1em;
 }
 
 
@@ -698,7 +700,7 @@ div.field-title {
   float        : left;
   text-align   : right; 
   font-size    : 1em;
-  padding-right: 0.8em;
+  padding-right: 0.5em;
   width        : 9em;
 }
 
@@ -1017,7 +1019,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 *********************************/
 #widgets {
   background:#EEE;
-  margin:0 0 1em;
+  margin:0;
   padding:0 0.5em 0.5em 0.5em;
   position:relative;
   clear:both;
@@ -1131,16 +1133,11 @@ padding:0;
 }
 
 .sortable{
-/*   min-height:1em; */
   width:100%;
   float:left;
   position:relative;
   margin:0;
 }
-/*
-.right{
-  min-height:10em;
-}*/
 
 .placeholder {
   background: #FAF7DE;
@@ -1180,6 +1177,11 @@ div.details div.field div.field-content{
 
 .bench_update {
   float:right;
+}
+
+.disabled {
+  background:#EEE;
+  color:#AAA;
 }
 
 /*Strain table*/

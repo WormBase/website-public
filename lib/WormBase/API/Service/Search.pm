@@ -37,7 +37,7 @@ sub preview {
   my $begin = $args->{begin};
   my $end = $args->{end};
   my $ace_class = ucfirst($class);
-  my $query = "find $ace_class where Species=$species";
+#   my $query = "find $ace_class where Species=$species";
   my $itr;
   if($species){
 #   $itr = $self->dbh->fetch_many(-query=>qq(find $ace_class where Species=$species));
@@ -56,6 +56,96 @@ sub preview {
   }
 
   return _wrap_objs($self, \@objs, $class);
+}
+
+sub person {
+  my ($self, $args) = @_;
+  my $query = $args->{pattern};
+  my $DB = $self->dbh;
+
+  my @objs = fetchPerson($self, $query);
+
+
+  return _wrap_objs($self, \@objs, 'person');
+}
+
+sub stemming {
+  my $self = shift;
+  my $query = shift;
+  my @queries = ($query, "$query*", "*$query*");
+#   @queries = map {$_ =~s/\*\*/\*/g} @queries;
+  return @queries;
+}
+
+sub fetchPerson {
+  my $self = shift;
+  my $query = shift;
+  my $DB = $self->dbh;
+  my @objs;
+
+  if ($query =~ /WBPerson/i || $query =~ /\d+/) {
+    @objs = $DB->fetch(-class =>'Person', -pattern  => $query,-fill  => 1,);
+    @objs = $DB->fetch(-class =>'Person', -pattern  => "*$query*",-fill  => 1,) unless @objs;
+  } else {
+   $query    =~ s/,/ /g;
+   $query    =~ s/\./\*/g;
+   $query    =~ s/  / /g;
+   my @fields = split(/\s/,$query);
+   
+   my @names;
+   foreach (stemming($self, $query)){ push(@names, $DB->fetch(-pattern=>$_, -class=>'Person_name'));}
+    foreach (@names) {
+        push (@objs,$_->Last_name_of,$_->Standard_name_of,$_->Full_name_of,
+          $_->Other_name_of);
+    }
+   foreach (stemming($self, $query)){ push(@names, $DB->fetch(-pattern=>$_, -class=>'Author'));}
+    foreach (@names) {
+        if (my @people = eval { $_->Possible_person }) {
+        push @objs,@people;
+        } 
+### HACK ignoring author objects without person attached
+#         else {
+#         push @objs,$_;
+#         }
+    }
+
+
+
+#     unless(@objs){
+   @objs = person_fields($self, $query);
+   foreach (stemming($self, $query)){ push(@objs, person_fields($self, $_));}
+   foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
+   if(@fields > 1 && !@objs){
+#     foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
+    foreach (stemming($self, join('*', reverse(@fields)))){ push(@objs, person_fields($self, $_));}
+    unless(@objs){
+     foreach my $qu (@fields){
+        foreach (stemming($self, $qu)){
+          push(@objs, person_fields($self, $_));
+        }
+      }
+    }
+   }
+#     }
+
+  }
+
+  my %seen;
+  my @people = grep {!$seen{$_}++} map {eval $_->Possible_person || $_} @objs;
+  return sort {$seen{$b} <=> $seen{$a}} @people;
+}
+
+sub person_fields {
+  my $self = shift;
+  my $query = shift;
+  my $DB = $self->dbh;
+  my @objs = $DB->fetch(-query=>qq{find Person where Standard_name="$query"});
+  push(@objs, $DB->fetch(-query=>qq{find Person where Full_name="$query"}));
+  @objs = $DB->fetch(-query=>qq{find Person where First_name="$query"}) unless @objs;
+  @objs = $DB->fetch(-query=>qq{find Person where Last_name="$query"}) unless @objs;
+  @objs = $DB->fetch(-query=>qq{find Person where Also_known_as="$query"}) unless @objs;
+  @objs = $DB->fetch(-query=>qq{find Person where Possibly_publishes_as="$query"}) unless @objs;
+  return @objs;
 }
 
 # Search for paper objects
@@ -114,6 +204,17 @@ sub paper {
     return _wrap_objs($self, \@sorted, 'paper');
 }
 
+sub fetchProt {
+  my $self = shift;
+  my $query = shift;
+  my $DB = $self->dbh;
+  my @objs;
+
+  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>$query);
+  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>"*$query*") unless @objs;
+  return @objs;
+  
+}
 
 
 sub protein {
@@ -124,10 +225,7 @@ sub protein {
   my $DB = $self->dbh;
 
   # first look for a Protein
-  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>$pattern);
-  return _wrap_objs($self, \@objs, 'protein') if @objs;
-  # first look for a Protein
-  @objs = $DB->fetch(-class=>'Wormpep',-pattern=>"*$pattern*");
+  @objs = fetchProt($self, $pattern);
   return _wrap_objs($self, \@objs, 'protein') if @objs;
 
   # now look for a sequence 
@@ -168,7 +266,7 @@ sub gene {
   my ($self,$args) = @_;
   my $query   = $args->{pattern};
 #   my ($count,@objs);
-my $DB = $self->dbh;
+  my $DB = $self->dbh;
   my (@genes,%seen);
 
 
@@ -291,8 +389,12 @@ sub variation {
       my @phenes = @{fetchPhen($self, $query)};
       @vars = map {eval {$_->Variation} } @phenes if (@phenes == 1); #only lookup for exact matches (shoudl we allow more??)
    }
+  unless (@vars) {
+#       @vars = $DB->fetch(-query=>qq{find Variation where Remark="*$query*"});
+  }
     return _wrap_objs($self, \@vars, 'variation');
 }
+
 
 sub fetchPhen {
   my $self = shift;
@@ -362,45 +464,42 @@ sub phenotype {
     my @phenes = @{fetchPhen($self, $name)};
     @phenes = $DB->fetch(-query=>qq{find Phenotype where Description=\"*$name*\"}) unless @phenes;	
 
+
+
+
     
     # 3. Perhaps we searched with one of the main classes
     # Variation, Transgene, or RNAi
     unless (@phenes) {
-        my @vars =  @{fetchVar($self, $name)};
-        @phenes = map {$_->Phenotype} @vars if @vars==1; #only if one variation
 
-	foreach my $class (qw/Transgene RNAi GO_term/) {
-	    if (my @objects = $DB->fetch($class => $name)) {
-		# Try fetching phenotype objects from these
-		push @phenes, map { $_->Phenotype } @objects;
-	    }
-	}
+      my ($other, $class) = item_check($self, $name);
+      if($other){
+        if($class eq 'variation'){
+          @phenes = $other->Phenotype;
+        }elsif($class eq 'gene'){
+          my (@objects);
+          push @objects,
+          $DB->fetch(-query=>qq{find Transgene where Driven_by_gene=$other});
+                        
+          push @objects,
+          $DB->fetch(-query=>qq{find Transgene where Gene=$other});
+
+          @phenes = map { $_->Phenotype } @objects;
+        }
+      }
+
+
+#           my @vars =  @{fetchVar($self, $name)};
+#           @phenes = map {$_->Phenotype} @vars if @vars==1; #only if one variation
+
+      foreach my $class (qw/Transgene RNAi GO_term/) {
+          if (my @objects = $DB->fetch($class => $name)) {
+          # Try fetching phenotype objects from these
+          push @phenes, map { $_->Phenotype } @objects;
+          }
+      }
     }
     
-    # 4. Okay, maybe user entered a gene or sequence
-    unless (@phenes) {
-	my $gene = fetchGene($self,$name);
-        if (@$gene == 1) {
-# 	if ($gene) {
-            $gene = @$gene[0];
-	    my (@objects,$query_class);
-
-	    # Fetch all RNAi objects that map to this gene
-# 	    push @objects,
-# 	    $DB->fetch(-query=>qq{find RNAi where Gene=$gene});
-
-	    # ...or attached to transgenes
-	    push @objects,
-	    $DB->fetch(-query=>qq{find Transgene where Driven_by_gene=$gene});
-				      
-	    # ...or perhaps even variations
-	    push @objects,
-	    $DB->fetch(-query=>qq{find Transgene where Gene=$gene});
-
-# 	    my %seen;
-	    @phenes = map { $_->Phenotype } @objects;
-	}
-    }
     my %seen;
     @phenes = grep(!$seen{$_}++, @phenes);
     return _wrap_objs($self, \@phenes, 'phenotype');
@@ -450,6 +549,42 @@ sub _wrap_objs {
     push(@ret, \%data);
   }
   return \@ret;
+}
+
+sub item_check {
+  my $self = shift;
+  my $query = shift;
+  my $DB = $self->dbh;
+
+  my (@objs);
+
+  if ($query =~ /^WB([A-Z][a-z]*)(:)?\d+/) {
+    my $class = $1;
+    if($class eq 'Var'){ $class = 'Variation'; }
+    @objs = $DB->fetch(-class=>$class, -pattern=>$query);
+    return ($objs[0], lcfirst($1)) if (@objs == 1);
+  } elsif ($query =~ /^WP.*(:)?\d+/) {
+    @objs = $DB->fetch(-class=>'Protein',-pattern=>$query);
+    return ($objs[0], 'protein') if (@objs == 1);
+  #locus
+  } elsif ($query =~ /(^[a-z]{3,4}-(\d+))/){
+    @objs =  @{fetchGene($self, $query)};
+    return ($objs[0], 'gene') if (@objs == 1);
+  #variation
+  } elsif ($query =~ /(^[a-z]{1,3}(\d+))/) {
+    @objs = @{fetchVar($self, $query)};
+
+    return ($objs[0], 'variation') if (@objs == 1);
+  }
+  @objs = @{fetchGene($self, $query)};
+  return ($objs[0], 'gene') if (@objs == 1);
+  @objs = @{fetchVar($self, $query)};
+  return ($objs[0], 'variation') if (@objs == 1);
+  @objs = @{fetchPhen($self, $query)};
+  return ($objs[0], 'phenotype') if (@objs == 1);
+  @objs = @{fetchProt($self, $query)};
+  return ($objs[0], 'protein') if (@objs == 1);
+
 }
 
 #just a test of concept... remember to remove this
