@@ -1,15 +1,105 @@
 [% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+[%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Nature" key="nature_of_variation" %]
-       [% fields.nature_of_variation.data %]
-   [% END %]
+	
+	
+	[%## DATA TABLE FOR PHENOTYPE %]
+	[% WRAPPER $field_block title="Phenotype" key=phenotype %]
+	
+		[%## declare array of columns named via keys in the data structure%] 	
+		[% order = ['phenotype','remark'] %]
+	
+		[% ## declare hash for column headers, keyed as above %]
+		[% headers = {	phenotype => 'Phenotype',
+						remark => 'Remark'
+					 }
+		%]
+	  
+		[% ## declare rows array %]
+		[% rows = [] %]
+		
+		[% ## loop through each element in <subroutine>.<return_data_key>.<... to array data> array %]
+		[% FOREACH r IN fields.phenotype.data_pack %]
+			[% ## declare row array %]
+			[% row = [] %]
+			
+			[% ## loop through each element in order array (for columns) , declared above %]
+			[% FOREACH o IN order %]
+				
+				[% ## get value (val) from the row r (keyed as o?) %]
+				[% val = r.$o %]
+			
+				[% ## enter data in row %]
+				[% row.push(val) %]
+	   
+			[% #  END FOREACH o IN order  %]  	
+			[% END %]
+		
+		
+			[% ## enter data row array into rows %]
+			[% rows.push(row) %]
+		
+	  [% END %]
+	  
+	  
+	  [% names = [] %]
+	  
+	  [% ## populate name array %]
+	  [% FOREACH o IN order; names.push(headers.$o); END %]
+	  
+	  [% ## generate table %]
+	  [% dataTable_list(names, rows, 'table_phenotype') %]
+	
+	[% ## END OF WRAPPER %] 
+	[% END %]
 
-   [% WRAPPER $field_block title="Dominance" key="dominance" %]
-         [% fields.dominance.data %]
-   [% END %]
 
-   [% WRAPPER $field_block title="Phenotype Remark" key="phenotype_remark" %]
-         [% fields.phenotype_remark.data %]
-   [% END %]
-
+	[%## DATA TABLE FOR PHENOTYPE_NOT %]
+	[% WRAPPER $field_block title="Phenotype Not Observed" key=phenotype %]
+	
+		[%## declare array of columns named via keys in the data structure%] 	
+		[% order = ['phenotype','remark'] %]
+	
+		[% ## declare hash for column headers, keyed as above %]
+		[% headers = {	phenotype => 'Phenotype',
+						remark => 'Remark'
+					 }
+		%]
+	  
+		[% ## declare rows array %]
+		[% rows = [] %]
+		
+		[% ## loop through each element in <subroutine>.<return_data_key>.<... to array data> array %]
+		[% FOREACH r IN fields.phenotype_not.data_pack %]
+			[% ## declare row array %]
+			[% row = [] %]
+			
+			[% ## loop through each element in order array (for columns) , declared above %]
+			[% FOREACH o IN order %]
+				
+				[% ## get value (val) from the row r (keyed as o?) %]
+				[% val = r.$o %]
+			
+				[% ## enter data in row %]
+				[% row.push(val) %]
+	   
+			[% #  END FOREACH o IN order  %]  	
+			[% END %]
+		
+		
+			[% ## enter data row array into rows %]
+			[% rows.push(row) %]
+		
+	  [% END %]
+	  
+	  
+	  [% names = [] %]
+	  
+	  [% ## populate name array %]
+	  [% FOREACH o IN order; names.push(headers.$o); END %]
+	  
+	  [% ## generate table %]
+	  [% dataTable_list(names, rows, 'table_phenotype') %]
+	
+	[% ## END OF WRAPPER %] 
+	[% END %]
