@@ -167,6 +167,22 @@ sub details {
 	return \%data;
 }
 
+sub phenotype_nots {
+
+	my $self = shift;
+    my $transg = $self->object;
+	my %data;
+	my $desc = 'experiments where phenotype was not observed with transgene';
+
+	my $data_pack = $self->_get_phenotype_data($transg, 1);
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
 sub phenotypes {
 
 	my $self = shift;
@@ -233,7 +249,53 @@ sub expr_pattern {
 	return \%data;
 }
 
-########
+####################
+# Internal methods
+####################
+
+sub _get_phenotype_data {
+
+	my $self = shift;
+    my $transg = shift;
+    my $not = shift;
+
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my @phenotypes;
+	my $tag;
+	
+	if ($not) {
+	
+		$tag = 'Phenotype_not_observed';
+	}
+	else {
+	
+		$tag = 'Phenotype';
+	}
+	
+	foreach my $phenotype ($transg->$tag) {
+
+		my $remark;
+		my $phenotype_name;
+		my $paper_evidence;
+	
+		$phenotype_name = $phenotype->Primary_name;
+		$remark = $phenotype->get('Remark'); ## Remark
+		# $paper_evidence = $phenotype->; ## at('Paper_evidence')
+	
+		$data_pack{$phenotype} = {
+									'phenotype_name'=>$phenotype_name,
+									'remark'=>$remark,
+									'paper_evidence'=>$paper_evidence
+									};
+	}
+	
+	return \%data_pack;
+}
+
+
 
 
 1;
