@@ -16,11 +16,17 @@ use parent 'WormBase::Web::Controller';
 sub species :Path('/species') :Args(0)   {
     my ($self,$c) = @_;
     $c->stash->{section} = 'species';
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
 #     $c->stash->{template} = 'report.tt2';
 }
 
 sub species_summary :Path('/species') :Args(1)  {
     my ($self,$c, $species) = @_;
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
     if(defined $c->config->{'species_list'}->{$species}){
       $c->stash->{section} = 'species';
       $c->stash->{species} = $species;
@@ -34,6 +40,9 @@ sub species_summary :Path('/species') :Args(1)  {
 
 sub species_class_summary :Path("/species") Args(2) {
     my ($self,$c,$class,$name) = @_;
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
     if(defined $c->config->{'species_list'}->{$class}){
       if(defined $c->config->{'sections'}->{'species'}->{$name}){
         $c->stash->{template} = 'species/species_class_summary.tt2';

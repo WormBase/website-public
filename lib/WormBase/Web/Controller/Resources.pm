@@ -16,17 +16,24 @@ use parent 'WormBase::Web::Controller';
 sub resources :Path('/resources') :Args(0)   {
     my ($self,$c) = @_;
     $c->stash->{section} = 'resources';
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
 #     $c->stash->{template} = 'report.tt2';
 }
 
 sub resources_class_summary :Path('/resources') :Args(1)  {
     my ($self,$c, $class) = @_;
+    if(defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
     if(defined $c->config->{'sections'}->{'resources'}->{$class}){
       $c->stash->{section} = 'resources';
       $c->stash->{class} = $class;
     }else{
       $c->detach;
     }
+
 }
 
 sub resources_report :Path("/resources") Args(2) {

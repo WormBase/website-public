@@ -113,16 +113,16 @@ $(function() {
     var $sidebar   = $("#navigation"),
         $window    = $(window),
         offset     = 100,
-        at_default = 0-($sidebar.children("#title").outerHeight() + 5);
+        at_default = -45;
 
     $window.scroll(function() {
-      var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight() -2;
+      var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
       if( bottomPos < at_default )
           bottomPos = at_default;
-      var objBiggerThanWindow = $sidebar.outerHeight() > $(window).height();
+      var objBiggerThanWindow = $sidebar.outerHeight() > $window.height();
       if (objBiggerThanWindow){ return; }
       if ($window.scrollTop() > offset) {
-          var newpos = $window.scrollTop() - offset + 3 + at_default;
+          var newpos = $window.scrollTop() - offset + 10 + at_default;
           if (newpos > bottomPos)
               newpos = bottomPos;
               $sidebar.stop().css(
@@ -132,6 +132,13 @@ $(function() {
           $sidebar.stop().css(
               'margin-top', at_default
           );
+      }
+
+      var results = $("#results");
+      var rHeight = results.height() + results.offset().top;
+      var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
+      if(rBottomPos < 100) {
+        results.children(".load-results").trigger('click');
       }
     });
 
