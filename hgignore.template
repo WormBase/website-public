@@ -5,3 +5,4 @@ extlib/
 extlib.old
 blib/
 inc/
+wormbase.env
