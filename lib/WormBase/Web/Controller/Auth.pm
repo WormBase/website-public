@@ -140,18 +140,11 @@ sub auth_local {
       my ($openid,$user);
       $openid =  $c->model('Schema::OpenID')->find_or_create({ openid_url => $id });
       unless ($openid->user_id) {
-	$user=$c->model('Schema::User')->find({email_address=>$email}) if($email);
-	unless($user){
-	    $user= $c->model('Schema::User')->create(
-	    { username => $id, email_address=>$email, first_name=>$first_name, last_name=>$last_name 
-	    });
-	    #assing curator role to wormbase.org domain user
-	    my $role_str="user";
-	    $role_str="curator" if($email && $email =~ /\@wormbase\.org/);
-	    $role_str="admin" if($email && $email =~ /lincoln\.stein/);
-	    my $role=$c->model('Schema::Role')->find({role=>$role_str}) ;
-	    $c->model('Schema::UserRole')->create({user_id=>$user->id,role_id=>$role->id});
-	}
+	$user=$c->model('Schema::User')->find_or_create({email_address=>$email, first_name=>$first_name, last_name=>$last_name}) ;
+	#assing curator role to wormbase.org domain user
+	my $role_str= ($email && $email =~ /\@wormbase\.org/)? "curator":"user";
+	my $role=$c->model('Schema::Role')->find({role=>$role_str}) ;
+	$c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
 	$openid->user_id($user->id);
 	$openid->update();
       }
@@ -207,9 +200,10 @@ sub profile :Path("/profile") {
 			last_name=>$user->last_name,
 			id=>$user->id,
 		      };
+	 
 	  my @roles =$user->roles;
 	    
-	  map{$hash->{$_->role}=1;} @roles;
+	  map{$hash->{$_->role}=1;} @roles if(@roles);
 	  push @array,$hash;
       }
       

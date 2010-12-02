@@ -291,10 +291,10 @@ sub feed_GET {
     $c->stash->{page} = $page;
     $c->stash->{class}=$class;
     if($type eq "issue"){
-      unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
+     # unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
       my @issues;
       if( $class) {
-	  @issues= $c->user->issues->search({location=>$page});
+	  @issues= $c->model('Schema::Issue')->search({location=>$page});
       }else {
 	  @issues= $c->user->issues;
       }
@@ -324,22 +324,51 @@ sub feed_POST {
 	  my $title= $c->req->params->{title};
 	  my $location= $c->req->params->{location};
 	  if( $title && $content && $location) { 
-	      
-	      $c->log->debug("create new issue $content ",$c->user->id);
-	      my $issue = $c->model('Schema::Issue')->find_or_create({report_user=>$c->user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
-	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$c->user->id,issue_id=>$issue->id}) ;
+	      my $user;
+	      if($c->user_exists) {
+		  $user=$c->user; 
+		  $user->username($c->req->params->{username}) if($c->req->params->{username});
+		  $user->email_address($c->req->params->{email}) if($c->req->params->{email});
+	      }else{
+		  $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
+		  $user->username($c->req->params->{username});
+	      }
+	      $user->update();
+	      $c->log->debug("create new issue $content ",$user->id);
+	      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
+ 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
+	      $self->issue_email($c,$issue,1,$content);
 	  }
 	}
     }elsif($type eq 'thread'){
 	my $content= $c->req->params->{content};
-	my $issue= $c->req->params->{issue};
-	if($issue && $content) { 
-	    $c->log->debug("create new thread for issue #$issue!!!");
-	     my @threads= $c->model('Schema::Issue')->find($issue)->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
-	     my $thread_id=1;
-	     $thread_id = $threads[0]->thread_id +1 if(@threads);
-	     $c->model('Schema::IssueThread')->create({issue_id=>$issue,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$c->user->id});
-	       
+	my $issue_id= $c->req->params->{issue};
+	my $state= $c->req->params->{state};
+	my $responser= $c->req->params->{responser};
+	if($issue_id) { 
+	   my $hash;
+	   my $issue = $c->model('Schema::Issue')->find($issue_id);
+	   if($state) {
+	      $hash->{status}={old=>$issue->state,new=>$state};
+	      $issue->state($state) ;
+	   }
+	   if($responser) {
+	      my $people=$c->model('Schema::User')->find($responser);
+	      $hash->{responser}={old=>$issue->responser,new=>$people};
+	      $issue->responser($responser)  ;
+	   }
+	   $issue->update();
+	   if($content){
+		$c->log->debug("create new thread for issue #$issue_id!");
+		my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
+		my $thread_id=1;
+		$thread_id = $threads[0]->thread_id +1 if(@threads);
+		$c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$c->user->id});
+	  }  
+	  if($state || $responser || $content){
+	     
+	      $self->issue_email($c,$issue,0,$content,$hash);
+	  }
 	}
     }
 }
@@ -350,6 +379,36 @@ Return a list of all available pages and their URIs
 TODO: This is currently just returning a dummy object
 
 =cut
+
+sub issue_email{
+ my ($self,$c,$issue,$new,$content,$change) = @_;
+ my $subject='New Issue';
+ my $bcc = $issue->owner->email_address;
+ unless($new){
+    $subject='Issue Update';
+    my @threads= $issue->issues_to_threads;
+    $bcc .= ",".$issue->responser->email_address ;
+    my %seen=();  
+    $bcc = join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
+ }
+ $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
+ 
+ $c->stash->{issue}=$issue;
+ 
+ $c->stash->{new}=$new;
+ $c->stash->{content}=$content;
+ $c->stash->{change}=$change;
+ $c->stash->{noboiler} = 1;
+ $c->stash->{email} = {
+		  to      => $c->config->{issue_email},
+		  cc => $bcc,
+		  from    => $c->config->{issue_email},
+		  subject => $subject, 
+		  template => "feed/issue_email.tt2",
+	      };
+   
+  $c->forward( $c->view('Email::Template') );
+}
 
 sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
 
