@@ -49,7 +49,12 @@
 [% BLOCK field_block %]
     [%# TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
 
-    <div class="field" id="[% title FILTER html %]">
+    <div class="field
+
+    [% TRY; IF (fields.$key.data.size == 0 ); " disabled "; END; END;%]
+
+
+" id="[% title FILTER html %]">
          <div class="field-title">
 
               [%# Is there a description? Set it as a tool tip %]
@@ -270,9 +275,9 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   title="comment" class="feed"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
-                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
-                    <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
+                    <a   title="comment" class="feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   title="report a problem" class="feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+                    <a href="#" title="help" class="ui-corner-all"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
 		<div id="widget-feed"></div>  
 

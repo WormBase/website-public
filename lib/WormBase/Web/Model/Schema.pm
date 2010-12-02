@@ -3,15 +3,7 @@ package WormBase::Web::Model::Schema;
 use strict;
 use base 'Catalyst::Model::DBIC::Schema';
 
-__PACKAGE__->config(
-    schema_class => 'WormBase::Schema',
-    
-    connect_info => {
-        dsn => 'dbi:mysql:wormbase_user',
-        user => 'wb',
-        password => '',
-    }
-);
+ 
 
 =head1 NAME
 
