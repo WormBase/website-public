@@ -1,0 +1,25 @@
+
+
+[% IF new %]New issue[% ELSE %]Issue Update[% END %] [% issue.id %]: [% issue.title %]
+[% url=c.uri_for(c.controller('tool').action_for('issue'),issue.id) %]
+<br><a href="[% url %]">[% url %]</a>
+[% USE date %]
+<br>[% username(issue.owner) %] on [% date.format(issue.submit_time, '%a, %d %b %y %H:%M:%S', 'en_GB') %]
+
+<p>Comment:
+<br>&nbsp;&nbsp;[% content %]
+</p>
+
+<p>
+Changes:
+[% FOREACH key IN change.keys.sort %]
+<br>&nbsp;&nbsp;[% key %]: 
+[% IF key == "responser" %][% username(change.$key.old) %][% ELSE %][% change.$key.old %][% END %]
+->
+[% IF key == "responser" %][% username(change.$key.new) %][% ELSE %][% change.$key.new %][% END %]
+[% END %]
+</p>
+
+<p><span style="font-size: 0.9em;color: #999999;">
+This is an issue notification from wormbase.org. You are receiving this either because you are the owner of the issue, or you are following the issue.
+</span></p> 
