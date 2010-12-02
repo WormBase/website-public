@@ -26,6 +26,16 @@ debug_view =
 # Are we a (development|mirror|local|production) site?
 installation_type   = development
 
+<Model::Schema>
+  schema_class = WormBase::Schema
+  <connect_info>  
+        dsn =  dbi:mysql:wormbase_user:hostname=localhost
+        user = wb
+        password =
+   </connect_info>
+</Model::Schema>
+
+
 ########################################################
 #
 #  Database Locations and Authorization
