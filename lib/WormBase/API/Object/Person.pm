@@ -87,9 +87,71 @@ has 'lab_object' => (
   	}
 );
 
+####### publication data ########
+
+has 'publication_hr' => (
+
+	is  => 'ro',
+    isa => 'HashRef',
+    lazy => 1,
+    default => sub {
+    	
+    my $self = shift;
+    my $object = $self->object;
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @papers = $object->Paper;
+	
+	foreach my $paper (@papers) {
+		
+		
+		my $paper_id = $paper;
+		my @authors = $paper->Author;
+		my $brief_citation = $paper->Brief_citation;
+		my $type = 'Paper';
+		
+		
+		my $publication_date = $paper->Publication_date; 
+		my ($publication_year, $disc) = split /\-/,$publication_date;
+		
+		my $meeting_abstract;
+		$meeting_abstract = $paper->Meeting_abstract;
+		
+		if ($meeting_abstract) {
+		
+			$type = 'Meeting_abstact';
+		}
+		
+		my %publication_info = (
+			'label' => "$brief_citation",
+			'class' => 'Paper',
+			'id' => "$paper_id"
+		);
+		
+		if ($data_pack{$type}{$publication_year}) {
+			
+			my $pub_ar = $data_pack{$type}{$publication_year};
+			push @$pub_ar, \%publication_info;
+		}
+		else {
+		
+			$data_pack{$type}{$publication_year} = [\%publication_info];
+		}
+		
+	}
+	
+	####
+
+	return \%data_pack;
+    
+    }
+
+);
 
 
-#######
+
 
 
 sub name {
@@ -630,6 +692,35 @@ sub allele_designation {
 sub papers {
 
 	my $self = shift;
+	my %data;
+	my $description = 'Papers by the person';
+	my $publication_hg = $self->publication_hr;
+	my $data_pack = $publication_hg->{'Paper'};
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $description;
+	
+	return \%data;
+
+}
+
+
+sub meeting_abstracts {
+
+	my $self = shift;
+	my %data;
+	my $description = 'Meeting presentations by the person';
+	my $publication_hg = $self->publication_hr;
+	my $data_pack = $publication_hg->{'Meeting_abstact'};
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $description;
+	
+	return \%data;
+}
+sub papers_old {
+
+	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
@@ -698,7 +789,6 @@ sub supervised {
 	$data{'data'} = $data;
 	$data{'description'} = $desc;
 	
-	
 	return \%data;
 }
 
@@ -713,7 +803,6 @@ sub supervised_by {
 	
 	$data{'data'} = $data;
 	$data{'description'} = $desc;
-	
 	
 	return \%data;
 }
@@ -756,10 +845,6 @@ sub supervised_by_old {
 }
 
 
-
-
-
-
 #####################
 # INTERNAL METHODS
 ######################
@@ -797,11 +882,15 @@ sub _get_supervision_data {
 		my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
 		
 		push @data_pack, {
-					'id' => "$supervised_scalar",
+					'person' => {
+					
+						'id' => "$supervised_scalar",
+						'label' => "$full_name",
+						'class' => 'Person'
+						},
+					
 					'first_name' => "$first_name",
 					'last_name' => "$last_name",
-					'label' => "$full_name",
-					'class' => 'Person',
 					'level' =>"$level",
 					'supervision_start' => "$start",
 					'supervision_end' => "$end",
@@ -810,7 +899,6 @@ sub _get_supervision_data {
 	}
 
 	return \@data_pack;
-
 }
 
 
