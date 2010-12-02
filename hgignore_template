@@ -1,4 +1,0 @@
-# Copy this to .hgignore
-extlib/
-extlib.old
-blib/

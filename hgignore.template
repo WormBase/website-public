@@ -1,0 +1,7 @@
+# Sample .hgignore file for WormBase.
+# Copy this to .hgignore
+
+extlib/
+extlib.old
+blib/
+inc/
