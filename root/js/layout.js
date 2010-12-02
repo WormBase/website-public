@@ -73,8 +73,8 @@
 
     function getLeftWidth(holder){
       var totWidth = parseFloat(holder.css("width"));
-      var leftWidth = parseFloat(holder.children(".left").css("width"));
-//       var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
+//       var leftWidth = parseFloat(holder.children(".left").css("width"));
+      var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
       return leftWidth
     }
 
