@@ -1,0 +1,17 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block -%] 
+		[% FOREACH year IN fields.meeting_abstracts.data.keys.sort %]
+		
+			<b>[% year %]:<br></b>
+			
+			[% FOREACH citation IN fields.meeting_abstracts.data.$year %]
+			
+				[% tag2link(citation) %]<br>
+				
+			[% END %]
+		[% END %]
+   [% END %]
+
+
