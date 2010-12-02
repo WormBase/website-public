@@ -4,7 +4,7 @@
 export APP="xshi"
 export APPLIB="WormBase"
 export WORKERS=5
-export PORT=8001
+export PORT=10001
 export PERL5LIB=/usr/local/wormbase/website/xshi/extlib/lib/perl5:/usr/local/wormbase/website/xshi/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/xshi/lib:$PERL5LIB
 
 #export PATH="/usr/local/wormbase/website-classic/extlib/bin:$PATH"
