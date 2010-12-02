@@ -27,8 +27,10 @@
 </div>
 
 <script>
+  [%# is there a better way to do this? probably.  yes. %]
   [% txt = c.stash.query.replace('[\*]', ' ') %]
   [% txt = txt.replace(',', ' ') %]
+  [% txt = txt.replace('\.', '') %]
   [% txt = txt.replace('  ', ' ') %]
   [% to_highlight = txt.split(' ') %]
   [% FOREACH q IN to_highlight %]
