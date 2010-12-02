@@ -19,8 +19,10 @@
           [% tag2link(fields.corresponding_gene.data) %]
    [% END %]
 
-   [% WRAPPER $field_block title="Other Names" key="other_names" %]
-       [% object_list(fields.other_names.data) %]
+	[% IF fields.other_names.data.id.defined  %]
+   		[% WRAPPER $field_block title="Other Names" key="other_names" %]
+   			[% object_list(fields.other_names.data) %]
+   		[% END %]
    [% END %]
 
    [% WRAPPER $field_block title="Status" key="status" %]

@@ -1,27 +1,20 @@
 <script type="text/javascript" >
-$("#lightbox").colorbox();
+$(".lightbox").colorbox();
 $("#bench_status").load("/rest/workbench");
 
 function popWin(url) {
   var win = window.open(url,'pop','status=no,resizable=yes,height=2px,width=2px');
   win.blur();
 };
+
 </script>   
  
 [% IF c.user_exists %]
 
-[%# should creat a fullname in database in future! %]
- [% IF c.user.first_name.defined %]
- [% name = c.user.first_name %]
- [% END %] 
- [% IF c.user.last_name.defined %]
- [% name = name _ ' ' _ c.user.last_name %]
- [% END %] 
   <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">Welcome [% username(c.user) %]<span href="/bench" id="bench_status"></span></a></li>
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
 [% ELSE %]
   <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench_status"></span></a></li>
-  <li><a  id='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
+  <li><a  class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
 [% END %]
-
  

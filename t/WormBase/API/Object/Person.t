@@ -24,8 +24,7 @@ ok (
 
 ##Instantiate a WormBase::API::Object::* wrapper object
 
-
-my $person = 'WBPerson320';
+my $person = 'WBPerson320'; ### WBPerson320
 
 my $person_obj = $wormbase->fetch({class=>'Person',name=>$person}); 
 isa_ok($person_obj,'WormBase::API::Object::Person');
@@ -34,17 +33,37 @@ isa_ok($person_obj,'WormBase::API::Object::Person');
 #### method list
 my @methods = qw/
 
-	laboratory
+papers
  /;
  
+# 	street_address
+#	address
+#	email
+#	office_phone
+#	other_phone
+#	lab_phone
+#	laboratory
+#	lab_id
+#	cgc_representative
+ 
+#	_by 
+#	
 # 	details
 #	address
 #	supervised
-#	supervised_by
+#	gene_classes
 #	papers
- 
- 
-#
+# 	full_name
+#	first_name
+#	standard_name
+#	supervised_by
+#	name
+#	mapa
+# 	country
+#	institution
+#	lab_phone
+#	office_phone
+#   allele_designation
 
 ### test runs ####
 

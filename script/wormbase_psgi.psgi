@@ -2,11 +2,11 @@
 use strict;
 use warnings;
 
-use Plack::Builder;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../extlib";
 use WormBase::Web;
+use Plack::Builder;
 
 WormBase::Web->setup_engine('PSGI');
 my $app = sub { WormBase::Web->run(@_) };

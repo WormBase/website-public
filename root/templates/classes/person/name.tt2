@@ -1,0 +1,34 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="First Name"-%] 
+            [% tag2link(fields.first_name.data) %]
+   [% END %]
+
+	[% WRAPPER $field_block title="Last Name"-%] 
+            [% tag2link(fields.last_name.data) %]
+   	[% END %]
+   
+   
+   	[% WRAPPER $field_block title="Standard Name"-%] 
+            [% tag2link(fields.standard_name.data) %]
+   	[% END %]
+   
+   
+   	[% WRAPPER $field_block title="Full Name"-%] 
+            [% tag2link(fields.full_name.data) %]
+   	[% END %]
+   
+   
+   	[% WRAPPER $field_block title="Also known as"-%] 
+    	
+    	[% FOREACH aka_hr IN fields.aka.data %]
+        	[% aka_hr.label  %]<br>
+        [% END %]	
+   	[% END %]
+
+	[% WRAPPER $field_block title="Possibly Publishes as"-%] 
+            [% FOREACH name IN fields.mapa.data %]
+            	[% name  %]<br>
+          	[%  END %]
+   	[% END %]

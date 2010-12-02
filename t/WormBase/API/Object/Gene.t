@@ -42,16 +42,16 @@ isa_ok($gene,'WormBase::API::Object::Gene');
 #### method list
 my @methods = qw/
 
-rnai_details
-transgene_phenotypes
-variation_phenotypes
-rnai_phenotypes
-phenotype
+gene_models
  /;
 
 
 # genomic_position genetic_position expression_cluster anatomy_function microarray_topology_map_position gene_models
-# 
+## rnai_details
+#transgene_phenotypes
+#variation_phenotypes
+#rnai_phenotypes
+#phenotype
 
 # gene_ontology
 # paralogs

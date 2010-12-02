@@ -168,15 +168,15 @@ __PACKAGE__->config(
 # What type of installation are we: development | mirror | local | production ?
 # Unfortunately, we set it here instead of in
 # our configuration file since it isn't loaded until application setup.
-__PACKAGE__->config->{installation_type} = 'development';
+__PACKAGE__->config->{installation_type} = 'production';
 
 # THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
 # Dynamically set the base URL for production; also requires the prepare_path
-if (__PACKAGE__->config->{installation_type} eq 'production') {
-    __PACKAGE__->config->{base} = 'http://206.108.125.175/';
-} else {
-#    __PACKAGE__->config->{base} = '';
-}
+#if (__PACKAGE__->config->{installation_type} eq 'production') {
+#    __PACKAGE__->config->{base} = 'http://www.wormbase.org:2011/';
+#} else {
+##    __PACKAGE__->config->{base} = '';
+#}
 
 # Conditionally set the using front end proxy flag
 __PACKAGE__->config->{using_frontend_proxy} = 1;
@@ -215,7 +215,7 @@ my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
 
 
 # CHI-powered on-disk file cache: default.
-if (0) {    
+if (1) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'File',
@@ -227,7 +227,7 @@ if (0) {
     };
 }
 
-if (1) {    
+if (0) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'Memcached::libmemcached',

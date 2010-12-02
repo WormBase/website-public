@@ -34,7 +34,6 @@ sub issue :Path("tools/issues") Args {
       $c->stash->{template} = "feed/issue.tt2";
       my @issues = $c->model('Schema::Issue')->search(undef);
       $c->stash->{issues} = \@issues;
-      $c->stash->{issues_type} = "all";
       $c->stash->{current_time}=time();
       return;
     }
@@ -50,7 +49,10 @@ sub issue :Path("tools/issues") Args {
       $c->stash->{last_edit}=$last->user ;
     }
     $c->stash->{last_edit}= $issue->owner unless($last);
-     
+    if($c->check_user_roles('admin')) {
+	my $role=$c->model('Schema::Role')->find({role=>'curator'});
+	$c->stash->{curators}=[$role->users];
+    }
 } 
 
 sub operator :Path("tools/operator") Args {

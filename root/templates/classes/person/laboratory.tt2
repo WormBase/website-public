@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+   [% WRAPPER $field_block title="CGC Representative"-%] 
+            [% fields.cgc_representative.data %]
+   [% END %]
+
+
+ [% WRAPPER $field_block title="Allele Designation"-%] 
+ 	[% fields.allele_designation.data %]
+ [% END %]
+ 
+  [% WRAPPER $field_block title="Gene Classes"-%]
+            
+     [% FOREACH key IN fields.gene_classes.data.keys %]
+     	[% key %] &nbsp;
+     [% END %]
+  [% END %]
