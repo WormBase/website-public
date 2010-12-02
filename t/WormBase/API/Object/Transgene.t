@@ -22,7 +22,7 @@ ok (
 
 ##Instantiate a WormBase::API::Object::* wrapper object
 
-my $transgene = 'cgc4781Is1';
+my $transgene = 'WBPaper00032201Ex1'; ### 'cgc4781Is1'
 
 my $transgene_obj = $wormbase->fetch({class=>'Transgene',name=>$transgene}); 
 isa_ok($transgene_obj,'WormBase::API::Object::Transgene');
@@ -31,10 +31,8 @@ isa_ok($transgene_obj,'WormBase::API::Object::Transgene');
 #### method list
 
 my @methods = qw/
-	isolation
-	details
-	phenotypes
-	expr_pattern
+
+	phenotype_nots
  /;
 #
 

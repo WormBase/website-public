@@ -29,7 +29,15 @@ sub index :Path Args(0) {
     $c->stash->{template} = 'index.tt2';
 }
 
- 
+sub header :Path("/header") Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{template} = 'header/default.tt2';
+}
+
+sub footer :Path("/footer") Args(0) {
+      my ($self,$c) = @_;
+      $c->stash->{template} = 'footer/default.tt2';
+ } 
 =head2 DEFAULT
 
 The default action is run last when no other action matches.

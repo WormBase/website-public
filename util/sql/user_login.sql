@@ -45,7 +45,8 @@ CREATE TABLE users_to_issues (
 DROP TABLE IF EXISTS issues;
 CREATE TABLE issues (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
-	    report_user INTEGER,
+	    reporter INTEGER,
+	    responser INTEGER,
 	    title TEXT ,
 	    location char(100),
 	    submit_time char(50),
