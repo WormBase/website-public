@@ -283,7 +283,7 @@ li.visible div.widget-container {
 
 .content {
   padding:0.5em;
-  padding-bottom:1.7em;
+  padding-bottom:2em;
   overflow:auto;
   list-style:disc outside none;
   clear:both;
@@ -333,20 +333,17 @@ li.visible div.widget-container {
 
 .widget-container #widget-footer a{
   float:right;
-  opacity:0.5;
-  filter:alpha(opacity=50);
-  -moz-opacity:0.5;
-}
-
-.widget-container #widget-footer a span{
-  float:left;
+  height:1.2em;
+  margin:0 0.2em;
+  border:1px solid #BBB;
+  background:#EEE;
+  padding:0 0.3em;
 }
 
 .widget-container #widget-footer a:hover{
-    opacity:1;
-    filter:alpha(opacity=100);
-    -moz-opacity:1;
+  background:#BBB;
 }
+
 
 div.ui-icon-large {
   float:right;
