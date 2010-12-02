@@ -10,7 +10,10 @@
 
    ELSIF (template.name.match('index'));   	 
          content WRAPPER boilerplate/html + layout/default.tt2;
-  
+
+   ELSIF (template.name.match('header|footer'));   	 
+         content WRAPPER boilerplate/html ;
+   
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");
      content;
