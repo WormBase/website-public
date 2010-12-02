@@ -64,7 +64,6 @@ has 'address_hr' => (
 				
 				$address{$address_bit} = $address_bit->right;
 			}
-			
 		}
 		return \%address;
 	}
@@ -76,7 +75,29 @@ has 'address_hr' => (
 has 'lab_object' => (
 
 	is  => 'ro',
-    isa => 'Ace::Object',
+    # isa => 'Ace::Object',
+    lazy => 1,
+    default => sub {
+    	
+    	my $self = shift;
+    	my $object = $self->object;
+    	my $ao_object = $object->Laboratory;
+    	
+    	if ($ao_object) {
+    		return $ao_object;
+    	}
+    	else {
+    	
+    		return;
+    	}
+  	}
+);
+
+
+has 'lab_info_hr' => (
+
+	is  => 'ro',
+    isa => 'HashRef',
     lazy => 1,
     default => sub {
     	
@@ -86,6 +107,11 @@ has 'lab_object' => (
     	return $ao_object;
   	}
 );
+
+
+
+
+
 
 ####### publication data ########
 
@@ -138,8 +164,7 @@ has 'publication_hr' => (
 		else {
 		
 			$data_pack{$type}{$publication_year} = [\%publication_info];
-		}
-		
+		}	
 	}
 	
 	####
@@ -149,9 +174,6 @@ has 'publication_hr' => (
     }
 
 );
-
-
-
 
 
 sub name {
@@ -613,8 +635,19 @@ sub lab_id {
 	my $object = $self->object;
 	my $lab = $self->lab_object;
 	my %data;
+	my %data_pack;
 	
-	$data{'data'} = $lab;
+	if ($lab) {
+		my $lab_label = $lab;
+		
+		%data_pack = (
+					'id' => "$lab_label",
+					'label' => "$lab_label",
+					'class' => 'Laboratory'
+		);
+	}
+	
+	$data{'data'} = \%data_pack;
 	$data{'description'} = 'lab id';
 
 	return \%data;
@@ -627,15 +660,21 @@ sub cgc_representative {
 	
 	my $lab = $self->lab_object;
 	my %data;
-	my $cgc_rep = $lab->Representative;
-	my $cgc_rep_name = $cgc_rep->Full_name;
+	my $cgc_rep;
+	my $cgc_rep_name;
+	
+	if($lab) {
+	
+		my $cgc_rep = $lab->Representative;
+		my $cgc_rep_name = $cgc_rep->Full_name;	
+	}
+	
+
 	
 	$data{'data'} = $cgc_rep_name;
 	$data{'description'} = 'lab representative';
 
 	return \%data;
-
-
 }
 
 
@@ -644,23 +683,25 @@ sub gene_classes {
 	my $self = shift;
 	my $object = $self->object;
 	my $lab = $self->lab_object;
-	my %data_pack;
+	my @data_pack;
 	my $desc = 'Gene classes assigned to laboratory';
 	my %data;
 	
-	my @gene_classes = $lab->Gene_classes;
-	
-	foreach my $gene_class (@gene_classes) {
-	
-		$data_pack{$gene_class} = {
-								
-				'name' => $gene_class,
-				'id' => $gene_class,
-				'class' => 'Gene_class'						
-		};
+	if($lab) {
+		my @gene_classes = $lab->Gene_classes;
+		foreach my $gene_class (@gene_classes) {
+			
+			my $gc_label = $gene_class;
+			push @data_pack, {
+									
+					'label' => "$gc_label",
+					'id' => "$gc_label",
+					'class' => 'Gene_class'						
+			};
+		}
 	}
-
-	$data{'data'} = \%data_pack;
+	
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	
 	return \%data;
@@ -673,9 +714,12 @@ sub allele_designation {
 	my $lab = $self->lab_object;
 	my $desc = 'allele designation assigned to laboratory';
 	my %data;
+	my $allele_designation;
 	
-	my $allele_designation = $lab->Allele_designation;
+	if($lab) {
 	
+		$allele_designation = $lab->Allele_designation;
+	}
 
 	$data{'data'} = $allele_designation;
 	$data{'description'} = $desc;
