@@ -68,6 +68,14 @@ requires 'WWW::Mechanize';
 requires 'YAML';
 
 #catalyst;
+# PSGI/Plack
+requires 'Plack::Test::Adopt::Catalyst';
+requires 'Task::Plask';
+requires 'Catalyst::Controller::Metal';
+requires 'Catalyst::Engine::PSGI';
+requires 'Catalyst::Helper::PSGI';
+requires 'Starman';
+
 
 install_script glob('script/*.pl');
 auto_install;
