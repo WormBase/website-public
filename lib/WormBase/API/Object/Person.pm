@@ -64,7 +64,6 @@ has 'address_hr' => (
 				
 				$address{$address_bit} = $address_bit->right;
 			}
-			
 		}
 		return \%address;
 	}
@@ -76,7 +75,29 @@ has 'address_hr' => (
 has 'lab_object' => (
 
 	is  => 'ro',
-    isa => 'Ace::Object',
+    # isa => 'Ace::Object',
+    lazy => 1,
+    default => sub {
+    	
+    	my $self = shift;
+    	my $object = $self->object;
+    	my $ao_object = $object->Laboratory;
+    	
+    	if ($ao_object) {
+    		return $ao_object;
+    	}
+    	else {
+    	
+    		return;
+    	}
+  	}
+);
+
+
+has 'lab_info_hr' => (
+
+	is  => 'ro',
+    isa => 'HashRef',
     lazy => 1,
     default => sub {
     	
@@ -89,7 +110,70 @@ has 'lab_object' => (
 
 
 
-#######
+
+
+
+####### publication data ########
+
+has 'publication_hr' => (
+
+	is  => 'ro',
+    isa => 'HashRef',
+    lazy => 1,
+    default => sub {
+    	
+    my $self = shift;
+    my $object = $self->object;
+	my %data_pack;
+
+	#### data pull and packaging
+	
+	my @papers = $object->Paper;
+	
+	foreach my $paper (@papers) {
+		
+		
+		my $paper_id = $paper;
+		my @authors = $paper->Author;
+		my $brief_citation = $paper->Brief_citation;
+		my $type = 'Paper';
+		
+		
+		my $publication_date = $paper->Publication_date; 
+		my ($publication_year, $disc) = split /\-/,$publication_date;
+		
+		my $meeting_abstract;
+		$meeting_abstract = $paper->Meeting_abstract;
+		
+		if ($meeting_abstract) {
+		
+			$type = 'Meeting_abstact';
+		}
+		
+		my %publication_info = (
+			'label' => "$brief_citation",
+			'class' => 'Paper',
+			'id' => "$paper_id"
+		);
+		
+		if ($data_pack{$type}{$publication_year}) {
+			
+			my $pub_ar = $data_pack{$type}{$publication_year};
+			push @$pub_ar, \%publication_info;
+		}
+		else {
+		
+			$data_pack{$type}{$publication_year} = [\%publication_info];
+		}	
+	}
+	
+	####
+
+	return \%data_pack;
+    
+    }
+
+);
 
 
 sub name {
@@ -551,8 +635,19 @@ sub lab_id {
 	my $object = $self->object;
 	my $lab = $self->lab_object;
 	my %data;
+	my %data_pack;
 	
-	$data{'data'} = $lab;
+	if ($lab) {
+		my $lab_label = $lab;
+		
+		%data_pack = (
+					'id' => "$lab_label",
+					'label' => "$lab_label",
+					'class' => 'Laboratory'
+		);
+	}
+	
+	$data{'data'} = \%data_pack;
 	$data{'description'} = 'lab id';
 
 	return \%data;
@@ -565,15 +660,21 @@ sub cgc_representative {
 	
 	my $lab = $self->lab_object;
 	my %data;
-	my $cgc_rep = $lab->Representative;
-	my $cgc_rep_name = $cgc_rep->Full_name;
+	my $cgc_rep;
+	my $cgc_rep_name;
+	
+	if($lab) {
+	
+		my $cgc_rep = $lab->Representative;
+		my $cgc_rep_name = $cgc_rep->Full_name;	
+	}
+	
+
 	
 	$data{'data'} = $cgc_rep_name;
 	$data{'description'} = 'lab representative';
 
 	return \%data;
-
-
 }
 
 
@@ -582,23 +683,25 @@ sub gene_classes {
 	my $self = shift;
 	my $object = $self->object;
 	my $lab = $self->lab_object;
-	my %data_pack;
+	my @data_pack;
 	my $desc = 'Gene classes assigned to laboratory';
 	my %data;
 	
-	my @gene_classes = $lab->Gene_classes;
-	
-	foreach my $gene_class (@gene_classes) {
-	
-		$data_pack{$gene_class} = {
-								
-				'name' => $gene_class,
-				'id' => $gene_class,
-				'class' => 'Gene_class'						
-		};
+	if($lab) {
+		my @gene_classes = $lab->Gene_classes;
+		foreach my $gene_class (@gene_classes) {
+			
+			my $gc_label = $gene_class;
+			push @data_pack, {
+									
+					'label' => "$gc_label",
+					'id' => "$gc_label",
+					'class' => 'Gene_class'						
+			};
+		}
 	}
-
-	$data{'data'} = \%data_pack;
+	
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	
 	return \%data;
@@ -611,9 +714,12 @@ sub allele_designation {
 	my $lab = $self->lab_object;
 	my $desc = 'allele designation assigned to laboratory';
 	my %data;
+	my $allele_designation;
 	
-	my $allele_designation = $lab->Allele_designation;
+	if($lab) {
 	
+		$allele_designation = $lab->Allele_designation;
+	}
 
 	$data{'data'} = $allele_designation;
 	$data{'description'} = $desc;
@@ -628,6 +734,35 @@ sub allele_designation {
 
 
 sub papers {
+
+	my $self = shift;
+	my %data;
+	my $description = 'Papers by the person';
+	my $publication_hg = $self->publication_hr;
+	my $data_pack = $publication_hg->{'Paper'};
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $description;
+	
+	return \%data;
+
+}
+
+
+sub meeting_abstracts {
+
+	my $self = shift;
+	my %data;
+	my $description = 'Meeting presentations by the person';
+	my $publication_hg = $self->publication_hr;
+	my $data_pack = $publication_hg->{'Meeting_abstact'};
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $description;
+	
+	return \%data;
+}
+sub papers_old {
 
 	my $self = shift;
     my $object = $self->object;
@@ -698,7 +833,6 @@ sub supervised {
 	$data{'data'} = $data;
 	$data{'description'} = $desc;
 	
-	
 	return \%data;
 }
 
@@ -713,7 +847,6 @@ sub supervised_by {
 	
 	$data{'data'} = $data;
 	$data{'description'} = $desc;
-	
 	
 	return \%data;
 }
@@ -756,10 +889,6 @@ sub supervised_by_old {
 }
 
 
-
-
-
-
 #####################
 # INTERNAL METHODS
 ######################
@@ -797,11 +926,15 @@ sub _get_supervision_data {
 		my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
 		
 		push @data_pack, {
-					'id' => "$supervised_scalar",
+					'person' => {
+					
+						'id' => "$supervised_scalar",
+						'label' => "$full_name",
+						'class' => 'Person'
+						},
+					
 					'first_name' => "$first_name",
 					'last_name' => "$last_name",
-					'label' => "$full_name",
-					'class' => 'Person',
 					'level' =>"$level",
 					'supervision_start' => "$start",
 					'supervision_end' => "$end",
@@ -810,7 +943,6 @@ sub _get_supervision_data {
 	}
 
 	return \@data_pack;
-
 }
 
 

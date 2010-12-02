@@ -33,7 +33,8 @@ isa_ok($person_obj,'WormBase::API::Object::Person');
 #### method list
 my @methods = qw/
 
-papers
+gene_classes
+
  /;
  
 # 	street_address
@@ -44,13 +45,11 @@ papers
 #	lab_phone
 #	laboratory
 #	lab_id
-#	cgc_representative
- 
-#	_by 
-#	
+#	cgc_representative 
+#	meeting_abstracts
 # 	details
 #	address
-#	supervised
+#	
 #	gene_classes
 #	papers
 # 	full_name
