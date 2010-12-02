@@ -17,6 +17,78 @@ has 'ao_template' => (
 );
 
 
+### add address hash
+
+has 'address_info' => (
+	
+	is => 'ro',
+	isa => 'HashRef',	
+	lazy => 1,
+	default => sub {
+	
+		my $self = shift;
+		my $object = $self->object;
+		my %address = map {$_ => $_->right} $object->Address;
+		return \%address;
+	}
+);
+
+has 'address_hr' => (
+	
+	is => 'ro',
+	isa => 'HashRef',	
+	lazy => 1,
+	default => sub {
+	
+		my $self = shift;
+		my $object = $self->object;
+		my %address;
+		
+		foreach my $address_bit ($object->Address) {
+			if ($address_bit=~ m/street/i) {
+			
+				my @street_data = $address_bit->col;
+				$address{$address_bit} = \@street_data;
+			}
+			elsif ($address_bit=~ m/email/i) {
+			
+				my @email_data = $address_bit->col;
+				$address{$address_bit} = \@email_data;
+			}
+			elsif ($address_bit=~ m/office/i) {
+			
+				my @office_phone_data = $address_bit->col;
+				$address{$address_bit} = \@office_phone_data;
+			}
+			else {
+				
+				$address{$address_bit} = $address_bit->right;
+			}
+			
+		}
+		return \%address;
+	}
+);
+
+
+#### laboratory object
+
+has 'lab_object' => (
+
+	is  => 'ro',
+    isa => 'Ace::Object',
+    lazy => 1,
+    default => sub {
+    	
+    	my $self = shift;
+    	my $object = $self->object;
+    	my $ao_object = $object->Laboratory;
+    	return $ao_object;
+  	}
+);
+
+
+
 #######
 
 
@@ -25,7 +97,7 @@ sub name {
     my $object = $self->object;
     my $name   = $object->name;
     my $data = { description => 'The name of the person',
-		 data        =>  { id    => $name,
+		 			data        =>  { id    => $name,
 				   label => $object->Standard_name,
 				   class => $object->class
 		 },
@@ -72,9 +144,171 @@ sub template_simple {
 }
 
 
-########
 
 ## NB: include possibly publishes as
+
+##########
+# name
+##########
+
+sub first_name {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'Persons first name';
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my $first_name = $object->First_name;
+	my $object_id = $object;
+
+	####
+	
+	
+	%data_pack = (
+	
+		'id' => "$object_id",
+		'label' => "$first_name",
+		'class' => "Person"
+	);
+	
+	
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub last_name {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my $last_name = $object->Last_name;
+	my $object_id = $object;
+	####
+	
+	%data_pack = (
+	
+		'id' => "$object_id",
+		'label' => "$last_name",
+		'class' => "Person"
+	);	
+	
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub standard_name {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my $standard_name = $object->Standard_name;
+	my $object_id = $object;
+	
+	####
+	
+	%data_pack = (
+	
+		'id' => "$object_id",
+		'label' => "$standard_name",
+		'class' => "Person"
+	);	
+	
+	
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub full_name {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+
+	#### data pull and packaging
+
+	my $full_name = $object->Full_name;
+	my $object_id = $object;
+
+	
+	%data_pack = (
+	
+		'id' => "$object_id",
+		'label' => "$full_name",
+		'class' => "Person"
+	);	
+	
+	
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub aka {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+	my @akas = $object->Also_known_as;
+	my $object_id = $object;
+	
+	foreach my $aka (@akas) {
+	
+		push @data_pack,{
+			'label' => "$aka",
+			'id' => "$object_id",
+			'class' => 'Person'
+		}; 
+	}
+
+	####
+
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+sub mapa {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	
+	#### data pull and packaging
+
+	my @mapas = $object->Possibly_publishes_as;
+	
+	####
+
+	$data{'data'} = \@mapas;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
 
 
 sub details {
@@ -116,6 +350,113 @@ sub details {
 	return \%data;
 }
 
+############
+# ADDRESS ##
+############
+
+sub street_address {
+
+	my $self = shift;
+	my %data;
+	my $address_info = $self->address_hr;
+	my $street_address = $address_info->{'Street_address'};
+	
+	$data{'data'} = $street_address;
+	$data{'description'} = 'Street address of person';
+	return \%data;
+}
+
+sub country {
+
+	my $self = shift;
+	my %data;
+	my $address_info = $self->address_hr;
+	$data{'data'} = $address_info->{'Country'};
+	$data{'description'} = 'Country of residence of person';
+	
+	return \%data;
+
+}
+
+
+sub institution {
+
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	my %data;
+	$data{'data'} = $address_info->{'Institution'};
+	$data{'description'} = 'Institution of person';
+	return \%data;
+
+}
+
+sub email {
+
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	my %data;
+	$data{'data'} = $address_info->{'Email'};
+	$data{'description'} = 'email addresses of person';
+	return \%data;
+
+}
+
+
+sub lab_phone {
+
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	my %data;
+	$data{'data'} = $address_info->{'Lab_phone'};
+	$data{'description'} = 'laboratory phone';
+	return \%data;
+}
+
+
+sub office_phone {
+
+	my %data;
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	$data{'data'} = $address_info->{'Office_phone'};
+	$data{'description'} = 'office number of person';
+	return \%data;
+}
+
+
+
+sub fax {	
+
+	my %data;
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	$data{'data'} =	$address_info->{'Fax'};
+	$data{'description'} = 'fax number of person';
+	return \%data;
+}
+
+sub web_page {
+
+	my %data;
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	$data{'data'} = $address_info->{'Web_page'};
+	$data{'description'} = 'web page of person';
+	return \%data;
+}
+
+sub other_phone {
+
+	my %data;
+	my $self = shift;
+	my $address_info = $self->address_hr;
+	$data{'data'} = $address_info->{'Other_phone'};
+	$data{'description'} = 'other contact numbers for person';
+	
+	return \%data;
+}
+
+
 sub address {
 
 	my $self = shift;
@@ -135,14 +476,17 @@ sub address {
 	my $fax;
 	my $webpage;
 
-	@street_address = $object->Street_address;
-	$country= $object->Country;
-	$institution= $object->Institution;
-	@emails= $object->Email;
-	$lab_phone= $object->Lab_phone;
-	$office_phone= $object->Office_phone;
-	$fax= $object->Fax;
-	$webpage= $object->Web_page;
+	my %address = map {$_ => $_->right} $object->Address;
+
+
+	@street_address = $address{'Street_address'}; #$object->
+	$country=  $address{'Country'}; #$object->
+	$institution= $address{'Institution'}; #$object->
+	@emails= $address{'Email'}; # $object->
+	$lab_phone= $address{'Lab_phone'}; #$object->
+	$office_phone= $address{'Office_phone'}; #$object->
+	$fax= $address{'Fax'}; #$object->
+	$webpage= $address{'Web_page'}; #$object->
 
 	%data_pack = (
 					'street_address' => \@street_address,
@@ -162,6 +506,12 @@ sub address {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+###############
+# laboratory
+###############
+
+
 
 sub laboratory {
 
@@ -195,6 +545,88 @@ sub laboratory {
 	return \%data;
 }
 
+sub lab_id {
+
+	my $self = shift;
+	my $object = $self->object;
+	my $lab = $self->lab_object;
+	my %data;
+	
+	$data{'data'} = $lab;
+	$data{'description'} = 'lab id';
+
+	return \%data;
+}
+
+sub cgc_representative {
+
+	my $self = shift;
+	my $object = $self->object;
+	
+	my $lab = $self->lab_object;
+	my %data;
+	my $cgc_rep = $lab->Representative;
+	my $cgc_rep_name = $cgc_rep->Full_name;
+	
+	$data{'data'} = $cgc_rep_name;
+	$data{'description'} = 'lab representative';
+
+	return \%data;
+
+
+}
+
+
+sub gene_classes {
+
+	my $self = shift;
+	my $object = $self->object;
+	my $lab = $self->lab_object;
+	my %data_pack;
+	my $desc = 'Gene classes assigned to laboratory';
+	my %data;
+	
+	my @gene_classes = $lab->Gene_classes;
+	
+	foreach my $gene_class (@gene_classes) {
+	
+		$data_pack{$gene_class} = {
+								
+				'name' => $gene_class,
+				'id' => $gene_class,
+				'class' => 'Gene_class'						
+		};
+	}
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	
+	return \%data;
+}
+
+sub allele_designation {
+
+	my $self = shift;
+	my $object = $self->object;
+	my $lab = $self->lab_object;
+	my $desc = 'allele designation assigned to laboratory';
+	my %data;
+	
+	my $allele_designation = $lab->Allele_designation;
+	
+
+	$data{'data'} = $allele_designation;
+	$data{'description'} = $desc;
+	
+	return \%data;
+
+}
+
+######################
+## publications
+######################
+
+
 sub papers {
 
 	my $self = shift;
@@ -209,24 +641,39 @@ sub papers {
 	
 	foreach my $paper (@papers) {
 		
+		
+		my $paper_id = $paper;
 		my @authors = $paper->Author;
 		my $brief_citation = $paper->Brief_citation;
 		my $type = 'Paper';
+		
+		
+		my $publication_date = $paper->Publication_date; 
+		my ($publication_year, $disc) = split /\-/,$publication_date;
+		
 		my $meeting_abstract;
-		
 		$meeting_abstract = $paper->Meeting_abstract;
-		
 		if ($meeting_abstract) {
 		
 			$type = 'Meeting_abstact';
 		}
 		
+		my %publication_info = (
+			'label' => "$brief_citation",
+			'class' => 'Paper',
+			'id' => "$paper_id"
+		);
 		
-		$data_pack{$paper} = {
-								'authors' => \@authors,
-								'brief_citation' =>$brief_citation,
-								'type' => $type
-								};
+		if ($data_pack{$type}{$publication_year}) {
+			
+			my $pub_ar = $data_pack{$type}{$publication_year};
+			push @$pub_ar, \%publication_info;
+		}
+		else {
+		
+			$data_pack{$type}{$publication_year} = [\%publication_info];
+		}
+		
 	}
 	
 	####
@@ -235,52 +682,49 @@ sub papers {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+###############
+# LINEAGE
+##############
 
 sub supervised {
 
 	my $self = shift;
-    my $object = $self->object;
+	my $data = $self->_get_supervision_data('Supervised');
+	my $desc = 'People supervised by person';
+	
 	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @supervised;
 	
-	@supervised = $object->Supervised;
-	
-	foreach my $supervised (@supervised) {
-	
-		my $first_name = $supervised->First_name;
-		my $last_name = $supervised->Last_name;
-		my ($level, $start, $end) = $supervised->right->row;
-		
-		$data_pack{$supervised} = {
-									'ace_id' => $supervised,
-									'first_name' => $first_name,
-									'last_name' => $last_name,
-									'class' => 'Person',
-									'level' =>$level,
-									'supervision_start' => $start,
-									'supervision_end' => $end
-									};
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
+	$data{'data'} = $data;
 	$data{'description'} = $desc;
+	
+	
 	return \%data;
 }
 
+
 sub supervised_by {
+
+	my $self = shift;
+	my $data = $self->_get_supervision_data('Supervised_by');
+	my $desc = 'People who supervised this person';
+	
+	my %data;
+	
+	$data{'data'} = $data;
+	$data{'description'} = $desc;
+	
+	
+	return \%data;
+}
+
+sub supervised_by_old {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 	my @supervised;
@@ -293,22 +737,80 @@ sub supervised_by {
 		my $last_name = $supervised->Last_name;
 		my ($level, $start, $end) = $supervised->right->row;
 		
-		$data_pack{$supervised} = {
-									'ace_id' => $supervised,
-									'first_name' => $first_name,
-									'last_name' => $last_name,
-									'class' => 'Person',
-									'level' =>$level,
-									'supervision_start' => $start,
-									'supervision_end' => $end
-									};
+		push @data_pack, {
+				'ace_id' => $supervised,
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+				'class' => 'Person',
+				'level' =>$level,
+				'supervision_start' => $start,
+				'supervision_end' => $end
+		};
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
+}
+
+
+
+
+
+
+#####################
+# INTERNAL METHODS
+######################
+
+sub _get_supervision_data {
+
+	my $self = shift;
+	my $tag = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+	my @supervised;
+	
+	@supervised = $object->$tag;
+	
+	foreach my $supervised (@supervised) {
+	
+		my $first_name = $supervised->First_name;
+		my $last_name = $supervised->Last_name;
+		my $full_name = $supervised->Full_name;
+		my ($level, $start, $end) = $supervised->right->row;
+		my $supervised_scalar = $supervised;
+		my @end_date;
+		
+		if (!($end =~ m/present/i)) {
+			@end_date = split /\ /,$end; 
+		}
+		
+		my @start_date = split /\ /,$start; 
+		
+		my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
+		
+		push @data_pack, {
+					'id' => "$supervised_scalar",
+					'first_name' => "$first_name",
+					'last_name' => "$last_name",
+					'label' => "$full_name",
+					'class' => 'Person',
+					'level' =>"$level",
+					'supervision_start' => "$start",
+					'supervision_end' => "$end",
+					'duration' => "$duration"
+					};
+	}
+
+	return \@data_pack;
+
 }
 
 
