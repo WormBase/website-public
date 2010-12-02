@@ -38,7 +38,7 @@
         url;
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
-#         c.uri_for_action('report', class , id);
+        IF (class == "author"); class = "person"; END;
         IF c.config.sections.species.$class.defined;
           c.uri_for('/species', class, id);
         ELSE;

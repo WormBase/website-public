@@ -9,7 +9,7 @@
 [% search_type = c.stash.type %]
 <div id="results">
 [% IF results.size > 0 %]
-  <div id="fade">found <span id="count">[% c.stash.count%]</span> 
+  <div id="fade"><span id="count">[% c.stash.count%]</span> 
     [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
   </div>
 [% ELSE %]
@@ -28,6 +28,8 @@
 
 <script>
   [% txt = c.stash.query.replace('[\*]', ' ') %]
+  [% txt = txt.replace(',', ' ') %]
+  [% txt = txt.replace('  ', ' ') %]
   [% to_highlight = txt.split(' ') %]
   [% FOREACH q IN to_highlight %]
     $("div#results").highlight('[% q %]');

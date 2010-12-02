@@ -73,6 +73,7 @@ sub stemming {
   my $self = shift;
   my $query = shift;
   my @queries = ($query, "$query*", "*$query*");
+#   @queries = map {$_ =~s/\*\*/\*/g} @queries;
   return @queries;
 }
 
@@ -90,14 +91,41 @@ sub fetchPerson {
    $query    =~ s/  / /g;
    my @fields = split(/\s/,$query);
    
+   my @names;
+   foreach (stemming($self, $query)){ push(@names, $DB->fetch(-pattern=>$_, -class=>'Person_name'));}
+    foreach (@names) {
+        push (@objs,$_->Last_name_of,$_->Standard_name_of,$_->Full_name_of,
+          $_->Other_name_of);
+    }
+   foreach (stemming($self, $query)){ push(@names, $DB->fetch(-pattern=>$_, -class=>'Author'));}
+    foreach (@names) {
+        if (my @people = eval { $_->Possible_person }) {
+        push @objs,@people;
+        } 
+### HACK ignoring author objects without person attached
+#         else {
+#         push @objs,$_;
+#         }
+    }
+
+
+
+    unless(@objs){
    @objs = person_fields($self, $query);
-   push(@objs, person_fields($self, join('*', @fields)));
-   push(@objs, person_fields($self, $fields[1] . "*" . $fields[0])) if @fields > 1;
-    foreach my $qu (@fields){
-      foreach my $q (stemming($self, $qu)){
-        push(@objs, person_fields($self, $q));
+   foreach (stemming($self, $query)){ push(@objs, person_fields($self, $_));}
+   if(@fields > 1 && !@objs){
+    foreach (stemming($self, join('*', @fields))) { push(@objs, person_fields($self, $_));}
+    foreach (stemming($self, join('*', reverse(@fields)))){ push(@objs, person_fields($self, $_));}
+    unless(@objs){
+     foreach my $qu (@fields){
+        foreach (stemming($self, $qu)){
+          push(@objs, person_fields($self, $_));
+        }
       }
     }
+   }
+    }
+
   }
 
   my %seen;
