@@ -44,6 +44,7 @@ sub search :Path('/search')  :Args(2) {
     }  
     $objs = $cached_data;
 
+
     if(@$objs<1) { #this may not be optimal
       $query.="*";
       $objs = $api->search->$search({class => $class, pattern => $query}) ;
@@ -53,10 +54,17 @@ sub search :Path('/search')  :Args(2) {
           $c->set_cache($cache_id,$cached_data);
       } 
       $objs = $cached_data;
-
     }
+
+    my $begin = $c->req->param("begin") || 0;
+    my $end = $c->req->param("end") || 9;
+    my $count = scalar(@$objs);
+    if($end > ($count-1)){ $end = $count - 1;}
+
+    my @results = @$objs[$begin..$end];
     $c->stash->{'type'} = $type; 
-    $c->stash->{'results'} = $objs;
+    $c->stash->{'results'} = \@results;
+    $c->stash->{'count'} = $count;
     if(defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     } elsif(@$objs==1 ) {
@@ -68,7 +76,11 @@ sub search :Path('/search')  :Args(2) {
         }
         $c->res->redirect($url);
     } 
+      if($begin > 0) {
+        $c->stash->{template} = "search/result_list.tt2";
+      }else {
         $c->stash->{template} = "search/results.tt2";
+      }
     }
     $c->stash->{'query'} = $query;
     $c->stash->{'class'} = $type;

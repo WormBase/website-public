@@ -55,6 +55,7 @@ sub workbench_GET {
 	  $count += scalar(keys %{$c->user_session->{bench}{$type}{$class}});
       }
     }
+    unless($count){$count = 0; } #otherwise empty brackets show
     $c->stash->{count} = $count;
     $c->stash->{template} = "workbench/count.tt2";
 } 
@@ -638,12 +639,38 @@ sub widget_me_GET {
       }
       push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
     }
+
     @ret = map{
             my $class = lcfirst($_->{name}->{class});
             my $id = $_->{name}->{id};
             $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
             $_;
               } @ret;
+
+
+      ### HACK, fix this later
+      if($widget=~m/species/){
+        my @more_ret;
+        foreach my $class (keys(%{$c->user_session->{bench}{'resources'}})){
+          my @objs;
+          foreach my $id (keys(%{$c->user_session->{bench}{'resources'}{$class}})){
+            my $obj = $api->fetch({class=> ucfirst($class),
+                              name => $id}) or die "$!";
+            push(@objs, $obj);
+          }
+          push(@more_ret, @{$api->search->_wrap_objs(\@objs, $class)});
+        }
+        @more_ret = map{
+                my $class = lcfirst($_->{name}->{class});
+                my $id = $_->{name}->{id};
+                $_->{footer} = "added " . $c->user_session->{bench}{'resources'}{$class}{$id};
+                $_;
+                  } @more_ret;
+        push(@ret, @more_ret);
+      }
+      ### END HACK
+
+
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
     $c->stash->{template} = "search/results.tt2";

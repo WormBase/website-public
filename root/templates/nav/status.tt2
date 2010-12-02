@@ -11,10 +11,10 @@ function popWin(url) {
  
 [% IF c.user_exists %]
 
-  <li><a href="[% c.uri_for('/me') %]" class="section-me [% IF(c.stash.section=='me'); 'selected'; END;%]">Welcome [% username(c.user) %]<span href="/bench" id="bench_status"></span></a></li>
+  <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">Welcome [% username(c.user) %]<span href="/bench" id="bench_status"></span></a></li>
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
 [% ELSE %]
-  <li><a href="/me" title="go to your workspace" class="section-me [% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench_status"></span></a></li>
+  <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench_status"></span></a></li>
   <li><a  class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
 [% END %]
  

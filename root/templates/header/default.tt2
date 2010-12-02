@@ -18,7 +18,7 @@
   <div id="nav-bar">
     <ul class="nav-bar">
     [% FOREACH title IN c.config.sections.nav_bar.option %]
-      <li><a href="/[% title %]" class="section-[% title %] [% IF(c.stash.section == title); 'selected'; END;%]">
+      <li><a href="/[% title %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
           [% c.config.sections.$title.title %]</a>
           <ul class="dropdown">
         [% IF (title == 'species') %]

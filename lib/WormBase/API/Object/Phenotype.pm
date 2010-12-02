@@ -149,6 +149,14 @@ sub variation {
    return $data;
 }
 
+sub variation_not {
+   my ($self,$detail) = @_;
+   my $data = { description => "Variations in which the phenotype is not observed",
+		 	data        => shift->_get_json_data('Not_in_Variation') , 
+    };
+   return $data;
+}
+
 sub go_term {
 
    my $data = { description => "The related Go term of the phenotype",
@@ -161,6 +169,14 @@ sub transgene {
   
    my $data = { description => "The related transgene of the phenotype ",
 		 	data        => shift->_get_json_data('Transgene') , 
+    };
+   return $data;
+}
+
+sub transgene_not {
+  
+   my $data = { description => "Transgene experiments in which phenotype is not observed ",
+		 	data        => shift->_get_json_data('Not_in_Transgene') , 
     };
    return $data;
 }
@@ -273,9 +289,18 @@ sub _format_objects {
 	    $str .= (($desc) ? ": $desc" : '')
 		. (($joined_evidence) ? "; $joined_evidence" : '');
 	     
-	} elsif ($tag eq 'Variation') {
-		 $is_not = _is_not($_,$phenotype);
-		 my $gene = $_->Gene;
+	} elsif ($tag=~ m/variation/i) { ##eq 'Variation'
+		 
+		 # $is_not = _is_not($_,$phenotype);
+		 if ($tag=~ m/not/i) {
+	    	$is_not = 0;
+	    } 
+	    
+	    else {
+	    	$is_not = 1;
+	    }
+		 
+		my $gene = $_->Gene;
 		 if($gene) {
 		  push @array,{id    => "$gene",
 				  label => $gene->Public_name->name,
@@ -289,26 +314,35 @@ sub _format_objects {
 				    };
 		  }else { push @array, "";}
 		 
-	} elsif ($tag eq 'Transgene') {
-	    #need to deal to Phenotype evidence hash, write more generic code in future/or maybe this already exist
-# 		foreach my $ph ($_->Phenotype){
-# 		    next unless ($ph eq $phenotype);
-# 		    foreach my $tag ($ph->col){
-# 			next unless($tag eq "Caused_by");
-# 			my $gene=$ph->$tag;
-# 			 if($gene) {
-# 			    push @array,{   id    => "$gene",
-# 					    label => $gene->Public_name->name,
-# 					    class => $gene->class,};
-# 			  }else { push @array, "";}
-# 		    }
-# 		}
+	} elsif ($tag=~ m/transgene/i ) { ## eq 'Transgene'
+
 		my $genotype = $_->Summary || "";
 		push @array,"$genotype";
-		$is_not = _is_not($_,$phenotype);
+		#$is_not = _is_not($_,$phenotype);
+		
+		if ($tag=~ m/not/i) {
+	    	$is_not = 0;
+	    } 
+	    
+	    else {
+	    	$is_not = 1;
+	    }
 	}
+	my %real_tags = (
+		'Not_in_Variation' => 'Variation',
+		'Not_in_Transgene' => 'Transgene'
+					);
+	my $real_tag;
+	if ($real_tags{$tag}) {
+		
+		$real_tag = $real_tags{$tag};
+	} else {
+	
+		$real_tag = $tag;
+	}
+	
 	my $hash = {    label=> "$str",
-			class => $tag,
+			class => $real_tag,
 			id => "$_", };
  
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}

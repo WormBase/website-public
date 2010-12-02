@@ -35,8 +35,6 @@
 	  } 
     }); 
 
- 
-    
     $(".issue-submit").live('click',function() {
 	    var url= $(this).attr("rel");
 	    var page= $(this).attr("page");
@@ -56,7 +54,6 @@
 	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
 	      success: function(data){
 			    displayNotification("Problem Submitted! We will be in touch soon.");
-			    //feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 
 			    feed.closest('#widget-feed').hide(); 
 		      },
 	      error: function(request,status,error) {
@@ -239,9 +236,9 @@
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
       widget_container.find("#widget-footer").hide();
-      widget_container.find("#widget-header").children("h3").children("span.hide").hide();
+      widget_container.find(".widget-header").children("h3").children("span.hide").hide();
 
-    widget_container.find("#widget-header").hover(
+    widget_container.find(".widget-header").hover(
       function () {
         $(this).children("h3").children("span").show();
       },
@@ -252,13 +249,13 @@
 
     widget_container.hover(
         function () {
-          $(this).find("#widget-header").children(".ui-icon").show();
-          if($(this).find("#widget-header").children("h3").children(".module-min").attr("show") != 1){
+          $(this).find(".widget-header").children(".ui-icon").show();
+          if($(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
             $(this).find("#widget-footer").show();
           }
         }, 
         function () {
-          $(this).find("#widget-header").children(".ui-icon").hide();
+          $(this).find(".widget-header").children(".ui-icon").hide();
           $(this).find("#widget-footer").hide();
         }
       );

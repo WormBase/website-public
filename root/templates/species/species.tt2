@@ -1,16 +1,37 @@
-Species:
-<br />
-
-          [% FOREACH option IN c.config.species_list.keys %]
-            <li><a href="/species/[% option %]">[% c.config.species_list.$option.Title %]</a></li>
-          [% END %]
+[% title = "Species"  %]
 
 
-<br />
-Classes:
-<br />
+  [% widgets = [] %]
+  [% widgets.push({ title="Species" type="title"}) %]
 
-          [% FOREACH option IN c.config.sections.species.keys %]
-            [% IF option == 'title'; NEXT; END; %]
-            <li><a href="/species/[% option %]">[% option %]</a></li>
-          [% END %]
+
+  [% FOREACH option IN c.config.species_list.keys %]
+      [% IF option == 'title'; NEXT; END; %]
+      [% widget = option %]
+      [% w = { id = option
+              title = c.config.species_list.$option.Title 
+              href =  "/species/" _ option _ "?inline=1"
+              type = 'species'
+              };
+      %]
+      [% widgets.push(w) %]
+  [% END %]
+
+  [% widgets.push({ title="Classes" type="title"}) %]
+
+
+  [% FOREACH option IN c.config.sections.species.keys %]
+      [% IF option == 'title'; NEXT; END; %]
+      [% widget = option %]
+      [% w = { id = option
+              title = option
+              href =  "/species/" _ option _ "?inline=1"
+              type = ''
+              };
+      %]
+      [% widgets.push(w) %]
+  [% END %]
+
+
+
+  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]

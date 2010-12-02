@@ -22,9 +22,7 @@
 
           <div class="workbench-status-[% wbid %]"></div>
 
-          <script>
-          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
-          </script>
+
        [% END %]
        [% UNLESS no_layout %]
           <div class="columns"><span id="fade" style="float:left">Layout</span>
@@ -38,16 +36,20 @@
           </ul>
           </div>
       [% END %]
+        <div style="clear:both"></div>
     </div>
 
 <div id="widgets">
   <div id="navigation">
-    <div id="title"><h2 class="ellipsis">
+    <div id="title"><div class="workbench-status-[% wbid %]"></div>
+<h4 class="ellipsis">
       [% IF object %]
+
         [% tag2link(object.name.data) %]
+
       [% ELSE %]
         WormBase
-      [% END %]</h2>
+      [% END %]</h4>
     </div>
     <ul>
     [% FOREACH w IN widgets -%]
@@ -91,3 +93,8 @@
     <div class="sortable right"></div>
   </div>
 </div>
+      [% IF object %]
+          <script>
+          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
+          </script>
+      [% END %]

@@ -1,12 +1,12 @@
 
-   <form method="post" id="searchForm" action="" onsubmit="search(); return false;">
+   <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="search(); return false;">
 
     [% val = "search..." %]
     [% IF query %]
        [% val = query %]
     [% END %]
-    <input class="text ui-corner-all" id="Search" name="query" type="text" value="[% val %]"> 
-
+    <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
+    <input class="button ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
          <ul class="dropdown">
 
     <li id="gene" class="selected" onclick="search_change('gene')"><a href="javascript:void(0)">Gene</a></li>
