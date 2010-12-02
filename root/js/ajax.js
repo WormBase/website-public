@@ -166,8 +166,8 @@
       if($(content).text().length < 4){
           var column = ".left";
           var holder = $("#widget-holder");
-          if(getLeftWidth(holder) == 100){
-            if(holder.children(".right").children(".visible").size() != 0){
+          if(getLeftWidth(holder) >= 90){
+            if(holder.children(".right").children(".visible").height()){
               column = ".right";
             }
           }else{
