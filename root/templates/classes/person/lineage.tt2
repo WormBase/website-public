@@ -6,10 +6,10 @@
 	[% WRAPPER $field_block title="Supervised" key=supervised %]
 	
 		[%## declare array of columns named via keys in the data structure%] 	
-		[% order = ['label','level', 'duration'] %]
+		[% order = ['person','level', 'duration'] %]
 	
 		[% ## declare hash for column headers, keyed as above %]
-		[% headers = {	label => 'Name',
+		[% headers = {	person => 'Name',
 						level => 'Level'
 						duration => 'Period'
 					 }
@@ -48,10 +48,59 @@
 	  [% FOREACH o IN order; names.push(headers.$o); END %]
 	  
 	  [% ## generate table %]
-	  [% dataTable_list(names, rows, 'table_supervised') %]
+	  [% dataTable_list(names, rows, 'table_supervised_by') %]
 	
 	[% ## END OF WRAPPER %] 
 	[% END %]
 
 
+	[%## DATA TABLE FOR SUPERVISORS %]
+	[% WRAPPER $field_block title="Supervised by" key=supervised_by %]
 	
+		[%## declare array of columns named via keys in the data structure%] 	
+		[% order = ['person','level', 'duration'] %]
+	
+		[% ## declare hash for column headers, keyed as above %]
+		[% headers = {	person => 'Name',
+						level => 'Level'
+						duration => 'Period'
+					 }
+		%]
+	  
+		[% ## declare rows array %]
+		[% rows = [] %]
+		
+		[% ## loop through each element in <subroutine>.<return_data_key>.<... to array data> array %]
+		[% FOREACH r IN fields.supervised_by.data %]
+			[% ## declare row array %]
+			[% row = [] %]
+			
+			[% ## loop through each element in order array (for columns) , declared above %]
+			[% FOREACH o IN order %]
+				
+				[% ## get value (val) from the row r %]
+				[% val = r.$o %]
+			
+				[% ## enter data in row %]
+				[% row.push(val) %]
+	   
+			[% #  END FOREACH o IN order  %]  	
+			[% END %]
+		
+		
+			[% ## enter data row array into rows %]
+			[% rows.push(row) %]
+		
+	  [% END %]
+	  
+	  
+	  [% names = [] %]
+	  
+	  [% ## populate name array %]
+	  [% FOREACH o IN order; names.push(headers.$o); END %]
+	  
+	  [% ## generate table %]
+	  [% dataTable_list(names, rows, 'table_supervised') %]
+	
+	[% ## END OF WRAPPER %] 
+	[% END %]
