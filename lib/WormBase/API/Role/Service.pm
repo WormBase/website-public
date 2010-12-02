@@ -3,6 +3,7 @@ package WormBase::API::Role::Service;
 use Moose::Role;
 use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
+use File::Path 'mkpath';
 
 use constant INITIAL_DELAY => 600;
 
@@ -193,6 +194,9 @@ sub dbfile {
     my $locking    = $write ? 'write' : 'read';
     my $mode       = $write ? O_CREAT|O_RDWR : O_RDONLY;
     my $perms      = 0666;
+
+    mkpath($self->path,0,0777) unless -d $self->path; 
+
     my $path	   = $self->path.'/WormBase_'.$self->symbolic_name;
     my %h;
     tie (%h,'DB_File::Lock',$path,$mode,$perms,$DB_HASH,$locking);
