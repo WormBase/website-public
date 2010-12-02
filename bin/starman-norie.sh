@@ -4,7 +4,7 @@
 export APP="norie"
 export APPLIB="WormBase"
 export WORKERS=5
-export PORT=9001
+export PORT=10003
 export PERL5LIB=/usr/local/wormbase/website/norie/extlib/lib/perl5:/usr/local/wormbase/website/norie/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/norie/lib:$PERL5LIB
 
 #export PATH="/usr/local/wormbase/website-classic/extlib/bin:$PATH"
