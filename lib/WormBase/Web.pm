@@ -215,7 +215,7 @@ my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
 
 
 # CHI-powered on-disk file cache: default.
-if (0) {    
+if (1) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'File',
@@ -227,7 +227,7 @@ if (0) {
     };
 }
 
-if (1) {    
+if (0) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'Memcached::libmemcached',
