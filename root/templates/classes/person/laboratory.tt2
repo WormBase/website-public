@@ -12,7 +12,7 @@
  
   [% WRAPPER $field_block title="Gene Classes"-%]
             
-     [% FOREACH key IN fields.gene_classes.data.keys %]
-     	[% key %] &nbsp;
+     [% FOREACH gene_class IN fields.gene_classes.data %]
+     	[% tag2link(gene_class) %] &nbsp;
      [% END %]
   [% END %]
