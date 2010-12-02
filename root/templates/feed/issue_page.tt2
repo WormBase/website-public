@@ -6,7 +6,7 @@
 	      $.ajax({
 		type: 'POST',
 		url: url,
-		data: {content: $("textarea").attr('value'),issue:[% issue.id %]},
+		data: {content: $("textarea").val(),issue:[% issue.id %],state:$("#issue_status option:selected").val(),responser:$("#issue_responser option:selected").val() },
 		success: function(data){
 			     window.location.reload();  
 			},
@@ -40,10 +40,14 @@ created <span id="fade">[% time_dir.ago(current_time - issue.submit_time) %]</sp
 last edited by <a href="#">[% username(last_edit) %]</a> 
 </font></h2>
 <p>[% issue.content %] </p>
+<table width="40%">
+<tr><th>Status:</th><td>[% issue.state %]</td> 
+ <th>Responsible:</th><td>[% username(issue.responser) %]</td></tr>
+</table>	
 </div>
 
 <div  class="issue-content">
-<h3>Comments</h3>
+<h3>Replies</h3>
 <ul>
 [% FOREACH th IN threads %]
 [% id = th.thread_id %]
@@ -59,11 +63,47 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 </div>
 
 <div id="threads-new" class="issue-content">
-<h2>Add Reply</h2>
+[% IF c.check_user_roles('admin') %]
+    set state to
+    <select id="issue_status">
+    <option value="" selected="selected">---------------</option>
+    <option value="new">new</option>
+    <option value="open">open</option>
+    <option value="resolved">resolved</option>
+    <option value="hold">hold</option>
+    <option value="duplicated">duplicated</option>
+    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    assign issue to 
+    <select id="issue_responser">
+    <option value="" selected="selected">------------------</option>
+    [% FOREACH p IN curators %]
+      <option value="[% p.id %]">[% username(p) %]</option>
+    [% END %]
+    </select>
+[% END %]
+<h3>Reply</h3>
+[% UNLESS c.user_exists %]	
+<table width="90%">		      
+		 <tr>
+			<th>
+			    <a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
+			</th>
+			<td>
+			   or
+			</td>
+			<td>
+			    Name <input id="display-name" name="display-name" type="text"   maxlength="30">
+			      <div style="height: 0.4em; overflow: hidden;"> </div>
+			    Email <input id="email" maxlength="50" type="text" name="email"  /> 
+			</td>
+		</tr>
+</table>
+[% END %]
 <form>
-<textarea rows="10" cols="40" id="content"></textarea>
+<textarea rows="5" cols="70" id="content"></textarea>
 <p>
-<input type='submit' value='Add' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
+<input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
  <input type='reset' value='Reset' />
 </p>
 </form>

@@ -13,18 +13,20 @@
 	  var url= $(this).attr("rel");
 	   
 	  var id=new Array();
-	  $(".ui-icon-circle-minus").each(function(){
+	  $(".issue-deletebox").filter(":checked").each(function(){
+	  
 	     id.push($(this).attr('name'));
 	  });
 	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
 	  if(answer){
-	    var reload = $(this).closest('.widget-container').find('.reload');
+// 	    var reload = $(this).closest('.widget-container').find('.reload');
 	    $.ajax({
 		      type: "POST",
 		      url : url,
 		      data: {method:"delete",issues:id.join('_')}, 
 		      success: function(data){
-			      reload.trigger('click');
+// 			      reload.trigger('click');
+			      window.location.reload(1);
 			},
 		      error: function(request,status,error) {
 			      alert(request + " " + status + " " + error );
@@ -33,15 +35,25 @@
 	  } 
     }); 
 
+ 
     
     $(".issue-submit").live('click',function() {
 	    var url= $(this).attr("rel");
 	    var page= $(this).attr("page");
 	    var feed = $(this).closest('#issues-new');
+	    var email = feed.find("#email");
+	    var username= feed.find("#display-name");
+	    if(email.attr('id') && username.attr('id')) {
+	      if( email.val() =="" || username.val() =="") {
+		  alert("To report an Issue, you need to provide a username & email address."); return false;
+	      }
+	      if (validate_email(email.val(),"Not a valid e-mail address!")==false)
+		  {email.focus();return false;}
+	    }  
 	    $.ajax({
 	      type: 'POST',
 	      url: url,
-	      data: {title:feed.find("#id_title").attr("value"), location: page, content: feed.find("#content").attr("value")},
+	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
 	      success: function(data){
 			    displayNotification("Problem Submitted! We will be in touch soon.");
 			    //feed.html("<div style='background-color:yellow'><h3>Problem Submitted!</h3><p>We will be in touch soon.</p></div>"); 

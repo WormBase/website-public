@@ -6,29 +6,28 @@
 ####################################################
 %]
 [% MACRO username(user) BLOCK %]
-[% IF user %]
- [% IF user.first_name.defined ; name = user.first_name; END;
-    IF user.last_name.defined; name = name _ ' ' _ user.last_name; END; %] 
+[% IF user.username %]
+[% user.username %]
+[% ELSIF user %]
+ [% IF user.first_name.defined ; name = user.first_name FILTER ucfirst ; END;
+    IF user.last_name.defined; lastname= user.last_name FILTER ucfirst; name = name _ ' ' _ lastname  ; END; %] 
 [% IF name.defined %][% name %][% ELSE %]Anonymous[% END %] 
 [%- END %]
 [%- END %]
  
-[% MACRO issue_table(issues,issues_type) BLOCK %]
+[% MACRO issue_table(issues) BLOCK %]
 [% IF issues %]
 [% USE time_dir = Time.Duration %]
-  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th>
-    <th>[% IF issues_type %]Report by
-	[% ELSE %]<button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button>[% END %]
-    </th>
-    <th>Responsible</th></tr>
+  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th> 
+    <th>Report by</th><th>Responsible</th>
+    [% IF c.check_user_roles('admin') %]<th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>[% END %]
+    </tr>
       [% FOREACH IS IN issues %]
 	 [% array=IS.location.split('/') %]
 	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
-	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>
-	    <td>[% IF issues_type %][% username(IS.owner) %]
-	    [% ELSE %]<span class="add-delete ui-icon ui-icon-circle-plus" name="[% IS.id %]"><span>[% END %]
-	    </td>
-	    <td>[% username(IS.responser) %]</td>
+	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
+	    <td>[% username(IS.owner) %]</td><td>[% username(IS.responser) %]</td>
+	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
 	  </tr>
       [% END %]
       </table>
@@ -271,8 +270,8 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   title="comment" class="feed"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,widget.name,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
-                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,widget.name,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
+                    <a   title="comment" class="feed"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment"></span></a>  
+                    <a   title="report a problem" class="feed"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice"></span></a>
                     <a href="#" title="help"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
 		<div id="widget-feed"></div>  
