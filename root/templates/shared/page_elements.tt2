@@ -275,9 +275,9 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   title="comment" class="feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
-                    <a   title="report a problem" class="feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
-                    <a href="#" title="help" class="ui-corner-all"><span class="ui-icon ui-icon-help"></span></a>
+                    <a   tip="comment" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   tip="report a problem" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+                    <a href="#" tip="help" class="tip-simple ui-corner-all"><span class="ui-icon ui-icon-help"></span></a>
                 </div>
 		<div id="widget-feed"></div>  
 

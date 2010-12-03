@@ -95,12 +95,18 @@
       
   });
 
-  $("#widget-footer").children("button").button({
-            icons: {
-                primary: "ui-icon-comment"
-            }
-        });
-
+  var tip = $('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>').hide();
+  $(".tip-simple").hover(
+        function () {
+          if($(this).children("div").size()){
+            $(this).children("div").show();
+          }else{
+            tip.clone().prepend($(this).attr("tip")).appendTo($(this)).show();
+            arrow.appendTo($(this));
+          }
+        }, 
+        function () { $(this).children("div").hide(); }
+      );
 
     $(".tooltip").live('mouseover',function() {
         $(this).cluetip({
