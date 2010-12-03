@@ -19,7 +19,7 @@ body, html {
     height:100%;
 }
 
-h1,h2,h3,h4,h5,h6 { color:black; }
+h1,h2,h3,h4,h5,h6 { color:black; margin:0;}
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
 h2 { font-size:1.4em; }  /* 21.6px ; page title */
@@ -29,7 +29,6 @@ h5 { font-size:0.8em; }  /* 13.2px ; field names */
 h6 { font-size:0.8em;    /* 12px; subfield names */
      font-weight:bold;
 }  
-
 
 /* IE hack: Force tables and input forms to inherit our default size */
 input, select, th, td { font-size:1em; }
@@ -331,7 +330,7 @@ li.visible div.widget-container {
     display:none;
 }
 
-.widget-container #widget-footer a{
+ #widget-footer a{
   float:right;
   height:1.2em;
   margin:0 0.2em;
@@ -341,7 +340,7 @@ li.visible div.widget-container {
   position:relative;
 }
 
-.widget-container #widget-footer a:hover{
+#widget-footer a:hover{
   background:#BBB;
 }
 
@@ -1024,6 +1023,8 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   overflow:hidden;
 }
 
+
+
 #navigation {
   width: 10em;
   float: left;
@@ -1182,6 +1183,10 @@ div.details div.field div.field-content{
   color:#AAA;
 }
 
+.tip-simple {
+  position:relative;
+}
+
 .tip {
   position:absolute;
   bottom:100%;
@@ -1196,7 +1201,7 @@ div.details div.field div.field-content{
   position:absolute;
   top:100%;
   right:0.4em;
-  margin-top:-6px;
+  margin-top:-7px;
 }
 
 /*Strain table*/

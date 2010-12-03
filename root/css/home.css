@@ -1,15 +1,44 @@
-/* The center divs on the home page */
-#main {
-  padding-top:25px;
-  text-align:center;
-  color: #999999;
+/* the home page */
+
+.home {
+  position:relative;
+  width:100%;
 }
-#main h1 {
-  font-size:5em;
+.home div {
+  margin:0.5em 0;
 }
-#main a {
-    text-decoration: none; 
-    color: #6666EE;
+
+.home div.home-col {
+  float:left;
+  width: 50%;
+}
+.home-box {
+  border:1px solid gray;
+}
+.home div#top{
+  margin:1em 0 -0.5em;
+}
+.home div#bottom{
+  clear:both;
+}
+.home div#news>div {
+  margin-right:0.5em;
+}
+.home div#posts>div {
+  margin-left:0.5em;
+}
+.home div.content-box {
+  padding:0.5em;
+  background:#EEE;
+}
+.inner-box {
+  background:white;
+  padding:0.5em;
+  font-size:0.8em;
+}
+.older-news {
+  text-align:right;
+  width:100%;
 }
 
 
