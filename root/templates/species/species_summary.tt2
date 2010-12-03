@@ -1,10 +1,56 @@
-
 [% species = c.stash.species %]
+
 
 [% IF c.config.species_list.$species.defined %]
 <span class="species">[% c.config.species_list.$species.Title %]</span>
-[% ELSE; species; END; %] summary page
+[% ELSE; c.config.species_list.$species.Title; END; %] summary page
 <br />
+
+
+  [% widgets = [] %]
+  [%# Establish my list of widgets %]
+  [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
+  [% widgets.push({ id    = 'overview',
+      	            title = 'Overview',
+              href =  "/species/" _ species _ "/overview/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [% widgets.push({ id    = 'isolation',
+      	            title = 'Isolation',
+              href =  "/species/" _ species _ "/isolation/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [% widgets.push({ id    = 'downloads',
+      	            title = 'Downloads',
+              href =  "/species/" _ species _ "/downloads/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [% widgets.push({ id    = 'key_papers',
+      	            title = 'Key Papers',
+              href =  "/species/" _ species _ "/key_papers/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [% widgets.push({ id    = 'related_sites',
+      	            title = 'Related Sites',
+              href =  "/species/" _ species _ "/related_sites/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+
+
+  [%# Add the sidebar %]
+  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
+
+
 
 
 <br />
@@ -15,3 +61,13 @@ Classes:
             [% IF option == 'title'; NEXT; END; %] 
            <li><a href="/species/[% species _ "/" _ option %]">[% option %]</a></li>
           [% END %]
+
+
+   [% WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns"%]
+   <span id="fade">Figure out images</span>
+        <ul>
+        [% FOREACH ep IN fields.anatomic_expression_patterns.data %]
+              <li>[% ep.value.image %][% tag2link(ep.value.object) %]: [% markup(ep.value.details,0) %]</li>
+        [% END %]
+         </ul>
+   [% END %]
