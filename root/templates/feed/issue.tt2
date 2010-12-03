@@ -13,16 +13,16 @@ $(".lightbox").colorbox();
       [% issue_table(issues) %]
     [% END %]
     <h4>Create new issue</h4>
-	<table  width="70%" >
+	<table id="issueTable" width="70%" >
 		<tr>
-			<th >Title:</th>
-			<td colspan="2"><input id="title" maxlength="100" size="70" type="text" name="title"  /></td>
+			<th width="10%">Title:</th>
+			<td colspan="2" ><input class="issue-text" id="title" maxlength="100"  type="text" name="title"  /></td>
 		</tr>
 				 
 		<tr>
-			<th>Content:</th>
-			<td colspan="2">
-				<textarea id="content" rows="10"  cols="90" name="content"  ></textarea>
+			<th width="10%">Content:</th>
+			<td colspan="2" >
+				<textarea class="issue-text" id="content" rows="10"     name="content"  ></textarea>
 			</td>
 		</tr>
 [% UNLESS c.user_exists %]			      
@@ -34,9 +34,9 @@ $(".lightbox").colorbox();
 			   or
 			</td>
 			<td>
-			    Name <input id="display-name" name="display-name" type="text"   maxlength="30">
+			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
 			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input id="email" maxlength="50" type="text" name="email"  /> 
+			    Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
 			</td>
 		</tr>
 [% ELSIF !c.user.email_address || ! c.user.username %]
@@ -48,9 +48,9 @@ $(".lightbox").colorbox();
 			   Please leave your username and email address
 			</td>
 			<td align='left'>
-			    Name <input id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
+			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
 			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
+			    Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
 			</td>
 		</tr>
 [% END %]
