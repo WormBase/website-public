@@ -22,14 +22,16 @@
           [% c.config.sections.$title.title %]</a>
           <ul class="dropdown">
         [% IF (title == 'species') %]
-          [% FOREACH option IN c.config.species_list.sort() %]
+          [% FOREACH option IN c.config.species_list.keys.sort() %]
             <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
               <ul class="dropdown">  
                 <li><a href="#">Browse Genome</a></li>
-              [% FOREACH class IN c.config.sections.species.keys %]
+
+              [% FOREACH class IN c.config.species_list.$option.available_classes.class %]
                 [% IF class == 'title'; NEXT; END; %]
                 <li><a href="/species/[% option %]/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
               [% END %]
+
               </ul>
             </li>
           [% END %]

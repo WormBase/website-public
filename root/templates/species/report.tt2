@@ -44,6 +44,7 @@
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
+
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
     $jq("#nav-overview").trigger('open');

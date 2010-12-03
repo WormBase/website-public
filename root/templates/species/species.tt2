@@ -1,9 +1,7 @@
 [% title = "Species"  %]
 
-
   [% widgets = [] %]
   [% widgets.push({ title="Species" type="title"}) %]
-
 
   [% FOREACH option IN c.config.species_list.keys %]
       [% IF option == 'title'; NEXT; END; %]
@@ -17,21 +15,11 @@
       [% widgets.push(w) %]
   [% END %]
 
-  [% widgets.push({ title="Classes" type="title"}) %]
-
-
-  [% FOREACH option IN c.config.sections.species.keys %]
-      [% IF option == 'title'; NEXT; END; %]
-      [% widget = option %]
-      [% w = { id = option
-              title = option
-              href =  "/species/" _ option _ "?inline=1"
-              type = ''
-              };
-      %]
-      [% widgets.push(w) %]
-  [% END %]
-
-
-
+  [%# Add the sidebar %]
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
+
+
+
+
+
+    This is the species OVERVIEW page.

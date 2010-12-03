@@ -12,13 +12,9 @@
 	div.slideToggle('fast');
     });
 
-// var layoutFocused = true;
-//       $jq(".toggle").addClass("ui-icon-large ui-icon-plus").show();
-//       addWidgetEffects();
-      $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+    $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
     $jq(".tooltip").addClass("ui-icon ui-icon-lightbulb");
-   
-   openid.init('openid_identifier');
+     openid.init('openid_identifier');
      $jq("#openid_identifier").focus();
 
     $jq(".sortable").sortable({
@@ -86,7 +82,7 @@
       });
 
 
-
+/*
   $jq("div.bench div.content").droppable({
       accept: ".results-paper div.result",
       hoverClass: 'placeholder ui-corner-all',
@@ -94,16 +90,13 @@
                 ui.draggable.find(".bench_update").trigger('click');
             },
       
-  });
+  });*/
 
-  var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>').hide();
   $jq(".tip-simple").hover(
         function () {
-          if($jq(this).children("div").size()){
-            $jq(this).children("div").show();
-          }else{
-            tip.clone().prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
-            arrow.appendTo($jq(this));
+          if(!($jq(this).children("div").show().size())){
+            var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
+            tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
           }
         }, 
         function () { $jq(this).children("div").hide(); }

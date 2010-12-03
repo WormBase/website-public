@@ -147,6 +147,9 @@ __PACKAGE__->config->{authentication} =
                     };
 
 
+
+
+
 # Set configuration for static files
 # Force specific directories to be handled by Static::Simple.
 # These should ALWAYS be served in static mode.
@@ -190,10 +193,11 @@ __PACKAGE__->config->{using_frontend_proxy} = 1;
 # Application-wide configuration is located in wormbase.conf
 # which can be over-ridden by wormbase_local.conf.
 __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
-                         driver => { 'General' => { -InterPolateVars => 1} },
-             } ) or die "$!";
-
-
+						 driver => { 'General' => { -InterPolateVars => 1,
+									    -ForceArray      => 1,
+							     } 
+						 },
+		     } ) or die "$!";
 
 
 

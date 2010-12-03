@@ -135,10 +135,12 @@ $jq(function() {
         }
       }
       var results = $jq("#results");
-      var rHeight = results.height() + results.offset().top;
-      var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
-      if(rBottomPos < 300) {
-        results.children(".load-results").trigger('click');
+      if(results){
+        var rHeight = results.height() + results.offset().top;
+        var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
+        if(rBottomPos < 300) {
+          results.children(".load-results").trigger('click');
+        }
       }
     });
 
