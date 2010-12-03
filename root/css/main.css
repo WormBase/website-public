@@ -338,6 +338,7 @@ li.visible div.widget-container {
   border:1px solid #BBB;
   background:#EEE;
   padding:0 0.3em;
+  position:relative;
 }
 
 .widget-container #widget-footer a:hover{
@@ -430,7 +431,7 @@ div#footer a{
 
 #footer, #spacer {
     clear:both;
-    height: 6.8em;
+    height: 7.2em;
     margin-top:1em;
 }
 
@@ -1179,6 +1180,23 @@ div.details div.field div.field-content{
 .disabled {
   background:#EEE;
   color:#AAA;
+}
+
+.tip {
+  position:absolute;
+  bottom:100%;
+  right:0;
+  background:#333;
+  color:white;
+  padding:0.5em;
+  margin:0.5em 0;
+}
+
+.tip span{
+  position:absolute;
+  top:100%;
+  right:0.4em;
+  margin-top:-6px;
 }
 
 /*Strain table*/
