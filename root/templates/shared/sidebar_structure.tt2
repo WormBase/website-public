@@ -69,7 +69,7 @@
       [% END %]
     [% END %]
   
-      <li class="title">Recently Activity</li>
+      <li class="title">Recent Activity</li>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
       <li id="nav-user_history" 
