@@ -100,8 +100,8 @@
   [% IF data && data.size>0 %]
  
     <script type="text/javascript" >
-	$(document).ready(function() {
-	    $('#[% table %]').dataTable({
+	$jq(document).ready(function() {
+	    $jq('#[% table %]').dataTable({
 		[% style %]
 	} );
       } );

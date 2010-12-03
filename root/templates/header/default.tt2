@@ -56,7 +56,7 @@
 </div>
 
 <script>
-$.post("/rest/history", { 'ref': window.location.pathname , 'name' : "[% object.name.data.label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
+$jq.post("/rest/history", { 'ref': window.location.pathname , 'name' : "[% object.name.data.label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
 </script>
 
 <!-- END boilerplate/banner -->

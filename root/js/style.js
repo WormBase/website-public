@@ -1,18 +1,18 @@
 
   // Tabs
-  $(function() {
-  $(".ui-tabs").tabs()
+  $jq(function() {
+  $jq(".ui-tabs").tabs()
   });
 
-  $("h1").each(function(i) {
-//        var url = $(i).attr("href");
-//        var widget = $(i).text();  
+  $jq("h1").each(function(i) {
+//        var url = $jq(i).attr("href");
+//        var widget = $jq(i).text();  
     alert("help");
-//         $("#widget").load("url"),
+//         $jq("#widget").load("url"),
 //   		                   function(response, status, xhr) {
 //                                          if (status == "error") {
 //                                             var msg = "Sorry but there was an error: ";
-//                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+//                                             $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
 //                                          } 
 //                                    }
   });

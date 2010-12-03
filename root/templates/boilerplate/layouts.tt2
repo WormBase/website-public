@@ -9,10 +9,10 @@
           </form>
 
 <script>
-    $("#layout-input").focus(function(){
-      if($(this).attr("value") == "save layout") $(this).attr("value", "");
+    $jq("#layout-input").focus(function(){
+      if($jq(this).attr("value") == "save layout") $jq(this).attr("value", "");
     });
-  $("#layout-input").blur(function(){
-    if($(this).attr("value") == "") $(this).attr("value", "save layout");
+  $jq("#layout-input").blur(function(){
+    if($jq(this).attr("value") == "") $jq(this).attr("value", "save layout");
   });
 </script>

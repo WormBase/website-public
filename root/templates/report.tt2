@@ -60,8 +60,8 @@
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
-    $("#nav-overview").trigger('open');
-    $("#nav-location").trigger('open');
+    $jq("#nav-overview").trigger('open');
+    $jq("#nav-location").trigger('open');
     [% UNLESS object %]
       resetLayout(["reports"], ["my_library"], 50);
     [% END %]
@@ -115,11 +115,11 @@
 
       <div id="content-pane"></div>
                      <script>
-                            $("#content-pane").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
+                            $jq("#content-pane").load("[% c.uri_for('/rest','widget',this_page,this_object_id,widget.name) %]",
                                function(response, status, xhr) {
                                             if (status == "error") {
                                                 var msg = "Sorry but there was an error: ";
-                                                $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                                $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
                                             } 
                                      });
                             </script>
@@ -181,11 +181,11 @@
            <!-- <div class="dynamic-widget"><a href="[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]">[% widget.name %]</a></div>-->
 
                     <script>
-                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
+                             $jq("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
                            function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
-                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                             $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
                                            } 
                                     })                    
                    </script>

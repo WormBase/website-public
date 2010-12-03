@@ -1,26 +1,26 @@
-  $(document).ready(function() {   
-      $(".role-update").live('click',function() {
-	$.ajax({
+  $jq(document).ready(function() {   
+      $jq(".role-update").live('click',function() {
+	$jq.ajax({
 		  type: "POST",
-		  url : "/rest/update/role/"+$(this).attr('id')+"/"+$(this).attr('value')+"/"+$(this).attr('checked'), 
+		  url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+$jq(this).attr('checked'), 
 		  error: function(request,status,error) {
 			  alert(request + " " + status + " " + error );
 		    }
 	  });
     });
 
-     $(".issue-delete").live('click',function() {
-	  var url= $(this).attr("rel");
+     $jq(".issue-delete").live('click',function() {
+	  var url= $jq(this).attr("rel");
 	   
 	  var id=new Array();
-	  $(".issue-deletebox").filter(":checked").each(function(){
+	  $jq(".issue-deletebox").filter(":checked").each(function(){
 	  
-	     id.push($(this).attr('name'));
+	     id.push($jq(this).attr('name'));
 	  });
 	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
 	  if(answer){
-// 	    var reload = $(this).closest('.widget-container').find('.reload');
-	    $.ajax({
+// 	    var reload = $jq(this).closest('.widget-container').find('.reload');
+	    $jq.ajax({
 		      type: "POST",
 		      url : url,
 		      data: {method:"delete",issues:id.join('_')}, 
@@ -35,10 +35,10 @@
 	  } 
     }); 
 
-    $(".issue-submit").live('click',function() {
-	    var url= $(this).attr("rel");
-	    var page= $(this).attr("page");
-	    var feed = $(this).closest('#issues-new');
+    $jq(".issue-submit").live('click',function() {
+	    var url= $jq(this).attr("rel");
+	    var page= $jq(this).attr("page");
+	    var feed = $jq(this).closest('#issues-new');
 	    var email = feed.find("#email");
 	    var username= feed.find("#display-name");
 	    if(email.attr('id') && username.attr('id')) {
@@ -48,7 +48,7 @@
 	      if (validate_email(email.val(),"Not a valid e-mail address!")==false)
 		  {email.focus();return false;}
 	    }  
-	    $.ajax({
+	    $jq.ajax({
 	      type: 'POST',
 	      url: url,
 	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
@@ -67,23 +67,23 @@
 
     
 
-        $(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
+        $jq(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $(".user-history").html(msg + xhr.status + " " + xhr.statusText);
+            $jq(".user-history").html(msg + xhr.status + " " + xhr.statusText);
           }
         });
 
-    $(".list-layouts").load("/rest/layout_list/" + $(".list-layouts").attr("type"), function(response, status, xhr) {
+    $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
+            $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
           }
         });
 
 
-    $("div.text-min").live('click',function() {expand($(this), $(this).next());});
-    $("div.more").live('click',function() {expand($(this).prev(), $(this));});
+    $jq("div.text-min").live('click',function() {expand($jq(this), $jq(this).next());});
+    $jq("div.more").live('click',function() {expand($jq(this).prev(), $jq(this));});
     function expand(txt, more){
          var h = txt.height();
          if(h<35){h='100%';}else{h='2.6em';}
@@ -100,39 +100,39 @@
             .toggleClass('ellipsis');
     }
 
-    $("div.text-min").live('mouseover mouseout',function() {
-      $(this).next().toggleClass('opaque');
+    $jq("div.text-min").live('mouseover mouseout',function() {
+      $jq(this).next().toggleClass('opaque');
     });
 
-    $(".reload").live('click', function() {
-      var widget_name = $(this).attr("wname");
-      $("div#" + widget_name + "-content").load("/rest/widget/me/" + widget_name);
+    $jq(".reload").live('click', function() {
+      var widget_name = $jq(this).attr("wname");
+      $jq("div#" + widget_name + "-content").load("/rest/widget/me/" + widget_name);
     });
 
-      $(".bench_update").live('click',function() {
-        var wbid     = $(this).attr("wbid");
-        var id     = $(this).attr("id");
-        var class     = $(this).attr("objclass");
-        var type     = $(this).attr("type");
-        var label     = $(this).attr("name");
-        var url     = $(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type;
-        $("#bench_status").load(url,   function(response, status, xhr) {
+      $jq(".bench_update").live('click',function() {
+        var wbid     = $jq(this).attr("wbid");
+        var id     = $jq(this).attr("id");
+        var class     = $jq(this).attr("objclass");
+        var type     = $jq(this).attr("type");
+        var label     = $jq(this).attr("name");
+        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type;
+        $jq("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
-                              $("#bench_status").html(msg + xhr.status + " " + xhr.statusText);
+                              $jq("#bench_status").html(msg + xhr.status + " " + xhr.statusText);
                               }
                           });
-        $("#bench_status").addClass("highlight").delay(3000).queue( function(){ $(this).removeClass("highlight"); $(this).dequeue();});       
-        $(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type);
-        $("div#reports-content").load("/rest/widget/me/reports");
-        $("div#my_library-content").load("/rest/widget/me/my_library");
+        $jq("#bench_status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
+        $jq(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type);
+        $jq("div#reports-content").load("/rest/widget/me/reports");
+        $jq("div#my_library-content").load("/rest/widget/me/my_library");
       return false;
       });
 
-       $(".status-bar").load("/rest/auth", function(response, status, xhr) {
+       $jq(".status-bar").load("/rest/auth", function(response, status, xhr) {
 	if (status == "error") {
 	  var msg = "Sorry but there was an error: ";
-	  $("#error").html(msg + xhr.status + " " + xhr.statusText);
+	  $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
 	}
       });
 
@@ -141,22 +141,22 @@
 
   //this function displayes the notification message at the top of the report page
   function displayNotification(message){
-        $("#notifications").text(message).show().delay(3000).fadeOut(400);
+        $jq("#notifications").text(message).show().delay(3000).fadeOut(400);
   }
 
-  $(".update").live('click',function() {
+  $jq(".update").live('click',function() {
 
-    $(this).text("updating").show();
-    var url     = $(this).attr("href");
+    $jq(this).text("updating").show();
+    var url     = $jq(this).attr("href");
     // Multiple classes specified. Split so I can rejoin.
-    var mytitle = $(this).attr("class").split(" ");
-    $("#" + mytitle[1]).load(url,
+    var mytitle = $jq(this).attr("class").split(" ");
+    $jq("#" + mytitle[1]).load(url,
                     function(response, status, xhr) {
                           if (status == "error") {
                           var msg = "Sorry but there was an error: ";
-                          $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                          $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
                           }
-                          $(this).children(".toggle").toggleClass("active");
+                          $jq(this).children(".toggle").toggleClass("active");
                       });
         
   return false;
@@ -164,14 +164,14 @@
 
 
   // used in sidebar view, to open and close widgets when selected
-  $(".module-load, .module-close").live('click',function() {
-    var widget_name = $(this).attr("wname");
-    var nav = $("#nav-" + widget_name);
+  $jq(".module-load, .module-close").live('click',function() {
+    var widget_name = $jq(this).attr("wname");
+    var nav = $jq("#nav-" + widget_name);
     var content = "div#" + widget_name + "-content";
     if (nav.attr("load") == 1){
-      if($(content).text().length < 4){
+      if($jq(content).text().length < 4){
           var column = ".left";
-          var holder = $("#widget-holder");
+          var holder = $jq("#widget-holder");
           if(getLeftWidth(holder) >= 90){
             if(holder.children(".right").children(".visible").height()){
               column = ".right";
@@ -184,14 +184,14 @@
           openWidget(widget_name, nav, content, column);
       }else{
         nav.attr("load", 0);
-        $(content).parents("li").addClass("visible");
+        $jq(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
       }
       location.href = "#" + widget_name;
     } else {
       nav.attr("load", 1);
       nav.removeClass("ui-selected");
-      $(content).parents("li").removeClass("visible"); 
+      $jq(content).parents("li").removeClass("visible"); 
     }
 
     updateLayout();
@@ -199,9 +199,9 @@
   });
 
   // used in sidebar view, to open and close widgets when selected
-  $(".module-load, .module-close").live('open',function() {
-    var widget_name = $(this).attr("wname");
-    var nav = $("#nav-" + widget_name);
+  $jq(".module-load, .module-close").live('open',function() {
+    var widget_name = $jq(this).attr("wname");
+    var nav = $jq("#nav-" + widget_name);
     var content = "div#" + widget_name + "-content";
 
     openWidget(widget_name, nav, content, ".left");
@@ -213,8 +213,8 @@
    
     function openWidget(widget_name, nav, content, column){
         nav.attr("load", 0);
-        $(content).closest("li").appendTo($("#widget-holder").children(column));
-        var content = $(content);
+        $jq(content).closest("li").appendTo($jq("#widget-holder").children(column));
+        var content = $jq(content);
         addWidgetEffects(content.parent(".widget-container"));
         var url     = nav.attr("href");
         content.html("<span id=\"fade\">loading...</span>").show();
@@ -240,70 +240,70 @@
 
     widget_container.find(".widget-header").hover(
       function () {
-        $(this).children("h3").children("span").show();
+        $jq(this).children("h3").children("span").show();
       },
       function () {
-        $(this).children("h3").children("span.hide").hide();
+        $jq(this).children("h3").children("span.hide").hide();
       }
     );
 
     widget_container.hover(
         function () {
-          $(this).find(".widget-header").children(".ui-icon").show();
-          if($(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
-            $(this).find("#widget-footer").show();
+          $jq(this).find(".widget-header").children(".ui-icon").show();
+          if($jq(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
+            $jq(this).find("#widget-footer").show();
           }
         }, 
         function () {
-          $(this).find(".widget-header").children(".ui-icon").hide();
-          $(this).find("#widget-footer").hide();
+          $jq(this).find(".widget-header").children(".ui-icon").hide();
+          $jq(this).find("#widget-footer").hide();
         }
       );
 
        widget_container.find("div.module-min").hover(
         function () {
-          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-circle-triangle-s");
-          }else{ $(this).addClass("ui-icon-circle-triangle-e");}
+          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-circle-triangle-s");
+          }else{ $jq(this).addClass("ui-icon-circle-triangle-e");}
         }, 
         function () {
-          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
-          if ($(this).attr("show")!=1){ $(this).addClass("ui-icon-triangle-1-s");
-          }else{ $(this).addClass("ui-icon-triangle-1-e");}
+          $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
+          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-triangle-1-s");
+          }else{ $jq(this).addClass("ui-icon-triangle-1-e");}
         }
       );
 
        widget_container.find("div.module-close").hover(
         function () {
-          $(this).addClass("ui-icon-circle-close");
+          $jq(this).addClass("ui-icon-circle-close");
         }, 
         function () {
-          $(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
+          $jq(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
         }
       );
     }
 
     function history_clear(){
-        $("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
+        $jq("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
-                              $("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
+                              $jq("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
                               }
         });
       }
 
 
   // Load a (specific) field or widget dynamically onClick.
-  $("a.ajax").click(function() {
-      var url     = $(this).attr("href");
-      var format  = $(this).text();
+  $jq("a.ajax").click(function() {
+      var url     = $jq(this).attr("href");
+      var format  = $jq(this).text();
   
       // Multiple classes specified. Split so I can rejoin.
-      var mytitle = $(this).attr("class").split(" ");
+      var mytitle = $jq(this).attr("class").split(" ");
       if (format == "yml") {
           format = "text/x-yaml";
       }
 
-      $.ajax({
+      $jq.ajax({
                  type: "GET",
                  url : url,
                  contentType: 'application/x-www-form-urlencoded',
@@ -311,8 +311,8 @@
                  success: function(data){
                       //  Add some description prior to dumping the content
                       var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
-                       $("#" + mytitle[1] + ".returned-data").show();
-                       $("#" + mytitle[1] + ".returned-data").html(content);                         
+                       $jq("#" + mytitle[1] + ".returned-data").show();
+                       $jq("#" + mytitle[1] + ".returned-data").html(content);                         
 
                         // Embed in <pre> if this is not html
                         if (format == "html") {
@@ -320,7 +320,7 @@
                           data = "<pre>" + data + "</pre>";
                         }
 
-                       $("#" + mytitle[1] + ".returned-data").append(data);
+                       $jq("#" + mytitle[1] + ".returned-data").append(data);
                    },
                    error: function(request,status,error) {
                          alert(request + " " + status + " " + error + " " + format);

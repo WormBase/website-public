@@ -5,7 +5,7 @@
  
  
 <script type="text/javascript">
-	  $('.thetable').tableScroll();
+	  $jq('.thetable').tableScroll();
 </script>  
 <table class="thetable"> 
   

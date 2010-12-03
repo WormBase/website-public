@@ -24,14 +24,14 @@
 <script type="text/javascript">
  
 
-    $(".blast_blat").change(function () {
+    $jq(".blast_blat").change(function () {
           
 	   
-	  $(".blast_container:visible").hide();
+	  $jq(".blast_container:visible").hide();
            
-           var str = $(".blast_blat option:selected").attr("id");
+           var str = $jq(".blast_blat option:selected").attr("id");
             
-          $("." + str).show();
+          $jq("." + str).show();
 	  
         })
         .change();
