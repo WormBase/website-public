@@ -12,10 +12,7 @@
 	div.slideToggle('fast');
     });
 
-// var layoutFocused = true;
-//       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
-//       addWidgetEffects();
-      $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+    $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
     $(".tooltip").addClass("ui-icon ui-icon-lightbulb");
      openid.init('openid_identifier');
      $("#openid_identifier").focus();
@@ -85,7 +82,7 @@
       });
 
 
-
+/*
   $("div.bench div.content").droppable({
       accept: ".results-paper div.result",
       hoverClass: 'placeholder ui-corner-all',
@@ -93,16 +90,13 @@
                 ui.draggable.find(".bench_update").trigger('click');
             },
       
-  });
+  });*/
 
-  var tip = $('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>').hide();
   $(".tip-simple").hover(
         function () {
-          if($(this).children("div").size()){
-            $(this).children("div").show();
-          }else{
-            tip.clone().prepend($(this).attr("tip")).appendTo($(this)).show();
-            arrow.appendTo($(this));
+          if(!($(this).children("div").show().size())){
+            var tip = $('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
+            tip.prepend($(this).attr("tip")).appendTo($(this)).show();
           }
         }, 
         function () { $(this).children("div").hide(); }

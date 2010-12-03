@@ -8,9 +8,6 @@
      debug("Passing request through without wrapping: $template.name");
      content;
 
-   ELSIF (template.name.match('index'));   	 
-         content WRAPPER boilerplate/html + layout/default.tt2;
-
    ELSIF (template.name.match('header|footer'));   	 
          content WRAPPER boilerplate/html ;
    
