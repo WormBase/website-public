@@ -5,24 +5,24 @@
 /***************************/
 
 //The search bar methods
-$(document).ready(function(){
-  var searchBox = $("#Search"),
+$jq(document).ready(function(){
+  var searchBox = $jq("#Search"),
       searchBoxDefault = "search...",
-      searchForm = $("#searchForm")
+      searchForm = $jq("#searchForm")
 
   searchBox.focus(function(e){
-    $(this).addClass("active");
+    $jq(this).addClass("active");
   });
   searchBox.blur(function(e){
-    $(this).removeClass("active");
+    $jq(this).removeClass("active");
   });
 
   //show/hide default text if needed
   searchBox.focus(function(){
-    if($(this).attr("value") == searchBoxDefault) $(this).attr("value", "");
+    if($jq(this).attr("value") == searchBoxDefault) $jq(this).attr("value", "");
   });
   searchBox.blur(function(){
-    if($(this).attr("value") == "") $(this).attr("value", searchBoxDefault);
+    if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
   });
  
 });
@@ -31,7 +31,7 @@ $(document).ready(function(){
 var cur_search_type = 'gene';
 
 function search() {
-    var f = $("#Search").attr("value");
+    var f = $jq("#Search").attr("value");
     if(f == "search..." || f == "*" || !f){
       location.href= '/search/preview/' + cur_search_type + '/*';
       return;
@@ -44,9 +44,9 @@ function search() {
 }
 
 function search_change(new_search) {
-  $("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
+  $jq("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
   cur_search_type = new_search;
-  $("#searchForm ul.dropdown li#" + new_search).addClass("selected");
+  $jq("#searchForm ul.dropdown li#" + new_search).addClass("selected");
 
   
 }

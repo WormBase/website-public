@@ -8,14 +8,14 @@
   
   <div id="[%- type -%]-container" style="display:none;padding-left:30px">
 				    <script>
-					$("#[%- type -%]-container").load("[% path _ "?inline=1" %]",
+					$jq("#[%- type -%]-container").load("[% path _ "?inline=1" %]",
 					      function(response, status, xhr) {
 						  if (status == "error") {
-						      $("#[%- type -%]2").html(xhr.status + " " + xhr.statusText);
+						      $jq("#[%- type -%]2").html(xhr.status + " " + xhr.statusText);
 						  }
 						  //try to find a better way to do this...
 						  var count = response.split("<span id=\"count\">")[1].split("</span>")[0];
-						  $("#[%- type -%]2").text(count); 
+						  $jq("#[%- type -%]2").text(count); 
 					});
 					
 				    </script>

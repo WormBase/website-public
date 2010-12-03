@@ -1,26 +1,27 @@
  
-  $(document).ready(function() {
+  $jq(document).ready(function() {
   
-     $(".add-delete").live('click',function() {
-	$(this).toggleClass( "ui-icon-circle-minus"); 
+     $jq(".add-delete").live('click',function() {
+	$jq(this).toggleClass( "ui-icon-circle-minus"); 
     });
 
-    $(".feed").live('click',function() {
-	var url=$(this).attr("rel");
-	var div=$(this).parent().next("#widget-feed");
+    $jq(".feed").live('click',function() {
+	var url=$jq(this).attr("rel");
+	var div=$jq(this).parent().next("#widget-feed");
 	div.filter(":hidden").empty().load(url);
 	div.slideToggle('fast');
     });
 
 // var layoutFocused = true;
-//       $(".toggle").addClass("ui-icon-large ui-icon-plus").show();
+//       $jq(".toggle").addClass("ui-icon-large ui-icon-plus").show();
 //       addWidgetEffects();
-      $("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
-    $(".tooltip").addClass("ui-icon ui-icon-lightbulb");
-     openid.init('openid_identifier');
-     $("#openid_identifier").focus();
+      $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
+    $jq(".tooltip").addClass("ui-icon ui-icon-lightbulb");
+   
+   openid.init('openid_identifier');
+     $jq("#openid_identifier").focus();
 
-    $(".sortable").sortable({
+    $jq(".sortable").sortable({
       handle: '.widget-header, #widget-footer',
       items:'li.widget',
       placeholder: 'placeholder ui-corner-all',
@@ -28,65 +29,65 @@
       forcePlaceholderSize: true,
       update: updateLayout,
     });
-    $("#widget-holder").children("#widget-header").disableSelection();
+    $jq("#widget-holder").children("#widget-header").disableSelection();
 
-    $("div.columns span, div.columns div.ui-icon, div.columns ul li").live('click', function() {
-      $("div.columns ul").toggle();
+    $jq("div.columns span, div.columns div.ui-icon, div.columns ul li").live('click', function() {
+      $jq("div.columns ul").toggle();
     });
 
 // if you want columns to show on hover: problems when using input
-//   $("div.columns").hover(function () {
-//       $("div.columns ul").show();
+//   $jq("div.columns").hover(function () {
+//       $jq("div.columns ul").show();
 //     }, function () {
-//       $("div.columns ul").hide();
+//       $jq("div.columns ul").hide();
 //     });
 
 
 // TODO:get jquery icons working for toggle
-//   $(".toggle").live('click',function() {
-//               $(this).next().slideToggle("fast");
-//               $(this).toggleClass("ui-icon-triangle-1-e");
-//               $(this).toggleClass("ui-icon-triangle-1-s");
+//   $jq(".toggle").live('click',function() {
+//               $jq(this).next().slideToggle("fast");
+//               $jq(this).toggleClass("ui-icon-triangle-1-e");
+//               $jq(this).toggleClass("ui-icon-triangle-1-s");
 //               return false;
 //         });
 
-     $(".toggle").live('click',function() {
-              $(this).toggleClass("active").next().slideToggle("fast");
+     $jq(".toggle").live('click',function() {
+              $jq(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
 
-  $("#searchForm dropdown li input").button();
+  $jq("#searchForm dropdown li input").button();
 
-    $("#nav-min").click(function() {
-      var nav = $("#navigation");
+    $jq("#nav-min").click(function() {
+      var nav = $jq("#navigation");
       var w = nav.width();
       var msg = "open sidebar";
       if(w == 0){ w = '9.5em'; msg = "close sidebar"; }else { w = 0;}
       nav.animate({width: w, display: 'block'});
       nav.children("#title").children("div").toggle();
-      $(this).attr("title", msg);
-      $(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
+      $jq(this).attr("title", msg);
+      $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
 
-    $(".module-min").live('click', function() {
-        var module = $("div#" + $(this).attr("wname") + "-content");
+    $jq(".module-min").live('click', function() {
+        var module = $jq("div#" + $jq(this).attr("wname") + "-content");
         module.next().slideToggle("fast");
         module.slideToggle("fast");
-        $(this).parent().toggleClass("minimized");
-        if ($(this).attr("show") != 1){
-          $(this).attr("show", 1).attr("title", "maximize");
-          $(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
-          $(this).addClass("ui-icon-circle-triangle-e");
+        $jq(this).parent().toggleClass("minimized");
+        if ($jq(this).attr("show") != 1){
+          $jq(this).attr("show", 1).attr("title", "maximize");
+          $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
+          $jq(this).addClass("ui-icon-circle-triangle-e");
         }else{
-          $(this).attr("show", 0).attr("title", "minimize");
-          $(this).removeClass("ui-icon-circle-triangle-e");
-          $(this).addClass("ui-icon-circle-triangle-s");
+          $jq(this).attr("show", 0).attr("title", "minimize");
+          $jq(this).removeClass("ui-icon-circle-triangle-e");
+          $jq(this).addClass("ui-icon-circle-triangle-s");
         }
       });
 
 
 
-  $("div.bench div.content").droppable({
+  $jq("div.bench div.content").droppable({
       accept: ".results-paper div.result",
       hoverClass: 'placeholder ui-corner-all',
       drop: function(event, ui){
@@ -95,21 +96,21 @@
       
   });
 
-  var tip = $('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>').hide();
-  $(".tip-simple").hover(
+  var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>').hide();
+  $jq(".tip-simple").hover(
         function () {
-          if($(this).children("div").size()){
-            $(this).children("div").show();
+          if($jq(this).children("div").size()){
+            $jq(this).children("div").show();
           }else{
-            tip.clone().prepend($(this).attr("tip")).appendTo($(this)).show();
-            arrow.appendTo($(this));
+            tip.clone().prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
+            arrow.appendTo($jq(this));
           }
         }, 
-        function () { $(this).children("div").hide(); }
+        function () { $jq(this).children("div").hide(); }
       );
 
-    $(".tooltip").live('mouseover',function() {
-        $(this).cluetip({
+    $jq(".tooltip").live('mouseover',function() {
+        $jq(this).cluetip({
         activation: 'click',
         sticky: true, 
         cluetipClass: 'jtip',

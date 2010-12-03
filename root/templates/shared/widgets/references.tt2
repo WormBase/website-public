@@ -12,10 +12,10 @@ The References widget itself is composed of multiple sections, each of which is 
 [% path = c.uri_for('/search', 'paper', c.stash.query) %]
   <div id="reference-results"><span id="fade">Loading...</span>
                     <script>
-                    $("#reference-results").load("[% path _ "?class=" _ c.stash.class _ ";inline=1" %]",
+                    $jq("#reference-results").load("[% path _ "?class=" _ c.stash.class _ ";inline=1" %]",
                           function(response, status, xhr) {
                           if (status == "error") {
-                              $("reference-results").html(xhr.status + " " + xhr.statusText);
+                              $jq("reference-results").html(xhr.status + " " + xhr.statusText);
                           }
                     });
                     </script>

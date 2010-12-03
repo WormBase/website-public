@@ -53,11 +53,11 @@
 		        Firefox does this using the existing code, but other browsers do not.			
 			%] 
                     <script>
-                             $("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
+                             $jq("#[%- widget.name -%]").load("[% c.uri_for('/rest','widget',class,this_object_id,widget.name) %]",
    		                   function(response, status, xhr) {
                                           if (status == "error") {
                                              var msg = "Sorry but there was an error: ";
-                                             $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                             $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
                                            } 
                                     })				      
                    </script>

@@ -1,7 +1,7 @@
 /***************************/
 // to be written
 /***************************/
-$('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
+$jq('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
 
 function validate_email(field,alerttxt)
 {

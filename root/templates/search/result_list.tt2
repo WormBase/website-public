@@ -9,7 +9,7 @@
           <div class="workbench-status-[% wbid %]"></div>
 
           <script>
-          $(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% class %]&type=[% type %]&id=[% item.name.id %]");
+          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% class %]&type=[% type %]&id=[% item.name.id %]");
           </script>
 
  

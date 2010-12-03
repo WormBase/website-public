@@ -16,16 +16,16 @@
 [% END %]  
 
 <script type="text/javascript" >
-$(document).ready(function() {  
+$jq(document).ready(function() {  
     openid.init('openid_identifier');
-     $("#openid_identifier").focus();
+     $jq("#openid_identifier").focus();
 	 
-    $("#left").click(function(){
-      $("#openid_choice").animate({"left": "+=76px"}, "fast");
+    $jq("#left").click(function(){
+      $jq("#openid_choice").animate({"left": "+=76px"}, "fast");
     });
 
-    $("#right").click(function(){
-      $("#openid_choice").animate({"left": "-=76px"}, "fast");
+    $jq("#right").click(function(){
+      $jq("#openid_choice").animate({"left": "-=76px"}, "fast");
     });
 
 });

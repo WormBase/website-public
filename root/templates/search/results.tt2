@@ -34,39 +34,39 @@
   [% txt = txt.replace('  ', ' ') %]
   [% to_highlight = txt.split(' ') %]
   [% FOREACH q IN to_highlight %]
-    $("div#results").highlight('[% q %]');
+    $jq("div#results").highlight('[% q %]');
   [% END %]
 
     var total = [% c.stash.count %];
     var begin = 20;
     var end = 39;
-    $(".load-results").live('click', function() {
+    $jq(".load-results").live('click', function() {
       if(begin > total){ return; }
-      var url= $(this).attr("href") + "&begin=" + begin + "&end=" + end;
+      var url= $jq(this).attr("href") + "&begin=" + begin + "&end=" + end;
 
-      $("#load-results").html("<span id=\"fade\">loading...</span>");
-      $(this).removeClass("load-results");
+      $jq("#load-results").html("<span id=\"fade\">loading...</span>");
+      $jq(this).removeClass("load-results");
 
-        var div = $("<div></div>");
+        var div = $jq("<div></div>");
         div.load(url, function(response, status, xhr) {
           begin = begin + 20;
           end = end +20;
           if(begin <= total){
-            $("#load-results").html('more results<span class="ui-icon ui-icon-triangle-1-s"></span>');
-            $("#load-results").addClass("load-results");
+            $jq("#load-results").html('more results<span class="ui-icon ui-icon-triangle-1-s"></span>');
+            $jq("#load-results").addClass("load-results");
           }else{
-            $("#load-results").html('');
+            $jq("#load-results").html('');
           }
           [% FOREACH q IN to_highlight %]
             div.highlight('[% q %]');
           [% END %]
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $(this).html(msg + xhr.status + " " + xhr.statusText);
+            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
           }
         });
 
-        div.appendTo($(this).parent().children("ul"));
+        div.appendTo($jq(this).parent().children("ul"));
 
     });
 </script>

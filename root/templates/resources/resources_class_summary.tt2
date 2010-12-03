@@ -14,17 +14,17 @@ TODO: add search;
         var end = 10;
   function load_preview(){
 
-        $("#message").html("<span id=\"fade\">loading...</span>");
-        var div = $("<div></div>");
+        $jq("#message").html("<span id=\"fade\">loading...</span>");
+        var div = $jq("<div></div>");
         div.load("/search/preview/[% c.stash.class %]/*[% c.config.species_list.$species.full_name %]?begin=" + begin + "&end=" + end, function(response, status, xhr) {
-          $("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
+          $jq("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
           begin = begin + 10;
           end = end +10;
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
-            $("#preview").html(msg + xhr.status + " " + xhr.statusText);
+            $jq("#preview").html(msg + xhr.status + " " + xhr.statusText);
           }
         });
-        div.appendTo($("#preview"));
+        div.appendTo($jq("#preview"));
   }
 </script>
