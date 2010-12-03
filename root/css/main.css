@@ -322,7 +322,10 @@ li.visible div.widget-container {
     background: #DEC1D0; 
 }
 
+.widget-container #widget-feed{
+    display:none;
 
+}
 .widget-container #widget-footer {
     font-size:0.9em;    
     position:absolute;
@@ -1216,4 +1219,12 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#BBFFAA;
 }
 
+.issue-text{
+  width :80%;
+}
 
+.issue-user {
+  width : 60%;
+}
+
+ 
