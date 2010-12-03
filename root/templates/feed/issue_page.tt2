@@ -84,7 +84,7 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 [% END %]
 <h3>Reply</h3>
 [% UNLESS c.user_exists %]	
-<table width="90%">		      
+<table width="60%">		      
 		 <tr>
 			<th>
 			    <a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
@@ -93,15 +93,16 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 			   or
 			</td>
 			<td>
-			    Name <input id="display-name" name="display-name" type="text"   maxlength="30">
+			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
 			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input id="email" maxlength="50" type="text" name="email"  /> 
+			    Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
 			</td>
 		</tr>
 </table>
+<p>
 [% END %]
 <form>
-<textarea rows="5" cols="70" id="content"></textarea>
+<textarea class="issue-text" rows="5"   id="content"></textarea>
 <p>
 <input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
  <input type='reset' value='Reset' />
