@@ -46,6 +46,17 @@
  	      ) %]
 
 
+  [% widgets.push({ title="My Workspace" type="title"}) %]
+  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+    [% widget = c.config.sections.me.widgets.$widget_name %]
+    [% w = { id = widget_name
+            title = widget.title
+            href =  c.uri_for('/rest','widget','me',widget_name)
+            type = "me"
+            };
+    %]
+    [% widgets.push(w) %]
+   [% END %]
 
   [%# Add the sidebar %]
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
@@ -53,21 +64,3 @@
 
 
 
-<br />
-Classes:
-<br />
-
-          [% FOREACH option IN c.config.sections.species.keys %]
-            [% IF option == 'title'; NEXT; END; %] 
-           <li><a href="/species/[% species _ "/" _ option %]">[% option %]</a></li>
-          [% END %]
-
-
-   [% WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns"%]
-   <span id="fade">Figure out images</span>
-        <ul>
-        [% FOREACH ep IN fields.anatomic_expression_patterns.data %]
-              <li>[% ep.value.image %][% tag2link(ep.value.object) %]: [% markup(ep.value.details,0) %]</li>
-        [% END %]
-         </ul>
-   [% END %]

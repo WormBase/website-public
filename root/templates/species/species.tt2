@@ -3,17 +3,44 @@
   [% widgets = [] %]
   [% widgets.push({ title="Species" type="title"}) %]
 
-  [% FOREACH option IN c.config.species_list.keys %]
-      [% IF option == 'title'; NEXT; END; %]
-      [% widget = option %]
-      [% w = { id = option
+  [% widgets.push({ id    = 'phylogeny',
+      	            title = 'Phylogeny',
+              href =  "/species/phyogeny/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [% widgets.push({ id    = 'phylogeny',
+      	            title = 'Phylogeny',
+              href =  "/species/phyogeny/" _ "?inline=1",
+              type = 'resource',
+              }
+ 	      ) %]
+
+  [%# FOREACH option IN c.config.species_list.keys %]
+      [%# IF option == 'title'; NEXT; END; %]
+      [%# widget = option %]
+      [%# w = { id = option
               title = c.config.species_list.$option.Title 
               href =  "/species/" _ option _ "?inline=1"
               type = 'species'
               };
       %]
-      [% widgets.push(w) %]
-  [% END %]
+      [%# widgets.push(w) %]
+  [%# END %]
+
+
+  [% widgets.push({ title="My Workspace" type="title"}) %]
+  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+    [% widget = c.config.sections.me.widgets.$widget_name %]
+    [% w = { id = widget_name
+            title = widget.title
+            href =  c.uri_for('/rest','widget','me',widget_name)
+            type = "me"
+            };
+    %]
+    [% widgets.push(w) %]
+   [% END %]
 
   [%# Add the sidebar %]
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
@@ -22,4 +49,4 @@
 
 
 
-    This is the species OVERVIEW page.
+
