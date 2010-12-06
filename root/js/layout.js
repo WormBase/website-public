@@ -19,14 +19,14 @@
     }
 
     function deleteLayout(layout){
-      var class = $jq("#widget-holder").attr("class");
-      $jq.get("/rest/layout/" + class + "/" + layout + "?delete=1");
+      var $class = $jq("#widget-holder").attr("class");
+      $jq.get("/rest/layout/" + $class + "/" + layout + "?delete=1");
       $jq("div.columns ul div li#layout-" + layout).remove();
     }
 
     function setLayout(layout){
-      var class = $jq("#widget-holder").attr("class");
-      $jq.get("/rest/layout/" + class + "/" + layout, function(data) {
+      var $class = $jq("#widget-holder").attr("class");
+      $jq.get("/rest/layout/" + $class + "/" + layout, function(data) {
           var nodeList = data.childNodes[0].childNodes;
           var len = nodeList.length;
           for(i=0; i<len; i++){
@@ -60,7 +60,7 @@
         l = escape(layout); 
       }
       var holder =  $jq("#widget-holder");
-      var class = holder.attr("class");
+      var $class = holder.attr("class");
       var left = holder.children(".left").children(".visible")
                         .map(function() { return this.id;})
                         .get();
@@ -68,7 +68,7 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
-      $jq.post("/rest/layout/" + class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
+      $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
     }
 
     function getLeftWidth(holder){

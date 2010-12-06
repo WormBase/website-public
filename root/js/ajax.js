@@ -112,10 +112,10 @@
       $jq(".bench-update").live('click',function() {
         var wbid     = $jq(this).attr("wbid");
         var id     = $jq(this).attr("id");
-        var class     = $jq(this).attr("objclass");
+        var $class     = $jq(this).attr("objclass");
         var type     = $jq(this).attr("type");
         var label     = $jq(this).attr("name");
-        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type;
+        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + type;
         $jq("#bench_status").load(url,   function(response, status, xhr) {
                               if (status == "error") {
                               var msg = "Sorry but there was an error: ";
@@ -123,7 +123,7 @@
                               }
                           });
         $jq("#bench_status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-        $jq(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + class + "&type=" + type);
+        $jq(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + type);
         $jq("div#reports-content").load("/rest/widget/me/reports");
         $jq("div#my_library-content").load("/rest/widget/me/my_library");
       return false;
