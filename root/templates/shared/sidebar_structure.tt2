@@ -72,11 +72,12 @@
       <li class="title">Recent Activity</li>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
+[% IF object %]
       <li id="nav-user_history" 
-          class="module-load bench" 
+          class="module-load me" 
           wname="user_history"
-          href="[% c.uri_for('/rest','widget','bench','a','user_history') %]" 
-          load=1>see more...</li></div>
+          href="[% c.uri_for('/rest','widget','me','user_history') %]" 
+          load=1>see more...</li>[% END %]</div>
     </ul>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon"></div></div>
   </div>
@@ -86,9 +87,14 @@
       [% FOREACH w IN widgets -%]
           [% IF w.type == "title"; NEXT; END; %]
           <li id="[% w.id %]" class="widget">
-          [% PROCESS widget_sortable_block type=w.type-%]
+          [% PROCESS widget_sortable_block type=w.type id=w.id title=w.title -%]
           </li>   
       [% END %]
+[% IF object %]
+          <li id="user_history" class="widget">
+          [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
+          </li>
+[% END %]   
     </div>
     <div class="sortable right"></div>
   </div>

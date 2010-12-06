@@ -135,7 +135,7 @@ $jq(function() {
         }
       }
       var results = $jq("#results");
-      if(results){
+      if(results.offset()){
         var rHeight = results.height() + results.offset().top;
         var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
         if(rBottomPos < 300) {
