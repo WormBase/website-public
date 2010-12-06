@@ -1200,11 +1200,12 @@ div.details div.field div.field-content{
   margin:0.5em 0;
 }
 
-.tip span{
+.tip span.ui-icon-triangle-1-s{
   position:absolute;
   top:100%;
   right:0.4em;
-  margin-top:-7px;
+  height:10px;
+  background-position:-64px -22px;
 }
 
 /*Strain table*/

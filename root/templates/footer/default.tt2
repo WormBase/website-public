@@ -4,6 +4,8 @@
 
 
 <!-- begin boilerplate/footer -->
+      <div id="spacer"></div>
+    </div>
 <div id="footer">
     <div id="footercredit">
           Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
@@ -30,3 +32,4 @@
 
 [% INCLUDE google_analytics %]
 
+    </div><!--end wrap-->

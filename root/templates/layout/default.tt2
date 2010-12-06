@@ -1,9 +1,9 @@
 [%- # This is the default layout -%]
 
-    <div id="wrap">
+<!--    <div id="wrap">-->
     [% PROCESS header/default.tt2 %]
 
-    <div id="content">
+<!--    <div id="content">-->
       <span class="message">[% status_msg %]</span>
       <span class="error">[% error_msg %]</span>
       <div id="notifications" class="ui-corner-bottom"><div class="module-close" title="close"></div></div>
@@ -11,9 +11,9 @@
 
 
            [% content %]
-      <div id="spacer"></div>
-    </div>
+<!--      <div id="spacer"></div>
+    </div>-->
      
  
     [% PROCESS footer/default.tt2 %]    
-    </div>
+<!--     </div> -->

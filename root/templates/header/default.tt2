@@ -2,6 +2,7 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- BEGIN boilerplate/banner -->
+    <div id="wrap">
 <div id="header">
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
@@ -62,3 +63,5 @@ $jq.post("/rest/history", { 'ref': window.location.pathname , 'name' : "[% objec
 </script>
 
 <!-- END boilerplate/banner -->
+
+    <div id="content">
