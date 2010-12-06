@@ -12,11 +12,18 @@
   float:left;
   width: 50%;
 }
-.home-box {
-  border:1px solid gray;
+
+.home>div>div {
+  border:1px solid #DDD;
 }
+
 .home div#top{
   margin:1em 0 -0.5em;
+}
+.home div#top>div{
+  height:8em;
+  padding:2em;
+  font-size:2em;
 }
 .home div#bottom{
   clear:both;
