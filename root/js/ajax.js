@@ -109,7 +109,7 @@
       $jq("div#" + widget_name + "-content").load("/rest/widget/me/" + widget_name);
     });
 
-      $jq(".bench_update").live('click',function() {
+      $jq(".bench-update").live('click',function() {
         var wbid     = $jq(this).attr("wbid");
         var id     = $jq(this).attr("id");
         var class     = $jq(this).attr("objclass");

@@ -87,7 +87,7 @@
       accept: ".results-paper div.result",
       hoverClass: 'placeholder ui-corner-all',
       drop: function(event, ui){
-                ui.draggable.find(".bench_update").trigger('click');
+                ui.draggable.find(".bench-update").trigger('click');
             },
       
   });*/

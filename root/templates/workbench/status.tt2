@@ -1,4 +1,4 @@
-<a class="bench_update" 
+<a class="bench-update" 
     wbid="[% c.stash.star.wbid %]" 
     href="/rest/workbench" 
     name="[% c.stash.star.name %]" 
