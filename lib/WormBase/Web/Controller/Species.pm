@@ -22,6 +22,11 @@ sub species :Path('/species') :Args(0)   {
 #     $c->stash->{template} = 'report.tt2';
 }
 
+
+
+
+
+# An individual species summary
 sub species_summary :Path('/species') :Args(1)  {
     my ($self,$c, $species) = @_;
     if(defined $c->req->param("inline")) {
