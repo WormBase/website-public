@@ -2,8 +2,8 @@
 
 <div class="home">
   <div id="top">
-    <div class="content-box"><h1>Welcome to WormBase</h1>
-      Put more things here. <br />
+    <div class="content-box"><h1>Explore Nematode Biology</h1>
+      Think of good things to write here. <br />
       Explore. Compare. Analyze. Share?
     </div>
   </div>
@@ -22,9 +22,15 @@
       <div class="older-news">Read more on <a href="http://forums.wormbase.org/">The Worm Community Forum</a>&nbsp;&raquo;</div>
    [% END %]
 
-   [% WRAPPER home_box title="Issues" id="bottom"-%] 
+   [% WRAPPER home_box title="Events" class="home-col" id="news"-%] 
+      Link this to something.
+   [% END %]
+
+   [% WRAPPER home_box title="Issues" id="posts" class="home-col" -%] 
       Many.
     <a   tip="report a problem" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
    [% END %]
+
+
 
 </div>
