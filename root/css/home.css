@@ -28,7 +28,10 @@
 .home div#bottom{
   clear:both;
 }
-.home div#news>div {
+.home div#events {
+  clear:left;
+}
+.home div#news>div, .home div#events>div {
   margin-right:0.5em;
 }
 .home div#posts>div {
