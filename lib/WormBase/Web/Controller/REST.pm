@@ -722,6 +722,31 @@ sub _bench {
 
 
 
+
+######################################################
+#
+#   SPECIES WIDGETS (as opposed to /species)
+#
+######################################################
+sub widget_species :Path('/rest/widget/species_summary') :Args(2) :ActionClass('REST') {}
+
+sub widget_species_GET {
+    my ($self,$c,$species,$widget) = @_; 
+    $c->log->debug("getting species widget");
+
+    # Check for the presence of generic templates.
+
+    $c->stash->{template} = "species/$species/$widget.tt2";
+    $c->stash->{noboiler} = 1;
+}
+
+
+
+
+
+
+
+
 ######################################################
 #
 #   FIELDS

@@ -11,7 +11,8 @@
   <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_name %]</a></h1>
       <p>  
           [% # The current release of the software and its codename %]
-          Database version [% constants.acedb_version %]
+<!--          Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
+	  Database version [% constants.acedb_version %] ([% c.config.codename %])
       </p>
   </div>
 
@@ -23,7 +24,17 @@
           [% c.config.sections.$title.title %]</a>
           <ul class="dropdown">
         [% IF (title == 'species') %]
+	
+	[%# Force C. elegans to the top without having to hard-code it in configuration %]
+        [%# species = [] %]
+        [%# species.push('c_elegans') %]
+        [%# species.push(c.config.species_list.keys.sort()) %]
+
           [% FOREACH option IN c.config.species_list.keys.sort() %]
+	  [%# elegans_seen = 0 %]
+	  [%# FOREACH option IN species %]
+	  [%# elegans_seen = 1 IF option == 'c_elegans' %]
+	  [%# NEXT if elegans_seen > 1 %]
             <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
               <ul class="dropdown">  
                 <li><a href="#">Browse Genome</a></li>
