@@ -44,7 +44,7 @@ $jq(document).ready(function(){
       timer = setTimeout(function() {
             toHide.children("ul.dropdown").hide();
             toHide.children("a").removeClass("hover");
-          }, 500)
+          }, 300)
     });
 
 
