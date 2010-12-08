@@ -1,4 +1,8 @@
-
+[% IF c.stash.notify %]
+<script>
+  displayNotification("[% c.stash.notify %]");
+</script>
+[% END %]
 
 [% SET this_object_id    = object.name.data.id %]
 [% SET this_object_label = object.name.data.label %]

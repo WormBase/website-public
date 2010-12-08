@@ -70,13 +70,13 @@ position:relative;
 </style>
 
 <!-- Login form -->
-<form method="post"  onsubmit="popWin('/auth/login?username='+this.username.value+'&password='+this.password.value)" style="float:left;">
-<h4>Sign in with your WormBase credentials</h4>
+<form method="post"  onsubmit="popWin('/auth/login?email='+this.email.value+'&password='+this.password.value)" style="float:left;">
+<h4>Sign in with your WormBase Account</h4>
 <input type="hidden" name="continue" value="[% continue %]"/>
 <table>
   <tr>
-    <th >Username:</th>
-    <td><input id="username" type="text" name="username" size="15"/></td> 
+    <th >Email:</th>
+    <td><input id="email" type="text" name="email" size="15"/></td> 
   <tr>
   <tr>
     <th>Password:</th>
@@ -90,7 +90,7 @@ position:relative;
   <tr>
     <td colspan="2" align="center">
 	<div style="height: 1em; overflow: hidden;"> </div>
-	<a href="#">Forgot Password</a>  | <a href="#">Register</a>
+	<a href="#">Forgot Password</a>  | <a  class='switch-colorbox register' href="" >Register</a>
 	 
     </td>
   </tr>

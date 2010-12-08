@@ -5,6 +5,7 @@ use warnings;
 use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
+use Crypt::SaltedHash;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -27,6 +28,8 @@ Catalyst Controller.
 
 =cut
  
+ 
+
 
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
@@ -282,6 +285,51 @@ sub download_GET {
     $c->response->body($c->req->param("sequence"));
 }
  
+sub rest_register :Path('/rest/register') :Args(0) :ActionClass('REST') {}
+
+sub rest_register_POST {
+    my ( $self, $c) = @_;
+     
+    my $email = $c->req->params->{email};
+    my $username = $c->req->params->{username};
+    my $password = $c->req->params->{password};
+    if($email && $username && $password){
+	my $csh = Crypt::SaltedHash->new();
+	$csh->add($password);
+	my $hash_password= $csh->generate();
+	my @users = $c->model('Schema::User')->search({email_address=>$email});
+  	foreach (@users){
+	   if($_->password && $_->active){
+	      $c->res->body(0);
+	      return 0;
+	    }
+	}  
+	my $user=$c->model('Schema::User')->find_or_create({email_address=>$email, username=>$username, password=>$hash_password,active=>0}) ;
+	 
+	foreach my $key (sort keys %{$c->req->params}){
+	  $c->stash->{info}->{$key}=$c->req->params->{$key};
+	}
+	$c->stash->{noboiler}=1;
+	 
+	  $csh->clear();
+	  $csh->add($email."_".$username);
+	  my $digest = $csh->generate();
+	  $digest =~ s/^{SSHA}//;
+	  $digest =~ s/\+/\%2B/g;
+	  $c->stash->{digest}=$c->uri_for('/confirm')."?u=".$user->id."&code=".$digest ;
+	
+	$c->stash->{email} = {
+		  to      => $email,
+		  from    => $c->config->{register_email},
+		  subject => "WormBase Account Activation", 
+		  template => "auth/register_email.tt2",
+	      };
+	 
+	$c->forward( $c->view('Email::Template') );
+	$c->res->body(1); 
+    }
+    return 1;
+}
 
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
@@ -325,16 +373,8 @@ sub feed_POST {
 	  my $title= $c->req->params->{title};
 	  my $location= $c->req->params->{location};
 	  if( $title && $content && $location) { 
-	      my $user;
-	      if($c->user_exists) {
-		  $user=$c->user; 
-		  $user->username($c->req->params->{username}) if($c->req->params->{username});
-		  $user->email_address($c->req->params->{email}) if($c->req->params->{email});
-	      }else{
-		  $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
-		  $user->username($c->req->params->{username});
-	      }
-	      $user->update();
+	      my $user = $self->check_user_info($c);
+	      return unless $user;
 	      $c->log->debug("create new issue $content ",$user->id);
 	      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
  	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
@@ -364,7 +404,9 @@ sub feed_POST {
 		my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
 		my $thread_id=1;
 		$thread_id = $threads[0]->thread_id +1 if(@threads);
-		$c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$c->user->id});
+		my $user = $self->check_user_info($c);
+		return unless $user;
+		$c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$user->id});
 	  }  
 	  if($state || $responser || $content){
 	     
@@ -372,6 +414,24 @@ sub feed_POST {
 	  }
 	}
     }
+}
+
+sub check_user_info {
+  my ($self,$c) = @_;
+  my $user;
+  if($c->user_exists) {
+	  $user=$c->user; 
+	  $user->username($c->req->params->{username}) if($c->req->params->{username});
+	  $user->email_address($c->req->params->{email}) if($c->req->params->{email});
+  }else{
+	  if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
+	    $c->res->body(0) ;return 0 ;
+	  }
+	  $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
+	  $user->username($c->req->params->{username}),
+  }
+  $user->update();
+  return $user;
 }
 =head2 pages() pages_GET()
 
@@ -388,7 +448,7 @@ sub issue_email{
  unless($new){
     $subject='Issue Update';
     my @threads= $issue->issues_to_threads;
-    $bcc .= ",".$issue->responser->email_address ;
+    $bcc .= ",".$issue->responser->email_address if($issue->responser);
     my %seen=();  
     $bcc = join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
  }

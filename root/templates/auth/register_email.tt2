@@ -1,0 +1,17 @@
+<p>Thank you for regsitering at WormBase!
+</p>
+<p>
+The account information found below is for your reference only. Please keep all account names and passwords in a safe location and do not share your password with others.
+</p> 
+&nbsp;&nbsp;&nbsp;&nbsp;Username: [% info.username %]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Password: [% info.password %]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;E-mail:   [% info.email %]<br>
+<p>
+<p>
+To activate your account and complete the sign up process, please click on the following link:<br>
+  <a href="[% digest %]">[% digest %]</a><br>
+</p> 
+<p>
+Thank you,</br>
+WormBase Administration
+</p> 

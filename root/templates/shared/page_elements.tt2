@@ -5,9 +5,45 @@
 #
 ####################################################
 %]
+[% MACRO user_login_info BLOCK %]
+    [% UNLESS c.user_exists %]	
+	<table width="60%">			      
+		    <tr>
+			    <th>
+				<a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
+			    </th>
+			    <td>
+			      or
+			    </td>
+			    <td>
+				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
+				  <div style="height: 0.4em; overflow: hidden;"> </div>
+				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
+			    </td>
+		    </tr>
+	 </table>
+    [% ELSIF !c.user.email_address || ! c.user.username %]
+	<table width="60%">
+		    <tr>
+			    <th>
+				
+			    </th>
+			    <td>
+			      Please leave your username and email address
+			    </td>
+			    <td align='left'>
+				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
+				  <div style="height: 0.4em; overflow: hidden;"> </div>
+				Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
+			    </td>
+		    </tr>
+	    </table>
+    [% END %]
+[% END %]
+
 [% MACRO username(user) BLOCK %]
 [% IF user.username %]
-[% user.username %]
+ [% IF user.username.length>20%][% user.username.substr(0,20) %][% ELSE %][% user.username %][% END %]
 [% ELSIF user %]
  [% IF user.first_name.defined ; name = user.first_name FILTER ucfirst ; END;
     IF user.last_name.defined; lastname= user.last_name FILTER ucfirst; name = name _ ' ' _ lastname  ; END; %] 
