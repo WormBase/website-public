@@ -397,20 +397,26 @@ sub feed_POST {
 	      my $people=$c->model('Schema::User')->find($responser);
 	      $hash->{responser}={old=>$issue->responser,new=>$people};
 	      $issue->responser($responser)  ;
+	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$responser,issue_id=>$issue_id}) ;
 	   }
 	   $issue->update();
+	    
+	   my $user = $self->check_user_info($c);
+	   return unless $user;
+	   my $thread  = { owner=>$user,
+			  submit_time=>time(),
+	   };
 	   if($content){
 		$c->log->debug("create new thread for issue #$issue_id!");
 		my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
 		my $thread_id=1;
 		$thread_id = $threads[0]->thread_id +1 if(@threads);
-		my $user = $self->check_user_info($c);
-		return unless $user;
-		$c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>time(),user_id=>$user->id});
+		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
+		$c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
 	  }  
 	  if($state || $responser || $content){
 	     
-	      $self->issue_email($c,$issue,0,$content,$hash);
+	      $self->issue_email($c,$issue,$thread,$content,$hash);
 	  }
 	}
     }
@@ -444,8 +450,8 @@ TODO: This is currently just returning a dummy object
 sub issue_email{
  my ($self,$c,$issue,$new,$content,$change) = @_;
  my $subject='New Issue';
- my $bcc = $issue->owner->email_address;
- unless($new){
+ my $bcc = $issue->owner->email_address if($issue->owner);
+ unless($new == 1){
     $subject='Issue Update';
     my @threads= $issue->issues_to_threads;
     $bcc .= ",".$issue->responser->email_address if($issue->responser);
