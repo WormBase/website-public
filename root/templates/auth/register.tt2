@@ -1,0 +1,22 @@
+<!-- Register form -->
+ 
+<h4>WormBase Registration</h4>
+<p>
+[% notice %]
+</p>
+<p>
+<table id="register-form">
+  <tr><td>Email: </td><td><input id="email" type="text" name="email" maxlength="50" size="15"/></td></tr> 
+  <tr><td>Username: </td><td><input id="username" type="text" name="username" maxlength="30" size="15"/></td></tr> 
+  <tr><td>Password: </td><td><input id="password" type="password" name="password" maxlength="20" size="15"/></td></tr> 
+  <tr><td>Confirm Password: </td><td><input id="confirm-password" type="password" maxlength="20" name="confirm-password" size="15"/></td></tr> 
+  <tr><div style="height: 0.8em; overflow: hidden;"> </div>
+  <tr>
+    <td colspan="2" align="center">
+      <input type="submit" class="register-button" value="Register"/>  
+      <input type="submit"  class='switch-colorbox login' value="Cancel"/>
+    </td>
+  </tr>
+</table>
+</p>
+

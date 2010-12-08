@@ -1,22 +1,29 @@
 <script>
  $jq(".issue-update").live('click',function() {
-	if("[% c.user_exists %]") {
+	
 	      var url= $jq(this).attr("rel");
-	       
+	      var thread = $jq(this).closest('#threads-new');
+	      var email = thread.find("#email");
+	      var username= thread.find("#display-name");
+	      if(email.attr('id') && username.attr('id')) {
+		if(validate_fields(email,username)==false) {return false;}
+	      }   
 	      $jq.ajax({
 		type: 'POST',
 		url: url,
-		data: {content: $jq("textarea").val(),issue:[% issue.id %],state:$jq("#issue_status option:selected").val(),responser:$jq("#issue_responser option:selected").val() },
+		data: {content: $jq("textarea").val(),issue:[% issue.id %],state:$jq("#issue_status option:selected").val(),responser:$jq("#issue_responser option:selected").val(),email:email.val() ,username:username.val()  },
 		success: function(data){
-			     window.location.reload();  
+			    if(data==0) {
+				   alert("The email address has already been registered! Please sign in."); 
+			    }else {
+				  window.location.reload();  
+			    }
 			},
 		error: function(request,status,error) {
 			      alert(request + " " + status + " " + error);
 			}
 	      });
-	}else{
-	    alert("you need to login to use this function");
-	}
+	
 	    return false;
 
     });
@@ -83,24 +90,8 @@ last edited by <a href="#">[% username(last_edit) %]</a>
     </select>
 [% END %]
 <h3>Reply</h3>
-[% UNLESS c.user_exists %]	
-<table width="60%">		      
-		 <tr>
-			<th>
-			    <a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
-			</th>
-			<td>
-			   or
-			</td>
-			<td>
-			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
-			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
-			</td>
-		</tr>
-</table>
 <p>
-[% END %]
+[% user_login_info %]
 <form>
 <textarea class="issue-text" rows="5"   id="content"></textarea>
 <p>
