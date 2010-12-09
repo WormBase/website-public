@@ -17,14 +17,14 @@ my $object_name = "WBRNAi00050957";
 my @methods = qw/
 
 phenotypes
- experimental_conditions
+phenotype_nots
 /;
 
 # laboratories
 # remarks
 # history_name
 # identification
-#
+# experimental_conditions
 #
 #
 #
