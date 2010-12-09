@@ -98,7 +98,8 @@ around 'dbh' => sub {
     my $dbh = $self->$orig;
     
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
-    if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
+  #  if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
+    if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh)) {  
 #       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
       return $dbh;
     } 
@@ -112,7 +113,8 @@ sub reconnect {
     my $self = shift;
     my $tries=0;
     my $dbh;
-    my @hosts = $self->select_host;
+    my @hosts = @{$self->hosts};
+#     my @hosts = $self->select_host;
     while(@hosts && $tries < $self->conf->{reconnect} && $self->host(shift @hosts) ) {
 	$tries++; 
 	$self->log->info("trytime $tries: Connecting to  ".$self->symbolic_name);
@@ -138,7 +140,7 @@ sub reconnect {
 
 sub select_host {
     my ($self,$current)   = @_;
-    my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>30 );
+    my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>5 );
     # if the current connected host is not too busy then continue using it
     # number 40 is arbitrary and needs to be adjusted in future!
     if(defined $current) {
