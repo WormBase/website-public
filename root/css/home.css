@@ -3,9 +3,10 @@
 .home {
   position:relative;
   width:100%;
+  margin:0 0 1em;
 }
-.home div {
-  margin:0.5em 0;
+.home>div {
+  margin:1em 0 0;
 }
 
 .home div.home-col {
@@ -18,7 +19,7 @@
 }
 
 .home div#top{
-  margin:1em 0 -0.5em;
+  margin:1em 0 0;
 }
 .home div#top>div{
   height:6em;

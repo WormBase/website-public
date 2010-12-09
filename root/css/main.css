@@ -288,7 +288,7 @@ li.visible div.widget-container {
 
 .content {
   padding:0.5em;
-  padding-bottom:2em;
+  padding-bottom:1.7em;
   overflow:auto;
   list-style:disc outside none;
   clear:both;
@@ -334,14 +334,20 @@ li.visible div.widget-container {
 .widget-container #widget-footer {
     font-size:0.9em;    
     position:absolute;
-    bottom:0.5em;
-    right:0.5em;
+    bottom:0.4em;
+    right:0.2em;
     display:none;
 }
+#widget-footer.footer-left {
+  left:0.2em;
+  right:auto;
+}
+
 
  #widget-footer a{
   float:right;
-  height:1.2em;
+  height:1em;
+  width:1em;
   margin:0 0.2em;
   border:1px solid #BBB;
   background:#EEE;
@@ -351,6 +357,10 @@ li.visible div.widget-container {
 
 #widget-footer a:hover{
   background:#BBB;
+}
+
+#widget-footer>a>span.ui-icon{
+  margin:-2px 0 0 -2px;
 }
 
 
@@ -689,10 +699,10 @@ div.widget-section-header {
 /* widget field titles: ie Identification > IDs */
 div.field {
 /*   clear:both; */
-  line-height:1em;
+  line-height:1.2em;
   padding:0.2em;
   height:1%;
-  overflow:auto;
+/*   overflow:auto; */
 }
 
 div.field h5 {
@@ -708,6 +718,11 @@ div.field-title {
   font-size    : 1em;
   padding-right: 0.5em;
   width        : 9em;
+}
+
+div.field-title>span{
+  padding:0;
+  margin:0;
 }
 
 div.field-content {
@@ -1121,7 +1136,7 @@ padding:0;
   position: absolute;
   left:-6px;
   top:50%;
-  margin-top:-8px;
+  margin-top:0.5em;
   opacity:0.8;
   filter:alpha(opacity=80);
   -moz-opacity:0.8;
@@ -1199,7 +1214,7 @@ div.details div.field div.field-content{
 .tip {
   position:absolute;
   bottom:100%;
-  right:0;
+  left:0;
   background:#333;
   color:white;
   padding:0.5em;
@@ -1209,9 +1224,31 @@ div.details div.field div.field-content{
 .tip span.ui-icon-triangle-1-s{
   position:absolute;
   top:100%;
+  left:0.3em;
+  height:6px;
+  background-position:-64px -23px;
+}
+
+.tr>.tip{
+  left:auto;
+  right:0;
+}
+.tr>.tip span.ui-icon-triangle-1-s{
+  left:auto;
+  right:0.3em;
+}
+
+.br>.tip{
+  left:auto;
+  top:auto;
+  right:0;
+  bottom:100%;
+}
+.br>.tip span.ui-icon-triangle-1-s{
+  left:auto;
+  top:auto;
   right:0.4em;
-  height:10px;
-  background-position:-64px -22px;
+  bottom:100%;
 }
 
 /*Strain table*/
