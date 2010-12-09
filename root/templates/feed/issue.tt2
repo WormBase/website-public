@@ -25,36 +25,8 @@ $jq(".lightbox").colorbox();
 				<textarea class="issue-text" id="content" rows="10"     name="content"  ></textarea>
 			</td>
 		</tr>
-[% UNLESS c.user_exists %]			      
-		 <tr>
-			<th>
-			    <a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
-			</th>
-			<td>
-			   or
-			</td>
-			<td>
-			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
-			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
-			</td>
-		</tr>
-[% ELSIF !c.user.email_address || ! c.user.username %]
-		<tr>
-			<th>
-			     
-			</th>
-			<td>
-			   Please leave your username and email address
-			</td>
-			<td align='left'>
-			    Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
-			      <div style="height: 0.4em; overflow: hidden;"> </div>
-			    Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
-			</td>
-		</tr>
-[% END %]
 	</table>
+	[% user_login_info %]
 	  </br><p>
 	    <input type='submit' value='Report Your Issue' class="issue-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
 	    <input type='reset' value='Reset'  />

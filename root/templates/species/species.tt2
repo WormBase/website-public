@@ -1,34 +1,22 @@
-[% title = "Species"  %]
+  [% title = "Species available at WormBase"  %]
 
   [% widgets = [] %]
   [% widgets.push({ title="Species" type="title"}) %]
 
   [% widgets.push({ id    = 'phylogeny',
       	            title = 'Phylogeny',
-              href =  "/species/phyogeny/" _ "?inline=1",
-              type = 'resource',
+                    href =  c.uri_for('/rest','widget','species_summary','overview','phylogeny'),
+                    type = 'resources',
+              }
+ 
+	      ) %]
+
+  [% widgets.push({ id    = 'downloads',
+      	            title = 'Downloads',
+                    href =  c.uri_for('/rest','widget','species_summary','overview','downloads'),
+                    type = 'resources',
               }
  	      ) %]
-
-  [% widgets.push({ id    = 'phylogeny',
-      	            title = 'Phylogeny',
-              href =  "/species/phyogeny/" _ "?inline=1",
-              type = 'resource',
-              }
- 	      ) %]
-
-  [%# FOREACH option IN c.config.species_list.keys %]
-      [%# IF option == 'title'; NEXT; END; %]
-      [%# widget = option %]
-      [%# w = { id = option
-              title = c.config.species_list.$option.Title 
-              href =  "/species/" _ option _ "?inline=1"
-              type = 'species'
-              };
-      %]
-      [%# widgets.push(w) %]
-  [%# END %]
-
 
   [% widgets.push({ title="My Workspace" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
@@ -46,7 +34,18 @@
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
 
+    <script>
+  [% UNLESS c.user_session.layout.$class.defined %]
+    $jq("#nav-overview").trigger('open');
+    [% UNLESS object %]
+      resetLayout(["reports"], ["my_library"], 50);
+    [% END %]
+  [% ELSE %]
+    var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];
+    var rightList = ["[% c.user_session.layout.$class.0.right.join('", "') %]"];
+    resetLayout(leftList, rightList, [% c.user_session.layout.$class.0.leftWidth %]);
+  [% END %]
 
-
+    </script>
 
 

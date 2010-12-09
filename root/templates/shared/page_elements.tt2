@@ -5,9 +5,45 @@
 #
 ####################################################
 %]
+[% MACRO user_login_info BLOCK %]
+    [% UNLESS c.user_exists %]	
+	<table width="60%">			      
+		    <tr>
+			    <th>
+				<a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
+			    </th>
+			    <td>
+			      or
+			    </td>
+			    <td>
+				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
+				  <div style="height: 0.4em; overflow: hidden;"> </div>
+				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
+			    </td>
+		    </tr>
+	 </table>
+    [% ELSIF !c.user.email_address || ! c.user.username %]
+	<table width="60%">
+		    <tr>
+			    <th>
+				
+			    </th>
+			    <td>
+			      Please leave your username and email address
+			    </td>
+			    <td align='left'>
+				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
+				  <div style="height: 0.4em; overflow: hidden;"> </div>
+				Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
+			    </td>
+		    </tr>
+	    </table>
+    [% END %]
+[% END %]
+
 [% MACRO username(user) BLOCK %]
 [% IF user.username %]
-[% user.username %]
+ [% IF user.username.length>20%][% user.username.substr(0,20) %][% ELSE %][% user.username %][% END %]
 [% ELSIF user %]
  [% IF user.first_name.defined ; name = user.first_name FILTER ucfirst ; END;
     IF user.last_name.defined; lastname= user.last_name FILTER ucfirst; name = name _ ' ' _ lastname  ; END; %] 
@@ -24,7 +60,7 @@
     </tr>
       [% FOREACH IS IN issues %]
 	 [% array=IS.location.split('/') %]
-	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
+	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link(array.3,array.4 ,array.6) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
 	    <td>[% username(IS.owner) %]</td><td>[% username(IS.responser) %]</td>
 	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
@@ -270,17 +306,17 @@
 <!--    <section class="widget" name="[% widget.name %]"> -->
           <div class="widget-container ui-corner-all">
                 <header> 
-                <div id="widget-[% type %]" class="ui-corner-top widget-header">
-                    <div class="module-close" wname="[% id %]" title="close"></div>
+                <div id="widget-[% w.type %]" class="ui-corner-top widget-header">
+                    <div class="module-close" wname="[% w.id %]" title="close"></div>
                    
-                    <h3><div class="module-min [% id %]" wname="[% id %]"></div><span>[% title %]</span>
-        [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
+                    <h3><div class="module-min [% w.id %]" wname="[% w.id %]"></div><span>[% w.title %]</span>
+        [% IF (w.type == 'me') %]<span wname="[% w.id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
                 </div>
                 </header>
 
-                <div id="[%- id -%]-content" class="content">
+                <div id="[%- w.id -%]-content" class="content">
                 [% content %]
                 </div>
 		 
@@ -337,10 +373,9 @@
        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-if (typeof(_gat) == 'object') {
-       var pageTracker = _gat._createTracker('UA-16257183-1');
+
+       var pageTracker = _gaq._getTracker('UA-16257183-1');
        pageTracker._trackPageview();
-}
      })();
    </script>
 [% END %]

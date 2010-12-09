@@ -5,6 +5,7 @@ use warnings;
 use parent 'WormBase::Web::Controller';
 use Net::Twitter;
 use Data::Dumper;
+use Crypt::SaltedHash;
 
 __PACKAGE__->config->{namespace} = '';
  
@@ -13,7 +14,50 @@ sub login :Path("/login") {
      my ( $self, $c ) = @_;
      $c->stash->{noboiler} = 1;
      $c->stash->{'template'}='auth/login.tt2';
-     $c->stash->{'continue'}=$c->req->params->{continue};
+#     $c->stash->{'continue'}=$c->req->params->{continue};
+}
+
+sub register :Path("/register") {
+     my ( $self, $c ) = @_;
+     $c->stash->{noboiler} = 1;
+     $c->stash->{'template'}='auth/register.tt2';
+#     $c->stash->{'continue'}=$c->req->params->{continue};
+}
+
+sub confirm :Path("/confirm") {
+     my ( $self, $c ) = @_;
+     
+     $c->stash->{'template'}='me.tt2';
+     my $user=$c->model('Schema::User')->find($c->req->params->{u});
+     
+     if($user && !$user->active) {
+
+	my $valid = Crypt::SaltedHash->validate("{SSHA}".$c->req->params->{code}, $user->email_address."_".$user->username);
+	if($valid) {
+	  $c->log->debug("digest validated for user",$user->id);
+	  my @users = $c->model('Schema::User')->search({email_address=>$user->email_address});
+	  foreach (@users){
+	       
+ 	      next if( $_->active eq 0);
+	      $c->log->debug("user registered email before, update the account...");
+	      $_->set_columns({"password"=>$user->password,"username"=>$user->username});
+	      $user->delete();
+	      $user=$_;
+	      last;
+	  }
+	  
+	  $user->active(1);
+	  if($user->email_address && $user->email_address =~ /\@wormbase\.org/) {
+		my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
+		$c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+	  }
+	  $user->update();
+	  $c->stash->{notify}="Your account is now activated, please login!";
+	  return 1;
+	}
+    }
+    
+    $c->stash->{notify}="This link is not valid or has already expired!";
 }
  
 =pod
@@ -45,18 +89,22 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
 sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my ( $self, $c) = @_;
     
-     my $user     = $c->req->params->{username};
+     my $email     = $c->req->params->{email};
      my $password = $c->req->params->{password}; 
-     if (   $user   &&  $password  )
+     if (   $email   &&  $password  )
      {
-            if ( $c->authenticate( { username => $user,
-                                     password => $password } ) ) {
+	    my $rs = $c->model('Schema::User')->search({ email_address => $email,active=>1 ,password => { '!=', undef }});
+	  
+            if ( $c->authenticate( {
+                                     password => $password,
+				    'dbix_class' => { resultset => $rs }
+				  } ) ) {
 		
                 $c->log->debug('Username login was successful.'. $c->user->get("firstname"));
 		$self->reload($c);
 #  		$c->res->redirect($c->req->params->{continue});
             } else {
-		$c->log->debug('Login incorrect.');
+		$c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
             }
      }
@@ -140,11 +188,33 @@ sub auth_local {
       my ($openid,$user);
       $openid =  $c->model('Schema::OpenID')->find_or_create({ openid_url => $id });
       unless ($openid->user_id) {
-	$user=$c->model('Schema::User')->find_or_create({email_address=>$email, first_name=>$first_name, last_name=>$last_name}) ;
+	my $username ;
+	if($first_name) {
+	    $username = $first_name  ;
+	} elsif($last_name) {
+	    $username = $last_name  ;
+	} else {
+	    $username = $id;
+	}
+	my @users=$c->model('Schema::User')->search({email_address=>$email});
+	
+	foreach (@users){
+ 	      next if( $_->active eq 0);
+	      $user=$_; 
+	      last;
+	}
+	if($email && $user) {
+		$username = $user->username if($user->username);
+		$user->set_columns({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1});
+		$user->update();
+	}else{
+		$user=$c->model('Schema::User')->find_or_create({username=>$username, email_address=>$email, first_name=>$first_name, last_name=>$last_name, active=>1}) ;
+	}
 	#assing curator role to wormbase.org domain user
-	my $role_str= ($email && $email =~ /\@wormbase\.org/)? "curator":"user";
-	my $role=$c->model('Schema::Role')->find({role=>$role_str}) ;
-	$c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+	if($email && $email =~ /\@wormbase\.org/) {
+	  my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
+	  $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+	}
 	$openid->user_id($user->id);
 	$openid->update();
       }
@@ -215,14 +285,18 @@ sub profile :Path("/profile") {
 
 sub profile_update :Path("/profile_update") {
      my ( $self, $c ) = @_;
-     $c->stash->{'template'}='auth/profile.tt2';
+     $c->stash->{'template'}='me.tt2';
+     my $user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email_address},active =>1});
+     if($c->req->params->{email_address} && $user && $user->id ne $c->user->id){
+	$c->stash->{notify}="The email address has already been registered. Update Fail!";return 0 ;
+      }
      foreach my $col (sort keys %{$c->req->params}){
 	# $c->log->debug("$col ok".$c->req->params->{$col});
 	 $c->user->$col($c->req->params->{$col});
       }
       $c->user->update();
-      $c->stash->{'status_msg'}='User inforamtion udpated!';
-      $c->res->redirect('/bench');
+      $c->stash->{notify}='User Inforamtion Udpated!';
+      
 } 
 
 

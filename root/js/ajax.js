@@ -1,4 +1,35 @@
   $jq(document).ready(function() {   
+
+    $jq(".register-button").live('click',function() {
+      
+	var reg = $jq(this).closest('#register-form');	
+	var email = reg.find("#email");
+	var username= reg.find("#username");
+	var password = reg.find("#password");
+	if(validate_fields(email,username,password,reg.find("#confirm-password")) == false) {
+	    return false;
+	}
+	 
+	$jq.ajax({
+		  type: "POST",
+		  dataType: 'text/x-yaml',
+		  url: "/rest/register",
+		  data: {username:username.val(),email:email.val(),password:password.val()},
+		  success: function(data){
+			   if(data==0) {
+				alert("The email address has already been registered!"); 
+			   }else {
+			    $jq.colorbox.close();
+			    displayNotification("Thank you for registering at WormBase, a confirmation emaill will be send to you soon.");
+			   }
+		    },
+		  error: function(request,status,error) {
+			  alert(request + " " + status + " " + error );
+		    }
+	  });
+      });
+
+  
       $jq(".role-update").live('click',function() {
 	$jq.ajax({
 		  type: "POST",
@@ -14,7 +45,6 @@
 	   
 	  var id=new Array();
 	  $jq(".issue-deletebox").filter(":checked").each(function(){
-	  
 	     id.push($jq(this).attr('name'));
 	  });
 	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
@@ -42,19 +72,19 @@
 	    var email = feed.find("#email");
 	    var username= feed.find("#display-name");
 	    if(email.attr('id') && username.attr('id')) {
-	      if( email.val() =="" || username.val() =="") {
-		  alert("To report an Issue, you need to provide a username & email address."); return false;
-	      }
-	      if (validate_email(email.val(),"Not a valid e-mail address!")==false)
-		  {email.focus();return false;}
+	       if(validate_fields(email,username)==false) {return false;}
 	    }  
 	    $jq.ajax({
 	      type: 'POST',
 	      url: url,
 	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
 	      success: function(data){
-			    displayNotification("Problem Submitted! We will be in touch soon.");
-			    feed.closest('#widget-feed').hide(); 
+			    if(data==0) {
+				   alert("The email address has already been registered!Please sign in."); 
+			    }else {
+				  displayNotification("Problem Submitted! We will be in touch soon.");
+				  feed.closest('#widget-feed').hide(); 
+			    }
 		      },
 	      error: function(request,status,error) {
 			    alert(request + " " + status + " " + error);
