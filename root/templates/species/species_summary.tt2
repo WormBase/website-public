@@ -1,46 +1,41 @@
 [% species = c.stash.species %]
 
-
-[% IF c.config.species_list.$species.defined %]
-<span class="species">[% c.config.species_list.$species.Title %]</span>
-[% ELSE; c.config.species_list.$species.Title; END; %] summary page
-<br />
-
+  [% title = '<span class="species">' _ c.config.species_list.$species.Title _ '</span> Summary Page' %]
 
   [% widgets = [] %]
   [%# Establish my list of widgets %]
   [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
   [% widgets.push({ id    = 'overview',
       	            title = 'Overview',
-              href =  "/species/" _ species _ "/overview/" _ "?inline=1",
+              href =  c.uri_for('/rest','widget','species_summary',species,'overview'),
               type = 'resource',
               }
  	      ) %]
 
   [% widgets.push({ id    = 'isolation',
       	            title = 'Isolation',
-              href =  "/species/" _ species _ "/isolation/" _ "?inline=1",
+              href =  c.uri_for('/rest','widget','species_summary',species,'isolation'),
               type = 'resource',
               }
  	      ) %]
 
   [% widgets.push({ id    = 'downloads',
       	            title = 'Downloads',
-              href =  "/species/" _ species _ "/downloads/" _ "?inline=1",
+              href =  c.uri_for('/rest','widget','species_summary',species,'downloads'),
               type = 'resource',
               }
  	      ) %]
 
   [% widgets.push({ id    = 'key_papers',
       	            title = 'Key Papers',
-              href =  "/species/" _ species _ "/key_papers/" _ "?inline=1",
+              href =  c.uri_for('/rest','widget','species_summary',species,'key_papers'),
               type = 'resource',
               }
  	      ) %]
 
   [% widgets.push({ id    = 'related_sites',
       	            title = 'Related Sites',
-              href =  "/species/" _ species _ "/related_sites/" _ "?inline=1",
+              href =  c.uri_for('/rest','widget','species_summary',species,'related_sites'),
               type = 'resource',
               }
  	      ) %]

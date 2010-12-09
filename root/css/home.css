@@ -21,14 +21,17 @@
   margin:1em 0 -0.5em;
 }
 .home div#top>div{
-  height:8em;
-  padding:2em;
-  font-size:2em;
+  height:6em;
+  padding:1.5em;
+  font-size:1.5em;
 }
 .home div#bottom{
   clear:both;
 }
-.home div#news>div {
+.home div#events {
+  clear:left;
+}
+.home div#news>div, .home div#events>div {
   margin-right:0.5em;
 }
 .home div#posts>div {

@@ -1,7 +1,6 @@
 <script type="text/javascript" >
 $jq(".lightbox").colorbox();
 $jq("#bench_status").load("/rest/workbench");
-
 function popWin(url) {
   var win = window.open(url,'pop','status=no,resizable=yes,height=2px,width=2px');
   win.blur();
@@ -15,6 +14,8 @@ function popWin(url) {
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
 [% ELSE %]
   <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench_status"></span></a></li>
-  <li><a  class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a></li>
+  <li><a  class='lightbox' id="login" href="[% c.uri_for('/login') %]"  >Login</a></li>
+  <div  class='lightbox' id="register" href="[% c.uri_for('/register') %]" style="display: none" ></div>
 [% END %]
+ 
  
