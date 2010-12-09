@@ -15,12 +15,16 @@ my $object_name = "egl";
 
 my @methods = qw/
 
-  previous_member
+name
+other_name
+description
+phenotype
+laboratory
  /;
 
-#
-#
-#
+# gene
+# old_members
+# previous_member
 #
 #
 #
