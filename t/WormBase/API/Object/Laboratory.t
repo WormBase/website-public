@@ -9,14 +9,13 @@ use Test::More;
 my $indent = " " x 6;
 
 my $class = "Laboratory";
-my $object_name = "EG";
+my $object_name = "JK";
 
 #### method list
 
 my @methods = qw/
 
-
-
+alleles
  /;
 
 #allele_prefixes
@@ -24,8 +23,18 @@ my @methods = qw/
 #members
 #details
 #representatives
+#details
+#name
+#email
+#phone
+#fax
+#web_site
+#allele_designation
+#strain_designation
+#gene_class
+#current_member
 #
-#
+
 
 my @mnas = (
 

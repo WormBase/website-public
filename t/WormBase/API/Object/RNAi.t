@@ -1,4 +1,4 @@
-# t/WormBase/API/Object/Person.t
+# t/WormBase/API/Object/RNAi.t
 
 use strict;
 use warnings;
@@ -8,6 +8,28 @@ use Test::More;
 
 my $indent = " " x 6;
 
+my $class = "RNAi";
+my $object_name = "WBRNAi00050957";
+
+#### method list
+
+#####
+my @methods = qw/
+
+phenotypes
+phenotype_nots
+/;
+
+# laboratories
+# remarks
+# history_name
+# identification
+# experimental_conditions
+#
+#
+#
+
+### run tests ####
 
 BEGIN {
       # This will cause a new connection to database(s)
@@ -20,52 +42,13 @@ ok (
     ( my $wormbase = WormBase::API->new({conf_dir => "./conf"})),
     'Constructed WormBase::API object ok'
     );
-
-
+    
 ##Instantiate a WormBase::API::Object::* wrapper object
 
-my $person = 'WBPerson320'; ### WBPerson320
 
-my $person_obj = $wormbase->fetch({class=>'Person',name=>$person}); 
-isa_ok($person_obj,'WormBase::API::Object::Person');
+my $object = $wormbase->fetch({class=>$class,name=>$object_name}); 
+isa_ok($object,'WormBase::API::Object::' . $class);
 
-
-#### method list
-my @methods = qw/
-
-worked_with
-status
-last_verified
-web_page
-
- /;
- 
-# 	street_address
-#	address
-#	email
-#	office_phone
-#	other_phone
-#	lab_phone
-#	laboratory
-#	lab_id
-#	cgc_representative 
-#	meeting_abstracts
-# 	details
-#	address
-#	
-#	gene_classes
-#	papers
-# 	full_name
-#	first_name
-#	standard_name
-#	supervised_by
-#	name
-#	mapa
-# 	country
-#	institution
-#	lab_phone
-#	office_phone
-#   allele_designation
 
 ### test runs ####
 
@@ -84,13 +67,15 @@ print "\n#######\n";
 
 sub test_method {
     my $method = shift;
-    my $result = $person_obj->$method;
+    my $result = $object->$method;
     ok($result, "$method() worked fine");
     return $result;
 }
 
+
 done_testing(4);
 
+### data printout ####
 
 sub print_array{
 	my ($array_ref) = @_;

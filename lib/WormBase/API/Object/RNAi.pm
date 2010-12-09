@@ -4,59 +4,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
-
-
-#######
-
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-### mainly for text data; and single layer hash ###
-
-sub template_simple {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Tag;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
 
 ################
 ## IDENTIFICATION
@@ -288,7 +235,7 @@ sub phenotypes {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
@@ -298,16 +245,16 @@ sub phenotypes {
 		
 		my $phenotype_name = $phenotype->Primary_name;
 		
-		$data_pack{$phenotype} = {
-									'phenotype_id' => $phenotype,
+		push @data_pack, {
+									'id' => "$phenotype",
 									'class' => 'Phenotype',
-									'phenotype_name' => $phenotype_name,
+									'label' => "$phenotype_name",
 								};
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -319,7 +266,7 @@ sub phenotype_nots {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
@@ -329,16 +276,16 @@ sub phenotype_nots {
 		
 		my $phenotype_name = $phenotype->Primary_name;
 		
-		$data_pack{$phenotype} = {
-									'phenotype_id' => $phenotype,
+		push @data_pack, {
+									'id' => "$phenotype",
 									'class' => 'Phenotype',
-									'phenotype_name' => $phenotype_name,
+									'label' => "$phenotype_name",
 								};
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
