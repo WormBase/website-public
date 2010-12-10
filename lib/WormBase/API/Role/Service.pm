@@ -113,8 +113,7 @@ sub reconnect {
     my $self = shift;
     my $tries=0;
     my $dbh;
-    my @hosts = @{$self->hosts};
-#     my @hosts = $self->select_host;
+    my @hosts = $self->select_host;
     while(@hosts && $tries < $self->conf->{reconnect} && $self->host(shift @hosts) ) {
 	$tries++; 
 	$self->log->info("trytime $tries: Connecting to  ".$self->symbolic_name);
@@ -138,6 +137,25 @@ sub reconnect {
     return 0;
 }
 
+sub select_host {
+    my ($self)   = @_;
+    my $dbfile     = $self->dbfile(1);
+    my @live_hosts;
+    foreach my $host ( @{$self->hosts} ) {
+	if( my $pack = $dbfile->{$host}) {  
+	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
+		  undef $dbfile->{$host};
+	  }
+	  else {next;}
+	   
+	} 
+	push @live_hosts, $host;
+	$self->log->debug("push host $host in the queue for connection");
+    }  
+    return @live_hosts;
+}
+
+=pod
 sub select_host {
     my ($self,$current)   = @_;
     my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>5 );
@@ -180,6 +198,7 @@ sub check_cpu_load {
     }
     return $load;
 }
+=cut
 
 sub mark_down {
     my $self   = shift;
