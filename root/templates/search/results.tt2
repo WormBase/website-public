@@ -44,7 +44,7 @@
       if(begin > total){ return; }
       var url= $jq(this).attr("href") + "&begin=" + begin + "&end=" + end;
 
-      $jq("#load-results").html("<span id=\"fade\">loading...</span>");
+      setLoading($jq("#load-results"));
       $jq(this).removeClass("load-results");
 
         var div = $jq("<div></div>");
