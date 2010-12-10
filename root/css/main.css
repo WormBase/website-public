@@ -288,7 +288,7 @@ li.visible div.widget-container {
 
 .content {
   padding:0.5em;
-  padding-bottom:1.7em;
+  padding-bottom:1.8em;
   overflow:auto;
   list-style:disc outside none;
   clear:both;
@@ -346,8 +346,7 @@ li.visible div.widget-container {
 
  #widget-footer a{
   float:right;
-  height:1em;
-  width:1em;
+  height:1.2em;
   margin:0 0.2em;
   border:1px solid #BBB;
   background:#EEE;
@@ -355,14 +354,15 @@ li.visible div.widget-container {
   position:relative;
 }
 
+#widget-footer>span{
+  float:right;
+  width:1em;
+  margin:1em 0 0 0;
+}
+
 #widget-footer a:hover{
   background:#BBB;
 }
-
-#widget-footer>a>span.ui-icon{
-  margin:-2px 0 0 -2px;
-}
-
 
 div.ui-icon-large {
   float:right;
@@ -371,6 +371,12 @@ div.ui-icon-large {
   -moz-opacity:0.3;
   cursor:pointer;
   margin:0.4em;
+}
+
+div.loading {
+  width:100%;
+  text-align:center;
+  padding-top:1em;
 }
 
 .widget-header div.ui-icon:hover {
