@@ -9,21 +9,18 @@ use Test::More;
 my $indent = " " x 6;
 
 my $class = "Gene_class";
-my $object_name = "egl";
+my $object_name = "unc";
 
 #### method list
 
 my @methods = qw/
 
-name
-other_name
-description
-phenotype
-laboratory
+remarks
+
  /;
 
 # gene
-# old_members
+# 
 # previous_member
 #
 #
