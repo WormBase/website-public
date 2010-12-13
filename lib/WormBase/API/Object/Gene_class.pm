@@ -35,6 +35,30 @@ sub name {
 	return \%data;
 }
 
+sub id {
+
+	my $self = shift;
+	my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = {
+			'id' => "$object",
+			'label' => "$object",
+			'class' => 'Gene_class'
+			};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+	
+}
+
 sub other_name {
 
 	my $self = shift;
@@ -120,22 +144,22 @@ sub laboratory {
 }
 
 
-sub general_info {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+#sub general_info {
+#
+#	my $self = shift;
+#    my $object = $self->object;
+#	my %data;
+#	my $desc = 'notes';
+#	my %data_pack;
+#
+#	#### data pull and packaging
+#
+#	####
+#
+#	$data{'data'} = \%data_pack;
+#	$data{'description'} = $desc;
+#	return \%data;
+#}
 
 
 #########
@@ -238,7 +262,7 @@ sub previous_member {
 	my $dbh = $self->ace_dsn->dbh;
 	my %data;
 	my $desc = 'notes';
-	my @data_pack = [];
+	my @data_pack;
 
 	#### data pull and packaging
 	
@@ -250,17 +274,17 @@ sub previous_member {
 	  my $bestname = $self->bestname($gene);
 	  my @onames = $gene->Other_name;
 	  my $seq_name = $gene->Sequence_name;
-	  my %gene_data = {
+	  my %gene_data = (
 	  
-	  	'info' => {
-	  		'ace_id' => $gene,
-	  	  	'gene_name' => $bestname,
+	  #	'info' => {
+	  		'ace_id' => "$gene",
+	  	  	'gene_name' => "$bestname",
 	  	  	'class' => 'Gene'
-	  	},
+	  #	},
 	
-	    'other_names' => \@onames,
-	    'sequence_name' => $seq_name    
-	    };    
+	  #  'other_names' => \@onames,
+	  #  'sequence_name' => $seq_name    
+	    );    
 
 	    push @data_pack, \%gene_data;
 	 }
@@ -278,13 +302,16 @@ sub remarks {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
+	
+	@data_pack = $object->Remark;
+
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
