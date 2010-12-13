@@ -1,6 +1,5 @@
+[% SET class    = 'home' %]
 
-
-<div class="home">
   <div id="top">
     <div class="content-box"><h1>Explore Worm Biology</h1>
       Think of good things to write here. <br />
@@ -8,41 +7,44 @@
     </div>
   </div>
 
+  [% widgets = [] %]
+  [% widgets.push({ title="Page Content" type="title"}) %]
+  [% widget_list = ['news', 'discussion', 'events', 'issues'] %]
+  [% FOREACH widget_name IN widget_list -%]
+    [% title = widget_name FILTER ucfirst %]
+    [% w = { id = widget_name
+             title = title
+             href =  c.uri_for('/rest','widget','home',widget_name)
+             type = 'home'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
 
-   [% WRAPPER home_box title="News" class="home-col" id="news"-%] 
-      <div id="news-box"></div>
-   <script language="javascript" src="http://dev.wormbase.org/db/misc/inline_feed_jquery?src=http%3A%2F%2Fblog.wormbase.org%2Fcategories%2Fnews%2Ffeed%2F;load_box=news-box" type="text/javascript"></script>
-<div class="older-news">Read more on <a href="http://blog.wormbase.org/">M9: The WormBase Blog</a>&nbsp;&raquo;</div>
-   [% END %]
+  [% widgets.push({ title="My Workspace" type="title"}) %]
+  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+    [% widget = c.config.sections.me.widgets.$widget_name %]
+    [% w = { id = widget_name
+            title = widget.title
+            href =  c.uri_for('/rest','widget','me',widget_name)
+            type = "me"
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+ [% title = '' %]
+ [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets no_layout=1%]
 
-   [% WRAPPER home_box title="Discussion" class="home-col" id="posts"-%] 
-      <div id="discussion"></div>
-      <script language="javascript"
-      src = "http://dev.wormbase.org/db/misc/inline_feed_jquery?src=http%3A%2F%2Fforums.wormbase.org%2Findex.php%3Faction%3D.xml&show_board=1;link_board=1;show_poster=1;link_poster=1;load_box=discussion"
-      type="text/javascript">
-      </script>
-      <div class="older-news">Read more on <a href="http://forums.wormbase.org/">The Worm Community Forum</a>&nbsp;&raquo;</div>
-   [% END %]
-
-   [% WRAPPER home_box title="Events" class="home-col" id="events"-%] 
-      Link this to something.
-   [% END %]
-
-   [% WRAPPER home_box title="Issues" id="posts" class="home-col" -%] 
-     <div id="rss-box">
-      [% USE date %]
-      [% FOREACH IS IN issues %]
-	<div class="entry"> 
-	<h3><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">&raquo; [% IF IS.re %]Re: [% END %][% IS.title %]</a></h3>
-	[% array=IS.location.split('/') %]
-	<span class="byline">Reported on: [% text2link(array.3,array.4, array.6 _ ' ' _ array.3 _ ' page ' _ array.5 _ ' section') %] by <a href="">[% username(IS.people) %]</a> [% date.format(IS.time, '%B %d, %Y, %I:%M %P','en_GB') %]</span>
-	</div>
-      [% END %]
-    </div>
-     look for this sign<a   tip="report a problem" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue','main') %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
-     <div class="older-news">Read more on <a href="[% c.uri_for('/tools/issues') %]">The WormBase Issue Archive</a>&nbsp;&raquo;</div>
-    [% END %]
+    <script>
+  [% UNLESS c.user_session.layout.$class.defined %]
+    var leftList = ["news", "events"];
+    var rightList = ["discussion", "issues"];
+    resetLayout(leftList, rightList, 50);
+  [% ELSE %]
+    var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];
+    var rightList = ["[% c.user_session.layout.$class.0.right.join('", "') %]"];
+    resetLayout(leftList, rightList, [% c.user_session.layout.$class.0.leftWidth %]);
+  [% END %]
+    </script>
 
 
-
-</div>

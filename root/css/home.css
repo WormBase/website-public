@@ -1,44 +1,16 @@
 /* the home page */
 
-.home {
-  position:relative;
-  width:100%;
-  margin:0 0 1em;
-}
-.home>div {
+
+div#top{
   margin:1em 0 0;
-}
-
-.home div.home-col {
-  float:left;
-  width: 50%;
-}
-
-.home>div>div {
   border:1px solid #DDD;
 }
-
-.home div#top{
-  margin:1em 0 0;
-}
-.home div#top>div{
+div#top>div{
   height:6em;
   padding:1.5em;
   font-size:1.5em;
 }
-.home div#bottom{
-  clear:both;
-}
-.home div#events {
-  clear:left;
-}
-.home div#news>div, .home div#events>div {
-  margin-right:0.5em;
-}
-.home div#posts>div {
-  margin-left:0.5em;
-}
-.home div.content-box {
+div.content-box {
   padding:0.5em;
   background:#EEE;
 }
@@ -71,6 +43,18 @@
 }
 #results span.forest-green{
    color: #228B22;
+}
+#load-results {
+  width:100%;
+  background:#EEE;
+  text-align:center;
+  margin:0.5em 0;
+  padding:0.5em 0;
+  cursor:pointer;
+  color: #0000B8;
+}
+#load-results:hover{
+  background:#CCC;
 }
 
 .ellipsis {

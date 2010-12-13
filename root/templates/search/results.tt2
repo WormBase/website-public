@@ -9,21 +9,21 @@
 [% search_type = c.stash.type %]
 <div id="results">
 [% IF results.size > 0 %]
-  <div id="fade"><span id="count">[% c.stash.count%]</span> 
-    [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
-  </div>
-[% ELSE %]
-  Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
-[% END %]
-
-<ul class="results-[% search_type %]">
-  [% PROCESS "search/result_list.tt2" %]
-</ul>
-
-[% PROCESS timer IF noboiler %] 	
-  [% IF c.stash.count > 20 %]
-  <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query | uri %]?inline=1">more results<span class="ui-icon ui-icon-triangle-1-s"></span></div>
+    <div id="fade"><span id="count">[% c.stash.count%]</span> 
+      [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
+    </div>
+  [% ELSE %]
+    Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
   [% END %]
+
+  <ul class="results-[% search_type %]">
+    [% PROCESS "search/result_list.tt2" %]
+  </ul>
+
+  [% PROCESS timer IF noboiler %] 	
+    [% IF c.stash.count > 20 %]
+    <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query | uri %]?inline=1">view more</div>
+    [% END %]
 </div>
 
 <script>
@@ -44,18 +44,17 @@
       if(begin > total){ return; }
       var url= $jq(this).attr("href") + "&begin=" + begin + "&end=" + end;
 
-      setLoading($jq("#load-results"));
       $jq(this).removeClass("load-results");
 
-        var div = $jq("<div></div>");
+      var div = $jq("<div></div>");
+      setLoading(div);
         div.load(url, function(response, status, xhr) {
           begin = begin + 20;
           end = end +20;
           if(begin <= total){
-            $jq("#load-results").html('more results<span class="ui-icon ui-icon-triangle-1-s"></span>');
             $jq("#load-results").addClass("load-results");
           }else{
-            $jq("#load-results").html('');
+            $jq("#load-results").remove();
           }
           [% FOREACH q IN to_highlight %]
             div.highlight('[% q %]');
