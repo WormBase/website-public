@@ -1,12 +1,6 @@
  
   $jq(document).ready(function() {
   
-   $jq(".switch-colorbox").live('click',function() {
-    var mytitle = $jq(this).attr("class").split(" ");
-    $jq("#"+mytitle[1]).trigger('click');
-    return false;
-  });
-
      $jq(".add-delete").live('click',function() {
 	$jq(this).toggleClass( "ui-icon-circle-minus"); 
     });
@@ -98,15 +92,25 @@
       
   });*/
 
-  $jq(".tip-simple").hover(
-        function () {
-          if(!($jq(this).children("div").show().size())){
-            var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
-            tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
-          }
-        }, 
-        function () { $jq(this).children("div").hide(); }
-      );
+//   $jq(".tip-simple").hover(
+//         function () {
+//           if(!($jq(this).children("div").show().size())){
+//             var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
+//             tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
+//           }
+//         }, 
+//         function () { $jq(this).children("div").hide(); }
+//       );
+
+  $jq(".tip-simple").live('mouseover', function(){
+    if(!($jq(this).children("div").show().size())){
+      var tip = $jq('<div class="tip ui-corner-all" style="display:block"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
+      tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
+    }
+  });
+  $jq(".tip-simple").live('mouseout', function(){
+    $jq(this).children("div").hide();
+  });
 
     $jq(".tooltip").live('mouseover',function() {
         $jq(this).cluetip({

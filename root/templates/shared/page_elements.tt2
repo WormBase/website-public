@@ -7,6 +7,9 @@
 %]
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]	
+	<script type="text/javascript" >
+	$jq(".lightbox").colorbox();
+	</script> 
 	<table width="60%">			      
 		    <tr>
 			    <th>
@@ -60,7 +63,7 @@
     </tr>
       [% FOREACH IS IN issues %]
 	 [% array=IS.location.split('/') %]
-	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link(array.3,array.4 ,array.6) %]</td> 
+	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
 	    <td>[% username(IS.owner) %]</td><td>[% username(IS.responser) %]</td>
 	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
@@ -95,9 +98,9 @@
 
               [%# Is there a description? Set it as a tool tip %]
                [% IF fields.$key.description %]
-                  <a title="[% fields.$key.description %]">
+                  <span title="[% fields.$key.description %]">
                      [% title %]:
-                   </a>
+                   </span>
               [% ELSE %]
                   [% title %]:
               [% END %]
@@ -306,24 +309,26 @@
 <!--    <section class="widget" name="[% widget.name %]"> -->
           <div class="widget-container ui-corner-all">
                 <header> 
-                <div id="widget-[% w.type %]" class="ui-corner-top widget-header">
-                    <div class="module-close" wname="[% w.id %]" title="close"></div>
+                <div id="widget-[% type %]" class="ui-corner-top widget-header">
+                    <div class="module-close" wname="[% id %]" title="close"></div>
                    
-                    <h3><div class="module-min [% w.id %]" wname="[% w.id %]"></div><span>[% w.title %]</span>
-        [% IF (w.type == 'me') %]<span wname="[% w.id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
+                    <h3><div class="module-min [% id %]" wname="[% id %]"></div><span>[% title %]</span>
+        [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
                 </div>
                 </header>
 
-                <div id="[%- w.id -%]-content" class="content">
+                <div id="[%- id -%]-content" class="content">
                 [% content %]
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   tip="comment" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
-                    <a   tip="report a problem" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
-                    <a href="#" tip="help" class="tip-simple ui-corner-all"><span class="ui-icon ui-icon-help"></span></a>
+                    <a   tip="comment" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.title,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.title,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+                    <a href="#" tip="help" class="tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-help"></span></a>
+                    <span> </span>
+                    <a href="#" tip="download" class="tip-simple ui-corner-all"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></a>
                 </div>
 		<div id="widget-feed"></div>  
 
@@ -373,9 +378,10 @@
        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-
-       var pageTracker = _gaq._getTracker('UA-16257183-1');
+if (typeof(_gat) == 'object') {
+       var pageTracker = _gat._createTracker('UA-16257183-1');
        pageTracker._trackPageview();
+}
      })();
    </script>
 [% END %]
