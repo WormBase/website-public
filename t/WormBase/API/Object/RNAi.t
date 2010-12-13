@@ -9,7 +9,7 @@ use Test::More;
 my $indent = " " x 6;
 
 my $class = "RNAi";
-my $object_name = "WBRNAi00050957";
+my $object_name = "WBRNAi00027544";
 
 #### method list
 
@@ -17,6 +17,10 @@ my $object_name = "WBRNAi00050957";
 my @methods = qw/
 
 name
+id
+species
+genotype
+strain
 /;
 
 # laboratories
@@ -24,9 +28,9 @@ name
 # history_name
 # identification
 # experimental_conditions
-#
-#
-#
+# identification
+# targets
+# laboratory
 
 ### run tests ####
 
