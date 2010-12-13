@@ -54,6 +54,8 @@
 	[% END %]
 
 
+	<hr>
+
 	[%## DATA TABLE FOR SUPERVISORS %]
 	[% WRAPPER $field_block title="Supervised by" key=supervised_by %]
 	
@@ -104,3 +106,15 @@
 	
 	[% ## END OF WRAPPER %] 
 	[% END %]
+	
+	<hr>
+	
+	[% WRAPPER $field_block title="Worked with" key=worked_with %]
+		[%  FOREACH worked_with IN fields.worked_with.data %]
+			[% tag2link(worked_with) %]<br>
+		[% END %]
+	[% END  %]
+	
+	
+	
+	

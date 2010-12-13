@@ -1533,15 +1533,19 @@ sub anatomic_expression_patterns {
     
     my @eps = $object->Expr_pattern;
     @eps = eval{grep {!($_->Author =~ /Mohler/ && $_->MovieURL)} @eps};
-    
+    my $file = $self->pre_compile->{mirror_img}."virtualworm/Gene_Expr_Renders/".$object.".jpg";
+    $data_pack{"image"}="jpg?class=Gene_Expr&id=". $object ."&source=virtualworm/Gene_Expr_Renders"  if(-e $file && ! -z $file);
+
     foreach my $ep (@eps) {
-        $data_pack{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+	my $file = $self->pre_compile->{mirror_img}."virtualworm/Expr_Object_Renders/".$ep.".jpg";
+	$data_pack{"expr"}{"$ep"}{image}="jpg?class=Expr_Object&id=". $ep ."&source=virtualworm/Expr_Object_Renders"  if(-e $file && ! -z $file);
+       # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  join '', ($ep->Pattern(-filled=>1), $ep->Subcellular_localization(-filled=>1));
         $pattern    =~ s/(.{384}).+/$1\.\.\. /;
-        $data_pack{"$ep"}{details} = $pattern;
-        $data_pack{"$ep"}{object} = $self->_pack_obj($ep);
+        $data_pack{"expr"}{"$ep"}{details} = $pattern;
+        $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
-    
+  
     $data{'description'} = 'expression pattern data for gene';
     
     $data{'data'} = \%data_pack;

@@ -44,6 +44,26 @@ sub footer :Path("/footer") Args(0) {
 The default action is run last when no other action matches.
 
 =cut
+sub draw :Path("/draw") Args(1) {
+    my ($self,$c,$format) = @_;
+    my $source = $c->model('WormBaseAPI')->pre_compile->{mirror_img}.$c->req->params->{source}."/".$c->req->params->{id}.".".$format;
+    my ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
+    unless($cached_img){
+      $cached_img = new GD::Image->new($source);
+      $c->set_cache($cache_id,$cached_img);
+    }
+=pod
+    binmode STDOUT;
+    if ($file) {
+      open IMG, $file or die $!;
+      print while(<IMG>);
+      close IMG;
+    }
+=cut
+ 
+    $c->stash(gd_image=>$cached_img);
+    $c->detach('WormBase::Web::View::Graphics');
+}
 
 
 
@@ -542,7 +562,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
 	$c->serve_static_file($c->path_to("root/static/$path"));
   } else{
-  	$c->forward('WormBase::Web::View::TT') unless(  $c->req->path =~ /cgi-bin|cgibin/i);
+  	$c->forward('WormBase::Web::View::TT') unless(  $c->req->path =~ /cgi-bin|cgibin/i || $c->action->name eq 'draw');
  }
 
   # 404 errors will be caught in default.

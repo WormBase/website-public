@@ -4,41 +4,62 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
+
+####################
+# GENERAL INFO
+####################
 
 
-#######
-
-sub template {
+sub name {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my $data_pack;
 
+	my $name = $object->Main_name;
+	
 	#### data pull and packaging
 
+	$data_pack = {
+	
+		'id' => "$object",
+		'label' => "$object",
+		'class' => "Gene_name"
+	};
 	####
-
-	$data{'data'} = \%data_pack;
+	
+	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
 
-### mainly for text data; and single layer hash ###
+sub id {
 
-sub template_simple {
+	my $self = shift;
+	my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = {
+			'id' => "$object",
+			'label' => "$object",
+			'class' => 'Gene_class'
+			};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+	
+}
+
+sub other_name {
 
 	my $self = shift;
     my $object = $self->object;
@@ -48,7 +69,26 @@ sub template_simple {
 
 	#### data pull and packaging
 
-	$data_pack = $object->Tag;
+	$data_pack = $object->Other_name;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub description {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Description;
 
 	####
 	
@@ -58,24 +98,74 @@ sub template_simple {
 }
 
 
-########
-
-sub general_info {
+sub phenotype {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my $data_pack;
 
 	#### data pull and packaging
 
-	####
+	$data_pack = $object->Phenotype;
 
-	$data{'data'} = \%data_pack;
+	####
+	
+	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+sub laboratory {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	my $laboratory = $object->Designating_laboratory;
+
+	#### data pull and packaging
+
+	$data_pack = {
+	
+		'id' => "$laboratory", 
+		'label' => "$laboratory",
+		'Class' => 'Laboratory'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+#sub general_info {
+#
+#	my $self = shift;
+#    my $object = $self->object;
+#	my %data;
+#	my $desc = 'notes';
+#	my %data_pack;
+#
+#	#### data pull and packaging
+#
+#	####
+#
+#	$data{'data'} = \%data_pack;
+#	$data{'description'} = $desc;
+#	return \%data;
+#}
+
+
+#########
+# Gene
+#########
+
 
 sub gene {
 
@@ -94,12 +184,22 @@ sub gene {
 	    my $species = $gene->Species;
 	    my $gene_name = $self->bestname($gene);
 	    %gene_data = (
-	      'gene_id' => $gene,
-	      'gene_name' => $gene_name,
+	      'id' => "$gene",
+	      'label' => "$gene_name",
 	      'class' => 'Gene'
 	      );
 	    
-	    $data_pack{$species}{$gene} = \%gene_data;
+	    if ($data_pack{$species}) {
+	    
+	    	my $gene_data = $data_pack{$species};
+	    	push @$gene_data,\%gene_data;
+	    	$data_pack{$species} = $gene_data;
+	    }
+	    
+	    else {
+	    	
+	    	$data_pack{$species} = [\%gene_data];
+	    }
 	}
   
 	####
@@ -128,12 +228,22 @@ sub old_members {
 	   my $sequence_name =  $gene->Sequence_name;
 	   my $species = $gene->Species;
 	   my %gene_data = (
-	      'ace_id' => $gene,
-	      'gene_name' => $gene_name,
+	      'id' => "$gene",
+	      'label' => "$gene_name",
 	      'class' => 'Gene'
 	      ); 
-
-	   $data_pack{$species}{$gene} = \%gene_data; 
+	      
+	    if ($data_pack{$species}) {
+	    
+	    	my $gene_data = $data_pack{$species};
+	    	push @$gene_data,\%gene_data;
+	    	$data_pack{$species} = $gene_data;
+	    }
+	    
+	    else {
+	    	
+	    	$data_pack{$species} = [\%gene_data];
+	    }
 	}
 
 	####
@@ -152,7 +262,7 @@ sub previous_member {
 	my $dbh = $self->ace_dsn->dbh;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 	
@@ -164,34 +274,27 @@ sub previous_member {
 	  my $bestname = $self->bestname($gene);
 	  my @onames = $gene->Other_name;
 	  my $seq_name = $gene->Sequence_name;
-	  my %gene_data = {
-	    'ace_id' => $gene,
-	    'gene_name' => $bestname,
-	    'other_names' => \@onames,
-	    'sequence_name' => $seq_name, 
-	    'class' => 'Gene'
-	    };    
+	  my %gene_data = (
+	  
+	  #	'info' => {
+	  		'ace_id' => "$gene",
+	  	  	'gene_name' => "$bestname",
+	  	  	'class' => 'Gene'
+	  #	},
+	
+	  #  'other_names' => \@onames,
+	  #  'sequence_name' => $seq_name    
+	    );    
 
-	    $data_pack{$gene} = \%gene_data;
+	    push @data_pack, \%gene_data;
 	 }
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
 
-
-# 	  foreach my $other (@onames) {
-# 	    
-# 	    if ($other =~ m/$object/) {
-# 	      
-# 
-# 	    } else {
-# 
-# 		next;
-# 	    }
-# 	  }
 
 sub remarks {
 
@@ -199,13 +302,16 @@ sub remarks {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
+	
+	@data_pack = $object->Remark;
+
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
