@@ -43,6 +43,7 @@ requires 'Catalyst::Plugin::Session::Store::DBI';
 requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
+requires 'Catalyst::View::GD';
 requires 'Crypt::SaltedHash';
 requires 'Crypt::SSLeay'; 					#for openid to work for (https)
 requires 'CHI';                              # Cache backend
