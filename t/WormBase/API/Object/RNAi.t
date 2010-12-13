@@ -16,8 +16,7 @@ my $object_name = "WBRNAi00050957";
 #####
 my @methods = qw/
 
-phenotypes
-phenotype_nots
+name
 /;
 
 # laboratories
