@@ -61,6 +61,8 @@ sub workbench_GET {
     unless($count){$count = 0; } #otherwise empty brackets show
     $c->stash->{count} = $count;
     $c->stash->{template} = "workbench/count.tt2";
+    $c->forward('WormBase::Web::View::TT');
+
 } 
 
 sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {}
@@ -86,6 +88,7 @@ sub workbench_star_GET{
     $c->stash->{star}->{type} = $type;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
 }
 
 sub layout :Path('/rest/layout') :Args(2) :ActionClass('REST') {}
@@ -153,6 +156,7 @@ sub layout_list_GET {
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
 }
 
 
@@ -163,6 +167,7 @@ sub auth_GET {
     my ($self,$c) = @_;   
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
+    $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
 
@@ -186,6 +191,7 @@ sub history_GET {
     $c->stash->{history} = \@ret;
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "shared/fields/user_history.tt2"; 
+    $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
 
@@ -259,7 +265,7 @@ sub evidence_GET {
     my $data = $object-> _get_evidence($node[$index]->right($right));
     $c->stash->{evidence} = $data;
     $c->stash->{template} = "shared/generic/evidence.tt2"; 
-
+    $c->forward('WormBase::Web::View::TT');
     my $uri = $c->uri_for("/reports",$class,$name);
     $self->status_ok($c, entity => {
 	                 class  => $class,
@@ -352,6 +358,7 @@ sub feed_GET {
     }
      
     $c->stash->{template} = "feed/$type.tt2"; 
+    $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
 
@@ -606,6 +613,7 @@ sub widget_GET {
 	    
 	    # Looking up the template is slow; hard-coded here.
 	    $c->stash->{template} = "shared/widgets/references.tt2";
+#     $c->stash->{template} = "search/results.tt2";
 	    $c->forward('WormBase::Web::View::TT');
 	    return;
 	}
@@ -741,6 +749,7 @@ sub widget_me_GET {
     $c->stash->{'type'} = $type; 
     $c->stash->{template} = "search/results.tt2";
     $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT')
 
 }
 
@@ -782,6 +791,7 @@ sub _bench {
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
     $c->stash->{template} = "search/results.tt2";
+    $c->forward('WormBase::Web::View::TT');
     $c->stash->{noboiler} = 1;
 }
 
@@ -803,6 +813,7 @@ sub widget_species_GET {
     # Check for the presence of generic templates.
 
     $c->stash->{template} = "species/$species/$widget.tt2";
+    $c->forward('WormBase::Web::View::TT');
     $c->stash->{noboiler} = 1;
 }
 
@@ -916,7 +927,7 @@ sub field_GET {
     my $uri = $c->uri_for("/page",$class,$name);
 
     $c->stash->{template} = $c->_select_template($field,$class,'field'); 
-
+    $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c, entity => {
 	class  => $class,
 			 name   => $name,

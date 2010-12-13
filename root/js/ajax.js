@@ -95,21 +95,8 @@
 
     });
 
-    
-
-        $jq(".user-history").load("/rest/history?count=3", function(response, status, xhr) {
-          if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq(".user-history").html(msg + xhr.status + " " + xhr.statusText);
-          }
-        });
-
-    $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
-          if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
-          }
-        });
+  ajaxGet($jq(".user-history"), "/rest/history?count=3");
+  ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
 
 
     $jq("div.text-min").live('click',function() {expand($jq(this), $jq(this).next());});
@@ -136,36 +123,30 @@
 
     $jq(".reload").live('click', function() {
       var widget_name = $jq(this).attr("wname");
-      $jq("div#" + widget_name + "-content").load("/rest/widget/me/" + widget_name);
+      ajaxGet($jq("div#" + widget_name + "-content"), "/rest/widget/me/" + widget_name);
     });
 
       $jq(".bench-update").live('click',function() {
         var wbid     = $jq(this).attr("wbid");
         var id     = $jq(this).attr("id");
         var $class     = $jq(this).attr("objclass");
-        var type     = $jq(this).attr("type");
+        var $type     = $jq(this).attr("type");
         var label     = $jq(this).attr("name");
-        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + type;
-        $jq("#bench_status").load(url,   function(response, status, xhr) {
-                              if (status == "error") {
-                              var msg = "Sorry but there was an error: ";
-                              $jq("#bench_status").html(msg + xhr.status + " " + xhr.statusText);
-                              }
-                          });
-        $jq("#bench_status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-        $jq(".workbench-status-" + id).load("/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + type);
-        $jq("div#reports-content").load("/rest/widget/me/reports");
-        $jq("div#my_library-content").load("/rest/widget/me/my_library");
+        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + $type;
+        $jq("#bench-status").load(url, function(){
+          ajaxGet($jq(".workbench-status-" + id), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + $type, 1);
+          $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
+          if($jq("#widget-holder").children().children(".visible#reports").size()){
+            ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
+          }
+          if($jq("#widget-holder").children().children(".visible#my_library").size()){
+            ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
+          }
+        });
       return false;
       });
 
-       $jq(".status-bar").load("/rest/auth", function(response, status, xhr) {
-	if (status == "error") {
-	  var msg = "Sorry but there was an error: ";
-	  $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
-	}
-      });
-
+    ajaxGet($jq(".status-bar"), "/rest/auth");
 
     });
 
@@ -174,23 +155,25 @@
         $jq("#notifications").text(message).show().delay(3000).fadeOut(400);
   }
 
-  $jq(".update").live('click',function() {
 
-    $jq(this).text("updating").show();
-    var url     = $jq(this).attr("href");
-    // Multiple classes specified. Split so I can rejoin.
-    var mytitle = $jq(this).attr("class").split(" ");
-    $jq("#" + mytitle[1]).load(url,
-                    function(response, status, xhr) {
-                          if (status == "error") {
-                          var msg = "Sorry but there was an error: ";
-                          $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
-                          }
-                          $jq(this).children(".toggle").toggleClass("active");
-                      });
-        
-  return false;
-  });
+// NOTE: Is this used anywhere???
+//   $jq(".update").live('click',function() {
+// 
+//     $jq(this).text("updating").show();
+//     var url     = $jq(this).attr("href");
+//     // Multiple classes specified. Split so I can rejoin.
+//     var mytitle = $jq(this).attr("class").split(" ");
+//     $jq("#" + mytitle[1]).load(url,
+//                     function(response, status, xhr) {
+//                           if (status == "error") {
+//                           var msg = "Sorry but there was an error: ";
+//                           $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
+//                           }
+//                           $jq(this).children(".toggle").toggleClass("active");
+//                       });
+//         
+//   return false;
+//   });
 
 
   // used in sidebar view, to open and close widgets when selected
@@ -247,20 +230,31 @@
         var content = $jq(content);
         addWidgetEffects(content.parent(".widget-container"));
         var url     = nav.attr("href");
-        content.html("<span id=\"fade\">loading...</span>").show();
-        content.load(url,
-                        function(response, status, xhr) {
-                              if (status == "error") {
-                              content.html(xhr.status + " " + xhr.statusText);
-                              }
-                          });
+        ajaxGet(content, url);
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
         return false;
     }
 
+    function setLoading(panel) {
+      panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+    }
 
+    function ajaxGet(ajaxPanel, $url, noLoadImg) {
+      $jq.ajax({
+        url: $url,
+        beforeSend:function(){
+          if(!noLoadImg){ setLoading(ajaxPanel); }
+        },
+        success:function(data){
+          ajaxPanel.html(data);
+        },
+        error:function(){
+          ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+        }
+      });
 
+    }
 
     function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
@@ -313,13 +307,8 @@
     }
 
     function history_clear(){
-        $jq("div#user_history").load("/rest/history?clear=1",   function(response, status, xhr) {
-                              if (status == "error") {
-                              var msg = "Sorry but there was an error: ";
-                              $jq("div#user_history").html(msg + xhr.status + " " + xhr.statusText);
-                              }
-        });
-      }
+        ajaxGet($jq("div#user_history"), "/rest/history?clear=1");
+    }
 
 
   // Load a (specific) field or widget dynamically onClick.
