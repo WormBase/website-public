@@ -376,7 +376,7 @@ div.ui-icon-large {
 div.loading {
   width:100%;
   text-align:center;
-  padding-top:1em;
+  padding:1em 0 0;
 }
 
 .widget-header div.ui-icon:hover {
