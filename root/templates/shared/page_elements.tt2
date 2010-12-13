@@ -7,6 +7,9 @@
 %]
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]	
+	<script type="text/javascript" >
+	$jq(".lightbox").colorbox();
+	</script> 
 	<table width="60%">			      
 		    <tr>
 			    <th>

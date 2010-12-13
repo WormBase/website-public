@@ -4,41 +4,12 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
 
+################
+## IDENTIFICATION
+################
 
-#######
-
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-### mainly for text data; and single layer hash ###
-
-sub template_simple {
+sub name {
 
 	my $self = shift;
     my $object = $self->object;
@@ -48,7 +19,69 @@ sub template_simple {
 
 	#### data pull and packaging
 
-	$data_pack = $object->Tag;
+	my $historical_name = $object->History_name || $object;
+	
+
+	$data_pack = {
+	
+		'id' => "$object",
+		'label' => "$historical_name",
+		'Class' => 'RNAi'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub id {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+
+	$data_pack = {
+	
+		'id' => "$object",
+		'label' => "$object",
+		'Class' => 'RNAi'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
+sub laboratory {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $lab = $object->Laboratory;
+	
+	$data_pack = {
+	
+		'id' => "$lab" ,
+		'label' => "$lab",
+		'class' => 'Laboratory'
+	};
 
 	####
 	
@@ -57,10 +90,48 @@ sub template_simple {
 	return \%data;
 }
 
+sub targets {
 
-################
-## IDENTIFICATION
-################
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my %data_pack;
+	my $genes;
+	
+	#### data pull and packaging
+	
+	my $targets_hr = _classify_targets($object);
+
+	foreach my $target_type ('Primary targets','Secondary targets') {
+		
+		$genes = eval { $targets_hr->{$target_type}};
+		$data_pack{$target_type} = $genes;
+		
+#		my @gene_info;
+#		foreach my $gene (@$genes) {
+#		
+#			#my $class;
+#			#$class = eval {$gene->Class;};
+#			my $label = $gene->Public_name;
+#			
+#			push @gene_info, {
+#			
+#							'id' => "$gene",
+#							'label' => "$label"
+#							#'class' => "$class"
+#						};
+#		}
+#	
+#		$data_pack{$target_type} = \@gene_info;
+  	}
+
+	####
+
+	$data{'data'} = \%data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 sub identification {
 
@@ -240,6 +311,164 @@ sub laboratory_details {
 ## EXPERIMENTAL CONDITIONS
 ################
 
+
+
+sub species {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $species = $object->Species;
+	my $species_name = $species->Common_name;
+
+	$data_pack = {
+	
+		'id' =>  "$species",
+		'label' => "$species_name",
+		'class' => 'Species'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub genotype {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Genotype;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub strain {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $strain = $object->Strain;
+
+	$data_pack = {
+	
+		'id' => "$strain",
+		'label' =>"$strain",
+		'Class' => 'Strain'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub interactions {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub treatment {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Tag;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub life_stage {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+
+	$data_pack = {
+	
+		'id' =>,
+		'label' =>,
+		'Class' => ''
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub delivered_by {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Tag;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
 #sub experimental_conditions {
 #
 #	my $self = shift;
@@ -288,7 +517,7 @@ sub phenotypes {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
@@ -298,16 +527,16 @@ sub phenotypes {
 		
 		my $phenotype_name = $phenotype->Primary_name;
 		
-		$data_pack{$phenotype} = {
-									'phenotype_id' => $phenotype,
+		push @data_pack, {
+									'id' => "$phenotype",
 									'class' => 'Phenotype',
-									'phenotype_name' => $phenotype_name,
+									'label' => "$phenotype_name",
 								};
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -319,7 +548,7 @@ sub phenotype_nots {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
@@ -329,16 +558,16 @@ sub phenotype_nots {
 		
 		my $phenotype_name = $phenotype->Primary_name;
 		
-		$data_pack{$phenotype} = {
-									'phenotype_id' => $phenotype,
+		push @data_pack, {
+									'id' => "$phenotype",
 									'class' => 'Phenotype',
-									'phenotype_name' => $phenotype_name,
+									'label' => "$phenotype_name",
 								};
 	}
 
 	####
 
-	$data{'data'} = \%data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }

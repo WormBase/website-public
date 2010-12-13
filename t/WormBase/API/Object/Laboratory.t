@@ -9,23 +9,38 @@ use Test::More;
 my $indent = " " x 6;
 
 my $class = "Laboratory";
-my $object_name = "EG";
+my $object_name = "CB";
 
 #### method list
 
 my @methods = qw/
 
-
+former_member
 
  /;
 
+#gene_classes
+#name
+#email
+#phone
+#fax
+#web_site
+#representative
+#strain_designation
+#allele_designation
 #allele_prefixes
 #gene_classes
 #members
 #details
 #representatives
+#details
+
+#allele_designation
+#strain_designation
+#gene_class
+#current_member
 #
-#
+
 
 my @mnas = (
 
@@ -68,8 +83,8 @@ foreach my $method (@methods) {
 }
 
 
-my $result = $object->members("past");
-print_data($result);
+#my $result = $object->members("past");
+#print_data($result);
 
 #foreach my $mna (@mnas) {
 #    print "\n#######\n";
