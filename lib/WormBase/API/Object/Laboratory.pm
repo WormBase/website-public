@@ -33,6 +33,30 @@ sub name {
 	return \%data;
 }
 
+sub id {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = {
+	
+		'id' => "$object",
+		'label' => "$object",
+		'class' => 'Laboratory'
+	
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 sub phone {
 
 	my $self = shift;
@@ -106,10 +130,11 @@ sub web_site {
 	#### data pull and packaging
 
 	$data_pack = $object->URL;
+	my ($disc, $url) = split '://', $data_pack;
 
 	####
 	
-	$data{'data'} = $data_pack;
+	$data{'data'} = $url;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -148,6 +173,39 @@ sub details {
 	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
+}
+
+
+sub representative {
+
+      my $self = shift;
+      my $lab = $self->object;
+      my %data;
+      my $desc = 'notes';
+      my $data_pack;
+
+      #### data pull and packaging
+    
+      my $rep = $lab->Representative;
+
+		my $name = $rep->Standard_name;
+
+
+		$data_pack = {
+	      'id' => "$rep",
+	      'label' => "$name",
+	      'class' => 'Person'
+	  	};
+
+
+
+	####
+
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+
 }
 
 sub representatives {
@@ -265,6 +323,27 @@ sub strain_designation {
 	return \%data;
 }
 
+sub allele_designation {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Allele_designation;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+
+
+}
 
 sub alleles {
 
@@ -285,7 +364,7 @@ sub alleles {
 		push @data_pack, {
 		
 			'id' => "$allele",
-			'lable' => "$allele_name",
+			'label' => "$allele_name",
 			'class' => 'Variation'
 		
 		};
@@ -298,33 +377,31 @@ sub alleles {
 	return \%data;
 }
 
-
-sub allele_prefixes {
+sub gene_classes {
 
 	my $self = shift;
-    my $lab = $self->object;
+	my $lab = $self->object;
+	my @data_pack;
+	my $desc = 'Gene classes assigned to laboratory';
 	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @alleles = $lab->get('Allele_designation');
 	
-	foreach my $allele (@alleles) {
+	my @gene_classes = $lab->Gene_classes;
+		
+	foreach my $gene_class (@gene_classes) {
+			
+		my $gc_label = $gene_class;
+		push @data_pack, {
+									
+					'label' => "$gc_label",
+					'id' => "$gc_label",
+					'class' => 'Gene_class'						
+		};
+	}
 
-	  my $allele_name; # = $allele->Public_name;
-  
-	 $data_pack{$allele} = {
-	  'ace_id' => $allele,
-	  'class' => 'Variation'
-	  }
-
-	 }
-	####
-
-	$data{'data'} = \%data_pack;
+	
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
+	
 	return \%data;
 }
 
@@ -338,7 +415,7 @@ sub current_member {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my @data_pack;
+	my %data_pack;
 
 	#### data pull and packaging
 	
@@ -347,8 +424,9 @@ sub current_member {
 	foreach my $current_member (@current_members) {
 	
 		my $cm_name = $current_member->Full_name;
+		my $cm_last_name = $current_member->Last_name;
 		
-		push @data_pack, {
+		$data_pack{$cm_last_name} =  {
 		
 			'id' => "$current_member",
 			'label' => "$cm_name",
@@ -358,7 +436,7 @@ sub current_member {
 	
 	####
 	
-	$data{'data'} = \@data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -370,7 +448,7 @@ sub former_member {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my @data_pack;
+	my %data_pack;
 
 	#### data pull and packaging
 	
@@ -379,8 +457,9 @@ sub former_member {
 	foreach my $former_member (@former_members) {
 	
 		my $fm_name = $former_member->Full_name;
+		my $fm_last_name = $former_member->Last_name;
 		
-		push @data_pack, {
+		$data_pack{$fm_last_name} = {
 		
 			'id' => "$former_member",
 			'label' => "$fm_name",
@@ -391,7 +470,7 @@ sub former_member {
 
 	####
 	
-	$data{'data'} = \@data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
