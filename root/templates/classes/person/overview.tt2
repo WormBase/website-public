@@ -10,7 +10,7 @@
             [% END %]
    [% END %]
 
-	[% WRAPPER $field_block title="Laboratory Phone"-%] 
+	[% WRAPPER $field_block title="Lab Phone"-%] 
             [% fields.lab_phone.data %]
    [% END %]
 
