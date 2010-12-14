@@ -83,7 +83,7 @@ has 'pass' => (
     isa => 'Str',
     );
 
-has 'species' => (
+has 'source' => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
@@ -94,16 +94,16 @@ has 'species' => (
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;
-    my $species = $self->species;
+    my $source = $self->source;
     my $dbh = $self->$orig;
     
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
   #  if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
     if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh)) {  
-#       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
+#       $self->log->debug( $self->symbolic_name." dbh for source $source exists and is alive!");
       return $dbh;
     } 
-    $self->log->debug( $self->symbolic_name." dbh for species $species doesn't exist or is not alive; trying to connect");
+    $self->log->debug( $self->symbolic_name." dbh for source $source doesn't exist or is not alive; trying to connect");
     undef $dbh; #release the current connection if exists
     return $self->reconnect();
      

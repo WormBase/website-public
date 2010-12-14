@@ -1,0 +1,10 @@
+[% INCLUDE tool/show_mult_align/index.tt2 %] 
+<p>
+[% FOREACH row IN data %]
+  [% count = count + 1  %]
+  [% FOREACH obj IN row %]
+      [% obj %]
+  [% END %]
+[% END %]
+
+</p>
