@@ -5,7 +5,7 @@ use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
 use File::Path 'mkpath';
 
-use constant INITIAL_DELAY => 600;
+ 
 
 # Every service should provide a:
 requires 'dbh';    # a database handel for the service
@@ -143,7 +143,7 @@ sub select_host {
     my @live_hosts;
     foreach my $host ( @{$self->hosts} ) {
 	if( my $pack = $dbfile->{$host}) {  
-	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
+	  if( (time() - unpack('L',$pack)) >= $self->conf->{delay} ) {
 		  undef $dbfile->{$host};
 	  }
 	  else {next;}
