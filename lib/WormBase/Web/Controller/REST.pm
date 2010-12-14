@@ -681,6 +681,54 @@ sub widget_GET {
 	);
 }
 
+sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
+
+sub widget_home_GET {
+    my ($self,$c,$widget) = @_; 
+    my ($self,$c,$widget) = @_; 
+    $c->log->debug("getting home page widget");
+    if($widget=~m/issues/){
+    $c->stash->{issues} = $self->issue_rss($c,2);
+    }
+    $c->stash->{template} = "classes/home/$widget.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT')
+}
+
+sub issue_rss {
+ my ($self,$c,$count) = @_;
+ my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
+     
+    my %seen;
+    my @rss;
+    while($_ = $threads->next) {
+      unless(exists $seen{$_->issue_id}) {
+      $seen{$_->issue_id} =1 ;
+      
+      push @rss, {  time=>$_->submit_time,
+            people=>$_->user,
+            title=>$_->issue->title,
+            location=>$_->issue->location,
+            id=>$_->issue->id,
+            re=>1,
+            } ;
+      }
+      last if(scalar(keys %seen)>=$count)  ;
+    };
+
+    map {    
+        push @rss, {      time=>$_->submit_time,
+                          people=>$_->owner,
+                          title=>$_->title,
+                          location=>$_->location,
+                  id=>$_->id,
+            };
+    } @issues;
+
+    my @sort = sort {$b->{time} <=> $a->{time}} @rss;
+    return \@sort;
+}
 
 sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
 

@@ -189,6 +189,21 @@ sub name {
     return $data;
 }
 
+sub id {
+    my $self = shift;
+    my $object = $self->object;
+    my $name   = $object->name;
+    my $data = { 
+    	description => 'The name of the person',
+		data        =>  { id    => "$object",
+				   			label => "$object",
+				   			class => 'Person'
+		 				},
+    			};
+    return $data;
+}
+
+
 sub template {
 
 	my $self = shift;
@@ -524,7 +539,11 @@ sub web_page {
 	my %data;
 	my $self = shift;
 	my $address_info = $self->address_hr;
-	$data{'data'} = $address_info->{'Web_page'};
+	my $url = $address_info->{'Web_page'};
+	
+	$url=~ s/HTTP\:\/\///;
+
+	$data{'data'} = $url;
 	$data{'description'} = 'web page of person';
 	return \%data;
 }
@@ -851,6 +870,43 @@ sub supervised_by {
 	return \%data;
 }
 
+sub worked_with {
+
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'People with whom person worked.	';
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @worked_with = $object->Worked_with;
+	
+	foreach my $ww (@worked_with) {
+	
+		my $ww_id = $ww;
+		my $ww_label = $ww->Full_name;
+		
+		my %ww = (
+		
+			'id' => "$ww_id",
+			'label' => "$ww_label",
+			'class' => 'Person'
+		);
+		
+		push @data_pack, \%ww;
+	}
+	
+	###
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+	
+}
+
+
 sub supervised_by_old {
 
 	my $self = shift;
@@ -887,6 +943,55 @@ sub supervised_by_old {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+#################
+# VERIFICATION
+#################
+
+
+sub status {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Status;
+
+	####
+
+	$data{'data'} = $data_pack; ##\%data_pack
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub last_verified {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Last_verified;
+	
+	my @date = split /\ /, $data_pack;
+	my $date = join " ", @date[0 .. 2];
+
+	####
+
+	$data{'data'} = $date; ## \%data_pack
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
 
 
 #####################

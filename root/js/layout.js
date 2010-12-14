@@ -112,10 +112,12 @@ $jq(function() {
 
     var $sidebar   = $jq("#navigation"),
         $window    = $jq(window),
-        offset     = 100,
+        offset     = 0,
         at_default = -45;
 
     $window.scroll(function() {
+      if(!offset){offset = $sidebar.offset().top;}
+
       var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
       if( bottomPos < at_default )
           bottomPos = at_default;
