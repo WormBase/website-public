@@ -1,0 +1,6 @@
+<h1>Protein Alignments</h1>
+<form method="POST" action="[% c.uri_for('tools','show_mult_align','run') %]">
+
+Type in a protein name, such as <cite>WP:CE25104.</cite>&nbsp;&nbsp;&nbsp;&nbsp;Symbol: 
+<input type="text" name="protein_id" value="[% protein_id %]" />
+</form>
