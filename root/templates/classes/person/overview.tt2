@@ -1,47 +1,73 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Name"-%] 
-            [% tag2link(fields.name.data) %]
-   [% END %]
+	<h2>[% tag2link(fields.name.data) %]</h2>
 
-
-   [% WRAPPER $field_block title="Street Address"-%] 
-            [%FOREACH address_line IN fields.street_address.data %]
-            [% address_line  %]<br>
-            [% END %]
-   [% END %]
-   
-    [% WRAPPER $field_block title="Country"-%] 
-            [% fields.country.data %]
-   [% END %]
-   
-   
-   [% WRAPPER $field_block title="Institution"-%] 
-            [% fields.institution.data %]
-   [% END %]
-   
-
+<div class="details ui-corner-all">
 	[% WRAPPER $field_block title="Email"-%] 
             [% FOREACH email_address IN fields.email.data %]
             [% email_address  %]<br>
             [% END %]
    [% END %]
 
-	[% WRAPPER $field_block title="Laboratory Phone"-%] 
+	[% WRAPPER $field_block title="Lab Phone"-%] 
             [% fields.lab_phone.data %]
    [% END %]
 
 	[% WRAPPER $field_block title="Office Phone"-%] 
             [% FOREACH office_number IN fields.office_phone.data %]
             [% office_number %]<br>
-            [% END %]
-   [% END %]
-
-	[% WRAPPER $field_block title="Fax"-%] 
+            [% END %]            
+   [% END %]       
+            
+   	[% WRAPPER $field_block title="Fax"-%] 
             [% fields.fax.data %]
+   [% END %]            
+
+	[% WRAPPER $field_block title="WormBase id"-%] 
+            [% tag2link(fields.id.data) %]
+   [% END %]            
+
+</div>
+
+
+<div class="text-width" style="clear:left">
+
+   [% WRAPPER $field_block title="Street Address"-%] 
+            [%FOREACH address_line IN fields.street_address.data %]
+            [% address_line  %]<br>
+            [% END %]
+            [% fields.country.data %]
    [% END %]
 
-	[% WRAPPER $field_block title="Laboratory"-%] 
+   [% WRAPPER $field_block title="Institution"-%] 
+            [% fields.institution.data %]
+   [% END %]
+   
+
+
+	[% WRAPPER $field_block title="Lab"-%] 
             [% tag2link(fields.lab_id.data) %]
    [% END %]
+   
+   [% WRAPPER $field_block title="Web Page"-%] 
+          <a href="http://[% fields.web_page.data %]">[% fields.web_page.data %]</a><br>
+   [% END %]
+
+   
+   
+</div>
+
+
+
+
+
+   
+   
+
+   
+
+
+
+
+

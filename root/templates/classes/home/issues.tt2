@@ -1,0 +1,13 @@
+     <div id="rss-box">
+      [% USE date %]
+      [% FOREACH IS IN c.stash.issues %]
+    <div class="entry"> 
+    <h3><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">&raquo; [% IF IS.re %]Re: [% END %][% IS.title %]</a></h3>
+    [% array=IS.location.split('/') %]
+    <span class="byline">Reported on: [% text2link(array.3,array.4, array.6 _ ' ' _ array.3 _ ' page ' _ array.5 _ ' section') %] by <a href="">[% username(IS.people) %]</a> [% date.format(IS.time, '%B %d, %Y, %I:%M %P','en_GB') %]</span>
+    </div>
+      [% END %]
+    </div>
+     look for this sign<a   tip="report a problem" class="tip-simple feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue','main') %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+     <div class="older-news">Read more on <a href="[% c.uri_for('/tools/issues') %]">The WormBase Issue Archive</a>&nbsp;&raquo;</div>
+  

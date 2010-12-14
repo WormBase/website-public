@@ -44,9 +44,9 @@ function search() {
 }
 
 function search_change(new_search) {
+  if((new_search == "home") || (new_search == "me")){ new_search = "gene"; }
   $jq("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
   cur_search_type = new_search;
   $jq("#searchForm ul.dropdown li#" + new_search).addClass("selected");
-
   
 }
