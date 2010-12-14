@@ -497,7 +497,7 @@ sub genomic_picture {
     my $position = $self->hunter_url($segment);
     my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
     my $gbrowse_img = "$species/?name=$position;$type";
-    my $id = "name=$position;source=$species";
+    my $id = "$species/?name=$position";
     my $data = { description => 'The Inline Image of the sequence',
 		 data        => {  class => 'genomic_location',
 				   label => $gbrowse_img,

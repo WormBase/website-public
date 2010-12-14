@@ -31,6 +31,11 @@ has 'pre_compile' => (
     is => 'ro',
     );
 
+sub mysql_dsn {
+    my $self    = shift;
+    my $source = shift;
+    return $self->dsn->{"mysql_".$source}; 
+}
 
 sub gff_dsn {
     my $self    = shift;

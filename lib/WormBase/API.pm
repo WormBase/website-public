@@ -123,7 +123,7 @@ sub _build__services {
       foreach my $sp (@species) {
 	  my $new = $class->new({	conf => $self->database->{$dbn},
 					log      => $self->log,
-					species	 => $sp,
+					source	 => $sp,
 					symbolic_name => $dbn,
 					path => $self->database->{tmp},
 				      });

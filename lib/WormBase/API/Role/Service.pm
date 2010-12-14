@@ -5,7 +5,7 @@ use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
 use File::Path 'mkpath';
 
-use constant INITIAL_DELAY => 600;
+ 
 
 # Every service should provide a:
 requires 'dbh';    # a database handel for the service
@@ -83,7 +83,7 @@ has 'pass' => (
     isa => 'Str',
     );
 
-has 'species' => (
+has 'source' => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
@@ -94,16 +94,16 @@ has 'species' => (
 around 'dbh' => sub {
     my $orig = shift;
     my $self = shift;
-    my $species = $self->species;
+    my $source = $self->source;
     my $dbh = $self->$orig;
     
 # Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
   #  if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
     if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh)) {  
-#       $self->log->debug( $self->symbolic_name." dbh for species $species exists and is alive!");
+#       $self->log->debug( $self->symbolic_name." dbh for source $source exists and is alive!");
       return $dbh;
     } 
-    $self->log->debug( $self->symbolic_name." dbh for species $species doesn't exist or is not alive; trying to connect");
+    $self->log->debug( $self->symbolic_name." dbh for source $source doesn't exist or is not alive; trying to connect");
     undef $dbh; #release the current connection if exists
     return $self->reconnect();
      
@@ -143,7 +143,7 @@ sub select_host {
     my @live_hosts;
     foreach my $host ( @{$self->hosts} ) {
 	if( my $pack = $dbfile->{$host}) {  
-	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
+	  if( (time() - unpack('L',$pack)) >= $self->conf->{delay} ) {
 		  undef $dbfile->{$host};
 	  }
 	  else {next;}

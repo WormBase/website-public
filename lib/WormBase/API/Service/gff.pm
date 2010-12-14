@@ -40,7 +40,7 @@ sub connect {
      
     return Bio::DB::GFF->new( -user => $self->user,
 			      -pass => $self->pass,
-			      -dsn => "dbi:mysql:database=".$self->species.";host=" . $self->host,
+			      -dsn => "dbi:mysql:database=".$self->source.";host=" . $self->host,
     );
 }
 
