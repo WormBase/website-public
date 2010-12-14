@@ -113,37 +113,43 @@ $jq(function() {
     var $sidebar   = $jq("#navigation"),
         $window    = $jq(window),
         offset     = 0,
+        loadcount  = 0,
         at_default = -45;
 
     $window.scroll(function() {
-      if(!offset){offset = $sidebar.offset().top;}
+      if($sidebar.offset()){
+        if(!offset){offset = $sidebar.offset().top;}
 
-      var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
-      if( bottomPos < at_default )
-          bottomPos = at_default;
-      var objBiggerThanWindow = $sidebar.outerHeight() < $window.height();
-      if (objBiggerThanWindow){
-        if ($window.scrollTop() > offset) {
-            var newpos = $window.scrollTop() - offset + 10 + at_default;
-            if (newpos > bottomPos)
-                newpos = bottomPos;
-                $sidebar.stop().css(
-                'margin-top', newpos
-            );
-        } else {
-            $sidebar.stop().css(
-                'margin-top', at_default
-            );
+        var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
+        if( bottomPos < at_default )
+            bottomPos = at_default;
+        var objBiggerThanWindow = $sidebar.outerHeight() < $window.height();
+        if (objBiggerThanWindow){
+          if ($window.scrollTop() > offset) {
+              var newpos = $window.scrollTop() - offset + 10 + at_default;
+              if (newpos > bottomPos)
+                  newpos = bottomPos;
+                  $sidebar.stop().css(
+                  'margin-top', newpos
+              );
+          } else {
+              $sidebar.stop().css(
+                  'margin-top', at_default
+              );
+          }
         }
-      }
-      var results = $jq("#results");
-      if(results.offset()){
+      } 
+      var results    = $jq("#results"); //load inside so we can catch the results loaded by ajax calls
+      if(results.offset() && loadcount < 2){
+
         var rHeight = results.height() + results.offset().top;
         var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
-        if(rBottomPos < 300) {
+        if(rBottomPos < 400) {
           results.children(".load-results").trigger('click');
+          loadcount++;
         }
       }
+
     });
 
 });

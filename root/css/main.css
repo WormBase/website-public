@@ -704,7 +704,7 @@ div.widget-section-header {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-/*   clear:both; */
+  clear:both;
   line-height:1.2em;
   padding:0.2em;
   height:1%;
