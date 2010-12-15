@@ -1,0 +1,265 @@
+<h1>Genetic Nomenclature for <span class="species">Caenorhabditis elegans</span></h1>
+
+<p>Genetic nomenclature for <span class="species">Caenorhabditis elegans</span>
+is supervised by <a href="http://wormbase.org/">WormBase</a> in collaboration 
+with the <a href="http://www.cbs.umn.edu/CGC/">
+<span class="species">Caenorhabditis</span> Genetics Center (CGC)</a>.
+</p>
+
+<h2> How to Register a New Gene Class or Gene Name</h2>
+
+<p>
+Investigators wishing to register new gene names for 
+<span class="species">C. elegans</span> should note the summary guidelines 
+below and apply online via <a href="http://minerva.caltech.edu/~azurebrd/cgi-bin/forms/gene_name.cgi">WormBase</a> 
+or by email application to <span class="email">genenames.org</span>
+</p>
+
+<h2> How to Register a New Laboratory and Receive Lab, Strain and Allele designations  </h2>
+
+<p>Specific identifying codes (CGC designations) are assigned to each laboratory engaged in dedicated long-term genetic research on <span class="species">C. elegans</span>. Each such laboratory is assigned a lab/strain code, for naming strains, and an allele code, for naming mutations and transgenes. These codes are listed at the <a href="http://biosci.umn.edu/CGC/nomenclature/code.html">CGC</a> and on the <a href="http://www.wormbase.org/wiki/index.php/Nomenclature">WormBase wiki</a>. </p>
+
+<p>Investigators requiring new CGC designations should apply to <span class="email">jonathan.hodgkin@bioch.ox.ac.uk</span>
+</p>
+
+<h1> Summary Guidelines for Proposing New Gene Names</h1>
+
+<ul>
+<li>
+Gene names must conform to the standard format of 3 or 4 letters, hyphen, number.
+</li>
+
+<li>
+Genes can be named on the basis of a mutant phenotype or on the basis of the predicted protein product or RNA product.
+</li>
+
+<li>If a new gene clearly belongs in an existing gene class (of which more than 2000 now exist), then a new gene number will be assigned after consultation with the laboratory responsible for the gene class in question. Gene classes and the corresponding assigning laboratory for each gene class are listed at the <a href="http://biosci.umn.edu/CGC/nomenclature/genes.html">CGC</a> and on the <a href="http://www.wormbase.org/wiki/index.php/Nomenclature">WormBase wiki</a>. 
+</li>
+
+<li>If the establishment of a new gene class name seems more appropriate, then an approval for this gene name must be obtained, preferably online via <a href="http://minerva.caltech.edu/~azurebrd/cgi-bin/forms/gene_name.cgi">WormBase</a> or by email application to <span class="email">genenames.org</span>.
+</li>
+
+<li>Gene names based on homology with a previously named gene in another well-studied organism, such as ''Saccharomyces cerevisiae'' or ''Mus musculus'', are often appropriate and desirable, especially where there is convincing orthology between genes.
+</li>
+
+<li>Gene names and gene numbering schemes that conform to established nomenclature proposals for particular protein classes are desirable.
+</li>
+
+<li>Gene names that are memorable, informative and simply explained are encouraged.</li>
+
+<li>Gene names based solely on RNAi phenotypes or high-throughput analysis of gene expression or protein interactions are discouraged.</li>
+
+<li>Gene names including <em>c</em> (for <em>caenorhabditis</em>), <em>ce</em> (for <span class="species">C. elegans</span>), <em>n</em> (for nematode) or <em>w</em> (for worm) are discouraged. <span class="species">C. elegans</span> as the organism of origin can be specified with a prefix (<em>Cel</em>-) if desired. 
+</li>
+
+<li>New gene name classes can be assigned in confidence, prior to formal publication or disclosure in an abstract.</li>
+</ul>
+</p>
+
+<h1>Standard Genetic Nomenclature Recommendations</h1>
+
+<p>
+This summary is based on the original proposals for 
+<span class="species">C. elegans</span> nomenclature (Horvitz <em>et al</em>., 1979 <em>Mol. Gen. Genet</em>. <b>175</b>: 129-133), plus additional recommendations that have been distributed in <em>The Worm Breeder's Gazette</em> or posted on <a href="http://www.wormbase.org">WormBase</a>.
+</p>
+
+<h2>Genetic Loci</h2>
+
+<ul>
+<li>
+Genes are given names consisting of three or four italicized letters, 
+a hyphen, and an italisized Arabic number, e.g., <em>dpy-5</em> or <em>let-37</em> or <em>mlc-3</em>.
+The gene name may be followed by an italicized Roman numeral, to indicate the linkage group on which
+the gene maps, e.g., <em>dpy-5 I</em>< or <em>let-37 X</em> or <em>mlc-3 III</em>.
+
+<li>For genes defined by mutation, the gene names refer to the mutant phenotype originally detected or most easily scored e.g.
+<ul>
+<li>dumpy (<em>d</em>um<em>py</em>) in the case of <em>dpy-5</em>
+<li>lethal (<em>let</em>hal) in the case of <em>let-37</em>.
+</ul>
+
+<li>For genes defined on the basis of sequence similarity or sequence features,
+the gene name refers to the predicted protein product or RNA product e.g.
+<ul>
+<li><em>my</em>osin <em>l</em>ight chain in the case of <em>mlc-3</em>,
+<li><em>super</em>o<em>xide</em> <em>d</em>ismutase in the case of <em>sod-1</em>,
+<li><em>NPHP</em> (human kidney disease nephronophthisis gene) in the case of <em>nph-4</em>.
+<li><em>r</em>ibosomal <em>RN</em>A in the case of <em>rrn-1</em>.
+</ul>
+
+<li>Genes with related properties are usually given the same three-letter name
+and different numbers. For example, there are three known myosin light chain genes: <em>mlc-1, mlc-2, mlc-3</em>,
+and more than twenty different dumpy genes: <em>dpy-1, dpy-2, dpy-3</em>, and so on.
+
+<li>Genes can be given names corresponding to homologous named genes in other standard genetic organisms. e.g.
+<ul>
+<li><em>rnt-1</em> is the <span class="species">C. elegans</span> ortholog of the Drosophila gene <em>runt</em>.
+<li><em>wrn-1</em> is the <span class="species">C. elegans</span> ortholog of the human gene WRN1, responsible for Werner's syndrome.
+</ul>
+
+<li>Gene names that are memorable, informative and simply explained are encouraged.
+
+<li>Genes in a paralogous set related to a single named gene in another organism are
+ sometimes given the same gene name and number, followed by a distinguishing decimal. 
+e.g. four <span class="species">C. elegans</span> genes homologous to <em>SIR2</em> in <span class="species">S. cerevisiae</span>
+have been given the names <em>sir-2.1, sir-2.2, sir-2.3, sir-2.4</em>.
+<li>Pseudogenes, for which there is good evidence that no functional product is ever
+generated, can be indicated by adding the optional italic suffix <em>ps</em> to the gene name, as in <em>msp-48ps</em>.
+<li>Gene names based solely on RNAi phenotypes or high-throughput analysis of gene expression or protein interaction are discouraged.
+<li>Gene names including <em>c</em> (for <em>Caenorhabditis</em>), <em>ce</em> (for <span class="species">C. elegans</span>), <em>n</em> (for nematode) or <em>w</em> (for worm) are discouraged. Instead, an optional prefix <em>Cel</em>- can be added to indicate the species origin.
+<li>A limited number of genes have been given temporary <em>tag</em>- names (<em>tag</em> = 
+<em>t</em>emporarily <em>a</em>ssigned <em>g</em>ene name). These are genes for which 
+deletion alleles have been generated by reverse genetic methods, but which have not
+yet been given more informative names based on sequence or mutant phenotype.
+When sufficient information becomes available, each <em>tag</em> name will be
+replaced by an appropriate standard 3-letter or 4-letter name.
+<li>A limited number of genes, named on the basis of sequence homology,
+have been given non-standard names ending with alphanumeric identifiers
+rather than with simple numbers, in order to make these names closer to
+the generally accepted names used in other organisms. e.g. <em>eif-3.B,
+eif-3.C</em> encode proteins of the conserved translation factor eIF3.
+</ul>
+
+<h3>Gene Name Conflicts</h3>
+
+<p>
+Gene names that have been established in the published literature
+and databases should preferably not be changed. In cases where a
+gene has received multiple names, one name will be adopted as the 
+main name for the gene. Other names will continue to be listed in 
+databases. Whenever possible, name changes or the adoption of a 
+single main name should be made with the approval of all laboratories 
+concerned.
+</p>
+
+<h3>Homologous Genes</h3>
+
+<p>
+If a homolog of a known <span class="species">C. elegans</span> gene
+is identified in a related species such as <span class="species">Caenorhabditis briggsae</span>,
+this can be given the same gene name, preceded by three italic letters
+referring to the species, and a hyphen. For example, <em>Cbr-tra-1</em>
+is the name for the <em>C. briggsae</em> homolog of the 
+<span class="species">C. elegans</span> gene <em>tra-1</em>. The 
+<span class="species">C. elegans</span> homolog of a gene identified
+and named in another organism can be distinguished by the same convention,
+using "Cel-" as an optional prefix. For example, <em>Cel-snt-1</em> 
+defines the <span class="species">C. elegans</span> synaptotagmin gene.
+</p>
+
+
+<h3>Alleles and Mutations</h3>
+
+<ul>
+<li>
+Every mutation has a unique designation. Mutations are given names
+consisting of one or two italicized letters followed by an italicized
+Arabic number, e.g., ''e61'' or ''mn138'' or ''st5''. The letter prefix refers to the laboratory of isolation, as registered with the <a href="http://www.cbs.umn.edu/CGC/nomenclature/labhead.html">CGC</a>. There are currently more than 500 registered laboratories. For example, ''e'' refers (originally) to the MRC Laboratory of Molecular Biology (Cambridge, U.K.), (currently) to the laboratory of J. Hodgkin (University of Oxford), and ''st'' refers to the laboratory of R.H. Waterston (originally at Washington University, St. Louis, MO, currently at the University of Washington, Seattle).</p>¶
+<p>*When gene and mutation names are used together, the mutation name is included in parentheses after the gene name, e.g., ''dpy-5(e61), let-37(mn138)''. When unambiguous (e.g., if only one mutation is known for a given gene or if all work on a gene described in a publication used a single mutation cited in a Methods section), gene names are used in preference to mutation names (''let-37'' rather than ''mn138'' or ''let-37(mn138'')).</p>¶
+<p>*Optional suffixes indicating characteristics of a mutation can follow a mutation name. These are usually two-letter nonitalicized letters, e.g., ''hc17''ts, where ts stands for temperature-sensitive, or ''pk15''te, where te stands for transposon-excision.</p>¶
+<p>*Mutations created by ''in vitro'' mutagenesis should receive standard allele names. For cases where a pre-existing genomic mutation is re-created by in vitro mutagenesis, it is still desirable to give the new mutation a new name.</p>¶
+<p>*The wild-type allele of a gene is defined as that present in the Bristol N2 strain, stored frozen at the CGC and other locations. Wild-type alleles can be designated by a plus sign immediately after the gene name, ''dpy-5+'', or, more commonly, by including the plus sign in parentheses, ''dpy-5(+)''.¶
+</p>¶
+<h3> Gene Knockouts  </h3>¶
+¶
+<p>*Most gene knockouts constructed to date are small deletions (<5 kb) generated by transposon excision or by chemical mutagenesis. These are named as alleles, sometimes with the optional suffix te (transposon-excision) or ko (knockout). Example: ''zyx-1(gk190)'' is a 777 bp deletion in the ''zyx-1'' gene.</p>¶
+<p>*Some knockouts have been made by insertion of a selectable marker, such as ''unc-119(+)''. These are named as alleles, with an optional descriptor defining the selected marker following the unique allele name, and preceded by a double colon. Example: ''jf61 = zhp-3(jf61::unc-119+)''</p>¶
+<p>*Some of the small deletions generated by reverse genetic methods may remove parts of two adjacent genes. If only two genes appear to be affected, then the deletion is given a single allele name, but the genotype is written with both gene names coupled with an ampersand (&amp;). Example: allele ''ok615'' is a 1422 bp deletion of two adjacent genes, so it can be written ''rad-54&tag-157(ok615)''.</p>¶
+<p>*Deletions that affect more than two genes are named as Deficiencies ''(Df)'', as described in the Chromosomal Aberrations section.¶
+</p>¶
+<h3> Modifers: Suppressors, Revertants and Enhancers  </h3>¶
+¶
+<p>*There is no special nomenclature for modifier mutations. Many extragenic suppressor loci are called ''sup'' (40 ''sup'' loci defined so far, with a wide variety of properties and mechanisms). An increasing number of more specific modifier gene classes have been established, such as ''smu'' (suppressor of ''mec'' and ''unc''), and ''smg'' (''s''uppressor with ''m''orphogenetic effect on ''g''enitalia) and ''sel'' (''s''uppressor/''e''nhancer of ''l''in-12).</p>¶
+<p>*Intragenic suppressors or modifiers are indicated by adding a second mutation name within parentheses; for example, ''unc-17(e245e2608)'' is an intragenic partial revertant of ''unc-17(e245)''.</p>¶
+<p>*Mutations known to be chromosomal rearrangements, rather than intragenic lesions, are named differently, as described in the Chromosomal Aberrations section.¶
+</p>¶
+<h3> Chromosomal Aberrations  </h3>¶
+¶
+<p>*Duplications (''Dp'') deficiencies (''Df''), inversions (''In'') and translocations (''T'') are known in <span class="species">C. elegans</span> cytogenetics; these are given italicized names consisting of the laboratory mutation prefix, the relevant abbreviation, and a number, optionally followed by the affected linkage groups in parentheses (e.g., ''eT1(III;V), mnDp5(X;f)'', where ''f'' indicates a free duplication). Chromosomal balancers of unknown structure can be designated using the abbreviation ''C'', e.g., ''mnC1(II)''.¶
+</p>¶
+<h2> Transposons and Transposon Insertions  </h2>¶
+¶
+<p>*<span class="species">C. elegans</span> transposons are called Tc1, Tc2, etc., where each number represents a different family. Transposon names are not italicized except when included in a genotype. Different races of <span class="species">C. elegans</span> have different distributions of these transposons, which result in polymorphic differences from the reference wild-type strain Bristol N2. These natural differences between races are given polymorphism names, as described below.</p>¶
+<p>*The endogenous transposons of <span class="species">C. elegans</span> can be mobilized to generate new insertional mutations. In addition, foreign transposons such as Mos1 can be introduced by transformation, and then mobilized to create new insertions. All these newly generated transposon insertions can be named as simple mutations, with an optional suffix indicating the nature of the transposon. They are treated as alleles of named genes if they are located within the boundaries of a gene. Example: ''r293'' is a Tc1 insertion in the gene ''unc-54''. An optional descriptor can also be added after a double colon to indicate the nature of the insertion. Example: ''unc-54(r293::Tc1)''.</p>¶
+<p>*Note that such insertions may often be silent in terms of gene activity, for example if an insertion occurs within an intron and can be spliced out.</p>¶
+<p>*Newly generated transposon insertions, especially those located in apparently intergenic regions, may also be given ''Ti'' (transposon insertion) names. These consist of a prefix identifying the laboratory of origin, the two letters ''Ti'', and a number, all italicized. Example: ''eTi13'' is an insertion of a Mos transposon into an intergenic region on ''LGIII''.¶
+</p>¶
+<h2> RFLPs and SNPs  </h2>¶
+¶
+<p>*Polymorphic sites, which are mostly '''RFLPs''' (restriction fragment length polymorphisms) or '''SNPs''' (single nucleotide polymorphisms), are designated by an italic letter ''P'' and an italic number, preceded by the allele prefix for the laboratory responsible for identifying the site. <br></p>¶
+<p>Examples: ''stP17'' and ''stP196'' are RFLPs identified in the laboratory of R. H. Waterston, ''amP9'' and ''amP15'' are SNPs identified in the laboratory of K. Kornfeld.¶
+</p>¶
+<h2> Natural Copy Number Variants  </h2>¶
+¶
+<p>Dozens of independent natural isolates of <span class="species">C. elegans</span> have been recovered, from multiple locations around the world. The genomes of some of these isolates contain large (>10 kb) deletions, duplications or insertions, relative to the reference wildtype strain, Bristol N2. Deletions are named with the prefix ''niDf'' (natural isolate deficiency) followed by a number. Duplications and insertions are named with the prefix ''niDp'' (natural isolate duplication or insertion), followed by a number. Numbers for ''niDf'' and ''niDp'' variants are assigned by application to: <span class="email">genenames.org</span>¶
+</p>¶
+<h2> Introgressed regions in near-isogenic lines (aka congenic lines)  </h2>¶
+¶
+<p>Genetic regions that have been introgressed from one natural isolate of <span class="species">C. elegans</span> onto the background of a different natural isolate are named in a manner similar to that used for deficiencies (''Df'') and duplications (''Dp''). Each Introgressed Region is given an italicized name consisting of the relevant laboratory mutation prefix, the letters ''IR'', and a number. Thus, a region from the X chromosome of Hawaiian strain CB4856 crossed onto a Bristol N2 background, and created in the Kruglyak lab (allele code ''qq'') has been given the name ''qqIR1''. Additional information about genetic map location and strain origin can be provided in an optional parenthesis. So this example could be more fully written as ''qqIR1(X, CB4856)'', with the implicit assumption that the strain background is Bristol N2. The strain background and the direction of introgression can also be specified, using the symbol &gt;, with this example being written ''qqR1(X, CB4856&gt;N2)''. ¶
+</p>¶
+<h2> Transgenes  </h2>¶
+¶
+<p>*Transformation of <span class="species">C. elegans</span> with exogenous DNA by microinjection usually leads to the formation of a transmissible extrachromosomal array containing many copies of the introduced DNA. Sometimes chromosomal integration of the introduced DNA can occur, or an existing extrachromosomal array can be integrated after irradiation of a transgenic line.</p>¶
+<p>*Extrachromosomal arrays are given italicized names consisting of the laboratory allele prefix, the two letters ''Ex'', and a number.</p>¶
+<p>*Integrated transgenes are designated by italicized names consisting of the laboratory allele prefix, the two letters ''Is'', and a number.</p>¶
+<p>*Both ''Ex'' and ''Is'' can optionally be followed by genotypic or molecular information describing the transgene, in square brackets. For example, ''eEx3'' or ''eIs2'' or ''stEx5<a href="sup-7(st5)">unc-22(+)</a>''.</p>¶
+<p>*Gene fusions incorporated in transgenes that consist of a <span class="species">C. elegans</span> gene or part thereof fused to a reporter such as lacZ or GFP are indicated by the C''. elegans'' gene name followed by two colons and the reporter, all italicized: ''pes-1::lacZ, mab-9::GFP''. No specific recommendations have been made for distinguishing between transcriptional and translational fusions.¶
+</p>¶
+<h2> Genotypes  </h2>¶
+¶
+<p><strong>The genotype of an animal is specified by listing all known differences between its genotype and that of wild type, which is defined by convention as Bristol N2. Each such difference is assigned a unique name. The currently recognized types of difference, described at greater length elsewhere in these guidelines, are: ¶
+</strong><strong>Simple mutations.Example: ''e2123''. ¶
+</strong><strong>New transposon insertions. Example: ''eTi13.'' ¶
+</strong><strong>Sequence polymorphisms. Example: ''stP17''. ¶
+</strong><strong>Transgenes (extrachromosomal arrays). Example: ''stEx5''. ¶
+</strong><strong>Transgenes (chromosomally inserted). Example: ''mdIs18''. ¶
+</strong>*Chromosomal aberrations (duplications, deficiencies, inversions, translocations, and crossover suppressors). Examples: ''nDp17, uaDf5, hIn1, eT1, mnC1''.</p>¶
+<p>*Where necessary, wild type sequence can be indicated using the symbol +.</p>¶
+<p>*Because every genetic "feature" (i.e., difference from Bristol N2) has a unique name, an animal's genotype is fully specified by listing all the named features that it carries. Example: ''e2123; mdIs18''.</p>¶
+<p>For clarity and convenience, additional information about genes, chromosomes, transgene contents, etc can be added as described elsewhere in this document, to produce a more informative genotype. Example: ''pha-1(e2123ts) III; mdIs18<a href="pha-1(+)">unc-17::GFP</a>'' </p>¶
+<p>*Mutants carrying more than one mutation are designated by sequentially listing mutant genes or mutations according to the left-right (= up-down) order on the genetic map. Different linkage groups are separated by a semicolon and given in the order ''I, II, III, IV, V, X, f, M. I-V'' are the five autosomes, ''X'' is the ''X'' chromosome, ''f'' refers to free duplications or chromosomal fragments, and ''M'' is the mitochondrial genome. For example: ''dpy-5(e61) I; bli-2(e768) II; unc-32(e189) III.''</p>¶
+<p>*Heterozygotes, with allelic differences between chromosomes, are designated by separating mutations on the two homologous chromosomes with a slash. Where unambiguous, wild-type alleles can be designated by a plus sign alone, or even omitted. For example, ''dpy-5(e61) unc-13(+)/dpy-5(+) unc-13(e51) I'' can also be written ''dpy-5 +/+ unc-13 or dpy-5/unc-13.''¶
+</p>¶
+<h2> Mitochondrial Genome  </h2>¶
+¶
+<p>The mitochondrial genotype of a worm can be expressed using the standard nomenclature, using ''M ''as the abbreviation for the mitochondrial linkage group. The mitochondrial genotype is written as the last element in the genotype, following the nuclear genotype. Heteroplasmic combinations, where mitochondria of different genotypes co-exist in the same cytoplasm, can be expressed using a double forward slash, //. For example: ''uaDf5//+''. ¶
+</p>¶
+<h2> DNA sequences  </h2>¶
+¶
+<p>*There are no specific recommendations for designating cloned sequences that are not similar to known genes. Most genomic clones have been provided by the <span class="species">C. elegans</span> mapping/sequencing consortium (based at the <a href="http://wiki.wormbase.org/index.php?title=Cosmids/YACs">Wellcome Trust Sanger Institute, Cambridge, UK</a>, and the <a href="http://genome.wustl.edu/">Genome Sequencing Center, St. Louis, USA)</a>. Cosmid clones generated by the consortium are named on thee below), a # symbol and an isolation number, e.g., MT#JAL6.</p>¶
+<p>*Sequences that are predicted to be genes from sequence data alone are initially named by the consortium on the basis of the sequenced cosmid, plus a number. For example, the genes predicted for the cosmid T05G3 are called T05G3.1, T05G3.2, etc. (numbered in arbitrary order of definition). Such names can be superseded by standard 3-letter names when this becomes appropriate. Thus, R13F6.3 has been given the name srg-12 (for ''s''erpentine ''r''eceptor, class ''g''amma).</p>¶
+<p>*EST (Expressed Sequence Tag) clones have received names with prefixes such as cm and yk.¶
+</p>¶
+<h2> Proteins  </h2>¶
+¶
+<p>*The protein product of a gene can be referred to by the relevant gene name, written in non-italic capitals, e.g., the protein encoded by ''unc-13'' can be called UNC-13. Where more than one protein product is predicted for a gene (usually as a result of alternative message processing), the different proteins are distinguished by additional capital letters, e.g., TRA-1A, TRA-1B.</p>¶
+<p>*Mutant protein products can be named by the missense change, for example a mutant TRA-1A protein with a Pro to Leu change at codon 79 would be written: TRA-1A (P79L).¶
+</p>¶
+<h2> RNA Molecules  </h2>¶
+¶
+<p>*Messenger RNA species can be written by using the protein product as a descriptor, for example TRA-1A mRNA, TRA-1B mRNA, in order to allow distinction between different splice variants.</p>¶
+<p>*Non-coding RNA species can be written using the gene name as a descriptor, for example ''lin-4'' RNA. Small RNA species derived from ''mir'' genes (micro-RNAs) can be written miR-, followed by a number corresponding to the ''mir'' gene. Example: miR-2 for the RNA derived from ''mir-2''.¶
+</p>¶
+<h2> Phenotypes  </h2>¶
+¶
+<p>*Phenotypic characteristics can be described in words, e.g., dumpy animals or uncoordinated animals. If more convenient, a nonitalicized 3-letter or 4-letter abbreviation, which usually corresponds to a gene name, may be used. The first letter of a phenotypic abbreviation is capitalized, e.g., Unc for uncoordinated, Dpy for dumpy. If necessary to distinguish among related but distinguishable phenotypes, the relevant gene number can be added, e.g., Unc-4 and Unc-13 to differentiate the distinct phenotypes produced by mutations in the two genes ''unc-4'' and ''unc-13''. Abbreviations that do not correspond to gene names can also be used, e.g., Muv for multiple vulval development, and Daf-c for dauer-formation-constitutive. WormBase maintains a standard set of defined phenotype descriptors (the <a href="http://wormbase.org/db/misc/phenotype">WormBase Phenotype Ontology</a>).</p>¶
+<p>*A common and accepted convention, when comparing a mutant with the wild-type, is to use the prefix non- to refer to the wild-type phenotypes, for example, non-Lin (= wild type cell lineage) or Dpy non-Unc (= wild type with respect to movement, but dumpy with respect to body shape).¶
+</p>¶
+<h2> RNAi Phenotypes  </h2>¶
+¶
+<p>*Animals in which an endogenous gene has been down-regulated by RNA interference (RNAi), after exposure to double-stranded RNA corresponding to that gene, can be referred to as mutants, using italicized ''RNAi'' as the mutation name. Example: ''mog-4(RNAi)'', C08F8.8''(RNAi)''</p>¶
+<p>*Phenotypes induced by RNAi can be named using conventional mutant phenotype descriptors, such as Unc, Muv, Fem. For high-throughput RNAi screens, which may detect only conspicuous phenotypes, the more general phenotype descriptors could be used (see the <span style="text-decoration: underline;"></span><a href="http://wormbase.org/db/misc/phenotype"> Phenotype Ontology</a>).¶
+</p>¶
+<h2> Strains  </h2>¶
+¶
+<p>*A strain is a set of individuals of a particular genotype with the capacity to produce more individuals of the same genotype. Strains are given nonitalicized names consisting of two or three uppercase letters followed by a number. The strain letter prefixes refer to the laboratory of origin and are distinct from the mutation letter prefixes. Examples: CB1833 is a strain of genotype ''dpy-5(e61) unc-13(e51)'', originally constructed by S. Brenner at the MRC Laboratory of Molecular Biology (strain prefix CB, allele prefix ''e''), and MT688 is a strain of genotype ''unc-32(e189) +/+ lin-12(n137) III; him-5(e1467) V'', constructed in the laboratory of H.R. Horvitz at M.I.T. (strain prefix MT, allele prefix ''n'').</p>¶
+<p>*Strain prefixes are listed at the <a href="http://biosci.umn.edu/CGC/nomenclature/code.html">CGC</a>.</p>¶
+<p>*Strains can and should be preserved as frozen stocks at -70C or ideally in liquid nitrogen, in order to ensure long-term maintenance and to avoid drift or accumulation of modifier mutations.¶
+</p>¶
+<h2> Sources  </h2>¶
+¶
+<p>*All genetic data for <span class="species">C. elegans</span> are summarized in WormBase</p>¶
+<p>(Bieri et al. 2007, Nucleic Acids Res. 35 Database Issue: D506-510; Harris et al. 2004, Nucleic Acids Res. 32 Database issue: D411-417). </p>¶
+<p>*Queries on recommended nomenclature for <span class="species">C. elegans</span> should be addressed to: <span class="email">genenames.org</span>or to the curator for <span class="species">C. elegans</span> Genetic Mapping and Genetic Nomenclature</p>¶
+<p>(Dr Jonathan Hodgkin, Genetics Unit, Department of Biochemistry, University of Oxford, UK): <span class="email">jonathan.hodgkin@bioch.ox.ac.uk</span></p>¶
+<p><a href="[Category:User">Guide</a>]</p>
