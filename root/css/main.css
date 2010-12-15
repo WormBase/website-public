@@ -455,7 +455,8 @@ div#footer a{
 
 #footer, #spacer {
     clear:both;
-    height: 7.2em;
+/*    height: 7.2em; */
+    height: 17.0em;
     margin-top:1em;
 }
 
@@ -473,6 +474,47 @@ div#footer a{
     overflow:hidden;
     margin-right: 1em;
 }
+
+
+#footer #footer-nav {
+    margin:0 auto;
+    height:2em;
+    padding-bottom:5em;
+/*    text-align:center;  */
+}
+
+
+#footer .footer-column {
+        float:left; 
+        display: inline-block;
+	border:1px solid black;
+        padding:5px;
+        width:20%;
+}
+
+.footer-column .footer-title {
+/*    color: #333333; */
+/*    display: block; */
+    font-size: 110%;
+    font-weight: bold;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+
+#footer ul,li {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+     
+}
+
+
+#footer li a {
+    display:block;
+}
+
+
 
 /*********************************
 
@@ -1283,3 +1325,15 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
  
+
+
+
+
+
+
+
+
+
+/* = Generic styling added by TH; possibly redundant  ========================== */
+
+.email {   }   /* email address formatting */
