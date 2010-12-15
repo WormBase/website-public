@@ -7,9 +7,6 @@
 %]
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]	
-	<script type="text/javascript" >
-	$jq(".lightbox").colorbox();
-	</script> 
 	<table width="60%">			      
 		    <tr>
 			    <th>
@@ -311,6 +308,7 @@
                 <header> 
                 <div id="widget-[% type %]" class="ui-corner-top widget-header">
                     <div class="module-close" wname="[% id %]" title="close"></div>
+                    <div class="module-max" wname="[% id %]" title="maximize"></div>
                    
                     <h3><div class="module-min [% id %]" wname="[% id %]"></div><span>[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
