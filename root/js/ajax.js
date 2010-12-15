@@ -123,7 +123,9 @@
 
     $jq(".reload").live('click', function() {
       var widget_name = $jq(this).attr("wname");
-      ajaxGet($jq("div#" + widget_name + "-content"), "/rest/widget/me/" + widget_name);
+      var nav = $jq("#nav-" + widget_name);
+      var url     = nav.attr("href");
+      ajaxGet($jq("div#" + widget_name + "-content"), url);
     });
 
       $jq(".bench-update").live('click',function() {
@@ -211,6 +213,22 @@
     return false;
   });
 
+  $jq(".module-max").live('click', function() {
+    var module = $jq(this).parents(".widget-container")
+    if(module.find(".cboxElement").trigger('click').size() < 1){
+      var clone = module.clone();
+      clone.find(".module-max").remove();
+      clone.find(".module-close").remove();
+      clone.find(".module-min").remove();
+      clone.find("#widget-footer").remove();
+      clone.find("h3").children(".ui-icon").remove();
+      clone.css("min-width", "400px");
+      var cbox = $jq('<a class="cboxElement" href="#"></a>');
+      cbox.appendTo(module).hide();
+      cbox.colorbox({html:clone, title:"Note: not all effects are supported while widget is maximized", maxWidth:"100%"}).trigger('click');
+    }
+  });
+
   // used in sidebar view, to open and close widgets when selected
   $jq(".module-load, .module-close").live('open',function() {
     var widget_name = $jq(this).attr("wname");
@@ -259,6 +277,7 @@
     function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
+      widget_container.find("div.module-max").addClass("ui-icon ui-icon-arrow-4-diag").hide();
       widget_container.find("#widget-footer").hide();
       widget_container.find(".widget-header").children("h3").children("span.hide").hide();
 
