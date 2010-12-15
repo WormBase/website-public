@@ -9,12 +9,7 @@
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
   <div id="title">
-  <h1><a href="/" title="Go to WormBase Home">[% template.title or c.config.site_name %]</a></h1>
-      <p>  
-          [% # The current release of the software and its codename %]
-<!--          Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
-	  Database version [% constants.acedb_version %] ([% c.config.codename %])
-      </p>
+       <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
   </div>
 
 
@@ -24,6 +19,7 @@
       <li><a href="/[% title %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
           [% c.config.sections.$title.title %]</a>
           <ul class="dropdown">
+
         [% IF (title == 'species') %]
 	
 	[%# Force C. elegans to the top without having to hard-code it in configuration %]
