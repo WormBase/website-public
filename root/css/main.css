@@ -275,6 +275,7 @@ li div.widget-container {
     background-color:#FFFFFF; 
     position:relative;
     border:1px solid #999;
+
 }
 
 li.visible div.widget-container {
@@ -282,7 +283,7 @@ li.visible div.widget-container {
 }
 
 .widget-container:hover {
-    border:1px solid #888;
+/*     border:1px solid #888; */
     background:#FAFAFA;
 }
 
@@ -300,6 +301,8 @@ li.visible div.widget-container {
   float:left;
 }
 
+
+
 .widget-header {
     background: #C2D1DF;
 }
@@ -311,6 +314,12 @@ li.visible div.widget-container {
     height:1em;
     cursor:pointer;
 
+}
+
+.widget-header>div.ui-icon {
+  float:right;
+  margin:0.4em;
+  cursor:pointer;
 }
 
 .widget-header h3.minimized{
