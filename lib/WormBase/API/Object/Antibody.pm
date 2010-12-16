@@ -4,40 +4,11 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
+############
+## SUMMARY
+############
 
-#######
-
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-### mainly for text data; and single layer hash ###
-
-sub template_simple {
+sub summary {
 
 	my $self = shift;
     my $object = $self->object;
@@ -47,7 +18,7 @@ sub template_simple {
 
 	#### data pull and packaging
 
-	$data_pack = $object->Tag;
+	$data_pack = $object->Summary;
 
 	####
 	
@@ -57,12 +28,75 @@ sub template_simple {
 }
 
 
-########
+sub source {
 
-#####
-## SUMMARY
-#####
+	my $self = shift;
+    my $antibody = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
 
+	#### data pull and packaging
+
+	foreach my $location (sort {$a cmp $b } $antibody->Location) {
+	
+		my $rep;
+		my $rep_name;
+		
+		if ($location) {
+			
+			$rep = eval { $location->Representative->Standard_name};
+			$rep_name = eval { $rep->Standard_name};
+		}
+		
+		#my $add      = $location->Mail;
+		
+		push @data_pack, {
+		
+						'laboratory' => {
+						
+							'id' => "$location",
+ 							'label' => "$location",
+ 							'class' => 'Laboratory'
+							},
+					
+						'representative' => {
+						
+							'id' => "$rep",
+ 							'label' => "$rep_name",
+ 							'class' => 'Person'
+							}
+						};
+	}
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+sub antigen {
+
+	my $self = shift;
+    my $antibody = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	my ($type,$comment) = eval { $antibody->Antigen->row };
+  	$type =~ s/_/ /g;
+  	$data_pack = $type . (($comment) ? " ($comment)" : '') if ($type);
+	
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+	
 sub details {
 
 	my $self = shift;
@@ -95,31 +129,112 @@ sub details {
 	return \%data;
 }
 
-sub antigen {
+sub animal {
 
 	my $self = shift;
     my $antibody = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my $data_pack;
 
 	#### data pull and packaging
-
-	my ($antigen_type,$comment) = eval { $antibody->Antigen->row };
-	my $animal = $antibody->Animal;
 	
-	%data_pack = (
-				'antigen_type' => $antigen_type,
-				'comment' => $comment,
-				'animal' => $animal
-				);
+	my $animal = $antibody->Animal;
+	$data_pack = $animal;
 
 	####
-
-	$data{'data'} = \%data_pack;
+	
+	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+sub clonality {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Clonality;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub remark {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Remark;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub other_name {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Other_name;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub target {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $gene =	$object->Gene;
+	my $gene_name = $gene->Public_name;
+	
+	$data_pack = {
+	
+		'id' => "$gene",
+		'label' => "$gene_name",
+		'Class' => 'Gene'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
 
 ####
 ## EXPRESSION PATTERN
@@ -140,16 +255,18 @@ sub expression_pattern {
 	foreach my $expr_pattern (@expr_patterns) {
 	
 		my $date = $expr_pattern->Date || '';
-		my $author = $expr_pattern->Author || '';
-		my $ref    = $author ? "$author $date" : $expr_pattern;
+		my $author = $expr_pattern->Author || ''; ## data for link to be added(?)
 		my $pattern = $expr_pattern->Pattern || $expr_pattern->Subcellular_localization || $expr_pattern->Remark;
 	
 		$data_pack{$expr_pattern} = {
-									'ace_id' => $expr_pattern,
-									'class' => 'Expr_pattern',
+									'ep_info' => {
+										'id' => "$expr_pattern",
+										'class' => 'Expr_pattern',
+										'label' =>"$expr_pattern"
+										},
+ 									
 									'date' => $date,
 									'author' => $author,
-									'ref' => $ref,
 									'pattern' => $pattern
 									};
 	}
