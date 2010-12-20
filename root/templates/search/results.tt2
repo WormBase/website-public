@@ -48,11 +48,13 @@
 
       var div = $jq("<div></div>");
       setLoading(div);
+      $jq("#load-results").html("loading...");
         div.load(url, function(response, status, xhr) {
           begin = begin + 20;
           end = end +20;
           if(begin <= total){
             $jq("#load-results").addClass("load-results");
+            $jq("#load-results").html("view more");
           }else{
             $jq("#load-results").remove();
           }

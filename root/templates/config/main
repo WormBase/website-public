@@ -41,6 +41,8 @@
         IF (class == "author"); class = "person"; END;
         IF c.config.sections.species.$class.defined;
           c.uri_for('/species', class, id);
+        ELSIF (class == 'bench');
+          c.uri_for('/me', id);
         ELSE;
           c.uri_for('/resources', class, id);
         END;
