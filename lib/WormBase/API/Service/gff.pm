@@ -1,7 +1,7 @@
 package WormBase::API::Service::gff;
 
 use Moose;
-use Bio::DB::GFF ();
+use Bio::DB::GFF () ;
 
 has 'dbh' => (
     is        => 'rw',
@@ -15,8 +15,34 @@ has 'dbh' => (
 # }
     );
 
-
 with 'WormBase::API::Role::Service';
+
+has 'ace' => (
+    is        => 'rw',
+    isa       => 'Ace',
+);
+
+
+has 'adaptor' => (
+    is  => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	return $self->conf->{data_sources}->{$self->source}->{adaptor};
+    }
+);
+
+has 'aggregators' => (
+    is  => 'ro',
+    isa => 'ArrayRef[Str]',
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	return $self->conf->{data_sources}->{$self->source}->{aggregator};
+    }
+);
+
 
 sub BUILD {
     my $self = shift;
@@ -37,11 +63,16 @@ sub ping {
 
 sub connect {
     my $self = shift;
-     
-    return Bio::DB::GFF->new( -user => $self->user,
+  
+    my $db = Bio::DB::GFF->new( -user => $self->user,
 			      -pass => $self->pass,
 			      -dsn => "dbi:mysql:database=".$self->source.";host=" . $self->host,
+			      -adaptor     => $self->adaptor,
+			      -aggregators => $self->aggregators,
+				  $self->ace ? (-acedb=>$self->ace):()
     );
+    $db->freshen_ace if $db;
+    return $db;
 }
 
 

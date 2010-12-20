@@ -94,33 +94,7 @@ sub object {
 
 
  
-sub hunter_url {
-  my ($self,$ref,$start,$stop);
-
-  # can call with three args (ref,start,stop)
-  if (@_ == 4) {
-    ($self,$ref,$start,$stop) = @_;
-  }
-
-  # or with a sequence object
-  else {
-    my ($self,$seq_obj) = @_ or return;
-    $seq_obj->absolute(1); 
-    $start      = $seq_obj->abs_start;
-    $stop       = $seq_obj->abs_stop;
-    $ref        = $seq_obj->abs_ref;
-  }
-
-  $ref =~ s/^CHROMOSOME_//;
-  if(defined $start) {
-      my $length = abs($stop - $start)+1;
-      $start = int($start - 0.05*$length) if $length < 500;
-      $stop  = int($stop  + 0.05*$length) if $length < 500;
-      ($start,$stop) = ($stop,$start) if $start > $stop;
-      $ref .= ":$start..$stop";
-  }
-  return $ref;
-}
+ 
 
 # get the interpolated position of a sequence on the genetic map
 # returns ($chromosome, $position)
@@ -485,27 +459,7 @@ sub interpolated_position {
   return \%data;
 }
 
-#generic method for getting genomic pictures
-#it requires the object calling this method having a segments attribute which is an array ref storing the gff sequences
-#it also requires the object having a type attribute which is also an array ref storing the tracks to display
-sub genomic_picture {
-    my $self = shift;
-    my $segment = $self->pic_segment;
-    return unless(defined $segment);
-      
-    my $species = $self->parsed_species;
-    my $position = $self->hunter_url($segment);
-    my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
-    my $gbrowse_img = "$species/?name=$position;$type";
-    my $id = "$species/?name=$position";
-    my $data = { description => 'The Inline Image of the sequence',
-		 data        => {  class => 'genomic_location',
-				   label => $gbrowse_img,
-				   id	=> $id,
-				},
-    };  
-    return $data;    
-}
+ 
 
 # Provided with a GFF segment, return its genomic coordinates
 sub genomic_position {
