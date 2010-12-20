@@ -275,6 +275,7 @@ li div.widget-container {
     background-color:#FFFFFF; 
     position:relative;
     border:1px solid #999;
+
 }
 
 li.visible div.widget-container {
@@ -282,7 +283,7 @@ li.visible div.widget-container {
 }
 
 .widget-container:hover {
-    border:1px solid #888;
+/*     border:1px solid #888; */
     background:#FAFAFA;
 }
 
@@ -300,6 +301,8 @@ li.visible div.widget-container {
   float:left;
 }
 
+
+
 .widget-header {
     background: #C2D1DF;
 }
@@ -311,6 +314,12 @@ li.visible div.widget-container {
     height:1em;
     cursor:pointer;
 
+}
+
+.widget-header>div.ui-icon {
+  float:right;
+  margin:0.4em;
+  cursor:pointer;
 }
 
 .widget-header h3.minimized{
@@ -437,13 +446,9 @@ section.widget .secondary-container {
    FOOTER ================================== */
 
 div#footer{
-/* 	color: #878787; */
     color:white;
     background: #333;
-    padding: 1.2em 0 0.4em 0;
     margin:0;
-	font-size:0.8em;
-/*     border-top: 1px solid #BCC; */
     overflow:auto;
     position:absolute;
     width:100%;
@@ -455,10 +460,11 @@ div#footer a{
 
 #footer, #spacer {
     clear:both;
-    height: 7.2em;
+    padding: 1.2em 0 0.4em 0;
+    height: 17em;
+    font-size:0.8em;
     margin-top:1em;
 }
-
 
 #footercredit {
     text-align: left;
@@ -473,6 +479,47 @@ div#footer a{
     overflow:hidden;
     margin-right: 1em;
 }
+
+
+#footer #footer-nav {
+    margin:0 auto;
+    height:2em;
+    padding-bottom:5em;
+/*    text-align:center;  */
+}
+
+
+#footer .footer-column {
+        float:left; 
+        display: inline-block;
+	border:1px solid black;
+        padding:5px;
+        width:20%;
+}
+
+.footer-column .footer-title {
+/*    color: #333333; */
+/*    display: block; */
+    font-size: 110%;
+    font-weight: bold;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+
+#footer ul,li {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+     
+}
+
+
+#footer li a {
+    display:block;
+}
+
+
 
 /*********************************
 
@@ -704,7 +751,7 @@ div.widget-section-header {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-/*   clear:both; */
+  clear:both;
   line-height:1.2em;
   padding:0.2em;
   height:1%;
@@ -1283,3 +1330,15 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
  
+
+
+
+
+
+
+
+
+
+/* = Generic styling added by TH; possibly redundant  ========================== */
+
+.email {   }   /* email address formatting */

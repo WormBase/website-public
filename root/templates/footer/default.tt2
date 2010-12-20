@@ -1,23 +1,65 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
-
-
 <!-- begin boilerplate/footer -->
       <div id="spacer"></div>
     </div>
 <div id="footer">
+    <div id="footer-nav">
+       <div class="footer-column">
+          <div class="footer-title">About WormBase</div>
+           <ul>
+             <li>Citing WormBase</li>
+             <li>Acceptable Use Policy</li>
+             <li>Privacy Statement</li>
+           </ul>                
+         </div>
+
+
+       <div class="footer-column">
+          <div class="footer-title">Support</div>
+           <ul>
+             <li>Chat with an online curator</li>
+             <li>Submit data</li>
+             <li>Ask a question</li>
+           </ul>                
+         </div>
+
+    <div class="footer-column">
+       <div class="footer-title">Social</div>
+        <ul>
+          <li>WormBase Discussion Forums</li>
+          <li>WormBase Blog</li>	  
+        </ul>
+ 
+    </div>
+
+    <div class="footer-column">
+       <div class="footer-title">Recent Papers</div>
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+    </div>
+   </div>
+
+   <br clear="all" />
+
     <div id="footercredit">
           Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
           <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
           <p>
-           WormBase is supported by a grant from the National Human Genome Research Institute <br />
-           at the US National Institutes of Health # P41 HG02223 and the British Medical Research Council.
+               WormBase is supported by a grant from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a> <br />
+               at the <a href="http://www.nih.gov/">US National Institutes of Health</a> #P41 HG02223 and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
 
-	   <br />
-	    [% server_details("") %] 
-	  <br /> Loading Time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
-     
+                <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
+                [% # The current release of the software and its codename %]
+	        <br />Database version [% constants.acedb_version %] ([% c.config.codename %])
+
+ 	        <br />[% server_details("") %] 
+     	        <br />Loading In: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
+
           </p>
 
      </div>
@@ -27,7 +69,14 @@
           <a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy</a>
 
     </div>
+
 </div>
+
+
+
+
+
+
 <!-- end boilerplate/footer -->
 
 [% INCLUDE google_analytics %]
