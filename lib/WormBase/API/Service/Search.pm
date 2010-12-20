@@ -327,7 +327,7 @@ sub gene {
     push (@unique_genes,$gene);
     $seen{$gene}++;
   }
-  
+  return \@unique_genes if($args->{tool});
   return _wrap_objs($self, \@unique_genes, 'gene');
 }
 

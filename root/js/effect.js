@@ -1,6 +1,11 @@
  
   $jq(document).ready(function() {
-  
+     $jq(".switch-colorbox").live('click',function() {
+    var mytitle = $jq(this).attr("class").split(" ");
+    $jq("#"+mytitle[1]).trigger('click');
+    return false;
+  });
+
      $jq(".add-delete").live('click',function() {
 	$jq(this).toggleClass( "ui-icon-circle-minus"); 
     });

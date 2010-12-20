@@ -9,7 +9,7 @@ has 'MAX_DISPLAY_NUM' => (
     );
 
 has 'object' => (
-    is  => 'ro',
+    is  => 'rw',
     isa => 'Ace::Object',
     );
 
@@ -121,6 +121,13 @@ sub _pack_obj {
     return \%data;
 }
 
+sub parsed_species {
+  my ($self,$object) = @_;
+  $object ||= $self->object;
+  my $genus_species = $object->Species;
+  my ($species) = $genus_species =~ /.* (.*)/;
+  return lc(substr($genus_species,0,1)) . "_$species";
+}
 
 sub bestname {
   my ($self,$gene) = @_;
@@ -128,6 +135,68 @@ sub bestname {
   my $name = $gene->Public_name ||
       $gene->CGC_name || $gene->Molecular_name || eval { $gene->Corresponding_CDS->Corresponding_protein } || $gene;
   return $name;
+}
+
+#generic method for getting genomic pictures
+#it requires the object calling this method having a segments attribute which is an array ref storing the gff sequences
+#it also requires the object having a type attribute which is also an array ref storing the tracks to display
+sub genomic_picture {
+    my ($self,$ref,$start,$stop);
+    my $position;
+    if (@_ == 4) {
+      $self = shift;
+      $position = $self->hunter_url(@_);
+    }
+
+    # or with a sequence object
+    else {
+      my ($self) = @_ ;
+      my $segment = $self->pic_segment or return;
+      $position = $self->hunter_url($segment);
+    }
+
+    return unless $position;
+    my $species = $self->parsed_species;
+    my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
+    $self->log->debug("tracks:" ,$type);
+    my $gbrowse_img = "$species/?name=$position;$type";
+    my $id = "$species/?name=$position";
+    my $data = { description => 'The Inline Image of the sequence',
+		 data        => {  class => 'genomic_location',
+				   label => $gbrowse_img,
+				   id	=> $id,
+				},
+    };  
+    return $data;    
+}
+
+sub hunter_url {
+  my ($self,$ref,$start,$stop);
+  my $flag= 1;
+  # can call with three args (ref,start,stop)
+  if (@_ == 4) {
+    ($self,$ref,$start,$stop) = @_;
+      $flag=0;
+  }
+
+  # or with a sequence object
+  else {
+    my ($self,$seq_obj) = @_ or return;
+    $seq_obj->absolute(1); 
+    $start      = $seq_obj->abs_start;
+    $stop       = $seq_obj->abs_stop;
+    $ref        = $seq_obj->abs_ref;
+  }
+
+  $ref =~ s/^CHROMOSOME_//;
+  if(defined $start) {
+      my $length = abs($stop - $start)+1;
+      $start = int($start - 0.05*$length) if $length < 500;
+      $stop  = int($stop  + 0.05*$length) if $length < 500;
+      ($start,$stop) = ($stop,$start) if ($flag && $start > $stop);
+      $ref .= ":$start..$stop";
+  }
+  return $ref;
 }
 
 1;

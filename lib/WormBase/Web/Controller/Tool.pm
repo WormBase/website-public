@@ -19,7 +19,7 @@ sub tool :Path("/tools") Args {
      $c->stash->{'template'}="tool/$tool/$action.tt2";
      my $api = $c->model('WormBaseAPI');
      my ($data)= $api->_tools->{$tool}->$action($c->req->params);
-          
+     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
      
     for my $key (keys %$data){
 

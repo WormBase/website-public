@@ -7,21 +7,6 @@ use Bio::Graphics::Browser2::Markup;
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
-has 'file_dir' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-	return shift->tmp_dir('blast_blat');
-    }
-);
-
-has 'image_dir' => (
-     is => 'ro',
-    lazy => 1,
-    default => sub {
-	return shift->tmp_image_dir('blast_blat');
-    }
-);
 
 # color table based on malign, but changed for the colour blind
 our %colours = ( 
@@ -62,8 +47,9 @@ sub index {
 
 sub run {
     my ($self,$param) = @_;
-    my $peptide_id = $param->{"protein_id"};
+    my $peptide_id = $param->{"sequence"};
     my $protRecord = $self->ace_dsn->fetch("Protein"=> $peptide_id);
+    return {msg=>"Sorry, 0 results found for this protein"} unless $protRecord  ;
     my $dbh = $self->mysql_dsn("clustal")->dbh;
     $self->log->debug("prepare the query to clustal db for protein $peptide_id");
     my $sql = qq{ SELECT peptide_id, alignment FROM clustal WHERE peptide_id LIKE "$peptide_id"}; 
@@ -78,7 +64,7 @@ sub run {
 	    push @results, $coloured_data;
     }
 
-    return {data=>\@results, protein_id=>$peptide_id};
+    return {data=>\@results, sequence=>$peptide_id};
 }
   
 

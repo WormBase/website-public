@@ -145,12 +145,13 @@ sub _build__tools {
       Class::MOP::load_class($class);
       # Instantiate the service providing it with
       # access to some of our configuration variables
-     
-      $tools{$tool}  = $class->new({	pre_compile => $self->tool->{$tool},
+      my $hash = {	pre_compile => $self->tool->{$tool},
 					log      => $self->log,
 					dsn	 => $self->_services, 
 					tmp_base  => $self->tmp_base,
-				      });
+				      };
+      $hash->{search} = $self->search, if ($tool eq 'aligner');
+      $tools{$tool}  = $class->new($hash);
       $self->log->debug( "service $tool registered");
     }
     return \%tools;
