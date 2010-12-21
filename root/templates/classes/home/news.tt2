@@ -3,4 +3,5 @@
   setLoading($jq("#news-box"));
 </script>
    <script language="javascript" src="http://dev.wormbase.org/db/misc/inline_feed_jquery?src=http%3A%2F%2Fblog.wormbase.org%2Fcategories%2Fnews%2Ffeed%2F;load_box=news-box" type="text/javascript"></script>
-<div class="older-news">Read more on <a href="http://blog.wormbase.org/">M9: The WormBase Blog</a>&nbsp;&raquo;</div>
+<!-- <div class="older-news">Read more on <a href="http://blog.wormbase.org/">M9: The WormBase Blog</a>&nbsp;&raquo;</div> -->
+      <a href="http://blog.wormbase.org/">View More ›</a>

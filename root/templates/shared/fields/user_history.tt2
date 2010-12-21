@@ -1,4 +1,4 @@
-
+[% c.stash.test %]
 [% FOREACH h IN c.stash.history %]
   <li><div class="ellipsis">
     [% IF h.data.type == 'species'; tag2link(h.data);%]

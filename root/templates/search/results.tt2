@@ -8,7 +8,7 @@
 [% results = c.stash.results %]
 [% search_type = c.stash.type %]
 <div id="results">
-[% IF results.size > 0 %]
+  [% IF results.size > 0 %]
     <div id="fade"><span id="count">[% c.stash.count%]</span> 
       [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
     </div>

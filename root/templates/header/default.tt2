@@ -67,7 +67,13 @@
 </div>
 
 <script>
-$jq.post("/rest/history", { 'ref': window.location.pathname , 'name' : "[% object.name.data.label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
+[% url = c.req.uri %]
+
+[% name = url %]
+[% IF c.action.name.match('index'); name = 'home'; END; %]
+[% IF object; url = get_url(object.name.data.class, object.name.data.id); name = object.name.data.label; END; %]]
+
+$jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% name %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
 </script>
 
 <!-- END boilerplate/banner -->
