@@ -1,0 +1,21 @@
+Recently saved by others on WormBase:
+<br/>
+<br />
+  [% FOREACH saved IN c.stash.saved %]
+    <div class="entry"> 
+      <a href="[% saved.url %]"> [% saved.title %]</a><br />
+      [% saved.time_lapse %]
+    </div>
+  [% END %]
+  
+
+<br/>
+<br />
+<div style="width:21em;">To save your own objects, click on the star: <!--<div class="workbench-status-test"></div>--></div>
+<!--          <script>
+[% lclass = object.name.data.class FILTER lcfirst %]
+          $jq(".workbench-status-test").load("/rest/workbench/star?wbid=[% wbid %]&name=[% 'gene' %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url('gene','test')%]");
+          </script>-->
+<!-- Recently viewed objects on WormBase: -->
+<!--<br/>
+<br />-->
