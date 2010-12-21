@@ -5,13 +5,15 @@
   
 [% PROCESS "shared/fields/species.tt2" %]
 
-[% WRAPPER $field_block title="Identity" %]
+  <h2>[% c.stash.fields.identity.data %]</h2>
+	<br><br>
+	&nbsp;  [% c.stash.fields.description.data %]
+
+<div class="details ui-corner-all">
+[% WRAPPER $field_block title="WormBase ID" %]
   [% c.stash.fields.identity.data %]
 [% END %]
-
-[% WRAPPER $field_block title="Description" %]
-  [% c.stash.fields.description.data %]
-[% END %]
+</div>
 
 [% WRAPPER $field_block title="Sequence Type" %]
   [% c.stash.fields.sequence_type.data %]
