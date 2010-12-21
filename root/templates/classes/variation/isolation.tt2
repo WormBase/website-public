@@ -27,7 +27,7 @@
       	      [% fields.mutagen.data %]
    [% END %]
 
-   <p class="caveat-emptor">How are these tags used?</p>
+   [% ##<p class="caveat-emptor">How are these tags used?</p> %]
 
    [% WRAPPER $field_block title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics" %]
       	      [% fields.isolated_via_forward_genetics.data %]
