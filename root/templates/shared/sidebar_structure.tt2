@@ -43,14 +43,14 @@
 <div id="widgets">
   <div id="navigation">
     <div id="title"><div class="workbench-status-[% wbid %]"></div>
-<h4 class="ellipsis">
+
       [% IF object %]
-
-        [% tag2link(object.name.data) %]
-
+        <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
+      [% ELSIF title %]
+        <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
       [% ELSE %]
-        WormBase
-      [% END %]</h4>
+        <h2><a href="#">WormBase</a></h2>
+      [% END %]
     </div>
     <ul>
     [% FOREACH w IN widgets -%]
@@ -102,6 +102,9 @@
 </div>
       [% IF object %]
           <script>
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]");
+[% lclass = object.name.data.class FILTER lcfirst %]
+[% save = 'reports' %]
+[% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
+          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]");
           </script>
       [% END %]

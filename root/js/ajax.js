@@ -130,18 +130,17 @@
 
       $jq(".bench-update").live('click',function() {
         var wbid     = $jq(this).attr("wbid");
-        var id     = $jq(this).attr("id");
         var $class     = $jq(this).attr("objclass");
-        var $type     = $jq(this).attr("type");
         var label     = $jq(this).attr("name");
-        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + $type;
+        var obj_url  = $jq(this).attr("url");
+        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url;
         $jq("#bench-status").load(url, function(){
-          ajaxGet($jq(".workbench-status-" + id), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&id=" + id + "&class=" + $class + "&type=" + $type, 1);
+          ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url, 1);
           $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-          if($jq("#widget-holder").children().children(".visible#reports").size()){
+          if($class != "paper"){
             ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
           }
-          if($jq("#widget-holder").children().children(".visible#my_library").size()){
+          if($class == "paper"){
             ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
           }
         });
@@ -153,9 +152,27 @@
     });
 
   //this function displayes the notification message at the top of the report page
+  var notifyTimer;
   function displayNotification(message){
-        $jq("#notifications").text(message).show().delay(3000).fadeOut(400);
+      if(notifyTimer){
+        clearTimeout(notifyTimer);
+        notifyTimer = null;
+      }
+      var notification = $jq("#notifications");
+      notification.show().children("#notification-text").text(message);
+
+      notifyTimer = setTimeout(function() {
+            notification.fadeOut(400);
+          }, 3000)
   }
+
+  $jq("#notifications").live('click', function() {
+      if(notifyTimer){
+        clearTimeout(notifyTimer);
+        notifyTimer = null;
+      }
+      $jq(this).hide();
+    });
 
 
 // NOTE: Is this used anywhere???
@@ -277,7 +294,7 @@
     function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
-      widget_container.find("div.module-max").addClass("ui-icon ui-icon-arrow-4-diag").hide();
+      widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
       widget_container.find("#widget-footer").hide();
       widget_container.find(".widget-header").children("h3").children("span.hide").hide();
 

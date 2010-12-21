@@ -42,19 +42,18 @@
     }
 
     function newLayout(layout){
-      updateLayout(layout);
-    $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
-//         $jq("#layout-input").focus(); 
-//           $jq("div.columns ul").show().delay(3000).hide();
-         if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
-          }
-        });
+      updateLayout(layout, function() {
+        $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
+            if (status == "error") {
+                var msg = "Sorry but there was an error: ";
+                $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
+              }
+            });
+          });
       return false;
     }
 
-    function updateLayout(layout){
+    function updateLayout(layout, callback){
       l = 'default';
       if((typeof layout) == 'string'){
         l = escape(layout); 
@@ -68,7 +67,10 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
-      $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth });
+      $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth }, function(){
+        if(callback){ callback(); }
+      });
+
     }
 
     function getLeftWidth(holder){
