@@ -24,7 +24,7 @@ $jq(document).ready(function(){
   }
 
   var timer;
-  $jq("#nav-bar ul li, #searchForm").hover(function () {
+  $jq("#nav-bar ul li").hover(function () {
       if(timer){
         $jq(this).siblings("li").children("ul.dropdown").hide();
         $jq(this).siblings("li").children("a").removeClass("hover");
@@ -42,6 +42,26 @@ $jq(document).ready(function(){
         timer = null;
       }
       timer = setTimeout(function() {
+            toHide.children("ul.dropdown").hide();
+            toHide.children("a").removeClass("hover");
+          }, 300)
+    });
+
+  var searchTimer;
+  $jq("#searchForm").hover(function () {
+      if(searchTimer){
+        clearTimeout(searchTimer);
+        searchTimer = null;
+      }
+      $jq(this).children("ul.dropdown").show();
+      $jq(this).children("a").addClass("hover");
+    }, function () {
+      var toHide = $jq(this);
+      if(searchTimer){
+        clearTimeout(searchTimer);
+        searchTimer = null;
+      }
+      searchTimer = setTimeout(function() {
             toHide.children("ul.dropdown").hide();
             toHide.children("a").removeClass("hover");
           }, 300)

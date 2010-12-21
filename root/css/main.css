@@ -460,10 +460,10 @@ div#footer a{
 
 #footer, #spacer {
     clear:both;
-    padding: 1.2em 0 0.4em 0;
-    height: 17em;
+    padding: 0;
+    height: 19em;
     font-size:0.8em;
-    margin-top:1em;
+    margin-top:1.4em;
 }
 
 #footercredit {
@@ -477,7 +477,7 @@ div#footer a{
     text-align: right;
     float: right;
     overflow:hidden;
-    margin-right: 1em;
+    margin-right: 1.4em;
 }
 
 
@@ -492,8 +492,9 @@ div#footer a{
 #footer .footer-column {
         float:left; 
         display: inline-block;
-	border:1px solid black;
-        padding:5px;
+/* 	border:1px solid black; */
+/*         padding:5px; */
+padding:1.4em;
         width:20%;
 }
 
@@ -1121,10 +1122,14 @@ padding:0.7em 0.5em 0;
   background:#555;
 }
 
-#navigation h4, #navigation h4 a{
+#navigation h4, #navigation h4 a {
   color:white;
-padding:0;
+  padding:0;
   margin:0;
+}
+#navigation h2, #navigation h2 a {
+  color:white;
+  padding:0 0.2em;
 }
 
 #navigation ul li:hover {
@@ -1330,8 +1335,22 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
  
+.entry {
+  padding:0 0 0.7em;
+/*   margin:0 0 0.5em; */
+/*   border-bottom:1px solid #EEE; */
+}
 
+.entry>h3 a{
+  color:black;
+}
+.entry>h3 a:hover{
+  color:#0000B8;
+}
 
+.entry .date {
+  float:right;
+}
 
 
 

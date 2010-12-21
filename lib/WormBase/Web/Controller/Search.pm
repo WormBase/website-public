@@ -75,6 +75,7 @@ sub search :Path('/search')  :Args(2) {
         }else{
           $url = $c->uri_for('/resources',$type,$objs->[0]->{obj_name});
         }
+        unless($query=~m/$objs->[0]->{obj_name}/){ $url = $url . "?query=$query";}
         $c->res->redirect($url);
     } 
       if($begin > 0) {

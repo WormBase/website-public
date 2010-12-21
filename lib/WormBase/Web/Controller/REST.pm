@@ -34,33 +34,35 @@ Catalyst Controller.
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
-    my $id = $c->req->params->{id};
-	if($id){
+    my $user = $self->check_user_info($c);
+    my $url = $c->req->params->{url};
+	if($url){
       my $class = $c->req->params->{class};
-      my $type = $c->req->params->{type};
-      $c->log->debug("type: $type, class: $class, id: $id");
-      $type = "my_library" if ($class eq 'paper');
-      my $name = $c->req->params->{name} || "this $class";
-      if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
-#             $c->user_session->{bench}{count}--;
-            delete $c->user_session->{bench}{$type}{$class}{$id};
-            $c->stash->{notify} = "$name has been removed from your favourites"; 
+      my $save_to = $c->req->params->{save_to};
+      my $loc = "saved reports";
+      $save_to = 'reports' unless $save_to;
+      if ($class eq 'paper') {
+        $loc = "library";
+        $save_to = 'my_library';
+      }
+      my $name = $c->req->params->{name};
+
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
+      my $saved = $page->user_saved->find({user_id=>$user->id});
+      if($saved){
+            $c->stash->{notify} = "$name has been removed from your $loc";
+            $saved->delete();
+            $saved->update(); 
       } else{
-#             $c->user_session->{bench}{count}++;
-            $c->user_session->{bench}{$type}{$class}{$id}=localtime();
-            $c->stash->{notify} = "$name has been added to your favourites"; 
+            $c->stash->{notify} = "$name has been added to your $loc"; 
+            $c->model('Schema::UserSave')->find_or_create({user_id=>$user->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
       }
     }
  	$c->stash->{noboiler} = 1;
-    my $count; # this seems a bit silly but to make sure numbers adds up after login, otherwise it shows the counts incorrect.. xiaoqi
-    foreach my $type (keys %{$c->user_session->{bench}} ){
-      foreach my $class (keys %{$c->user_session->{bench}{$type}} ){
-	  $count += scalar(keys %{$c->user_session->{bench}{$type}{$class}});
-      }
-    }
-    unless($count){$count = 0; } #otherwise empty brackets show
-    $c->stash->{count} = $count;
+    my $count = $user->pages->count;
+    $c->stash->{count} = $count || 0;
     $c->stash->{template} = "workbench/count.tt2";
+    $c->forward('WormBase::Web::View::TT');
 } 
 
 sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {}
@@ -70,11 +72,11 @@ sub workbench_star_GET{
     my $wbid = $c->req->params->{wbid};
     my $name = $c->req->params->{name};
     my $class = $c->req->params->{class};
-    my $type = $c->req->params->{type};
-    my $id = $c->req->params->{id};
 
-    $type = "my_library" if ($class eq 'paper');
-    if(exists $c->user_session->{bench} && exists $c->user_session->{bench}{$type}{$class}{$id}){
+    my $url = $c->req->params->{url};
+    my $page = $self->check_user_info($c)->pages->find({url=>$url});
+
+    if($page) {
           $c->stash->{star}->{value} = 1;
     } else{
         $c->stash->{star}->{value} = 0;
@@ -82,10 +84,10 @@ sub workbench_star_GET{
     $c->stash->{star}->{wbid} = $wbid;
     $c->stash->{star}->{name} = $name;
     $c->stash->{star}->{class} = $class;
-    $c->stash->{star}->{id} = $id;
-    $c->stash->{star}->{type} = $type;
+    $c->stash->{star}->{url} = $url;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
 }
 
 sub layout :Path('/rest/layout') :Args(2) :ActionClass('REST') {}
@@ -131,7 +133,7 @@ sub layout_GET {
   $c->log->debug("left:" . $left);
   $c->log->debug("right:" . $right);
   $c->log->debug("leftWidth:" . $leftWidth);
-
+    $c->forward('WormBase::Web::View::TT');
   $self->status_ok(
       $c,
       entity =>  {left => $left,
@@ -153,6 +155,7 @@ sub layout_list_GET {
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
 }
 
 
@@ -164,6 +167,7 @@ sub auth_GET {
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
+    $c->forward('WormBase::Web::View::TT');
 }
 
 
@@ -172,20 +176,40 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
-    if($clear){ delete $c->user_session->{history};}
+
+    my $user = $self->check_user_info($c);
+    my @hist = $user->user_history;
+
+    if($clear){ 
+      map { 
+        $_->visits->delete(); 
+        $_->update(); 
+      } $user->user_history;
+    }
+
+
     my $history = $c->user_session->{history};
-    my $size = (scalar keys(%{$history}));
+
+    my $size = @hist;
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
-    my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count-1];
-    @ret = map {
-      my $t = (time() - @{$_->{time}}[-1]); 
-      $_->{time_lapse} = concise(ago($t, 1));
-      $_ } @ret;
-    $c->stash->{history} = \@ret;
+
+    @hist = sort { $b->visits->get_column('visit_time')->max() <=> $a->visits->get_column('visit_time')->max()} @hist;
+
+    my @histories;
+    map {
+      if($_->visits->count > 0){
+        my $time = $_->visits->get_column('visit_time')->max();
+        push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
+                            visits => $_->visits->count,
+                            page => $_->page,
+                          };
+      }
+    } @hist[0..$count-1];
+    $c->stash->{history} = \@histories;
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "shared/fields/user_history.tt2"; 
+    $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
 
@@ -193,18 +217,16 @@ sub history_GET {
 sub history_POST {
     my ($self,$c) = @_;
     $c->log->debug("history logging");
+    my $user = $self->check_user_info($c);
+
     my $path = $c->request->body_parameters->{'ref'};
-    unless($c->user_session->{history}->{$path}){
-#       my ($i,$type, $class, $id) = split(/\//,$path); 
-      my $id = $c->request->body_parameters->{'id'};
-      my $class = $c->request->body_parameters->{'class'};
-      my $type = $c->request->body_parameters->{'type'};
-      my $name = $c->request->body_parameters->{'name'} || $id;
-#       my $name = $c->req->params->{name} || $id;
-      $c->log->debug("type:$type, class:$class, id:$id, name:$name");
-      $c->user_session->{history}->{$path}->{data} = { label => $name, class => $class, id => $id, type => $type };
-    }
-    push(@{$c->user_session->{history}->{$path}->{time}}, time());
+    my $name = $c->request->body_parameters->{'name'};
+
+    my $page = $user->visited->find({url=>$path});
+    $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
+    $c->log->debug("logging:" . $page->page_id);
+    my $hist = $c->model('Schema::UserHistory')->find_or_create({user_id=>$user->id,page_id=>$page->page_id});
+    $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
 }
 
  
@@ -259,7 +281,7 @@ sub evidence_GET {
     my $data = $object-> _get_evidence($node[$index]->right($right));
     $c->stash->{evidence} = $data;
     $c->stash->{template} = "shared/generic/evidence.tt2"; 
-
+    $c->forward('WormBase::Web::View::TT');
     my $uri = $c->uri_for("/reports",$class,$name);
     $self->status_ok($c, entity => {
 	                 class  => $class,
@@ -559,11 +581,6 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
 
-    if($class eq "bench"){
-      $c->log->debug("this is a bench page widget");
-      $self->_bench($c, $widget);
-      return;
-    }
     $c->log->debug("this is NOT a bench page widget");
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
@@ -679,6 +696,89 @@ sub widget_GET {
 }
 
 
+sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
+
+sub widget_home_GET {
+    my ($self,$c,$widget) = @_; 
+    my ($self,$c,$widget) = @_; 
+    $c->log->debug("getting home page widget");
+    if($widget=~m/issues/){
+      $c->stash->{issues} = $self->issue_rss($c,2);
+    }
+    if($widget=~m/activity/){
+      $c->stash->{saved} = $self->recently_saved($c,10);
+    }
+    $c->stash->{template} = "classes/home/$widget.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT')
+}
+
+sub recently_saved {
+ my ($self,$c,$count) = @_;
+    my @saved = $c->model('Schema::UserSave')->search(undef,{order_by=>'time_saved DESC'} )->slice(0, $count-1);
+    my @rss;
+    map {    
+      my $time = ago((time() - $_->time_saved), 1);
+      push @rss, {      time_lapse=>$time,
+                          people=>$_->user,
+                          url=>$_->page->url,
+                          title=>$_->page->title,
+            };
+    } @saved;
+
+    return \@rss;
+}
+
+sub issue_rss {
+ my ($self,$c,$count) = @_;
+ my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
+     
+    my %seen;
+    my @rss;
+    while($_ = $threads->next) {
+      unless(exists $seen{$_->issue_id}) {
+      $seen{$_->issue_id} =1 ;
+      my $time = ago((time() - $_->submit_time), 1);
+      push @rss, {  time=>$_->submit_time,
+            time_lapse=>$time,
+            people=>$_->user,
+            title=>$_->issue->title,
+            location=>$_->issue->location,
+            id=>$_->issue->id,
+            re=>1,
+            } ;
+      }
+      last if(scalar(keys %seen)>=$count)  ;
+    };
+
+    map {    
+      my $time = ago((time() - $_->submit_time), 1);
+        push @rss, {      time=>$_->submit_time,
+                          time_lapse=>$time,
+                          people=>$_->owner,
+                          title=>$_->title,
+                          location=>$_->location,
+                  id=>$_->id,
+            };
+    } @issues;
+
+    my @sort = sort {$b->{time} <=> $a->{time}} @rss;
+    return \@sort;
+}
+
+
+### NOTE: Make this more robust
+sub parse_url{
+    my ($self,$c, $url) = @_; 
+
+    my @parts = split(/\//,$url); 
+    my $class = $parts[-2];
+    my $wb_id = $parts[-1];
+
+    return ($class, $wb_id);
+}
+
 sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
 
 sub widget_me_GET {
@@ -700,95 +800,26 @@ sub widget_me_GET {
       return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
-    if($widget=~m/reports/){ $widget = 'species';}
-    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
+    my $user = $self->check_user_info($c);
+    my @reports = $user->user_saved->search({save_to => $widget});
+    $c->log->debug("getting saved reports @reports for user $user->id");  
+    foreach my $report (@reports){
       my @objs;
-      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
-        my $obj = $api->fetch({class=> ucfirst($class),
+      my($class, $id) = $self->parse_url($c, $report->page->url);
+      $c->log->debug("saved $class, $id");
+      my $obj = $api->fetch({class=> ucfirst($class),
                           name => $id}) or die "$!";
-        push(@objs, $obj);
-      }
+      push(@objs, $obj); 
       push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
     }
-
-    @ret = map{
-            my $class = lcfirst($_->{name}->{class});
-            my $id = $_->{name}->{id};
-            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
-            $_;
-              } @ret;
-
-
-      ### HACK, fix this later
-      if($widget=~m/species/){
-        my @more_ret;
-        foreach my $class (keys(%{$c->user_session->{bench}{'resources'}})){
-          my @objs;
-          foreach my $id (keys(%{$c->user_session->{bench}{'resources'}{$class}})){
-            my $obj = $api->fetch({class=> ucfirst($class),
-                              name => $id}) or die "$!";
-            push(@objs, $obj);
-          }
-          push(@more_ret, @{$api->search->_wrap_objs(\@objs, $class)});
-        }
-        @more_ret = map{
-                my $class = lcfirst($_->{name}->{class});
-                my $id = $_->{name}->{id};
-                $_->{footer} = "added " . $c->user_session->{bench}{'resources'}{$class}{$id};
-                $_;
-                  } @more_ret;
-        push(@ret, @more_ret);
-      }
-      ### END HACK
-
-
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
     $c->stash->{template} = "search/results.tt2";
     $c->stash->{noboiler} = 1;
-
+    $c->forward('WormBase::Web::View::TT');
+    return;
 }
 
-
-sub _bench {
-    my ($self,$c, $widget) = @_; 
-    $c->log->debug("getting bench widget");
-    my $api = $c->model('WormBaseAPI');
-    my @ret;
-    my $type;
-    $c->stash->{'bench'} = 1;
-    if($widget=~m/user_history/){
-      $self->history_GET($c);
-      return;
-    } elsif($widget=~m/profile/){
-    $c->stash->{noboiler} = 1;
-        $c->res->redirect('/profile');
-    return;
-    }elsif($widget=~m/issue/){
-    $self->feed_GET($c,"issue");
-    return;
-    }
-    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
-    foreach my $class (keys(%{$c->user_session->{bench}{$widget}})){
-      my @objs;
-      foreach my $id (keys(%{$c->user_session->{bench}{$widget}{$class}})){
-        my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-        push(@objs, $obj);
-      }
-      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
-    }
-    @ret = map{
-            my $class = lcfirst($_->{name}->{class});
-            my $id = $_->{name}->{id};
-            $_->{footer} = "added " . $c->user_session->{bench}{$widget}{$class}{$id};
-            $_;
-              } @ret;
-    $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = $type; 
-    $c->stash->{template} = "search/results.tt2";
-    $c->stash->{noboiler} = 1;
-}
 
 
 
