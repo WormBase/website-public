@@ -5,7 +5,9 @@
 
 [% widget = widget %]
  
+GO terms associated with this phenotype:<br>
+   &nbsp;[% short_list(fields.go_term.data.aaData) %]
 
-[% WRAPPER $field_block  title="phenotype observed in the Go_term entries" key="go_term" %]
-   [% short_list(fields.go_term.data.aaData) %]
-[% END %]
+[% # WRAPPER $field_block  title="" key="go_term" %]
+
+[% # END %]
