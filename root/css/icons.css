@@ -71,7 +71,7 @@
 .ui-icon-2-1 { background-position: -32px 0px; }
 .ui-icon-1-2 { background-position: -48px 0px; }
 
-.ui-icon-stars { width: 20px; height: 20px; background-image: url(../img/stars.png);}
+.ui-icon-stars { width: 20px; height: 20px; background-image: url(../img/stars.png); cursor:pointer;}
 
 .ui-icon-star-filled { background-position: 0px 0px; }
 .ui-icon-star-outline  { background-position: -20px 0px; }
