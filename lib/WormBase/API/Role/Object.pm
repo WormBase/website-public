@@ -39,8 +39,9 @@ sub mysql_dsn {
 
 sub gff_dsn {
     my $self    = shift;
-    my $species = shift || $self->parsed_species;
-    return $self->dsn->{"gff_".$species}; 
+    my $species = shift || $self->parsed_species ;
+    $self->log->debug("geting gff database species $species");
+    return $self->dsn->{"gff_".$species} || $self->dsn->{"gff_c_elegans"} ; 
 }
 
 sub ace_dsn{
@@ -150,7 +151,7 @@ sub genomic_picture {
 
     # or with a sequence object
     else {
-      my ($self) = @_ ;
+      $self = shift ;
       my $segment = $self->pic_segment or return;
       $position = $self->hunter_url($segment);
     }
