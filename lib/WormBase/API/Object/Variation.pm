@@ -1201,7 +1201,13 @@ sub pull_phenotype_data {
 				$p_data{'not'} = 1; 		
  			}
 			
-			$p_data{'phenotype'} = "$phenotype_name"; ## $phenotype_link
+			$p_data{'phenotype'} = {
+			
+							'id' => "$phenotype",
+							'label' => "$phenotype_name",
+							'class' => 'Phenotype'
+			};
+			
 			$p_data{'ps'} = \@ps_data;
 			
 			
