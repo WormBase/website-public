@@ -5,19 +5,19 @@
 
 [% # WRAPPER "boilerplate/widget" -%]
 
-   [% WRAPPER $field_block title="Polymorphism type" -%] 
+   [% WRAPPER $field_block title="Polymorphism type" key="polymorphism" -%] 
                 [% fields.polymorphism_type.data %]
    [% END %]
 
-   [% WRAPPER $field_block title="Reference strain" -%] 
+   [% WRAPPER $field_block title="Reference strain" key ="reference_strain"  -%] 
                 [% tag2link(fields.reference_strain.data) %]
    [% END %]
 
-   [% WRAPPER $field_block title="Polymorphism status" -%] 
+   [% WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status" -%] 
                 [% fields.polymorphism_status.data %]
    [% END %]
 
-   [% WRAPPER $field_block title="Assays" -%] 
+   [% WRAPPER $field_block title="Assays" key="assay" -%] 
 
        [% FOREACH assay IN fields.polymorphism_assays.data %]
            <h5>
