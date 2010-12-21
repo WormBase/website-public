@@ -5,6 +5,12 @@
 
 [% widget = widget %]
 
-[% WRAPPER $field_block  title=" Anatomy Ontology term associated with this Phenotype" key="anatomy_ontology" %] 
-    [% tag2link(fields.anatomy_ontology.data) %]
-[% END %]
+Anatomy Ontology terms associated with this Phenotype:<br>
+
+
+[% ## WRAPPER $field_block  title=" Anatomy Ontology term associated with this Phenotype" key="anatomy_ontology" %] 
+	[% FOREACH ao_term IN fields.anatomy_ontology.data %]
+		[% ao_term.label %]
+    	[% ## tag2link(ao_term) %]
+	[% END %]
+[% ## END %]
