@@ -33,16 +33,39 @@ isa_ok($strain_obj,'WormBase::API::Object::Strain');
 
 #### method list
 my @methods = qw/
-genotype
+
+reference_strain
+mutagen
+outcrossed
+date_received
+phenotype
+location
 made_by
 remark
-description
-properties
-gene
-phenotype
-test_sd
  /;
+ 
+#males
+#genotype
 #
+#
+#description
+#properties
+#gene
+#
+#test_sd
+#species
+#name
+#id
+#genotype
+#gene
+#allele
+#transgene
+#clone
+#rearrangement
+#
+#
+
+
 
 ### test runs ####
 
@@ -66,11 +89,7 @@ sub test_method {
     return $result;
 }
 
-
-
-
 done_testing(4);
-
 
 sub print_array{
 	my ($array_ref) = @_;
