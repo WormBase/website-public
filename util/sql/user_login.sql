@@ -64,6 +64,36 @@ CREATE TABLE issues_threads (
             PRIMARY KEY (thread_id, issue_id)
 );
 
+DROP TABLE IF EXISTS user_saved;
+CREATE TABLE user_saved (
+		user_saved_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+		user_id INTEGER,
+		page_id INTEGER,
+        save_to char(50),
+        time_saved INTEGER
+);
+
+DROP TABLE IF EXISTS pages;
+CREATE TABLE pages (
+		page_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+		url char(72),
+		title TEXT
+);
+
+DROP TABLE IF EXISTS user_history;
+CREATE TABLE user_history (
+		user_history_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+		user_id INTEGER,
+		page_id INTEGER
+);
+
+DROP TABLE IF EXISTS history_visits;
+CREATE TABLE history_visits (
+        history_visit_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        user_history_id INTEGER,
+        visit_time INTEGER
+);
+
 INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator');
 
 DROP TABLE IF EXISTS sessions;
@@ -72,3 +102,5 @@ CREATE TABLE sessions (
         session_data text,
         expires      int(10)
     );
+
+

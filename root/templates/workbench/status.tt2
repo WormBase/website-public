@@ -3,8 +3,7 @@
     href="/rest/workbench" 
     name="[% c.stash.star.name %]" 
     objclass="[% c.stash.star.class %]" 
-    id="[% c.stash.star.id %]" 
-    type="[% c.stash.star.type %]">
+    url="[% c.stash.star.url %]">
 <div id="save" class="ui-icon ui-icon-stars
 [% IF c.stash.star.value == 1 %]
   ui-icon-star-yellow" title="remove this report from your workbench" 
