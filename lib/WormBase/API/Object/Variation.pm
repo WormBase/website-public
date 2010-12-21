@@ -717,6 +717,7 @@ sub genomic_position {
     my $self = shift;
     my $segment = $self->_get_genomic_segment(-key=>'wt_variation');
     my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+    return unless $segment;
     
     # Generate a link to the genome browser
     # This is hard-coded and needs to be cleaned up.
@@ -1752,9 +1753,13 @@ sub _get_genomic_segment {
 # Return the genomic coordinates of a provided span
 sub _coordinates {
     my ($self,$segment) = @_;
-    my $ref       = $segment->abs_ref;
+    
+    return unless $segment;
+    
+    my $ref       = eval{$segment->abs_ref};
     my $start     = $segment->start;
     my $stop      = $segment->stop;
+	
 
     $segment->absolute(1);
     my $abs_start = $segment->abs_start;
@@ -1994,7 +1999,7 @@ sub _do_markup {
 
     # Here, variation might be a specially formatted string (ie '----' for a deletion)
     my @markup;
-    my $markup = Bio::Graphics::Browser::Markup->new;
+    my $markup = Bio::Graphics::Browser2::Markup->new;
     $markup->add_style('utr'  => 'FGCOLOR gray');
     $markup->add_style('cds0'  => 'BGCOLOR yellow');
     $markup->add_style('cds1'  => 'BGCOLOR orange');
