@@ -67,13 +67,15 @@
 </div>
 
 <script>
+
 [% url = c.req.uri %]
 
-[% name = url %]
-[% IF c.action.name.match('index'); name = 'home'; END; %]
-[% IF object; url = get_url(object.name.data.class, object.name.data.id); name = object.name.data.label; END; %]]
+[% label = c.req.path %]
+[% IF c.action.name.match('index'); label = 'home'; ELSIF c.action.name.match('me'); label = 'my wormbase'; END; %]
+[% IF object; url = get_url(object.name.data.class, object.name.data.id); label = object.name.data.label; END; %]
 
-$jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% name %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
+$jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]" });
+
 </script>
 
 <!-- END boilerplate/banner -->

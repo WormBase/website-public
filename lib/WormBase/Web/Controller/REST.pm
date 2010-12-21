@@ -177,33 +177,37 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
-    if($clear){ delete $c->user_session->{history};}
-
 
     my $user = $self->check_user_info($c);
-    my $histories = $user->user_history;
+    my @hist = $user->user_history;
 
-#     my @histories = $user->user_history->search(undef);
-#     my $h = $histories->visits->get_column('visit_time');
+    if($clear){ 
+      map { 
+        $_->visits->delete(); 
+        $_->update(); 
+      } $user->user_history;
+    }
 
-#     foreach $uh (@histories){
-#       my $time = $uh->visits->search(undef,{order_by=>'visit_time DESC'})->slice(0, 0);
-#       my $numVisits = $uh->visits->count;
-#       my $latest = $uh->visits->get_column('visit_time')->max();
-#     }
-# $c->stash->{test} = $h;
 
     my $history = $c->user_session->{history};
-    my $size = (scalar keys(%{$history}));
+
+    my $size = @hist;
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
-    my @history_keys = sort {@{$history->{$b}->{time}}[-1] <=> @{$history->{$a}->{time}}[-1]} (keys(%{$history}));
-    my @ret = map {$history->{$_}->{path} = $_; $history->{$_}} @history_keys[0..$count-1];
-    @ret = map {
-      my $t = (time() - @{$_->{time}}[-1]); 
-      $_->{time_lapse} = concise(ago($t, 1));
-      $_ } @ret;
-    $c->stash->{history} = \@ret;
+
+    @hist = sort { $b->visits->get_column('visit_time')->max() <=> $a->visits->get_column('visit_time')->max()} @hist;
+
+    my @histories;
+    map {
+      if($_->visits->count > 0){
+        my $time = $_->visits->get_column('visit_time')->max();
+        push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
+                            visits => $_->visits->count,
+                            page => $_->page,
+                          };
+      }
+    } @hist[0..$count-1];
+    $c->stash->{history} = \@histories;
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "shared/fields/user_history.tt2"; 
     $c->forward('WormBase::Web::View::TT');
@@ -213,25 +217,17 @@ sub history_GET {
 
 sub history_POST {
     my ($self,$c) = @_;
-    my $user = $self->check_user_info($c);
     $c->log->debug("history logging");
+    my $user = $self->check_user_info($c);
+
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
+
     my $page = $user->visited->find({url=>$path});
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
+    $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({user_id=>$user->id,page_id=>$page->page_id});
-    $c->model('Schema::HistoryVisit')->find_or_create({user_history_id=>$hist->user_history_id,visit_time=>time()});
-    unless($c->user_session->{history}->{$path}){
-#       my ($i,$type, $class, $id) = split(/\//,$path); 
-      my $id = $c->request->body_parameters->{'id'};
-      my $class = $c->request->body_parameters->{'class'};
-      my $type = $c->request->body_parameters->{'type'};
-#       my $name = $c->request->body_parameters->{'name'} || $id;
-#       my $name = $c->req->params->{name} || $id;
-      $c->log->debug("type:$type, class:$class, id:$id, name:$name");
-      $c->user_session->{history}->{$path}->{data} = { label => $name, class => $class, id => $id, type => $type };
-    }
-    push(@{$c->user_session->{history}->{$path}->{time}}, time());
+    $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
 }
 
  
