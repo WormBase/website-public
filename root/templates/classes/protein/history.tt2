@@ -3,7 +3,7 @@
 
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_block title="Curation History" %]
+[% WRAPPER $field_block title="Curation History" key="history" -%]
    [% types = history.keys.sort %]
    <table  border= 0, width= '100%' >
    <tr align= 'left'>
