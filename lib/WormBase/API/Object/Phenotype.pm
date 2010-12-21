@@ -183,20 +183,29 @@ sub transgene_not {
 
 sub anatomy_ontology {
     
-    my $anatomy_fn = shift ~~ 'Anatomy_function';
-    my $anatomy_fn_name = $anatomy_fn->Involved if $anatomy_fn;
-    my $anatomy_term = $anatomy_fn_name->Term if $anatomy_fn_name;
-    my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term if $anatomy_term;
-    my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
-    return unless $anatomy_term_name;
-     
-    my $data = { description => "The Anatomy Ontology of the phenotype ",
-		 	data        =>  {     id=>$anatomy_term_id,
-					      label=>$anatomy_term_id , 
-					      class => $anatomy_term_id->class,
-					 }
-    };
-    return $data;
+    my @anatomy_fns = shift ~~ 'Anatomy_function';
+	my @data_pack;
+
+	foreach my $anatomy_fn (@anatomy_fns) {
+	    
+	    my $anatomy_fn_name = $anatomy_fn->Involved if $anatomy_fn;
+    	my $anatomy_term = $anatomy_fn_name->Term if $anatomy_fn_name;
+    	my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term if $anatomy_term;
+    	my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
+		my $class = $anatomy_term_id->class;
+		push @data_pack, {     
+		 			id=>"$anatomy_term_id",
+					label=>"$anatomy_term_name", 
+					class => "$class"
+				};
+	}    
+
+    my %data = ( 
+    	'description' => "The Anatomy Ontology of the phenotype ",
+		 'data'       => \@data_pack
+    );
+    
+    return \%data;
 }  
  
 ############################################################
