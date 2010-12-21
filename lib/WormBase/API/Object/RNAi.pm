@@ -366,22 +366,22 @@ sub strain {
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my $data_pack;
-
+	my %data_pack;
+	my $strain;
+	
 	#### data pull and packaging
 	
-	my $strain = $object->Strain;
+	$strain = eval {$object->Strain;}; 
 
-	$data_pack = {
-	
+	%data_pack = (
 		'id' => "$strain",
-		'label' =>"$strain",
+		'label' => "$strain",
 		'Class' => 'Strain'
-	};
+	);
 
 	####
 	
-	$data{'data'} = $data_pack;
+	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 
@@ -395,12 +395,23 @@ sub interactions {
 	my $desc = 'notes';
 	my @data_pack;
 
+	my @interactions = $object->Interaction;
+
 	#### data pull and packaging
 
+	foreach my $interaction (@interactions) {
+	
+		push @data_pack, {
+		
+			'id' => "$interaction",
+			'label' => "$interaction",
+			'class' => 'Interaction'
+		}	
+	}
 
 	####
 	
-	$data{'data'} = \@data_pack;
+	$data{'data'} = \@interactions; ## @data_pack
 	$data{'description'} = $desc;
 	return \%data;
 }
@@ -415,7 +426,7 @@ sub treatment {
 
 	#### data pull and packaging
 
-	$data_pack = $object->Tag;
+	$data_pack = $object->Treatment;
 
 	####
 	
@@ -434,12 +445,14 @@ sub life_stage {
 
 	#### data pull and packaging
 	
-
+	my $life_stage = $object->Life_stage;
+	my $life_stage_id = $life_stage;
+	
 	$data_pack = {
 	
-		'id' =>,
-		'label' =>,
-		'Class' => ''
+		'id' => "$life_stage",
+		'label' => "$life_stage",
+		'Class' => 'Life_stage'
 	};
 
 	####
@@ -460,7 +473,7 @@ sub delivered_by {
 
 	#### data pull and packaging
 
-	$data_pack = $object->Tag;
+	$data_pack = $object->Delivered_by;
 
 	####
 	
