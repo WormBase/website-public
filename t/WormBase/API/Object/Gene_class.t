@@ -15,13 +15,14 @@ my $object_name = "unc";
 
 my @methods = qw/
 
+gene
 remarks
-
+previous_member
  /;
 
-# gene
 # 
-# previous_member
+# 
+# 
 #
 #
 #
