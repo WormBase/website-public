@@ -104,7 +104,7 @@ around 'dbh' => sub {
       return $dbh;
     } 
     $self->log->debug( $self->symbolic_name." dbh for source $source doesn't exist or is not alive; trying to connect");
-  #  undef $dbh; #release the current connection if exists
+    undef $dbh; #release the current connection if exists
     return $self->reconnect();
      
 };
@@ -116,11 +116,11 @@ sub reconnect {
     my @hosts = $self->select_host;
     while(@hosts && $tries < $self->conf->{reconnect} && $self->host(shift @hosts) ) {
 	$tries++; 
-	$self->log->info("trytime $tries: Connecting to  ".$self->symbolic_name);
+	$self->log->info("trytime $tries: Connecting to ".$self->symbolic_name. " ".$self->source);
 	$self->log->debug('     using the following parameters:');
 	$self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
 	
-	$dbh = $self->connect() ;
+	$dbh = eval {$self->connect() };
 	if(defined $dbh && $dbh) {
 	    $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $self->host);
 	    # Cache my handle
