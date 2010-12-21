@@ -3,17 +3,17 @@
  
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_block title="Homology Groups" %]
+[% WRAPPER $field_block title="Homology Groups" key="homology_groups"-%]
   [% FOREACH obj IN fields.homology_groups.data %]
      [% obj.type %]:[% obj.title %] [[% tag2link(obj.link) %]]<br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Orthologous Gene(s)" %]
+[% WRAPPER $field_block title="Orthologous Gene(s)" key="ortholog_genes" -%]
   [% fields.ortholog_genes.data.join('<br>') %]
 [% END %]
 
-[% WRAPPER $field_block title="Protein Schematic" %]
+[% WRAPPER $field_block title="Protein Schematic" key="homology_image" -%]
     [% image(fields.homology_image.data) %]
 [% END %]
 
