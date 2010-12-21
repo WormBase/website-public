@@ -3,20 +3,27 @@
 
 [% widget = c.stash.widget %]
 
-[% WRAPPER $field_block title="Name" %]
+<h2>[% tag2link(fields.name.data,fields.name.data.id) %]</h2>
+
+ <div class="details ui-corner-all">
+ 
+ [% PROCESS "shared/fields/species.tt2" %]
+ 
+ [% WRAPPER $field_block title="WormBase ID" %]
   [% tag2link(fields.name.data,fields.name.data.id) %]
 [% END %]
-
  
-   [% PROCESS "shared/fields/species.tt2" %]
+ </div>
+ 
 
-[% WRAPPER $field_block title="Gene" %]
+
+[% WRAPPER $field_block title="Gene" key="genes" -%]
   [% FOREACH obj IN fields.genes.data %]
     [% tag2link(obj) %]  <br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Transcripts" %]
+[% WRAPPER $field_block title="Transcripts" key="transcripts" -%]
    [% FOREACH obj IN  fields.transcripts.data %]
    [% tag2link(obj) %]<br>
   [% END %]
@@ -28,14 +35,14 @@
 
  [% PROCESS "shared/fields/remarks.tt2" %]
 
-[% IF fields.status.data.defined %]
-[% WRAPPER $field_block title="Status" %]
+
+[% WRAPPER $field_block title="Status" key="status" -%]
   [% fields.status.data %]
 [% END %]
-[% END %]
 
-[% IF fields.description.data.defined %]
-[% WRAPPER $field_block title="Description" %]
+
+
+[% WRAPPER $field_block title="Description" key="description" -%]
   [% fields.description.data %]
 [% END %]
-[% END %] 
+ 
