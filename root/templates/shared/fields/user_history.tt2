@@ -1,15 +1,13 @@
-[% c.stash.test %]
+
+
 [% FOREACH h IN c.stash.history %]
   <li><div class="ellipsis">
-    [% IF h.data.type == 'species'; tag2link(h.data);%]
-    [% ELSIF h.data.type == 'resources'; tag2link(h.data);%]
-    [% ELSIF h.data.type == 'search'; searchlink(h.data.class, h.data.id, h.data.class _ ' search: ' _ h.data.id); %]
-    [% ELSIF h.data.type == 'me'; "<a href=\"" _ c.uri_for_action('me') _ "\">my wormbase</a>";%]
-    [% ELSE %] <a href="[% h.path %]">[% h.path %]</a>
-    [% END %]
+    [% label = h.page.title %]
+    [% UNLESS label; label = h.page.url; END; %]
+    <a href="[% h.page.url %]">[% label %]</a>
     
    <span id="fade"> - [% h.time_lapse %] 
-  [% IF h.time.size > 1 %]([% h.time.size %] visits) [% END %]
+  [% IF h.visits > 1 %]([% h.visits %] visits) [% END %]
   </span>
 </div>
   </li>
