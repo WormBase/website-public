@@ -1,4 +1,4 @@
-Recently saved by others on WormBase:
+<entry><h3>Recently saved by others on WormBase:</h3></entry>
 <br/>
 <br />
   [% FOREACH saved IN c.stash.saved %]
@@ -11,7 +11,14 @@ Recently saved by others on WormBase:
 
 <br/>
 <br />
-<div style="width:21em;">To save your own objects, click on the star: <!--<div class="workbench-status-test"></div>--></div>
+<div><h3>You can save your own items</h3> 
+When you see a star on WormBase:
+<ol>
+<li>1. click on the star: <span id="test-star" class="ui-icon ui-icon-stars ui-icon-star-gray" style="margin-left:1em"></span></li>
+
+
+
+
 <!--          <script>
 [% lclass = object.name.data.class FILTER lcfirst %]
           $jq(".workbench-status-test").load("/rest/workbench/star?wbid=[% wbid %]&name=[% 'gene' %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url('gene','test')%]");
@@ -19,3 +26,24 @@ Recently saved by others on WormBase:
 <!-- Recently viewed objects on WormBase: -->
 <!--<br/>
 <br />-->
+
+<div id="star-instructions" class="text-width">
+  <li>2. you will be notified that the item has been saved.
+  <li>3. view your item by opening  
+  <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
+  <a href="javascript:void(0)" onClick='$jq("#nav-my_library").trigger("open"); return true;'>'My Library'</a>(for litterature).
+  </li>
+  <img src="img/reports_library.png">
+  <li>4. view your item by going to <a href="/me">'My Wormbase'</a></li>
+  <img src="img/my_wormbase.png">
+</div>
+</ol>
+</div>
+<script>
+  $jq("#star-instructions").hide();
+  $jq("#test-star").live('click', function() {
+    $jq(this).toggleClass("ui-icon-star-gray");
+    $jq(this).toggleClass("ui-icon-star-yellow");
+    $jq("#star-instructions").toggle();
+  });
+</script>
