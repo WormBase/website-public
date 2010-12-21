@@ -43,7 +43,7 @@
 	          <div class="subfield-content">
 		      [% FOREACH variation IN fields.other_alleles.data.polymorphisms %]
     	                  <span class="allele">
-                              <a href="[% c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
+                              <a href="[ % c.uri_for_action('report', 'variation' , variation ) %]">[% variation %]</a>
 			  </span>
 		      [% END %]
                   </div>
@@ -65,6 +65,6 @@
    [% END %]
 
    [% WRAPPER $field_block title="Rescued By Transgene" key="rescued_by_transgene" %]
-         <a href="[% c.uri_for_action('report', 'transgene' , fields.rescued_by_transgene.data ) %]">[% fields.rescued_by_transgene.data %]</a>
+         <a href="[ % c.uri_for_action('report', 'transgene' , fields.rescued_by_transgene.data ) %]">[% fields.rescued_by_transgene.data %]</a>
    [% END %]
 
