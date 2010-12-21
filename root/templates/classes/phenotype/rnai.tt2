@@ -7,10 +7,13 @@
  
 [% WRAPPER $field_block  title="Gene knockdown (via RNAi) results in a(an) " _ tag2link(object.name.data) _ " phenotype in these
 experiments" key="rnai" %]  
-   [% dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.0.aaData,'table_rnai_0') %]
+   [% ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.0.aaData,'table_rnai_0') %]
+   [%  dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.0.aaData,'table_rnai_0') %]
+   
 [% END %]
 
 [% WRAPPER $field_block  title="Gene knockdown (via RNAi) DOES NOT result in a(an) " _ tag2link(object.name.data) _ " phenotype in
 these experiments" key="rnai" %]  
-   [% dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.1.aaData,'table_rnai_1') %]
+   [% ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.1.aaData,'table_rnai_1') %]
+   [%  dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.1.aaData,'table_rnai_1') %]
 [% END %]
