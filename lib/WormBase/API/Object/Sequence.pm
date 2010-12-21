@@ -154,7 +154,7 @@ sub _build_type {
 	    $type   = 'non-Elegans nematode EST sequence';
 	} elsif (eval { $s->AC_number }) {
 	    $type = 'external sequence';
-	} elsif (is_merged($s)) {
+	} elsif (eval{is_merged($s)}) {
 	    $type = 'merged sequence entry';
 	} elsif ($self->method eq 'NDB') {
 	    $type = 'GenBank/EMBL Entry';
