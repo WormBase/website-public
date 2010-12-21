@@ -53,9 +53,10 @@
 	[% ## END OF WRAPPER %] 
 	[% END %]
 
+	<hr>
 
 	[%## DATA TABLE FOR PHENOTYPE_NOT %]
-	[% WRAPPER $field_block title="Phenotype Not Observed" key=phenotype %]
+	[% WRAPPER $field_block title="Phenotype Not Observed" key=phenotype_not_observed %]
 	
 		[%## declare array of columns named via keys in the data structure%] 	
 		[% order = ['phenotype','remark'] %]
