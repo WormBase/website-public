@@ -6,162 +6,132 @@ extends 'WormBase::API::Object';
 
 ### has ###
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
+#has 'laboratory' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $laboratory = $self->Location;
+#    	return $laboratory;
+#  	}
+#);
+
+#has 'reference' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $reference = $self->Reference;
+#    	return $reference;
+#  	}
+#);
+
+#has 'variation' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $ao_object = $self->Variation;
+#    	return $ao_object;
+#  	}
+#);
+
+#has 'rearrangement' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $ao_object = $self->Rearrangement;
+#    	return $ao_object;
+#  	}
+#);
 
 
-has 'laboratory' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $laboratory = $self->Location;
-    	return $laboratory;
-  	}
-);
+#has 'clone' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $ao_object = $self->Clone;
+#    	return $ao_object;
+#  	}
+#);
 
-has 'reference' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $reference = $self->Reference;
-    	return $reference;
-  	}
-);
-
-has 'variation' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->Variation;
-    	return $ao_object;
-  	}
-);
-
-has 'rearrangement' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->Rearrangement;
-    	return $ao_object;
-  	}
-);
-
-
-has 'clone' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->Clone;
-    	return $ao_object;
-  	}
-);
-
-
-has 'transgene' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->Transgene;
-    	return $ao_object;
-  	}
-);
+#
+#has 'transgene' => (    
+#	is  => 'ro',
+#    isa => 'Ace::Object',
+#    lazy => 1,
+#    default => sub {
+#    	
+#    	my $self = shift;
+#    	my $ao_object = $self->Transgene;
+#    	return $ao_object;
+#  	}
+#);
 
 
 
 ### subroutines
 
-sub genotype {
+###########
+## OVERVIEW
+############
+sub name {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'genotype of the strain';
+	my $desc = 'notes';
 	my $data_pack;
 
 	#### data pull and packaging
 
-	$data_pack = $object->Genotype;
-
+	$data_pack = {
+					'label' => "$object",
+					'class' => 'Strain',
+					'id' => "$object"
+				};
 	####
 	
-
 	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
 
-sub made_by {
-
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'developer of the strain';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Made_by;
-
-	####
-	
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-
-}
-
-sub remark {
-
+sub id {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
-	my $desc = 'remarks';
+	my $desc = 'notes';
 	my $data_pack;
 
 	#### data pull and packaging
 
-	$data_pack = $object->Remark;
-
+	$data_pack = {
+					'label' => "$object",
+					'class' => 'Strain',
+					'id' => "$object"
+				};
 	####
 	
-
 	$data{'data'} = $data_pack;
 	$data{'description'} = $desc;
 	return \%data;
-
-
 }
+
+
 
 sub description {
 
@@ -185,6 +155,287 @@ sub description {
 	return \%data;
 }
 
+##############
+## GENOTYPE
+############
+
+sub strain {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+
+	$data_pack = {
+	
+		'id' =>,
+		'label' =>,
+		'Class' => ''
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
+sub genotype {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'genotype of the strain';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Genotype;
+
+	####
+	
+
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+##############
+## CONTAINS
+############
+
+sub gene {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @genes = $object->Gene;
+	foreach my $gene (@genes) {
+	
+		my $gene_name = public_name($gene,'Gene'); ## common_name($gene)
+		push @data_pack, {
+							'id' => "$gene",
+							'common_name' => "$gene_name",
+							'class' => 'Gene'
+							};	
+	}
+
+	####
+	
+	$data{'data'} = \@data_pack; ## 
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub allele {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	
+	my $allele = $object->Variation;
+	my $allele_name = $allele->Public_name;
+	
+
+	$data_pack = {
+	
+		'id' =>"$allele",
+		'label' =>"$allele_name",
+		'Class' => 'Variation'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub rearrangement {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Rearrangement;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub clone {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Clone;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub transgene {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Transgene;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+##############
+## PROPERTIES
+############
+
+### sub species
+
+sub males {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Males;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub reference_strain {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $ref_strain = $object->Reference_strain;
+	
+	$data_pack = {
+	
+		'id' =>"$ref_strain",
+		'label' =>"$ref_strain",
+		'Class' => 'Strain'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+sub mutagen {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Mutagen;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub outcrossed {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Outcrossed;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub date_received {
+
+	my $self = shift;
+    my $strain = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+	my $date;
+
+	
+	#### data pull and packaging
+	
+	$date   = $strain->CGC_received;
+	$date =~ s/ 00:00:00$//;
+	$data_pack = $date;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 sub properties  {
 
@@ -223,42 +474,13 @@ sub properties  {
 }
 
 
-
-sub gene {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @genes = $object->Gene;
-	foreach my $gene (@genes) {
-	
-		my $gene_name = public_name($gene,'Gene'); ## common_name($gene)
-		$data_pack{$gene} = {
-							'common_name' => $gene_name,
-							'class' => 'Gene'
-							};	
-	}
-
-	####
-	
-	$data{'data'} = \%data_pack; ## 
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
 sub phenotype {
 
 	my $self = shift;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
-	my %data_pack;
+	my @data_pack;
 
 	#### data pull and packaging
 
@@ -267,18 +489,102 @@ sub phenotype {
 	foreach my $phenotype (@phenotypes) {
 	
 		my $phene_name = $phenotype ; ## common_name($gene)
-		$data_pack{$phenotype} = {
-							'common_name' => $phene_name,
-							'class' => 'Phenotype'
+		
+		push @data_pack, {
+							'label' => "$phene_name",
+							'class' => 'Phenotype',
+							'id' => "$phenotype"
 							};	
 	}
 
 	####
 	
-	$data{'data'} = %data_pack;
+	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+
+
+##############
+## LOCATION
+############
+
+sub location {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Location;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+##############
+## MADE BY
+############
+
+sub made_by {
+
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'developer of the strain';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Made_by;
+
+	####
+	
+
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+
+}
+##############
+## REMARK
+############
+
+sub remark {
+
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'remarks';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Remark;
+
+	####
+	
+
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+
+}
+##############
+## REFERENCE
+############
 
 ### copied and pasted, need to get to work in Object.pm
 
@@ -333,6 +639,6 @@ sub public_name {
 
 }
 
-
+sub _get_phenotype_data {}
 
 1;
