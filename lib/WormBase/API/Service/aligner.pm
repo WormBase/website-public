@@ -22,19 +22,8 @@ has 'algorithms' => (
     );
 
 has 'tracks' => (
-    is  => 'rw',
-    lazy => 1,
-    default => sub {
-	my ($self) = @_;
-	my %types = %{$self->algorithms} ;
-	my @types = 'CG';
-	push @types,'ESTB'  if $types{BLAT_EST_BEST};
-	push @types,'ESTO' if $types{BLAT_EST_OTHER};
-	push @types,'mRNAB' if $types{BLAT_mRNA_BEST};
-	push @types,'WABA'  if $types{BRIGGSAE};
-	$self->log->debug("show these tracks",join(":",@types));
-	return \@types;
-    }
+    is  => 'ro',
+    writer => 'set_tracks',
 );
 
 use constant TOO_BIG => 50_000;
@@ -58,6 +47,13 @@ our %LABELS   = (
 	     BRIGGSAE   => 'Briggsae Alignments (WABA)',
 	     );
  
+our %TRACKS   = (
+	     BLAT_EST_BEST  => 'ESTB',
+	     BLAT_EST_OTHER => 'ESTO',
+	     BLAT_mRNA_BEST => 'mRNAB',
+	     BRIGGSAE   => 'WABA',
+	     );
+
 sub index {
    my ($self) = @_;
    my $data = {};
@@ -80,7 +76,12 @@ sub run {
 	push @array, DEFAULT_ALGORITHM;
     }
     $self->algorithms({map {$_=>1} @array});
-   
+    
+    my @types = 'CG';
+    foreach (sort keys %TRACKS) {
+      push @types,$TRACKS{$_}  if $self->algorithms->{$_};
+    }
+    $self->set_tracks(\@types);
 
     my $sequences = $self->search->gene({pattern=>$sequence_id,tool=>1});
     return {msg=>"No such sequence ID known."} unless @$sequences  ;

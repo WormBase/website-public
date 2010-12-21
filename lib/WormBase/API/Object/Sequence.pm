@@ -134,7 +134,7 @@ sub _build_type {
     my $type;
     if ($s =~ /^cb\d+\.fpc\d+$/) {
 	$type = 'C. briggsae draft contig'
-	} elsif ($self->is_gap) {
+	} elsif (is_gap($s)) {
 	    $type = 'gap in genomic sequence -- for accounting purposes';
 	} elsif (eval { $s->Genomic_canonical(0) }) {
 	    $type = 'genomic';
@@ -948,13 +948,11 @@ sub print_feature {
 ############################################################
 
 sub is_gap {
-    my ($self) = shift;
-    return $self->object =~ /(\b|_)GAP(\b|_)/i;
+    return shift =~ /(\b|_)GAP(\b|_)/i;
 }
 
 sub is_merged {
-    my $self = shift;
-    return $self->object =~ /LINK|CHROMOSOME/i;
+    return shift =~ /LINK|CHROMOSOME/i;
 }
 
 sub _get_segments {
