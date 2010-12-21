@@ -267,7 +267,7 @@ sub previous_member {
 	#### data pull and packaging
 	
 	my @others;
-	my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object" . "*"})};
+	my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object*"})};
 
 	foreach my $gene (@genes) {
 
@@ -276,17 +276,14 @@ sub previous_member {
 	  my $seq_name = $gene->Sequence_name;
 	  my %gene_data = (
 	  
-	  #	'info' => {
-	  		'ace_id' => "$gene",
-	  	  	'gene_name' => "$bestname",
+	  		'id' => "$gene",
+	  	  	'label' => "$bestname",
 	  	  	'class' => 'Gene'
-	  #	},
-	
-	  #  'other_names' => \@onames,
-	  #  'sequence_name' => $seq_name    
+
 	    );    
 
 	    push @data_pack, \%gene_data;
+
 	 }
 	####
 

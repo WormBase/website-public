@@ -1,4 +1,4 @@
-# t/WormBase/API/Object/RNAi.t
+# t/WormBase/API/Object/Rnai.t
 
 use strict;
 use warnings;
@@ -19,8 +19,8 @@ my @methods = qw/
 name
 id
 species
-genotype
-strain
+delivered_by
+phenotypes
 /;
 
 # laboratories
@@ -31,6 +31,10 @@ strain
 # identification
 # targets
 # laboratory
+# life_stage
+# interactions
+# strain
+# 
 
 ### run tests ####
 
@@ -50,7 +54,7 @@ ok (
 
 
 my $object = $wormbase->fetch({class=>$class,name=>$object_name}); 
-isa_ok($object,'WormBase::API::Object::' . $class);
+isa_ok($object,'WormBase::API::Object::RNAi');
 
 
 ### test runs ####
