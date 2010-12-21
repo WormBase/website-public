@@ -55,8 +55,8 @@
 
 	<hr>
 
-	[%## DATA TABLE FOR PHENOTYPE_NOT %]
-	[% WRAPPER $field_block title="Phenotype Not Observed" key=phenotype_not_observed %]
+	[%## DATA TABLE FOR PHENOTYPE NOTS %]
+	[% WRAPPER $field_block title="Phenotype not observed " key="phenotype_not" %]
 	
 		[%## declare array of columns named via keys in the data structure%] 	
 		[% order = ['phenotype','remark'] %]
@@ -100,7 +100,7 @@
 	  [% FOREACH o IN order; names.push(headers.$o); END %]
 	  
 	  [% ## generate table %]
-	  [% dataTable_list(names, rows, 'table_phenotype') %]
+	  [% dataTable_list(names, rows, 'table_phenotype_not') %]
 	
 	[% ## END OF WRAPPER %] 
 	[% END %]
