@@ -1,0 +1,15 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+<script>
+ $jq("input[name='content-type']").change(function(){
+	$jq("#download-rest").submit();       
+ });
+</script>
+ 
+<form id="download-rest" action="[% url %]" >
+<h4>In which data format would you like to download</h4>
+[% FOREACH type IN c.config.api.content_type.keys.sort %]
+<input type="radio" name="content-type" value="[% type %]"/>[% c.config.api.content_type.$type %]<br />
+[% END %]
+</form>  
+
