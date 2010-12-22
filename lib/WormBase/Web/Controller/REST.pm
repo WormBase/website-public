@@ -183,9 +183,7 @@ sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
 
-#     my $user = $self->check_user_info($c);
     my $session = $self->get_session($c);
-
     my @hist = $session->user_history;
 
     if($clear){ 
@@ -194,9 +192,6 @@ sub history_GET {
         $_->update(); 
       } $session->user_history;
     }
-
-
-#     my $history = $c->user_session->{history};
 
     my $size = @hist;
     my $count = $c->req->params->{count} || $size;
@@ -225,7 +220,6 @@ sub history_GET {
 sub history_POST {
     my ($self,$c) = @_;
     $c->log->debug("history logging");
-    my $user = $self->check_user_info($c);
     my $session = $self->get_session($c);
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
@@ -822,7 +816,7 @@ sub widget_me_GET {
       return;
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
-    my $user = $self->check_user_info($c);
+
     my $session = $self->get_session($c);
     my @reports = $session->user_saved->search({save_to => $widget});
     $c->log->debug("getting saved reports @reports for user $session->id");  
