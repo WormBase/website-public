@@ -26,7 +26,6 @@
 	[% user_login_info %]
 	  </br><p>
 	    <input type='submit' value='Report Your Issue' class="issue-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
-	    <input type='reset' value='Reset'  />
 	  </p>
   </div>
 [% END %]

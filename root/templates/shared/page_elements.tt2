@@ -65,7 +65,7 @@
 	 [% array=IS.location.split('/') %]
 	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link('gene',array.4 ,array.6) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
-	    <td>[% username(IS.owner) %]</td><td>[% username(IS.responser) %]</td>
+	    <td>[% username(IS.owner) %]</td><td>[% username(IS.assigned_to) %]</td>
 	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
 	  </tr>
       [% END %]
