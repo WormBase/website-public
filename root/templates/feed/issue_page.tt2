@@ -11,7 +11,7 @@
 	      $jq.ajax({
 		type: 'POST',
 		url: url,
-		data: {content: $jq("textarea").val(),issue:[% issue.id %],state:$jq("#issue_status option:selected").val(),responser:$jq("#issue_responser option:selected").val(),email:email.val() ,username:username.val()  },
+		data: {content: $jq("textarea").val(),issue:[% issue.id %],state:$jq("#issue_status option:selected").val(),assigned_to:$jq("#issue_assigned_to option:selected").val(),email:email.val() ,username:username.val()  },
 		success: function(data){
 			    if(data==0) {
 				   alert("The email address has already been registered! Please sign in."); 
@@ -49,7 +49,7 @@ last edited by <a href="#">[% username(last_edit) %]</a>
 <p>[% issue.content %] </p>
 <table width="40%">
 <tr><th>Status:</th><td>[% issue.state %]</td> 
- <th>Responsible:</th><td>[% username(issue.responser) %]</td></tr>
+ <th>Responsible:</th><td>[% username(issue.assigned_to) %]</td></tr>
 </table>	
 </div>
 
@@ -82,7 +82,7 @@ last edited by <a href="#">[% username(last_edit) %]</a>
     </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
     assign issue to 
-    <select id="issue_responser">
+    <select id="issue_assigned_to">
     <option value="" selected="selected">------------------</option>
     [% FOREACH p IN curators %]
       <option value="[% p.id %]">[% username(p) %]</option>

@@ -1,4 +1,5 @@
 <h1>Nucleotide Aligner</h1>
-<form method="POST" action="[% c.uri_for('tools','aligner','run') %]">
-<p class="caption">Type in a predicted sequence name, such as <cite>AC3.6</cite> or <cite>B0019.1</cite> : 
-Symbol:  <input type="text" name="sequence" value="[% sequence %]"></p></form>
+<form method="POST" action="[% c.uri_for('tools','aligner','run') %]"> 
+Symbol:  <input type="text" name="sequence" value="[% sequence %]">(e.g. <cite>AC3.6</cite> or <cite>B0019.1</cite>)
+<input type="submit" value ="Run" /> 
+</form>

@@ -17,9 +17,9 @@
 Changes:
 [% FOREACH key IN change.keys.sort %]
 <br>&nbsp;&nbsp;[% key %]: 
-[% IF key == "responser" %][% username(change.$key.old) %][% ELSE %][% change.$key.old %][% END %]
+[% IF key == "assigned_to" %][% username(change.$key.old) %][% ELSE %][% change.$key.old %][% END %]
 ->
-[% IF key == "responser" %][% username(change.$key.new) %][% ELSE %][% change.$key.new %][% END %]
+[% IF key == "assigned_to" %][% username(change.$key.new) %][% ELSE %][% change.$key.new %][% END %]
 [% END %]
 </p>
 
