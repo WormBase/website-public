@@ -29,6 +29,20 @@
     [% widgets.push(w) %]
   [% END %]
 
+  [% IF c.config.sections.resources.$class.tools.keys.size > 0 %]
+  [% widgets.push({ title="Tools" type="title"}) %]
+  [% tool_list = c.config.sections.resources.$class.tools.keys.sort %]
+  [% FOREACH widget_name IN tool_list -%]
+    [% widget = c.config.sections.resources.$class.tools.$widget_name %]
+    [% w = { id = widget_name
+             title = widget.title
+             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+             type = 'tools'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+  [% END %]
 
   [% widgets.push({ title="My Workspace" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
