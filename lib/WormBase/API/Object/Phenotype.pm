@@ -192,6 +192,7 @@ sub anatomy_ontology {
     	my $anatomy_term = $anatomy_fn_name->Term if $anatomy_fn_name;
     	my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term if $anatomy_term;
     	my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
+		next unless($anatomy_term_id);
 		my $class = $anatomy_term_id->class;
 		push @data_pack, {     
 		 			id=>"$anatomy_term_id",
