@@ -461,7 +461,7 @@ div#footer a{
 #footer, #spacer {
     clear:both;
     padding: 0;
-    height: 19em;
+    height: 17em;
     font-size:0.8em;
     margin-top:1.4em;
 }
@@ -1244,7 +1244,6 @@ div.details {
   padding: 0.5em;
   float:right;
   margin:0.5em;
-
 }
 
 div.details div.field div.field-title {
