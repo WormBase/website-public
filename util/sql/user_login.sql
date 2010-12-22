@@ -35,6 +35,16 @@ CREATE TABLE openid (
             
 );
 
+DROP TABLE IF EXISTS comments;
+CREATE TABLE comments (
+            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            reporter char(50),
+            location char(100),
+            submit_time char(50),
+            content TEXT
+);
+
+
 DROP TABLE IF EXISTS users_to_issues;
 CREATE TABLE users_to_issues (
             user_id INTEGER,
@@ -46,7 +56,7 @@ DROP TABLE IF EXISTS issues;
 CREATE TABLE issues (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	    reporter INTEGER,
-	    responser INTEGER,
+	    assigned_to INTEGER,
 	    title TEXT ,
 	    location char(100),
 	    submit_time char(50),
