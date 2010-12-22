@@ -1,13 +1,5 @@
 <entry><h3>Recently saved by others on WormBase:</h3></entry>
-<br/>
-<br />
-  [% FOREACH saved IN c.stash.saved %]
-    <div class="entry"> 
-      <a href="[% saved.url %]"> [% saved.title %]</a><br />
-      [% saved.time_lapse %]
-    </div>
-  [% END %]
 
-[% PROCESS "search/results.tt2" %]
+[% PROCESS "search/results.tt2" no_count=1%]
   
 [% PROCESS "shared/generic/how_to_star.tt2" %]
