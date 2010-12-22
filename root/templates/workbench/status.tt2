@@ -6,7 +6,7 @@
     url="[% c.stash.star.url %]">
 <div id="save" class="ui-icon ui-icon-stars
 [% IF c.stash.star.value == 1 %]
-  ui-icon-star-yellow" title="remove this reports" 
+  ui-icon-star-yellow" title="remove this report" 
 [% ELSE %]
   ui-icon-star-gray" title="save this report" 
 [% END %]
