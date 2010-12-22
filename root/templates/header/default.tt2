@@ -10,6 +10,10 @@
 
   <div id="title">
        <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
+     <p>  
+          [% # The current release of the software and its codename %]
+          Database version [% constants.acedb_version %]
+      </p>
   </div>
 
 

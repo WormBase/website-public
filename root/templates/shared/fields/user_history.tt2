@@ -1,5 +1,4 @@
 
-
 [% FOREACH h IN c.stash.history %]
   <li><div class="ellipsis">
     [% label = h.page.title %]

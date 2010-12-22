@@ -67,7 +67,7 @@ CREATE TABLE issues_threads (
 DROP TABLE IF EXISTS user_saved;
 CREATE TABLE user_saved (
 		user_saved_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-		user_id INTEGER,
+		session_id char(72),
 		page_id INTEGER,
         save_to char(50),
         time_saved INTEGER
@@ -83,7 +83,7 @@ CREATE TABLE pages (
 DROP TABLE IF EXISTS user_history;
 CREATE TABLE user_history (
 		user_history_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-		user_id INTEGER,
+		session_id char(72),
 		page_id INTEGER
 );
 
