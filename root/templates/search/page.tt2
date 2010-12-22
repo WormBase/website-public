@@ -1,0 +1,3 @@
+      <a href="[% item.name.url %]">[% item.name.label %]</a>
+    </li>
+Click on the star to add or remove this item from your saved reports<br />

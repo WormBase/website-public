@@ -708,7 +708,7 @@ sub widget_home_GET {
       $c->stash->{issues} = $self->issue_rss($c,2);
     }
     if($widget=~m/activity/){
-      $c->stash->{saved} = $self->recently_saved($c,3);
+      $c->stash->{results} = $self->recently_saved($c,3);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
@@ -718,31 +718,44 @@ sub widget_home_GET {
 sub recently_saved {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
-    my @saved = $c->model('Schema::UserSave')->search(undef,{order_by=>'time_saved DESC'} )->slice(0, $count-1);
-    my @rss;
-    map {    
-      my $time = ago((time() - $_->time_saved), 1);
-      push @rss, {      time_lapse=>$time,
-#                           people=>$_->user,
-                          url=>$_->page->url,
-                          title=>$_->page->title,
-            };
-    } @saved;
+    my @saved = $c->model('Schema::UserSave')->search(undef,
+                {   select => [ 
+                      'page_id', 
+                      { max => 'time_saved', -as => 'latest_save' }, 
+                    ],
+                    as => [ qw/
+                      page_id 
+                      time_saved
+                    /], 
+                    order_by=>'latest_save DESC', 
+                    group_by=>[ qw/page_id/]
+                })->slice(0, $count-1);
 
-my @ret;
+    my @ret;
     foreach my $report (@saved){
       my @objs;
       my($class, $id) = $self->parse_url($c, $report->page->url);
-
+      $c->log->debug("saved $class, $id"); 
+      my $time = ago((time() - $report->time_saved), 1);
+      if (!$id || $class=~m/page/) {
+        push(@ret, { name => {  url => $report->page->url, 
+                                label => $report->page->title,
+                                id => $report->page->title,
+                                class => 'page' },
+                     footer => $time,
+                    });
+      }else{
       my $obj = $api->fetch({class=> ucfirst($class),
                           name => $id}) or die "$!";
       push(@objs, $obj); 
-      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+      @objs = map { $_->{footer} = $time; $_;} @objs;
+      push(@ret, @objs);
+      }
     }
-    $c->stash->{'results'} = \@ret;
- $c->stash->{'type'} = 'all'; 
+    $c->stash->{'type'} = 'all'; 
 
-    return \@rss;
+    return \@ret;
 }
 
 sub issue_rss {
@@ -787,11 +800,11 @@ sub issue_rss {
 ### NOTE: Make this more robust
 sub parse_url{
     my ($self,$c, $url) = @_; 
-
+    if($url=~m/#/){ return; }
     my @parts = split(/\//,$url); 
     my $class = $parts[-2];
     my $wb_id = $parts[-1];
-
+    
     return ($class, $wb_id);
 }
 
@@ -824,10 +837,24 @@ sub widget_me_GET {
       my @objs;
       my($class, $id) = $self->parse_url($c, $report->page->url);
       $c->log->debug("saved $class, $id");
-      my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-      push(@objs, $obj); 
-      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+      my $time = ago((time() - $report->time_saved), 1);
+     if (!$id || $class=~m/page/) {
+        push(@ret, { name => {  url => $report->page->url, 
+                                label => $report->page->title,
+                                id => $report->page->title,
+                                class => 'page' },
+                     footer => "added $time",
+                    });
+      }else{
+        my $obj = $api->fetch({class=> ucfirst($class),
+                            name => $id}) or die "$!";
+
+        push(@objs, $obj); 
+
+        @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+        @objs = map { $_->{footer} = "added $time"; $_;} @objs;
+        push(@ret, @objs);
+      }
     }
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 

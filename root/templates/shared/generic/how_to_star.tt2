@@ -1,0 +1,38 @@
+<div class="example ui-corner-all"><h3>You can save items to your workspace</h3> 
+When you see a star on WormBase:
+<ol>
+<li style="width:12em"><div id="test-star" class="workbench-status-example"></div>
+
+1. Click on the star: <!--<span id="test-star" class="ui-icon ui-icon-stars ui-icon-star-gray" ></span>--></li>
+
+<div id="star-instructions" class="text-width">
+  <li>2. You will be notified at the top of your screen that the item has been saved.
+  <li>3. View your item by opening <br /> &nbsp &nbsp
+  <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
+  <a href="javascript:void(0)" onClick='$jq("#nav-my_library").trigger("open"); return true;'>'My Library'</a> (literature).
+  </li>
+  <img src="img/reports_library.png">
+  <li>4. View your item by going to <a href="/me">'My Wormbase'</a></li>
+  <img src="img/my_wormbase.png">
+</div>
+</ol>
+</div>
+<script>
+  var instruct = (function(){
+
+    $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=[% get_url('page', 'example') %]");
+    var notified = false;
+    $jq("#star-instructions").hide();
+    $jq(".example .bench-update").live('click', function() {
+//       $jq(this).toggleClass("ui-icon-star-gray");
+//       $jq(this).toggleClass("ui-icon-star-yellow");
+      $jq("#star-instructions").toggle();
+
+//       if(!notified){
+//         displayNotification("example item has been added to your saved reports");
+//         notified = true;
+//       }
+    });
+  });
+  instruct();
+</script>
