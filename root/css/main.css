@@ -1221,10 +1221,11 @@ padding:0.7em 0.5em 0;
 }
 
 .placeholder {
-  background: #FAF7DE;
+/*   background: #FAF7DE; */
+  background: #FAFAFA;
   padding:0 1em 0 0.5em;
   margin:0.5em 0 0 0.5em;
-  border:1px dashed gray;
+  border:1px dashed #333;
 }
 
 #navigation div.small li{
