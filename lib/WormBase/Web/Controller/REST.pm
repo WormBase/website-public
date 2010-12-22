@@ -730,10 +730,12 @@ sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 
 sub widget_home_GET {
     my ($self,$c,$widget) = @_; 
-    my ($self,$c,$widget) = @_; 
     $c->log->debug("getting home page widget");
     if($widget=~m/issues/){
       $c->stash->{issues} = $self->issue_rss($c,2);
+    }
+    if($widget=~m/comments/){
+      $c->stash->{comments} = $self->comment_rss($c,2);
     }
     if($widget=~m/activity/){
       $c->stash->{results} = $self->recently_saved($c,3);
@@ -784,6 +786,22 @@ sub recently_saved {
     $c->stash->{'type'} = 'all'; 
 
     return \@ret;
+}
+
+sub comment_rss {
+ my ($self,$c,$count) = @_;
+ my @rss;
+ my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+ map {
+        my $time = ago((time() - $_->submit_time), 1);
+        push @rss, {      time=>$_->submit_time,
+                          time_lapse=>$time,
+                          people=>$_->reporter,
+                          location=>$_->location,
+						  content=>$_->content,
+             };
+     } @comments;
+ return \@rss;
 }
 
 sub issue_rss {
