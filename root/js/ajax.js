@@ -40,6 +40,32 @@
 	  });
     });
 
+      $jq(".comment-submit").live('click',function() {
+	    var url= $jq(this).attr("rel");
+	    var page= $jq(this).attr("page");
+	    var feed = $jq(this).closest('#comment-new');
+	    var name = feed.find("#comment-name").val();
+	    var content = feed.find("#comment-content").val();
+	    if(name == "" || name == "name" || content == "" || content == "enter your comment here"){
+		    alert("Please provide your name & comment"); return false;
+	    }
+	    $jq.ajax({
+	      type: 'POST',
+	      url: url,
+	      data: { name:name, location: page, content: content},
+	      success: function(data){
+ 			displayNotification("Comment Submitted!");
+			feed.find("#comment-box").prepend(data);
+		      },
+	      error: function(request,status,error) {
+			    alert(request + " " + status + " " + error);
+		      }
+	    });
+
+	    return false;
+
+    });
+
      $jq(".issue-delete").live('click',function() {
 	  var url= $jq(this).attr("rel");
 	   
