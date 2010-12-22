@@ -192,6 +192,7 @@ sub anatomy_ontology {
     	my $anatomy_term = $anatomy_fn_name->Term if $anatomy_fn_name;
     	my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term if $anatomy_term;
     	my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
+		next unless($anatomy_term_id);
 		my $class = $anatomy_term_id->class;
 		push @data_pack, {     
 		 			id=>"$anatomy_term_id",
@@ -295,7 +296,7 @@ sub _format_objects {
 	    }
 =cut
 	    my $desc = $_->Term || $_->Definition;
-	    $str .= (($desc) ? ": $desc" : '')
+	    $str = (($desc) ? "$desc" : "$str")
 		. (($joined_evidence) ? "; $joined_evidence" : '');
 	     
 	} elsif ($tag=~ m/variation/i) { ##eq 'Variation'
@@ -357,7 +358,7 @@ sub _format_objects {
 # 	if(defined $is_not) { $result{content}{$is_not}{$str} = $hash;$count->{$is_not}++;}
 # 	else { $result{content}{$str} = $hash;$count++;}
 # 	unshift @array, $is_not if(defined $is_not);
-	push @array,$hash;
+	unshift @array,$hash;
 # 	$result{content}{$str} = \@array;
 	if($is_not) {
 	    push @content_array_not, \@array;
