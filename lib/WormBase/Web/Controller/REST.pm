@@ -366,7 +366,12 @@ sub feed_GET {
     my $page ="/rest/widget/$class/$name/$widget/$label";
     $c->stash->{page} = $page;
     $c->stash->{class}=$class;
-    if($type eq "issue"){
+    $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
+    $c->stash->{current_time}=time();
+     if($type eq "comment"){
+       my @comments =  $c->model('Schema::Comment')->search({location=>$page},{order_by=>'submit_time DESC'} );
+       $c->stash->{comments} = \@comments if(@comments);  
+     }elsif($type eq "issue"){
      # unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
       my @issues;
       if( $class) {
@@ -375,12 +380,9 @@ sub feed_GET {
 	  @issues= $c->user->issues;
       }
       $c->stash->{issues} = \@issues if(@issues);  
-      $c->stash->{current_time}=time();
     }
-     $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
-     
+      
      $c->stash->{template} = "feed/$type.tt2"; 
-
      $c->forward('WormBase::Web::View::TT') ;
     
      #$self->status_ok($c,entity => {});
@@ -388,7 +390,17 @@ sub feed_GET {
 
 sub feed_POST {
     my ($self,$c,$type) = @_;
-    if($type eq 'issue'){
+    if($type eq 'comment'){
+	 my $content= $c->req->params->{content};
+	 my $name= $c->req->params->{name};
+	 my $location= $c->req->params->{location};
+	 if( $name && $content && $location) {
+	      $c->log->debug("create new comment for user $name at $location");
+	      my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, location=>$location,content=>$content,'submit_time'=>time()});
+	      $c->res->body( "(".ago(time() - $commment->submit_time).") $name said:<br />$content <br />");
+	  }
+    }
+    elsif($type eq 'issue'){
 	if($c->req->params->{method} eq 'delete'){
 	  my $id = $c->req->params->{issues};
 	  if($id){
@@ -416,7 +428,7 @@ sub feed_POST {
 	my $content= $c->req->params->{content};
 	my $issue_id= $c->req->params->{issue};
 	my $state= $c->req->params->{state};
-	my $responser= $c->req->params->{responser};
+	my $assigned_to= $c->req->params->{assigned_to};
 	if($issue_id) { 
 	   my $hash;
 	   my $issue = $c->model('Schema::Issue')->find($issue_id);
@@ -424,11 +436,11 @@ sub feed_POST {
 	      $hash->{status}={old=>$issue->state,new=>$state};
 	      $issue->state($state) ;
 	   }
-	   if($responser) {
-	      my $people=$c->model('Schema::User')->find($responser);
-	      $hash->{responser}={old=>$issue->responser,new=>$people};
-	      $issue->responser($responser)  ;
-	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$responser,issue_id=>$issue_id}) ;
+	   if($assigned_to) {
+	      my $people=$c->model('Schema::User')->find($assigned_to);
+	      $hash->{assigned_to}={old=>$issue->assigned_to,new=>$people};
+	      $issue->assigned_to($assigned_to)  ;
+	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
 	   }
 	   $issue->update();
 	    
@@ -445,7 +457,7 @@ sub feed_POST {
 		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
 		$c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
 	  }  
-	  if($state || $responser || $content){
+	  if($state || $assigned_to || $content){
 	     
 	      $self->issue_email($c,$issue,$thread,$content,$hash);
 	  }
@@ -485,7 +497,7 @@ sub issue_email{
  unless($new == 1){
     $subject='Issue Update';
     my @threads= $issue->issues_to_threads;
-    $bcc .= ",".$issue->responser->email_address if($issue->responser);
+    $bcc .= ",".$issue->assigned_to->email_address if($issue->assigned_to);
     my %seen=();  
     $bcc = join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
  }

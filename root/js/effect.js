@@ -1,5 +1,28 @@
  
   $jq(document).ready(function() {
+
+   var nameBox = $jq("#comment-name"),
+      nameBoxDefault = "name",
+      contentBox = $jq("#comment-content"),
+      contentBoxDefault = "enter your comment here"
+
+ 
+  //show/hide default text if needed
+  nameBox.live('focus',function() {
+    if($jq(this).val().trim()== nameBoxDefault) $jq(this).attr("value", "");
+  });
+  nameBox.live('blur',function() {
+    if($jq(this).val().trim() == "") $jq(this).attr("value",nameBoxDefault);
+  });
+  
+  contentBox.live('focus',function() {
+    if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
+  });
+  contentBox.live('blur',function() {
+    if($jq(this).val().trim() == "") $jq(this).attr("value",contentBoxDefault);
+  });
+  
+
      $jq(".switch-colorbox").live('click',function() {
     var mytitle = $jq(this).attr("class").split(" ");
     $jq("#"+mytitle[1]).trigger('click');

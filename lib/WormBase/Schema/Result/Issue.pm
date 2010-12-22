@@ -23,7 +23,7 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 0 },
   "reporter",
   { data_type => "integer", is_nullable => 1 },
-  "responser",
+  "assigned_to",
   { data_type => "integer", is_nullable => 1 },
   "title",
   { data_type => "text", is_nullable => 1 },
@@ -44,5 +44,5 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->has_many(users_to_issues=>'WormBase::Schema::Result::UserIssue', 'issue_id');
 __PACKAGE__->has_many(issues_to_threads=>'WormBase::Schema::Result::IssueThread', 'issue_id'); 
 __PACKAGE__->belongs_to(owner=>'WormBase::Schema::Result::User','reporter');
-__PACKAGE__->belongs_to(responser=>'WormBase::Schema::Result::User','responser');
+__PACKAGE__->belongs_to(assigned_to=>'WormBase::Schema::Result::User','assigned_to');
 1;
