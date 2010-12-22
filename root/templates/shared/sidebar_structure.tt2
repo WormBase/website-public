@@ -73,7 +73,7 @@
       <li class="title">Recent Activity</li>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
-[% IF object %]
+[% UNLESS c.req.action == 'me' %]
       <li id="nav-user_history" 
           class="module-load me" 
           wname="user_history"
@@ -91,7 +91,7 @@
           [% PROCESS widget_sortable_block type=w.type id=w.id title=w.title -%]
           </li>   
       [% END %]
-[% IF object %]
+[% UNLESS c.req.action == 'me' %]
           <li id="user_history" class="widget">
           [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
           </li>

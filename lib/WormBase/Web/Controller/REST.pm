@@ -11,10 +11,8 @@ __PACKAGE__->config(
     'default' => 'text/x-yaml',
     'stash_key' => 'rest',
     'map' => {
-     'text/x-yaml' => 'YAML',,
-     'text/html'          => 'YAML::HTML',
-     'text/xml' => 'XML::Simple',
-     'application/json'   => 'JSON',
+      'text/html'        => [ 'View', 'TT' ],
+      'text/xml' => 'XML::Simple',
     }
 );
 
@@ -361,9 +359,8 @@ sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
     my ($self,$c,$type,$class,$name,$widget,$label) = @_;
-
     $c->stash->{noboiler} = 1;
-    my $page ="/rest/widget/$class/$name/$widget/$label";
+    my $page = "/rest/widget/$class/$name/$widget/$label";
     $c->stash->{page} = $page;
     $c->stash->{class}=$class;
     if($type eq "issue"){
@@ -377,13 +374,9 @@ sub feed_GET {
       $c->stash->{issues} = \@issues if(@issues);  
       $c->stash->{current_time}=time();
     }
-     $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
      
-     $c->stash->{template} = "feed/$type.tt2"; 
-
-     $c->forward('WormBase::Web::View::TT') ;
-    
-     #$self->status_ok($c,entity => {});
+    $c->stash->{template} = "feed/$type.tt2"; 
+    $self->status_ok($c,entity => {});
 }
 
 sub feed_POST {
@@ -589,10 +582,6 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-   
-    my $headers = $c->req->headers;
-    $c->log->debug("widget GET header ".$headers->header('Content-Type'));
-    $c->log->debug($headers);
 
     $c->log->debug("this is NOT a bench page widget");
     # It seems silly to fetch an object if we are going to be pulling
@@ -639,6 +628,8 @@ sub widget_GET {
 	    $c->forward('WormBase::Web::View::TT');
 	    return;
 	}elsif($widget eq "aligner" ||$widget eq "show_mult_align" ) {
+	    
+	    $c->log->debug("aaaaaaaaaaa");
 	    $c->res->redirect("/tools/".$widget."/run?inline=1&sequence=".$name) ;
 	    return;
        }
@@ -690,27 +681,20 @@ sub widget_GET {
     $c->stash->{child_template} = $c->_select_template($widget,$class,'widget'); 	
 
     # Forward to the view for rendering HTML.
-    my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
-    $c->detach('WormBase::Web::View::TT') unless($format) ;
+    $c->forward('WormBase::Web::View::TT');
     
-	# TODO: AGAIN THIS IS THE REFERENCE OBJECT
+    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
+    
     $self->status_ok($c, entity => {
 	class   => $class,
 	name    => $name,
-	uri     => "$uri",
-	fields => $c->stash->{fields},
+	uri     => "$uri"
 		     }
 	);
-   $format ||= 'text/html';
-   my $filename = "rest_widget_".$class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
-   $c->log->debug("$filename download in the format: $format");
-   $c->response->header('Content-Type' => $format);
-   $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
-   
 }
 
 
@@ -742,6 +726,7 @@ sub recently_saved {
                     as => [ qw/
                       page_id 
                       time_saved
+                      save_count
                     /], 
                     order_by=>'latest_save DESC', 
                     group_by=>[ qw/page_id/]
@@ -761,12 +746,12 @@ sub recently_saved {
                      footer => $time,
                     });
       }else{
-      my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-      push(@objs, $obj); 
-      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
-      @objs = map { $_->{footer} = $time; $_;} @objs;
-      push(@ret, @objs);
+        my $obj = $api->fetch({class=> ucfirst($class),
+                            name => $id}) or die "$!";
+        push(@objs, $obj); 
+        @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+        @objs = map { $_->{footer} = $time; $_;} @objs;
+        push(@ret, @objs);
       }
     }
     $c->stash->{'type'} = 'all'; 
@@ -874,7 +859,8 @@ sub widget_me_GET {
     }
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
-    $c->stash->{template} = "search/results.tt2";
+    $c->stash->{template} = "workbench/widget.tt2";
+#     $c->stash->{template} = "search/results.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
     return;
