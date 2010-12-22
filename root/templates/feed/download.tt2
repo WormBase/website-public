@@ -2,7 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 <script>
  $jq("input[name='content-type']").change(function(){
-	$jq("#download-rest").submit();       
+	$jq(this).parent("#download-rest").submit();       
  });
 </script>
  
