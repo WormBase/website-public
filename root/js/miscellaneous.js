@@ -3,6 +3,11 @@
 /***************************/
 $jq('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
 
+String.prototype.trim = function () {
+    return this.replace(/^\s*/, "").replace(/\s*$/, "");
+}
+ 
+
 function validate_fields(email,username, password, confirm_password){
 	if( email.val() ==""){
 		      alert("Please provide your email address."); email.focus();return false;
