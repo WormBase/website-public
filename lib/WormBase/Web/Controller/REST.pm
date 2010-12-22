@@ -34,7 +34,7 @@ Catalyst Controller.
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
-    my $user = $self->check_user_info($c);
+    my $session = $self->get_session($c);
     my $url = $c->req->params->{url};
 	if($url){
       my $class = $c->req->params->{class};
@@ -48,18 +48,18 @@ sub workbench_GET {
       my $name = $c->req->params->{name};
 
       my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
-      my $saved = $page->user_saved->find({user_id=>$user->id});
+      my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $c->stash->{notify} = "$name has been removed from your $loc";
             $saved->delete();
             $saved->update(); 
       } else{
             $c->stash->{notify} = "$name has been added to your $loc"; 
-            $c->model('Schema::UserSave')->find_or_create({user_id=>$user->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
+            $c->model('Schema::UserSave')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
       }
     }
  	$c->stash->{noboiler} = 1;
-    my $count = $user->pages->count;
+    my $count = $session->pages->count;
     $c->stash->{count} = $count || 0;
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
@@ -74,7 +74,7 @@ sub workbench_star_GET{
     my $class = $c->req->params->{class};
 
     my $url = $c->req->params->{url};
-    my $page = $self->check_user_info($c)->pages->find({url=>$url});
+    my $page = $self->get_session($c)->pages->find({url=>$url});
 
     if($page) {
           $c->stash->{star}->{value} = 1;
@@ -170,6 +170,12 @@ sub auth_GET {
     $c->forward('WormBase::Web::View::TT');
 }
 
+sub get_session {
+    my ($self,$c) = @_;
+    my $sid = $c->get_session_id;
+    return $c->model('Schema::Session')->find({id=>"session:$sid"});
+}
+
 
 sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 
@@ -177,18 +183,20 @@ sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
 
-    my $user = $self->check_user_info($c);
-    my @hist = $user->user_history;
+#     my $user = $self->check_user_info($c);
+    my $session = $self->get_session($c);
+
+    my @hist = $session->user_history;
 
     if($clear){ 
       map { 
         $_->visits->delete(); 
         $_->update(); 
-      } $user->user_history;
+      } $session->user_history;
     }
 
 
-    my $history = $c->user_session->{history};
+#     my $history = $c->user_session->{history};
 
     my $size = @hist;
     my $count = $c->req->params->{count} || $size;
@@ -218,14 +226,14 @@ sub history_POST {
     my ($self,$c) = @_;
     $c->log->debug("history logging");
     my $user = $self->check_user_info($c);
-
+    my $session = $self->get_session($c);
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
 
-    my $page = $user->visited->find({url=>$path});
+    my $page = $session->visited->find({url=>$path});
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
     $c->log->debug("logging:" . $page->page_id);
-    my $hist = $c->model('Schema::UserHistory')->find_or_create({user_id=>$user->id,page_id=>$page->page_id});
+    my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
     $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
 }
 
@@ -706,7 +714,7 @@ sub widget_home_GET {
       $c->stash->{issues} = $self->issue_rss($c,2);
     }
     if($widget=~m/activity/){
-      $c->stash->{saved} = $self->recently_saved($c,10);
+      $c->stash->{saved} = $self->recently_saved($c,3);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
@@ -715,16 +723,30 @@ sub widget_home_GET {
 
 sub recently_saved {
  my ($self,$c,$count) = @_;
+    my $api = $c->model('WormBaseAPI');
     my @saved = $c->model('Schema::UserSave')->search(undef,{order_by=>'time_saved DESC'} )->slice(0, $count-1);
     my @rss;
     map {    
       my $time = ago((time() - $_->time_saved), 1);
       push @rss, {      time_lapse=>$time,
-                          people=>$_->user,
+#                           people=>$_->user,
                           url=>$_->page->url,
                           title=>$_->page->title,
             };
     } @saved;
+
+my @ret;
+    foreach my $report (@saved){
+      my @objs;
+      my($class, $id) = $self->parse_url($c, $report->page->url);
+
+      my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+      push(@objs, $obj); 
+      push(@ret, @{$api->search->_wrap_objs(\@objs, $class)});
+    }
+    $c->stash->{'results'} = \@ret;
+ $c->stash->{'type'} = 'all'; 
 
     return \@rss;
 }
@@ -801,8 +823,9 @@ sub widget_me_GET {
     }
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
     my $user = $self->check_user_info($c);
-    my @reports = $user->user_saved->search({save_to => $widget});
-    $c->log->debug("getting saved reports @reports for user $user->id");  
+    my $session = $self->get_session($c);
+    my @reports = $session->user_saved->search({save_to => $widget});
+    $c->log->debug("getting saved reports @reports for user $session->id");  
     foreach my $report (@reports){
       my @objs;
       my($class, $id) = $self->parse_url($c, $report->page->url);

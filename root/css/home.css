@@ -189,8 +189,15 @@ div.more .ui-icon {
   margin:1em 0;
 }
 
-#star-instructions>img {
+.example img, .example .ui-icon {
   margin-left:1em;
+}
+
+.example {
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  padding: 1em;
+  margin: 1em;
 }
 
 .highlight {
