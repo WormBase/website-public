@@ -10,7 +10,7 @@
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
-  [% widget_list = ['news', 'discussion', 'issues', 'activity'] %]
+  [% widget_list = ['news', 'discussion', 'issues', 'activity', "comments"] %]
   [% FOREACH widget_name IN widget_list -%]
     [% title = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
@@ -38,7 +38,7 @@
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["news", "discussion"];
+    var leftList = ["news", "discussion","comments"];
     var rightList = ["activity", "issues"];
     resetLayout(leftList, rightList, 50);
   [% ELSE %]

@@ -55,6 +55,17 @@ sub issue :Path("tools/issues") Args {
     }
 } 
 
+sub comment :Path("tools/comments") Args {
+    my ( $self, $c) = @_;
+    
+      $c->stash->{template} = "feed/comment_list.tt2";
+      my @comments = $c->model('Schema::Comment')->search(undef);
+      $c->stash->{comments} = \@comments;
+      $c->stash->{current_time}=time();
+      return;
+   
+} 
+
 sub operator :Path("tools/operator") Args {
     my ( $self, $c) = @_;
     $c->stash->{be_operator}=1 if($c->user_exists && !$c->check_user_roles("operator") && $c->check_any_user_role(qw/admin curator/)) ; 

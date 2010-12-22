@@ -26,7 +26,7 @@ Root level controller actions for the WormBase web application.
 
 sub index :Path Args(0) {
     my ($self,$c) = @_;
-#     $c->stash->{issues} = $self->issue_rss($c,2);
+    $c->stash->{issues} = $self->issue_rss($c,2);
     $c->stash->{template} = 'index.tt2';
 }
 
@@ -64,8 +64,42 @@ sub draw :Path("/draw") Args(1) {
     $c->stash(gd_image=>$cached_img);
     $c->detach('WormBase::Web::View::Graphics');
 }
+ 
 
+sub issue_rss {
+ my ($self,$c,$count) = @_;
+ my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
+     
+    my %seen;
+    my @rss;
+    while($_ = $threads->next) {
+      unless(exists $seen{$_->issue_id}) {
+	  $seen{$_->issue_id} =1 ;
+	  
+	  push @rss, {	time=>$_->submit_time,
+			people=>$_->user,
+			title=>$_->issue->title,
+			location=>$_->issue->location,
+			id=>$_->issue->id,
+			re=>1,
+		    } ;
+      }
+      last if(scalar(keys %seen)>=$count)  ;
+    };
 
+    map {	 
+		push @rss, {      time=>$_->submit_time,
+					      people=>$_->owner,
+					      title=>$_->title,
+					      location=>$_->location,
+				  id=>$_->id,
+			};
+	} @issues;
+
+    my @sort = sort {$b->{time} <=> $a->{time}} @rss;
+    return \@sort;
+}
 
 
 sub default :Path {
