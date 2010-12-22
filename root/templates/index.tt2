@@ -2,7 +2,9 @@
 
   <div id="top">
     <div class="content-box"><h1>Explore Worm Biology</h1>
-      <br />Compare. Analyze. Share.
+<!--      <br />Compare. Analyze. Share.-->
+<!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
+      <p>facilitating insights into <br />nematode biology</p>
     </div>
   </div>
 

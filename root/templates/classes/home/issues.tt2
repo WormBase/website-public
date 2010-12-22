@@ -1,5 +1,7 @@
 
-
+[% IF c.stash.issues.size == 0 %]
+No outstanding issues remaining!
+[% ELSE %]
 
   [% FOREACH IS IN c.stash.issues %]
     <div class="entry"> 
@@ -11,4 +13,4 @@
   [% END %]
 
   <a href="[% c.uri_for('/tools/issues') %]">View More ›</a>
-  
+[% END %]

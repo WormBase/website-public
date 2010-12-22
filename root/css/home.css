@@ -6,13 +6,23 @@ div#top{
   border:1px solid #DDD;
 }
 div#top>div{
-  height:6em;
+/*   height:6em; */
   padding:1.5em;
+  padding-left:2.5em;
   font-size:1.5em;
+}
+div#top>div>p{
+  margin-top:0em;
+/*   margin-left:3em; */
+  text-align:center;
+  width:15em;
 }
 div.content-box {
   padding:0.5em;
-  background:#EEE;
+  background-color:#EEE;
+  background-image:url('/img/home.png');
+  background-repeat:no-repeat;
+  background-position:left top;
 }
 .inner-box {
   background:white;

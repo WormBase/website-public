@@ -293,16 +293,6 @@
 
 [% END %]
 
-[% BLOCK home_box %]
-  <div id="[% id %]" class="[% class %]">
-    <div class="content-box"><h3>[% title %]</h3>
-    <div class="inner-box">
-      [% content %]
-    </div>
-    </div>
-  </div>
-[% END %]
-
 
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
