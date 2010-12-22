@@ -88,11 +88,5 @@ __PACKAGE__->many_to_many(issues => 'users_to_issues', 'issue');
 __PACKAGE__->has_many(users_to_issues=>'WormBase::Schema::Result::UserIssue', 'user_id');
 
 
-__PACKAGE__->many_to_many(pages => 'user_saved', 'page');
-__PACKAGE__->has_many(user_saved=>'WormBase::Schema::Result::UserSave', 'user_id');
-
-__PACKAGE__->many_to_many(visited => 'user_history', 'page');
-__PACKAGE__->has_many(user_history=>'WormBase::Schema::Result::UserHistory', 'user_id');
-
 # You can replace this text with custom content, and it will be preserved on regeneration
 1;

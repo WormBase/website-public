@@ -185,6 +185,21 @@ div.more .ui-icon {
   -moz-opacity:1;
 }
 
+#star-instructions li {
+  margin:1em 0;
+}
+
+.example img, .example .ui-icon {
+  margin-left:1em;
+}
+
+.example {
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  padding: 1em;
+  margin: 1em;
+}
+
 .highlight {
   font-weight:bold
 }

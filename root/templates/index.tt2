@@ -2,14 +2,13 @@
 
   <div id="top">
     <div class="content-box"><h1>Explore Worm Biology</h1>
-      Think of good things to write here. <br />
-      Explore. Compare. Analyze. Share?
+      <br />Compare. Analyze. Share.
     </div>
   </div>
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
-  [% widget_list = ['news', 'discussion', 'events', 'issues', 'activity'] %]
+  [% widget_list = ['news', 'discussion', 'issues', 'activity'] %]
   [% FOREACH widget_name IN widget_list -%]
     [% title = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
@@ -37,7 +36,7 @@
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["news", "events"];
+    var leftList = ["news", "activity"];
     var rightList = ["discussion", "issues"];
     resetLayout(leftList, rightList, 50);
   [% ELSE %]
