@@ -19,19 +19,10 @@ When you see a star on WormBase:
 </div>
 <script>
   var instruct = (function(){
-
     $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=[% get_url('page', 'example') %]");
-    var notified = false;
     $jq("#star-instructions").hide();
     $jq(".example .bench-update").live('click', function() {
-//       $jq(this).toggleClass("ui-icon-star-gray");
-//       $jq(this).toggleClass("ui-icon-star-yellow");
       $jq("#star-instructions").toggle();
-
-//       if(!notified){
-//         displayNotification("example item has been added to your saved reports");
-//         notified = true;
-//       }
     });
   });
   instruct();

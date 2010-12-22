@@ -1,0 +1,7 @@
+
+[% PROCESS "search/results.tt2" no_count=1%]
+
+[% IF c.stash.results.size == 0 %]
+There are no items saved here.
+[% PROCESS "shared/generic/how_to_star.tt2" %]
+[% END %]
