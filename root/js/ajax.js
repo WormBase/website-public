@@ -134,6 +134,7 @@
         var label     = $jq(this).attr("name");
         var obj_url  = $jq(this).attr("url");
         var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url;
+
         $jq("#bench-status").load(url, function(){
           ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url, 1);
           $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
