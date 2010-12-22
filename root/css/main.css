@@ -189,7 +189,7 @@ ul.nav-bar li a.hover, ul.nav-bar li a.selected, ul.nav-bar span.status-bar li a
   border-color:#D0DEC1;
 }
 #section-tools {
-  border-color:#DEC1D0;
+  border-color:#CFC1DE;
 }
 #section-me {
   border-color:#E3DDC5;
@@ -333,7 +333,7 @@ li.visible div.widget-container {
     background: #D0DEC1;
 }
 .widget-container  #widget-tools, #navigation .tools.ui-selected {
-    background: #DEC1D0; 
+    background: #CFC1DE; 
 }
 
 .widget-container #widget-feed{
@@ -1222,7 +1222,7 @@ padding:0.7em 0.5em 0;
 
 .placeholder {
 /*   background: #FAF7DE; */
-  background: #FAFAFA;
+  background: #EEE;
   padding:0 1em 0 0.5em;
   margin:0.5em 0 0 0.5em;
   border:1px dashed #333;
