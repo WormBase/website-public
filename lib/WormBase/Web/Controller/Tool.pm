@@ -86,5 +86,14 @@ sub operator :Path("tools/operator") Args {
     
 }
 
+sub comment :Path("tools/comments") Args {
+    my ( $self, $c) = @_;
+    $c->stash->{template} = "feed/comment_list.tt2";
+    my @comments = $c->model('Schema::Comment')->search(undef);
+    $c->stash->{comments} = \@comments;
+    $c->stash->{current_time}=time();
+    return;
+} 
+
 
 1;
