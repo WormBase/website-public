@@ -212,8 +212,8 @@ sub external_links {
 
   my ($aceview,$refseq) = @{$self->database_ids};
   my $data = { description => 'External links',
-                      data => { 'aceview'     => $aceview,
-                                'ncbi_refseq' => $refseq,
+                      data => { 'aceview'     => "$aceview",
+                                'ncbi_refseq' => "$refseq",
                               },
              };
   return $data;
@@ -235,7 +235,7 @@ sub ids {
     my $common  = $object->Public_name;
     
     
-    my @other_names = $object->Other_name;
+    my @other_names = map {$_->id} $object->Other_name;
     my $sequence = $object->Sequence_name;
     
     my $sequence_ret = { id => "$sequence", label => "$sequence", class=>"sequence"};
@@ -420,7 +420,8 @@ sub cloned_by {
 sub legacy_information {
   my $self = shift;
   my $object = $self->object;
-  my @description = $object->Legacy_information or return;
+  my @description = map {$_->id } $object->Legacy_information;
+  return unless @description;
   my $data = {  description => "legacy information for the gene",
                 data => \@description
             };
@@ -2212,7 +2213,7 @@ sub _public_name {
     }
     
     my $data = $common_name;
-    return $data;
+    return "$data";
 
 
 }
