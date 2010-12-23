@@ -9,6 +9,13 @@ use Badge::GoogleTalk;
 
 __PACKAGE__->config->{namespace} = '';
 
+sub tool_summary :Path("/tools") :Args(0) {
+  my ( $self, $c) = @_;
+
+    $c->stash->{template} = "tool/report.tt2";
+    $c->forward('WormBase::Web::View::TT')
+}
+
 sub tool :Path("/tools") Args {
      my ( $self, $c, @args) = @_;
    #  $c->stash->{noboiler} = 1;
@@ -53,17 +60,6 @@ sub issue :Path("tools/issues") Args {
 	my $role=$c->model('Schema::Role')->find({role=>'curator'});
 	$c->stash->{curators}=[$role->users];
     }
-} 
-
-sub comment :Path("tools/comments") Args {
-    my ( $self, $c) = @_;
-    
-      $c->stash->{template} = "feed/comment_list.tt2";
-      my @comments = $c->model('Schema::Comment')->search(undef);
-      $c->stash->{comments} = \@comments;
-      $c->stash->{current_time}=time();
-      return;
-   
 } 
 
 sub operator :Path("tools/operator") Args {
