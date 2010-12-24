@@ -115,7 +115,7 @@ sub _pack_obj {
     return unless defined $object;
     $label = eval {$object->Public_name} || "$object" unless $label;
     my %data = ( id => "$object",
-              label => $label,
+              label => "$label",
               class => $object->class,
     );
     @data{ keys %args } = values %args if(%args);

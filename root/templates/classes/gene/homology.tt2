@@ -26,7 +26,7 @@
      
 	[% FOREACH species IN cluster.proteins.keys.sort %]
 	  <tr>
-	  <td>[% species %]</td>
+	  <td>[% species.replace('_',' ') %]</td>
 	  <td>[% FOREACH obj IN cluster.proteins.$species %]
 		[% tag2link(obj) %]
 	      [% END %]
