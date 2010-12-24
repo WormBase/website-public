@@ -903,14 +903,14 @@ sub gene_ontology {
 	$display_method =~ m/.*_(.*)/;
         my %data = (
             'display_method' => $1,
-            'evidence_code' => $evidence_code,
+            'evidence_code' => "$evidence_code",
             'term' => {id=>"$go_term", label=>"$term", class=>$go_term->class}
             
             ); 
         
         my @data = ($display_method,$evidence_code,$term,$go_term); 
         my $data_line = join ";",@data;
-        $data_pack{$annotation_basis}{$term_type}{$data_line} = \%data;
+        $data_pack{$annotation_basis}{"$term_type"}{$data_line} = \%data;
       }
     }
     ####
@@ -1088,6 +1088,7 @@ sub inparanoid_groups {
 			      (my $sp=$species) =~ s/ /_/g;
 			      $id="$sp&$id" ;
 			}
+			$species =~ s/ /_/g;
 	   		push @{$proteins{$species}} , {
 	   								'class' => "$class",
 	   								'id' => "$id" ,
@@ -1149,7 +1150,7 @@ sub orthologs {
 	  push @data_pack, {	 species=>"$species",
 				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
 				 sequence=>{ class=>'ebsyn',
-					      id=>$ortholog->Sequence_name,
+					      id=>$ortholog->Sequence_name->id,
 					      label=>'syntenic alignment',
 					  },
 				 evidence=>{	check=>$self->check_empty($species),
@@ -1209,7 +1210,7 @@ sub treefam {
 		my $treefam = $self->_fetch_protein_ids($_,'treefam');
 		# Ignore proteins that lack a Treefam ID
 		next unless $treefam;
-		push @data_pack, $treefam;
+		push @data_pack, "$treefam";
 	}			
 	## end classic code ##
 	
@@ -1413,7 +1414,7 @@ sub gene_models {
       my $count = $unique_remarks{$_};
       unless ($count) {
         $count = ++$unique_remarks;
-        $footnotes{$sequence->name}{$count}{'note'} = $_;
+        $footnotes{$sequence->name}{$count}{'note'} = "$_";
         $footnotes{$sequence->name}{$count}{'evidence'} = $self->_get_evidence($_);
       } else {
         $footnotes{$sequence->name}{$count}++;

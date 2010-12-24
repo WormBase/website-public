@@ -676,7 +676,7 @@ sub best_blastp_matches {
 	$id++;
 =cut
 
-      push @hits,[$taxonomy,{label=>$hit,id=>($id ? $id : $hit),class=>$class},"$description",
+      push @hits,[$taxonomy,{label=>"$hit",id=>($id ? "$id" : "$hit"),class=>$class},"$description",
   		sprintf("%7.3g",10**-$best{$_}{score}),
  		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
   }
@@ -974,8 +974,8 @@ sub _get_evidence {
 		    undef $class;
 		}  
 # 		$type =~ s/_/ /g;
-		$data{$type}{$evidence}{id} = $evidence; 
-		$data{$type}{$evidence}{label} = $label; 
+		$data{$type}{$evidence}{id} = "$evidence"; 
+		$data{$type}{$evidence}{label} = "$label"; 
 		$data{$type}{$evidence}{class} = lc($class) if(defined $class);
 	    }
 
@@ -1666,20 +1666,20 @@ sub history {
             my $cu;
             if($curator){
                 $cu->{id} = "$curator";
-                $cu->{label} = $curator->Standard_name || $curator->Full_name;
+                $cu->{label} = $curator->Standard_name->id || $curator->Full_name->id;
                                 $cu->{class} = $curator->class;
             }
             my $ge;
             if($gene){
                 $ge->{id} = "$gene";
-                $ge->{label} = $gene->Public_name;
+                $ge->{label} = $gene->Public_name->id;
                                 $ge->{class} = $gene->class;
             }
-            $data_pack{$history}{$version} =
-                                            { type    => $type,
-                                              date    => $date,
-                                              action  => $action,
-                                              remark  => $remark,
+            $data_pack{"$history"}{"$version"} =
+                                            { type    => "$type",
+                                              date    => "$date",
+                                              action  => "$action",
+                                              remark  => "$remark",
                                               gene    => $ge,
                                               curator => $cu,
                                             };
