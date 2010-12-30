@@ -25,7 +25,7 @@ requires 'Catalyst::Devel';                  # REQ'D FOR DEVELOPMENT ONLY
 requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
 requires 'Cache::Memcached::libmemcached';
 requires 'Catalyst::Action::REST';           
-requires 'Catalyst::Action::RenderView::ErrorHandler';
+#requires 'Catalyst::Action::RenderView::ErrorHandler';
 requires 'Catalyst::Authentication::Credential::OpenID';   # will need to install Math::BigInt::GMP first 
 requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Controller::FormBuilder';
@@ -34,6 +34,7 @@ requires 'Catalyst::Log::Log4perl';
 requires 'Catalyst::Plugin::Authentication';          
 requires 'Catalyst::Plugin::Authorization::Roles';          
 requires 'Catalyst::Plugin::Cache';          # Cache interface
+requires 'Catalyst::Plugin::ErrorCatcher';          # Cache interface
 requires 'Catalyst::Plugin::Unicode';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::PerUser';
