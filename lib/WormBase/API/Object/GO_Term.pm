@@ -7,6 +7,97 @@ extends 'WormBase::API::Object';
 
 #### subroutines
 
+sub id {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+
+	$data_pack = {
+	
+		'id' => "$object",
+		'label' => "$object",
+		'Class' => 'GO_Term'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
+sub term {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Term;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
+sub definition {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Definition;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+
+}
+
+
+sub type {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Type;
+	$data_pack =~ s/\_/\ /;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
 sub details {
 
   my $self = shift;
@@ -29,6 +120,8 @@ sub details {
   $data{'description'} = $desc;
   return \%data;
 }
+
+
 
 sub genes {
 
