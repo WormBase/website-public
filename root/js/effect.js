@@ -48,7 +48,7 @@
     $jq(".sortable").sortable({
       handle: '.widget-header, #widget-footer',
       items:'li.widget',
-      placeholder: 'placeholder ui-corner-all',
+      placeholder: 'placeholder',
       connectWith: '.sortable',
       forcePlaceholderSize: true,
       update: updateLayout,

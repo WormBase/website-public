@@ -19,10 +19,10 @@ div#top>div>p{
 }
 div.content-box {
   padding:0.5em;
-  background-color:#EEE;
-  background-image:url('/img/home.png');
   background-repeat:no-repeat;
   background-position:left top;
+  position:relative;
+  background-image:url('/img/home.png'), -webkit-gradient(linear, left bottom, right top, from(#EEE), to(#FAFAFA));
 }
 .inner-box {
   background:white;
@@ -32,6 +32,50 @@ div.content-box {
 .older-news {
   text-align:right;
   width:100%;
+}
+
+div#create-prompt {
+  font-size:0.7em;
+  background:white;
+  font-weight:bold;
+  position:absolute;
+  right:1em;
+  bottom:1em;
+  padding:1em;
+  text-align:center;
+  border:1px solid #CCC;
+  border-bottom:1px solid #999;
+  border-left:1px solid #999;
+  background: #EEE -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFF), to(#DDD));
+
+}
+div#create-prompt>span#login {
+  font-weight:normal;
+  font-size:0.8em;
+float:left;
+  margin:1em 0 0 0;
+/*   float:right; */
+}
+
+#create-account{
+ /* position:absolute;
+  right:1em;
+  bottom:1em;*/
+clear:both;
+  padding:0.6em 1.2em;
+  font-size:0.7em;
+  color:white;
+  margin:0.5em 0.5em 0 0 ;
+float:left;
+width:5em;
+display:block;
+  cursor:pointer;
+/* border:1px solid black; */
+  background: #83A1D1 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8CA4BA), to(#406F9C));
+}
+
+#create-account:hover{
+  background: #83A1D1 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#A3BCD4), to(#406F9C));
 }
 
 
