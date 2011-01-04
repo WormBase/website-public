@@ -5,6 +5,15 @@
 <!--      <br />Compare. Analyze. Share.-->
 <!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
       <p>facilitating insights into <br />nematode biology</p>
+[% UNLESS c.user_exists %]
+<div id="create-prompt">
+  Join the online worm community! <br />
+        <span id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
+          register ›
+        </span>
+        <span id="login"> Already registered? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
+</div>
+[% END %]
     </div>
   </div>
 
