@@ -120,16 +120,6 @@
       
   });*/
 
-//   $jq(".tip-simple").hover(
-//         function () {
-//           if(!($jq(this).children("div").show().size())){
-//             var tip = $jq('<div class="tip ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
-//             tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
-//           }
-//         }, 
-//         function () { $jq(this).children("div").hide(); }
-//       );
-
   $jq(".tip-simple").live('mouseover', function(){
     if(!($jq(this).children("div").show().size())){
       var tip = $jq('<div class="tip ui-corner-all" style="display:block"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
