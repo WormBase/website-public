@@ -89,8 +89,11 @@ sub run {
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
     my $bestname = $self->bestname($sequence);
-    $self->gff_dsn->ace($sequence->db);
-    my $dbgff =  $self->gff_dsn->dbh ;
+    my $gff_dsn= $self->gff_dsn;
+    $gff_dsn->ace($sequence->db);
+    $gff_dsn->reconnect();
+    
+    my $dbgff =  $gff_dsn->dbh ;
     $self->log->debug("GFF database:",$dbgff);
     $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
