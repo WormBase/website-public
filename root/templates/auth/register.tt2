@@ -1,5 +1,6 @@
 <!-- Register form -->
- 
+
+<div style="float:left">
 <h4>WormBase Registration</h4>
 <p>
 [% notice %]
@@ -19,4 +20,11 @@
   </tr>
 </table>
 </p>
+</div>
 
+
+[% IF 1 %]
+  <div style="float:left">
+  [% PROCESS "auth/openid.tt2" %]
+  </div>
+[% END %]

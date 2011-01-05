@@ -8,10 +8,10 @@
 [% UNLESS c.user_exists %]
 <div id="create-prompt">
   Join the online worm community! <br />
-        <span id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
-          register ›
-        </span>
-        <span id="login"> Already registered? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
+        <div id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
+          sign up ›
+        </div>
+        <span> Already a member? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
 </div>
 [% END %]
     </div>
@@ -19,7 +19,7 @@
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
-  [% widget_list = ['news', 'discussion', 'issues', 'activity', "comments"] %]
+  [% widget_list = ['news', 'discussion', 'activity', "comments",'issues'] %]
   [% FOREACH widget_name IN widget_list -%]
     [% title = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
@@ -47,8 +47,8 @@
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["news", "discussion","comments"];
-    var rightList = ["activity", "issues"];
+    var leftList = ["news", "discussion"];
+    var rightList = ["activity", "comments"];
     resetLayout(leftList, rightList, 50);
   [% ELSE %]
     var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];

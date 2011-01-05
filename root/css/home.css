@@ -19,13 +19,11 @@ div#top>div>p{
 }
 div.content-box {
   padding:0.5em;
-  background-repeat:no-repeat;
-  background-position:left top;
   position:relative;
   background:#EEE;
   background-image:url('/img/home.png');
-  background-image:url('/img/home.png'), -moz-linear-gradient(45deg, #EEE, #FAFAFA);
-  background-image:url('/img/home.png'), -webkit-gradient(linear, left bottom, right top, from(#EEE), to(#FAFAFA));
+  background-image:url('/img/home.png'), -moz-linear-gradient(-45deg, #DDD, #FAFAFA);
+  background-image:url('/img/home.png'), -webkit-gradient(linear, left top, right bottom, from(#DDD), to(#FAFAFA));
 }
 .inner-box {
   background:white;
@@ -47,41 +45,41 @@ div#create-prompt {
   padding:1em;
   text-align:center;
   border:1px solid #CCC;
+  background:white;
+  border-top:1px solid #FFF;
   border-bottom:1px solid #999;
-  border-left:1px solid #999;
   background: #EEE -moz-linear-gradient(90deg, #DDD, #FFF);
   background: #EEE -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFF), to(#DDD));
-
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=white,endColorStr=#DDDDDD);
 }
-div#create-prompt>span#login {
+div#create-prompt>span {
   font-weight:normal;
   font-size:0.8em;
-float:left;
+  float:left;
   margin:1em 0 0 0;
-/*   float:right; */
 }
 
 #create-account{
- /* position:absolute;
-  right:1em;
-  bottom:1em;*/
-clear:both;
-  padding:0.6em 1.2em;
-  font-size:0.7em;
+  clear:both;
+  padding:0.4em 0.8em;
+  font-size:0.9em;
   color:white;
   margin:0.5em 0.5em 0 0 ;
-float:left;
-width:5em;
-display:block;
+  float:left;
+  width:5em;
+  display:block;
   cursor:pointer;
-/* border:1px solid black; */
-  background: -moz-linear-gradient(90deg, #406F9C, #8CA4BA);
-  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8CA4BA), to(#406F9C));
+  background: #406F9C;
+  background: #406F9C -moz-linear-gradient(90deg, #406F9C, #8CA4BA);
+  background: #406F9C -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8CA4BA), to(#406F9C));
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#8CA4BA,endColorStr=#406F9C);
 }
 
 #create-account:hover{
-  background: -moz-linear-gradient(90deg, #406F9C, #A3BCD4);
-  background: #83A1D1 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#A3BCD4), to(#406F9C));
+  background: #8CA4BA;
+  background: #8CA4BA -moz-linear-gradient(90deg, #406F9C, #A3BCD4);
+  background: #8CA4BA -webkit-gradient(linear, 0% 0%, 0% 100%, from(#A3BCD4), to(#406F9C));
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#A3BCD4,endColorStr=#406F9C);
 }
 
 
@@ -104,6 +102,12 @@ display:block;
 #results span.forest-green{
    color: #228B22;
 }
+
+#results ul li>a>div.date{
+  text-decoration:none;
+  float:right;
+}
+
 #load-results {
   width:100%;
   background:#EEE;
@@ -134,12 +138,12 @@ display:block;
 
 div.more {
   position:relative;
-  margin:0 5%;
+  margin:0.3em 10% 0;
   height:4px;
   border-top:1px solid gray;
-  opacity:0.5;
-  filter:alpha(opacity=50);
-  -moz-opacity:0.5;
+  opacity:0.3;
+  filter:alpha(opacity=30);
+  -moz-opacity:0.3;
 }
 
 div.more:hover {
@@ -263,3 +267,38 @@ div.more .ui-icon {
 .highlight {
   font-weight:bold
 }
+
+
+
+#openid {
+margin-left:2em ;
+width:170px;
+float:right;
+position:relative;
+}
+
+#content-slider {
+  width:74px;
+  margin-left:25px;
+  height: 115px;
+  overflow: hidden;
+}
+
+#openid_choice {
+  width: 800px;
+  position:relative;
+}
+
+#left {
+  float: left;
+  margin-top:50px; 
+  margin-left:5px;
+  position:absolute;
+} 
+
+#right {
+  float: left;
+  margin-top:50px; 
+  margin-left:102px; 
+  position:absolute;
+} 
