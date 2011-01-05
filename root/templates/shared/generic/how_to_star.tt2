@@ -22,7 +22,7 @@ When you see a star on WormBase:
     $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=[% get_url('page', 'example') %]");
     $jq(".star-instructions").hide();
     $jq(".example .bench-update").live('click', function() {
-      $jq("#star-instructions").toggle();
+      $jq(".star-instructions").toggle();
     });
   });
   instruct();

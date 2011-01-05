@@ -138,7 +138,7 @@
 
          //expand the shorted items before the text, also
          txt.prev()
-            .add(txt.prev().prev().prev())
+            .add(txt.prev().prev().prev('.author-list'))
             .add(txt.prev().prev().prev().prev().children('.paper-title'))
             .toggleClass('ellipsis');
     }
