@@ -15,60 +15,8 @@
 </script>
 [% END %]  
 
-<script type="text/javascript" >
-$jq(document).ready(function() {  
-    openid.init('openid_identifier');
-     $jq("#openid_identifier").focus();
-	 
-    $jq("#left").click(function(){
-      $jq("#openid_choice").animate({"left": "+=76px"}, "fast");
-    });
 
-    $jq("#right").click(function(){
-      $jq("#openid_choice").animate({"left": "-=76px"}, "fast");
-    });
-
-});
-</script> 
-   
-<style>
-
-#openid {
-margin-left:2em ;
-width:170px;
-float:right;
-position:relative;
-}
-
-#content-slider {
   
-  width:79px;
-  margin-left:25px;
-  height: 115px;
-  overflow: hidden;
-}
-
-#openid_choice {
-  width: 800px;
-  position:relative;
-}
-
-#left {
-  float: left;
-  margin-top:50px; 
-  margin-left:5px;
-  position:absolute;
-} 
-
-#right {
-  float: left;
-  margin-top:50px; 
-  margin-left:102px; 
-  position:absolute;
-} 
-
-</style>
-
 <!-- Login form -->
 <form method="post"  onsubmit="popWin('/auth/login?email='+this.email.value+'&password='+this.password.value)" style="float:left;">
 <h4>Sign in with your WormBase Account</h4>
@@ -97,21 +45,7 @@ position:relative;
 </table>
 </form>
 
-<!-- Simple OpenID Selector -->
-<div id="openid">
-<h4><span id="fade">or Sign in with your third-party account</span></h4>
-
-<span id="left" class="ui-icon ui-icon-triangle-1-w"></span>  
-<span id="right" class="ui-icon ui-icon-triangle-1-e"></span> 
-<div id="content-slider"  >
-  <div id="openid_choice">
-    <div id="openid_btns"></div>
-  </div>   
-</div>
-
-</div>
-<!-- /Simple OpenID Selector -->
- 
+[% PROCESS "auth/openid.tt2" %]
  
  
  

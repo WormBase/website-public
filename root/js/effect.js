@@ -50,6 +50,7 @@
       items:'li.widget',
       placeholder: 'placeholder',
       connectWith: '.sortable',
+      opacity: 0.6,
       forcePlaceholderSize: true,
       update: updateLayout,
     });
