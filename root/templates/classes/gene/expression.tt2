@@ -11,7 +11,7 @@ $jq(".lightbox").colorbox({width:"90%", inline:true});
 	<div style='display:none'>
 	  [% FOREACH ep IN fields.anatomic_expression_patterns.data.expr %]
 	    [% IF ep.value.image %]
-	    <div id="[% ep.value.object.id %]"   ><a href="/draw/[% ep.value.image %]">[% image("/draw/" _ ep.value.image)  %]</a></div>
+	    <div id="[% ep.value.object.id %]"   ><a href="/draw/[% ep.value.image %]" target="_blank">[% image("/draw/" _ ep.value.image)  %]</a></div>
 	    [% END %]
 	  [% END %]
 	</div>
