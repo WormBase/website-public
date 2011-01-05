@@ -372,10 +372,10 @@ sub transcripts {
     return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
     return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
     
-    my @transcripts = sort {$b cmp $a } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
+    my @transcripts = sort {$a cmp $b } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
     return unless @transcripts;
     my $data = { description => 'The Transcripts in this region of the sequence',
-		 data        => \@transcripts, #class Sequence
+		 data        => [map {$self->_pack_obj($_)}  @transcripts], #class Sequence
     };
     return $data;    
 }
@@ -388,7 +388,7 @@ sub microarray_assays {
     my @microarrays = sort {$a cmp $b } map {$_->info} map { $_->features('reagent:Oligo_set') } @{$self->segments} ;
     return unless @microarrays;
     my $data = { description => 'The Microarray assays in this region of the sequence',
-		 data        => \@microarrays,  #class Oligo_set
+		 data        => [map {$self->_pack_obj($_)}  @microarrays],  #class Oligo_set
     };
     return $data;    
 }
@@ -399,7 +399,7 @@ sub transgene_constructs {
     my @transgenes = grep {!$seen{$_}++} (eval { $self ~~ 'Drives_Transgene'},eval { $self ~~ 'Transgene_product' });
     return unless @transgenes;
     my $data = { description => 'The Transgene constructs of the sequence',
-		 data        => \@transgenes,
+		 data        => [map {$self->_pack_obj($_)}  @transgenes],
     };
     return $data;    
 }

@@ -1,11 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget toggle = 1%]
-
-[% WRAPPER $field_block title="ESTs" %]
-     <button onclick="window.location='[% c.external_url.aligner _ fields.print_sequence.data.est %]'" >View EST alignments</button>
-[% END %] 
+[% widget = c.stash.widget toggle = 1 %]
 
 [% WRAPPER $field_block title="Predicted Exon Structure" %]
   [% data = c.stash.fields.print_feature.data.exons %]
@@ -23,7 +19,7 @@
 
 [% WRAPPER $field_block title="Blast" %]
     [% data= c.stash.fields.print_blast.data %]
-     <form method="post" action= [% c.external_url.blast_blat %] enctype="multipart/form-data">
+     <form method="post" action= [% c.uri_for('/tools','blast_blat') %]>
 	 [% FOREACH key IN  data.target %]
 	<input type="submit" name="autoload" value="Blast [% data.source %] against [% key %]" />
 	[% END %] 
