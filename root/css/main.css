@@ -763,7 +763,8 @@ div.widget-section-header {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-  clear:both;
+  clear:left;
+  float:left;
   line-height:1.2em;
   padding:0.2em;
   height:1%;
@@ -1258,11 +1259,6 @@ div.details {
   padding: 0.5em;
   float:right;
   margin:0.5em;
-}
-
-div.overview {
-  float:left;
-  clear:left;
 }
 
 div.details div.field div.field-title {

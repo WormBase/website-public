@@ -12,8 +12,8 @@
 
 </div>
 
-<div class="overview">
-<div class="text-width">[% fields.description.data.des %]</div>
+
+<div class="text-width" style="clear:left">[% fields.description.data.des %]</div>
 
 
 [% widget = c.stash.widget %]
@@ -34,4 +34,4 @@
      [% END %]
 
 
-</div>
+
