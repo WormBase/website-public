@@ -12,7 +12,7 @@
    [% END %]
 
 </div>
-<div class="overview">
+
    [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
            [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
    [% END %]
@@ -36,4 +36,3 @@
          <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
    [% END %]
 
-</div>

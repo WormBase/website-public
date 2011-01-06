@@ -161,7 +161,7 @@ div.opaque {
 
 div.more.open {
   border-top:none;
-  border-bottom:1px solid gray;
+  border-bottom:1px solid black;
 }
 
 div.more .ui-icon {

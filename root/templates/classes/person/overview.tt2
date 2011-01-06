@@ -31,7 +31,6 @@
 </div>
 
 
-<div class="overview">
    [% WRAPPER $field_block title="Street Address"-%] 
             [%FOREACH address_line IN fields.street_address.data %]
             [% address_line  %]<br>
@@ -53,7 +52,7 @@
           <a href="http://[% fields.web_page.data %]">[% fields.web_page.data %]</a><br>
    [% END %]
 
-</div>
+
 
 
 

@@ -17,7 +17,7 @@
 
 </div>
 
-<div class="overview">
+
  
 	[% markup(c.stash.fields.description.data) %]
 
@@ -70,4 +70,3 @@
     [% key %]:[% c.stash.fields.analysis.data.$key %]<br>
   [% END %]
 [% END %]
-  </div>
