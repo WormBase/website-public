@@ -17,10 +17,10 @@
 
 </div>
 
-<div class="text-width">
+<div class="overview">
  
-	&nbsp;  [% markup(c.stash.fields.description.data) %]
- </div>
+	[% markup(c.stash.fields.description.data) %]
+
 
 [% WRAPPER $field_block title="Sequence Type" %]
   [% c.stash.fields.sequence_type.data %]
@@ -63,11 +63,11 @@
    [% END %]
 [% END %]
  
-[% PROCESS "shared/fields/remarks.tt2" %]
-
+<div class="text-width">[% PROCESS "shared/fields/remarks.tt2" %]
+</div>
 [% WRAPPER $field_block title="Analysis" %]
   [% FOREACH key IN c.stash.fields.analysis.data.keys.sort %]
     [% key %]:[% c.stash.fields.analysis.data.$key %]<br>
   [% END %]
 [% END %]
- 
+  </div>
