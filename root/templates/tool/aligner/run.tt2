@@ -19,17 +19,15 @@
 <input type="checkbox" name="flip"   [% IF flip %]checked[% END %] >Flip <br> <b>Length of unaligned sequence allowed at ends</b> 
 <input type="hidden" name="override_flip" value="1" > 
 <select name="ragged" >
-<option value="0">0</option>
-<option value="5">5</option>
-<option value="10">10</option>
-<option selected value="[% factor %]">[% factor %]</option>
-<option value="50">50</option>
-<option value="100">100</option>
+[% FOREACH number IN [0,5,10,23,50,100] %]
+  <option value="[% number %]" [% IF number==factor %]selected[% END %]>[% number %]</option>
+[% END %]
 </select> <br>
 </p>
 <input type="submit" name="Change" value="Change" ><br>
 </form> 
 </p>
+
 [% END %]
 
 [% IF long %]<h3 class="error" align="CENTER">Sorry, alignment display is limited to [% max_len %] bp</h3>
