@@ -717,7 +717,7 @@ sub widget_GET {
 		     }
 	);
    $format ||= 'text/html';
-   my $filename = "rest_widget_".$class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
+   my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
    $c->log->debug("$filename download in the format: $format");
    $c->response->header('Content-Type' => $format);
    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
