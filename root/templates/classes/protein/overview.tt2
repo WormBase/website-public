@@ -16,7 +16,7 @@
  </div>
  
 
-
+<div class="overview">
 [% WRAPPER $field_block title="Gene" key="genes" -%]
   [% FOREACH obj IN fields.genes.data %]
     [% tag2link(obj) %]  <br>
@@ -45,4 +45,4 @@
 [% WRAPPER $field_block title="Description" key="description" -%]
   [% fields.description.data %]
 [% END %]
- 
+ <div class="overview">
