@@ -86,13 +86,13 @@ div#create-prompt>span {
 /* Seach bar and results page */
 #results {
   max-width:49em;
-  font-size:0.8em;
+  font-size:0.9em;
     margin: 0;
     padding:0em;
 }
 #results ul li{
    padding-top:0.5em;
-   font-size:1.2em;
+   font-size:1.1em;
 /*    height:1.3em; */
 }
 
@@ -103,7 +103,7 @@ div#create-prompt>span {
    color: #228B22;
 }
 
-#results ul li>a>div.date{
+#results ul li div.date{
   text-decoration:none;
   float:right;
 }
@@ -138,9 +138,9 @@ div#create-prompt>span {
 
 div.more {
   position:relative;
-  margin:0.3em 10% 0;
+  margin:4px 10% 0;
   height:4px;
-  border-top:1px solid gray;
+  border-top:1px solid black;
   opacity:0.3;
   filter:alpha(opacity=30);
   -moz-opacity:0.3;

@@ -1260,6 +1260,11 @@ div.details {
   margin:0.5em;
 }
 
+div.overview {
+  float:left;
+  clear:left;
+}
+
 div.details div.field div.field-title {
   width: 6.7em;
   padding-right: 0.5em;

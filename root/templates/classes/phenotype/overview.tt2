@@ -3,7 +3,6 @@
 
 
 <h2>[% fields.name.data.label %]</h2>
-<br><br>
 <div class="details ui-corner-all">
     
     
@@ -13,7 +12,8 @@
 
 </div>
 
-<p>[% fields.description.data.des %]</p>
+<div class="overview">
+<div class="text-width">[% fields.description.data.des %]</div>
 
 
 [% widget = c.stash.widget %]
@@ -34,4 +34,4 @@
      [% END %]
 
 
-
+</div>
