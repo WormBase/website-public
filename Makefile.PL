@@ -14,14 +14,14 @@ requires 'Catalyst::Action::RenderView';
 requires 'parent';
 
 # We're using Config::General format
-requires 'Config::General';
+
 
 # Application dependencies
 requires 'Ace';
-requires 'Bio::Perl';                        # This should be 1.60 or greater
+requires 'Bio::Perl'      => '1.006001';
 requires 'Bio::Graphics';
 requires 'Bio::Grapics::Browser2::Markup';   # Sequece Summary page
-requires 'Catalyst::Devel';                  # REQ'D FOR DEVELOPMENT ONLY
+requires 'Catalyst::Devel';                  # REQ'D for development only
 requires 'Task::Catalyst';                   # A slew of basic Catalyst Goodies
 requires 'Cache::Memcached::libmemcached';
 requires 'Catalyst::Action::REST';           
@@ -33,8 +33,8 @@ requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Log::Log4perl';
 requires 'Catalyst::Plugin::Authentication';          
 requires 'Catalyst::Plugin::Authorization::Roles';          
-requires 'Catalyst::Plugin::Cache';          # Cache interface
-requires 'Catalyst::Plugin::ErrorCatcher';          # Cache interface
+requires 'Catalyst::Plugin::Cache';                # Cache interface
+requires 'Catalyst::Plugin::ErrorCatcher';
 requires 'Catalyst::Plugin::Unicode';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::PerUser';
@@ -45,19 +45,20 @@ requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
 requires 'Catalyst::View::GD';
+requires 'Config::General';
 requires 'Crypt::SaltedHash';
-requires 'Crypt::SSLeay'; 					#for openid to work for (https)
-requires 'CHI';                              # Cache backend
-requires 'CHI::Driver::Memcached::libmemcached';                              
+requires 'Crypt::SSLeay'; 			  # For openid support
+requires 'CHI';                                   # Cache
+requires 'CHI::Driver::Memcached::libmemcached';  # Cache                            
 requires 'DBI';
 requires 'DBD::mysql';
 requires 'DB_File::Lock';
 requires 'GD';
 requires 'GD::SVG';
 requires 'Badge::GoogleTalk';
-requires 'Math::BigInt::GMP';				# will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
+requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Module::Install';
-requires 'Moose';
+requires 'Moose'          => '1.09';
 requires 'MooseX::AbstractFactory';
 requires 'Net::Twitter';
 requires 'namespace::clean';
@@ -68,6 +69,7 @@ requires 'Test::Pod::Coverage';
 requires 'Text::Glob';
 requires 'Time::Duration';
 requires 'WWW::Mechanize';
+requires 'XML::Simple';
 requires 'YAML';
 
 #catalyst;
