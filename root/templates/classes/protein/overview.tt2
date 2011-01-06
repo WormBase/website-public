@@ -45,4 +45,4 @@
 [% WRAPPER $field_block title="Description" key="description" -%]
   [% fields.description.data %]
 [% END %]
- <div class="overview">
+ </div>
