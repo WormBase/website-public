@@ -2,7 +2,7 @@
 # Copy this to .hgignore
 
 extlib/
-extlib.old
+extlib.original
 blib/
 inc/
 wormbase.env
