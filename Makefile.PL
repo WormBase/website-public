@@ -46,19 +46,26 @@ requires 'Badge::GoogleTalk';                                    #
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        # 
 requires 'Bio::Grapics::Browser2::Markup';                       # Sequence Summary page
+requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
+requires 'CGI::Simple::Cookie';                                  #
 requires 'Config::General';                                      #
 requires 'Crypt::SaltedHash';                                    #
 requires 'Crypt::SSLeay'; 			                 # For openid support
 requires 'CHI';                                                  # Cache
 requires 'CHI::Driver::Memcached::libmemcached';                 # Cache
 requires 'Class::MOP';                                           # => '1.12';
+requires 'Data::Dump';                                           #
+requires 'Data::OptList';                                        #
 requires 'DBI';                                                  #
 requires 'DBD::mysql';                                           #
 requires 'DB_File::Lock';                                        #
+requires 'Devel::GlobalDestruction';                             #
+requires 'Devel::StackTrace';                                    #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
 requires 'List::MoreUtils';                                      #
+requires 'Log::Log4perl';                                        #
 requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Module::Install';                                      #
 requires 'Moose'                                 => '1.21';      #
@@ -66,14 +73,16 @@ requires 'MooseX::AbstractFactory';                              #
 requires 'MooseX::NonMoose';                                     # => '0.17';
 requires 'MooseX::MethodAttributes::Inheritable';                # => '0.24';
 requires 'MooseX::Role::WithOverloading';                        # => '0.05';
+requires 'MRO::Compat';                                          #
 requires 'Net::Twitter';                                         #
 requires 'namespace::clean';                                     #
 requires 'namespace::autoclean';                                 #
 requires 'Package::DeprecationManager'           => '0.10';      #
 requires 'Package::Stash'                        => '0.21';      # 
 requires 'Package::Stash::XS'                    => '0.18';      #
-requires 'Param::Utils';                                         #
-requires 'Term::Readline';                                       #
+requires 'Params::Util';                                         #
+requires 'Term::ReadLine';                                       #
+requires 'Sub::Exporter';                                        #
 requires 'Sub::Install';                                         #
 requires 'Sub::Identify';                                        #
 requires 'SVG';                                                  #
