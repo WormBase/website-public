@@ -62,8 +62,11 @@ requires 'DBD::mysql';                                           #
 requires 'DB_File::Lock';                                        #
 requires 'Devel::GlobalDestruction';                             #
 requires 'Devel::StackTrace';                                    #
+requires 'HTML::Parser';                                         #
+requires 'HTML::Entities';                                       #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
+requires 'JSON';                                                 #
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
 requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
