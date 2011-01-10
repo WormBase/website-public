@@ -6,7 +6,7 @@ export APPLIB="WormBase"
 export WORKERS=5
 export PORT=9001
 #export PERL5LIB=/usr/local/wormbase/website/tharris/extlib/lib/perl5:/usr/local/wormbase/website/xshi/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/xshi/lib:$PERL5LIB
-export PERL5LIB=/usr/local/wormbase/website/tharris/extlib/lib/perl5:/usr/local/wormbase/website/tharris/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/tharris/lib:$PERL5LIB
+export PERL5LIB=/usr/local/wormbase/website/tharris/extlib/lib/perl5:/usr/local/wormbase/website/tharris/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/tharris/lib:/usr/local/wormbase/website/tharris/extlib/gbrowse2/current/lib/perl5/x86_64-linux-gnu-thread-multi:$PERL5LIB
 
 #export PATH="/usr/local/wormbase/website-classic/extlib/bin:$PATH"
 export MODULEBUILDRC="/usr/local/wormbase/website/tharris/extlib/.modulebuildrc"
