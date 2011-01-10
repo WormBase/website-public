@@ -33,14 +33,19 @@ isa_ok($go_obj,'WormBase::API::Object::GO_Term');
 
 #### method list
 my @methods = qw/
-	details
-	genes_n_cds
-	phenotype
-	genes
-	motif
-	cds
+id
+definition
+type
+term
+
  /;
-#
+
+#	details
+#	genes_n_cds
+#	phenotype
+#	genes
+#	motif
+#	cds
 
 ### test runs ####
 
