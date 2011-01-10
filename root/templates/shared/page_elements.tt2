@@ -306,9 +306,9 @@
 
 [% BLOCK widget_sortable_block %]
    <!-- start [% widget.name %] widget -->
-          <div class="widget-container ui-corner-all">
+          <div id="widget-[% type %]" class="widget-container ui-corner-all">
                 <header> 
-                <div id="widget-[% type %]" class="ui-corner-top widget-header">
+                <div class="ui-corner-top widget-header">
                     <div class="module-close" wname="[% id %]" title="close"></div>
                     <div class="module-max" wname="[% id %]" title="pop out"></div>
                    

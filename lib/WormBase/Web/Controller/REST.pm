@@ -493,13 +493,15 @@ TODO: This is currently just returning a dummy object
 sub issue_email{
  my ($self,$c,$issue,$new,$content,$change) = @_;
  my $subject='New Issue';
- my $bcc = $issue->owner->email_address if($issue->owner);
+ my $bcc ;
+ $bcc= $issue->owner->email_address  if($issue->owner);
+
  unless($new == 1){
     $subject='Issue Update';
     my @threads= $issue->issues_to_threads;
     $bcc .= ",".$issue->assigned_to->email_address if($issue->assigned_to);
     my %seen=();  
-    $bcc = join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
  }
  $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
  
@@ -509,6 +511,7 @@ sub issue_email{
  $c->stash->{content}=$content;
  $c->stash->{change}=$change;
  $c->stash->{noboiler} = 1;
+ $c->log->debug(" send out email to $bcc");
  $c->stash->{email} = {
 		  to      => $c->config->{issue_email},
 		  cc => $bcc,
@@ -571,7 +574,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set($cache_id,$data);
+	$c->cache->set($cache_id,$data) or die;
     }
     
     # Retain the widget order
@@ -624,22 +627,7 @@ sub widget_GET {
 					   name => $name}) or die "$!";
     }
     my $object = $c->stash->{object};
-
-    # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
-
-
-    my $status;
-
-    # The cache ONLY includes the field data for the widget, nothing else.
-    # This is because most backend caches cannot store globs.
-    if ($cached_data) {
-	$c->stash->{fields} = $cached_data;
-    } else {
-
-	# No result? Generate and cache the widget.		
-
-	# Is this a request for the references widget?
+    # Is this a request for the references widget?
 	# Return it (of course, this will ONLY be HTML).
 	if ($widget eq "references") {
 	    $c->stash->{class}    = $class;
@@ -654,6 +642,17 @@ sub widget_GET {
 	    $c->res->redirect("/tools/".$widget."/run?inline=1&sequence=".$name) ;
 	    return;
        }
+
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
+
+    # The cache ONLY includes the field data for the widget, nothing else.
+    # This is because most backend caches cannot store globs.
+    if ($cached_data) {
+	$c->stash->{fields} = $cached_data;
+    } else {
+
+	# No result? Generate and cache the widget.		
 
 #    unless ($c->stash->{object}) {
 #	# Fetch our external model
@@ -718,7 +717,7 @@ sub widget_GET {
 		     }
 	);
    $format ||= 'text/html';
-   my $filename = "rest_widget_".$class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
+   my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
    $c->log->debug("$filename download in the format: $format");
    $c->response->header('Content-Type' => $format);
    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);

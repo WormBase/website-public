@@ -24,14 +24,12 @@
             [% fields.fax.data %]
    [% END %]            
 
-	[% WRAPPER $field_block title="WormBase id"-%] 
+	[% WRAPPER $field_block title="WormBase ID"-%] 
             [% tag2link(fields.id.data) %]
    [% END %]            
 
 </div>
 
-
-<div class="text-width" style="clear:left">
 
    [% WRAPPER $field_block title="Street Address"-%] 
             [%FOREACH address_line IN fields.street_address.data %]
@@ -54,9 +52,7 @@
           <a href="http://[% fields.web_page.data %]">[% fields.web_page.data %]</a><br>
    [% END %]
 
-   
-   
-</div>
+
 
 
 

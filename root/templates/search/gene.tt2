@@ -2,7 +2,7 @@
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
-<div class="text-min" style="height:auto;max-height:2.6em;">
+<div class="text-min" style="height:auto;max-height:2.4em;">
   [% markup(item.concise_description) %]    
 </div>
 [% IF item.concise_description.length > 150 %]

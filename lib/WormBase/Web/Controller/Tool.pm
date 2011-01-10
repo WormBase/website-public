@@ -21,15 +21,28 @@ sub tool :Path("/tools") Args {
    #  $c->stash->{noboiler} = 1;
      my $tool = shift @args;
      my $action= shift @args || "index";
-     $c->log->debug("using $tool and runiing $action\n");
+     $c->log->debug("using $tool and running $action\n");
       
-     $c->stash->{'template'}="tool/$tool/$action.tt2";
-     my $api = $c->model('WormBaseAPI');
-     my ($data)= $api->_tools->{$tool}->$action($c->req->params);
+     $c->stash->{template}="tool/$tool/$action.tt2";
      $c->stash->{noboiler} = 1 if($c->req->params->{inline});
-     
-    for my $key (keys %$data){
+     my $api = $c->model('WormBaseAPI');
+     my $data;
 
+    # Does the data already exist in the cache?
+  
+    if($action eq 'run' && $tool eq 'aligner' && !(defined $c->req->params->{Change})) {
+       
+      my $cache_id;
+      ($cache_id,$data) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
+      unless($data) {  
+	  $data = $api->_tools->{$tool}->$action($c->req->params);
+	  $c->set_cache($cache_id,$data);
+      }  
+    }else{
+      $data= $api->_tools->{$tool}->$action($c->req->params);
+    }
+
+    for my $key (keys %$data){
 	$c->stash->{$key}=$data->{$key};
     }
 }
