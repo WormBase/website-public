@@ -16,12 +16,12 @@
 
 [% WRAPPER $field_block title="Microarray Assays" %]
   [% FOREACH key IN  c.stash.fields.microarray_assays.data %]
-      <a href="[% c.uri_for_action('report','oligo_set' ,key ) %]">[% key %]</a><br>
+      [% tag2link(key) %]<br>
    [% END %]
 [% END %]
 
 [% WRAPPER $field_block title="Transgene Constructs" %]
   [% FOREACH key IN  c.stash.fields.transgene_constructs.data %]
-      <a href="[% c.uri_for_action('report','transgene' ,key ) %]">[% key %]</a><br>
+      [% tag2link(key) %]<br>
    [% END %]
 [% END %]

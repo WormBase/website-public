@@ -89,8 +89,10 @@ sub run {
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
     my $bestname = $self->bestname($sequence);
-    $self->gff_dsn->ace($sequence->db);
-    my $dbgff =  $self->gff_dsn->dbh ;
+    my $gff_dsn= $self->gff_dsn;
+    $gff_dsn->ace($sequence->db);
+    $gff_dsn->reconnect();
+    my $dbgff =  $gff_dsn->dbh ;
     $self->log->debug("GFF database:",$dbgff);
     $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
@@ -102,7 +104,7 @@ sub run {
     my $user_start = $param->{"start"};
     my $user_end   = $param->{"end"};
     my $flip_user  = $param->{"flip"};
-    my $user_ragged =  $param->{"ragged"} || BLUMENTHAL_FACTOR;
+    my $user_ragged =  defined $param->{"ragged"} ? $param->{"ragged"} : BLUMENTHAL_FACTOR;
     my $user_override = defined $user_start && defined $user_end && ($user_start || $user_end);
     my $hash = {	
 		sequence => $sequence_id,
@@ -110,7 +112,7 @@ sub run {
 		start => $user_start,
 		end => $user_end,
 		flip => 0,
-		factor => BLUMENTHAL_FACTOR,
+		factor => $user_ragged,
 		algorithm => $self->algorithms,
 		types	  =>\%TYPES,
 		labels	=> \%LABELS,

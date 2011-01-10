@@ -1,11 +1,11 @@
 <div class="example ui-corner-all"><h3>You can save items to your workspace</h3> 
 When you see a star on WormBase:
 <ol>
-<li style="width:12em"><div id="test-star" class="workbench-status-example"></div>
+<li style="width:10.5em"><div id="test-star" class="workbench-status-example"></div>
 
-1. Click on the star: <!--<span id="test-star" class="ui-icon ui-icon-stars ui-icon-star-gray" ></span>--></li>
+1. Click on the star: </li>
 
-<div id="star-instructions" class="text-width">
+<div id="star-instructions" class="star-instructions text-width">
   <li>2. You will be notified at the top of your screen that the item has been saved.
   <li>3. View your item by opening <br /> &nbsp &nbsp
   <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
@@ -20,9 +20,9 @@ When you see a star on WormBase:
 <script>
   var instruct = (function(){
     $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=[% get_url('page', 'example') %]");
-    $jq("#star-instructions").hide();
+    $jq(".star-instructions").hide();
     $jq(".example .bench-update").live('click', function() {
-      $jq("#star-instructions").toggle();
+      $jq(".star-instructions").toggle();
     });
   });
   instruct();

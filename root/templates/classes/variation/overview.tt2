@@ -33,6 +33,6 @@
    [% END %]
 
    [% WRAPPER $field_block title="Remark(s)" key="remarks" %]
-         [% markup(fields.remarks.data.join('<br>'),0) %]
+         <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
    [% END %]
 

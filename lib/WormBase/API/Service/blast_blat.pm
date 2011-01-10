@@ -102,7 +102,7 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
 
 sub index {
    my ($self,$param) = @_;
-
+   $self->autoload($param) if  $param->{'autoload'};
    
 
     my $data = {
@@ -1310,4 +1310,35 @@ sub sort_hits {
 
     return 1;
 }
+
+sub autoload {
+    my ($self,$param) = @_;
+
+    my $object = $param->{'autoload'};
+
+    my ($id, $species, $db) = $object =~ /^Blast (\S+) against (\S+) (\S+)/;
+
+    return unless $id && $db && $species;
+
+    my ($obj) = $self->ace_dsn->fetch(CDS => $id);
+    ($obj) = $self->ace_dsn->fetch(Sequence => $id) unless $obj;
+
+    return unless $obj;
+    $param->{'search_type'} = 'blast';
+
+    if ($db =~ /protein/) {
+	$param->{'blast_app'} = 'blastp';
+	$param->{'query_sequence'} = $obj->asPeptide;
+	$param->{'query_type'} = 'prot';
+	$param->{'database'} = lc($species.'_'.$db);
+    }
+
+    else {
+	$param->{'blast_app'} = 'blastn';
+	$param->{'query_sequence'} = $obj->asDNA;
+	$param->{'query_type'} = 'nucl';
+	$param->{'database'} = lc($species.'_'.$db);
+    }
+}
+
 1;

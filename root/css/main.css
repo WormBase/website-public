@@ -134,6 +134,7 @@ div#header div#nav-bar {
   background:#EEE;
   height:2em;
   margin:0;
+  border-bottom:1px solid #DDD;
 }
 
 ul.nav-bar {
@@ -274,17 +275,12 @@ li div.widget-container {
     display:none;
     background-color:#FFFFFF; 
     position:relative;
-    border:1px solid #999;
+    border:1px solid #A0ACB8;
 
 }
 
 li.visible div.widget-container {
   display:block;
-}
-
-.widget-container:hover {
-/*     border:1px solid #888; */
-    background:#FAFAFA;
 }
 
 .content {
@@ -326,14 +322,29 @@ li.visible div.widget-container {
     border:0;
 }
 
-.widget-container  #widget-me, #navigation .me.ui-selected {
+#widget-me {
+   border: 1px solid #BDB8A4;
+}
+#widget-resources {
+    border: 1px solid #ACB8A0;
+}
+#widget-tools {
+    border: 1px solid #ABA0B8; 
+}
+
+#widget-me .widget-header, #navigation .me.ui-selected {
     background: #E3DDC5;
 }
-.widget-container  #widget-resources, #navigation .resources.ui-selected {
+#widget-resources .widget-header, #navigation .resources.ui-selected {
     background: #D0DEC1;
 }
-.widget-container  #widget-tools, #navigation .tools.ui-selected {
+#widget-tools .widget-header, #navigation .tools.ui-selected {
     background: #CFC1DE; 
+}
+
+
+.widget-container:hover {
+    background:#FAFAFA;
 }
 
 .widget-container #widget-feed{
@@ -752,7 +763,8 @@ div.widget-section-header {
 
 /* widget field titles: ie Identification > IDs */
 div.field {
-  clear:both;
+  clear:left;
+  float:left;
   line-height:1.2em;
   padding:0.2em;
   height:1%;
@@ -1222,10 +1234,12 @@ padding:0.7em 0.5em 0;
 
 .placeholder {
 /*   background: #FAF7DE; */
-  background: #EEE;
+/*   background: #EEE; */
+  background:white;
   padding:0 1em 0 0.5em;
-  margin:0.5em 0 0 0.5em;
-  border:1px dashed #333;
+  margin:0.375em 0 -0.125em 0.5em;
+/*   border:1px dashed #333; */
+  border:0.15em dashed #AAA;
 }
 
 #navigation div.small li{
@@ -1346,10 +1360,6 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 .entry>h3 a:hover{
   color:#0000B8;
-}
-
-.entry .date {
-  float:right;
 }
 
 
