@@ -17,15 +17,13 @@ use Catalyst qw/
 	  Static::Simple
 	  Unicode
 	  ErrorCatcher
-
 	  Authentication
-	  Authorization::Roles
-	  
+	  Authorization::Roles  
 	  Session
 	  Session::PerUser
 	  Session::Store::DBI
-	  Session::State::Cookie
-         StackTrace
+ 	  Session::State::Cookie
+          StackTrace
            /;
 
 extends 'Catalyst';
@@ -215,8 +213,13 @@ __PACKAGE__->config->{'View::JSON'} = {
 # it to persist.
 my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
     ? '4 weeks'
-    : '1 day';
+    : '1 minute';
 
+# I don't yet have access to the configuration file. installation_type
+# is statically set above. LAME!!
+my $servers = (__PACKAGE__->config->{installation_type} eq 'production')
+    ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
+    : [ '127.0.0.1:11211' ];
 
 # CHI-powered on-disk file cache: default.
 if (0) {    
@@ -231,23 +234,20 @@ if (0) {
     };
 }
 
+# Here's a typical example for Cache::Memcached::libmemcached
+# For development and distribution installations, this should
+# default to localhost; for production it nees to point to our
+# distributed memcached machines.
 if (1) {    
     __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    class          => "CHI",
-    driver         => 'Memcached::libmemcached',
-    servers => ['127.0.0.1:11211'], 
-     expires_in     => $expires_in,
+	class          => "CHI",
+	driver         => 'Memcached::libmemcached',
+	servers        => $servers, 
     };
 }
 
-# Here's a typical example for Cache::Memcached::libmemcached
-if (0) {
-    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    class   => "Cache::Memcached::libmemcached",
-    servers => ['127.0.0.1:11211'],
-    debug   => 2,
-    };
-}
+#	expires_in     => $expires_in,
+#	debug          => 2
 
 # FastMmap. WORKS, although I'm uncertain of how well it will scale.
 if (0) {
@@ -345,35 +345,38 @@ sub get_example_object {
 #  Helper methods for interacting 
 #  with the cache.
 #
+# I don't think the cache is working...
+#
 ########################################
 sub check_cache {
     my ($self,@keys) = @_;
     
     # First get the cache
     my $cache = $self->cache;
-
+ 
     # Now get the database version from the cache. Heh.
     my $version;
     unless ($version = $cache->get('wormbase_version')) {
-    # The version isn't cached. So on this our first
-    # check of the cache, stash the database version.
-    
-    $version = $self->model('WormBaseAPI')->version;
-    $cache->set('wormbase_version',$version);
+	# The version isn't cached. So on this our first
+	# check of the cache, stash the database version.
+	
+	$version = $self->model('WormBaseAPI')->version;
+	$cache->set('wormbase_version',$version);
+	$self->log->warn("tried to set a cache key");
     }
     
     # Build a cache key that includes the version.
     my $cache_id = join("_",@keys,$version);
-
+    
     # Now check the cache for the data we are looking for.
     my $cached_data = $cache->get($cache_id);
-
+    
     if ($cached_data) {
-    $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving.");
+	$self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving.");
     } else {
-    $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
     }
-
+    
     return ($cache_id,$cached_data);
 }
 
