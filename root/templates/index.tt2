@@ -6,7 +6,7 @@
 <!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
       <p>facilitating insights into <br />nematode biology</p>
 [% UNLESS c.user_exists %]
-<div id="create-prompt">
+<div id="create-prompt" class="ui-corner-all">
   Join the online worm community! <br />
         <div id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
           sign up ›

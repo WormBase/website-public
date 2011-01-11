@@ -93,7 +93,8 @@ Note: firefox seems to render header objects funny
 div#header {
   padding:0;
   position:relative;
-  background:#333;
+/*   background:#333; */
+  background:black;
   margin-bottom:0.5em;
 }
 
@@ -378,6 +379,7 @@ li.visible div.widget-container {
   float:right;
   width:1em;
   margin:1em 0 0 0;
+  cursor:pointer;
 }
 
 #widget-footer a:hover{
@@ -458,37 +460,44 @@ section.widget .secondary-container {
 
 div#footer{
     color:white;
-    background: #333;
+    background:black;
     margin:0;
     overflow:auto;
     position:absolute;
     width:100%;
-    bottom:0px;
+    bottom:0;
 }
 div#footer a{
   color:white;
+}
+div#footer a:hover{
+  color:#6FA2D9;
 }
 
 #footer, #spacer {
     clear:both;
     padding: 0;
-    height: 17em;
-    font-size:0.8em;
-    margin-top:1.4em;
+    height: 12em;
+    font-size:0.9em;
+    margin-top:1em;
 }
 
 #footercredit {
     text-align: left;
-    float: left;
+    position:absolute;
+    bottom:0;
+    left:1.4em;
     overflow:hidden;
-    margin-left:1.4em;
 }
+
 
 #footermeta {
     text-align: right;
-    float: right;
     overflow:hidden;
-    margin-right: 1.4em;
+    position:absolute;
+    bottom:1em;
+    right:1.4em;
+    overflow:hidden;
 }
 
 
@@ -512,9 +521,9 @@ padding:1.4em;
 .footer-column .footer-title {
 /*    color: #333333; */
 /*    display: block; */
-    font-size: 110%;
+/*     font-size: 110%; */
     font-weight: bold;
-    margin-bottom: 6px;
+    margin-bottom: 1em;
     white-space: nowrap;
 }
 
@@ -1125,7 +1134,8 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #navigation #title{
-  background:#333;
+/*   background:#333; */
+  background:black;
   height:2em;
   color:white;
 padding:0.7em 0.5em 0;
@@ -1287,7 +1297,8 @@ div.details div.field div.field-content{
   position:absolute;
   bottom:100%;
   left:0;
-  background:#333;
+/*   background:#333; */
+  background:black;
   color:white;
   padding:0.5em;
   margin:0.5em 0;
