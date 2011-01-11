@@ -348,9 +348,10 @@ sub check_cache {
     my $memd = $self->default_cache_backend->memd;
 #     my $cached_data = $memd->get($cache_id);
     my $cached_server;
-    $cached_server=$memd->get_server_for_key($cache_id) if($self->config->{timer}||$self->check_user_roles('admin'));
+     
 
     if ($cached_data) {
+      $cached_server=$memd->get_server_for_key($cache_id) if($self->config->{timer}||$self->check_user_roles('admin'));
       $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
     } else {
       $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");

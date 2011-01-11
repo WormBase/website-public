@@ -32,13 +32,13 @@ sub tool :Path("/tools") Args {
   
     if($action eq 'run' && $tool eq 'aligner' && !(defined $c->req->params->{Change})) {
        
-      my $cache_id;
-      ($cache_id,$data) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
+      my ($cache_id,$cache_server);
+      ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
       unless($data) {  
 	  $data = $api->_tools->{$tool}->$action($c->req->params);
 	  $c->set_cache($cache_id,$data);
       }else {
-	$c->stash->{cached} = 1;
+	$c->stash->{cache} = $cache_server if($cache_server);
       }
     }else{
       $data= $api->_tools->{$tool}->$action($c->req->params);
