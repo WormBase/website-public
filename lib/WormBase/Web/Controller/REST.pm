@@ -31,6 +31,43 @@ Catalyst Controller.
 =cut
  
  
+sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
+sub print_GET {
+    my ( $self, $c) = @_;
+   
+    my $api = $c->model('WormBaseAPI');
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    my $class = lc($c->req->param('class'));
+     $c->log->debug("class is $class");
+    my $left = $c->user_session->{'layout'}->{$class}->{0}->{'left'};
+    my $right = $c->user_session->{'layout'}->{$class}->{0}->{'right'};
+    my $leftwidth = $c->user_session->{'layout'}->{$class}->{0}->{'leftWidth'};
+  
+    if(ref($left) eq 'ARRAY') {$left = join('-', @$left);}
+    if(ref($right) eq 'ARRAY') {$right = join('-', @$right);}
+    (my $path = $c->req->param('path')) =~ s/\?.*//g;
+    my $file = $api->_tools->{print}->run("$path?left=$left&right=$right&leftwidth=$leftwidth");
+     
+    if ($file) {
+ 
+    $c->response->header('Content-Type' => 'application/x-download');
+    $c->response->header('Content-Disposition' => 'attachment; filename=test.pdf');
+#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
+#         $c->serve_static_file('root/test.html');
+      
+#     while (defined(my $line = <FILE>)) {
+    open(MYINPUTFILE, "<$file");
+#      binmode MYINPUTFILE;
+    my $fileGlob = \*MYINPUTFILE;
+ 
+
+     $c->log->debug($fileGlob);
+    $c->res->body($fileGlob);
+#    }
+ 
+      close FILE;
+    }
+}
 
 
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
@@ -230,7 +267,7 @@ sub history_POST {
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
     $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
+    $c->model('Schema::HistoryVisits')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
 }
 
  
@@ -644,12 +681,13 @@ sub widget_GET {
        }
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
+    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
 
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
 	$c->stash->{fields} = $cached_data;
+	$c->stash->{cache} = $cache_server if($cache_server);
     } else {
 
 	# No result? Generate and cache the widget.		
