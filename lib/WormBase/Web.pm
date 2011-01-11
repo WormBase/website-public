@@ -351,7 +351,7 @@ sub check_cache {
     
     # First get the cache
     my $cache = $self->cache;
-
+=pod
     # Now get the database version from the cache. Heh.
     my $version;
     unless ($version = $cache->get('wormbase_version')) {
@@ -361,22 +361,29 @@ sub check_cache {
     $version = $self->model('WormBaseAPI')->version;
     $cache->set('wormbase_version',$version);
     }
-    
+=cut
     # Build a cache key that includes the version.
-    my $cache_id = join("_",@keys,$version);
+    my $cache_id = join("/",@keys);
 
     # Now check the cache for the data we are looking for.
     my $cached_data = $cache->get($cache_id);
-
+    my $memd = $self->default_cache_backend->memd;
+#     my $cached_data = $memd->get($cache_id);
+    my $cached_server;
+    $cached_server=$memd->get_server_for_key($cache_id) if($self->config->{timer}||$self->check_user_roles('admin'));
+   
+ 
     if ($cached_data) {
-    $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving.");
+      $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
+       
     } else {
-    $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+      $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
     }
 
-    return ($cache_id,$cached_data);
+    return ($cache_id,$cached_data,$cached_server);
 }
 
+ 
 # Provided with a pregenerated cache_id and (probably hash reference) of data,
 # store it in the cache.
 sub set_cache {
