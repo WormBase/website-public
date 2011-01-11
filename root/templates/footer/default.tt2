@@ -49,7 +49,7 @@
     <div id="footercredit">
      <!--     Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
           <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
-      -->      [% c.config.codename %] - [% server_details("") %] 
+      -->     
           <p>
              
                WormBase is supported by a grant from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a> <br />
@@ -62,6 +62,7 @@
     <div id="footermeta">
                 <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
                 [% # The current release of the software and its codename %]
+ [% c.config.codename %] - [% server_details("") %] 
      <!--       <br />[% c.config.codename %]
 
             <br />[% server_details("") %] 

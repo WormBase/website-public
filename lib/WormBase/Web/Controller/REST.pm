@@ -190,7 +190,7 @@ sub history_GET {
 
     if($clear){ 
       map { 
-        $_->visits->delete(); 
+        $_->user_history->delete(); 
         $_->update(); 
       } $session->user_history;
     }
@@ -199,14 +199,14 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
 
-    @hist = sort { $b->visits->get_column('visit_time')->max() <=> $a->visits->get_column('visit_time')->max()} @hist;
+    @hist = sort { $b->get_column('latest_visit') <=> $a->get_column('latest_visit')} @hist;
 
     my @histories;
     map {
-      if($_->visits->count > 0){
-        my $time = $_->visits->get_column('visit_time')->max();
+      if($_->visit_count > 0){
+        my $time = $_->get_column('latest_visit');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
-                            visits => $_->visits->count,
+                            visits => $_->visit_count,
                             page => $_->page,
                           };
       }
@@ -230,7 +230,10 @@ sub history_POST {
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
     $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
+    $hist->set_column(latest_visit=>time());
+    $hist->set_column(visit_count=>($hist->visit_count + 1));
+    $hist->update;
+#     $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
 }
 
  
@@ -574,7 +577,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set($cache_id,$data) or die;
+	$c->cache->set($cache_id,$data);
     }
     
     # Retain the widget order

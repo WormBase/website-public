@@ -460,8 +460,7 @@ section.widget .secondary-container {
 
 div#footer{
     color:white;
-/*   background:#333; */
-  background:black;
+    background:black;
     margin:0;
     overflow:auto;
     position:absolute;
@@ -478,23 +477,19 @@ div#footer a:hover{
 #footer, #spacer {
     clear:both;
     padding: 0;
-    height: 14em;
-    font-size:0.8em;
-    margin-top:1.4em;
+    height: 12em;
+    font-size:0.9em;
+    margin-top:1em;
 }
 
 #footercredit {
     text-align: left;
     position:absolute;
-    bottom:1.4em;
+    bottom:0;
     left:1.4em;
     overflow:hidden;
 }
 
-#footercredit p {
-  font-size:1.1em;
-  margin:0;
-}
 
 #footermeta {
     text-align: right;
@@ -526,9 +521,9 @@ padding:1.4em;
 .footer-column .footer-title {
 /*    color: #333333; */
 /*    display: block; */
-    font-size: 110%;
+/*     font-size: 110%; */
     font-weight: bold;
-    margin-bottom: 6px;
+    margin-bottom: 1em;
     white-space: nowrap;
 }
 
