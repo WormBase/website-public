@@ -9,9 +9,9 @@
        <div class="footer-column">
           <div class="footer-title">About WormBase</div>
            <ul>
-             <li>Citing WormBase</li>
-             <li>Acceptable Use Policy</li>
-             <li>Privacy Statement</li>
+             <li><a href="http://wiki.wormbase.org/index.php/Citing_WormBase">Citing WormBase</a></li>
+             <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy">Acceptable Use Policy<a/></li>
+             <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy Statement</a></li>
            </ul>                
          </div>
 
@@ -19,17 +19,17 @@
        <div class="footer-column">
           <div class="footer-title">Support</div>
            <ul>
-             <li>Chat with an online curator</li>
-             <li>Submit data</li>
-             <li>Ask a question</li>
+             <li><a href="/tools/operator">Chat with an online curator</a></li>
+             <li><a href="#">Submit data</a></li>
+             <li><a href="mailto:feedback@wormbase.org">Ask a question</a></li>
            </ul>                
          </div>
 
     <div class="footer-column">
        <div class="footer-title">Social</div>
         <ul>
-          <li>WormBase Discussion Forums</li>
-          <li>WormBase Blog</li>	  
+          <li><a href="forums.wormbase.org">WormBase Discussion Forums</a></li>
+          <li><a href="blog.wormbase.org">WormBase Blog</a></li>	  
         </ul>
  
     </div>
@@ -49,7 +49,9 @@
     <div id="footercredit">
      <!--     Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
           <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
-      -->    <p>
+      -->      [% c.config.codename %] - [% server_details("") %] 
+          <p>
+             
                WormBase is supported by a grant from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a> <br />
                at the <a href="http://www.nih.gov/">US National Institutes of Health</a> #P41 HG02223 and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
 
@@ -60,10 +62,10 @@
     <div id="footermeta">
                 <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
                 [% # The current release of the software and its codename %]
-            <br />[% c.config.codename %]
+     <!--       <br />[% c.config.codename %]
 
             <br />[% server_details("") %] 
-                <br />Loading In: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %] s
+                <br />Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s-->
 <!--
           [%# INCLUDE elements/social/sharethis.tt2 %]
           <a href="http://wiki.wormbase.org/index.php/WormBaseWiki:Copyrights">Copyright </a> |
