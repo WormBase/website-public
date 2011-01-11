@@ -42,7 +42,9 @@ sub search :Path('/search')  :Args(2) {
     unless($cached_data) {  
         $cached_data = $api->search->$search({class => $class, pattern => $query});
         $c->set_cache($cache_id,$cached_data);
-    }  
+    } else {
+	$c->stash->{cached} = 1;
+    }
     $objs = $cached_data;
 
 # 

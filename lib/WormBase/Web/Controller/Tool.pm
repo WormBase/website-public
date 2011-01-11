@@ -37,7 +37,9 @@ sub tool :Path("/tools") Args {
       unless($data) {  
 	  $data = $api->_tools->{$tool}->$action($c->req->params);
 	  $c->set_cache($cache_id,$data);
-      }  
+      }else {
+	$c->stash->{cached} = 1;
+      }
     }else{
       $data= $api->_tools->{$tool}->$action($c->req->params);
     }
