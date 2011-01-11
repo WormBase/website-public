@@ -92,16 +92,11 @@ CREATE TABLE pages (
 
 DROP TABLE IF EXISTS user_history;
 CREATE TABLE user_history (
-		user_history_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 		session_id char(72),
-		page_id INTEGER
-);
-
-DROP TABLE IF EXISTS history_visits;
-CREATE TABLE history_visits (
-        history_visit_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-        user_history_id INTEGER,
-        visit_time INTEGER
+		page_id INTEGER,
+        latest_visit INTEGER,
+        visit_count INTEGER,
+        PRIMARY KEY (session_id, page_id)
 );
 
 INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator');

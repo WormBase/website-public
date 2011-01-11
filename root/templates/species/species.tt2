@@ -2,21 +2,19 @@
 
   [% widgets = [] %]
   [% widgets.push({ title="Species" type="title"}) %]
+  [% widget_list = ['phylogeny', 'downloads'] %]
 
-  [% widgets.push({ id    = 'phylogeny',
-      	            title = 'Phylogeny',
-                    href =  c.uri_for('/rest','widget','species_summary','overview','phylogeny'),
-                    type = 'resources',
-              }
- 
-	      ) %]
+  [% FOREACH widget_name IN widget_list -%]
+    [% title = widget_name FILTER ucfirst %]
+    [% w = { id = widget_name
+             title = title
+             href =  c.uri_for('/rest','widget','species_summary',widget_name)
+             type = ''
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
 
-  [% widgets.push({ id    = 'downloads',
-      	            title = 'Downloads',
-                    href =  c.uri_for('/rest','widget','species_summary','overview','downloads'),
-                    type = 'resources',
-              }
- 	      ) %]
 
   [% widgets.push({ title="My Workspace" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
