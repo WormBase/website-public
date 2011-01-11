@@ -25,7 +25,7 @@ __PACKAGE__->set_primary_key('id');
 __PACKAGE__->many_to_many(pages => 'user_saved', 'page');
 __PACKAGE__->has_many(user_saved=>'WormBase::Schema::Result::UserSave', 'session_id');
 
-__PACKAGE__->many_to_many(visited => 'user_history', 'page');
+# __PACKAGE__->many_to_many(visited => 'user_history', 'page');
 __PACKAGE__->has_many(user_history=>'WormBase::Schema::Result::UserHistory', 'session_id');
 
 1;

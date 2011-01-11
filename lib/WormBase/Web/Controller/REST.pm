@@ -267,14 +267,9 @@ sub history_POST {
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
     $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-<<<<<<< /usr/local/wormbase/website/acabunoc/lib/WormBase/Web/Controller/REST.pm
     $hist->set_column(latest_visit=>time());
     $hist->set_column(visit_count=>($hist->visit_count + 1));
     $hist->update;
-#     $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
-=======
-    $c->model('Schema::HistoryVisits')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
->>>>>>> /tmp/REST.pm~other.tHChmz
 }
 
  
