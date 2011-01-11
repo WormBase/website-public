@@ -263,8 +263,7 @@ sub history_POST {
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
 
-    my $page = $session->visited->find({url=>$path});
-    $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
+    my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name});
     $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
     $hist->set_column(latest_visit=>time());
