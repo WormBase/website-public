@@ -611,7 +611,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set($cache_id,$data);
+	$c->cache->set($cache_id,$data) or die;
     }
     
     # Retain the widget order
