@@ -17,6 +17,6 @@
           [% authors.join(', ') %]
    [% END %]
 
-   [% WRAPPER $field_block title="Abstract"-%] 
+   [% WRAPPER $field_block title="Abstract" key="abstract"-%] 
             [% fields.abstract.data %]
    [% END %]

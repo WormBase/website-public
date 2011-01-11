@@ -326,11 +326,12 @@
                 <div id="widget-footer">
                     <a   tip="comment" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
                     <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+                    <a  tip="download" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% IF 0 %]
 <!--                     <a href="#" tip="help" class="tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-help"></span></a> -->
 <!--                     <span> </span> -->
 [% END %]
-                    <a  tip="download" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></a>
+                    
                 </div>
 		<div id="widget-feed"></div>  
 

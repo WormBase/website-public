@@ -788,6 +788,49 @@ sub recently_saved {
     return \@ret;
 }
 
+# sub most_popular {
+#  my ($self,$c,$count) = @_;
+#     my $api = $c->model('WormBaseAPI');
+#     my @saved = $c->model('Schema::HistoryVisits')->search(undef,
+#                 {   select => [ 
+#                       'page_id', 
+#                       { max => 'time_saved', -as => 'latest_save' }, 
+#                     ],
+#                     as => [ qw/
+#                       page_id 
+#                       time_saved
+#                     /], 
+#                     order_by=>'latest_save DESC', 
+#                     group_by=>[ qw/page_id/]
+#                 })->slice(0, $count-1);
+# 
+#     my @ret;
+#     foreach my $report (@saved){
+#       my @objs;
+#       my($class, $id) = $self->parse_url($c, $report->page->url);
+#       $c->log->debug("saved $class, $id"); 
+#       my $time = ago((time() - $report->time_saved), 1);
+#       if (!$id || $class=~m/page/) {
+#         push(@ret, { name => {  url => $report->page->url, 
+#                                 label => $report->page->title,
+#                                 id => $report->page->title,
+#                                 class => 'page' },
+#                      footer => $time,
+#                     });
+#       }else{
+#       my $obj = $api->fetch({class=> ucfirst($class),
+#                           name => $id}) or die "$!";
+#       push(@objs, $obj); 
+#       @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+#       @objs = map { $_->{footer} = $time; $_;} @objs;
+#       push(@ret, @objs);
+#       }
+#     }
+#     $c->stash->{'type'} = 'all'; 
+# 
+#     return \@ret;
+# }
+
 sub comment_rss {
  my ($self,$c,$count) = @_;
  my @rss;
