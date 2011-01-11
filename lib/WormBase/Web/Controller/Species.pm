@@ -19,7 +19,8 @@ sub species :Path('/species') :Args(0)   {
     if(defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     }
-#     $c->stash->{template} = 'report.tt2';
+   
+
 }
 
 

@@ -27,15 +27,11 @@
         [% IF (title == 'species') %]
 	
 	[%# Force C. elegans to the top without having to hard-code it in configuration %]
-        [%# species = [] %]
-        [%# species.push('c_elegans') %]
-        [%# species.push(c.config.species_list.keys.sort()) %]
+        [% species = c.config.species_list.keys.sort %]
+        [% species.unshift('c_elegans') %]
+        [% species = species.unique %]
 
-          [% FOREACH option IN c.config.species_list.keys.sort() %]
-	  [%# elegans_seen = 0 %]
-	  [%# FOREACH option IN species %]
-	  [%# elegans_seen = 1 IF option == 'c_elegans' %]
-	  [%# NEXT if elegans_seen > 1 %]
+          [% FOREACH option IN species %]
             <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
               <ul class="dropdown">  
                 <li><a href="#">Browse Genome</a></li>

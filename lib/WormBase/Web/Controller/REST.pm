@@ -227,7 +227,7 @@ sub history_GET {
 
     if($clear){ 
       map { 
-        $_->visits->delete(); 
+        $_->user_history->delete(); 
         $_->update(); 
       } $session->user_history;
     }
@@ -236,14 +236,14 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
 
-    @hist = sort { $b->visits->get_column('visit_time')->max() <=> $a->visits->get_column('visit_time')->max()} @hist;
+    @hist = sort { $b->get_column('latest_visit') <=> $a->get_column('latest_visit')} @hist;
 
     my @histories;
     map {
-      if($_->visits->count > 0){
-        my $time = $_->visits->get_column('visit_time')->max();
+      if($_->visit_count > 0){
+        my $time = $_->get_column('latest_visit');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
-                            visits => $_->visits->count,
+                            visits => $_->visit_count,
                             page => $_->page,
                           };
       }
@@ -267,7 +267,14 @@ sub history_POST {
     $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
     $c->log->debug("logging:" . $page->page_id);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
+<<<<<<< /usr/local/wormbase/website/acabunoc/lib/WormBase/Web/Controller/REST.pm
+    $hist->set_column(latest_visit=>time());
+    $hist->set_column(visit_count=>($hist->visit_count + 1));
+    $hist->update;
+#     $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
+=======
     $c->model('Schema::HistoryVisits')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
+>>>>>>> /tmp/REST.pm~other.tHChmz
 }
 
  
@@ -611,7 +618,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set($cache_id,$data) or die;
+	$c->cache->set($cache_id,$data);
     }
     
     # Retain the widget order
@@ -825,6 +832,49 @@ sub recently_saved {
 
     return \@ret;
 }
+
+# sub most_popular {
+#  my ($self,$c,$count) = @_;
+#     my $api = $c->model('WormBaseAPI');
+#     my @saved = $c->model('Schema::HistoryVisits')->search(undef,
+#                 {   select => [ 
+#                       'page_id', 
+#                       { max => 'time_saved', -as => 'latest_save' }, 
+#                     ],
+#                     as => [ qw/
+#                       page_id 
+#                       time_saved
+#                     /], 
+#                     order_by=>'latest_save DESC', 
+#                     group_by=>[ qw/page_id/]
+#                 })->slice(0, $count-1);
+# 
+#     my @ret;
+#     foreach my $report (@saved){
+#       my @objs;
+#       my($class, $id) = $self->parse_url($c, $report->page->url);
+#       $c->log->debug("saved $class, $id"); 
+#       my $time = ago((time() - $report->time_saved), 1);
+#       if (!$id || $class=~m/page/) {
+#         push(@ret, { name => {  url => $report->page->url, 
+#                                 label => $report->page->title,
+#                                 id => $report->page->title,
+#                                 class => 'page' },
+#                      footer => $time,
+#                     });
+#       }else{
+#       my $obj = $api->fetch({class=> ucfirst($class),
+#                           name => $id}) or die "$!";
+#       push(@objs, $obj); 
+#       @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+#       @objs = map { $_->{footer} = $time; $_;} @objs;
+#       push(@ret, @objs);
+#       }
+#     }
+#     $c->stash->{'type'} = 'all'; 
+# 
+#     return \@ret;
+# }
 
 sub comment_rss {
  my ($self,$c,$count) = @_;
