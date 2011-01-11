@@ -36,8 +36,9 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
+<a style="float:right"  class="print ui-icon-pdf" href="" rel="[% class %]"><img src="%s" valign="middle" width="100%"></a>
       [% END %]
-	<a style="float:right"  class="print ui-icon-pdf" href="" rel="[% class %]"><img src="%s" valign="middle" width="100%"></a>
+	
         <div style="clear:both"></div>
     </div>
 
