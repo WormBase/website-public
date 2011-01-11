@@ -12,7 +12,7 @@ div#top>div{
   font-size:1.5em;
 }
 div#top>div>p{
-  margin-top:0em;
+  margin:0.3em 0 1em 0.6em;
 /*   margin-left:3em; */
   text-align:center;
   width:15em;
@@ -44,14 +44,10 @@ div#create-prompt {
   bottom:1em;
   padding:1em;
   text-align:center;
-  border:1px solid #CCC;
-  background:white;
-  border-top:1px solid #FFF;
-  border-bottom:1px solid #999;
-  background: #EEE -moz-linear-gradient(90deg, #DDD, #FFF);
-  background: #EEE -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFF), to(#DDD));
-  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=white,endColorStr=#DDDDDD);
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
 }
+
 div#create-prompt>span {
   font-weight:normal;
   font-size:0.8em;
@@ -108,6 +104,14 @@ div#create-prompt>span {
   float:right;
 }
 
+/* #results ul div > span#fade{ */
+/*   margin:-2em 0 0 0; */
+/*padding:0;*/
+/* border:1px solid red; */
+/*position:relative;
+top:-0.5em;
+}*/
+
 #load-results {
   width:100%;
   background:#EEE;
@@ -140,7 +144,7 @@ div.more {
   cursor:pointer;
   position:relative;
   margin:0.5em 10% 0;
-  height:4px;
+  height:5px;
   border-top:1px solid black;
   opacity:0.3;
   filter:alpha(opacity=30);
@@ -166,7 +170,7 @@ div.more.open {
 
 div.more .ui-icon {
   position:absolute;
-  top:-7px;
+  top:-6px;
   left:50%;
 }
 
