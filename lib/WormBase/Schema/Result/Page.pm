@@ -25,6 +25,8 @@ __PACKAGE__->add_columns(
   { data_type => "char(72)", is_nullable => 0 },
   "title",
   { data_type => "text", is_nullable => 1 },
+  "is_obj",
+  { data_type => "bool", is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key("page_id");

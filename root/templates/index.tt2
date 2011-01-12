@@ -47,8 +47,8 @@
 
     <script>
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["news", "discussion"];
-    var rightList = ["activity", "comments"];
+    var leftList = ["news", "discussion", "comments"];
+    var rightList = ["activity"];
     resetLayout(leftList, rightList, 60);
   [% ELSE %]
     var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];

@@ -489,12 +489,16 @@ div#footer a:hover{
     left:1.4em;
     overflow:hidden;
 }
+div#footercredit a{
+  color:#6FA2D9;
+}
 
 
 #footermeta {
     text-align: right;
     overflow:hidden;
     position:absolute;
+    font-size:0.9em;
     bottom:1em;
     right:1.4em;
     overflow:hidden;

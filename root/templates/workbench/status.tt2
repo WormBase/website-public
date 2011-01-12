@@ -3,6 +3,7 @@
     href="/rest/workbench" 
     name="[% c.stash.star.name %]" 
     objclass="[% c.stash.star.class %]" 
+    is_obj="[% c.stash.star.is_obj %]" 
     url="[% c.stash.star.url %]">
 <div id="save" class="ui-icon ui-icon-stars
 [% IF c.stash.star.value == 1 %]
