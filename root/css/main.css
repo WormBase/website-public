@@ -780,12 +780,13 @@ div.field {
   float:left;
   line-height:1.2em;
   padding:0.2em;
-  height:1%;
+/*   height:1%; */
 /*   overflow:auto; */
 }
 
 div.field h5 {
   float:left;
+position:relative;
   width:8em;
   text-align:right;
   margin-top:0em;   /* Pitch default h2 margin and force top alignment with p content */
@@ -805,8 +806,9 @@ div.field-title>span{
 }
 
 div.field-content {
-/*   float:left; */
-  overflow:hidden;
+  margin-left:9.5em;
+  width:auto;
+   overflow:hidden; 
 }
 
 
