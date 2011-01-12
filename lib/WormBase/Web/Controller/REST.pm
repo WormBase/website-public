@@ -78,6 +78,7 @@ sub workbench_GET {
 	if($url){
       my $class = $c->req->params->{class};
       my $save_to = $c->req->params->{save_to};
+      my $is_obj = $c->req->params->{is_obj} || 0;
       my $loc = "saved reports";
       $save_to = 'reports' unless $save_to;
       if ($class eq 'paper') {
@@ -86,7 +87,7 @@ sub workbench_GET {
       }
       my $name = $c->req->params->{name};
 
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name, is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $c->stash->{notify} = "$name has been removed from your $loc";
@@ -111,6 +112,7 @@ sub workbench_star_GET{
     my $wbid = $c->req->params->{wbid};
     my $name = $c->req->params->{name};
     my $class = $c->req->params->{class};
+    my $is_obj = $c->req->params->{is_obj};
 
     my $url = $c->req->params->{url};
     my $page = $self->get_session($c)->pages->find({url=>$url});
@@ -124,6 +126,7 @@ sub workbench_star_GET{
     $c->stash->{star}->{name} = $name;
     $c->stash->{star}->{class} = $class;
     $c->stash->{star}->{url} = $url;
+    $c->stash->{star}->{is_obj} = $is_obj;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
@@ -262,9 +265,10 @@ sub history_POST {
     my $session = $self->get_session($c);
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
+    my $is_obj = $c->request->body_parameters->{'is_obj'};
 
-    my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name});
-    $c->log->debug("logging:" . $page->page_id);
+    my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
+    $c->log->debug("logging:" . $page->page_id . " is_obj: " . $is_obj);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
     $hist->set_column(latest_visit=>time());
     $hist->set_column(visit_count=>($hist->visit_count + 1));
@@ -775,6 +779,7 @@ sub widget_home_GET {
     }
     elsif($widget=~m/activity/){
       $c->stash->{results} = $self->recently_saved($c,3);
+      $c->stash->{popular} = $self->most_popular($c,3);
     }   
     elsif($widget=~m/comments/){
       $c->stash->{comments} = $self->comment_rss($c,2);
@@ -827,48 +832,47 @@ sub recently_saved {
     return \@ret;
 }
 
-# sub most_popular {
-#  my ($self,$c,$count) = @_;
-#     my $api = $c->model('WormBaseAPI');
-#     my @saved = $c->model('Schema::HistoryVisits')->search(undef,
-#                 {   select => [ 
-#                       'page_id', 
-#                       { max => 'time_saved', -as => 'latest_save' }, 
-#                     ],
-#                     as => [ qw/
-#                       page_id 
-#                       time_saved
-#                     /], 
-#                     order_by=>'latest_save DESC', 
-#                     group_by=>[ qw/page_id/]
-#                 })->slice(0, $count-1);
-# 
-#     my @ret;
-#     foreach my $report (@saved){
-#       my @objs;
-#       my($class, $id) = $self->parse_url($c, $report->page->url);
-#       $c->log->debug("saved $class, $id"); 
-#       my $time = ago((time() - $report->time_saved), 1);
-#       if (!$id || $class=~m/page/) {
-#         push(@ret, { name => {  url => $report->page->url, 
-#                                 label => $report->page->title,
-#                                 id => $report->page->title,
-#                                 class => 'page' },
-#                      footer => $time,
-#                     });
-#       }else{
-#       my $obj = $api->fetch({class=> ucfirst($class),
-#                           name => $id}) or die "$!";
-#       push(@objs, $obj); 
-#       @objs = @{$api->search->_wrap_objs(\@objs, $class)};
-#       @objs = map { $_->{footer} = $time; $_;} @objs;
-#       push(@ret, @objs);
-#       }
-#     }
-#     $c->stash->{'type'} = 'all'; 
-# 
-#     return \@ret;
-# }
+sub most_popular {
+ my ($self,$c,$count) = @_;
+    my $api = $c->model('WormBaseAPI');
+    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1},
+                {   select => [ 
+                      'page.page_id', 
+                      { sum => 'visit_count', -as => 'total_visit' }, 
+                    ],
+                    as => [ qw/
+                      page_id 
+                      visit_count
+                    /], 
+                    order_by=>'total_visit DESC', 
+                    group_by=>[ qw/page_id/],
+                    join=>'page'
+                })->slice(0, $count-1);
+
+    my @ret;
+    foreach my $report (@saved){
+      my @objs;
+      my($class, $id) = $self->parse_url($c, $report->page->url);
+      $c->log->debug("saved $class, $id"); 
+      if (!$id || $class=~m/page/) {
+        push(@ret, { name => {  url => $report->page->url, 
+                                label => $report->page->title,
+                                id => $report->page->title,
+                                class => 'page' }
+                    });
+      }else{
+      my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+      push(@objs, $obj); 
+      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+      @objs = map { $_->{footer} = $report->visit_count . " visits"; $_;} @objs;
+      push(@ret, @objs);
+      }
+    }
+    $c->stash->{'type'} = 'all'; 
+
+    return \@ret;
+}
 
 sub comment_rss {
  my ($self,$c,$count) = @_;
@@ -933,6 +937,13 @@ sub parse_url{
     my $class = $parts[-2];
     my $wb_id = $parts[-1];
     
+    if((scalar @parts) < 4){
+      $class = 'page';
+    }elsif(!(defined $c->config->{'sections'}->{'species'}->{$class}) && !(defined $c->config->{'sections'}->{'resources'}->{$class})){
+      $class = 'page';
+    }
+# $class = 'page';
+# $wb_id = scalar @parts . $wb_id;
     return ($class, $wb_id);
 }
 

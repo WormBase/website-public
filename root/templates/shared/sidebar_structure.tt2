@@ -19,6 +19,7 @@
       <h2>[% title %]</h2>
 
       [% IF object %]
+          [% is_obj = 1 %]
           [% wbid = this_object_id.remove(':') %]
 
           <div class="workbench-status-[% wbid %]"></div>
@@ -107,6 +108,6 @@
 [% lclass = object.name.data.class FILTER lcfirst %]
 [% save = 'reports' %]
 [% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]");
+          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
           </script>
       [% END %]

@@ -87,7 +87,8 @@ DROP TABLE IF EXISTS pages;
 CREATE TABLE pages (
 		page_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 		url char(72),
-		title TEXT
+		title TEXT,
+        is_obj BOOL,
 );
 
 DROP TABLE IF EXISTS user_history;
