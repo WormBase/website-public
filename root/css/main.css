@@ -808,7 +808,6 @@ div.field-title>span{
 div.field-content {
   margin-left:9.5em;
   width:auto;
-   overflow:hidden; 
 }
 
 
@@ -1284,6 +1283,7 @@ div.details div.field div.field-title {
 
 div.details div.field div.field-content{
   float:left;
+  margin-left:0;
 }
 
 .bench-update {
