@@ -164,13 +164,6 @@ __PACKAGE__->config(
     });
 
 
-
-# THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
-# What type of installation are we: development | mirror | local | production ?
-# Unfortunately, we set it here instead of in
-# our configuration file since it isn't loaded until application setup.
-__PACKAGE__->config->{installation_type} = 'production';
-
 # THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
 # Dynamically set the base URL for production; also requires the prepare_path
 #if (__PACKAGE__->config->{installation_type} eq 'production') {
@@ -203,11 +196,26 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
 __PACKAGE__->config->{'View::JSON'} = {
     expose_stash => 'data' };
 
+
+##################################################
+#
+#   What type of installation are we?
+#   THIS NEEDS TO BE MANUALLY CHANGED!
+#
+##################################################
+
+# What type of installation are we: development | mirror | local | production ?
+# Unfortunately, we set it here instead of in
+# our configuration file since it isn't loaded until application setup.
+__PACKAGE__->config->{installation_type} = 'production';
+
+
 ##################################################
 #
 #   Dynamically establish the cache backend
 #
 ##################################################
+
 # First, if we are a development site, we still want
 # to test the caching mechanism, we just don't want 
 # it to persist.
@@ -221,52 +229,19 @@ my $servers = (__PACKAGE__->config->{installation_type} eq 'production')
     ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
     : [ '127.0.0.1:11211' ];
 
-# CHI-powered on-disk file cache: default.
-if (0) {    
-    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+# Memcached/libmemcached support built into the app.
+# Development and mirror distributions should point to localhost.
+# The production installation points to our distributed memcached.
+__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
-    driver         => 'File',
-#    root_dir       => '/tmp/wormbase/file_cache_chi',
-    root_dir       => '/usr/local/wormbase/shared/cache',
-    depth          => '3',
-    max_key_length => '64', 
-    expires_in     => $expires_in,
-    };
-}
+    driver         => 'Memcached::libmemcached',
+    servers        => $servers, 
+    expires_in     => $expires_in,	
+};
 
-# Here's a typical example for Cache::Memcached::libmemcached
-# For development and distribution installations, this should
-# default to localhost; for production it nees to point to our
-# distributed memcached machines.
-if (1) {    
-    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-	class          => "CHI",
-	driver         => 'Memcached::libmemcached',
-	servers        => $servers, 
-    };
-}
 
-#	expires_in     => $expires_in,
-#	debug          => 2
 
-# FastMmap. WORKS, although I'm uncertain of how well it will scale.
-if (0) {
-    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    class => "Cache::FastMmap",
-    share_file => "/Users/todd/tmp_cache",
-    cache_size => "64m",
-    num_pages  => '1039',  # Should be a prime number for best hashing.
-    page_size  => '128k',   
-    };
-}
 
-# FastMmap as a store; Uses Catalyst::Plugin::Cache::Store::FMmap which must be loaded.
-# Sets up default share_file and other params.
-if (0) {
-    __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    store => "FastMmap",
-    };
-}
     
 
 ##################################################
@@ -276,8 +251,6 @@ if (0) {
 ##################################################
 
  
-
-
 # Finally! Start the application!
 __PACKAGE__->setup;
 
@@ -354,6 +327,7 @@ sub check_cache {
     # First get the cache
     my $cache = $self->cache;
  
+=pod
     # Now get the database version from the cache. Heh.
     my $version;
     unless ($version = $cache->get('wormbase_version')) {
@@ -364,22 +338,29 @@ sub check_cache {
 	$cache->set('wormbase_version',$version);
 	$self->log->warn("tried to set a cache key");
     }
-    
+ 
     # Build a cache key that includes the version.
     my $cache_id = join("_",@keys,$version);
-    
+=cut
+    my $cache_id = join("/",@keys);
     # Now check the cache for the data we are looking for.
     my $cached_data = $cache->get($cache_id);
-    
+    my $memd = $self->default_cache_backend->memd;
+#     my $cached_data = $memd->get($cache_id);
+    my $cached_server;
+     
+
     if ($cached_data) {
-	$self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving.");
+      $cached_server=$memd->get_server_for_key($cache_id) if($self->config->{timer}||$self->check_user_roles('admin'));
+      $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
     } else {
-	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+      $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
     }
-    
-    return ($cache_id,$cached_data);
+
+    return ($cache_id,$cached_data,$cached_server);
 }
 
+ 
 # Provided with a pregenerated cache_id and (probably hash reference) of data,
 # store it in the cache.
 sub set_cache {

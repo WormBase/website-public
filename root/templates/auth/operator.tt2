@@ -4,7 +4,7 @@
 [% ELSE %]
   <div class="ui-state-disabled">
 	  <img src="http://www.google.com/talk/service/resources/chaticon.gif" alt="" width="24" height="20">
-	  <a title="Click here to chat with helpdesk" target="_blank" >Chat with helpdesk</a>
+	  <a title="Click here to chat with help desk" target="_blank" >Chat with help desk</a>
   </div>
 [% END %]
 <div>
@@ -12,7 +12,7 @@
 <p>
 
 [% IF be_operator  %]
-If you would like to become an operator, please go to this <a href="http://www.google.com/talk/service/badge/New?nickname=helpdesk" target="_blank"><b>link</b></a>
+If you would like to become an operator, please go to this <a href="http://www.google.com/talk/service/badge/New?nickname=help desk" target="_blank"><b>link</b></a>
 <br>
 and copy paste the html code into here:<br>
 <form method="POST" onsubmit="window.location.href='[% c.uri_for('add_operator') %]' + '?content='+ escape(this.content.value);return false;">

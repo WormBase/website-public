@@ -19,7 +19,8 @@ sub species :Path('/species') :Args(0)   {
     if(defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     }
-#     $c->stash->{template} = 'report.tt2';
+   
+
 }
 
 
@@ -69,12 +70,12 @@ sub species_report :Path("/species") Args(3) {
     get_report($self, $c, $class, $name);
 }
 
-
+ 
 sub get_report {
     my ($self,$c,$class,$name) = @_;
     $c->stash->{section} = 'species';
     $c->stash->{template} = 'species/report.tt2';
-
+  
     unless ($c->config->{sections}->{species}->{$class}) { 
       # class doens't exist in this section
       $c->detach;
@@ -89,7 +90,14 @@ sub get_report {
                   name => $name}) || $self->error_custom($c, 500, "can't connect to database");
      
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
-
+  
+    if($c->req->param('left') || $c->req->param('right')) {
+       $c->log->debug("print the page as pdf");
+      $c->stash->{print}={	    left=>[split /-/, $c->req->param('left')],
+				      right=>[split /-/, $c->req->param('right')],
+				      leftWidth=>$c->req->param('leftwidth'),
+			      };
+    }
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
 }
 

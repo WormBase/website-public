@@ -3,7 +3,7 @@ package WormBase::Web::Controller::Root;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
-
+ 
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in WormBase.pm
 __PACKAGE__->config->{namespace} = '';
@@ -23,7 +23,7 @@ Root level controller actions for the WormBase web application.
 =head2 INDEX
 
 =cut
-
+ 
 sub index :Path Args(0) {
     my ($self,$c) = @_;
     $c->stash->{issues} = $self->issue_rss($c,2);
