@@ -22,7 +22,6 @@ use parent 'Catalyst::Controller::FormBuilder';
 
 sub search :Path('/search')  :Args(2) {
     my ($self, $c, $type, $query) = @_;
-      
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
     if($type eq 'all' && !(defined $c->req->param("view"))) {
     $c->log->debug(" search all kinds...");
@@ -38,11 +37,13 @@ sub search :Path('/search')  :Args(2) {
 
     # Does the data for this widget already exist in the cache?
 # my $cached_data;
-    my ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
+    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('search', $type, $query, $class);
     unless($cached_data) {  
         $cached_data = $api->search->$search({class => $class, pattern => $query});
         $c->set_cache($cache_id,$cached_data);
-    }  
+    } else {
+	$c->stash->{cache} = $cache_server if($cache_server);
+    }
     $objs = $cached_data;
 
 # 

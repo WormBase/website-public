@@ -65,6 +65,7 @@
 
 
 .ui-icon-column { width: 16px; height: 16px; background-image: url(../img/columns.png);}
+.ui-icon-pdf {width: 20px; height: 20px; background-image: url(../img/pdf_icon.gif); }
 
 .ui-icon-1 { background-position: 0px 0px; }
 .ui-icon-1-1 { background-position: -16px 0px; }

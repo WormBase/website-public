@@ -31,6 +31,43 @@ Catalyst Controller.
 =cut
  
  
+sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
+sub print_GET {
+    my ( $self, $c) = @_;
+   
+    my $api = $c->model('WormBaseAPI');
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    my $class = lc($c->req->param('class'));
+     $c->log->debug("class is $class");
+    my $left = $c->user_session->{'layout'}->{$class}->{0}->{'left'};
+    my $right = $c->user_session->{'layout'}->{$class}->{0}->{'right'};
+    my $leftwidth = $c->user_session->{'layout'}->{$class}->{0}->{'leftWidth'};
+  
+    if(ref($left) eq 'ARRAY') {$left = join('-', @$left);}
+    if(ref($right) eq 'ARRAY') {$right = join('-', @$right);}
+    (my $path = $c->req->param('path')) =~ s/\?.*//g;
+    my $file = $api->_tools->{print}->run("$path?left=$left&right=$right&leftwidth=$leftwidth");
+     
+    if ($file) {
+ 
+    $c->response->header('Content-Type' => 'application/x-download');
+    $c->response->header('Content-Disposition' => 'attachment; filename=test.pdf');
+#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
+#         $c->serve_static_file('root/test.html');
+      
+#     while (defined(my $line = <FILE>)) {
+    open(MYINPUTFILE, "<$file");
+#      binmode MYINPUTFILE;
+    my $fileGlob = \*MYINPUTFILE;
+ 
+
+     $c->log->debug($fileGlob);
+    $c->res->body($fileGlob);
+#    }
+ 
+      close FILE;
+    }
+}
 
 
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
@@ -41,6 +78,7 @@ sub workbench_GET {
 	if($url){
       my $class = $c->req->params->{class};
       my $save_to = $c->req->params->{save_to};
+      my $is_obj = $c->req->params->{is_obj} || 0;
       my $loc = "saved reports";
       $save_to = 'reports' unless $save_to;
       if ($class eq 'paper') {
@@ -49,7 +87,7 @@ sub workbench_GET {
       }
       my $name = $c->req->params->{name};
 
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name, is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $c->stash->{notify} = "$name has been removed from your $loc";
@@ -74,6 +112,7 @@ sub workbench_star_GET{
     my $wbid = $c->req->params->{wbid};
     my $name = $c->req->params->{name};
     my $class = $c->req->params->{class};
+    my $is_obj = $c->req->params->{is_obj};
 
     my $url = $c->req->params->{url};
     my $page = $self->get_session($c)->pages->find({url=>$url});
@@ -87,6 +126,7 @@ sub workbench_star_GET{
     $c->stash->{star}->{name} = $name;
     $c->stash->{star}->{class} = $class;
     $c->stash->{star}->{url} = $url;
+    $c->stash->{star}->{is_obj} = $is_obj;
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
@@ -190,7 +230,7 @@ sub history_GET {
 
     if($clear){ 
       map { 
-        $_->visits->delete(); 
+        $_->user_history->delete(); 
         $_->update(); 
       } $session->user_history;
     }
@@ -199,14 +239,14 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
 
-    @hist = sort { $b->visits->get_column('visit_time')->max() <=> $a->visits->get_column('visit_time')->max()} @hist;
+    @hist = sort { $b->get_column('latest_visit') <=> $a->get_column('latest_visit')} @hist;
 
     my @histories;
     map {
-      if($_->visits->count > 0){
-        my $time = $_->visits->get_column('visit_time')->max();
+      if($_->visit_count > 0){
+        my $time = $_->get_column('latest_visit');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
-                            visits => $_->visits->count,
+                            visits => $_->visit_count,
                             page => $_->page,
                           };
       }
@@ -225,12 +265,14 @@ sub history_POST {
     my $session = $self->get_session($c);
     my $path = $c->request->body_parameters->{'ref'};
     my $name = $c->request->body_parameters->{'name'};
+    my $is_obj = $c->request->body_parameters->{'is_obj'};
 
-    my $page = $session->visited->find({url=>$path});
-    $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name}) unless $page;
-    $c->log->debug("logging:" . $page->page_id);
+    my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
+    $c->log->debug("logging:" . $page->page_id . " is_obj: " . $is_obj);
     my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $c->model('Schema::HistoryVisit')->create({user_history_id=>$hist->user_history_id,visit_time=>time()});
+    $hist->set_column(latest_visit=>time());
+    $hist->set_column(visit_count=>($hist->visit_count + 1));
+    $hist->update;
 }
 
  
@@ -574,7 +616,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set($cache_id,$data) or die;
+	$c->cache->set($cache_id,$data);
     }
     
     # Retain the widget order
@@ -644,12 +686,13 @@ sub widget_GET {
        }
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data) = $c->check_cache($class,$widget,$name);
+    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
 
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
 	$c->stash->{fields} = $cached_data;
+	$c->stash->{cache} = $cache_server if($cache_server);
     } else {
 
 	# No result? Generate and cache the widget.		
@@ -736,6 +779,7 @@ sub widget_home_GET {
     }
     elsif($widget=~m/activity/){
       $c->stash->{results} = $self->recently_saved($c,3);
+      $c->stash->{popular} = $self->most_popular($c,3);
     }   
     elsif($widget=~m/comments/){
       $c->stash->{comments} = $self->comment_rss($c,2);
@@ -780,6 +824,48 @@ sub recently_saved {
       push(@objs, $obj); 
       @objs = @{$api->search->_wrap_objs(\@objs, $class)};
       @objs = map { $_->{footer} = $time; $_;} @objs;
+      push(@ret, @objs);
+      }
+    }
+    $c->stash->{'type'} = 'all'; 
+
+    return \@ret;
+}
+
+sub most_popular {
+ my ($self,$c,$count) = @_;
+    my $api = $c->model('WormBaseAPI');
+    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1},
+                {   select => [ 
+                      'page.page_id', 
+                      { sum => 'visit_count', -as => 'total_visit' }, 
+                    ],
+                    as => [ qw/
+                      page_id 
+                      visit_count
+                    /], 
+                    order_by=>'total_visit DESC', 
+                    group_by=>[ qw/page_id/],
+                    join=>'page'
+                })->slice(0, $count-1);
+
+    my @ret;
+    foreach my $report (@saved){
+      my @objs;
+      my($class, $id) = $self->parse_url($c, $report->page->url);
+      $c->log->debug("saved $class, $id"); 
+      if (!$id || $class=~m/page/) {
+        push(@ret, { name => {  url => $report->page->url, 
+                                label => $report->page->title,
+                                id => $report->page->title,
+                                class => 'page' }
+                    });
+      }else{
+      my $obj = $api->fetch({class=> ucfirst($class),
+                          name => $id}) or die "$!";
+      push(@objs, $obj); 
+      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+      @objs = map { $_->{footer} = $report->visit_count . " visits"; $_;} @objs;
       push(@ret, @objs);
       }
     }
@@ -851,6 +937,13 @@ sub parse_url{
     my $class = $parts[-2];
     my $wb_id = $parts[-1];
     
+    if((scalar @parts) < 4){
+      $class = 'page';
+    }elsif(!(defined $c->config->{'sections'}->{'species'}->{$class}) && !(defined $c->config->{'sections'}->{'resources'}->{$class})){
+      $class = 'page';
+    }
+# $class = 'page';
+# $wb_id = scalar @parts . $wb_id;
     return ($class, $wb_id);
 }
 
