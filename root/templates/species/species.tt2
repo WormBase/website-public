@@ -33,6 +33,7 @@
 
 
     <script>
+      
   [% UNLESS c.user_session.layout.$class.defined %]
     $jq("#nav-overview").trigger('open');
     [% UNLESS object %]
