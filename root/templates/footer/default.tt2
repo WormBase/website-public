@@ -28,8 +28,8 @@
     <div class="footer-column">
        <div class="footer-title">Social</div>
         <ul>
-          <li><a href="forums.wormbase.org">WormBase Discussion Forums</a></li>
-          <li><a href="blog.wormbase.org">WormBase Blog</a></li>	  
+          <li><a href="http://forums.wormbase.org">WormBase Discussion Forums</a></li>
+          <li><a href="http://blog.wormbase.org">WormBase Blog</a></li>	  
         </ul>
  
     </div>
@@ -59,7 +59,13 @@
           </p>
 
      </div>
+
     <div id="footermeta">
+<div id="footer-icons">
+  <a id="footer-mail" href="mailto:help@wormbase.org"></a>
+  <a id="footer-tweet" href="http://twitter.com/wormbase"></a>
+  <a id="footer-rss" href="http://feeds.feedburner.com/wormbase"></a>
+</div>
                 <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
                 [% # The current release of the software and its codename %]
  [% c.config.codename %] - [% server_details("") %] 
@@ -82,7 +88,6 @@
 
 
 <!-- end boilerplate/footer -->
-
 [% INCLUDE google_analytics %]
 
     </div><!--end wrap-->
