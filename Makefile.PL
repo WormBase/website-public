@@ -90,6 +90,7 @@ requires 'Sub::Install';                                         #
 requires 'Sub::Identify';                                        #
 requires 'SVG';                                                  #
 requires 'Task::Weaken';                                         #
+requires 'Template::Plugin::Time::Duration ';
 requires 'Test::YAML::Valid';                                    #
 requires 'Test::Pod::Coverage';                                  #
 requires 'Text::Glob';                                           #
