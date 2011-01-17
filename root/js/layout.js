@@ -53,16 +53,7 @@
       return false;
     }
     
-    function updateURLHash () {
-      var holder =  $jq("#widget-holder");
-      var left = holder.children(".left").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var right = holder.children(".right").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var leftWidth = getLeftWidth(holder);
-
+    function updateURLHash (left, right, leftWidth) {
       var l = "l[" + left.join(',') + "],";
       var r = "r[" + right.join(',') + "],";
       var w = "w[" + leftWidth + "]";
@@ -112,23 +103,19 @@
       var leftWidth = getLeftWidth(holder);
       var diff = leftWidth - w;
       if((left.length != l.length) || (right.length != r.length)){
-//         alert("lengths different");
         return true;
       }else if((diff > 5)||(diff < -5)){
-//                 alert("width different");
         return true;
       }else {
           var i = 0;
           for(i=0;i<left.length;i++){
             if(left[i] != l[i]){
-//                       alert("widget l different");
               return true;
             }
           }
           i=0;
           for(i=0;i<right.length;i++){
             if(right[i] != r[i]){
-//               alert("widget r different");
               return true;
             }
           }
@@ -141,7 +128,7 @@
       if((typeof layout) == 'string'){
         l = escape(layout); 
       }
-      updateURLHash();
+
       var holder =  $jq("#widget-holder");
       var $class = holder.attr("class");
       var left = holder.children(".left").children(".visible")
@@ -151,6 +138,7 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
+      updateURLHash(left, right, leftWidth);
       $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth }, function(){
         if(callback){ callback(); }
       });
