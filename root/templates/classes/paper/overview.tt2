@@ -1,22 +1,42 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Name"-%] 
-            [% tag2link(fields.name.data) %]
-   [% END %]
+	[% WRAPPER $field_block title="Title"-%]
+		[% tag2link(fields.name.data) %]
+		[% IF fields.PMID %]
+			[% external_link('ncbi_pubmed','<span style="display:inline-block" class="ui-icon-pubmed"></span>',fields.PMID) %]
+			<!-- inline-block display is a nasty workaround -- span will not show up without this -->
+		[% END %]
+	[% END %]
 
-   [% WRAPPER $field_block title="Title"-%] 
-            [% fields.title.data %]
-   [% END %]
+	[% WRAPPER $field_block title="Authors"-%]
+		[% authors = [] %]
+		[% FOREACH author IN  fields.authors.data %]
+			[% authors.push(tag2link(author)) %]
+		[% END %]
+		[% authors.join(', ') %]
+	[% END %]
 
-   [% WRAPPER $field_block title="Authors"-%] 
-          [% authors = [] %]
-          [% FOREACH author IN  fields.authors.data %]
-            [% authors.push(tag2link(author)) %]
-          [% END %]
-          [% authors.join(', ') %]
-   [% END %]
+	[% WRAPPER $field_block title="Abstract" key="abstract"-%]
+		[% markup(fields.abstract.data) %]
+	[% END %]
 
-   [% WRAPPER $field_block title="Abstract" key="abstract"-%] 
-            [% fields.abstract.data %]
-   [% END %]
+	[% WRAPPER $field_block title="Keywords" key="keywords"-%]
+		[% keywords = [] %]
+		[% FOREACH key IN fields.keywords.data.keys %]
+			[% keywords.push(tag2link(fields.keywords.data.$key)) %]
+		[% END %]
+		[% keywords.join(', ') %]
+	[% END %]
+
+	[% WRAPPER $field_block title="Citation"-%]
+		[% IF authors.size > 5 %]
+			[% authors.0 %] et al.
+		[% ELSE %]
+			[% authors.join(', ')  # this is done above so maybe shouldn't do again... %].
+		[% END %]
+		[% fields.year.data %].
+		[% fields.title.data %].
+		[% fields.journal.data %] [% fields.volume.data %]:[% fields.page.data %].
+		[%# this works okay for papers in journals but not in general... %]
+	[% END %]

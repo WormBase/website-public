@@ -117,6 +117,12 @@
  ncbi_refseq = { description = 'RefSeq'
                       search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
               }
+              
+	ncbi_pubmed  =	{ 
+						description = 'PubMed Abstracts'
+						base 		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
+						search 		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
+					}
    }
 
 -%]
@@ -131,10 +137,6 @@
 	ncbi_genbank     = { base              = 'http://www.ncbi.nlm.nih.gov'
 		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
 		   }
-	
-	ncbi_pubmed   = { base        = 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
-		     fetch_paper = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
-		    }
 
 	ncbi_refseq  ={ base = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept' }
 
