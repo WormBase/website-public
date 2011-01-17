@@ -29,14 +29,20 @@ sub index :Path Args(0) {
     $c->stash->{issues} = $self->issue_rss($c,2);
     $c->stash->{template} = 'index.tt2';
 }
-
+sub gbrowse :Path("/gbrowse") Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{noboiler}=1;
+    $c->stash->{template} = 'gbrowse.tt2';
+}
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
+    $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
 }
 
 sub footer :Path("/footer") Args(0) {
       my ($self,$c) = @_;
+      $c->stash->{noboiler}=1;
       $c->stash->{template} = 'footer/default.tt2';
  } 
 =head2 DEFAULT
