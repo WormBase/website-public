@@ -98,22 +98,43 @@ sub search_preview :Path('/search/preview')  :Args(2) {
     $c->stash->{template} = "search/results.tt2";
     my $api = $c->model('WormBaseAPI');
     my $class =  $type;
-    my $begin = $c->req->param("begin") || 0;
-    my $end = $c->req->param("end") ||10;
+    my $offset = $c->req->param("begin") || 0;
+    my $count = ($c->req->param("end") ||10) - $offset;
     my $objs;
-    $objs = $api->search->preview({class => $class, species => $species, begin=>$begin, end=>$end});
+    my $total;
+    ($total, $objs) = $api->search->preview({class => $class, species => $species, offset=>$offset, count=>$count});
 
-#     $c->stash->{'type'} = $type; 
-#     $c->stash->{'results'} = $objs;
-#     $c->stash->{noboiler} = 1;
-# 
-#     $c->stash->{'query'} = $species;
-#     $c->stash->{'class'} = $type;
     $c->stash->{'type'} = $type; 
+    $c->stash->{'total'} = $total; 
     $c->stash->{'results'} = $objs;
     $c->stash->{noboiler} = 1;
 
     $c->stash->{'query'} = $species || "*";
+    $c->stash->{'class'} = $type;
+}
+
+sub search_all :Path('/search/all')  :Args(2) {
+    my ($self, $c, $type, $query) = @_;
+
+    $c->log->debug("search all");
+
+    $c->stash->{template} = "search/all.tt2";
+    my $api = $c->model('WormBaseAPI');
+    my $class =  $type;
+    my $offset = $c->req->param("begin") || 0;
+    my $count = ($c->req->param("end") ||20) - $offset;
+    my $objs;
+    my $total;
+    ($total, $objs) = $api->search->preview({class => $class, offset=>$offset, count=>$count});
+
+    $c->stash->{'type'} = $type; 
+    $c->stash->{'total'} = $total; 
+    $c->stash->{'results'} = $objs;
+    if(defined $c->req->param("inline")) {
+      $c->stash->{template} = "search/result_list.tt2";
+      $c->stash->{noboiler} = 1;
+    }
+    $c->stash->{'query'} = "*";
     $c->stash->{'class'} = $type;
 }
 

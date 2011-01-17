@@ -34,28 +34,22 @@ sub preview {
   my ($self,$args) = @_;
   my $class     = $args->{class};
   my $species   = $args->{species};
-  my $begin = $args->{begin};
-  my $end = $args->{end};
+  my $offset = $args->{offset};
+  my $count = $args->{count};
   my $ace_class = ucfirst($class);
 #   my $query = "find $ace_class where Species=$species";
   my $itr;
-  if($species){
-#   $itr = $self->dbh->fetch_many(-query=>qq(find $ace_class where Species=$species));
-    $itr = $self->dbh->fetch_many($ace_class=>'*');
-  }else{
-    $itr = $self->dbh->fetch_many($ace_class=>'*');
-  }
-  my $i = 0;
-  my @objs;
-  my $obj;
-  while(($obj = $itr->next) && ($i < $end)){
-    if($i>= $begin){
-      push(@objs, $obj);
-    }
-    $i++;
-  }
-
-  return _wrap_objs($self, \@objs, $class);
+#   if($species){
+# #   $itr = $self->dbh->fetch_many(-query=>qq(find $ace_class where Species=$species));
+#     $itr = $self->dbh->fetch_many(-class=>$ace_class,-name=>'*', -offset=>$begin, -chunk=>($end-$begin));
+#   }else{
+#     $itr = $self->dbh->fetch_many(-class=>$ace_class,-name=>'*', -offset=>$begin, -chunk=>($end-$begin));
+  my $total;
+  my @objs = $self->dbh->fetch(-class  => $ace_class,
+                               -count  => $count,
+                               -offset => $offset,
+                               -total  => \$total);
+  return ($total, _wrap_objs($self, \@objs, $class));
 }
 
 sub person {
@@ -533,8 +527,10 @@ sub _wrap_objs {
     my $object;
     if (eval{$ace_obj->class}){
       # this is faster than passing the ace_obj.  I know, weird.
-      $object = $api->fetch({class => $ace_obj->class, 
-                            name => $ace_obj}) or die "$!";
+#       $object = $api->fetch({class => $ace_obj->class, 
+#                             name => $ace_obj}) or die "$!";
+      $object = $api->fetch({object => $ace_obj}) or die "$!";
+
     } else {
       $object = $ace_obj;
     }
