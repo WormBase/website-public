@@ -1,0 +1,73 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+[% IF search_guide %]
+<h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
+[% END %]
+
+<!-- begin result list -->
+[% results = c.stash.results %]
+[% search_type = c.stash.type %]
+<div id="results">
+  [% UNLESS no_count %]
+  [% IF results.size > 0 %]
+    <div id="fade">[% c.stash.total%]
+      [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
+    </div>
+  [% ELSE %]
+    Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
+  [% END %]
+  [% END %]
+  <ul class="results-[% search_type %]">
+    [% PROCESS "search/result_list.tt2" %]
+  </ul>
+
+  [% PROCESS timer IF noboiler %]   
+    <div id="load-results" class="load-results" href="/search/all/[% c.stash.type %]/*?inline=1">view more</div>
+</div>
+
+<script>
+  [%# is there a better way to do this? probably.  yes. %]
+  [% txt = c.stash.query.replace('[\*]', ' ') %]
+  [% txt = txt.replace(',', ' ') %]
+  [% txt = txt.replace('\.', '') %]
+  [% txt = txt.replace('  ', ' ') %]
+  [% to_highlight = txt.split(' ') %]
+  [% FOREACH q IN to_highlight %]
+    $jq("div#results").highlight('[% q %]');
+  [% END %]
+
+    var total = [% c.stash.total %];
+    var begin = 20;
+    var end = 39;
+    $jq(".load-results").live('click', function() {
+      if(begin > total){ return; }
+      var url= $jq(this).attr("href") + "&begin=" + begin + "&end=" + end;
+
+      $jq(this).removeClass("load-results");
+
+      var div = $jq("<div></div>");
+      setLoading(div);
+      $jq("#load-results").html("loading...");
+        div.load(url, function(response, status, xhr) {
+          begin = begin + 20;
+          end = end +20;
+          if(begin <= total){
+            $jq("#load-results").addClass("load-results");
+            $jq("#load-results").html("view more");
+          }else{
+            $jq("#load-results").remove();
+          }
+          [% FOREACH q IN to_highlight %]
+            div.highlight('[% q %]');
+          [% END %]
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+
+        div.appendTo($jq(this).parent().children("ul"));
+
+    });
+</script>
+<!-- End result list -->

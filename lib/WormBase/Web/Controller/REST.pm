@@ -835,7 +835,11 @@ sub recently_saved {
 sub most_popular {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
-    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1},
+#     my $interval = "> UNIX_TIMESTAMP() - 604800"; # one week ago
+    my $interval = "> UNIX_TIMESTAMP() - 86400"; # one day ago
+#     my $interval = "> UNIX_TIMESTAMP() - 3600"; # one hour ago
+#     my $interval = "> UNIX_TIMESTAMP() - 60"; # one minute ago
+    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1, latest_visit => \$interval},
                 {   select => [ 
                       'page.page_id', 
                       { sum => 'visit_count', -as => 'total_visit' }, 

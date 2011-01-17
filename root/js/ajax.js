@@ -1,5 +1,5 @@
   $jq(document).ready(function() {   
-
+    window.onhashchange = readHash;
     $jq(".register-button").live('click',function() {
       
 	var reg = $jq(this).closest('#register-form');	
@@ -247,7 +247,10 @@
         $jq(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
       }
-      location.href = "#" + widget_name;
+//       location.href = "#" + widget_name;
+//         updateURLHash(widget_name);
+        goToAnchor(widget_name);
+        
     } else {
       nav.attr("load", 1);
       nav.removeClass("ui-selected");

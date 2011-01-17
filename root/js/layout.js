@@ -52,12 +52,83 @@
           });
       return false;
     }
+    
+    function updateURLHash (left, right, leftWidth) {
+      var l = "l[" + left.join(',') + "],";
+      var r = "r[" + right.join(',') + "],";
+      var w = "w[" + leftWidth + "]";
+      location.hash = l  + r  + w;
+      return;
+    }
+    
+    function readHash() {
+
+      var h = decodeURI(location.hash);
+      var left = [];
+      var right = [];
+      var findL = h.match(/l\[([^[\]]*)\]/);
+      var findR = h.match(/r\[([^[\]]*)\]/);
+      var findW = h.match(/w\[([^[\]]*)\]/);
+
+      var a = getAnchor(h);
+      var w = (findW && findW.length>0) ? findW[1] : false;
+
+      var l = findL[1].split(',');
+      var r = findR[1].split(',');
+      
+      var reset = compare(l, r, w);
+      if(reset){
+        resetLayout(l, r, w);
+        goToAnchor(a);
+      }
+    }
+    
+    function getAnchor(h){
+      var findA = h.match(/a\[([^[\]]*)\]/);
+      return (findA && findA.length>0) ? findA[1] : false;
+    }
+    
+    function goToAnchor(anchor){
+      document.getElementById(anchor).scrollIntoView(true);
+    }
+    
+    function compare(l, r, w) {
+      var holder =  $jq("#widget-holder");
+      var left = holder.children(".left").children(".visible")
+                        .map(function() { return this.id;})
+                        .get();
+      var right = holder.children(".right").children(".visible")
+                        .map(function() { return this.id;})
+                        .get();
+      var leftWidth = getLeftWidth(holder);
+      var diff = leftWidth - w;
+      if((left.length != l.length) || (right.length != r.length)){
+        return true;
+      }else if((diff > 5)||(diff < -5)){
+        return true;
+      }else {
+          var i = 0;
+          for(i=0;i<left.length;i++){
+            if(left[i] != l[i]){
+              return true;
+            }
+          }
+          i=0;
+          for(i=0;i<right.length;i++){
+            if(right[i] != r[i]){
+              return true;
+            }
+          }
+      }
+      return false;
+    }
 
     function updateLayout(layout, callback){
       l = 'default';
       if((typeof layout) == 'string'){
         l = escape(layout); 
       }
+
       var holder =  $jq("#widget-holder");
       var $class = holder.attr("class");
       var left = holder.children(".left").children(".visible")
@@ -67,6 +138,7 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
+      updateURLHash(left, right, leftWidth);
       $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth }, function(){
         if(callback){ callback(); }
       });
@@ -77,7 +149,7 @@
       var totWidth = parseFloat(holder.css("width"));
 //       var leftWidth = parseFloat(holder.children(".left").css("width"));
       var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
-      return leftWidth
+      return Math.round(leftWidth);
     }
 
     function resetLayout(leftList, rightList, leftWidth){
