@@ -1,0 +1,27 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+	[% MACRO tag2linkAll(hash) BLOCK %]
+		[% result = [] %]
+		[% FOREACH key IN hash.keys %]
+			[% result.push(tag2link(hash.$key)) %]
+		[% END %]
+		[% result.join(', ') %]
+	[% END %]
+
+
+	[% WRAPPER $field_block title=pluralize("Gene", fields.genes.data.size) key="genes"-%]
+		[% tag2linkAll(fields.genes.data) %]
+	[% END %]
+
+	[% WRAPPER $field_block title=pluralize("Variation", fields.alleles.data.size) key="alleles"-%]
+		[% tag2linkAll(fields.alleles.data) %]
+	[% END %]
+
+	[% WRAPPER $field_block title=pluralize("Strain",fields.strains.data.size) key="strains"-%]
+		[% tag2linkAll(fields.strains.data) %]
+	[% END %]
+
+	[% WRAPPER $field_block title=pluralize("Interaction",fields.interactions.data.size) key="interactions"-%]
+		[% tag2linkAll(fields.interactions.data) %]
+	[% END %]
