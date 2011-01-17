@@ -86,9 +86,9 @@ CREATE TABLE user_saved (
 DROP TABLE IF EXISTS pages;
 CREATE TABLE pages (
 		page_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-		url char(72),
-		title TEXT,
-        is_obj BOOL,
+		url char(255),
+		title char(255),
+        is_obj BOOLEAN
 );
 
 DROP TABLE IF EXISTS user_history;

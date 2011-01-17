@@ -41,6 +41,11 @@ sub resources_report :Path("/resources") Args(2) {
     get_report($self, $c, $class, $name);
 }
 
+sub advistory_board :Path("/resources/advisory_board") Args(0) {
+    my ($self,$c) = @_;
+#     get_report($self, $c, "advisory_board", "");
+}
+
 
 sub get_report {
     my ($self,$c,$class,$name) = @_;
