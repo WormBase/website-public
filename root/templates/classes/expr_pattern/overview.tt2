@@ -1,0 +1,24 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<h2>[% tag2link(fields.name.data) %]</h2>
+
+ 
+[% WRAPPER $field_block title="Description" key="print_summary" %]
+       
+       [% fields.print_summary.data.other.remark %]
+
+	[% FOREACH obj IN fields.print_summary.data.desc %]
+	   [% obj %]<br>
+	 [% END %]
+	<br>
+	[% FOREACH obj IN fields.print_summary.data.other.Subcellular %]
+	  [% obj %]<br>
+	 [% END %]
+
+         [% IF fields.print_summary.data.other.check_bc %]
+	  GFP constructs were generated as part of the <a href="http://elegans.bcgsc.ca/home/ge_consortium.html">
+	     BC <i>C. elegans</i> Gene Expression Consortium</a>
+	[% END %]
+       
+[% END %]
