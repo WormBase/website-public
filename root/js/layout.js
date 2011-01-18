@@ -54,8 +54,8 @@
     }
     
     function updateURLHash (left, right, leftWidth) {
-      var l = "l[" + left.join(',') + "],";
-      var r = "r[" + right.join(',') + "],";
+      var l = "l[" + left.join(',') + "]";
+      var r = "r[" + right.join(',') + "]";
       var w = "w[" + leftWidth + "]";
       location.hash = l  + r  + w;
       return;
@@ -85,7 +85,7 @@
     
     function getAnchor(h){
       var findA = h.match(/a\[([^[\]]*)\]/);
-      return (findA && findA.length>0) ? findA[1] : false;
+      return (findA && findA.length>0) ? findA[1] : "";
     }
     
     function goToAnchor(anchor){

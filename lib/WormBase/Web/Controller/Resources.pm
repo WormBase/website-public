@@ -41,8 +41,17 @@ sub resources_report :Path("/resources") Args(2) {
     get_report($self, $c, $class, $name);
 }
 
-sub advistory_board :Path("/resources/advisory_board") Args(0) {
-    my ($self,$c) = @_;
+sub advisory_board :Path("/resources/advisory_board") Args {
+    my ($self,$c, @args) = @_;
+    $c->stash->{section} = 'resources';
+
+    my $widget = shift @args;
+    if($widget){
+      $c->stash->{noboiler} = 1;
+      $c->stash->{template} = "resources/advisory_board/$widget.tt2";
+      $c->forward('WormBase::Web::View::TT');
+    }
+
 #     get_report($self, $c, "advisory_board", "");
 }
 
