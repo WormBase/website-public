@@ -12,6 +12,7 @@
              <li><a href="http://wiki.wormbase.org/index.php/Citing_WormBase">Citing WormBase</a></li>
              <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy">Acceptable Use Policy<a/></li>
              <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy Statement</a></li>
+             <li><a href="[% c.uri_for('/resources', 'advisory_board') %]">Advisory Board</a></li>
            </ul>                
          </div>
 
