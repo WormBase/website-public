@@ -5,9 +5,9 @@
   [% widget_list = ['members'] %]
 
   [% FOREACH widget_name IN widget_list -%]
-    [% title = widget_name FILTER ucfirst %]
+    [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
-             title = title
+             title = t
              href =  c.uri_for('/resources','advisory_board', widget_name)
              type = 'resources'
             };
