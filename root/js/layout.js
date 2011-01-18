@@ -65,7 +65,6 @@
     }
     
     function readHash() {
-
       var h = decodeURI(location.hash);
       var left = [];
       var right = [];
