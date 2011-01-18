@@ -146,13 +146,11 @@ sub layout_POST {
     $c->log->debug("not default: $i");
   }
   $c->log->debug($i);
-  my $left = $c->request->body_parameters->{'left[]'};
-  my $right = $c->request->body_parameters->{'right[]'};  
-  my $leftWidth = $c->request->body_parameters->{'leftWidth'};
+
+  my $lstring = $c->request->body_parameters->{'lstring'};
   $c->user_session->{'layout'}->{$class}->{$i}->{'name'} = $layout;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'left'} = $left;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'right'} = $right;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'leftWidth'} = $leftWidth;
+
+  $c->user_session->{'layout'}->{$class}->{$i}->{'lstring'} = $lstring;
 }
 
 sub layout_GET {
@@ -165,23 +163,18 @@ sub layout_GET {
   unless (defined $c->user_session->{'layout'}->{$class}->{$layout}){
     $layout = 0;
   }
-  my $left = $c->user_session->{'layout'}->{$class}->{$layout}->{'left'};
-  my $right = $c->user_session->{'layout'}->{$class}->{$layout}->{'right'};
-  my $leftWidth = $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'};
-  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
-  if(ref($left) eq 'ARRAY') {$left = join(',', @$left);}
-  if(ref($right) eq 'ARRAY') {$right = join(',', @$right);}
 
-  $c->log->debug("left:" . $left);
-  $c->log->debug("right:" . $right);
-  $c->log->debug("leftWidth:" . $leftWidth);
-    $c->forward('WormBase::Web::View::TT');
+  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
+  my $lstring = $c->user_session->{'layout'}->{$class}->{$layout}->{'lstring'};
+
+
+  $c->log->debug("lstring:" . $lstring);
+
   $self->status_ok(
       $c,
-      entity =>  {left => $left,
-          right => $right,
-          leftWidth => $leftWidth,
+      entity =>  {
           name => $name,
+          lstring => $lstring,
       },
   );
 }

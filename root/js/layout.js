@@ -32,10 +32,7 @@
           for(i=0; i<len; i++){
             var node = nodeList.item(i);
             if(node.nodeName == "data"){
-              var leftList = node.attributes.getNamedItem('left').nodeValue.split(',');
-              var rightList = node.attributes.getNamedItem('right').nodeValue.split(',');
-              var leftWidth = node.attributes.getNamedItem('leftWidth').nodeValue;
-              resetLayout(leftList, rightList, leftWidth);
+              location.hash = node.attributes.getNamedItem('lstring').nodeValue;
             }
           }
         }, "xml");
@@ -60,12 +57,14 @@
     function updateURLHash (left, right, leftWidth) {
       var l = left.map(function(i) { return getWidgetID(i);});
       var r = right.map(function(i) { return getWidgetID(i);});
-      location.hash = "l" + l.join('') + "r" + r.join('') + "w" + leftWidth;
-      return;
+      var ret = "l" + l.join('') + "r" + r.join('') + "w" + leftWidth;
+      location.hash = ret;
+      return ret;
     }
     
     function readHash() {
       var h = decodeURI(location.hash);
+
       var left = [];
       var right = [];
       var findL = h.match(/l([0-9A-Z]*)/);
@@ -156,8 +155,8 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
-      updateURLHash(left, right, leftWidth);
-      $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth }, function(){
+      var lstring = updateURLHash(left, right, leftWidth);
+      $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
         if(callback){ callback(); }
       });
 
