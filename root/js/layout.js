@@ -40,6 +40,10 @@
           }
         }, "xml");
     }
+    
+    function goToAnchor(anchor){
+      document.getElementById(anchor).scrollIntoView(true);
+    }
 
     function newLayout(layout){
       updateLayout(layout, function() {
@@ -54,10 +58,9 @@
     }
     
     function updateURLHash (left, right, leftWidth) {
-      var l = "l[" + left.join(',') + "]";
-      var r = "r[" + right.join(',') + "]";
-      var w = "w[" + leftWidth + "]";
-      location.hash = l  + r  + w;
+      var l = left.map(function(i) { return getWidgetID(i);});
+      var r = right.map(function(i) { return getWidgetID(i);});
+      location.hash = "l" + l.join('') + "r" + r.join('') + "w" + leftWidth;
       return;
     }
     
@@ -66,32 +69,48 @@
       var h = decodeURI(location.hash);
       var left = [];
       var right = [];
-      var findL = h.match(/l\[([^[\]]*)\]/);
-      var findR = h.match(/r\[([^[\]]*)\]/);
-      var findW = h.match(/w\[([^[\]]*)\]/);
-
-      var a = getAnchor(h);
+      var findL = h.match(/l([0-9A-Z]*)/);
+      var findR = h.match(/r([0-9A-Z]*)/);
+      var findW = h.match(/w([0-9A-Z]*)/);
       var w = (findW && findW.length>0) ? findW[1] : false;
 
-      var l = findL[1].split(',');
-      var r = findR[1].split(',');
+      var l = findL[1].split('');
+      var r = findR[1].split('');
       
+      l = l.map(function(i) { return getWidgetName(i);});
+      r = r.map(function(i) { return getWidgetName(i);});
+
       var reset = compare(l, r, w);
       if(reset){
         resetLayout(l, r, w);
-        goToAnchor(a);
       }
     }
     
-    function getAnchor(h){
-      var findA = h.match(/a\[([^[\]]*)\]/);
-      return (findA && findA.length>0) ? findA[1] : "";
+    //get an ordered list of all the widgets as they appear in the sidebar.
+    //only generate once, save for future
+    var widgetList = function() {
+        if (this.wl) return this.wl;
+        var instance = this;
+        var navigation = $jq("#navigation");
+        var list = navigation.children("ul").children(".module-load")
+                  .map(function() { return this.getAttribute("wname");})
+                  .get();
+        this.wl = { list: list };
+        return this.wl;
     }
     
-    function goToAnchor(anchor){
-      document.getElementById(anchor).scrollIntoView(true);
+    //returns order of widget in widget list in radix (base 36) 0-9a-z
+    function getWidgetID (widget_name) {
+        var wl = widgetList();
+        return wl.list.indexOf(widget_name).toString(36).toUpperCase();
     }
     
+    //returns widget name 
+    function getWidgetName (widget_id) {
+        var wl = widgetList();
+        return wl.list[parseInt(widget_id,36)];
+    }
+
     function compare(l, r, w) {
       var holder =  $jq("#widget-holder");
       var left = holder.children(".left").children(".visible")
@@ -149,7 +168,7 @@
       var totWidth = parseFloat(holder.css("width"));
 //       var leftWidth = parseFloat(holder.children(".left").css("width"));
       var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
-      return Math.round(leftWidth);
+      return Math.round(leftWidth); //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth){
