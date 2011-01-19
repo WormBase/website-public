@@ -285,23 +285,23 @@
 
   $jq(".module-max").live('click', function() {
     var module = $jq(this).parents(".widget-container")
-    if(module.find(".cboxElement").trigger('click').size() < 1){
+//     if(module.find(".cboxElement").trigger('click').size() < 1){
       var clone = module.clone();
-      clone.find(".module-max").remove();
-      clone.find(".module-close").remove();
-      clone.find(".module-min").remove();
-      clone.find("#widget-footer").remove();
-      clone.find("h3").children(".ui-icon").remove();
-      clone.css("min-width", "400px");
-      var cbox = $jq('<a class="cboxElement" href="#"></a>');
-      cbox.appendTo(module).hide();
-      cbox.colorbox({html:clone, title:"Note: not all effects are supported while widget is maximized", maxWidth:"100%"}).trigger('click');
-    }
+//       clone.find(".module-max").remove();
+//       clone.find(".module-close").remove();
+//       clone.find(".module-min").remove();
+//       clone.find("#widget-footer").remove();
+//       clone.find("h3").children(".ui-icon").remove();
+//       clone.css("min-width", "400px");
+//       var cbox = $jq('<a class="cboxElement" href="#"></a>');
+//       cbox.appendTo(module).hide();
+//       cbox.colorbox({html:clone, title:"Note: not all effects are supported while widget is maximized", maxWidth:"100%"}).trigger('click');
+//     }
 
 // code for external pop out window - if we need that
-//     var popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
-//     popout.document.write(document.head.innerHTML);
-//     popout.document.write(clone.html());
+    var popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
+    popout.document.write(document.head.innerHTML);
+    popout.document.write(clone.html());
   });
 
   // used in sidebar view, to open and close widgets when selected
