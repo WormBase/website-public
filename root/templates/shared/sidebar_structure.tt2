@@ -37,7 +37,7 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
-<a class="print ui-icon-pdf" href="" rel="[% class %]"></a>
+	  <a class="print ui-icon-pdf" href="javascript:void(0)"></a>
       [% END %]
 	
         <div style="clear:both"></div>
@@ -115,13 +115,7 @@
         $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
       [% END %]
 
-  [% IF print.defined %]
-
-    var leftList = ["[% print.left.join('", "') %]"];
-    var rightList = ["[% print.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% print.leftWidth %]);
-  [% ELSE %]
-
+  
     if(location.hash.length > 0){
       readHash();
     }else{
@@ -132,6 +126,6 @@
         $jq("#nav-location").trigger('open');
       [% END %]
     }
-  [% END %]
+   
 
     </script>
