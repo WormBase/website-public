@@ -1,7 +1,6 @@
 package WormBase::API::Service::print;
 
 use File::Temp;
- 
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
@@ -13,14 +12,11 @@ has 'file_dir' => (
     }
 );
 
- 
-
-
 sub run {
     my ($self,$path) = @_;
     $self->log->debug("print the page into pdf");
     my $temp_file = File::Temp->new(
-        TEMPLATE => "out_XXXXX",
+        TEMPLATE => "wormbase_XXXXX",
         DIR      => $self->file_dir,
         SUFFIX   => ".pdf",
         UNLINK   => 0,

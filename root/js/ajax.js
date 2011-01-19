@@ -1,5 +1,27 @@
   $jq(document).ready(function() {   
     window.onhashchange = readHash;
+     $jq(".print").live('click',function() {
+	  var layout= window.location.hash.replace('#','');
+	  var print = $jq(this);
+	   
+	    $jq.ajax({
+		      type: "POST",
+		      url : '/rest/print',
+		      data: {layout:layout}, 
+		       beforeSend:function(){
+			  setLoading(print); 
+			},
+		      success: function(data){
+			  print.html('');
+			   window.location.href=data;
+			},
+		      error: function(request,status,error) {
+			      alert(request + " " + status + " " + error );
+			}
+	      });
+	  
+    }); 
+
     $jq(".register-button").live('click',function() {
       
 	var reg = $jq(this).closest('#register-form');	

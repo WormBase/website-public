@@ -6,7 +6,7 @@ use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
-
+use Data::Dumper;
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
     'stash_key' => 'rest',
@@ -32,40 +32,25 @@ Catalyst Controller.
  
  
 sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
-sub print_GET {
+sub print_POST {
     my ( $self, $c) = @_;
    
     my $api = $c->model('WormBaseAPI');
     $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    my $class = lc($c->req->param('class'));
-     $c->log->debug("class is $class");
-    my $left = $c->user_session->{'layout'}->{$class}->{0}->{'left'};
-    my $right = $c->user_session->{'layout'}->{$class}->{0}->{'right'};
-    my $leftwidth = $c->user_session->{'layout'}->{$class}->{0}->{'leftWidth'};
-  
-    if(ref($left) eq 'ARRAY') {$left = join('-', @$left);}
-    if(ref($right) eq 'ARRAY') {$right = join('-', @$right);}
-    (my $path = $c->req->param('path')) =~ s/\?.*//g;
-    my $file = $api->_tools->{print}->run("$path?left=$left&right=$right&leftwidth=$leftwidth");
      
-    if ($file) {
- 
-    $c->response->header('Content-Type' => 'application/x-download');
-    $c->response->header('Content-Disposition' => 'attachment; filename=test.pdf');
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-#         $c->serve_static_file('root/test.html');
-      
-#     while (defined(my $line = <FILE>)) {
-    open(MYINPUTFILE, "<$file");
-#      binmode MYINPUTFILE;
-    my $fileGlob = \*MYINPUTFILE;
- 
+    my $path = $c->req->param('layout');
+    
+    if($path) {
+      $path = $c->req->headers->referer.'#'.$path;
+      $c->log->debug("here is the path $path");
+      my $file = $api->_tools->{print}->run($path);
+     
+      if ($file) {
+	  $c->log->debug("here is the file: $file");	 
+	  $file =~ s/.*print/\/print/;
+	  $c->res->body($file);
+      }
 
-     $c->log->debug($fileGlob);
-    $c->res->body($fileGlob);
-#    }
- 
-      close FILE;
     }
 }
 
