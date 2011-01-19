@@ -57,29 +57,23 @@
     function updateURLHash (left, right, leftWidth) {
       var l = left.map(function(i) { return getWidgetID(i);});
       var r = right.map(function(i) { return getWidgetID(i);});
-      var ret = "l" + l.join('') + "r" + r.join('') + "w" + leftWidth;
+      var ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
       location.hash = ret;
       return ret;
     }
     
     function readHash() {
-      var h = decodeURI(location.hash);
-
-      var left = [];
-      var right = [];
-      var findL = h.match(/l([0-9A-Z]*)/);
-      var findR = h.match(/r([0-9A-Z]*)/);
-      var findW = h.match(/w([0-9A-Z]*)/);
-      var w = (findW && findW.length>0) ? findW[1] : false;
-
-      var l = findL[1].split('');
-      var r = findR[1].split('');
+      var h = decodeURI(location.hash).match(/[#](.*)/);
+      h = h[1].split('-');
       
-      l = l.map(function(i) { return getWidgetName(i);});
-      r = r.map(function(i) { return getWidgetName(i);});
+      var l = h[0];
+      var r = h[1];
+      var w = (h[2] * 10);
+      
+      l = l.split('').map(function(i) { return getWidgetName(i);});
+      r = r.split('').map(function(i) { return getWidgetName(i);});
 
-      var reset = compare(l, r, w);
-      if(reset){
+      if(compare(l, r, w)){
         resetLayout(l, r, w);
       }
     }

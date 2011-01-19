@@ -1,3 +1,4 @@
+[% SET class    = 'species_summary' %]
 [% species = c.stash.species %]
 
   [% title = '<span class="species">' _ c.config.species_list.$species.Title _ '</span> Summary Page' %]
@@ -5,41 +6,17 @@
   [% widgets = [] %]
   [%# Establish my list of widgets %]
   [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
-  [% widgets.push({ id    = 'overview',
-      	            title = 'Overview',
-              href =  c.uri_for('/rest','widget','species_summary',species,'overview'),
-              type = 'resource',
-              }
- 	      ) %]
-
-  [% widgets.push({ id    = 'isolation',
-      	            title = 'Isolation',
-              href =  c.uri_for('/rest','widget','species_summary',species,'isolation'),
-              type = 'resource',
-              }
- 	      ) %]
-
-  [% widgets.push({ id    = 'downloads',
-      	            title = 'Downloads',
-              href =  c.uri_for('/rest','widget','species_summary',species,'downloads'),
-              type = 'resource',
-              }
- 	      ) %]
-
-  [% widgets.push({ id    = 'key_papers',
-      	            title = 'Key Papers',
-              href =  c.uri_for('/rest','widget','species_summary',species,'key_papers'),
-              type = 'resource',
-              }
- 	      ) %]
-
-  [% widgets.push({ id    = 'related_sites',
-      	            title = 'Related Sites',
-              href =  c.uri_for('/rest','widget','species_summary',species,'related_sites'),
-              type = 'resource',
-              }
- 	      ) %]
-
+  [% widget_list = ['overview', 'isolation', 'downloads', 'key_papers', 'related_sites'] %]
+  [% FOREACH widget_name IN widget_list -%]
+    [% USE String(widget_name.replace('_', ' ')) %]
+    [% w = { id = widget_name
+             title = String.capital
+             href =  c.uri_for('/species','summary', species, widget_name)
+             type = 'resources'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
 
   [% widgets.push({ title="My Workspace" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
@@ -56,6 +33,14 @@
   [%# Add the sidebar %]
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
+
+    <script>
+      
+  [% UNLESS c.user_session.layout.$class.defined %]
+    $jq("#nav-overview").trigger('open');
+  [% END %]
+
+    </script>
 
 
 
