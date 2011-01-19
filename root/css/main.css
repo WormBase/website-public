@@ -1268,7 +1268,7 @@ padding:0.7em 0.5em 0;
 /*   margin:0.5em; */
 }
 
-div.details {
+div.detail-box {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
@@ -1276,12 +1276,12 @@ div.details {
   margin:0.5em;
 }
 
-div.details div.field div.field-title {
+div.detail-box div.field div.field-title {
   width: 6.7em;
   padding-right: 0.5em;
 }
 
-div.details div.field div.field-content{
+div.detail-box div.field div.field-content{
   float:left;
   margin-left:0;
 }

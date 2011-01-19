@@ -3,7 +3,7 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="details ui-corner-all">
+<div class="detail-box ui-corner-all">
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Sequence"-%] 
