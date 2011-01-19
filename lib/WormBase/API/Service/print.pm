@@ -1,7 +1,6 @@
 package WormBase::API::Service::print;
 
 use File::Temp;
- 
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
@@ -12,9 +11,6 @@ has 'file_dir' => (
 	return shift->tmp_dir('print');
     }
 );
-
- 
-
 
 sub run {
     my ($self,$path) = @_;
