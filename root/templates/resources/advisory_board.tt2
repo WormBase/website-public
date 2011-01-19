@@ -1,3 +1,4 @@
+[% SET class    = 'advisory_board' %]
   [% title = "Advisory Board"  %]
 
   [% widgets = [] %]
