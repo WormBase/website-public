@@ -8,7 +8,11 @@
 		      type: "POST",
 		      url : '/rest/print',
 		      data: {layout:layout}, 
+		       beforeSend:function(){
+			  setLoading(print); 
+			},
 		      success: function(data){
+			  print.html('');
 			   window.location.href=data;
 			},
 		      error: function(request,status,error) {

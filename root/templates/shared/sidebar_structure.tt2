@@ -37,7 +37,7 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
-	  <a class="print ui-icon-pdf" href="javascript:void(0)"></a>
+	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>
       [% END %]
 	
         <div style="clear:both"></div>
