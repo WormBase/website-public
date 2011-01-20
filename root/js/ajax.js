@@ -1,5 +1,7 @@
   $jq(document).ready(function() {   
     window.onhashchange = readHash;
+    
+    ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
 	  var print = $jq(this);
