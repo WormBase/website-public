@@ -197,7 +197,7 @@
       return false;
       });
 
-    ajaxGet($jq(".status-bar"), "/rest/auth");
+    
 
     });
 

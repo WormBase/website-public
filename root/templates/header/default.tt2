@@ -76,7 +76,7 @@
 [% IF object; is_obj = 1; url = get_url(object.name.data.class, object.name.data.id); label = object.name.data.label; END; %]
 
 $jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]", 'is_obj': "[% is_obj %]" });
-
+ajaxGet($jq(".status-bar"), "/rest/auth");
 </script>
 
 <!-- END boilerplate/banner -->
