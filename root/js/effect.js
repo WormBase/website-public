@@ -52,7 +52,7 @@
       connectWith: '.sortable',
       opacity: 0.6,
       forcePlaceholderSize: true,
-      update: updateLayout,
+      update: function(event, ui) { updateLayout(); },
     });
     $jq("#widget-holder").children("#widget-header").disableSelection();
 
