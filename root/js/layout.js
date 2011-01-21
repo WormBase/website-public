@@ -58,7 +58,7 @@
       var l = $jq.map(left, function(i) { return getWidgetID(i);});
       var r = $jq.map(right, function(i) { return getWidgetID(i);});
       var ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
-      if(!(decodeURI(location.hash).match(ret))){
+      if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
         reloadLayout = false;
       }
       location.hash = ret;
@@ -67,7 +67,7 @@
     
     function readHash() {
       if(reloadLayout){
-        var h = decodeURI(location.hash).match(/[#](.*)/);
+        var h = decodeURI(location.hash).match(/^[#](.*)$/);
         if(!h){ return; }
         h = h[1].split('-');
         
@@ -89,7 +89,7 @@
         if (this.wl) return this.wl;
         var instance = this;
         var navigation = $jq("#navigation");
-        var list = navigation.children("ul").children(".module-load")
+        var list = navigation.find(".module-load")
                   .map(function() { return this.getAttribute("wname");})
                   .get();
         this.wl = { list: list };
