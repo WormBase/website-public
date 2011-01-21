@@ -271,16 +271,12 @@
         $jq(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
       }
-//       location.href = "#" + widget_name;
-//         updateURLHash(widget_name);
-        goToAnchor(widget_name);
-        
+      goToAnchor(widget_name);
     } else {
       nav.attr("load", 1);
       nav.removeClass("ui-selected");
       $jq(content).parents("li").removeClass("visible"); 
     }
-
     updateLayout();
     return false;
   });
@@ -314,7 +310,6 @@
 
     openWidget(widget_name, nav, content, ".left");
 
-    updateLayout();
     return false;
   });
 
