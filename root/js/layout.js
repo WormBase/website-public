@@ -108,37 +108,6 @@
         return wl.list[parseInt(widget_id,36)];
     }
 
-    function compare(l, r, w) {
-      var holder =  $jq("#widget-holder");
-      var left = holder.children(".left").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var right = holder.children(".right").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var leftWidth = getLeftWidth(holder);
-      var diff = leftWidth - w;
-      if((left.length != l.length) || (right.length != r.length)){
-        return true;
-      }else if((diff > 5)||(diff < -5)){
-        return true;
-      }else {
-          var i = 0;
-          for(i=0;i<left.length;i++){
-            if(left[i] != l[i]){
-              return true;
-            }
-          }
-          i=0;
-          for(i=0;i<right.length;i++){
-            if(right[i] != r[i]){
-              return true;
-            }
-          }
-      }
-      return false;
-    }
-
     function updateLayout(layout, callback){
       l = 'default';
       if((typeof layout) == 'string'){
@@ -178,7 +147,6 @@
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
           var content = "div#" + widget_name + "-content";
-          nav.attr("load", 0);
           openWidget(widget_name, nav, content, ".left");
         }
       }
