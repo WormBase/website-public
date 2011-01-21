@@ -5,7 +5,7 @@
 /***************************/
 
 //The layout methods
-
+    var reloadLayout = true; //keeps track of whether or not to reload the layout on hash change
     function columns(leftWidth, rightWidth, noUpdate){
       if(leftWidth>99){
         $jq("#widget-holder").children(".sortable").css('min-height', '0');
@@ -55,26 +55,31 @@
     }
     
     function updateURLHash (left, right, leftWidth) {
-      var l = left.map(function(i) { return getWidgetID(i);});
-      var r = right.map(function(i) { return getWidgetID(i);});
+      var l = $jq.map(left, function(i) { return getWidgetID(i);});
+      var r = $jq.map(right, function(i) { return getWidgetID(i);});
       var ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
+      if(!(decodeURI(location.hash).match(ret))){
+        reloadLayout = false;
+      }
       location.hash = ret;
       return ret;
     }
     
     function readHash() {
-      var h = decodeURI(location.hash).match(/[#](.*)/);
-      h = h[1].split('-');
-      
-      var l = h[0];
-      var r = h[1];
-      var w = (h[2] * 10);
-      
-      l = l.split('').map(function(i) { return getWidgetName(i);});
-      r = r.split('').map(function(i) { return getWidgetName(i);});
-
-      if(compare(l, r, w)){
-        resetLayout(l, r, w);
+      if(reloadLayout){
+        var h = decodeURI(location.hash).match(/[#](.*)/);
+        if(!h){ return; }
+        h = h[1].split('-');
+        
+        var l = h[0];
+        var r = h[1];
+        var w = (h[2] * 10);
+        
+        if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
+        if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
+        resetLayout(l,r,w);
+      }else{
+        reloadLayout = true;
       }
     }
     
@@ -94,7 +99,7 @@
     //returns order of widget in widget list in radix (base 36) 0-9a-z
     function getWidgetID (widget_name) {
         var wl = widgetList();
-        return wl.list.indexOf(widget_name).toString(36).toUpperCase();
+        return wl.list.indexOf(widget_name).toString(36);
     }
     
     //returns widget name 
@@ -238,3 +243,14 @@ $jq(function() {
     });
 
 });
+
+    if(!Array.indexOf){
+        Array.prototype.indexOf = function(obj){
+            for(var i=0; i<this.length; i++){
+                if(this[i]==obj){
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }
