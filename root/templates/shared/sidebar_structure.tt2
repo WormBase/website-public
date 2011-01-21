@@ -14,6 +14,19 @@
 [%#               type = "title"                                                %]
 [%#             }                                                               %]
 
+[% UNLESS c.req.action == 'me' %]
+  [% widgets.push({ title="My Workspace" type="title"}) %]
+  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+    [% widget = c.config.sections.me.widgets.$widget_name %]
+    [% w = { id = widget_name
+            title = widget.title
+            href =  c.uri_for('/rest','widget','me',widget_name)
+            type = "me"
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+[% END %]
 
     <div class="title">
       <h2>[% title %]</h2>
@@ -67,8 +80,7 @@
           [% END %]
           [% w.type %]"
           wname="[% w.id %]"
-          href="[% w.href %]" 
-          load=1>[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+          href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
       </li>
       [% END %]
     [% END %]

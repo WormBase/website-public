@@ -252,7 +252,7 @@
     var widget_name = $jq(this).attr("wname");
     var nav = $jq("#nav-" + widget_name);
     var content = "div#" + widget_name + "-content";
-    if (nav.attr("load") == 1){
+    if(!nav.hasClass('ui-selected')){
       if($jq(content).text().length < 4){
           var column = ".left";
           var holder = $jq("#widget-holder");
@@ -267,13 +267,11 @@
           }
           openWidget(widget_name, nav, content, column);
       }else{
-        nav.attr("load", 0);
         $jq(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
       }
       goToAnchor(widget_name);
     } else {
-      nav.attr("load", 1);
       nav.removeClass("ui-selected");
       $jq(content).parents("li").removeClass("visible"); 
     }
@@ -315,7 +313,6 @@
 
    
     function openWidget(widget_name, nav, content, column){
-        nav.attr("load", 0);
         $jq(content).closest("li").appendTo($jq("#widget-holder").children(column));
         var content = $jq(content);
         addWidgetEffects(content.parent(".widget-container"));
