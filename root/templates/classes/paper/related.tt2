@@ -9,19 +9,11 @@
 		[% result.join(', ') %]
 	[% END %]
 
-
-	[% WRAPPER $field_block title=pluralize("Gene", fields.genes.data.size) key="genes"-%]
-		[% tag2linkAll(fields.genes.data) %]
-	[% END %]
-
-	[% WRAPPER $field_block title=pluralize("Variation", fields.alleles.data.size) key="alleles"-%]
-		[% tag2linkAll(fields.alleles.data) %]
-	[% END %]
-
-	[% WRAPPER $field_block title=pluralize("Strain",fields.strains.data.size) key="strains"-%]
-		[% tag2linkAll(fields.strains.data) %]
-	[% END %]
-
-	[% WRAPPER $field_block title=pluralize("Interaction",fields.interactions.data.size) key="interactions"-%]
-		[% tag2linkAll(fields.interactions.data) %]
-	[% END %]
+[% IF fields.refers_to.data.size == 0 %]
+   No items related to this paper
+[% END %]
+[% FOREACH reftype IN fields.refers_to.data.keys.sort %]
+   [% WRAPPER $field_block title=pluralize(reftype, fields.refers_to.data.$reftype.size)-%]
+   	  [% tag2linkAll(fields.refers_to.data.$reftype) %]
+   [% END %]
+[% END %]
