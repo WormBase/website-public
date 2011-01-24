@@ -141,6 +141,30 @@ sub keywords {
 	return $data;
 }
 
+sub PMID {
+	my $self = shift;
+	my @dbfields = $self->object->Database(2);
+	foreach (@dbfields) {
+		return $_->right if $_ == 'PMID'; # ?Accession_number (should be PMID)
+	}
+	return ''; # why can't I return; ?
+}
+
+sub refers_to {
+	my $self = shift;
+	my %data;
+	my @refers_to = $self->object->Refers_to;
+	foreach my $ref_type (@refers_to) {
+		my @columns = $ref_type->col;
+		$data{$ref_type} = $self->_pack_objects(\@columns);
+	}
+	my $fields = {
+				  description => 'Objects that the paper refers to',
+				  data => \%data,
+				 };
+	return $fields;
+}
+
 sub genes {
 	my $self = shift;
 	my $genes = $self->_pack_objects($self ~~ '@Gene');
@@ -181,14 +205,6 @@ sub strains {
 	return $data;
 }
 
-sub PMID {
-	my $self = shift;
-	my @dbfields = map {$_->col} $self->object->Database;
-	foreach (@dbfields) {
-		return $_->right if $_ == 'PMID'; # ?Accession_number (should be PMID)
-	}
-	return ''; # why can't I return; ?
-}
 
 ############################################################
 #
