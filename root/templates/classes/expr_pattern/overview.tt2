@@ -1,7 +1,10 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-<h3>TODO: Picture Goes Here --></h3>
+[% gene_image = fields.expression_image.data %]
+[% IF gene_image %]
+<a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>
+[% END %]
 
 [% WRAPPER $field_block title="Description" -%]
 	[% FOREACH obj IN fields.summary.data.description %]
