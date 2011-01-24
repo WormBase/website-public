@@ -52,21 +52,17 @@ The default action is run last when no other action matches.
 =cut
 sub draw :Path("/draw") Args(1) {
     my ($self,$c,$format) = @_;
-    my $source = $c->model('WormBaseAPI')->pre_compile->{$c->req->params->{class}}."/".$c->req->params->{id}.".".$format;
-    my ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
-    unless($cached_img){
-      $cached_img = new GD::Image->new($source);
-      $c->set_cache($cache_id,$cached_img);
+    my ($cache_id,$cached_img);
+    if($c->req->params->{class} && $c->req->params->{id}){
+      my $source = $c->model('WormBaseAPI')->pre_compile->{$c->req->params->{class}}."/".$c->req->params->{id}.".".$format;
+      ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
+      unless($cached_img){
+	$cached_img = new GD::Image->new($source);
+	$c->set_cache($cache_id,$cached_img);
+      }
+    }else{
+	$cached_img = $c->flash->{gd};
     }
-=pod
-    binmode STDOUT;
-    if ($file) {
-      open IMG, $file or die $!;
-      print while(<IMG>);
-      close IMG;
-    }
-=cut
- 
     $c->stash(gd_image=>$cached_img);
     $c->detach('WormBase::Web::View::Graphics');
 }
