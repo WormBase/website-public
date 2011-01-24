@@ -3,7 +3,7 @@
 
 	[% MACRO tag2linkAll(hash) BLOCK %]
 		[% result = [] %]
-		[% FOREACH key IN hash.keys %]
+		[% FOREACH key IN hash.keys.sort %]
 			[% result.push(tag2link(hash.$key)) %]
 		[% END %]
 		[% result.join(', ') %]
