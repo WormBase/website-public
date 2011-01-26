@@ -1,6 +1,7 @@
  
   $jq(document).ready(function() {
- 
+    
+    
    $jq('#operator').live('click',function()  
     { 
       if($jq('#operator').attr("rel")) {
@@ -9,21 +10,13 @@
 	  });
       }else {
 	  if($jq("#operator-box").size()==0) {  
-		  $jq('#wrap').after('<div id="operator-box"  class="ui-corner-all" ></div>');
+		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
+		  $jq("#operator-box").draggable();
 	   } 
       }
     });  
 
-   
-/*  $jq('#operator-box').addFloating( 
-    {  
-                 targetRight: 15,  
-                 targetBottom: 200,
-		 // centerY: true,  
-                 snap: true  
-   });  
-*/
   $jq('#operator-box-close').live('click',function()  
     {  
 
