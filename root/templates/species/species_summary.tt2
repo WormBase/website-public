@@ -25,7 +25,8 @@
     <script>
       
   [% UNLESS c.user_session.layout.$class.defined %]
-    $jq("#nav-overview").trigger('open');
+    location.hash = "0--10";
+    readHash();
   [% END %]
 
     </script>
