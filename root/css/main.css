@@ -1380,9 +1380,24 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
 
+#operator-box{
+  position:fixed;  
+  width:9em; 
+  height:2em; 
+  bottom:200px;
+  right:15px;   
+  padding:0.5em; 
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  z-index:100;
+}
 
-
-
+#operator-box-close{
+  position:absolute; 
+  bottom:0; 
+  right:0.5em; 
+  display:block;  
+}
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */

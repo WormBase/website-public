@@ -1,6 +1,11 @@
   $jq(document).ready(function() {   
     window.onhashchange = readHash;
-    
+      
+    if($jq("#operator-box")[0]){
+      
+       ajaxGet($jq("#operator-box"), "/rest/livechat");
+    }
+
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
