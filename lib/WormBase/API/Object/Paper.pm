@@ -113,6 +113,13 @@ sub authors {
     return $data;
 }
 
+sub publication_type {
+	my $self = shift;
+	my $paper = $self->object;
+
+    return ''; # TODO
+}
+
 sub abstract {
     my $self = shift;
     my $abs = $self ~~ 'Abstract';
@@ -150,6 +157,43 @@ sub PMID {
 	return ''; # why can't I return; ?
 }
 
+sub intext_citation {
+	my $self = shift;
+
+	my $packed_authors = $self->authors->{data};
+	my $year = $self->year->{data};
+
+	my $innertext;
+	if (@$packed_authors > 5) { # 6..inf
+		my $author = $packed_authors->[0]->{id}; # will be author or person object
+		$innertext = _extract_last_name_from_person($author) . ' et al.';
+	}
+	else {
+		my @authors = map $_->{id}, @$packed_authors;
+		if (@authors > 2) { # 3..5
+			my @lnames = map {_extract_last_name_from_person($_)} @authors;
+			$innertext = join(', ', @lnames[0..$#lnames]) . ', & ' . $lnames[-1];
+		}
+		elsif (@authors > 0) {  # 1..2
+			$innertext = join(' & ', map {_extract_last_name_from_person($_)} @authors);
+		}
+	}
+
+	return unless $innertext;
+
+	if (defined $year) {
+		$innertext .= ", $year";
+	}
+	$innertext = "($innertext)";
+
+	my $data = {
+				description => 'APA in-text citation',
+				data => $innertext
+			   };
+	return $data;
+}
+
+
 sub refers_to {
 	my $self = shift;
 	my %data;
@@ -164,6 +208,8 @@ sub refers_to {
 				 };
 	return $fields;
 }
+
+# below are deprecated in favour of refers_to()
 
 sub genes {
 	my $self = shift;
@@ -205,15 +251,46 @@ sub strains {
 	return $data;
 }
 
-
 ############################################################
 #
 # PRIVATE METHODS
 #
 ############################################################
 
+# should consider moving this into Person?
+sub _extract_last_name_from_person {
+	my $person = shift;
+	return unless eval{$person->isa('Ace::Object')};
 
+	my $lastname;
+	if ($person->class eq 'Author') {
+		$lastname ||= _extract_last_name($person->Full_name);
+		$lastname ||= _extract_last_name($person->Also_known_as);
+		$lastname ||= _extract_last_name("$person");
+	}
+	elsif ($person->class eq 'Person') {
+		$lastname ||= $person->Last_name;
+		$lastname ||= _extract_last_name($person->Full_name);
+		$lastname ||= _extract_last_name($person->Standard_name);
+	}
+	return $lastname;
+}
 
-
+sub _extract_last_name {
+	$_ = shift;
+	s/^[^A-Za-z]+//; # strip non-alphas from front
+	s/[^A-Za-z.]+$//; # strip non-alphas (exc. '.') from back
+	s/_/ /g; # underscores should be spaces
+	s/- +/-/g; # fix hyphenation
+	my $lastname_part;
+	if (/,/) {
+		$lastname_part = (split /,/)[0];
+	}
+	else {
+	  s/ +([A-Z]\.? *)+$//;
+	  $lastname_part = $_;
+	}
+	return (split/[. ]/, $lastname_part)[-1];
+}
 
 1;
