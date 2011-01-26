@@ -24,6 +24,7 @@
     [% END %] 
 
  <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
+<!-- <script type="text/javascript" src="/js/jquery/plugins/floating-1.4.js"></script>-->
 
    <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/jquery.dataTables.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/demo_table.css"/>
@@ -52,7 +53,7 @@
   </head>
 
   <body>
-   
+    
     [%- content -%]    
   </body>
 </html>

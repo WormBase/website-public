@@ -1,5 +1,39 @@
  
   $jq(document).ready(function() {
+ 
+   $jq('#operator').live('click',function()  
+    { 
+      if($jq('#operator').attr("rel")) {
+	 $jq.post("/rest/livechat?open=1",function() {
+		window.location.href="/tools/operator";
+	  });
+      }else {
+	  if($jq("#operator-box").size()==0) {  
+		  $jq('#wrap').after('<div id="operator-box"  class="ui-corner-all" ></div>');
+		  ajaxGet($jq("#operator-box"), "/rest/livechat");
+	   } 
+      }
+    });  
+
+   
+/*  $jq('#operator-box').addFloating( 
+    {  
+                 targetRight: 15,  
+                 targetBottom: 200,
+		 // centerY: true,  
+                 snap: true  
+   });  
+*/
+  $jq('#operator-box-close').live('click',function()  
+    {  
+
+      $jq.post("/rest/livechat",function() {
+	  $jq('#operator-box').remove();
+      });
+         
+    }); 
+    
+  
 
    var nameBox = $jq("#comment-name"),
       nameBoxDefault = "name",
