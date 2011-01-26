@@ -119,7 +119,6 @@
 
 
     <script>
-
       [% IF object %]
         [% lclass = object.name.data.class FILTER lcfirst %]
         [% save = 'reports' %]
@@ -127,15 +126,12 @@
         $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
       [% END %]
 
-  
     if(location.hash.length > 0){
       readHash();
     }else{
-      [% IF c.user_session.layout.$class.defined %]
-        setLayout('0');
-      [% ELSE %]
-        $jq("#nav-overview").trigger('open');
-        $jq("#nav-location").trigger('open');
+      [% IF c.user_session.layout.$class.0.defined %]
+          location.hash = "[% c.user_session.layout.$class.0.lstring %]";
+          readHash();
       [% END %]
     }
    
