@@ -67,9 +67,9 @@
     
     function readHash() {
       if(reloadLayout){
-        var h = decodeURI(location.hash).match(/^[#](.*)$/);
+        var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
         if(!h){ return; }
-        h = h[1].split('-');
+//         h = h[1].split('-');
         
         var l = h[0];
         var r = h[1];
@@ -138,7 +138,7 @@
     }
 
     function resetLayout(leftList, rightList, leftWidth){
-      $jq("div#navigation").children("ul").children("li").removeClass("ui-selected");
+      $jq("div#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);

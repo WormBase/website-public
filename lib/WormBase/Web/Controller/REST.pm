@@ -759,7 +759,7 @@ sub widget_home_GET {
       $c->stash->{results} = $self->recently_saved($c,3);
       $c->stash->{popular} = $self->most_popular($c,3);
     }   
-    elsif($widget=~m/comments/){
+    elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";

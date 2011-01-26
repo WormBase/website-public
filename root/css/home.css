@@ -71,6 +71,10 @@ div#create-prompt>span {
   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#8CA4BA,endColorStr=#406F9C);
 }
 
+#create-account>span{
+  float:right;
+}
+
 #create-account:hover{
   background: #8CA4BA;
   background: #8CA4BA -moz-linear-gradient(90deg, #406F9C, #A3BCD4);

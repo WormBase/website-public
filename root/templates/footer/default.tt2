@@ -69,7 +69,7 @@
 </div>
                 <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
                 [% # The current release of the software and its codename %]
- [% c.config.codename %] - [% server_details("") %] 
+ [%# server_details("") %] 
      <!--       <br />[% c.config.codename %]
 
             <br />[% server_details("") %] 
