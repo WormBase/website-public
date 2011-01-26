@@ -1,3 +1,4 @@
+<entry><h3>Forums:</h3></entry>
       <div id="discussion-load"></div>
 <script>
   setLoading($jq("#discussion-load"));
@@ -8,3 +9,22 @@
       </script>
 <br />
       <a href="http://forums.wormbase.org/">View More ›</a>
+
+<br /><br />
+<entry><h3>Page comments:</h3></entry>
+
+[% IF c.stash.comments.size == 0 %]
+No comments currently!
+[% ELSE %]
+
+  [% FOREACH cm IN c.stash.comments %]
+    <div class="entry"> 
+      [% cm.time_lapse %] by <a href="">[% cm.people %]</a> - 
+      [% array=cm.location.split('/') %]
+      [% text2link(array.3,array.4, array.6 _ ' ' _ array.3 _ ' page (' _ array.5 _ ')') %]<br />
+      [% cm.content %]
+    </div>
+  [% END %]
+
+  <a href="[% c.uri_for('/tools/comments') %]">View More ›</a>
+[% END %]
