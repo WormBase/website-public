@@ -203,12 +203,7 @@ sub homology_image {
     my $self=shift;
     my $panel=$self->_draw_image($self->object,1);
     my $gd=$panel->gd;
-    #show dynamic images
-    my $data = { description => 'The homology image of the protein',
-		 data        => $gd,
-    };
-    return $data;
-=pod print image as file
+    
     my ($suffix,$img,$boxes);
     if ($gd->isa('Ace::Object')) {
 	$suffix = 'gif';
@@ -233,11 +228,10 @@ sub homology_image {
     
     # Return the URI to the temporary image file.
     # It should be something like
-     my $data = { description => 'The homology image of the protein',
- 		 data        => $self->tmp_image_uri($path),
-     };
-     return $data;
-=cut
+    my $data = { description => 'The homology image of the protein',
+		 data        => $self->tmp_image_uri($path),
+    };
+    return $data;
 }
 
 sub motif_homologies {

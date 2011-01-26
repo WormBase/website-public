@@ -25,13 +25,25 @@ sub name {
 #
 ############################################################
 
+sub expression_image { # may put this in another function...
+	my $self = shift;
+	
+	my $field = {
+		description => 'The image',
+	};
+	
+	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
+	$field->{data} = 'jpg?class=expr_object&id=' . $self->object 
+		if -e $file && ! -z $file;
+
+	return $field;
+}
+
 sub summary {
 	my $self = shift;
 	my %data;
 	my $remark;
-	  
-	# TOTAL HACK FOR THE MOHLER MOVIES
-	# These are handled elsewhere because he wants his own custom formatting
+	
 	unless (($self ~~ 'Author') =~ /Mohler/) {
 		$data{description} = $self ~~ '@Pattern';
 		$data{remarks} = join(' ', @{$self ~~ '@Remark'});
