@@ -2,8 +2,8 @@
     window.onhashchange = readHash;
       
     if($jq("#operator-box")[0]){
-      
-       ajaxGet($jq("#operator-box"), "/rest/livechat");
+         ajaxGet($jq("#operator-box"), "/rest/livechat");
+	 $jq("#operator-box").draggable();
     }
 
     ajaxGet($jq(".status-bar"), "/rest/auth");
