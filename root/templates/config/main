@@ -141,10 +141,14 @@
           url = site.external_urls.$link.base;
        END;
        UNLESS url; url = link; END;
+      IF (link == 'genomic_location' OR link == 'gbrowse_image' );
+	"<a href=\"$url\" title=\"$desc\">$text</a>";
+      ELSE;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" 
            title=\"$desc\">$text</a>";
+      END;
     END;
 
 
