@@ -16,7 +16,7 @@ TODO: add search;
 <br />
 <div id="preview"></div>
 <br />
-<div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% c.stash.class %]s</a></div>
+<div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% pluralize(c.stash.class, 2) %]</a></div>
 
 <script>
         var begin = 0;
