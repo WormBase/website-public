@@ -3,8 +3,31 @@
       
     if($jq("#operator-box")[0]){
          ajaxGet($jq("#operator-box"), "/rest/livechat");
-	 $jq("#operator-box").draggable();
+// 	 $jq("#operator-box").draggable();
+        var opTimer;
+        $jq("#operator-box").hover(
+          function(){
+              if(opTimer){
+                clearTimeout(opTimer);
+                opTimer = null;
+              }
+            $jq(this).removeClass("minimize");
+            $jq(this).animate({width:"9em"});
+          },
+          function() {
+              if(opTimer){
+                clearTimeout(opTimer);
+                opTimer = null;
+              }
+              var opBox = $jq(this);
+              opTimer = setTimeout(function() {
+                opBox.addClass("minimize");
+                opBox.animate({width:"1.5em"});
+              }, 900)
+          }
+        );
     }
+
 
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {

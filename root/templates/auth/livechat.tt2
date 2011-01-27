@@ -10,7 +10,8 @@
   </div>
 [% END %]
  
-<a id="operator-box-close"  href="#">x </a>  
+<!-- <a id="operator-box-close"  class="ui-icon ui-icon-close" href="#">x </a>   -->
+
  
 
  
