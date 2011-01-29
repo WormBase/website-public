@@ -6,6 +6,8 @@ use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
+use List::Util qw(shuffle);
+use Badge::GoogleTalk;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -30,42 +32,57 @@ Catalyst Controller.
 
 =cut
  
- 
+sub livechat :Path('/rest/livechat') :Args(0) :ActionClass('REST') {} 
+sub livechat_GET {
+    my ( $self, $c) = @_;
+    $c->user_session->{'livechat'}=1;
+    $c->stash->{template} = "auth/livechat.tt2";
+    my $role= $c->model('Schema::Role')->find({role=>"operator"});
+     
+    foreach my $op ( shuffle $role->users){
+      next unless($op->gtalk_key );
+      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
+      my $online_status = $badge->is_online();
+      my $status = $badge->get_status();
+      my $away_status = $badge->is_away();
+      if($online_status && $status ne 'Busy' && !$away_status) {
+	  $c->log->debug("get gtalk badge for ",$op->username);
+  	  $c->stash->{badge_html}  = $badge->get_badge();
+	  $c->stash->{operator}  = $op;
+	  $c->log->debug($c->stash->{badge_html});
+	  last;
+      }
+    }
+    $c->stash->{noboiler}=1;
+    $c->forward('WormBase::Web::View::TT');
+}
+sub livechat_POST {
+    my ( $self, $c) = @_;
+    $c->user_session->{'livechat'}=0;
+    $c->user_session->{'livechat'}=1 if($c->req->param('open'));
+    $c->log->debug('livechat open? '.$c->user_session->{'livechat'});
+}
+
 sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
-sub print_GET {
+sub print_POST {
     my ( $self, $c) = @_;
    
     my $api = $c->model('WormBaseAPI');
     $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    my $class = lc($c->req->param('class'));
-     $c->log->debug("class is $class");
-    my $left = $c->user_session->{'layout'}->{$class}->{0}->{'left'};
-    my $right = $c->user_session->{'layout'}->{$class}->{0}->{'right'};
-    my $leftwidth = $c->user_session->{'layout'}->{$class}->{0}->{'leftWidth'};
-  
-    if(ref($left) eq 'ARRAY') {$left = join('-', @$left);}
-    if(ref($right) eq 'ARRAY') {$right = join('-', @$right);}
-    (my $path = $c->req->param('path')) =~ s/\?.*//g;
-    my $file = $api->_tools->{print}->run("$path?left=$left&right=$right&leftwidth=$leftwidth");
      
-    if ($file) {
- 
-    $c->response->header('Content-Type' => 'application/x-download');
-    $c->response->header('Content-Disposition' => 'attachment; filename=test.pdf');
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-#         $c->serve_static_file('root/test.html');
-      
-#     while (defined(my $line = <FILE>)) {
-    open(MYINPUTFILE, "<$file");
-#      binmode MYINPUTFILE;
-    my $fileGlob = \*MYINPUTFILE;
- 
+    my $path = $c->req->param('layout');
+    
+    if($path) {
+      $path = $c->req->headers->referer.'#'.$path;
+      $c->log->debug("here is the path $path");
+      my $file = $api->_tools->{print}->run($path);
+     
+      if ($file) {
+	  $c->log->debug("here is the file: $file");	 
+	  $file =~ s/.*print/\/print/;
+	  $c->res->body($file);
+      }
 
-     $c->log->debug($fileGlob);
-    $c->res->body($fileGlob);
-#    }
- 
-      close FILE;
     }
 }
 
@@ -146,13 +163,11 @@ sub layout_POST {
     $c->log->debug("not default: $i");
   }
   $c->log->debug($i);
-  my $left = $c->request->body_parameters->{'left[]'};
-  my $right = $c->request->body_parameters->{'right[]'};  
-  my $leftWidth = $c->request->body_parameters->{'leftWidth'};
+
+  my $lstring = $c->request->body_parameters->{'lstring'};
   $c->user_session->{'layout'}->{$class}->{$i}->{'name'} = $layout;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'left'} = $left;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'right'} = $right;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'leftWidth'} = $leftWidth;
+
+  $c->user_session->{'layout'}->{$class}->{$i}->{'lstring'} = $lstring;
 }
 
 sub layout_GET {
@@ -165,23 +180,18 @@ sub layout_GET {
   unless (defined $c->user_session->{'layout'}->{$class}->{$layout}){
     $layout = 0;
   }
-  my $left = $c->user_session->{'layout'}->{$class}->{$layout}->{'left'};
-  my $right = $c->user_session->{'layout'}->{$class}->{$layout}->{'right'};
-  my $leftWidth = $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'};
-  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
-  if(ref($left) eq 'ARRAY') {$left = join(',', @$left);}
-  if(ref($right) eq 'ARRAY') {$right = join(',', @$right);}
 
-  $c->log->debug("left:" . $left);
-  $c->log->debug("right:" . $right);
-  $c->log->debug("leftWidth:" . $leftWidth);
-    $c->forward('WormBase::Web::View::TT');
+  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
+  my $lstring = $c->user_session->{'layout'}->{$class}->{$layout}->{'lstring'};
+
+
+  $c->log->debug("lstring:" . $lstring);
+
   $self->status_ok(
       $c,
-      entity =>  {left => $left,
-          right => $right,
-          leftWidth => $leftWidth,
+      entity =>  {
           name => $name,
+          lstring => $lstring,
       },
   );
 }
@@ -781,7 +791,7 @@ sub widget_home_GET {
       $c->stash->{results} = $self->recently_saved($c,3);
       $c->stash->{popular} = $self->most_popular($c,3);
     }   
-    elsif($widget=~m/comments/){
+    elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";

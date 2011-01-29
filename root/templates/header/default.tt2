@@ -1,4 +1,4 @@
-
+ 
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
@@ -34,7 +34,7 @@
           [% FOREACH option IN species %]
             <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
               <ul class="dropdown">  
-                <li><a href="#">Browse Genome</a></li>
+                <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
               [% FOREACH class IN c.config.species_list.$option.available_classes.class %]
                 [% IF class == 'title'; NEXT; END; %]
@@ -47,7 +47,15 @@
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.sort() %]
             [% IF option == 'title'; NEXT; END; %]
-            <li><a href="/[% title %]/[% option %]">[% c.config.sections.$title.$option.title %]</a></li>
+            <li>[% IF option == 'operator' %]
+		     <a id="[% option %]" href="#"  
+			[% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
+			  rel="redirect" 
+			[%  END  %]
+		      > 
+		[% ELSE %]<a href="/[% title %]/[% option %]"> 
+		[% END %]
+		[% c.config.sections.$title.$option.title %]</a></li>
           [% END %]
         [% END %]
           </ul>
@@ -55,19 +63,21 @@
     [% END %]
   <span class="status-bar"></span>
     </ul>
-
-
-
   </div>
-
-
-
-
+ 
   [% PROCESS timer %]
+
 </div>
 
-<script>
+<div id="operator-box-wrap">
+[% IF !c.user_session.livechat.defined ||  c.user_session.livechat == 1 %]
+  <div id="operator-box"  class="ui-corner-all" ></div>   
+[% END %]
+</div> 
 
+<script>
+ 
+ 
 [% url = c.req.uri %]
 
 [% label = c.req.path %]
@@ -76,9 +86,12 @@
 [% IF object; is_obj = 1; url = get_url(object.name.data.class, object.name.data.id); label = object.name.data.label; END; %]
 
 $jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]", 'is_obj': "[% is_obj %]" });
-
+ 
+ 
 </script>
 
 <!-- END boilerplate/banner -->
+   
+    
 
     <div id="content">

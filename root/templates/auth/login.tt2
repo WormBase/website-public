@@ -7,7 +7,7 @@
       opener.location.reload(1); 
    [% ELSE %]
       var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
-      if(answer) { opener.location.href ="[% c.uri_for(c.controller('tool').action_for('operator')) %]"; }
+      if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')) %]"; }
       else { opener.location.reload(1);}
   [% END %] 
   window.close();

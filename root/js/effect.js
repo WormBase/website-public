@@ -1,5 +1,32 @@
  
   $jq(document).ready(function() {
+    
+    
+   $jq('#operator').live('click',function()  
+    { 
+      if($jq('#operator').attr("rel")) {
+	 $jq.post("/rest/livechat?open=1",function() {
+		window.location.href="/tools/operator";
+	  });
+      }else {
+	  if($jq("#operator-box").size()==0) {  
+		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
+		  ajaxGet($jq("#operator-box"), "/rest/livechat");
+		  $jq("#operator-box").draggable();
+	   } 
+      }
+    });  
+
+  $jq('#operator-box-close').live('click',function()  
+    {  
+
+      $jq.post("/rest/livechat",function() {
+	  $jq('#operator-box').remove();
+      });
+         
+    }); 
+    
+  
 
    var nameBox = $jq("#comment-name"),
       nameBoxDefault = "name",
@@ -52,7 +79,7 @@
       connectWith: '.sortable',
       opacity: 0.6,
       forcePlaceholderSize: true,
-      update: updateLayout,
+      update: function(event, ui) { updateLayout(); },
     });
     $jq("#widget-holder").children("#widget-header").disableSelection();
 

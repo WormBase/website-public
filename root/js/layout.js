@@ -5,7 +5,7 @@
 /***************************/
 
 //The layout methods
-
+    var reloadLayout = true; //keeps track of whether or not to reload the layout on hash change
     function columns(leftWidth, rightWidth, noUpdate){
       if(leftWidth>99){
         $jq("#widget-holder").children(".sortable").css('min-height', '0');
@@ -32,13 +32,14 @@
           for(i=0; i<len; i++){
             var node = nodeList.item(i);
             if(node.nodeName == "data"){
-              var leftList = node.attributes.getNamedItem('left').nodeValue.split(',');
-              var rightList = node.attributes.getNamedItem('right').nodeValue.split(',');
-              var leftWidth = node.attributes.getNamedItem('leftWidth').nodeValue;
-              resetLayout(leftList, rightList, leftWidth);
+              location.hash = node.attributes.getNamedItem('lstring').nodeValue;
             }
           }
         }, "xml");
+    }
+    
+    function goToAnchor(anchor){
+      document.getElementById(anchor).scrollIntoView(true);
     }
 
     function newLayout(layout){
@@ -54,73 +55,57 @@
     }
     
     function updateURLHash (left, right, leftWidth) {
-      var l = "l[" + left.join(',') + "]";
-      var r = "r[" + right.join(',') + "]";
-      var w = "w[" + leftWidth + "]";
-      location.hash = l  + r  + w;
-      return;
+      var l = $jq.map(left, function(i) { return getWidgetID(i);});
+      var r = $jq.map(right, function(i) { return getWidgetID(i);});
+      var ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
+      if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
+        reloadLayout = false;
+      }
+      location.hash = ret;
+      return ret;
     }
     
     function readHash() {
-
-      var h = decodeURI(location.hash);
-      var left = [];
-      var right = [];
-      var findL = h.match(/l\[([^[\]]*)\]/);
-      var findR = h.match(/r\[([^[\]]*)\]/);
-      var findW = h.match(/w\[([^[\]]*)\]/);
-
-      var a = getAnchor(h);
-      var w = (findW && findW.length>0) ? findW[1] : false;
-
-      var l = findL[1].split(',');
-      var r = findR[1].split(',');
-      
-      var reset = compare(l, r, w);
-      if(reset){
-        resetLayout(l, r, w);
-        goToAnchor(a);
+      if(reloadLayout){
+        var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
+        if(!h){ return; }
+//         h = h[1].split('-');
+        
+        var l = h[0];
+        var r = h[1];
+        var w = (h[2] * 10);
+        
+        if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
+        if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
+        resetLayout(l,r,w);
+      }else{
+        reloadLayout = true;
       }
     }
     
-    function getAnchor(h){
-      var findA = h.match(/a\[([^[\]]*)\]/);
-      return (findA && findA.length>0) ? findA[1] : "";
+    //get an ordered list of all the widgets as they appear in the sidebar.
+    //only generate once, save for future
+    var widgetList = function() {
+        if (this.wl) return this.wl;
+        var instance = this;
+        var navigation = $jq("#navigation");
+        var list = navigation.find(".module-load")
+                  .map(function() { return this.getAttribute("wname");})
+                  .get();
+        this.wl = { list: list };
+        return this.wl;
     }
     
-    function goToAnchor(anchor){
-      document.getElementById(anchor).scrollIntoView(true);
+    //returns order of widget in widget list in radix (base 36) 0-9a-z
+    function getWidgetID (widget_name) {
+        var wl = widgetList();
+        return wl.list.indexOf(widget_name).toString(36);
     }
     
-    function compare(l, r, w) {
-      var holder =  $jq("#widget-holder");
-      var left = holder.children(".left").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var right = holder.children(".right").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var leftWidth = getLeftWidth(holder);
-      var diff = leftWidth - w;
-      if((left.length != l.length) || (right.length != r.length)){
-        return true;
-      }else if((diff > 5)||(diff < -5)){
-        return true;
-      }else {
-          var i = 0;
-          for(i=0;i<left.length;i++){
-            if(left[i] != l[i]){
-              return true;
-            }
-          }
-          i=0;
-          for(i=0;i<right.length;i++){
-            if(right[i] != r[i]){
-              return true;
-            }
-          }
-      }
-      return false;
+    //returns widget name 
+    function getWidgetName (widget_id) {
+        var wl = widgetList();
+        return wl.list[parseInt(widget_id,36)];
     }
 
     function updateLayout(layout, callback){
@@ -138,8 +123,8 @@
                         .map(function() { return this.id;})
                         .get();
       var leftWidth = getLeftWidth(holder);
-      updateURLHash(left, right, leftWidth);
-      $jq.post("/rest/layout/" + $class + "/" + l, { 'left[]': left, 'right[]' : right, 'leftWidth':leftWidth }, function(){
+      var lstring = updateURLHash(left, right, leftWidth);
+      $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
         if(callback){ callback(); }
       });
 
@@ -149,11 +134,11 @@
       var totWidth = parseFloat(holder.css("width"));
 //       var leftWidth = parseFloat(holder.children(".left").css("width"));
       var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
-      return Math.round(leftWidth);
+      return Math.round(leftWidth); //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth){
-      $jq("div#navigation").children("ul").children("li").removeClass("ui-selected");
+      $jq("div#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
@@ -162,7 +147,6 @@
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
           var content = "div#" + widget_name + "-content";
-          nav.attr("load", 0);
           openWidget(widget_name, nav, content, ".left");
         }
       }
@@ -227,3 +211,14 @@ $jq(function() {
     });
 
 });
+
+    if(!Array.indexOf){
+        Array.prototype.indexOf = function(obj){
+            for(var i=0; i<this.length; i++){
+                if(this[i]==obj){
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }

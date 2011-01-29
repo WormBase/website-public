@@ -73,10 +73,17 @@
 
 
 # use this to pluraize a word
-# todo: add logic for words that need more than an additional 's'
     MACRO pluralize(word, size) BLOCK;
       IF (size > 1);
-        word = word _ "s";
+	  	 IF (matches = word.match('^(.*)y$'));
+		 	word = matches.0 _ 'ies';					# antibody -> antibodies
+		 ELSIF (matches = word.match('^(.*)ium$'));
+		 	word = matches.0 _ 'ia';					# bacterium -> bacteria
+		 ELSIF (matches = word.match('^(.*)ius$'));
+		 	word = matches.0 _ 'ii';					# radius -> radii 
+		 ELSE; 
+		 	word = word _ "s";
+		 END;
       END;
       word;
     END;
@@ -141,10 +148,14 @@
           url = site.external_urls.$link.base;
        END;
        UNLESS url; url = link; END;
+      IF (link == 'genomic_location' OR link == 'gbrowse_image' );
+	"<a href=\"$url\" title=\"$desc\">$text</a>";
+      ELSE;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" 
            title=\"$desc\">$text</a>";
+      END;
     END;
 
 

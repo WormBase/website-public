@@ -314,7 +314,7 @@
                     <div class="module-close" wname="[% id %]" title="close"></div>
                     <div class="module-max" wname="[% id %]" title="pop out"></div>
                    
-                    <h3><div class="module-min [% id %]" wname="[% id %]"></div><span>[% title %]</span>
+                    <h3><div class="module-min" wname="[% id %]"></div><span>[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
