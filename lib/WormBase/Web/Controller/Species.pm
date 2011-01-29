@@ -25,6 +25,21 @@ sub species :Path('/species') :Args(0)   {
 
 
 
+sub summary_widgets :Path("/species/summary") Args {
+    my ($self,$c, @args) = @_;
+    $c->stash->{section} = 'species';
+
+    if(@args == 1){
+      my $widget = shift @args;
+      $c->stash->{template} = "species/summary/$widget.tt2";
+    }elsif(@args ==2){
+      my $species = shift @args;
+      my $widget = shift @args;
+      $c->stash->{template} = "species/summary/$species/$widget.tt2";
+    }
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
+}
 
 
 # An individual species summary
@@ -69,6 +84,7 @@ sub species_report :Path("/species") Args(3) {
     my ($self,$c,$species,$class,$name) = @_;
     get_report($self, $c, $class, $name);
 }
+
 
  
 sub get_report {

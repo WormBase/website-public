@@ -14,6 +14,19 @@
 [%#               type = "title"                                                %]
 [%#             }                                                               %]
 
+[% UNLESS c.req.action == 'me' %]
+  [% widgets.push({ title="My Workspace" type="title"}) %]
+  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+    [% widget = c.config.sections.me.widgets.$widget_name %]
+    [% w = { id = widget_name
+            title = widget.title
+            href =  c.uri_for('/rest','widget','me',widget_name)
+            type = "me"
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+[% END %]
 
     <div class="title">
       <h2>[% title %]</h2>
@@ -37,7 +50,7 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
-<a class="print ui-icon-pdf" href="" rel="[% class %]"></a>
+	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>
       [% END %]
 	
         <div style="clear:both"></div>
@@ -67,8 +80,7 @@
           [% END %]
           [% w.type %]"
           wname="[% w.id %]"
-          href="[% w.href %]" 
-          load=1>[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+          href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
       </li>
       [% END %]
     [% END %]
@@ -103,11 +115,25 @@
     <div class="sortable right"></div>
   </div>
 </div>
+
+
+
+    <script>
       [% IF object %]
-          <script>
-[% lclass = object.name.data.class FILTER lcfirst %]
-[% save = 'reports' %]
-[% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
-          </script>
+        [% lclass = object.name.data.class FILTER lcfirst %]
+        [% save = 'reports' %]
+        [% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
+        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
       [% END %]
+
+    if(location.hash.length > 0){
+      readHash();
+    }else{
+      [% IF c.user_session.layout.$class.0.defined %]
+          location.hash = "[% c.user_session.layout.$class.0.lstring %]";
+          readHash();
+      [% END %]
+    }
+   
+
+    </script>

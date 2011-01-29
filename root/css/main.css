@@ -40,6 +40,7 @@ input, select, th, td { font-size:1em; }
   background:white;
   min-height: 100%;
   height: auto !important;
+  width:100%;
   position: relative;
   min-width: 630px;
 }
@@ -168,7 +169,7 @@ ul.nav-bar span.status-bar {
 }
 
 ul.nav-bar span.status-bar li a {
-  padding-right:1.4em;
+  padding-right:1.9em;
 }
 
 ul.nav-bar li span.ui-icon {
@@ -1268,7 +1269,7 @@ padding:0.7em 0.5em 0;
 /*   margin:0.5em; */
 }
 
-div.details {
+div.detail-box {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
@@ -1276,12 +1277,12 @@ div.details {
   margin:0.5em;
 }
 
-div.details div.field div.field-title {
+div.detail-box div.field div.field-title {
   width: 6.7em;
   padding-right: 0.5em;
 }
 
-div.details div.field div.field-content{
+div.detail-box div.field div.field-content{
   float:left;
   margin-left:0;
 }
@@ -1379,10 +1380,32 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   color:#0000B8;
 }
 
+#operator-box-wrap{  
+  position:fixed;       
+  bottom:200px;
+  right:15px;   
+}
 
+#operator-box{
+  position:absolute;  
+  width:9em; 
+  height:2em; 
+  right:15px;    
+  padding:0.5em; 
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  z-index:100;
+  cursor:pointer
+}
 
+#operator-box-close{
+  position:absolute; 
+  bottom:0; 
+  right:0.5em; 
+/*   display:block;   */
+}
 
-
+ 
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */

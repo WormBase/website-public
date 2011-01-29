@@ -1,11 +1,7 @@
 /***************************/
 // to be written
 /***************************/
-$jq(".print").live('click',function() {
-       $jq(this).attr("href","/rest/print?&class="+$jq(this).attr("rel")+"&path="+window.location.href);
-       $jq(this).trigger('click');
-	 
-});
+ 
 
 $jq('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
 

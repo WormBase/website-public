@@ -44,43 +44,13 @@
   [% END %]
   [% END %]
 
-  [% widgets.push({ title="My Workspace" type="title"}) %]
-  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
-    [% widget = c.config.sections.me.widgets.$widget_name %]
-    [% w = { id = widget_name
-            title = widget.title
-            href =  c.uri_for('/rest','widget','me',widget_name)
-            type = "me"
-            };
-    %]
-    [% widgets.push(w) %]
-  [% END %]
-
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
-
+      [% UNLESS c.user_session.layout.$class.0.defined %]
     <script>
-
-  [% IF print.defined %]
-    var leftList = ["[% print.left.join('", "') %]"];
-    var rightList = ["[% print.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% print.leftWidth %]);
-  [% ELSE %]
-
-    if(location.hash){
-      readHash();
-    }else{
-      [% IF  c.user_session.layout.$class.defined %]
-        var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];
-        var rightList = ["[% c.user_session.layout.$class.0.right.join('", "') %]"];
-        resetLayout(leftList, rightList, [% c.user_session.layout.$class.0.leftWidth %]);
-      [% ELSE %]
         $jq("#nav-overview").trigger('open');
         $jq("#nav-location").trigger('open');
-      [% END %]
-    }
-  [% END %]
-
+    updateLayout();
     </script>
-
+      [% END %]
 
