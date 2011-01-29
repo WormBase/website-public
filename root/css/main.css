@@ -1388,3 +1388,18 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 /* = Generic styling added by TH; possibly redundant  ========================== */
 
 .email {   }   /* email address formatting */
+
+div#advisory-board        { padding:2em; }
+#advisory-board h2        { float:none;}
+#advisory-board img {
+    border : 3px solid gray;
+    width  : 100px;
+}
+#advisory-board .description { 
+     font-style:normal;
+     clear:both; 
+     padding: 1em 0em 2em 0em;
+     width:500px;
+     font-size:1.2em;
+}
+

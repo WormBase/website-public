@@ -2,7 +2,7 @@
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Contents" type="title"}) %]
-  [% widget_list = ['members'] %]
+  [% widget_list = ['members','alumni'] %]
 
   [% FOREACH widget_name IN widget_list -%]
     [% title = widget_name FILTER ucfirst %]
