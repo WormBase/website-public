@@ -71,12 +71,13 @@
 
 <div id="operator-box-wrap">
 [% IF !c.user_session.livechat.defined ||  c.user_session.livechat == 1 %]
-  <div id="operator-box"  class="ui-corner-all" ></div>   
+  <div id="operator-box"  class="ui-corner-left minimize" ></div>   
 [% END %]
 </div> 
 
 <script>
  
+operator();
  
 [% url = c.req.uri %]
 

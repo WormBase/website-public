@@ -9,23 +9,36 @@
 		window.location.href="/tools/operator";
 	  });
       }else {
-	  if($jq("#operator-box").size()==0) {  
-		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
-		  ajaxGet($jq("#operator-box"), "/rest/livechat");
-		  $jq("#operator-box").draggable();
-	   } 
+        var opBox = $jq("#operator-box");
+        ajaxGet(opBox, "/rest/livechat");
+        if(opBox.hasClass("minimize")){
+            opBox.removeClass("minimize");
+            opBox.animate({width:"9em"});
+            opBox.children().show();
+        }
+        opTimer = setTimeout(function() {
+          opBox.addClass("minimize");
+          opBox.animate({width:"1.5em"});
+          opBox.children().hide();
+
+        }, 4000)
+// 	  if($jq("#operator-box").size()==0) {  
+// 		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
+// 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
+// 		  $jq("#operator-box").draggable();
+// 	   } 
       }
     });  
 
-  $jq('#operator-box-close').live('click',function()  
-    {  
-
-      $jq.post("/rest/livechat",function() {
-	  $jq('#operator-box').remove();
-      });
-         
-    }); 
-    
+//   $jq('#operator-box-close').live('click',function()  
+//     {  
+// 
+//       $jq.post("/rest/livechat",function() {
+// 	  $jq('#operator-box').remove();
+//       });
+//          
+//     }); 
+//     
   
 
    var nameBox = $jq("#comment-name"),
