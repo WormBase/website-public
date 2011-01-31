@@ -10,7 +10,14 @@
 	  });
       }else {
         var opBox = $jq("#operator-box");
-        ajaxGet(opBox, "/rest/livechat");
+//         ajaxGet(opBox, "/rest/livechat");
+        ajaxGet(opBox, "/rest/livechat", 0, 
+        function(){ 
+          if(opBox.hasClass("minimize")){
+            opBox.children().hide();
+          }
+        });
+        opLoaded = true;
         if(opBox.hasClass("minimize")){
             opBox.removeClass("minimize");
             opBox.animate({width:"9em"});

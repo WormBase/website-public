@@ -335,10 +335,12 @@
         },
         success:function(data){
           ajaxPanel.html(data);
-          if(callback){ callback(); }
         },
         error:function(request,status,error){
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+        },
+        complete:function(XMLHttpRequest, textStatus){
+          if(callback){ callback(); }
         }
       });
 
