@@ -1,7 +1,7 @@
 
 [% IF badge_html  %]
   [% badge_html %]
-  [% IF c.check_user_roles('admin') %]the current operator is [% username(operator) %][% END %]
+  <div>[% IF c.check_user_roles('admin') %]operator:[% username(operator) %][% END %]</div>
 [% ELSE %]
   <div class="ui-state-disabled" style="font-size:0.9em">
 	  <img src="http://www.google.com/talk/service/resources/chaticon.gif" alt="" width="16" height="14">

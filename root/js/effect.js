@@ -10,14 +10,18 @@
 	  });
       }else {
         var opBox = $jq("#operator-box");
+        ajaxGet(opBox, "/rest/livechat");
         if(opBox.hasClass("minimize")){
             opBox.removeClass("minimize");
             opBox.animate({width:"9em"});
+            opBox.children().show();
         }
         opTimer = setTimeout(function() {
           opBox.addClass("minimize");
           opBox.animate({width:"1.5em"});
-        }, 3000)
+          opBox.children().hide();
+
+        }, 4000)
 // 	  if($jq("#operator-box").size()==0) {  
 // 		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
 // 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
