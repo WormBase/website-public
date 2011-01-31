@@ -46,7 +46,7 @@ sub livechat_GET {
       my $status = $badge->get_status();
       my $away_status = $badge->is_away();
       if($online_status && $status ne 'Busy' && !$away_status) {
-	  $c->log->debug("get gtalk badge for ",$op->username);
+	  $c->log->debug("get gtalk badge from operator ",$op->username);
   	  $c->stash->{badge_html}  = $badge->get_badge();
 	  $c->stash->{operator}  = $op;
 	  $c->log->debug($c->stash->{badge_html});
@@ -1158,6 +1158,7 @@ sub field_GET {
 			 $field => $data
 		     }
 	);
+    $c->forward('WormBase::Web::View::TT');
 }
 
 
