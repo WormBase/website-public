@@ -227,24 +227,13 @@
     });
 
 
-// NOTE: Is this used anywhere???
-//   $jq(".update").live('click',function() {
-// 
-//     $jq(this).text("updating").show();
-//     var url     = $jq(this).attr("href");
-//     // Multiple classes specified. Split so I can rejoin.
-//     var mytitle = $jq(this).attr("class").split(" ");
-//     $jq("#" + mytitle[1]).load(url,
-//                     function(response, status, xhr) {
-//                           if (status == "error") {
-//                           var msg = "Sorry but there was an error: ";
-//                           $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
-//                           }
-//                           $jq(this).children(".toggle").toggleClass("active");
-//                       });
-//         
-//   return false;
-//   });
+// NOTE:  This is used on the protein page homology section 
+   $jq(".update").live('click',function() { 
+     // Multiple classes specified. Split so I can rejoin.
+     var mytitle = $jq(this).attr("class").split(" ");
+      ajaxGet($jq("#" + mytitle[1]),$jq(this).attr("href"));
+      return false;
+   });
 
 
   // used in sidebar view, to open and close widgets when selected
