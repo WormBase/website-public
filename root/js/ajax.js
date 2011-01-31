@@ -70,7 +70,7 @@
 	    var feed = $jq(this).closest('#comment-new');
 	    var name = feed.find("#comment-name").val();
 	    var content = feed.find("#comment-content").val();
-	    if(name == "" || name == "name" || content == "" || content == "enter your comment here"){
+	    if(name == "" || name == "name" || content == "" || content == "write a comment..."){
 		    alert("Please provide your name & comment"); return false;
 	    }
 	    $jq.ajax({

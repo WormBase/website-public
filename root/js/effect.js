@@ -51,7 +51,7 @@
    var nameBox = $jq("#comment-name"),
       nameBoxDefault = "name",
       contentBox = $jq("#comment-content"),
-      contentBoxDefault = "enter your comment here"
+      contentBoxDefault = "write a comment..."
 
  
   //show/hide default text if needed
@@ -64,9 +64,13 @@
   
   contentBox.live('focus',function() {
     if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
+    $jq(".comment-submit").show();
   });
   contentBox.live('blur',function() {
-    if($jq(this).val().trim() == "") $jq(this).attr("value",contentBoxDefault);
+    if($jq(this).val().trim() == "") {
+      $jq(this).attr("value",contentBoxDefault);
+      $jq(".comment-submit").hide();
+    }
   });
   
 
@@ -219,3 +223,7 @@
 
 
  
+function commentNow(){
+  goToAnchor("comment-content");
+  $jq("#comment-content").focus();
+}
