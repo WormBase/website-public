@@ -1,33 +1,5 @@
   $jq(document).ready(function() {   
     window.onhashchange = readHash;
-      
-    if($jq("#operator-box")[0]){
-         ajaxGet($jq("#operator-box"), "/rest/livechat");
-// 	 $jq("#operator-box").draggable();
-        var opTimer;
-        $jq("#operator-box").hover(
-          function(){
-              if(opTimer){
-                clearTimeout(opTimer);
-                opTimer = null;
-              }
-            $jq(this).removeClass("minimize");
-            $jq(this).animate({width:"9em"});
-          },
-          function() {
-              if(opTimer){
-                clearTimeout(opTimer);
-                opTimer = null;
-              }
-              var opBox = $jq(this);
-              opTimer = setTimeout(function() {
-                opBox.addClass("minimize");
-                opBox.animate({width:"1.5em"});
-              }, 900)
-          }
-        );
-    }
-
 
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
@@ -43,7 +15,7 @@
 			},
 		      success: function(data){
 			  print.html('');
-			   window.location.href=data;
+			  window.location.href=data;
 			},
 		      error: function(request,status,error) {
 			      alert(request + " " + status + " " + error );
@@ -355,7 +327,7 @@
       panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
     }
 
-    function ajaxGet(ajaxPanel, $url, noLoadImg) {
+    function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
       $jq.ajax({
         url: $url,
         beforeSend:function(){
@@ -363,8 +335,9 @@
         },
         success:function(data){
           ajaxPanel.html(data);
+          if(callback){ callback(); }
         },
-        error:function(){
+        error:function(request,status,error){
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
         }
       });
@@ -464,7 +437,43 @@
   return false;
   });
  
-
+    function operator(){
+        var opTimer;
+        var opLoaded = false;
+        
+        $jq("#operator-box").hover(
+          function(){
+              if(!(opLoaded)){
+                ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
+                        function(){ 
+                          if($jq("#operator-box").hasClass("minimize")){
+                            $jq("#operator-box").children().hide();
+                          }
+                        });
+                opLoaded = true;
+              }
+              if(opTimer){
+                clearTimeout(opTimer);
+                opTimer = null;
+              }
+            $jq(this).removeClass("minimize");
+            $jq(this).animate({width:"9em"});
+            $jq(this).children().show();
+          },
+          function() {
+              if(opTimer){
+                clearTimeout(opTimer);
+                opTimer = null;
+              }
+              var opBox = $jq(this);
+              opTimer = setTimeout(function() {
+                opBox.addClass("minimize");
+                opBox.animate({width:"1.5em"});
+                opBox.children().hide();
+              }, 900)
+          }
+        );
+    }
 
 
 

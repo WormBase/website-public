@@ -77,6 +77,7 @@
 
 <script>
  
+operator();
  
 [% url = c.req.uri %]
 
