@@ -29,6 +29,7 @@ requires 'Catalyst::Plugin::Cache';                # Cache interface
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::ErrorCatcher';
 requires 'Catalyst::Plugin::Unicode';
+requires 'Catalyst::Plugin::Scheduler';
 requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::PerUser';
 requires 'Catalyst::Plugin::Session::State';

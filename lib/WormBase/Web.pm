@@ -24,6 +24,7 @@ use Catalyst qw/
 	  Session::Store::DBI
  	  Session::State::Cookie
           StackTrace
+	  Scheduler
            /;
 
 extends 'Catalyst';
@@ -82,6 +83,7 @@ __PACKAGE__->config->{'Plugin::Session'} = {
 	      dbi_expires_field => 'expires',
 };
 
+ 
 __PACKAGE__->config->{authentication} =
                     {
                         default_realm => 'default',
