@@ -48,19 +48,10 @@
 //     
   
 
-   var nameBox = $jq("#comment-name"),
-      nameBoxDefault = "name",
-      contentBox = $jq("#comment-content"),
+   var contentBox = $jq(".comment-content"),
       contentBoxDefault = "write a comment..."
 
- 
-  //show/hide default text if needed
-  nameBox.live('focus',function() {
-    if($jq(this).val().trim()== nameBoxDefault) $jq(this).attr("value", "");
-  });
-  nameBox.live('blur',function() {
-    if($jq(this).val().trim() == "") $jq(this).attr("value",nameBoxDefault);
-  });
+
   
   contentBox.live('focus',function() {
     if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
@@ -223,7 +214,7 @@
 
 
  
-function commentNow(){
-  goToAnchor("comment-content");
-  $jq("#comment-content").focus();
+function commentNow(widget){
+  goToAnchor("comment-content-" + widget);
+  $jq("#comment-content-" + widget).focus();
 }

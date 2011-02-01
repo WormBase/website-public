@@ -10,7 +10,7 @@
     <script type="text/javascript" >
     $jq(".lightbox").colorbox();
     </script> 
-	<table width="60%">			      
+	<table width="100%">			      
 		    <tr>
 			    <th>
 				<a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
@@ -21,12 +21,12 @@
 			    <td>
 				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
 				  <div style="height: 0.4em; overflow: hidden;"> </div>
-				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
+				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
 			    </td>
 		    </tr>
 	 </table>
     [% ELSIF !c.user.email_address || ! c.user.username %]
-	<table width="60%">
+	<table width="100%">
 		    <tr>
 			    <th>
 				
