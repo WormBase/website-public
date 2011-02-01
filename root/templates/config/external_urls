@@ -110,11 +110,11 @@
                       search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
                }
 
-     aceview = { description =  'The AceView genes - NCBI'
+	aceview = { description =  'The AceView genes - NCBI'
                       search = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
                         base = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/index.html'
                }
- ncbi_refseq = { description = 'RefSeq'
+	ncbi_refseq = { description = 'RefSeq'
                       search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
               }
               
@@ -123,6 +123,13 @@
 						base 		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
 						search 		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
 					}
+
+	ncbi_taxonomy = { 
+		      description = 'NCBI Taxonomy'
+                      search = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
+              }
+
+	 
    }
 
 -%]
