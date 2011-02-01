@@ -9,7 +9,7 @@
 <div id="comments">
 [% FOREACH cm IN comments %]
 <div class="comment-box">
-[% IF c.check_user_roles('admin') %]
+[% IF c.check_user_roles('admin') || c.check_user_roles('curator')%]
 <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
 [% END %]
 

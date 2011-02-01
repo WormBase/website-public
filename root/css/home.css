@@ -332,6 +332,6 @@ position:relative;
   font-size:0.9em;
 }
 
-#comment-submit {
+.comment-submit {
   display:none;
 }
