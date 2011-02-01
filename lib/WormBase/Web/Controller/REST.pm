@@ -46,7 +46,7 @@ sub livechat_GET {
       my $status = $badge->get_status();
       my $away_status = $badge->is_away();
       if($online_status && $status ne 'Busy' && !$away_status) {
-	  $c->log->debug("get gtalk badge from operator ",$op->username);
+	  $c->log->debug("get gtalk badge for ",$op->username);
   	  $c->stash->{badge_html}  = $badge->get_badge();
 	  $c->stash->{operator}  = $op;
 	  $c->log->debug($c->stash->{badge_html});
@@ -418,6 +418,7 @@ sub feed_GET {
     my $page ="/rest/widget/$class/$name/$widget/$label";
     $c->stash->{page} = $page;
     $c->stash->{class}=$class;
+    $c->stash->{widget}=$widget;
     $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
     $c->stash->{current_time}=time();
      if($type eq "comment"){
@@ -443,14 +444,24 @@ sub feed_GET {
 sub feed_POST {
     my ($self,$c,$type) = @_;
     if($type eq 'comment'){
-	 my $content= $c->req->params->{content};
-	 my $name= $c->req->params->{name};
-	 my $location= $c->req->params->{location};
-	 if( $name && $content && $location) {
-	      $c->log->debug("create new comment for user $name at $location");
-	      my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, location=>$location,content=>$content,'submit_time'=>time()});
-	      $c->res->body( "(".ago(time() - $commment->submit_time).") $name said:<br />$content <br />");
-	  }
+      if($c->req->params->{method} eq 'delete'){
+        my $id = $c->req->params->{id};
+        if($id){
+          my $comment = $c->model('Schema::Comment')->find($id);
+          $c->log->debug("delete comment #",$comment->id);
+          $comment->delete();
+          $comment->update();
+        }
+      }else{
+        my $content= $c->req->params->{content};
+        my $name= $c->req->params->{name};
+        my $location= $c->req->params->{location};
+        if( $name && $content && $location) {
+              $c->log->debug("create new comment for user $name at $location");
+              my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, location=>$location,content=>$content,'submit_time'=>time()});
+              $c->res->body( "(".ago(time() - $commment->submit_time).") $name said:<br />$content <br />");
+          }
+      }
     }
     elsif($type eq 'issue'){
 	if($c->req->params->{method} eq 'delete'){
@@ -899,6 +910,7 @@ sub comment_rss {
                           people=>$_->reporter,
                           location=>$_->location,
                           content=>$_->content,
+                          id=>$_->id,
              };
      } @comments;
  return \@rss;
@@ -1158,7 +1170,6 @@ sub field_GET {
 			 $field => $data
 		     }
 	);
-    $c->forward('WormBase::Web::View::TT');
 }
 
 

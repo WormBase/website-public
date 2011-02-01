@@ -1359,7 +1359,14 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
 .issue-text{
-  width :80%;
+  width :97%;
+  font-family: Helvetica, sans-serif;
+  padding:0.5em;
+  color:gray;
+  font-size: 1em;
+}
+.issue-text:focus{
+  color:black;
 }
 
 .issue-user {
