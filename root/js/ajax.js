@@ -68,9 +68,18 @@
 	    var url= $jq(this).attr("rel");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#comment-new');
-	    var name = feed.find("#comment-name").val();
-	    var content = feed.find("#comment-content").val();
-	    if(name == "" || name == "name" || content == "" || content == "write a comment..."){
+// 	    var name = feed.find("#comment-name").val();
+        var email = feed.find("#email");
+        var name= feed.find("#display-name");
+        if(email.attr('id') && name.attr('id')) {
+           if(validate_fields(email,name)==false) {return false;}
+        }  
+        if(!(name.val())){ name = name.attr('value'); 
+        }else{
+         name = name.val(); 
+        }
+	    var content = feed.find(".comment-content").val();
+	    if(content == "" || content == "write a comment..."){
 		    alert("Please provide your name & comment"); return false;
 	    }
 	    $jq.ajax({
@@ -86,8 +95,29 @@
 		      }
 	    });
 
-	    return false;
+        var box = $jq('<div class="comment-box"><a href="">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
+        var comments = $jq("#comments");
+        comments.prepend(box);
+        return false;
 
+    });
+    
+    $jq(".comment-delete").live('click', function(){
+      var $id=$jq(this).attr("id");
+      var url= $jq(this).attr("rel");
+      
+      $jq.ajax({
+        type: "POST",
+        url : url,
+        data: {method:"delete",id:$id}, 
+        success: function(data){
+//                   window.location.reload(1);
+          },
+        error: function(request,status,error) {
+            alert(request + " " + status + " " + error );
+          }
+      });
+      $jq(this).parent().remove();
     });
 
      $jq(".issue-delete").live('click',function() {
@@ -227,13 +257,24 @@
     });
 
 
-// NOTE:  This is used on the protein page homology section 
-   $jq(".update").live('click',function() { 
-     // Multiple classes specified. Split so I can rejoin.
-     var mytitle = $jq(this).attr("class").split(" ");
-      ajaxGet($jq("#" + mytitle[1]),$jq(this).attr("href"));
-      return false;
-   });
+// NOTE: Is this used anywhere???
+//   $jq(".update").live('click',function() {
+// 
+//     $jq(this).text("updating").show();
+//     var url     = $jq(this).attr("href");
+//     // Multiple classes specified. Split so I can rejoin.
+//     var mytitle = $jq(this).attr("class").split(" ");
+//     $jq("#" + mytitle[1]).load(url,
+//                     function(response, status, xhr) {
+//                           if (status == "error") {
+//                           var msg = "Sorry but there was an error: ";
+//                           $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
+//                           }
+//                           $jq(this).children(".toggle").toggleClass("active");
+//                       });
+//         
+//   return false;
+//   });
 
 
   // used in sidebar view, to open and close widgets when selected

@@ -318,6 +318,15 @@ position:relative;
   background: #E9EEF2;
 }
 
+.comment-box>a.comment-delete{
+  float:right;
+  display:none;
+}
+
+.comment-box:hover>a.comment-delete{
+  display:block;
+}
+
 #comment-new {
   padding:1em;
   font-size:0.9em;
