@@ -1,24 +1,69 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	[% WRAPPER $field_block title="Title"-%]
-		[% tag2link(fields.name.data) %]
-		[% IF fields.PMID %]
-			[% external_link('ncbi_pubmed','<span style="display:inline-block" class="ui-icon-pubmed"></span>',fields.PMID) %]
-			<!-- inline-block display is a nasty workaround -- span will not show up without this -->
+[% authors = [] %]
+[% FOREACH author IN  fields.authors.data %]
+	[% authors.push(tag2link(author)) %]
+[% END %]
+
+<div class="detail-box ui-corner-all">
+	[% 
+	   classic_base = 'http://www.wormbase.org' # required for CiteULike paper identification
+	   url = get_url(fields.name.data.class, fields.name.data.id)
+	   classic_url = classic_base _ get_url(fields.name.data.class, fields.name.data.id, 1)
+	   title = fields.title.data
+    %]
+	[% IF fields.pmid %]
+	   [% WRAPPER $field_block title="PMID"-%]
+	   	  [% external_link('ncbi_pubmed', fields.pmid.data, fields.pmid.data) %]
+	   [% END %]
+	[% END %]
+	[% IF fields.doi %]
+	   [% WRAPPER $field_block title="DOI"-%][% fields.doi.data %][% END %]
+	[% END %]
+	[% WRAPPER $field_block title="CiteULike"-%]
+	   <a href="http://www.citeulike.org/posturl?url=[% classic_url | uri %]" target="_blank">
+	   	  <img src="/img/buttons/cul.gif" alt="CiteULike"> Bookmark</a>
+	[% END %]
+	[% WRAPPER $field_block title="De.licio.us"-%]
+	   <a href="http://www.delicious.com/save?v=5&url=[% url | uri %]&title=[% title | uri %]" target="_blank">
+	   	   <img src="/img/buttons/delicious.gif" alt="De.licio.us"> Bookmark</a>
+	[% END %]
+	[% WRAPPER $field_block title="Wormbase ID"-%]
+	   [% tag2link(fields.name.data, fields.name.data.id) %]
+	[% END %]
+</div>
+
+<div class="text-width" style="margin:0.5em;clear:left">
+	[% IF fields.abstract.data %]
+	   [% markup(fields.abstract.data) %]
+	[% ELSE %]
+	   Abstract unavailable.
+	[% END %]
+</div>
+
+<div style="margin-top:1em">
+	[% IF authors.size > 7 %]
+	 	[% WRAPPER $field_block title="Authors"-%]
+		   [% authors.join(', ') %]
 		[% END %]
 	[% END %]
 
-	[% WRAPPER $field_block title="Authors"-%]
-		[% authors = [] %]
-		[% FOREACH author IN  fields.authors.data %]
-			[% authors.push(tag2link(author)) %]
-		[% END %]
-		[% authors.join(', ') %]
-	[% END %]
-
-	[% WRAPPER $field_block title="Abstract" key="abstract"-%]
-		[% markup(fields.abstract.data) %]
+	[% WRAPPER $field_block title="Citation (APA)"-%]
+	   [% IF authors.size > 7 %]
+	   	  [% authors.slice(0,5).join(", ") %], . . . [% authors.-1 %]
+	   [% ELSIF authors.size > 1 %]
+	   	  [% authors.slice(0,authors.size - 2).join(", ") %], &amp; [% authors.-1 %]
+	   [% ELSE %]
+	   	  [% authors.0 %]
+	   [% END %]
+	   ([% fields.year.data %]).
+	   [% fields.title.data.remove('\.$') %].
+	   [% IF fields.journal.data %]
+	   	  <i>[% fields.journal.data %], 
+		  [% fields.volume.data %]</i> <!-- (issue number) -->, [%fields.page.data %]. 
+	   [% END %]
+	   [% fields.journal.data %] [% fields.volume.data %]:[% fields.page.data %]. 
 	[% END %]
 
 	[% WRAPPER $field_block title="Keywords" key="keywords"-%]
@@ -28,15 +73,4 @@
 		[% END %]
 		[% keywords.join(', ') %]
 	[% END %]
-
-	[% WRAPPER $field_block title="Citation"-%]
-		[% IF authors.size > 5 %]
-			[% authors.0 %] et al.
-		[% ELSE %]
-			[% authors.join(', ')  # this is done above so maybe shouldn't do again... %].
-		[% END %]
-		[% fields.year.data %].
-		[% fields.title.data %].
-		[% fields.journal.data %] [% fields.volume.data %]:[% fields.page.data %].
-		[%# this works okay for papers in journals but not in general... %]
-	[% END %]
+</div>
