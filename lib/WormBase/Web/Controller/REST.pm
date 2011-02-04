@@ -742,9 +742,8 @@ sub widget_GET {
 	foreach my $field (@fields) {
         unless ($field) { next;}
 	    $c->log->debug($field);
-	    my $data = {};
-	    $data = $object->$field if defined $object->$field;
-	    
+	    my $data = $object->$field; # $object->can($field) for a check
+
 	    # Conditionally load up the stash (for now) for HTML requests.
 	    # Alternatively, we could return JSON and have the client format it.
 	    $c->stash->{fields}->{$field} = $data; 
