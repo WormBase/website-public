@@ -274,7 +274,7 @@ sub intext_citation {
 		my @authors = map $_->{id}, @$packed_authors;
 		if (@authors > 2) {		# 3..5
 			my @lnames = map {(parse_name($_))[-1]} @authors;
-			$innertext = join(', ', @lnames[0..$#lnames]) . ', & ' . $lnames[-1];
+			$innertext = join(', ', @lnames[0..$#lnames-1]) . ', & ' . $lnames[-1];
 		}
 		else {
 			$innertext = join(' & ', map {(parse_name($_))[-1]} @authors);
@@ -287,8 +287,10 @@ sub intext_citation {
 
 	my $data = {
 		description => 'APA in-text citation',
-		data => '(' . $innertext . ')',
-		paper => $self->object,
+		data => {
+			citation => '(' . $innertext . ')',
+			paper => $self->object,
+		},
 	};
 	return $data;
 }
