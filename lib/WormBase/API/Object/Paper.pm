@@ -13,7 +13,7 @@ sub name {
     my $title = $self ~~ 'Title' // $self ~~ 'name';
     $title =~ s/\.*$//;
     my $data = {
-		description => 'The object name of the paper',
+		description => 'The object name of the publication',
 		data => {
 			id		=> $self ~~ 'name',
 			label	=> $title,
@@ -35,7 +35,7 @@ sub title {
     my $title = $self ~~ 'Title' // return;
     $title =~ s/\.*$//;
     my $data = {
-		description	=> 'The title of the paper',
+		description	=> 'The title of the publication',
 		data		=> $title,
     };
     return $data;
@@ -56,7 +56,7 @@ sub page {
     my $page = $self ~~ 'Page' // return;
     $page =~ s/\.*$//;
     my $data = {
-		description => 'The page numbers of the paper',
+		description => 'The pages of the publication',
 		data        => $page,
     };
     return $data;
@@ -77,7 +77,7 @@ sub year {
     my $self = shift;
 	my $date = $self ~~ 'Publication_date' // return;
     my $data = {
-		description => 'The publication year of the paper',
+		description => 'The year of publication',
 		data        =>  $self->_parse_year($date),
     };
     return $data;
@@ -87,7 +87,7 @@ sub publication_date {
 	my ($self) = @_;
 	my $date = $self ~~ 'Publication_date' // return;
 	my $data = {
-		description => 'The publication date of the paper',
+		description => 'The publication date of the publication',
 		data		=> $date,
 	};
 	return $data;
@@ -118,50 +118,118 @@ sub authors {
 		});
     }
     my $data = {
-		description => 'The authors of the paper',
+		description => 'The authors of the publication',
 		data        => \@authors,
 	};
     return $data;
+}
+
+sub editors {
+	my ($self) = @_;
+	my $editors = $self ~~ '@Editor';
+	return unless @$editors;
+
+	unless ($self->is_wormbook_paper->{data}) {
+		$editors = [map {@$_ > 1 ? $_->[-1] . ', ' . join('. ', $_->[0..$#_-1]) . '.'
+						   : $_->[0]} map [parse_name_initials($_)], @$editors];
+	}
+
+	return {
+		description => 'Editor of publication',
+		data => $editors,
+	};
 }
 
 sub publication_type {
 	my ($self) = @_;
 	my $type = $self ~~ '@Type';
 	return unless @$type;
-
 	return {
 		description => 'Type of publication',
 		data => $type,
 	};
 }
 
+sub is_wormbook_paper {
+	my ($self) = @_;
+	my $description = 'Whether this is a publication in the WormBook';
+	my $truth = 0;
+
+	my ($type, $journal, $contained);
+	if (($type = $self->publication_type and grep {$_ eq 'WormBook'} @{$type->{data}}) or
+		  ($journal = $self->journal and $journal->{data} eq 'WormBook') or
+			($contained = $self->contained_in and grep /WormBook/, @{$contained->{data}})) {
+		$truth = 1;
+	}
+
+	return {
+		description => $description,
+		data => $truth,
+	};
+}
+
 sub abstract {
 	my ($self) = @_;
     my $abs = $self ~~ 'Abstract' // return;
-    my $abstext = $self->ace_dsn->fetch(LongText=>$abs);
-    my $text = "";
+    my $text = '';
 
-    if ($abstext =~ /WBPaper/i ) {
-		$text = $abstext->right;
-		$text=~s/^\n+//gs;
-		$text=~s/\n+$//gs;
+    if ($abs =~ /^WBPaper/i ) {
+		$text = $abs->right;
+		$text=~s/^\n+//;
+		$text=~s/\n+$//;
     }
 
     my $data = {
-		description => 'The abstract of the paper',
+		description => 'The abstract of the publication',
 		data        => $text,
 	};
     return $data;
 }
 
+sub remarks {
+	my ($self) = @_;
+	my $remarks = $self ~~ '@Remark' // return;
+	return unless @$remarks;
+	return {
+		description => 'Remarks regarding this publication',
+		data => $remarks,
+	};
+}
+
 sub keywords {
 	my ($self) = @_;
-	my $keywords = $self->_pack_objects($self ~~ '@Keyword');
-	my $data = {
-		description => 'Keywords related to the paper',
-		data		=> $keywords,
+	my $keywords = $self ~~ '@Keyword';
+	return unless @$keywords;
+	my $data = $self->_pack_objects($keywords);
+
+	my $field = {
+		description => 'Keywords related to the publication',
+		data		=> $data,
 	};
-	return $data;
+	return $field;
+}
+
+# TODO: publisher should be in format "Location: Publisher"
+#       for APA citations. Consider parsing $self ~~ 'Publisher'
+#       and returning [Location, Publisher]
+sub publisher {
+	my ($self) = @_;
+	my $publisher = $self ~~ 'Publisher' // return;
+	return {
+		description => 'Publisher of the publication',
+		data => $publisher,
+	};
+}
+
+sub affiliation {
+	my ($self) = @_;
+	my $affiliations = $self ~~ '@Affiliation';
+	return  unless @$affiliations;
+
+	return {
+		description => 'Affiliations of the publication',
+		data => $affiliations,
+	};
 }
 
 sub doi {
@@ -170,7 +238,7 @@ sub doi {
 	my $field;
 	if ($name =~ m{^(?:doi.*)?(10\.[^/]+.+)$}) {
 		$field = {
-			description => 'DOI of paper',
+			description => 'DOI of publication',
 			data => $1,
 		};
 	}
@@ -183,7 +251,7 @@ sub pmid {
 	foreach (@dbfields) {
 		if ($_ == 'PMID') {
 			return {
-				description => 'PubMed ID of paper',
+				description => 'PubMed ID of publication',
 				data => $_->right,
 			};
 		}
@@ -194,8 +262,8 @@ sub pmid {
 sub intext_citation {
 	my ($self) = @_;
 
-	my $packed_authors = $self->authors->{data} // return;
-	my $year = $self->year->{data};
+	my $packed_authors = eval {$self->authors->{data}} // return;
+	my $year = eval {$self->year->{data}};
 
 	my $innertext;
 	if (@$packed_authors > 5) {					 # 6..inf
@@ -225,6 +293,17 @@ sub intext_citation {
 	return $data;
 }
 
+sub contained_in {
+	my ($self) = @_;
+	my $contained_in = $self ~~ '@Contained_in';
+	return unless @$contained_in;
+
+	my $field = {
+		description => 'Publications this publication is contained in',
+		data => $contained_in,
+	};
+	return $field;
+}
 
 sub refers_to {
 	my ($self) = @_;
@@ -235,7 +314,7 @@ sub refers_to {
 		$data{$ref_type} = $self->_pack_objects(\@columns);
 	}
 	my $fields = {
-		description => 'Objects that the paper refers to',
+		description => 'Items that the publication refers to',
 		data => \%data,
 	};
 	return $fields;
