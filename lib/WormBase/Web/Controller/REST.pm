@@ -234,15 +234,14 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
-
+    $c->log->debug("history");
     my $session = $self->get_session($c);
     my @hist = $session->user_history;
 
     if($clear){ 
-      map { 
-        $_->user_history->delete(); 
-        $_->update(); 
-      } $session->user_history;
+      $c->log->debug("clearing");
+      $session->user_history->delete();
+      $session->update();
     }
 
     my $size = @hist;
