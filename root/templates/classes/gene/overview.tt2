@@ -14,9 +14,19 @@
         [% IF fields.other_name.data.size>0; tag2link(fields.name.data, fields.other_name.data.join(', ')); END; %]
    [% END %]
 
+   [% WRAPPER $field_block title="Type"-%] 
+           [% fields.classification.data.type %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Status" -%] 
+      [% fields.status.data.status %]
+   [% END %]
+
    [% WRAPPER $field_block title="WormBase ID"-%] 
            [% fields.name.data.id %]
    [% END %]
+
+
 
 </div>
 

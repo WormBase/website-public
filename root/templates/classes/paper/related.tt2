@@ -10,10 +10,10 @@
 	[% END %]
 
 [% IF fields.refers_to.data.size == 0 %]
-   No items related to this paper
+   <p style="margin:1em">No items related to this paper</p>
 [% END %]
 [% FOREACH reftype IN fields.refers_to.data.keys.sort %]
-   [% WRAPPER $field_block title=pluralize(reftype, fields.refers_to.data.$reftype.size)-%]
+   [% WRAPPER $field_block title=pluralize(reftype.replace('_',' '),fields.refers_to.data.$reftype.size)-%]
    	  [% tag2linkAll(fields.refers_to.data.$reftype) %]
    [% END %]
 [% END %]
