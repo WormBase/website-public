@@ -17,6 +17,7 @@
 [% END %]
 
   [% WRAPPER $field_block title="Alleles" key="alleles"%]
+    <div class="caveat-emptor">Alleles for which the sequence change is known are listed in <b>boldface</b>.</div>
     [% FOREACH list IN fields.alleles.data.alleles.keys %]
       [% list %]:
       [% FOREACH obj IN fields.alleles.data.alleles.$list %]
@@ -28,10 +29,9 @@
       [% END %]
       <br />
     [% END %]
-  <br>Alleles for which the sequence change is known are listed in <b>boldface</b>
   [% END %]
  
-  [% WRAPPER $field_block title="SNPs" %]
+  [% WRAPPER $field_block title="Polymorphisms" %]
     [% FOREACH obj IN fields.alleles.data.snps %]
 	 [%  tag2link(obj) %] 
     [% END %]
@@ -61,6 +61,6 @@
     Browse for rearrangements known to:
     [% FOREACH obj IN fields.rearrangements.data %]
 	 [%  tag2link(obj) %] 
-	[% UNLESS loop.last %],[% END %]
+	[% UNLESS loop.last -%],[% END %]
     [% END %]
 [% END %]

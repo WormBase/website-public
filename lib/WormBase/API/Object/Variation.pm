@@ -433,8 +433,9 @@ sub features_affected {
 sub possibly_affects {
     my $self = shift;
     my $object = $self->object;
+    my $tag    = $object->Possibly_affects;
     my $data = {  description => 'genes that may be affected by the variation but have not been experimentally tested',
-		  data        => "$object->Possibly_affects" ,
+		  data        => "$tag" || '',
     };
     return $data;
 }
@@ -457,7 +458,7 @@ sub affects_splice_site {
     my $self = shift;
     my $object = $self->object;
     my $data = {};
-    $data->{description} = 'does this variation affect a splice site?';
+    $data->{description} = 'A ';
     $data->{data} = { donor    => $object->Donor,
 		      acceptor => $object->Acceptor,
     };
@@ -468,8 +469,9 @@ sub causes_frameshift {
     my $self = shift;
     my $object = $self->object;
     my $data = {};
-    $data->{description} = 'does this variation affect a splice site?';
-    $data->{data} = "$object->Frameshift" || "";
+    $data->{description} = 'a variation that alters the reading frame';
+    my $tag = $object->Frameshift;
+    $data->{data} = "$tag" || '';
     return $data;
 }    
 
@@ -477,8 +479,8 @@ sub causes_frameshift {
 sub detection_method {
     my $self = shift;
     my $object = $self->object;
-    my $detection_method = $object->Detection_method || "";
-    return { description => 'detection method for polymorphism',
+    my $detection_method = $object->Detection_method || '';
+    return { description => 'detection method for polymorphism, typically via sequencing or restriction digest.',
 	     data        => "$detection_method",
     };
 }
