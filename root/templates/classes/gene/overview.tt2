@@ -14,9 +14,19 @@
         [% tag2link(fields.name.data, fields.ids.data.other_names.join(', ')) %]
    [% END %]
 
+   [% WRAPPER $field_block title="Type"-%] 
+           [% fields.classification.data.type %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Status" -%] 
+      [% fields.status.data.status %]
+   [% END %]
+
    [% WRAPPER $field_block title="WormBase ID"-%] 
            [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
+
+
 
 </div>
 

@@ -14,7 +14,7 @@
 </div>
 
    [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
-           [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
+           [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class FILTER lower %]
    [% END %]
 
    [% WRAPPER $field_block title="Corresponding Gene" key="corresponding_gene" %]
@@ -32,7 +32,7 @@
          [% fields.status.data %]
    [% END %]
 
-   [% WRAPPER $field_block title="Remark(s)" key="remarks" %]
+   [% WRAPPER $field_block title="Curator Remarks" key="remarks" %]
          <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
    [% END %]
 

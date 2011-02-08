@@ -197,11 +197,10 @@ sub name {
     my $object = $self->object;
     my $data = { description => 'The most commonly used name of the gene',
 		 data        =>  { id    => "$object",
-				           label => $self->_public_name($object),
-				           class => $object->class
+				   label => $self->_public_name($object),
+				   class => $object->class
 		 },
-    };
-    
+    };    
     return $data;
 }
 
@@ -428,6 +427,94 @@ sub legacy_information {
   return $data;
 }
 
+sub status { 
+    my $self   = shift;
+    my $object = $self->object;
+    return { description => 'the status of the gene',
+	     data        => { status => $object->Status }
+    };
+}
+
+
+
+
+# This meta method returns the broad type of a gene
+sub classification {
+    my $self   = shift;
+    my $object = $self->object;
+   
+    my $data = {};
+    
+    # Is this a CGC-approved locus? Is it defined mutationally?
+    my $locus = $object->CGC_name;   
+    $data->{defined_by_mutation} = $object->Allele ? 1 : 0;
+
+    # General type: coding gene, pseudogene, or RNA
+    if ($object->Corresponding_pseudogene) {
+	$data->{type} = 'pseudogene';
+    }
+
+    # Protein coding?
+    my @cds = $object->Corresponding_CDS;
+    if (@cds) {
+	my $status = $cds[0]->Prediction_status ? 'confirmed' : 'unconfirmed';
+	$data->{type}  = "protein coding ($status)" 
+    }
+    
+    # Is this a non-coding RNA?
+    my @transcripts = $object->Corresponding_transcript;
+    foreach (@transcripts) {
+	$data->{type} = $_->Transcript;
+	last;
+    }
+    
+    $data->{associated_sequence} = @cds ? 1 : 0;
+    
+    # Confirmed?
+    $data->{confirmed}   = @cds ? $cds[0]->Prediction_status : 0;
+    my $matching_cdna    = @cds ? $cds[0]->Matching_cDNA     : '';
+  
+    # Create a prose description; possibly better in a template.
+    my @prose;
+    if ($data->{locus}
+	&&
+	$data->{associated_sequence}) {
+	push @prose,"This gene has been defined mutationally and associated with a sequence.";
+    } elsif ($data->{associated_sequence}) {
+	push @prose,"This gene is known only by sequence.";
+    } elsif ($data->{locus}) {
+	push @prose,"This gene is known only by mutation.";
+    } else { }
+    
+    # Is the locus name approved?
+    if ($data->{locus} && $data->{approved_name}) {
+	push @prose,"The gene name has been approved by the CGC.";
+    } elsif ($data->{locus} && !$data->{approved_name}) {
+	push @prose,"The gene name has not been approved by the CGC.";
+    }
+    
+    # Confirmed or not?
+    if ($data->{confirmed} eq 'Confirmed'){
+	push @prose,"Gene structures have been confirmed by a curator.";
+    } elsif ($matching_cdna) {
+	push @prose,"Gene structures have been partially confirmed by matching cDNA.";
+    } else {
+	push @prose,"Gene structures have not been confirmed."; 
+    }
+    
+    $data->{prose_description} = join(" ",@prose);
+
+    my $return = { description => 'gene type and status',
+		   data        => $data };
+    
+    return $return;
+}
+
+
+
+
+
+
 ###########################################
 # Components of the Location panel
 # Note: Most of these are generic and located
@@ -441,35 +528,33 @@ sub genomic_position {
 
 
 sub genetic_position {
-
 	my $self = shift;
 	my $object = $self->object;
-	my $LOCUS = $object->CGC_name || $object->Other_name;
+	my $locus = $object->CGC_name || $object->Other_name;
 	 
 	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row} or return;
 	
-	my $map_data = { class=>'locus',
-			 id=>"name=$LOCUS#Mapping%20Data",
-			  lable=>'[mapping data]',
-			};
-	 
+	my $map_data = { class => 'locus',
+			 id    => "name=$locus#Mapping%20Data",
+			 lable => '[mapping data]',
+	};
+	
 	my $label;
-	if($position == 0) {
-	    $label= $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;
-	    
+	if ($position == 0) {
+	    $label = $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;	    
 	} else {
-	    $label=$link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
-	}			       
-	 my $data = { description => 'The Interpolated Genetic Position of the gene',
-		 data        => [	{  class => 'Map',
+	    $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
+	}
+	my $data = { description => 'The interpolated genetic position of the gene',
+		     data        => [	{  class => 'Map',
 					   label => $label,
 					   id => "name=$object;class=Gene",
 					},$map_data],
 	};
-
-	return $data;    
- 
+	
+	return $data;
 }
+
 ###########################################
 # Components of the Function panel
 ###########################################
@@ -509,6 +594,7 @@ sub microarray_topology_map_position {
 	my $self = shift;
     my $object = $self->object;
 
+	# I don't think this will work; have sequences been statshed in the object?
     my @sequences = $self->sequences;
     return unless @sequences;
     my @segments = $self->_fetch_segments;
@@ -1421,19 +1507,19 @@ sub gene_models {
       }
       $unique_remarks{$_} = $count;
     }
-
+    
     if ($confirm eq 'Confirmed') {
-      $data{status} = "confirmed by cDNA(s)";
+	$data{status} = "confirmed by cDNA(s)";
     } elsif (@matching_cdna && $confirm eq 'Partially_confirmed') {
-      $data{status} = "partially confirmed by cDNA(s)";
+	$data{status} = "partially confirmed by cDNA(s)";
     } elsif ($confirm eq 'Partially_confirmed') {
-    $data{status} = "partially confirmed";
+	$data{status} = "partially confirmed";
     } elsif ($cds && $cds->Method eq 'history') {
-      $data{status} = 'historical';
+	$data{status} = 'historical';
     } else {
-      $data{status} = "predicted";
+	$data{status} = "predicted";
     }
-
+    
     my $len_unspliced  = $gff->length;
     my $len_spliced = 0;
 
