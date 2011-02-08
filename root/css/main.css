@@ -366,7 +366,7 @@ li.visible div.widget-container {
 }
 
 
- #widget-footer a{
+#widget-footer a{
   float:right;
   height:1.2em;
   margin:0 0.2em;
@@ -374,6 +374,13 @@ li.visible div.widget-container {
   background:#EEE;
   padding:0 0.3em;
   position:relative;
+}
+
+#widget-footer .comment-count{
+  font-size:0.7em;
+  padding:0.2em;
+  margin-top:0.2em;
+  float:right;
 }
 
 #widget-footer>span{
@@ -1414,6 +1421,11 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   height:5em; 
   padding:0.5em 0;
   width:1.5em;
+}
+
+#operator-box.minimize:hover{
+  background-color:#0F2F4D;
+  width:2em;
 }
 
 #operator-box.minimize>div{

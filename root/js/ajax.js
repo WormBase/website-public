@@ -472,39 +472,28 @@
     function operator(){
         var opTimer;
         var opLoaded = false;
-        
-        $jq("#operator-box").hover(
-          function(){
-              if(!(opLoaded)){
-                ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
-                        function(){ 
-                          if($jq("#operator-box").hasClass("minimize")){
-                            $jq("#operator-box").children().hide();
-                          }
-                        });
-                opLoaded = true;
-              }
-              if(opTimer){
-                clearTimeout(opTimer);
-                opTimer = null;
-              }
-            $jq(this).removeClass("minimize");
-            $jq(this).animate({width:"9em"});
-            $jq(this).children().show();
-          },
-          function() {
-              if(opTimer){
-                clearTimeout(opTimer);
-                opTimer = null;
-              }
-              var opBox = $jq(this);
-              opTimer = setTimeout(function() {
-                opBox.addClass("minimize");
-                opBox.animate({width:"1.5em"});
-                opBox.children().hide();
-              }, 900)
+        $jq('#operator-box').live('click',function()  
+        { 
+          var opBox = $jq(this);
+          if(!(opLoaded)){
+            ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
+                    function(){ 
+                      if($jq("#operator-box").hasClass("minimize")){
+                        $jq("#operator-box").children().hide();
+                      }
+                    });
+            opLoaded = true;
           }
-        );
+          if(opBox.hasClass("minimize")){
+              opBox.removeClass("minimize");
+              opBox.animate({width:"9em"});
+              opBox.children().show();
+          }else{
+            opBox.addClass("minimize");
+            opBox.animate({width:"1.5em"});
+            opBox.children().hide();
+          }
+        });
     }
 
 

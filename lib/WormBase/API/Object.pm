@@ -1666,14 +1666,16 @@ sub history {
             my $cu;
             if($curator){
                 $cu->{id} = "$curator";
-                $cu->{label} = $curator->Standard_name->id || $curator->Full_name->id;
-                                $cu->{class} = $curator->class;
+                my $label = $curator->Standard_name || $curator->Full_name;
+                $cu->{label} = "$label";
+                $cu->{class} = $curator->class;
             }
             my $ge;
             if($gene){
                 $ge->{id} = "$gene";
-                $ge->{label} = $gene->Public_name->id;
-                                $ge->{class} = $gene->class;
+                my $label = $gene->Public_name;
+                $cu->{label} = "$label";
+                $ge->{class} = $gene->class;
             }
             $data_pack{"$history"}{"$version"} =
                                             { type    => "$type",
