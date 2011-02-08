@@ -235,7 +235,7 @@ sub ids {
     my $common  = $object->Public_name;
     
     
-    my @other_names = map {$_->id} $object->Other_name;
+    my @other_names = map {"$_"} $object->Other_name;
     my $sequence = $object->Sequence_name;
     
     my $sequence_ret = { id => "$sequence", label => "$sequence", class=>"sequence"};
@@ -257,6 +257,21 @@ sub ids {
 
     return \%data;
     
+}
+
+sub other_name {
+    my $self   = shift;
+    my $object = $self->object;
+    
+    my %data;
+    
+    
+    my @other_names = map {"$_"} $object->Other_name;
+
+    $data{'data'} = \@other_names; 
+    $data{'description'} = "alias for gene $object";
+
+    return \%data;
 }
 
 
@@ -420,7 +435,7 @@ sub cloned_by {
 sub legacy_information {
   my $self = shift;
   my $object = $self->object;
-  my @description = map {$_->id } $object->Legacy_information;
+  my @description = map {"$_"} $object->Legacy_information;
   return unless @description;
   my $data = {  description => "legacy information for the gene",
                 data => \@description
@@ -1118,7 +1133,7 @@ sub paralogs {
 	#### data pull and packaging
 	
 	my @paralogs = $object->Paralog;
-	@data_pack = map {$self->bestname($_);} @paralogs;
+	@data_pack = map {$self->_pack_obj($_, $self->bestname($_));} @paralogs;
 	 
 	 
 

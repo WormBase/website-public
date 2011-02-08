@@ -74,7 +74,7 @@
 
 # use this to pluraize a word
     MACRO pluralize(word, size) BLOCK;
-      IF (size > 1);
+      IF (size != 1);
 	  	 IF (matches = word.match('^(.*)y$'));
 		 	word = matches.0 _ 'ies';					# antibody -> antibodies
 		 ELSIF (matches = word.match('^(.*)ium$'));
@@ -191,8 +191,14 @@
 
 # format taxonomy
     MACRO taxonomy(genus, species) BLOCK;
-      g = genus.chunk(1).0 _ ".";
-      "<span class=\"species\">$g $species</span>";
+      IF species;
+        g = genus.chunk(1).0 _ ".";
+      ELSE;
+        s = genus.split(' ');
+        g = s.first.chunk(1).0 _ ".";
+        species = s.last;
+      END;
+        "<span class=\"species\">$g $species</span>";
     END;
 
     MACRO span_class(text, class, ace_class, link) BLOCK;
