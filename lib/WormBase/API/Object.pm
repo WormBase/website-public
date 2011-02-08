@@ -907,7 +907,7 @@ Returns
 #'
 sub _parse_year {
     my ($self,$date) = @_;
-    $date =~ /.*(\d\d\d\d).*/;
+	$date =~ /(\d\d\d\d)/;
     my $year = $1 || $date;
     return $year;
 }

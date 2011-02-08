@@ -1,42 +1,129 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	[% WRAPPER $field_block title="Title"-%]
-		[% tag2link(fields.name.data) %]
-		[% IF fields.PMID %]
-			[% external_link('ncbi_pubmed','<span style="display:inline-block" class="ui-icon-pubmed"></span>',fields.PMID) %]
-			<!-- inline-block display is a nasty workaround -- span will not show up without this -->
-		[% END %]
+[% MACRO apa_persons(persons) BLOCK %]
+   [% IF persons.size > 7 %]
+   	  [% persons.slice(0,5).join(", ") %], . . . [% persons.-1 %]
+   [% ELSIF persons.size > 1    # 2..6 %]
+   	  [% persons.slice(0,persons.size - 2).join(", ") %], &amp; [% persons.-1 %]
+   [% ELSIF persons.size == 1 %]
+   	  [% persons.0 %]
+   [% END %]
+[% END %]
+
+[% authors = [] %]
+[% FOREACH author IN  fields.authors.data %]
+	[% authors.push(tag2link(author)) %]
+[% END %]
+
+<div class="detail-box ui-corner-all">
+	[% 
+	   classic_base = 'http://www.wormbase.org' # required for CiteULike paper identification
+	   url = get_url(fields.name.data.class, fields.name.data.id)
+	   classic_url = classic_base _ get_url(fields.name.data.class, fields.name.data.id, 1)
+	   title = fields.title.data
+    %]
+	[% IF fields.pmid %]
+	   [% WRAPPER $field_block title="PMID"-%]
+	   	  [% external_link('ncbi_pubmed', fields.pmid.data, fields.pmid.data) %]
+	   [% END %]
+	[% END %]
+	[% IF fields.doi %]
+	   [% WRAPPER $field_block title="DOI"-%]
+	   	  [% external_link($DOI _ fields.doi.data, fields.doi.data, fields.doi.data) %]
+	   [% END %]
+	[% END %]
+	[% WRAPPER $field_block title="CiteULike"-%]
+	   [% external_link('http://www.citeulike.org/posturl?url=' _ classic_url,
+	   	  				'<img src="/img/buttons/cul.gif" alt="CiteULike"> Bookmark') %]
+
+	[% END %]
+	[% WRAPPER $field_block title="De.licio.us"-%]
+	   [% external_link('http://www.delicious.com/save?v=5&url=' _ url _ '&title=' _ title,
+	   	  				'<img src="/img/buttons/delicious.gif" alt="De.licio.us"> Bookmark') %]
+	[% END %]
+	[% WRAPPER $field_block title="Wormbase ID"-%]
+	   [% tag2link(fields.name.data, fields.name.data.id) %]
+	[% END %]
+</div>
+
+
+<div style="margin:1em;max-width:65%;">
+	[% IF authors.size > 0 %]
+		[% apa_persons(authors) %]
+	[% ELSIF fields.editors %]
+		[% apa_persons(fields.editors.data) %] (Eds.).
 	[% END %]
 
-	[% WRAPPER $field_block title="Authors"-%]
-		[% authors = [] %]
-		[% FOREACH author IN  fields.authors.data %]
-			[% authors.push(tag2link(author)) %]
-		[% END %]
-		[% authors.join(', ') %]
+	([% IF fields.year; fields.year.data; ELSE; 'n.d.'; END %]).
+
+	[% is_wormbook_paper = fields.is_wormbook_paper.data %]
+
+	[% IF fields.publication_type.data.grep('Book').size || is_wormbook_paper %]
+	   [% IF fields.journal || is_wormbook_paper # if fields.journal present, then that's the book title %]
+		  [% fields.title.data %]. In
+		  [% IF authors.size > 0 && fields.editors %]
+			 [% apa_persons(fields.editors.data) %] ([% pluralize('Ed', fields.editors.data.size) %].),
+		  [% ELSIF is_wormbook_paper   # has editor%]
+			 [% fields.editors.data || 'The C. Elegans Community' %] (Ed.),
+		  [% END %]
+		  <i>[% fields.journal.data || 'WormBook' %]</i>[% IF fields.page ; ' (' _ fields.page.data  _ ')'; END %].
+	   [% ELSE     # no section specified... title is actually title of book %]
+		  <i>[% fields.title.data %]</i>[% IF fields.page ; ' (' _ fields.page.data _ ')'; END %].
+	   [% END %]
+	   [% IF fields.publisher; fields.publisher.data _ '.'; END %]
+	[% ELSIF fields.publication_type.data.grep('^Meeting_abstract$').size %]
+	   [% fields.title.data || 'Abstract' %]
+
+	   presented in
+
+	   [% IF fields.journal %]
+		  <i>[% fields.journal.data %]</i>.
+	   [% ELSE %]
+		  a meeting.
+	   [% END %]
+	[% ELSE %]
+	   [% fields.title.data %].
+	   [% IF fields.journal || fields.publication_type.data.grep('^Gazette_article$').size %]
+		  <i>[% fields.journal.data || 'Worm Breeder\'s Gazette' %]<!-- nospace
+		  -->[% IF fields.volume %], [% fields.volume.data %][% END %]</i><!-- nospace
+		  -->[% IF fields.page %], [% fields.page.data %][% END %].
+	   [% END %]
 	[% END %]
 
-	[% WRAPPER $field_block title="Abstract" key="abstract"-%]
-		[% markup(fields.abstract.data) %]
+	[% IF fields.doi %]
+	   [% external_link($DOI _ fields.doi.data, 'doi:' _ fields.doi.data) %]
 	[% END %]
 
-	[% WRAPPER $field_block title="Keywords" key="keywords"-%]
-		[% keywords = [] %]
-		[% FOREACH key IN fields.keywords.data.keys %]
-			[% keywords.push(tag2link(fields.keywords.data.$key)) %]
-		[% END %]
-		[% keywords.join(', ') %]
+	<p>
+	[% IF fields.abstract %]
+	   [% markup(fields.abstract.data) %]
+	   [% IF fields.remarks %]
+		  <br><br>[% pluralize("Remark", fields.remarks.data.size) %]:
+		  [% markup(fields.remarks.data.join('<br>')) %]
+	   [% END %]
+	[% ELSIF fields.remarks %]
+	   [% markup(fields.remarks.data.join('<br>')) %]
+	[% ELSE %]
+	   Abstract unavailable.
+	[% END %]
+	</p>
+
+	[% IF authors.size > 7 %]
+	   <p><b>Authors:</b> [% authors.join(', ') %]</p>
 	[% END %]
 
-	[% WRAPPER $field_block title="Citation"-%]
-		[% IF authors.size > 5 %]
-			[% authors.0 %] et al.
-		[% ELSE %]
-			[% authors.join(', ')  # this is done above so maybe shouldn't do again... %].
-		[% END %]
-		[% fields.year.data %].
-		[% fields.title.data %].
-		[% fields.journal.data %] [% fields.volume.data %]:[% fields.page.data %].
-		[%# this works okay for papers in journals but not in general... %]
+	[% IF fields.affiliation %]
+	   <p><b>[% pluralize('Affiliation', fields.affiliation.data.size) %]</b>:<br>- [% fields.affiliation.data.join('<br>- ') %]</p>
 	[% END %]
+
+	[% IF fields.keywords %]
+	   [% keywords = [] %]
+	   [% FOREACH key IN fields.keywords.data.keys %]
+		  [% keywords.push(tag2link(fields.keywords.data.$key)) %]
+	   [% END %]
+	   <b>Keywords:</b> [% keywords.join(', ') %]
+	[% END %]
+</div>
+
+
