@@ -1410,7 +1410,7 @@ sub mutagen {
     my $self = shift;
     my $object = $self->object;
     return { description => 'mutagen used to generate the variation',
-	     data        => $object->Mutagen };
+	     data        => $object->Mutagen->name };
 }
 
 # Q: What are the contents of this tag?
@@ -1476,6 +1476,37 @@ sub source_database {
     return $data;
 }	
   
+sub external_source {
+    my $self = shift;
+    my $object = $self->object;
+    my $hash;
+    
+    my ($remote_url,$remote_text);
+    foreach my $dbsnp ($object->Database){
+      if($dbsnp eq 'dbSNP_ss'){
+	$remote_text=$dbsnp->right(2);
+	my $url  = $dbsnp->URL_constructor;
+	# Create a direct link to the external site
+
+	if ($url && $remote_text) {
+# 	    (my $name = $dbsnp) =~ s/_/ /g;
+	    $remote_url = sprintf($url,$remote_text);
+	    $remote_text = "dbSNP: $remote_text";
+	    $hash->{$dbsnp}={ remote_url => $remote_url,
+				  remote_text => $remote_text,
+		 };
+	} 
+
+	
+      }
+    }
+     
+    my $data = { description => 'dbSNP ss#, if known',
+		 data        => $hash,
+    };
+    return $data;
+}
+
 sub derived_from {
     my $self = shift;
     my $object = $self->object;

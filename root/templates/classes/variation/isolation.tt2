@@ -19,6 +19,12 @@
 	 <a href="[% fields.source_database.data.remote_url %]">[% fields.source_database.data.remote_text %]</a>
    [% END %]
 
+    [% WRAPPER $field_block title="External Source" key="external_source" %]
+	  [% FOREACH type IN fields.external_source.data.keys %]
+	  <a href="[% fields.external_source.data.$type.remote_url %]">[% fields.external_source.data.$type.remote_text %]</a>
+	  [% END %]
+   [% END %]
+
    [% WRAPPER $field_block title="Date Isolated" key="date_isolated" %]
         [% fields.date_isolated.data %]
    [% END %]
