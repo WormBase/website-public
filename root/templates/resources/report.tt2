@@ -10,8 +10,12 @@
 
   [% path = c.uri_for('/resources', class, this_object_id) %]
   [% upperClass = class FILTER ucfirst %]
-  [% title = upperClass _ " Report: " _ tag2link(object.name.data)  %]
-
+  [% title = upperClass _ " Report: " %]
+  [% UNLESS class == 'paper' %]
+    [% title = title _ tag2link(object.name.data)  %]
+  [% ELSE %]
+    [% title = title _ tag2link(object.name.data, object.title.data)  %]
+  [% END %]
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
@@ -29,20 +33,23 @@
     [% widgets.push(w) %]
   [% END %]
 
-  [% IF c.config.sections.resources.$class.tools.keys.size > 0 %]
+  [%# IF c.config.sections.resources.$class.tools.keys.size > 0 %]
   [% widgets.push({ title="Tools" type="title"}) %]
-  [% tool_list = c.config.sections.resources.$class.tools.keys.sort %]
+  [% tool_list = c.config.sections.resources.$class.tools.keys.sort || [] %]
+  [% tool_list.push('comments', 'issues') %]
   [% FOREACH widget_name IN tool_list -%]
     [% widget = c.config.sections.resources.$class.tools.$widget_name %]
+    [% t = widget.title %]
+    [% UNLESS t; t = widget_name FILTER ucfirst; END; %]
     [% w = { id = widget_name
-             title = widget.title
+             title = t
              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
              type = 'tools'
             };
     %]
     [% widgets.push(w) %]
   [% END %]
-  [% END %]
+  [%# END %]
 
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]

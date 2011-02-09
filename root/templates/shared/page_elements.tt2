@@ -325,13 +325,14 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   tip="view comments" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>  
-                    <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+[% UNLESS c.req.action == '/' %]
+<!--                     <a   tip="view comments" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>   -->
+                    <a   tip="view comments" class="tip-simple tr ui-corner-all" href="javascript:void(0)" onClick='$jq("#nav-comment").trigger("open"); goToAnchor("comment"); return true;' ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   tip="report a problem" class="tip-simple tr ui-corner-all"  href="javascript:void(0)" onClick='$jq("#nav-issue").trigger("open"); goToAnchor("issue"); return true;' ><span class="ui-icon ui-icon-notice ui-button"></span></a>
+
+<!--                     <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a> -->
                     <a  tip="download" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
-[% IF 0 %]
-<!--                     <a href="#" tip="help" class="tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-help"></span></a> -->
-<!--                     <span> </span> -->
-[% END %]
+[% END %] 
                     
                 </div>
 		<div id="widget-feed"></div>  

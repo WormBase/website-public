@@ -29,7 +29,7 @@
     [% widgets.push(w) %]
   [% END %]
 
-  [% IF c.config.sections.species.$class.tools.keys.size > 0 %]
+
   [% widgets.push({ title="Tools" type="title"}) %]
   [% tool_list = c.config.sections.species.$class.tools.keys.sort %]
   [% FOREACH widget_name IN tool_list -%]
@@ -42,6 +42,18 @@
     %]
     [% widgets.push(w) %]
   [% END %]
+
+
+  [% tools = ['comment', 'issue'] %]
+  [% FOREACH widget_name IN tools %]
+    [% t = widget_name FILTER ucfirst %]
+    [% w = { id = widget_name
+             title = t _ 's'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
+             type = 'tools'
+            };
+    %]
+    [% widgets.push(w) %]
   [% END %]
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
