@@ -21,7 +21,7 @@
       <li><span class="ellipsis" style="max-width:60%;float:left;">"[% cm.content %]</span>" -<a href="">[% cm.people %]</a></li>
       [% cm.time_lapse %] - 
       [% array=cm.location.split('/') %]
-      [% text2link(array.3,array.4, array.6  _ ' (' _ array.5 _ ')') %]<br />
+      [% text2link(array.3,array.4, array.6 ) %]<br />
 
     </div>
   [% END %]

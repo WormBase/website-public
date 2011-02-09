@@ -82,7 +82,7 @@ sub issue_rss {
 	  push @rss, {	time=>$_->submit_time,
 			people=>$_->user,
 			title=>$_->issue->title,
-			location=>$_->issue->location,
+			location=>$_->issue->page,
 			id=>$_->issue->id,
 			re=>1,
 		    } ;
@@ -94,7 +94,7 @@ sub issue_rss {
 		push @rss, {      time=>$_->submit_time,
 					      people=>$_->owner,
 					      title=>$_->title,
-					      location=>$_->location,
+					      location=>$_->page,
 				  id=>$_->id,
 			};
 	} @issues;

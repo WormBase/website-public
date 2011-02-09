@@ -49,20 +49,25 @@
     [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
              title = t _ 's'
-             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
              type = 'tools'
             };
     %]
+
     [% widgets.push(w) %]
   [% END %]
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
-      [% UNLESS c.user_session.layout.$class.0.defined %]
+     
     <script>
+ [% UNLESS c.user_session.layout.$class.0.defined %]
         $jq("#nav-overview").trigger('open');
         $jq("#nav-location").trigger('open');
-    updateLayout();
-    </script>
+        updateLayout();
       [% END %]
+
+        updateSidebarStatus(class,this_object_id);
+    </script>
+
 

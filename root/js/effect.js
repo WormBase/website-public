@@ -218,3 +218,10 @@ function commentNow(widget){
   goToAnchor("comment-content-" + widget);
   $jq("#comment-content-" + widget).focus();
 }
+
+function updateSidebarStatus(class, object_id){
+  var comments = $jq("#nav-comment");
+  var issues = $jq("#nav-issue");
+  
+//   issues.addClass("error");
+}
