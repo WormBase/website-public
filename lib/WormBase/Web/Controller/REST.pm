@@ -412,24 +412,25 @@ sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
     my ($self,$c,$type,$class,$name,$widget,$label) = @_;
-
     $c->stash->{noboiler} = 1;
-    my $page ="/rest/widget/$class/$name/$widget/$label";
-    $c->stash->{page} = $page;
     $c->stash->{class}=$class;
     $c->stash->{widget}=$widget;
-    $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
     $c->stash->{current_time}=time();
-     if($type eq "comment"){
-       my @comments =  $c->model('Schema::Comment')->search({location=>$page},{order_by=>'submit_time DESC'} );
-       $c->stash->{comments} = \@comments if(@comments);  
-     }elsif($type eq "issue"){
-     # unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
+
+    my $url = $c->req->params->{url};
+    my $page = $c->model('Schema::Page')->find({url=>$url});
+    $c->stash->{url} = $url;
+
+
+    if($type eq "comment"){
+      my @comments = $page->comments;
+      $c->stash->{comments} = \@comments if(@comments);  
+    }elsif($type eq "issue"){
       my @issues;
       if( $class) {
-	  @issues= $c->model('Schema::Issue')->search({location=>$page});
+        @issues = $page->issues;
       }else {
-	  @issues= $c->user->issues;
+        @issues= $c->user->issues;
       }
       $c->stash->{issues} = \@issues if(@issues);  
     }
@@ -454,12 +455,11 @@ sub feed_POST {
       }else{
         my $content= $c->req->params->{content};
         my $name= $c->req->params->{name};
-        my $location= $c->req->params->{location};
-        if( $name && $content && $location) {
-              $c->log->debug("create new comment for user $name at $location");
-              my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, location=>$location,content=>$content,'submit_time'=>time()});
-              $c->res->body( "(".ago(time() - $commment->submit_time).") $name said:<br />$content <br />");
-          }
+
+        my $url = $c->req->params->{url};
+        my $page = $c->model('Schema::Page')->find({url=>$url});
+        my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
+
       }
     }
     elsif($type eq 'issue'){
@@ -476,15 +476,17 @@ sub feed_POST {
 	}else{
 	  my $content= $c->req->params->{content};
 	  my $title= $c->req->params->{title};
-	  my $location= $c->req->params->{location};
-	  if( $title && $content && $location) { 
-	      my $user = $self->check_user_info($c);
-	      return unless $user;
-	      $c->log->debug("create new issue $content ",$user->id);
-	      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
- 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
-	      $self->issue_email($c,$issue,1,$content);
-	  }
+
+      my $url = $c->req->params->{url};
+
+      my $page = $c->model('Schema::Page')->find({url=>$url});
+
+      my $user = $self->check_user_info($c);
+      return unless $user;
+      $c->log->debug("create new issue $content ",$user->id);
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,page_id=>$page->page_id,content=>$content,state=>"new",'submit_time'=>time()});
+      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
+      $self->issue_email($c,$issue,1,$content);
 	}
     }elsif($type eq 'thread'){
 	my $content= $c->req->params->{content};
@@ -906,7 +908,7 @@ sub comment_rss {
         push @rss, {      time=>$_->submit_time,
                           time_lapse=>$time,
                           people=>$_->reporter,
-                          location=>$_->location,
+                          location=>$_->page,
                           content=>$_->content,
                           id=>$_->id,
              };
@@ -929,7 +931,7 @@ sub issue_rss {
             time_lapse=>$time,
             people=>$_->user,
             title=>$_->issue->title,
-            location=>$_->issue->location,
+            location=>$_->issue->page,
             id=>$_->issue->id,
             re=>1,
             } ;
@@ -943,7 +945,7 @@ sub issue_rss {
                           time_lapse=>$time,
                           people=>$_->owner,
                           title=>$_->title,
-                          location=>$_->location,
+                          location=>$_->page,
                   id=>$_->id,
             };
     } @issues;

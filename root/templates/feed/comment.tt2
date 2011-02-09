@@ -14,16 +14,16 @@
 
 <div id="comments">
 [% FOREACH cm IN comments %]
-<div class="comment-box">
-[% IF c.check_user_roles('admin') || c.check_user_roles('curator')%]
-<a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
-[% END %]
+  <div class="comment-box">
+    [% IF c.check_user_roles('admin') || c.check_user_roles('curator')%]
+      <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
+    [% END %]
 
-<a href="">[% cm.reporter %]</a>
-[% cm.content %] <br />
+    <a href="">[% cm.reporter %]</a>
+    [% cm.content %] <br />
 
-<span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>
-</div>
+    <span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>
+  </div>
 [% END %]
 
 <div class="comment-box">
@@ -44,7 +44,7 @@
 		</tr>
 	</table>
 
-	    <input type='submit' value='Comment' id="comment-submit-[% widget %]" class="comment-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','comment') %]" /> 
+	    <input type='submit' value='Comment' id="comment-submit-[% widget %]" url="[% url %]" class="comment-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','comment') %]" /> 
 </div>
   </div>
 

@@ -65,7 +65,8 @@
     });
 
       $jq(".comment-submit").live('click',function() {
-	    var url= $jq(this).attr("rel");
+	    var rel= $jq(this).attr("rel");
+        var url= $jq(this).attr("url");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#comment-new');
 // 	    var name = feed.find("#comment-name").val();
@@ -84,8 +85,8 @@
 	    }
 	    $jq.ajax({
 	      type: 'POST',
-	      url: url,
-	      data: { name:name, location: page, content: content},
+	      url: rel,
+	      data: { name:name, location: page, content: content, url: url},
 	      success: function(data){
  			displayNotification("Comment Submitted!");
 			feed.find("#comment-box").prepend(data);
@@ -146,7 +147,8 @@
     }); 
 
     $jq(".issue-submit").live('click',function() {
-	    var url= $jq(this).attr("rel");
+	    var rel= $jq(this).attr("rel");
+        var url = $jq(this).attr("url");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#issues-new');
 	    var email = feed.find("#email");
@@ -156,11 +158,11 @@
 	    }  
 	    $jq.ajax({
 	      type: 'POST',
-	      url: url,
-	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
+	      url: rel,
+	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() , url:url,},
 	      success: function(data){
 			    if(data==0) {
-				   alert("The email address has already been registered!Please sign in."); 
+				   alert("The email address has already been registered! Please sign in."); 
 			    }else {
 				  displayNotification("Problem Submitted! We will be in touch soon.");
 				  feed.closest('#widget-feed').hide(); 

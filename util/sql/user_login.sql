@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
             reporter char(50),
-            location char(100),
+            page_id INTEGER,
             submit_time char(50),
             content TEXT
 );
@@ -58,7 +58,7 @@ CREATE TABLE issues (
 	    reporter INTEGER,
 	    assigned_to INTEGER,
 	    title TEXT ,
-	    location char(100),
+        page_id INTEGER,
 	    submit_time char(50),
 	    state char(10),
 	    content TEXT 

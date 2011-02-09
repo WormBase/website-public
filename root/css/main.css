@@ -1453,3 +1453,7 @@ div#advisory-board        { padding:2em; }
      font-size:1.2em;
 }
 
+.error {
+  background: #FFCFCF;
+}
+
