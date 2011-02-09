@@ -21,9 +21,9 @@
   [% widgets.push({ title="Page Content" type="title"}) %]
   [% widget_list = ['news', 'discussion', 'activity','issues'] %]
   [% FOREACH widget_name IN widget_list -%]
-    [% title = widget_name FILTER ucfirst %]
+    [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
-             title = title
+             title = t
              href =  c.uri_for('/rest','widget','home',widget_name)
              type = 'home'
             };
