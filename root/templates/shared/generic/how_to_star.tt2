@@ -8,7 +8,7 @@ When you see a star on WormBase:
 <div id="star-instructions" class="star-instructions text-width">
   <li>2. You will be notified at the top of your screen that the item has been saved.
   <li>3. View your item by opening <br /> &nbsp &nbsp
-  <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); goToAnchor("comment"); return true;'>'My Reports'</a> or 
+  <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
   <a href="javascript:void(0)" onClick='$jq("#nav-my_library").trigger("open"); return true;'>'My Library'</a> (literature).
   </li>
   <img src="img/reports_library.png">

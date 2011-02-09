@@ -36,14 +36,23 @@
   [%# IF c.config.sections.resources.$class.tools.keys.size > 0 %]
   [% widgets.push({ title="Tools" type="title"}) %]
   [% tool_list = c.config.sections.resources.$class.tools.keys.sort || [] %]
-  [% tool_list.push('comments', 'issues') %]
   [% FOREACH widget_name IN tool_list -%]
     [% widget = c.config.sections.resources.$class.tools.$widget_name %]
-    [% t = widget.title %]
-    [% UNLESS t; t = widget_name FILTER ucfirst; END; %]
     [% w = { id = widget_name
-             title = t
+             title = widget.title
              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+             type = 'tools'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+
+  [% tools = ['comment', 'issue'] %]
+  [% FOREACH widget_name IN tools %]
+    [% t = widget_name FILTER ucfirst %]
+    [% w = { id = widget_name
+             title = t _ 's'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
              type = 'tools'
             };
     %]
