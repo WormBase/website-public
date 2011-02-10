@@ -1,9 +1,7 @@
 
 [% FOREACH h IN c.stash.history %]
   <li><div class="ellipsis">
-    [% label = h.page.title %]
-    [% UNLESS label; label = h.page.url; END; %]
-    <a href="[% h.page.url %]">[% label %]</a>
+    [% linkPage(h.page) %]
     
    <span id="fade"> - [% h.time_lapse %] 
   [% IF h.visits > 1 %]([% h.visits %] visits) [% END %]

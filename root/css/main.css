@@ -376,13 +376,6 @@ li.visible div.widget-container {
   position:relative;
 }
 
-#widget-footer .comment-count{
-  font-size:0.7em;
-  padding:0.2em;
-  margin-top:0.2em;
-  float:right;
-}
-
 #widget-footer>span{
   float:right;
   width:1em;
@@ -1452,8 +1445,3 @@ div#advisory-board        { padding:2em; }
      width:500px;
      font-size:1.2em;
 }
-
-.error {
-  background: #FFCFCF;
-}
-

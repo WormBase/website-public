@@ -411,10 +411,8 @@ sub rest_register_POST {
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
-    my ($self,$c,$type,$class,$name,$widget,$label) = @_;
+    my ($self,$c,$type) = @_;
     $c->stash->{noboiler} = 1;
-    $c->stash->{class}=$class;
-    $c->stash->{widget}=$widget;
     $c->stash->{current_time}=time();
 
     my $url = $c->req->params->{url};
@@ -424,13 +422,21 @@ sub feed_GET {
 
     if($type eq "comment"){
       my @comments = $page->comments;
+      if($c->req->params->{count}){
+        $c->response->body(scalar(@comments));
+        return;
+      }
       $c->stash->{comments} = \@comments if(@comments);  
     }elsif($type eq "issue"){
       my @issues;
-      if( $class) {
+      if( $page) {
         @issues = $page->issues;
       }else {
         @issues= $c->user->issues;
+      }
+      if($c->req->params->{count}){
+        $c->response->body(scalar(@issues));
+        return;
       }
       $c->stash->{issues} = \@issues if(@issues);  
     }
@@ -908,7 +914,7 @@ sub comment_rss {
         push @rss, {      time=>$_->submit_time,
                           time_lapse=>$time,
                           people=>$_->reporter,
-                          location=>$_->page,
+                          page=>$_->page,
                           content=>$_->content,
                           id=>$_->id,
              };
@@ -931,7 +937,7 @@ sub issue_rss {
             time_lapse=>$time,
             people=>$_->user,
             title=>$_->issue->title,
-            location=>$_->issue->page,
+            page=>$_->issue->page,
             id=>$_->issue->id,
             re=>1,
             } ;
@@ -945,7 +951,7 @@ sub issue_rss {
                           time_lapse=>$time,
                           people=>$_->owner,
                           title=>$_->title,
-                          location=>$_->page,
+                          page=>$_->page,
                   id=>$_->id,
             };
     } @issues;
