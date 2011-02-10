@@ -32,7 +32,10 @@ isa_ok($transgene_obj,'WormBase::API::Object::Transgene');
 
 my @methods = qw/
 
-	phenotype_nots
+name
+summary
+details
+
  /;
 #
 
