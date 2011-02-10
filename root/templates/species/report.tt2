@@ -48,7 +48,7 @@
   [% FOREACH widget_name IN tools %]
     [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
-             title = t _ 's'
+             title = t _ 's ' _ '(<a class="' _ widget_name _ '-count"></a>)'
              href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
              type = 'tools'
             };
@@ -66,8 +66,7 @@
         $jq("#nav-location").trigger('open');
         updateLayout();
       [% END %]
-
-        updateSidebarStatus(class,this_object_id);
+        updateCounts("[% path %]");
     </script>
 
 

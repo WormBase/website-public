@@ -90,6 +90,7 @@
 	      success: function(data){
  			displayNotification("Comment Submitted!");
 			feed.find("#comment-box").prepend(data);
+            updateCounts(url);
 		      },
 	      error: function(request,status,error) {
 			    alert(request + " " + status + " " + error);
@@ -112,6 +113,7 @@
         url : url,
         data: {method:"delete",id:$id}, 
         success: function(data){
+                      updateCounts(url);
 //                   window.location.reload(1);
           },
         error: function(request,status,error) {
@@ -138,6 +140,7 @@
 		      success: function(data){
 // 			      reload.trigger('click');
 			      window.location.reload(1);
+                              updateCounts(url);
 			},
 		      error: function(request,status,error) {
 			      alert(request + " " + status + " " + error );
@@ -159,14 +162,15 @@
 	    $jq.ajax({
 	      type: 'POST',
 	      url: rel,
-	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() , url:url,},
+	      data: {title:feed.find("#title").val(), content: feed.find("#content").val(), email:email.val() ,username:username.val() , url:url,},
 	      success: function(data){
 			    if(data==0) {
 				   alert("The email address has already been registered! Please sign in."); 
 			    }else {
 				  displayNotification("Problem Submitted! We will be in touch soon.");
 				  feed.closest('#widget-feed').hide(); 
-			    }
+                              updateCounts(url);
+                }
 		      },
 	      error: function(request,status,error) {
 			    alert(request + " " + status + " " + error);
