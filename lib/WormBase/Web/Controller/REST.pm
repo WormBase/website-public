@@ -96,6 +96,7 @@ sub workbench_GET {
       my $class = $c->req->params->{class};
       my $save_to = $c->req->params->{save_to};
       my $is_obj = $c->req->params->{is_obj} || 0;
+#       $c->stash->{is_obj} = $is_obj;
       my $loc = "saved reports";
       $save_to = 'reports' unless $save_to;
       if ($class eq 'paper') {
@@ -104,7 +105,7 @@ sub workbench_GET {
       }
       my $name = $c->req->params->{name};
 
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name, is_obj=>$is_obj});
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $c->stash->{notify} = "$name has been removed from your $loc";
@@ -118,6 +119,7 @@ sub workbench_GET {
  	$c->stash->{noboiler} = 1;
     my $count = $session->pages->count;
     $c->stash->{count} = $count || 0;
+
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
