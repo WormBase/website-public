@@ -10,8 +10,8 @@
 [% END %]
 
 [% WRAPPER $field_block title="Expressed By" -%]
-	[% FOREACH kind IN fields.expressed_by.data.keys %]
-		[% kind %]: [% tag2linkAll(fields.expressed_by.data.$kind) %]<br>
+	[% FOREACH pair IN fields.expressed_by.data %]
+		[% pluralize(pair.key, pair.value.size) | ucfirst %]: [% tag2linkAll(pair.value) %]<br>
 	[% END %]
 [% END %]
 
