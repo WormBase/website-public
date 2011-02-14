@@ -28,6 +28,15 @@
       END;
    END;
 
+   MACRO tag2linkAll(hash) BLOCK;
+      result = [];
+	  FOREACH key IN hash.keys.sort;
+	     result.push(tag2link(hash.$key));
+	  END;
+	  result.join(', ');
+   END;
+
+
    MACRO get_url(class, id, is_classic) BLOCK;
       class =  class FILTER lower;
       IF c.request.referer.search("/db/"); is_classic = 1; END;
