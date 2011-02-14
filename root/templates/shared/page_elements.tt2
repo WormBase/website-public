@@ -102,7 +102,7 @@
 
     <div class="field
 
-    [% TRY; IF (fields.$key.data.size == 0 ); " disabled "; END; END;%]
+    [% TRY; IF key.defined && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
 
 
 " id="[% title FILTER html %]">
