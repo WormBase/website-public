@@ -610,10 +610,10 @@ sub microarray_topology_map_position {
     my $object = $self->object;
 
 	# I don't think this will work; have sequences been statshed in the object?
-    my @sequences = $self->sequences;
-    return unless @sequences;
+    my $sequences = $self->sequences;
+    return unless @$sequences;
     my @segments = $self->_fetch_segments;
-    my $seg = @segments[0] or return;
+    my $seg = $segments[0] or return;
     my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
     return unless @p;
     my %data;
@@ -2052,7 +2052,7 @@ sub _fetch_sequences {
 	push (@seqs,(@transcripts)? @transcripts : $_);
     }
     @seqs = $GENE->Corresponding_Pseudogene unless @seqs;
-    return \@seqs;
+	return @seqs;
     
 }
 
