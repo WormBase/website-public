@@ -1483,7 +1483,7 @@ sub protein_domains {
 sub gene_models {
   my $self = shift;
   my $object = $self->object;
-  my $seqs = $self->_fetch_sequences();
+  my $seqs = $self->sequences;
 
   my @rows;
 
