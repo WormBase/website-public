@@ -46,7 +46,7 @@ requires 'Ace'                                    => '1.92';     # Good 'ole Ace
 requires 'Badge::GoogleTalk';                                    # 
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        # 
-requires 'Bio::Grapics::Browser2::Markup';                       # Sequence Summary page
+requires 'Bio::Graphics::Browser2::Markup';                       # Sequence Summary page
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
