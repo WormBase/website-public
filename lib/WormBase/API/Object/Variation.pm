@@ -177,6 +177,7 @@ sub variation_type {
     return $data;
 }
 
+# Should probably be promoted to Role/Object.pm
 sub remarks {
     my $self    = shift;
     my $object  = $self->object;
