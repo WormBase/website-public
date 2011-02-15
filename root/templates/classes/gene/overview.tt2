@@ -63,3 +63,15 @@
             [% END %]
          </div>
     [% END %]
+
+  [%# Usually we show empty fields; but some things we actually want to suppress when empty %]
+  [% IF fields.also_refers_to.data %]
+         <div class="toggle">Also refers to</div>
+         <div class="returned">
+         <div class="caveat-emptor">[% fields.ids.data.common_name %] has also been used to refer to:
+           [% FOREACH item IN fields.also_refers_to.data %]
+               [% tag2link(item) %]            
+           [% END %]
+           </div>
+  [% END %]
+

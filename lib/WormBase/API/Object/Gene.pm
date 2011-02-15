@@ -188,10 +188,10 @@ has 'phen_data' => (
 
 
 #######################################################
-# The Overview (formerly Identification) Panel
+#
+# OVERVIEW
+#
 #######################################################
-
-
 sub name {
     my $self = shift;
     my $object = $self->object;
@@ -219,20 +219,40 @@ sub external_links {
 }
 
 
+=item also_refers_to()
+
+ Fetch other genes that the public name of the current gene might refer to.
+ 
+ Returns: arrayref of other genes or undef.
+
+=cut
+
+sub also_refers_to {
+    my $self   = shift;
+    my $object = $self->object;
+    my $locus  = $object->CGC_name;
+
+    # Save other names that don't correspond to the current object.
+    my @other_names_for = map { $self->_pack_obj($_) } grep { ! /$object/ } $locus->Other_name_for;
+    my $data =  { description => 'other genes that this locus name may refer to',
+		  data        => \@other_names_for };
+    return $data;
+}
+
+
 # A lot of stuff is repeated in here.  Like, from other methods. Do we need that? -AC
 sub ids {
     my $self   = shift;
     my $object = $self->object; ## shift
     
     my %data;
-     
+    
     # Fetch external database IDs for the gene
     my ($aceview,$refseq) = @{$self->database_ids};
-
+    
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
-    
     
     my @other_names = map {"$_"} $object->Other_name;
     my $sequence = $object->Sequence_name;
@@ -240,36 +260,30 @@ sub ids {
     my $sequence_ret = { id => "$sequence", label => "$sequence", class=>"sequence"};
    
     my $object_data = {
+	common_name   => "$common",
+	locus_name    => "$locus",
+	version       => "$version",
+	aceview_id    => "$aceview",
+	refseq_id     => $refseq,
+	other_names	  => \@other_names,
+	sequence_name => $sequence_ret
+    };	
     
-		common_name   => "$common",
-		locus_name    => "$locus",
-		version       => "$version",
-		aceview_id    => "$aceview",
-		refseq_id     => $refseq,
-		other_names	  => \@other_names,
-		sequence_name => $sequence_ret
-
-	};	
-
-	$data{'data'} = $object_data; 
-	$data{'description'} = "ID data for gene $object";
-
-    return \%data;
+    $data{data} = $object_data; 
+    $data{description} = "gene identifiers for gene $object";
     
+    return \%data;   
 }
 
 sub other_name {
     my $self   = shift;
     my $object = $self->object;
     
-    my %data;
-    
-    
+    my %data;    
     my @other_names = map {"$_"} $object->Other_name;
 
     $data{'data'} = \@other_names; 
     $data{'description'} = "alias for gene $object";
-
     return \%data;
 }
 
