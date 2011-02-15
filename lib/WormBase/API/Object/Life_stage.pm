@@ -78,7 +78,7 @@ sub expression_patterns {
     my $object = $self->object;
 
     # Oy. Really? We are just displaying a count in the UI and linking to search.
-    my @patterns = map { $self->_pack_objects(\@patterns) } $object->Expr_pattern;
+    my @patterns = map { $self->_pack_objects($_) } $object->Expr_pattern;
     return { description => 'expression patterns associated with this life stage',
 	     data        => \@patterns  };
 #    my $dbh = $self->dbh_ace;
