@@ -1,25 +1,67 @@
  
   $jq(document).ready(function() {
+    
+    
+   $jq('#operator').live('click',function()  
+    { 
+      if($jq('#operator').attr("rel")) {
+	 $jq.post("/rest/livechat?open=1",function() {
+		window.location.href="/tools/operator";
+	  });
+      }else {
+        var opBox = $jq("#operator-box");
+//         ajaxGet(opBox, "/rest/livechat");
+        ajaxGet(opBox, "/rest/livechat", 0, 
+        function(){ 
+          if(opBox.hasClass("minimize")){
+            opBox.children().hide();
+          }
+        });
+        opLoaded = true;
+        if(opBox.hasClass("minimize")){
+            opBox.removeClass("minimize");
+            opBox.animate({width:"9em"});
+            opBox.children().show();
+        }
+        opTimer = setTimeout(function() {
+          opBox.addClass("minimize");
+          opBox.animate({width:"1.5em"});
+          opBox.children().hide();
 
-   var nameBox = $jq("#comment-name"),
-      nameBoxDefault = "name",
-      contentBox = $jq("#comment-content"),
-      contentBoxDefault = "enter your comment here"
+        }, 4000)
+// 	  if($jq("#operator-box").size()==0) {  
+// 		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
+// 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
+// 		  $jq("#operator-box").draggable();
+// 	   } 
+      }
+    });  
 
- 
-  //show/hide default text if needed
-  nameBox.live('focus',function() {
-    if($jq(this).val().trim()== nameBoxDefault) $jq(this).attr("value", "");
-  });
-  nameBox.live('blur',function() {
-    if($jq(this).val().trim() == "") $jq(this).attr("value",nameBoxDefault);
-  });
+//   $jq('#operator-box-close').live('click',function()  
+//     {  
+// 
+//       $jq.post("/rest/livechat",function() {
+// 	  $jq('#operator-box').remove();
+//       });
+//          
+//     }); 
+//     
+  
+
+   var contentBox = $jq(".comment-content"),
+      contentBoxDefault = "write a comment..."
+
+
   
   contentBox.live('focus',function() {
     if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
+    $jq(".comment-submit").show();
   });
   contentBox.live('blur',function() {
-    if($jq(this).val().trim() == "") $jq(this).attr("value",contentBoxDefault);
+    if($jq(this).val().trim() == "") {
+      $jq(this).attr("value",contentBoxDefault);
+      $jq(".comment-submit").hide();
+    }
   });
   
 
@@ -52,7 +94,7 @@
       connectWith: '.sortable',
       opacity: 0.6,
       forcePlaceholderSize: true,
-      update: updateLayout,
+      update: function(event, ui) { updateLayout(); },
     });
     $jq("#widget-holder").children("#widget-header").disableSelection();
 
@@ -148,7 +190,38 @@
         //},
           });
     });
+
+
+
+  var rss = new Raphael("footer-rss", 35, 30).path("M4.135,16.762c3.078,0,5.972,1.205,8.146,3.391c2.179,2.187,3.377,5.101,3.377,8.202h4.745c0-9.008-7.299-16.335-16.269-16.335V16.762zM4.141,8.354c10.973,0,19.898,8.975,19.898,20.006h4.743c0-13.646-11.054-24.749-24.642-24.749V8.354zM10.701,25.045c0,1.815-1.471,3.287-3.285,3.287s-3.285-1.472-3.285-3.287c0-1.813,1.471-3.285,3.285-3.285S10.701,23.231,10.701,25.045z").attr({fill: "#FFF", stroke: "none"});
+  var t = new Raphael("footer-tweet", 35, 30).path("M23.295,22.567h-7.213c-2.125,0-4.103-2.215-4.103-4.736v-1.829h11.232c1.817,0,3.291-1.469,3.291-3.281c0-1.813-1.474-3.282-3.291-3.282H11.979V6.198c0-1.835-1.375-3.323-3.192-3.323c-1.816,0-3.29,1.488-3.29,3.323v11.633c0,6.23,4.685,11.274,10.476,11.274h7.211c1.818,0,3.318-1.463,3.318-3.298S25.112,22.567,23.295,22.567z").attr({fill: "#FFF", stroke: "none"});
+  var email = new Raphael("footer-mail", 35, 30).path("M28.516,7.167H3.482l12.517,7.108L28.516,7.167zM16.74,17.303C16.51,17.434,16.255,17.5,16,17.5s-0.51-0.066-0.741-0.197L2.5,10.06v14.773h27V10.06L16.74,17.303z").attr({fill: "#FFF", stroke: "none"});
+
+  icon_hover(rss);
+  icon_hover(t);
+  icon_hover(email);
+
+  function icon_hover(e1){
+    e1.hover(function (event) {
+      this.attr({fill: "#6FA2D9"});
+    }, function (event) {
+      this.attr({fill: "white"});
+    });
+  }
+
   });
 
 
+
  
+function commentNow(widget){
+  goToAnchor("comment-content-" + widget);
+  $jq("#comment-content-" + widget).focus();
+}
+
+function updateSidebarStatus(class, object_id){
+  var comments = $jq("#nav-comment");
+  var issues = $jq("#nav-issue");
+  
+//   issues.addClass("error");
+}

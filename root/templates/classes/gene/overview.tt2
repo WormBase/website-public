@@ -3,20 +3,30 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="details ui-corner-all">
+<div class="detail-box ui-corner-all">
    [% PROCESS "shared/fields/species.tt2" %]
 
    [% WRAPPER $field_block title="Sequence"-%] 
         [% tag2link(fields.ids.data.sequence_name)%]
    [% END %]
 
-   [% WRAPPER $field_block title=pluralize("Other name", fields.ids.data.other_names.size) %]
-        [% tag2link(fields.name.data, fields.ids.data.other_names.join(', ')) %]
+   [% WRAPPER $field_block title=pluralize("Other name", fields.other_name.data.size) key="other_name"%]
+        [% IF fields.other_name.data.size>0; tag2link(fields.name.data, fields.other_name.data.join(', ')); END; %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Type"-%] 
+           [% fields.classification.data.type %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Status" -%] 
+      [% fields.status.data.status %]
    [% END %]
 
    [% WRAPPER $field_block title="WormBase ID"-%] 
-           [% tag2link(fields.name.data,fields.name.data.id) %]
+           [% fields.name.data.id %]
    [% END %]
+
+
 
 </div>
 

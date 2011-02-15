@@ -11,7 +11,7 @@
 
     %]
 
-<div class="ellipsis paper-title">[% tag2link(item.name,"","",item.name.label)%]</div>
+<div class="ellipsis paper-title">[% tag2link(item.name,item.title,"",item.name.label)%]</div>
 </li>
 [% authors = [] %]
 [% FOREACH author IN  item.authors %]

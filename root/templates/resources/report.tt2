@@ -10,8 +10,12 @@
 
   [% path = c.uri_for('/resources', class, this_object_id) %]
   [% upperClass = class FILTER ucfirst %]
-  [% title = upperClass _ " Report: " _ tag2link(object.name.data)  %]
-
+  [% title = upperClass _ " Report: " %]
+  [% UNLESS class == 'paper' %]
+    [% title = title _ tag2link(object.name.data)  %]
+  [% ELSE %]
+    [% title = title _ tag2link(object.name.data, object.title.data)  %]
+  [% END %]
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
@@ -29,9 +33,9 @@
     [% widgets.push(w) %]
   [% END %]
 
-  [% IF c.config.sections.resources.$class.tools.keys.size > 0 %]
+  [%# IF c.config.sections.resources.$class.tools.keys.size > 0 %]
   [% widgets.push({ title="Tools" type="title"}) %]
-  [% tool_list = c.config.sections.resources.$class.tools.keys.sort %]
+  [% tool_list = c.config.sections.resources.$class.tools.keys.sort || [] %]
   [% FOREACH widget_name IN tool_list -%]
     [% widget = c.config.sections.resources.$class.tools.$widget_name %]
     [% w = { id = widget_name
@@ -42,33 +46,27 @@
     %]
     [% widgets.push(w) %]
   [% END %]
-  [% END %]
 
-  [% widgets.push({ title="My Workspace" type="title"}) %]
-  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
-    [% widget = c.config.sections.me.widgets.$widget_name %]
+  [% tools = ['comment', 'issue'] %]
+  [% FOREACH widget_name IN tools %]
+    [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
-            title = widget.title
-            href =  c.uri_for('/rest','widget','me',widget_name)
-            type = "me"
+             title = t _ 's'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
+             type = 'tools'
             };
     %]
     [% widgets.push(w) %]
   [% END %]
+  [%# END %]
+
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
+       [% UNLESS c.user_session.layout.$class.0.defined %]
     <script>
-  [% UNLESS c.user_session.layout.$class.defined %]
-    $jq("#nav-overview").trigger('open');
-    $jq("#nav-location").trigger('open');
-  [% ELSE %]
-    var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];
-    var rightList = ["[% c.user_session.layout.$class.0.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% c.user_session.layout.$class.0.leftWidth %]);
-  [% END %]
-
+        $jq("#nav-overview").trigger('open');
+    updateLayout();
     </script>
-
- 
+      [% END %]
 

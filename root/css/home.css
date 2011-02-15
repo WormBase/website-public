@@ -71,6 +71,10 @@ div#create-prompt>span {
   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#8CA4BA,endColorStr=#406F9C);
 }
 
+#create-account>span{
+  float:right;
+}
+
 #create-account:hover{
   background: #8CA4BA;
   background: #8CA4BA -moz-linear-gradient(90deg, #406F9C, #A3BCD4);
@@ -307,3 +311,27 @@ position:relative;
   margin-left:102px; 
   position:absolute;
 } 
+
+.comment-box {
+  margin:0.5em 0;
+  padding:0.5em;
+  background: #E9EEF2;
+}
+
+.comment-box>a.comment-delete{
+  float:right;
+  display:none;
+}
+
+.comment-box:hover>a.comment-delete{
+  display:block;
+}
+
+#comment-new {
+  padding:1em;
+  font-size:0.9em;
+}
+
+.comment-submit {
+  display:none;
+}

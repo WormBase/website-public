@@ -25,6 +25,34 @@ sub species :Path('/species') :Args(0)   {
 
 
 
+sub summary_widgets :Path("/species/summary") Args {
+    my ($self,$c, @args) = @_;
+    $c->stash->{section} = 'species';
+
+    if(@args == 1){
+      my $widget = shift @args;
+      $c->stash->{template} = "species/summary/$widget.tt2";
+    }elsif(@args ==2){
+      my $species = shift @args;
+      my $widget = shift @args;
+      $c->stash->{template} = "species/summary/$species/$widget.tt2";
+      $c->stash->{name}= $c->config->{species_list}->{$species}->{genus}." ".$c->config->{species_list}->{$species}->{species};
+      unless ($c->stash->{object}) {
+	    my $api = $c->model('WormBaseAPI');  
+	    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+	    $c->stash->{object} =  $api->fetch({class=> ucfirst("species"),
+						name => $c->stash->{name}}) or die "$!";
+      }
+      my $object= $c->stash->{object};
+      my @fields = $c->_get_widget_fields("species_summary",$widget);
+      foreach my $field (@fields){
+	  $c->stash->{fields}->{$field} = $object->$field; 
+      }
+
+    }
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
+}
 
 
 # An individual species summary
@@ -69,6 +97,7 @@ sub species_report :Path("/species") Args(3) {
     my ($self,$c,$species,$class,$name) = @_;
     get_report($self, $c, $class, $name);
 }
+
 
  
 sub get_report {

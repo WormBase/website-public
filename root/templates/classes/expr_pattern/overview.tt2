@@ -1,0 +1,30 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% gene_image = fields.expression_image.data %]
+[% IF gene_image %]
+<a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>
+[% END %]
+
+[% WRAPPER $field_block title="Description" -%]
+	[% FOREACH obj IN fields.summary.data.description %]
+		[% obj %]<br><br>
+	[% END %]
+
+	[% IF fields.summary.data.remarks %]
+	<b>Remarks:</b> [% fields.summary.data.remarks %]<br>
+	[% END %]
+    
+	[% IF fields.summary.data.check_bc %]
+		<b>N.B.</b>: GFP constructs were generated as part of the 
+		<a href="http://elegans.bcgsc.ca/home/ge_consortium.html">
+		BC <i>C. elegans</i> Gene Expression Consortium</a>
+	[% END %]
+       
+[% END %]
+
+[% WRAPPER $field_block title="Subcellular Location" -%]
+	[% FOREACH obj IN fields.summary.data.subcellular %]
+		[% obj %]<br>
+	[% END %]
+[% END %]

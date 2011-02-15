@@ -1,6 +1,6 @@
 [% WRAPPER $field_block title=pluralize("Paralog", fields.paralog.data.size) key="paralogs" %]
      [% FOREACH obj IN fields.paralogs.data %]
-	[% obj %]
+	   [% tag2link(obj) %]
       [% END %]
        
 [% END %]

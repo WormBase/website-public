@@ -40,6 +40,7 @@ input, select, th, td { font-size:1em; }
   background:white;
   min-height: 100%;
   height: auto !important;
+  width:100%;
   position: relative;
   min-width: 630px;
 }
@@ -152,7 +153,7 @@ ul.nav-bar li {
 
 ul.nav-bar li a{
   float:left;
-  padding:0.4em 2.4em 0 1.4em;
+  padding:0.4em 2.8em 0 1.9em;
   margin:0;
   color:#555;
   height:1.3em;
@@ -168,7 +169,7 @@ ul.nav-bar span.status-bar {
 }
 
 ul.nav-bar span.status-bar li a {
-  padding-right:1.4em;
+  padding-right:1.9em;
 }
 
 ul.nav-bar li span.ui-icon {
@@ -210,7 +211,7 @@ ul.nav-bar ul.dropdown, form#searchForm ul.dropdown {
   left:-1px;
   background:white;
   border:1px solid #CDCDCD;
-  z-index:99;
+  z-index:598;
   padding:0;
   width:100%;
   list-style-type: none;
@@ -365,7 +366,7 @@ li.visible div.widget-container {
 }
 
 
- #widget-footer a{
+#widget-footer a{
   float:right;
   height:1.2em;
   margin:0 0.2em;
@@ -373,6 +374,13 @@ li.visible div.widget-container {
   background:#EEE;
   padding:0 0.3em;
   position:relative;
+}
+
+#widget-footer .comment-count{
+  font-size:0.7em;
+  padding:0.2em;
+  margin-top:0.2em;
+  float:right;
 }
 
 #widget-footer>span{
@@ -1268,7 +1276,7 @@ padding:0.7em 0.5em 0;
 /*   margin:0.5em; */
 }
 
-div.details {
+div.detail-box {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
@@ -1276,12 +1284,12 @@ div.details {
   margin:0.5em;
 }
 
-div.details div.field div.field-title {
+div.detail-box div.field div.field-title {
   width: 6.7em;
   padding-right: 0.5em;
 }
 
-div.details div.field div.field-content{
+div.detail-box div.field div.field-content{
   float:left;
   margin-left:0;
 }
@@ -1358,7 +1366,14 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 }
 
 .issue-text{
-  width :80%;
+  width :97%;
+  font-family: Helvetica, sans-serif;
+  padding:0.5em;
+  color:gray;
+  font-size: 1em;
+}
+.issue-text:focus{
+  color:black;
 }
 
 .issue-user {
@@ -1379,12 +1394,66 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   color:#0000B8;
 }
 
+#operator-box-wrap{  
+  position:fixed;       
+  bottom:7em;
+  right:0;  
+}
 
+#operator-box{
+  position:absolute;  
+  height:5em; 
+  right:0;    
+  padding:0.5em; 
+  border:1px solid #CDCDCD;
+  background:#E9EEF2;
+  z-index:100;
+  cursor:pointer
+}
 
+#operator-box.minimize{
+  background:#406F9C;
+  background-image:url('/img/chat.png');
+  background-repeat:no-repeat;
+  background-position: 0.2em 0.5em;
+  color:white;
+  border:none;
+  height:5em; 
+  padding:0.5em 0;
+  width:1.5em;
+}
 
+#operator-box.minimize:hover{
+  background-color:#0F2F4D;
+  width:2em;
+}
 
+#operator-box.minimize>div{
+  display:none;
+}
+
+ 
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
 
 .email {   }   /* email address formatting */
+
+div#advisory-board        { padding:2em; }
+#advisory-board h2        { float:none;}
+#advisory-board img {
+    border : 3px solid gray;
+    width  : 100px;
+}
+#advisory-board .description { 
+     font-style:normal;
+     clear:both; 
+     padding: 1em 0em 2em 0em;
+     width:500px;
+     font-size:1.2em;
+}
+
+.error {
+  background: #FFCFCF;
+}
+

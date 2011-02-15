@@ -12,6 +12,7 @@
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script> 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>   
+<script type="text/javascript" src="/js/raphael-min.js"></script>
   <script>
   var $jq=  jQuery.noConflict();
 </script>
@@ -23,6 +24,7 @@
     [% END %] 
 
  <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
+<!-- <script type="text/javascript" src="/js/jquery/plugins/floating-1.4.js"></script>-->
 
    <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/jquery.dataTables.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/demo_table.css"/>
@@ -51,7 +53,7 @@
   </head>
 
   <body>
-   
+    
     [%- content -%]    
   </body>
 </html>

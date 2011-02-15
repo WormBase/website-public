@@ -1,4 +1,28 @@
   $jq(document).ready(function() {   
+    window.onhashchange = readHash;
+
+    ajaxGet($jq(".status-bar"), "/rest/auth");
+     $jq(".print").live('click',function() {
+	  var layout= window.location.hash.replace('#','');
+	  var print = $jq(this);
+	   
+	    $jq.ajax({
+		      type: "POST",
+		      url : '/rest/print',
+		      data: {layout:layout}, 
+		       beforeSend:function(){
+			  setLoading(print); 
+			},
+		      success: function(data){
+			  print.html('');
+			  window.location.href=data;
+			},
+		      error: function(request,status,error) {
+			      alert(request + " " + status + " " + error );
+			}
+	      });
+	  
+    }); 
 
     $jq(".register-button").live('click',function() {
       
@@ -41,18 +65,28 @@
     });
 
       $jq(".comment-submit").live('click',function() {
-	    var url= $jq(this).attr("rel");
+	    var rel= $jq(this).attr("rel");
+        var url= $jq(this).attr("url");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#comment-new');
-	    var name = feed.find("#comment-name").val();
-	    var content = feed.find("#comment-content").val();
-	    if(name == "" || name == "name" || content == "" || content == "enter your comment here"){
+// 	    var name = feed.find("#comment-name").val();
+        var email = feed.find("#email");
+        var name= feed.find("#display-name");
+        if(email.attr('id') && name.attr('id')) {
+           if(validate_fields(email,name)==false) {return false;}
+        }  
+        if(!(name.val())){ name = name.attr('value'); 
+        }else{
+         name = name.val(); 
+        }
+	    var content = feed.find(".comment-content").val();
+	    if(content == "" || content == "write a comment..."){
 		    alert("Please provide your name & comment"); return false;
 	    }
 	    $jq.ajax({
 	      type: 'POST',
-	      url: url,
-	      data: { name:name, location: page, content: content},
+	      url: rel,
+	      data: { name:name, location: page, content: content, url: url},
 	      success: function(data){
  			displayNotification("Comment Submitted!");
 			feed.find("#comment-box").prepend(data);
@@ -62,8 +96,29 @@
 		      }
 	    });
 
-	    return false;
+        var box = $jq('<div class="comment-box"><a href="">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
+        var comments = $jq("#comments");
+        comments.prepend(box);
+        return false;
 
+    });
+    
+    $jq(".comment-delete").live('click', function(){
+      var $id=$jq(this).attr("id");
+      var url= $jq(this).attr("rel");
+      
+      $jq.ajax({
+        type: "POST",
+        url : url,
+        data: {method:"delete",id:$id}, 
+        success: function(data){
+//                   window.location.reload(1);
+          },
+        error: function(request,status,error) {
+            alert(request + " " + status + " " + error );
+          }
+      });
+      $jq(this).parent().remove();
     });
 
      $jq(".issue-delete").live('click',function() {
@@ -92,7 +147,8 @@
     }); 
 
     $jq(".issue-submit").live('click',function() {
-	    var url= $jq(this).attr("rel");
+	    var rel= $jq(this).attr("rel");
+        var url = $jq(this).attr("url");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#issues-new');
 	    var email = feed.find("#email");
@@ -102,11 +158,11 @@
 	    }  
 	    $jq.ajax({
 	      type: 'POST',
-	      url: url,
-	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() ,},
+	      url: rel,
+	      data: {title:feed.find("#title").val(), location: page, content: feed.find("#content").val(), email:email.val() ,username:username.val() , url:url,},
 	      success: function(data){
 			    if(data==0) {
-				   alert("The email address has already been registered!Please sign in."); 
+				   alert("The email address has already been registered! Please sign in."); 
 			    }else {
 				  displayNotification("Problem Submitted! We will be in touch soon.");
 				  feed.closest('#widget-feed').hide(); 
@@ -175,7 +231,7 @@
       return false;
       });
 
-    ajaxGet($jq(".status-bar"), "/rest/auth");
+    
 
     });
 
@@ -228,7 +284,7 @@
     var widget_name = $jq(this).attr("wname");
     var nav = $jq("#nav-" + widget_name);
     var content = "div#" + widget_name + "-content";
-    if (nav.attr("load") == 1){
+    if(!nav.hasClass('ui-selected')){
       if($jq(content).text().length < 4){
           var column = ".left";
           var holder = $jq("#widget-holder");
@@ -243,40 +299,37 @@
           }
           openWidget(widget_name, nav, content, column);
       }else{
-        nav.attr("load", 0);
         $jq(content).parents("li").addClass("visible");
         nav.addClass("ui-selected");
       }
-      location.href = "#" + widget_name;
+      goToAnchor(widget_name);
     } else {
-      nav.attr("load", 1);
       nav.removeClass("ui-selected");
       $jq(content).parents("li").removeClass("visible"); 
     }
-
     updateLayout();
     return false;
   });
 
   $jq(".module-max").live('click', function() {
     var module = $jq(this).parents(".widget-container")
-    if(module.find(".cboxElement").trigger('click').size() < 1){
+//     if(module.find(".cboxElement").trigger('click').size() < 1){
       var clone = module.clone();
-      clone.find(".module-max").remove();
-      clone.find(".module-close").remove();
-      clone.find(".module-min").remove();
-      clone.find("#widget-footer").remove();
-      clone.find("h3").children(".ui-icon").remove();
-      clone.css("min-width", "400px");
-      var cbox = $jq('<a class="cboxElement" href="#"></a>');
-      cbox.appendTo(module).hide();
-      cbox.colorbox({html:clone, title:"Note: not all effects are supported while widget is maximized", maxWidth:"100%"}).trigger('click');
-    }
+//       clone.find(".module-max").remove();
+//       clone.find(".module-close").remove();
+//       clone.find(".module-min").remove();
+//       clone.find("#widget-footer").remove();
+//       clone.find("h3").children(".ui-icon").remove();
+//       clone.css("min-width", "400px");
+//       var cbox = $jq('<a class="cboxElement" href="#"></a>');
+//       cbox.appendTo(module).hide();
+//       cbox.colorbox({html:clone, title:"Note: not all effects are supported while widget is maximized", maxWidth:"100%"}).trigger('click');
+//     }
 
 // code for external pop out window - if we need that
-//     var popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
-//     popout.document.write(document.head.innerHTML);
-//     popout.document.write(clone.html());
+    var popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
+    popout.document.write(document.head.innerHTML);
+    popout.document.write(clone.html());
   });
 
   // used in sidebar view, to open and close widgets when selected
@@ -287,13 +340,11 @@
 
     openWidget(widget_name, nav, content, ".left");
 
-    updateLayout();
     return false;
   });
 
    
     function openWidget(widget_name, nav, content, column){
-        nav.attr("load", 0);
         $jq(content).closest("li").appendTo($jq("#widget-holder").children(column));
         var content = $jq(content);
         addWidgetEffects(content.parent(".widget-container"));
@@ -308,7 +359,7 @@
       panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
     }
 
-    function ajaxGet(ajaxPanel, $url, noLoadImg) {
+    function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
       $jq.ajax({
         url: $url,
         beforeSend:function(){
@@ -317,8 +368,11 @@
         success:function(data){
           ajaxPanel.html(data);
         },
-        error:function(){
+        error:function(request,status,error){
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+        },
+        complete:function(XMLHttpRequest, textStatus){
+          if(callback){ callback(); }
         }
       });
 
@@ -417,7 +471,32 @@
   return false;
   });
  
-
+    function operator(){
+        var opTimer;
+        var opLoaded = false;
+        $jq('#operator-box').live('click',function()  
+        { 
+          var opBox = $jq(this);
+          if(!(opLoaded)){
+            ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
+                    function(){ 
+                      if($jq("#operator-box").hasClass("minimize")){
+                        $jq("#operator-box").children().hide();
+                      }
+                    });
+            opLoaded = true;
+          }
+          if(opBox.hasClass("minimize")){
+              opBox.removeClass("minimize");
+              opBox.animate({width:"9em"});
+              opBox.children().show();
+          }else{
+            opBox.addClass("minimize");
+            opBox.animate({width:"1.5em"});
+            opBox.children().hide();
+          }
+        });
+    }
 
 
 

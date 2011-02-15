@@ -1,0 +1,3 @@
+Common Name: [% c.stash.name %]
+<br>
+NCBI Taxonomy: [% text2link('ncbi_taxonomy',fields.ncbi_taxonomy.data,fields.ncbi_taxonomy.data) %]
