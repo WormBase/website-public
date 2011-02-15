@@ -7,9 +7,7 @@ No outstanding issues remaining!
   [% FOREACH IS IN c.stash.issues %]
     <div class="entry"> 
       <li><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]"> [% IF IS.re %]Re: [% END %][% IS.title %]</a></li>
-      [% IS.time_lapse %] by <a href="">[% username(IS.people) %]</a> - 
-<!--       [% array=IS.location.split('/') %] -->
-      [% text2link(array.3,array.4, array.6 _ ' ' _ array.3 _ ' page (' _ array.5 _ ')') %]
+      [% IS.time_lapse %] by <a href="">[% username(IS.people) %]</a> - [% linkPage(IS.page) %]
     </div>
   [% END %]
   </ul>

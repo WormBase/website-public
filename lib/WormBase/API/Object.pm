@@ -146,15 +146,18 @@ sub wrap {
     my ($self,$objects) = @_;
 
     # Allow for array references or scalar variables
-    $objects = eval { ref $objects =~ /ARRAY/ } ? $objects : [ $objects ];
+    $objects = eval { ref($objects) =~ /ARRAY/ } ? $objects : [ $objects ];
     
     my @wrapped;
     foreach my $object (@$objects) {
 	my $class = $object->class;
 	push @wrapped, WormBase::API::Factory->create($class,
-						      { object => $object,
-							dsn => $self->dsn,
-					      });
+												  {
+													  object => $object,
+													  dsn => $self->dsn,
+													  pre_compile => $self->pre_compile,
+													  tmp_base => $self->tmp_base,
+												  });
     }
     
     # User might have passed and expected just a single object
@@ -1687,10 +1690,10 @@ sub history {
                                             };
         }
     }
-
-
+    
+    
     ####
-
+    
     $data{'data'} = \%data_pack;
     $data{'description'} = $desc;
     return \%data;

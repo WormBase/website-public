@@ -1,0 +1,39 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title='name' key='name'-%]
+   [% fields.name.data.label %]
+[% END %]
+
+[% WRAPPER $field_block title='description' key='description'-%]
+   [% fields.description.data %]
+[% END %]
+
+[% WRAPPER $field_block title='cropped_from' key='cropped_from'-%]
+   [% fields.cropped_from.data %]
+[% END %]
+
+[% WRAPPER $field_block title='cropped_pictures' key='cropped_pictures'-%]
+   [% fields.cropped_pictures.data %]
+[% END %]
+
+[% WRAPPER $field_block title='pick_me_to_call' key='pick_me_to_call'-%]
+   [% fields.pick_me_to_call.data %]
+[% END %]
+
+[% WRAPPER $field_block title='remarks' key='remarks'-%]
+   [% fields.remarks.data %]
+[% END %]
+
+[% WRAPPER $field_block title='depicts' key='depicts'-%]
+   [% fields.depicts.data %]
+[% END %]
+
+[% WRAPPER $field_block title='reference_paper' key='reference_paper'-%]
+   [% fields.reference_paper.data %]
+[% END %]
+
+[% WRAPPER $field_block title='contact' key='contact'-%]
+   [% fields.contact.data %]
+[% END %]
+

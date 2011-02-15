@@ -6,8 +6,6 @@ use ParseName qw(parse_name parse_name_initials);
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
-
 sub name {
     my $self = shift;
     my $title = $self ~~ 'Title' // $self ~~ 'name';
@@ -16,19 +14,12 @@ sub name {
 		description => 'The object name of the publication',
 		data => {
 			id		=> $self ~~ 'name',
-			label	=> $title,
+			label	=> eval {$self->intext_citation->{data}{citation}} // $title,
 			class	=> $self ~~ 'class'
 		   },
 	};
     return $data;
 }
-
-
-############################################################
-#
-# The Overview widget
-#
-############################################################
 
 sub title {
 	my ($self) = @_;
@@ -211,7 +202,8 @@ sub keywords {
 
 # TODO: publisher should be in format "Location: Publisher"
 #       for APA citations. Consider parsing $self ~~ 'Publisher'
-#       and returning [Location, Publisher]
+#       and returning [Location, Publisher] -- this may be as hard
+#       as parsing a name! :(
 sub publisher {
 	my ($self) = @_;
 	my $publisher = $self ~~ 'Publisher' // return;
