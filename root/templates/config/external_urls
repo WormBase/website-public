@@ -21,14 +21,19 @@
 [% site.external_urls = {
 	genomic_location = { description  = 'The WormBase Genome Browser'
 			      maintainer   = ''
-			      base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
-			      search      = 'http://www.wormbase.org/db/gb2/gbrowse/%s'   
+# base = 'http://www.wormbase.org/db/gb2/gbrowse/'
+# search = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
+			      base         = '/gb2/gbrowse/'
+			      search      = '/gb2/gbrowse/%s'   
 			    }
 
 	gbrowse_image = { description  = 'The WormBase Genome Browser Image'
 			      maintainer   = ''
-			      base         = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
-			      search      = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'   
+
+# base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
+# search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
+			      base         = '/gb2/gbrowse_img/'
+			      search      = '/gb2/gbrowse_img/%s'   
 			    }
 	pfam    ={ search = 'http://pfam.sanger.ac.uk/family/%s' }
 		  
@@ -110,18 +115,34 @@
                       search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
                }
 
-     aceview = { description =  'The AceView genes - NCBI'
+	aceview = { description =  'The AceView genes - NCBI'
                       search = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
                         base = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/index.html'
                }
- ncbi_refseq = { description = 'RefSeq'
+	ncbi_refseq = { description = 'RefSeq'
                       search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
               }
+              
+	ncbi_pubmed  =	{ 
+						description = 'PubMed Abstracts'
+						base 		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
+						search 		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
+					}
+
+	ncbi_taxonomy = { 
+		      description = 'NCBI Taxonomy'
+                      search = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
+              }
+
+	 
    }
 
 -%]
 
-
+[%
+# The DOI resolver for WormBook chapters
+$DOI             = 'http://dx.doi.org/';
+%]
 
 [%# MIGRATING THESE URLs ON AN AS-NEEDED BASIS 
 
@@ -131,10 +152,6 @@
 	ncbi_genbank     = { base              = 'http://www.ncbi.nlm.nih.gov'
 		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
 		   }
-	
-	ncbi_pubmed   = { base        = 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
-		     fetch_paper = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
-		    }
 
 	ncbi_refseq  ={ base = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept' }
 
@@ -250,8 +267,6 @@ $TREMBL         = 'http://www.ebi.uniprot.org/entry/%s',
 $WBG            = 'http://elegans.swmed.edu/wli/';
 $KIM_MOUNTAINS  = 'http://www.sciencemag.org/feature/data/kim1061603/gl/gene_list.html';
 
-# The DOI resolver for WormBook chapters
-$DOI             = 'http://dx.doi.org/';
 
 
 ###################### PROTEIN LINKS #################

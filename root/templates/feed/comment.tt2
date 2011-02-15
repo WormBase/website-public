@@ -1,31 +1,51 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-<div id="comment-new" class="layout-box" style="padding: 15px 24px;">
-<h4>Comments</h4>
-    [% UNLESS comments %]
-No one has commented yet. Be the first!<p></p>
+<div id="comment-new" class="layout-box text-width">
+<h4 style="float:right">
+  <a href="javascript:void(0)" onClick="commentNow('[% widget %]')">
+    [% IF comments.size > 0 %] add a comment
+    [% ELSE %] be the first to comment
     [% END %]
-<table   width="70%" >
+  </a>
+</h4>
+<h4>[% comments.size + 0 %] [% pluralize("Comment", comments.size) %]</h4>
+[% USE time_dir = Time.Duration %]
+
+<div id="comments">
+[% FOREACH cm IN comments %]
+  <div class="comment-box">
+    [% IF c.check_user_roles('admin') || c.check_user_roles('curator')%]
+      <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
+    [% END %]
+
+    <a href="">[% cm.reporter %]</a>
+    [% cm.content %] <br />
+
+    <span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>
+  </div>
+[% END %]
+
+<div class="comment-box">
+<table   width="100%" >
 		<tr>
-			<td><input class="issue-text" id="comment-name" maxlength="50"  type="text"   value="name"  /></td>
+<td>
+[% user_login_info %]
+[% IF c.user_exists %]
+<a href="[% c.uri_for('/me') %]" id="display-name" value="[% username(c.user) %]">[% username(c.user) %]</a> says: 
+[% END %]
+</td>
 		</tr>
 				 
 		<tr>
 			<td>
-				<textarea class="issue-text" id="comment-content" rows="10"    >enter your comment here</textarea>
+				<textarea class="issue-text comment-content" id="comment-content-[% widget %]" rows="10"    >write a comment...</textarea>
 			</td>
 		</tr>
 	</table>
-	  </br><p>
-	    <input type='submit' value='Comment' class="comment-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','comment') %]" /> 
-	  </p>
-  
-[% USE time_dir = Time.Duration %]
-<div id="comment-box">
-[% FOREACH cm IN comments %]
-([%  time_dir.ago(current_time - cm.submit_time)  %]) [% cm.reporter %] said:<br />
-[% cm.content %] <br />
-[% END %]
+
+	    <input type='submit' value='Comment' id="comment-submit-[% widget %]" url="[% url %]" class="comment-submit" page="[% page %]" rel="[% c.uri_for('/rest','feed','comment') %]" /> 
 </div>
+  </div>
+
  </div>

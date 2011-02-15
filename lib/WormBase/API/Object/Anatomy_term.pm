@@ -7,6 +7,324 @@ extends 'WormBase::API::Object';
 
 #### subroutines
 
+
+#####################
+## identification
+#####################
+
+sub term {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+	my $term = $object->Term;
+
+	$data_pack = {
+	
+		'id' =>"$object",
+		'label' =>"$term",
+		'Class' => 'AO_term'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+## TODO: evidence may need to be added in display
+
+sub definition {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->Definition;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+## TODO: evidence may need to be added in display
+
+sub synonyms {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @data_pack = $object->Synonym;
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+sub remarks {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @data_pack = $object->Remark;
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+## sub anatomy {}  figure out image displaying functions
+
+sub worm_atlas {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->URL;
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub transgenes {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+	my @transgenes;
+
+	eval{@transgenes = map{$_->Transgene} grep {/marker/i&& defined $_->Transgene} $term->Expr_pattern;};
+
+	foreach $transgene (@transgenes) {
+	
+		my $transgene_data = {
+			'id' =>"$transgene",
+			'label' =>"$transgene",
+			'class' => 'Transgene'
+		}
+	
+		push @data_pack, $transgene_data;
+	}
+	
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+#####################
+## browser
+#####################
+
+#####################
+## term diagram
+#####################
+
+#####################
+## associations
+####################
+
+sub expr_patterns{
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @expr_patterns = $object->Expr_pattern;
+	
+	foreach my $expr_pattern (@expr_patterns) {
+	
+		my $ep_data = {
+		
+		'id' =>"$expr_pattern",
+		'label' =>"$expr_pattern",
+		'Class' => 'Expr_pattern'			
+		
+		};
+	}
+
+	push @data_pack, $ep_data;
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub go_terms{
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	my @go_terms = $object->GO_term;
+	
+	foreach my $go_term (@go_terms) {
+	
+		my $term = $go_term->Term;
+		my $gt_data = {
+		
+			'id' =>"$go_term",
+			'label' =>"$term",
+			'Class' => 'GO_term'			
+		};
+	}
+
+	push @data_pack, $gt_data;
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub anatomy_functions{
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+	my @anatomy_functions = $object->Anatomy_function;
+	
+	foreach my $anatomy_function (@anatomy_functions) {
+	
+		my $af_data = {
+		
+			'id' =>"$anatomy_function",
+			'label' =>"$anatomy_function",
+			'Class' => 'Anatomy_function'			
+		};
+	}
+
+	push @data_pack, $af_data;
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub anatomy_function_nots {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+
+	my @anatomy_functions = $object->Anatomy_function_not;
+	
+	foreach my $anatomy_function (@anatomy_functions) {
+	
+		my $af_data = {
+		
+			'id' =>"$anatomy_function",
+			'label' =>"$anatomy_function",
+			'Class' => 'Anatomy_function'			
+		};
+	}
+
+	push @data_pack, $af_data;
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub expression_clusters{
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
+
+	#### data pull and packaging
+	my @expression_clusters = $object->Expression_cluster;
+	
+	foreach my $expression_cluster (@expression_clusters) {
+	
+		my $ec_data = {
+		
+		'id' =>"$expression_cluster",
+		'label' =>"$expression_cluster",
+		'Class' => 'Expression_cluster'			
+		
+		};
+	}
+
+	push @data_pack, $ec_data;
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+####################
+## superceded
+####################
+
+
 sub details {
 
   my $self = shift;
@@ -278,6 +596,12 @@ sub public_name {
 
 
 }
+
+#####################
+## internal methods
+#####################
+
+
 
 
 1;

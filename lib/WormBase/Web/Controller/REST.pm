@@ -6,6 +6,8 @@ use parent 'Catalyst::Controller::REST';
 use Time::Duration;
 use XML::Simple;
 use Crypt::SaltedHash;
+use List::Util qw(shuffle);
+use Badge::GoogleTalk;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -30,42 +32,57 @@ Catalyst Controller.
 
 =cut
  
- 
+sub livechat :Path('/rest/livechat') :Args(0) :ActionClass('REST') {} 
+sub livechat_GET {
+    my ( $self, $c) = @_;
+    $c->user_session->{'livechat'}=1;
+    $c->stash->{template} = "auth/livechat.tt2";
+    my $role= $c->model('Schema::Role')->find({role=>"operator"});
+     
+    foreach my $op ( shuffle $role->users){
+      next unless($op->gtalk_key );
+      my $badge = Badge::GoogleTalk->new( key => $op->gtalk_key);
+      my $online_status = $badge->is_online();
+      my $status = $badge->get_status();
+      my $away_status = $badge->is_away();
+      if($online_status && $status ne 'Busy' && !$away_status) {
+	  $c->log->debug("get gtalk badge for ",$op->username);
+  	  $c->stash->{badge_html}  = $badge->get_badge();
+	  $c->stash->{operator}  = $op;
+	  $c->log->debug($c->stash->{badge_html});
+	  last;
+      }
+    }
+    $c->stash->{noboiler}=1;
+    $c->forward('WormBase::Web::View::TT');
+}
+sub livechat_POST {
+    my ( $self, $c) = @_;
+    $c->user_session->{'livechat'}=0;
+    $c->user_session->{'livechat'}=1 if($c->req->param('open'));
+    $c->log->debug('livechat open? '.$c->user_session->{'livechat'});
+}
+
 sub print :Path('/rest/print') :Args(0) :ActionClass('REST') {}
-sub print_GET {
+sub print_POST {
     my ( $self, $c) = @_;
    
     my $api = $c->model('WormBaseAPI');
     $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    my $class = lc($c->req->param('class'));
-     $c->log->debug("class is $class");
-    my $left = $c->user_session->{'layout'}->{$class}->{0}->{'left'};
-    my $right = $c->user_session->{'layout'}->{$class}->{0}->{'right'};
-    my $leftwidth = $c->user_session->{'layout'}->{$class}->{0}->{'leftWidth'};
-  
-    if(ref($left) eq 'ARRAY') {$left = join('-', @$left);}
-    if(ref($right) eq 'ARRAY') {$right = join('-', @$right);}
-    (my $path = $c->req->param('path')) =~ s/\?.*//g;
-    my $file = $api->_tools->{print}->run("$path?left=$left&right=$right&leftwidth=$leftwidth");
      
-    if ($file) {
- 
-    $c->response->header('Content-Type' => 'application/x-download');
-    $c->response->header('Content-Disposition' => 'attachment; filename=test.pdf');
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-#         $c->serve_static_file('root/test.html');
-      
-#     while (defined(my $line = <FILE>)) {
-    open(MYINPUTFILE, "<$file");
-#      binmode MYINPUTFILE;
-    my $fileGlob = \*MYINPUTFILE;
- 
+    my $path = $c->req->param('layout');
+    
+    if($path) {
+      $path = $c->req->headers->referer.'#'.$path;
+      $c->log->debug("here is the path $path");
+      my $file = $api->_tools->{print}->run($path);
+     
+      if ($file) {
+	  $c->log->debug("here is the file: $file");	 
+	  $file =~ s/.*print/\/print/;
+	  $c->res->body($file);
+      }
 
-     $c->log->debug($fileGlob);
-    $c->res->body($fileGlob);
-#    }
- 
-      close FILE;
     }
 }
 
@@ -146,13 +163,11 @@ sub layout_POST {
     $c->log->debug("not default: $i");
   }
   $c->log->debug($i);
-  my $left = $c->request->body_parameters->{'left[]'};
-  my $right = $c->request->body_parameters->{'right[]'};  
-  my $leftWidth = $c->request->body_parameters->{'leftWidth'};
+
+  my $lstring = $c->request->body_parameters->{'lstring'};
   $c->user_session->{'layout'}->{$class}->{$i}->{'name'} = $layout;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'left'} = $left;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'right'} = $right;
-  $c->user_session->{'layout'}->{$class}->{$i}->{'leftWidth'} = $leftWidth;
+
+  $c->user_session->{'layout'}->{$class}->{$i}->{'lstring'} = $lstring;
 }
 
 sub layout_GET {
@@ -165,23 +180,18 @@ sub layout_GET {
   unless (defined $c->user_session->{'layout'}->{$class}->{$layout}){
     $layout = 0;
   }
-  my $left = $c->user_session->{'layout'}->{$class}->{$layout}->{'left'};
-  my $right = $c->user_session->{'layout'}->{$class}->{$layout}->{'right'};
-  my $leftWidth = $c->user_session->{'layout'}->{$class}->{$layout}->{'leftWidth'};
-  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
-  if(ref($left) eq 'ARRAY') {$left = join(',', @$left);}
-  if(ref($right) eq 'ARRAY') {$right = join(',', @$right);}
 
-  $c->log->debug("left:" . $left);
-  $c->log->debug("right:" . $right);
-  $c->log->debug("leftWidth:" . $leftWidth);
-    $c->forward('WormBase::Web::View::TT');
+  my $name = $c->user_session->{'layout'}->{$class}->{$layout}->{'name'};
+  my $lstring = $c->user_session->{'layout'}->{$class}->{$layout}->{'lstring'};
+
+
+  $c->log->debug("lstring:" . $lstring);
+
   $self->status_ok(
       $c,
-      entity =>  {left => $left,
-          right => $right,
-          leftWidth => $leftWidth,
+      entity =>  {
           name => $name,
+          lstring => $lstring,
       },
   );
 }
@@ -224,15 +234,14 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 sub history_GET {
     my ($self,$c) = @_;
     my $clear = $c->req->params->{clear};
-
+    $c->log->debug("history");
     my $session = $self->get_session($c);
     my @hist = $session->user_history;
 
     if($clear){ 
-      map { 
-        $_->user_history->delete(); 
-        $_->update(); 
-      } $session->user_history;
+      $c->log->debug("clearing");
+      $session->user_history->delete();
+      $session->update();
     }
 
     my $size = @hist;
@@ -403,23 +412,25 @@ sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
     my ($self,$c,$type,$class,$name,$widget,$label) = @_;
-
     $c->stash->{noboiler} = 1;
-    my $page ="/rest/widget/$class/$name/$widget/$label";
-    $c->stash->{page} = $page;
     $c->stash->{class}=$class;
-    $c->stash->{url} = "/rest/widget/$class/$name/$widget";  
+    $c->stash->{widget}=$widget;
     $c->stash->{current_time}=time();
-     if($type eq "comment"){
-       my @comments =  $c->model('Schema::Comment')->search({location=>$page},{order_by=>'submit_time DESC'} );
-       $c->stash->{comments} = \@comments if(@comments);  
-     }elsif($type eq "issue"){
-     # unless($c->user_exists) { $c->res->body("<script>alert('you need to login to use this function');</script>") ;return ;}
+
+    my $url = $c->req->params->{url};
+    my $page = $c->model('Schema::Page')->find({url=>$url});
+    $c->stash->{url} = $url;
+
+
+    if($type eq "comment"){
+      my @comments = $page->comments;
+      $c->stash->{comments} = \@comments if(@comments);  
+    }elsif($type eq "issue"){
       my @issues;
       if( $class) {
-	  @issues= $c->model('Schema::Issue')->search({location=>$page});
+        @issues = $page->issues;
       }else {
-	  @issues= $c->user->issues;
+        @issues= $c->user->issues;
       }
       $c->stash->{issues} = \@issues if(@issues);  
     }
@@ -433,14 +444,23 @@ sub feed_GET {
 sub feed_POST {
     my ($self,$c,$type) = @_;
     if($type eq 'comment'){
-	 my $content= $c->req->params->{content};
-	 my $name= $c->req->params->{name};
-	 my $location= $c->req->params->{location};
-	 if( $name && $content && $location) {
-	      $c->log->debug("create new comment for user $name at $location");
-	      my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, location=>$location,content=>$content,'submit_time'=>time()});
-	      $c->res->body( "(".ago(time() - $commment->submit_time).") $name said:<br />$content <br />");
-	  }
+      if($c->req->params->{method} eq 'delete'){
+        my $id = $c->req->params->{id};
+        if($id){
+          my $comment = $c->model('Schema::Comment')->find($id);
+          $c->log->debug("delete comment #",$comment->id);
+          $comment->delete();
+          $comment->update();
+        }
+      }else{
+        my $content= $c->req->params->{content};
+        my $name= $c->req->params->{name};
+
+        my $url = $c->req->params->{url};
+        my $page = $c->model('Schema::Page')->find({url=>$url});
+        my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
+
+      }
     }
     elsif($type eq 'issue'){
 	if($c->req->params->{method} eq 'delete'){
@@ -456,15 +476,17 @@ sub feed_POST {
 	}else{
 	  my $content= $c->req->params->{content};
 	  my $title= $c->req->params->{title};
-	  my $location= $c->req->params->{location};
-	  if( $title && $content && $location) { 
-	      my $user = $self->check_user_info($c);
-	      return unless $user;
-	      $c->log->debug("create new issue $content ",$user->id);
-	      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,location=>$location,content=>$content,state=>"new",'submit_time'=>time()});
- 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
-	      $self->issue_email($c,$issue,1,$content);
-	  }
+
+      my $url = $c->req->params->{url};
+
+      my $page = $c->model('Schema::Page')->find({url=>$url});
+
+      my $user = $self->check_user_info($c);
+      return unless $user;
+      $c->log->debug("create new issue $content ",$user->id);
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,page_id=>$page->page_id,content=>$content,state=>"new",'submit_time'=>time()});
+      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
+      $self->issue_email($c,$issue,1,$content);
 	}
     }elsif($type eq 'thread'){
 	my $content= $c->req->params->{content};
@@ -721,9 +743,8 @@ sub widget_GET {
 	foreach my $field (@fields) {
         unless ($field) { next;}
 	    $c->log->debug($field);
-	    my $data = {};
-	    $data = $object->$field if defined $object->$field;
-	    
+	    my $data = $object->$field; # $object->can($field) for a check
+
 	    # Conditionally load up the stash (for now) for HTML requests.
 	    # Alternatively, we could return JSON and have the client format it.
 	    $c->stash->{fields}->{$field} = $data; 
@@ -781,7 +802,7 @@ sub widget_home_GET {
       $c->stash->{results} = $self->recently_saved($c,3);
       $c->stash->{popular} = $self->most_popular($c,3);
     }   
-    elsif($widget=~m/comments/){
+    elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
@@ -835,7 +856,11 @@ sub recently_saved {
 sub most_popular {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
-    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1},
+#     my $interval = "> UNIX_TIMESTAMP() - 604800"; # one week ago
+    my $interval = "> UNIX_TIMESTAMP() - 86400"; # one day ago
+#     my $interval = "> UNIX_TIMESTAMP() - 3600"; # one hour ago
+#     my $interval = "> UNIX_TIMESTAMP() - 60"; # one minute ago
+    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1, latest_visit => \$interval},
                 {   select => [ 
                       'page.page_id', 
                       { sum => 'visit_count', -as => 'total_visit' }, 
@@ -883,8 +908,9 @@ sub comment_rss {
         push @rss, {      time=>$_->submit_time,
                           time_lapse=>$time,
                           people=>$_->reporter,
-                          location=>$_->location,
+                          location=>$_->page,
                           content=>$_->content,
+                          id=>$_->id,
              };
      } @comments;
  return \@rss;
@@ -905,7 +931,7 @@ sub issue_rss {
             time_lapse=>$time,
             people=>$_->user,
             title=>$_->issue->title,
-            location=>$_->issue->location,
+            location=>$_->issue->page,
             id=>$_->issue->id,
             re=>1,
             } ;
@@ -919,7 +945,7 @@ sub issue_rss {
                           time_lapse=>$time,
                           people=>$_->owner,
                           title=>$_->title,
-                          location=>$_->location,
+                          location=>$_->page,
                   id=>$_->id,
             };
     } @issues;

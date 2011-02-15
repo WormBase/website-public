@@ -14,7 +14,9 @@
 [% END %]
 
 [% WRAPPER $field_block title="Protein Schematic" key="homology_image" -%]
-    [% image(fields.homology_image.data) %]
+    [%# image(fields.homology_image.data) %]
+     [% c.flash.gd= fields.homology_image.data %]
+     [% image("/draw/protein")  %]
 [% END %]
 
 

@@ -497,10 +497,23 @@ sub external_links {
     } else {
       $ac_number = find_ac($s, 'EMBL');
       $ac_number = find_ac($s, 'GenBank') if( keys(%{$ac_number}) == 0 );
+
+      # Get the longtext for the DB. Should probably include the URL constructor too, oh well.
+      my ($source,@rest) = $s->DB_annotation if $s->class eq 'Sequence';
+      my $details;
+      if ($source) {
+	    my ($text)  = $source->col if ($source);
+	    $details = { label=>'',
+			 class=>$text->class, 
+			 id=>$text->name,
+			};
+      }
+
       if( keys(%{$ac_number}) > 0 ) {
 	$hash{'GenBank/EMBL'}{label}=$ac_number->{NDB_AC};
 	$hash{'GenBank/EMBL'}{id}=$ac_number->{NDB_AC};
 	$hash{'GenBank/EMBL'}{class}='Entrez';
+	$hash{'GenBank/EMBL'}{detail}=$details;
       }
     }
  

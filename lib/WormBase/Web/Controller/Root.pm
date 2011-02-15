@@ -29,14 +29,20 @@ sub index :Path Args(0) {
     $c->stash->{issues} = $self->issue_rss($c,2);
     $c->stash->{template} = 'index.tt2';
 }
-
+sub gbrowse :Path("/gbrowse") Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{noboiler}=1;
+    $c->stash->{template} = 'gbrowse.tt2';
+}
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
+    $c->stash->{noboiler}=1;
     $c->stash->{template} = 'header/default.tt2';
 }
 
 sub footer :Path("/footer") Args(0) {
       my ($self,$c) = @_;
+      $c->stash->{noboiler}=1;
       $c->stash->{template} = 'footer/default.tt2';
  } 
 =head2 DEFAULT
@@ -46,21 +52,17 @@ The default action is run last when no other action matches.
 =cut
 sub draw :Path("/draw") Args(1) {
     my ($self,$c,$format) = @_;
-    my $source = $c->model('WormBaseAPI')->pre_compile->{$c->req->params->{class}}."/".$c->req->params->{id}.".".$format;
-    my ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
-    unless($cached_img){
-      $cached_img = new GD::Image->new($source);
-      $c->set_cache($cache_id,$cached_img);
+    my ($cache_id,$cached_img);
+    if($c->req->params->{class} && $c->req->params->{id}){
+      my $source = $c->model('WormBaseAPI')->pre_compile->{$c->req->params->{class}}."/".$c->req->params->{id}.".".$format;
+      ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
+      unless($cached_img){
+	$cached_img = new GD::Image->new($source);
+	$c->set_cache($cache_id,$cached_img);
+      }
+    }else{
+	$cached_img = $c->flash->{gd};
     }
-=pod
-    binmode STDOUT;
-    if ($file) {
-      open IMG, $file or die $!;
-      print while(<IMG>);
-      close IMG;
-    }
-=cut
- 
     $c->stash(gd_image=>$cached_img);
     $c->detach('WormBase::Web::View::Graphics');
 }
@@ -80,7 +82,7 @@ sub issue_rss {
 	  push @rss, {	time=>$_->submit_time,
 			people=>$_->user,
 			title=>$_->issue->title,
-			location=>$_->issue->location,
+			location=>$_->issue->page,
 			id=>$_->issue->id,
 			re=>1,
 		    } ;
@@ -92,7 +94,7 @@ sub issue_rss {
 		push @rss, {      time=>$_->submit_time,
 					      people=>$_->owner,
 					      title=>$_->title,
-					      location=>$_->location,
+					      location=>$_->page,
 				  id=>$_->id,
 			};
 	} @issues;

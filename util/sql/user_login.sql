@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
             reporter char(50),
-            location char(100),
+            page_id INTEGER,
             submit_time char(50),
             content TEXT
 );
@@ -58,7 +58,7 @@ CREATE TABLE issues (
 	    reporter INTEGER,
 	    assigned_to INTEGER,
 	    title TEXT ,
-	    location char(100),
+        page_id INTEGER,
 	    submit_time char(50),
 	    state char(10),
 	    content TEXT 
@@ -86,9 +86,9 @@ CREATE TABLE user_saved (
 DROP TABLE IF EXISTS pages;
 CREATE TABLE pages (
 		page_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-		url char(72),
-		title TEXT,
-        is_obj BOOL,
+		url char(255),
+		title char(255),
+        is_obj BOOLEAN
 );
 
 DROP TABLE IF EXISTS user_history;

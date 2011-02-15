@@ -3,7 +3,7 @@
 
 
 <h2>[% fields.name.data.label %]</h2>
-<div class="details ui-corner-all">
+<div class="detail-box ui-corner-all">
     
     
    [% WRAPPER $field_block  title="Wormbase ID" key="name" %]

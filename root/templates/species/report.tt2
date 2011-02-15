@@ -29,7 +29,7 @@
     [% widgets.push(w) %]
   [% END %]
 
-  [% IF c.config.sections.species.$class.tools.keys.size > 0 %]
+
   [% widgets.push({ title="Tools" type="title"}) %]
   [% tool_list = c.config.sections.species.$class.tools.keys.sort %]
   [% FOREACH widget_name IN tool_list -%]
@@ -42,37 +42,32 @@
     %]
     [% widgets.push(w) %]
   [% END %]
-  [% END %]
 
-  [% widgets.push({ title="My Workspace" type="title"}) %]
-  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
-    [% widget = c.config.sections.me.widgets.$widget_name %]
+
+  [% tools = ['comment', 'issue'] %]
+  [% FOREACH widget_name IN tools %]
+    [% t = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
-            title = widget.title
-            href =  c.uri_for('/rest','widget','me',widget_name)
-            type = "me"
+             title = t _ 's'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
+             type = 'tools'
             };
     %]
+
     [% widgets.push(w) %]
   [% END %]
 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
-
+     
     <script>
-  [% IF print.defined %]
-    var leftList = ["[% print.left.join('", "') %]"];
-    var rightList = ["[% print.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% print.leftWidth %]);
-  [% ELSIF  c.user_session.layout.$class.defined %]
-    var leftList = ["[% c.user_session.layout.$class.0.left.join('", "') %]"];
-    var rightList = ["[% c.user_session.layout.$class.0.right.join('", "') %]"];
-    resetLayout(leftList, rightList, [% c.user_session.layout.$class.0.leftWidth %]);
-  [% ELSE %]
-    $jq("#nav-overview").trigger('open');
-    $jq("#nav-location").trigger('open');
-  [% END %]
+ [% UNLESS c.user_session.layout.$class.0.defined %]
+        $jq("#nav-overview").trigger('open');
+        $jq("#nav-location").trigger('open');
+        updateLayout();
+      [% END %]
 
+        updateSidebarStatus(class,this_object_id);
     </script>
 
 

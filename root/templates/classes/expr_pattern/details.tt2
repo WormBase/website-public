@@ -1,0 +1,54 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% MACRO tag2linkAll(hash) BLOCK %]
+	[% result = [] %]
+	[% FOREACH key IN hash.keys.sort %]
+		[% result.push(tag2link(hash.$key)) %]
+	[% END %]
+	[% result.join(', ') %]
+[% END %]
+
+[% WRAPPER $field_block title="Expressed By" -%]
+	[% FOREACH kind IN fields.expressed_by.data.keys %]
+		[% kind %]: [% tag2linkAll(fields.expressed_by.data.$kind) %]<br>
+	[% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Expressed In" -%]
+	[% IF fields.expressed_in.data.life_stages.size %]
+		Life stages: [% tag2linkAll(fields.expressed_in.data.life_stages) %]
+	[% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Anatomy Ontology" -%]
+	[% FOREACH item IN fields.anatomy_ontology.data %]
+		[% tag2link(item.anatomy_term) %] : [% item.location %] : [% item.definition %]<br>
+	[% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Experimental Details" -%]
+	[% details = fields.experimental_details.data # alias %]
+	[% FOREACH technique IN details.types %]
+		[% technique.0 %] assay: [% technique.1 %]<br>
+	[% END %]
+	[% IF details.antibody_infos %]
+		[% pluralize("Antibody", details.antibody_infos.size) %]
+			used for this assay: [% tag2linkAll(details.antibody_infos) %]<br>
+	[% END %]
+	[% IF details.transgenes %]
+		[% pluralize("Transgene", details.transgenes.size) %] 
+			used for this assay: [% tag2linkAll(details.transgenes) %]<br>
+	[% END %]
+	[% IF details.strains %]
+		[% pluralize("Strain", details.strains.size) %]: 
+			[% tag2linkAll(details.strains) %]<br>
+	[% END %]
+	[% IF details.authors %]
+		[% pluralize("Author", details.authors.size) %]: 
+			[% tag2linkAll(details.authors) %]<br>
+	[% END %]
+	[% IF details.date %]
+		Date: [% details.date %]
+	[% END %]
+[% END %]

@@ -10,7 +10,7 @@
     <script type="text/javascript" >
     $jq(".lightbox").colorbox();
     </script> 
-	<table width="60%">			      
+	<table width="100%">			      
 		    <tr>
 			    <th>
 				<a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
@@ -21,12 +21,12 @@
 			    <td>
 				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
 				  <div style="height: 0.4em; overflow: hidden;"> </div>
-				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> 
+				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
 			    </td>
 		    </tr>
 	 </table>
     [% ELSIF !c.user.email_address || ! c.user.username %]
-	<table width="60%">
+	<table width="100%">
 		    <tr>
 			    <th>
 				
@@ -88,7 +88,6 @@
 
 [% # adding print="always" to field wrapper will make the field print even if there is no data%]
 [% BLOCK field_block %]
-    [%# TRY; IF ((fields.$key.data.size == 0 ) AND (print != "always")); RETURN; END; END;%]
 
     <div class="field
 
@@ -314,7 +313,7 @@
                     <div class="module-close" wname="[% id %]" title="close"></div>
                     <div class="module-max" wname="[% id %]" title="pop out"></div>
                    
-                    <h3><div class="module-min [% id %]" wname="[% id %]"></div><span>[% title %]</span>
+                    <h3><div class="module-min" wname="[% id %]"></div><span>[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
@@ -326,13 +325,14 @@
                 </div>
 		 
                 <div id="widget-footer">
-                    <a   tip="comment" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
-                    <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a>
+[% UNLESS c.req.action == '/' %]
+<!--                     <a   tip="view comments" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>   -->
+                    <a   tip="view comments" class="tip-simple tr ui-corner-all" href="javascript:void(0)" onClick='$jq("#nav-comment").trigger("open"); goToAnchor("comment"); return true;' ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   tip="report a problem" class="tip-simple tr ui-corner-all"  href="javascript:void(0)" onClick='$jq("#nav-issue").trigger("open"); goToAnchor("issue"); return true;' ><span class="ui-icon ui-icon-notice ui-button"></span></a>
+
+<!--                     <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a> -->
                     <a  tip="download" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
-[% IF 0 %]
-<!--                     <a href="#" tip="help" class="tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-help"></span></a> -->
-<!--                     <span> </span> -->
-[% END %]
+[% END %] 
                     
                 </div>
 		<div id="widget-feed"></div>  

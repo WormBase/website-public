@@ -55,6 +55,59 @@
        [% object_list(fields.flanking_pcr_products.data) %]
    [% END %]
 
+
+
+   [%# Conditionally display some information if this is a polymorphism %]
+
+   [% IF fields.polymorphism_type.data %]
+   <div class="caveat-emptor">This variation has been identified as a polymophism.</div>
+   [% WRAPPER $field_block title="Polymorphism type" key="polymorphism" -%] 
+                [% fields.polymorphism_type.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Reference strain" key ="reference_strain"  -%] 
+                [% tag2link(fields.reference_strain.data) %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status" -%] 
+                [% fields.polymorphism_status.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Assays" key="assay" -%] 
+
+       [% FOREACH assay IN fields.polymorphism_assays.data %]
+           <h5>
+		[% IF assay.assay_type.match('rflp') %]
+	   	   RFLP assay
+		[% ELSE %]
+		   Sequence-only assay
+		[% END %]
+	    </h5>
+
+	    <table>
+			 <tr><td>Verified PCR product</td><td>[% tag2link(fields.polymorphism_assays.data.$assay.pcr_product) %]</td></tr>
+	    		 <tr><td>Left Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.left_oligo %]</td></tr>
+	    		 <tr><td>Right Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.right_oligo %]</td></tr>
+			 <tr><td>PCR conditions</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions %]</td></tr>
+			 <tr><td>Sequence</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.dna %]</td></tr>
+	    </table>
+
+	    <table>
+	    	    <tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>
+		    <tr><td>Reference strain digest</td><td>[% assay.reference_strain_digest %]</td>
+		         <td>[% assay.reference_strain_bands %]</td>
+ 	 	    <tr>
+		    <tr><td>Polymorphic strain digest</td>
+		         <td>[% assay.polymorphic_strain_digest %]</td><td>[% assay.polymorphic_strain_bands %]</td>
+		    <tr>
+	    </table>
+       [% END %]
+      [% END %]
+    [% END %]
+
+
+
+
    [% WRAPPER $field_block title="Context" key="context" %]
      <div class="inline-sequence">
             [% fields.context.data.wildtype_fragment %] -- wild type<br>
@@ -182,4 +235,48 @@
    [% WRAPPER $field_block title="Causes Frameshift" key="causes_frameshift" %]
       [% fields.causes_frameshift.data %]
    [% END %]
+
+   [% WRAPPER $field_block title="Polymorphism type" key="polymorphism" -%] 
+                [% fields.polymorphism_type.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Reference strain" key ="reference_strain"  -%] 
+                [% tag2link(fields.reference_strain.data) %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status" -%] 
+                [% fields.polymorphism_status.data %]
+   [% END %]
+
+   [% WRAPPER $field_block title="Assays" key="assay" -%] 
+
+       [% FOREACH assay IN fields.polymorphism_assays.data %]
+           <h5>
+		[% IF assay.assay_type.match('rflp') %]
+	   	   RFLP assay
+		[% ELSE %]
+		   Sequence-only assay
+		[% END %]
+	    </h5>
+
+	    <table>
+			 <tr><td>Verified PCR product</td><td>[% tag2link(fields.polymorphism_assays.data.$assay.pcr_product) %]</td></tr>
+	    		 <tr><td>Left Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.left_oligo %]</td></tr>
+	    		 <tr><td>Right Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.right_oligo %]</td></tr>
+			 <tr><td>PCR conditions</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions %]</td></tr>
+			 <tr><td>Sequence</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.dna %]</td></tr>
+	    </table>
+
+	    <table>
+	    	    <tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>
+		    <tr><td>Reference strain digest</td><td>[% assay.reference_strain_digest %]</td>
+		         <td>[% assay.reference_strain_bands %]</td>
+ 	 	    <tr>
+		    <tr><td>Polymorphic strain digest</td>
+		         <td>[% assay.polymorphic_strain_digest %]</td><td>[% assay.polymorphic_strain_bands %]</td>
+		    <tr>
+	    </table>
+       [% END %]
+
+    [% END %]
 

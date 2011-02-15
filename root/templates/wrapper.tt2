@@ -8,9 +8,6 @@
      debug("Passing request through without wrapping: $template.name");
      content;
 
-   ELSIF (template.name.match('header|footer'));   	 
-         content WRAPPER boilerplate/html ;
-   
    ELSIF (c.stash.unbuffer);
      debug("Passing widget: $template.name through without wrapping");
      content;
