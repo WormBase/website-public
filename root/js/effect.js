@@ -219,9 +219,10 @@ function commentNow(widget){
   $jq("#comment-content-" + widget).focus();
 }
 
-function updateSidebarStatus(class, object_id){
-  var comments = $jq("#nav-comment");
-  var issues = $jq("#nav-issue");
-  
-//   issues.addClass("error");
+function updateCounts(url){
+  var comments = $jq(".comment-count");
+  var issues = $jq(".issue-count");
+
+  comments.load("/rest/feed/comment?count=1;url=" + url);
+  issues.load("/rest/feed/issue?count=1;url=" + url);
 }

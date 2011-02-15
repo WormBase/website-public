@@ -130,6 +130,7 @@ sub reconnect {
 	else { 
 	    $self->mark_down($self->host);
 	    $self->log->fatal($self->host." is down!");
+		$self->log->fatal($@) if $@;
 	    $self->host(0);
 	}
     } 

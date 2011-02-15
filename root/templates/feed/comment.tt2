@@ -9,7 +9,7 @@
     [% END %]
   </a>
 </h4>
-<h4>[% comments.size + 0 %] [% pluralize("Comment", comments.size) %]</h4>
+<h4><a class="comment-count">[% comments.size + 0 %]</a> [% pluralize("Comment", comments.size) %]</h4>
 [% USE time_dir = Time.Duration %]
 
 <div id="comments">

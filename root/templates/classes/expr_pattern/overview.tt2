@@ -6,25 +6,24 @@
 <a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>
 [% END %]
 
-[% WRAPPER $field_block title="Description" -%]
-	[% FOREACH obj IN fields.summary.data.description %]
+[% WRAPPER $field_block title="Description" key='description'-%]
+	[% FOREACH obj IN fields.description.data.description %]
 		[% obj %]<br><br>
 	[% END %]
 
-	[% IF fields.summary.data.remarks %]
-	<b>Remarks:</b> [% fields.summary.data.remarks %]<br>
+	[% IF fields.description.data.remarks %]
+	<b>Remarks:</b> [% fields.description.data.remarks %]<br>
 	[% END %]
     
-	[% IF fields.summary.data.check_bc %]
+	[% IF fields.description.data.check_bc %]
 		<b>N.B.</b>: GFP constructs were generated as part of the 
 		<a href="http://elegans.bcgsc.ca/home/ge_consortium.html">
 		BC <i>C. elegans</i> Gene Expression Consortium</a>
 	[% END %]
-       
 [% END %]
 
-[% WRAPPER $field_block title="Subcellular Location" -%]
-	[% FOREACH obj IN fields.summary.data.subcellular %]
-		[% obj %]<br>
+[% WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_locations.data.size) key='subcellular_locations'-%]
+	[% FOREACH loc IN fields.subcellular_locations.data %]
+		[% loc %]<br>
 	[% END %]
 [% END %]

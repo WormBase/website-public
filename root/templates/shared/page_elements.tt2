@@ -53,17 +53,28 @@
 [% IF name.defined %][% name %][% ELSE %]Anonymous[% END %] 
 [%- END %]
 [%- END %]
+
+[% MACRO linkPage(page) BLOCK %]
+    [% label = page.title %]
+    [% UNLESS label; label = page.url; END; %]
+    [% IF page.is_obj %]
+      [% array=page.url.split('/') %]
+      [% text2link(array.slice(-2,-2).0, array.last, label) %]
+    [% ELSE %]
+      <a href="[% IS.page.url %]">[% label %]</a>
+    [% END %]
+[% END %]
  
 [% MACRO issue_table(issues) BLOCK %]
 [% IF issues %]
 [% USE time_dir = Time.Duration %]
-  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th> 
+  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Object</th><th>Time</th> 
     <th>Report by</th><th>Responsible</th>
     [% IF c.check_user_roles('admin') %]<th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>[% END %]
     </tr>
       [% FOREACH IS IN issues %]
-	 [% array=IS.location.split('/') %]
-	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link(array.3,array.4 ,array.6) %]</td> 
+	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td>
+        <td>[% linkPage(IS.page) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
 	    <td>[% username(IS.owner) %]</td><td>[% username(IS.assigned_to) %]</td>
 	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
@@ -91,7 +102,7 @@
 
     <div class="field
 
-    [% TRY; IF (fields.$key.data.size == 0 ); " disabled "; END; END;%]
+    [% TRY; IF key.defined && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
 
 
 " id="[% title FILTER html %]">
@@ -327,7 +338,7 @@
                 <div id="widget-footer">
 [% UNLESS c.req.action == '/' %]
 <!--                     <a   tip="view comments" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>   -->
-                    <a   tip="view comments" class="tip-simple tr ui-corner-all" href="javascript:void(0)" onClick='$jq("#nav-comment").trigger("open"); goToAnchor("comment"); return true;' ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>  
+                    <a   tip="view comments" class="tip-simple tr ui-corner-all" href="javascript:void(0)" onClick='$jq("#nav-comment").trigger("open"); goToAnchor("comment"); return true;' ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
                     <a   tip="report a problem" class="tip-simple tr ui-corner-all"  href="javascript:void(0)" onClick='$jq("#nav-issue").trigger("open"); goToAnchor("issue"); return true;' ><span class="ui-icon ui-icon-notice ui-button"></span></a>
 
 <!--                     <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a> -->

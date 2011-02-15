@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% UNLESS class %]
+[% UNLESS url %]
   [% issue_table(issues,issues_type) %]
 [% ELSE %]
   <div id="issues-new" class="layout-box" style="padding: 15px 24px;">
