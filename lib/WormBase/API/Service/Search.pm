@@ -350,6 +350,8 @@ sub fetchGene {
   return \@genes;
 }
 
+    
+
 #get aceobj var, only look at name
 sub fetchVar {
     my $self = shift;
