@@ -13,7 +13,7 @@ This is the individual species summary page.
     [% USE String(widget_name.replace('_', ' ')) %]
     [% w = { id = widget_name
              title = String.capital
-             href =  c.uri_for('/species','summary',species, widget_name)
+             href =  c.uri_for('/species','guide','component',species, widget_name)
              type = 'resources'
             };
     %]
