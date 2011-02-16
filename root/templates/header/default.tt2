@@ -32,7 +32,7 @@
         [% species = species.unique %]
 
           [% FOREACH option IN species %]
-            <li><a href="/[% title %]/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
+            <li><a href="/[% title %]/guide/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
               <ul class="dropdown">  
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 

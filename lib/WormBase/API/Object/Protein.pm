@@ -27,7 +27,7 @@ has 'peptide' => (
 	$peptide =~ s/\n//g;   
 	return $peptide;
     }
-);
+    );
 
 has 'cds' => (
     is  => 'ro',
@@ -37,29 +37,22 @@ has 'cds' => (
 	my $self = shift;
 	return $self ~~ '@Corresponding_CDS';
     }
-);
+    );
 
- 
+
 ############################################################
 #
 # The Overview widget
 #
 ############################################################
-
-
-
 sub name {
     my $self = shift;
     my $id = $self->object;
-#    my $ace = eval { $self->cds->[0]->Gene->CGC_name } || $id;
-    
     my $data = { description => 'The name of the protein',
 		 data        => { id    => "$id",
-				  #				  label => $ace->name,
 				  label => "$id",
 				  class => $id->class
 		 },
-				      
     };
     return $data;
 }
