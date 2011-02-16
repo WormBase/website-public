@@ -3,6 +3,8 @@
 
   [% title = '<span class="species">' _ c.config.species_list.$species.Title _ '</span> Summary Page' %]
 
+This is the individual species summary page.
+
   [% widgets = [] %]
   [%# Establish my list of widgets %]
   [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
@@ -11,7 +13,7 @@
     [% USE String(widget_name.replace('_', ' ')) %]
     [% w = { id = widget_name
              title = String.capital
-             href =  c.uri_for('/species','summary', species, widget_name)
+             href =  c.uri_for('/species','summary',species, widget_name)
              type = 'resources'
             };
     %]
