@@ -1,0 +1,9 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+	[% WRAPPER $field_block title="Previous Members"-%] 
+		[% FOREACH gene IN fields.previous_member.data %]
+			[% tag2link(gene)%]<br>
+         [% END %]   		
+            		
+   [% END %]
