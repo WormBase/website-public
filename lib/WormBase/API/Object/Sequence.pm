@@ -4,8 +4,8 @@ use Moose;
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
-use Bio::Graphics::Browser2::Markup;
 
+use Bio::Graphics::Browser2::Markup;
 use vars qw($CHROMOSOME_TABLE_LENGTH);
 $CHROMOSOME_TABLE_LENGTH = 2_000_000;
 
@@ -13,12 +13,12 @@ has 'type' => (
     is  => 'ro',
 #     isa => 'Str',
     lazy_build => 1,
-);
+    );
 
 has 'length' => (
     is  => 'rw',
 #     isa => 'Str',
-);
+    );
 
 has 'gff' => (
     is  => 'ro',
@@ -27,7 +27,7 @@ has 'gff' => (
 	my $self = shift;
 	return $self->gff_dsn;
     }
-);
+    );
 
 has 'sequence' => (
     is  => 'ro',
@@ -37,7 +37,7 @@ has 'sequence' => (
 	my $self = shift;
 	return $self ~~ 'Sequence';
     }
-);
+    );
 
 has 'method' => (
     is  => 'ro',
@@ -47,7 +47,7 @@ has 'method' => (
 	my $self = shift;
 	return $self ~~ 'Method';
     }
-);
+    );
 
 has 'genes' => (
     is  => 'ro',,
@@ -58,7 +58,7 @@ has 'genes' => (
 	my @genes  = grep {!$seen{$_}++} eval { $self ~~ '@Locus' };
 	return \@genes;
     }
-);
+    );
 
 has 'segments' => (
     is  => 'ro',
@@ -68,7 +68,7 @@ has 'segments' => (
 	my @seg = $self->_get_segments;
 	return \@seg;
     }
-);
+    );
 
 has 'pic_segment' => (
     is  => 'ro',
@@ -77,7 +77,7 @@ has 'pic_segment' => (
 	my $self = shift;
 	my $seq = $self->object;
 	return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
-    
+	
 	my $source = $self->species;
 	my $segment = $self->segments->[0];
 	
@@ -101,19 +101,19 @@ has 'pic_segment' => (
 	# This is slightly bizarre but expedient fix.
 	my $new_segment;
 	if (@segments > 1) {
-	foreach (@segments) {
-
-	    if ($_->start == $start && $_->stop == $stop) {
-	      $new_segment = $_;
-	      last;
+	    foreach (@segments) {
+		
+		if ($_->start == $start && $_->stop == $stop) {
+		    $new_segment = $_;
+		    last;
+		}
 	    }
-	  }
 	}
 	$new_segment ||= $segments[0];
 	$new_segment ||= $segment;
 	return  $new_segment;
-  }
-);
+    }
+    );
 
 
 has 'tracks' => (
@@ -124,7 +124,7 @@ has 'tracks' => (
 	my @type = $self->species =~ /elegans/ ? qw/NG CG CDS PG PCR SNP TcI MOS CLO/:qw//;
 	return \@type;
     }
-);
+    );
 
 sub _build_type {
     my $self = shift;
@@ -133,143 +133,197 @@ sub _build_type {
     # should rearrange in order of probability
     my $type;
     if ($s =~ /^cb\d+\.fpc\d+$/) {
-	$type = 'C. briggsae draft contig'
-	} elsif (is_gap($s)) {
-	    $type = 'gap in genomic sequence -- for accounting purposes';
-	} elsif (eval { $s->Genomic_canonical(0) }) {
-	    $type = 'genomic';
-	} elsif ($self->method eq 'Vancouver_fosmid') {
-	    $type = 'genomic -- fosmid';
-	} elsif (eval { $s->Pseudogene(0) }) {
-	    $type = 'pseudogene';
-	} elsif (eval { $s->RNA_Pseudogene(0) }) {
-	    $type = 'RNA_pseudogene';
-	} elsif (eval { $s->Locus }) {
-	    $type = 'confirmed gene';
-	} elsif (eval { $s->Coding }) {
-	    $type = 'predicted coding sequence';
-	} elsif ($s->get('cDNA')) {
-	    ($type) = $s->get('cDNA');
-	} elsif ($self->method eq 'EST_nematode') {
-	    $type   = 'non-Elegans nematode EST sequence';
-	} elsif (eval { $s->AC_number }) {
-	    $type = 'external sequence';
-	} elsif (eval{is_merged($s)}) {
-	    $type = 'merged sequence entry';
-	} elsif ($self->method eq 'NDB') {
-	    $type = 'GenBank/EMBL Entry';
-	    # This is going to need more robust processing to traverse object structure
-	} elsif (eval { $s->RNA} ) {
-	    $type = eval {$s->RNA} . ' ' . eval {$s->RNA->right};
-	} else {
-	    $type = eval {$s->Properties(1)};
-	}
+	$type = 'C. briggsae draft contig';
+    } elsif (is_gap($s)) {
+	$type = 'gap in genomic sequence -- for accounting purposes';
+    } elsif (eval { $s->Genomic_canonical(0) }) {
+	$type = 'genomic';
+    } elsif ($self->method eq 'Vancouver_fosmid') {
+	$type = 'genomic -- fosmid';
+    } elsif (eval { $s->Pseudogene(0) }) {
+	$type = 'pseudogene';
+    } elsif (eval { $s->RNA_Pseudogene(0) }) {
+	$type = 'RNA_pseudogene';
+    } elsif (eval { $s->Locus }) {
+	$type = 'confirmed gene';
+    } elsif (eval { $s->Coding }) {
+	$type = 'predicted coding sequence';
+    } elsif ($s->get('cDNA')) {
+	($type) = $s->get('cDNA');
+    } elsif ($self->method eq 'EST_nematode') {
+	$type   = 'non-Elegans nematode EST sequence';
+    } elsif (eval { $s->AC_number }) {
+	$type = 'external sequence';
+    } elsif (eval{is_merged($s)}) {
+	$type = 'merged sequence entry';
+    } elsif ($self->method eq 'NDB') {
+	$type = 'GenBank/EMBL Entry';
+	# This is going to need more robust processing to traverse object structure
+    } elsif (eval { $s->RNA} ) {
+	$type = eval {$s->RNA} . ' ' . eval {$s->RNA->right};
+    } else {
+	$type = eval {$s->Properties(1)};
+    }
     $type ||= 'unknown';
     return $type;
 }
 
-sub name {
-    my $self = shift;
-    my $ace  = $self->object;
-    my $data = { description => 'The name of the sequence',
-		 data        =>  { id    => "$ace",
-				   label => $ace->name,
-				   class => $ace->class
-		 },
-    };
-    return $data;
-}
- 
+
 ############################################################
 #
 # The Overview widget
 #
 ############################################################
-sub identity {
-   my $self = shift;
-   my $print = eval{ join(', ', @{$self->genes});};
-   my $iden = $self ~~ 'Brief_identification' ;
-   if($iden) {
-    if($print) {
-	$print.=", ".$iden;
-    }
-    else {
-      $print=$iden;
-    }
-   }
-   return unless $print;
-    my $data = { description => 'The identity of the sequence',
-		 data        => "Identified as ". $print. $self->type eq 'pseudogene' ? ' (pseudogene)' : '',
+sub name {
+    my $self   = shift;
+    my $object = $self->object;
+    my $data = { description => 'the name of the sequence',
+		 data        =>  { id    => "$object",
+				   label => $object->name,
+				   class => $object->class
+		 },
     };
     return $data;
 }
 
 sub description {
     my $self = shift;
-    my $title = eval {$self ~~ 'Title'} || return;
-    my $data = { description => 'The description of the sequence',
-		 data        => $title,
+    my $title = eval {$self ~~ 'Title'};
+    my $data = { description => 'the description of the sequence, if available',
+		 data        => $title || undef,
     };
-    return $data;    
+    return $data;
 }
 
 sub sequence_type {
     my $type = shift->type or return ;
-    my $data = { description => 'The Sequence type of the sequence',
+    my $data = { description => 'the general type of the sequence',
 		 data        => $type,
     };
     return $data;    
 }
 
-sub corresponding_gene {
+sub identity {
+    my $self  = shift;
+    my @identified_as   = eval { @{$self->genes} };
+    push @identified_as,$self ~~ 'Brief_identification' ;
+    
+    my $string = join(', ',@identified_as);
+    $string .= $self->type eq 'pseudogene' ? ' (pseudogene)' : '';
+    my $data = { description => 'the identity of the sequence',
+		 data        => $string || undef };
+    return $data;
+}
+
+# I think these really only applies to coding sequences
+sub status {
+    my $self   = shift;
+    my $object = $self->object;
+    my $status = $object->Prediction_status;
+    my $data = { description => 'prediction status (only applicable to coding sequences)',
+		 data        => $status || undef };
+    return $data;
+}
+
+sub method {
     my $self = shift;
-    my $gene = $self ~~ 'Gene';
-    my $bestname = $self->bestname($gene);
-    my $label;
-#     $label = ($self->method ne 'Coding_transcript' )
-# 		? "$bestname ($gene)" : $bestname if($gene && $self->method ne 'Genefinder');
-    $label = $bestname || $gene;
-    return unless $label;
-    my $data = { description => 'The Corresponding gene of the sequence',
-		 data        => { label => $label,
-				  id => $gene,
-				  class => 'gene',
-				},
+    return unless $self->method;
+    my $data = { description => 'the method used to describe the sequence',
+		 data        => $self->method,
     };
     return $data;    
 }
 
-sub corresponding_protein {
-    my $protein = shift ~~ 'Corresponding_protein' or return;
-    my $data = { description => 'The Corresponding protein of the sequence',
-		 data        => { label => $protein,
-				  id => $protein,
-				  class => 'protein',
-				},
+
+sub remarks {
+    my $self = shift;
+    my @remarks =map {ucfirst($_)} map { $self->object->get($_) } qw(Remark DB_remark);
+   
+    my $data = { description => 'The Remarks of the sequence',
+		 data        => \@remarks,
     };
+    return $data;    
+}
+
+
+
+############################################################
+#
+# Genomic Region / Related sequences
+#
+############################################################
+sub corresponding_gene {
+    my $self = shift;
+    my @genes = $self ~~ 'Gene';
+    @genes = map { $self->_pack_obj($_, $_->Public_name) } @genes;
+    my $data = { description => 'corresponding gene of the sequence, if known',
+		 data        => \@genes };
+    return $data;    
+}
+
+sub matching_transcript {
+    my $transcript = eval {shift ~~ 'Matching_transcript'};
+    my $data = { description => 'the matching transcript of the sequence',
+		 data        =>  $transcript || undef };
     return $data;    
 }
 
 sub matching_cds {
-    my $cds = shift ~~ 'Matching_CDS' or return;
-    my $data = { description => 'The Matching CDS of the sequence',
+    my $cds = shift ~~ 'Matching_CDS';
+    my $data = { description => 'the matching CDS of the sequence',
 		 data        => $cds,
     };
     return $data;    
 }
 
-sub matching_transcript {
-    my $transcript = eval {shift ~~ 'Matching_transcript'} or return;
-    my $data = { description => 'The Matching Transcript of the sequence',
-		 data        =>  $transcript ,
+sub corresponding_protein {
+    my $self  = shift;
+    my $object = $self->object;
+    my @cds    = $object->Matching_CDS;
+    my @proteins = map { $_->Corresponding_protein } @cds;
+    @proteins = map { $self->_pack_obj($_) } @proteins;
+    my $data = { description => 'the corresponding protein of the sequence',
+		 data        => \@proteins };
+    return $data; 
+}
+
+
+sub matching_cdnas {
+    my $self = shift;
+    my $object = $self->object;    
+    my @cDNA = $object->Matching_cDNA;
+    @cDNA = map { $self->_pack_obj($_) } @cDNA;    
+    my $data = { description => 'cDNAs that match the sequence',
+		 data        => \@cDNA,
+    };
+    return $data; 
+}
+
+
+# Eh?
+sub transcripts {
+    my $self = shift;
+    return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
+    return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
+    
+    my @transcripts = sort {$a cmp $b } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
+    return unless @transcripts;
+    my $data = { description => 'transcripts in this region of the sequence',
+		 data        => [map {$self->_pack_obj($_)}  @transcripts], #class Sequence
     };
     return $data;    
 }
+
+############################################################
+#
+# The Origin widget (origin, location, etc)
+#
+############################################################
 sub origin {
     my $self = shift;
     my $origin = $self ~~ 'From_Laboratory';
-    return unless $origin;
-    my $data = { description => 'The Origin of the sequence',
+#    $origin = $self->_pack_obj($origin) if $origin;
+    my $data = { description => 'The origin of the sequence',
 		 data        => { label => $origin->get(Mail=>1),
 				  id => $origin,
 				  class => 'laboratory'
@@ -283,34 +337,12 @@ sub available_from {
     my $data = { description => 'The Vancouver_fosmid source of the sequence',
 		 data        => { label => 'GeneService',
 				  class => 'Geneservice_fosmids',
-				},
-    };
-    return $data;    
-}
-
-sub sequence_method {
-    my $self = shift;
-    return unless $self->method;
-    my $data = { description => 'The Sequence method of the sequence',
-		 data        => $self->method,
+		 },
     };
     return $data;    
 }
 
 
-sub briggsae_orthologs {
-    my $self = shift;
-    my $object = $self->object;
-    my @briggsae;
-    if ($self->species =~ /briggsae/) {
-	@briggsae = map {$_->[0]} grep {$_->[1] =~ /\Q$object/} $self->gff->search_notes($object);
-    }
-    return unless  @briggsae;
-    my $data = { description => 'The Briggsae Orthologs of the sequence',
-		 data        => \@briggsae,
-    };
-    return $data;    
-}
 
 sub orfeome_assays {
     my $self = shift;
@@ -367,18 +399,7 @@ sub genetic_position {
     return $data;    
 }
 
-sub transcripts {
-    my $self = shift;
-    return unless ($self->object->Structure(0)  || $self->method eq 'Vancouver_fosmid') ;
-    return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
-    
-    my @transcripts = sort {$a cmp $b } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
-    return unless @transcripts;
-    my $data = { description => 'The Transcripts in this region of the sequence',
-		 data        => [map {$self->_pack_obj($_)}  @transcripts], #class Sequence
-    };
-    return $data;    
-}
+
 
 sub microarray_assays {
     my $self = shift;
@@ -409,15 +430,7 @@ sub transgene_constructs {
 # The Details widget
 #
 ############################################################
-sub remarks {
-    my $self = shift;
-    my @remarks =map {ucfirst($_)} map { $self->object->get($_) } qw(Remark DB_remark);
-   
-    my $data = { description => 'The Remarks of the sequence',
-		 data        => \@remarks,
-    };
-    return $data;    
-}
+
 =pod
 sub genomic_picture {
     my $self = shift;
@@ -835,22 +848,8 @@ sub print_homologies {
 
 }
 
-sub print_cdna {
-    my $self = shift;
-    my @cDNA = $self->object->get('Matching_cDNA');
-    return unless @cDNA;
-    my @array;
-    foreach (@cDNA) {
-      push @array, {   id => $_,
-		      label => $_,
-		      class=>'sequence',
-		    };
-    }
-     my $data = { description => 'The Matching cDNAs  of the sequence',
-		 data        => \@array,
-    };
-    return $data; 
-}
+
+
 sub print_feature {
     my $self = shift;
     my $s = $self->object;

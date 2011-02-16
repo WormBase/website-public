@@ -1,1 +1,24 @@
-downloads widget
+<div class="caveat-emptor">Note: see individual species pages for additional precomputed data sets, release notes, and references.</div>
+
+<table>
+   <tr>
+     <th>Species</th>
+     <th>NCBI</th>
+     <th></th>
+   </tr>
+  
+   [% FOREACH option IN c.config.species_list.keys.sort() %]
+      <tr>
+          <td><a href="/species/[% option %]" class="species">[% c.config.species_list.$option.genus %]
+                               [% c.config.species_list.$option.species %]
+               </a></td>
+          <td><a href="">[% c.config.species_list.$option.ncbi_taxonomy_id %]</a></td>
+          <td>
+	  <table width="100%">
+	      <tr><td width="50%">genome annotations</td><td><a href="">[% option %].gff3.gz</td>
+	      <tr><td width="50%">fasta sequence</td><td><a href="">[% option %].fasta.gz</td>
+	  </table>
+          </td>
+      </tr>
+   [% END %]
+</table>
