@@ -11,7 +11,7 @@ sub name {
 	$bestname = defined $bestname ?
 	  "Expression pattern for $bestname" : $self ~~ 'name';
 
-    my $data = {
+	return {
 		description => 'The object name of the paper',
 		data => {
 			id		=> $self ~~ 'name',
@@ -19,7 +19,6 @@ sub name {
 			class	=> $self ~~ 'class'
 		},
 	};
-    return $data;
 }
 
 
@@ -65,11 +64,10 @@ sub expressed_by {
 		$data{$_} =  $self->_pack_objects($val) if @$val;
 	}
 
-	my $data_pack = {
+	return {
 		description => 'Items that exhibit this expression pattern',
 		data		=> \%data,
 	};
-	return $data_pack;
 }
 
 sub expressed_in {
@@ -82,11 +80,10 @@ sub expressed_in {
 	); # TODO: the above is insufficient for cells and cell groups -- they will
 	   #       likely require special handling (pedigree stuff?)...
 
-	my $data_pack = {
+	return {
 		description => 'TODO',
 		data		=> \%data,
 	};
-	return $data_pack;
 }
 
 sub anatomy_ontology {
@@ -94,11 +91,10 @@ sub anatomy_ontology {
 
 	my $data = $self->_ao_table;
 
-	my $data_pack = {
+	return {
 		description => 'TODO',
 		data		=> $data,
 	};
-	return $data_pack;
 }
 
 sub experimental_details {
@@ -117,11 +113,10 @@ sub experimental_details {
 		$data{date} = $date;
 	}
 
-	my $data_pack = {
+	return {
 		description => 'Experimental details of the expression pattern',
 		data		=> \%data,
 	};
-	return $data_pack;
 }
 
 sub expression_image {
@@ -141,29 +136,7 @@ sub curated_images {
 	my ($self) = @_;
 	my $pictures = $self ~~ '@Picture';
 
-	my @data;
-	foreach (@$pictures) {
-		my $class = $self ~~ 'Remark' =~ /chronogram/ ?
-		  'expr_pattern_localizome' : 'expr_pattern';
-		my $file = $self->pre_compile->{$class}. '/' . $_;
-		next unless -e $file && !-z $file;
-
-		/^([^.]+)\.(.+)$/;
-		my ($name, $format) = ($1 || $self->object.'', $2 || '');
-
-		my $reference;
-		if (my $ref_paper = $self->wrap($_)->reference_paper->{data}) {
-			$reference = $self->wrap($ref_paper)->name->{data};
-		}
-
-		push @data, {
-			id => "$_",
-			name => $name,
-			class => $class,
-			format => $format,
-			reference => $reference,
-		};
-	}
+	my @data = grep defined, map {$_->image->{data}} $self->wrap($pictures);
 
 	return {
 		description => 'Curated images of the expression pattern',
