@@ -1,0 +1,31 @@
+[% # This generic statement belongs at the start of every template %]
+[%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+	
+	[%## DATA TABLE FOR SUPERVISEES %]
+	[% WRAPPER $field_block title="Phenotype" key=phenotype %]
+		[% FOREACH link_data IN fields.phenotypes.data %]
+			[% tag2link(link_data)%]<br>
+		[% END %]	
+	[% END %]
+
+	<br><hr><br>
+
+	[%## DATA TABLE FOR SUPERVISEES %]
+	[% WRAPPER $field_block title="Phenotype not observed" key=phenotype %]
+		[% FOREACH link_data IN fields.phenotype_nots.data %]
+			[% tag2link(link_data)%]<br>
+		[% END %]	
+	[% END %]
+
+
+
+
+
+			[% ## declare row array %]
+			[% ## fulL_label = "r.label(r.short_name)" %]
+			[% ## link_data = {
+				#	'id' => r.id
+				#	'label' => full_label
+				#	'class' => r.class
+				#		}  %]
