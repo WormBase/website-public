@@ -10,7 +10,7 @@
     [% title = widget_name FILTER ucfirst %]
     [% w = { id = widget_name
              title = title
-             href =  c.uri_for('/species','summary',widget_name)
+             href =  c.uri_for('/species','guide','component',widget_name)
              type = ''
             };
     %]

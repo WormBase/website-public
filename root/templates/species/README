@@ -1,0 +1,12 @@
+The templates in this directory create species
+guide.
+
+Actions in: W::W::Controller::Species
+
+/species/guide         -> species_summary-all.tt2
+/species/guide/SPECIES -> species_summary-individual.tt2
+
+Widgets are under the "component" URL space:
+
+/species/guide/component/overview         -> summary/overview.tt2
+/species/guide/component/SPECIES/overview -> SPECIES/overview.tt2
