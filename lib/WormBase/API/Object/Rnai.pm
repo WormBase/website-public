@@ -299,7 +299,7 @@ sub phenotypes {
 	my ($self) = @_;
 
 	my @data = map {$self->_pack_obj($_, scalar $_->Primary_name)}
-	               @{$self ~~ 'Phenotype'};
+	               @{$self ~~ '@Phenotype'};
 
 	return {
 		description => 'notes',
@@ -312,7 +312,7 @@ sub phenotype_nots {
 	my ($self) = @_;
 
 	my @data = map {$self->_pack_obj($_, scalar $_->Primary_name)}
-	               @{$self ~~ 'Phenotype_not_observed'};
+	               @{$self ~~ '@Phenotype_not_observed'};
 
 	return {
 		description => 'notes',
