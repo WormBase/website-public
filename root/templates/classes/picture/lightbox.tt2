@@ -1,13 +1,20 @@
 [% # This generic statement belongs at the start of every template %]
+[% WRAPPER boilerplate/html # need the CSS %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title='name' key='name'-%]
-   [% fields.name.data.label %]
-[% END %]
+[% 
+   img = fields.image.data 
+   img_loc = '/draw/' _ img.format _ '?class=' _ img.class _ '&id=' _  img.name
+%]
 
-[% WRAPPER $field_block title='description' key='description'-%]
-   [% fields.description.data %]
-[% END %]
+<h1>[% fields.name.data.label %]</h1>
+
+<div style="float:left;width:35%;">
+<div>
+<a href="[% img_loc %]" target="_blank"><img src="[% img_loc %]" style="max-width:100%"></a><br>
+<span style="font-size:small;">Click on the image to see the enlarged version.</span>
+</div>
+
 
 [% WRAPPER $field_block title='cropped_from' key='cropped_from'-%]
    [% fields.cropped_from.data %]
@@ -25,9 +32,26 @@
    [% fields.remarks.data %]
 [% END %]
 
-[% WRAPPER $field_block title='depicts' key='depicts'-%]
-   [% fields.depicts.data %]
+</div>
+<div style="margin-left:40%;">
+<p>
+[% IF fields.description.data %]
+   [% fields.description.data %]
+[% ELSE %]
+   No description.
 [% END %]
+</p>
+
+<b>Anatomical features</b>: Not implemented yet<br><br>
+
+<b>Depicts</b>:
+<ul>
+[% FOREACH type IN keys fields.depicts.data %]
+   <li>[% pluralize(type, fields.depicts.data.$type.size) | ucfirst %]: [%tag2linkAll(fields.depicts.data.$type)%]</li>
+[% END %]
+</ul>
+
+</div>
 
 [% WRAPPER $field_block title='reference_paper' key='reference_paper'-%]
    [% fields.reference_paper.data %]
@@ -37,3 +61,4 @@
    [% fields.contact.data %]
 [% END %]
 
+[% END %]

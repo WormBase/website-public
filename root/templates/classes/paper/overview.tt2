@@ -23,12 +23,12 @@
 	   classic_url = classic_base _ get_url(fields.name.data.class, fields.name.data.id, 1)
 	   title = fields.title.data
     %]
-	[% IF fields.pmid %]
+	[% IF fields.pmid.data %]
 	   [% WRAPPER $field_block title="PMID"-%]
 	   	  [% external_link('ncbi_pubmed', fields.pmid.data, fields.pmid.data) %]
 	   [% END %]
 	[% END %]
-	[% IF fields.doi %]
+	[% IF fields.doi.data %]
 	   [% WRAPPER $field_block title="DOI"-%]
 	   	  [% external_link($DOI _ fields.doi.data, fields.doi.data, fields.doi.data) %]
 	   [% END %]
@@ -55,29 +55,29 @@
 		[% apa_persons(fields.editors.data) %] (Eds.).
 	[% END %]
 
-	([% IF fields.year; fields.year.data; ELSE; 'n.d.'; END %]).
+	([% fields.year.data || 'n.d.' %]).
 
 	[% is_wormbook_paper = fields.is_wormbook_paper.data %]
 
 	[% IF fields.publication_type.data.grep('Book').size || is_wormbook_paper %]
-	   [% IF fields.journal || is_wormbook_paper # if fields.journal present, then that's the book title %]
+	   [% IF fields.journal.data || is_wormbook_paper # if fields.journal present, then that's the book title %]
 		  [% fields.title.data %]. In
-		  [% IF authors.size > 0 && fields.editors %]
+		  [% IF authors.size > 0 && fields.editors.data %]
 			 [% apa_persons(fields.editors.data) %] ([% pluralize('Ed', fields.editors.data.size) %].),
 		  [% ELSIF is_wormbook_paper   # has editor%]
 			 [% fields.editors.data || 'The C. Elegans Community' %] (Ed.),
 		  [% END %]
 		  <i>[% fields.journal.data || 'WormBook' %]</i>[% IF fields.page ; ' (' _ fields.page.data  _ ')'; END %].
 	   [% ELSE     # no section specified... title is actually title of book %]
-		  <i>[% fields.title.data %]</i>[% IF fields.page ; ' (' _ fields.page.data _ ')'; END %].
+		  <i>[% fields.title.data %]</i>[% IF fields.page.data ; ' (' _ fields.page.data _ ')'; END %].
 	   [% END %]
-	   [% IF fields.publisher; fields.publisher.data _ '.'; END %]
+	   [% IF fields.publisher.data; fields.publisher.data _ '.'; END %]
 	[% ELSIF fields.publication_type.data.grep('^Meeting_abstract$').size %]
 	   [% fields.title.data || 'Abstract' %]
 
 	   presented in
 
-	   [% IF fields.journal %]
+	   [% IF fields.journal.data %]
 		  <i>[% fields.journal.data %]</i>.
 	   [% ELSE %]
 		  a meeting.
@@ -86,23 +86,23 @@
 	   [% fields.title.data %].
 	   [% IF fields.journal || fields.publication_type.data.grep('^Gazette_article$').size %]
 		  <i>[% fields.journal.data || 'Worm Breeder\'s Gazette' %]<!-- nospace
-		  -->[% IF fields.volume %], [% fields.volume.data %][% END %]</i><!-- nospace
-		  -->[% IF fields.page %], [% fields.page.data %][% END %].
+		  -->[% IF fields.volume.data %], [% fields.volume.data %][% END %]</i><!-- nospace
+		  -->[% IF fields.page.data %], [% fields.page.data %][% END %].
 	   [% END %]
 	[% END %]
 
-	[% IF fields.doi %]
+	[% IF fields.doi.data %]
 	   [% external_link($DOI _ fields.doi.data, 'doi:' _ fields.doi.data) %]
 	[% END %]
 
 	<p>
-	[% IF fields.abstract %]
+	[% IF fields.abstract.data %]
 	   [% markup(fields.abstract.data) %]
-	   [% IF fields.remarks %]
+	   [% IF fields.remarks.data %]
 		  <br><br>[% pluralize("Remark", fields.remarks.data.size) %]:
 		  [% markup(fields.remarks.data.join('<br>')) %]
 	   [% END %]
-	[% ELSIF fields.remarks %]
+	[% ELSIF fields.remarks.data %]
 	   [% markup(fields.remarks.data.join('<br>')) %]
 	[% ELSE %]
 	   Abstract unavailable.
@@ -113,11 +113,11 @@
 	   <p><b>Authors:</b> [% authors.join(', ') %]</p>
 	[% END %]
 
-	[% IF fields.affiliation %]
+	[% IF fields.affiliation.data %]
 	   <p><b>[% pluralize('Affiliation', fields.affiliation.data.size) %]</b>:<br>- [% fields.affiliation.data.join('<br>- ') %]</p>
 	[% END %]
 
-	[% IF fields.keywords %]
+	[% IF fields.keywords.data %]
 	   [% keywords = [] %]
 	   [% FOREACH key IN fields.keywords.data.keys %]
 		  [% keywords.push(tag2link(fields.keywords.data.$key)) %]

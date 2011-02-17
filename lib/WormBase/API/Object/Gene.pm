@@ -754,42 +754,35 @@ sub rnai {
 }
 
 sub _print_rnai_details_table {
-
 	my ($self, $rnai_details_ar, $phene_id2name_hr) = @_;
 	my @array;
 	foreach my $rnai_detail (@$rnai_details_ar) {
-	
+
 		my ($rnaix,$phenes,$genotype,$ref) = split /\|/,$rnai_detail;
 		my @phenes = split /\&/, $phenes;
 		my $ref_obj = $self->ace_dsn->fetch(-class=>'Paper', -name=>$ref);
 		my $paper = $self->wrap($ref_obj);
-		my $formated_ref = $paper->authors->{data}[0]->{label};	
+		my $citation_hash = $paper->intext_citation->{data};
+		my $formatted_ref = $citation_hash ? substr $citation_hash->{citation}, 1, -1 : undef ;
 
-		my @phenotype_set;
-		my @row;
+		my @phenotype_set = map {
+			class => 'phenotype',
+			id => $_,
+			label => $$phene_id2name_hr{$_},
+		}, @phenes;
 
-		foreach my $phene (@phenes) {
-			push @phenotype_set,{  class=>'phenotype',
-					      id=>$phene,
-					    label=>$$phene_id2name_hr{$phene},
-					    };
-		
-		}
-		
-		 
-		 
-		push @array, {rnai=> {  class=>'rnai',
-					      id=>$rnaix,
-					    label=>"$rnaix"
-						},
-			      phenotype=>\@phenotype_set,
-			      genotype=>$genotype,
-			      cite=>$self->_pack_obj($ref_obj,"$formated_ref et al."),
-			};
-		
+		push @array, {
+			rnai	  => {
+				class => 'RNAi',
+				id	  => $rnaix,
+				label => $rnaix,
+			},
+			phenotype => \@phenotype_set,
+			genotype  => $genotype,
+			cite	  => $self->_pack_obj($ref_obj,$formatted_ref),
+		};
 	}
-	
-	 
+
 	return \@array;
 }
 
