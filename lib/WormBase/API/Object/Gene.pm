@@ -233,10 +233,13 @@ sub also_refers_to {
     my $locus  = $object->CGC_name;
 
     # Save other names that don't correspond to the current object.
-    my @other_names_for = map { $self->_pack_obj($_) } grep { ! /$object/ } $locus->Other_name_for;
-    my $data =  { description => 'other genes that this locus name may refer to',
-		  data        => \@other_names_for };
-    return $data;
+    my @other_names_for = $locus ? map { $self->_pack_obj($_) }
+	                      grep { ! /$object/ } $locus->Other_name_for : ();
+
+    return {
+		description => 'other genes that this locus name may refer to',
+		data        => @other_names_for ? \@other_names_for : undef,
+	};
 }
 
 
