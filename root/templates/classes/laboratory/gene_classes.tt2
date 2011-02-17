@@ -1,0 +1,32 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+	[% WRAPPER $field_block title="Gene Classes"-%] 
+            	[% ## set counter and number of columns %]
+            	[% n = 1 %]
+            	[% cols = 5 %]
+            	
+            	[% ## start table %]
+            	<table cellpadding = "3">
+            		[% FOREACH gc IN fields.gene_classes.data %]
+            			[% IF n == 1 %]
+							<tr><td>
+								[% tag2link(gc)%]
+							</td>           			
+            				[% n = n + 1 %]
+            			
+            			[% ELSIF n == cols %]
+							<td>
+								[% tag2link(gc)%]
+							</td></tr>            				
+            				[% n = 1 %]
+            			[% ELSE %]
+							<td>
+								[% tag2link(gc)%]
+							</td>
+							[% n = n + 1 %]
+            			[% END %]
+            		[% END %]
+            	</table>
+   [% END %]
+
