@@ -209,7 +209,7 @@ __PACKAGE__->config->{'View::JSON'} = {
 # What type of installation are we: development | mirror | local | production ?
 # Unfortunately, we set it here instead of in
 # our configuration file since it isn't loaded until application setup.
-__PACKAGE__->config->{installation_type} = 'production';
+__PACKAGE__->config->{installation_type} = 'development';
 
 
 ##################################################

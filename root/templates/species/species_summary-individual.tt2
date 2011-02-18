@@ -8,7 +8,7 @@ This is the individual species summary page.
   [% widgets = [] %]
   [%# Establish my list of widgets %]
   [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
-  [% widget_list = ['overview', 'isolation', 'downloads', 'key_papers', 'related_sites'] %]
+  [% widget_list = ['overview', 'isolation', 'downloads', 'key_papers', 'resources'] %]
   [% FOREACH widget_name IN widget_list -%]
     [% USE String(widget_name.replace('_', ' ')) %]
     [% w = { id = widget_name
