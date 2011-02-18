@@ -10,244 +10,126 @@ extends 'WormBase::API::Object';
 ################
 
 sub name {
-
-	my $self = shift;
+	my ($self) = @_;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
 
-	#### data pull and packaging
-
-	my $historical_name = $object->History_name || $object;
-	
-
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$historical_name",
-		'Class' => 'RNAi'
+	return {
+		description => 'notes',
+		data		=> {
+			id	  => "$object",
+			label => $object->History_name || "$object",
+			class => 'RNAi',
+		},
 	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
 }
 
 sub id {
+	my ($self) = @_;
+	my $object = $self->object;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$object",
-		'Class' => 'RNAi'
+	return {
+		description => 'notes',
+		data => {
+			id => "$object",
+			label => "$object",
+			class => 'RNAi',
+		},
 	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
 }
 
-
 sub laboratory {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	my $lab = $object->Laboratory;
-	
-	$data_pack = {
-	
-		'id' => "$lab" ,
-		'label' => "$lab",
-		'class' => 'Laboratory'
+	return {
+		description => 'notes',
+		data => $self->_pack_obj($self ~~ 'Laboratory'),
 	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
 }
 
 sub targets {
-
-	my $self = shift;
-    my $object = $self->object;
+	my ($self) = @_;
 	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-	my $genes;
-	
-	#### data pull and packaging
-	
-	my $targets_hr = _classify_targets($object);
+
+	my $targets_hr = _classify_targets($self->object);
 
 	foreach my $target_type ('Primary targets','Secondary targets') {
-		
-		$genes = eval { $targets_hr->{$target_type}};
-		$data_pack{$target_type} = $genes;
-		
-#		my @gene_info;
-#		foreach my $gene (@$genes) {
-#		
-#			#my $class;
-#			#$class = eval {$gene->Class;};
-#			my $label = $gene->Public_name;
-#			
-#			push @gene_info, {
-#			
-#							'id' => "$gene",
-#							'label' => "$label"
-#							#'class' => "$class"
-#						};
-#		}
-#	
-#		$data_pack{$target_type} = \@gene_info;
+		my $genes = eval { $targets_hr->{$target_type}};
+		$data{$target_type} = $genes; # are the key,value pair important? otherwise omit...
   	}
 
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => %data || undef,
+	};
 }
 
 sub identification {
-
-	my $self = shift;
+	my ($self) = @_;
     my $exp = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
 
-	#### data pull and packaging
-	
-	my $targets_hr;
-	my $history_name;
-	my @genes;
-	my %targets;	
-	my @reagents;
-	my $sequence;
-	my $assay;
-	
-	$targets_hr = _classify_targets($exp);
-	#$history_name = $exp->History_name || $exp;
-	@reagents = $exp->PCR_product;
-	$sequence = $exp->Sequence_info->right	;
-	$assay = ($exp->PCR_product) ? 'PCR product' : 'Sequence';
+	my $targets_hr = _classify_targets($exp);
+	my @reagents = $exp->PCR_product;
+	my $sequence = $exp->Sequence_info->right;
+	my $assay = ($exp->PCR_product) ? 'PCR product' : 'Sequence';
 
+	my %targets;
 	foreach my $target_type ('Primary targets','Secondary targets') {
-
-		@genes = eval { @{$targets_hr->{$target_type}}};
-		$targets{$target_type} = \@genes;
+		$targets{$target_type} = eval {$targets_hr->{$target_type}};
   	}
 
-	%data_pack = (
-					'ace_id' => $exp,
-					'class'  => 'RNAi',
-					'targets' => \%targets,
-					'reagents' => \@reagents,
-					'sequence' => $sequence,
-					'assay' => $assay
-				);
-	####
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data		=> {
+			ace_id	 => $exp,
+			class	 => 'RNAi',
+			targets	 => \%targets,
+			reagents => \@reagents,
+			sequence => $sequence,
+			assay	 => $assay,
+		},
+	};
 }
 
 ## development notes
 
 sub history_name {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->History_name || $object;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => $self ~~ 'History_name' || $self->object,
+	};
 }
-
-
 
 ################
 ## SOURCE
 ################
 
 sub remarks {
+	my ($self) = @_;
+	my $remarks = $self ~~ '@Remark';
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	@data_pack = $object->Remark;
-
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => @$remarks ? $remarks : undef,
+	};
 }
 
 #### test
 
 sub laboratories {
+	my ($self) = @_;
+	my $labs = $self ~~ '@Laboratory';
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	@data_pack = $object->Laboratory;
-
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => @$labs ? $labs : undef,
+	};
 }
 
-sub laboratory_details {
-
-	my $self = shift;
+sub laboratory_details { # TODO ???
+	my ($self) = @_;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
@@ -297,194 +179,84 @@ sub laboratory_details {
 	#  }
 	#  
 	#  SubSection('Remarks',@remark);
-	
+
 	####
 
 	$data{'data'} = \%data_pack;
 	$data{'description'} = $desc;
 	return \%data;
 }
-
-
 
 ################
 ## EXPERIMENTAL CONDITIONS
 ################
 
-
-
 sub species {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	my $species = $object->Species;
-	my $species_name = $species->Common_name;
-
-	$data_pack = {
-	
-		'id' =>  "$species",
-		'label' => "$species_name",
-		'class' => 'Species'
+	return {
+		description => 'notes',
+		data		=> $self->_pack_obj($self ~~ 'Species', $self ~~ 'Common_name'),
 	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
 }
 
 sub genotype {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Genotype;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data		=> $self ~~ 'Genotype',
+	};
 }
 
 sub strain {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-	my $strain;
-	
-	#### data pull and packaging
-	
-	$strain = eval {$object->Strain;}; 
-
-	%data_pack = (
-		'id' => "$strain",
-		'label' => "$strain",
-		'Class' => 'Strain'
-	);
-
-	####
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+	return {
+		description => 'notes',
+		data		=> $self->_pack_obj($self ~~ 'Strain'),
+	};
 }
 
 sub interactions {
+	my ($self) = @_;
+	my @data = map {$self->_pack_obj($_)} @{$self ~~ '@Interaction'};
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	my @interactions = $object->Interaction;
-
-	#### data pull and packaging
-
-	foreach my $interaction (@interactions) {
-	
-		push @data_pack, {
-		
-			'id' => "$interaction",
-			'label' => "$interaction",
-			'class' => 'Interaction'
-		}	
-	}
-
-	####
-	
-	$data{'data'} = \@interactions; ## @data_pack
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => @data ? \@data : undef,
+	};
 }
 
 sub treatment {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Treatment;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => $self ~~ 'Treatment',
+	};
 }
 
 sub life_stage {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	my $life_stage = $object->Life_stage;
-	my $life_stage_id = $life_stage;
-	
-	$data_pack = {
-	
-		'id' => "$life_stage",
-		'label' => "$life_stage",
-		'Class' => 'Life_stage'
+    return {
+		description => 'notes',
+		data => $self->_pack_obj($self ~~ 'Life_stage'),
 	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
 }
 
 sub delivered_by {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Delivered_by;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my ($self) = @_;
+	return {
+		description => 'notes',
+		data => $self ~~ 'Delivered_by',
+	};
 }
 
 #sub experimental_conditions {
 #
-#	my $self = shift;
+#	my ($self) = @_;
 #    my $exp = $self->object;
 #	my %data;
 #	my $desc = 'notes';
@@ -519,75 +291,33 @@ sub delivered_by {
 #	return \%data;
 #}
 
-
 ###############
 ## PHENOTYPES
 ###############
 
 sub phenotypes {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
+	my @data = map {$self->_pack_obj($_, scalar $_->Primary_name)}
+	               @{$self ~~ '@Phenotype'};
 
-	#### data pull and packaging
-
-	my @phenotypes = $object->Phenotype;
-	
-
-	foreach my $phenotype (@phenotypes) {
-		
-		my $phenotype_name = $phenotype->Primary_name;
-		my $short_name = $phenotype->Short_name;
-		
-		push @data_pack, {
-									'id' => "$phenotype",
-									'class' => 'Phenotype',
-									'label' => "$phenotype_name" 
-									
-								}; #,'short_name' => "$short_name"
-	}
-
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => @data ? \@data : undef,
+	};
 }
 
 
 sub phenotype_nots {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
+	my @data = map {$self->_pack_obj($_, scalar $_->Primary_name)}
+	               @{$self ~~ '@Phenotype_not_observed'};
 
-	#### data pull and packaging
-
-	my @phenotypes = $object->Phenotype_not_observed;
-
-	foreach my $phenotype (@phenotypes) {
-		
-		my $phenotype_name = $phenotype->Primary_name;
-		my $short_name = $phenotype->Short_name;
-		
-		push @data_pack, {
-									'id' => "$phenotype",
-									'class' => 'Phenotype',
-									'label' => "$phenotype_name"
-									
-								};#'short_name' => "$short_name"
-	}
-
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => @data ? \@data : undef,
+	};
 }
 
 
@@ -596,9 +326,8 @@ sub phenotype_nots {
 ## MOVIES AND IMAGES
 ###############
 
-sub movies {
-
-	my $self = shift;
+sub movies { # TODO ???
+	my ($self) = @_;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
@@ -621,16 +350,15 @@ sub movies {
 ###############
 
 
-sub genomic_environs {
-
-	my $self = shift;
+sub genomic_environs { # TODO ???
+	my ($self) = @_;
     my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
 	my %data_pack;
 
 	#### data pull and packaging
-	
+
 	## work with XS to get precise details of data needed for images
 
 	####
@@ -646,56 +374,46 @@ sub genomic_environs {
 ## NOTES
 ###############
 
-sub display_notes{
+sub display_notes {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = 'Primary targets
+	my $data = 'Primary targets
 
 	Primary targets have sequence identity to the RNAi probe of at least
 	95% over a stretch of at least 100 nucleotides, identified using a
 	combination of BLAST and BLAT algorithms.  These are usually the
 	intended target genes of an RNAi experiment.
-	
+
 	Secondary targets
-	
+
 	Secondary targets have between 80 and 94.99% sequence identity over a
 	stretch of at least 200 nucleotides to the RNAi probe. Targets (and
 	overlapping genes) that satisfy these criteria may or may not be
 	susceptible to an RNAi effect with the given probe and represent
 	secondary (unintended) genomic targets of an RNAi experiment.';
 
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		description => 'notes',
+		data => $data,
+	};
 }
+
 ###############
 ## INTERNAL
 ###############
 
 sub _classify_targets {
-
   	my $exp = shift;
   	my %seen;
   	my %categories;
+
 	my @genes = grep { !$seen{$_->Molecular_name}++ } $exp->Gene;
-  
-  	push (@genes,grep {!$seen{$_}++} $exp->Predicted_gene);
+  	push @genes, grep { !$seen{$_}++ } $exp->Predicted_gene;
 
   	foreach my $gene (@genes) {
-  	
     	my @types = $gene->col;
-    
+
     	foreach (@types) {
-    
 			my ($remark) = $_->col;
 			my $status = ($remark =~ /primary/) ? 'Primary targets' : 'Secondary targets';
 			push @{$categories{$status}},$gene;
