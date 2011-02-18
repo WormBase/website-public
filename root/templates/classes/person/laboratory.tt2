@@ -1,19 +1,21 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Strain Designation"-%] 
-            [% tag2link(fields.lab_id.data) %] 
-            [% ## fields.allele_designation.data %]
-   [% END %]
+[% WRAPPER $field_block title="Lab affiliation" key="laboratory" %] 
+      [% tag2link(fields.laboratory.data) %] 
+         [% IF fields.lab_representative.data ; " (" ; tag2link(fields.lab_representative.data); ")" ; END; %]
+[% END %]
 
+[% WRAPPER $field_block title="Strain designation" key="strain_designation" -%] 
+      [% tag2link(fields.strain_designation.data) %] 
+[% END %]
 
- [% WRAPPER $field_block title="Allele Designation"-%] 
- 	[% fields.allele_designation.data %]
- [% END %]
- 
-  [% WRAPPER $field_block title="Gene Classes"-%]
-            
+[% WRAPPER $field_block title="Allele designation" key="allele_designation" -%] 
+      [% fields.allele_designation.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Gene classes" key="gene_classes"-%]
      [% FOREACH gene_class IN fields.gene_classes.data %]
-     	[% tag2link(gene_class) %] &nbsp;
+         [% tag2link(gene_class) %] &nbsp;
      [% END %]
-  [% END %]
+[% END %]

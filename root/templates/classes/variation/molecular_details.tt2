@@ -41,15 +41,15 @@
        [% END %]
    [% END %]
 
-   <!-- flanking sequences OFF: 2010.06
-   [%# WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences" %]
+   <!-- flanking sequences OFF: 2010.06 -->
+   [% WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences" %]
       <div class="sequence">
           <span class="inline-sequence">
            5' flank -- [% fields.flanking_sequences.data.left_flank %]  &nbsp; [% fields.flanking_sequences.data.right_flank %] -- 3' flank
           </span>           
      </div>
-   [%# END %]
-   -->
+   [% END %]
+
 
    [% WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products" %]
        [% object_list(fields.flanking_pcr_products.data) %]
