@@ -32,7 +32,7 @@
 				[% ## enter data in row %]
 				[% row.push(val) %]
 	   
-			[% #  END FOREACH o IN order  %]  	
+			[% #  END FOREACH o IN order  %]
 			[% END %]
 		
 		
