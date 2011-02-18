@@ -129,7 +129,7 @@ sub genes {
   my $object = $self->object;
   my %data;
   my $desc = 'notes';
-  my %data_pack;
+  my @data_pack; ## %data_pack
 
   #### data pull and packaging
 	
@@ -141,13 +141,17 @@ sub genes {
 		foreach my $gene (@genes) {
 		
 			my ($evidence_code, $evidence_details) = get_GO_evidence($object,$gene);
-			$data_pack{$gene} = {
-								'ace_id' => $gene,
-								'common_name' => public_name($gene,'Gene'),
-								'class' => 'Gene',
+			my $gene_name = $gene->Public_name;
+			my $gene_data = {
+								'gene' => {
+									'ace_id' => "$gene",
+									'common_name' => "$gene_name",
+									'class' => 'Gene'
+								},
 								'evidence_code' => $evidence_code,
 								'evidence_details' => $evidence_details
 								};
+			push @data_pack, $gene_data;				
 		}
 	}
  
@@ -156,7 +160,7 @@ sub genes {
 
   ####
 
-  $data{'data'} = \%data_pack;
+  $data{'data'} = \@data_pack;
   $data{'description'} = $desc;
   return \%data;
 }
@@ -167,7 +171,7 @@ sub cds {
   my $object = $self->object;
   my %data;
   my $desc = 'notes';
-  my %data_pack;
+  my @data_pack;
 
   #### data pull and packaging
 	
@@ -176,19 +180,22 @@ sub cds {
 	foreach my $gene (@genes) {
 	
 			my ($evidence_code, $evidence_details) = get_GO_evidence($object,$gene);		
-			$data_pack{$gene} = {
-								'ace_id' => $gene,
-								'common_name' => public_name($gene,'CDS'),
-								'class' => 'CDS',
+			my $cds_data = {
+								'cds_info' => {
+									'id' => "$gene",
+									'label' => public_name($gene,'CDS'),
+									'class' => 'CDS'
+								},
+							
 								'evidence_code' => $evidence_code,
 								'evidence_details' => $evidence_details
-								};
+							};
 	}
 	
 
   ####
 
-  $data{'data'} = \%data_pack;
+  $data{'data'} = \@data_pack;
   $data{'description'} = $desc;
   return \%data;
   
@@ -202,12 +209,12 @@ sub genes_n_cds {
   my %mol;
   my %cgc;
   my $desc = 'notes';
-  my %data_pack;
+  my @data_pack;
 	my $DB = $self->ace_dsn();
 
   #### data pull and packaging
 	
-	my @objs;# = $term->$tag if $tag;
+my @objs;# = $term->$tag if $tag;
 
   push (@objs,$term->Gene,$term->CDS) unless @objs;
 
@@ -256,21 +263,26 @@ sub genes_n_cds {
 					
 			my ($evidence_code, $evidence_details) = get_GO_evidence($term,$gene);
 			
-			$data_pack{$gene} = (
-								'ace_id' => $gene,
-								'common_name' => public_name($gene,'Gene'),
-								'class' => 'Gene',
+			my $gene_data = {
+								'gene_info' => {
+									
+									'id' => "$gene",
+									'label' => public_name($gene,'Gene'),
+									'class' => 'Gene'
+								},
+								
 								'cgc_name' => $cgc_name,
 								'seq' => $seq,
 								'description' => $desc,
 								'evidence_code' => $evidence_code,
 								'evidence_details' => $evidence_details
-								);
+							};
+			push @data_pack, $gene_data;		
 	}
 	
   ####
 
-  $data{'data'} = \%data_pack;
+  $data{'data'} = \@data_pack;
   $data{'description'} = $desc;
   return \%data;
 }
@@ -282,7 +294,7 @@ sub phenotype {
   my $term = $self->object;
   my %data;
   my $desc = 'notes';
-  my %data_pack;
+  my @data_pack;
 
   #### data pull and packaging
 	my @phenotypes;
@@ -298,14 +310,17 @@ sub phenotype {
 		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$phenotype);
 		
 		
-		$data_pack{$phenotype} = {
-
-								'term' =>$phenotype_term,
-								'description' => $phenotype_desc,
-								'class' => 'Phenotype',
-								'evidence_code' => $evidence_code,
-								'evidence_details' => $evidence_details									
-								};
+		my $pheno_data = {
+							'phene_info' => {
+								'id' => "$phenotype",
+								'label' => "$phenotype_term",
+								'class' => 'Phenotype'
+							},
+							'description' => $phenotype_desc,
+							'evidence_code' => $evidence_code,
+							'evidence_details' => $evidence_details									
+						 };
+		push @data_pack, $pheno_data;			 
 	}
 	
  ####
@@ -322,7 +337,7 @@ sub motif {
   my $term = $self->object;
   my %data;
   my $desc = 'notes';
-  my %data_pack;
+  my @data_pack;
 
   #### data pull and packaging
 	my @motifs;
@@ -332,19 +347,26 @@ sub motif {
 	
 		my $motif_desc = $motif->Description;
 		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$motif);
-		$data_pack{$motif} = {
-								'term' =>$motif,
+		
+		my $motif_data = {
+								'motif_info' => {
+									'id' => "$motif",
+									'label' => "$motif",
+									'class' => 'Motif'
+								},
+								
 								'description' => $motif_desc,
-								'class' => 'Motif',
 								'evidence_code' => $evidence_code,
 								'evidence_details' => $evidence_details
 								};
+								
+		push @data_pack, $motif_data;
 	}
 	
 
  ####
 
-  $data{'data'} = \%data_pack;
+  $data{'data'} = \@data_pack;
   $data{'description'} = $desc;
   return \%data;
 }
@@ -384,7 +406,6 @@ sub motif {
   return \%data;
 }
   
-
 sub get_GO_evidence {
 
 	my ($term,$gene) = @_;
@@ -405,33 +426,7 @@ sub get_GO_evidence {
 	return ($evidence_code, $evidence_detail);
 }
 
- sub sequence {
 
-  my $self = shift;
-  my $tag = shift;
-  my $term = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my %data_pack;
-
-  #### data pull and packaging
-	my @motifs;
-	my @tag_data;
-	eval {@tag_data = $term->Sequence;};
-	
-	foreach my $tag_datum (@tag_data) {
-	
-		my $tag_datum_desc = $tag_datum->Description;
-		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$tag_datum);
-		$data_pack{$tag_datum} = {
-								'term' =>$tag_datum,
-								'description' => $tag_datum_desc,
-								'class' => $tag,
-								'evidence_code' => $evidence_code,
-								'evidence_details' => $evidence_details
-								};
-	}	
-}
 
 ### copied and pasted, need to get to work in Object.pm
 
