@@ -3,7 +3,8 @@
 <table>
    <tr>
      <th>Species</th>
-     <th>NCBI</th>
+     <th>FASTA</th>
+     <th>GFF</th>
      <th></th>
    </tr>
   
@@ -11,8 +12,8 @@
       <tr>
           <td><a href="/species/[% option %]" class="species">[% c.config.species_list.$option.genus %]
                                [% c.config.species_list.$option.species %]
-               </a></td>
-          <td><a href="">[% c.config.species_list.$option.ncbi_taxonomy_id %]</a></td>
+               </a>
+          </td>
           <td>
 	  <table width="100%">
 	      <tr><td width="50%">genome annotations</td><td><a href="">[% option %].gff3.gz</td>

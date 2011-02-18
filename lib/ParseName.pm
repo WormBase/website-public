@@ -59,7 +59,7 @@ sub _parse_name_person {
 }
 
 sub _parse_name {
-	($_) = @_; # for brevity
+	local ($_) = @_;  # for brevity
 	s/^[^A-Za-z]+//; s/[^A-Za-z.]+$//;
 	s/_/ /g; # underscores should be spaces
 	s/- +/-/g; # fix hyphenation
