@@ -184,7 +184,7 @@ sub web_page {
     my $address = $self->address_data;
     my $url = $address->{web_page};
     $url =~ s/HTTP\:\/\///;
-
+    
     my $data = { description => 'web address of the person',
 		 data        => $url || undef };
     return $data;   
@@ -213,10 +213,10 @@ sub possibly_publishes_as {
 sub laboratory {
     my $self   = shift;
     my $object = $self->object;
-       
+    
     my $lab   = $object->Laboratory;
     $lab = $self->_pack_obj($lab) if $lab;
-
+    
     my $data = { description => 'laboratory affiliation of the person',
 		 data        => $lab || undef};
     return $data;		     
@@ -226,14 +226,18 @@ sub laboratory {
 sub previous_laboratories {
     my $self   = shift;
     my $object = $self->object;
-       
+    
     my @labs  = $object->Old_laboratory;
-    @labs  = map { $self->_pack_obj($lab) @labs;
-
-
-
+    my @data;
+    foreach (@labs) {
+	my $representative = $_->Representative;
+	my $name = $representative->Standard_name; 
+	my $rep = $self->_pack_obj($representative,$name);
+	push @data,[ $self->_pack_obj($_),$rep ];
+    }
+       
     my $data = { description => 'previous laboratory affiliations',
-		 data        => $lab || undef};
+		 data        => (@data > 0) ? \@data : undef};
     return $data;		     
 }
 

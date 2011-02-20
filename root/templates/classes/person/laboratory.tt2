@@ -6,16 +6,23 @@
          [% IF fields.lab_representative.data ; " (" ; tag2link(fields.lab_representative.data); ")" ; END; %]
 [% END %]
 
-[% WRAPPER $field_block title="Strain designation" key="strain_designation" -%] 
+[% WRAPPER $subfield_block title="Strain designation" key="strain_designation" -%] 
       [% tag2link(fields.strain_designation.data) %] 
 [% END %]
 
-[% WRAPPER $field_block title="Allele designation" key="allele_designation" -%] 
+[% WRAPPER $subfield_block title="Allele designation" key="allele_designation" -%] 
       [% fields.allele_designation.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Gene classes" key="gene_classes"-%]
+[% WRAPPER $subfield_block title="Gene classes" key="gene_classes" -%]
      [% FOREACH gene_class IN fields.gene_classes.data %]
          [% tag2link(gene_class) %] &nbsp;
      [% END %]
+[% END %]
+
+
+[% WRAPPER $field_block title="Previous laboratories" key="previous_laboratories" %] 
+      [% FOREACH item IN fields.previous_laboratories.data %]
+         [% tag2link(item.0) %] ([% tag2link(item.1) %])
+      [% END %]
 [% END %]
