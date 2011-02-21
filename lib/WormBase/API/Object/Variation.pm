@@ -251,7 +251,7 @@ sub nucleotide_change {
 }
 
 sub flanking_sequences {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
