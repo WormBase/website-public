@@ -13,12 +13,12 @@ __PACKAGE__->config(
     'default' => 'text/x-yaml',
     'stash_key' => 'rest',
     'map' => {
-     'text/x-yaml' => 'YAML',,
-     'text/html'          => 'YAML::HTML',
-     'text/xml' => 'XML::Simple',
-     'application/json'   => 'JSON',
+	'text/x-yaml' => 'YAML',,
+	'text/html'          => 'YAML::HTML',
+	'text/xml' => 'XML::Simple',
+	'application/json'   => 'JSON',
     }
-);
+    );
 
 =head1 NAME
 
