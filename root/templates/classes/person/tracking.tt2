@@ -1,0 +1,14 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title="Status" key="status" %] 
+    [% fields.status.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Last verified" key="last_verified" %] 
+    [% fields.last_verified.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Possibly publishes as" key="possibly_publishes_as" %] 
+    [% fields.possibly_publishes_as.data.join(', ') %]
+[% END %]
