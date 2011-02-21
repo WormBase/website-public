@@ -21,7 +21,7 @@
 [% END %]
 
 
-[% WRAPPER $field_block title="Previous laboratories" key="previous_laboratories" %] 
+[% WRAPPER $field_block title="Previous affiliations" key="previous_laboratories" %] 
       [% FOREACH item IN fields.previous_laboratories.data %]
          [% tag2link(item.0) %] ([% tag2link(item.1) %])
       [% END %]
