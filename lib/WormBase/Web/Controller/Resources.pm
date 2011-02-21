@@ -56,6 +56,35 @@ sub advisory_board :Path("/resources/advisory_board") Args {
 }
 
 
+# The reagents pages
+sub reagents :Path("/resources/reagents") Args {
+    my ($self,$c, @args) = @_;
+    $c->stash->{section} = 'resources';
+
+    my $widget = shift @args;
+    if($widget){
+      $c->stash->{noboiler} = 1;
+      $c->stash->{template} = "resources/reagents/$widget.tt2";
+      $c->forward('WormBase::Web::View::TT');
+    }
+}
+
+
+# Nomenclature
+sub nomenclature :Path("/resources/nomenclature") Args {
+    my ($self,$c, @args) = @_;
+    $c->stash->{section} = 'resources';
+
+    my $widget = shift @args;
+    if($widget){
+      $c->stash->{noboiler} = 1;
+      $c->stash->{template} = "resources/nomenclature/$widget.tt2";
+      $c->forward('WormBase::Web::View::TT');
+    }
+}
+
+
+
 sub get_report {
     my ($self,$c,$class,$name) = @_;
     $c->stash->{section} = 'resources';

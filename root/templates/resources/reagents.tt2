@@ -1,16 +1,16 @@
-[% SET class    = 'nomenclature' %]
-  [% title = c.config.sections.resources.nomenclature.title  %]
+[% SET class    = 'reagents' %]
+  [% title = c.config.sections.resources.reagents.title  %]
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Contents" type="title"}) %]
 
-  [% FOREACH item IN c.config.sections.resources.nomenclature.widgets -%]
+  [% FOREACH item IN c.config.sections.resources.reagents.widgets -%]
     [% widget_symbolic = item.key %]
-    [% widget = c.config.sections.resources.nomenclature.widgets.$widget_symbolic %]
+    [% widget = c.config.sections.resources.reagents.widgets.$widget_symbolic %]
     [% t = widget.title FILTER ucfirst %]
     [% w = { id = widget.name
              title = t
-             href =  c.uri_for('/resources','nomenclature', widget.name)
+             href =  c.uri_for('/resources','reagents', widget.name)
              type = 'resources'
             };
     %]
@@ -29,5 +29,3 @@
   [% END %]
 
     </script>
-
-
