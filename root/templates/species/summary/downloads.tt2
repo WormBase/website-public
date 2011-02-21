@@ -1,4 +1,3 @@
-<div class="caveat-emptor">Note: see individual species pages for additional precomputed data sets, release notes, and references.</div>
 
 <table>
    <tr>
@@ -10,16 +9,14 @@
   
    [% FOREACH option IN c.config.species_list.keys.sort() %]
       <tr>
-          <td><a href="/species/[% option %]" class="species">[% c.config.species_list.$option.genus %]
+           <td><a href="/species/guide/[% option %]" class="species">[% c.config.species_list.$option.genus %]
                                [% c.config.species_list.$option.species %]
                </a>
-          </td>
-          <td>
-	  <table width="100%">
-	      <tr><td width="50%">genome annotations</td><td><a href="">[% option %].gff3.gz</td>
-	      <tr><td width="50%">fasta sequence</td><td><a href="">[% option %].fasta.gz</td>
-	  </table>
-          </td>
+           </td>
+           <td width="25%"><a href="">[% option %].fa.gz</td>
+	   <td width="25%"><a href="">[% option %].gff.gz</td>
       </tr>
    [% END %]
 </table>
+
+<div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on individual pages for each species.</div>

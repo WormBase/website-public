@@ -807,21 +807,26 @@ div.field-title>span{
 }
 
 div.field-content {
-  margin-left:9.5em;
-  width:auto;
+    margin-left:9.5em;
+    width:auto;
 }
 
 
 /* Subfields - structure mimics that of fields */
 div.subfield { 
-    clear:both;
-    margin-left:0em;
+      clear:left;
+      float:left;
+      line-height:1.2em;
+      padding:0.2em;
+      margin-left:4em;
 }
+
 div.subfield h6 {   
     float:left;
+/* position:relative; */
     width:10em;
     text-align:right;
-    margin-top:0em;   // Force top alignment with content even though we're an h element
+    margin-top:0em;   // Force top alignment with content even though we are an h element
 }
 
 div.subfield p {
@@ -829,16 +834,20 @@ div.subfield p {
 }
 
 div.subfield-title {
-	font-size    : 1em;
-/*     padding-bottom: 0.5em; */
-	height       : auto;	
-	}
+    font-size    : 1em;
+    /*     padding-bottom: 0.5em; */
+    height       : auto;	
+    float:left;
+    text-align:right;
+    padding-right:0.5em;
+    width:9em;
+}
 
 div.subfield .subfield-content {
-  margin-left:0.5em;
-  text-align:left;
-  width:auto;
-  overflow:hidden;
+    margin-left:9.5em;
+    text-align:left;
+    width:auto;
+/*  overflow:hidden; */
 }
 
 

@@ -97,13 +97,15 @@
   [% END %]
 [% END %]
 
-[% # adding print="always" to field wrapper will make the field print even if there is no data%]
+[%# options:
+   print="always" to print the field even if there is no data 
+%]
+
 [% BLOCK field_block %]
 
     <div class="field
 
     [% TRY; IF key.defined && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
-
 
 " id="[% title FILTER html %]">
          <div class="field-title">
