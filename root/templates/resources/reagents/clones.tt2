@@ -1,84 +1,282 @@
-Source: http://wiki.wormbase.org/index.php/Reagents
-
-== Clones  ==
-
-* C. elegans genomic [[Cosmids/YACs]] 
-* C. elegans [[Fosmids]]
-
-*C. briggsae genomic clones: [http://bacpac.chori.org/library.php?id=26 information] | [http://bacpac.chori.org/ordering_information.htm ordering] 
-*[http://www.its.caltech.edu/~wormbase/userguide/OtherResource/ObtainingReagents.html#ykest YK EST clones]
-
-== Libraries  ==
-
-*[http://www.lifesciences.sourcebioscience.com/clone-products/mirna--rnai-resources.aspx RNAi libraries (Source BioScience)]
-*[http://www.openbiosystems.com/GeneExpression/Non-Mammalian/Worm/CelegansORF-RNAi/ RNAi libraries (Open BioSystems)]
-*[http://www.openbiosystems.com/GeneExpression/Non-Mammalian/Worm/C_%20elegans%20ORFs/ Orfeome v1.1 (Open BioSystems)]
-*[http://www.openbiosystems.com/GeneExpression/Non-Mammalian/Worm/CelegansPromoters/ Promoterome (Open BioSystems)]
-*[http://www.openbiosystems.com/GeneExpression/Non-Mammalian/Worm/TranscriptionFactors/ Transcription Factor Clones (Open BioSystems)]
-
-== Constructs  ==
-
-*Fire vectors [ftp://ftp.wormbase.org/pub/wormbase/datasets/fire_vectors/ Full list] | [http://www.addgene.org/Andrew_Fire purchase (AddGene)]
 
 
 
-== Microarrays  ==
 
-*[http://www.affymetrix.com/products/arrays/specific/celegans.affx Affymetrix] 
-*[http://www.chem.agilent.com/Scripts/PDS.asp?lPage=29452 Agilent] 
-*[http://genome.wustl.edu/genome/celegans/microarray/ma_gen_info.cgi WUSTL]
+SEE ALSO:
 
+http://wiki.wormbase.org/index.php/Reagents
 
 
-__TOC__
-<center>
-== <span style="color: rgb(128, 0, 0);"><i>C. elegans</i> Cosmid and YAC Info. </span><br>  ==
-</center><u>
-===Ordering===
-</u>
-Please submit all requests for C.elegans genomic clones via this request form.
 
-[http://www.sanger.ac.uk/technology/clonerequests/ http://wormbase.sanger.ac.uk/wiki_pics/Clone_request_form.gif]
+<div id="resources">
 
-Details are then automatically forwarded to [mailto:archives@sanger.ac.uk Anne Angell].  Please do not send request directly to this address.
-<br>
-<br>
-<b><font color=red size=4>Important!</font></b><br>
-'''Please remember to include a [http://fedex.com/gb/account/ http://wormbase.sanger.ac.uk/wiki_pics/fedex.jpeg] <b>or</b> [http://www.dhl.co.uk/publish/gb/en/eshipping/open_a_dhl_account.high.html http://wormbase.sanger.ac.uk/wiki_pics/dhl.jpeg] Account number''' to which shipping cost can be charged. 
-<br>
-<br>
-<br><u>
-===Nomenclature===
-</u>
-There are seven different types of "Clone" objects in WormBase:
+<h2>Nomenclature</h2>
+<p>
+There are seven different types of "Clone" objects in WormBase. 
+Although WormBase does not provide clones many of these can be
+ ordered directly from independent sources.
+</p>
+<p>
+<table border="1">
+   <tr><th bgcolor="gray">Type</th>
+       <th bgcolor="gray">Nomenclature</th>
+   </tr>
+   <tr>
+      <td>Cosmid</td>
+      <td>A*, B*, C*, D*, F*,J*,K*,M*,R*,T*,W*,Z*</td>
+  </tr>
+  <tr>
+      <td>Fosmid</td>
+      <td>H* WRM*</td>
+  </tr>
+  <tr>
+      <td>YAC</td>
+      <td>Y*</td>
+  </tr>
+  <tr>
+      <td>cDNA</td>
+      <td>yk*, EC*, EB*, OST*, CK*, EF*, CEE*, CEM*, CES*, CB*, CN*, cm*</td>
+  </tr>
+  <tr>
+      <td>Plasmid: PCR clones</td>
+      <td>V*,EGAP*</td>
+  </tr>
+  <tr>
+      <td>Other</td>   
+      <td>telo clones, 1 BAC, plasmid</td>
+  </tr>
+</table>
+</p>
+
+<h2>Fosmids</h2>
+
+<h3>C. elegans fosmids from the Moerman library</h3>
+
+<p>
+<a href="http://www.lifesciences.sourcebioscience.com/">Source BioScience LifeSciences</a> is a leading provider of genomic services and products to the life sciences market. 
+</p>
+<p>
+They are the distributors of <a target="_blank" href="http://www.lifesciences.sourcebioscience.com/clone-products/genomic-dna-clones/c-elegans-fosmid-library-.aspx">Don Moerman's C.elegans fosmid library</a>.
+</p>
+<p>
+<a target="_blank" href="http://elegans.bcgsc.bc.ca/perl/fosmid/CloneSearch/">Search for your clone</a>. 
+</p>
+
+<b>Nomenclature</b>
+<p>
+<table border="1">
+<tr>
+<td>Example </td>
+<td>WRM prefix </td>
+<td>Plate No. </td>
+<td>Filter (a,b,c,d) </td>
+<td>Plate Position</td>
+</tr>
+<tr>
+<td>WRM069bF08</td>
+<td>WRM </td>
+<td>069 </td>
+<td>b </td>
+<td>F08</td>
+</tr>
+<tr>
+<td>WRM069cF08</td> 
+<td>WRM </td>
+<td>069 </td>
+<td>c </td>
+<td>F08</td>
+</tr>
+<tr>
+<td>WRM069dF08 </td>
+<td>WRM </td>
+<td>069</td>
+<td>d</td>
+<td>F08</td>
+</tr></table>
+</p>
 
 
-{| border="1" class="wikitable"
+<b>Library info</b>
+
+<table border="1">
 |-
-| bgcolor="gray" | Type 
-| bgcolor="gray" | Nomenclature
+| Library Details 
+| C. elegans Fosmid Library
 |-
-| Cosmid 
-| A*, B*, C*, D*, F*,J*,K*,M*,R*,T*,W*,Z*
+| Library Plate numbers 
+| 061-069 0610-0641 (41)
 |-
-| Fosmid 
-| H* WRM*<br>
+| Number of clones 
+| 12874 (verified) 15744 (total)
 |-
-| YAC 
-| Y*
+| [http://en.wikipedia.org/wiki/Microtiter_plate Plate Format] 
+| 384
 |-
-| cDNA 
-| yk*, EC*, EB*, OST*, CK*, EF*, CEE*, CEM*, CES*, CB*, CN*, cm*<br>
+| Source material 
+| [http://en.wikipedia.org/wiki/Nematode nematode] total organism
 |-
-| Plasmid: PCR clones 
-| V*,EGAP*
+| Strain 
+| N2
 |-
-| Other 
-| telo clones, 1 BAC, plasmid<br>
+| Vector 
+| [http://www.geneservice.co.uk/products/clones/datasheets/Celegans_Fos/vector.jsp pCC1FOS] (Epicentre)
+|-
+| Host 
+| maintained at low copy number until induced.
+|-
+| Average insert size 
+| 43.3kB
+|-
+| Cloning site 
+| &nbsp;?
+|-
+| Genomic coverage 
+| 5.74X (86.7% correct paired ends)<br>
+|-
+| Creator 
+| [http://www.zoology.ubc.ca/~alorch/homepage.php Don Moerman] et al
+|-
+| Stock center 
+| [http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp GeneService<br>]
 |}
 
-Most Cosmids, Fosmids, YACs can be requested from Sanger via the form at the top of the page,
 
+<h4>C. elegans fosmids from the Incyte Genomics Inc. fosmid library.</h4>
+
+<p>
+This is an old fosmid library that was lost for quite some time. 
+29 of these fosmids were used in the C. elegans sequencing project 
+to fill holes left in the cosmid assembly. 
+</p>
+
+<p>
+These clones can be requested from the Sanger Centre at the links listed below.
+</p>
+
+<p>
+<b>Nomenclature</b>
+
+<table border="1">
+<tr>
+<th>Example </th>
+<th>H prefix </th>
+<th>Plate No. </th>
+<th>Well pos.</th>
+</tr>
+<tr>
+<td>H27D07 </td>
+<td>H </td>
+<td>27 </td>
+<td>d07</td>
+</tr>
+<tr>
+<td>H30E23 </td>
+<td>H </td>
+<td>30 </td>
+<td>e23</td>
+</tr>
+</table>
+</p>
+
+<p>
+<b>Library info</b>
+
+Easy to Screen High-Density Filters, created 1 November 2000, sold by Incyte Genomics Inc.
+</p>
+
+<table border="1">
+<tr>
+<th>Library Details</th>
+<td>Fosmid C. elegans</td>
+</tr>
+<tr>
+<th>Library Plate numbers</th>
+<td>1-43, 1-5</td>
+</tr>
+<tr>
+<th>Number of clones </th>
+<td>16,512</td>
+</tr>
+<tr>
+<th><a target="_blank" href="http://en.wikipedia.org/wiki/Microtiter_plate"> Plate Format</a> </th>
+<td>384</td>
+</tr>
+<tr>
+<th>Source material 
+<td><a target="_blank" href="http://en.wikipedia.org/wiki/Nematode">nematode</> total organism</th></td>
+</tr>
+<tr>
+<th>Strain </th>
+<td>N2</td>
+</tr>
+<tr>
+<th>Vector </th>
+<td><a target="_blank" href="http://www.neb.com/nebecomm/tech_reference/restriction_enzymes/maps/pFOS1_map.pdf">pFOS1</a></td>
+</tr>
+<tr>
+<th>Host </th>
+<td>XL1 Blu MR</td>
+</tr>
+<tr>
+<th>Average insert size </th>
+<td>40 kb</td>
+</tr>
+<tr>
+<th>Cloning site </th>
+<td>BamHI</td>
+</tr>
+<tr>
+<th>Genomic coverage </th>
+<td>6.6x</td>
+</tr>
+<tr>
+<th>Creator</th>
+<td>Stephanie Chissoe</td>
+</tr>
+<tr>
+<th>Stock center </th>
+<td><a target="_blank" href="http://genome.wustl.edu/">G.S.C. St. Louis</td>
+</tr></table>
+
+
+
+
+<h3>YACs</h3>
+
+Specific YAC information can be found in these publications:
+
+[http://www.nature.com/doifinder/10.1038/335184a0 Nature. 1988 Sep 8;335(6186):184-6. Genome linking with yeast artificial chromosomes. Coulson A, Waterston R, Kiff J, Sulston J, Kohara Y.]
+
+[http://www.sciencemag.org/cgi/content/abstract/236/4803/806 science 1987 May 15;236(806-812) Cloning of large segments of exogenous DNA into yeast by means of artificial chromosome vectors.   DT Burke, GF Carle, and MV Olson]
+
+<b><font color=blue size=4>Note</font></b> When ordering YAC clones.<br>
+Suffixes appended to YAC names (e.g. Y73B3A, Y73B3B) indicate sequenced segments of the YAC that have been used to bridge gaps between finished Cosmids<br>
+<br>
+They do not exist as subclones so you will be sent the whole YAC.<br> 
+
+<center>
+http://wormbase.sanger.ac.uk/wiki_pics/yac.png
+</center>
+<br>
+
+
+
+
+
+
+
+<h3>Ordering Clones</h3>
+
+Most Cosmids, Fosmids, and YACs can be requested from The Wellcome Trust Sanger Centre via <a target="_blank" href=http://www.sanger.ac.uk/technology/clonerequests/">this web form</a>.
+
+Details are then automatically forwarded to [mailto:archives@sanger.ac.uk Anne Angell].  Please do not send request directly to this address.
+<b><font color=red size=4>Important!</font></b><br>
+'''Please remember to include a [http://fedex.com/gb/account/ http://wormbase.sanger.ac.uk/wiki_pics/fedex.jpeg] <b>or</b> [http://www.dhl.co.uk/publish/gb/en/eshipping/open_a_dhl_account.high.html http://wormbase.sanger.ac.uk/wiki_pics/dhl.jpeg] Account number''' to which shipping cost can be charged. 
+
+
+
+OTHER CLONES
+----------------
 cDNA (yk*) from Dr. Yuji Kohara. 
 
 The EGAP* plasmids can be obtained from MRC Geneservice. 
@@ -87,11 +285,25 @@ WRM [http://wiki.wormbase.org/index.php/Fosmids Vancouver_fosmid]
 
 '''The V* plasmids are no longer available.'''
 
-<br>
-<br>
-<br><u>
 
-===Vector Sequences===
+
+
+*C. briggsae genomic clones: [http://bacpac.chori.org/library.php?id=26 information] | [http://bacpac.chori.org/ordering_information.htm ordering] 
+*[http://www.its.caltech.edu/~wormbase/userguide/OtherResource/ObtainingReagents.html#ykest YK EST clones]
+
+
+
+
+
+
+
+
+<h2>Constructs</h2>
+
+*Fire vectors [ftp://ftp.wormbase.org/pub/wormbase/datasets/fire_vectors/ Full list] | [http://www.addgene.org/Andrew_Fire purchase (AddGene)]
+
+
+<h3>Vector Sequences</h3>
 </u>
 {| border="1" class="wikitable"
 | bgcolor="gray" | Clone series || bgcolor="gray" | Vector Sequence || bgcolor="gray" | Comment || bgcolor="gray" | Vector publication || bgcolor="gray" | NCBI/DB Accession
@@ -157,35 +369,17 @@ WRM [http://wiki.wormbase.org/index.php/Fosmids Vancouver_fosmid]
 | ZK 757 on || [ftp://ftp.sanger.ac.uk/pub/vector_sequences/lorist6.seq lorist6] || <i>Sau</i>3A1 partial, probe selected || [http://www.ncbi.nlm.nih.gov/pubmed/3038694 Gene.  1987;53(2-3):283-6.] || [http://www.ncbi.nlm.nih.gov/nuccore/X98450.1 X98450]
 |-
 | Y || [ftp://ftp.sanger.ac.uk/pub/vector_sequences/pYAC4.seq pYAC4] || || [http://www.ncbi.nlm.nih.gov/pubmed/8163163 Gene.  1994 Apr 8;141(1):125-7.] || [http://www.ncbi.nlm.nih.gov/nuccore/401849 XXU01086] [http://genome-www.stanford.edu/vectordb/vector_descrip/PYAC4.html Vector db]
-|}</center>
-<br>
-<br>
-<br><u>
+|}
+
+
+
+
+
 === Protocols and Methods ===
 </u>
 The Protocols and methods used when generating the Physical Map of C. elegans and the Genome Sequencing Project can be found in this book chapter [[http://books.google.co.uk/books?id=AUxd_e4mzHIC&pg=PA538&lpg=PA538&dq=pJB8&source=bl&ots=ViMao3y2x3&sig=QXZxjqVNC6u99qDsOEloaN-i1Us&hl=en&ei=HbxFTIfMOIPO4gaim8T7CQ&sa=X&oi=book_result&ct=result&resnum=9&ved=0CDIQ6AEwCA#v=onepage&q=pJB8&f=false Methods in cell biology, Volume 48]
-<br>
-<br>
-<br><u>
-=== YAC clone Information ===
-</u>
-Specific YAC information can be found in these publications:
 
-[http://www.nature.com/doifinder/10.1038/335184a0 Nature. 1988 Sep 8;335(6186):184-6. Genome linking with yeast artificial chromosomes. Coulson A, Waterston R, Kiff J, Sulston J, Kohara Y.]
 
-[http://www.sciencemag.org/cgi/content/abstract/236/4803/806 science 1987 May 15;236(806-812) Cloning of large segments of exogenous DNA into yeast by means of artificial chromosome vectors.   DT Burke, GF Carle, and MV Olson]
-
-<b><font color=blue size=4>Note</font></b> When ordering YAC clones.<br>
-Suffixes appended to YAC names (e.g. Y73B3A, Y73B3B) indicate sequenced segments of the YAC that have been used to bridge gaps between finished Cosmids<br>
-<br>
-They do not exist as subclones so you will be sent the whole YAC.<br> 
-
-<center>
-http://wormbase.sanger.ac.uk/wiki_pics/yac.png
-</center>
-<br>
-<br>
-<br><u>
 ===Clone ends within wormbase===
 </u>
 The set of clone ends is dumped as part of the gff files: 
@@ -195,181 +389,13 @@ The set of clone ends is dumped as part of the gff files:
 This is the source for the extents displayed in WormBase. 
 
 The caveat with this is that the 'true' end is not marked up for all clones. The early cosmids do not have such annotations because nobody thought about marking them up. Later cosmids do have clone left and right ends as this became part of the standard procedure. Finally, many of the YACs do not have clone ends because the segment submitted to GenBank/EMBL is much smaller than the full clone, and hence the true ends lie within sequences already finished at that stage of the sequencing (i.e. we never went back to update clone ends in sequence already finished). 
-<br>
-<br>
-<br>
-
-
-
-
-__TOC__
-
-==== '''<u>C. elegans fosmid from the Moerman fosmid library.</u>'''  ====
-
-[http://www.lifesciences.sourcebioscience.com/ Source BioScience LifeSciences] is a leading provider of genomic services and products to the life sciences market. 
-
-Here is the [http://www.lifesciences.sourcebioscience.com/clone-products/genomic-dna-clones/c-elegans-fosmid-library-.aspx link] for their distribution of Don Moerman's C.elegans fosmid library. 
-
-[http://elegans.bcgsc.bc.ca/perl/fosmid/CloneSearch/ Search for your clone] 
-
-'''<u>Nomenclature:</u>''' 
-
-{| border="1" class="wikitable"
-|-
-| Example 
-| WRM prefix 
-| Plate No. 
-| Filter (a,b,c,d) 
-| Plate Position
-|-
-| WRM069bF08 
-| WRM 
-| 069 
-| b 
-| F08
-|-
-| WRM069cF08 
-| WRM 
-| 069 
-| c 
-| F08
-|-
-| WRM069dF08 
-| WRM 
-| 069 
-| d 
-| F08
-|}
-
-<br> '''<u>Library info:</u>''' 
-
-{| border="1" class="wikitable"
-|-
-| Library Details 
-| C. elegans Fosmid Library
-|-
-| Library Plate numbers 
-| 061-069 0610-0641 (41)
-|-
-| Number of clones 
-| 12874 (verified) 15744 (total)
-|-
-| [http://en.wikipedia.org/wiki/Microtiter_plate Plate Format] 
-| 384
-|-
-| Source material 
-| [http://en.wikipedia.org/wiki/Nematode nematode] total organism
-|-
-| Strain 
-| N2
-|-
-| Vector 
-| [http://www.geneservice.co.uk/products/clones/datasheets/Celegans_Fos/vector.jsp pCC1FOS] (Epicentre)
-|-
-| Host 
-| maintained at low copy number until induced.
-|-
-| Average insert size 
-| 43.3kB
-|-
-| Cloning site 
-| &nbsp;?
-|-
-| Genomic coverage 
-| 5.74X (86.7% correct paired ends)<br>
-|-
-| Creator 
-| [http://www.zoology.ubc.ca/~alorch/homepage.php Don Moerman] et al
-|-
-| Stock center 
-| [http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp GeneService<br>]
-|}
-
-<br> 
-
-<br>
-
-==== <u>'''C. elegans fosmid from the Incyte Genomics Inc. fosmid library.'''</u>  ====
-
-This is an old fosmid library that was lost for quite some time. 29 of these fosmides were used in the C. elegans sequencing project to fill holes left in the Cosmid assembly. 
-
-These clones can be requested from:
-
-<b>Prefered Link:</b> European based copy of the library:[http://wiki.wormbase.org/index.php?title=Cosmids/YACs HERE] 
-
-US based copy of the library: [mailto:cfronick@watson.wustl.edu Catrina Fronick] 
-
-
-Please remember to include a FedEx/DHL Account number to which shipping cost can be charged. 
-
-<u>'''Nomenclature:'''</u> 
-
-{|border="1" class="wikitable"
-|-
-| Example 
-| H prefix 
-| Plate No. 
-| Well pos.
-|-
-| H27D07 
-| H 
-| 27 
-| d07
-|-
-| H30E23 
-| H 
-| 30 
-| e23
-|}
-
-'''<u>Library info</u>'''<u>''': Easy to Screen High-Density Filters, created 1 November 2000, sold by Incyte Genomics Inc.'''</u> 
-
-{|border="1" class="wikitable"
-|-
-| Library Details 
-| Fosmid C. elegans
-|-
-| Library Plate numbers 
-| 1-43, 1-5
-|-
-| Number of clones 
-| 16,512
-|-
-| [http://en.wikipedia.org/wiki/Microtiter_plate Plate Format] 
-| 384<br>
-|-
-| Source material 
-| [http://en.wikipedia.org/wiki/Nematode nematode] total organism
-|-
-| Strain 
-| N2
-|-
-| Vector 
-| [http://www.neb.com/nebecomm/tech_reference/restriction_enzymes/maps/pFOS1_map.pdf pFOS1]
-|-
-| Host 
-| XL1 Blu MR
-|-
-| Average insert size 
-| 40 kb
-|-
-| Cloning site 
-| [http://en.wikipedia.org/wiki/BamHI BamHI]
-|-
-| Genomic coverage 
-| 6.6x
-|-
-| Creator 
-| Stephanie Chissoe
-|-
-| Stock center 
-| [http://genome.wustl.edu/ G.S.C. St. Louis] // [http://www.sanger.ac.uk The Sanger Institute]<br>
-|}
-
-&nbsp;
 
 
 
 
 
-[[Category:User Guide]]
+
+
+SOURCEs from the wiki
+http://wiki.wormbase.org/index.php/Cosmids/YACs
+* C. elegans [[Fosmids]]
