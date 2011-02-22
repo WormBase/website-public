@@ -752,6 +752,13 @@ sub widget_GET {
         unless ($field) { next;}
 	    $c->log->debug($field);
 	    my $data = $object->$field; # $object->can($field) for a check
+		if ($c->config->{installation_type} eq 'development' and
+			my $fixed_data = $object->check_data($data)) {
+			$data = $fixed_data;
+			$c->log->fatal("${class}::$field returns non-compliant data!");
+			die "Non-compliant data. See log for fatal error.\n"
+			    if $c->config->{fatal_non_compliance};
+		}
 
 	    # Conditionally load up the stash (for now) for HTML requests.
 	    # Alternatively, we could return JSON and have the client format it.
