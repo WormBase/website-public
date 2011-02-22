@@ -138,6 +138,49 @@ sub bestname {
   return $name;
 }
 
+# Description: checks data returned by extenral model for standards
+#              compliance and fixes the data if necessary and possible
+# Usage: $obj->check_data($obj->$field)
+# Returns: undef if all is well, otherwise fixed data (hashref)
+sub check_data {
+	my ($self, $data) = @_;
+	my $is_non_compliant = 0;
+
+	if (ref($data) ne 'HASH') { # no data pack
+		$data = {
+			description => 'No description available',
+			data => $data,
+		};
+		$is_non_compliant ||= 1;
+	}
+
+	if (!$data->{description}) { # no description
+		$data->{description} = 'No description available';
+		$is_non_compliant ||= 1;
+	}
+
+	if (! exists $data->{data}) { # no data entry
+		$data->{data} = undef;
+		$is_non_compliant ||= 1;
+	}
+	else { # fix data type here
+		my $ref = ref $data->{data};
+		if ($ref && $ref ne 'ARRAY' && $ref ne 'HASH') {
+			# data entry is not scalar, arrayref, or hashref...
+			if ($ref eq 'SCALAR') {
+				$data->{data} = ${$data->{data}}; # deref scalar ref
+			}
+			elsif (eval {$data->{data}->isa('Ace::Object')}) {
+				$data->{data} = $data->{data}->name; # stringify Ace::Object
+			}
+			$is_non_compliant ||= 1;
+		}
+	}
+
+	return $data if $is_non_compliant;
+	return;
+}
+
 #generic method for getting genomic pictures
 #it requires the object calling this method having a segments attribute which is an array ref storing the gff sequences
 #it also requires the object having a type attribute which is also an array ref storing the tracks to display
