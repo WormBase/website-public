@@ -1,32 +1,31 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
+<div class="detail-box ui-corner-all">
 
-        <h1>[% tag2link(fields.name.data) %]</h1><br>
-
- 
-      	[% WRAPPER $field_block title="Designating Lab"-%] 
-            [% tag2link(fields.laboratory.data) %]
-   [% END %]
-   
-      	[% WRAPPER $field_block title="Description"-%] 
-            [% fields.description.data %]
-   [% END %]
-   
-   
-      	[% WRAPPER $field_block title="Phenotype"-%] 
-            [% fields.phenotype.data ##tag2link()  %]
-   [% END %]
-
-      	[% WRAPPER $field_block title="Other name"-%] 
-            [% fields.other_name.data %]
-   [% END %]
-<div class="details ui-corner-all">
-
-
-	[% WRAPPER $field_block title="Wormbase ID"-%] 
-            [% tag2link(fields.id.data) %]
-   [% END %]
-         
-
+    [% WRAPPER $field_block title="Other names" key="other_names" -%] 
+         [% FOREACH name IN fields.other_names.data %]
+             [% tag2link(name) %]<br />
+         [% END %]
+    [% END %]
+        
 </div>
+
+[% WRAPPER $field_block title="Description" key="description" -%] 
+     [% fields.description.data %]
+[% END %]
+
+[% PROCESS "shared/fields/laboratory.tt2" title="Designating laboratory" %]
+
+[% WRAPPER $field_block title="Phenotype" key="phenotype" -%] 
+      [% fields.phenotype.data %]
+[% END %]
+
+[% IF fields.remarks.data.size > 0 %]
+[% WRAPPER $field_block title="" %]
+         <div class="toggle">Curatorial remarks</div>
+         <div class="returned">
+           [% fields.remarks.data.join("<br />") %]
+         </div>
+[% END %]
+[% END %]
