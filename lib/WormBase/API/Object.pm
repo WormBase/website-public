@@ -282,6 +282,37 @@ sub parsed_species {
   return lc(substr($genus_species,0,1)) . "_$species";
 }
 
+
+# laboratory: Whenever a cross-ref to lab is needed.
+# Returns the lab as well as the current representative.
+# Used in: Person, Gene_class, Transgene
+# template: shared/fields/laboratory.tt2
+sub laboratory {
+    my $self   = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+
+    # Ugh. Model inconsistencies.
+    my $tag = ($class eq 'Gene_class') ? 'Designating_laboratory' : 'Laboratory';	
+    my $lab = $object->$tag;
+    my %data;
+    $data{laboratory} = $self->_pack_obj($lab);
+    if ($lab) {
+	my $representative = $lab->Representative;
+	my $name = $representative->Standard_name; 
+	my $rep = $self->_pack_obj($representative,$name);
+	$data{representative} = $rep if $rep;
+    }
+    
+    my $data = { description => "the laboratory where the $class was isolated, created, or named",
+		 data        => \%data };
+    return $data;		     
+}
+
+
+
+
+
 sub FindPosition {
   my ($self,$seq) = @_;
   my $db = $self->gff_dsn($seq->Species);

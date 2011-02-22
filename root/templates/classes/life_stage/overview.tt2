@@ -13,21 +13,21 @@
 
 </div>
 
-   [% WRAPPER $field_block title="Definition" key="definition" %]
-         [% fields.definition.data %]
-   [% END %]
+[% WRAPPER $field_block title="Definition" key="definition" %]
+      [% fields.definition.data %]
+[% END %]
 
-   [% WRAPPER $field_block title="Other name" key="other_name" %]
-         [% fields.other_name.data.join(' ') FILTER lower %]
-   [% END %]
+[% WRAPPER $field_block title="Other name" key="other_name" %]
+      [% fields.other_name.data.join(' ') FILTER lower %]
+[% END %]
 
-   [% WRAPPER $field_block title="Substages" key="remarks" %]
-      [% FOREACH item IN fields.substages.data %]
-        [% tag2link(item) %]<br />			 
-      [% END %]		  
-   [% END %]
+[% WRAPPER $field_block title="Substages" key="substages" %]
+   [% FOREACH item IN fields.substages.data %]
+     [% tag2link(item) %]<br />			 
+   [% END %]		  
+[% END %]
 
-   [% WRAPPER $field_block title="Curator Remarks" key="remarks" %]
-         <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
-   [% END %]
+[% WRAPPER $field_block title="Curator Remarks" key="remarks" %]
+      <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
+[% END %]
 

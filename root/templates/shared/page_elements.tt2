@@ -113,10 +113,10 @@
               [%# Is there a description? Set it as a tool tip %]
                [% IF fields.$key.description %]
                   <span title="[% fields.$key.description %]">
-                     [% title %]:
+                     [% IF title ; title _ ': '; END; %]
                    </span>
               [% ELSE %]
-                  [% title %]:
+                  [% IF title ; title _ ': '; END; %]
               [% END %]
 
           </div>
