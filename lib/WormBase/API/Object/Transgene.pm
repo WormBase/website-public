@@ -728,10 +728,10 @@ sub injected_into_strains {
     my $self   = shift;
     my $object = $self->object;
     my @strains = $object->Injected_into_CGC_strain;
-    @strains = map { $self->_pack_obj($_) } @strains;
+    @strains    = map { $self->_pack_obj($_) } @strains;
     push @strains,$object->Injected_into;
-    my $data = { description => 'strains that the transgene has been injected into',
-		 data        => \@strains };
+    my $data    = { description => 'strains that the transgene has been injected into',
+		    data        => @strains ? \@strains : undef};
     return $data;
 }
 
@@ -793,7 +793,7 @@ sub integrated_by {
     } 
     push @methods,keys %methods;
     my $data = { description => 'how the transgene was integrated (if it has been)',
-		 data        => \@methods };
+		 data        => @methods ? \@methods : undef };
     return $data;
 }
 
@@ -851,7 +851,7 @@ sub integrated_at {
     my $position = $object->Map;
 
     my $data = { description => 'map position of the integrated transgene',
-		 data        => $position };
+		 data        => "$position" };
     return $data;
 }
 
@@ -1093,7 +1093,7 @@ sub expression_patterns {
     my @expression = $object->Expr_pattern;
     @expression = map { $self->_pack_obj($_) } @expression;
     my $data   = { description => 'expression patterns associated with the transgene',
-		   data        =>  \@expression };
+		   data        =>  @expression ? \@expression : undef};
     return $data;
 }
 
@@ -1207,59 +1207,36 @@ sub marked_rearrangement {
     my @rearrangements = $object->Marked_rearrangement;
     @rearrangements    = map { $self->_pack_obj($_) } @rearrangements;
     my $data   = { description => 'rearrangements that the transgene can be used as a marker for',
-		   data        =>  \@rearrangements };
+		   data        =>  @rearrangements ? \@rearrangements : undef };
     return $data;
 }
 
 
 ####################
-# Internal methods NOT VERIFIED
+# Internal methods
 ####################
-
 sub _get_phenotype_data {    
     my ($self,$object,$not) = @_;
-    my %data_pack;
-    
-    #### data pull and packaging
-    
-    my @phenotypes;
-    my $tag;
-    
-    if ($not) {
-	
+
+    my $tag;    
+    if ($not) {	
 	$tag = 'Phenotype_not_observed';
-    }
-    else {
-	
+    } else {	
 	$tag = 'Phenotype';
     }
     
-    foreach my $phenotype ($object->$tag) {
+    my @data;
+    foreach my $phenotype ($object->$tag) {		
+	my $phenotype_name = $phenotype->Primary_name;
+	my $remark         = $phenotype->Remark;
+	# my $paper_evidence = $phenotype->; ## at('Paper_evidence')
 	
-	my $remark;
-	my $phenotype_name;
-	my $paper_evidence;
-	
-	$phenotype_name = $phenotype->Primary_name;
-	$remark = $phenotype->get('Remark'); ## Remark
-	# $paper_evidence = $phenotype->; ## at('Paper_evidence')
-	
-	$data_pack{$phenotype} = { 
-	    'link_data' => {
-		'id' => "$phenotype",
-		'label'=>"$phenotype_name",
-		'Class' => "$tag"
-	    },
-		    
-		    'remark'=>$remark,
-		    'paper_evidence'=>$paper_evidence
+	push @data,{ phenotype => $self->_pack_obj($phenotype,$phenotype_name),
+		     remark    => "$remark",
 	};
     }
-    
-    return \%data_pack;
+    return \@data;
 }
-
-
 
 
 
