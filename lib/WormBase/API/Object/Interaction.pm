@@ -116,17 +116,135 @@ sub paper {
 ## more summary items
 ######################
 
-#
-# sub phenotype
-# sub rnai
-#
+sub phenotype {
 
-	######################
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+	
+    my $it = $object->Interaction_type;
+	
+	my $phenotype;
+	my $phenotype_name;
+	eval{$phenotype = $it->Interaction_phenotype->right;};
+	eval{$phenotype_name = $phenotype->Primary_name;};
+
+	$data_pack = {
+	
+		'id' => "$phenotype",
+		'label' => "$phenotype_name",
+		'Class' => 'Phenotype'
+	};
+
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+sub rnai {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+    my $it = $object->Interaction_type;
+	my $rnai;
+
+	eval{$rnai = $it->Interaction_RNAi->right;}; ## $it_data->{'Interaction_RNAi'}
+	
+
+	$data_pack = {
+	
+		'id' =>"$rnai",
+		'label' =>"$rnai",
+		'Class' => 'RNAi'
+	};
+	
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+
+}
+
+
+######################
 ### Interactors
 ######################
 
-# sub interactors
+sub interactor_data {
 
+	my $self = shift;
+	my $interactor_type; ## efffector, effected, non_directional
+   	my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my @data_pack;
 
+	#### data pull and packaging
+
+	my $interactor_ar;
+	
+	if ($interactor_type =~ /effector/) {
+	
+		$interactor_ar = $self->effector;
+	}
+	
+	elsif ($interactor_type =~ /effected/) {
+	
+		$interactor_ar = $self->effected;
+	}
+	
+	else {
+	
+		$interactor_ar = $self->non_directional_interactors;
+	}
+
+	foreach my $interactor (@$interactor_ar) {
+	
+
+		my @cds = $gene_obj->Corresponding_CDS;
+  		my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
+  		my @interactions = $gene_obj->Interaction;
+  		
+  		my $gene_data = _pack_obj($interactor);
+  		my @protein_data_set;
+  		my $interaction_count = @interactions;
+  		
+  		
+  		foreach my $protein (@proteins) {
+  			
+  			my $protein_data = _pack_obj($protein);
+  			push @protein_data_set, $protein_data
+  		}
+  	
+  		
+		$interactor_data => {
+				
+				'gene' => $gene_data,
+				'protein' => \@protein_data_set,
+				'inteactions' => "$interaction_count"	
+		}
+		
+		push @data_pack, $interactor_data;
+	}
+
+	####
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 1;
