@@ -184,7 +184,6 @@ sub _build_type {
 ############################################################
 sub name {
     my ($self) = @_;
-    my $object = $self->object;
 
     return {
 		description => 'the name of the sequence',
@@ -265,7 +264,7 @@ sub corresponding_gene {
 	my @genes = map { $self->_pack_obj($_, $_->Public_name) } @{$self ~~ '@Gene'};
 
 	return {
-		description => 'corresponding gene of the sequence, if known',
+		description => 'Corresponding gene of the sequence, if known',
 		data        => @genes? \@genes : undef,
 	};
 }
@@ -273,57 +272,58 @@ sub corresponding_gene {
 sub matching_transcript {
 	my ($self) = @_;
 
-	my $transcript = $self ~~ 'Matching_transcript';
     return {
-		description => 'the matching transcript of the sequence',
-		data        =>  $transcript || undef,
+		description => 'The matching transcript of the sequence',
+		data        =>  $self ~~ 'Matching_transcript',
 	};
 }
 
 sub matching_cds {
-    my $cds = shift ~~ 'Matching_CDS';
-    my $data = { description => 'the matching CDS of the sequence',
-				 data        => $cds,
-			 };
-    return $data;
+	my ($self) = @_;
+
+    return {
+		description => 'The matching CDS of the sequence',
+		data        => $self ~~ 'Matching_CDS',
+	};
 }
 
 sub corresponding_protein {
     my ($self) = @_;
-    my $object = $self->object;
-    my @cds    = $object->Matching_CDS;
-    my @proteins = map { $_->Corresponding_protein } @cds;
-    @proteins = map { $self->_pack_obj($_) } @proteins;
-    my $data = { description => 'the corresponding protein of the sequence',
-				 data        => \@proteins };
-    return $data;
+	my @proteins = map { $self->_pack_obj($_) } map { $_->Corresponding_protein }
+	                                            @{$self ~~ '@Matching_CDS'};
+    return {
+		description => 'the corresponding protein of the sequence',
+		data        => @proteins ? \@proteins : undef,
+	};
 }
-
 
 sub matching_cdnas {
     my ($self) = @_;
-    my $object = $self->object;
-    my @cDNA = $object->Matching_cDNA;
-    @cDNA = map { $self->_pack_obj($_) } @cDNA;
-    my $data = { description => 'cDNAs that match the sequence',
-				 data        => \@cDNA,
-			 };
-    return $data;
+	my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
+
+    return {
+		description => 'cDNAs that match the sequence',
+		data        => @cDNA ? \@cDNA : undef,
+	};
 }
 
 
 # Eh?
 sub transcripts {
     my ($self) = @_;
-    return unless ($self->object->Structure(0)  || $self->_method eq 'Vancouver_fosmid') ;
-    return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
 
-    my @transcripts = sort {$a cmp $b } map {$_->info} map { $_->features('Transcript:Coding_transcript') } @{$self->segments} ;
-    return unless @transcripts;
-    my $data = { description => 'transcripts in this region of the sequence',
-				 data        => [map {$self->_pack_obj($_)}  @transcripts], #class Sequence
-			 };
-    return $data;
+	my @transcripts;
+	if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
+		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
+		@transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
+					   map { $_->features('Transcript:Coding_transcript') }
+					   @{$self->segments};
+	}
+
+    return {
+		description => 'Transcripts in this region of the sequence',
+		data        => @transcripts ? \@transcripts : undef, #class Sequence
+	};
 }
 
 ############################################################
@@ -360,16 +360,18 @@ sub orfeome_assays {
     my ($self) = @_;
     my (@orfeome,@pcr);
     if ($self->type =~ /gene|coding sequence|cDNA/) {
-		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @{$self->segments} if @{$self->segments};
+		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS',
+													 'structural:PCR_product') }
+		           @{$self->segments} if @{$self->segments};
 		@orfeome = grep {/^mv_/} @pcr;
     }
 
     my %data;
     foreach my $id (@orfeome) {
-		$data{id}= $id;
-		$data{label}= $id. " (".($id->Amplified(1) ? "PCR assay amplified"
-								 : font({-color=>'red'},"PCR assay did NOT amplify")).")";
-		$data{class}='pcr';
+		$data{id}    = $id;
+		$data{label} = $id. " (".($id->Amplified(1) ? "PCR assay amplified"
+								  : font({-color=>'red'},"PCR assay did NOT amplify")).")";
+		$data{class} ='pcr';
     }
 
 	return {
@@ -389,55 +391,69 @@ sub source_clone {
 
 sub genomic_position {
     my ($self) = @_;
-    return unless ($self->object->Structure(0) || $self->_method eq 'Vancouver_fosmid') ;
+
+	if ($self ~~ 'Structure' || self->_method eq 'Vancouver_fosmid') {
+		# the following description relies on SUPER::genomic_position.
+		# perhaps the above check is unnecessary or the description
+		# can be pulled from SUPER?
+		return {
+			description => 'The Genomic Location of the sequence',
+			data		=> undef,
+		};
+	}
     return $self->SUPER::genomic_position;
 }
 
 sub genetic_position {
     my ($self) = @_;
-    return unless ($self->object->Structure(0)  || $self->_method eq 'Vancouver_fosmid') ;
-    my ($chrom,$pos) = $self->GetInterpolatedPosition($self->object);
 
-    if ($chrom && $pos) {
-		$pos= $chrom . ":$pos" ;
-    }
-    else {
-		return;
+	my %data;
+	if ($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') {
+		my ($chrom,$pos) = $self->GetInterpolatedPosition($self->object);
+		if ($chrom && $pos) {
+			$pos = "$chrom:$pos";
+			%data = (
+				class => $chrom->class, #should be Map?
+				label => $pos,
+				id	  => "$chrom",
+			   );
+		}
 	}
 
-    my $data = { description => 'The Interpolated Genetic Position of the sequence',
-				 data        => {  class => $chrom->class, #should be Map?
-								   label => $pos,
-								   id => "$chrom",
-							   },
-			 };
-    return $data;
+	return {
+		description => 'The Interpolated Genetic Position of the sequence',
+		data		=> %data ? \%data : undef,
+	};
 }
 
 
 
 sub microarray_assays {
     my ($self) = @_;
-    return unless ($self->object->Structure(0)  || $self->_method eq 'Vancouver_fosmid') ;
-    return unless ($self->type =~ /genomic|confirmed gene|predicted coding sequence/);
 
-    my @microarrays = sort {$a cmp $b } map {$_->info} map { $_->features('reagent:Oligo_set') } @{$self->segments} ;
-    return unless @microarrays;
-    my $data = { description => 'The Microarray assays in this region of the sequence',
-				 data        => [map {$self->_pack_obj($_)}  @microarrays],	#class Oligo_set
-			 };
-    return $data;
+	my @microarrays;
+	if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
+		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
+
+		@microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
+		               map { $_->features('reagent:Oligo_set') } @{$self->segments};
+	}
+
+    return {
+		description => 'The Microarray assays in this region of the sequence',
+		data        => @microarrays ? \@microarrays : undef,	#class Oligo_set
+	};
 }
 
 sub transgene_constructs {
     my ($self) = @_;
     my %seen;
-    my @transgenes = grep {!$seen{$_}++} (eval { $self ~~ 'Drives_Transgene'},eval { $self ~~ 'Transgene_product' });
-    return unless @transgenes;
-    my $data = { description => 'The Transgene constructs of the sequence',
-				 data        => [map {$self->_pack_obj($_)}  @transgenes],
-			 };
-    return $data;
+    my @transgenes = map {$self->_pack_obj($_)} grep {!$seen{$_}++}
+	                     ($self ~~ 'Drives_Transgene',  $self ~~ 'Transgene_product');
+    return {
+		description => 'The Transgene constructs of the sequence',
+		data        => @transgenes ? \@transgenes : undef,
+	};
 }
 
 ############################################################
@@ -514,8 +530,6 @@ sub external_links {
     my $uniprot    = find_ac($s,'UniProt');
     my %ac_hash = %$uniprot;
 
-
-
     my %hash;
     if ( keys(%{$ac_number}) > 0 ) {
 		$hash{'GenBank/EMBL'}{label}=$ac_number->{GI_number};
@@ -587,15 +601,11 @@ sub external_links {
 		$hash{'WormPD (fee required)'}{class}='Proteome';
     }
 
-
-
     # RSTs. Yuck.
     if ($s =~ /^RST/) {
 		$hash{'RACE project page at WORFDB'}{label}=$s;
 		$hash{'RACE project page at WORFDB'}{id}="";
 		$hash{'RACE project page at WORFDB'}{class}='WORFDB';
-
-
     }
 
     my $parent = $self->sequence;
@@ -609,12 +619,10 @@ sub external_links {
 		$hash{'NextDB EXPRESSION'}{class}='Nextdb_EXPRESSION';
     }
 
-
-    return unless keys %hash;
-    my $data = { description => 'The External Links of the sequence',
-				 data        => \%hash,
-			 };
-    return $data;
+    return {
+		description => 'The External Links of the sequence',
+		data        => %hash ? \%hash : undef,
+	};
 }
 
 ### to be written...... ####
@@ -652,26 +660,28 @@ sub analysis {
 #
 ############################################################
 
+## returns 1 ??
 sub print_link_parts {
     my ($self) = @_;
 
-
-    my $data = { description => 'The Analysis info of the sequence',
-				 data        =>  1,
-			 };
-    return $data;
+    return {
+		description => 'The Analysis info of the sequence',
+		data        =>  1,
+	};
 }
+
 sub print_blast {
     my ($self) = @_;
     my @target = ('Elegans genome');
-    push @target,"Elegans protein" if( $self ~~ 'Coding');
-    my $data = { description => 'The Analysis info of the sequence',
-				 data        =>  {
-					 source => $self ~~ 'name',
-					 target => \@target,
-				 },
-			 };
-    return $data;
+    push @target,"Elegans protein" if ($self ~~ 'Coding');
+
+	return {
+		description => 'The Analysis info of the sequence',
+		data        =>  {
+			source => $self ~~ 'name',
+			target => \@target,
+		},
+	};
 }
 
 # TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
