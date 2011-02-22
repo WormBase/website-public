@@ -4,841 +4,1276 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
 
-##############
-## Transgene
-##############
+=head1 NAME
+
+WormBase::API::Object::Transgene
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Transgene class.
+
+=head1 URL
+
+http://wormbase.org/species/transgene
+
+=head1 TODO
+
+=cut
+
+#######################################
+#
+# The Overview widget 
+#
+#######################################
+
+=head2 name
+
+This method will return a data structure of the 
+name and ID of the requested transgene.
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub name {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-
-	$data_pack = {
-	
-		'id' =>"$object",
-		'label' =>"$object",
-		'Class' => 'Transgene'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+    my $data = { description => 'the name and internal ID of a transgene',
+		 data        =>  $self->_pack_obj($object) };
+    return $data;
 }
 
-#################
-## Evidence
-#################
+=head2 synonym
 
-sub evidence {
+This method will return a data structure containing
+a brief summary of the requested transgene.
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+=head3 PERL API
 
-	#### data pull and packaging
+ $data = $model->synonym();
 
-	$data_pack = eval{$object->Evidence;};
+=head3 REST API
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/synonym
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub synonym {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $synonym = $object->Synonym;
+    my $data = { description => 'a synonym for the transgene',
+		 data        =>  "$synonym" || undef };
+    return $data;
 }
 
-###################
-## Summary
-###################
+=head2 summary
+
+This method will return a data structure containing
+a brief summary of the requested transgene.
+
+=head3 PERL API
+
+ $data = $model->summary();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/summary
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub summary {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = eval{$object->Summary;};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $summary = $object->Summary;
+    my $data = { description => 'a brief summary of the transgene',
+		 data        => "$summary" || undef };
+    return $data;
 }
 
+=head2 driven_by_gene
 
+This method will return a data structure containing
+information about how the transgene is expressed.
 
+=head3 PERL API
 
-##############
-## Driven by
-##############
+ $data = $model->driven_by_gene();
 
-sub driven_by_promoter {
+=head3 REST API
 
-	my $self = shift;
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_gene
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub driven_by_gene {
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	eval{$data_pack = $object->$transg->Driven_by_CDS_promoter;};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub driven_by_genes {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	my @genes = $object->Driven_by_gene;
-	
-	foreach my $gene (@genes) {
-	
-		my $public_name = $gene->Public_name;
-		
-		my %data_hash = (		
-			'id' => "$gene",
-			'label' => "$public_name",
-			'Class' => 'Gene'
-		);
-	
-		push @data_pack, \%data_hash;
-	}
-	
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-#####################
-## Reporter data
-#####################
-
-sub reporter_product {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-	my $reporter;
-	my $return;
-	
-	#### data pull and packaging
-	
-	my @reporters = $transg->Reporter_product;
-    $reporter = join ('',@reporters) if (@reporters);
-	
-	if ($reporter =~ /GFP/) {
-	
-      $return = shift (@reporter);
-    } elsif ($reporter =~ /LacZ/) {
     
-      $return = shift (@reporter);
-    } elsif ($reporter =~ /Other_reporter/) {
-    
-      $return = $transg->Other_reporter;
-    }
-    
-	$data_pack = $reporter;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $gene   = $object->Driven_by_gene;
+    $gene = ($gene) ? $self->_pack_obj($gene,$gene->Public_name) : undef;
+    my $data = { description => 'gene that drives the transgene',
+		 data        => $gene };
 }
 
-sub c_elegans_gene {
 
-	my $self = shift;
+
+=head2 driven_by_construct
+
+This method will return a data structure containing
+information about how the transgene is expressed.
+
+=head3 PERL API
+
+ $data = $model->driven_by_construct();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_construct
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub driven_by_construct {
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	my $gene = $object->Gene;
-	my $gene_name = $gene->Public_name;
-	
-	$data_pack = {
-	
-		'id' =>"$gene",
-		'label' =>"$gene_name",
-		'Class' => 'Gene'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+    
+    my $construct = $object->Driven_by_construct;
+    my $data = { description => 'construct that drives the transgene',
+		 data        => $construct || undef };
+    return $data;
 }
 
-sub c_elegans_sequence {
 
-	my $self = shift;
+=head2 remarks
+
+This method will return a data structure containing
+curator remarks about the transgene.
+
+=head3 PERL API
+
+ $data = $model->remarks();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene (eg gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub remarks {
+    my $self    = shift;
+    my $object  = $self->object;
+    my @remarks = $object->Remark;
+    
+    # TODO: handling of Evidence nodes
+    my $data    = { description  => 'curatorial remarks',
+		    data         => \@remarks,
+    };
+    return $data;
+}   
+
+=head2 reporter_construct
+
+This method will return a data structure of the 
+reporter construct driven by the transgene.
+
+=head3 PERL API
+
+ $data = $model->reporter_construct();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+
+sub reporter_construct {
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	my $sequence;
-	eval {$sequence = $object->CDS;};
-
-	$data_pack = {
-	
-		'id' =>"$sequence",
-		'label' =>"$sequence",
-		'Class' => 'CDS'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+    
+    my %reporters = map { $_ => $_ } $object->Reporter_product;
+    
+    if ($reporters{Other_reporter}) {
+	my $text = $reporters{Other_reporter}->right;
+	$reporters{other} = $text;
+	$reporters{Other_reporter} = undef;
+    } elsif ($reporters{Gene}) {
+	my $gene = $reporters{Gene}->right;
+	$reporters{Gene} = $self->_pack_obj($gene,$gene->Public_name); 
+    } else { }
+      
+    my $data = { description => 'reporter construct for this transgene',
+		 data        => \%reporters };
+    return $data;
 }
 
 
 
+#######################################
+#
+# The Isolation Widget
+#
+#######################################
 
-##################
-## Isolation
-##################
+=head2 author
+
+This method will return a data structure of the 
+reporter construct driven by the transgene.
+
+=head3 PERL API
+
+ $data = $model->author();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub author {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+    my $author = $object->Author;
 
-	#### data pull and packaging
-
-	$data_pack = $object->Author;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $person;  # WBPeople only; Sorry, Charlie.
+    if ($author) {
+	$person = $author->Possible_person;
+	$person = $person ? $self->_pack_obj($person,$person->Standard_name) : undef;
+    }
+    
+    my $data = { description => 'the person who created the transgene',
+		 data        => $person };
+    return $data;
 }
+
+=head2 laboratory
+
+This method will return a data structure containing
+information on the laboratory where the transgene was isolated.
+
+=head3 PERL API
+
+ $data = $model->laboratory();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/laboratory
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub laboratory {
+    my $self   = shift;
+    my $object = $self->object;
+    my $lab    = $object->Laboratory;
+    my %data;
+    $data{laboratory} = $self->pack_obj($lab);
+    if ($lab) {
+	my $representative = $_->Representative;
+	my $name = $representative->Standard_name; 
+	my $rep = $self->_pack_obj($representative,$name);
+	$data{representative} = $rep if $rep;
+    }
+    
+    my $data = { description => 'the laboratory where the transgene was isolated',
+		 data        => \%data };
+    return $data;		     
+}
+
+=head2 clone
+
+This method will return a data structure containing
+information about the clone of this transgene.
+
+=head3 PERL API
+
+ $data = $model->clone();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/clone
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub clone {
-
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Clone;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $clone  = $object->Clone;
+    $clone = $clone ? $self->_pack_obj($clone) : undef;
+    my $data = { description => 'the clone of this transgene',
+		 data        => $clone };
+    return $data;
 }
+
+
+=head2 fragment
+
+This method will return a data structure containing
+information about the clone fragments contained
+in this transgene.
+
+=head3 PERL API
+
+ $data = $model->fragment();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/fragment
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub fragment {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Fragment;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $frag = $object->Fragment;
+    my $data = { description => 'clone fragments contained in this transgene',
+		 data        => $frag || undef };
 }
 
 
-sub injected_into_strain {
 
-	my $self = shift;
+=head2 injected_into_strains
+
+This method will return a data structure containing
+strains that the transgene has been injected into.
+
+=head3 PERL API
+
+ $data = $model->injected_into_strains();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/injected_into_strains
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub injected_into_strains {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Injected_into_CGC_strain;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my @strains = $object->Injected_into_CGC_strain;
+    @strains = map { $self->_pack_obj($_) } @strains;
+    push @strains,$object->Injected_into;
+    my $data = { description => 'strains that the transgene has been injected into',
+		 data        => \@strains };
+    return $data;
 }
 
-sub injected_into {
+=head2 integrated_by
 
-	my $self = shift;
+This method will return a data structure containing
+how the transgene was integrated (if it was).
+
+=head3 PERL API
+
+ $data = $model->integrated_by();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_by
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub integrated_by {    
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Injected_into;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my %methods = map { $_ => $_ } $object->Integrated_by;
+    my @methods;
+    if ($methods{Other_integration_method}) {
+	my $text = $methods{Other_integration_method}->right;
+	push @methods,$text;
+    } 
+    push @methods,keys %methods;
+    my $data = { description => 'how the transgene was integrated (if it has been)',
+		 data        => \@methods };
+    return $data;
 }
 
 
-sub integrated_by {
+=head2 integrated_by
 
-	my $self = shift;
+This method will return a data structure containing
+the map position of the transgene if it has been integrated.
+
+=head3 PERL API
+
+ $data = $model->integrated_by();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub integrated_at {    
+    my $self   = shift;
+    my $object   = $self->object;
+    my $position = $object->Map;
+
+    my $data = { description => 'map position of the integrated transgene',
+		 data        => $position };
+    return $data;
+}
+
+=head2 rescues
+
+This method will return a data structure containing
+information about phenotypes the transgene may rescue.
+
+=head3 PERL API
+
+ $data = $model->rescues();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub rescues {    
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	my $other = $transg->Integrated_by;
-	
-    if ($other =~ /Other_integration_method/) {
-	
-		$data_pack = $object->Integrated_by->right;
-	} else {
-		
-		$data_pack = {
-						'id' => "$other",
-						'label' => "$other",
-						'class' => "Strain"
-					};
-	}
-
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my @genes  = $object->Rescue;
+    @genes = map {$self->pack_obj($_) } @genes;
+    my $data = { description => 'genes that may be rescued by this transgene',
+		 data        => \@genes };
+    return $data;
 }
 
 
 
-###################
-## Location
-###################
+#######################################
+#
+# The Phenotypes widget
+#
+#######################################
 
+=head2 phenotypes_observed
 
+This method will return a data structure of the 
+phenotypes associated with the transgene.
 
-###################
-## Map
-###################
+=head3 PERL API
 
-sub map {
+ $data = $model->phenotypes_observed();
 
-	my $self = shift;
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_observed
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub phenotypes_observed {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Map;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $phenes = $self->_get_phenotype_data($object, 0);
+    my $data   = { description => 'phenotypes associated with the transgene',
+		   data        =>  $phenes };
+    return $data;
 }
 
+=head2 phenotypes_not_observed
 
-###################
-## Strain
-###################
+This method will return a data structure of the 
+phenotypes NOT OBSERVED with the transgene.
 
-sub strain {
+=head3 PERL API
 
-	my $self = shift;
+ $data = $model->phenotypes_not_observed();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_not_observed
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub phenotypes_not_observed {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	my $strain = $object->Strain;
-	
-	$data_pack = {
-	
-		'id' => "$strain",
-		'label' => "$strain",
-		'Class' => 'Strain'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+    my $phenes = $self->_get_phenotype_data($object, 1);
+    my $data   = { description => 'phenotypes NOT associated with the transgene',
+		   data        =>  $phenes };
+    return $data;
 }
 
-###################
-## Mapping data
-###################
 
-sub two_point_map {
 
-	my $self = shift;
+#######################################
+#
+# The Expression widget
+#
+#######################################
+
+=head2 expression_patterns
+
+This method will return a data structure of the 
+expression patterns assocaited with the transgene.
+
+=head3 PERL API
+
+ $data = $model->expression_patterns();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/expression_patterns
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub expression_patterns {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-
-	@data_pack = map {my $genotype = $_->Genotype;
-						 "$genotype"
-						} $transg->get('2_point');
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my @expression = $object->Expr_pattern;
+    @expression = map { $self->_pack_obj($_) } @expression;
+    my $data   = { description => 'expression patterns associated with the transgene',
+		   data        =>  \@expression };
+    return $data;
 }
 
+=head2 marker_for
 
+This method will return a data structure of the 
+describing what the transgene is a marker for.
 
-sub multi_point_map { 
+=head3 PERL API
 
-	my $self = shift;
+ $data = $model->marker_for();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marker_for
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub marker_for {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-
-	@data_pack = map {
-                        my $genotype = $_->Genotype;
-						 "$genotype"
-						} $transg->Multi_point;
-						
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $marker = $object->Marker_for;
+    my $data   = { description => 'stringing decribing what the transgene is a marker for',
+		   data        =>  $marker || undef };
+    return $data;
 }
 
 
+=head2 marked_rearrangement
 
-###################
-## Phenotype
-###################
+This method will return a data structure of the
+rearrangmements that the transgene can be used for.
 
-sub phenotype_nots {
+=head3 PERL API
 
-	my $self = shift;
-    my $transg = $self->object;
-	my %data;
-	my $desc = 'experiments where phenotype was not observed with transgene';
+ $data = $model->marked_rearrangement();
 
-	my $data_pack = $self->_get_phenotype_data($transg, 1);
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+=head3 REST API
 
-}
+=head4 Request Method
 
-sub phenotypes {
+GET
 
-	my $self = shift;
-    my $transg = $self->object;
-	my %data;
-	my $desc = 'experiments where phenotype was observed with transgene';
+=head4 Requires Authentication
 
-	my $data_pack = $self->_get_phenotype_data($transg, 0);
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+No
 
-}
+=head4 Parameters
 
+a Transgene ID (gmIs13)
 
-######################
-## Rescue
-######################
+=head4 Returns
 
+=over 4
 
-sub rescue {
+=item *
 
-	my $self = shift;
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marked_rearrangement
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub marked_rearrangement {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Rescue;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my @rearrangements = $object->Marked_rearrangement;
+    @rearrangements    = map { $self->_pack_obj($_) } @rearrangements;
+    my $data   = { description => 'rearrangements that the transgene can be used as a marker for',
+		   data        =>  \@rearrangements };
+    return $data;
 }
 
-#####################
-## Expression pattern
-#####################
-
-
-sub expr_pattern {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	my $expr_pattern;
-	
-	$expr_pattern = $object->Expr_pattern;
-	
-	$data_pack = {
-								'id' => "$expr_pattern",
-								'label' => "$expr_pattern",
-								'class' => 'Expr_pattern'
-								};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 ####################
-## Remark
-#################### 
-
-sub remark {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Remark;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-############
-## Species
-############
-
-sub species {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-	$species = $object->Species;
-	$species_name = $species->Common_name;
-
-	$data_pack = {
-	
-		'id' => "$species",
-		'label' => "$species_name",
-		'Class' => 'Species'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
-
-
-
-####################
-# Internal methods
+# Internal methods NOT VERIFIED
 ####################
 
-sub _get_phenotype_data {
-
-	my $self = shift;
-    my $transg = shift;
-    my $not = shift;
-
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @phenotypes;
-	my $tag;
-	
-	if ($not) {
-	
-		$tag = 'Phenotype_not_observed';
-	}
-	else {
-	
-		$tag = 'Phenotype';
-	}
-	
-	foreach my $phenotype ($transg->$tag) {
-
-		my $remark;
-		my $phenotype_name;
-		my $paper_evidence;
-	
-		$phenotype_name = $phenotype->Primary_name;
-		$remark = $phenotype->get('Remark'); ## Remark
-		# $paper_evidence = $phenotype->; ## at('Paper_evidence')
-	
-		$data_pack{$phenotype} = { 
-									'link_data' => {
-										'id' => "$phenotype",
-										'label'=>"$phenotype_name",
-										'Class' => "$tag"
-									},
-									
-									'remark'=>$remark,
-									'paper_evidence'=>$paper_evidence
-									};
-	}
-	
-	return \%data_pack;
-}
-
-###############
-## Superceded
-###############
-
-
-sub isolation {
-
-	my $self = shift;
-    my $transg = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my $author;
-	my $clone;
-	my $fragment;
-	my $injected_into_cgc_strain;
-	my $injected_into;
-	my $integrated_by;
-	my $int_by_check;
-	my $other;
-	
-	$author = $transg->Author;
-	$clone = $transg->Clone;
-	eval{$fragment = transg->Fragment;};
-	$injected_into_cgc_strain = $transg->Injected_into_CGC_strain;
-	$injected_into = $transg->Injected_into;
-	$other= $transg->Integrated_by;
-	
-    if ($other =~ /Other_integration_method/) {
+sub _get_phenotype_data {    
+    my ($self,$object,$not) = @_;
+    my %data_pack;
     
-    	$integrated_by = $transg->Integrated_by->right;
-	} 	
-	else {
+    #### data pull and packaging
+    
+    my @phenotypes;
+    my $tag;
+    
+    if ($not) {
 	
-		$integrated_by = $transg->Integrated_by;
-	}
-
-	%data_pack = (
-					'Author' 	=> $author,
-					'Clone' 	=> $clone,
-					'Fragment'  => $fragment,
-					'Injected_into_CGC_strain' => $injected_into_cgc_strain,
-					'Injected_into' => $injected_into,
-					'Integrated_by' => $integrated_by
-				);	
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub details {
-
-	my $self = shift;
-    my $transg = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
+	$tag = 'Phenotype_not_observed';
+    }
+    else {
 	
-	my $transgene_evidence;
-	my $summary;
-	my $driven_by;
-	my $transgene_driven_by;
-	my $driven_by_gene;
-	my @reporter_products;
-	my $gene;
-	my $cds;
+	$tag = 'Phenotype';
+    }
+    
+    foreach my $phenotype ($object->$tag) {
+	
 	my $remark;
-	my $species;
-	my $rescue;
+	my $phenotype_name;
+	my $paper_evidence;
 	
-	eval{$transgene_evidence = $transg->Evidence;};
-	eval{$summary = $transg->Summary;};
-	$driven_by = $transg->Driven_by_gene;
-	eval{$transgene_driven_by = $transg->Driven_by_CDS_promoter;};
-	$transg->Driven_by_gene;
-	@reporter_products = $transg->Reporter_product;
-	$gene = $transg->Gene;
-	eval{$cds = $transg->CDS;};
-	$remark = $transg->Remark;
-	$species = $transg->Species;
-	$rescue = $transg->Rescue;
+	$phenotype_name = $phenotype->Primary_name;
+	$remark = $phenotype->get('Remark'); ## Remark
+	# $paper_evidence = $phenotype->; ## at('Paper_evidence')
 	
-	%data_pack = (
-					'ace_id' => $transg,
-					'summary' => $summary,
-					'driven_by' => $driven_by,
-					'transgene_driven_by' => $transgene_driven_by,
-					'driven_by_gene' => $driven_by_gene,
-					'reporter_products' => \@reporter_products,
-					'gene' => {
-								'gene_id' => $gene,
-								'class' => 'Gene'
-								},
-					'cds' =>{
-							 'cds_id' => $cds,
-							 'class' => 'CDS'
-							},
-					'remark'=>$remark,
-					'species'=>$species,
-					'rescue'=>$rescue
-					
-					);
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+	$data_pack{$phenotype} = { 
+	    'link_data' => {
+		'id' => "$phenotype",
+		'label'=>"$phenotype_name",
+		'Class' => "$tag"
+	    },
+		    
+		    'remark'=>$remark,
+		    'paper_evidence'=>$paper_evidence
+	};
+    }
+    
+    return \%data_pack;
 }
 
 
-sub phenotypes_old {
-
-	my $self = shift;
-    my $transg = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my @phenotypes;
-	@phenotypes = $transg->Phenotype;
-	
-	foreach my $phenotype (@phenotypes) {
-
-		my $remark;
-		my $not;
-		my $phenotype_name;
-		my $paper_evidence;
-	
-		$phenotype_name = $phenotype->Phenotype_name;
-		$remark = $phenotype->get('Remark');
-		$not = $phenotype->at('Not');
-		$paper_evidence = $phenotype->at('Paper_evidence');
-	
-		$data_pack{$phenotype} = (
-									'phenotype_name'=>$phenotype_name,
-									'remark'=>$remark,
-									'not'=>$not,
-									'paper_evidence'=>$paper_evidence
-									);
-	}
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 
 
