@@ -1,0 +1,50 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% WRAPPER $field_block title="Author" key="author" %]
+    [% fields.author.data %]
+[% END %]
+
+[% PROCESS shared/fields/laboratory.tt2 title="Created in lab" %]
+
+
+[% WRAPPER $field_block title="Construction" %]
+    [% WRAPPER $field_block title="Clone" key="clone" %]
+        [% tag2link(fields.clone.data) %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Fragment" key="fragment" %]
+       [% tag2link(fields.fragment.data) %]
+    [% END %]
+[% END %]
+
+
+[% WRAPPER $field_block title="Functional Assay" %]
+    [% WRAPPER $field_block title="Injected Into Strains" key="injected_into_strains" %]
+         [% FOREACH strain IN fields.injected_into_strains.data %]
+            [% tag2link(strain) %]<br />
+         [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Rescues" key="rescues" %]
+         [% FOREACH item IN fields.rescues.data %]
+            [% tag2link(item) %]<br />
+         [% END %]
+    [% END %]
+[% END %]
+
+
+[% WRAPPER $field_block title="Integration" %]
+    [% WRAPPER $field_block title="Integrated By" key="integrated_by" %]
+         [% FOREACH item IN fields.integrated_by.data %]
+            [% tag2link(item) %]<br />
+         [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Integrated at" key="integrated_at" %]
+         [% FOREACH item IN fields.integrated_at.data %]
+            [% item %]<br />
+         [% END %]
+    [% END %]
+[% END %]
