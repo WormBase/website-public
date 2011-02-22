@@ -1,0 +1,54 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% MACRO gene_table BLOCK;
+
+   WRAPPER $field_block title="$title" key="$key";
+	
+	# declare array of columns named via keys in the data structure
+#	order = ['species','former_name', 'new_name', 'sequence' , 'reason'];
+	order = ['species','former_name', 'new_name', 'sequence' ];
+	
+	# declare hash for column headers, keyed as above
+	headers = {	species     => 'Species',
+			former_name => 'Former Name',
+			new_name    => 'New Name',
+			sequence    => 'Sequence',
+#			reason      => 'Reason' 
+};
+	  
+	# declare rows array
+        rows = [];
+
+	FOREACH species IN fields.$key.data.keys;
+	
+   	   # loop through each element in <subroutine>.<return_data_key>.<... to array data> array
+	   FOREACH r IN fields.$key.data.$species;
+  		row = [];
+ 	        row.push(r.species);
+                row.push(r.former_name);
+                row.push(tag2link(r.new_name));
+		row.push(sequence);
+#		row.push(reason);
+							
+		# enter data row array into rows
+		rows.push(row);
+	  END;
+        END;	  	 
+ 	  
+	# populate name array;
+        names = [];
+        FOREACH o IN order; names.push(headers.$o); END;
+	  
+	# generate table
+	dataTable_list(names, rows, "table_${key}_by");
+	
+    END; # END of WRAPPER
+  END; # END of MACRO
+%]
+
+[% gene_table(title="Reassigned to new class" key="former_members") %]
+[% gene_table(title="Reassigned to new name"  key="reassigned_members") %]
+
+
+

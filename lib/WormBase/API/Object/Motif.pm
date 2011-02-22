@@ -64,23 +64,13 @@ sub identification {
 ###################
 
 sub title {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+    my $title   = $object->Title;
 
-	#### data pull and packaging
-
-	$data_pack = $object->Title;
-
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $data = { description => 'this is the description',
+		 data        => "$title" };
+    return $data;
 }
 
 

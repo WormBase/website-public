@@ -7,13 +7,13 @@ extends 'WormBase::API::Object';
 
 
 has 'effector' => (    
-	is  => 'ro',
-    lazy => 1,
+    is       => 'ro',
+    lazy    => 1,
     default => sub {
     	
     	my $self = shift;
     	my @effectors;
-    	eval {@effectors = $self->interaction_type->Effector->col;};
+    	eval { @effectors = $self->interaction_type->Effector->col;};
     	return \@effectors;
   	}
 );
@@ -117,34 +117,40 @@ sub paper {
 ######################
 
 sub phenotype {
-
+                                                                # No space
 	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+    my $object = $self->object;                                 # Weird indentation?
+	my %data;                                               # Why defined here?
+	my $desc = 'notes';                                     # Why defined here?
+	my $data_pack;                                          # Why defined here?
 
-	#### data pull and packaging
+	#### data pull and packaging                            # Obvious. Omit.
+	 
+    my $it = $object->Interaction_type;                         # Weird indentation
 	
-    my $it = $object->Interaction_type;
-	
-	my $phenotype;
-	my $phenotype_name;
-	eval{$phenotype = $it->Interaction_phenotype->right;};
-	eval{$phenotype_name = $phenotype->Primary_name;};
+	my $phenotype;                                          # Why?
+	my $phenotype_name;                                     # Why?
+	my $phenotype = $it->Internation_phenotype->right if $it->Internation_phenotype;
+	eval{$phenotype = $it->Interaction_phenotype->right;};  # Why is this an eval?
+	eval{$phenotype_name = $phenotype->Primary_name;};      # Why is this an eval?
+
 
 	$data_pack = {
-	
-		'id' => "$phenotype",
-		'label' => "$phenotype_name",
+	                                                # TH. No space!
+		'id' => "$phenotype",                   
+		'label' => "$phenotype_name",           # TH. Not needed!
 		'Class' => 'Phenotype'
 	};
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
+	####                                            # TH. No!
+
+	$data{'data'} = $data_pack;                     # TH. No! Why do this?	
+	$data{'description'} = $desc;                   # TH. No! Why do this?
 	return \%data;
+                                                        # Do this instead
+                                                  	my $data = { data => 'my data',
+                                              		             description => 'my description' };
+	
 }
 
 sub rnai {
