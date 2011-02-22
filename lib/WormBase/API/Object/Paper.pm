@@ -115,11 +115,7 @@ sub authors {
 		  "$authorname[-1], " . join('. ', @authorname[0..$#authorname-1]) . '.' :
 			$authorname[0];		# author's name in APA format
 
-		push(@authors,{
-			id	  => $obj,
-			class => $obj->class,
-			label => $label,
-		});
+		push @authors, $self->_pack_obj($obj, $label);
     }
 
 	return {
@@ -145,11 +141,11 @@ sub editors {
 
 sub publication_type {
 	my ($self) = @_;
-	my $type = $self ~~ '@Type';
+	my @type = map {$_->name} @{$self ~~ '@Type'};
 
 	return {
 		description => 'Type of publication',
-		data		=> @$type ? $type : undef,
+		data		=> @type ? \@type : undef,
 	};
 }
 
@@ -247,7 +243,7 @@ sub pmid {
 	my $pmid;
 	foreach ($self->object->Database(2)) {
 		if ($_ == 'PMID') {
-			$pmid = $_->right;
+			$pmid = $_->right->name;
 			last;
 		}
 	}
@@ -285,7 +281,7 @@ sub intext_citation {
 		description => 'APA in-text citation',
 		data		=> {
 			citation => $innertext,
-			paper	 => $self->object,
+			paper	 => $self ~~ 'name',
 		},
 	};
 }
