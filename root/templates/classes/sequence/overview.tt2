@@ -5,53 +5,43 @@
      [% PROCESS "shared/fields/species.tt2" %]
 
      [% WRAPPER $field_block title="Sequence Type" %]
-          [% fields.sequence_type.data %]
+	 	[% fields.sequence_type.data || '' %]
      [% END %]
 
 </div>
 
-     [% markup(c.stash.fields.description.data) %]
+	 [% fields.description.data && markup(fields.description.data) %]
 
      <div class="text-width">[% PROCESS "shared/fields/remarks.tt2" %]</div>
 
-     [% WRAPPER $field_block title="Identity" %]
-         [% tag2link(fields.identity.data) %]
+     [% WRAPPER $field_block title="Identity" key='identity' %]
+	 	[% fields.identity.data || '' %]
      [% END %]
 
-     [% WRAPPER $field_block title="Status" %]
-         [% tag2link(fields.status.data) %]
+     [% WRAPPER $field_block title="Status" key='status' %]
+	 	[% fields.status.data || '' %]
      [% END %]
 
-     [% WRAPPER $field_block title="Method" %]
-        [% fields.method.data %]
+     [% WRAPPER $field_block title="Method" key='method' %]
+        [% fields.method.data || '' %]
      [% END %]
 
-
-
-
-[% WRAPPER $field_block title="Origin" %]
-  [% tag2link(c.stash.fields.origin.data) %]
+[% WRAPPER $field_block title="Origin" key='origin' %]
+  [% fields.origin.data && tag2link(fields.origin.data) %]
 [% END %]
 
 [% WRAPPER $field_block title="Available From" %]
-  [% tag2link(c.stash.fields.available_from.data) %]
+  [% fields.available_from.data && tag2link(fields.available_from.data) %]
 [% END %]
 
-
-
 [% WRAPPER $field_block title="Transcripts in this region" %]
-  [% FOREACH key IN  c.stash.fields.transcripts.data %]
+  [% FOREACH key IN  fields.transcripts.data %]
       [% tag2link(key) %]<br>
    [% END %]
 [% END %]
  
-
-
-
-
-
 [% WRAPPER $field_block title="Analysis" %]
-  [% FOREACH key IN c.stash.fields.analysis.data.keys.sort %]
-    [% key %]:[% c.stash.fields.analysis.data.$key %]<br>
+  [% FOREACH key IN fields.analysis.data.keys.sort %]
+    [% key %]:[% fields.analysis.data.$key %]<br>
   [% END %]
 [% END %]
