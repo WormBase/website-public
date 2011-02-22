@@ -8,22 +8,15 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
-WormBase::API::Object::Life_stage
+WormBase::API::Object::Gene_class
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Life_stage class.
+Model for the Ace ?Gene_class class.
 
 =head1 URL
 
-http://wormbase.org/species/life_stage
-
-=head1 TODO
-
-# The original LifeStage CGI presented a number of secondary screens
-
-# TODO: Handling of big lists of objects
-# Search and browse methods
+http://wormbase.org/species/gene_class
 
 =cut
 
@@ -523,7 +516,7 @@ sub former_members {
 	push @{$data_pack{$species}},$data;
     }
 
-    my $data = { description => 'genes formerly in the class that have been reassigned',
+    my $data = { description => 'genes formerly in the class that have been reassigned to a new class',
 		 data        => \%data_pack };    
 }
 
@@ -594,7 +587,7 @@ sub reassigned_members {
 	    push @{$data_pack{$species}},$data;
 	}
     }
-    my $data = { description => 'genes formerly in the class that have been reassigned',
+    my $data = { description => 'genes that have been reassigned a new name in the same class',
 		 data        => \%data_pack };    
     return $data;
 }
