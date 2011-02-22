@@ -201,4 +201,175 @@ The caveat with this is that the 'true' end is not marked up for all clones. The
 
 
 
+
+__TOC__
+
+==== '''<u>C. elegans fosmid from the Moerman fosmid library.</u>'''  ====
+
+[http://www.lifesciences.sourcebioscience.com/ Source BioScience LifeSciences] is a leading provider of genomic services and products to the life sciences market. 
+
+Here is the [http://www.lifesciences.sourcebioscience.com/clone-products/genomic-dna-clones/c-elegans-fosmid-library-.aspx link] for their distribution of Don Moerman's C.elegans fosmid library. 
+
+[http://elegans.bcgsc.bc.ca/perl/fosmid/CloneSearch/ Search for your clone] 
+
+'''<u>Nomenclature:</u>''' 
+
+{| border="1" class="wikitable"
+|-
+| Example 
+| WRM prefix 
+| Plate No. 
+| Filter (a,b,c,d) 
+| Plate Position
+|-
+| WRM069bF08 
+| WRM 
+| 069 
+| b 
+| F08
+|-
+| WRM069cF08 
+| WRM 
+| 069 
+| c 
+| F08
+|-
+| WRM069dF08 
+| WRM 
+| 069 
+| d 
+| F08
+|}
+
+<br> '''<u>Library info:</u>''' 
+
+{| border="1" class="wikitable"
+|-
+| Library Details 
+| C. elegans Fosmid Library
+|-
+| Library Plate numbers 
+| 061-069 0610-0641 (41)
+|-
+| Number of clones 
+| 12874 (verified) 15744 (total)
+|-
+| [http://en.wikipedia.org/wiki/Microtiter_plate Plate Format] 
+| 384
+|-
+| Source material 
+| [http://en.wikipedia.org/wiki/Nematode nematode] total organism
+|-
+| Strain 
+| N2
+|-
+| Vector 
+| [http://www.geneservice.co.uk/products/clones/datasheets/Celegans_Fos/vector.jsp pCC1FOS] (Epicentre)
+|-
+| Host 
+| maintained at low copy number until induced.
+|-
+| Average insert size 
+| 43.3kB
+|-
+| Cloning site 
+| &nbsp;?
+|-
+| Genomic coverage 
+| 5.74X (86.7% correct paired ends)<br>
+|-
+| Creator 
+| [http://www.zoology.ubc.ca/~alorch/homepage.php Don Moerman] et al
+|-
+| Stock center 
+| [http://www.geneservice.co.uk/products/clones/Celegans_Fos.jsp GeneService<br>]
+|}
+
+<br> 
+
+<br>
+
+==== <u>'''C. elegans fosmid from the Incyte Genomics Inc. fosmid library.'''</u>  ====
+
+This is an old fosmid library that was lost for quite some time. 29 of these fosmides were used in the C. elegans sequencing project to fill holes left in the Cosmid assembly. 
+
+These clones can be requested from:
+
+<b>Prefered Link:</b> European based copy of the library:[http://wiki.wormbase.org/index.php?title=Cosmids/YACs HERE] 
+
+US based copy of the library: [mailto:cfronick@watson.wustl.edu Catrina Fronick] 
+
+
+Please remember to include a FedEx/DHL Account number to which shipping cost can be charged. 
+
+<u>'''Nomenclature:'''</u> 
+
+{|border="1" class="wikitable"
+|-
+| Example 
+| H prefix 
+| Plate No. 
+| Well pos.
+|-
+| H27D07 
+| H 
+| 27 
+| d07
+|-
+| H30E23 
+| H 
+| 30 
+| e23
+|}
+
+'''<u>Library info</u>'''<u>''': Easy to Screen High-Density Filters, created 1 November 2000, sold by Incyte Genomics Inc.'''</u> 
+
+{|border="1" class="wikitable"
+|-
+| Library Details 
+| Fosmid C. elegans
+|-
+| Library Plate numbers 
+| 1-43, 1-5
+|-
+| Number of clones 
+| 16,512
+|-
+| [http://en.wikipedia.org/wiki/Microtiter_plate Plate Format] 
+| 384<br>
+|-
+| Source material 
+| [http://en.wikipedia.org/wiki/Nematode nematode] total organism
+|-
+| Strain 
+| N2
+|-
+| Vector 
+| [http://www.neb.com/nebecomm/tech_reference/restriction_enzymes/maps/pFOS1_map.pdf pFOS1]
+|-
+| Host 
+| XL1 Blu MR
+|-
+| Average insert size 
+| 40 kb
+|-
+| Cloning site 
+| [http://en.wikipedia.org/wiki/BamHI BamHI]
+|-
+| Genomic coverage 
+| 6.6x
+|-
+| Creator 
+| Stephanie Chissoe
+|-
+| Stock center 
+| [http://genome.wustl.edu/ G.S.C. St. Louis] // [http://www.sanger.ac.uk The Sanger Institute]<br>
+|}
+
+&nbsp;
+
+
+
+
+
 [[Category:User Guide]]

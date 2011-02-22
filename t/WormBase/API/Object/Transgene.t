@@ -34,7 +34,6 @@ my @methods = qw/
 
 name
 summary
-details
 
  /;
 #
@@ -62,7 +61,7 @@ sub test_method {
 
 
 
-done_testing(4);
+done_testing(5);
 
 
 sub print_array{
