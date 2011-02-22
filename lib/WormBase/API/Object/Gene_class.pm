@@ -4,314 +4,617 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
 
-####################
-# GENERAL INFO
-####################
+=head1 NAME
 
+WormBase::API::Object::Life_stage
 
-sub name {
+=head1 SYNPOSIS
 
-	my $self = shift;
+Model for the Ace ?Life_stage class.
+
+=head1 URL
+
+http://wormbase.org/species/life_stage
+
+=head1 TODO
+
+# The original LifeStage CGI presented a number of secondary screens
+
+# TODO: Handling of big lists of objects
+# Search and browse methods
+
+=cut
+
+#######################################
+#
+# The Overview widget 
+#
+#######################################
+
+=head2 name
+
+This method will return a data structure of the 
+name and ID of the requested gene class.
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub name { 
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	my $name = $object->Main_name;
-	
-	#### data pull and packaging
-
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$object",
-		'class' => "Gene_name"
-	};
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $data   = { description => 'the primary name and id of the requested gene class',
+		   data        => $self->_pack_obj($object) };
+    return $data;
 }
 
-sub id {
+=head2 other_names
 
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+This method will return a data structure containing 
+other names that have been used to describe the 
+requested gene class.
 
-	#### data pull and packaging
+=head3 PERL API
 
-	$data_pack = {
-			'id' => "$object",
-			'label' => "$object",
-			'class' => 'Gene_class'
-			};
+ $data = $model->other_names();
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-	
-}
+=head3 REST API
 
-sub other_name {
+=head4 Request Method
 
-	my $self = shift;
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/other-names
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub other_names {
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Other_name;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my @other_names = map { $self->_pack_obj($_) } $object->Other_name;
+    my $data = { description => 'other names that have been used for this gene class',
+		 data        => \@other_names };
+    return $data;
 }
+
+
+=head2 description
+
+This method will return a data structure containing
+a brief description of the gene class abbreviation.
+
+=head3 PERL API
+
+ $data = $model->description();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/description
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub description {
-
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Description;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $description = $object->Description;
+    my $data = { description => 'a brief description of the gene class abbreviation',
+		 data        => "$description" };
+    return $data;
 }
 
+# laboratory() is provided by Object.pm. Documentation
+# duplicated here for completeness of API
+
+=head2 laboratory
+
+This method will return a data structure containing
+the laboratory that coined the gene class.
+
+=head3 PERL API
+
+ $data = $model->laboratory();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/laboratory
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+=head2 phenotype
+
+This method will return a data structure containing
+a string describing the general phenotype of genes
+placed in this gene class.
+
+=head3 PERL API
+
+ $data = $model->phenotype();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/phenotype
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub phenotype {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Phenotype;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $self = shift;
+    my $object    = $self->object;
+    my $phenotype = $object->Phenotype;
+    my $data      = { description => 'general phenotype of genes placed in this gene class',
+		      data        => "$phenotype" || undef };
+    return $data;
 }
 
-sub laboratory {
+=head2 remarks
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+This method will return a data structure containing
+curatorial remarks for the gene class.
 
-	my $laboratory = $object->Designating_laboratory;
+=head3 PERL API
 
-	#### data pull and packaging
+ $data = $model->remarks();
 
-	$data_pack = {
-	
-		'id' => "$laboratory", 
-		'label' => "$laboratory",
-		'Class' => 'Laboratory'
-	};
+=head3 REST API
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+=head4 Request Method
 
+GET
 
-#sub general_info {
-#
-#	my $self = shift;
-#    my $object = $self->object;
-#	my %data;
-#	my $desc = 'notes';
-#	my %data_pack;
-#
-#	#### data pull and packaging
-#
-#	####
-#
-#	$data{'data'} = \%data_pack;
-#	$data{'description'} = $desc;
-#	return \%data;
-#}
+=head4 Requires Authentication
 
+No
 
-#########
-# Gene
-#########
+=head4 Parameters
 
+A Gene class (eg unc)
 
-sub gene {
+=head4 Returns
 
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
+=over 4
 
-	#### data pull and packaging
+=item *
 
-	my @genes = $object->Genes;
-	
-	foreach my $gene (@genes) {
-	    my %gene_data;
-	    my $species = $gene->Species;
-	    my $gene_name = $self->bestname($gene);
-	    %gene_data = (
-	      'id' => "$gene",
-	      'label' => "$gene_name",
-	      'class' => 'Gene'
-	      );
-	    
-	    if ($data_pack{$species}) {
-	    
-	    	my $gene_data = $data_pack{$species};
-	    	push @$gene_data,\%gene_data;
-	    	$data_pack{$species} = $gene_data;
-	    }
-	    
-	    else {
-	    	
-	    	$data_pack{$species} = [\%gene_data];
-	    }
-	}
-  
-	####
+200 OK and JSON, HTML, or XML
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+=item *
 
+404 Not Found
 
-sub old_members {
+=back
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
+=head4 Request example
 
-	#### data pull and packaging
-    
-	my @old_genes = $object->Old_member;
-	my @genes = map {$_->Other_name_for} @old_genes;
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
 
-	foreach  my $gene (@genes) {
-	   my $gene_name = $self->bestname($gene);
-	   my $sequence_name =  $gene->Sequence_name;
-	   my $species = $gene->Species;
-	   my %gene_data = (
-	      'id' => "$gene",
-	      'label' => "$gene_name",
-	      'class' => 'Gene'
-	      ); 
-	      
-	    if ($data_pack{$species}) {
-	    
-	    	my $gene_data = $data_pack{$species};
-	    	push @$gene_data,\%gene_data;
-	    	$data_pack{$species} = $gene_data;
-	    }
-	    
-	    else {
-	    	
-	    	$data_pack{$species} = [\%gene_data];
-	    }
-	}
+=head4 Response example
 
-	####
+<div class="response-example"></div>
 
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-## TODO: figure out the nuisances of @onames if necessary....
-
-sub previous_member {
-
-	my $self = shift;
-	my $object = $self->object;
-	my $dbh = $self->ace_dsn->dbh;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	my @others;
-	my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object*"})};
-
-	foreach my $gene (@genes) {
-
-	  my $bestname = $self->bestname($gene);
-	  my @onames = $gene->Other_name;
-	  my $seq_name = $gene->Sequence_name;
-	  my %gene_data = (
-	  
-	  		'id' => "$gene",
-	  	  	'label' => "$bestname",
-	  	  	'class' => 'Gene'
-
-	    );    
-
-	    push @data_pack, \%gene_data;
-
-	 }
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
+=cut 
 
 sub remarks {
+    my $self    = shift;
+    my $object  = $self->object;
+    my @remarks = $object->Remark;
+    
+    my $data    = { description  => 'curatorial remarks',
+		    data         => \@remarks,
+    };
+    return $data;
+} 
 
-	my $self = shift;
+
+
+
+#######################################
+#
+# The Genes widget 
+#
+#######################################
+
+=head2 genes
+
+This method will return a data structure containing
+all genes assigned to the class, organized by species.
+
+=head3 PERL API
+
+ $data = $model->genes();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/genes
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub genes {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
+    
+    my @genes  = $object->Genes;
 
-	#### data pull and packaging
-
+    my %data;
+    foreach my $gene (@genes) {
 	
-	@data_pack = $object->Remark;
+	my $species = $gene->Species;
+	
+	my $sequence_name = $gene->Sequence_name;
+	my $locus_name    = $gene->Public_name;
+	my $name = ($locus_name ne $sequence_name) ? "$locus_name ($locus_name)" : "$locus_name";
 
-	####
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	# Some redundancy in the data structure here while
+	# we decide how to format this data.
+	push @{$data{$species}},
+	{ species  => "$species",
+	  locus    => $self->_pack_obj($gene),
+	  sequence => "$sequence_name",
+	};		     
+    }
+    my $data = { description => 'genes assigned to the gene class, organized by species',
+		 data        => \%data };
+    return $data;
 }
 
+#######################################
+#
+# The Previous Members widget 
+#
+#######################################
+
+=head2 former_members
+
+This method will return a data structure containing
+genes that used to belong to the current gene class
+but have been reassigned to another class, or that
+have been reassigned a new gene name within the same
+class.
+
+=head3 PERL API
+
+ $data = $model->former_members();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_members
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub former_members {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my %data_pack;
+    my @genes = $object->Old_member;
+
+    foreach my $old_gene (@genes) {
+	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
+
+	my $data = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
+	
+	my $species = $gene->Species;
+	push @{$data_pack{$species}},$data;
+    }
+
+    my $data = { description => 'genes formerly in the class that have been reassigned',
+		 data        => \%data_pack };    
+}
+
+
+=head2 reassigned_members
+
+This method will return a data structure containing
+genes that have been reassigned within the gene class.
+
+=head3 PERL API
+
+ $data = $model->reassigned_members();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_members
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub reassigned_members {
+    my $self   = shift;
+    my $object = $self->object;
+    my $dbh = $self->ace_dsn->dbh;
+     
+    my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object*"})};
+    my %data_pack;
+    foreach my $gene (@genes) {
+	my $species = $gene->Species;
+
+	# Only keep them if their current locus name matches the object name
+	# We're looking for genes that have been reassigned
+	my $public_name = $gene->Public_name;
+	my @other_names =  grep { /$public_name/ } $gene->Other_name;
+	foreach (@other_names) {
+	    my $data = $self->_stash_former_member($gene,$_);
+	    push @{$data_pack{$species}},$data;
+	}
+    }
+    my $data = { description => 'genes formerly in the class that have been reassigned',
+		 data        => \%data_pack };    
+    return $data;
+}
+
+##############################
+#
+# Internal methods
+#
+##############################
+sub _stash_former_member {
+    my ($self,$gene,$old_gene,$reason) = @_;
+    
+    my $sequence_name = $gene->Sequence_name;
+    my $locus_name    = $gene->Public_name;
+    my %data = ( species => $self->_pack_obj($gene->Species),
+		 former_name => "$old_gene",
+		 new_name    => $self->_pack_obj($gene,$gene->Public_name),
+		 sequence    => ($sequence_name) ? $self->_pack_obj($sequence_name) : undef,
+		 reason      => $reason );
+    return \%data;
+}
 
 1;

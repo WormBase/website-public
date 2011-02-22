@@ -510,6 +510,9 @@ sub author {
     return $data;
 }
 
+# laboratory() is provided by Object.pm. Documentation
+# duplicated here for completeness of API
+
 =head2 laboratory
 
 This method will return a data structure containing
@@ -557,23 +560,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
-sub laboratory {
-    my $self   = shift;
-    my $object = $self->object;
-    my $lab    = $object->Laboratory;
-    my %data;
-    $data{laboratory} = $self->pack_obj($lab);
-    if ($lab) {
-	my $representative = $_->Representative;
-	my $name = $representative->Standard_name; 
-	my $rep = $self->_pack_obj($representative,$name);
-	$data{representative} = $rep if $rep;
-    }
-    
-    my $data = { description => 'the laboratory where the transgene was isolated',
-		 data        => \%data };
-    return $data;		     
-}
 
 =head2 clone
 

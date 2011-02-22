@@ -808,6 +808,9 @@ sub web_page {
 #
 #######################################
 
+# laboratory() is provided by Object.pm. Documentation
+# duplicated here for completeness of API
+
 =head2 laboratory
 
 This method returns a data structure containing
@@ -815,7 +818,7 @@ the lab affilition of the the person.
 
 =head3 PERL API
 
- $data = $model->laboraty();
+ $data = $model->laboratory();
 
 =head3 REST API
 
@@ -854,18 +857,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/person/
 <div class="response-example"></div>
 
 =cut
-
-sub laboratory {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my $lab   = $object->Laboratory;
-    $lab = $self->_pack_obj($lab) if $lab;
-    
-    my $data = { description => 'laboratory affiliation of the person',
-		 data        => $lab || undef};
-    return $data;		     
-}
 
 =head2 previous_laboratories
 

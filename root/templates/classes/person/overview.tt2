@@ -26,7 +26,6 @@
 
 </div>	  
 
-
 [% WRAPPER $field_block title="Address" key="street_address" %] 
    [% fields.street_address.data.join('<br>') %]
    [% TRY; IF fields.country.data; "<br>" ; fields.country.data; END; END; %]
@@ -38,4 +37,9 @@
       
 [% WRAPPER $field_block title="Web Page" key="web_page" %] 
           <a href="http://[% fields.web_page.data %]">[% fields.web_page.data %]</a><br>
+[% END %]
+
+[% WRAPPER $field_block title="Updates" %]
+<a target="_blank" href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person_lineage.cgi">Add or update</a> your information in our lineage of <i>C. elegans</i> scientists.<br />
+<a target="_blank" href="http://tazendra.caltech.edu/~azurebrd/cgi-bin/forms/person.cgi">Add or update</a> your contact information.
 [% END %]
