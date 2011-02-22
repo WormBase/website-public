@@ -1,7 +1,3 @@
-<<<<<<< /usr/local/wormbase/website/aduong/root/templates/classes/sequence/region.tt2
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-=======
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
@@ -80,4 +76,3 @@
    [% END %]
 [% END %]
  
->>>>>>> /tmp/region.tt2~other.8r07hF
