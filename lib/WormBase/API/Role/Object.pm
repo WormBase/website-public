@@ -140,45 +140,92 @@ sub bestname {
 
 # Description: checks data returned by extenral model for standards
 #              compliance and fixes the data if necessary and possible
-# Usage: $obj->check_data($obj->$field)
-# Returns: undef if all is well, otherwise fixed data (hashref)
+#              WARNING: modifies data directly if passed data is reference
+# Usage: if (my ($fixed, @problems) = $self->check_data($data)) { ... }
+# Returns: () if all is well, otherwise array with fixed data and
+#          description(s) of compliance problem(s).
 sub check_data {
 	my ($self, $data) = @_;
-	my $is_non_compliant = 0;
+	my @compliance_problems;
 
 	if (ref($data) ne 'HASH') { # no data pack
 		$data = {
 			description => 'No description available',
 			data => $data,
 		};
-		$is_non_compliant ||= 1;
+		push @compliance_problems,
+		     'Did not return in hashref datapack with description and data entry.';
 	}
 
 	if (!$data->{description}) { # no description
 		$data->{description} = 'No description available';
-		$is_non_compliant ||= 1;
+		push @compliance_problems, 'No description entry in datapack.';
 	}
 
 	if (! exists $data->{data}) { # no data entry
 		$data->{data} = undef;
-		$is_non_compliant ||= 1;
+		push @compliance_problems, 'No data entry in datapack.';
 	}
-	else { # fix data type here
-		my $ref = ref $data->{data};
-		if ($ref && $ref ne 'ARRAY' && $ref ne 'HASH') {
-			# data entry is not scalar, arrayref, or hashref...
-			if ($ref eq 'SCALAR') {
-				$data->{data} = ${$data->{data}}; # deref scalar ref
-			}
-			elsif (eval {$data->{data}->isa('Ace::Object')}) {
-				$data->{data} = $data->{data}->name; # stringify Ace::Object
-			}
-			$is_non_compliant ||= 1;
-		}
+	elsif (my ($tmp, @problems) = $self->_check_data_content($data->{data})) {
+		$data->{data} = $tmp;
+		push @compliance_problems, @problems;
 	}
 
-	return $data if $is_non_compliant;
-	return;
+	return @compliance_problems ? ($data, @compliance_problems) : ();
+}
+
+# Description: helper to recursively checks the content of data for standards
+#              compliance and fixes the data if necessary and possible
+# Usage: FOR INTERNAL USE.
+#        if(my ($tmp) = $self->_check_data_content($datum)) { ... }
+# Returns: if all is well, (). otherwise, 2-array with fixed data and
+#          description(s) of compliance problem(s).
+sub _check_data_content {
+	my ($self, $data) = @_;
+	warn "Inside _check_data_content";
+	my $ref = ref($data) || return ();
+
+	my @compliance_problems;
+	my ($tmp, @problems);
+
+	if ($ref eq 'ARRAY') {
+		foreach (@$data) {
+			if (($tmp, @problems) = $self->_check_data_content($_)) {
+				$_ = $tmp;
+				push @compliance_problems, @problems;
+			}
+		}
+		push @compliance_problems, 'Empty arrayref returned; should be undef.'
+		     unless @$data;
+	}
+	elsif ($ref eq 'HASH') {
+		foreach my $key (keys %$data) {
+			if (($tmp, @problems) = $self->_check_data_content($data->{$key})) {
+				$data->{$key} = $tmp;
+				push @compliance_problems, @problems;
+			}
+		}
+		push @compliance_problems, 'Empty hashref returned; should be undef.'
+		     unless %$data;
+	}
+	elsif ($ref eq 'SCALAR') {
+		# make sure scalar ref doesn't refer to something bad
+		if (($tmp, @problems) = $self->_check_data_content($$data)) {
+			$data = $tmp;
+			push @compliance_problems, @problems;
+		}
+		else {
+			$data = $$data; # doesn't refer to anything bad -- just dereference it.
+			push @compliance_problems, 'Scalar reference returned; should be scalar.';
+		}
+
+	}
+	elsif (eval {$data->isa('Ace::Object')}) {
+		$data = $data->name; # or perhaps they wanted a _pack_obj... we'll never know
+		push @compliance_problems, 'Ace::Object returned.';
+	}
+
+	return @compliance_problems ? ($data, @compliance_problems) : ();
 }
 
 #generic method for getting genomic pictures

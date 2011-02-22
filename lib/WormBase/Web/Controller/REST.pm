@@ -747,24 +747,30 @@ sub widget_GET {
 	# Load the stash with the field contents for this widget.
 	# The widget itself could make a series of REST calls for each field but that could quickly become unwieldy.
 	my @fields = $c->_get_widget_fields($class,$widget);
-	       		
+
+	my $fatal_non_compliance = 0;
 	foreach my $field (@fields) {
         unless ($field) { next;}
 	    $c->log->debug($field);
 	    my $data = $object->$field; # $object->can($field) for a check
 		if ($c->config->{installation_type} eq 'development' and
-			my $fixed_data = $object->check_data($data)) {
+			my ($fixed_data, @problems) = $object->check_data($data)) {
 			$data = $fixed_data;
-			$c->log->fatal("${class}::$field returns non-compliant data!");
-			die "Non-compliant data. See log for fatal error.\n"
-			    if $c->config->{fatal_non_compliance};
+			$c->log->fatal("${class}::$field returns non-compliant data: ");
+			$c->log->fatal("\t$_") foreach @problems;
+
+			$fatal_non_compliance = $c->config->{fatal_non_compliance};
 		}
 
 	    # Conditionally load up the stash (for now) for HTML requests.
 	    # Alternatively, we could return JSON and have the client format it.
 	    $c->stash->{fields}->{$field} = $data; 
 	}
-		
+
+	if ($fatal_non_compliance) {
+		die "Non-compliant data. See log for fatal error.\n"
+	}
+
 	# Cache the field data for this widget.
 	$c->set_cache($cache_id,$c->stash->{fields});
     }
