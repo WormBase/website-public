@@ -3,7 +3,7 @@
 
 
 [% IF fields.remarks.data.defined %]
-  [% WRAPPER $field_block title="Remarks" key="remark" %]
+  [% WRAPPER $field_block title="Remarks" key="remarks" %]
 	[% FOREACH remark IN fields.remarks.data %]
 	    [% remark %]
 	[% END %]
