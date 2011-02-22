@@ -4,17 +4,63 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+#########################
+## has_as
+#########################
+
+
+
+has 'data_directory' => (    
+	is  => 'ro',
+    lazy => 1,
+    default => sub {
+    
+    	return "/usr/local/wormbase/databases/$version/position_matrix";
+  	}
+);
+
+has 'image_directory' => (    
+	is  => 'ro',
+    lazy => 1,
+    default => sub {
+    
+    	return "../../html/images/position_matrix";
+  	}
+);
+
+has 'name2consensus_hr' => (
+	is  => 'ro',
+    lazy => 1,
+    default => sub {
+    	
+    	my $self = shift;
+    	my $data_dir = $self->data_directory;
+    	my $datafile = $data_dir."/pm_id2consensus_seq.txt";
+    	my %name2consensus = _build_hash($datafile);
+    	
+    	return \%name2consensus;
+  	}
+);
+
+has 'image_pointer_file' => (
+	is  => 'ro',
+    lazy => 1,
+    default => sub {
+    	
+    	my $self = shift;
+    	my $data_dir = $self->data_directory;
+    	my $datafile = $data_dir."/pm_id2source_pm.txt";
+    	my %image_pointer = _build_hash($datafile);
+    	
+    	return \%image_pointer;
+  	}
+);
+
 
 ###########################
 ## summary
 ###########################
 
-    $data{'name'} = $position_matrix_object;
-	$data{'desc'} = $position_matrix_object->Description;
-	$data{'remark'} = $position_matrix_object->Remark;	
-	$data{'paper_evidence'} = $position_matrix_object->Paper_evidence;
-	$data{'associated_feature'} = $position_matrix_object->Associated_feature;
-	$data{'associated_pm'} = $position_matrix_object->Associated_with_Position_Matrix;
 
 sub name {
 
@@ -129,10 +175,28 @@ sub associated_position_matrix {
 
 }
 
+
+sub consensus {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+
+	#### data pull and packaging
+
+	$data_pack = $object->name2consensus_hr->{$object};
+
+	####
+
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
 #sub evidence
-
-#sub consensus
-
 
 ############################
 ## logo
@@ -177,5 +241,27 @@ sub position_data {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+
+
+
+
+###########################
+## internal methods
+###########################
+
+
+sub _build_hash{
+	my ($file_name) = @_;
+	open FILE, "<./$file_name" or die "Cannot open the file: $file_name\n";
+	my %hash;
+	foreach my $line (<FILE>) {
+		chomp ($line);
+		my ($key, $value) = split '=>',$line;
+		$hash{$key} = $value;
+	}
+	return %hash;
+}
+
 
 1;
