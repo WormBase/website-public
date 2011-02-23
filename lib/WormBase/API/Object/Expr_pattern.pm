@@ -32,11 +32,11 @@ sub description {
 	my ($self) = @_;
 	my %data;
 	unless (($self ~~ 'Author') =~ /Mohler/) {
-		$data{description} = $self ~~ '@Pattern';
-		$data{remarks} = join(' ', @{$self ~~ '@Remark'});
+		$data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
+		$data{remark} = join ' ', @{$self ~~ '@Remark'};
 		$data{check_bc} = $self->_check_for_bc;
 		%data = () unless @{$data{description}} ||
-		  $data{remarks} || $data{check_bc};
+		  $data{remark} || $data{check_bc};
 	}
 
 	return {
@@ -66,34 +66,37 @@ sub expressed_by {
 
 	return {
 		description => 'Items that exhibit this expression pattern',
-		data		=> \%data,
+		data		=> %data ? \%data : undef,
 	};
 }
 
 sub expressed_in {
 	my ($self) = @_;
 
-	my %data = (
-		cells => $self->_pack_objects($self ~~ '@Cell'),
-		cell_groups => $self->_pack_objects($self ~~ '@Cell_group'),
-		life_stages => $self->_pack_objects($self ~~ '@Life_stage'), # majority
-	); # TODO: the above is insufficient for cells and cell groups -- they will
-	   #       likely require special handling (pedigree stuff?)...
+	my %data;
+	foreach my $type (qw(Cell Cell_group Life_stage)) {
+		my $packed_obj = $self->_pack_objects($self ~~ "\@$type");
+		$data{ucfirst $type . 's'} = $packed_obj if %$packed_obj;
+	} # TODO: what to do about pedigree stuff?
 
 	return {
 		description => 'TODO',
-		data		=> \%data,
+		data		=> %data ? \%data : undef
 	};
 }
 
 sub anatomy_ontology {
 	my ($self) = @_;
 
-	my $data = $self->_ao_table;
+	my @anatomy_terms = map {
+		anatomy_term => $self->_pack_obj($_),
+		definition => $_->Definition->name,
+		location => $_->Term->name,
+	}, @{$self ~~ '@Anatomy_term'};
 
 	return {
 		description => 'TODO',
-		data		=> $data,
+		data		=> @anatomy_terms ? \@anatomy_terms : undef,
 	};
 }
 
@@ -101,21 +104,22 @@ sub experimental_details {
 	my ($self) = @_;
 	my %data;
 
-	$data{types} = [map [$_, $self ~~ $_], @{$self ~~ '@Type'}];
+	if (my @types = @{$self ~~ '@Type'}) {
+		$data{types} = [map ["$_", $_->right . ''], @types];
+	}
 
 	foreach (qw(Antibody_info Transgene Strain Author)) {
 		my $val = $self ~~ "\@$_";
 		$data{$_} = $self->_pack_objects($val) if @$val;
 	}
 
-
 	if (my $date = $self ~~ 'Date') {
-		$data{date} = $date;
+		$data{date} = $date->name;
 	}
 
 	return {
 		description => 'Experimental details of the expression pattern',
-		data		=> \%data,
+		data		=> %data ? \%data : undef,
 	};
 }
 
@@ -166,16 +170,5 @@ sub _check_for_bc {
     # VC abd BC are the Baiilie and Moerman labs
     return scalar grep {$_ eq 'BC' || $_ eq 'VC'} @{$self ~~ '@Laboratory'};
 }
-
-sub _ao_table {
-	my ($self) = @_;
-
-	return [map {
-		anatomy_term => $self->_pack_obj($_),
-		definition => $_->Definition,
-		location => $_->Term,
-    }, @{$self ~~ '@Anatomy_term'}];
-}
-
 
 1;
