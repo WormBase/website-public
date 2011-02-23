@@ -224,6 +224,10 @@ sub _check_data_content {
 		$data = $data->name; # or perhaps they wanted a _pack_obj... we'll never know
 		push @compliance_problems, 'Ace::Object returned.';
 	}
+	else { # don't know what the data is, but try to stringify it...
+		$data = "$data";
+		push @compliance_problems, 'Object returned.';
+	}
 
 	return @compliance_problems ? ($data, @compliance_problems) : ();
 }
