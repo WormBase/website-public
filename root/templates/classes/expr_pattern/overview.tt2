@@ -11,8 +11,8 @@
 		[% obj %]<br><br>
 	[% END %]
 
-	[% IF fields.description.data.remarks %]
-	<b>Remarks:</b> [% fields.description.data.remarks %]<br>
+	[% IF fields.description.data.remark %]
+	<b>Remarks:</b> [% fields.description.data.remark %]<br>
 	[% END %]
     
 	[% IF fields.description.data.check_bc %]
