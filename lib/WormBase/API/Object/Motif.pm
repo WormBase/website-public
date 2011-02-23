@@ -4,12 +4,76 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Motif
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Motif class.
+
+=head1 URL
+
+http://wormbase.org/species/motif
+
+=head1 TODO
+
+=cut
+
 ###################
 ## Identification
 ###################
 
+=head2 title
+
+This method will return a data structure of the 
+title for the requested motif.
+
+=head3 PERL API
+
+ $data = $model->title();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Motif ID ((AAATG)n)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/title
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
 sub title {
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Motif.pm
 	my $self 	= shift;
 	my $object 	= $self->object;
 	my $data_pack = $object->Title;
@@ -20,23 +84,11 @@ sub title {
 				};
 	return $data;
 }
-=======
-    my $self   = shift;
-    my $object = $self->object;
-    my $title   = $object->Title;
-
-    my $data = { description => 'this is the description',
-		 data        => "$title" };
-    return $data;
-}
-
-
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
 
 =head2 remarks
 
-This method will return a data structure containing
-curatorial remarks for the gene class.
+This method will return a data structure with
+remarks re: the requested motif.
 
 =head3 PERL API
 
@@ -54,7 +106,7 @@ No
 
 =head4 Parameters
 
-A Gene class (eg unc)
+a Motif ID ((AAATG)n)
 
 =head4 Returns
 
@@ -71,9 +123,16 @@ A Gene class (eg unc)
 =back
 
 =head4 Request example
->>>>>>> /tmp/Motif.pm~other.glr_jt
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Motif.pm
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/remarks
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+
 sub remarks {
 	my $self 	= shift;
     my $object 	= $self->object;
@@ -85,19 +144,53 @@ sub remarks {
 				};
 	return $data;	
 }
-=======
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
+
+
+=head2 database
+
+This method will return a data structure with database information for the requested motif.
+
+=head3 PERL API
+
+ $data = $model->database();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Motif ID ((AAATG)n)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/database
 
 =head4 Response example
 
 <div class="response-example"></div>
 
 =cut 
-
-# sub remarks { }
-
-
->>>>>>> /tmp/Motif.pm~other.glr_jt
 
 sub database  {
 	my $self = shift;
@@ -120,6 +213,52 @@ sub database  {
 ## homology
 ####################
 
+=head2 go
+
+This method will return a data structure with go annotations for the requested motif.
+
+=head3 PERL API
+
+ $data = $model->go();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Motif ID ((AAATG)n)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/go
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
 sub homologies {
 	my $self = shift;
     my $object = $self->object;
@@ -135,17 +274,14 @@ sub homologies {
 				if ($_ =~ /.*RepeatMasker/g) {
 					$_ =~ /(.*):.*/;
 					my $clone = $1;
-					$id = "$clone";
-					$label = "$clone";
-					$class = 'Clone';
 					
 					$homolog_data = {	
-						'id'	=> "$id",
-						'label'	=> "$label",
-						'class' => $class
+						'id'	=> "$clone",
+						'label'	=> "$clone",
+						'class' => 'Clone'
 					};
 				} else
-					$homolog_data = _pack_obj($_);	
+					$homolog_data = $self->_pack_obj($_);	
 				}
 				push @data_pack, $homolog_data;
 			}
@@ -160,6 +296,52 @@ sub homologies {
 ###################
 ## gene ontology
 ###################
+
+=head2 homologies
+
+This method will return a data structure with homology information on the requested motif.
+
+=head3 PERL API
+
+ $data = $model->homologies();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Motif ID ((AAATG)n)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/homologies
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub go  {
 	my $self = shift;
@@ -192,48 +374,5 @@ sub go  {
 	return $data;	
 }
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Motif.pm
-1;=======
-
-
-sub homologies_old {
-
-	my $self = shift;
-    my $motif = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @dnas;
-	my @peptides;
-	my @motifs;
-	my @homologies;
-	
-	@dnas = $motif->DNA_homol;
-	@peptides= $motif->Pep_homol;
-	@motifs= $motif->Motif_homol;
-	@homologies= $motif->Homol_homol;
-
-
-	%data_pack = (
-					'dnas'=>\@dnas
-					,'peptides'=>\@peptides
-					,'motifs'=>\@motifs
-					,'homologies'=>\@homologies
-					);
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-
-
-
 1;
->>>>>>> /tmp/Motif.pm~other.glr_jt
+
