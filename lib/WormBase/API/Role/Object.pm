@@ -181,7 +181,7 @@ sub check_data {
 # Returns: if all is well, (). otherwise, 2-array with fixed data and
 #          description(s) of compliance problem(s).
 sub _check_data_content {
-	my ($self, $data) = @_;
+	my ($self, $data, @keys) = @_;
 	warn "Inside _check_data_content";
 	my $ref = ref($data) || return ();
 
@@ -190,43 +190,51 @@ sub _check_data_content {
 
 	if ($ref eq 'ARRAY') {
 		foreach (@$data) {
-			if (($tmp, @problems) = $self->_check_data_content($_)) {
+			if (($tmp, @problems) = $self->_check_data_content($_, @keys)) {
 				$_ = $tmp;
 				push @compliance_problems, @problems;
 			}
 		}
-		push @compliance_problems, 'Empty arrayref returned; should be undef.'
-		     unless @$data;
+		unless (@$data) {
+			push @compliance_problems,
+			     join('->', @keys) . ': Empty arrayref returned; should be undef.';
+		}
 	}
 	elsif ($ref eq 'HASH') {
 		foreach my $key (keys %$data) {
-			if (($tmp, @problems) = $self->_check_data_content($data->{$key})) {
+			if (($tmp, @problems) = $self->_check_data_content($data->{$key},
+															   @keys, $key)) {
 				$data->{$key} = $tmp;
 				push @compliance_problems, @problems;
 			}
 		}
-		push @compliance_problems, 'Empty hashref returned; should be undef.'
-		     unless %$data;
+		unless (%$data) {
+			push @compliance_problems,
+			     join('->', @keys) . ': Empty hashref returned; should be undef.'
+		}
 	}
 	elsif ($ref eq 'SCALAR') {
 		# make sure scalar ref doesn't refer to something bad
-		if (($tmp, @problems) = $self->_check_data_content($$data)) {
+		if (($tmp, @problems) = $self->_check_data_content($$data, @keys)) {
 			$data = $tmp;
 			push @compliance_problems, @problems;
 		}
 		else {
 			$data = $$data; # doesn't refer to anything bad -- just dereference it.
-			push @compliance_problems, 'Scalar reference returned; should be scalar.';
+			push @compliance_problems,
+			     join('->', @keys) . ': Scalar reference returned; should be scalar.';
 		}
 
 	}
 	elsif (eval {$data->isa('Ace::Object')}) {
+		push @compliance_problems, join('->', @keys) .
+		     ": Ace::Object (class: " . $data->class . ", name: $data) returned.";
 		$data = $data->name; # or perhaps they wanted a _pack_obj... we'll never know
-		push @compliance_problems, 'Ace::Object returned.';
 	}
 	else { # don't know what the data is, but try to stringify it...
+		push @compliance_problems, join('->', @keys) .
+             ": Object (class: " . $data->class . ", value: $data) returned.";
 		$data = "$data";
-		push @compliance_problems, 'Object returned.';
 	}
 
 	return @compliance_problems ? ($data, @compliance_problems) : ();
