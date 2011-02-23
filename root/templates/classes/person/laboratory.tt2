@@ -3,15 +3,15 @@
 
 [% PROCESS "shared/fields/laboratory.tt2" title="Laboratory affiliation" %]
 
-[% WRAPPER $subfield_block title="Strain designation" key="strain_designation" -%] 
+[% WRAPPER $field_block title="Strain designation" key="strain_designation" -%] 
       [% tag2link(fields.strain_designation.data) %] 
 [% END %]
 
-[% WRAPPER $subfield_block title="Allele designation" key="allele_designation" -%] 
+[% WRAPPER $field_block title="Allele designation" key="allele_designation" -%] 
       [% fields.allele_designation.data %]
 [% END %]
 
-[% WRAPPER $subfield_block title="Gene classes" key="gene_classes" -%]
+[% WRAPPER $field_block title="Gene classes" key="gene_classes" -%]
      [% FOREACH gene_class IN fields.gene_classes.data %]
          [% tag2link(gene_class) %] &nbsp;
      [% END %]

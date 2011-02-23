@@ -1,0 +1,19 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% WRAPPER $field_block title="Expression Patterns" key="expression_patterns" %]
+    [% FOREACH item IN fields.expression_patterns.data %]
+       [% tag2link(item) %]
+    [% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Marker for" key="marker_for" %]
+    [% fields.marker_for.data %]
+[% END %]
+
+
+[% WRAPPER $field_block title="Marker Rearrangement" key="marker_rearrangement" %]
+    [% fields.marker_rearrangement.data %]
+[% END %]
+

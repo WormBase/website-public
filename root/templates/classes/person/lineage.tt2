@@ -1,50 +1,17 @@
 [% # This generic statement belongs at the start of every template %]
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% MACRO lineage BLOCK;
+[% build_data_table(title="Supervised",
+                    key="supervised",
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']) %]
 
-   WRAPPER $field_block title="$title" key="$key";
-	
-	# declare array of columns named via keys in the data structure
-	order = ['name','level', 'duration'];
-	
-	# declare hash for column headers, keyed as above
-	headers = {	name     => 'Name',
-			level    => 'Level',
-			duration => 'Period' };
-	  
-	# declare rows array
-        rows = [];
-		
-	# loop through each element in <subroutine>.<return_data_key>.<... to array data> array
-	FOREACH r IN fields.$key.data;			
-  		row = [];
-			
-		# loop through each element in order array (for columns) , declared above
-		FOREACH o IN order;			
-			# get value (val) from the row r
-     		        val = r.$o;
-			# enter data in row
-	                row.push(val);
-  		END;
-				
-		# enter data row array into rows
-		rows.push(row);
-	  END;
-	  	  	  
-	  # populate name array;
-	  names = [];
-	  FOREACH o IN order; names.push(headers.$o); END;
-	  
-	  # generate table
-	  dataTable_list(names, rows, "table_${key}_by");	
+[% build_data_table(title="Supervised by",
+                    key="supervised_by",
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']) %]
 
-	
-	END; # END of WRAPPER
-    END; # END of MACRO
-%]
-
-
-[% lineage(title="Supervised",    key="supervised")    %]
-[% lineage(title="Supervised by", key="supervised_by") %]
-[% lineage(title="Worked with",   key="worked_with")   %]
+[% build_data_table(title="Worked with",
+                    key="worked_with",
+                    columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
+		    order=['name','level','duration']) %]

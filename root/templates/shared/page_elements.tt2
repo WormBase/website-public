@@ -149,6 +149,58 @@
 [% END %]
 
 
+
+
+
+
+
+
+[% MACRO build_data_table BLOCK;
+
+   WRAPPER $field_block title="$title" key="$key";
+
+	# Should be passed:
+        #     order  : array of columns
+        #     columns: hash ref associating columns to labels
+        #     key    : data key for accessing the stash
+        #     title  : optional title for the field 
+	  
+	# declare rows array
+        rows = [];
+		
+	# loop through each element in <subroutine>.<return_data_key>.<... to array data> array
+	FOREACH r IN fields.$key.data;			
+  		row = [];
+			
+		# loop through each element in order array (for columns) , declared above
+		FOREACH o IN order;			
+			# get value (val) from the row r
+     		        val = r.$o;
+			# enter data in row
+	                row.push(val);
+  		END;
+				
+		# enter data row array into rows
+		rows.push(row);
+	  END;
+	  	  	  
+	  # populate name array;
+	  names = [];
+	  FOREACH o IN order; names.push(columns.$o); END;
+	  
+	  # generate table
+	  dataTable_list(names, rows, "table_${key}_by");	
+
+	
+	END; # END of WRAPPER
+    END; # END of MACRO
+%]
+
+
+
+
+
+
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
   [% IF data && data.size>0 %]
  

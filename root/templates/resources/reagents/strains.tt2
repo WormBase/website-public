@@ -1,22 +1,51 @@
-Source: 
+<div id="resources">
+<h2>About The Caenorhabditis Genetics Center</h2>
+<p>
+The <a href="http://www.cbs.umn.edu/CGC/CGChomepage.htm"><span class="species">Caenorhabditis</span> Genetics Center</a> (the CGC) collects, maintains, and distributes stocks of <em>C. elegans</em>.
+</p>
+<p>
+The CGC is supported by the National Institutes of Health - National Center 
+for Research Resources. The CGC has been in operation since 1978, first at 
+the University of Missouri, Columbia and since 1992 at the University
+of Minnesota, Twin Cities. 
+</p>
+<p>
+<a href="/resources/person/WBPerson540">Ann Rougvie</a> is the director; <a href="/resources/person/WBPerson627">Theresa Stiernagle</a> is the curator. 
+</p>
 
-
-
-The ''Caenorhabditis'' Genetics Center ([http://www.cbs.umn.edu/CGC/CGChomepage.htm CGC]) is supported by the National Institutes of Health - National Center for Research Resources. The CGC has been in operation since 1978, first at the University of Missouri, Columbia and since 1992 at the University of Minnesota, Twin Cities. 
-
-Ann Rougvie is the director; Theresa Stiernagle is the curator. The CGC collects, maintains, and distributes stocks of ''C. elegans''. 
-
-*[http://www.cbs.umn.edu/CGC/order.html How to order strains] 
-*[http://biosci.umn.edu/CGC/strains/ CGC strains] 
-*[http://wormbase.org/db/gene/strain CGC strain list] (searchable‚ takes you to WormBase). 
-*[http://biosci.umn.edu/CGC/strains/recent.html Recent additions to the CGC strain collection] (may contain strains not yet listed in Wormbase). 
-*[http://biosci.umn.edu/CGC/strains/gophstrnt.txt Strain list: one big text file] (may contain strains not yet listed in Wormbase). 
-*[http://biosci.umn.edu/CGC/strains/send.html Sending strains to the CGC] 
-*[http://biosci.umn.edu/CGC/strains/wild.html Wild Caenorhabditis strains] 
-*[http://biosci.umn.edu/CGC/strains/non.html Non-Caenorhabditis species] 
-*[http://biosci.umn.edu/CGC/strains/acknowledge.html Acknowledging the CGC]
-
-
-
-
-*Knockouts: [http://celeganskoconsortium.omrf.org/ KO Consortium] | [http://shigen.lab.nig.ac.jp/c.elegans/index.jsp NBP-Japan] | [http://pbil.univ-lyon1.fr/segalat/data/mos.php NemaGENETAG Mos insertions] |
+<h3>Searching For Strains</h3>
+<p>
+WormBase <a href="http://wormbase.org/db/gene/strain">maintains a list of strains</a> 
+available from the CGC, as well as those noted in the literature.
+</p>
+<p>
+Or <a target="_blank" href="http://biosci.umn.edu/CGC/strains/">browse</a> or <a href="href=http://biosci.umn.edu/CGC/strains/gophstrnt.txt">download</a> the full list of CGC strains.
+</p>
+<p>
+The CGC also maintains a list of <a target="_blank" href="http://biosci.umn.edu/CGC/strains/recent.html">recent additions</a> to the strain collection, containing strains that may not yet be entered into WormBase.
+</p>
+<h3>Ordering Strains</h3>
+<p>
+You can <a target="_blank" href="http://www.cbs.umn.edu/CGC/order.html">order strains</a> directly from the CGC.
+</p>
+<h3>Submitting Strains</h3>
+<p>
+If you have strains you'd wish to share with the community, please <a target="_blank" href="http://biosci.umn.edu/CGC/strains/send.html">submit them to the CGC</a>. 
+</p>
+<h3>Acknowledging the CGC</h3>
+<p>
+Please be certain to <a href="http://biosci.umn.edu/CGC/strains/acknowledge.html">acknowledge the CGC</a> and the help ensure its continued existence.
+</p>
+<h2>Wild <span class="species">Caenorhabditis</span> strains and Non-<span class="species">Caenorhabditis</span> species</h2>
+<p>
+The CGC also maintains stocks of <a target="_blank" href="http://biosci.umn.edu/CGC/strains/wild.html">wild <span class="species">Caenorhabditis</span> strains</a> as well as some <a target="_blank" href="http://biosci.umn.edu/CGC/strains/non.html">non-<span class="species">Caenorhabditis</span> species</a>.
+</p>
+<h2>Gene Knockout Strains</h2>
+<p>
+<ul>
+<li><a target="_blank" href="http://celeganskoconsortium.omrf.org/>The <span class="species">C. elegans</span> Knockout Consortium (USA)</a></li>
+<li><a target="_blank" href="http://celeganskoconsortium.omrf.org/">National Bioresource Project (Japan)</a></li>
+<li><a target="_blank" href="http://pbil.univ-lyon1.fr/segalat/data/mos.php">NemaGENETAG Mos insertions</a></li>
+</ul>
+</p>
+</div>

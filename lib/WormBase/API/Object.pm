@@ -293,7 +293,14 @@ sub laboratory {
     my $class  = $object->class;
 
     # Ugh. Model inconsistencies.
-    my $tag = ($class eq 'Gene_class') ? 'Designating_laboratory' : 'Laboratory';	
+    my $tag;
+    if ($class eq 'Gene_class') {
+	$tag = 'Designating_laboratory';
+    } elsif ($class eq 'Transgene') {
+	$tag = 'Location';
+    } else {
+	$tag = 'Laboratory';
+    }
     my $lab = $object->$tag;
     my %data;
     $data{laboratory} = $self->_pack_obj($lab);
@@ -329,14 +336,6 @@ sub FindPosition {
   return wantarray ? @{$result[0]} : \@result;
 }
 
-
-# Ugh.  Can't autoload because singular vs plural
-#sub remarks {
-#  my ($self) = @_;
-#  my $object = $self->object;
-#  my $remarks = $object->Remark;
-#  return "$remarks";
-#}
 
 
 #################################################
