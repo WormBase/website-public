@@ -3,7 +3,6 @@
 
 [% MACRO genes_by_species BLOCK;
 
-
    # loop through each element in <subroutine>.<return_data_key>.<... to array data> array
    # One table for each species
    FOREACH species IN fields.$key.data.keys.sort;
