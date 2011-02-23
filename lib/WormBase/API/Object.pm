@@ -317,6 +317,40 @@ sub laboratory {
 }
 
 
+# Remarks:
+# Tag usage:
+# Expr_profile      : Remark
+# Variation         : Remark
+# Expression_cluster: Remark
+# Gene_class        : Remark
+# Life_stage        : Remark
+# Motif             : Remark
+# Operon
+# Strain
+# (Sequence has unique remark, not removed)
+# RNAi
+# Pcr_oligo
+# Phenotype
+# Picture
+# Position_matrix
+# Protein
+# Transgene
+sub remarks {
+    my $self    = shift;
+    my $object  = $self->object;
+    my @remarks = $object->Remark;
+    my $class = $object->class;
+
+    # Need to add in evidence handling.
+    my @evidence = map { $_->col } @remarks;
+
+    # TODO: handling of Evidence nodes
+    my $data    = { description  => "curatorial remarks for the $class",
+		    data         => @remarks ? \@remarks : undef,
+    };
+    return $data;
+}
+
 
 
 

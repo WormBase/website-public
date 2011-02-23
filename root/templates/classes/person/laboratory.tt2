@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% PROCESS "shared/fields/laboratory.tt2" title="Laboratory affiliation" %]
+[% laboratory(title="Laboratory affiliation") %]
 
 [% WRAPPER $field_block title="Strain designation" key="strain_designation" -%] 
       [% tag2link(fields.strain_designation.data) %] 

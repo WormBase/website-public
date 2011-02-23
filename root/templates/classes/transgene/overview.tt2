@@ -5,7 +5,7 @@
 
 <div class="detail-box ui-corner-all">
 
-   [% PROCESS "shared/fields/species.tt2" %]
+   [% species %]
 
    [% WRAPPER $field_block title="Summary" key="summary" %]
       [% fields.summary.data %]
@@ -39,6 +39,4 @@
     [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Curatorial remarks" key="remarks" %]
-    [% fields.remarks.data.join("<br>") %]
-[% END %]
+[% remarks %]

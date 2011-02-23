@@ -177,18 +177,58 @@ sub variation_type {
     return $data;
 }
 
-# Should probably be promoted to Role/Object.pm
-sub remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-    my @remarks = $object->Remark;
 
-    # TODO: handling of Evidence nodes
-    my $data    = { description  => 'curator remarks for the variation',
-		    data         => \@remarks,
-    };
-    return $data;
-}
+# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
+
+=head2 remarks
+
+This method will return a data structure containing
+curatorial remarks for the gene class.
+
+=head3 PERL API
+
+ $data = $model->remarks();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A Gene class (eg unc)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# sub remarks { }
+
 
 sub status {
     my $self    = shift;

@@ -15,17 +15,10 @@
      [% fields.description.data %]
 [% END %]
 
-[% PROCESS "shared/fields/laboratory.tt2" title="Designating laboratory" %]
+[% laboratory(title="Designating laboratory") %]
 
 [% WRAPPER $field_block title="Phenotype" key="phenotype" -%] 
       [% fields.phenotype.data %]
 [% END %]
 
-[% IF fields.remarks.data.size > 0 %]
-[% WRAPPER $field_block title="" %]
-         <div class="toggle">Curatorial remarks</div>
-         <div class="returned">
-           [% fields.remarks.data.join("<br />") %]
-         </div>
-[% END %]
-[% END %]
+[% remarks() %]

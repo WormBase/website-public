@@ -254,6 +254,8 @@ sub other_name {
     return $data;
 }
 
+# Provided by Object.pm, pod retained for completeness
+
 =head2 remarks
 
 This method will return a data structure containing
@@ -301,17 +303,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/life_st
 
 =cut 
 
-sub remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-    my @remarks = $object->Remark;
-    
-    # TODO: handling of Evidence nodes
-    my $data    = { description  => 'curatorial remarks',
-		    data         => \@remarks,
-    };
-    return $data;
-}   
 
 #######################################
 #

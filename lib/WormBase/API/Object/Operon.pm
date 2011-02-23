@@ -268,45 +268,8 @@ sub history {
 #     EndSection;
 #   }
 # }
-############
-## Remark
-############
 
 
-sub remarks {
-
-	my $self = shift;
-    my $operon = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @remarks = $operon->Remark;
-	my %remark_evidence;
-  	
-	for my $remark (@remarks) {
-
-	  my @evidence = $remark->col;
-	  $data_pack{$remark} = \@evidence;
-
-  	}
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
-
-# sub get_all_remark_data {
-#   my %data;
-#   # get remarks and remark evidence data
-#   
-#   $data{'Remark_Evidence'} = \%remark_evidence;
-#   return \%data;
-# }
 
 
 

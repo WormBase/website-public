@@ -5,7 +5,7 @@
             
 <div class="detail-box ui-corner-all">
 
-        [% PROCESS "shared/fields/species.tt2" %]
+        [% species %]
 
         [% WRAPPER $field_block title="Life Stage"-%] 
               [% tag2link(fields.name.data,fields.name.data.name) %]
@@ -27,7 +27,4 @@
    [% END %]		  
 [% END %]
 
-[% WRAPPER $field_block title="Curator Remarks" key="remarks" %]
-      <div class="text-width">[% markup(fields.remarks.data.join('<br>'),0) %]</div>
-[% END %]
-
+[% remarks(no_toggle=1);
