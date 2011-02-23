@@ -1,6 +1,9 @@
 package WormBase::API::Object::Analysis;
 use Moose;
 
+with 'WormBase::API::Role::Object';
+extends 'WormBase::API::Object';
+
 =pod 
 
 =head1 NAME
@@ -18,31 +21,6 @@ http://wormbase.org/resources/analysis
 =head1 Methods
 
 =cut
-
-with 'WormBase::API::Role::Object';
-extends 'WormBase::API::Object';
-
-has 'address_data' => (
-    is   => 'ro',
-    isa  => 'HashRef',	
-    lazy => 1,
-    default => sub {	
-	my $self = shift;
-	my $object = $self->object;
-	my %address;
-	
-	foreach my $tag ($object->Address) {
-	    if ($tag =~ m/street|email|office/i) {		
-		my @data = map { $_->name } $tag->col;
-		$address{lc($tag)} = \@data;
-	    } else {
-		$address{lc($tag)} =  $tag->right->name;
-	    }
-	}
-	return \%address;
-    }
-    );
-
 
 #######################################
 #
@@ -97,15 +75,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/analysi
 
 =cut			 
 
-sub name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $name   = $object->name;
-    my $data   = { description => 'a generic name of the analysis or method',
-		   data        => $self->_pack_obj($object)
-    };
-    return $data;
-}
+# supplied by Object.pm; retain pod for complete documentation of API
+# sub name { }
 
 =head2 database
 

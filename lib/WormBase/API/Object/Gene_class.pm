@@ -73,13 +73,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
-sub name { 
-    my $self = shift;
-    my $object = $self->object;
-    my $data   = { description => 'the primary name and id of the requested gene class',
-		   data        => $self->_pack_obj($object) };
-    return $data;
-}
+# Provided by Object.pm; retain pod for complete documentation of the API
+#sub name { }
 
 =head2 other_names
 

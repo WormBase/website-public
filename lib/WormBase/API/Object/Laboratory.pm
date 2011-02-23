@@ -5,33 +5,80 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
+=pod 
 
-########
+=head1 NAME
 
-sub name {
+WormBase::API::Object::Laboratory
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+=head1 SYNPOSIS
 
-	#### data pull and packaging
+Model for the Ace ?Laboratory class.
 
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$object",
-		'class' => 'Laboratory'
-	
-	};
+=head1 URL
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+http://wormbase.org/resource/laboratory
+
+=head1 TODO
+
+=head1 METHODS
+
+=cut
+
+
+
+
+=head2 name
+
+This method will return a data structure of the 
+name and ID of the requested transgene.
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Supplied by Object.pm; retain pod for complete documentation of API
+# sub name {}
+
+
 
 sub id {
 

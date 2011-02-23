@@ -205,39 +205,30 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 #
 ################################################
 
-=pod
-
-Mapping fields -> tags for more efficient autoloading:
-
-Approach 1:
-Name all "singleton" fields the same as the tag in the database.
-
-Use a hash that maps the tag name to the field name in the template
-
-
-Approach 2:
-
-=cut
-
 sub name {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-    my $name   = $object->name;
-    return $name;
-    return ({ name => $name });   # OR THIS?
+    my $class  = $object->class;
+    my $label = eval { $object->Public_name || $object->Common_name };
+    $label = ($label && $label ne $object->name) ? $label : $object->name;
+    my $data = { description => "the name and WormBase internal ID of a $class object",
+		 data        =>  $self->_pack_obj($object,$label) };
+    return $data;
 }
 
 =head1 $object->common_name
 
-Default: name of the object
-
+  Default: name of the object
+    
 =cut
 
 sub common_name {
-  my $self   = shift;
-  my $object = $self->object;
-  my $name   = $object->name;
-  return ({ common_name => $name });
+    my $self   = shift;
+    my $object = $self->object;
+    my $name   = eval { $object->Public_name || $object->Common_name };
+    return { description => 'the common name of the object which may be the object name',
+	     data        => $self->_pack_obj($object,$name),
+    };
 }
 
 sub other_name {

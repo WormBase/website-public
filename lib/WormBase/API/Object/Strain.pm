@@ -81,33 +81,57 @@ extends 'WormBase::API::Object';
 #);
 
 
+=head2 name
 
-### subroutines
+This method will return a data structure of the 
+name and ID of the requested transgene.
 
-###########
-## OVERVIEW
-############
-sub name {
+=head3 PERL API
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+ $data = $model->name();
 
-	#### data pull and packaging
+=head3 REST API
 
-	$data_pack = {
-					'label' => "$object",
-					'class' => 'Strain',
-					'id' => "$object"
-				};
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene ID (gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Supplied by Object.pm; retain pod for complete documentation of API
+# sub name {}
+
+   
 
 sub id {
 

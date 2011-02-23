@@ -20,6 +20,8 @@ http://wormbase.org/species/transgene
 
 =head1 TODO
 
+=head1 METHODS
+
 =cut
 
 #######################################
@@ -75,13 +77,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
-sub name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $data = { description => 'the name and internal ID of a transgene',
-		 data        =>  $self->_pack_obj($object) };
-    return $data;
-}
+# Supplied by Object.pm; retain pod for complete documentation of API
+# sub name {}
 
 =head2 synonym
 

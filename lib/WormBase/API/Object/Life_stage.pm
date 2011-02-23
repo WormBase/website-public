@@ -80,13 +80,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/life_st
 
 =cut 
 
-sub name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $data = { description => 'A life stage in the development of C. elegans',
-		 data        =>  $self->_pack_obj($object) };
-    return $data;
-}
+# Provided by Object.pm; retain pod for complete documentation of the API
+# sub name { }
 
 =head2 substages
 
