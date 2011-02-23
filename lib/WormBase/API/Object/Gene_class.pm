@@ -302,6 +302,8 @@ sub phenotype {
     return $data;
 }
 
+# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
+
 =head2 remarks
 
 This method will return a data structure containing
@@ -348,19 +350,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 <div class="response-example"></div>
 
 =cut 
-
-sub remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-    my @remarks = $object->Remark;
-    
-    my $data    = { description  => 'curatorial remarks',
-		    data         => \@remarks,
-    };
-    return $data;
-} 
-
-
 
 
 #######################################

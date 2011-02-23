@@ -2,7 +2,8 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 <div class="detail-box ui-corner-all">
-     [% PROCESS "shared/fields/species.tt2" %]
+
+     [% species %]
 
      [% WRAPPER $field_block title="Sequence Type" %]
 	 	[% fields.sequence_type.data || '' %]
@@ -12,7 +13,7 @@
 
 	 [% fields.description.data && markup(fields.description.data) %]
 
-     <div class="text-width">[% PROCESS "shared/fields/remarks.tt2" %]</div>
+     [% remarks %]
 
      [% WRAPPER $field_block title="Identity" key='identity' %]
 	 	[% fields.identity.data || '' %]

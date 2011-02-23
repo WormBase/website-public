@@ -6,8 +6,7 @@
     [% fields.author.data %]
 [% END %]
 
-[% PROCESS shared/fields/laboratory.tt2 title="Created in lab" %]
-
+[% laboratory(title="Created in lab") %]
 
 [% WRAPPER $field_block title="Construction" %]
     [% WRAPPER $field_block title="Clone" key="clone" %]

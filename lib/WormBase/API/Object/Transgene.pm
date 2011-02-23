@@ -311,6 +311,7 @@ sub driven_by_construct {
     return $data;
 }
 
+# Provided by Object.pm, pod retained for documentation
 
 =head2 remarks
 
@@ -359,17 +360,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
-sub remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-    my @remarks = $object->Remark;
-    
-    # TODO: handling of Evidence nodes
-    my $data    = { description  => 'curatorial remarks',
-		    data         => \@remarks,
-    };
-    return $data;
-}   
+# sub remarks { }
 
 =head2 reporter_construct
 
@@ -418,6 +409,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
+# sub remarks { }
 
 sub reporter_construct {
     my $self = shift;

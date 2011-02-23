@@ -101,24 +101,56 @@ sub description {
 	return \%data;
 }
 
-sub remark {
+# Provided by Object.pm, pod retained for documentation
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+=head2 remarks
 
-	#### data pull and packaging
+This method will return a data structure containing
+curator remarks about the transgene.
 
-	$data_pack = $object->Remark;
+=head3 PERL API
 
-	####
+ $data = $model->remarks();
 
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Transgene (eg gmIs13)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# sub remarks { }
 
 sub associated_feature {
 

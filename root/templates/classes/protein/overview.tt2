@@ -7,7 +7,7 @@
 
  <div class="detail-box ui-corner-all">
  
- [% PROCESS "shared/fields/species.tt2" %]
+[% species %]
  
  [% WRAPPER $field_block title="WormBase ID" %]
   [% tag2link(fields.name.data,fields.name.data.id) %]
@@ -32,7 +32,7 @@
   [% fields.type.data %]
 [% END %]
 
- [% PROCESS "shared/fields/remarks.tt2" %]
+[% remarks %]
 
 
 [% WRAPPER $field_block title="Status" key="status" -%]

@@ -568,3 +568,56 @@ if (typeof(_gat) == 'object') {
 [% END %]
 
 
+
+
+
+
+[% MACRO laboratory BLOCK ;
+     # The Laboratory field
+     # Expects the stash to contain the "laboratory" key.
+     WRAPPER $field_block title="$title" key="laboratory";
+         tag2link(fields.laboratory.data.laboratory);
+ 
+         # Include the lab representative, if one exists         
+         IF fields.laboratory.data.representative;
+              " (" ; 
+              tag2link(fields.laboratory.data.representative); 
+              ")" ; 
+         END;
+     END;
+  END;
+%]
+
+[% MACRO species BLOCK; 
+   # Don't display unless we have a genus and species
+   IF fields.taxonomy.data.genus;
+      WRAPPER $field_block title="Species" key="taxonomy";
+          taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species);
+      END;
+   END;
+END;
+%]
+
+[% MACRO remarks BLOCK;
+   # Expects the remarks key to be defined in the data stash
+   # Presents field in a toggle by default; pass "no_toggle=1"
+   IF $no_toggle == 1;  
+      IF fields.remarks.data.defined;
+        '<div class="text-width">';
+         WRAPPER $field_block title="Remarks" key="remarks";
+	      markup(fields.remarks.data.join('<br>'),0);
+         END;
+        '</div>';
+      END;
+   ELSE;
+      IF fields.remarks.data.size > 0;
+           WRAPPER $field_block title="";
+               '<div class="toggle">Curatorial remarks</div>';
+               '<div class="returned">';
+                    fields.remarks.data.join('<br />');
+               '</div>';
+           END;
+      END;
+    END;
+ END;
+%]
