@@ -1,0 +1,8 @@
+[% WRAPPER $field_block title="$title" key="laboratory" %] 
+      [% tag2link(fields.laboratory.data.laboratory) %] 
+         [% IF fields.laboratory.data.representative ; 
+            " (" ; 
+            tag2link(fields.laboratory.data.representative); 
+            ")" ; 
+         END; %]
+[% END %]
