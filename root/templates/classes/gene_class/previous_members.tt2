@@ -50,5 +50,13 @@
 [% gene_table(title="Reassigned to new class" key="former_members") %]
 [% gene_table(title="Reassigned to new name"  key="reassigned_members") %]
 
-
+[%# USING A CUSTOM DATA STRUCTURE HERE %]
+[%# build_data_table(title="Reassigned to new class",
+                    key="former_members",
+                    columns={'species'=>'Species',
+                             'former_name'=>'Former Name',
+		    	     'new_name'=>'New Name',
+                             'sequence'=>'Sequence',
+			},
+		    order=['species','former_name','new_names','sequence']) %]
 

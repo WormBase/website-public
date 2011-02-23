@@ -7,22 +7,25 @@
 
    [% PROCESS "shared/fields/species.tt2" %]
 
+   [% WRAPPER $field_block title="Summary" key="summary" %]
+      [% fields.summary.data %]
+   [% END %]
+
    [% WRAPPER $field_block title="Synonym" key="synonym" %]
         [% fields.synonym.data %]
    [% END %]
 
 </div>
 
-[% WRAPPER $field_block title="Summary" key="summary" %]
-    [% fields.summary.data %]
-[% END %]
+[% WRAPPER $field_block title="Driven by" %]
 
-[% WRAPPER $field_block title="Drive by gene" key="driven_by_gene" %]
-    [% tag2link(fields.driven_by_gene.data) %]
-[% END %]
+   [% WRAPPER $field_block title="Gene" key="driven_by_gene" %]
+       [% tag2link(fields.driven_by_gene.data) %]
+   [% END %]
 
-[% WRAPPER $field_block title="Driven by construct" key="driven_by_construct" %]
-    [% fields.driven_by_construct.data %]
+   [% WRAPPER $field_block title="Construct" key="driven_by_construct" %]
+       [% fields.driven_by_construct.data %]
+   [% END %]
 [% END %]
 
 [% WRAPPER $field_block title="Reporter construct" key="reporter_construct" %]
@@ -31,14 +34,11 @@
         [% IF reporter == "Gene" %] 
             Gene: [% tag2link(fields.reporter_construct.data.$reporter) %]
         [% ELSE %]
-            [% reporter %]
+            [% reporter.value %]
         [% END %]
-        [%# "<br>" unless LAST %]
     [% END %]
 [% END %]
 
 [% WRAPPER $field_block title="Curatorial remarks" key="remarks" %]
     [% fields.remarks.data.join("<br>") %]
 [% END %]
-
-
