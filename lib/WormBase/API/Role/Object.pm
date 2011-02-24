@@ -182,7 +182,6 @@ sub check_data {
 #          description(s) of compliance problem(s).
 sub _check_data_content {
 	my ($self, $data, @keys) = @_;
-	warn "Inside _check_data_content";
 	my $ref = ref($data) || return ();
 
 	my @compliance_problems;
