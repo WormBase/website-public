@@ -47,6 +47,7 @@
         url;
       ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
+		IF (class == "pcr_product" OR class == "oligo_set" OR class == "oligo"); class = "pcr_oligo"; END;
         IF (class == "author"); class = "person"; END;
         IF c.config.sections.species.$class.defined;
           c.uri_for('/species', class, id);
