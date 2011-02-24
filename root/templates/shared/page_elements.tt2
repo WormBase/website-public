@@ -634,3 +634,82 @@ END;
 
 
 
+
+[%# 
+    #######################################################
+
+      Class-specific MACROS, used only by a single class 
+
+    #######################################################
+%]
+
+
+[% MACRO gene_list_by_species BLOCK;
+
+   WRAPPER $field_block title="$title";
+
+       # loop through each element in <subroutine>.<return_data_key>.<... to array data> array
+       # One table for each species
+       # Force C. elegans to the top of the list
+       species_list = fields.$key.data.keys.sort;
+       species_list.unshift('Caenorhabditis elegans');
+       species_list = species_list.unique;
+
+       FOREACH species IN species_list;
+#       FOREACH species IN fields.$key.data.keys.sort;
+
+            WRAPPER $field_block title="" key="$key";
+
+               # declare array of columns named via keys in the data structure
+	       IF $key.match('current');	       
+	            order = ['species','locus', 'sequence'];
+		    
+		     # declare hash for column headers, keyed as above
+	             headers = {   species  => 'Species',
+                                   locus    => 'Locus',
+                                   sequence => 'Sequence' };
+              ELSE;
+ 	             order = ['species','former_name', 'new_name','sequence'];
+		    
+		     # declare hash for column headers, keyed as above
+	             headers = {   species     => 'Species',
+                                   former_name => 'Former name',
+				   new_name    => 'New name',
+                                   sequence    => 'Sequence' };	  
+	      END;
+										 
+             # declare rows array
+             rows = [];
+
+             FOREACH r IN fields.$key.data.$species;
+      	               row = [];
+		       row.push(r.species);
+                       row.push(tag2link(r.locus));
+                       row.push(r.sequence);
+					
+		        # enter data row array into rows
+                       rows.push(row);
+             END;
+					  
+             # populate name array;
+	     names = [];
+	     FOREACH o IN order; names.push(headers.$o); END;
+             table_count = table_count + 1;		      	  
+
+	          # generate table
+             '<div class="toggle">';
+       	             '<span class="species">' 
+                      _ species 
+                      _ '</span> (' 
+                      _ fields.$key.data.$species.size 
+                      _ ' members)'
+                      _ '</div>';
+             '<div class="returned">';
+                dataTable_list(names, rows, "table_${table_count}");
+             '</div>';         
+
+	     END; # END of nested WRAPPER
+         END; # END of SPECIES
+     END; # END of primary WRAPPER 
+  END; # END of MACRO
+%]

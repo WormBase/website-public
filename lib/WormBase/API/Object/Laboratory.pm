@@ -134,7 +134,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/person/
 sub affiliation {
     my $self   = shift;
     my $object = $self->object;
-    my ($institute,@address)    = $object->Address(2);
+    my ($institute)    = $object->Mail;
     return { description => 'institute or affiliation of the laboratory',
 	     data        => "$institute" || undef };
 }
@@ -366,7 +366,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 sub email {
     my $self   = shift;
     my $object = $self->object;
-    my $email  = $object->Email;
+    my $email  = $object->E_mail;
     my $data   = { description => 'primary email number for the lab',
 		   data        => "$email" || undef };
     return $data;

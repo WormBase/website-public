@@ -15,7 +15,7 @@
 
 [% END %]
 
-[% WRAPPER $field_block title="Lab Web Site" -%] 
+[% WRAPPER $field_block title="Lab Website" -%]
     <a href="http://[% fields.website.data %]">[% fields.website.data %]</a><br>
 [% END %]
 
