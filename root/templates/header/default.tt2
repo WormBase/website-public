@@ -50,6 +50,7 @@
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.sort() %]
             [% IF option == 'title'; NEXT; END; %]
+			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
             <li>[% IF option == 'operator' %]
 		     <a id="[% option %]" href="#"  
 			[% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
