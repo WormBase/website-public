@@ -3,7 +3,7 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
             
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
 
    [% species %]
 
@@ -11,7 +11,7 @@
            [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
 
-</div>
+[% END %]
 
    [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
            [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class FILTER lower %]

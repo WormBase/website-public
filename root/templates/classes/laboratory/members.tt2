@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+ 
+[% WRAPPER $field_block title="Current Members"-%] 
+     <ul>
+     [% FOREACH last_name IN fields.current_members.data.keys.sort %]
+     	<li>[% tag2link(fields.current_members.data.$last_name) %]</li>
+     [% END %]
+     </ul>
+[% END %]
+ 
+[% WRAPPER $field_block title="Former Members"-%]
+     <ul>
+     [% FOREACH last_name IN fields.former_members.data.keys.sort %]
+     	<li>[% tag2link(fields.former_members.data.$last_name) %]</li>
+     [% END %]
+     <ul>
+[% END %]

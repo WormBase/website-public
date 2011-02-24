@@ -3,14 +3,14 @@
 
 
 <h2>[% fields.name.data.label %]</h2>
-<div class="detail-box ui-corner-all">
-    
-    
+
+[% WRAPPER highlight_box %]
+        
    [% WRAPPER $field_block  title="Wormbase ID" key="name" %]
       [% tag2link(fields.name.data,fields.name.data.id) %]
    [% END %]
 
-</div>
+[% END %]
 
 
 <div class="text-width" style="clear:left">[% fields.description.data.des %]</div>

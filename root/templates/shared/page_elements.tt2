@@ -97,6 +97,15 @@
   [% END %]
 [% END %]
 
+
+[%# The Floating Box on the overview widget %]
+[% BLOCK highlight_box %]
+    <div class="detail-box ui-corner-all">
+       [% content %]
+    </div>
+[% END %] 
+
+
 [%# options:
    print="always" to print the field even if there is no data 
 %]
@@ -621,3 +630,7 @@ END;
     END;
  END;
 %]
+
+
+
+

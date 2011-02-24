@@ -3,7 +3,7 @@
 
 <h2>[% fields.name.data.name %]</h2>
 
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
 
    [% species %]
 
@@ -15,7 +15,7 @@
         [% fields.synonym.data %]
    [% END %]
 
-</div>
+[% END %]
 
 [% WRAPPER $field_block title="Driven by" %]
 

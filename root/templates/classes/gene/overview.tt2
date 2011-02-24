@@ -3,8 +3,9 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="detail-box ui-corner-all">
-   
+
+[% WRAPPER highlight_box %]
+ 
    [% species %]
 
    [% WRAPPER $field_block title="Sequence"-%] 
@@ -27,9 +28,7 @@
            [% fields.name.data.id %]
    [% END %]
 
-
-
-</div>
+[% END %]
 
 
 

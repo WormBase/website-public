@@ -3,7 +3,7 @@
 
 <h2>[% fields.name.data.name %]</h2>
 
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
 
    [% WRAPPER $field_block title="Database"  %]
        [% IF fields.database.data.url %]
@@ -13,7 +13,7 @@
        [% END %]
    [% END %]
 
-</div>
+[% END %]
 
 
 [% WRAPPER $field_block title="Analysis Description" key="description" %]

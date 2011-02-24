@@ -3,7 +3,7 @@
 
 <h2>[% fields.name.data.name %]</h2>
             
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
 
         [% species %]
 
@@ -11,7 +11,7 @@
               [% tag2link(fields.name.data,fields.name.data.name) %]
         [% END %]
 
-</div>
+[% END %]
 
 [% WRAPPER $field_block title="Definition" key="definition" %]
       [% fields.definition.data %]

@@ -5,15 +5,15 @@
 
 <h2>[% tag2link(fields.name.data,fields.name.data.id) %]</h2>
 
- <div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
  
-[% species %]
+   [% species %]
  
- [% WRAPPER $field_block title="WormBase ID" %]
-  [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% WRAPPER $field_block title="WormBase ID" %]
+     [% tag2link(fields.name.data,fields.name.data.id) %]
+   [% END %]
+ 
 [% END %]
- 
- </div>
  
 
 [% WRAPPER $field_block title="Gene" key="genes" -%]

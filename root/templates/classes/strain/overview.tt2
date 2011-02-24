@@ -4,7 +4,8 @@
 
 	<h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="details ui-corner-all">
+[% WRAPPER highlight_box %]
+
 	[% WRAPPER $field_block title="Email"-%] 
             [% FOREACH email_address IN fields.email.data %]
             [% email_address  %]<br>
@@ -29,7 +30,7 @@
             [% tag2link(fields.id.data) %]
    [% END %]            
 
-</div>
+[% END %]
 
 
 <div class="text-width" style="clear:left">
