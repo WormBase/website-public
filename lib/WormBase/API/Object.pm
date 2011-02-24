@@ -206,14 +206,14 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 ################################################
 
 sub name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $class  = $object->class;
-    my $label = eval { $object->Public_name || $object->Common_name };
-    $label = ($label && $label ne $object->name) ? $label : $object->name;
-    my $data = { description => "the name and WormBase internal ID of a $class object",
-		 data        =>  $self->_pack_obj($object,$label) };
-    return $data;
+	my ($self) = @_;
+	my $object = $self->object;
+    my $label  = $self ~~ 'Public_name' || $self ~~ 'Common_name' || $object->name;
+	my $class  = $object->class;
+	return {
+		description => "The name and WormBase internal ID of a $class object",
+		data        =>  $self->_pack_obj($object,$label),
+	};
 }
 
 =head1 $object->common_name
