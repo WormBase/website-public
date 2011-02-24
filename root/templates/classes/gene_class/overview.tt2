@@ -20,8 +20,9 @@
 
 [% laboratory(title="Designating laboratory") %]
 
-[% WRAPPER $field_block title="Phenotype" key="phenotype" -%] 
-      [% fields.phenotype.data %]
-[% END %]
+
+[%# WRAPPER $field_block title="Phenotype" key="phenotype" -%] 
+      [%# fields.phenotype.data %]
+[%# END %]
 
 [% remarks() %]

@@ -643,6 +643,7 @@ END;
     #######################################################
 %]
 
+[% # gene_list_by_species: custom dataTable processing for the Gene Class summary %]
 
 [% MACRO gene_list_by_species BLOCK;
 
@@ -656,59 +657,65 @@ END;
        species_list = species_list.unique;
 
        FOREACH species IN species_list;
-#       FOREACH species IN fields.$key.data.keys.sort;
+            IF fields.$key.data.$species > 0;
+                WRAPPER $field_block title="" key="$key";
 
-            WRAPPER $field_block title="" key="$key";
-
-               # declare array of columns named via keys in the data structure
-	       IF $key.match('current');	       
-	            order = ['species','locus', 'sequence'];
+                   # declare array of columns named via keys in the data structure
+	           IF key == 'current_genes';
+	                order = ['species','locus', 'sequence'];
 		    
-		     # declare hash for column headers, keyed as above
-	             headers = {   species  => 'Species',
-                                   locus    => 'Locus',
-                                   sequence => 'Sequence' };
-              ELSE;
- 	             order = ['species','former_name', 'new_name','sequence'];
-		    
-		     # declare hash for column headers, keyed as above
-	             headers = {   species     => 'Species',
-                                   former_name => 'Former name',
-				   new_name    => 'New name',
-                                   sequence    => 'Sequence' };	  
-	      END;
-										 
-             # declare rows array
-             rows = [];
+		         # declare hash for column headers, keyed as above
+	                 headers = {   species  => 'Species',
+                                       locus    => 'Locus',
+                                       sequence => 'Sequence' };
+                  ELSE;
+ 	                 order = ['species','former_name', 'new_name','sequence'];
+		       
+		         # declare hash for column headers, keyed as above
+	                 headers = {   species     => 'Species',
+                                       former_name => 'Former name',
+				       new_name    => 'New name',
+                                       sequence    => 'Sequence' };	  
+    	          END;
 
-             FOREACH r IN fields.$key.data.$species;
-      	               row = [];
-		       row.push(r.species);
-                       row.push(tag2link(r.locus));
-                       row.push(r.sequence);
+                 # declare rows array
+                 rows = [];
+  
+                 FOREACH r IN fields.$key.data.$species;
+          	           row = [];
+		           # loop through each element in order array (for columns) , declared above
+		           FOREACH o IN order;			
+			         # get value (val) from the row r
+     		                 val = r.$o;
+			         # enter data in row
+	                         row.push(val);
+      		           END;
+#		       row.push(r.species);
+#                       row.push(tag2link(r.locus));
+#                       row.push(r.sequence);
 					
-		        # enter data row array into rows
-                       rows.push(row);
-             END;
+		           # enter data row array into rows
+                           rows.push(row);
+                 END;
 					  
-             # populate name array;
-	     names = [];
-	     FOREACH o IN order; names.push(headers.$o); END;
-             table_count = table_count + 1;		      	  
+                 # populate name array;
+	         names = [];
+	         FOREACH o IN order; names.push(headers.$o); END;
+                 table_count = table_count + 1;		      	  
 
-	          # generate table
-             '<div class="toggle">';
-       	             '<span class="species">' 
-                      _ species 
-                      _ '</span> (' 
-                      _ fields.$key.data.$species.size 
-                      _ ' members)'
-                      _ '</div>';
-             '<div class="returned">';
-                dataTable_list(names, rows, "table_${table_count}");
-             '</div>';         
-
+    	          # generate table
+                 '<div class="toggle">';
+       	                 '<span class="species">' 
+                          _ species 
+                          _ '</span> (' 
+                          _ fields.$key.data.$species.size 
+                          _ ' members)'
+                          _ '</div>';
+                 '<div class="returned">';
+                    dataTable_list(names, rows, "table_${table_count}");
+                '</div>';         
 	     END; # END of nested WRAPPER
+           END; # END IF species contains data
          END; # END of SPECIES
      END; # END of primary WRAPPER 
   END; # END of MACRO
