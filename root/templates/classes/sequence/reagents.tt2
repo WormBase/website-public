@@ -4,23 +4,23 @@
 [% widget = c.stash.widget %]
  
 
-[% WRAPPER $field_block title="ORFeome Assays" %]
+[% WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays"%]
   [% FOREACH key IN c.stash.fields.orfeome_assays.data.keys.sort %]
     [% tag2link(c.stash.fields.orfeome_assays.data.$key) %]<br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Source Clone" %]
+[% WRAPPER $field_block title="Source Clone" key="source_clone" %]
   [% c.stash.fields.source_clone.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Microarray Assays" %]
+[% WRAPPER $field_block title="Microarray Assays" key="microarray_assays" %]
   [% FOREACH key IN  c.stash.fields.microarray_assays.data %]
       [% tag2link(key) %]<br>
    [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Transgene Constructs" %]
+[% WRAPPER $field_block title="Transgene Constructs" key="transgene_constructs" %]
   [% FOREACH key IN  c.stash.fields.transgene_constructs.data %]
       [% tag2link(key) %]<br>
    [% END %]

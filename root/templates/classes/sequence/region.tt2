@@ -70,7 +70,7 @@
          </div>
      [% END %] 
 
-[% WRAPPER $field_block title="Transcripts in this region" %]
+[% WRAPPER $field_block title="Transcripts in this region" key="transcripts" %]
   [% FOREACH key IN  c.stash.fields.transcripts.data %]
       [% tag2link(key) %]<br>
    [% END %]
