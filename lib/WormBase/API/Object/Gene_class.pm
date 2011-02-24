@@ -349,18 +349,18 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 #######################################
 #
-# The Genes widget 
+# The Current Members widget 
 #
 #######################################
 
-=head2 genes
+=head2 current_members
 
 This method will return a data structure containing
 all genes assigned to the class, organized by species.
 
 =head3 PERL API
 
- $data = $model->genes();
+ $data = $model->current_members();
 
 =head3 REST API
 
@@ -392,7 +392,7 @@ A Gene class (eg unc)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/genes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_members
 
 =head4 Response example
 
@@ -400,7 +400,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
-sub genes {
+sub current_members {
     my $self   = shift;
     my $object = $self->object;
     
