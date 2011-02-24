@@ -47,8 +47,14 @@
   END; # END of MACRO
 %]
 
+[% mytitle = "Former <b>" _ object.name.data.id _ "</b> Class Members";
+   WRAPPER $field_block title="$mytitle"; %]
+
 [% gene_table(title="Reassigned to new class" key="former_members") %]
 [% gene_table(title="Reassigned to new name"  key="reassigned_members") %]
+
+[% END %]
+
 
 [%# USING A CUSTOM DATA STRUCTURE HERE %]
 [%# build_data_table(title="Reassigned to new class",

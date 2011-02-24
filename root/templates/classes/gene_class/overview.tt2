@@ -12,7 +12,10 @@
 </div>
 
 [% WRAPPER $field_block title="Description" key="description" -%] 
-     [% fields.description.data %]
+     [% # Turn uppercase into boldface %]
+     [% desc = fields.description.data;
+       desc.replace('([A-Z])','<b>$1</b>');
+     %]
 [% END %]
 
 [% laboratory(title="Designating laboratory") %]
