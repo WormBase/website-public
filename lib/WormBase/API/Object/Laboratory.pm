@@ -1,4 +1,4 @@
-package WormBase::API::Object::Laboratory	;
+package WormBase::API::Object::Laboratory;
 use Moose;
 
 with 'WormBase::API::Role::Object';
@@ -26,12 +26,16 @@ http://wormbase.org/resource/laboratory
 =cut
 
 
-
+#######################################
+#
+# The Overview widget 
+#
+#######################################
 
 =head2 name
 
 This method will return a data structure of the 
-name and ID of the requested transgene.
+name and ID of the requested laboratory.
 
 =head3 PERL API
 
@@ -67,7 +71,7 @@ a Transgene ID (gmIs13)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/name
 
 =head4 Response example
 
@@ -79,180 +83,68 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 # sub name {}
 
 
+=head2 lab_representative
 
-sub id {
+This method returns a data structure containing
+the current lab representative of the affiliated lab.
 
-	my $self = shift;
+=head3 PERL API
+
+ $data = $model->lab_representative();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+WBPerson ID
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub lab_representative {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$object",
-		'class' => 'Laboratory'
-	
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-sub phone {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Phone;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-
-sub fax {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Fax;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-
-sub email {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Email;
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-
-sub web_site {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->URL;
-	my ($disc, $url) = split '://', $data_pack;
-
-	####
-	
-	$data{'data'} = $url;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-##########
-## details
-##########
-
-sub details {
-
-	my $self = shift;
-	my $lab = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	my ($institution,@address)    = $lab->Address(2);
-	my $fax =  $lab->Fax;  
-	my $phone =  $lab->Phone;
-	my $email =  $lab->Email;
-
-	%data_pack = (
-
-	  'name' => "$lab",
-	  'instituion' => $institution,
-	  'fax' => $fax,
-	  'phone' => $phone,
-	  'email' => $email
-	  );
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-sub representative {
-
-      my $self = shift;
-      my $lab = $self->object;
-      my %data;
-      my $desc = 'notes';
-      my $data_pack;
-
-      #### data pull and packaging
+    my $lab    = $object->Laboratory;
     
-      my $rep = $lab->Representative;
-
-		my $name = $rep->Standard_name;
-
-
-		$data_pack = {
-	      'id' => "$rep",
-	      'label' => "$name",
-	      'class' => 'Person'
-	  	};
-
-
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-
+    my $rep;
+    if ($lab) { 
+	my $representative = $lab->Representative;
+	my $name = $representative->Standard_name; 
+	$rep = $self->_pack_obj($representative,$name);
+    }
+    
+    my $data = { description => 'official representative of the laboratory',
+		 data        => $rep || undef };
+    return $data;
 }
 
 sub representatives {
@@ -297,230 +189,414 @@ sub representatives {
 }
 
 
-####################
-# genes and alleles
-####################
-
-sub gene_class {
-
-	my $self = shift;
+sub phone {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack = [];
-
-	#### data pull and packaging
-
-	my @gene_classes;
-	@gene_classes = $object->get('Gene_classes');	
-
-	foreach my $gene_class (@gene_classes) {
-	
-	push @data_pack, {
-	
-						'id' => "$gene_class",
-						'label' => "$gene_class",
-						'class' => 'Gene_class'
-						};
-	}
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $phone  = $object->Phone;
+    my $data   = { description => 'primary phone number for the lab',
+		   data        => "$phone" : undef };
+    return $data;
 }
 
-sub allele_designation {
-
-	my $self = shift;
+sub fax {
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Allele_designation;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $fax    = $object->Fax;
+    my $data   = { description => 'primary fax number for the lab',
+		   data        => "$fax" : undef };
+    return $data;
 }
 
+sub email {
+    my $self   = shift;
+    my $object = $self->object;
+    my $email  = $object->Email;
+    my $data   = { description => 'primary email number for the lab',
+		   data        => "$email" : undef };
+    return $data;
+}
+
+sub website {
+    my $self   = shift;
+    my $object = $self->object;
+    my $url    = $object->URL;
+    my ($protocol, $url) = split '://', $url;
+    my $data   = { description => 'website of the lab',
+		   data        => "url" : undef };
+    return $data;
+}
+
+
+
+
+
+
+
+#######################################
+#
+# The Members widget
+#
+#######################################
+
+=head2 current_members
+
+This method returns a data structure containing
+the current members of the laboratory.
+
+=head3 PERL API
+
+ $data = $model->members();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A laboratory ID (eg EG)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/current_members
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub current_members {
+    my $self = shift;
+    my $object = $self->object;
+    my $data   = $self->_get_members('Registered_lab_members');
+    return { description => 'current members of the laboratory',
+	     data        => @data ? \@data : undef };
+}
+ 
+sub former_members {
+    my $self = shift;
+    my $object = $self->object;
+    my $data   = $self->_get_members('Past_lab_members');
+    return { description => 'former members of the laboratory',
+	     data        => @$data ? $data : undef };
+}
+   
+sub _get_members {
+    my ($self,$tag) = @_;
+	
+    my @members = $object->$tag;
+    my @data;
+    foreach my $member (@members) {
+	my $name = $member->Standard_name;
+	push @data,$self->pack_obj($member,$name);
+    }
+    return \@data;
+}
+
+
+
+#######################################
+#
+# The Genes widget
+#
+#######################################
+
+=head2 strain_designation
+
+This method returns a data structure containing
+the strain designation of the laboratory.
+
+=head3 PERL API
+
+ $data = $model->strain_designation();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+WBPerson ID
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/strain_designation
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub strain_designation {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Strain_designation;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+       
+    my $lab   = $object->Laboratory;
+    $lab = $self->_pack_obj($lab) if $lab;
+       
+    my $data = { description => 'strain designation of the laboratory',
+		 data        => $lab || undef };
+    return $data;		     
 }
+
+=head2 allele_designation
+
+This method returns a data structure containing
+the allele designation of the laboratory.
+
+=head3 PERL API
+
+ $data = $model->allele_designation();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+WBPerson ID
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/allele_designation
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub allele_designation {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Allele_designation;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-
-
+    my $lab    = $object->Laboratory;
+    my $allele_designation = ($lab) ? $lab->Allele_designation->name : undef;
+    my $data = { description => 'allele designation of the laboratory',
+		 data        => $allele_designation };
+    return $data;
 }
 
-sub alleles {
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
 
-	#### data pull and packaging
+=head2 gene_classes
 
-	my @alleles = $object->Alleles;
+This method returns a data structure containing
+gene classes assigned to the laboratory.
 
-	foreach my $allele (@alleles) {
-	
-		my $allele_name = $allele->Public_name;
-	
-		push @data_pack, {
-		
-			'id' => "$allele",
-			'label' => "$allele_name",
-			'class' => 'Variation'
-		
-		};
-	}
+=head3 PERL API
 
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+ $data->gene_classes();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+WBPerson ID
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/gene_classes
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
 
 sub gene_classes {
+    my $self   = shift;
+    my $object = $self->object;
+    my $lab    = $object->Laboratory;
+
+    my @gene_classes = $lab ? $lab->Gene_classes : undef;
+    @gene_classes = map { $self->_pack_obj($_) } @gene_classes;
+    
+    my $data = { description => 'gene classes assigned to laboratory',
+		 data        => \@gene_classes };
+    return $data;
+}
+
+
+=head2 alleles
+
+This method returns a data structure containing
+alleles generated by the laboratory.
+
+=head3 PERL API
+
+ $data->alleles();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+A laboratory ID (eg EG)
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/alleles
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+
+sub alleles {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my @alleles = $object->Alleles;
+    my @data;
+    foreach (@alleles) {
+	my $gene = $_->Corresponding_gene;  # Correct?
+	push @data,{ name => $self->_pack_obj($_,$_->Public_name),
+		     gene => $gene ? $self->_pack_obj($gene,$gene->Public_name) : undef,
+	};
+    }
+    return { description => 'alleles generated by the laboratory',
+	     data        => @data ? \@data : undef,
+    };
+}
+
+
+
+
+
+
+
+##########
+## details - mostly deprecated
+##########
+
+sub details {
 
 	my $self = shift;
 	my $lab = $self->object;
-	my @data_pack;
-	my $desc = 'Gene classes assigned to laboratory';
-	my %data;
-	
-	my @gene_classes = $lab->Gene_classes;
-		
-	foreach my $gene_class (@gene_classes) {
-			
-		my $gc_label = $gene_class;
-		push @data_pack, {
-									
-					'label' => "$gc_label",
-					'id' => "$gc_label",
-					'class' => 'Gene_class'						
-		};
-	}
-
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	
-	return \%data;
-}
-
-#####################
-# lab personnel
-#####################
-
-sub current_member {
-
-	my $self = shift;
-    my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
 	my %data_pack;
 
 	#### data pull and packaging
-	
-	my @current_members = $object->Registered_lab_members;
-	
-	foreach my $current_member (@current_members) {
-	
-		my $cm_name = $current_member->Full_name;
-		my $cm_last_name = $current_member->Last_name;
-		
-		$data_pack{$cm_last_name} =  {
-		
-			'id' => "$current_member",
-			'label' => "$cm_name",
-			'class' => 'Person'
-		};
-	}
-	
-	####
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+
+	my ($institution,@address)    = $lab->Address(2);
+
+	%data_pack = (
+
+	  'name' => "$lab",
+	  'instituion' => $institution,
+	  );
+
+
 }
 
-
-sub former_member {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my @former_members = $object->Past_lab_members;
-	
-	foreach my $former_member (@former_members) {
-	
-		my $fm_name = $former_member->Full_name;
-		my $fm_last_name = $former_member->Last_name;
-		
-		$data_pack{$fm_last_name} = {
-		
-			'id' => "$former_member",
-			'label' => "$fm_name",
-			'class' => 'Person'
-		};
-	}
-	
-
-	####
-	
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 
 1; 
