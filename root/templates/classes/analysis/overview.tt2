@@ -26,7 +26,7 @@
 
 
 [% WRAPPER $field_block title="Database" %]
-   [% WRAPPER $field_block title="Database" key="database" %]
+   [% WRAPPER $field_block title="Name" key="database" %]
        [% IF fields.database.data.url %]
            <a href="http://[% fields.database.data.url %]/">[% fields.database.data.database %]</a>
        [% ELSE %]
