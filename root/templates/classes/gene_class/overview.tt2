@@ -1,7 +1,7 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box %]
 
     [% WRAPPER $field_block title="Other names" key="other_names" -%] 
          [% FOREACH name IN fields.other_names.data %]
@@ -9,7 +9,7 @@
          [% END %]
     [% END %]
         
-</div>
+[% END %]
 
 [% WRAPPER $field_block title="Description" key="description" -%] 
      [% # Turn uppercase into boldface %]

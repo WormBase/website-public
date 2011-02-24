@@ -3,28 +3,29 @@
 
 <h2>[% fields.name.data.label %]</h2>
 
-<div class="detail-box ui-corner-all">
-	[% WRAPPER $field_block title="Email" %] 
-            [% fields.email.data.join("<br>") %]
-        [% END %]
+[% WRAPPER highlight_box %]
 
-	[% WRAPPER $field_block title="Lab Phone" %] 
-            [% fields.lab_phone.data %]
-        [% END %]
+    [% WRAPPER $field_block title="Email" %] 
+        [% fields.email.data.join("<br>") %]
+    [% END %]
 
-	[% WRAPPER $field_block title="Office Phone" %] 
-            [% fields.office_phone.data.join("<br>") %]
-        [% END %]       
+    [% WRAPPER $field_block title="Lab Phone" %] 
+        [% fields.lab_phone.data %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Office Phone" %] 
+        [% fields.office_phone.data.join("<br>") %]
+    [% END %]       
             
-   	[% WRAPPER $field_block title="Fax" %] 
-            [% fields.fax.data %]
-        [% END %]            
+    [% WRAPPER $field_block title="Fax" %] 
+          [% fields.fax.data %]
+    [% END %]            
 
-	[% WRAPPER $field_block title="WormBase ID" %] 
-            [% fields.name.data.id %]
-        [% END %]            
+    [% WRAPPER $field_block title="WormBase ID" %] 
+          [% fields.name.data.id %]
+    [% END %]            
 
-</div>	  
+[% END %]
 
 [% WRAPPER $field_block title="Address" key="street_address" %] 
    [% fields.street_address.data.join('<br>') %]

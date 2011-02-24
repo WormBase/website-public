@@ -3,13 +3,13 @@
 
 	<h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="details ui-corner-all">
-   
-	[% WRAPPER $field_block title="WormBase ID"-%] 
+[% WRAPPER highlight_box %]
+  
+   [% WRAPPER $field_block title="WormBase ID"-%] 
             [% tag2link(fields.id.data) %]
    [% END %]            
       
-</div>
+[% END %]
 
 <div class="text-width" style="clear:left">
 		[% WRAPPER $field_block title="Historical Name"-%] 
