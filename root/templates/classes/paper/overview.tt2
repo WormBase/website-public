@@ -42,8 +42,8 @@
 	   [% external_link('http://www.delicious.com/save?v=5&url=' _ url _ '&title=' _ title,
 	   	  				'<img src="/img/buttons/delicious.gif" alt="De.licio.us"> Bookmark') %]
 	[% END %]
-	[% WRAPPER $field_block title="Wormbase ID"-%]
-	   [% tag2link(fields.name.data, fields.name.data.id) %]
+	[% WRAPPER $field_block title="WormBase ID"-%]
+	   [% fields.name.data.id %]
 	[% END %]
 </div>
 

@@ -1356,7 +1356,8 @@ div.detail-box div.field div.field-content{
 }
 
 .disabled {
-  background:#EEE;
+/*  No box, just text only */
+/*  background:#EEE; */
   color:#AAA;
 }
 

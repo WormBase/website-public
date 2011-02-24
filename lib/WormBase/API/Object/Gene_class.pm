@@ -349,18 +349,18 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 #######################################
 #
-# The Current Members widget 
+# The Current Genes widget 
 #
 #######################################
 
-=head2 current_members
+=head2 current_genes
 
 This method will return a data structure containing
 all genes assigned to the class, organized by species.
 
 =head3 PERL API
 
- $data = $model->current_members();
+ $data = $model->current_genes();
 
 =head3 REST API
 
@@ -392,7 +392,7 @@ A Gene class (eg unc)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_members
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_genes
 
 =head4 Response example
 
@@ -400,7 +400,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
-sub current_members {
+sub current_genes {
     my $self   = shift;
     my $object = $self->object;
     
@@ -430,11 +430,11 @@ sub current_members {
 
 #######################################
 #
-# The Previous Members widget 
+# The Previous Genes widget 
 #
 #######################################
 
-=head2 former_members
+=head2 former_genes
 
 This method will return a data structure containing
 genes that used to belong to the current gene class
@@ -444,7 +444,7 @@ class.
 
 =head3 PERL API
 
- $data = $model->former_members();
+ $data = $model->former_genes();
 
 =head3 REST API
 
@@ -476,7 +476,7 @@ A Gene class (eg unc)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_members
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_genes
 
 =head4 Response example
 
@@ -484,7 +484,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
-sub former_members {
+sub former_genes {
     my $self   = shift;
     my $object = $self->object;
 
@@ -505,14 +505,14 @@ sub former_members {
 }
 
 
-=head2 reassigned_members
+=head2 reassigned_genes
 
 This method will return a data structure containing
 genes that have been reassigned within the gene class.
 
 =head3 PERL API
 
- $data = $model->reassigned_members();
+ $data = $model->reassigned_genes();
 
 =head3 REST API
 
@@ -544,7 +544,7 @@ A Gene class (eg unc)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_members
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_genes
 
 =head4 Response example
 
@@ -552,7 +552,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
-sub reassigned_members {
+sub reassigned_genes {
     my $self   = shift;
     my $object = $self->object;
     my $dbh = $self->ace_dsn->dbh;
