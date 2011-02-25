@@ -125,7 +125,7 @@ sub _pack_obj {
 sub parsed_species {
   my ($self,$object) = @_;
   $object ||= $self->object;
-  my $genus_species = $object->Species;
+  my $genus_species = eval {$object->Species} or return 'c_elegans';
   my ($species) = $genus_species =~ /.* (.*)/;
   return lc(substr($genus_species,0,1)) . "_$species";
 }
@@ -212,7 +212,7 @@ sub _check_data_content {
 			     join('->', @keys) . ': Empty hashref returned; should be undef.'
 		}
 	}
-	elsif ($ref eq 'SCALAR') {
+	elsif ($ref eq 'SCALAR' || $ref eq 'REF') {
 		# make sure scalar ref doesn't refer to something bad
 		if (($tmp, @problems) = $self->_check_data_content($$data, @keys)) {
 			$data = $tmp;
@@ -232,7 +232,7 @@ sub _check_data_content {
 	}
 	else { # don't know what the data is, but try to stringify it...
 		push @compliance_problems, join('->', @keys) .
-             ": Object (class: " . $data->class . ", value: $data) returned.";
+             ": Object (class: " . ref($data) . ", value: $data) returned.";
 		$data = "$data";
 	}
 
