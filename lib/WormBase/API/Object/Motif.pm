@@ -195,7 +195,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(
 sub database  {
 	my $self = shift;
     my $object = $self->object;
-	my ($database,$accession1,$accession2) = $object->Database('@')->row;
+	my ($database,$accession1,$accession2) = $object->Database('@')->row if $object->Database;
 	my $accession = $accession2 || $accession1;
 	
 	my $data_pack = {'database' 	=> "$database",
@@ -265,7 +265,7 @@ sub homologies {
 	my @data_pack;
 	
     foreach (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
-		if (my @homol = $motif->$_) {
+		if (my @homol = $object->$_) {
 			foreach (@homol) {
 				my $id;
 				my $label;
@@ -280,19 +280,19 @@ sub homologies {
 						'label'	=> "$clone",
 						'class' => 'Clone'
 					};
-				} else
+				} else {
 					$homolog_data = $self->_pack_obj($_);	
 				}
 				push @data_pack, $homolog_data;
 			}
 		}       
 	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'homology data for this motif'
-				};
+		'data'=> \@data_pack,
+		'description' => 'homology data for this motif'
+		};
 	return $data;	
+	}
 }
-
 ###################
 ## gene ontology
 ###################
@@ -347,6 +347,8 @@ sub go  {
 	my $self = shift;
     my $motif = $self->object;
 	my @go_terms;
+	my @data_pack;
+	
 	@go_terms = $motif->GO_term;
 	
 	foreach my $go_term (@go_terms) {	
@@ -355,7 +357,7 @@ sub go  {
 		my $term = $go_term->GO_term;
 		my $go_data;
 
-		$go_data = (		
+		$go_data = {		
 					'term_data' => {
 						'id'=> "$go_term",
 						'label' => "$term",
@@ -363,16 +365,16 @@ sub go  {
 					},	
 				'definition'=>$definition,
 				'evidence'=>$evidence
-				);
-				
-		push @data_pack, $go_data;		
-
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'go terms to with which motif is annotated'
 				};
+				
+		push @data_pack,$go_data;		
+	}
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'go terms to with which motif is annotated'
+		};
 	return $data;	
-}
+ }
 
 1;
 
