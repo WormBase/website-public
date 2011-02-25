@@ -31,7 +31,10 @@ isa_ok($motif_obj,'WormBase::API::Object::Motif');
 #### method list
 
 my @methods = qw/
-identification
+
+title
+remarks
+database
 homologies
 go
  /;
