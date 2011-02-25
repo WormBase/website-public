@@ -4,18 +4,33 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Position_matrix
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Motif class.
+
+=head1 URL
+
+http://wormbase.org/species/position_matrix
+
+=head1 TODO
+
+=cut
+
 #########################
 ## has_as
 #########################
-
-
 
 has 'data_directory' => (    
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    
-    	return "/usr/local/wormbase/databases/$version/position_matrix";
+    	return "/usr/local/wormbase/databases/WS223/position_matrix";
   	}
 );
 
@@ -23,7 +38,6 @@ has 'image_directory' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    
     	return "../../html/images/position_matrix";
   	}
 );
@@ -31,8 +45,7 @@ has 'image_directory' => (
 has 'name2consensus_hr' => (
 	is  => 'ro',
     lazy => 1,
-    default => sub {
-    	
+    default => sub {	
     	my $self = shift;
     	my $data_dir = $self->data_directory;
     	my $datafile = $data_dir."/pm_id2consensus_seq.txt";
@@ -46,7 +59,6 @@ has 'image_pointer_file' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    	
     	my $self = shift;
     	my $data_dir = $self->data_directory;
     	my $datafile = $data_dir."/pm_id2source_pm.txt";
@@ -63,6 +75,70 @@ has 'image_pointer_file' => (
 
 =head2 name
 
+This method will return a data structure of the 
+name for the requested position matrix.
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Postion_matrix ID WBPmat00000001
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+
+sub name {
+	my $self = shift;
+    my $object = $self->object;
+	my $data_pack = $self->_pack_obj($object);
+
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'name of position matrix'
+				};
+	return $data;
+}
+
+=head2 description
+
+This method will return a data structure description of the requested position matrix.
+
+=head3 PERL API
+=======
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
@@ -108,39 +184,26 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-
 sub description {
 
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
 
-	#### data pull and packaging
-
-	$data_pack = $object->Description;
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data_pack = $object->Description;
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'description of the position matrix'
+				};
+	return $data;
 }
 
-# Provided by Object.pm, pod retained for documentation
+=head2 remark
 
-=head2 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
+This method will return a data structure with remark re: the requested position matrix.
 
 =head3 PERL API
 
- $data = $model->remarks();
+ $data = $model->remark();
 
 =head3 REST API
 
@@ -154,7 +217,7 @@ No
 
 =head4 Parameters
 
-a Transgene (eg gmIs13)
+a Postion_matrix ID WBPmat00000001
 
 =head4 Returns
 
@@ -172,7 +235,7 @@ a Transgene (eg gmIs13)
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/remark
 
 =head4 Response example
 
@@ -180,138 +243,281 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 =cut 
 
-# sub remarks { }
+sub remark {
+	my $self 	= shift;
+    my $object 	= $self->object;
+	my $data_pack = $object->Remark;
+
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'remarks re: position matrix'
+				};
+	return $data;
+}
+
+=head2 associated_feature
+
+This method will return a data structure with the associated feature to the requested position matrix.
+
+=head3 PERL API
+
+ $data = $model->associated_feature();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Postion_matrix ID WBPmat00000001
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_feature
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub associated_feature {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
 	
-	my $associated_feature;
-	my $feature_name;
-	
-	$associated_feature = $object->Associated_feature;
-	$feature_name = $associated_feature->Public_name
+	my $associated_feature = $object->Associated_feature;
+	my $data_pack = $self->_pack_obj($associated_feature);
 
-	$data_pack = {
-	
-		'id' =>"$associated_feature",
-		'label' =>"$feature_name",
-		'Class' => 'Feature'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'feature associated with motif'
+				};
+	return $data;	
 }
 
+=head2 associated_position_matrix
+
+This method will return a data structure with the associated position_matrix to the requested position matrix.
+
+=head3 PERL API
+
+ $data = $model->associated_position_matrix();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Postion_matrix ID WBPmat00000001
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_position_matrix
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub associated_position_matrix {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
 	
-	my $associated_pm;
-	$associated_pm = $object->Associated_with_Position_Matrix;
+	my $associated_pm = $object->Associated_with_Position_Matrix;
+	my $data_pack = $self->_pack_obj($associated_pm);
 
-	$data_pack = _pack_obj($associated_pm);
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'other motif associated with motif'
+				};
+	return $data;
 }
 
+=head2 consensus
+
+This method will return a data structure with the consensus sequence for the requested position matrix.
+
+=head3 PERL API
+
+ $data = $model->consensus();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Postion_matrix ID WBPmat00000001
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/consensus
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub consensus {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->name2consensus_hr->{$object};
-
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $name2consensus_hr = $self->name2consensus_hr;
+	my $data_pack = $name2consensus_hr->{$object};
+	my $data = {
+		'data'=> $data_pack,
+		'description' => 'consensus sequence for motif'
+	};
+	return $data;	
 }
-
-
-#sub evidence
 
 ############################
 ## logo
 ############################
 
 
-
 #############################
 ## position data
 #############################
 
+=head2 position_data
+
+This method will return a data structure with the position data for the requested position matrix.
+
+=head3 PERL API
+
+ $data = $model->position_data();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Postion_matrix ID WBPmat00000001
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/position_data
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut 
 
 sub position_data {
 
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data;
+	my $sv = $object->Site_values;
 
-	#### data pull and packaging
+	my @row_1 = $sv->row;
+	my @row_2 = $sv->down->row;
+	my @row_3 = $sv->down->down->row;
+	my @row_4 = $sv->down->down->down->row;
 
-		my $sv = $object->Site_values;
-		my @row_1 = $sv->row;
-		my @row_2 = $sv->down->row;
-		my @row_3 = $sv->down->down->row;
-		my @row_4 = $sv->down->down->down->row;
-		# my %data;
-		my $base_r1 = shift @row_1;
-		my $base_r2 = shift @row_2;
-		my $base_r3 = shift @row_3;
-		my $base_r4 = shift @row_4;
-		my $data = {$base_r1 => \@row_1,
-			$base_r2 => \@row_2,
-			$base_r3 => \@row_3,
-			$base_r4 => \@row_4
-		};
+	my $base_r1 = shift @row_1;
+	my $base_r2 = shift @row_2;
+	my $base_r3 = shift @row_3;
+	my $base_r4 = shift @row_4;
 
-	####
-
-	$data{'data'} = $data;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data = {
+		$base_r1 => \@row_1,
+		$base_r2 => \@row_2,
+		$base_r3 => \@row_3,
+		$base_r4 => \@row_4
+	};
+	
+	my $return = {
+				'data'=> $data,
+				'description' => 'data for individual positions in motif'
+				};
+	return $return;	
 }
-
-
-
-
 
 ###########################
 ## internal methods
 ###########################
-
 
 sub _build_hash{
 	my ($file_name) = @_;
@@ -324,6 +530,5 @@ sub _build_hash{
 	}
 	return %hash;
 }
-
 
 1;
