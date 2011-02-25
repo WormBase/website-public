@@ -4,89 +4,74 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-### has ###
+=pod 
 
-#has 'laboratory' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $laboratory = $self->Location;
-#    	return $laboratory;
-#  	}
-#);
+=head1 NAME
 
-#has 'reference' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $reference = $self->Reference;
-#    	return $reference;
-#  	}
-#);
+## headvar WormBase::API::Object::Strain
 
-#has 'variation' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $ao_object = $self->Variation;
-#    	return $ao_object;
-#  	}
-#);
+=head1 SYNPOSIS
 
-#has 'rearrangement' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $ao_object = $self->Rearrangement;
-#    	return $ao_object;
-#  	}
-#);
+Model for the Ace ?Motif class.
 
+=head1 URL
 
-#has 'clone' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $ao_object = $self->Clone;
-#    	return $ao_object;
-#  	}
-#);
+http://wormbase.org/species/strain
 
-#
-#has 'transgene' => (    
-#	is  => 'ro',
-#    isa => 'Ace::Object',
-#    lazy => 1,
-#    default => sub {
-#    	
-#    	my $self = shift;
-#    	my $ao_object = $self->Transgene;
-#    	return $ao_object;
-#  	}
-#);
+=head1 TODO
 
-
-
-### subroutines
+=cut
 
 ###########
 ## OVERVIEW
 ############
+
+=head2 name
+
+This method will return a data structure with the name of this antibody .
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/name
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
 sub name {
 
 	my $self = shift;
@@ -108,6 +93,52 @@ sub name {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+=head2 id
+
+<headvar>This method will return a data structure re: id of this strain.
+
+=head3 PERL API
+
+ $data = $model->id();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/id
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub id {
 
@@ -131,6 +162,51 @@ sub id {
 	return \%data;
 }
 
+=head2 description
+
+This method will return a data structure re: description of this strain.
+
+=head3 PERL API
+
+ $data = $model->description();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/description
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 
 sub description {
@@ -159,31 +235,51 @@ sub description {
 ## GENOTYPE
 ############
 
-sub strain {
+=head2 genotype
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+<headvar>This method will return a data structure re: genotype of this strain.
 
-	#### data pull and packaging
-	
+=head3 PERL API
 
-	$data_pack = {
-	
-		'id' =>,
-		'label' =>,
-		'Class' => ''
-	};
+ $data = $model->genotype();
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+=head3 REST API
 
-}
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/genotype
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 
 sub genotype {
@@ -205,9 +301,56 @@ sub genotype {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
 ##############
 ## CONTAINS
 ############
+
+=head2 gene
+
+<headvar>This method will return a data structure re: genes in this strain.
+
+=head3 PERL API
+
+ $data = $model->gene();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/gene
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub gene {
 
@@ -236,6 +379,52 @@ sub gene {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+=head2 allele
+
+This method will return a data structure re: alleles this strain.
+
+=head3 PERL API
+
+ $data = $model->allele();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/allele
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub allele {
 
@@ -267,6 +456,53 @@ sub allele {
 
 }
 
+=head2 rearrangement
+
+This method will return a data structure re: rearrangement observed in this strain.
+
+=head3 PERL API
+
+ $data = $model->rearrangement();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/rearrangement
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+
 sub rearrangement {
 
 	my $self = shift;
@@ -285,6 +521,52 @@ sub rearrangement {
 	$data{'description'} = $desc;
 	return \%data;
 }
+
+=head2 <headvar>
+
+<headvar>This method will return a data structure re: this strain.
+
+=head3 PERL API
+
+ $data = $model-><headvar>();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Strain ID DR2
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/<headvar>
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub clone {
 
@@ -559,116 +841,6 @@ sub made_by {
 
 # sub remarks { }
 
-=head2 reporter_construct
 
-This method will return a data structure of the 
-reporter construct driven by the transgene.
-
-=head3 PERL API
-
- $data = $model->reporter_construct();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Transgene ID (gmIs13)
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks {}
-
-
-	
-
-  
-##############
-## REFERENCE
-############
-
-### copied and pasted, need to get to work in Object.pm
-
-
-sub basic_package {
-
-	my ($self,$data_ar) = @_;
-	my %package;
-	
-	foreach my $object (@$data_ar) {
-				
-				
-				my $class;
-				eval{$class = $object->class;};
-
-				my $common_name = public_name($object,$class);  ## 
-				$package{$object} = 	{
-										'class' => $class,
-										'common_name' => $common_name
-										}	
-	}
-
-	return \%package;
-}
-
-sub public_name {
-    
-	my ($object,$class) = @_;
-    my $common_name;    
-   
-    if ($class =~ /gene/i) {
-		$common_name = 
-		$object->Public_name
-		|| $object->CGC_name
-		|| $object->Molecular_name
-		|| eval { $object->Corresponding_CDS->Corresponding_protein }
-		|| $object;
-    }
-    elsif ($class =~ /protein/i) {
-    	$common_name = 
-    	$object->Gene_name
-    	|| eval { $object->Corresponding_CDS->Corresponding_protein }
-    	||$object;
-    }
-    else {
-    	$common_name = $object;
-    }
-	
-	my $data = $common_name;
-    return $data;
-
-
-}
-
-sub _get_phenotype_data {}
 
 1;
