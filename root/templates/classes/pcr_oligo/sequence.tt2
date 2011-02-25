@@ -1,0 +1,13 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<div style="font-family:monospace;margin:1em;">
+[% IF fields.segment.data %]
+   [% segment = fields.segment.data %]
+   >[% fields.name.data.label %] ([%fields.name.data.class %];
+   [% segment.refseq %]:[% segment.abs_start %]..[% segment.abs_stop %];
+   [% segment.length %] bp)<br><br>
+   [%# TODO: uppercase the oligo seqs %]
+   [% segment.dna.replace('(.{80})', '$1<br>') %]
+[% END %]
+</div>
