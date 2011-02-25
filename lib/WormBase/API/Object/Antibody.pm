@@ -75,7 +75,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 sub summary {
 	my $self = shift;
     my $object = $self->object;
-	$data_pack = $object->Summary;
+	my $data_pack = $object->Summary;
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'description of the position matrix'
@@ -132,6 +132,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 sub source {
 	my $self = shift;
     my $antibody = $self->object;
+    my @data_pack;
+ 
 	foreach my $location (sort {$a cmp $b } $antibody->Location) {
 		my $rep;
 
@@ -147,7 +149,6 @@ sub source {
 			'representative' => $rep_info
 		};
 	}	
-	my @data_pack;
 	my $data = {
 		'data'=> \@data_pack,
 		'description' => 'laboratory source of the antibody'
@@ -203,7 +204,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 
 sub antigen {
 	my $self = shift;
-    my $object = $self->object;
+    my $antibody = $self->object;
 	my ($type,$comment) = $antibody->Antigen->row if $antibody->Antigen;
   	$type =~ s/_/ /g;
   	my $data_pack = $type . (($comment) ? " ($comment)" : '') if ($type);
@@ -442,6 +443,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 sub other_name {
 	my $self = shift;
     my $object = $self->object;
+    my $data_pack = $object->Other_name;
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'the other_name for this antibody'
