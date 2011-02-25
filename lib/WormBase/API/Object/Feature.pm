@@ -385,12 +385,12 @@ sub defined_by {
 	my @defining_objects = $object->$tag;
 	
 	foreach my $defining_object (@defining_objects) {
-		$do_data = _pack_obj($defining_object);
+		my $do_data = _pack_obj($defining_object);
 		push @data_pack, $do_data;
 	}	
 	
 	my $data = {
-				'data'=> $data_pack,
+				'data'=> \@data_pack,
 				'description' => 'objects that define this feature'
 				};
 	return $data;
@@ -449,14 +449,17 @@ sub associations {
 	my $self = shift;
 	my $tag = shift;
     my $object = $self->object;
-	my $associated_object = $object->$tag;
+	my @associations = $object->$tag;
+	my @data_pack;
 	
-	my $data_pack = $self->_pack_obj($object);
-
+	foreach my $association (@associations) {
+		my $assoc_data = $self->_pack_obj($association);
+		push @data_pack, $assoc_data;
+	}
 	my $data = {
-				'data'=> $data_pack,
-				'description' => 'objects associated with this feature'
-				};
+		'data'=> \@data_pack,
+		'description' => 'objects associated with this feature'
+	};
 	return $data;
 }
 
@@ -513,7 +516,7 @@ sub binds_product_of_gene {
 	my @data_pack;
 	
 	foreach my $gene (@genes) {
-		my $gene_data = $self_pack_obj($gene);
+		my $gene_data = $self->pack_obj($gene);
 		push @data_pack, $gene_data;
 	}
 	my $data = {
@@ -574,7 +577,7 @@ sub transcription_factor {
     my $object = $self->object;
 	my $transcription_factor = $object->Transcription_factor;
 
-	my $data_pack = $self->_pack_obj($object);
+	my $data_pack = $self->_pack_obj($transcription_factor);
 
 	my $data = {
 				'data'=> $data_pack,
