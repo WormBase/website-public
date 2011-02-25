@@ -112,30 +112,30 @@ has 'publication_hr' => (
 #
 #######################################
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the name
 of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -149,11 +149,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/name
 
-=head4 Response example
+=head5 Response example
 
  { "name"        :   
    "class"       : "person",
@@ -178,30 +178,30 @@ sub name {
     return $data;
 }
 
-=head2 id
+=head3 id
 
 This method returns a data structure containing the 
 internal WormBase ID of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->id();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -215,11 +215,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/id
 
-=head4 Response example
+=head5 Response example
 
  { "name"   : "WBPerson242",
    "class"  : "person",
@@ -239,30 +239,30 @@ sub id {
 }
 
 
-=head2 street_address
+=head3 street_address
 
 This method returns a data structure containing the 
 street address of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->street_address();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -276,11 +276,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/street_address
 
-=head4 Response example
+=head5 Response example
 
  { "name"           : "WBPerson242",
    "class"          : "person",
@@ -306,30 +306,30 @@ sub street_address {
 }
 
 
-=head2 country
+=head3 country
 
 This method returns a data structure containing the 
 country that the person lives in, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->country();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -343,11 +343,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/country
 
-=head4 Response example
+=head5 Response example
 
  { "name"    : "WBPerson242",
    "class"   : "person",    
@@ -367,30 +367,30 @@ sub country {
     return $data;
 }
 
-=head2 institution
+=head3 institution
 
 This method returns a data structure containing the 
 institution of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->institution();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -404,11 +404,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/institution
 
-=head4 Response example
+=head5 Response example
 
  { "name"           : "WBPerson242",
    "class"          : "person",
@@ -428,30 +428,30 @@ sub institution {
     return $data;
 }
 
-=head2 email
+=head3 email
 
 This method returns a data structure containing the 
 email addresses of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->email();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -465,11 +465,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/email
 
-=head4 Response example
+=head5 Response example
 
  { "name"           : "WBPerson242",
    "class"          : "person",
@@ -490,30 +490,30 @@ sub email {
     return $data;
 }
 
-=head2 lab_phone
+=head3 lab_phone
 
 This method returns a data structure containing the 
 lab phone number of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->lab_phone();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -527,11 +527,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone
 
-=head4 Response example
+=head5 Response example
 
  { "name"       : "WBPerson242",
    "class"      : "person",
@@ -551,30 +551,30 @@ sub lab_phone {
     return $data;
 }
 
-=head2 office_phone
+=head3 office_phone
 
 This method returns a data structure containing the 
 office phone of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->office_phone();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -588,11 +588,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/office_phone
 
-=head4 Response example
+=head5 Response example
 
  { "name"         : "WBPerson242",
    "class"        : "person",
@@ -612,30 +612,30 @@ sub office_phone {
     return $data;
 }
 
-=head2 other_phone
+=head3 other_phone
 
 This method returns a data structure containing
 other phone numbers of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->street_other_phone();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -649,11 +649,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/other_phone
 
-=head4 Response example
+=head5 Response example
 
  { "name"        : "WBPerson242",
    "class"       : "person",
@@ -673,30 +673,30 @@ sub other_phone {
     return $data;
 }
 
-=head2 fax
+=head3 fax
 
 This method returns a data structure containing the 
 fax number of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->fax();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -710,11 +710,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/fax
 
-=head4 Response example
+=head5 Response example
 
  { "name"      : "WBPerson242",
    "class"     : "person",
@@ -735,30 +735,30 @@ sub fax {
 }
 
 
-=head2 web_page
+=head3 web_page
 
 This method returns a data structure containing the 
 web site of the person, if known.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->web_page();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -772,11 +772,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/web_page
 
-=head4 Response example
+=head5 Response example
 
  { "name"        : "WBPerson242",
    "class"       : "person",
@@ -811,30 +811,30 @@ sub web_page {
 # laboratory() is provided by Object.pm. Documentation
 # duplicated here for completeness of API
 
-=head2 laboratory
+=head3 laboratory
 
 This method returns a data structure containing
 the lab affilition of the the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->laboratory();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -848,41 +848,41 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/laboratory
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
 =cut
 
-=head2 previous_laboratories
+=head3 previous_laboratories
 
 This method returns a data structure containing
 previous laboratories of the person, as well as
 the current representative of that lab.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->previous_laboratories();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -896,11 +896,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -924,31 +924,31 @@ sub previous_laboratories {
     return $data;		     
 }
 
-=head2 strain_designation
+=head3 strain_designation
 
 This method returns a data structure containing
 the strain designation of the current lab affiliation
 of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->strain_designation();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -962,11 +962,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -984,31 +984,31 @@ sub strain_designation {
     return $data;		     
 }
 
-=head2 allele_designation
+=head3 allele_designation
 
 This method returns a data structure containing
 the allele designation of the current lab affiliation
 of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->allele_designation();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1022,11 +1022,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1042,30 +1042,30 @@ sub allele_designation {
     return $data;
 }
 
-=head2 lab_representative
+=head3 lab_representative
 
 This method returns a data structure containing
 the current lab representative of the affiliated lab.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->lab_representative();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1079,11 +1079,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1106,31 +1106,31 @@ sub lab_representative {
     return $data;
 }
 
-=head2 gene_classes
+=head3 gene_classes
 
 This method returns a data structure containing
 gene classes assigned to the current lab affiliation
 of the person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data->gene_classes();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1144,11 +1144,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1178,30 +1178,30 @@ sub gene_classes {
 #
 #######################################
 
-=head2 possibly_publishes_as
+=head3 possibly_publishes_as
 
 This method returns a data structure containing
 other names that the person might possibly publishh under.
 
-=head3 PERL API
+=head4 PERL API
 
  $data->possibly_publishes_as();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1215,11 +1215,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1235,30 +1235,30 @@ sub possibly_publishes_as {
     return $data;
 }
 
-=head2 status
+=head3 status
 
 This method returns a data structure containing
 the current curation status of this person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->status();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1272,11 +1272,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/status
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1293,31 +1293,31 @@ sub status {
 }
 
 
-=head2 last_verified
+=head3 last_verified
 
 This method returns a data structure containing
 the date the information about this person was
 last verified.
 
-=head3 PERL API
+=head4 PERL API
 
  $data->last_verified();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1331,11 +1331,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/last_verified
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1361,30 +1361,30 @@ sub last_verified {
 #
 #######################################
 
-=head2 supervised
+=head3 supervised
 
 This method will return a data structure of people supervised 
 by the query person.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->supervised();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1398,11 +1398,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised
 
-=head4 Response example
+=head5 Response example
 
  { "name"        : "WBPerson242",
    "class"       : "person",
@@ -1429,30 +1429,30 @@ sub supervised {
     return $data;
 }
 
-=head2 supervised_by
+=head3 supervised_by
 
 This method will return a data structure containing
 people that this person has been supervised by.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->supervised_by();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1466,11 +1466,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by
 
-=head4 Response example
+=head5 Response example
 
 =cut
 
@@ -1482,30 +1482,30 @@ sub supervised_by {
     return $data;    
 }
 
-=head2 worked_with
+=head3 worked_with
 
 This method will return a data structure containing
 people that this person has worked or collaborated with.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->worked_with();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 WBPerson ID
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1519,11 +1519,11 @@ WBPerson ID
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/worked_with
 
-=head4 Response example
+=head5 Response example
 
 =cut
 

@@ -28,30 +28,32 @@ http://wormbase.org/resources/analysis
 #
 #######################################
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the name
 of the analysis object.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -65,43 +67,47 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/name
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut			 
 
 # supplied by Object.pm; retain pod for complete documentation of API
 # sub name { }
 
-=head2 database
+=head3 database
 
 This method returns a data structure containing the 
 the database of the analysis, if there is one.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->database();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -115,13 +121,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/database
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -142,30 +150,32 @@ sub database {
     return $data;
 }
     
-=head2 title
+=head3 title
 
 This method returns a data structure containing the 
 the title of the analysis, if there is one.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->titlee();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -179,13 +189,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/title
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -198,30 +210,32 @@ sub title {
     return $data;
 }
 
-=head2 description
+=head3 description
 
 This method returns a data structure containing 
 a description of the analysis, if there is one.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->description();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -235,13 +249,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/description
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -255,30 +271,32 @@ sub description {
 }
 
 
-=head2 based_on_wb_release
+=head3 based_on_wb_release
 
 This method returns a data structure containing 
 the WormBase release the analysis is based on.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->based_on_wb_release();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -292,13 +310,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_wb_release
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -313,30 +333,32 @@ sub based_on_wb_release {
 }
 
 
-=head2 based_on_db_release
+=head3 based_on_db_release
 
 This method returns a data structure containing 
 the database release the analysis is based on.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->based_on_db_release();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -350,13 +372,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/based_on_db_release
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -370,30 +394,32 @@ sub based_on_db_release {
     return $data;
 }
 
-=head2 project
+=head3 project
 
 This method returns a data structure containing 
 the project that conducted the analysis.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->project();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -407,13 +433,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/project
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -429,30 +457,32 @@ sub project {
 }
 
 
-=head2 subproject
+=head3 subproject
 
 This method returns a data structure containing 
 the subproject of the analysis.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->subproject();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -466,13 +496,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/subproject
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -487,30 +519,32 @@ sub subproject {
     return $data;
 }
 
-=head2 conducted_by
+=head3 conducted_by
 
 This method returns a data structure containing 
 the person that conducted the analysis.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->conducted_by();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
 An analysis ID (eg TreeFam)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -524,13 +558,15 @@ An analysis ID (eg TreeFam)
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/conducted_by
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 

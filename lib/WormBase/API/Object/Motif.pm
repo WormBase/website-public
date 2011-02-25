@@ -5,30 +5,30 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -42,11 +42,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -77,30 +77,30 @@ http://wormbase.org/species/motif
 ## Identification
 ###################
 
-=head2 title
+=head3 title
 
 This method will return a data structure of the 
 title for the requested motif.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->title();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Motif ID ((AAATG)n)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -114,11 +114,11 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/title
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -136,30 +136,30 @@ sub title {
 	return $data;
 }
 
-=head2 remarks
+=head3 remarks
 
 This method will return a data structure with
 remarks re: the requested motif.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->remarks();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Motif ID ((AAATG)n)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -173,11 +173,11 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/remarks
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -197,29 +197,29 @@ sub remarks {
 }
 
 
-=head2 database
+=head3 database
 
 This method will return a data structure with database information for the requested motif.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->database();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Motif ID ((AAATG)n)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -233,11 +233,11 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/database
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -264,29 +264,29 @@ sub database  {
 ## homology
 ####################
 
-=head2 go
+=head3 go
 
 This method will return a data structure with go annotations for the requested motif.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->go();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Motif ID ((AAATG)n)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -300,11 +300,11 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/go
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -348,29 +348,29 @@ sub homologies {
 ## gene ontology
 ###################
 
-=head2 homologies
+=head3 homologies
 
 This method will return a data structure with homology information on the requested motif.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->homologies();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Motif ID ((AAATG)n)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -384,11 +384,11 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/homologies
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 

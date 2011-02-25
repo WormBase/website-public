@@ -13,7 +13,7 @@ extends 'WormBase::API::Object';
 <<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
 =head1 SYNPOSIS
 =======
-=head2 name
+=head3 name
 >>>>>>> /tmp/Strain.pm~other.7nZLzV
 
 <<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
@@ -30,25 +30,25 @@ http://wormbase.org/species/strain
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -62,11 +62,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 >>>>>>> /tmp/Strain.pm~other.7nZLzV
 
 <<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
@@ -74,29 +74,29 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 ## OVERVIEW
 ############
 
-=head2 name
+=head3 name
 
 This method will return a data structure with the name of this antibody .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -110,11 +110,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -132,29 +132,29 @@ sub name {
 
    
 
-=head2 id
+=head3 id
 
 <headvar>This method will return a data structure re: id of this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->id();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -168,11 +168,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/id
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -200,29 +200,29 @@ sub id {
 	return \%data;
 }
 
-=head2 description
+=head3 description
 
 This method will return a data structure re: description of this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->description();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -236,11 +236,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/description
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -273,29 +273,29 @@ sub description {
 ## GENOTYPE
 ############
 
-=head2 genotype
+=head3 genotype
 
 <headvar>This method will return a data structure re: genotype of this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->genotype();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -309,11 +309,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/genotype
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -344,29 +344,29 @@ sub genotype {
 ## CONTAINS
 ############
 
-=head2 gene
+=head3 gene
 
 <headvar>This method will return a data structure re: genes in this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->gene();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -380,11 +380,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/gene
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -418,29 +418,29 @@ sub gene {
 	return \%data;
 }
 
-=head2 allele
+=head3 allele
 
 This method will return a data structure re: alleles this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->allele();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -454,11 +454,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/allele
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -494,29 +494,29 @@ sub allele {
 
 }
 
-=head2 rearrangement
+=head3 rearrangement
 
 This method will return a data structure re: rearrangement observed in this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->rearrangement();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -530,11 +530,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/rearrangement
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -560,29 +560,29 @@ sub rearrangement {
 	return \%data;
 }
 
-=head2 <headvar>
+=head3 <headvar>
 
 <headvar>This method will return a data structure re: this strain.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model-><headvar>();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Strain ID DR2
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -596,11 +596,11 @@ a Strain ID DR2
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/<headvar>
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
