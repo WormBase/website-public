@@ -9,30 +9,30 @@ extends 'WormBase::API::Object';
 ## IDENTIFICATION
 ################
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -46,11 +46,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -145,30 +145,30 @@ sub history_name {
 
 # Provided by Object.pm, pod retained for documentation
 
-=head2 remarks
+=head3 remarks
 
 This method will return a data structure containing
 curator remarks about the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->remarks();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene (eg gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -182,11 +182,11 @@ a Transgene (eg gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 

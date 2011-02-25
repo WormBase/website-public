@@ -30,30 +30,30 @@ http://wormbase.org/species/transgene
 #
 #######################################
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -67,11 +67,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -80,30 +80,30 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 # Supplied by Object.pm; retain pod for complete documentation of API
 # sub name {}
 
-=head2 synonym
+=head3 synonym
 
 This method will return a data structure containing
 a brief summary of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->synonym();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -117,11 +117,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/synonym
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -136,30 +136,30 @@ sub synonym {
     return $data;
 }
 
-=head2 summary
+=head3 summary
 
 This method will return a data structure containing
 a brief summary of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->summary();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -173,11 +173,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/summary
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -192,30 +192,30 @@ sub summary {
     return $data;
 }
 
-=head2 driven_by_gene
+=head3 driven_by_gene
 
 This method will return a data structure containing
 information about how the transgene is expressed.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->driven_by_gene();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -229,11 +229,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_gene
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -251,30 +251,30 @@ sub driven_by_gene {
 
 
 
-=head2 driven_by_construct
+=head3 driven_by_construct
 
 This method will return a data structure containing
 information about how the transgene is expressed.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->driven_by_construct();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -288,11 +288,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/driven_by_construct
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -310,30 +310,30 @@ sub driven_by_construct {
 
 # Provided by Object.pm, pod retained for documentation
 
-=head2 remarks
+=head3 remarks
 
 This method will return a data structure containing
 curator remarks about the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->remarks();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene (eg gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -347,11 +347,11 @@ a Transgene (eg gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -359,30 +359,30 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 # sub remarks { }
 
-=head2 reporter_construct
+=head3 reporter_construct
 
 This method will return a data structure of the 
 reporter construct driven by the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->reporter_construct();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -396,11 +396,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -436,30 +436,30 @@ sub reporter_construct {
 #
 #######################################
 
-=head2 author
+=head3 author
 
 This method will return a data structure of the 
 reporter construct driven by the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->author();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -473,11 +473,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -502,30 +502,30 @@ sub author {
 # laboratory() is provided by Object.pm. Documentation
 # duplicated here for completeness of API
 
-=head2 laboratory
+=head3 laboratory
 
 This method will return a data structure containing
 information on the laboratory where the transgene was isolated.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->laboratory();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -539,41 +539,41 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/laboratory
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
 =cut 
 
 
-=head2 clone
+=head3 clone
 
 This method will return a data structure containing
 information about the clone of this transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->clone();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -587,11 +587,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/clone
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -608,31 +608,31 @@ sub clone {
 }
 
 
-=head2 fragment
+=head3 fragment
 
 This method will return a data structure containing
 information about the clone fragments contained
 in this transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->fragment();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -646,11 +646,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/fragment
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -666,30 +666,30 @@ sub fragment {
 
 
 
-=head2 injected_into_strains
+=head3 injected_into_strains
 
 This method will return a data structure containing
 strains that the transgene has been injected into.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->injected_into_strains();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -703,11 +703,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/injected_into_strains
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -724,30 +724,30 @@ sub injected_into_strains {
     return $data;
 }
 
-=head2 integrated_by
+=head3 integrated_by
 
 This method will return a data structure containing
 how the transgene was integrated (if it was).
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->integrated_by();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -761,11 +761,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_by
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -787,30 +787,30 @@ sub integrated_by {
 }
 
 
-=head2 integrated_by
+=head3 integrated_by
 
 This method will return a data structure containing
 the map position of the transgene if it has been integrated.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->integrated_by();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -824,11 +824,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/integrated_at
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -844,30 +844,30 @@ sub integrated_at {
     return $data;
 }
 
-=head2 rescues
+=head3 rescues
 
 This method will return a data structure containing
 information about phenotypes the transgene may rescue.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->rescues();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -881,11 +881,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/rescues
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -909,30 +909,30 @@ sub rescues {
 #
 #######################################
 
-=head2 phenotypes_observed
+=head3 phenotypes_observed
 
 This method will return a data structure of the 
 phenotypes associated with the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->phenotypes_observed();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -946,11 +946,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_observed
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -965,30 +965,30 @@ sub phenotypes_observed {
     return $data;
 }
 
-=head2 phenotypes_not_observed
+=head3 phenotypes_not_observed
 
 This method will return a data structure of the 
 phenotypes NOT OBSERVED with the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->phenotypes_not_observed();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1002,11 +1002,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_not_observed
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1029,30 +1029,30 @@ sub phenotypes_not_observed {
 #
 #######################################
 
-=head2 expression_patterns
+=head3 expression_patterns
 
 This method will return a data structure of the 
 expression patterns assocaited with the transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->expression_patterns();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1066,11 +1066,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/expression_patterns
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1086,30 +1086,30 @@ sub expression_patterns {
     return $data;
 }
 
-=head2 marker_for
+=head3 marker_for
 
 This method will return a data structure of the 
 describing what the transgene is a marker for.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->marker_for();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1123,11 +1123,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marker_for
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -1143,30 +1143,30 @@ sub marker_for {
 }
 
 
-=head2 marked_rearrangement
+=head3 marked_rearrangement
 
 This method will return a data structure of the
 rearrangmements that the transgene can be used for.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->marked_rearrangement();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -1180,11 +1180,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/marked_rearrangement
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 

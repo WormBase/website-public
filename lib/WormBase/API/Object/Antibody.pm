@@ -5,30 +5,30 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
-=head2 name
+=head3 name
 
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -42,11 +42,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -77,29 +77,29 @@ http://wormbase.org/species/antibody
 ## SUMMARY
 ############
 
-=head2 summary
+=head3 summary
 
 This method will return a data structure with a summary re: this antibody.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->summary();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -113,11 +113,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/summary
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -134,29 +134,29 @@ sub summary {
 	return $data;
 }
 
-=head2 source
+=head3 source
 
 This method will return a data structure with info re: the This method will return a data structure with info re: the source of this antibody.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->source();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -170,11 +170,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/source
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -207,29 +207,29 @@ sub source {
 	return $data;
 }
 
-=head2 antigen
+=head3 antigen
 
 <headvar>This method will return a data structure re: the antigen for this antibody
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->antigen();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -243,11 +243,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/WBPmat00000001/antigen
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -266,29 +266,29 @@ sub antigen {
 	return $data;
 }
 
-=head2 animal
+=head3 animal
 
 <headvar>This method will return a data structure re: the animal source of this antibody .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->animal();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -302,11 +302,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/animal
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -330,29 +330,29 @@ sub animal {
 	return $data;
 }
 
-=head2 clonality
+=head3 clonality
 
 <headvar>This method will return a data structure re: clonality of this antibody .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->clonality();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -366,11 +366,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/clonality
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -387,29 +387,29 @@ sub clonality {
 	return $data;
 }
 
-=head2 remark
+=head3 remark
 
 This method will return a data structure with a remark re: this antibody.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->remark();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -423,11 +423,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/remark
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -445,29 +445,29 @@ sub remark {
 	return $data;
 }
 
-=head2 other_name
+=head3 other_name
 
 This method will return a data structure re: an other_name for this antibody .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->other_name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -481,11 +481,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/other_name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -502,29 +502,29 @@ sub other_name {
 	return $data;
 }
 
-=head2 target
+=head3 target
 
 <headvar>This method will return a data structure re: gene target for this antibody.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->target();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -538,11 +538,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/target
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -565,29 +565,29 @@ sub target {
 ## EXPRESSION PATTERN
 ######################
 
-=head2 expression_pattern
+=head3 expression_pattern
 
 <headvar>This method will return a data structure re: expression_pattern test by this antibody .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->expression_pattern();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Antibody ID [cgc2018]:mec-7
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -601,11 +601,11 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/expression_pattern
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 

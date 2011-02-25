@@ -27,28 +27,28 @@ http://wormbase.org/species/homology_group
 ## Overview
 ###############
 
-=head2 title
+=head3 title
 
 <headvar>This method will return a data structure with this Homology_groups title
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->title();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Homology_group ID InP_Cae_006282
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -62,11 +62,11 @@ a Homology_group ID InP_Cae_006282
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/title
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -91,29 +91,29 @@ sub title {
 #<todo> sub db  ### for external links?
 #########################################
 
-=head2 group_type
+=head3 group_type
 
 <headvar>This method will return a data structure with info on the group type.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->group_type();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Homology_group ID InP_Cae_006282
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -127,11 +127,11 @@ a Homology_group ID InP_Cae_006282
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/group_type
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -140,29 +140,29 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/homolog
 #<todo> sub group_type {}
 
 
-=head2 go_term
+=head3 go_term
 
 <headvar>This method will return a data structure for go terms related to this homology group
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->go_term();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Homology_group ID InP_Cae_006282
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -176,11 +176,11 @@ a Homology_group ID InP_Cae_006282
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/go_term
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -205,29 +205,29 @@ sub go_term {
 }
 
 
-=head2 protein
+=head3 protein
 
 This method will return a data structure containing information for proteins related to this homology_group.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->protein();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Homology_group ID InP_Cae_006282
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -241,11 +241,11 @@ a Homology_group ID InP_Cae_006282
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/protein
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -269,29 +269,29 @@ sub protein {
 	return $data;
 }
 
-=head2 <headvar>
+=head3 <headvar>
 
 <headvar>This method will return a data structure.... .
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model-><headvar>();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Homology_group ID InP_Cae_006282
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -305,11 +305,11 @@ a Homology_group ID InP_Cae_006282
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/<headvar>
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
@@ -327,30 +327,30 @@ sub remark {
 	return $data;
 }
 =======
-=head2 name
+=head3 name
 
 This method will return a data structure of the 
 name and ID of the requested transgene.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->name();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Transgene ID (gmIs13)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -364,11 +364,11 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
