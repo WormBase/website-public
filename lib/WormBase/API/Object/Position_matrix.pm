@@ -30,8 +30,7 @@ has 'data_directory' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    
-    	return "/usr/local/wormbase/databases/$version/position_matrix";
+    	return "/usr/local/wormbase/databases/WS223/position_matrix";
   	}
 );
 
@@ -39,7 +38,6 @@ has 'image_directory' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    
     	return "../../html/images/position_matrix";
   	}
 );
@@ -47,8 +45,7 @@ has 'image_directory' => (
 has 'name2consensus_hr' => (
 	is  => 'ro',
     lazy => 1,
-    default => sub {
-    	
+    default => sub {	
     	my $self = shift;
     	my $data_dir = $self->data_directory;
     	my $datafile = $data_dir."/pm_id2consensus_seq.txt";
@@ -62,7 +59,6 @@ has 'image_pointer_file' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    	
     	my $self = shift;
     	my $data_dir = $self->data_directory;
     	my $datafile = $data_dir."/pm_id2source_pm.txt";
@@ -189,7 +185,7 @@ sub description {
 	my $self = shift;
     my $object = $self->object;
 
-	$data_pack = $object->Description;
+	my $data_pack = $object->Description;
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'description of the position matrix'
@@ -306,7 +302,6 @@ sub associated_feature {
     my $object = $self->object;
 	
 	my $associated_feature = $object->Associated_feature;
-	my $feature_name = $associated_feature->Public_name
 	my $data_pack = $self->_pack_obj($associated_feature);
 
 	my $data = {
@@ -423,12 +418,12 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 sub consensus {
 	my $self = shift;
     my $object = $self->object;
-	my $data_pack = $object->name2consensus_hr->{$object};
-
+    my $name2consensus_hr = $self->name2consensus_hr;
+	my $data_pack = $name2consensus_hr->{$object};
 	my $data = {
-				'data'=> $data_pack,
-				'description' => 'consensus sequence for motif'
-				};
+		'data'=> $data_pack,
+		'description' => 'consensus sequence for motif'
+	};
 	return $data;	
 }
 
