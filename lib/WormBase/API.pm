@@ -176,9 +176,14 @@ sub fetch {
       # Try fetching an object (from the default data source)
       my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0; 
       $object = $service_dbh->fetch(-class=>$class,-name=>$name);
-          if($class eq 'Sequence') {
+	  if($class eq 'Sequence') {
           $object ||= $service_dbh->fetch(-class=>'CDS',-name=>$name);
       }
+	  elsif ($class eq 'Pcr_oligo') {
+		  $object ||= $service_dbh->fetch(-class=>'PCR_product', -name=>$name);
+		  $object ||= $service_dbh->fetch(-class=>'Oligo_set', -name=>$name);
+		  $object ||= $service_dbh->fetch(-class=>'Oligo', -name=>$name);
+	  }
     }
     return -1 unless(defined $object);
     return WormBase::API::Factory->create($class,

@@ -105,10 +105,14 @@ sub canonical_parent {
 sub oligos {
 	my ($self) = @_;
 
-	my @data = map {
-		obj => $self->_pack_obj($_),
-		sequence => $_->Sequence,
-	}, @{$self->_oligos};
+	my @data;
+	foreach (@{$self->_oligos}) {
+		my $seq = $_->Sequence;
+		push @data, {
+			obj => $self->_pack_obj($_),
+			sequence => $seq && $seq->name,
+		};
+	}
 
 	return {
 		description => 'Oligos of this' . $self->display_class,
@@ -119,7 +123,7 @@ sub oligos {
 
 sub overlapping_genes {
 	my ($self) = @_;
-	my @gene_info = map {$_->info} $self->_overlapping_genes($self->_segment);
+	my @gene_info = map {$_->info->name} $self->_overlapping_genes($self->_segment);
 
 	return {
 		description => 'Overlapping genes of this ' . $self->display_class,
@@ -143,7 +147,7 @@ sub overlaps_transcript {
 
 	return {
 		description => 'Transcripts that this ' . $self->display_class . ' overlaps',
-		data		=> $transcripts ? \$transcripts : undef,
+		data		=> %$transcripts ? $transcripts : undef,
 	};
 }
 
@@ -171,7 +175,7 @@ sub overlaps_variation {
 sub on_orfeome_project {
 	my ($self) = @_;
 
-	$self->name =~ /^mv_(.*)/;
+	$self->object->name =~ /^mv_(.*)/;
 	my $data = $1;
 
 	return {
@@ -264,9 +268,10 @@ sub segment {
 sub amplified {
 	my ($self) = @_;
 
+	my $amplified = $self ~~ 'Amplified';
 	return {
 		description => 'Whether this PCR product is amplified',
-		data		=> $self ~~ 'Amplified',
+		data		=> $amplified && $amplified->name,
 	};
 }
 
@@ -292,11 +297,10 @@ sub SNP_loci {
 sub assay_conditions {
 	my ($self) = @_;
 	my $conditions = $self ~~ 'Assay_conditions';
-	$conditions &&= $conditions->right;
 
 	return {
 		description => 'Assay conditions for this PCR product',
-		data		=> $conditions,
+		data		=> $conditions && $conditions->name,
 	};
 }
 

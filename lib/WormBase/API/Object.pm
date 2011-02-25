@@ -219,7 +219,7 @@ sub name {
 =head1 $object->common_name
 
   Default: name of the object
-    
+
 =cut
 
 sub common_name {
