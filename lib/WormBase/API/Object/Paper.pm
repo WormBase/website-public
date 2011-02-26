@@ -6,6 +6,24 @@ use ParseName qw(parse_name parse_name_initials);
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Paper
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Paper class.
+
+=head1 URL
+
+http://wormbase.org/resources/paper
+
+=head1 METHODS
+
+=cut
+
 has '_authors' => (
 	is => 'ro',
 	isa => 'ArrayRef[Ace::Object]',
@@ -26,192 +44,43 @@ has '_parsed_authors' => (
 	},
 );
 
-#############
-## METHODS
-#############
-
-sub name {
-	my ($self) = @_;
-    my $title = $self ~~ 'Title' // $self ~~ 'name';
-    $title =~ s/\.*$//;
-	return {
-		description => 'The object name of the publication',
-		data => {
-			id		=> $self ~~ 'name',
-			label	=> eval {$self->intext_citation->{data}{citation}} // $title,
-			class	=> $self ~~ 'class',
-		},
-	};
-}
-
-sub title {
-	my ($self) = @_;
-    my $title = $self ~~ 'Title' // $self ~~ 'name';
-    $title =~ s/\.*$//;
-	return {
-		description	=> 'The title of the publication',
-		data		=> $title,
-    };
-}
-
-sub journal {
-	my ($self) = @_;
-    my $journal = $self ~~ 'Journal';
-    $journal =~ s/\.*$// if $journal;
-	return {
-		description => 'The journal the paper was published in',
-		data        => $journal,
-	};
-}
-
-sub page {
-	my ($self) = @_;
-    my $page = $self ~~ 'Page';
-    $page =~ s/\.*$// if $page;
-	return {
-		description => 'The pages of the publication',
-		data        => $page,
-    };
-}
-
-sub volume {
-	my ($self) = @_;
-    my $volume = $self ~~ 'Volume';
-    $volume =~ s/\.*$// if $volume;
-	return {
-		description => 'The volume the paper was published in',
-		data        => $volume,
-    };
-}
-
-sub year {
-	my ($self) = @_;
-	return {
-		description => 'The year of publication',
-		data        =>  $self->_parse_year($self ~~ 'Publication_date'),
-    };
-}
-
-sub publication_date {
-	my ($self) = @_;
-	return {
-		description => 'The publication date of the publication',
-		data		=> $self ~~ 'Publication_date',
-	};
-}
-
-sub authors {
-	my ($self) = @_;
-
-    my @authors;
-    foreach my $author (@{$self->_authors}) {
-		my $obj = $author;
-		foreach my $col ($author->col) {
-			$obj = $col->right if $col eq 'Person';
-		}
-
-		my @authorname = @{$self->_parsed_authors->{$author}};
-		my $label = @authorname > 1 ?
-		  "$authorname[-1], " . join('. ', @authorname[0..$#authorname-1]) . '.' :
-			$authorname[0];		# author's name in APA format
-
-		push @authors, $self->_pack_obj($obj, $label);
-    }
-
-	return {
-		description => 'The authors of the publication',
-		data        => @authors ? \@authors : undef,
-	};
-}
-
-sub editors {
-	my ($self) = @_;
-	my $editors = $self ~~ '@Editor';
-
-	unless ($self->is_wormbook_paper->{data}) {
-		$editors = [map {@$_ > 1 ? $_->[-1] . ', ' . join('. ', $_->[0..$#_-1]) . '.'
-						   : $_->[0]} map [parse_name_initials($_)], @$editors];
-	}
-
-	return {
-		description => 'Editor of publication',
-		data		=> @$editors ? $editors : undef,
-	};
-}
-
-sub publication_type {
-	my ($self) = @_;
-	my @type = map {$_->name} @{$self ~~ '@Type'};
-
-	return {
-		description => 'Type of publication',
-		data		=> @type ? \@type : undef,
-	};
-}
-
-sub is_wormbook_paper {
-	my ($self) = @_;
-	my $description = 'Whether this is a publication in the WormBook';
-	my $truth = 0;
-
-	my ($type, $journal, $contained);
-	if (($type = $self->publication_type and grep {$_ eq 'WormBook'} @{$type->{data}}) or
-		($journal = $self->journal and $journal->{data} eq 'WormBook') or
-		($contained = $self->contained_in and grep /WormBook/, @{$contained->{data}})) {
-		$truth = 1;
-	}
-
-	return {
-		description => $description,
-		data		=> $truth,
-	};
-}
-
-sub abstract {
-	my ($self) = @_;
-    my $abs = $self ~~ 'Abstract' // return;
-    my $text;
-
-    if ($abs =~ /^WBPaper/i ) {
-		$text =	 $abs->right;
-		$text =~ s/^\n+//;
-		$text =~ s/\n+$//;
-    }
-
-	return {
-		description => 'The abstract of the publication',
-		data        => $text,
-	};
-}
 
 
 
-# Provided by Object.pm, pod retained for documentation
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-=head3 remarks
+=head2 Overview
+
+=head3 name
 
 This method will return a data structure containing
-curator remarks about the transgene.
+the name and ID of the paper object.
 
-=head4 PERL API
+=over
 
- $data = $model->remarks();
+=item PERL API
 
-=head4 REST API
+ $data = $model->name();
 
-=head5 Request Method
+=item REST API
+
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
-a Transgene (eg gmIs13)
+a paper ID (eg WBPaper00000031) 
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -225,27 +94,899 @@ a Transgene (eg gmIs13)
 
 =back
 
-=head5 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
+=back
+
+=cut
+
+sub name {
+    my ($self) = @_;
+    my $title = $self ~~ 'Title' // $self ~~ 'name';
+    $title =~ s/\.*$//;
+    return {
+	description => 'The object name of the publication',
+	data        => {
+	    id		=> $self ~~ 'name',
+	    label	=> eval {$self->intext_citation->{data}{citation}} // $title,
+	    class	=> $self ~~ 'class',
+	},
+    };
+}
+
+=head3 title
+
+This method will return a data structure containing
+the title of the paper.
+
+=over
+
+=item PERL API
+
+ $data = $model->title();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/title
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+    
+sub title {
+    my ($self) = @_;
+    my $title = $self ~~ 'Title' // $self ~~ 'name';
+    $title =~ s/\.*$//;
+    return {
+	description	=> 'The title of the publication',
+	data		=> $title,
+    };
+}
+
+
+=head3 journal
+
+This method will return a data structure containing
+the journal the paper was published in, if appropriate.
+
+=over
+
+=item PERL API
+
+ $data = $model->journal();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/journal
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
 =cut 
 
+sub journal {
+    my ($self) = @_;
+    my $journal = $self ~~ 'Journal';
+    $journal =~ s/\.*$// if $journal;
+    return {
+	description => 'The journal the paper was published in',
+	data        => $journal,
+    };
+}
+
+=head3 pages
+
+This method will return a data structure containing
+the page range of the publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->pages();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/pages
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub pages {
+    my ($self) = @_;
+    my $page = $self ~~ 'Page';
+    $page =~ s/\.*$// if $page;
+    return {
+	description => 'The pages of the publication',
+	data        => "$page",
+    };
+}
+
+=head3 volume
+
+This method will return a data structure containing
+the volume of the paper the journal was published in.
+
+=over
+
+=item PERL API
+
+ $data = $model->volume();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/volume
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub volume {
+    my ($self) = @_;
+    my $volume = $self ~~ 'Volume';
+    $volume =~ s/\.*$// if $volume;
+    return {
+	description => 'The volume the paper was published in',
+	data        => $volume,
+    };
+}
+
+=head3 year
+
+This method will return a data structure containing
+the year of publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->year();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/year
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub year {
+    my ($self) = @_;
+    return {
+	description => 'The year of publication',
+	data        =>  $self->_parse_year($self ~~ 'Publication_date'),
+    };
+}
+
+=head3 publication_date
+
+This method will return a data structure containing
+the date the paper was published.
+
+=over
+
+=item PERL API
+
+ $data = $model->publication_date();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_date
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub publication_date {
+    my ($self) = @_;
+    return {
+	description => 'The publication date of the publication',
+	data		=> $self ~~ 'Publication_date',
+    };
+}
+
+=head3 authors
+
+This method will return a data structure containing
+the authors of the publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->authors();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/authors
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub authors {
+    my ($self) = @_;
+    
+    my @authors;
+    foreach my $author (@{$self->_authors}) {
+	my $obj = $author;
+	foreach my $col ($author->col) {
+	    $obj = $col->right if $col eq 'Person';
+	}
+	
+	my @authorname = @{$self->_parsed_authors->{$author}};
+	my $label = @authorname > 1 ?
+	    "$authorname[-1], " . join('. ', @authorname[0..$#authorname-1]) . '.' :
+	    $authorname[0];		# author's name in APA format
+	
+	push @authors, $self->_pack_obj($obj, $label);
+    }
+    
+    return {
+	description => 'The authors of the publication',
+	data        => @authors ? \@authors : undef,
+    };
+}
+
+=head3 editors
+
+This method will return a data structure containing
+the editors of the publication, if any.
+
+=over
+
+=item PERL API
+
+ $data = $model->editors();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/editors
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub editors {
+    my ($self) = @_;
+    my $editors = $self ~~ '@Editor';
+    
+    unless ($self->is_wormbook_paper->{data}) {
+	$editors = [map {@$_ > 1 ? $_->[-1] . ', ' . join('. ', $_->[0..$#_-1]) . '.'
+			     : $_->[0]} map [parse_name_initials($_)], @$editors];
+    }
+    
+    return {
+	description => 'Editor of publication',
+	data		=> @$editors ? $editors : undef,
+    };
+}
+
+=head3 publication_type
+
+This method will return a data structure containing
+the type of publication, eg "Book Chapter".
+
+=over
+
+=item PERL API
+
+ $data = $model->publication_type();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_type
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub publication_type {
+    my ($self) = @_;
+    my @type = map {$_->name} @{$self ~~ '@Type'};
+    
+    return {
+	description => 'Type of publication',
+	data		=> @type ? \@type : undef,
+    };
+}
+
+=head3 is_wormbook_paper
+
+This method will return a data structure containing
+whether or not this publication came from WormBook.
+
+=over
+
+=item PERL API
+
+ $data = $model->is_wormbook_paper();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/is_wormbook_paper
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub is_wormbook_paper {
+    my ($self) = @_;
+    my $truth = 0;
+    
+    my ($type, $journal, $contained);
+    if (($type = $self->publication_type and grep {$_ eq 'WormBook'} @{$type->{data}}) or
+	($journal = $self->journal and $journal->{data} eq 'WormBook') or
+	($contained = $self->contained_in and grep /WormBook/, @{$contained->{data}})) {
+	$truth = 1;
+    }
+    
+    return {
+	description => 'Whether this is a publication in the WormBook', 
+	data	    => $truth,
+    };
+}
+
+=head3 abstract
+
+This method will return a data structure containing
+the abstract for the publication, if available.
+
+=over
+
+=item PERL API
+
+ $data = $model->abstract();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/abstract
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub abstract {
+    my ($self) = @_;
+    my $abs = $self ~~ 'Abstract' // return;
+    my $text;
+    
+    if ($abs =~ /^WBPaper/i ) {
+	$text =	 $abs->right;
+	$text =~ s/^\n+//;
+	$text =~ s/\n+$//;
+    }
+    
+    return {
+	description => 'The abstract of the publication',
+	data        => "$text",
+    };
+}
+
+=head3 remarks
+
+This method will return a data structure containing
+curator remarks about the paper.
+
+=over
+
+=item PERL API
+
+ $data = $model->remarks();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/remarks
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Provided by Object.pm; retain POD for complete documentation.
 # sub remarks { }
 
-sub keywords {
-	my ($self) = @_;
+=head3 keywords
 
-	my $data = $self->_pack_objects($self ~~ '@Keyword');
-	return {
-		description => 'Keywords related to the publication',
-		data		=> %$data ? $data : undef,
-	};
+This method will return a data structure containing
+keywords associated with the person.
+
+=over
+
+=item PERL API
+
+ $data = $model->keywords();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/keywords
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub keywords {
+    my ($self) = @_;
+    
+    my $data = $self->_pack_objects($self ~~ '@Keyword');
+    return {
+	description => 'Keywords related to the publication',
+	data	    => %$data ? $data : undef,
+    };
 }
+
+
+=head3 publisher
+
+This method will return a data structure containing
+the publisher of the publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->publisher();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/publisher
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # TODO: publisher should be in format "Location: Publisher"
 #       for APA citations. Consider parsing $self ~~ 'Publisher'
@@ -260,133 +1001,454 @@ sub publisher {
 	};
 }
 
-sub affiliation {
-	my ($self) = @_;
+=head3 affiliation
 
-	my $affiliations = $self ~~ '@Affiliation';
-	return {
-		description => 'Affiliations of the publication',
-		data => @$affiliations ? $affiliations : undef,
-	};
+This method will return a data structure containing
+the affiliations of the publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->affiliation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/affiliation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub affiliation {
+    my ($self) = @_;
+    
+    my $affiliations = $self ~~ '@Affiliation';
+    return {
+	description => 'Affiliations of the publication',
+	data => @$affiliations ? $affiliations : undef,
+    };
 }
+
+=head3 doi
+
+This method will return a data structure containing
+the doi of the paper.
+
+=over
+
+=item PERL API
+
+ $data = $model->doi();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/doi
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub doi {
-	my ($self) = @_;
-
-	($self ~~ 'Name') =~ m{^(?:doi.*)?(10\.[^/]+.+)$};
-	return {
-		description => 'DOI of publication',
-		data		=> $1,
-	};
+    my ($self) = @_;
+    
+    ($self ~~ 'Name') =~ m{^(?:doi.*)?(10\.[^/]+.+)$};
+    return {
+	description => 'DOI of publication',
+	data		=> $1,
+    };
 }
+
+=head3 pmid
+
+This method will return a data structure containing
+the Pubmed ID of the publication.
+
+=over
+
+=item PERL API
+
+ $data = $model->pmid();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/pmid
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub pmid {
-	my ($self) = @_;
-
-	my $pmid;
-	foreach ($self->object->Database(2)) {
-		if ($_ == 'PMID') {
-			$pmid = $_->right->name;
-			last;
-		}
+    my ($self) = @_;
+    
+    my $pmid;
+    foreach ($self->object->Database(2)) {
+	if ($_ == 'PMID') {
+	    $pmid = $_->right->name;
+	    last;
 	}
-
-	return {
-		description => 'PubMed ID of publication',
-		data => $pmid,
-	};
+    }
+    
+    return {
+	description => 'PubMed ID of publication',
+	data => "$pmid",
+    };
 }
+
+=head3 intext_citation
+
+This method will return a data structure containing
+an APA-formatted intext citation.
+
+=over
+
+=item PERL API
+
+ $data = $model->intext_citation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/intext_citation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub intext_citation {
-	my ($self) = @_;
-
-	my $authors = $self->_authors;
-	my $year = eval {$self->year->{data}};
-
-	my $innertext;
-	if (@$authors > 5) {					 # 6..inf
-		my $author = $authors->[0]; # will be author or person object
-		$innertext = $self->_parsed_authors->{$author}->[-1] . ' et al.';
+    my ($self) = @_;
+    
+    my $authors = $self->_authors;
+    my $year = eval {$self->year->{data}};
+    
+    my $innertext;
+    if (@$authors > 5) {					 # 6..inf
+	my $author = $authors->[0]; # will be author or person object
+	$innertext = $self->_parsed_authors->{$author}->[-1] . ' et al.';
+    }
+    elsif (@$authors) {
+	if (@$authors > 2) {		# 3..5
+	    my @lnames = map {$self->_parsed_authors->{$_}->[-1]} @$authors;
+	    $innertext = join(', ', @lnames[0..$#lnames-1]) . ', & ' . $lnames[-1];
 	}
-	elsif (@$authors) {
-		if (@$authors > 2) {		# 3..5
-			my @lnames = map {$self->_parsed_authors->{$_}->[-1]} @$authors;
-			$innertext = join(', ', @lnames[0..$#lnames-1]) . ', & ' . $lnames[-1];
-		}
-		else {
-			$innertext = join(' & ', map {$self->_parsed_authors->{$_}->[-1]} @$authors);
-		}
+	else {
+	    $innertext = join(' & ', map {$self->_parsed_authors->{$_}->[-1]} @$authors);
 	}
-
-	$innertext = "($innertext, $year)" if $innertext && defined $year;
-
-	return {
-		description => 'APA in-text citation',
-		data		=> {
-			citation => $innertext,
-			paper	 => $self ~~ 'name',
-		},
-	};
+    }
+    
+    $innertext = "($innertext, $year)" if $innertext && defined $year;
+    
+    return {
+	description => 'APA in-text citation',
+	data		=> {
+	    citation => $innertext,
+	    paper	 => $self ~~ 'name',
+	},
+    };
 }
+
+=head3 contained_in
+
+This method will return a data structure containing
+publications the current publication is contained in.
+
+=over
+
+=item PERL API
+
+ $data = $model->contained_in();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/contained_in
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub contained_in {
-	my ($self) = @_;
-	my $contained_in = $self ~~ '@Contained_in';
-
-	return {
-		description => 'Publications this publication is contained in',
-		data		=> @$contained_in ? $contained_in : undef,
-	};
+    my ($self) = @_;
+    my $contained_in = $self ~~ '@Contained_in';
+    
+    return {
+	description => 'Publications this publication is contained in',
+	data		=> @$contained_in ? $contained_in : undef,
+    };
 }
+
+#######################################
+#
+# The Related Widget
+#
+#######################################
+
+=head2 Related
+
+=head3 refers_to
+
+This method will return a data structure containing
+items that the publication refers to.
+
+=over
+
+=item PERL API
+
+ $data = $model->refers_to();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Paper ID (eg WBPaper00000031)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/refers_to
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub refers_to {
-	my ($self) = @_;
-
-	my %data;
-	foreach my $ref_type (@{$self ~~ '@Refers_to'}) {
-		$data{$ref_type} = $self->_pack_objects([$ref_type->col]);
-	}
-
-	return {
-		description => 'Items that the publication refers to',
-		data		=> %data ? \%data : undef,
-	};
+    my ($self) = @_;
+    
+    my %data;
+    foreach my $ref_type (@{$self ~~ '@Refers_to'}) {
+	$data{$ref_type} = $self->_pack_objects([$ref_type->col]);
+    }
+    
+    return {
+	description => 'Items that the publication refers to',
+	data		=> %data ? \%data : undef,
+    };
 }
 
-sub genes {
-	my ($self) = @_;
 
-	return {
-		description => 'Genes related to or mentioned in paper',
-		data => $self->_pack_objects($self ~~ '@Gene'),
-	};
+#######################################
+#
+# This may all just be cruft; handled by refers_to above.
+#
+#######################################
+
+sub genes {
+    my ($self) = @_;
+    
+    return {
+	description => 'Genes referenced by the paper',
+	data		=> $self->_pack_objects($self ~~ '@Gene'),
+    };
 }
 
 sub alleles {
-	my ($self) = @_;
-
-	return {
-		description => 'Alleles referenced by the paper',
-		data		=> $self->_pack_objects($self ~~ '@Allele'),
-	};
+    my ($self) = @_;
+    
+    return {
+	description => 'Alleles referenced by the paper',
+	data		=> $self->_pack_objects($self ~~ '@Allele'),
+    };
 }
 
 sub interactions {
-	my ($self) = @_;
-
-	return {
-		description => 'Interactions referenced by the paper',
-		data => $self->_pack_objects($self ~~ '@Interaction'),
-	};
+    my ($self) = @_;
+    
+    return {
+	description => 'Interactions referenced by the paper',
+	data => $self->_pack_objects($self ~~ '@Interaction'),
+    };
 }
 
 sub strains {
-	my ($self) = @_;
-
-	return {
-		description => 'Strains referenced by the paper',
-		data 		=> $self->_pack_objects($self ~~ '@Strain'),
-	};
+    my ($self) = @_;
+    
+    return {
+	description => 'Strains referenced by the paper',
+	data 		=> $self->_pack_objects($self ~~ '@Strain'),
+    };
 }
 
 ############################################################

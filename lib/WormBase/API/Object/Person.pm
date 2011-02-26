@@ -18,6 +18,8 @@ Model for the Ace ?Person class.
 
 http://wormbase.org/resources/person
 
+=head1 METHODS
+
 =cut
 
 has 'address_data' => (
@@ -111,6 +113,8 @@ has 'publication_hr' => (
 # The Overview Widget
 #
 #######################################
+
+=head2 Overview
 
 =head3 name
 
