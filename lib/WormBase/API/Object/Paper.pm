@@ -1399,7 +1399,13 @@ sub refers_to {
     
     my %data;
     foreach my $ref_type (@{$self ~~ '@Refers_to'}) {
-	$data{$ref_type} = $self->_pack_objects([$ref_type->col]);
+	$data{$ref_type} = $self->_pack_objects([$ref_type->col]);       
+	# Or build some data tables for different object types
+#	foreach $ref_type ($ref_type->col) {
+#	    if ($ref_type eq '') {
+#		# ...
+#	    }
+#	}
     }
     
     return {
