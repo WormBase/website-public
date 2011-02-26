@@ -136,14 +136,8 @@ B<Response example>
 
 =cut 
 
-sub other_names {
-    my $self = shift;
-    my $object = $self->object;
-    my @other_names = map { $self->_pack_obj($_) } $object->Other_name;
-    my $data = { description => 'other names that have been used for this gene class',
-		 data        => \@other_names };
-    return $data;
-}
+# Provided by Object.pm, retain POD for completeness of documentation.
+# sub other_names { }
 
 
 =head3 description
@@ -197,17 +191,9 @@ B<Response example>
 
 =cut 
 
-sub description {
-    my $self = shift;
-    my $object = $self->object;
-    my $description = $object->Description;
-    my $data = { description => 'a brief description of the gene class abbreviation',
-		 data        => "$description" };
-    return $data;
-}
+# Provided by Object.pm, retain POD for completeness of documentation.
+# sub description { }
 
-# laboratory() is provided by Object.pm. Documentation
-# duplicated here for completeness of API
 
 =head3 laboratory
 
@@ -259,6 +245,11 @@ B<Response example>
 =back
 
 =cut 
+
+# laboratory() is provided by Object.pm. Documentation
+# duplicated here for completeness of API
+# sub laboratory { }
+
 
 =head3 phenotype
 
@@ -321,8 +312,6 @@ sub phenotype {
     return $data;
 }
 
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
-
 =head3 remarks
 
 This method will return a data structure containing
@@ -374,6 +363,8 @@ B<Response example>
 
 =cut 
 
+# Provided by Object.pm; retain for complete documentation.
+# sub remarks { }
 
 #######################################
 #
