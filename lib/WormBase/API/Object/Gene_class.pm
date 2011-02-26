@@ -18,6 +18,8 @@ Model for the Ace ?Gene_class class.
 
 http://wormbase.org/species/gene_class
 
+=head1 METHODS/URIs
+
 =cut
 
 #######################################
@@ -26,30 +28,34 @@ http://wormbase.org/species/gene_class
 #
 #######################################
 
+=head2 Overview
+
 =head3 name
 
 This method will return a data structure of the 
 name and ID of the requested gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->name();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -63,13 +69,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/name
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -82,25 +90,27 @@ This method will return a data structure containing
 other names that have been used to describe the 
 requested gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->other_names();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -114,13 +124,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/other-names
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/other_names
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -139,25 +151,27 @@ sub other_names {
 This method will return a data structure containing
 a brief description of the gene class abbreviation.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->description();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -171,13 +185,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/description
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -198,25 +214,27 @@ sub description {
 This method will return a data structure containing
 the laboratory that coined the gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->laboratory();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -230,13 +248,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/laboratory
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -246,25 +266,27 @@ This method will return a data structure containing
 a string describing the general phenotype of genes
 placed in this gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->phenotype();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -278,13 +300,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/phenotype
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -304,25 +328,27 @@ sub phenotype {
 This method will return a data structure containing
 curatorial remarks for the gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->remarks();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -336,13 +362,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -353,30 +381,34 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 #
 #######################################
 
+=head2 Current Genes
+
 =head3 current_genes
 
 This method will return a data structure containing
 all genes assigned to the class, organized by species.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->current_genes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -390,13 +422,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/current_genes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -434,6 +468,8 @@ sub current_genes {
 #
 #######################################
 
+=head2 Previous Genes
+
 =head3 former_genes
 
 This method will return a data structure containing
@@ -442,25 +478,27 @@ but have been reassigned to another class, or that
 have been reassigned a new gene name within the same
 class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->former_genes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -474,13 +512,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/former_genes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -510,25 +550,27 @@ sub former_genes {
 This method will return a data structure containing
 genes that have been reassigned within the gene class.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->reassigned_genes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -542,13 +584,15 @@ A Gene class (eg unc)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/reassigned_genes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
