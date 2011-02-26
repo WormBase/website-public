@@ -81,6 +81,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 # Supplied by Object.pm; retain pod for complete documentation of API
@@ -133,6 +135,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -194,6 +198,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -263,6 +269,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut
 
 
@@ -321,6 +329,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -384,6 +394,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut
 
 sub email {
@@ -441,6 +453,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -505,6 +519,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut
 
 sub strain_designation {
@@ -565,6 +581,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -638,6 +656,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut
 
 sub current_members {
@@ -694,6 +714,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -783,6 +805,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut
 
 
@@ -856,6 +880,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -937,6 +963,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
