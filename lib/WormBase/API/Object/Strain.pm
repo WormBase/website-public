@@ -73,7 +73,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/name
 
 B<Response example>
 
