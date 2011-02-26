@@ -91,25 +91,27 @@ B<Response example>
 This method will return a data structure containing
 the taxonomy of the requested strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->taxonomy();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -123,13 +125,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/taxonomy
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -143,25 +147,27 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/
 This method will return a data structure containing
 other names that have been used to refer to the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->other_names();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -175,13 +181,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/other_names
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -248,25 +256,27 @@ B<Response example>
 This method will return a data structure containing 
 the genotype of the strain as a string.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->genotype();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -280,13 +290,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genotype
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -303,25 +315,27 @@ sub genotype {
 This method will return a data structure 
 containing the genes in this strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->genes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -335,13 +349,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -359,25 +375,27 @@ sub genes {
 This method will return a data structure 
 containing alleles contained in this strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->alleles();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -391,13 +409,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/alleles
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -416,25 +436,27 @@ sub alleles {
 This method will return a data structure 
 containing rearrangements contained in this strain, if any.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->rearrangements();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -448,13 +470,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/rearrangements
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -473,25 +497,27 @@ sub rearrangements {
 This method will return a data structure containing
 clones that rescue this strain (?? HOW IS THIS USED? )
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->clones();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -505,13 +531,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/clones
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -530,25 +558,27 @@ sub clones {
 This method will return a data structure containing
 transgenes carried by the requested strain
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->transgenes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -562,13 +592,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/transgenes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -588,25 +620,27 @@ sub transgenes {
 This method will return a data structure containing
 the reference strain of the strain in question.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->reference_strain();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -620,13 +654,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/reference_strain
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -645,25 +681,27 @@ sub reference_strain {
 This method will return a data structure containing
 the reference strain of the strain in question.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->mutagen();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -677,13 +715,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/mutagen
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -702,25 +742,27 @@ sub mutagen {
 This method will return a data structure containing
 the number of times a strain has been outcrossed.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->outcrossed();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -734,13 +776,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/outcrossed
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -759,25 +803,27 @@ This method will return a data structure containing
 information whether the strain throws males at a higher
 than expected frequency.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->throws_males();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -791,13 +837,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/throws_males
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -816,25 +864,27 @@ sub throws_males {
 This method will return a data structure containing
 phenotypes observed in the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->phenotypes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -848,13 +898,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -873,25 +925,27 @@ sub phenotypes {
 This method will return a data structure containing
 phenotypes observed in the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->phenotypes_not_observed();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -905,13 +959,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes_not_observed
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -944,25 +1000,27 @@ sub _pack_phenotypes {
 This method will return a data structure containing
 curator remarks about the transgene.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->remarks();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Transgene (eg gmIs13)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -976,13 +1034,15 @@ a Transgene (eg gmIs13)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -1004,25 +1064,27 @@ This method will return a data structure containing
 the laboratory (and name of the lab representative)
 that generated the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->laboratory();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1036,13 +1098,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/laboratory
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1054,25 +1118,27 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/
 This method will return a data structure containing
 the person who built the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->made_by();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1086,13 +1152,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/made_by
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1109,25 +1177,27 @@ sub made_by {
 This method will return a data structure containing
 the person who built the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->contact();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1141,13 +1211,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/contact
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1164,25 +1236,27 @@ sub contact {
 This method will return a data structure containing
 the date the strain was received at the CGC.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->date_received();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1196,13 +1270,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/date_received
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1231,25 +1307,27 @@ sub date_received {
 This method will return a data structure containing
 the gps coordinates from where the strain was isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->gps_coordinates();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1263,13 +1341,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/gps_coordinates
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1289,25 +1369,27 @@ sub gps_coordinates {
 This method will return a data structure containing
 the place where the strain was isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->place();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1321,13 +1403,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/place
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1345,25 +1429,27 @@ sub place {
 This method will return a data structure containing
 the general type of landscape where the strain was isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->landscape();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1377,13 +1463,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/landscape
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1401,25 +1489,27 @@ sub landscape {
 This method will return a data structure containing
 the substrate that the stain was found on.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->substrate();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1433,13 +1523,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/subtrate
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1457,25 +1549,27 @@ sub substrate {
 This method will return a data structure containing
 other organisms present when the strain was isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->associated_organisms();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1489,13 +1583,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/associated_organisms
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1512,25 +1608,27 @@ sub associated_organisms {
 This method will return a data structure containing
 the life stage the strain was in when isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->life_stage();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1544,13 +1642,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/life_stage
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1568,25 +1668,27 @@ sub life_stage {
 This method will return a data structure containing
 the log size of the population.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->log_size_of_population();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1600,13 +1702,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/log_size_of_population
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1624,25 +1728,27 @@ sub log_size_of_population {
 This method will return a data structure containing
 the person who sampled the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->sampled_by();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1656,13 +1762,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/sampled_by
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1680,25 +1788,27 @@ sub sampled_by {
 This method will return a data structure containing
 the person who isolated the strain.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->isolated_by();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1712,13 +1822,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/isolated_by
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1735,25 +1847,27 @@ sub isolated_by {
 This method will return a data structure containing
 the date the strain was isolated.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->date_isolated();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Strain ID (eg CB1)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1767,13 +1881,15 @@ a Strain ID (eg CB1)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/date_isolated
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
