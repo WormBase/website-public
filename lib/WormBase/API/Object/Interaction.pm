@@ -4,13 +4,10 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
-
 has 'effector' => (    
     is       => 'ro',
     lazy    => 1,
     default => sub {
-    	
     	my $self = shift;
     	my @effectors;
     	eval { @effectors = $self->interaction_type->Effector->col;};
@@ -22,7 +19,6 @@ has 'effected' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-   
     	my $self = shift;
     	my @effecteds;
     	eval{@effecteds = $self->interaction_type->Effected->col;};
@@ -34,7 +30,6 @@ has 'non_directional_interactors' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    
     	my $self = shift;
     	my @non_directional_interactors; 
     	eval {
@@ -93,8 +88,54 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 =cut 
 
 # Supplied by Object.pm; retain pod for complete documentation of API
+
 # sub name {}
 
+=head2 interactor
+
+<headvar>This method will return a data structure re: set of interactors for this interaction.
+
+=head3 PERL API
+
+ $data = $model->interactor();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub interactor {
     my $self = shift;
@@ -159,6 +200,52 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 # sub remarks { }
 
+=head2 interaction_type
+
+This method will return a data structure re: interaction_type of this interaction.
+
+=head3 PERL API
+
+ $data = $model->interaction_type();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/<headvar>
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
 sub interaction_type {
     my $self = shift;
     my $object = $self->object;
@@ -180,6 +267,52 @@ sub interaction_type {
     return $data;
 }
 
+=head2 paper
+
+<headvar>This method will return a data structure re: papers describing this interaction.
+
+=head3 PERL API
+
+ $data = $model->paper();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/paper
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
 sub paper {
     my $self = shift;
     my $object = $self->object;
@@ -194,142 +327,230 @@ sub paper {
 ## more summary items
 ######################
 
+
+=head2 phenotype
+
+This method will return a data structure re: phenotype associated with this interaction.
+
+=head3 PERL API
+
+ $data = $model-><headvar>();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/<headvar>
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
 sub phenotype {
-                                                                # No space
-	my $self = shift;
-    my $object = $self->object;                                 # Weird indentation?
-	my %data;                                               # Why defined here?
-	my $desc = 'notes';                                     # Why defined here?
-	my $data_pack;                                          # Why defined here?
-
-	#### data pull and packaging                            # Obvious. Omit.
-	 
-    my $it = $object->Interaction_type;                         # Weird indentation
 	
-	my $phenotype;                                          # Why?
-	my $phenotype_name;                                     # Why?
-	my $phenotype = $it->Internation_phenotype->right if $it->Internation_phenotype;
-	eval{$phenotype = $it->Interaction_phenotype->right;};  # Why is this an eval?
-	eval{$phenotype_name = $phenotype->Primary_name;};      # Why is this an eval?
+	my $self = shift;
+    my $object = $self->object;
 
+	### data pull ####
+	
+	my $it = $object->Interaction_type;                                                         
+	my $phenotype = $it->Internation_phenotype->right if $it->Internation_phenotype;  
+	my $phenotype_name = $phenotype->Primary_name if $phenotype;      
 
-	$data_pack = {
-	                                                # TH. No space!
-		'id' => "$phenotype",                   
-		'label' => "$phenotype_name",           # TH. Not needed!
+	my $data_pack = {
+		'id' =>"$phenotype",
+		'label' =>"$phenotype_name",
 		'Class' => 'Phenotype'
 	};
 
-	####                                            # TH. No!
-
-	$data{'data'} = $data_pack;                     # TH. No! Why do this?	
-	$data{'description'} = $desc;                   # TH. No! Why do this?
-	return \%data;
-                                                        # Do this instead
-                                                  	my $data = { data => 'my data',
-                                              		             description => 'my description' };
-	
+	my $data = {
+		'data'=> $data_pack,
+		'description' => 'description of the phenotype associated with this interaction'
+		};
+	return $data;
 }
+
+=head2 rnai
+
+This method will return a data structure re: rnais related to this interaction.
+
+=head3 PERL API
+
+ $data = $model->rnai();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/rnai
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub rnai {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-    my $it = $object->Interaction_type;
-	my $rnai;
-
-	eval{$rnai = $it->Interaction_RNAi->right;}; ## $it_data->{'Interaction_RNAi'}
+	my $it = $object->Interaction_type;
+	my $rnai = $it->Interaction_RNAi->right if $it->Interaction_RNAi;
 	
-
-	$data_pack = {
-	
-		'id' =>"$rnai",
-		'label' =>"$rnai",
-		'Class' => 'RNAi'
-	};
-	
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
+	my $data_pack = $self->_pack_obj($rnai);
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'description of the rnai involved with this interaction'
+				};
+	return $data;
 }
-
 
 ######################
 ### Interactors
 ######################
 
-sub interactor_data {
+=head2 interactor_data
 
+This method will return a data structure re: interactor_data for this interaction.
+
+=head3 PERL API
+
+ $data = $model->interactor_data();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Interaction ID WBInteraction0000779
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor_data
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub interactor_data {
 	my $self = shift;
 	my $interactor_type; ## efffector, effected, non_directional
    	my $object = $self->object;
 	my %data;
 	my $desc = 'notes';
 	my @data_pack;
-
-	#### data pull and packaging
-
 	my $interactor_ar;
-	
+		
 	if ($interactor_type =~ /effector/) {
-	
 		$interactor_ar = $self->effector;
-	}
-	
-	elsif ($interactor_type =~ /effected/) {
-	
+	} elsif ($interactor_type =~ /effected/) {
 		$interactor_ar = $self->effected;
-	}
-	
-	else {
-	
+	} else {
 		$interactor_ar = $self->non_directional_interactors;
 	}
 
 	foreach my $interactor (@$interactor_ar) {
-	
-
-		my @cds = $gene_obj->Corresponding_CDS;
-  		my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds if (@cds);
-  		my @interactions = $gene_obj->Interaction;
-  		
+		my @cds = $interactor->Corresponding_CDS;
+  		my @proteins  = map {$interactor->Corresponding_protein(-fill=>1)} @cds if (@cds);
+  		my @interactions = $interactor->Interaction;
   		my $gene_data = _pack_obj($interactor);
   		my @protein_data_set;
   		my $interaction_count = @interactions;
-  		
-  		
-  		foreach my $protein (@proteins) {
-  			
+  	
+  		foreach my $protein (@proteins) {		
   			my $protein_data = _pack_obj($protein);
   			push @protein_data_set, $protein_data
   		}
   	
-  		
-		$interactor_data => {
-				
+		my $interactor_data => {
 				'gene' => $gene_data,
 				'protein' => \@protein_data_set,
 				'inteactions' => "$interaction_count"	
-		}
-		
+		};
+	 	
 		push @data_pack, $interactor_data;
 	}
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'interactor data for this interaction broken down by type'
+	};
+	return $data;
 }
-
 
 1;
