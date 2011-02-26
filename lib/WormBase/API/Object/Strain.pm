@@ -55,7 +55,7 @@ No
 
 B<Parameters>
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 B<Returns>
 
@@ -73,7 +73,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/name
 
 B<Response example>
 
@@ -107,7 +107,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -125,7 +125,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/taxonomy
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/taxonomy
 
 =head5 Response example
 
@@ -159,7 +159,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -177,7 +177,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/other_names
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/other_names
 
 =head5 Response example
 
@@ -212,7 +212,7 @@ No
 
 B<Parameters>
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 B<Returns>
 
@@ -230,7 +230,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/description
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/description
 
 B<Response example>
 
@@ -264,7 +264,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -282,7 +282,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/genotype
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genotype
 
 =head5 Response example
 
@@ -319,7 +319,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -337,7 +337,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/genes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/genes
 
 =head5 Response example
 
@@ -375,7 +375,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -393,7 +393,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/alleles
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/alleles
 
 =head5 Response example
 
@@ -432,7 +432,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -450,7 +450,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/rearrangements
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/rearrangements
 
 =head5 Response example
 
@@ -489,7 +489,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -507,7 +507,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/clones
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/clones
 
 =head5 Response example
 
@@ -546,7 +546,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -564,7 +564,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/transgenes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/transgenes
 
 =head5 Response example
 
@@ -604,7 +604,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -622,7 +622,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/reference_strain
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/reference_strain
 
 =head5 Response example
 
@@ -661,7 +661,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -679,7 +679,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/mutagen
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/mutagen
 
 =head5 Response example
 
@@ -718,7 +718,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -736,7 +736,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/outcrossed
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/outcrossed
 
 =head5 Response example
 
@@ -775,7 +775,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -793,7 +793,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/throws_males
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/throws_males
 
 =head5 Response example
 
@@ -832,7 +832,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -850,7 +850,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/phenotypes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes
 
 =head5 Response example
 
@@ -889,7 +889,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -907,7 +907,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/phenotypes_not_observed
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes_not_observed
 
 =head5 Response example
 
@@ -1020,7 +1020,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1038,7 +1038,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/laboratory
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/laboratory
 
 =head5 Response example
 
@@ -1070,7 +1070,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1088,7 +1088,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/made_by
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/made_by
 
 =head5 Response example
 
@@ -1125,7 +1125,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1143,7 +1143,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/contact
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/contact
 
 =head5 Response example
 
@@ -1180,7 +1180,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1198,7 +1198,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/date_received
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/date_received
 
 =head5 Response example
 
@@ -1247,7 +1247,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1265,7 +1265,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/gps_coordinates
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/gps_coordinates
 
 =head5 Response example
 
@@ -1305,7 +1305,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1323,7 +1323,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/place
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/place
 
 =head5 Response example
 
@@ -1361,7 +1361,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1379,7 +1379,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/landscape
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/landscape
 
 =head5 Response example
 
@@ -1417,7 +1417,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1435,7 +1435,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/subtrate
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/subtrate
 
 =head5 Response example
 
@@ -1473,7 +1473,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1491,7 +1491,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/associated_organisms
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/associated_organisms
 
 =head5 Response example
 
@@ -1528,7 +1528,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1546,7 +1546,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/life_stage
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/life_stage
 
 =head5 Response example
 
@@ -1584,7 +1584,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1602,7 +1602,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/log_size_of_population
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/log_size_of_population
 
 =head5 Response example
 
@@ -1640,7 +1640,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1658,7 +1658,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/sampled_by
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/sampled_by
 
 =head5 Response example
 
@@ -1696,7 +1696,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1714,7 +1714,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/isolated_by
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/isolated_by
 
 =head5 Response example
 
@@ -1751,7 +1751,7 @@ No
 
 =head5 Parameters
 
-a Strain ID (eg DR2)
+a Strain ID (eg CB1)
 
 =head5 Returns
 
@@ -1769,7 +1769,7 @@ a Strain ID (eg DR2)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/DR2/date_isolated
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/date_isolated
 
 =head5 Response example
 
