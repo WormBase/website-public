@@ -67,9 +67,9 @@
 		  [% ELSIF is_wormbook_paper   # has editor%]
 			 [% fields.editors.data || 'The C. Elegans Community' %] (Ed.),
 		  [% END %]
-		  <i>[% fields.journal.data || 'WormBook' %]</i>[% IF fields.page ; ' (' _ fields.page.data  _ ')'; END %].
+		  <i>[% fields.journal.data || 'WormBook' %]</i>[% IF fields.pages ; ' (' _ fields.pages.data  _ ')'; END %].
 	   [% ELSE     # no section specified... title is actually title of book %]
-		  <i>[% fields.title.data %]</i>[% IF fields.page.data ; ' (' _ fields.page.data _ ')'; END %].
+		  <i>[% fields.title.data %]</i>[% IF fields.pages.data ; ' (' _ fields.pages.data _ ')'; END %].
 	   [% END %]
 	   [% IF fields.publisher.data; fields.publisher.data _ '.'; END %]
 	[% ELSIF fields.publication_type.data.grep('^Meeting_abstract$').size %]
@@ -87,7 +87,7 @@
 	   [% IF fields.journal || fields.publication_type.data.grep('^Gazette_article$').size %]
 		  <i>[% fields.journal.data || 'Worm Breeder\'s Gazette' %]<!-- nospace
 		  -->[% IF fields.volume.data %], [% fields.volume.data %][% END %]</i><!-- nospace
-		  -->[% IF fields.page.data %], [% fields.page.data %][% END %].
+		  -->[% IF fields.pages.data %], [% fields.pages.data %][% END %].
 	   [% END %]
 	[% END %]
 
