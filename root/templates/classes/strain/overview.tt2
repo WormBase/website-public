@@ -57,7 +57,7 @@
 
 [% WRAPPER $field_block title="Properties" %]
          [% WRAPPER $field_block title="Mutagen" key="mutagen" %]
-             [% fields.genotype.data %]         
+             [% fields.mutagen.data %]         
          [% END %]
 
          [% WRAPPER $field_block title="Outcrossed" key="outcrossed" %]
