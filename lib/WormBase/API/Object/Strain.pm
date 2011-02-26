@@ -10,13 +10,8 @@ extends 'WormBase::API::Object';
 
 ## headvar WormBase::API::Object::Strain
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
 =head1 SYNPOSIS
-=======
-=head2 name
->>>>>>> /tmp/Strain.pm~other.7nZLzV
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
 Model for the Ace ?Motif class.
 
 =head1 URL
@@ -26,50 +21,7 @@ http://wormbase.org/species/strain
 =head1 TODO
 
 =cut
-=======
-This method will return a data structure of the 
-name and ID of the requested transgene.
 
-=head3 PERL API
-
- $data = $model->name();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Transgene ID (gmIs13)
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head4 Response example
->>>>>>> /tmp/Strain.pm~other.7nZLzV
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
 ###########
 ## OVERVIEW
 ############
@@ -121,16 +73,26 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/
 =cut
 
 sub name {
-=======
-<div class="response-example"></div>
->>>>>>> /tmp/Strain.pm~other.7nZLzV
 
-=cut 
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
 
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
+	#### data pull and packaging
 
-   
+	$data_pack = {
+					'label' => "$object",
+					'class' => 'Strain',
+					'id' => "$object"
+				};
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 =head2 id
 
