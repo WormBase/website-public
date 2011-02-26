@@ -12,7 +12,11 @@ WormBase::API::Object::Strain
 
 =head1 SYNPOSIS
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+Model for the Ace ?Motif class.
+=======
 Model for the Ace ?Strain class.
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
 =head1 URL
 
@@ -23,6 +27,8 @@ http://wormbase.org/species/strain
 =head1 METHODS/URIs
 
 =cut
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+=======
 
 #######################################
 #
@@ -66,7 +72,13 @@ B<Returns>
 200 OK and JSON, HTML, or XML
 
 =item *
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+###########
+## OVERVIEW
+############
+=======
 404 Not Found
 
 =back
@@ -87,6 +99,7 @@ B<Response example>
 # sub name {}
 
 =head3 taxonomy
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
 This method will return a data structure containing
 the taxonomy of the requested strain.
@@ -137,6 +150,9 @@ B<Response example>
 
 =cut
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+sub name {
+=======
 # Taxonomy is provided by Object.pm
 # It is provided here for completeness of the documentation.
 # sub taxonomy {}
@@ -188,16 +204,43 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/
 B<Response example>
 
 <div class="response-example"></div>
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'notes';
+	my $data_pack;
+=======
 =back
 
 =cut
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+	#### data pull and packaging
+=======
 # Other_name is provided by Object.pm.
 # Retain pod for completeness of documentation.
 # sub other_names { }
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
+<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
+	$data_pack = {
+					'label' => "$object",
+					'class' => 'Strain',
+					'id' => "$object"
+				};
+	####
+	
+	$data{'data'} = $data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+=======
 =head3 description
+>>>>>>> /tmp/Strain.pm~other.L38ZsN
 
 This method will return a data structure containing
 a description of the requested strain.
