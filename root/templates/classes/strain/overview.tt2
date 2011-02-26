@@ -2,60 +2,90 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	<h2>[% tag2link(fields.name.data) %]</h2>
+<h2>[% tag2link(fields.name.data) %]</h2>
 
 [% WRAPPER highlight_box %]
 
-	[% WRAPPER $field_block title="Email"-%] 
-            [% FOREACH email_address IN fields.email.data %]
-            [% email_address  %]<br>
-            [% END %]
-   [% END %]
+    [% WRAPPER $field_block title="" -%]
+       [% species %]
+    [% END %] 
 
-	[% WRAPPER $field_block title="Lab Phone"-%] 
-            [% fields.lab_phone.data %]
-   [% END %]
+    [% WRAPPER $field_block title="Genotype" -%]
+        [% fields.genotype.data %]
+    [% END %]
 
-	[% WRAPPER $field_block title="Office Phone"-%] 
-            [% FOREACH office_number IN fields.office_phone.data %]
-            [% office_number %]<br>
-            [% END %]            
-   [% END %]       
-            
-   	[% WRAPPER $field_block title="Fax"-%] 
-            [% fields.fax.data %]
-   [% END %]            
+[% END %]
 
-	[% WRAPPER $field_block title="WormBase id"-%] 
-            [% tag2link(fields.id.data) %]
-   [% END %]            
+[% other_names %]
+
+[% WRAPPER $field_block title="Contains" %]
+    [% WRAPPER $field_block title="Genes" key="genes" %]
+         [% FOREACH gene IN fields.genes.data %]
+             [% tag2link(gene) %]<br />
+	 [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Alleles" key="alleles" %]
+         [% FOREACH allele IN fields.alleles.data %]
+             [% tag2link(allele) %]<br />
+	 [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Rearrangements" key="rearrangements" %]
+         [% FOREACH rearrangement IN fields.rearrangements.data %]
+             [% tag2link(rearrangement) %]<br />
+	 [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Clones" key="clones" %]
+         [% FOREACH clone IN fields.clones.data %]
+             [% tag2link(clone) %]<br />
+	 [% END %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Transgenes" key="transgenes" %]
+         [% FOREACH gene IN fields.transgenes.data %]
+             [% tag2link(gene) %]<br />
+	 [% END %]
+    [% END %]
+
+[% END %]
+
+[% WRAPPER $field_block title="Reference strain" key="referenc_strain" -%] 
+    [% tag2link(fields.reference_strain.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="Properties" %]
+         [% WRAPPER $field_block title="Mutagen" key="mutagen" %]
+             [% fields.genotype.data %]         
+         [% END %]
+
+         [% WRAPPER $field_block title="Outcrossed" key="outcrossed" %]
+             [% fields.outcrossed.data %]         
+         [% END %]
+
+         [% WRAPPER $field_block title="Males?" key="throws_males" %]
+             [% fields.throws_males.data %]
+         [% END %]
 
 [% END %]
 
 
-<div class="text-width" style="clear:left">
+[% WRAPPER $field_block title="Phenotypes" %]
+    [% WRAPPER $field_block title="Observed" key="phenotypes_observed" %]
+      This should be a data table
+         [% FOREACH phenotype IN fields.phenotypes_observed.data %]
+            [% phenotype %]         
+         [% END %]
+    [% END %]
 
-   [% WRAPPER $field_block title="Street Address"-%] 
-            [%FOREACH address_line IN fields.street_address.data %]
-            [% address_line  %]<br>
-            [% END %]
-            [% fields.country.data %]
-   [% END %]
-
-   [% WRAPPER $field_block title="Institution"-%] 
-            [% fields.institution.data %]
-   [% END %]
-   
+    [% WRAPPER $field_block title="Not Observed" key="phenotypes_not_observed" %]
+      This should be a data table
+         [% FOREACH phenotype IN fields.phenotypes_not_observed.data %]
+            [% phenotype %]         
+         [% END %]
+    [% END %]
+[% END %]
 
 
-	[% WRAPPER $field_block title="Lab"-%] 
-            [% tag2link(fields.lab_id.data) %]
-   [% END %]
-   
-   [% WRAPPER $field_block title="Web Page"-%] 
-          <a href="http://[% fields.web_page.data %]">[% fields.web_page.data %]</a><br>
-   [% END %]
-
-   
-   
-</div>
+[% remarks %]
