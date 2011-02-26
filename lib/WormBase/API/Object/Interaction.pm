@@ -543,7 +543,7 @@ sub interactor_data {
 				'protein' => \@protein_data_set,
 				'inteactions' => "$interaction_count"	
 		};
-		
+	 	
 		push @data_pack, $interactor_data;
 	}
 	my $data = {
