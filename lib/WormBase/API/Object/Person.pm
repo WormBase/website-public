@@ -1,6 +1,9 @@
 package WormBase::API::Object::Person;
 use Moose;
 
+with 'WormBase::API::Role::Object';
+extends 'WormBase::API::Object';
+
 =pod 
 
 =head1 NAME
@@ -16,9 +19,6 @@ Model for the Ace ?Person class.
 http://wormbase.org/resources/person
 
 =cut
-
-with 'WormBase::API::Role::Object';
-extends 'WormBase::API::Object';
 
 has 'address_data' => (
     is   => 'ro',

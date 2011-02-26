@@ -206,19 +206,60 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 ################################################
 
 sub name {
-	my ($self) = @_;
-	my $object = $self->object;
+    my ($self) = @_;
+    my $object = $self->object;
     my $label  = $self ~~ 'Public_name' || $self ~~ 'Common_name' || $object->name;
-	my $class  = $object->class;
-	return {
-		description => "The name and WormBase internal ID of a $class object",
-		data        =>  $self->_pack_obj($object,$label),
-	};
+    my $class  = $object->class;
+    return {
+	description => "The name and WormBase internal ID of a $class object",
+	data        =>  $self->_pack_obj($object,$label),
+    };
 }
 
-=head1 $object->common_name
+=head3 common_name
 
-  Default: name of the object
+This method will return a data structure containing
+the common (public) name of the object.
+
+=head4 PERL API
+
+ $data = $model->common_name();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and an object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/common_name
+
+=head5 Response example
+
+<div class="response-example"></div>
 
 =cut
 
@@ -231,46 +272,121 @@ sub common_name {
     };
 }
 
-sub other_name {
+
+=head3 other_names
+
+This method will return a data structure containing
+other names that have been used to refer to the object.
+
+=head4 PERL API
+
+ $data = $model->other_names();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and an object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub other_names {
     my $self = shift;
     my $object = $self->object;
-    my $name   = eval { $self->other_name} || "none";
-    return ({ other_name => $name });
+    my @names = $object->Other_name;
+    
+    # We will just stringify other names; no sense in linking them.
+    @names = map { "$_" } @names;
+    return { description => "other names that have been used to refer to $object",
+	     data        => @names ? \@names : undef };
 }
 
+=head3 description
+    
+This method will return a data structure containing
+a brief description of the object.
+    
+=head4 PERL API
+    
+  $data = $model->description();
 
+=head4 REST API
 
+=head5 Request Method
 
-# Parse out species "from a Genus species" string.
-# Return g_species, used primarily for dynamically
-# selecting a data source based on species identifier.
-sub taxonomy {
-    my ($self,$genus_species) = @_;
+GET
 
-    # We may have already been passed a string to parse
-    unless ($genus_species) {
-	my $object = $self->object;
-	$genus_species = $object->Species;
-    }
-    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { description => 'the genus and species of the current object',
-		 data        => { genus   => $genus,
-				  species => $species,
-		 }
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub description { 
+    my $self    = shift;
+    my $object  = $self->object;
+    my $class   = $object->class;
+    my $description = $object->Description;
+    my $data    = { description  => "description of the $class $object",
+		    data         => $description || undef,
     };
     return $data;
-}
-
-sub species {
-    return eval {shift ~~ 'Species'} ;
-}
-
-sub parsed_species {
-  my ($self) = @_;
-  my $object = $self->object;
-  my $genus_species = $object->Species;
-  my ($species) = $genus_species =~ /.* (.*)/;
-  return lc(substr($genus_species,0,1)) . "_$species";
 }
 
 
@@ -287,7 +403,7 @@ sub laboratory {
     my $tag;
     if ($class eq 'Gene_class') {
 	$tag = 'Designating_laboratory';
-    } elsif ($class eq 'Transgene') {
+    } elsif ($class eq 'Transgene' || $class eq 'Strain') {
 	$tag = 'Location';
     } else {
 	$tag = 'Laboratory';
@@ -326,6 +442,54 @@ sub laboratory {
 # Position_matrix
 # Protein
 # Transgene
+
+=head3 remarks
+
+This method will return a data structure containing
+curator remarks about the requested object.
+
+=head4 PERL API
+
+ $data = $model->remarks();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
 sub remarks {
     my $self    = shift;
     my $object  = $self->object;
@@ -341,6 +505,108 @@ sub remarks {
     };
     return $data;
 }
+
+
+=head3 status
+
+This method will return a data structure containing
+the current status of the object.
+
+=head4 PERL API
+
+ $data = $model->status();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+sub status {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $status  = $object->Status;
+    my $class   = $object->class;
+    my $data    = { description  => "current status of the $class:$object",
+		    data         => "$status",
+    };
+    return $data;
+}
+
+# Parse out species "from a Genus species" string.
+# Return g_species, used primarily for dynamically
+# selecting a data source based on species identifier.
+sub taxonomy {
+    my ($self,$genus_species) = @_;
+
+    # We may have already been passed a string to parse
+    unless ($genus_species) {
+	my $object = $self->object;
+	$genus_species = $object->Species;
+    }
+    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
+    my $data = { description => 'the genus and species of the current object',
+		 data        => { genus   => $genus,
+				  species => $species,
+		 }
+    };
+    return $data;
+}
+
+sub species {
+    return eval {shift ~~ 'Species'} ;
+}
+
+sub parsed_species {
+  my ($self) = @_;
+  my $object = $self->object;
+  my $genus_species = $object->Species;
+  my ($species) = $genus_species =~ /.* (.*)/;
+  return lc(substr($genus_species,0,1)) . "_$species";
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

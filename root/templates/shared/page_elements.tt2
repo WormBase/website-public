@@ -578,7 +578,22 @@ if (typeof(_gat) == 'object') {
 
 
 
+[% MACRO name BLOCK;
+   WRAPPER $field_block title="Name" key="name";
+      tag2link(fields.name.data);
+   END;
+END;
+%]
 
+[% MACRO other_names BLOCK; 
+      WRAPPER $field_block title="Other names" key="other_names";
+           FOREACH name IN fields.other_names.data;
+              tag2link(name);
+              "<br /";
+           END;
+      END;
+END;
+%]
 
 
 [% MACRO laboratory BLOCK ;
@@ -597,15 +612,6 @@ if (typeof(_gat) == 'object') {
   END;
 %]
 
-[% MACRO species BLOCK; 
-   # Don't display unless we have a genus and species
-   IF fields.taxonomy.data.genus;
-      WRAPPER $field_block title="Species" key="taxonomy";
-          taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species);
-      END;
-   END;
-END;
-%]
 
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
@@ -631,6 +637,22 @@ END;
  END;
 %]
 
+[% MACRO species BLOCK; 
+   # Don't display unless we have a genus and species
+   IF fields.taxonomy.data.genus;
+      WRAPPER $field_block title="Species" key="taxonomy";
+          taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species);
+      END;
+   END;
+END;
+%]
+
+[% MACRO status BLOCK; 
+      WRAPPER $field_block title="Status" key="status";
+           fields.status.data;
+      END;
+END;
+%]
 
 
 
