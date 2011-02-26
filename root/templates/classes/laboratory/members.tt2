@@ -1,5 +1,19 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+
+
+[% build_data_table(order=['name','level','start_date','end_date'],
+                    columns={ name   => 'Name',
+		              level  => 'Position',
+			      start_date => 'Start',
+			      end_date => 'End' },
+                    key='current_members',
+                    title='Current Members') %] 
+
+
+
  
 [% WRAPPER $field_block title="Current Members"-%] 
      <ul>

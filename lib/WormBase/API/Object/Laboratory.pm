@@ -664,6 +664,9 @@ sub current_members {
     my $self = shift;
     my $object = $self->object;
     my $data   = $self->_get_members($object,'Registered_lab_members');
+
+    my $rep = 
+
     return { description => 'current members of the laboratory',
 	     data        => $data };
 }
@@ -732,19 +735,51 @@ sub former_members {
 sub _get_members {
     my ($self,$object,$tag) = @_;
     
+    my @data;
     my @members = $object->$tag;
-    my %data;
-
-# Should also try to discern the relationship
-# but necessarily convoluted.
-#    my $rep = $object->Representative;
     foreach my $member (@members) {
-	my $name = $member->Standard_name;
-	$data{$member->Last_name} = $self->_pack_obj($member,$name);
+	my $lineage_info = $self->_get_lineage_data($member);
+	push @data,$lineage_info;
     }
-    return \%data;
+    return \@data;
 }
 
+
+sub _get_lineage_data {
+    my ($self,$member) = @_;
+    my $object = $self->object;
+
+    my @data_pack;
+
+    my %relationships = map { $_ => $_ } ($member->Supervised,$member->Supervised_by,$member->Worked_with);
+
+    my $rep    = $object->Representative;
+    my $relationship = $relationships{$rep};
+    my ($level,$start,$end,$duration);
+    if ($relationship) {
+	($level, $start, $end) = $relationship->right->row;       
+
+	my @end_date;
+	if ($end !~ m/present/i) {	    
+	    @end_date = split /\ /,$end; 
+	    $end = $end_date[2];
+	}
+	
+	my @start_date = split /\ /,$start; 
+	$start = $start_date[2];
+	
+	$duration = "$start_date[2]\ \-\ $end_date[2]"; 
+    }
+    my $name = $member->Standard_name;
+    
+    my %data = ('name'       => $self->_pack_obj($member,$name),
+		'level'      => "$level",
+		'start_date' => "$start",
+		'end_date'   => "$end",
+		'duration'   => "$duration",
+	);
+    return \%data;
+}
 
 
 
