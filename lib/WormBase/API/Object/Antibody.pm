@@ -134,29 +134,32 @@ sub summary {
 	return $data;
 }
 
-=head3 source
+=head3 laboratory
 
-This method will return a data structure with info re: the This method will return a data structure with info re: the source of this antibody.
+This method will return a data structure containing
+the laboratory that coined the gene class.
 
-=head4 PERL API
+=over
 
- $data = $model->source();
+=item PERL API
 
-=head4 REST API
+ $data = $model->laboratory();
 
-=head5 Request Method
+=item REST API
+
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
-a Antibody ID [cgc2018]:mec-7
+A Gene class (eg unc)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -170,42 +173,24 @@ a Antibody ID [cgc2018]:mec-7
 
 =back
 
-=head5 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/source
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/laboratory
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
 
-sub source {
-	my $self = shift;
-    my $antibody = $self->object;
-    my @data_pack;
- 
-	foreach my $location (sort {$a cmp $b } $antibody->Location) {
-		my $rep;
+=cut 
 
-		if ($location) {
-			$rep = $location->Representative->Standard_name if $location->Representative;
-		}
+# laboratory() is provided by Object.pm. Documentation
+# duplicated here for completeness of API
+# sub laboratory { }
 
-		my $lab_info = _pack_obj($location);		
-		my $rep_info = _pack_obj($location);
-		
-		push @data_pack,{
-			'laboratory' => $lab_info,
-			'representative' => $rep_info
-		};
-	}	
-	my $data = {
-		'data'=> \@data_pack,
-		'description' => 'laboratory source of the antibody'
-	};
-	return $data;
-}
+
+
 
 =head3 antigen
 
@@ -387,13 +372,14 @@ sub clonality {
 	return $data;
 }
 
-=head3 remark
+=head3 remarks
 
-This method will return a data structure with a remark re: this antibody.
+This method will return a data structure containing
+curator remarks about the requested life stage.
 
 =head4 PERL API
 
- $data = $model->remark();
+ $data = $model->remarks();
 
 =head4 REST API
 
@@ -407,7 +393,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+Life stage (eg embryo)
 
 =head5 Returns
 
@@ -425,33 +411,26 @@ a Antibody ID [cgc2018]:mec-7
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/remark
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/remarks
 
 =head5 Response example
 
 <div class="response-example"></div>
 
-=cut
+=cut 
 
-sub remark {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Remark;
+# Provided by Object.pm, pod retained for completeness
+# sub remarks { }
 
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'remark re: this antibody'
-				};
-	return $data;
-}
 
-=head3 other_name
+=head3 other_names
 
-This method will return a data structure re: an other_name for this antibody .
+This method will return a data structure containing
+other names that have been used to refer to the strain.
 
 =head4 PERL API
 
- $data = $model->other_name();
+ $data = $model->other_names();
 
 =head4 REST API
 
@@ -465,7 +444,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+an Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -483,7 +462,7 @@ a Antibody ID [cgc2018]:mec-7
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/other_name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/other_names
 
 =head5 Response example
 
@@ -491,16 +470,17 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 
 =cut
 
-sub other_name {
-	my $self = shift;
-    my $object = $self->object;
-    my $data_pack = $object->Other_name;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'the other_name for this antibody'
-				};
-	return $data;
-}
+# Other_name is provided by Object.pm.
+# Retain pod for completeness of documentation.
+# sub other_names { }
+
+
+
+
+
+
+
+
 
 =head3 target
 

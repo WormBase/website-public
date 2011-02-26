@@ -90,7 +90,7 @@ substages of the requested life stage.
 
 =head4 PERL API
 
- $data = $model->substage();
+ $data = $model->substages();
 
 =head4 REST API
 
@@ -190,17 +190,17 @@ sub definition {
     my $object = $self->object;
     my $definition = $object->Definition;
     return { data        => "$definition" || undef,
-	     description => 'brief description  of the life stage', };
+	     description => 'brief definition  of the life stage', };
 }
 
-=head3 other_name
+=head3 other_names
 
 This method will return a data structure containing
 a synonyms -- if any -- of the requested life stage.
 
 =head4 PERL API
 
- $data = $model->other_name();
+ $data = $model->other_names();
 
 =head4 REST API
 
@@ -232,7 +232,7 @@ Life stage (eg embryo)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/other_name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/other_names
 
 =head5 Response example
 
@@ -240,16 +240,9 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/life_st
 
 =cut 
 
-sub other_name {
-    my $self = shift;
-    my $object = $self->object;    
-    my @other_names = map { $self->_pack_obj($_) } $object->Other_name;
-    my $data = { data        => \@other_names,
-		 description => 'other possible names for this lifestage' };
-    return $data;
-}
+# Provided by Object.pm; retain POD for completeness of documentation.
+# sub other_names {} 
 
-# Provided by Object.pm, pod retained for completeness
 
 =head3 remarks
 
@@ -298,6 +291,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/life_st
 
 =cut 
 
+# Provided by Object.pm, pod retained for completeness
+# sub remarks { }
 
 #######################################
 #

@@ -851,7 +851,7 @@ div.field .field .field-title {
   text-align   : right; 
   font-size    : 1em;
   padding-right: 0.5em;
-  width        : 4em;
+  width        : 8em;
 }
 
 div.field .field .field-title>span{
@@ -860,7 +860,7 @@ div.field .field .field-title>span{
 }
 
 div.field .field .field-content {
-    margin-left:6em;
+    margin-left:10em;
     width:auto;
 }
 

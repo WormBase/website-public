@@ -77,6 +77,8 @@ has 'tracks' => (
 #
 #######################################
 
+=head2 Overview
+
 =head3 name
 
 This method will return a data structure of the 
@@ -98,7 +100,7 @@ No
 
 =head5 Parameters
 
-a Transgene ID (gmIs13)
+a Variation ID (eg e345
 
 =head5 Returns
 
@@ -116,7 +118,7 @@ a Transgene ID (gmIs13)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/name
 
 =head5 Response example
 
@@ -126,7 +128,108 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 
 # Supplied by Object.pm; retain pod for complete documentation of API
 # sub name {}
-# sub common_name {}
+
+=head3 other_names
+
+This method will return a data structure containing
+other names that have been used to refer to the variation.
+
+=head4 PERL API
+
+ $data = $model->other_names();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a Variation ID (eg e345)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/other_names
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Other_name is provided by Object.pm.
+# Retain pod for completeness of documentation.
+# sub other_names { }
+
+=head3 common_name
+
+This method will return a data structure containing
+the common name of the variation.
+
+=head4 PERL API
+
+ $data = $model->common_name();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a Variation ID (eg e345)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/common_name
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Other_name is provided by Object.pm; Retain pod for completeness of documentation.
+# sub common_name { }
+
 
 
 # THIS METHOD IS PROBABLY DEPRECATED
@@ -139,19 +242,6 @@ sub cgc_name {
 				  label => $cgc_name->name,
 				  class => $cgc_name->class,
 		 },
-    };
-    return $data;
-}
-
-sub other_names {
-    my $self   = shift;
-    my $object = $self->object;
-    my @others = $object->Other_name;
-
-    my $packed = $self->_pack_objects(\@others);
-
-    my $data   = { description => 'other possible names for the variation',
-		   data        => $packed,
     };
     return $data;
 }
@@ -206,12 +296,10 @@ sub variation_type {
 }
 
 
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
-
 =head3 remarks
 
 This method will return a data structure containing
-curatorial remarks for the gene class.
+curatorial remarks for the current variation.
 
 =head4 PERL API
 
@@ -229,7 +317,7 @@ No
 
 =head5 Parameters
 
-A Gene class (eg unc)
+A Variation id (eg e345)
 
 =head5 Returns
 
@@ -247,7 +335,7 @@ A Gene class (eg unc)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/remarks
 
 =head5 Response example
 
@@ -255,18 +343,11 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cl
 
 =cut 
 
+# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
 # sub remarks { }
 
 
-sub status {
-    my $self    = shift;
-    my $object  = $self->object;
-    my $status = $object->Status;
-    my $data    = { description  => 'curator remarks for the variation',
-		    data         => "$status",
-    };
-    return $data;
-}
+
 
 
 ############################################################
@@ -1436,14 +1517,59 @@ sub rescued_by_transgene {
 #
 ############################################################
 
-sub laboratory_of_origin {
-    my $self = shift;
-    my $object = $self->object;
-    return { description => 'the laboratory that generated the variation',
-	     data        => { id => $object->Laboratory,
-                          label => $object->Laboratory . ": " . $object->Laboratory->Representative->Standard_name,
-                          class => 'laboratory'}};
-}
+=head2 History
+
+=head3 laboratory
+
+This method will return a data structure containing
+the laboratory (and name of the lab representative)
+that generated the variation.
+
+=head4 PERL API
+
+ $data = $model->laboratory();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a variation id (eg e345)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/laboratory
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# laboratory() is provided by Object.pm. It is included here for completeness of documentation.
+# sub laboratory {}
+
 
 sub isolated_by_author {
     my $self = shift;
