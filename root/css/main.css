@@ -1359,6 +1359,7 @@ div.detail-box div.field div.field-content{
 /*  No box, just text only */
 /*  background:#EEE; */
   color:#AAA;
+  display:none;
 }
 
 .tip-simple {

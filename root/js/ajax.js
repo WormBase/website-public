@@ -1,4 +1,4 @@
-  $jq(document).ready(function() {   
+  $jq(document).ready(function() {
     window.onhashchange = readHash;
 
     ajaxGet($jq(".status-bar"), "/rest/auth");
@@ -148,6 +148,15 @@
 	      });
 	  } 
     }); 
+    
+
+     // Should be a user supplied site-wide option for this.
+     // which can be over-ridden on any widget.
+     // Toggle should empty look of button
+     $jq("#hide-empty-fields").live('click', function() { 	    
+          $jq(".disabled" ).toggle();    
+	  $jq(this).addCLass('ui-state-highlight');
+     });
 
     $jq(".issue-submit").live('click',function() {
 	    var rel= $jq(this).attr("rel");
@@ -474,6 +483,7 @@
         });
   return false;
   });
+
  
     function operator(){
         var opTimer;
