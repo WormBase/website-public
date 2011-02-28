@@ -4,58 +4,37 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
 
-#### subroutines
+=head1 NAME
 
-=head3 name
+WormBase::API::Object::Anatomy_term
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+=head1 SYNPOSIS
 
-=head4 PERL API
+Model for the Ace ?Anatomy_term class.
 
- $data = $model->name();
+=head1 URL
 
-=head4 REST API
+http://wormbase.org/species/anatomy_term
 
-=head5 Request Method
+=head1 METHODS/URIs
 
-GET
+=cut
 
-=head5 Requires Authentication
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-No
+=head2 Overview
 
-=head5 Parameters
+=cut
 
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 
 #####################
@@ -132,24 +111,10 @@ sub synonyms {
 }
 
 
-sub remarks {
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	my @data_pack = $object->Remark;
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 ## sub anatomy {}  figure out image displaying functions
 

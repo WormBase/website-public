@@ -7,7 +7,7 @@
 
 [% WRAPPER highlight_box %]
  
-   [% species %]
+   [% taxonomy %]
  
    [% WRAPPER $field_block title="WormBase ID" %]
      [% tag2link(fields.name.data,fields.name.data.id) %]

@@ -18,7 +18,7 @@ Model for the Ace ?Analysis class.
 
 http://wormbase.org/resources/analysis
 
-=head1 Methods
+=head1 METHODS/URIs
 
 =cut
 
@@ -28,59 +28,13 @@ http://wormbase.org/resources/analysis
 #
 #######################################
 
-=head3 name
+=head2 Overview
 
-This method will return a data structure of the name
-of the analysis object.
+=cut
 
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut			 
-
-# supplied by Object.pm; retain pod for complete documentation of API
 # sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 =head3 database
 
@@ -210,65 +164,9 @@ sub title {
     return $data;
 }
 
-=head3 description
-
-This method returns a data structure containing 
-a description of the analysis, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->description();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/description
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub description {
-    my $self = shift;
-    my $object = $self->object;
-    my $description = $object->Description;
-    my $data  = { description => 'a description of the analysis',
-		  data        => "$description" || undef };
-    return $data;
-}
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
 
 =head3 based_on_wb_release

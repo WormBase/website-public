@@ -4,6 +4,34 @@ use Moose;
 with    'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Gene
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Gene class.
+
+=head1 URL
+
+http://wormbase.org/species/gene
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# Moose Goodness
+#
+#######################################
+
+
+
+
 #### passed test #####
 # common_name 
 # ids
@@ -24,7 +52,6 @@ extends 'WormBase::API::Object';
 # cds
 # microarray_expression_data
 # inparanoid_groups
-
 
 #### rebuilt methods  trouble shooting #####
 
@@ -94,10 +121,6 @@ has 'gene_pheno_datadir' => (
 	return $self->pre_compile->{base}.$version.$self->pre_compile->{gene};
     }
 );
- 
-#####################
-##### template ######
-
  
 has 'all_proteins' => (
     is  => 'ro',
@@ -192,17 +215,15 @@ has 'phen_data' => (
 # OVERVIEW
 #
 #######################################################
-sub name {
-    my $self = shift;
-    my $object = $self->object;
-    my $data = { description => 'The most commonly used name of the gene',
-		 data        =>  { id    => "$object",
-				   label => $self->_public_name($object),
-				   class => $object->class
-		 },
-    };    
-    return $data;
-}
+
+=head2 Overview
+
+=cut
+
+# sub name {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
 
 sub external_links {
   my $self = shift;
@@ -278,17 +299,9 @@ sub ids {
     return \%data;   
 }
 
-sub other_name {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my %data;    
-    my @other_names = map {"$_"} $object->Other_name;
-
-    $data{'data'} = \@other_names; 
-    $data{'description'} = "alias for gene $object";
-    return \%data;
-}
+# sub other_names {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
 
 sub concise_description {
@@ -459,14 +472,9 @@ sub legacy_information {
   return $data;
 }
 
-sub status { 
-    my $self   = shift;
-    my $object = $self->object;
-    return { description => 'the status of the gene',
-	     data        => { status => $object->Status }
-    };
-}
-
+# sub status {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include status >>
 
 
 
@@ -559,33 +567,10 @@ sub genomic_position {
 }
 
 
-sub genetic_position {
-	my $self = shift;
-	my $object = $self->object;
-	my $locus = $object->CGC_name || $object->Other_name;
-	 
-	my ($link_group,undef,$position,undef,$error) = eval{$object->Map(1)->row} or return;
-	
-	my $map_data = { class => 'locus',
-			 id    => "name=$locus#Mapping%20Data",
-			 lable => '[mapping data]',
-	};
-	
-	my $label;
-	if ($position == 0) {
-	    $label = $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;	    
-	} else {
-	    $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
-	}
-	my $data = { description => 'The interpolated genetic position of the gene',
-		     data        => [	{  class => 'Map',
-					   label => $label,
-					   id => "name=$object;class=Gene",
-					},$map_data],
-	};
-	
-	return $data;
-}
+# sub genetic_position { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genetic_position >>
+
 
 ###########################################
 # Components of the Function panel

@@ -2,9 +2,6 @@ package WormBase::API::Object;
 
 use Moose;
  
-
- 
-
 use overload '~~' => \&_overload_ace, fallback => 1;
 
 sub _overload_ace {
@@ -96,50 +93,6 @@ sub object {
  
  
 
-# get the interpolated position of a sequence on the genetic map
-# returns ($chromosome, $position)
-# position is in genetic map coordinates
-# Lots of cruft here from pre-WS124
-sub GetInterpolatedPosition {
-  my ($self,$obj) = @_;
-  my ($full_name,$chromosome,$position);
-  if ($obj){
-      if ($obj->class eq 'CDS') {
-	  # Is it a query
-	  # wquery/genelist.def:Tag Locus_genomic_seq
-	  # wquery/new_wormpep.def:Tag Locus_genomic_seq
-	  # wquery/wormpep.table.def:Tag Locus_genomic_seq
-	  # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
-	  
-	  # Fetch the interpolated map position if it exists...
-	  # if (my $m = $obj->get('Interpolated_map_position')) {
-	  if (my $m = eval {$obj->get('Interpolated_map_position') }) {
-	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
-	      ($chromosome,$position) = $m->right->row;
-	      return ($chromosome,$position) if $chromosome;
-	  } elsif (my $l = $obj->Gene) {
-	      return $self->GetInterpolatedPosition($l);
-	  }
-      } elsif ($obj->class eq 'Sequence') {
-	  #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
-	  my $chromosome = $obj->get(Interpolated_map_position=>1);
-	  my $position   = $obj->get(Interpolated_map_position=>2);
-	  return ($chromosome,$position) if $chromosome;
-      } else {
-	  $chromosome = $obj->get(Map=>1);
-	  $position   = $obj->get(Map=>3);
-	  return ($chromosome,$position) if $chromosome;
-	  if (my $m = $obj->get('Interpolated_map_position')) {	     
-	      my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row unless $position;
-	      ($chromosome,$position) = $m->right->row unless $position;
-	      return ($chromosome,$position) if $chromosome;
-	  }
-      }
-  }
-  return;
-}
-# Wrap XREFed AceDB objects into WormBase::API objects.  Klunky.
-
 
 # Expects an array reference of objects (or a simple scalar object)
 sub wrap {
@@ -205,412 +158,25 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 #
 ################################################
 
-sub name {
-    my ($self) = @_;
-    my $object = $self->object;
-    my $label  = $self ~~ 'Public_name' || $self ~~ 'Common_name' || $object->name;
-    my $class  = $object->class;
-    return {
-	description => "The name and WormBase internal ID of a $class object",
-	data        =>  $self->_pack_obj($object,$label),
-    };
-}
+# Necessary?
+#sub species {
+#    return eval {shift ~~ 'Species'} ;
+#}
 
-=head3 common_name
+# Necessary?
+# Probably belongs in Role::Object. Already there, redundant?
+#sub parsed_species {
+#  my ($self) = @_;
+#  my $object = $self->object;
+#  my $genus_species = $object->Species;
+#  my ($species) = $genus_species =~ /.* (.*)/;
+#  return lc(substr($genus_species,0,1)) . "_$species";
+#}
 
-This method will return a data structure containing
-the common (public) name of the object.
 
-=head4 PERL API
 
- $data = $model->common_name();
 
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a class and an object ID.
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/common_name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub common_name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $name   = eval { $object->Public_name || $object->Common_name };
-    return { description => 'the common name of the object which may be the object name',
-	     data        => $self->_pack_obj($object,$name),
-    };
-}
-
-
-=head3 other_names
-
-This method will return a data structure containing
-other names that have been used to refer to the object.
-
-=head4 PERL API
-
- $data = $model->other_names();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a class and an object ID.
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub other_names {
-    my $self = shift;
-    my $object = $self->object;
-    my @names = $object->Other_name;
-    
-    # We will just stringify other names; no sense in linking them.
-    @names = map { "$_" } @names;
-    return { description => "other names that have been used to refer to $object",
-	     data        => @names ? \@names : undef };
-}
-
-=head3 description
-    
-This method will return a data structure containing
-a brief description of the object.
-    
-=head4 PERL API
-    
-  $data = $model->description();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a class and object ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub description { 
-    my $self    = shift;
-    my $object  = $self->object;
-    my $class   = $object->class;
-    my $description = $object->Description;
-    my $data    = { description  => "description of the $class $object",
-		    data         => $description || undef,
-    };
-    return $data;
-}
-
-
-# laboratory: Whenever a cross-ref to lab is needed.
-# Returns the lab as well as the current representative.
-# Used in: Person, Gene_class, Transgene
-# template: shared/fields/laboratory.tt2
-sub laboratory {
-    my $self   = shift;
-    my $object = $self->object;
-    my $class  = $object->class;
-
-    # Ugh. Model inconsistencies.
-    my $tag;
-    if ($class eq 'Gene_class') {
-	$tag = 'Designating_laboratory';
-    } elsif ($class eq 'Transgene' || $class eq 'Strain') {
-	$tag = 'Location';
-    } else {
-	$tag = 'Laboratory';
-    }
-    my $lab = $object->$tag;
-    my %data;
-    $data{laboratory} = $self->_pack_obj($lab);
-    if ($lab) {
-	my $representative = $lab->Representative;
-	my $name = $representative->Standard_name; 
-	my $rep = $self->_pack_obj($representative,$name);
-	$data{representative} = $rep if $rep;
-    }
-    
-    my $data = { description => "the laboratory where the $class was isolated, created, or named",
-		 data        => \%data };
-    return $data;		     
-}
-
-
-# Remarks:
-# Tag usage:
-# Expr_profile      : Remark
-# Variation         : Remark
-# Expression_cluster: Remark
-# Gene_class        : Remark
-# Life_stage        : Remark
-# Motif             : Remark
-# Operon
-# Strain
-# (Sequence has unique remark, not removed)
-# RNAi
-# Pcr_oligo
-# Phenotype
-# Picture
-# Position_matrix
-# Protein
-# Transgene
-
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the requested object.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a class and object ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-    my @remarks = $object->Remark;
-    my $class = $object->class;
-
-    # Need to add in evidence handling.
-    my @evidence = map { $_->col } @remarks;
-
-    # TODO: handling of Evidence nodes
-    my $data    = { description  => "curatorial remarks for the $class",
-		    data         => @remarks ? \@remarks : undef,
-    };
-    return $data;
-}
-
-
-=head3 status
-
-This method will return a data structure containing
-the current status of the object.
-
-=head4 PERL API
-
- $data = $model->status();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a class and object ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub status {
-    my $self    = shift;
-    my $object  = $self->object;
-    my $status  = $object->Status;
-    my $class   = $object->class;
-    my $data    = { description  => "current status of the $class:$object",
-		    data         => "$status",
-    };
-    return $data;
-}
-
-# Parse out species "from a Genus species" string.
-# Return g_species, used primarily for dynamically
-# selecting a data source based on species identifier.
-sub taxonomy {
-    my ($self,$genus_species) = @_;
-
-    # We may have already been passed a string to parse
-    unless ($genus_species) {
-	my $object = $self->object;
-	$genus_species = $object->Species;
-    }
-    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { description => 'the genus and species of the current object',
-		 data        => { genus   => $genus,
-				  species => $species,
-		 }
-    };
-    return $data;
-}
-
-sub species {
-    return eval {shift ~~ 'Species'} ;
-}
-
-sub parsed_species {
-  my ($self) = @_;
-  my $object = $self->object;
-  my $genus_species = $object->Species;
-  my ($species) = $genus_species =~ /.* (.*)/;
-  return lc(substr($genus_species,0,1)) . "_$species";
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# What/Where was this used?
 sub FindPosition {
   my ($self,$seq) = @_;
   my $db = $self->gff_dsn($seq->Species);
@@ -749,67 +315,39 @@ sub id2species {
   return 'Tetraodon nigroviridis'    if ($id =~ /gstenp/i);
 }
 
-# Generically fetch the genetic position for an object
-sub genetic_position {
-  my ($self) = @_;
-  my $object = $self->object;
-  my ($chromosome,$position,$error);
-  if ($object->Interpolated_map_position) {
-    ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
-  } else {
-    ($chromosome,undef,$position,undef,$error) = eval{$object->Map(1)->row} or return;
-  }
-  my %data = ( chromosome => "$chromosome",
-	       position    => "$position",
-	       error       => "$error");
-  return \%data;
-}
 
-# Generically fetch the interpolated genetic position for an object
-# This *might* be the same as genetic_position above.
-sub interpolated_position {
-  my ($self) = @_;
-  my $object = $self->object;
-  my ($chrom,$pos,$error);
-  for my $cds ($object->Corresponding_CDS) {
-    ($chrom,$pos,$error) = $self->_get_interpolated_position($cds);
-    last if $chrom;
-  }
-  
-  # TODO: Save the formatting for the view
-  my %data = (chromosome         => "$chrom",
-	      position            => "$pos",
-	      formatted_position => sprintf("%s:%2.2f",$chrom,$pos));
-  return \%data;
-}
 
- 
+
+
+
+
+
 
 # Provided with a GFF segment, return its genomic coordinates
 sub genomic_position {
     my ($self,$segments) = @_;
     $segments ||= $self->segments;
-	my @a;
-	if ($segments) {
-		$segments = [$segments] unless ref $segments eq 'ARRAY';
-		for my $segment (@$segments) {
-			$segment->absolute(1);
-			my $ref = $segment->ref;
-			my $start = $segment->start;
-			my $stop  = $segment->stop;
-			next unless abs($stop-$start) > 0;
-			my $url = $self->hunter_url($ref,$start,$stop);
-			my $hash = {
-				label => $url,
-				id=>$self->parsed_species."/?name=".$url,
-				class=>'genomic_location',
-			};
-			push @a, $hash;
-		}
+    my @a;
+    if ($segments) {
+	$segments = [$segments] unless ref $segments eq 'ARRAY';
+	for my $segment (@$segments) {
+	    $segment->absolute(1);
+	    my $ref = $segment->ref;
+	    my $start = $segment->start;
+	    my $stop  = $segment->stop;
+	    next unless abs($stop-$start) > 0;
+	    my $url = $self->hunter_url($ref,$start,$stop);
+	    my $hash = {
+		label => $url,
+		id=>$self->parsed_species."/?name=".$url,
+		class=>'genomic_location',
+	    };
+	    push @a, $hash;
 	}
+    }
     return {
-		description => 'The Genomic Location of the sequence',
-		data        => @a ? \@a : undef,
+	description => 'The genomic location of the sequence',
+	data        => @a ? \@a : undef,
     };
 }
 
@@ -1163,21 +701,6 @@ sub markup {
 
 
 
-
-
-
-
-
-
-
-#################################################
-#
-#   INTERNAL METHODS
-#
-# The following items occur often enough
-# throughout the Model to warrant inclusion here.
-#
-################################################
 
 
 
@@ -1727,48 +1250,6 @@ sub _parse_molecular_change_hash {
 
 
 
-# get the interpolated position of a sequence on the genetic map
-# returns ($chromosome, $position,$error)
-# position is in genetic map coordinates
-# This MIGHT also be the actual experimental position
-sub _get_interpolated_position {
-  my ($self,$object) = @_;
-  $object ||= $self->object;
-  if ($object){
-    if ($object->class eq 'CDS') {
-      # Is it a query
-      # wquery/genelist.def:Tag Locus_genomic_seq
-      # wquery/new_wormpep.def:Tag Locus_genomic_seq
-      # wquery/wormpep.table.def:Tag Locus_genomic_seq
-      # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
-      
-      # Fetch the interpolated map position if it exists...
-      # if (my $m = $object->get('Interpolated_map_position')) {
-      if (my $m = eval {$object->get('Interpolated_map_position') }) {
-	#my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
-	my ($chromosome,$position) = $m->right->row;
-	return ($chromosome,$position) if $chromosome;
-      } elsif (my $l = $object->Gene) {
-	return $self->_get_interpolated_position($l);
-      }
-    } elsif ($object->class eq 'Sequence') {
-      #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
-      my $chromosome = $object->get(Interpolated_map_position=>1);
-      my $position   = $object->get(Interpolated_map_position=>2);
-      return ($chromosome,$position) if $chromosome;
-    } else {
-      my $chromosome = $object->get(Map=>1);
-      my $position   = $object->get(Map=>3);
-      return ($chromosome,$position) if $chromosome;
-      if (my $m = $object->get('Interpolated_map_position')) {	     
-	my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row unless $position;
-	($chromosome,$position) = $m->right->row unless $position;
-	return ($chromosome,$position,$error) if $chromosome;
-      }
-    }
-  }
-  return;
-}
 
 
 # Part of the old Best_BLAST_Hits table
@@ -2101,23 +1582,6 @@ The WormBase model superclass.  Methods that need to be accessed in
 more than a single model belong here.
 
 =head1 METHODS
-
-=item $self->genetic_position($object)
-
- Returns : Hash reference containing keys of chromosome and position
- Widget  : location
- Tmpl    : generic/genetic_position.tt2
-
-=item $self->interpolated_position($object)
-
- Returns : Hash reference containing keys of:
-             chromosome
-             position
-             formatted_position 
- Widget  : location
- Tmpl    : generic/interpolated_position.tt2
-
-=head1 MIGRATION NOTES
 
 =head1 AUTHOR
 

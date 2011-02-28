@@ -43,55 +43,10 @@ has 'display_class' => (
 ## Methods pertaining to all three classes
 #############################################
 
-=head3 name
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
 
 sub canonical_parent {
 	my ($self) = @_;
@@ -184,56 +139,9 @@ sub on_orfeome_project {
 	};
 }
 
-# Provided by Object.pm, pod retained for documentation
-
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene (eg gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 sub microarray_results {
 	my ($self) = @_;
@@ -275,14 +183,11 @@ sub amplified {
 	};
 }
 
-sub laboratory {
-	my ($self) = @_;
+# CHECK THIS!!
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
 
-	return {
-		description => 'Laboratory this PCR product was from',
-		data		=> $self->_pack_obj($self ~~ 'From_laboratory'),
-	};
-}
 
 sub SNP_loci {
 	my ($self) = @_;

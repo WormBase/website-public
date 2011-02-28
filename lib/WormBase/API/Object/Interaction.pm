@@ -4,6 +4,23 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Interaction
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Interaction class.
+
+=head1 URL
+
+http://wormbase.org/species/interaction
+
+=head1 METHODS/URIs
+
+=cut
 
 
 has 'effector' => (    
@@ -45,56 +62,19 @@ has 'non_directional_interactors' => (
     }
 );
 
-=head3 name
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+=head2 Overview
 
-=head4 PERL API
+=cut
 
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 sub interactor {
     my $self = shift;
@@ -108,56 +88,10 @@ sub interactor {
 }
 
 
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head3 remarks
-
-This method will return a data structure containing
-curatorial remarks for the gene class.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-A Gene class (eg unc)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
 
 sub interaction_type {
     my $self = shift;

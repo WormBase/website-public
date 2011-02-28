@@ -55,6 +55,7 @@ has '_parsed_authors' => (
 
 =head2 Overview
 
+
 =head3 name
 
 This method will return a data structure containing
@@ -821,59 +822,10 @@ sub abstract {
     };
 }
 
-=head3 remarks
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-This method will return a data structure containing
-curator remarks about the paper.
-
-=over
-
-=item PERL API
-
- $data = $model->remarks();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Paper ID (eg WBPaper00000031)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031/remarks
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm; retain POD for complete documentation.
-# sub remarks { }
 
 =head3 keywords
 

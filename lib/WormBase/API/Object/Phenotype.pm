@@ -6,7 +6,35 @@ use JSON;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
  
+=pod 
 
+=head1 NAME
+
+WormBase::API::Object::Phenotype
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Phenotype class.
+
+=head1 URL
+
+http://wormbase.org/species/phenotype
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
+# This needs to be abstracted to Role
 sub name {
     my $self = shift;
     my $ace  = $self->object;
@@ -40,20 +68,14 @@ sub synonym  {
    return $data;
 }
 
-sub description {
-   my $self=shift;
-   my $des= $self ~~ 'Description';
-  
-   my $data = { description => 'The description of the phenotype ',
-		 	data        => {      des=>$des ,
-					      evidence=> {check=>$self->check_empty($des),
-							  tag=>"Description",
-							}
-				      },
-    };
-   return $data;
-}
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
+
+
+
 =pod
+
 sub assay {
     
    my $data = { description => 'The Assay of the phenotype ',
@@ -64,57 +86,10 @@ sub assay {
 
 =cut
 
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-# Provided by Object.pm, pod retained for documentation
-
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene (eg gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
 
 sub is_dead {
    my $object = shift->object;

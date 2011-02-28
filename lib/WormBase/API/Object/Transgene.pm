@@ -20,7 +20,7 @@ http://wormbase.org/species/transgene
 
 =head1 TODO
 
-=head1 METHODS
+=head1 METHODS/URIs
 
 =cut
 
@@ -30,55 +30,12 @@ http://wormbase.org/species/transgene
 #
 #######################################
 
-=head3 name
+=head2 Overview
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
 
 =head3 synonym
 
@@ -308,56 +265,10 @@ sub driven_by_construct {
     return $data;
 }
 
-# Provided by Object.pm, pod retained for documentation
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene (eg gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
 
 =head3 reporter_construct
 
@@ -499,56 +410,9 @@ sub author {
     return $data;
 }
 
-# laboratory() is provided by Object.pm. Documentation
-# duplicated here for completeness of API
-
-=head3 laboratory
-
-This method will return a data structure containing
-information on the laboratory where the transgene was isolated.
-
-=head4 PERL API
-
- $data = $model->laboratory();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/laboratory
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
 
 =head3 clone
 

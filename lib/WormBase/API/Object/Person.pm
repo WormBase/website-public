@@ -18,7 +18,7 @@ Model for the Ace ?Person class.
 
 http://wormbase.org/resources/person
 
-=head1 METHODS
+=head1 METHODS/URIs
 
 =cut
 
@@ -42,9 +42,6 @@ has 'address_data' => (
 	return \%address;
     }
     );
-
-
-####### publication data ########
 
 has 'publication_hr' => (
     is      => 'ro',
@@ -103,11 +100,6 @@ has 'publication_hr' => (
 
 );
 
-=head1 Methods
-
-=cut
-
-
 #######################################
 #
 # The Overview Widget
@@ -116,131 +108,12 @@ has 'publication_hr' => (
 
 =head2 Overview
 
-=head3 name
-
-This method will return a data structure of the name
-of the person.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-WBPerson ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/name
-
-=head5 Response example
-
- { "name"        :   
-   "class"       : "person",
-   "uri":"http://api.wormbase.org/page/person/WBPerson242"}
-   { "data"    : { "class" : "Person",
-                   "label" : "Anne Hart",
-                   "id"    : "WBPerson242"
-                 },
-    "description" : "full (standard) name of the person"},
-   }
- }
-
-=cut			 
-
-sub name {
-    my $self   = shift;
-    my $object = $self->object;
-    my $name   = $object->name;
-    my $data   = { description => 'full (standard) name of the person',
-		   data        => $self->_pack_obj($object,$object->Standard_name)
-    };
-    return $data;
-}
-
-=head3 id
-
-This method returns a data structure containing the 
-internal WormBase ID of the person.
-
-=head4 PERL API
-
- $data = $model->id();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-WBPerson ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/id
-
-=head5 Response example
-
- { "name"   : "WBPerson242",
-   "class"  : "person",
-   "uri"    : "http://todd.wormbase.org/page/person/WBPerson242", 
-   "id"     : { "data"        : "WBPerson242", 
-                "description" : "the WormBase ID of the person"},
- }
-
 =cut
 
-sub id {
-    my $self   = shift;
-    my $object = $self->object;
-    my $data   = {  description => 'the WormBase ID of the person',
-		    data        =>  $object->name };
-    return $data;
-}
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
 
 
 =head3 street_address
@@ -812,55 +685,9 @@ sub web_page {
 #
 #######################################
 
-# laboratory() is provided by Object.pm. Documentation
-# duplicated here for completeness of API
-
-=head3 laboratory
-
-This method returns a data structure containing
-the lab affilition of the the person.
-
-=head4 PERL API
-
- $data = $model->laboratory();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-WBPerson ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/laboratory
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
 
 =head3 previous_laboratories
 
@@ -1239,63 +1066,10 @@ sub possibly_publishes_as {
     return $data;
 }
 
-=head3 status
 
-This method returns a data structure containing
-the current curation status of this person.
-
-=head4 PERL API
-
- $data = $model->status();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-WBPerson ID
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/status
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub status {
-    my $self   = shift;
-    my $object = $self->object;
-    my $status = $object->Status;
-    my $data   = { data        => "$status",
-		   description => 'current status of curation of this person',
-    };
-    return $data;
-}
-
+# sub statu { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include status >>
 
 =head3 last_verified
 
@@ -1554,8 +1328,8 @@ sub papers {
     my $self = shift;
     my %data;
     my $description = 'Papers by the person';
-    my $publication_hg = $self->publication_hr;
-    my $data_pack = $publication_hg->{'Paper'};
+    my $publication = $self->publication_hr;
+    my $data_pack = $publication->{'Paper'};
     
     $data{'data'} = $data_pack;
     $data{'description'} = $description;

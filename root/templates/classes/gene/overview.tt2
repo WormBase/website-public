@@ -6,7 +6,7 @@
 
 [% WRAPPER highlight_box %]
  
-   [% species %]
+   [% taxonomy %]
 
    [% WRAPPER $field_block title="Sequence"-%] 
         [% tag2link(fields.ids.data.sequence_name)%]

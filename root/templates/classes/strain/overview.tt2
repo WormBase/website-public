@@ -7,7 +7,7 @@
 [% WRAPPER highlight_box %]
 
     [% WRAPPER $field_block title="" -%]
-       [% species %]
+       [% taxonomy %]
     [% END %] 
 
     [% WRAPPER $field_block title="Genotype" -%]

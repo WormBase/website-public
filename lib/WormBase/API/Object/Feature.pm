@@ -4,7 +4,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
 =pod 
 
 =head1 NAME
@@ -13,141 +12,30 @@ WormBase::API::Object::Feature
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Motif class.
+Model for the Ace ?Feature class.
 
 =head1 URL
 
 http://wormbase.org/species/feature
 
-=head1 TODO
+=head1 METHODS/URIs
 
 =cut
 
+#######################################
+#
+# The Overview widget
+#
+#######################################
 
-##################
-## Details
-##################
+=head2 Overview
 
-=head3 name
+=cut
 
-This method will return a data structure of the 
-name for the requested position matrix.
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Feature ID WBsf000753
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub name {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $self->_pack_obj($object);
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'name of the feature'
-				};
-	return $data;
-}
-
-=head3 id
-
-This method will return a data structure for the feature's id
-
-=head4 PERL API
-
- $data = $model->id();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Feature ID WBsf000753
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/id
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub id {
-	my $self = shift;
-    my $object = $self->object;
-
-	my $data_pack = {
-		'id' =>"$object",
-		'label' =>"$object",
-		'Class' => 'Feature'
-	};
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'id of the feature'
-				};
-	return $data;
-}
 
 =head3 flanking_sequences
 
@@ -214,122 +102,15 @@ sub flanking_sequences {
 	return $data;
 }
 
-=head3 species
 
-This method will return a data structure containing the species in which the feature was observed
+# sub taxonomy { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include taxonomy >>
 
-=head4 PERL API
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
- $data = $model->species();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Feature ID WBsf000753
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/species
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub species {
-	my $self = shift;
-    my $object = $self->object;
-	my $species = $object->Species;
-
-	my $data_pack = $self->_pack_obj($species);
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'species in which feature was observed'
-				};
-	return $data;
-
-}
-
-=head3 description
-
-This method will return a data structure with the description of the feature
-
-=head4 PERL API
-
- $data = $model->description();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Feature ID WBsf000753
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/description
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub description {	
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Description;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the feature'
-				};
-	return $data;
-}
 
 =head3 defined_by
 
@@ -644,62 +425,9 @@ sub annotation {
 	return $data;
 }
 
-=head3 remark
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-This method will return a data structure containing remarks .
-
-=head4 PERL API
-
- $data = $model->remark();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a  Feature ID WBsf000753
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/remark
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub remark {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Remark;
-	
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'remark re: the feature'
-				};
-	return $data;
-}
 
 1;

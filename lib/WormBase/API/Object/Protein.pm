@@ -11,10 +11,27 @@ use JSON;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
  
-
 use vars qw(%HIT_CACHE);
 %HIT_CACHE=();
 
+
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Protein
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Protein class.
+
+=head1 URL
+
+http://wormbase.org/species/protein
+
+=head1 METHODS/URIs
+
+=cut
 
 has 'peptide' => (
     is  => 'ro',
@@ -46,69 +63,17 @@ has 'cds' => (
 #
 ############################################################
 
-=head3 name
+=head2 Overview
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+=cut
 
-=head4 PERL API
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-
-sub taxonomy {
-    my $self = shift;
-    my $genus_species = $self ~~ 'Species' || eval { $self->cds->[0]->Species };
-    #    my $data = $self->taxonomy($genus_species);
-    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { description => 'the genus and species of the protein object',
-		 data        => { genus   => $genus,
-				  species => $species,
-		 }
-    };
-    return $data;
-}
+# sub taxonomy { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include taxonomy >>
 
 
 sub genes {
@@ -149,71 +114,18 @@ sub type {
     return $data;
 }
 
-# Provided by Object.pm, pod retained for documentation
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head3 remarks
+# sub status { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include status >>
 
-This method will return a data structure containing
-curator remarks about the transgene.
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene (eg gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
-
-sub status {    
-    my $data = { description => 'The status of the protein',
-		 data        =>  shift ~~ 'Status' ,
-    }; 
-    return $data;
-}
-
-sub description {
-    
-    my $data = { description => 'The description of the protein',
-		 data        =>  shift ~~ 'Description'  ,
-    }; 
-    return $data;
-}
 
 ############################################################
 #

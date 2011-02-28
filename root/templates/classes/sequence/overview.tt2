@@ -3,7 +3,7 @@
 
 [% WRAPPER highlight_box %]
 
-     [% species %]
+     [% taxonomy %]
 
      [% WRAPPER $field_block title="Sequence Type" %]
 	 	[% fields.sequence_type.data || '' %]

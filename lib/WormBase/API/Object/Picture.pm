@@ -5,28 +5,42 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-sub name {
-	my ($self) = @_;
-	my $objname = $self ~~ 'name';
-	my $name	= $self ~~ 'Name' || $objname;
-	return {
-		description => 'The object name of the picture',
-		data		=> {
-			id	  => $objname,
-			label => $name,
-			class => $self ~~ 'class',
-		},
-	};
-}
+=pod 
 
-sub description {
-	my ($self) = @_;
-	my $description = join(' ', @{$self ~~ '@Descriptions'});
-	return {
-		description => 'Description of the picture',
-		data		=> $description,
-	};
-}
+=head1 NAME
+
+WormBase::API::Object::Picture
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Picture class.
+
+=head1 URL
+
+http://wormbase.org/resources/picture
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
+
 
 sub cropped_from {
 	my ($self) = @_;
@@ -102,56 +116,10 @@ sub image {
 	};
 }
 
-# Provided by Object.pm, pod retained for documentation
 
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene (eg gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 sub depicts {
 	my ($self) = @_;

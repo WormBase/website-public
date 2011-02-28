@@ -1,8 +1,8 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% mytitle = "Previous <b>" _ object.name.data.id _ "</b> Class Genes";
+[% mytitle = "Previous <b>" _ object.name.data.id _ "</b> Genes";
     gene_list_by_species(title="$mytitle" key="former_genes") %]
 
-[% mytitle = "Reassigned <b>" _ object.name.data.id _ "</b> Class Genes";
+[% mytitle = "Reassigned <b>" _ object.name.data.id _ "</b> Genes";
     gene_list_by_species(title="$mytitle" key="reassigned_genes") %]

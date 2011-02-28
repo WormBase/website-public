@@ -6,6 +6,39 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Clone
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Clone class.
+
+=head1 URL
+
+http://wormbase.org/species/clone
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+
 sub type {
 	my ($self) = @_;
 

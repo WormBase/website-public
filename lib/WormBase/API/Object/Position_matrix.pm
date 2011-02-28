@@ -18,13 +18,10 @@ Model for the Ace ?Motif class.
 
 http://wormbase.org/species/position_matrix
 
-=head1 TODO
+=head1 METHODS/URIs
 
 =cut
 
-#########################
-## has_as
-#########################
 
 has 'data_directory' => (    
 	is  => 'ro',
@@ -69,191 +66,29 @@ has 'image_pointer_file' => (
 );
 
 
-###########################
-## summary
-###########################
 
-=head3 name
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-This method will return a data structure of the 
-name for the requested position matrix.
+=head2 Overview
 
-=head4 PERL API
+=cut
 
- $data = $model->name();
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=head4 REST API
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
-=head5 Request Method
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Postion_matrix ID WBPmat00000001
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-
-sub name {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $self->_pack_obj($object);
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'name of position matrix'
-				};
-	return $data;
-}
-
-=head3 description
-
-This method will return a data structure description of the requested position matrix.
-
-=head4 PERL API
-=======
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub description {
-
-	my $self = shift;
-    my $object = $self->object;
-
-	my $data_pack = $object->Description;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the position matrix'
-				};
-	return $data;
-}
-
-=head3 remark
-
-This method will return a data structure with remark re: the requested position matrix.
-
-=head4 PERL API
-
- $data = $model->remark();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Postion_matrix ID WBPmat00000001
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/remark
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub remark {
-	my $self 	= shift;
-    my $object 	= $self->object;
-	my $data_pack = $object->Remark;
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'remarks re: position matrix'
-				};
-	return $data;
-}
 
 =head3 associated_feature
 

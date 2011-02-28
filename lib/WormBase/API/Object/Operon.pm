@@ -4,148 +4,50 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Operon
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Operon class.
+
+=head1 URL
+
+http://wormbase.org/species/operon
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 
-
-=head3 name
-
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
 
 
 
-#######
-
-sub template {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-### mainly for text data; and single layer hash ###
-
-sub template_simple {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Tag;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 
-########
 
-##################
-# Description
-##################
 
-sub description {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my $species = $object->Species;
-	my $description = $object->Description;
-
-	%data_pack = (
-	    'name' => $object,
-	    'class' => 'Operon',
-	    'species' => $species,
-	    'description' => $description,
-	    'reference' => 'TBD'
-	);
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
 
 
 ###############
