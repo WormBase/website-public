@@ -10,13 +10,13 @@
        [% taxonomy %]
     [% END %] 
 
-    [% WRAPPER $field_block title="Genotype" -%]
-        [% fields.genotype.data %]
-    [% END %]
-
 [% END %]
 
 [% other_names %]
+
+[% WRAPPER $field_block title="Genotype" -%]
+      [% fields.genotype.data %]
+[% END %]
 
 [% WRAPPER $field_block title="Contains" %]
     [% WRAPPER $field_block title="Genes" key="genes" %]

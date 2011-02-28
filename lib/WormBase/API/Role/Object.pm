@@ -400,10 +400,10 @@ sub _build_expression_patterns {
     
     foreach ($object->Expr_pattern) {	
 	my $author  = $_->Author || '';
-	my $pattern = $_->Pattern || $_->Subcellular_localization || $_->Remark;
+	my @patterns = $_->Pattern || $_->Subcellular_localization || $_->Remark;
 	push @data, {
 	    expression_pattern => $self->_pack_obj($_),
-	    description        => "$pattern" || undef,
+	    description        => @patterns ? join("<br />",@patterns) : undef,
 	    author             => "$author"  || undef,
 	};
     }

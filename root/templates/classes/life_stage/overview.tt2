@@ -21,6 +21,50 @@
       [% fields.other_names.data.join(' ') FILTER lower %]
 [% END %]
 
+
+[% IF (fields.followed_by_life_stage.data.size > 0)
+       ||
+      (fields.preceded_by_life_stage.data.size > 0) %]
+
+       [% WRAPPER $field_block title="" %]
+
+       <!-- Developmental timing information -->
+       <div class="inline-columns">
+        [% IF fields.preceded_by_life_stage.data.size > 0 %]
+           <div>
+              <b>Preceded By</b><br />
+              [% FOREACH item IN fields.preceded_by_life_stage.data %]
+                 [% tag2link(item) %]<br />
+              [% END %]
+           </div>
+           <div>
+               <img src="/img/arrows/right.gif">
+           </div>
+	  [% END %]
+       <div>
+            <h2>[% object.name.data.id %]</h2>
+       </div>
+        [% IF fields.followed_by_life_stage.data.size > 0 %]
+            <div>
+                 <img src="/img/arrows/right.gif">
+            </div>  
+            <div>
+                <b>Followed by</b><br />
+                 [% FOREACH item IN fields.followed_by_life_stage.data %]
+                   [% tag2link(item) %]<br />
+                 [% END %] 
+           </div>
+         [% END %]
+     </div>
+    [% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Contained in" key="contained_in_life_stage" %]
+      [% FOREACH item IN fields.contained_in_life_stage.data %]
+        [% tag2link(item) %]<br />			 
+      [% END %]
+[% END %]
+
 [% WRAPPER $field_block title="Substages" key="substages" %]
    [% FOREACH item IN fields.substages.data %]
      [% tag2link(item) %]<br />			 

@@ -813,6 +813,7 @@ div.field-title {
   font-size    : 1em;
   padding-right: 0.5em;
   width        : 9em;
+  font-weight  : bold;
 }
 
 div.field-title>span{

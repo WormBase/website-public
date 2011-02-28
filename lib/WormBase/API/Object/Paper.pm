@@ -20,7 +20,7 @@ Model for the Ace ?Paper class.
 
 http://wormbase.org/resources/paper
 
-=head1 METHODS
+=head1 METHODS/URIs
 
 =cut
 
@@ -54,7 +54,6 @@ has '_parsed_authors' => (
 #######################################
 
 =head2 Overview
-
 
 =head3 name
 
