@@ -4,6 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+
 =pod 
 
 =head1 NAME
@@ -88,8 +89,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 sub affiliation {
@@ -148,8 +147,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 
@@ -219,8 +216,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 
@@ -282,8 +277,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 sub fax {
@@ -295,7 +288,7 @@ sub fax {
     return $data;
 }
 
-=head3 strain_designation
+=head3 email
 
 This method returns a data structure containing
 an email address for the laboratory.
@@ -341,8 +334,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 
@@ -406,8 +397,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 sub website {
@@ -466,8 +455,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 
@@ -534,8 +521,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 sub allele_designation {
@@ -556,6 +541,8 @@ sub allele_designation {
 #######################################
 
 =head2 Laboratory Members
+
+=cut
 
 =head3 current_members
 
@@ -606,8 +593,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 sub current_members {
@@ -621,6 +606,7 @@ sub current_members {
 	     data        => $data };
 }
  
+
 =head3 former_members
 
 This method returns a data structure containing
@@ -667,8 +653,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 
@@ -790,8 +774,6 @@ B<Response example>
 
 =back
 
-=back
-
 =cut
 
 
@@ -865,8 +847,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 
@@ -948,8 +928,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/laborat
 B<Response example>
 
 <div class="response-example"></div>
-
-=back
 
 =back
 

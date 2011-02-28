@@ -1,0 +1,1420 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Person</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#street_address">street_address</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#country">country</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#institution">institution</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#email">email</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#lab_phone">lab_phone</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#office_phone">office_phone</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#other_phone">other_phone</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#fax">fax</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#web_page">web_page</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#laboratory">laboratory</a></li>
+			<li><a href="#previous_laboratories">previous_laboratories</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#strain_designation">strain_designation</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#allele_designation">allele_designation</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#lab_representative">lab_representative</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#gene_classes">gene_classes</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#possibly_publishes_as">possibly_publishes_as</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#status">status</a></li>
+			<li><a href="#last_verified">last_verified</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#supervised">supervised</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#supervised_by">supervised_by</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#worked_with">worked_with</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Person</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Person class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/resources/person">http://wormbase.org/resources/person</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure of the 
+name and ID of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="street_address">street_address</a></h3>
+<p>This method returns a data structure containing the 
+street address of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;street_address();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/street_address">http://api.wormbase.org/rest/field/person/WBPerson242/street_address</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;           : &quot;WBPerson242&quot;,
+   &quot;class&quot;          : &quot;person&quot;,
+   &quot;uri&quot;            : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}                               
+   &quot;street_address&quot; : { &quot;data&quot; : [ &quot;Department of Neuroscience&quot;,
+                                   &quot;Brown University&quot;,
+                                   &quot;185 Meeting Street, SFH458&quot;,
+                                   &quot;Mailbox GL-N&quot;,
+                                   &quot;Providence, RI 02912&quot;
+                                 ],
+                         &quot;description&quot; : &quot;street address of the person&quot;
+                      },
+ }</pre>
+<p>
+</p>
+<h3><a name="country">country</a></h3>
+<p>This method returns a data structure containing the 
+country that the person lives in, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;country();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/country">http://api.wormbase.org/rest/field/person/WBPerson242/country</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;    : &quot;WBPerson242&quot;,
+   &quot;class&quot;   : &quot;person&quot;,    
+   &quot;uri&quot;     : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}     
+   &quot;country&quot; : { &quot;data&quot; : &quot;United States of America&quot;,
+                 &quot;description&quot; : &quot;country of residence of the person, if known&quot;
+               },
+ }</pre>
+<p>
+</p>
+<h3><a name="institution">institution</a></h3>
+<p>This method returns a data structure containing the 
+institution of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;institution();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/institution">http://api.wormbase.org/rest/field/person/WBPerson242/institution</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;           : &quot;WBPerson242&quot;,
+   &quot;class&quot;          : &quot;person&quot;,
+   &quot;uri&quot;            : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}                               
+   &quot;institution&quot;    : { &quot;data&quot; : &quot;Brown University, Providence RI, USA&quot;,
+                        &quot;description&quot; : &quot;the institutional affiliation of the person&quot;,
+                      }, 
+ }</pre>
+<p>
+</p>
+<h3><a name="email">email</a></h3>
+<p>This method returns a data structure containing the 
+email addresses of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;email();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/email">http://api.wormbase.org/rest/field/person/WBPerson242/email</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;           : &quot;WBPerson242&quot;,
+   &quot;class&quot;          : &quot;person&quot;,
+   &quot;uri&quot;            : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;email&quot; : { &quot;data&quot; : [ &quot;myemail@yahoo.com&quot;,
+                          &quot;myotheremail@gmail.com&quot; ],
+              &quot;description&quot; : &quot;email addresses of the person, if known&quot;,
+   },
+ }</pre>
+<p>
+</p>
+<h3><a name="lab_phone">lab_phone</a></h3>
+<p>This method returns a data structure containing the 
+lab phone number of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;lab_phone();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone">http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;       : &quot;WBPerson242&quot;,
+   &quot;class&quot;      : &quot;person&quot;,
+   &quot;uri&quot;        : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;lab_phone&quot;  : { &quot;data&quot; : &quot;1-123-456-7890&quot;,
+                    &quot;description&quot; : &quot;laboratory phone of the person&quot;,
+                  },
+ }</pre>
+<p>
+</p>
+<h3><a name="office_phone">office_phone</a></h3>
+<p>This method returns a data structure containing the 
+office phone of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;office_phone();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/office_phone">http://api.wormbase.org/rest/field/person/WBPerson242/office_phone</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;         : &quot;WBPerson242&quot;,
+   &quot;class&quot;        : &quot;person&quot;,
+   &quot;uri&quot;          : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;office_phone&quot; : { &quot;data&quot; : &quot;1-345-678-9876&quot;
+                      &quot;description&quot; : &quot;office phone number of the person, if known&quot;,
+   },
+ }</pre>
+<p>
+</p>
+<h3><a name="other_phone">other_phone</a></h3>
+<p>This method returns a data structure containing
+other phone numbers of the person.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;street_other_phone();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/other_phone">http://api.wormbase.org/rest/field/person/WBPerson242/other_phone</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;        : &quot;WBPerson242&quot;,
+   &quot;class&quot;       : &quot;person&quot;,
+   &quot;uri&quot;         : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;other_phone&quot; : { &quot;data&quot;        : &quot;1-234-567-9876&quot;
+                     &quot;description&quot; : &quot;other phone numbers of the person },
+   },
+ }</pre>
+<p>
+</p>
+<h3><a name="fax">fax</a></h3>
+<p>This method returns a data structure containing the 
+fax number of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;fax();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/fax">http://api.wormbase.org/rest/field/person/WBPerson242/fax</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;      : &quot;WBPerson242&quot;,
+   &quot;class&quot;     : &quot;person&quot;,
+   &quot;uri&quot;       : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;fax&quot;       : { &quot;data&quot; : &quot;1-234-444-4455&quot;,
+                   &quot;description&quot; : &quot;fax number of the person, if known&quot;,
+   },
+ }</pre>
+<p>
+</p>
+<h3><a name="web_page">web_page</a></h3>
+<p>This method returns a data structure containing the 
+web site of the person, if known.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;web_page();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/web_page">http://api.wormbase.org/rest/field/person/WBPerson242/web_page</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;        : &quot;WBPerson242&quot;,
+   &quot;class&quot;       : &quot;person&quot;,
+   &quot;uri&quot;         : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;}
+   &quot;web_page&quot;    : { &quot;data&quot;        : &quot;www.myawesomelabwebsite.org&quot;
+                     &quot;description&quot; : &quot;web site of the person, if known&quot;,
+   },
+ }</pre>
+<p>
+</p>
+<h3><a name="laboratory">laboratory</a></h3>
+<p>This method returns a data structure containing
+the lab affiliation or origin of the requested object,
+as well as the current lab representative.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;laboratory();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="previous_laboratories">previous_laboratories</a></h3>
+<p>This method returns a data structure containing
+previous laboratories of the person, as well as
+the current representative of that lab.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;previous_laboratories();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories">http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="strain_designation">strain_designation</a></h3>
+<p>This method returns a data structure containing
+the strain designation of the current lab affiliation
+of the person.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;strain_designation();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation">http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="allele_designation">allele_designation</a></h3>
+<p>This method returns a data structure containing
+the allele designation of the current lab affiliation
+of the person.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;allele_designation();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation">http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="lab_representative">lab_representative</a></h3>
+<p>This method returns a data structure containing
+the current lab representative of the affiliated lab.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;lab_representative();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative">http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="gene_classes">gene_classes</a></h3>
+<p>This method returns a data structure containing
+gene classes assigned to the current lab affiliation
+of the person.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data-&gt;gene_classes();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes">http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="possibly_publishes_as">possibly_publishes_as</a></h3>
+<p>This method returns a data structure containing
+other names that the person might possibly publishh under.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data-&gt;possibly_publishes_as();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as">http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="status">status</a></h3>
+<p>This method will return a data structure containing
+the current status of the object.</p>
+<dl>
+<dt><strong><a name="perl_api3" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;status();</pre>
+</dd>
+<dt><strong><a name="rest_api3" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="last_verified">last_verified</a></h3>
+<p>This method returns a data structure containing
+the date the information about this person was
+last verified.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data-&gt;last_verified();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/last_verified">http://api.wormbase.org/rest/field/person/WBPerson242/last_verified</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="supervised">supervised</a></h3>
+<p>This method will return a data structure of people supervised 
+by the query person.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;supervised();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/supervised">http://api.wormbase.org/rest/field/person/WBPerson242/supervised</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<pre>
+ { &quot;name&quot;        : &quot;WBPerson242&quot;,
+   &quot;class&quot;       : &quot;person&quot;,
+   &quot;description&quot; : &quot;people supervised by this person&quot;},
+   &quot;uri&quot;         : &quot;<a href="http://todd.wormbase.org/page/person/WBPerson242&quot">http://todd.wormbase.org/page/person/WBPerson242&quot</a>;
+   &quot;supervised&quot;  : { &quot;data&quot;: [{
+                                &quot;name&quot;: {&quot;class&quot;: &quot;Person&quot;,
+                                         &quot;label&quot;: &quot;Emily Bates&quot;,
+                                         &quot;id&quot;   : &quot;WBPerson1652&quot;},
+                                &quot;level&quot;: &quot;Phd | Lab visitor | Grad&quot;,
+                                &quot;start_date&quot; : &quot;01 JAN 1998 00:00:00&quot;,
+                                &quot;end_date&quot;   : &quot;01 JAN 1999 00:00:00&quot;,
+                                &quot;duration&quot;:&quot;1998-1999&quot;,
+                              }],
+ }</pre>
+<p>
+</p>
+<h3><a name="supervised_by">supervised_by</a></h3>
+<p>This method will return a data structure containing
+people that this person has been supervised by.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;supervised_by();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by">http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>
+</p>
+<h3><a name="worked_with">worked_with</a></h3>
+<p>This method will return a data structure containing
+people that this person has worked or collaborated with.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;worked_with();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>WBPerson ID</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/person/WBPerson242/worked_with">http://api.wormbase.org/rest/field/person/WBPerson242/worked_with</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+
+</body>
+
+</html>

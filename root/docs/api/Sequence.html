@@ -1,0 +1,1337 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Sequence</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#description">description</a></li>
+			<li><a href="#sequence_type">sequence_type</a></li>
+			<li><a href="#identity">identity</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#method">method</a></li>
+			<li><a href="#remarks">remarks</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#laboratory">laboratory</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#genetic_position_interpolated">genetic_position_interpolated</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+			<li><a href="#prediction_status">prediction_status</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Sequence</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Sequence class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/species/sequence">http://wormbase.org/species/sequence</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure of the 
+name and ID of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="description">description</a></h3>
+<pre>
+
+This method will return a data structure containing
+a brief description of the object.</pre>
+<pre>
+
+=over</pre>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+
+  $data = $model-&gt;description();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="sequence_type">sequence_type</a></h3>
+<p>This method will return a data structure containing
+which type of sequence the requested object is.</p>
+<dl>
+<dt><strong><a name="perl_api3" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;sequence_type();</pre>
+</dd>
+<dt><strong><a name="rest_api3" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/sequence_type">http://api.wormbase.org/rest/field/sequence/JC8.10a/sequence_type</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="identity">identity</a></h3>
+<p>This method will return a data structure containing
+the brief identity of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api4" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;identity();</pre>
+</dd>
+<dt><strong><a name="rest_api4" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/identity">http://api.wormbase.org/rest/field/sequence/JC8.10a/identity</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api5" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api5" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="method">method</a></h3>
+<p>This method will return a data structure containing
+the method used to describe or determine the object.</p>
+<dl>
+<dt><strong><a name="perl_api6" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;method();</pre>
+</dd>
+<dt><strong><a name="rest_api6" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/method">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/method</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api7" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api7" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api8" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api8" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api9" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api9" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api10" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api10" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api11" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api11" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api12" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api12" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api13" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api13" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="laboratory">laboratory</a></h3>
+<p>This method returns a data structure containing
+the lab affiliation or origin of the requested object,
+as well as the current lab representative.</p>
+<dl>
+<dt><strong><a name="perl_api14" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;laboratory();</pre>
+</dd>
+<dt><strong><a name="rest_api14" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api15" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api15" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api16" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api16" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api17" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api17" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<dl>
+<dt><strong><a name="perl_api18" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api18" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="genetic_position_interpolated">genetic_position_interpolated</a></h3>
+<p>This method returns a data structure containing
+the genetic position of the requested object, if known.</p>
+<dl>
+<dt><strong><a name="perl_api19" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;genetic_position_interpolated();</pre>
+</dd>
+<dt><strong><a name="rest_api19" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position_interpolated">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position_interpolated</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api20" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api20" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api21" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api21" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api22" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api22" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api23" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api23" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api24" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api24" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api25" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api25" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api26" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api26" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api27" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api27" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api28" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api28" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api29" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api29" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="prediction_status">prediction_status</a></h3>
+<p>This method will return a data structure containing
+the prediction status of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api30" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;prediction_status();</pre>
+</dd>
+<dt><strong><a name="rest_api30" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A Sequence ID (eg JC8.10a)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status">http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<pre>
+        my $subscript = ('a'..'z')[$begin/$CHROMOSOME_TABLE_LENGTH];
+        (my $anchor = $s) =~ s/\..*$//;
+        my $href = &quot;$reference$subscript.html#$anchor&quot;;</pre>
+<pre>
+      my %entry;
+      $entry{chrom}{class} = 'Chromosome_tables';
+      $entry{chrom}{id} = $href;
+      $entry{chrom}{label} = $reference;</pre>
+<pre>
+      $entry{browse}{class} = 'genomic_location';
+      $entry{browse}{id} = &quot;?name=$s&quot;;
+      $entry{browse}{label} = '[Search for this Sequence on Genome]';
+      print li(&quot;$ref: $begin-$end. &quot;,
+               a({-href=&gt;hunter_url($reference,$begin,$end)},' [Browse map] '),
+               eval { $s-&gt;Coding } ?
+               a({-href=&gt;Url('aligner',&quot;name=$s;class=CDS&quot;),-target=&gt;&quot;_blank&quot;},' [View EST alignments]')
+               : ''
+              );
+      push @array,$entry;
+    }
+  } else {
+    my %entry;
+    $entry{browse}{class} = 'genomic_location';
+    $entry{browse}{id} = &quot;?name=$s&quot;;
+    $entry{browse}{label} = '[Search for this Sequence on Genome]';
+    push @array,$entry;</pre>
+<pre>
+  }
+  $hash{content} = \@array;
+  return \%hash;
+}
+=cut</pre>
+<p><table cellspacing="0" cellpadding="0"><tr><td>sub _print_unspliced {
+<tr><td><td>my ($markup,$seq_obj,$unspliced,@features) = @_;
+<tr><td><td>my $name = $seq_obj-&gt;info . ' (' . $seq_obj-&gt;start . '-' . $seq_obj-&gt;stop . ')';</table></p>
+<pre>
+        my $length   = length $unspliced;
+        if ($length &gt; 0) {
+                # mark up the feature locations</pre>
+<pre>
+                my @markup;
+                my $offset = $seq_obj-&gt;start;
+                my $counter = 0;
+                for my $feature (@features) {
+                        my $start    = $feature-&gt;start - $offset;
+                        my $length   = $feature-&gt;length;
+                        my $style = $feature-&gt;method eq 'CDS'  ? 'cds'.$counter++%2
+                        : $feature-&gt;method =~ /exon/ ? 'cds'.$counter++%2
+                        : $feature-&gt;method =~ 'UTR' ? 'utr' : '';
+                        push @markup,[$style,$start,$start+$length];
+                        push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
+                }
+                push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
+                push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
+                my $download = _to_fasta(&quot;$name|unspliced + UTR - $length bp&quot;,$unspliced);
+                $markup-&gt;markup(\$unspliced,\@markup);
+                return {
+                        #download =&gt; $download,
+                        header=&gt;&quot;unspliced + UTR - $length bp&quot;,
+                        content=&gt;&quot;&gt;$name (unspliced + UTR - $length bp)\n&quot;.$unspliced,
+                };
+        }
+}</pre>
+<p># Fetch and markup the spliced DNA
+# markup alternative exons
+sub _print_spliced {
+	my ($markup,@features) = @_;
+	my $spliced = join('',map {$_-&gt;dna} @features);
+	my $splen   = length $spliced;
+	my $last    = 0;
+	my $counter = 0;
+	my @markup  = ();
+	my $prefasta = $spliced;
+	for my $feature (@features) {
+		my $length = $feature-&gt;stop - $feature-&gt;start + 1;
+		my $style  = $feature-&gt;method =~ /UTR/i ? 'utr' : 'cds' . $counter++ %2;
+		my $end = $last + $length;
+		push @markup,[$style,$last,$end];
+		push @markup,['uc',$last,$end] if $feature-&gt;method =~ /exon/;
+		$last += $length;
+	}</p>
+<pre>
+        push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
+        push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
+        my $name = eval { $features[0]-&gt;refseq-&gt;name } ;
+        my $download=_to_fasta(&quot;$name|spliced + UTR - $splen bp&quot;,$spliced);
+        $markup-&gt;markup(\$spliced,\@markup);</pre>
+<pre>
+        return {                                        # download =&gt; $download ,
+                header=&gt;&quot;spliced + UTR - $splen bp&quot;,
+                content=&gt;&quot;&gt;$name (spliced + UTR - $splen bp)\n&quot;.$spliced,
+        } if $name;</pre>
+<p>}</p>
+<p><table cellspacing="0" cellpadding="0"><tr><td>sub _print_protein {
+<tr><td><td>my ($markup,$features,$genetic_code) = @_;
+<tr><td><td>my @markup;
+<tr><td><td>my $trimmed = join('',map {$_-&gt;dna} grep {$_-&gt;method eq 'coding_exon'} @$features);
+<tr><td><td>return unless $trimmed;<td># Hack for mRNA
+<tr><td><td>my $peptide = Bio::Seq-&gt;new(-seq=&gt;$trimmed)-&gt;translate-&gt;seq;
+<tr><td><td>my $change  = $peptide =~/\w+\*$/ ? 1 : 0;
+<tr><td><td>my $plen = <code>length($peptide)</code> - $change;</table></p>
+<pre>
+        @markup = map {['space',10*$_]}      (1..length($peptide)/10);
+        push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
+        my $name = eval { $features-&gt;[0]-&gt;refseq-&gt;name };
+        my $download=_to_fasta(&quot;$name|conceptual translation - $plen aa&quot;,$peptide);
+        $markup-&gt;markup(\$peptide,\@markup);
+        $peptide =~ s/^\s+//;</pre>
+<pre>
+        return {                                        # download =&gt; $download,
+                header=&gt;&quot;conceptual translation - $plen aa&quot;,
+                content=&gt;&quot;&gt;$name (conceptual translation - $plen aa)\n&quot;.$peptide,
+        };
+}</pre>
+<p>##use this or template to format sequence?</p>
+<p>sub _to_fasta {
+    my ($name,$dna) = @_;
+    $dna ||= '';
+    my @markup;
+    for (my $i=0; $i &lt; length $dna; $i += 10) {
+		push (@markup,[$i,$i % 80 ? ' ':&quot;\n&quot;]);
+    }
+    <code>_markup(\$dna,\@markup)</code>;
+    $dna =~ s/^\s+//;
+    $dna =~ s/\*$//;
+    return  { 	header=&gt;&quot;Genomic Sequence&quot;,
+	     		content=&gt;&quot;&amp;gt;$name\n$dna&quot;
+			   };
+}</p>
+<p># insert HTML tags into a string without disturbing order
+sub _markup {
+	my $string = shift;
+	my $markups = shift;
+	for my $m (sort {$b-&gt;[0]&lt;=&gt;$a-&gt;[0]} @$markups) { #insert later tags first so position remains correct
+		my ($position,$markup) = @$m;
+		next unless $position &lt;= length $$string;
+		<code>substr($$string,$position,0)</code> = $markup;
+	}
+}
+# get coordinates of parent for exons etc
+sub _get_parent_coords {
+	my ($self,$s) = @_;
+	my ($parent) = $self-&gt;sequence;
+	return unless $parent;
+	#  my $subseq = $parent-&gt;get('Subsequence');  # prevent automatic dereferencing</p>
+<pre>
+        # Escape the sequence name for fetching
+        $s =~ s/\./\\./g;
+        # We may be dealing with transcripts, too.
+        my $se;
+        foreach my $tag (qw/CDS_child Transcript/) {
+                my $subseq = $parent-&gt;get($tag); # prevent automatic dereferencing
+                if ($subseq) {
+                        $se = $subseq-&gt;at($s);
+                        if ($se) {
+                                my ($start,$stop) = $se-&gt;right-&gt;row;
+                                my $orientation = $start &lt;=&gt; $stop;
+                                return ($start,-$orientation,$parent);
+                        }
+                }
+        }
+        return;
+}
+
+</pre>
+<p>1;</p>
+
+</body>
+
+</html>

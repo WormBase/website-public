@@ -240,7 +240,7 @@ sub external_links {
 }
 
 
-=item also_refers_to()
+=head2 also_refers_to()
 
  Fetch other genes that the public name of the current gene might refer to.
  
