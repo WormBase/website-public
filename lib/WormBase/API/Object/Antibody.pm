@@ -40,13 +40,10 @@ http://wormbase.org/species/antibody
 # Supplied by Role; POD will automatically be inserted here.
 # << include other_names >>
 
-############
-## SUMMARY
-############
-
 =head3 summary
 
-This method will return a data structure with a summary re: this antibody.
+This method will return a data structure 
+containing a summary of the requested antibody.
 
 =head4 PERL API
 
@@ -64,7 +61,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+An Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -82,7 +79,7 @@ a Antibody ID [cgc2018]:mec-7
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/summary
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/summary
 
 =head5 Response example
 
@@ -91,27 +88,80 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 =cut 
 
 sub summary {
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my $data_pack = $object->Summary;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the position matrix'
-				};
-	return $data;
+    my $summary = $object->Summary;
+    return { description => 'summary of the antibody',
+	     data        => "$summary" or undef };
 }
 
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
 
 
 
 
+
+
+
+=head3 corresponding_gene
+
+This method will return a data structure containing
+the corresponding gene for this antibody.
+
+=head4 PERL API
+
+ $data = $model->corresponding_gene();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+An Antibody ID (eg [cgc2018]:mec-7)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/corresponding_gene
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub corresponding_gene {
+    my $self   = shift;
+    my $object = $self->object;
+    my $gene   = $object->Gene;
+    return { description => 'the corresponding gene the antibody was generated against',
+	     data        => $gene ? $self->_pack_obj($gene,$gene->Public_name) : undef };
+}
 
 =head3 antigen
 
-<headvar>This method will return a data structure re: the antigen for this antibody
+This method will return a data structure 
+containing the antigen that this antibody
+was generated against.
 
 =head4 PERL API
 
@@ -129,7 +179,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+An Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -147,7 +197,7 @@ a Antibody ID [cgc2018]:mec-7
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/WBPmat00000001/antigen
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/antigen
 
 =head5 Response example
 
@@ -156,21 +206,20 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 =cut
 
 sub antigen {
-	my $self = shift;
-    my $antibody = $self->object;
-	my ($type,$comment) = $antibody->Antigen->row if $antibody->Antigen;
-  	$type =~ s/_/ /g;
-  	my $data_pack = $type . (($comment) ? " ($comment)" : '') if ($type);
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the position matrix'
-	};
-	return $data;
+    my $self   = shift;
+    my $object = $self->object;
+    my ($type,$comment) = $object->Antigen->row if $object->Antigen;
+    $type =~ s/_/ /g;
+    return { description => 'the type and decsription of antigen this antibody was generated against',
+	     data        => { type    => "$type" || undef,
+			      comment => "$comment" || undef },
+    };
 }
 
 =head3 animal
 
-<headvar>This method will return a data structure re: the animal source of this antibody .
+This method will return a data structure containing
+the animal the antibody was generated.
 
 =head4 PERL API
 
@@ -188,7 +237,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+An Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -214,27 +263,23 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 
 =cut
 
-sub animal {
-
-	my $self = shift;
+sub animal {    
+    my $self = shift;
     my $object = $self->object;
+    my $animal = $object->Animal;
 
-	### data pull ####
-
-	my $data_pack = $object->Animal;
-	
-	### package ######
-	
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'the animal source of this antibody'
-				};
-	return $data;
+    if ($animal eq 'Other_animal') {
+	my $data = $animal->right;
+	$animal  = $data if $data;
+    }
+    return { description => 'the animal the antibody was generated in',
+	     data        => "$animal" or undef };
 }
 
 =head3 clonality
 
-<headvar>This method will return a data structure re: clonality of this antibody .
+This method will return a data structure containing
+the clonality of this antibody.
 
 =head4 PERL API
 
@@ -252,7 +297,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+An Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -279,14 +324,71 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 =cut
 
 sub clonality {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Clonality;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the clonality of the antibody'
-				};
-	return $data;
+    my $self      = shift;
+    my $object    = $self->object;
+    my $clonality = $object->Clonality;
+    return { description => 'the clonality of the antibody',
+	     data        => "$clonality" || undef };
+}
+
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
+
+=head3 constructed_by
+
+This method will return a data structure containing
+the person who isolated the antibody.
+
+=head4 PERL API
+
+ $data = $model->constructed_by();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+An Antibody ID (eg [cgc2018]:mec-7)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/constructed_by
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub constructed_by {
+    my $self      = shift;
+    my $object    = $self->object;
+    my $person    = $object->Person
+    return { description => 'the person who constructed the antibody',
+	     data        => $person ? $self->_pack_obj($person,$person->Standard_name) : undef };
 }
 
 # sub remarks {}
@@ -295,19 +397,20 @@ sub clonality {
 
 
 
+#######################################
+#
+# The Expression widget
+#
+#######################################
 
+=head3 expression_patterns
 
-
-
-
-
-=head3 target
-
-<headvar>This method will return a data structure re: gene target for this antibody.
+This method will return a data structure containing
+information on expression patterns generated by this antibody.
 
 =head4 PERL API
 
- $data = $model->target();
+ $data = $model->expression_patterns();
 
 =head4 REST API
 
@@ -321,7 +424,7 @@ No
 
 =head5 Parameters
 
-a Antibody ID [cgc2018]:mec-7
+An Antibody ID (eg [cgc2018]:mec-7)
 
 =head5 Returns
 
@@ -339,7 +442,7 @@ a Antibody ID [cgc2018]:mec-7
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/target
+curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/expression_patterns
 
 =head5 Response example
 
@@ -347,140 +450,25 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/antibod
 
 =cut
 
-sub target {
-	my $self = shift;
-    my $object = $self->object;
-	my $gene =	$object->Gene;
-	my $data_pack = $self->_pack_obj($gene);
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'target of the antibody'
-		};
-	return $data;
-}
-
-
-######################
-## EXPRESSION PATTERN
-######################
-
-=head3 expression_pattern
-
-<headvar>This method will return a data structure re: expression_pattern test by this antibody .
-
-=head4 PERL API
-
- $data = $model->expression_pattern();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Antibody ID [cgc2018]:mec-7
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/expression_pattern
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub expression_pattern {
-	my $self = shift;
+sub expression_patterns {
+    my $self = shift;
     my $antibody = $self->object;
-	my @data_pack;
-	my @expr_patterns = $antibody->Expr_pattern;
+    my @data;
+    my @expr_patterns = $antibody->Expr_pattern;
+    
+    foreach ($antibody->Expr_pattern) {	
+	my $author  = $_->Author || ''; ## data for link to be added(?)
+	my $pattern = $_->Pattern || $_->Subcellular_localization || $_->Remark;
 
-	foreach my $expr_pattern (@expr_patterns) {
-		my $date = $expr_pattern->Date || '';
-		my $author = $expr_pattern->Author || ''; ## data for link to be added(?)
-		my $pattern = $expr_pattern->Pattern || $expr_pattern->Subcellular_localization || $expr_pattern->Remark;
-		my $ep_info = _pack_obj($expr_pattern);
-		
-		push @data_pack, {
-				'ep_info' => $ep_info,					
-				'date' => $date,
-				'author' => $author,
-				'pattern' => $pattern
-			};
-	}
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'expression_pattern antibody is used in'
-				};
-	return $data;
+	
+	push @data, {
+	    expression_pattern => $self->_pack_obj($_),
+	    description        => "$pattern" or undef,
+	    author             => "$author" or undef,
+	};
+    }
+    return { description => 'expression patterns using the antibody',
+	     data        => @data ? \@data : undef };
 }
-
-
-#####
-## REFERENCES
-####
-
-#sub references {
-#
-#	my $self = shift;
-#    my $antibody = $self->object;
-#	my %data;
-#	my $desc = 'notes';
-#	my %data_pack;
-#
-#	#### data pull and packaging
-#	
-#	my @references = $antibody->Reference;
-#	
-#	foreach my $reference (@references) {
-#	
-#		$data_pack{$reference} = {
-#								'ace_id' => $reference,
-#								'class' => 'Reference' 
-#								### add details from format_references
-#								};
-#	}
-#	
-#	####
-#
-#	$data{'data'} = \%data_pack;
-#	$data{'description'} = $desc;
-#	return \%data;
-#}
-
-#
-#sub print_bibliography {
-#
-#  StartSection('References');
-#  
-#  format_references(-references=>\@references,-format=>'long',-pubmed_link=>'image',-curator=>url_param('curator'));
-#  EndSection;
-#}
-
-
-#####
-## INTERNAL
-#####
 
 1;
