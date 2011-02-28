@@ -59,25 +59,27 @@ has 'pre_compile' => (
 This method will return a data structure of the 
 name and ID of the requested object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->name();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -91,13 +93,15 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -128,25 +132,27 @@ This method will return a data structure containing
 the common (public) name of the object. Almost totally
 redundant with name().
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->common_name();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and an object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -160,13 +166,15 @@ a class and an object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/common_name
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -194,25 +202,27 @@ sub _build_common_name {
 This method will return a data structure containing
 other names that have been used to refer to the object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->other_names();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and an object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -226,13 +236,15 @@ a class and an object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -260,25 +272,27 @@ sub _build_other_names {
 This method will return a data structure containing
 a brief description of the object.
     
-=head4 PERL API
+=over
+
+=item PERL API
     
   $data = $model->description();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -292,13 +306,15 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -343,25 +359,27 @@ sub _build_description {
 This method will return a data structure containing
 a list of expresion patterns associated with the object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->expression_patterns();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -375,13 +393,15 @@ A class and ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/expression_patterns
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -418,25 +438,27 @@ sub _build_expression_patterns {
 This method returns a data structure containing
 the genetic position of the requested object, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->genetic_position();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -450,13 +472,15 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -526,25 +550,27 @@ sub _build_genetic_position {
 This method returns a data structure containing
 the genetic position of the requested object, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->genetic_position_interpolated();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -558,13 +584,15 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position_interpolated
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -642,25 +670,27 @@ This method returns a data structure containing
 the lab affiliation or origin of the requested object,
 as well as the current lab representative.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->laboratory();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -674,13 +704,15 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -731,25 +763,27 @@ sub _build_laboratory {
 This method will return a data structure containing
 the method used to describe or determine the object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->method();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and object ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -763,13 +797,15 @@ a class and object ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/method
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -798,25 +834,27 @@ sub _build_method {
 This method will return a data structure containing
 curator remarks about the requested object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->remarks();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and object ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -830,13 +868,15 @@ a class and object ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -915,6 +955,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 # Template: [% summary %]
@@ -940,25 +982,27 @@ sub _build_summary {
 This method will return a data structure containing
 the current status of the object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->status();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and object ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -972,13 +1016,15 @@ a class and object ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -1006,25 +1052,27 @@ sub _build_status {
 This method will return a data structure containing
 the genus and species of the requested object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->taxonomy();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a class and object ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1038,13 +1086,15 @@ a class and object ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/taxonomy
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 

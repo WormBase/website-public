@@ -1067,7 +1067,7 @@ sub genomic_position {
 
 # sub interpolated_genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
-# << include interpolated_genetic_position >>
+# << include genetic_position_interpolated >>
 
 
 

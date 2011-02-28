@@ -1,0 +1,848 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Paper</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#title">title</a></li>
+			<li><a href="#journal">journal</a></li>
+			<li><a href="#pages">pages</a></li>
+			<li><a href="#volume">volume</a></li>
+			<li><a href="#year">year</a></li>
+			<li><a href="#publication_date">publication_date</a></li>
+			<li><a href="#authors">authors</a></li>
+			<li><a href="#editors">editors</a></li>
+			<li><a href="#publication_type">publication_type</a></li>
+			<li><a href="#is_wormbook_paper">is_wormbook_paper</a></li>
+			<li><a href="#abstract">abstract</a></li>
+			<li><a href="#remarks">remarks</a></li>
+			<li><a href="#keywords">keywords</a></li>
+			<li><a href="#publisher">publisher</a></li>
+			<li><a href="#affiliation">affiliation</a></li>
+			<li><a href="#doi">doi</a></li>
+			<li><a href="#pmid">pmid</a></li>
+			<li><a href="#intext_citation">intext_citation</a></li>
+			<li><a href="#contained_in">contained_in</a></li>
+		</ul>
+
+		<li><a href="#related">Related</a></li>
+		<ul>
+
+			<li><a href="#refers_to">refers_to</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Paper</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Paper class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/resources/paper">http://wormbase.org/resources/paper</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure containing
+the name and ID of the paper object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031">http://api.wormbase.org/rest/field/paper/WBPaper00000031</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="title">title</a></h3>
+<p>This method will return a data structure containing
+the title of the paper.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;title();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/title">http://api.wormbase.org/rest/field/paper/WBPaper00000031/title</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="journal">journal</a></h3>
+<p>This method will return a data structure containing
+the journal the paper was published in, if appropriate.</p>
+<dl>
+<dt><strong><a name="perl_api3" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;journal();</pre>
+</dd>
+<dt><strong><a name="rest_api3" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/journal">http://api.wormbase.org/rest/field/paper/WBPaper00000031/journal</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="pages">pages</a></h3>
+<p>This method will return a data structure containing
+the page range of the publication.</p>
+<dl>
+<dt><strong><a name="perl_api4" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;pages();</pre>
+</dd>
+<dt><strong><a name="rest_api4" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/pages">http://api.wormbase.org/rest/field/paper/WBPaper00000031/pages</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="volume">volume</a></h3>
+<p>This method will return a data structure containing
+the volume of the paper the journal was published in.</p>
+<dl>
+<dt><strong><a name="perl_api5" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;volume();</pre>
+</dd>
+<dt><strong><a name="rest_api5" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/volume">http://api.wormbase.org/rest/field/paper/WBPaper00000031/volume</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="year">year</a></h3>
+<p>This method will return a data structure containing
+the year of publication.</p>
+<dl>
+<dt><strong><a name="perl_api6" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;year();</pre>
+</dd>
+<dt><strong><a name="rest_api6" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/year">http://api.wormbase.org/rest/field/paper/WBPaper00000031/year</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="publication_date">publication_date</a></h3>
+<p>This method will return a data structure containing
+the date the paper was published.</p>
+<dl>
+<dt><strong><a name="perl_api7" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;publication_date();</pre>
+</dd>
+<dt><strong><a name="rest_api7" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_date">http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_date</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="authors">authors</a></h3>
+<p>This method will return a data structure containing
+the authors of the publication.</p>
+<dl>
+<dt><strong><a name="perl_api8" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;authors();</pre>
+</dd>
+<dt><strong><a name="rest_api8" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/authors">http://api.wormbase.org/rest/field/paper/WBPaper00000031/authors</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="editors">editors</a></h3>
+<p>This method will return a data structure containing
+the editors of the publication, if any.</p>
+<dl>
+<dt><strong><a name="perl_api9" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;editors();</pre>
+</dd>
+<dt><strong><a name="rest_api9" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/editors">http://api.wormbase.org/rest/field/paper/WBPaper00000031/editors</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="publication_type">publication_type</a></h3>
+<p>This method will return a data structure containing
+the type of publication, eg &quot;Book Chapter&quot;.</p>
+<dl>
+<dt><strong><a name="perl_api10" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;publication_type();</pre>
+</dd>
+<dt><strong><a name="rest_api10" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_type">http://api.wormbase.org/rest/field/paper/WBPaper00000031/publication_type</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="is_wormbook_paper">is_wormbook_paper</a></h3>
+<p>This method will return a data structure containing
+whether or not this publication came from WormBook.</p>
+<dl>
+<dt><strong><a name="perl_api11" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;is_wormbook_paper();</pre>
+</dd>
+<dt><strong><a name="rest_api11" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/is_wormbook_paper">http://api.wormbase.org/rest/field/paper/WBPaper00000031/is_wormbook_paper</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="abstract">abstract</a></h3>
+<p>This method will return a data structure containing
+the abstract for the publication, if available.</p>
+<dl>
+<dt><strong><a name="perl_api12" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;abstract();</pre>
+</dd>
+<dt><strong><a name="rest_api12" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/abstract">http://api.wormbase.org/rest/field/paper/WBPaper00000031/abstract</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api13" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api13" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="keywords">keywords</a></h3>
+<p>This method will return a data structure containing
+keywords associated with the person.</p>
+<dl>
+<dt><strong><a name="perl_api14" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;keywords();</pre>
+</dd>
+<dt><strong><a name="rest_api14" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/keywords">http://api.wormbase.org/rest/field/paper/WBPaper00000031/keywords</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="publisher">publisher</a></h3>
+<p>This method will return a data structure containing
+the publisher of the publication.</p>
+<dl>
+<dt><strong><a name="perl_api15" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;publisher();</pre>
+</dd>
+<dt><strong><a name="rest_api15" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/publisher">http://api.wormbase.org/rest/field/paper/WBPaper00000031/publisher</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="affiliation">affiliation</a></h3>
+<p>This method will return a data structure containing
+the affiliations of the publication.</p>
+<dl>
+<dt><strong><a name="perl_api16" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;affiliation();</pre>
+</dd>
+<dt><strong><a name="rest_api16" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/affiliation">http://api.wormbase.org/rest/field/paper/WBPaper00000031/affiliation</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="doi">doi</a></h3>
+<p>This method will return a data structure containing
+the doi of the paper.</p>
+<dl>
+<dt><strong><a name="perl_api17" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;doi();</pre>
+</dd>
+<dt><strong><a name="rest_api17" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/doi">http://api.wormbase.org/rest/field/paper/WBPaper00000031/doi</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="pmid">pmid</a></h3>
+<p>This method will return a data structure containing
+the Pubmed ID of the publication.</p>
+<dl>
+<dt><strong><a name="perl_api18" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;pmid();</pre>
+</dd>
+<dt><strong><a name="rest_api18" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/pmid">http://api.wormbase.org/rest/field/paper/WBPaper00000031/pmid</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="intext_citation">intext_citation</a></h3>
+<p>This method will return a data structure containing
+an APA-formatted intext citation.</p>
+<dl>
+<dt><strong><a name="perl_api19" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;intext_citation();</pre>
+</dd>
+<dt><strong><a name="rest_api19" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/intext_citation">http://api.wormbase.org/rest/field/paper/WBPaper00000031/intext_citation</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="contained_in">contained_in</a></h3>
+<p>This method will return a data structure containing
+publications the current publication is contained in.</p>
+<dl>
+<dt><strong><a name="perl_api20" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;contained_in();</pre>
+</dd>
+<dt><strong><a name="rest_api20" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/contained_in">http://api.wormbase.org/rest/field/paper/WBPaper00000031/contained_in</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h2><a name="related">Related</a></h2>
+<p>
+</p>
+<h3><a name="refers_to">refers_to</a></h3>
+<p>This method will return a data structure containing
+items that the publication refers to.</p>
+<dl>
+<dt><strong><a name="perl_api21" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;refers_to();</pre>
+</dd>
+<dt><strong><a name="rest_api21" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Paper ID (eg WBPaper00000031)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/paper/WBPaper00000031/refers_to">http://api.wormbase.org/rest/field/paper/WBPaper00000031/refers_to</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+
+</body>
+
+</html>

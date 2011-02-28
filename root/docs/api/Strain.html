@@ -1,0 +1,1224 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Strain</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#taxonomy">taxonomy</a></li>
+			<li><a href="#other_names">other_names</a></li>
+			<li><a href="#description">description</a></li>
+			<li><a href="#genotype">genotype</a></li>
+			<li><a href="#genes">genes</a></li>
+			<li><a href="#alleles">alleles</a></li>
+			<li><a href="#rearrangements">rearrangements</a></li>
+			<li><a href="#clones">clones</a></li>
+			<li><a href="#transgenes">transgenes</a></li>
+			<li><a href="#reference_strain">reference_strain</a></li>
+			<li><a href="#mutagen">mutagen</a></li>
+			<li><a href="#outcrossed">outcrossed</a></li>
+			<li><a href="#throws_males">throws_males</a></li>
+			<li><a href="#phenotypes">phenotypes</a></li>
+			<li><a href="#phenotypes_not_observed">phenotypes_not_observed</a></li>
+			<li><a href="#remarks">remarks</a></li>
+		</ul>
+
+		<li><a href="#origin">Origin</a></li>
+		<ul>
+
+			<li><a href="#laboratory">laboratory</a></li>
+			<li><a href="#made_by">made_by</a></li>
+			<li><a href="#contact">contact</a></li>
+			<li><a href="#date_received">date_received</a></li>
+			<li><a href="#place">place</a></li>
+			<li><a href="#landscape">landscape</a></li>
+			<li><a href="#substrate">substrate</a></li>
+			<li><a href="#associated_organisms">associated_organisms</a></li>
+			<li><a href="#life_stage">life_stage</a></li>
+			<li><a href="#log_size_of_population">log_size_of_population</a></li>
+			<li><a href="#sampled_by">sampled_by</a></li>
+			<li><a href="#isolated_by">isolated_by</a></li>
+			<li><a href="#date_isolated">date_isolated</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Strain</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Strain class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/species/strain">http://wormbase.org/species/strain</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p># sub name { }
+# Supplied by Role; POD will automatically be inserted here.</p>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure of the 
+name and ID of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="taxonomy">taxonomy</a></h3>
+<p>This method will return a data structure containing
+the genus and species of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;taxonomy();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/taxonomy">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/taxonomy</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="other_names">other_names</a></h3>
+<p>This method will return a data structure containing
+other names that have been used to refer to the object.</p>
+<dl>
+<dt><strong><a name="perl_api3" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;other_names();</pre>
+</dd>
+<dt><strong><a name="rest_api3" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and an object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="description">description</a></h3>
+<pre>
+
+This method will return a data structure containing
+a brief description of the object.</pre>
+<pre>
+
+=over</pre>
+<dl>
+<dt><strong><a name="perl_api4" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+
+  $data = $model-&gt;description();</pre>
+</dd>
+<dt><strong><a name="rest_api4" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="genotype">genotype</a></h3>
+<p>This method will return a data structure containing 
+the genotype of the strain as a string.</p>
+<dl>
+<dt><strong><a name="perl_api5" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;genotype();</pre>
+</dd>
+<dt><strong><a name="rest_api5" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/genotype">http://api.wormbase.org/rest/field/strain/CB1/genotype</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="genes">genes</a></h3>
+<p>This method will return a data structure 
+containing the genes in this strain.</p>
+<dl>
+<dt><strong><a name="perl_api6" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;genes();</pre>
+</dd>
+<dt><strong><a name="rest_api6" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/genes">http://api.wormbase.org/rest/field/strain/CB1/genes</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="alleles">alleles</a></h3>
+<p>This method will return a data structure 
+containing alleles contained in this strain.</p>
+<dl>
+<dt><strong><a name="perl_api7" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;alleles();</pre>
+</dd>
+<dt><strong><a name="rest_api7" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/alleles">http://api.wormbase.org/rest/field/strain/CB1/alleles</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="rearrangements">rearrangements</a></h3>
+<p>This method will return a data structure 
+containing rearrangements contained in this strain, if any.</p>
+<dl>
+<dt><strong><a name="perl_api8" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;rearrangements();</pre>
+</dd>
+<dt><strong><a name="rest_api8" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/rearrangements">http://api.wormbase.org/rest/field/strain/CB1/rearrangements</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="clones">clones</a></h3>
+<p>This method will return a data structure containing
+clones that rescue this strain (?? HOW IS THIS USED? )</p>
+<dl>
+<dt><strong><a name="perl_api9" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;clones();</pre>
+</dd>
+<dt><strong><a name="rest_api9" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/clones">http://api.wormbase.org/rest/field/strain/CB1/clones</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="transgenes">transgenes</a></h3>
+<p>This method will return a data structure containing
+transgenes carried by the requested strain</p>
+<dl>
+<dt><strong><a name="perl_api10" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;transgenes();</pre>
+</dd>
+<dt><strong><a name="rest_api10" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/transgenes">http://api.wormbase.org/rest/field/strain/CB1/transgenes</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="reference_strain">reference_strain</a></h3>
+<p>This method will return a data structure containing
+the reference strain of the strain in question.</p>
+<dl>
+<dt><strong><a name="perl_api11" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;reference_strain();</pre>
+</dd>
+<dt><strong><a name="rest_api11" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/reference_strain">http://api.wormbase.org/rest/field/strain/CB1/reference_strain</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="mutagen">mutagen</a></h3>
+<p>This method will return a data structure containing
+the reference strain of the strain in question.</p>
+<dl>
+<dt><strong><a name="perl_api12" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;mutagen();</pre>
+</dd>
+<dt><strong><a name="rest_api12" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/mutagen">http://api.wormbase.org/rest/field/strain/CB1/mutagen</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="outcrossed">outcrossed</a></h3>
+<p>This method will return a data structure containing
+the number of times a strain has been outcrossed.</p>
+<dl>
+<dt><strong><a name="perl_api13" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;outcrossed();</pre>
+</dd>
+<dt><strong><a name="rest_api13" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/outcrossed">http://api.wormbase.org/rest/field/strain/CB1/outcrossed</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="throws_males">throws_males</a></h3>
+<p>This method will return a data structure containing
+information whether the strain throws males at a higher
+than expected frequency.</p>
+<dl>
+<dt><strong><a name="perl_api14" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;throws_males();</pre>
+</dd>
+<dt><strong><a name="rest_api14" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/throws_males">http://api.wormbase.org/rest/field/strain/CB1/throws_males</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="phenotypes">phenotypes</a></h3>
+<p>This method will return a data structure containing
+phenotypes observed in the strain.</p>
+<dl>
+<dt><strong><a name="perl_api15" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;phenotypes();</pre>
+</dd>
+<dt><strong><a name="rest_api15" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/phenotypes">http://api.wormbase.org/rest/field/strain/CB1/phenotypes</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="phenotypes_not_observed">phenotypes_not_observed</a></h3>
+<p>This method will return a data structure containing
+phenotypes observed in the strain.</p>
+<dl>
+<dt><strong><a name="perl_api16" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;phenotypes_not_observed();</pre>
+</dd>
+<dt><strong><a name="rest_api16" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/phenotypes_not_observed">http://api.wormbase.org/rest/field/strain/CB1/phenotypes_not_observed</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api17" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api17" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h2><a name="origin">Origin</a></h2>
+<p># sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.</p>
+<p>
+</p>
+<h3><a name="laboratory">laboratory</a></h3>
+<p>This method returns a data structure containing
+the lab affiliation or origin of the requested object,
+as well as the current lab representative.</p>
+<dl>
+<dt><strong><a name="perl_api18" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;laboratory();</pre>
+</dd>
+<dt><strong><a name="rest_api18" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="made_by">made_by</a></h3>
+<p>This method will return a data structure containing
+the person who built the strain.</p>
+<dl>
+<dt><strong><a name="perl_api19" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;made_by();</pre>
+</dd>
+<dt><strong><a name="rest_api19" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/made_by">http://api.wormbase.org/rest/field/strain/CB1/made_by</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="contact">contact</a></h3>
+<p>This method will return a data structure containing
+the person who built the strain.</p>
+<dl>
+<dt><strong><a name="perl_api20" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;contact();</pre>
+</dd>
+<dt><strong><a name="rest_api20" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/contact">http://api.wormbase.org/rest/field/strain/CB1/contact</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="date_received">date_received</a></h3>
+<p>This method will return a data structure containing
+the date the strain was received at the CGC.</p>
+<dl>
+<dt><strong><a name="perl_api21" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;date_received();</pre>
+</dd>
+<dt><strong><a name="rest_api21" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/date_received">http://api.wormbase.org/rest/field/strain/CB1/date_received</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<dl>
+<dt><strong><a name="perl_api22" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;gps_coordinates();</pre>
+</dd>
+<dt><strong><a name="rest_api22" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/gps_coordinates">http://api.wormbase.org/rest/field/strain/CB1/gps_coordinates</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="place">place</a></h3>
+<p>This method will return a data structure containing
+the place where the strain was isolated.</p>
+<dl>
+<dt><strong><a name="perl_api23" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;place();</pre>
+</dd>
+<dt><strong><a name="rest_api23" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/place">http://api.wormbase.org/rest/field/strain/CB1/place</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="landscape">landscape</a></h3>
+<p>This method will return a data structure containing
+the general type of landscape where the strain was isolated.</p>
+<dl>
+<dt><strong><a name="perl_api24" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;landscape();</pre>
+</dd>
+<dt><strong><a name="rest_api24" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/landscape">http://api.wormbase.org/rest/field/strain/CB1/landscape</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="substrate">substrate</a></h3>
+<p>This method will return a data structure containing
+the substrate that the stain was found on.</p>
+<dl>
+<dt><strong><a name="perl_api25" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;substrate();</pre>
+</dd>
+<dt><strong><a name="rest_api25" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/subtrate">http://api.wormbase.org/rest/field/strain/CB1/subtrate</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="associated_organisms">associated_organisms</a></h3>
+<p>This method will return a data structure containing
+other organisms present when the strain was isolated.</p>
+<dl>
+<dt><strong><a name="perl_api26" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;associated_organisms();</pre>
+</dd>
+<dt><strong><a name="rest_api26" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/associated_organisms">http://api.wormbase.org/rest/field/strain/CB1/associated_organisms</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="life_stage">life_stage</a></h3>
+<p>This method will return a data structure containing
+the life stage the strain was in when isolated.</p>
+<dl>
+<dt><strong><a name="perl_api27" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;life_stage();</pre>
+</dd>
+<dt><strong><a name="rest_api27" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/life_stage">http://api.wormbase.org/rest/field/strain/CB1/life_stage</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="log_size_of_population">log_size_of_population</a></h3>
+<p>This method will return a data structure containing
+the log size of the population.</p>
+<dl>
+<dt><strong><a name="perl_api28" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;log_size_of_population();</pre>
+</dd>
+<dt><strong><a name="rest_api28" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/log_size_of_population">http://api.wormbase.org/rest/field/strain/CB1/log_size_of_population</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="sampled_by">sampled_by</a></h3>
+<p>This method will return a data structure containing
+the person who sampled the strain.</p>
+<dl>
+<dt><strong><a name="perl_api29" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;sampled_by();</pre>
+</dd>
+<dt><strong><a name="rest_api29" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/sampled_by">http://api.wormbase.org/rest/field/strain/CB1/sampled_by</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="isolated_by">isolated_by</a></h3>
+<p>This method will return a data structure containing
+the person who isolated the strain.</p>
+<dl>
+<dt><strong><a name="perl_api30" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;isolated_by();</pre>
+</dd>
+<dt><strong><a name="rest_api30" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/isolated_by">http://api.wormbase.org/rest/field/strain/CB1/isolated_by</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="date_isolated">date_isolated</a></h3>
+<p>This method will return a data structure containing
+the date the strain was isolated.</p>
+<dl>
+<dt><strong><a name="perl_api31" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;date_isolated();</pre>
+</dd>
+<dt><strong><a name="rest_api31" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a Strain ID (eg CB1)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/strain/CB1/date_isolated">http://api.wormbase.org/rest/field/strain/CB1/date_isolated</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+
+</body>
+
+</html>

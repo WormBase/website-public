@@ -1,0 +1,378 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Motif</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#title">title</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#remarks">remarks</a></li>
+			<li><a href="#database">database</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#go">go</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+			<li><a href="#homologies">homologies</a></li>
+			<ul>
+
+				<li><a href="#perl_api">PERL API</a></li>
+				<li><a href="#rest_api">REST API</a></li>
+				<ul>
+
+					<li><a href="#request_method">Request Method</a></li>
+					<li><a href="#requires_authentication">Requires Authentication</a></li>
+					<li><a href="#parameters">Parameters</a></li>
+					<li><a href="#returns">Returns</a></li>
+					<li><a href="#request_example">Request example</a></li>
+					<li><a href="#response_example">Response example</a></li>
+				</ul>
+
+			</ul>
+
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Motif</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Motif class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/species/motif">http://wormbase.org/species/motif</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure of the 
+name and ID of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="title">title</a></h3>
+<p>This method will return a data structure of the 
+title for the requested motif.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;title();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>a Motif ID ((AAATG)n)</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/motif/(AAATG)n/title">http://api.wormbase.org/rest/field/motif/(AAATG)n/title</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="database">database</a></h3>
+<p>This method will return a data structure with database information for the requested motif.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;database();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>a Motif ID ((AAATG)n)</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/motif/(AAATG)n/database">http://api.wormbase.org/rest/field/motif/(AAATG)n/database</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="go">go</a></h3>
+<p>This method will return a data structure with go annotations for the requested motif.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;go();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>a Motif ID ((AAATG)n)</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/motif/(AAATG)n/go">http://api.wormbase.org/rest/field/motif/(AAATG)n/go</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+<p>
+</p>
+<h3><a name="homologies">homologies</a></h3>
+<p>This method will return a data structure with homology information on the requested motif.</p>
+<p>
+</p>
+<h4><a name="perl_api">PERL API</a></h4>
+<pre>
+ $data = $model-&gt;homologies();</pre>
+<p>
+</p>
+<h4><a name="rest_api">REST API</a></h4>
+<p>
+</p>
+<h5><a name="request_method">Request Method</a></h5>
+<p>GET</p>
+<p>
+</p>
+<h5><a name="requires_authentication">Requires Authentication</a></h5>
+<p>No</p>
+<p>
+</p>
+<h5><a name="parameters">Parameters</a></h5>
+<p>a Motif ID ((AAATG)n)</p>
+<p>
+</p>
+<h5><a name="returns">Returns</a></h5>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p>
+</p>
+<h5><a name="request_example">Request example</a></h5>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/motif/(AAATG)n/homologies">http://api.wormbase.org/rest/field/motif/(AAATG)n/homologies</a></p>
+<p>
+</p>
+<h5><a name="response_example">Response example</a></h5>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+
+</body>
+
+</html>

@@ -1,0 +1,470 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Life_stage</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#name">name</a></li>
+			<li><a href="#substages">substages</a></li>
+			<li><a href="#definition">definition</a></li>
+			<li><a href="#other_names">other_names</a></li>
+			<li><a href="#remarks">remarks</a></li>
+			<li><a href="#expression_patterns">expression_patterns</a></li>
+			<li><a href="#cells">cells</a></li>
+			<li><a href="#cell_group">cell_group</a></li>
+			<li><a href="#contained_in_life_stage">contained_in_life_stage</a></li>
+			<li><a href="#preceded_by_life_stage">preceded_by_life_stage</a></li>
+			<li><a href="#followed_by_life_stage">followed_by_life_stage</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Life_stage</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Life_stage class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/species/life_stage">http://wormbase.org/species/life_stage</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p>
+</p>
+<h3><a name="name">name</a></h3>
+<p>This method will return a data structure of the 
+name and ID of the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;name();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="substages">substages</a></h3>
+<p>This method will return a data structure containing
+substages of the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;substages();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/substages">http://api.wormbase.org/rest/field/life_stage/embryo/substages</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="definition">definition</a></h3>
+<p>This method will return a data structure containing
+a definition of the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api3" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;definition();</pre>
+</dd>
+<dt><strong><a name="rest_api3" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/definition">http://api.wormbase.org/rest/field/life_stage/embryo/definition</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="other_names">other_names</a></h3>
+<p>This method will return a data structure containing
+other names that have been used to refer to the object.</p>
+<dl>
+<dt><strong><a name="perl_api4" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;other_names();</pre>
+</dd>
+<dt><strong><a name="rest_api4" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and an object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api5" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api5" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="expression_patterns">expression_patterns</a></h3>
+<p>This method will return a data structure containing
+a list of expresion patterns associated with the object.</p>
+<dl>
+<dt><strong><a name="perl_api6" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;expression_patterns();</pre>
+</dd>
+<dt><strong><a name="rest_api6" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/expression_patterns">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/expression_patterns</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="cells">cells</a></h3>
+<p>This method will return a data structure containing
+cells linked to the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api7" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;cells();</pre>
+</dd>
+<dt><strong><a name="rest_api7" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/cells">http://api.wormbase.org/rest/field/life_stage/embryo/cells</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="cell_group">cell_group</a></h3>
+<p>This method will return a data structure containing
+cell groups linked to the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api8" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;cell_group();</pre>
+</dd>
+<dt><strong><a name="rest_api8" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/cell_group">http://api.wormbase.org/rest/field/life_stage/embryo/cell_group</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="contained_in_life_stage">contained_in_life_stage</a></h3>
+<p>This method will return a data structure containing
+the life stages that contain the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api9" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;contained_in_life_stage();</pre>
+</dd>
+<dt><strong><a name="rest_api9" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/contained_in_life_stage">http://api.wormbase.org/rest/field/life_stage/embryo/contained_in_life_stage</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="preceded_by_life_stage">preceded_by_life_stage</a></h3>
+<p>This method will return a data structure containing
+the life stages that precede the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api10" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;preceded_by_life_stage();</pre>
+</dd>
+<dt><strong><a name="rest_api10" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/preceded_by_life_stage">http://api.wormbase.org/rest/field/life_stage/embryo/preceded_by_life_stage</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="followed_by_life_stage">followed_by_life_stage</a></h3>
+<p>This method will return a data structure containing
+the life stages that follow the requested life stage.</p>
+<dl>
+<dt><strong><a name="perl_api11" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;followed_by_life_stage();</pre>
+</dd>
+<dt><strong><a name="rest_api11" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>Life stage (eg embryo)</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/life_stage/embryo/followed_by_life_stage">http://api.wormbase.org/rest/field/life_stage/embryo/followed_by_life_stage</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>WormBase API: Phenotype</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#url">URL</a></li>
+	<li><a href="#methods_uris">METHODS/URIs</a></li>
+	<ul>
+
+		<li><a href="#overview">Overview</a></li>
+		<ul>
+
+			<li><a href="#description">description</a></li>
+			<li><a href="#remarks">remarks</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>WormBase::API::Object::Phenotype</p>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<p>Model for the Ace ?Phenotype class.</p>
+<p>
+</p>
+<hr />
+<h1><a name="url">URL</a></h1>
+<p><a href="http://wormbase.org/species/phenotype">http://wormbase.org/species/phenotype</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="methods_uris">METHODS/URIs</a></h1>
+<p>
+</p>
+<h2><a name="overview">Overview</a></h2>
+<p>
+</p>
+<h3><a name="description">description</a></h3>
+<pre>
+
+This method will return a data structure containing
+a brief description of the object.</pre>
+<pre>
+
+=over</pre>
+<dl>
+<dt><strong><a name="perl_api" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+
+  $data = $model-&gt;description();</pre>
+</dd>
+<dt><strong><a name="rest_api" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>A class and object ID.</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>sub assay {</p>
+<pre>
+
+   my $data = { description =&gt; 'The Assay of the phenotype ',
+                        data        =&gt; shift ~~ 'Assay'  ,
+    };
+   return $data;
+}</pre>
+<p>
+</p>
+<h3><a name="remarks">remarks</a></h3>
+<p>This method will return a data structure containing
+curator remarks about the requested object.</p>
+<dl>
+<dt><strong><a name="perl_api2" class="item">PERL API</a></strong></dt>
+
+<dd>
+<pre>
+ $data = $model-&gt;remarks();</pre>
+</dd>
+<dt><strong><a name="rest_api2" class="item">REST API</a></strong></dt>
+
+<dd>
+<p><strong>Request Method</strong></p>
+<p>GET</p>
+<p><strong>Requires Authentication</strong></p>
+<p>No</p>
+<p><strong>Parameters</strong></p>
+<p>a class and object ID</p>
+<p><strong>Returns</strong></p>
+<ul>
+<li>
+<p>200 OK and JSON, HTML, or XML</p>
+</li>
+<li>
+<p>404 Not Found</p>
+</li>
+</ul>
+<p><strong>Request example</strong></p>
+<p>curl -H content-type:application/json <a href="http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks">http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks</a></p>
+<p><strong>Response example</strong></p>
+<p>&lt;div class=&quot;response-example&quot;&gt;&lt;/div&gt;</p>
+</dd>
+</dl>
+
+</body>
+
+</html>

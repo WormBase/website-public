@@ -987,15 +987,6 @@ sub date_received {
     };
 }
     
-
-#######################################
-#
-# The Isolation widget
-#
-#######################################6
-
-=head2 Isolation
-
 =head3 gps_coordinates
 
 This method will return a data structure containing
