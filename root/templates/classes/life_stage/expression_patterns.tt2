@@ -1,6 +1,4 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   [% WRAPPER $field_block title="Expression Patterns" key="expression_pattern" %]
-       Found [% searchlink("expression_pattern", c.stash.object.name.data.id, fields.expression_patterns.data.size _ " expression pattern " _ pluralize("object", fields.expression_patterns.data.size)) %]
-   [% END %]
+[% expression_patterns %]
