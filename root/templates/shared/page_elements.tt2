@@ -616,7 +616,7 @@ END;
 			      author             => 'Author',
                              },
                     key='expression_patterns',
-                    title='Expression patterns');
+                    title='Patterns');
    END;
 %]
 

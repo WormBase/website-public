@@ -18,12 +18,7 @@ Model for the Ace ?Life_stage class.
 
 http://wormbase.org/species/life_stage
 
-=head1 TODO
-
-# The original LifeStage CGI presented a number of secondary screens
-
-# TODO: Handling of big lists of objects
-# Search and browse methods
+=head1 METHODS/URIs
 
 =cut
 
@@ -46,25 +41,27 @@ http://wormbase.org/species/life_stage
 This method will return a data structure containing
 substages of the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->substages();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -78,13 +75,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/substages
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -93,7 +92,7 @@ sub substages {
     my $object = $self->object;
     my @substages = map { $self->_pack_obj($_) } $object->Sub_stage;
     return { data        => \@substages,
-	     description => 'sublife stage' };
+	     description => 'life substage' };
 }
 
 =head3 definition
@@ -101,25 +100,27 @@ sub substages {
 This method will return a data structure containing
 a definition of the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->definition();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -133,13 +134,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/definition
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -183,25 +186,27 @@ sub definition {
 This method will return a data structure containing
 cells linked to the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->cells();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -215,13 +220,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cells
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -239,25 +246,27 @@ sub cells {
 This method will return a data structure containing
 cell groups linked to the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->cell_group();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -271,13 +280,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/cell_group
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -300,25 +311,27 @@ sub cell_group {
 This method will return a data structure containing
 the life stages that contain the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->contained_in_life_stage();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -332,13 +345,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/contained_in_life_stage
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -355,25 +370,27 @@ sub contained_in_life_stage {
 This method will return a data structure containing
 the life stages that precede the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->preceded_by_life_stage();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -387,13 +404,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/preceded_by_life_stage
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -411,25 +430,27 @@ sub preceded_by_life_stage {
 This method will return a data structure containing
 the life stages that follow the requested life stage.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->followed_by_life_stage();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 Life stage (eg embryo)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -443,13 +464,15 @@ Life stage (eg embryo)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/followed_by_life_stage
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -460,19 +483,6 @@ sub followed_by_life_stage {
     return { description => 'next life stage after this',
 	     data        => \@stages };
 }
-
-
-1;
-
-
-
-
-
-
-
-
-
-
 
 
 1;

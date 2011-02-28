@@ -34,11 +34,12 @@
 [% END %]
 
 [% WRAPPER $field_block title="Isolated by" %]
-      [% laboratory %]
+      [% laboratory(title="Laboratory") %]
 
       [% WRAPPER $field_block title="Constructed by" key="constructed_by" %]
              [% fields.constructed_by.data %]
       [% END %]
 [% END %]
 
-[% remarks(no_toggle=1) %]
+[% remarks %]
+[% remarks("no_toggle=1") %]

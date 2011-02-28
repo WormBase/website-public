@@ -6,15 +6,63 @@
       [% tag2link(fields.made_by.data) %]
 [% END %]
 
-[% laboratory %]
+[% laboratory(title="Laboratory") %]
 
 [% WRAPPER $field_block title="Contact" key="contact" %]
       [% tag2link(fields.contact.data) %]
 [% END %]
 
-[% WRAPPER $field_block title="Date Received" key="date_received" %]
+[% WRAPPER $field_block title="Date Received at CGC" key="date_received" %]
       [% fields.date_received.data %]
 [% END %]
 
 
 
+[% WRAPPER $field_block title="Isolation" %]
+    [% WRAPPER $field_block title="Place" key="place" %]
+         [% fields.place.data %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Landscape" key="landscape" %]
+         [% fields.landscape.data %]
+    [% END %]
+
+    [% WRAPPER $field_block title="GPS coordinates" key="gps_coordinates" %]
+
+        [% WRAPPER $field_block title="latitude" %]
+            [% fields.gps_coordinates.data.latitude %]
+        [% END %]
+
+        [% WRAPPER $field_block title="longitude" %]
+            [% fields.gps_coordinates.data.longitude %]
+        [% END %]
+    [% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Associated organisms" key="associated_organisms" %]
+     [% fields.associated_organisms.data.join('; ') %]
+[% END %]
+
+[% WRAPPER $field_block title="Life stage" key="life_stage" %]
+     [% tag2link(fields.life_stage.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="Substrate" key="substrate" %]
+     [% fields.substrate.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Log size of population" key="log_size_of_population" %]
+     [% fields.log_size_of_population.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Sampled by" key="sampled_by" %]
+     [% fields.dampled_by.data %]
+[% END %]
+
+[% WRAPPER $field_block title="Isolated by" key="isolated_by" %]
+     [% tag2link(fields.isolated_by.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="Date isolated" key="date_isolated" %]
+     [% fields.date_isolated.data %]
+[% END %]
