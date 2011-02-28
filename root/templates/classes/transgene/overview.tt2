@@ -7,9 +7,7 @@
 
    [% taxonomy %]
 
-   [% WRAPPER $field_block title="Summary" key="summary" %]
-      [% fields.summary.data %]
-   [% END %]
+   [% summary %]
 
    [% WRAPPER $field_block title="Synonym" key="synonym" %]
         [% fields.synonym.data %]

@@ -162,67 +162,14 @@ sub definition {
 
 #######################################
 #
-# Expression Patterns (needs work)
+# Expression Patterns
 #
 #######################################
 
-=head3 expression_patterns
+# sub expression_patterns {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include expression_patterns >>
 
-This method will return a data structure containing
-expression patterns linked to the requested life stage.
-
-=head4 PERL API
-
- $data = $model->expression_patterns();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-Life stage (eg embryo)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/expression_patterns
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-sub expression_patterns {
-    my $self = shift;
-    my $object = $self->object;
-
-    # Oy. Really? We are just displaying a count in the UI and linking to search.
-    my @patterns = map { $self->_pack_objects($_) } $object->Expr_pattern;
-    return { description => 'expression patterns associated with this life stage',
-	     data        => \@patterns  };
-
-}
 
 
 #######################################

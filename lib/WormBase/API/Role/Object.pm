@@ -335,6 +335,84 @@ sub _build_description {
 
 }
 
+
+
+
+=head3 expression_patterns
+
+This method will return a data structure containing
+a list of expresion patterns associated with the object.
+
+=head4 PERL API
+
+ $data = $model->expression_patterns();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/expression_patterns
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% expression_patterns %]
+
+has 'expression_patterns'  => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+sub _build_expression_patterns {
+    my $self   = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+    my @data;
+    
+    foreach ($object->Expr_pattern) {	
+	my $author  = $_->Author || '';
+	my $pattern = $_->Pattern || $_->Subcellular_localization || $_->Remark;
+	push @data, {
+	    expression_pattern => $self->_pack_obj($_),
+	    description        => "$pattern" || undef,
+	    author             => "$author"  || undef,
+	};
+    }
+    return { description => "expression patterns associated with the $class:$object",
+	     data        => @data ? \@data : undef };
+}
+
+
+
 =head3 genetic_position
 
 This method returns a data structure containing
@@ -628,7 +706,7 @@ sub _build_laboratory {
 	$tag = 'Designating_laboratory';
     } elsif ($class eq 'Pcr_olig' || $class eq 'Sequence') {
 	$tag = 'From_laboratory';
-    } elsif ($class eq 'Transgene' || $class eq 'Strain') {
+    } elsif ($class eq 'Transgene' || $class eq 'Strain' || $class eq 'Antibody') {
 	$tag = 'Location';
     } else {
 	$tag = 'Laboratory';
@@ -786,6 +864,75 @@ sub _build_remarks {
     };
     return $data;
 }
+
+
+=head3 summary
+
+This method will return a data structure containing
+a brief summary of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->summary();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A class and object ID.
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/summary
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Template: [% summary %]
+
+has 'summary'  => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+sub _build_summary {
+    my $self   = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+    my $summary = $object->Summary;
+    return { description => "a brief summary of the $class:$object",
+	     data        => "$summary" || undef };
+}
+
 
 
 =head3 status
