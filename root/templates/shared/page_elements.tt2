@@ -609,6 +609,18 @@ END;
 %]
 
 
+[% MACRO expression_patterns BLOCK ;
+   build_data_table(order=['expression_pattern','description','author'],
+                    columns={ expression_pattern => 'Pattern',
+		              description        => 'Description',
+			      author             => 'Author',
+                             },
+                    key='expression_patterns',
+                    title='Expression patterns');
+   END;
+%]
+
+
 [% MACRO genetic_position BLOCK ;
      WRAPPER $field_block title="Genetic position" key="genetic_position";
          fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
@@ -649,7 +661,7 @@ END;
 
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
-   # Presents field in a toggle by default; pass "no_toggle=1"
+   # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
    IF $no_toggle == 1;  
       IF fields.remarks.data.defined;
         '<div class="text-width">';
@@ -669,6 +681,14 @@ END;
       END;
     END;
  END;
+%]
+
+[% MACRO summary BLOCK;
+    # Currently only includes Summary but could encompass other tags
+    WRAPPER $field_block title="Summary" key="summary"
+       fields.summary.data;
+    END;
+END;
 %]
 
 [% MACRO status BLOCK; 

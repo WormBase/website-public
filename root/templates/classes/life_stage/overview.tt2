@@ -17,8 +17,8 @@
       [% fields.definition.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Other name" key="other_name" %]
-      [% fields.other_name.data.join(' ') FILTER lower %]
+[% WRAPPER $field_block title="Other names" key="other_names" %]
+      [% fields.other_names.data.join(' ') FILTER lower %]
 [% END %]
 
 [% WRAPPER $field_block title="Substages" key="substages" %]
