@@ -766,7 +766,7 @@ END;
                           _ ' members)'
                           _ '</div>';
                  '<div class="returned">';
-                    dataTable_list(names, rows, "table_${table_count}");
+                    dataTable_list(names, rows, "table_${species}_${key}");
                 '</div>';         
 	     END; # END of nested WRAPPER
            END; # END IF species contains data
