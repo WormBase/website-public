@@ -4,55 +4,39 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=head3 name
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+=pod 
 
-=head4 PERL API
+=head1 NAME
 
- $data = $model->name();
+WormBase::API::Object::Microarray_results
 
-=head4 REST API
+=head1 SYNPOSIS
 
-=head5 Request Method
+Model for the Ace ?Microarray_results class.
 
-GET
+=head1 URL
 
-=head5 Requires Authentication
+http://wormbase.org/species/microarray_results
 
-No
+=head1 METHODS/URIs
 
-=head5 Parameters
+=cut
 
-a Transgene ID (gmIs13)
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-=head5 Returns
+=head2 Overview
 
-=over 4
+=cut
 
-=item *
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
 
 sub gene {
     my $self = shift;

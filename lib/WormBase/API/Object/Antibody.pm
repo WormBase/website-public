@@ -4,62 +4,11 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
-=head3 name
-
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
 =pod 
 
 =head1 NAME
 
-## headvar WormBase::API::Object::Antibody
+WormBase::API::Object::Antibody
 
 =head1 SYNPOSIS
 
@@ -69,9 +18,27 @@ Model for the Ace ?Antibody class.
 
 http://wormbase.org/species/antibody
 
-=head1 TODO
+=head1 METHODS/URIs
 
 =cut
+
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# sub other_names { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
 ############
 ## SUMMARY
@@ -134,60 +101,10 @@ sub summary {
 	return $data;
 }
 
-=head3 laboratory
-
-This method will return a data structure containing
-the laboratory that coined the gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->laboratory();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/laboratory
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# laboratory() is provided by Object.pm. Documentation
-# duplicated here for completeness of API
 # sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
 
 
 
@@ -372,107 +289,9 @@ sub clonality {
 	return $data;
 }
 
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the requested life stage.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-Life stage (eg embryo)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Provided by Object.pm, pod retained for completeness
-# sub remarks { }
-
-
-=head3 other_names
-
-This method will return a data structure containing
-other names that have been used to refer to the strain.
-
-=head4 PERL API
-
- $data = $model->other_names();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-an Antibody ID (eg [cgc2018]:mec-7)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/antibody/[cgc2018]:mec-7/other_names
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-# Other_name is provided by Object.pm.
-# Retain pod for completeness of documentation.
-# sub other_names { }
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 
 

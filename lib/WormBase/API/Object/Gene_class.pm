@@ -30,225 +30,22 @@ http://wormbase.org/species/gene_class
 
 =head2 Overview
 
-=head3 name
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-This method will return a data structure of the 
-name and ID of the requested gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm; retain pod for complete documentation of the API
-#sub name { }
-
-=head3 other_names
-
-This method will return a data structure containing 
-other names that have been used to describe the 
-requested gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->other_names();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/other_names
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm, retain POD for completeness of documentation.
 # sub other_names { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
-
-=head3 description
-
-This method will return a data structure containing
-a brief description of the gene class abbreviation.
-
-=over
-
-=item PERL API
-
- $data = $model->description();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/description
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm, retain POD for completeness of documentation.
 # sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
-
-=head3 laboratory
-
-This method will return a data structure containing
-the laboratory that coined the gene class.
-
-=over
-
-=item PERL API
-
- $data = $model->laboratory();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/laboratory
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# laboratory() is provided by Object.pm. Documentation
-# duplicated here for completeness of API
 # sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
 
 
 =head3 phenotype
@@ -312,59 +109,11 @@ sub phenotype {
     return $data;
 }
 
-=head3 remarks
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-This method will return a data structure containing
-curatorial remarks for the gene class.
 
-=over
-
-=item PERL API
-
- $data = $model->remarks();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Gene class (eg unc)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm; retain for complete documentation.
-# sub remarks { }
 
 #######################################
 #
@@ -518,19 +267,19 @@ B<Response example>
 sub former_genes {
     my $self   = shift;
     my $object = $self->object;
-
+    
     my %data_pack;
     my @genes = $object->Old_member;
-
+    
     foreach my $old_gene (@genes) {
 	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
-
+	
 	my $data = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
 	
 	my $species = $gene->Species;
 	push @{$data_pack{$species}},$data;
     }
-
+    
     my $data = { description => 'genes formerly in the class that have been reassigned to a new class',
 		 data        => \%data_pack };    
 }
@@ -596,7 +345,7 @@ sub reassigned_genes {
     my %data_pack;
     foreach my $gene (@genes) {
 	my $species = $gene->Species;
-
+	
 	# Only keep them if their current locus name matches the object name
 	# We're looking for genes that have been reassigned
 	my $public_name = $gene->Public_name;

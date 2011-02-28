@@ -9,6 +9,25 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Analysis
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Analysis class.
+
+=head1 URL
+
+http://wormbase.org/resources/analysis
+
+=head1 METHODS/URIs
+
+=cut
+
+
 # TODO:
 # Mapping data
 # Marked_rearrangement
@@ -73,163 +92,26 @@ has 'tracks' => (
 
 #######################################
 #
-# The Overview widget 
+# The Overview Widget
 #
 #######################################
 
 =head2 Overview
 
-=head3 name
-
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Variation ID (eg e345
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-=head3 other_names
-
-This method will return a data structure containing
-other names that have been used to refer to the variation.
-
-=head4 PERL API
-
- $data = $model->other_names();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Variation ID (eg e345)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/other_names
-
-=head5 Response example
-
-<div class="response-example"></div>
-
 =cut
 
-# Other_name is provided by Object.pm.
-# Retain pod for completeness of documentation.
-# sub other_names { }
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=head3 common_name
 
-This method will return a data structure containing
-the common name of the variation.
-
-=head4 PERL API
-
- $data = $model->common_name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Variation ID (eg e345)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/common_name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-# Other_name is provided by Object.pm; Retain pod for completeness of documentation.
 # sub common_name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include common_name >>
 
+# sub other_names { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
 
 # THIS METHOD IS PROBABLY DEPRECATED
@@ -296,58 +178,9 @@ sub variation_type {
 }
 
 
-=head3 remarks
-
-This method will return a data structure containing
-curatorial remarks for the current variation.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-A Variation id (eg e345)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
-# sub remarks { }
-
-
-
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 
 ############################################################
@@ -790,81 +623,25 @@ sub polymorphism_assays {
 # LOCATION
 #
 ############################################################
-sub genetic_position {
-    my $self = shift;
-    my $object = $self->object;
-    
-    my ($chrom,$position,$error);
-    if ($object->Interpolated_map_position) {
-	($chrom,$position,$error) = $object->Interpolated_map_position(1)->row;
-    } elsif ($object->Map) {
-	($chrom,undef,$position,undef,$error) = $object->Map(1)->row;
-    }
-    
-    unless ($chrom) {
-	# Try fetching from sequence
-	if (my $sequence = $object->Sequence) {
-	    $chrom = $sequence->Interpolated_map_position(1);
-	    $position = $sequence->Interpolated_map_position(2);
-	} 
-    }
-    
-    unless ($chrom) {
-	if (my $gene = $object->Gene) {
-	    if (my $m = $gene->get('Map')) {
-		($chrom,undef,$position,undef,$error) = $gene->Map(1)->row;
-	    } else {
-		if (my $m = $gene->get('Interpolated_map_position')) {
-		    ($chrom,$position,$error) = $m->right->row;
-		}
-	    }
-	}
-    }
-    
-    # Build a link to the genome browser. Not optimal here.
-    my ($start,$stop) = ($position-0.5,$position+0.5);
-=pod 
-    my $gb_url = 
-	$position
-	? a({-href=>"name=$chrom;class=Map;map_start=$start;map_stop=$stop"},
-	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error || 0))
-	: a({-href=>"name=$chrom;class=Map"},
-	    $chrom);
-#	$position
-#	? a({-href=>Url('pic',"name=$chrom;class=Map;map_start=$start;map_stop=$stop")},
-#	    sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error))
-#	: a({-href=>Url('pic',"name=$chrom;class=Map")},
-#	    $chrom);
-   
-    my $data = { description => 'the genetic position of the variation (if known)',
-		 data        => { chromosome => $chrom,
-				  position   => $position,
-				  error      => $error,
-				  gb_url     => $gb_url,
-		 },
-    };
-=cut
-    my ($id,$label);
-    if($position) {
-	$label= sprintf("$chrom:%2.2f +/- %2.3f cM",$position,$error || 0);
-	$id = "name=$chrom;map_start=$start;map_stop=$stop";
-    } else {
-	$label= $chrom;
-	$id = "name=$chrom";
-    }
-     
-    my $data = { description => 'the genetic position of the variation (if known)',
-		 data        => {  
-				  id   => $id,
-				  class      => 'Map',
-				  label     => $label,
-		 },
-    };
-    return $data;
-}
+
+=head2 Location
+
+=cut 
+
+
+# sub genetic_position {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include genetic_position >>
+
+
+
+
+
+
 
 
 # The genomic position and a link to the genome browser
+# SHOULD BE ABSTRACT
 sub genomic_position {
     my $self = shift;
     my $segment = $self->_get_genomic_segment(-key=>'wt_variation');
@@ -1387,7 +1164,6 @@ sub pull_phenotype_data {
 # GENETICS
 #  NEEDS: Mapping data
 ############################################################
-# TO DO: What if it is empty or not known? Perhaps DATA
 sub gene_class {
     my $self   = shift;
     my $object = $self->object;    
@@ -1519,56 +1295,12 @@ sub rescued_by_transgene {
 
 =head2 History
 
-=head3 laboratory
-
-This method will return a data structure containing
-the laboratory (and name of the lab representative)
-that generated the variation.
-
-=head4 PERL API
-
- $data = $model->laboratory();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a variation id (eg e345)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/e345/laboratory
-
-=head5 Response example
-
-<div class="response-example"></div>
-
 =cut
 
-# laboratory() is provided by Object.pm. It is included here for completeness of documentation.
-# sub laboratory {}
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
 
 
 sub isolated_by_author {

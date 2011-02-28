@@ -8,7 +8,7 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
-## headvar WormBase::API::Object::Homology_group
+WormBase::API::Object::Homology_group
 
 =head1 SYNPOSIS
 
@@ -18,14 +18,25 @@ Model for the Ace ?Homology_group class.
 
 http://wormbase.org/species/homology_group
 
-=head1 TODO
+=head1 METHODS/URIs
 
 =cut
 
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-###############
-## Overview
-###############
+=head2 Overview
+
+=cut
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+
 
 =head3 title
 
@@ -78,7 +89,6 @@ sub title {
     my $object = $self->object;
 	my $data_pack = $object->Title;
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Homology_group.pm
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'title for this homology_group'
@@ -269,114 +279,10 @@ sub protein {
 	return $data;
 }
 
-=head3 <headvar>
 
-<headvar>This method will return a data structure.... .
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head4 PERL API
-
- $data = $model-><headvar>();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Homology_group ID InP_Cae_006282
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/<headvar>
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub remark {
-
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Remark;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'remark re: homology group'
-				};
-	return $data;
-}
-=======
-=head3 name
-
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
->>>>>>> /tmp/Homology_group.pm~other.20-PX9
 
 1;

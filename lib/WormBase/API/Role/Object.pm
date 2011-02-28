@@ -3,6 +3,18 @@ package WormBase::API::Role::Object;
 use Moose::Role;
 use File::Path 'mkpath';
 
+# I should have an abstract method for id():
+# provided with a class and a name, return the internal ID, if different.
+
+# TODO:
+# Reconcile all the various versions of genomic_environs and genomic_picture
+# Test interpolated_genetic_position
+# Add in support for genomic position
+# Synonym (other_name?)
+# common name: Short_name || common_name || Public_name
+# Database and DB_Info parsing
+# Phenotypes observed/not_observed
+
 has 'MAX_DISPLAY_NUM' => (
       is => 'ro',
       default => 10,
@@ -30,6 +42,913 @@ has 'tmp_base' => (
 has 'pre_compile' => (
     is => 'ro',
     );
+
+#######################################################
+#
+# Generic methods
+#
+#######################################################
+
+
+################
+#  Names
+################
+
+=head3 name
+
+This method will return a data structure of the 
+name and ID of the requested object.
+
+=head4 PERL API
+
+ $data = $model->name();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/name
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% name %]
+
+has 'name'     => (
+    is         => 'ro',
+    default    => sub {
+	my $self   = shift;
+	my $object = $self->object;
+	my $class  = $object->class;
+	my $tag    = $self->_common_name_tag($object->class);
+
+	my $label  = $tag ? $object->$tag : $object->name;
+
+	return {
+	    description => "The name and WormBase internal ID of a $class object",
+	    data        =>  $self->_pack_obj($object,$label),
+	};
+    }
+    );
+
+
+
+=head3 common_name
+
+This method will return a data structure containing
+the common (public) name of the object. Almost totally
+redundant with name().
+
+=head4 PERL API
+
+ $data = $model->common_name();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and an object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/common_name
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% common_name %]
+
+has 'common_name' => (
+    is   => 'ro',
+    lazy_build => 1,
+    );
+
+sub _build_common_name {
+    my $self   = shift;
+    my $object = $self->object;
+    my $tag    = $self->_common_name_tag($object->class);
+    
+    my $label  = $tag ? $object->$tag : $object->name;
+    return { description => 'the common name of the object which may be the object name',
+	     data        => $self->_pack_obj($object,$label),
+    };
+}
+
+
+=head3 other_names
+
+This method will return a data structure containing
+other names that have been used to refer to the object.
+
+=head4 PERL API
+
+ $data = $model->other_names();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and an object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/other_names
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% other_names %]
+
+has 'other_names' => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+
+sub _build_other_names {
+    my $self = shift;
+    my $object = $self->object;
+    my @names = $object->Other_name;
+    
+    # We will just stringify other names; no sense in linking them.
+    @names = map { "$_" } @names;
+    return { description => "other names that have been used to refer to $object",
+	     data        => @names ? \@names : undef };
+}
+
+=head3 description
+    
+This method will return a data structure containing
+a brief description of the object.
+    
+=head4 PERL API
+    
+  $data = $model->description();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/description
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% description %]
+
+has 'description'  => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+sub _build_description { 
+    my $self    = shift;
+    my $object  = $self->object;
+    my $class   = $object->class;
+    my $tag;
+    if ($class eq 'Sequence') {
+	$tag = 'Title';
+    } else {
+	$tag = 'Description';
+    }
+    my $description = $object->$tag;
+    return { description  => "description of the $class $object",
+	     data         => "$description" || undef,
+    };
+	     
+#    my $data = { description => "description of the $class $object",
+#		 data        => { description => $description ,
+#				  evidence    => { check=>$self->check_empty($description),
+#						   tag=>"Description",
+#				  },
+#		 }
+#    };
+#   return $data;
+
+}
+
+=head3 genetic_position
+
+This method returns a data structure containing
+the genetic position of the requested object, if known.
+
+=head4 PERL API
+
+ $data = $model->genetic_position();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% genetic_position %]
+
+has 'genetic_position' => (
+    is    => 'ro',
+    lazy_build => 1
+    );
+
+
+sub _build_genetic_position {
+  my ($self) = @_;
+  my $object = $self->object;
+  my $class  = $object->class;
+  my ($chromosome,$position,$error,$method);
+
+  # CDSs and Sequence are only interpolated
+  if ($class eq 'CDS' || $class eq 'Sequence') {
+      if ($object->Interpolated_map_position) {
+	  ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
+	  $method = 'interpolated';
+      } else {
+	  # Try fetching from the gene
+	  if (my $gene = $object->Gene) {
+	      $chromosome = $gene->get(Map=>1);
+	      $position   = $gene->get(Map=>3);
+	      $method = 'interpolated';
+	  }
+      }
+  } else {
+      ($chromosome,undef,$position,undef,$error) = eval{$object->Map(1)->row};
+      $method = 'experimentally determined' if $chromosome;
+  }
+
+  # Nothing yet? Trying fetching interpolated position.
+  unless ($chromosome) {
+      if ($object->Interpolated_map_position) {
+	  ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
+	  $method = 'interpolated';
+      }
+  }
+
+  my $label;
+  if ($position) {
+      $label= sprintf("$chromosome:%2.2f +/- %2.3f cM",$position,$error || 0);      
+  } else {
+      $label = $chromosome;
+  }
+  
+  return { description => "the genetic position of the $class:$object",
+	   data        => { chromosome => "$chromosome",
+			    position    => "$position",
+			    error       => "$error",
+			    formatted   => "$label",
+			    method      => "$method",
+	   },
+  };
+}
+
+
+######## NOT IN USE AND LIKELY NO LONGER NEEDED
+
+
+=head3 genetic_position_interpolated
+
+This method returns a data structure containing
+the genetic position of the requested object, if known.
+
+=head4 PERL API
+
+ $data = $model->genetic_position_interpolated();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position_interpolated
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% interpolated_genetic_position %]
+
+has 'genetic_position_interpolated' => (
+    is => 'ro',
+    lazy_build => 1
+    );
+
+
+sub _build_genetic_position_interpolated {
+  my ($self) = @_;
+  my $object = $self->object;
+  my ($chrom,$pos,$error);
+  for my $cds ($object->Corresponding_CDS) {
+    ($chrom,$pos,$error) = $self->_get_interpolated_position($cds);
+    last if $chrom;
+  }
+  return { description => 'the interpolated genetic position of the object',
+	   data        => { chromosome         => "$chrom",
+			    position            => "$pos",
+			    formatted_position => sprintf("%s:%2.2f",$chrom,$pos)
+	   },
+  }
+}
+
+# get the interpolated position of a sequence on the genetic map
+# returns ($chromosome, $position,$error)
+# position is in genetic map coordinates
+# This MIGHT also be the actual experimental position
+sub _get_interpolated_position {
+  my ($self,$object) = @_;
+  $object ||= $self->object;
+  if ($object){
+    if ($object->class eq 'CDS') {
+      # Is it a query
+      # wquery/genelist.def:Tag Locus_genomic_seq
+      # wquery/new_wormpep.def:Tag Locus_genomic_seq
+      # wquery/wormpep.table.def:Tag Locus_genomic_seq
+      # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
+      
+      # Fetch the interpolated map position if it exists...
+      # if (my $m = $object->get('Interpolated_map_position')) {
+      if (my $m = eval {$object->get('Interpolated_map_position') }) {
+	#my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
+	my ($chromosome,$position) = $m->right->row;
+	return ($chromosome,$position) if $chromosome;
+      } elsif (my $l = $object->Gene) {
+	return $self->_get_interpolated_position($l);
+      }
+    } elsif ($object->class eq 'Sequence') {
+      #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
+      my $chromosome = $object->get(Interpolated_map_position=>1);
+      my $position   = $object->get(Interpolated_map_position=>2);
+      return ($chromosome,$position) if $chromosome;
+    } else {
+      my $chromosome = $object->get(Map=>1);
+      my $position   = $object->get(Map=>3);
+      return ($chromosome,$position) if $chromosome;
+      if (my $m = $object->get('Interpolated_map_position')) {	     
+	my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row unless $position;
+	($chromosome,$position) = $m->right->row unless $position;
+	return ($chromosome,$position,$error) if $chromosome;
+      }
+    }
+  }
+  return;
+}
+
+
+=head3 laboratory
+
+This method returns a data structure containing
+the lab affiliation or origin of the requested object,
+as well as the current lab representative.
+
+=head4 PERL API
+
+ $data = $model->laboratory();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/laboratory
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+# Template: [% laboratory %]
+
+has 'laboratory' => (
+    is           => 'ro',
+    lazy_build   => 1,
+    );
+
+# laboratory: Whenever a cross-ref to lab is needed.
+# Returns the lab as well as the current representative.
+# Used in: Person, Gene_class, Transgene
+# template: shared/fields/laboratory.tt2
+sub _build_laboratory {
+    my $self   = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+
+    # Ugh. Model inconsistencies.
+    my $tag;
+    if ($class eq 'Gene_class') {
+	$tag = 'Designating_laboratory';
+    } elsif ($class eq 'Pcr_olig' || $class eq 'Sequence') {
+	$tag = 'From_laboratory';
+    } elsif ($class eq 'Transgene' || $class eq 'Strain') {
+	$tag = 'Location';
+    } else {
+	$tag = 'Laboratory';
+    }
+    my $lab = $object->$tag;
+    my %data;
+    $data{laboratory} = $self->_pack_obj($lab);
+    if ($lab) {
+	my $representative = $lab->Representative;
+	my $name = $representative->Standard_name; 
+	my $rep = $self->_pack_obj($representative,$name);
+	$data{representative} = $rep if $rep;
+    }
+    
+    my $data = { description => "the laboratory where the $class was isolated, created, or named",
+		 data        => \%data };
+    return $data;		     
+}
+
+=head3 method
+
+This method will return a data structure containing
+the method used to describe or determine the object.
+
+=head4 PERL API
+
+ $data = $model->method();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/method
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% method %]
+
+has 'method'   => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+# The method used to describe the object
+sub _build_method {
+    my $self = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+    
+    my $method = $self->Method;
+    return {
+	description => "the method used to describe the $class",
+	data        => $method ? "$method" : undef,
+    };
+}
+
+=head3 remarks
+
+This method will return a data structure containing
+curator remarks about the requested object.
+
+=head4 PERL API
+
+ $data = $model->remarks();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/remarks
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% remarks %]
+
+has 'remarks'  => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+
+sub _build_remarks {
+    my $self    = shift;
+    my $object  = $self->object;
+#    my @remarks = grep defined, map { $object->$_ } qw/Remark/;
+    my @remarks = $object->Remark;
+    my $class = $object->class;
+
+    # Need to add in evidence handling.
+    my @evidence = map { $_->col } @remarks;
+
+    # TODO: handling of Evidence nodes
+    my $data    = { description  => "curatorial remarks for the $class",
+		    data         => @remarks ? \@remarks : undef,
+    };
+    return $data;
+}
+
+
+=head3 status
+
+This method will return a data structure containing
+the current status of the object.
+
+=head4 PERL API
+
+ $data = $model->status();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/status
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% status %]
+
+has 'status'   => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+
+sub _build_status {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $status  = $object->Status;
+    my $class   = $object->class;
+    my $data    = { description  => "current status of the $class:$object",
+		    data         => "$status",
+    };
+    return $data;
+}
+
+=head3 taxonomy
+
+This method will return a data structure containing
+the genus and species of the requested object.
+
+=head4 PERL API
+
+ $data = $model->taxonomy();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a class and object ID
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/taxonomy
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# Template: [% taxonomy %]
+
+has 'taxonomy' => (
+    is         => 'ro',
+    lazy_build => 1,
+    );
+
+# Parse out species "from a Genus species" string.
+sub _build_taxonomy {
+    my ($self,$genus_species) = @_;
+
+    # We may have already been passed a string to parse
+    unless ($genus_species) {
+	my $object = $self->object;
+	$genus_species = $object->Species;
+    }
+    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
+    my $data = { description => 'the genus and species of the current object',
+		 data        => { genus   => $genus,
+				  species => $species,
+		 }
+    };
+    return $data;
+}
+
+
+
+
+
+
+
+
+
+
+
+# Get the tag which stores the best common name of the object
+# Model varieagation.
+sub _common_name_tag {
+    my ($self,$class) = @_;
+    if ($class eq 'Person') {
+	return 'Standard_name';
+    } elsif ($class eq 'Gene') {
+	return 'Public_name';
+    }
+}
+
+
+
 
 sub mysql_dsn {
     my $self    = shift;
@@ -300,5 +1219,22 @@ sub hunter_url {
   }
   return $ref;
 }
+
+
+
+
+
+
+
+
+############################################################
+#
+# Generic Object methods
+#
+############################################################
+
+
+
+
 
 1;

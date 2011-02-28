@@ -4,81 +4,39 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=head3 name
+=pod 
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+=head1 NAME
 
-=head4 PERL API
+WormBase::API::Object::GO_term
 
- $data = $model->name();
+=head1 SYNPOSIS
 
-=head4 REST API
+Model for the Ace ?GO_Term class.
 
-=head5 Request Method
+=head1 URL
 
-GET
+http://wormbase.org/species/go_term
 
-=head5 Requires Authentication
+=head1 METHODS/URIs
 
-No
+=cut
 
-=head5 Parameters
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-a Transgene ID (gmIs13)
+=head2 Overview
 
-=head5 Returns
+=cut
 
-=over 4
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=item *
 
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-sub id {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-	
-
-	$data_pack = {
-	
-		'id' => "$object",
-		'label' => "$object",
-		'Class' => 'GO_Term'
-	};
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
 
 
 sub term {
@@ -498,6 +456,8 @@ sub basic_package {
 	return \%package;
 }
 
+
+# Probably unnecessary
 sub public_name {
     
 	my ($object,$class) = @_;

@@ -33,55 +33,13 @@ http://wormbase.org/species/life_stage
 #
 #######################################
 
-=head3 name
+=head2 Overview
 
-This method will return a data structure of the 
-name and ID of the requested life stage.
+=cut
 
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-Life stage (eg embryo)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Provided by Object.pm; retain pod for complete documentation of the API
 # sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 =head3 substages
 
@@ -193,106 +151,14 @@ sub definition {
 	     description => 'brief definition  of the life stage', };
 }
 
-=head3 other_names
+# sub other_names { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
-This method will return a data structure containing
-a synonyms -- if any -- of the requested life stage.
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head4 PERL API
-
- $data = $model->other_names();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-Life stage (eg embryo)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/other_names
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Provided by Object.pm; retain POD for completeness of documentation.
-# sub other_names {} 
-
-
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the requested life stage.
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-Life stage (eg embryo)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/life_stage/embryo/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Provided by Object.pm, pod retained for completeness
-# sub remarks { }
 
 #######################################
 #

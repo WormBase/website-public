@@ -5,6 +5,36 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Expr_pattern
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Expr_pattern class.
+
+=head1 URL
+
+http://wormbase.org/species/expr_pattern
+
+=head1 TODO
+
+=head1 METHODS/URIs
+
+=cut
+
+#######################################
+#
+# The Overview widget 
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
 sub name {
     my ($self) = @_;
 	my $bestname = $self->bestname($self ~~ 'Gene');

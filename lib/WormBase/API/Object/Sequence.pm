@@ -9,6 +9,25 @@ use Bio::Graphics::Browser2::Markup;
 use vars qw($CHROMOSOME_TABLE_LENGTH);
 $CHROMOSOME_TABLE_LENGTH = 2_000_000;
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Sequence
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Sequence class.
+
+=head1 URL
+
+http://wormbase.org/species/sequence
+
+=head1 METHODS/URIs
+
+=cut
+
+
 has 'type' => (
     is  => 'ro',
     lazy_build => 1,
@@ -36,6 +55,7 @@ has 'sequence' => (
     }
    );
 
+# Role?
 has '_method' => (
     is		=> 'ro',
     lazy	=> 1,
@@ -43,7 +63,7 @@ has '_method' => (
 		my ($self) = @_;
 		return $self ~~ 'Method';
     },
-   );
+    );
 
 has 'genes' => (
     is  => 'ro',
@@ -129,7 +149,7 @@ sub _build_type {
     if ($s =~ /^cb\d+\.fpc\d+$/) {
 		$type = 'C. briggsae draft contig';
     }
-	elsif (is_gap($s)) {
+	elsif (_is_gap($s)) {
 		$type = 'gap in genomic sequence -- for accounting purposes';
     }
 	elsif (eval { $s->Genomic_canonical(0) }) {
@@ -159,7 +179,7 @@ sub _build_type {
 	elsif (eval { $s->AC_number }) {
 		$type = 'external sequence';
     }
-	elsif (eval{is_merged($s)}) {
+	elsif (eval{_is_merged($s)}) {
 		$type = 'merged sequence entry';
     }
 	elsif ($self->_method eq 'NDB') {
@@ -182,30 +202,41 @@ sub _build_type {
 # The Overview widget
 #
 ############################################################
-=head3 name
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+# sub name {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-=head4 PERL API
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
- $data = $model->name();
+=head3 sequence_type
 
-=head4 REST API
+This method will return a data structure containing
+which type of sequence the requested object is.
 
-=head5 Request Method
+=over
+
+=item PERL API
+
+ $data = $model->sequence_type();
+
+=item REST API
+
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
-a Transgene ID (gmIs13)
+A Sequence ID (eg JC8.10a)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -219,79 +250,161 @@ a Transgene ID (gmIs13)
 
 =back
 
-=head5 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/sequence_type
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
+=back
+
 =cut 
 
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-sub description {
+sub sequence_type {
     my ($self) = @_;
     return {
-		description => 'the description of the sequence, if available',
-		data		=> $self ~~ 'Title',
-	};
+	description => 'the general type of the sequence',
+	data        => $self->type,
+    };
 }
 
-sub sequence_type {
-	my ($self) = @_;
+=head3 identity
 
-	return {
-		description => 'the general type of the sequence',
-		data        => $self->type,
-	};
-}
+This method will return a data structure containing
+the brief identity of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->identity();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/identity
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub identity {
-	my ($self) = @_;
-
-	my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
-	$data .= ' (pseudogene)' if $data && $self->type eq 'pseudogene';
-
-	return {
-		description => 'the identity of the sequence',
-		data        => $data || undef,
-	};
+    my ($self) = @_;
+ 
+    # Cull a brief identification from each gene. Redundant with gene page and 
+    # not necessarily accurate if we are looking at a splice variant.
+    my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
+    $data .= ' (pseudogene)' if $data && $self->type eq 'pseudogene';
+    
+    return {
+	description => 'the identity of the sequence',
+	data        => $data || undef,
+    };
 }
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # I think these really only applies to coding sequences
-sub status {
-	my ($self) = @_;
-
-	my $status = $self ~~ 'Prediction_status';
-	return {
-		description => 'prediction status (only applicable to coding sequences)',
-		data        => $status ? "$status" : undef,
-	};
-}
-
-sub method {
-    my ($self) = @_;
-
-	my $method = $self->_method;
-	return {
-		description => 'the method used to describe the sequence',
-		data        => $method ? "$method" : undef,
+sub prediction_status {
+    my ($self) = @_;	
+    my $status = $self ~~ 'Prediction_status';
+    return {
+	description => 'prediction status (only applicable to coding sequences)',
+	data        => $status ? "$status" : undef,
     };
 }
 
 
-sub remarks {
-    my ($self) = @_;
-	my @remarks = map ucfirst, grep defined, map {$self ~~ $_} qw(Remark DB_remark);
+# sub method {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
 
-	return {
-		description => 'The Remarks of the sequence',
-		data        => @remarks ? \@remarks : undef,
-	};
-}
+
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 
 
@@ -300,6 +413,59 @@ sub remarks {
 # Genomic Region / Related sequences
 #
 ############################################################
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+
 sub corresponding_gene {
     my ($self) = @_;
 	my @genes = map { $self->_pack_obj($_, $_->Public_name) } @{$self ~~ '@Gene'};
@@ -310,6 +476,57 @@ sub corresponding_gene {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub matching_transcript {
 	my ($self) = @_;
 
@@ -319,6 +536,57 @@ sub matching_transcript {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub matching_cds {
 	my ($self) = @_;
 
@@ -327,6 +595,57 @@ sub matching_cds {
 		data        => $self ~~ 'Matching_CDS',
 	};
 }
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub corresponding_protein {
     my ($self) = @_;
@@ -338,6 +657,57 @@ sub corresponding_protein {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub matching_cdnas {
     my ($self) = @_;
 	my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
@@ -348,6 +718,56 @@ sub matching_cdnas {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # Eh?
 sub transcripts {
@@ -372,16 +792,62 @@ sub transcripts {
 # The Origin widget (origin, location, etc)
 #
 ############################################################
-sub origin {
-	my ($self) = @_;
-	my $origin = $self ~~ 'From_Laboratory';
-	my $data = $origin && $self->_pack_obj($origin, $origin->Mail);
 
-    return {
-		description => 'The origin of the sequence',
-		data        => $data || undef,
-    };
-}
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub available_from { # looks like the returned data should be part of the template...
 	my ($self) = @_;
@@ -396,6 +862,57 @@ sub available_from { # looks like the returned data should be part of the templa
 	    data => $data || undef,
 	};
 }
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub orfeome_assays {
     my ($self) = @_;
@@ -421,6 +938,57 @@ sub orfeome_assays {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub source_clone {
     my ($self) = @_;
     my $clone = $self ~~ 'Clone' || $self->sequence->Clone;
@@ -429,6 +997,57 @@ sub source_clone {
 		data        => $clone ? $clone->name : undef,
 	};
 }
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 
 sub genomic_position {
     my ($self) = @_;
@@ -445,29 +1064,64 @@ sub genomic_position {
     return $self->SUPER::genomic_position;
 }
 
-sub genetic_position {
-    my ($self) = @_;
 
-	my %data;
-	if ($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') {
-		my ($chrom,$pos) = $self->GetInterpolatedPosition($self->object);
-		if ($chrom && $pos) {
-			$pos = "$chrom:$pos";
-			%data = (
-				class => $chrom->class, #should be Map?
-				label => $pos,
-				id	  => "$chrom",
-			   );
-		}
-	}
-
-	return {
-		description => 'The Interpolated Genetic Position of the sequence',
-		data		=> %data ? \%data : undef,
-	};
-}
+# sub interpolated_genetic_position {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include interpolated_genetic_position >>
 
 
+
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub microarray_assays {
     my ($self) = @_;
@@ -486,6 +1140,57 @@ sub microarray_assays {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub transgene_constructs {
     my ($self) = @_;
     my %seen;
@@ -503,72 +1208,122 @@ sub transgene_constructs {
 #
 ############################################################
 
-=pod
-sub genomic_picture {
-    my ($self) = @_;
-    my $seq = $self->object;
-    return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
+=head3 prediction_status
 
-    my $source = $self->species;
-    my $segment = $self->segments->[0];
+This method will return a data structure containing
+the prediction status of the requested object.
 
-    my $ref   = $segment->ref;
-    my $start = $segment->start;
-    my $stop  = $segment->stop;
+=over
 
-    # add another 10% to left and right
-    $start = int($start - 0.05*($stop-$start));
-    $stop  = int($stop  + 0.05*($stop-$start));
-    my @segments;
-    if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
-	my $gene = eval { $seq->Gene;};
-	$gene ||= $seq;
-	@segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
-	@segments      = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq) unless @segments;  # CB discontinuity
-    }
-    # In cases where more than one segment is retrieved
-    # (ie with EST or OST mappings)
-    # choose that which matches the original segment.
-    # This is slightly bizarre but expedient fix.
-    my $new_segment;
-    if (@segments > 1) {
-    foreach (@segments) {
+=item PERL API
 
-	if ($_->start == $start && $_->stop == $stop) {
-	  $new_segment = $_;
-	  last;
-	}
-      }
-    }
-    $new_segment ||= $segments[0];
-    $new_segment ||= $segment;
-    return unless $new_segment;
+ $data = $model->prediction_status();
 
-    my $type = $source =~ /elegans/ ? "t=NG;t=CG;t=CDS;t=PG;t=PCR;t=SNP;t=TcI;t=MOS;t=CLO":"";
-    my $position = (defined $start)?"$ref:$start..$stop":$ref;
+=item REST API
 
-    my $link_gb=$self->parsed_species."?name=$position;$type;width=700";
-    my $id="name=$position;source=".$self->parsed_species;
-    my $data = { description => 'The Inline Image of the sequence',
-		 data        => {  class => 'genomic_location',
-				   label => $link_gb,
-				   id	=> $id,
-				},
-    };
+B<Request Method>
 
-    return $data;
-}
-=cut
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Genomic picture is provided by Role::Object.
+# Retain POD for complete documentation.
+
+
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub external_links {
     my ($self) = @_;
     my $s = $self->object;
 
-    my $ac_number = find_ac($s,'NDB');
+    my $ac_number = $self->_find_accession($s,'NDB');
     my $ac_protein = eval { $s->Protein_id(2);};
-    my $swissprot = find_swissprot($s);
-    my $wormpd_id = find_wormpd($s);
-    my $uniprot    = find_ac($s,'UniProt');
+    my $swissprot = $self->_find_swissprot($s);
+    my $wormpd_id = $self->_find_wormpd($s);
+    my $uniprot    = $self->_find_accession($s,'UniProt');
     my %ac_hash = %$uniprot;
 
     my %hash;
@@ -579,8 +1334,8 @@ sub external_links {
 
     }
 	else {
-		$ac_number = find_ac($s, 'EMBL');
-		$ac_number = find_ac($s, 'GenBank') if( keys(%{$ac_number}) == 0 );
+		$ac_number = $self->_find_accession($s, 'EMBL');
+		$ac_number = $self->_find_accession($s, 'GenBank') if( keys(%{$ac_number}) == 0 );
 
 		# Get the longtext for the DB. Should probably include the URL constructor too, oh well.
 		my ($source,@rest) = $s->DB_annotation if $s->class eq 'Sequence';
@@ -666,11 +1421,113 @@ sub external_links {
 	};
 }
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 ### to be written...... ####
 #sub print_long_description {
 #
 #}
 
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 ############## this is deprecated? ################
 # TH 2010.08.01: No, just not widly supported
@@ -701,6 +1558,57 @@ sub analysis {
 #
 ############################################################
 
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 ## returns 1 ??
 sub print_link_parts {
     my ($self) = @_;
@@ -710,6 +1618,57 @@ sub print_link_parts {
 		data        =>  1,
 	};
 }
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub print_blast {
     my ($self) = @_;
@@ -724,6 +1683,57 @@ sub print_blast {
 		},
 	};
 }
+
+=head3 prediction_status
+
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
 #       one would expect due to some Perl details...
@@ -835,7 +1845,56 @@ sub print_sequence {
 }
 
 
+=head3 prediction_status
 
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub print_homologies {
     my ($self) = @_;
@@ -919,7 +1978,56 @@ sub print_homologies {
 
 }
 
+=head3 prediction_status
 
+This method will return a data structure containing
+the prediction status of the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->prediction_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub print_feature {
     my ($self) = @_;
@@ -1030,11 +2138,11 @@ sub print_feature {
 #
 ############################################################
 
-sub is_gap {
+sub _is_gap {
     return shift =~ /(\b|_)GAP(\b|_)/i;
 }
 
-sub is_merged {
+sub _is_merged {
     return shift =~ /LINK|CHROMOSOME/i;
 }
 
@@ -1056,8 +2164,8 @@ sub _get_segments {
 	return  map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object);
 }
 
-sub find_ac {
-	my ($s,$node) = @_;
+sub _find_accession {
+	my ($self,$s,$node) = @_;
 	my %ids;
 	my @dbs = $s->Database;
 	foreach (@dbs) {
@@ -1070,8 +2178,8 @@ sub find_ac {
 	return (\%ids);
 }
 
-sub find_swissprot {
-    my $s = shift;
+sub _find_swissprot {
+    my ($self,$s) = @_;
     my @dbs = $s->Database;
     foreach (@dbs) {
 		next unless $_ eq 'TREMBL' or $_ eq 'SwissProt';
@@ -1095,12 +2203,12 @@ sub find_swissprot {
     return $swissprot;
 }
 
-sub find_wormpd {
-	my $s = shift;
-	return unless eval { $s->Coding };
-	my @genes = eval { $s->Locus };
-	return $genes[0] if @genes; # oh well
-	return $s;
+sub _find_wormpd {
+    my ($self,$s) = @_;
+    return unless eval { $s->Coding };
+    my @genes = eval { $s->Locus };
+    return $genes[0] if @genes; # oh well
+    return $s;
 }
 
 =pod already displayed genomic location(s) in the overview widgets... is this redundent?

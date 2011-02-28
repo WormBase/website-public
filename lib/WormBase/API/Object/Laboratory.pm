@@ -32,61 +32,11 @@ http://wormbase.org/resource/laboratory
 
 =head2 Overview
 
-=head3 name
+=cut
 
-This method will return a data structure of the 
-name and ID of the requested laboratory.
-
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Laboratory ID (eg EG)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/EG/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=back
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 
 =head3 affiliation

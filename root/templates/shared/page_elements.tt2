@@ -591,6 +591,13 @@ if (typeof(_gat) == 'object') {
 END;
 %]
 
+[% MACRO common_name BLOCK;
+   WRAPPER $field_block title="Common name" key="common_name";
+      tag2link(fields.name.data);
+   END;
+END;
+%]
+
 [% MACRO other_names BLOCK; 
       WRAPPER $field_block title="Other names" key="other_names";
            FOREACH name IN fields.other_names.data;
@@ -598,6 +605,27 @@ END;
               "<br /";
            END;
       END;
+END;
+%]
+
+
+[% MACRO genetic_position BLOCK ;
+     WRAPPER $field_block title="Genetic position" key="genetic_position";
+         fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
+
+#     fields.genetic_position.data.chromosome _ ': ' _ fields.genetic_position.data.position;
+#       IF fields.genetic_position.data.error;
+#          "+/-";
+#          fields.genetic_position.data.error;
+#       END;
+#    if ($position == 0) {
+#            $label = $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;
+#        } else {
+#            $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
+
+
+
+    END;
 END;
 %]
 
@@ -643,20 +671,22 @@ END;
  END;
 %]
 
-[% MACRO species BLOCK; 
-   # Don't display unless we have a genus and species
-   IF fields.taxonomy.data.genus;
-      WRAPPER $field_block title="Species" key="taxonomy";
-          taxonomy(fields.taxonomy.data.genus, fields.taxonomy.data.species);
-      END;
-   END;
-END;
-%]
-
 [% MACRO status BLOCK; 
       WRAPPER $field_block title="Status" key="status";
            fields.status.data;
       END;
+END;
+%]
+
+[% MACRO taxonomy BLOCK; 
+   # Don't display unless we have a genus and species
+   IF fields.taxonomy.data.genus;
+      WRAPPER $field_block title="Species" key="taxonomy";
+          '<span class="species">';
+          fields.taxonomy.data.genus _ ' ' _ fields.taxonomy.data.species;
+          '</span>';
+      END;
+   END;
 END;
 %]
 
@@ -718,10 +748,6 @@ END;
 			         # enter data in row
 	                         row.push(val);
       		           END;
-#		       row.push(r.species);
-#                       row.push(tag2link(r.locus));
-#                       row.push(r.sequence);
-					
 		           # enter data row array into rows
                            rows.push(row);
                  END;

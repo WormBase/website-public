@@ -4,109 +4,40 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'ao_template' => (    
-	is  => 'ro',
-    isa => 'Ace::Object',
-    lazy => 1,
-    default => sub {
-    	
-    	my $self = shift;
-    	my $ao_object = $self->pull;
-    	return $ao_object;
-  	}
-);
+=pod 
 
+=head1 NAME
 
+WormBase::API::Object::Expr_profile
 
-=head3 name
+=head1 SYNPOSIS
 
-This method will return a data structure of the 
-name and ID of the requested transgene.
+Model for the Ace ?Expr_profile class.
 
-=head4 PERL API
+=head1 URL
 
- $data = $model->name();
+http://wormbase.org/species/expr_profile
 
-=head4 REST API
+=head1 METHODS/URIs
 
-=head5 Request Method
+=cut
 
-GET
+#######################################
+#
+# The Overview widget 
+#
+#######################################
 
-=head5 Requires Authentication
+=head2 Overview
 
-No
+=cut
 
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# Supplied by Object.pm; retain pod for complete documentation of API
 # sub name {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-#######
 
-sub template {
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-### mainly for text data; and single layer hash ###
-
-sub template_simple {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Tag;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 #####################
 # DEVELOPMENT NOTES #
@@ -257,76 +188,15 @@ sub expr_map {
 }
 
 
-# Add to wormbase.conf: remarks; supplied by Object.pm
-# remarks() provided by Object.pm. We retain here for completeness of the API documentation.
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head3 remarks
 
-This method will return a data structure containing
-curatorial remarks for the gene class.
+# sub method {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
 
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-A Gene class (eg unc)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/unc/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub remarks { }
-
-sub method {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Method;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
 
 sub rnai {
 

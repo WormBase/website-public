@@ -5,7 +5,7 @@
 
 [% WRAPPER highlight_box %]
 
-   [% species %]
+   [% taxonomy %]
 
    [% WRAPPER $field_block title="Summary" key="summary" %]
       [% fields.summary.data %]
