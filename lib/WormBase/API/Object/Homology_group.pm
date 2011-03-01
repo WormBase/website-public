@@ -8,6 +8,7 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
+
 WormBase::API::Object::Homology_group
 
 =head1 SYNPOSIS
@@ -28,19 +29,9 @@ http://wormbase.org/species/homology_group
 #
 #######################################
 
-=head2 Overview
-
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-
-
 =head3 title
 
-<headvar>This method will return a data structure with this Homology_groups title
+This method will return a data structure with this Homology_groups title
 =head4 PERL API
 
  $data = $model->title();
@@ -88,7 +79,6 @@ sub title {
 	my $self = shift;
     my $object = $self->object;
 	my $data_pack = $object->Title;
-
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'title for this homology_group'
@@ -103,7 +93,7 @@ sub title {
 
 =head3 group_type
 
-<headvar>This method will return a data structure with info on the group type.
+This method will return a data structure with info on the group type.
 
 =head4 PERL API
 
@@ -147,12 +137,31 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/homolog
 
 =cut
 
-#<todo> sub group_type {}
+
+sub group_type {
+	my $self = shift;
+    my $object = $self->object;
+	my $homology_group = $object->Homology_group;
+	my $homology_code;
+	
+	if ($homology_group =~ /COG/) {
+		$homology_code = $object->COG_code;
+	}
+	my data_pack = {
+		'homology_group' => "$homology_group",
+		'cog_code' => $homology_code
+	};
+	my $data = {
+		'data'=> $data_pack,
+		'description' => 'type of homology_group'
+		};
+	return $data;
+}
 
 
 =head3 go_term
 
-<headvar>This method will return a data structure for go terms related to this homology group
+This method will return a data structure for go terms related to this homology group
 
 =head4 PERL API
 
@@ -204,7 +213,7 @@ sub go_term {
 
 	foreach my $go_term (@go_terms) {
 		my $gt_info = _pack_obj($go_term);
-		push, @data_pack, $gt_info;
+		push @data_pack, $gt_info;
 	}
 	
 	my $data = {
@@ -280,6 +289,150 @@ sub protein {
 }
 
 
+=head3 remarks
+
+This method will return a data structure with remarks re: this homology_group
+
+=head4 PERL API
+
+ $data = $model->remarks();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a Homology_group ID InP_Cae_006282
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/remarks
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+
+
+=head3 name
+
+This method will return a data structure of the 
+name and ID of the requested transgene.
+
+=head4 PERL API
+
+ $data = $model->name();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a Transgene ID (gmIs13)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+=head3 remarks
+
+This method will return a data structure with remarks re: this homology_group
+
+=head4 PERL API
+
+ $data = $model->remarks();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+a Homology_group ID InP_Cae_006282
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/remarks
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
