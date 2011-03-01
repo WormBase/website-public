@@ -75,7 +75,7 @@ sub length {
 	};
 }
 
-sub map {
+sub map { # needs a look
 	my ($self) = @_;
 
 	my $map = $self ~~ '@Map';
@@ -91,17 +91,17 @@ sub map {
 sub sequence_status {
 	my ($self) = @_;
 
-	my %status = map { $_ => $_->right->name } @{$self ~~ 'Sequence_status'};
+	my @status = map { $_->name } @{$self ~~ '@Sequence_status'};
 	return {
 		description => 'Sequence status of clone',
-		data		=> %status ? \%status : undef;
+		data		=> @status ? \@status : undef,
 	};
 }
 
 sub canonical_for {
 	my ($self) = @_;
 
-	my $canonical = $self->_pack_obj($self ~~ '@Canonical_for');
+	my $canonical = $self->_pack_objects($self ~~ '@Canonical_for');
 	return {
 		description => 'Canonical for',
 		data		=> %$canonical ? $canonical : undef,
@@ -119,7 +119,7 @@ sub canonical_parent {
 
 	return {
 		description => 'Canonical parent for clone',
-		data		=> \@canonical_parent,
+		data		=> @canonical_parent ? \@canonical_parent : undef,
 	}
 }
 
