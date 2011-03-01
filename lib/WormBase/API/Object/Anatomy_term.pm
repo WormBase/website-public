@@ -12,161 +12,316 @@ WormBase::API::Object::Anatomy_term
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Anatomy_term class.
+Model for the Ace ?Gene class.
 
 =head1 URL
 
-http://wormbase.org/species/anatomy_term
+http://wormbase.org/species/gene
 
 =head1 METHODS/URIs
 
 =cut
 
-#######################################
-#
-# The Overview Widget
-#
-#######################################
+################
+## subroutines
+################
 
-=head2 Overview
+=head2 name
+
+This method will return a data structure re: definition of this name.
+
+=head3 PERL API
+
+ $data = $model->name();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/name
+
+=head4 Response example
+
+<div class="response-example"></div>
 
 =cut
+
 
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
 
-#####################
-## identification
-#####################
+=head2 definition
 
-sub term {
+This method will return a data structure re: definition of this anatomy_term.
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
+=head3 PERL API
 
-	#### data pull and packaging
-	
-	my $term = $object->Term;
+ $data = $model->definition();
 
-	$data_pack = {
-	
-		'id' =>"$object",
-		'label' =>"$term",
-		'Class' => 'AO_term'
-	};
+=head3 REST API
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+=head4 Request Method
 
-}
+GET
 
-## TODO: evidence may need to be added in display
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/definition
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub definition {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-
-	#### data pull and packaging
-
-	$data_pack = $object->Definition;
-
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	my $data_pack = $object->Definition;
+	my $data = {
+				'data'=> $data_pack,
+				'description' => 'definition of the anatomy term'
+				};
+	return $data;
 }
 
-## TODO: evidence may need to be added in display
+=head2 synonyms
+
+This method will return a data structure re: synonyms this anatomy_term.
+
+=head3 PERL API
+
+ $data = $model->synonyms();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub synonyms {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
 	my @data_pack;
+	my @tag_objects = $object->Synonym;
 
-	#### data pull and packaging
-	
-	my @data_pack = $object->Synonym;
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	foreach my $tag_object (@tag_objects) {
+		my $synonym = $tag_object->Primary_name->right if $tag_object->Primary_name;
+		my $tag_info = $self->_pack_obj($synonym);
+		push, @data_pack, $tag_info;
+	}
+	my $data = {
+				'data'=> \@data_pack,
+				'description' => 'description of the'
+				};
+	return $data;
 }
+
+=head2 remarks
+
+This method will return a data structure with remarks re: this term.
+
+=head3 PERL API
+
+ $data = $model->remarks();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/remarks
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-
 ## sub anatomy {}  figure out image displaying functions
 
-sub worm_atlas {
+## sub worm_atlas {} put under external resources
 
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
 
-	#### data pull and packaging
+=head2 transgenes
 
-	$data_pack = $object->URL;
+This method will return a data structure re: transgenes annotated with this anatomy_term.
 
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
+=head3 PERL API
+
+ $data = $model->transgenes();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub transgenes {
-
 	my $self = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-
 	my @transgenes;
-
+	my @data_pack;
 	eval{@transgenes = map{$_->Transgene} grep {/marker/i&& defined $_->Transgene} $term->Expr_pattern;};
 
 	foreach $transgene (@transgenes) {
-	
 		my $transgene_data = {
 			'id' =>"$transgene",
 			'label' =>"$transgene",
 			'class' => 'Transgene'
 		}
-	
 		push @data_pack, $transgene_data;
 	}
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'transgenes annotated with this anatomy_term'
+		};
+	return $data;		
 	
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
 }
 
 #####################
@@ -181,442 +336,394 @@ sub transgenes {
 ## associations
 ####################
 
-sub expr_patterns{
+=head2 expr_patterns
 
+This method will return a data structure re: expr_patterns annotated with this anatomy_term.
+
+=head3 PERL API
+
+ $data = $model->expr_patterns();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/expr_patterns
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub expr_patterns{
 	my $self = shift;
     my $object = $self->object;
-	my %data;
 	my $desc = 'notes';
 	my @data_pack;
-
-	#### data pull and packaging
-	
 	my @expr_patterns = $object->Expr_pattern;
 	
 	foreach my $expr_pattern (@expr_patterns) {
-	
 		my $ep_data = {
-		
-		'id' =>"$expr_pattern",
-		'label' =>"$expr_pattern",
-		'Class' => 'Expr_pattern'			
-		
+			'id' =>"$expr_pattern",
+			'label' =>"$expr_pattern",
+			'Class' => 'Expr_pattern'				
 		};
-	}
-
-	push @data_pack, $ep_data;
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub go_terms{
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	my @go_terms = $object->GO_term;
-	
-	foreach my $go_term (@go_terms) {
-	
-		my $term = $go_term->Term;
-		my $gt_data = {
-		
-			'id' =>"$go_term",
-			'label' =>"$term",
-			'Class' => 'GO_term'			
-		};
-	}
-
-	push @data_pack, $gt_data;
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub anatomy_functions{
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-
-	my @anatomy_functions = $object->Anatomy_function;
-	
-	foreach my $anatomy_function (@anatomy_functions) {
-	
-		my $af_data = {
-		
-			'id' =>"$anatomy_function",
-			'label' =>"$anatomy_function",
-			'Class' => 'Anatomy_function'			
-		};
-	}
-
-	push @data_pack, $af_data;
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub anatomy_function_nots {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-
-	my @anatomy_functions = $object->Anatomy_function_not;
-	
-	foreach my $anatomy_function (@anatomy_functions) {
-	
-		my $af_data = {
-		
-			'id' =>"$anatomy_function",
-			'label' =>"$anatomy_function",
-			'Class' => 'Anatomy_function'			
-		};
-	}
-
-	push @data_pack, $af_data;
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-sub expression_clusters{
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-
-	#### data pull and packaging
-	my @expression_clusters = $object->Expression_cluster;
-	
-	foreach my $expression_cluster (@expression_clusters) {
-	
-		my $ec_data = {
-		
-		'id' =>"$expression_cluster",
-		'label' =>"$expression_cluster",
-		'Class' => 'Expression_cluster'			
-		
-		};
-	}
-
-	push @data_pack, $ec_data;
-
-	####
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-####################
-## superceded
-####################
-
-
-sub details {
-
-  my $self = shift;
-  my $term = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my $data_pack;
-
-  #### data pull and packaging
-  
-  my $ao_term = $term->Term;
-  my $definition = $term->Definition;
-  my $synonym = $term->Synonym;
-  my $remark = $term->Remark;
-  my $url = $term->URL;
-
-  $data_pack = {
-  				'ace_id' =>$term,
-  				'term' => $ao_term,
-  				'definition' => $definition,
-  				'synonym' => $synonym,
-  				'remark' => $remark,
-  				'url' => $url,
-  				};
-  ####
-
-  $data{'data'} = $data_pack;
-  $data{'description'} = $desc;
-  return \%data;
-}
-
-
-sub expr_patterns{
-
-  my $self = shift;
-  my $object = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my %data_pack;
-
-		  #### data pull and packaging
-
-	my @eps = $object->Expr_pattern;
-		
-		foreach my $expr_pattern (@eps) {
-		
 		my $ep_gene;
 		my $ep_pattern;
 		my $ep_xgene;
 		
 		eval {$ep_gene= $expr_pattern->Gene};
 		eval {$ep_pattern= $expr_pattern->Pattern};
-		eval {$ep_xgene= $expr_pattern->Transgene};
+		eval {$ep_xgene = $expr_pattern->Transgene};		
 		
+		my $gene_data = $self->_pack_obj($ep_gene) if $ep_gene;
+		my $ep_pattern_data = $self->_pack_obj($ep_pattern) if $ep_pattern;
+		my $ep_transgene_data = $self->_pack_obj($ep_xgene) if $ep_xgene;
 		
-		my $gene_name = public_name($ep_gene,'Gene');
-		
-		
-		$data_pack{$expr_pattern} = (
-									'expr_pattern' => $expr_pattern,
-									'gene' => {
-												'ace_id' => $ep_gene,
-												'name' => $gene_name,
-												'class' => 'Gene'
-												},
-									'pattern' => $ep_pattern,
-									'transgene' =>{
-													'xgene_id' => $ep_xgene,
-													'class' => 'Transgene'
-													}
-									);
+		push @data_pack, {
+			'ep_data' => $ep_data,
+			'gene' => $gene_data,
+			'pattern' => ep_pattern_data,
+			'trans_gene' => $ep_transgene_data		
+			};
 	}
-
-  ####
-
-  $data{'data'} = \%data_pack;
-  $data{'description'} = $desc;
-  return \%data;
+	
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'expr_patterns annotated with this anatomy_term'
+		};
+	return $data;
 }
 
+=head2 go_terms
 
+<headvar>This method will return a data structure re: go_terms annotated to this anatomy_term.
 
-sub go_terms {
+=head3 PERL API
 
-  my $self = shift;
-  my $object = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my %data_pack;
+ $data = $model->go_terms();
 
-  #### data pull and packaging
+=head3 REST API
 
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/go_terms
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub go_terms{
+	my $self = shift;
+    my $object = $self->object;
+	my $desc = 'notes';
+	my @data_pack;
 	my @go_terms = $object->GO_term;
-	
 	foreach my $go_term (@go_terms) {
+		my $term = $go_term->Term;
+		my $ao_code = $go_term->right;
+		my $gt_data = {
+			'id' =>"$go_term",
+			'label' =>"$term",
+			'Class' => 'GO_term'			
+		};
+		push @data_pack, {
+				'term' => $gt_data,
+				'ao_code' => "$ao_code"
+			};
+	}
 	
-	my $term = $go_term->Term;
-	my $type = $go_term->Type;
-	my $ao_code = $go_term->right;
-	
-	$data_pack{$go_term} = {
-							'ace_id' => $go_term,
-							'term' => $term,
-							'ao_code' => $ao_code,
-							'class' => 'GO_term'
-							}
-	};
-	
-	
-  ####
-
-  $data{'data'} = \%data_pack;
-  $data{'description'} = $desc;
-  return \%data;
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'go_terms associated with this anatomy_term'
+		};
+	return $data;
 }
 
+=head2 anatomy_function 
 
+<headvar>This method will return a data structure re: anatomy_function associated with this anatomy_term.
 
-#sub reference {
+=head3 PERL API
 
-#  my $self = shift;
-#  my $object = $self->object;
-#  my %data;
-#  my $desc = 'notes';
-#  my %data_pack;
+ $data = $model->anatomy_function();
 
-#  #### data pull and packaging
+=head3 REST API
 
-#  ####
+=head4 Request Method
 
-#  $data{'data'} = \%data_pack;
-#  $data{'description'} = $desc;
-#  return \%data;
-#}
+GET
 
+=head4 Requires Authentication
 
-#sub ao_evidences {
-#
-#	my $evidences_hr;
-#	my @tags = /GO_term /;
-#	$evidences_hr = _get_evidences(@tags);
-#	return $evidences_hr;
-#}
+No
 
+=head4 Parameters
 
+a Anatomy_term ID WBbt:0005175
 
-sub anatomy_fn {
+=head4 Returns
 
-  my $self = shift;
-  my $object = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my %data_pack;
+=over 4
 
-	my @anatomy_funtions = $object->Anatomy_function;
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/anatomy_function
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub anatomy_functions {
+	my $self = shift;
+    my $object = $self->object;
+	my @data_pack;
+	my @anatomy_functions = $object->Anatomy_function;
 	
-	foreach my $af (@anatomy_funtions) {
-		
-		my $phenotype = $af->Phenotype;
+	foreach my $anatomy_function (@anatomy_functions) {
+		my $phenotype = $anatomy_function->Phenotype;
 		my $phenotype_name = $phenotype->Primary_name;
 		my $gene = eval{$af->Gene;};
-		my $gene_name = eval{public_name($gene);};
-		my $af_not;
-	
-		$data_pack{$af} = {
-							'ace_id' => $af,
-							'phenotype' => {
-								 			'phenotype_id' => $phenotype,
-								 			'phenotype_name' => $phenotype_name,
-								 			'class' => 'phenotype'
-											},
-							'gene' => {
-										'gene_id' => $gene,
-										'gene_name' => $gene_name,
-										'class' => 'Gene'
-										},
-							'not' => $af_not
-							};
+		my $gene_data = $self->_pack_obj($gene) if $gene;
+
+		push @data_pack, {
+			'af_data' => {
+				'id' =>"$anatomy_function",
+				'label' =>"$anatomy_function",
+				'Class' => 'Anatomy_function'			
+			},						
+			'phenotype' => {
+				'id' => $phenotype,
+				'label' => $phenotype_name,
+				'class' => 'phenotype'
+			},
+			'gene' => $gene_data
+		};	
 	}
-
 	
-
-
-  $data{'data'} = \%data_pack;
-  $data{'description'} = $desc;
-  return \%data;
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'anatomy_functions associatated with this anatomy_term'
+		};
+	return $data;
 }
 
-sub expr_clusters {
+=head2 anatomy_function_nots
 
-  my $self = shift;
-  my $object = $self->object;
-  my %data;
-  my $desc = 'notes';
-  my %data_pack;
+<headvar>This method will return a data structure re:anatomy_function_nots associated with this anatomy_term.
 
+=head3 PERL API
 
-	my @expr_clusters = $object->Expression_cluster;
+ $data = $model->anatomy_function_nots();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/anatomy_function_nots
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub anatomy_function_nots {
+	my $self = shift;
+    my $object = $self->object;
+	my @data_pack;
+	my @anatomy_functions = $object->Anatomy_function_not;
 	
-	foreach my $ec (@expr_clusters) {
-	
-		my $ec_description = $ec->Description;
-	
-		$data_pack{$ec} = {
-		
-						'expr_cluster_id' => $ec,
-						'class' => 'Expression_cluster',
-						'description' => $ec_description
-						}
+	foreach my $anatomy_function (@anatomy_functions) {
+		my $phenotype = $anatomy_function->Phenotype;
+		my $phenotype_name = $phenotype->Primary_name;
+		my $gene = eval{$af->Gene;};
+		my $gene_data = $self->_pack_obj($gene) if $gene;
+
+		push @data_pack, {
+			'af_data' => {
+				'id' =>"$anatomy_function",
+				'label' =>"$anatomy_function",
+				'Class' => 'Anatomy_function'			
+			},						
+			'phenotype' => {
+				'id' => $phenotype,
+				'label' => $phenotype_name,
+				'class' => 'phenotype'
+			},
+			'gene' => $gene_data
+		};	
 	}
-
-  $data{'data'} = \%data_pack;
-  $data{'description'} = $desc;
-  return \%data;
-}
-
-
-
-
-### copied and pasted, need to get to work in Object.pm
-
-
-sub basic_package {
-
-	my ($self,$data_ar) = @_;
-	my %package;
 	
-	foreach my $object (@$data_ar) {
-				
-				
-				my $class;
-				eval{$class = $object->class;};
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'anatomy_functions not associated with this anatomy_term'
+		};
+	return $data;
+}
+=head2 expression_clusters
 
-				my $common_name = public_name($object,$class);  ## 
-				$package{$object} = 	{
-										'class' => $class,
-										'label' => $common_name,
-                                                                                'id' => "$object"
-										}	
+<headvar>This method will return a data structure re: expression_clusters associated with this anatomy_term.
+
+=head3 PERL API
+
+ $data = $model->expression_clusters();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Anatomy_term ID WBbt:0005175
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/expression_clusters
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub expression_clusters {
+	my $self = shift;
+    my $object = $self->object;
+	my $desc = 'notes';
+	my @data_pack;
+	my @expression_clusters = $object->Expression_cluster;
+	foreach my $expression_cluster (@expression_clusters) {
+		my $ec_description = $expression_cluster->Description;
+		my $ec_data = {
+			'id' =>"$expression_cluster",
+			'label' =>"$expression_cluster",
+			'Class' => 'Expression_cluster'			
+		};
+		push @data_pack, {
+			'ec_data' => $ec_data,
+			'description' => $ec_description
+		};
 	}
-	return \%package;
+	my $data = {
+		'data'=> \@data_pack,
+		'description' => 'expression_clusters associated with this anatomy_term'
+		};
+	return $data;
 }
-
-sub public_name {
-    
-	my ($object,$class) = @_;
-    my $common_name;    
-   
-    if ($class =~ /gene/i) {
-		$common_name = 
-		$object->Public_name
-		|| $object->CGC_name
-		|| $object->Molecular_name
-		|| eval { $object->Corresponding_CDS->Corresponding_protein}
-		|| $object;
-    }
-    elsif ($class =~ /protein/i) {
-    	$common_name = 
-    	$object->Gene_name
-    	|| eval { $object->Corresponding_CDS->Corresponding_protein}
-    	||$object;
-    }
-    else {
-    	$common_name = $object;
-    }
-	
-	my $data = $common_name;
-    return $data;
-
-
-}
-
-#####################
-## internal methods
-#####################
-
-
 
 
 1;
