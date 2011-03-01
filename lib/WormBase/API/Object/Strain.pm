@@ -12,23 +12,15 @@ WormBase::API::Object::Strain
 
 =head1 SYNPOSIS
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-Model for the Ace ?Motif class.
-=======
 Model for the Ace ?Strain class.
->>>>>>> /tmp/Strain.pm~other.L38ZsN
 
 =head1 URL
 
 http://wormbase.org/species/strain
 
-=head1 TODO
-
 =head1 METHODS/URIs
 
 =cut
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-=======
 
 #######################################
 #
@@ -38,261 +30,21 @@ http://wormbase.org/species/strain
 
 =head2 Overview
 
-=head3 name
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
-This method will return a data structure of the 
-name and ID of the requested strain.
+# sub taxonomy { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include taxonomy >>
 
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
->>>>>>> /tmp/Strain.pm~other.L38ZsN
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-###########
-## OVERVIEW
-############
-=======
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Supplied by Object.pm; retain pod for complete documentation of API
-# sub name {}
-
-=head3 taxonomy
->>>>>>> /tmp/Strain.pm~other.L38ZsN
-
-This method will return a data structure containing
-the taxonomy of the requested strain.
-
-=over
-
-=item PERL API
-
- $data = $model->taxonomy();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/taxonomy
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-sub name {
-=======
-# Taxonomy is provided by Object.pm
-# It is provided here for completeness of the documentation.
-# sub taxonomy {}
-
-
-=head3 other_names
-
-This method will return a data structure containing
-other names that have been used to refer to the strain.
-
-=over
-
-=item PERL API
-
- $data = $model->other_names();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/other_names
-
-B<Response example>
-
-<div class="response-example"></div>
->>>>>>> /tmp/Strain.pm~other.L38ZsN
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my $data_pack;
-=======
-=back
-
-=cut
->>>>>>> /tmp/Strain.pm~other.L38ZsN
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-	#### data pull and packaging
-=======
-# Other_name is provided by Object.pm.
-# Retain pod for completeness of documentation.
 # sub other_names { }
->>>>>>> /tmp/Strain.pm~other.L38ZsN
+# Supplied by Role; POD will automatically be inserted here.
+# << include other_names >>
 
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Strain.pm
-	$data_pack = {
-					'label' => "$object",
-					'class' => 'Strain',
-					'id' => "$object"
-				};
-	####
-	
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-=======
-=head3 description
->>>>>>> /tmp/Strain.pm~other.L38ZsN
-
-This method will return a data structure containing
-a description of the requested strain.
-
-=over
-
-=item PERL API
-
- $data = $model->description();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/description
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Supplied by Object.pm; retain pod for complete documentation of API
 # sub description {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
 
 =head3 genotype
 
@@ -1038,59 +790,9 @@ sub _pack_phenotypes {
     return \@data;
 }
 
-=head3 remarks
-
-This method will return a data structure containing
-curator remarks about the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->remarks();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene (eg gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/remarks
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# Provided by Object.pm; retain POD for completeness of documentation.
-# sub remarks { }
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 
 #######################################
@@ -1101,60 +803,9 @@ B<Response example>
 
 =head2 Origin
 
-=head3 laboratory
-
-This method will return a data structure containing
-the laboratory (and name of the lab representative)
-that generated the strain.
-
-=over
-
-=item PERL API
-
- $data = $model->laboratory();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/laboratory
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# laboratory() is provided by Object.pm. It is included here for completeness of documentation.
-# sub laboratory {}
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
 
 =head3 made_by
 
@@ -1336,15 +987,6 @@ sub date_received {
     };
 }
     
-
-#######################################
-#
-# The Isolation widget
-#
-#######################################6
-
-=head2 Isolation
-
 =head3 gps_coordinates
 
 This method will return a data structure containing
