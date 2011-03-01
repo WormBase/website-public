@@ -8,7 +8,7 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
-## headvar WormBase::API::Object::Homology_group
+## WormBase::API::Object::Homology_group
 
 =head1 SYNPOSIS
 
@@ -29,7 +29,7 @@ http://wormbase.org/species/homology_group
 
 =head3 title
 
-<headvar>This method will return a data structure with this Homology_groups title
+This method will return a data structure with this Homology_groups title
 =head4 PERL API
 
  $data = $model->title();
@@ -77,8 +77,6 @@ sub title {
 	my $self = shift;
     my $object = $self->object;
 	my $data_pack = $object->Title;
-
-<<<<<<< /usr/local/wormbase/website/norie/lib/WormBase/API/Object/Homology_group.pm
 	my $data = {
 				'data'=> $data_pack,
 				'description' => 'title for this homology_group'
@@ -93,7 +91,7 @@ sub title {
 
 =head3 group_type
 
-<headvar>This method will return a data structure with info on the group type.
+This method will return a data structure with info on the group type.
 
 =head4 PERL API
 
@@ -137,12 +135,31 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/homolog
 
 =cut
 
-#<todo> sub group_type {}
+
+sub group_type {
+	my $self = shift;
+    my $object = $self->object;
+	my $homology_group = $object->Homology_group;
+	my $homology_code;
+	
+	if ($homology_group =~ /COG/) {
+		$homology_code = $object->COG_code;
+	}
+	my data_pack = {
+		'homology_group' => "$homology_group",
+		'cog_code' => $homology_code
+	};
+	my $data = {
+		'data'=> $data_pack,
+		'description' => 'type of homology_group'
+		};
+	return $data;
+}
 
 
 =head3 go_term
 
-<headvar>This method will return a data structure for go terms related to this homology group
+This method will return a data structure for go terms related to this homology group
 
 =head4 PERL API
 
@@ -194,7 +211,7 @@ sub go_term {
 
 	foreach my $go_term (@go_terms) {
 		my $gt_info = _pack_obj($go_term);
-		push, @data_pack, $gt_info;
+		push @data_pack, $gt_info;
 	}
 	
 	my $data = {
@@ -269,13 +286,13 @@ sub protein {
 	return $data;
 }
 
-=head3 <headvar>
+=head3 remark
 
-<headvar>This method will return a data structure.... .
+This method will return a data structure with remarks re: this homology_group
 
 =head4 PERL API
 
- $data = $model-><headvar>();
+ $data = $model->remark();
 
 =head4 REST API
 
@@ -307,7 +324,7 @@ a Homology_group ID InP_Cae_006282
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/<headvar>
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/remark
 
 =head5 Response example
 
@@ -315,18 +332,9 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/homolog
 
 =cut
 
-sub remark {
+# Supplied by Object.pm; retain pod for complete documentation of API
+## sub remark {}
 
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Remark;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'remark re: homology group'
-				};
-	return $data;
-}
-=======
 =head3 name
 
 This method will return a data structure of the 
@@ -377,6 +385,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/transge
 # Supplied by Object.pm; retain pod for complete documentation of API
 # sub name {}
 
->>>>>>> /tmp/Homology_group.pm~other.20-PX9
+
 
 1;
