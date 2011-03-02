@@ -17,13 +17,20 @@
    [% END %]
 [% END %]
 
+[% WRAPPER $field_block title='Regulation' key='regulation' %]
+   [% FOREACH reg_type IN fields.regulation.data.sort %]
+   	  [% WRAPPER $field_block title=reg_type.replace('_', ' ') %]
+	  	 [% tag2linkAll(fields.regulation.data.$reg_type) %]
+	  [% END %]
+   [% END %]
+[% END %]
+
 [% WRAPPER $field_block title='Regulators' key='regulators' %]
-   [% USE Dumper; Dumper.dump(fields.regulators.data) %]<br>
    [% FOREACH regulator IN fields.regulators.data.sort %]
    	  [% WRAPPER $field_block title=regulator.replace('_',' ') %]
 	  	 [% IF fields.regulators.data.$regulator.pairs.0.value # it's a packed obj %]
 		 	[% tag2linkAll(fields.regulators.data.$regulator) %]
-		 [% ELSE %]
+		 [% ELSE # it's just text %]
 		 	[% fields.regulators.data.$regulator.sort.join(', ') %]
 		 [% END %]
 	  [% END %]
@@ -31,7 +38,6 @@
 [% END %]
 
 [% WRAPPER $field_block title='Targets' key='targets' %]
-   [% USE Dumper; Dumper.dump(fields.targets.data) %]<br>
    [% FOREACH target_type IN fields.targets.data.sort %]
    	  [% WRAPPER $field_block title=target_type.replace('_', ' ') %]
 	  	 [% tag2linkAll(fields.targets.data.$target_type) %]
@@ -39,11 +45,3 @@
    [% END %]
 [% END %]
 
-[% WRAPPER $field_block title='Regulation' key='regulation' %]
-   [% USE Dumper; Dumper.dump(fields.regulation.data) %]<br>
-   [% FOREACH reg_type IN fields.regulation.data.sort %]
-   	  [% WRAPPER $field_block title=reg_type.replace('_', ' ') %]
-	  	 [% tag2linkAll(fields.regulation.data.$reg_type) %]
-	  [% END %]
-   [% END %]
-[% END %]

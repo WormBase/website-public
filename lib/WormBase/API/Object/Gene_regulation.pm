@@ -11,7 +11,7 @@ sub summary {
 	my $summary = $self ~~ 'Summary';
 	return {
 		description => 'Summary',
-		data		=> $summary && $summary->name,
+		data		=> $summary && "$summary",
 	};
 }
 
@@ -87,8 +87,11 @@ sub regulation {
 
 	my %data;
 	foreach my $reg_type (@{$self ~~ '@Result'}) {
-		undef $data{$reg_type}; # the presence of the undef indicates that there is indeed
-		                        # this kind of regulation.
+		undef $data{$reg_type};
+
+        # the presence of the undef above indicates that there is indeed
+        # this kind of regulation. the following finds details about it.
+
 		foreach my $condition_type ($reg_type->col) {
 			my %conditions = $self->_pack_objects($condition_type->col);
 			$data{$reg_type}{$condition_type} = %conditions ? \%conditions : undef;
