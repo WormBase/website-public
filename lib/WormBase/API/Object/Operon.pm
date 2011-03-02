@@ -36,201 +36,207 @@ http://wormbase.org/species/operon
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
+# sub remarks { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
+=head2 species
 
+This method will return a data structure species containing this Operon.
 
+=head3 PERL API
 
+ $data = $model->species();
 
+=head3 REST API
 
+=head4 Request Method
 
+GET
 
+=head4 Requires Authentication
 
-###############
-## Structure
-###############
+No
+
+=head4 Parameters
+
+a Operon ID CEOP1140
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/species
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
+
+sub species {
+	my $self = shift;
+    my $object = $self->object;
+	my $tag_object = $object->Species;
+	my $data_pack = $self->_pack_obj($tag_object);
+	return {
+		'data'=> $data_pack,
+		'description' => ''
+		};
+}
+
+=head2 structure
+
+This method will return a data structure with the species containing this Operon.
+
+=head3 PERL API
+
+ $data = $model->structure();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Operon ID CEOP1140
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/structure
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub structure {
-
 	my $self = shift;
 	my $operon = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my %data_pack;
-
-	#### data pull and packaging
-	
-	my %genes;
-	my @gene_list;
+	my @data_pack;
 	my @member_gene = $operon->Contains_gene;
  
 	foreach my $gene (@member_gene) {
-
-	  my $gene_name = $self->bestname($gene);
-	  my %spliced_leader;
-
+		my $gene_info = $self->_pack_obj($gene);
+	  	my %spliced_leader;
 	    foreach my $sl ($gene->col) {
-
-	      my @evidence = $sl->col;
-	      #@evidence = get_evidence_names(\@evidence);
-	      $spliced_leader{$sl} = \@evidence;      # each spliced leader key is linked to an array of evidence 
+	    	my @evidence = $sl->col;
+			$spliced_leader{$sl} = \@evidence;      # each spliced leader key is linked to an array of evidence 
 	    }
-    
-	    $genes{$gene_name} = \%spliced_leader;      # each gene key is linked to a hash of splioed leaders for the gene
+	    push @data_pack, {
+	    	gene_info => $gene_info,
+			splice_info => \%spliced_leader
+	    };
 	 } 
-
-	####
-
-	$data{'data'} = \%genes;
-	$data{'description'} = $desc;
-	return \%data;
-
+	return {
+		'data'=> \@data_pack,
+		'description' => 'structure information for this operon'
+	};
 }
 
-# sub get_all_struct_data {
-#   my %data;
-#  
-#   # get data on genes in operon 
+=head2 history
 
-#   $data{'Genes'} = \%genes;
-#   $data{'Gene_List'} = \@gene_list;
-#   
-#   #get data on associated features
-#   $data{'Associated'} = a({-href=>Object2URL($operon->Associated_feature)}, $operon->Associated_feature) if $operon->Associated_feature;
-#   
-#   if (my $segment = $DBGFF->segment('Operon' => $operon)) {
-# 
-#     # get genomic position
-#     my ($ref,$start,$stop) = ($segment->abs_ref,$segment->abs_start,$segment->abs_stop);
-#     my $browser_url = a({-href=>HunterUrl($ref,$start,$stop)},"$ref:$start..$stop");
-#     $data{'Genomic_Position'} = $browser_url;
-# 
-#     # get gbrowse embedded image
-#     my $genomic_picture = genomic_picture($segment);
-#     $data{'Genomic_Picture'} = $genomic_picture;
-#   }
-# 
-#   return \%data;
-#}
-# {
-#   my $struct_data = get_all_struct_data();
-#   StartSection('Structure');
-# 
-#   # print data in Genes
-#   my @gene_list = @{$struct_data->{'Gene_List'}};
-#   my $genes_content;
-#   if(@gene_list) {
-#     my %genes = %{$struct_data->{'Genes'}};
-#     $genes_content = start_table({-border=>1}) . TR({-align=>'left'},th('Genes:'), th('Spliced Leader:'), th('Evidence:'));
-#     foreach my $gene (@gene_list) {
-#         my %spliced_leader = %{$genes{$gene}};                  # get spliced leaders for each gene
-#         my $num_rows = keys(%spliced_leader);
-#         $num_rows = 1 if $num_rows == 0;
-#         $genes_content .= TR().td({-align=>'left',-rowspan=>$num_rows},$gene);
-#         foreach my $sl (sort keys %spliced_leader) {
-#             my @evidence = @{$spliced_leader{$sl}};             # get evidence for each spliced leader
-#             $genes_content .= td($sl).td(join('<br>',@evidence)).TR();    
-#         }
-#      }
-#     $genes_content .= end_table();
-#   }
-#   SubSection("", $genes_content);
-# 
-#   # print data in Associated  -- I never see anything 
-#   my $associated_content = ${$struct_data}{'Associated'};
-#   $associated_content = start_table().TR({-align=>'left'},th('Associated:'), td($associated_content).end_table()) if $associated_content;
-#   SubSection("", $associated_content);
-#   
-#   # print data in Genomic Position
-#   my $genomic_position = ${$struct_data}{'Genomic_Position'};
-#   SubSection("", start_table().TR(th('Genomic Position:'),td($genomic_position)).end_table()) if $genomic_position;
-#   
-#   # print data in Genomic Picture
-#   my $genomic_picture = ${$struct_data}{'Genomic_Picture'};
-#   SubSection("", start_table().TR({-valign=>'top'},th('Genomic Environs:'),td($genomic_picture)).end_table()) if $genomic_picture;
-#   
-#   EndSection();
-#}
-#############
-## History
-#############
+This method will return a data structure with history info on this Operon.
+
+=head3 PERL API
+
+ $data = $model->history();
+
+=head3 REST API
+
+=head4 Request Method
+
+GET
+
+=head4 Requires Authentication
+
+No
+
+=head4 Parameters
+
+a Operon ID CEOP1140
+
+=head4 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head4 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/history
+
+=head4 Response example
+
+<div class="response-example"></div>
+
+=cut
 
 sub history {
-
 	my $self = shift;
 	my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
 	my %data_pack;
-
-	#### data pull and packaging
-
 	my  @history_types = $object->History;
 	
 	foreach my $history_type (@history_types) {
-	  my %histories;
-
-	  foreach my $h ($history_type->col) {
-	     my @evidence = $h->col;	     
-	     @evidence = _get_evidence_names(\@evidence);
-	    $histories{$h} = \@evidence;                    #Each history has an array of evidences
-	  }
-	    
-	  $data_pack{$history_type} = \%histories;        #Each history_type is linked to a hash of histories
+		my %histories;
+	  	foreach my $h ($history_type->col) {
+	    	my @evidence = $h->col;	     
+	     	@evidence = _get_evidence_names(\@evidence);
+	    	$histories{$h} = \@evidence;                    
+	  	} 
+	  	$data_pack{$history_type} = \%histories;        
 	}
-	####
-
-	$data{'data'} = \%data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+	return {
+		'data'=> $data_pack,
+		'description' => ''
+	};
 }
-
-# {
-#   my %data;
-#   my %history_types;
-    
-#   $data{'History'} = \%history_types;
-# 
-#   return \%data;
-# 
-# }
-
-# {
-#   my $history_data = get_all_history_data();
-# 
-#   # print data in History
-#   my %history_types = %{$history_data->{'History'}};
-#   my $history_content;
-#   if(%history_types) {                                  #Only print section if History items exist
-#     StartSection('History');
-#     $history_content = start_table() . TR({-align=>'left'},th(''), th(''), th('Evidence:'));
-#     foreach my $history_type (sort keys %history_types) {
-#         my %operons = %{$history_types{$history_type}};           
-#         my $num_rows = keys(%operons);
-#         $num_rows = 1 if $num_rows == 0;
-#         $history_content .= TR({-valign=>'top'}).td({-align=>'left',-rowspan=>$num_rows},$history_type.': ');
-#         foreach my $operon (sort keys %operons) {
-#             my @evidence = @{$operons{$operon}};        
-#             $history_content .= td($operon).td(join('<br>',@evidence)).TR({-valign=>'top'});    
-#         }
-#      }
-#     $history_content .= end_table();
-#     SubSection("", $history_content);
-#     EndSection;
-#   }
-# }
-
-
-
-
-
-############
-## Internal
-############
 
 sub _get_evidence_names {
   my ($evidences)=shift;
