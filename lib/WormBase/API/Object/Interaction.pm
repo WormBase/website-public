@@ -60,61 +60,9 @@ has 'non_directional_interactors' => (
     }
 );
 
-
-=head3 name
-
-This method will return a data structure of the 
-name and ID of the requested transgene.
-
-=head4 PERL API
-
- $data = $model->name();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Transgene ID (gmIs13)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/name
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
 =head2 interactor
 
-<headvar>This method will return a data structure re: set of interactors for this interaction.
+This method will return a data structure with the set of interactors for this interaction.
 
 =head3 PERL API
 
@@ -171,7 +119,11 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/interac
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
->>>>>>> /tmp/Interaction.pm~other.cecFNx
+
+
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
 sub interactor {
     my $self = shift;
@@ -184,62 +136,9 @@ sub interactor {
     return $data;
 }
 
-
-=head3 remarks
-
-This method will return a data structure with remarks re: this homology_group
-
-=head4 PERL API
-
- $data = $model->remarks();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Homology_group ID InP_Cae_006282
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_006282/remarks
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-
 =head2 interaction_type
 
-This method will return a data structure re: interaction_type of this interaction.
+This method will return a data structure with the interaction_type of this interaction.
 
 =head3 PERL API
 
@@ -275,7 +174,7 @@ a Interaction ID WBInteraction0000779
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/<headvar>
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type.
 
 =head4 Response example
 
@@ -296,17 +195,18 @@ sub interaction_type {
       $interaction_info{'non_directional'} = \@genes;
     }
 
-    my $data = { description => 'The remark on this interaction',
-                 data        => { type  =>  "$type",
-                                  interaction_info  =>  \%interaction_info,
-                                },
+    my $data = 
+    return { 
+    	description => 'The remark on this interaction',
+       	data        => { type  =>  "$type",
+                         interaction_info  =>  \%interaction_info,
+                       }
     };
-    return $data;
 }
 
 =head2 paper
 
-<headvar>This method will return a data structure re: papers describing this interaction.
+This method will return a data structure containing papers describing this interaction.
 
 =head3 PERL API
 
@@ -360,18 +260,13 @@ sub paper {
     return $data;
 }
 
-######################
-## more summary items
-######################
-
-
 =head2 phenotype
 
 This method will return a data structure re: phenotype associated with this interaction.
 
 =head3 PERL API
 
- $data = $model-><headvar>();
+ $data = $model->phenotype();
 
 =head3 REST API
 
@@ -403,7 +298,7 @@ a Interaction ID WBInteraction0000779
 
 =head4 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/<headvar>
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotype
 
 =head4 Response example
 
@@ -421,12 +316,7 @@ sub phenotype {
 	my $it = $object->Interaction_type;                                                         
 	my $phenotype = $it->Internation_phenotype->right if $it->Internation_phenotype;  
 	my $phenotype_name = $phenotype->Primary_name if $phenotype;      
-
-	my $data_pack = {
-		'id' =>"$phenotype",
-		'label' =>"$phenotype_name",
-		'Class' => 'Phenotype'
-	};
+	my $data_pack = $self->_pack_obj($phenotype, $phenotype_name);
 
 	my $data = {
 		'data'=> $data_pack,
@@ -486,13 +376,11 @@ sub rnai {
     my $object = $self->object;
 	my $it = $object->Interaction_type;
 	my $rnai = $it->Interaction_RNAi->right if $it->Interaction_RNAi;
-	
 	my $data_pack = $self->_pack_obj($rnai);
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the rnai involved with this interaction'
-				};
-	return $data;
+	return {
+		'data'=> $data_pack,
+		'description' => 'description of the rnai involved with this interaction'
+	};
 }
 
 ######################
@@ -566,12 +454,12 @@ sub interactor_data {
 		my @cds = $interactor->Corresponding_CDS;
   		my @proteins  = map {$interactor->Corresponding_protein(-fill=>1)} @cds if (@cds);
   		my @interactions = $interactor->Interaction;
-  		my $gene_data = _pack_obj($interactor);
+  		my $gene_data = $self->_pack_obj($interactor);
   		my @protein_data_set;
   		my $interaction_count = @interactions;
   	
   		foreach my $protein (@proteins) {		
-  			my $protein_data = _pack_obj($protein);
+  			my $protein_data = $self->_pack_obj($protein);
   			push @protein_data_set, $protein_data
   		}
   	
@@ -583,11 +471,11 @@ sub interactor_data {
 	 	
 		push @data_pack, $interactor_data;
 	}
-	my $data = {
+	
+	return {
 		'data'=> \@data_pack,
 		'description' => 'interactor data for this interaction broken down by type'
 	};
-	return $data;
 }
 
 1;
