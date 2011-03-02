@@ -41,8 +41,8 @@ isa_ok($gene,'WormBase::API::Object::Gene');
 
 #### method list
 my @methods = qw/
-
-gene_models
+ortholog
+paralog
  /;
 
 
