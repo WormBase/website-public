@@ -627,6 +627,18 @@ build_data_table(order=['taxonomy','hit','description','evalue','percent'],
                                  },
                          key='best_blastp_matches',	
                          title='Best BLASTP matches');
+
+
+   
+        WRAPPER $field_block title="";
+           '<div id="blast_details">';
+             '<a class="update blast_details"';
+              ' href="' _ c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '">';
+               '[View full BLASTP List]</a>';
+         '</div>';
+       END;
+
+
 END;
 %]
 

@@ -41,12 +41,4 @@ build_data_table(order=['species','gene'],
 
 
 [% best_blastp_matches %]
-   
-[% WRAPPER $field_block title="" %]
-   <div id="blast_details">
-        <a class="update blast_details" 
-           href="[% c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') %]">
-           [View full BLASTP List]</a>
-   </div>
-[% END %]
 
