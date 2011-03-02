@@ -34,9 +34,9 @@ http://wormbase.org/species/protein
 =cut
 
 has 'peptide' => (
-    is  => 'ro',
-    isa => 'Str',
-    lazy => 1,
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
     default => sub {
 	my $self = shift;
 	my $peptide = $self ~~ 'asPeptide';
@@ -47,9 +47,8 @@ has 'peptide' => (
     );
 
 has 'cds' => (
-    is  => 'ro',
-#     isa => 'Ace::Object',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
 	my $self = shift;
 	return $self ~~ '@Corresponding_CDS';
@@ -76,35 +75,303 @@ has 'cds' => (
 # << include taxonomy >>
 
 
-sub genes {
-    my $self = shift;
+=head3 central_dogma
+
+This method returns a data structure containing the 
+the central dogma from the perspective of this protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->central_dogma();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/central_dogma
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub central_dogma {
+    my $self   = shift;
+
+    my @cds = grep{$_->Method ne 'history'} @{$self->cds};
+
+    # From a list of CDSs for the protein, get the corresponding gene(s)
     my %seen;
-    my @result;
-    my @genes = grep {!$seen{$_}++}   grep{$_->Method ne 'history'}  @{$self->cds};
-    foreach (@genes) {
-	push @result, { id=>$_->Gene,
-			label=>$self->bestname($_->Gene)||$_,
-			class=>'gene',
-	}; 
-    }
-    my $data = { description => 'The genes or CDS associated with the protein',
-		 data        => \@result,
-    }; 
-    return $data;
+    my @genes = grep { ! $seen{%_}++ } map { $_->Gene } grep{ $_->Method ne 'history'}  @cds;
+    @genes = map { $self->_pack_obj($_,$_->Public_name) } @genes;
+
+    # Fetch all transcripts that make this protein
+    my @transcripts = map { $self->_pack_obj($_) } map {$_->Corresponding_transcript}  @cds;
+
+    # Finally, all CDS
+    @cds = map { $self->_pack_obj($_) } @cds;
+    
+    return { description => 'the central dogma from the perspective of this protein',
+	     data        => { genes       => @genes       ? \@genes       : undef,
+			      transcripts => @transcripts ? \@transcripts : undef,
+			      cds         => @cds         ? \@cds         : undef },
+    };
 }
 
 
-sub transcripts {
-    my $self = shift;
-    my %seen;
-    my @transcripts = grep{$_->Method ne 'history'} @{$self->cds};
-    push @transcripts, map {$_->Corresponding_transcript}  @transcripts;
-    my $data = { description => 'The transcripts related with the protein',
-		 data        => [map {my $hash = { id => $_,label=>$_,class=>$_->class} ;$_=$hash;} grep {!$seen{$_}++}  @transcripts],
-    }; 
-    return $data;    
+=head3 corresponding_gene
+
+This method returns a data structure containing the 
+corresponding gene of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->corresponding_gene();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_gene
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub corresponding_gene {
+    my $self   = shift;
+
+    # From a list of CDSs for the protein, get the corresponding gene(s)
+    my @genes = grep{ $_->Method ne 'history'}  @{$self->cds};
+    @genes = map { $self->pack_obj($_) } @genes;
+    return { description => 'The corressponding gene of the protein',
+	     data        => @genes ? \@genes : undef }; 
 }
 
+=head3 corresponding_transcripts
+
+This method returns a data structure containing
+the corresponding transcripts of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->corresponding_transcripts();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_transcripts
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub corresponding_transcripts {
+    my $self = shift;
+    my @cds = grep{$_->Method ne 'history'} @{$self->cds};
+    my @transcripts = map { $self->_pack_obj($_) } map {$_->Corresponding_transcript}  @cds;
+    return  { description => 'the corresponding transcripts of the protein',
+	      data        => @transcripts ? \@transcripts : undef };
+}
+
+
+=head3 corresponding_cds
+
+This method returns a data structure containing
+the corresponding CDSs of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->corresponding_cds();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/corresponding_cds
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub corresponding_cds {
+    my $self = shift;
+    my %seen;
+    my @cds = grep{$_->Method ne 'history'} @{$self->cds};
+    @cds = map { $self->_pack_obj($_) } @cds;
+    return  { description => 'the corresponding CDSs of the protein',
+	      data        => @cds ? \@cds : undef };
+}
+
+
+=head3 type (DEPRECATING!)
+
+This method returns a data structure containing the 
+the type of protein, if defined.
+
+=over
+
+=item PERL API
+
+ $data = $model->type();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/type
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub type {
     my $self = shift;
@@ -114,85 +381,559 @@ sub type {
     return $data;
 }
 
-# sub remarks {}
+# sub description { }
 # Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# << include description >>
 
 # sub status { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include status >>
 
-# sub description { }
+# sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
-# << include description >>
+# << include remarks >>
 
 
 ############################################################
 #
-# The External link widget
+# The External Links widget
 #
 ############################################################ 
 
+=head2 External Links
+
+=head3 external_links
+
+This method returns a data structure containing the 
+external links and IDs for the current protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->external_links();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/P:CE02346/external_links
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
 sub external_links {
     my $self=shift;
-    my $id = eval{$self->cds->[0]}  ;
+
     my $hash;
     foreach (@{$self ~~ '@Database'}){
-	next if($_ eq 'WORMPEP');
+	next if ($_ eq 'WORMPEP');
 	$hash->{$_}={ class => $_,
 		      id    =>$_->right(2),
 		      label =>$_->right(2),
 	};
     }
+
+    # Often use CDS as external IDs?
+    my $id = eval{$self->cds->[0]}  ;
+    
     $hash->{'Phosphopep'}= { id    => $id,
 			     label => $id,
 			     class => 'phosphopep',
     } if( $id);
-    my $data = { description => 'Protein links from third party sites',
-		 data        => $hash,
-    }; 
-    return $data;  
+    
+    return { description => 'links to third party sites',
+	     data        => $hash,
+    };
+}    
+
+############################################################
+#
+# The Molecular Details widget
+#
+############################################################
+
+=head2 Molecular Details
+
+=head3 sequence
+
+This method returns a data structure containing the 
+the sequence of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->sequence();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/sequence
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub sequence {
+    my $self    = shift;
+    my $peptide = $self->peptide;
+    return { description => 'the peptide sequence of the protein',
+	     data        => { sequence => $peptide,
+			      length   => length $peptide,			      
+	     },
+    };
 }
 
+=head3 estimated_molecular_weight
 
+This method returns a data structure containing the 
+estimated molecular weight of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->estimated_molecular_weight();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/estimated_molecular_weight
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub estimated_molecular_weight{
+    my $self   = shift;
+    my $object = $self->object; 
+    my $mw     = $object->Molecular_weight;
+    return { description => 'the estimated molecular weight of the protein',
+	     data        =>  $mw ? "$mw" : undef };
+}
+
+=head3 estimated_isoelectric_point
+    
+This method returns a data structure containing the 
+estimated isoelectric point of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->estimated_isoelectric_point();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/estimated_isoelectric_point
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub estimated_isoelectric_point {
+    my $self = shift;
+  
+    my $pic     = pICalculator->new();
+    my $seq     = Bio::PrimarySeq->new($self->peptide);
+    $pic->seq($seq);
+    my $iep     = $pic->iep;
+    return { description => 'the estimated isoelectric point of the protein',
+	     data        =>  $iep }; 
+}
+
+=head3 amino_acid_composition
+
+This method returns a data structure containing the 
+amino acid makeup of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->amino_acid_composition();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/amino_acid_composition
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub amino_acid_composition {
+    my $self = shift;
+    return unless ($self->peptide);
+    my $selenocysteine_count = 
+	(my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
+
+    my $seq     = Bio::PrimarySeq->new($hack_seq);
+    my $stats   = Bio::Tools::SeqStats->new($seq);
+    
+    my %abbrev = (A=>'Ala',R=>'Arg',N=>'Asn',D=>'Asp',C=>'Cys',E=>'Glu',
+		  Q=>'Gln',G=>'Gly',H=>'His',I=>'Ile',L=>'Leu',K=>'Lys',
+		  M=>'Met',F=>'Phe',P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
+		  Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa');
+    # Amino acid content
+    my $composition = $stats->count_monomers;
+    if ($selenocysteine_count > 0) {
+	$composition->{C} -= $selenocysteine_count;
+	$composition->{U} += $selenocysteine_count;
+    }
+    my %aminos = map {$abbrev{$_}=>$composition->{$_}} keys %$composition;
+    return { description => 'The amino acid composition of the protein',
+	     data        =>  \%aminos ,
+    }; 
+}
+
+    
 ############################################################
 #
 # The Homology widget
 #
 ############################################################
+
+=head2 Homology
+
+=head3 homology_groups
+
+This method returns a data structure containing "KOGs"
+or clusters of homology groups of this protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->homology_groups();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_groups
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
 sub homology_groups {
-    my $self = shift;
-    my $kogs= $self ~~ '@Homology_group';
+    my $self   = shift;
+    my $object = $self->object;
+    my @kogs = $object->Homology_group;
     my @hg;
-    foreach my $k (@$kogs) {
-	push @hg ,{ type=>$k->Group_type||'',
-		    title=>$k->Title||'',
+    foreach my $k (@kogs) {
+	my $title = $k->Title;
+	my $type  = $k->Group_type;
+	push @hg ,{ type  => "$type"  || '',
+		    title => "$title" || '',
 		    link => { id=>"$k",
 			      label=>$k->name,
 			      class=>$k->class,
 		    }
 	};
     }
-    my $data = { description => 'The homology groups of the protein',
-		 data        => \@hg,
-    }; 
-    return $data;
+    return { description => 'KOG homology groups of the protein',
+	     data        => \@hg };
+    
 }
 
-sub ortholog_genes {
-    my $self = shift;
-    my $data = { description => 'The orthology genes of the protein',
-		 data        =>  $self ~~ 'Ortholog_gene'  ,
-    }; 
-    return $data;
+=head3 orthologous_genes
+
+This method returns a data structure containing 
+genes orthologous to the current protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->orthologous_genes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/orthologous_genes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub orthologous_genes {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+    foreach ($object->Ortholog_gene) {
+	my $species = $_->Species;
+	push @data, { species => "$species",
+		      gene    => $self->_pack_obj($_,$_->Public_name) };
+    }
+
+    return { description => 'orthologous genes of the protein',
+	     data        =>  @data ? \@data : undef };
 }
+
+
+
+=head3 homology_image
+
+This method returns a data structure containing 
+data for generating a schematic showing protein
+domains versus exons.
+
+=over
+
+=item PERL API
+
+ $data = $model->homology_image();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/homology_image
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub homology_image {
     my $self=shift;
     my $panel=$self->_draw_image($self->object,1);
     my $gd=$panel->gd;
     #show dynamic images
-    my $data = { description => 'The homology image of the protein',
+    my $data = { description => 'a dynamically generated image representing homologous regions of the protein',
 		 data        => $gd,
     };
     return $data;
@@ -228,7 +969,56 @@ sub homology_image {
 =cut
 }
 
-sub motif_homologies {
+=head3 motifs
+
+This method returns a data structure containing
+motifs and motif homlogies identified in the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->motifss();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motifs
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub motifs {
     my $self = shift;
     my (%motif);
 #     my %hash;
@@ -242,11 +1032,59 @@ sub motif_homologies {
 #       $hash{description}{$_} = $title||$_;
 #       $hash{accession}{$_} = { label=>$_, id=>$_, class=>$_->class};
     }
-    my $data = { description => 'The motif summary of the protein',
-		 data        => \@row,
-    }; 
-    return $data;
+    return { description => 'motifs and motif homologies identified in the protein',
+	     data        => @row ? \@row : undef };
 }	  
+
+
+=head3 pfam_graph
+
+This method returns a data structure containing the 
+coordinates for generating a PFAM domain cartoon.
+
+=over
+
+=item PERL API
+
+ $data = $model->pfam_graph();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/pfam_graph
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub pfam_graph {
     my $self = shift;
@@ -278,19 +1116,18 @@ sub pfam_graph {
 		    push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
 		 
 	    }
-	}
- 
-     
+    }
+    
+    
     # extract the exons, then map them
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
     my $gffdb = $self->gff_dsn;
     my ($seq_obj) = $gffdb->segment(CDS => $gene);
-
+    
     my (@exons,@segmented_exons);
     # Translate the bp start and stop positions into the approximate amino acid
     # contributions from the different exons.
-     
     
     if ($seq_obj) {
 	@exons = $seq_obj->features('exon:curated');
@@ -312,16 +1149,15 @@ sub pfam_graph {
 				     end=>$end,
 				     v_align=>"bottom",
 				     metadata => {
-						  type=>"exon".$count,
-						  start=>$end_holder,
-						  end=>$end,	
-						},
-				  };
+					 type=>"exon".$count,
+					 start=>$end_holder,
+					 end=>$end,	
+				     },
+	    };
 	    $end_holder = $end+1;
 	}
     } 
-
-
+    
     my @markups;
     foreach my $type (sort keys %$hash){
 	my @array = grep { $_->{length} >1  } @{$hash->{$type}};
@@ -330,16 +1166,16 @@ sub pfam_graph {
 	    delete $hash->{$type};
 	}
     }
-
+    
     foreach my $type (sort keys %$hash){
-	if(@markups) {
+	if (@markups) {
 	    push @{$hash->{$type}}, @markups;
 	    undef @markups;
 	}
 	my $graph;
 	my @sort = sort { $b->{length} <=> $a->{length} } @{$hash->{$type}};
 	foreach my $obj (@sort) {
-	     
+	    
 	    my $feature = $obj->{feature};
 	    (my $label = $feature) =~ s/.*://;
 	    my $desc = $feature->Title ||$feature ;
@@ -350,41 +1186,86 @@ sub pfam_graph {
 				     start=>$obj->{start},
 				     href=>$href,
 				     metadata => {
-						  database=>$obj->{type}, 	
-						  description=>"$desc",
-						  start=>$obj->{start},
-						  identifier=>$identifier,		
-						},
-			    };
+					 database=>$obj->{type}, 	
+					 description=>"$desc",
+					 start=>$obj->{start},
+					 identifier=>$identifier,		
+				     },
+	    };
 	    my $graph_type = "regions";
 	    if($obj->{length} == 1 ) {
-		    $graph_type = "markups";
-		    $graph_hash->{headStyle} = "diamond";
-		   
+		$graph_type = "markups";
+		$graph_hash->{headStyle} = "diamond";
+		
 	    } else {
-		    $graph_hash->{end} = $obj->{end};
-		    $graph_hash->{startStyle} = "straight";
-		    $graph_hash->{endStyle} = "straight";
-		    $graph_hash->{text} = ucfirst(substr($desc,0,3));
-		    $graph_hash->{metadata}->{end} = $obj->{end};
+		$graph_hash->{end} = $obj->{end};
+		$graph_hash->{startStyle} = "straight";
+		$graph_hash->{endStyle} = "straight";
+		$graph_hash->{text} = ucfirst(substr($desc,0,3));
+		$graph_hash->{metadata}->{end} = $obj->{end};
 	    }
-
+	    
 	    push @{$graph->{$graph_type}} ,$graph_hash;
 	}
 	$graph->{length}= $length;
 	push @{$graph->{markups}} ,@segmented_exons;
 	$hash->{$type} = to_json ($graph);
     }
-
- 
-
-   my $data = { description => 'The motif graph of the protein',
-		  data        => $hash,
-		}; 
+    
+    return { description => 'The motif graph of the protein',
+	     data        => $hash,
+    }; 
 }
- 
 
+=head3 motif_details
 
+This method returns a data structure containing the 
+details on motifs identified in the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->motif_details();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/motif_details
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+    
 sub motif_details {
     my $self = shift;
     
@@ -398,22 +1279,22 @@ sub motif_details {
     
     if (@$raw_features > 0 || @$motif_homol > 0) {
 	my %positions;
- 
+	
 	foreach my $feature (@$raw_features) {
 	    %positions = map {$_ => $_->right(1)} $feature->col;
 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
 		my $stop =  $positions{$start};
 		push @tot_positions,[ ( "$feature",'','',
-				       "$start",
-				       "$stop")
-				  ];
+					"$start",
+					"$stop")
+		];
 	    }
 	}
  	
 	# Now deal with the motif_homol features
 	foreach my $feature (@$motif_homol) {
 	    my $score = $feature->right->col;
-
+	    
 	    my $start = $feature->right(3);
 	    my $stop  = $feature->right(4);
 	    my $type = $feature->right ||"";
@@ -429,29 +1310,78 @@ sub motif_details {
 		foreach my $start (@multiple) {
 		    my $stop = $start->right;
 		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
-					   "$start",
-					   "$stop")
-					];
+					    "$start",
+					    "$stop")
+		    ];
 		}
 	    } else {
 		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
-				       "$start",
-				       "$stop")
-				  ];
+					"$start",
+					"$stop")
+		];
 	    }
 	}
-
+	
     }
     my $data = { description => 'The motif details of the protein',
 		 data        => \@tot_positions,
     }; 
-   
+    
 }
+
+=head3 blast_details
+
+This method returns a data structure containing the 
+details of all precomputed blastp hits of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->blast_details();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/blast_details
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub blast_details {
   my $self = shift;
 #   local $^W = 0;  # to avoid loads of uninit variable warnings
-
+  
   my $homol = $self ~~ '@Pep_homol';
   # wrestle blast hits into a workable data structure!!
   my @hits = wrestle_blast($homol);
@@ -460,144 +1390,133 @@ sub blast_details {
   my @rows;
   for my $h (@hits) {
 #     my ($url,$id) = hit_to_url($h->{hit}) or next;
-    my $id = $h->{hit};
-    next if ($id =~ /^MSP/); # skip for mass-spec objects, not sure if this is right?
-    my $method = $h->{type};
-
-    # Try fetching the species first with the identification
-    # then method then the embedded species
-    my $species = $self->id2species($h);
-    $species  ||= $self->id2species($method);
-     
-    # Not all proteins are populated with the species 
-    $species ||= $h->{hit}->Species;
-    $species =~ s/^(\w)\w* /$1. /;
-    $species =~ /(.*)\.(.*)/;
-
-    my $taxonomy = {genus=>$1,species=>$2};
-
-
- my $description = $h->{hit}->Description || $h->{hit}->Gene_name;
-    my $class;
-
-    # this doesn't seem optimal... maybe there should be something in config?
-    if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
-      $description ||= eval{$h->{hit}->Corresponding_CDS->Brief_identification};
-      # Kludge: display a description using the CDS
-      if (!$description) {
-        for my $cds (eval { $h->{hit}->Corresponding_CDS }) {
-          next if $cds->Method eq 'history';
-          $description ||= "gene $cds";
-        }
+      my $id = $h->{hit};
+      next if ($id =~ /^MSP/); # skip for mass-spec objects, not sure if this is right?
+      my $method = $h->{type};
+      
+      # Try fetching the species first with the identification
+      # then method then the embedded species
+      my $species = $self->id2species($h);
+      $species  ||= $self->id2species($method);
+      
+      # Not all proteins are populated with the species 
+      $species ||= $h->{hit}->Species;
+      $species =~ s/^(\w)\w* /$1. /;
+      $species =~ /(.*)\.(.*)/;
+      
+      my $taxonomy = {genus=>$1,species=>$2};
+      
+      
+      my $description = $h->{hit}->Description || $h->{hit}->Gene_name;
+      my $class;
+      
+      # this doesn't seem optimal... maybe there should be something in config?
+      if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
+	  $description ||= eval{$h->{hit}->Corresponding_CDS->Brief_identification};
+	  # Kludge: display a description using the CDS
+	  if (!$description) {
+	      for my $cds (eval { $h->{hit}->Corresponding_CDS }) {
+		  next if $cds->Method eq 'history';
+		  $description ||= "gene $cds";
+	      }
+	  }
+	  $class = 'protein';
       }
-      $class = 'protein';
-    }
-
-    my $id_link = $id;
-    if ($id =~ /(\w+):(.+)/) {
-      my $prefix    = $1;
-      my $accession = $2;
-      $id_link = $accession unless $class;
-      $class = $prefix unless $class;
-    }
-
-    # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
-    my $eval = $h->{score};
-    push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
-		$h->{source},
-		$h->{target})];
+      
+      my $id_link = $id;
+      if ($id =~ /(\w+):(.+)/) {
+	  my $prefix    = $1;
+	  my $accession = $2;
+	  $id_link = $accession unless $class;
+	  $class = $prefix unless $class;
+      }
+      
+      # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
+      my $eval = $h->{score};
+      push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
+		   $h->{source},
+		   $h->{target})];
       
   }
-  my $data = { description => 'The Blast details of the protein',
-		 data        => \@rows,
-    }; 
-   
-}
-############################################################
-#
-# The Molecular Details widget
-#
-############################################################
-
-sub protein_sequence {
-    my $self = shift;
-    my $peptide = $self->peptide;
-    my $data = { description => 'The peptide sequence of the protein',
-		 data        => { 'seq' => $peptide ,
-				  'length' => length $peptide,
-				}
-    }; 
-    return $data;
-}
- 
-
-sub estimated_molecular_weight{
-    my $self = shift;
-    my $data = { description => 'The estimated molecular weight of the protein',
-		 data        =>  $self ~~ 'Molecular_weight' ,
-    }; 
-    return $data;
+  return { description => 'The Blast details of the protein',
+	   data        => @rows ? \@rows : undef };
 }
 
-sub estimated_isoelectric_point{
-    my $self = shift;
-  
-    my $pic     = pICalculator->new();
-    my $seq     = Bio::PrimarySeq->new($self->peptide);
-    $pic->seq($seq);
-    my $iep     = $pic->iep;
-    my $data = { description => 'The estimated isoelectric point of the protein',
-		 data        =>  $iep,
-    }; 
-    return $data;
-}
 
-sub amino_acid_composition{
-    my $self = shift;
-    return unless($self->peptide);
-    my $selenocysteine_count =  (my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
-    my $seq     = Bio::PrimarySeq->new($hack_seq);
-    my $stats   = Bio::Tools::SeqStats->new($seq);
-
-    my %abbrev = (A=>'Ala',R=>'Arg',N=>'Asn',D=>'Asp',C=>'Cys',E=>'Glu',
-		Q=>'Gln',G=>'Gly',H=>'His',I=>'Ile',L=>'Leu',K=>'Lys',
-		M=>'Met',F=>'Phe',P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
-		Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa');
-    # Amino acid content
-    my $composition = $stats->count_monomers;
-    if ($selenocysteine_count > 0) {
-      $composition->{C} -= $selenocysteine_count;
-      $composition->{U} += $selenocysteine_count;
-    }
-    my %aminos = map {$abbrev{$_}=>$composition->{$_}} keys %$composition;
-    my $data = { description => 'The amino acid composition of the protein',
-		 data        =>  \%aminos ,
-    }; 
-    return $data;
-}
 
 
  
 ############################################################
 #
-# The Protein History widget, this is actaully on a field level but not widget
+# The History Widget (template supplied by shared/widgets/history.tt2)
 #
 ############################################################
-sub history{
-    my $self = shift;
-   
-    my %history ;
-    foreach my $obj (@{$self ~~ '@History'}) {
-	  my ($status,$prediction) = $obj->row(1);
-	  $history{version}{$obj}=$obj;
-	  $history{status}{$obj}=$status;
-	  $history{prediction}{$obj}=$prediction;
+
+=head2
+
+=head3 history
+
+This method returns a data structure containing the 
+curatorial history of the protein.
+
+=over
+
+=item PERL API
+
+ $data = $model->history();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/history
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub history {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my @data;    
+    foreach my $version ($object->History) {
+	my ($event,$prediction)  = $version->row(1);
+	push @data, { version    => "$version",
+		      event      => "$event",
+		      prediction => $self->_pack_obj($prediction), };
     }
     
-    my $data = { description => 'The history information of the protein',
-		 data        =>  \%history ,
-    }; 
-    return $data;
+    return { description => 'curatorial history of the protein',
+	     data        =>  @data ? \@data : undef };
 }
 
  
@@ -835,55 +1754,55 @@ sub _draw_image {
 }
 
 sub wrestle_blast {
-  my $hits = shift;
-  my $as_features = shift;
-
-  my (@hits,%cached_features);
-  my %seen;
-  for my $homol (@$hits) {
-    for my $type ($homol->col) {
-      for my $score ($type->col) {
-	for my $start ($score->col) {
-	  for my $end ($start->col) {
-	    my ($tstart,$tend) = $end->row(1);
-
-	    next if ($seen{"$start$end$homol"}++);
-
-	    $HIT_CACHE{$homol} = $homol;
-
-	    if ($as_features) {
-	      my $f = $cached_features{$type}{$homol};
-	      if (!$f) {
-		$f
-		  = $cached_features{$type}{$homol}
-		    = Bio::Graphics::Feature->new(-name     => "$homol",   # quotes and +0 stringifies ace object
-						  -type     => "$type",
-						  -score    => $score+0);
-		push @hits,$f;
-	      }
-	      $f->add_segment(Bio::Graphics::Feature->new(-start => $start+0,
-							  -end   => $end+0,
-							  -score => $score+0,
-							 ));
-	    } else {
-	      push @hits,{hit=>$homol,type=>$type,score=>$score,source=>"$start..$end",target=>"$tstart..$tend"};
+    my $hits = shift;
+    my $as_features = shift;
+    
+    my (@hits,%cached_features);
+    my %seen;
+    for my $homol (@$hits) {
+	for my $type ($homol->col) {
+	    for my $score ($type->col) {
+		for my $start ($score->col) {
+		    for my $end ($start->col) {
+			my ($tstart,$tend) = $end->row(1);
+			
+			next if ($seen{"$start$end$homol"}++);
+			
+			$HIT_CACHE{$homol} = $homol;
+			
+			if ($as_features) {
+			    my $f = $cached_features{$type}{$homol};
+			    if (!$f) {
+				$f
+				    = $cached_features{$type}{$homol}
+				= Bio::Graphics::Feature->new(-name     => "$homol",   # quotes and +0 stringifies ace object
+							      -type     => "$type",
+							      -score    => $score+0);
+				push @hits,$f;
+			    }
+			    $f->add_segment(Bio::Graphics::Feature->new(-start => $start+0,
+									-end   => $end+0,
+									-score => $score+0,
+					    ));
+			} else {
+			    push @hits,{hit=>$homol,type=>$type,score=>$score,source=>"$start..$end",target=>"$tstart..$tend"};
+			}
+		    }
+		}
 	    }
-	  }
 	}
-      }
     }
-  }
-  @hits;
+    @hits;
 }
 
 sub hit_to_url {
-  my $name = shift;
-  $name =~ /(\w+):(\w+)/ or return; # was $name =~ /(\w+):(.+)/ or return;
-  my $prefix    = $1;
-  my $accession = $2;
-  # Hack for flybase IDs
-  $accession =~ s/CG/00/ if ($prefix =~ /FLYBASE/);
-  return ($prefix,$accession);
+    my $name = shift;
+    $name =~ /(\w+):(\w+)/ or return; # was $name =~ /(\w+):(.+)/ or return;
+    my $prefix    = $1;
+    my $accession = $2;
+    # Hack for flybase IDs
+    $accession =~ s/CG/00/ if ($prefix =~ /FLYBASE/);
+    return ($prefix,$accession);
 }
 
 1;

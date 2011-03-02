@@ -177,9 +177,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/person/
 sub street_address {
     my $self    = shift;
     my $address = $self->address_data;
-    my $data = { data        => $address->{street_address} || undef,
-		 description => 'street address of the person'}; 
-    return $data;
+    return { data        => $address->{street_address} || undef,
+	     description => 'street address of the person'}; 
 }
 
 

@@ -1,53 +1,44 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
  
-[% widget = c.stash.widget %]
-
-[% WRAPPER $field_block title="Homology Groups" key="homology_groups"-%]
+[% WRAPPER $field_block title="Homology Groups" key="homology_groups" -%]
   [% FOREACH obj IN fields.homology_groups.data %]
      [% obj.type %]:[% obj.title %] [[% tag2link(obj.link) %]]<br>
   [% END %]
 [% END %]
 
-[% WRAPPER $field_block title="Orthologous Gene(s)" key="ortholog_genes" -%]
-  [% fields.ortholog_genes.data.join('<br>') %]
-[% END %]
+
+[% 
+build_data_table(order=['species','gene'],
+                         columns={ species => 'Species',
+		                   gene    => 'Gene',
+                                 },
+                         key='orthologous_genes',	
+                         title='Orthologs');
+%]
+
 
 [% WRAPPER $field_block title="Protein Schematic" key="homology_image" -%]
-    [%# image(fields.homology_image.data) %]
-     [% c.flash.gd= fields.homology_image.data %]
+     [%# image(fields.homology_image.data) %]
+     [% c.flash.gd = fields.homology_image.data %]
      [% image("/draw/protein")  %]
 [% END %]
 
 
-[% WRAPPER $field_block title="Motif Summary" %]
-   
+[% WRAPPER $field_block title="Motif Summary" %]   
      
   <iframe src ="[% c.uri_for('/field','protein',object.name.data.id,'pfam_graph') %]" width="100%" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
   <p>Your browser does not support iframes.</p>
   </iframe> 
 
-  <div id="motif_details"><a class="update motif_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]">[View Details]</a></div> 
-  <br />
+  <div id="motif_details">
+       <a class="update motif_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]">
+          [View full Motif Details]
+       </a>
+  </div>   
 [% END %]
-    
-[% WRAPPER $field_block title="Best BLAST Hits" %]
-  <div id="blast_details"><a class="update blast_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') %]">[Full List]</a></div> 
    
-  <table  border= 0, width= '100%' >
-  <tr align= 'left'><th>Species</th><th>Hit</th><th>Description</th><th>BLAST E-value</th><th>% Length</th></tr>
-   [% FOREACH row IN fields.best_blastp_matches.data %]
-    <tr>	
-	[% FOREACH obj IN row %]
-	  <td>[% IF obj.species.defined %]
-		<span class="species">[% obj.genus %].[% obj.species %]</span>
-	       [% ELSIF obj.class.defined %] [% tag2link(obj) %] 
-           [% ELSIF obj.match('(\d+)e[-](\d+)') %] <span class="no-wrap">[% obj %]</span>
-           [% ELSE %] [% obj %]
-           [% END %]</td>
-	 [% END %]
-    </tr>
-   [% END %]
-   </table>   
-[% END %]
+
+
+[% best_blastp_matches %]
 
