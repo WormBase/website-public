@@ -27,7 +27,10 @@ has 'data_directory' => (
 	is  => 'ro',
     lazy => 1,
     default => sub {
-    	return "/usr/local/wormbase/databases/WS223/position_matrix";
+    	my $self = shift;
+		my $ace_service = $self->ace_dsn(); 
+		my $version = $ace_service->dbh->version;
+    	return "/usr/local/wormbase/databases/$version/position_matrix";
   	}
 );
 
@@ -65,12 +68,9 @@ has 'image_pointer_file' => (
   	}
 );
 
-
-
 #######################################
-#
+
 # The Overview Widget
-#
 #######################################
 
 =head2 Overview
