@@ -45,29 +45,32 @@ sub type {
 	my $type = $self ~~ 'Type';
 	return {
 		description => 'The type if this clone',
-		data		=> $type && $type->name,
+		data		=> $type && "$type",
 	};
 }
 
 sub sequences {
 	my ($self) = @_;
 
-	my $sequences = $self->_pack_objects($self ~~ '@Sequence');
-	# TODO: there's some bit of extra Sequence data displayed in classic...
+    my %sequences = map {
+        my $map = $_->Interpolated_map_position(2);
+        $_ => $self->_pack_obj(
+            $_, undef,
+            chrom => $self->_pack_obj($_->Interpolated_map_position),
+            map   => $map && "$map",
+        )
+    } @{$self ~~ '@Sequence'};
+
 	return {
 		description => 'Sequences assocaited with this clone',
-		data		=> %$sequences ? $sequences : undef,
+		data		=> %sequences ? \%sequences : undef,
 	}
 }
 
-sub length {
+sub lengths {
 	my ($self) = @_;
 
-	my %data;
-	foreach (qw(Seq_length Gel_length)) {
-		my $length = $self ~~ $_;
-		$data{lc $_} = $length if $length;
-	}
+	my %data = map { $_ => $self ~~ "$_" } qw(Seq_length Gel_length);
 
 	return {
 		description => 'Lengths relevant to this clone',
@@ -75,9 +78,10 @@ sub length {
 	};
 }
 
-sub map { # needs a look
+sub maps {
 	my ($self) = @_;
 
+    # get Maps from object itself, otherwise try for Maps from Pmap
 	my $map = $self ~~ '@Map';
 	$map = eval {[$self->object->Pmap->Map] } unless @$map;
 
@@ -87,14 +91,17 @@ sub map { # needs a look
 	};
 }
 
-
+# Returns the sequence status of the clone. Each key represents a status
+# and a status => undef pair represents no ?DateType or Text data for the status,
+# but does not invalidate the status itself.
 sub sequence_status {
 	my ($self) = @_;
 
-	my @status = map { $_->name } @{$self ~~ '@Sequence_status'};
+    # eval is in scalar context to force an undef instead of empty list
+    my %status = map { $_ => scalar eval {$_->right->name}} @{$self ~~ '@Sequence_status'};
 	return {
 		description => 'Sequence status of clone',
-		data		=> @status ? \@status : undef,
+		data		=> %status ? \%status : undef,
 	};
 }
 
@@ -127,11 +134,13 @@ sub canonical_parent {
 sub screened_positive {
 	my ($self) = @_;
 
-	my $data = $self->_pack_objects([$self->object->Positive(2)]);
-	# TODO: "weak" logic from classic...
+    my %weaks = map {$_ => 1} @{$self ~~ '@Pos_probe_weak'};
+    my %data = map { $_ => $self->_pack_obj($_, undef, weak => $weaks{$_}) }
+                   $self->object->Positive(2);
+
 	return {
 		description => 'Screened positive for',
-		data		=> %$data ? $data : undef,
+		data		=> %data ? \%data : undef,
 	};
 }
 
@@ -163,6 +172,21 @@ sub references {
 		description => 'References for this clone',
 		data		=> %$data ? $data : undef,
 	};
+}
+
+###
+
+sub _build_remarks {
+    my ($self) = @_;
+
+    my @remarks = map { "$_" } (@{$self ~~ '@General_remark'},
+                                @{$self ~~ '@Y_remark'},
+                                @{$self ~~ '@PCR_remark'});
+
+    return {
+        description => 'Remarks',
+        data        => @remarks ? \@remarks : undef,
+    };
 }
 
 1;
