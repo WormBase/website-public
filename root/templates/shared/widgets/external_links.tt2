@@ -1,7 +1,9 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
+[%# 2011.02: IN USE BY PROTEIN %]
+
+
 [% FOREACH tag IN fields.external_links.data.keys.sort %]
     [% WRAPPER $field_block title=tag %]
 	  [% external_link(fields.external_links.data.$tag.class,fields.external_links.data.$tag.label,fields.external_links.data.$tag.id) %]

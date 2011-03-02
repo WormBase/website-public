@@ -1,20 +1,26 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-  <table border=1 class="history">
-      [% # find a better way to do this:%]
-      <tr><th>Version</th><th>Date</th><th>Action</th><th>Remark</th><th>Gene</th><th>Curator</th></tr>
-    [% FOREACH history IN fields.history.data.keys %]
-      [% FOREACH h IN fields.history.data.$history.keys.nsort %]
-          [% NEXT UNLESS fields.history.data.$history.$h.type == "Version_change" %]
-          <tr>
-              <td>[% h %]</td>
-              <td>[% fields.history.data.$history.$h.date %]</td>
-              <td>[% fields.history.data.$history.$h.action %]</td>
-              <td>[% fields.history.data.$history.$h.remark %]</td>
-              <td>[% tag2link(fields.history.data.$history.$h.gene) %]</td>
-              <td>[% tag2link(fields.history.data.$history.$h.curator) %]</td>
-          </tr>
-      [% END %]
-    [% END %]
-    </table>
+[% IF object.name.data.class == 'Protein' %]
+    [%
+        build_data_table(order=['prediction','event','version'],
+                         columns={ prediction => 'Predicted gene',
+		                   event      => 'Event',
+			           version    => 'Version',
+                                 },
+                         key='history',
+                       title='Curatorial History');
+   %]
+[% ELSE %]
+   [%        build_data_table(order=['version','date','action','remark','gene','curator'],
+                         columns={ version => 'Version',
+		                   date    => 'Date',
+			           action  => 'Action',
+ 				   remark  => 'Remark',
+				   gene    => 'Gene',
+				   curator => 'Curator'
+                                 },
+                         key='history',	
+                         title='Curatorial History');
+    %]
+[% END %]
