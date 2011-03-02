@@ -1,14 +1,13 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
 
-[% WRAPPER $field_block title="Protein Length" %]
-  [% fields.protein_sequence.data.length %] aa
+[% WRAPPER $field_block title="Length" %]
+  [% fields.sequence.data.length %] aa
 [% END %]
 
 [% WRAPPER $field_block title="Protein Sequence" %]
-  [% seq = fields.protein_sequence.data.seq %]
+  [% seq = fields.sequence.data.sequence %]
   [% format_seq = "" %]
   [% FOREACH line IN seq.chunk(80) %]
      [% format_seq = format_seq _ line.chunk(10).join(' ')  %]
@@ -36,7 +35,7 @@
   [% fields.estimated_isoelectric_point.data %]
 [% END %]
 
-[% WRAPPER $field_block title="Amino Acid Composition" %]
+[% WRAPPER $field_block title="Amino Acid Composition" key="amino_acid_composition" %]
   [% data = fields.amino_acid_composition.data  %]
   [% keys = data.keys.sort  %]
   <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>

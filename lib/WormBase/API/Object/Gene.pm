@@ -462,14 +462,11 @@ sub cloned_by {
 }
 
 sub legacy_information {
-  my $self = shift;
+  my $self   = shift;
   my $object = $self->object;
   my @description = map {"$_"} $object->Legacy_information;
-  return unless @description;
-  my $data = {  description => "legacy information for the gene",
-                data => \@description
-            };
-  return $data;
+  return { description => 'legacy information from the CSHL Press C. elegans I/II books',
+	   data        => @description ? \@description : undef };
 }
 
 # sub status {}
@@ -575,24 +572,8 @@ sub genomic_position {
 ###########################################
 # Components of the Function panel
 ###########################################
-
-# This has some rather complicated markup.
-# Pre-process here before hitting the template
-# (This could also be a function for the template)
-# NOTE: this method makes no sense.
-sub pre_wormbase_information {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    # Description comes from Phenotype.
-    my @description = $object->Phenotype or return;
-    
-    my @xref = $object->Allele;
-    push @xref,$object->Strain;
-
-    my $data = $self->build_data_structure(\@description,
-					   'information from C. elegans I/II');
-    return $data;
+    return { 
+	     data        => @description ? \@description : undef };
 }
 
 
@@ -1015,6 +996,111 @@ sub gene_ontology {
     $data{'description'} = $desc;
     return \%data;
 }
+
+
+
+############################################################
+#
+# The History Widget (template supplied by shared/widgets/history.tt2)
+#
+############################################################
+
+=head2
+
+=head3 history
+
+This method returns a data structure containing the 
+curatorial history of the gene.
+
+=head4 PERL API
+
+ $data = $model->history();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A gene ID (WBGene00006763)
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/history
+
+=head5 Response example
+
+=cut
+
+
+sub history {
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+
+    foreach my $history ($object->History) {
+	my $type = $history;
+	$type =~ s/_ / /g;  
+
+	my @versions = $history->col;
+        foreach my $version (@versions) {
+	    #  next unless $history eq 'Version_change';    # View Logic
+            my ($vers,$date,$curator,$event,$action,$remark,$gene,$person);     
+            if ($history eq 'Version_change') {
+		($vers,$date,$curator,$event,$action,$remark) = $version->row; 
+		
+                # For some cases, the remark is actually a gene object
+                if ($action eq 'Merged_into'
+		    || $action eq 'Acquires_merge'
+                    || $action eq 'Split_from'
+		    || $action eq 'Split_into') {
+		    $gene = $remark;
+		    $remark = undef;
+                }
+            } else {
+		($gene) = $version->row;
+            }    
+	    
+	    push @data,{ history => "$history",
+			 version => "$version",
+			 type    => "$type",
+			 date    => "$date",
+			 action  => "$action",
+			 remark  => "$remark",
+			 gene    => $gene    ? $self->_pack_obj($gene,$gene->Public_name)         : undef,
+			 curator => $curator ? $self->_pack_obj($curator,$curator->Standard_name) : undef,
+	    };
+	}
+    }
+    
+    return { description => 'the curatorial history of the gene',
+	     data        => @data ? \@data : undef };
+}
+
+
+
+
+
 
 
 
