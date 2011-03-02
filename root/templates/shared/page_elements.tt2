@@ -584,6 +584,15 @@ if (typeof(_gat) == 'object') {
 
 
 
+
+
+
+
+
+
+
+
+
 [% MACRO name BLOCK;
    WRAPPER $field_block title="Name" key="name";
       tag2link(fields.name.data);
@@ -607,6 +616,32 @@ END;
       END;
 END;
 %]
+
+[% MACRO best_blastp_matches BLOCK;
+build_data_table(order=['taxonomy','hit','description','evalue','percent'],
+                         columns={ taxonomy => 'Species',
+		                   hit      => 'Hit',
+				   description => 'Description',
+				   evalue   => 'BLAST e-value',
+				   percent  => '% Length' 
+                                 },
+                         key='best_blastp_matches',	
+                         title='Best BLASTP matches');
+
+
+   
+        WRAPPER $field_block title="";
+           '<div id="blast_details">';
+             '<a class="update blast_details"';
+              ' href="' _ c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '">';
+               '[View full BLASTP List]</a>';
+         '</div>';
+       END;
+
+
+END;
+%]
+
 
 
 [% MACRO expression_patterns BLOCK ;
@@ -640,6 +675,7 @@ END;
     END;
 END;
 %]
+
 
 
 [% MACRO laboratory BLOCK ;
