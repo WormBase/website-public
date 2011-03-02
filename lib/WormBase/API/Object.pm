@@ -177,6 +177,8 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 
 
 # What/Where was this used?
+# A: known to be used in the following:
+#  - Clone.pm
 sub FindPosition {
   my ($self,$seq) = @_;
   my $db = $self->gff_dsn($seq->Species);
