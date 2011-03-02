@@ -1,0 +1,19 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title='Genomic Map' key='' # empty block%][% END %]
+[% # setting vars up
+   genom_link_part = 'c_elegans?name=' _ fields.genomic_picture.data.ref _
+                     ':'  _ fields.genomic_picture.data.start _
+                     '..' _ fields.genomic_picture.data.stop;
+   genom_img_part  = genom_link_part _ ';t=NG;t=CG;t=CLO;t=LINK;t=CANONICAL'
+                     # taken from classic site
+%]
+
+[% # the actual image
+   external_link('gbrowse_image', 
+                 image(site.external_urls.gbrowse_image.base _ genom_img_part),
+                 genom_link_part)
+%]
+
+[%# Physical Map... cannot implement until Clone::physical_picture implemented %]

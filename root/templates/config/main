@@ -147,25 +147,25 @@
        desc = site.external_urls.$link.description;
        IF id;
           USE String=format(site.external_urls.$link.search);
-	  IF (link == 'ensembl');
-	    UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
-	    array=id.split('&');
-	    url = String(array.first array.last);
-	  ELSE;
-	    url = String(id);
-	  END;
+	      IF (link == 'ensembl');
+             UNLESS (id.match('&')); id= 'Homo_sapiens&' _ id; END;
+             array=id.split('&');
+             url = String(array.first array.last);
+          ELSE;
+                url = String(id);
+          END;
        ELSE;
           url = site.external_urls.$link.base;
        END;
        UNLESS url; url = link; END;
-      IF (link == 'genomic_location' OR link == 'gbrowse_image' );
-	"<a href=\"$url\" title=\"$desc\">$text</a>";
-      ELSE;
+       IF (link == 'genomic_location' OR link == 'gbrowse_image' );
+          "<a href=\"$url\" title=\"$desc\">$text</a>";
+       ELSE;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" 
            title=\"$desc\">$text</a>";
-      END;
+       END;
     END;
 
 

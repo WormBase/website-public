@@ -9,8 +9,18 @@
    [% tag2linkAll(fields.sequences.data) %]
 [% END %]
 
-[% WRAPPER $field_block title=pluralize('Genomic Location', 0) key='sequences' %]
-   Placeholder for GBrowse stuff...
+[% WRAPPER $field_block title=pluralize('Genomic Location', fields.sequences.data.size) key='sequences' %]
+   [% links = [] %]
+   [% FOREACH seqname IN fields.sequences.data.sort %]
+      [% seq = fields.sequences.data.$seqname %]
+      [% IF seq.start && seq.end && seq.ref && seq.refname %]
+         [% quarter_len = (seq.end - seq.start) div 4 %]
+         [% external_link('genomic_location', seq.refname, 
+                          'c_elegans?ref=' _ seq.ref _
+                          '&start=' _ (seq.start - quarter_len) _
+                          '&stop='  _ (seq.end   + quarter_len)) %]
+      [% END %]
+   [% END %]
 [% END %]
 
 [% expression_patterns %]

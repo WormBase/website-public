@@ -52,12 +52,19 @@ sub type {
 sub sequences {
 	my ($self) = @_;
 
+    # genomic data of the sequence can probably be refactored out somewhere...
+    # see comment in genomic_picture
     my %sequences = map {
         my $map = $_->Interpolated_map_position(2);
+        my ($start, $end, $refname, $ref) = $self->FindPosition($_);
         $_ => $self->_pack_obj(
             $_, undef,
-            chrom => $self->_pack_obj($_->Interpolated_map_position),
-            map   => $map && "$map",
+            start   => $start,
+            end     => $end,
+            ref     => $ref,
+            refname => $refname,
+            chrom   => $self->_pack_obj($_->Interpolated_map_position),
+            map     => $map && "$map",
         )
     } @{$self ~~ '@Sequence'};
 
@@ -174,8 +181,59 @@ sub references {
 	};
 }
 
-###
+sub physical_picture { # TODO
+    my ($self) = @_;
 
+    # not what $PmapGFF translates to, e.g. $DBGFF --> $self->gff_dsn
+    # see classic code seq/clone
+
+    return {
+        description => 'Physical picture data',
+        data        => 'NOT IMPLEMENTED',
+    };
+}
+
+sub genomic_picture {
+    my ($self) = @_;
+
+    my ($ref, $start, $stop);
+    if (my $segment = $self->gff_dsn->segment(-class => 'region',
+                                              -name => $self->object)) {
+        # the following looks like something done in Object::genomic_position...
+        # consider refactoring?
+        my ($absref,           $absstart,           $absend)
+         = ($segment->abs_ref, $segment->abs_start, $segment->abs_end);
+        ($absstart, $absend) = ($absend, $absstart) if $absstart > $absend;
+
+        ($ref, $start, $stop) = ($absref, int $absstart, int $absend);
+
+        # the following appear in classic website but are commented out because
+        # fore som reason it doesn't work. may wish to investigate later
+
+        # my $new_segment = $self->gff_dsn->segment({
+        #     -name => 'name',
+        #     -class => 'Sequence'
+        #     -start => $start,
+        #     -stop => $stop,
+        # });
+
+    }
+
+    return {
+        description => 'Genomic picture data',
+        data        => {
+            ref   => $ref,
+            start => $start,
+            stop  => $stop,
+        },
+    };
+}
+
+########################################
+## PRIVATE METHODS
+########################################
+
+# override default remarks from Role::Object
 sub _build_remarks {
     my ($self) = @_;
 
