@@ -52,9 +52,9 @@
    [% END %]
 
    [% WRAPPER $field_block title="Derived From" key="derived_from" %]
-      	      [% fields.derived_from.data %]
+      	      [% IF fields.derived_from.data; tag2link(fields.derived_from.data); END %]
    [% END %]
 
    [% WRAPPER $field_block title="Derivate" key="derivative" %]
-      	      [% fields.derivative.data.join(" ") %]
+      	      [% tag2linkAll(fields.derivative.data) %]
    [% END %]

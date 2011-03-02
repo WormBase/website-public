@@ -110,19 +110,19 @@ B<Response example>
 has 'name'     => (
     is         => 'ro',
     default    => sub {
-	my $self   = shift;
-	my $object = $self->object;
-	my $class  = $object->class;
-	my $tag    = $self->_common_name_tag($object->class);
+        my $self   = shift;
+        my $object = $self->object;
+        my $class  = $object->class;
+        my $tag    = $self->_common_name_tag($object->class);
 
-	my $label  = $tag ? $object->$tag : $object->name;
+        my $label  = $tag ? $object->$tag : $object->name;
 
-	return {
-	    description => "The name and WormBase internal ID of a $class object",
-	    data        =>  $self->_pack_obj($object,$label),
-	};
+        return {
+            description => "The name and WormBase internal ID of a $class object",
+            data        =>  $self->_pack_obj($object,$label),
+        };
     }
-    );
+);
 
 
 
@@ -899,10 +899,10 @@ sub _build_remarks {
     my @evidence = map { $_->col } @remarks;
 
     # TODO: handling of Evidence nodes
-    my $data    = { description  => "curatorial remarks for the $class",
-		    data         => @remarks ? \@remarks : undef,
+    return {
+        description  => "curatorial remarks for the $class",
+        data         => @remarks ? \@remarks : undef,
     };
-    return $data;
 }
 
 
@@ -1217,25 +1217,21 @@ sub tmp_acedata_dir {
     return $self->tmp_dir('acedata',@_);
 }
 
-sub _pack_objects { 
-    my ($self,$objects) = @_;
-    my %data;
-    foreach (@$objects) {
-      $data{"$_"} = $self->_pack_obj($_);
-    }
-    return \%data;
+sub _pack_objects {
+    my ($self, $objects) = @_;
+    return { map { $_ => $self->_pack_obj($_) } @$objects };
 }
 
 sub _pack_obj {
-    my ($self,$object,$label,%args) = @_;
+    my ($self, $object, $label, %args) = @_;
     return unless defined $object;
     $label =  eval {$object->Public_name} || "$object" unless $label;
-    my %data = ( id => "$object",
-              label => "$label",
-              class => $object->class,
-    );
-    @data{ keys %args } = values %args if(%args);
-    return \%data;
+    return {
+        id => "$object",
+        label => "$label",
+        class => $object->class,
+        %args,
+    };
 }
 
 sub parsed_species {
