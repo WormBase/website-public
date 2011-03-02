@@ -324,89 +324,99 @@ has 'best_blastp_matches'  => (
 # Fetch all of the best_blastp_matches for a list of proteins.
 # Used for genes and proteins
 sub _build_best_blastp_matches {
-  my ($self,$proteins) = @_;
+    my $self = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
 
-  # current_object might already be a protein. If a gene, it will supply proteins.
-  $proteins = [$self->object] unless $proteins;
 
-  return unless @$proteins;
-  my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
-  
-  my @pep_homol = $biggest->Pep_homol;
-  my $length    = $biggest->Peptide(2);
-  
-  my @hits;
-  
-  # find the best pep_homol in each category
-  my %best;
-  return "" unless @pep_homol;
-  for my $hit (@pep_homol) {
+    my $proteins;
+    if ($class eq 'Gene') {
+	$proteins = $self->all_proteins;
+    } elsif ($class eq 'Protein') {
+
+	# current_object might already be a protein.
+	$proteins = [$self->object] unless $proteins;
+    } else {
+	return { description => 'no proteins found, no best blastp hits to display' };
+    }
+
+    my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
+    
+    my @pep_homol = $biggest->Pep_homol;
+    my $length    = $biggest->Peptide(2);
+    
+    my @hits;
+    
+    # find the best pep_homol in each category
+    my %best;
+    return "" unless @pep_homol;
+    for my $hit (@pep_homol) {
         # Ignore mass spec hits
 #     next if ($hit =~ /^MSP/);
-    next if $hit eq $biggest;         # Ignore self hits
-    my ($method,$score) = $hit->row(1) or next;
-    
-    my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
-    $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score .'0' : "$prev_score.0000";
-    my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0' : "$score.0000";
-    
-    $best{$method} = {score=>$score,hit=>$hit,adjusted_score=>$curr_score} if !$best{$method} || $prev_score < $curr_score;
-  }
-  
-  foreach (values %best) {
-    my $covered = $self->_covered($_->{score}->col);
-    $_->{covered} = $covered;
-  }
-  
-  # NOT HANDLED YET
-  # my $links = Configuration->Protein_links;
-  
-  my %seen;  # Display only one hit / species
-  
-  # I think the perl glitch on x86_64 actually resides *here*
-  # in sorting hash values.  But I can't replicate this outside of a
-  # mod_perl environment
-  # Adding the +0 forces numeric context
-  my $id=0;
-  foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
-    my $method = $_;
-    my $hit = $best{$_}{hit};
-   
-    # Try fetching the species first with the identification
-    # then method then the embedded species
-    my $species = $self->id2species($hit);
-    $species  ||= $self->id2species($method);
-     
-    # Not all proteins are populated with the species 
-    $species ||= $best{$method}{hit}->Species;
-    $species =~ s/^(\w)\w* /$1. / ;
-    my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-    my $class;
-
-    # this doesn't seem optimal... maybe there should be something in config?
-    if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
-      $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
-      # Kludge: display a description using the CDS
-      if (!$description) {
-	for my $cds (eval { $best{$method}{hit}->Corresponding_CDS }) {
-	  next if $cds->Method eq 'history';
-	  $description ||= "gene $cds";
-	}
-      }
-      $class = 'protein';
+	next if $hit eq $biggest;         # Ignore self hits
+	my ($method,$score) = $hit->row(1) or next;
+	
+	my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
+	$prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score .'0' : "$prev_score.0000";
+	my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0' : "$score.0000";
+	
+	$best{$method} = {score=>$score,hit=>$hit,adjusted_score=>$curr_score} if !$best{$method} || $prev_score < $curr_score;
     }
-    next if ($hit =~ /^MSP/);
-     $species =~ /(.*)\.(.*)/;
-    my $taxonomy = {genus=>$1,species=>$2};
+    
+    foreach (values %best) {
+	my $covered = $self->_covered($_->{score}->col);
+	$_->{covered} = $covered;
+    }
+    
+    # NOT HANDLED YET
+    # my $links = Configuration->Protein_links;
+    
+    my %seen;  # Display only one hit / species
+    
+    # I think the perl glitch on x86_64 actually resides *here*
+    # in sorting hash values.  But I can't replicate this outside of a
+    # mod_perl environment
+    # Adding the +0 forces numeric context
+    my $id=0;
+    foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
+	my $method = $_;
+	my $hit = $best{$_}{hit};
+	
+	# Try fetching the species first with the identification
+	# then method then the embedded species
+	my $species = $self->id2species($hit);
+	$species  ||= $self->id2species($method);
+	
+	# Not all proteins are populated with the species 
+	$species ||= $best{$method}{hit}->Species;
+	$species =~ s/^(\w)\w* /$1. / ;
+	my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
+	my $class;
+	
+	# this doesn't seem optimal... maybe there should be something in config?
+	if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
+	    $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
+	    # Kludge: display a description using the CDS
+	    if (!$description) {
+		for my $cds (eval { $best{$method}{hit}->Corresponding_CDS }) {
+		    next if $cds->Method eq 'history';
+		    $description ||= "gene $cds";
+		}
+	    }
+	    $class = 'protein';
+	}
+	next if ($hit =~ /^MSP/);
+	$species =~ /(.*)\.(.*)/;
+	my $taxonomy = {genus=>$1,species=>$2};
 #     next if ($seen{$species}++);
-    my $id;
-    if ($hit =~ /(\w+):(.+)/) {
-      my $prefix    = $1;
-      my $accession = $2;
-      $id = $accession unless $class;
-      $class = $prefix unless $class;
-
-      # Try fetching accessions directly from the protein object
+	my $id;
+	if ($hit =~ /(\w+):(.+)/) {
+	    my $prefix    = $1;
+	    my $accession = $2;
+	    $id = $accession unless $class;
+	    $class = $prefix unless $class;
+	    
+	    # Try fetching accessions directly from the protein object
 #       my @dbs = $hit->Database;
 #       foreach my $db (@dbs) {
 # 	if ($db eq 'FLYBASE') {
@@ -418,14 +428,14 @@ sub _build_best_blastp_matches {
 # 	  }
 # 	}
 #       }
-     
-      # NOT HANDLED YET!
+	    
+	    # NOT HANDLED YET!
 #      my $link_rule = $links->{$prefix};
 #       my $link_rule = '%s';
 #       my $url       = sprintf($link_rule,$accession);
-      # TH: 1/2006 - remanei not yet in the database but blast hits available
-      # Generate links to the remanei browser
-      # This will not work for mirror sites, of course...
+	    # TH: 1/2006 - remanei not yet in the database but blast hits available
+	    # Generate links to the remanei browser
+	    # This will not work for mirror sites, of course...
 #       if ($species =~ /remanei/) {
 # 	$accession =~ s/^RP://;
 # 	$hit = qq{<a href="http://dev.wormbase.org/db/seq/gbrowse/remanei/?name=$accession"</a>$accession</a>};
@@ -433,36 +443,36 @@ sub _build_best_blastp_matches {
 #       } else {
 # 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
 #       }
-    }
-
+	}
+	
 #       $hits{$hit}{species}=$species;
 #       $hits{$hit}{hit}=$hit;
 #       $hits{$hit}{description}=$description;
 #       $hits{$hit}{evalue}=sprintf("%7.3g",10**-$best{$_}{score});
 #       $hits{$hit}{plength}=sprintf("%2.1f",100*($best{$_}{covered})/$length);
 =pod
- 	$hits{species}{$id}=$species;
+	    $hits{species}{$id}=$species;
         $hits{hit}{$id}={label=>$hit,id=>$hit,class=>'protein'};
         $hits{description}{$id}=$description;
         $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
 =cut
-
-    push @hits,{ taxonomy => $taxonomy,
-		 hit      => { label => "$hit",
-			       id    => ($id ? "$id" : "$hit"),
-			       class => $class },
-		 description => "$description",
-		 evalue      => sprintf("%7.3g",10**-$best{$_}{score}),
-		 percent     => sprintf("%2.1f%%",100*($best{$_}{covered})/$length)};
+	    
+	push @hits,{ taxonomy => $taxonomy,
+		     hit      => { label => "$hit",
+				   id    => ($id ? "$id" : "$hit"),
+				   class => $class },
+		     description => "$description",
+		     evalue      => sprintf("%7.3g",10**-$best{$_}{score}),
+		     percent     => sprintf("%2.1f%%",100*($best{$_}{covered})/$length)};
 #[$taxonomy,{label=>"$hit",id=>($id ? "$id" : "$hit"),class=>$class},"$description",
 #  		sprintf("%7.3g",10**-$best{$_}{score}),
 # 		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
-  }
-  
-  return { description => 'best BLASTP hits from selected species',
-	   data        => @hits ? \@hits : undef }; 
+    }
+    
+    return { description => 'best BLASTP hits from selected species',
+	     data        => @hits ? \@hits : undef }; 
 }
 
 

@@ -1404,10 +1404,12 @@ sub treefam {
 ###########################################
 # Components of the Similarities panel
 ###########################################
-sub best_blastp_matches {
-    my $self     = shift;
-    return  $self->SUPER::best_blastp_matches($self->all_proteins) ;
-}
+
+
+# sub best_blastp_matches {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include best_blastp_matches >>
+
 
 
 
