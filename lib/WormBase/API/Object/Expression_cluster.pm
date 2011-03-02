@@ -36,17 +36,14 @@ http://wormbase.org/species/expresssion_cluster
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
-
 sub gene {
     my $self = shift;
     my $object = $self->object;
     my %ret;
     map { {$ret{"$_"} = $self->_pack_obj($_, $_->Public_name)}} $object->Gene;
-    my $data = { description => 'The corresponding gene',
+    return { description => 'The corresponding gene',
          data        =>  \%ret, 
     };
-    return $data;
 }
 
 # sub description { }
@@ -60,12 +57,55 @@ sub gene {
 sub algorithm {
     my $self = shift;
     my $object = $self->object;
-    my $data = { description => 'Algorithm',
+    my $data = { description => 'Algorithm used to determine cluster',
          data        =>  $object->Algorithm, 
     };
     return $data;
 }
 
+sub microarray {
+	my $self = shift;
+    my $object = $self->object;
+	my @tag_objects = $object->Microarray_results;
+	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+	return {
+		'data'=> \@data_pack,
+		'description' => 'microarray results from expression cluster'
+	};
+}
+
+sub sage_tag {
+	my $self = shift;
+    my $object = $self->object;
+	my @tag_objects = $object-><TAG>;
+	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+	return {
+		'data'=> \@data_pack,
+		'description' => ''
+	};
+}
+
+sub expr_pattern {
+	my $self = shift;
+    my $object = $self->object;
+	my @tag_objects = $object->Expr_pattern;
+	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+	return {
+		'data'=> \@data_pack,
+		'description' => 'expression patterns associated with this cluster'
+	};
+}
+
+sub anatomy_term {
+	my $self = shift;
+    my $object = $self->object;
+	my @tag_objects = $object->Anatomy_term;
+	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+	return {
+		'data'=> \@data_pack,
+		'description' => 'anatomy term annotated with this expression cluster'
+	};
+}
 
 
 1;
