@@ -114,7 +114,7 @@
 
     <div class="field
 
-    [% TRY; IF key.defined && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
+    [% TRY; IF key && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
 
 " id="[% title FILTER html %]">
          <div class="field-title">
@@ -662,7 +662,7 @@ END;
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
-   IF $no_toggle == 1;  
+   IF no_toggle == 1;  
       IF fields.remarks.data.defined;
         '<div class="text-width">';
          WRAPPER $field_block title="Remarks" key="remarks";
