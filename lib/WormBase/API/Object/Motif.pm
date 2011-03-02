@@ -37,8 +37,6 @@ http://wormbase.org/species/motif
 # << include name >>
 
 
-
-
 =head3 title
 
 This method will return a data structure of the 
@@ -90,19 +88,15 @@ sub title {
 	my $self 	= shift;
 	my $object 	= $self->object;
 	my $data_pack = $object->Title;
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'title for the motif'
-				};
-	return $data;
+	return {
+		'data' => $data_pack,
+		'description' => 'title for the motif'
+	};
 }
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
-
-
 
 =head3 database
 
@@ -154,22 +148,17 @@ sub database  {
 	my $self = shift;
     my $object = $self->object;
 	my ($database,$accession1,$accession2) = $object->Database('@')->row if $object->Database;
-	my $accession = $accession2 || $accession1;
-	
+	my $accession = $accession2 || $accession1;	
 	my $data_pack = {'database' 	=> "$database",
 					'accession' => "$accession"
 	             };
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'database which contained info on motif, along with its accession number'
-				};
-	return $data;
+	
+	return {
+		'data'=> $data_pack,
+		'description' => 'database which contained info on motif, along with its accession number'
+	};     
 }
 
-####################
-## homology
-####################
 
 =head3 go
 
@@ -244,16 +233,13 @@ sub homologies {
 				push @data_pack, $homolog_data;
 			}
 		}       
-	my $data = {
+	}
+	return {
 		'data'=> \@data_pack,
 		'description' => 'homology data for this motif'
-		};
-	return $data;	
-	}
+	};
+	
 }
-###################
-## gene ontology
-###################
 
 =head3 homologies
 
@@ -314,24 +300,19 @@ sub go  {
 		my ($evidence) = $go_term->right;
 		my $term = $go_term->GO_term;
 		my $go_data;
+		my $term_data = $self->pack_obj($term);
 
 		$go_data = {		
-					'term_data' => {
-						'id'=> "$go_term",
-						'label' => "$term",
-						'class'=>'GO_term'
-					},	
-				'definition'=>$definition,
-				'evidence'=>$evidence
-				};
-				
+			'term_data' => $term_data,	
+			'definition'=>$definition,
+			'evidence'=>$evidence
+			};	
 		push @data_pack,$go_data;		
 	}
-	my $data = {
+	return {
 		'data'=> \@data_pack,
 		'description' => 'go terms to with which motif is annotated'
-		};
-	return $data;	
+	};	
  }
 
 1;
