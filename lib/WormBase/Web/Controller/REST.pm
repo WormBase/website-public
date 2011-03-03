@@ -700,21 +700,24 @@ sub widget_GET {
     }
     my $object = $c->stash->{object};
     # Is this a request for the references widget?
-	# Return it (of course, this will ONLY be HTML).
-	if ($widget eq "references") {
-	    $c->stash->{class}    = $class;
-	    $c->stash->{query}    = $name;
-	    $c->stash->{noboiler} = 1;
-	    
-	    # Looking up the template is slow; hard-coded here.
-	    $c->stash->{template} = "shared/widgets/references.tt2";
-	    $c->forward('WormBase::Web::View::TT');
-	    return;
-	}elsif($widget eq "aligner" ||$widget eq "show_mult_align" ) {
-	    $c->res->redirect("/tools/".$widget."/run?inline=1&sequence=".$name) ;
-	    return;
-       }
-
+    # Return it (of course, this will ONLY be HTML).
+    if ($widget eq "references") {
+	$c->stash->{class}    = $class;
+	$c->stash->{query}    = $name;
+	$c->stash->{noboiler} = 1;
+	
+	# Looking up the template is slow; hard-coded here.
+	$c->stash->{template} = "shared/widgets/references.tt2";
+	$c->forward('WormBase::Web::View::TT');
+	return;
+	
+    # If you have a tool that you want to display inline as a widget, be certain to add it here.
+    # Otherwise, it will try to load a template under class/action.tt2...
+    } elsif ($widget eq "aligner" || $widget eq "show_mult_align" || $widget eq 'tree') {
+	return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
+	return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
+    }
+    
     # Does the data for this widget already exist in the cache?
     my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
 
