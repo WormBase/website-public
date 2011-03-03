@@ -112,6 +112,7 @@ has 'name'     => (
     default    => sub {
         my $self   = shift;
         my $object = $self->object;
+	return unless $object;
         my $class  = $object->class;
         my $tag    = $self->_common_name_tag($object->class);
 

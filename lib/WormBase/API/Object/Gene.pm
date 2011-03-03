@@ -572,9 +572,6 @@ sub genomic_position {
 ###########################################
 # Components of the Function panel
 ###########################################
-    return { 
-	     data        => @description ? \@description : undef };
-}
 
 
 sub microarray_expression_data {

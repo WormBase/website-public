@@ -16,35 +16,40 @@ sub tool_summary :Path("/tools") :Args(0) {
 }
 
 sub tool :Path("/tools") Args {
-     my ( $self, $c, @args) = @_;
-   #  $c->stash->{noboiler} = 1;
-     my $tool = shift @args;
-     my $action= shift @args || "index";
-     $c->log->debug("using $tool and running $action\n");
-      
-     $c->stash->{template}="tool/$tool/$action.tt2";
-     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
-     my $api = $c->model('WormBaseAPI');
-     my $data;
-
+    my ( $self, $c, @args) = @_;
+    #  $c->stash->{noboiler} = 1;
+    my $tool = shift @args;
+    my $action= shift @args || "index";
+    $c->log->debug("using $tool and running $action\n");
+    
+    $c->stash->{template}="tool/$tool/$action.tt2";
+    $c->stash->{noboiler} = 1 if($c->req->params->{inline});
+    my $api = $c->model('WormBaseAPI');
+    my $data;
+    
     # Does the data already exist in the cache?
-  
-    if($action eq 'run' && $tool eq 'aligner' && !(defined $c->req->params->{Change})) {
-       
-      my ($cache_id,$cache_server);
-      ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
-      unless($data) {  
-	  $data = $api->_tools->{$tool}->$action($c->req->params);
-	  $c->set_cache($cache_id,$data);
-      }else {
-	$c->stash->{cache} = $cache_server if($cache_server);
-      }
-    }else{
-      $data= $api->_tools->{$tool}->$action($c->req->params);
+    
+    if ($action eq 'run' && $tool eq 'aligner' && !(defined $c->req->params->{Change})) {
+	
+	my ($cache_id,$cache_server);
+	($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
+	unless ($data) {  
+	    $data = $api->_tools->{$tool}->$action($c->req->params);
+	    $c->set_cache($cache_id,$data);
+	} else {
+	    $c->stash->{cache} = $cache_server if($cache_server);
+	}
+    } else{
+	$data= $api->_tools->{$tool}->$action($c->req->params);
     }
-
-    for my $key (keys %$data){
-	$c->stash->{$key}=$data->{$key};
+    
+    # Um. Not sure how this works for other tools.    
+    if ($tool eq 'tree') {
+	$c->stash->{data} = $data;
+    } else {
+	for my $key (keys %$data){
+	    $c->stash->{$key}=$data->{$key};
+	}
     }
 }
 
@@ -89,6 +94,11 @@ sub comment :Path("tools/comments") Args {
     $c->stash->{current_time}=time();
     return;
 } 
+
+#sub tree : Path("tools/tree") Args {
+    
+
+#}
 
 
 1;
