@@ -681,7 +681,7 @@ END;
 [% MACRO laboratory BLOCK ;
      # The Laboratory field
      # Expects the stash to contain the "laboratory" key.
-     WRAPPER $field_block title="$title" key="laboratory";
+     WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
          tag2link(fields.laboratory.data.laboratory);
  
          # Include the lab representative, if one exists         
