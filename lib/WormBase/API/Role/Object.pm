@@ -938,34 +938,36 @@ has 'laboratory' => (
 # Used in: Person, Gene_class, Transgene
 # template: shared/fields/laboratory.tt2
 sub _build_laboratory {
-    my $self   = shift;
+    my ($self) = @_;
     my $object = $self->object;
-    my $class  = $object->class;
+    my $class = $object->class;    # Ace::Object class, NOT ext. model class
 
     # Ugh. Model inconsistencies.
-    my $tag;
-    if ($class eq 'Gene_class') {
-	$tag = 'Designating_laboratory';
-    } elsif ($class eq 'Pcr_olig' || $class eq 'Sequence') {
-	$tag = 'From_laboratory';
-    } elsif ($class eq 'Transgene' || $class eq 'Strain' || $class eq 'Antibody') {
-	$tag = 'Location';
-    } else {
-	$tag = 'Laboratory';
+    my %taghash = (
+        Gene_class  => 'Designating_laboratory',
+        PCR_product => 'From_laboratory',
+        Sequence    => 'From_laboratory',
+        CDS         => 'From_laboratory',
+        Transgene   => 'Location',
+        Strain      => 'Location',
+        Antibody    => 'Location',
+    ); # does this belong here?
+
+    my $tag = $taghash{$class} || 'Laboratory';
+    my $data; # trick: $data is undef until following code derefs it like hash (or not)!
+    if (my $lab = eval {$object->$tag}) {
+        $data->{laboratory} = $self->_pack_obj($lab);
+
+        my $representative = $lab->Representative;
+        my $name           = $representative->Standard_name;
+        my $rep            = $self->_pack_obj($representative,$name);
+        $data->{representative} = $rep if $rep;
     }
-    my $lab = $object->$tag;
-    my %data;
-    $data{laboratory} = $self->_pack_obj($lab);
-    if ($lab) {
-	my $representative = $lab->Representative;
-	my $name = $representative->Standard_name; 
-	my $rep = $self->_pack_obj($representative,$name);
-	$data{representative} = $rep if $rep;
-    }
-    
-    my $data = { description => "the laboratory where the $class was isolated, created, or named",
-		 data        => \%data };
-    return $data;		     
+
+    return {
+        description => "the laboratory where the $class was isolated, created, or named",
+        data        => $data,
+    };
 }
 
 =head3 method
