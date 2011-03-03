@@ -12,95 +12,53 @@ WormBase::API::Object::Anatomy_term
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Gene class.
+Model for the Ace ?Anatomy_term class.
 
 =head1 URL
 
-http://wormbase.org/species/gene
+http://wormbase.org/species/anatomy_term
 
 =head1 METHODS/URIs
 
 =cut
 
-################
-## subroutines
-################
+#######################################
+#
+# The Overview Widget
+#
+#######################################
 
-=head2 name
-
-This method will return a data structure re: definition of this name.
-
-=head3 PERL API
-
- $data = $model->name();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Anatomy_term ID WBbt:0005175
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/name
-
-=head4 Response example
-
-<div class="response-example"></div>
+=head2 Overview
 
 =cut
-
 
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
-=head2 definition
+=head3 definition
 
 This method will return a data structure re: definition of this anatomy_term.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->definition();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
-a Anatomy_term ID WBbt:0005175
+An Anatomy_term ID (eg WBbt:0005175)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -114,50 +72,50 @@ a Anatomy_term ID WBbt:0005175
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/definition
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
 =cut
 
 sub definition {
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my $data_pack = $object->Definition;
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'definition of the anatomy term'
-				};
-	return $data;
+    my $data   = $object->Definition;
+    return {
+	data        => $data ? "$data" : undef,
+	description => 'definition of the anatomy term',
+    };
 }
 
-=head2 synonyms
+=head3 synonyms
 
-This method will return a data structure re: synonyms this anatomy_term.
+This method will return a data structure containing the 
+synonyms of this anatomy term object.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->synonyms();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
-a Anatomy_term ID WBbt:0005175
+An Anatomy_term ID (eg WBbt:0005175)
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -171,79 +129,29 @@ a Anatomy_term ID WBbt:0005175
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
 =cut
 
 sub synonyms {
-	my $self = shift;
-    my $object = $self->object;
-	my @data_pack;
-	my @tag_objects = $object->Synonym;
-
-	foreach my $tag_object (@tag_objects) {
-		my $synonym = $tag_object->Primary_name->right if $tag_object->Primary_name;
-		my $tag_info = $self->_pack_obj($synonym);
-		push, @data_pack, $tag_info;
-	}
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'description of the'
-				};
-	return $data;
+    my $self     = shift;
+    my $object   = $self->object;
+    my @synonyms = $object->Synonym;
+    
+    foreach my $entry (@synonyms) {
+	my $synonym = $entry->Primary_name->right if $entry->Primary_name;
+	my $tag_info = $self->_pack_obj($synonym);
+	push @data,$self->_pack_obj($synonym);
+    }
+    return { description => 'synonyms that have been used to describe the anatomy term',
+	     data        => @data ? \@data : undef };
 }
-
-=head2 remarks
-
-This method will return a data structure with remarks re: this term.
-
-=head3 PERL API
-
- $data = $model->remarks();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Anatomy_term ID WBbt:0005175
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/remarks
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
 
 
 # sub remarks {}
@@ -255,29 +163,30 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy
 ## sub worm_atlas {} put under external resources
 
 
-=head2 transgenes
+=head3 transgenes
 
-This method will return a data structure re: transgenes annotated with this anatomy_term.
+This method will return a data structure of 
+transgenes annotated with this anatomy term.
 
-=head3 PERL API
+=head4 PERL API
 
  $data = $model->transgenes();
 
-=head3 REST API
+=head4 REST API
 
-=head4 Request Method
+=head5 Request Method
 
 GET
 
-=head4 Requires Authentication
+=head5 Requires Authentication
 
 No
 
-=head4 Parameters
+=head5 Parameters
 
 a Anatomy_term ID WBbt:0005175
 
-=head4 Returns
+=head5 Returns
 
 =over 4
 
@@ -291,31 +200,31 @@ a Anatomy_term ID WBbt:0005175
 
 =back
 
-=head4 Request example
+=head5 Request example
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
 
-=head4 Response example
+=head5 Response example
 
 <div class="response-example"></div>
 
 =cut
 
 sub transgenes {
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my @transgenes;
-	my @data_pack;
-	eval{@transgenes = map{$_->Transgene} grep {/marker/i&& defined $_->Transgene} $term->Expr_pattern;};
-
-	foreach $transgene (@transgenes) {
-		my $transgene_data = {
-			'id' =>"$transgene",
-			'label' =>"$transgene",
-			'class' => 'Transgene'
-		}
-		push @data_pack, $transgene_data;
+    my @transgenes;
+    my @data_pack;
+    eval{@transgenes = map{$_->Transgene} grep {/marker/i&& defined $_->Transgene} $term->Expr_pattern;};
+    
+    foreach $transgene (@transgenes) {
+	my $transgene_data = {
+	    'id' =>"$transgene",
+	    'label' =>"$transgene",
+	    'class' => 'Transgene'
 	}
+	push @data_pack, $transgene_data;
+    }
 	my $data = {
 		'data'=> \@data_pack,
 		'description' => 'transgenes annotated with this anatomy_term'
