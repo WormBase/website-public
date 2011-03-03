@@ -49,6 +49,7 @@
 
 
 <div style="margin:1em;max-width:65%;">
+[%# BEGIN CITATION %]
 	[% IF authors.size > 0 %]
 		[% apa_persons(authors) %]
 	[% ELSIF fields.editors %]
@@ -94,6 +95,7 @@
 	[% IF fields.doi.data %]
 	   [% external_link($DOI _ fields.doi.data, 'doi:' _ fields.doi.data) %]
 	[% END %]
+[%# END OF CITATION. %]
 
 	<p>
 	[% IF fields.abstract.data %]
