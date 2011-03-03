@@ -1,13 +1,61 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-<div style="font-family:monospace;margin:1em;">
 [% IF fields.segment.data %]
+<div style="font-family:monospace;margin:1em;">
    [% segment = fields.segment.data %]
    >[% fields.name.data.label %] ([%fields.name.data.class %];
    [% segment.refseq %]:[% segment.abs_start %]..[% segment.abs_stop %];
-   [% segment.length %] bp)<br><br>
-   [%# TODO: uppercase the oligo seqs %]
-   [% segment.dna.replace('(.{80})', '$1<br>') %]
-[% END %]
+   [% segment.length %] bp)
+   <br><br>
+   [% dnaseq = segment.dna | lower %]
+   [% FOREACH oligo IN fields.oligos.data %]
+      [%# Rationale for embedding Perl:
+
+          The operations involved are not provided by the TT (how to do revcomp if
+          substitution fails?) even if provided by the TT would be unwieldy.
+
+          So, why not put this into the model? This is fundamentally a view process.
+          Suppose in the future we would like to, in addition to uppercasing the 
+          oligos in the sequence, BOLD the oligos as well. Since the computation
+          is in the model, we would have to embed HTML into data provided by the
+          model, which is most certainly wrong.
+
+          One compromise may be to move this into a macro or write a few custom
+          vmethods, but again, we have no choice but to throw Perl into template
+          code.
+      %]
+      [% RAWPERL %]
+         my $_oligoseq = lc $stash->get('oligo')->{sequence};
+         my $_upperseq = uc $_oligoseq;
+         my $_dnaseq   = $stash->get('dnaseq');
+         unless ($_dnaseq =~ s/$_oligoseq/$_upperseq/) {
+            $_oligoseq =~ tr/atcg/tagc/;
+            $_oligoseq = reverse $_oligoseq;
+            $_upperseq = uc $_oligoseq;
+            $_dnaseq   =~ s/$_oligoseq/$_upperseq/;
+         }
+         $stash->set('dnaseq', $_dnaseq);
+      [% END %]
+   [% END %]
+   [% dnaseq.replace('(.{80})', '$1<br>') %]
 </div>
+
+<div>
+[%   # this stuff used in clone/maps.tt2 and gene as well... consider refactoring
+     # into inline_gbrowse_image macro?
+   piece = (fields.segment.data.stop - fields.segment.data.start) div 20; # 5%
+   genom_link_part = 'c_elegans?name=' _ fields.segment.data.ref _
+                     ':'  _ (fields.segment.data.start - piece) _
+                     '..' _ (fields.segment.data.stop  + piece);
+   genom_img_part  = genom_link_part _ ';t=CG;t=OLIGO;t=PCR;t=OSTP;t=CLO';
+%]
+
+[% 
+   external_link('gbrowse_image', 
+                 image(site.external_urls.gbrowse_image.base _ genom_img_part),
+                 genom_link_part) # must be a better way to do this...
+%]
+</div>
+[% END %]
+
