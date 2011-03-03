@@ -881,7 +881,7 @@ sub synonyms {
 	foreach my $tag_object (@tag_objects) {
 		my $synonym = $tag_object->Primary_name->right if $tag_object->Primary_name;
 		my $tag_info = $self->_pack_obj($synonym);    # TH: Unnecessary variable assignment.
-		push, @data_pack, $tag_info;
+		push, @data_pack, $tag_info;                  # TH: Typos. This will not compile.
 	}
 	# TH: Goofy indentation. Unnecessary assignment. Broken description.
 	my $data = {

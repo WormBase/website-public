@@ -39,7 +39,7 @@ http://wormbase.org/species/feature
 
 =head3 flanking_sequences
 
-This method will return a data structure containing sequences adjacent to the feature .
+This method will return a data structure containing sequences adjacent to the feature.
 
 =head4 PERL API
 
@@ -57,7 +57,7 @@ No
 
 =head5 Parameters
 
-a Feature ID WBsf000753
+A Feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -81,25 +81,16 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 
 <div class="response-example"></div>
 
-=cut }
-
+=cut 
 
 sub flanking_sequences {
-	my $self = shift;
-    my $object = $self->object;
-	my @sequences = $object->Flanking_sequences;
-	my @data_pack;
-	
-	foreach my $sequence (@sequences) {
-		my $seq_data = $self->_pack_obj($sequence);
-		push @data_pack, $seq_data;
-	}
-
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'sequences flanking feature'
-				};
-	return $data;
+    my $self      = shift;
+    my $object    = $self->object;
+    my @sequences = $object->Flanking_sequences;
+    
+    my @data = map { "$_" } @sequences;
+    return { description => 'sequences flanking the feature',
+	     data        => @data ? \@data : undef };
 }
 
 
@@ -132,7 +123,7 @@ No
 
 =head5 Parameters
 
-a Feature ID WBsf000753
+A Feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -159,25 +150,14 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 =cut 
 
 sub defined_by {
-	my $self = shift;
-	my $tag = shift;
+    my $self   = shift;
     my $object = $self->object;
-    my @data_pack;
-	my @defining_objects = $object->$tag;
-	
-	foreach my $defining_object (@defining_objects) {
-		my $do_data = _pack_obj($defining_object);
-		push @data_pack, $do_data;
-	}	
-	
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'objects that define this feature'
-				};
-	return $data;
+    my $tag    = shift;
+    
+    my @data = map { $self->_pack_obj($_) } $object->$tag;
+    return { description => 'objects that define this feature', 
+	     data        => @data ? \@data : undef };
 }
-
-
 
 =head3 associations
 
@@ -200,7 +180,7 @@ No
 
 =head5 Parameters
 
-a Feature ID WBsf000753
+A Feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -227,26 +207,18 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 =cut
 
 sub associations {
-	my $self = shift;
-	my $tag = shift;
-    my $object = $self->object;
-	my @associations = $object->$tag;
-	my @data_pack;
-	
-	foreach my $association (@associations) {
-		my $assoc_data = $self->_pack_obj($association);
-		push @data_pack, $assoc_data;
-	}
-	my $data = {
-		'data'=> \@data_pack,
-		'description' => 'objects associated with this feature'
-	};
-	return $data;
+    my $self = shift;
+    my $tag = shift;
+    my $object = $self->object;    
+    my @data = map { $self->_pack_obj($_) } $object->$tag;
+    return { description => 'objects associated with this feature',
+	     data        => @data ? \@data : undef };
 }
 
-=head3 binds_product_of_gene
+=head3 binds_gene_product
 
-This method will return a data structure containing the gene whose product binds the feature.
+This method will return a data structure containing 
+the gene whose product binds the feature.
 
 =head4 PERL API
 
@@ -264,7 +236,7 @@ No
 
 =head5 Parameters
 
-a  Feature ID WBsf000753
+A feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -282,7 +254,7 @@ a  Feature ID WBsf000753
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_product_of_gene
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_gene_product
 
 =head5 Response example
 
@@ -290,26 +262,19 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 
 =cut 
 
-sub binds_product_of_gene {
-	my $self = shift;
+sub binds_gene_product {
+    my $self   = shift;
     my $object = $self->object;
-	my @genes = $object->Bound_by_product_of;
-	my @data_pack;
-	
-	foreach my $gene (@genes) {
-		my $gene_data = $self->pack_obj($gene);
-		push @data_pack, $gene_data;
-	}
-	my $data = {
-				'data'=> \@data_pack,
-				'description' => 'product of these genes binds this feature'
-				};
-	return $data;
+    my @genes  = $object->Bound_by_product_of;
+    my @data   = map { $self->_pack_obj($_,$_->Public_name) } @genes;
+    return { description => 'gene products thtat bind this feature',
+	     data        => @data ? \@data : undef };
 }
 
 =head3 transcription_factor
 
-This method will return a data structure containing the transcription factors associated with this feature.
+This method will return a data structure containing
+the transcription factors associated with this feature.
 
 =head4 PERL API
 
@@ -327,7 +292,7 @@ No
 
 =head5 Parameters
 
-a  Feature ID WBsf000753
+A feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -354,22 +319,19 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 =cut
 
 sub transcription_factor {	
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my $transcription_factor = $object->Transcription_factor;
-
-	my $data_pack = $self->_pack_obj($transcription_factor);
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'description of the position matrix'
-				};
-	return $data;
+    my $transcription_factor = $object->Transcription_factor;
+    
+    my $data = $self->_pack_obj($transcription_factor);
+    return { description => 'transcription factor that binds the feature',
+	     data        => $data ? $data : undef };
 }
 
 =head3 annotation
 
-This method will return a data structure containing annotation info on the feature.
+This method will return a data structure
+containing annotation info on the feature.
 
 =head4 PERL API
 
@@ -387,7 +349,7 @@ No
 
 =head5 Parameters
 
-a Feature ID WBsf000753
+A feature ID (eg WBsf000753)
 
 =head5 Returns
 
@@ -414,15 +376,11 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 =cut 
 
 sub annotation {
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my $data_pack = $object->Annotation;
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'annotation of the feature'
-				};
-	return $data;
+    my $data   = map { $self->_pack_obj($_) } $object->Annotation;
+    return { description => 'annotations on the feature',
+	     data        => $data ? $data : undef };
 }
 
 # sub remarks {}
