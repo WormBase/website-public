@@ -830,3 +830,138 @@ END;
      END; # END of primary WRAPPER 
   END; # END of MACRO
 %]
+
+
+
+
+
+
+
+[% # Report Page elements; shared for species, resources, and tools %]
+[% MACRO report_page BLOCK;
+   upperClass = class FILTER ucfirst;
+
+   IF is_index;
+      SET this_object_id    = "all";
+      SET this_object_label = "all";
+      title = upperClass _ " Class Index";
+   ELSE;
+      SET this_object_id    = object.name.data.id;
+      SET this_object_label = object.name.data.label;
+      title = upperClass _ " Report: ";
+      UNLESS class == 'paper';
+              title = title _ tag2link(object.name.data);
+      ELSE;
+              title = title _ tag2link(object.name.data);
+      END;
+   END;
+
+
+   path = c.uri_for("/$section", class, this_object_id);
+
+   widgets = [];
+   widgets.push({ title="Page Content" type="title"});
+   widget_list = c.config.sections.$section.$class.widgets.keys.sort;
+
+   # Class index page? Add Browse, Basic Search, and Advanced Search widgets
+   IF is_index ;
+      widgets.push({   id  = 'browse',
+                     title = 'Browse',
+                     href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
+                     type  = class
+                    },
+                   {   id  = 'basic_search'
+                     title = 'Basic Search'
+                     href  = c.uri_for('/rest','widget',class,this_object_id,'basic_search')
+                     type  = class
+                   },
+                   { id    = 'advanced_search'
+                     title = 'Advanced Search'
+                     href  = c.uri_for('/rest','widget',class,this_object_id,'advanced_search')
+                     type  = class
+                   });
+   ELSE;
+        widget_list.unshift('overview');
+   END;
+
+   widget_list = widget_list.unique;
+   
+   FOREACH widget_name IN widget_list;
+   
+      widget = c.config.sections.$section.$class.widgets.$widget_name;
+      # If this is a Class Index page, ignore widgets lacking the "index" tag;
+      IF is_index;
+         NEXT IF ! widget.index;
+      ELSE;
+         NEXT IF ! widget.report;
+      END;
+
+      w = { id    = widget_name
+            title = widget.title
+             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+             type = $section
+            };
+    
+     widgets.push(w);
+  END;
+
+  widgets.push({ title="Tools" type="title"});
+  tool_list = c.config.sections.$section.$class.tools.keys.sort || [];
+
+  # resources/* and species/* automatically get the tree display;
+  tool_list.unshift('tree');
+
+  FOREACH widget_name IN tool_list;
+
+      widget = c.config.sections.tools.$widget_name;
+
+      IF is_index;
+          NEXT IF ! widget.index;
+      ELSE;
+          NEXT IF ! widget.report;
+      END;
+
+      w = { id = widget_name
+             title = widget.title
+             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+             type = 'tools'
+            };
+    
+      widgets.push(w);
+   END;
+
+   tools = ['comment', 'issue'];
+   FOREACH widget_name IN tools;
+       t = widget_name FILTER ucfirst;
+       w = { id = widget_name
+             title = t _ 's'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
+             type = 'tools'
+            };
+      # The species report had:
+#      w = { id = widget_name
+#             title = t _ 's ' _ '(<a class="' _ widget_name _ '-count"></a>)'
+#             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
+#             type = 'tools'
+#            };
+    
+       widgets.push(w);
+  END;
+  
+  PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
+
+  # Open some sections by default.
+  '<script>';
+  UNLESS c.user_session.layout.$class.0.defined;
+        '$jq("#nav-overview").trigger("open");';
+        IF section == 'species';
+           '$jq("#nav-location").trigger("open");';
+        END;
+        'updateLayout();';
+  END;
+       'updateCounts("$path");';
+  '</script>';
+
+END;
+%]
+
