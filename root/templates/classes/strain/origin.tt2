@@ -12,7 +12,7 @@
       [% tag2link(fields.contact.data) %]
 [% END %]
 
-[% WRAPPER $field_block title="Date Received at CGC" key="date_received" %]
+[% WRAPPER $field_block title="Received at CGC" key="date_received" %]
       [% fields.date_received.data %]
 [% END %]
 
@@ -48,7 +48,6 @@
             [% END %]
 
              <div id="google-map" style="height: 250px; width: 400px">
-                Loading map ...
              </div>
 
              <script type="text/javascript">

@@ -174,29 +174,6 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 #}
 
 
-
-
-# What/Where was this used?
-# A: known to be used in the following:
-#  - Clone.pm
-sub FindPosition {
-  my ($self,$seq) = @_;
-  my $db = $self->gff_dsn($seq->Species);
-  my $name  = "$seq";
-  my $class = eval{$seq->class} || 'Sequence';
-  my @s = $db->segment($class=>$name) or return;
-  my @result;
-  foreach (@s) {
-    my $ref = $_->abs_ref;
-    $ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
-    push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
-  }
-  return unless @result;
-  return wantarray ? @{$result[0]} : \@result;
-}
-
-
-
 #################################################
 #
 #   AGGREGATED INFORMATION
@@ -316,44 +293,6 @@ sub id2species {
   return 'Plasmodium falciparum'     if ($id =~ /pfalciparum/);
   return 'Tetraodon nigroviridis'    if ($id =~ /gstenp/i);
 }
-
-
-
-
-
-
-
-
-
-# Provided with a GFF segment, return its genomic coordinates
-sub genomic_position {
-    my ($self,$segments) = @_;
-    $segments ||= $self->segments;
-    my @a;
-    if ($segments) {
-	$segments = [$segments] unless ref $segments eq 'ARRAY';
-	for my $segment (@$segments) {
-	    $segment->absolute(1);
-	    my $ref = $segment->ref;
-	    my $start = $segment->start;
-	    my $stop  = $segment->stop;
-	    next unless abs($stop-$start) > 0;
-	    my $url = $self->hunter_url($ref,$start,$stop);
-	    my $hash = {
-		label => $url,
-		id=>$self->parsed_species."/?name=".$url,
-		class=>'genomic_location',
-	    };
-	    push @a, $hash;
-	}
-    }
-    return {
-	description => 'The genomic location of the sequence',
-	data        => @a ? \@a : undef,
-    };
-}
-
-# CONVERTED TO HERE.
 
 
 
