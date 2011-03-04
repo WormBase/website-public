@@ -803,11 +803,25 @@ sub widget_GET {
    
 }
 
+# For "static" pages -- which are most likely resources --
+# that do not need to handle objects. They have a different linking structure
+# eg /rest/widget/static/nomenclature/overview
+# and have the "static = true" property set in teh configuration file.
+sub widget_static :Path('/rest/widget/static') :Args(2) :ActionClass('REST') {}
+
+sub widget_static_GET {
+    my ($self,$c,$class,$widget) = @_; 
+    $c->log->debug("getting resource widget");
+
+    $c->stash->{template} = "resources/$class/$widget.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT')
+}
+
 
 sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 
 sub widget_home_GET {
-    my ($self,$c,$widget) = @_; 
     my ($self,$c,$widget) = @_; 
     $c->log->debug("getting home page widget");
     if($widget=~m/issues/){

@@ -838,9 +838,11 @@ END;
 
 
 [% # Report Page elements; shared for species, resources, and tools %]
+[% # Called from species/report.tt2 and resources.report.tt2        %]
 [% MACRO report_page BLOCK;
    upperClass = class FILTER ucfirst;
 
+   # I should probably pass in title.
    IF is_index;
       SET this_object_id    = "all";
       SET this_object_label = "all";
@@ -864,7 +866,7 @@ END;
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
 
    # Class index page? Add Browse, Basic Search, and Advanced Search widgets
-   IF is_index ;
+   IF is_index && ! is_static;
       widgets.push({   id  = 'browse',
                      title = 'Browse',
                      href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
@@ -889,6 +891,7 @@ END;
    FOREACH widget_name IN widget_list;
    
       widget = c.config.sections.$section.$class.widgets.$widget_name;
+
       # What context should this widget be displayed in?
       IF is_index;
          NEXT IF widget.display == "report";
@@ -896,10 +899,18 @@ END;
          NEXT IF widget.display == "index";
       END;
 
+      # Some resource types are just simple static files.
+      # These will have a structure of /resources/CLASS/widget
+      IF is_static;
+          myhref = c.uri_for('/rest','widget','static',class,widget.name);
+      ELSE;
+          myhref = c.uri_for('/rest','widget',class,this_object_id,widget.name);
+      END;
+
       w = { id    = widget_name
             title = widget.title
-             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
-             type = $section
+             href = myhref
+             type = section
             };
     
      widgets.push(w);
@@ -950,16 +961,19 @@ END;
   
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
 
-  # Open some sections by default.
+  # Open some sections by default, depending on what we are displaying.
   '<script>';
   UNLESS c.user_session.layout.$class.0.defined;
-        '$jq("#nav-overview").trigger("open");';
         IF $section == 'species';
+           '$jq("#nav-overview").trigger("open");';
            '$jq("#nav-location").trigger("open");';
+        ELSIF is_static;
+        ELSE;
+           '$jq("#nav-overview").trigger("open");';
         END;
         'updateLayout();';
   END;
-#       'updateCounts("' _ path _ '");';
+       'updateCounts("' _ path _ '");';
   '</script>';
 
 END;
