@@ -891,9 +891,9 @@ END;
       widget = c.config.sections.$section.$class.widgets.$widget_name;
       # If this is a Class Index page, ignore widgets lacking the "index" tag;
       IF is_index;
-         NEXT IF ! widget.index;
+         NEXT if widget.display == "report";  # Only intended for report pages.
       ELSE;
-         NEXT IF ! widget.report;
+         NEXT IF widget.display == "index";   # Only intended for index pages.
       END;
 
       w = { id    = widget_name
@@ -916,9 +916,9 @@ END;
       widget = c.config.sections.tools.$widget_name;
 
       IF is_index;
-          NEXT IF ! widget.index;
+         NEXT if widget.display == "report";  # Only intended for report pages.
       ELSE;
-          NEXT IF ! widget.report;
+         NEXT IF widget.display == "index";   # Only intended for index pages.
       END;
 
       w = { id = widget_name
