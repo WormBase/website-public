@@ -14,7 +14,7 @@ use parent 'WormBase::Web::Controller';
 #   /resources/CLASS -> an Index page of class
 #   /resources/CLASS/OBJECT -> a report page
 #
-#   CUSTOM
+#   And things that don't handle objects
 #   /resources/advisory_board
 #   /resources/nomenclature
 #   /resources/reagents
@@ -43,7 +43,21 @@ sub resources_class_index :Path('/resources') :Args(1)  {
     if (defined $c->config->{'sections'}->{'resources'}->{$class}){
       $c->stash->{section} = 'resources';
       $c->stash->{class}   = $class;
-      $c->stash->{is_index} = 1;
+      
+      # Special cases: like advisory_board, reagents, nomenclature
+      # These will have a property of "static" set to "true".
+      # We need to generate links to these a bit differently
+      # since they do not have objects associated with them:
+      #     /resources/class/widget instead of
+      #     /resources/class/object/widget
+      # We handle it here so that in the future we can just add a property.
+      if (defined $c->config->{'sections'}->{'resources'}->{$class}->{static}) {
+	  $c->stash->{is_static} = 1;	  
+      }
+
+      # We're also an index page, some for classes that DO handle objects.
+      $c->stash->{is_index} = 1;      
+
     } else {
 	$c->detach;
     }
@@ -67,47 +81,19 @@ sub resources_report :Path("/resources") Args(2) {
 #  set up a custom sidebar.
 #  
 #################################
-sub advisory_board :Path("/resources/advisory_board") Args {
-    my ($self,$c, @args) = @_;
-    $c->stash->{section} = 'resources';
-
-    my $widget = shift @args;
-    if($widget){
-      $c->stash->{noboiler} = 1;
-      $c->stash->{template} = "resources/advisory_board/$widget.tt2";
-      $c->forward('WormBase::Web::View::TT');
-    }
-
-#     get_report($self, $c, "advisory_board", "");
-}
-
-
-# The reagents pages
-sub reagents :Path("/resources/reagents") Args {
-    my ($self,$c, @args) = @_;
-    $c->stash->{section} = 'resources';
-
-    my $widget = shift @args;
-    if($widget){
-      $c->stash->{noboiler} = 1;
-      $c->stash->{template} = "resources/reagents/$widget.tt2";
-      $c->forward('WormBase::Web::View::TT');
-    }
-}
-
-
-# Nomenclature
-sub nomenclature :Path("/resources/nomenclature") Args {
-    my ($self,$c, @args) = @_;
-    $c->stash->{section} = 'resources';
-
-    my $widget = shift @args;
-    if($widget){
-      $c->stash->{noboiler} = 1;
-      $c->stash->{template} = "resources/nomenclature/$widget.tt2";
-      $c->forward('WormBase::Web::View::TT');
-    }
-}
+#sub advisory_board :Path("/resources/advisory_board") Args {
+#    my ($self,$c, @args) = @_;
+#    $c->stash->{section} = 'resources';
+#
+#    my $widget = shift @args;
+#    if($widget){
+#      $c->stash->{noboiler} = 1;
+#      $c->stash->{template} = "resources/advisory_board/$widget.tt2";
+#      $c->forward('WormBase::Web::View::TT');
+#    }
+#
+##     get_report($self, $c, "advisory_board", "");
+#}
 
 
 
