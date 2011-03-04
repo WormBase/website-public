@@ -1,0 +1,27 @@
+[%# This is a generic template for species/class index pages. It is added automatically by species/reports.tt2 %]
+
+<div id="preview"></div>
+<br />
+
+
+<div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% pluralize(c.stash.class, 2) %]</a></div>
+
+<script>
+        var begin = 0;
+        var end = 10;
+  function load_preview(){
+
+        $jq("#message").html("<span id=\"fade\">loading...</span>");
+        var div = $jq("<div></div>");
+        div.load("/search/preview/[% c.stash.class %]/*[% c.config.species_list.$species.full_name %]?begin=" + begin + "&end=" + end, function(response, status, xhr) {
+          $jq("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
+          begin = begin + 10;
+          end = end +10;
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $jq("#preview").html(msg + xhr.status + " " + xhr.statusText);
+          }
+        });
+        div.appendTo($jq("#preview"));
+  }
+</script>
