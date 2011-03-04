@@ -1,14 +1,26 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
+[% class = fields.name.data.class %]
+
 [% WRAPPER $field_block title='Contained In' key='canonical_parent' %]
    [% tag2link(fields.canonical_parent.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='Oligos' key='oligos' %]
-   [% IF fields.oligos.data # need to include reversing logic %]
-   	  Left Oligo [% tag2link(fields.oligos.data.0.obj) %]: [% fields.oligos.data.0.sequence %]<br>
-	  Right Oligo  [% tag2link(fields.oligos.data.1.obj) %]: [% fields.oligos.data.1.sequence %]
+[% IF fields.oligos.data %]
+      [% left  = fields.oligos.data.0; 
+         right = fields.oligos.data.1;
+         IF left.obj.id.match('_b$'); tmp = left; left = right; right = tmp; END; # SWAP %]
+[% END %]   
+
+[% WRAPPER $field_block title='Left Oligo' key='' %]      
+   [% IF fields.oligos.data %]
+      [% tag2link(left.obj) %]: [% left.sequence %]
+   [% END %]
+[% END %]
+[% WRAPPER $field_block title='Right Oligo' key='' %]
+   [% IF fields.oligos.data %]
+      [% tag2link(right.obj) %]: [% right.sequence %]
    [% END %]
 [% END %]
 
@@ -16,25 +28,28 @@
    [% IF fields.segment.data; fields.segment.data.length; END %]
 [% END %]
 
-[%# TODO: pluralization %]
-
-[% WRAPPER $field_block title='Genes Overlapping the Amplicon' key='overlapping_genes' %]
-   [% IF fields.overlapping_genes.data; fields.overlapping_genes.data.join(', '); END %]
+[% WRAPPER $field_block title=(pluralize('Gene', fields.overlapping_genes.data.size) _ 
+           ' Overlapping the Amplicon') key='overlapping_genes' %]
+   [% tag2linkAll(fields.overlapping_genes.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='Overlaps CDS' key='overlaps_CDS' %]
+[% WRAPPER $field_block title=pluralize('Overlaps CDS', fields.overlaps_CDS.data.size)
+           key='overlaps_CDS' %]
    [% tag2linkAll(fields.overlaps_CDS.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='Overlaps transcript' key='overlaps_transcript' %]
+[% WRAPPER $field_block title=pluralize('Overlaps transcript', fields.overlaps_transcript.data.size)
+           key='overlaps_transcript' %]
    [% tag2linkAll(fields.overlaps_transcript.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='Overlaps pseudogene' key='overlaps_pseudogene' %]
+[% WRAPPER $field_block title=pluralize('Overlaps pseudogene', fields.overlaps_pseudogene.data.size)
+           key='overlaps_pseudogene' %]
    [% tag2linkAll(fields.overlaps_pseudogene.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='Overlaps variation' key='overlaps_variation' %]
+[% WRAPPER $field_block title=pluralize('Overlaps variation', fields.overlaps_variation.data.size)
+           key='overlaps_variation' %]
    [% tag2linkAll(fields.overlaps_variation.data) %]
 [% END %]
 
@@ -46,7 +61,7 @@
    [% END %]
 [% END %]
 
-[%# the following should be in details box %]
+[%# TODO: the following should be in details box %]
 [% WRAPPER $field_block title='ORFeome Project' key='on_orfeome_project' %]
    [% IF fields.on_orfeome_project.data %]
    	  <a href="..[% fields.on_orfeome_project.data %]">[% fields.on_orfeome_project.data %]</a>
@@ -57,27 +72,26 @@
    [% IF fields.remarks.data; fields.remarks.data.join('<br>'); END %]
 [% END %]
 
-[% WRAPPER $field_block title='Loci #test' key='SNP_loci' %]
-   [% IF fields.SNP_loci.data %]
-   	  PCR product spans [% fields.SNP_loci.data.size %] SNPs:
-	  [% loci = [] %]
-	  [% FOREACH locus IN fields.SNP_loci.data; loci.push(tag2link(locus)); END %]
-	  [% loci.join(', ') %]
+[%# TODO: more class-specific logic %]
+[% IF class == 'PCR_product' %]
+   [% WRAPPER $field_block title=pluralize('Locus', fields.SNP_loci.data.size) key='SNP_loci' %]
+      [% IF fields.SNP_loci.data %]
+         PCR product spans [% fields.SNP_loci.data.size %] SNPs:
+         [% loci = [] %]
+         [% FOREACH locus IN fields.SNP_loci.data; loci.push(tag2link(locus)); END %]
+         [% loci.join(', ') %]
+      [% END %]
+   [% END %]
+
+   [% laboratory %]
+
+   [% WRAPPER $field_block title='Microarray results' key='microarray_results' %]
+      [% tag2linkAll(fields.microarray_results.data) %]
+   [% END %]
+
+   [% WRAPPER $field_block title='Assay conditions' key='assay_conditions' %]
+      [% IF fields.assay_conditions.data; fields.assay_conditions.data; END %]
    [% END %]
 [% END %]
 
-[% WRAPPER $field_block title='From laboratory' key='laboratory' %]
-   [% tag2link(fields.laboratory.data) %]
-[% END %]
-
-[% WRAPPER $field_block title='Microarray results' key='microarray_results' %]
-   [% tag2linkAll(fields.microarray_results.data) %]
-[% END %]
-
 [%# TODO: logic for product on ORFeome project %]
-
-[% WRAPPER $field_block title='Assay conditions' key='assay_conditions' %]
-   [% IF fields.assay_conditions.data; fields.assay_conditions.data; END %]
-[% END %]
-
-[%# TODO: GBrowse stuff %]
