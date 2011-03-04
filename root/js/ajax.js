@@ -158,6 +158,9 @@
 	  $jq(this).addCLass('ui-state-highlight');
      });
 
+
+
+
     $jq(".issue-submit").live('click',function() {
 	    var rel= $jq(this).attr("rel");
         var url = $jq(this).attr("url");

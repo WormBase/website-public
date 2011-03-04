@@ -19,6 +19,20 @@
 
 
 [% WRAPPER $field_block title="Isolation" %]
+
+    [% WRAPPER $field_block title="Sampled by" key="sampled_by" %]
+        [% fields.sampled_by.data %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Isolated by" key="isolated_by" %]
+        [% tag2link(fields.isolated_by.data) %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Date isolated" key="date_isolated" %]
+        [% fields.date_isolated.data %]
+    [% END %]
+
+
     [% WRAPPER $field_block title="Place" key="place" %]
          [% fields.place.data %]
     [% END %]
@@ -28,41 +42,68 @@
     [% END %]
 
     [% WRAPPER $field_block title="GPS coordinates" key="gps_coordinates" %]
+            [% IF fields.gps_coordinates.data.latitude %]
+               [% fields.gps_coordinates.data.latitude %]° latitude;
+               [% fields.gps_coordinates.data.longitude %]° longitude
+            [% END %]
 
-        [% WRAPPER $field_block title="latitude" %]
-            [% fields.gps_coordinates.data.latitude %]
-        [% END %]
+             <div id="google-map" style="height: 250px; width: 400px">
+                Loading map ...
+             </div>
 
-        [% WRAPPER $field_block title="longitude" %]
-            [% fields.gps_coordinates.data.longitude %]
-        [% END %]
+             <script type="text/javascript">
+
+                function mapsLoaded() {
+                    var map = new google.maps.Map2(document.getElementById("google-map"));
+                    map.setCenter(new google.maps.LatLng(35,10), 1);
+
+                    // Controls
+                    map.addControl(new GSmallZoomControl());
+                    map.addControl(new GMapTypeControl());
+                    map.addControl(new GScaleControl());
+
+                    function addMarker(point, placeinfo) {
+                          var marker = new GMarker(point);
+                          map.addOverlay(marker); 
+                          if (placeinfo) {
+                               GEvent.addListener(marker, "click", function() {
+                                      marker.openInfoWindowHtml("<b>" + placeinfo + "</b>");
+                                 });
+			   }
+ 
+                      }
+
+		       var point = new GLatLng([% fields.gps_coordinates.data.latitude %],
+                                               [% fields.gps_coordinates.data.longitude %]);
+                       addMarker(point,"[% fields.place.data ? fields.place.data : 'place name unknown' %]");
+                    }
+	       </script>
+	       
+               <script type="text/javascript">
+                   google.load("maps", "2", {"callback" : mapsLoaded});
+               </script>
+
     [% END %]
+
+    [% WRAPPER $field_block title="Substrate" key="substrate" %]
+        [% fields.substrate.data %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Associated organisms" key="associated_organisms" %]
+         [% fields.associated_organisms.data.join('; ') %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Life stage" key="life_stage" %]
+        [% tag2link(fields.life_stage.data) %]
+    [% END %]
+
+    [% WRAPPER $field_block title="Log size of population" key="log_size_of_population" %]
+        [% fields.log_size_of_population.data %]
+    [% END %]
+
 [% END %]
 
-[% WRAPPER $field_block title="Associated organisms" key="associated_organisms" %]
-     [% fields.associated_organisms.data.join('; ') %]
-[% END %]
 
-[% WRAPPER $field_block title="Life stage" key="life_stage" %]
-     [% tag2link(fields.life_stage.data) %]
-[% END %]
 
-[% WRAPPER $field_block title="Substrate" key="substrate" %]
-     [% fields.substrate.data %]
-[% END %]
 
-[% WRAPPER $field_block title="Log size of population" key="log_size_of_population" %]
-     [% fields.log_size_of_population.data %]
-[% END %]
 
-[% WRAPPER $field_block title="Sampled by" key="sampled_by" %]
-     [% fields.dampled_by.data %]
-[% END %]
-
-[% WRAPPER $field_block title="Isolated by" key="isolated_by" %]
-     [% tag2link(fields.isolated_by.data) %]
-[% END %]
-
-[% WRAPPER $field_block title="Date isolated" key="date_isolated" %]
-     [% fields.date_isolated.data %]
-[% END %]
