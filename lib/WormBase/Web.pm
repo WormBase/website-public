@@ -397,13 +397,13 @@ sub _select_template {
         return "classes/$class/$render_target.tt2";
     }
     } else {       
-    # Widget template selection
-    # Some widgets are shared across Models
-    if (defined $self->config->{common_widgets}->{$render_target}) {
-        return "shared/widgets/$render_target.tt2";
-    } else {  
-        return "classes/$class/$render_target.tt2"; 
-    }
+	# Widget template selection
+	# Some widgets are shared across Models
+	if (defined $self->config->{common_widgets}->{$render_target}) {
+	    return "shared/widgets/$render_target.tt2";
+	} else {  
+	    return "classes/$class/$render_target.tt2"; 
+	}
     }   
 }
 
@@ -411,16 +411,13 @@ sub _select_template {
 
 sub _get_widget_fields {
     my ($self,$class,$widget) = @_;
-
     my $section;
-    if($self->config->{sections}->{species}->{$class}){
-      $section = 'species';
-    }else{
-      $section = 'resources';
+    if ($self->config->{sections}->{species}->{$class}) {
+	$section = 'species';
+    } else{
+	$section = 'resources';
     }
-
-
-
+    
     my @fields;
     # Widgets accessible by name
     if (ref $self->config->{sections}->{$section}->{$class}->{widgets}->{$widget}->{fields} ne "ARRAY") {
