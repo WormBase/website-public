@@ -231,11 +231,9 @@
       text;
     END;
 
-# Dynamically select a tempate: custom, common, generic
+# Dynamically select a tempate: custom or common
 MACRO select_field_template(field,class) BLOCK;
-     IF c.config.generic_fields.$field;
-              "generic/field.tt2";
-     ELSIF c.config.common_fields.$field;
+     IF c.config.common_fields.$field;
               "shared/fields/" _ field _ ".tt2";
      ELSE;
               "classes/" _ class _ "/" _ field _ '.tt2';
@@ -243,9 +241,7 @@ MACRO select_field_template(field,class) BLOCK;
 END;
 
 MACRO select_widget_template(widget,class) BLOCK;
-     IF c.config.generic_widgets.$widget;
-              "generic/widget.tt2";
-     ELSIF c.config.common_widgets.$widget;
+     IF c.config.common_widgets.$widget;
               "shared/widgets/" _ widget _ ".tt2";
      ELSE;
               "classes/" _ class _ "/" _ widget _ '.tt2';
