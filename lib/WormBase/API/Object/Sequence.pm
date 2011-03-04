@@ -2238,7 +2238,7 @@ sub print_genomic_position {
       $entry{browse}{id} = "?name=$s";
       $entry{browse}{label} = '[Search for this Sequence on Genome]';
       print li("$ref: $begin-$end. ",
-	       a({-href=>hunter_url($reference,$begin,$end)},' [Browse map] '),
+	       a({-href=>gbrowse_url($reference,$begin,$end)},' [Browse map] '),
 	       eval { $s->Coding } ?
 	       a({-href=>Url('aligner',"name=$s;class=CDS"),-target=>"_blank"},' [View EST alignments]')
 	       : ''

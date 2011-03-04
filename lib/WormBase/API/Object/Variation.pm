@@ -662,7 +662,7 @@ sub genomic_position {
 
 =cut
 
-        my $url = $self->hunter_url($chrom,$low,$high);
+        my $url = $self->gbrowse_url($chrom,$low,$high);
 
         return {
             description => $description,
