@@ -886,6 +886,8 @@ END;
                      type  = class
                    });
    ELSE;
+
+        # Push overview to the top.
         widget_list.unshift('overview');
    END;
 
@@ -910,10 +912,10 @@ END;
           myhref = c.uri_for('/rest','widget',class,this_object_id,widget.name);
       END;
 
-      w = { id    = widget_name
-            title = widget.title
+      w = {  id    = widget_name
+             title = widget.title
              href = myhref
-             type = section
+             type = section == "resources" ? 'resources' : class
             };
     
      widgets.push(w);
@@ -949,17 +951,17 @@ END;
    tools = ['comment', 'issue'];
    FOREACH widget_name IN tools;
        t = widget_name FILTER ucfirst;
-       w = { id = widget_name
-             title = t _ 's'
-             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
-             type = 'tools'
-            };
-      # The species report had:
-#      w = { id = widget_name
-#             title = t _ 's ' _ '(<a class="' _ widget_name _ '-count"></a>)'
-#             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
+#       w = { id = widget_name
+#             title = t _ 's'
+#             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
 #             type = 'tools'
 #            };
+      # The species report had:
+      w = { id = widget_name
+             title = t _ 's ' _ '(<a class="' _ widget_name _ '-count"></a>)'
+             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
+             type = 'tools'
+            };
     
        widgets.push(w);
   END;
@@ -972,9 +974,9 @@ END;
         IF $section == 'species' AND ! is_index;
            '$jq("#nav-overview").trigger("open");';
            '$jq("#nav-location").trigger("open");';
-        ELSIF is_static;
-        ELSE;
+        ELSIF $section == 'resources' AND ! is_index;
            '$jq("#nav-overview").trigger("open");';
+        ELSIF is_static;
         END;
         'updateLayout();';
   END;

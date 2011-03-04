@@ -1041,7 +1041,7 @@ B<Response example>
 sub gps_coordinates {
     my $self = shift;
     my $object = $self->object;
-    my ($lat,$lon) = $object->GPS->row;
+    my ($lat,$lon) = $object->GPS->row if $object->GPS;
     return { description => 'GPS coordinates of where the strain was isolated',
 	     data        => { latitude    => "$lat" || undef,
 			      longitude   => "$lon" || undef,
