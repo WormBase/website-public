@@ -969,7 +969,7 @@ END;
   # Open some sections by default, depending on what we are displaying.
   '<script>';
   UNLESS c.user_session.layout.$class.0.defined;
-        IF $section == 'species';
+        IF $section == 'species' AND ! is_index;
            '$jq("#nav-overview").trigger("open");';
            '$jq("#nav-location").trigger("open");';
         ELSIF is_static;

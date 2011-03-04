@@ -43,7 +43,7 @@ This is the call out box. It will contain pertinent information or maybe a descr
 		           [% NEXT UNLESS strain.latitude AND strain.longitude %]
     		           var point = new GLatLng([% strain.latitude %],
 			                           [% strain.longitude %]);
-                       addMarker(point,"[% strain.strain _ (strain.place ? ' (' _ strain.place.data _ ')' : 'place name unknown') %]");
+                       addMarker(point,"[% strain.strain.label _ (strain.place ? ' (' _ strain.place _ ')' : 'place name unknown') %]");
 		       [% END %]
                     }
 	       </script>
