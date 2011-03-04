@@ -2,6 +2,7 @@
 [%- # It automatically creates the sidebar from configuration -%]
 [%- # It handles Index pages (/species/gene) and Reports (/species/gene/WBGene00006763) %]
 
+[%# TODO: Create and pass in the page title %]
 [% report_page %]
 
 

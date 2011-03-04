@@ -843,7 +843,10 @@ END;
    upperClass = class FILTER ucfirst;
 
    # I should probably pass in title.
-   IF is_index;
+   IF is_static;
+      title = upperClass;
+   # Kludge: set index pages to "all" so that I can use the same URLs as for report pages.
+   ELSIF is_index;
       SET this_object_id    = "all";
       SET this_object_label = "all";
       title = upperClass _ " Class Index";
@@ -858,7 +861,6 @@ END;
       END;
    END;
 
-
    path = c.uri_for("/$section", class, this_object_id);
 
    widgets = [];
@@ -866,7 +868,8 @@ END;
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
 
    # Class index page? Add Browse, Basic Search, and Advanced Search widgets
-   IF is_index && ! is_static;
+   IF is_static;
+   ELSIF is_index;
       widgets.push({   id  = 'browse',
                      title = 'Browse',
                      href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
@@ -920,7 +923,9 @@ END;
   tool_list = c.config.sections.$section.$class.tools.keys.sort || [];
 
   # resources/* and species/* automatically get the tree display;
-  tool_list.unshift('tree');
+  IF ! is_static;
+      tool_list.unshift('tree');
+  END;
 
   FOREACH widget_name IN tool_list;
 
