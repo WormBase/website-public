@@ -167,34 +167,45 @@ sub fetch {
     my $class;
 
     if ($args->{object}) {
-      $object = $args->{object};
-      $class = $object->class;
+	$object = $args->{object};
+	$class = $object->class;	
+    } else {
+	$class   = $args->{class};
+	my $name = $args->{name};    
+	# Try fetching an object (from the default data source)
+	my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0; 
+	$object = $service_dbh->fetch(-class=>$class,-name=>$name);
+	if ($class eq 'Sequence') {
+	    $object ||= $service_dbh->fetch(-class=>'CDS',-name=>$name);
+	} elsif ($class eq 'Pcr_oligo') {
+	    $object ||= $service_dbh->fetch(-class=>'PCR_product', -name=>$name);
+	    $object ||= $service_dbh->fetch(-class=>'Oligo_set', -name=>$name);
+	    $object ||= $service_dbh->fetch(-class=>'Oligo', -name=>$name);
+	}
     }
-    else {
-      $class  = $args->{class};
-      my $name   = $args->{name};
-      # Try fetching an object (from the default data source)
-      my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0; 
-      $object = $service_dbh->fetch(-class=>$class,-name=>$name);
-	  if($class eq 'Sequence') {
-          $object ||= $service_dbh->fetch(-class=>'CDS',-name=>$name);
-      }
-	  elsif ($class eq 'Pcr_oligo') {
-		  $object ||= $service_dbh->fetch(-class=>'PCR_product', -name=>$name);
-		  $object ||= $service_dbh->fetch(-class=>'Oligo_set', -name=>$name);
-		  $object ||= $service_dbh->fetch(-class=>'Oligo', -name=>$name);
-	  }
-    }
-    return -1 unless(defined $object);
+    return -1 unless(defined $object); #&& ($name eq 'all' || $name eq '*'));
     return WormBase::API::Factory->create($class,
-					      { object   => $object,
-						log => $self->log,
-						dsn	 => $self->_services,
-						tmp_base  => $self->tmp_base,
+					      { object       => $object,
+						log          => $self->log,
+						dsn	     => $self->_services,
+						tmp_base     => $self->tmp_base,
 						pre_compile  => $self->pre_compile,
 					      });
     
 }
+
+
+# Instantiate but without fetching an ace object
+sub instantiate_empty { 
+    my ($self,$args) = @_; 
+    my $class   = $args->{class};    
+    return WormBase::API::Factory->create($class,
+					  {log          => $self->log,
+					   dsn	       => $self->_services,
+					   tmp_base     => $self->tmp_base,
+					   pre_compile  => $self->pre_compile,
+					  });	
+}    
 
  
 
