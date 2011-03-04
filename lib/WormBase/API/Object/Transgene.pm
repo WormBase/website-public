@@ -298,8 +298,9 @@ sub reporter_construct {
     } elsif ($reporters{Gene}) {
 	my $gene = $reporters{Gene}->right;
 	$reporters{Gene} = $self->_pack_obj($gene,$gene->Public_name); 
-    } else { }
-      
+    } else {	
+    }
+    
     my $data = { description => 'reporter construct for this transgene',
 		 data        => \%reporters };
     return $data;
