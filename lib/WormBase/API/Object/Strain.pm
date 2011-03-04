@@ -1028,7 +1028,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/gps_coordinates
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/ED3083/gps_coordinates
 
 B<Response example>
 
@@ -1041,10 +1041,11 @@ B<Response example>
 sub gps_coordinates {
     my $self = shift;
     my $object = $self->object;
-    my ($lat,$lon) = $object->GPS;
+    my ($lat,$lon) = $object->GPS->row;
     return { description => 'GPS coordinates of where the strain was isolated',
-	     latitude    => "$lat" || undef,
-	     longitude   => "$lon" || undef,
+	     data        => { latitude    => "$lat" || undef,
+			      longitude   => "$lon" || undef,
+	     },
     };    
 }
 
@@ -1582,10 +1583,96 @@ sub date_isolated {
     my $self = shift;
     my $object = $self->object;
     my $date   = $object->Date;
+    $date =~ s/ \d\d:\d\d:\d\d//;
     return { description => 'the date the strain was isolated',
 	     data        => "$date" || undef,
     };
 }
+
+
+
+=head3 natural_isolates
+
+This method will return a data structure containing
+information on natural isolates.
+
+=over
+
+=item PERL API
+
+ $data = $model->date_isolated();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+The keyword "all" or "*" as a wildcard.
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/all/natural_isolates
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub natural_isolates {
+    my $self = shift;
+    my $object = $self->object;
+
+    my $dsn = $self->ace_dsn->dbh;
+    my @strains = $dsn->fetch(-query => "find Strain Wild_isolate");
+    $self->log->debug("@strains");
+    my @data;
+    foreach (@strains) {
+	my ($lat,$lon) = $_->GPS->row;
+	my $place     = $_->Place;
+	my $landscape = $_->Landscape;
+	my $substrate = $_->Substrate;
+	$substrate =~ s/_/ /g;
+	$landscape =~ s/_/ /g;
+	my $isolated  = $_->Isolated_by;
+	push @data,{ place       => "$place",
+		     strain      => $self->_pack_obj($_),
+		     latitude    => "$lat" || undef,
+		     longitude   => "$lon" || undef,
+		     isolated_by => $isolated ? $self->_pack_obj($isolated,$isolated->Standard_name) : undef,
+		     landscape   => "$landscape",
+		     substrate   => "$substrate",
+	};
+    }
+    
+    return { description => 'a list of wild isolates of strains contained in WormBase',
+	     data        => @data ? \@data : undef };
+}
+
+
 
 
 1;
