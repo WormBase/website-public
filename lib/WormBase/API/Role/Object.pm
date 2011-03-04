@@ -9,7 +9,7 @@ use File::Path 'mkpath';
 # TODO:
 # Reconcile all the various versions of genomic_environs and genomic_picture
 # Test interpolated_genetic_position
-# Add in support for genomic position
+# Genomic position isn't fully abstract: It requires GFF segments to be passed in, or that the Model implement segments()
 # Synonym (other_name?)
 # common name: Short_name || common_name || Public_name
 # Database and DB_Info parsing
@@ -1576,14 +1576,14 @@ sub genomic_picture {
     my $position;
     if (@_ == 4) {
       $self = shift;
-      $position = $self->hunter_url(@_);
+      $position = $self->gbrowse_url(@_);
     }
 
     # or with a sequence object
     else {
       $self = shift ;
       my $segment = $self->pic_segment or return;
-      $position = $self->hunter_url($segment);
+      $position = $self->gbrowse_url($segment);
     }
 
     return unless $position;
@@ -1601,33 +1601,90 @@ sub genomic_picture {
     return $data;    
 }
 
-sub hunter_url {
-  my ($self,$ref,$start,$stop);
-  my $flag= 1;
-  # can call with three args (ref,start,stop)
-  if (@_ == 4) {
-    ($self,$ref,$start,$stop) = @_;
-      $flag=0;
-  }
+sub gbrowse_url {
+    my ($self,$ref,$start,$stop);
+    my $flag= 1;
+    # can call with three args (ref,start,stop)
+    if (@_ == 4) {
+	($self,$ref,$start,$stop) = @_;
+	$flag=0;
+    }
+    
+    # or with a sequence object
+    else {
+	my ($self,$seq_obj) = @_ or return;
+	$seq_obj->absolute(1); 
+	$start      = $seq_obj->abs_start;
+	$stop       = $seq_obj->abs_stop;
+	$ref        = $seq_obj->abs_ref;
+    }
+    
+    $ref =~ s/^CHROMOSOME_//;
+    if(defined $start) {
+	my $length = abs($stop - $start)+1;
+	$start = int($start - 0.05*$length) if $length < 500;
+	$stop  = int($stop  + 0.05*$length) if $length < 500;
+	($start,$stop) = ($stop,$start) if ($flag && $start > $stop);
+	$ref .= ":$start..$stop";
+    }
+    return $ref;
+}
 
-  # or with a sequence object
-  else {
-    my ($self,$seq_obj) = @_ or return;
-    $seq_obj->absolute(1); 
-    $start      = $seq_obj->abs_start;
-    $stop       = $seq_obj->abs_stop;
-    $ref        = $seq_obj->abs_ref;
-  }
 
-  $ref =~ s/^CHROMOSOME_//;
-  if(defined $start) {
-      my $length = abs($stop - $start)+1;
-      $start = int($start - 0.05*$length) if $length < 500;
-      $stop  = int($stop  + 0.05*$length) if $length < 500;
-      ($start,$stop) = ($stop,$start) if ($flag && $start > $stop);
-      $ref .= ":$start..$stop";
-  }
-  return $ref;
+# Provided with a GFF segment, return its genomic coordinates
+sub genomic_position {
+    my ($self,$segments) = @_;
+    $segments ||= $self->segments;
+    my @a;
+    if ($segments) {
+	$segments = [$segments] unless ref $segments eq 'ARRAY';
+	for my $segment (@$segments) {
+	    $segment->absolute(1);
+	    my $ref = $segment->ref;
+	    my $start = $segment->start;
+	    my $stop  = $segment->stop;
+	    next unless abs($stop-$start) > 0;
+	    my $url = $self->gbrowse_url($ref,$start,$stop);
+	    my $hash = {
+		label => $url,
+		id=>$self->parsed_species."/?name=".$url,
+		class=>'genomic_location',
+	    };
+	    push @a, $hash;
+	}
+    }
+    return {
+	description => 'The genomic location of the sequence',
+	data        => @a ? \@a : undef,
+    };
+}
+
+
+
+############################################################
+#
+# Private Methods
+#
+############################################################
+
+
+# Provided with an ace object, fetch
+# its genomic coordinates.
+# Used by Clone.
+sub _get_genomic_position_using_object {
+    my ($self,$seq) = @_;
+    my $db    = $self->gff_dsn($seq->Species);
+    my $name  = "$seq";
+    my $class = eval{$seq->class} || 'Sequence';
+    my @s     = $db->segment($class=>$name) or return;
+    my @result;
+    foreach (@s) {
+	my $ref = $_->abs_ref;
+	$ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
+	push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
+    }
+    return unless @result;
+    return wantarray ? @{$result[0]} : \@result;
 }
 
 
@@ -1635,13 +1692,6 @@ sub hunter_url {
 
 
 
-
-
-############################################################
-#
-# Generic Object methods
-#
-############################################################
 
 
 
