@@ -124,7 +124,6 @@ sub default :Path {
 	if ($c->config->{debug}) {
 	  $c->stash->{template} = 'debug/index.tt2';
 	} else {
-#	    $c->stash->{template} = 'generic/index.tt2';
 	    $c->stash->{template} = 'report.tt2';
 	    $c->stash->{path} = $c->request->path;
 	}
@@ -138,13 +137,6 @@ sub default :Path {
 
  
 
-
-# /db/class/components - list all available widgets
-#sub components :Path("/db/available") Args(1) {
-#    my ($self,$c,$class) = @_;
-#    $c->stash->{template} = 'generic/class_index.tt2';    
-#    $c->stash->{class} = $class;
-#}
  
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
@@ -153,6 +145,12 @@ sub me :Path("/me") Args(0) {
     $c->stash->{'class'} = $class;
     $c->stash->{template} = "me.tt2";
 } 
+
+
+=pod
+
+
+
 ##############################################################
 #
 #   Fields
@@ -178,18 +176,16 @@ sub field :Path("/field") Args(3) {
     $c->log->debug("The requested class is " . ucfirst($class));
     $c->log->debug("The request is " . $name);
     
-    # This code in essence calls the Factory for me.
-    # It is the EXACT same thing the W::W::M::* would be doing.
     my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) or die "$!";
+			       name => $name}) or die "$!";
     
     $c->log->debug("Instantiated an external object: " . ref($object));
     # $c->stash->{object} = $object;
     
     # Fetch the field content and stash it.
     # This is goofy; the object of interest is wrapped inside an object...
-    my $ace_object = $object->object;
-    $c->log->debug("The internal object is: " . ref($ace_object));
+#    my $ace_object = $object->object;
+#    $c->log->debug("The internal object is: " . ref($ace_object));
     
     # Currently, I have to provide EVERY tag in my wrapper model
     # since I cannot find a sensible way to AUTOLOAD under Moose
@@ -221,11 +217,6 @@ sub field :Path("/field") Args(3) {
 };
 
 
-
-
-
-
-
 ##############################################################
 #
 #   Widgets (composites of fields)
@@ -250,13 +241,13 @@ sub widget :Path("/widget") Args(3) {
     $c->log->debug("The request is " . $name);
     
     my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) or die "$!";
-    
+			       name => $name}) or die "$!";
+	
     $c->log->debug("Instantiated an external object: " . ref($object));
     
     # Should I stash the object so I only need to fetch it once?
     $c->stash->{object} = $object;
-    
+
     # Fetch the field content and stash it.
     
     # Currently, I have to provide EVERY tag in my wrapper model
@@ -394,6 +385,9 @@ sub widget :Path("/widget") Args(3) {
 # #     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
 # #     $c->stash->{widgets} = \@widgets;
 # }
+
+=cut
+
 
 
 ##############################################################
