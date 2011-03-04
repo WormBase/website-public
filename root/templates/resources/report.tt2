@@ -1,72 +1,8 @@
-[%- # This is the generic WormBase Report page             -%]
-[%- # Stash contents should contain:                       -%]
-[%- #    current_object - the object being displayed       -%]
-[%- #    widgets - a list of widgets supported by the page -%]
-[%- #    title   - the title of the page                   -%]
+[%- # This is the generic WormBase Report page  for resources -%]
+[%- # It automatically creates the sidebar from configuration -%]
+[%- # It handles Index pages (/species/gene) and Reports (/species/gene/WBGene00006763) %]
+
+[% report_page %]
 
 
-[% SET this_object_id    = object.name.data.id %]
-[% SET this_object_label = object.name.data.label %]
-
-  [% path = c.uri_for('/resources', class, this_object_id) %]
-  [% upperClass = class FILTER ucfirst %]
-  [% title = upperClass _ " Report: " %]
-  [% UNLESS class == 'paper' %]
-    [% title = title _ tag2link(object.name.data)  %]
-  [% ELSE %]
-    [% title = title _ tag2link(object.name.data, object.title.data)  %]
-  [% END %]
-
-  [% widgets = [] %]
-  [% widgets.push({ title="Page Content" type="title"}) %]
-  [% widget_list = c.config.sections.resources.$class.widgets.keys.sort %]
-  [% widget_list.unshift('overview') %]
-  [% widget_list = widget_list.unique %]
-  [% FOREACH widget_name IN widget_list -%]
-    [% widget = c.config.sections.resources.$class.widgets.$widget_name %]
-    [% w = { id = widget_name
-             title = widget.title
-             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
-             type = 'resources'
-            };
-    %]
-    [% widgets.push(w) %]
-  [% END %]
-
-  [%# IF c.config.sections.resources.$class.tools.keys.size > 0 %]
-  [% widgets.push({ title="Tools" type="title"}) %]
-  [% tool_list = c.config.sections.resources.$class.tools.keys.sort || [] %]
-  [% FOREACH widget_name IN tool_list -%]
-    [% widget = c.config.sections.resources.$class.tools.$widget_name %]
-    [% w = { id = widget_name
-             title = widget.title
-             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
-             type = 'tools'
-            };
-    %]
-    [% widgets.push(w) %]
-  [% END %]
-
-  [% tools = ['comment', 'issue'] %]
-  [% FOREACH widget_name IN tools %]
-    [% t = widget_name FILTER ucfirst %]
-    [% w = { id = widget_name
-             title = t _ 's'
-             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label)
-             type = 'tools'
-            };
-    %]
-    [% widgets.push(w) %]
-  [% END %]
-  [%# END %]
-
-
-  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
-
-       [% UNLESS c.user_session.layout.$class.0.defined %]
-    <script>
-        $jq("#nav-overview").trigger('open');
-    updateLayout();
-    </script>
-      [% END %]
 
