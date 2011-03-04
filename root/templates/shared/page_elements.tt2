@@ -889,11 +889,11 @@ END;
    FOREACH widget_name IN widget_list;
    
       widget = c.config.sections.$section.$class.widgets.$widget_name;
-      # If this is a Class Index page, ignore widgets lacking the "index" tag;
+      # What context should this widget be displayed in?
       IF is_index;
-         NEXT if widget.display == "report";  # Only intended for report pages.
+         NEXT IF widget.display == "report";
       ELSE;
-         NEXT IF widget.display == "index";   # Only intended for index pages.
+         NEXT IF widget.display == "index";
       END;
 
       w = { id    = widget_name
@@ -914,11 +914,11 @@ END;
   FOREACH widget_name IN tool_list;
 
       widget = c.config.sections.tools.$widget_name;
-
+      # What context should this widget be displayed in ?
       IF is_index;
-         NEXT if widget.display == "report";  # Only intended for report pages.
+         NEXT IF widget.display == "report";
       ELSE;
-         NEXT IF widget.display == "index";   # Only intended for index pages.
+         NEXT IF widget.display == "index";
       END;
 
       w = { id = widget_name
@@ -954,12 +954,12 @@ END;
   '<script>';
   UNLESS c.user_session.layout.$class.0.defined;
         '$jq("#nav-overview").trigger("open");';
-        IF section == 'species';
+        IF $section == 'species';
            '$jq("#nav-location").trigger("open");';
         END;
         'updateLayout();';
   END;
-       'updateCounts("$path");';
+#       'updateCounts("' _ path _ '");';
   '</script>';
 
 END;

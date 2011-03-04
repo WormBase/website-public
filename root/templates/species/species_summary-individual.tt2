@@ -5,6 +5,8 @@
 
 This is the individual species summary page.
 
+ <p> It could be folded into the report_page macro </p>
+
   [% widgets = [] %]
   [%# Establish my list of widgets %]
   [% widgets.push({ title=c.config.species_list.$species.Title type="title"}) %]
@@ -32,6 +34,3 @@ This is the individual species summary page.
   [% END %]
 
     </script>
-
-
-
