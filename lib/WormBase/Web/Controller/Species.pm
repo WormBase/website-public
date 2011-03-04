@@ -9,11 +9,52 @@ use parent 'WormBase::Web::Controller';
 #
 #   Species
 #   URL space : /species
-#   Params    : species, class, object
+#
+#   /species -> a list of all species
+#   /species/CLASS -> an Index page of class
+#   /species/CLASS/OBJECT -> a report page
+#
+#   CUSTOM
+#   /species/guide   -> NOTHING
+#   /species/guide/SPECIES -> Species info page
+#   /species/guide/component
 # 
 ##############################################################
-# sub species :Chained("/") :ParthPart('species') :Args(0) 
 
+
+
+
+##############################################################
+#
+#   Species Reports
+#
+##############################################################
+
+# Class summary: eg /species/strain, displays a custom search and widgets
+sub species_class_index :Path('/species') :Args(1)   {
+    my ($self,$c,$class) = @_;
+    if (defined $c->req->param("inline")) {
+      $c->stash->{noboiler} = 1;
+    }
+
+    $c->stash->{section}    = 'species';
+    $c->stash->{class}      = $class;
+    $c->stash->{is_index}   = 1;
+
+    # Override the default template. Too confusing when editing.
+    # Index and report are both handled by the same template: report.
+    $c->stash->{template} = "species/report.tt2";
+}
+
+
+
+
+##############################################################
+#
+#   Species Atlas
+#   URL space : /species and /species/guide
+# 
+##############################################################
 
 # Species index page
 sub species :Path('/species') :Args(0)   {
@@ -26,6 +67,7 @@ sub species :Path('/species') :Args(0)   {
       $c->stash->{noboiler} = 1;
     }
 }
+
 
 # /species/guide/ARG: individual species summary
 sub species_overview :Path('/species/guide') :Args(1)  {
@@ -87,7 +129,8 @@ sub species_component_widgets :Path("/species/guide/component") Args {
 
 # LEGACY CODE, but seems to be mixed in with /species calls?
 # This is a widget listing all the classes available for a given species
-sub species_class_summary :Path("/species") Args(2) {
+#sub species_class_report :Path("/species") Args(2) {
+sub species_report :Path("/species") Args(2) {
     my ($self,$c,$class,$name) = @_;
     if (defined $c->req->param("inline")) {
 	$c->stash->{noboiler} = 1;
@@ -110,11 +153,14 @@ sub species_class_summary :Path("/species") Args(2) {
     }
 }
 
-# This collides with actions above...
-sub species_report :Path("/species") Args(3) {
-    my ($self,$c,$species,$class,$name) = @_;
-    get_report($self, $c, $class, $name);
-}
+
+# Is this for handling PDFs?
+# I have NO IDEA what this action is for.
+# I renamed the action above to species_report to match resources.
+#sub species_report :Path("/species") Args(3) {
+#    my ($self,$c,$species,$class,$name) = @_;
+#    get_report($self, $c, $class, $name);
+#}
 
 
 sub get_report {
@@ -123,7 +169,7 @@ sub get_report {
     $c->stash->{template} = 'species/report.tt2';
     
     unless ($c->config->{sections}->{species}->{$class}) { 
-	# class doens't exist in this section
+	# class doesn't exist in this section
 	$c->detach;
     }
     

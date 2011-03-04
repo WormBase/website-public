@@ -9,10 +9,19 @@ use parent 'WormBase::Web::Controller';
 #
 #   Resources
 #   URL space : /resources
-#   Params    : class, object
+#
+#   /resources -> a list of all resources
+#   /resources/CLASS -> an Index page of class
+#   /resources/CLASS/OBJECT -> a report page
+#
+#   CUSTOM
+#   /resources/advisory_board
+#   /resources/nomenclature
+#   /resources/reagents
 # 
 ##############################################################
-# sub species :Chained("/") :ParthPart('species') :Args(0) 
+
+# This would/should/could be a listing of all resources
 sub resources :Path('/resources') :Args(0)   {
     my ($self,$c) = @_;
     $c->stash->{section} = 'resources';
@@ -22,25 +31,42 @@ sub resources :Path('/resources') :Args(0)   {
 #     $c->stash->{template} = 'report.tt2';
 }
 
-sub resources_class_summary :Path('/resources') :Args(1)  {
+# eg /resources/{CLASS}
+sub resources_class_index :Path('/resources') :Args(1)  {
     my ($self,$c, $class) = @_;
-    if(defined $c->req->param("inline")) {
+    if (defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     }
-    if(defined $c->config->{'sections'}->{'resources'}->{$class}){
+    
+    $c->stash->{template} = "resources/report.tt2";
+    
+    if (defined $c->config->{'sections'}->{'resources'}->{$class}){
       $c->stash->{section} = 'resources';
-      $c->stash->{class} = $class;
-    }else{
-      $c->detach;
+      $c->stash->{class}   = $class;
+      $c->stash->{is_index} = 1;
+    } else {
+	$c->detach;
     }
 
 }
 
+# eg /resources/{CLASS}/{OBJECT}
 sub resources_report :Path("/resources") Args(2) {
     my ($self,$c,$class,$name) = @_;
     get_report($self, $c, $class, $name);
 }
 
+
+
+
+#################################
+#
+#  Custom Resources:
+#
+#  These have their own tt2 and
+#  set up a custom sidebar.
+#  
+#################################
 sub advisory_board :Path("/resources/advisory_board") Args {
     my ($self,$c, @args) = @_;
     $c->stash->{section} = 'resources';

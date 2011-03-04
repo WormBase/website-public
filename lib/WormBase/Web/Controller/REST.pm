@@ -682,6 +682,7 @@ sub widget_GET {
     $c->log->debug($headers);
 
     $c->log->debug("this is NOT a bench page widget");
+
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
@@ -694,10 +695,16 @@ sub widget_GET {
 	$c->log->debug("The request is " . $name);
 	
 	# Fetch a WormBase::API::Object::* object
-	# But wait. Some methods return lists. Others scalars...
-	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
-					   name => $name}) or die "$!";
+	if ($name eq '*' || $name eq 'all') {
+	    $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+	} else {
+	    $c->stash->{object} = $api->fetch({class => ucfirst($class),
+					       name  => $name,
+					      }) or die "$!";
+	}
+	$c->log->debug("Tried to instantiate: $class");
     }
+
     my $object = $c->stash->{object};
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
@@ -729,26 +736,8 @@ sub widget_GET {
     } else {
 
 	# No result? Generate and cache the widget.		
-
-#    unless ($c->stash->{object}) {
-#	# Fetch our external model
-#	my $api = $c->model('WormBaseAPI');
-#	
-#	# Fetch the object from our driver	 
-#	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-#	$c->log->debug("The requested class is " . ucfirst($class));
-#	$c->log->debug("The request is " . $name);
-#	
-#	# Fetch a WormBase::API::Object::* object
-#	# But wait. Some methods return lists. Others scalars...
-#	$c->stash->{object} = $api->fetch({class=> ucfirst($class),
-#					   name => $name}) or die "$!";
-#    }
-#    my $object = $c->stash->{object};
-
-	
 	# Load the stash with the field contents for this widget.
-	# The widget itself could make a series of REST calls for each field but that could quickly become unwieldy.
+	# The widget itself is loaded by REST; fields are not.
 	my @fields = $c->_get_widget_fields($class,$widget);
 
 	my $fatal_non_compliance = 0;
@@ -777,6 +766,8 @@ sub widget_GET {
 	# Cache the field data for this widget.
 	$c->set_cache($cache_id,$c->stash->{fields});
     }
+
+    $c->stash->{class} = $class;
     
     # Save the name of the widget.
     $c->stash->{widget} = $widget;
@@ -1070,8 +1061,6 @@ sub widget_species_GET {
     my ($self,$c,$species,$widget) = @_; 
     $c->log->debug("getting species widget");
 
-    # Check for the presence of generic templates.
-
     $c->stash->{template} = "species/$species/$widget.tt2";
     $c->stash->{noboiler} = 1;
 }
@@ -1158,9 +1147,14 @@ sub field_GET {
 	$c->log->debug("The request is " . $name);
 	
 	# Fetch a WormBase::API::Object::* object
-	# But wait. Some methods return lists. Others scalars...
-	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
-					    name => $name}) or die "$!";
+	# * and all are placeholders to match the /species/class/object structure for species/class index pages
+	if ($name eq '*' || $name eq 'all') {
+	    $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+	} else {
+	    $c->stash->{object} = $api->fetch({class => ucfirst($class),
+					       name  => $name,
+					      }) or die "$!";
+	}
     }
     
     # Did we request the widget by ajax?
@@ -1169,17 +1163,14 @@ sub field_GET {
 	$c->stash->{noboiler} = 1;
     }
 
-
     my $object = $c->stash->{object};
     my $data = $object->$field();
 
     # Should be conditional based on content type (only need to populate the stash for HTML)
      $c->stash->{$field} = $data;
-#      $c->stash->{data} = $data->{data};
-#     $c->stash->{field} = $field;
-    # Anything in $c->stash->{rest} will automatically be serialized
-#    $c->stash->{rest} = $data;
 
+    # Anything in $c->stash->{rest} will automatically be serialized
+    #  $c->stash->{rest} = $data;
     
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
@@ -1188,7 +1179,7 @@ sub field_GET {
     $c->stash->{template} = $c->_select_template($field,$class,'field'); 
 
     $self->status_ok($c, entity => {
-	class  => $class,
+	                 class  => $class,
 			 name   => $name,
 	                 uri    => "$uri",
 			 $field => $data
