@@ -15,22 +15,26 @@
 
 [% END %]
 
-[% WRAPPER $field_block title="Driven by" %]
+[% WRAPPER $field_block title=pluralize('Promoter') %]
+   [% w = [ tag2link(fields.driven_by_gene.data),
+            fields.driven_by_construct.data ] ;
+      w.join(', ');
+   %]
 
-   [% WRAPPER $field_block title="Gene" key="driven_by_gene" %]
-       [% tag2link(fields.driven_by_gene.data) %]
-   [% END %]
+   [%# WRAPPER $field_block title="Gene" key="driven_by_gene" %]
+       [%# tag2link(fields.driven_by_gene.data) %]
+   [%# END %]
 
-   [% WRAPPER $field_block title="Construct" key="driven_by_construct" %]
-       [% fields.driven_by_construct.data %]
-   [% END %]
+   [%# WRAPPER $field_block title="Construct" key="driven_by_construct" %]
+       [%# fields.driven_by_construct.data %]
+   [%# END %]
 [% END %]
 
-[% WRAPPER $field_block title="Reporter construct" key="reporter_construct" %]
+[% WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct" %]
     [% FOREACH reporter IN fields.reporter_construct.data.keys %]
-    [% reporter %]
+        [%# reporter %]
         [% IF reporter == "Gene" %] 
-            Gene: [% tag2link(fields.reporter_construct.data.$reporter) %]
+            [% tag2link(fields.reporter_construct.data.$reporter) %]
         [% ELSE %]
             [% reporter.value %]
         [% END %]
