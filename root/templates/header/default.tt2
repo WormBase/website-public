@@ -40,7 +40,7 @@
 
               [% FOREACH class IN c.config.species_list.$option.available_classes.class %]
                 [% IF class == 'title'; NEXT; END; %]
-                <li><a href="/species/[% option %]/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
+                <li><a href="/species/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
               [% END %]
 
               </ul>

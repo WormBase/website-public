@@ -1,6 +1,9 @@
 [% SET class    = 'all_species_summary' %]
   [% title = "Species available at WormBase"  %]
   This is the full species index page at root/template/species/species.tt2
+  <p>
+  This could be folded into the report_page macro...
+</p>
 
   [% widgets = [] %]
   [% widgets.push({ title="Species" type="title"}) %]
@@ -25,8 +28,8 @@
     <script>
       
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["phylogeny"];
-    var rightList = ["downloads"];
+    var leftList = ["overview"];
+    var rightList = ["phylogeny"];
     resetLayout(leftList, rightList, 50);
   [% END %]
 
