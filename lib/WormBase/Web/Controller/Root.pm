@@ -147,8 +147,6 @@ sub me :Path("/me") Args(0) {
 } 
 
 
-=pod
-
 
 
 ##############################################################
@@ -156,9 +154,6 @@ sub me :Path("/me") Args(0) {
 #   Fields
 #   URL space : /fields
 #   Params    : class, object, field
-#
-# THis URL structure is rather goofy. I can't have two fields
-# with the same name in two different widgets...
 ##############################################################
 sub field :Path("/field") Args(3) {
     my ($self,$c,$class,$name,$field) = @_;
@@ -216,6 +211,7 @@ sub field :Path("/field") Args(3) {
     # $c->forward('WormBase::Web::View::TT');
 };
 
+=pod
 
 ##############################################################
 #
