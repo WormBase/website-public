@@ -129,6 +129,19 @@ div#header .release_date { }
     color:gray;
 }
 
+/* Not found; a warning for when a request is not found in the database */
+.not-found {
+   color: red;
+   font-size:1.2em;
+   width: 500px;
+   margin-left:auto;
+   margin-right:auto;
+   margin-top:50px;
+   padding:25px;
+   border: 2px solid gray;
+   text-align:center;   
+}
+
 
 /* Header */
 
@@ -867,6 +880,16 @@ div.field .field .field-content {
 
 
 
+/* Special field elements */
+/* Google Map */
+div#google-map { 
+    position:absolute;
+    right:140px;
+    top:50px;
+}
+
+
+
 
 /* Subfields - structure mimics that of fields */
 div.subfield { 
@@ -1340,6 +1363,7 @@ div.detail-box {
   padding: 0.5em;
   float:right;
   margin:0.5em;
+  width:300px;
 }
 
 div.detail-box div.field div.field-title {
