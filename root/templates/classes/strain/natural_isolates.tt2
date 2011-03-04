@@ -59,8 +59,9 @@ This is the call out box. It will contain pertinent information or maybe a descr
 
 
 [% 
-   build_data_table(order=['strain','place','landscape','substrate','isolated_by'],
-                    columns={ strain      => 'Strain',
+   build_data_table(order=['species','strain','place','landscape','substrate','isolated_by'],
+                    columns={ species     => 'Species',
+		    	      strain      => 'Strain',
 		              place       => 'Place',
 			      landscape   => 'Landscape',
 			      substrate   => 'Substrate',

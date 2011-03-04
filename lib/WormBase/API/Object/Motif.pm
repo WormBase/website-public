@@ -85,18 +85,15 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(
 =cut 
 
 sub title {
-	my $self 	= shift;
-	my $object 	= $self->object;
-	my $data_pack = $object->Title;
-	return {
-		'data' => $data_pack,
-		'description' => 'title for the motif'
-	};
+    my $self 	= shift;
+    my $object 	= $self->object;
+    my $data_pack = $object->Title;
+    return {
+	data        => "$title",
+	description => 'title for the motif'
+    };
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
 
 =head3 database
 
@@ -143,26 +140,39 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(
 <div class="response-example"></div>
 
 =cut 
-
+    
 sub database  {
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
-	my ($database,$accession1,$accession2) = $object->Database('@')->row if $object->Database;
-	my $accession = $accession2 || $accession1;	
-	my $data_pack = {'database' 	=> "$database",
-					'accession' => "$accession"
-	             };
-	
-	return {
-		'data'=> $data_pack,
-		'description' => 'database which contained info on motif, along with its accession number'
-	};     
+    my ($database,$accession1,$accession2) = $object->Database('@')->row if $object->Database;
+    my $accession = $accession2 || $accession1;	   # TH: ??
+    
+    return { description => 'external database and ID with additional information on the motif',
+	     data        => { database  => "$database",
+			      accession => "$accession"
+	     },
+    };
 }
 
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
 
-=head3 go
 
-This method will return a data structure with go annotations for the requested motif.
+#######################################
+#
+# The Gene Ontology Widget
+#
+#######################################
+
+=head2 Gene Ontology
+
+=cut
+
+
+=head3 gene_ontology
+
+This method will return a data structure with gene ontology (GO) annotations for the requested motif.
 
 =head4 PERL API
 
@@ -198,48 +208,37 @@ a Motif ID ((AAATG)n)
 
 =head5 Request example
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/go
+curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/gene_ontology
 
 =head5 Response example
 
 <div class="response-example"></div>
 
 =cut 
+    
+sub gene_ontology  {
+    my $self     = shift;
+    my $motif    = $self->object;
 
-sub homologies {
-	my $self = shift;
-    my $object = $self->object;
-	my @data_pack;
+    my @data;
+    foreach my $go_term ($motif->GO_term) {
+	my $definition = $go_term->Definition;
+	my ($evidence) = $go_term->right;
+	my $term       = $go_term->GO_term;
+	my $go_data;
+	my $term_data  = $self->pack_obj($term);
 	
-    foreach (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
-		if (my @homol = $object->$_) {
-			foreach (@homol) {
-				my $id;
-				my $label;
-				my $class;
-				my $homolog_data;
-				if ($_ =~ /.*RepeatMasker/g) {
-					$_ =~ /(.*):.*/;
-					my $clone = $1;
-					
-					$homolog_data = {	
-						'id'	=> "$clone",
-						'label'	=> "$clone",
-						'class' => 'Clone'
-					};
-				} else {
-					$homolog_data = $self->_pack_obj($_);	
-				}
-				push @data_pack, $homolog_data;
-			}
-		}       
-	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'homology data for this motif'
-	};
-	
+	push @data,{		
+	    term_data  => $term_data,	
+	    definition => $definition,
+	    evidence   => $evidence
+	};	
+    }
+    return { data        => \@data,
+	     description => 'go terms to with which motif is annotated',
+    };
 }
+
 
 =head3 homologies
 
@@ -287,33 +286,35 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(
 
 =cut 
 
-sub go  {
-	my $self = shift;
-    my $motif = $self->object;
-	my @go_terms;
-	my @data_pack;
-	
-	@go_terms = $motif->GO_term;
-	
-	foreach my $go_term (@go_terms) {	
-		my $definition = $go_term->Definition;
-		my ($evidence) = $go_term->right;
-		my $term = $go_term->GO_term;
-		my $go_data;
-		my $term_data = $self->pack_obj($term);
-
-		$go_data = {		
-			'term_data' => $term_data,	
-			'definition'=>$definition,
-			'evidence'=>$evidence
-			};	
-		push @data_pack,$go_data;		
+sub homologies {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+    
+    foreach (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
+	if (my @homol = $object->$_) {
+	    foreach (@homol) {		
+		if ($_ =~ /.*RepeatMasker/g) {
+		    $_ =~ /(.*):.*/;
+		    my $clone = $1;
+		    
+		    push @data, {
+			'id'	=> "$clone",
+			'label'	=> "$clone",
+			'class' => 'Clone'
+		    };
+		} else {
+		    push @data,$self->_pack_obj($_);	
+		}
+	    }
 	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'go terms to with which motif is annotated'
-	};	
- }
+    }
+    
+    return { data         => \@data,
+	     description  => 'homology data for this motif'
+    };
+}
+
 
 1;
 

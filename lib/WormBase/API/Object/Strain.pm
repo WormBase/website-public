@@ -1648,7 +1648,6 @@ sub natural_isolates {
 
     my $dsn = $self->ace_dsn->dbh;
     my @strains = $dsn->fetch(-query => "find Strain Wild_isolate");
-    $self->log->debug("@strains");
     my @data;
     foreach (@strains) {
 	my ($lat,$lon) = $_->GPS->row;
@@ -1658,7 +1657,9 @@ sub natural_isolates {
 	$substrate =~ s/_/ /g;
 	$landscape =~ s/_/ /g;
 	my $isolated  = $_->Isolated_by;
-	push @data,{ place       => "$place",
+	my $species   = $_->Species;
+	push @data,{ species     => "$species",
+		     place       => "$place",
 		     strain      => $self->_pack_obj($_),
 		     latitude    => "$lat" || undef,
 		     longitude   => "$lon" || undef,
