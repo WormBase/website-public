@@ -28,7 +28,7 @@ has '_oligos' => (
 	},
    );
 
-has 'display_class' => (
+has 'object_class' => (
 	is => 'ro',
 	required => 1,
 	default => sub {
@@ -52,7 +52,7 @@ sub canonical_parent {
 	my ($self) = @_;
 
 	return {
-		description => 'Canonical parent of this ' . $self->display_class,
+		description => 'Canonical parent of this ' . $self->object_class,
 		data		=> $self->_pack_obj($self ~~ 'Canonical_parent'),
 	};
 }
@@ -65,24 +65,30 @@ sub oligos {
 		my $seq = $_->Sequence;
 		push @data, {
 			obj => $self->_pack_obj($_),
-			sequence => $seq && $seq->name,
+			sequence => $seq && "$seq",
 		};
 	}
 
 	return {
-		description => 'Oligos of this' . $self->display_class,
+		description => 'Oligos of this' . $self->object_class,
 		data		=> @data ? \@data : undef,
 	};
 }
 
-
 sub overlapping_genes {
 	my ($self) = @_;
-	my @gene_info = map {$_->info->name} $self->_overlapping_genes($self->_segment);
+	my %gene_info = map {
+        my $name = $_->info->name;
+        $name => {
+            id    => $name,
+            label => $name,
+            class => 'Gene',
+        }
+    } $self->_overlapping_genes($self->_segment);
 
 	return {
-		description => 'Overlapping genes of this ' . $self->display_class,
-		data		=> @gene_info ? \@gene_info : undef,
+		description => 'Overlapping genes of this ' . $self->object_class,
+		data		=> %gene_info ? \%gene_info : undef,
 	};
 }
 
@@ -91,7 +97,7 @@ sub overlaps_CDS {
 	my $CDS = $self->_pack_objects($self ~~ '@Overlaps_CDS');
 
 	return {
-		description => 'CDS\'s that this ' . $self->display_class . ' overlaps',
+		description => 'CDS\'s that this ' . $self->object_class . ' overlaps',
 		data		=> %$CDS ? $CDS : undef,
 	};
 }
@@ -101,7 +107,7 @@ sub overlaps_transcript {
 	my $transcripts = $self->_pack_objects($self ~~ '@Overlaps_Transcript');
 
 	return {
-		description => 'Transcripts that this ' . $self->display_class . ' overlaps',
+		description => 'Transcripts that this ' . $self->object_class . ' overlaps',
 		data		=> %$transcripts ? $transcripts : undef,
 	};
 }
@@ -111,7 +117,7 @@ sub overlaps_pseudogene {
 	my $pseudogenes = $self->_pack_objects($self ~~ '@Overlaps_Pseudogene');
 
 	return {
-		description => 'Pseudogenes that this ' . $self->display_class . ' overlaps',
+		description => 'Pseudogenes that this ' . $self->object_class . ' overlaps',
 		data		=> %$pseudogenes ? \$pseudogenes : undef,
 	};
 }
@@ -121,7 +127,7 @@ sub overlaps_variation {
 	my $variations = $self->_pack_objects($self ~~ '@Overlaps_Variation');
 
 	return {
-		description => 'Variations that this ' . $self->display_class . ' overlaps',
+		description => 'Variations that this ' . $self->object_class . ' overlaps',
 		data		=> %$variations ? \$variations : undef,
 	};
 }
@@ -134,7 +140,7 @@ sub on_orfeome_project {
 	my $data = $1;
 
 	return {
-		description => 'Finding this ' . $self->display_class . ' on the ORFeome project',
+		description => 'Finding this ' . $self->object_class . ' on the ORFeome project',
 		data		=> $data,
 	};
 }
@@ -148,7 +154,7 @@ sub microarray_results {
 
 	my $results = $self->_pack_objects($self ~~ '@Microarray_results');
 	return {
-		description => 'Microarray results involving this ' . $self->display_class,
+		description => 'Microarray results involving this ' . $self->object_class,
 		data => %$results ? $results : undef,
 	};
 }
@@ -159,11 +165,11 @@ sub segment {
 	my %data;
 	if (my $segment = $self->_segment) {
 		%data = map { $_ => $segment->$_ }
-		        qw(refseq abs_start abs_stop start stop length dna);
+		        qw(refseq ref abs_start abs_stop start stop length dna);
 	}
 
 	return {
-		description => 'Sequence/segment data about this ' . $self->display_class,
+		description => 'Sequence/segment data about this ' . $self->object_class,
 		data		=> %data ? \%data : undef,
 	};
 }

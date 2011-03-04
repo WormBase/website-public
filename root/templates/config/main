@@ -84,15 +84,17 @@
 
 # use this to pluraize a word
     MACRO pluralize(word, size) BLOCK;
-      IF (size != 1);
+      IF (size > 1);
 	  	 IF (matches = word.match('^(.*)y$'));
 		 	word = matches.0 _ 'ies';					# antibody -> antibodies
 		 ELSIF (matches = word.match('^(.*)ium$'));
 		 	word = matches.0 _ 'ia';					# bacterium -> bacteria
+         ELSIF (matches = word.match('^(.*)cus$'));
+            word = matches.0 _ 'ci';                    # locus -> loci
 		 ELSIF (matches = word.match('^(.*)ius$'));
 		 	word = matches.0 _ 'ii';					# radius -> radii 
 		 ELSE; 
-		 	word = word _ "s";
+		 	word = word _ "s";                          # fallback
 		 END;
       END;
       word;
