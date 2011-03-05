@@ -7,15 +7,9 @@
 [% WRAPPER highlight_box %]
 
     [% WRAPPER $field_block title="" -%]
-       [% taxonomy %]
+       [% fields.title.data %]
     [% END %] 
 
-[% END %]
-
-[% other_names %]
-
-[% WRAPPER $field_block title="Genotype" -%]
-      [% fields.genotype.data %]
 [% END %]
 
 [% WRAPPER $field_block title="Contains" %]

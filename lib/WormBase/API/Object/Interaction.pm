@@ -478,4 +478,20 @@ sub interactor_data {
 	};
 }
 
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
 1;

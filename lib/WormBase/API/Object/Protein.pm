@@ -402,79 +402,12 @@ sub type {
 
 =head2 External Links
 
-=head3 external_links
-
-This method returns a data structure containing the 
-external links and IDs for the current protein.
-
-=over
-
-=item PERL API
-
- $data = $model->external_links();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/P:CE02346/external_links
-
-B<Response example>
-
-<div class="response-example"></div>
-
 =cut
 
-sub external_links {
-    my $self=shift;
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
-    my $hash;
-    foreach (@{$self ~~ '@Database'}){
-	next if ($_ eq 'WORMPEP');
-	$hash->{$_}={ class => $_,
-		      id    =>$_->right(2),
-		      label =>$_->right(2),
-	};
-    }
-
-    # Often use CDS as external IDs?
-    my $id = eval{$self->cds->[0]}  ;
-    
-    $hash->{'Phosphopep'}= { id    => $id,
-			     label => $id,
-			     class => 'phosphopep',
-    } if( $id);
-    
-    return { description => 'links to third party sites',
-	     data        => $hash,
-    };
-}    
 
 ############################################################
 #

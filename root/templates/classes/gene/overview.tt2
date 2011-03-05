@@ -3,7 +3,6 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-
 [% WRAPPER highlight_box %]
  
    [% taxonomy %]

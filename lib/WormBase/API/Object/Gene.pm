@@ -134,28 +134,6 @@ has 'all_proteins' => (
     }
 );
  
-
-has 'database_ids' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-	my $self=shift;
-	my ($aceview,@refseq);
-	# Fetch all DB IDs at once, uniquifying them
-	# for genes at the same time
-	foreach my $db (@{$self ~~ '@Database'}) {
-	    foreach my $type ($db->col) {
-		if ($db eq 'AceView') {
-		    $aceview = $type->right->name;
-		} elsif ($db eq 'RefSeq') {
-		    push (@refseq,map { "$_" } eval { $type->col });
-		}
-	    }
-	}
-	return [$aceview,\@refseq];
-    }
-);
-
 has 'sequences' => (
     is  => 'ro',
     lazy => 1,
@@ -224,20 +202,9 @@ has 'phen_data' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
-sub external_links {
-  my $self = shift;
-  my $object = $self->object;
-
-
-  my ($aceview,$refseq) = @{$self->database_ids};
-  my $data = { description => 'External links',
-                      data => { 'aceview'     => "$aceview",
-                                'ncbi_refseq' => "$refseq",
-                              },
-             };
-  return $data;
-}
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
 
 =head2 also_refers_to()
@@ -271,9 +238,6 @@ sub ids {
     
     my %data;
     
-    # Fetch external database IDs for the gene
-    my ($aceview,$refseq) = @{$self->database_ids};
-    
     my $version = $object->Version;
     my $locus   = $object->CGC_name;
     my $common  = $object->Public_name;
@@ -287,8 +251,6 @@ sub ids {
 	common_name   => "$common",
 	locus_name    => "$locus",
 	version       => "$version",
-	aceview_id    => "$aceview",
-	refseq_id     => $refseq,
 	other_names	  => \@other_names,
 	sequence_name => $sequence_ret
     };	
@@ -1836,30 +1798,8 @@ sub _select_protein_description {
     return $msg;
 }
 
-# Aceview and entrez are unique to gene (although stored in CDS)
-# refseq is unique to CDS - NM_* is mRNA ID.
-# DONE
-=pod
-sub _fetch_database_ids {
-    my ($self) = @_;
-    my ($aceview,@refseq);
-    # Fetch all DB IDs at once, uniquifying them
-    # for genes at the same time
-    my @dbs = $self->object->Database;
-    foreach my $db (@dbs) {
-	foreach my $type ($db->col) {
-	    if ($db eq 'AceView') {
-		$aceview = $type->right->name;
-	    } elsif ($db eq 'RefSeq') {
-		push (@refseq,map { "$_" } eval { $type->col });
-	    }
-	}
-    }
-    return [$aceview,\@refseq];
-}
-=cut
 
-# This is really inefficient
+# I need to retain this in order to link to Treefam.
 sub _fetch_protein_ids {
     my ($self,$s,$tag) = @_;
     my @dbs = $s->Database;

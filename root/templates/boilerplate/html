@@ -28,8 +28,8 @@
  <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
 <!-- <script type="text/javascript" src="/js/jquery/plugins/floating-1.4.js"></script>-->
 
-   <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/jquery.dataTables.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/demo_table.css"/>
+   <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.css"/>
    
     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/>

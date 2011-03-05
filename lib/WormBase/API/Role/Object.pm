@@ -1342,10 +1342,103 @@ sub _build_taxonomy {
 
 
 
+=head3 xrefs
+
+This method will return a data structure containing
+external database cross-references for the requested object.
+
+=head4 PERL API
+
+ $data = $model->xrefs();
+
+=head4 REST API
+
+=head5 Request Method
+
+GET
+
+=head5 Requires Authentication
+
+No
+
+=head5 Parameters
+
+A class and object ID.
+
+=head5 Returns
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+=head5 Request example
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/CLASS/OBJECT/xrefs
+
+=head5 Response example
+
+<div class="response-example"></div>
+
+=cut 
+ 
+# template [% xrefs %]
+   
+has 'xrefs' => (
+    is => 'ro',
+    lazy_build => 1,
+    );
 
 
+# XREFs are stored under the Database tag.
+sub _build_xrefs  {
+    my $self   = shift;
+    my $object = $self->object;    
+    
+    my @databases = $object->Database;
+    my %dbs;
+    foreach my $db (@databases) {    
 
+	my $name        = $db->Name || "$db";
+	my $description = $db->Description;
+	my $url         = $db->URL;
+        my $url_constructor = $db->URL_constructor;
+	my $email       = $db->Email;
+	my $remote_text = $db->right(1);
 
+	# Possibly multiple entries for a single DB
+	my @ids;
+	foreach my $type ($db->col) {
+	    if ($type->col) {
+		push @ids,map { "$_" } $type->col;
+	    } else {
+		push @ids,$type->right->name;
+	    }
+	}
+		
+	$dbs{"$db"} = { name        => "$name",
+			description => "$description",
+			url         => "$url",
+			url_constructor => "$url_constructor",
+			email       => "$email",
+			ids         => \@ids,
+			label       => "$remote_text" 
+	};
+    }
+
+    # ?Analysis has a separate URL tag.
+#    my $url = $object->URL if eval { $object->URL } ;
+    
+    return { description => 'external databases and IDs containing additional information on the object',
+	     data        => \%dbs };
+}
 
 
 

@@ -1013,13 +1013,6 @@ div.evidence tr.updated {
 
 
 
-/* obsolete? 
-table.multi       { padding: 0;
-                    border-spacing: 0;
-                    width: 100%;
-                  }
-*/
-
 /* dataheader and datacell are used in page-wide tables such as in the 
    listing of all rearrangements by chrom on the rearrangment page */
 
