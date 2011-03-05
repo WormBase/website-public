@@ -1,17 +1,24 @@
 [%#  External URLs currently referenced by WormBase
+
      Usage: site.external_url.[symbolic_name].base	
 
-     When adding, the primary hash key should be the name
-     of the site, added in ALPHABETICAL ORDER!
+     Note that we also store this information in the database
+     but is maintained here for ease of updates between releases.
 
-     Minimally you should provide the following information:
-        base -> the home page for the resource
+     When adding an entry, the primary hash key should be the
+     symbolic name of the database, matching that stored there.
+
+     Please add in alphabetical order for ease of editing.
+
+     Each entry should have the following keys:
         description -> a brief description of the resource
- 
-     Optional parameters
- 	search -> the path to the search facility - with variable
-	          substitution as needed
+        maintainer  -> name of the person responsible
+        email       -> the contact email of the person/resource
+        base        -> the home page for the resource
+        search      -> a url constructor for searches/links
+        icon        -> a link to a (local?) thumbnail icon 
 
+     Optional parameters
         [custom] -> custom pages or searches at the resource
 
 %]
@@ -19,15 +26,47 @@
 
 
 [% site.external_urls = {
-	genomic_location = { description  = 'The WormBase Genome Browser'
-			      maintainer   = ''
-base = 'http://www.wormbase.org/db/gb2/gbrowse/'
-search = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
-			      # base         = '/gb2/gbrowse/'
-			      # search      = '/gb2/gbrowse/%s'   
-			    }
 
-	gbrowse_image = { description  = 'The WormBase Genome Browser Image'
+ AceView 
+   = { description =  'The AceView genes - NCBI'
+       maintainer  =  'Jean-Thierry and Danielle Mieg',
+       email       =  '',
+       base        = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/index.html'
+       search      = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
+     }
+
+ # No CGC entry in ?Database !
+ cgc
+   = { description  = 'The C. elegans Genetics Center'
+       maintainer   = 'Aric Daul'
+       email        = 'cgc@umn.edu'
+       base         = 'http://www.cbs.umn.edu/CGC/'
+       strains      = 'http://biosci.umn.edu/CGC/strains/'
+       nomenclature = 'http://biosci.umn.edu/CGC/Nomenclature/nomenguid.htm'
+     }
+
+ Refseq 
+   = { description = 'RefSeq'
+       maintainer  = 'NCBI',
+       base        = 'http://www.ncbi.nlm.nih.gov/entrez',
+       email       = '',
+       search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
+     }
+
+# Done to here only!
+
+   genomic_location 
+           = { description  = 'The WormBase Genome Browser'
+               maintainer   = 'WormBase'
+               email        = 'help@wormbase.org',
+               base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
+               search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
+               # base         = '/gb2/gbrowse/'
+	       # search      = '/gb2/gbrowse/%s'   
+             }
+
+   gbrowse_image 
+           = { description  = 'The WormBase Genome Browser Image'
 			      maintainer   = ''
 
 base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
@@ -35,23 +74,21 @@ search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
 			      # base         = '/gb2/gbrowse_img/'
 			      # search      = '/gb2/gbrowse_img/%s'   
 			    }
-	pfam    ={ search = 'http://pfam.sanger.ac.uk/family/%s' }
-		  
-        
-		  
-        INTERPRO ={ search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
+		 
+        INTERPRO = { search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
 
-	cgc      = { description  = 'The C. elegans Genetics Center'
-	             maintainer   = ''
-		     base         = 'http://www.cbs.umn.edu/CGC/'
-		     strains      = 'http://biosci.umn.edu/CGC/strains/'
-		     nomenclature = 'http://biosci.umn.edu/CGC/Nomenclature/nomenguid.htm'
- 	           }
 
-        flybase = { description = 'The central data repository for D. melanogaster and related species'
+
+
+         ensembl = { description = 'The Ensembl Project'
+                      search = 'http://www.ensembl.org/%s/protview?peptide=%s'
+                        base = 'http://www.ensembl.org'
+               }
+
+        flybase = { description = 'FlyBase: a database for drosophila genetics and molecular biology'
 		    maintainer  = ''
-		    base        = 'http://flybase.net/'
-                    search      = 'http://flybase.net/reports/%s.html'
+                    base = 'http://www.flybase.org'
+                    search = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
 		   }
 
 	gadfly  = { description = 'gadfly'
@@ -60,17 +97,52 @@ search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
                     search = 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
                    }
 
+
+          hi = { description = 'H-InvDB: Annotated Human Gene Database'
+                      search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
+               }
+
+              
+	ncbi_pubmed  =	{ 
+			description = 'PubMed Abstracts'
+			base 		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
+			search 		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
+			}
+
+	ncbi_taxonomy = { 
+		      description = 'NCBI Taxonomy'
+                      search = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
+              }
+
+
+         omim     = { description = 'OMIM: Online Mendelian Inheritance in Man'
+                  maintainer  = 'info@ncbi.nlm.nih.gov'
+                  base        = 'http://www.ncbi.nlm.nih.gov/omim/'
+                  search      = 'http://www.ncbi.nlm.nih.gov/omim/%s'
+                }
+
+
+	pfam    ={ search = 'http://pfam.sanger.ac.uk/family/%s' }
+
 	phosphopep = { description = 'a database of phosphorylation sites'
 		       maintainer  = ''
 		       base   = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi',
 	               search = 'http://www.sbeams.org/dev1/sbeams/cgi/Glycopeptide/peptideSearch.cgi?action=Show_hits_form&search_type=accession&organism=cel&search_term=%s'
 		     }
 
+
+
 	reactome = { description = 'an online resource of curated pathways'
 		     maintainer  = ''
 		     base        = 'http://www.reactome.org/'
 		     search      = 'http://www.reactome.org/cgi-bin/search?QUERY=%s&QUERY_CLASS=DatabaseIdentifier'
 		     }
+
+
+         sgd = { description = 'GO Term finder - Stanford University'
+                      search =  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
+                        base =  'http://genome-www4.stanford.edu'
+               }
 
 	treefam  = { description = 'treefam: protein family trees'
 		     maintainer  = ''
@@ -79,7 +151,7 @@ search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
 		     image       = 'http://www.treefam.org/cgi-bin/treeview.pl?pic&ac=%s&stype=clean&highlight=%s'
 		   }
 
-        uniprot = { description = 'UniProt | The Universal Protein Resource | EBI'
+        UniProt = { description = 'UniProt | The Universal Protein Resource | EBI'
                     maintainer  = ''
                     base        = 'http://www.ebi.ac.uk/uniprot'
                     search      = 'http://www.ebi.uniprot.org/entry/%s'
@@ -89,52 +161,7 @@ search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
 		     maintainer  = 'help@wormbook.org'
 		     base        = 'http://www.wormbook.org/'
 		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
-	}
-
-
-    omim     = { description = 'OMIM: Online Mendelian Inheritance in Man'
-                  maintainer  = 'info@ncbi.nlm.nih.gov'
-                  base        = 'http://www.ncbi.nlm.nih.gov/omim/'
-                  search      = 'http://www.ncbi.nlm.nih.gov/omim/%s'
-                }
-    
-    flybase  = { description = 'FlyBase: a database for drosophila genetics and molecular biology'
-                        base = 'http://www.flybase.org'
-                      search = 'http://flybase.org/cgi-bin/quicksearch.cgi?species=Dmel&field=SYM&db=fbgn&addata=all&context=%s'
-               }
-     ensembl = { description = 'The Ensembl Project'
-                      search = 'http://www.ensembl.org/%s/protview?peptide=%s'
-                        base = 'http://www.ensembl.org'
-               }
-         sgd = { description = 'GO Term finder - Stanford University'
-                      search =  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'
-                        base =  'http://genome-www4.stanford.edu'
-               }
-
-          hi = { description = 'H-InvDB: Annotated Human Gene Database'
-                      search = 'http://www.jbirc.jbic.or.jp/hinv/spsoup/transcript_view?hit_id=%s'
-               }
-
-	aceview = { description =  'The AceView genes - NCBI'
-                      search = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s'
-                        base = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/index.html'
-               }
-	ncbi_refseq = { description = 'RefSeq'
-                      search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
-              }
-              
-	ncbi_pubmed  =	{ 
-						description = 'PubMed Abstracts'
-						base 		= 'http://www.ncbi.nlm.nih.gov/sites/entrez/'
-						search 		= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=retrieve&dopt=abstract&list_uids=%s'
-					}
-
-	ncbi_taxonomy = { 
-		      description = 'NCBI Taxonomy'
-                      search = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=%s' 
-              }
-
-	 
+	} 
    }
 
 -%]
@@ -152,9 +179,6 @@ $DOI             = 'http://dx.doi.org/';
 	ncbi_genbank     = { base              = 'http://www.ncbi.nlm.nih.gov'
 		     nucleotide_search = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=%s'
 		   }
-
-	ncbi_refseq  ={ base = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&term=%s[accn]&doptcmdl=GenPept' }
-
 
 	
         sgd     = { base=  'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s' }
@@ -213,7 +237,6 @@ $DOI             = 'http://dx.doi.org/';
 	Prosite  = { base         = ''
 		     search       = 'http://kr.expasy.org/cgi-bin/prosite-search-ac?'
 		   }		
-
 $HYMAN        = 'http://worm-srv1.mpi-cbg.de/dbScreen/cgi-bin/ViewRNA.py?RNAName=';
 $RNAIDB	      = 'http://www.rnai.org/cgi-bin/rnai/browse/card.rnai.cgi?query=';
 $PHENOBANK    = 'http://worm.mpi-cbg.de/phenobank2';
@@ -249,7 +272,7 @@ $PUBMED         = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=PubMed&cmd=S
 $ENTREZ         = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&doptcmdl=GenBank&term=';
 $ENTREZP        = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Protein&doptcmdl=GenPep&term=';
 $ENTREZ_GENE    = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=';
-$ACEVIEW        = 'http://www.ncbi.nlm.nih.gov/IEB/Research/Acembly/av.cgi?db=worm&q=%s';
+
 
 $PROTEOME       = 'http://www.proteome.com/WormPD/';
 $SWISSPROT      = 'http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?db=p&form=1&field=Sequence+ID&term=';

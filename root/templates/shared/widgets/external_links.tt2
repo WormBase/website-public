@@ -1,12 +1,52 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[%# 2011.02: IN USE BY PROTEIN %]
+[%
+
+# USE Dumper;
+# '<pre>';
+# Dumper.dump(fields.xrefs.data);
+# '</pre>';
+
+  rows = [];
+  hash = fields.xrefs.data;
+  FOREACH db IN hash.keys.sort;
+
+      # This information is pulled from config which we might want to use in preference over ?Database;
+      # Create a tooltip with information from information culled from both the database and our config.
+      maintainer = site.external_urls.$db.maintainer;
+
+      # WRAPPER $field_block title=hash.$db.name tooltip=hash.$db.description;
+
+	  FOREACH id IN hash.$db.ids; 
+	     
+              href= FILTER format(hash.$db.url_constructor); id; END; 
+	      # We'll use description info from the website and not the DB.
+ 	      link = external_link(href,id,id);
+
+              # Should be a table of resource, ID linked to page description, maintainer.
+             rows.push( { maintainer  = site.external_urls.$db.maintainer,
+                          name        = '<a href="' _ site.external_urls.$db.base _ '">' _ db _ '</a>',                   
+                          link        = external_link(href,id,id),
+#		          description = site.external_urls.$db.description,
+		          full_description = hash.$db.description,     # full description from the DB
+                        } );
+
+	  END;
+  	  # hash.$db.db_field;
+     END;
+#  END;
+
+   build_data_table(order=['name','link','full_description','maintainer'],
+                    columns={ name        => 'Name',
+		    	      link        => 'Entry',
+#		              description => 'Description',
+			      full_description => 'Description',
+			      maintainer  => 'Maintainer',
+			      },
+		    passed_data = rows,
+                    title='',);
+%]
 
 
-[% FOREACH tag IN fields.external_links.data.keys.sort %]
-    [% WRAPPER $field_block title=tag %]
-	  [% external_link(fields.external_links.data.$tag.class,fields.external_links.data.$tag.label,fields.external_links.data.$tag.id) %]
-	  [% IF tag == 'GenBank/EMBL' %][% tag2link(fields.external_links.data.$tag.detail,' [details]') %] [% END %]
-    [% END %]
-[% END %]
+
