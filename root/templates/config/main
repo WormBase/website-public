@@ -59,7 +59,7 @@
       END; 
    END;
 
-# Like tag2link, bt for cases where we only have text and no object.
+# Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # An optional fourth parameter, is_classic, will be classic WormBase
 # URLs
