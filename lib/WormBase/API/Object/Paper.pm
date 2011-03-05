@@ -742,9 +742,9 @@ sub is_wormbook_paper {
     my $truth = 0;
 
     my ($type, $journal, $contained);
-    if (($type = $self->publication_type and first {$_ eq 'WormBook'} @{$type->{data}}) or
-        ($journal = $self->journal and $journal->{data} eq 'WormBook') or
-        ($contained = $self->contained_in and first /WormBook/, @{$contained->{data}})) {
+    if (($type = $self->publication_type and first { $_ eq 'WormBook' } } @{$type->{data}})
+        or ($journal = $self->journal and $journal->{data} eq 'WormBook')
+        or ($contained = $self->contained_in and first /WormBook/, @{$contained->{data}})) {
         $truth = 1;
     }
 

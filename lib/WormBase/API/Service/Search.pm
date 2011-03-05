@@ -31,25 +31,25 @@ sub basic {
 }
 
 sub preview {
-  my ($self,$args) = @_;
-  my $class     = $args->{class};
-  my $species   = $args->{species};
-  my $offset = $args->{offset};
-  my $count = $args->{count};
-  my $ace_class = ucfirst($class);
+    my ($self,$args) = @_;
+    my $class     = $args->{class};
+    my $species   = $args->{species};
+    my $offset    = $args->{offset};
+    my $count     = $args->{count};
+    my $ace_class = ucfirst($class);
 #   my $query = "find $ace_class where Species=$species";
-  my $itr;
+    my $itr;
 #   if($species){
 # #   $itr = $self->dbh->fetch_many(-query=>qq(find $ace_class where Species=$species));
 #     $itr = $self->dbh->fetch_many(-class=>$ace_class,-name=>'*', -offset=>$begin, -chunk=>($end-$begin));
 #   }else{
 #     $itr = $self->dbh->fetch_many(-class=>$ace_class,-name=>'*', -offset=>$begin, -chunk=>($end-$begin));
-  my $total;
-  my @objs = $self->dbh->fetch(-class  => $ace_class,
-                               -count  => $count,
-                               -offset => $offset,
-                               -total  => \$total);
-  return ($total, _wrap_objs($self, \@objs, $class));
+    my $total;
+    my @objs = $self->dbh->fetch(-class  => $ace_class,
+				 -count  => $count,
+				 -offset => $offset,
+				 -total  => \$total);
+    return ($total, _wrap_objs($self, \@objs, $class));
 }
 
 sub person {
@@ -504,8 +504,8 @@ sub phenotype {
 # input: list of ace objects
 # output: list of Result objects
 sub _wrap_objs {
-  my $self = shift;
-  my $list = shift;
+  my $self  = shift;
+  my $list  = shift;
   my $class = shift;
 
   # don't get config info if nothing to config
@@ -514,15 +514,12 @@ sub _wrap_objs {
   my $api = $self->api;
   my $fields;
   my $f;
-  if($self->config->{'DefaultConfig'}->{sections}->{species}->{$class}){
+  if ($self->config->{'DefaultConfig'}->{sections}->{species}->{$class}){
     $f = $self->config->{'DefaultConfig'}->{sections}->{species}->{$class}->{search}->{fields};
-  }else{
+  } else{
     $f = $self->config->{'DefaultConfig'}->{sections}->{resources}->{$class}->{search}->{fields};
   }
   push(@$fields, @$f) if $f;
-
-  # default fields for all objects
-  push(@$fields, 'name');
 
   my @ret;
   foreach my $ace_obj (@$list) {
@@ -539,7 +536,7 @@ sub _wrap_objs {
     my %data;
     $data{obj_name}=$ace_obj;
     foreach my $field (@$fields) {
-      my $field_data = $object->$field;# if  $object->meta->has_method($field);
+      my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
       $field_data = $field_data->{data};
 #       $field_data =~ s/((.){200})(.)*/$1.../ unless $field eq 'abstract';
       $data{$field} = $field_data;

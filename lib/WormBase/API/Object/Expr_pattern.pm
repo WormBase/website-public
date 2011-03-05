@@ -52,22 +52,22 @@ sub name {
 }
 
 
-
-sub description {
-	my ($self) = @_;
-	my %data;
-	unless (($self ~~ 'Author') =~ /Mohler/) {
-		$data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
-		$data{remark} = join ' ', @{$self ~~ '@Remark'};
-		$data{check_bc} = $self->_check_for_bc;
-		%data = () unless @{$data{description}} ||
-		  $data{remark} || $data{check_bc};
-	}
-
-	return {
-		description => 'The description of the expression pattern',
-		data => %data ? \%data : undef,
-	};
+# Override default description from Role::Object.
+sub _build_description {
+    my ($self) = @_;
+    my %data;
+    unless (($self ~~ 'Author') =~ /Mohler/) {
+	$data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
+	$data{remark} = join ' ', @{$self ~~ '@Remark'};
+	$data{check_bc} = $self->_check_for_bc;
+	%data = () unless @{$data{description}} ||
+	    $data{remark} || $data{check_bc};
+    }
+    
+    return {
+	description => 'The description of the expression pattern',
+	data => %data ? \%data : undef,
+    };
 }
 
 sub subcellular_locations {

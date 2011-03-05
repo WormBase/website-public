@@ -5,16 +5,15 @@
 [% END %]
 
 <!-- begin result list -->
-[% results = c.stash.results %]
 [% search_type = c.stash.type %]
 <div id="results">
   [% UNLESS no_count %]
   [% IF results.size > 0 %]
-    <div id="fade"><span id="count">[% c.stash.count%]</span> 
+    <div id="fade"><span id="count">[% results.size %]</span> 
       [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
     </div>
   [% ELSE %]
-    Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
+    Sorry, <span id="count">[% results.size %]</span> results found for the [% search_type %] search [% query %]
   [% END %]
   [% END %]
   <ul class="results-[% search_type %]">
@@ -22,8 +21,8 @@
   </ul>
 
   [% PROCESS timer IF noboiler %] 	
-    [% IF c.stash.count > 20 %]
-    <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query | uri %]?inline=1">view more</div>
+    [% IF count > 20 %]
+    <div id="load-results" class="load-results" href="/search/[% type %]/[% query | uri %]?inline=1">view more</div>
     [% END %]
 </div>
 
@@ -38,7 +37,7 @@
     $jq("div#results").highlight('[% q %]');
   [% END %]
 
-    var total = [% c.stash.count %];
+    var total = [% count %];
     var begin = 20;
     var end = 39;
     $jq(".load-results").live('click', function() {

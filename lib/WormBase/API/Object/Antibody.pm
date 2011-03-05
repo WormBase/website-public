@@ -96,7 +96,7 @@ sub summary {
     my $object = $self->object;
     my $summary = $object->Summary;
     return { description => 'summary of the antibody',
-	     data        => "$summary" or undef };
+	     data        => "$summary" || undef };
 }
 
 

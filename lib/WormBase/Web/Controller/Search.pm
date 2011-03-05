@@ -99,7 +99,7 @@ sub search_preview :Path('/search/preview')  :Args(2) {
     my $api = $c->model('WormBaseAPI');
     my $class =  $type;
     my $offset = $c->req->param("begin") || 0;
-    my $count = ($c->req->param("end") ||10) - $offset;
+    my $count = ($c->req->param("end")   || 10) - $offset;
     my $objs;
     my $total;
     ($total, $objs) = $api->search->preview({class => $class, species => $species, offset=>$offset, count=>$count});
