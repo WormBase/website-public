@@ -1,18 +1,9 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
- 
-
-    [% # Pull in all sections - each of these should be conditional but under what parameters? %]
-	[% # Users could just to show or hide empty sections...      %]
-    [%# Sections themselves can optionally be composed of subsections 
-    
-    The template names are actually in the stash.  This should be unnecessary...
-
-    %]
-
       [% tag2link(item.name) %]
-    </li>zzz
+    </li>
+
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
     [% item.status %], [% item.variation_type.general_class %]
         [% IF item.variation_type.physical_class %]

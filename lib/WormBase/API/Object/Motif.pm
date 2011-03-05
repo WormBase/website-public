@@ -87,7 +87,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(
 sub title {
     my $self 	= shift;
     my $object 	= $self->object;
-    my $data_pack = $object->Title;
+    my $title   = $object->Title;
     return {
 	data        => "$title",
 	description => 'title for the motif'

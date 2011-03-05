@@ -12,7 +12,8 @@ use File::Path 'mkpath';
 # Genomic position isn't fully abstract: It requires GFF segments to be passed in, or that the Model implement segments()
 # Synonym (other_name?)
 # common name: Short_name || common_name || Public_name
-# Database and DB_Info parsing
+# DONE (mostly): Database and DB_Info parsing
+# Titles / description / definition
 # Phenotypes observed/not_observed
 
 has 'MAX_DISPLAY_NUM' => (
@@ -1451,6 +1452,8 @@ sub _common_name_tag {
 	return 'Standard_name';
     } elsif ($class eq 'Gene') {
 	return 'Public_name';
+    } elsif ($class eq 'Phenotype') {
+	return 'Primary_name';
     }
 }
 

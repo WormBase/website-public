@@ -1,8 +1,0 @@
-      [% tag2link(item.name) %]
-    </li>
-    [% IF item.taxonomy %]
-    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
-    [% END %]
-        [% IF item.type %]
-           [% item.type %]<br />
-        [% END %]
