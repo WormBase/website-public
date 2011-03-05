@@ -36,74 +36,6 @@ http://wormbase.org/resources/analysis
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-=head3 database
-
-This method returns a data structure containing the 
-the database of the analysis, if there is one.
-
-=over
-
-=item PERL API
-
- $data = $model->database();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An analysis ID (eg TreeFam)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/analysis/TreeFam/database
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub database {
-    my $self   = shift;
-    my $object = $self->object;
-
-    my $database = $object->Database;
-    my $url    = $object->URL;
-    my $description = ($database) ? $database->Description : undef;
-
-    my $data   = {  description => 'the remote database and URI',
-		    data        =>  { database    => "$database"  || undef,
-				      url         => "$url"       || undef,
-				      description => "$description",
-		    },
-    };
-    return $data;
-}
-    
 =head3 title
 
 This method returns a data structure containing the 
@@ -481,6 +413,21 @@ sub conducted_by {
 		    data        => $person ? $person : undef };
     return $data;
 }
+
+
+############################################################
+#
+# The External Links widget
+#
+############################################################ 
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
 
 1;

@@ -120,8 +120,8 @@
          <div class="field-title">
 
               [%# Is there a description? Set it as a tool tip %]
-               [% IF fields.$key.description %]
-                  <span title="[% fields.$key.description %]">
+               [% IF tooltip OR fields.$key.description %]
+                  <span title="[% tooltip ? tooltip : fields.$key.description %]">
                      [% IF title ; title _ ': '; END; %]
                    </span>
               [% ELSE %]
@@ -175,10 +175,12 @@
         #     title  : optional title for the field 
 	  
 	# declare rows array
-        rows = [];
-		
+        local_rows = [];
+
 	# loop through each element in <subroutine>.<return_data_key>.<... to array data> array
-	FOREACH r IN fields.$key.data;			
+        # (or through data passed in that may have been built by the caller)
+        local_data = passed_data ? passed_data : fields.$key.data;
+	FOREACH r IN local_data;
   		row = [];
 			
 		# loop through each element in order array (for columns) , declared above
@@ -190,7 +192,7 @@
   		END;
 				
 		# enter data row array into rows
-		rows.push(row);
+		local_rows.push(row);
 	  END;
 	  	  	  
 	  # populate name array;
@@ -198,25 +200,44 @@
 	  FOREACH o IN order; names.push(columns.$o); END;
 	  
 	  # generate table
-	  dataTable_list(names, rows, "table_${key}_by");	
-
+	  dataTable_list(names, local_rows, "table_${key}_by");	
 	
 	END; # END of WRAPPER
     END; # END of MACRO
 %]
 
-
-
-
-
+[%# We SHOULD be able to be data tables from arrays which would be faster
+     than taking a data strucutre from the db, building a second data structure,
+     dumping to a table and then styling it. 
+     
+     Also: dataTable_List applies WRAPPER. Might be nice to override this
+%]
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
-  [% IF data && data.size>0 %]
- 
+
+  [% IF data && data.size > 0;  
+       # Set up some suitable defaults
+       IF data.size < 50;
+          paginate        = 'false';
+          pagination_type = 'false';
+	  length          = 'false';
+	  lengthMenu      = 'false';
+       ELSE;
+          paginate        = 'true';
+          pagination_type = 'full_numbers';
+	  length          = 'true';
+          lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
+       END;
+   %]
+
     <script type="text/javascript" >
 	$jq(document).ready(function() {
 	    $jq('#[% table %]').dataTable({
-		[% style %]
+                "bPaginate"        : [% paginate %],
+		"bLengthChange"    : [% length   %],
+//                "bJQueryUI"        : true,
+                "sPaginationType"  : "[% pagination_type %]",
+     	        [% style %]
 	} );
       } );
     </script>
@@ -244,6 +265,7 @@
 		</tr>
 	    [% END %]
 	</tbody>
+
 	<tfoot>
 		<tr>
 			 [% FOREACH item IN header %]  
@@ -745,6 +767,27 @@ END;
    END;
 END;
 %]
+
+
+
+[% MACRO xrefs BLOCK;
+
+ USE Dumper;
+ '<pre>';
+ Dumper.dump(fields.xrefs.data);
+ '</pre>';
+
+  hash = fields.xrefs.data;
+  FOREACH db IN hash.keys.sort;
+       db;
+       hash.$db.url;
+  END;
+END;
+%]
+
+
+
+
 
 
 

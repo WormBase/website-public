@@ -1264,6 +1264,22 @@ B<Response example>
 
 
 
+############################################################
+#
+# The External Links widget
+#
+############################################################ 
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+# OLD EXTERNAL LINKS
+
 =head3 prediction_status
 
 This method will return a data structure containing

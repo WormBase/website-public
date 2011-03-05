@@ -95,65 +95,6 @@ sub title {
 }
 
 
-=head3 database
-
-This method will return a data structure with database information for the requested motif.
-
-=head4 PERL API
-
- $data = $model->database();
-
-=head4 REST API
-
-=head5 Request Method
-
-GET
-
-=head5 Requires Authentication
-
-No
-
-=head5 Parameters
-
-a Motif ID ((AAATG)n)
-
-=head5 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head5 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/database
-
-=head5 Response example
-
-<div class="response-example"></div>
-
-=cut 
-    
-sub database  {
-    my $self = shift;
-    my $object = $self->object;
-    my ($database,$accession1,$accession2) = $object->Database('@')->row if $object->Database;
-    my $accession = $accession2 || $accession1;	   # TH: ??
-    
-    return { description => 'external database and ID with additional information on the motif',
-	     data        => { database  => "$database",
-			      accession => "$accession"
-	     },
-    };
-}
-
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
@@ -240,6 +181,16 @@ sub gene_ontology  {
 }
 
 
+#######################################
+#
+# The Homology widget
+#
+#######################################
+
+=head2 Homology
+
+=cut
+
 =head3 homologies
 
 This method will return a data structure with homology information on the requested motif.
@@ -314,6 +265,21 @@ sub homologies {
 	     description  => 'homology data for this motif'
     };
 }
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
 
 1;

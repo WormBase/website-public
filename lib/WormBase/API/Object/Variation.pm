@@ -1289,7 +1289,24 @@ sub transposon_insertion {
     };
 }
 
+
+
+############################################################
+#
+# The External Links widget
+#
+############################################################ 
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
 # Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
+# CAN BE REPLACED WITH << xrefs >>
 sub source_database {
     my ($self) = @_;
 
