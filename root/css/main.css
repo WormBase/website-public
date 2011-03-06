@@ -123,6 +123,31 @@ div#header div#title {
 
 div#header .release_date { }
 
+
+
+
+/* *************************************
+
+       ERRORS AND WARNINGS
+
+  ************************************** */
+
+/* System message, for displaying site-wide warnings and alerts */
+#system-message {
+    border: 1px solid #C0D8BE;
+    background: #E4F6E0;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    line-height: 16px;
+    padding: 1em 19px 1em 12px;
+    margin-bottom: 15px;
+    border-top-left-radius: 8px 8px;
+    border-top-right-radius: 8px 8px;
+    border-bottom-right-radius: 8px 8px;
+    border-bottom-left-radius: 8px 8px;
+}
+
 /* user warnings */
 .caveat-emptor {
     font-style:italic;
@@ -141,6 +166,16 @@ div#header .release_date { }
    border: 2px solid gray;
    text-align:center;   
 }
+
+
+
+
+
+
+
+
+
+
 
 
 /* Header */
