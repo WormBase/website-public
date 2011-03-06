@@ -883,6 +883,11 @@ END;
 [% # Report Page elements; shared for species, resources, and tools %]
 [% # Called from species/report.tt2 and resources.report.tt2        %]
 [% MACRO report_page BLOCK;
+
+
+  '<div id="system-message">WormBase will be offline from 1-3PM. Todd\'s on vacation</div>';
+
+
    upperClass = class FILTER ucfirst;
 
    # I should probably pass in title.
