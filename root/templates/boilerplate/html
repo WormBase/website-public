@@ -34,8 +34,8 @@
     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/>
    
-    <script type="text/javascript" src="/js/jquery/plugins/openid-selector-1.0/js/openid-jquery.js"></script>
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/openid-selector-1.0/css/openid.css"/>
+    <script type="text/javascript" src="/js/jquery/plugins/openid-selector/js/openid-jquery.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/openid-selector/css/openid.css"/>
 
     <link media="screen" rel="stylesheet" href="/js/jquery/plugins/colorbox/example4/colorbox.css" />
     <script type="text/javascript" src="/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js"></script>

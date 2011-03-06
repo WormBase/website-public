@@ -17,7 +17,7 @@ $jq(document).ready(function() {
 
 <!-- Simple OpenID Selector -->
 <div id="openid">
-<h4><span id="fade">or Sign in with your third-party account</span></h4>
+<h4><span id="fade">or sign in with your Google account</span></h4>
 
 <span id="left" class="ui-icon ui-icon-triangle-1-w"></span>  
 <span id="right" class="ui-icon ui-icon-triangle-1-e"></span> 
