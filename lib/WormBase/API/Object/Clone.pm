@@ -2,9 +2,9 @@ package WormBase::API::Object::Clone;
 
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
-
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 
 =pod
 
