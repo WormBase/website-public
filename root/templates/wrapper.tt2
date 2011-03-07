@@ -16,6 +16,8 @@
 
      IF is_classic;
           content WRAPPER boilerplate/html;
+     ELSIF c.action == "login";
+          content WRAPPER boilerplate/html;
      ELSE;
           content WRAPPER boilerplate/html + layout/default.tt2;
      END;

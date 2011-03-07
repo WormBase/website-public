@@ -1,4 +1,4 @@
-  $jq(document).ready(function() {
+ $jq(document).ready(function() {
     window.onhashchange = readHash;
 
     ajaxGet($jq(".status-bar"), "/rest/auth");
@@ -24,6 +24,21 @@
 	  
     }); 
 
+
+     /* The Login Page. Probably doesn't belong here ... */
+      $jq('.toggle-link').click(function() {
+          // Hide all the existing forms and show the current one.
+          $jq("div.login-option").hide();
+          $jq("div#" + $jq(this).attr("id")).show();
+	  $jq("li.form-links").show();
+	  $jq("li." + $jq(this).attr("id") + '-link').hide();	  
+	  if ($jq(this).attr("id").match(/login/) ) {
+	      $jq("li.login-type").toggle();
+	  } 	 
+	  });
+
+      //    $jq(".register-button").button();
+
     $jq(".register-button").live('click',function() {
       
 	var reg = $jq(this).closest('#register-form');	
@@ -42,9 +57,9 @@
 		  success: function(data){
 			   if(data==0) {
 				alert("The email address has already been registered!"); 
-			   }else {
-			    $jq.colorbox.close();
-			    displayNotification("Thank you for registering at WormBase, a confirmation emaill will be send to you soon.");
+			   } else {
+			       //			    $jq.colorbox.close();
+			    displayNotification("Thank you for registering at WormBase, a confirmation emaill will be sent to you soon.");
 			   }
 		    },
 		  error: function(request,status,error) {

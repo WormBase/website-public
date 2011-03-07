@@ -26,6 +26,5 @@ $jq(document).ready(function() {
     <div id="openid_btns"></div>
   </div>   
 </div>
-
 </div>
 <!-- /Simple OpenID Selector -->
