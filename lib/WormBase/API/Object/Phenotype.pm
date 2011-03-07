@@ -40,6 +40,11 @@ http://wormbase.org/species/phenotype
 #
 ############################################################
 
+=head2 Details
+
+=cut
+
+
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
@@ -52,6 +57,56 @@ http://wormbase.org/species/phenotype
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+=head3 synonym
+
+This method will return a data structure synonyms for the phenotype.
+
+=over
+
+=item PERL API
+
+ $data = $model->synonym();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/synonym
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub synonym {
     my $data = {
         description => 'The synonym name of the phenotype ',
@@ -60,25 +115,60 @@ sub synonym {
     return $data;
 }
 
-=pod
+=head3 is_dead
 
-sub assay {
-    
-   my $data = { description => 'The Assay of the phenotype ',
-		 	data        => shift ~~ 'Assay'  ,
-    };
-   return $data;
-}
+This method will return a data structure noting that the phenotype is retired and replaced by another.
 
-=cut
+=over
+
+=item PERL API
+
+ $data = $model->is_dead();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/is_dead
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub is_dead {
     my $object = shift->object;
-    my $alternate;
-    if ( $object->Dead(0) ) {
-        $alternate = eval { $object->Dead->right };
-    }
-    my $data = {
+    my $alternate = $object->Dead->right if $object->Dead(0);
+    return {
         description =>
 "The Note of the phenotype when it's retired and replaced by another.",
         data => {
@@ -87,7 +177,6 @@ sub is_dead {
             class => 'Phenotype',
         },
     };
-    return $data;
 }
 
 ############################################################
@@ -96,21 +185,80 @@ sub is_dead {
 #
 ############################################################
 
+=head2 Ontology Browser
+
+=cut
+
+
 ############################################################
 #
 # The Related Information widget
 #
 ############################################################
 
+=head2 Related Information
+
+=cut
+
+=head3 related_phenotypes
+
+This method will return a data structure providing the generalize and specialized terms for the phenotype in the ontology.
+
+=over
+
+=item PERL API
+
+ $data = $model->related_phenotypes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/related_phenotypes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub related_phenotypes {
     my $self      = shift;
     my $phenotype = $self->object;
     my $result;
-    if ( $phenotype->Related_phenotypes(0) ) {
+    if ($phenotype->Related_phenotypes(0)) {
         foreach my $tag (qw/Specialisation_of Generalisation_of/) {
-            ( my $type = $tag ) =~ s/_/ /g;
+            (my $type = $tag) =~ s/_/ /g;
             my @entries;
-            foreach my $ph ( $phenotype->$tag ) {
+            foreach my $ph ($phenotype->$tag) {
                 push @entries,
                   {
                     id    => $ph,
@@ -121,12 +269,61 @@ sub related_phenotypes {
             $result->{$type} = \@entries;
         }
     }
-    my $data = {
-        description => "The related phenotypes ",
+    return {
+        description => "The generalized and specialized terms in the ontology for this phenotype.",
         data        => $result,
     };
-    return $data;
 }
+
+=head3 go_term
+
+This method will return a data structure go terms annotating the phenotype.
+
+=over
+
+=item PERL API
+
+ $data = $model->go_term();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/go_term
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub go_term {
     my $self        = shift;
@@ -140,6 +337,56 @@ sub go_term {
     };
 }
 
+=head3 rnai
+
+This method will return a data structure rnai experiments in which the phenotype was observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->rnai();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/rnai
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub rnai {
     my $self      = shift;
     my $object    = $self->object;
@@ -149,6 +396,56 @@ sub rnai {
         'description' => 'rnais associated with this phenotype'
     };
 }
+
+=head3 rnai_not
+
+This method will return a data structure with RNAi experiments in which the phenotype was not observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->rnai_not();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/rnai_not
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub rnai_not {
     my $self      = shift;
@@ -160,6 +457,56 @@ sub rnai_not {
     };
 }
 
+=head3 variation
+
+This method will return a data structure with variations in which the phenotype was observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->variation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/variation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub variation {
     my $self      = shift;
     my $object    = $self->object;
@@ -169,6 +516,56 @@ sub variation {
         'description' => 'variations associated with this phenotype'
     };
 }
+
+=head3 variation_not
+
+This method will return a data structure with variations in which the phenotype was not observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->variation_not();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/variation_not
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub variation_not {
     my $self      = shift;
@@ -180,6 +577,56 @@ sub variation_not {
     };
 }
 
+=head3 transgene
+
+This method will return a data structure with transgene experiments in which the phenotype was observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->transgene();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/transgene
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub transgene {
     my $self      = shift;
     my $object    = $self->object;
@@ -190,6 +637,56 @@ sub transgene {
     };
 }
 
+=head3 transgene_not
+
+This method will return a data structure transgene experiments in which the phenotype was not observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->transgene_not();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/transgene_not
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub transgene_not {
     my $self      = shift;
     my $object    = $self->object;
@@ -199,6 +696,81 @@ sub transgene_not {
         'description' => 'transgenes not associated with this phenotype'
     };
 }
+
+=head3 anatomy_ontology
+
+This method will return a data structure anatomy_ontology terms associated with the phenotype via anatomy_function.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_ontology();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Phenotype id (eg WBPhenotype:0000643)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/phenotype/WBPhenotype:0000643/anatomy_ontology
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub anatomy_ontology {
+    my @anatomy_fns = shift ~~ 'Anatomy_function';
+    my @data_pack;
+    foreach my $anatomy_fn (@anatomy_fns) {
+        my $anatomy_fn_name = $anatomy_fn->Involved  if $anatomy_fn;
+        my $anatomy_term    = $anatomy_fn_name->Term if $anatomy_fn_name;
+        my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term
+          if $anatomy_term;
+        my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
+        next unless ($anatomy_term_id);
+        my $class = $anatomy_term_id->class;
+        push @data_pack,
+          {
+            id    => "$anatomy_term_id",
+            label => "$anatomy_term_name",
+            class => "$class"
+          };
+    }
+    return {
+        'description' => "The Anatomy Ontology of the phenotype ",
+        'data'        => \@data_pack
+    };
+}
+
 
 sub rnai_json {
     return {
@@ -252,29 +824,6 @@ sub transgene_not_json {
     };
 }
 
-sub anatomy_ontology {
-    my @anatomy_fns = shift ~~ 'Anatomy_function';
-    my @data_pack;
-    foreach my $anatomy_fn (@anatomy_fns) {
-        my $anatomy_fn_name = $anatomy_fn->Involved  if $anatomy_fn;
-        my $anatomy_term    = $anatomy_fn_name->Term if $anatomy_fn_name;
-        my $anatomy_term_id = $anatomy_term->Name_for_anatomy_term
-          if $anatomy_term;
-        my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
-        next unless ($anatomy_term_id);
-        my $class = $anatomy_term_id->class;
-        push @data_pack,
-          {
-            id    => "$anatomy_term_id",
-            label => "$anatomy_term_name",
-            class => "$class"
-          };
-    }
-    return {
-        'description' => "The Anatomy Ontology of the phenotype ",
-        'data'        => \@data_pack
-    };
-}
 
 ############################################################
 #
