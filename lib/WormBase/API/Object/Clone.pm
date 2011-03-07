@@ -5,28 +5,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has 'tracks' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return {
-            description => 'tracks',
-            data        => [qw(NG CG CLO LINK CANONICAL)]
-        };
-    },
-);
-
-# pending to be factored out into a new role.
-# in such a case, the default sub will be replaced with an overridden builder
-has 'segments' => ( # this is part of API? would require datapacking...
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        return [$self->gff_dsn->segment(-class => 'region',
-                                        -name => $self->object)];
-    },
-);
 
 =pod
 
@@ -828,93 +806,17 @@ sub physical_picture { # TODO (TH: And probably not necessary)
     };
 }
 
-=head3 genomic_picture
+sub _build_tracks {
+    return {
+        description => 'tracks',
+        data        => [qw(NG CG CLO LINK CANONICAL)]
+    };
+}
 
-This method will return a data structure containing
-the genomic coordinates of the clone.
-
-=over
-
-=item PERL API
-
- $data = $model->genomic_picture();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/genomic_picture
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# sub genomic_picture {
-#     my ($self) = @_;
-
-#     my ($ref, $start, $stop);
-#     if (my $segment = $self->gff_dsn->segment(-class => 'region',
-#                                               -name => $self->object)) {
-#         # the following looks like something done in Object::genomic_position...
-#         # consider refactoring?  TH: Yes it is, but the method in Role::Object isn't yet sufficiently generic. It should be.
-#         my ($absref,           $absstart,           $absend)
-# 	    = ($segment->abs_ref, $segment->abs_start, $segment->abs_end);
-#         ($absstart, $absend) = ($absend, $absstart) if $absstart > $absend;
-
-#         ($ref, $start, $stop) = ($absref, int $absstart, int $absend);
-
-#         # the following appear in classic website but are commented out because
-#         # fore som reason it doesn't work. may wish to investigate later
-
-#         # my $new_segment = $self->gff_dsn->segment({
-#         #     -name => 'name',
-#         #     -class => 'Sequence'
-#         #     -start => $start,
-#         #     -stop => $stop,
-#         # });
-
-#     }
-
-#     return {
-#         description => 'genomic environs of the clone',
-#         data        => {
-#             ref   => $ref,
-#             start => $start,
-#             stop  => $stop,
-#         },
-#     };
-# }
-
+sub _build_segments {
+    my ($self) = @_;
+    return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
+}
 
 
 #######################################

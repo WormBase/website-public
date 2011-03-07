@@ -20,7 +20,7 @@
           END;
        %]
        <br><br>
-       [% external_link('gbrowse_image', image(img_url), fields.genomic_image_position.data.id) %]
+       [% tag2link(fields.genomic_image_position.data, image(img_url)) %]
        [%# tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)) %] 
     [% END %]
 
