@@ -373,7 +373,7 @@ sub rest_register_POST {
     my $username = $c->req->params->{username};
     my $password = $c->req->params->{password};
     if($email && $username && $password){
-	my $csh = Crypt::SaltedHash->new();
+	my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
 	$csh->add($password);
 	my $hash_password= $csh->generate();
 	my @users = $c->model('Schema::User')->search({email_address=>$email});
@@ -390,22 +390,23 @@ sub rest_register_POST {
 	}
 	$c->stash->{noboiler}=1;
 	 
-	  $csh->clear();
-	  $csh->add($email."_".$username);
-	  my $digest = $csh->generate();
-	  $digest =~ s/^{SSHA}//;
-	  $digest =~ s/\+/\%2B/g;
-	  $c->stash->{digest}=$c->uri_for('/confirm')."?u=".$user->id."&code=".$digest ;
+	$csh->clear();
+	$csh->add($email."_".$username);
+	my $digest = $csh->generate();
+	$digest =~ s/^{SSHA}//;
+	$digest =~ s/\+/\%2B/g;
+	$c->stash->{digest}=$c->uri_for('/confirm')."?u=".$user->id."&code=".$digest ;
 	
 	$c->stash->{email} = {
-		  to      => $email,
-		  from    => $c->config->{register_email},
-		  subject => "WormBase Account Activation", 
-		  template => "auth/register_email.tt2",
-	      };
-	 
+	    to       => $email,
+	    from     => $c->config->{register_email},
+	    subject  => "WormBase Account Activation", 
+	    template => "auth/register_email.tt2",
+	};
+	
 	$c->forward( $c->view('Email::Template') );
-	$c->res->body(1); 
+	$c->res->body(1);
+	
     }
     return 1;
 }

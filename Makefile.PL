@@ -51,7 +51,7 @@ requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
 requires 'Config::General';                                      #
-requires 'Crypt::SaltedHash';                                    #
+requires 'Crypt::SaltedHash';                     => '0.06';     #
 requires 'Crypt::SSLeay'; 			                 # For openid support
 requires 'CHI';                                                  # Cache
 requires 'CHI::Driver::Memcached::libmemcached';                 # Cache

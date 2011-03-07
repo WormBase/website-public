@@ -1,0 +1,14 @@
+      [% tag2link(item.name) %]
+    </li>
+
+<div class="text-min" style="height:auto;max-height:2.4em;">
+  [% item.summary %]    
+</div>
+<div class="text-min" style="height:auto;max-height:2.4em;">
+  [% tag2link(item.corresponding_gene) %]    
+</div>
+[% IF item.summary.length > 150 %]
+<div class="more">
+<div class="ui-icon ui-icon-triangle-1-s"></div>
+</div>
+[% END %]

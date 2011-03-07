@@ -12,8 +12,9 @@ __PACKAGE__->config->{namespace} = '';
  
 sub login :Path("/login") {
      my ( $self, $c ) = @_;
-     $c->stash->{noboiler} = 1;
-     $c->stash->{'template'}='auth/login.tt2';
+#     $c->stash->{noboiler} = 1;
+#     $c->stash->{'template'}='auth/login.tt2';
+     $c->stash->{'template'}='auth/login-fullpage.tt2';
 #     $c->stash->{'continue'}=$c->req->params->{continue};
 }
 
@@ -295,7 +296,7 @@ sub profile_update :Path("/profile_update") {
 	 $c->user->$col($c->req->params->{$col});
       }
       $c->user->update();
-      $c->stash->{notify}='User Inforamtion Udpated!';
+      $c->stash->{notify}='User Information Updated!';
       
 } 
 

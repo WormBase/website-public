@@ -12,3 +12,6 @@ function recordOutboundLink(link, category, action) {
 //     setTimeout('document.location = "' + link.href + '"', 100)
   }catch(err){}
 }
+
+
+
