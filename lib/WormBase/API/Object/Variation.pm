@@ -6,6 +6,7 @@ use Bio::Graphics::Browser2::Markup;
 #use CGI qw/:standard :html3/;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 extends 'WormBase::API::Object';
 
 
@@ -32,61 +33,7 @@ http://wormbase.org/resources/analysis
 # TODO:
 # Mapping data
 # Marked_rearrangement
-has 'segments' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        my $gene   = $self ~~ 'Gene';
 
-        # Fetch a GF handle
-        my $gffdb     = $self->gff_dsn();
-        my ($segment) = $gffdb->segment(Gene => $gene);
-
-        # By default, lets just center the image on the variation itself.
-        # What segment should be used to determine the baseline coordinates?
-        # Use a CDS segment if one is provided, else just show the genomic environs
-
-        # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-        my $UNMAPPED_SPAN = 10000;
-        unless ($segment) {
-            # Try fetching a generic segment corresponding to a span flanking the variation
-
-            my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
-
-            # Generate a link to the genome browser
-            # This is hard-coded and needs to be cleaned up.
-            # Is the segment smaller than 100? Let's adjust
-            my ($low,$high);
-            if ($abs_stop - $abs_start < 100) {
-                $low  = $abs_start - 50;
-                $high = $abs_stop  + 50;
-            }
-            else {
-                $low  = $abs_start;
-                $high = $abs_stop;
-            }
-
-            my $split  = $UNMAPPED_SPAN / 2;
-            ($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
-        }
-
-        return [$segment || () ];
-    }
-);
-
-has 'tracks' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        return {
-            description => 'tracks displayed in GBrowse',
-            data => [qw(CG
-                        Allele
-                        TRANSPOSONS)],
-        };
-    }
-);
 
 
 
@@ -631,14 +578,12 @@ sub polymorphism_assays {
 
 =cut
 
-
-
 # based on the above 'segments' (previously 'pic_segment') attribute,
 # this may be doing the same thing, so we probably could omit this and rely
 # entirely on SUPER::genomic_position...
 # the key difference lies in the segment that's fetched. here it's fetched
 # with _get_genomic_segment, whereas above it's a GFFDB call...
-sub genomic_position {
+sub _build_genomic_position {
     my ($self) = @_;
     my $segments = [$self->_get_genomic_segment(-key => 'wt_variation') || ()];
     my $adjustment = sub {
@@ -646,75 +591,74 @@ sub genomic_position {
         return $abs_stop - $abs_start < 100
              ? ($abs_start - 50, $abs_stop + 50)
              : ($abs_start, $abs_stop);
+
     };
-    return{
+
+    my @positions = $self->_genomic_position($segments, $adjustment);
+    return {
         description => 'The genomic location of the sequence',
-        data        => $self->_genomic_position($segments, $adjustment),
+        data        => @positions ? \@positions : undef,
     };
 }
+
+sub _build_tracks {
+    return {
+        description => 'tracks displayed in GBrowse',
+        data => [qw(CG
+                    Allele
+                    TRANSPOSONS)],
+    };
+}
+
+sub _build_genomic_image_position {
+    my ($self) = @_;
+    my $gene   = $self ~~ 'Gene';
+
+    # Fetch a GF handle
+    my $gffdb     = $self->gff_dsn();
+    my ($segment) = $gffdb->segment(Gene => $gene);
+
+    # By default, lets just center the image on the variation itself.
+    # What segment should be used to determine the baseline coordinates?
+    # Use a CDS segment if one is provided, else just show the genomic environs
+
+    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+    my $UNMAPPED_SPAN = 10000;
+    unless ($segment) {
+        # Try fetching a generic segment corresponding to a span flanking the variation
+
+        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+
+        # Generate a link to the genome browser
+        # This is hard-coded and needs to be cleaned up.
+        # Is the segment smaller than 100? Let's adjust
+        my ($low,$high);
+        if ($abs_stop - $abs_start < 100) {
+            $low  = $abs_start - 50;
+            $high = $abs_stop  + 50;
+        }
+        else {
+            $low  = $abs_start;
+            $high = $abs_stop;
+        }
+
+        my $split  = $UNMAPPED_SPAN / 2;
+        ($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
+    }
+
+    my ($position) = $self->_genomic_position([$segment || ()]);
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    }
+}
+
+# TODO: required to consume Role::Position, but currently unknown implementation.
+sub _build_segments {} # WARNING: THIS MAY WREAK HAVOC ON _get_genomic_segment!
 
 # sub genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include genetic_position >>
-
-# Create a genomic picture
-# This is far simpler than the manual approach below but doesn't give me as much
-# flexibility
-
-=pod
-
-sub genomic_image {
-    my ($self) = @_;
-
-    my $object  = $self->object;
-	my $gene    = $object->Gene;
-
-	# Fetch a GF handle
-	my $gffdb   = $self->gff_dsn();
-	my ($segment) =  $gffdb->segment(Gene => $gene);
-
-	# By default, lets just center the image on the variation itself.
-	# What segment should be used to determine the baseline coordinates?
-	# Use a CDS segment if one is provided, else just show the genomic environs
-
-	# TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-	my $UNMAPPED_SPAN = 10000;
-	unless ($segment) {
-	    # Try fetching a generic segment corresponding to a span flanking the variation
-
-	    my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
-
-	    # Generate a link to the genome browser
-	    # This is hard-coded and needs to be cleaned up.
-	    # Is the segment smaller than 100? Let's adjust
-	    my ($low,$high);
-	    if ($abs_stop - $abs_start < 100) {
-            $low   = $abs_start - 50;
-            $high  = $abs_stop  + 50;
-	    }
-        else {
-            $low = $abs_start;
-            $high = $abs_stop;
-	    }
-
-	    my $split = $UNMAPPED_SPAN / 2;
-	    ($segment) =   $gffdb->segment($ref,$low-$split,$low+$split);
-	}
-
-
-    my @tracks = qw/
-                       CG
-                       Allele
-                       TRANSPOSONS/;
-
-    my $image_data = $self->build_gbrowse_img($segment,\@tracks,undef,800);
-    my $data = { description => 'a link to the genome browser',
-                 data        => $segment,
-             };
-    return $data;
-}
-
-=cut
 
 ############################################################
 #

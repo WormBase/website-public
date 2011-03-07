@@ -144,18 +144,6 @@ has 'sequences' => (
     }
 );
 
-# pending to be factored out into a new role.
-# in such a case, the default sub will be replaced with an overridden builder
-has 'segments' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my ($self) = @_;
-        my @segments = $self->_fetch_segments;
-        return \@segments;
-    },
-);
-
 has 'tracks' => (
     is      => 'ro',
     lazy    => 1,
@@ -509,7 +497,11 @@ sub classification {
 # in the Model.pm
 ###########################################
 
-sub genomic_position {
+# sub genomic_position { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_position >>
+
+sub _build_genomic_position {
     my ($self) = @_;
     my @pos = $self->_genomic_position([ $self->_longest_segment || () ]);
     return {
@@ -546,7 +538,7 @@ sub microarray_topology_map_position {
 	# I don't think this will work; have sequences been statshed in the object?
     my $sequences = $self->sequences;
     return unless @$sequences;
-    my @segments = $self->_fetch_segments;
+    my @segments = @{$self->segments};
     my $seg = $segments[0] or return;
     my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
     return unless @p;
@@ -1738,40 +1730,38 @@ sub _fetch_transcripts {
     return \@seqs;
 }
 
-# TODO: This could logically be moved into WormBase::Model::GFF although it is currently
-# totally specific for genes and CDSs
-# Provided with a gene and array of sequences, fetch an array of GFF segments
-sub _fetch_segments {
+sub _build_segments {
     my ($self) = @_;
     my $sequences = $self->sequences;
-    # Dynamically fetch a DBH for the correct species
     my $dbh = $self->gff_dsn();
 
-#    my $dbh = $self->service('gff_c_elegans');
     my $object = $self->object;
     my $species = $object->Species;
-    
+
+    my @segments;
     # Yuck. Still have some species specific stuff here.
-    if (@$sequences && $species =~ /briggsae/) {
-	my @tmp = map {$dbh->segment(CDS => "$_")} @$sequences;
-	@tmp = map {$dbh->segment(Pseudogene => "$_")} @$sequences unless (@tmp);
-	return @tmp;
+
+    if (@$sequences and $species =~ /briggsae/) {
+        if (@segments = map {$dbh->segment(CDS => "$_")} @$sequences
+            or @segments = map {$dbh->segment(Pseudogene => "$_")} @$sequences) {
+            return \@segments;
+        }
     }
-    
-    my @segments = $dbh->segment(Gene => $object);
-    @segments    = map { $dbh->segment(CDS => $_) } @$sequences unless (@segments > 0);
-    
-    # Pseudogenes (B0399.t10)
-    @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene unless @segments;
-    
-    # RNA transcripts (lin-4, sup-5)
-    @segments = map { $dbh->segment(Transcript => $_) } $object->Corresponding_Transcript unless @segments;
-    return @segments;
+
+    if (@segments = $dbh->segment(Gene => $object)
+        or @segments = map {$dbh->segment(CDS => $_)} @$sequences
+        or @segments = map { $dbh->segment(Pseudogene => $_) } $object->Corresponding_Pseudogene # Pseudogenes (B0399.t10)
+        or @segments = map { $dbh->segment(Transcript => $_) } $object->Corresponding_Transcript # RNA transcripts (lin-4, sup-5)
+    ) {
+        return \@segments;
+    }
+
+    return;
 }
 
 # TODO: Logically this might reside in Model::GFF although I don't know if it is used elsewhere
 # Find the longest GFF segment
-sub _longest_segment { # AD: if this is left in Gene, I think it should access the segments attr
+sub _longest_segment {
     my ($self) = @_;
     my ($longest)
        = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}

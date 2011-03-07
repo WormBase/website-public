@@ -75,29 +75,6 @@ has 'genes' => (
     },
    );
 
-has 'segments' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-		my ($self) = @_;
-		my @seg = $self->_get_segments;
-		return \@seg;
-    }
-   );
-
-has 'tracks' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-		my ($self) = @_;
-		my @type = $self->parsed_species =~ /elegans/ ? qw/NG CG CDS PG PCR SNP TcI MOS CLO/:qw//;
-        return {
-            description => 'Tracks to display in GBrowse',
-            data => \@type,
-        };
-    }
-   );
-
 sub _build_type {
     my ($self) = @_;
     my $s = $self->object;
@@ -1012,7 +989,7 @@ B<Response example>
 # if the seq is a CDS or Transcript, and if more than 1 seg, selects the
 # first one that matches the start and stop (or just the first one).
 # throwing that segment back into genomic_position just wraps it up
-sub genomic_image_position {
+sub _build_genomic_image_position {
     my ($self) = @_;
     my $seq = $self->object;
     return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
@@ -1048,13 +1025,18 @@ sub genomic_image_position {
         }
     }
 
+    my ($position) = $self->_genomic_position([$new_segment || $segment || ()]);
     return {
         description => 'The genomic location of the sequence to be displayed by GBrowse',
-        data        => $self->_genomic_position([$new_segment || $segment || ()]),
+        data        => $position,
     };
 }
 
-sub genomic_position {
+# sub genomic_position { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_position >>
+
+sub _build_genomic_position {
     my ($self) = @_;
 
     my $genomic_position;
@@ -1067,13 +1049,22 @@ sub genomic_position {
     };
 }
 
+# sub tracks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include tracks >>
+
+sub _build_tracks {
+    my ($self) = @_;
+
+    return {
+        description => 'Tracks to display in GBrowse',
+        data => $self->parsed_species =~ /elegans/ ? [qw(NG CG CDS PG PCR SNP TcI MOS CLO)] : undef,
+    };
+}
 
 # sub interpolated_genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include genetic_position_interpolated >>
-
-
-
 
 =head3 prediction_status
 
@@ -2114,7 +2105,7 @@ sub _is_merged {
     return shift =~ /LINK|CHROMOSOME/i;
 }
 
-sub _get_segments {
+sub _build_segments {
 	my ($self) = @_;
 	my $object = $self->object;
 	# special case: return the union of 3' and 5' EST if possible
@@ -2129,7 +2120,7 @@ sub _get_segments {
 			}
 		}
 	}
-	return  map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object);
+	return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
 }
 
 sub _find_accession {
