@@ -87,8 +87,8 @@ sub definition {
     my $object = $self->object;
     my $data   = $object->Definition;
     return {
-	data        => $data ? "$data" : undef,
-	description => 'definition of the anatomy term',
+		data        => $data ? "$data" : undef,
+		description => 'definition of the anatomy term',
     };
 }
 
@@ -630,9 +630,57 @@ sub expression_clusters {
 	my $data = {
 		'data'=> \@data_pack,
 		'description' => 'expression_clusters associated with this anatomy_term'
-		};
+	};
 	return $data;
 }
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
 
 
 #######################################
