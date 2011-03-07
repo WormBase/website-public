@@ -5,9 +5,9 @@ use Bio::Graphics::Browser2::Markup;
 # I shouldn't need to use CGI here.
 #use CGI qw/:standard :html3/;
 
+extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
-extends 'WormBase::API::Object';
 
 
 =pod

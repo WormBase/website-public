@@ -2,8 +2,9 @@ package WormBase::API::Object::Sequence;
 
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 
 use Bio::Graphics::Browser2::Markup;
 use vars qw($CHROMOSOME_TABLE_LENGTH);
@@ -1039,13 +1040,13 @@ sub _build_genomic_image_position {
 sub _build_genomic_position {
     my ($self) = @_;
 
-    my $genomic_position;
-    unless ($self ~~ 'Structure' || self->_method eq 'Vancouver_fosmid') {
-        $genomic_position = $self->_genomic_position($self->segments);
+    my @positions;
+    unless ($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') {
+        @positions = $self->_genomic_position($self->segments);
 	}
     return {
         description => 'The genomic location of the sequence',
-        data        => $genomic_position,
+        data        => @positions ? \@positions : undef,
     };
 }
 
