@@ -44,7 +44,6 @@ http://wormbase.org/species/phenotype
 
 =cut
 
-
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
@@ -189,7 +188,6 @@ sub is_dead {
 
 =cut
 
-
 ############################################################
 #
 # The Related Information widget
@@ -254,11 +252,11 @@ sub related_phenotypes {
     my $self      = shift;
     my $phenotype = $self->object;
     my $result;
-    if ($phenotype->Related_phenotypes(0)) {
+    if ( $phenotype->Related_phenotypes(0) ) {
         foreach my $tag (qw/Specialisation_of Generalisation_of/) {
-            (my $type = $tag) =~ s/_/ /g;
+            ( my $type = $tag ) =~ s/_/ /g;
             my @entries;
-            foreach my $ph ($phenotype->$tag) {
+            foreach my $ph ( $phenotype->$tag ) {
                 push @entries,
                   {
                     id    => $ph,
@@ -270,8 +268,9 @@ sub related_phenotypes {
         }
     }
     return {
-        description => "The generalized and specialized terms in the ontology for this phenotype.",
-        data        => $result,
+        description =>
+"The generalized and specialized terms in the ontology for this phenotype.",
+        data => $result,
     };
 }
 
@@ -771,7 +770,6 @@ sub anatomy_ontology {
     };
 }
 
-
 sub rnai_json {
     return {
         description => 'RNAi experiments in which Phenotype is observed',
@@ -823,7 +821,6 @@ sub transgene_not_json {
         data => shift->_get_json_data('Not_in_Transgene'),
     };
 }
-
 
 ############################################################
 #
