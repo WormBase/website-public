@@ -5,7 +5,8 @@ use Moose;                       # Moosey goodness
 use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
 use Config::General;
-use WormBase::API::Service::Search;
+use WormBase::API::Service::Xapian;
+use Search::Xapian qw/:all/;
 
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
@@ -56,7 +57,7 @@ has tmp_base => (
 
 has search => (
     is     => 'rw',
-    isa    => 'WormBase::API::Service::Search',
+    isa    => 'WormBase::API::Service::Xapian',
     lazy_build      => 1,
     );
 
@@ -92,7 +93,14 @@ sub _build_search {
 				  -ConfigFile      => "$root/../wormbase.conf",
 				  -InterPolateVars => 1
     );
-  return WormBase::API::Service::Search->new({ dbh => $service_instance, api => $self, config => $config}); 
+  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search");
+  my $qp = Search::Xapian::QueryParser->new($db);
+  $qp->set_database($db);
+  $qp->set_default_op(OP_OR);
+  my $svrp = Search::Xapian::StringValueRangeProcessor->new(0);
+  $qp->add_valuerangeprocessor($svrp);
+
+  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self}); 
 }
  
 
