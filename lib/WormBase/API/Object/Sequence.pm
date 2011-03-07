@@ -85,58 +85,16 @@ has 'segments' => (
     }
    );
 
-has 'pic_segment' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-		my ($self) = @_;
-		my $seq = $self->object;
-		return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
-
-		my $source = $self->species;
-		my $segment = $self->segments->[0];
-
-		my $ref   = $segment->ref;
-		my $start = $segment->start;
-		my $stop  = $segment->stop;
-
-		# add another 10% to left and right
-		$start = int($start - 0.05*($stop-$start));
-		$stop  = int($stop  + 0.05*($stop-$start));
-		my @segments;
-		if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
-			my $gene = eval { $seq->Gene;};
-			$gene ||= $seq;
-			@segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
-			@segments      = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq) unless @segments;	# CB discontinuity
-		}
-		# In cases where more than one segment is retrieved
-		# (ie with EST or OST mappings)
-		# choose that which matches the original segment.
-		# This is slightly bizarre but expedient fix.
-		my $new_segment;
-		if (@segments > 1) {
-			foreach (@segments) {
-				if ($_->start == $start && $_->stop == $stop) {
-					$new_segment = $_;
-					last;
-				}
-			}
-		}
-		$new_segment ||= $segments[0];
-		$new_segment ||= $segment;
-		return  $new_segment;
-    }
-   );
-
-
 has 'tracks' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
 		my ($self) = @_;
-		my @type = $self->species =~ /elegans/ ? qw/NG CG CDS PG PCR SNP TcI MOS CLO/:qw//;
-		return \@type;
+		my @type = $self->parsed_species =~ /elegans/ ? qw/NG CG CDS PG PCR SNP TcI MOS CLO/:qw//;
+        return {
+            description => 'Tracks to display in GBrowse',
+            data => \@type,
+        };
     }
    );
 
@@ -1048,20 +1006,65 @@ B<Response example>
 
 =cut 
 
+# note for AD:
+# this one needs some reworking. it currently fetches the first segment
+# in $self->segments, recomputes the start & stop, fetches more segments
+# if the seq is a CDS or Transcript, and if more than 1 seg, selects the
+# first one that matches the start and stop (or just the first one).
+# throwing that segment back into genomic_position just wraps it up
+sub genomic_image_position {
+    my ($self) = @_;
+    my $seq = $self->object;
+    return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
+
+    my $source = $self->parsed_species;
+    my $segment = $self->segments->[0];
+
+    my $ref   = $segment->ref;
+    my $start = $segment->start;
+    my $stop  = $segment->stop;
+
+    # add another 10% to left and right
+    $start = int($start - 0.05*($stop-$start));
+    $stop  = int($stop  + 0.05*($stop-$start));
+    my @segments;
+    if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
+        my $gene = eval { $seq->Gene;} || $seq;
+        @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+        @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
+            unless @segments;	# CB discontinuity
+    }
+    # In cases where more than one segment is retrieved
+    # (ie with EST or OST mappings)
+    # choose that which matches the original segment.
+    # This is slightly bizarre but expedient fix.
+    my $new_segment;
+    if (@segments > 1) {
+        foreach (@segments) {
+            if ($_->start == $start && $_->stop == $stop) {
+                $new_segment = $_;
+                last;
+            }
+        }
+    }
+
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $self->_genomic_position([$new_segment || $segment || ()]),
+    };
+}
 
 sub genomic_position {
     my ($self) = @_;
 
-	if ($self ~~ 'Structure' || self->_method eq 'Vancouver_fosmid') {
-		# the following description relies on SUPER::genomic_position.
-		# perhaps the above check is unnecessary or the description
-		# can be pulled from SUPER?
-		return {
-			description => 'The Genomic Location of the sequence',
-			data		=> undef,
-		};
+    my $genomic_position;
+    unless ($self ~~ 'Structure' || self->_method eq 'Vancouver_fosmid') {
+        $genomic_position = $self->_genomic_position($self->segments);
 	}
-    return $self->SUPER::genomic_position;
+    return {
+        description => 'The genomic location of the sequence',
+        data        => $genomic_position,
+    };
 }
 
 
@@ -1139,57 +1142,6 @@ sub microarray_assays {
 		data        => @microarrays ? \@microarrays : undef,	#class Oligo_set
 	};
 }
-
-=head3 prediction_status
-
-This method will return a data structure containing
-the prediction status of the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->prediction_status();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/prediction_status
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
 
 sub transgene_constructs {
     my ($self) = @_;
@@ -1759,7 +1711,7 @@ sub print_sequence {
     my %hash;
     my $gff = $self->gff;
     my $seq_obj;
-    if ($self->species =~ /briggsae/) {
+    if ($self->parsed_species =~ /briggsae/) {
 		($seq_obj) = sort {$b->length<=>$a->length}
 		$self->type =~ /^(genomic|confirmed gene|predicted coding sequence)$/i
 		? grep {$_->method eq 'wormbase_cds'} $gff->fetch_group(Transcript => $s),

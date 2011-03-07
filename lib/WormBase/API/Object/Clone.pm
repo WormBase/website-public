@@ -5,7 +5,30 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+has 'tracks' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        return {
+            description => 'tracks',
+            data        => [qw(NG CG CLO LINK CANONICAL)]
+        };
+    },
+);
+
+# pending to be factored out into a new role.
+# in such a case, the default sub will be replaced with an overridden builder
+has 'segments' => ( # this is part of API? would require datapacking...
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my ($self) = @_;
+        return [$self->gff_dsn->segment(-class => 'region',
+                                        -name => $self->object)];
+    },
+);
+
+=pod
 
 =head1 NAME
 
@@ -86,11 +109,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub type {
     my ($self) = @_;
-    
+
     my $type = $self ~~ 'Type';
     return {
 	description => 'The type of this clone',
@@ -147,13 +170,12 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub sequences {
     my ($self) = @_;
-    
-    # genomic data of the sequence can probably be refactored out somewhere...
-    # see comment in genomic_picture
+
+    # TODO : take a look at genomic_position in general
     my %sequences = map {
         my $map = $_->Interpolated_map_position(2);
         my ($start, $end, $refname, $ref) = $self->_get_genomic_position_using_object($_);
@@ -167,7 +189,7 @@ sub sequences {
             map     => $map && "$map",
 	    )
     } @{$self ~~ '@Sequence'};
-    
+
     return {
 	description => 'sequences associated with this clone',
 	data		=> %sequences ? \%sequences : undef,
@@ -224,7 +246,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub lengths {
     my ($self) = @_;
@@ -285,15 +307,15 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub maps {
     my ($self) = @_;
-    
+
     # get Maps from object itself, otherwise try for Maps from Pmap
     my $map = $self ~~ '@Map';
     $map = eval {[$self->object->Pmap->Map] } unless @$map;
-    
+
     return {
 	description => 'maps assigned to this clone',
 	data	    => $map && @$map ? $self->_pack_objects($map) : undef,
@@ -350,14 +372,14 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Returns the sequence status of the clone. Each key represents a status
 # and a status => undef pair represents no ?DateType or Text data for the status,
 # but does not invalidate the status itself.
 sub sequence_status {
     my ($self) = @_;
-    
+
     # eval is in scalar context to force an undef instead of empty list
     my %status = map { $_ => scalar eval {$_->right->name}} @{$self ~~ '@Sequence_status'};
     return {
@@ -416,11 +438,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub canonical_for {
     my ($self) = @_;
-    
+
     my $canonical = $self->_pack_objects($self ~~ '@Canonical_for');
     return {
 	description => 'clones that the requested clone is a canonical representative of',
@@ -477,7 +499,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub canonical_parent {
     my ($self) = @_;
@@ -487,7 +509,7 @@ sub canonical_parent {
 	$self ~~ 'Exact_Match_to',
 	$self ~~ 'Funny_Match_to',
     );
-    
+
     return {
 	description => 'canonical parent for clone',
 	data	    => @canonical_parent ? \@canonical_parent : undef,
@@ -543,15 +565,15 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub screened_positive {
     my ($self) = @_;
-    
+
     my %weaks = map {$_ => 1} @{$self ~~ '@Pos_probe_weak'};
     my %data = map { $_ => $self->_pack_obj($_, undef, weak => $weaks{$_}) }
     $self->object->Positive(2);
-    
+
     return {
 	description => 'entities shown to be contained within this clone',
 	data		=> %data ? \%data : undef,
@@ -559,7 +581,7 @@ sub screened_positive {
 }
 
 =head3 screened_negative
-    
+
 This method will return a data structure containing
 entities shown NOT to be contained within the requested
 clone.
@@ -608,11 +630,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub screened_negative {
     my ($self) = @_;
-    
+
     my $data = $self->_pack_objects([$self->object->Negative(2)]);
     return {
 	description => 'entities shown to NOT be contained within the requested clone',
@@ -670,11 +692,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub gridded_on {
     my ($self) = @_;
-    
+
     my $data = $self->_pack_objects($self ~~ '@Gridded');
     return {
 	description => 'grid this clone was gridded on during fingerprinting',
@@ -731,11 +753,11 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub references {
     my ($self) = @_;
-    
+
     my $data = $self->_pack_objects($self ~~ '@Reference');
     return {
 	description => 'references that cite this clone',
@@ -792,14 +814,14 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub physical_picture { # TODO (TH: And probably not necessary)
     my ($self) = @_;
-    
+
     # not what $PmapGFF translates to, e.g. $DBGFF --> $self->gff_dsn
     # see classic code seq/clone
-    
+
     return {
         description => 'Physical picture data',
         data        => 'NOT IMPLEMENTED',
@@ -855,43 +877,94 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
-sub genomic_picture {
-    my ($self) = @_;
-    
-    my ($ref, $start, $stop);
-    if (my $segment = $self->gff_dsn->segment(-class => 'region',
-                                              -name => $self->object)) {
-        # the following looks like something done in Object::genomic_position...
-        # consider refactoring?  TH: Yes it is, but the method in Role::Object isn't yet sufficiently generic. It should be.
-        my ($absref,           $absstart,           $absend)
-	    = ($segment->abs_ref, $segment->abs_start, $segment->abs_end);
-        ($absstart, $absend) = ($absend, $absstart) if $absstart > $absend;
-	
-        ($ref, $start, $stop) = ($absref, int $absstart, int $absend);
-	
-        # the following appear in classic website but are commented out because
-        # fore som reason it doesn't work. may wish to investigate later
-	
-        # my $new_segment = $self->gff_dsn->segment({
-        #     -name => 'name',
-        #     -class => 'Sequence'
-        #     -start => $start,
-        #     -stop => $stop,
-        # });
-	
-    }
-    
-    return {
-        description => 'genomic environs of the clone',
-        data        => {
-            ref   => $ref,
-            start => $start,
-            stop  => $stop,
-        },
-    };
-}
+# sub genomic_picture {
+#     my ($self) = @_;
+
+#     my ($ref, $start, $stop);
+#     if (my $segment = $self->gff_dsn->segment(-class => 'region',
+#                                               -name => $self->object)) {
+#         # the following looks like something done in Object::genomic_position...
+#         # consider refactoring?  TH: Yes it is, but the method in Role::Object isn't yet sufficiently generic. It should be.
+#         my ($absref,           $absstart,           $absend)
+# 	    = ($segment->abs_ref, $segment->abs_start, $segment->abs_end);
+#         ($absstart, $absend) = ($absend, $absstart) if $absstart > $absend;
+
+#         ($ref, $start, $stop) = ($absref, int $absstart, int $absend);
+
+#         # the following appear in classic website but are commented out because
+#         # fore som reason it doesn't work. may wish to investigate later
+
+#         # my $new_segment = $self->gff_dsn->segment({
+#         #     -name => 'name',
+#         #     -class => 'Sequence'
+#         #     -start => $start,
+#         #     -stop => $stop,
+#         # });
+
+#     }
+
+#     return {
+#         description => 'genomic environs of the clone',
+#         data        => {
+#             ref   => $ref,
+#             start => $start,
+#             stop  => $stop,
+#         },
+#     };
+# }
+
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
+
+
+#######################################
+#
+# The External Links widget
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
 
 
 
