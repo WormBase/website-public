@@ -233,6 +233,57 @@ sub transgenes {
 
 # TH: There is a shared expression_patterns method in Role. We should use/expand that one and template.
 
+=head3 expr_patterns
+
+This method will return a data structure expression patterns associated with this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->expr_patterns();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expr_patterns
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+
 sub expr_patterns{
 	my $self = shift;
     my $object = $self->object;
@@ -266,6 +317,53 @@ sub expr_patterns{
 		};
 }
 
+=head3 go_terms
+
+This method will return a data structure containing go terms for this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->go_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/go_terms
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub go_terms{
 	my $self = shift;
@@ -291,6 +389,55 @@ sub go_terms{
 		};
 }
 
+=head3 anatomy_functions
+
+This method will return a data structure anatomy_functions associated with this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_functions();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_functions
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub anatomy_functions {
 	my $self = shift;
     my $object = $self->object;
@@ -301,6 +448,55 @@ sub anatomy_functions {
 		};
 }
 
+=head3 anatomy_function_nots
+
+This method will return a data structure ... of this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_function_nots();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/anatomy_function_nots
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub anatomy_function_nots {
 	my $self = shift;
@@ -311,6 +507,56 @@ sub anatomy_function_nots {
 		'description' => 'anatomy_functions associatated with this anatomy_term'
 		};	
 }
+
+=head3 expression_clusters
+
+This method will return a data structure expression_clusters associated with this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_clusters();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expression_clusters
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub expression_clusters {
 	my $self = shift;
