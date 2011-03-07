@@ -6,7 +6,10 @@
 <!--    <div id="content">-->
       <span class="message">[% status_msg %]</span>
       <span class="error">[% error_msg %]</span>
-      <div id="notifications" class="ui-corner-bottom"><span id="notification-text"></span><span class="ui-icon ui-icon-close tip-simple br" tip="close"></span></div>
+      <div id="notifications" class="ui-corner-bottom">
+            <span id="notification-text"></span>
+            <span class="ui-icon ui-icon-close tip-simple br" tip="close"></span>
+      </div>
       [% IF c.request.param('query') %]
         <script>
           displayNotification("redirected from search [% c.request.param('query') %]");

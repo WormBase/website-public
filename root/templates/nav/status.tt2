@@ -14,8 +14,12 @@ function popWin(url) {
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
 [% ELSE %]
   <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
-  <li><a  class='lightbox' id="login" href="[% c.uri_for('/login') %]"  >Login</a></li>
+  <li><a id="login" href="[% c.uri_for('/login') %]">Login</a></li>
+  <div id="register" href="[% c.uri_for('/register') %]" style="display: none"></div>
+
+  <!-- <li><a  class='lightbox' id="login" href="[% c.uri_for('/login') %]"  >Login</a></li>
   <div  class='lightbox' id="register" href="[% c.uri_for('/register') %]" style="display: none" ></div>
+  -->
 [% END %]
  
  

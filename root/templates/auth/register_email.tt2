@@ -1,7 +1,7 @@
-<p>Thank you for regsitering at WormBase!
+<p>Thank you for registering at WormBase!
 </p>
 <p>
-The account information found below is for your reference only. Please keep all account names and passwords in a safe location and do not share your password with others.
+You supplied the following registration information:
 </p> 
 &nbsp;&nbsp;&nbsp;&nbsp;Username: [% info.username %]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Password: [% info.password %]<br>
@@ -13,5 +13,7 @@ To activate your account and complete the sign up process, please click on the f
 </p> 
 <p>
 Thank you,</br>
-WormBase Administration
+
+The WormBase Consortium
+help@wormbase.org
 </p> 
