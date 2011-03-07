@@ -24,6 +24,7 @@
 
 [% IF class %]
 <script>
-  search_change("[% class %]");
+  [% search_class = class FILTER ucfirst %]
+  search_change("[% search_class %]");
 </script>
 [% END %]

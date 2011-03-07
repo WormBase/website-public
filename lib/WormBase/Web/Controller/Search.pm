@@ -9,85 +9,53 @@ use parent 'Catalyst::Controller::FormBuilder';
 #
 #   Search
 #   URL space : /search
-#   Params    : class, query
+#   Params    : type, query, page count
 #
 ##############################################################
-# sub search :Chained('/') :ParthPart('search') :CaptureArgs(0) {
-#     my ($self, $c) = @_;
-#     $c->log->debug("search method...");
-#   
-#     #all search results will end up at the search/results template.
-#     $c->stash->{template} = "search/results.tt2";
-# }
+sub search :Path('/search') Args {
+    my ($self, $c, @args) = @_;
+    my $type = shift @args;
+    my $query = shift @args;
+    my $page_count = shift @args || 1;
 
-sub search :Path('/search')  :Args(2) {
-    my ($self, $c, $type, $query) = @_;
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
-    if($type eq 'all' && !(defined $c->req->param("view"))) {
-    $c->log->debug(" search all kinds...");
-    $c->stash->{template} = "search/full_list.tt2";
-    } else {
+
     $c->log->debug("$type search");
-     
     my $api = $c->model('WormBaseAPI');
-    my $class =  $c->req->param("class") || $type;
-    my $search = $type;
-    $search = "basic" unless  $api->search->meta->has_method($type);
-    my $objs;
 
-    # Does the data for this widget already exist in the cache?
-# my $cached_data;
-    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('search', $type, $query, $class);
-    unless($cached_data) {  
-        $cached_data = $api->search->$search({class => $class, pattern => $query});
-        $c->set_cache($cache_id,$cached_data);
-    } else {
-	$c->stash->{cache} = $cache_server if($cache_server);
-    }
-    $objs = $cached_data;
-
-# 
-#     if(@$objs<1) { #this may not be optimal
-#       $query.="*";
-#       $objs = $api->search->$search({class => $class, pattern => $query}) ;
-#       ($cache_id,$cached_data) = $c->check_cache('search', $type, $class, $query);
-#       unless($cached_data) {  
-#           $cached_data = $api->search->$search({class => $class, pattern => $query});
-#           $c->set_cache($cache_id,$cached_data);
-#       } 
-#       $objs = $cached_data;
-#     }
-
-    my $begin = $c->req->param("begin") || 0;
-    my $end = $c->req->param("end") || 19;
-    my $count = scalar(@$objs);
-    if($end > ($count-1)){ $end = $count - 1;}
-
-    my @results = @$objs[$begin..$end];
-    $c->stash->{'type'} = $type; 
-    $c->stash->{'results'} = \@results;
-    $c->stash->{'count'} = $count;
-    if(defined $c->req->param("inline")) {
+    $c->stash->{template} = "search/results.tt2";
+    if($page_count >1) {
+      $c->stash->{template} = "search/result_list.tt2";
       $c->stash->{noboiler} = 1;
-    } elsif(@$objs==1 ) {
-        my $url;
-        if(defined $c->config->{'sections'}->{'species'}->{$class}){
-          $url = $c->uri_for('/species',$type,$objs->[0]->{obj_name});
-        }else{
-          $url = $c->uri_for('/resources',$type,$objs->[0]->{obj_name});
-        }
-        unless($query=~m/$objs->[0]->{obj_name}/){ $url = $url . "?query=$query";}
-        $c->res->redirect($url);
-    } 
-      if($begin > 0) {
-        $c->stash->{template} = "search/result_list.tt2";
-      }else {
-        $c->stash->{template} = "search/results.tt2";
-      }
+    }elsif($c->req->param("inline")){
+      $c->stash->{noboiler} = 1;
     }
-    $c->stash->{'query'} = $query;
-    $c->stash->{'class'} = $type;
-     
+    my $tmp_query = $query;
+    $tmp_query =~ s/-/_/g;
+    $tmp_query .= " $query" unless($tmp_query =~ /$query/ );
+    $c->log->debug("search $query");
+      
+    my $search = $type unless($type=~/All/);
+
+    my ($it,$res)= $api->search->search(
+      $tmp_query, $page_count, $search
+    );
+
+    $c->stash->{type} = $type;
+    $c->stash->{count} = $it->{pager}->{total_entries}; 
+    my @ret;
+    foreach my $o (@{$it->{struct}}){
+      my @objs;
+      my $class = $o->get_document->get_value(0);
+      my $obj = $api->fetch({class=> $class,
+                          name => $o->get_document->get_value(1)}) or die "$!";
+      my %obj = %{$api->search->_wrap_objs($obj, lcfirst($class))};
+      push(@ret, \%obj);
+    }
+    $c->stash->{results} = \@ret;
+    $c->stash->{query} = $query || "*";
+
+    return;
 }
 
 sub search_preview :Path('/search/preview')  :Args(2) {
@@ -113,81 +81,12 @@ sub search_preview :Path('/search/preview')  :Args(2) {
     $c->stash->{'class'} = $type;
 }
 
-sub search_all :Path('/search/all')  :Args(2) {
-    my ($self, $c, $type, $query) = @_;
-
-    $c->log->debug("search all");
-
-    $c->stash->{template} = "search/all.tt2";
-    my $api = $c->model('WormBaseAPI');
-    my $class =  $type;
-    my $offset = $c->req->param("begin") || 0;
-    my $count = ($c->req->param("end") ||20) - $offset;
-    my $objs;
-    my $total;
-    ($total, $objs) = $api->search->preview({class => $class, offset=>$offset, count=>$count});
-
-    $c->stash->{'type'} = $type; 
-    $c->stash->{'total'} = $total; 
-    $c->stash->{'results'} = $objs;
-    if(defined $c->req->param("inline")) {
-      $c->stash->{template} = "search/result_list.tt2";
-      $c->stash->{noboiler} = 1;
-    }
-    $c->stash->{'query'} = "*";
-    $c->stash->{'class'} = $type;
-}
-
 
 #########################################
 # Search actions
 #########################################
 # Display the search form itself
-# 
-# sub search : Path Form {
-#   my ( $self, $c ) = @_;
-#   my $ace = $c->model('AceDB');
-#   my $dbh = $ace->dbh;
-#   my @classes = $dbh->classes();
-# 
-#    my $form = $self->formbuilder;
-# 
-# #  $self->formbuilder->field('query');
-# 
-#   # Populate options for the class field
-#   $self->formbuilder->field(
-# 			    name     => 'class',
-# 			    label    => 'Class',
-# 			    options  => \@classes ,
-# 			   );
-# 
-#   # Generically search a class
-#   $c->stash->{template} = "search/basic.tt2";
-#   if ( $form->submitted ) {
-# 
-#     # Has the form been submitted?
-#     # Call the search method of the specified class (if it exists)
-#     # WormBase::Web::Controller::$CLASS::search
-# 
-#     # ALTERNATIVELY:
-#     # NEED TO INCLUDE: paging, basic vs advanced, limits, fields to return...
-#     my $class = $c->req->params('class');
-#     $c->stash->{results} = $c->model($class)->search();
-#     
-#     #    if ( $form->validate ) {
-#     #      return $c->response->body("VALID FORM");
-#     #    }
-#     #    else {
-#     #      $c->stash->{ERROR}          = "INVALID FORM";
-#     #      $c->stash->{invalid_fields} =
-#     #	[ grep { !$_->validate } $form->fields ];
-#     #    }
-#   }
-# 
-#   # WormBase::Web::Controller::$CLASS::search() should specify the cocrrect
-#   # template (if a custom template is required)
-# 
-# }
+
 
 =head1 basic_search
 
