@@ -144,34 +144,28 @@ has 'sequences' => (
     }
 );
 
+# pending to be factored out into a new role.
+# in such a case, the default sub will be replaced with an overridden builder
 has 'segments' => (
-    is  => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-	my $self=shift;
-	my @seg = $self->_fetch_segments;
-	return \@seg;
-    }
-);
-
-has 'pic_segment' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-	my $self = shift;
-	my $seq = $self->object;
-	return unless(defined $self->segments);
-	return $self->_longest_segment($self->segments);  
-    }
+        my ($self) = @_;
+        my @segments = $self->_fetch_segments;
+        return \@segments;
+    },
 );
 
 has 'tracks' => (
-    is  => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-	my $self = shift;
-	my @type = $self->species =~ /elegans/ ? qw/CG CANONICAL Allele RNAi/:qw//;
-	return \@type;
+        my ($self) = @_;
+        return {
+            description => 'tracks displayed in GBrowse',
+            data        => $self->parsed_species =~ /elegans/ ?
+                           [qw(CG CANONICAL Allele RNAi)] : undef,
+        },
     }
 );
 
@@ -509,11 +503,6 @@ sub classification {
     return $return;
 }
 
-
-
-
-
-
 ###########################################
 # Components of the Location panel
 # Note: Most of these are generic and located
@@ -521,10 +510,13 @@ sub classification {
 ###########################################
 
 sub genomic_position {
-    my $self      = shift;
-    return $self->SUPER::genomic_position($self->_longest_segment($self->segments)); 
+    my ($self) = @_;
+    my @pos = $self->_genomic_position([ $self->_longest_segment || () ]);
+    return {
+        description => 'The genomic location of the sequence',
+        data        => @pos ? \@pos : undef,
+    };
 }
-
 
 # sub genetic_position { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -1779,10 +1771,12 @@ sub _fetch_segments {
 
 # TODO: Logically this might reside in Model::GFF although I don't know if it is used elsewhere
 # Find the longest GFF segment
-sub _longest_segment {
-    my ($self,$segments) = @_;
-    my @sorted = sort { ($b->abs_end-$b->abs_start) <=> $a->abs_end-$a->abs_start } @$segments;
-    return $sorted[0];
+sub _longest_segment { # AD: if this is left in Gene, I think it should access the segments attr
+    my ($self) = @_;
+    my ($longest)
+       = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}
+              @{$self->segments};
+    return $longest;
 }
 
 sub _select_protein_description {
