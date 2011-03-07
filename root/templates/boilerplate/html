@@ -25,10 +25,10 @@
      <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
     [% END %] 
 
- <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
-<!-- <script type="text/javascript" src="/js/jquery/plugins/floating-1.4.js"></script>-->
+     <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
+    <!-- <script type="text/javascript" src="/js/jquery/plugins/floating-1.4.js"></script>-->
 
-   <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.css"/>
    
     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
@@ -44,18 +44,16 @@
     <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />
     <link type="text/css" rel="stylesheet" href="/css/jquery.tablescroll.css"/>
 
-    <link type="text/css" href="/css/main.css" rel="stylesheet" />
-    <link href="/css/home.css" rel="stylesheet" type="text/css" />
-    [% IF is_classic %]
-        <link type="text/css" href="/css/wormbase_classic.css" rel="stylesheet" />
+    [% IF c.action == "login" %]
+       <link href="/css/login.css" media="screen" rel="stylesheet" type="text/css" />
+    [% ELSE %]
+        <link type="text/css" href="/css/main.css" rel="stylesheet" />
+        <link type="text/css" href="/css/home.css" rel="stylesheet" />
+        <link type="text/css" href="/css/icons.css" rel="stylesheet" />
     [% END %]
-    
-  <link type="text/css" href="/css/icons.css" rel="stylesheet" />
-
   </head>
 
-  <body>
-    
+  <body>  
     [%- content -%]    
   </body>
 </html>
