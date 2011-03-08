@@ -47,7 +47,7 @@ input, select, th, td { font-size:1em; }
 
 #content {
   background:white;
-  padding: 0 1em;
+  padding: 0 1.7em 1em 0em;
 }
 
 /* Global Links */
@@ -141,7 +141,10 @@ div#header .release_date { }
     border-radius: 8px;
     line-height: 16px;
     padding: 1em 19px 1em 12px;
-    margin-bottom: 15px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left:10px;   /* was: 175px */
+    margin-right:0em;
     border-top-left-radius: 8px 8px;
     border-top-right-radius: 8px 8px;
     border-bottom-right-radius: 8px 8px;
@@ -172,6 +175,56 @@ div#header .release_date { }
 
 
 
+#titlebar {
+/*    border-bottom: 6px solid #ddd; */
+    border-bottom:1px solid #ddd;
+    background:#fff;
+/*
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+*/
+  z-index:100000;
+   overflow:hidden;
+    position:relative;
+/*    border-radius: 8px; */
+    padding: 0 0em 0 0;
+    margin-bottom:0.5em;
+/*
+    border-top-left-radius: 8px 8px;
+    border-top-right-radius: 8px 8px;
+    border-bottom-right-radius: 8px 8px;
+    border-bottom-left-radius: 8px 8px;
+*/
+}
+
+
+#titlebar #title {
+    font-family:"Helvetica Neue",Arial;
+    font-size:28px;
+    float:left;
+    padding:0em 0 0em 1em;
+    margin:0;
+    color:#222;
+    font-weight:bold;
+}
+
+#titlebar #buttons {
+    float:right;
+    font-size:0.6em;
+    width:auto;
+}
+
+#titlebar .button {
+   margin:0.2em;
+}
+#titlebar .dropdown-button {
+   width:75px;
+}
+
+
+#titlebar .button-on {
+    color:blue;
+}
 
 
 
@@ -321,7 +374,8 @@ ul.dropdown li.selected {
 
 li div.widget-container {
     padding:0;
-    margin:0.5em 0 0 0.5em;
+/*    margin:0.5em 0 0 0.5em; */
+    margin:1em 0 0 1em;
     display:none;
     background-color:#FFFFFF; 
     position:relative;
@@ -742,23 +796,33 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
-div.title {
-    padding:0.5em 0 0.7em 0.5em;
+/* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
+
+div.title{
+    font-family:"Helvetica Neue",Arial;
+    font-size:28px;
+    border:1px solid gray; 
     margin:0;
+    color:#222;
+    font-weight:bold;
+    padding:0.5em 0 0.7em 0.5em;
     border-bottom:0.5em solid #EEE;
+    border-bottom:1px solid #EEE;
 }
 
 div.columns {
-  float:right;
-  margin:0 0.5em;
+/*  float:right; */
+/*  margin:0 0.5em;
   padding:0.3em 0 0;
   position:relative;
   cursor:pointer;
+*/
 }
 
 div.columns ul {
   width:4.5em;
-  position:absolute;
+/*  position:absolute; */
+  overflow:visible;
   z-index:999;
   top:100%;
   left:0em;
@@ -794,7 +858,7 @@ div.columns ul div input#layout-input {
 /*   width:5em; */
   width:100%;
   color: #999999;
-  font-size: 0.75em;
+/*  font-size: 0.75em; */
   margin:0;
   padding:0;
 }
@@ -1236,9 +1300,12 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
    
 *********************************/
 #widgets {
-  background:#EEE;
+/*  background:#EEE; */
+  background:#FFF;
   margin:0;
-  padding:0 0.5em 0.5em 0.5em;
+/*  padding:0 0.5em 0.5em 0.5em;   ORIGINAL */
+/*  padding:0 1em 0.5em 0.5em; */
+  padding:0 0em 0.5em 0em;
   position:relative;
   clear:both;
   overflow:hidden;
@@ -1260,7 +1327,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   background:black;
   height:2em;
   color:white;
-padding:0.7em 0.5em 0;
+  padding:0.7em 0.5em 0;
 }
 #navigation #title:hover{
   background:#555;
@@ -1353,7 +1420,7 @@ padding:0.7em 0.5em 0;
   list-style: none;
   position:relative;
   background:white;
-  padding:0 0.5em 0.5em 0em;
+  padding:0 0.0em 0.5em 0em;
   border-left:0.5em solid #EEE;
 }
 
@@ -1429,6 +1496,7 @@ div.detail-box div.field div.field-content{
   padding:0.5em;
   margin:0.5em 0;
 }
+
 
 .tip span.ui-icon-triangle-1-s{
   position:absolute;
