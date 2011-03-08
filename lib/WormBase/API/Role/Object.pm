@@ -8,7 +8,6 @@ use File::Path 'mkpath';
 
 # TODO:
 # Synonym (other_name?)
-# common name: Short_name || common_name || Public_name
 # DONE (mostly): Database and DB_Info parsing
 # Titles / description / definition
 # Phenotypes observed/not_observed
@@ -109,91 +108,45 @@ B<Response example>
 has 'name'     => (
     is         => 'ro',
     default    => sub {
-        my $self   = shift;
+        my ($self) = @_;
         my $object = $self->object;
-	return unless $object;
         my $class  = $object->class;
-        my $tag    = $self->_common_name_tag($object->class);
-
-        my $label  = $tag ? $object->$tag : $object->name;
 
         return {
             description => "The name and WormBase internal ID of a $class object",
-            data        =>  $self->_pack_obj($object,$label),
+            data        =>  $self->_pack_obj($object),
         };
     }
 );
 
-
-
-=head3 common_name
-
-This method will return a data structure containing
-the common (public) name of the object. Almost totally
-redundant with name().
-
-=over
-
-=item PERL API
-
- $data = $model->common_name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a class and an object ID.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/common_name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Template: [% common_name %]
-
+# should be for internal use only
+# external use, see 'name' attr.
 has 'common_name' => (
-    is   => 'ro',
+    is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 sub _build_common_name {
-    my $self   = shift;
+    my ($self) = @_;
     my $object = $self->object;
-    my $tag    = $self->_common_name_tag($object->class);
+    my $class  = $object->class;
 
-    my $label  = $tag ? $object->$tag : $object->name;
-    return { description => 'the common name of the object which may be the object name',
-	     data        => $self->_pack_obj($object,$label),
-    };
+    my %taghash = ( # where should this go?
+        Person     => 'Standard_name',
+        Gene       => 'Public_name',
+        Feature    => 'Public_name',
+        Variation  => 'Public_name',
+        Phenotype  => 'Primary_name',
+        Gene_class => 'Main_name',
+        Species    => 'Common_name',
+    );
+
+    my $name;
+    if (my $tag = $taghash{$class}) {
+        $name = $object->$tag;
+    }
+
+    return ($name && "$name") || $self->object->name;
 }
 
 
@@ -540,11 +493,12 @@ sub _build_description {
     my $class   = $object->class;
     my $tag;
     if ($class eq 'Sequence') {
-	$tag = 'Title';
-    } else {
-	$tag = 'Description';
+        $tag = 'Title';
     }
-    my $description = $object->$tag;
+    else {
+        $tag = 'Description';
+    }
+    my $description = eval {$object->$tag }; # hack, will fix later
     return { description  => "description of the $class $object",
 	     data         => "$description" || undef,
     };
@@ -1209,25 +1163,6 @@ sub _build_xrefs  {
 	     data        => \%dbs };
 }
 
-
-
-
-# Get the tag which stores the best common name of the object
-# Model varieagation.
-sub _common_name_tag {
-    my ($self,$class) = @_;
-    if ($class eq 'Person') {
-	return 'Standard_name';
-    } elsif ($class eq 'Gene') {
-	return 'Public_name';
-    } elsif ($class eq 'Phenotype') {
-	return 'Primary_name';
-    }
-}
-
-
-
-
 sub mysql_dsn {
     my $self    = shift;
     my $source = shift;
@@ -1305,11 +1240,10 @@ sub _pack_objects {
 
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
-    return unless defined $object;
-    $label =  eval {$object->Public_name} || "$object" unless $label;
+    return unless $object;
     return {
         id => "$object",
-        label => "$label",
+        label => $label // $self->common_name,
         class => $object->class,
         %args,
     };

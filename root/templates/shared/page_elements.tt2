@@ -623,13 +623,7 @@ END;
 %]
 
 
-[%# is this macro necessary? it does the same thing as the name macro above %]
-[% MACRO common_name BLOCK;
-   WRAPPER $field_block title="Common name" key="common_name";
-      tag2link(fields.name.data);
-   END;
-END;
-%]
+[% MACRO common_name GET name # an alias for name %]
 
 [% MACRO other_names BLOCK; 
       WRAPPER $field_block title="Other names" key="other_names";
