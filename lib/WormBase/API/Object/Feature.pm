@@ -151,7 +151,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 sub defined_by {
     my $self   = shift;
     my $object = $self->object;
-    my $tag    = shift;
     my %data;
     my @tag_objects = qw/sequence paper author analysis/;
     foreach $tag_object (@tag_objects) {
@@ -215,7 +214,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 sub associations {
     my $self   = shift;
     my $object = $self->object;
-    my $tag    = shift;
     my %data;
     my @tag_objects =
       qw/gene CDS transcript pseudogene transposon variation Position_matrix operon gene_regulation expression_pattern Feature/;
