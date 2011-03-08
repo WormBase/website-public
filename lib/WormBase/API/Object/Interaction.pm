@@ -135,7 +135,7 @@ sub interactor {
     @genes = map { $self->_pack_obj( $_, $_->Public_name ) } @genes;
     return {
         description => 'The genes in this interaction',
-        data        => \@genes,
+        data        => @genes ? \@genes : undef,
     };
 }
 
@@ -266,8 +266,8 @@ sub phenotype {
     my $self      = shift;
     my $object    = $self->object;
     my $it        = $object->Interaction_type;
-    my $phenotype = $it->Internation_phenotype->right
-      if $it->Internation_phenotype;
+    my $phenotype = $it->Interaction_phenotype->right
+      if $it->Interaction_phenotype;
     my $phenotype_name = $phenotype->Primary_name if $phenotype;
     my $data_pack = $self->_pack_obj( $phenotype, $phenotype_name );
 
