@@ -4,7 +4,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
 =pod 
 
 =head1 NAME
@@ -23,88 +22,42 @@ http://wormbase.org/species/interaction
 
 =cut
 
-
-has 'effector' => (    
-    is       => 'ro',
+has 'effector' => (
+    is      => 'ro',
     lazy    => 1,
     default => sub {
-    	my $self = shift;
-    	my @effectors;
-    	eval { @effectors = $self->interaction_type->Effector->col;};
-    	return \@effectors;
-  	}
+        my $self = shift;
+        my @effectors;
+        eval { @effectors = $self->interaction_type->Effector->col; };
+        return \@effectors;
+    }
 );
 
 has 'effected' => (
-	is  => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-    	my $self = shift;
-    	my @effecteds;
-    	eval{@effecteds = $self->interaction_type->Effected->col;};
-    	return \@effecteds;   
+        my $self = shift;
+        my @effecteds;
+        eval { @effecteds = $self->interaction_type->Effected->col; };
+        return \@effecteds;
     }
 );
 
 has 'non_directional_interactors' => (
-	is  => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-    	my $self = shift;
-    	my @non_directional_interactors; 
-    	eval {
-    	
-    		@non_directional_interactors = $self->interaction_type->Non_directional->col;	
-    	}; 
-    	return \@non_directional_interactors;   
+        my $self = shift;
+        my @non_directional_interactors;
+        eval {
+
+            @non_directional_interactors =
+              $self->interaction_type->Non_directional->col;
+        };
+        return \@non_directional_interactors;
     }
 );
-
-=head2 interactor
-
-This method will return a data structure with the set of interactors for this interaction.
-
-=head3 PERL API
-
- $data = $model->interactor();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Interaction ID WBInteraction0000779
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
 
 #######################################
 #
@@ -120,45 +73,97 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/interac
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+=head3 interactor
+
+This method will return a data structure with the interactors.
+
+=over
+
+=item PERL API
+
+ $data = $model->interactor();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Interaction id (eg WBInteraction0000779)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json
+http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub interactor {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-    my @genes = $object->Interactor;
-    @genes = map{$self->_pack_obj($_, $_->Public_name)} @genes;
-    my $data = { description => 'The genes in this interaction',
-         data        =>  \@genes, 
+    my @genes  = $object->Interactor;
+    @genes = map { $self->_pack_obj( $_, $_->Public_name ) } @genes;
+    return {
+        description => 'The genes in this interaction',
+        data        => \@genes,
     };
-    return $data;
 }
 
-=head2 interaction_type
+=head3 interaction_type
 
-This method will return a data structure with the interaction_type of this interaction.
+This method will return a data structure with the interaction_type.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->interaction_type();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Interaction ID WBInteraction0000779
+An Interaction id (eg WBInteraction0000779)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -172,117 +177,66 @@ a Interaction ID WBInteraction0000779
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type.
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub interaction_type {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-    my $type = $object->Interaction_type;
-
+    my $type   = $object->Interaction_type;
     my %interaction_info;
-    $interaction_info{'effector'} = $self->_pack_obj($type->Effector) if $type->Effector;
-    $interaction_info{'effected'} = $self->_pack_obj($type->Effected) if $type->Effected;
-    if ($type->Non_directional){
-      my @genes = map{$self->_pack_obj($_)} $type->Non_directional;
-      $interaction_info{'non_directional'} = \@genes;
+
+    $interaction_info{'effector'} = $self->_pack_obj( $type->Effector )
+      if $type->Effector;
+    $interaction_info{'effected'} = $self->_pack_obj( $type->Effected )
+      if $type->Effected;
+    if ( $type->Non_directional ) {
+        my @genes = map { $self->_pack_obj($_) } $type->Non_directional;
+        $interaction_info{'non_directional'} = \@genes;
     }
-
-    my $data = 
-    return { 
-    	description => 'The remark on this interaction',
-       	data        => { type  =>  "$type",
-                         interaction_info  =>  \%interaction_info,
-                       }
+    return {
+        description => 'The type of interaction.',
+        data        => {
+            type             => "$type",
+            interaction_info => \%interaction_info,
+        }
     };
 }
 
-=head2 paper
+=head3 phenotype
 
-This method will return a data structure containing papers describing this interaction.
+This method will return a data structure with phenotypes observed with the interaction.
 
-=head3 PERL API
+=over
 
- $data = $model->paper();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Interaction ID WBInteraction0000779
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/paper
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-sub paper {
-    my $self = shift;
-    my $object = $self->object;
-
-    my $data = { description => 'The paper for this interactions',
-                 data        => $self->_pack_obj($object->Paper, $object->Paper->Brief_citation),
-    };
-    return $data;
-}
-
-=head2 phenotype
-
-This method will return a data structure re: phenotype associated with this interaction.
-
-=head3 PERL API
+=item PERL API
 
  $data = $model->phenotype();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Interaction ID WBInteraction0000779
+An Interaction id (eg WBInteraction0000779)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -296,58 +250,59 @@ a Interaction ID WBInteraction0000779
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotype
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub phenotype {
-	
-	my $self = shift;
-    my $object = $self->object;
+    my $self      = shift;
+    my $object    = $self->object;
+    my $it        = $object->Interaction_type;
+    my $phenotype = $it->Internation_phenotype->right
+      if $it->Internation_phenotype;
+    my $phenotype_name = $phenotype->Primary_name if $phenotype;
+    my $data_pack = $self->_pack_obj( $phenotype, $phenotype_name );
 
-	### data pull ####
-	
-	my $it = $object->Interaction_type;                                                         
-	my $phenotype = $it->Internation_phenotype->right if $it->Internation_phenotype;  
-	my $phenotype_name = $phenotype->Primary_name if $phenotype;      
-	my $data_pack = $self->_pack_obj($phenotype, $phenotype_name);
-
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the phenotype associated with this interaction'
-		};
-	return $data;
+    return {
+        'data' => $data_pack,
+        'description' =>
+          'description of the phenotype associated with this interaction'
+    };
 }
 
-=head2 rnai
+=head3 rnai
 
-This method will return a data structure re: rnais related to this interaction.
+This method will return a data structure with rnais involved in the interaction.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->rnai();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Interaction ID WBInteraction0000779
+An Interaction id (eg WBInteraction0000779)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -361,55 +316,66 @@ a Interaction ID WBInteraction0000779
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/rnai
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub rnai {
-	my $self = shift;
-    my $object = $self->object;
-	my $it = $object->Interaction_type;
-	my $rnai = $it->Interaction_RNAi->right if $it->Interaction_RNAi;
-	my $data_pack = $self->_pack_obj($rnai);
-	return {
-		'data'=> $data_pack,
-		'description' => 'description of the rnai involved with this interaction'
-	};
+    my $self      = shift;
+    my $object    = $self->object;
+    my $it        = $object->Interaction_type;
+    my $rnai      = $it->Interaction_RNAi->right if $it->Interaction_RNAi;
+    my $data_pack = $self->_pack_obj($rnai);
+    return {
+        'data' => $data_pack,
+        'description' =>
+          'description of the rnai involved with this interaction'
+    };
 }
 
-######################
-### Interactors
-######################
+###########################
+#
+# The Interactors Widget
+#
+###########################
 
-=head2 interactor_data
+=head2 Interactors
 
-This method will return a data structure re: interactor_data for this interaction.
+=cut
 
-=head3 PERL API
+=head3 effector_data
 
- $data = $model->interactor_data();
+This method will return a data structure with effector_data for the interaction.
 
-=head3 REST API
+=over
 
-=head4 Request Method
+=item PERL API
+
+ $data = $model->effector_data();
+
+=item REST API
+
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Interaction ID WBInteraction0000779
+An Interaction id (eg WBInteraction0000779)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -423,61 +389,148 @@ a Interaction ID WBInteraction0000779
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor_data
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/effector_data
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
 
-sub interactor_data {
-	my $self = shift;
-	my $interactor_type; ## efffector, effected, non_directional
-   	my $object = $self->object;
-	my %data;
-	my $desc = 'notes';
-	my @data_pack;
-	my $interactor_ar;
-		
-	if ($interactor_type =~ /effector/) {
-		$interactor_ar = $self->effector;
-	} elsif ($interactor_type =~ /effected/) {
-		$interactor_ar = $self->effected;
-	} else {
-		$interactor_ar = $self->non_directional_interactors;
-	}
+=cut 
 
-	foreach my $interactor (@$interactor_ar) {
-		my @cds = $interactor->Corresponding_CDS;
-  		my @proteins  = map {$interactor->Corresponding_protein(-fill=>1)} @cds if (@cds);
-  		my @interactions = $interactor->Interaction;
-  		my $gene_data = $self->_pack_obj($interactor);
-  		my @protein_data_set;
-  		my $interaction_count = @interactions;
-  	
-  		foreach my $protein (@proteins) {		
-  			my $protein_data = $self->_pack_obj($protein);
-  			push @protein_data_set, $protein_data
-  		}
-  	
-		my $interactor_data => {
-				'gene' => $gene_data,
-				'protein' => \@protein_data_set,
-				'inteactions' => "$interaction_count"	
-		};
-	 	
-		push @data_pack, $interactor_data;
-	}
-	
-	return {
-		'data'=> \@data_pack,
-		'description' => 'interactor data for this interaction broken down by type'
-	};
+sub effector_data {
+    my $self      = shift;
+    my $data_pack = $self->_interactor_data('effector');
+
+    return {
+        data        => $data_pack,
+        description => 'data on the effector genes of the interaction'
+    };
 }
 
+=head3 effected_data
+
+This method will return a data structure with effected_data for the interaction.
+
+=over
+
+=item PERL API
+
+ $data = $model->effected_data();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Interaction id (eg WBInteraction0000779)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/effected_data
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub effected_data {
+    my $self      = shift;
+    my $data_pack = $self->_interactor_data('effected');
+
+    return {
+        data        => $data_pack,
+        description => 'data on the effected genes of the interaction'
+    };
+}
+
+=head3 non_directional_data
+
+This method will return a data structure with date for the non_directional interactions.
+
+=over
+
+=item PERL API
+
+ $data = $model->non_directional_data();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Interaction id (eg WBInteraction0000779)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/non_directional_data
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub non_directional_data {
+    my $self      = shift;
+    my $data_pack = $self->_interactor_data('non_directional');
+
+    return {
+        data => $data_pack,
+        description =>
+          'data on the non_directional components of the interaction'
+    };
+}
 
 #######################################
 #
@@ -493,5 +546,54 @@ sub interactor_data {
 # Supplied by Role; POD will automatically be inserted here.
 # << include xrefs >>
 
+#######################################
+#
+# Internal Methods
+#
+#######################################
+
+sub _interactor_data {
+    my $self            = shift;
+    my $interactor_type = shift;         ## efffector, effected, non_directional
+    my $object          = $self->object;
+    my %data;
+    my $desc = 'notes';
+    my @data_pack;
+    my $interactor_ar;
+
+    if ( $interactor_type =~ /effector/ ) {
+        $interactor_ar = $self->effector;
+    }
+    elsif ( $interactor_type =~ /effected/ ) {
+        $interactor_ar = $self->effected;
+    }
+    else {
+        $interactor_ar = $self->non_directional_interactors;
+    }
+
+    foreach my $interactor (@$interactor_ar) {
+        my @cds = $interactor->Corresponding_CDS;
+        my @proteins =
+          map { $interactor->Corresponding_protein( -fill => 1 ) } @cds
+          if (@cds);
+        my @interactions = $interactor->Interaction;
+        my $gene_data    = $self->_pack_obj($interactor);
+        my @protein_data_set;
+        my $interaction_count = @interactions;
+
+        foreach my $protein (@proteins) {
+            my $protein_data = $self->_pack_obj($protein);
+            push @protein_data_set, $protein_data;
+        }
+        my $interactor_data => {
+            'gene'        => $gene_data,
+            'protein'     => \@protein_data_set,
+            'inteactions' => "$interaction_count"
+        };
+
+        push @data_pack, $interactor_data;
+    }
+    return \@data_pack;
+}
 
 1;
