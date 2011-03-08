@@ -36,7 +36,6 @@ http://wormbase.org/species/feature
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
 =head3 flanking_sequences
 
 This method will return a data structure containing sequences adjacent to the feature.
@@ -87,12 +86,13 @@ sub flanking_sequences {
     my $self      = shift;
     my $object    = $self->object;
     my @sequences = $object->Flanking_sequences;
-    
-    my @data = map { "$_" } @sequences;
-    return { description => 'sequences flanking the feature',
-	     data        => @data ? \@data : undef };
-}
 
+    my @data = map { "$_" } @sequences;
+    return {
+        description => 'sequences flanking the feature',
+        data        => @data ? \@data : undef
+    };
+}
 
 # sub taxonomy { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -101,7 +101,6 @@ sub flanking_sequences {
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
-
 
 =head3 defined_by
 
@@ -153,10 +152,17 @@ sub defined_by {
     my $self   = shift;
     my $object = $self->object;
     my $tag    = shift;
-    
-    my @data = map { $self->_pack_obj($_) } $object->$tag;
-    return { description => 'objects that define this feature', 
-	     data        => @data ? \@data : undef };
+    my %data;
+    my @tag_objects = qw/sequence paper author analysis/;
+    foreach $tag_object (@tag_objects) {
+        my $tag = "Defined_by_" . $tag_object;
+        my @data = map { $self->_pack_obj($_) } $object->$tag;
+        $data{"$tag_object"} = \@data if @data;
+    }
+    return {
+        description => 'objects that define this feature',
+        data        => \%data
+    };
 }
 
 =head3 associations
@@ -207,12 +213,21 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 =cut
 
 sub associations {
-    my $self = shift;
-    my $tag = shift;
-    my $object = $self->object;    
-    my @data = map { $self->_pack_obj($_) } $object->$tag;
-    return { description => 'objects associated with this feature',
-	     data        => @data ? \@data : undef };
+    my $self   = shift;
+    my $object = $self->object;
+    my $tag    = shift;
+    my %data;
+    my @tag_objects =
+      qw/gene CDS transcript pseudogene transposon variation Position_matrix operon gene_regulation expression_pattern Feature/;
+    foreach $tag_object (@tag_objects) {
+        my $tag = "Associated_with_" . $tag_object;
+        my @data = map { $self->_pack_obj($_) } $object->$tag;
+        $data{"$tag_object"} = \@data if @data;
+    }
+    return {
+        description => 'objects that define this feature',
+        data        => \%data
+    };
 }
 
 =head3 binds_gene_product
@@ -266,9 +281,11 @@ sub binds_gene_product {
     my $self   = shift;
     my $object = $self->object;
     my @genes  = $object->Bound_by_product_of;
-    my @data   = map { $self->_pack_obj($_,$_->Public_name) } @genes;
-    return { description => 'gene products thtat bind this feature',
-	     data        => @data ? \@data : undef };
+    my @data   = map { $self->_pack_obj( $_, $_->Public_name ) } @genes;
+    return {
+        description => 'gene products thtat bind this feature',
+        data        => @data ? \@data : undef
+    };
 }
 
 =head3 transcription_factor
@@ -318,14 +335,16 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 
 =cut
 
-sub transcription_factor {	
-    my $self = shift;
-    my $object = $self->object;
+sub transcription_factor {
+    my $self                 = shift;
+    my $object               = $self->object;
     my $transcription_factor = $object->Transcription_factor;
-    
+
     my $data = $self->_pack_obj($transcription_factor);
-    return { description => 'transcription factor that binds the feature',
-	     data        => $data ? $data : undef };
+    return {
+        description => 'transcription factor that binds the feature',
+        data        => $data ? $data : undef
+    };
 }
 
 =head3 annotation
@@ -379,13 +398,14 @@ sub annotation {
     my $self   = shift;
     my $object = $self->object;
     my $data   = map { $self->_pack_obj($_) } $object->Annotation;
-    return { description => 'annotations on the feature',
-	     data        => $data ? $data : undef };
+    return {
+        description => 'annotations on the feature',
+        data        => $data ? $data : undef
+    };
 }
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
-
 
 1;
