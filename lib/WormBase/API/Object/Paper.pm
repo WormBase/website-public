@@ -115,7 +115,7 @@ sub name {
         description => 'The object name of the publication',
         data        => {
             id		=> $self ~~ 'name',
-            label	=> eval {$self->intext_citation->{data}{citation}} // $title,
+            label	=> $self->intext_citation->{data}{citation} || $title,
             class	=> $self ~~ 'class',
         },
     };
@@ -742,9 +742,9 @@ sub is_wormbook_paper {
     my $truth = 0;
 
     my ($type, $journal, $contained);
-    if (($type = $self->publication_type and first { $_ eq 'WormBook' } } @{$type->{data}})
+    if (($type = $self->publication_type and first { $_ eq 'WormBook' } @{$type->{data}})
         or ($journal = $self->journal and $journal->{data} eq 'WormBook')
-        or ($contained = $self->contained_in and first /WormBook/, @{$contained->{data}})) {
+        or ($contained = $self->contained_in and first {/WormBook/} @{$contained->{data}})) {
         $truth = 1;
     }
 

@@ -614,7 +614,7 @@ if (typeof(_gat) == 'object') {
 
 
 
-
+[%# is it necessary to link an object back to itself? %]
 [% MACRO name BLOCK;
    WRAPPER $field_block title="Name" key="name";
       tag2link(fields.name.data);
@@ -622,6 +622,8 @@ if (typeof(_gat) == 'object') {
 END;
 %]
 
+
+[%# is this macro necessary? it does the same thing as the name macro above %]
 [% MACRO common_name BLOCK;
    WRAPPER $field_block title="Common name" key="common_name";
       tag2link(fields.name.data);
