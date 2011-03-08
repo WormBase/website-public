@@ -5,24 +5,24 @@
 [% END %]
 
 <!-- begin result list -->
-[% search_type = c.stash.type %]
 <div id="results">
   [% UNLESS no_count %]
   [% IF results.size > 0 %]
     <div id="fade">about <span id="count">[% c.stash.count%]</span> 
-      [% UNLESS search_type == 'All'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
+      [% UNLESS type == 'all'; pluralize(type, results.size) _ ' found'; ELSE; 'results'; END; %]
+      [% IF querytime; "(" _ querytime _ " seconds)"; END %]
     </div>
   [% ELSE %]
     Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
   [% END %]
   [% END %]
-  <ul class="results-[% search_type %]">
+  <ul class="results-[% type %]">
     [% PROCESS "search/result_list.tt2" %]
   </ul>
 
   [% PROCESS timer IF noboiler %]   
-    [% IF c.stash.count > 20 %]
-    <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query | uri %]/">view more</div>
+    [% IF c.stash.count > 10 %]
+    <div id="load-results" class="load-results" href="/search/[% type %]/[% c.stash.query | uri %]/">load 10 more results</div>
     [% END %]
 </div>
 
@@ -40,7 +40,7 @@
     var total = [% c.stash.count %];
     var page = 2;
     $jq(".load-results").live('click', function() {
-      if((page*20) > total){ return; }
+      if(((page-1)*10) > total){ return; }
       var url= $jq(this).attr("href") + page;
 
       $jq(this).removeClass("load-results");
@@ -49,9 +49,11 @@
       setLoading(div);
       $jq("#load-results").html("loading...");
       div.load(url, function(response, status, xhr) {
-        if((page*20) <= total){
+        var left = total - (page*10);
+        if(left > 0){
+          if(left>10){left=10;}
           $jq("#load-results").addClass("load-results");
-          $jq("#load-results").html("view more");
+          $jq("#load-results").html("load " + left + " more results");
         }else{
           $jq("#load-results").remove();
         }
@@ -63,6 +65,7 @@
           $jq(this).html(msg + xhr.status + " " + xhr.statusText);
         }
         page++;
+        loadcount++;
       });
 
       div.appendTo($jq(this).parent().children("ul"));

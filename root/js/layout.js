@@ -164,14 +164,13 @@
 
 
 
-
+  var loadcount = 0;
 
 $jq(function() {
 
     var $sidebar   = $jq("#navigation"),
         $window    = $jq(window),
         offset     = 0,
-        loadcount  = 0,
         at_default = -45;
 
     $window.scroll(function() {
@@ -198,13 +197,14 @@ $jq(function() {
         }
       } 
       var results    = $jq("#results"); //load inside so we can catch the results loaded by ajax calls
-      if(results.offset() && loadcount < 2){
+
+      if(results.offset() && loadcount < 3){
 
         var rHeight = results.height() + results.offset().top;
         var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
         if(rBottomPos < 400) {
           results.children(".load-results").trigger('click');
-          loadcount++;
+          
         }
       }
 
