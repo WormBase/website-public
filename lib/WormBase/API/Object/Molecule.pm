@@ -22,6 +22,16 @@ http://wormbase.org/resources/molecule
 
 =cut
 
+#######################################
+#
+# The Overview Widget
+#
+#######################################
+
+=head2 Overview
+
+=cut
+
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
@@ -30,29 +40,31 @@ http://wormbase.org/resources/molecule
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-=head2 synonym 
+=head3 synonym
 
-This method will return a data structure with synonym for the molecule name.
+This method will return a data structure with synonyms for the molecule name.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->synonym();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Molecule ID D054852
+A Molecule id (eg D054852)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -66,49 +78,53 @@ a Molecule ID D054852
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/synonym 
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/synonym
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub synonym {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Synonym; 
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-	};
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Synonym;
+    return {
+        'data'        => $data_pack,
+        'description' => 'synonyms for the molecule name'
+    };
 }
 
-=head2 db
+=head3 db
 
-This method will return a data structure with db info for the molecule.
+This method will return a data structure with db information for the molecule.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->db();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Molecule ID D054852
+A Molecule id (eg D054852)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -122,120 +138,62 @@ a Molecule ID D054852
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/db
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
-
-=cut
-
-
-sub db {
-	my $self = shift;
-    my $object = $self->object;
-    my @db_data = $object->DB_info->col if $object->DB_info;
-    my $db = $self->_pack_obj($db_data[0]);
-    my $field = $self->_pack_obj($db_data[1]);
-    my $accession_number = $self->_pack_obj($db_data[2]);
-    
-	my $data_pack = {
-		'db' =>$db,
-		'field' =>$field,
-		'accession' => $accession_number
-	};
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-		};
-}
-
-=head2 affects
-
-This method will return a data structure with classes affected by the molecule.
-
-=head3 PERL API
-
- $data = $model->affects();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Molecule ID D054852
-
-an object tag Variation Strain Transgene OR RNAi
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
 
 =back
 
-=head4 Request example
+=cut 
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affects
+sub db {
+    my $self             = shift;
+    my $object           = $self->object;
+    my @db_data          = $object->DB_info->col if $object->DB_info;
+    my $db               = $self->_pack_obj( $db_data[0] );
+    my $field            = $self->_pack_obj( $db_data[1] );
+    my $accession_number = $self->_pack_obj( $db_data[2] );
 
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-
-sub affects {
-	my $self = shift;
-	my $tag = shift;
-    my $object = $self->object;
-	my @tag_objects = $object->$tag;
-	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
-	return {
-		'data'=> \@data_pack,
-		'description' => ''
-	};
+    my $data_pack = {
+        'db'        => $db,
+        'field'     => $field,
+        'accession' => $accession_number
+    };
+    return {
+        'data'        => $data_pack,
+        'description' => 'database information for external resources'
+    };
 }
 
-=head2 gene_regulation
+=head3 gene_regulation
 
-This method will return a data structure on the gene_regulation involving the molecule.
+This method will return a data structure with gene_regulation processes involving the molecule.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->gene_regulation();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Molecule ID D054852
+A Molecule id (eg D054852)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -249,51 +207,55 @@ a Molecule ID D054852
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/gene_regulation
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
 
+=cut 
 
 sub gene_regulation {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Gene_regulation->right if $object->Gene_regulation;
-	my $data_pack = $self->_pack_obj($tag_object);
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-		};
+    my $self       = shift;
+    my $object     = $self->object;
+    my $tag_object = $object->Gene_regulation->right
+      if $object->Gene_regulation;
+    my $data_pack = $self->_pack_obj($tag_object);
+    return {
+        'data'        => $data_pack,
+        'description' => 'gene regulation involving the molecule'
+    };
 }
 
-=head2 molecule_use
+=head3 molecule_use
 
-This method will return a data structure info on the use of the molecule.
+This method will return a data structure with information on molecule_use.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->molecule_use();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Molecule ID D054852
+A Molecule id (eg D054852)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -307,23 +269,289 @@ a Molecule ID D054852
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/molecule_use
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub molecule_use {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Molecule_use; 
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-	};
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Molecule_use;
+    return {
+        'data'        => $data_pack,
+        'description' => 'uses for the molecule'
+    };
 }
+
+############################
+#
+# The Phenotype Widget
+#
+############################
+
+=head3 affected_variation
+
+This method will return a data structure with variations affected by the molecule.
+
+=over
+
+=item PERL API
+
+ $data = $model->affected_variation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Molecule id (eg D054852)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_variation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub affected_variation {
+    my $self      = shift;
+    my $data_pack = _affects('Variation');
+
+    return {
+        data        => $data_pack,
+        description => 'variations affected by molecule'
+
+    };
+}
+
+=head3 affected_strain
+
+This method will return a data structure with strains affected by the molecule.
+
+=over
+
+=item PERL API
+
+ $data = $model->affected_strain();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Molecule id (eg D054852)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_strain
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub affected_strain {
+    my $self      = shift;
+    my $data_pack = _affects('Strain');
+
+    return {
+        data        => $data_pack,
+        description => 'strain affected by molecule'
+    };
+}
+
+=head3 affected_transgene
+
+This method will return a data structure with transgenes affected by the molecule.
+
+=over
+
+=item PERL API
+
+ $data = $model->affected_transgene();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Molecule id (eg D054852)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_transgene
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub affected_transgene {
+    my $self      = shift;
+    my $data_pack = _affects('Transgene');
+
+    return {
+        data        => $data_pack,
+        description => 'transgenes affected by molecule'
+    };
+}
+
+=head3 affected_rnai
+
+This method will return a data structure with rnais affected by the molecule.
+
+=over
+
+=item PERL API
+
+ $data = $model->affected_rnai();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Molecule id (eg D054852)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_rnai
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub affected_rnai {
+    my $self      = shift;
+    my $data_pack = _affects('RNAi');
+
+    return {
+        data        => $data_pack,
+        description => 'rnai affected by molecule'
+    };
+}
+
+##########################
+#
+# Internal methods
+#
+##########################
+
+sub _affects {
+    my $self        = shift;
+    my $tag         = shift;
+    my $object      = $self->object;
+    my @tag_objects = $object->$tag;
+    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
+      if @tag_objects;
+    return @data_pack ? \@data_pack : undef;
+}
+
 1;
