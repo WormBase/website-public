@@ -93,11 +93,11 @@ sub _build_search {
 				  -ConfigFile      => "$root/../wormbase.conf",
 				  -InterPolateVars => 1
     );
-  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search");
+  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
   my $qp = Search::Xapian::QueryParser->new($db);
   $qp->set_database($db);
   $qp->set_default_op(OP_OR);
-  my $svrp = Search::Xapian::StringValueRangeProcessor->new(0);
+  my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $qp->add_valuerangeprocessor($svrp);
 
   return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self}); 

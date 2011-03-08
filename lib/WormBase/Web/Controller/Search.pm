@@ -35,12 +35,16 @@ sub search :Path('/search') Args {
     $tmp_query .= " $query" unless($tmp_query =~ /$query/ );
     $c->log->debug("search $query");
       
-    my $search = $type unless($type=~/All/);
+    my $search = $type unless($type=~/all/);
 
     my ($it,$res)= $api->search->search(
-      $tmp_query, $page_count, $search
+      $c, $tmp_query, $page_count, $search
     );
 
+#     $c->stash->{iterator} = $it;
+#     $c->stash->{template} = "search/xapian.tt2";
+
+    $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
     my @ret;
@@ -53,6 +57,7 @@ sub search :Path('/search') Args {
       push(@ret, \%obj);
     }
     $c->stash->{results} = \@ret;
+    $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
 
     return;
@@ -80,37 +85,6 @@ sub search_preview :Path('/search/preview')  :Args(2) {
     $c->stash->{'query'} = $species || "*";
     $c->stash->{'class'} = $type;
 }
-
-
-#########################################
-# Search actions
-#########################################
-# Display the search form itself
-
-
-=head1 basic_search
-
-A site-wide and per-class basic search
-
-=cut
-
-sub basic : Args(2) {
-  my ($self,$c,$class,$name) = @_;
-  
-  # Instantiate the Model
-  my $model = $c->model(ucfirst($class));
-  
-  # Generically search a class
-  $c->stash->{template} = "search/$class.tt2";
-  
-  # Pass the search form the appropriate configuration directives, too.
-  $c->stash->{results}  = $model->search($name);
-  
-  # Design patterns:  Need generic search limits, fields to return,
-  # paging, (or dynamic loading on scroll). 
-}
-
-
 
 
 =head1 NAME

@@ -11,7 +11,7 @@
 
     [% FOREACH option IN c.config.search_dropdown.option %]
      
-        [% IF option.id == "gene" %]
+        [% IF option.id == "all" %]
             <li id="[%- option.id -%]" class="selected" onclick="search_change('[%- option.id -%]')"><a href="javascript:void(0)">[%- option.title -%]</a></li>
         [% ELSE %]
             <li id="[%- option.id -%]" onclick="search_change('[%- option.id -%]')"><a href="javascript:void(0)">[%- option.title -%]</a></li>
@@ -24,7 +24,6 @@
 
 [% IF class %]
 <script>
-  [% search_class = class FILTER ucfirst %]
-  search_change("[% search_class %]");
+  search_change("[% class %]");
 </script>
 [% END %]

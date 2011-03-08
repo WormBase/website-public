@@ -1,3 +1,4 @@
+[% IF page > 1; "<br /><b>Page " _ page _ "</b>"; END; %]
 [% FOREACH item IN results %]
  [% UNLESS c.stash.bench %]<div class="result">[% END %]
  [% USE String(item.name.class); class = String.lower; %]
@@ -13,7 +14,7 @@
 
  
 
-  [% IF search_type == 'All' %]
+  [% IF type == 'all' %]
     <span id="fade">[% class %]:</span>
   [% END %]
 

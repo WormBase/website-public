@@ -28,7 +28,7 @@ $jq(document).ready(function(){
 });
 
 
-var cur_search_type = 'All';
+var cur_search_type = 'all';
 
 function search() {
     var f = $jq("#Search").attr("value");
@@ -43,7 +43,7 @@ function search() {
 }
 
 function search_change(new_search) {
-  if((new_search == "Home") || (new_search == "Me") || (new_search == "Bench")){ new_search = "All"; }
+  if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
   $jq("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
   cur_search_type = new_search;
   $jq("#searchForm ul.dropdown li#" + new_search).addClass("selected");

@@ -29,10 +29,10 @@ has 'c' => (
 
 
 sub search {
-    my ( $class, $q, $page, $type, $page_size) = @_;
+    my ( $class, $c, $q, $page, $type, $page_size) = @_;
     my $t=[gettimeofday];
     $page       ||= 1;
-    $page_size  ||=  20;#$class->config->{page_size};
+    $page_size  ||=  10;#$class->config->{page_size};
     $class->db->reopen();
 
     if($type){
@@ -41,15 +41,15 @@ sub search {
 
     my $query=$class->qp->parse_query( $q, 512|1|2 );
     my $enq       = $class->db->enquire ( $query );
-
-    if($type =~ /Paper/){
+$c->log->debug("query:" . $query->get_description());
+    if($type =~ /paper/){
         $enq->set_docid_order(ENQ_DESCENDING);
         $enq->set_weighting_scheme(Search::Xapian::BoolWeight->new());
     }
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
-    $time =~ s/\./\,/;
+#     $time =~ s/\./\,/;
     from_to($q,'utf-8','iso-8859-1') if $class->config->{utf8_query};
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
