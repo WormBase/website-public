@@ -1,11 +1,11 @@
 /* the home page */
 
 
-div#top{
+div#splash-box{
   margin:1em 0 0;
   border:1px solid #DDD;
 }
-div#top>div{
+div#splash-box>div {
 /*   height:6em; */
   padding:1.5em;
   padding-left:2.5em;
@@ -18,7 +18,7 @@ div#top>div>p{
   width:15em;
 }
 div.content-box {
-  padding:0.5em;
+  padding:0.5em 0 0.5em 0;
   position:relative;
   background:#EEE;
   background-image:url('/img/home.png');
