@@ -7,14 +7,12 @@ use File::Path 'mkpath';
 # provided with a class and a name, return the internal ID, if different.
 
 # TODO:
-# Reconcile all the various versions of genomic_environs and genomic_picture
-# Test interpolated_genetic_position
-# Genomic position isn't fully abstract: It requires GFF segments to be passed in, or that the Model implement segments()
 # Synonym (other_name?)
 # common name: Short_name || common_name || Public_name
 # DONE (mostly): Database and DB_Info parsing
 # Titles / description / definition
 # Phenotypes observed/not_observed
+#
 
 has 'MAX_DISPLAY_NUM' => (
       is => 'ro',
@@ -39,7 +37,7 @@ has 'log' => (
 has 'tmp_base' => (
     is => 'ro',
     );
- 
+
 has 'pre_compile' => (
     is => 'ro',
     );
@@ -57,7 +55,7 @@ has 'pre_compile' => (
 
 =head3 name
 
-This method will return a data structure of the 
+This method will return a data structure of the
 name and ID of the requested object.
 
 =over
@@ -104,7 +102,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% name %]
 
@@ -191,7 +189,7 @@ sub _build_common_name {
     my $self   = shift;
     my $object = $self->object;
     my $tag    = $self->_common_name_tag($object->class);
-    
+
     my $label  = $tag ? $object->$tag : $object->name;
     return { description => 'the common name of the object which may be the object name',
 	     data        => $self->_pack_obj($object,$label),
@@ -262,7 +260,7 @@ sub _build_other_names {
     my $self = shift;
     my $object = $self->object;
     my @names = $object->Other_name;
-    
+
     # We will just stringify other names; no sense in linking them.
     @names = map { "$_" } @names;
     return { description => "other names that have been used to refer to $object",
@@ -272,7 +270,7 @@ sub _build_other_names {
 
 =head3 best_blastp_matches
 
-This method returns a data structure containing 
+This method returns a data structure containing
 the best BLASTP matches for the current gene or protein.
 
 =head4 PERL API
@@ -343,12 +341,12 @@ sub _build_best_blastp_matches {
     }
 
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
-    
+
     my @pep_homol = $biggest->Pep_homol;
     my $length    = $biggest->Peptide(2);
-    
+
     my @hits;
-    
+
     # find the best pep_homol in each category
     my %best;
     return "" unless @pep_homol;
@@ -357,24 +355,24 @@ sub _build_best_blastp_matches {
 #     next if ($hit =~ /^MSP/);
 	next if $hit eq $biggest;         # Ignore self hits
 	my ($method,$score) = $hit->row(1) or next;
-	
+
 	my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
 	$prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score .'0' : "$prev_score.0000";
 	my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0' : "$score.0000";
-	
+
 	$best{$method} = {score=>$score,hit=>$hit,adjusted_score=>$curr_score} if !$best{$method} || $prev_score < $curr_score;
     }
-    
+
     foreach (values %best) {
 	my $covered = $self->_covered($_->{score}->col);
 	$_->{covered} = $covered;
     }
-    
+
     # NOT HANDLED YET
     # my $links = Configuration->Protein_links;
-    
+
     my %seen;  # Display only one hit / species
-    
+
     # I think the perl glitch on x86_64 actually resides *here*
     # in sorting hash values.  But I can't replicate this outside of a
     # mod_perl environment
@@ -383,18 +381,18 @@ sub _build_best_blastp_matches {
     foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
 	my $method = $_;
 	my $hit = $best{$_}{hit};
-	
+
 	# Try fetching the species first with the identification
 	# then method then the embedded species
 	my $species = $self->id2species($hit);
 	$species  ||= $self->id2species($method);
-	
-	# Not all proteins are populated with the species 
+
+	# Not all proteins are populated with the species
 	$species ||= $best{$method}{hit}->Species;
 	$species =~ s/^(\w)\w* /$1. / ;
 	my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
 	my $class;
-	
+
 	# this doesn't seem optimal... maybe there should be something in config?
 	if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
 	    $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
@@ -417,7 +415,7 @@ sub _build_best_blastp_matches {
 	    my $accession = $2;
 	    $id = $accession unless $class;
 	    $class = $prefix unless $class;
-	    
+
 	    # Try fetching accessions directly from the protein object
 #       my @dbs = $hit->Database;
 #       foreach my $db (@dbs) {
@@ -430,7 +428,7 @@ sub _build_best_blastp_matches {
 # 	  }
 # 	}
 #       }
-	    
+
 	    # NOT HANDLED YET!
 #      my $link_rule = $links->{$prefix};
 #       my $link_rule = '%s';
@@ -446,7 +444,7 @@ sub _build_best_blastp_matches {
 # 	$hit = qq{<a href="$url" -target="_blank">$hit</a>};
 #       }
 	}
-	
+
 #       $hits{$hit}{species}=$species;
 #       $hits{$hit}{hit}=$hit;
 #       $hits{$hit}{description}=$description;
@@ -460,7 +458,7 @@ sub _build_best_blastp_matches {
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
 =cut
-	    
+
 	push @hits,{ taxonomy => $taxonomy,
 		     hit      => { label => "$hit",
 				   id    => ($id ? "$id" : "$hit"),
@@ -472,21 +470,21 @@ sub _build_best_blastp_matches {
 #  		sprintf("%7.3g",10**-$best{$_}{score}),
 # 		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
     }
-    
+
     return { description => 'best BLASTP hits from selected species',
-	     data        => @hits ? \@hits : undef }; 
+	     data        => @hits ? \@hits : undef };
 }
 
 
 =head3 description
-    
+
 This method will return a data structure containing
 a brief description of the object.
-    
+
 =over
 
 =item PERL API
-    
+
   $data = $model->description();
 
 =item REST API
@@ -527,7 +525,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% description %]
 
@@ -536,7 +534,7 @@ has 'description'  => (
     lazy_build => 1,
     );
 
-sub _build_description { 
+sub _build_description {
     my $self    = shift;
     my $object  = $self->object;
     my $class   = $object->class;
@@ -550,7 +548,7 @@ sub _build_description {
     return { description  => "description of the $class $object",
 	     data         => "$description" || undef,
     };
-	     
+
 #    my $data = { description => "description of the $class $object",
 #		 data        => { description => $description ,
 #				  evidence    => { check=>$self->check_empty($description),
@@ -628,8 +626,8 @@ sub _build_expression_patterns {
     my $object = $self->object;
     my $class  = $object->class;
     my @data;
-    
-    foreach ($object->Expr_pattern) {	
+
+    foreach ($object->Expr_pattern) {
 	my $author  = $_->Author || '';
 	my @patterns = $_->Pattern || $_->Subcellular_localization || $_->Remark;
 	push @data, {
@@ -643,236 +641,6 @@ sub _build_expression_patterns {
 }
 
 
-
-=head3 genetic_position
-
-This method returns a data structure containing
-the genetic position of the requested object, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->genetic_position();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A class and object ID.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Template: [% genetic_position %]
-
-has 'genetic_position' => (
-    is    => 'ro',
-    lazy_build => 1
-    );
-
-
-sub _build_genetic_position {
-  my ($self) = @_;
-  my $object = $self->object;
-  my $class  = $object->class;
-  my ($chromosome,$position,$error,$method);
-
-  # CDSs and Sequence are only interpolated
-  if ($class eq 'CDS' || $class eq 'Sequence') {
-      if ($object->Interpolated_map_position) {
-	  ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
-	  $method = 'interpolated';
-      } else {
-	  # Try fetching from the gene
-	  if (my $gene = $object->Gene) {
-	      $chromosome = $gene->get(Map=>1);
-	      $position   = $gene->get(Map=>3);
-	      $method = 'interpolated';
-	  }
-      }
-  } else {
-      ($chromosome,undef,$position,undef,$error) = eval{$object->Map(1)->row};
-      $method = 'experimentally determined' if $chromosome;
-  }
-
-  # Nothing yet? Trying fetching interpolated position.
-  unless ($chromosome) {
-      if ($object->Interpolated_map_position) {
-	  ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
-	  $method = 'interpolated';
-      }
-  }
-
-  my $label;
-  if ($position) {
-      $label= sprintf("$chromosome:%2.2f +/- %2.3f cM",$position,$error || 0);      
-  } else {
-      $label = $chromosome;
-  }
-  
-  return { description => "the genetic position of the $class:$object",
-	   data        => { chromosome => "$chromosome",
-			    position    => "$position",
-			    error       => "$error",
-			    formatted   => "$label",
-			    method      => "$method",
-	   },
-  };
-}
-
-
-######## NOT IN USE AND LIKELY NO LONGER NEEDED
-
-
-=head3 genetic_position_interpolated
-
-This method returns a data structure containing
-the genetic position of the requested object, if known.
-
-=over
-
-=item PERL API
-
- $data = $model->genetic_position_interpolated();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A class and object ID.
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/genetic_position_interpolated
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-# Template: [% interpolated_genetic_position %]
-
-has 'genetic_position_interpolated' => (
-    is => 'ro',
-    lazy_build => 1
-    );
-
-
-sub _build_genetic_position_interpolated {
-  my ($self) = @_;
-  my $object = $self->object;
-  my ($chrom,$pos,$error);
-  for my $cds ($object->Corresponding_CDS) {
-    ($chrom,$pos,$error) = $self->_get_interpolated_position($cds);
-    last if $chrom;
-  }
-  return { description => 'the interpolated genetic position of the object',
-	   data        => { chromosome         => "$chrom",
-			    position            => "$pos",
-			    formatted_position => sprintf("%s:%2.2f",$chrom,$pos)
-	   },
-  }
-}
-
-# get the interpolated position of a sequence on the genetic map
-# returns ($chromosome, $position,$error)
-# position is in genetic map coordinates
-# This MIGHT also be the actual experimental position
-sub _get_interpolated_position {
-  my ($self,$object) = @_;
-  $object ||= $self->object;
-  if ($object){
-    if ($object->class eq 'CDS') {
-      # Is it a query
-      # wquery/genelist.def:Tag Locus_genomic_seq
-      # wquery/new_wormpep.def:Tag Locus_genomic_seq
-      # wquery/wormpep.table.def:Tag Locus_genomic_seq
-      # wquery/wormpepCE_DNA_Locus_OtherName.def:Tag Locus_genomic_seq
-      
-      # Fetch the interpolated map position if it exists...
-      # if (my $m = $object->get('Interpolated_map_position')) {
-      if (my $m = eval {$object->get('Interpolated_map_position') }) {
-	#my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
-	my ($chromosome,$position) = $m->right->row;
-	return ($chromosome,$position) if $chromosome;
-      } elsif (my $l = $object->Gene) {
-	return $self->_get_interpolated_position($l);
-      }
-    } elsif ($object->class eq 'Sequence') {
-      #my ($chromosome,$position,$error) = $obj->Interpolated_map_position(1)->row;
-      my $chromosome = $object->get(Interpolated_map_position=>1);
-      my $position   = $object->get(Interpolated_map_position=>2);
-      return ($chromosome,$position) if $chromosome;
-    } else {
-      my $chromosome = $object->get(Map=>1);
-      my $position   = $object->get(Map=>3);
-      return ($chromosome,$position) if $chromosome;
-      if (my $m = $object->get('Interpolated_map_position')) {	     
-	my ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row unless $position;
-	($chromosome,$position) = $m->right->row unless $position;
-	return ($chromosome,$position,$error) if $chromosome;
-      }
-    }
-  }
-  return;
-}
 
 
 =head3 laboratory
@@ -1020,7 +788,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% method %]
 
@@ -1034,7 +802,7 @@ sub _build_method {
     my $self = shift;
     my $object = $self->object;
     my $class  = $object->class;
-    
+
     my $method = $self->Method;
     return {
 	description => "the method used to describe the $class",
@@ -1091,7 +859,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% remarks %]
 
@@ -1107,10 +875,10 @@ sub _build_remarks {
 #    my @remarks = grep defined, map { $object->$_ } qw/Remark/;
     my @remarks = $object->Remark;
     my $class = $object->class;
-    
+
     # Need to add in evidence handling.
     my @evidence = map { $_->col } @remarks;
-    
+
     # TODO: handling of Evidence nodes
     return {
         description  => "curatorial remarks for the $class",
@@ -1170,7 +938,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% summary %]
 
@@ -1239,7 +1007,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% status %]
 
@@ -1257,7 +1025,7 @@ sub _build_status {
     if ($class eq 'Protein') {
 	$status = $object->Live(0) ? 'live' : 'history';
     } else {
-	$status  = $object->Status;    
+	$status  = $object->Status;
     }
     my $data    = { description  => "current status of the $class:$object",
 		    data         => "$status",
@@ -1314,7 +1082,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 # Template: [% taxonomy %]
 
@@ -1463,19 +1231,19 @@ sub _common_name_tag {
 sub mysql_dsn {
     my $self    = shift;
     my $source = shift;
-    return $self->dsn->{"mysql_".$source}; 
+    return $self->dsn->{"mysql_".$source};
 }
 
 sub gff_dsn {
     my $self    = shift;
     my $species = shift || $self->parsed_species ;
     $self->log->debug("geting gff database species $species");
-    return $self->dsn->{"gff_".$species} || $self->dsn->{"gff_c_elegans"} ; 
+    return $self->dsn->{"gff_".$species} || $self->dsn->{"gff_c_elegans"} ;
 }
 
 sub ace_dsn{
     my $self    = shift;
-    return $self->dsn->{"acedb"}; 
+    return $self->dsn->{"acedb"};
 }
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
@@ -1483,7 +1251,7 @@ sub tmp_dir {
     my @sub_dirs = @_;
     my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
 
-    mkpath($path,0,0777) unless -d $path;    
+    mkpath($path,0,0777) unless -d $path;
     return $path;
 };
 
@@ -1506,23 +1274,23 @@ sub tmp_image_dir {
 # and apache in production.
 sub tmp_image_uri {
     my ($self,$path_and_file) = @_;
-    
+
 #    # append the hostname so that I can correctly direct traffic through the proxy
 #    my $host = `hostname`;
 #    chomp $host;
 #    $host ||= 'local';
-    
+
     my $tmp_base = $self->tmp_base;
-    
-    # Purge the temp base from the path_and_file    
+
+    # Purge the temp base from the path_and_file
     # pre-NFS: eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
     # eg /tmp/wormbase/images/00/00/00/filename.jpg -> images/00/00/00/filename.jpg
     $path_and_file =~ s/$tmp_base//;
-    
+
     # URI (pre-NFS): /images/wb-web1/00/00/00...
     # URI: /images/00/00/00...
     my $uri = '/' . $path_and_file;
-    return $uri;    
+    return $uri;
 }
 
 sub tmp_acedata_dir {
@@ -1664,97 +1432,6 @@ sub _check_data_content {
 	return @compliance_problems ? ($data, @compliance_problems) : ();
 }
 
-#generic method for getting genomic pictures
-#it requires the object calling this method having a segments attribute which is an array ref storing the gff sequences
-#it also requires the object having a type attribute which is also an array ref storing the tracks to display
-sub genomic_picture {
-    my ($self,$ref,$start,$stop);
-    my $position;
-    if (@_ == 4) {
-      $self = shift;
-      $position = $self->gbrowse_url(@_);
-    }
-
-    # or with a sequence object
-    else {
-      $self = shift ;
-      my $segment = $self->pic_segment or return;
-      $position = $self->gbrowse_url($segment);
-    }
-
-    return unless $position;
-    my $species = $self->parsed_species;
-    my $type = @{$self->tracks} ? join(";", map { "t=".$_ } @{$self->tracks}) : ""; 
-    $self->log->debug("tracks:" ,$type);
-    my $gbrowse_img = "$species/?name=$position;$type";
-    my $id = "$species/?name=$position";
-    my $data = { description => 'The Inline Image of the sequence',
-		 data        => {  class => 'genomic_location',
-				   label => $gbrowse_img,
-				   id	=> $id,
-				},
-    };  
-    return $data;    
-}
-
-sub gbrowse_url {
-    my ($self,$ref,$start,$stop);
-    my $flag= 1;
-    # can call with three args (ref,start,stop)
-    if (@_ == 4) {
-	($self,$ref,$start,$stop) = @_;
-	$flag=0;
-    }
-    
-    # or with a sequence object
-    else {
-	my ($self,$seq_obj) = @_ or return;
-	$seq_obj->absolute(1); 
-	$start      = $seq_obj->abs_start;
-	$stop       = $seq_obj->abs_stop;
-	$ref        = $seq_obj->abs_ref;
-    }
-    
-    $ref =~ s/^CHROMOSOME_//;
-    if(defined $start) {
-	my $length = abs($stop - $start)+1;
-	$start = int($start - 0.05*$length) if $length < 500;
-	$stop  = int($stop  + 0.05*$length) if $length < 500;
-	($start,$stop) = ($stop,$start) if ($flag && $start > $stop);
-	$ref .= ":$start..$stop";
-    }
-    return $ref;
-}
-
-
-# Provided with a GFF segment, return its genomic coordinates
-sub genomic_position {
-    my ($self,$segments) = @_;
-    $segments ||= $self->segments;
-    my @a;
-    if ($segments) {
-	$segments = [$segments] unless ref $segments eq 'ARRAY';
-	for my $segment (@$segments) {
-	    $segment->absolute(1);
-	    my $ref = $segment->ref;
-	    my $start = $segment->start;
-	    my $stop  = $segment->stop;
-	    next unless abs($stop-$start) > 0;
-	    my $url = $self->gbrowse_url($ref,$start,$stop);
-	    my $hash = {
-		label => $url,
-		id=>$self->parsed_species."/?name=".$url,
-		class=>'genomic_location',
-	    };
-	    push @a, $hash;
-	}
-    }
-    return {
-	description => 'The genomic location of the sequence',
-	data        => @a ? \@a : undef,
-    };
-}
-
 
 
 ############################################################
@@ -1762,35 +1439,6 @@ sub genomic_position {
 # Private Methods
 #
 ############################################################
-
-
-# Provided with an ace object, fetch
-# its genomic coordinates.
-# Used by Clone.
-sub _get_genomic_position_using_object {
-    my ($self,$seq) = @_;
-    my $db    = $self->gff_dsn($seq->Species);
-    my $name  = "$seq";
-    my $class = eval{$seq->class} || 'Sequence';
-    my @s     = $db->segment($class=>$name) or return;
-    my @result;
-    foreach (@s) {
-	my $ref = $_->abs_ref;
-	$ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
-	push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
-    }
-    return unless @result;
-    return wantarray ? @{$result[0]} : \@result;
-}
-
-
-
-
-
-
-
-
-
 
 
 1;

@@ -5,8 +5,9 @@ use Bio::Graphics::Browser2::Markup;
 # I shouldn't need to use CGI here.
 #use CGI qw/:standard :html3/;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 
 
 =pod
@@ -28,62 +29,11 @@ http://wormbase.org/resources/analysis
 =cut
 
 
+# pending factoring into new role
 # TODO:
 # Mapping data
 # Marked_rearrangement
-has 'pic_segment' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        my $gene   = $self ~~ 'Gene';
 
-        # Fetch a GF handle
-        my $gffdb     = $self->gff_dsn();
-        my ($segment) = $gffdb->segment(Gene => $gene);
-
-        # By default, lets just center the image on the variation itself.
-        # What segment should be used to determine the baseline coordinates?
-        # Use a CDS segment if one is provided, else just show the genomic environs
-
-        # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-        my $UNMAPPED_SPAN = 10000;
-        unless ($segment) {
-            # Try fetching a generic segment corresponding to a span flanking the variation
-
-            my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
-
-            # Generate a link to the genome browser
-            # This is hard-coded and needs to be cleaned up.
-            # Is the segment smaller than 100? Let's adjust
-            my ($low,$high);
-            if ($abs_stop - $abs_start < 100) {
-                $low  = $abs_start - 50;
-                $high = $abs_stop  + 50;
-            }
-            else {
-                $low  = $abs_start;
-                $high = $abs_stop;
-            }
-
-            my $split  = $UNMAPPED_SPAN / 2;
-            ($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
-        }
-
-        return $segment;
-
-    }
-);
-
-has 'tracks' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        return [qw(CG
-                   Allele
-                   TRANSPOSONS)];
-    }
-);
 
 
 
@@ -628,116 +578,87 @@ sub polymorphism_assays {
 
 =cut
 
+# based on the above 'segments' (previously 'pic_segment') attribute,
+# this may be doing the same thing, so we probably could omit this and rely
+# entirely on SUPER::genomic_position...
+# the key difference lies in the segment that's fetched. here it's fetched
+# with _get_genomic_segment, whereas above it's a GFFDB call...
+sub _build_genomic_position {
+    my ($self) = @_;
+    my $segments = [$self->_get_genomic_segment(-key => 'wt_variation') || ()];
+    my $adjustment = sub {
+        my ($abs_start, $abs_stop) = @_;
+        return $abs_stop - $abs_start < 100
+             ? ($abs_start - 50, $abs_stop + 50)
+             : ($abs_start, $abs_stop);
+
+    };
+
+    my @positions = $self->_genomic_position($segments, $adjustment);
+    return {
+        description => 'The genomic location of the sequence',
+        data        => @positions ? \@positions : undef,
+    };
+}
+
+sub _build_tracks {
+    return {
+        description => 'tracks displayed in GBrowse',
+        data => [qw(CG
+                    Allele
+                    TRANSPOSONS)],
+    };
+}
+
+sub _build_genomic_image_position {
+    my ($self) = @_;
+    my $gene   = $self ~~ 'Gene';
+
+    # Fetch a GF handle
+    my $gffdb     = $self->gff_dsn();
+    my ($segment) = $gffdb->segment(Gene => $gene);
+
+    # By default, lets just center the image on the variation itself.
+    # What segment should be used to determine the baseline coordinates?
+    # Use a CDS segment if one is provided, else just show the genomic environs
+
+    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+    my $UNMAPPED_SPAN = 10000;
+    unless ($segment) {
+        # Try fetching a generic segment corresponding to a span flanking the variation
+
+        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+
+        # Generate a link to the genome browser
+        # This is hard-coded and needs to be cleaned up.
+        # Is the segment smaller than 100? Let's adjust
+        my ($low,$high);
+        if ($abs_stop - $abs_start < 100) {
+            $low  = $abs_start - 50;
+            $high = $abs_stop  + 50;
+        }
+        else {
+            $low  = $abs_start;
+            $high = $abs_stop;
+        }
+
+        my $split  = $UNMAPPED_SPAN / 2;
+        ($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
+    }
+
+    my ($position) = $self->_genomic_position([$segment || ()]);
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    }
+}
+
+# TODO: required to consume Role::Position, but currently unknown implementation.
+sub _build_segments {} # WARNING: THIS MAY WREAK HAVOC ON _get_genomic_segment!
 
 # sub genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include genetic_position >>
-
-# The genomic position and a link to the genome browser
-# SHOULD BE ABSTRACT
-sub genomic_position {
-    my ($self) = @_;
-
-    my $description = 'the genomic coordinates of the variation';
-
-    if (my $segment = $self->_get_genomic_segment(-key=>'wt_variation')) {
-        my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
-
-        # Is the segment smaller than 100? Let's adjust
-        # coordinates a bit for a better GBrowse view.
-        my ($low,$high) = $abs_stop - $abs_start < 100
-                        ? ($abs_start - 50, $abs_stop + 50)
-                        : ($abs_start, $abs_stop);
-
-=pod
-
-    my $link = "/db/seq/gbrowse/elegans/?ref=$chrom;start=$low;stop=$high;label=CG-Allele";
-    my $data = { description => 'the genomic coordinates of the variation',
-                 data        => { chromosome => $chrom,
-                                  start      => $abs_start,
-                                  stop       => $abs_stop,
-                                  gbrowse_link => $link,
-                              },
-             };
-
-=cut
-
-        my $url = $self->gbrowse_url($chrom,$low,$high);
-
-        return {
-            description => $description,
-            data        => $segment && {
-                id    => $self->parsed_species . "/?name=" . $url,
-                class => 'genomic_location',
-                label => $url,
-            },
-        };
-    }
-
-    return {
-        description => $description,
-        data => undef,
-    };
-}
-
-# Create a genomic picture
-# This is far simpler than the manual approach below but doesn't give me as much
-# flexibility
-
-=pod
-
-sub genomic_image {
-    my ($self) = @_;
-
-    my $object  = $self->object;
-	my $gene    = $object->Gene;
-
-	# Fetch a GF handle
-	my $gffdb   = $self->gff_dsn();
-	my ($segment) =  $gffdb->segment(Gene => $gene);
-
-	# By default, lets just center the image on the variation itself.
-	# What segment should be used to determine the baseline coordinates?
-	# Use a CDS segment if one is provided, else just show the genomic environs
-
-	# TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-	my $UNMAPPED_SPAN = 10000;
-	unless ($segment) {
-	    # Try fetching a generic segment corresponding to a span flanking the variation
-
-	    my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
-
-	    # Generate a link to the genome browser
-	    # This is hard-coded and needs to be cleaned up.
-	    # Is the segment smaller than 100? Let's adjust
-	    my ($low,$high);
-	    if ($abs_stop - $abs_start < 100) {
-            $low   = $abs_start - 50;
-            $high  = $abs_stop  + 50;
-	    }
-        else {
-            $low = $abs_start;
-            $high = $abs_stop;
-	    }
-
-	    my $split = $UNMAPPED_SPAN / 2;
-	    ($segment) =   $gffdb->segment($ref,$low-$split,$low+$split);
-	}
-
-
-    my @tracks = qw/
-                       CG
-                       Allele
-                       TRANSPOSONS/;
-
-    my $image_data = $self->build_gbrowse_img($segment,\@tracks,undef,800);
-    my $data = { description => 'a link to the genome browser',
-                 data        => $segment,
-             };
-    return $data;
-}
-
-=cut
 
 ############################################################
 #
@@ -1600,7 +1521,12 @@ sub _compile_nucleotide_changes {
 # This may be a segmenet spanning a single variation
 # Type will be used to store the segment in the object
 # Pass an object to fetch that segment
-
+# AD: ouch, this requires knowledge of the underlying Moose implementation.
+#     we wouldn't be able to do this if Moose used inside-out objects...
+#     And what if the segments attribute is renamed or moved? this will break
+#     and nobody will notice until much later on...
+#     Additionally, only _fetc_coords_in_feature uses this as a setter,
+#     so this mutator should be factored into an attribute.
 sub _get_genomic_segment {
     my ($self,@p) = @_;
     my ($class,$start,$stop,$refseq,$key) = $self->rearrange([qw/CLASS START STOP REFSEQ KEY/],@p);

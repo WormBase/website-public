@@ -9,20 +9,20 @@
 <div id="results">
   [% UNLESS no_count %]
   [% IF results.size > 0 %]
-    <div id="fade"><span id="count">[% results.size %]</span> 
-      [% UNLESS search_type == 'all'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
+    <div id="fade">about <span id="count">[% c.stash.count%]</span> 
+      [% UNLESS search_type == 'All'; pluralize(search_type, results.size) _ ' found'; ELSE; 'results'; END; %]
     </div>
   [% ELSE %]
-    Sorry, <span id="count">[% results.size %]</span> results found for the [% search_type %] search [% query %]
+    Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
   [% END %]
   [% END %]
   <ul class="results-[% search_type %]">
     [% PROCESS "search/result_list.tt2" %]
   </ul>
 
-  [% PROCESS timer IF noboiler %] 	
-    [% IF count > 20 %]
-    <div id="load-results" class="load-results" href="/search/[% type %]/[% query | uri %]?inline=1">view more</div>
+  [% PROCESS timer IF noboiler %]   
+    [% IF c.stash.count > 20 %]
+    <div id="load-results" class="load-results" href="/search/[% c.stash.type %]/[% c.stash.query | uri %]/">view more</div>
     [% END %]
 </div>
 
@@ -37,37 +37,35 @@
     $jq("div#results").highlight('[% q %]');
   [% END %]
 
-    var total = [% count %];
-    var begin = 20;
-    var end = 39;
+    var total = [% c.stash.count %];
+    var page = 2;
     $jq(".load-results").live('click', function() {
-      if(begin > total){ return; }
-      var url= $jq(this).attr("href") + "&begin=" + begin + "&end=" + end;
+      if((page*20) > total){ return; }
+      var url= $jq(this).attr("href") + page;
 
       $jq(this).removeClass("load-results");
 
       var div = $jq("<div></div>");
       setLoading(div);
       $jq("#load-results").html("loading...");
-        div.load(url, function(response, status, xhr) {
-          begin = begin + 20;
-          end = end +20;
-          if(begin <= total){
-            $jq("#load-results").addClass("load-results");
-            $jq("#load-results").html("view more");
-          }else{
-            $jq("#load-results").remove();
-          }
-          [% FOREACH q IN to_highlight %]
-            div.highlight('[% q %]');
-          [% END %]
-          if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
-          }
-        });
+      div.load(url, function(response, status, xhr) {
+        if((page*20) <= total){
+          $jq("#load-results").addClass("load-results");
+          $jq("#load-results").html("view more");
+        }else{
+          $jq("#load-results").remove();
+        }
+        [% FOREACH q IN to_highlight %]
+          div.highlight('[% q %]');
+        [% END %]
+        if (status == "error") {
+          var msg = "Sorry but there was an error: ";
+          $jq(this).html(msg + xhr.status + " " + xhr.statusText);
+        }
+        page++;
+      });
 
-        div.appendTo($jq(this).parent().children("ul"));
+      div.appendTo($jq(this).parent().children("ul"));
 
     });
 </script>

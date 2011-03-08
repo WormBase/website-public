@@ -28,13 +28,12 @@ $jq(document).ready(function(){
 });
 
 
-var cur_search_type = 'gene';
+var cur_search_type = 'All';
 
 function search() {
     var f = $jq("#Search").attr("value");
-    if(f == "search..." || f == "*" || !f){
-      location.href= '/search/all/' + cur_search_type + '/*';
-      return;
+    if(f == "search..." || !f){
+      f = "*";
     }
     f = encodeURIComponent(f);
     f = f.replace('%26', '&');
@@ -44,7 +43,7 @@ function search() {
 }
 
 function search_change(new_search) {
-  if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
+  if((new_search == "Home") || (new_search == "Me") || (new_search == "Bench")){ new_search = "All"; }
   $jq("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
   cur_search_type = new_search;
   $jq("#searchForm ul.dropdown li#" + new_search).addClass("selected");

@@ -13,7 +13,7 @@
 
  
 
-  [% IF search_type == 'all' %]
+  [% IF search_type == 'All' %]
     <span id="fade">[% class %]:</span>
   [% END %]
 
