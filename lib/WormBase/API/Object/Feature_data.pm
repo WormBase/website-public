@@ -22,33 +22,41 @@ http://wormbase.org/species/feature_data
 
 =cut
 
-###################
-## Subroutines
-###################
+#########################
+#
+# The Overview widget
+#
+#########################
 
-=head2 feature
+=head2 Overview
 
-This method will return a data structure re: feature related to this feature_data.
+=cut
 
-=head3 PERL API
+=head3 feature
+
+This method will return a data structure with feature associated with the feature_data.
+
+=over
+
+=item PERL API
 
  $data = $model->feature();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Feature_data ID AF031935:polyA_signal
+A Feature_data id (eg CO871145:polyA_site)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -62,52 +70,54 @@ a Feature_data ID AF031935:polyA_signal
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/<feature_data_id>/feature
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/CO871145:polyA_site/feature
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub feature {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Feature;
-	my $data_pack = $self->_pack_obj($tag_object);
-
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the '
-				};
-	return $data;
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $self->_pack_obj( $object->Feature ) if $object->Feature;
+    return {
+        'data' => $data_pack,
+        'description' =>
+          'description of the feature associated with this Feature_data.'
+    };
 }
 
-=head2 intron
+=head3 intron
 
-This method will return a data structure re: intron related to this feature_data.
+This method will return a data structure with introns associated with the feature_data.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->intron();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Feature_data ID <feature_data_id>
+A Feature_data id (eg CO871145:polyA_site)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -121,51 +131,55 @@ a Feature_data ID <feature_data_id>
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/<feature_data_id>/intron
-=head4 Response example
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/CO871145:polyA_site/intron
+
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub intron {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Confirmed_intron;
-	my $data_pack = $self->_pack_obj($tag_object);
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $self->_pack_obj( $object->Confirmed_intron )
+      if $object->Confirmed_intron;
 
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the '
-				};
-	return $data;
+    return {
+        'data'        => $data_pack,
+        'description' => 'introns associated with this Feature_data'
+    };
 }
 
-=head2 predicted_5
+=head3 predicted_5
 
-This method will return a data structure re: predicted 5' intron related to this feature_data.
+This method will return a data structure with predicted 5' info on the feature_data.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->predicted_5();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Feature_data ID <feature_data_id>
+A Feature_data id (eg CO871145:polyA_site)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -179,52 +193,54 @@ a Feature_data ID <feature_data_id>
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/<feature_data_id>/predicted_5
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/CO871145:polyA_site/predicted_5
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub predicted_5 {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Predicted_5;
-	my $data_pack = $self->_pack_obj($tag_object);
-
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the '
-				};
-	return $data;
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $self->_pack_obj( $object->Predicted_5 )
+      if $object->Predicted_5;
+    return {
+        'data'        => $data_pack,
+        'description' => 'predicted 5\' related object of Feature_data '
+    };
 }
 
-=head2 predicted_3
+=head3 predicted_3
 
-This method will return a data structure re: predicted 3' intron related to this feature_data.
+This method will return a data structure with predicted 3' info on the feature_data.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->predicted_3();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Feature_data ID <feature_data_id>
+A Feature_data id (eg CO871145:polyA_site)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -238,90 +254,27 @@ a Feature_data ID <feature_data_id>
 
 =back
 
-=head4 Request example
+B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/<feature_data_id>/predicted_3
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/CO871145:polyA_site/predicted_3
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub predicted_3 {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Predicted_3;
-	my $data_pack = $self->_pack_obj($tag_object);
-
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'description of the '
-				};
-	return $data;
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $self->_pack_obj( $object->Predicted_3 )
+      if $object->Predicted_3;
+    return {
+        'data'        => $data_pack,
+        'description' => 'predicted 3\' related object of Feature_data'
+    };
 }
-
-=head2 method
-
-This method will return a data structure re: method related to this feature_data.
-
-=head3 PERL API
-
- $data = $model->method();
-
-=head3 REST API
-
-=head4 Request Method
-
-GET
-
-=head4 Requires Authentication
-
-No
-
-=head4 Parameters
-
-a Feature_data ID <feature_data_id>
-
-=head4 Returns
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-=head4 Request example
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/feature_data/<feature_data_id>/method
-
-=head4 Response example
-
-<div class="response-example"></div>
-
-=cut
-
-#sub method {
-#	my $self = shift;
-#    my $object = $self->object;
-#	my $tag_object = $object->Method;
-#	my $data_pack = {
-#		'id' => "$tag_object",
-#		'label' => "$tag_object",
-#		'class' => 'Method'
-#		};
-#
-#	my $data = {
-#		'data'=> $data_pack,
-#		'description' => 'description of the '
-#				};
-#	return $data;
-#}
 
 1;
