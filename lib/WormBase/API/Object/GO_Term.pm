@@ -86,16 +86,15 @@ B<Response example>
 
 =cut 
 
-
 sub term {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Term;
-	my $data_pack = $self->_pack_obj($object, $tag_object);
-	return {
-		'data'=> $data_pack,
-		'description' => 'GO term'
-		};
+    my $self       = shift;
+    my $object     = $self->object;
+    my $tag_object = $object->Term;
+    my $data_pack  = $self->_pack_obj( $object, $tag_object );
+    return {
+        'data'        => $data_pack,
+        'description' => 'GO term'
+    };
 }
 
 =head3 definition
@@ -148,15 +147,14 @@ B<Response example>
 
 =cut 
 
-
 sub definition {
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Definition; 
-	return {
-		'data'=> $data_pack,
-		'description' => 'term definition'
-	};
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Definition;
+    return {
+        'data'        => $data_pack,
+        'description' => 'term definition'
+    };
 }
 
 =head3 type
@@ -209,16 +207,15 @@ B<Response example>
 
 =cut 
 
-
-sub type {	
-	my $self = shift;
-    my $object = $self->object;
-	my $data_pack = $object->Type;
-	$data_pack =~ s/\_/\ /;
-	return {
-		'data'=> $data_pack,
-		'description' => 'type for this term'
-	};
+sub type {
+    my $self      = shift;
+    my $object    = $self->object;
+    my $data_pack = $object->Type;
+    $data_pack =~ s/\_/\ /;
+    return {
+        'data'        => $data_pack,
+        'description' => 'type for this term'
+    };
 }
 
 =head3 genes
@@ -271,30 +268,30 @@ B<Response example>
 
 =cut 
 
-
 sub genes {
-  	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my @data_pack;
-	my @genes = eval{$object->Genes};
-	
-	if (@genes) {
-		foreach my $gene (@genes) {
-		
-			my ($evidence_code, $evidence_details) = $self->_get_GO_evidence($object,$gene);
-			my $gene_info = $self->_pack_object($gene);
-			my $gene_data = {
-				'gene' => $gene_info,
-				'evidence_code' => $evidence_code,
-				'evidence_details' => $evidence_details
-				};
-			push @data_pack, $gene_data;				
-		}
-	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'genes annotated with this term'
-	};  
+    my @genes = eval { $object->Genes };
+
+    if (@genes) {
+        foreach my $gene (@genes) {
+
+            my ( $evidence_code, $evidence_details ) =
+              $self->_get_GO_evidence( $object, $gene );
+            my $gene_info = $self->_pack_object($gene);
+            my $gene_data = {
+                'gene'             => $gene_info,
+                'evidence_code'    => $evidence_code,
+                'evidence_details' => $evidence_details
+            };
+            push @data_pack, $gene_data;
+        }
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'genes annotated with this term'
+    };
 }
 
 =head3 cds
@@ -347,30 +344,30 @@ B<Response example>
 
 =cut 
 
-
 sub cds {
-  	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my @data_pack;
-	my @genes = eval{$object->CDS};
-	
-	if (@genes) {
-		foreach my $gene (@genes) {
-		
-			my ($evidence_code, $evidence_details) = $self->_get_GO_evidence($object,$gene);
-			my $gene_info = $self->_pack_object($gene);
-			my $gene_data = {
-				'gene' => $gene_info,
-				'evidence_code' => $evidence_code,
-				'evidence_details' => $evidence_details
-				};
-			push @data_pack, $gene_data;				
-		}
-	}	
-	return {
-		'data'=> \@data_pack,
-		'description' => 'CDS annotated with this term'
-	};  
+    my @genes = eval { $object->CDS };
+
+    if (@genes) {
+        foreach my $gene (@genes) {
+
+            my ( $evidence_code, $evidence_details ) =
+              $self->_get_GO_evidence( $object, $gene );
+            my $gene_info = $self->_pack_object($gene);
+            my $gene_data = {
+                'gene'             => $gene_info,
+                'evidence_code'    => $evidence_code,
+                'evidence_details' => $evidence_details
+            };
+            push @data_pack, $gene_data;
+        }
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'CDS annotated with this term'
+    };
 }
 
 =head3 genes_n_cds
@@ -424,70 +421,74 @@ B<Response example>
 =cut 
 
 sub genes_n_cds {
-  	my $self = shift;
-  	my $term = $self->object;
-  	my %mol;
-  	my %cgc;
-  	my @data_pack;
-	my $DB = $self->ace_dsn();
-	my @objs;
-	
-  	push (@objs,$term->Gene,$term->CDS) unless @objs;
+    my $self = shift;
+    my $term = $self->object;
+    my %mol;
+    my %cgc;
+    my @data_pack;
+    my $DB = $self->ace_dsn();
+    my @objs;
 
-  	foreach my $obj (@objs) {
-    	my ($gene,$key);
-	  	if ($obj->class eq 'CDS') {
-	    	$gene = $obj->Gene;
-	      	$key  = $obj;
-	  	} else {
-	      	$gene = $obj;
-	      	$key  = $gene;
-	  	}
-      	next unless $gene;
-      	next if (defined $cgc{$key} || defined $mol{$key});
+    push( @objs, $term->Gene, $term->CDS ) unless @objs;
 
-     	if ($gene->CGC_name) {
-	  		$cgc{$key} = [$obj,$gene,$gene->CGC_name];
-      	} else {
-	  		$mol{$key} = [$obj,$gene,$gene->Sequence_name];
-      	}
-  	}
+    foreach my $obj (@objs) {
+        my ( $gene, $key );
+        if ( $obj->class eq 'CDS' ) {
+            $gene = $obj->Gene;
+            $key  = $obj;
+        }
+        else {
+            $gene = $obj;
+            $key  = $gene;
+        }
+        next unless $gene;
+        next if ( defined $cgc{$key} || defined $mol{$key} );
 
-  	my @sorted = keys %cgc;
-  	push @sorted, keys %mol;
+        if ( $gene->CGC_name ) {
+            $cgc{$key} = [ $obj, $gene, $gene->CGC_name ];
+        }
+        else {
+            $mol{$key} = [ $obj, $gene, $gene->Sequence_name ];
+        }
+    }
 
-  	my @genes;
-  
-  	foreach (@sorted) {
-    	my ($obj,$gene,$junk) = eval { @{$cgc{$_}} };
-      	($obj,$gene,$junk) = eval { @{$mol{$_}} } unless $gene;
-      # UGH!  Return a list of CDSs instead.
-	  	push @genes,$obj;
-	  	push @genes,$DB->fetch(Gene=>$gene);
-	}
-	
-	foreach my $gene (@genes) {
-	
-			my $cgc_name = $gene->CGC_name;
-			my $seq = $gene->Sequence_name;
-			my $desc = $gene->Concise_description || $gene->Provisional_description;		
-			my ($evidence_code, $evidence_details) = $self->_get_GO_evidence($term,$gene);
-			my $gene_info = $self->_pack_obj($gene);
-			
-			my $gene_data = {
-								'gene_info' => $gene_info,
-								'cgc_name' => $cgc_name,
-								'seq' => $seq,
-								'description' => $desc,
-								'evidence_code' => $evidence_code,
-								'evidence_details' => $evidence_details
-							};
-			push @data_pack, $gene_data;		
-	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'genes and cds annoted with this term'
-	};
+    my @sorted = keys %cgc;
+    push @sorted, keys %mol;
+
+    my @genes;
+
+    foreach (@sorted) {
+        my ( $obj, $gene, $junk ) = eval { @{ $cgc{$_} } };
+        ( $obj, $gene, $junk ) = eval { @{ $mol{$_} } } unless $gene;
+
+        # UGH!  Return a list of CDSs instead.
+        push @genes, $obj;
+        push @genes, $DB->fetch( Gene => $gene );
+    }
+
+    foreach my $gene (@genes) {
+
+        my $cgc_name = $gene->CGC_name;
+        my $seq      = $gene->Sequence_name;
+        my $desc = $gene->Concise_description || $gene->Provisional_description;
+        my ( $evidence_code, $evidence_details ) =
+          $self->_get_GO_evidence( $term, $gene );
+        my $gene_info = $self->_pack_obj($gene);
+
+        my $gene_data = {
+            'gene_info'        => $gene_info,
+            'cgc_name'         => $cgc_name,
+            'seq'              => $seq,
+            'description'      => $desc,
+            'evidence_code'    => $evidence_code,
+            'evidence_details' => $evidence_details
+        };
+        push @data_pack, $gene_data;
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'genes and cds annoted with this term'
+    };
 }
 
 =head3 phenotype
@@ -540,29 +541,29 @@ B<Response example>
 
 =cut 
 
-
 sub phenotype {
-  	my $self = shift;
-  	my $term = $self->object;
-  	my @data_pack;
-	my @phenotypes= $term->Phenotype;
-	foreach my $phenotype (@phenotypes) {
-		my $phenotype_desc = $phenotype->Description;
-		my ($evidence_code, $evidence_details) = $self->_get_GO_evidence($term,$phenotype);
-		my $phenotype_info = $self->_pack_obj($phenotype);
+    my $self = shift;
+    my $term = $self->object;
+    my @data_pack;
+    my @phenotypes = $term->Phenotype;
+    foreach my $phenotype (@phenotypes) {
+        my $phenotype_desc = $phenotype->Description;
+        my ( $evidence_code, $evidence_details ) =
+          $self->_get_GO_evidence( $term, $phenotype );
+        my $phenotype_info = $self->_pack_obj($phenotype);
 
-		my $pheno_data = {
-							'phenotype_info' => $phenotype_info,
-							'description' => $phenotype_desc,
-							'evidence_code' => $evidence_code,
-							'evidence_details' => $evidence_details									
-						 };
-		push @data_pack, $pheno_data;			 
-	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'phenotypes annotated with this term'
-	};
+        my $pheno_data = {
+            'phenotype_info'   => $phenotype_info,
+            'description'      => $phenotype_desc,
+            'evidence_code'    => $evidence_code,
+            'evidence_details' => $evidence_details
+        };
+        push @data_pack, $pheno_data;
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'phenotypes annotated with this term'
+    };
 }
 
 =head3 motif
@@ -615,31 +616,31 @@ B<Response example>
 
 =cut 
 
-
 sub motif {
-	my $self = shift;
-  	my $term = $self->object;
-  	my @data_pack;
+    my $self = shift;
+    my $term = $self->object;
+    my @data_pack;
 
-	my @motifs;
-	eval {@motifs = $term->Motif;};
-	
-	foreach my $motif (@motifs) {
-		my $motif_desc = $motif->Description;
-		my ($evidence_code, $evidence_details) = get_GO_evidence($term,$motif);
-		my $motif_info = $self->_pack_obj($motif);
-		my $motif_data = {
-			'motif_info' => $motif_info,
-			'description' => $motif_desc,
-			'evidence_code' => $evidence_code,
-			'evidence_details' => $evidence_details
-		};						
-		push @data_pack, $motif_data;
-	}
-	return {
-		'data'=> \@data_pack,
-		'description' => 'motifs annotated with this term'
-	};	
+    my @motifs;
+    eval { @motifs = $term->Motif; };
+
+    foreach my $motif (@motifs) {
+        my $motif_desc = $motif->Description;
+        my ( $evidence_code, $evidence_details ) =
+          get_GO_evidence( $term, $motif );
+        my $motif_info = $self->_pack_obj($motif);
+        my $motif_data = {
+            'motif_info'       => $motif_info,
+            'description'      => $motif_desc,
+            'evidence_code'    => $evidence_code,
+            'evidence_details' => $evidence_details
+        };
+        push @data_pack, $motif_data;
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'motifs annotated with this term'
+    };
 }
 
 =head3 sequence
@@ -693,12 +694,12 @@ B<Response example>
 =cut 
 
 sub sequence {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Sequence');
-	return {
-		data => $data_pack,
-		description => 'sequences annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Sequence');
+    return {
+        data        => $data_pack,
+        description => 'sequences annotated with this term'
+    };
 }
 
 =head3 transcript
@@ -752,12 +753,12 @@ B<Response example>
 =cut 
 
 sub transcript {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Transcript');
-	return {
-		data => $data_pack,
-		description => 'transcripts annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Transcript');
+    return {
+        data        => $data_pack,
+        description => 'transcripts annotated with this term'
+    };
 }
 
 =head3 pseudogene
@@ -811,13 +812,14 @@ B<Response example>
 =cut 
 
 sub pseudogene {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Pseudogene');
-	return {
-		data => $data_pack,
-		description => 'pseudogenes annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Pseudogene');
+    return {
+        data        => $data_pack,
+        description => 'pseudogenes annotated with this term'
+    };
 }
+
 =head3 anatomy_term
 
 This method will return a data structure with the anatomy_terms annotated with the go_term.
@@ -869,13 +871,14 @@ B<Response example>
 =cut 
 
 sub anatomy_term {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Anatomy_term');
-	return {
-		data => $data_pack,
-		description => 'anatomy_terms annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Anatomy_term');
+    return {
+        data        => $data_pack,
+        description => 'anatomy_terms annotated with this term'
+    };
 }
+
 =head3 homology_group
 
 This method will return a data structure with the homology_groups annotated with the go_term.
@@ -927,12 +930,12 @@ B<Response example>
 =cut 
 
 sub homology_group {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data();
-	return {
-		data => $data_pack,
-		description => ' annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data();
+    return {
+        data        => $data_pack,
+        description => ' annotated with this term'
+    };
 }
 
 =head3 expr_pattern
@@ -986,12 +989,12 @@ B<Response example>
 =cut 
 
 sub expr_pattern {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Expr_pattern');
-	return {
-		data => $data_pack,
-		description => ' annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Expr_pattern');
+    return {
+        data        => $data_pack,
+        description => ' annotated with this term'
+    };
 }
 
 =head3 cell
@@ -1045,15 +1048,13 @@ B<Response example>
 =cut 
 
 sub cell {
-	my $self = shift;
-	my $data_pack = $self->_get_tag_data('Cell');
-	return {
-		data => $data_pack,
-		description => ' annotated with this term'
-	};
+    my $self      = shift;
+    my $data_pack = $self->_get_tag_data('Cell');
+    return {
+        data        => $data_pack,
+        description => ' annotated with this term'
+    };
 }
-
-
 
 #################################
 #
@@ -1062,49 +1063,48 @@ sub cell {
 #################################
 
 sub _get_tag_data {
-	my $self = shift;
-  	my $tag = shift;
-  	my $term = $self->object;
-  	my @data_pack;
-	my @motifs;
-	my @tag_data = $term->$tag;
-	
-	foreach my $tag_datum (@tag_data) {
-		my $tag_datum_desc = $tag_datum->Description;
-		my ($evidence_code, $evidence_details) = get_evidence($term,$tag_datum);
-		
-		push @data_pack, {
-			'term' =>"$tag_datum",
-			'description' => "$tag_datum_desc",
-			'class' => $tag,
-			'evidence_code' => $evidence_code,
-			'evidence_details' => $evidence_details
-		};
-	}
-	return \@data_pack;
+    my $self = shift;
+    my $tag  = shift;
+    my $term = $self->object;
+    my @data_pack;
+    my @motifs;
+    my @tag_data = $term->$tag;
+
+    foreach my $tag_datum (@tag_data) {
+        my $tag_datum_desc = $tag_datum->Description;
+        my ( $evidence_code, $evidence_details ) =
+          get_evidence( $term, $tag_datum );
+
+        push @data_pack,
+          {
+            'term'             => "$tag_datum",
+            'description'      => "$tag_datum_desc",
+            'class'            => $tag,
+            'evidence_code'    => $evidence_code,
+            'evidence_details' => $evidence_details
+          };
+    }
+    return \@data_pack;
 }
-  
+
 sub _get_GO_evidence {
 
-	my ($term,$gene) = @_;
-	my @go_terms;
-	eval{@go_terms = $gene->GO_Term;};
-	my $evidence_code;
-	my $evidence_detail;
-	
-	
-	foreach my $go_term (@go_terms) {
-	
-		if ($go_term eq $term) {
-			eval{$evidence_code = $go_term->right;};
-			eval{$go_term->right->right->right;};$evidence_detail = 
-			last;
-		}
-	}
-	return ($evidence_code, $evidence_detail);
+    my ( $term, $gene ) = @_;
+    my @go_terms;
+    eval { @go_terms = $gene->GO_Term; };
+    my $evidence_code;
+    my $evidence_detail;
+
+    foreach my $go_term (@go_terms) {
+
+        if ( $go_term eq $term ) {
+            eval { $evidence_code = $go_term->right; };
+            eval { $go_term->right->right->right; };
+            $evidence_detail = last;
+        }
+    }
+    return ( $evidence_code, $evidence_detail );
 }
 
 1;
-
-
 
