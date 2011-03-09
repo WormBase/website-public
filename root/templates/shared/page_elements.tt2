@@ -882,13 +882,15 @@ END;
 
 
 
-
 [% # Report Page elements; shared for species, resources, and tools %]
 [% # Called from species/report.tt2 and resources.report.tt2        %]
 [% MACRO report_page BLOCK;
- 
 
-  '<div id="system-message"><strong>Coming soon:</strong> More new pages! Stay tuned...</strong></div>';
+  '<div id="system-message">' 
+        _ c.config.system_message 
+        _ '<a class="system-message-close" href="#">Dismiss</a></div>';
+
+# onclick="new Ajax.Request('/announcement_dismissals?announcement_id=14', {asynchronous:true, evalScripts:true, method:'post', parameters:'authenticity_token=' + encodeURIComponent('85iRduBYVYZPdEHVaEKXhruZBmOqCJKw919NQt9vkoY=')}); hide_big_div('announcement'); return false;">Dismiss</a></div>
 
    upperClass = class FILTER ucfirst;
 
@@ -903,7 +905,7 @@ END;
    ELSE;
       SET this_object_id    = object.name.data.id;
       SET this_object_label = object.name.data.label;
-      title = '<a href="' _ c.uri_for('/species',class) _'">' _ upperClass _ '</a>'  _ " &raquo; ";
+      title = upperClass _ " &raquo;	 ";
       UNLESS class == 'paper';
               title = title _ tag2link(object.name.data);
       ELSE;
@@ -912,12 +914,14 @@ END;
    END;
 
 
+   # BEGIN EXPERIMENTAL TITLE BAR
+
        '<!-- TESTING: Relocated page title and other toolbars to the widget container -->';
        '<div id="titlebar">';
 
       IF object;
           is_obj = 1;
-          wbid = this_object_id.remove(':');
+          wbid = this_object_id.remove(":");
 
           '<div class="workbench-status-' _  wbid _ '"></div>';
        END;
@@ -938,9 +942,8 @@ END;
 
 
         UNLESS no_layout;
-%]
 
-         <div class="columns toggle-button button">
+         '<div class="columns toggle-button button">
 <!--               <span id="fade" style="float:left">Layout</span> -->
 		   <span>Layout</span>
                <ul>
@@ -948,11 +951,11 @@ END;
                  <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
                  <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
                  <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-                 <div class="list-layouts" type="[% class %]"></div>
-              </ul>
+                 <div class="list-layouts" type="' _ class _ '"></div>';
+              '</ul>
 <!--         </div> -->
-</div>
-[%
+</div>';
+
 
        END ;
  
@@ -960,6 +963,9 @@ END;
       </div> ';
 
 
+##############################
+# END EXPERIMENTAL TITLEBAR
+##############################
 
    path = c.uri_for("/$section", class, this_object_id);
 

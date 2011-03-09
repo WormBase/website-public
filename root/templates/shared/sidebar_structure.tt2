@@ -28,41 +28,35 @@
   [% END %]
 [% END %]
 
-   <!-- TESTING: relocating page title and tools to widget-holder > toolbar; this div is really weird, BTW, since it forms the top of the widget-holder border-->
- <div class="title"> 
+    <div class="title">
       <h2>[% title %]</h2>
-
-      <!-- TESTING: Relocated to widget-holder > toolbar -->
 
       [% IF object %]
           [% is_obj = 1 %]
           [% wbid = this_object_id.remove(':') %]
 
           <div class="workbench-status-[% wbid %]"></div>
+
+
        [% END %]
-
-
        [% UNLESS no_layout %]
-
           <div class="columns"><span id="fade" style="float:left">Layout</span>
-               <div class="ui-icon ui-icon-triangle-1-s"></div>
-               <ul>
-                 <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
-                 <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
-                 <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
-                 <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-                 <div class="list-layouts" type="[% class %]"></div>
-              </ul>
-         </div>
-	 <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>
-
+          <div class="ui-icon ui-icon-triangle-1-s"></div>
+          <ul>
+          <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
+          <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
+          <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
+          <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
+          <div class="list-layouts" type="[% class %]"></div>
+          </ul>
+          </div>
+	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>
       [% END %]
 	
         <div style="clear:both"></div>
-    </div> 
+    </div>
 
 <div id="widgets">
-
   <div id="navigation">
     <div id="title"><div class="workbench-status-[% wbid %]"></div>
 
@@ -104,7 +98,6 @@
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon"></div></div>
   </div>
 
-
   <div id="widget-holder" class="[% class %]">
     <div class="sortable left">
       [% FOREACH w IN widgets -%]
@@ -143,16 +136,4 @@
     }
    
 
-    </script>
-
-
-
-
-    <script>
- [% UNLESS c.user_session.layout.$class.0.defined %]
-        $jq("#nav-overview").trigger('open');
-        $jq("#nav-location").trigger('open');
-        updateLayout();
-      [% END %]
-        updateCounts("[% path %]");
     </script>
