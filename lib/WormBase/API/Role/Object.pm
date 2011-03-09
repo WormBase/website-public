@@ -14,39 +14,38 @@ use File::Path 'mkpath';
 #
 
 has 'MAX_DISPLAY_NUM' => (
-      is => 'ro',
-      default => 10,
-    );
+    is      => 'ro',
+    default => 10,
+);
 
 has 'object' => (
     is  => 'rw',
     isa => 'Ace::Object',
-    );
+);
 
 has 'dsn' => (
-    is  => 'ro',
-    isa => 'HashRef',
+    is       => 'ro',
+    isa      => 'HashRef',
     required => 1,
-    );
+);
 
 has 'log' => (
     is => 'ro',
-    );
+);
 
 has 'tmp_base' => (
     is => 'ro',
-    );
+);
 
 has 'pre_compile' => (
     is => 'ro',
-    );
+);
 
 #######################################################
 #
 # Generic methods
 #
 #######################################################
-
 
 ################
 #  Names
@@ -105,9 +104,9 @@ B<Response example>
 
 # Template: [% name %]
 
-has 'name'     => (
-    is         => 'ro',
-    default    => sub {
+has 'name' => (
+    is      => 'ro',
+    default => sub {
         my ($self) = @_;
         my $object = $self->object;
         my $class  = $object->class;
@@ -148,7 +147,6 @@ sub _build_common_name {
 
     return ($name && "$name") || $self->object->name;
 }
-
 
 =head3 other_names
 
@@ -206,20 +204,20 @@ B<Response example>
 has 'other_names' => (
     is         => 'ro',
     lazy_build => 1,
-    );
-
+);
 
 sub _build_other_names {
-    my $self = shift;
+    my ($self) = @_;
     my $object = $self->object;
-    my @names = $object->Other_name;
+    my @names  = $object->Other_name;
 
     # We will just stringify other names; no sense in linking them.
     @names = map { "$_" } @names;
-    return { description => "other names that have been used to refer to $object",
-	     data        => @names ? \@names : undef };
+    return {
+        description => "other names that have been used to refer to $object",
+        data        => @names ? \@names : undef
+    };
 }
-
 
 =head3 best_blastp_matches
 
@@ -269,28 +267,31 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|P
 
 # Template: [% best_blastp_matches %]
 
-has 'best_blastp_matches'  => (
+has 'best_blastp_matches' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 # Fetch all of the best_blastp_matches for a list of proteins.
 # Used for genes and proteins
 sub _build_best_blastp_matches {
-    my $self = shift;
+    my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
 
-
     my $proteins;
     if ($class eq 'Gene') {
-	$proteins = $self->all_proteins;
-    } elsif ($class eq 'Protein') {
-
-	# current_object might already be a protein.
-	$proteins = [$self->object] unless $proteins;
-    } else {
-	return { description => 'no proteins found, no best blastp hits to display' };
+        $proteins = $self->all_proteins;
+    }
+    elsif ($class eq 'Protein') {
+        # current_object might already be a protein.
+        $proteins = [$self->object] unless $proteins;
+    }
+    else {
+        return {
+            description => 'no proteins found, no best blastp hits to display',
+            data        => undef,
+        };
     }
 
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
@@ -305,20 +306,24 @@ sub _build_best_blastp_matches {
     return "" unless @pep_homol;
     for my $hit (@pep_homol) {
         # Ignore mass spec hits
-#     next if ($hit =~ /^MSP/);
-	next if $hit eq $biggest;         # Ignore self hits
-	my ($method,$score) = $hit->row(1) or next;
+        #     next if ($hit =~ /^MSP/);
+        next if $hit eq $biggest;    # Ignore self hits
+        my ($method, $score) = $hit->row(1) or next;
 
-	my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
-	$prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score .'0' : "$prev_score.0000";
-	my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0' : "$score.0000";
+        my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
+        $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score . '0'
+                                                  : "$prev_score.0000";
+        my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0'
+                                                : "$score.0000";
 
-	$best{$method} = {score=>$score,hit=>$hit,adjusted_score=>$curr_score} if !$best{$method} || $prev_score < $curr_score;
+        $best{$method} =
+          {score => $score, hit => $hit, adjusted_score => $curr_score}
+          if !$best{$method} || $prev_score < $curr_score;
     }
 
     foreach (values %best) {
-	my $covered = $self->_covered($_->{score}->col);
-	$_->{covered} = $covered;
+        my $covered = $self->_covered($_->{score}->col);
+        $_->{covered} = $covered;
     }
 
     # NOT HANDLED YET
@@ -330,57 +335,63 @@ sub _build_best_blastp_matches {
     # in sorting hash values.  But I can't replicate this outside of a
     # mod_perl environment
     # Adding the +0 forces numeric context
-    my $id=0;
-    foreach (sort {$best{$b}{adjusted_score}+0 <=>$best{$a}{adjusted_score}+0 } keys %best) {
-	my $method = $_;
-	my $hit = $best{$_}{hit};
+    my $id = 0;
+    foreach (sort {$best{$b}{adjusted_score} + 0 <=> $best{$a}{adjusted_score} + 0} keys %best)
+    {
+        my $method = $_;
+        my $hit    = $best{$_}{hit};
 
-	# Try fetching the species first with the identification
-	# then method then the embedded species
-	my $species = $self->id2species($hit);
-	$species  ||= $self->id2species($method);
+        # Try fetching the species first with the identification
+        # then method then the embedded species
+        my $species = $self->id2species($hit);
+        $species ||= $self->id2species($method);
 
-	# Not all proteins are populated with the species
-	$species ||= $best{$method}{hit}->Species;
-	$species =~ s/^(\w)\w* /$1. / ;
-	my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-	my $class;
+        # Not all proteins are populated with the species
+        $species ||= $best{$method}{hit}->Species;
+        $species =~ s/^(\w)\w* /$1. /;
+        my $description = $best{$method}{hit}->Description
+          || $best{$method}{hit}->Gene_name;
+        my $class;
 
-	# this doesn't seem optimal... maybe there should be something in config?
-	if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
-	    $description ||= eval{$best{$method}{hit}->Corresponding_CDS->Brief_identification};
-	    # Kludge: display a description using the CDS
-	    if (!$description) {
-		for my $cds (eval { $best{$method}{hit}->Corresponding_CDS }) {
-		    next if $cds->Method eq 'history';
-		    $description ||= "gene $cds";
-		}
-	    }
-	    $class = 'protein';
-	}
-	next if ($hit =~ /^MSP/);
-	$species =~ /(.*)\.(.*)/;
-	my $taxonomy = {genus=>$1,species=>$2};
-#     next if ($seen{$species}++);
-	my $id;
-	if ($hit =~ /(\w+):(.+)/) {
-	    my $prefix    = $1;
-	    my $accession = $2;
-	    $id = $accession unless $class;
-	    $class = $prefix unless $class;
+       # this doesn't seem optimal... maybe there should be something in config?
+        if ($method =~ /worm|briggsae|remanei|japonica|brenneri|pristionchus/) {
+            $description ||= eval {
+                $best{$method}{hit}->Corresponding_CDS->Brief_identification;
+            };
 
-	    # Try fetching accessions directly from the protein object
-#       my @dbs = $hit->Database;
-#       foreach my $db (@dbs) {
-# 	if ($db eq 'FLYBASE') {
-# 	  foreach my $col ($db->col) {
-# 	    if ($col eq 'FlyBase_gn') {
-# 	      $accession = $col->right;
-# 	      last;
-# 	    }
-# 	  }
-# 	}
-#       }
+            # Kludge: display a description using the CDS
+            if (!$description) {
+                for my $cds (eval {$best{$method}{hit}->Corresponding_CDS}) {
+                    next if $cds->Method eq 'history';
+                    $description ||= "gene $cds";
+                }
+            }
+            $class = 'protein';
+        }
+        next if ($hit =~ /^MSP/);
+        $species =~ /(.*)\.(.*)/;
+        my $taxonomy = {genus => $1, species => $2};
+
+        #     next if ($seen{$species}++);
+        my $id;
+        if ($hit =~ /(\w+):(.+)/) {
+            my $prefix    = $1;
+            my $accession = $2;
+            $id    = $accession unless $class;
+            $class = $prefix    unless $class;
+
+            # Try fetching accessions directly from the protein object
+            #       my @dbs = $hit->Database;
+            #       foreach my $db (@dbs) {
+            # 	if ($db eq 'FLYBASE') {
+            # 	  foreach my $col ($db->col) {
+            # 	    if ($col eq 'FlyBase_gn') {
+            # 	      $accession = $col->right;
+            # 	      last;
+            # 	    }
+            # 	  }
+            # 	}
+            #       }
 
 	    # NOT HANDLED YET!
 #      my $link_rule = $links->{$prefix};
@@ -410,24 +421,31 @@ sub _build_best_blastp_matches {
         $hits{evalue}{$id}=sprintf("%7.3g",10**-$best{$_}{score});
         $hits{plength}{$id}=sprintf("%2.1f%%",100*($best{$_}{covered})/$length);
 	$id++;
+
 =cut
 
-	push @hits,{ taxonomy => $taxonomy,
-		     hit      => { label => "$hit",
-				   id    => ($id ? "$id" : "$hit"),
-				   class => $class },
-		     description => "$description",
-		     evalue      => sprintf("%7.3g",10**-$best{$_}{score}),
-		     percent     => sprintf("%2.1f%%",100*($best{$_}{covered})/$length)};
+        push @hits, {
+            taxonomy => $taxonomy,
+            hit      => {
+                label => "$hit",
+                id    => ($id ? "$id" : "$hit"),
+                class => $class
+            },
+            description => "$description",
+            evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
+            percent     => sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
+        };
+
 #[$taxonomy,{label=>"$hit",id=>($id ? "$id" : "$hit"),class=>$class},"$description",
 #  		sprintf("%7.3g",10**-$best{$_}{score}),
 # 		sprintf("%2.1f%%",100*($best{$_}{covered})/$length)];
     }
 
-    return { description => 'best BLASTP hits from selected species',
-	     data        => @hits ? \@hits : undef };
+    return {
+        description => 'best BLASTP hits from selected species',
+        data        => @hits ? \@hits : undef
+    };
 }
-
 
 =head3 description
 
@@ -482,15 +500,15 @@ B<Response example>
 
 # Template: [% description %]
 
-has 'description'  => (
+has 'description' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 sub _build_description {
-    my $self    = shift;
-    my $object  = $self->object;
-    my $class   = $object->class;
+    my ($self) = @_;
+    my $object = $self->object;
+    my $class  = $object->class;
     my $tag;
     if ($class eq 'Sequence') {
         $tag = 'Title';
@@ -498,24 +516,22 @@ sub _build_description {
     else {
         $tag = 'Description';
     }
-    my $description = eval {$object->$tag }; # hack, will fix later
-    return { description  => "description of the $class $object",
-	     data         => "$description" || undef,
+    my $description = eval {$object->$tag};    # TODO!!! : fix
+    return {
+        description => "description of the $class $object",
+        data        => "$description" || undef,
     };
 
-#    my $data = { description => "description of the $class $object",
-#		 data        => { description => $description ,
-#				  evidence    => { check=>$self->check_empty($description),
-#						   tag=>"Description",
-#				  },
-#		 }
-#    };
-#   return $data;
+    #    my $data = { description => "description of the $class $object",
+    #		 data        => { description => $description ,
+    #				  evidence    => { check=>$self->check_empty($description),
+    #						   tag=>"Description",
+    #				  },
+    #		 }
+    #    };
+    #   return $data;
 
 }
-
-
-
 
 =head3 expression_patterns
 
@@ -570,32 +586,34 @@ B<Response example>
 
 # Template: [% expression_patterns %]
 
-has 'expression_patterns'  => (
+has 'expression_patterns' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 sub _build_expression_patterns {
-    my $self   = shift;
+    my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
     my @data;
 
     foreach ($object->Expr_pattern) {
-	my $author  = $_->Author || '';
-	my @patterns = $_->Pattern || $_->Subcellular_localization || $_->Remark;
-	push @data, {
-	    expression_pattern => $self->_pack_obj($_),
-	    description        => @patterns ? join("<br />",@patterns) : undef,
-	    author             => "$author"  || undef,
-	};
+        my $author = $_->Author;
+        my @patterns = $_->Pattern
+            || $_->Subcellular_localization
+            || $_->Remark;
+        push @data, {
+            expression_pattern => $self->_pack_obj($_),
+            description        => join("<br />", @patterns) : undef,
+            author             => $author && "$author",
+        };
     }
-    return { description => "expression patterns associated with the $class:$object",
-	     data        => @data ? \@data : undef };
+
+    return {
+        description => "expression patterns associated with the $class:$object",
+        data        => @data ? \@data : undef
+    };
 }
-
-
-
 
 =head3 laboratory
 
@@ -652,9 +670,9 @@ B<Response example>
 # Template: [% laboratory %]
 
 has 'laboratory' => (
-    is           => 'ro',
-    lazy_build   => 1,
-    );
+    is         => 'ro',
+    lazy_build => 1,
+);
 
 # laboratory: Whenever a cross-ref to lab is needed.
 # Returns the lab as well as the current representative.
@@ -663,7 +681,7 @@ has 'laboratory' => (
 sub _build_laboratory {
     my ($self) = @_;
     my $object = $self->object;
-    my $class = $object->class;    # Ace::Object class, NOT ext. model class
+    my $class  = $object->class;    # Ace::Object class, NOT ext. model class
 
     # Ugh. Model inconsistencies.
     my %taghash = (
@@ -674,7 +692,7 @@ sub _build_laboratory {
         Transgene   => 'Location',
         Strain      => 'Location',
         Antibody    => 'Location',
-    ); # does this belong here?
+    );                              # does this belong here?
 
     my $tag = $taghash{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
@@ -683,7 +701,7 @@ sub _build_laboratory {
 
         my $representative = $lab->Representative;
         my $name           = $representative->Standard_name;
-        my $rep            = $self->_pack_obj($representative,$name);
+        my $rep            = $self->_pack_obj($representative, $name);
         $data->{representative} = $rep if $rep;
     }
 
@@ -746,21 +764,21 @@ B<Response example>
 
 # Template: [% method %]
 
-has 'method'   => (
+has 'method' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 # The method used to describe the object
 sub _build_method {
-    my $self = shift;
+    my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
+    my $method = $object->Method;
 
-    my $method = $self->Method;
     return {
-	description => "the method used to describe the $class",
-	data        => $method ? "$method" : undef,
+        description => "the method used to describe the $class",
+        data        => $method && "$method",
     };
 }
 
@@ -817,29 +835,28 @@ B<Response example>
 
 # Template: [% remarks %]
 
-has 'remarks'  => (
+has 'remarks' => (
     is         => 'ro',
     lazy_build => 1,
-    );
-
+);
 
 sub _build_remarks {
-    my $self    = shift;
-    my $object  = $self->object;
-#    my @remarks = grep defined, map { $object->$_ } qw/Remark/;
+    my ($self) = @_;
+    my $object = $self->object;
+
+    #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
     my @remarks = $object->Remark;
-    my $class = $object->class;
+    my $class   = $object->class;
 
     # Need to add in evidence handling.
-    my @evidence = map { $_->col } @remarks;
+    my @evidence = map {$_->col} @remarks;
 
     # TODO: handling of Evidence nodes
     return {
-        description  => "curatorial remarks for the $class",
-        data         => @remarks ? \@remarks : undef,
+        description => "curatorial remarks for the $class",
+        data        => @remarks ? \@remarks : undef,
     };
 }
-
 
 =head3 summary
 
@@ -896,21 +913,22 @@ B<Response example>
 
 # Template: [% summary %]
 
-has 'summary'  => (
+has 'summary' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 sub _build_summary {
-    my $self   = shift;
-    my $object = $self->object;
-    my $class  = $object->class;
+    my ($self)  = @_;
+    my $object  = $self->object;
+    my $class   = $object->class;
     my $summary = $object->Summary;
-    return { description => "a brief summary of the $class:$object",
-	     data        => "$summary" || undef };
+
+    return {
+        description => "a brief summary of the $class:$object",
+        data        => $summary && "$summary",
+    };
 }
-
-
 
 =head3 status
 
@@ -965,26 +983,22 @@ B<Response example>
 
 # Template: [% status %]
 
-has 'status'   => (
+has 'status' => (
     is         => 'ro',
     lazy_build => 1,
-    );
-
+);
 
 sub _build_status {
-    my $self    = shift;
-    my $object  = $self->object;
-    my $class   = $object->class;
-    my $status;
-    if ($class eq 'Protein') {
-	$status = $object->Live(0) ? 'live' : 'history';
-    } else {
-	$status  = $object->Status;
-    }
-    my $data    = { description  => "current status of the $class:$object",
-		    data         => "$status",
+    my ($self) = @_;
+    my $object = $self->object;
+    my $class  = $object->class;
+    my $status = $class eq 'Protein' ? ($object->Live ? 'live' : 'history')
+                                     : $object->Status;
+
+    return {
+        description => "current status of the $class:$object",
+        data        => $status && "$status",
     };
-    return $data;
 }
 
 =head3 taxonomy
@@ -1043,27 +1057,22 @@ B<Response example>
 has 'taxonomy' => (
     is         => 'ro',
     lazy_build => 1,
-    );
+);
 
 # Parse out species "from a Genus species" string.
-sub _build_taxonomy {
-    my ($self,$genus_species) = @_;
+sub _build_taxonomy { # this overlaps with parsed_species
+    my ($self) = @_;
 
-    # We may have already been passed a string to parse
-    unless ($genus_species) {
-	my $object = $self->object;
-	$genus_species = $object->Species;
-    }
-    my ($genus,$species) = $genus_species =~ /(.*) (.*)/;
-    my $data = { description => 'the genus and species of the current object',
-		 data        => { genus   => $genus,
-				  species => $species,
-		 }
+    my ($genus, $species) = (($self ~~ 'Species') =~ /(.*) (.*)/);
+
+    return {
+        description => 'the genus and species of the current object',
+        data        => $genus && $species && {
+            genus   => $genus,
+            species => $species,
+        },
     };
-    return $data;
 }
-
-
 
 =head3 xrefs
 
@@ -1110,97 +1119,96 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/CLASS/O
 
 <div class="response-example"></div>
 
-=cut 
- 
-# template [% xrefs %]
-   
-has 'xrefs' => (
-    is => 'ro',
-    lazy_build => 1,
-    );
+=cut
 
+# template [% xrefs %]
+
+has 'xrefs' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
 
 # XREFs are stored under the Database tag.
-sub _build_xrefs  {
-    my $self   = shift;
-    my $object = $self->object;    
-    
+sub _build_xrefs {
+    my ($self) = @_;
+    my $object = $self->object;
+
     my @databases = $object->Database;
     my %dbs;
-    foreach my $db (@databases) {    
+    foreach my $db (@databases) {
 
-	my $name        = $db->Name || "$db";
-	my $description = $db->Description;
-	my $url         = $db->URL;
+        my $name            = $db->Name || "$db";
+        my $description     = $db->Description;
+        my $url             = $db->URL;
         my $url_constructor = $db->URL_constructor;
-	my $email       = $db->Email;
-	my $remote_text = $db->right(1);
+        my $email           = $db->Email;
+        my $remote_text     = $db->right(1);
 
-	# Possibly multiple entries for a single DB
-	my @ids;
-	foreach my $type ($db->col) {
-	    if ($type->col) {
-		push @ids,map { "$_" } $type->col;
-	    } else {
-		push @ids,$type->right->name;
-	    }
-	}
-		
-	$dbs{"$db"} = { name        => "$name",
-			description => "$description",
-			url         => "$url",
-			url_constructor => "$url_constructor",
-			email       => "$email",
-			ids         => \@ids,
-			label       => "$remote_text" 
-	};
+        # Possibly multiple entries for a single DB
+        my @ids = map {
+            my @types = $_->col;
+            @type ? map { "$_" } @types : $_->right->name;
+        } $db->col;
+
+        $dbs{$db} = {
+            name            => "$name",
+            description     => "$description",
+            url             => "$url",
+            url_constructor => "$url_constructor",
+            email           => "$email",
+            ids             => \@ids,
+            label           => "$remote_text"
+        };
     }
 
     # ?Analysis has a separate URL tag.
-#    my $url = $object->URL if eval { $object->URL } ;
-    
-    return { description => 'external databases and IDs containing additional information on the object',
-	     data        => \%dbs };
+    #    my $url = $object->URL if eval { $object->URL } ;
+
+    return {
+        description => 'external databases and IDs containing additional information on the object',
+        data => %db ? \%dbs : undef,
+    };
 }
 
 sub mysql_dsn {
-    my $self    = shift;
+    my ($self) = @_;
     my $source = shift;
-    return $self->dsn->{"mysql_".$source};
+    return $self->dsn->{"mysql_" . $source};
 }
 
 sub gff_dsn {
-    my $self    = shift;
-    my $species = shift || $self->parsed_species ;
+    my ($self) = @_;
+    my $species = shift || $self->parsed_species;
     $self->log->debug("geting gff database species $species");
-    return $self->dsn->{"gff_".$species} || $self->dsn->{"gff_c_elegans"} ;
+    return $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
 }
 
-sub ace_dsn{
-    my $self    = shift;
+sub ace_dsn {
+    my ($self) = @_;
     return $self->dsn->{"acedb"};
 }
+
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
-    my $self     = shift;
+    my ($self) = @_;
     my @sub_dirs = @_;
-    my $path = File::Spec->catfile($self->tmp_base,@sub_dirs);
+    my $path = File::Spec->catfile($self->tmp_base, @sub_dirs);
 
-    mkpath($path,0,0777) unless -d $path;
+    mkpath($path, 0, 0777) unless -d $path;
     return $path;
-};
+}
 
 sub tmp_image_dir {
-    my $self  = shift;
+    my ($self) = @_;
 
-    # 2010.08.18: hostname no longer required in URI; tmp images stored in NFS mount
-    # Include the hostname for images. Necessary for proxying and apache configuration.
+# 2010.08.18: hostname no longer required in URI; tmp images stored in NFS mount
+# Include the hostname for images. Necessary for proxying and apache configuration.
 #    my $host = `hostname`;
 #    chomp $host;
 #    $host ||= 'local';
 #    my $path = $self->tmp_dir('media/images',$host,@_);
 
-    my $path = $self->tmp_dir('media/images',@_);
+    my $path = $self->tmp_dir('media/images', @_);
     return $path;
 }
 
@@ -1208,7 +1216,7 @@ sub tmp_image_dir {
 # Routing will be handled by Static::Simple in development
 # and apache in production.
 sub tmp_image_uri {
-    my ($self,$path_and_file) = @_;
+    my ($self, $path_and_file) = @_;
 
 #    # append the hostname so that I can correctly direct traffic through the proxy
 #    my $host = `hostname`;
@@ -1217,9 +1225,9 @@ sub tmp_image_uri {
 
     my $tmp_base = $self->tmp_base;
 
-    # Purge the temp base from the path_and_file
-    # pre-NFS: eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
-    # eg /tmp/wormbase/images/00/00/00/filename.jpg -> images/00/00/00/filename.jpg
+# Purge the temp base from the path_and_file
+# pre-NFS: eg /tmp/wormbase/images/wb-web1/00/00/00/filename.jpg -> images/wb-web1/00/00/00/filename.jpg
+# eg /tmp/wormbase/images/00/00/00/filename.jpg -> images/00/00/00/filename.jpg
     $path_and_file =~ s/$tmp_base//;
 
     # URI (pre-NFS): /images/wb-web1/00/00/00...
@@ -1229,20 +1237,20 @@ sub tmp_image_uri {
 }
 
 sub tmp_acedata_dir {
-    my $self  = shift;
-    return $self->tmp_dir('acedata',@_);
+    my ($self) = @_;
+    return $self->tmp_dir('acedata', @_);
 }
 
 sub _pack_objects {
     my ($self, $objects) = @_;
-    return { map { $_ => $self->_pack_obj($_) } @$objects };
+    return {map {$_ => $self->_pack_obj($_)} @$objects};
 }
 
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return unless $object;
     return {
-        id => "$object",
+        id    => "$object",
         label => $label // $self->common_name,
         class => $object->class,
         %args,
@@ -1250,19 +1258,23 @@ sub _pack_obj {
 }
 
 sub parsed_species {
-  my ($self,$object) = @_;
-  $object ||= $self->object;
-  my $genus_species = eval {$object->Species} or return 'c_elegans';
-  my ($species) = $genus_species =~ /.* (.*)/;
-  return lc(substr($genus_species,0,1)) . "_$species";
+    my ($self, $object) = @_;
+    $object ||= $self->object;
+    my $genus_species = eval {$object->Species} or return 'c_elegans'; # is this default correct?
+    my ($species) = $genus_species =~ /.* (.*)/;
+    return lc(substr($genus_species, 0, 1)) . "_$species";
 }
 
 sub bestname {
-  my ($self,$gene) = @_;
-  return unless $gene && $gene->class eq 'Gene';
-  my $name = $gene->Public_name ||
-      $gene->CGC_name || $gene->Molecular_name || eval { $gene->Corresponding_CDS->Corresponding_protein } || $gene;
-  return $name;
+    my ($self, $gene) = @_;
+    return unless $gene && $gene->class eq 'Gene';
+    my $name =
+         $gene->Public_name
+      || $gene->CGC_name
+      || $gene->Molecular_name
+      || eval {$gene->Corresponding_CDS->Corresponding_protein}
+      || $gene;
+    return $name;
 }
 
 # Description: checks data returned by extenral model for standards
@@ -1272,33 +1284,34 @@ sub bestname {
 # Returns: () if all is well, otherwise array with fixed data and
 #          description(s) of compliance problem(s).
 sub check_data {
-	my ($self, $data) = @_;
-	my @compliance_problems;
+    my ($self, $data) = @_;
+    my @compliance_problems;
 
-	if (ref($data) ne 'HASH') { # no data pack
-		$data = {
-			description => 'No description available',
-			data => $data,
-		};
-		push @compliance_problems,
-		     'Did not return in hashref datapack with description and data entry.';
-	}
+    if (ref($data) ne 'HASH') {   # no data pack
+        $data = {
+            description => 'No description available',
+            data        => $data,
+        };
+        push @compliance_problems,
+          'Did not return in hashref datapack with description and data entry.';
+    }
 
-	if (!$data->{description}) { # no description
-		$data->{description} = 'No description available';
-		push @compliance_problems, 'No description entry in datapack.';
-	}
+    if (!$data->{description}) {    # no description
+        $data->{description} = 'No description available';
+        push @compliance_problems, 'No description entry in datapack.';
+    }
 
-	if (! exists $data->{data}) { # no data entry
-		$data->{data} = undef;
-		push @compliance_problems, 'No data entry in datapack.';
-	}
-	elsif (my ($tmp, @problems) = $self->_check_data_content($data->{data})) {
-		$data->{data} = $tmp;
-		push @compliance_problems, @problems;
-	}
+    if (!exists $data->{data}) {    # no data entry
+        $data->{data} = undef;
+        push @compliance_problems, 'No data entry in datapack.';
+    }
+    elsif (my ($tmp, @problems) = $self->_check_data_content($data->{data}) )
+    {
+        $data->{data} = $tmp;
+        push @compliance_problems, @problems;
+    }
 
-	return @compliance_problems ? ($data, @compliance_problems) : ();
+    return @compliance_problems ? ($data, @compliance_problems) : ();
 }
 
 # Description: helper to recursively checks the content of data for standards
@@ -1308,71 +1321,83 @@ sub check_data {
 # Returns: if all is well, (). otherwise, 2-array with fixed data and
 #          description(s) of compliance problem(s).
 sub _check_data_content {
-	my ($self, $data, @keys) = @_;
-	my $ref = ref($data) || return ();
+    my ($self, $data, @keys) = @_;
+    my $ref = ref($data) || return ();
 
-	my @compliance_problems;
-	my ($tmp, @problems);
+    my @compliance_problems;
+    my ($tmp, @problems);
 
-	if ($ref eq 'ARRAY') {
-		foreach (@$data) {
-			if (($tmp, @problems) = $self->_check_data_content($_, @keys)) {
-				$_ = $tmp;
-				push @compliance_problems, @problems;
-			}
-		}
-		unless (@$data) {
-			push @compliance_problems,
-			     join('->', @keys) . ': Empty arrayref returned; should be undef.';
-		}
-	}
-	elsif ($ref eq 'HASH') {
-		foreach my $key (keys %$data) {
-			if (($tmp, @problems) = $self->_check_data_content($data->{$key},
-															   @keys, $key)) {
-				$data->{$key} = $tmp;
-				push @compliance_problems, @problems;
-			}
-		}
-		unless (%$data) {
-			push @compliance_problems,
-			     join('->', @keys) . ': Empty hashref returned; should be undef.'
-		}
-	}
-	elsif ($ref eq 'SCALAR' || $ref eq 'REF') {
-		# make sure scalar ref doesn't refer to something bad
-		if (($tmp, @problems) = $self->_check_data_content($$data, @keys)) {
-			$data = $tmp;
-			push @compliance_problems, @problems;
-		}
-		else {
-			$data = $$data; # doesn't refer to anything bad -- just dereference it.
-			push @compliance_problems,
-			     join('->', @keys) . ': Scalar reference returned; should be scalar.';
-		}
+    if ($ref eq 'ARRAY') {
+        foreach (@$data) {
+            if (($tmp, @problems) = $self->_check_data_content($_, @keys))
+            {
+                $_ = $tmp;
+                push @compliance_problems, @problems;
+            }
+        }
+        unless (@$data) {
+            push @compliance_problems,
+              join('->', @keys)
+              . ': Empty arrayref returned; should be undef.';
+        }
+    }
+    elsif ($ref eq 'HASH') {
+        foreach my $key (keys %$data) {
+            if (($tmp, @problems) =
+                $self->_check_data_content($data->{$key}, @keys, $key))
+            {
+                $data->{$key} = $tmp;
+                push @compliance_problems, @problems;
+            }
+        }
+        unless (%$data) {
+            push @compliance_problems,
+              join('->', @keys)
+              . ': Empty hashref returned; should be undef.';
+        }
+    }
+    elsif ($ref eq 'SCALAR' || $ref eq 'REF') {
 
-	}
-	elsif (eval {$data->isa('Ace::Object')}) {
-		push @compliance_problems, join('->', @keys) .
-		     ": Ace::Object (class: " . $data->class . ", name: $data) returned.";
-		$data = $data->name; # or perhaps they wanted a _pack_obj... we'll never know
-	}
-	else { # don't know what the data is, but try to stringify it...
-		push @compliance_problems, join('->', @keys) .
-             ": Object (class: " . ref($data) . ", value: $data) returned.";
-		$data = "$data";
-	}
+        # make sure scalar ref doesn't refer to something bad
+        if (($tmp, @problems) = $self->_check_data_content($$data, @keys))
+        {
+            $data = $tmp;
+            push @compliance_problems, @problems;
+        }
+        else {
+            $data =
+              $$data;    # doesn't refer to anything bad -- just dereference it.
+            push @compliance_problems,
+              join('->', @keys)
+              . ': Scalar reference returned; should be scalar.';
+        }
 
-	return @compliance_problems ? ($data, @compliance_problems) : ();
+    }
+    elsif (eval {$data->isa('Ace::Object')}) {
+        push @compliance_problems,
+            join('->', @keys)
+          . ": Ace::Object (class: "
+          . $data->class
+          . ", name: $data) returned.";
+        $data =
+          $data->name;  # or perhaps they wanted a _pack_obj... we'll never know
+    }
+    else {    # don't know what the data is, but try to stringify it...
+        push @compliance_problems,
+            join('->', @keys)
+          . ": Object (class: "
+          . ref($data)
+          . ", value: $data) returned.";
+        $data = "$data";
+    }
+
+    return @compliance_problems ? ($data, @compliance_problems) : ();
 }
-
-
 
 ############################################################
 #
 # Private Methods
 #
 ############################################################
-
 
 1;
