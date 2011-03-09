@@ -137,15 +137,3 @@
    
 
     </script>
-
-
-
-
-    <script>
- [% UNLESS c.user_session.layout.$class.0.defined %]
-        $jq("#nav-overview").trigger('open');
-        $jq("#nav-location").trigger('open');
-        updateLayout();
-      [% END %]
-        updateCounts("[% path %]");
-    </script>
