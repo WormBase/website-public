@@ -36,6 +36,10 @@
 	      $jq("li.login-type").toggle();
 	  } 	 
 	  });
+	 
+
+      //    $jq(".register-button").button();
+
 
       //    $jq(".register-button").button();
       // Register buttons 
@@ -51,11 +55,11 @@
 	      //	      if($jq("#nav-" + section).attr('display'));
 
 	      $jq("#nav-" + section).trigger("open");
-	      goToAnchor("issue");
+	      goToAnchor(section);
 	      // Change the state of the button, too
 	      $jq(this).toggleClass("button-on");
 	  });
-	      
+
 
 
     $jq(".register-button").live('click',function() {
@@ -87,6 +91,11 @@
 	  });
       });
 
+
+      /* This is the system-wide dialog */
+      $jq(".system-message-close").click(function() {
+	      $jq("div#system-message").hide();
+	  })
   
       $jq(".role-update").live('click',function() {
 	$jq.ajax({
@@ -261,17 +270,17 @@
     });
 
       $jq(".bench-update").live('click',function() {
-        var wbid       = $jq(this).attr("wbid");
-	var $class     = $jq(this).attr("objclass");
-        var label      = $jq(this).attr("name");
-        var obj_url    = $jq(this).attr("url");
-        var is_obj     = $jq(this).attr("is_obj");
-        var url        = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+        var wbid     = $jq(this).attr("wbid");
+        var $class     = $jq(this).attr("objclass");
+        var label     = $jq(this).attr("name");
+        var obj_url  = $jq(this).attr("url");
+        var is_obj  = $jq(this).attr("is_obj");
+        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
 
         $jq("#bench-status").load(url, function(){
           ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
           $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-          if($class != "paper"){	     
+          if($class != "paper"){
             ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
           }
           if($class == "paper"){
