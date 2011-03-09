@@ -36,8 +36,31 @@
 	      $jq("li.login-type").toggle();
 	  } 	 
 	  });
+	 
 
       //    $jq(".register-button").button();
+
+
+      //    $jq(".register-button").button();
+      // Register buttons 
+      //      $jq(".comments-button").button({ icons: {primary:'ui-icon-comment'}});
+      //      $jq(".settings-button").button({ icons: {secondary:'ui-icon-triangle-1-s'} });
+      $jq(".dropdown-button").button({ icons: {secondary:'ui-icon-triangle-1-s'} });
+      $jq(".toggle-button").button();
+      $jq(".button").button();
+        
+      $jq(".toggle-button").click(function() {
+	      var section = $jq(this).attr('name');
+	      alert ($jq("#nav-" + section).attr('display'));
+	      //	      if($jq("#nav-" + section).attr('display'));
+
+	      $jq("#nav-" + section).trigger("open");
+	      goToAnchor(section);
+	      // Change the state of the button, too
+	      $jq(this).toggleClass("button-on");
+	  });
+
+
 
     $jq(".register-button").live('click',function() {
       
@@ -68,6 +91,11 @@
 	  });
       });
 
+
+      /* This is the system-wide dialog */
+      $jq(".system-message-close").click(function() {
+	      $jq("div#system-message").hide();
+	  })
   
       $jq(".role-update").live('click',function() {
 	$jq.ajax({

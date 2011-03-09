@@ -48,6 +48,9 @@ input, select, th, td { font-size:1em; }
 #content {
   background:white;
   padding: 0 1em;
+/* NEW EXPERIMENTAL UI
+  padding: 0 1.7em 1em 0em;
+*/
 }
 
 /* Global Links */
@@ -141,11 +144,32 @@ div#header .release_date { }
     border-radius: 8px;
     line-height: 16px;
     padding: 1em 19px 1em 12px;
-    margin-bottom: 15px;
+/*    margin-bottom: 15px; */
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left:10px;
+    margin-right:0em;
     border-top-left-radius: 8px 8px;
     border-top-right-radius: 8px 8px;
     border-bottom-right-radius: 8px 8px;
     border-bottom-left-radius: 8px 8px;
+}
+
+
+#system-message .system-message-close:hover {
+    background: url('/img/buttons/dismiss.png') 100% -16px no-repeat;
+    color: #666;
+}
+
+
+#system-message .system-message-close {
+   background: url('/img/buttons/dismiss.png') 100% 0 no-repeat;
+   display: block-inline;
+   color: #999;
+   float: right;
+   font-size: 11px;
+   padding-right: 15px;
+   text-decoration: none;
 }
 
 /* user warnings */
@@ -166,6 +190,10 @@ div#header .release_date { }
    border: 2px solid gray;
    text-align:center;   
 }
+
+
+
+
 
 
 
@@ -742,10 +770,23 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
+/* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
+
 div.title {
     padding:0.5em 0 0.7em 0.5em;
     margin:0;
     border-bottom:0.5em solid #EEE;
+/*  NEW MARKUP
+    font-family:"Helvetica Neue",Arial;
+    font-size:28px;
+    border:1px solid gray; 
+    margin:0;
+    color:#222;
+    font-weight:bold;
+    padding:0.5em 0 0.7em 0.5em;
+    border-bottom:0.5em solid #EEE;
+    border-bottom:1px solid #EEE;
+*/
 }
 
 div.columns {
@@ -1582,3 +1623,59 @@ div.inline-columns div {
 div.inline-columns img {
     padding-top:0.5em;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* New titlebar formatting */
+#titlebar {
+    border-bottom:1px solid #ddd;
+    background:#fff;
+    z-index:100000;
+    overflow:hidden;
+    position:relative;
+    padding: 1em 0em 0 0;
+    margin-bottom:0.5em;
+}
+
+#titlebar #title {
+    font-family:"Helvetica Neue",Arial;
+    font-size:28px;
+    float:left;
+    padding:0em 0 0em 0.5em;
+    margin:0;
+    color:#222;
+    font-weight:bold;
+}
+
+#titlebar #buttons {
+    float:right;
+    font-size:0.6em;
+    width:300px;
+    padding-right:0.5em;
+}
+
+#titlebar .button {
+   margin:0.2em;
+    padding-top:0;   /* need to override div.columsn for the layout button */
+}
+
+#titlebar .dropdown-button {
+   width:75px;
+}
+
+#titlebar .button-on {
+    color:blue;
+}
+
+
+
+

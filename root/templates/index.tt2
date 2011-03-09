@@ -1,21 +1,21 @@
-[% SET class    = 'home' %]
+[% SET class = 'home' %]
 
-  <div id="top">
+<div id="splash-box">
     <div class="content-box"><h1>Explore Worm Biology</h1>
 <!--      <br />Compare. Analyze. Share.-->
 <!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
       <p>facilitating insights into <br />nematode biology</p>
-[% UNLESS c.user_exists %]
-<div id="create-prompt" class="ui-corner-all">
-  Join the online worm community! <br />
-        <div id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
-          sign up ›
+      [% UNLESS c.user_exists %]
+        <div id="create-prompt" class="ui-corner-all">
+           Join the online worm community! <br />
+              <div id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
+                  sign up ›
+              </div>
+             <span> Already a member? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
         </div>
-        <span> Already a member? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
+    [% END %]
+   </div>
 </div>
-[% END %]
-    </div>
-  </div>
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
@@ -42,5 +42,3 @@
     resetLayout(leftList, rightList, 60);
   [% END %]
     </script>
-
-
