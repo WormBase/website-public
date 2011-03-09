@@ -1284,7 +1284,8 @@ sub bestname {
 # Returns: () if all is well, otherwise array with fixed data and
 #          description(s) of compliance problem(s).
 sub check_data {
-    my ($self, $data) = @_;
+    my ($self, $data, $class) = @_;
+    $class ||= '';
     my @compliance_problems;
 
     if (ref($data) ne 'HASH') {   # no data pack
@@ -1305,7 +1306,7 @@ sub check_data {
         $data->{data} = undef;
         push @compliance_problems, 'No data entry in datapack.';
     }
-    elsif (my ($tmp, @problems) = $self->_check_data_content($data->{data}) )
+    elsif (my ($tmp, @problems) = $self->_check_data_content($data->{data}, $class))
     {
         $data->{data} = $tmp;
         push @compliance_problems, @problems;
