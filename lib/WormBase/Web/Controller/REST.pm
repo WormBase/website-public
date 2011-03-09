@@ -747,7 +747,7 @@ sub widget_GET {
 	    $c->log->debug($field);
 	    my $data = $object->$field; # $object->can($field) for a check
 		if ($c->config->{installation_type} eq 'development' and
-			my ($fixed_data, @problems) = $object->check_data($data)) {
+			my ($fixed_data, @problems) = $object->check_data($data, $class)) {
 			$data = $fixed_data;
 			$c->log->fatal("${class}::$field returns non-compliant data: ");
 			$c->log->fatal("\t$_") foreach @problems;
