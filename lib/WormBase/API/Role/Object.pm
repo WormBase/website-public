@@ -604,7 +604,7 @@ sub _build_expression_patterns {
             || $_->Remark;
         push @data, {
             expression_pattern => $self->_pack_obj($_),
-            description        => join("<br />", @patterns) : undef,
+            description        => join("<br />", @patterns) || undef,
             author             => $author && "$author",
         };
     }
@@ -1147,7 +1147,7 @@ sub _build_xrefs {
         # Possibly multiple entries for a single DB
         my @ids = map {
             my @types = $_->col;
-            @type ? map { "$_" } @types : $_->right->name;
+            @types ? map { "$_" } @types : $_->right->name;
         } $db->col;
 
         $dbs{$db} = {
@@ -1166,7 +1166,7 @@ sub _build_xrefs {
 
     return {
         description => 'external databases and IDs containing additional information on the object',
-        data => %db ? \%dbs : undef,
+        data => %dbs ? \%dbs : undef,
     };
 }
 
