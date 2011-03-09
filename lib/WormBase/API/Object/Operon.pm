@@ -44,29 +44,31 @@ http://wormbase.org/species/operon
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-=head2 species
+=head3 species
 
-This method will return a data structure species containing this Operon.
+This method will return a data structure with species containing the operon.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->species();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Operon ID CEOP1140
+An Operon id (eg CEOP1140)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -80,50 +82,54 @@ a Operon ID CEOP1140
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/species
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub species {
-	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Species;
-	my $data_pack = $self->_pack_obj($tag_object);
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-		};
+    my $self       = shift;
+    my $object     = $self->object;
+    my $tag_object = $object->Species;
+    my $data_pack  = $self->_pack_obj($tag_object);
+    return {
+        'data'        => $data_pack,
+        'description' => 'species containing the operon'
+    };
 }
 
-=head2 structure
+=head3 structure
 
-This method will return a data structure with the species containing this Operon.
+This method will return a data structure with structure of the operon.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->structure();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Operon ID CEOP1140
+An Operon id (eg CEOP1140)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -137,63 +143,69 @@ a Operon ID CEOP1140
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/structure
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub structure {
-	my $self = shift;
-	my $operon = $self->object;
-	my @data_pack;
-	my @member_gene = $operon->Contains_gene;
- 
-	foreach my $gene (@member_gene) {
-		my $gene_info = $self->_pack_obj($gene);
-	  	my %spliced_leader;
-	    foreach my $sl ($gene->col) {
-	    	my @evidence = $sl->col;
-			$spliced_leader{$sl} = \@evidence;      # each spliced leader key is linked to an array of evidence 
-	    }
-	    push @data_pack, {
-	    	gene_info => $gene_info,
-			splice_info => \%spliced_leader
-	    };
-	 } 
-	return {
-		'data'=> \@data_pack,
-		'description' => 'structure information for this operon'
-	};
+    my $self   = shift;
+    my $operon = $self->object;
+    my @data_pack;
+    my @member_gene = $operon->Contains_gene;
+
+    foreach my $gene (@member_gene) {
+        my $gene_info = $self->_pack_obj($gene);
+        my %spliced_leader;
+        foreach my $sl ( $gene->col ) {
+            my @evidence = $sl->col;
+            $spliced_leader{$sl} = \@evidence
+              ;    # each spliced leader key is linked to an array of evidence
+        }
+        push @data_pack,
+          {
+            gene_info   => $gene_info,
+            splice_info => \%spliced_leader
+          };
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'structure information for this operon'
+    };
 }
 
-=head2 history
+=head3 history
 
-This method will return a data structure with history info on this Operon.
+This method will return a data structure with history of the operon.
 
-=head3 PERL API
+=over
+
+=item PERL API
 
  $data = $model->history();
 
-=head3 REST API
+=item REST API
 
-=head4 Request Method
+B<Request Method>
 
 GET
 
-=head4 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head4 Parameters
+B<Parameters>
 
-a Operon ID CEOP1140
+An Operon id (eg CEOP1140)
 
-=head4 Returns
+B<Returns>
 
 =over 4
 
@@ -207,59 +219,73 @@ a Operon ID CEOP1140
 
 =back
 
-=head4 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/history
 
-=head4 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
+
+=cut 
 
 sub history {
-	my $self = shift;
-	my $object = $self->object;
-	my %data_pack;
-	my  @history_types = $object->History;
-	
-	foreach my $history_type (@history_types) {
-		my %histories;
-	  	foreach my $h ($history_type->col) {
-	    	my @evidence = $h->col;	     
-	     	@evidence = _get_evidence_names(\@evidence);
-	    	$histories{$h} = \@evidence;                    
-	  	} 
-	  	$data_pack{$history_type} = \%histories;        
-	}
-	return {
-		'data'=> $data_pack,
-		'description' => ''
-	};
+    my $self   = shift;
+    my $object = $self->object;
+    my %data_pack;
+    my @history_types = $object->History;
+
+    foreach my $history_type (@history_types) {
+        my %histories;
+        foreach my $h ( $history_type->col ) {
+            my @evidence = $h->col;
+            @evidence = _get_evidence_names( \@evidence );
+            $histories{$h} = \@evidence;
+        }
+        $data_pack{$history_type} = \%histories;
+    }
+    return {
+        'data'        => $data_pack,
+        'description' => 'history of the information on the operon'
+    };
 }
+
+#########################
+#
+# Internal Methods
+#
+##########################
 
 sub _get_evidence_names {
-  my ($evidences)=shift;
-  my @ret;
-  
-  foreach my $ev (@$evidences) {
-    my @names = $ev->col;
-    if($ev eq "Person_evidence" || $ev eq "Author_evidence" || $ev eq "Curator_confirmed") {    
-      $ev =~ /(.*)_(evidence|confirmed)/;  #find a better way to do this?    
-      @names =  map{$1 . ': ' . $_->Full_name || $_} @names;
-    }elsif ($ev eq "Paper_evidence"){
-      @names = map{'Paper: ' . $_->Brief_citation || $_} @names;
-    }elsif ($ev eq "Feature_evidence"){
-      @names = map{'Feature: '.  $_->Visible->right || $_} @names;
-    }elsif ($ev eq "From_analysis"){
-      @names = map{'Analysis: '. $_->Description || $_} @names;
-    }else {
-      @names = map{$ev . ': ' . $_} @names;
-    }
-    push(@ret, @names);
-  }
-  return @ret;
-}
+    my ($evidences) = shift;
+    my @ret;
 
+    foreach my $ev (@$evidences) {
+        my @names = $ev->col;
+        if (   $ev eq "Person_evidence"
+            || $ev eq "Author_evidence"
+            || $ev eq "Curator_confirmed" )
+        {
+            $ev =~ /(.*)_(evidence|confirmed)/;   #find a better way to do this?
+            @names = map { $1 . ': ' . $_->Full_name || $_ } @names;
+        }
+        elsif ( $ev eq "Paper_evidence" ) {
+            @names = map { 'Paper: ' . $_->Brief_citation || $_ } @names;
+        }
+        elsif ( $ev eq "Feature_evidence" ) {
+            @names = map { 'Feature: ' . $_->Visible->right || $_ } @names;
+        }
+        elsif ( $ev eq "From_analysis" ) {
+            @names = map { 'Analysis: ' . $_->Description || $_ } @names;
+        }
+        else {
+            @names = map { $ev . ': ' . $_ } @names;
+        }
+        push( @ret, @names );
+    }
+    return @ret;
+}
 
 1;
