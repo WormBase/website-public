@@ -22,55 +22,55 @@ http://wormbase.org/species/position_matrix
 
 =cut
 
-
-has 'data_directory' => (    
-	is  => 'ro',
-    lazy => 1,
+has 'data_directory' => (
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-    	my $self = shift;
-		my $ace_service = $self->ace_dsn(); 
-		my $version = $ace_service->dbh->version;
-    	return "/usr/local/wormbase/databases/$version/position_matrix";
-  	}
+        my $self        = shift;
+        my $ace_service = $self->ace_dsn();
+        my $version     = $ace_service->dbh->version;
+        return "/usr/local/wormbase/databases/$version/position_matrix";
+    }
 );
 
-has 'image_directory' => (    
-	is  => 'ro',
-    lazy => 1,
+has 'image_directory' => (
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-    	return "../../html/images/position_matrix";
-  	}
+        return "../../html/images/position_matrix";
+    }
 );
 
 has 'name2consensus_hr' => (
-	is  => 'ro',
-    lazy => 1,
-    default => sub {	
-    	my $self = shift;
-    	my $data_dir = $self->data_directory;
-    	my $datafile = $data_dir."/pm_id2consensus_seq.txt";
-    	my %name2consensus = _build_hash($datafile);
-    	
-    	return \%name2consensus;
-  	}
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        my $self           = shift;
+        my $data_dir       = $self->data_directory;
+        my $datafile       = $data_dir . "/pm_id2consensus_seq.txt";
+        my %name2consensus = _build_hash($datafile);
+
+        return \%name2consensus;
+    }
 );
 
 has 'image_pointer_file' => (
-	is  => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub {
-    	my $self = shift;
-    	my $data_dir = $self->data_directory;
-    	my $datafile = $data_dir."/pm_id2source_pm.txt";
-    	my %image_pointer = _build_hash($datafile);
-    	
-    	return \%image_pointer;
-  	}
+        my $self          = shift;
+        my $data_dir      = $self->data_directory;
+        my $datafile      = $data_dir . "/pm_id2source_pm.txt";
+        my %image_pointer = _build_hash($datafile);
+
+        return \%image_pointer;
+    }
 );
 
 #######################################
-
+#
 # The Overview Widget
+#
 #######################################
 
 =head2 Overview
@@ -88,7 +88,6 @@ has 'image_pointer_file' => (
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
-
 
 =head3 associated_feature
 
@@ -137,17 +136,14 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 =cut 
 
 sub associated_feature {
-	my $self = shift;
-    my $object = $self->object;
-	
-	my $associated_feature = $object->Associated_feature;
-	my $data_pack = $self->_pack_obj($associated_feature);
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'feature associated with motif'
-				};
-	return $data;	
+    my $self               = shift;
+    my $object             = $self->object;
+    my $associated_feature = $object->Associated_feature;
+    my $data_pack          = $self->_pack_obj($associated_feature);
+    return {
+        'data'        => $data_pack,
+        'description' => 'feature associated with motif'
+    };
 }
 
 =head3 associated_position_matrix
@@ -196,17 +192,14 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 =cut 
 
 sub associated_position_matrix {
-	my $self = shift;
-    my $object = $self->object;
-	
-	my $associated_pm = $object->Associated_with_Position_Matrix;
-	my $data_pack = $self->_pack_obj($associated_pm);
-
-	my $data = {
-				'data'=> $data_pack,
-				'description' => 'other motif associated with motif'
-				};
-	return $data;
+    my $self          = shift;
+    my $object        = $self->object;
+    my $associated_pm = $object->Associated_with_Position_Matrix;
+    my $data_pack     = $self->_pack_obj($associated_pm);
+    return {
+        'data'        => $data_pack,
+        'description' => 'other motif associated with motif'
+    };
 }
 
 =head3 consensus
@@ -255,21 +248,19 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 =cut 
 
 sub consensus {
-	my $self = shift;
-    my $object = $self->object;
+    my $self              = shift;
+    my $object            = $self->object;
     my $name2consensus_hr = $self->name2consensus_hr;
-	my $data_pack = $name2consensus_hr->{$object};
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'consensus sequence for motif'
-	};
-	return $data;	
+    my $data_pack         = $name2consensus_hr->{$object};
+    return {
+        'data'        => $data_pack,
+        'description' => 'consensus sequence for motif'
+    };
 }
 
 ############################
 ## logo
 ############################
-
 
 #############################
 ## position data
@@ -321,49 +312,47 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/positio
 =cut 
 
 sub position_data {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my $sv = $object->Site_values;
+    my $sv     = $object->Site_values;
 
-	my @row_1 = $sv->row;
-	my @row_2 = $sv->down->row;
-	my @row_3 = $sv->down->down->row;
-	my @row_4 = $sv->down->down->down->row;
+    my @row_1 = $sv->row;
+    my @row_2 = $sv->down->row;
+    my @row_3 = $sv->down->down->row;
+    my @row_4 = $sv->down->down->down->row;
 
-	my $base_r1 = shift @row_1;
-	my $base_r2 = shift @row_2;
-	my $base_r3 = shift @row_3;
-	my $base_r4 = shift @row_4;
+    my $base_r1 = shift @row_1;
+    my $base_r2 = shift @row_2;
+    my $base_r3 = shift @row_3;
+    my $base_r4 = shift @row_4;
 
-	my $data = {
-		$base_r1 => \@row_1,
-		$base_r2 => \@row_2,
-		$base_r3 => \@row_3,
-		$base_r4 => \@row_4
-	};
-	
-	my $return = {
-				'data'=> $data,
-				'description' => 'data for individual positions in motif'
-				};
-	return $return;	
+    my $data = {
+        $base_r1 => \@row_1,
+        $base_r2 => \@row_2,
+        $base_r3 => \@row_3,
+        $base_r4 => \@row_4
+    };
+
+    return {
+        'data'        => $data,
+        'description' => 'data for individual positions in motif'
+    };
 }
 
 ###########################
 ## internal methods
 ###########################
 
-sub _build_hash{
-	my ($file_name) = @_;
-	open FILE, "<./$file_name" or die "Cannot open the file: $file_name\n";
-	my %hash;
-	foreach my $line (<FILE>) {
-		chomp ($line);
-		my ($key, $value) = split '=>',$line;
-		$hash{$key} = $value;
-	}
-	return %hash;
+sub _build_hash {
+    my ($file_name) = @_;
+    open FILE, "<./$file_name" or die "Cannot open the file: $file_name\n";
+    my %hash;
+    foreach my $line (<FILE>) {
+        chomp($line);
+        my ( $key, $value ) = split '=>', $line;
+        $hash{$key} = $value;
+    }
+    return %hash;
 }
 
 1;
