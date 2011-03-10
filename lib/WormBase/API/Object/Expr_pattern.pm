@@ -35,22 +35,15 @@ http://wormbase.org/species/expr_pattern
 
 =cut
 
-sub name {
+sub _build_name {
     my ($self) = @_;
 	my $bestname = $self->bestname($self ~~ 'Gene');
 	$bestname = defined $bestname ?
 	  "Expression pattern for $bestname" : $self ~~ 'name';
 
-	return {
-		description => 'The object name of the paper',
-		data => {
-			id		=> $self ~~ 'name',
-			label	=> $bestname,
-			class	=> $self ~~ 'class'
-		},
-	};
+    return $self->_pack_obj($self->object,
+                            $bestname && "Expression pattern for $bestname");
 }
-
 
 # Override default description from Role::Object.
 sub _build_description {
