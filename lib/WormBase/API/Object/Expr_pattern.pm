@@ -86,12 +86,13 @@ B<Response example>
 
 sub _build_name {
     my ($self) = @_;
-	my $bestname = $self->bestname($self ~~ 'Gene');
-	$bestname = defined $bestname ?
-	  "Expression pattern for $bestname" : $self ~~ 'name';
 
-    return $self->_pack_obj($self->object,
-                            $bestname && "Expression pattern for $bestname");
+	my $bestname = $self->bestname($self ~~ 'Gene');
+    return {
+        description => 'The name and WormBase internal ID of an Expr_pattern object',
+        data        => $self->_pack_obj($self->object,
+                                        $bestname && "Expression pattern for $bestname"),
+    };
 }
 
 # sub description {}

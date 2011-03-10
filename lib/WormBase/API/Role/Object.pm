@@ -1297,7 +1297,9 @@ sub parsed_species {
 
 
 # Description: checks data returned by extenral model for standards
-#              compliance and fixes the data if necessary and possible
+#              compliance and fixes the data if necessary and possible.
+#              the fixing is very rudimentary and can be bypassed by intra-model
+#              invocations of methods. do not depend on it. fix your model code.
 #              WARNING: modifies data directly if passed data is reference
 # Usage: if (my ($fixed, @problems) = $self->check_data($data)) { ... }
 # Returns: () if all is well, otherwise array with fixed data and
@@ -1315,10 +1317,18 @@ sub check_data {
         push @compliance_problems,
           'Did not return in hashref datapack with description and data entry.';
     }
-
-    if (!$data->{description}) {    # no description
+    elsif (!$data->{description} && !exists $data->{data}) { # it's probably a data hash but not packed
+        $data = {
+            description => 'No description available',
+            data        => $data,
+        };
+        push @compliance_problems,
+          'Returned hashref, but no data & description entries. Perhaps forgot to pack the data?';
+    }
+    elsif (!$data->{description}) { # data value is there, but no description
         $data->{description} = 'No description available';
-        push @compliance_problems, 'No description entry in datapack.';
+        push @compliance_problems,
+          'Datapack does not have description.';
     }
 
     if (!exists $data->{data}) {    # no data entry
