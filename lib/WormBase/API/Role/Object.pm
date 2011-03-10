@@ -127,12 +127,19 @@ has 'common_name' => (
 
 sub _build_common_name {
     my ($self) = @_;
-    my $object = $self->object;
+    return $self->_common_name($self->object);
+}
+
+sub _common_name {
+    my ($self, $object) = @_;
     my $class  = $object->class;
 
     my %taghash = ( # where should this go?
         Person     => 'Standard_name',
-        Gene       => 'Public_name',
+        Gene       => [qw(Public_name CGC_name Molecular_name)],
+        # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
+        # to fully handle this, an exception may have to be made OR this method
+        # could be made more robust to do recursive checks... seems unnecessary
         Feature    => 'Public_name',
         Variation  => 'Public_name',
         Phenotype  => 'Primary_name',
@@ -142,10 +149,26 @@ sub _build_common_name {
 
     my $name;
     if (my $tag = $taghash{$class}) {
-        $name = $object->$tag;
+        $tag = [$tag] unless ref $tag;
+        foreach my $tag (@$tag) {
+            last if $name = $object->$tag;
+        }
     }
 
-    return ($name && "$name") || $self->object->name;
+    return ($name && "$name") || $object->name;
+}
+
+# deprecated in favour of _common_name
+sub bestname {
+    my ($self, $gene) = @_;
+    return unless $gene && $gene->class eq 'Gene';
+    my $name =
+         $gene->Public_name
+      || $gene->CGC_name
+      || $gene->Molecular_name
+      || eval {$gene->Corresponding_CDS->Corresponding_protein}
+      || $gene;
+    return $name;
 }
 
 =head3 other_names
@@ -1251,7 +1274,7 @@ sub _pack_obj {
     return unless $object;
     return {
         id    => "$object",
-        label => $label // $self->common_name,
+        label => $label // $self->_common_name($object),
         class => $object->class,
         %args,
     };
@@ -1265,17 +1288,6 @@ sub parsed_species {
     return lc(substr($genus_species, 0, 1)) . "_$species";
 }
 
-sub bestname {
-    my ($self, $gene) = @_;
-    return unless $gene && $gene->class eq 'Gene';
-    my $name =
-         $gene->Public_name
-      || $gene->CGC_name
-      || $gene->Molecular_name
-      || eval {$gene->Corresponding_CDS->Corresponding_protein}
-      || $gene;
-    return $name;
-}
 
 # Description: checks data returned by extenral model for standards
 #              compliance and fixes the data if necessary and possible
