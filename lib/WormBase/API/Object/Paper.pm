@@ -107,7 +107,7 @@ B<Response example>
 
 =cut
 
-sub name {
+sub _build_name {
     my ($self) = @_;
     my $title = $self ~~ 'Title' // $self ~~ 'name';
     $title =~ s/\.*$//;

@@ -84,22 +84,15 @@ B<Response example>
 
 =cut
 
-sub name {
+sub _build_name {
     my ($self) = @_;
 	my $bestname = $self->bestname($self ~~ 'Gene');
 	$bestname = defined $bestname ?
 	  "Expression pattern for $bestname" : $self ~~ 'name';
 
-	return {
-		description => 'The object name of the paper',
-		data => {
-			id		=> $self ~~ 'name',
-			label	=> $bestname,
-			class	=> $self ~~ 'class'
-		},
-	};
+    return $self->_pack_obj($self->object,
+                            $bestname && "Expression pattern for $bestname");
 }
-
 
 # sub description {}
 # Supplied by Role; POD will automatically be inserted here.
