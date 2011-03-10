@@ -19,8 +19,6 @@ Model for the Ace ?Expr_pattern class.
 
 http://wormbase.org/species/expr_pattern
 
-=head1 TODO
-
 =head1 METHODS/URIs
 
 =cut
@@ -32,6 +30,57 @@ http://wormbase.org/species/expr_pattern
 #######################################
 
 =head2 Overview
+
+=cut
+
+=head3 name
+
+This method will return a data structure containing a prose
+name of this expression pattern.
+
+=over
+
+=item PERL API
+
+ $data = $model->name();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/name
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -52,6 +101,10 @@ sub name {
 }
 
 
+# sub description {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
+
 # Override default description from Role::Object.
 sub _build_description {
     my ($self) = @_;
@@ -70,6 +123,58 @@ sub _build_description {
     };
 }
 
+
+=head3 subcellular_locations
+
+This method will return a data structure containing 
+subcellular locations of this expression pattern.
+
+=over
+
+=item PERL API
+
+ $data = $model->subcellular_locations();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/subcellular_locations
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub subcellular_locations {
 	my ($self) = @_;
 	my $subcellular_loc = $self ~~ '@Subcellular_localization';
@@ -79,6 +184,58 @@ sub subcellular_locations {
 		data		=> @$subcellular_loc ? $subcellular_loc : undef,
 	};
 }
+
+=head3 expressed_by
+
+This method will return a data structure containing 
+information on the gene or clone responsible for the
+expression pattern.
+
+=over
+
+=item PERL API
+
+ $data = $model->expressed_by();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expressed_by
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub expressed_by {
 	my ($self) = @_;
@@ -95,6 +252,57 @@ sub expressed_by {
 	};
 }
 
+=head3 expressed_in
+
+This method will return a data structure containing 
+the life stage in which the expression pattern is observed.
+
+=over
+
+=item PERL API
+
+ $data = $model->expressed_in();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expressed_in
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub expressed_in {
 	my ($self) = @_;
 
@@ -109,6 +317,57 @@ sub expressed_in {
 		data		=> %data ? \%data : undef
 	};
 }
+
+=head3 anatomy_ontology
+
+This method will return a data structure containing 
+anatomy ontology entries associated with this expression pattern.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_ontology();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/anatomy_ontology
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub anatomy_ontology {
 	my ($self) = @_;
@@ -125,31 +384,135 @@ sub anatomy_ontology {
 	};
 }
 
+=head3 experimental_details
+
+This method will return a data structure containing 
+experimental details about how the expression pattern
+was generated.
+
+=over
+
+=item PERL API
+
+ $data = $model->experimental_details();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/experimental_details
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub experimental_details {
-	my ($self) = @_;
-	my %data;
-
-	if (my @types = @{$self ~~ '@Type'}) {
-		$data{types} = [map ["$_", $_->right . ''], @types];
-	}
-
-	foreach (qw(Antibody_info Transgene Strain Author)) {
-		my $val = $self ~~ "\@$_";
-		$data{$_} = $self->_pack_objects($val) if @$val;
-	}
-
-	if (my $date = $self ~~ 'Date') {
-		$data{date} = $date->name;
-	}
-
-	return {
-		description => 'Experimental details of the expression pattern',
-		data		=> %data ? \%data : undef,
-	};
+    my ($self) = @_;
+    my %data;
+    
+    if (my @types = @{$self ~~ '@Type'}) {
+	$data{types} = [map ["$_", $_->right . ''], @types];
+    }
+    
+    foreach (qw(Antibody_info Transgene Strain Author)) {
+	my $val = $self ~~ "\@$_";
+	$data{$_} = $self->_pack_objects($val) if @$val;
+    }
+    
+    if (my $date = $self ~~ 'Date') {
+	$data{date} = $date->name;
+    }
+    
+    return {
+	description => 'Experimental details of the expression pattern',
+	data	    => %data ? \%data : undef,
+    };
 }
 
+
+=head3 expression_image
+
+This method will return a data structure containing 
+curated expression images, if they exist.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_image();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expression_image
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub expression_image {
-	my ($self) = @_;
+    my ($self) = @_;
 
 	my $data;
 	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
@@ -160,6 +523,57 @@ sub expression_image {
 		data => $data,
 	};
 }
+
+=head3 curated_images
+
+This method will return a data structure containing 
+curated expression pattern images.
+
+=over
+
+=item PERL API
+
+ $data = $model->curated_images();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr1213)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/curated_images
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub curated_images {
 	my ($self) = @_;

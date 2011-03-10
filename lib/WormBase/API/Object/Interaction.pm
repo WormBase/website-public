@@ -117,8 +117,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json
-http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interactor
 
 B<Response example>
 

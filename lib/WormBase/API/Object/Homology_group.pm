@@ -36,6 +36,11 @@ http://wormbase.org/species/homology_group
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
+
 =head3 title
 
 This method will return a data structure with the title for the homology_group.
@@ -91,7 +96,7 @@ sub title {
     my $object    = $self->object;
     my $data_pack = $object->Title;
     return {
-        'data'        => $data_pack,
+        'data'        => $data_pack ? "$data_pack" : undef,
         'description' => 'title for this homology_group'
     };
 }
@@ -288,9 +293,5 @@ sub protein {
         'description' => 'proteins related to this homology_group'
     };
 }
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
 
 1;
