@@ -625,10 +625,15 @@ sub _build_expression_patterns {
         my @patterns = $_->Pattern
             || $_->Subcellular_localization
             || $_->Remark;
+
+	my $gene      = $_->Gene;
+	my $transgene = $_->Transgene; 
         push @data, {
             expression_pattern => $self->_pack_obj($_),
             description        => join("<br />", @patterns) || undef,
             author             => $author && "$author",
+	    gene               => $self->_pack_obj($gene),
+#	    transgene          => $self->_pack_obj($transgene);
         };
     }
 

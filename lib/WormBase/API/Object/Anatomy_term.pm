@@ -38,27 +38,30 @@ http://wormbase.org/species/anatomy_term
 
 =head3 definition
 
-This method will return a data structure re: definition of this anatomy_term.
+This method will return a data structure containing a prose
+definition of this term.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->definition();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 An Anatomy_term ID (eg WBbt:0005175)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -72,13 +75,15 @@ An Anatomy_term ID (eg WBbt:0005175)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/definition
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -87,7 +92,7 @@ sub definition {
     my $object = $self->object;
     my $data   = $object->Definition;
     return {
-        data => $data ? "$data" : undef,
+        data        => $data ? "$data" : undef,
         description => 'definition of the anatomy term',
     };
 }
@@ -97,25 +102,27 @@ sub definition {
 This method will return a data structure containing the 
 synonyms of this anatomy term object.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->synonyms();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 An Anatomy_term ID (eg WBbt:0005175)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -129,13 +136,15 @@ An Anatomy_term ID (eg WBbt:0005175)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/synonyms
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -165,25 +174,27 @@ sub synonyms {
 This method will return a data structure of 
 transgenes annotated with this anatomy term.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->transgenes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Anatomy_term ID WBbt:0005175
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -197,13 +208,15 @@ a Anatomy_term ID WBbt:0005175
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/WBbt:0005175/transgenes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -223,6 +236,92 @@ sub transgenes {
     };
 }
 
+
+#######################################
+#
+# The Expression patterns
+#
+#######################################
+
+=head3 expression_clusters
+
+This method will return a data structure expression_clusters associated with this anatomy_term.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_clusters();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Anatomy_term id (eg WBbt:0005175)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expression_clusters
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=back
+
+=cut 
+
+sub expression_clusters {
+    my $self   = shift;
+    my $object = $self->object;
+    my $desc   = 'notes';
+    my @data_pack;
+    my @expression_clusters = $object->Expression_cluster;
+    foreach my $expression_cluster (@expression_clusters) {
+        my $ec_description = $expression_cluster->Description;
+        my $ec_data        = $self->_pack_obj($expression_cluster);
+
+        push @data_pack,
+          {
+            'ec_data'     => $ec_data,
+            'description' => $ec_description
+          };
+    }
+    return {
+        'data'        => \@data_pack,
+        'description' => 'expression_clusters associated with this anatomy_term'
+    };
+}
+
+# sub expression_patterns {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include expression_patterns >>
+
+
 #####################
 ## browser
 #####################
@@ -235,93 +334,10 @@ sub transgenes {
 ## associations
 ####################
 
-# TH: There is a shared expression_patterns method in Role. We should use/expand that one and template.
 
-=head3 expr_patterns
 
-This method will return a data structure expression patterns associated with this anatomy_term.
 
-=over
-
-=item PERL API
-
- $data = $model->expr_patterns();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expr_patterns
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub expr_patterns {
-    my $self          = shift;
-    my $object        = $self->object;
-    my @expr_patterns = $object->Expr_pattern;
-
-    foreach my $expr_pattern (@expr_patterns) {
-        my $ep_data = {
-            'id'    => "$expr_pattern",
-            'label' => "$expr_pattern",
-            'Class' => 'Expr_pattern'
-        };
-
-        my $ep_gene    = $expr_pattern->Gene      if $expr_pattern->Gene;
-        my $ep_pattern = $expr_pattern->Pattern   if $expr_pattern->Pattern;
-        my $ep_xgene   = $expr_pattern->Transgene if $expr_pattern->Transgene;
-
-        my $gene_data         = $self->_pack_obj($ep_gene)    if $ep_gene;
-        my $ep_pattern_data   = $self->_pack_obj($ep_pattern) if $ep_pattern;
-        my $ep_transgene_data = $self->_pack_obj($ep_xgene)   if $ep_xgene;
-
-        push @data_pack,
-          {
-            'ep_data'    => $ep_data,
-            'gene'       => $gene_data,
-            'pattern'    => ep_pattern_data,
-            'trans_gene' => $ep_transgene_data
-          };
-    }
-    return {
-        'data'        => \@data_pack,
-        'description' => 'expr_patterns annotated with this anatomy_term'
-    };
-}
-
-=head3 go_terms
+=head3 gene_ontology
 
 This method will return a data structure containing go terms for this anatomy_term.
 
@@ -329,7 +345,7 @@ This method will return a data structure containing go terms for this anatomy_te
 
 =item PERL API
 
- $data = $model->go_terms();
+ $data = $model->gene_ontology();
 
 =item REST API
 
@@ -361,7 +377,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/go_terms
+curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/gene_ontology
 
 <div class="response-example"></div>
 
@@ -369,7 +385,7 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy
 
 =cut 
 
-sub go_terms {
+sub gene_ontology {
     my $self     = shift;
     my $object   = $self->object;
     my @go_terms = $object->GO_term;
@@ -441,6 +457,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub anatomy_functions {
@@ -501,6 +519,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub anatomy_function_nots {
@@ -513,77 +533,7 @@ sub anatomy_function_nots {
     };
 }
 
-=head3 expression_clusters
 
-This method will return a data structure expression_clusters associated with this anatomy_term.
-
-=over
-
-=item PERL API
-
- $data = $model->expression_clusters();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Anatomy_term id (eg WBbt:0005175)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/anatomy_term/eg WBbt:0005175/expression_clusters
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub expression_clusters {
-    my $self   = shift;
-    my $object = $self->object;
-    my $desc   = 'notes';
-    my @data_pack;
-    my @expression_clusters = $object->Expression_cluster;
-    foreach my $expression_cluster (@expression_clusters) {
-        my $ec_description = $expression_cluster->Description;
-        my $ec_data        = $self->_pack_obj($expression_cluster);
-
-        push @data_pack,
-          {
-            'ec_data'     => $ec_data,
-            'description' => $ec_description
-          };
-    }
-    return {
-        'data'        => \@data_pack,
-        'description' => 'expression_clusters associated with this anatomy_term'
-    };
-}
 
 #######################################
 #
@@ -597,11 +547,7 @@ sub expression_clusters {
 
 # sub xrefs {}
 # Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
+# << include xreffs >>
 
 ## sub anatomy {}  figure out image displaying functions
 
