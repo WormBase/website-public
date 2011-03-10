@@ -5,7 +5,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod
 
 =head1 NAME
 
@@ -25,7 +25,7 @@ http://wormbase.org/species/expr_pattern
 
 #######################################
 #
-# The Overview widget 
+# The Overview widget
 #
 #######################################
 
@@ -99,28 +99,28 @@ sub _build_name {
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
+# TODO: this needs to be separated in the model but combined in template imo
 # Override default description from Role::Object.
 sub _build_description {
     my ($self) = @_;
     my %data;
     unless (($self ~~ 'Author') =~ /Mohler/) {
-	$data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
-	$data{remark} = join ' ', @{$self ~~ '@Remark'};
-	$data{check_bc} = $self->_check_for_bc;
-	%data = () unless @{$data{description}} ||
-	    $data{remark} || $data{check_bc};
+        $data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
+        $data{remark}      = join ' ', @{$self ~~ '@Remark'};
+        $data{check_bc}    = $self->_check_for_bc;
+        %data = () unless @{$data{description}} || $data{remark} || $data{check_bc};
     }
-    
+
     return {
-	description => 'The description of the expression pattern',
-	data => %data ? \%data : undef,
+        description => 'The description of the expression pattern',
+        data        => %data ? \%data : undef,
     };
 }
 
 
 =head3 subcellular_locations
 
-This method will return a data structure containing 
+This method will return a data structure containing
 subcellular locations of this expression pattern.
 
 =over
@@ -181,7 +181,7 @@ sub subcellular_locations {
 
 =head3 expressed_by
 
-This method will return a data structure containing 
+This method will return a data structure containing
 information on the gene or clone responsible for the
 expression pattern.
 
@@ -248,7 +248,7 @@ sub expressed_by {
 
 =head3 expressed_in
 
-This method will return a data structure containing 
+This method will return a data structure containing
 the life stage in which the expression pattern is observed.
 
 =over
@@ -314,7 +314,7 @@ sub expressed_in {
 
 =head3 anatomy_ontology
 
-This method will return a data structure containing 
+This method will return a data structure containing
 anatomy ontology entries associated with this expression pattern.
 
 =over
@@ -380,7 +380,7 @@ sub anatomy_ontology {
 
 =head3 experimental_details
 
-This method will return a data structure containing 
+This method will return a data structure containing
 experimental details about how the expression pattern
 was generated.
 
@@ -433,30 +433,30 @@ B<Response example>
 sub experimental_details {
     my ($self) = @_;
     my %data;
-    
+
     if (my @types = @{$self ~~ '@Type'}) {
-	$data{types} = [map ["$_", $_->right . ''], @types];
+        $data{types} = [map ["$_", $_->right . ''], @types];
     }
-    
+
     foreach (qw(Antibody_info Transgene Strain Author)) {
-	my $val = $self ~~ "\@$_";
-	$data{$_} = $self->_pack_objects($val) if @$val;
+        my $val = $self ~~ "\@$_";
+        $data{$_} = $self->_pack_objects($val) if @$val;
     }
-    
+
     if (my $date = $self ~~ 'Date') {
-	$data{date} = $date->name;
+        $data{date} = $date->name;
     }
-    
+
     return {
-	description => 'Experimental details of the expression pattern',
-	data	    => %data ? \%data : undef,
+        description => 'Experimental details of the expression pattern',
+        data	    => %data ? \%data : undef,
     };
 }
 
 
 =head3 expression_image
 
-This method will return a data structure containing 
+This method will return a data structure containing
 curated expression images, if they exist.
 
 =over
@@ -514,13 +514,13 @@ sub expression_image {
 
 	return {
 		description => 'Image of the expression pattern',
-		data => $data,
+		data        => $data,
 	};
 }
 
 =head3 curated_images
 
-This method will return a data structure containing 
+This method will return a data structure containing
 curated expression pattern images.
 
 =over
@@ -577,7 +577,7 @@ sub curated_images {
 
 	return {
 		description => 'Curated images of the expression pattern',
-		data => @data ? \@data : undef,
+		data        => @data ? \@data : undef,
 	};
 }
 
