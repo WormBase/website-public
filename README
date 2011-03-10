@@ -1,18 +1,3 @@
-Todo:
-
-What if a field is empty or not known?  Perhaps return a hash lacking 'data'?
-
-Anaotmy of a widget, illustrating fields, subfields and wrapping
-
-List of shared widgets
-List of shared fields
-
-Migrate shared fields to Object.pm
-
-Error trapping; right nowif lib throws an error, it tries to render the default template. Bad!
-
------
-
 Run script/wormbase_server.pl to test the application.
 
 Add StackTrace as an option to the Application: lib/WormBase.pm
@@ -35,44 +20,6 @@ mkdir root/src/gene
 copy the list.tt2 from MyApp (note that we're missing boatloads of files that were created in the demo by TTSite
 
 
-
-# Er.  I'll just use TTSite to bootstrap.
-script/wormbase_create.pl view TT TTSite
-
-Edit lib/WormBase.pm:
-
-    sub message : Global {
-        my ( $self, $c ) = @_;
-        $c->stash->{template} = 'message.tt2';
-        $c->stash->{message}  ||= $c->req->param('message') || 'No message';
-    }
-    
-    sub default : Private {
-        my ( $self, $c ) = @_;
-        $c->stash->{template} = 'welcome.tt2';
-    }
-    
-    sub end : Private {
-        my ( $self, $c ) = @_;
-        $c->forward('MyApp::V::TT');
-    }
-
-
-
-
-# Create a Catalyst::Model::DBI acedb subclass
-script/wormbase_create.pl model AceDB DBI host port user password
-
-Pull in suitable parts of AcePerl (OpenDatabase, mainly)
-
-
-# Create a Catalyst::Model::DBI for the GFF database
-# Should I have one Model for each database?
-
-
-
-# For elements that should be rendered inline,
-
 use the inline View
 script/wormbase_create.pl view TT::Inline TT
 
@@ -87,57 +34,6 @@ Catalyst::View::TT - allows independent rendering of templates
 my $output = $c->view('TT')->render(
     $c, 'mytemplate.tt', \%args
 );
-
-
-
-
-
-Checking out:
-svn checkout svn+ssh://brie6.cshl.edu/home/todd/svn/wormbase/website
-
-Checking in:
-
-
-
-
-
-
-Due diligence:
-
-Background:
-
-Model-View-Controller architecture separates components of an
-application making it easier to maintain and extend.
-
-Controller:
-Handles interaction with the user
-
-Model:
-Interacts with the database. 
-
-
-
-
-Specifying a template
-
-To specify a template conditionally, check for which type of data is in the stash.
-
-
-
-
-
-Issues:
-- configuration variables
-- eg: steps to adding a new section / subsection
-- object mapping
-- interactivity
-
-examples
-
-templating systems
-
-
-bestname should be a function I can call from within a template
 
 
 
