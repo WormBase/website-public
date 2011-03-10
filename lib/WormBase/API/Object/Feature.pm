@@ -40,25 +40,27 @@ http://wormbase.org/species/feature
 
 This method will return a data structure containing sequences adjacent to the feature.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->flanking_sequences();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -72,13 +74,15 @@ A Feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/flanking_sequences
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -106,25 +110,27 @@ sub flanking_sequences {
 
 This method will return a data structure 
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->defined_by();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -138,13 +144,15 @@ A Feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/defined_by
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -169,25 +177,27 @@ sub defined_by {
 This method will return a data structure of the 
 name for the requested position matrix.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->associations();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A Feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -201,13 +211,15 @@ A Feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/associations
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -233,25 +245,27 @@ sub associations {
 This method will return a data structure containing 
 the gene whose product binds the feature.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->binds_product_of_gene();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -265,13 +279,15 @@ A feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/binds_gene_product
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -291,25 +307,27 @@ sub binds_gene_product {
 This method will return a data structure containing
 the transcription factors associated with this feature.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->transcription_factor();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -323,13 +341,15 @@ A feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/transcription_factor
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -350,25 +370,27 @@ sub transcription_factor {
 This method will return a data structure
 containing annotation info on the feature.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->annotation();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A feature ID (eg WBsf000753)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -382,13 +404,15 @@ A feature ID (eg WBsf000753)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/annotation
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 

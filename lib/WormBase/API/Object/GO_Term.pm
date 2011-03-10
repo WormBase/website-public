@@ -84,6 +84,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub term {
@@ -142,6 +144,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -205,6 +209,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub type {
@@ -263,6 +269,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -342,6 +350,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub cds {
@@ -415,6 +425,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -539,6 +551,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub phenotype {
@@ -611,6 +625,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -691,6 +707,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub sequence {
@@ -747,6 +765,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -809,6 +829,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub pseudogene {
@@ -865,6 +887,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -927,6 +951,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub homology_group {
@@ -986,6 +1012,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub expr_pattern {
@@ -1042,6 +1070,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/go_term
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 

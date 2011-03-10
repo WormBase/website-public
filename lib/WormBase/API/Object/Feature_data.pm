@@ -80,6 +80,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub feature {
@@ -138,6 +140,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
@@ -203,6 +207,8 @@ B<Response example>
 
 =back
 
+=back
+
 =cut 
 
 sub predicted_5 {
@@ -261,6 +267,8 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/feature
 B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =back
 
