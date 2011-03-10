@@ -105,18 +105,20 @@ B<Response example>
 # Template: [% name %]
 
 has 'name' => (
-    is      => 'ro',
-    default => sub {
-        my ($self) = @_;
-        my $object = $self->object;
-        my $class  = $object->class;
-
-        return {
-            description => "The name and WormBase internal ID of a $class object",
-            data        =>  $self->_pack_obj($object),
-        };
-    }
+    is         => 'ro',
+    lazy_build => 1,
 );
+
+sub _build_name {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $class  = $object->class;
+
+    return {
+        description => "The name and WormBase internal ID of a $class object",
+        data        =>  $self->_pack_obj($object),
+    };
+}
 
 # should be for internal use only
 # external use, see 'name' attr.
