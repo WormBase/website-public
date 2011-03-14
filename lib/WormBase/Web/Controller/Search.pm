@@ -80,16 +80,17 @@ sub search :Path('/search') Args {
     return;
 }
 
-sub search_autocomplete :Path('/search/autocomplete') :Args(0) {
-  my ($self, $c) = @_;
+sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
+  my ($self, $c, $type) = @_;
   my $q = $c->req->param("term");
   $c->stash->{noboiler} = 1;
-  $c->log->debug("autocomplete search: $q");
+  $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
+ my $search = $type unless($type=~/all/);
  $q =~ s/-/_/g;
   my ($it,$res)= $api->xapian->search_autocomplete(
-    $c, $q
+    $c, $q, $search
   );
 
   my @ret;
