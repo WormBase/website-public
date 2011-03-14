@@ -881,6 +881,8 @@ sub _build_remarks {
     # Need to add in evidence handling.
     my @evidence = map {$_->col} @remarks;
 
+    @remarks = map {"$_"} @remarks; # stringify them
+
     # TODO: handling of Evidence nodes
     return {
         description => "curatorial remarks for the $class",
