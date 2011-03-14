@@ -739,15 +739,15 @@ END;
 
 [% MACRO summary BLOCK;
     # Currently only includes Summary but could encompass other tags
-    WRAPPER $field_block title="Summary" key="summary"
-       fields.summary.data;
+    WRAPPER $field_block title="Summary" key="summary";
+            IF fields.summary.data.defined; fields.summary.data; END;
     END;
 END;
 %]
 
 [% MACRO status BLOCK; 
       WRAPPER $field_block title="Status" key="status";
-           fields.status.data;
+           IF fields.status.data.defined; fields.status.data; END;
       END;
 END;
 %]
