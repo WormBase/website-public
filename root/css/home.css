@@ -198,7 +198,6 @@ div.more .ui-icon {
 
 /* The search bar form */
 #searchForm {
-/*   padding:0.7em; */
   float:right;
   position:relative;
   padding:0;
@@ -212,7 +211,6 @@ div.more .ui-icon {
     text-align: left;  
     height:18px;
     margin: 0;
-    background:transparent;
   border-right:1px dotted gray;
 }  
 
@@ -335,3 +333,5 @@ position:relative;
 .comment-submit {
   display:none;
 }
+
+.ui-autocomplete-loading { background: white url(/img/ajax-loader.gif) right center no-repeat; }

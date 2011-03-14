@@ -278,7 +278,7 @@ ul.nav-bar li a.hover span, ul.nav-bar li a.selected span{
   visibility:visible;
 }
 
-ul.nav-bar ul.dropdown, form#searchForm ul.dropdown {
+ul.nav-bar ul.dropdown {
   float:none;
   margin:0;
   display:none;
@@ -293,7 +293,7 @@ ul.nav-bar ul.dropdown, form#searchForm ul.dropdown {
   list-style-type: none;
 }
 
-ul.nav-bar ul.dropdown li, form#searchForm ul.dropdown li {
+ul.nav-bar ul.dropdown li {
   padding:0.5em 0;
   width:100%;
   font-size:0.9em;
@@ -316,22 +316,13 @@ ul.nav-bar ul.dropdown li a span.ui-icon{
   top:0;
 }
 
-ul.nav-bar ul.dropdown li a, form#searchForm ul.dropdown li a{
+ul.nav-bar ul.dropdown li a {
   float:none;
   border:none;
   color:black;
   font-weight:normal;
   padding:0.5em;
 }
-
-
-form#searchForm ul.dropdown {
-  width:8em;
-  top:1.7em;
-  left:0.5em;
-}
-
-
 
 ul.dropdown li:hover{
   background:#FFFFDF;

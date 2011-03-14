@@ -15,7 +15,10 @@ use Config::General;
 
 
 has 'db' => (isa => 'Search::Xapian::Database', is => 'rw');
+has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
+
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
+has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
 has 'api' => (
     is         => 'ro',
@@ -41,7 +44,7 @@ sub search {
 
     my $query=$class->qp->parse_query( $q, 512|1|2 );
     my $enq       = $class->db->enquire ( $query );
-$c->log->debug("query:" . $query->get_description());
+    $c->log->debug("query:" . $query->get_description());
     if($type =~ /paper/){
         $enq->set_docid_order(ENQ_DESCENDING);
         $enq->set_weighting_scheme(Search::Xapian::BoolWeight->new());
@@ -49,11 +52,48 @@ $c->log->debug("query:" . $query->get_description());
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
-#     $time =~ s/\./\,/;
-    from_to($q,'utf-8','iso-8859-1') if $class->config->{utf8_query};
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,querytime=>$time,page=>$page,page_size=>$page_size });
+}
+
+sub search_autocomplete {
+    my ( $class, $c, $q, $type) = @_;
+
+    $class->db->reopen();
+#     $class->syn_db->reopen();
+
+    if($type){
+      $q .= " $type..$type";
+    }
+
+    my $query=$class->qp->parse_query( $q, 64 );
+    my $enq       = $class->db->enquire ( $query );
+#     my $query=$class->syn_qp->parse_query( $q, 64 );
+#     my $enq       = $class->syn_db->enquire ( $query );
+    $c->log->debug("query:" . $query->get_description());
+
+    my $mset      = $enq->get_mset( 0, 10 );
+
+    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
+        search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>10 });
+}
+
+sub search_exact {
+    my ( $class, $c, $q, $type) = @_;
+
+    $class->syn_db->reopen();
+
+    if($type){ $q .= " $type..$type";}
+
+    my $query=$class->syn_qp->parse_query( $q, 1|2 );
+    my $enq       = $class->syn_db->enquire ( $query );
+    $c->log->debug("query:" . $query->get_description());
+
+    my $mset      = $enq->get_mset( 0,1 );
+
+    return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
+        search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
 }
  
  

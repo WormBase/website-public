@@ -24,6 +24,15 @@ $jq(document).ready(function(){
   searchBox.blur(function(){
     if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
   });
+  
+
+  $jq( "#Search" ).autocomplete({
+      source: "/search/autocomplete",
+      minLength: 2,
+      select: function( event, ui ) {
+          location.href = ui.item.url;
+      }
+  });
  
 });
 
@@ -44,8 +53,16 @@ function search() {
 
 function search_change(new_search) {
   if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
-  $jq("#searchForm ul.dropdown li#" + cur_search_type).removeClass("selected");
   cur_search_type = new_search;
-  $jq("#searchForm ul.dropdown li#" + new_search).addClass("selected");
-  
+  selectOptionByValue(document.searchForm.searchSelect, new_search);
+}
+
+function selectOptionByValue(selObj, val){
+    var A= selObj.options, L= A.length;
+    while(L){
+        if (A[--L].value== val){
+            selObj.selectedIndex= L;
+            L= 0;
+        }
+    }
 }

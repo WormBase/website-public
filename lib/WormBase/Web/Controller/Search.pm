@@ -2,8 +2,19 @@ package WormBase::Web::Controller::Search;
 
 use strict;
 use warnings;
-use parent 'Catalyst::Controller::FormBuilder';
+use Moose;
+use JSON::XS;
 
+BEGIN { extends 'Catalyst::Controller::REST' }
+
+
+__PACKAGE__->config(
+    'default' => 'JSON',
+    'stash_key' => 'rest',
+    'map' => {
+    'application/json'   => 'JSON',
+    }
+    );
 
 ##############################################################
 #
@@ -37,30 +48,89 @@ sub search :Path('/search') Args {
       
     my $search = $type unless($type=~/all/);
 
-    my ($it,$res)= $api->search->search(
-      $c, $tmp_query, $page_count, $search
-    );
+    if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
+      my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
+      if($it->{pager}->{total_entries} == 1 ){
+        my $o = @{$it->{struct}}[0];
+        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1));
+        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
+        $c->res->redirect($url);
+        return;
+      }
+    }
 
-#     $c->stash->{iterator} = $it;
+#     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $tmp_query, $page_count, $search);
+#     unless($it) {  
+#         $it = $api->xapian->search($c, $tmp_query, $page_count, $search);
+#         $c->set_cache($cache_id,$it);
+#     }
+
+    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search);
+
 #     $c->stash->{template} = "search/xapian.tt2";
+#     $c->stash->{iterator} = $it;
 
-    $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret;
-    foreach my $o (@{$it->{struct}}){
-      my @objs;
-      my $class = $o->get_document->get_value(0);
-      my $obj = $api->fetch({class=> $class,
-                          name => $o->get_document->get_value(1)}) or die "$!";
-      my %obj = %{$api->search->_wrap_objs($obj, lcfirst($class))};
-      push(@ret, \%obj);
-    }
+    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
-
+    $c->forward('WormBase::Web::View::TT');
     return;
+}
+
+sub search_autocomplete :Path('/search/autocomplete') :Args(0) {
+  my ($self, $c) = @_;
+  my $q = $c->req->param("term");
+  $c->stash->{noboiler} = 1;
+  $c->log->debug("autocomplete search: $q");
+  my $api = $c->model('WormBaseAPI');
+
+ $q =~ s/-/_/g;
+  my ($it,$res)= $api->xapian->search_autocomplete(
+    $c, $q
+  );
+
+  my @ret;
+  foreach my $o (@{$it->{struct}}){
+    my $class = $o->get_document->get_value(2);
+    my $id = $o->get_document->get_value(1);
+    my $url = $self->_get_url($c, $class, $id);
+    my $label = $o->get_document->get_data() || $id;
+    my $objs = {    class   =>  $class,
+                    id      =>  $id,
+                    label   =>  $label,
+                    url     =>  $url,
+                };
+    push(@ret, $objs);
+  }
+
+  $c->req->header('Content-Type' => 'application/json');
+  $c->response->header('Content-Type' => 'application/json');
+  $self->status_ok(
+      $c,
+      entity =>  \@ret,
+  );
+  return;
+}
+
+sub _get_url {
+  my ($self, $c, $class, $id) = @_;
+  my $url = "";
+  if(defined $c->config->{sections}->{species}->{$class}){
+    $url .= $c->uri_for('/species',$class,$id);
+  }else{
+    $url .= $c->uri_for('/resources',$class,$id);
+  }
+  return $url;
+}
+
+sub _get_obj {
+  my ($self, $api, $doc) = @_;
+  my $obj = $api->fetch({class=> $doc->get_value(0),
+                          name => $doc->get_value(1)}) or die "$!";
+  return $api->xapian->_wrap_objs($obj, $doc->get_value(2));
 }
 
 sub search_preview :Path('/search/preview')  :Args(2) {
