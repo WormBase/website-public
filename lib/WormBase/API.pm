@@ -55,7 +55,7 @@ has tmp_base => (
     is       => 'rw',
     );
 
-has search => (
+has xapian => (
     is     => 'rw',
     isa    => 'WormBase::API::Service::Xapian',
     lazy_build      => 1,
@@ -85,7 +85,7 @@ sub _build_database {
 }
 
 # builds a search object with the default datasource
-sub _build_search {
+sub _build_xapian {
   my $self = shift;
   my $service_instance = $self->_services->{$self->default_datasource}; 
   my $root  = $self->conf_dir;
@@ -94,13 +94,17 @@ sub _build_search {
 				  -InterPolateVars => 1
     );
   my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
+  my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
   my $qp = Search::Xapian::QueryParser->new($db);
+  my $syn_qp = Search::Xapian::QueryParser->new($db);
   $qp->set_database($db);
+  $syn_qp->set_database($syn_db);
   $qp->set_default_op(OP_OR);
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $qp->add_valuerangeprocessor($svrp);
+  $syn_qp->add_valuerangeprocessor($svrp);
 
-  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self}); 
+  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
 }
  
 
