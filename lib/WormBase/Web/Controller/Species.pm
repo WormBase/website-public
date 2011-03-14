@@ -22,150 +22,149 @@ use parent 'WormBase::Web::Controller';
 ##############################################################
 
 
+##############################################################
+#   
+#   /species
+# 
+#        --> Redirects to the species summary: /species/all
+#
+##############################################################
+
+sub species_summary :Path('/species') :Args(0)   {
+    my ($self,$c) = @_;
+    $c->detach('species_index',['all']);
+}
 
 
 ##############################################################
 #
-#   Species Reports
+#   /species/[SPECIES] : The species index page 
+#    
+#            all     -> all species
+#            SPECIES -> an individual species
 #
 ##############################################################
 
-# Class summary: eg /species/strain, displays a custom search and widgets
-sub species_class_index :Path('/species') :Args(1)   {
-    my ($self,$c,$class) = @_;
-    if (defined $c->req->param("inline")) {
-      $c->stash->{noboiler} = 1;
+sub species_index :Path('/species') :Args(1)   {
+    my ($self,$c,$species) = @_;
+
+    if (defined $c->req->param('inline')) {
+	$c->stash->{noboiler} = 1;
     }
 
-    $c->stash->{section}    = 'species';
-    $c->stash->{class}      = $class;
-    $c->stash->{is_index}   = 1;
-
-    # Override the default template. Too confusing when editing.
-    # Index and report are both handled by the same template: report.
-    $c->stash->{template} = "species/report.tt2";
+    if ($species eq 'all' || $self->_is_species($c,$species)) {
+	$c->stash->{section}    = 'species_list';     # Section is where to grab widgets from
+#	$c->stash->{speceis}    = $species;           # Redundancy here for 
+	$c->stash->{class}      = $species;
+	$c->stash->{species}    = $species;           # Class is the subsection	
+	$c->stash->{template}   = 'species/species-index.tt2';
+    } else {
+	$c->detach;   # We are neither a supported class or proper species name. Error!	   
+    }
 }
 
 
 
-
 ##############################################################
 #
-#   Species Atlas
+#   Species page components
 #   URL space : /species and /species/guide
 # 
 ##############################################################
 
-# Species index page
-sub species :Path('/species') :Args(0)   {
-    my ($self,$c) = @_;
-    $c->stash->{section}  = 'species';
 
-    # Override the default template. Too confusing when editing.
-    $c->stash->{template} = 'species/species_summary-all.tt2';
-    if (defined $c->req->param("inline")) {
-      $c->stash->{noboiler} = 1;
-    }
-}
-
-
-# /species/guide/ARG: individual species summary
-sub species_overview :Path('/species/guide') :Args(1)  {
-    my ($self,$c, $species) = @_;
-    if (defined $c->req->param("inline")) {
-	$c->stash->{noboiler} = 1;
-    }
-    # I suppose we should try to trap errors here.
-   if (defined $c->config->{'species_list'}->{$species}) {
-	$c->stash->{template} = 'species/species_summary-individual.tt2';
-	$c->stash->{section}  = 'species';
-	$c->stash->{species}  = $species;
-    } else {
-	$c->detach;
-    }
-}
-
-
+# SHOULDN'T THESE BE REST TARGETS?
 # Component widgets of the guide
 # /species/guide/component: two cases
 # 1. /species/guide/component/ARG - a widget for the overview page
 # 2. /species/guide/component/SPECIES/ARG - a widget for an individual page
-sub species_component_widgets :Path("/species/guide/component") Args {
-    my ($self,$c, @args) = @_;
-    $c->stash->{section} = 'species';
 
-    # These could be species index page widgets
-    if (@args == 1) {
-      my $widget = shift @args;
-      $c->stash->{template} = "species/summary/$widget.tt2";
-
-    # Or per-species widgets
-    } elsif (@args == 2) {
-      my $species = shift @args;
-      my $widget = shift @args;
-      $c->stash->{template} = "species/$species/$widget.tt2";
-      $c->stash->{name}= join(' ',
-			      $c->config->{species_list}->{$species}->{genus},
-			      $c->config->{species_list}->{$species}->{species});
-      
-      # Necessary?
-#      unless ($c->stash->{object}) {
-#	  my $api = $c->model('WormBaseAPI');  
-#	  $c->log->debug("WormBaseAPI model is $api " . ref($api));
-#	  $c->stash->{object} =  $api->fetch({class=> ucfirst("species"),
-#					      name => $c->stash->{name}}) or die "$!";
-#      }
-#      my $object= $c->stash->{object};
-#      my @fields = $c->_get_widget_fields("species_summary",$widget);
-#      foreach my $field (@fields){
-#	  $c->stash->{fields}->{$field} = $object->$field; 
-#      }      
-    }
-    $c->stash->{noboiler} = 1;
-    $c->forward('WormBase::Web::View::TT');
-}
-
-
-
-# LEGACY CODE, but seems to be mixed in with /species calls?
-# This is a widget listing all the classes available for a given species
-#sub species_class_report :Path("/species") Args(2) {
-sub species_report :Path("/species") Args(2) {
-    my ($self,$c,$class,$name) = @_;
-    if (defined $c->req->param("inline")) {
-	$c->stash->{noboiler} = 1;
-    }
-
-#    if (defined $c->config->{'species_list'}->{$class}){
-#	if(defined $c->config->{'sections'}->{'species'}->{$name}){
-#	    $c->stash->{template} = 'species/species_class_summary.tt2';
-#	    $c->stash->{species} = $class;
-#	    $c->stash->{class} = $name;
-#	} else {
-#	    # maybe search class names?
-#	    $c->detach;
-#	}
-#    } elsif(defined $c->config->{'sections'}->{'species'}->{$class}) {
-    if(defined $c->config->{'sections'}->{'species'}->{$class}) {
-	get_report($self, $c, $class, $name);
-    } else {
-	$c->detach;
-    }
-}
-
-
-# Is this for handling PDFs?
-# I have NO IDEA what this action is for.
-# I renamed the action above to species_report to match resources.
-#sub species_report :Path("/species") Args(3) {
-#    my ($self,$c,$species,$class,$name) = @_;
-#    get_report($self, $c, $class, $name);
+# Now rest targets and probably no longer necessary.
+#sub species_component_widgets :Path("/species/guide/component") Args {
+#    my ($self,$c, @args) = @_;
+#    $c->stash->{section} = 'species';
+#
+#    # These could be species index page widgets
+#    if (@args == 1) {
+#      my $widget = shift @args;
+#      $c->stash->{template} = "species/summary/$widget.tt2";
+#
+#    # Or per-species widgets
+#    } elsif (@args == 2) {
+#      my $species = shift @args;
+#      my $widget = shift @args;
+#      $c->stash->{template} = "species/$species/$widget.tt2";
+#      $c->stash->{name}= join(' ',
+#			      $c->config->{species_list}->{$species}->{genus},
+#			      $c->config->{species_list}->{$species}->{species});
+#      
+#      # Necessary?
+##      unless ($c->stash->{object}) {
+##	  my $api = $c->model('WormBaseAPI');  
+##	  $c->log->debug("WormBaseAPI model is $api " . ref($api));
+##	  $c->stash->{object} =  $api->fetch({class=> ucfirst("species"),
+##					      name => $c->stash->{name}}) or die "$!";
+##      }
+##      my $object= $c->stash->{object};
+##      my @fields = $c->_get_widget_fields("species_summary",$widget);
+##      foreach my $field (@fields){
+##	  $c->stash->{fields}->{$field} = $object->$field; 
+##      }      
+#    }
+#    $c->stash->{noboiler} = 1;
+#    $c->forward('WormBase::Web::View::TT');
 #}
 
 
-sub get_report {
-    my ($self,$c,$class,$name) = @_;
-    $c->stash->{section} = 'species';
+
+
+##############################################################
+#
+#   /species/[SPECIES]/[CLASS]:
+#    
+#      Class Summary pages, general and species specific.
+#
+##############################################################
+sub class_index :Path("/species") Args(2) {
+    my ($self,$c,$species,$class) = @_;
+    if (defined $c->req->param('inline')) {
+	$c->stash->{noboiler} = 1;
+    }
+
+    # Is this a species known to WormBase?
+    if ($species eq 'all' || $self->_is_species($c,$species)) {
+
+#	if ($self->_is_class($c,$class)) {
+	    $c->stash->{template}    = 'species/species-class_index.tt2';
+	    $c->stash->{section}     = 'species';
+	    $c->stash->{class}       = $class;
+	   
+	    $c->stash->{species}     = $species;  # Provided for formatting, limit searches
+	    $c->stash->{is_class_index} = 1;       # used by report_page macro as a flag that this is an index page.
+    } else {
+	# maybe search class names?
+	$c->detach;
+    }   
+}
+
+
+##############################################################
+#
+#   /species/SPECIES/CLASS/OBJECT
+#
+#            Object Report page via
+#                CLASS/OBJECT/FIELD
+#                SPECIES/CLASS/OBJECT
+#
+##############################################################
+
+sub object_report :Path("/species") Args(3) {
+    my ($self,$c,$species,$class,$name) = @_;
+#    $self->_get_report($self, $c, $class, $name);
+    $c->stash->{section}  = 'species';
+    $c->stash->{species}  = $species,
+    $c->stash->{class}    = $class;
+
     $c->stash->{template} = 'species/report.tt2';
     
     unless ($c->config->{sections}->{species}->{$class}) { 
@@ -173,8 +172,9 @@ sub get_report {
 	$c->detach;
     }
     
+    $c->stash->{species}    = $species;
     $c->stash->{query_name} = $name;
-    $c->stash->{class} = $class;
+    $c->stash->{class}      = $class;
     $c->log->debug($name);
     
     my $api = $c->model('WormBaseAPI');
@@ -191,7 +191,31 @@ sub get_report {
 	};
     }
     $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+   
 }
+
+
+
+##############################################################
+#
+#   PRIVATE METHODS
+#
+##############################################################
+
+# Is the argument a class?
+sub _is_class {
+    my ($self,$c,$arg) = @_;
+    return 1 if (defined $c->config->{'sections'}->{'species'}->{$arg});
+    return 0;
+}
+
+# Is the argument a species?
+sub _is_species {
+    my ($self,$c,$arg) = @_;
+    return 1 if (defined $c->config->{sections}->{'species_list'}->{$arg});
+    return 0;
+}
+
 
 
 
