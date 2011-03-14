@@ -62,6 +62,7 @@ sub draw :Path("/draw") Args(1) {
             # the following line is a security risk
             my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
                        . "/".$params->{id} . "." . $format;
+            $c->log->debug("Attempt to draw image: $source");
 
             $cached_img = new GD::Image->new($source);
             if ($params->{size}) {
