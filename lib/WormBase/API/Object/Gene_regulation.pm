@@ -6,8 +6,7 @@ with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
 # TODO:
-#  better descriptions for data returned
-#  !!!summary pod (from Role::Object)
+#  better descriptions for data returned (in datapack)
 
 =pod
 
@@ -29,7 +28,7 @@ http://wormbase.org/species/gene_regulation
 
 ################################################################################
 #
-#
+# Overview widget
 #
 ################################################################################
 
@@ -39,7 +38,8 @@ http://wormbase.org/species/gene_regulation
 
 =head3 methods
 
-!!!Description of data
+Returns a datapack containing the experimental approach used to determine
+the gene regulation.
 
 =over
 
@@ -106,7 +106,7 @@ sub methods {
 
 =head3 regulators
 
-!!!Description of data
+Returns a datapack with the regulator involved in gene regulation.
 
 =over
 
@@ -180,7 +180,7 @@ sub regulators {
 
 =head3 targets
 
-!!!Description of data
+Returns a datapack containing what the regulator regulates.
 
 =over
 
@@ -250,7 +250,9 @@ sub targets {
 
 =head3 regulation
 
-!!!Description of data
+Returns a datapack detailing the kind of regulation (whether positive, negative,
+or none). The presence of a key indicates that kind of regulation -- the
+associated value may or may not be undef.
 
 =over
 
@@ -320,7 +322,7 @@ sub regulation {
 
 =head3 types
 
-!!!Description of data
+Returns a datapack containing the type of change effected by the regulation.
 
 =over
 
@@ -379,7 +381,7 @@ sub types {
 
 =head3 molecule_regulators
 
-!!!Description of data
+Returns a datapack with the ?Molecule involved in the regulation.
 
 =over
 
@@ -438,7 +440,7 @@ sub molecule_regulators {
 
 =head3 references
 
-!!!Description of data
+Returns a datapack containing reference papers.
 
 =over
 
