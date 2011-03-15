@@ -349,7 +349,7 @@ B<Response example>
 
 sub affected_variation {
     my $self      = shift;
-    my $data_pack = _affects('Variation');
+    my $data_pack = $self->_affects('Variation');
 
     return {
         data        => $data_pack,
@@ -410,7 +410,7 @@ B<Response example>
 
 sub affected_strain {
     my $self      = shift;
-    my $data_pack = _affects('Strain');
+    my $data_pack = $self->_affects('Strain');
 
     return {
         data        => $data_pack,
@@ -470,7 +470,7 @@ B<Response example>
 
 sub affected_transgene {
     my $self      = shift;
-    my $data_pack = _affects('Transgene');
+    my $data_pack = $self->_affects('Transgene');
 
     return {
         data        => $data_pack,
@@ -530,7 +530,7 @@ B<Response example>
 
 sub affected_rnai {
     my $self      = shift;
-    my $data_pack = _affects('RNAi');
+    my $data_pack = $self->_affects('RNAi');
 
     return {
         data        => $data_pack,
