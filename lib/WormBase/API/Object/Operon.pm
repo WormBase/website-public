@@ -247,7 +247,7 @@ sub history {
         $data_pack{$history_type} = \%histories;
     }
     return {
-        'data'        => $data_pack,
+        'data'        => \%data_pack,
         'description' => 'history of the information on the operon'
     };
 }
