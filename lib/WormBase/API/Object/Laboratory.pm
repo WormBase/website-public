@@ -25,6 +25,98 @@ http://wormbase.org/resource/laboratory
 
 =cut
 
+
+
+#######################################
+#
+# Class summary widgets
+#
+#######################################6
+
+=head2 Summary data
+
+=cut
+
+=head3 all_labs
+
+This method returns a data structure containing
+all laboratories registered with WormBase.
+
+=over
+
+=item PERL API
+
+ $data = $model->all_labs();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+The keyword 'all'.
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/laboratory/all/all_labs
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub all_labs {
+    my $self   = shift;
+
+    my $db   = $self->ace_dsn->dbh;
+    my @labs = $db->fetch(-query=>qq/find Laboratory/);
+    my @rows;
+
+    foreach my $lab (sort { $a cmp $b } @labs) {
+	my $wb       = $lab->Representative;
+	my $allele   = join('; ',$lab->Allele_designation);	
+	my $url      = $lab->URL;
+	my ($institute)  = $lab->Mail;
+	my $email        = $lab->E_mail;
+	push @rows,{ lab             => $self->_pack_obj($lab),
+		     representative  => $wb ? $self->_pack_obj($wb,$wb->Standard_name) : "$lab",
+		     email           => "$email",
+		     allele_designation => "$allele",
+		     url                => "$url",
+		     affiliation        => "$institute",
+	};
+    }
+    return { description => 'all labs registered with WormBase and the Caenorhabditis Genetics Center',
+	     data        => @rows ? \@rows : undef };   
+}
+
+
+
+
+
 #######################################
 #
 # The Overview widget 
@@ -343,7 +435,7 @@ sub email {
     my $self   = shift;
     my $object = $self->object;
     my $email  = $object->E_mail;
-    my $data   = { description => 'primary email number for the lab',
+    my $data   = { description => 'primary email address for the lab',
 		   data        => "$email" || undef };
     return $data;
 }

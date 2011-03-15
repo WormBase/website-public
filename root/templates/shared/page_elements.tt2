@@ -187,6 +187,9 @@
 		FOREACH o IN order;			
 			# get value (val) from the row r
      		        val = r.$o;
+			IF val.match('^http');
+			     val='<a href="' _ val _ '">Lab link</a>';
+                        END;
 			# enter data in row
 	                row.push(val);
   		END;

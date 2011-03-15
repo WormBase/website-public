@@ -1,0 +1,8 @@
+The templates in this directory correspond to
+widgets presented on the species index page:.
+
+   /species
+
+They are loaded by REST at the URL
+
+   /species/summary/WIDGET
