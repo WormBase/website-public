@@ -91,7 +91,7 @@ sub flanking_sequences {
     my $object    = $self->object;
     my @sequences = $object->Flanking_sequences;
 
-    my @data = map { "$_" } @sequences;
+    my @data = map {$_=$self->_pack_obj($_)} @sequences;
     return {
         description => 'sequences flanking the feature',
         data        => @data ? \@data : undef
@@ -161,9 +161,9 @@ sub defined_by {
     my $object = $self->object;
     my %data;
     my @tag_objects = qw/sequence paper author analysis/;
-    foreach $tag_object (@tag_objects) {
+    foreach my $tag_object (@tag_objects) {
         my $tag = "Defined_by_" . $tag_object;
-        my @data = map { $self->_pack_obj($_) } $object->$tag;
+        my @data = map {$self->_pack_obj($_)} $object->$tag;
         $data{"$tag_object"} = \@data if @data;
     }
     return {
@@ -229,7 +229,7 @@ sub associations {
     my %data;
     my @tag_objects =
       qw/gene CDS transcript pseudogene transposon variation Position_matrix operon gene_regulation expression_pattern Feature/;
-    foreach $tag_object (@tag_objects) {
+    foreach my $tag_object (@tag_objects) {
         my $tag = "Associated_with_" . $tag_object;
         my @data = map { $self->_pack_obj($_) } $object->$tag;
         $data{"$tag_object"} = \@data if @data;

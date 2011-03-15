@@ -813,11 +813,25 @@ sub widget_static :Path('/rest/widget/static') :Args(2) :ActionClass('REST') {}
 sub widget_static_GET {
     my ($self,$c,$class,$widget) = @_; 
     $c->log->debug("getting resource widget");
-
     $c->stash->{template} = "resources/$class/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT')
 }
+
+
+
+sub widget_species :Path('/rest/widget/species') :Args(2) :ActionClass('REST') {}
+
+sub widget_species_GET {
+    my ($self,$c,$species,$widget) = @_; 
+    $c->log->debug("getting species widget");
+
+    $c->stash->{template} = "species/$species/$widget.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT')
+}
+
+
 
 
 sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
@@ -1070,15 +1084,15 @@ sub widget_me_GET {
 #   SPECIES WIDGETS (as opposed to /species)
 #
 ######################################################
-sub widget_species :Path('/rest/widget/species_summary') :Args(2) :ActionClass('REST') {}
-
-sub widget_species_GET {
-    my ($self,$c,$species,$widget) = @_; 
-    $c->log->debug("getting species widget");
-
-    $c->stash->{template} = "species/$species/$widget.tt2";
-    $c->stash->{noboiler} = 1;
-}
+#sub widget_species :Path('/rest/widget/species_summary') :Args(2) :ActionClass('REST') {}
+#
+#sub widget_species_GET {
+#    my ($self,$c,$species,$widget) = @_; 
+#    $c->log->debug("getting species widget");#
+#
+#    $c->stash->{template} = "species/$species/$widget.tt2";
+#    $c->stash->{noboiler} = 1;
+#}
 
 
 

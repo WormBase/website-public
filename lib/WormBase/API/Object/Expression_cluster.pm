@@ -282,7 +282,7 @@ B<Response example>
 sub sage_tag {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->< TAG >;
+    my @tag_objects = $object->SAGE_tag;
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
