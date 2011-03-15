@@ -7,7 +7,8 @@ extends 'WormBase::API::Object';
 
 # TODO:
 #  Split according to widgets? (May be hard for this aggregated class)
-
+#  Consider merging the overlaps_* methods
+#  segment & _segment method similar to Role::Position requirements? maybe redo
 
 =pod
 
@@ -18,6 +19,8 @@ WormBase::API::Object::Pcr_oligo
 =head1 SYNPOSIS
 
 Aggregate model for the Ace ?PCR_product, ?Oligo_set, and ?Oligo classes.
+Documentation will henceforth refer to these collectively as "product", except
+when specific to a single Ace model.
 
 =head1 URL
 
@@ -26,7 +29,6 @@ http://wormbase.org/resources/pcr_oligo
 =head1 METHODS/URIs
 
 =cut
-
 
 has '_segment' => (
 	is		 => 'ro',
@@ -69,9 +71,13 @@ has '_object_class' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# sub remarks { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
 =head3 canonical_parent
 
-!!!Description
+Returns a datapack containing the parent of the product.
 
 =head4 PERL API
 
@@ -89,7 +95,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -115,7 +121,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 sub canonical_parent {
 	my ($self) = @_;
 
@@ -127,7 +132,7 @@ sub canonical_parent {
 
 =head3 oligos
 
-!!!Description
+Returns a datapack containing the oligos of the product.
 
 =head4 PERL API
 
@@ -145,7 +150,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -171,7 +176,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 sub oligos {
 	my ($self) = @_;
 
@@ -192,7 +196,7 @@ sub oligos {
 
 =head3 overlapping_genes
 
-!!!Description
+Returns a datapack containing the genes overlapping the product.
 
 =head4 PERL API
 
@@ -210,7 +214,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -255,7 +259,7 @@ sub overlapping_genes {
 
 =head3 overlaps_CDS
 
-!!!Description
+Returns a datapack containing the CDS's that the product overlaps.
 
 =head4 PERL API
 
@@ -273,7 +277,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -311,7 +315,7 @@ sub overlaps_CDS {
 
 =head3 overlaps_transcript
 
-!!!Description
+Returns a datapack containing the transcript(s) that the product overlaps.
 
 =head4 PERL API
 
@@ -329,7 +333,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -355,7 +359,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 sub overlaps_transcript {
 	my ($self) = @_;
 	my $transcripts = $self->_pack_objects($self ~~ '@Overlaps_Transcript');
@@ -368,7 +371,7 @@ sub overlaps_transcript {
 
 =head3 overlaps_pseudogene
 
-!!!Description
+Returns a datapack containing the pseudogene(s) that the product overlaps.
 
 =head4 PERL API
 
@@ -386,7 +389,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -424,7 +427,7 @@ sub overlaps_pseudogene {
 
 =head3 overlaps_variation
 
-!!!Description
+Returns a datapack containing the variation(s) that the product overlaps.
 
 =head4 PERL API
 
@@ -442,7 +445,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -480,7 +483,7 @@ sub overlaps_variation {
 
 =head3 on_orfeome_project
 
-!!!Description
+Returns a datapack containing information to find the product on the ORFeome project.
 
 =head4 PERL API
 
@@ -498,7 +501,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -524,7 +527,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 # classic site note: MRC Genesevice and Open Biosystems links are invalid now
 sub on_orfeome_project {
 	my ($self) = @_;
@@ -538,13 +540,9 @@ sub on_orfeome_project {
 	};
 }
 
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
 =head3 microarray_results
 
-!!!Description
+Returns a datapack containing the microarray result(s) using/containing the product.
 
 =head4 PERL API
 
@@ -562,7 +560,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -588,7 +586,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 sub microarray_results {
 	my ($self) = @_;
 
@@ -601,7 +598,7 @@ sub microarray_results {
 
 =head3 segment
 
-!!!Description
+Returns a datapack containing a packaged GFF segment corresponding to the product.
 
 =head4 PERL API
 
@@ -619,7 +616,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -645,7 +642,6 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oli
 
 =cut
 
-
 sub segment {
 	my ($self) = @_;
 
@@ -669,7 +665,8 @@ sub segment {
 
 =head3 amplified
 
-!!!Description
+Returns a datapack containing the number of times amplification to product the
+PCR product.
 
 =head4 PERL API
 
@@ -687,7 +684,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -729,7 +726,7 @@ sub amplified {
 
 =head3 SNP_loci
 
-!!!Description
+Returns a datapack containing SNP locus information of the PCR product.
 
 =head4 PERL API
 
@@ -747,7 +744,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -785,7 +782,8 @@ sub SNP_loci {
 
 =head3 assay_conditions
 
-!!!Description
+Returns a datapack containing details of the assay conditions of the experiment
+involving the PCR product.
 
 =head4 PERL API
 
@@ -803,7 +801,7 @@ No
 
 =head5 Parameters
 
-WBPerson ID
+PCR_product, Oligo_set, or Oligo ID
 
 =head5 Returns
 
@@ -856,6 +854,5 @@ sub _overlapping_genes {
 	my ($self, @segments) = @_;
 	return map { $_->features('CDS:curated') } @segments;
 }
-
 
 1;
