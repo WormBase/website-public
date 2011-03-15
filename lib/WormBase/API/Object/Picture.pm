@@ -58,14 +58,14 @@ sub cropped_from {
     my $pic = $self ~~ 'Cropped_from';
 	return {
 		description => 'Picture that this picture was cropped from',
-		data		=> $pic && $self->wrap($pic)->image->{data},
+		data		=> $pic && $self->_wrap($pic)->image->{data},
 	};
 }
 
 sub cropped_pictures {
 	my ($self) = @_;
 
-    my %data = map {$_ => $self->wrap($_)->image->{data}} @{$self ~~ '@Crop_picture'};
+    my %data = map {$_ => $self->_wrap($_)->image->{data}} @{$self ~~ '@Crop_picture'};
 	return {
 		description => 'Picture(s) that were cropped from this picture',
 		data        => %data ? \%data : undef,
