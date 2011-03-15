@@ -25,14 +25,21 @@ $jq(document).ready(function(){
     if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
   });
   
-
+  var lastXhr;
   $jq( "#Search" ).autocomplete({
-      source: "/search/autocomplete",
+      source: function( request, response ) {
+          lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
+              if ( xhr === lastXhr ) {
+                  response( data );
+              }
+          });
+      },
       minLength: 2,
       select: function( event, ui ) {
           location.href = ui.item.url;
       }
   });
+  
  
 });
 

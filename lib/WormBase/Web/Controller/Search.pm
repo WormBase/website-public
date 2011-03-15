@@ -52,7 +52,7 @@ sub search :Path('/search') Args {
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];
-        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1));
+        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
         unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
         $c->res->redirect($url);
         return;
@@ -80,23 +80,24 @@ sub search :Path('/search') Args {
     return;
 }
 
-sub search_autocomplete :Path('/search/autocomplete') :Args(0) {
-  my ($self, $c) = @_;
+sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
+  my ($self, $c, $type) = @_;
   my $q = $c->req->param("term");
   $c->stash->{noboiler} = 1;
-  $c->log->debug("autocomplete search: $q");
+  $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
+ my $search = $type unless($type=~/all/);
  $q =~ s/-/_/g;
   my ($it,$res)= $api->xapian->search_autocomplete(
-    $c, $q
+    $c, $q, $search
   );
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
     my $class = $o->get_document->get_value(2);
     my $id = $o->get_document->get_value(1);
-    my $url = $self->_get_url($c, $class, $id);
+    my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5));
     my $label = $o->get_document->get_data() || $id;
     my $objs = {    class   =>  $class,
                     id      =>  $id,
@@ -116,10 +117,10 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(0) {
 }
 
 sub _get_url {
-  my ($self, $c, $class, $id) = @_;
+  my ($self, $c, $class, $id, $species) = @_;
   my $url = "";
-  if(defined $c->config->{sections}->{species}->{$class}){
-    $url .= $c->uri_for('/species',$class,$id);
+  if($species){
+    $url .= $c->uri_for('/species',$species,$class,$id);
   }else{
     $url .= $c->uri_for('/resources',$class,$id);
   }
@@ -133,27 +134,25 @@ sub _get_obj {
   return $api->xapian->_wrap_objs($obj, $doc->get_value(2));
 }
 
-sub search_preview :Path('/search/preview')  :Args(2) {
-    my ($self, $c, $type, $species) = @_;
+sub search_preview :Path('/search/preview')  :Args(3) {
+    my ($self, $c, $species, $type, $page_count) = @_;
 
     $c->log->debug("search preview");
-
-    $c->stash->{template} = "search/results.tt2";
-    my $api = $c->model('WormBaseAPI');
-    my $class =  $type;
-    my $offset = $c->req->param("begin") || 0;
-    my $count = ($c->req->param("end")   || 10) - $offset;
-    my $objs;
-    my $total;
-    ($total, $objs) = $api->search->preview({class => $class, species => $species, offset=>$offset, count=>$count});
-
-    $c->stash->{'type'} = $type; 
-    $c->stash->{'total'} = $total; 
-    $c->stash->{'results'} = $objs;
+    $c->stash->{template} = "search/result_list.tt2";
     $c->stash->{noboiler} = 1;
+    my $api = $c->model('WormBaseAPI');
+    my $search = $type unless($type=~/all/);
+    my $it= $api->xapian->search($c, "*", $page_count, $search, $species);
 
-    $c->stash->{'query'} = $species || "*";
-    $c->stash->{'class'} = $type;
+
+    $c->stash->{type} = $type;
+    $c->stash->{count} = $it->{pager}->{total_entries}; 
+    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    $c->stash->{results} = \@ret;
+    $c->stash->{querytime} = $it->{querytime};
+    $c->stash->{query} = "*";
+    $c->forward('WormBase::Web::View::TT');
+
 }
 
 
