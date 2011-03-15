@@ -95,24 +95,16 @@ sub object {
 
 
 # Expects an array reference of objects (or a simple scalar object)
-sub wrap {
-    my ($self,$objects) = @_;
+sub _wrap {
+    my $self = shift;
 
-    # Allow for array references or scalar variables
-    $objects = eval { ref($objects) =~ /ARRAY/ } ? $objects : [ $objects ];
-    
-    my @wrapped;
-    foreach my $object (@$objects) {
-	my $class = $object->class;
-	push @wrapped, WormBase::API::Factory->create($class,
-						      {
-							  object => $object,
-							  dsn => $self->dsn,
-							  pre_compile => $self->pre_compile,
-							  tmp_base => $self->tmp_base,
-						      });
-    }
-    
+    my @wrapped = map {WormBase::API::Factory->create($_->class, {
+        object      => $_,
+        dsn         => $self->dsn,
+        pre_compile => $self->pre_compile,
+        tmp_base    => $self->tmp_base,
+    })} @_;
+
     # User might have passed and expected just a single object
     return wantarray ? @wrapped : $wrapped[0];
 }

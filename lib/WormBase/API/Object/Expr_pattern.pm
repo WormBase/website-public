@@ -571,9 +571,8 @@ B<Response example>
 
 sub curated_images {
 	my ($self) = @_;
-	my $pictures = $self ~~ '@Picture';
 
-	my @data = grep defined, map {$_->image->{data}} $self->wrap($pictures);
+	my @data = grep defined, map {$_->image->{data}} $self->_wrap(@{$self ~~ '@Picture'});
 
 	return {
 		description => 'Curated images of the expression pattern',
