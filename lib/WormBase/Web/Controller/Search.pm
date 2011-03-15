@@ -52,7 +52,7 @@ sub search :Path('/search') Args {
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];
-        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1));
+        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
         unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
         $c->res->redirect($url);
         return;
@@ -97,7 +97,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   foreach my $o (@{$it->{struct}}){
     my $class = $o->get_document->get_value(2);
     my $id = $o->get_document->get_value(1);
-    my $url = $self->_get_url($c, $class, $id);
+    my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5));
     my $label = $o->get_document->get_data() || $id;
     my $objs = {    class   =>  $class,
                     id      =>  $id,
@@ -117,10 +117,10 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
 }
 
 sub _get_url {
-  my ($self, $c, $class, $id) = @_;
+  my ($self, $c, $class, $id, $species) = @_;
   my $url = "";
-  if(defined $c->config->{sections}->{species}->{$class}){
-    $url .= $c->uri_for('/species',$class,$id);
+  if($species){
+    $url .= $c->uri_for('/species',$species,$class,$id);
   }else{
     $url .= $c->uri_for('/resources',$class,$id);
   }
