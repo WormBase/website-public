@@ -5,6 +5,16 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+has '_reference' => ( # single reference or undef
+    is => 'ro',
+    lazy_build => 1,
+);
+
+sub _build__reference {
+    my ($self) = @_;
+    return $self ~~ 'Reference';
+}
+
 =pod 
 
 =head1 NAME
@@ -44,19 +54,20 @@ http://wormbase.org/resources/picture
 
 sub cropped_from {
 	my ($self) = @_;
-	my $pic = $self ~~ 'Cropped_from';
+
 	return {
 		description => 'Picture that this picture was cropped from',
-		data		=> $pic,
+		data		=> $self->_pack_obj($self ~~ 'Cropped_from'),
 	};
 }
 
 sub cropped_pictures {
 	my ($self) = @_;
-	my $pics = $self ~~ '@Cropped_picture';
+
+    my $data = $self->_pack_objects($self ~~ '@Cropped_picture');
 	return {
 		description => 'Picture(s) that were cropped from this picture',
-		data		=> @$pics ? $pics : undef,
+		data		=> %$data ? $data : undef,
 	};
 }
 
@@ -88,27 +99,54 @@ sub image {
 
 	my $data;
 
-	foreach my $class (qw(expr_pattern_localizome expr_pattern)) { # test all for now
-		my $file = $self->pre_compile->{$class}. '/' . $obj;
-		next unless -e $file && !-z $file;
+    my ($file, $filename, $reference, $class);
+    if ($reference = $self->_reference) { {
+        $filename = $self ~~ 'Name'; # file name
+        last unless $filename; # break out (that's why there's an extra {} block)
+        $file = $self->pre_compile->{new_images} . '/' . $reference . '/' . $filename;
+        unless (-e $file && !-z $file) {
+            undef $file;
+            undef $filename;
+            last;
+        }
+        $class = 'new_images';
+    } } # if $file is undef, then could not find
 
-		$obj =~ /^([^.]+)\.(.+)$/;
-		my ($name, $format) = ($1 || $obj.'', $2 || '');
+    if (!$file) { # try the old images
+        $filename = "$obj";
+        foreach (qw(expr_pattern_localizome expr_pattern)) {
+            $class = $_;
+            $file = $self->pre_compile->{$class} . '/' . $filename;
+            if (!-e $file || -z $file) {
+                undef $file;
+                next;
+            }
+        }
+    } # if $file is still undef, then there is no image file.
 
-		my $reference;
-		if (my $ref_paper = $self->reference_paper->{data}) {
-			$reference = $self->_pack_object($ref_paper);
-		}
+    $filename =~ /^(.+)\.(.+)$/; # will match names like a.b.c.jpg properly due to greediness
+    my ($namepart, $format) = ($1 || $obj.'', $2 || '');
 
-		$data = {
-			id		  => "$obj",
-			name	  => $name,
-			class	  => $class,
-			format	  => $format,
-			reference => $reference,
-		};
-		last;
-	}
+    if ($reference) {
+        my $ref_label;
+        if ($ref_label = $self ~~ 'Template') {
+            foreach (qw(Publication_year Article_URL Journal_URL Publisher_URL Person_name)) {
+                $ref_label =~ s/\<$_\>/$self ~~ $_/ge;
+            }
+        }
+        $reference = $self->_pack_obj($reference, $ref_label);
+    }
+
+    # THIS IS A HACK -- CHANGE LATER:
+    $namepart = "$reference->{id}/$namepart" if $class eq 'new_images';
+
+    $data = {
+        id		  => "$obj",
+        name	  => $namepart,
+        class	  => $class,
+        format	  => $format,
+        reference => $reference,
+    };
 
 	return {
 		description => 'Information pertaining to underlying image of picture',
@@ -124,24 +162,22 @@ sub image {
 sub depicts {
 	my ($self) = @_;
 	my %depictions; # a picture can depict more than one thing...
-	foreach (@{$self ~~ '@Depict'}) {
-		push @{$depictions{$_}}, $self->_pack_object($_->right);
-	}
+    foreach my $depict_type (@{$self ~~ '@Depict'}) {
+        $depictions{$depict_type} = $self->_pack_objects([$depict_type->col]);
+    }
 
 	return {
 		description => 'What this picture depicts',
-		data		=> keys %depictions ? \%depictions : undef,
+		data		=> %depictions ? \%depictions : undef,
 	};
 }
 
-sub reference_paper {
+sub reference { # could this be multiple? (model allows it)
 	my ($self) = @_;
-	my $paper = $self ~~ 'Paper';
-	$paper = $self->_pack_object($paper) if $paper;
 
 	return {
 		description => 'Paper that this picture belongs to',
-		data		=> $paper,
+		data		=> $self->_pack_obj($self->_reference),
 	};
 }
 

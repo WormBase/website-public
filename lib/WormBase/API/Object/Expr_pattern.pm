@@ -171,11 +171,11 @@ B<Response example>
 
 sub subcellular_locations {
 	my ($self) = @_;
-	my $subcellular_loc = $self ~~ '@Subcellular_localization';
+    my @subcellular_locs = map {"$_"} @{$self ~~ '@Subcellular_localization'};
 
 	return {
-		description	=> 'TODO',
-		data		=> @$subcellular_loc ? $subcellular_loc : undef,
+		description	=> 'Subcellular locations of this expression pattern',
+		data		=> @subcellular_locs ? \@subcellular_locs : undef,
 	};
 }
 

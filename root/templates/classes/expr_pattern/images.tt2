@@ -7,9 +7,11 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:400});
 
 [% IF fields.curated_images.data %]	
    [% FOREACH img IN fields.curated_images.data %]
+   <div style="display:inline-block;">
    	  <a class="picturebox" rel="curated_images1" href="/rest/widget/picture/[% img.id %]/lightbox">
-	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]" style="max-width:49%"></a><br>
+	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]&size=20"></a><br>
       [% IF img.reference %][% tag2link(img.reference) %][% ELSE %]No reference data.[% END %]<br>
+   </div>
    [% END %]
 [% ELSE %]
    No curated images available.
