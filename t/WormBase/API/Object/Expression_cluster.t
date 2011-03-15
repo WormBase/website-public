@@ -9,22 +9,22 @@ use Test::More;
 my $indent = " " x 6;
 
 my $class = "Expression_cluster";
-my $object_name = "<object name>";
+my $object_name = "[cgc5767]:cluster_88";
 
 #### method list
 
 my @methods = qw/
+anatomy_term
 
  /;
 
-#
-#
-#
-#
-#
-#
-#
-#
+### works
+# gene microarray algorithm sage_tag expr_pattern anatomy_term
+
+## debug
+# 
+
+
 
 ### run tests ####
 
