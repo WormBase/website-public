@@ -56,8 +56,8 @@ sub resources_class_index :Path('/resources') :Args(1)  {
       }
 
       # We're also an index page, some for classes that DO handle objects.
-      $c->stash->{is_index} = 1;      
-
+      $c->stash->{is_class_index} = 1;      
+      
     } else {
 	$c->detach;
     }
@@ -67,7 +67,7 @@ sub resources_class_index :Path('/resources') :Args(1)  {
 # eg /resources/{CLASS}/{OBJECT}
 sub resources_report :Path("/resources") Args(2) {
     my ($self,$c,$class,$name) = @_;
-    get_report($self, $c, $class, $name);
+    $self->_get_report($c, $class, $name);
 }
 
 
@@ -97,18 +97,19 @@ sub resources_report :Path("/resources") Args(2) {
 
 
 
-sub get_report {
+sub _get_report {
     my ($self,$c,$class,$name) = @_;
-    $c->stash->{section} = 'resources';
+    $c->stash->{section}  = 'resources';
     $c->stash->{template} = 'resources/report.tt2';
 
     unless ($c->config->{sections}->{resources}->{$class}) { 
-      # class doens't exist in this section
+      # class doesn't exist in this section
       $c->detach;
     }
 
+    $c->stash->{section}    = 'resources';
     $c->stash->{query_name} = $name;
-    $c->stash->{class} = $class;
+    $c->stash->{class}      = $class;
     $c->log->debug($name);
     
     my $api = $c->model('WormBaseAPI');
