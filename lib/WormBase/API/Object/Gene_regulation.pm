@@ -5,15 +5,85 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-sub summary {
-	my ($self) = @_;
+# TODO:
+#  better descriptions for data returned
+#  !!!summary pod (from Role::Object)
 
-	my $summary = $self ~~ 'Summary';
-	return {
-		description => 'Summary',
-		data		=> $summary && "$summary",
-	};
-}
+=pod
+
+=head1 NAME
+
+WormBase::API::Object::Gene_regulation
+
+=head1 SYNOPSIS
+
+Model for the Ace ?Gene_regulation class.
+
+=head1 URL
+
+http://wormbase.org/species/gene_regulation
+
+=head1 METHODS/URIs
+
+=cut
+
+################################################################################
+#
+#
+#
+################################################################################
+
+# sub summary {}
+# Supplied by Role; POD will automatically be inserted here
+# << include summary >>
+
+=head3 methods
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->methods();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/methods
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub methods {
 	my ($self) = @_;
@@ -33,6 +103,54 @@ sub methods {
 		data		=> %data ? \%data : undef,
 	};
 }
+
+=head3 regulators
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->regulators();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulators
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub regulators {
 	my ($self) = @_;
@@ -60,6 +178,54 @@ sub regulators {
 	};
 }
 
+=head3 targets
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->targets();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/targets
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
 sub targets {
 	my ($self) = @_;
 
@@ -81,6 +247,54 @@ sub targets {
 		data		=> %data ? \%data : undef,
 	};
 }
+
+=head3 regulation
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->regulation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub regulation {
 	my ($self) = @_;
@@ -104,6 +318,54 @@ sub regulation {
 	};
 }
 
+=head3 types
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->types();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/types
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
 sub types {
 	my ($self) = @_;
 
@@ -115,6 +377,54 @@ sub types {
 	};
 }
 
+=head3 molecule_regulators
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->molecule_regulators();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/molecule_regulators
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
 sub molecule_regulators {
 	my ($self) = @_;
 
@@ -125,6 +435,54 @@ sub molecule_regulators {
 		data		=> %$molecule_regs ? $molecule_regs : undef,
 	};
 }
+
+=head3 references
+
+!!!Description of data
+
+=over
+
+=item PERL API
+
+ $data = $model->references();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene regulation ID (eg WBPaper00035152_bah-1)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/references
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
 
 sub references {
 	my ($self) = @_;
