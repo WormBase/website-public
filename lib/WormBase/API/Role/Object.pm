@@ -11,7 +11,7 @@ use File::Path 'mkpath';
 # DONE (mostly): Database and DB_Info parsing
 # Titles / description / definition
 # Phenotypes observed/not_observed
-#
+# Where do hashtables (used for decisions) go? See _common_name()
 
 has 'MAX_DISPLAY_NUM' => (
     is      => 'ro',
@@ -140,7 +140,7 @@ sub _common_name {
     my ($self, $object) = @_;
     my $class  = $object->class;
 
-    my %taghash = ( # where should this go?
+    my %taghash = (
         Person     => 'Standard_name',
         Gene       => [qw(Public_name CGC_name Molecular_name)],
         # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
@@ -548,7 +548,7 @@ sub _build_description {
     my $description = eval {$object->$tag};    # TODO!!! : fix
     return {
         description => "description of the $class $object",
-        data        => "$description" || undef,
+        data        => $description && "$description",
     };
 
     #    my $data = { description => "description of the $class $object",
@@ -726,7 +726,7 @@ sub _build_laboratory {
         Transgene   => 'Location',
         Strain      => 'Location',
         Antibody    => 'Location',
-    );                              # does this belong here?
+    );
 
     my $tag = $taghash{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!

@@ -7,7 +7,11 @@ use List::Util qw(first);
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+# TODO:
+#  build data tables for refers_to() ?
+#  re-evaluate cruft (see cruft section below); consider deletion
+
+=pod
 
 =head1 NAME
 
@@ -46,8 +50,6 @@ has '_parsed_authors' => (
 );
 
 
-
-
 #######################################
 #
 # The Overview Widget
@@ -56,68 +58,24 @@ has '_parsed_authors' => (
 
 =head2 Overview
 
-=head3 name
-
-This method will return a data structure containing
-the name and ID of the paper object.
-
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a paper ID (eg WBPaper00000031) 
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/paper/WBPaper00000031
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
 =cut
 
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# override the default name
 sub _build_name {
     my ($self) = @_;
-    my $title = $self ~~ 'Title' // $self ~~ 'name';
-    $title =~ s/\.*$//;
+
+    my $label = $self->intext_citation->{data}{citation};
+    if (!$label and $label = $self ~~ 'Title') {
+        $label =~ s/\.$//;
+    }
+
     return {
         description => 'The object name of the publication',
-        data        => {
-            id		=> $self ~~ 'name',
-            label	=> $self->intext_citation->{data}{citation} || $title,
-            class	=> $self ~~ 'class',
-        },
+        data        => $self->_pack_obj($self->object, $label),
     };
 }
 
@@ -170,7 +128,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub title {
     my ($self) = @_;
@@ -232,7 +190,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub journal {
     my ($self) = @_;
@@ -293,7 +251,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub pages {
     my ($self) = @_;
@@ -354,7 +312,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub volume {
     my ($self) = @_;
@@ -415,7 +373,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub year {
     my ($self) = @_;
@@ -474,7 +432,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub publication_date {
     my ($self) = @_;
@@ -533,7 +491,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub authors {
     my ($self) = @_;
@@ -608,7 +566,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub editors {
     my ($self) = @_;
@@ -674,7 +632,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub publication_type {
     my ($self) = @_;
@@ -735,7 +693,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub is_wormbook_paper {
     my ($self) = @_;
@@ -803,7 +761,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub abstract {
     my ($self) = @_;
@@ -830,7 +788,7 @@ sub abstract {
 =head3 keywords
 
 This method will return a data structure containing
-keywords associated with the person.
+keywords associated with the publication.
 
 =over
 
@@ -876,7 +834,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub keywords {
     my ($self) = @_;
@@ -938,12 +896,12 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
-# TODO: publisher should be in format "Location: Publisher"
-#       for APA citations. Consider parsing $self ~~ 'Publisher'
-#       and returning [Location, Publisher] -- this may be as hard
-#       as parsing a name! :(
+# Considerations: publisher should be in format "Location: Publisher"
+#                 for APA citations. Consider parsing $self ~~ 'Publisher'
+#                 and returning "Location, Publisher" -- this may be harder
+#                 than parsing a name! :(
 sub publisher {
 	my ($self) = @_;
 
@@ -1002,7 +960,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub affiliation {
     my ($self) = @_;
@@ -1017,7 +975,7 @@ sub affiliation {
 =head3 doi
 
 This method will return a data structure containing
-the doi of the paper.
+the DOI of the publication.
 
 =over
 
@@ -1063,7 +1021,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub doi {
     my ($self) = @_;
@@ -1124,7 +1082,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub pmid {
     my ($self) = @_;
@@ -1146,7 +1104,7 @@ sub pmid {
 =head3 intext_citation
 
 This method will return a data structure containing
-an APA-formatted intext citation.
+an APA-formatted in-text (i.e. parenthetical) citation.
 
 =over
 
@@ -1192,7 +1150,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub intext_citation {
     my ($self) = @_;
@@ -1275,7 +1233,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub contained_in {
     my ($self) = @_;
@@ -1344,14 +1302,14 @@ B<Response example>
 
 =back
 
-=cut 
+=cut
 
 sub refers_to {
     my ($self) = @_;
 
     my %data;
     foreach my $ref_type (@{$self ~~ '@Refers_to'}) {
-        $data{$ref_type} = $self->_pack_objects([$ref_type->col]);       
+        $data{$ref_type} = $self->_pack_objects([$ref_type->col]);
         # Or build some data tables for different object types
         #	foreach $ref_type ($ref_type->col) {
         #	    if ($ref_type eq '') {
@@ -1370,7 +1328,7 @@ sub refers_to {
 #
 # The External Links widget
 #
-############################################################ 
+############################################################
 
 =head2 External Links
 
