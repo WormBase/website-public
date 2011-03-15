@@ -17,10 +17,10 @@ BEGIN {
 # Test object construction.
 # Object construction also connects to sgifaceserver at localhost::2005
 ok ( 
-    ( my $wormbase = WormBase::API->new({conf_dir => "./conf"})),
+    ( my $wormbase = WormBase::API->new({conf_dir => "./conf"})), 
     'Constructed WormBase::API object ok'
     );
-
+##"Go_term"
 
 ##Instantiate a WormBase::API::Object::* wrapper object
 
@@ -33,20 +33,11 @@ isa_ok($go_obj,'WormBase::API::Object::GO_Term');
 
 #### method list
 my @methods = qw/
-id
-definition
-type
-term
-
+genes
  /;
 
-#	details
-#	genes_n_cds
-#	phenotype
-#	genes
-#	motif
-#	cds
-
+#	details term type definition id genes_n_cds phenotype motif cds
+	
 ### test runs ####
 
 foreach my $method (@methods) {
