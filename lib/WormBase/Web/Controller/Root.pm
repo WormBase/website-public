@@ -53,20 +53,35 @@ The default action is run last when no other action matches.
 sub draw :Path("/draw") Args(1) {
     my ($self,$c,$format) = @_;
     my ($cache_id,$cached_img);
-    if($c->req->params->{class} && $c->req->params->{id}){
-      my $source = $c->model('WormBaseAPI')->pre_compile->{$c->req->params->{class}}."/".$c->req->params->{id}.".".$format;
-      ($cache_id,$cached_img) = $c->check_cache('image',$c->req->params->{class},$c->req->params->{id});
-      unless($cached_img){
-	$cached_img = new GD::Image->new($source);
-	$c->set_cache($cache_id,$cached_img);
-      }
-    }else{
-	$cached_img = $c->flash->{gd};
+    my $params = $c->req->params;
+    if ($params->{class} && $params->{id}
+        && (!defined $params->{size} || $params->{size} > 0)) {
+        my @keys = ('image', $params->{class}, $params->{id}, $params->{size} // ());
+        ($cache_id,$cached_img) = $c->check_cache(@keys);
+        unless($cached_img){ # not cached -- make new image and cache
+            # the following line is a security risk
+            my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
+                       . "/".$params->{id} . "." . $format;
+            $c->log->debug("Attempt to draw image: $source");
+
+            $cached_img = new GD::Image->new($source);
+            if ($params->{size}) {
+                my $scale_factor = $params->{size}/100;
+                my ($w, $h) = $cached_img->getBounds;
+                my ($nw, $nh) = ($w * $scale_factor, $h * $scale_factor);
+                my $new_img = GD::Image->new($nw, $nh);
+                $new_img->copyResized($cached_img, 0, 0, 0, 0, $nw, $nh, $w, $h);
+                $cached_img = $new_img;
+            }
+            $c->set_cache($cache_id,$cached_img);
+        }
+    }
+    else {
+        $cached_img = $c->flash->{gd};
     }
     $c->stash(gd_image=>$cached_img);
     $c->detach('WormBase::Web::View::Graphics');
 }
- 
 
 sub issue_rss {
  my ($self,$c,$count) = @_;

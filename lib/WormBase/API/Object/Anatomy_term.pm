@@ -152,6 +152,7 @@ sub synonyms {
     my $self     = shift;
     my $object   = $self->object;
     my @synonyms = $object->Synonym;
+	my @data;
 
     foreach my $entry (@synonyms) {
         my $synonym = $entry->Primary_name->right if $entry->Primary_name;
@@ -222,7 +223,7 @@ B<Response example>
 
 sub transgenes {
     my $self   = shift;
-    my $object = $self->object;
+    my $term = $self->object;
     my @transgenes;
     eval {
         @transgenes =
@@ -389,6 +390,7 @@ sub gene_ontology {
     my $self     = shift;
     my $object   = $self->object;
     my @go_terms = $object->GO_term;
+	my @data_pack;
 
     foreach my $go_term (@go_terms) {
         my $term    = $go_term->Term;
@@ -561,13 +563,15 @@ sub anatomy_function_nots {
 
 sub _anatomy_function {
     my $self              = shift;
-    my $tag               = shift my $object = $self->object;
+    my $tag               = shift;
+    my $object = $self->object;
     my @anatomy_functions = $object->$tag;
-
+	my @data_pack;
+	
     foreach my $anatomy_function (@anatomy_functions) {
         my $phenotype      = $anatomy_function->Phenotype;
         my $phenotype_name = $phenotype->Primary_name;
-        my $gene_data      = $self->_pack_obj( $af->Gene ) if $af->Gene;
+        my $gene_data      = $self->_pack_obj( $anatomy_function->Gene ) if $anatomy_function->Gene;
 
         push @data_pack,
           {

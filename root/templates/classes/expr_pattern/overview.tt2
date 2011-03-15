@@ -8,11 +8,11 @@
 
 [% WRAPPER $field_block title="Description" key='description'-%]
 	[% FOREACH obj IN fields.description.data.description %]
-		[% obj %]<br><br>
+		[% markup(obj) %]<br><br>
 	[% END %]
 
 	[% IF fields.description.data.remark %]
-	<b>Remarks:</b> [% fields.description.data.remark %]<br>
+	<b>Remarks:</b> [% markup(fields.description.data.remark) %]<br>
 	[% END %]
     
 	[% IF fields.description.data.check_bc %]

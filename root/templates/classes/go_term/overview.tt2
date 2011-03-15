@@ -1,0 +1,52 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<h2>[% tag2link(fields.name.data) %]</h2>
+
+
+[% WRAPPER $field_block title="term"-%] 
+	[% tag2link(fields.term.data) %]
+[% END %]
+
+
+[% WRAPPER $field_block title="definition"-%] 
+	[% fields.definition.data %]
+[% END %]
+
+
+
+[% WRAPPER $field_block title="type"-%] 
+	[% fields.type.data %]
+[% END %]
+
+[% WRAPPER $field_block title="genes"-%] 
+            [% FOREACH g IN fields.genes.data %]
+            [% tag2link(g.gene) %]<br>
+            [% END %]            
+   [% END %]  
+
+
+[% WRAPPER $field_block  title="Genes" key="genes" %] 
+    [% dataTable_list(['Gene','Evidence Codes','Evidence'],fields.genes.data.0.aaData,'table_genes_0') %]
+[% END %]
+
+
+
+[% WRAPPER $field_block title="genes and cds"-%] 
+	[%  FOREACH g IN fields.genes_n_cds.data %]
+		[%  tag2link(g.gene_info) %]<br>
+	[%  END %]                    
+[% # END %]
+ 
+ [% WRAPPER $field_block title="cds"-%] 
+	[%  FOREACH g IN fields.cds.data %]
+		[%  tag2link(g.gene) %]<br>
+	[%  END %]                    
+[% # END %]
+ 
+ 
+[% # WRAPPER $field_block  title="Genes and CDs" key="genes_n_cds" %] 
+    [%# dataTable_list(['Gene','Evidence Codes','Evidence'],fields.genes_n_cds.data.1.aaData,'table_genes_1') %]
+[% # END %]
+
+

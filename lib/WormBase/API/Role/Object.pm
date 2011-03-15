@@ -11,7 +11,7 @@ use File::Path 'mkpath';
 # DONE (mostly): Database and DB_Info parsing
 # Titles / description / definition
 # Phenotypes observed/not_observed
-#
+# Where do hashtables (used for decisions) go? See _common_name()
 
 has 'MAX_DISPLAY_NUM' => (
     is      => 'ro',
@@ -105,15 +105,19 @@ B<Response example>
 # Template: [% name %]
 
 has 'name' => (
+#    default => sub {
+#        my ($self) = @_;
+#        my $object = $self->object;
+#	return { } unless $object;
+#        my $class  = $object->class;
     is         => 'ro',
     lazy_build => 1,
-);
+    );
 
 sub _build_name {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-
     return {
         description => "The name and WormBase internal ID of a $class object",
         data        =>  $self->_pack_obj($object),
@@ -136,7 +140,7 @@ sub _common_name {
     my ($self, $object) = @_;
     my $class  = $object->class;
 
-    my %taghash = ( # where should this go?
+    my %taghash = (
         Person     => 'Standard_name',
         Gene       => [qw(Public_name CGC_name Molecular_name)],
         # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
@@ -722,7 +726,7 @@ sub _build_laboratory {
         Transgene   => 'Location',
         Strain      => 'Location',
         Antibody    => 'Location',
-    );                              # does this belong here?
+    );
 
     my $tag = $taghash{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
@@ -880,6 +884,8 @@ sub _build_remarks {
 
     # Need to add in evidence handling.
     my @evidence = map {$_->col} @remarks;
+
+    @remarks = map {"$_"} @remarks; # stringify them
 
     # TODO: handling of Evidence nodes
     return {
@@ -1280,9 +1286,10 @@ sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return unless $object;
     return {
-        id    => "$object",
-        label => $label // $self->_common_name($object),
-        class => $object->class,
+        id       => "$object",
+        label    => $label // $self->_common_name($object),
+        class    => $object->class,
+	taxonomy => $self->parsed_species($object),
         %args,
     };
 }

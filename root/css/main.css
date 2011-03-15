@@ -1630,7 +1630,7 @@ div.inline-columns img {
 #titlebar {
     border-bottom:1px solid #ddd;
     background:#fff;
-    z-index:100000;
+    z-index:1;
     overflow:hidden;
     position:relative;
     padding: 1em 0em 0 0;
