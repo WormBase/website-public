@@ -159,7 +159,7 @@ sub genes {
     my @tag_objects = $object->Contains_gene;
     foreach my $tag_object (@tag_objects) {
         my $tag_info = $self->_pack_obj($tag_object);
-        push, @data_pack, $tag_info;
+        push @data_pack, $tag_info;
     }
     return {
         'data' => @data_pack ? \@data_pack : undef,
