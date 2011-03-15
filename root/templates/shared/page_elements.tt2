@@ -739,15 +739,15 @@ END;
 
 [% MACRO summary BLOCK;
     # Currently only includes Summary but could encompass other tags
-    WRAPPER $field_block title="Summary" key="summary"
-       fields.summary.data;
+    WRAPPER $field_block title="Summary" key="summary";
+            IF fields.summary.data.defined; fields.summary.data; END;
     END;
 END;
 %]
 
 [% MACRO status BLOCK; 
       WRAPPER $field_block title="Status" key="status";
-           fields.status.data;
+           IF fields.status.data.defined; fields.status.data; END;
       END;
 END;
 %]
@@ -878,35 +878,75 @@ END;
 
 [% # Report Page elements; shared for species, resources, and tools %]
 [% # Called from species/report.tt2 and resources.report.tt2        %]
+[% # Callers should pass an array of widgets and the page title     %]
+
 [% MACRO report_page BLOCK;
 
-  '<div id="system-message">' 
-        _ c.config.system_message 
-        _ '<a class="system-message-close" href="#">Dismiss</a></div>';
-
-# onclick="new Ajax.Request('/announcement_dismissals?announcement_id=14', {asynchronous:true, evalScripts:true, method:'post', parameters:'authenticity_token=' + encodeURIComponent('85iRduBYVYZPdEHVaEKXhruZBmOqCJKw919NQt9vkoY=')}); hide_big_div('announcement'); return false;">Dismiss</a></div>
-
-   upperClass = class FILTER ucfirst;
-
-   # I should probably pass in title.
-   IF is_static;
-      title = upperClass;
-   # Kludge: set index pages to "all" so that I can use the same URLs as for report pages.
-   ELSIF is_index;
-      SET this_object_id    = "all";
-      SET this_object_label = "all";
-      title = upperClass _ " Class Index";
-   ELSE;
-      SET this_object_id    = object.name.data.id;
-      SET this_object_label = object.name.data.label;
-      title = upperClass _ " &raquo;	 ";
-      UNLESS class == 'paper';
-              title = title _ tag2link(object.name.data);
-      ELSE;
-              title = title _ tag2link(object.name.data);
-      END;
+   IF c.config.system-message;
+      '<div id="system-message">' 
+            _ c.config.system_message 
+            _ '<a class="system-message-close" href="#">Dismiss</a></div>';
    END;
 
+   widgets = [];
+   widgets.push({ title="Page Content" type="title"});
+
+   # Get the default (configuration provided) list of widgets.
+   widget_list = c.config.sections.$section.$class.widgets.keys.sort;
+  
+   # Conditionally set up different types of pages.
+   # Class indexes (of both species and resource persuasions; these do not display individual objects)
+   IF is_class_index;
+
+      # Kludge: set the "object" of index pages to "all" 
+      # so that we can use the same URL structure.
+      SET this_object_id    = "all";
+      SET this_object_label = "all";
+
+      # Index pages automatically get Browse and search widgets.
+      # These *should* be species-specific but they aren't yet.
+      widgets.push({   id  = 'browse',
+                       title = 'Browse',
+                       href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
+                       type  = class
+                      },
+                     {   id  = 'basic_search'
+                       title = 'Basic Search'
+                       href  = c.uri_for('/rest','widget',class,this_object_id,'basic_search')
+                       type  = class
+                     },
+                     { id    = 'advanced_search'
+                       title = 'Advanced Search'
+                       href  = c.uri_for('/rest','widget',class,this_object_id,'advanced_search')
+                       type  = class
+                     });
+
+   # This is an object report page.
+   ELSIF ((section == 'species' || section == 'resources') && class && object);
+      SET this_object_id    = object.name.data.id;
+      SET this_object_label = object.name.data.label;
+
+      # Push overview to the top.
+      widget_list.unshift('overview');
+
+   ELSIF section == 'species_list';
+
+      SET this_object_id    = species;
+      SET this_object_label = species;
+
+      # Push overview to the top.
+      widget_list.unshift('overview');
+
+   ELSE;
+
+   END;
+
+# Debug
+#   'section     : ' _ section      _ "<br />";
+#   'class       : ' _ class   _ "<br />";
+
+
+   path = c.uri_for("/$section", class, this_object_id);
 
    # BEGIN EXPERIMENTAL TITLE BAR
 
@@ -916,7 +956,6 @@ END;
       IF object;
           is_obj = 1;
           wbid = this_object_id.remove(":");
-
           '<div class="workbench-status-' _  wbid _ '"></div>';
        END;
 
@@ -961,44 +1000,15 @@ END;
 # END EXPERIMENTAL TITLEBAR
 ##############################
 
-   path = c.uri_for("/$section", class, this_object_id);
-
-   widgets = [];
-   widgets.push({ title="Page Content" type="title"});
-   widget_list = c.config.sections.$section.$class.widgets.keys.sort;
-
-   # Class index page? Add Browse, Basic Search, and Advanced Search widgets
-   IF is_static;
-   ELSIF is_index;
-      widgets.push({   id  = 'browse',
-                     title = 'Browse',
-                     href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
-                     type  = class
-                    },
-                   {   id  = 'basic_search'
-                     title = 'Basic Search'
-                     href  = c.uri_for('/rest','widget',class,this_object_id,'basic_search')
-                     type  = class
-                   },
-                   { id    = 'advanced_search'
-                     title = 'Advanced Search'
-                     href  = c.uri_for('/rest','widget',class,this_object_id,'advanced_search')
-                     type  = class
-                   });
-   ELSE;
-
-        # Push overview to the top.
-        widget_list.unshift('overview');
-   END;
-
    widget_list = widget_list.unique;
    
    FOREACH widget_name IN widget_list;
-   
+
+      # Fetch the actual widget configuration.
       widget = c.config.sections.$section.$class.widgets.$widget_name;
 
-      # What context should this widget be displayed in?
-      IF is_index;
+      # What context should this widget be displayed in, and what type of page are we?
+      IF is_class_index;
          NEXT IF widget.display == "report";
       ELSE;
          NEXT IF widget.display == "index";
@@ -1008,29 +1018,33 @@ END;
       # These will have a structure of /resources/CLASS/widget
       IF is_static;
           myhref = c.uri_for('/rest','widget','static',class,widget.name);
+
+      # Species summary and index page widgets
+      ELSIF section == 'species_list';
+          myhref = c.uri_for('/rest','widget','species',this_object_id,widget.name);
       ELSE;
-          myhref = c.uri_for('/rest','widget',class,this_object_id,widget.name);
+           myhref = c.uri_for('/rest','widget',class,   this_object_id,widget.name);
       END;
 
       w = {  id    = widget_name
              title = widget.title
-             href = myhref
-             type = section == "resources" ? 'resources' : class
+             href  = myhref
+             type  = section == "resources" ? 'resources' : class
             };
     
      widgets.push(w);
   END;
 
+  # Add tools.
   widgets.push({ title="Tools" type="title"});
   tool_list = c.config.sections.$section.$class.tools.keys.sort || [];
 
-  # resources/* and species/* automatically get the tree display;
+  # resources/* and species/* automatically get the tree display (and index pages)
   IF ! is_static;
       tool_list.unshift('tree');
   END;
 
   FOREACH widget_name IN tool_list;
-
       widget = c.config.sections.tools.$widget_name;
       # What context should this widget be displayed in ?
       IF is_index;
@@ -1039,6 +1053,7 @@ END;
          NEXT IF widget.display == "index";
       END;
 
+      
       w = { id = widget_name
              title = widget.title
              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
@@ -1071,12 +1086,11 @@ END;
   # Open some sections by default, depending on what we are displaying.
   '<script>';
   UNLESS c.user_session.layout.$class.0.defined;
-        IF $section == 'species' AND ! is_index;
-           '$jq("#nav-overview").trigger("open");';
-           '$jq("#nav-location").trigger("open");';
-        ELSIF $section == 'resources' AND ! is_index;
-           '$jq("#nav-overview").trigger("open");';
-        ELSIF is_static;
+
+        defaults = c.config.sections.$section.$class.default_widgets.keys;	
+        FOREACH default IN defaults;
+	alert(default);
+           '$jq("#nav-' _ default _ '").trigger("open");';
         END;
         'updateLayout();';
   END;

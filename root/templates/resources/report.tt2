@@ -2,8 +2,44 @@
 [%- # It automatically creates the sidebar from configuration -%]
 [%- # It handles Index pages (/species/gene) and Reports (/species/gene/WBGene00006763) %]
 
-[%# TODO: Create and pass in the page title %]
-[% report_page %]
+[% 
+
+   breadcrumbs = [];
+
+   upperclass = class FILTER ucfirst;
+
+   IF !class;
+      breadcrumbs.push('Resources');
+  
+   ELSIF class && !query_name;
+
+      breadcrumbs.push('<a href="'
+	       	     _ c.uri_for('/resources')
+       	             _ '">Resources</a>');
+
+
+      breadcrumbs.push(upperclass);
+
+   ELSIF class && query_name;
+
+      breadcrumbs.push('<a href="'
+	       	     _ c.uri_for('/resources')
+       	             _ '">Resources</a>');
+
+      breadcrumbs.push(
+                       '<a href="'
+	       	     _ c.uri_for('/resources',class)
+       	             _ '">'
+		     _ upperclass
+		     _ '</a>');
+       
+    END;
+
+    title = breadcrumbs.join(" &raquo; ");
+   
+    report_page(title);
+
+%]
 
 
 
