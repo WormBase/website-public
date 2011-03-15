@@ -426,7 +426,7 @@ sub feed_GET {
     if($type eq "comment"){
       my @comments = $page->comments;
       if($c->req->params->{count}){
-        $c->response->body(scalar(@comments));
+        $c->response->body("(" . scalar(@comments) . ")");
         return;
       }
       $c->stash->{comments} = \@comments if(@comments);  

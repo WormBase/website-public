@@ -221,8 +221,12 @@ function commentNow(widget){
 
 function updateCounts(url){
   var comments = $jq(".comment-count");
-  var issues = $jq(".issue-count");
 
   comments.load("/rest/feed/comment?count=1;url=" + url);
-  issues.load("/rest/feed/issue?count=1;url=" + url);
+  var is = $jq("<span></span>");
+  is.load("/rest/feed/issue?count=1;url=" + url, function(){
+    if(is.html() != "0"){
+      $jq(".issue-count").html("!").css({color:"red"});
+    } 
+  });
 }

@@ -100,8 +100,14 @@ sub _build_xapian {
   $qp->set_database($db);
   $syn_qp->set_database($syn_db);
   $qp->set_default_op(OP_OR);
+ 
+  my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
+  my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
+  $qp->add_valuerangeprocessor($species_svrp);
+  $qp->add_valuerangeprocessor($type_svrp);
+
+
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
-  $qp->add_valuerangeprocessor($svrp);
   $syn_qp->add_valuerangeprocessor($svrp);
 
   return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
