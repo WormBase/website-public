@@ -176,7 +176,7 @@ B<Response example>
 sub profiles {
     my $self    = shift;
     my $profile = $self->object;
-    my $data_pack;
+	my @data_pack;
     my $dbgff = $self->gff_dsn('c_elegans');
     my $db    = $self->ace_dsn();
 
@@ -193,15 +193,14 @@ sub profiles {
         $profile = $p[0];
         undef $profile
           unless @p;    # used as a flag that we fetched an appropriate object
-        @p =
-          map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
-
+        @p = map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
         foreach my $p (@p) {
-            $data_pack = $self->_pack_obj($p);
+            my $data_pack = $self->_pack_obj($p);
+            push @data_pack, $data_pack;
         }
     }
     return {
-        'data'        => $data_pack,
+        'data'        => \@data_pack,
         'description' => 'expression profiles for set of genes'
     };
 }

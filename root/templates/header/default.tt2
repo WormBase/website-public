@@ -27,25 +27,29 @@
      
 	
     	[%# Force C. elegans to the top without having to hard-code it in configuration %]
-        [% species = c.config.species_list.keys.sort %]
+        [% species = c.config.sections.species_list.keys.sort %]
         [% species.unshift('c_elegans') %]
+        [% species.unshift('all') %]
         [% species = species.unique %]
 
           [% FOREACH option IN species %]
-            [% IF c.config.species_list.$option.display_in_dropdown == 'yes' %]
-            <li><a href="/[% title %]/guide/[% option %]" class="species">[% c.config.species_list.$option.Title %]</a>
+            [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
+
+            <li><a href="/[% title %]/[% option %]" class="species">[% c.config.sections.species_list.$option.title %]</a>
               <ul class="dropdown">  
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
-              [% FOREACH class IN c.config.species_list.$option.available_classes.class %]
+              [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
                 [% IF class == 'title'; NEXT; END; %]
-                <li><a href="/species/[% class %]">[% c.config.sections.species.$class.title %]</a></li>
+                <li><a href="[% c.uri_for('/species',option,class) %]">[% c.config.sections.species.$class.title %]</a></li>
               [% END %]
 
               </ul>
             </li>
             [% END %]
           [% END %]
+
+
         [% ELSE %]
           [% FOREACH option IN c.config.sections.$title.sort() %]
             [% IF option == 'title'; NEXT; END; %]

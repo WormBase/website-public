@@ -105,15 +105,19 @@ B<Response example>
 # Template: [% name %]
 
 has 'name' => (
+#    default => sub {
+#        my ($self) = @_;
+#        my $object = $self->object;
+#	return { } unless $object;
+#        my $class  = $object->class;
     is         => 'ro',
     lazy_build => 1,
-);
+    );
 
 sub _build_name {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-
     return {
         description => "The name and WormBase internal ID of a $class object",
         data        =>  $self->_pack_obj($object),
@@ -881,6 +885,8 @@ sub _build_remarks {
     # Need to add in evidence handling.
     my @evidence = map {$_->col} @remarks;
 
+    @remarks = map {"$_"} @remarks; # stringify them
+
     # TODO: handling of Evidence nodes
     return {
         description => "curatorial remarks for the $class",
@@ -1280,9 +1286,10 @@ sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
     return unless $object;
     return {
-        id    => "$object",
-        label => $label // $self->_common_name($object),
-        class => $object->class,
+        id       => "$object",
+        label    => $label // $self->_common_name($object),
+        class    => $object->class,
+	taxonomy => $self->parsed_species($object),
         %args,
     };
 }

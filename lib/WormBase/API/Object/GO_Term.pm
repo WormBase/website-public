@@ -1016,14 +1016,14 @@ B<Response example>
 
 =cut 
 
-sub expr_pattern {
-    my $self      = shift;
-    my $data_pack = $self->_get_tag_data('Expr_pattern');
-    return {
-        data        => $data_pack,
-        description => ' annotated with this term'
-    };
-}
+#sub expr_pattern {
+#    my $self      = shift;
+#    my $data_pack = $self->_get_tag_data('Expr_pattern');
+#    return {
+#        data        => $data_pack,
+#        description => ' annotated with this term'
+#    };
+#}
 
 =head3 cell
 
@@ -1098,7 +1098,8 @@ sub _get_tag_data {
     my $term = $self->object;
     my @data_pack;
     my @motifs;
-    my @tag_data = $term->$tag;
+    my @tag_data;
+    eval{@tag_data = $term->$tag} ;
 
     foreach my $tag_datum (@tag_data) {
         my $tag_datum_desc = $tag_datum->Description;
