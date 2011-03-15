@@ -1590,6 +1590,15 @@ sub date_isolated {
 }
 
 
+#######################################
+#
+# Class summary widgets
+#
+#######################################6
+
+=head2 Summary data
+
+=cut
 
 =head3 natural_isolates
 
