@@ -193,8 +193,7 @@ sub profiles {
         $profile = $p[0];
         undef $profile
           unless @p;    # used as a flag that we fetched an appropriate object
-        @p =
-          map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
+        @p = map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
         foreach my $p (@p) {
             my $data_pack = $self->_pack_obj($p);
             push @data_pack, $data_pack;
