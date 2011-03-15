@@ -1484,7 +1484,7 @@ sub _draw_image {
   # Get out the gene - will use to extract the exons, then map them
   # onto the protein backbone.
   my $gene    = $self->cds->[0];
-  my $gffdb = $self->gff_dsn($self->parsed_species);
+  my $gffdb = $self->gff_dsn($self->_parsed_species);
 # print $gffdb;
   my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene);
 
