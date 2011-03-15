@@ -201,16 +201,17 @@ div.more .ui-icon {
   float:right;
   position:relative;
   padding:0;
-  margin:0.6em 1em 0;
+  height:30px;
+  margin:0.6em 1em 0 0;
   background:#FFF;
 }
 #searchForm input.text{  
-    color: #565656;  
-    border:none;
-    padding: 0.3em; 
-    text-align: left;  
-    height:18px;
-    margin: 0;
+  color: #565656;  
+  border:none;
+  padding: 0.3em; 
+  text-align: left;  
+  height:15px;
+  margin: 0.3em;
   border-right:1px dotted gray;
 }  
 
@@ -223,6 +224,15 @@ div.more .ui-icon {
   display:inline;
 }
 
+#searchSelect {
+  color: #565656;  
+  float:right;
+  margin:0.6em 0;
+  height:30px;
+  padding:0.3em;
+  text-align:center;
+  width:7em;
+}
 
 #notifications {
   display:none;

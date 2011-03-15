@@ -32,7 +32,7 @@ has 'c' => (
 
 
 sub search {
-    my ( $class, $c, $q, $page, $type, $page_size) = @_;
+    my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
     my $t=[gettimeofday];
     $page       ||= 1;
     $page_size  ||=  10;#$class->config->{page_size};
@@ -40,6 +40,12 @@ sub search {
 
     if($type){
       $q .= " $type..$type";
+    }
+
+    if($species){
+      my $s = $c->{config}->{speices_list}->{$species}->{ncbi_taxonomy_id};
+      $c->log->debug("species search $s");
+      $q .= " species:$s..$s";
     }
 
     my $query=$class->qp->parse_query( $q, 512|1|2 );
@@ -64,10 +70,10 @@ sub search_autocomplete {
 #     $class->syn_db->reopen();
 
     if($type){
-      $q .= " $type..$type";
+      $q .= "* $type..$type";
     }
 
-    my $query=$class->qp->parse_query( $q, 64 );
+    my $query=$class->qp->parse_query( $q, 64|16 );
     my $enq       = $class->db->enquire ( $query );
 #     my $query=$class->syn_qp->parse_query( $q, 64 );
 #     my $enq       = $class->syn_db->enquire ( $query );
