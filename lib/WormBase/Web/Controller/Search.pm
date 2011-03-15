@@ -134,27 +134,25 @@ sub _get_obj {
   return $api->xapian->_wrap_objs($obj, $doc->get_value(2));
 }
 
-sub search_preview :Path('/search/preview')  :Args(2) {
-    my ($self, $c, $type, $species) = @_;
+sub search_preview :Path('/search/preview')  :Args(3) {
+    my ($self, $c, $species, $type, $page_count) = @_;
 
     $c->log->debug("search preview");
-
-    $c->stash->{template} = "search/results.tt2";
-    my $api = $c->model('WormBaseAPI');
-    my $class =  $type;
-    my $offset = $c->req->param("begin") || 0;
-    my $count = ($c->req->param("end")   || 10) - $offset;
-    my $objs;
-    my $total;
-    ($total, $objs) = $api->search->preview({class => $class, species => $species, offset=>$offset, count=>$count});
-
-    $c->stash->{'type'} = $type; 
-    $c->stash->{'total'} = $total; 
-    $c->stash->{'results'} = $objs;
+    $c->stash->{template} = "search/result_list.tt2";
     $c->stash->{noboiler} = 1;
+    my $api = $c->model('WormBaseAPI');
+    my $search = $type unless($type=~/all/);
+    my $it= $api->xapian->search($c, "*", $page_count, $search, $species);
 
-    $c->stash->{'query'} = $species || "*";
-    $c->stash->{'class'} = $type;
+
+    $c->stash->{type} = $type;
+    $c->stash->{count} = $it->{pager}->{total_entries}; 
+    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    $c->stash->{results} = \@ret;
+    $c->stash->{querytime} = $it->{querytime};
+    $c->stash->{query} = "*";
+    $c->forward('WormBase::Web::View::TT');
+
 }
 
 
