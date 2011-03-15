@@ -32,6 +32,10 @@ http://wormbase.org/species/gene_regulation
 #
 ################################################################################
 
+=head2 Overview
+
+=cut
+
 # sub summary {}
 # Supplied by Role; POD will automatically be inserted here
 # << include summary >>

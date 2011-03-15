@@ -5,6 +5,10 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+# TODO:
+#  Split _build_description (see comment down below)
+#  Movie method?
+
 =pod
 
 =head1 NAME
@@ -33,56 +37,9 @@ http://wormbase.org/species/expr_pattern
 
 =cut
 
-=head3 name
-
-This method will return a data structure containing a prose
-name of this expression pattern.
-
-=over
-
-=item PERL API
-
- $data = $model->name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expression pattern ID (eg Expr1213)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
 
 sub _build_name {
     my ($self) = @_;
@@ -99,7 +56,7 @@ sub _build_name {
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
-# TODO: this needs to be separated in the model but combined in template imo
+# TODO: this needs to be separated in the model but combined in template
 # Override default description from Role::Object.
 sub _build_description {
     my ($self) = @_;
@@ -141,7 +98,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -159,7 +116,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/subcellular_locations
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/subcellular_locations
 
 B<Response example>
 
@@ -203,7 +160,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -221,7 +178,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expressed_by
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/expressed_by
 
 B<Response example>
 
@@ -269,7 +226,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -287,7 +244,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expressed_in
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/expressed_in
 
 B<Response example>
 
@@ -335,7 +292,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -353,7 +310,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/anatomy_ontology
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/anatomy_ontology
 
 B<Response example>
 
@@ -402,7 +359,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -420,7 +377,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/experimental_details
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/experimental_details
 
 B<Response example>
 
@@ -456,8 +413,8 @@ sub experimental_details {
 
 =head3 expression_image
 
-This method will return a data structure containing
-curated expression images, if they exist.
+This method will return a data structure containing the string to use with
+/draw to retrieve the curated expression images, if they exist.
 
 =over
 
@@ -477,7 +434,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -495,11 +452,15 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/expression_image
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/expression_image
 
 B<Response example>
 
 <div class="response-example"></div>
+
+B<Usage example>
+
+http://wormbase.org/draw/$data
 
 =back
 
@@ -521,7 +482,7 @@ sub expression_image {
 =head3 curated_images
 
 This method will return a data structure containing
-curated expression pattern images.
+curated expression pattern images in the Picture::image format.
 
 =over
 
@@ -541,7 +502,7 @@ No
 
 B<Parameters>
 
-An Expression pattern ID (eg Expr1213)
+An Expression pattern ID (eg Expr12)
 
 B<Returns>
 
@@ -559,7 +520,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr1213/curated_images
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/curated_images
 
 B<Response example>
 
@@ -581,7 +542,7 @@ sub curated_images {
 	};
 }
 
-sub movies { # TODO
+sub movies {
 	my ($self) = @_;
 	my $data;
 
