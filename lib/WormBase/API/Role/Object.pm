@@ -548,7 +548,7 @@ sub _build_description {
     my $description = eval {$object->$tag};    # TODO!!! : fix
     return {
         description => "description of the $class $object",
-        data        => "$description" || undef,
+        data        => $description && "$description",
     };
 
     #    my $data = { description => "description of the $class $object",
