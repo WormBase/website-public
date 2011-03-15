@@ -55,19 +55,20 @@ http://wormbase.org/resources/picture
 sub cropped_from {
 	my ($self) = @_;
 
+    my $pic = $self ~~ 'Cropped_from';
 	return {
 		description => 'Picture that this picture was cropped from',
-		data		=> $self->_pack_obj($self ~~ 'Cropped_from'),
+		data		=> $pic && $self->wrap($pic)->image->{data},
 	};
 }
 
 sub cropped_pictures {
 	my ($self) = @_;
 
-    my $data = $self->_pack_objects($self ~~ '@Cropped_picture');
+    my %data = map {$_ => $self->wrap($_)->image->{data}} @{$self ~~ '@Crop_picture'};
 	return {
 		description => 'Picture(s) that were cropped from this picture',
-		data		=> %$data ? $data : undef,
+		data        => %data ? \%data : undef,
 	};
 }
 
