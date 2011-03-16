@@ -995,7 +995,7 @@ sub _build_genomic_image_position {
     my $seq = $self->object;
     return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
 
-    my $source = $self->parsed_species;
+    my $source = $self->_parsed_species;
     my $segment = $self->segments->[0];
 
     my $ref   = $segment->ref;
@@ -1059,7 +1059,7 @@ sub _build_tracks {
 
     return {
         description => 'Tracks to display in GBrowse',
-        data => $self->parsed_species =~ /elegans/ ? [qw(NG CG CDS PG PCR SNP TcI MOS CLO)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(NG CG CDS PG PCR SNP TcI MOS CLO)] : undef,
     };
 }
 
@@ -1703,7 +1703,7 @@ sub print_sequence {
     my %hash;
     my $gff = $self->gff;
     my $seq_obj;
-    if ($self->parsed_species =~ /briggsae/) {
+    if ($self->_parsed_species =~ /briggsae/) {
 		($seq_obj) = sort {$b->length<=>$a->length}
 		$self->type =~ /^(genomic|confirmed gene|predicted coding sequence)$/i
 		? grep {$_->method eq 'wormbase_cds'} $gff->fetch_group(Transcript => $s),

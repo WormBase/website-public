@@ -83,20 +83,16 @@ sub object {
 #sub dbh_gff {
 #  my ($self,$dsn) = @_;
 #  my $object  = $self->object;
-#  my $species = $self->parsed_species();
+#  my $species = $self->_parsed_species();
 
 #  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
 #  return $dbh;
 #}
 
 
- 
- 
-
-
-# Expects an array reference of objects (or a simple scalar object)
 sub _wrap {
     my $self = shift;
+    my @objects = grep defined, @_ or return;
 
     # TODO:
     # the fact that this exists and the inverse must be done in API.pm
@@ -122,7 +118,7 @@ sub _wrap {
             pre_compile => $self->pre_compile,
             tmp_base    => $self->tmp_base,
         });
-    } @_; # end of map
+    } @objects; # end of map
 
     # User might have passed and expected just a single object
     return wantarray ? @wrapped : $wrapped[0];
@@ -313,7 +309,7 @@ sub id2species {
 sub build_gbrowse_img {
   my ($self,$segment,$tracks,$options,$width) = @_;
   
-  my $species = $self->parsed_species(); 
+  my $species = $self->_parsed_species(); 
   
   # open the browser for drawing pictures
   my $BROWSER = Bio::Graphics::Browser->new or die;
