@@ -1214,7 +1214,7 @@ sub mysql_dsn {
 
 sub gff_dsn {
     my ($self) = @_;
-    my $species = shift || $self->parsed_species;
+    my $species = shift || $self->_parsed_species;
     $self->log->debug("geting gff database species $species");
     return $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
 }
@@ -1289,7 +1289,7 @@ sub _pack_obj {
         id       => "$object",
         label    => $label // $self->_common_name($object),
         class    => $object->class,
-	taxonomy => $self->parsed_species($object),
+        taxonomy => $self->_parsed_species($object),
         %args,
     };
 }
