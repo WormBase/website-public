@@ -172,6 +172,40 @@ sub image { # this is too bulky...
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+sub expression_patterns {
+    my ($self) = @_;
+
+    my $expr_patterns = $self->_pack_objects($self ~~ '@Expr_pattern');
+
+    return {
+        description => 'Expression pattern(s) that this picture depicts',
+        data        => %$expr_patterns ? $expr_patterns : undef,
+    };
+}
+
+sub go_terms {
+    my ($self) = @_;
+
+    my $go_terms = $self->_pack_objects($self ~~ '@Cellular_component');
+
+    return {
+        description => 'GO terms for this picture',
+        data        => %$go_terms ? $go_terms : undef,
+    };
+}
+
+sub anatomy_terms {
+    my ($self) = @_;
+
+    my $anatomy_terms = $self->_pack_objects($self ~~ '@Anatomy');
+
+    return {
+        description => 'Anatomy terms for this picture',
+        data        => %$anatomy_terms ? $anatomy_terms : undef,
+    };
+}
+
+# pending obsolescence for the 3 above
 sub depicts {
 	my ($self) = @_;
 	my %depictions; # a picture can depict more than one thing...
