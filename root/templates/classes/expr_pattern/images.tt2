@@ -16,8 +16,10 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
          [% ELSE %]
             [% img.source.text %]
          [% END %]
+      [% ELSIF img.reference %]
+         [% tag2link(img.reference) %]
       [% ELSE %]
-         [% tag2link(img.reference) || 'No reference data.' %]
+         No reference data.
       [% END %]<br>
    </div>
    [% END %]
