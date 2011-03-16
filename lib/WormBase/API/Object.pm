@@ -83,7 +83,7 @@ sub object {
 #sub dbh_gff {
 #  my ($self,$dsn) = @_;
 #  my $object  = $self->object;
-#  my $species = $self->parsed_species();
+#  my $species = $self->_parsed_species();
 
 #  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
 #  return $dbh;
@@ -294,7 +294,7 @@ sub id2species {
 sub build_gbrowse_img {
   my ($self,$segment,$tracks,$options,$width) = @_;
   
-  my $species = $self->parsed_species(); 
+  my $species = $self->_parsed_species(); 
   
   # open the browser for drawing pictures
   my $BROWSER = Bio::Graphics::Browser->new or die;

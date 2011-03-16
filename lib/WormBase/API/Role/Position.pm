@@ -87,7 +87,7 @@ sub _seg2posURLpart {
 
     return {
         label      => $position,
-        id         => $self->parsed_species . '/?name=' . $position, # looks like a template thing...
+        id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
         class      => 'genomic_location',
         pos_string => $position, # independent from label -- label may change in the future
     };
