@@ -90,20 +90,35 @@ sub object {
 #}
 
 
- 
- 
-
-
-# Expects an array reference of objects (or a simple scalar object)
 sub _wrap {
     my $self = shift;
+    my @objects = grep defined, @_ or return;
 
-    my @wrapped = map {WormBase::API::Factory->create($_->class, {
-        object      => $_,
-        dsn         => $self->dsn,
-        pre_compile => $self->pre_compile,
-        tmp_base    => $self->tmp_base,
-    })} @_;
+    # TODO:
+    # the fact that this exists and the inverse must be done in API.pm
+    # indicates that this should probably be abstracted, otherwise
+    # future aggregate model devs may have headaches looking for this
+    # and the code in API.pm.
+    # a similar thing happens in Role::Object with mapping common fields
+    # to Ace tags.
+
+    my %aggregate_class = (
+        PCR_product => 'Pcr_oligo',
+        Oligo_set   => 'Pcr_oligo',
+        Oligo       => 'Pcr_oligo',
+        CDS         => 'CDS',
+    );
+
+    my @wrapped = map {
+        my $class = $_->class;
+        $class = $aggregate_class{$class} if $aggregate_class{$class};
+        WormBase::API::Factory->create($class, {
+            object      => $_,
+            dsn         => $self->dsn,
+            pre_compile => $self->pre_compile,
+            tmp_base    => $self->tmp_base,
+        });
+    } @objects; # end of map
 
     # User might have passed and expected just a single object
     return wantarray ? @wrapped : $wrapped[0];
