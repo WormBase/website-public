@@ -1173,7 +1173,7 @@ sub intext_citation {
         }
     }
 
-    $innertext = "($innertext, $year)" if $innertext && defined $year;
+    $innertext = "$innertext, $year" if $innertext && defined $year;
 
     return {
         description => 'APA in-text citation',
