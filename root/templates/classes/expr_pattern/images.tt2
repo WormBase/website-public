@@ -10,7 +10,15 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
    <div style="display:inline-block;">
    	  <a class="picturebox" rel="curated_images1" href="/rest/widget/picture/[% img.id %]/lightbox">
 	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]&size=20"></a><br>
-      [% IF img.reference %][% tag2link(img.reference) %][% ELSE %]No reference data.[% END %]<br>
+      [% IF img.source %]
+         [% IF img.source.link %]
+            [% external_link(img.source.link, img.source.text) %]
+         [% ELSE %]
+            [% img.source.text %]
+         [% END %]
+      [% ELSE %]
+         [% tag2link(img.reference) || 'No reference data.' %]
+      [% END %]<br>
    </div>
    [% END %]
 [% ELSE %]
