@@ -128,19 +128,22 @@ sub image { # this is too bulky...
             $namepart = "$reference/$namepart";
 
             if (my $label = $self ~~ 'Template') {
-                my %cache; # I think Ace caches stuff so maybe this is not necessary...
-                $label =~ s| \<([^>]+)\>                    # look for <tag>
-                           | $cache{$1} //= $obj->$1;       # orcish manoeuvre
-                             eval{$cache{$1}->Name}         # might not be object
-                             // $cache{$1}                  # replace with the string
-                           |gex;                            # replaces <tag> with tag value
+                $label =~ s/\<([^>]+)\>/$self ~~ $1/ge; # assume Ace caches stuff
+                # # the following would be used instead if caching is required
+                # my %cache;
+                # $label =~ s| \<([^>]+)\>                                # look for <tag>
+                #            | unless ($cache{$1}) {                      # check for cached value
+                #                my ($tmp) = $obj->$1; $cache{$1} = $tmp; # cache value (don't step in!)
+                #              };
+                #              eval{$cache{$1}->Name} // $cache{$1}
+                #            |gex;                                        # replaces <tag> with tag value
 
                 my $link;
-                if ($cache{Article_URL} and $link = $cache{Article_URL}->URL_constructor) {
+                if (my ($db, $field, $accessor) = $cache{Article_URL}->row) {
+                    $link = $db->URL_constructor;
+                    # one would imagine the following, but...
                     # $link = sprintf($link, $accessor);
-                    #   one would imagine but...
-                    my $accessor = $obj->fetch->Article_URL(3); # the fetch is necessary...
-                    $link =~ s/%S/$accessor/g;
+                    $link =~ s/%S/$accessor/g; # is this always the case? %S?
                 }
 
                 # it's possible to not have a link, but still label the source
