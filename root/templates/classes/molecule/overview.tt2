@@ -1,0 +1,33 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title="molecule_use" key="molecule_use"-%]
+	[%  fields.molecule_use.data %]
+[% END %]
+
+[% WRAPPER $field_block title="db" key="db" -%] 
+[% END %]
+
+[% WRAPPER $field_block title="affected_strain" key="affected_strain" -%] 
+	[% tag2link(fields.affected_strain.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="affected_transgene" key="affected_transgene" -%] 
+	[% tag2link(fields.affected_transgene.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="affected_variation" key="affected_variation" -%] 
+	[% # tag2link(fields.affected_variation.data) %]
+[% END %]
+
+	[% WRAPPER $field_block title="synonym" key="synonym"-%] 
+	[%  fields.synonym.data %]
+[% END %]
+
+[% WRAPPER $field_block title="affected_rnai" key="affected_rnai" -%] 
+	[%  tag2link(fields.affected_rnai.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="gene_regulation" key="gene_regulation" -%] 
+	[%  tag2link(fields.gene_regulation.data) %]
+[% END %]
