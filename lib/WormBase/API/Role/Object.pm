@@ -151,6 +151,7 @@ sub _common_name {
         Phenotype  => 'Primary_name',
         Gene_class => 'Main_name',
         Species    => 'Common_name',
+        Molecule   => [qw(Public_name Name)],
     );
 
     my $name;

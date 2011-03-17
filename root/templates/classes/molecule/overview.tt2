@@ -1,33 +1,54 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title="molecule_use" key="molecule_use"-%]
-	[%  fields.molecule_use.data %]
+[% WRAPPER $field_block title="Molecule Use" key="molecule_use"-%]
+   [% fields.molecule_use.data.join('; ') %]
 [% END %]
 
-[% WRAPPER $field_block title="db" key="db" -%] 
+[% WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation" -%] 
+	[% tag2linkAll(fields.gene_regulation.data) %]
 [% END %]
 
-[% WRAPPER $field_block title="affected_strain" key="affected_strain" -%] 
-	[% tag2link(fields.affected_strain.data) %]
+[% remarks(no_toggle=1) %]
+
+[% # Affected * belong in Phenotype widget? %]
+
+[% MACRO tag2linkAffected(affectedHash,type) BLOCK;
+   # TODO: handle phenotype; this is just a data dump
+   results = [];
+   FOR name IN affectedHash.sort;
+       item = affectedHash.$name;
+       results.push(tag2link(item.$type) _ ' (' _ tag2link(item.phenotype) _ ')');
+   END;
+   results.join(', ');
+END;
+%]
+
+
+[% WRAPPER $field_block title="Affected RNAi" key="affected_rnai" -%] 
+	[% tag2linkAffected(fields.affected_rnai.data, 'RNAi') %]
 [% END %]
 
-[% WRAPPER $field_block title="affected_transgene" key="affected_transgene" -%] 
-	[% tag2link(fields.affected_transgene.data) %]
+[% WRAPPER $field_block title="Affected Transgene" key="affected_transgene" -%] 
+	[% tag2linkAffected(fields.affected_transgene.data, 'Transgene') %]
 [% END %]
 
-[% WRAPPER $field_block title="affected_variation" key="affected_variation" -%] 
-	[% # tag2link(fields.affected_variation.data) %]
+[% WRAPPER $field_block title="Affected Variation" key="affected_variation" -%] 
+	[% tag2linkAffected(fields.affected_variation.data, 'Variation') %]
 [% END %]
 
-	[% WRAPPER $field_block title="synonym" key="synonym"-%] 
-	[%  fields.synonym.data %]
+[% WRAPPER $field_block title="Affected Strain" key="affected_strain" -%] 
+	[% tag2linkAffected(fields.affected_strain.data, 'Strain') %]
 [% END %]
 
-[% WRAPPER $field_block title="affected_rnai" key="affected_rnai" -%] 
-	[%  tag2link(fields.affected_rnai.data) %]
+[% WRAPPER $field_block title=pluralize('Synonym', fields.synonym.data.size) key="synonym"-%] 
+	[%  tag2linkAll(fields.synonym.data) %]
 [% END %]
 
-[% WRAPPER $field_block title="gene_regulation" key="gene_regulation" -%] 
-	[%  tag2link(fields.gene_regulation.data) %]
+[% WRAPPER $field_block title="Database Entries" key="db" -%]
+   [% # for now, just dumping the data. will abstract this out later %]
+   [% FOR db IN fields.db.data %]
+      [% db.join(' : ') %]<br>
+   [% END %]
 [% END %]
+
