@@ -113,7 +113,7 @@ sub _wrap {
         my $class = $_->class;
         $class = $aggregate_class{$class} if $aggregate_class{$class};
         WormBase::API::Factory->create($class, {
-            object      => $_,
+            object      => $_->fetch, # should step into object, if haven't done so
             dsn         => $self->dsn,
             pre_compile => $self->pre_compile,
             tmp_base    => $self->tmp_base,
