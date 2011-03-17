@@ -39,10 +39,6 @@ END
    [% img2linkAll(fields.cropped_pictures.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='pick_me_to_call' key='pick_me_to_call'-%]
-   [% fields.pick_me_to_call.data %]
-[% END %]
-
 [% remarks(no_toggle=1) %]
 
 </div>
@@ -66,8 +62,8 @@ END
 
 </div>
 
-[% WRAPPER $field_block title='reference_paper' key='reference_paper'-%]
-   [% tag2link(fields.reference_paper.data) %]
+[% WRAPPER $field_block title='Publication' key='reference'-%]
+   [% tag2link(fields.reference.data, undef,undef,'iframe') %]
 [% END %]
 
 [% WRAPPER $field_block title='contact' key='contact'-%]
