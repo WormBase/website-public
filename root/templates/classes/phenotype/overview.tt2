@@ -4,34 +4,56 @@
 
 <h2>[% fields.name.data.label %]</h2>
 
-[% WRAPPER highlight_box %]
-        
-   [% WRAPPER $field_block  title="Wormbase ID" key="name" %]
-      [% tag2link(fields.name.data,fields.name.data.id) %]
-   [% END %]
+[% 
 
-[% END %]
+WRAPPER highlight_box;        
+     WRAPPER $field_block  title="Wormbase ID" key="name";
+         fields.name.data.id;
+     END;
+END;
 
-
-<div class="text-width" style="clear:left">[% fields.description.data.des %]</div>
-
-
-[% widget = c.stash.widget %]
-
-[% widget = widget %]
+%]
 
 
+<div class="text-width" style="clear:left">
+    [% fields.description.data.description %]
+</div>
 
-   [% WRAPPER $field_block  title="Synonym"  key="synonym" %]
-      [% fields.synonym.data.join("<br>") %]
-   [% END %]
+
+[%
+
+WRAPPER $field_block  title="Description" key="description";
+     
+    fields.description.data;
+        # IF fields.description.data.evidence;
+	#     c.session.des= fields.description.data;
+        #     c.session.object= object.object;
+	#     '<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/['_ object.name.data.id _ '/description></a>';
+        # END;
+END;
+
+WRAPPER $field_block  title="Synonyms"  key="synonyms";
+     fields.synonyms.data.join("<br>");
+END;
+
+
+FOREACH key IN fields.related_phenotypes.data.keys.sort;
+     WRAPPER $field_block title=key  key="related_phenotypes";
+	  FOREACH obj IN fields.related_phenotypes.data.$key;
+	     tag2link(obj);
+		 UNLESS loop.last;
+                      '<br />';
+		  END;
+	   END; 
+     
+     END;
+END;
+
   
-  
+WRAPPER $field_block  title="Is retired" key="is_dead";
+    tag2link(fields.is_dead.data);
+END;
 
- 
-     [% WRAPPER $field_block  title="Note" key="is_dead" %]
-      [% tag2link(fields.is_dead.data) %]
-     [% END %]
+remarks;
 
-
-
+%]

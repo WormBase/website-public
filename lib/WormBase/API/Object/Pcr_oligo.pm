@@ -79,25 +79,27 @@ has '_object_class' => (
 
 Returns a datapack containing the parent of the product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->canonical_parent();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -111,13 +113,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/canonical_parent
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -134,25 +138,27 @@ sub canonical_parent {
 
 Returns a datapack containing the oligos of the product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->oligos();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -166,13 +172,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/oligos
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -198,25 +206,27 @@ sub oligos {
 
 Returns a datapack containing the genes overlapping the product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->overlapping_genes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -230,13 +240,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlapping_genes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -261,25 +273,27 @@ sub overlapping_genes {
 
 Returns a datapack containing the CDS's that the product overlaps.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->overlaps_CDS();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -293,13 +307,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_CDS
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -317,25 +333,27 @@ sub overlaps_CDS {
 
 Returns a datapack containing the transcript(s) that the product overlaps.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->overlaps_transcript();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -349,13 +367,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_transcript
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -373,25 +393,27 @@ sub overlaps_transcript {
 
 Returns a datapack containing the pseudogene(s) that the product overlaps.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->overlaps_pseudogene();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -405,13 +427,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_pseudogene
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -429,25 +453,27 @@ sub overlaps_pseudogene {
 
 Returns a datapack containing the variation(s) that the product overlaps.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->overlaps_variation();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -461,13 +487,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/overlaps_variation
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -485,25 +513,27 @@ sub overlaps_variation {
 
 Returns a datapack containing information to find the product on the ORFeome project.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->on_orfeome_project();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -517,13 +547,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/on_orfeome_project
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -544,25 +576,27 @@ sub on_orfeome_project {
 
 Returns a datapack containing the microarray result(s) using/containing the product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->microarray_results();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -576,13 +610,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/microarray_results
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -600,25 +636,27 @@ sub microarray_results {
 
 Returns a datapack containing a packaged GFF segment corresponding to the product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->segment();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -632,13 +670,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/segment
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -668,25 +708,27 @@ sub segment {
 Returns a datapack containing the number of times amplification to product the
 PCR product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->amplified();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -700,13 +742,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/amplified
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -728,25 +772,27 @@ sub amplified {
 
 Returns a datapack containing SNP locus information of the PCR product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->SNP_loci();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -760,13 +806,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/SNP_loci
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -785,25 +833,27 @@ sub SNP_loci {
 Returns a datapack containing details of the assay conditions of the experiment
 involving the PCR product.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->assay_conditions();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 PCR_product, Oligo_set, or Oligo ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -817,13 +867,15 @@ PCR_product, Oligo_set, or Oligo ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/pcr_oligo/mv_F25B5.5/assay_conditions
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 

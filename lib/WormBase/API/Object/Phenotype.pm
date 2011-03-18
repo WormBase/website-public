@@ -34,16 +34,6 @@ http://wormbase.org/species/phenotype
 
 =cut
 
-############################################################
-#
-# The Details widget
-#
-############################################################
-
-=head2 Details
-
-=cut
-
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
@@ -56,15 +46,15 @@ http://wormbase.org/species/phenotype
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-=head3 synonym
+=head3 synonyms
 
-This method will return a data structure synonyms for the phenotype.
+This method will return a data structure containing synonyms for the phenotype.
 
 =over
 
 =item PERL API
 
- $data = $model->synonym();
+ $data = $model->synonyms();
 
 =item REST API
 
@@ -106,12 +96,13 @@ B<Response example>
 
 =cut 
 
-sub synonym {
-    my $data = {
-        description => 'The synonym name of the phenotype ',
-        data        => shift ~~ '@Synonym',
-    };
-    return $data;
+sub synonyms {
+    my $self     = shift;
+    my $object   = $self->object;
+    my @synonyms = map { "$_" } $object->Synonym;    
+    return {
+        description => 'Synonymous name of the phenotype ',
+        data        => @synonyms ? \@synonyms : undef };
 }
 
 =head3 is_dead
@@ -165,38 +156,15 @@ B<Response example>
 =cut 
 
 sub is_dead {
-    my $object = shift->object;
+    my $self = shift;
+    my $object = $self->object;
     my $alternate = $object->Dead->right if $object->Dead(0);
     return {
-        description =>
-"The Note of the phenotype when it's retired and replaced by another.",
-        data => {
-            id    => $alternate,
-            label => $alternate,
-            class => 'Phenotype',
-        },
+        description => "The Note of the phenotype when it's retired and replaced by another.",
+        data        => $alternate ? $self->_pack_obj($alternate,$self->best_phenotype_name($alternate)) : undef,
     };
 }
 
-############################################################
-#
-# The Ontology Browser widget
-#
-############################################################
-
-=head2 Ontology Browser
-
-=cut
-
-############################################################
-#
-# The Related Information widget
-#
-############################################################
-
-=head2 Related Information
-
-=cut
 
 =head3 related_phenotypes
 
@@ -257,22 +225,40 @@ sub related_phenotypes {
             ( my $type = $tag ) =~ s/_/ /g;
             my @entries;
             foreach my $ph ( $phenotype->$tag ) {
-                push @entries,
-                  {
-                    id    => $ph,
-                    label => $self->best_phenotype_name($ph),
-                    class => 'Phenotype'
-                  };
+		push @entries,$self->_pack_obj($ph,$self->best_phenotype_name($ph));	       
             }
+	    # Americanize. Sorry.
+	    $type =~ s/isation/ization/g;
             $result->{$type} = \@entries;
         }
     }
-    return {
-        description =>
-"The generalized and specialized terms in the ontology for this phenotype.",
-        data => $result,
+    return { description => 'The generalized and specialized terms in the ontology for this phenotype.',
+	     data        => $result,
     };
 }
+
+
+############################################################
+#
+# The Ontology Browser widget
+#
+############################################################
+
+=head2 Ontology Browser
+
+=cut
+
+
+
+############################################################
+#
+# The Gene Ontology Widget
+#
+############################################################
+
+=head2 Gene Ontology
+
+=cut
 
 =head3 go_term
 
@@ -328,13 +314,23 @@ sub go_term {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->GO_term;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
+    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects;	
     return {
-        'data'        => \@data_pack,
-        'description' => 'go terms associated with phenotype'
+        data        => @data_pack ? \@data_pack : undef,
+        description => 'go terms associated with phenotype'
     };
 }
+
+
+############################################################
+#
+# The RNAi widget
+#
+############################################################
+
+=head2 RNAi
+
+=cut
 
 =head3 rnai
 
@@ -451,10 +447,20 @@ sub rnai_not {
     my $object    = $self->object;
     my $data_pack = $self->_rnai('Not_in_RNAi');
     return {
-        'data'        => $data_pack,
-        'description' => 'rnais not associated with this phenotype'
+        data        => $data_pack,
+        description => 'rnais not associated with this phenotype'
     };
 }
+
+############################################################
+#
+# The Variation widget
+#
+############################################################
+
+=head2 Variation
+
+=cut
 
 =head3 variation
 
@@ -511,8 +517,8 @@ sub variation {
     my $object    = $self->object;
     my $data_pack = $self->_variation('Variation');
     return {
-        'data'        => $data_pack,
-        'description' => 'variations associated with this phenotype'
+        data        => $data_pack,
+        description => 'variations associated with this phenotype'
     };
 }
 
@@ -626,6 +632,16 @@ B<Response example>
 
 =cut 
 
+############################################################
+#
+# The Transgene widget
+#
+############################################################
+
+=head2 Transgene
+
+=cut
+
 sub transgene {
     my $self      = shift;
     my $object    = $self->object;
@@ -696,6 +712,17 @@ sub transgene_not {
     };
 }
 
+
+############################################################
+#
+# The Anatomy Ontology widget
+#
+############################################################
+
+=head2 Anatomy Ontology
+
+=cut
+
 =head3 anatomy_ontology
 
 This method will return a data structure anatomy_ontology terms associated with the phenotype via anatomy_function.
@@ -747,7 +774,9 @@ B<Response example>
 =cut 
 
 sub anatomy_ontology {
-    my @anatomy_fns = shift ~~ 'Anatomy_function';
+    my $self = shift;
+    my $object = $self->object;
+    my @anatomy_fns = $object->Anatomy_function;
     my @data_pack;
     foreach my $anatomy_fn (@anatomy_fns) {
         my $anatomy_fn_name = $anatomy_fn->Involved  if $anatomy_fn;
@@ -757,18 +786,26 @@ sub anatomy_ontology {
         my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
         next unless ($anatomy_term_id);
         my $class = $anatomy_term_id->class;
-        push @data_pack,
-          {
-            id    => "$anatomy_term_id",
-            label => "$anatomy_term_name",
-            class => "$class"
-          };
+        push @data_pack, $self->_pack_obj($anatomy_term_id,$anatomy_term_name);
+#          {
+#            id    => "$anatomy_term_id",
+#            label => "$anatomy_term_name",
+#            class => "$class"
+#          };
     }
     return {
-        'description' => "The Anatomy Ontology of the phenotype ",
-        'data'        => \@data_pack
+        description => "The Anatomy Ontology of the phenotype ",
+        data        => @data_pack ? \@data_pack : undef,
     };
 }
+
+
+
+############################################################
+#
+# Private methods
+#
+############################################################
 
 sub rnai_json {
     return {
@@ -848,21 +885,21 @@ sub _variation {
     my $object = $self->object;
     my @data_pack;
     my @tag_objects = $object->$tag;
-
+    
     foreach my $tag_object (@tag_objects) {
         my $tag_info       = $self->_pack_obj($tag_object);
         my $variation_type = $tag_object->Variation_type;
         my $gene_info      = $self->_pack_obj( $tag_object->Possibly_affects )
-          if $tag_object->Possibly_affects;
+	    if $tag_object->Possibly_affects;
         my $species_info = $self->_pack_obj( $tag_object->Species )
-          if $tag_object->Species;
+	    if $tag_object->Species;
         push @data_pack,
-          {
+	{
             variation => $tag_info,
             gene      => $gene_info,
             type      => $tag_object->Variation_type,
             species   => $species_info
-          };
+	};
     }
     return \@data_pack;
 }
