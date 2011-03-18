@@ -4,6 +4,8 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+# Some Molecules to view (as of WS224): D016627, D002104 (1 of 3 with gene_regulation)
+
 =pod 
 
 =head1 NAME
@@ -93,9 +95,9 @@ B<Response example>
 sub synonym {
     my $self      = shift;
     my $object    = $self->object;
-    my $data_pack = $object->Synonym;
+    my $data_pack = $self->_pack_objects([$object->Synonym]);
     return {
-        'data'        => $data_pack,
+        'data'        => %$data_pack ? $data_pack : undef,
         'description' => 'synonyms for the molecule name'
     };
 }
@@ -150,21 +152,12 @@ B<Response example>
 
 =cut 
 
-sub db {
+sub db { # AD: for now, just dropping this out as a table structure. will abstract this later
     my $self             = shift;
-    my $object           = $self->object;
-    my @db_data          = $object->DB_info->col if $object->DB_info;
-    my $db               = $self->_pack_obj( $db_data[0] );
-    my $field            = $self->_pack_obj( $db_data[1] );
-    my $accession_number = $self->_pack_obj( $db_data[2] );
+    my @databases = map {[map {"$_"} $_->row]} @{$self ~~ '@Database'};
 
-    my $data_pack = {
-        'db'        => $db,
-        'field'     => $field,
-        'accession' => $accession_number
-    };
     return {
-        'data'        => $data_pack,
+        'data'        => @databases ? \@databases : undef,
         'description' => 'database information for external resources'
     };
 }
@@ -221,12 +214,10 @@ B<Response example>
 
 sub gene_regulation {
     my $self       = shift;
-    my $object     = $self->object;
-    my $tag_object = $object->Gene_regulation->right
-      if $object->Gene_regulation;
-    my $data_pack = $self->_pack_obj($tag_object);
+
+    my $gene_reg = $self->_pack_objects($self ~~ '@Gene_regulator');
     return {
-        'data'        => $data_pack,
+        'data'        => %$gene_reg ? $gene_reg : undef,
         'description' => 'gene regulation involving the molecule'
     };
 }
@@ -282,11 +273,15 @@ B<Response example>
 =cut 
 
 sub molecule_use {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $object->Molecule_use;
+    my ($self) = @_;
+
+    # TODO: deal with evidence
+    my @uses = map {[$_->row]} @{$self ~~ '@Molecule_use'};
+    # (use, evidence type, evidence)
+
+    @uses = map {"$_->[0]"} @uses; # drop evidence...
     return {
-        'data'        => $data_pack,
+        'data'        => @uses ? \@uses : undef,
         'description' => 'uses for the molecule'
     };
 }
@@ -545,13 +540,17 @@ sub affected_rnai {
 ##########################
 
 sub _affects {
-    my $self        = shift;
-    my $tag         = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->$tag;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return @data_pack ? \@data_pack : undef;
+    my ($self, $tag) = @_;
+    my @affected = map {[$_->row]} @{$self ~~ "\@$tag"};
+    # (obj, phenotype, evidence type, evidence)
+
+    # TODO: do something with evidence
+    my %data_pack = map { $_->[0] => {
+        $tag      => $self->_pack_obj($_->[0]), # obj
+        phenotype => $self->_pack_obj($_->[1])
+    }} @affected;
+
+    return %data_pack ? \%data_pack : undef;
 }
 
 1;

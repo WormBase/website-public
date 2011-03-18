@@ -151,7 +151,7 @@ has 'tracks' => (
         my ($self) = @_;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->parsed_species =~ /elegans/ ?
+            data        => $self->_parsed_species =~ /elegans/ ?
                            [qw(CG CANONICAL Allele RNAi)] : undef,
         },
     }
