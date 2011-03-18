@@ -93,25 +93,27 @@ has 'image_pointer_file' => (
 
 This method will return a data structure with the associated feature to the requested position matrix.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->associated_feature();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Postion_matrix ID WBPmat00000001
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -125,13 +127,15 @@ a Postion_matrix ID WBPmat00000001
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_feature
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -150,25 +154,27 @@ sub associated_feature {
 
 This method will return a data structure with the associated position_matrix to the requested position matrix.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->associated_position_matrix();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Postion_matrix ID WBPmat00000001
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -182,12 +188,15 @@ a Postion_matrix ID WBPmat00000001
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/associated_position_matrix
-=head5 Response example
+
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -206,25 +215,27 @@ sub associated_position_matrix {
 
 This method will return a data structure with the consensus sequence for the requested position matrix.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->consensus();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Postion_matrix ID WBPmat00000001
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -238,12 +249,15 @@ a Postion_matrix ID WBPmat00000001
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/consensus
-=head5 Response example
+
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -270,25 +284,27 @@ sub consensus {
 
 This method will return a data structure with the position data for the requested position matrix.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->position_data();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Postion_matrix ID WBPmat00000001
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -302,12 +318,14 @@ a Postion_matrix ID WBPmat00000001
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/position_data
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
