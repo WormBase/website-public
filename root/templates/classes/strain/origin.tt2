@@ -28,7 +28,7 @@
         [% tag2link(fields.isolated_by.data) %]
     [% END %]
 
-    [% WRAPPER $field_block title="Date isolated" key="date_isolated" %]
+    [% WRAPPER $field_block title="Date of sampling" key="date_isolated" %]
         [% fields.date_isolated.data %]
     [% END %]
 
