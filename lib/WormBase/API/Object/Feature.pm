@@ -4,6 +4,8 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+# Some good examples: WBsf000001, WBsf027925
+
 =pod 
 
 =head1 NAME
@@ -35,6 +37,10 @@ http://wormbase.org/species/feature
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
+
+# sub method { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
 
 =head3 flanking_sequences
 
@@ -87,20 +93,23 @@ B<Response example>
 =cut 
 
 sub flanking_sequences {
-    my $self      = shift;
-    my $object    = $self->object;
-    my @sequences = $object->Flanking_sequences;
+    my ($self) = @_;
 
-    my @data = map {$_=$self->_pack_obj($_)} @sequences;
+    my ($seq, @flanks);
+    if (my ($flanking_seq) = $self->object->Flanking_sequences) {
+        ($seq, @flanks) = $flanking_seq->row;
+        $seq = $self->_pack_obj($seq);
+        @flanks = map {"$_"} @flanks;
+    }
+
     return {
         description => 'sequences flanking the feature',
-        data        => @data ? \@data : undef
+        data        => $seq && {
+            seq    => $seq,
+            flanks => \@flanks,
+        },
     };
 }
-
-# sub taxonomy { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include taxonomy >>
 
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -157,25 +166,25 @@ B<Response example>
 =cut 
 
 sub defined_by {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data;
-    my @tag_objects = qw/sequence paper author analysis/;
-    foreach my $tag_object (@tag_objects) {
-        my $tag = "Defined_by_" . $tag_object;
-        my @data = map {$self->_pack_obj($_)} $object->$tag;
-        $data{"$tag_object"} = \@data if @data;
+    my ($self) = @_;
+
+    my %defined_by;
+    foreach my $definer (@{$self ~~ '@Defined_by'}) {
+        my $definer_objs = $self->_pack_objects([$definer->col]);
+        (my $label = "$definer") =~ s/Defined_by_(.)/\u$1/;
+        $defined_by{$label} = $definer_objs;
     }
+
     return {
         description => 'objects that define this feature',
-        data        => \%data
+        data        => %defined_by ? \%defined_by : undef,
     };
 }
 
 =head3 associations
 
 This method will return a data structure of the 
-name for the requested position matrix.
+TODO
 
 =over
 
@@ -224,19 +233,21 @@ B<Response example>
 =cut
 
 sub associations {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data;
-    my @tag_objects =
-      qw/gene CDS transcript pseudogene transposon variation Position_matrix operon gene_regulation expression_pattern Feature/;
-    foreach my $tag_object (@tag_objects) {
-        my $tag = "Associated_with_" . $tag_object;
-        my @data = map { $self->_pack_obj($_) } $object->$tag;
-        $data{"$tag_object"} = \@data if @data;
+    my ($self) = @_;
+
+    my %associations;
+    foreach my $assoc_type (@{$self ~~ '@Associations'}) { # assoc_type is tag
+        my %assoc_objs = map { $_ => {
+            obj => $self->_pack_obj($_),
+            # evidence => $_->right, # TODO: do something with evidence
+        }} $assoc_type->col;
+        (my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
+        $associations{$label} = \%assoc_objs;
     }
+
     return {
         description => 'objects that define this feature',
-        data        => \%data
+        data        => %associations ? \%associations : undef,
     };
 }
 
@@ -292,13 +303,12 @@ B<Response example>
 =cut 
 
 sub binds_gene_product {
-    my $self   = shift;
-    my $object = $self->object;
-    my @genes  = $object->Bound_by_product_of;
-    my @data   = map { $self->_pack_obj( $_, $_->Public_name ) } @genes;
+    my ($self) = @_;
+
+    my $data = $self->_pack_objects($self ~~ '@Bound_by_product_of'); # TODO: evidence?
     return {
-        description => 'gene products thtat bind this feature',
-        data        => @data ? \@data : undef
+        description => 'gene products that bind this feature',
+        data        => %$data ? $data: undef,
     };
 }
 
@@ -354,15 +364,13 @@ B<Response example>
 =cut
 
 sub transcription_factor {
-    my $self                 = shift;
-    my $object               = $self->object;
-    my $transcription_factor = $object->Transcription_factor;
+    my ($self) = @_;
 
-    my $data = $self->_pack_obj($transcription_factor);
+    my $factor = $self ~~ 'Transcription_factor';
     return {
-        description => 'transcription factor that binds the feature',
-        data        => $data ? $data : undef
-    };
+        description => 'Transcription factor of the feature',
+        data        => $factor && $self->_common_name($factor), # no TFactor model
+    }
 }
 
 =head3 annotation
@@ -417,17 +425,141 @@ B<Response example>
 =cut 
 
 sub annotation {
-    my $self   = shift;
-    my $object = $self->object;
-    my $data   = map { $self->_pack_obj($_) } $object->Annotation;
+    my ($self) = @_;
+
+    my $annotation;
+    if ($annotation = $self ~~ 'Annotation') {
+        $annotation = $annotation->right;
+    }
+
     return {
-        description => 'annotations on the feature',
-        data        => $data ? $data : undef
+        description => 'Annotation of the feature',
+        data        => $annotation && "$annotation",
     };
 }
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
+
+=head3 so_terms
+
+This method will return a data structure
+containing sequence ontology terms on the feature.
+
+=over
+
+=item PERL API
+
+ $data = $model->so_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A feature ID (eg WBsf000753)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/so_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub so_terms {
+    my ($self) = @_;
+
+    my @terms = map {"$_"} @{$self ~~ '@SO_term'};
+    return {
+        description => 'SO term(s) of the feature',
+        data        => @terms ? \@terms : undef,
+    };
+}
+
+=head3 sequence
+
+# TODO
+
+=over
+
+=item PERL API
+
+ $data = $model->sequence();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A feature ID (eg WBsf000753)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/feature/WBsf000753/sequence
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub sequence {
+    my ($self) = @_;
+
+    return {
+        description => 'TODO',
+        data => $self->_pack_obj($self ~~ 'Sequence'),
+    };
+}
 
 1;

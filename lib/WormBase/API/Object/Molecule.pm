@@ -546,7 +546,7 @@ sub _affects {
 
     # TODO: do something with evidence
     my %data_pack = map { $_->[0] => {
-        $tag      => $self->_pack_obj($_->[0]), # obj
+        obj       => $self->_pack_obj($_->[0]), # the affected obj
         phenotype => $self->_pack_obj($_->[1])
     }} @affected;
 

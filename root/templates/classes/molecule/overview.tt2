@@ -13,12 +13,12 @@
 
 [% # Affected * belong in Phenotype widget? %]
 
-[% MACRO tag2linkAffected(affectedHash,type) BLOCK;
+[% MACRO tag2linkAffected(affectedHash) BLOCK;
    # TODO: handle phenotype; this is just a data dump
    results = [];
    FOR name IN affectedHash.sort;
        item = affectedHash.$name;
-       results.push(tag2link(item.$type) _ ' (' _ tag2link(item.phenotype) _ ')');
+       results.push(tag2link(item.obj) _ ' (' _ tag2link(item.phenotype) _ ')');
    END;
    results.join(', ');
 END;
@@ -26,19 +26,19 @@ END;
 
 
 [% WRAPPER $field_block title="Affected RNAi" key="affected_rnai" -%] 
-	[% tag2linkAffected(fields.affected_rnai.data, 'RNAi') %]
+	[% tag2linkAffected(fields.affected_rnai.data) %]
 [% END %]
 
 [% WRAPPER $field_block title="Affected Transgene" key="affected_transgene" -%] 
-	[% tag2linkAffected(fields.affected_transgene.data, 'Transgene') %]
+	[% tag2linkAffected(fields.affected_transgene.data) %]
 [% END %]
 
 [% WRAPPER $field_block title="Affected Variation" key="affected_variation" -%] 
-	[% tag2linkAffected(fields.affected_variation.data, 'Variation') %]
+	[% tag2linkAffected(fields.affected_variation.data) %]
 [% END %]
 
 [% WRAPPER $field_block title="Affected Strain" key="affected_strain" -%] 
-	[% tag2linkAffected(fields.affected_strain.data, 'Strain') %]
+	[% tag2linkAffected(fields.affected_strain.data) %]
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Synonym', fields.synonym.data.size) key="synonym"-%] 
