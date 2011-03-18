@@ -682,48 +682,47 @@ sub widget_GET {
     $c->log->debug("widget GET header ".$headers->header('Content-Type'));
     $c->log->debug($headers);
 
-    $c->log->debug("this is NOT a bench page widget");
-
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
-	# Fetch our external model
-	my $api = $c->model('WormBaseAPI');
-	
-	# Fetch the object from our driver	 
-	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-	$c->log->debug("The requested class is " . ucfirst($class));
-	$c->log->debug("The request is " . $name);
-	
-	# Fetch a WormBase::API::Object::* object
-	if ($name eq '*' || $name eq 'all') {
-	    $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-	} else {
-	    $c->stash->{object} = $api->fetch({class => ucfirst($class),
-					       name  => $name,
-					      }) or die "$!";
-	}
-	$c->log->debug("Tried to instantiate: $class");
+      # Fetch our external model
+      my $api = $c->model('WormBaseAPI');
+      
+      # Fetch the object from our driver	 
+      $c->log->debug("WormBaseAPI model is $api " . ref($api));
+      $c->log->debug("The requested class is " . ucfirst($class));
+      $c->log->debug("The request is " . $name);
+      
+      # Fetch a WormBase::API::Object::* object
+      if ($name eq '*' || $name eq 'all' || $widget eq 'browse') {
+          $c->stash->{species} = $name;
+          $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+      } else {
+          $c->stash->{object} = $api->fetch({class => ucfirst($class),
+                            name  => $name,
+                            }) or die "$!";
+      }
+      $c->log->debug("Tried to instantiate: $class");
     }
 
     my $object = $c->stash->{object};
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
     if ($widget eq "references") {
-	$c->stash->{class}    = $class;
-	$c->stash->{query}    = $name;
-	$c->stash->{noboiler} = 1;
-	
-	# Looking up the template is slow; hard-coded here.
-	$c->stash->{template} = "shared/widgets/references.tt2";
-	$c->forward('WormBase::Web::View::TT');
-	return;
+      $c->stash->{class}    = $class;
+      $c->stash->{query}    = $name;
+      $c->stash->{noboiler} = 1;
+      
+      # Looking up the template is slow; hard-coded here.
+      $c->stash->{template} = "shared/widgets/references.tt2";
+      $c->forward('WormBase::Web::View::TT');
+      return;
 	
     # If you have a tool that you want to display inline as a widget, be certain to add it here.
     # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "aligner" || $widget eq "show_mult_align" || $widget eq 'tree') {
-	return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
-	return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
+      return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
+      return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
     }
     
     # Does the data for this widget already exist in the cache?
@@ -732,40 +731,40 @@ sub widget_GET {
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
-	$c->stash->{fields} = $cached_data;
-	$c->stash->{cache} = $cache_server if($cache_server);
+      $c->stash->{fields} = $cached_data;
+      $c->stash->{cache} = $cache_server if($cache_server);
     } else {
 
-	# No result? Generate and cache the widget.		
-	# Load the stash with the field contents for this widget.
-	# The widget itself is loaded by REST; fields are not.
-	my @fields = $c->_get_widget_fields($class,$widget);
+      # No result? Generate and cache the widget.		
+      # Load the stash with the field contents for this widget.
+      # The widget itself is loaded by REST; fields are not.
+      my @fields = $c->_get_widget_fields($class,$widget);
 
-	my $fatal_non_compliance = 0;
-	foreach my $field (@fields) {
-        unless ($field) { next;}
-	    $c->log->debug($field);
-	    my $data = $object->$field; # $object->can($field) for a check
-		if ($c->config->{installation_type} eq 'development' and
-			my ($fixed_data, @problems) = $object->check_data($data, $class)) {
-			$data = $fixed_data;
-			$c->log->fatal("${class}::$field returns non-compliant data: ");
-			$c->log->fatal("\t$_") foreach @problems;
+      my $fatal_non_compliance = 0;
+      foreach my $field (@fields) {
+          unless ($field) { next;}
+          $c->log->debug($field);
+          my $data = $object->$field; # $object->can($field) for a check
+          if ($c->config->{installation_type} eq 'development' and
+              my ($fixed_data, @problems) = $object->check_data($data, $class)) {
+              $data = $fixed_data;
+              $c->log->fatal("${class}::$field returns non-compliant data: ");
+              $c->log->fatal("\t$_") foreach @problems;
 
-			$fatal_non_compliance = $c->config->{fatal_non_compliance};
-		}
+              $fatal_non_compliance = $c->config->{fatal_non_compliance};
+          }
 
-	    # Conditionally load up the stash (for now) for HTML requests.
-	    # Alternatively, we could return JSON and have the client format it.
-	    $c->stash->{fields}->{$field} = $data; 
-	}
+          # Conditionally load up the stash (for now) for HTML requests.
+          # Alternatively, we could return JSON and have the client format it.
+          $c->stash->{fields}->{$field} = $data; 
+      }
 
-	if ($fatal_non_compliance) {
-		die "Non-compliant data. See log for fatal error.\n"
-	}
+      if ($fatal_non_compliance) {
+          die "Non-compliant data. See log for fatal error.\n"
+      }
 
-	# Cache the field data for this widget.
-	$c->set_cache($cache_id,$c->stash->{fields});
+      # Cache the field data for this widget.
+      $c->set_cache($cache_id,$c->stash->{fields});
     }
 
     $c->stash->{class} = $class;

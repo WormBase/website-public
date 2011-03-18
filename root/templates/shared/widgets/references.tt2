@@ -9,7 +9,7 @@ Strategy: iterate over all default fields (supplied by the action). remove any t
 The References widget itself is composed of multiple sections, each of which is handled by one template.
 
 %]
-[% path = c.uri_for('/search', 'Paper', c.stash.query) %]
+[% path = c.uri_for('/search', 'paper', c.stash.query) %]
   <div id="reference-results">
                     <script>
                     ajaxGet($jq("#reference-results"), "[% path _ "?class=" _ c.stash.class _ ";inline=1" %]");

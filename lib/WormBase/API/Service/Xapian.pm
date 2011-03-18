@@ -36,19 +36,20 @@ sub search {
     my $t=[gettimeofday];
     $page       ||= 1;
     $page_size  ||=  10;#$class->config->{page_size};
-    $class->db->reopen();
+#     $class->db->reopen();
 
     if($type){
       $q .= " $type..$type";
     }
 
     if($species){
-      my $s = $c->{config}->{speices_list}->{$species}->{ncbi_taxonomy_id};
+      my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
       $c->log->debug("species search $s");
       $q .= " species:$s..$s";
     }
 
     my $query=$class->qp->parse_query( $q, 512|1|2 );
+
     my $enq       = $class->db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
     if($type =~ /paper/){
@@ -66,20 +67,24 @@ sub search {
 sub search_autocomplete {
     my ( $class, $c, $q, $type) = @_;
 
-    $class->db->reopen();
 #     $class->syn_db->reopen();
 
     if($type){
       $q .= "* $type..$type";
     }
 
-    my $query=$class->qp->parse_query( $q, 64|16 );
-    my $enq       = $class->db->enquire ( $query );
-#     my $query=$class->syn_qp->parse_query( $q, 64 );
-#     my $enq       = $class->syn_db->enquire ( $query );
+    my $query=$class->syn_qp->parse_query( $q, 64|16 );
+    my $enq       = $class->syn_db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
-
     my $mset      = $enq->get_mset( 0, 10 );
+
+    if($mset->empty()){
+#       $class->db->reopen();
+      $query=$class->qp->parse_query( $q, 64|16 );
+      $enq       = $class->db->enquire ( $query );
+      $c->log->debug("query2:" . $query->get_description());
+      $mset      = $enq->get_mset( 0, 10 );
+    }
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>10 });
@@ -88,7 +93,7 @@ sub search_autocomplete {
 sub search_exact {
     my ( $class, $c, $q, $type) = @_;
 
-    $class->syn_db->reopen();
+#     $class->syn_db->reopen();
 
     if($type){ $q .= " $type..$type";}
 

@@ -25,6 +25,7 @@
  
       breadcrumbs.push(tag2link(object.name.data));
       title = breadcrumbs.join(' &raquo; ');
+      is_class_index = 0;
       report_page(title);
 
 %]
