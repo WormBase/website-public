@@ -419,7 +419,8 @@ sub _get_widget_fields {
         die "There appears to be more than one $class section in the config file\n";
     }
 
-    my @fields = @{$section->{widgets}{$widget}{fields} || []};
+    my $fields = $section->{widgets}{$widget}{fields};
+    my @fields = ref $fields eq 'ARRAY' ? @$fields : $fields // ();
 
     $self->log->debug("The $widget widget is composed of: " . join(", ",@fields));
     return @fields;
