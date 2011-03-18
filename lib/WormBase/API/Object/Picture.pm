@@ -139,7 +139,9 @@ sub image { # this is too bulky...
                 #            |gex;                                        # replaces <tag> with tag value
 
                 my $link;
-                if (my ($db, $field, $accessor) = $cache{Article_URL}->row) {
+                if (my ($article_URL) = $obj->Article_URL) {
+                    my ($db, $field, $accessor) = $article_URL->row;
+                    $accessor //= ''; # don't want to sub with undef
                     $link = $db->URL_constructor;
                     # one would imagine the following, but...
                     # $link = sprintf($link, $accessor);
