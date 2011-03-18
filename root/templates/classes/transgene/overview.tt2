@@ -3,42 +3,56 @@
 
 <h2>[% fields.name.data.name %]</h2>
 
-[% WRAPPER highlight_box %]
+[%
 
-   [% taxonomy %]
+WRAPPER highlight_box;
 
-   [% summary %]
+   taxonomy;
 
-   [% WRAPPER $field_block title="Synonym" key="synonym" %]
-        [% fields.synonym.data %]
-   [% END %]
+   summary;
 
-[% END %]
+   WRAPPER $field_block title="Synonym" key="synonym";
+        fields.synonym.data;
+   END;
 
-[% WRAPPER $field_block title=pluralize('Promoter') %]
-   [% w = [ tag2link(fields.driven_by_gene.data),
-            fields.driven_by_construct.data ] ;
+END;
+
+    
+w = [];
+IF fields.driven_by_gen.data.defined;
+    w.push(tag2link(fields.driven_by_gene.data));
+END; 
+  
+IF fields.driven_by_construct.data.defined;
+    w.push(fields.driven_by_construct.data);
+END;
+
+IF w.size > 0;
+   WRAPPER $field_block title=pluralize('Promoter');
       w.join(', ');
-   %]
+   END;
+END;
 
-   [%# WRAPPER $field_block title="Gene" key="driven_by_gene" %]
-       [%# tag2link(fields.driven_by_gene.data) %]
-   [%# END %]
+# WRAPPER $field_block title="Gene" key="driven_by_gene";
+    # tag2link(fields.driven_by_gene.data);
+# END;
 
-   [%# WRAPPER $field_block title="Construct" key="driven_by_construct" %]
-       [%# fields.driven_by_construct.data %]
-   [%# END %]
-[% END %]
+# WRAPPER $field_block title="Construct" key="driven_by_construct";
+    # fields.driven_by_construct.data;
+# END;
 
-[% WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct" %]
-    [% FOREACH reporter IN fields.reporter_construct.data.keys %]
-        [%# reporter %]
-        [% IF reporter == "Gene" %] 
-            [% tag2link(fields.reporter_construct.data.$reporter) %]
-        [% ELSE %]
-            [% reporter.value %]
-        [% END %]
-    [% END %]
-[% END %]
 
-[% remarks %]
+WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct";
+   FOREACH reporter IN fields.reporter_construct.data.keys;
+       # reporter;
+       IF reporter == "Gene";
+          tag2link(fields.reporter_construct.data.$reporter);
+       ELSE;
+           reporter.value;
+       END;
+   END;
+END;
+
+remarks;
+
+%]
