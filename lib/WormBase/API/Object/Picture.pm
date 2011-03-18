@@ -55,19 +55,20 @@ http://wormbase.org/resources/picture
 sub cropped_from {
 	my ($self) = @_;
 
+    my $pic = $self ~~ 'Cropped_from';
 	return {
 		description => 'Picture that this picture was cropped from',
-		data		=> $self->_pack_obj($self ~~ 'Cropped_from'),
+		data		=> $pic && $self->_wrap($pic)->image->{data},
 	};
 }
 
 sub cropped_pictures {
 	my ($self) = @_;
 
-    my $data = $self->_pack_objects($self ~~ '@Cropped_picture');
+    my %data = map {$_ => $self->_wrap($_)->image->{data}} @{$self ~~ '@Crop_picture'};
 	return {
 		description => 'Picture(s) that were cropped from this picture',
-		data		=> %$data ? $data : undef,
+		data        => %data ? \%data : undef,
 	};
 }
 
@@ -85,7 +86,7 @@ sub pick_me_to_call {
 	};
 }
 
-sub image {
+sub image { # this is too bulky...
 	my ($self) = @_;
 	my $obj = $self->object;
 
@@ -100,57 +101,74 @@ sub image {
 	my $data;
 
     my ($file, $filename, $reference, $class);
-    if ($reference = $self->_reference) { {
-        $filename = $self ~~ 'Name'; # file name
-        last unless $filename; # break out (that's why there's an extra {} block)
-        $file = $self->pre_compile->{new_images} . '/' . $reference . '/' . $filename;
-        unless (-e $file && !-z $file) {
-            undef $file;
-            undef $filename;
-            last;
-        }
-        $class = 'new_images';
-    } } # if $file is undef, then could not find
-
-    if (!$file) { # try the old images
-        $filename = "$obj";
+    if ($filename = $self ~~ 'Name' and $reference = $self->_reference) {
+        $class     = 'new_images'; # temporary for transition to new pictures
+        $file      = $self->pre_compile->{new_images} . '/' . $reference . '/' . $filename;
+    }
+    else { # legacy support
+        $filename = "$obj"; # the filename in this case is the same as the object name
         foreach (qw(expr_pattern_localizome expr_pattern)) {
             $class = $_;
+            # TODO: the following (and pre_compile statement above) are fairly low
+            #       level and shouldn't be dealt with in these models...
+            #       it should be abstracted elsewhere... perhaps a role
+            #       which may also remove the need to wrap Picture objects
             $file = $self->pre_compile->{$class} . '/' . $filename;
-            if (!-e $file || -z $file) {
-                undef $file;
-                next;
-            }
+            last if -e $file && !-z $file;
         }
-    } # if $file is still undef, then there is no image file.
-
-    $filename =~ /^(.+)\.(.+)$/; # will match names like a.b.c.jpg properly due to greediness
-    my ($namepart, $format) = ($1 || $obj.'', $2 || '');
-
-    if ($reference) {
-        my $ref_label;
-        if ($ref_label = $self ~~ 'Template') {
-            foreach (qw(Publication_year Article_URL Journal_URL Publisher_URL Person_name)) {
-                $ref_label =~ s/\<$_\>/$self ~~ $_/ge;
-            }
-        }
-        $reference = $self->_pack_obj($reference, $ref_label);
     }
 
-    # THIS IS A HACK -- CHANGE LATER:
-    $namepart = "$reference->{id}/$namepart" if $class eq 'new_images';
 
-    $data = {
-        id		  => "$obj",
-        name	  => $namepart,
-        class	  => $class,
-        format	  => $format,
-        reference => $reference,
-    };
+    my ($namepart, $format, $source);
+    if (-e $file && !-z $file) {
+        $filename =~ /^(.+)\.(.+)$/; # will match names like a.b.c.jpg properly due to greediness
+        ($namepart, $format) = ($1 || $obj.'', $2 || '');
 
+        if ($class eq 'new_images') {
+            $namepart = "$reference/$namepart";
+
+            if (my $label = $self ~~ 'Template') {
+                $label =~ s/\<([^>]+)\>/$self ~~ $1/ge; # assume Ace caches stuff
+                # # the following would be used instead if caching is required
+                # my %cache;
+                # $label =~ s| \<([^>]+)\>                                # look for <tag>
+                #            | unless ($cache{$1}) {                      # check for cached value
+                #                my ($tmp) = $obj->$1; $cache{$1} = $tmp; # cache value (don't step in!)
+                #              };
+                #              eval{$cache{$1}->Name} // $cache{$1}
+                #            |gex;                                        # replaces <tag> with tag value
+
+                my $link;
+                if (my ($article_URL) = $obj->Article_URL) {
+                    my ($db, $field, $accessor) = $article_URL->row;
+                    $accessor //= ''; # don't want to sub with undef
+                    $link = $db->URL_constructor;
+                    # one would imagine the following, but...
+                    # $link = sprintf($link, $accessor);
+                    $link =~ s/%S/$accessor/g; # is this always the case? %S?
+                }
+
+                # it's possible to not have a link, but still label the source
+                $source = $label && {
+                    text => $label,
+                    link => $link,
+                };
+            }
+        }
+    }
+
+    # could use _pack_obj, but Papers handle labelling differently
+    $reference = $self->_wrap($reference)->name->{data} if $reference;
 	return {
 		description => 'Information pertaining to underlying image of picture',
-		data		=> $data,
+		data		=> $namepart && {
+            id		  => "$obj",               # internal object identifier
+            name	  => $namepart,            # used by /draw as identifier...
+            class	  => $class,               # what kind of picture
+            format	  => $format,              # what format of image (for /draw)
+            reference => $reference,           # from which paper
+            source    => $source,              # source of picture
+        },
 	};
 }
 
@@ -159,6 +177,40 @@ sub image {
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+sub expression_patterns {
+    my ($self) = @_;
+
+    my $expr_patterns = $self->_pack_objects($self ~~ '@Expr_pattern');
+
+    return {
+        description => 'Expression pattern(s) that this picture depicts',
+        data        => %$expr_patterns ? $expr_patterns : undef,
+    };
+}
+
+sub go_terms {
+    my ($self) = @_;
+
+    my $go_terms = $self->_pack_objects($self ~~ '@Cellular_component');
+
+    return {
+        description => 'GO terms for this picture',
+        data        => %$go_terms ? $go_terms : undef,
+    };
+}
+
+sub anatomy_terms {
+    my ($self) = @_;
+
+    my $anatomy_terms = $self->_pack_objects($self ~~ '@Anatomy');
+
+    return {
+        description => 'Anatomy terms for this picture',
+        data        => %$anatomy_terms ? $anatomy_terms : undef,
+    };
+}
+
+# pending obsolescence for the 3 above
 sub depicts {
 	my ($self) = @_;
 	my %depictions; # a picture can depict more than one thing...

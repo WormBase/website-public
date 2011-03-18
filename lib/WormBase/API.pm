@@ -169,12 +169,13 @@ sub _build__tools {
 					dsn	 => $self->_services, 
 					tmp_base  => $self->tmp_base,
 				      };
-      $hash->{search} = $self->search, if ($tool eq 'aligner');
+#      $hash->{search} = $self->search if ($tool eq 'aligner');    # TODO: Needs to be updated for Xapian.
       $tools{$tool}  = $class->new($hash);
       $self->log->debug( "service $tool registered");
     }
     return \%tools;
 }
+
 # Provide a wrapper around the driver's fetch method
 # and MooseX::AbstractFactory to create a 
 # WormBase::API::Object::*

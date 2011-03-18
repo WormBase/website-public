@@ -187,6 +187,9 @@
 		FOREACH o IN order;			
 			# get value (val) from the row r
      		        val = r.$o;
+			IF val.match('^http');
+			     val='<a href="' _ val _ '">Lab link</a>';
+                        END;
 			# enter data in row
 	                row.push(val);
   		END;
@@ -717,24 +720,20 @@ END;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
    IF no_toggle == 1;  
-      IF fields.remarks.data.defined;
-        '<div class="text-width">';
-         WRAPPER $field_block title="Remarks" key="remarks";
-	      markup(fields.remarks.data.join('<br>'),0);
-         END;
-        '</div>';
-      END;
+      '<div class="text-width">';
+       WRAPPER $field_block title="Remarks" key="remarks";
+          markup(fields.remarks.data.join('<br>'),0);
+       END;
+      '</div>';
    ELSE;
-      IF fields.remarks.data.size > 0;
-           WRAPPER $field_block title="";
-               '<div class="toggle">Curatorial remarks</div>';
-               '<div class="returned">';
-                    fields.remarks.data.join('<br />');
-               '</div>';
-           END;
+      WRAPPER $field_block title="";
+         '<div class="toggle">Curatorial remarks</div>';
+         '<div class="returned">';
+              markup(fields.remarks.data.join('<br />'),0);
+         '</div>';
       END;
-    END;
- END;
+   END;
+END;
 %]
 
 [% MACRO summary BLOCK;

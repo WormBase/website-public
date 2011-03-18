@@ -1,0 +1,22 @@
+
+<table>
+   <tr>
+     <th>Species</th>
+     <th>FASTA</th>
+     <th>GFF</th>
+     <th></th>
+   </tr>
+  
+   [% FOREACH option IN c.config.sections.species_list.keys.sort() %]
+      <tr>
+           <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %]
+                               [% c.config.sections.species_list.$option.species %]
+               </a>
+           </td>
+           <td width="25%"><a href="">[% option %].fa.gz</td>
+	   <td width="25%"><a href="">[% option %].gff.gz</td>
+      </tr>
+   [% END %]
+</table>
+
+<div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on individual pages for each species.</div>

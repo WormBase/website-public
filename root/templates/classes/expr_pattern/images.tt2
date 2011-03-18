@@ -2,15 +2,26 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 <script type="text/javascript">
-$jq(".picturebox").colorbox({iframe:true, width:"80%", height:400});
+$jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
 </script>
 
 [% IF fields.curated_images.data %]	
    [% FOREACH img IN fields.curated_images.data %]
-   <div style="display:inline-block;">
+   <div style="display:inline-block;max-width:25%;">
    	  <a class="picturebox" rel="curated_images1" href="/rest/widget/picture/[% img.id %]/lightbox">
-	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]&size=20"></a><br>
-      [% IF img.reference %][% tag2link(img.reference) %][% ELSE %]No reference data.[% END %]<br>
+	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]&size=20"
+           style="max-width:100%;margin:auto;display:block;"></a><br>
+      [% IF img.source %]
+         [% IF img.source.link %]
+            [% external_link(img.source.link, img.source.text) %]
+         [% ELSE %]
+            [% img.source.text %]
+         [% END %]
+      [% ELSIF img.reference %]
+         [% tag2link(img.reference) %]
+      [% ELSE %]
+         No reference data.
+      [% END %]<br>
    </div>
    [% END %]
 [% ELSE %]

@@ -151,6 +151,7 @@ sub _common_name {
         Phenotype  => 'Primary_name',
         Gene_class => 'Main_name',
         Species    => 'Common_name',
+        Molecule   => [qw(Public_name Name)],
     );
 
     my $name;
@@ -548,7 +549,7 @@ sub _build_description {
     my $description = eval {$object->$tag};    # TODO!!! : fix
     return {
         description => "description of the $class $object",
-        data        => "$description" || undef,
+        data        => $description && "$description",
     };
 
     #    my $data = { description => "description of the $class $object",
@@ -1214,7 +1215,7 @@ sub mysql_dsn {
 
 sub gff_dsn {
     my ($self) = @_;
-    my $species = shift || $self->parsed_species;
+    my $species = shift || $self->_parsed_species;
     $self->log->debug("geting gff database species $species");
     return $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
 }
@@ -1289,12 +1290,12 @@ sub _pack_obj {
         id       => "$object",
         label    => $label // $self->_common_name($object),
         class    => $object->class,
-	taxonomy => $self->parsed_species($object),
+        taxonomy => $self->_parsed_species($object),
         %args,
     };
 }
 
-sub parsed_species {
+sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
     my $genus_species = eval {$object->Species} or return 'c_elegans'; # is this default correct?

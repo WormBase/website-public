@@ -1,0 +1,14 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% build_data_table(order=['lab','representative','affiliation','email','allele_designation','url'],
+                    columns={ lab                => 'Lab',
+		    	      affiliation        => 'Affiliation',
+		              representative     => 'Representative',
+			      email              => 'Email',
+			      allele_designation => 'Allele ID',
+			      url                => 'URL',
+			      },
+                    key='all_labs',
+                    title='Labs') %] 

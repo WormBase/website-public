@@ -22,18 +22,19 @@
   # 2nd approach: using formats
   #   external_link = format('<a href="%s" target="_blank">%s</a>');
 #    MACRO tag2link(data,text,is_classic,title) BLOCK;  
-    MACRO tag2link(data,text,title) BLOCK;  
+    MACRO tag2link(data,text,title,iframe) BLOCK;  
       IF data.defined ;
-	UNLESS text; text = data.label; END;
+         UNLESS text; text = data.label; END;
 #	text2link(data.class, data.id, text, is_classic, title);
-	text2link(data.class, data.id, text, title, data.taxonomy);
+         text2link(data.class, data.id, text, title, data.taxonomy,
+                   iframe ? 'onclick="parent.location=this.href;return false;"' : undef);
       END;
    END;
 
-   MACRO tag2linkAll(hash) BLOCK;
+   MACRO tag2linkAll(hash, iframe) BLOCK;
       result = [];
-	  FOREACH key IN hash.keys.sort;
-	     result.push(tag2link(hash.$key));
+	  FOREACH key IN hash.sort;
+	     result.push(tag2link(hash.$key, undef, undef, iframe));
 	  END;
 	  result.join(', ');
    END;
@@ -67,16 +68,16 @@
 # An optional fourth parameter, is_classic, will be classic WormBase
 # URLs
 #    MACRO text2link(class,id,text,is_classic,title) BLOCK;
-    MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
+    MACRO text2link(class,id,text,title,taxonomy,htmlattrs) BLOCK;  
       class =  class FILTER lower;
       IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
-          external_link(class, text, id);
+          external_link(class, text, id, htmlattrs);
        ELSE;
           url = get_url(class, id, taxonomy);
           IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
-          IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;         
-          "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
+          IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;
+          "<a href=\"$url\" class=\"$class-link\" title=\"$title\" $htmlattrs>$text</a>";
        END;
    END;
 
@@ -146,7 +147,7 @@
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
 # ret: formatted html to link using url and description from config.  
 #      Has google analytics code to record clicks and opens new window
-    MACRO external_link(link, text, id) BLOCK;
+    MACRO external_link(link, text, id, htmlattrs) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
        link =  link FILTER lower;
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
@@ -165,12 +166,11 @@
        END;
        UNLESS url; url = link; END;
        IF (link == 'genomic_location' OR link == 'gbrowse_image' );
-          "<a href=\"$url\" title=\"$desc\">$text</a>";
+          "<a href=\"$url\" title=\"$desc\" $htmlattrs>$text</a>";
        ELSE;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
-           target=\"_blank\" 
-           title=\"$desc\">$text</a>";
+           target=\"_blank\" title=\"$desc\" $htmlattrs>$text</a>";
        END;
     END;
 
