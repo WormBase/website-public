@@ -176,23 +176,23 @@ B<Response example>
 sub profiles {
     my $self    = shift;
     my $profile = $self->object;
-	my @data_pack;
+    my @data_pack;
     my $dbgff = $self->gff_dsn('c_elegans');
     my $db    = $self->ace_dsn();
-
+    
     if ( $profile->class eq 'Gene' ) {
         my $s;
         eval { $s = $dbgff->segment($profile); };
         my @p;
         eval {
             @p =
-              map { $_->info }
-              $s->features('experimental_result_region:Expr_profile')
-              if $s;
+		map { $_->info }
+	    $s->features('experimental_result_region:Expr_profile')
+		if $s;
         };
         $profile = $p[0];
         undef $profile
-          unless @p;    # used as a flag that we fetched an appropriate object
+	    unless @p;    # used as a flag that we fetched an appropriate object
         @p = map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
         foreach my $p (@p) {
             my $data_pack = $self->_pack_obj($p);
@@ -206,9 +206,9 @@ sub profiles {
 }
 
 =head3 pcr_product
-
+    
 This method will return a data structure with pcr_products generated from the expr_profile.
-
+    
 =over
 
 =item PERL API

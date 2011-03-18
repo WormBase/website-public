@@ -421,6 +421,8 @@ sub _get_widget_fields {
         die "There appears to be more than one $class section in the config file\n";
     }
 
+    # Config::General oddity. Single entry arrays become hashes?
+    # This won't work with widgets containing single fields.
     my @fields = @{$section->{widgets}{$widget}{fields}};
 
     $self->log->debug("The $widget widget is composed of: " . join(", ",@fields));
