@@ -412,8 +412,6 @@ sub _select_template {
 sub _get_widget_fields {
     my ($self,$class,$widget) = @_;
 
-    my $section = $self->config->{sections}{species}{$class} ? 'species' : 'resources';
-
     my $section = $self->config->{sections}{species}{$class}
                || $self->config->{sections}{resources}{$class};
 

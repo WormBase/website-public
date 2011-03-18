@@ -146,7 +146,7 @@ sub _common_name {
         # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
         # to fully handle this, an exception may have to be made OR this method
         # could be made more robust to do recursive checks... seems unnecessary
-        Feature    => 'Public_name',
+        Feature    => ['Public_name', 'Other_name'],
         Variation  => 'Public_name',
         Phenotype  => 'Primary_name',
         Gene_class => 'Main_name',
@@ -162,7 +162,9 @@ sub _common_name {
         }
     }
 
-    return ($name && "$name") || $object->name;
+    $name //= eval {$object->Name} // $object->name;
+
+    return "$name";
 }
 
 # deprecated in favour of _common_name
@@ -809,7 +811,7 @@ sub _build_method {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-    my $method = $object->Method;
+    my $method = $object->Method; # TODO: expand on this by pulling data from ?Method?
 
     return {
         description => "the method used to describe the $class",

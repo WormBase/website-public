@@ -765,18 +765,17 @@ B<Response example>
 
 sub abstract {
     my ($self) = @_;
-    my $abs = $self ~~ 'Abstract' // return;
-    my $text;
 
-    if ($abs =~ /^WBPaper/i ) {
-        $text =	 $abs->right;
-        $text =~ s/^\n+//;
-        $text =~ s/\n+$//;
+    my $abs;
+    if ($abs = $self ~~ 'Abstract') {
+        $abs =	 $abs->right;
+        $abs =~ s/^\n+//;
+        $abs =~ s/\n+$//;
     }
 
     return {
         description => 'The abstract of the publication',
-        data        => "$text",
+        data        => $abs && "$abs",
     };
 }
 
