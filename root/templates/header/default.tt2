@@ -40,8 +40,7 @@
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
               [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
-                [% IF class == 'title'; NEXT; END; %]
-                <li><a href="[% c.uri_for('/species',option,class) %]">[% c.config.sections.species.$class.title %]</a></li>
+                <li><a href="[% c.uri_for('/species',option,class) %]">[% c.config.sections.species.$class.title || c.config.sections.resources.$class.title %]</a></li>
               [% END %]
 
               </ul>

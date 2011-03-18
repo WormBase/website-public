@@ -41,6 +41,10 @@ sub search :Path('/search') Args {
     }elsif($c->req->param("inline")){
       $c->stash->{noboiler} = 1;
     }
+
+    if($query=~/^\*$/){
+      $query = " ";
+    }
     my $tmp_query = $query;
     $tmp_query =~ s/-/_/g;
     $tmp_query .= " $query" unless($tmp_query =~ /$query/ );
@@ -89,9 +93,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
 
  my $search = $type unless($type=~/all/);
  $q =~ s/-/_/g;
-  my ($it,$res)= $api->xapian->search_autocomplete(
-    $c, $q, $search
-  );
+  my $it = $api->xapian->search_autocomplete($c, $q, $search);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
@@ -118,13 +120,10 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
 
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
-  my $url = "";
-  if($species){
-    $url .= $c->uri_for('/species',$species,$class,$id);
-  }else{
-    $url .= $c->uri_for('/resources',$class,$id);
+  if(defined $c->config->{sections}->{species}->{$class}){
+    return $c->uri_for('/species',$species || 'all' ,$class,$id)->as_string;
   }
-  return $url;
+  return $c->uri_for('/resources',$class,$id)->as_string;
 }
 
 sub _get_obj {

@@ -61,7 +61,7 @@ function search() {
 function search_change(new_search) {
   if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
   cur_search_type = new_search;
-  selectOptionByValue(document.searchForm.searchSelect, new_search);
+  selectOptionByValue(document.getElementById("searchSelect"), new_search);
 }
 
 function selectOptionByValue(selObj, val){

@@ -96,6 +96,7 @@ sub _build_xapian {
   my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
   my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
   my $qp = Search::Xapian::QueryParser->new($db);
+  my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($db);
   $qp->set_database($db);
   $syn_qp->set_database($syn_db);

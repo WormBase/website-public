@@ -893,15 +893,15 @@ END;
 
    # Get the default (configuration provided) list of widgets.
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
-  
+
    # Conditionally set up different types of pages.
    # Class indexes (of both species and resource persuasions; these do not display individual objects)
    IF is_class_index;
 
       # Kludge: set the "object" of index pages to "all" 
       # so that we can use the same URL structure.
-      SET this_object_id    = "all";
-      SET this_object_label = "all";
+      SET this_object_id    = species; #"all";
+      SET this_object_label = species; #"all";
 
       # Index pages automatically get Browse and search widgets.
       # These *should* be species-specific but they aren't yet.
@@ -1063,6 +1063,7 @@ END;
       widgets.push(w);
    END;
 
+   IF object;
    tools = ['comment', 'issue'];
    FOREACH widget_name IN tools;
        t = widget_name FILTER ucfirst;
@@ -1073,6 +1074,7 @@ END;
             };
     
        widgets.push(w);
+  END;
   END;
   
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;

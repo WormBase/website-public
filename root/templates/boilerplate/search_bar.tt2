@@ -1,5 +1,5 @@
 
-   <form method="post" class="ui-corner-right" id="searchForm" action="" name="searchForm" onsubmit="search(); return false;">
+   <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="search(); return false;">
 
     [% val = "search..." %]
     [% IF query %]
@@ -10,7 +10,7 @@
 
 
   </form>
-         <select class="ui-corner-left" id="searchSelect" name="searchSelect" onChange="search_change(this.options[selectedIndex].value);">
+         <select id="searchSelect" onChange="search_change(this.options[selectedIndex].value);">
 
     [% FOREACH option IN c.config.search_dropdown.option %]
      

@@ -4,15 +4,14 @@
 <br />
 
 
+
 <div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% pluralize(c.stash.class, 2) %]</a></div>
 
 <script>
         var page_count = 1;
   function load_preview(){
-
-        $jq("#message").html("<span id=\"fade\">loading...</span>");
+        setLoading($jq("#message"));
         var div = $jq("<div></div>");
-alert("/search/preview/[% species %]/[% c.stash.class %]/" + page_count);
         div.load("/search/preview/[% species %]/[% c.stash.class %]/" + page_count, function(response, status, xhr) {
           $jq("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
           page_count++;
