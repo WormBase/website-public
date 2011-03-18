@@ -83,36 +83,43 @@ sub object {
 #sub dbh_gff {
 #  my ($self,$dsn) = @_;
 #  my $object  = $self->object;
-#  my $species = $self->parsed_species();
+#  my $species = $self->_parsed_species();
 
 #  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
 #  return $dbh;
 #}
 
 
- 
- 
+sub _wrap {
+    my $self = shift;
+    my @objects = grep defined, @_ or return;
 
+    # TODO:
+    # the fact that this exists and the inverse must be done in API.pm
+    # indicates that this should probably be abstracted, otherwise
+    # future aggregate model devs may have headaches looking for this
+    # and the code in API.pm.
+    # a similar thing happens in Role::Object with mapping common fields
+    # to Ace tags.
 
-# Expects an array reference of objects (or a simple scalar object)
-sub wrap {
-    my ($self,$objects) = @_;
+    my %aggregate_class = (
+        PCR_product => 'Pcr_oligo',
+        Oligo_set   => 'Pcr_oligo',
+        Oligo       => 'Pcr_oligo',
+        CDS         => 'CDS',
+    );
 
-    # Allow for array references or scalar variables
-    $objects = eval { ref($objects) =~ /ARRAY/ } ? $objects : [ $objects ];
-    
-    my @wrapped;
-    foreach my $object (@$objects) {
-	my $class = $object->class;
-	push @wrapped, WormBase::API::Factory->create($class,
-						      {
-							  object => $object,
-							  dsn => $self->dsn,
-							  pre_compile => $self->pre_compile,
-							  tmp_base => $self->tmp_base,
-						      });
-    }
-    
+    my @wrapped = map {
+        my $class = $_->class;
+        $class = $aggregate_class{$class} if $aggregate_class{$class};
+        WormBase::API::Factory->create($class, {
+            object      => $_->fetch, # should step into object, if haven't done so
+            dsn         => $self->dsn,
+            pre_compile => $self->pre_compile,
+            tmp_base    => $self->tmp_base,
+        });
+    } @objects; # end of map
+
     # User might have passed and expected just a single object
     return wantarray ? @wrapped : $wrapped[0];
 }
@@ -302,7 +309,7 @@ sub id2species {
 sub build_gbrowse_img {
   my ($self,$segment,$tracks,$options,$width) = @_;
   
-  my $species = $self->parsed_species(); 
+  my $species = $self->_parsed_species(); 
   
   # open the browser for drawing pictures
   my $BROWSER = Bio::Graphics::Browser->new or die;

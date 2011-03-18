@@ -1,0 +1,77 @@
+<h2>About WormBase Tiers</h2>
+
+<p>
+Different species in WormBase are classified in various tiers depending
+on the amount of curation effort we are able to put into maintaining them.
+</p>
+
+<p>
+<b>Tier I</b> - All efforts are made to curate the gene structures and any other genetic or metabolic information. Only '''C. elegans''' is in this group.
+</p>
+
+<p>
+<b>Tier II</b> - Efforts are made, where practical, to manually curate the gene structure and possibly some other genomic information. WormBase 'owns' the assembly in the [http://www.ebi.ac.uk/ena/ ENA] and GenBank so that new gene annotations can be submitted to the ENA/GenBank by WormBase.
+</p>
+
+<p>
+<b>Tier III</b> - We will set up the genome on WormBase with any gene structures that the authors of this genome have predicted. No further curation efforts are made by the WormBase consortium.
+</p>
+
+<p>
+<b>Tier IV</b> - Proposed tier for organisms with only transcriptome information and no coherent genome. There are no examples of this in WormBase at present.
+</p>
+
+<p>
+<b>Tier V</b> - Proposed tier for organisms with only genome information and no coherent transcriptome. There are no examples of this in WormBase at present.
+</p>
+
+
+=== Genome ===
+
+The '''Genome''' column in the table indicates whether the genome has been added to WormBase.
+
+=== Gene ===
+
+The '''Genes''' column in the table indicates whether gene structures have been added to WormBase.
+
+=== The genome status ===
+
+
+<table>
+   <tr>
+       <th>Species</th>
+       <th>Tier</th>
+       <th>Genome</th>
+       <th>Version</th>
+       <th>Origin</th>
+       <th>Comments</th>
+   </tr>
+
+
+  [% FOR option IN c.config.sections.species_list.keys.sort %]
+  [% species = c.config.sections.species_list.$option %]
+  <tr>
+      <td>
+         <span class="species"><a href="/species/[% option %]">[% species.genus %] [% species.species %]</a></span>
+      </td>
+      <!--
+      <td><a href=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=[% species.ncbi_taxonomy_id %]">
+             [% species.ncbi_taxonomy_id %]
+          </a>
+      </td>
+      -->
+      <td>[% species.tier %]</td>
+      <td>[% IF species.gbrowse %]
+               <a href="/db/gb2/gbrowse/[% option %]">yes</a>
+          [% END %]
+      </td>
+      <!--
+      <td>[% species.gene_models_in_wormbase %]</td>     
+       -->
+      <td>[% species.current_version %]        </td>
+      <td>[% species.source.name %]            </td>
+      <td>[% species.notes.keys.join(' ') %]                  </td>
+   </tr>
+   [% END %]
+</table>
+

@@ -151,7 +151,7 @@ has 'tracks' => (
         my ($self) = @_;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->parsed_species =~ /elegans/ ?
+            data        => $self->_parsed_species =~ /elegans/ ?
                            [qw(CG CANONICAL Allele RNAi)] : undef,
         },
     }
@@ -673,7 +673,7 @@ sub _print_rnai_details_table {
 		my ($rnaix,$phenes,$genotype,$ref) = split /\|/,$rnai_detail;
 		my @phenes = split /\&/, $phenes;
 		my $ref_obj = $self->ace_dsn->fetch(-class=>'Paper', -name=>$ref);
-		my $paper = $self->wrap($ref_obj);
+		my $paper = $self->_wrap($ref_obj);
 		my $citation_hash = $paper->intext_citation->{data};
 		my $formatted_ref = $citation_hash ? substr $citation_hash->{citation}, 1, -1 : undef ;
 
