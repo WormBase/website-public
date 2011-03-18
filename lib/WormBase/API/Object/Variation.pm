@@ -534,7 +534,7 @@ sub polymorphism_assays {
             $stop  = $pos[2];
         }
 
-        my $gffdb   = $self->gff_dsn($self->parsed_species);
+        my $gffdb   = $self->gff_dsn($self->_parsed_species);
 
         my ($segment) = $gffdb->segment(-name=>$sequence,
                                         -offset=>$start,
@@ -1541,7 +1541,7 @@ sub _get_genomic_segment {
 
     # Get a GFFdb handle - I'm not sure how to do this in the API.
     # TODO: This should probably be simplified
-    my $species = $self->parsed_species;
+    my $species = $self->_parsed_species;
     my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
     my $db      = $db_obj->dbh;
 
@@ -1607,7 +1607,7 @@ sub _build_sequence_strings {
     my ($with_markup,$flank) = $self->rearrange([qw/WITH_MARKUP FLANK/],@p);
 
     # Get a GFFdb handle - I'm not sure how to do this in the API.
-    my $species = $self->parsed_species;
+    my $species = $self->_parsed_species;
     my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
     my $db      = $db_obj->dbh;
 
@@ -2021,7 +2021,7 @@ sub _fetch_coords_in_feature {
     # Fetch a GFF segment of the containing feature
     my $containing_segment;
 
-    my $species = $self->parsed_species;
+    my $species = $self->_parsed_species;
     my $gffdb   = $self->gff_dsn($species);
 
     # Kludge for chromosome
