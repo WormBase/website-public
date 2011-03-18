@@ -42,25 +42,27 @@ http://wormbase.org/species/motif
 This method will return a data structure of the 
 title for the requested motif.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->title();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Motif ID ((AAATG)n)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -74,13 +76,15 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/title
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 
@@ -115,25 +119,27 @@ sub title {
 
 This method will return a data structure with gene ontology (GO) annotations for the requested motif.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->go();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Motif ID ((AAATG)n)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -147,13 +153,15 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/gene_ontology
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
     
@@ -195,25 +203,27 @@ sub gene_ontology  {
 
 This method will return a data structure with homology information on the requested motif.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->homologies();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 a Motif ID ((AAATG)n)
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -227,13 +237,15 @@ a Motif ID ((AAATG)n)
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/motif/(AAATG)n/homologies
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut 
 

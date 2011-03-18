@@ -563,9 +563,9 @@ B<Response example>
 sub injected_into_strains {
     my $self   = shift;
     my $object = $self->object;
-    my @strains = $object->Injected_into_CGC_strain;
-    @strains    = map { $self->_pack_obj($_) } @strains;
-    push @strains,$object->Injected_into;
+    my @cgc_strains = $object->Injected_into_CGC_strain;
+    my @data = map { $self->_pack_obj($_) } @cgc_strains;
+    push @data,map { "$_" } $object->Injected_into;
     my $data    = { description => 'strains that the transgene has been injected into',
 		    data        => @strains ? \@strains : undef};
     return $data;
@@ -695,7 +695,7 @@ sub integrated_at {
     my $position = $object->Map;
 
     my $data = { description => 'map position of the integrated transgene',
-		 data        => "$position" };
+		 data        => $position ? "$position" : undef};
     return $data;
 }
 

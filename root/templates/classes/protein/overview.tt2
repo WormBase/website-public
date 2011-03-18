@@ -14,7 +14,7 @@
  
 [% END %]
  
-[% WRAPPER $field_block title="Central Dogma" %]
+[% WRAPPER $field_block title="" %]
      
        <div class="inline-columns">
           [% IF fields.central_dogma.data.genes.size > 0 %]
