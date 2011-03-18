@@ -719,7 +719,7 @@ END;
    IF no_toggle == 1;  
       '<div class="text-width">';
        WRAPPER $field_block title="Remarks" key="remarks";
-          markup(fields.remarks.data.join('<br>'),0);
+          markup(fields.remarks.data.join('<br />'),0);
        END;
       '</div>';
    ELSE;
