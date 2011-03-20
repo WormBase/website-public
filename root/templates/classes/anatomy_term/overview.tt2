@@ -2,6 +2,45 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% ## %]
+	[% WRAPPER $field_block title="definition" key="definition"-%] 
+		[%  fields.definition.data %]
+	[% END %]
 
-<h2>[% tag2link(fields.name.data) %]</h2>
+	[% WRAPPER $field_block title="gene_ontology" key="gene_ontology" -%] 
+	[% FOREACH data IN fields.gene_ontology.data %]
+		[%  data.term %]<br>
+	[% END %] 
+	[% END %]
+
+
+	[% WRAPPER $field_block title="synonyms" key="synonyms" -%] 
+		[% FOREACH data IN fields.synonyms.data %]
+			[%  data.data %]<br>
+		[% END %] 
+	[% END %]
+
+[% WRAPPER $field_block title="transgenes" key="transgenes" -%] 
+	[% FOREACH data IN fields.transgenes.data %]
+		[%  data.data %]<br>
+	[% END %] 
+[% END %]
+
+
+[% WRAPPER $field_block title="expression_clusters" key="expression_clusters" -%] 
+	[%# FOREACH data IN fields.expression_clusters.data %]
+		[%  data.data %]<br>
+	[%# END %] 
+[% END %]
+
+
+[% WRAPPER $field_block title="anatomy_function_nots" key="anatomy_function_nots" -%] 
+	[%# FOREACH data IN fields.anatomy_function_nots.data %]
+		[% # data.data %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="anatomy_functions" key="anatomy_functions" -%] 
+	[% FOREACH data IN fields.anatomy_functions.data %]
+		[%  data.data %]<br>
+	[% END %] 
+[% END %]
