@@ -26,27 +26,66 @@
    [% END %]  
 
 
-[% WRAPPER $field_block  title="Genes" key="genes" %] 
-    [% dataTable_list(['Gene','Evidence Codes','Evidence'],fields.genes.data.0.aaData,'table_genes_0') %]
-[% END %]
-
-
-
 [% WRAPPER $field_block title="genes and cds"-%] 
 	[%  FOREACH g IN fields.genes_n_cds.data %]
 		[%  tag2link(g.gene_info) %]<br>
 	[%  END %]                    
-[% # END %]
+[%  END %]
  
  [% WRAPPER $field_block title="cds"-%] 
 	[%  FOREACH g IN fields.cds.data %]
 		[%  tag2link(g.gene) %]<br>
 	[%  END %]                    
-[% # END %]
+[%  END %]
  
- 
-[% # WRAPPER $field_block  title="Genes and CDs" key="genes_n_cds" %] 
-    [%# dataTable_list(['Gene','Evidence Codes','Evidence'],fields.genes_n_cds.data.1.aaData,'table_genes_1') %]
-[% # END %]
+[% WRAPPER $field_block title="sequence" key="sequence" -%] 
+	[% FOREACH data IN fields.sequence.data %]
+		[% tag2link(data) %]<br>
+	[% END %] 
+[% END %]
+
+[% WRAPPER $field_block title="anatomy_term" key="anatomy_term" -%] 
+	[%# FOREACH data IN fields.anatomy_term.data %]
+		[% # data.<key> %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="transcript" key="transcript" -%] 
+	[%# FOREACH data IN fields.transcript.data %]
+		[% # data.<key> %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="pseudogene" key="pseudogene" -%] 
+	[%# FOREACH data IN fields.pseudogene.data %]
+		[% # data.<key> %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="homology_group" key="homology_group" -%] 
+	[%# FOREACH data IN fields.homology_group.data %]
+		[% # data.<key> %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="phenotype" key="phenotype" -%] 
+	[% FOREACH data IN fields.phenotype.data %]
+		[% tag2link(data.phenotype_info)  %]<br>
+	[% END %] 
+[% END %]
+
+[% WRAPPER $field_block title="cell" key="cell" -%] 
+	[%# FOREACH data IN fields.cell.data %]
+		[% # data.<key> %]<br>
+	[%# END %] 
+[% END %]
+
+[% WRAPPER $field_block title="motif" key="motif" -%] 
+	[%# FOREACH data IN fields.motif.data %]
+		[% tag2link(data)%]<br>
+	[%# END %] 
+[% END %]
+
+
 
 

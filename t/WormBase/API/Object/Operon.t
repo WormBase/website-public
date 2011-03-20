@@ -15,7 +15,7 @@ my $object_name = "CEOP1140";
 
 my @methods = qw/
 
-remarks
+species
 structure
 history
  /;
