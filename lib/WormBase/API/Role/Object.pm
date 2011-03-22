@@ -125,42 +125,42 @@ sub _build_name {
     };
 }
 
-# deprecated, but still used below...
-has 'common_name' => (
+has '_common_name' => (
     is         => 'ro',
     lazy_build => 1,
 );
 
-sub _build_common_name {
+sub _build__common_name {
     my ($self) = @_;
-    return $self->_common_name($self->object);
+    return $self->_make_common_name($self->object);
 }
 
-sub _common_name {
+sub _make_common_name {
     my ($self, $object) = @_;
     my $class  = $object->class;
 
+	my $name;
+
     if (my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$class}) {
-        if ($wbclass->meta->get_method('_build_common_name')
+        if ($wbclass->meta->get_method('_build__common_name')
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
-            $self->log->debug("$class has overridden _build_custom_name");
-            return $self->_wrap($object)->common_name; # MUST BE DEFINED
+            $self->log->debug("$class has overridden _build_common_name");
+            $name = $self->_wrap($object)->_common_name;
         }
     }
 
-    my $name;
+	unless (defined $name) {
+		my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
+		if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
+			$tag = [$tag] unless ref $tag;
+			foreach my $tag (@$tag) {
+				last if $name = $object->$tag;
+			}
+		}
+	}
 
-    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
-    if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
-        $tag = [$tag] unless ref $tag;
-        foreach my $tag (@$tag) {
-            last if $name = $object->$tag;
-        }
-    }
-
-    $name //= $object->name;
-
+	$name //= $object->name;
     return "$name";
 }
 
@@ -1278,7 +1278,7 @@ sub _pack_obj {
     return unless $object;
     return {
         id       => "$object",
-        label    => $label // $self->_common_name($object),
+        label    => $label // $self->_make_common_name($object),
         class    => $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,

@@ -101,6 +101,7 @@ sub _wrap {
             dsn         => $self->dsn,
             pre_compile => $self->pre_compile,
             tmp_base    => $self->tmp_base,
+			log         => $self->log,
         });
     } @objects; # end of map
 
