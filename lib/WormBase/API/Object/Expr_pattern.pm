@@ -41,15 +41,12 @@ http://wormbase.org/species/expr_pattern
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-sub _build_name {
+sub _build__common_name {
     my ($self) = @_;
+    my $bestname = $self->bestname($self ~~ 'Gene');
 
-	my $bestname = $self->bestname($self ~~ 'Gene');
-    return {
-        description => 'The name and WormBase internal ID of an Expr_pattern object',
-        data        => $self->_pack_obj($self->object,
-                                        $bestname && "Expression pattern for $bestname"),
-    };
+    return "Expression pattern for $bestname" if $bestname;
+    return $self->object->name;
 }
 
 # sub description {}
