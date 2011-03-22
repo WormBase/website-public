@@ -26,7 +26,6 @@ Root level controller actions for the WormBase web application.
  
 sub index :Path Args(0) {
     my ($self,$c) = @_;
-    $c->stash->{issues} = $self->issue_rss($c,2);
     $c->stash->{template} = 'index.tt2';
 }
 sub gbrowse :Path("/gbrowse") Args(0) {

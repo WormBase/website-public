@@ -5,7 +5,7 @@
    [%# some don't have genetic_position at all... can check for that %]
     [% genetic_position %]
 
-    [% WRAPPER $field_block title="Genomic Position" key="genomic_position" %]
+    [% WRAPPER $field_block title="Genomic position" key="genomic_position" %]
         [%# label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop %]
 	  [% FOREACH position IN fields.genomic_position.data %]
          [% tag2link(position) %]

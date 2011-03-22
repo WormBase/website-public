@@ -447,14 +447,23 @@ li.visible div.widget-container {
 }
 
 
-#widget-footer a{
+.button{
   float:right;
-  height:1.2em;
-  margin:0 0.2em;
   border:1px solid #BBB;
   background:#EEE;
+}
+
+.button:hover, .button.selected{
+  background:#BBB;
+  border:1px solid #BBB;
+}
+
+
+#widget-footer a {
+  height:1.2em;
   padding:0 0.3em;
   position:relative;
+  margin:0 0.2em;
 }
 
 #widget-footer>span{
@@ -464,9 +473,6 @@ li.visible div.widget-container {
   cursor:pointer;
 }
 
-#widget-footer a:hover{
-  background:#BBB;
-}
 
 div.ui-icon-large {
   float:right;
@@ -764,31 +770,20 @@ div.downloadable-formats {
 /* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
 
 div.title {
-    padding:0.5em 0 0.7em 0.5em;
+    padding:0.5em 1em 0.7em 0.5em;
     margin:0;
     border-bottom:0.5em solid #EEE;
-/*  NEW MARKUP
-    font-family:"Helvetica Neue",Arial;
-    font-size:28px;
-    border:1px solid gray; 
-    margin:0;
-    color:#222;
-    font-weight:bold;
-    padding:0.5em 0 0.7em 0.5em;
-    border-bottom:0.5em solid #EEE;
-    border-bottom:1px solid #EEE;
-*/
+    position:relative;
 }
 
 div.columns {
   float:right;
-  margin:0 0.5em;
-  padding:0.3em 0 0;
   position:relative;
   cursor:pointer;
 }
 
 div.columns ul {
+  font-size:1.3em;
   width:4.5em;
   position:absolute;
   z-index:999;
@@ -849,9 +844,11 @@ div.columns ul div li div.ui-icon:hover {
 
 
 .title h2 {
-    padding:0;
     margin:0;
     float:left;
+    font-size:28px;
+  padding:0.5em;
+  color:#222;
 }
 
 
@@ -1624,47 +1621,19 @@ div.inline-columns img {
 
 
 
-
-
-/* New titlebar formatting */
-#titlebar {
-    border-bottom:1px solid #ddd;
-    background:#fff;
-    z-index:1;
-    overflow:hidden;
-    position:relative;
-    padding: 1em 0em 0 0;
-    margin-bottom:0.5em;
+.title #buttons {
+/*   float:right; */
+  width:310px;
+/*   border:1px solid red; */
+  position: absolute;
+  font-size: 0.8em;
+  bottom:2.5em;
+  right:1em;
 }
 
-#titlebar #title {
-    font-family:"Helvetica Neue",Arial;
-    font-size:28px;
-    float:left;
-    padding:0em 0 0em 0.5em;
-    margin:0;
-    color:#222;
-    font-weight:bold;
-}
-
-#titlebar #buttons {
-    float:right;
-    font-size:0.6em;
-    width:300px;
-    padding-right:0.5em;
-}
-
-#titlebar .button {
-   margin:0.2em;
-    padding-top:0;   /* need to override div.columsn for the layout button */
-}
-
-#titlebar .dropdown-button {
-   width:75px;
-}
-
-#titlebar .button-on {
-    color:blue;
+.title #buttons .button{
+  margin-right:0.5em;
+  padding:0.3em;
 }
 
 

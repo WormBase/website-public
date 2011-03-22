@@ -29,8 +29,13 @@
 [% END %]
 
     <div class="title">
-      <h2>[% title %]</h2>
+       [% UNLESS no_layout %]
+           [%# This span is added here to prevent the title from overlapping with the buttons %]
+          [% title = title _ '<span style="width:220px; height:1.2em; float:right;"></span>' %]
 
+      <h2>[% title %]</h2>
+      [% END %]
+        <div id="buttons">
       [% IF object %]
           [% is_obj = 1 %]
           [% wbid = this_object_id.remove(':') %]
@@ -40,8 +45,15 @@
 
        [% END %]
        [% UNLESS no_layout %]
-          <div class="columns"><span id="fade" style="float:left">Layout</span>
-          <div class="ui-icon ui-icon-triangle-1-s"></div>
+
+      [% IF object %]
+<a   tip="view comments" class="button section-button tip-simple tr ui-corner-all" name="comment"  >comments <span class="comment-count"></span></a>
+<a   tip="report a problem" class="button section-button tip-simple tr ui-corner-all"  name="issue" >issues <span class="'issue-count"></span></a>
+       [% END %]
+<a   tip="print page as pdf" class="button print tip-simple tr ui-corner-all">PDF</a>
+
+          <div class="columns"><a class="button ui-corner-all">layout<div class="ui-icon ui-icon-triangle-1-s" style="float:right"></div></a>
+          
           <ul>
           <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
           <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
@@ -50,9 +62,10 @@
           <div class="list-layouts" type="[% class %]"></div>
           </ul>
           </div>
-	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>
+<!-- 	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div> -->
       [% END %]
-	
+<div style="clear:both"></div>
+	        </div>
         <div style="clear:both"></div>
     </div>
 
