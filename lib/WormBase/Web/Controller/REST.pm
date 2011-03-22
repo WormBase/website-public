@@ -681,7 +681,7 @@ sub widget_GET {
     my $headers = $c->req->headers;
     $c->log->debug("widget GET header ".$headers->header('Content-Type'));
     $c->log->debug($headers);
-
+        $c->stash->{is_class_index} = 0;  
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
@@ -842,8 +842,11 @@ sub widget_home_GET {
       $c->stash->{issues} = $self->issue_rss($c,2);
     }
     elsif($widget=~m/activity/){
-      $c->stash->{results} = $self->recently_saved($c,3);
+      $c->stash->{recent} = $self->recently_saved($c,3);
       $c->stash->{popular} = $self->most_popular($c,3);
+
+      $c->log->debug("recent: " . @{$c->stash->{recent}}); 
+      $c->log->debug("pop: " . @{$c->stash->{popular}});
     }   
     elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);
@@ -873,7 +876,6 @@ sub recently_saved {
     foreach my $report (@saved){
       my @objs;
       my($class, $id) = $self->parse_url($c, $report->page->url);
-      $c->log->debug("saved $class, $id"); 
       my $time = ago((time() - $report->time_saved), 1);
       if (!$id || $class=~m/page/) {
         push(@ret, { name => {  url => $report->page->url, 
@@ -886,7 +888,7 @@ sub recently_saved {
       my $obj = $api->fetch({class=> ucfirst($class),
                           name => $id}) or die "$!";
       push(@objs, $obj); 
-      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+      @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
       @objs = map { $_->{footer} = $time; $_;} @objs;
       push(@ret, @objs);
       }
@@ -898,6 +900,7 @@ sub recently_saved {
 
 sub most_popular {
  my ($self,$c,$count) = @_;
+
     my $api = $c->model('WormBaseAPI');
 #     my $interval = "> UNIX_TIMESTAMP() - 604800"; # one week ago
     my $interval = "> UNIX_TIMESTAMP() - 86400"; # one day ago
@@ -921,7 +924,6 @@ sub most_popular {
     foreach my $report (@saved){
       my @objs;
       my($class, $id) = $self->parse_url($c, $report->page->url);
-      $c->log->debug("saved $class, $id"); 
       if (!$id || $class=~m/page/) {
         push(@ret, { name => {  url => $report->page->url, 
                                 label => $report->page->title,
@@ -932,7 +934,7 @@ sub most_popular {
       my $obj = $api->fetch({class=> ucfirst($class),
                           name => $id}) or die "$!";
       push(@objs, $obj); 
-      @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+      @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
       @objs = map { $_->{footer} = $report->visit_count . " visits"; $_;} @objs;
       push(@ret, @objs);
       }
@@ -1059,7 +1061,7 @@ sub widget_me_GET {
 
         push(@objs, $obj); 
 
-        @objs = @{$api->search->_wrap_objs(\@objs, $class)};
+        @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
         @objs = map { $_->{footer} = "added $time"; $_;} @objs;
         push(@ret, @objs);
       }

@@ -91,7 +91,7 @@
 # there exists a TT plugin which does this, but better.
 #   See: Template::Plugin::Lingua::EN::Inflect
     MACRO pluralize(word, size) BLOCK;
-      IF (size > 1);
+      IF (size != 1);
 	  	 IF (matches = word.match('^(.*)y$'));
 		 	word = matches.0 _ 'ies';					# antibody -> antibodies
 		 ELSIF (matches = word.match('^(.*)ium$'));
