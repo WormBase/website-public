@@ -5,6 +5,9 @@ use MooseX::AbstractFactory;
 implementation_does qw/WormBase::API::Role::Object/;
 
 # Generate the appropriate class name
-implementation_class_via sub { 'WormBase::API::Object::' . shift };
+implementation_class_via sub {
+    my $class = shift;
+    return $class =~ /^WormBase::API::Object::/ ? $class : "WormBase::API::Object::$class";
+};
 
 1;
