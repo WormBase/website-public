@@ -137,7 +137,7 @@ sub protein_homology {
 
 	foreach my $tag_object (@tag_objects) {
 		my $tag_info = $self->_pack_obj($tag_object);
-		push, @data_pack, $tag_info;
+		push @data_pack, $tag_info;
 	}
 	
 	my $data = {
@@ -201,7 +201,7 @@ sub homology_data {
 
 	foreach my $tag_object (@tag_objects) {
 		my $tag_info = $self->_pack_obj($tag_object);
-		push, @data_pack, $tag_info;
+		push @data_pack, $tag_info;
 	}
 	my $data = {
 		'data'=> \@data_pack,
