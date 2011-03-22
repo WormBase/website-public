@@ -567,7 +567,7 @@ sub injected_into_strains {
     my @data = map { $self->_pack_obj($_) } @cgc_strains;
     push @data,map { "$_" } $object->Injected_into;
     my $data    = { description => 'strains that the transgene has been injected into',
-		    data        => @strains ? \@strains : undef};
+		    data        => @data ? \@data : undef};
     return $data;
 }
 
