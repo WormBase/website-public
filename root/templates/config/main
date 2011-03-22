@@ -89,7 +89,7 @@
 
 # use this to pluraize a word
     MACRO pluralize(word, size) BLOCK;
-      IF (size > 1);
+      IF (size != 1);
 	  	 IF (matches = word.match('^(.*)y$'));
 		 	word = matches.0 _ 'ies';					# antibody -> antibodies
 		 ELSIF (matches = word.match('^(.*)ium$'));

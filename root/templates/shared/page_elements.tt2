@@ -59,9 +59,9 @@
     [% UNLESS label; label = page.url; END; %]
     [% IF page.is_obj %]
       [% array=page.url.split('/') %]
-      [% text2link(array.slice(-2,-2).0, array.last, label) %]
+      [% text2link(array.slice(-2,-2).0, array.last, label, label, array.slice(-3,-3).0) %]
     [% ELSE %]
-      <a href="[% IS.page.url %]">[% label %]</a>
+      <a href="[% page.url %]">[% label %]</a>
     [% END %]
 [% END %]
  
@@ -425,17 +425,10 @@
 		 
                 <div id="widget-footer">
 [% UNLESS c.req.action == '/' %]
-<!--                     <a   tip="view comments" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','comment',class,this_object_id,w.id,this_object_label) %]" ><span class="comment-count"></span><span class="ui-icon ui-icon-comment ui-button"></span></a>   -->
-                    <a   tip="view comments" class="tip-simple tr ui-corner-all" href="javascript:void(0)" onClick='$jq("#nav-comment").trigger("open"); goToAnchor("comment"); return true;' ><span class="ui-icon ui-icon-comment ui-button"></span></a>  
-                    <a   tip="report a problem" class="tip-simple tr ui-corner-all"  href="javascript:void(0)" onClick='$jq("#nav-issue").trigger("open"); goToAnchor("issue"); return true;' ><span class="ui-icon ui-icon-notice ui-button"></span></a>
-
-<!--                     <a   tip="report a problem" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','issue',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-notice ui-button"></span></a> -->
-                    <a  tip="download" class="tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
+                    <a  tip="download" class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 
                     <!-- A button for hiding empty fields -->
-                    <a tip="toggle empty fields" class="tip-simple tr ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
-
-
+                    <a tip="toggle empty fields" class="button tip-simple tr ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
 [% END %] 
                     
 
@@ -928,13 +921,13 @@ END;
       # Push overview to the top.
       widget_list.unshift('overview');
 
-   ELSIF section == 'species_list';
-
-      SET this_object_id    = species;
-      SET this_object_label = species;
-
-      # Push overview to the top.
-      widget_list.unshift('overview');
+#    ELSIF section == 'species_list';
+# 
+#       SET this_object_id    = species;
+#       SET this_object_label = species;
+# 
+#       # Push overview to the top.
+#       widget_list.unshift('overview');
 
    ELSE;
 
@@ -947,68 +940,17 @@ END;
 
    path = c.uri_for("/$section", class, this_object_id);
 
-   # BEGIN EXPERIMENTAL TITLE BAR
-
-       '<!-- TESTING: Relocated page title and other toolbars to the widget container -->';
-       '<div id="titlebar">';
-
-      IF object;
-          is_obj = 1;
-          wbid = this_object_id.remove(":");
-          '<div class="workbench-status-' _  wbid _ '"></div>';
-       END;
-
-        '<div id="title">' _ title _ '</div>';
-        '<div id="buttons">
-<!--           <div class="dropdown-button button">settings</div> -->
-           <div class="toggle-button button" name="comments">
-              <a tip="leave a comment" class="tip-simple tr ui-corner-all">comments</a>
-           </div>
-           <div class="toggle-button button" name="issue">
-              <a tip="report a problem" class="tip-simple tr ui-corner-all">issues</a>
-           </div>';
-
-           '<div class="button">PDF</div>';
-
-	   '<!--<div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div>-->';
-
-
-        UNLESS no_layout;
-
-         '<div class="columns toggle-button button">
-<!--               <span id="fade" style="float:left">Layout</span> -->
-		   <span>Layout</span>
-               <ul>
-                 <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
-                 <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
-                 <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
-                 <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-                 <div class="list-layouts" type="' _ class _ '"></div>';
-              '</ul>
-<!--         </div> -->
-</div>';
-
-
-       END ;
- 
-      '</div> <!-- end buttons -->
-      </div> ';
-
-
-##############################
-# END EXPERIMENTAL TITLEBAR
-##############################
 
    widget_list = widget_list.unique;
    
    FOREACH widget_name IN widget_list;
-
       # Fetch the actual widget configuration.
       widget = c.config.sections.$section.$class.widgets.$widget_name;
 
       # What context should this widget be displayed in, and what type of page are we?
       IF is_class_index;
-         NEXT IF widget.display == "report";
+         # NEXT IF widget.display == "report";
+         NEXT;
       ELSE;
          NEXT IF widget.display == "index";
       END;
@@ -1066,7 +1008,7 @@ END;
    tools = ['comment', 'issue'];
    FOREACH widget_name IN tools;
        t = widget_name FILTER ucfirst;
-      w = { id = widget_name
+       w = { id = widget_name
              title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
              href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
              type = 'tools'
@@ -1075,7 +1017,7 @@ END;
        widgets.push(w);
   END;
   END;
-  
+
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
 
   # Open some sections by default, depending on what we are displaying.
