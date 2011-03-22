@@ -1,7 +1,7 @@
 package WormBase::API::Object;
 
 use Moose;
- 
+
 use overload '~~' => \&_overload_ace, fallback => 1;
 
 sub _overload_ace {
@@ -89,29 +89,13 @@ sub object {
 #  return $dbh;
 #}
 
-
 sub _wrap {
     my $self = shift;
     my @objects = grep defined, @_ or return;
 
-    # TODO:
-    # the fact that this exists and the inverse must be done in API.pm
-    # indicates that this should probably be abstracted, otherwise
-    # future aggregate model devs may have headaches looking for this
-    # and the code in API.pm.
-    # a similar thing happens in Role::Object with mapping common fields
-    # to Ace tags.
-
-    my %aggregate_class = (
-        PCR_product => 'Pcr_oligo',
-        Oligo_set   => 'Pcr_oligo',
-        Oligo       => 'Pcr_oligo',
-        CDS         => 'CDS',
-    );
-
     my @wrapped = map {
-        my $class = $_->class;
-        $class = $aggregate_class{$class} if $aggregate_class{$class};
+        my $class = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$_->class};
+            # or croak "Cannot find WB class for Ace class ", $_->class;
         WormBase::API::Factory->create($class, {
             object      => $_->fetch, # should step into object, if haven't done so
             dsn         => $self->dsn,
