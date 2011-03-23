@@ -1204,7 +1204,8 @@ sub field_GET {
     
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for("/page",$class,$name);
+    # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+    my $uri = $c->uri_for("/species",$class,$name);
 
     $c->stash->{template} = $c->_select_template($field,$class,'field'); 
 
