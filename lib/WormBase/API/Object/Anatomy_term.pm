@@ -591,5 +591,8 @@ sub _anatomy_function {
     return \@data_pack;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
 

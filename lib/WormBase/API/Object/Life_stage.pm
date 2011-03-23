@@ -485,4 +485,7 @@ sub followed_by_life_stage {
 }
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

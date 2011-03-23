@@ -931,4 +931,7 @@ sub _classify_targets {
     return \%categories;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

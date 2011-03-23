@@ -1108,4 +1108,7 @@ sub _get_phenotype_data {
 
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
