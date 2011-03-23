@@ -1,14 +1,13 @@
-[% recent = c.stash.results %]
 
 <entry><h3>What's popular on WormBase:</h3></entry>
-[% c.stash.results = c.stash.popular %]
+[% results = c.stash.popular %]
 [% PROCESS "search/results.tt2" no_count=1%]
 
 <br />
 <br />
 
 <entry><h3>Recently saved by others on WormBase:</h3></entry>
-[% c.stash.results = recent %]
+[% results = c.stash.recent %]
 [% PROCESS "search/results.tt2" no_count=1%]
 
   
