@@ -105,7 +105,7 @@ sub workbench_GET {
       }
       my $name = $c->req->params->{name};
 
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name});
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $c->stash->{notify} = "$name has been removed from your $loc";
@@ -696,7 +696,7 @@ sub widget_GET {
       # Fetch a WormBase::API::Object::* object
       if ($name eq '*' || $name eq 'all' || $widget eq 'browse') {
           $c->stash->{species} = $name;
-          $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+#           $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
       } else {
           $c->stash->{object} = $api->fetch({class => ucfirst($class),
                             name  => $name,
@@ -872,28 +872,9 @@ sub recently_saved {
                     group_by=>[ qw/page_id/]
                 })->slice(0, $count-1);
 
-    my @ret;
-    foreach my $report (@saved){
-      my @objs;
-      my($class, $id) = $self->parse_url($c, $report->page->url);
-      my $time = ago((time() - $report->time_saved), 1);
-      if (!$id || $class=~m/page/) {
-        push(@ret, { name => {  url => $report->page->url, 
-                                label => $report->page->title,
-                                id => $report->page->title,
-                                class => 'page' },
-                     footer => $time,
-                    });
-      }else{
-      my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-      push(@objs, $obj); 
-      @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
-      @objs = map { $_->{footer} = $time; $_;} @objs;
-      push(@ret, @objs);
-      }
-    }
-    $c->stash->{'type'} = 'all'; 
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, ago((time() - $_->time_saved), 1)) } @saved;
+
+    $c->stash->{type} = 'all'; 
 
     return \@ret;
 }
@@ -920,28 +901,32 @@ sub most_popular {
                     join=>'page'
                 })->slice(0, $count-1);
 
-    my @ret;
-    foreach my $report (@saved){
-      my @objs;
-      my($class, $id) = $self->parse_url($c, $report->page->url);
-      if (!$id || $class=~m/page/) {
-        push(@ret, { name => {  url => $report->page->url, 
-                                label => $report->page->title,
-                                id => $report->page->title,
-                                class => 'page' }
-                    });
-      }else{
-      my $obj = $api->fetch({class=> ucfirst($class),
-                          name => $id}) or die "$!";
-      push(@objs, $obj); 
-      @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
-      @objs = map { $_->{footer} = $report->visit_count . " visits"; $_;} @objs;
-      push(@ret, @objs);
-      }
-    }
-    $c->stash->{'type'} = 'all'; 
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, $_->visit_count . " visits") } @saved;
 
+    $c->stash->{type} = 'all'; 
     return \@ret;
+}
+
+
+#input page obj from user db, return result
+sub _get_search_result {
+  my ($self,$c, $api, $page, $footer) = @_;
+
+  if($page->is_obj){
+    my @parts = split(/\//,$page->url); 
+    my $class = $parts[-2];
+    my $id = $parts[-1];
+    my $obj = $api->fetch({class=> ucfirst($class),
+                              name => $id}) or die "$!";
+    return $api->xapian->_wrap_objs($obj, $class, $footer);
+  }
+
+  return { 'name' => {  url => $page->url, 
+                                label => $page->title,
+                                id => $page->title,
+                                class => 'page' },
+            footer => "$footer",
+                    };
 }
 
 sub comment_rss {
@@ -999,32 +984,11 @@ sub issue_rss {
     return \@sort;
 }
 
-
-### NOTE: Make this more robust
-sub parse_url{
-    my ($self,$c, $url) = @_; 
-    if($url=~m/#/){ return; }
-    my @parts = split(/\//,$url); 
-    my $class = $parts[-2];
-    my $wb_id = $parts[-1];
-    
-    if((scalar @parts) < 4){
-      $class = 'page';
-    }elsif(!(defined $c->config->{'sections'}->{'species'}->{$class}) && !(defined $c->config->{'sections'}->{'resources'}->{$class})){
-      $class = 'page';
-    }
-# $class = 'page';
-# $wb_id = scalar @parts . $wb_id;
-    return ($class, $wb_id);
-}
-
 sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
 
 sub widget_me_GET {
     my ($self,$c,$widget) = @_; 
-    $c->log->debug("getting me widget");
     my $api = $c->model('WormBaseAPI');
-    my @ret;
     my $type;
     $c->stash->{'bench'} = 1;
     if($widget=~m/user_history/){
@@ -1042,33 +1006,12 @@ sub widget_me_GET {
 
     my $session = $self->get_session($c);
     my @reports = $session->user_saved->search({save_to => $widget});
-    $c->log->debug("getting saved reports @reports for user $session->id");  
-    foreach my $report (@reports){
-      my @objs;
-      my($class, $id) = $self->parse_url($c, $report->page->url);
-      $c->log->debug("saved $class, $id");
-      my $time = ago((time() - $report->time_saved), 1);
-     if (!$id || $class=~m/page/) {
-        push(@ret, { name => {  url => $report->page->url, 
-                                label => $report->page->title,
-                                id => $report->page->title,
-                                class => 'page' },
-                     footer => "added $time",
-                    });
-      }else{
-        my $obj = $api->fetch({class=> ucfirst($class),
-                            name => $id}) or die "$!";
+#     $c->log->debug("getting saved reports @reports for user $session->id");  
 
-        push(@objs, $obj); 
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->time_saved), 1) ) } @reports;
 
-        @objs = @{$api->xapian->_wrap_objs(\@objs, $class)};
-        @objs = map { $_->{footer} = "added $time"; $_;} @objs;
-        push(@ret, @objs);
-      }
-    }
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
-#     $c->stash->{template} = "search/results.tt2";
     $c->stash->{template} = "workbench/widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');

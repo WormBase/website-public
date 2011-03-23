@@ -3,5 +3,5 @@
 [% IF item.name.label == 'example' %]
 Click on the star to add or remove this item from your saved reports<br />
 [% ELSE %]
-[% item.name.url %]
+[% item.name.url %]<br />
 [% END %]

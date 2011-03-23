@@ -105,6 +105,17 @@
     </div>
 [% END %] 
 
+[% #get page info %]
+[% BLOCK page_info %]
+  [% url = c.req.uri %]
+
+  [% label = c.req.path %]
+  [% IF (c.action.name == 'index'); label = 'home'; 
+    ELSIF c.action.name.match('me'); clabel = 'my wormbase'; 
+    END; %]
+  [% is_obj = 0 %]
+  [% IF object; is_obj = 1; url = get_url(object.name.data.class, object.name.data.id, object.name.data.taxonomy); label = object.name.data.label; END; %]
+[% END %]
 
 [%# options:
    print="always" to print the field even if there is no data 
@@ -715,7 +726,7 @@ END;
    IF no_toggle == 1;  
       '<div class="text-width">';
        WRAPPER $field_block title="Remarks" key="remarks";
-          markup(fields.remarks.data.join('<br />'),0);
+          markup(fields.remarks.data.join('<br>'),0);
        END;
       '</div>';
    ELSE;
@@ -874,7 +885,7 @@ END;
 
 [% MACRO report_page BLOCK;
 
-   IF c.config.system_message;
+   IF c.config.system-message;
       '<div id="system-message">' 
             _ c.config.system_message 
             _ '<a class="system-message-close" href="#">Dismiss</a></div>';
