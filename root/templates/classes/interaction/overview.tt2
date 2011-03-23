@@ -1,0 +1,34 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% WRAPPER $field_block title="effector_data" key="effector_data" -%] 
+	[% FOREACH data IN fields.effector_data.data %]
+		[% tag2link(data.gene)  %]<br>
+	[% END %] 
+[% END %]
+
+[% WRAPPER $field_block title="interaction_type" key="interaction_type"-%] 
+	[% fields.interaction_type.data %]
+[% END %]
+
+
+[% WRAPPER $field_block title="non_directional_data" key="non_directional_data" -%] 
+	[% FOREACH data IN fields.non_directional_data.data %]
+		[% tag2link(data.gene) %]<br>
+	[% END %] 
+[% END %]
+
+[% WRAPPER $field_block title="phenotype" key="phenotype" -%] 
+	[% tag2link(fields.phenotype.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="interactor" key="interactor" -%] 
+	[% FOREACH data IN fields.interactor.data %]
+		[%  tag2link(data) %]<br>
+	[% END %] 
+[% END %]
+
+[% WRAPPER $field_block title="rnai" key="rnau" -%] 
+	[% tag2link(fields.rnai.data) %]
+[% END %]
