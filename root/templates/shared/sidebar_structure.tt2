@@ -36,15 +36,9 @@
       <h2>[% title %]</h2>
       [% END %]
         <div id="buttons">
-      [% IF object %]
-          [% is_obj = 1 %]
-          [% wbid = this_object_id.remove(':') %]
-
-          <div class="workbench-status-[% wbid %]"></div>
-
-
-       [% END %]
        [% UNLESS no_layout %]
+          [% wbid = this_object_id.remove(':') %]
+          <div class="workbench-status-[% wbid %]"></div>
 
       [% IF object %]
 <a   tip="view comments" class="button section-button tip-simple tr ui-corner-all" name="comment"  >comments <span class="comment-count"></span></a>
@@ -71,14 +65,16 @@
 
 <div id="widgets">
   <div id="navigation">
-    <div id="title"><div class="workbench-status-[% wbid %]"></div>
-
-      [% IF object %]
-        <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
-      [% ELSIF title %]
-        <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
-      [% ELSE %]
+    <div id="title">
+      [% IF c.action.name == 'index' %]
         <h2><a href="#">WormBase</a></h2>
+      [% ELSE %]
+        <div class="workbench-status-[% wbid %]"></div>
+        [% IF object %]
+          <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
+        [% ELSE %]
+          <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
+        [% END %]
       [% END %]
     </div>
     <ul>
@@ -132,12 +128,16 @@
 
 
     <script>
-      [% IF object %]
+      [%# IF object %]
+
+[% PROCESS page_info %]
         [% lclass = object.name.data.class FILTER lcfirst %]
         [% save = 'reports' %]
-        [% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
-        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
-      [% END %]
+        [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
+
+        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% url %]&save_to=[% save %]&is_obj=[% is_obj %]");
+
+      [%# END %]
 
     if(location.hash.length > 0){
       readHash();

@@ -129,6 +129,7 @@ sub _wrap_objs {
   my $self  = shift;
   my $list  = shift;
   my $class = shift;
+  my $footer = shift;
 
   my $api = $self->api;
   my $fields;
@@ -157,6 +158,7 @@ sub _wrap_objs {
       }
       my %data;
       $data{obj_name}=$ace_obj;
+    $data{footer} = $footer if $footer;
       foreach my $field (@$fields) {
         my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
         $field_data = $field_data->{data};
@@ -176,6 +178,7 @@ sub _wrap_objs {
     }
     my %data;
     $data{obj_name}=$ace_obj;
+    $data{footer} = $footer if $footer;
     foreach my $field (@$fields) {
       my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
       $field_data = $field_data->{data};
