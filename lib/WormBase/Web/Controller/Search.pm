@@ -71,9 +71,6 @@ sub search :Path('/search') Args {
 
     my $it= $api->xapian->search($c, $tmp_query, $page_count, $search);
 
-#     $c->stash->{template} = "search/xapian.tt2";
-#     $c->stash->{iterator} = $it;
-
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
     my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
@@ -120,7 +117,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
 
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
-  if(defined $c->config->{sections}->{species}->{$class}){
+  if(defined $c->config->{sections}{species}{$class}){
     return $c->uri_for('/species',$species || 'all' ,$class,$id)->as_string;
   }
   return $c->uri_for('/resources',$class,$id)->as_string;
