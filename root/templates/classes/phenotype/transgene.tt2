@@ -1,13 +1,31 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
-
-[% WRAPPER $field_block  title="Overexpression of these genes results in a(an) " _ tag2link(object.name.data) _ " phenotype" key="variation" %] 
-  [% dataTable_list(['Transgene','Summary'],fields.transgene.data.0.aaData,'table_transgene_0') %]
-[% END %]
-
-[% WRAPPER $field_block  title="Overexpression of these genes DOES NOT results in a(an) " _ tag2link(object.name.data) _ " phenotype" key="variation" %] 
-    [% dataTable_list(['Transgene','Summary'],fields.transgene.data.1.aaData,'table_transgene_1') %]
-[% END %] 
- 
+	
+	[% build_data_table (
+		order = [ 
+			'transgene',
+			'species'
+			],
+		columns = {				 		
+			transgene => 'Transgene',
+			species => 'Species'
+			},
+		key = 'transgene',
+		title = 'Transgenes associated with this phenotype'	
+		)
+	%]	
+	
+	[% build_data_table (
+		order = [ 
+			'transgene',
+			'species'
+			],
+		columns = {				 		
+			transgene => 'Transgene',
+			species => 'Species'
+			},
+		key = 'transgene_not',
+		title = 'Transgenes NOT associated with this phenotype'	
+		)
+	%]
