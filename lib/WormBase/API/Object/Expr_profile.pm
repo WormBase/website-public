@@ -141,7 +141,7 @@ GET
 
 B<Requires Authentication>
 
-No
+No	
 
 B<Parameters>
 
