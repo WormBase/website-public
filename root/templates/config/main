@@ -20,18 +20,17 @@
    WB2ACE_MAP = c.model('WormBaseAPI').modelmap.WB2ACE_MAP.class;
    ACE2WB_MAP = c.model('WormBaseAPI').modelmap.ACE2WB_MAP.class;
 
-    MACRO tag2link(data,text,title,iframe) BLOCK;  
+    MACRO tag2link(data,text,title) BLOCK;  
       IF data.defined ;
          UNLESS text; text = data.label; END;
-         text2link(data.class, data.id, text, title, data.taxonomy,
-                   iframe ? 'onclick="parent.location=this.href;return false;"' : undef);
+         text2link(data.class, data.id, text, title, data.taxonomy);
       END;
    END;
 
-   MACRO tag2linkAll(hash, iframe) BLOCK;
+   MACRO tag2linkAll(hash) BLOCK;
       result = [];
 	  FOREACH key IN hash.sort;
-	     result.push(tag2link(hash.$key, undef, undef, iframe));
+	     result.push(tag2link(hash.$key));
 	  END;
 	  result.join(', ');
    END;
@@ -52,16 +51,16 @@
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs
-    MACRO text2link(class,id,text,title,taxonomy,htmlattrs) BLOCK;  
+    MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
 #      class =  class FILTER lower;
       IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
-          external_link(class, text, id, htmlattrs);
+          external_link(class, text, id);
        ELSE;
           url = get_url(class, id, taxonomy);
           IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
           IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;
-          "<a href=\"$url\" class=\"$class-link\" title=\"$title\" $htmlattrs>$text</a>";
+          "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
        END;
    END;
 
@@ -135,7 +134,7 @@
 #         id (optional) - the unique id needed in the url.  If not provided, base url is used.
 # ret: formatted html to link using url and description from config.  
 #      Has google analytics code to record clicks and opens new window
-    MACRO external_link(link, text, id, htmlattrs) BLOCK;
+    MACRO external_link(link, text, id) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
        link =  link FILTER lower;
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
@@ -154,11 +153,11 @@
        END;
        UNLESS url; url = link; END;
        IF (link == 'genomic_location' OR link == 'gbrowse_image' );
-          "<a href=\"$url\" title=\"$desc\" $htmlattrs>$text</a>";
+          "<a href=\"$url\" title=\"$desc\">$text</a>";
        ELSE;
        "<a href=\"$url\" 
            onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
-           target=\"_blank\" title=\"$desc\" $htmlattrs>$text</a>";
+           target=\"_blank\" title=\"$desc\">$text</a>";
        END;
     END;
 
