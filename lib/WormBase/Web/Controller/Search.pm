@@ -73,7 +73,7 @@ sub search :Path('/search') Args {
 
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
@@ -124,10 +124,11 @@ sub _get_url {
 }
 
 sub _get_obj {
-  my ($self, $api, $doc) = @_;
-  my $obj = $api->fetch({class=> $doc->get_value(0),
+  my ($self, $c, $doc) = @_;
+  my $api = $c->model('WormBaseAPI');
+  my $obj = $api->fetch({aceclass=> $doc->get_value(0),
                           name => $doc->get_value(1)}) or die "$!";
-  return $api->xapian->_wrap_objs($obj, $doc->get_value(2));
+  return $api->xapian->_wrap_objs($c, $obj, $doc->get_value(2));
 }
 
 sub search_preview :Path('/search/preview')  :Args(3) {
@@ -143,7 +144,7 @@ sub search_preview :Path('/search/preview')  :Args(3) {
 
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = "*";

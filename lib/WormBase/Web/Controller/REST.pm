@@ -844,9 +844,6 @@ sub widget_home_GET {
     elsif($widget=~m/activity/){
       $c->stash->{recent} = $self->recently_saved($c,3);
       $c->stash->{popular} = $self->most_popular($c,3);
-
-      $c->log->debug("recent: " . @{$c->stash->{recent}}); 
-      $c->log->debug("pop: " . @{$c->stash->{popular}});
     }   
     elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);
@@ -918,7 +915,7 @@ sub _get_search_result {
     my $id = $parts[-1];
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
-    return $api->xapian->_wrap_objs($obj, $class, $footer);
+    return $api->xapian->_wrap_objs($c, $obj, $class, $footer);
   }
 
   return { 'name' => {  url => $page->url, 
