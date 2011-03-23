@@ -1,19 +1,44 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
- 
-[% widget = widget %]
- 
-[% WRAPPER $field_block  title="Gene knockdown (via RNAi) results in a(an) " _ tag2link(object.name.data) _ " phenotype in these
-experiments" key="rnai" %]  
-   [% ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.0.aaData,'table_rnai_0') %]
-   [%  dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.0.aaData,'table_rnai_0') %]
-   
-[% END %]
-
-[% WRAPPER $field_block  title="Gene knockdown (via RNAi) DOES NOT result in a(an) " _ tag2link(object.name.data) _ " phenotype in
-these experiments" key="rnai" %]  
-   [% ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.1.aaData,'table_rnai_1') %]
-   [%  dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.1.aaData,'table_rnai_1') %]
-[% END %]
+	
+	[% build_data_table (
+		order = [ 
+			'rnai',
+			'species',
+			'sequence',
+			'genotype',
+			'treatment'
+			],
+		columns = {				 		
+			rnai => 'RNAi',
+			species => 'Species',
+			sequence => 'Sequence',
+			genotype => 'Genotype',
+			treatment => 'Treatment'
+			},
+		key = 'rnai',
+		title = 'Phenotype Observed with these RNAis'	
+		)
+	%]	
+	
+	
+	[% build_data_table (
+		order = [ 
+			'rnai',
+			'species',
+			'sequence',
+			'genotype',
+			'treatment'
+			],
+		columns = {				 		
+			rnai => 'RNAi',
+			species => 'Species',
+			sequence => 'Sequence',
+			genotype => 'Genotype',
+			treatment => 'Treatment'
+			},
+		key = 'rnai_not',
+		title = 'Phenotype Observed with these RNAis'	
+		)
+	%]

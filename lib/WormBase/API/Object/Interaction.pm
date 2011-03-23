@@ -595,4 +595,7 @@ sub _interactor_data {
     return \@data_pack;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

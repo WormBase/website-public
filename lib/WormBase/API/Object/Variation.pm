@@ -2055,4 +2055,7 @@ sub _fetch_coords_in_feature {
 # OLD ACCESSORS deprecating
 #sub cgh_segment       { return shift->{segments}->{cgh_variation}; }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

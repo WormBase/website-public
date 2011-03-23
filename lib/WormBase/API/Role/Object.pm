@@ -2,6 +2,7 @@ package WormBase::API::Role::Object;
 
 use Moose::Role;
 use File::Path 'mkpath';
+use WormBase::API::ModelMap;
 
 # I should have an abstract method for id():
 # provided with a class and a name, return the internal ID, if different.
@@ -124,46 +125,42 @@ sub _build_name {
     };
 }
 
-# should be for internal use only
-# external use, see 'name' attr.
-has 'common_name' => (
+has '_common_name' => (
     is         => 'ro',
     lazy_build => 1,
 );
 
-sub _build_common_name {
+sub _build__common_name {
     my ($self) = @_;
-    return $self->_common_name($self->object);
+    return $self->_make_common_name($self->object);
 }
 
-sub _common_name {
+sub _make_common_name {
     my ($self, $object) = @_;
     my $class  = $object->class;
 
-    my %taghash = (
-        Person     => 'Standard_name',
-        Gene       => [qw(Public_name CGC_name Molecular_name)],
-        # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
-        # to fully handle this, an exception may have to be made OR this method
-        # could be made more robust to do recursive checks... seems unnecessary
-        Feature    => ['Public_name', 'Other_name'],
-        Variation  => 'Public_name',
-        Phenotype  => 'Primary_name',
-        Gene_class => 'Main_name',
-        Species    => 'Common_name',
-        Molecule   => [qw(Public_name Name)],
-    );
+	my $name;
 
-    my $name;
-    if (my $tag = $taghash{$class}) {
-        $tag = [$tag] unless ref $tag;
-        foreach my $tag (@$tag) {
-            last if $name = $object->$tag;
+    if (my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
+        if ($wbclass->meta->get_method('_build__common_name')
+            ->original_package_name ne __PACKAGE__) {
+            # this has potential for circular dependency...
+            $self->log->debug("$class has overridden _build_common_name");
+            $name = $self->_wrap($object)->_common_name;
         }
     }
 
-    $name //= eval {$object->Name} // $object->name;
+	unless (defined $name) {
+		my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
+		if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
+			$tag = [$tag] unless ref $tag;
+			foreach my $tag (@$tag) {
+				last if $name = $object->$tag;
+			}
+		}
+	}
 
+	$name //= $object->name;
     return "$name";
 }
 
@@ -720,18 +717,9 @@ sub _build_laboratory {
     my $object = $self->object;
     my $class  = $object->class;    # Ace::Object class, NOT ext. model class
 
-    # Ugh. Model inconsistencies.
-    my %taghash = (
-        Gene_class  => 'Designating_laboratory',
-        PCR_product => 'From_laboratory',
-        Sequence    => 'From_laboratory',
-        CDS         => 'From_laboratory',
-        Transgene   => 'Location',
-        Strain      => 'Location',
-        Antibody    => 'Location',
-    );
+    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
 
-    my $tag = $taghash{$class} || 'Laboratory';
+    my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
     if (my $lab = eval {$object->$tag}) {
         $data->{laboratory} = $self->_pack_obj($lab);
@@ -1290,7 +1278,7 @@ sub _pack_obj {
     return unless $object;
     return {
         id       => "$object",
-        label    => $label // $self->_common_name($object),
+        label    => $label // $self->_make_common_name($object),
         class    => $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,

@@ -141,7 +141,7 @@ GET
 
 B<Requires Authentication>
 
-No
+No	
 
 B<Parameters>
 
@@ -397,4 +397,7 @@ sub rnai {
     };
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

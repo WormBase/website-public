@@ -2356,4 +2356,7 @@ sub _get_parent_coords {
 	return;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

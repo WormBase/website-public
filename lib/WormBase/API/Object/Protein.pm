@@ -1738,4 +1738,7 @@ sub hit_to_url {
     return ($prefix,$accession);
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

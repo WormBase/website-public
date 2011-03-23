@@ -1685,4 +1685,7 @@ sub natural_isolates {
 
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

@@ -89,16 +89,21 @@ B<Response example>
 sub gene {
     my $self   = shift;
     my $object = $self->object;
-    my %ret;
-    map {
-        { $ret{"$_"} = $self->_pack_obj( $_, $_->Public_name ) }
-    } $object->Gene;
+    my @tag_objects = $object->Gene;
+    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
+      if @tag_objects;
     return {
         description => 'The corresponding gene',
-        data        => \%ret,
-    };
-}
+        data        => @data_pack    
+      
+	};
+}	
+#     my %return;
+#     map {
+#         { $ret{"$_"} = $self->_pack_obj( $_, $_->Public_name ) }
+#     } $object->Gene;
 
+#     };
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
@@ -415,4 +420,7 @@ sub anatomy_term {
     };
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

@@ -378,4 +378,7 @@ sub _stash_former_member {
     return \%data;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
