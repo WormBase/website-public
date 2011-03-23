@@ -197,7 +197,9 @@ sub fetch {
         # Try fetching an object (from the default data source)
         my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
 
-		my $aceclass = WormBase::API::ModelMap->WB2ACE_MAP->{class}->{$class};
+		my $aceclass = $args->{aceclass} || WormBase::API::ModelMap->WB2ACE_MAP->{class}->{$class};
+        $class = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$aceclass} unless $class;
+
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);

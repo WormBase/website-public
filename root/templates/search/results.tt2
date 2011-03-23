@@ -21,7 +21,7 @@
   </ul>
 
   [% PROCESS timer IF noboiler %]   
-    [% IF c.stash.count > 10 %]
+    [% IF (count && count > 10) %]
     <div id="load-results" class="load-results" href="/search/[% type %]/[% c.stash.query | uri %]/">load 10 more results</div>
     [% END %]
 </div>

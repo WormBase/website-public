@@ -20,14 +20,10 @@ has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
-has 'api' => (
-    is         => 'ro',
-    isa        => 'WormBase::API',
-    );
-
-has 'c' => (
-    is     => 'ro',
-    isa    => 'Config::General',
+has '_fields'   => (
+    is          => 'rw',
+    isa         => 'HashRef',
+    default     => sub { {} },
     );
 
 
@@ -35,8 +31,7 @@ sub search {
     my ( $class, $c, $q, $page, $type, $species, $page_size) = @_;
     my $t=[gettimeofday];
     $page       ||= 1;
-    $page_size  ||=  10;#$class->config->{page_size};
-#     $class->db->reopen();
+    $page_size  ||=  10;
 
     if($type){
       $q .= " $type..$type";
@@ -67,8 +62,6 @@ sub search {
 sub search_autocomplete {
     my ( $class, $c, $q, $type) = @_;
 
-#     $class->syn_db->reopen();
-
     if($type){
       $q .= "* $type..$type";
     }
@@ -79,7 +72,6 @@ sub search_autocomplete {
     my $mset      = $enq->get_mset( 0, 10 );
 
     if($mset->empty()){
-#       $class->db->reopen();
       $query=$class->qp->parse_query( $q, 64|16 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query2:" . $query->get_description());
@@ -92,8 +84,6 @@ sub search_autocomplete {
 
 sub search_exact {
     my ( $class, $c, $q, $type) = @_;
-
-#     $class->syn_db->reopen();
 
     if($type){ $q .= " $type..$type";}
 
@@ -127,65 +117,40 @@ sub extract_data {
 # output: list of Result objects
 sub _wrap_objs {
   my $self  = shift;
-  my $list  = shift;
+  my $c = shift;
+  my $ace_obj  = shift;
   my $class = shift;
   my $footer = shift;
 
-  my $api = $self->api;
-  my $fields;
-  my $f;
-  if ($self->c->{'DefaultConfig'}->{sections}->{species}->{$class}){
-    $f = $self->c->{'DefaultConfig'}->{sections}->{species}->{$class}->{search}->{fields};
-  } else{
-    $f = $self->c->{'DefaultConfig'}->{sections}->{resources}->{$class}->{search}->{fields};
+  my $api = $c->model('WormBaseAPI');
+  my $fields = $self->_fields->{$class};
+
+  unless($fields){
+    my $f;
+    if ( defined $c->config->{sections}{species}{$class}){
+      $f = $c->config->{sections}->{species}->{$class}->{search}->{fields};
+    } else{
+      $f = $c->config->{sections}->{resources}->{$class}->{search}->{fields};
+    }
+    push(@$fields, @$f) if $f;
+    $self->_fields->{$class} = $fields;
   }
-  push(@$fields, @$f) if $f;
 
-  if (ref($list) eq "ARRAY") {
-
-    # don't get config info if nothing to config
-    return $list if (@$list < 1); 
-
-    my @ret;
-    foreach my $ace_obj (@$list) {
-      my $object;
-      if (eval{$ace_obj->class}){
-        # this is faster than passing the ace_obj.  I know, weird.
-        $object = $api->fetch({object => $ace_obj}) or die "$!";
-
-      } else {
-        $object = $ace_obj;
-      }
-      my %data;
-      $data{obj_name}=$ace_obj;
-    $data{footer} = $footer if $footer;
-      foreach my $field (@$fields) {
-        my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
-        $field_data = $field_data->{data};
-        $data{$field} = $field_data;
-      }
-      push(@ret, \%data);
-    }
-    return \@ret;
-  }else{
-    my $ace_obj = $list;
-    my $object;
-    if (eval{$ace_obj->class}){
-      # this is faster than passing the ace_obj.  I know, weird.
-      $object = $api->fetch({object => $ace_obj}) or die "$!";
-    } else {
-      $object = $ace_obj;
-    }
-    my %data;
-    $data{obj_name}=$ace_obj;
-    $data{footer} = $footer if $footer;
-    foreach my $field (@$fields) {
-      my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
-      $field_data = $field_data->{data};
-      $data{$field} = $field_data;
-    }
-    return \%data;
+  my $object;
+  if (eval{$ace_obj->class}){
+    $object = $api->fetch({object => $ace_obj}) or die "$!";
+  } else {
+    $object = $ace_obj;
   }
+  my %data;
+  $data{obj_name}=$ace_obj;
+  $data{footer} = $footer if $footer;
+  foreach my $field (@$fields) {
+    my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
+    $field_data = $field_data->{data};
+    $data{$field} = $field_data;
+  }
+  return \%data;
 }
 
 1;

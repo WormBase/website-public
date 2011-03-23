@@ -1,4 +1,4 @@
-[% IF page > 1; "<br /><b>Page " _ page _ "</b>"; END; %]
+[% IF (page && page > 1); "<br /><b>Page " _ page _ "</b>"; END; %]
 [% FOREACH item IN results %]
 
  [% UNLESS c.stash.bench %]<div class="result">[% END %]

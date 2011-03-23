@@ -40,16 +40,8 @@
    END;
 
 
-#   MACRO get_url(class, id, is_classic) BLOCK;
    MACRO get_url(class, id, taxonomy) BLOCK;
       class =  class FILTER lower;
-#      IF c.request.referer.search("/db/"); is_classic = 1; END;
-#      IF is_classic;
-#        url  = site.class2action.$class.action;
-#        url = "$url\?name=" _ id;
-#        IF (class == 'motif'); url = url _ ";class=Motif"; END; #hack to get motif links to work
-#        url;
-#      ELSE;
         IF (class == "cds" OR class == "transcript"); class = "sequence"; END;
 		IF (class == "pcr_product" OR class == "oligo_set" OR class == "oligo"); class = "pcr_oligo"; END;
         IF (class == "author"); class = "person"; END;
@@ -60,7 +52,6 @@
         ELSE;
           c.uri_for('/resources', class, id);
         END;
-#      END; 
    END;
 
 # Like tag2link, but for cases where we only have text and no object.
