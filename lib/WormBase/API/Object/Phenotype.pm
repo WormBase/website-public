@@ -388,7 +388,7 @@ sub rnai {
     my $data_pack = $self->_rnai('RNAi');
     return {
         'data'        => $data_pack,
-        'description' => 'rnais associated with this phenotype'
+        'description' => 'RNAi experiments associated with this phenotype'
     };
 }
 
@@ -910,20 +910,21 @@ sub _rnai {
     my $object = $self->object;
     my @data_pack;
     my @tag_objects = $object->$tag;
-
+    
     foreach my $tag_object (@tag_objects) {
         my $tag_info      = $self->_pack_obj($tag_object);
-        my $sequence      = $tag_object->Sequence;
-        my $sequence_info = $self->_pack_obj( $tag_object->Sequence )
-          if $tag_object->Sequence;
-        my $species_info = $self->_pack_obj( $tag_object->Species )
-          if $tag_object->Species;
+	my $genotype      = $tag_object->Genotype;
+#	my @genes    = map { $self->_pack_obj($_,$_->Public_name) } $tag_object->Gene;
+	my @genes = $tag_object->Gene;
+	my $strain   = $tag_object->Strain;
+	$strain = $strain ? $self->_pack_obj($strain) : undef;
         push @data_pack,
-          {
-            rnai     => $tag_info,
-            sequence => $sequence_info,
-            species  => $species_info
-          };
+	{
+            experiment     => $tag_info,
+	    genotype       => "$genotype",
+	    genes          => join(", ",@genes),
+	    strain         => $strain,
+	};
     }
     return \@data_pack;
 }
@@ -984,13 +985,13 @@ sub _format_objects {
             if ( my $sp = $_->Species ) {
                 $sp =~ /(.*) (.*)/;
                 push @array,
-                  {
+		{
                     genus   => $1,
                     species => $2,
-                  };
+		};
             }
             else { push @array, ""; }
-
+	    
             #$is_not = _is_not($_,$phenotype);
             if ( $tag =~ m/not/i ) {
                 $is_not = 0;
@@ -1004,34 +1005,24 @@ sub _format_objects {
             my $desc = $_->Term || $_->Definition;
             $str =
                 ( ($desc) ? "$desc" : "$str" )
-              . ( ($joined_evidence) ? "; $joined_evidence" : '' );
+		. ( ($joined_evidence) ? "; $joined_evidence" : '' );
         }
         elsif ( $tag =~ m/variation/i ) {    ##eq 'Variation'
-                                             # $is_not = _is_not($_,$phenotype);
-            if ( $tag =~ m/not/i ) {
-                $is_not = 0;
-            }
-            else {
-                $is_not = 1;
-            }
+	    # $is_not = _is_not($_,$phenotype);
+	    my $is_not = ( $tag =~ m/not/i ) ? 0 : 1;
+
             my $gene = $_->Gene;
             if ($gene) {
-                push @array,
-                  {
-                    id    => "$gene",
-                    label => $gene->Public_name->name,
-                    class => $gene->class,
-                  };
-            }
-            else { push @array, ""; }
+                push @array,$self->_pack_obj($gene,$gene->Public_name);
+            } else { push @array, ""; }
             $str = $_->Public_name;
             if ( my $sp = $_->Species ) {
                 $sp =~ /(.*) (.*)/;
                 push @array,
-                  {
+		{
                     genus   => $1,
                     species => $2,
-                  };
+		};
             }
             else { push @array, ""; }
         }
