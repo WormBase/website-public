@@ -373,4 +373,7 @@ sub _build_hash {
     return %hash;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

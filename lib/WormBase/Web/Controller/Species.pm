@@ -56,6 +56,7 @@ sub species_index :Path('/species') :Args(1)   {
 	$c->stash->{section}    = 'species_list';     # Section is where to grab widgets from
 #	$c->stash->{speceis}    = $species;           # Redundancy here for 
 	$c->stash->{class}      = $species;
+        $c->stash->{is_class_index} = 1;  
 	$c->stash->{species}    = $species;           # Class is the subsection	
 	$c->stash->{template}   = 'species/species-index.tt2';
     } else {
@@ -164,7 +165,7 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{section}  = 'species';
     $c->stash->{species}  = $species,
     $c->stash->{class}    = $class;
-
+    $c->stash->{is_class_index} = 0;  
     $c->stash->{template} = 'species/report.tt2';
     
     unless ($c->config->{sections}->{species}->{$class}) { 

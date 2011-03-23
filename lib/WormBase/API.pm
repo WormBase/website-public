@@ -7,6 +7,7 @@ use WormBase::API::Factory;      # Our object factory
 use Config::General;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
+use WormBase::API::ModelMap;
 
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
@@ -184,34 +185,37 @@ sub fetch {
     # We may have already fetched an object (ie by following an XREF).
     # This is an ugly, ugly hack
     my $object;
-    my $class;
+    my $class; # WB model class
 
     if ($args->{object}) {
-	$object = $args->{object};
-	$class = $object->class;	
-    } else {
-	$class   = $args->{class};
-	my $name = $args->{name};    
-	# Try fetching an object (from the default data source)
-	my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0; 
-	$object = $service_dbh->fetch(-class=>$class,-name=>$name);
-	if ($class eq 'Sequence') {
-	    $object ||= $service_dbh->fetch(-class=>'CDS',-name=>$name);
-	} elsif ($class eq 'Pcr_oligo') {
-	    $object ||= $service_dbh->fetch(-class=>'PCR_product', -name=>$name);
-	    $object ||= $service_dbh->fetch(-class=>'Oligo_set', -name=>$name);
-	    $object ||= $service_dbh->fetch(-class=>'Oligo', -name=>$name);
-	}
+        $object = $args->{object};
+        $class = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$object->class};
     }
+    else {
+        $class   = $args->{class};
+        my $name = $args->{name};
+        # Try fetching an object (from the default data source)
+        my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
+
+		my $aceclass = WormBase::API::ModelMap->WB2ACE_MAP->{class}->{$class};
+		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
+			foreach my $ace (@$aceclass) {
+				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
+			}
+		}
+		else { # assume a single Ace class
+			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);
+		}
+    }
+
     return -1 unless(defined $object); #&& ($name eq 'all' || $name eq '*'));
-    return WormBase::API::Factory->create($class,
-					      { object       => $object,
-						log          => $self->log,
-						dsn	     => $self->_services,
-						tmp_base     => $self->tmp_base,
-						pre_compile  => $self->pre_compile,
-					      });
-    
+    return WormBase::API::Factory->create($class, {
+		object      => $object,
+		log         => $self->log,
+		dsn			=> $self->_services,
+		tmp_base    => $self->tmp_base,
+		pre_compile => $self->pre_compile,
+	});
 }
 
 
