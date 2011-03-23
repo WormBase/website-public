@@ -1137,5 +1137,8 @@ sub _get_GO_evidence {
     return ( $evidence_code, $evidence_detail );
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
 

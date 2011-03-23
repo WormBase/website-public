@@ -6,7 +6,7 @@
        [% val = query %]
     [% END %]
     <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
-    <input class="button ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
+    <input class="ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
 
 
   </form>

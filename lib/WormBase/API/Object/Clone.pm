@@ -903,4 +903,7 @@ sub _build_remarks {
     };
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

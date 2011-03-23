@@ -2350,4 +2350,7 @@ sub structured_description {
 
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

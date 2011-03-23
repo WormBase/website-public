@@ -64,19 +64,9 @@ has '_parsed_authors' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-# override the default name
-sub _build_name {
+sub _build__common_name {
     my ($self) = @_;
-
-    my $label = $self->intext_citation->{data}{citation};
-    if (!$label and $label = $self ~~ 'Title') {
-        $label =~ s/\.$//;
-    }
-
-    return {
-        description => 'The object name of the publication',
-        data        => $self->_pack_obj($self->object, $label),
-    };
+    return $self->intext_citation->{data}{citation} // $self->object->name;
 }
 
 =head3 title
@@ -1386,5 +1376,8 @@ sub strains {
 #
 ############################################################
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
 

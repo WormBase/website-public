@@ -430,4 +430,7 @@ sub conducted_by {
 # << include xrefs >>
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
