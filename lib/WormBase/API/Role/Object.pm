@@ -141,7 +141,7 @@ sub _make_common_name {
 
 	my $name;
 
-    if (my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$class}) {
+    if (my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
         if ($wbclass->meta->get_method('_build__common_name')
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...

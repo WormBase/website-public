@@ -3,6 +3,7 @@ package WormBase::API::ModelMap;
 use strict;
 use warnings;
 use Module::Pluggable::Object;
+use Class::MOP;
 
 # If we want to make this more object-oriented, we would add a class attribute
 # (e.g. _ACE_MODEL) to WormBase::API::Object. That attribute would default to
@@ -13,6 +14,8 @@ use Module::Pluggable::Object;
 # In this more procedural approach, the special cases (e.g. Pcr_oligo) are hard-
 # coded into the maps. The map is then populated with defaults.
 
+# NOTE: all entries use the short WB names (without the package base) unless
+#  specified.
 { # limit the scope of the lexical variables to prevent tampering
     my $base = 'WormBase::API::Object';
 
@@ -51,23 +54,22 @@ use Module::Pluggable::Object;
     );
 
     sub _map_wb2ace {
-        # canonize the existing entries
-        while (my ($wbclass, $aceclass) = each %{$WB2ACE_MAP{class}}) {
-            next if $wbclass =~ /^${base}::/;
-            delete $WB2ACE_MAP{$wbclass};
-            $WB2ACE_MAP{"${base}::$wbclass"} = $aceclass;
-        }
-
-        # map the classes
+        # map the classes (with short name)
         my $mp = Module::Pluggable::Object->new(search_path => [$base]);
 
-        my $classmap = $WB2ACE_MAP{class} ||= {};
+		$WB2ACE_MAP{class}     ||= {};
+		$WB2ACE_MAP{fullclass} ||= {};
+		my ($classmap, $fullclassmap) = @WB2ACE_MAP{qw(class fullclass)};
 
-        foreach my $wbclass ($mp->plugins) {
-            Class::MOP::load_class($wbclass); # load the calsses
+        foreach my $fullwbclass ($mp->plugins) {
+            Class::MOP::load_class($fullwbclass); # load the classes
+			my $wbclass = (split /::/, $fullwbclass)[-1];
             # the exceptional cases have already been mapped.
-            $classmap->{$wbclass} ||= (split /::/, $wbclass)[-1];
+            $classmap->{$wbclass} ||= $wbclass;
+			$fullclassmap->{$fullwbclass} = $classmap->{$wbclass};
         }
+
+		# create short names as well
         $WB2ACE_MAP_DONE = 1;
     }
 
@@ -75,18 +77,23 @@ use Module::Pluggable::Object;
         # map the classes
         _map_wb2ace() unless $WB2ACE_MAP_DONE;
 
-        my $classmap = $ACE2WB_MAP{class} ||= {};
+        my $classmap     = $ACE2WB_MAP{class}     ||= {};
+		my $fullclassmap = $ACE2WB_MAP{fullclass} ||= {};
 
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
+			my $fullwb = "${base}::$wb";
             if (ref $ace eq 'ARRAY') { # multiple Ace to single WB
                 foreach my $ace_class (@$ace) {
-                    $classmap->{$ace_class} ||= $wb;
+                    $classmap->{$ace_class}		||= $wb;
+					$fullclassmap->{$ace_class} ||= $fullwb;
                 }
             }
             else {              # assume scalar; 1-to-1
-                $classmap->{$ace} ||= $wb;
+                $classmap->{$ace}     ||= $wb;
+				$fullclassmap->{$ace} ||= $fullwb;
             }
         }
+
         $ACE2WB_MAP_DONE = 1;
     }
 
