@@ -1504,4 +1504,7 @@ sub _get_lineage_data {
 }
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

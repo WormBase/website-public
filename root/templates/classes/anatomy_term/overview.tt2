@@ -2,6 +2,114 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% ## %]
+	<h2>[% tag2link(fields.term.data) %]</h2>
 
-<h2>[% tag2link(fields.name.data) %]</h2>
+
+
+	[% WRAPPER $field_block title="Definition" key="definition"-%] 
+		[%  fields.definition.data %]
+	[% END %]
+
+
+[%## Gene Ontology %]
+
+		[% build_data_table (
+			order = [ 
+				'term',
+				'ao_code'
+				],
+			columns = {				 		
+				term => 'Gene Ontology Term',
+				ao_code => 'AO Code'
+				},
+			key = 'gene_ontology',
+			title = 'Gene Ontology'	
+			)
+		%]
+
+
+	[% WRAPPER $field_block title="Synonyms" key="synonyms" -%] 
+		[% FOREACH data IN fields.synonyms.data %]
+			[%  tag2link(data) %]<br>
+		[% END %] 
+	[% END %]
+
+[% WRAPPER $field_block title="Transgenes" key="transgenes" -%] 
+	[% FOREACH data IN fields.transgenes.data %]
+		[%  tag2link(tag) %]<br>
+	[% END %] 
+[% END %]
+
+
+
+[%## expression_clusters %]
+
+		[% build_data_table (
+			order = [ 
+				'ec_data',
+				'description'
+				],
+			columns = {				 		
+				ec_data => 'Expression Cluster',
+				description => 'Description'
+				},
+			key = 'expression_clusters',
+			title = 'Expression Clusters'	
+			)
+		%]
+
+[% ## expression_pattern %]
+
+		[% build_data_table (
+			order = [ 
+				'expression_pattern',
+				'gene',
+				'description'
+				],
+			columns = {				 		
+				expression_pattern => 'Expression Pattern',
+				gene => 'Gene',
+				description => 'Description'
+				},
+			key = 'expression_patterns',
+			title = 'Expression Patterns'	
+			)
+		%]
+		
+[% ## anatomy_function %]
+
+		[% build_data_table (
+			order = [ 
+				'af_data',
+				'phenotype',
+				'gene'
+				],
+			columns = {				 		
+				af_data => 'Anatomy Function',
+				phenotype => 'Phenotype',
+				gene => 'Gene'
+				},
+			key = 'anatomy_functions',
+			title = 'Anatomy Functions'	
+			)
+		%]
+		
+[% ## anatomy_function_nots %]
+
+		[% build_data_table (
+			order = [ 
+				'af_data',
+				'phenotype',
+				'gene'
+				],
+			columns = {				 		
+				af_data => 'Anatomy Function',
+				phenotype => 'Phenotype',
+				gene => 'Gene'
+				},
+			key = 'anatomy_function_nots',
+			title = 'Anatomy Functions NOT associated with this Term'	
+			)
+		%]
+		
+

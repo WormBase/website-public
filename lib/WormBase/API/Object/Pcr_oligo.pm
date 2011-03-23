@@ -907,4 +907,7 @@ sub _overlapping_genes {
 	return map { $_->features('CDS:curated') } @segments;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

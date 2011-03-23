@@ -288,4 +288,7 @@ sub _get_evidence_names {
     return @ret;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

@@ -1,0 +1,19 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% WRAPPER $field_block title="associated_feature" key="associated_feature" -%] 
+	[%  tag2link(fields.associated_feature.data) %]
+[% END %]
+
+[% WRAPPER $field_block title="associated_position_matrix" key="associated_position_matrix" -%] 
+	[%  tag2link(fields.associated_position_matrix.data) %]
+[% END %]
+
+[%# WRAPPER $field_block title="consensus" key="consensus"-%] 
+	[% # fields.consensus.data %]
+[%# END %]
+
+
+[%# WRAPPER $field_block title="position_data" key="position_data" -%] 
+	[%# dataTable_list(['Header1','Header2','Header3' ... ],fields.<subroutine>.<key>.<table_number>.aaData,'<table_name>') %]
+[%# END %]
