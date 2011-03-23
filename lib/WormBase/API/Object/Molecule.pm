@@ -553,4 +553,7 @@ sub _affects {
     return %data_pack ? \%data_pack : undef;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

@@ -561,4 +561,7 @@ sub _check_for_bc {
     return scalar grep {$_ eq 'BC' || $_ eq 'VC'} @{$self ~~ '@Laboratory'};
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+

@@ -426,4 +426,7 @@ sub constructed_by {
 # << include expression_patterns >>
 
 
+__PACKAGE__->meta->make_immutable;
+
 1;
+
