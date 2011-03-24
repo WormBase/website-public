@@ -534,6 +534,7 @@ has 'description' => (
     lazy_build => 1,
 );
 
+# the following is a candidate for retrofitting with ModelMap
 sub _build_description {
     my ($self) = @_;
     my $object = $self->object;
@@ -542,15 +543,21 @@ sub _build_description {
     if ($class eq 'Sequence') {
         $tag = 'Title';
     }
+    elsif ($class eq 'Expr_pattern') {
+        $tag = 'Pattern'; # does nto handle Mohler movies (~~ 'Author' =~ /Mohler/)
+    }
     else {
         $tag = 'Description';
     }
-    my $description = eval {$object->$tag};    # TODO!!! : fix
+    # do many models have multiple description values?
+    my $description = eval {join(' ', $object->$tag)} || undef;
+
     return {
         description => "description of the $class $object",
         data        => $description && "$description",
     };
 
+    ## deal with evidence... ?
     #    my $data = { description => "description of the $class $object",
     #		 data        => { description => $description ,
     #				  evidence    => { check=>$self->check_empty($description),
@@ -620,6 +627,7 @@ has 'expression_patterns' => (
     lazy_build => 1,
 );
 
+# TODO: use hash instead; make expression_patterns macro compatibile with hash
 sub _build_expression_patterns {
     my ($self) = @_;
     my $object = $self->object;

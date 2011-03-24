@@ -53,24 +53,15 @@ sub _build__common_name {
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
-# TODO: this needs to be separated in the model but combined in template
-# Override default description from Role::Object.
-sub _build_description {
+sub is_bc_strain { # returns true, false, or undef (if no data)
     my ($self) = @_;
-    my %data;
-    unless (($self ~~ 'Author') =~ /Mohler/) {
-        $data{description} = [map {$_->name} @{$self ~~ '@Pattern'}];
-        $data{remark}      = join ' ', @{$self ~~ '@Remark'};
-        $data{check_bc}    = $self->_check_for_bc;
-        %data = () unless @{$data{description}} || $data{remark} || $data{check_bc};
-    }
 
+    my $lab = $self->laboratory->{data};
     return {
-        description => 'The description of the expression pattern',
-        data        => %data ? \%data : undef,
+        description => 'Whether this is expression pattern for a BC strain',
+        data        => $lab && ($lab eq 'BC' || $lab eq 'VC'),
     };
 }
-
 
 =head3 subcellular_locations
 
@@ -191,7 +182,7 @@ sub expressed_by {
 
 	foreach (qw(Gene Sequence Clone Protein)) {
 		my $val = $self ~~ "\@$_";
-		$data{$_} =  $self->_pack_objects($val) if @$val;
+		$data{lc $_} =  $self->_pack_objects($val) if @$val;
 	}
 
 	return {
@@ -257,7 +248,7 @@ sub expressed_in {
 	my %data;
 	foreach my $type (qw(Cell Cell_group Life_stage)) {
 		my $packed_obj = $self->_pack_objects($self ~~ "\@$type");
-		$data{ucfirst $type . 's'} = $packed_obj if %$packed_obj;
+		$data{lc $type} = $packed_obj if %$packed_obj;
 	} # TODO: what to do about pedigree stuff?
 
 	return {
@@ -323,7 +314,6 @@ sub anatomy_ontology {
 	my @anatomy_terms = map {
 		anatomy_term => $self->_pack_obj($_),
 		definition => $_->Definition->name,
-		location => $_->Term->name,
 	}, @{$self ~~ '@Anatomy_term'};
 
 	return {
@@ -552,14 +542,6 @@ sub movies {
 # PRIVATE METHODS
 #
 ############################################################
-
-# Is this a BC strain?
-sub _check_for_bc {
-	my ($self) = @_;
-
-    # VC abd BC are the Baiilie and Moerman labs
-    return scalar grep {$_ eq 'BC' || $_ eq 'VC'} @{$self ~~ '@Laboratory'};
-}
 
 __PACKAGE__->meta->make_immutable;
 

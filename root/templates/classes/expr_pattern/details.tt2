@@ -1,28 +1,10 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title="Expressed By" -%]
-	[% FOREACH pair IN fields.expressed_by.data %]
-		[% pluralize(pair.key, pair.value.size) | ucfirst %]: [% tag2linkAll(pair.value) %]<br>
-	[% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Expressed In" -%]
-	[% IF fields.expressed_in.data.life_stages.size %]
-		Life stages: [% tag2linkAll(fields.expressed_in.data.life_stages) %]
-	[% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Anatomy Ontology" -%]
-	[% FOREACH item IN fields.anatomy_ontology.data %]
-		[% tag2link(item.anatomy_term) %] : [% item.location %] : [% item.definition %]<br>
-	[% END %]
-[% END %]
-
 [% WRAPPER $field_block title="Experimental Details" -%]
 	[% details = fields.experimental_details.data # alias %]
 	[% FOREACH technique IN details.types %]
-		[% technique.0 %] assay: [% technique.1 %]<br>
+		[% technique.0.replace('_',' ') %] assay: [% technique.1 %]<br>
 	[% END %]
 	[% IF details.antibody_infos %]
 		[% pluralize("Antibody", details.antibody_infos.size) %]
@@ -44,3 +26,30 @@
 		Date: [% details.date %]
 	[% END %]
 [% END %]
+
+[% WRAPPER $field_block title="Expressed By" -%]
+	[% FOREACH type IN fields.expressed_by.data.sort %]
+       [% typelabel = type.replace('_', ' ') FILTER ucfirst %]
+       [% WRAPPER $field_block title=pluralize(typelabel, fields.expressed_by.data.$type.size) key='' %]
+          [% tag2linkAll(fields.expressed_by.data.$type) %]<br>
+       [% END %]
+	[% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Expressed In" key='expressed_in' -%]
+   [% FOREACH type IN fields.expressed_in.data.sort %]
+      [% typelabel = type.replace('_', ' ') FILTER ucfirst %]
+      [% WRAPPER $field_block title=pluralize(typelabel, fields.expressed_in.data.$type.size) key='' %]
+         [% tag2linkAll(fields.expressed_in.data.$type) %]
+      [% END %]
+   [% END %]
+[% END %]
+
+[% WRAPPER $field_block title="Anatomical Features" key='anatomy_ontology'-%]
+   [% result = [] %]
+	[% FOREACH item IN fields.anatomy_ontology.data %]
+		[% result.push(tag2link(item.anatomy_term)) %]
+	[% END %]
+    [% result.join(', ') %]
+[% END %]
+
