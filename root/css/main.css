@@ -447,17 +447,6 @@ li.visible div.widget-container {
 }
 
 
-.button{
-  float:right;
-  border:1px solid #BBB;
-  background:#EEE;
-}
-
-.button:hover, .button.selected{
-  background:#BBB;
-  border:1px solid #BBB;
-}
-
 
 #widget-footer a {
   height:1.2em;
@@ -767,14 +756,7 @@ div.downloadable-formats {
     font-size:0.9em;    
 }
 
-/* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
 
-div.title {
-    padding:0.5em 1em 0.7em 0.5em;
-    margin:0;
-    border-bottom:0.5em solid #EEE;
-    position:relative;
-}
 
 div.columns {
   float:right;
@@ -1435,6 +1417,7 @@ div.detail-box div.field div.field-content{
 
 .bench-update {
   float:right;
+  margin-left:1em;
 }
 
 .disabled {
@@ -1615,20 +1598,37 @@ div.inline-columns img {
 
 
 
+.button span {
+  float:left;
+}
 
 
+.button{
+  float:right;
+  border:1px solid #BBB;
+  background:#EEE;
+}
 
+.button:hover, .button.selected{
+  background:#BBB;
+  border:1px solid #BBB;
+}
 
+/* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
 
+div.title {
+    padding:0.5em 1em 0.7em 0.5em;
+    margin:0;
+    border-bottom:0.5em solid #EEE;
+    position:relative;
+}
 
 .title #buttons {
-/*   float:right; */
-  width:310px;
-/*   border:1px solid red; */
+  width:200px;
   position: absolute;
-  font-size: 0.8em;
-  bottom:2.5em;
-  right:1em;
+  font-size: 0.9em;
+  bottom:1em;
+  right:1.5em;
 }
 
 .title #buttons .button{

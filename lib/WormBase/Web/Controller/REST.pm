@@ -420,6 +420,7 @@ sub feed_GET {
 
     my $url = $c->req->params->{url};
     my $page = $c->model('Schema::Page')->find({url=>$url});
+$c->log->debug("page: " . $page . ", url:" . $url);
     $c->stash->{url} = $url;
 
 
@@ -432,10 +433,10 @@ sub feed_GET {
       $c->stash->{comments} = \@comments if(@comments);  
     }elsif($type eq "issue"){
       my @issues;
-      if( $page) {
+      if($page) {
         @issues = $page->issues;
       }else {
-        @issues= $c->user->issues;
+        @issues= $c->user->issues if $c->user;
       }
       if($c->req->params->{count}){
         $c->response->body(scalar(@issues));
