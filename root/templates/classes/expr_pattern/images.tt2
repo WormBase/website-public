@@ -5,12 +5,15 @@
 $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
 </script>
 
+<pre>[%# USE dumper; dumper.dump(fields.curated_images.data) %]</pre>
 [% IF fields.curated_images.data %]	
    [% FOREACH img IN fields.curated_images.data %]
    <div style="display:inline-block;max-width:200px;margin:1em;">
-   	  <a class="picturebox" rel="curated_images1" href="/rest/widget/picture/[% img.id %]/lightbox">
-	  <img src="/draw/[% img.format %]?class=[% img.class %]&id=[% img.name %]_200"
-           style="max-width:100%;margin:auto;display:block;"></a><br>
+      
+   	  <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox">
+	  <img src="/draw/[% img.draw.format | uri %]?class=[% img.draw.class | uri %]&id=[% img.draw.name | uri %]_200"
+           alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
+      <small>
       [% IF img.source %]
          [% IF img.source.link %]
             [% external_link(img.source.link, img.source.text) %]
@@ -21,9 +24,11 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
          [% tag2link(img.reference) %]
       [% ELSE %]
          No reference data.
-      [% END %]<br>
+      [% END %]
+      </small>
    </div>
    [% END %]
 [% ELSE %]
    No curated images available.
 [% END %]
+
