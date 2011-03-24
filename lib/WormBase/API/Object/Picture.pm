@@ -5,6 +5,24 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Picture
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Picture class.
+
+=head1 URL
+
+http://wormbase.org/resources/picture
+
+=head1 METHODS/URIs
+
+=cut
+
 has 'reference' => (
     is         => 'ro',
     lazy_build => 1,
@@ -33,32 +51,6 @@ sub _build_contact {
 	};
 }
 
-=pod 
-
-=head1 NAME
-
-WormBase::API::Object::Picture
-
-=head1 SYNPOSIS
-
-Model for the Ace ?Picture class.
-
-=head1 URL
-
-http://wormbase.org/resources/picture
-
-=head1 METHODS/URIs
-
-=cut
-
-# sub name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include name >>
-
-# sub description { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
-
 sub _build__common_name {
     my ($self) = @_;
 
@@ -76,6 +68,64 @@ sub _build__common_name {
     return $name // $self->object->name;
 }
 
+# sub name { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# sub description { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include description >>
+
+=head3 cropped_from
+
+Returns a datapack containing the picture (parent) that the picture is cropped from.
+
+=over
+
+=item PERL API
+
+ $data = $model->cropped_from();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/cropped_from
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub cropped_from {
 	my ($self) = @_;
 
@@ -84,6 +134,56 @@ sub cropped_from {
 		data		=> $self->_pack_obj($self ~~ 'Cropped_from'),
 	};
 }
+
+=head3 cropped_pictures
+
+Returns a datapack containing pictures cropped from the [parent] picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->cropped_pictures();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/cropped_pictures
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub cropped_pictures {
 	my ($self) = @_;
@@ -94,6 +194,61 @@ sub cropped_pictures {
 		data        => %$data ? $data : undef,
 	};
 }
+
+=head3 image
+
+Returns a datapack containing information related to rendering the image via "/draw"
+
+=over
+
+=item PERL API
+
+ $data = $model->image();
+
+B<Usage Example>
+
+ ($format, $class, $name) = ($data->{format}, $data->{class}, $data->{$name});
+ $image_url = "http://www.wormbase.org/draw/$format?class=$class&id=$name"
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/image
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub image {
 	my ($self) = @_;
@@ -124,6 +279,56 @@ sub image {
     return $datapack;
 }
 
+=head3 external_source
+
+Returns a datapack containing the acknowledgement (i.e. source of picture) data.
+
+=over
+
+=item PERL API
+
+ $data = $model->external_source();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/external_source
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub external_source {
     my ($self) = @_;
     my $obj    = $self->object;
@@ -153,6 +358,56 @@ sub external_source {
     };
 }
 
+=head3 go_terms
+
+Returns a datapack containing the GO terms depicted in the picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->go_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/go_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
@@ -171,6 +426,56 @@ sub go_terms {
         data        => %$go_terms ? $go_terms : undef,
     };
 }
+
+=head3 anatomy_terms
+
+Returns a datapack containing the anatomy terms depicted in the picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/anatomy_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub anatomy_terms {
     my ($self) = @_;
