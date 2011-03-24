@@ -43,6 +43,8 @@
           c.uri_for('/species', taxonomy,class, id);
         ELSIF (class == 'bench');
           c.uri_for('/me', id);
+        # ELSIF (class == 'picture');
+        #   c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
         ELSE;
           c.uri_for('/resources', class, id);
         END;
