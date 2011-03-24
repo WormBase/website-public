@@ -1283,7 +1283,7 @@ sub _pack_objects {
 
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
-    return unless $object;
+    return undef unless $object; # this method shouldn't expect a list.
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
