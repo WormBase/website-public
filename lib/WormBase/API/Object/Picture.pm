@@ -29,10 +29,9 @@ sub _build_contact {
 
 	return {
 		description => 'Who to contact about this picture',
-		data		=> $self->_pack_obj($self ~~ 'Reference'),
+		data		=> $self->_pack_obj($self ~~ 'Contact'),
 	};
 }
-
 
 =pod 
 
@@ -60,6 +59,22 @@ http://wormbase.org/resources/picture
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
+sub _build__common_name {
+    my ($self) = @_;
+
+    my $name;
+    if (my $expr_patterns = $self->expression_patterns->{data}) {
+        if (@$expr_patterns > 1) { # according to curator, this won't happen...
+            $name = "Picture depicting multiple expression patterns";
+        }
+        else { # should be 1 item
+            my $exprname = $expr_patterns->[0]->{expression_pattern}->{label};
+            $name = "Picture depicting $exprname";
+        }
+    }
+
+    return $name // $self->object->name;
+}
 
 sub cropped_from {
 	my ($self) = @_;
@@ -88,20 +103,20 @@ sub image {
         data        => undef,
     };
 
-    my $reference = $self->reference->{data};
-    my $contact   = $self->contact->{data};
-    return $datapack unless $reference || $contact;
+    my $reference = $self->reference->{data} || $self->contact->{data}
+        or return $datapack;
+    $reference = $reference->{id}; # we only need the id;
 
-    my $filename = $self ~~ 'Name';
-    return $datapack unless $filename;
+    my $filename = $self ~~ 'Name'
+        or return $datapack;
 
     my $file = $self->pre_compile->{picture} . '/'
-             . $reference->{id} || $contact->{id} . '/' . $filename;
+             . $reference. '/' . $filename;
     return $datapack unless -e $file && !-z $file;
 
     $filename =~ /^(.+)\.(.+)$/ or return $datapack; # greedy . will match 'a.b.c.jpg' properly
     $datapack->{data} = {
-        name   => $1 || $self->object->name,
+        name   => $reference . '/' . $1 || $self->object->name,
         format => $2 || '',
         class  => 'picture',
     };
@@ -142,16 +157,9 @@ sub external_source {
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-sub expression_patterns {
-    my ($self) = @_;
-
-    my $expr_patterns = $self->_pack_objects($self ~~ '@Expr_pattern');
-
-    return {
-        description => 'Expression pattern(s) that this picture depicts',
-        data        => %$expr_patterns ? $expr_patterns : undef,
-    };
-}
+# sub expression_patterns { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include expression_patterns >>
 
 sub go_terms {
     my ($self) = @_;

@@ -520,7 +520,20 @@ B<Response example>
 sub curated_images {
 	my ($self) = @_;
 
-	my @data = grep defined, map {$_->image->{data}} $self->_wrap(@{$self ~~ '@Picture'});
+    my @data;
+    foreach my $pic ($self->_wrap(@{$self ~~ '@Picture'})) {
+        my $img_data = $pic->image->{data};
+        next unless $img_data;
+
+        my $src_data = $pic->external_source->{data};
+        my $id = $pic->object->name;
+
+        push @data, {
+            id     => $id,
+            draw   => $img_data,
+            source => $src_data,
+        };
+    }
 
 	return {
 		description => 'Curated images of the expression pattern',
