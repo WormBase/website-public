@@ -19,12 +19,6 @@ END
    [% result.join('<br>') %]
 [% END %]
 
-<style type="text/css">
-div#picture-right-column .field {
-   clear : none;
-}
-</style>
-
 [%
    img = fields.image.data 
    img_loc = '/draw/' _ img.format _ '?class=' _ img.class _ '&id=' _ img.name
@@ -68,6 +62,7 @@ div#picture-right-column .field {
 [% END %]
 </p>
 
+<div style="float:left;">
 [% WRAPPER $field_block title='Depicts' key='' #key='expression_patterns,anatomy_terms,go_terms' key_support=1 %]
    [% WRAPPER $field_block title=pluralize('Expression pattern', fields.expression_patterns.data.size), key='expression_patterns' %]
       [% results = [] %]
@@ -92,6 +87,7 @@ div#picture-right-column .field {
 [% WRAPPER $field_block title='Contact' key='contact'-%]
    [% tag2link(fields.contact.data) %]
 [% END %]
+</div>
 </div>
 
 
