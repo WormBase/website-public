@@ -517,21 +517,23 @@ B<Response example>
 
 =cut
 
-sub curated_images {
+sub curated_images { # Caveat: this is very tightly coupled with the Picture model
 	my ($self) = @_;
 
     my @data;
     foreach my $pic ($self->_wrap(@{$self ~~ '@Picture'})) {
-        my $img_data = $pic->image->{data};
+        my $img_data = $pic->image->{data}; # can't render the image if there is no file!
         next unless $img_data;
 
-        my $src_data = $pic->external_source->{data};
-        my $id = $pic->object->name;
+        my $id          = $pic->object->name;
+        my $extsrc_data = $pic->external_source->{data};
+        my $src_data    = $pic->reference->{data} || $pic->contact->{data};
 
         push @data, {
-            id     => $id,
-            draw   => $img_data,
-            source => $src_data,
+            id              => $id,
+            draw            => $img_data,
+            external_source => $extsrc_data,
+            source          => $src_data,
         };
     }
 

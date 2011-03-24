@@ -243,6 +243,25 @@ MACRO select_widget_template(widget,class) BLOCK;
      END;
 END;
 
+     MACRO cite_image(extsrc,src) BLOCK;
+           RETURN UNLESS extsrc || src;
+           '<small>';
+           IF extsrc;
+              IF extsrc.link;
+                 external_link(extsrc.link, extsrc.text);
+              ELSE;
+                 extsrc.text;
+              END;
+           ELSIF src;
+              IF src.class != 'Paper'; # this is from a person
+                 'Courtesy of ';
+              END;
+              tag2link(src);
+           ELSE;
+              'No reference data.';
+           END;
+           '</small>';
+     END;
 
    # load up any other configuration items 
    PROCESS config/col

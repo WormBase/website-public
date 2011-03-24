@@ -2,10 +2,9 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 <script type="text/javascript">
-$jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
+$jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.4"});
 </script>
 
-<pre>[%# USE dumper; dumper.dump(fields.curated_images.data) %]</pre>
 [% IF fields.curated_images.data %]	
    [% FOREACH img IN fields.curated_images.data %]
    <div style="display:inline-block;max-width:200px;margin:1em;">
@@ -13,19 +12,7 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%"});
    	  <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox">
 	  <img src="/draw/[% img.draw.format | uri %]?class=[% img.draw.class | uri %]&id=[% img.draw.name | uri %]_200"
            alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
-      <small>
-      [% IF img.source %]
-         [% IF img.source.link %]
-            [% external_link(img.source.link, img.source.text) %]
-         [% ELSE %]
-            [% img.source.text %]
-         [% END %]
-      [% ELSIF img.reference %]
-         [% tag2link(img.reference) %]
-      [% ELSE %]
-         No reference data.
-      [% END %]
-      </small>
+      [% cite_image(img.external_source, img.source) %]
    </div>
    [% END %]
 [% ELSE %]
