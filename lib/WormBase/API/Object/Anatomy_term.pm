@@ -329,7 +329,7 @@ sub expression_clusters {
         push @data_pack,
           {
             'ec_data'     => $ec_data,
-            'description' => $ec_description
+            'description' => "$ec_description"
           };
     }
     return {
