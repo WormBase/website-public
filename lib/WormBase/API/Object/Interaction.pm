@@ -27,6 +27,7 @@ has 'effector' => (
     lazy    => 1,
     default => sub {
         my $self = shift;
+        my $object = $self->object;
         my @effectors;
         eval { @effectors = $self->interaction_type->Effector->col; };
         return \@effectors;
@@ -38,26 +39,28 @@ has 'effected' => (
     lazy    => 1,
     default => sub {
         my $self = shift;
+        my $object = $self->object;
         my @effecteds;
-        eval { @effecteds = $self->interaction_type->Effected->col; };
+        eval { @effecteds = $object->interaction_type->Effected->col; };
         return \@effecteds;
     }
 );
 
-has 'non_directional_interactors' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my @non_directional_interactors;
-        eval {
-
-            @non_directional_interactors =
-              $self->interaction_type->Non_directional->col;
-        };
-        return \@non_directional_interactors;
-    }
-);
+# has 'non_directional_interactors' => (
+#     is      => 'ro',
+#     lazy    => 1,
+#     default => sub {
+#         my $self = shift;
+#         my $object = $self->object;
+#         my $it = $object->interaction_type;
+#         my @non_directional_interactors;
+#         
+#         eval {@non_directional_interactors =
+#               $self->interaction_type->Non_directional->col;
+#         };
+#         return \@non_directional_interactors;
+#     }
+# );
 
 #######################################
 #
@@ -194,18 +197,18 @@ sub interaction_type {
     my $type   = $object->Interaction_type;
     my %interaction_info;
 
-    $interaction_info{'effector'} = $self->_pack_obj( $type->Effector )
-      if $type->Effector;
-    $interaction_info{'effected'} = $self->_pack_obj( $type->Effected )
-      if $type->Effected;
-    if ( $type->Non_directional ) {
-        my @genes = map { $self->_pack_obj($_) } $type->Non_directional;
-        $interaction_info{'non_directional'} = \@genes;
-    }
+#     $interaction_info{'effector'} = $self->_pack_obj($type->Effector->col)
+#       if $type->Effector;
+#     $interaction_info{'effected'} = $self->_pack_obj( $type->Effected )
+#       if $type->Effected;
+#     if ( $type->Non_directional ) {
+#         my @genes = map { $self->_pack_obj($_) } $type->Non_directional;
+#         $interaction_info{'non_directional'} = \@genes;
+#     }
     return {
         description => 'The type of interaction.',
         data        => {
-            type             => "$type",
+            type             => $type,
             interaction_info => \%interaction_info,
         }
     };
@@ -520,16 +523,16 @@ B<Response example>
 
 =cut 
 
-sub non_directional_data {
-    my $self      = shift;
-    my $data_pack = $self->_interactor_data('non_directional');
-
-    return {
-        data => $data_pack,
-        description =>
-          'data on the non_directional components of the interaction'
-    };
-}
+# sub non_directional_data {
+#     my $self      = shift;
+#     my $data_pack = $self->_interactor_data('non_directional');
+# 
+#     return {
+#         data => $data_pack,
+#         description =>
+#           'data on the non_directional components of the interaction'
+#     };
+# }
 
 #######################################
 #

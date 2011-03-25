@@ -2,22 +2,28 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% WRAPPER $field_block title="effector_data" key="effector_data" -%] 
-	[% FOREACH data IN fields.effector_data.data %]
-		[% tag2link(data.gene)  %]<br>
-	[% END %] 
-[% END %]
+[% # WRAPPER $field_block title="effector_data" key="effector_data" -%] 
+	[% #FOREACH data IN fields.effector_data.data %]
+		[% #tag2link(data.gene) %]<br>
+	[% #END %] 
+[% #END %]
+
+[% #WRAPPER $field_block title="effected_data" key="effected_data" -%] 
+	[% #FOREACH data IN fields.effected_data.data %]
+		[% #tag2link(data.gene)  %]<br>
+	[% #END %] 
+[% #END %]
 
 [% WRAPPER $field_block title="interaction_type" key="interaction_type"-%] 
-	[% fields.interaction_type.data %]
+	[% fields.interaction_type.data.type %]
 [% END %]
 
 
-[% WRAPPER $field_block title="non_directional_data" key="non_directional_data" -%] 
-	[% FOREACH data IN fields.non_directional_data.data %]
-		[% tag2link(data.gene) %]<br>
-	[% END %] 
-[% END %]
+[%#WRAPPER $field_block title="non_directional_data" key="non_directional_data" -%] 
+	[% #FOREACH data IN fields.non_directional_data.data %]
+		[%# tag2link(data.gene) %]<br>
+	[%# END %] 
+[%# END %]
 
 [% WRAPPER $field_block title="phenotype" key="phenotype" -%] 
 	[% tag2link(fields.phenotype.data) %]
@@ -29,6 +35,6 @@
 	[% END %] 
 [% END %]
 
-[% WRAPPER $field_block title="rnai" key="rnau" -%] 
+[% WRAPPER $field_block title="rnai" key="rnai" -%] 
 	[% tag2link(fields.rnai.data) %]
 [% END %]
