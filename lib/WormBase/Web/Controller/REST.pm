@@ -916,7 +916,14 @@ sub _get_search_result {
     my $id = $parts[-1];
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
-    return $api->xapian->_wrap_objs($c, $obj, $class, $footer);
+#     return $api->xapian->_wrap_objs($c, $obj, $class, $footer);
+
+    my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
+    unless (defined $ret{name}) {
+      $ret{name}{id} = $id;
+      $ret{name}{class} = $class;
+    }
+    return \%ret;
   }
 
   return { 'name' => {  url => $page->url, 
