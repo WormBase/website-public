@@ -908,7 +908,7 @@ sub _variation {
 	{
             variation => $tag_info,
             #gene      => $gene_info,
-            type      => $tag_object->Variation_type,
+            type      => "$variation_type",
             species   => $species_info
 	};
     }
