@@ -19,101 +19,271 @@
 	[% fields.type.data %]
 [% END %]
 
-[% WRAPPER $field_block title="genes"-%] 
-            [% FOREACH g IN fields.genes.data %]
-            [% tag2link(g.gene) %]<br>
-            [% END %]            
-   [% END %]  
+[% # WRAPPER $field_block title="genes"-%] 
+            [% # FOREACH g IN fields.genes.data %]
+            [% # tag2link(g.gene) %]<br>
+            [% # END %]            
+   [% # END %]  
 
+[% genes %]
 
-[%  WRAPPER $field_block title="genes and cds"-%] 
-	[%  FOREACH g IN fields.genes_n_cds.data %]
-		[%  tag2link(g.gene_info) %]<br>
-	[%  END %]                    
-[%  END %]
+	[% build_data_table (
+		order = [ 
+			'gene',
+			'evidence_code'
+			'evidence_details'
+			],
+		columns = {				 		
+			gene => 'Gene',
+			evidence_code => 'Evidence Code'
+			evidence_details => 'Evidence Details'
+			},
+		key = 'genes',
+		title = 'Genes'	
+		)
+	%]
+
+[% # WRAPPER $field_block title="genes and cds"-%] 
+	[% # FOREACH g IN fields.genes_n_cds.data %]
+		[% # tag2link(g.gene_info) %]<br>
+	[% # END %]                    
+[% # END %]
  
-[%## genes_n_cds %] 
 
-	[%## build_data_table (
+
+[% genes_n_cds %] 
+
+	[% build_data_table (
 		order = [ 
 			'gene_info',
+			'cgc_name',
+			'seq'
 			'description',
 			'evidence_code'
+			'evidence_details'
 			],
 		columns = {				 		
 			gene_info => 'Gene',
+			cgc_name => 'CGC Name',
+			seq => 'Sequence'
 			description => 'Description',
 			evidence_code => 'Evidence Code'
+			evidence_details => 'Evidence Details'
 			},
 		key = 'genes_n_cds',
 		title = 'Genes and CDS'	
 		)
 	%]
  
- [%##  		
- 			'cgc_name',
-			'seq', 
+ 
+ 
+ [%# WRAPPER $field_block title="cds"-%] 
+	[% # FOREACH g IN fields.cds.data %]
+		[%#  tag2link(g.gene) %]<br>
+	[% # END %]                    
+[% # END %]
+
+
+[% cds %]
+
+	[% build_data_table (
+		order = [ 
+			'gene',
+			'evidence_code'
 			'evidence_details'
-
-			cgc_name => 'CGC Name',
-			seq => 'Sequence',						
+			],
+		columns = {				 		
+			gene => 'Gene',
+			evidence_code => 'Evidence Code'
 			evidence_details => 'Evidence Details'
-%]
- 
- 
- [% WRAPPER $field_block title="cds"-%] 
-	[%  FOREACH g IN fields.cds.data %]
-		[%  tag2link(g.gene) %]<br>
-	[%  END %]                    
-[%  END %]
- 
-[% WRAPPER $field_block title="sequence" key="sequence" -%] 
-	[% FOREACH data IN fields.sequence.data %]
-		[% tag2link(data.data) %]<br>
-	[% END %] 
-[% END %]
+			},
+		key = 'cds',
+		title = 'CDS'	
+		)
+	%]
 
-[% WRAPPER $field_block title="anatomy_term" key="anatomy_term" -%] 
-	[% FOREACH data IN fields.anatomy_term.data %]
-		[% tag2link(data.data) %]<br>
-	[%  END %] 
-[% END %]
+[% # WRAPPER $field_block title="phenotype" key="phenotype" -%] 
+	[% # FOREACH data IN fields.phenotype.data %]
+		[% # tag2link(data.phenotype_info)  %]<br>
+	[% # END %] 
+[% # END %]
 
-[% WRAPPER $field_block title="transcript" key="transcript" -%] 
-	[% FOREACH data IN fields.transcript.data %]
-		[% tag2link(data.data) %]<br>
-	[% END %] 
-[% END %]
 
-[% WRAPPER $field_block title="pseudogene" key="pseudogene" -%] 
-	[% FOREACH data IN fields.pseudogene.data %]
-		[%  tag2link(data.data) %]<br>
-	[% END %] 
-[% END %]
+[% # phenotype %]
 
-[% WRAPPER $field_block title="homology_group" key="homology_group" -%] 
-	[%# FOREACH data IN fields.homology_group.data %]
-		[% tag2link(data.data) %]<br>
-	[%# END %] 
-[% END %]
+	[% build_data_table (
+		order = [ 
+			'phenotype_info',
+			#'description'
+			#,
+			#'evidence_code', 
+			#'evidence_details'
+			],
+		columns = {				 		
+			phenotype_info => 'Phenotype',
+			#description => 'Description'
+			#,
+			#evidence_code => 'Evidence Code',
+			#evidence_details => 'Evidence Details'
+			},
+		key = 'phenotype',
+		title = 'Phenotype'	
+		)
+	%]
 
-[% WRAPPER $field_block title="phenotype" key="phenotype" -%] 
-	[% FOREACH data IN fields.phenotype.data %]
-		[% tag2link(data.phenotype_info)  %]<br>
-	[% END %] 
-[% END %]
 
-[% WRAPPER $field_block title="cell" key="cell" -%] 
-	[%# FOREACH data IN fields.cell.data %]
-		[% # tag2link(data.data) %]<br>
-	[%# END %] 
-[% END %]
 
-[% WRAPPER $field_block title="motif" key="motif" -%] 
-	[% FOREACH data IN fields.motif.data %]
-		[% tag2link(data.motif_info)%]<br>
-	[% END %] 
-[% END %]
+[% # sequence %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Sequence',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'sequence',
+		title = 'Sequence'	
+		)
+	%]
+
+
+
+
+[% # anatomy_term %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Term',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'anatomy_term',
+		title = 'Anatomy Term'	
+		)
+	%]
+
+
+
+[% # transcript %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Transcript',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'transcript',
+		title = 'Transcript'	
+		)
+	%]
+
+
+
+[% # pseudogene %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Pseudogene',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'pseudogene',
+		title = 'Pseudogene'	
+		)
+	%]
+
+
+[% # homology_group %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Homology Group',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'homology_group',
+		title = 'Homology Group'	
+		)
+	%]
+
+
+[% # cell %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Cell',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'cell',
+		title = 'Cell'	
+		)
+	%]
+
+
+
+
+[% # motif %]
+
+	[% build_data_table (
+		order = [ 
+			'motif_info',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			motif_info => 'Motif',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'motif',
+		title = 'Motif'	
+		)
+	%]
 
 
 

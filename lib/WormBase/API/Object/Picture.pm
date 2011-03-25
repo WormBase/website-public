@@ -5,16 +5,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-has '_reference' => ( # single reference or undef
-    is => 'ro',
-    lazy_build => 1,
-);
-
-sub _build__reference {
-    my ($self) = @_;
-    return $self ~~ 'Reference';
-}
-
 =pod 
 
 =head1 NAME
@@ -33,15 +23,50 @@ http://wormbase.org/resources/picture
 
 =cut
 
-#######################################
-#
-# The Overview Widget
-#
-#######################################
+has 'reference' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
 
-=head2 Overview
+sub _build_reference {
+	my ($self) = @_;
 
-=cut
+	return {
+		description => 'Paper that this picture belongs to',
+		data		=> $self->_pack_obj($self ~~ 'Reference'),
+	};
+}
+
+has 'contact' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_contact {
+	my ($self) = @_;
+
+	return {
+		description => 'Who to contact about this picture',
+		data		=> $self->_pack_obj($self ~~ 'Contact'),
+	};
+}
+
+sub _build__common_name {
+    my ($self) = @_;
+
+    my $name;
+    if (my $expr_patterns = $self->expression_patterns->{data}) {
+        if (@$expr_patterns > 1) { # according to curator, this won't happen...
+            $name = "Picture depicting multiple expression patterns";
+        }
+        else { # should be 1 item
+            my $exprname = $expr_patterns->[0]->{expression_pattern}->{label};
+            $name = "Picture depicting $exprname";
+        }
+    }
+
+    return $name // $self->object->name;
+}
 
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -51,142 +76,345 @@ http://wormbase.org/resources/picture
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
+=head3 cropped_from
+
+Returns a datapack containing the picture (parent) that the picture is cropped from.
+
+=over
+
+=item PERL API
+
+ $data = $model->cropped_from();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/cropped_from
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub cropped_from {
 	my ($self) = @_;
 
-    my $pic = $self ~~ 'Cropped_from';
 	return {
 		description => 'Picture that this picture was cropped from',
-		data		=> $pic && $self->_wrap($pic)->image->{data},
+		data		=> $self->_pack_obj($self ~~ 'Cropped_from'),
 	};
 }
+
+=head3 cropped_pictures
+
+Returns a datapack containing pictures cropped from the [parent] picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->cropped_pictures();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/cropped_pictures
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 sub cropped_pictures {
 	my ($self) = @_;
 
-    my %data = map {$_ => $self->_wrap($_)->image->{data}} @{$self ~~ '@Crop_picture'};
+    my $data = $self->_pack_objects($self ~~ '@Crop_picture');
 	return {
 		description => 'Picture(s) that were cropped from this picture',
-		data        => %data ? \%data : undef,
+		data        => %$data ? $data : undef,
 	};
 }
 
-sub pick_me_to_call {
+=head3 image
+
+Returns a datapack containing information related to rendering the image via "/draw"
+
+=over
+
+=item PERL API
+
+ $data = $model->image();
+
+B<Usage Example>
+
+ ($format, $class, $name) = ($data->{format}, $data->{class}, $data->{$name});
+ $image_url = "http://www.wormbase.org/draw/$format?class=$class&id=$name"
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/image
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub image {
 	my ($self) = @_;
-	# not sure what this field is...
-	my $data;
-	if (my $node = $self ~~ 'Pick_me_to_call') {
-		$data = join ':', $node->row;
-	}
 
-	return {
-		description => 'Unknown',
-		data		=> $data,
-	};
+	my $datapack = {
+        description => 'Information pertaining to the underlying image of the picture',
+        data        => undef,
+    };
+
+    my $reference = $self->reference->{data} || $self->contact->{data}
+        or return $datapack;
+    $reference = $reference->{id}; # we only need the id;
+
+    my $filename = $self ~~ 'Name'
+        or return $datapack;
+
+    my $file = $self->pre_compile->{picture} . '/'
+             . $reference. '/' . $filename;
+    return $datapack unless -e $file && !-z $file;
+
+    $filename =~ /^(.+)\.(.+)$/ or return $datapack; # greedy . will match 'a.b.c.jpg' properly
+    $datapack->{data} = {
+        name   => $reference . '/' . $1 || $self->object->name,
+        format => $2 || '',
+        class  => 'picture',
+    };
+
+    return $datapack;
 }
 
-sub image { # this is too bulky...
-	my ($self) = @_;
-	my $obj = $self->object;
+=head3 external_source
 
-	# The following was lifted from the Expr_pattern model;
-	# however, there is no such equivalent data yet. There is an
-	# equivalent, currently unpopulated Remark field in Picture.
-	# Keep an eye out for that.
-	#
-	#	my $class = $self ~~ 'Remark' =~ /chronogram/ ?
-	#	  'expr_pattern_localizome' : 'expr_pattern';
+Returns a datapack containing the acknowledgement (i.e. source of picture) data.
 
-	my $data;
+=over
 
-    my ($file, $filename, $reference, $class);
-    if ($filename = $self ~~ 'Name' and $reference = $self->_reference) {
-        $class     = 'new_images'; # temporary for transition to new pictures
-        $file      = $self->pre_compile->{new_images} . '/' . $reference . '/' . $filename;
-    }
-    else { # legacy support
-        $filename = "$obj"; # the filename in this case is the same as the object name
-        foreach (qw(expr_pattern_localizome expr_pattern)) {
-            $class = $_;
-            # TODO: the following (and pre_compile statement above) are fairly low
-            #       level and shouldn't be dealt with in these models...
-            #       it should be abstracted elsewhere... perhaps a role
-            #       which may also remove the need to wrap Picture objects
-            $file = $self->pre_compile->{$class} . '/' . $filename;
-            last if -e $file && !-z $file;
+=item PERL API
+
+ $data = $model->external_source();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/external_source
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub external_source {
+    my ($self) = @_;
+    my $obj    = $self->object;
+
+    my $source;
+    if (my $label = $self ~~ 'Template') {
+        $label =~ s/\<([^>]+)\>/$obj->$1/ge; # Ace caches stuff...?
+
+        my $link;
+        if (my ($article_URL) = $obj->Article_URL) {
+            my ($db, $field, $accessor) = $article_URL->row;
+            $link = $db->URL_constructor;
+            $link =~ s/%S/$accessor/g if $accessor; # is this always the case? %S?
+            # one would imagine $link = sprintf($link, $accessor);
         }
+
+        # it's possible to not have a link, but still label the source
+        $source = $label && {
+            text => $label,
+            link => $link,
+        };
     }
 
-
-    my ($namepart, $format, $source);
-    if (-e $file && !-z $file) {
-        $filename =~ /^(.+)\.(.+)$/; # will match names like a.b.c.jpg properly due to greediness
-        ($namepart, $format) = ($1 || $obj.'', $2 || '');
-
-        if ($class eq 'new_images') {
-            $namepart = "$reference/$namepart";
-
-            if (my $label = $self ~~ 'Template') {
-                $label =~ s/\<([^>]+)\>/$self ~~ $1/ge; # assume Ace caches stuff
-                # # the following would be used instead if caching is required
-                # my %cache;
-                # $label =~ s| \<([^>]+)\>                                # look for <tag>
-                #            | unless ($cache{$1}) {                      # check for cached value
-                #                my ($tmp) = $obj->$1; $cache{$1} = $tmp; # cache value (don't step in!)
-                #              };
-                #              eval{$cache{$1}->Name} // $cache{$1}
-                #            |gex;                                        # replaces <tag> with tag value
-
-                my $link;
-                if (my ($article_URL) = $obj->Article_URL) {
-                    my ($db, $field, $accessor) = $article_URL->row;
-                    $accessor //= ''; # don't want to sub with undef
-                    $link = $db->URL_constructor;
-                    # one would imagine the following, but...
-                    # $link = sprintf($link, $accessor);
-                    $link =~ s/%S/$accessor/g; # is this always the case? %S?
-                }
-
-                # it's possible to not have a link, but still label the source
-                $source = $label && {
-                    text => $label,
-                    link => $link,
-                };
-            }
-        }
-    }
-
-    # could use _pack_obj, but Papers handle labelling differently
-    $reference = $self->_wrap($reference)->name->{data} if $reference;
-	return {
-		description => 'Information pertaining to underlying image of picture',
-		data		=> $namepart && {
-            id		  => "$obj",               # internal object identifier
-            name	  => $namepart,            # used by /draw as identifier...
-            class	  => $class,               # what kind of picture
-            format	  => $format,              # what format of image (for /draw)
-            reference => $reference,           # from which paper
-            source    => $source,              # source of picture
-        },
-	};
+    return {
+        description => 'Information to link to the source of this picture',
+        data        => $source,
+    };
 }
 
+=head3 go_terms
+
+Returns a datapack containing the GO terms depicted in the picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->go_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/go_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-sub expression_patterns {
-    my ($self) = @_;
-
-    my $expr_patterns = $self->_pack_objects($self ~~ '@Expr_pattern');
-
-    return {
-        description => 'Expression pattern(s) that this picture depicts',
-        data        => %$expr_patterns ? $expr_patterns : undef,
-    };
-}
+# sub expression_patterns { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include expression_patterns >>
 
 sub go_terms {
     my ($self) = @_;
@@ -199,6 +427,56 @@ sub go_terms {
     };
 }
 
+=head3 anatomy_terms
+
+Returns a datapack containing the anatomy terms depicted in the picture.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Picture ID (eg WBPicture0000007416)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/picture/WBPicture0000007416/anatomy_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub anatomy_terms {
     my ($self) = @_;
 
@@ -208,39 +486,6 @@ sub anatomy_terms {
         description => 'Anatomy terms for this picture',
         data        => %$anatomy_terms ? $anatomy_terms : undef,
     };
-}
-
-# pending obsolescence for the 3 above
-sub depicts {
-	my ($self) = @_;
-	my %depictions; # a picture can depict more than one thing...
-    foreach my $depict_type (@{$self ~~ '@Depict'}) {
-        $depictions{$depict_type} = $self->_pack_objects([$depict_type->col]);
-    }
-
-	return {
-		description => 'What this picture depicts',
-		data		=> %depictions ? \%depictions : undef,
-	};
-}
-
-sub reference { # could this be multiple? (model allows it)
-	my ($self) = @_;
-
-	return {
-		description => 'Paper that this picture belongs to',
-		data		=> $self->_pack_obj($self->_reference),
-	};
-}
-
-sub contact {
-	my ($self) = @_;
-	my $contact = $self ~~ 'Contact';
-
-	return {
-		description => 'Who to contact about this picture',
-		data		=> $contact,
-	};
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -62,6 +62,19 @@ has xapian => (
     lazy_build      => 1,
     );
 
+# this is for the view (see /template/config/main)
+# it's a nasty hack. it simply reveals WormBase::API::ModelMap to the view
+# so that the maps can be accessed from there. this is heavily coupled
+# with the internals of ModelMap.
+has modelmap => (
+    is => 'ro',
+    lazy => 1,
+    required => 1,
+    default => sub {
+        return WormBase::API::ModelMap->new; # just a blessed scalar ref
+    },
+);
+
 has _tools => (
     is       => 'ro',
     lazy_build      => 1,
@@ -70,6 +83,7 @@ has _tools => (
 has tool => (
     is       => 'rw',
     );
+
 # this is here just for the testing script to load database configuration
 # may be removed or changed in furutre! 
 sub _build_database {
