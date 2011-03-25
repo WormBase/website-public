@@ -5,11 +5,13 @@
 	[% build_data_table (
 		order = [ 
 			'variation',
+			'gene'
 			'type', 
 			'species'
 			],
 		columns = {				 		
 			variation => 'Variation',
+			gene => 'Gene',
 			type => 'Type',
 			species => 'Species'
 			},
@@ -19,13 +21,15 @@
 	%]	
 	
 	[% build_data_table (
-		order = [
+		order = [ 
 			'variation',
+			'gene'
 			'type', 
 			'species'
 			],
 		columns = {				 		
 			variation => 'Variation',
+			gene => 'Gene',
 			type => 'Type',
 			species => 'Species'
 			},
