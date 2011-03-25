@@ -1225,7 +1225,7 @@ sub ace_dsn {
 
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
-    my ($self) = @_;
+    my $self = shift;
     my @sub_dirs = @_;
     my $path = File::Spec->catfile($self->tmp_base, @sub_dirs);
 
@@ -1234,7 +1234,7 @@ sub tmp_dir {
 }
 
 sub tmp_image_dir {
-    my ($self) = @_;
+    my $self = shift;
 
 # 2010.08.18: hostname no longer required in URI; tmp images stored in NFS mount
 # Include the hostname for images. Necessary for proxying and apache configuration.
@@ -1272,7 +1272,7 @@ sub tmp_image_uri {
 }
 
 sub tmp_acedata_dir {
-    my ($self) = @_;
+    my $self = shift;
     return $self->tmp_dir('acedata', @_);
 }
 
