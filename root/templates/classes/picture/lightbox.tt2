@@ -1,48 +1,59 @@
 [% # This generic statement belongs at the start of every template %]
-[% WRAPPER boilerplate/html # need the CSS %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+[% WRAPPER boilerplate/html # need the CSS %]
 
 [% MACRO img2link(img, label) BLOCK;
-   UNLESS label; label = img.id; END;
-   '<a href="/rest/widget/picture/' _ img.id _ '/lightbox">' _ label _ '</a>';
+   UNLESS label; label = img.label || img.id; END;
+   '<a href="';
+   c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox');
+   '" target="lightbox">';
+   label;
+   '</a>';
 END
 %]
-
 [% MACRO img2linkAll(img_hash) BLOCK %]
    [% result = [] %]
    [% FOREACH img_name IN img_hash.sort %]
-      [% result.push(img2link(img_hash.$img_name, img_name)) %]
+      [% result.push(img2link(img_hash.$img_name)) %]
    [% END %]
-   [% result.join(', ') %]
+   [% result.join('<br>') %]
 [% END %]
 
-[% 
+[%
    img = fields.image.data 
    img_loc = '/draw/' _ img.format _ '?class=' _ img.class _ '&id=' _ img.name
-   img_src = img_loc _ '&size=20'
+   img_src = img_loc _ '_600' # 600 thumbnail. img.name MUST be the last thing in img_loc
 %]
 
 <h1>[% fields.name.data.label %]</h1>
 
-<div style="float:left;width:35%;">
-<div>
-<a href="[% img_loc %]" target="_blank"><img src="[% img_src %]" style="max-width:100%"></a><br>
-<span style="font-size:small;">Click on the image to see the enlarged version.</span>
+<div id="picture-left-column" style="float:left;width:35%;max-width:35%;overflow:hidden;">
+    <a href="[% img_loc %]" target="_blank"><img src="[% img_src %]" style="max-width:100%"></a><br>
+    [% cite_image(fields.external_source.data, fields.reference.data) %]<br>
+    <small>Click on the image to see the original.</small>
+
+    [% IF fields.cropped_from.data %]
+       <div style="margin-top:1em;clear:both">
+       Cropped from [% img2link(fields.cropped_from.data) %]
+       [% #tag2link(fields.cropped_from.data) %]
+       </div>
+    [% END %]
+
+    [% IF fields.cropped_pictures.data %]
+       <div style="margin-top:1em;clear:both">
+       Cropped pictures:<br>
+          <div style="padding-left:0.5em;">
+          [% img2linkAll(fields.cropped_pictures.data).replace('Picture d', 'D') %]
+          [% #tag2linkAll(fields.cropped_pictures.data) 
+             # there is experimental support but currently can't make it target the lightbox %]
+          </div>
+       </div>
+    [% END %]
+
+    [% remarks %]
 </div>
 
-
-[% WRAPPER $field_block title='Cropped from' key='cropped_from'-%]
-   [% img2link(fields.cropped_from.data) %]
-[% END %]
-
-[% WRAPPER $field_block title='Cropped pictures' key='cropped_pictures'-%]
-   [% img2linkAll(fields.cropped_pictures.data) %]
-[% END %]
-
-[% remarks(no_toggle=1) %]
-
-</div>
-<div style="margin-left:40%;">
+<div id="picture-right-column" style="margin-left:40%;">
 <p>
 [% IF fields.description.data %]
    [% fields.description.data %]
@@ -51,24 +62,46 @@ END
 [% END %]
 </p>
 
-<b>Anatomical features</b>: Not implemented yet<br><br>
-
-<b>Depicts</b>:
-<ul>
-[% FOREACH type IN fields.depicts.data.sort %]
-   <li>[% pluralize(type, fields.depicts.data.$type.size) %]: [%tag2linkAll(fields.depicts.data.$type, 'iframe')%]</li>
+<div style="float:left;">
+[% WRAPPER $field_block title='Depicts' key='' #key='expression_patterns,anatomy_terms,go_terms' key_support=1 %]
+   [% WRAPPER $field_block title=pluralize('Expression pattern', fields.expression_patterns.data.size), key='expression_patterns' %]
+      [% results = [] %]
+      [% FOREACH expr IN fields.expression_patterns.data %]
+         [% expr_pattern = expr.expression_pattern %]
+         [% results.push(tag2link(expr_pattern)) %]
+      [% END %]
+      [% results.join(', ') %]
+   [% END %]
+   [% WRAPPER $field_block title=pluralize('Anatomical feature', fields.anatomy_terms.data.size), key='anatomy_terms' %]
+      [% tag2linkAll(fields.anatomy_terms.data) %]
+   [% END %]
+   [% WRAPPER $field_block title=pluralize('Cellular component', fields.go_terms.data.size), key='go_terms' %]
+      [% tag2linkAll(fields.go_terms.data) %]
+   [% END %]
 [% END %]
-</ul>
-
-</div>
 
 [% WRAPPER $field_block title='Publication' key='reference'-%]
-   [% tag2link(fields.reference.data, undef,undef,'iframe') %]
+   [% tag2link(fields.reference.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='contact' key='contact'-%]
-   [% fields.contact.data %]
+[% WRAPPER $field_block title='Contact' key='contact'-%]
+   [% tag2link(fields.contact.data) %]
 [% END %]
+</div>
+</div>
 
-[% END %]
+
+
+<script type="text/javascript">
+$jq('a:not([target])').click(function () {
+   parent.location=this.href; 
+   return false;
+});
+$jq('a:[target="lightbox"]').click(function () {
+   location=this.href;
+   return false;
+});
+</script>
+
+[% END # end of CSS boilerplate wrapper %]
 

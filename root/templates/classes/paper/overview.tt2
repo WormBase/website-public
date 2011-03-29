@@ -18,9 +18,7 @@
 
 <div class="detail-box ui-corner-all">
 	[% 
-	   classic_base = 'http://www.wormbase.org' # required for CiteULike paper identification
 	   url = get_url(fields.name.data.class, fields.name.data.id)
-	   classic_url = classic_base _ get_url(fields.name.data.class, fields.name.data.id, 1)
 	   title = fields.title.data
     %]
 	[% IF fields.pmid.data %]
@@ -34,7 +32,7 @@
 	   [% END %]
 	[% END %]
 	[% WRAPPER $field_block title="CiteULike"-%]
-	   [% external_link('http://www.citeulike.org/posturl?url=' _ classic_url,
+	   [% external_link('http://www.citeulike.org/posturl?url=' _ url,
 	   	  				'<img src="/img/buttons/cul.gif" alt="CiteULike"> Bookmark') %]
 
 	[% END %]

@@ -36,6 +36,25 @@ http://wormbase.org/species/anatomy_term
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+sub term {
+
+	my $self = shift;
+    my $object = $self->object;
+	my $label = $object->Term;
+
+	my $data_pack = {
+		'id' =>"$`object",
+		'label' =>"$label",
+		'Class' => 'Anatomy_term'
+	};
+	
+	return {
+		'data'=> $data_pack,
+		'description' => ''
+		};
+}
+
+
 =head3 definition
 
 This method will return a data structure containing a prose
@@ -154,9 +173,10 @@ sub synonyms {
     my @synonyms = $object->Synonym;
 	my @data;
 
-    foreach my $entry (@synonyms) {
-        my $synonym = $entry->Primary_name->right if $entry->Primary_name;
-        my $tag_info = $self->_pack_obj($synonym);
+    foreach my $synonym (@synonyms) {
+        #my $synonym;
+        #$synonym = eval{$entry->Primary_name->right;};
+        # my $tag_info = $self->_pack_obj($synonym);
         push @data, $self->_pack_obj($synonym);
     }
     return {
@@ -309,7 +329,7 @@ sub expression_clusters {
         push @data_pack,
           {
             'ec_data'     => $ec_data,
-            'description' => $ec_description
+            'description' => "$ec_description"
           };
     }
     return {
@@ -395,11 +415,14 @@ sub gene_ontology {
     foreach my $go_term (@go_terms) {
         my $term    = $go_term->Term;
         my $ao_code = $go_term->right;
-        my $gt_data = {
-            'id'    => "$go_term",
-            'label' => "$term",
-            'Class' => 'GO_term'
-        };
+        my $gt_data = $self->_pack_obj($go_term, $term);
+        
+        ## {
+        #    'id'    => "$go_term",
+        #    'label' => "$term",
+        #    'class' => 'GO_term'
+        # };
+        
         push @data_pack,
           {
             'term'    => $gt_data,
@@ -569,22 +592,17 @@ sub _anatomy_function {
 	my @data_pack;
 	
     foreach my $anatomy_function (@anatomy_functions) {
+    	#my $af_term = $anatomy_function->Term;
         my $phenotype      = $anatomy_function->Phenotype;
         my $phenotype_name = $phenotype->Primary_name;
         my $gene_data      = $self->_pack_obj( $anatomy_function->Gene ) if $anatomy_function->Gene;
-
+		my $af_data = $self->_pack_obj($anatomy_function); ## ,$af_term
+		my $phenotype_data = $self->_pack_obj($phenotype,$phenotype_name);
+		
         push @data_pack,
           {
-            'af_data' => {
-                'id'    => "$anatomy_function",
-                'label' => "$anatomy_function",
-                'Class' => 'Anatomy_function'
-            },
-            'phenotype' => {
-                'id'    => $phenotype,
-                'label' => $phenotype_name,
-                'class' => 'phenotype'
-            },
+            'af_data' => $af_data,
+            'phenotype' => $phenotype_data,
             'gene' => $gene_data
           };
     }

@@ -102,13 +102,6 @@
       $jq("div.columns ul").toggle();
     });
 
-// if you want columns to show on hover: problems when using input
-//   $jq("div.columns").hover(function () {
-//       $jq("div.columns ul").show();
-//     }, function () {
-//       $jq("div.columns ul").hide();
-//     });
-
 
 // TODO:get jquery icons working for toggle
 //   $jq(".toggle").live('click',function() {
@@ -122,8 +115,6 @@
               $jq(this).toggleClass("active").next().slideToggle("fast");
               return false;
         });
-
-  $jq("#searchForm dropdown li input").button();
 
     $jq("#nav-min").click(function() {
       var nav = $jq("#navigation");
@@ -164,14 +155,16 @@
   });*/
 
   $jq(".tip-simple").live('mouseover', function(){
-    if(!($jq(this).children("div").show().size())){
-      var tip = $jq('<div class="tip ui-corner-all" style="display:block"><span class="ui-icon ui-icon-triangle-1-s"></span></div>');
+    if(!($jq(this).children("div.tip-elem").show().size())){
+      var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
       tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
     }
   });
   $jq(".tip-simple").live('mouseout', function(){
-    $jq(this).children("div").hide();
+    $jq(this).children("div.tip-elem").hide();
   });
+  
+  
 
     $jq(".tooltip").live('mouseover',function() {
         $jq(this).cluetip({

@@ -1,15 +1,39 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
-
-
-[% WRAPPER $field_block  title="Gene knockdown (via mutation) results in a(an) " _ tag2link(object.name.data) _ " phenotype in these
-experiments" key="variation" %] 
-    [% dataTable_list(['Allele','Gene','Species'],fields.variation.data.0.aaData,'table_variation_0') %]
-[% END %]
-
-[% WRAPPER $field_block  title="Gene knockdown (via mutation) DOES NOT results in a(an) " _ tag2link(object.name.data) _ " phenotype in these
-experiments" key="variation" %] 
-    [% dataTable_list(['Allele','Gene','Species'],fields.variation.data.1.aaData,'table_variation_1') %]
-[% END %] 
+	
+	[% build_data_table (
+		order = [ 
+			'variation',
+			'gene'
+			'type', 
+			'species'
+			],
+		columns = {				 		
+			variation => 'Variation',
+			gene => 'Gene',
+			type => 'Type',
+			species => 'Species'
+			},
+		key = 'variation',
+		title = 'Variations associated with this phenotype'
+		)
+	%]	
+	
+	[% build_data_table (
+		order = [ 
+			'variation',
+			'gene'
+			'type', 
+			'species'
+			],
+		columns = {				 		
+			variation => 'Variation',
+			gene => 'Gene',
+			type => 'Type',
+			species => 'Species'
+			},
+		key = 'variation_not',
+		title = 'Variations NOT associated with this phenotype'	
+		)
+	%]

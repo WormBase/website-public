@@ -1,14 +1,13 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% UNLESS url %]
-  [% issue_table(issues,issues_type) %]
-[% ELSE %]
   <div id="issues-new" class="layout-box" style="padding: 15px 24px;">
-    [% IF issues %]
-     <h4>Existing Issues</h4>
-      [% issue_table(issues) %]
-    [% END %]
+
+   <h4>Existing Issues</h4>
+  [% issue_table(issues,issues_type) %]
+  <br /><br />
+
+  [% IF url %]
     <h4>Create new issue</h4>
 	<table id="issueTable" width="70%" >
 		<tr>
@@ -27,8 +26,7 @@
 	  </br><p>
 	    <input type='submit' value='Report Your Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
 	  </p>
-  </div>
-[% END %]
+  [% END %]
 
- 
+   </div>
  

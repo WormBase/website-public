@@ -75,7 +75,7 @@
       [% FOREACH IS IN issues %]
 	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td>
         <td>[% linkPage(IS.page) %]</td> 
-	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
+	    <td>[%  time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
 	    <td>[% username(IS.owner) %]</td><td>[% username(IS.assigned_to) %]</td>
 	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
 	  </tr>
@@ -105,6 +105,17 @@
     </div>
 [% END %] 
 
+[% #get page info %]
+[% BLOCK page_info %]
+  [% url = c.req.base _ c.req.path %]
+
+  [% label = c.req.path %]
+  [% IF (c.action.name == 'index'); label = 'home'; 
+    ELSIF c.action.name.match('me'); label = 'my wormbase'; 
+    END; %]
+  [% is_obj = object.defined %]
+  [% IF object; label = object.name.data.label; END; %]
+[% END %]
 
 [%# options:
    print="always" to print the field even if there is no data 
@@ -715,7 +726,7 @@ END;
    IF no_toggle == 1;  
       '<div class="text-width">';
        WRAPPER $field_block title="Remarks" key="remarks";
-          markup(fields.remarks.data.join('<br />'),0);
+          markup(fields.remarks.data.join('<br>'),0);
        END;
       '</div>';
    ELSE;
@@ -874,7 +885,7 @@ END;
 
 [% MACRO report_page BLOCK;
 
-   IF c.config.system_message;
+   IF c.config.system-message;
       '<div id="system-message">' 
             _ c.config.system_message 
             _ '<a class="system-message-close" href="#">Dismiss</a></div>';
@@ -937,9 +948,7 @@ END;
 #   'section     : ' _ section      _ "<br />";
 #   'class       : ' _ class   _ "<br />";
 
-
-   path = c.uri_for("/$section", class, this_object_id);
-
+    path = c.req.base _ c.req.path;
 
    widget_list = widget_list.unique;
    

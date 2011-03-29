@@ -62,18 +62,20 @@ sub search :Path('/search') Args {
         return;
       }
     }
-
-#     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $tmp_query, $page_count, $search);
+# 
+#     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $query, $page_count, $search);
 #     unless($it) {  
-#         $it = $api->xapian->search($c, $tmp_query, $page_count, $search);
-#         $c->set_cache($cache_id,$it);
+#         $c->log->debug("conducting search -- not cached; $cache_id");
+#         my $it = $api->xapian->search($c, $tmp_query, $page_count, $search);
+#         $c->set_cache($cache_id, $it);
 #     }
 
     my $it= $api->xapian->search($c, $tmp_query, $page_count, $search);
 
+    $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
@@ -124,10 +126,16 @@ sub _get_url {
 }
 
 sub _get_obj {
-  my ($self, $api, $doc) = @_;
-  my $obj = $api->fetch({class=> $doc->get_value(0),
+  my ($self, $c, $doc) = @_;
+  my $api = $c->model('WormBaseAPI');
+  my $obj = $api->fetch({aceclass=> $doc->get_value(0),
                           name => $doc->get_value(1)}) or die "$!";
-  return $api->xapian->_wrap_objs($obj, $doc->get_value(2));
+  my %ret = %{$api->xapian->_wrap_objs($c, $obj, $doc->get_value(2))};
+  unless (defined $ret{name}) {
+    $ret{name}{id} = $doc->get_value(1);
+    $ret{name}{class} = $doc->get_value(2);
+  }
+  return \%ret;
 }
 
 sub search_preview :Path('/search/preview')  :Args(3) {
@@ -143,7 +151,7 @@ sub search_preview :Path('/search/preview')  :Args(3) {
 
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($api, $_->get_document) } @{$it->{struct}};
+    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = "*";
