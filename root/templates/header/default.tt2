@@ -85,15 +85,7 @@
  
 operator();
  
-[% url = c.req.uri %]
-
-[% label = c.req.path %]
-[% IF (c.action.name == 'index'); label = 'home'; 
-   ELSIF c.action.name.match('me'); label = 'my wormbase'; 
-   END; %]
-[% is_obj = 0 %]
-[% IF object; is_obj = 1; url = get_url(object.name.data.class, object.name.data.id, object.name.data.taxonomy); label = object.name.data.label; END; %]
-
+[% PROCESS page_info %]
 $jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]", 'is_obj': "[% is_obj %]" });
  
  

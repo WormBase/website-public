@@ -12,17 +12,22 @@ use Class::MOP;
 # the maps by accessing the _ACE_MODEL attributes of each model.
 
 # In this more procedural approach, the special cases (e.g. Pcr_oligo) are hard-
-# coded into the maps. The map is then populated with defaults.
+# coded into the maps. The maps are then populated with defaults. This class was
+# coded with speed in mind.
 
-# NOTE: all entries use the short WB names (without the package base) unless
-#  specified.
 { # limit the scope of the lexical variables to prevent tampering
     my $base = 'WormBase::API::Object';
 
+    # NOTE: all entries use the short WB names (without the package base) unless
+    #  specified.
+    # NOTE: the maps will NOT provide default values unless otherwise noted i.e.
+    #  any code using the maps should not rely on the presence of a value
+
     my $WB2ACE_MAP_DONE = 0;
     my %WB2ACE_MAP = ( # WB models -> Ace models (values are Ace tags/values)
-        class => { # remember to put on the base
+        class => { # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
+            Person    => [qw(Person Author)],
             Sequence  => [qw(Sequence CDS)],
             Rnai      => 'RNAi',
         },
@@ -51,6 +56,7 @@ use Class::MOP;
 
     my $ACE2WB_MAP_DONE = 0;
     my %ACE2WB_MAP = ( # Ace models -> WB models (values are WB attrs/values)
+        # class HAS DEFAULT (and will be dynamically populated)
     );
 
     sub _map_wb2ace {
@@ -105,6 +111,11 @@ use Class::MOP;
     sub WB2ACE_MAP {
         _map_wb2ace() unless $WB2ACE_MAP_DONE; # manual lazy loading
         return \%WB2ACE_MAP;
+    }
+
+    sub new { # a dummy object for the view to access the class methods/attrs
+        my $class = shift;
+        return bless \(my $anon), $class;
     }
 }
 

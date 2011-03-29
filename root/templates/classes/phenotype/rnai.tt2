@@ -4,40 +4,68 @@
 [%
 
 IF fields.rnai.data.defined;
- 
-    WRAPPER $field_block  title="" key="rnai";
-       '<span class="caveat-emptor">Gene knockdown via RNAi results in a(an) ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
-       ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.0.aaData,'table_rnai_0');
-       # dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.0.aaData,'table_rnai_0');
-       build_data_table(order=['experiment','gene','strain','genotype'],
-			columns={ experiment => 'Experiment',
-				  gene       => 'Gene',
-				  strain     => 'Strain',
-				  genotype   => 'Genotype',
-				  },
-				  key        => 'rnai',
-				  title      => '');	
-								
-  
-    END;
 
-    WRAPPER $field_block  title="" key="rnai_not";
-       '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in a(an) ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
-       ## dataTable_list(['Gene','Coding sequences','Species','Experiment'],fields.rnai.data.1.aaData,'table_rnai_1');
-       #dataTable_list(['Experiment','Gene','Coding sequences','Species'],fields.rnai.data.1.aaData,'table_rnai_1');
-       build_data_table(order=['experiment','gene','strain','genotype'],
-			columns={ experiment => 'Experiment',
-				  gene       => 'Gene',
-				  strain     => 'Strain',
-				  genotype   => 'Genotype',
-				  },
-				  key        => 'rnai_not',
-				  title      => '');	
-    END;
+    WRAPPER $field_block  title="" key="rnai";
+       '<span class="caveat-emptor">Gene knockdown via RNAi results in the ' 
+               _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
+
+	build_data_table (
+		order = [ 
+			'rnai',
+			'species',
+			'sequence',
+			'strain',
+			'genotype',			
+			'treatment'
+			],
+		columns = {				 		
+			rnai => 'RNAi',
+			species => 'Species',
+			sequence => 'Sequence',
+			strain  => 'Strain',
+			genotype => 'Genotype',
+			treatment => 'Treatment'
+			},
+		key = 'rnai',
+		title = '',
+		);
+
+#		title = 'Phenotype Observed with these RNAis'	
+    END;	
 
 ELSE;
 
-    '<span class="caveat-emptor">No gene knockdown experiments have noted this phenotype</span>';
+    '<span class="caveat-emptor">No gene knockdown experiments have noted this phenotype.</span>';
+
+END;
+
+IF fields.rnai_not.data.defined;
+
+    WRAPPER $field_block  title="" key="rnai_not";
+       '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in the ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
+	
+	build_data_table (
+		order = [ 
+			'rnai',
+			'species',
+			'sequence',
+			'strain',
+			'genotype',
+			'treatment'
+			],
+		columns = {				 		
+			rnai => 'RNAi',
+			species => 'Species',
+			sequence => 'Sequence',
+			strain   => 'Strain',
+			genotype => 'Genotype',
+			treatment => 'Treatment'
+			},
+		key = 'rnai_not',
+		title = '',
+		);
+#		title = 'Phenotypes <b>Not</b> Observed with these RNAis'	
+     END;
 
 END;
 

@@ -534,6 +534,7 @@ has 'description' => (
     lazy_build => 1,
 );
 
+# the following is a candidate for retrofitting with ModelMap
 sub _build_description {
     my ($self) = @_;
     my $object = $self->object;
@@ -542,15 +543,21 @@ sub _build_description {
     if ($class eq 'Sequence') {
         $tag = 'Title';
     }
+    elsif ($class eq 'Expr_pattern') {
+        $tag = 'Pattern'; # does nto handle Mohler movies (~~ 'Author' =~ /Mohler/)
+    }
     else {
         $tag = 'Description';
     }
-    my $description = eval {$object->$tag};    # TODO!!! : fix
+    # do many models have multiple description values?
+    my $description = eval {join(' ', $object->$tag)} || undef;
+
     return {
         description => "description of the $class $object",
         data        => $description && "$description",
     };
 
+    ## deal with evidence... ?
     #    my $data = { description => "description of the $class $object",
     #		 data        => { description => $description ,
     #				  evidence    => { check=>$self->check_empty($description),
@@ -620,6 +627,7 @@ has 'expression_patterns' => (
     lazy_build => 1,
 );
 
+# TODO: use hash instead; make expression_patterns macro compatibile with hash
 sub _build_expression_patterns {
     my ($self) = @_;
     my $object = $self->object;
@@ -1217,7 +1225,7 @@ sub ace_dsn {
 
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
-    my ($self) = @_;
+    my $self = shift;
     my @sub_dirs = @_;
     my $path = File::Spec->catfile($self->tmp_base, @sub_dirs);
 
@@ -1226,7 +1234,7 @@ sub tmp_dir {
 }
 
 sub tmp_image_dir {
-    my ($self) = @_;
+    my $self = shift;
 
 # 2010.08.18: hostname no longer required in URI; tmp images stored in NFS mount
 # Include the hostname for images. Necessary for proxying and apache configuration.
@@ -1264,7 +1272,7 @@ sub tmp_image_uri {
 }
 
 sub tmp_acedata_dir {
-    my ($self) = @_;
+    my $self = shift;
     return $self->tmp_dir('acedata', @_);
 }
 
@@ -1275,7 +1283,7 @@ sub _pack_objects {
 
 sub _pack_obj {
     my ($self, $object, $label, %args) = @_;
-    return unless $object;
+    return undef unless $object; # this method shouldn't expect a list.
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),

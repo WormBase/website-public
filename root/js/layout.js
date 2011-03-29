@@ -163,7 +163,6 @@
 
 
 
-
   var loadcount = 0;
 
 $jq(function() {

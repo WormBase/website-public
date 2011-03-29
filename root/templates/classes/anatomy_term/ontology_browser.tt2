@@ -1,0 +1,15 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% widget = c.stash.widget %]
+
+[% widget = widget %]
+ 
+[% link=c.config.external_url.tree_lister _ object.name.data.id %]
+ 
+ 				       
+     <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
+      </iframe>  
+ 
+
+   

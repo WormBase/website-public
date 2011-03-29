@@ -314,7 +314,13 @@ sub go_term {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->GO_term;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects;	
+    my @data_pack; 	
+    
+    foreach my $tag_object (@tag_objects) {
+    	my $term_pack = $self->_pack_obj($tag_object,$tag_object->Term); ## , $tag_object->Term
+    	push @data_pack, $term_pack; ## {go_term => $term_pack}
+    }
+    
     return {
         data        => @data_pack ? \@data_pack : undef,
         description => 'go terms associated with phenotype'
@@ -778,6 +784,7 @@ sub anatomy_ontology {
     my $object = $self->object;
     my @anatomy_fns = $object->Anatomy_function;
     my @data_pack;
+    my %anatomy_term_check;
     foreach my $anatomy_fn (@anatomy_fns) {
         my $anatomy_fn_name = $anatomy_fn->Involved  if $anatomy_fn;
         my $anatomy_term    = $anatomy_fn_name->Term if $anatomy_fn_name;
@@ -785,13 +792,13 @@ sub anatomy_ontology {
           if $anatomy_term;
         my $anatomy_term_name = $anatomy_term_id->Term if $anatomy_term_id;
         next unless ($anatomy_term_id);
-        my $class = $anatomy_term_id->class;
-        push @data_pack, $self->_pack_obj($anatomy_term_id,$anatomy_term_name);
-#          {
-#            id    => "$anatomy_term_id",
-#            label => "$anatomy_term_name",
-#            class => "$class"
-#          };
+        if ($anatomy_term_check{$anatomy_term_id}) {
+        	next;
+        }
+        else {
+        	$anatomy_term_check{$anatomy_term_id} = 1;
+        	push @data_pack, $self->_pack_obj($anatomy_term_id,$anatomy_term_name);
+        }
     }
     return {
         description => "The Anatomy Ontology of the phenotype ",
@@ -874,7 +881,11 @@ sub _transgene {
 
     foreach my $tag_object (@tag_objects) {
         my $tag_info = $self->_pack_obj($tag_object);
-        push @data_pack, $tag_info;
+        my $species_info = $self->_pack_obj($tag_object->Species);
+        push @data_pack, {
+        	transgene => $tag_info,
+        	species => $species_info
+        };
     }
     return \@data_pack;
 }
@@ -889,15 +900,15 @@ sub _variation {
     foreach my $tag_object (@tag_objects) {
         my $tag_info       = $self->_pack_obj($tag_object);
         my $variation_type = $tag_object->Variation_type;
-        my $gene_info      = $self->_pack_obj( $tag_object->Possibly_affects )
-	    if $tag_object->Possibly_affects;
+        #my $gene_info      = $self->_pack_obj( $tag_object->Possibly_affects )
+	    #if $tag_object->Possibly_affects;
         my $species_info = $self->_pack_obj( $tag_object->Species )
 	    if $tag_object->Species;
         push @data_pack,
 	{
             variation => $tag_info,
-            gene      => $gene_info,
-            type      => $tag_object->Variation_type,
+            #gene      => $gene_info,
+            type      => "$variation_type",
             species   => $species_info
 	};
     }
@@ -913,17 +924,33 @@ sub _rnai {
     
     foreach my $tag_object (@tag_objects) {
         my $tag_info      = $self->_pack_obj($tag_object);
-	my $genotype      = $tag_object->Genotype;
+
+
 #	my @genes    = map { $self->_pack_obj($_,$_->Public_name) } $tag_object->Gene;
 	my @genes = $tag_object->Gene;
 	my $strain   = $tag_object->Strain;
 	$strain = $strain ? $self->_pack_obj($strain) : undef;
+        my $sequence      = $tag_object->Sequence;
+        my $sequence_info = $self->_pack_obj( $tag_object->Sequence )
+          if $tag_object->Sequence;
+        my $species_info = $self->_pack_obj( $tag_object->Species )
+          if $tag_object->Species;
+        my $genotype =   $tag_object->Genotype;
+        my $treatment = $tag_object->Treatment;
         push @data_pack,
+#	{
+#            experiment     => $tag_info,
+#	    genotype       => "$genotype",
+#	    genes          => join(", ",@genes),
+#	    strain         => $strain,
+#	};
 	{
-            experiment     => $tag_info,
-	    genotype       => "$genotype",
-	    genes          => join(", ",@genes),
-	    strain         => $strain,
+	    rnai     => $tag_info,
+            sequence => $sequence_info,
+            species  => $species_info,
+            genotype => "$genotype",
+            treatment => "$treatment",
+	    strain    => $strain,		
 	};
     }
     return \@data_pack;

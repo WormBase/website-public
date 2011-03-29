@@ -1,4 +1,4 @@
-[% IF page > 1; "<br /><b>Page " _ page _ "</b>"; END; %]
+[% IF (page && page > 1); "<br /><b>Page " _ page _ "</b>"; END; %]
 [% FOREACH item IN results %]
 
  [% UNLESS c.stash.bench %]<div class="result">[% END %]
@@ -7,10 +7,13 @@
 
   <li>
           [% wbid = item.name.id.remove(':') %]
+          [% wbid = wbid.remove('/') %]
+          [% wbid = wbid.remove(' ') %]
+          [% IF item.name.class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
           <div class="workbench-status-[% wbid %]"></div>
 
           <script>
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% result_class %]&url=[% get_url(result_class, item.name.id) %]");
+          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% result_class %]&url=[% item.name.url || get_url(result_class, item.name.id, item.name.taxonomy) %]&is_obj=[% is_obj %]");
           </script>
 
  

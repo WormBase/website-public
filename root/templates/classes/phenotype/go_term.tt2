@@ -1,13 +1,9 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
-
-[% widget = widget %]
- 
-GO terms associated with this phenotype:<br>
-   &nbsp;[% short_list(fields.go_term.data.aaData) %]
-
-[% # WRAPPER $field_block  title="" key="go_term" %]
-
-[% # END %]
+	
+	[% WRAPPER $field_block title="GO Terms"-%] 
+            [% FOREACH data IN fields.go_term.data %]
+            [% tag2link(data) %]<br>
+            [% END %]            
+   [% END %]  

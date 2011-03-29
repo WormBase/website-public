@@ -1,16 +1,8 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
-
-[% widget = widget %]
-
-Anatomy Ontology terms associated with this Phenotype:<br>
-
-
-[% ## WRAPPER $field_block  title=" Anatomy Ontology term associated with this Phenotype" key="anatomy_ontology" %] 
-	[% FOREACH ao_term IN fields.anatomy_ontology.data %]
-		[% ao_term.label %]
-    	[% ## tag2link(ao_term) %]
-	[% END %]
-[% ## END %]
+[% WRAPPER $field_block title="Anatomy Ontology"-%] 
+            [% FOREACH data IN fields.anatomy_ontology.data %]
+            [% tag2link(data) %]<br>
+            [% END %]            
+   [% END %] 

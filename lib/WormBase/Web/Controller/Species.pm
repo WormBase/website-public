@@ -53,12 +53,11 @@ sub species_index :Path('/species') :Args(1)   {
     }
 
     if ($species eq 'all' || $self->_is_species($c,$species)) {
-	$c->stash->{section}    = 'species_list';     # Section is where to grab widgets from
-#	$c->stash->{speceis}    = $species;           # Redundancy here for 
-	$c->stash->{class}      = $species;
-        $c->stash->{is_class_index} = 1;  
-	$c->stash->{species}    = $species;           # Class is the subsection	
-	$c->stash->{template}   = 'species/species-index.tt2';
+      $c->stash->{section}    = 'species_list';     # Section is where to grab widgets from
+      $c->stash->{class}      = 'all';
+      $c->stash->{is_class_index} = 1;  
+      $c->stash->{species}    = $species;           # Class is the subsection	
+      $c->stash->{template}   = 'species/species-index.tt2';
     } else {
 	$c->detach;   # We are neither a supported class or proper species name. Error!	   
     }

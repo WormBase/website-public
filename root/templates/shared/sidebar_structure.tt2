@@ -31,28 +31,22 @@
     <div class="title">
        [% UNLESS no_layout %]
            [%# This span is added here to prevent the title from overlapping with the buttons %]
-          [% title = title _ '<span style="width:220px; height:1.2em; float:right;"></span>' %]
+          [% title = title _ '<span style="width:170px; height:1.2em; float:right;"></span>' %]
 
       <h2>[% title %]</h2>
       [% END %]
         <div id="buttons">
-      [% IF object %]
-          [% is_obj = 1 %]
+       [% UNLESS no_layout %]
           [% wbid = this_object_id.remove(':') %]
-
           <div class="workbench-status-[% wbid %]"></div>
 
-
-       [% END %]
-       [% UNLESS no_layout %]
-
       [% IF object %]
-<a   tip="view comments" class="button section-button tip-simple tr ui-corner-all" name="comment"  >comments <span class="comment-count"></span></a>
-<a   tip="report a problem" class="button section-button tip-simple tr ui-corner-all"  name="issue" >issues <span class="'issue-count"></span></a>
+<a   tip="view comments" class="button section-button tip-simple tr ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
+<a   tip="report a problem" class="button section-button tip-simple tr ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
        [% END %]
-<a   tip="print page as pdf" class="button print tip-simple tr ui-corner-all">PDF</a>
+<a   tip="print page" class="button print tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-print"></span></a>
 
-          <div class="columns"><a class="button ui-corner-all">layout<div class="ui-icon ui-icon-triangle-1-s" style="float:right"></div></a>
+          <div class="columns"><a class="button ui-corner-all tip-simple tr" tip="set layout"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
           
           <ul>
           <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
@@ -71,14 +65,16 @@
 
 <div id="widgets">
   <div id="navigation">
-    <div id="title"><div class="workbench-status-[% wbid %]"></div>
-
-      [% IF object %]
-        <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
-      [% ELSIF title %]
-        <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
-      [% ELSE %]
+    <div id="title">
+      [% IF c.action.name == 'index' %]
         <h2><a href="#">WormBase</a></h2>
+      [% ELSE %]
+        <div class="workbench-status-[% wbid %]"></div>
+        [% IF object %]
+          <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
+        [% ELSE %]
+          <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
+        [% END %]
       [% END %]
     </div>
     <ul>
@@ -132,12 +128,16 @@
 
 
     <script>
-      [% IF object %]
+      [%# IF object %]
+
+[% PROCESS page_info %]
         [% lclass = object.name.data.class FILTER lcfirst %]
         [% save = 'reports' %]
-        [% IF object.name.data.class.match('Paper'); save = 'my_library'; END; %]
-        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% object.name.data.label | uri %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% get_url(lclass,object.name.data.id)%]&save_to=[% save %]&is_obj=1");
-      [% END %]
+        [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
+
+        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% url %]&save_to=[% save %]&is_obj=[% is_obj %]");
+
+      [%# END %]
 
     if(location.hash.length > 0){
       readHash();

@@ -540,6 +540,7 @@ sub affected_rnai {
 ##########################
 
 sub _affects {
+
     my ($self, $tag) = @_;
     my @affected = map {[$_->row]} @{$self ~~ "\@$tag"};
     # (obj, phenotype, evidence type, evidence)
@@ -551,6 +552,7 @@ sub _affects {
     }} @affected;
 
     return %data_pack ? \%data_pack : undef;
+
 }
 
 __PACKAGE__->meta->make_immutable;
