@@ -1,60 +1,61 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = widget %]
+[%
 
-   [% WRAPPER $field_block title="Laboratory Of Origin" key="laboratory_of_origin" %]
-         [% tag2link(fields.laboratory_of_origin.data) %]
-   [% END %]
+laboratory(title="Laboratory");
 
-   [% WRAPPER $field_block title="Isolated By (author)" key="isolated_by_author" %]
-         [% tag2link(fields.isolated_by_author.data) %]
-   [% END %]
+WRAPPER $field_block title="Isolated By (author)" key="isolated_by_author";
+     tag2link(fields.isolated_by_author.data);
+END;
 
-   [% WRAPPER $field_block title="Isolated By" key="isolated_by" %]
-                 [% tag2link(fields.isolated_by.data) %]
-   [% END %]
+WRAPPER $field_block title="Isolated By" key="isolated_by";
+        tag2link(fields.isolated_by.data);
+END;
 
-   [% WRAPPER $field_block title="Source Database" key="source_database" %]
-	 <a href="[% fields.source_database.data.remote_url %]">[% fields.source_database.data.remote_text %]</a>
-   [% END %]
+# Deprecated by xrefs.
+#WRAPPER $field_block title="Source Database" key="source_database";
+#      '<a href="' _ fields.source_database.data.remote_url _ '">' _ fields.source_database.data.remote_text _ '</a>';
+#END;
 
-    [% WRAPPER $field_block title="External Source" key="external_source" %]
-	  [% FOREACH type IN fields.external_source.data.keys %]
-	  <a href="[% fields.external_source.data.$type.remote_url %]">[% fields.external_source.data.$type.remote_text %]</a>
-	  [% END %]
-   [% END %]
+# To be deprecated by xrefs. Confirm.
+WRAPPER $field_block title="External Source" key="external_source";
+	FOREACH type IN fields.external_source.data.keys;
+	     '<a href="' _ fields.external_source.data.$type.remote_url _ '">' _ fields.external_source.data.$type.remote_text _ '</a>';
+	END;
+END;
 
-   [% WRAPPER $field_block title="Date Isolated" key="date_isolated" %]
-        [% fields.date_isolated.data %]
-   [% END %]
+WRAPPER $field_block title="Date Isolated" key="date_isolated";
+       fields.date_isolated.data;
+END;
 
-   [% WRAPPER $field_block title="Mutagen" key="mutagen" %]
-      	      [% fields.mutagen.data %]
-   [% END %]
+WRAPPER $field_block title="Mutagen" key="mutagen";
+      	fields.mutagen.data;
+END;
 
-   [% ##<p class="caveat-emptor">How are these tags used?</p> %]
 
-   [% WRAPPER $field_block title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics" %]
-      	      [% fields.isolated_via_forward_genetics.data %]
-   [% END %]
+WRAPPER $field_block title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics";
+      fields.isolated_via_forward_genetics.data;
+END;
 
-   [% WRAPPER $field_block title="Isolated Via Reverse Genetics" key="isolated_via_reverse_genetics" %]
-      	      [% fields.isolated_via_reverse_genetics.data %]
-   [% END %]
+WRAPPER $field_block title="Isolated Via Reverse Genetics" key="isolated_via_reverse_genetics";
+      fields.isolated_via_reverse_genetics.data;
+END;
 
-   [% WRAPPER $field_block title="Transposon Excision" key="transposon_excision" %]
-      	      [% fields.transposon_excision.data %]
-   [% END %]
+WRAPPER $field_block title="Transposon Excision" key="transposon_excision";
+      fields.transposon_excision.data;
+END;
 
-   [% WRAPPER $field_block title="Transposon Insertion" key="transposon_insertion" %]
-      	      [% fields.transposon_insertion.data %]
-   [% END %]
+WRAPPER $field_block title="Transposon Insertion" key="transposon_insertion";
+      fields.transposon_insertion.data;
+END;
 
-   [% WRAPPER $field_block title="Derived From" key="derived_from" %]
-      	      [% IF fields.derived_from.data; tag2link(fields.derived_from.data); END %]
-   [% END %]
+WRAPPER $field_block title="Derived From" key="derived_from";
+     tag2link(fields.derived_from.data);      
+END;
 
-   [% WRAPPER $field_block title="Derivate" key="derivative" %]
-      	      [% tag2linkAll(fields.derivative.data) %]
-   [% END %]
+WRAPPER $field_block title="Derivate" key="derivative";
+     tag2linkAll(fields.derivative.data);
+END;
+
+%]

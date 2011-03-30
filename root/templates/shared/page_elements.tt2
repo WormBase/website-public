@@ -231,7 +231,7 @@
 
   [% IF data && data.size > 0;  
        # Set up some suitable defaults
-       IF data.size < 50;
+       IF data.size < 51;
           paginate        = 'false';
           pagination_type = 'false';
 	  length          = 'false';

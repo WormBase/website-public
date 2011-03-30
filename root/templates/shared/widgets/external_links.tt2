@@ -8,6 +8,8 @@
 # Dumper.dump(fields.xrefs.data);
 # '</pre>';
 
+  IF fields.xrefs.data;
+
   rows = [];
   hash = fields.xrefs.data;
   FOREACH db IN hash.keys.sort;
@@ -46,6 +48,12 @@
 			      },
 		    passed_data = rows,
                     title='',);
+
+
+   ELSE;
+      '<span class="caveat-emptor">No external references available for ' _ object.object.name _ '</span>';
+
+   END;
 %]
 
 
