@@ -556,7 +556,7 @@ sub polymorphism_assays {
 
     return {
         description => 'experimental assays for detecting this polymorphism',
-        data        => %$data ? $data : undef,
+        data        => $data,
     };
 }
 
@@ -1049,25 +1049,38 @@ sub reference_allele {
 
 sub other_alleles {
     my ($self) = @_;
-
+    
     my $name = $self ~~ 'name';
     my $data;
-    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
+    foreach my $allele (eval {$self->object->Gene->Allele(-fill => 1)}) {
         next if $allele eq $name;
 
         my $packed_allele = $self->_pack_obj($allele);
-
-        if ($allele->SNP) {
-            push @{$data->{data}->{polymorphisms}}, $packed_allele;
+	my ($status,$type);
+        if ($allele->SNP(0)) {
+	    $type = 'polymorphism';
+#            push @{$data->{polymorphisms}}, $packed_allele;
+        } else { 
+	    $type = 'variation';
+	}
+	
+	if ($allele->Sequence || $allele->Flanking_sequences) {
+#            push @{$data->{sequenced_alleles}}, $packed_allele;
+	    $status = 'sequenced';
+        } else {
+#            push @{$data->{unsequenced_alleles}}, $packed_allele;
+	    $status = 'unsequenced';
         }
-        elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
-        else {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
+	
+	my $physical_type   = $allele->Type_of_mutation;
+	
+	push @$data,{ allele => $packed_allele,
+		      type   => $type,
+		      status => $status,
+		      physical_type => "$physical_type",
+	};
     }
-
+    
     return {
         description => 'other alleles of the containing gene (if known)',
         data        => $data,
@@ -1228,35 +1241,38 @@ sub transposon_insertion {
 
 # Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
 # CAN BE REPLACED WITH << xrefs >>
-sub source_database {
-    my ($self) = @_;
+# Deprecated by xrefs and external_links.tt2. Save until confirmed. TH: 03.30.2011
+#sub source_database {
+#    my ($self) = @_;
+#
+#    my ($remote_url,$remote_text);
+#    if (my $source_db = $self ~~ 'Database') {
+#        my $name = $source_db->Name;
+#        my $id   = $self->object->Database(3);
+#
+#        # Using the URL constructor in the database (for now)
+#        # TODO: Should probably pull these out and keep URLs in config
+#        my $url  = $source_db->URL_constructor;
+#        # Create a direct link to the external site
+#
+#        if ($url && $id) {
+#            $name =~ s/_/ /g;
+#            $remote_url = sprintf($url,$id);
+#            $remote_text = "$name";
+#        }
+#    }
+#
+#    return {
+#        description => 'remote source database, if known',
+#        data        => {
+#            remote_url => $remote_url,
+#            remote_text => $remote_text,
+#        }
+#    };
+#}
 
-    my ($remote_url,$remote_text);
-    if (my $source_db = $self ~~ 'Database') {
-        my $name = $source_db->Name;
-        my $id   = $self->object->Database(3);
-
-        # Using the URL constructor in the database (for now)
-        # TODO: Should probably pull these out and keep URLs in config
-        my $url  = $source_db->URL_constructor;
-        # Create a direct link to the external site
-
-        if ($url && $id) {
-            $name =~ s/_/ /g;
-            $remote_url = sprintf($url,$id);
-            $remote_text = "$name";
-        }
-    }
-
-    return {
-        description => 'remote source database, if known',
-        data        => {
-            remote_url => $remote_url,
-            remote_text => $remote_text,
-        }
-    };
-}
-
+# TH: 03.30.2011.  Is this also captured/handled correctly by xrefs? It should be.
+# Confirm then deprecate this method.
 sub external_source {
     my ($self) = @_;
 
@@ -1802,10 +1818,19 @@ sub _build_sequence_strings {
     # TO DO: This markup belongs as part of the view, not here.
     # Return the full sequence on the plus strand
     if ($with_markup) {
-        my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
+#        my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
+#                          lc($right_flank));
+#        my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
+#                                                    uc($mut_fragment)),lc($right_flank));
+
+        my $wt_seq = join(' ',
+			  lc($left_flank),
+			  uc($wt_fragment),
                           lc($right_flank));
-        my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
-                                                    uc($mut_fragment)),lc($right_flank));
+        my $mut_seq = join(' ',
+			   lc($left_flank),
+			   uc($mut_fragment),
+			   lc($right_flank));
         return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
     }
     else {

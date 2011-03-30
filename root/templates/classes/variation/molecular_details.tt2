@@ -1,11 +1,12 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget toggle = 1%]
+[% 
+WRAPPER $field_block title="Variation Type" key="variation_type";
+      fields.variation_type.data.general_class _ ': ' _ fields.variation_type.data.physical_class;
+END;
 
-   [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
-        [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
-   [% END %]
+%]
 
    [% WRAPPER $field_block title="Sequencing Status" key="sequencing_status" %]
        [% fields.sequencing_status.data %]
@@ -144,7 +145,7 @@
    [% END %]
 
    [% WRAPPER $field_block title="Features Affected" key="features_affected" %]
-       <table border="1">
+       <table border="1" width="100%">
 	  	<tr>
 			<td>feature type</td>
 			<td>feature</td>
