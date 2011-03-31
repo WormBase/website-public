@@ -686,6 +686,9 @@ sub widget_GET {
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
+        # AD: this condition is an illusion -- the stash will never have an object
+        #     unless we were forwarded here by another action. since this is a
+        #     RESTful action, that likely isn't the case.
       # Fetch our external model
       my $api = $c->model('WormBaseAPI');
       

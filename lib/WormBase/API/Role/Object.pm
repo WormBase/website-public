@@ -141,7 +141,16 @@ sub _make_common_name {
 
 	my $name;
 
-    if (my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
+    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
+    if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
+        $tag = [$tag] unless ref $tag;
+        foreach my $tag (@$tag) {
+            last if $name = $object->$tag;
+        }
+    }
+
+    if (!$name and
+        my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
         if ($wbclass->meta->get_method('_build__common_name')
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
@@ -149,16 +158,6 @@ sub _make_common_name {
             $name = $self->_wrap($object)->_common_name;
         }
     }
-
-	unless (defined $name) {
-		my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
-		if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
-			$tag = [$tag] unless ref $tag;
-			foreach my $tag (@$tag) {
-				last if $name = $object->$tag;
-			}
-		}
-	}
 
 	$name //= $object->name;
     return "$name";
