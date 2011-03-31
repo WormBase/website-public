@@ -437,6 +437,44 @@ sub widget :Path("/widget") Args(3) {
 # 
 
 
+############################################################
+#
+#   GET report pages
+#   URL space: /db/get
+#   Params: NONE
+#
+#   Redirect to the right report page given the class and
+#   name of an object as URL params.
+#   Caveat: currently assumes Ace class is given. Requires
+#   name & class to correspond exactly to an object in AceDB
+#
+############################################################
+sub get_report :Path("/db/get") Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{template} = 'report.tt2';
+
+    my $aceclass = $c->req->param('class');
+    my $name  = $c->req->param('name');
+    # TODO: handle when these are not provided and when the object doesn't exist
+
+    my $api    = $c->model('WormBaseAPI');
+    my $ACE2WB = $api->modelmap->ACE2WB_MAP->{class};
+
+    my $class           = $ACE2WB->{$aceclass} or $c->detach;
+    my $canonical_class = lc $class;
+
+    my $url;
+    if (exists $c->config->{sections}->{species}->{$canonical_class}) { # /species
+        my $species = 'c_elegans'; # for now... one would have to fetch the object...
+        $url = $c->uri_for('/species', $species, $canonical_class, $name);
+    }
+    else { # /report
+        $url = $c->uri_for('/resources', $canonical_class, $name);
+    }
+
+    $c->res->redirect($url);
+}
 
 
 ##############################################################
@@ -579,9 +617,9 @@ sub configure : Chained('/') PathPart('configure') Args(1) {
 =head2 end
     
     Attempt to render a view, if needed.
-    
-=cut 
-    
+
+=cut
+
 # This is a kludge.  RenderView keeps tripping over itself
 # for some Model/Controller combinations with the dynamic actions.
 #  Namespace collision?  Missing templates?  I can't figure it out.
