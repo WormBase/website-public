@@ -1,0 +1,189 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% # WRAPPER $field_block title="phenotype" key="phenotype" -%] 
+	[% # FOREACH data IN fields.phenotype.data %]
+		[% # tag2link(data.phenotype_info)  %]<br>
+	[% # END %] 
+[% # END %]
+
+
+[% # phenotype %]
+
+	[% build_data_table (
+		order = [ 
+			'phenotype_info',
+			'description',
+			'evidence_code', 
+			'evidence_details',
+			],
+		columns = {				 		
+			phenotype_info => 'Phenotype',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details',
+			},
+		key = 'phenotype',
+		title = 'Phenotype'	
+		)
+	%]
+
+
+
+
+[% # sequence %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Sequence',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'sequence',
+		title = 'Sequence'	
+		)
+	%]
+
+
+
+
+[% # anatomy_term %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Term',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'anatomy_term',
+		title = 'Anatomy Term'	
+		)
+	%]
+
+
+
+[% # transcript %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Transcript',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'transcript',
+		title = 'Transcript'	
+		)
+	%]
+
+
+
+[% # pseudogene %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Pseudogene',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'pseudogene',
+		title = 'Pseudogene'	
+		)
+	%]
+
+
+[% # homology_group %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Homology Group',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'homology_group',
+		title = 'Homology Group'	
+		)
+	%]
+
+
+[% # cell %]
+
+	[% build_data_table (
+		order = [ 
+			'data',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			data => 'Cell',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'cell',
+		title = 'Cell'	
+		)
+	%]
+
+
+
+
+[% # motif %]
+
+	[% build_data_table (
+		order = [ 
+			'motif_info',
+			'description',
+			'evidence_code', 
+			'evidence_details'
+			],
+		columns = {				 		
+			motif_info => 'Motif',
+			description => 'Description',
+			evidence_code => 'Evidence Code',
+			evidence_details => 'Evidence Details'
+			},
+		key = 'motif',
+		title = 'Motif'	
+		)
+	%]
+
+
+
+
