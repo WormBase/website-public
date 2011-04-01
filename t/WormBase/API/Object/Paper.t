@@ -1,27 +1,27 @@
-# t/WormBase/API/Object/Person.t
+# t/WormBase/API/Object/Paper.t
 
 use strict;
 use warnings;
 
 BEGIN {
-      use FindBin '$Bin';
-      chdir "$Bin/../../.."; # /t
-      use lib 'lib';
-      use lib '../lib';
+    use FindBin '$Bin';
+    chdir "$Bin/../../.."; # /t
+    use lib 'lib';
+    use lib '../lib';
 }
 
 use Test::More;
 use WormBase::Test::API::Object;
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Person');
-} # Person.t loads ok
+    use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Paper');
+} # Paper loads ok
 
-my @test_objects = qw(WBPerson320);
+my @test_objects = qw(WBPaper00024194);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',
-    class     => 'Person',
+    class     => 'Paper',
 });
 
 $tester->run_common_tests({
