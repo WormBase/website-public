@@ -2,30 +2,32 @@
 
 use strict;
 use warnings;
-use FindBin qw/$Bin/;
-use feature "switch";	     
-use Test::More;
-
-my $indent = " " x 6;
-
 
 BEGIN {
-      # This will cause a new connection to database(s)
-      use_ok('WormBase::API');
+      use FindBin '$Bin';
+      chdir "$Bin/../../.."; # /t
+      use lib 'lib';
+      use lib '../lib';
 }
 
-# Test object construction.
-# Object construction also connects to sgifaceserver at localhost::2005
-ok ( 
-    ( my $wormbase = WormBase::API->new({conf_dir => "./conf"})),
-    'Constructed WormBase::API object ok'
-    );
+use Test::More;
+use WormBase::Test::API::Object;
 
+BEGIN {
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Analysis');
+} # Analysis loads ok
 
-# Instantiate a WormBase::API::Object::* wrapper object
+my @test_objects = qw(TreeFam);
 
-my $analysis = 'TreeFam';
+my $tester = WormBase::Test::API::Object->new({
+    conf_file => 'data/test.conf',
+    class     => 'Analysis',
+});
 
-my $object = $wormbase->fetch({class=>'Analysis',name=>$analysis}); 
-isa_ok($object,'WormBase::API::Object::Analysis');
+$tester->run_common_tests({
+    objects                 => \@test_objects,
+    exclude_parents_methods => 1,
+    exclude_roles_methods   => 1,
+});
 
+done_testing;

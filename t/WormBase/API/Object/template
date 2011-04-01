@@ -1,4 +1,4 @@
-# t/WormBase/API/Object/Person.t
+# t/WormBase/API/Object/<<CLASS>>.t
 
 use strict;
 use warnings;
@@ -14,14 +14,14 @@ use Test::More;
 use WormBase::Test::API::Object;
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Person');
-} # Person.t loads ok
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::<<CLASS>>');
+} # <<CLASS>>.t loads ok
 
-my @test_objects = qw(WBPerson320);
+my @test_objects = qw();
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',
-    class     => 'Person',
+    class     => '<<CLASS>>',
 });
 
 $tester->run_common_tests({
