@@ -106,14 +106,11 @@ B<Response example>
 # Template: [% name %]
 
 has 'name' => (
-#    default => sub {
-#        my ($self) = @_;
-#        my $object = $self->object;
-#	return { } unless $object;
-#        my $class  = $object->class;
-    is         => 'ro',
-    lazy_build => 1,
-    );
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_name',
+);
 
 sub _build_name {
     my ($self) = @_;
@@ -126,8 +123,10 @@ sub _build_name {
 }
 
 has '_common_name' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__common_name',
 );
 
 sub _build__common_name {
@@ -231,8 +230,10 @@ B<Response example>
 # Template: [% other_names %]
 
 has 'other_names' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_other_names',
 );
 
 sub _build_other_names {
@@ -297,8 +298,10 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|P
 # Template: [% best_blastp_matches %]
 
 has 'best_blastp_matches' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_best_blastp_matches',
 );
 
 # Fetch all of the best_blastp_matches for a list of proteins.
@@ -531,7 +534,9 @@ B<Response example>
 
 has 'description' => (
     is         => 'ro',
-    lazy_build => 1,
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_description',
 );
 
 # the following is a candidate for retrofitting with ModelMap
@@ -624,7 +629,9 @@ B<Response example>
 
 has 'expression_patterns' => (
     is         => 'ro',
-    lazy_build => 1,
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_expression_patterns',
 );
 
 # TODO: use hash instead; make expression_patterns macro compatibile with hash
@@ -713,7 +720,9 @@ B<Response example>
 
 has 'laboratory' => (
     is         => 'ro',
-    lazy_build => 1,
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_laboratory',
 );
 
 # laboratory: Whenever a cross-ref to lab is needed.
@@ -798,8 +807,10 @@ B<Response example>
 # Template: [% method %]
 
 has 'method' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_method',
 );
 
 # The method used to describe the object
@@ -869,8 +880,10 @@ B<Response example>
 # Template: [% remarks %]
 
 has 'remarks' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_remarks',
 );
 
 sub _build_remarks {
@@ -949,8 +962,10 @@ B<Response example>
 # Template: [% summary %]
 
 has 'summary' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_summary',
 );
 
 sub _build_summary {
@@ -1019,8 +1034,10 @@ B<Response example>
 # Template: [% status %]
 
 has 'status' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    lazy     => 1,
+    required => 1,
+    builder  => '_build_status',
 );
 
 sub _build_status {
@@ -1090,8 +1107,10 @@ B<Response example>
 # Template: [% taxonomy %]
 
 has 'taxonomy' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_taxonomy',
 );
 
 # Parse out species "from a Genus species" string.
@@ -1099,6 +1118,7 @@ sub _build_taxonomy { # this overlaps with parsed_species
     my ($self) = @_;
 
     my ($genus, $species) = (($self ~~ 'Species') =~ /(.*) (.*)/);
+    # TODO: what if $self ~~ 'Species' is undef?
 
     return {
         description => 'the genus and species of the current object',
@@ -1159,8 +1179,10 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/CLASS/O
 # template [% xrefs %]
 
 has 'xrefs' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_xrefs',
 );
 
 # XREFs are stored under the Database tag.
@@ -1307,10 +1329,10 @@ sub _parsed_species {
 #              the fixing is very rudimentary and can be bypassed by intra-model
 #              invocations of methods. do not depend on it. fix your model code.
 #              WARNING: modifies data directly if passed data is reference
-# Usage: if (my ($fixed, @problems) = $self->check_data($data)) { ... }
+# Usage: if (my ($fixed, @problems) = $self->_check_data($data)) { ... }
 # Returns: () if all is well, otherwise array with fixed data and
 #          description(s) of compliance problem(s).
-sub check_data {
+sub _check_data {
     my ($self, $data, $class) = @_;
     $class ||= '';
     my @compliance_problems;

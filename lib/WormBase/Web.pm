@@ -185,12 +185,17 @@ __PACKAGE__->config->{using_frontend_proxy} = 1;
 # Configure the application based on the type of installation.
 # Application-wide configuration is located in wormbase.conf
 # which can be over-ridden by wormbase_local.conf.
-__PACKAGE__->config( 'Plugin::ConfigLoader' => { file => 'wormbase.conf',
-						 driver => { 'General' => { -InterPolateVars => 1,
-# 									    -ForceArray      => 1,
-							     } 
-						 },
-		     } ) or die "$!";
+__PACKAGE__->config( 'Plugin::ConfigLoader' => {
+    file => 'wormbase.conf',
+    driver => {
+        'General' => {
+            -InterPolateVars => 1,
+            -ForceArray      => 0,
+            # Plugin::ConfigLoader uses Config::Any[::General]
+            # which ForceArray by default. We don't want that.
+        },
+    },
+} ) or die "$!";
 
 
 
