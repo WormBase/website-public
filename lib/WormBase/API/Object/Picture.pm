@@ -334,22 +334,38 @@ sub external_source {
     my $obj    = $self->object;
 
     my $source;
-    if (my $label = $self ~~ 'Template') {
-        $label =~ s/\<([^>]+)\>/$obj->$1/ge; # Ace caches stuff...?
+    if (my $template = $obj->Template) {
+        my $publication_year = $obj->Publication_year || '';
+        $template =~ s/\<Publication_year\>/$publication_year/g;
+        $source = { template => "$template" };
 
-        my $link;
-        if (my ($article_URL) = $obj->Article_URL) {
-            my ($db, $field, $accessor) = $article_URL->row;
-            $link = $db->URL_constructor;
-            $link =~ s/%S/$accessor/g if $accessor; # is this always the case? %S?
-            # one would imagine $link = sprintf($link, $accessor);
+        foreach my $dbtag (qw(Journal_URL Publisher_URL)) {
+            my $db = $obj->$dbtag;
+            my $text = $db->Name || $db->name;
+            my $url = $db->URL;
+
+            $source->{template_items}->{$dbtag} = {
+                text => $text && "$text",
+                url  => $url && "$url",
+            };
         }
 
-        # it's possible to not have a link, but still label the source
-        $source = $label && {
-            text => $label,
-            link => $link,
-        };
+
+        if (my ($dbnode) = $obj->Article_URL) {
+            my ($db, $field, $accessor) = $dbnode->row;
+            my $url   = $db->URL_constructor;
+            $url   =~ s/%S/$accessor/g if $accessor; # is this always the case? %S?
+            # one would imagine $url = sprintf($url, $accessor);
+            $url ||= $db->URL;
+
+            my $ref = $self->reference->{data};
+            my $text = $ref && $ref->{label}; # try this for now
+            # what if there's no text?
+            $source->{template_items}->{Article_URL} = {
+                text => $text,
+                url  => $url,
+            };
+        }
     }
 
     return {

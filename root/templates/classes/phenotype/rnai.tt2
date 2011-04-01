@@ -1,33 +1,55 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	
-	[% build_data_table (
+[%
+
+IF fields.rnai.data.defined;
+
+    WRAPPER $field_block  title="" key="rnai";
+       '<span class="caveat-emptor">Gene knockdown via RNAi results in the ' 
+               _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
+
+	build_data_table (
 		order = [ 
 			'rnai',
 			'species',
 			'sequence',
-			'genotype',
+			'strain',
+			'genotype',			
 			'treatment'
 			],
 		columns = {				 		
 			rnai => 'RNAi',
 			species => 'Species',
 			sequence => 'Sequence',
+			strain  => 'Strain',
 			genotype => 'Genotype',
 			treatment => 'Treatment'
 			},
 		key = 'rnai',
-		title = 'Phenotype Observed with these RNAis'	
-		)
-	%]	
+		title = '',
+		);
+
+#		title = 'Phenotype Observed with these RNAis'	
+    END;	
+
+ELSE;
+
+    '<span class="caveat-emptor">No gene knockdown experiments have noted this phenotype.</span>';
+
+END;
+
+IF fields.rnai_not.data.defined;
+
+    WRAPPER $field_block  title="" key="rnai_not";
+       '<span class="caveat-emptor">Gene knockdown via RNAi DOES NOT result in the ' _ tag2link(object.name.data) _ ' phenotype in these experiments.</span>';
 	
-	
-	[% build_data_table (
+	build_data_table (
 		order = [ 
 			'rnai',
 			'species',
 			'sequence',
+			'strain',
 			'genotype',
 			'treatment'
 			],
@@ -35,10 +57,16 @@
 			rnai => 'RNAi',
 			species => 'Species',
 			sequence => 'Sequence',
+			strain   => 'Strain',
 			genotype => 'Genotype',
 			treatment => 'Treatment'
 			},
 		key = 'rnai_not',
-		title = 'Phenotype Observed with these RNAis'	
-		)
-	%]
+		title = '',
+		);
+#		title = 'Phenotypes <b>Not</b> Observed with these RNAis'	
+     END;
+
+END;
+
+%]

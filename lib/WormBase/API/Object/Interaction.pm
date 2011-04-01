@@ -28,9 +28,7 @@ has 'effector' => (
     default => sub {
         my $self = shift;
         my $object = $self->object;
-        my @effectors;
-        eval { @effectors = $self->interaction_type->Effector->col; };
-        return \@effectors;
+
     }
 );
 
@@ -41,7 +39,7 @@ has 'effected' => (
         my $self = shift;
         my $object = $self->object;
         my @effecteds;
-        eval { @effecteds = $object->interaction_type->Effected->col; };
+        eval { @effecteds = $object->Interaction_type->Effected->col; };
         return \@effecteds;
     }
 );
@@ -52,11 +50,11 @@ has 'effected' => (
 #     default => sub {
 #         my $self = shift;
 #         my $object = $self->object;
-#         my $it = $object->interaction_type;
+#         my $it = $object->Interaction_type;
 #         my @non_directional_interactors;
 #         
 #         eval {@non_directional_interactors =
-#               $self->interaction_type->Non_directional->col;
+#               $self->Interaction_type->Non_directional->col;
 #         };
 #         return \@non_directional_interactors;
 #     }
@@ -523,16 +521,16 @@ B<Response example>
 
 =cut 
 
-# sub non_directional_data {
-#     my $self      = shift;
-#     my $data_pack = $self->_interactor_data('non_directional');
-# 
-#     return {
-#         data => $data_pack,
-#         description =>
-#           'data on the non_directional components of the interaction'
-#     };
-# }
+sub non_directional_data {
+    my $self      = shift;
+    my $data_pack = $self->_interactor_data('non_directional');
+
+    return {
+        data => $data_pack,
+        description =>
+          'data on the non_directional components of the interaction'
+    };
+}
 
 #######################################
 #
@@ -561,41 +559,47 @@ sub _interactor_data {
     my %data;
     my $desc = 'notes';
     my @data_pack;
+	my $it = $object->Interaction_type;
     my $interactor_ar;
 
     if ( $interactor_type =~ /effector/ ) {
-        $interactor_ar = $self->effector;
+        my @effectors = $it->Effector->col if $it->Effector;
+        $interactor_ar = \@effectors;    
     }
     elsif ( $interactor_type =~ /effected/ ) {
-        $interactor_ar = $self->effected;
+        my @effecteds = $it->Effected->col if $it->Effected; 
+        $interactor_ar = \@effecteds;
     }
     else {
-        $interactor_ar = $self->non_directional_interactors;
+        my @non_directional_interactors = $it->Non_directional->col if $it->Non_directional;
+        $interactor_ar = \@non_directional_interactors;
     }
-
-    foreach my $interactor (@$interactor_ar) {
-        my @cds = $interactor->Corresponding_CDS;
-        my @proteins =
-          map { $interactor->Corresponding_protein( -fill => 1 ) } @cds
-          if (@cds);
+	
+ 	foreach my $interactor (@$interactor_ar) {
+ 		my $gene_data    = $self->_pack_obj($interactor,$interactor->Public_name);     
         my @interactions = $interactor->Interaction;
-        my $gene_data    = $self->_pack_obj($interactor);
+		my $interaction_count = @interactions;
+
+        my @cds = $interactor->Corresponding_CDS;
+        my @proteins;
+        eval{ @proteins =
+          map { $interactor->Corresponding_protein( -fill => 1 ) } @cds
+          if (@cds);};
         my @protein_data_set;
-        my $interaction_count = @interactions;
 
         foreach my $protein (@proteins) {
             my $protein_data = $self->_pack_obj($protein);
             push @protein_data_set, $protein_data;
         }
-        my $interactor_data => {
-            'gene'        => $gene_data,
-            'protein'     => \@protein_data_set,
-            'inteactions' => "$interaction_count"
-        };
 
-        push @data_pack, $interactor_data;
-    }
-    return \@data_pack;
+         my $interactor_data = {
+            'gene'        => $gene_data,
+            'interactions' => "$interaction_count",
+            'protein'     => \@protein_data_set,
+         };
+         push @data_pack, $interactor_data;
+ 	}
+     return \@data_pack; ## $interactor_ar; 
 }
 
 __PACKAGE__->meta->make_immutable;

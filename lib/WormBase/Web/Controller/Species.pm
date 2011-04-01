@@ -190,7 +190,7 @@ sub object_report :Path("/species") Args(3) {
 				    leftWidth=>$c->req->param('leftwidth'),
 	};
     }
-    $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+    $c->stash->{object} = $object;  # Store the WB object.
    
 }
 
