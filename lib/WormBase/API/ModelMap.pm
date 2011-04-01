@@ -42,6 +42,7 @@ use Class::MOP;
             Species      => 'Common_name',
             Molecule     => [qw(Public_name Name)],
             Anatomy_term => 'Term',
+            GO_term      => 'Term',
         },
         laboratory => {
             Gene_class  => 'Designating_laboratory',
