@@ -367,9 +367,10 @@ B<Response example>
 
 sub year {
     my ($self) = @_;
+    (my $date = $self ~~ 'Publication_date') =~ /(\d{4})/;
     return {
         description => 'The year of publication',
-        data        =>  $self->_parse_year($self ~~ 'Publication_date'),
+        data        =>  $1 || $date,
     };
 }
 

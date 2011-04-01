@@ -27,12 +27,12 @@ has 'log' => (
 # create a new one during instantiation.
 sub _build_log {
     my $self = shift;
-    
+
     # Use the default log4perl.conf file supplied with the web app
     # This is not ideal at the moment as it is specific to t/WormBase/API/Object
 
     my $root  = $self->conf_dir;
-    Log::Log4perl::init("$root/log4perl-screen.conf");
+    Log::Log4perl::init("$root/log4perl.conf");
     my $log = Log::Log4perl::get_logger();
     return $log;
 }
