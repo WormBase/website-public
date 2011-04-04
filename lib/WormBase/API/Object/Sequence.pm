@@ -714,7 +714,7 @@ sub transcripts {
 		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 		@transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
 					   map { $_->features('Transcript:Coding_transcript') }
-					   @{$self->segments};
+					   @{$self->_segments};
 	}
 
     return {
@@ -856,7 +856,7 @@ sub orfeome_assays {
     if ($self->type =~ /gene|coding sequence|cDNA/) {
 		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS',
 													 'structural:PCR_product') }
-		           @{$self->segments} if @{$self->segments};
+		           @{$self->_segments} if @{$self->_segments};
 		@orfeome = grep {/^mv_/} @pcr;
     }
 
@@ -993,10 +993,10 @@ B<Response example>
 sub _build_genomic_image_position {
     my ($self) = @_;
     my $seq = $self->object;
-    return unless(defined $self->segments && $self->segments->[0]->length< 100_0000);
+    return unless(defined $self->_segments && $self->_segments->[0]->length< 100_0000);
 
     my $source = $self->_parsed_species;
-    my $segment = $self->segments->[0];
+    my $segment = $self->_segments->[0];
 
     my $ref   = $segment->ref;
     my $start = $segment->start;
@@ -1042,7 +1042,7 @@ sub _build_genomic_position {
 
     my @positions;
     unless ($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') {
-        @positions = $self->_genomic_position($self->segments);
+        @positions = $self->_genomic_position($self->_segments);
 	}
     return {
         description => 'The genomic location of the sequence',
@@ -1126,7 +1126,7 @@ sub microarray_assays {
 		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 
 		@microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
-		               map { $_->features('reagent:Oligo_set') } @{$self->segments};
+		               map { $_->features('reagent:Oligo_set') } @{$self->_segments};
 	}
 
     return {
@@ -2106,7 +2106,7 @@ sub _is_merged {
     return shift =~ /LINK|CHROMOSOME/i;
 }
 
-sub _build_segments {
+sub _build__segments {
 	my ($self) = @_;
 	my $object = $self->object;
 	# special case: return the union of 3' and 5' EST if possible

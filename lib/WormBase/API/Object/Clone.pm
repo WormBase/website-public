@@ -481,11 +481,14 @@ B<Response example>
 
 sub canonical_parent {
     my ($self) = @_;
+    my $obj = $self->object;
 
+    # the following abuses the list context behaviour of the autogen'd accessors
+    # i.e. no data results in ()
     my @canonical_parent = map {$self->_pack_obj($_)}  (
-	$self ~~ 'Approximate_Match_to',
-	$self ~~ 'Exact_Match_to',
-	$self ~~ 'Funny_Match_to',
+        $obj->Approximate_match_to,
+        $obj->Exact_match_to,
+        $obj->Funny_match_to,
     );
 
     return {
@@ -813,7 +816,7 @@ sub _build_tracks {
     };
 }
 
-sub _build_segments {
+sub _build__segments {
     my ($self) = @_;
     return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
 }

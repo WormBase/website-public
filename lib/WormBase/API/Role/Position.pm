@@ -9,36 +9,48 @@ use Moose::Role;
 
 # segments should probably be private, i.e. prefix with _ ?
 # otherwise it should return data in a datapack.
-has 'segments' => (
-    is         => 'ro',
-    lazy_build => 1,
+has '_segments' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build__segments',
 );
 
-requires '_build_segments'; # no fallback to build segments... yet (or ever?).
+requires '_build__segments'; # no fallback to build segments... yet (or ever?).
 
 has 'genomic_position' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+	lazy     => 1,
+	builder  => '_build_genomic_position',
 );
 
 has 'genomic_image_position' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+	lazy     => 1,
+	builder  => '_build_genomic_image_position',
 );
 
 has 'tracks' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+	lazy     => 1,
+	builder  => '_build_tracks',
 );
 
 has 'genetic_position' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+	lazy     => 1,
+	builder  => '_build_genetic_position',
 );
 
 has 'genetic_position_interpolated' => (
-    is         => 'ro',
-    lazy_build => 1,
+    is       => 'ro',
+    required => 1,
+	lazy     => 1,
+	builder  => '_build_genetic_position_interpolated',
 );
 
 # NOTE: genomic_picture has been superceded by genomic_image_position & tracks attribute
@@ -59,7 +71,7 @@ sub _build_genomic_image_position { # genomic_picture_position?
 sub _build_genomic_position {
     my ($self) = @_;
 
-    my @positions = $self->_genomic_position($self->segments);
+    my @positions = $self->_genomic_position($self->_segments);
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
