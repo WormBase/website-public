@@ -538,7 +538,7 @@ sub microarray_topology_map_position {
 	# I don't think this will work; have sequences been statshed in the object?
     my $sequences = $self->sequences;
     return unless @$sequences;
-    my @segments = @{$self->segments};
+    my @segments = @{$self->_segments};
     my $seg = $segments[0] or return;
     my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
     return unless @p;
@@ -1393,7 +1393,7 @@ sub orfeome_project_primers {
   my $self = shift;
   my $object = $self->object;
 
-  my @segments = @{$self->segments};
+  my @segments = @{$self->_segments};
   my @ost = map {$self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
 
   my $data =    {   description =>  "ORFeome Project primers and sequences",
@@ -1408,7 +1408,7 @@ sub primer_pairs {
     
     return unless @{$self->sequences};
     
-    my @segments = @{$self->segments};
+    my @segments = @{$self->_segments};
     my @primer_pairs =  map {$self->_pack_obj($_)} map {$_->info} map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
 
     my $data =    {   description =>  "Primer pairs",
@@ -1730,7 +1730,7 @@ sub _fetch_transcripts {
     return \@seqs;
 }
 
-sub _build_segments {
+sub _build__segments {
     my ($self) = @_;
     my $sequences = $self->sequences;
     my $dbh = $self->gff_dsn();
@@ -1765,7 +1765,7 @@ sub _longest_segment {
     my ($self) = @_;
     my ($longest)
        = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}
-              @{$self->segments};
+              @{$self->_segments};
     return $longest;
 }
 
