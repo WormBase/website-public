@@ -29,6 +29,9 @@ sub search :Path('/search') Args {
     my $query = shift @args;
     my $page_count = shift @args || 1;
 
+    my $species = $c->req->param("species");
+    $c->stash->{widget} = $c->req->param("widget") if $c->req->param("widget");
+
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
 
     $c->log->debug("$type search");
@@ -70,12 +73,13 @@ sub search :Path('/search') Args {
 #         $c->set_cache($cache_id, $it);
 #     }
 
-    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search);
+    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $species);
 
+    $c->stash->{species} = $species;
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
+    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
@@ -117,6 +121,19 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   return;
 }
 
+sub search_count :Path('/search/count') :Args(3) {
+  my ($self, $c, $species, $type, $q) = @_;
+
+  $c->stash->{noboiler} = 1;
+  my $api = $c->model('WormBaseAPI');
+
+  my $search = $type unless($type=~/all/);
+  $q =~ s/-/_/g;
+  my $count = $api->xapian->search_count($c, $q, $search, $species);
+  $c->response->body("$count");
+  return;
+}
+
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
   if(defined $c->config->{sections}{species}{$class}){
@@ -138,26 +155,6 @@ sub _get_obj {
   return \%ret;
 }
 
-sub search_preview :Path('/search/preview')  :Args(3) {
-    my ($self, $c, $species, $type, $page_count) = @_;
-
-    $c->log->debug("search preview");
-    $c->stash->{template} = "search/result_list.tt2";
-    $c->stash->{noboiler} = 1;
-    my $api = $c->model('WormBaseAPI');
-    my $search = $type unless($type=~/all/);
-    my $it= $api->xapian->search($c, "*", $page_count, $search, $species);
-
-
-    $c->stash->{type} = $type;
-    $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}};
-    $c->stash->{results} = \@ret;
-    $c->stash->{querytime} = $it->{querytime};
-    $c->stash->{query} = "*";
-    $c->forward('WormBase::Web::View::TT');
-
-}
 
 
 =head1 NAME
