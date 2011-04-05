@@ -9,14 +9,16 @@
    [% tag2linkAll(fields.sequences.data) %]
 [% END %]
 
-[% WRAPPER $field_block title=pluralize('Genomic Location', fields.sequences.data.size) key='sequences' %]
+[%# this looks suspiciously like Genomic position in the Location widget... %]
+[% WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='sequences' %]
    [% links = [] %]
    [% FOREACH seqname IN fields.sequences.data.sort %]
       [% seq = fields.sequences.data.$seqname %]
-      [% IF seq.start && seq.end && seq.ref && seq.refname %]
+      [% IF seq.start && seq.end && seq.ref %]
          [% quarter_len = (seq.end - seq.start) div 4 %]
-         [% external_link('genomic_location', seq.refname, 
-                          'c_elegans?ref=' _ seq.ref _
+         [% label = seq.ref _ ':' _ seq.start _ '..' _ seq.end %]
+         [% external_link('genomic_location', label, 
+                          'c_elegans?ref=' _ seq.ref.replace('CHROMOSOME_','')  _
                           '&start=' _ (seq.start - quarter_len) _
                           '&stop='  _ (seq.end   + quarter_len)) %]
       [% END %]
@@ -25,16 +27,20 @@
 
 [% expression_patterns %]
 
-[% WRAPPER $field_block title='Interpolated Genetic Map Position' key='sequences' %]
-   [% map_positions = [] %]
-   [% FOREACH seqname IN fields.sequences.data.sort %]
-      [% seq = fields.sequences.data.$seqname %]
-      [% IF seq.chrom && seq.map.defined %]
-         [% map_positions.push(tag2link(seq.chrom) _ ':' _ seq.map) %]
-      [% END %]
+
+[% map_positions = [] %]
+[% FOREACH seqname IN fields.sequences.data.sort %]
+   [% seq = fields.sequences.data.$seqname %]
+   [% IF seq.chrom && seq.map.defined %]
+      [% map_positions.push(tag2link(seq.chrom) _ ':' _ seq.map) %]
    [% END %]
+[% END %]
+
+[% WRAPPER $field_block title='Interpolated genetic map position' key=''
+   disabled = map_positions.size == 0 %]
    [% map_positions.join(', ') %]
 [% END %]
+
 
 [% WRAPPER $field_block title='Measured length' key='length' %]
    [% IF fields.length.data.Gel_length; fields.length.data.Gel_length _ ' kb'; END %]
