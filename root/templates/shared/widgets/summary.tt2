@@ -1,0 +1,31 @@
+[%# This is a generic template for species/class index pages. It is added automatically by species/reports.tt2 %]
+
+
+<ul id="summary">
+[% IF species == 'all'; %]
+  [% FOREACH species IN c.config.sections.species_list.keys.sort %]
+    [% IF c.config.sections.species_list.$species.display_in_dropdown == 'yes' %]
+      <li><a href="[% c.uri_for('/species',species, class) %]" class="species">[% c.config.sections.species_list.$species.title %]</a>: 
+        <span class="count" href="/search/count/[% species %]/[% class %]/*"></span>
+      </li>
+    [% END %]
+  [% END %]
+[% END %]
+[% IF class == 'all'; %]
+  [% FOREACH class IN c.config.sections.species_list.$species.available_classes.class %]
+      <li><a href="[% c.uri_for('/species',species,class) %]">[% c.config.sections.species.$class.title || c.config.sections.resources.$class.title %]</a>: 
+        <span class="count" href="/search/count/[% species %]/[% class %]/*"></span>
+      </li>
+  [% END %]
+[% END %]
+</ul>
+
+
+
+
+
+<script>
+  $jq("#summary").find(".count").each(function() {
+    $jq(this).load($jq(this).attr("href"));
+  });
+</script>

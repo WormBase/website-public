@@ -5,7 +5,7 @@
 [% END %]
 
 <!-- begin result list -->
-<div id="results">
+<div id="results" class="[% widget %]-widget">
   [% UNLESS no_count %]
   [% IF results.size > 0 %]
     <div id="fade">about <span id="count">[% c.stash.count%]</span> 
@@ -22,7 +22,11 @@
 
   [% PROCESS timer IF noboiler %]   
     [% IF (count && count > 10) %]
-    <div id="load-results" class="load-results" href="/search/[% type %]/[% c.stash.query | uri %]/">load 10 more results</div>
+    [% UNLESS searchLink %]
+      [% query = query | uri %]
+      [% searchLink = "/search/" _ type _"/" _ query _ "/" %]
+    [% END %]
+    <div id="load-results" class='load-results [% IF widget; widget _ "-widget"; END; %]' href="[% searchLink %]">load 10 more results</div>
     [% END %]
 </div>
 
@@ -34,28 +38,36 @@
   [% txt = txt.replace('  ', ' ') %]
   [% to_highlight = txt.split(' ') %]
   [% FOREACH q IN to_highlight %]
-    $jq("div#results").highlight('[% q %]');
+    $jq("div#results[% IF widget; '.' _ widget  _'-widget'; END;%]").highlight('[% q %]');
   [% END %]
+//     var resultLoaded[% IF widget; widget ; END;%] = false;
 
-    var total = [% c.stash.count %];
-    var page = 2;
-    $jq(".load-results").live('click', function() {
-      if(((page-1)*10) > total){ return; }
-      var url= $jq(this).attr("href") + page;
+    if(!(resultLoaded[% IF widget; widget ; END;%])){
+    var total[% IF widget; widget ; END;%] = [% c.stash.count %];
+    var page[% IF widget; widget ; END;%] = 2;
+
+    [% IF widget; 'loadcount = 3;'; END; %]
+    $jq(".load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").live('click', function() {
+      if(((page[% IF widget; widget ; END;%]-1)*10) > total[% IF widget; widget ; END;%]){ return; }
+      var url= $jq(this).attr("href") + page[% IF widget; widget ; END;%];
+
+      [% IF species %]
+        url += "?species=[% species %]";
+      [% END; %]
 
       $jq(this).removeClass("load-results");
 
       var div = $jq("<div></div>");
       setLoading(div);
-      $jq("#load-results").html("loading...");
+      $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("loading...");
       div.load(url, function(response, status, xhr) {
-        var left = total - (page*10);
+        var left = total[% IF widget; widget ; END;%] - (page[% IF widget; widget ; END;%]*10);
         if(left > 0){
           if(left>10){left=10;}
-          $jq("#load-results").addClass("load-results");
-          $jq("#load-results").html("load " + left + " more results");
+          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").addClass("load-results");
+          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("load " + left + " more results");
         }else{
-          $jq("#load-results").remove();
+          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").remove();
         }
         [% FOREACH q IN to_highlight %]
           div.highlight('[% q %]');
@@ -64,12 +76,14 @@
           var msg = "Sorry but there was an error: ";
           $jq(this).html(msg + xhr.status + " " + xhr.statusText);
         }
-        page++;
+        page[% IF widget; widget ; END;%]++;
         loadcount++;
       });
 
       div.appendTo($jq(this).parent().children("ul"));
 
     });
+      var resultLoaded[% IF widget; widget ; END;%] = true;
+    }
 </script>
 <!-- End result list -->

@@ -8,6 +8,7 @@ use XML::Simple;
 use Crypt::SaltedHash;
 use List::Util qw(shuffle);
 use Badge::GoogleTalk;
+use WormBase::API::ModelMap;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -682,7 +683,8 @@ sub widget_GET {
     my $headers = $c->req->headers;
     $c->log->debug("widget GET header ".$headers->header('Content-Type'));
     $c->log->debug($headers);
-        $c->stash->{is_class_index} = 0;  
+    $c->stash->{is_class_index} = 0;  
+
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
@@ -819,7 +821,7 @@ sub widget_static_GET {
 }
 
 
-
+# widgets on the species summary pages
 sub widget_species :Path('/rest/widget/species') :Args(2) :ActionClass('REST') {}
 
 sub widget_species_GET {
@@ -829,6 +831,28 @@ sub widget_species_GET {
     $c->stash->{template} = "species/$species/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT')
+}
+
+
+# for the generic summary page widgets (Browse, Search, etc)
+sub widget_class_index :Path('/rest/widget/index') :Args(3) :ActionClass('REST') {}
+
+sub widget_class_index_GET {
+    my ($self,$c,$species,$class, $widget) = @_; 
+    $c->log->debug("getting one of the class index page widgets");
+
+    $c->stash->{species} = $species;
+    $c->stash->{class} = $class;
+    
+    # Save the name of the widget.
+    $c->stash->{widget} = $widget;
+
+    # No boiler since this is an XHR request.
+    $c->stash->{noboiler} = 1;
+
+    # Set the template
+    $c->stash->{template}="shared/widgets/$widget.tt2";
+    $c->detach('WormBase::Web::View::TT'); 
 }
 
 
@@ -916,8 +940,6 @@ sub _get_search_result {
     my $id = $parts[-1];
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
-#     return $api->xapian->_wrap_objs($c, $obj, $class, $footer);
-
     my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
     unless (defined $ret{name}) {
       $ret{name}{id} = $id;

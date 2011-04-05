@@ -43,7 +43,7 @@ sub search {
       $q .= " species:$s..$s";
     }
 
-    my $query=$class->qp->parse_query( $q, 512|1|2 );
+    my $query=$class->qp->parse_query( $q, 512|16 );
 
     my $enq       = $class->db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
@@ -96,6 +96,31 @@ sub search_exact {
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
 }
+
+sub search_count {
+ my ( $class, $c, $q, $type, $species) = @_;
+
+    if($type){
+      $q .= " $type..$type";
+    }
+
+#     my $ms = Search::Xapian::ValueCountMatchSpy->new(2);
+
+    if($species){
+      my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+      $q .= " species:$s..$s";
+    }
+
+    my $query=$class->qp->parse_query( $q, 512|16 );
+
+    my $enq       = $class->db->enquire ( $query );
+#     $enq->add_matchspy($ms);
+    $c->log->debug("query:" . $query->get_description());
+
+    my $mset      = $enq->get_mset( 0, 500000 );
+
+    return $mset->get_matches_estimated();
+}
  
  
 =item extract_data <item> <query>
@@ -118,7 +143,7 @@ sub extract_data {
 sub _wrap_objs {
   my $self  = shift;
   my $c = shift;
-  my $ace_obj  = shift;
+  my $object  = shift;
   my $class = shift;
   my $footer = shift;
 
@@ -136,14 +161,8 @@ sub _wrap_objs {
     $self->_fields->{$class} = $fields;
   }
 
-  my $object;
-  if (eval{$ace_obj->class}){
-    $object = $api->fetch({object => $ace_obj}) or die "$!";
-  } else {
-    $object = $ace_obj;
-  }
   my %data;
-  $data{obj_name}=$ace_obj;
+  $data{obj_name}=$object;
   $data{footer} = $footer if $footer;
   foreach my $field (@$fields) {
     my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
