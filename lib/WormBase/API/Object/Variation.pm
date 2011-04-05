@@ -654,7 +654,7 @@ sub _build_genomic_image_position {
 }
 
 # TODO: required to consume Role::Position, but currently unknown implementation.
-sub _build_segments {} # WARNING: THIS MAY WREAK HAVOC ON _get_genomic_segment!
+sub _build__segments {} # WARNING: THIS MAY WREAK HAVOC ON _get_genomic_segment!
 
 # sub genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
