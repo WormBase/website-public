@@ -57,7 +57,7 @@ sub species_index :Path('/species') :Args(1)   {
       $c->stash->{class}      = 'all';
       $c->stash->{is_class_index} = 1;  
       $c->stash->{species}    = $species;           # Class is the subsection	
-      $c->stash->{template}   = 'species/species-index.tt2';
+      $c->stash->{template}   = 'species/report.tt2';
     } else {
 	$c->detach;   # We are neither a supported class or proper species name. Error!	   
     }

@@ -12,7 +12,7 @@
 
    # Site-wide data
    site = {
-     copyright => '2000-2010 The WormBase Consortium',
+     copyright => '2000-2011 The WormBase Consortium',
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
   
@@ -54,7 +54,7 @@
 # You must provide both the id and text.
 # URLs
     MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
-#      class =  class FILTER lower;
+      class =  class FILTER lower;
       IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
           external_link(class, text, id);

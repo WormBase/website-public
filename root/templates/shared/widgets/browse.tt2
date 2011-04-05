@@ -1,25 +1,18 @@
 [%# This is a generic template for species/class index pages. It is added automatically by species/reports.tt2 %]
 
-<div id="preview"></div>
-<br />
+<div id="preview">
 
-
-
-<div id="message"><a href="javascript:void(0)" onClick="load_preview();true;">click to get first 10 [% pluralize(c.stash.class, 2) %]</a></div>
+  <div class='load-results text-width'>
+    <a    href="javascript:void(0)" 
+          onClick='ajaxGet($jq("#preview"), "/search/[% class %]/*/?species=[% species %]&inline=1&widget=browse");true;'>
+          click to browse [% pluralize(c.stash.class, 2) %] <span id="[% species %]-[% class %]-count"></span>
+    </a>
+  </div>
+</div>
 
 <script>
-        var page_count = 1;
-  function load_preview(){
-        setLoading($jq("#message"));
-        var div = $jq("<div></div>");
-        div.load("/search/preview/[% species %]/[% c.stash.class %]/" + page_count, function(response, status, xhr) {
-          $jq("#message").html('<a href="javascript:void(0)" onClick="load_preview();true;">click to get next 10 [% c.stash.class %]s</a>');
-          page_count++;
-          if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq("#preview").html(msg + xhr.status + " " + xhr.statusText);
-          }
-        });
-        div.appendTo($jq("#preview"));
-  }
+  $jq("#[% species %]-[% class %]-count").load("/search/count/[% species %]/[% class %]/*", function(){
+    $jq(this).html("(about " + $jq(this).html() + " found)");
+  });
+
 </script>

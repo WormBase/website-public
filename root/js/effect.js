@@ -1,6 +1,8 @@
  
   $jq(document).ready(function() {
     
+//    breadcrumbs($jq('#breadcrumbs'));
+     Breadcrumbs.init();
     
    $jq('#operator').live('click',function()  
     { 
@@ -155,9 +157,9 @@
   });*/
 
   $jq(".tip-simple").live('mouseover', function(){
-    if(!($jq(this).children("div.tip-elem").show().size())){
-      var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
-      tip.prepend($jq(this).attr("tip")).appendTo($jq(this)).show();
+    if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
+      var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
+      tip.appendTo($jq(this)).show();
     }
   });
   $jq(".tip-simple").live('mouseout', function(){
@@ -223,3 +225,55 @@ function updateCounts(url){
     } 
   });
 }
+
+
+
+
+var Breadcrumbs = {
+  init: function() {
+    this.bc = $jq('#breadcrumbs');
+    this.children = this.bc.children(),
+    this.bCount = this.children.size();
+    if(this.bCount < 3){ return; }; //Two or less items, don't bother with breadcrumbs
+    
+    this.bc.empty();
+    var hidden = this.children.slice(0, (this.bCount - 2));
+    var shown = this.children.slice((this.bCount - 2));
+    this.hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
+    this.hiddenContainer.append(hidden).children().after(' &raquo; ');
+
+    this.bc.append('<span id="breadcrumbs-expand" class="tip-simple" tip="exapand"></span>').append(this.hiddenContainer).append(shown);
+    this.bc.children(':last').before(" &raquo; ");
+   
+    this.arrow = new Raphael("breadcrumbs-expand", 35, 50).path("m 20.546006,26.799417 -18.8190097,24.999999 0,-50.0000002 18.8190097,25.0000012 z").attr({fill: "#EEE", stroke: "none", scale:"1, 1", rotation:"180"});
+    this.expand = $jq("#breadcrumbs-expand");
+    
+    this.expand.hover( function() { 
+        Breadcrumbs.arrow.animate({fill:"#BBB", scale:"1.2, 1"}, 200);
+        this.bc.animate({left:'+=10'}, 200);
+      }, function() {  Breadcrumbs.arrow.animate({fill:"#EEE", scale:"1, 1"}, 200); 
+      }
+    );
+    this.expand.click( function(){
+      if( Breadcrumbs.hiddenContainer.width()<10 ){ Breadcrumbs.show(); }
+      else{ Breadcrumbs.hide(); }
+    });
+    this.hiddenContainer.css('font-size', '0.6em');
+    this.width = this.hiddenContainer.width();
+    this.hide();
+  },
+  
+  show: function(){
+    Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width, visibility:'visible'}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");});
+    Breadcrumbs.expand.attr("tip", "minimize");
+    Breadcrumbs.arrow.rotate(180);
+   
+  },
+  
+  hide: function() {
+    Breadcrumbs.hiddenContainer.animate({width:0, visibility:'hidden'});     
+    Breadcrumbs.expand.attr("tip", "expand");
+    Breadcrumbs.arrow.rotate(180);
+  }
+}
+

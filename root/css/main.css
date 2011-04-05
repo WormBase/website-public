@@ -1438,6 +1438,8 @@ div.detail-box div.field div.field-content{
 /*   background:#333; */
   background:black;
   color:white;
+  font-size:10pt;
+  line-height:12pt;
   padding:0.5em;
   margin:0.5em 0;
 }
@@ -1637,3 +1639,32 @@ div.title {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+/* Effects */
+#breadcrumbs {
+  position:relative;
+}
+
+#breadcrumbs-hide {
+  font-size:0.6em;
+  white-space: nowrap;
+  height:auto;
+  width: auto;
+  overflow:hidden;
+  margin:0 5px;
+}
+#breadcrumbs-expand  {
+  position:absolute;
+  left:-23px;
+  top:-10px;
+  cursor:pointer;
+}

@@ -901,31 +901,39 @@ END;
    # Class indexes (of both species and resource persuasions; these do not display individual objects)
    IF is_class_index;
 
-      # Kludge: set the "object" of index pages to "all" 
-      # so that we can use the same URL structure.
-      SET this_object_id    = species; #"all";
-      SET this_object_label = species; #"all";
+      # Kludge: set the "object" of index pages to species
+      # so that we can have species specific search widgets
+      SET this_object_id    = species; 
+      SET this_object_label = species; 
 
       # Index pages automatically get Browse and search widgets.
-      # These *should* be species-specific but they aren't yet.
       widgets.push({   id  = 'browse',
                        title = 'Browse',
-                       href  = c.uri_for('/rest','widget',class,this_object_id,'browse'),
+                       href  = c.uri_for('/rest','widget', 'index', species, class,'browse'),
                        type  = class
                       },
                      {   id  = 'basic_search'
                        title = 'Basic Search'
-                       href  = c.uri_for('/rest','widget',class,this_object_id,'basic_search')
-                       type  = class
-                     },
-                     { id    = 'advanced_search'
-                       title = 'Advanced Search'
-                       href  = c.uri_for('/rest','widget',class,this_object_id,'advanced_search')
+                       href  = c.uri_for('/rest','widget', 'index', species, class,'basic_search')
                        type  = class
                      });
+#                      { id    = 'advanced_search'
+#                        title = 'Advanced Search'
+#                        href  = c.uri_for('/rest','widget','index', species, class,'advanced_search')
+#                        type  = class
+#                      });
+
+      IF((species == 'all')||(class == 'all'));
+        widgets.push({   id  = 'summary',
+                        title = 'Summary',
+                        href  = c.uri_for('/rest','widget', 'index', species, class,'summary'),
+                        type  = class
+                        });
+      END;
 
    # This is an object report page.
-   ELSIF ((section == 'species' || section == 'resources') && class && object);
+   ELSIF (object);
+   #ELSIF ((section == 'species' || section == 'resources') && class && object);
       SET this_object_id    = object.name.data.id;
       SET this_object_label = object.name.data.label;
 
@@ -944,9 +952,12 @@ END;
 
    END;
 
+
+
 # Debug
 #   'section     : ' _ section      _ "<br />";
 #   'class       : ' _ class   _ "<br />";
+#   'species     : ' _ species   _ "<br />";
 
     path = c.req.base _ c.req.path;
 
@@ -958,8 +969,8 @@ END;
 
       # What context should this widget be displayed in, and what type of page are we?
       IF is_class_index;
-         # NEXT IF widget.display == "report";
-         NEXT;
+         NEXT IF widget.display == "report";
+         # NEXT;
       ELSE;
          NEXT IF widget.display == "index";
       END;
@@ -1027,19 +1038,23 @@ END;
   END;
   END;
 
+
+
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
+
 
   # Open some sections by default, depending on what we are displaying.
   '<script>';
-  UNLESS c.user_session.layout.$class.0.defined;
 
-        defaults = c.config.sections.$section.$class.default_widgets.keys;	
-        FOREACH default IN defaults;
-	alert(default);
-           '$jq("#nav-' _ default _ '").trigger("open");';
-        END;
-        'updateLayout();';
-  END;
+    UNLESS c.user_session.layout.$class.0.defined;
+
+          defaults = c.config.sections.$section.$class.default_widgets.keys;	
+          FOREACH d IN defaults;
+            '$jq("#nav-' _ d _ '").trigger("open");';
+          END;
+          'updateLayout();';
+    END;
+
        'updateCounts("' _ path _ '");';
   '</script>';
 
