@@ -1227,16 +1227,15 @@ sub _build_xrefs {
 }
 
 sub mysql_dsn {
-    my ($self) = @_;
-    my $source = shift;
+    my ($self, $source) = @_;
     return $self->dsn->{"mysql_" . $source};
 }
 
 sub gff_dsn {
-    my ($self) = @_;
-    my $species = shift || $self->_parsed_species;
+    my ($self, $species) = @_;
+    $species ||= $self->_parsed_species;
     $self->log->debug("geting gff database species $species");
-    return $self->dsn->{"gff_" . $species} || $self->dsn->{"gff_c_elegans"};
+    return $self->dsn->{"gff_" . $species};
 }
 
 sub ace_dsn {
