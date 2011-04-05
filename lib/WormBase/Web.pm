@@ -424,6 +424,9 @@ sub _get_widget_fields {
         die "There appears to be more than one $class section in the config file\n";
     }
 
+    # this is here to prevent a widget section from getting added to config
+    unless(defined $section->{widgets}{$widget}){ return (); }
+
     my $fields = $section->{widgets}{$widget}{fields};
     my @fields = ref $fields eq 'ARRAY' ? @$fields : $fields // ();
 

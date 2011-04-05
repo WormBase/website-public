@@ -31,7 +31,7 @@
     <div class="title">
        [% UNLESS no_layout %]
            [%# This span is added here to prevent the title from overlapping with the buttons %]
-          [% title = title _ '<span style="width:170px; height:1.2em; float:right;"></span>' %]
+          [% title = '<span id="breadcrumbs">' _ title _ '</span><span style="width:170px; height:1.2em; float:right;"></span>' %]
 
       <h2>[% title %]</h2>
       [% END %]
@@ -39,7 +39,6 @@
        [% UNLESS no_layout %]
           [% wbid = this_object_id.remove(':') %]
           <div class="workbench-status-[% wbid %]"></div>
-
       [% IF object %]
 <a   tip="view comments" class="button section-button tip-simple tr ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
 <a   tip="report a problem" class="button section-button tip-simple tr ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
