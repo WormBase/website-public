@@ -4,42 +4,28 @@
 
 [% 
 
-   breadcrumbs = [];
+    breadcrumbs = [];
+    upperclass = class FILTER ucfirst;
 
-   upperclass = class FILTER ucfirst;
-
-   IF !class;
-      breadcrumbs.push('Resources');
+    breadcrumbs.push('<a href="'
+                _ c.uri_for('/resources')
+                    _ '">Resources</a>');
   
-   ELSIF class && !query_name;
-
-      breadcrumbs.push('<a href="'
-	       	     _ c.uri_for('/resources')
-       	             _ '">Resources</a>');
-
-
-      breadcrumbs.push(upperclass);
-
-   ELSIF class && query_name;
-
-      breadcrumbs.push('<a href="'
-	       	     _ c.uri_for('/resources')
-       	             _ '">Resources</a>');
-
+    IF class && class != 'all';
       breadcrumbs.push(
                        '<a href="'
-	       	     _ c.uri_for('/resources',class)
-       	             _ '">'
-		     _ upperclass
-		     _ '</a>');
-       
+                 _ c.uri_for('/resources',class)
+                     _ '">'
+             _ upperclass
+             _ '</a>');
     END;
 
-    IF object; breadcrumbs.push(tag2link(object.name.data)); END;
-    title = breadcrumbs.join(" &raquo; ");
-   
-    report_page(title);
+    IF object; 
+      breadcrumbs.push(tag2link(object.name.data)); 
+    END;
 
+    title = breadcrumbs.join(" &raquo; ");
+    report_page(title);
 %]
 
 

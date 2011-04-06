@@ -40,49 +40,50 @@
   [% FOREACH q IN to_highlight %]
     $jq("div#results[% IF widget; '.' _ widget  _'-widget'; END;%]").highlight('[% q %]');
   [% END %]
-//     var resultLoaded[% IF widget; widget ; END;%] = false;
+
+    var query[% IF widget; widget ; END;%] = '[% q %]';
+    var page[% IF widget; widget ; END;%] = 2;
+    var total[% IF widget; widget ; END;%] = [% c.stash.count %];
 
     if(!(resultLoaded[% IF widget; widget ; END;%])){
-    var total[% IF widget; widget ; END;%] = [% c.stash.count %];
-    var page[% IF widget; widget ; END;%] = 2;
 
-    [% IF widget; 'loadcount = 3;'; END; %]
-    $jq(".load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").live('click', function() {
-      if(((page[% IF widget; widget ; END;%]-1)*10) > total[% IF widget; widget ; END;%]){ return; }
-      var url= $jq(this).attr("href") + page[% IF widget; widget ; END;%];
+      [% IF widget; 'loadcount = 3;'; END; %]
+      $jq(".load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").live('click', function() {
+        if(((page[% IF widget; widget ; END;%]-1)*10) > total[% IF widget; widget ; END;%]){ return; }
+        var url= $jq(this).attr("href") + page[% IF widget; widget ; END;%];
 
-      [% IF species %]
-        url += "?species=[% species %]";
-      [% END; %]
+        [% IF species %]
+          url += "?species=[% species %]";
+        [% END; %]
 
-      $jq(this).removeClass("load-results");
+        $jq(this).removeClass("load-results");
 
-      var div = $jq("<div></div>");
-      setLoading(div);
-      $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("loading...");
-      div.load(url, function(response, status, xhr) {
-        var left = total[% IF widget; widget ; END;%] - (page[% IF widget; widget ; END;%]*10);
-        if(left > 0){
-          if(left>10){left=10;}
-          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").addClass("load-results");
-          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("load " + left + " more results");
-        }else{
-          $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").remove();
-        }
-        [% FOREACH q IN to_highlight %]
-          div.highlight('[% q %]');
-        [% END %]
-        if (status == "error") {
-          var msg = "Sorry but there was an error: ";
-          $jq(this).html(msg + xhr.status + " " + xhr.statusText);
-        }
-        page[% IF widget; widget ; END;%]++;
-        loadcount++;
+        var div = $jq("<div></div>");
+        setLoading(div);
+        $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("loading...");
+        div.load(url, function(response, status, xhr) {
+          var left = total[% IF widget; widget ; END;%] - (page[% IF widget; widget ; END;%]*10);
+          if(left > 0){
+            if(left>10){left=10;}
+            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").addClass("load-results");
+            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("load " + left + " more results");
+          }else{
+            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").remove();
+          }
+          [% FOREACH q IN to_highlight %]
+            div.highlight(query[% IF widget; widget ; END;%]);
+          [% END %]
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
+          }
+          page[% IF widget; widget ; END;%]++;
+          loadcount++;
+        });
+
+        div.appendTo($jq(this).parent().children("ul"));
+
       });
-
-      div.appendTo($jq(this).parent().children("ul"));
-
-    });
       var resultLoaded[% IF widget; widget ; END;%] = true;
     }
 </script>

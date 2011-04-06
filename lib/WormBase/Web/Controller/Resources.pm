@@ -28,6 +28,9 @@ sub resources :Path('/resources') :Args(0)   {
     if(defined $c->req->param("inline")) {
       $c->stash->{noboiler} = 1;
     }
+      $c->stash->{is_class_index} = 1;      
+    $c->stash->{template} = "resources/report.tt2";
+      $c->stash->{class}   = 'all';
 #     $c->stash->{template} = 'report.tt2';
 }
 

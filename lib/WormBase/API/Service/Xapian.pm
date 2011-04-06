@@ -12,6 +12,7 @@ use Storable;
 use MRO::Compat;
 use Time::HiRes qw/gettimeofday tv_interval/;
 use Config::General;
+use Number::Format qw(:subs :vars);
 
 
 has 'db' => (isa => 'Search::Xapian::Database', is => 'rw');
@@ -103,23 +104,18 @@ sub search_count {
     if($type){
       $q .= " $type..$type";
     }
-
-#     my $ms = Search::Xapian::ValueCountMatchSpy->new(2);
-
     if($species){
       my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
       $q .= " species:$s..$s";
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
-
     my $enq       = $class->db->enquire ( $query );
-#     $enq->add_matchspy($ms);
     $c->log->debug("query:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
-
-    return $mset->get_matches_estimated();
+return format_number($mset->get_matches_estimated());
+#     return $mset->get_matches_estimated();
 }
  
  
