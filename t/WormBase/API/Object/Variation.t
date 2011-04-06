@@ -3,36 +3,53 @@
 
 use strict;
 use warnings;
-use FindBin qw/$Bin/;
-use feature "switch";	     
-
-use Test::More;
-
-my $indent = " " x 6;
 
 BEGIN {
-      # Use the API (and establish connections to DBs)
-      use_ok('WormBase::API');
+    use FindBin '$Bin';
+    chdir "$Bin/../../.."; # /t
+    use lib 'lib';
+    use lib '../lib';
 }
 
-# Test object construction.
-# Object construction also connects to sgifaceserver at localhost::2005
-ok ( 
-    ( my $wormbase = WormBase::API->new({conf_dir => "$Bin/../../../../conf"})),
-    'Constructed WormBase::API object ok'
-    );
+use feature 'switch';
+use Test::More;
+use WormBase::Test::API::Object;
 
-# Instantiate a WormBase::API::Object::* object
-my $variation = $wormbase->fetch({class => 'Variation', 
-   	      		          name  => 'e205'});
-isa_ok($variation,'WormBase::API::Object::Variation');
+BEGIN {
+    use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Variation');
+} # Variation loads ok
 
+my @test_objects = qw(e205);
+
+my $tester = WormBase::Test::API::Object->new({
+    conf_file => 'data/test.conf',
+    class     => 'Variation',
+});
+
+$tester->run_common_tests({
+    objects                 => \@test_objects,
+    exclude_parents_methods => 1,
+    exclude_roles_methods   => 1,
+});
+
+done_testing; exit; # comment this line to continue with old tests
+# TODO: convert old tests to new framework
+
+############################################################
+# Old tests below (some are quite specific)
+############################################################
+
+my $wormbase = $tester->api;
+my $variation = $tester->fetch_object_ok({class => 'Variation',
+                                          name  => 'e205'});
+isa_ok($variation,'WormBase::API::Object::Variation') or diag($variation);
+
+my $indent = " " x 6;
 
 # Dynamically build a list of methods or specify it manually.
 #my @methods = build_method_list($variation);
 my @methods = qw/
 name
-common_name
 cgc_name
 other_names
 taxonomy
@@ -125,6 +142,10 @@ $coords->{data}->{stop}));
 # The total number of tests is that identified through introspection
 # plus a few extras.
 done_testing((scalar @methods) + 4);
+
+################################################################################
+# Old test methods
+################################################################################
 
 # Simply call the method.
 sub test_method {
