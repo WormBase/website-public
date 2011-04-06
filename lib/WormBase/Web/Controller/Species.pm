@@ -135,7 +135,8 @@ sub class_index :Path("/species") Args(2) {
     if ($species eq 'all' || $self->_is_species($c,$species)) {
 
 #	if ($self->_is_class($c,$class)) {
-	    $c->stash->{template}    = 'species/species-class_index.tt2';
+    $c->stash->{template} = 'species/report.tt2';
+# 	    $c->stash->{template}    = 'species/species-class_index.tt2';
 	    $c->stash->{section}     = 'species';
 	    $c->stash->{class}       = $class;
 	   

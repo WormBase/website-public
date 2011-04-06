@@ -1,5 +1,6 @@
+  [% lowerClass = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lcfirst %]
 
-Search [% UNLESS class=='all'; 'for ' _ pluralize(class); END; IF species; ' in <span class="species">' _ c.config.sections.species_list.$species.title _ '</span>'; END; %]
+Search [% UNLESS class=='all'; 'for ' _ pluralize(lowerClass); END; IF species; ' in <span class="species">' _ c.config.sections.species_list.$species.title _ '</span>'; END; %]
  <form onsubmit='$jq("#basic-search-results").empty(); ajaxGet($jq("#basic-search-results"), "/search/[% class %]/" + $jq("#basic-search-input").attr("value") + "/?species=[% species %]&inline=1&widget=basic_search");return false;'>
 
     <input class="text" id="basic-search-input" name="query" type="text" value=""> 

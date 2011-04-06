@@ -1,11 +1,11 @@
 [%# This is a generic template for species/class index pages. It is added automatically by species/reports.tt2 %]
 
 <div id="preview">
-
+  [% lowerClass = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lcfirst %]
   <div class='load-results text-width'>
     <a    href="javascript:void(0)" 
           onClick='ajaxGet($jq("#preview"), "/search/[% class %]/*/?species=[% species %]&inline=1&widget=browse");true;'>
-          click to browse [% pluralize(c.stash.class, 2) %] <span id="[% species %]-[% class %]-count"></span>
+          click to browse [% pluralize(lowerClass)%] <span id="[% species %]-[% class %]-count"></span>
     </a>
   </div>
 </div>

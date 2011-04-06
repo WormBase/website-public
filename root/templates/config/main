@@ -76,6 +76,7 @@
 # there exists a TT plugin which does this, but better.
 #   See: Template::Plugin::Lingua::EN::Inflect
     MACRO pluralize(word, size) BLOCK;
+      UNLESS word; RETURN; END;
       IF (size != 1);
 	  	 IF (matches = word.match('^(.*)y$'));
 		 	word = matches.0 _ 'ies';					# antibody -> antibodies
@@ -87,6 +88,8 @@
             word = matches.0 _ 'ses';                   # analysis -> analyses
 		 ELSIF (matches = word.match('^(.*)ius$'));
 		 	word = matches.0 _ 'ii';					# radius -> radii 
+         ELSIF (matches = word.match('^(.*)ss$'));
+            word = matches.0 _ 'ses';                   # class -> classes 
 		 ELSE; 
 		 	word = word _ "s";                          # fallback
 		 END;

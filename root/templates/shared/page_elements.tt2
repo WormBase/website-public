@@ -910,24 +910,24 @@ END;
       widgets.push({   id  = 'browse',
                        title = 'Browse',
                        href  = c.uri_for('/rest','widget', 'index', species, class,'browse'),
-                       type  = class
+                       type  = section == 'species' ? class : section
                       },
                      {   id  = 'basic_search'
                        title = 'Basic Search'
                        href  = c.uri_for('/rest','widget', 'index', species, class,'basic_search')
-                       type  = class
+                       type  = section == 'species' ? class : section
                      });
 #                      { id    = 'advanced_search'
 #                        title = 'Advanced Search'
 #                        href  = c.uri_for('/rest','widget','index', species, class,'advanced_search')
-#                        type  = class
+#                        type  = section == 'species' ? class : section
 #                      });
 
       IF((species == 'all')||(class == 'all'));
         widgets.push({   id  = 'summary',
                         title = 'Summary',
                         href  = c.uri_for('/rest','widget', 'index', species, class,'summary'),
-                        type  = class
+                        type  = section == 'species' ? class : section
                         });
       END;
 
