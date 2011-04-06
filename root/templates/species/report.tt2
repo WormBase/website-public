@@ -2,7 +2,6 @@
 
 [% 
 
-      upperClass = class FILTER ucfirst;
       breadcrumbs = [];
 
       breadcrumbs.push('<a href="'
@@ -22,7 +21,7 @@
         breadcrumbs.push('<a href="'
                 _ c.uri_for('/species',species,class)
             _ '">'
-            _ upperClass _ '</a>');
+            _ c.config.sections.species.$class.title _ '</a>');
       END;
  
       IF object;

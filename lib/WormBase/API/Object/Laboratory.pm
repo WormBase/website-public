@@ -620,7 +620,7 @@ B<Response example>
 sub allele_designation {
     my $self   = shift;
     my $object = $self->object;
-    my $allele_designation = $object->Allele_designation->name;
+    my $allele_designation = $object->Allele_designation->name if $object->Allele_designation;
     my $data = { description => 'allele designation of the laboratory',
 		 data        => "$allele_designation" };
     return $data;

@@ -5,7 +5,6 @@
 [% 
 
     breadcrumbs = [];
-    upperclass = class FILTER ucfirst;
 
     breadcrumbs.push('<a href="'
                 _ c.uri_for('/resources')
@@ -16,7 +15,7 @@
                        '<a href="'
                  _ c.uri_for('/resources',class)
                      _ '">'
-             _ upperclass
+             _ c.config.sections.$section.$class.title
              _ '</a>');
     END;
 
