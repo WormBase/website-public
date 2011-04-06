@@ -106,6 +106,11 @@ sub get_roles_methods {
 
     # apply all roles
     foreach my $role (@roles) {
+        # add required [dummy] methods to anon class
+        foreach ($role->get_required_method_list) {
+            $excl{$_} = 1; # this required method isn't provided by the role
+            $anon_meta->add_method($_, sub {});
+        }
         $role->apply($anon_meta);
     }
 

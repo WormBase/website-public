@@ -87,11 +87,10 @@ B<Response example>
 =cut 
 
 sub pcr_data {
-
     my $self    = shift;
     my $profile = $self->object;
-    my $dbgff   = $self->gff_dsn('c_elegans');
-    my $db      = $self->ace_dsn();
+    my $dbgff   = $self->gff_dsn;
+    my $db      = $self->ace_dsn;
 
     my $primer = $profile->PCR_product;
     my $seq    = $dbgff->segment($primer);
@@ -177,8 +176,8 @@ sub profiles {
     my $self    = shift;
     my $profile = $self->object;
     my @data_pack;
-    my $dbgff = $self->gff_dsn('c_elegans');
-    my $db    = $self->ace_dsn();
+    my $dbgff = $self->gff_dsn;
+    my $db    = $self->ace_dsn;
     
     if ( $profile->class eq 'Gene' ) {
         my $s;

@@ -25,6 +25,7 @@ has 'genomic_position' => (
 	builder  => '_build_genomic_position',
 );
 
+# used by genome browser to render image
 has 'genomic_image_position' => (
     is       => 'ro',
     required => 1,
@@ -123,27 +124,6 @@ sub _gbrowse_url {       # should probably be called something else...
     }
     return $ref;
 }
-
-
-# Provided with an ace object, fetch
-# its genomic coordinates.
-# Used by Clone.
-sub _get_genomic_position_using_object {
-    my ($self,$seq) = @_;
-    my $db    = $self->gff_dsn($seq->Species);
-    my $name  = "$seq";
-    my $class = eval{$seq->class} || 'Sequence';
-    my @s     = $db->segment($class=>$name) or return;
-    my @result;
-    foreach (@s) {
-        my $ref = $_->abs_ref;
-        $ref = "CHROMOSOME_$ref" if $ref =~ /^[IVX]+$/;
-        push @result,[$_->abs_start,$_->abs_end,$ref,$_->abs_ref];
-    }
-    return unless @result;
-    return wantarray ? @{$result[0]} : \@result;
-}
-
 
 =head3 genetic_position
 
@@ -253,6 +233,26 @@ sub _build_genetic_position {
          };
 }
 
+sub _seg2coords {
+    my ($self,$segment) = @_;
+
+    return unless $segment;
+
+    my $prev_abs = $segment->absolute(0); # temporarily set to relative
+
+    my $ref       = $segment->ref;
+    my $start     = $segment->start;
+    my $stop      = $segment->stop;
+
+    $segment->absolute($prev_abs); # reset relativity
+
+    my $abs_ref   = $segment->abs_ref;
+    my $abs_start = $segment->abs_start;
+    my $abs_stop  = $segment->abs_stop;
+    ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
+
+    return ($abs_ref,$abs_start,$abs_stop,$start,$stop); # what about $ref?
+}
 
 ######## NOT IN USE AND LIKELY NO LONGER NEEDED
 

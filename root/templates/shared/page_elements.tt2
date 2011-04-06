@@ -125,7 +125,7 @@
 
     <div class="field
 
-    [% TRY; IF key && (!fields.$key.data.defined || fields.$key.data.size == 0); " disabled "; END; END;%]
+    [% TRY; IF (key && !fields.$key.data.defined) || disabled; " disabled "; END; END;%]
 
 " id="[% title FILTER html %]">
          <div class="field-title">
