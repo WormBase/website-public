@@ -4,29 +4,30 @@
 
       breadcrumbs = [];
 
-      breadcrumbs.push('<a href="'
-	          	_ c.uri_for('/species','all')
-       	                _ '">All Species</a>');
-
-      IF species && species != 'all';
-             breadcrumbs.push('<span class="species"><a href="'
-	            	  _ c.uri_for('/species',species)
-		    	  _ '">'
-			  _ c.config.sections.species_list.$species.title
-		    	  _ '</a></span>');
+      IF (species == 'all' && class=='all');
+        breadcrumbs.push('<span>All Species</span>');
+      ELSE;
+        breadcrumbs.push('<a href="' _ c.uri_for('/species','all') _ '">All Species</a>');
+        IF class == 'all';
+          breadcrumbs.push('<span class="species">'
+                _ c.config.sections.species_list.$species.title
+                _ '</span>');
+        ELSE;
+          IF species != 'all';
+            breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species) _ '">'
+                      _ c.config.sections.species_list.$species.title
+                      _ '</a></span>');
+          END;
+          UNLESS object;
+            breadcrumbs.push('<span>'_ c.config.sections.species.$class.title _ '</span>');
+          ELSE;
+            breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class) _ '">'
+                    _ c.config.sections.species.$class.title _ '</a>');
+            breadcrumbs.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
+          END;
+        END;
       END;
 
-      IF class && class != 'all';
-        # Add the class to the path.
-        breadcrumbs.push('<a href="'
-                _ c.uri_for('/species',species,class)
-            _ '">'
-            _ c.config.sections.species.$class.title _ '</a>');
-      END;
- 
-      IF object;
-        breadcrumbs.push(tag2link(object.name.data));
-      END;
       title = breadcrumbs.join(' &raquo; ');
       report_page(title);
 %]
