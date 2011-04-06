@@ -1,7 +1,6 @@
  
   $jq(document).ready(function() {
     
-//    breadcrumbs($jq('#breadcrumbs'));
      Breadcrumbs.init();
     
    $jq('#operator').live('click',function()  

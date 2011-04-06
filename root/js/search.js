@@ -73,3 +73,9 @@ function selectOptionByValue(selObj, val){
         }
     }
 }
+
+
+function SearchResults(){
+  
+  
+}
