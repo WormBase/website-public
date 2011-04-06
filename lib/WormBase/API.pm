@@ -191,29 +191,38 @@ sub _build__tools {
     return \%tools;
 }
 
-# Provide a wrapper around the driver's fetch method
-# and MooseX::AbstractFactory to create a 
-# WormBase::API::Object::*
+# Fetches a WormBase object corresponding to an Ace object.
+# TODO: Standardize return values. Currently returns object if fetched,
+#       0 if can't get DB handle, and -1 if can't seem to fetch object.
+#       Consider throwing an exception and return;, respectively. Will
+#       Require modifying places where $api->fetch is called.
 sub fetch {
     my ($self,$args) = @_;
-    # We may have already fetched an object (ie by following an XREF).
-    # This is an ugly, ugly hack
-    my $object;
-    my $class; # WB model class
 
-    if ($args->{object}) {
-        $object = $args->{object};
-        $class = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$object->class};
+    my ($object, $class, $aceclass, $name)
+        = @{$args}{qw(object class aceclass name)};
+
+    if ($object) {
+        $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$object->class};
     }
     else {
-        $class   = $args->{class};
-        my $name = $args->{name};
-        # Try fetching an object (from the default data source)
         my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
 
-		my $aceclass = $args->{aceclass} || WormBase::API::ModelMap->WB2ACE_MAP->{class}->{$class};
-        $class = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$aceclass} unless $class;
+        # resolve classes to properly retrieve object
+        if ($class) { # WB class was provided
+            $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class};
+        }
+        else { # aceclass provided (assumption), WB class not
+            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass};
+        }
 
+        # HACK for variation -- resolve variation name first
+        if ($aceclass eq 'Variation' and $name !~ /^WBVar/ and
+            my $var_name = $service_dbh->fetch(-class => 'Variation_name', -name => $name)) {
+            $name = $var_name->Public_name_for || $var_name->Other_name_for || $name;
+        }
+
+        # Try fetching an object (from the default data source)
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
@@ -234,20 +243,17 @@ sub fetch {
 	});
 }
 
-
 # Instantiate but without fetching an ace object
-sub instantiate_empty { 
-    my ($self,$args) = @_; 
-    my $class   = $args->{class};    
-    return WormBase::API::Factory->create($class,
-					  {log          => $self->log,
-					   dsn	       => $self->_services,
-					   tmp_base     => $self->tmp_base,
-					   pre_compile  => $self->pre_compile,
-					  });	
-}    
-
- 
+sub instantiate_empty {
+    my ($self,$args) = @_;
+    my $class   = $args->{class};
+    return WormBase::API::Factory->create($class, {
+        log         => $self->log,
+        dsn         => $self->_services,
+        tmp_base    => $self->tmp_base,
+        pre_compile => $self->pre_compile,
+    });
+}
 
 1;
 
