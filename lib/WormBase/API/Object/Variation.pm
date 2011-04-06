@@ -75,7 +75,6 @@ sub cgc_name {
 # A unified classification of the type of variation
 # general class: SNP, allele, etc
 # physical class: deletion, insertion, etc
-# TODO: EVidence
 sub variation_type {
     my ($self) = @_;
     my $object = $self->object;
@@ -85,38 +84,31 @@ sub variation_type {
         push @types,"Knockout Consortium allele";
     }
 
-    if ($object->SNP(0) && $object->RFLP(0)) {
-        my $type = 'polymorphism; RFLP';
-        $type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-        push @types,$type;
-    }
-
-    if ($object->SNP(0) && !$object->RFLP(0)) {
-        my $type  = 'polymorphism';
-        $type .= $object->Confirmed_SNP(0) ? " (confirmed)" : " (predicted)";
-        push @types,$type;
+    if ($object->SNP) {
+        my $type = 'Polymorphism';
+        $type .= '; RFLP' if $object->RFLP;
+        $type .= $object->Confirmed_SNP ? ' (confirmed)' : ' (predicted)';
+        push @types, $type;
     }
 
     if ($object->Natural_variant) {
-        push @types, 'natural variant';
+        push @types, 'Natural variant';
     }
 
     if (@types == 0) {
-        push @types,'allele';
+        push @types,'Allele';
     }
 
-    my $type = join("; ",@types);
-
-    my $physical_type   = $object->Type_of_mutation;
+    my $physical_type = $object->Type_of_mutation; # what about text?
     if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
-        $physical_type = 'transposon insertion';
+        $physical_type = 'Transposon insertion';
     }
 
     return {
         description => 'the general type of the variation',
         data        => {
-            general_class  => $type,
-            physical_class => $physical_type,
+            general_class  => @types ? \@types : undef,
+            physical_class => $physical_type && "$physical_type",
         },
     };
 }
@@ -139,30 +131,9 @@ sub sequencing_status {
     my $status = $self ~~ 'SeqStatus';
     return {
         description => 'sequencing status of the variation',
-        data        => $status && $status->name,
+        data        => $status && "$status",
     };
 }
-
-## AD: The following are not in the Ace model...
-
-# sub five_prime_gap {
-#     my ($self) = @_;
-
-#     my $gap;
-#     my $object = $self->object;
-#     my $gap    = $object->FivePrimeGap || '';
-#     return { description => 'five prime gap',
-#              data        => "$gap" };
-# }
-
-# sub three_prime_gap {
-#     my ($self) = @_;
-#     my $object = $self->object;
-#     my $gap     = $object->ThreePrimeGap || '';
-#     return { description => 'three prime gap',
-#              data        => "$gap" };
-#}
-
 
 # Returns a data structure containing
 # wild type sequence - the wild type (or reference) sequence
@@ -578,14 +549,9 @@ sub polymorphism_assays {
 
 =cut
 
-# based on the above 'segments' (previously 'pic_segment') attribute,
-# this may be doing the same thing, so we probably could omit this and rely
-# entirely on SUPER::genomic_position...
-# the key difference lies in the segment that's fetched. here it's fetched
-# with _get_genomic_segment, whereas above it's a GFFDB call...
 sub _build_genomic_position {
     my ($self) = @_;
-    my $segments = [$self->_get_genomic_segment(-key => 'wt_variation') || ()];
+
     my $adjustment = sub {
         my ($abs_start, $abs_stop) = @_;
         return $abs_stop - $abs_start < 100
@@ -594,7 +560,7 @@ sub _build_genomic_position {
 
     };
 
-    my @positions = $self->_genomic_position($segments, $adjustment);
+    my @positions = $self->_genomic_position($self->_segments, $adjustment);
     return {
         description => 'The genomic location of the sequence',
         data        => @positions ? \@positions : undef,
@@ -627,7 +593,7 @@ sub _build_genomic_image_position {
     unless ($segment) {
         # Try fetching a generic segment corresponding to a span flanking the variation
 
-        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
         # Generate a link to the genome browser
         # This is hard-coded and needs to be cleaned up.
@@ -653,8 +619,12 @@ sub _build_genomic_image_position {
     }
 }
 
-# TODO: required to consume Role::Position, but currently unknown implementation.
-sub _build_segments {} # WARNING: THIS MAY WREAK HAVOC ON _get_genomic_segment!
+sub _build__segments {
+    my ($self) = @_;
+    my $obj    = $self->object;
+
+    return [$self->gff_dsn->segment($obj->class => $obj)];
+}
 
 # sub genetic_position {}
 # Supplied by Role; POD will automatically be inserted here.
@@ -1437,7 +1407,7 @@ sub _format_molecular_change_hash {
 # What is the length of the mutation?
 sub _compile_nucleotide_changes {
     my ($self,$object) = @_;
-    my @types = eval { $object->Type_of_mutation };
+    my @types = $object->Type_of_mutation;
     my @variations;
 
     # Some variation objects have multiple types
@@ -1471,7 +1441,7 @@ sub _compile_nucleotide_changes {
             # We need to extract the sequence from a GFF store.
             # Get a segment corresponding to the deletion sequence
 
-            my $segment = $self->_get_genomic_segment(-key => 'wt_variation');
+            my $segment = $self->_segments->[0];
             if ($segment) {
                 $wt  = $segment->dna;
             }
@@ -1515,77 +1485,6 @@ sub _compile_nucleotide_changes {
 }
 
 
-# Genomic segment getter/setter.
-# Not very Moose-like, but it's expedient.
-# keys:
-# This may be a segmenet spanning a single variation
-# Type will be used to store the segment in the object
-# Pass an object to fetch that segment
-# AD: ouch, this requires knowledge of the underlying Moose implementation.
-#     we wouldn't be able to do this if Moose used inside-out objects...
-#     And what if the segments attribute is renamed or moved? this will break
-#     and nobody will notice until much later on...
-#     Additionally, only _fetc_coords_in_feature uses this as a setter,
-#     so this mutator should be factored into an attribute.
-sub _get_genomic_segment {
-    my ($self,@p) = @_;
-    my ($class,$start,$stop,$refseq,$key) = $self->rearrange([qw/CLASS START STOP REFSEQ KEY/],@p);
-
-    # We may have already fetched this segment and stashed it.
-    if ($key && $self->{segments}->{$key}) {
-        return $self->{segments}->{$key};
-    }
-
-    # Fetch the object
-    my $object = $self->object;
-
-    # Get a GFFdb handle - I'm not sure how to do this in the API.
-    # TODO: This should probably be simplified
-    my $species = $self->_parsed_species;
-    my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
-    my $db      = $db_obj->dbh;
-
-    my $segment;
-
-    # Am I trying to fetch a specific segment with start and stop coords?
-    if ($refseq && $start && $stop) {
-        $segment = $db->segment(-name=>$refseq,-start=>$start,-stop=>$stop);
-
-        # Am I trying to fetch a specific segment.
-    }
-    elsif ($refseq) {
-        $segment = $db->segment(-name=>$refseq,-class=>$refseq->class);
-
-        # Otherwise, fetch a segment for the variation.
-    }
-    else {
-        $class ||= $object->class;
-        $segment = $db->segment($class => $object);
-    }
-
-    $self->{segments}->{$key} = $segment if $segment && $key;
-    return $segment;
-}
-
-
-# Return the genomic coordinates of a provided span
-sub _coordinates {
-    my ($self,$segment) = @_;
-
-    return unless $segment;
-
-    my $ref       = eval{$segment->abs_ref};
-    my $start     = $segment->start;
-    my $stop      = $segment->stop;
-
-
-    $segment->absolute(1);
-    my $abs_start = $segment->abs_start;
-    my $abs_stop  = $segment->abs_stop;
-    ($abs_start,$abs_stop) = ($abs_stop,$abs_start) if ($abs_start > $abs_stop);
-    $segment->absolute(0);
-    return ($ref,$abs_start,$abs_stop,$start,$stop);
-}
 
 
 
@@ -1612,11 +1511,11 @@ sub _build_sequence_strings {
     my $db      = $db_obj->dbh;
 
     my $object     = $self->object;
-    my $segment    = $self->_get_genomic_segment(-key => 'wt_variation');
+    my $segment    = $self->_segments->[0];
     return unless $segment;
 
     my $sourceseq  = $segment->sourceseq;
-    my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($segment);
+    my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
     my $debug;
 
@@ -2008,52 +1907,29 @@ sub _get_aa_position {
     return;
 }
 
-
-
-
 # Fetch the coordinates of the variation in a given feature
 # Much in here could be generic
 sub _fetch_coords_in_feature {
     my ($self,$tag,$entry) = @_;
-    # Fetch the variation segment
-    my $variation_segment = $self->_get_genomic_segment(-key=>'wt_variation');
 
-    # Fetch a GFF segment of the containing feature
-    my $containing_segment;
+    my $db = $self->gff_dsn;
 
-    my $species = $self->_parsed_species;
-    my $gffdb   = $self->gff_dsn($species);
+    my $variation_segment = $self->_segments->[0] or return;
 
-    # Kludge for chromosome
-    if ($tag eq 'Chromosome') {
-        ($containing_segment) = $gffdb->segment(-class=>'Sequence',-name=>$entry);
-    }
-    else {
+    # Kludge for chromosomes
+    my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
+    # is it really okay to ignore multiple results and arbitarily use the first one?
+    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
+    # consider caching results?
 
-        # Um, this breaks very often, returning multiple segments...
-        $containing_segment = $self->_get_genomic_segment(-refseq=>$entry);
-    }
+    # Set the refseq of the variation to the containing segment
+    $variation_segment->refseq($containing_segment);
 
-    return unless $variation_segment && $containing_segment;
-    if ($containing_segment) {
-        # Set the refseq of the variation to the containing segment
-        eval { $variation_segment->refseq($containing_segment) };
-
-        # Debugging statements
-        # MOVED into the Variation.t
-        # 	warn "Contained in $tag $entry" . join(' ',$data->coordinates($variation_segment)) if DEBUG;
-        # 	warn "Containing seg coordinates " . join(' ',$data->coordinates($containing_segment)) if DEBUG;
-
-        my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_coordinates($containing_segment);
-        my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_coordinates($variation_segment);
-        ($start,$stop) = ($stop,$start) if ($start > $stop);
-        return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
-    }
+    my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_seg2coords($containing_segment);
+    my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($variation_segment);
+    ($start,$stop) = ($stop,$start) if ($start > $stop);
+    return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
 }
-
-
-# OLD ACCESSORS deprecating
-#sub cgh_segment       { return shift->{segments}->{cgh_variation}; }
 
 __PACKAGE__->meta->make_immutable;
 
