@@ -2,7 +2,8 @@ package WormBase::API::Object::Protein;
 
 use Moose;
 use Bio::Tools::SeqStats;
-use pICalculator;
+#use pICalculator;
+use WormBase::Util::pICalculator;
 use Bio::Graphics::Feature;
 use Bio::Graphics::Panel;
 use Digest::MD5 'md5_hex';

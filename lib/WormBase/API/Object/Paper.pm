@@ -1,7 +1,7 @@
 package WormBase::API::Object::Paper;
 
 use Moose;
-use ParseName qw(parse_name parse_name_initials);
+use WormBase::Util::ParseName qw(parse_name parse_name_initials);
 use List::Util qw(first);
 
 with 'WormBase::API::Role::Object';
