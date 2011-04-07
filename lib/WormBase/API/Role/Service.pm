@@ -5,159 +5,156 @@ use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
 use File::Path 'mkpath';
 
- 
+
 
 # Every service should provide a:
 requires 'dbh';    # a database handel for the service
 requires 'connect';    # a database connection for the service
+requires 'ping';
 
 has symbolic_name => (
-    is => 'rw',
-    isa => 'Str',
-    required => 1,
+    is            => 'rw',
+    isa           => 'Str',
+    required      => 1,
     documentation => 'A simple symbolic name for the service, typically a single word, e.g. "acedb"',
-    );
+);
 
 has function => (
-    is  => 'rw',
-    isa => 'Str',
+    is            => 'rw',
+    isa           => 'Str',
     documentation => 'A brief description of the service',
-    );
+);
 
 has version => (
-    is   => 'ro',
-    isa  => 'Str',
-    lazy => 1,
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
     default => sub {
-	my $self = shift;
-	my $dbh = $self->dbh || return "?";
-	return $dbh->version;
+        my $self = shift;
+        my $dbh = $self->dbh || return "?";
+        return $dbh->version;
     },
-    );
+);
 
 has path => (
-    is => 'ro',
+    is       => 'ro',
     required => 1,
-    default => '/tmp/',
-    );
+    default  => '/tmp/',
+);
 
 has conf => (
-    is => 'ro',
+    is       => 'ro',
     required => 1,
-    );
+);
 
 has log => (
     is => 'ro',
-    );
+);
 
 has 'hosts' => (
-    is  => 'rw',
-    isa => 'ArrayRef[Str]',
-    lazy => 1,
+    is      => 'rw',
+    isa     => 'ArrayRef[Str]',
+    lazy    => 1,
     default => sub {
-	my $self = shift;
-	return [split(/\s+|\t/,$self->conf->{host})];
+        my $self = shift;
+        return [split(/\s+|\t/,$self->conf->{host})];
     }
-#     default => [qw/aceserver.cshl.edu/],
-    );
+);
 
 has 'host' => (
-    is  => 'rw',
-    isa => 'Str',
-    default    => 0,
-    );
+    is      => 'rw',
+    isa     => 'Str',
+    default => 0,
+);
 
 has 'port' => (
     is  => 'rw',
     isa => 'Str',
-#     default => '2005',
-    );
+    #     default => '2005',
+);
 
 has 'user' => (
     is  => 'rw',
     isa => 'Str',
-    );
+);
 
 has 'pass' => (
     is  => 'rw',
     isa => 'Str',
-    );
+);
 
 has 'source' => (
-    is  => 'rw',
-    isa => 'Str',
+    is       => 'rw',
+    isa      => 'Str',
     required => 1,
-    default => 'c_elegans',
-    );
-
+    default  => 'c_elegans',
+);
 
 around 'dbh' => sub {
-    my $orig = shift;
-    my $self = shift;
+    my $orig   = shift;
+    my $self   = shift;
+
+    if (my $dbh = $self->$orig) {
+        $self->ping($dbh) and return $dbh;
+    }
+
     my $source = $self->source;
-    my $dbh = $self->$orig;
-    
-# Do we already have a dbh? HOW TO TEST THIS WITH HASH REF? Dose undef mean timeout or disconnected?
-  #  if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh) && !$self->select_host(1)) {   
-    if ($self->has_dbh && defined $dbh && $dbh && $self->ping($dbh)) {  
-#       $self->log->debug( $self->symbolic_name." dbh for source $source exists and is alive!");
-      return $dbh;
-    } 
     $self->log->debug( $self->symbolic_name." dbh for source $source doesn't exist or is not alive; trying to connect");
-    undef $dbh; #release the current connection if exists
     return $self->reconnect();
-     
 };
 
 sub reconnect {
-    my $self = shift;
-    my $tries=0;
+    my $self  = shift;
+
+    my $tries = 0;
     my $dbh;
-    my @hosts = $self->select_host;
-    while(@hosts && $tries < $self->conf->{reconnect} && $self->host(shift @hosts) ) {
-	$tries++; 
-	$self->log->info("trytime $tries: Connecting to ".$self->symbolic_name. " ".$self->source);
-	$self->log->debug('     using the following parameters:');
-	$self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
-	
-	$dbh = eval {$self->connect() };
-	if(defined $dbh && $dbh) {
-	    $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $self->host);
-	    # Cache my handle
-	    $self->set_dbh($dbh);
-	    return $dbh;
-	} 
-	else { 
-	    $self->mark_down($self->host);
-	    $self->log->fatal($self->host." is down!");
-		$self->log->fatal($@) if $@;
-	    $self->host(0);
-	}
-    } 
+    foreach my $host ($self->select_hosts) {
+        $tries++;
+
+        $self->host($host);
+
+        $self->log->info("trytime $tries: Connecting to ".$self->symbolic_name. " ".$self->source);
+        $self->log->debug('     using the following parameters:');
+        $self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
+
+        if ($dbh = eval {$self->connect}) {
+            $self->log->info("   --> succesfully established connection to  ".$self->symbolic_name." on " . $self->host);
+            # Cache my handle
+            $self->set_dbh($dbh);
+            return $dbh;
+        }
+
+        $self->mark_down_host($self->host);
+        $self->log->fatal($self->host." is down!");
+        $self->log->fatal($@) if $@;
+        $self->host(0);
+
+        last if $tries > $self->conf->{reconnect};
+    }
+
     $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
     return 0;
 }
 
-sub select_host {
-    my ($self)   = @_;
-    my $dbfile     = $self->dbfile(1);
+# get hosts to try to connect to
+sub select_hosts {
+    my ($self) = @_;
+    my $get_downed_hosts = $self->get_downed_hosts(1);
     my @live_hosts;
     foreach my $host ( @{$self->hosts} ) {
-	if( my $pack = $dbfile->{$host}) {  
-	  if( (time() - unpack('L',$pack)) >= $self->conf->{delay} ) {
-		  undef $dbfile->{$host};
-	  }
-	  else {next;}
-	   
-	} 
-	push @live_hosts, $host;
-	$self->log->debug("push host $host in the queue for connection");
-    }  
+        if ( my $pack = $get_downed_hosts->{$host}) {
+            next if time - unpack('L', $pack) < $self->conf->{delay};
+            $get_downed_hosts->{$host} = undef;
+        }
+        push @live_hosts, $host;
+        $self->log->debug("push host $host in the queue for connection");
+    }
     return @live_hosts;
 }
 
 =pod
-sub select_host {
+
+sub select_hosts {
     my ($self,$current)   = @_;
     my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>5 );
     # if the current connected host is not too busy then continue using it
@@ -166,19 +163,19 @@ sub select_host {
 	return 0 if($self->check_cpu_load($ua,$self->host)<40) ;
 	return 1;
     }
-    # open berkeley db(which stores the db hosts status:on/off information)  
-    my $dbfile     = $self->dbfile(1);
+    # open berkeley db(which stores the db hosts status:on/off information)
+    my $get_downed_hosts     = $self->get_downed_hosts(1);
     my $host_loads;
     foreach my $host ( @{$self->hosts} ) {
 	my ($status,$last_checked)=(0,0);
-	if( my $pack = $dbfile->{$host}) {  
+	if( my $pack = $get_downed_hosts->{$host}) {
 	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
-		  undef $dbfile->{$host};
-  # 		$self->mark_host($host,1,$dbfile);
+		  undef $get_downed_hosts->{$host};
+  # 		$self->mark_host($host,1,$get_downed_hosts);
 	  }
 	  else {next;}
-	   
-	} 
+
+	}
 	$host_loads->{$host} = $self->check_cpu_load($ua,$host);
 	$self->log->debug("host $host CPU Load: ".$host_loads->{$host}."%");
     }
@@ -199,17 +196,20 @@ sub check_cpu_load {
     }
     return $load;
 }
+
 =cut
 
-sub mark_down {
+sub mark_down_host {
     my $self   = shift;
-    my $host	= shift || return;
-    my $dbfile	= shift || $self->dbfile(1) || return ;
-    $self->log->info("marking $host down");  
-    $dbfile->{$host} = pack('L',time());
+    my $host   = shift || return;
+    my $get_downed_hosts = shift || $self->get_downed_hosts(1) || return;
+
+    $self->log->info("marking $host down");
+    $get_downed_hosts->{$host} = pack('L',time());
 }
 
-sub dbfile {
+# returns hashref of HOST => TIME SINCE DOWN
+sub get_downed_hosts {
     my $self  = shift;
     my $write = shift;
 
@@ -217,7 +217,7 @@ sub dbfile {
     my $mode       = $write ? O_CREAT|O_RDWR : O_RDONLY;
     my $perms      = 0666;
 
-    mkpath($self->path,0,0777) unless -d $self->path; 
+    mkpath($self->path,0,0777) unless -d $self->path;
 
     my $path	   = $self->path.'/WormBase_'.$self->symbolic_name;
     my %h;
