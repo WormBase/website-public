@@ -5,7 +5,9 @@ use warnings;
 use Carp;
 use Readonly;
 use Config::General;
+use File::Basename;
 use Test::More;
+use Catalyst::Utils; # merge_hash: can reimplement in this class if needed
 use WormBase::API;
 
 use namespace::autoclean;
@@ -30,9 +32,22 @@ sub new {
         $self->api($args->{api});
     }
     elsif ($args->{conf_file}) { # make the API object using conf file
-        croak "$args->{conf_file} does not exist" unless -e $args->{conf_file};
-        my %conf = Config::General->new(-ConfigFile      => $args->{conf_file},
+        my $conf_file = $args->{conf_file};
+        croak "$conf_file does not exist" unless -e $conf_file;
+
+        my %conf = Config::General->new(-ConfigFile      => $conf_file,
                                         -InterPolateVars => 1)->getall;
+
+        # try to find _local version of $conf_file
+        my ($conf_filename, $dir, $suffix) = fileparse($conf_file, qr/\.[^.]+/);
+        my $local_conf_file = $dir . $conf_filename . '_local' . $suffix;
+
+        if (-e $local_conf_file) {
+            my %newconfig = Config::General->new(-ConfigFile      => $local_conf_file,
+                                                 -InterPolateVars => 1)->getall;
+
+            %conf = %{Catalyst::Utils::merge_hashes(\%conf, \%newconfig)};
+        }
 
         my $api = WormBase::API->new($conf{'Model::WormBaseAPI'}->{args});
         ok($api && $api->isa($API_BASE), 'Created WormBase API object');
@@ -65,7 +80,5 @@ sub api {
 ################################################################################
 # Test Methods
 ################################################################################
-
-
 
 1;
