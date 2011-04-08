@@ -1,4 +1,11 @@
-[% IF (page && page > 1); "<br /><b>Page " _ page _ "</b>"; END; %]
+
+
+[% IF (page && page > 1) %]
+  <script>
+  sr[% IF widget; widget ; END;%].search.setTotal([% c.stash.count %]);
+  </script>
+ [% IF results.size > 0 %]<br /><b>Page [% page %] </b>[% END %]
+[% END %]
 [% FOREACH item IN results %]
 
  [% UNLESS c.stash.bench %]<div class="result">[% END %]
