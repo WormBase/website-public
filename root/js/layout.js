@@ -195,15 +195,13 @@ $jq(function() {
           }
         }
       } 
-      var results    = $jq("#results"); //load inside so we can catch the results loaded by ajax calls
+      var results    = $jq("#results.lazyload-widget"); //load inside so we can catch the results loaded by ajax calls
 
       if(results.offset() && loadcount < 3){
-
         var rHeight = results.height() + results.offset().top;
         var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
         if(rBottomPos < 400) {
           results.children(".load-results").trigger('click');
-          
         }
       }
 

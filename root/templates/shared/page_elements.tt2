@@ -913,7 +913,7 @@ END;
                        type  = section == 'species' ? class : section
                       },
                      {   id  = 'basic_search'
-                       title = 'Basic Search'
+                       title = 'Basic search'
                        href  = c.uri_for('/rest','widget', 'index', species, class,'basic_search')
                        type  = section == 'species' ? class : section
                      });
