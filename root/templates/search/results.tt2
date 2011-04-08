@@ -5,11 +5,13 @@
 [% END %]
 
 <!-- begin result list -->
-<div id="results" class="[% widget %]-widget">
+<div id="results" class="[% widget || 'lazyload' %]-widget">
   [% UNLESS no_count %]
   [% IF results.size > 0 %]
+  [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
+
     <div id="fade">about <span id="count">[% c.stash.count%]</span> 
-      [% UNLESS type == 'all'; pluralize(type, results.size) _ ' found'; ELSE; 'results'; END; %]
+      [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
       [% IF querytime; "(" _ querytime _ " seconds)"; END %]
     </div>
   [% ELSE %]
@@ -26,65 +28,17 @@
       [% query = query | uri %]
       [% searchLink = "/search/" _ type _"/" _ query _ "/" %]
     [% END %]
-    <div id="load-results" class='load-results [% IF widget; widget _ "-widget"; END; %]' href="[% searchLink %]">load 10 more results</div>
+    <div id="load-results" class='load-results' href="[% searchLink %]">load 10 more results</div>
     [% END %]
 </div>
 
 <script>
-  [%# is there a better way to do this? probably.  yes. %]
-  [% txt = c.stash.query.replace('[\*]', ' ') %]
-  [% txt = txt.replace(',', ' ') %]
-  [% txt = txt.replace('\.', '') %]
-  [% txt = txt.replace('  ', ' ') %]
-  [% to_highlight = txt.split(' ') %]
-  [% FOREACH q IN to_highlight %]
-    $jq("div#results[% IF widget; '.' _ widget  _'-widget'; END;%]").highlight('[% q %]');
-  [% END %]
-
-    var query[% IF widget; widget ; END;%] = '[% q %]';
-    var page[% IF widget; widget ; END;%] = 2;
-    var total[% IF widget; widget ; END;%] = [% c.stash.count %];
-
-    if(!(resultLoaded[% IF widget; widget ; END;%])){
-
-      [% IF widget; 'loadcount = 3;'; END; %]
-      $jq(".load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").live('click', function() {
-        if(((page[% IF widget; widget ; END;%]-1)*10) > total[% IF widget; widget ; END;%]){ return; }
-        var url= $jq(this).attr("href") + page[% IF widget; widget ; END;%];
-
-        [% IF species %]
-          url += "?species=[% species %]";
-        [% END; %]
-
-        $jq(this).removeClass("load-results");
-
-        var div = $jq("<div></div>");
-        setLoading(div);
-        $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("loading...");
-        div.load(url, function(response, status, xhr) {
-          var left = total[% IF widget; widget ; END;%] - (page[% IF widget; widget ; END;%]*10);
-          if(left > 0){
-            if(left>10){left=10;}
-            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").addClass("load-results");
-            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").html("load " + left + " more results");
-          }else{
-            $jq("#load-results[% IF widget; '.' _ widget  _'-widget'; END;%]").remove();
-          }
-          [% FOREACH q IN to_highlight %]
-            div.highlight(query[% IF widget; widget ; END;%]);
-          [% END %]
-          if (status == "error") {
-            var msg = "Sorry but there was an error: ";
-            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
-          }
-          page[% IF widget; widget ; END;%]++;
-          loadcount++;
-        });
-
-        div.appendTo($jq(this).parent().children("ul"));
-
-      });
-      var resultLoaded[% IF widget; widget ; END;%] = true;
+    var sr[% IF widget; widget ; END;%] = { 
+      init: function(){
+        this.search = new SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]');
+        this.search.setTotal([% c.stash.count %]);
+      }
     }
+    sr[% IF widget; widget ; END;%].init();
 </script>
 <!-- End result list -->

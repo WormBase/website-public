@@ -353,7 +353,7 @@ li.visible div.widget-container {
 }
 
 .content {
-  padding:0.5em;
+  padding:1em;
   padding-bottom:1.8em;
   overflow:auto;
   list-style:disc outside none;
