@@ -75,7 +75,59 @@ function selectOptionByValue(selObj, val){
 }
 
 
-function SearchResults(){
+function SearchResult(q, type, species, widget){
+  var query = decodeURI(q),
+      type = type,
+      species = species,
+      widget = widget,
+      page = 1.0,
+      total = 0,
+      countSpan = $jq((widget ? "." + widget + "-widget" : '') + " #count"),
+      resultDiv = $jq((widget ? "." + widget + "-widget" : '') + " .load-results");
+  var queryList = query.replace(/[,\.\*]/, ' ').split(' ');
+
+  this.setTotal = function(t){
+   total = t;
+   countSpan.html(total);
+  }
   
+  function queryHighlight(div){
+    for (var i=0; i<queryList.length; i++){
+      if(queryList[i]) { div.highlight(queryList[i]); }
+    }
+  }
+  
+  queryHighlight($jq("div#results" + (widget ? "." + widget + "-widget" : '')));
+  
+  resultDiv.click(function(){
+    page++;
+    var url= $jq(this).attr("href") + page + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
+    $jq(this).removeClass("load-results");
+
+    var div = $jq("<div></div>");
+    setLoading(div);
+    
+    var res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
+    res.html("loading...");
+    div.load(url, function(response, status, xhr) {
+      var left = total - (page*10);
+      if(left > 0){
+        if(left>10){left=10;}
+        res.addClass("load-results");
+        res.html("load " + left + " more results");
+      }else{
+        res.remove();
+      }
+
+      queryHighlight(div);
+
+      if (status == "error") {
+        var msg = "Sorry but there was an error: ";
+        $jq(this).html(msg + xhr.status + " " + xhr.statusText);
+      }
+    });
+    div.appendTo($jq(this).parent().children("ul"));
+    loadcount++;
+  });
   
 }

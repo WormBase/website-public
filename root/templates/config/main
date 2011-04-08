@@ -219,12 +219,13 @@
 
 
 #  Add params to have options on what to markup.  ie. omim, locus...
-    MACRO markup(text, omim, locus, var) BLOCK;
+    MACRO markup(text, omim, locus, var, link) BLOCK;
       UNLESS omim.defined; omim = 1; END;
       UNLESS locus.defined; locus = 1; END;
       UNLESS var.defined; var = 1; END;
-      IF locus; text = markup_locus(text); END;
-      IF var; text = markup_var(text); END;
+      UNLESS link.defined; link = 0; END;
+      IF locus; text = markup_locus(text, link); END;
+      IF var; text = markup_var(text, link); END;
       IF omim; text = markup_omim(text); END;
       text;
     END;

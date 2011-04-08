@@ -6,21 +6,19 @@
 
     breadcrumbs = [];
 
-    breadcrumbs.push('<a href="'
-                _ c.uri_for('/resources')
-                    _ '">Resources</a>');
-  
-    IF class && class != 'all';
-      breadcrumbs.push(
-                       '<a href="'
-                 _ c.uri_for('/resources',class)
-                     _ '">'
-             _ c.config.sections.$section.$class.title
-             _ '</a>');
-    END;
-
-    IF object; 
-      breadcrumbs.push(tag2link(object.name.data)); 
+    IF (class=='all');
+      breadcrumbs.push('<span>Resources</span>');
+    ELSE;
+      breadcrumbs.push('<a href="'_ c.uri_for('/resources') _ '">Resources</a>');
+      UNLESS object;
+        breadcrumbs.push('<span>' _ c.config.sections.$section.$class.title _ '</span>');
+      ELSE;
+        breadcrumbs.push('<a href="'
+            _ c.uri_for('/resources',class) _ '">'
+            _ c.config.sections.$section.$class.title
+            _ '</a>');
+        breadcrumbs.push('<span>' _ object.name.data.label _ '</span>');
+      END;
     END;
 
     title = breadcrumbs.join(" &raquo; ");
