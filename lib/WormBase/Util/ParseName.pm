@@ -1,4 +1,4 @@
-package ParseName;
+package WormBase::Util::ParseName;
 
 use Exporter 'import';
 use strict;
