@@ -3,8 +3,8 @@
 
 [% widget = widget %]
 
-   [% WRAPPER $field_block title="Laboratory Of Origin" key="laboratory_of_origin" %]
-         [% tag2link(fields.laboratory_of_origin.data) %]
+   [% WRAPPER $field_block title="Laboratory Of Origin" key="laboratory" %]
+         [% tag2link(fields.laboratory.data.laboratory) %]
    [% END %]
 
    [% WRAPPER $field_block title="Isolated By (author)" key="isolated_by_author" %]

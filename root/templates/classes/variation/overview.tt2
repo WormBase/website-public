@@ -13,8 +13,8 @@
 
 [% END %]
 
-   [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
-           [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class FILTER lower %]
+   [% WRAPPER $field_block title="Variation Type" key='variation_type' %]
+           [% fields.variation_type.data.general_class.join('; ') %]: [% fields.variation_type.data.physical_class FILTER lower %]
    [% END %]
 
    [% WRAPPER $field_block title="Corresponding Gene" key="corresponding_gene" %]

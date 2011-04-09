@@ -70,7 +70,9 @@ use Class::MOP;
 		my ($classmap, $fullclassmap) = @WB2ACE_MAP{qw(class fullclass)};
 
         foreach my $fullwbclass ($mp->plugins) {
-            Class::MOP::load_class($fullwbclass); # load the classes
+            # it is necessary to load the classes as anything that is using
+            # ModelMap likely wants to tinker with that class
+            Class::MOP::load_class($fullwbclass);
 			my $wbclass = (split /::/, $fullwbclass)[-1];
             # the exceptional cases have already been mapped.
             $classmap->{$wbclass} ||= $wbclass;
