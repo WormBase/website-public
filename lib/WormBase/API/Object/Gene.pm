@@ -1987,62 +1987,6 @@ sub _go_evidence_code {
     return @results;
 }
 
-
-
-
-# NOT COMPLETE
-# THIS BELONGS ELSEWHERE, MAYBE EVEN AS A COMPONENT OF THE VIEW
-sub GetEvidenceNew {
-    my ($self,$object,@p) = @_;
-    
-    my $data      = $self->_parse_hash($object);
-    my $formatted = $self->_parse_evidence_hash(-data=>$data,@p);
-    return $formatted;
-}
-
-
-# Reformat IDs and map them to correct URLs
-# THIS BELONGS AS PART OF A TEMPLATE FUNCTION / CONFIGURATION
-sub species2url {
-    my ($self,$species,$id) = @_;
-    
-    # Oryza sativa
-    if ($species =~ /oryza/i) {
-	$id =~ s/^GR\://;
-	# Plasmodium falciparum
-    } elsif ($species =~ /sapiens/) {
-	
-    } elsif ($species =~ /pfalciparum/) {
-	$id =~ s/GeneDB_Pfalciparum://g;
-	# S. cervisiae
-    } elsif ($species eq 'Saccharomyces cerevisiae') {
-	$id =~ s/SGD\://g;
-    } elsif ($id =~ /fly/i) {
-	$id =~ s/FLYBASE://g;
-	$id =~ s/CG//i;
-	$id =~ s/GA//i;
-	$id = sprintf("%07d",$id);
-	# S. pombe
-    } elsif ($species =~ /Schizosaccharomyces/) {
-	$id =~ s/GeneDB_Spombe://g;
-    } elsif ($species =~ /dictyostelium/i) {
-	$id =~ s/^DDB://;
-    } elsif ($id =~ /RefSeq/i) {
-	$id =~ s/REFSEQ://;
-	$species = 'refseq';
-    } elsif ($id =~ /ENSEMBL/) {
-	$id =~ s/ENSEMBL\://g;
-	my $url = Configuration->Species_to_url->{ensembl};
-	$species =~ s/ /_/g;
-	return (sprintf($url,$species,$id));
-    }
-    
-    my $url = Configuration->Species_to_url->{$species};
-    return (sprintf($url,$id)) if $url;
-}
-
-
-
 sub _fetch_sequences {
 
 	my $self = shift;

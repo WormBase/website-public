@@ -3,8 +3,8 @@
 
 [% widget = c.stash.widget toggle = 1%]
 
-   [% WRAPPER $field_block title="Variation Type" key="variation_type" %]
-        [% fields.variation_type.data.general_class %]: [% fields.variation_type.data.physical_class %]
+   [% WRAPPER $field_block title="Variation Type" key='variation_type' %]
+           [% fields.variation_type.data.general_class.join('; ') %]: [% fields.variation_type.data.physical_class FILTER lower %]
    [% END %]
 
    [% WRAPPER $field_block title="Sequencing Status" key="sequencing_status" %]
@@ -144,42 +144,42 @@
    [% END %]
 
    [% WRAPPER $field_block title="Features Affected" key="features_affected" %]
-       <table border="1">
-	  	<tr>
-			<td>feature type</td>
-			<td>feature</td>
-			<td>details</td>
-		</tr>
-
-       [% FOREACH feature_type IN fields.features_affected.data.keys %]
-                [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
-		
-                <tr>
-                   <td>[% feature_type %]</td>
+       [% FOREACH feature_type IN fields.features_affected.data.sort %]
+           <div class="toggle">
+                [% pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) %]
+                ([% fields.features_affected.data.$feature_type.size %])
+           </div>
+           <div style="display:none">
+           [% FOREACH feature_name IN fields.features_affected.data.$feature_type.sort %]
+              <div style="margin-bottom:0.25em; margin-top:0.25em">
+                [% feature = fields.features_affected.data.$feature_type.$feature_name %]
                [% IF feature_type == 'Chromosome' %]
-                <td>[% fields.features_affected.data.$feature_type.$feature.label %]</td>
+                  [% feature.label %]
                [% ELSE %]
-	           <td>[% tag2link(fields.features_affected.data.$feature_type.$feature) %]</td>
-               [% END %]
-		   <td>
+	              [% tag2link(feature) %]
+               [% END %]<br>
 
-     		      [% IF fields.features_affected.data.$feature_type.$feature.protein_effects %]
-		   	   [% FOREACH affects IN fields.features_affected.data.$feature_type.$feature.protein_effects %]
-			        Effect on protein: [% affects.effect_on_protein %][% affects.text %]<br />
-                           [% END %]
-                      [% END %]
+     		      [% protein_effects = feature.protein_effects %]
+                  [% IF protein_effects %]
+                  [% FOREACH effect_type IN protein_effects.sort %]
+                     [% effect = protein_effects.$effect_type %]
+                     Effect on protein: [% effect_type.replace('_', ' ') %]
+                     [% effect.subtype || effect.position || '' %] [% effect.description %]<br />
+                  [% END %]
+                  [% END %]
 
-     		      [% IF fields.features_affected.data.$feature_type.$feature.location_effects %]	
-		   	   [% FOREACH affects IN fields.features_affected.data.$feature_type.$feature.location_effects %]
-			        Contained in: [% affects.location %]<br />
-                           [% END %]
-                      [% END %]
+     		      [% location_effects = feature.location_effects %]
+                  [% IF location_effects %]
+                  [% FOREACH effect_type IN location_effects.sort %]
+                     [% effect = location_effects.$effect_type %]
+			         Contained in: [% effect_type.replace('_', ' ') %]<br />
+                  [% END %]
+                  [% END %]
 
 
-     		      [% IF fields.features_affected.data.$feature_type.$feature.abs_start %]
-		           <div class="toggle">View coordinates</div>
-			        <div class="sequence-container">
-				     <table border="1">
+     		      [% IF feature.abs_start %]
+                    <div class="sequence-container" style="display:block">
+                         <table>
 				         <tr>
 						<td>absolute start</td>
 						<td>absolute stop</td>
@@ -188,48 +188,49 @@
 						<td>start relative to feature</td>
 						<td>stop relative to feature</td>
 					  </tr>
-
 					   <tr>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.abs_start %]</td>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.abs_stop %]</td>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.fstart %]</td>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.fstop %]</td>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.start %]</td>
-			                   <td>[% fields.features_affected.data.$feature_type.$feature.stop %]</td>
+			                   <td>[% feature.abs_start %]</td>
+			                   <td>[% feature.abs_stop %]</td>
+			                   <td>[% feature.fstart %]</td>
+			                   <td>[% feature.fstop %]</td>
+			                   <td>[% feature.start %]</td>
+			                   <td>[% feature.stop %]</td>
 					   </tr>
 				    </table>
 			       </div>
-			   </div>
-                      [% END %]
+                 [% END %]
 		
 
-     		      [% IF fields.features_affected.data.$feature_type.$feature.wildtype_translation_full %]
-		           <div class="toggle">View conceptual translation</div>
-			        <div class="sequence-container">
-				 <pre>> wildtype<br />[% fields.features_affected.data.$feature_type.$feature.wildtype_translation_full %]</pre>
-				 <pre>> wildtype<br />[% fields.features_affected.data.$feature_type.$feature.mutant_translation_full %]</pre>
-				 </div>
-			 </div>
-
-
-                      [% END %]
-
-
-		   </td>
-
-                 </tr>    
-               [% END %]
-       [% END %]   
-     </table>
-   [% END %]
+                 [% IF feature.wildtype_translation_full %]
+                 <div class="toggle">View conceptual translation</div>
+                      <div class="sequence-container">
+                           <pre>> wildtype<br />[% feature.wildtype_translation_full %]</pre>
+                           <pre>> wildtype<br />[% feature.mutant_translation_full %]</pre>
+                      </div>
+                 </div>
+                 [%  END %]
+             </div>
+             [% END # of feature loop %]
+             </div>
+       [% END # of feature type loop %]   
+   [% END # of Features Affected WRAPPER %]
 
    [% WRAPPER $field_block title="Detection Method" key="detection_method" %]
       [% fields.detection_method.data %]
    [% END %]
 
-   [% WRAPPER $field_block title="Affects Splice Site" key="affects_splice_site" %]
-         <p>Acceptor: [% fields.affects_splice_site.data.acceptor %]</p>
-         <p>Donor: [% fields.affects_splice_site.data.donor %]</p>
+   [% WRAPPER $field_block title="Affects Splice Site" key=''
+              disabled=!(fields.affects_splice_site.data.donor || fields.affects_splice_site.data.acceptor) %]
+      [% IF fields.affects_splice_site.data.acceptor %]
+      [% WRAPPER $field_block title="Acceptor" key='' %]
+         [% fields.affects_splice_site.data.acceptor %]
+      [% END %]
+      [% END %]
+      [% IF fields.affects_splice_site.data.donor %]
+      [% WRAPPER $field_block title="Donor" key='' %]
+         [% fields.affects_splice_site.data.donor %]
+      [% END %]
+      [% END %]
    [% END %]
 
    [% WRAPPER $field_block title="Causes Frameshift" key="causes_frameshift" %]

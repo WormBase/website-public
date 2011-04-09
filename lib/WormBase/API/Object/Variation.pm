@@ -2,12 +2,15 @@ package WormBase::API::Object::Variation;
 
 use Moose;
 use Bio::Graphics::Browser2::Markup;
-# I shouldn't need to use CGI here.
-#use CGI qw/:standard :html3/;
+use List::Util qw(first);
 
 extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
+
+# TODO:
+# Mapping data
+# Marked_rearrangement
 
 
 =pod
@@ -28,15 +31,6 @@ http://wormbase.org/resources/analysis
 
 =cut
 
-
-# pending factoring into new role
-# TODO:
-# Mapping data
-# Marked_rearrangement
-
-
-
-
 #######################################
 #
 # The Overview Widget
@@ -50,11 +44,6 @@ http://wormbase.org/resources/analysis
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
-
-
-# sub common_name { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include common_name >>
 
 # sub other_names { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -79,6 +68,8 @@ sub variation_type {
     my ($self) = @_;
     my $object = $self->object;
 
+    # the following is contrary to what is done in the classic code...
+    # is this the correct behaviour?
     my @types;
     if ($object->KO_consortium_allele(0)) {
         push @types,"Knockout Consortium allele";
@@ -192,7 +183,7 @@ sub context {
 
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
-    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings(-with_markup => 1);
+    my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
         data        => {
@@ -229,102 +220,58 @@ sub features_affected {
     # Clone and Chromosome are calculated, not provided in the DB.
     # Feature and Interactor are handled a bit differently.
 
-    foreach my $tag (qw/Pseudogene Transcript Predicted_CDS Gene Clone Chromosome Feature Interactor/) {
-        my @container;
-        if (my @entries = eval { $object->$tag }) {
+    foreach my $type_affected ($object->Affects) {
+        foreach my $item_affected ($type_affected->col) { # is a subtree
+            my $affected_hash = $affects->{$type_affected}->{$item_affected} = $self->_pack_obj($item_affected);
 
-            # Parse the Molecular_change hash for each feature
-            my $parsed_data;
-            foreach my $entry (@entries) {
-                my @data = $entry->col;
-
-                # Save the class of the feature for template linking.
-                $affects->{$tag}->{$entry}->{class} = $entry->class;
-                $affects->{$tag}->{$entry}->{label} = $entry->class eq 'Gene' ? ($entry->Public_name) : "$entry";
-                $affects->{$tag}->{$entry}->{id} = "$entry";
-                # Genes ONLY have gene
-                if ($tag eq 'Gene') {
-                    $affects->{$tag}->{$entry}->{entry}++;
-                    next;
-                }
-
-                next unless @data;
-                my $hash_data  = $self->_parse_hash($entry);
-
-                # do_translation is a flag controlling whether or not
-                # we should undertake a conceptual translation for this affected feature
-                # See FormatMolecularChangeHash for details
-                # $protein_effects & $location_effects contain things like missense and coding_exon, respectively.
-                my ($protein_effects,$location_effects,$do_translation)
-                  = $self->_format_molecular_change_hash({data => $hash_data,
-                                                          tag  => $tag});
-
-                if ($protein_effects) {
-                    $affects->{$tag}->{$entry}->{protein_effects} = $protein_effects;
-                }
-
-                if ($location_effects) {
-                    $affects->{$tag}->{$entry}->{location_effects} = $location_effects;
-                }
-
-                # Display a conceptual translation, but only for Missense
-                # Nonsense, and Frameshift alleles within exons
-                if ($tag eq 'Predicted_CDS' && $do_translation) {
-
-                    # Is the amino acid change stored in Ace?
-                    my $aa_type = $self->_aa_type;
-                    if ($aa_type) {
-                        my ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug);
-                        ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug)
-                          = $self->_do_simple_conceptual_translation($entry);
-                        # 			unless ($wt_snippet) {
-                        # 			    ($wt_snippet,$mut_snippet,$wt_full,$mut_full,$debug)
-                        # 				= $self->_do_manual_conceptual_translation($entry);
-                        # 			}
-
-                        $affects->{$tag}->{$entry}->{wildtype_conceptual_translation} = $wt_full;
-                        $affects->{$tag}->{$entry}->{mutant_conceptual_translation}   = $mut_full;
-                    }
-                }
-
-                # Get the coordinates in absolute coordinates
-                # the coordinates of the containing feature,
-                # and the coordinates of the variation WITHIN the feature.
-                my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$entry);
-                $affects->{$tag}->{$entry}->{abs_start} = $abs_start;
-                $affects->{$tag}->{$entry}->{abs_stop}  = $abs_stop;
-                $affects->{$tag}->{$entry}->{fstart} = $fstart;
-                $affects->{$tag}->{$entry}->{fstop} = $fstop;
-                $affects->{$tag}->{$entry}->{start} = $start;
-                $affects->{$tag}->{$entry}->{stop} = $stop;
+            # Genes ONLY have gene
+            if ($type_affected eq 'Gene') {
+                $affected_hash->{entry}++;
+                next;
             }
+
+            my ($protein_effects, $location_effects, $do_translation)
+                = $self->_retrieve_molecular_changes($item_affected);
+
+            $affected_hash->{protein_effects}  = $protein_effects if $protein_effects;
+            $affected_hash->{location_effects} = $location_effects if $location_effects;
+
+            # Display a conceptual translation, but only for Missense and
+            # Nonsense alleles within exons
+            if ($type_affected eq 'Predicted_CDS' && $do_translation) {
+                # $do_translation implies $protein_effects
+                if ($protein_effects->{Missense}) {
+                    my ($wt_snippet,$mut_snippet,$wt_full,$mut_full)
+                        = $self->_do_simple_conceptual_translation(
+                            $item_affected,
+                            $protein_effects->{Missense}
+                          );
+                    $affected_hash->{wildtype_conceptual_translation} = $wt_full;
+                    $affected_hash->{mutant_conceptual_translation}   = $mut_full;
+                }
+                # what about the manual translation?
+            }
+
+            # Get the coordinates in absolute coordinates
+            # the coordinates of the containing feature,
+            # and the coordinates of the variation WITHIN the feature.
+            @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
+                 = $self->_fetch_coords_in_feature($type_affected,$item_affected);
         }
-        else {
-            # Clone and Chromosome are not provided in the DB - we calculate them here.
-            my @affects_this;   # BLECH!
-            if ($tag eq 'Clone') {
-                @affects_this = $object->Sequence if $object->Sequence;
-            }
-            elsif ($tag eq 'Chromosome') {
-                # And fetch the chromosome from the Clone
-                my ($chrom) = eval { $object->Sequence->Interpolated_map_position(1) };
-                @affects_this = $chrom;
-            }
+    } # end of FOR loop
 
-            foreach (@affects_this) {
-                next unless $_;
-                $affects->{$tag}->{$_}->{class} = $_->class;
-                $affects->{$tag}->{$_}->{label} = "$_";
-                $affects->{$tag}->{$_}->{id} = "$_";
+    # Clone and Chromosome are not provided in the DB - we calculate them here.
+    foreach my $type_affected (qw(Clone Chromosome)) {
+        my @affects_this = $type_affected eq 'Clone'      ? $object->Sequence
+                         : $type_affected eq 'Chromosome' ? eval {($object->Sequence->Interpolated_map_position)[0]}
+                         :                        ();
 
-                my ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop) = $self->_fetch_coords_in_feature($tag,$_);
-                $affects->{$tag}->{$_}->{abs_start} = $abs_start;
-                $affects->{$tag}->{$_}->{abs_start} = $abs_stop;
-                $affects->{$tag}->{$_}->{fstart} = $fstart;
-                $affects->{$tag}->{$_}->{fstop} = $fstop;
-                $affects->{$tag}->{$_}->{start} = $start;
-                $affects->{$tag}->{$_}->{stop} = $stop;
-            }
+        foreach (@affects_this) {
+            next unless $_;
+            my $hash = $affects->{$type_affected}->{$_} = $self->_pack_obj($_);
+
+            @{$hash}{qw(abs_start abs_stop fstart fstop start stop)}
+                = $self->_fetch_coords_in_feature($type_affected,$_);
         }
     }
 
@@ -334,7 +281,6 @@ sub features_affected {
     };
 }
 
-
 sub possibly_affects {
     my ($self) = @_;
 
@@ -343,7 +289,6 @@ sub possibly_affects {
         data        => $self->_pack_obj($self ~~ 'Possibly_affects'),
     };
 }
-
 
 sub flanking_pcr_products {
     my ($self) = @_;
@@ -433,56 +378,43 @@ sub reference_strain {
     };
 }
 
-
-
 # Details related to assaying polymorphisms
 sub polymorphism_assays {
     my ($self) = @_;
     my $object = $self->object;
 
     my $data;
-    my @pcr_product = $object->PCR_product;
 
-    # Ugh.  Have to access RFLP by indexing into an array! Blech!
-    my @ref_enzymes = eval { $object->Reference_strain_digest->col(0) };
     my @ref_digests;
-    foreach my $enz (@ref_enzymes) {
-        my @bands = $enz->col;
-        foreach (@bands) {
-            push (@ref_digests,[$enz,$_]);
-        }
+    foreach my $enz ($object->Reference_strain_digest(2)) {
+        @ref_digests = map {[$enz, $_]} $enz->col;
     }
 
-    my @poly_enzymes = eval { $object->Polymorphic_strain_digest->col(0) };
     my @poly_digests;
-    foreach my $enz (@poly_enzymes) {
-        my @bands = $enz->col;
-        foreach (@bands) {
-            push (@poly_digests,[$enz,$_]);
-        }
+    foreach my $enz ($object->Polymorphic_strain_digest(2)) {
+        @poly_digests = map {[$enz, $_]} $enz->col;
     }
 
-    my $index = 0;
-    foreach my $pcr_product (@pcr_product) {
+    foreach my $pcr_product ($object->PCR_product) {
         # If this is an RFLP, extract digest conditions
         my $assay_table;
+        my %pcr_data;
 
-        # Are we an RFLP?
-        #	if ($object->RFLP(0) && @ref_digests) {
         if ($object->RFLP && @ref_digests) {
-            my ($ref_digest,$ref_bands)   = @{$ref_digests[$index]};
-            my ($poly_digest,$poly_bands) = @{$poly_digests[$index]};
+            my ($ref_digest,$ref_bands)   = @{shift @ref_digests};
+            my ($poly_digest,$poly_bands) = @{shift @poly_digests};
 
-            $data->{$pcr_product} = {
+            %pcr_data = (
                 reference_strain_digest   => $ref_digest,
                 reference_strain_bands    => $ref_bands,
                 polymorphic_strain_digest => $poly_digest,
                 polymorphic_strain_bands  => $poly_bands,
+
                 assay_type                => 'rflp',
-            };
+            );
         }
         else {
-            $data->{$pcr_product}->{assay_type} = 'sequence';
+            %pcr_data = (assay_type => 'sequence');
         }
 
         my ($left_oligo,$right_oligo);
@@ -494,50 +426,41 @@ sub polymorphism_assays {
         my $pcr_conditions = $pcr_product->Assay_conditions;
 
         # Fetch the sequence of the PCR_product
-        my $sequence = eval { $object->Sequence };
+        my $sequence = $object->Sequence;
 
-        my @pcrs = eval { $sequence->PCR_product };
-        my ($start,$stop,@pos);
-        foreach (@pcrs) {
-            next if ($_ ne $pcr_product);
-            @pos   = $_->row;
-            $start = $pos[1];
-            $stop  = $pos[2];
+        my $dna;
+
+        if (my $pcr_node = first {$_ eq $pcr_product} $sequence->PCR_product) {{
+            my ($start, $stop) = $pcr_node->row or last;
+            my $gffdb = $self->gff_dsn or last;
+            my ($segment) = eval { $gffdb->segment(
+                -name   => $sequence,
+                -offset => $start,
+                -length => ($stop-$start)
+            ) } or last;
+
+            $dna = $segment->dna;
         }
-
-        my $gffdb   = $self->gff_dsn($self->_parsed_species);
-
-        my ($segment) = $gffdb->segment(-name=>$sequence,
-                                        -offset=>$start,
-                                        -length=>($stop-$start)) if ($start && $stop);
-
-        my $dna = $segment && $segment->dna;
-
-        $data->{$pcr_product}->{pcr_product} = {
-            id             => "$pcr_product",
-            label          => $pcr_product,
-            class          => $pcr_product->class,
+                                                                           }
+        $pcr_data{pcr_product} = $self->_pack_obj(
+            $pcr_product, undef, # let _pack_obj resolve label
             left_oligo     => $left_oligo,
             right_oligo    => $right_oligo,
             pcr_conditions => $pcr_conditions,
             dna            => $dna,
-        };
-        $index++;
+        );
+
+        $data->{$pcr_product} = \%pcr_data;
     }
 
     return {
         description => 'experimental assays for detecting this polymorphism',
-        data        => %$data ? $data : undef,
+        data        => $data,
     };
 }
 
-
-
 # OOOH!  Need to handle this.
 #++ 					 'variation and motif image',p(motif_picture(1,$entry)));
-
-
-
 
 ############################################################
 #
@@ -568,31 +491,22 @@ sub _build_genomic_position {
 }
 
 sub _build_tracks {
+    my ($self) = @_;
     return {
         description => 'tracks displayed in GBrowse',
-        data => [qw(CG
-                    Allele
-                    TRANSPOSONS)],
+        data => [ $self->_parsed_species eq 'c_elegans'
+                  ? qw(CG CANONICAL Allele TRANSPOSONS) : 'WBG' ],
     };
 }
 
 sub _build_genomic_image_position {
     my ($self) = @_;
-    my $gene   = $self ~~ 'Gene';
-
-    # Fetch a GF handle
-    my $gffdb     = $self->gff_dsn();
-    my ($segment) = $gffdb->segment(Gene => $gene);
-
-    # By default, lets just center the image on the variation itself.
-    # What segment should be used to determine the baseline coordinates?
-    # Use a CDS segment if one is provided, else just show the genomic environs
 
     # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
     my $UNMAPPED_SPAN = 10000;
-    unless ($segment) {
-        # Try fetching a generic segment corresponding to a span flanking the variation
 
+    my $position;
+    if (my $segment = $self->_segments->[0]) {
         my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
 
         # Generate a link to the genome browser
@@ -609,14 +523,15 @@ sub _build_genomic_image_position {
         }
 
         my $split  = $UNMAPPED_SPAN / 2;
-        ($segment) = $gffdb->segment($ref,$low-$split,$low+$split);
+        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
+
+        ($position) = $self->_genomic_position([$segment || ()]);
     }
 
-    my ($position) = $self->_genomic_position([$segment || ()]);
     return {
         description => 'The genomic location of the sequence to be displayed by GBrowse',
         data        => $position,
-    }
+    };
 }
 
 sub _build__segments {
@@ -698,6 +613,7 @@ sub phenotype_not {
 	return $self->pull_phenotype_data('Phenotype_not_observed');
 }
 
+# what a strange name for a public method...
 sub pull_phenotype_data {
     my ($self, $phenotype_tag) = @_;
 	my $object = $self->object;
@@ -1180,8 +1096,6 @@ sub transposon_insertion {
     };
 }
 
-
-
 ############################################################
 #
 # The External Links widget
@@ -1278,130 +1192,43 @@ sub derivative {
 #
 ############################################################
 
+{ # begin _retrieve_molecular_changes block
+my %associated_meta = ( # this can be used to identify protein effects
+    Missense    => [qw(position description)],
+    Silent      => [qw(description)],
+    Frameshift  => [qw(description)],
+    Nonsense    => [qw(subtype description)],
+    Splice_site => [qw(subtype description)],
+);
 
-
-##########################################
-# MolecularChangeHash
-##########################################
-
-# Draw out what the effects are on proteins
-# and where the mutation occurs.
-sub _format_molecular_change_hash {
-    my ($self,$params) = @_;
-    my $data = $params->{data};
-    my $tag  = $params->{tag};
-
-    return unless $data && eval { @$data >= 1 }; # Nothing to build a table from
-
-    my @types     = qw/Missense Nonsense Frameshift Silent Splice_site/;
-    my @locations = qw/Intron Coding_exon Noncoding_exon Promoter UTR_3 UTR_5 Genomic_neighbourhood/;
-
-    # Select items that we will try and translate
-    # Currently, this needs to be
-    # 1. Affects Predicted_CDS
-    # 2. A missense or nonsense allele
-    # 3. Contained in a coding_exon
-    my %parameters_seen;
-    my %do_translation = map { $_ => 1 } (qw/Missense Nonsense/);
-    # Under no circumstances try and translate the following
-    my %no_translation = map { $_ => 1 } (qw/Frameshift Deletion Insertion/);
-
-    # The following entries should be examined for the presence
-    # of associated Evidence hashes
-    my @with_evidence =
-	qw/
-          Missense
-          Silent
-          Nonsense
-          Splice_site
-          Frameshift
-          Intron
-          Coding_exon
-          Noncoding_exon
-          Promoter
-          UTR_3
-          UTR_5
-          Genomic_neighbourhood
-      /;
-
-    my (@protein_effects,@location_effects);
-    foreach my $entry (@$data) {
-        my $hash  = $entry->{hash};
-        my $node  = $entry->{node};
-
-        # Conditionally format the data for each type of evidence
-        # Curation often has the type of change and its location
-
-        # What type of change is this?
-        foreach my $type (@types) {
-            my $obj = $hash->{$type};
-            my @data = eval { $obj->row };
-            next unless @data;
-            my $clean_tag = ucfirst($type);
-            $clean_tag    =~ s/_/ /g;
-            $parameters_seen{$type}++;
-
-            my ($pos,$text,$evi,$evi_method,$description);
-            if ($type eq 'Missense') {
-                ($type,$description,$text,$evi) = @data;
-            }
-            elsif ($type eq 'Nonsense' || $type eq 'Splice_site') {
-                ($type,$description,$text,$evi) = @data;
-            }
-            elsif ($type eq 'Frameshift') {
-                ($type,$text,$evi) = @data;
-            }
-            else {
-                ($type,$text,$evi) = @data;
-            }
-
-            #	    # NOT DONE!  Haven't added evidence parsing yet. Should be global
-            #	    if ($evi) {
-            #		($evi_method) = GetEvidenceNew(-object => $text,
-            #					       -format => 'inline',
-            #					       -display_label => 1,
-            #					       );
-            #    	     }
-
-            push @protein_effects,{ effect_on_protein    => $clean_tag,
-                                    description => $description,
-                                    text        => $text,
-                                    evidence    => $evi_method
-                                };
-        }
-
-        # *Where* is this change located?
-        foreach my $location (@locations) {
-            my $obj = $hash->{$location};
-            my @data = eval { $obj->col };
-            next unless @data;
-
-            $parameters_seen{$location}++;
-
-            # NOT DONE! Need to add in evidence parsing
-            #	    my ($evidence) = GetEvidenceNew(-object => $obj,
-            #					    -format => 'inline',
-            #					    -display_label => 1
-            #					    );
-
-            my $clean_tag = ucfirst($location);
-            $clean_tag    =~ s/_/ /g;
-
-            my $evidence = '';
-            push @location_effects,{ location => $clean_tag,
-                                     evidence => $evidence,
-                                 };
-        }
-    }
+sub _retrieve_molecular_changes {
+    my ($self, $changed_item) = @_; # actually, changed_item is a subtree
 
     my $do_translation;
-    foreach (keys %parameters_seen) {
-        $do_translation++ if (defined $do_translation{$_}  && !defined $no_translation{$_});
+
+    my (%protein_effects, %location_effects);
+    foreach my $change_type ($changed_item->col) {
+        $do_translation++ if $change_type eq 'Missense' || $change_type eq 'Nonsense';
+
+        my @raw_change_data = $change_type->row;
+        shift @raw_change_data; # first one is the type
+
+        my %change_data;
+        my $keys = $associated_meta{$change_type} || [];
+        @change_data{@$keys, 'evidence_type', 'evidence'}
+            = map {"$_"} @raw_change_data;
+
+        if ($associated_meta{$change_type}) { # only protein effects have extra data
+            $protein_effects{$change_type} = \%change_data;
+        }
+        else {
+            $location_effects{$change_type} = \%change_data;
+        }
     }
-    return (\@protein_effects,\@location_effects,$do_translation);
+
+    return (\%protein_effects, \%location_effects, $do_translation);
 }
-
-
+} # end of _retrieve_molecular_changes block
 
 
 # What is the length of the mutation?
@@ -1484,11 +1311,29 @@ sub _compile_nucleotide_changes {
     return \@variations;
 }
 
+# Fetch the coordinates of the variation in a given feature
+# Much in here could be generic
+sub _fetch_coords_in_feature {
+    my ($self,$tag,$entry) = @_;
 
+    my $db = $self->gff_dsn;
 
+    my $variation_segment = $self->_segments->[0] or return;
 
+    # Kludge for chromosomes
+    my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
+    # is it really okay to ignore multiple results and arbitarily use the first one?
+    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
+    # consider caching results?
 
+    # Set the refseq of the variation to the containing segment
+    $variation_segment->refseq($containing_segment);
 
+    my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_seg2coords($containing_segment);
+    my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($variation_segment);
+    ($start,$stop) = ($stop,$start) if ($start > $stop);
+    return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
+}
 
 # Build short strings (wild type and mutant) flanking
 # the position of the mutant sequence in support of the context() method.
@@ -1503,7 +1348,7 @@ sub _compile_nucleotide_changes {
 # Returns (wt(+), mut(+), wt(-), mut(-));
 sub _build_sequence_strings {
     my ($self,@p) = @_;
-    my ($with_markup,$flank) = $self->rearrange([qw/WITH_MARKUP FLANK/],@p);
+    my ($with_markup,$flank);
 
     # Get a GFFdb handle - I'm not sure how to do this in the API.
     my $species = $self->_parsed_species;
@@ -1700,21 +1545,87 @@ sub _build_sequence_strings {
 
     # TO DO: This markup belongs as part of the view, not here.
     # Return the full sequence on the plus strand
-    if ($with_markup) {
-        my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
-                          lc($right_flank));
-        my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
-                                                    uc($mut_fragment)),lc($right_flank));
-        return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
-    }
-    else {
+    # if ($with_markup) {
+    #     my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
+    #                       lc($right_flank));
+    #     my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
+    #                                                 uc($mut_fragment)),lc($right_flank));
+    #     return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
+    # }
+    # else {
         my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
         my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
         return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
-    }
+    # }
 }
 
+sub _do_simple_conceptual_translation {
+    my ($self, $cds, $datahash) = @_;
 
+    my ($pos,$formatted_change) = @{$datahash}{'position', 'description' }
+        or return;
+    my $wt_protein = eval { $cds->Corresponding_protein->asPeptide }
+        or return;
+
+    # De-FASTA
+    $wt_protein =~ s/^>.*//;
+    $wt_protein =~ s/\n//g;
+
+    $formatted_change =~ /(.*) to (.*)/;
+    my $wt_aa  = $1;
+    my $mut_aa = $2;
+
+    #    # String formatting of nonsense alleles is a bit different
+    #    if ($type eq 'Nonsense') {
+    #	$mut_aa = '*';
+    #    }
+
+    # Substitute the mut_aa into the wildtype protein
+    my $mut_protein = $wt_protein;
+
+    substr($mut_protein,($pos-1),1,$mut_aa);
+
+    # Store some data for easy accession
+    # I'd like to purge this but it's deeply embedded in the logic
+    # of presenting a detailed view of the sequence
+    $self->{wt_aa_start} = $pos;
+
+    # I should be formatting these here depending on the type of nucleotide change...
+    $self->{formatted_aa_change} = $formatted_change;
+
+    # Create short strings of the proteins for display
+    $self->{wt_protein_fragment} = ($pos - 19)
+ 	. '...'
+ 	. substr($wt_protein,$pos - 20,19)
+ 	. ' '
+ 	. '<b>' . substr($wt_protein,$pos-1,1) . '</b>'
+ 	. ' '
+ 	. substr($wt_protein,$pos,20)
+ 	. '...'
+ 	. ($pos + 19);
+    $self->{mut_protein_fragment} = ($pos - 19)
+ 	. '...'
+ 	. substr($mut_protein,$pos - 20,19)
+ 	. ' '
+ 	. '<b>' . substr($mut_protein,$pos-1,1) . '</b>'
+ 	. ' '
+ 	. substr($mut_protein,$pos,20)
+ 	.  '...'
+ 	. ($pos + 19);
+
+    $self->{wt_trans_length} = length($wt_protein);
+    $self->{mut_trans_length} = length($mut_protein);
+
+    $self->{wt_trans} =
+ 	"> $cds"
+ 	. $self->_do_markup($wt_protein,$pos-1,$wt_aa,undef,'is_peptide');
+    my $object = $self->object;
+    $self->{mut_trans} =
+ 	"> $cds ($object: $formatted_change)"
+ 	. $self->_do_markup($mut_protein,$pos-1,$mut_aa,undef,'is_peptide');
+
+    return ($self->{wt_protein_fragment},$self->{mut_protein_fragment},$self->{wt_trans},$self->{mut_trans});
+}
 
 # Markup features relative to the CDS or to raw genomic features
 sub _do_markup {
@@ -1769,166 +1680,6 @@ sub _do_markup {
 
     $markup->markup(\$seq,\@markup);
     return $seq;
-}
-
-
-
-sub _aa_type {
-    my ($self) = @_;
-    my $object = $self->object;
-
-    # This must be parsed from the Molecular_change hash now, specifically Predicted_CDS
-    return $self->{aa_type} if $self->{aa_type};
-
-    # AA type change, if known, will be located under the Predicted_CDS
-    my @types     = qw/Missense Nonsense Frameshift Silent Splice_site/;
-    foreach my $cds ($object->Predicted_CDS) {
-        my $data = $self->_parse_hash($cds);
-        foreach (@$data) {
-            my $hash = $_->{hash};
-
-            foreach (@types) {
-                return $_ if ($hash->{$_});
-            }
-        }
-    }
-}
-
-# Need to generalize this for all alleles
-sub _do_simple_conceptual_translation {
-    my ($self,$cds) = @_;
-
-    my ($pos,$formatted_change,$type) = $self->_get_aa_position($cds);
-    my $wt_protein = eval { $cds->Corresponding_protein->asPeptide };
-
-    return unless ($pos && $formatted_change); # Try to do a manual translation
-    return unless $wt_protein;
-
-    # De-FASTA
-    $wt_protein =~ s/^>.*//;
-    $wt_protein =~ s/\n//g;
-
-    $formatted_change =~ /(.*) to (.*)/;
-    my $wt_aa  = $1;
-    my $mut_aa = $2;
-
-
-    #    # String formatting of nonsense alleles is a bit different
-    #    if ($type eq 'Nonsense') {
-    #	$mut_aa = '*';
-    #    }
-
-    # Substitute the mut_aa into the wildtype protein
-    my $mut_protein = $wt_protein;
-
-    substr($mut_protein,($pos-1),1,$mut_aa);
-
-    # Store some data for easy accession
-    # I'd like to purge this but it's deeply embedded in the logic
-    # of presenting a detailed view of the sequence
-    $self->{wt_aa_start} = $pos;
-
-    # I should be formatting these here depending on the type of nucleotide change...
-    $self->{formatted_aa_change} = $formatted_change;
-
-    # Create short strings of the proteins for display
-    $self->{wt_protein_fragment} = ($pos - 19)
- 	. '...'
- 	. substr($wt_protein,$pos - 20,19)
- 	. ' '
- 	. b(substr($wt_protein,$pos-1,1))
- 	. ' '
- 	. substr($wt_protein,$pos,20)
- 	. '...'
- 	. ($pos + 19);
-    $self->{mut_protein_fragment} = ($pos - 19)
- 	. '...'
- 	. substr($mut_protein,$pos - 20,19)
- 	. ' '
- 	. b(substr($mut_protein,$pos-1,1))
- 	. ' '
- 	. substr($mut_protein,$pos,20)
- 	.  '...'
- 	. ($pos + 19);
-
-    $self->{wt_trans_length} = length($wt_protein);
-    $self->{mut_trans_length} = length($mut_protein);
-
-    $self->{wt_trans} =
- 	"> $cds"
- 	. $self->_do_markup($wt_protein,$pos-1,$wt_aa,undef,'is_peptide');
-    my $object = $self->object;
-    $self->{mut_trans} =
- 	"> $cds ($object: $formatted_change)"
- 	. $self->_do_markup($mut_protein,$pos-1,$mut_aa,undef,'is_peptide');
-
-    my $debug;
-
-    # MOVE INTO TEST
-    #     if (DEBUG_ADVANCED) {
-    # 	$debug .= "CONCEPTUAL TRANSLATION VIA SUBSTITUTION OF STORED AA" . br;
-    # 	$debug .= "STORED WT : $wt_aa" . br;
-    # 	$debug .= "STORED MUT: $mut_aa" . br;
-    #     }
-
-    return ($self->{wt_protein_fragment},$self->{mut_protein_fragment},$self->{wt_trans},$self->{mut_trans},$debug);
-}
-
-
-
-## For missense and non_sense alleles only
-## Actually, the position is ONLY stored for
-## missense alleles
-sub _get_aa_position {
-    my ($self,$cds) = @_;
-    my @types = qw/Missense Nonsense/;
-    my $data = $self->_parse_hash($cds);
-    foreach my $entry (@$data) {
-        my $hash = $entry->{hash};
-        my $node = $entry->{node};
-        foreach my $type (@types) {
-
-            my $obj = $hash->{$type};
-            my @data = eval { $obj->row };
-            if ($obj) {
-                if ($type eq 'Missense') {
-                    my ($type,$pos,$text,$evi) = @data;
-                    $self->log->warn("getting aa positiong $pos $text $type");
-                    return ($pos,$text,$type);
-                }
-
-                #		else {
-                #		    my ($type,$pos,$text,$evi) = @data;
-                #		    return ($pos,$text,$type);
-                #		}
-            }
-        }
-    }
-    return;
-}
-
-# Fetch the coordinates of the variation in a given feature
-# Much in here could be generic
-sub _fetch_coords_in_feature {
-    my ($self,$tag,$entry) = @_;
-
-    my $db = $self->gff_dsn;
-
-    my $variation_segment = $self->_segments->[0] or return;
-
-    # Kludge for chromosomes
-    my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
-    # is it really okay to ignore multiple results and arbitarily use the first one?
-    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
-    # consider caching results?
-
-    # Set the refseq of the variation to the containing segment
-    $variation_segment->refseq($containing_segment);
-
-    my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_seg2coords($containing_segment);
-    my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($variation_segment);
-    ($start,$stop) = ($stop,$start) if ($start > $stop);
-    return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
 }
 
 __PACKAGE__->meta->make_immutable;
