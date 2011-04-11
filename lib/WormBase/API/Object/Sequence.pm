@@ -1717,13 +1717,12 @@ sub print_sequence {
 		# and fetch the first CDS or Transcript
 		# We really should display a list for all of these.
 
-		# NOTE: THE FOLLOWING DOES NOT DO WHAT YOU EXPECT IT TO.
-		($seq_obj) ||= sort {$b->length<=>$a->length}
+		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
 		# 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
-		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
-		($seq_obj) ||= sort {$b->length<=>$a->length}
+		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
+		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
 		# 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
-		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
+		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
     }
 
     ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
