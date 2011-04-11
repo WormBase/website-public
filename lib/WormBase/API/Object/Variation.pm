@@ -60,7 +60,6 @@ sub cgc_name {
     };
 }
 
-
 # A unified classification of the type of variation
 # general class: SNP, allele, etc
 # physical class: deletion, insertion, etc
@@ -233,8 +232,8 @@ sub features_affected {
             my ($protein_effects, $location_effects, $do_translation)
                 = $self->_retrieve_molecular_changes($item_affected);
 
-            $affected_hash->{protein_effects}  = $protein_effects if $protein_effects;
-            $affected_hash->{location_effects} = $location_effects if $location_effects;
+            $affected_hash->{protein_effects}  = $protein_effects if %$protein_effects;
+            $affected_hash->{location_effects} = $location_effects if %$location_effects;
 
             # Display a conceptual translation, but only for Missense and
             # Nonsense alleles within exons
@@ -319,7 +318,7 @@ sub causes_frameshift {
 
     my $frameshift = $self ~~ 'Frameshift';
     return {
-        desceription => 'A variation that alters the reading frame',
+        description => 'A variation that alters the reading frame',
         data         => $frameshift && "$frameshift",
     };
 }
@@ -444,10 +443,10 @@ sub polymorphism_assays {
                                                                            }
         $pcr_data{pcr_product} = $self->_pack_obj(
             $pcr_product, undef, # let _pack_obj resolve label
-            left_oligo     => $left_oligo,
-            right_oligo    => $right_oligo,
-            pcr_conditions => $pcr_conditions,
-            dna            => $dna,
+            left_oligo     => $left_oligo && "$left_oligo",
+            right_oligo    => $right_oligo && "right_oligo",
+            pcr_conditions => $pcr_conditions && "$pcr_conditions",
+            dna            => $dna && "$dna",
         );
 
         $data->{$pcr_product} = \%pcr_data;
@@ -572,6 +571,7 @@ sub dominance {
                   || $object->Dominant
                   || eval{$object->Partially_penetrant}
                   || eval{$object->Completely_penetrant};
+    # I don't see Partially_penetrant or Completely_penetrant in the model
 
     return {
         description => 'dominance of the variation',
@@ -604,17 +604,784 @@ sub temperature_sensitivity {
 sub phenotype {
 	my ($self) = @_;
 
-	return $self->pull_phenotype_data('Phenotype');
+	return $self->_pull_phenotype_data('Phenotype');
 }
 
 sub phenotype_not {
 	my ($self) = @_;
 
-	return $self->pull_phenotype_data('Phenotype_not_observed');
+	return $self->_pull_phenotype_data('Phenotype_not_observed');
 }
 
-# what a strange name for a public method...
-sub pull_phenotype_data {
+
+############################################################
+#
+# GENETICS
+#  NEEDS: Mapping data
+############################################################
+sub gene_class {
+    my ($self) = @_;
+
+    return {
+        description => 'the class of the gene the variation falls in, if any',
+        data        => $self->_pack_obj($self ~~ 'Gene_class'),
+    };
+}
+
+# This should return the CGC name, sequence name (if name), and WBGeneID...
+sub corresponding_gene {
+    my ($self) = @_;
+
+    return {
+        description => 'gene in which this variation is found (if any)',
+        data        => $self->_pack_obj($self ~~ 'Gene'),
+    };
+}
+
+sub reference_allele {
+    my ($self) = @_;
+
+    my $allele = eval {$self->object->Gene->Reference_allele};
+    return {
+        description => 'the reference allele for the containing gene (if any)',
+        data        => $allele && $self->_pack_obj($allele),
+    };
+}
+
+sub other_alleles {
+    my ($self) = @_;
+
+    my $name = $self ~~ 'name';
+    my $data;
+    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
+        next if $allele eq $name;
+
+        my $packed_allele = $self->_pack_obj($allele);
+
+        if ($allele->SNP) {
+            push @{$data->{data}->{polymorphisms}}, $packed_allele;
+        }
+        elsif ($allele->Sequence || $allele->Flanking_sequences) {
+            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+        }
+        else {
+            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+        }
+    }
+
+    return {
+        description => 'other alleles of the containing gene (if known)',
+        data        => $data,
+    };
+}
+
+sub strains {
+    my ($self) = @_;
+
+    my (@strains,@singletons,@cgc,@others,@both, $count);
+    foreach my $strain (@{$self ~~ '@Strain'}) {
+        $count++;
+        my @genes = $strain->Gene;
+        my $cgc = $strain->Location eq 'CGC';
+        my $packed_strain = $self->_pack_obj($strain);
+
+        if (@genes == 1) {
+            push @both, $packed_strain if $cgc;
+            push @singletons, $packed_strain;
+        }
+        elsif ($cgc) {
+            push @cgc, $packed_strain;
+        }
+        else {
+            push @others, $packed_strain;
+        }
+    }
+
+    my %data;
+    $data{singleton} = \@singletons if @singletons;
+    $data{both}      = \@both if @both;
+    $data{cgc}       = \@cgc if @cgc;
+    $data{others}    = \@others if @others;
+    $data{total}     = $count if $count;
+
+    return {
+        description => 'strains carrying this variation',
+        data        => %data ? \%data : undef,
+    };
+}
+
+sub rescued_by_transgene {
+    my ($self) = @_;
+
+    return {
+        description => 'transgenes that rescue phenotype(s) caused by this variation',
+        data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
+    };
+}
+
+
+############################################################
+#
+# HISTORY
+#
+############################################################
+
+=head2 History
+
+=cut
+
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
+sub isolated_by_author {
+    my ($self) = @_;
+
+    return {
+        description => 'the author credited with generating the mutation',
+        data        => $self->_pack_obj($self ~~ 'Author'),
+    };
+}
+
+sub isolated_by {
+    my ($self) = @_;
+
+    return {
+        description => 'the person credited with generating the mutation',
+        data        => $self->_pack_obj($self ~~ 'Person'),
+    };
+}
+
+sub date_isolated {
+    my ($self) = @_;
+
+    my $date = $self ~~ 'Date';
+    return {
+        description => 'date the mutation was isolated',
+        data        => $date && "$date",
+    };
+}
+
+sub mutagen {
+    my ($self) = @_;
+
+    my $mutagen = $self ~~ 'Mutagen';
+    return {
+        description => 'mutagen used to generate the variation',
+        data        => $mutagen && "$mutagen",,
+    };
+}
+
+# Q: What are the contents of this tag?
+sub isolated_via_forward_genetics {
+    my ($self) = @_;
+
+    return {
+        description => 'was the mutation isolated by forward genetics?',
+        data        => $self ~~ 'Forward_genetics',
+    };
+}
+
+# Q: what are the contents of this tag?
+sub isolated_via_reverse_genetics {
+    my ($self) = @_;
+
+    return {
+        description => 'was the mutation isolated by reverse genetics?',
+        data        => $self ~~ 'Reverse_genetics',
+    };
+}
+
+sub transposon_excision {
+    my ($self) = @_;
+
+    my $transposon = $self ~~ 'Transposon_excision';
+    return {
+        description => 'was the variation generated by a transposon excision event, and if so, of which family?',
+        data        => $transposon && "$transposon",
+    };
+}
+
+sub transposon_insertion {
+    my ($self) = @_;
+
+    my $transposon = $self ~~ 'Transposon_insertion';
+    return {
+        description => 'was the variation generated by a transposon insertion event, and if so, of which family?',
+        data        => $transposon && "$transposon",
+    };
+}
+
+############################################################
+#
+# The External Links widget
+#
+############################################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+# Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
+# CAN BE REPLACED WITH << xrefs >>
+sub source_database {
+    my ($self) = @_;
+
+    my ($remote_url,$remote_text);
+    if (my $source_db = $self ~~ 'Database') {
+        my $name = $source_db->Name;
+        my $id   = $self->object->Database(3);
+
+        # Using the URL constructor in the database (for now)
+        # TODO: Should probably pull these out and keep URLs in config
+        my $url  = $source_db->URL_constructor;
+        # Create a direct link to the external site
+
+        if ($url && $id) {
+            $name =~ s/_/ /g;
+            $remote_url = sprintf($url,$id);
+            $remote_text = "$name";
+        }
+    }
+
+    return {
+        description => 'remote source database, if known',
+        data        => {
+            remote_url => $remote_url,
+            remote_text => $remote_text,
+        }
+    };
+}
+
+sub external_source {
+    my ($self) = @_;
+
+    my $hash;
+    my ($remote_url,$remote_text);
+    foreach my $dbsnp (@{$self ~~ '@Database'}) {
+        next unless $dbsnp eq 'dbSNP_ss';
+        $remote_text = $dbsnp->right(2);
+        my $url  = $dbsnp->URL_constructor;
+        # Create a direct link to the external site
+
+        if ($url && $remote_text) {
+            # 	    (my $name = $dbsnp) =~ s/_/ /g;
+            $hash->{$dbsnp} = {
+                remote_url => sprintf($url, $remote_text),
+                remote_text => "dbSNP: $remote_text",
+            };
+        }
+    }
+
+    return {
+        description => 'dbSNP ss#, if known',
+        data        => $hash,
+    };
+}
+
+sub derived_from {
+    my ($self) = @_;
+
+    return {
+        description => 'variation from which this one was derived',
+        data        => $self->_pack_obj($self ~~ 'Derived_from'),
+    };
+}
+
+sub derivative {
+    my ($self) = @_;
+
+    my $derivatives = $self->_pack_objects($self ~~ '@Derivative');
+    return {
+        description => 'variations derived from this variation',
+        data => %$derivatives ? $derivatives : undef,
+    };
+}
+
+############################################################
+#
+# PRIVATE METHODS
+#
+############################################################
+
+{ # begin _retrieve_molecular_changes block
+my %associated_meta = ( # this can be used to identify protein effects
+    Missense    => [qw(position description)],
+    Silent      => [qw(description)],
+    Frameshift  => [qw(description)],
+    Nonsense    => [qw(subtype description)],
+    Splice_site => [qw(subtype description)],
+);
+
+sub _retrieve_molecular_changes {
+    my ($self, $changed_item) = @_; # actually, changed_item is a subtree
+
+    my $do_translation;
+
+    my (%protein_effects, %location_effects);
+    foreach my $change_type ($changed_item->col) {
+        $do_translation++ if $change_type eq 'Missense' || $change_type eq 'Nonsense';
+
+        my @raw_change_data = $change_type->row;
+        shift @raw_change_data; # first one is the type
+
+        my %change_data;
+        my $keys = $associated_meta{$change_type} || [];
+        @change_data{@$keys, 'evidence_type', 'evidence'}
+            = map {"$_"} @raw_change_data;
+
+        if ($associated_meta{$change_type}) { # only protein effects have extra data
+            $protein_effects{$change_type} = \%change_data;
+        }
+        else {
+            $location_effects{$change_type} = \%change_data;
+        }
+    }
+
+    return (\%protein_effects, \%location_effects, $do_translation);
+}
+} # end of _retrieve_molecular_changes block
+
+
+# What is the length of the mutation?
+sub _compile_nucleotide_changes {
+    my ($self,$object) = @_;
+    my @types = $object->Type_of_mutation;
+    my @variations;
+
+    # Some variation objects have multiple types
+    foreach my $type (@types) {
+        my ($mut,$wt,$mut_label,$wt_label);
+
+        # Simple insertion?
+        #     wt sequence = empty
+        # mutant sequence = name of transposon or the actual insertion sequence
+        if ($type =~ /insertion/i) {
+            $wt = '';
+
+            # Is this a transposon insertion?
+            # mutant sequence just the name of the transposon
+            if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
+                $mut = $object->Transposon_insertion;
+                $mut ||= 'unknown' if $object->Method eq 'Transposon_insertion';
+            }
+            else {
+                # Return the full sequence of the inertion.
+                $mut = $type->right;
+            }
+
+        }
+        elsif ($type =~ /deletion/i) {
+            # Deletion.
+            #     wt sequence = the deleted sequence
+            # mutant sequence = empty
+            $mut = '';
+
+            # We need to extract the sequence from a GFF store.
+            # Get a segment corresponding to the deletion sequence
+
+            my $segment = $self->_segments->[0];
+            if ($segment) {
+                $wt  = $segment->dna;
+            }
+
+            # CGH tested deletions.
+            $type = "definite deletion" if  ($object->CGH_deleted_probes(1));
+
+            # Substitutions
+            #     wt sequence = um, the wt sequence
+            # mutant sequence = the mutant sequence
+        }
+        elsif ($type =~ /substitution/i) {
+            my $change = $type->right;
+            ($wt,$mut) = eval { $change->row };
+
+            # Ack. Some of the alleles are still stored as A/G.
+            unless ($wt && $mut) {
+                $change =~ s/\[\]//g;
+                ($wt,$mut) = split("/",$change);
+            }
+        }
+
+        # Set wt and mutant labels
+        if ($object->SNP(0) || $object->RFLP(0)) {
+            $wt_label = 'bristol';
+            $mut_label = $object->Strain; # CB4856, 4857, etc
+        }
+        else {
+            $wt_label  = 'wild type';
+            $mut_label = 'mutant';
+        }
+
+        push @variations, {
+            type           => "$type",
+            wildtype       => "$wt",
+            mutant         => "$mut",
+            wildtype_label => $wt_label,
+            mutant_label   => $mut_label,
+        };
+    }
+    return \@variations;
+}
+
+# Fetch the coordinates of the variation in a given feature
+# Much in here could be generic
+sub _fetch_coords_in_feature {
+    my ($self,$tag,$entry) = @_;
+
+    my $db = $self->gff_dsn;
+
+    my $variation_segment = $self->_segments->[0] or return;
+
+    # Kludge for chromosomes
+    my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
+    # is it really okay to ignore multiple results and arbitarily use the first one?
+    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
+    # consider caching results?
+
+    # Set the refseq of the variation to the containing segment
+    $variation_segment->refseq($containing_segment);
+
+    my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_seg2coords($containing_segment);
+    my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($variation_segment);
+    ($start,$stop) = ($stop,$start) if ($start > $stop);
+    return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
+}
+
+sub _do_simple_conceptual_translation {
+    my ($self, $cds, $datahash) = @_;
+
+    my ($pos, $formatted_aa_change) = @{$datahash}{'position', 'description' }
+        or return;
+    my $wt_protein = eval { $cds->Corresponding_protein->asPeptide }
+        or return;
+
+    my $object = $self->object;
+
+    # De-FASTA
+    $wt_protein =~ s/^>.*//;
+    $wt_protein =~ s/\n//g;
+
+    $formatted_aa_change =~ /(.*) to (.*)/;
+    my $wt_aa  = $1;
+    my $mut_aa = $2;
+
+    # if ($type eq 'Nonsense') {
+    # 	$mut_aa = '*';
+    # }
+
+    # Substitute the mut_aa into the wildtype protein
+    my $mut_protein = $wt_protein;
+    my ($wt_aa_start, $wt_protein_fragment, $mut_protein_fragment);
+
+    substr($mut_protein,($pos-1),1,$mut_aa);
+
+    $wt_aa_start = $pos;
+
+    # Create short strings of the proteins for display
+    $wt_protein_fragment = ($pos - 19)
+ 	. '...'
+ 	. substr($wt_protein,$pos - 20,19)
+ 	. ' '
+ 	. '<b>' . substr($wt_protein,$pos-1,1) . '</b>'
+ 	. ' '
+ 	. substr($wt_protein,$pos,20)
+ 	. '...'
+ 	. ($pos + 19);
+    $mut_protein_fragment = ($pos - 19)
+ 	. '...'
+ 	. substr($mut_protein,$pos - 20,19)
+ 	. ' '
+ 	. '<b>' . substr($mut_protein,$pos-1,1) . '</b>'
+ 	. ' '
+ 	. substr($mut_protein,$pos,20)
+ 	.  '...'
+ 	. ($pos + 19);
+
+    my $wt_trans = "> $cds"
+ 	    . $self->_do_markup($wt_protein, $pos-1, $wt_aa, undef, 'is_peptide');
+    my $mut_trans = "> $cds ($object: $formatted_aa_change)"
+ 	    . $self->_do_markup($mut_protein, $pos-1, $mut_aa, undef, 'is_peptide');
+
+    return ($wt_protein_fragment, $mut_protein_fragment, $wt_trans, $mut_trans);
+}
+
+# Markup features relative to the CDS or to raw genomic features
+sub _do_markup {
+    my ($self,$seq,$var_start,$variation,$flank_length,$is_peptide) = @_;
+    my $object = $self->object;
+
+    # Here, variation might be a specially formatted string (ie '----' for a deletion)
+    my @markup;
+    my $markup = Bio::Graphics::Browser2::Markup->new;
+    $markup->add_style('utr'  => 'FGCOLOR gray');
+    $markup->add_style('cds0'  => 'BGCOLOR yellow');
+    $markup->add_style('cds1'  => 'BGCOLOR orange');
+    $markup->add_style('space' => ' ');
+    $markup->add_style('substitution' => 'text-transform:uppercase; background-color: red;');
+    $markup->add_style('deletion'     => 'background-color:red; text-transform:uppercase;');
+    $markup->add_style('insertion'     => 'background-color:red; text-transform:uppercase;');
+    $markup->add_style('deletion_with_insertion'  => 'background-color: red; text-transform:uppercase');
+    if ($object->Type_of_mutation eq 'Insertion') {
+        $markup->add_style('flank' => 'background-color:yellow;font-weight:bold;text-transform:uppercase');
+    }
+    else {
+        $markup->add_style('flank' => 'background-color:yellow');
+    }
+    # The extra space is required here when used in non-pre-formatted text!
+    $markup->add_style('newline',"<br> ");
+
+    my $var_stop = length($variation) + $var_start;
+
+    # Substitutions start and stop at the same position
+    $var_start = ($var_stop - $var_start == 0) ? $var_start - 1 : $var_start;
+
+    # Markup the variation as appropriate
+    push (@markup,[lc($object->Type_of_mutation),$var_start,$var_stop]);
+
+    # Add spacing for peptides
+    if ($is_peptide) {
+        for (my $i=0; $i < length $seq; $i += 10) {
+            push @markup,[$i % 80 ? 'space' : 'newline',$i];
+        }
+    }
+    else {
+        for (my $i=80; $i < length $seq; $i += 80) {
+            push @markup,['newline',$i];
+        }
+        #	push @markup,map {['newline',80*$_]} (1..length($seq)/80);
+    }
+
+    if ($flank_length) {
+        push @markup,['flank',$var_start - $flank_length + 1,$var_start];
+        push @markup,['flank',$var_stop,$var_stop + $flank_length];
+    }
+
+    $markup->markup(\$seq,\@markup);
+    return $seq;
+}
+
+# Build short strings (wild type and mutant) flanking
+# the position of the mutant sequence in support of the context() method.
+# If a mutation sequence (insertion or deletion) exceeds
+# INDEL_DISPLAY_LIMIT, a string will be inserted unless
+# the --all option is supplied.
+# Options:
+# --all    Don't truncate long strings: return the full flank-mutant-flank
+# --boldface Boldface the mutation
+# --flank amount of flank to include. Defaults to SNIPPET_LENGTH
+#
+# Returns (wt(+), mut(+), wt(-), mut(-));
+sub _build_sequence_strings {
+    my ($self,@p) = @_;
+    my ($with_markup,$flank);
+
+    # Get a GFFdb handle - I'm not sure how to do this in the API.
+    my $species = $self->_parsed_species;
+    my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
+    my $db      = $db_obj->dbh;
+
+    my $object     = $self->object;
+    my $segment    = $self->_segments->[0];
+    return unless $segment;
+
+    my $sourceseq  = $segment->sourceseq;
+    my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
+
+    my $debug;
+
+    # Coordinates are sometimes reported on the minus strand
+    # We will report all sequence strings on the plus strand instead.
+    my $strand = '+';
+    if ($abs_start > $abs_stop) {
+        ($abs_start,$abs_stop) = ($abs_stop,$abs_start);
+        $strand = '-';          # Set $strand - used for tracking
+    }
+
+    # Fetch a segment that spans the mutation with the appropriate flank
+    # on the plus strand
+
+    # The amount of flanking sequence to recover should be configurable
+    # Right now, it is hardcoded for 500 bp
+    my $offset = 500;
+    my ($full_segment) = $db->segment(-class => 'Sequence',
+                                      -name  => $sourceseq,
+                                      -start => $abs_start - $offset,
+                                      -stop  => $abs_stop  + $offset);
+    my $dna = $full_segment->dna;
+    # MOVE INTO TEST
+    # $debug .= "WT SNIPPET DNA FROM GFF: $dna" . br if DEBUG_ADVANCED;
+
+    # Visit each variation and create a formatted string
+    my ($wt_fragment,$mut_fragment,$wt_plus,$mut_plus);
+    my $variations = $self->_compile_nucleotide_changes($object);
+
+    foreach my $variation (@{$variations}) {
+        my $type = $variation->{type};
+        my $wt   = $variation->{wildtype};
+        my $mut  = $variation->{mutant};
+        my $extracted_wt;
+        if ($type =~ /insertion/i) {
+            $extracted_wt = '-';
+        }
+        else {
+            my ($seg) = $db->segment(-class => 'Sequence',
+                                     -name  => $sourceseq,
+                                     -start => $abs_start,
+                                     -stop  => $abs_stop);
+            $extracted_wt = $seg->dna;
+        }
+
+        # Does the sequence we have extracted match that stored in the
+        # database?  Stated another way, is the mutation reported on the
+        # plus strand?
+
+        # Insertions will have no sequence and I should not be able to
+        # extract any either (We use logical or here to check for the
+        # $strand flag. Sometimes insertions or deletions will have no
+        # sequence.
+
+        if ($wt eq $extracted_wt && $strand ne '-') {
+            # Yes, it has.  Do nothing.
+        }
+        else {
+            # MOVE INTO TEST
+            # $debug .= "-----> TRANSCRIPT ON - strand; revcomping" if DEBUG_ADVANCED;
+
+            # The variation and flanks have been reported on the minus strand
+            # Reverse complement the mutant sequence
+            $strand = '-';  # Set the $strand flag if not already set.
+            unless ($mut =~ /transposon/i) {
+                $mut = reverse $mut;
+                $mut =~ tr/[acgt]/[tgca]/;
+
+                $wt = reverse $wt;
+                $wt =~ tr/[acgt]/[tgca]/;
+            }
+        }
+
+        # Keep the full string of all variations on the plus strand
+        $wt_plus  .= $wt;
+        $mut_plus .= $mut;
+
+        # What is the type of mutation? If deletion or insertion,
+        # check the length of the partner, then format appropriately
+        # TODO: The INDEL_DISPLAY_LIMIT is hard coded
+        my $INDEL_DISPLAY_LIMIT = 100;
+        if (length $mut > $INDEL_DISPLAY_LIMIT || length $wt > $INDEL_DISPLAY_LIMIT) {
+            if ($type =~ /deletion/i) {
+                my $target = length ($wt) . " bp " . lc($type);
+                $wt_fragment  .= "[$target]";
+                $mut_fragment .= '-' x (length ($target) + 2);
+            }
+            elsif ($type =~ /insertion/i) {
+                my $target;
+                if ($mut =~ /transposon/i) { # String representing transposon insertions
+                    $target = $mut;
+                }
+                else {
+                    $target = length ($mut) . " bp " . lc($type);
+                }
+                #  $mut_fragment .= '[' . a({-href=>$href,-target=>'_blank'},$target) . ']';
+                $mut_fragment .= "[$target]";
+                #  $wt_fragment  .= '-' x (length($mut_fragment) + 2);
+                $wt_fragment  .= '-' x (length($mut_fragment));
+            }
+        }
+        else {
+            # We are less than 100 bp, go ahead and use it.
+            $wt_fragment  .= ($wt  eq '-') ? '-' x length $mut  : $wt;
+            $mut_fragment .= ($mut eq '-') ? '-' x length $wt : $mut;
+        }
+    }
+
+    # Coordinates of the mutation within the segment
+    my ($mutation_start,$mutation_length);
+    if ($strand eq '-') {
+        # This works for e205 substition (-)
+        $mutation_start   = $offset;
+        $mutation_length  = length($wt_plus);
+    }
+    else {
+        # SETTING 1 - works for:
+        #   ca16 indel(+)
+        #   cxP622 insertion(+)
+        $mutation_start  = $offset + 1;
+        $mutation_length = length($wt_plus) - 1;
+
+        # SETTING 2 - works for:
+        #     tm728 (indel)
+        #     ok431 (indel)
+        $mutation_start  = $offset;
+        $mutation_length = length($wt_plus) - 1;
+
+        # SETTING 3 - works for:
+        #     cn28 (unknown transposon insertion)
+        #$mutation_start  = $offset + 2;
+        #$mutation_length = length($wt_full) - 1;
+
+        # SETTING 4 - works for:
+        #      bm1 (indel)
+        $mutation_start  = $offset;
+        $mutation_length = length($wt_plus);
+    }
+
+    # TODO: Make the snippet length configurable.
+    my $SNIPPET_LENGTH = 100;
+    $flank ||= $SNIPPET_LENGTH;
+
+    my $insert_length = (length $wt_fragment > length $mut_fragment) ? length $wt_fragment : length $mut_fragment;
+    my $flank_length = int(($flank - $insert_length) / 2);
+
+    # The amount of flank to fetch is based on the middle segment
+    my $left_flank  = substr($dna,$mutation_start - $flank_length,$flank_length);
+    my $right_flank = substr($dna,$mutation_start + $mutation_length,$flank_length);
+
+    # MOVE INTO TEST
+    #    if (DEBUG_ADVANCED) {
+    #	#      print "right flank : $right_flank",br;
+    # 	$debug .= "WT PLUS STRAND .................. : $wt_plus"  . br;
+    # 	$debug .= "MUT PLUS STRAND ................. : $mut_plus" . br;
+    #     }
+
+    # Mark up the reported flanking sequences in the full sequence
+    my ($reported_left_flank,$reported_right_flank) = ($object->Flanking_sequences(1),$object->Flanking_sequences(2));
+    #    my $left_length = length($reported_left_flank);
+    #    my $right_length = length($reported_right_flank);
+    $reported_left_flank = (length $reported_left_flank > 25) ? substr($reported_left_flank,-25,25) :  $reported_left_flank;
+    $reported_right_flank = (length $reported_right_flank > 25) ? substr($reported_right_flank,0,25) :  $reported_right_flank;
+
+    # Create a full length mutant dna string so that I can mark it up.
+    my $mut_dna =
+ 	substr($dna,$mutation_start - 500,500)
+ 	. $mut_plus
+ 	. substr($dna,$mutation_start + $mutation_length,500);
+
+
+    my $wt_full = $self->_do_markup($dna,$mutation_start,$wt_plus,length($reported_left_flank));
+    my $mut_full = $self->_do_markup($mut_dna,$mutation_start,$mut_plus,length($reported_right_flank));
+
+    # TO DO: This markup belongs as part of the view, not here.
+    # Return the full sequence on the plus strand
+    # if ($with_markup) {
+    #     my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
+    #                       lc($right_flank));
+    #     my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
+    #                                                 uc($mut_fragment)),lc($right_flank));
+    #     return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
+    # }
+    # else {
+        my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
+        my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
+        return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
+    # }
+}
+
+sub _pull_phenotype_data {
     my ($self, $phenotype_tag) = @_;
 	my $object = $self->object;
 
@@ -622,7 +1389,6 @@ sub pull_phenotype_data {
 
 	#my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
   	#foreach my $phenotype_tag (@phenotype_tags) {
-
     my @phenotypes = $object->$phenotype_tag;
 
     foreach my $phenotype (@phenotypes) {
@@ -709,7 +1475,7 @@ sub pull_phenotype_data {
                     my @remarks = $phenotype_subtag->col;
                     my $remarks = join "; ", @remarks;
                     my $details_url = "/db/misc/etree?name=$phenotype;class=Phenotype";
-                    my $details_link = a({-href=>$details_url},'[Details]');
+                    my $details_link = qq(<a href="$details_url">[Details]>);
                     $remarks = "$remarks\ $details_link";
                     $p_data{'remark'} = $remarks; #$phenotype_subtag->right
                     next;
@@ -876,7 +1642,6 @@ sub pull_phenotype_data {
 
         }
 
-        my $phenotype_name = $phenotype->Primary_name;
         #my $phenotype_url = Object2URL($phenotype);
         #my $phenotype_link = b(a({-href=>$phenotype_url},$phenotype_name));
 
@@ -885,9 +1650,9 @@ sub pull_phenotype_data {
             $p_data{not} = 1;
         }
 
-        $p_data{phenotype} = $self->_pack_obj($phenotype, $phenotype_name);
+        $p_data{phenotype} = $self->_pack_obj($phenotype);
 
-        $p_data{ps} = \@ps_data;
+        $p_data{ps} = @ps_data ? \@ps_data : undef;
 
         push @phenotype_data, \%p_data;
     }
@@ -898,791 +1663,6 @@ sub pull_phenotype_data {
     };
 }
 
-
-############################################################
-#
-# GENETICS
-#  NEEDS: Mapping data
-############################################################
-sub gene_class {
-    my ($self) = @_;
-
-    return {
-        description => 'the class of the gene the variation falls in, if any',
-        data        => $self->_pack_obj($self ~~ 'Gene_class'),
-    };
-}
-
-# This should return the CGC name, sequence name (if name), and WBGeneID...
-sub corresponding_gene {
-    my ($self) = @_;
-
-    return {
-        description => 'gene in which this variation is found (if any)',
-        data        => $self->_pack_obj($self ~~ 'Gene'),
-    };
-}
-
-sub reference_allele {
-    my ($self) = @_;
-
-    my $allele = eval {$self->object->Gene->Reference_allele};
-    return {
-        description => 'the reference allele for the containing gene (if any)',
-        data        => $allele && $self->_pack_obj($allele),
-    };
-}
-
-sub other_alleles {
-    my ($self) = @_;
-
-    my $name = $self ~~ 'name';
-    my $data;
-    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
-        next if $allele eq $name;
-
-        my $packed_allele = $self->_pack_obj($allele);
-
-        if ($allele->SNP) {
-            push @{$data->{data}->{polymorphisms}}, $packed_allele;
-        }
-        elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
-        else {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
-    }
-
-    return {
-        description => 'other alleles of the containing gene (if known)',
-        data        => $data,
-    };
-}
-
-sub strains {
-    my ($self) = @_;
-
-    my (@strains,@singletons,@cgc,@others,@both, $count);
-    foreach my $strain (@{$self ~~ '@Strain'}) {
-        $count++;
-        my @genes = $strain->Gene;
-        my $cgc = $strain->Location eq 'CGC';
-        my $packed_strain = $self->_pack_obj($strain);
-
-        if (@genes == 1) {
-            push @both, $packed_strain if $cgc;
-            push @singletons, $packed_strain;
-        }
-        elsif ($cgc) {
-            push @cgc, $packed_strain;
-        }
-        else {
-            push @others, $packed_strain;
-        }
-    }
-
-    my %data;
-    $data{singleton} = \@singletons if @singletons;
-    $data{both}      = \@both if @both;
-    $data{cgc}       = \@cgc if @cgc;
-    $data{others}    = \@others if @others;
-    $data{total}     = $count if $count;
-
-    return {
-        description => 'strains carrying this variation',
-        data        => %data ? \%data : undef,
-    };
-}
-
-sub rescued_by_transgene {
-    my ($self) = @_;
-
-    return {
-        description => 'transgenes that rescue phenotype(s) caused by this variation',
-        data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
-    };
-}
-
-
-############################################################
-#
-# HISTORY
-#
-############################################################
-
-=head2 History
-
-=cut
-
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-sub isolated_by_author {
-    my ($self) = @_;
-
-    return {
-        description => 'the author credited with generating the mutation',
-        data        => $self->_pack_obj($self ~~ 'Author'),
-    };
-}
-
-sub isolated_by {
-    my ($self) = @_;
-
-    return {
-        description => 'the person credited with generating the mutation',
-        data        => $self->_pack_obj($self ~~ 'Person'),
-    };
-}
-
-sub date_isolated {
-    my ($self) = @_;
-
-    my $date = $self ~~ 'Date';
-    return {
-        description => 'date the mutation was isolated',
-        data        => $date && "$date",
-    };
-}
-
-sub mutagen {
-    my ($self) = @_;
-
-    return {
-        description => 'mutagen used to generate the variation',
-        data        => $self ~~ 'Mutagen',
-    };
-}
-
-# Q: What are the contents of this tag?
-sub isolated_via_forward_genetics {
-    my ($self) = @_;
-
-    return {
-        description => 'was the mutation isolated by forward genetics?',
-        data        => $self ~~ 'Forward_genetics',
-    };
-}
-
-# Q: what are the contents of this tag?
-sub isolated_via_reverse_genetics {
-    my ($self) = @_;
-
-    return {
-        description => 'was the mutation isolated by reverse genetics?',
-        data        => $self ~~ 'Reverse_genetics',
-    };
-}
-
-sub transposon_excision {
-    my ($self) = @_;
-
-    my $transposon = $self ~~ 'Transposon_excision';
-    return {
-        description => 'was the variation generated by a transposon excision event, and if so, of which family?',
-        data        => $transposon && "$transposon",
-    };
-}
-
-sub transposon_insertion {
-    my ($self) = @_;
-
-    my $transposon = $self ~~ 'Transposon_insertion';
-    return {
-        description => 'was the variation generated by a transposon insertion event, and if so, of which family?',
-        data        => $transposon && "$transposon",
-    };
-}
-
-############################################################
-#
-# The External Links widget
-#
-############################################################ 
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-# Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
-# CAN BE REPLACED WITH << xrefs >>
-sub source_database {
-    my ($self) = @_;
-
-    my ($remote_url,$remote_text);
-    if (my $source_db = $self ~~ 'Database') {
-        my $name = $source_db->Name;
-        my $id   = $self->object->Database(3);
-
-        # Using the URL constructor in the database (for now)
-        # TODO: Should probably pull these out and keep URLs in config
-        my $url  = $source_db->URL_constructor;
-        # Create a direct link to the external site
-
-        if ($url && $id) {
-            $name =~ s/_/ /g;
-            $remote_url = sprintf($url,$id);
-            $remote_text = "$name";
-        }
-    }
-
-    return {
-        description => 'remote source database, if known',
-        data        => {
-            remote_url => $remote_url,
-            remote_text => $remote_text,
-        }
-    };
-}
-
-sub external_source {
-    my ($self) = @_;
-
-    my $hash;
-    my ($remote_url,$remote_text);
-    foreach my $dbsnp ($self ~~ 'Database') {
-        next unless $dbsnp eq 'dbSNP_ss';
-        $remote_text = $dbsnp->right(2);
-        my $url  = $dbsnp->URL_constructor;
-        # Create a direct link to the external site
-
-        if ($url && $remote_text) {
-            # 	    (my $name = $dbsnp) =~ s/_/ /g;
-            $hash->{$dbsnp} = {
-                remote_url => sprintf($url, $remote_text),
-                remote_text => "dbSNP: $remote_text",
-            };
-        }
-    }
-
-    return {
-        description => 'dbSNP ss#, if known',
-        data        => $hash,
-    };
-}
-
-sub derived_from {
-    my ($self) = @_;
-
-    return {
-        description => 'variation from which this one was derived',
-        data        => $self->_pack_obj($self ~~ 'Derived_from'),
-    };
-}
-
-sub derivative {
-    my ($self) = @_;
-
-    my $derivatives = $self->_pack_objects($self ~~ '@Derivative');
-    return {
-        description => 'variations derived from this variation',
-        data => %$derivatives ? $derivatives : undef,
-    };
-}
-
-############################################################
-#
-# PRIVATE METHODS
-#
-############################################################
-
-{ # begin _retrieve_molecular_changes block
-my %associated_meta = ( # this can be used to identify protein effects
-    Missense    => [qw(position description)],
-    Silent      => [qw(description)],
-    Frameshift  => [qw(description)],
-    Nonsense    => [qw(subtype description)],
-    Splice_site => [qw(subtype description)],
-);
-
-sub _retrieve_molecular_changes {
-    my ($self, $changed_item) = @_; # actually, changed_item is a subtree
-
-    my $do_translation;
-
-    my (%protein_effects, %location_effects);
-    foreach my $change_type ($changed_item->col) {
-        $do_translation++ if $change_type eq 'Missense' || $change_type eq 'Nonsense';
-
-        my @raw_change_data = $change_type->row;
-        shift @raw_change_data; # first one is the type
-
-        my %change_data;
-        my $keys = $associated_meta{$change_type} || [];
-        @change_data{@$keys, 'evidence_type', 'evidence'}
-            = map {"$_"} @raw_change_data;
-
-        if ($associated_meta{$change_type}) { # only protein effects have extra data
-            $protein_effects{$change_type} = \%change_data;
-        }
-        else {
-            $location_effects{$change_type} = \%change_data;
-        }
-    }
-
-    return (\%protein_effects, \%location_effects, $do_translation);
-}
-} # end of _retrieve_molecular_changes block
-
-
-# What is the length of the mutation?
-sub _compile_nucleotide_changes {
-    my ($self,$object) = @_;
-    my @types = $object->Type_of_mutation;
-    my @variations;
-
-    # Some variation objects have multiple types
-    foreach my $type (@types) {
-        my ($mut,$wt,$mut_label,$wt_label);
-
-        # Simple insertion?
-        #     wt sequence = empty
-        # mutant sequence = name of transposon or the actual insertion sequence
-        if ($type =~ /insertion/i) {
-            $wt = '';
-
-            # Is this a transposon insertion?
-            # mutant sequence just the name of the transposon
-            if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
-                $mut = $object->Transposon_insertion;
-                $mut ||= 'unknown' if $object->Method eq 'Transposon_insertion';
-            }
-            else {
-                # Return the full sequence of the inertion.
-                $mut = $type->right;
-            }
-
-        }
-        elsif ($type =~ /deletion/i) {
-            # Deletion.
-            #     wt sequence = the deleted sequence
-            # mutant sequence = empty
-            $mut = '';
-
-            # We need to extract the sequence from a GFF store.
-            # Get a segment corresponding to the deletion sequence
-
-            my $segment = $self->_segments->[0];
-            if ($segment) {
-                $wt  = $segment->dna;
-            }
-
-            # CGH tested deletions.
-            $type = "definite deletion" if  ($object->CGH_deleted_probes(1));
-
-            # Substitutions
-            #     wt sequence = um, the wt sequence
-            # mutant sequence = the mutant sequence
-        }
-        elsif ($type =~ /substitution/i) {
-            my $change = $type->right;
-            ($wt,$mut) = eval { $change->row };
-
-            # Ack. Some of the alleles are still stored as A/G.
-            unless ($wt && $mut) {
-                $change =~ s/\[\]//g;
-                ($wt,$mut) = split("/",$change);
-            }
-        }
-
-        # Set wt and mutant labels
-        if ($object->SNP(0) || $object->RFLP(0)) {
-            $wt_label = 'bristol';
-            $mut_label = $object->Strain; # CB4856, 4857, etc
-        }
-        else {
-            $wt_label  = 'wild type';
-            $mut_label = 'mutant';
-        }
-
-        push @variations,{ type           => "$type",
-                           wildtype       => "$wt",
-                           mutant         => "$mut",
-                           wildtype_label => $wt_label,
-                           mutant_label   => $mut_label,
-                       };
-    }
-    return \@variations;
-}
-
-# Fetch the coordinates of the variation in a given feature
-# Much in here could be generic
-sub _fetch_coords_in_feature {
-    my ($self,$tag,$entry) = @_;
-
-    my $db = $self->gff_dsn;
-
-    my $variation_segment = $self->_segments->[0] or return;
-
-    # Kludge for chromosomes
-    my $class = $tag eq 'Chromosome' ? 'Sequence' : $entry->class;
-    # is it really okay to ignore multiple results and arbitarily use the first one?
-    my ($containing_segment) = $db->segment(-name  => $entry, -class => $class) or return;
-    # consider caching results?
-
-    # Set the refseq of the variation to the containing segment
-    $variation_segment->refseq($containing_segment);
-
-    my ($chrom,$fabs_start,$fabs_stop,$fstart,$fstop) = $self->_seg2coords($containing_segment);
-    my ($var_chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($variation_segment);
-    ($start,$stop) = ($stop,$start) if ($start > $stop);
-    return ($abs_start,$abs_stop,$fstart,$fstop,$start,$stop);
-}
-
-# Build short strings (wild type and mutant) flanking
-# the position of the mutant sequence in support of the context() method.
-# If a mutation sequence (insertion or deletion) exceeds
-# INDEL_DISPLAY_LIMIT, a string will be inserted unless
-# the --all option is supplied.
-# Options:
-# --all    Don't truncate long strings: return the full flank-mutant-flank
-# --boldface Boldface the mutation
-# --flank amount of flank to include. Defaults to SNIPPET_LENGTH
-#
-# Returns (wt(+), mut(+), wt(-), mut(-));
-sub _build_sequence_strings {
-    my ($self,@p) = @_;
-    my ($with_markup,$flank);
-
-    # Get a GFFdb handle - I'm not sure how to do this in the API.
-    my $species = $self->_parsed_species;
-    my $db_obj  = $self->gff_dsn($species); # Get a WormBase::API::Service::gff object
-    my $db      = $db_obj->dbh;
-
-    my $object     = $self->object;
-    my $segment    = $self->_segments->[0];
-    return unless $segment;
-
-    my $sourceseq  = $segment->sourceseq;
-    my ($chrom,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
-
-    my $debug;
-
-    # Coordinates are sometimes reported on the minus strand
-    # We will report all sequence strings on the plus strand instead.
-    my $strand;
-    if ($abs_start > $abs_stop) {
-        ($abs_start,$abs_stop) = ($abs_stop,$abs_start);
-        $strand = '-';          # Set $strand - used for tracking
-    }
-
-    # Fetch a segment that spans the mutation with the appropriate flank
-    # on the plus strand
-
-    # The amount of flanking sequence to recover should be configurable
-    # Right now, it is hardcoded for 500 bp
-    my $offset = 500;
-    my ($full_segment) = $db->segment(-class => 'Sequence',
-                                      -name  => $sourceseq,
-                                      -start => $abs_start - $offset,
-                                      -stop  => $abs_stop  + $offset);
-    my $dna = $full_segment->dna;
-    # MOVE INTO TEST
-    # $debug .= "WT SNIPPET DNA FROM GFF: $dna" . br if DEBUG_ADVANCED;
-
-    # Visit each variation and create a formatted string
-    my ($wt_fragment,$mut_fragment,$wt_plus,$mut_plus);
-    my $variations = $self->_compile_nucleotide_changes($object);
-
-    foreach my $variation (@{$variations}) {
-        my $type = $variation->{type};
-        my $wt   = $variation->{wildtype};
-        my $mut  = $variation->{mutant};
-        my $extracted_wt;
-        if ($type =~ /insertion/i) {
-            $extracted_wt = '-';
-        }
-        else {
-            my ($seg) = $db->segment(-class => 'Sequence',
-                                     -name  => $sourceseq,
-                                     -start => $abs_start,
-                                     -stop  => $abs_stop);
-            $extracted_wt = $seg->dna;
-        }
-
-        # MOVE INTO TEST
-        # 	if (DEBUG_ADVANCED) {
-        # 	    $debug .= "WT SEQUENCE EXTRACTED FROM GFF .. : $extracted_wt" . br;
-        # 	    $debug .= "WT SEQUENCE STORED IN ACE ....... : $wt" . br;
-        # 	    $debug .= "MUT SEQUENCE STORED IN ACE ...... : $mut" . br;
-        # 	    $debug .= "LENGTH OF VARIATION ............. : " . length($extracted_wt) . ' bp' . br;
-        # 	}
-
-        # Does the sequence we have extracted match that stored in the
-        # database?  Stated another way, is the mutation reported on the
-        # plus strand?
-
-        # Insertions will have no sequence and I should not be able to
-        # extract any either (We use logical or here to check for the
-        # $strand flag. Sometimes insertions or deletions will have no
-        # sequence.
-
-        if ($wt eq $extracted_wt && $strand ne '-') {
-            # Yes, it has.  Do nothing.
-        }
-        else {
-            # MOVE INTO TEST
-            # $debug .= "-----> TRANSCRIPT ON - strand; revcomping" if DEBUG_ADVANCED;
-
-            # The variation and flanks have been reported on the minus strand
-            # Reverse complement the mutant sequence
-            $strand = '-';  # Set the $strand flag if not already set.
-            unless ($mut =~ /transposon/i) {
-                $mut = reverse $mut;
-                $mut =~ tr/[acgt]/[tgca]/;
-
-                $wt = reverse $wt;
-                $wt =~ tr/[acgt]/[tgca]/;
-            }
-        }
-
-        # Keep the full string of all variations on the plus strand
-        $wt_plus  .= $wt;
-        $mut_plus .= $mut;
-
-        # What is the type of mutation? If deletion or insertion,
-        # check the length of the partner, then format appropriately
-        # TODO: The INDEL_DISPLAY_LIMIT is hard coded
-        my $INDEL_DISPLAY_LIMIT = 100;
-        if (length $mut > $INDEL_DISPLAY_LIMIT || length $wt > $INDEL_DISPLAY_LIMIT) {
-            if ($type =~ /deletion/i) {
-                my $target = length ($wt) . " bp " . lc($type);
-                $wt_fragment  .= "[$target]";
-                $mut_fragment .= '-' x (length ($target) + 2);
-            }
-            elsif ($type =~ /insertion/i) {
-                my $target;
-                if ($mut =~ /transposon/i) { # String representing transposon insertions
-                    $target = $mut;
-                }
-                else {
-                    $target = length ($mut) . " bp " . lc($type);
-                }
-                #  $mut_fragment .= '[' . a({-href=>$href,-target=>'_blank'},$target) . ']';
-                $mut_fragment .= "[$target]";
-                #  $wt_fragment  .= '-' x (length($mut_fragment) + 2);
-                $wt_fragment  .= '-' x (length($mut_fragment));
-            }
-        }
-        else {
-            # We are less than 100 bp, go ahead and use it.
-            $wt_fragment  .= ($wt  eq '-') ? '-' x length $mut  : $wt;
-            $mut_fragment .= ($mut eq '-') ? '-' x length $wt : $mut;
-        }
-    }
-
-    # Coordinates of the mutation within the segment
-    my ($mutation_start,$mutation_length);
-    if ($strand eq '-') {
-        # This works for e205 substition (-)
-        $mutation_start   = $offset;
-        $mutation_length  = length($wt_plus);
-    }
-    else {
-        # SETTING 1 - works for:
-        #   ca16 indel(+)
-        #   cxP622 insertion(+)
-        $mutation_start  = $offset + 1;
-        $mutation_length = length($wt_plus) - 1;
-
-        # SETTING 2 - works for:
-        #     tm728 (indel)
-        #     ok431 (indel)
-        $mutation_start  = $offset;
-        $mutation_length = length($wt_plus) - 1;
-
-        # SETTING 3 - works for:
-        #     cn28 (unknown transposon insertion)
-        #$mutation_start  = $offset + 2;
-        #$mutation_length = length($wt_full) - 1;
-
-        # SETTING 4 - works for:
-        #      bm1 (indel)
-        $mutation_start  = $offset;
-        $mutation_length = length($wt_plus);
-    }
-
-    # TODO: Make the snippet length configurable.
-    my $SNIPPET_LENGTH = 100;
-    $flank ||= $SNIPPET_LENGTH;
-
-    my $insert_length = (length $wt_fragment > length $mut_fragment) ? length $wt_fragment : length $mut_fragment;
-    my $flank_length = int(($flank - $insert_length) / 2);
-
-    # The amount of flank to fetch is based on the middle segment
-    my $left_flank  = substr($dna,$mutation_start - $flank_length,$flank_length);
-    my $right_flank = substr($dna,$mutation_start + $mutation_length,$flank_length);
-
-    # MOVE INTO TEST
-    #    if (DEBUG_ADVANCED) {
-    #	#      print "right flank : $right_flank",br;
-    # 	$debug .= "WT PLUS STRAND .................. : $wt_plus"  . br;
-    # 	$debug .= "MUT PLUS STRAND ................. : $mut_plus" . br;
-    #     }
-
-    # Mark up the reported flanking sequences in the full sequence
-    my ($reported_left_flank,$reported_right_flank) = ($object->Flanking_sequences(1),$object->Flanking_sequences(2));
-    #    my $left_length = length($reported_left_flank);
-    #    my $right_length = length($reported_right_flank);
-    $reported_left_flank = (length $reported_left_flank > 25) ? substr($reported_left_flank,-25,25) :  $reported_left_flank;
-    $reported_right_flank = (length $reported_right_flank > 25) ? substr($reported_right_flank,0,25) :  $reported_right_flank;
-
-    # Create a full length mutant dna string so that I can mark it up.
-    my $mut_dna =
- 	substr($dna,$mutation_start - 500,500)
- 	. $mut_plus
- 	. substr($dna,$mutation_start + $mutation_length,500);
-
-
-    my $wt_full = $self->_do_markup($dna,$mutation_start,$wt_plus,length($reported_left_flank));
-    my $mut_full = $self->_do_markup($mut_dna,$mutation_start,$mut_plus,length($reported_right_flank));
-
-    # TO DO: This markup belongs as part of the view, not here.
-    # Return the full sequence on the plus strand
-    # if ($with_markup) {
-    #     my $wt_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},uc($wt_fragment)),
-    #                       lc($right_flank));
-    #     my $mut_seq = join(' ',lc($left_flank),span({-style=>'font-weight:bold'},
-    #                                                 uc($mut_fragment)),lc($right_flank));
-    #     return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
-    # }
-    # else {
-        my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
-        my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
-        return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
-    # }
-}
-
-sub _do_simple_conceptual_translation {
-    my ($self, $cds, $datahash) = @_;
-
-    my ($pos,$formatted_change) = @{$datahash}{'position', 'description' }
-        or return;
-    my $wt_protein = eval { $cds->Corresponding_protein->asPeptide }
-        or return;
-
-    # De-FASTA
-    $wt_protein =~ s/^>.*//;
-    $wt_protein =~ s/\n//g;
-
-    $formatted_change =~ /(.*) to (.*)/;
-    my $wt_aa  = $1;
-    my $mut_aa = $2;
-
-    #    # String formatting of nonsense alleles is a bit different
-    #    if ($type eq 'Nonsense') {
-    #	$mut_aa = '*';
-    #    }
-
-    # Substitute the mut_aa into the wildtype protein
-    my $mut_protein = $wt_protein;
-
-    substr($mut_protein,($pos-1),1,$mut_aa);
-
-    # Store some data for easy accession
-    # I'd like to purge this but it's deeply embedded in the logic
-    # of presenting a detailed view of the sequence
-    $self->{wt_aa_start} = $pos;
-
-    # I should be formatting these here depending on the type of nucleotide change...
-    $self->{formatted_aa_change} = $formatted_change;
-
-    # Create short strings of the proteins for display
-    $self->{wt_protein_fragment} = ($pos - 19)
- 	. '...'
- 	. substr($wt_protein,$pos - 20,19)
- 	. ' '
- 	. '<b>' . substr($wt_protein,$pos-1,1) . '</b>'
- 	. ' '
- 	. substr($wt_protein,$pos,20)
- 	. '...'
- 	. ($pos + 19);
-    $self->{mut_protein_fragment} = ($pos - 19)
- 	. '...'
- 	. substr($mut_protein,$pos - 20,19)
- 	. ' '
- 	. '<b>' . substr($mut_protein,$pos-1,1) . '</b>'
- 	. ' '
- 	. substr($mut_protein,$pos,20)
- 	.  '...'
- 	. ($pos + 19);
-
-    $self->{wt_trans_length} = length($wt_protein);
-    $self->{mut_trans_length} = length($mut_protein);
-
-    $self->{wt_trans} =
- 	"> $cds"
- 	. $self->_do_markup($wt_protein,$pos-1,$wt_aa,undef,'is_peptide');
-    my $object = $self->object;
-    $self->{mut_trans} =
- 	"> $cds ($object: $formatted_change)"
- 	. $self->_do_markup($mut_protein,$pos-1,$mut_aa,undef,'is_peptide');
-
-    return ($self->{wt_protein_fragment},$self->{mut_protein_fragment},$self->{wt_trans},$self->{mut_trans});
-}
-
-# Markup features relative to the CDS or to raw genomic features
-sub _do_markup {
-    my ($self,$seq,$var_start,$variation,$flank_length,$is_peptide) = @_;
-    my $object = $self->object;
-
-    # Here, variation might be a specially formatted string (ie '----' for a deletion)
-    my @markup;
-    my $markup = Bio::Graphics::Browser2::Markup->new;
-    $markup->add_style('utr'  => 'FGCOLOR gray');
-    $markup->add_style('cds0'  => 'BGCOLOR yellow');
-    $markup->add_style('cds1'  => 'BGCOLOR orange');
-    $markup->add_style('space' => ' ');
-    $markup->add_style('substitution' => 'text-transform:uppercase; background-color: red;');
-    $markup->add_style('deletion'     => 'background-color:red; text-transform:uppercase;');
-    $markup->add_style('insertion'     => 'background-color:red; text-transform:uppercase;');
-    $markup->add_style('deletion_with_insertion'  => 'background-color: red; text-transform:uppercase');
-    if ($object->Type_of_mutation eq 'Insertion') {
-        $markup->add_style('flank' => 'background-color:yellow;font-weight:bold;text-transform:uppercase');
-    }
-    else {
-        $markup->add_style('flank' => 'background-color:yellow');
-    }
-    # The extra space is required here when used in non-pre-formatted text!
-    $markup->add_style('newline',"<br> ");
-
-    my $var_stop = length($variation) + $var_start;
-
-    # Substitutions start and stop at the same position
-    $var_start = ($var_stop - $var_start == 0) ? $var_start - 1 : $var_start;
-
-    # Markup the variation as appropriate
-    push (@markup,[lc($object->Type_of_mutation),$var_start,$var_stop]);
-
-    # Add spacing for peptides
-    if ($is_peptide) {
-        for (my $i=0; $i < length $seq; $i += 10) {
-            push @markup,[$i % 80 ? 'space' : 'newline',$i];
-        }
-    }
-    else {
-        for (my $i=80; $i < length $seq; $i += 80) {
-            push @markup,['newline',$i];
-        }
-        #	push @markup,map {['newline',80*$_]} (1..length($seq)/80);
-    }
-
-    if ($flank_length) {
-        push @markup,['flank',$var_start - $flank_length + 1,$var_start];
-        push @markup,['flank',$var_stop,$var_stop + $flank_length];
-    }
-
-    $markup->markup(\$seq,\@markup);
-    return $seq;
-}
-
 __PACKAGE__->meta->make_immutable;
 
 1;
-
