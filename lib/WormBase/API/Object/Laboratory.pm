@@ -494,13 +494,13 @@ B<Response example>
 =cut
 
 sub website {
-    my $self   = shift;
-    my $object = $self->object;
-    my $url    = $object->URL;
-    my ($protocol, $url) = split '://', $url;
-    my $data   = { description => 'website of the lab',
-		   data        => "$url" || undef };
-    return $data;
+    my ($self) = @_;
+    my ($scheme, $url) = split '://', $self ~~ 'URL', 2;
+
+    return {
+        description => 'website of the lab',
+        data        => $url,
+    };
 }
 
 =head3 strain_designation

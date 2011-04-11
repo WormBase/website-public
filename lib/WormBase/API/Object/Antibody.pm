@@ -273,17 +273,18 @@ B<Response example>
 
 =cut
 
-sub animal {    
+sub animal {
     my $self = shift;
-    my $object = $self->object;
-    my $animal = $object->Animal;
+    my $animal = $self->object->Animal;
 
     if ($animal eq 'Other_animal') {
-	my $data = $animal->right;
-	$animal  = $data if $data;
+        $animal = $animal->right || $animal;
     }
-    return { description => 'the animal the antibody was generated in',
-	     data        => "$animal" or undef };
+
+    return {
+        description => 'the animal the antibody was generated in',
+        data        => $animal && "$animal",
+    };
 }
 
 =head3 clonality

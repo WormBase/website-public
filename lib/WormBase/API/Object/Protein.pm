@@ -1020,25 +1020,26 @@ B<Response example>
 
 =cut
 
+{ # block for pfam graph
+my @COLORS = map {"#$_"} qw(2dcf00 ff5353 e469fe ffa500 00ffff 86bcff ff7ff0 f2ff7f 7ff2ff);
+
 sub pfam_graph {
     my $self = shift;
-    my @COLORS = qw(#2dcf00 #ff5353 #e469fe #ffa500 #00ffff #86bcff #ff7ff0 #f2ff7f #7ff2ff);
     my $motif_homol = $self ~~ '@Motif_homol';
     my $hash;
     my $length = length($self->peptide);
 
     for( my $i=0;my $feature=shift @$motif_homol;$i++) {
-    
 	    my $score = $feature->right(2);
 	    my $start = $feature->right(3);
 	    my $stop  = $feature->right(4);
 	    my $type = $feature->right ||"";
 	    $type  ||= 'Interpro' if $feature =~ /IPR/;
- 
+
 	    # Are the multiple occurences of this feature?
 	    my @multiple = $feature->right->right->col;
 	    @multiple = map {$_->right} $feature->right->col if(@multiple <= 1);
-	     
+
 	    if (@multiple > 1) {
 		my @scores = $feature->right->col;
 		for( my $count=0; $start=shift @multiple;$count++) {
@@ -1048,36 +1049,36 @@ sub pfam_graph {
 		}
 	    } else {
 		    push  @{$hash->{$type}} , {end=>"$stop",start=>"$start",score=>"$score",type=>"$type",feature=>$feature,length=>($stop-$start+1),colour=>$COLORS[$i % @COLORS]};
-		 
+
 	    }
     }
-    
-    
+
+
     # extract the exons, then map them
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
     my $gffdb = $self->gff_dsn;
     my ($seq_obj) = $gffdb->segment(CDS => $gene);
-    
+
     my (@exons,@segmented_exons);
     # Translate the bp start and stop positions into the approximate amino acid
     # contributions from the different exons.
-    
+
     if ($seq_obj) {
 	@exons = $seq_obj->features('exon:curated');
 	@exons = grep { $_->name eq $gene } @exons;
 	my $end_holder=0;
-	my $mod=0; 
+	my $mod=0;
 	my $count=0;
 	foreach my $exon (sort { $a->start <=> $b->start } @exons) {
-	    
+
 	    $count++;
 	    my $start = $exon->start;
 	    my $stop  = $exon->stop;
 	    my $length = ($stop - $start + $mod +1) / 3;
 	    $mod= ($stop - $start + $mod +1) % 3;
 	    my $end = int($length) + $end_holder-1;
-	    
+
 	    push @segmented_exons,{  colour => "#000000",
 				     start=>$end_holder,
 				     end=>$end,
@@ -1085,13 +1086,13 @@ sub pfam_graph {
 				     metadata => {
 					 type=>"exon".$count,
 					 start=>$end_holder,
-					 end=>$end,	
+					 end=>$end,
 				     },
 	    };
 	    $end_holder = $end+1;
 	}
-    } 
-    
+    }
+
     my @markups;
     foreach my $type (sort keys %$hash){
 	my @array = grep { $_->{length} >1  } @{$hash->{$type}};
@@ -1100,7 +1101,7 @@ sub pfam_graph {
 	    delete $hash->{$type};
 	}
     }
-    
+
     foreach my $type (sort keys %$hash){
 	if (@markups) {
 	    push @{$hash->{$type}}, @markups;
@@ -1109,7 +1110,7 @@ sub pfam_graph {
 	my $graph;
 	my @sort = sort { $b->{length} <=> $a->{length} } @{$hash->{$type}};
 	foreach my $obj (@sort) {
-	    
+
 	    my $feature = $obj->{feature};
 	    (my $label = $feature) =~ s/.*://;
 	    my $desc = $feature->Title ||$feature ;
@@ -1120,17 +1121,17 @@ sub pfam_graph {
 				     start=>$obj->{start},
 				     href=>$href,
 				     metadata => {
-					 database=>$obj->{type}, 	
+					 database=>$obj->{type},
 					 description=>"$desc",
 					 start=>$obj->{start},
-					 identifier=>$identifier,		
+					 identifier=>$identifier,
 				     },
 	    };
 	    my $graph_type = "regions";
 	    if($obj->{length} == 1 ) {
 		$graph_type = "markups";
 		$graph_hash->{headStyle} = "diamond";
-		
+
 	    } else {
 		$graph_hash->{end} = $obj->{end};
 		$graph_hash->{startStyle} = "straight";
@@ -1138,18 +1139,20 @@ sub pfam_graph {
 		$graph_hash->{text} = ucfirst(substr($desc,0,3));
 		$graph_hash->{metadata}->{end} = $obj->{end};
 	    }
-	    
+
 	    push @{$graph->{$graph_type}} ,$graph_hash;
 	}
 	$graph->{length}= $length;
 	push @{$graph->{markups}} ,@segmented_exons;
 	$hash->{$type} = to_json ($graph);
     }
-    
-    return { description => 'The motif graph of the protein',
-	     data        => $hash,
-    }; 
+
+    return {
+        description => 'The motif graph of the protein',
+        data        => $hash,
+    };
 }
+} # end of block for pfam_graph
 
 =head3 motif_details
 
