@@ -6,7 +6,7 @@ use Carp;
 use Readonly;
 use Config::General;
 use File::Basename;
-use Test::More;
+use Test::Builder;
 use Catalyst::Utils; # merge_hash: can reimplement in this class if needed
 use WormBase::API;
 
@@ -14,9 +14,10 @@ use namespace::autoclean;
 
 use base 'WormBase::Test';
 
+my $Test = Test::Builder->new;
 
 Readonly our $API_BASE => 'WormBase::API';
-sub API_BASE { return $API_BASE; }
+sub API_BASE () { return $API_BASE; }
 
 # WormBase API tester
 
@@ -50,7 +51,7 @@ sub new {
         }
 
         my $api = WormBase::API->new($conf{'Model::WormBaseAPI'}->{args});
-        ok($api && $api->isa($API_BASE), 'Created WormBase API object');
+        $Test->ok($api && $api->isa($API_BASE), 'Created WormBase API object');
 
         $self->api($api);
     }

@@ -3,16 +3,17 @@ package WormBase::Test::API::Object;
 use strict;
 use warnings;
 use Carp;
-use Test::More;
+use Test::Builder;
 use Readonly;
 
 use namespace::autoclean;
 
 use base 'WormBase::Test::API';
 
+my $Test = Test::Builder->new;
 
 Readonly our $OBJECT_BASE => $WormBase::Test::API::API_BASE . '::Object';
-sub OBJECT_BASE { return $OBJECT_BASE; }
+sub OBJECT_BASE () { return $OBJECT_BASE; }
 
 # WormBase API model object tester
 
@@ -121,7 +122,7 @@ sub get_roles_methods {
 sub fully_qualified_class_name { # invocant-independent
     my ($invocant, $name) = @_;
 
-    return $name =~ /^$OBJECT_BASE/ ? $name : "${OBJECT_BASE}::${name}";
+    return $name =~ /^$OBJECT_BASE/o ? $name : "${OBJECT_BASE}::${name}";
 }
 
 ################################################################################
@@ -169,7 +170,7 @@ sub fetch_object_ok {
     my ($self, $args) = @_;
 
     my $name = ref $args eq 'HASH' ? $args->{name} : $args;
-    ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
+    $Test->ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
     return $obj || ();
 }
 
@@ -179,7 +180,7 @@ sub class_immutable_ok {
 
     $class = $self->fully_qualified_class_name($class);
 
-    return ok($class->meta->is_immutable, 'Class immutable');
+    return $Test->ok($class->meta->is_immutable, 'Class immutable');
 }
 
 sub call_method_ok {
@@ -188,8 +189,8 @@ sub call_method_ok {
         unless $object && $method;
 
     my $data = eval {$object->$method};
-    ok(! $@, "$method called without problems")
-        or diag("$object call $method: $@");
+    $Test->ok(! $@, "$method called without problems")
+        or $Test->diag("$object call $method: $@");
     return $data;
 }
 
@@ -200,13 +201,13 @@ sub class_hierarchy_ok { # checks that the class has the right hierarchy
 
     $class = $self->fully_qualified_class_name($class);
 
-    subtest 'Class hierarchy okay' => sub {
+    $Test->subtest('Class hierarchy okay' => sub {
         # check that it's a WormBase Object descendent
-        isa_ok($class, $OBJECT_BASE) || return;
+        $self->isa_ok($class, $OBJECT_BASE) || $Test->diag("$class, $OBJECT_BASE") && return;
 
         # implements Object role
-        ok($class->does($WormBase::Test::API::API_BASE . '::Role::Object')) || return;
-    }; # end of subtest
+        $Test->ok($class->does($WormBase::Test::API::API_BASE . '::Role::Object')) || return;
+    }); # end of subtest
 
     return 1;
 }
@@ -237,39 +238,39 @@ sub compliant_methods_ok {
     }
 
     unless (@methods) {
-        fail('Compliant methods');
-        diag('No public methods found');
-        diag('Include: ', join(', ', @{$args->{include}})) if %include;
-        diag('Exclude: ', join(', ', @{$args->{exclude}})) if %exclude;
+        $Test->ok(0, 'Compliant methods');
+        $Test->diag('No public methods found');
+        $Test->diag('Include: ', join(', ', @{$args->{include}})) if %include;
+        $Test->diag('Exclude: ', join(', ', @{$args->{exclude}})) if %exclude;
         return;
     }
 
     my $ok = 1;
-    subtest 'Compliant methods' => sub {
+    $Test->subtest('Compliant methods' => sub {
         foreach my $method (@methods) {
 #            $self->_note_method($method);
             my $m = $method->name;
             my $data = $self->call_method_ok($wb_obj, $m);
             $self->compliant_data_ok($data)
-                or diag('Ace Object is ' . $wb_obj->object) && undef $ok;
+                or $Test->diag($wb_obj->object . "->$m") && undef $ok;
         }
-    }; # end of subtest
+    }); # end of subtest
 
     return $ok || ();
 }
 
 sub compliant_data_ok {
     my $self = shift;
-    fail 'Too much data' if @_ > 1;
+    $Test->ok(0, 'Too much data') if @_ > 1;
 
     my ($data) = @_; # unpack to avoid destructiveness of check_data()
     if (my ($fixed_data, @problems) = WormBase::API::Role::Object->_check_data($data)) {
-        fail 'Data has problems';
-        diag(join("\n", @problems));
+        $Test->ok(0, 'Data has problems');
+        $Test->diag(join("\n", @problems));
         return;
     }
 
-    pass 'Data is okay';
+    $Test->ok(1, 'Data is okay');
     return 1;
 }
 
@@ -304,7 +305,7 @@ sub _note_method {
         map {(my $a = $_) =~ s/^${WormBase::Test::API::API_BASE}::/W::A::/o; $a}
         map {$method->$_} qw(name original_package_name package_name);
 
-    note("$name; OPKG: $original_package; PKG: $package_name; TYPE: $type");
+    $Test->note("$name; OPKG: $original_package; PKG: $package_name; TYPE: $type");
 }
 
 1;
