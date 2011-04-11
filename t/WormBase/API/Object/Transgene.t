@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Transgene');
 } # Transgene.t loads ok
 
-my @test_objects = qw(WBPaper00032201Ex1); # cgc4781Is1
+my @test_objects = qw(WBPaper00032201Ex1 ayIs4); # cgc4781Is1
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',

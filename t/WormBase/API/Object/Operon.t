@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Operon');
 } # Operon.t loads ok
 
-my @test_objects = qw(CEOP1140);
+my @test_objects = qw(CEOP1140 CEOP4252);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',

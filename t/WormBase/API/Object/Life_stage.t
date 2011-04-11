@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Life_stage');
 } # Life_stage.t loads ok
 
-my @test_objects = qw(embryo);
+my @test_objects = ('embryo', 'L3 larva');
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',

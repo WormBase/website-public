@@ -19,7 +19,7 @@ BEGIN {
     use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Variation');
 } # Variation loads ok
 
-my @test_objects = qw(e205 tm501);
+my @test_objects = qw(e205 WBVar00143616 tm501);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',

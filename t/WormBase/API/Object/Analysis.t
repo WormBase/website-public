@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Analysis');
 } # Analysis loads ok
 
-my @test_objects = qw(TreeFam);
+my @test_objects = qw(TreeFam RNASeq_Hillier.dauer_daf-2);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',
