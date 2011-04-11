@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Person');
 } # Person.t loads ok
 
-my @test_objects = qw(WBPerson320);
+my @test_objects = qw(WBPerson320 WBPerson1352);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',
