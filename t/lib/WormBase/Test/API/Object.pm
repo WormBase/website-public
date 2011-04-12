@@ -13,16 +13,126 @@ use base 'WormBase::Test::API';
 
 my $Test = Test::Builder->new;
 
+# WormBase API model object tester
+
+=head1 NAME
+
+WormBase::Test::API::Object - WormBase API object tester
+
+=head1 SYNOPSIS
+
+    my $tester = WormBase::Test::API::Object->new({
+        conf_file => $conf_file, # e.g. 'Paper' or 'WormBase::API::Object::Paper'
+        class     => $class,
+    });
+
+    my @test_object_names = qw(a b c d);
+
+    # automatic testing
+    my %test_objects = $tester->run_common_tests(@test_object_names);
+
+    # finer autotesting
+    $tester->run_common_tests({
+        objects                 => \@test_object_names,
+        # check only the methods specific to the class
+        exclude_parents_methods => 1,
+        exclude_roles_methods   => 1,
+    });
+
+    $tester->run_common_tests({
+        objects         => \@test_object_names,
+        # check only these methods
+        include_methods => ['method1', 'method2'],
+    });
+
+    $tester->run_common_tets({
+        objects         => \@test_object_names,
+        # check all methods except
+        exclude_methods => ['badmethod', 'manually_test_this'],
+    });
+
+    # manual testing
+    $tester->class('Variation');
+    my $obj = $tester->fetch_object_ok('WBVar00249542');
+    my $data = $tester->call_method_ok($var, 'name');
+    $tester->compliant_data_ok($data);
+
+
+
+    # more advanced manual testing
+    my ($fixed_data, @problems) = $tester->compliant_data_ok($data);
+    ... # some manual inspection of problems or battery of tests using Test::More
+
+    my @methods = map{$_->name} $tester->get_class_specific_methods;
+    $tester->call_method_ok($obj, $_) foreach grep {...} @methods;
+
+=head1 DESCRIPTION
+
+Tester class for testing WormBase models and their objects. Fundamentally,
+the model is tested by fetching instances of the model and exercising the code
+through calls and standards compliance. The tester is designed to help
+facilitate these tests anywhere from automating the "common" tests to calling
+specific methods and capturing their error. This class, like the WormBase::Test
+class that it inherits from will emit TAP compatible output for use with
+Test::Harness (and its prove command).
+
+=head1 CONSTANTS
+
+Constants related to testing objects. These can be accessed either as
+interpolable variables or subroutines/methods:
+
+    $WormBase::Test::API::Object::CONSTANT
+    WormBase::Test::API::Object::CONSTANT
+
+=over
+
+=item B<OBJECT_BASE>
+
+The namespace/prefix/base of all WormBase model objects.
+
+=cut
+
 Readonly our $OBJECT_BASE => $WormBase::Test::API::API_BASE . '::Object';
 sub OBJECT_BASE () { return $OBJECT_BASE; }
 
-# WormBase API model object tester
+=back
+
+=head1 METHODS
+
+=head2 Constructor and accessors
+
+=over
+
+=cut
 
 ################################################################################
 # Constructor & Accessors
 ################################################################################
 
 # yes, rolling my own class. may replace with Moose or something later
+
+=item B<new($argshash)>
+
+    my $tester = WormBase::Test::API::Object->new({
+        class     => $class, # optional
+        conf_file => $file,  # or api => $api
+    });
+
+Creates an object tester with an underlying L<WormBase::API> object. See
+L<WormBase::Test::API> for more details on the API object construction.
+
+The tester may optionally be associated with a particular class to test, which
+alleviates the need to specify a class in some of the class-specific tests.
+
+If a class is provided, the class module will be loaded (if not already) and
+the following class-specific tests will be run: test that the class is in fact
+a WormBase model object class; test that the class is immutable for Moose
+optimizations.
+
+If a class is not provided, these tests can be run after constructing the
+tester object. The class can also be explicitly re/set later with L<class>.
+
+=cut
 
 sub new {
     my ($class, $args) = @_;
@@ -42,6 +152,13 @@ sub new {
     return $self;
 }
 
+=item B<class([$class])>
+
+    $tester->class($class); # e.g. 'Paper'
+    my $class = $tester->class;
+
+=cut
+
 sub class { # accessor/mutator
     my ($self, $param) = @_;
     if ($param) {
@@ -51,9 +168,36 @@ sub class { # accessor/mutator
     return $self->{class};
 }
 
+=back
+
+=head2 Utility methods
+
+These methods are used to help with testing model objects but not
+necessarily test methods themselves. See the L<"Test methods"> for those.
+
+=over
+
+=cut
+
 ################################################################################
 # Methods
 ################################################################################
+
+=item B<fetch_object($argshash)>
+
+    my $obj = $tester->fetch_object({
+        name     => $name,
+        class    => $class, # optional unless set earlier
+        aceclass => $aceclass, # for fetching WB objects using an Ace class
+    })
+
+Fetches a L<WormBase::API::Object> object of a given class. This uses (and reveals)
+the underlying WormBase::API object's interface to fetch.
+
+C<name> is required. C<class> or C<aceclass> is required unless the class of
+the tester object has been set beforehand.
+
+=cut
 
 sub fetch_object {
     my ($self, $args) = @_;
@@ -79,11 +223,37 @@ sub fetch_object {
     return $api->fetch({class => $class, name => $name, aceclass => $aceclass});
 }
 
+=item B<fully_qualified_class_name($class)>
+
+    my $full_class = WormBase::Test::API::Object->fully_qualified_class_name('Paper');
+    # $full_class is now 'WormBase::API::Object::Paper'
+
+    $tester->fully_qualified_class_name('Paper'); # can be called as instance method
+    $full_class = $tester->fully_qualified_class_name($full_clas); # unchanged
+
+Takes a class name and fully qualifies it with the OBJECT_BASE constant as a
+prefix if not already done.
+
+=cut
+
 sub fully_qualified_class_name { # invocant-independent
     my ($invocant, $name) = @_;
 
     return $name =~ /^$OBJECT_BASE/o ? $name : "${OBJECT_BASE}::${name}";
 }
+
+=item B<get_parents_methods([$class])>
+
+    my @parents_methods = $tester->get_parents_methods($class);
+
+Get the methods present in all parent classes of the given class. The class
+must be provided unless previously set for the tester object. The methods
+will be L<Moose::Meta::Method> objects. Often, it is useful to get the
+unqualified method names like so:
+
+    @method_names = map { $_->name } @parents_methods;
+
+=cut
 
 # these are nice utilities; perhaps it should be put in WormBase::Test
 sub get_parents_methods { # of WormBase class.
@@ -94,6 +264,15 @@ sub get_parents_methods { # of WormBase class.
     my @parents = $class->meta->superclasses;
     return map { eval {$_->meta->get_all_methods} } @parents;
 }
+
+=item B<get_roles_methods([$class])>
+
+    my @roles_methods = $tester->get_roles_methods($class);
+
+Get the methods provided in all the roles of a given class. The class
+must be provided unless previously set for the tester object.
+
+=cut
 
 sub get_roles_methods {
     my ($self, $class) = @_;
@@ -121,6 +300,16 @@ sub get_roles_methods {
     return grep { !$excl{$_->name} } $anon_meta->get_all_methods;
 }
 
+=item B<get_class_specific_methods([$class])>
+
+    my @my_methods = $tester->get_class_specific_methods($class);
+
+Get the methods declared in the given class. This excludes methods originally
+defined in a parent class or a consumed role. The class must be provided
+unless previously set for the tester object.
+
+=cut
+
 sub get_class_specific_methods {
     my ($self, $class) = @_;
     $class ||= $self->class;
@@ -133,9 +322,57 @@ sub get_class_specific_methods {
         $self->get_all_methods;
 }
 
+=back
+
+=head2 Test methods
+
+These methods facilitate testing and emit TAP. They all return the success
+status of the test in scalar context and will also do so in list context unless
+otherwise specified.
+
+=over
+
+=cut
+
 ################################################################################
 # Test methods
 ################################################################################
+
+=item B<run_common_tests($argshash)>
+
+Run tests common to model objects. The names of test objects must be provided
+as arguments:
+
+    my @test_objects = ('Object 1', 'Object 2'); # names of objects
+    $tester->run_common_tests(@test_objects);
+
+or in the "objects" entry of an arguments hashref ("argshash"):
+
+    $tester->run_common_tests({objects => \@test_objects});
+
+This method will attempt to fetch each object and run L<compliant_methods_ok>
+on them. If the parents' or roles' methods should not be tested for each
+object, specify that in the argshash:
+
+    $tester->run_common_tests({
+        objects                 => \@test_objects,
+        exclude_parents_methods => 1,
+        exclude_roles_methods   => 1,
+    });
+
+If the fetched objects are desired, run_common_tests will return a hash in list
+context with the object name as the key and object as the value:
+
+    my %object_hash = $tester->run_common_tests(@test_objects);
+
+It is possible that some of the objects are not fetched so do not assume that
+C<values %object_hash> will be the same as @test_objects (even after rearrangement).
+
+In scalar context, run_common_tests will return the test success.
+
+CAVEAT: The tester object B<must> have an associated class to run the common tests.
+
+=cut
 
 sub run_common_tests {
     my $self = shift;
@@ -145,12 +382,12 @@ sub run_common_tests {
     my $class = $self->class
         or croak 'Need to provide tester with test class via class accessor';
 
-    my @objs;
+    my @object_names;
     my $method_args; # for method compliance test
     if (ref $_[0] eq 'HASH') {
         my $args = shift;
         croak 'Need objects in hash' unless $args->{objects};
-        @objs = @{$args->{objects}};
+        @object_names = @{$args->{objects}};
 
         $method_args->{exclude} = $args->{exclude_methods} if $args->{exclude_methods};
 
@@ -168,42 +405,29 @@ sub run_common_tests {
             if !$large_exclusions && $args->{include_methods};
     }
     else {
-        @objs = @_;
+        @object_names = @_;
     }
 
-    foreach my $obj_name (@objs) {
+    my $ok;
+    my %objects;
+    foreach my $obj_name (@object_names) {
         my $obj = $self->fetch_object_ok({name => $obj_name});
-        $self->compliant_methods_ok($obj, $method_args || ());
+        my $meth_ok = $self->compliant_methods_ok($obj, $method_args || ());
+        $ok &&= $meth_ok;
+        $objects{$obj_name} = $obj if $obj;
     }
+
+    return wantarray ? %objects : $ok;
 }
 
-sub fetch_object_ok {
-    my ($self, $args) = @_;
+=item B<class_hierarchy_ok([$class])>
 
-    my $name = ref $args eq 'HASH' ? $args->{name} : $args;
-    $Test->ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
-    return $obj || ();
-}
+    $tester->class_hierarchy_ok($class);
 
-sub class_immutable_ok {
-    my ($self, $class) = @_;
-    $class ||= $self->class or croak 'Must provide a class as an argument!';
+Tests that the class is a WormBase model object and consumes the model object
+role. A class must be provided unless previously set for the tester object.
 
-    $class = $self->fully_qualified_class_name($class);
-
-    return $Test->ok($class->meta->is_immutable, "Class $class is immutable");
-}
-
-sub call_method_ok {
-    my ($self, $object, $method) = @_;
-    croak 'Must provide object and method as arguments'
-        unless $object && $method;
-
-    my $data = eval {$object->$method};
-    $Test->ok(! $@, "$method called without problems")
-        or $Test->diag("$object call $method: $@");
-    return $data;
-}
+=cut
 
 sub class_hierarchy_ok { # checks that the class has the right hierarchy
     my ($self, $class) = @_;
@@ -221,6 +445,53 @@ sub class_hierarchy_ok { # checks that the class has the right hierarchy
         $Test->ok($class->does($role), "$class does role $role");
     }); # end of subtest
 }
+
+=item B<class_immutable_ok([$class])>
+
+    $tester->class_immutable_ok($class);
+
+Tests that the class is immutable, which causes Moose to optimize certain
+metaclass features and improve construction of objects.
+See L<Moose::Manual::BestPractices/"namespace::autoclean and immutabilize">
+for details.
+
+=cut
+
+sub class_immutable_ok {
+    my ($self, $class) = @_;
+    $class ||= $self->class or croak 'Must provide a class as an argument!';
+
+    $class = $self->fully_qualified_class_name($class);
+
+    return $Test->ok($class->meta->is_immutable, "Class $class is immutable");
+}
+
+=item B<fetch_object_ok($argshash)>
+
+    my $obj = $tester->fetch_object_ok($args)
+
+Tests fetching a model object. Identical interface to L<fetch_object_ok>.
+
+=cut
+
+sub fetch_object_ok {
+    my ($self, $args) = @_;
+
+    my $name = ref $args eq 'HASH' ? $args->{name} : $args;
+    $Test->ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
+    return $obj;
+}
+
+=item B<compliant_methods_ok($object, $argshash)>
+
+    $tester->compliant_methods_ok($object);
+
+Tests all methods of an object by calling them and checking that their data
+are standards compliant as determined by WormBase::API::Role::Object::_check_data().
+The test passes if the method is called without error and the returned data
+is standards compliant.
+
+=cut
 
 sub compliant_methods_ok {
     my $self = shift;
@@ -248,15 +519,15 @@ sub compliant_methods_ok {
         @methods = grep { !$exclude{$_->name} } @methods;
     }
 
+    my $test_name = $wb_obj->object . " of class $class has compliant methods";
+
     unless (@methods) {
-        $Test->ok(0, 'Compliant methods');
+        $Test->ok(0, $test_name);
         $Test->diag('No public methods found');
         $Test->diag('Include: ', join(', ', @{$args->{include}})) if %include;
         $Test->diag('Exclude: ', join(', ', @{$args->{exclude}})) if %exclude;
         return;
     }
-
-    my $test_name = $wb_obj->object . " of class $class has compliant methods";
 
     return $Test->subtest($test_name, => sub {
         foreach my $method (@methods) {
@@ -267,6 +538,41 @@ sub compliant_methods_ok {
     }); # end of subtest
 }
 
+=item B<call_method_ok($object, $method)>
+
+    my $result = $tester->call_method_ok($object, $method);
+
+Tests calling a method with an object. This method will essentially do
+$object->$method and captures errors. The test passes if the method
+is called without errors.
+
+=cut
+
+sub call_method_ok {
+    my ($self, $object, $method) = @_;
+    croak 'Must provide object and method as arguments'
+        unless $object && $method;
+
+    my $data = eval {$object->$method};
+    $Test->ok(! $@, "$method called without problems")
+        or $Test->diag("$object call $method: $@");
+    return $data;
+}
+
+
+=item B<compliant_data_ok($data, $testname)>
+
+    my $ok = $tester->compliant_data_ok($data, $testname);
+
+Tests whether the given datum is standards compliant as determined by
+WormBase::API::Role::Object::_check_data. The test passes if the datum
+is standards compliant.
+
+In list context, return data fixed by _check_data followed by a list of problems
+found by _check_data. An empty list is returned if there were no problems.
+
+=cut
+
 sub compliant_data_ok {
     my ($self, $data, $name) = @_; # unpacking data; _check_data will not mangle it
     my $test_name = (defined $name ? "$name d" : 'D') . 'ata is standards compliant';
@@ -276,11 +582,15 @@ sub compliant_data_ok {
     if (my ($fixed_data, @problems) = WormBase::API::Role::Object->_check_data($data)) {
         $ok = $Test->ok(0, $test_name);
         $Test->diag(join("\n", @problems));
-        return $ok;
+        return wantarray ? ($fixed_data, @problems)  : $ok;
     }
 
-    return $Test->ok(1, $test_name);
+    return wantarray ? () : $Test->ok(1, $test_name);
 }
+
+=back
+
+=cut
 
 
 ################################################################################
@@ -293,6 +603,7 @@ sub compliant_data_ok {
 my %private_methods = map { $_ => 1 }
     qw(new DESTROY);
 
+# given a list of methods (not method names), filter out the "private" methods.
 sub _grep_public_methods {
     my ($self, @methods) = @_;
 
@@ -320,5 +631,18 @@ sub _note_method {
 
     $Test->note("$name; OPKG: $original_package; PKG: $package_name; TYPE: $type");
 }
+
+=head1 AUTHOR
+
+=head1 BUGS
+
+=head1 SEE ALSO
+
+L<WormBase::API>, L<WormBase::API::Object>, L<WormBase::API::Role::Object>,
+L<WormBase::Test>, L<WormBase::Test::API>
+
+=head1 COPYRIGHT
+
+=cut
 
 1;

@@ -16,14 +16,71 @@ use base 'WormBase::Test';
 
 my $Test = Test::Builder->new;
 
+# WormBase API tester
+
+=head1 NAME
+
+WormBase::Test::API - a generic WormBase API testing object
+
+=head1 SYNOPSIS
+
+my $tester = WormBase::Test::API->new({conf_file => 'data/test.conf'});
+
+=head1 DESCRIPTION
+
+This inherits from L<WormBase::Test> and provides a base class for WormBase API
+tester objects i.e. objects involved in testing of the WormBase model.
+
+=head1 CONSTANTS
+
+Constants related to testing the API. These can be accessed either as
+interpolable variables or subroutines/methods:
+
+    $WormBase::Test::API::CONSTANT
+    WormBase::Test::API::CONSTANT
+
+=over
+
+=item B<API_BASE>
+
+The base WormBase API package/prefix.
+
+=cut
+
 Readonly our $API_BASE => 'WormBase::API';
 sub API_BASE () { return $API_BASE; }
 
-# WormBase API tester
+=back
+
+=head1 METHODS
+
+=head2 Construction and accessors
+
+=over
+
+=cut
 
 ################################################################################
 # Constructor & Accessors
 ################################################################################
+
+=item B<new($argshash)>
+
+   my $tester = WormBase::Test::API->new({api => $wb_api});
+
+   my $tester = WormBase::Test::API->new({conf_file => 'data/test.conf'});
+
+Creates a new API tester object wrapping a L<WormBase::API> object.
+
+A config file, parsable by L<Config::General>, can be passed in; it will be
+loaded to create a new API object. A local version of the config file will
+be searched for and loaded if present, i.e. if the config file is 'test.conf'
+and if 'test_local.conf' is also present, then it will be loaded as well,
+overwriting any config values from 'test.conf'.
+
+Alternatively, an API object can be passed in and used as the underlying object.
+
+=cut
 
 sub new {
     my ($class, $args) = @_;
@@ -63,6 +120,13 @@ sub new {
 
     return $self;
 }
+
+=item B<api([$api])>
+
+    $tester->api($api);
+    my $api = $tester->api;
+
+=cut
 
 sub api {
     my ($self, $param) = @_;
