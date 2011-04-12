@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use YAML qw(Dump);
-use Test::More ();
+use Test::More (); # isa_ok, use_ok
 use Test::Builder;
 
 use namespace::autoclean;
@@ -14,6 +14,10 @@ use namespace::autoclean;
 
 my $Test = Test::Builder->new;
 
+################################################################################
+# Constructors/accessors
+################################################################################
+
 sub new {
     my ($class, $args) = @_;
     croak 'Arguments must be in a hashref' if $args && ref $args ne 'HASH';
@@ -22,6 +26,10 @@ sub new {
 
     return $self;
 }
+
+################################################################################
+# Methods
+################################################################################
 
 sub dump {
     my $self = shift;
@@ -33,9 +41,28 @@ sub dump {
     }
 }
 
-sub isa_ok {
+################################################################################
+# Tests from Test::*, wrapped around OO goodness.
+################################################################################
+
+# &method passes @_ straight to method, bypassing stack and prototyping
+
+sub isa_ok { # from Test::More
     my $self = shift;
-    return &Test::More::isa_ok; # calls isa_ok, passing @_ straight to it
+    return &Test::More::isa_ok;
+}
+
+sub use_ok { # from Test::More
+    my $self = shift;
+    return &Test::More::use_ok;
+}
+
+sub is_passing { # from Test::Builder
+    return $Test->is_passing;
+}
+
+sub done_testing { # from Test::Builder
+    $Test->done_testing;
 }
 
 1;

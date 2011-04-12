@@ -5,6 +5,7 @@ use warnings;
 use Carp;
 use Test::Builder;
 use Readonly;
+use Class::MOP;
 
 use namespace::autoclean;
 
@@ -28,28 +29,24 @@ sub new {
 
     my $self = $class->SUPER::new($args);
     if ($args->{class}) { # run class tests automatically
-        $self->class($args->{class});
+        my $class = $self->class($args->{class});
+
+        # attempt to load class if not already
+        unless (Class::MOP::is_class_loaded($class)) {
+            $self->use_ok($class);
+        }
+
         $self->class_hierarchy_ok($args->{class});
         $self->class_immutable_ok($args->{class});
     }
     return $self;
 }
 
-sub object {
-    my ($self, $param) = @_;
-    if ($param) {
-        croak "Not a $OBJECT_BASE!"
-            unless (ref $param and $param->isa($OBJECT_BASE));
-        return $self->{wormbase_object} = $param;
-    }
-    return $self->{wormbase_object};
-}
-
-sub class {
+sub class { # accessor/mutator
     my ($self, $param) = @_;
     if ($param) {
         croak "Not a string!" if ref $param;
-        return $self->{class} = $param;
+        return $self->{class} = $self->fully_qualified_class_name($param);
     }
     return $self->{class};
 }
@@ -69,7 +66,7 @@ sub fetch_object {
         $aceclass = $args->{aceclass};
     }
     else {
-        $name  = $args;
+        $name = $args;
     }
 
     $class ||= $self->class;
@@ -82,7 +79,13 @@ sub fetch_object {
     return $api->fetch({class => $class, name => $name, aceclass => $aceclass});
 }
 
-# DFS to get parent methods
+sub fully_qualified_class_name { # invocant-independent
+    my ($invocant, $name) = @_;
+
+    return $name =~ /^$OBJECT_BASE/o ? $name : "${OBJECT_BASE}::${name}";
+}
+
+# these are nice utilities; perhaps it should be put in WormBase::Test
 sub get_parents_methods { # of WormBase class.
     my ($self, $class) = @_;
     $class ||= $self->class or croak 'Must provide class as an argument';
@@ -92,7 +95,6 @@ sub get_parents_methods { # of WormBase class.
     return map { eval {$_->meta->get_all_methods} } @parents;
 }
 
-# this is a nice utility; perhaps it should be put in WormBase::Test
 sub get_roles_methods {
     my ($self, $class) = @_;
     $class ||= $self->class;
@@ -119,10 +121,16 @@ sub get_roles_methods {
     return grep { !$excl{$_->name} } $anon_meta->get_all_methods;
 }
 
-sub fully_qualified_class_name { # invocant-independent
-    my ($invocant, $name) = @_;
+sub get_class_specific_methods {
+    my ($self, $class) = @_;
+    $class ||= $self->class;
+    $class = $self->fully_qualified_class_name($class);
 
-    return $name =~ /^$OBJECT_BASE/o ? $name : "${OBJECT_BASE}::${name}";
+    my %roles_methods = map {$_->name => 1} $self->get_roles_methods($class);
+    my %parents_methods = map {$_->name => 1} $self->get_parents_methods($class);
+
+    return grep {!$roles_methods{$_->name} && !$parents_methods{$_->name}}
+        $self->get_all_methods;
 }
 
 ################################################################################
@@ -132,9 +140,10 @@ sub fully_qualified_class_name { # invocant-independent
 sub run_common_tests {
     my $self = shift;
     croak 'No arguments given. Call with name of objects to fetch, ',
-          'or hash with name of objects and additional options' unless @_;
-    my $class = $self->class;
-    croak 'Need to provide tester with test class via class accessor' unless $class;
+          'or hash with name of objects and additional options'
+          unless @_;
+    my $class = $self->class
+        or croak 'Need to provide tester with test class via class accessor';
 
     my @objs;
     my $method_args; # for method compliance test
@@ -153,6 +162,8 @@ sub run_common_tests {
             push @{$method_args->{exclude}}, map {$_->name} $self->$m($class);
         }
 
+        # we must check for large exclusions because inclusions
+        # override all exclusions in the compliant_methods_ok method
         $method_args->{include} = $args->{include_methods}
             if !$large_exclusions && $args->{include_methods};
     }
@@ -180,7 +191,7 @@ sub class_immutable_ok {
 
     $class = $self->fully_qualified_class_name($class);
 
-    return $Test->ok($class->meta->is_immutable, 'Class immutable');
+    return $Test->ok($class->meta->is_immutable, "Class $class is immutable");
 }
 
 sub call_method_ok {
@@ -201,15 +212,14 @@ sub class_hierarchy_ok { # checks that the class has the right hierarchy
 
     $class = $self->fully_qualified_class_name($class);
 
-    $Test->subtest('Class hierarchy okay' => sub {
+    return $Test->subtest("Class $class hierarchy ok" => sub {
         # check that it's a WormBase Object descendent
-        $self->isa_ok($class, $OBJECT_BASE) || $Test->diag("$class, $OBJECT_BASE") && return;
+        $self->isa_ok($class, $OBJECT_BASE, $class);
 
         # implements Object role
-        $Test->ok($class->does($WormBase::Test::API::API_BASE . '::Role::Object')) || return;
+        my $role = "${WormBase::Test::API::API_BASE}::Role::Object";
+        $Test->ok($class->does($role), "$class does role $role");
     }); # end of subtest
-
-    return 1;
 }
 
 sub compliant_methods_ok {
@@ -223,6 +233,7 @@ sub compliant_methods_ok {
     my $class = $meta->name;    # same as ref $wb_obj;
     my @methods = $self->_grep_public_methods($meta->get_all_methods);
 
+    # deal with inclusion-exclusion options. inclusions override exclusions
     my (%include, %exclude);
     if ($args->{include}) { # test only these methods (if public)
         croak 'Include option must be arrayref!'
@@ -245,33 +256,30 @@ sub compliant_methods_ok {
         return;
     }
 
-    my $ok = 1;
-    $Test->subtest('Compliant methods' => sub {
+    my $test_name = $wb_obj->object . " of class $class has compliant methods";
+
+    return $Test->subtest($test_name, => sub {
         foreach my $method (@methods) {
-#            $self->_note_method($method);
             my $m = $method->name;
             my $data = $self->call_method_ok($wb_obj, $m);
-            $self->compliant_data_ok($data)
-                or $Test->diag($wb_obj->object . "->$m") && undef $ok;
+            $self->compliant_data_ok($data, $m);
         }
     }); # end of subtest
-
-    return $ok || ();
 }
 
 sub compliant_data_ok {
-    my $self = shift;
-    $Test->ok(0, 'Too much data') if @_ > 1;
+    my ($self, $data, $name) = @_; # unpacking data; _check_data will not mangle it
+    my $test_name = (defined $name ? "$name d" : 'D') . 'ata is standards compliant';
 
-    my ($data) = @_; # unpack to avoid destructiveness of check_data()
+    my $ok;
+
     if (my ($fixed_data, @problems) = WormBase::API::Role::Object->_check_data($data)) {
-        $Test->ok(0, 'Data has problems');
+        $ok = $Test->ok(0, $test_name);
         $Test->diag(join("\n", @problems));
-        return;
+        return $ok;
     }
 
-    $Test->ok(1, 'Data is okay');
-    return 1;
+    return $Test->ok(1, $test_name);
 }
 
 
@@ -279,8 +287,11 @@ sub compliant_data_ok {
 # Private methods
 ################################################################################
 
+{ # block for _grep_public_methods
 # private but nothing we can do to rename them with _
-my %private_methods = map {$_=>1} qw(new DESTROY);
+# add to this list as necessary
+my %private_methods = map { $_ => 1 }
+    qw(new DESTROY);
 
 sub _grep_public_methods {
     my ($self, @methods) = @_;
@@ -296,7 +307,9 @@ sub _grep_public_methods {
 
     return @public;
 }
+} # end of block for _grep_public_methods
 
+# note a Class::MOP::Method object for debugging purposes
 sub _note_method {
     my ($self, $method) = @_;
     my $type = ref $method;

@@ -50,6 +50,8 @@ sub new {
             %conf = %{Catalyst::Utils::merge_hashes(\%conf, \%newconfig)};
         }
 
+        croak "$conf_file does not contain Model::WormBaseAPI stanza."
+            unless exists $conf{'Model::WormBaseAPI'}; # indicates something amiss...
         my $api = WormBase::API->new($conf{'Model::WormBaseAPI'}->{args});
         $Test->ok($api && $api->isa($API_BASE), 'Created WormBase API object');
 

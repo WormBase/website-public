@@ -210,10 +210,13 @@ sub fetch {
 
         # resolve classes to properly retrieve object
         if ($class) { # WB class was provided
-            $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class};
+            $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class}
+                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class}
+                     || return 0; # don't know which aceclass
         }
         else { # aceclass provided (assumption), WB class not
-            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass};
+            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass}
+                or return 0; # an aceclass we don't handle [yet]?
         }
 
         # HACK for variation -- resolve variation name first

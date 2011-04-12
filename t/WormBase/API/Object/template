@@ -13,21 +13,17 @@ BEGIN {
 use Test::More;
 use WormBase::Test::API::Object;
 
-BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::<<CLASS>>');
-} # <<CLASS>>.t loads ok
-
 my @test_objects = qw();
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/test.conf',
     class     => '<<CLASS>>',
-});
+}); # create API object, load class module, etc.
 
 $tester->run_common_tests({
     objects                 => \@test_objects,
-    exclude_parents_methods => 1,
-    exclude_roles_methods   => 1,
+    exclude_parents_methods => 1, # don't want to test parent methods
+    exclude_roles_methods   => 1, # don't want to test role methods
 });
 
 done_testing;
