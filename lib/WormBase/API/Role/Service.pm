@@ -5,12 +5,15 @@ use Fcntl qw(:flock O_RDWR O_CREAT);
 use DB_File::Lock;
 use File::Path 'mkpath';
 
-
-
 # Every service should provide a:
 requires 'dbh';    # a database handel for the service
 requires 'connect';    # a database connection for the service
 requires 'ping';
+
+has conf => ( # the other attributes can probably be built from this
+    is       => 'ro',
+    required => 1,
+);
 
 has symbolic_name => (
     is            => 'rw',
@@ -23,7 +26,13 @@ has function => (
     is            => 'rw',
     isa           => 'Str',
     documentation => 'A brief description of the service',
+    lazy          => 1,
+    builder       => '_build_function',
 );
+
+sub _build_function {
+    return 'unknown';
+}
 
 has version => (
     is      => 'ro',
@@ -42,46 +51,61 @@ has path => (
     default  => '/tmp/',
 );
 
-has conf => (
-    is       => 'ro',
-    required => 1,
+has 'hosts' => (
+    is         => 'rw',
+    isa        => 'ArrayRef[Str]',
+    lazy_build => 1,
 );
+
+sub _build_hosts {
+    my $self = shift;
+    return [split /\s+/o , $self->conf->{host}];
+}
 
 has log => (
     is => 'ro',
 );
 
-has 'hosts' => (
-    is      => 'rw',
-    isa     => 'ArrayRef[Str]',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        return [split(/\s+|\t/,$self->conf->{host})];
-    }
-);
-
 has 'host' => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => 0,
+    is       => 'rw',
+    isa      => 'Str',
+    required => 1,
+    default  => 0,
 );
 
 has 'port' => (
-    is  => 'rw',
-    isa => 'Str',
+    is         => 'rw',
+    isa        => 'Str', # does not allow undef -- necessary? 
+    lazy_build => 1,
     #     default => '2005',
 );
 
+sub _build_port {
+    my ($self) = @_;
+    return $self->conf->{port} // ''; # satisfy type constraint
+}
+
 has 'user' => (
-    is  => 'rw',
-    isa => 'Str',
+    is         => 'rw',
+    isa        => 'Str', # does not allow undef
+    lazy_build => 1,
 );
 
+sub _build_user {
+    my ($self) = @_;
+    return $self->conf->{user} // ''; # satisfy type constraint
+}
+
 has 'pass' => (
-    is  => 'rw',
-    isa => 'Str',
+    is         => 'rw',
+    isa        => 'Str',
+    lazy_build => 1,
 );
+
+sub _build_pass {
+    my ($self) = @_;
+    return $self->conf->{pass};
+}
 
 has 'source' => (
     is       => 'rw',
@@ -113,7 +137,7 @@ sub reconnect {
 
         $self->host($host);
 
-        $self->log->info("trytime $tries: Connecting to ".$self->symbolic_name. " ".$self->source);
+        $self->log->info("try #$tries: Connecting to ".$self->symbolic_name. " ".$self->source);
         $self->log->debug('     using the following parameters:');
         $self->log->debug('       ' . $self->host . ':' . (defined $self->port?$self->port:''));
 
@@ -152,52 +176,48 @@ sub select_hosts {
     return @live_hosts;
 }
 
-=pod
+# sub select_hosts {
+#     my ($self,$current)   = @_;
+#     my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>5 );
+#     # if the current connected host is not too busy then continue using it
+#     # number 40 is arbitrary and needs to be adjusted in future!
+#     if(defined $current) {
+# 	return 0 if($self->check_cpu_load($ua,$self->host)<40) ;
+# 	return 1;
+#     }
+#     # open berkeley db(which stores the db hosts status:on/off information)
+#     my $get_downed_hosts     = $self->get_downed_hosts(1);
+#     my $host_loads;
+#     foreach my $host ( @{$self->hosts} ) {
+# 	my ($status,$last_checked)=(0,0);
+# 	if( my $pack = $get_downed_hosts->{$host}) {
+# 	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
+# 		  undef $get_downed_hosts->{$host};
+#   # 		$self->mark_host($host,1,$get_downed_hosts);
+# 	  }
+# 	  else {next;}
 
-sub select_hosts {
-    my ($self,$current)   = @_;
-    my $ua = LWP::UserAgent->new(protocols_allowed => ['http'], timeout=>5 );
-    # if the current connected host is not too busy then continue using it
-    # number 40 is arbitrary and needs to be adjusted in future!
-    if(defined $current) {
-	return 0 if($self->check_cpu_load($ua,$self->host)<40) ;
-	return 1;
-    }
-    # open berkeley db(which stores the db hosts status:on/off information)
-    my $get_downed_hosts     = $self->get_downed_hosts(1);
-    my $host_loads;
-    foreach my $host ( @{$self->hosts} ) {
-	my ($status,$last_checked)=(0,0);
-	if( my $pack = $get_downed_hosts->{$host}) {
-	  if( (time() - unpack('L',$pack)) >= INITIAL_DELAY ) {
-		  undef $get_downed_hosts->{$host};
-  # 		$self->mark_host($host,1,$get_downed_hosts);
-	  }
-	  else {next;}
+# 	}
+# 	$host_loads->{$host} = $self->check_cpu_load($ua,$host);
+# 	$self->log->debug("host $host CPU Load: ".$host_loads->{$host}."%");
+#     }
+#     defined $host_loads or return;
+#     return sort {$host_loads->{$a}<=>$host_loads->{$b}} keys %{$host_loads};
+# }
 
-	}
-	$host_loads->{$host} = $self->check_cpu_load($ua,$host);
-	$self->log->debug("host $host CPU Load: ".$host_loads->{$host}."%");
-    }
-    defined $host_loads or return;
-    return sort {$host_loads->{$a}<=>$host_loads->{$b}} keys %{$host_loads};
-}
-
-sub check_cpu_load {
-    my ($self,$ua,$host) = @_;
-    my $response = $ua->get("http://".$host."/server-status");
-    my $load = -1;  # this is set temporarily since the server-status module is not enabled on hosts now
-    if($response->is_success) {
-	($load)=$response->content =~ /CPU Usage.*- (.*) CPU load/i;
-	$load =~ s/%// if(defined $load);
-    }
-    else {
-# 	$self->log->debug("not able to retrieve host $host status through http!");
-    }
-    return $load;
-}
-
-=cut
+# sub check_cpu_load {
+#     my ($self,$ua,$host) = @_;
+#     my $response = $ua->get("http://".$host."/server-status");
+#     my $load = -1;  # this is set temporarily since the server-status module is not enabled on hosts now
+#     if($response->is_success) {
+# 	($load)=$response->content =~ /CPU Usage.*- (.*) CPU load/i;
+# 	$load =~ s/%// if(defined $load);
+#     }
+#     else {
+# # 	$self->log->debug("not able to retrieve host $host status through http!");
+#     }
+#     return $load;
+# }
 
 sub mark_down_host {
     my $self   = shift;

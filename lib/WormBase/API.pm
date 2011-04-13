@@ -8,6 +8,7 @@ use Config::General;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
 use WormBase::API::ModelMap;
+use Class::MOP;
 
 with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
 
@@ -49,7 +50,7 @@ has conf_dir => (
 has database => (
     is       => 'ro',
     required => 1,
-    lazy_build => 1,
+#    lazy_build => 1,
     );
 
 has tmp_base => (
@@ -84,20 +85,21 @@ has tool => (
     is       => 'rw',
     );
 
-# this is here just for the testing script to load database configuration
-# may be removed or changed in furutre! 
-sub _build_database {
-    my $self = shift;
-    my $root  = $self->conf_dir;
-    my $conf = new Config::General(
-				  -ConfigFile      => "$root/../wormbase.conf",
-				  -InterPolateVars => 1
-    );
-    $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
-    $self->pre_compile($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile});
-    $self->tool($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tool});
-    return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
-}
+# AD: pending removal; test library handles this more generally
+# # this is here just for the testing script to load database configuration
+# # may be removed or changed in furutre! 
+# sub _build_database {
+#     my $self = shift;
+#     my $root  = $self->conf_dir;
+#     my $conf = new Config::General(
+# 				  -ConfigFile      => "$root/../wormbase.conf",
+# 				  -InterPolateVars => 1
+#     );
+#     $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
+#     $self->pre_compile($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile});
+#     $self->tool($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tool});
+#     return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
+# }
 
 # builds a search object with the default datasource
 sub _build_xapian {
@@ -138,37 +140,42 @@ sub version {
     return $service->version;
 }
 
- 
-# Build a hashref of services, including things like the 
+# Build a hashref of services, including things like the
 # default datasource, GFF databases, etc.
-# Note the double underscores...
 sub _build__services {
     my ($self) = @_;
+
     my %services;
-    for my $dbn (sort keys %{$self->database}) {
-      next if($dbn eq 'tmp');
-      my $class = __PACKAGE__ . "::Service::$dbn" ;	
-      Class::MOP::load_class($class);
-      # Instantiate the service providing it with
-      # access to some of our configuration variables
-      my @species = sort keys %{$self->database->{$dbn}->{data_sources}}; 
-      push @species, '' unless @species;
-        
-      foreach my $sp (@species) {
-	  my $new = $class->new({	conf => $self->database->{$dbn},
-					log      => $self->log,
-					source	 => $sp,
-					symbolic_name => $dbn,
-					path => $self->database->{tmp},
-				      });
-	  my $type=$sp? $dbn.'_'.$sp:$dbn;
-	  $services{$type} = $new; 
-	  $self->log->debug( "service $type registered but not connected yet");
-      }
+
+    my $db_confs = $self->database;
+    foreach my $db_type (sort keys %$db_confs) {
+        next if $db_type eq 'tmp';
+        my $service_class = __PACKAGE__ . "::Service::$db_type";
+        Class::MOP::load_class($service_class);
+
+        my $conf = $db_confs->{$db_type};
+        my @sources = sort keys %{$conf->{data_sources}}; # usually species
+        # some of the DBs may not have specific data sources but
+        # we'd still like to set them up below
+        @sources = '' unless @sources;
+
+        foreach my $source (@sources) {
+            my $service = $service_class->new({
+                conf          => $conf,
+                log           => $self->log,
+                source        => $source,
+                symbolic_name => $db_type,
+                path          => $db_confs->{tmp},
+            });
+
+            my $full_name = $source ? "${db_type}_${source}" : $db_type;
+            $services{$full_name} = $service;
+            $self->log->debug("service $full_name registered by not yet connected");
+        }
     }
- 
+
     return \%services;
-} 
+}
 
 sub _build__tools {
     my ($self) = @_;
