@@ -20,7 +20,7 @@ BEGIN {
 my @test_objects = ('embryo', 'L3 larva');
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Life_stage',
 });
 

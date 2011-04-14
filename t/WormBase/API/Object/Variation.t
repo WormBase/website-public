@@ -22,7 +22,7 @@ BEGIN {
 my @test_objects = qw(e205 WBVar00143616 tm501);
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Variation',
 });
 

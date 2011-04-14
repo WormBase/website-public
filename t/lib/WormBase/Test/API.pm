@@ -7,8 +7,8 @@ use Readonly;
 use Config::General;
 use File::Basename;
 use Test::Builder;
-use Catalyst::Utils; # merge_hash: can reimplement in this class if needed
 use WormBase::API;
+use WormBase::Util::Hash 'merge_hashes';
 
 use namespace::autoclean;
 
@@ -69,14 +69,14 @@ sub API_BASE () { return $API_BASE; }
    my $tester = WormBase::Test::API->new({api => $wb_api});
 
    my $tester = WormBase::Test::API->new({conf_file => 'data/test.conf'});
+   my $tester = WormBase::Test::API->new({conf_file => ['data/test.conf',
+                                                        'data/more.conf']})
 
 Creates a new API tester object wrapping a L<WormBase::API> object.
 
-A config file, parsable by L<Config::General>, can be passed in; it will be
-loaded to create a new API object. A local version of the config file will
-be searched for and loaded if present, i.e. if the config file is 'test.conf'
-and if 'test_local.conf' is also present, then it will be loaded as well,
-overwriting any config values from 'test.conf'.
+The name of config files, parsable by L<Config::General>, can be passed in;
+each will be loaded in order to create a new API object. See L<build_api> for
+more details in how the config files will be handled.
 
 Alternatively, an API object can be passed in and used as the underlying object.
 
@@ -90,28 +90,8 @@ sub new {
         $self->api($args->{api});
     }
     elsif ($args->{conf_file}) { # make the API object using conf file
-        my $conf_file = $args->{conf_file};
-        croak "$conf_file does not exist" unless -e $conf_file;
-
-        my %conf = Config::General->new(-ConfigFile      => $conf_file,
-                                        -InterPolateVars => 1)->getall;
-
-        # try to find _local version of $conf_file
-        my ($conf_filename, $dir, $suffix) = fileparse($conf_file, qr/\.[^.]+/);
-        my $local_conf_file = $dir . $conf_filename . '_local' . $suffix;
-
-        if (-e $local_conf_file) {
-            my %newconfig = Config::General->new(-ConfigFile      => $local_conf_file,
-                                                 -InterPolateVars => 1)->getall;
-
-            %conf = %{Catalyst::Utils::merge_hashes(\%conf, \%newconfig)};
-        }
-
-        croak "$conf_file does not contain Model::WormBaseAPI stanza."
-            unless exists $conf{'Model::WormBaseAPI'}; # indicates something amiss...
-        my $api = WormBase::API->new($conf{'Model::WormBaseAPI'}->{args});
+        my $api = $self->build_api($args->{conf_file});
         $Test->ok($api && $api->isa($API_BASE), 'Created WormBase API object');
-
         $self->api($api);
     }
     else {
@@ -138,14 +118,100 @@ sub api {
     return $self->{api};
 }
 
+=back
+
+=head2 Utility Methods
+
+=over
+
+=cut
+
 ################################################################################
 # Methods
 ################################################################################
 
+=item B<build_api>
 
+    $api = WormBase::Test::API->build_api($conf_file);
+    $api = $tester->build_api($conf_file);
+    $api = $tester->build_api($conf_file1, $conf_file2, ...);
+    $api = $tester->build_api([$conf_file1, $conf_file2, ...]);
+
+Creates a WormBase::API object from the name(s) of a given config file(s),
+parsable by L<Config::General>. The config files will be loaded in order,
+the latest one merged with the previous ones. Fields which already exist
+from a previous config will be overwritten if specified in a later config,
+consistent with the behaviour specified in L<Catalyst/"Cascading configuration">.
+In other words, the latest config files specified have higher priority.
+
+A local version of the config file will also loaded. For example, if
+
+   $api = $tester->build_api('a.conf', 'b.conf', 'c');
+
+then a.conf will be loaded first, then a_local.conf (if it exists) will be merged
+with the current config, then b.conf will be merged, then b_local.conf (if
+it exists), then c, and finally c_local (if it exists).
+
+=cut
+
+sub build_api {
+    my ($self, @conf_files) = @_;
+    if (@conf_files == 1 and ref $conf_files[0] eq 'ARRAY') {
+        @conf_files = @{$conf_files[0]}; # deref the conf files
+    }
+
+    my ($conf, $newconf);
+    foreach my $conf_file (@conf_files) {
+        croak "$conf_file does not exist" unless -e $conf_file;
+
+        $newconf = {Config::General->new(
+            -ConfigFile      => $conf_file,
+            -InterPolateVars => 1
+        )->getall};
+
+        $conf = merge_hashes($conf, $newconf);
+
+        # try to find _local version of $conf_file
+        my ($conf_filename, $dir, $suffix) = fileparse($conf_file, qr/\.[^.]+/);
+        my $local_conf_file = $dir . $conf_filename . '_local' . $suffix;
+
+        if (-e $local_conf_file) {
+            $newconf = {Config::General->new(-ConfigFile      => $local_conf_file,
+                                            -InterPolateVars => 1)->getall};
+
+            $conf = merge_hashes($conf, $newconf);
+        }
+    }
+
+    croak "Config does not contain Model::WormBaseAPI settings."
+        unless exists $conf->{'Model::WormBaseAPI'}; # indicates something amiss...
+    return WormBase::API->new($conf->{'Model::WormBaseAPI'}->{args});
+}
+
+=back
+
+=cut
 
 ################################################################################
 # Test Methods
 ################################################################################
+
+
+################################################################################
+# Private Methods
+################################################################################
+
+=head1 AUTHOR
+
+=head1 BUGS
+
+=head1 SEE ALSO
+
+L<WormBase::Test::API>
+
+=head1 COPYRIGHT
+
+=cut
+
 
 1;

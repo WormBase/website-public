@@ -470,7 +470,7 @@ sub class_immutable_ok {
 
     my $obj = $tester->fetch_object_ok($args)
 
-Tests fetching a model object. Identical interface to L<fetch_object_ok>.
+Tests fetching a model object. Identical interface to L<fetch_object>.
 
 =cut
 

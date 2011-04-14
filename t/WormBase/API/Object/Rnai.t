@@ -20,7 +20,7 @@ BEGIN {
 my @test_objects = qw(WBRNAi00027544 WBRNAi00059855);
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Rnai',
 });
 
