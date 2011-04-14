@@ -16,7 +16,7 @@ use WormBase::Test::API::Object;
 my @test_objects = qw();
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => '<<CLASS>>',
 }); # create API object, load class module, etc.
 

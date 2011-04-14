@@ -20,7 +20,7 @@ BEGIN {
 my @test_objects = qw(TreeFam RNASeq_Hillier.dauer_daf-2);
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Analysis',
 });
 

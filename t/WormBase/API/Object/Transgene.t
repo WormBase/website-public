@@ -20,7 +20,7 @@ BEGIN {
 my @test_objects = qw(WBPaper00032201Ex1 ayIs4); # cgc4781Is1
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Transgene',
 });
 

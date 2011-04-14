@@ -20,7 +20,7 @@ BEGIN {
 my @test_objects = qw(WBPaper00000031 WBPaper00024194);
 
 my $tester = WormBase::Test::API::Object->new({
-    conf_file => 'data/test.conf',
+    conf_file => 'data/conf/test.conf',
     class     => 'Paper',
 });
 

@@ -113,8 +113,6 @@ module. In general, they are used like so:
 They are intended to be used by subclasses of WormBase::Test which do not wish
 to use some of the Test:: modules directly.
 
-=over
-
 =cut
 
 # &method passes @_ straight to method, bypassing stack and prototyping
@@ -122,6 +120,8 @@ to use some of the Test:: modules directly.
 =pod
 
 From L<Test::More>
+
+=over
 
 =item B<isa_ok>
 
@@ -143,7 +143,14 @@ sub use_ok { # from Test::More
 
 =back
 
-=cut
+=head1 AUTHOR
 
+=head1 BUGS
+
+=head1 SEE ALSO
+
+=head1 COPYRIGHT
+
+=cut
 
 1;
