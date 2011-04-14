@@ -232,24 +232,24 @@ B<Response example>
 =cut 
 
 sub history {
-    my $self   = shift;
-    my $object = $self->object;
-    my %data_pack;
-    my @history_types = $object->History;
-
-    foreach my $history_type (@history_types) {
-        my %histories;
-        foreach my $h ( $history_type->col ) {
-            my @evidence = $h->col;
-            @evidence = _get_evidence_names( \@evidence );
-            $histories{$h} = \@evidence;
-        }
-        $data_pack{$history_type} = \%histories;
-    }
-    return {
-        'data'        => \%data_pack,
-        'description' => 'history of the information on the operon'
-    };
+     my $self   = shift;
+     my $object = $self->object;
+     my %data_pack;
+     my @history_types = $object->History;
+ 
+     foreach my $history_type (@history_types) {
+         my %histories;
+         foreach my $h ( $history_type->col ) {
+             my @evidence = $h->col;
+             @evidence = $self->_get_evidence_names(\@evidence);
+             $histories{$h} = \@evidence;
+         }
+         $data_pack{$history_type} = \%histories;
+     }
+     return {
+         'data'        => \%data_pack,
+         'description' => 'history of the information on the operon'
+     };
 }
 
 #########################
@@ -259,7 +259,8 @@ sub history {
 ##########################
 
 sub _get_evidence_names {
-    my ($evidences) = shift;
+	my $self = shift;
+    my $evidences = shift;
     my @ret;
 
     foreach my $ev (@$evidences) {
