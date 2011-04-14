@@ -22,8 +22,8 @@ WormBase::Test::API::Object - WormBase API object tester
 =head1 SYNOPSIS
 
     my $tester = WormBase::Test::API::Object->new({
-        conf_file => $conf_file, # e.g. 'Paper' or 'WormBase::API::Object::Paper'
-        class     => $class,
+        conf_file => $conf_file,
+        class     => $class, # e.g. 'Paper' or 'WormBase::API::Object::Paper'
     });
 
     my @test_object_names = qw(a b c d);
@@ -75,6 +75,10 @@ facilitate these tests anywhere from automating the "common" tests to calling
 specific methods and capturing their error. This class, like the WormBase::Test
 class that it inherits from will emit TAP compatible output for use with
 Test::Harness (and its prove command).
+
+Any tests or methods requiring a class in either WormBase::Test or
+WormBase::Test::API are overridden here to make use of the class set for
+the tester.
 
 =head1 CONSTANTS
 
@@ -183,94 +187,66 @@ necessarily test methods themselves. See the L<"Test methods"> for those.
 # Methods
 ################################################################################
 
-=item B<fetch_object($argshash)>
-
-    my $obj = $tester->fetch_object({
-        name     => $name,
-        class    => $class, # optional unless set earlier
-        aceclass => $aceclass, # for fetching WB objects using an Ace class
-    })
-
-Fetches a L<WormBase::API::Object> object of a given class. This uses (and reveals)
-the underlying WormBase::API object's interface to fetch.
-
-C<name> is required. C<class> or C<aceclass> is required unless the class of
-the tester object has been set beforehand.
-
-=cut
-
-sub fetch_object {
-    my ($self, $args) = @_;
-    croak 'Must provide object details in arguments!' unless $args;
-    my ($name, $class, $aceclass);
-    if (ref $args eq 'HASH') {
-        croak 'Must provide name of object in arguments' unless $args->{name};
-        $name     = $args->{name};
-        $class    = $args->{class};
-        $aceclass = $args->{aceclass};
-    }
-    else {
-        $name = $args;
-    }
-
-    $class ||= $self->class;
-    croak 'Must specify class of object to fetch, either through',
-        '$tester->class or using a hashref as arguments'
-        unless $class;
-
-    my $api = $self->api or die "Can't get $WormBase::Test::API::API_BASE object";
-
-    return $api->fetch({class => $class, name => $name, aceclass => $aceclass});
-}
-
 =item B<fully_qualified_class_name($class)>
 
     my $full_class = WormBase::Test::API::Object->fully_qualified_class_name('Paper');
-    # $full_class is now 'WormBase::API::Object::Paper'
-
-    $tester->fully_qualified_class_name('Paper'); # can be called as instance method
-    $full_class = $tester->fully_qualified_class_name($full_clas); # unchanged
+    # WormBase::API::Object::Paper
 
 Takes a class name and fully qualifies it with the OBJECT_BASE constant as a
-prefix if not already done.
+prefix if not already done. Useful for dynamically creating objects.
 
 =cut
 
 sub fully_qualified_class_name { # invocant-independent
     my ($invocant, $name) = @_;
+    return $invocant->_fully_qualified_class_name($OBJECT_BASE, $name);
+}
 
-    return $name =~ /^$OBJECT_BASE/o ? $name : "${OBJECT_BASE}::${name}";
+=item B<fetch_object($objname|$arghash)>
+
+    $obj = $tester->fetch_object($obj_name); #  if class is set
+    $obj = $tester->fetch_object({class => $class, name => $obj_name});
+
+See L<WormBase::Test::API/fetch_object>.
+
+=cut
+
+sub fetch_object {
+    my ($self, $args) = @_;
+
+    my $class = $self->class;
+    if (ref $args eq 'HASH') {
+        $args->{class} ||= $class;
+        return $self->SUPER::fetch_object($args);
+    }
+
+    croak "Must provide set tester's class" unless $class;
+    return $self->SUPER::fetch_object({name => $args, class => $class});
 }
 
 =item B<get_parents_methods([$class])>
 
-    my @parents_methods = $tester->get_parents_methods($class);
+    $parents_methods = $tester->get_parents_methods; # if class is set
+    $parents_methods = $tester->get_parents_methods($class);
 
-Get the methods present in all parent classes of the given class. The class
-must be provided unless previously set for the tester object. The methods
-will be L<Moose::Meta::Method> objects. Often, it is useful to get the
-unqualified method names like so:
-
-    @method_names = map { $_->name } @parents_methods;
+See L<WormBase::Test/get_parents_methods>.
 
 =cut
 
-# these are nice utilities; perhaps it should be put in WormBase::Test
-sub get_parents_methods { # of WormBase class.
+sub get_parents_methods {
     my ($self, $class) = @_;
-    $class ||= $self->class or croak 'Must provide class as an argument';
+    $class ||= $self->class;
     $class = $self->fully_qualified_class_name($class);
 
-    my @parents = $class->meta->superclasses;
-    return map { eval {$_->meta->get_all_methods} } @parents;
+    return $self->SUPER::get_parents_methods($class);
 }
 
 =item B<get_roles_methods([$class])>
 
-    my @roles_methods = $tester->get_roles_methods($class);
+    $roles_methods = $tester->get_roles_methods; # if class is set
+    $roles_methods = $tester->get_roles_methods($class);
 
-Get the methods provided in all the roles of a given class. The class
-must be provided unless previously set for the tester object.
+See L<WormBase::Test/get_roles_methods>.
 
 =cut
 
@@ -279,34 +255,15 @@ sub get_roles_methods {
     $class ||= $self->class;
     $class = $self->fully_qualified_class_name($class);
 
-    my @roles = $class->meta->calculate_all_roles;
-    # create an anonymous class['s metaclass] to compose roles into
-    my $anon_meta = Moose::Meta::Class->create_anon_class;
-
-    # get the methods before roles are applied
-    my %excl = map {$_->name => 1} $anon_meta->get_all_methods;
-
-    # apply all roles
-    foreach my $role (@roles) {
-        # add required [dummy] methods to anon class
-        foreach ($role->get_required_method_list) {
-            $excl{$_} = 1; # this required method isn't provided by the role
-            $anon_meta->add_method($_, sub {});
-        }
-        $role->apply($anon_meta);
-    }
-
-    # return the methods which weren't there before applying roles
-    return grep { !$excl{$_->name} } $anon_meta->get_all_methods;
+    return $self->SUPER::get_roles_methods($class);
 }
 
 =item B<get_class_specific_methods([$class])>
 
-    my @my_methods = $tester->get_class_specific_methods($class);
+    $roles_methods = $tester->get_class_specific_methods; # if class is set
+    $roles_methods = $tester->get_class_specific_methods($class);
 
-Get the methods declared in the given class. This excludes methods originally
-defined in a parent class or a consumed role. The class must be provided
-unless previously set for the tester object.
+See L<WormBase::Test/get_class_specific_methods>.
 
 =cut
 
@@ -315,12 +272,12 @@ sub get_class_specific_methods {
     $class ||= $self->class;
     $class = $self->fully_qualified_class_name($class);
 
-    my %roles_methods = map {$_->name => 1} $self->get_roles_methods($class);
-    my %parents_methods = map {$_->name => 1} $self->get_parents_methods($class);
-
-    return grep {!$roles_methods{$_->name} && !$parents_methods{$_->name}}
-        $self->get_all_methods;
+    return $self->SUPER::get_class_specific_methods($class);
 }
+
+################################################################################
+# Test methods
+################################################################################
 
 =back
 
@@ -332,18 +289,12 @@ otherwise specified.
 
 =over
 
-=cut
-
-################################################################################
-# Test methods
-################################################################################
-
 =item B<run_common_tests($argshash)>
 
 Run tests common to model objects. The names of test objects must be provided
 as arguments:
 
-    my @test_objects = ('Object 1', 'Object 2'); # names of objects
+    @test_objects = ('Object 1', 'Object 2'); # names of objects
     $tester->run_common_tests(@test_objects);
 
 or in the "objects" entry of an arguments hashref ("argshash"):
@@ -411,7 +362,7 @@ sub run_common_tests {
     my $ok;
     my %objects;
     foreach my $obj_name (@object_names) {
-        my $obj = $self->fetch_object_ok({name => $obj_name});
+        my $obj = $self->fetch_object_ok($obj_name);
         my $meth_ok = $self->compliant_methods_ok($obj, $method_args || ());
         $ok &&= $meth_ok;
         $objects{$obj_name} = $obj if $obj;
@@ -466,22 +417,6 @@ sub class_immutable_ok {
     return $Test->ok($class->meta->is_immutable, "Class $class is immutable");
 }
 
-=item B<fetch_object_ok($argshash)>
-
-    my $obj = $tester->fetch_object_ok($args)
-
-Tests fetching a model object. Identical interface to L<fetch_object>.
-
-=cut
-
-sub fetch_object_ok {
-    my ($self, $args) = @_;
-
-    my $name = ref $args eq 'HASH' ? $args->{name} : $args;
-    $Test->ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
-    return $obj;
-}
-
 =item B<compliant_methods_ok($object, $argshash)>
 
     $tester->compliant_methods_ok($object);
@@ -491,37 +426,64 @@ are standards compliant as determined by WormBase::API::Role::Object::_check_dat
 The test passes if the method is called without error and the returned data
 is standards compliant.
 
+The option to test only certain methods is provided:
+
+    $tester->compliant_methods_ok({
+        object  => $object,
+        include => $methods_array,
+    });
+
+Where $methods_array is an arrayref of methods metaobjects or the names of methods.
+The option to test all methods except a few is also provided:
+
+    $tester->compliant_methods_ok({
+        object  => $object,
+        exclude => $methods_array,
+    });
+
 =cut
 
 sub compliant_methods_ok {
-    my $self = shift;
-    my ($wb_obj, $args) = @_;
-    croak 'A WormBase object must be an argument!'
-        unless ref $wb_obj && $wb_obj->isa($OBJECT_BASE);
-    croak 'Options must be a hashref!' if $args && ref $args ne 'HASH';
+    my ($self, $args) = @_;
+    croak 'Need to provide object as an argument or an argument hash'
+        unless $args; # quick check to do less work
+
+    my $wb_obj;
+
+    my (%include, %exclude);
+    if (ref $args eq 'HASH') {
+        $wb_obj = $args->{object};
+        croak 'Need to provide an object as an argument'
+            unless eval {$wb_obj->isa($OBJECT_BASE)};
+
+        # deal with inclusion-exclusion options. inclusions override exclusions
+        if ($args->{include}) { # test only these methods (if public)
+            croak 'Include option must be arrayref!'
+                unless ref $args->{include} eq 'ARRAY';
+            %include = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{include}};
+        }
+        elsif ($args->{exclude}) { # test all public methods except these
+            croak 'Exclude option must be arrayref!'
+                unless ref $args->{exclude} eq 'ARRAY';
+            %exclude = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{exclude}};
+        }
+    }
+    else {
+        $wb_obj = $args;
+    }
 
     my $meta  = $wb_obj->meta;
     my $class = $meta->name;    # same as ref $wb_obj;
-    my @methods = $self->_grep_public_methods($meta->get_all_methods);
 
-    # deal with inclusion-exclusion options. inclusions override exclusions
-    my (%include, %exclude);
-    if ($args->{include}) { # test only these methods (if public)
-        croak 'Include option must be arrayref!'
-            unless ref $args->{include} eq 'ARRAY';
-        %include = map {$_ => 1} @{$args->{include}} if $args->{include};
-        @methods = grep { $include{$_->name} } @methods;
-    }
-    elsif ($args->{exclude}) { # test all public methods except these
-        croak 'Exclude option must be arrayref!'
-            unless ref $args->{exclude} eq 'ARRAY';
-        %exclude = map {$_ => 1} @{$args->{exclude}} if $args->{exclude};
-        @methods = grep { !$exclude{$_->name} } @methods;
-    }
+    my %methods = map { $_->name => $_ }
+                  $self->_grep_public_methods($meta->get_all_methods);
+    map { $methods{$_} ||= 1 } keys %include; # small loops ;)
+    map { delete $methods{$_} } keys %exclude;
+
 
     my $test_name = $wb_obj->object . " of class $class has compliant methods";
 
-    unless (@methods) {
+    unless (%methods) {
         $Test->ok(0, $test_name);
         $Test->diag('No public methods found');
         $Test->diag('Include: ', join(', ', @{$args->{include}})) if %include;
@@ -530,39 +492,16 @@ sub compliant_methods_ok {
     }
 
     return $Test->subtest($test_name, => sub {
-        foreach my $method (@methods) {
-            my $m = $method->name;
-            my $data = $self->call_method_ok($wb_obj, $m);
-            $self->compliant_data_ok($data, $m);
+        while (my ($method_name, $method_meta) = each %methods) {
+            my $data = $self->call_method_ok($wb_obj, $method_name);
+            $self->compliant_data_ok($data, $method_name);
         }
     }); # end of subtest
 }
 
-=item B<call_method_ok($object, $method)>
-
-    my $result = $tester->call_method_ok($object, $method);
-
-Tests calling a method with an object. This method will essentially do
-$object->$method and captures errors. The test passes if the method
-is called without errors.
-
-=cut
-
-sub call_method_ok {
-    my ($self, $object, $method) = @_;
-    croak 'Must provide object and method as arguments'
-        unless $object && $method;
-
-    my $data = eval {$object->$method};
-    $Test->ok(! $@, "$method called without problems")
-        or $Test->diag("$object call $method: $@");
-    return $data;
-}
-
-
 =item B<compliant_data_ok($data, $testname)>
 
-    my $ok = $tester->compliant_data_ok($data, $testname);
+    $ok = $tester->compliant_data_ok($data, $testname);
 
 Tests whether the given datum is standards compliant as determined by
 WormBase::API::Role::Object::_check_data. The test passes if the datum
@@ -588,10 +527,17 @@ sub compliant_data_ok {
     return wantarray ? () : $Test->ok(1, $test_name);
 }
 
+=item B<fetch_object_ok>
+
+    $obj = $tester->fetch_object_ok($obj_name); # if class is set
+    $obj = $tester->fetch_object_ok({class => $class, name => $name})
+    $obj = $tester->fetch_object_ok({aceclass => $ace, name => $name});
+
+See L<WormBase::Test::API/fetch_object_ok>.
+
 =back
 
 =cut
-
 
 ################################################################################
 # Private methods
@@ -638,7 +584,6 @@ sub _note_method {
 
 =head1 SEE ALSO
 
-L<WormBase::API>, L<WormBase::API::Object>, L<WormBase::API::Role::Object>,
 L<WormBase::Test>, L<WormBase::Test::API>
 
 =head1 COPYRIGHT
