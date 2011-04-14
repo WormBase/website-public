@@ -26,6 +26,13 @@ WormBase::Test::API - a generic WormBase API testing object
 
 my $tester = WormBase::Test::API->new({conf_file => 'data/test.conf'});
 
+my $obj = $tester->fetch_object_ok({class => 'Paper', name => 'WBPaper00024194'});
+
+
+# manual operations
+my $api = $tester->build_api('data/test.conf', 'data/test1.conf');
+my $newtester = WormBase::Test::API->new({api => $api});
+
 =head1 DESCRIPTION
 
 This inherits from L<WormBase::Test> and provides a base class for WormBase API
@@ -188,14 +195,86 @@ sub build_api {
     return WormBase::API->new($conf->{'Model::WormBaseAPI'}->{args});
 }
 
-=back
+=item B<fetch_object($argshash)>
+
+    my $obj = $tester->fetch_object({
+        name     => $name,
+        class    => $class,
+        aceclass => $aceclass, # for fetching WB objects using an Ace class
+    })
+
+Fetches a L<WormBase::API::Object> object of a given class. This uses (and reveals)
+the underlying WormBase::API object's interface to fetch.
+
+name is required. Either class or aceclass must be provided.
 
 =cut
+
+sub fetch_object {
+    my ($self, $args) = @_;
+    croak 'Must provide object details in arguments!' unless $args;
+    my ($name, $class, $aceclass);
+    if (ref $args eq 'HASH') {
+        croak 'Must provide name of object in arguments' unless $args->{name};
+        $name     = $args->{name};
+        $class    = $args->{class};
+        $aceclass = $args->{aceclass};
+        croak 'Must provide class or aceclass in arguments'
+            unless $class || $aceclass;
+    }
+    else {
+        $name = $args;
+    }
+
+    my $api = $self->api or die "Can't get $WormBase::Test::API::API_BASE object";
+
+    return $api->fetch({class => $class, name => $name, aceclass => $aceclass});
+}
+
+=item B<fully_qualified_class_name($class)>
+
+    my $full_class = WormBase::Test::API::Object->fully_qualified_class_name('ModelMap');
+    # WormBase::API::ModelMap
+
+Takes a class name and fully qualifies it with the API_BASE constant as a
+prefix if not already done. Useful for dynamically creating objects.
+
+=cut
+
+sub fully_qualified_class_name { # invocant-independent
+    my ($invocant, $name) = @_;
+    return $invocant->_fully_qualified_class_name($API_BASE, $name);
+}
 
 ################################################################################
 # Test Methods
 ################################################################################
 
+=back
+
+=head2 Test Methods
+
+=over
+
+=item B<fetch_object_ok($argshash)>
+
+    my $obj = $tester->fetch_object_ok($args)
+
+Tests fetching a model object. Identical interface to L<fetch_object>.
+
+=cut
+
+sub fetch_object_ok {
+    my ($self, $args) = @_;
+
+    my $name = ref $args eq 'HASH' ? $args->{name} : $args;
+    $Test->ok(my $obj = $self->fetch_object($args), 'Fetch object ' . $name);
+    return $obj;
+}
+
+=back
+
+=cut
 
 ################################################################################
 # Private Methods
@@ -206,8 +285,6 @@ sub build_api {
 =head1 BUGS
 
 =head1 SEE ALSO
-
-L<WormBase::Test::API>
 
 =head1 COPYRIGHT
 
