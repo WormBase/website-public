@@ -281,7 +281,7 @@ B<Response example>
 
 sub assay {
     my $self      = shift;
-    my $object    = $self->object;
+    my $object    = $self->object || shift;
     my $data_pack = ( $object->PCR_product ) ? 'PCR product' : 'Sequence';
     return {
         'data'        => $data_pack,
@@ -819,16 +819,28 @@ B<Response example>
 
 =cut 
 
+
 sub phenotypes {
-    my ($self) = @_;
-    my @data =
-      map { $self->_pack_obj( $_, scalar $_->Primary_name ) }
-      @{ $self ~~ '@Phenotype' };
-    return {
-        description => 'phenotypes observed with rnai',
-        data        => @data ? \@data : undef,
-    };
+	my $self = shift;
+	my $data = $self->_phenotype_abs('Phenotype'); 	
+	return {
+		data => $data,
+		description =>'phenotypes annotated with this term',
+	};
 }
+
+# sub phenotypes {
+#     my ($self) = @_;
+#     my @data =
+#       map { $self->_pack_obj( $_, scalar $_->Primary_name ) }
+#       @{ $self ~~ '@Phenotype' };
+#     return {
+#         description => 'phenotypes observed with rnai',
+#         data        => @data ? \@data : undef,
+#     };
+# }
+
+
 
 =head3 phenotype_nots
 
@@ -881,15 +893,63 @@ B<Response example>
 =cut 
 
 sub phenotype_nots {
-    my ($self) = @_;
-    my @data =
-      map { $self->_pack_obj( $_, scalar $_->Primary_name ) }
-      @{ $self ~~ '@Phenotype_not_observed' };
-    return {
-        description => 'phenotypes not observed with rnai',
-        data        => @data ? \@data : undef,
-    };
+	my $self = shift;
+	my $data = $self->_phenotype_abs('Phenotype_not_observed'); 	
+	return {
+		data => $data,
+		description =>'phenotypes not associated with this term',
+	};
 }
+
+
+
+
+
+# sub phenotype_nots {
+#     my ($self) = @_;
+#     my @data =
+#       map { $self->_pack_obj( $_, scalar $_->Primary_name ) }
+#       @{ $self ~~ '@Phenotype_not_observed' };
+#     return {
+#         description => 'phenotypes not observed with rnai',
+#         data        => @data ? \@data : undef,
+#     };
+# }
+
+###########################################################
+#
+# Abstrating phenotype
+#
+###########################################################
+	
+ sub _phenotype_abs {
+    my $self = shift;
+    my $tag = shift;
+    my $term = $self->object;
+    my @data_pack;
+    my @phenotypes = $term->$tag;
+    foreach my $phenotype (@phenotypes) {
+    	my $phenotype_info = $self->_pack_obj($phenotype);
+        my $phenotype_desc = $phenotype->Description;
+		my $phenotype_remarks = $phenotype->Remark;
+
+        my $pheno_data = {
+            'phenotype_info'   => $phenotype_info,
+            'description'      => "$phenotype_desc",
+            'remark'    => "$phenotype_remarks",
+        };
+        push @data_pack, $pheno_data;
+    }
+    return \@data_pack;
+
+#     {
+#         'data'        => ,
+#         'description' => 'phenotypes annotated with this term'
+#     };
+
+ }
+
+
 
 ############################################################
 #
