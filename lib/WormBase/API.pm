@@ -10,7 +10,7 @@ use Search::Xapian qw/:all/;
 use WormBase::API::ModelMap;
 use Class::MOP;
 
-with 'WormBase::API::Role::Logger';           # A basic Log::Log4perl screen appender
+with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
 # We assume that there is a single default data source.
 # For now this is AceDB.
@@ -19,7 +19,7 @@ has 'default_datasource' => (
     isa      => 'Str',
     required => 1,
     default  => 'acedb',
-    );
+);
 
 # Dynamically establish a list of available data services.
 # This includes the default_datasource and other singletons.
@@ -27,41 +27,41 @@ has '_services' => (
     is         => 'ro',
     isa        => 'HashRef',
     lazy_build => 1,
-    );
+);
 
 has 'stringified_responses' => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
     default  => 1,
-    );
+);
 
 # This is just the configuration directory
 # for instantiating Log::Log4perl object. Janky.
 has pre_compile => (
     is       => 'rw',
-    );
+);
 
 has conf_dir => (
     is       => 'ro',
     required => 1,
-    );
+);
 # This is the configuration object/hashref for databases info e.g. connection hosts password...
 has database => (
     is       => 'ro',
     required => 1,
-#    lazy_build => 1,
-    );
+    #    lazy_build => 1,
+);
 
 has tmp_base => (
     is       => 'rw',
-    );
+);
 
 has xapian => (
     is     => 'rw',
     isa    => 'WormBase::API::Service::Xapian',
     lazy_build      => 1,
-    );
+);
 
 # this is for the view (see /template/config/main)
 # it's a nasty hack. it simply reveals WormBase::API::ModelMap to the view
@@ -79,27 +79,11 @@ has modelmap => (
 has _tools => (
     is       => 'ro',
     lazy_build      => 1,
-    );
+);
 
 has tool => (
     is       => 'rw',
-    );
-
-# AD: pending removal; test library handles this more generally
-# # this is here just for the testing script to load database configuration
-# # may be removed or changed in furutre! 
-# sub _build_database {
-#     my $self = shift;
-#     my $root  = $self->conf_dir;
-#     my $conf = new Config::General(
-# 				  -ConfigFile      => "$root/../wormbase.conf",
-# 				  -InterPolateVars => 1
-#     );
-#     $self->tmp_base($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tmp_base});
-#     $self->pre_compile($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile});
-#     $self->tool($conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{tool});
-#     return   $conf->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{database} ;
-# }
+);
 
 # builds a search object with the default datasource
 sub _build_xapian {
@@ -130,7 +114,6 @@ sub _build_xapian {
 
   return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
 }
- 
 
 # Version should be provided by the default datasource or set explicitly.
 sub version {
@@ -165,7 +148,7 @@ sub _build__services {
                 log           => $self->log,
                 source        => $source,
                 symbolic_name => $db_type,
-                path          => $db_confs->{tmp},
+                tmp_base      => $db_confs->{tmp},
             });
 
             my $full_name = $source ? "${db_type}_${source}" : $db_type;
