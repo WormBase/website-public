@@ -45,7 +45,7 @@ has version => (
     },
 );
 
-has path => (
+has 'tmp_base' => (
     is       => 'ro',
     required => 1,
     default  => '/tmp/',
@@ -115,16 +115,16 @@ has 'source' => (
 );
 
 around 'dbh' => sub {
-    my $orig   = shift;
-    my $self   = shift;
+    my $orig = shift;
+    my $self = shift;
 
-    if (my $dbh = $self->$orig) {
+    if (my $dbh = $self->$orig(@_)) {
         $self->ping($dbh) and return $dbh;
     }
 
     my $source = $self->source;
     $self->log->debug( $self->symbolic_name." dbh for source $source doesn't exist or is not alive; trying to connect");
-    return $self->reconnect();
+    return $self->reconnect;
 };
 
 sub reconnect {
@@ -237,9 +237,9 @@ sub get_downed_hosts {
     my $mode       = $write ? O_CREAT|O_RDWR : O_RDONLY;
     my $perms      = 0666;
 
-    mkpath($self->path,0,0777) unless -d $self->path;
+    mkpath($self->tmp_base,0,0777) unless -d $self->tmp_base;
 
-    my $path	   = $self->path.'/WormBase_'.$self->symbolic_name;
+    my $path	   = $self->tmp_base.'/WormBase_'.$self->symbolic_name;
     my %h;
     tie (%h,'DB_File::Lock',$path,$mode,$perms,$DB_HASH,$locking);
     return \%h;

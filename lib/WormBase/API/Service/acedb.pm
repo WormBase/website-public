@@ -2,7 +2,7 @@ package WormBase::API::Service::acedb;
 
 use Moose;
 use Ace ();
-#database handel
+
 has 'dbh' => (
     is        => 'rw',
     isa       => 'Ace',
@@ -24,6 +24,44 @@ has 'query_timeout' => (
     isa => 'Str'
 );
 
+has 'program' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_program {
+    my $self = shift;
+    return $self->conf->{program};
+}
+
+has 'path' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_path {
+    my $self = shift;
+    return $self->conf->{path};
+}
+
+around 'reconnect' => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $dbh;
+    if (my $prog = $self->program and my $path = $self->path) {
+        # go straight to connecting
+        $self->log->debug("try 0: Connecting to ", $self->symbolic_name,
+                          " locally at $path using $prog");
+        $dbh = $self->connect;
+    }
+
+    # use the fallback reconnect if program is not available
+    $dbh ||= $self->$orig(@_);
+
+    return $dbh;
+};
+
 sub connect {
     my $self = shift;
 
@@ -37,12 +75,19 @@ sub connect {
     # })
     #     if $self->conf->{cache_root};
 
-    return Ace->connect(
-        -host => $self->host,
-        -port => $self->port,
+    my %options = ( # will always have this...
         -user => $self->user,
         -pass => $self->pass,
     );
+
+    if (my $prog = $self->program and my $path = $self->path) {
+        @options{'-program', '-path'} = ($prog, $path);
+    }
+    else {
+        @options{'-host', '-port'} = ($self->host, $self->port);
+    }
+
+    return Ace->connect(%options);
     #			   @cache);
 }
 
