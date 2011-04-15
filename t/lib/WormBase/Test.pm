@@ -191,7 +191,7 @@ sub get_class_specific_methods {
     my %parents_methods = map {$_->name => 1} $self->get_parents_methods($class);
 
     return grep {!$roles_methods{$_->name} && !$parents_methods{$_->name}}
-        $self->get_all_methods;
+        $class->meta->get_all_methods;
 }
 
 =item B<fully_qualified_class_name($class)>
