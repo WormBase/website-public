@@ -386,20 +386,34 @@ sub run_common_tests {
         croak 'Need objects in hash' unless $args->{objects};
         @object_names = @{$args->{objects}};
 
-        $method_args->{exclude} = $args->{exclude_methods} if $args->{exclude_methods};
+        my @excludes;
+        if ($args->{exclude_methods}) {
+            croak 'exclude_methods must be an arrayref!'
+                unless ref $args->{exclude_methods} eq 'ARRAY';
+            @excludes = @{$args->{exclude_methods}}; # ensure non-destructiveness
+        }
 
-        my $large_exclusions; # will disable inclusions
+        my $large_exclusions; # will warn & disable inclusions
         foreach my $type (qw(parents roles)) {
             next unless $args->{"exclude_${type}_methods"};
             $large_exclusions ||= 1;
             my $m = "get_${type}_methods";
-            push @{$method_args->{exclude}}, map {$_->name} $self->$m($class);
+            push @excludes, map {$_->name} $self->$m($class);
         }
 
         # we must check for large exclusions because inclusions
         # override all exclusions in the compliant_methods_ok method
-        $method_args->{include} = $args->{include_methods}
-            if !$large_exclusions && $args->{include_methods};
+        if ($args->{include_methods}) {
+            if ($large_exclusions) {
+                carp 'Common tests were specified to exclude many methods and ',
+                     'also include methods. Ignoring specified inclusions.';
+            }
+            else {
+                $method_args->{include} = $args->{include_methods};
+            }
+        }
+
+        $method_args->{exclude} = \@excludes if @excludes;
     }
     else {
         @object_names = @_;
@@ -498,46 +512,50 @@ sub compliant_methods_ok {
     croak 'Need to provide object as an argument or an argument hash'
         unless $args; # quick check to do less work
 
-    my $wb_obj;
+    my ($wb_obj, $class);
 
-    my (%include, %exclude);
+    my %methods; # METHOD_NAME => METHOD_NAME/METHOD_METAOBJECT
+
     if (ref $args eq 'HASH') {
         $wb_obj = $args->{object};
         croak 'Need to provide an object as an argument'
             unless eval {$wb_obj->isa($OBJECT_BASE)};
+        $class = ref $wb_obj;
+
+        if ($args->{include} and $args->{exclude}) {
+            carp 'Include and exclude options specified; only include will be used';
+        }
 
         # deal with inclusion-exclusion options. inclusions override exclusions
-        if ($args->{include}) { # test only these methods (if public)
+        if ($args->{include}) { # test only these methods
             croak 'Include option must be arrayref!'
                 unless ref $args->{include} eq 'ARRAY';
-            %include = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{include}};
+            %methods = map { (ref $_ ? $_->name : $_) => $_ } @{$args->{include}};
         }
-        elsif ($args->{exclude}) { # test all public methods except these
-            croak 'Exclude option must be arrayref!'
-                unless ref $args->{exclude} eq 'ARRAY';
-            %exclude = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{exclude}};
+        else { # test all public methods
+            my $meta = $class->meta or die "Couldn't get metaclass for class $class";
+            %methods = map { $_->name => $_ }
+                       $self->_grep_public_methods($meta->get_all_methods);
+
+            if ($args->{exclude}) { # don't test these methods
+                croak 'Exclude option must be arrayref!'
+                    unless ref $args->{exclude} eq 'ARRAY';
+                map { delete $methods{ref $_ ? $_->name : $_ } }
+                    @{$args->{exclude}};
+            }
         }
     }
     else {
         $wb_obj = $args;
     }
 
-    my $meta  = $wb_obj->meta;
-    my $class = $meta->name;    # same as ref $wb_obj;
-
-    my %methods = map { $_->name => $_ }
-                  $self->_grep_public_methods($meta->get_all_methods);
-    map { $methods{$_} ||= 1 } keys %include; # small loops ;)
-    map { delete $methods{$_} } keys %exclude;
-
-
     my $test_name = $wb_obj->object . " of class $class has compliant methods";
 
     unless (%methods) {
         $Test->ok(0, $test_name);
         $Test->diag('No public methods found');
-        $Test->diag('Include: ', join(', ', @{$args->{include}})) if %include;
-        $Test->diag('Exclude: ', join(', ', @{$args->{exclude}})) if %exclude;
+        $Test->diag('Include: ', join(', ', @{$args->{include}})) if $args->{include};
+        $Test->diag('Exclude: ', join(', ', @{$args->{exclude}})) if $args->{exclude};
         return;
     }
 
