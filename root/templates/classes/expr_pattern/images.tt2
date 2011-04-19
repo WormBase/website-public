@@ -6,13 +6,16 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.
 </script>
 
 [% IF fields.curated_images.data %]	
-   [% FOREACH img IN fields.curated_images.data %]
-   <div style="display:inline-block;max-width:200px;margin:1em;">
-      
-   	  <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox">
-	  <img src="/draw/[% img.draw.format | uri %]?class=[% img.draw.class | uri %]&id=[% img.draw.name | uri %]_200"
-           alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
-      [% cite_image(img.external_source, img.source) %]
+   [% FOREACH group IN fields.curated_images.data.sort %]
+   <div style="display:inline-block;">
+      [% FOREACH img IN fields.curated_images.data.$group %]
+      <div style="display:inline-block;max-width:200px;margin:1em;">
+         <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox">
+         <img src="/draw/[% img.draw.format | uri %]?class=[% img.draw.class | uri %]&id=[% img.draw.name | uri %]_200"
+              alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
+      </div>
+      [% END %]
+      <div>[% cite_image(img.external_source, img.source) %]</div>
    </div>
    [% END %]
 [% ELSE %]

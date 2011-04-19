@@ -520,7 +520,8 @@ B<Response example>
 sub curated_images { # Caveat: this is very tightly coupled with the Picture model
 	my ($self) = @_;
 
-    my @data;
+    my %data;
+
     foreach my $pic ($self->_wrap(@{$self ~~ '@Picture'})) {
         my $img_data = $pic->image->{data}; # can't render the image if there is no file!
         next unless $img_data;
@@ -529,7 +530,10 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
         my $extsrc_data = $pic->external_source->{data};
         my $src_data    = $pic->reference->{data} || $pic->contact->{data};
 
-        push @data, {
+        # assumption: extsrc_data has 1 to 1 relation to src_data
+        my $group = ($src_data && $src_data->{id}) || 'none';
+
+        push @{$data{$group}}, {
             id              => $id,
             draw            => $img_data,
             external_source => $extsrc_data,
@@ -539,7 +543,7 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
 
 	return {
 		description => 'Curated images of the expression pattern',
-		data        => @data ? \@data : undef,
+		data        => %data ? \%data : undef,
 	};
 }
 
