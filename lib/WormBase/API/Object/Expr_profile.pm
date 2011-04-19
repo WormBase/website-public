@@ -106,14 +106,14 @@ sub pcr_data {
     my %data_pack;
 
     my $data_pack = {
-        primer     => $primer,
-        seq        => $seq,
+        primer     => "$primer",
+        seq        => "$seq",
         chromosome => $chromosome,
         start      => $start,
         stop       => $stop,
-        x_coord    => $x_coord,
-        y_coord    => $y_coord,
-        mountain   => $mountain,
+        x_coord    => "$x_coord",
+        y_coord    => "$y_coord",
+        mountain   => "$mountain",
         radius     => $radius
     };
     return {
