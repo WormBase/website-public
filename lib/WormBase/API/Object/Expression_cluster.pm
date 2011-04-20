@@ -90,12 +90,12 @@ sub gene {
     my $self   = shift;
     my $object = $self->object;
     my @tag_objects = $object->Gene;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
+    my @data_pack   = map{$_ = $self->_pack_obj($_)} @tag_objects
       if @tag_objects;
     return {
+    	data        => @data_pack ? \@data_pack : undef,
         description => 'The corresponding gene',
-        data        => @data_pack    
-      
+           
 	};
 }	
 #     my %return;
@@ -165,9 +165,10 @@ B<Response example>
 sub algorithm {
     my $self   = shift;
     my $object = $self->object;
+    my $algorithm =  $object->Algorithm;
     my $data   = {
         description => 'Algorithm used to determine cluster',
-        data        => $object->Algorithm,
+        data        =>"$algorithm" || undef,
     };
     return $data;
 }
@@ -229,7 +230,7 @@ sub microarray {
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'microarray results from expression cluster'
     };
 }
@@ -291,8 +292,8 @@ sub sage_tag {
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
-        'data'        => \@data_pack,
-        'description' => ''
+        'data'        => @data_pack ? \@data_pack : undef,
+        'description' => 'Sage tags associated with this expression_cluster'
     };
 }
 
@@ -353,7 +354,7 @@ sub expr_pattern {
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
-        'data'        => \@data_pack,
+        'data'        => @tag_objects ? \@data_pack : undef,
         'description' => 'expression patterns associated with this cluster'
     };
 }
@@ -415,7 +416,7 @@ sub anatomy_term {
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'anatomy term annotated with this expression cluster'
     };
 }
