@@ -331,7 +331,7 @@ In addition to the specific exclusions, the methods belonging to the class'
 parents or roles can be excluded automatically like so:
 
     $tester->run_common_tests({
-        objects                 => \@test_objects,
+        objects                 => \@objects,
         exclude_parents_methods => 1,
         exclude_roles_methods   => 1,
     });
@@ -432,28 +432,10 @@ sub run_common_tests {
     return wantarray ? %objects : $ok;
 }
 
-
+# deprecated. here for current testing code but will be removed soon.
 sub test_object_methods {
     my $self = shift;
-    croak 'No arguments given. Call with name of objects to fetch, ',
-          'or hash with name of objects and additional options'
-          unless @_;
-    my $class = $self->class
-        or croak 'Need to provide tester with test class via class accessor';
-
-    my $object_names = $_[0];
-    my $method_args->{include} = $_[1]; # for method compliance test
-    my $ok;
-    my %objects;
-    foreach my $obj_name (@$object_names) {
-        my $obj = $self->fetch_object_ok($obj_name);
-		$method_args->{object} = $obj if $method_args;
-        my $meth_ok = $self->listed_methods_ok($method_args || $obj);
-        $ok &&= $meth_ok;
-        $objects{$obj_name} = $obj if $obj;
-    }
-
-    return wantarray ? %objects : $ok;
+    $self->run_common_tests({objects => $_[0], include_methods => $_[1]});
 }
 
 
@@ -592,61 +574,11 @@ sub compliant_methods_ok {
     }); # end of subtest
 }
 
+# deprecated. here for current testing code but will be removed soon.
 sub listed_methods_ok {
     my ($self, $args) = @_;
-    croak 'Need to provide object as an argument or an argument hash'
-        unless $args; # quick check to do less work
-
-    my $wb_obj;
-
-    my (%include, %exclude);
-    if (ref $args eq 'HASH') {
-        $wb_obj = $args->{object};
-        croak 'Need to provide an object as an argument'
-            unless eval {$wb_obj->isa($OBJECT_BASE)};
-		%include = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{include}};
-
-		#        # deal with inclusion-exclusion options. inclusions override exclusions
-		#        if ($args->{include}) { # test only these methods (if public)
-		#            croak 'Include option must be arrayref!'
-		#                unless ref $args->{include} eq 'ARRAY';
-		#            
-		#        }
-		#        elsif ($args->{exclude}) { # test all public methods except these, 
-		#            croak 'Exclude option must be arrayref!'
-		#                unless ref $args->{exclude} eq 'ARRAY';
-		#            %exclude = map { (ref $_ ? $_->name : $_) => 1 } @{$args->{exclude}};
-		#        }
-
-    }
-    else {
-        $wb_obj = $args;
-    }
-
-    my $meta  = $wb_obj->meta;
-    my $class = $meta->name;    # same as ref $wb_obj;
-    my %methods; 
-    map { $methods{$_} ||= 1 } keys %include; # small loops ;)
-    map { delete $methods{$_} } keys %exclude;
-    
-    my $test_name = $wb_obj->object . " of class $class has compliant methods";
-
-    unless (%methods) {
-        $Test->ok(0, $test_name);
-        $Test->diag('No public methods found');
-        $Test->diag('Include: ', join(', ', @{$args->{include}})) if %include;
-        $Test->diag('Exclude: ', join(', ', @{$args->{exclude}})) if %exclude;
-        return;
-    }
-
-    return $Test->subtest($test_name, => sub {
-        while (my ($method_name, $method_meta) = each %methods) {
-            my $data = $self->call_method_ok($wb_obj, $method_name);
-            $self->compliant_data_ok($data, $method_name);
-        }
-    }); # end of subtest
+    $self->compliant_methods_ok($args);
 }
-
 
 =item B<compliant_data_ok($data, $testname)>
 
@@ -716,7 +648,6 @@ sub _grep_public_methods {
 } # end of block for _grep_public_methods
 
 # note a Class::MOP::Method object for debugging purposes
-
 sub _note_method {
     my ($self, $method) = @_;
     my $type = ref $method;
