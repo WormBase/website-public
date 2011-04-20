@@ -406,7 +406,7 @@ sub effector_data {
     my $data_pack = $self->_interactor_data('effector');
 
     return {
-        data        => $data_pack,
+        data        => $data_pack || undef,
         description => 'data on the effector genes of the interaction'
     };
 }
