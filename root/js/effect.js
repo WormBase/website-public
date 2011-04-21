@@ -121,7 +121,7 @@
       var nav = $jq("#navigation");
       var w = nav.width();
       var msg = "open sidebar";
-      if(w == 0){ w = '9.5em'; msg = "close sidebar"; }else { w = 0;}
+      if(w == 0){ w = '12em'; msg = "close sidebar"; }else { w = 0;}
       nav.animate({width: w, display: 'block'});
       nav.children("#title").children("div").toggle();
       $jq(this).attr("title", msg);
