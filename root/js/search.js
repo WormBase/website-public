@@ -100,10 +100,10 @@ function SearchResult(q, type, species, widget){
   queryHighlight($jq("div#results" + (widget ? "." + widget + "-widget" : '')));
   
   resultDiv.click(function(){
-    page++;
-    var url= $jq(this).attr("href") + page + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
     $jq(this).removeClass("load-results");
-
+    
+    page++;
+    var url = $jq(this).attr("href") + page + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
     var div = $jq("<div></div>");
     setLoading(div);
     

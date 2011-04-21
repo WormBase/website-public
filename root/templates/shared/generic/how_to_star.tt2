@@ -1,7 +1,7 @@
 <div class="example ui-corner-all"><h3>You can save items to your workspace</h3> 
 When you see a star on WormBase:
 <ol>
-<li style="width:10.5em"><div id="test-star" class="workbench-status-example"></div>
+<li style="width:11em"><div id="test-star" class="workbench-status-example"></div>
 
 1. Click on the star: </li>
 

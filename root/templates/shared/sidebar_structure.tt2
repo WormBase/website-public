@@ -28,15 +28,17 @@
   [% END %]
 [% END %]
 
-    <div class="title">
+
        [% UNLESS no_layout %]
+    <div class="title">
            [%# This span is added here to prevent the title from overlapping with the buttons %]
           [% title = '<span id="breadcrumbs">' _ title _ '</span><span style="width:170px; height:1.2em; float:right;"></span>' %]
 
       <h2>[% title %]</h2>
       [% END %]
-        <div id="buttons">
+
        [% UNLESS no_layout %]
+        <div id="buttons">
           [% wbid = this_object_id.remove(':') %]
           <div class="workbench-status-[% wbid %]"></div>
       [% IF object %]
@@ -56,11 +58,12 @@
           </ul>
           </div>
 <!-- 	  <div class="print tip-simple ui-icon-pdf" tip="print page as pdf"></div> -->
-      [% END %]
 <div style="clear:both"></div>
-	        </div>
+            </div>
         <div style="clear:both"></div>
     </div>
+      [% END %]
+
 
 <div id="widgets">
   <div id="navigation">
