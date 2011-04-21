@@ -1,4 +1,4 @@
-#t/WormBase/API/Object/Operon.t
+#t/WormBase/API/Object/Expression_cluster.t
 
 use strict;
 use warnings;
@@ -15,38 +15,39 @@ use WormBase::Test::API::Object;
 use PrintOut;
 use Ace;
 
-my $class = 'Operon';
-my $tag = '<<TAG of interest in class>>';
+my $class = 'Expression_cluster';
+my $tag = 'Algorithm';
 
 ## get test object with a tag data populated (hopefully)
-# my $test_objects = PrintOut::get_features($class,$tag); 
+my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["CEOP1140"];
+# my $test_objects = ["\[cgc5767\]\:cluster_88"];
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Operon'); ## "::$class"
-} # Operon.t loads ok
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Expression_cluster'); ## "::$class"
+} # <<CLASS>>.t loads ok
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
-    class     => 'Operon',
+    class     => 'Expression_cluster',
 });
 
 # uncomment appropriate test procedure
 
-  my $test_type = 'all' ; ## 
-  
-# my $test_type = 'methods';
+# my $test_type = 'all' ; ## 
+my $test_type = 'methods';
 
 ## list methods to be tested here
-my @methods = qw(
-			
 
+my @methods = qw(
+				algorithm			
 				);
-###
+### microarray	anatomy_term	
 
 if ($test_type eq 'methods') {
+	
+	print "TESTING\: $test_objects->[0]\n";
 	$tester->run_common_tests({
 		objects                 => $test_objects,
 		include_methods => \@methods,    

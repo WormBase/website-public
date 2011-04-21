@@ -1,4 +1,4 @@
-#t/WormBase/API/Object/Operon.t
+#t/WormBase/API/Object/Gene_cluster.t
 
 use strict;
 use warnings;
@@ -15,31 +15,31 @@ use WormBase::Test::API::Object;
 use PrintOut;
 use Ace;
 
-my $class = 'Operon';
+my $class = 'Gene_cluster';
 my $tag = '<<TAG of interest in class>>';
 
 ## get test object with a tag data populated (hopefully)
 # my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["CEOP1140"];
+my $test_objects = ["HIS3_cluster"];
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Operon'); ## "::$class"
-} # Operon.t loads ok
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Gene_cluster'); ## "::$class"
+} # Gene_cluster.t loads ok
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
-    class     => 'Operon',
+    class     => 'Gene_cluster',
 });
 
 # uncomment appropriate test procedure
 
-  my $test_type = 'all' ; ## 
-  
-# my $test_type = 'methods';
+ my $test_type = 'all' ; ## 
+#my $test_type = 'methods';
 
 ## list methods to be tested here
+
 my @methods = qw(
 			
 

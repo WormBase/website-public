@@ -1316,8 +1316,8 @@ sub _pack_obj {
 sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
-    my $genus_species = eval {$object->Species} or return 'c_elegans'; # is this default correct?
-    my ($species) = $genus_species =~ /.* (.*)/;
+    my $genus_species = eval {$object->Species} or return 'c_elegans';
+    my ($species) = $genus_species =~ /.*[ _](.*)/o;
     return lc(substr($genus_species, 0, 1)) . "_$species";
 }
 

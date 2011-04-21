@@ -1,4 +1,4 @@
-#t/WormBase/API/Object/Operon.t
+#t/WormBase/API/Object/Homology_group.t
 
 use strict;
 use warnings;
@@ -15,22 +15,22 @@ use WormBase::Test::API::Object;
 use PrintOut;
 use Ace;
 
-my $class = 'Operon';
+my $class = 'Homology_group';
 my $tag = '<<TAG of interest in class>>';
 
 ## get test object with a tag data populated (hopefully)
 # my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["CEOP1140"];
+my $test_objects = ["InP_Cae_000935"];
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Operon'); ## "::$class"
-} # Operon.t loads ok
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Homology_group'); ## "::$class"
+} # Homology_group.t loads ok
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
-    class     => 'Operon',
+    class     => 'Homology_group',
 });
 
 # uncomment appropriate test procedure

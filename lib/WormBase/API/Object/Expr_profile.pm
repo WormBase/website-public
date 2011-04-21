@@ -106,14 +106,14 @@ sub pcr_data {
     my %data_pack;
 
     my $data_pack = {
-        primer     => $primer,
-        seq        => $seq,
+        primer     => "$primer",
+        seq        => "$seq",
         chromosome => $chromosome,
         start      => $start,
         stop       => $stop,
-        x_coord    => $x_coord,
-        y_coord    => $y_coord,
-        mountain   => $mountain,
+        x_coord    => "$x_coord",
+        y_coord    => "$y_coord",
+        mountain   => "$mountain",
         radius     => $radius
     };
     return {
@@ -199,8 +199,8 @@ sub profiles {
         }
     }
     return {
-        'data'        => \@data_pack,
-        'description' => 'expression profiles for set of genes'
+        'data'        =>  @data_pack ? \@data_pack : undef,
+        'description' => 'expression profiles for set of genes',
     };
 }
 
@@ -261,7 +261,7 @@ sub pcr_product {
     my $data_pack  = $self->_pack_obj($tag_object);
     return {
         'data'        => $data_pack,
-        'description' => ''
+        'description' => 'pcr_product for expr_profile'
     };
 }
 
@@ -322,7 +322,7 @@ sub expr_map {
     my $data_pack  = $self->_pack_obj($tag_object);
     return {
         'data'        => $data_pack,
-        'description' => ''
+        'description' => 'expression map data for expr_profile'
     };
 }
 
@@ -382,7 +382,7 @@ B<Response example>
 
 =back
 
-=cut 
+=cut `
 
 sub rnai {
     my $self        = shift;
@@ -391,8 +391,8 @@ sub rnai {
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
-        'data'        => \@data_pack,
-        'description' => ''
+        'data'        => @tag_objects ? \@data_pack : undef,
+        'description' => 'rnais associated with this expr_profile',
     };
 }
 

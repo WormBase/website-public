@@ -103,34 +103,41 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
 sub index {
    my ($self,$param) = @_;
    $self->autoload($param) if  $param->{'autoload'};
-   
 
-    my $data = {
-       
-        query_sequence   => $param->{'query_sequence'} || qq[],
-       
-        check_query_type_nucl => $param->{'query_type'} eq 'nucl'
-        ? qq[checked="1"]
-        : qq[],
-        check_query_type_prot => $param->{'query_type'} eq 'nucl' ? qq[]
-        : qq[checked="1"],
-        selected_blastn => $param->{'blast_app'} eq 'blastn'
-        ? qq[selected="1"]
-        : qq[],
-        selected_blastp => $param->{'blast_app'} eq 'blastp'
-        ? qq[selected="1"]
-        : qq[],
-        selected_elegans_protein => $param->{'database'} eq
-          'elegans_protein'
-        ? qq[selected="1"]
-        : qq[],
-        selected_elegans_genome => $param->{'database'} eq 'elegans_genome'
-        ? qq[selected="1"]
-        : qq[],
-    };
+   my %data = (
+       query_sequence => $param->{query_sequence} || '',
+       check_query_type_nucl => '',
+       check_query_type_prot => 'checked="1"',
+       selected_blastn => '',
+       selected_blastp => '',
+       selected_elegans_protein => '',
+       selected_elegans_genome => '',
+   );
 
-  return $data;
+   if ($params->{query_type} and $params->{query_type} eq 'nucl') {
+       @data{qw(check_query_type_nucl check_query_type_prot)}
+           = @data{qw(check_query_type_prot check_query_type_nucl)} # flip them
+   }
 
+   if ($params->{blast_app}) {
+       if ($params->{blast_app} eq 'blastn') {
+           $data{selected_blastn} = 'selected="1"';
+       }
+       elsif ($params->{blast_app} eq 'blastp') {
+           $data{selected_blastp} = 'selected="1"';
+       }
+   }
+
+   if ($params->{database}) {
+       if ($params->{database} eq 'elegans_genome') {
+           $data{selected_elegans_genome} = 'selected="1"';
+       }
+       elsif ($params->{database} eq 'elegans_protein') {
+           $data{selected_elegans_protein} = 'selected="1"';
+       }
+   }
+
+   return \%data;
 }
 
 
@@ -979,9 +986,9 @@ sub process_result_file {
 	    push @{$kviewer_adds{$chr}}, $kviewer_add;
 	}
 
-	my $result=  [$query_name,$alignment_image,$score_key_image, \%kviewer_adds,
-	      \%genome_links, \%expand_links, \@image_map_pieces];
-	push  @data,$result;
+        push @data, [$query_name, $alignment_image, $score_key_image,
+                     \%kviewer_adds, \%genome_links, \%expand_links,
+                     \@image_map_pieces];
     }
 
     return \@data;
