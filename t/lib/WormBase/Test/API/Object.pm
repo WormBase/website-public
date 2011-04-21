@@ -331,7 +331,7 @@ In addition to the specific exclusions, the methods belonging to the class'
 parents or roles can be excluded automatically like so:
 
     $tester->run_common_tests({
-        objects                 => \@test_objects,
+        objects                 => \@objects,
         exclude_parents_methods => 1,
         exclude_roles_methods   => 1,
     });
@@ -431,6 +431,13 @@ sub run_common_tests {
 
     return wantarray ? %objects : $ok;
 }
+
+# deprecated. here for current testing code but will be removed soon.
+sub test_object_methods {
+    my $self = shift;
+    $self->run_common_tests({objects => $_[0], include_methods => $_[1]});
+}
+
 
 =item B<class_hierarchy_ok([$class])>
 
@@ -565,6 +572,12 @@ sub compliant_methods_ok {
             $self->compliant_data_ok($data, $method_name);
         }
     }); # end of subtest
+}
+
+# deprecated. here for current testing code but will be removed soon.
+sub listed_methods_ok {
+    my ($self, $args) = @_;
+    $self->compliant_methods_ok($args);
 }
 
 =item B<compliant_data_ok($data, $testname)>

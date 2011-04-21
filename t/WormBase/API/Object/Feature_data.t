@@ -1,4 +1,4 @@
-#t/WormBase/API/Object/Operon.t
+#t/WormBase/API/Object/Feature_data.t
 
 use strict;
 use warnings;
@@ -15,31 +15,31 @@ use WormBase::Test::API::Object;
 use PrintOut;
 use Ace;
 
-my $class = 'Operon';
+my $class = 'Feature_data';
 my $tag = '<<TAG of interest in class>>';
 
 ## get test object with a tag data populated (hopefully)
 # my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["CEOP1140"];
+my $test_objects = ["CO871145:polyA_site"];
 
 BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Operon'); ## "::$class"
-} # Operon.t loads ok
+      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Feature_data'); ## "::$class"
+} # Feature_data.t loads ok
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
-    class     => 'Operon',
+    class     => 'Feature_data',
 });
 
 # uncomment appropriate test procedure
 
-  my $test_type = 'all' ; ## 
-  
+my $test_type = 'all' ; ## 
 # my $test_type = 'methods';
 
 ## list methods to be tested here
+
 my @methods = qw(
 			
 

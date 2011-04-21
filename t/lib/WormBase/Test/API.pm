@@ -171,6 +171,8 @@ sub build_api {
     foreach my $conf_file (@conf_files) {
         croak "$conf_file does not exist" unless -e $conf_file;
 
+        # consider -MergeDuplicateBlocks and -MergeDuplicateOptions to
+        # remove dependency on merge_hashes util function?
         $newconf = {Config::General->new(
             -ConfigFile      => $conf_file,
             -InterPolateVars => 1

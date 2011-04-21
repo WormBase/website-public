@@ -183,7 +183,7 @@ sub gene_ontology  {
 	    evidence   => $evidence
 	};	
     }
-    return { data        => \@data,
+    return { data        => @data ? \@data : undef,
 	     description => 'go terms to with which motif is annotated',
     };
 }
