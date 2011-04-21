@@ -10,6 +10,7 @@
 
  [% UNLESS c.stash.bench %]<div class="result">[% END %]
  [% USE String(item.name.class); result_class = String.lower; %]
+ [% result_class = c.config.sections.species.$result_class.title || c.config.sections.resources.$result_class.title FILTER lower %]
 
 
   <li>
@@ -30,7 +31,7 @@
   [% END %]
 
   [% TRY %]
-      [% file = "search/" _ result_class _ ".tt2" %]
+      [% file = "search/" _ item.name.class _ ".tt2" %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
   [% CATCH %]

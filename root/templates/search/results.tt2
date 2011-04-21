@@ -4,19 +4,66 @@
 <h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
 [% END %]
 
+
+
+    [% IF ( !(noboiler) && (( !(species) && (c.config.sections.$type.defined || type == 'all') )|| (type == 'all'))) %]
+      <div id="search-count-summary" class="detail-box ui-corner-all">
+      [% IF type == 'all' %]
+        [% FOREACH sec IN ['species', 'resources'] %]
+          [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
+              [% IF cls == 'title'; NEXT; END; %]
+              <li style="display:none"><a href="[% c.uri_for('/search',cls,query); IF species; '?species=' _ species ; END;%]">[% c.config.sections.$sec.$cls.title %]</a>: 
+                <span class="count" href="/search/count/[% species %]/[% cls %]/[% query %]"></span>
+              </li>
+          [% END %]
+        [% END %]
+      [% END %]
+
+      [% IF( !(species) && (c.config.sections.$type.defined || type == 'all') )%]
+        <br />
+        [% FOREACH s IN c.config.sections.species_list.keys.sort %]
+          [% IF s == 'all'; NEXT; END; %]
+          [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
+            <li style="display:none"><a href="[% c.uri_for('/search', type, query) _ '?species=' _ s %]" class="species">[% c.config.sections.species_list.$s.title %]</a>: 
+              <span class="count" href="/search/count/[% s %]/[% type %]/[% query %]"></span>
+            </li>
+          [% END %]
+        [% END %]
+      [% END %]
+      </div>
+
+      <script>
+        $jq("#search-count-summary").find(".count").each(function() {
+          $jq(this).load($jq(this).attr("href"), function(){
+            if($jq(this).text() == '0'){
+              $jq(this).parent().remove();
+            }else {
+              $jq(this).parent().show();
+            }
+          });
+        });
+
+
+      </script>
+    [% END %]
+
+
 <!-- begin result list -->
 <div id="results" class="[% widget || 'lazyload' %]-widget">
   [% UNLESS no_count %]
-  [% IF results.size > 0 %]
-  [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
+    [% IF results.size > 0 %]
+    [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
 
-    <div id="fade">about <span id="count">[% c.stash.count%]</span> 
-      [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
-      [% IF querytime; "(" _ querytime _ " seconds)"; END %]
-    </div>
-  [% ELSE %]
-    Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
-  [% END %]
+      <div id="fade">about <span id="count">[% c.stash.count%]</span> 
+        [% UNLESS type == 'all'; pluralize(lowerClass, results.size) _ ' found'; ELSE; 'results'; END; %]
+        [% IF querytime; "(" _ querytime _ " seconds)"; END %]
+      </div>
+    [% ELSE %]
+      Sorry, <span id="count">[% results.size %]</span> results found for the [% serach_type %] search [% c.stash.query %]
+    [% END %]
+
+
+
   [% END %]
   <ul class="results-[% type %]">
     [% PROCESS "search/result_list.tt2" %]
@@ -40,5 +87,6 @@
       }
     }
     sr[% IF widget; widget ; END;%].init();
+
 </script>
 <!-- End result list -->
