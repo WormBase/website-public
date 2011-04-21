@@ -2,8 +2,10 @@
 
 
 div#splash-box{
-  margin:1em 0 0;
-  border:1px solid #DDD;
+/*   margin:1em 1em 0; */
+  margin:0;
+  border-bottom:1px solid #CCC;
+/*   border:1px solid #DDD; */
 }
 div#splash-box>div {
 /*   height:6em; */
@@ -11,19 +13,19 @@ div#splash-box>div {
   padding-left:2.5em;
   font-size:1.5em;
 }
-div#top>div>p{
+div#splash-box>div>p{
   margin:0.3em 0 1em 0.6em;
-/*   margin-left:3em; */
+  margin-left:1.5em;
   text-align:center;
   width:15em;
 }
 div.content-box {
   padding:0.5em 0 0.5em 0;
   position:relative;
-  background:#EEE;
+/*   background:#EEE; */
   background-image:url('/img/home.png');
-  background-image:url('/img/home.png'), -moz-linear-gradient(-45deg, #DDD, #FAFAFA);
-  background-image:url('/img/home.png'), -webkit-gradient(linear, left top, right bottom, from(#DDD), to(#FAFAFA));
+/*   background-image:url('/img/home.png'), -moz-linear-gradient(-45deg, #DDD, #FAFAFA); */
+/*   background-image:url('/img/home.png'), -webkit-gradient(linear, left top, right bottom, from(#DDD), to(#FAFAFA)); */
 }
 .inner-box {
   background:white;
@@ -89,6 +91,7 @@ div#create-prompt>span {
   font-size:0.9em;
     margin: 0;
     padding:0em;
+/*   float:left; */
 }
 #results ul li{
    padding-top:0.5em;
@@ -137,7 +140,7 @@ top:-0.5em;
 }
 
 .text-min {
-  clear:both;
+  clear:left;
   height:2.4em;
   overflow:hidden;
   width:auto;
