@@ -681,7 +681,7 @@ sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
    
     my $headers = $c->req->headers;
-    $c->log->debug("widget GET header ".$headers->header('Content-Type'));
+    $c->log->debug("widget GET header ".$headers->content_type);
     $c->log->debug($headers);
     $c->stash->{is_class_index} = 0;  
 
