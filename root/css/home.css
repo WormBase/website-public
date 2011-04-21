@@ -2,39 +2,22 @@
 
 
 div#splash-box{
-/*   margin:1em 1em 0; */
   margin:0;
-  border-bottom:1px solid #CCC;
-/*   border:1px solid #DDD; */
-}
-div#splash-box>div {
-/*   height:6em; */
+/*   border-bottom:1px solid #CCC; */
+  padding:0.5em 0 0.5em 0;
+  position:relative;
+  background-image:url('/img/home.png');
+  background-repeat:no-repeat;
   padding:1.5em;
   padding-left:2.5em;
   font-size:1.5em;
 }
-div#splash-box>div>p{
+
+div#splash-box>p{
   margin:0.3em 0 1em 0.6em;
   margin-left:1.5em;
   text-align:center;
   width:15em;
-}
-div.content-box {
-  padding:0.5em 0 0.5em 0;
-  position:relative;
-/*   background:#EEE; */
-  background-image:url('/img/home.png');
-/*   background-image:url('/img/home.png'), -moz-linear-gradient(-45deg, #DDD, #FAFAFA); */
-/*   background-image:url('/img/home.png'), -webkit-gradient(linear, left top, right bottom, from(#DDD), to(#FAFAFA)); */
-}
-.inner-box {
-  background:white;
-  padding:0.5em;
-  font-size:0.8em;
-}
-.older-news {
-  text-align:right;
-  width:100%;
 }
 
 div#create-prompt {

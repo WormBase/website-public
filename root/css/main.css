@@ -47,7 +47,7 @@ input, select, th, td { font-size:1em; }
 
 #content {
   background:white;
-  padding: 0;
+  padding:0;
 }
 
 /* Global Links */
@@ -1243,18 +1243,18 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
    
 *********************************/
 #widgets {
-/*   background:#EEE; */
   margin:0;
-  padding:0 0 0 0em;
+  padding:0em;
   position:relative;
   clear:both;
   overflow:hidden;
+  border-top: 1px solid #CCC;
 }
 
 
 
 #navigation {
-  width: 10em;
+  width: 12em;
   float: left;
   position:relative;
   margin:-2.8em 0 0 0em;
@@ -1364,10 +1364,8 @@ padding:0.7em 0.5em 0;
   list-style: none;
   position:relative;
   background:white;
-  padding:0.7em 0.7em 0em 0.7em;
-/*   border-left:0.5em solid #EEE; */
+  padding:0.7em 0.7em 0em 0.5em;
   border-left:1px solid #CCC;
-/*   border-top:1px solid #CCC; */
 }
 
 .sortable{
@@ -1378,24 +1376,20 @@ padding:0.7em 0.5em 0;
 }
 
 .placeholder {
-/*   background: #FAF7DE; */
-/*   background: #EEE; */
   background:white;
   padding:0 1em 0 0.5em;
-  margin:0.375em 0 -0.125em 0.5em;
-/*   border:1px dashed #333; */
+  margin:0 0 0.5em 0.5em;
   border:0.15em dashed #AAA;
 }
 
 #navigation div.small li{
   font-size:0.7em;
   line-height:1em;
-/*   padding-left:1.8em; */
+  padding-left:2em;
 }
 
 .text-width {
   max-width:35em;
-/*   margin:0.5em; */
 }
 
 div.detail-box {
@@ -1437,7 +1431,6 @@ div.detail-box div.field div.field-content{
   position:absolute;
   bottom:100%;
   left:0;
-/*   background:#333; */
   background:black;
   color:white;
   font-size:10pt;
@@ -1618,13 +1611,9 @@ div.inline-columns img {
   border:1px solid #BBB;
 }
 
-/* This mark up is kinda weird. Omitting removes the structural border which really breaks the layout */
-
 div.title {
     padding:0.5em 1em 0.7em 2em;
     margin:0;
-/*    border-bottom:0.5em solid #EEE;*/
-    border-bottom:1px solid #CCC;
     position:relative;
 }
 
