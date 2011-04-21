@@ -223,14 +223,16 @@ sub _build_genetic_position {
         $label = $chromosome;
     }
 
-    return { description => "the genetic position of the $class:$object",
-             data        => { chromosome => "$chromosome",
-                              position    => "$position",
-                              error       => "$error",
-                              formatted   => "$label",
-                              method      => "$method",
-                          },
-         };
+    return {
+        description => "the genetic position of the $class:$object",
+        data        => {
+            chromosome => $chromosome && "$chromosome",
+            position   => $position   && "$position",
+            error      => $error      && "$error",
+            formatted  => $label      && "$label",
+            method     => $method     && "$method",
+        },
+    };
 }
 
 sub _seg2coords {
