@@ -34,6 +34,7 @@ sub search {
     $page       ||= 1;
     $page_size  ||=  10;
 
+
     if($type){
       $q .= " $type..$type";
     }
@@ -54,6 +55,8 @@ sub search {
     }
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
+
+
     my ($time)=tv_interval($t) =~ m/^(\d+\.\d{0,2})/;
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
