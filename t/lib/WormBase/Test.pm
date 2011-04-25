@@ -3,7 +3,7 @@ package WormBase::Test;
 use strict;
 use warnings;
 use Carp;
-use YAML qw(Dump);
+use Data::Dumper;
 use Readonly;
 use Test::More (); # isa_ok, use_ok
 use Test::Builder;
@@ -102,18 +102,29 @@ sub new {
     WormBase::Test->dump(@objs);
     $tester->dump(@objs);
 
-Produces a YAML dump of the arguments. If no arguments are provided and this is
-called as an instance method, produces a YAML dump of the tester object itself.
+Produces a data dump of the arguments. If no arguments are
+provided and this is called as an instance method, produces a dump of the
+tester object itself.
 
 =cut
 
 sub dump {
     my $self = shift;
+
+    # following taken from Data::Dumper::Concise
+    local $Data::Dumper::Terse     = 1;
+    local $Data::Dumper::Indent    = 1;
+    local $Data::Dumper::Useqq     = 1;
+    local $Data::Dumper::Deparse   = 1;
+    local $Data::Dumper::Quotekeys = 0;
+    local $Data::Dumper::Sortkeys  = 1;
+    local $Data::Dumper::Deepcopy  = 1;
+
     if (@_) {
-        $Test->diag(Dump(@_));
+        $Test->diag(Dumper(@_));
     }
     else {
-        $Test->diag(Dump($self));
+        $Test->diag(Dumper($self));
     }
 }
 
