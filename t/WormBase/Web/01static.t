@@ -18,7 +18,9 @@ use Test::More;
 use WormBase::Test::Web;
 use WWW::Robot;
 
-my $CHECK_EXTERNAL = 1;
+my $VERBOSE = 0;
+my $CHECK_EXTERNAL = 1; # use ENV?
+my $MAX_LINKS_FOLLOWED = 1000;
 
 my $tester = WormBase::Test::Web->new;
 my $mech = $tester->mech;
@@ -33,19 +35,13 @@ my $robot = WWW::Robot->new(
 
 $robot->setAttribute(TRAVERSAL => 'breadth'); # BFS
 
-#my $default_hook = sub { print join('|', @_), "\n"; return 1;};
-
-my $base_url = URI::URL->new($ENV{CATALYST_SERVER} || 'http://localhost/');
-
 my @followed;
 
 # setup robot
-
-# check external URLs but don't follow them
 $robot->addHook('follow-url-test', \&check_external_url);
 $robot->addHook('invoke-on-followed-url', sub {
                     my ($robot, $hook_name, $url) = @_;
-                    diag("Following: $url");
+                    diag("Following: $url") if $VERBOSE;
                     push @followed, $url;
                 });
 $robot->addHook('invoke-after-get', sub {
@@ -54,47 +50,38 @@ $robot->addHook('invoke-after-get', sub {
                         or diag("$url -- ", $response->status_line);
                 });
 
-# don't let the robot go out of control
-$robot->addHook('continue-test', robot_under_control(1000));
+# safeguard against the robot going out of control
+# the robot will not follow-through more than MAX_LINKS_FOLLOWED
+$robot->addHook('continue-test', max_counted($MAX_LINKS_FOLLOWED));
 
-$robot->run($base_url); # start'er up!
+$robot->run($tester->base_url); # start'er up!
 
+if ($VERBOSE) {
+    diag($_) foreach @followed;
+}
 diag("Total followed: ", scalar @followed);
-diag($_) foreach @followed;
 
 done_testing;
 
 ################################################################################
+# helper subs
 
-
-sub is_same_domain {
-    my ($url1, $url2) = @_;
-    my $hp1 = $url1->can('host_port') ? $url1->host_port : '';
-    my $hp2 = $url2->can('host_port') ? $url2->host_port : '';
-    return $hp1 eq $hp2;
-}
-
-sub robot_under_control {
-    my $max = shift;
-    my $counter = 0;
-    return sub {
-        ++$counter < $max;
-    }
-}
-
+# checks whether the URL is external to the test server
+# if external, fetch the resource but do not allow the robot to follow it
+# else let the robot fetch it
 sub check_external_url {
     my ($robot, $hook_name, $url) = @_;
 
-    diag("check_external_url: $url");
+    diag("check_external_url: $url") if $VERBOSE;
 
     return unless $url->path; # is just a fragment...
 
     # follow if it's internal
-    return 1 if is_same_domain($url, $base_url);
+    return 1 if $tester->is_external_url($url);
 
     return unless $CHECK_EXTERNAL; # do we want to run checks?
-    # otherwise check the link and but don't let the bot follow
 
+    # check the link and but don't let the bot follow
     push @followed, $url; # pretend it followed though
 
     my $response = $robot->get_url($url);
@@ -104,30 +91,11 @@ sub check_external_url {
     return;
 }
 
-# takes in a sub/name of sub and returns a sub that will
-# print out the value returned by the sub in addition to returning
-# the same value as the sub
-sub echo_wrap {
-    my $sub = shift;
-    my $name = shift;
-    unless (ref $sub eq 'CODE') {
-        no strict 'refs';
-        $name ||= $sub;
-        $sub = \&$sub; # soft reference
-        use strict 'refs';
-    }
-    $name ||= '';
-
+# counter sub generator
+sub max_counted {
+    my $max = shift;
+    my $counter = 0;
     return sub {
-        if (wantarray) {
-            my @arr = &$sub;
-            diag("$name(): ARRAY: ", join('; ', map { $_ // 'UNDEF' } @arr));
-            return @arr;
-        }
-        else {
-            my $val = &$sub;
-            diag("$name(): VALUE: ", $val // 'UNDEF');
-            return $val;
-        }
+        ++$counter < $max;
     }
 }

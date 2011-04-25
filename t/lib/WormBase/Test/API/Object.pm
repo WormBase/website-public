@@ -166,7 +166,7 @@ sub new {
 sub class { # accessor/mutator
     my ($self, $param) = @_;
     if ($param) {
-        croak "Not a string!" if ref $param;
+        croak "Class must be a string!" if ref $param;
         return $self->{class} = $self->fully_qualified_class_name($param);
     }
     return $self->{class};
@@ -419,7 +419,7 @@ sub run_common_tests {
         @object_names = @_;
     }
 
-    my $ok;
+    my $ok = 1;
     my %objects;
     foreach my $obj_name (@object_names) {
         my $obj = $self->fetch_object_ok($obj_name);
@@ -566,7 +566,7 @@ sub compliant_methods_ok {
         return;
     }
 
-    return $Test->subtest($test_name, => sub {
+    return $Test->subtest($test_name => sub {
         while (my ($method_name, $method_meta) = each %methods) {
             my $data = $self->call_method_ok($wb_obj, $method_name);
             $self->compliant_data_ok($data, $method_name);
