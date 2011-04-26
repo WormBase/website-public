@@ -168,6 +168,30 @@ B<Response example>
 sub defined_by {
     my ($self) = @_;
 
+    my @data_pack;
+    foreach my $definer (@{$self ~~ '@Defined_by'}) {
+    	my @definer_objs = $definer->col;
+    	foreach my $definer_object (@definer_objs) {
+    		my $definer_data = $self->_pack_obj($definer_object);
+    		(my $label = "$definer") =~ s/Defined_by_(.)/\u$1/;
+    		my $data = {
+    			'object' 	=> $definer_data,
+    			'label' 	=> "$label",
+    		};
+    		push @data_pack, $data;
+    	}
+    }
+
+    return {
+        description => 'objects that define this feature',
+        data        => @data_pack ? \@data_pack : undef,
+    };
+}
+
+
+sub defined_by_20110426_sav {
+    my ($self) = @_;
+
     my %defined_by;
     foreach my $definer (@{$self ~~ '@Defined_by'}) {
         my $definer_objs = $self->_pack_objects([$definer->col]);
@@ -180,6 +204,7 @@ sub defined_by {
         data        => %defined_by ? \%defined_by : undef,
     };
 }
+
 
 =head3 associations
 
@@ -233,6 +258,30 @@ B<Response example>
 =cut
 
 sub associations {
+    my ($self) = @_;
+    my @data_pack;
+    my @association_types = @{$self ~~ '@Associations'};
+    
+    foreach my $assoc_type (@association_types) { # assoc_type is tag
+    	my @association_objs = $assoc_type->col;
+    	foreach my $association_object (@association_objs) {
+    		my $association = $self->_pack_obj($association_object);
+    		(my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
+    		my $association_data = {
+    			'association' 	=> $association,
+    			'label' 		=> $label,
+    			};
+    		push @data_pack, $association_data; 
+    		}
+    }
+    return {
+        description => 'objects that define this feature',
+        data        => @data_pack ? \@data_pack : undef,
+    };
+}
+
+
+sub associations_20110426 {
     my ($self) = @_;
 
     my %associations;
@@ -301,8 +350,18 @@ B<Response example>
 =back
 
 =cut 
-
 sub binds_gene_product {
+    my ($self) = @_;
+    my $object = $self->object;
+  	my @tag_objects = $object->Bound_by_product_of;
+  	my @data_pack = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+	return {
+		'data' => @data_pack ? \@data_pack : undef,
+		'description' => ''
+	};
+}
+
+sub binds_gene_product_20110426_sav {
     my ($self) = @_;
 
     my $data = $self->_pack_objects($self ~~ '@Bound_by_product_of'); # TODO: evidence?
@@ -366,7 +425,7 @@ B<Response example>
 sub transcription_factor {
     my ($self) = @_;
 
-    my $factor = $self ~~ 'Transcription_factor';
+    my $factor = $self ~~ '	Transcription_factor';
     return {
         description => 'Transcription factor of the feature',
         data        => $factor && $self->_common_name($factor), # no TFactor model
