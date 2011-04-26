@@ -29,7 +29,7 @@ WormBase::Test::Web
         # tests that require more information about the internals
 
         my $api_tester = $tester->api_tester;
-        my $obj = $api_tester->fetch_object({-class => $class, -name => $name});
+        my $obj = $api_tester->fetch_object({ class => $class, name => $name });
 
         my $c = $tester->context;
 

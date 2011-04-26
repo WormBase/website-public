@@ -22,10 +22,37 @@ WormBase::Test::Web::REST
 =head1 SYNOPSIS
 
 
+    $tester = WormBase::Test::Web::REST->new({ class => $class });
+    $mech = $tester->mech;
+
+    %obj_widgets = $tester->check_all_widgets({ names => $obj_names });
+    like($obj_widgets{$obj_name}->{$widget}, $regex);
+
+    # testing that a widget simply works
+    $tester->get_widget_ok({ name => $obj_name, widget => $widget });
+
+    # using local server to test RESTful interface with data straight from API
+    if ($tester->is_local_server) {
+        $api_tester = $tester->api_tester;
+        $obj = $api_tester->fetch_object({ name => $name, class => $class });
+
+        # check that some part of the data makes it to the view
+        $data = $obj->$field->{data};
+        like($obj_widgets{$obj_name}->{$widget}, qr/$data/);
+    }
+
+
+    # more detailed information
+    $section = $tester->get_section($class); # config section for the class
+    $section->{search} ...;
+
 
 =head1 DESCRIPTION
 
-
+Tester class for the WormBase RESTful interface. This is a subclass of
+WormBase::Test::Web and makes use of its encapsulated convenience methods.
+This class aids in testing the RESTful interface by providing some
+common tests and class- and server-aware methods.
 
 =head1 CONSTANTS
 
@@ -120,7 +147,11 @@ sub class { # accessor/mutator
 
 =item B<get_section([$section_name)>
 
-    $section = $tester->get_section;
+    $all_sections = $tester->get_section;
+    $section      = $tester->get_section($class);
+
+Retrieve either all sections present in the config (under the <sections>
+block) or a particular one two levels deep (e.g. sections->species->variation).
 
 =cut
 
@@ -284,7 +315,6 @@ sub _canonical_class {
     my $self = shift;
     return lc shift;
 }
-
 
 =head1 AUTHOR
 
