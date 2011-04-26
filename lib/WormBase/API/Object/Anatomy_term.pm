@@ -50,7 +50,7 @@ sub term {
 	
 	return {
 		'data'=> $data_pack,
-		'description' => ''
+		'description' => 'Term in the Anatomy ontology'
 		};
 }
 
@@ -252,7 +252,7 @@ sub transgenes {
     };
     my @data_pack = map { $_ = $self->_pack_obj($_) } @transgenes;
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'transgenes annotated with this anatomy_term'
     };
 }
@@ -333,7 +333,7 @@ sub expression_clusters {
           };
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'expression_clusters associated with this anatomy_term'
     };
 }
@@ -430,7 +430,7 @@ sub gene_ontology {
           };
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'go_terms associated with this anatomy_term'
     };
 }
@@ -606,7 +606,7 @@ sub _anatomy_function {
             'gene' => $gene_data
           };
     }
-    return \@data_pack;
+    return @data_pack ? \@data_pack : undef;
 }
 
 __PACKAGE__->meta->make_immutable;
