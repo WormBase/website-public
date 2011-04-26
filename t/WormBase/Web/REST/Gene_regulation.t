@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @test_objects = qw(WBPaper00024604_unc-60);
+my @object_names = qw(WBPaper00024604_unc-60);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
@@ -21,6 +21,6 @@ my $tester = WormBase::Test::Web::REST->new({
     class     => 'Gene_regulation'
 });
 
-$tester->check_all_widgets({objects => \@test_objects});
+$tester->check_all_widgets({names => \@object_names});
 
 done_testing;

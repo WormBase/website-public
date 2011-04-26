@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @test_objects = qw(RNASeq_Hillier.dauer_daf-2);
+my @object_names = qw(RNASeq_Hillier.dauer_daf-2);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
@@ -21,6 +21,6 @@ my $tester = WormBase::Test::Web::REST->new({
     class     => 'Analysis'
 });
 
-$tester->check_all_widgets({objects => \@test_objects});
+$tester->check_all_widgets({names => \@object_names});
 
 done_testing;
