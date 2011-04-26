@@ -9,6 +9,7 @@ use Class::MOP;
 
 use namespace::autoclean;
 
+use WormBase::Test::API;
 use base 'WormBase::Test::API';
 
 my $Test = Test::Builder->new;
@@ -33,20 +34,20 @@ WormBase::Test::API::Object - WormBase API object tester
 
     # finer autotesting
     $tester->run_common_tests({
-        objects                 => \@test_object_names,
+        names                   => \@test_object_names,
         # check only the methods specific to the class
         exclude_parents_methods => 1,
         exclude_roles_methods   => 1,
     });
 
     $tester->run_common_tests({
-        objects         => \@test_object_names,
+        names           => \@test_object_names,
         # check only these methods
         include_methods => ['method1', 'method2'],
     });
 
     $tester->run_common_tets({
-        objects         => \@test_object_names,
+        names           => \@test_object_names,
         # check all methods except
         exclude_methods => ['badmethod', 'manually_test_this'],
     });
@@ -294,19 +295,19 @@ otherwise specified.
 Run tests common to model objects. The names of test objects must be provided
 as arguments:
 
-    @test_objects = ('Object 1', 'Object 2'); # names of objects
-    $tester->run_common_tests(@test_objects);
+    @test_object_names = ('Object 1', 'Object 2'); # names of objects
+    $tester->run_common_tests(@test_object_names);
 
-or in the "objects" entry of an arguments hashref ("argshash"):
+or in the "names" entry of an arguments hashref ("argshash"):
 
-    $tester->run_common_tests({objects => \@test_objects});
+    $tester->run_common_tests({names => \@test_object_names});
 
 This method will attempt to fetch each object and run L<compliant_methods_ok>
 on them. Specific methods to test may be specified by providing an arrayref
 of method names or metaobjects like so:
 
     $tester->run_common_tests({
-        objects         => \@test_objects,
+        names           => \@test_object_names,
         include_methods => $methods, # arrayref
     });
 
@@ -314,7 +315,7 @@ Similarly, methods can be excluded from testing i.e. test all methods of the
 class except the ones specified:
 
     $tester->run_common_tests({
-        objects         => \@test_objects,
+        names           => \@test_object_names,
         exclude_methods => $methods, # all except these
     });
 
@@ -322,7 +323,7 @@ Note that if methods are specified to test using include_methods, any exclusions
 are ignored.
 
     $tester->run_common_tests({
-        objects         => \@test_objects,
+        names           => \@test_object_names,
         include_methods => $methods1, # only test these
         exclude_methods => $methods2, # no effect
     });
@@ -331,7 +332,7 @@ In addition to the specific exclusions, the methods belonging to the class'
 parents or roles can be excluded automatically like so:
 
     $tester->run_common_tests({
-        objects                 => \@objects,
+        names                   => \@test_object_names,
         exclude_parents_methods => 1,
         exclude_roles_methods   => 1,
     });
@@ -340,7 +341,7 @@ Note that large exclusions such as excluding parents' methods and roles' methods
 will ignore any inclusions specified such that the above run is the same as
 
     $tester->run_common_tests({
-        objects                 => \@test_objects,
+        names                   => \@test_object_names,
         include_methods         => $methods,
         exclude_parents_methods => 1,
         exclude_roles_methods   => 1,
@@ -349,7 +350,7 @@ will ignore any inclusions specified such that the above run is the same as
 In such a case, more methods to be excluded may be specified:
 
     $tester->run_common_tests({
-        objects                 => \@test_objects,
+        names                   => \@test_object_names,
         exclude_parents_methods => 1,         # exclude parents' methods
         exclude_roles_methods   => 1,         # exclude roles' methods
         exclude_methods         => $methods,  # exclude these too!
@@ -360,10 +361,11 @@ Thus, in general: B<DO NOT USE BOTH EXCLUSION AND INCLUSION TOGETHER>.
 If the fetched objects are desired, run_common_tests will return a hash in list
 context with the object name as the key and object as the value:
 
-    my %object_hash = $tester->run_common_tests(@test_objects);
+    my %object_hash = $tester->run_common_tests(@test_object_names);
 
 It is possible that some of the objects are not fetched so do not assume that
-C<values %object_hash> will be the same as @test_objects (even after rearrangement).
+C<values %object_hash> will be the same as @test_object_names (even after
+rearrangement).
 
 In scalar context, run_common_tests will return the test success.
 
@@ -379,12 +381,13 @@ sub run_common_tests {
     my $class = $self->class
         or croak 'Need to provide tester with test class via class accessor';
 
-    my @object_names;
+    my $object_names;
     my $method_args; # for method compliance test
     if (ref $_[0] eq 'HASH') {
         my $args = shift;
-        croak 'Need objects in hash' unless $args->{objects};
-        @object_names = @{$args->{objects}};
+        # $args->{objects} deprecated!
+        $object_names = $args->{name} || $args->{names} || $args->{objects}
+            or croak 'Need object names in hash';
 
         my @excludes;
         if ($args->{exclude_methods}) {
@@ -416,14 +419,14 @@ sub run_common_tests {
         $method_args->{exclude} = \@excludes if @excludes;
     }
     else {
-        @object_names = @_;
+        $object_names = [@_];
     }
 
     my $ok = 1;
     my %objects;
-    foreach my $obj_name (@object_names) {
+    foreach my $obj_name (@$object_names) {
         my $obj = $self->fetch_object_ok($obj_name);
-		$method_args->{object} = $obj if $method_args;
+		$method_args->{name} = $obj if $method_args;
         my $meth_ok = $self->compliant_methods_ok($method_args || $obj);
         $ok &&= $meth_ok;
         $objects{$obj_name} = $obj if $obj;
@@ -497,7 +500,7 @@ is standards compliant.
 The option to test only certain methods is provided:
 
     $tester->compliant_methods_ok({
-        object  => $object,
+        name    => $object,
         include => $methods_array,
     });
 
@@ -505,7 +508,7 @@ Where $methods_array is an arrayref of methods metaobjects or the names of metho
 The option to test all methods except a few is also provided:
 
     $tester->compliant_methods_ok({
-        object  => $object,
+        name    => $object,
         exclude => $methods_array,
     });
 
@@ -524,7 +527,7 @@ sub compliant_methods_ok {
     my %methods; # METHOD_NAME => METHOD_NAME/METHOD_METAOBJECT
 
     if (ref $args eq 'HASH') {
-        $wb_obj = $args->{object};
+        $wb_obj = $args->{name} || $args->{object}; # $args->{object} deprecated!
         croak 'Need to provide an object as an argument'
             unless eval {$wb_obj->isa($OBJECT_BASE)};
         $class = ref $wb_obj;

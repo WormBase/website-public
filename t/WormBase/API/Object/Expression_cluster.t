@@ -49,7 +49,7 @@ if ($test_type eq 'methods') {
 	
 	print "TESTING\: $test_objects->[0]\n";
 	$tester->run_common_tests({
-		objects                 => $test_objects,
+		names                   => $test_objects,
 		include_methods => \@methods,    
 	});
 
@@ -65,7 +65,7 @@ if ($test_type eq 'methods') {
 }
 else {
 	$tester->run_common_tests({
-		objects => $test_objects,   
+		names   => $test_objects,   
 		exclude_parents_methods => 1, # don't want to test parent methods
     	exclude_roles_methods   => 1, # don't want to test role methods
 	});

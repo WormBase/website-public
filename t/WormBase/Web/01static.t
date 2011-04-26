@@ -54,7 +54,7 @@ $robot->addHook('invoke-after-get', sub {
 # the robot will not follow-through more than MAX_LINKS_FOLLOWED
 $robot->addHook('continue-test', max_counted($MAX_LINKS_FOLLOWED));
 
-$robot->run($tester->base_url); # start'er up!
+$robot->run($tester->root_url); # start'er up!
 
 if ($VERBOSE) {
     diag($_) foreach @followed;

@@ -20,7 +20,7 @@ my $Test = Test::Builder->new;
 
 =head1 NAME
 
-WormBase::Test::API - a generic WormBase API testing object
+WormBase::Test::API - a WormBase API testing object
 
 =head1 SYNOPSIS
 
@@ -287,6 +287,8 @@ sub fetch_object_ok {
 =head1 BUGS
 
 =head1 SEE ALSO
+
+L<WormBase::Test>, L<WormBase::API>
 
 =head1 COPYRIGHT
 

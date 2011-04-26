@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 # t/WormBase/API/Object/Variation.t
 
 use strict;
@@ -14,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::API::Object;
 
-my @test_objects = qw(WBVar00143616 tm501);
+my @object_names = qw(WBVar00143616 tm501);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
@@ -22,7 +21,7 @@ my $tester = WormBase::Test::API::Object->new({
 });
 
 $tester->run_common_tests({
-    objects                 => \@test_objects,
+    names                   => \@object_names,
     exclude_parents_methods => 1,
     exclude_roles_methods   => 1,
 });
