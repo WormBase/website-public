@@ -189,22 +189,6 @@ sub defined_by {
 }
 
 
-sub defined_by_20110426_sav {
-    my ($self) = @_;
-
-    my %defined_by;
-    foreach my $definer (@{$self ~~ '@Defined_by'}) {
-        my $definer_objs = $self->_pack_objects([$definer->col]);
-        (my $label = "$definer") =~ s/Defined_by_(.)/\u$1/;
-        $defined_by{$label} = $definer_objs;
-    }
-
-    return {
-        description => 'objects that define this feature',
-        data        => %defined_by ? \%defined_by : undef,
-    };
-}
-
 
 =head3 associations
 
@@ -281,24 +265,6 @@ sub associations {
 }
 
 
-sub associations_20110426 {
-    my ($self) = @_;
-
-    my %associations;
-    foreach my $assoc_type (@{$self ~~ '@Associations'}) { # assoc_type is tag
-        my %assoc_objs = map { $_ => {
-            obj => $self->_pack_obj($_),
-            # evidence => $_->right, # TODO: do something with evidence
-        }} $assoc_type->col;
-        (my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
-        $associations{$label} = \%assoc_objs;
-    }
-
-    return {
-        description => 'objects that define this feature',
-        data        => %associations ? \%associations : undef,
-    };
-}
 
 =head3 binds_gene_product
 
@@ -361,15 +327,6 @@ sub binds_gene_product {
 	};
 }
 
-sub binds_gene_product_20110426_sav {
-    my ($self) = @_;
-
-    my $data = $self->_pack_objects($self ~~ '@Bound_by_product_of'); # TODO: evidence?
-    return {
-        description => 'gene products that bind this feature',
-        data        => %$data ? $data: undef,
-    };
-}
 
 =head3 transcription_factor
 
