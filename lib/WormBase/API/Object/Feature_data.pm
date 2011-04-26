@@ -28,6 +28,14 @@ http://wormbase.org/species/feature_data
 #
 #########################
 
+# sub name {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# sub method {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
+
 =head2 Overview
 
 =cut
