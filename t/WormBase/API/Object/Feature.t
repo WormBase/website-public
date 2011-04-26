@@ -16,13 +16,15 @@ use PrintOut;
 use Ace;
 
 my $class = 'Feature';
-my $tag = '<<TAG of interest in class>>';
+my $tag = 'Transcription_factor';
+
+## Bound_by_product_of
 
 ## get test object with a tag data populated (hopefully)
-# my $test_objects = PrintOut::get_features($class,$tag); 
+ my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["WBsf000001"];
+# my $test_objects = ["WBsf019088"];
 
 BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Feature'); ## "::$class"
@@ -34,17 +36,14 @@ my $tester = WormBase::Test::API::Object->new({
 });
 
 # uncomment appropriate test procedure
-
-my $test_type = 'all' ; ## 
-# my $test_type = 'methods';
+#	my $test_type = 'all' ; ## 
+ 	my $test_type = 'methods';
 
 ## list methods to be tested here
-
 my @methods = qw(
-			
-
+			transcription_factor
 				);
-###
+###defined_by	annotation binds_gene_product
 
 if ($test_type eq 'methods') {
 	$tester->run_common_tests({
