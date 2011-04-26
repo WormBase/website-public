@@ -44,6 +44,13 @@ http://wormbase.org/species/operon
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+# sub method {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
+
+
+
+
 =head3 species
 
 This method will return a data structure with species containing the operon.
