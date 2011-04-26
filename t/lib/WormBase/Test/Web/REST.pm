@@ -9,31 +9,101 @@ use Test::Builder;
 
 use namespace::autoclean;
 
-use WormBase::Test::Web;
 use base 'WormBase::Test::Web';
 
 my $Test = Test::Builder->new;
 
+# WormBase REST tester
+
+=head1 NAME
+
+WormBase::Test::Web::REST
+
+=head1 SYNOPSIS
+
+
+
+=head1 DESCRIPTION
+
+
+
+=head1 CONSTANTS
+
+Constants related to testing and running the WormBase web application.
+These can be accessed as either interpolated variables or
+subroutines/methods.
+
+    $WormBase::Test::Web::REST::CONSTANT
+    WormBase::Test::Web::REST::CONSTANT
+
+=over
+
+=item B<WIDGET_BASE>
+
+The REST URL base for retrieving widgets.
+
+=cut
+
 Readonly our $WIDGET_BASE => '/rest/widget';
 sub WIDGET_BASE() { return $WIDGET_BASE };
+
+=back
+
+=cut
+
+=head1 METHODS
+
+=cut
+
+################################################################################
+# Methods
+################################################################################
+
+=over
+
+=item B<new($arghash)>
+
+    $tester = WormBase::Test::Web::REST->new({
+        conf_file => $filename, # optional on a local server
+        class     => $class, # optional but if provided, must be in config
+    });
+
+Creates a new tester object with configuration given in the conf_file.
+
+=cut
 
 sub new {
     my $class = shift;
     my $args  = shift;
 
     my $self = $class->SUPER::new($args);
-    my $conf_file = $args->{conf_file}
-        or croak 'Must provide conf_file';
-    croak "$conf_file does not exist" unless -e $conf_file;
 
-    my %config = Config::General->new(-ConfigFile => $conf_file)->getall
-        or croak "$conf_file does not have sections block";
-    $self->{sections} = $config{sections};
+    if (my $conf_file = $args->{conf_file}) {
+        croak "$conf_file does not exist" unless -e $conf_file;
+
+        # not doing further searches for _local or support multiple conf files
+        # because sections should be in one place and unchanged on local dev
+        # machines. can support in future but will require refactoring from
+        # WormBase::Test::API
+        my %config = Config::General->new(-ConfigFile => $conf_file)->getall;
+        $self->{remote_sections} = $config{sections}
+            or croak 'Config does not have "sections" section';
+    }
+    elsif ($self->is_remote_server) {
+        croak "Must provide conf_file to run against a remote server";
+    } # else handle config seamlessly
 
     $self->class($args->{class}) if $args->{class};
 
     return bless $self, $class;
 }
+
+=item B<class([$class])>
+
+    $tester->class($class); # $class must be found in sections or will croak
+    $class = $tester->class;
+
+=cut
 
 # resembles Test::API::Object but web interface is not aware of internal,
 # fully qualified names
@@ -48,36 +118,122 @@ sub class { # accessor/mutator
     return $self->{class};
 }
 
-sub sections { # accessor
-    my $self = shift;
-    # could use $c->config(...) if local server
-    return $self->{sections};
-}
+=item B<get_section([$section_name)>
 
-# 1 level deep in sections hash; generalize to n-level deep?
+    $section = $tester->get_section;
+
+=cut
+
 sub get_section {
     my ($self, $section) = @_;
 
-    my $sections = $self->sections;
+    my $sections = $self->is_local_server
+                 ? $self->context->config->{sections}
+                 : $self->{local_sections};
+
+    return $sections unless $section;
+
     foreach my $section_type (keys %$sections) {
         if (exists $sections->{$section_type}->{$section}) {
             return $sections->{$section_type}->{$section};
         }
     }
-    croak "Cannot find $section section in provided config file!\n";
+    croak "Cannot find $section section in config!";
 }
 
-# basically the non-exception form of get_section
+=item B<has_section>
+
+    # same arguments as get_section
+    $section = $tester->has_section($section_name);
+
+Convenience method for checking whether a section exists in the config.
+Returns the hash of the section config if it exists, otherwise false.
+This behaves like L<get_section> but returns false instead of an exception.
+
+=cut
+
 sub has_section {
-    my ($self, $section) = @_;
-
-    return eval { $self->get_section($section) };
-}
-
-sub _canonical_class {
     my $self = shift;
-    return lc shift;
+
+    return eval { $self->get_section(@_) };
 }
+
+=item B<get_widget($argshash)>
+
+    $widget = $tester->get_widget({
+        name   => $obj_name,
+        class  => $class, # optional if already set
+        widget => $widget_name,
+    });
+
+Retrieves the content of the specified widget via the RESTful interface.
+If there are any problems in the retrieval process, returns undef.
+
+=cut
+
+sub get_widget {
+    my ($self, $args) = @_;
+    croak 'Argument hash required' unless $args && ref $args eq 'HASH';
+
+    my $class = $self->_canonical_class($args->{class} || $self->class)
+        or croak 'Class needs to be set or provided as an arg';
+    my $obj = $args->{name}
+        or croak 'Object name needs to be provided as an arg';
+    my $widget = $args->{widget}
+        or croak 'Widget needs to be provided as an arg';
+
+    # can make use of $c->uri_for(...) if local server
+    my $url = "$WIDGET_BASE/$class/$obj/$widget";
+
+    if ($args->{_test}) {
+        my $testname = "GET $widget widget from $obj " . ucfirst $class;
+        return $self->mech->get_ok($url, $testname);
+    }
+
+    my $res = $self->mech->get($url);
+    return $res->is_success ? $res->decoded_content : undef;
+}
+
+=back
+
+=cut
+
+################################################################################
+# Test methods
+################################################################################
+
+=head2 Test Methods
+
+Methods that emit TAP compatible output.
+
+=over
+
+=item B<get_widget_ok>
+
+Same interface as L<get_widget> but emits TAP output and returns true on
+success and false on failure.
+
+=cut
+
+sub get_widget_ok {
+    my ($self, $args) = @_;
+    croak 'Argument hash required' unless $args && ref $args eq 'HASH';
+
+    return $self->get_widget({%$args, _test => 1});
+}
+
+=item B<check_all_widgets>
+
+    $tester->check_all_widgets({
+        names => $obj_names, # arrayref of names or single name
+        class => $class, # optional if already set
+    });
+
+Checks all the widgets of the given objects of the given class. In scalar
+context, returns true or false indicating success or failure. In list context,
+returns a nested hash of object name => widget => widget content.
+
+=cut
 
 sub check_all_widgets {
     my ($self, $args) = @_;
@@ -86,7 +242,7 @@ sub check_all_widgets {
     my $class = $self->_canonical_class($args->{class} || $self->class)
         or croak 'Class needs to be set or provided as an arg';
     my $uclass = ucfirst $class;
-    my $objs = $args->{object} || $args->{objects};
+    my $objs = $args->{name} || $args->{names};
     $objs = [$objs] if ref $objs ne 'ARRAY';
 
     my $section = $self->has_section($class)
@@ -103,7 +259,7 @@ sub check_all_widgets {
             "All widgets ok for $obj $uclass",
             sub {
                 foreach my $widget (keys %$widgets) {
-                    my $widget_data = $self->get_widget({object => $obj,
+                    my $widget_data = $self->get_widget({name   => $obj,
                                                          class  => $class,
                                                          widget => $widget});
                     if ($Test->ok($widget_data,"GET $widget from $obj $uclass")) {
@@ -116,34 +272,31 @@ sub check_all_widgets {
     return wantarray ? %objwidgets : $ok;
 }
 
-sub get_widget {
-    my ($self, $args) = @_;
-    croak 'Argument hash required' unless $args && ref $args eq 'HASH';
+=back
 
-    my $class = $self->_canonical_class($args->{class} || $self->class)
-        or croak 'Class needs to be set or provided as an arg';
-    my $obj = $args->{object}
-        or croak 'Object needs to be provided as an arg';
-    my $widget = $args->{widget}
-        or croak 'Widget needs to be provided as an arg';
+=cut
 
-    # can make use of $c->uri_for(...) if local server
-    my $url = "$WIDGET_BASE/$class/$obj/$widget";
+################################################################################
+# Private methods
+################################################################################
 
-    if ($args->{_test}) {
-        my $testname = "GET $widget widget from $obj " . ucfirst $class;
-        return $self->mech->get_ok($url, $testname);
-    }
-
-    my $res = $self->mech->get($url);
-    return $res->is_success ? $res->decoded_content : undef;
+sub _canonical_class {
+    my $self = shift;
+    return lc shift;
 }
 
-sub get_widget_ok {
-    my ($self, $args) = @_;
-    croak 'Argument hash required' unless $args && ref $args eq 'HASH';
 
-    return $self->get_widget({%$args, _test => 1});
-}
+=head1 AUTHOR
+
+=head1 BUGS
+
+=head1 SEE ALSO
+
+L<WormBase::Test>, L<WormBase::Test::API>,  L<Test::WWW::Mechanize>,
+L<Catalyst::Test>
+
+=head1 COPYRIGHT
+
+=cut
 
 1;

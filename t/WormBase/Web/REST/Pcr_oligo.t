@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @test_objects = qw(cenix:235-f12_T7 184904_at sjj_C06C6.4);
+my @object_names = qw(cenix:235-f12_T7 184904_at sjj_C06C6.4);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
@@ -21,6 +21,6 @@ my $tester = WormBase::Test::Web::REST->new({
     class     => 'Pcr_oligo'
 });
 
-$tester->check_all_widgets({objects => \@test_objects});
+$tester->check_all_widgets({names => \@object_names});
 
 done_testing;

@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @test_objects = qw(K07D8);
+my @object_names = qw(K07D8);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
@@ -21,6 +21,6 @@ my $tester = WormBase::Test::Web::REST->new({
     class     => 'Clone'
 });
 
-$tester->check_all_widgets({objects => \@test_objects});
+$tester->check_all_widgets({names => \@object_names});
 
 done_testing;

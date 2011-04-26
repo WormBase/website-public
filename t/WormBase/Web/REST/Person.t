@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @test_objects = qw(WBPerson1352);
+my @object_names = qw(WBPerson1352);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
@@ -21,6 +21,6 @@ my $tester = WormBase::Test::Web::REST->new({
     class     => 'Person'
 });
 
-$tester->check_all_widgets({objects => \@test_objects});
+$tester->check_all_widgets({names => \@object_names});
 
 done_testing;
