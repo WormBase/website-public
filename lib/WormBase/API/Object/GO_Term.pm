@@ -92,7 +92,7 @@ sub term {
     my $self       = shift;
     my $object     = $self->object;
     my $tag_object = $object->Term;
-    my $data_pack  = $self->_pack_obj( $object, $tag_object );
+    my $data_pack  = $self->_pack_obj($object,"$tag_object");
     return {
         'data'        => $data_pack,
         'description' => 'GO term'
@@ -156,7 +156,7 @@ sub definition {
     my $object    = $self->object;
     my $data_pack = $object->Definition;
     return {
-        'data'        => $data_pack,
+        'data'        => "$data_pack",
         'description' => 'term definition'
     };
 }
@@ -297,7 +297,7 @@ sub genes {
         }
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @genes ? \@data_pack : undef,
         'description' => 'genes annotated with this term'
     };
 }
@@ -365,7 +365,8 @@ sub cds {
 
             my ( $evidence_code, $evidence_details ) =
               $self->_get_GO_evidence( $object, $gene );
-            my $gene_info = $self->_pack_object($gene);
+            my $gene_info;
+           	$gene_info = eval{$self->_pack_object($gene);};
             my $gene_data = {
                 'gene'             => $gene_info,
                 'evidence_code'    => $evidence_code,
@@ -375,7 +376,7 @@ sub cds {
         }
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @genes ? \@data_pack : undef,
         'description' => 'CDS annotated with this term'
     };
 }
@@ -479,9 +480,10 @@ sub genes_n_cds {
     }
 
     foreach my $gene (@genes) {
-
-        my $cgc_name = $gene->CGC_name;
-        my $seq      = $gene->Sequence_name;
+        my $cgc_name;
+        $cgc_name = eval{$gene->CGC_name;};
+        my $seq;
+        $seq = eval{$gene->Sequence_name;};
         my $desc = $gene->Concise_description || $gene->Provisional_description;
         my ( $evidence_code, $evidence_details ) =
           $self->_get_GO_evidence( $term, $gene );
@@ -489,16 +491,16 @@ sub genes_n_cds {
 
         my $gene_data = {
             'gene_info'        => $gene_info,
-            'cgc_name'         => $cgc_name,
-            'seq'              => $seq,
-            'description'      => $desc,
+            'cgc_name'         => "$cgc_name",
+            'seq'              => "$seq",
+            'description'      => "$desc",
             'evidence_code'    => $evidence_code,
             'evidence_details' => $evidence_details
         };
         push @data_pack, $gene_data;
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @objs ?  \@data_pack : undef,
         'description' => 'genes and cds annoted with this term'
     };
 }
@@ -568,14 +570,14 @@ sub phenotype {
 
         my $pheno_data = {
             'phenotype_info'   => $phenotype_info,
-            'description'      => $phenotype_desc,
+            'description'      => "$phenotype_desc",
             'evidence_code'    => $evidence_code,
             'evidence_details' => $evidence_details
         };
         push @data_pack, $pheno_data;
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @phenotypes ? \@data_pack : undef,
         'description' => 'phenotypes annotated with this term'
     };
 }
@@ -654,7 +656,7 @@ sub motif {
         push @data_pack, $motif_data;
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @data_pack ? \@data_pack : undef,
         'description' => 'motifs annotated with this term'
     };
 }
@@ -1115,7 +1117,7 @@ sub _get_tag_data {
             'evidence_details' => $evidence_details
           };
     }
-    return \@data_pack;
+    return @data_pack ? \@data_pack : undef;
 }
 
 sub _get_GO_evidence {
