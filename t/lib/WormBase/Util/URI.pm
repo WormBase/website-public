@@ -12,7 +12,8 @@ our @EXPORT;
 our @EXPORT_OK = qw(is_same_domain);
 
 sub is_same_domain {
-    my @absolute_hps = map { $_->can('host_port') ? $_->host_port : () } @_;
+    my @absolute_hps = map { $_->can('host_port') ? $_->host_port : () }
+                       map { ref $_ ? $_ : URI::URL->new($_) } @_;
     return 1 unless @absolute_hps;
 
     # have to check equality amongst the absolute URIs
