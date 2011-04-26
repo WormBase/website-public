@@ -22,6 +22,14 @@ http://wormbase.org/species/structure_data
 
 =cut
 
+# sub name {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include name >>
+
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
 
 =head2 sequence
 
