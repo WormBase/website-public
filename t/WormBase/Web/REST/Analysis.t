@@ -13,7 +13,8 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(RNASeq_Hillier.dauer_daf-2);
+my @object_names = qw(modENCODE_Pseudogenes RNASeq_Hillier.L4_larva_JK1107
+                      RNASeq_Hillier.dauer_daf-2);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({

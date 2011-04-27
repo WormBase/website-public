@@ -18,7 +18,7 @@ my @object_names = qw();
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
     conf_file => 'wormbase.conf',
-    class     => '<<CLASS>>'
+    class     => '<<CLASS>>',
 });
 
 $tester->check_all_widgets({names => \@object_names});

@@ -13,7 +13,8 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(WBPicture0000007352);
+my @object_names = qw(F52C12.4_BC10278_GFP_l-2_1prjctn23.jpg
+                      WBPicture0000007352 WBPicture0000007352);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({

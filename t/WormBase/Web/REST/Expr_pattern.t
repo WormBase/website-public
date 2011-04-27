@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(Expr513);
+my @object_names = qw(Expr1996 Expr513);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
