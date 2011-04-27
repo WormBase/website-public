@@ -160,7 +160,7 @@ sub get_section {
 
     my $sections = $self->is_local_server
                  ? $self->context->config->{sections}
-                 : $self->{local_sections};
+                 : $self->{remote_sections};
 
     return $sections unless $section;
 
@@ -217,7 +217,7 @@ sub get_widget {
     my $url = "$WIDGET_BASE/$class/$obj/$widget";
 
     if ($args->{_test}) {
-        my $testname = "GET $widget widget from $obj " . ucfirst $class;
+        my $testname = "GET $widget from $obj " . ucfirst $class;
         return $self->mech->get_ok($url, $testname);
     }
 
@@ -283,12 +283,12 @@ sub check_all_widgets {
         croak "No widgets found for $class";
     }
 
+
     my $ok = 1;
     my %objwidgets;
     foreach my $obj (@$objs) {
         $ok &&= $Test->subtest(
-            "All widgets ok for $obj $uclass",
-            sub {
+            "All widgets ok for $obj $uclass", sub {
                 foreach my $widget (keys %$widgets) {
                     my $widget_data = $self->get_widget({name   => $obj,
                                                          class  => $class,
