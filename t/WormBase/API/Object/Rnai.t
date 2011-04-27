@@ -17,7 +17,8 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Rnai');
 } # Rnai.t loads ok
 
-my @object_names = qw(WBRNAi00027544 WBRNAi00059855);
+my @object_names = ('WBRNAi00066492 | WBRNAi00066493',
+                    qw(WBRNAi00042161 WBRNAi00027544 WBRNAi00059855));
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',

@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::API::Object;
 
-my @object_names = qw(WBVar00143616 tm501);
+my @object_names = qw(WBVar00094689 tm1325 e936 tm501);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',

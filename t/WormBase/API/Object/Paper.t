@@ -17,7 +17,7 @@ BEGIN {
     use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Paper');
 } # Paper loads ok
 
-my @object_names = qw(WBPaper00000031 WBPaper00024194);
+my @object_names = qw(WBPaper00035792 WBPaper00000031 WBPaper00024194);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',

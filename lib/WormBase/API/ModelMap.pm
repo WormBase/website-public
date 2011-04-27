@@ -30,7 +30,7 @@ use Class::MOP;
             Person    => [qw(Person Author)],
             Sequence  => [qw(Sequence CDS)],
             Rnai      => 'RNAi',
-            Go_term      => 'GO_term',
+            Go_term   => 'GO_term',
         },
         common_name => {
             Person       => 'Standard_name',
