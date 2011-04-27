@@ -13,7 +13,8 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(WBPhenotype:00000061);
+my @object_names = qw(WBPhenotype:000040 WBPhenotype:0000643
+                      WBPhenotype:00000061);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({

@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(lev);
+my @object_names = qw(ocs idf lev);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({

@@ -13,7 +13,7 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw(HIS1_cluster);
+my @object_names = qw(HIS1_cluster rDNA_cluster);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({

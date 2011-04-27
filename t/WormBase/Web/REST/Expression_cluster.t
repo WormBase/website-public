@@ -13,7 +13,8 @@ BEGIN {
 use Test::More;
 use WormBase::Test::Web::REST;
 
-my @object_names = qw([cgc6390]:Cluster_C);
+my @object_names = qw(WBPaper00028788:MPK-1_Response_Strong
+                      [cgc6390]:Cluster_F [cgc6390]:Cluster_C);
 
 # load in sections of config
 my $tester = WormBase::Test::Web::REST->new({
