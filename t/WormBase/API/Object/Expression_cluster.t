@@ -16,7 +16,7 @@ use PrintOut;
 use Ace;
 
 my $class = 'Expression_cluster';
-my $tag = 'Algorithm';
+my $tag = 'Microarray_results';
 
 ## get test object with a tag data populated (hopefully)
 my $test_objects = PrintOut::get_features($class,$tag); 
@@ -41,9 +41,9 @@ my $test_type = 'methods';
 ## list methods to be tested here
 
 my @methods = qw(
-				algorithm			
+			microarray			
 				);
-### microarray	anatomy_term	
+### microarray algorithm anatomy_term gene sage_tag
 
 if ($test_type eq 'methods') {
 	
