@@ -17,7 +17,8 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Analysis');
 } # Analysis loads ok
 
-my @object_names = qw(TreeFam RNASeq_Hillier.dauer_daf-2);
+my @object_names = qw(modENCODE_Pseudogenes RNASeq_Hillier.L4_larva_JK1107
+                      TreeFam RNASeq_Hillier.dauer_daf-2);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',

@@ -17,7 +17,7 @@ BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Strain');
 } # Strain.t loads ok
 
-my @object_names = qw(DR2 JU258);
+my @object_names = qw(UL46 DR2 JU258);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',

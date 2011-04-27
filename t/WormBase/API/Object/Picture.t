@@ -1,4 +1,4 @@
-# t/WormBase/API/Object/Transgene.t
+# t/WormBase/API/Object/Picture.t
 
 use strict;
 use warnings;
@@ -13,21 +13,18 @@ BEGIN {
 use Test::More;
 use WormBase::Test::API::Object;
 
-BEGIN {
-      use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Transgene');
-} # Transgene.t loads ok
-
-my @object_names = qw(kyEx648 WBPaper00032201Ex1 ayIs4); # cgc4781Is1
+my @object_names = qw(F52C12.4_BC10278_GFP_l-2_1prjctn23.jpg
+                      WBPicture0000007352);
 
 my $tester = WormBase::Test::API::Object->new({
     conf_file => 'data/conf/test.conf',
-    class     => 'Transgene',
-});
+    class     => 'Picture',
+}); # create API object, load class module, etc.
 
 $tester->run_common_tests({
     names                   => \@object_names,
-    exclude_parents_methods => 1,
-    exclude_roles_methods   => 1,
+    exclude_parents_methods => 1, # don't want to test parent methods
+    exclude_roles_methods   => 1, # don't want to test role methods
 });
 
 done_testing;
