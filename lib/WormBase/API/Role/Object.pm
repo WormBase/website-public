@@ -825,6 +825,165 @@ sub _build_method {
     };
 }
 
+=head3 phenotype
+
+This method will return a data structure with phenotypes not associated with the RNAi.
+
+=over
+
+=item PERL API
+
+ $data = $model->phenotype();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An RNAi id (eg WBRNAi00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/phenotype
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+has 'phenotype' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_phenotype',
+);
+
+## method to build data
+
+sub _build_phenotype{	
+	my $self = shift;
+	my $data = $self->_build_phenotype_data('Phenotype'); 	
+	return {
+		data => $data,
+		description =>'phenotypes annotated with this term',
+	};
+}
+
+=head3 phenotype_not
+
+This method will return a data structure with phenotypes not associated with the RNAi.
+
+=over
+
+=item PERL API
+
+ $data = $model->phenotype_not();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An RNAi id (eg WBRNAi00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/phenotype_not
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+
+
+has 'phenotype_not' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_phenotype_not',
+);
+
+## method to build data
+
+sub _build_phenotype_not {
+	my $self = shift;
+	my $data = $self->_build_phenotype_data('Phenotype_not_observed'); 	
+	return {
+		data => $data,
+		description =>'phenotypes not associated with this term',
+	};
+}
+
+sub _build_phenotype_data {
+    my $self = shift;
+    my $tag = shift;
+    my $term = $self->object;
+    my @data_pack;
+    my @phenotypes = $term->$tag;
+    foreach my $phenotype (@phenotypes) {
+    	my $phenotype_info = $self->_pack_obj($phenotype);
+        my $phenotype_desc = $phenotype->Description;
+		my $phenotype_remarks = $phenotype->Remark;
+
+        my $pheno_data = {
+            'phenotype_info'   => $phenotype_info,
+            'description'      => "$phenotype_desc",
+            'remark'    => "$phenotype_remarks",
+        };
+        push @data_pack, $pheno_data;
+    }
+    return @data_pack ? \@data_pack : undef;
+}
+
 =head3 remarks
 
 This method will return a data structure containing
