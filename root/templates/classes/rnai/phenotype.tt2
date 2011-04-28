@@ -1,36 +1,5 @@
 [% # This generic statement belongs at the start of every template %]
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
-
-	[% build_data_table (
-		order = [ 
-			'phenotype_info',
-			'description',
-			'remark', 
-			],
-		columns = {				 		
-			phenotype_info => 'Phenotype',
-			description => 'Description',
-			remark => 'Remark',
-			},
-		key = 'phenotypes',
-		title = 'Phenotype'	
-		)
-	%]
 	
-	
-	[% build_data_table (
-		order = [ 
-			'phenotype_info',
-			'description',
-			'remark', 
-			],
-		columns = {				 		
-			phenotype_info => 'Phenotype',
-			description => 'Description',
-			remark => 'Remark',
-			},
-		key = 'phenotype_nots',
-		title = 'Phenotype NOT observed'	
-		)
-	%]
+	[% phenotype %]	
+	[% phenotype_not %]
