@@ -383,8 +383,32 @@ B<Response example>
 =back
 
 =cut `
-
 sub rnai {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @tag_objects = $object->RNAi_result;
+    my @data_pack;
+    
+    foreach my $tag_object (@tag_objects) {
+    	my $tag_data = $self->_pack_obj($tag_object);
+    	my $strain = $self->_pack_obj($tag_object->Strain) if $tag_object->Strain;
+    	my $treatment = $tag_object->Treatment;
+    	
+    	push @data_pack, {
+    		rnai => $tag_data,
+    		strain =>$strain,
+    		treatment =>"$treatment",
+    	}
+    }
+    return {
+        'data'        => @tag_objects ? \@data_pack : undef,
+        'description' => 'rnais associated with this expr_profile',
+    };
+}
+
+
+
+sub rnai_20110427 {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->RNAi_result;
