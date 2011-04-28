@@ -719,6 +719,30 @@ END;
   END;
 %]
 
+[% MACRO phenotype BLOCK ;
+   build_data_table(order=['phenotype_info','description','remark'],
+                    columns={ 
+                    	phenotype_info => 'Phenotype',
+		              	description        => 'Description',
+			      		remark             => 'Remark',
+                    },
+                    key='phenotype',
+                    title='Phenotype');
+   END;
+%]
+
+[% MACRO phenotype_not BLOCK ;
+   build_data_table(order=['phenotype_info','description','remark'],
+                    columns={ 
+                    	phenotype_info => 'Phenotype',
+		              	description        => 'Description',
+			      		remark             => 'Remark',
+                    },
+                    key='phenotype_not',
+                    title='Phenotype NOT Observed');
+   END;
+%]
+
 
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
