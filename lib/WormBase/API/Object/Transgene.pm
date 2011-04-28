@@ -768,127 +768,13 @@ sub rescues {
 #
 #######################################
 
-=head3 phenotypes_observed
+# sub phenotype {}
+# Supplied by Role; POD will automatically be inserted here.
+# <<include phenotype>>
 
-This method will return a data structure of the 
-phenotypes associated with the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotypes_observed();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_observed
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub phenotypes_observed {
-    my $self   = shift;
-    my $object = $self->object;
-    my $phenes = $self->_get_phenotype_data($object, 0);
-    my $data   = { description => 'phenotypes associated with the transgene',
-		   data        =>  $phenes };
-    return $data;
-}
-
-=head3 phenotypes_not_observed
-
-This method will return a data structure of the 
-phenotypes NOT OBSERVED with the transgene.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotypes_not_observed();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Transgene ID (gmIs13)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/phenotypes_not_observed
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub phenotypes_not_observed {
-    my $self   = shift;
-    my $object = $self->object;
-    my $phenes = $self->_get_phenotype_data($object, 1);
-    my $data   = { description => 'phenotypes NOT associated with the transgene',
-		   data        =>  $phenes };
-    return $data;
-}
-
-
+# sub phenotype_not {}
+# Supplied by Role; POD will automatically be inserted here.
+# <<include phenotype_not>>
 
 #######################################
 #
