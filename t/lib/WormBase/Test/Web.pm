@@ -174,7 +174,7 @@ does not refer to a resoruce on the testing server.
 
 sub is_external_url {
     my ($self, $url) = @_;
-    return WormBase::Util::URI::is_same_domain($self->root_url, $url);
+    return ! WormBase::Util::URI::is_same_domain($self->root_url, $url);
 }
 
 =item B<is_remote_server>

@@ -108,8 +108,8 @@ sub to_href {
     my $class = $obj->class;
 
     # Which tags/fields should we squash/expand?
-    my %squash = map { $_ => 1; } grep($_ ne '',@squash);
-    my %expand = map { $_ => 1; } grep($_ ne '',@expand);
+    my %squash = map { $_ => 1; } grep(defined $_ && $_ ne '',@squash);
+    my %expand = map { $_ => 1; } grep(defined $_ && $_ ne '',@expand);
     
     my %PAPERS;
 
@@ -140,6 +140,7 @@ sub to_href {
 
 
     $title ||= $name;
+    $view ||= '';
     if ($cnt > 1) {
 	# Really, really big arbitrary expansion. Sloppy.
 	my $MAXEXPAND = ($view eq 'expand') ? 100000 : MAXEXPAND;
