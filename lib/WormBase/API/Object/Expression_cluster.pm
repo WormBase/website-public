@@ -90,6 +90,26 @@ sub gene {
     my $self   = shift;
     my $object = $self->object;
     my @tag_objects = $object->Gene;
+    my @data_pack;  
+    foreach my $tag_object (@tag_objects) {
+    	my $tag_data = $self->_pack_obj($tag_object);
+    	my $species = $tag_object->Species;
+    	push @data_pack, {
+    		gene => $tag_data,
+    		species => "$species",
+    	}
+    } 
+    return {
+    	data        => @data_pack ? \@data_pack : undef,
+        description => 'The corresponding gene',
+           
+	};
+}
+
+sub gene_20110427_sav {
+    my $self   = shift;
+    my $object = $self->object;
+    my @tag_objects = $object->Gene;
     my @data_pack   = map{$_ = $self->_pack_obj($_)} @tag_objects
       if @tag_objects;
     return {
@@ -97,7 +117,9 @@ sub gene {
         description => 'The corresponding gene',
            
 	};
-}	
+}
+
+
 #     my %return;
 #     map {
 #         { $ret{"$_"} = $self->_pack_obj( $_, $_->Public_name ) }
@@ -227,6 +249,33 @@ sub microarray {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Microarray_results;
+    my @data_pack;  
+    
+    foreach my $tag_object (@tag_objects) {
+    	my $microarray_result = $self->_pack_obj($tag_object);
+    	my $experiment = $self->_pack_obj($tag_object->Result) if $tag_object->Result;
+    	my $minimum = $tag_object->Min;
+    	my $maximum = $tag_object->Max;
+    	
+
+		push @data_pack, {
+			microarray => $microarray_result,
+			experiment => $experiment,
+			minimum => "$minimum",
+			maximum => "$maximum",
+							};
+	}
+    return {
+        'data'        => @data_pack ? \@data_pack : undef,
+        'description' => 'microarray results from expression cluster'
+    };
+}
+
+
+sub microarray_20110427_sav {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @tag_objects = $object->Microarray_results;
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
@@ -234,7 +283,6 @@ sub microarray {
         'description' => 'microarray results from expression cluster'
     };
 }
-
 =head3 sage_tag
 
 This method will return a data structure with sage_tags analyzing the expression_cluster.
@@ -413,6 +461,25 @@ sub anatomy_term {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Anatomy_term;
+    my @data_pack;
+	foreach my $tag_object (@tag_objects) {
+		my $definition = $tag_object->Definition;
+		my $anatomy_term = $self->_pack_obj($tag_object);
+		push @data_pack, {
+			anatomy_term => $anatomy_term,
+			definition => "$definition",
+							};
+	}
+    return {
+        'data'        => @data_pack ? \@data_pack : undef,
+        'description' => 'anatomy term annotated with this expression cluster'
+    };
+}
+
+sub anatomy_term_20110427_sav {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @tag_objects = $object->Anatomy_term;
     my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
       if @tag_objects;
     return {
@@ -420,6 +487,8 @@ sub anatomy_term {
         'description' => 'anatomy term annotated with this expression cluster'
     };
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
 

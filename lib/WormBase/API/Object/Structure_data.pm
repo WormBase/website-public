@@ -87,7 +87,7 @@ sub sequence {
 
 	my $data = {
 		'data'=> $data_pack,
-		'description' => 'description of the '
+		'description' => 'sequence of structure'
 				};
 	return $data;}
 
@@ -205,14 +205,14 @@ sub homology_data {
 	my $self = shift;
     my $object = $self->object;
 	my @data_pack;
-	my @tag_objects = $object->Homol_data;
+	my @tag_objects = $object->Homol_homol;
 
 	foreach my $tag_object (@tag_objects) {
 		my $tag_info = $self->_pack_obj($tag_object);
 		push @data_pack, $tag_info;
 	}
 	my $data = {
-		'data'=> \@data_pack,
+		'data'=> @data_pack ? \@data_pack : undef ,
 		'description' => 'homology data re: this structure'
 		};
 	return $data;

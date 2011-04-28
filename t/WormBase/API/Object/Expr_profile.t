@@ -16,13 +16,13 @@ use PrintOut;
 use Ace;
 
 my $class = 'Expr_profile';
-my $tag = 'Expr_map';
+my $tag = 'RNAi_result';
 
 ## get test object with a tag data populated (hopefully)
-# my $test_objects = PrintOut::get_features($class,$tag); 
+ my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["R10E9.2"];
+# my $test_objects = ["R10E9.2"];
 
 BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Expr_profile'); ## "::$class"
@@ -42,7 +42,6 @@ my $test_type = 'methods';
 
 my @methods = qw(
 				rnai
-
 				);
 
 ## 	expr_map profiles
