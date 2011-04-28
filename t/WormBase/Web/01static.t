@@ -18,9 +18,14 @@ use Test::More;
 use WormBase::Test::Web;
 use WWW::Robot;
 
+# these should be tested separately
+my @DO_NOT_FOLLOW = (qr{^/rest/}o, qr{^/tools/tree}o);
+
 my $VERBOSE = 0;
 my $CHECK_EXTERNAL = 1; # use ENV?
 my $MAX_LINKS_FOLLOWED = 1000;
+
+################################################################################
 
 my $tester = WormBase::Test::Web->new;
 my $mech = $tester->mech;
@@ -38,7 +43,7 @@ $robot->setAttribute(TRAVERSAL => 'breadth'); # BFS
 my @followed;
 
 # setup robot
-$robot->addHook('follow-url-test', \&check_external_url);
+$robot->addHook('follow-url-test', sub { &check_external_url && &check_dnf_list });
 $robot->addHook('invoke-on-followed-url', sub {
                     my ($robot, $hook_name, $url) = @_;
                     diag("Following: $url") if $VERBOSE;
@@ -46,7 +51,7 @@ $robot->addHook('invoke-on-followed-url', sub {
                 });
 $robot->addHook('invoke-after-get', sub {
                     my ($robot, $hook_name, $url, $response) = @_;
-                    ok ($response->is_success, "Got $url successfully")
+                    ok ($response->is_success, "GET $url")
                         or diag("$url -- ", $response->status_line);
                 });
 
@@ -77,18 +82,33 @@ sub check_external_url {
     return unless $url->path; # is just a fragment...
 
     # follow if it's internal
-    return 1 if $tester->is_external_url($url);
+    return 1 if ! $tester->is_external_url($url);
 
+    # we now know that the link is external
     return unless $CHECK_EXTERNAL; # do we want to run checks?
+
+    diag("FOLLOWING EXTERNAL: $url") if $VERBOSE;
 
     # check the link and but don't let the bot follow
     push @followed, $url; # pretend it followed though
 
-    my $response = $robot->get_url($url);
-    ok($response->is_success, "$url is ok")
-       or diag("$url -- ", $response->status_line);
-
+    $mech->get_ok($url);
     return;
+}
+
+sub check_dnf_list {
+    my ($robot, $hook_name, $url) = @_;
+
+    my $path = $url->path;
+    diag("check_do_not_follow path: $path") if $VERBOSE;
+
+    foreach (@DO_NOT_FOLLOW) {
+        if ($path =~ /$_/) {
+            diag("IS ON DNF LIST") if $VERBOSE;
+            return;
+        }
+    }
+    return 1;
 }
 
 # counter sub generator
