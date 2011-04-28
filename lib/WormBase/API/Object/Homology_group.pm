@@ -157,15 +157,17 @@ sub group_type {
     my $homology_group = $object->Homology_group;
     my $homology_code;
 
-    if ( $homology_group =~ /COG/ ) {
+    if ($homology_group =~ /COG/ ) {
         $homology_code = $object->COG_code;
     }
     my $data_pack = {
         'homology_group' => "$homology_group",
         'cog_code'       => $homology_code
     };
+    
+    my @contents = values %$data_pack;
     return {
-        'data'        => $data_pack,
+        'data'        => @contents ? $data_pack : undef,
         'description' => 'type of homology_group'
     };
 }
@@ -223,8 +225,17 @@ B<Response example>
 sub go_term {
     my $self      = shift;
     my $object    = $self->object;
-    my @go_terms  = $object->GO_term;
-    my @data_pack = map { $_ = $self->_pack_obj($_) } @go_terms if @go_terms;
+    my @tag_objects  = $object->GO_term;
+    my @data_pack;
+    foreach my $tag_object (@tag_objects) {
+    	my $tag_data = $self->_pack_obj($tag_object);
+    	my $definition = $tag_object->Definition;
+    	push @data_pack, {
+    		go_term => $tag_data,
+    		definition => "$definition",
+    	}
+    } 	
+
     return {
         'data' => @data_pack ? \@data_pack : undef,
         'description' => 'go terms related to this homology group'
@@ -285,9 +296,17 @@ sub protein {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Protein;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-
+    my @data_pack;
+    foreach my $tag_object (@tag_objects) {
+    	my $tag_data = $self->_pack_obj($tag_object);
+    	my $species = $self->_pack_obj($tag_object->Species) if $tag_object->Species;
+    	my $description = $tag_object->Description;
+    	push @data_pack, {
+    		protein => $tag_data,
+    		species => $species,
+    		description =>"$description",
+    	}
+    }
     return {
         'data' => @data_pack ? \@data_pack : undef,
         'description' => 'proteins related to this homology_group'
