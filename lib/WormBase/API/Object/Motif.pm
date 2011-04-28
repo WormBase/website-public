@@ -178,7 +178,7 @@ sub gene_ontology  {
 	my $term_data  = $self->pack_obj($term);
 	
 	push @data,{		
-	    term_data  => $term_data,	
+	    go_term  => $term_data,	
 	    definition => $definition,
 	    evidence   => $evidence
 	};	

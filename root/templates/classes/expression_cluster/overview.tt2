@@ -1,0 +1,21 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+<h2>[% tag2link(fields.name.data) %]</h2>
+
+<div class="details ui-corner-all">
+	[% WRAPPER $field_block title="WormBase ID"-%] 
+		[% fields.name.data.id %]
+	[% END %]
+</div>
+
+[% WRAPPER $field_block title='Description' key='description' %]
+   [% IF fields.description.data; markup(fields.description.data); END  %]
+[% END %]
+
+[% remarks(no_toggle=1) %]
+
+[% WRAPPER $field_block title="Algorithm" key="algorithm"-%] 
+	[% fields.algorithm.data %]
+[% END %]

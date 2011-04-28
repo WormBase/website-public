@@ -16,13 +16,13 @@ use PrintOut;
 use Ace;
 
 my $class = 'Homology_group';
-my $tag = '<<TAG of interest in class>>';
+my $tag = 'GO_term';
 
 ## get test object with a tag data populated (hopefully)
-# my $test_objects = PrintOut::get_features($class,$tag); 
+ my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["InP_Cae_000935"];
+#my $test_objects = ["InP_Cae_000935"];
 
 BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Homology_group'); ## "::$class"
@@ -34,17 +34,15 @@ my $tester = WormBase::Test::API::Object->new({
 });
 
 # uncomment appropriate test procedure
-
-  my $test_type = 'all' ; ## 
+#  my $test_type = 'all' ; ## 
   
-# my $test_type = 'methods';
+ my $test_type = 'methods';
 
 ## list methods to be tested here
 my @methods = qw(
-			
-
+			go_term
 				);
-###
+### group_type protein
 
 if ($test_type eq 'methods') {
 	$tester->run_common_tests({
