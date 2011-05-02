@@ -478,6 +478,111 @@ sub _build_best_blastp_matches {
     };
 }
 
+
+
+=head3 central_dogma
+
+This method will return a data structure containing
+the central dogma from the perspective of the supplied
+(gene|transcript|cds|protein)
+
+=over
+
+=item PERL API
+
+  $data = $model->central_dogma();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A class and object ID.
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/central_dogma
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+# Template: [% central_dogma %]
+
+has 'central_dogma' => (
+    is         => 'ro',
+    lazy_build => 1,
+);
+
+# the following is a candidate for retrofitting with ModelMap
+sub _build_central_dogma {
+    my ($self) = @_;
+    my $object = $self->object;
+    my $class  = $object->class;
+    my $data;
+
+    my $gene;
+    # Need to get the root element, a gene.
+    if ($class eq 'Gene') {
+	$gene = $object;
+    } elsif ($class eq 'CDS') {
+	$gene = $object->Gene;
+    } elsif ($class eq 'Protein') {
+	my %seen;
+	my @genes = grep { ! $seen{%_}++ } map { $_->Gene } grep{ $_->Method ne 'history'}  $object->Corresponding_CDS;
+	$gene = $genes[0];
+    }
+    
+    # Transcripts
+    my @transcripts = $gene->Corresponding_transcript;
+    
+    # Each transcript has one or more CDS
+    foreach my $transcript (@transcripts) {
+	my @cds = $transcript->Corresponding_CDS;
+
+	foreach my $cds (@cds) {
+	    my @proteins = map { $self->_pack_obj($_) } $cds->Corresponding_protein;
+	    push @{$data->{transcripts}},{ transcript => $self->_pack_obj($transcript),
+					   cds        => $self->_pack_obj($cds),
+					   proteins   => \@proteins,
+	    };
+	}
+    }
+
+    $data->{gene} = $self->_pack_obj($gene);
+
+    return {
+        description => "teh central dogma of the current object",
+        data        => $data,
+    };
+}
+
+
 =head3 description
 
 This method will return a data structure containing

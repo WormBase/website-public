@@ -187,7 +187,7 @@ sub _build_genetic_position {
     # CDSs and Sequence are only interpolated
     # AD: no... only Sequence... (that's what the models suggests)
     #  if ($class eq 'CDS' || $class eq 'Sequence') {
-    if ($class eq 'Sequence') {
+    if ($class eq 'Sequence' || $class eq 'Variation') {
         if (eval {$object->Interpolated_map_position}) { # eval added here... should always have Interpolated_map_position?
             ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
             $method = 'interpolated';

@@ -46,21 +46,25 @@ while (my $file = readdir DIR) {
 
 # Parse code snippets from Role/Object.pm
 sub get_pod {
-    open (LIB,"$libroot/Role/Object.pm") || die "Couldn't open the role file for fetching boilerplate POD";
+    my @roles = glob("$libroot/Role/*.pm");
     my %pod;
-    my $in_stanza;
-    while (<LIB>) {
-	if ($_ =~ /^=head3\s(.*)/) {
-	    $in_stanza = 1;
+    foreach my $role (@roles) {
+	open (LIB,"$libroot/Role/$role") || die "Couldn't open the role file for fetching boilerplate POD";
+	
+	my $in_stanza;
+	while (<LIB>) {
+	    if ($_ =~ /^=head3\s(.*)/) {
+		$in_stanza = 1;
+	    }
+	    push @{$pod{$1}},$_ if $in_stanza;
+	    
+	    
+	    if ($in_stanza && $_ =~ /^=cut/) {
+		$in_stanza = undef;
+	    }       
 	}
-	push @{$pod{$1}},$_ if $in_stanza;
-
-
-	if ($in_stanza && $_ =~ /^=cut/) {
-	    $in_stanza = undef;
-	}       
+	close LIB;    
     }
-    close LIB;    
     return \%pod;
 }
 
