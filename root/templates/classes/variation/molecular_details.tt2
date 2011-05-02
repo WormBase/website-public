@@ -1,11 +1,17 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget toggle = 1%]
+[% 
+WRAPPER $field_block title="Variation Type" key="variation_type";
+      fields.variation_type.data.general_class _ ': ' _ fields.variation_type.data.physical_class;
+END;
+
+%]
 
    [% WRAPPER $field_block title="Variation Type" key='variation_type' %]
            [% fields.variation_type.data.general_class.join('; ') %]: [% fields.variation_type.data.physical_class FILTER lower %]
    [% END %]
+
 
    [% WRAPPER $field_block title="Sequencing Status" key="sequencing_status" %]
        [% fields.sequencing_status.data %]
@@ -144,6 +150,20 @@
    [% END %]
 
    [% WRAPPER $field_block title="Features Affected" key="features_affected" %]
+<<<<<<< /usr/local/wormbase/website/tharris-primary/root/templates/classes/variation/molecular_details.tt2
+       <table border="1" width="100%">
+	  	<tr>
+			<td>feature type</td>
+			<td>feature</td>
+			<td>details</td>
+		</tr>
+
+       [% FOREACH feature_type IN fields.features_affected.data.keys %]
+                [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
+		
+                <tr>
+                   <td>[% feature_type %]</td>
+=======
        [% FOREACH feature_type IN fields.features_affected.data.sort %]
            <div class="toggle">
                 [% pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) %]
@@ -153,6 +173,7 @@
            [% FOREACH feature_name IN fields.features_affected.data.$feature_type.sort %]
               <div style="margin-bottom:0.25em; margin-top:0.25em">
                 [% feature = fields.features_affected.data.$feature_type.$feature_name %]
+>>>>>>> /tmp/molecular_details.tt2~other.xAHYCZ
                [% IF feature_type == 'Chromosome' %]
                   [% feature.label %]
                [% ELSE %]
