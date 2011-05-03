@@ -254,26 +254,26 @@ sub homologies {
     my $object = $self->object;
     my @data;
     
-    foreach (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
-	if (my @homol = $object->$_) {
-	    foreach (@homol) {		
-		if ($_ =~ /.*RepeatMasker/g) {
-		    $_ =~ /(.*):.*/;
-		    my $clone = $1;
-		    
-		    push @data, {
-			'id'	=> "$clone",
-			'label'	=> "$clone",
-			'class' => 'Clone'
-		    };
-		} else {
-		    push @data,$self->_pack_obj($_);	
+    my $types = {
+    	DNA_homol 	=> 'DNA',
+    	Pep_homol 	=> 'Peptide',
+    	Motif_homol => 'Motif',
+    	Homol_homol => 'Other',
+    };
+    
+    foreach my $homology_type (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
+		if (my @homol = $object->$homology_type) {
+			foreach my $homologous_object (@homol) {	
+				my $homolog = $self->_pack_obj($homologous_object);
+				push @data,	{
+					homolog => $homolog,
+					type => "$types->{$homology_type}",	    	
+				}	
+			}
 		}
-	    }
-	}
     }
     
-    return { data         => \@data,
+    return { data => @data ? \@data : undef,
 	     description  => 'homology data for this motif'
     };
 }
