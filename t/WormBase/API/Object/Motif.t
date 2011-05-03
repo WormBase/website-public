@@ -35,14 +35,14 @@ my $tester = WormBase::Test::API::Object->new({
 
 # uncomment appropriate test procedure
 
-  my $test_type = 'all' ; ## 
+#  my $test_type = 'all' ; ## 
   
-# my $test_type = 'methods';
+ my $test_type = 'methods';
 
 ## list methods to be tested here
 my @methods = qw(
 			
-
+		homologies
 				);
 ###
 
