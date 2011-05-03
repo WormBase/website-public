@@ -16,6 +16,40 @@
       [% END %]
 [% END %]
 
+
+[% best_blastp_matches %]
+
+[% build_data_table (
+	order=[
+		'ortholog_other',
+		'species',
+		'method',
+		],
+	columns={ 
+		ortholog_other => 'Ortholog',
+		species => 'Species',
+		method => 'Method',
+		},
+	key='other_orthologs',
+	title='Other Orthologs') 
+%] 
+
+[% build_data_table (
+	order=[
+		'ortholog_other',
+		#'species',
+		'method',
+		],
+	columns={ 
+		ortholog_other => 'Ortholog',
+		#species => 'Species',
+		method => 'Method',
+		},
+	key='human_orthologs',
+	title='Human Orthologs') 
+%] 
+
+
 [% WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) key="inparanoid_groups" %]
 
    <div class="toggle">[% fields.inparanoid_groups.data.size %] InParanoid groups for [% object.name.label %]</div> 
@@ -57,4 +91,8 @@
       [% external_link('phosphopep', '...access more phosphorylation information in phosphopep') %]
    [% END %]
 
-[% best_blastp_matches %]
+
+
+
+
+
