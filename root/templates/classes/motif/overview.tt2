@@ -20,3 +20,17 @@
         key='gene_ontology',
         title='Gene Ontology') 
     %] 
+    
+
+[% build_data_table (
+		order=[
+			'homolog',
+			'type',
+			],
+        columns={ 
+        	homolog => 'Homolog',
+			type => 'Type',
+			},
+        key='homologies',
+        title='Homologs') 
+    %] 
