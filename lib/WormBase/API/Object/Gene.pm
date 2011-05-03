@@ -168,6 +168,75 @@ has 'phen_data' => (
     }
 );
 
+has 'ortholog_data_hr' => (
+	is  => 'ro',
+    lazy => 1,
+    default => sub {
+		my $self = shift;
+		my $gene = $self->object;
+		my @sp_data_pack;
+		my @hs_data_pack;
+		my %ortholog_hr;
+		my @ortholog_others = $gene->Ortholog_other;
+		
+		foreach my $ortholog_other (@ortholog_others) {
+				my $ortholog_other_data = $self->_pack_obj( $ortholog_other);
+				my $method = $ortholog_other->right(2);
+				# my $species = $ortholog_other->Species;		
+				
+				#my $protein_id  = $ortholog_other->DB_info->right(3);
+				#my $db = $ortholog_other->DB_info->right;
+				#my $url = "dev.wormbase.org";
+
+				
+				my $ortholog_hr = {
+					ortholog_other => $ortholog_other_data,
+					species => $ortholog_other_data->{'taxonomy'},
+					method => "$method",
+					};
+	
+				
+				if($ortholog_hr->{'species'} =~ m/sapien/i){
+					push @hs_data_pack, $ortholog_hr;
+				}
+				
+				push @sp_data_pack, $ortholog_hr;			
+		}
+		
+		my $sp_data = {
+			'data'=> @sp_data_pack ? \@sp_data_pack : undef,
+			'description' => 'orthologs for this gene from all species'
+			};
+		
+		my $hs_data = {
+			'data'=> @hs_data_pack ? \@hs_data_pack : undef,
+			'description' => 'orthologs for this gene from humans'
+			};	
+		my $data = {
+			'sp' => $sp_data,
+			'hs' => $hs_data
+		};
+		
+		return $data;	
+	}
+);
+
+
+################################################
+#
+# ortholog, paralog and disease incorporation
+#
+################################################
+
+sub other_orthologs {
+	my $self = shift;
+	return $self->ortholog_data_hr->{'sp'};
+}
+
+sub human_orthologs {
+	my $self = shift;
+	return $self->ortholog_data_hr->{'hs'};
+}
 
 
 #######################################################
@@ -1256,7 +1325,7 @@ sub paralogs {
 sub orthologs {
 
 	my $self = shift;
-	    my $object = $self->object;
+	my $object = $self->object;
 	my %data;
 	my $desc = 'this genes orthologs';
 	my @data_pack;
@@ -1264,14 +1333,9 @@ sub orthologs {
 	#### data pull and packaging
 
 	my @orthologs = $object->Ortholog;
-# 	 my @orthologs = $object->at("Gene_info.Ortholog");
-	#my $data_pack = $self->basic_package(\@orthologs);
 	 
 	for(my $index=0; my $ortholog=shift @orthologs;$index++) {
-	   
-# 	  my $ortholog_name = $self->public_name($ortholog,'Gene');
 	  my $species = $ortholog->right;
-# 	  my @analyses = $_->right->right->col;
 	  push @data_pack, {	 species=>"$species",
 				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
 				 sequence=>{ class=>'ebsyn',
@@ -1286,8 +1350,6 @@ sub orthologs {
 			    };
 	    
 	}
-
-	####
 
 	$data{'data'} = \@data_pack;
 	$data{'description'} = $desc;
