@@ -2,8 +2,8 @@
 
 
 div#splash-box{
-  margin:0;
-/*   border-bottom:1px solid #CCC; */
+  margin:0 -0.6em;
+/*   margin:0; */
   padding:0.5em 0 0.5em 0;
   position:relative;
   background-image:url('/img/home.png');

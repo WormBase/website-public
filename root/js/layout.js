@@ -176,17 +176,19 @@ $jq(function() {
       if($sidebar.offset()){
         if(!offset){offset = $sidebar.offset().top;}
 
-        var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight();
-        if( bottomPos < at_default )
+        var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight() - 20;
+        if( bottomPos < 0 )
             bottomPos = at_default;
-        var objBiggerThanWindow = $sidebar.outerHeight() < $window.height();
-        if (objBiggerThanWindow){
+        var objSmallerThanWindow = $sidebar.outerHeight() < $window.height();
+        if (objSmallerThanWindow){
           if ($window.scrollTop() > offset) {
-              var newpos = $window.scrollTop() - offset + 10 + at_default;
-              if (newpos > bottomPos)
+              var newpos = $window.scrollTop() - offset + 0 + at_default;
+
+              if (newpos > bottomPos) {
                   newpos = bottomPos;
-                  $sidebar.stop().css(
-                  'margin-top', newpos
+              }
+              $sidebar.stop().css(
+                'margin-top', newpos
               );
           } else {
               $sidebar.stop().css(

@@ -439,7 +439,7 @@
                     <a  tip="download" class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 
                     <!-- A button for hiding empty fields -->
-                    <a tip="toggle empty fields" class="button tip-simple tr ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
+<!--                     <a tip="toggle empty fields" class="button tip-simple tr ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a> -->
 [% END %] 
                     
 

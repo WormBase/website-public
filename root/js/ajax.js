@@ -183,7 +183,7 @@
      // Toggle should empty look of button
      $jq("#hide-empty-fields").live('click', function() { 	    
           $jq(".disabled" ).toggle();    
-	  $jq(this).addCLass('ui-state-highlight');
+          $jq(this).toggleClass('ui-state-highlight');
      });
 
 
