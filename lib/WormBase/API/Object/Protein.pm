@@ -203,7 +203,7 @@ sub corresponding_gene {
 
     # From a list of CDSs for the protein, get the corresponding gene(s)
     my @genes = grep{ $_->Method ne 'history'}  @{$self->cds};
-    @genes = map { $self->pack_obj($_) } @genes;
+    @genes = map { $self->_pack_obj($_) } @genes;
     return { description => 'The corressponding gene of the protein',
 	     data        => @genes ? \@genes : undef }; 
 }

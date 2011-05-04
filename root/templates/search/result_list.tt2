@@ -31,7 +31,8 @@
   [% END %]
 
   [% TRY %]
-      [% file = "search/" _ item.name.class _ ".tt2" %]
+      [% class = item.name.class FILTER lower %]
+      [% file = "search/" _ class _ ".tt2" %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
   [% CATCH %]

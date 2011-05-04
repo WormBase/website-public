@@ -47,7 +47,8 @@ input, select, th, td { font-size:1em; }
 
 #content {
   background:white;
-  padding:0;
+/*   padding:0; */
+  padding:0 1em;
 }
 
 /* Global Links */
@@ -411,13 +412,17 @@ li.visible div.widget-container {
     border: 1px solid #ABA0B8; 
 }
 
-#widget-me .widget-header, #navigation .me.ui-selected {
+.species-bg, .species_list-bg {
+  background-color:#C2D1DF;
+}
+
+#widget-me .widget-header, #navigation .me.ui-selected, .me-bg {
     background: #E3DDC5;
 }
-#widget-resources .widget-header, #navigation .resources.ui-selected {
+#widget-resources .widget-header, #navigation .resources.ui-selected, .resources-bg  {
     background: #D0DEC1;
 }
-#widget-tools .widget-header, #navigation .tools.ui-selected {
+#widget-tools .widget-header, #navigation .tools.ui-selected, .tools-bg  {
     background: #CFC1DE; 
 }
 
@@ -755,7 +760,7 @@ div.downloadable-formats {
 
 
 div.columns {
-  float:right;
+  float:left;
   position:relative;
   cursor:pointer;
 }
@@ -821,12 +826,24 @@ div.columns ul div li div.ui-icon:hover {
 
 
 
-.title h2 {
-    margin:0;
-    float:left;
-    font-size:28px;
-  padding:0.5em;
+
+
+#page-title {
+  margin:1.5em -1em -2em 175px;
+  padding:0 1em 0 0;
+  position:relative;
+/*  background-color:#C2D1DF;*/
+  z-index:10;
+}
+
+#page-title h2 {
+  font-size:24px;
   color:#222;
+  padding:0.5em 1em 0.5em 10px;
+}
+
+#page-title h2 .bench-update{
+  padding-top:5px;
 }
 
 
@@ -939,7 +956,7 @@ div.subfield {
       float:left;
       line-height:1.2em;
       padding:0.2em;
-      margin-left:6em;
+/*       margin-left:6em; */
 }
 
 div.subfield h6 {   
@@ -1212,6 +1229,7 @@ white-space:nowrap;
 	font-size: 1em;
 	font-weight: normal;
     height:16px;
+    clear:left;
 }
 
 .toggle-container {
@@ -1243,7 +1261,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
    
 *********************************/
 #widgets {
-  margin:0;
+  margin:0 -1em;
   padding:0em;
   position:relative;
   clear:both;
@@ -1256,8 +1274,9 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 #navigation {
   width: 12em;
   float: left;
+  clear:left;
   position:relative;
-  margin:-2.8em 0 0 0em;
+  margin:-2.8em 0 1em 0em;
   border-bottom:1px solid #CDCDCD;
   background:white;
 }
@@ -1267,7 +1286,8 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   background:black;
   height:2em;
   color:white;
-padding:0.7em 0.5em 0;
+  padding:0.7em 1.5em 0;
+  overflow:hidden;
 }
 #navigation #title:hover{
   background:#555;
@@ -1300,7 +1320,7 @@ padding:0.7em 0.5em 0;
 }
 
 #navigation ul li { 
-  padding:0.5em 0.5em 0.6em 1.4em;
+  padding:0.5em 0.5em 0.6em 2em;
   font-size: 0.9em; 
   height: 1em;
   overflow:hidden;
@@ -1313,7 +1333,7 @@ padding:0.7em 0.5em 0;
   font-size: 0.9em; 
   cursor:auto;
   font-weight: bold;
-  padding-left: 1em;
+  padding-left: 1.5em;
   padding-top: 10px;
 /*   margin-top:5px; */
   border-top:1px solid #CDCDCD;
@@ -1364,8 +1384,12 @@ padding:0.7em 0.5em 0;
   list-style: none;
   position:relative;
   background:white;
-  padding:0.7em 0.7em 0em 0.5em;
+  padding:1em 1em 0.5em 0.7em;
   border-left:1px solid #CCC;
+}
+
+#widget-holder.title-padding{
+  padding-top: 1.7em;
 }
 
 .sortable{
@@ -1385,7 +1409,7 @@ padding:0.7em 0.5em 0;
 #navigation div.small li{
   font-size:0.7em;
   line-height:1em;
-  padding-left:2em;
+  padding-left:2.5em;
 }
 
 .text-width {
@@ -1413,7 +1437,7 @@ div.detail-box div.field div.field-content{
 
 .bench-update {
   float:right;
-  margin-left:1em;
+/*   margin-left:1em; */
 }
 
 .disabled {
@@ -1433,8 +1457,8 @@ div.detail-box div.field div.field-content{
   left:0;
   background:black;
   color:white;
-  font-size:10pt;
-  line-height:12pt;
+  font-size:9pt;
+  line-height:11pt;
   padding:0.5em;
   margin:0.5em 0;
 }
@@ -1599,35 +1623,42 @@ div.inline-columns img {
   float:left;
 }
 
-
 .button{
   float:right;
   border:1px solid #BBB;
   background:#EEE;
+  cursor:pointer;
 }
 
-.button:hover, .button.selected{
+.button:hover{
   background:#BBB;
   border:1px solid #BBB;
 }
 
+.button.ui-state-highlight {
+  background:white;
+}
+
 div.title {
-    padding:0.5em 1em 0.7em 2em;
-    margin:0;
+    padding:0.5em 0em 0 0em;
+    padding:0;
+    margin:0 -1em;
     position:relative;
 }
 
-.title #buttons {
-  width:200px;
-  position: absolute;
+#buttons-nav {
+  width:12em;
+  float:left;
   font-size: 0.9em;
-  bottom:1em;
-  right:1.5em;
+/*   margin: 1em 0 0 0; */
+  background:white;
+  height:2.8em;
 }
 
-.title #buttons .button{
+#buttons-nav .button{
   margin-right:0.5em;
   padding:0.3em;
+  float:left;
 }
 
 
@@ -1644,6 +1675,9 @@ div.title {
 /* Effects */
 #breadcrumbs {
   position:relative;
+  padding-left:5px;
+/*   margin-left:10px; */
+  width:100%;
 }
 
 #breadcrumbs-hide {
@@ -1652,11 +1686,11 @@ div.title {
   height:auto;
   width: auto;
   overflow:hidden;
-  margin:0 5px;
+  margin:0 5px 0 15px;
 }
 #breadcrumbs-expand  {
   position:absolute;
-  left:-23px;
-  top:-10px;
+  left:-5px;
+  top:-12px;
   cursor:pointer;
 }

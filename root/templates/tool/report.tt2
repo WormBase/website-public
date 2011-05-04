@@ -8,7 +8,7 @@
 
 
 
-  [% title = "Tools Summany Page" %]
+  [% title = "Tools Summary Page" %]
 
 
   [% widgets = [] %]
