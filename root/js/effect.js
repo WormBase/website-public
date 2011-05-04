@@ -244,13 +244,13 @@ var Breadcrumbs = {
     this.bc.append('<span id="breadcrumbs-expand" class="tip-simple" tip="exapand"></span>').append(this.hiddenContainer).append(shown);
     this.bc.children(':last').before(" &raquo; ");
    
-    this.arrow = new Raphael("breadcrumbs-expand", 35, 50).path("m 20.546006,26.799417 -18.8190097,24.999999 0,-50.0000002 18.8190097,25.0000012 z").attr({fill: "#EEE", stroke: "none", scale:"1, 1", rotation:"180"});
+    this.arrow = new Raphael("breadcrumbs-expand", 35, 50).path("m 20.546006,26.799417 -18.8190097,24.999999 0,-50.0000002 18.8190097,25.0000012 z").attr({fill: "#666", stroke: "none", scale:"0.6, 0.4", rotation:"180"});
     this.expand = $jq("#breadcrumbs-expand");
     
     this.expand.hover( function() { 
-        Breadcrumbs.arrow.animate({fill:"#BBB", scale:"1.2, 1"}, 200);
+        Breadcrumbs.arrow.animate({fill:"#999", scale:"0.6, 0.4"}, 200);
         this.bc.animate({left:'+=10'}, 200);
-      }, function() {  Breadcrumbs.arrow.animate({fill:"#EEE", scale:"1, 1"}, 200); 
+      }, function() {  Breadcrumbs.arrow.animate({fill:"#666", scale:"0.6, 0.4"}, 200); 
       }
     );
     this.expand.click( function(){
@@ -266,7 +266,6 @@ var Breadcrumbs = {
     Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width, visibility:'visible'}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");});
     Breadcrumbs.expand.attr("tip", "minimize");
     Breadcrumbs.arrow.rotate(180);
-   
   },
   
   hide: function() {

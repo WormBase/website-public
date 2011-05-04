@@ -69,9 +69,12 @@ function selectOptionByValue(selObj, val){
     while(L){
         if (A[--L].value== val){
             selObj.selectedIndex= L;
+            return;
             L= 0;
         }
     }
+    A[A.length] = new Option(val.charAt(0).toUpperCase() + val.slice(1),val);
+    selObj.selectedIndex = A.length-1;
 }
 
 
