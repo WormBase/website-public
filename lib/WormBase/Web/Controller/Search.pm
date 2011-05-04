@@ -145,6 +145,7 @@ sub _get_url {
 sub _get_obj {
   my ($self, $c, $doc) = @_;
   my $api = $c->model('WormBaseAPI');
+  $c->log->debug("class:" . $doc->get_value(0) . ", name:" . $doc->get_value(1));
   my $obj = $api->fetch({aceclass=> $doc->get_value(0),
                           name => $doc->get_value(1)}) or die "$!";
   my %ret = %{$api->xapian->_wrap_objs($c, $obj, $doc->get_value(2))};

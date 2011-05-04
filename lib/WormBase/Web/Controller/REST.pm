@@ -9,6 +9,7 @@ use Crypt::SaltedHash;
 use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
+use URI::Escape;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -940,9 +941,10 @@ sub _get_search_result {
   if($page->is_obj){
     my @parts = split(/\//,$page->url); 
     my $class = $parts[-2];
-    my $id = $parts[-1];
+    my $id = uri_unescape($parts[-1]);
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
+    $c->log->debug("class: $class, id: $id");
     my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
     unless (defined $ret{name}) {
       $ret{name}{id} = $id;

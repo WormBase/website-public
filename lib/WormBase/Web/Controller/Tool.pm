@@ -12,6 +12,7 @@ sub tool_summary :Path("/tools") :Args(0) {
   my ( $self, $c) = @_;
 
     $c->stash->{template} = "tool/report.tt2";
+    $c->stash->{section} = "tools";
     $c->forward('WormBase::Web::View::TT')
 }
 
@@ -22,6 +23,7 @@ sub tool :Path("/tools") Args {
     my $action= shift @args || "index";
     $c->log->debug("using $tool and running $action\n");
     
+    $c->stash->{section} = "tools";
     $c->stash->{template}="tool/$tool/$action.tt2";
     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
     my $api = $c->model('WormBaseAPI');
