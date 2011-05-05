@@ -943,8 +943,8 @@ div.field .field .field-content {
 /* Google Map */
 div#google-map { 
     position:absolute;
-    right:140px;
-    top:50px;
+/*     right:140px; */
+/*     top:50px; */
 }
 
 
@@ -1416,7 +1416,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   max-width:35em;
 }
 
-div.detail-box {
+div.detail-box, div.search-summary {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
