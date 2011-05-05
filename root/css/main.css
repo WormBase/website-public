@@ -42,7 +42,7 @@ input, select, th, td { font-size:1em; }
   height: auto !important;
   width:100%;
   position: relative;
-  min-width: 630px;
+  min-width: 780px;
 }
 
 #content {
