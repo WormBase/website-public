@@ -45,16 +45,6 @@ sub search :Path('/search') Args {
       $c->stash->{noboiler} = 1;
     }
 
-    if( !($c->stash->{noboiler}) && (( !($species) && (defined $c->config->{sections}{$type} || $type == 'all') ) || ($type == 'all'))) {
-            $c->stash->{template} = "search/result-all.tt2";
-            $c->stash->{species} = $species;
-            $c->stash->{page} = $page_count;
-            $c->stash->{type} = $type;
-            $c->stash->{query} = $query || "*";
-            $c->forward('WormBase::Web::View::TT');
-            return;
-    }
-
 
     if($query=~/^\*$/){
       $query = " ";
@@ -76,6 +66,19 @@ sub search :Path('/search') Args {
         return;
       }
     }
+
+
+    if( !($c->stash->{noboiler}) && (( !($species) && (defined $c->config->{sections}{$type} || $type == 'all') ) || ($type == 'all'))) {
+            $c->stash->{template} = "search/result-all.tt2";
+            $c->stash->{species} = $species;
+            $c->stash->{page} = $page_count;
+            $c->stash->{type} = $type;
+            $c->stash->{query} = $query || "*";
+            $c->forward('WormBase::Web::View::TT');
+            return;
+    }
+
+
 # 
 #     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $query, $page_count, $search);
 #     unless($it) {  
