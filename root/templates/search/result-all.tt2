@@ -1,0 +1,52 @@
+
+
+
+      <div id="search-count-summary" class="search-summary ui-corner-all">
+        query: <b>[% query %]</b><br />
+        class: [% type %] <br />
+        species: <span class="species">[% IF species; c.config.sections.species_list.$species.title; ELSE; c.config.sections.species_list.all.title; END;%]</span>
+        <br />
+        <br />
+      [% IF type == 'all' %]
+        [% FOREACH sec IN ['species', 'resources'] %]
+          [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
+              [% IF cls == 'title'; NEXT; END; %]
+              <li style="display:none"><a onClick='$jq("#all-search-results").empty(); ajaxGet($jq("#all-search-results"), "/search/[% cls %]/[% query %]?inline=1[% IF species; "&species=" _ species; END %]");return false;' href="/search/[% cls %]/[% query %][% IF species; "?species=" _ species; END %]">[% c.config.sections.$sec.$cls.title %]</a>: 
+                <span class="count" href="/search/count/[% species %]/[% cls %]/[% query %]"></span>
+              </li>
+          [% END %]
+        [% END %]
+      [% END %]
+
+      [% IF( !(species) && (c.config.sections.$type.defined || type == 'all') )%]
+        <br />
+        [% FOREACH s IN c.config.sections.species_list.keys.sort %]
+          [% IF s == 'all'; NEXT; END; %]
+          [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
+            <li style="display:none"><a onClick='$jq("#all-search-results").empty(); ajaxGet($jq("#all-search-results"), "/search/[% type %]/[% query %]?inline=1&species=[% s %]");return false;' class="species" href="/search/[% type %]/[% query %]?species=[% s %]">[% c.config.sections.species_list.$s.title %]</a>: 
+              <span class="count" href="/search/count/[% s %]/[% type %]/[% query %]"></span>
+            </li>
+          [% END %]
+        [% END %]
+      [% END %]
+      </div>
+
+
+
+<div id="all-search-results"></div>
+
+<script>
+  $jq("#all-search-results").empty(); 
+  ajaxGet($jq("#all-search-results"), "/search/[% type %]/[% query %]/?inline=1[% IF species; '&species=' _ species; END %]");
+
+
+        $jq("#search-count-summary").find(".count").each(function() {
+          $jq(this).load($jq(this).attr("href"), function(){
+            if($jq(this).text() == '0'){
+              $jq(this).parent().remove();
+            }else {
+              $jq(this).parent().show();
+            }
+          });
+        });
+      </script>
