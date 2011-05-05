@@ -1021,14 +1021,15 @@ END;
   END;
 
   # Add tools.
-  widgets.push({ title="Tools" type="title"});
+ 
   tool_list = c.config.sections.$section.$class.tools.keys.sort || [];
 
   # resources/* and species/* automatically get the tree display (and index pages)
-  IF ! is_static;
+  IF object;
       tool_list.unshift('tree');
   END;
 
+  IF tool_list.size > 0;  widgets.push({ title="Tools" type="title"}); END;
   FOREACH widget_name IN tool_list;
       widget = c.config.sections.tools.$widget_name;
       # What context should this widget be displayed in ?
