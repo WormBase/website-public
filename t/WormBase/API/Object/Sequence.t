@@ -22,7 +22,7 @@ my $tag = '<<TAG of interest in class>>';
 # my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-my $test_objects = ["JC8.10a"];
+my $test_objects = ["AC7"];
 
 BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Sequence'); ## "::$class"
@@ -35,13 +35,13 @@ my $tester = WormBase::Test::API::Object->new({
 
 # uncomment appropriate test procedure
 
-  my $test_type = 'all' ; ## 
+#  my $test_type = 'all' ; ## 
   
-# my $test_type = 'methods';
+ my $test_type = 'methods';
 
 ## list methods to be tested here
 my @methods = qw(
-			
+			sequence
 
 				);
 ###
