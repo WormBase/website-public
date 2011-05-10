@@ -41,7 +41,7 @@ my $tester = WormBase::Test::API::Object->new({
 
 ## list methods to be tested here
 my @methods = qw(
-			
+			consensus
 
 				);
 ###
