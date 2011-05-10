@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-=pod 
+=pod  
 
 =head1 NAME
 
@@ -22,50 +22,61 @@ http://wormbase.org/species/position_matrix
 
 =cut
 
-has 'data_directory' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self        = shift;
-        my $ace_service = $self->ace_dsn();
-        my $version     = $ace_service->dbh->version;
-        return "/usr/local/wormbase/databases/$version/position_matrix";
+has 'pm_datadir' => (
+    is  => 'ro',
+    lazy => 1,
+    default  => sub {
+		my $self= shift;
+		my $version = $self->ace_dsn->version;
+		return $self->pre_compile->{base} . $version . "/position_matrix/";
+		#$self->pre_compile->{position_matrix};
     }
 );
 
-has 'image_directory' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        return "../../html/images/position_matrix";
-    }
-);
+# has 'data_directory' => (
+#     is      => 'ro',
+#     lazy    => 1,
+#     default => sub {
+#         my $self        = shift;
+#         my $ace_service = $self->ace_dsn();
+#         my $version     = $ace_service->dbh->version;
+#         return "/usr/local/wormbase/databases/$version/position_matrix";
+#     }
+# );
+# 
+# has 'image_directory' => (
+#     is      => 'ro',
+#     lazy    => 1,
+#     default => sub {
+#         return "../../html/images/position_matrix";
+#     }
+# );
 
-has 'name2consensus_hr' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self           = shift;
-        my $data_dir       = $self->data_directory;
-        my $datafile       = $data_dir . "/pm_id2consensus_seq.txt";
-        my %name2consensus = _build_hash($datafile);
-
-        return \%name2consensus;
-    }
-);
-
-has 'image_pointer_file' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self          = shift;
-        my $data_dir      = $self->data_directory;
-        my $datafile      = $data_dir . "/pm_id2source_pm.txt";
-        my %image_pointer = _build_hash($datafile);
-
-        return \%image_pointer;
-    }
-);
+# has 'name2consensus_hr' => (
+#     is      => 'ro',
+#     lazy    => 1,
+#     default => sub {
+#         my $self           = shift;
+#         my $data_dir       = $self->data_directory;
+#         my $datafile       = $data_dir . "/pm_id2consensus_seq.txt";
+#         my %name2consensus = _build_hash($datafile);
+# 
+#         return \%name2consensus;
+#     }
+# );
+# 
+# has 'image_pointer_file' => (
+#     is      => 'ro',
+#     lazy    => 1,
+#     default => sub {
+#         my $self          = shift;
+#         my $data_dir      = $self->data_directory;
+#         my $datafile      = $data_dir . "/pm_id2source_pm.txt";
+#         my %image_pointer = _build_hash($datafile);
+# 
+#         return \%image_pointer;
+#     }
+# );
 
 #######################################
 #
@@ -261,16 +272,17 @@ B<Response example>
 
 =cut 
 
-sub consensus {
+ sub consensus {
     my $self              = shift;
     my $object            = $self->object;
-    my $name2consensus_hr = $self->name2consensus_hr;
-    my $data_pack         = $name2consensus_hr->{$object};
+    my %name2consensus = _build_hash($self->pm_datadir . "pm_id2consensus_seq.txt");
+    ## $self->pre_compile->{pm_id2consensus_seq_file}
+    my $data_pack         = $name2consensus{$object};
     return {
         'data'        => $data_pack,
         'description' => 'consensus sequence for motif'
     };
-}
+ }
 
 ############################
 ## logo
@@ -363,7 +375,7 @@ sub position_data {
 
 sub _build_hash {
     my ($file_name) = @_;
-    open FILE, "<./$file_name" or die "Cannot open the file: $file_name\n";
+    open FILE, "<$file_name" or die "Cannot open the file: $file_name\n";
     my %hash;
     foreach my $line (<FILE>) {
         chomp($line);
