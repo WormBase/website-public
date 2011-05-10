@@ -9,9 +9,9 @@
 	[%  tag2link(fields.associated_position_matrix.data) %]
 [% END %]
 
-[%# WRAPPER $field_block title="consensus" key="consensus"-%] 
-	[% # fields.consensus.data %]
-[%# END %]
+[% WRAPPER $field_block title="consensus" key="consensus"-%] 
+	[%  fields.consensus.data %]
+[% END %]
 
 
 [%# WRAPPER $field_block title="position_data" key="position_data" -%] 
