@@ -266,7 +266,6 @@ sub diseases {
 					description => $omim_id2disease_desc{$disease_id},
 					};	
 	}
-	
 	return {
 		'data'=> @data_pack ? \@data_pack : undef,
 		'description' => 'Diseases related to the gene'
