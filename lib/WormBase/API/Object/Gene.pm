@@ -122,6 +122,17 @@ has 'gene_pheno_datadir' => (
     }
 );
  
+has 'othology_datadir' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+	my $self=shift;
+	my $version = $self->ace_dsn->version;
+	return $self->pre_compile->{base} . $version . "/orthology/";
+    }
+);
+
+ 
 has 'all_proteins' => (
     is  => 'ro',
     lazy => 1,
@@ -236,6 +247,29 @@ sub other_orthologs {
 sub human_orthologs {
 	my $self = shift;
 	return $self->ortholog_data_hr->{'hs'};
+}
+
+sub diseases {
+	my $self = shift;
+    my $object = $self->object;
+	my %gene_id2omim_ids = build_hash('/usr/local/wormbase/databases/WS225/orthology/gene_id2omim_ids.txt');
+	my %omim_id2disease_desc = build_hash('/usr/local/wormbase/databases/WS225/orthology/omim_id2disease_desc.txt');
+	my %omim_id2disease_name = build_hash('/usr/local/wormbase/databases/WS225/orthology/omim_id2disease_name.txt');
+	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
+	my @diseases = split /%/,$disease_list;     
+	my @data_pack;
+	foreach my $disease_id (@diseases) {
+		push @data_pack, {
+					id 		=> $disease_id,
+					label 	=> $omim_id2disease_name{$disease_id},
+					description => $omim_id2disease_desc{$disease_id},
+					};	
+	}
+	
+	return {
+		'data'=> @data_pack ? \@data_pack : undef,
+		'description' => 'Diseases related to the gene'
+	};
 }
 
 
