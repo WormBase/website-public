@@ -49,6 +49,20 @@
 	title='Human Orthologs') 
 %] 
 
+[% build_data_table (
+	order=[
+		'label',
+		'description',
+		'id',
+		],
+	columns={ 
+		label => 'Disease',
+		description => 'Description',
+		id => 'OMIM ID',
+		},
+	key='diseases',
+	title='Diseases via Human Orthologs') 
+%] 
 
 [% WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) key="inparanoid_groups" %]
 
