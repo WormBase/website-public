@@ -19,10 +19,11 @@ my $class = 'Gene';
 my $tag = 'Ortholog_other';
 
 ## get test object with a tag data populated (hopefully)
- my $test_objects = PrintOut::get_features($class,$tag); 
+# my $test_objects = PrintOut::get_features($class,$tag); 
 
 ## list test_objects 
-# my $test_objects = ["<<CLASS INSTANCE>>"];
+
+my $test_objects = ["WBGene00028408"];
 
 BEGIN {
       use_ok($WormBase::Test::API::Object::OBJECT_BASE . '::Gene'); ## "::$class"
@@ -41,9 +42,9 @@ my $tester = WormBase::Test::API::Object->new({
 
 ## list methods to be tested here
 my @methods = qw(
-		other_orthologs
+		diseases
 				);
-###concise_description human_orthologs
+###concise_description human_orthologs other_orthologs
 
 if ($test_type eq 'methods') {
 	$tester->run_common_tests({
