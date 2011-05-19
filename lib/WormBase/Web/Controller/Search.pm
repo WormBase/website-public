@@ -56,7 +56,7 @@ sub search :Path('/search') Args {
       
     my $search = $type unless($type=~/all/);
 
-    if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline")))){
+    if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline"))) && ($page_count < 2)){
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];

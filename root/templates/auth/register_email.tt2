@@ -6,6 +6,7 @@ You supplied the following registration information:
 &nbsp;&nbsp;&nbsp;&nbsp;Username: [% info.username %]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Password: [% info.password %]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E-mail:   [% info.email %]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;WormBase ID:   [% info.wbid %]<br>
 <p>
 <p>
 To activate your account and complete the sign up process, please click on the following link:<br>

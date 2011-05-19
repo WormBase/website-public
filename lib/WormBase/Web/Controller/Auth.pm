@@ -12,16 +12,22 @@ __PACKAGE__->config->{namespace} = '';
  
 sub login :Path("/login") {
      my ( $self, $c ) = @_;
-#     $c->stash->{noboiler} = 1;
-#     $c->stash->{'template'}='auth/login.tt2';
-     $c->stash->{'template'}='auth/login-fullpage.tt2';
-#     $c->stash->{'continue'}=$c->req->params->{continue};
+    $c->stash->{noboiler} = 1;
+    $c->stash->{'template'}='auth/login.tt2';
+#      $c->stash->{'template'}='auth/login-fullpage.tt2';
+    $c->stash->{'continue'}=$c->req->params->{continue};
 }
 
 sub register :Path("/register") {
-     my ( $self, $c ) = @_;
-     $c->stash->{noboiler} = 1;
-     $c->stash->{'template'}='auth/register.tt2';
+  my ( $self, $c ) = @_;
+  if($c->req->params->{inline}){
+    $c->stash->{noboiler} = 1;
+  }else{
+     $c->stash->{email} = $c->req->body_parameters->{email};
+     $c->stash->{full_name} = $c->req->body_parameters->{name};
+     $c->stash->{password} = $c->req->body_parameters->{password}; 
+  }
+  $c->stash->{'template'}='auth/register.tt2';
 #     $c->stash->{'continue'}=$c->req->params->{continue};
 }
 
@@ -89,9 +95,9 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
 
 sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my ( $self, $c) = @_;
-    
-     my $email     = $c->req->params->{email};
-     my $password = $c->req->params->{password}; 
+     my $email     = $c->req->body_parameters->{email};
+     my $password = $c->req->body_parameters->{password}; 
+
      if (   $email   &&  $password  )
      {
 	    my $rs = $c->model('Schema::User')->search({ email_address => $email,active=>1 ,password => { '!=', undef }});
@@ -317,6 +323,7 @@ sub add_operator :Path("/add_operator") {
 	 $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
     }
 }
+
 =head1 AUTHOR
 
 xiaoqi shi

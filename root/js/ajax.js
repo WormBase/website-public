@@ -47,34 +47,36 @@
 
 
 
-    $jq(".register-button").live('click',function() {
-      
-	var reg = $jq(this).closest('#register-form');	
-	var email = reg.find("#email");
-	var username= reg.find("#username");
-	var password = reg.find("#password");
-	if(validate_fields(email,username,password,reg.find("#confirm-password")) == false) {
-	    return false;
-	}
-	 
-	$jq.ajax({
-		  type: "POST",
-		  dataType: 'text/x-yaml',
-		  url: "/rest/register",
-		  data: {username:username.val(),email:email.val(),password:password.val()},
-		  success: function(data){
-			   if(data==0) {
-				alert("The email address has already been registered!"); 
-			   } else {
-			       //			    $jq.colorbox.close();
-			    displayNotification("Thank you for registering at WormBase, a confirmation emaill will be sent to you soon.");
-			   }
-		    },
-		  error: function(request,status,error) {
-			  alert(request + " " + status + " " + error );
-		    }
-	  });
+  $jq(".register-button").live('click',function() {
+
+    var reg = $jq(this).closest('#register-form');	
+    var email = reg.find("#email");
+    var username= reg.find("#name");
+    var password = reg.find("#password");
+    var wbid = reg.find("#wbid");
+    if(validate_fields(email,username,password,reg.find("#confirm-password")) == false) {
+        return false;
+    }
+    
+    $jq.ajax({
+          type: "POST",
+          url: "/rest/register",
+          data: {username:username.val(),email:email.val(),password:password.val(), wbid:wbid.val()},
+          success: function(data){
+                if(data==0) {
+                alert("The email address has already been registered!"); 
+                } else {
+                displayNotification("Thank you for registering at WormBase, a confirmation emaill will be sent to " + email.val() + " soon.");
+                }
+            },
+          error: function(request,status,error) {
+              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
+                  return; 
+              alert(request + " " + status + " " + error );
+            }
       });
+    return false;
+    });
 
 
       /* This is the system-wide dialog */
