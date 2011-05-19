@@ -53,7 +53,7 @@ sub species_index :Path('/species') :Args(1)   {
     }
 
     if ($species eq 'all' || $self->_is_species($c,$species)) {
-      $c->stash->{section}    = 'species_list';     # Section is where to grab widgets from
+      $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
       $c->stash->{class}      = 'all';
       $c->stash->{is_class_index} = 1;  
       $c->stash->{species}    = $species;           # Class is the subsection	

@@ -74,6 +74,10 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "active",
   { data_type => "integer", is_nullable => 1 },
+  "wbid",
+  { data_type => "text", is_nullable => 1 },
+  "wb_link_confirm",
+  { data_type => "boolean", is_nullable => 1 },
 );
 __PACKAGE__->set_primary_key("id");
 

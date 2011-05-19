@@ -11,8 +11,10 @@ CREATE TABLE users (
             email_address char(255),
             first_name    char(100),
             last_name     char(100),
-	    gtalk_key	  text,
-	    active        int(11) 
+            gtalk_key	  text,
+            active        int(11),
+            wbid          char(255),
+            wb_link_confirm     BOOLEAN
 );
 
 DROP TABLE IF EXISTS roles;
