@@ -1,66 +1,74 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-   
- 
-[% WRAPPER $field_block title="Reference allele" key="reference_allele" %]
+[%
+
+   # Reference allele
+   WRAPPER $field_block title="Reference allele" key="reference_allele";
+       FOREACH obj IN fields.reference_allele.data;
+	   tag2link(obj);
+       END;
+   END;
+
        
-        [% FOREACH obj IN fields.reference_allele.data %]
-	  [% IF obj.flanking_sequence %] 
-	      <b>[%  tag2link(obj) %]</b>   
-	  [% ELSE %]
-	     [%  tag2link(obj) %]
-	  [% END %]
+   # Alleles
+   build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
+                    columns={ variation         => 'Allele',
+	   	              type              => 'Type',
+		              molecular_change  => 'Molecular change',
+			      affects           => 'Protein effect',
+			      sequence_known    => 'Sequence known?',
+                            },
+                     key='alleles',
+                     title='Alleles');
 
-        [% END %]
-       
-[% END %]
+   # Polymorphisms
+   build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
+                    columns={ variation         => 'Polymorphism',
+	   	              type              => 'Type',
+		              molecular_change  => 'Molecular change',
+			      affects           => 'Location',
+			      sequence_known    => 'Sequence known?',
+                            },
+                     key='polymorphisms',
+                     title='Polymorphisms & Natural variants');
 
-  [% WRAPPER $field_block title="Alleles" key="alleles"%]
-    <div class="caveat-emptor">Alleles for which the sequence change is known are listed in <b>boldface</b>.</div>
-    [% FOREACH list IN fields.alleles.data.alleles.keys %]
-      [% list %]:
-      [% FOREACH obj IN fields.alleles.data.alleles.$list %]
-        [% IF obj.flanking_sequence %] 
-            <b>[%  tag2link(obj) %]</b>   
-        [% ELSE %]
-          [%  tag2link(obj) %]
-        [% END %]
-      [% END %]
-      <br />
-    [% END %]
-  [% END %]
- 
-  [% WRAPPER $field_block title="Polymorphisms" %]
-    [% FOREACH obj IN fields.alleles.data.snps %]
-	 [%  tag2link(obj) %] 
-    [% END %]
-    [% FOREACH obj IN fields.alleles.data.rflps %]
-    	 [%  tag2link(obj) %] 
-    [% END %]
-  [% END %]
+   # Strains
 
-[% IF fields.alleles.data.insertions.size>0 %]
-  [% WRAPPER $field_block title="Transposon insertions" %]
-    [% FOREACH obj IN fields.alleles.data.insertions %]
-	 [%  tag2link(obj) %] 
-    [% END %]
-  [% END %]
-[% END %] 
-[% WRAPPER $field_block title="Strains" %]
-  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _  " " _ pluralize("strain", fields.strains.data.total)) %]</div>
-  <div class="toggle-container">
-    [% venn("Carrying " _ tag2link(object.name.data) _ " alone", fields.strains.data.singletons, 
-    	    "Available from the CGC", fields.strains.data.cgc, 
-    	    "", fields.strains.data.both, 
-    	    "Other strains", fields.strains.data.other) %]
-  </div>
-[% END %]
+#    '<div class="toggle">Found ';
+#           searchlink('strain', object.name.data.id, fields.strains.count.total.size
+#           _  " " 
+#           _ pluralize('strain', fields.strains.count.total));
+#	   '</div>';
+#    '<div class="toggle-container">';
+#    fields.strains.count.carrying_gene_alone;
+   WRAPPER $field_block title="";
+     venn("Carrying " _ tag2link(object.name.data) _ " alone", 
+                                         fields.strains.count.carrying_gene_alone,
+    	    "Available from the CGC",    fields.strains.count.available_from_cgc,
+    	    "",                          fields.strains.count.carrying_gene_alone_and_cgc,
+    	    "Other strains",             fields.strains.count.others);
+  END;
+#    '</div>';
 
-[% WRAPPER $field_block title="Rearrangements" %]
-    Browse for rearrangements known to:
-    [% FOREACH obj IN fields.rearrangements.data %]
-	 [%  tag2link(obj) %] 
-	[% UNLESS loop.last -%],[% END %]
-    [% END %]
-[% END %]
+   build_data_table(order=['strain','genotype','cgc'],
+                    columns={ strain    => 'Strain',
+	   	              cgc       => 'Available from CGC?',
+		              genotype  => 'Genotype',
+                            },
+                     key='strains',
+                     title='Strains');
+
+   WRAPPER $field_block title="Rearrangements" key="rearrangements";
+      IF fields.rearrangements.data.positive;
+        tag2link(object.name.data) _ ' inside: ';
+	FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
+	'<br />';
+      END;
+      IF fields.rearrangements.data.negative;
+        tag2link(object.name.data) _ ' outside: ';
+	FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
+      END;
+   END;
+
+%]

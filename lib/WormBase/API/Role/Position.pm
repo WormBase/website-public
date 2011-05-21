@@ -26,11 +26,11 @@ has 'genomic_position' => (
 );
 
 # used by genome browser to render image
-has 'genomic_image_position' => (
+has 'genomic_image' => (
     is       => 'ro',
     required => 1,
 	lazy     => 1,
-	builder  => '_build_genomic_image_position',
+	builder  => '_build_genomic_image',
 );
 
 has 'tracks' => (
@@ -54,11 +54,11 @@ has 'genetic_position_interpolated' => (
 	builder  => '_build_genetic_position_interpolated',
 );
 
-# NOTE: genomic_picture has been superceded by genomic_image_position & tracks attribute
+# NOTE: genomic_picture has been superceded by genomic_image & tracks attribute
 #       see Object::Clone and respective templates for example
 
 # this is the fallback. and defaults to the first in genomic_position (i.e. only 1 pos used for image)
-sub _build_genomic_image_position { # genomic_picture_position?
+sub _build_genomic_image { # genomic_picture_position?
     my ($self) = @_;
 
     my $positions = $self->genomic_position->{data};

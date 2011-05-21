@@ -4,88 +4,118 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-[% WRAPPER highlight_box %]
+[% 
+  
+  WRAPPER highlight_box;
 
-    [% WRAPPER $field_block title="" -%]
-       [% taxonomy %]
-    [% END %] 
+     WRAPPER $field_block title="";
+         taxonomy;
+     END;
 
-[% END %]
+   END;
 
-[% other_names %]
+   other_names;
 
-[% WRAPPER $field_block title="Genotype" -%]
-      [% fields.genotype.data %]
-[% END %]
+   WRAPPER $field_block title="Genotype";
+       # fields.genotype.data;
+       # Instead, let's mark up the genotype string.
 
-[% WRAPPER $field_block title="Contains" %]
-    [% WRAPPER $field_block title="Genes" key="genes" %]
-         [% FOREACH gene IN fields.genes.data %]
-             [% tag2link(gene) %]<br />
-	 [% END %]
-    [% END %]
+       genotype=fields.genotype.data;
+       markup=[fields.genes.data,fields.alleles.data,fields.rearrangements.data,
+	       fields.clones.data,
+	       fields.transgenes.data];
 
-    [% WRAPPER $field_block title="Alleles" key="alleles" %]
-         [% FOREACH allele IN fields.alleles.data %]
-             [% tag2link(allele) %]<br />
-	 [% END %]
-    [% END %]
-
-    [% WRAPPER $field_block title="Rearrangements" key="rearrangements" %]
-         [% FOREACH rearrangement IN fields.rearrangements.data %]
-             [% tag2link(rearrangement) %]<br />
-	 [% END %]
-    [% END %]
-
-    [% WRAPPER $field_block title="Clones" key="clones" %]
-         [% FOREACH clone IN fields.clones.data %]
-             [% tag2link(clone) %]<br />
-	 [% END %]
-    [% END %]
-
-    [% WRAPPER $field_block title="Transgenes" key="transgenes" %]
-         [% FOREACH gene IN fields.transgenes.data %]
-             [% tag2link(gene) %]<br />
-	 [% END %]
-    [% END %]
-
-[% END %]
-
-[% WRAPPER $field_block title="Reference strain" key="referenc_strain" -%] 
-    [% tag2link(fields.reference_strain.data) %]
-[% END %]
-
-[% WRAPPER $field_block title="Properties" %]
-         [% WRAPPER $field_block title="Mutagen" key="mutagen" %]
-             [% fields.mutagen.data %]         
-         [% END %]
-
-         [% WRAPPER $field_block title="Outcrossed" key="outcrossed" %]
-             [% fields.outcrossed.data %]         
-         [% END %]
-
-         [% WRAPPER $field_block title="Males?" key="throws_males" %]
-             [% fields.throws_males.data %]
-         [% END %]
-
-[% END %]
+       FOREACH array IN markup;
+      	   FOREACH entry IN array;
+	       IF genotype.match(entry.label);
+	           genotype=genotype.replace(entry.label,tag2link(entry));
+	       END;
+           END;
+       END;
+    
+       genotype;
+   
+    END;
+%]
 
 
-[% WRAPPER $field_block title="Phenotypes" %]
-    [% WRAPPER $field_block title="Observed" key="phenotypes_observed" %]
-      This should be a data table
-         [% FOREACH phenotype IN fields.phenotypes_observed.data %]
-            [% phenotype %]         
-         [% END %]
-    [% END %]
+[%# The "Contained" entries are integrated into the Genotype string.
 
-    [% WRAPPER $field_block title="Not Observed" key="phenotypes_not_observed" %]
-      This should be a data table
-         [% FOREACH phenotype IN fields.phenotypes_not_observed.data %]
-            [% phenotype %]         
-         [% END %]
-    [% END %]
-[% END %]
+ WRAPPER $field_block title="Contains";
+    WRAPPER $field_block title="Genes" key="genes";
+         FOREACH gene IN fields.genes.data;
+             tag2link(gene);
+	     '<br />';
+	 END;
+    END;
+
+    WRAPPER $field_block title="Alleles" key="alleles";
+         FOREACH allele IN fields.alleles.data;
+             tag2link(allele);;
+	     '<br />';
+	 END;
+    END;
+
+    WRAPPER $field_block title="Rearrangements" key="rearrangements";
+         FOREACH rearrangement IN fields.rearrangements.data;
+             tag2link(rearrangement);
+	     '<br />';
+	 END;
+    END;
+
+    WRAPPER $field_block title="Clones" key="clones";
+         FOREACH clone IN fields.clones.data;
+             tag2link(clone);
+	     '<br />';
+	 END;
+    END;
+
+    WRAPPER $field_block title="Transgenes" key="transgenes";
+         FOREACH gene IN fields.transgenes.data;
+             tag2link(gene);
+	     '<br />';
+	 END;
+    END;
+
+END;
+ %]
+
+[% 
+
+   WRAPPER $field_block title="Reference strain" key="reference_strain";
+        tag2link(fields.reference_strain.data);
+   END;
+
+   WRAPPER $field_block title="Properties";
+         WRAPPER $field_block title="Mutagen" key="mutagen";
+             fields.mutagen.data;
+         END;
+
+         WRAPPER $field_block title="Outcrossed" key="outcrossed";
+              fields.outcrossed.data;
+         END;
+
+         WRAPPER $field_block title="Males?" key="throws_males";
+             fields.throws_males.data;
+         END;
+
+   END;
 
 
-[% remarks %]
+   WRAPPER $field_block title="Phenotypes";
+      WRAPPER $field_block title="Observed" key="phenotypes_observed";
+         FOREACH phenotype IN fields.phenotypes_observed.data;
+             phenotype;
+          END;
+      END;
+
+      WRAPPER $field_block title="Not Observed" key="phenotypes_not_observed";
+          FOREACH phenotype IN fields.phenotypes_not_observed.data;
+               phenotype;         
+          END;
+      END;
+   END;
+
+remarks;
+
+%]
