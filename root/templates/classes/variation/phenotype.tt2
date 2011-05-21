@@ -2,105 +2,35 @@
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 	
-	
-	[%## DATA TABLE FOR PHENOTYPE %]
-	[% WRAPPER $field_block title="Phenotype" key=phenotype %]
-	
-		[%## declare array of columns named via keys in the data structure%] 	
-		[% order = ['phenotype','remark'] %]
-	
-		[% ## declare hash for column headers, keyed as above %]
-		[% headers = {	phenotype => 'Phenotype',
-						remark => 'Remark'
-					 }
-		%]
-	  
-		[% ## declare rows array %]
-		[% rows = [] %]
-		
-		[% ## loop through each element in <subroutine>.<return_data_key>.<... to array data> array %]
-		[% FOREACH r IN fields.phenotype.data_pack %]
-			[% ## declare row array %]
-			[% row = [] %]
-			
-			[% ## loop through each element in order array (for columns) , declared above %]
-			[% FOREACH o IN order %]
-				
-				[% ## get value (val) from the row r (keyed as o?) %]
-				[% val = r.$o %]
-			
-				[% ## enter data in row %]
-				[% row.push(val) %]
-	   
-			[% #  END FOREACH o IN order  %]  	
-			[% END %]
-		
-		
-			[% ## enter data row array into rows %]
-			[% rows.push(row) %]
-		
-	  [% END %]
-	  
-	  
-	  [% names = [] %]
-	  
-	  [% ## populate name array %]
-	  [% FOREACH o IN order; names.push(headers.$o); END %]
-	  
-	  [% ## generate table %]
-	  [% dataTable_list(names, rows, 'table_phenotype') %]
-	
-	[% ## END OF WRAPPER %] 
-	[% END %]
+[%
 
-	<hr>
+  'TH: data processing and view redundancy with other phenotypes?';
 
-	[%## DATA TABLE FOR PHENOTYPE NOTS %]
-	[% WRAPPER $field_block title="Phenotype not observed " key="phenotype_not" %]
-	
-		[%## declare array of columns named via keys in the data structure%] 	
-		[% order = ['phenotype','remark'] %]
-	
-		[% ## declare hash for column headers, keyed as above %]
-		[% headers = {	phenotype => 'Phenotype',
-						remark => 'Remark'
-					 }
-		%]
-	  
-		[% ## declare rows array %]
-		[% rows = [] %]
-		
-		[% ## loop through each element in <subroutine>.<return_data_key>.<... to array data> array %]
-		[% FOREACH r IN fields.phenotype_not.data_pack %]
-			[% ## declare row array %]
-			[% row = [] %]
-			
-			[% ## loop through each element in order array (for columns) , declared above %]
-			[% FOREACH o IN order %]
-				
-				[% ## get value (val) from the row r (keyed as o?) %]
-				[% val = r.$o %]
-			
-				[% ## enter data in row %]
-				[% row.push(val) %]
-	   
-			[% #  END FOREACH o IN order  %]  	
-			[% END %]
-		
-		
-			[% ## enter data row array into rows %]
-			[% rows.push(row) %]
-		
-	  [% END %]
-	  
-	  
-	  [% names = [] %]
-	  
-	  [% ## populate name array %]
-	  [% FOREACH o IN order; names.push(headers.$o); END %]
-	  
-	  [% ## generate table %]
-	  [% dataTable_list(names, rows, 'table_phenotype_not') %]
-	
-	[% ## END OF WRAPPER %] 
-	[% END %]
+   WRAPPER $field_block title="Phenotype" key=phenotype;
+
+    'TH: check data model for conformation. view called for "data_pack".
+
+      build_data_table(order=['phenotype','remark'],
+                              columns={ phenotype => 'Phenotype',
+		                        remark    => 'Remark',
+                                       },
+                         key='phenotype');
+   END;
+
+   '<hr>';
+
+
+   WRAPPER $field_block title="Phenotype NOT observed" key="phenotype_not";
+
+    'TH: check data model for conformation. view called for "data_pack".
+
+      build_data_table(order=['phenotype','remark'],
+                              columns={ phenotype => 'Phenotype',
+		                        remark    => 'Remark',
+                                       },
+                         key='phenotype_not');
+   END;
+
+%]
+
+

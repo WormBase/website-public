@@ -4,33 +4,36 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-[% remarks %]	
+[% 
 
-[% build_data_table (
-		order=[
+     remarks;
+
+     WRAPPER $field_block title="gene_ontology" key="gene_ontology";
+           build_data_table (
+	    	   order=[
 			'go_term',
 			'definition',
 			'evidence',
 			],
-        columns={ 
-        	 go_term => 'GO Term',
-			definition => 'Definition',
-			evidence => 'Evidence', 
-			},
-        key='gene_ontology',
-        title='Gene Ontology') 
-    %] 
+                   columns={ 
+        	           go_term => 'GO Term',
+                        definition => 'Definition',
+		          evidence => 'Evidence', 
+			   },
+                   key='gene_ontology');
+     END;
     
+     WRAPPER $field_block title="Homologs" key="homologies";
+           build_data_table (
+		      order=[
+			     'homolog',
+		     	     'type',
+			     ],
+                    columns={ 
+        	         homolog => 'Homolog',
+			    type => 'Type',
+			     },
+                     key='homologies');
+     END;
 
-[% build_data_table (
-		order=[
-			'homolog',
-			'type',
-			],
-        columns={ 
-        	homolog => 'Homolog',
-			type => 'Type',
-			},
-        key='homologies',
-        title='Homologs') 
-    %] 
+%]

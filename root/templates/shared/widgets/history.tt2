@@ -1,18 +1,23 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% IF object.name.data.class == 'Protein' %]
-    [%
-        build_data_table(order=['prediction','event','version'],
+[%
+
+IF object.name.data.class == 'Protein';
+
+   WRAPPER $field_block title="Curatorial History" key="history";
+       build_data_table(order=['prediction','event','version'],
                          columns={ prediction => 'Predicted gene',
 		                   event      => 'Event',
 			           version    => 'Version',
                                  },
-                         key='history',
-                       title='Curatorial History');
-   %]
-[% ELSE %]
-   [%        build_data_table(order=['version','date','action','remark','gene','curator'],
+                         key='history');
+   END;
+
+ELSE;
+
+    WRAPPER $field_block title="Curatorial History" key="history";
+       build_data_table(order=['version','date','action','remark','gene','curator'],
                          columns={ version => 'Version',
 		                   date    => 'Date',
 			           action  => 'Action',
@@ -20,7 +25,9 @@
 				   gene    => 'Gene',
 				   curator => 'Curator'
                                  },
-                         key='history',	
-                         title='Curatorial History');
-    %]
-[% END %]
+                         key='history');
+    END;
+
+END;
+
+%]

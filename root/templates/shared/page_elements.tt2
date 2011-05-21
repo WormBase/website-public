@@ -173,24 +173,31 @@
 
 
 
+[%#
 
+    Build a JQuery dataTable.
+    Parameters:
+        order  : array of columns
+        columns: hash ref associating columns to labels
+        key    : data key for accessing the stash        
+        passed_data : in lieu of passing a key for accessing data,
+                      pass in pre-structured data as passed_data;
+                      useful in cases when you want to change the processing heuristic.
+
+   Note: build_data_table is no longer wrapped in a field BLOCK. This was too
+   restrictive for formatting, for example, in cases where it was
+   necessary to include multiple tables in a single field.
+%]
 
 [% MACRO build_data_table BLOCK;
 
-   WRAPPER $field_block title="$title" key="$key";
-
-	# Should be passed:
-        #     order  : array of columns
-        #     columns: hash ref associating columns to labels
-        #     key    : data key for accessing the stash
-        #     title  : optional title for the field 
-	  
 	# declare rows array
         local_rows = [];
 
 	# loop through each element in <subroutine>.<return_data_key>.<... to array data> array
         # (or through data passed in that may have been built by the caller)
         local_data = passed_data ? passed_data : fields.$key.data;
+
 	FOREACH r IN local_data;
   		row = [];
 			
@@ -210,21 +217,118 @@
 	  END;
 	  	  	  
 	  # populate name array;
-	  names = [];
-	  FOREACH o IN order; names.push(columns.$o); END;
+	  headers = [];
+	  FOREACH o IN order; headers.push(columns.$o); END;
 	  
 	  # generate table
-	  dataTable_list(names, local_rows, "table_${key}_by");	
-	
-	END; # END of WRAPPER
+	  jquery_data_table_html(headers, local_rows, "table_${key}_by");	
+
     END; # END of MACRO
 %]
 
+[%# jquery_data_table_html:
+
+     This is Xq's original jquery data implementation with some
+     sugar added to make it configurable.
+     
+     It might be better to build the table directly from the data
+     structure instead of formatting it into a html table and then
+     styling via javascript.
+%]
+     
+[% MACRO jquery_data_table_html(table_headers,rows,table_name,style) BLOCK %]
+
+  [% IF rows && rows.size > 0;  
+       # Set up some suitable defaults
+       IF rows.size < 11;
+          paginate        = 'false';
+          pagination_type = 'false';
+	  length          = 'false';
+	  lengthMenu      = 'false';
+          filter          = 'false';
+          info            = 'false';
+       ELSIF rows.size < 51;
+          paginate        = 'false';
+          pagination_type = 'false';
+	  length          = 'false';
+	  lengthMenu      = 'false';
+	  filter          = 'true';
+          info            = 'false';
+       ELSE;
+          paginate        = 'true';
+          pagination_type = 'full_numbers';
+	  length          = 'true';
+          lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
+          filter          = 'true';
+	  info            = 'true'; 
+      END;
+
+   %]
+
+
+    <script type="text/javascript" >
+	$jq(document).ready(function() {
+	    $jq('#[% table_name %]').dataTable({
+                "bPaginate"        : [% paginate %],
+		"bLengthChange"    : [% length   %],
+//                "bJQueryUI"        : true,
+                "sPaginationType"  : "[% pagination_type %]",
+		"bFilter"          : [% filter %],		
+		"bInfo"            : [% info %],
+     	        [% style %]
+	} );
+      } );
+    </script>
+
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
+	<thead>
+		<tr>
+		    [% FOREACH header IN table_headers %]  
+			<th>[% header %]</th>
+		    [% END %]
+		</tr>
+	</thead>
+	<tbody>
+	    [% 
+                FOREACH row IN rows;
+		   '<tr>';
+                   FOREACH cell IN row;
+		      '<td>'; 
+                      IF cell.species.defined;
+                          '<span class="species">' _ cell.genus.chunk(1).0 _ '.' _ cell.species _ '</span>';
+                      ELSIF cell.class.defined;
+                          tag2link(cell);
+                      ELSE;
+		          cell;
+                      END;
+		      '</td>';
+		   END;
+		   '</tr>';
+	       END;
+             %]
+	</tbody>
+
+	<tfoot>
+		<tr>
+			 [% FOREACH header IN table_headers %]  
+     			       <th>[% header %]</th>
+			 [% END %]
+		</tr>
+	</tfoot>
+
+      </table>
+   [% END %] 
+
+[% END %] 
+
+
+
+
+
+
 [%# We SHOULD be able to build data tables from arrays which would be faster
      than taking a data strucutre from the db, building a second data structure,
-     dumping to a table and then styling it. 
-     
-     Also: dataTable_List applies WRAPPER. Might be nice to override this
+     dumping to a table and then styling it.      
 %]
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
@@ -660,6 +764,8 @@ END;
 
 [% MACRO best_blastp_matches BLOCK;
 
+   WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
+
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
                               columns={ taxonomy => 'Species',
 		                        hit      => 'Hit',
@@ -667,9 +773,8 @@ END;
 				        evalue   => 'BLAST e-value',
 				        percent  => '% Length' 
                                  },
-                         key='best_blastp_matches',	
-                         title='Best BLASTP matches');
-
+                         key='best_blastp_matches');
+    END;
 
    
         WRAPPER $field_block title="";
@@ -687,13 +792,17 @@ END;
 
 
 [% MACRO expression_patterns BLOCK ;
-   build_data_table(order=['expression_pattern','description','author'],
-                    columns={ expression_pattern => 'Pattern',
-		              description        => 'Description',
-			      author             => 'Author',
+
+   WRAPPER $field_block title="Patterns" key="expression_patterns";
+
+       build_data_table(order=['expression_pattern','description','author'],
+                      columns={ expression_pattern => 'Pattern',
+		                description        => 'Description',
+			        author             => 'Author',
                              },
-                    key='expression_patterns',
-                    title='Patterns');
+                    key='expression_patterns');
+    END;
+
    END;
 %]
 
@@ -736,26 +845,33 @@ END;
 %]
 
 [% MACRO phenotype BLOCK ;
-   build_data_table(order=['phenotype_info','description','remark'],
-                    columns={ 
-                    	phenotype_info => 'Phenotype',
-		              	description        => 'Description',
-			      		remark             => 'Remark',
+
+   WRAPPER $field_block title="Phenotype" key="phenotype";
+
+       build_data_table(order=['phenotype_info','description','remark'],
+                        columns={ 
+                      	phenotype_info => 'Phenotype',
+		      	description    => 'Description',
+			remark         => 'Remark',
                     },
-                    key='phenotype',
-                    title='Phenotype');
-   END;
+                    key='phenotype');
+    END;
+END;
 %]
 
 [% MACRO phenotype_not BLOCK ;
+
+   WRAPPER $field_block title="Phenotype NOT Observed" key="phenotype_not";
+
    build_data_table(order=['phenotype_info','description','remark'],
                     columns={ 
                     	phenotype_info => 'Phenotype',
 		        description        => 'Description',
 	 		remark             => 'Remark',
                     },
-                    key='phenotype_not',
-                    title='Phenotype NOT Observed');
+                    key='phenotype_not');
+    END;	  	      
+   
    END;
 %]
 
@@ -916,47 +1032,27 @@ END;
 
 
 
-[% # gene_ontology; custom dataTable procesing for the Gene summary %]
-[%# This is (nearly) generically suitable for structure that contains 
-     multiple tables eg data contains hash of arrays %]
+[%# 
+
+   gene_ontology; custom data table processing used on the Gene Summary.
+
+   This is essentially generic processing for a nested data structure
+   intended to be multiple tables.
+   
+   eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
+
+%]
 
 [% MACRO gene_ontology BLOCK;
 
-       # One table for each GO facet
+       # One table for each key (here, a GO facet)
        facets = fields.$key.data.keys.sort;
 
        FOREACH facet IN facets;
             IF fields.$key.data.$facet > 0;
                 WRAPPER $field_block title="$facet" key="$key";
-
-                   # declare array of columns named via keys in the data structure
-	           order = ['method','term', 'evidence_code'];
-		    
-	           # declare hash for column headers, keyed as above
-	           headers = {   method          => 'Method',
-                                 term            => 'Term',
-                                 evidence_code   => 'Evidence' };
- 
-                   # declare rows array
-                   rows = [];
-  
-                   FOREACH r IN fields.$key.data.$facet;
-          	           row = [];
-		           # loop through each element in order array (for columns) , declared above
-		           FOREACH o IN order;			
-			         # get value (val) from the row r
-     		                 val = r.$o;
-			         # enter data in row
-	                         row.push(val);
-      		           END;
-		           # enter data row array into rows
-                           rows.push(row);
-                    END;
-					  
-                    # populate name array;
-	            names = [];
-	            FOREACH o IN order; names.push(headers.$o); END;
-                    table_count = table_count + 1;		      	  
+		     					  
+                   table_count = table_count + 1;		      	  
  
     	          # generate table
 #       	                 '<span class="species">'
@@ -964,10 +1060,17 @@ END;
 #                          _ '</span> (' 
 #                          _ fields.$key.data.$facet.size 
 #                          _ ' assocations)';
-#                    dataTable_list(names, rows, "table_${facet}_${key}");
-                    dataTable_list(names, rows, "table_${table_count}");
-	     END; # END of WRAPPER
-           END; # END IF facet contains data	   
+
+                  # Here we assume that the inner data structure as an array of hashes	
+                  build_data_table(order = ['method','term', 'evidence_code'],
+	                         columns = {   method   => 'Method',
+                                                 term   => 'Term',
+                                        evidence_code   => 'Evidence' },
+	                         passed_data = fields.$key.data.$facet,
+			             key     = "table_${table_count}_go");   
+
+    	         END; # END of WRAPPER
+              END; # END IF facet contains data	   
          END; # END of facets
   END; # END of MACRO
 %]

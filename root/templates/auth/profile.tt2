@@ -27,7 +27,24 @@
     %]
 	[% rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator,operator]); %]
     [% END %]
-[% dataTable_list(['username','email','first name','last name','admin','curator','operator'],rows,'user_list') %]
+
+
+    [%# dataTable_list(['username','email','first name','last name','admin','curator','operator'],rows,'user_list') %]
+    [% 
+
+       build_data_table(order=['username','email','first name','last name','admin','curator','operator'],
+                        columns={ username          => 'Username',
+	   	                  email             => 'Email',
+	  	                  first_name        => 'First Name',
+			          last_name         => 'Last Name',
+			          admin             => 'Admin',
+				  curator           => 'Curator',
+				  operator          => 'Operator',
+                               },
+			 passed_data = rows,
+                         key='user_list');
+      %]
+
 </fieldset>
 
 [% END %]

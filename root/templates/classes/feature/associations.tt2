@@ -1,7 +1,11 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	[% build_data_table (
+[%
+
+WRAPPER $field_block title="Associations" key="associations";
+
+    build_data_table (
 		order = [ 
 			'label',
 			'association',
@@ -10,12 +14,12 @@
 			label => 'Association Type',
 			association => 'Associate',
 			},
-		key = 'associations',
-		title = 'Associations'	
-		)
-	%]
-	
-	[% build_data_table (
+		key = 'associations');
+END;
+
+WRAPPER $field_block title="Defined by" key="defined_by";	
+
+    build_data_table (
 		order = [ 
 			'label',
 			'object',
@@ -24,14 +28,14 @@
 			label => 'Defined via',
 			object => 'Object',
 			},
-		key = 'defined_by',
-		title = 'Defined by'	
-		)
-	%]
+		key = 'defined_by');
 	
-[% WRAPPER $field_block title='Bound by product of' key ='binds_gene_product' %]
-            [% FOREACH data IN fields.binds_gene_product.data %]
-            [% tag2link(data) %]<br>
-            [% END %]      	
-   [% tag2linkAll(fields.binds_gene_product.data) %]
-[% END %]
+
+WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
+    FOREACH data IN fields.binds_gene_product.data;
+         tag2link(data) _ '<br>';
+    END;
+    tag2linkAll(fields.binds_gene_product.data);
+END;
+
+%]

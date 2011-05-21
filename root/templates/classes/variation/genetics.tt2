@@ -71,9 +71,7 @@ WRAPPER $field_block  title="Other alleles" key="other_alleles";
 			physical_type => 'Classification',
 			status        => 'Status',
 			},
-		key = 'other_alleles',
-		title = '',
-		);
+		key = 'other_alleles');
 
 END;	
 %]

@@ -39,6 +39,9 @@
      END;
 #  END;
 
+# Does this need to be wrapped?
+# WRAPPER $field_block title="" key="";
+
    build_data_table(order=['name','link','full_description','maintainer'],
                     columns={ name        => 'Name',
 		    	      link        => 'Entry',
@@ -46,8 +49,8 @@
 			      full_description => 'Description',
 			      maintainer  => 'Maintainer',
 			      },
-		    passed_data = rows,
-                    title='',);
+		    passed_data = rows);
+#END;
 
 
    ELSE;
