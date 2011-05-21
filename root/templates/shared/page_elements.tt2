@@ -659,12 +659,13 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-build_data_table(order=['taxonomy','hit','description','evalue','percent'],
-                         columns={ taxonomy => 'Species',
-		                   hit      => 'Hit',
-				   description => 'Description',
-				   evalue   => 'BLAST e-value',
-				   percent  => '% Length' 
+
+      build_data_table(order=['taxonomy','hit','description','evalue','percent'],
+                              columns={ taxonomy => 'Species',
+		                        hit      => 'Hit',
+			     	     description => 'Description',
+				        evalue   => 'BLAST e-value',
+				        percent  => '% Length' 
                                  },
                          key='best_blastp_matches',	
                          title='Best BLASTP matches');

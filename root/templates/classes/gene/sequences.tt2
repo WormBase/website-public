@@ -2,10 +2,11 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
    [% WRAPPER $field_block title="Gene model(s)" key="gene_models"%]
-      [% order = ['model','status','nucleotides','protein','aa'] %]
+      [% order = ['model','status','length_spliced','length_unspliced','protein','length_protein'] %]
       [% headers = {    model => 'Gene Model',
                         status => 'Status',
-                        nucleotides => 'Nucleotides (coding/transcript)',
+			length_spliced   => 'Length (spliced)',
+			length_unspliced => 'Length (unspliced)',
                         protein => 'Protein',
                         aa => 'Amino Acids'}
       %]

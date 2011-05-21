@@ -5,24 +5,6 @@ extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 
-=pod 
-
-=head1 NAME
-
-WormBase::API::Object::Gene
-
-=head1 SYNPOSIS
-
-Model for the Ace ?Gene class.
-
-=head1 URL
-
-http://wormbase.org/species/gene
-
-=head1 METHODS/URIs
-
-=cut
-
 
 #### passed test #####
 # common_name 
@@ -88,6 +70,24 @@ http://wormbase.org/species/gene
 # our $gene_variation_phene_file = "variation_data.txt";
 # our $phenotype_name_file = "phenotype_id2name.txt";
 # our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
+
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Gene
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Gene class.
+
+=head1 URL
+
+http://wormbase.org/species/gene
+
+=head1 METHODS/URIs
+
+=cut
 
 # No. No. No. No. No. Yuck.
 has 'gene_pheno_datadir' => (
@@ -161,60 +161,6 @@ has 'phen_data' => (
     }
 );
 
-has 'ortholog_data_hr' => (
-	is  => 'ro',
-    lazy => 1,
-    default => sub {
-		my $self = shift;
-		my $gene = $self->object;
-		my @sp_data_pack;
-		my @hs_data_pack;
-		my %ortholog_hr;
-		my @ortholog_others = $gene->Ortholog_other;
-		
-		foreach my $ortholog_other (@ortholog_others) {
-				my $ortholog_other_data = $self->_pack_obj( $ortholog_other);
-				my $method = $ortholog_other->right(2);
-				# my $species = $ortholog_other->Species;		
-				
-				#my $protein_id  = $ortholog_other->DB_info->right(3);
-				#my $db = $ortholog_other->DB_info->right;
-				#my $url = "dev.wormbase.org";
-
-				
-				my $ortholog_hr = {
-					ortholog_other => $ortholog_other_data,
-					species => $ortholog_other_data->{'taxonomy'},
-					method => "$method",
-					};
-	
-				
-				if($ortholog_hr->{'species'} =~ m/sapien/i){
-					push @hs_data_pack, $ortholog_hr;
-				}
-				
-				push @sp_data_pack, $ortholog_hr;			
-		}
-		
-		my $sp_data = {
-			'data'=> @sp_data_pack ? \@sp_data_pack : undef,
-			'description' => 'orthologs for this gene from all species'
-			};
-		
-		my $hs_data = {
-			'data'=> @hs_data_pack ? \@hs_data_pack : undef,
-			'description' => 'orthologs for this gene from humans'
-			};	
-		my $data = {
-			'sp' => $sp_data,
-			'hs' => $hs_data
-		};
-		
-		return $data;	
-	}
-);
-
-
 ################################################
 #
 # ortholog, paralog and disease incorporation
@@ -222,16 +168,6 @@ has 'ortholog_data_hr' => (
 #  Why are these methods here?
 #
 ################################################
-
-sub other_orthologs {
-	my $self = shift;
-	return $self->ortholog_data_hr->{'sp'};
-}
-
-sub human_orthologs {
-	my $self = shift;
-	return $self->ortholog_data_hr->{'hs'};
-}
 
 
 # Why the hell is all of this hardcoded?
@@ -262,6 +198,7 @@ sub diseases {
 #######################################
 #
 # The Overview Widget
+#   template: classes/gene/overview.tt2
 #
 #######################################
 
@@ -513,16 +450,13 @@ sub cloned_by {
     my $object    = $self->object;
     my $cloned_by = $object->Cloned_by;   
 
-    # This is an evidence hash.
-    my ($tag,$source) = $cloned_by->row  if $cloned_by;
-   
-    # This data structure is WACK and needs to be fixed.
-    # Should be returning packed objects, too.
-    return { description => 'person or laboratory who cloned this gene',
+    # This is an evidence hash. We're assuming scalar context.
+    my ($tag,$source) = $cloned_by->row  if $cloned_by;   
+    return { description => 'the person or laboratory who cloned this gene',
 	     data        => {
-		 'cloned_by' => $cloned_by,
-		 'tag'       => $tag,
-		 'source'    => $source	    
+		 'cloned_by' => "$cloned_by",
+		 'tag'       => "$tag",
+		 'source'    => $self->_pack_obj($source),
 	     },
     };
 }
@@ -842,7 +776,16 @@ B<Response example>
 sub structured_description {
    my $self = shift;
    my %ret;
-   my @types = qw(Provisional_description Other_description Sequence_features Functional_pathway Functional_physical_interaction Molecular_function Sequence_features Biological_process Expression Detailed_description);
+   my @types = qw(Provisional_description 
+                  Other_description
+                  Sequence_features
+                  Functional_pathway 
+                  Functional_physical_interaction 
+                  Molecular_function
+                  Sequence_features
+                  Biological_process
+                  Expression
+                  Detailed_description);
    foreach my $type (@types){
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
@@ -916,100 +859,11 @@ sub version {
 }
 
 
-# OBSOLETE METHODS?
-
-
-
-
-# Fetch all proteins associated with a gene.
-## NB: figure out the naming convention for proteins
-
-# NOTE: this method is not used
-sub proteins {
-    my $self   = shift;
-    my $object = $self->object;   
-    my $desc = 'proteins related to gene';   
-        
-    my @cds    = $object->Corresponding_CDS;
-    my @proteins  = map { $_->Corresponding_protein } @cds;
-    @proteins = map {$self->_pack_obj($_, $self->public_name($_, $_->class))} @proteins;
-		
-    return { description => 'proteins encoded by this gene',
-	     data        => \@proteins };
-}
-
-
-# Fetch all CDSs associated with a gene.
-## figure out naming convention for CDs
-
-# NOTE: this method is not used
-sub cds {
-    my $self   = shift;
-    my $object = $self->object;    
-    my @cds    = $object->Corresponding_CDS;
-    my $data_pack = $self->basic_package(\@cds);
-    
-    return { description => 'CDSs encoded by this gene',
-	     data        => $data_pack };
-}
-
-
-
-# Fetch Homology Group Objects for this gene.
-# Each is associated with a protein and we should probably
-# retain that relationship
-
-# NOTE: this method is not used
-# TH: NOT YET CLEANED UP
-sub kogs {
-    my $self   = shift;
-    my $object = $self->object;
-    my @cds    = $object->Corresponding_CDS;
-    my %data;
-    my %data_pack;
-    
-    if (@cds) {
-	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
-	if (@proteins) {
-	    my %seen;
-	    my @kogs = grep {$_->Group_type ne 'InParanoid_group' } grep {!$seen{$_}++} 
-	         map {$_->Homology_group} @proteins;
-	    if (@kogs) {
-	    	
-	    	$data_pack{$object} = \@kogs;
-			$data{'data'} = \%data_pack;
-
-	    } else { 
-	    
-	    	$data_pack{$object} = 1;
-	    
-	    }
-	}
-    } else {
-		$data_pack{$object} = 1;	
-    }
-    
-    $data{'description'} = "KOGs related to gene";
- 	return \%data;
-}
-
-# should we return entire sequence obj or just linking/description info? -AC
-sub other_sequences {
-    my $self   = shift;
-    my $object = $self->object;
-    my @seqs = map { [$self->_pack_obj($_), "". $_->Title] } $object->Other_sequence;
-    return { 
-	description => 'Other sequences associated with gene',
-	data        => \@seqs
-    };
-}
-
-
-
 
 #######################################
 #
 # The Expression Widget NOT DONE YET
+#   template: classes/gene/expression.tt2
 #
 #######################################
 
@@ -1017,17 +871,16 @@ sub other_sequences {
 
 =cut
 
-=head3 also_refers_to
+=head3 fourd_expression_movies
 
 This method will return a data structure containing
-other names that have also been used to refer to the
-gene.
+links to four-dimensional expression movies.
 
 =over
 
 =item PERL API
 
- $data = $model->also_refers_to();
+ $data = $model->fourd_expression_movies();
 
 =item REST API
 
@@ -1041,7 +894,7 @@ No
 
 B<Parameters>
 
-a WBGene ID
+a WBGene ID (eg WBGene00006763)
 
 B<Returns>
 
@@ -1059,7 +912,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/also_refers_to
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/fourd_expression_movies
 
 B<Response example>
 
@@ -1077,11 +930,13 @@ sub fourd_expression_movies {
     
     my %data;
     foreach (@expression) {
-        $data{$_}{movie}   = $_->MovieURL;
-        $data{$_}{details} = $_->Pattern;
-        $data{$_}{object}  = $self->_pack_obj($_);
+	my $details = $_->Pattern;	
+	my $url     = $_->MovieURL;
+        $data{$_} = { movie   => "$url",
+		      details => "$details",
+		      object  => $self->_pack_obj($_),
+	};
     }
-
     return { description => 'interactive 4D expression movies',
 	     data        => \%data };
 }
@@ -1148,7 +1003,7 @@ sub anatomic_expression_patterns {
 
     # WTF IS THIS?!!?!?!?!?!?
     my $file = $self->pre_compile->{gene_expr}."/".$object.".jpg";
-    $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if(-e $file && ! -z $file);
+    $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if (-e $file && ! -z $file);
 
     foreach my $ep (@eps) {
 	my $file = $self->pre_compile->{expr_object}."/".$ep.".jpg";
@@ -1164,6 +1019,58 @@ sub anatomic_expression_patterns {
 	     data        => \%data_pack };
 }
 
+=head3 microarray_expression_data
+
+This method will return a data structure containing
+microarray expression data.
+
+=over
+
+=item PERL API
+
+ $data = $model->microarray_expression_data();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_expression_data
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+
 sub microarray_expression_data {
     my $self   = shift;
     my $object = $self->object;
@@ -1172,6 +1079,57 @@ sub microarray_expression_data {
     return { data        => $self->_pack_objects(\@microarray_results),
 	     description => 'gene expression determined via microarray analysis'};
 }
+
+=head3 microrarray_topology_map_position
+
+This method will return a data structure containing
+the microarray "topology" map position.
+
+=over
+
+=item PERL API
+
+ $data = $model->microarray_topology_map_position();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/microarray_topology_map_position
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub microarray_topology_map_position {
     my $self = shift;
@@ -1253,6 +1211,7 @@ sub anatomy_function {
 #######################################
 #
 # The External Links widget
+#   template: shared/widgets/xrefs.tt2
 #
 #######################################
 
@@ -1268,6 +1227,7 @@ sub anatomy_function {
 #######################################
 #
 # The Genetics Widget
+#   template: classes/gene/genetics.tt2
 #
 #######################################
 
@@ -1409,6 +1369,7 @@ sub polymorphisms {
 	     data        => \@data };
 }
 
+# Private method: glean some information about a variation.
 sub _process_variation {
     my ($self,$variation) = @_;
 
@@ -1563,10 +1524,10 @@ sub strains {
 
 	if (@genes == 1 && !$_->Transgene){
 	    push @{$count{carrying_gene_alone}},$packed;
-	    if ($cgc){
+	    if ($cgc) {
 		push @{$count{carrying_gene_alone_and_cgc}},$packed;
 	    }	    
-	} else{
+	} else {
 	    push @{$count{others}},$packed;
 	}       
 	
@@ -1583,7 +1544,7 @@ sub strains {
 }
 
 =head3 rearrangements
-
+    
 This method will return a data structure 
 containing rearrangements affecting the gene.
 
@@ -1633,7 +1594,7 @@ B<Response example>
 
 =cut 
 
-sub rearrangements{
+sub rearrangements {
     my $self    = shift;     
     my $object  = $self->object;
     my @positive = map { $self->_pack_obj($_) } $object->Inside_rearr;
@@ -1650,6 +1611,7 @@ sub rearrangements{
 #######################################
 #
 # The Gene Ontology widget
+#   template: classes/gene/gene_ontology.tt2
 #
 #######################################
 
@@ -1713,7 +1675,8 @@ sub gene_ontology {
     my $self   = shift;
     my $object = $self->object;
 
-    # This is really opaque.
+    # TH: This is really opaque. What is the value used for?
+    # Is it a display kludge?
     my %annotation_bases  = (
         'EXP' , 'p',
         'IDA' , 'p',
@@ -1760,7 +1723,7 @@ sub gene_ontology {
 	     data        => \%data }; 
 }
 
-
+# This is the old way of processing ontology.
 sub gene_ontology_OLD {
     my $self   = shift;
     my $object = $self->object;
@@ -1826,15 +1789,14 @@ sub gene_ontology_OLD {
 
 #######################################
 #
-# The History Widget (template supplied by shared/widgets/history.tt2)
+# The History Widget
+#    template: shared/widgets/history.tt2
 #
 #######################################
 
 =head2 History
 
 =cut
-
-=head2
 
 =head3 history
 
@@ -1883,7 +1845,6 @@ B<Response example>
 
 =cut
 
-
 sub history {
     my $self = shift;
     my $object = $self->object;
@@ -1930,21 +1891,493 @@ sub history {
 
 
 
+#######################################
+#
+# The Homology Widget
+#   template: classes/gene/homology.tt2
+#
+#######################################
+
+=head2 Homology
+
+=cut
+
+# sub best_blastp_matches {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include best_blastp_matches >>
+
+
+=head3 inparanoid_groups
+
+This method returns a data structure containing the 
+inparanoid groups that this gene has been assigned to.
+
+=over
+
+=item PERL API
+
+ $data = $model->inparanoid_groups();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/inparanoid_groups
+
+B<Response example>
+
+=cut
+
+
+# NOT DONE.
+sub inparanoid_groups {
+    my $self = shift;
+    my $object = $self->object;
+	 
+    my %seen;
+    my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
+    map {$_->Homology_group} @{$self->all_proteins};
+    my @data_pack;
+    foreach my $cluster (@inp) {
+		my %proteins;
+		foreach my $protein ($cluster->Protein) {
+		
+	   		my $species = $protein->Species || $self->id2species($protein) || 'unknown';
+			my ($class,$id);
+			if($self->wb_protein($species)){
+			    $class    = "protein";
+			   $id = $protein;
+			}else{
+			   $protein =~ /(\w+):(.+)/ ;
+			   $class    = $1;
+			   $id = $2;
+			} 
+			if($class eq 'ENSEMBL') {
+			      (my $sp=$species) =~ s/ /_/g;
+			      $id="$sp&$id" ;
+			}
+			$species =~ s/ /_/g;
+	   		push @{$proteins{$species}} , {
+	   								'class' => "$class",
+	   								'id' => "$id" ,
+	   								'label' => "$protein",
+	   								};
+	   								
+	      }
+	      push @data_pack, $self->_pack_obj($cluster,'',proteins=>\%proteins);
+	}							 
+      
+    return { description => 'homology groups for this gene defined using InParanoid',
+	     data        => \@data_pack }; 
+}	
+
+=head3 nematode_orthologs
+
+This method returns a data structure containing the 
+orthologs of this gene to other nematodes housed
+at WormBase.
+
+=over
+
+=item PERL API
+
+ $data = $model->nematode_orthologs();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/nematode_orthologs
+
+B<Response example>
+
+=cut
+
+sub nematode_orthologs {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my @data;
+    my $index = 0;
+    foreach ($object->Ortholog) {
+	my $species = $_->right;
+	push @data, { species  => "$species",
+		      ortholog => $self->_pack_obj($_),
+#		      sequence => { class=>'ebsyn',
+#				    id=>$ortholog->Sequence_name->id,
+#				    label=>'syntenic alignment',
+#		      },
+		      evidence => {  check=>$self->check_empty($species),
+				     tag   => "Ortholog",
+				     index => $index,
+				     right => 1,
+		      },
+	};
+	$index++;
+    }
+    
+    return { description => 'precalculated ortholog assignments for this gene',
+	     data        =>  '' };
+
+}
+
+=head3 human_orthologs
+
+This method returns a data structure containing the 
+human orthologs of this gene.
+
+=over
+
+=item PERL API
+
+ $data = $model->human_orthologs();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_orthologs
+
+B<Response example>
+
+=cut
+
+# I sure do wish we had some descriptions for human genes.
+sub human_orthologs {    
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+    foreach ($object->Ortholog_other) {
+	next unless $_ =~ /ENSEMBL:ENSP\d*/;	
+	push @data, $self->_parse_ortholog_other($_);
+    }
+    return { description => 'human orthologs of this gene',
+	     data        => \@data };    
+}
+
+
+=head3 other_orthologs
+
+This method returns a data structure containing the 
+orthologs of this gene to species outside of the core
+nematodes housed at WormBase. See also nematode_orthologs()
+and human_orthologs();
+
+=over
+
+=item PERL API
+
+ $data = $model->other_orthologs();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/other_orthologs
+
+B<Response example>
+
+=cut
+
+sub other_orthologs {    
+    my $self = shift;
+    my $object = $self->object;
+    my @data;
+    foreach ($object->Ortholog_other) {
+	push @data, $self->_parse_ortholog_other($_);
+    }
+    return { description => 'orthologs of this gene to other species outside of core nematodes at WormBase',
+	     data        => \@data };    
+}
+
+# Private helper method to standardize structure of other orthologs.
+sub _parse_ortholog_other {
+    my ($self,$ortholog) = @_;
+    my $method  = $ortholog->right(2);
+    my ($genus,$species) = split(/ /,$ortholog->Species);
+    return { ortholog => "$ortholog",
+	     method   => "$method",
+	     species  => { genus => "$genus", species => "$species" }
+    };
+}
+
+# NOT DONE YET
+sub paralogs {
+
+	my $self = shift;
+	my $object = $self->object;
+	my %data;
+	my $desc = 'This genes paralogs';
+
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	my @paralogs = $object->Paralog;
+	@data_pack = map {$self->_pack_obj($_, $self->bestname($_));} @paralogs;
+	 
+	 
+
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
+
+
+sub protein_domains {
+	my $self = shift;
+    my $object = $self->object;
+
+	 
+    my %unique_motifs;
+    for my $protein (@{$self->all_proteins}) {
+    	my @motifs;
+    	@motifs	= $protein->Motif_homol;
+		foreach my $motif (@motifs) {
+          $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
+		}
+	}
+    my $data = { description => "protein domains of the gene",
+                 data => \%unique_motifs
+                };
+	return $data;
+}
+
+sub treefam {
+
+	my $self = shift;
+    my $object = $self->object;
+	my %data;
+	my $desc = 'data associated with gene for rendering treefam data';
+
+	my @data_pack;
+
+	#### data pull and packaging
+	
+	 
+
+	foreach  (@{$self->all_proteins}) {
+		my $treefam = $self->_fetch_protein_ids($_,'treefam');
+		# Ignore proteins that lack a Treefam ID
+		next unless $treefam;
+		push @data_pack, "$treefam";
+	}			
+	## end classic code ##
+	
+	$data{'data'} = \@data_pack;
+	$data{'description'} = $desc;
+	return \%data;
+}
 
 
 
 
+#######################################
+#
+# The Interactions Widget
+#
+#######################################
+
+=head2 Interactions
+
+=cut
+
+sub interactions {
+
+    my $self = shift;
+    my $object = $self->object;
+    my %data;
+    my %data_pack;
+    my $desc = "interactions gene is involved in";
+    
+    my $version = $self->ace_dsn->version;
+    my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
+    my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
+
+
+    my $gene_data_lines = `grep $object $datafile`;
+    my @gene_data_lines = split /\n/,$gene_data_lines;
+    
+    my @interaction_data;
+    foreach my $dataline (@gene_data_lines){
+        
+        chomp $dataline;
+        my @dataline_set = split /\|/,$dataline;
+        push @interaction_data,$dataline_set[0];
+    }
+
+    my %interaction_ret;
+    map {$interaction_ret{"$_"} = { id => "$_", class => "interaction", label => "$_" }} @interaction_data;
+    
+    $data{'data'} = \%interaction_ret;
+    $data{'description'} = $desc;
+    return \%data;
+
+}
 
 
 
 
+# Gene regulation
+sub regulation_on_expression_level {
+    my $self   = shift;
+    my $object = $self->object;
+    return unless ($object->Gene_regulation);
+    
+    my @stash;
 
-# TO DO: homology
-
-
-
-
-
+    # Explore the relationship in both directions.
+    foreach my $tag (qw/Trans_regulator Trans_target/) {
+	my $join = ($tag eq 'Trans_regulator') ? 'regulated by' : 'regulates';
+	if (my @gene_reg = $object->$tag(-filled=>1)) {
+	    foreach my $gene_reg (@gene_reg) {
+		my ($string,$target);
+		if ($tag eq 'Trans_regulator') {
+		    $target = $gene_reg->Trans_regulated_gene(-filled=>1)
+			|| $gene_reg->Trans_regulated_seq(-filled=>1)
+			|| $gene_reg->Other_regulated(-filled=>1);
+		} else {
+		    $target = $gene_reg->Trans_regulator_gene(-filled=>1)
+			|| $gene_reg->Trans_regulator_seq(-filled=>1)
+			|| $gene_reg->Other_regulator(-filled=>1);
+		}
+		# What is the nature of the regulation?
+		# If Positive_regulate and Negative_regulate are present
+		# in the same gene object, then it means the localization is changed.  Go figure.
+		if ($gene_reg->Positive_regulate && $gene_reg->Negative_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Changes localization of '
+			: 'Localization changed by ';
+		} elsif ($gene_reg->Result eq 'Does_not_regulate') {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Does not regulate '
+			: 'Not regulated by ';
+		} elsif ($gene_reg->Positive_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Positively regulates '
+			: 'Positively regulated by ';
+		} elsif ($gene_reg->Negative_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Negatively regulates '
+			: 'Negatively regulated by ';
+		}
+	
+		my $common_name     = $self->_public_name($target);
+		push @stash,{ string => $string,
+			      target => $self->_pack_obj($target, $common_name),
+			      gene_regulation => $self->_pack_obj($gene_reg)};
+	    }
+	}
+    }
+    my $data = { description => 'Regulation on expression level',
+         data        => \@stash,
+    };
+    return $data;
+}
 
 
 
@@ -1983,41 +2416,15 @@ sub _build_genomic_position {
 # << include genomic_image >>
 
 
+#######################################
+#
+# The Phenotype Widget
+#
+#######################################
 
+=head2 Phenotype
 
-sub _build_phen_data {
-    my $self = shift;
-    my $GENE = $self->object;
-
-    my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
-    my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
-    my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
-    my ($variation_data_not, $variation_name_hr_not) = $self->_get_variation_data($GENE);
-    my $xgene_data = $self->_get_xgene_data($GENE, 1);
-    my $xgene_data_not = $self->_get_xgene_data($GENE);
-
-    my $phenotype_names_hr  = $self->_get_phenotype_names($phenotype_data,$variation_data);
-    my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
-
-    my $pheno_table = $self->_print_phenotype_table($phenotype_data,
-                        $variation_data,
-                        $phenotype_names_hr,
-                        $xgene_data,
-                        $variation_name_hr);
-    my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
-                        $variation_data_not,
-                        $phenotype_names_not_hr,
-                        $xgene_data_not,
-                        $variation_name_hr_not);
-    my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
-    my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
-
-    my $ret = { pheno_table => $pheno_table,
-                pheno_table_not => $pheno_table_not,
-                rnai_details_table => $rnai_details_table,
-                rnai_not_details_table => $rnai_not_details_table,
-    };
-}
+=cut
 
 sub phenotype {
     my $self = shift;
@@ -2040,7 +2447,7 @@ sub rnai {
 
     return $data;    
 }
-
+# TH: THIS IS A VIEW TASK.
 sub _print_rnai_details_table {
 	my ($self, $rnai_details_ar, $phene_id2name_hr) = @_;
 	my @array;
@@ -2154,281 +2561,6 @@ sub _print_phenotype_table {
 
     return \@data;
 } 
-
-# Gene regulation
-sub regulation_on_expression_level {
-    my $self   = shift;
-    my $object = $self->object;
-    return unless ($object->Gene_regulation);
-    
-    my @stash;
-
-    # Explore the relationship in both directions.
-    foreach my $tag (qw/Trans_regulator Trans_target/) {
-	my $join = ($tag eq 'Trans_regulator') ? 'regulated by' : 'regulates';
-	if (my @gene_reg = $object->$tag(-filled=>1)) {
-	    foreach my $gene_reg (@gene_reg) {
-		my ($string,$target);
-		if ($tag eq 'Trans_regulator') {
-		    $target = $gene_reg->Trans_regulated_gene(-filled=>1)
-			|| $gene_reg->Trans_regulated_seq(-filled=>1)
-			|| $gene_reg->Other_regulated(-filled=>1);
-		} else {
-		    $target = $gene_reg->Trans_regulator_gene(-filled=>1)
-			|| $gene_reg->Trans_regulator_seq(-filled=>1)
-			|| $gene_reg->Other_regulator(-filled=>1);
-		}
-		# What is the nature of the regulation?
-		# If Positive_regulate and Negative_regulate are present
-		# in the same gene object, then it means the localization is changed.  Go figure.
-		if ($gene_reg->Positive_regulate && $gene_reg->Negative_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Changes localization of '
-			: 'Localization changed by ';
-		} elsif ($gene_reg->Result eq 'Does_not_regulate') {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Does not regulate '
-			: 'Not regulated by ';
-		} elsif ($gene_reg->Positive_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Positively regulates '
-			: 'Positively regulated by ';
-		} elsif ($gene_reg->Negative_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Negatively regulates '
-			: 'Negatively regulated by ';
-		}
-	
-		my $common_name     = $self->_public_name($target);
-		push @stash,{ string => $string,
-			      target => $self->_pack_obj($target, $common_name),
-			      gene_regulation => $self->_pack_obj($gene_reg)};
-	    }
-	}
-    }
-    my $data = { description => 'Regulation on expression level',
-         data        => \@stash,
-    };
-    return $data;
-}
-
-
-sub interactions {
-
-    my $self = shift;
-    my $object = $self->object;
-    my %data;
-    my %data_pack;
-    my $desc = "interactions gene is involved in";
-    
-    my $version = $self->ace_dsn->version;
-    my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
-    my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-
-
-    my $gene_data_lines = `grep $object $datafile`;
-    my @gene_data_lines = split /\n/,$gene_data_lines;
-    
-    my @interaction_data;
-    foreach my $dataline (@gene_data_lines){
-        
-        chomp $dataline;
-        my @dataline_set = split /\|/,$dataline;
-        push @interaction_data,$dataline_set[0];
-    }
-
-    my %interaction_ret;
-    map {$interaction_ret{"$_"} = { id => "$_", class => "interaction", label => "$_" }} @interaction_data;
-    
-    $data{'data'} = \%interaction_ret;
-    $data{'description'} = $desc;
-    return \%data;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-# Components of the Homology panel
-###########################################
-
-sub inparanoid_groups {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'homology groups for this gene determined via inparanoid method';
-
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	 
-    my %seen;
-    my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
-    map {$_->Homology_group} @{$self->all_proteins};
-    
-    foreach my $cluster (@inp) {
-		my %proteins;
-		foreach my $protein ($cluster->Protein) {
-		
-	   		my $species = $protein->Species || $self->id2species($protein) || 'unknown';
-			my ($class,$id);
-			if($self->wb_protein($species)){
-			    $class    = "protein";
-			   $id = $protein;
-			}else{
-			   $protein =~ /(\w+):(.+)/ ;
-			   $class    = $1;
-			   $id = $2;
-			} 
-			if($class eq 'ENSEMBL') {
-			      (my $sp=$species) =~ s/ /_/g;
-			      $id="$sp&$id" ;
-			}
-			$species =~ s/ /_/g;
-	   		push @{$proteins{$species}} , {
-	   								'class' => "$class",
-	   								'id' => "$id" ,
-	   								'label' => "$protein",
-	   								};
-	   								
-	      }
-	      push @data_pack, $self->_pack_obj($cluster,'',proteins=>\%proteins);
-	}							 
-  
-  $data{'data'} = \@data_pack;
-  $data{'description'} = $desc;
-  return \%data;
- 
-}	
-
-
-sub paralogs {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'This genes paralogs';
-
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	my @paralogs = $object->Paralog;
-	@data_pack = map {$self->_pack_obj($_, $self->bestname($_));} @paralogs;
-	 
-	 
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-
-sub orthologs {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'this genes orthologs';
-	my @data_pack;
-			  
-	#### data pull and packaging
-
-	my @orthologs = $object->Ortholog;
-	 
-	for(my $index=0; my $ortholog=shift @orthologs;$index++) {
-	  my $species = $ortholog->right;
-	  push @data_pack, {	 species=>"$species",
-				 ortholog=>$self->_pack_obj($ortholog,$self->bestname($ortholog)),
-				 sequence=>{ class=>'ebsyn',
-					      id=>$ortholog->Sequence_name->id,
-					      label=>'syntenic alignment',
-					  },
-				 evidence=>{	check=>$self->check_empty($species),
-						tag=>"Ortholog",
-						index=>$index,
-						right=>1,
-					    }
-			    };
-	    
-	}
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-# NOTE: this is not used in display
-sub ortholog_other {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'number of other ortologs';
-
-	my $data_pack;
-
-	#### data pull and packaging
-
-	my @ortholog_others = $object->Ortholog_other;
-	my $ortholog_others_count = @ortholog_others;
-	$data_pack = $ortholog_others_count;
-  
-	####
-
-	$data{'data'} = $data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-
-}
-
-sub treefam {
-
-	my $self = shift;
-    my $object = $self->object;
-	my %data;
-	my $desc = 'data associated with gene for rendering treefam data';
-
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	 
-
-	foreach  (@{$self->all_proteins}) {
-		my $treefam = $self->_fetch_protein_ids($_,'treefam');
-		# Ignore proteins that lack a Treefam ID
-		next unless $treefam;
-		push @data_pack, "$treefam";
-	}			
-	## end classic code ##
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
-}
-
-###########################################
-# Components of the Similarities panel
-###########################################
-
-
-# sub best_blastp_matches {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include best_blastp_matches >>
 
 
 
@@ -2984,39 +3116,81 @@ sub transgene_products {
 
 
 
+#######################################
+#
+# The References Widget
+#
+#######################################
+
+=head2 References
+
+=cut
+
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
 
 
+#######################################
+#
+# The Sequences Widget
+#
+#######################################
 
+=head2 Reagents
 
+=cut
 
+=head3 gene_models
 
-  
-#### complex transformation ####
+This method will return an extensive data structure containing
+gene models for the gene.
 
+=over
 
-sub protein_domains {
-	my $self = shift;
-    my $object = $self->object;
+=item PERL API
 
-	 
-    my %unique_motifs;
-    for my $protein (@{$self->all_proteins}) {
-    	my @motifs;
-    	@motifs	= $protein->Motif_homol;
-		foreach my $motif (@motifs) {
-          $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
-		}
-	}
-    my $data = { description => "protein domains of the gene",
-                 data => \%unique_motifs
-                };
-	return $data;
-}
+ $data = $model->gene_models();
 
+=item REST API
 
+B<Request Method>
 
+GET
 
+B<Requires Authentication>
 
+No
+
+B<Parameters>
+
+a WBGene ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_models
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub gene_models {
   my $self = shift;
@@ -3095,16 +3269,17 @@ sub gene_models {
       }
     }
     $len_spliced ||= '-';
-    $data{nucleotides} = "$len_spliced/$len_unspliced bp"
-      if $len_unspliced;
+
+    $data{length_spliced}   = $len_spliced;
+    $data{length_unspliced} = $len_unspliced;
 
     if ($protein) {
       my $peplen = $protein->Peptide(2);
       my $aa   = "$peplen aa";
-      $data{aa} = $aa if $aa;
+      $data{length_protein} = $aa if $aa;
     }
     my $protein_desc = { label => $protein->name, id => $protein->name, class=>$protein->class};
-    $data{model}  = $model    if $model;
+    $data{model}   = $model    if $model;
     $data{protein} = $protein_desc if $protein_desc;
 
     push @rows,\%data;
@@ -3119,6 +3294,33 @@ sub gene_models {
    return $data;
 }
 
+
+
+# should we return entire sequence obj or just linking/description info? -AC
+sub other_sequences {
+    my $self   = shift;
+    my $object = $self->object;
+    my @seqs = map { [$self->_pack_obj($_), "". $_->Title] } $object->Other_sequence;
+    return { 
+	description => 'Other sequences associated with gene',
+	data        => \@seqs
+    };
+}
+
+
+
+
+
+
+
+
+
+
+#########################################
+#
+#   INTERNAL METHODS
+#
+#########################################
 sub fetch_gff_gene {
  my ($self,$transcript) = @_;
 
@@ -3141,13 +3343,42 @@ sub fetch_gff_gene {
 
 
 
+sub _build_phen_data {
+    my $self = shift;
+    my $GENE = $self->object;
+
+    my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
+    my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
+    my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
+    my ($variation_data_not, $variation_name_hr_not) = $self->_get_variation_data($GENE);
+    my $xgene_data = $self->_get_xgene_data($GENE, 1);
+    my $xgene_data_not = $self->_get_xgene_data($GENE);
+
+    my $phenotype_names_hr  = $self->_get_phenotype_names($phenotype_data,$variation_data);
+    my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
+
+    my $pheno_table = $self->_print_phenotype_table($phenotype_data,
+                        $variation_data,
+                        $phenotype_names_hr,
+                        $xgene_data,
+                        $variation_name_hr);
+    my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
+                        $variation_data_not,
+                        $phenotype_names_not_hr,
+                        $xgene_data_not,
+                        $variation_name_hr_not);
+    my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
+    my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
+
+    my $ret = { pheno_table => $pheno_table,
+                pheno_table_not => $pheno_table_not,
+                rnai_details_table => $rnai_details_table,
+                rnai_not_details_table => $rnai_not_details_table,
+    };
+}
 
 
-#########################################
-#
-#   INTERNAL METHODS
-#
-#########################################
+
 # This is for GO processing
 # TH: I don't understand the significance of the nomenclature.
 # Oh wait, I see, it's used to force an order in the view. Ugly.
@@ -3721,6 +3952,89 @@ sub _public_name {
     return "$data";
 
 
+}
+
+
+
+
+
+
+#######################################
+#
+# OBSOLETE METHODS?
+#
+#######################################
+
+# Fetch all proteins associated with a gene.
+## NB: figure out the naming convention for proteins
+
+# NOTE: this method is not used
+sub proteins {
+    my $self   = shift;
+    my $object = $self->object;   
+    my $desc = 'proteins related to gene';   
+        
+    my @cds    = $object->Corresponding_CDS;
+    my @proteins  = map { $_->Corresponding_protein } @cds;
+    @proteins = map {$self->_pack_obj($_, $self->public_name($_, $_->class))} @proteins;
+		
+    return { description => 'proteins encoded by this gene',
+	     data        => \@proteins };
+}
+
+
+# Fetch all CDSs associated with a gene.
+## figure out naming convention for CDs
+
+# NOTE: this method is not used
+sub cds {
+    my $self   = shift;
+    my $object = $self->object;    
+    my @cds    = $object->Corresponding_CDS;
+    my $data_pack = $self->basic_package(\@cds);
+    
+    return { description => 'CDSs encoded by this gene',
+	     data        => $data_pack };
+}
+
+
+
+# Fetch Homology Group Objects for this gene.
+# Each is associated with a protein and we should probably
+# retain that relationship
+
+# NOTE: this method is not used
+# TH: NOT YET CLEANED UP
+sub kogs {
+    my $self   = shift;
+    my $object = $self->object;
+    my @cds    = $object->Corresponding_CDS;
+    my %data;
+    my %data_pack;
+    
+    if (@cds) {
+	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
+	if (@proteins) {
+	    my %seen;
+	    my @kogs = grep {$_->Group_type ne 'InParanoid_group' } grep {!$seen{$_}++} 
+	         map {$_->Homology_group} @proteins;
+	    if (@kogs) {
+	    	
+	    	$data_pack{$object} = \@kogs;
+			$data{'data'} = \%data_pack;
+
+	    } else { 
+	    
+	    	$data_pack{$object} = 1;
+	    
+	    }
+	}
+    } else {
+		$data_pack{$object} = 1;	
+    }
+    
+    $data{'description'} = "KOGs related to gene";
+ 	return \%data;
 }
 
 
