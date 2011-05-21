@@ -1,17 +1,29 @@
 [% # This generic statement belongs at the start of every template %]
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% build_data_table(title="Supervised",
+[% 
+
+WRAPPER $field_block title="Supervised" key="supervised";
+    build_data_table(
                     key="supervised",
                     columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
-		    order=['name','level','duration']) %]
+		    order=['name','level','duration']);
+END;
 
-[% build_data_table(title="Supervised by",
+
+WRAPPER $field_block title="Supervised By" key="supervised_by";
+    build_data_table(
                     key="supervised_by",
                     columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
-		    order=['name','level','duration']) %]
+		    order=['name','level','duration']);
+END;
 
-[% build_data_table(title="Worked with",
+
+WRAPPER $field_block title="Worked With" key="worked_with";
+   build_data_table(
                     key="worked_with",
                     columns={'name'=>'Name','level'=>'Position','duration'=>'Period'},
-		    order=['name','level','duration']) %]
+		    order=['name','level','duration']);
+END;
+
+%]

@@ -1,7 +1,13 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% build_data_table (
+[% 
+
+
+WRAPPER $field_block title="Anatomy Term" key="anatomy_term";
+'TH: duplicated with go_term/associations?";
+
+    build_data_table (
 		order = [ 
 			'anatomy_term',
 			'definition', 
@@ -10,12 +16,12 @@
 			anatomy_term => 'Anatomy_term',
 			definition => 'Definition',
 			},
-		key = 'anatomy_term',
-		title = 'Anatomy Term'	
-		)
-	%]
-	
-	[% build_data_table (
+		key = 'anatomy_term');
+END;
+
+
+WRAPPER $field_block title="Gene" key="gene";
+    build_data_table (
 		order = [ 
 			'gene',
 			'species', 
@@ -24,12 +30,12 @@
 			gene => 'Gene',
 			species => 'Species',
 			},
-		key = 'gene',
-		title = 'Gene'	
-		)
-	%]
+		key = 'gene');
+END;
 	
-	[% build_data_table (
+
+WRAPPER $field_block title="Microarray" key="microarray";
+    build_data_table (
 		order = [ 
 			'microarray',
 			'experiment',
@@ -42,7 +48,7 @@
 			minimum =>'Minimum',
 			maximum =>'Maximum',
 			},
-		key = 'microarray',
-		title = 'Microarray'	
-		)
-	%]
+		key = 'microarray');
+END;
+
+%]

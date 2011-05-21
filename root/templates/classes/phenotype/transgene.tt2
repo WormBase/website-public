@@ -1,8 +1,11 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	
-	[% build_data_table (
+
+[%
+
+   WRAPPER $field_block title="Transgenes associated with this phenotype" key="transgene";	
+       build_data_table (
 		order = [ 
 			'transgene',
 			'species'
@@ -11,21 +14,20 @@
 			transgene => 'Transgene',
 			species => 'Species'
 			},
-		key = 'transgene',
-		title = 'Transgenes associated with this phenotype'	
-		)
-	%]	
-	
-	[% build_data_table (
+		key = 'transgene');
+   END;
+
+   WRAPPER $field_block title="Transgenes NOT associated with this phenotype" key="transgene_not";
+	build_data_table (
 		order = [ 
-			'transgene',
-			'species'
+                         'transgene',
+			 'species'
 			],
 		columns = {				 		
 			transgene => 'Transgene',
 			species => 'Species'
 			},
-		key = 'transgene_not',
-		title = 'Transgenes NOT associated with this phenotype'	
-		)
-	%]
+		key = 'transgene_not');
+    END;
+
+%]

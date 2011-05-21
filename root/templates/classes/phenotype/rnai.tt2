@@ -26,11 +26,7 @@ IF fields.rnai.data.defined;
 			genotype => 'Genotype',
 			treatment => 'Treatment'
 			},
-		key = 'rnai',
-		title = '',
-		);
-
-#		title = 'Phenotype Observed with these RNAis'	
+		key = 'rnai');
     END;	
 
 ELSE;
@@ -61,10 +57,7 @@ IF fields.rnai_not.data.defined;
 			genotype => 'Genotype',
 			treatment => 'Treatment'
 			},
-		key = 'rnai_not',
-		title = '',
-		);
-#		title = 'Phenotypes <b>Not</b> Observed with these RNAis'	
+		key = 'rnai_not');
      END;
 
 END;

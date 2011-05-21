@@ -2,9 +2,15 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% build_data_table(order=['gene_class','description'],
+[% 
+
+WRAPPER $field_block title="Gene Classes" key="gene_classes";
+
+   build_data_table(order=['gene_class','description'],
                     columns={ gene_class  => 'Gene Class',
 		              description => 'Description'},
-                    key='gene_classes',
-                    title='Gene Classes') %] 
+                    key='gene_classes');
+END;
+
+%]
 

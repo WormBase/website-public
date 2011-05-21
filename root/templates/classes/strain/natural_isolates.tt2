@@ -59,16 +59,18 @@ This is the call out box. It will contain pertinent information or maybe a descr
 
 
 [% 
-   build_data_table(order=['species','strain','place','landscape','substrate','isolated_by'],
-                    columns={ species     => 'Species',
+
+   WRAPPER $field_block title="" key="natural_isolates";
+       build_data_table(order=['species','strain','place','landscape','substrate','isolated_by'],
+                      columns={ species     => 'Species',
 		    	      strain      => 'Strain',
 		              place       => 'Place',
 			      landscape   => 'Landscape',
 			      substrate   => 'Substrate',
 			      isolated_by => 'Isolated By'
                              },
-                    key='natural_isolates',
-                    title='');
+                    key='natural_isolates');
+    END;
 %]
 
 

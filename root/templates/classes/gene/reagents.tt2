@@ -4,34 +4,37 @@
 [% 
 
    # Antibodies
+   WRAPPER $field_block title="Antibodies" key="antibodies";
    build_data_table(order=['antibody','summary','laboratory'],
                     columns={ antibody     => 'Antibody',
 	   	              summary      => 'Summary',
 		              laboratory   => 'Laboratory',
                             },
-                     key='antibodies',
-                     title='Antibodies');
+                     key='antibodies');
+   END;
 
 
    # Transgenes
    t = pluralize("Drives Transgene", fields.transgenes.data.size);
+   WRAPPER $field_block title="$t" key="transgenes";
    build_data_table(order=['transgene','summary','laboratory'],
                     columns={ transgene    => 'Transgene',
 	   	              summary      => 'Summary',
 		              laboratory   => 'Laboratory',
                              },
-                    key='transgenes',
-                    title="$t");
+                    key='transgenes');
+   END;
 
    # Drive by transgene
    t = pluralize("Expressed in Transgene", fields.transgene_products.data.size);
+   WRAPPER $field_block title="$t" key="transgene_products";
    build_data_table(order=['transgene','summary','laboratory'],
                     columns={ transgene    => 'Transgene',
 	   	              summary      => 'Summary',
 		              laboratory   => 'Laboratory',
                             },
-                     key='transgene_products',
-                     title="$t");
+                     key='transgene_products');
+   END;
 
 
 

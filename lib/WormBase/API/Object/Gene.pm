@@ -102,6 +102,7 @@ has 'gene_pheno_datadir' => (
 
 
 # No. Should be a configuration directive. 
+# Besides, it's misspelled.
 has 'othology_datadir' => (
     is  => 'ro',
     lazy => 1,
@@ -160,6 +161,44 @@ has 'phen_data' => (
       return $ret;
     }
 );
+
+sub _build_phen_data {
+    my $self = shift;
+    my $GENE = $self->object;
+
+    my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
+    my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
+    my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
+    my ($variation_data_not, $variation_name_hr_not) = $self->_get_variation_data($GENE);
+    my $xgene_data = $self->_get_xgene_data($GENE, 1);
+    my $xgene_data_not = $self->_get_xgene_data($GENE);
+
+    my $phenotype_names_hr  = $self->_get_phenotype_names($phenotype_data,$variation_data);
+    my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
+
+    my $pheno_table = $self->_print_phenotype_table($phenotype_data,
+                        $variation_data,
+                        $phenotype_names_hr,
+                        $xgene_data,
+                        $variation_name_hr);
+    my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
+                        $variation_data_not,
+                        $phenotype_names_not_hr,
+                        $xgene_data_not,
+                        $variation_name_hr_not);
+    my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
+    my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
+
+    my $ret = { pheno_table => $pheno_table,
+                pheno_table_not => $pheno_table_not,
+                rnai_details_table => $rnai_details_table,
+                rnai_not_details_table => $rnai_not_details_table,
+    };
+}
+
+
+
+
 
 ################################################
 #
@@ -1906,7 +1945,6 @@ sub history {
 # Supplied by Role; POD will automatically be inserted here.
 # << include best_blastp_matches >>
 
-
 =head3 inparanoid_groups
 
 This method returns a data structure containing the 
@@ -3203,11 +3241,7 @@ sub gene_models {
   # I still need to fetch some details from sequence
   # Fetch a variety of information about all transcripts / CDS prior to printing
   # These will be stored using the following keys (which correspond to column headers)
-  my %footnotes;
-  my $footnote_count = 0;
 
-  my $unique_remarks = 0;
-  my %unique_remarks;
   foreach my $sequence (sort { $a cmp $b } @$seqs) {
     my %data = ();
     my $model = { label => $sequence->name, class => $sequence->class, id => $sequence->name};
@@ -3223,17 +3257,10 @@ sub gene_models {
 
     # Fetch all the notes for this given sequence / CDS
     my @notes = (eval {$cds->DB_remark},$sequence->DB_remark,eval {$cds->Remark},$sequence->Remark);
-    foreach (@notes) {
-      my $count = $unique_remarks{$_};
-      unless ($count) {
-        $count = ++$unique_remarks;
-        $footnotes{$sequence->name}{$count}{'note'} = "$_";
-        $footnotes{$sequence->name}{$count}{'evidence'} = $self->_get_evidence($_);
-      } else {
-        $footnotes{$sequence->name}{$count}++;
-      }
-      $unique_remarks{$_} = $count;
-    }
+
+    # Save all the remarks for each gene model.
+    # We will create unique list of footnotes in the view.
+    $data{remarks} = \@notes;
     
     if ($confirm eq 'Confirmed') {
 	$data{status} = "confirmed by cDNA(s)";
@@ -3287,10 +3314,7 @@ sub gene_models {
 
    # data is returned in this structure for use with dataTables macro
    my $data = { description => "The gene models table info",
-                data        =>  { rows => \@rows,
-                                  remarks => \%footnotes
-                                }
-   };
+                data        =>  \@rows };
    return $data;
 }
 
@@ -3300,10 +3324,16 @@ sub gene_models {
 sub other_sequences {
     my $self   = shift;
     my $object = $self->object;
-    my @seqs = map { [$self->_pack_obj($_), "". $_->Title] } $object->Other_sequence;
+    my @data;
+    foreach ($object->Other_sequence) {
+	my $title = $_->Title;
+	push @data, {sequence    => $self->_pack_obj($_),
+		     description => "$title" };
+    }
+
     return { 
 	description => 'Other sequences associated with gene',
-	data        => \@seqs
+	data        => \@data,
     };
 }
 
@@ -3342,40 +3372,6 @@ sub fetch_gff_gene {
 
 
 
-
-sub _build_phen_data {
-    my $self = shift;
-    my $GENE = $self->object;
-
-    my ($details,$phenotype_data) = $self->_get_phenotype_data($GENE, 1);  
-    my ($variation_data, $variation_name_hr) = $self->_get_variation_data($GENE, 1); 
-    my ($details_not,$phenotype_data_not) = $self->_get_phenotype_data($GENE); 
-    my ($variation_data_not, $variation_name_hr_not) = $self->_get_variation_data($GENE);
-    my $xgene_data = $self->_get_xgene_data($GENE, 1);
-    my $xgene_data_not = $self->_get_xgene_data($GENE);
-
-    my $phenotype_names_hr  = $self->_get_phenotype_names($phenotype_data,$variation_data);
-    my $phenotype_names_not_hr  = $self->_get_phenotype_names($phenotype_data_not,$variation_data_not);
-
-    my $pheno_table = $self->_print_phenotype_table($phenotype_data,
-                        $variation_data,
-                        $phenotype_names_hr,
-                        $xgene_data,
-                        $variation_name_hr);
-    my $pheno_table_not = $self->_print_phenotype_table($phenotype_data_not,
-                        $variation_data_not,
-                        $phenotype_names_not_hr,
-                        $xgene_data_not,
-                        $variation_name_hr_not);
-    my $rnai_details_table = $self->_print_rnai_details_table($details, $phenotype_names_hr);
-    my $rnai_not_details_table = $self->_print_rnai_details_table($details_not,$phenotype_names_not_hr);
-
-    my $ret = { pheno_table => $pheno_table,
-                pheno_table_not => $pheno_table_not,
-                rnai_details_table => $rnai_details_table,
-                rnai_not_details_table => $rnai_not_details_table,
-    };
-}
 
 
 

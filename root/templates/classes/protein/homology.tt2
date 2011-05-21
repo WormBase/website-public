@@ -9,12 +9,16 @@
 
 
 [% 
-build_data_table(order=['species','gene'],
+
+WRAPPER $field_block title="Orthologs" key="orthologs";
+   'TH: duplicated processing and display with gene. ';
+
+    build_data_table(order=['species','gene'],
                          columns={ species => 'Species',
 		                   gene    => 'Gene',
                                  },
-                         key='orthologous_genes',	
-                         title='Orthologs');
+                         key='orthologous_genes');
+END;
 %]
 
 

@@ -1,26 +1,29 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title="interaction_type" key="interaction_type"-%] 
-	[% fields.interaction_type.data.type %]
-[% END %]
+[% 
 
-[% WRAPPER $field_block title="phenotype" key="phenotype" -%] 
-	[% tag2link(fields.phenotype.data) %]
-[% END %]
+WRAPPER $field_block title="interaction_type" key="interaction_type";
+    fields.interaction_type.data.type;
+END;
 
-[% WRAPPER $field_block title="interactor" key="interactor" -%] 
-	[% FOREACH data IN fields.interactor.data %]
-		[%  tag2link(data) %]<br>
-	[% END %] 
-[% END %]
+WRAPPER $field_block title="phenotype" key="phenotype"; 
+    tag2link(fields.phenotype.data);
+END;
 
-[% WRAPPER $field_block title="rnai" key="rnai" -%] 
-	[% tag2link(fields.rnai.data) %]
-[% END %]
+WRAPPER $field_block title="interactor" key="interactor";
+    FOREACH data IN fields.interactor.data;
+	tag2link(data) _ '<br>';
+    END; 
+END;
+
+WRAPPER $field_block title="rnai" key="rnai";
+    tag2link(fields.rnai.data);
+END;
 
 
-	[% build_data_table (
+WRAPPER $field_block title="Effector" key="effector_data";
+    build_data_table (
 		order = [ 
 			'gene',
 			'interactions',
@@ -29,17 +32,12 @@
 			gene => 'Gene',
 			interactions => 'Interactions',
 			},
-		key = 'effector_data',
-		title = 'Effector'	
-		)
-	%]
-
-	[% # FOREACH data IN fields.effector_data.data %]
-		[% # tag2link(data.gene) %]<br>
-	[% # END %] 
+		key = 'effector_data');
+END;
 
 
-	[% build_data_table (
+WRAPPER $field_block title="Effected" key="effected_data";
+    build_data_table (
 		order = [ 
 			'gene',
 			'interactions',
@@ -48,20 +46,12 @@
 			gene => 'Gene',
 			interactions => 'Interactions',
 			},
-		key = 'effected_data',
-		title = 'Effected'	
-		)
-	%]
+		key = 'effected_data');
+END;
 
 
-	[% # FOREACH data IN fields.effected_data.data %]
-		[% # tag2link(data.gene)  %]<br>
-	[% # END %] 
-
-
-
-[% WRAPPER $field_block title="non_directional_data" key="non_directional_data" -%] 
-	[%  FOREACH data IN fields.non_directional_data.data %]
-		[% tag2link(data.gene) %]<br>
-	[% END %] 
-[% END %]
+WRAPPER $field_block title="non_directional_data" key="non_directional_data";
+    FOREACH data IN fields.non_directional_data.data;
+         tag2link(data.gene) _ '<br>';
+    END;
+END;

@@ -1,7 +1,11 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-	[% build_data_table (
+[%
+
+WRAPPER $field_block title="Microarray" key="microarray";
+
+    build_data_table (
 		order = [ 
 			'microarray',
 			'experiment',
@@ -14,13 +18,14 @@
 			minimum =>'Minimum',
 			maximum =>'Maximum',
 			},
-		key = 'microarray',
-		title = 'Microarray'	
-		)
-	%]
+		key = 'microarray');
+END;
 
-[% WRAPPER $field_block title="sage_tag" key="sage_tag" -%] 
-	[% FOREACH data IN fields.sage_tag.data %]
-		[% tag2link(data) %]<br>
-	[% END %] 
-[% END %]
+
+WRAPPER $field_block title="sage_tag" key="sage_tag";
+    FOREACH data IN fields.sage_tag.data;
+	 tag2link(data) _ '<br>';
+    END; 
+END;
+
+%]
