@@ -6,4 +6,3 @@
 
 [% mytitle = "Reassigned <b>" _ object.name.data.id _ "</b> Genes";
     gene_list_by_species(title="$mytitle" key="reassigned_genes") %]
-o

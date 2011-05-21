@@ -4,7 +4,7 @@
 $jq(".exprbox").colorbox({width:"90%", inline:true});
 </script>
   
-   [% IF fields.anatomic_expression_patterns.data.keys.size >0 %]
+   [%# IF fields.anatomic_expression_patterns.data.keys.size > 0 %]
    [% WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns"%]
   [% gene_image = fields.anatomic_expression_patterns.data.image  %]
    [% IF gene_image %]<a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>[% END %]
@@ -36,7 +36,9 @@ $jq(".exprbox").colorbox({width:"90%", inline:true});
    [% END %]
    [% END %]
 
-   [% WRAPPER $field_block title="Expression Cluster" key="expression_cluster"%]
+   [% WRAPPER $field_block title="Expression Cluster" key="expression_cluster" %]
+
+       
        Found [% searchlink("expression_cluster", c.stash.object.name.data.id, fields.expression_cluster.data.keys.size _ " expression cluster " _ pluralize("object", fields.expression_cluster.data.keys.size)) %]
    [% END %]
 

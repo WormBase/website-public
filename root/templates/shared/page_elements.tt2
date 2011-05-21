@@ -220,7 +220,7 @@
     END; # END of MACRO
 %]
 
-[%# We SHOULD be able to be data tables from arrays which would be faster
+[%# We SHOULD be able to build data tables from arrays which would be faster
      than taking a data strucutre from the db, building a second data structure,
      dumping to a table and then styling it. 
      
@@ -231,18 +231,31 @@
 
   [% IF data && data.size > 0;  
        # Set up some suitable defaults
-       IF data.size < 51;
+       IF data.size < 11;
           paginate        = 'false';
           pagination_type = 'false';
 	  length          = 'false';
 	  lengthMenu      = 'false';
+          filter          = 'false';
+          info            = 'false';
+       ELSIF data.size < 51;
+          paginate        = 'false';
+          pagination_type = 'false';
+	  length          = 'false';
+	  lengthMenu      = 'false';
+	  filter          = 'true';
+          info            = 'false';
        ELSE;
           paginate        = 'true';
           pagination_type = 'full_numbers';
 	  length          = 'true';
           lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
-       END;
+          filter          = 'true';
+	  info            = 'true'; 
+      END;
+
    %]
+
 
     <script type="text/javascript" >
 	$jq(document).ready(function() {
@@ -251,6 +264,8 @@
 		"bLengthChange"    : [% length   %],
 //                "bJQueryUI"        : true,
                 "sPaginationType"  : "[% pagination_type %]",
+		"bFilter"          : [% filter %],		
+		"bInfo"            : [% info %],
      	        [% style %]
 	} );
       } );
@@ -287,8 +302,9 @@
 			[% END %]
 		</tr>
 	</tfoot>
-</table>
-[% END %] 
+
+      </table>
+   [% END %] 
 
 [% END %] 
 
@@ -696,7 +712,6 @@ END;
 #            $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
 
 
-
     END;
 END;
 %]
@@ -735,8 +750,8 @@ END;
    build_data_table(order=['phenotype_info','description','remark'],
                     columns={ 
                     	phenotype_info => 'Phenotype',
-		              	description        => 'Description',
-			      		remark             => 'Remark',
+		        description        => 'Description',
+	 		remark             => 'Remark',
                     },
                     key='phenotype_not',
                     title='Phenotype NOT Observed');
@@ -900,6 +915,61 @@ END;
 
 
 
+[% # gene_ontology; custom dataTable procesing for the Gene summary %]
+[%# This is (nearly) generically suitable for structure that contains 
+     multiple tables eg data contains hash of arrays %]
+
+[% MACRO gene_ontology BLOCK;
+
+       # One table for each GO facet
+       facets = fields.$key.data.keys.sort;
+
+       FOREACH facet IN facets;
+            IF fields.$key.data.$facet > 0;
+                WRAPPER $field_block title="$facet" key="$key";
+
+                   # declare array of columns named via keys in the data structure
+	           order = ['method','term', 'evidence_code'];
+		    
+	           # declare hash for column headers, keyed as above
+	           headers = {   method          => 'Method',
+                                 term            => 'Term',
+                                 evidence_code   => 'Evidence' };
+ 
+                   # declare rows array
+                   rows = [];
+  
+                   FOREACH r IN fields.$key.data.$facet;
+          	           row = [];
+		           # loop through each element in order array (for columns) , declared above
+		           FOREACH o IN order;			
+			         # get value (val) from the row r
+     		                 val = r.$o;
+			         # enter data in row
+	                         row.push(val);
+      		           END;
+		           # enter data row array into rows
+                           rows.push(row);
+                    END;
+					  
+                    # populate name array;
+	            names = [];
+	            FOREACH o IN order; names.push(headers.$o); END;
+                    table_count = table_count + 1;		      	  
+ 
+    	          # generate table
+#       	                 '<span class="species">'
+#                          _ facet 
+#                          _ '</span> (' 
+#                          _ fields.$key.data.$facet.size 
+#                          _ ' assocations)';
+#                    dataTable_list(names, rows, "table_${facet}_${key}");
+                    dataTable_list(names, rows, "table_${table_count}");
+	     END; # END of WRAPPER
+           END; # END IF facet contains data	   
+         END; # END of facets
+  END; # END of MACRO
+%]
 
 
 

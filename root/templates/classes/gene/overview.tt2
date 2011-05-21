@@ -10,12 +10,16 @@ WRAPPER highlight_box;
    taxonomy;
 
    WRAPPER $field_block title="Sequence";
-        tag2link(fields.ids.data.sequence_name);
+        tag2link(fields.sequence_name.data);
    END;
 
-   WRAPPER $field_block title=pluralize("Other name", fields.other_name.data.size) key="other_name";
-        IF fields.other_name.data.size>0; 
-              tag2link(fields.name.data, fields.other_name.data.join(', ')); 
+   WRAPPER $field_block title="Locus";
+        tag2link(fields.locus_name.data);
+   END;
+
+   WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
+        IF fields.other_names.data.size>0; 
+              fields.other_names.data.join(', '); 
         END;
    END;
 
@@ -23,85 +27,71 @@ WRAPPER highlight_box;
            fields.classification.data.type;
    END;
 
-   WRAPPER $field_block title="Status";
-      fields.status.data.status;
+   status;
+
+   WRAPPER $field_block title="Cloned By" key="cloned_by";
+           tag2link(fields.name.cloned_by.data.cloned_by);
    END;
 
    WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
+           fields.name.data.id _ ' v' _ fields.version.data;
    END;
 
 END;
-%]
 
 
-<div class="text-width" style="clear:left">
-[% markup(fields.concise_description.data) %]</div>
-  [% IF fields.structured_description.data.keys.size > 0 %]
-    <div class="toggle">Details</div>
-         <div class="returned">
-          [% id =0 %]
-          [% FOREACH sd IN fields.structured_description.data.keys %]
-              [% USE String(sd.replace('_', ' ')) %]
-              [% WRAPPER $subfield_block title=String.capital-%]  
-                  [% FOREACH obj IN fields.structured_description.data.$sd %]
-                    <div class="text-width" style="margin:0.5em">
-                      [% markup(obj.text) %]
-                      [% IF obj.evidence.check %] 
-                        <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/[% obj.evidence.tag %]/[% obj.evidence.index %]"></a>
-                      [% END %]
-                    </div>
-                  [% END %]
-              [% END %]
-          [% END %]
-         </div>
-  [% END %]
+# The main concise description
+'<div class="text-width" style="clear:left">';
+    markup(fields.concise_description.data);
+'</div>';
+
+# Structured descriptions
+IF fields.structured_description.data.keys.size > 0;
+    '<div class="toggle">Details</div>';
+    '<div class="returned">';
+    id = 0;
+    FOREACH sd IN fields.structured_description.data.keys;
+          USE String(sd.replace('_', ' '));
+          WRAPPER $subfield_block title=String.capital;
+               FOREACH obj IN fields.structured_description.data.$sd;
+                   '<div class="text-width" style="margin:0.5em">';
+                      markup(obj.text);
+                      IF obj.evidence.check;
+                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/' _ object.name.data.id _ '/' _ obj.evidence.tag _ '/' _ obj.evidence.index _ '"></a>';
+                      END;
+                   '</div>';
+               END;
+           END;
+    END;
+    '</div>';
+END;
 
 
-   [% IF fields.legacy_information.data.size > 0 %]
-         <div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>
-         <div class="returned">
-           [% FOREACH desc IN fields.legacy_information.data %]
-              <li>[% markup(desc, 0) %]</li>
-            [% END %]
-         </div>
-    [% END %]
+# Legacy Information
+IF fields.legacy_information.data.size > 0;
+     '<div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>';
+     '<div class="returned">';
+          FOREACH desc IN fields.legacy_information.data;
+              '<li>';
+                   markup(desc, 0);
+              '</li>';
+            END;
+         '</div>';
+END;
 
-  [%# Usually we show empty fields; but some things we actually want to suppress when empty %]
-  [% IF fields.also_refers_to.data %]
-         <div class="toggle">Also refers to</div>
-         <div class="returned">
-         <div class="caveat-emptor">[% fields.ids.data.common_name %] has also been used to refer to:
-           [% FOREACH item IN fields.also_refers_to.data %]
-               [% tag2link(item) %]            
-           [% END %]
-           </div>
-  [% END %]
-
-
-
-
-
-
-
-[% 
-   # Central dogma
-
-    '<table border="1">';
-       '<tr><th>Gene</th><th>Transcripts</th><th>CDS</th><th>Proteins</th></tr>';
-
-       '<tr>';
-            '<td>';
-                 tag2link(fields.central_dogma.data.gene);
-            '</td>';
-	   
-               FOR transcript IN fields.central_dogma.data.transcripts;
-                   
-	    
-
-       '</tr>';
-    '</table>';
-
+# Also Refers to
+# Usually we show empty fields; but some things we actually want to suppress when empty
+IF fields.also_refers_to.data;
+         '<div class="toggle">Also refers to</div>';
+         '<div class="returned">';
+         '<div class="caveat-emptor">';
+               fields.name.data.label;
+               'has also been used to refer to:';
+               FOREACH item IN fields.also_refers_to.data;
+                   tag2link(item);
+               END;
+          '</div>';
+END;
 
 
 %]

@@ -1308,7 +1308,7 @@ sub _build_status {
     my $object = $self->object;
     my $class  = $object->class;
     my $status = $class eq 'Protein' ? ($object->Live ? 'live' : 'history')
-                                     : $object->Status;
+	: $object->Status;
 
     return {
         description => "current status of the $class:$object",

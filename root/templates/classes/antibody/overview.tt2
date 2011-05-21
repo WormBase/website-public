@@ -3,43 +3,47 @@
 
 <h2>[% fields.name.data.name %]</h2>
             
-[% WRAPPER highlight_box %]
+[% 
 
-        [% WRAPPER $field_block title="Other names" key="other_names" -%] 
-	      [% FOREACH name IN fields.other_names.data %]
-                  [% fields.other_name.data.join(' ') FILTER lower %]
-              [% END %]
-        [% END %]
+   WRAPPER highlight_box;
 
-[% END %]
+      other_names;
 
-[% summary %]
+   END;
 
-[% WRAPPER $field_block title="Gene target" key="corresponding_gene" %]
-     [% tag2link(fields.corresponding_gene.data) %]
-[% END %]
+   summary;
 
-[% WRAPPER $field_block title="Isolation" %]
-      [% WRAPPER $field_block title="Antigen" key="antigen" %]
-             [% fields.antigen.data.type %] [% IF fields.antigen.data.comment ; ': ' ; fields.antigene.data.comment ; END; %]
-      [% END %]
+   WRAPPER $field_block title="Gene target" key="corresponding_gene";
+      tag2link(fields.corresponding_gene.data);
+   END;
 
-      [% WRAPPER $field_block title="Generated in" key="animal" %]
-             [% fields.animal.data %]
-      [% END %]
+   WRAPPER $field_block title="Isolation";
+       WRAPPER $field_block title="Antigen" key="antigen";
+             fields.antigen.data.type; 
+             IF fields.antigen.data.comment ; 
+                 ': ' ; fields.antigene.data.comment; 
+             END;
+       END;
 
-      [% WRAPPER $field_block title="Clonality" key="clonality" %]
-             [% fields.clonality.data %]
-      [% END %]
-[% END %]
+       WRAPPER $field_block title="Generated in" key="animal";
+             fields.animal.data;
+       END;
 
-[% WRAPPER $field_block title="Isolated by" %]
-      [% laboratory(title="Laboratory") %]
+       WRAPPER $field_block title="Clonality" key="clonality";
+             fields.clonality.data;
+       END;
+  END;
 
-      [% WRAPPER $field_block title="Constructed by" key="constructed_by" %]
-             [% fields.constructed_by.data %]
-      [% END %]
-[% END %]
+  WRAPPER $field_block title="Isolated by";
+      
+       laboratory(title="Laboratory");
 
-[% remarks %]
-[% remarks("no_toggle=1") %]
+       WRAPPER $field_block title="Constructed by" key="constructed_by";
+              fields.constructed_by.data;
+       END;
+   END;
+
+   remarks;
+   remarks("no_toggle=1");
+
+%]

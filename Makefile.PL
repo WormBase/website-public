@@ -79,6 +79,7 @@ requires 'MooseX::MethodAttributes::Inheritable';                # => '0.24';
 requires 'MooseX::Role::WithOverloading';                        # => '0.05';
 requires 'MRO::Compat';                                          #
 requires 'Net::Twitter';                                         #
+requires 'Number::Format';                                       #
 requires 'namespace::clean';                                     #
 requires 'namespace::autoclean';                                 #
 requires 'Package::DeprecationManager'           => '0.10';      #

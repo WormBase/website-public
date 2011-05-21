@@ -1,27 +1,29 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% widget = c.stash.widget %]
-   [%# some don't have genetic_position at all... can check for that %]
-    [% genetic_position %]
+[% 
 
-    [% WRAPPER $field_block title="Genomic position" key="genomic_position" %]
-        [%# label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop %]
-	  [% FOREACH position IN fields.genomic_position.data %]
-         [% tag2link(position) %]
-	  [% END %]
-    [% END %]
-<div style="clear:both;">
-    [% IF fields.genomic_image_position.data %]
-       [% # setting vars up
-          img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image_position.data.id;
-          IF fields.tracks.data;
-             img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
-          END;
-       %]
-       <br><br>
-       [% tag2link(fields.genomic_image_position.data, image(img_url)) %]
-       [%# tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)) %] 
-    [% END %]
+    genetic_position;
 
-    </div>
+    WRAPPER $field_block title="Genomic position" key="genomic_position";
+        # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
+	 FOREACH position IN fields.genomic_position.data;
+              tag2link(position);
+	 END;
+     END;
+
+    '<div style="clear:both;">';
+    IF fields.genomic_image.data;
+       # setting vars up
+            img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;
+            IF fields.tracks.data;
+                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
+            END;
+       '<br><br>';
+
+       tag2link(fields.genomic_image.data, image(img_url));
+       # tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)); 
+    END;
+
+    '</div>';
+%]
