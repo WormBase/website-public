@@ -100,10 +100,8 @@ has 'gene_pheno_datadir' => (
     }
 );
 
-
-# No. Should be a configuration directive. 
-# Besides, it's misspelled.
-has 'othology_datadir' => (
+ 
+has 'orthology_datadir' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
@@ -213,9 +211,9 @@ sub _build_phen_data {
 sub diseases {
 	my $self = shift;
     my $object = $self->object;
-	my %gene_id2omim_ids = build_hash('/usr/local/wormbase/databases/WS225/orthology/gene_id2omim_ids.txt');
-	my %omim_id2disease_desc = build_hash('/usr/local/wormbase/databases/WS225/orthology/omim_id2disease_desc.txt');
-	my %omim_id2disease_name = build_hash('/usr/local/wormbase/databases/WS225/orthology/omim_id2disease_name.txt');
+	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
+	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
+	my %omim_id2disease_name = build_hash($self->orthology_datadir . 'omim_id2disease_name.txt');
 	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
 	my @diseases = split /%/,$disease_list;     
 	my @data_pack;
@@ -226,7 +224,6 @@ sub diseases {
 					description => $omim_id2disease_desc{$disease_id},
 					};	
 	}
-	
 	return {
 		'data'=> @data_pack ? \@data_pack : undef,
 		'description' => 'Diseases related to the gene'
