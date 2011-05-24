@@ -6,58 +6,6 @@ with    'WormBase::API::Role::Object';
 with    'WormBase::API::Role::Position';
 
 
-#### passed test #####
-# common_name 
-# ids
-# concise_description
-# kogs 
-# anatomic_expression_patterns 
-# matching_cdnas
-# sage_tagsf
-# paralogs
-# treefam
-# rearrangements
-# history
-# interactions 
-# other_sequences
-# orthologs
-# cds
-# microarray_expression_data
-# inparanoid_groups
-
-#### rebuilt methods  trouble shooting #####
-
-# genomic_position - need _fetch_sequences
-# strains
-# proteins
-# cloned_by
-# orfeome_project_primers
-# microarray_topology_map_position
-
-
-### from id
-
-### from Function
-# sites_of_action
-# expression_cluster
-# expression
-
-
-## Homology
-# similarities
-
-## Reagents
-
-### complex transform
-# gene_models *
-# protein_domains*
-# rnai_phenotypes *
-
-### for implementation in view
-# fourd_expression_movies 
-# anatomic_expression_patterns
-
-
 #####################
 
 ### configuration items
@@ -195,40 +143,6 @@ sub _build_phen_data {
 }
 
 
-
-
-
-################################################
-#
-# ortholog, paralog and disease incorporation
-
-#  Why are these methods here?
-#
-################################################
-
-
-# Why the hell is all of this hardcoded?
-sub diseases {
-	my $self = shift;
-    my $object = $self->object;
-	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
-	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
-	my %omim_id2disease_name = build_hash($self->orthology_datadir . 'omim_id2disease_name.txt');
-	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
-	my @diseases = split /%/,$disease_list;     
-	my @data_pack;
-	foreach my $disease_id (@diseases) {
-		push @data_pack, {
-					id 		=> $disease_id,
-					label 	=> $omim_id2disease_name{$disease_id},
-					description => $omim_id2disease_desc{$disease_id},
-					};	
-	}
-	return {
-		'data'=> @data_pack ? \@data_pack : undef,
-		'description' => 'Diseases related to the gene'
-	};
-}
 
 
 #######################################
@@ -898,8 +812,11 @@ sub version {
 
 #######################################
 #
-# The Expression Widget NOT DONE YET
+# The Expression Widget
 #   template: classes/gene/expression.tt2
+#
+#   TH: Several of the methods in this widget
+#       need to be rewritten and clarified.
 #
 #######################################
 
@@ -962,7 +879,7 @@ sub fourd_expression_movies {
     my $self   = shift;
     my $object = $self->object;
     
-    my @expression = grep { ($_->Author =~ /Mohler/ && $_->MovieURL) } $object->Expression_pattern;
+    my @expression = grep { ($_->Author =~ /Mohler/ && $_->MovieURL) } $object->Expr_pattern;
     
     my %data;
     foreach (@expression) {
@@ -1036,11 +953,10 @@ sub anatomic_expression_patterns {
     my %data_pack;
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !($_->Author =~ /Mohler/ && $_->MovieURL) } $object->Expr_pattern;
-
-    # WTF IS THIS?!!?!?!?!?!?
+    
     my $file = $self->pre_compile->{gene_expr}."/".$object.".jpg";
     $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if (-e $file && ! -z $file);
-
+    
     foreach my $ep (@eps) {
 	my $file = $self->pre_compile->{expr_object}."/".$ep.".jpg";
 	$data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=". $ep   if (-e $file && ! -z $file);
@@ -1050,16 +966,16 @@ sub anatomic_expression_patterns {
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
-
+    
     return { description => 'expression patterns for the gene',
 	     data        => \%data_pack };
 }
 
 =head3 microarray_expression_data
-
+    
 This method will return a data structure containing
 microarray expression data.
-
+    
 =over
 
 =item PERL API
@@ -1187,6 +1103,56 @@ sub microarray_topology_map_position {
     return $data;
 }
 
+=head3 expression_cluster
+
+This method will return a data structure containing
+microarray expression clusters.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_cluster();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/expression_cluster
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub expression_cluster {
     my $self   = shift;
@@ -1196,6 +1162,57 @@ sub expression_cluster {
 	     description => 'expression cluster data' };
 }
 
+
+=head3 anatomy_function
+
+This method will return a data structure containing
+the anatomy function of the gene.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_function();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_function
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub anatomy_function {
     my $self   = shift;
@@ -1990,47 +2007,49 @@ B<Response example>
 =cut
 
 
-# NOT DONE.
 sub inparanoid_groups {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
 	 
     my %seen;
-    my @inp = grep {!$seen{$_}++ } grep {$_->Group_type eq 'InParanoid_group' }
+    my @inp = grep {!$seen{$_}++ } 
+    grep {$_->Group_type eq 'InParanoid_group' }
     map {$_->Homology_group} @{$self->all_proteins};
-    my @data_pack;
+    
+    my @data;
     foreach my $cluster (@inp) {
-		my %proteins;
-		foreach my $protein ($cluster->Protein) {
-		
-	   		my $species = $protein->Species || $self->id2species($protein) || 'unknown';
-			my ($class,$id);
-			if($self->wb_protein($species)){
-			    $class    = "protein";
-			   $id = $protein;
-			}else{
-			   $protein =~ /(\w+):(.+)/ ;
-			   $class    = $1;
-			   $id = $2;
-			} 
-			if($class eq 'ENSEMBL') {
-			      (my $sp=$species) =~ s/ /_/g;
-			      $id="$sp&$id" ;
-			}
-			$species =~ s/ /_/g;
-	   		push @{$proteins{$species}} , {
-	   								'class' => "$class",
-	   								'id' => "$id" ,
-	   								'label' => "$protein",
-	   								};
-	   								
-	      }
-	      push @data_pack, $self->_pack_obj($cluster,'',proteins=>\%proteins);
-	}							 
-      
+	my %proteins;
+	foreach my $protein ($cluster->Protein) {
+	    
+	    my $species = $protein->Species || $self->id2species($protein) || 'unknown';
+	    my ($class,$id);
+	    if ($self->wb_protein($species)){
+		$class = "protein";
+		$id    = $protein;
+	    } else{
+		$protein =~ /(\w+):(.+)/ ;
+		$class = $1;
+		$id    = $2;
+	    } 
+	    if ($class eq 'ENSEMBL') {
+		(my $sp=$species) =~ s/ /_/g;
+		$id="$sp&$id" ;
+	    }
+
+	    $species =~ s/ /_/g;
+	    push @{$proteins{$species}} , {
+		'class' => "$class",
+		'id'    => "$id" ,
+		'label' => "$protein",
+	    };
+	    
+	}
+	push @data, $self->_pack_obj($cluster,'',proteins=>\%proteins);
+    }							 
+    
     return { description => 'homology groups for this gene defined using InParanoid',
-	     data        => \@data_pack }; 
-}	
+	     data        => \@data }; 
+}
 
 =head3 nematode_orthologs
 
@@ -2085,26 +2104,16 @@ sub nematode_orthologs {
     my $object = $self->object;
 
     my @data;
-    my $index = 0;
     foreach ($object->Ortholog) {
-	my $species = $_->right;
-	push @data, { species  => "$species",
-		      ortholog => $self->_pack_obj($_),
-#		      sequence => { class=>'ebsyn',
-#				    id=>$ortholog->Sequence_name->id,
-#				    label=>'syntenic alignment',
-#		      },
-		      evidence => {  check=>$self->check_empty($species),
-				     tag   => "Ortholog",
-				     index => $index,
-				     right => 1,
-		      },
+	my $methods  = join('; ',map { "$_" } $_->right(2)->col);
+	push @data, { ortholog => $self->_pack_obj($_),
+		      method   => $methods,
+		      species  => $self->_split_genus_species($_->Species)
 	};
-	$index++;
     }
     
     return { description => 'precalculated ortholog assignments for this gene',
-	     data        =>  '' };
+	     data        =>  \@data };
 
 }
 
@@ -2161,7 +2170,7 @@ sub human_orthologs {
     my $object = $self->object;
     my @data;
     foreach ($object->Ortholog_other) {
-	next unless $_ =~ /ENSEMBL:ENSP\d*/;	
+	next unless $_->name =~ /ENSEMBL:ENSP\d{1}.*/;	
 	push @data, $self->_parse_ortholog_other($_);
     }
     return { description => 'human orthologs of this gene',
@@ -2232,80 +2241,277 @@ sub other_orthologs {
 # Private helper method to standardize structure of other orthologs.
 sub _parse_ortholog_other {
     my ($self,$ortholog) = @_;
-    my $method  = $ortholog->right(2);
-    my ($genus,$species) = split(/ /,$ortholog->Species);
-    return { ortholog => "$ortholog",
-	     method   => "$method",
-	     species  => { genus => "$genus", species => "$species" }
+    my $methods  = join('; ',map { "$_" } $ortholog->right->col);
+    return { ortholog => $self->_pack_obj($ortholog),
+	     method   => $methods,
+	     species  => $self->_split_genus_species($ortholog->Species)
     };
 }
 
-# NOT DONE YET
+=head3 paralogs
+
+This method returns a data structure containing the 
+paralogs of this gene.
+
+=over
+
+=item PERL API
+
+ $data = $model->paralogs();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/paralogs
+
+B<Response example>
+
+=cut
+
 sub paralogs {
-
-	my $self = shift;
-	my $object = $self->object;
-	my %data;
-	my $desc = 'This genes paralogs';
-
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	my @paralogs = $object->Paralog;
-	@data_pack = map {$self->_pack_obj($_, $self->bestname($_));} @paralogs;
-	 
-	 
-
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;
+    foreach ($object->Paralog) {
+	my $methods  = join('; ',map { "$_" } $_->right(2)->col);
+	push @data, { ortholog => $self->_pack_obj($_),
+		      method   => $methods,
+		      species  => $self->_split_genus_species($_->Species)
+	};
+    }
+    
+    return { description => 'precalculated paralog assignments',
+	     data        =>  \@data };
 }
 
 
-sub protein_domains {
+=head3 human_diseases
+
+This method returns a data structure containing disease
+processes that human orthologs of this gene are thought
+to participate in.
+
+=over
+
+=item PERL API
+
+ $data = $model->human_diseases();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/human_diseases
+
+B<Response example>
+
+=cut
+
+# THIS SERIOUSLY NEEDS TO BE FIXED.
+sub human_diseases {
 	my $self = shift;
     my $object = $self->object;
+	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
+	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
+	my %omim_id2disease_name = build_hash($self->orthology_datadir . 'omim_id2disease_name.txt');
+	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
+	my @diseases = split /%/,$disease_list;     
+	my @data_pack;
+	foreach my $disease_id (@diseases) {
+		push @data_pack, {
+					omim_id 	=> $disease_id,
+					disease 	=> $omim_id2disease_name{$disease_id},
+					description => $omim_id2disease_desc{$disease_id},
+					};	
+	}
+	return {
+		'data'=> @data_pack ? \@data_pack : undef,
+		'description' => 'Diseases related to the gene'
+	};
+}
 
-	 
+
+=head3 protein_domains
+
+This method returns a data structure containing the 
+protein domains contained in this gene.
+
+=over
+
+=item PERL API
+
+ $data = $model->protein_domains();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/protein_domains
+
+B<Response example>
+
+=cut
+
+sub protein_domains {
+    my $self   = shift;
+    my $object = $self->object;
+    
     my %unique_motifs;
     for my $protein (@{$self->all_proteins}) {
     	my @motifs;
     	@motifs	= $protein->Motif_homol;
-		foreach my $motif (@motifs) {
-          $unique_motifs{$motif->Title} = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
-		}
+	foreach my $motif (@motifs) {
+	    $unique_motifs{$motif->Title} 
+	    = $self->_pack_obj($motif, $motif->Title) unless $unique_motifs{$motif->Title};
 	}
-    my $data = { description => "protein domains of the gene",
-                 data => \%unique_motifs
-                };
-	return $data;
+    }
+    return { description => "protein domains of the gene",
+	     data        => \%unique_motifs
+    };
 }
 
+
+=head3 treefam
+
+This method returns a data structure containing the 
+link outs to the Treefam resource.
+
+=over
+
+=item PERL API
+
+ $data = $model->treefam();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/treefam
+
+B<Response example>
+
+=cut
+
 sub treefam {
-
-	my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-	my %data;
-	my $desc = 'data associated with gene for rendering treefam data';
-
-	my @data_pack;
-
-	#### data pull and packaging
-	
-	 
-
-	foreach  (@{$self->all_proteins}) {
-		my $treefam = $self->_fetch_protein_ids($_,'treefam');
-		# Ignore proteins that lack a Treefam ID
-		next unless $treefam;
-		push @data_pack, "$treefam";
-	}			
-	## end classic code ##
-	
-	$data{'data'} = \@data_pack;
-	$data{'description'} = $desc;
-	return \%data;
+    
+    my @data;
+    foreach (@{$self->all_proteins}) {
+	my $treefam = $self->_fetch_protein_ids($_,'treefam');
+	# Ignore proteins that lack a Treefam ID
+	next unless $treefam;
+	push @data, "$treefam";
+    }			
+    
+    return { description => 'data and IDs related to rendering Treefam trees',
+	     data        => \@data,
+    };
 }
 
 

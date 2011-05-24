@@ -271,8 +271,7 @@ END;
    PROCESS config/col
          + config/url
 	 + config/external_urls
-         + config/assets
-	 + config/debug;
+         + config/assets;
 
    # set defaults for variables, etc.
    DEFAULT 
