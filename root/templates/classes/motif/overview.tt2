@@ -6,7 +6,9 @@
 
 [% 
 
-     remarks;
+     WRAPPER $field_block title="Title" key="title";
+         fields.title.date;
+     END;
 
      WRAPPER $field_block title="gene_ontology" key="gene_ontology";
            build_data_table (
@@ -36,4 +38,5 @@
                      key='homologies');
      END;
 
+     remarks;
 %]
