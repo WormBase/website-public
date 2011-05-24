@@ -16,7 +16,7 @@ Model for the Ace ?Motif class.
 
 =head1 URL
 
-http://wormbase.org/species/motif
+http://wormbase.org/resources/motif
 
 =head1 METHODS/URIs
 
@@ -93,7 +93,7 @@ sub title {
     my $object 	= $self->object;
     my $title   = $object->Title;
     return {
-	data        => "$title",
+	data        => "$title" || undef,
 	description => 'title for the motif'
     };
 }
@@ -114,16 +114,16 @@ sub title {
 
 =cut
 
-
 =head3 gene_ontology
 
-This method will return a data structure with gene ontology (GO) annotations for the requested motif.
+This method will return a data structure with 
+gene ontology (GO) annotations for the requested motif.
 
 =over
 
 =item PERL API
 
- $data = $model->go();
+ $data = $model->gene_ontology();
 
 =item REST API
 
@@ -262,15 +262,15 @@ sub homologies {
     };
     
     foreach my $homology_type (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
-		if (my @homol = $object->$homology_type) {
-			foreach my $homologous_object (@homol) {	
-				my $homolog = $self->_pack_obj($homologous_object);
-				push @data,	{
-					homolog => $homolog,
-					type => "$types->{$homology_type}",	    	
-				}	
-			}
-		}
+	if (my @homol = $object->$homology_type) {
+	    foreach my $homologous_object (@homol) {	
+		my $homolog = $self->_pack_obj($homologous_object);
+		push @data,	{
+		    homolog => $homolog,
+		    type => "$types->{$homology_type}",	    	
+		}	
+	    }
+	}
     }
     
     return { data => @data ? \@data : undef,
