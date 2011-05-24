@@ -1,0 +1,31 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+
+   WRAPPER $field_block title="Name";
+        fields.name.data.id;
+   END;
+
+END;
+
+
+WRAPPER $field_block title="Title" key="title";
+     fields.title.data;
+END;
+
+WRAPPER $field_block title="Description" key="description";
+     fields.description.data;
+END;
+
+WRAPPER $field_block title="Genes" key="contains_genes"; 
+   FOREACH gene IN fields.contains_genes.data;
+	   tag2link(gene) _ '<br />';
+   END;  
+END;
+
+%]
