@@ -1237,11 +1237,11 @@ sub contained_in {
 
 #######################################
 #
-# The Related Widget
+# The Referenced Widget
 #
 #######################################
 
-=head2 Related
+=head2 Referenced
 
 =head3 refers_to
 
