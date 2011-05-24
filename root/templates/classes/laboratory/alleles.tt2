@@ -4,13 +4,13 @@
 
 [% 
 
-WRAPPER $field_block title="Alleles" key="alleles";
+WRAPPER $field_block title="" key="alleles";
 
     build_data_table(order=['allele','gene','type','sequenced'],
                     columns={ allele => 'Allele',
 		              gene   => 'Gene',
 			      type   => 'Type',
-			      sequenced => 'Sequence known' },
+			      sequenced => 'Sequence known?' },
                     key='alleles');
 
 END;

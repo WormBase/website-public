@@ -1,38 +1,40 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER highlight_box %]
+[% 
 
-   [% WRAPPER $field_block title=""-%] 
-      [% FOREACH rep IN fields.representatives.data %]
-          [% tag2link(rep) %]
-      [% END %]
-   [% END %]
+WRAPPER highlight_box;
 
-   [% WRAPPER $field_block title="" %] 
-        [% fields.affiliation.data %]
-   [% END %]
+   WRAPPER $field_block title="" key="representatives"; 
+       FOREACH rep IN fields.representatives.data;
+          tag2link(rep);
+       END;
+   END;
 
-[% END %]
+   WRAPPER $field_block title="" key="affiliation";
+        fields.affiliation.data;
+   END;
 
-[% WRAPPER $field_block title="Lab Website" -%]
-    <a href="http://[% fields.website.data %]">[% fields.website.data %]</a><br>
-[% END %]
+END;
 
-[% WRAPPER $field_block title="Email" key="email" %] 
-       [% fields.email.data %]
-[% END %]
+WRAPPER $field_block title="Lab Website";
+    '<a href="http://' _ fields.website.data _ '">' _ fields.website.data _ '</a><br>';
+END;
+
+WRAPPER $field_block title="Email" key="email";
+    fields.email.data;
+END;
    
-[% WRAPPER $field_block title="Strain designation" key="strain_designation" %] 
-       [% fields.strain_designation.data %]
-[% END %]
+WRAPPER $field_block title="Strain designation" key="strain_designation";
+    fields.strain_designation.data;
+END;
    
-[% WRAPPER $field_block title="Allele designation" key="allele_designation" %] 
-       [% fields.allele_designation.data %]
-[% END %]
+WRAPPER $field_block title="Allele designation" key="allele_designation";
+    fields.allele_designation.data;
+END;
 
-
-   
+%]
+ 
    
 
    

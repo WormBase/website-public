@@ -12,21 +12,16 @@ WRAPPER $field_block title="Current Members" key="current_members";
 			      start_date => 'Start',
 			      end_date => 'End' },
                     key='current_members');
- 
-WRAPPER $field_block title="Current Members";
-     '<ul>';
-     FOREACH last_name IN fields.current_members.data.keys.sort;
-     	 '<li>' _ tag2link(fields.current_members.data.$last_name) _ '</li>';
-     END;
-     '</ul>';
-END;
- 
-WRAPPER $field_block title="Former Members";
-     '<ul>';
-     FOREACH last_name IN fields.former_members.data.keys.sort;
-     	'<li>' _ tag2link(fields.former_members.data.$last_name) _ '</li>';
-     END;
-     '<ul>';
+END; 
+
+WRAPPER $field_block title="Former Members" key="former_members";
+   build_data_table(order=['name','level','start_date','end_date'],
+                    columns={ name   => 'Name',
+		              level  => 'Position',
+			      start_date => 'Start',
+			      end_date => 'End' },
+                    key='former_members');
+
 END;
 
 %]

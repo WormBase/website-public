@@ -17,7 +17,7 @@ Model for the Ace ?Laboratory class.
 
 =head1 URL
 
-http://wormbase.org/resource/laboratory
+http://wormbase.org/resources/laboratory
 
 =head1 TODO
 
@@ -94,7 +94,7 @@ sub all_labs {
     my $db   = $self->ace_dsn->dbh;
     my @labs = $db->fetch(-query=>qq/find Laboratory/);
     my @rows;
-
+    
     foreach my $lab (sort { $a cmp $b } @labs) {
 	my $wb       = $lab->Representative;
 	my $allele   = join('; ',$lab->Allele_designation);	
@@ -249,16 +249,15 @@ B<Response example>
 sub representatives {
     my $self   = shift;
     my $object = $self->object;
-        
+    
     my @data;
     my @reps = $object->Representative;
     foreach (@reps) {
 	push @data,$self->_pack_obj($_,$_->Standard_name);
     }
     
-    my $data = { description => 'official representatives of the laboratory',
-		 data        => @data ? \@data : undef };
-    return $data;
+    return { description => 'official representatives of the laboratory',
+		 data    => @data ? \@data : undef };
 }
 
 =head3 phone
@@ -317,9 +316,8 @@ sub phone {
     my $self   = shift;
     my $object = $self->object;
     my $phone  = $object->Phone;
-    my $data   = { description => 'primary phone number for the lab',
-		   data        => "$phone" || undef };
-    return $data;
+    return { description => 'primary phone number for the lab',
+	     data        => "$phone" || undef };
 }
 
 =head3 fax
@@ -377,9 +375,8 @@ sub fax {
     my $self   = shift;
     my $object = $self->object;
     my $fax    = $object->Fax;
-    my $data   = { description => 'primary fax number for the lab',
-		   data        => "$fax" || undef };
-    return $data;
+    return { description => 'primary fax number for the lab',
+	     data        => "$fax" || undef };
 }
 
 =head3 email
@@ -437,9 +434,8 @@ sub email {
     my $self   = shift;
     my $object = $self->object;
     my $email  = $object->E_mail;
-    my $data   = { description => 'primary email address for the lab',
-		   data        => "$email" || undef };
-    return $data;
+    return { description => 'primary email address for the lab',
+	     data        => "$email" || undef };
 }
 
 =head3 website
@@ -497,10 +493,8 @@ sub website {
     my ($self) = @_;
     my ($scheme, $url) = split '://', $self ~~ 'URL', 2;
 
-    return {
-        description => 'website of the lab',
-        data        => $url,
-    };
+    return { description => 'website of the lab',
+	     data        => $url };
 }
 
 =head3 strain_designation
@@ -559,10 +553,8 @@ sub strain_designation {
     my $object = $self->object;
     my $name = $object->name;
              
-    my $data = { description => 'strain designation of the laboratory',
-#		 data        => $self->_pack_obj($object) };
-		 data        => "$name" };
-    return $data;		     
+    return { description => 'strain designation of the laboratory',
+	     data        => "$name" };
 }
 
 
@@ -621,9 +613,8 @@ sub allele_designation {
     my $self   = shift;
     my $object = $self->object;
     my $allele_designation = $object->Allele_designation->name if $object->Allele_designation;
-    my $data = { description => 'allele designation of the laboratory',
-		 data        => "$allele_designation" };
-    return $data;
+    return { description => 'allele designation of the laboratory',
+	     data        => "$allele_designation" };
 }
 
 
@@ -647,7 +638,7 @@ the current members of the laboratory.
 
 =item PERL API
 
- $data = $model->members();
+ $data = $model->current_members();
 
 =item REST API
 
@@ -694,8 +685,6 @@ sub current_members {
     my $object = $self->object;
     my $data   = $self->_get_members($object,'Registered_lab_members');
 
-    my $rep = 
-
     return { description => 'current members of the laboratory',
 	     data        => $data };
 }
@@ -710,7 +699,7 @@ the current members of the laboratory.
 
 =item PERL API
 
- $data = $model->members();
+ $data = $model->former_members();
 
 =item REST API
 
@@ -759,7 +748,7 @@ sub former_members {
     return { description => 'former members of the laboratory',
 	     data        => $data };
 }
-   
+
 sub _get_members {
     my ($self,$object,$tag) = @_;
     
@@ -776,9 +765,8 @@ sub _get_members {
 sub _get_lineage_data {
     my ($self,$member) = @_;
     my $object = $self->object;
-
-    my @data_pack;
-
+   
+    
     my %relationships = map { $_ => $_ } ($member->Supervised,$member->Supervised_by,$member->Worked_with);
 
     my $rep    = $object->Representative;
@@ -800,13 +788,11 @@ sub _get_lineage_data {
     }
     my $name = $member->Standard_name;
     
-    my %data = ('name'       => $self->_pack_obj($member,$name),
-		'level'      => "$level",
-		'start_date' => "$start",
-		'end_date'   => "$end",
-		'duration'   => "$duration",
-	);
-    return \%data;
+    return { 'name'       => $self->_pack_obj($member,$name),
+	     'level'      => "$level",
+	     'start_date' => "$start",
+	     'end_date'   => "$end",
+	     'duration'   => "$duration" };
 }
 
 
