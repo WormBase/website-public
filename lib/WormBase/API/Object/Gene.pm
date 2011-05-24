@@ -2362,7 +2362,7 @@ B<Response example>
 
 # THIS SERIOUSLY NEEDS TO BE FIXED.
 sub human_diseases {
-	my $self = shift;
+    my $self = shift;
     my $object = $self->object;
 	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
 	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
@@ -2520,6 +2520,8 @@ sub treefam {
 #######################################
 #
 # The Interactions Widget
+#   template: classes/gene/interactions.tt2
+# NOT DONE
 #
 #######################################
 
@@ -2527,43 +2529,138 @@ sub treefam {
 
 =cut
 
+=head3 interactions
+
+This method returns a data structure containing the 
+a data table of gene and protein interactions. Ask us
+to increase the granularity of this method!
+
+=over
+
+=item PERL API
+
+ $data = $model->interactions();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/interactions
+
+B<Response example>
+
+=cut
+
 sub interactions {
-
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-    my %data;
-    my %data_pack;
-    my $desc = "interactions gene is involved in";
     
-    my $version = $self->ace_dsn->version;
-    my $interaction_data_dir  = "/usr/local/wormbase/databases/$version/interaction";
-    my  $datafile = $interaction_data_dir."/compiled_interaction_data.txt";
-
-
-    my $gene_data_lines = `grep $object $datafile`;
-    my @gene_data_lines = split /\n/,$gene_data_lines;
-    
-    my @interaction_data;
-    foreach my $dataline (@gene_data_lines){
-        
-        chomp $dataline;
-        my @dataline_set = split /\|/,$dataline;
-        push @interaction_data,$dataline_set[0];
+    my @data;
+    foreach ($object->Interaction) {
+	my $type = $_->Interaction_type;
+	# Filter low confidence predicted interactions.
+	next if ($_->Log_likelihood_score >= 1.5 && $type =~ /predicted/);
+	
+	my ($effector,$effected,$direction);
+	
+	my @non_directional = eval { $type->Non_directional->col };
+	if (@non_directional) {
+	    ($effector,$effected) = @non_directional;  # WBGenes
+	    $direction = 'non-directional';
+	} else { 
+	    $effector  = $type->Effector->right;
+	    $effected  = $type->Effected->right;
+	    $direction = 'Effector->Effected';
+	}
+	
+	my $phenotype = $type->Interaction_phenotype;
+	push @data, { interaction => $self->_pack_obj($_),
+		      type        => "$type",
+		      effector    => $self->_pack_obj($effector),
+		      effected    => $self->_pack_obj($effected),
+		      direction   => $direction,
+		      phenotype   => $self->_pack_obj($phenotype) };
     }
-
-    my %interaction_ret;
-    map {$interaction_ret{"$_"} = { id => "$_", class => "interaction", label => "$_" }} @interaction_data;
-    
-    $data{'data'} = \%interaction_ret;
-    $data{'description'} = $desc;
-    return \%data;
-
+    return { description => 'genetic and predicted interactions',
+	     data        => \@data };
 }
 
 
 
+=head3 regulation_on_expression_level
 
-# Gene regulation
+This method returns a data structure containing the 
+a data table describing the regulation on expression
+level.
+
+=over
+
+=item PERL API
+
+ $data = $model->regulation_on_expression_level();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
+
+B<Response example>
+
+=cut
+
 sub regulation_on_expression_level {
     my $self   = shift;
     my $object = $self->object;
@@ -2614,13 +2711,9 @@ sub regulation_on_expression_level {
 	    }
 	}
     }
-    my $data = { description => 'Regulation on expression level',
-         data        => \@stash,
-    };
-    return $data;
+    return { description => 'Regulation on expression level',
+	     data        => \@stash };
 }
-
-
 
 
 
@@ -2878,10 +2971,8 @@ sub antibodies {
 		    laboratory => $_->Location ? $self->_pack_obj($_->Location) : "" };
   }
 
-  my $data = {  description =>  "antibodies generated against protein products or gene fusions",
-                data        =>  \@data,
-              };
-  return $data;
+  return {  description =>  "antibodies generated against protein products or gene fusions",
+	    data        =>  \@data };
 }
 
 
@@ -3378,7 +3469,7 @@ sub transgene_products {
 #
 #######################################
 
-=head2 Reagents
+=head2 Sequences
 
 =cut
 
@@ -3544,11 +3635,6 @@ sub other_sequences {
 
 
 
-
-
-
-
-
 #########################################
 #
 #   INTERNAL METHODS
@@ -3580,7 +3666,7 @@ sub fetch_gff_gene {
 
 # This is for GO processing
 # TH: I don't understand the significance of the nomenclature.
-# Oh wait, I see, it's used to force an order in the view. Ugly.
+# Oh wait, I see, it's used to force an order in the view.
 # This should probably be an attribute or view configuration.
 sub _go_method_detail {
     my ($self,$method,$detail) = @_;
@@ -3598,7 +3684,6 @@ sub _go_method_detail {
 }
 
  
-
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
 sub _fetch_transcripts {  
     my $self = shift;
