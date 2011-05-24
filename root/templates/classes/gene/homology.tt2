@@ -1,39 +1,30 @@
-[% WRAPPER $field_block title=pluralize("Paralog", fields.paralog.data.size) key="paralogs" %]
-     [% FOREACH obj IN fields.paralogs.data %]
-	   [% tag2link(obj) %]
-      [% END %]
-       
-[% END %]
-
-
-[% WRAPPER $field_block title=pluralize("Ortholog", fields.orthologs.data.size) key="orthologs" %]
-     [% FOREACH obj IN fields.orthologs.data %]
-	[% taxonomy(obj.species) %]: [% tag2link(obj.ortholog) %] [[% tag2link(obj.sequence) %]] 
-	[% IF obj.evidence.check %] 
-            <a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/[% object.name.data.id %]/[% obj.evidence.tag %]/[% obj.evidence.index %]/[% obj.evidence.right %]"></a>
-        [% END %]
-	<br>
-      [% END %]
-[% END %]
-
-
 [%  
-
-    best_blastp_matches;
 
    # Human orthologs. Not very informative at the moment.
    WRAPPER $field_block title="Human Orthologs" key="human_orthologs";
-   build_data_table(order=['ortholog','method'],
-     	       columns={ 
+   build_data_table(order=['species','ortholog','method'],
+     	            columns={ 
+	                species  => 'Species',
 	                ortholog => 'Ortholog',		
 	    	        method   => 'Method',
 		        },
 	       key='human_orthologs');
     END;
 
+    # Nematode orthologs (species hosted at WormBase)
+    WRAPPER $field_block title="Nematode Orthologs" key="nematode_orthologs";
+    build_data_table(order=['species','ortholog','method'],
+   	             columns={species  => 'Species',
+		              ortholog => 'Ortholog',
+		              method  => 'Method',
+ 		              },
+	             key='nematode_orthologs');
+   END;
+
+
     # Other orthologs: humans, mice, rats, pigs, golden retrievers.
     WRAPPER $field_block title="Other Orthologs" key="other_orthologs";
-    build_data_table(order=['ortholog','species','method'],
+    build_data_table(order=['species','ortholog','method'],
    	             columns={ortholog => 'Ortholog',
 		              species  => 'Species',
 		              method   => 'Method',
@@ -41,66 +32,78 @@
 	             key='other_orthologs');
     END;
 
-%] 
+    # Paralogs
+    WRAPPER $field_block title="Paralogs" key="paralogs";
+    build_data_table(order=['species','ortholog','method'],
+   	             columns={ortholog => 'Ortholog',
+		              species  => 'Species',
+		              method   => 'Method',
+ 		              },
+	             key='paralogs');
+    END;
 
-[% build_data_table (
-	order=[
-		'label',
-		'description',
-		'id',
-		],
-	columns={ 
-		label => 'Disease',
-		description => 'Description',
-		id => 'OMIM ID',
-		},
-	key='diseases',
-	title='Diseases via Human Orthologs') 
-%] 
 
-[% WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) key="inparanoid_groups" %]
+    # Human diseases. Broken.
+    WRAPPER $field_block title='Human Diseases' key='human_diseases';
+    build_data_table (order=['disease','description','omim_id'],
+	             columns={ disease     => 'Disease',
+			       description => 'Description',
+			       omim_id     => 'OMIM ID',
+			       },
+	key='human_diseases');
+    END;
 
-   <div class="toggle">[% fields.inparanoid_groups.data.size %] InParanoid groups for [% object.name.label %]</div> 
-  <div class="toggle-container">
-   [% FOREACH cluster IN fields.inparanoid_groups.data %]
-    <table  border= 1, width= '100%' >
-    <tr><td colspan=2>InParanoid cluster:[% tag2link(cluster) %]</td></tr>
+    # Inparanoid groups
+    WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) 
+       key="inparanoid_groups";
+
+   #   '<div class="toggle">';
+           fields.inparanoid_groups.data.size;
+           'InParanoid groups for' _ object.name.data.label;
+   #    '</div>'; 
+   #    '<div class="toggle-container">';
+           FOREACH cluster IN fields.inparanoid_groups.data;
+              '<table  border="1" width="100%">';
+                  '<tr><td colspan=2>InParanoid cluster: ';
+                        tag2link(cluster);
+                  '</td></tr>';
      
-	[% FOREACH species IN cluster.proteins.keys.sort %]
-	  <tr>
-	  <td>[% species.replace('_',' ') %]</td>
-	  <td>[% FOREACH obj IN cluster.proteins.$species %]
-		[% tag2link(obj) %]
-	      [% END %]
-	  </td>
-	  </tr>
-	 [% END %]
-   </table> <br>  
-   [% END %]
-   </div>  
-[% END %]
-
-[% WRAPPER $field_block title="TreeFam" key="treefam" %]
-  [% USE url= format(site.external_urls.treefam.image) %]
-  [% FOREACH obj IN fields.treefam.data %]
-    TreeFam ID: [% text2link('Treefam_report',obj,obj) %] <br>
-    <div class="toggle">Treefam image</div> 
-    <div class="toggle-container"> 
-      <iframe name='treefam' src=[% url(obj,obj) %] width=680 height=500 scrolling='auto'></iframe>
-    </div>
-  [% END %]
-  Phylogenetic trees provided by the [% text2link('treefam','','Treefam') %] project.
-[% END %]
-
-   [% WRAPPER $field_block title="Protein domains" key="protein_domains"-%] 
-      [% FOREACH i IN fields.protein_domains.data.keys.sort %]
-        [% tag2link(fields.protein_domains.data.$i) %] <br />
-      [% END %]
-      [% external_link('phosphopep', '...access more phosphorylation information in phosphopep') %]
-   [% END %]
+   	          FOREACH species IN cluster.proteins.keys.sort;
+   	          '<tr>';
+    	             '<td>' _ species.replace('_',' ') _ '</td>';
+	             '<td>';
+		         FOREACH obj IN cluster.proteins.$species;
+		             tag2link(obj);
+	                 END;
+	             '</td>';
+	          '</tr>';
+	          END;
+            '</table> <br>';  
+         END;
+   #   '</div>';  
+   END;
 
 
+   WRAPPER $field_block title="Protein domains" key="protein_domains"; 
+         FOREACH i IN fields.protein_domains.data.keys.sort;
+             tag2link(fields.protein_domains.data.$i);
+	    '<br />';
+         END;
+         # external_link('phosphopep', '...access more phosphorylation information in phosphopep');
+   END;
 
 
+   WRAPPER $field_block title="TreeFam" key="treefam";
+       USE url= format(site.external_urls.treefam.image);
+       FOREACH obj IN fields.treefam.data;
+           'TreeFam ID: ' _ text2link('Treefam_report',obj,obj);
+	   '<br /><br />';
+	   '<div class="toggle">Treefam image</div>';
+           '<div class="toggle-container">'; 
+                '<iframe name="treefam" src=' _ url(obj,obj) _ 'width="680" height="500" scrolling="auto"></iframe>';
+           '</div>';
+        END;
+        'Phylogenetic trees provided by the' _ text2link('treefam','','Treefam') _ ' project.';
+   END;
 
-
+%]
