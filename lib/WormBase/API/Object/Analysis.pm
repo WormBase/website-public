@@ -430,6 +430,21 @@ sub conducted_by {
 # << include xrefs >>
 
 
+#######################################
+#
+# The References Widget
+#
+#######################################
+
+=head2 References
+
+=cut
+
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
+
+
 __PACKAGE__->meta->make_immutable;
 
 1;

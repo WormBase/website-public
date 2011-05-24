@@ -3,63 +3,54 @@
 
 <h2>[% fields.name.data.name %]</h2>
 
-[% WRAPPER highlight_box %]
+[% 
 
-   [% WRAPPER $field_block title="Database"  %]
-       [% IF fields.database.data.url %]
-           <a href="http://[% fields.database.data.url %]/">[% fields.database.data.database %]</a>
-       [% ELSE %]
-           [% fields.database.data.database %]
-       [% END %]
-   [% END %]
+#WRAPPER highlight_box;
 
-[% END %]
+#END;
 
 
-[% WRAPPER $field_block title="Analysis Description" key="description" %]
-     [% fields.description.data %]
-[% END %]
-
-[% WRAPPER $field_block title="Title" key="title" %]
-     [% fields.title.data %]
-[% END %]
-
-
-[% WRAPPER $field_block title="Database" %]
-   [% WRAPPER $field_block title="Name" key="database" %]
-       [% IF fields.database.data.url %]
-           <a href="http://[% fields.database.data.url %]/">[% fields.database.data.database %]</a>
-       [% ELSE %]
-           [% fields.database.data.database %]
-       [% END %]
-   [% END %]
-   [% WRAPPER $field_block title="Description" %]
-       [% fields.database.data.description %]
-   [% END %]
-[% END %]
+WRAPPER $field_block title="Database" key="database";
+      IF fields.database.data.url;
+           '<a href="http://' _ fields.database.data.url _ '/">' _ fields.database.data.database _ '</a>';
+      ELSE;
+           fields.database.data.database;
+      END;
+END;
 
 
+WRAPPER $field_block title="Description" key="description";
+     fields.description.data;
+END;
 
-[% WRAPPER $field_block title="Details" %]
-   [% WRAPPER $field_block title="Conducted By" key="conducted_by" %]
-       [% tag2link(fields.conducted_by.data) %]
-   [% END %]
+WRAPPER $field_block title="Title" key="title";
+     fields.title.data;
+END;
 
-   [% WRAPPER $field_block title="Project" key="project" %]
-       [% tag2link(fields.project.data) %]
-   [% END %]
 
-   [% WRAPPER $field_block title="Subproject" key="subproject" %]
-       [% tag2link(fields.subproject.data) %]
-   [% END %]
-[% END %]
+WRAPPER $field_block title="Details";
+   WRAPPER $field_block title="Conducted By" key="conducted_by";
+       tag2link(fields.conducted_by.data);
+   END;
 
-[% WRAPPER $field_block title="Based On" %]
-   [% WRAPPER $field_block title="WormBase Release" key="based_on_wb_release" %]
-       [% fields.based_on_wb_release.data %]
-   [% END %]
+   WRAPPER $field_block title="Project" key="project";
+       tag2link(fields.project.data);
+   END;
 
-   [% WRAPPER $field_block title="Database Release" key="based_on_db_release" %]
-       [% fields.based_on_db_release.data %]
-   [% END %]
-[% END %]
+   WRAPPER $field_block title="Subproject" key="subproject";
+       tag2link(fields.subproject.data);
+   END;
+END;
+
+WRAPPER $field_block title="Based On";
+   WRAPPER $field_block title="WormBase Release" key="based_on_wb_release";
+       fields.based_on_wb_release.data;
+   END;
+
+   WRAPPER $field_block title="Database Release" key="based_on_db_release";
+       fields.based_on_db_release.data;
+   END;
+END;
+
+
+%]
