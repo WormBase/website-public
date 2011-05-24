@@ -8,7 +8,7 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
-## headvar WormBase::API::Object::Gene_cluster
+WormBase::API::Object::Gene_cluster
 
 =head1 SYNPOSIS
 
@@ -16,9 +16,9 @@ Model for the Ace ?Gene_cluster class.
 
 =head1 URL
 
-http://wormbase.org/species/gene_cluster
+http://wormbase.org/species/*/gene_cluster
 
-=head1 TODO
+=head1 METHODS/URIs
 
 =cut
 
@@ -36,7 +36,6 @@ http://wormbase.org/species/gene_cluster
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
  
-
 =head3 title
 
 This method will return a data structure with title for the gene_cluster.
@@ -90,10 +89,9 @@ B<Response example>
 sub title {
     my $self      = shift;
     my $object    = $self->object;
-    my $data_pack = $object->Title;
-    return {
-        'data'        => $data_pack,
-        'description' => 'title of the gene_cluster'
+    my $title     = $object->Title;
+    return { data        => "$title",
+	     description => 'title of the gene cluster'
     };
 }
 
@@ -103,7 +101,7 @@ sub title {
 # << include description >>
 
 
-=head3 genes
+=head3 contains_genes
 
 This method will return a data structure with genes in the gene_cluster.
 
@@ -111,7 +109,7 @@ This method will return a data structure with genes in the gene_cluster.
 
 =item PERL API
 
- $data = $model->genes();
+ $data = $model->contains_genes();
 
 =item REST API
 
@@ -143,7 +141,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/genes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_cluster/HIS3_cluster/contains_genes
 
 B<Response example>
 
@@ -153,19 +151,15 @@ B<Response example>
 
 =cut 
 
-sub genes {
+sub contains_genes {
     my $self   = shift;
     my $object = $self->object;
-    my @data_pack;
-    my @tag_objects = $object->Contains_gene;
-    foreach my $tag_object (@tag_objects) {
-        my $tag_info = $self->_pack_obj($tag_object);
-        push @data_pack, $tag_info;
+    my @data;
+    foreach ($object->Contains_gene) {
+	push @data,$self->_pack_obj($_);
     }
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'member genes of this gene cluster'
-    };
+    return { data => \@data,
+	     description => 'genes that are found in this gene cluster' };
 }
 
 __PACKAGE__->meta->make_immutable;

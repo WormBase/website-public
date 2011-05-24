@@ -31,7 +31,7 @@ Model for the Ace ?Gene class.
 
 =head1 URL
 
-http://wormbase.org/species/gene
+http://wormbase.org/species/*/gene
 
 =head1 METHODS/URIs
 
@@ -1775,69 +1775,6 @@ sub gene_ontology {
     return { description => 'gene ontology assocations',
 	     data        => \%data }; 
 }
-
-# This is the old way of processing ontology.
-sub gene_ontology_OLD {
-    my $self   = shift;
-    my $object = $self->object;
-
-    my %data;
-    my $desc = 'notes ;
-                data structure = data{"data"} = {
-                }';
-
-    my %data_pack;
-
-    my @go_terms = $object->GO_term;
-    
-    my %annotation_bases  = (
-        'EXP' , 'p',
-        'IDA' , 'p',
-        'IPI' , 'p',
-        'IMP' , 'p',
-        'IGI' , 'p',
-        'IEP' , 'p',
-        'ND'  , 'p',
-        
-        'IEA' , 'x',
-        'ISS' , 'x',
-        'ISO' , 'x',
-        'ISA' , 'x',
-        'ISM' , 'x',
-        'IGC' , 'x',
-        'RCA' , 'x',
-        'IC'  , 'x'
-    );
-
-    
-
-    foreach my $go_term (@go_terms){
-      foreach my $code ($go_term->col){
-        my @row = $code->row;
-        my ($evidence_code,$method,$detail) = @row;
-        my $display_method = $self->_go_method_detail($method,$detail);
-        my $term = $go_term->Term;
-        my $term_type = $go_term->Type;
-        my $annotation_basis =  $annotation_bases{$evidence_code};
-	$display_method =~ m/.*_(.*)/;
-        my %data = (
-            'display_method' => $1,
-            'evidence_code' => "$evidence_code",
-            'term' => {id=>"$go_term", label=>"$term", class=>$go_term->class}
-            
-            ); 
-        
-        my @data = ($display_method,$evidence_code,$term,$go_term); 
-        my $data_line = join ";",@data;
-        $data_pack{$annotation_basis}{"$term_type"}{$data_line} = \%data;
-      }
-    }
-
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
-}
-
 
 
 #######################################
