@@ -875,7 +875,7 @@ END;
        END;
       '</div>';
    ELSE;
-      WRAPPER $field_block title="";
+      WRAPPER $field_block title="" key="remarks";
          '<div class="toggle">Curatorial remarks</div>';
          '<div class="returned">';
               markup(fields.remarks.data.join('<br />'),0);

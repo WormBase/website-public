@@ -92,10 +92,10 @@ B<Response example>
 =cut 
 
 sub summary {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     my $summary = $object->Summary;
-    return { description => 'summary of the antibody',
+    return { description => 'summary description of the antibody',
 	     data        => "$summary" || undef };
 }
 
@@ -156,7 +156,7 @@ sub corresponding_gene {
     my $object = $self->object;
     my $gene   = $object->Gene;
     return { description => 'the corresponding gene the antibody was generated against',
-	     data        => $gene ? $self->_pack_obj($gene,$gene->Public_name) : undef };
+	     data        => $gene ? $self->_pack_obj($gene) : undef };
 }
 
 =head3 antigen
