@@ -150,20 +150,6 @@ sub dbh_ace { shift->{ace_model}->{dbh}; }
 #
 ################################################
 
-# Necessary?
-#sub species {
-#    return eval {shift ~~ 'Species'} ;
-#}
-
-# Necessary?
-# Probably belongs in Role::Object. Already there, redundant?
-#sub parsed_species {
-#  my ($self) = @_;
-#  my $object = $self->object;
-#  my $genus_species = $object->Species;
-#  my ($species) = $genus_species =~ /.* (.*)/;
-#  return lc(substr($genus_species,0,1)) . "_$species";
-#}
 
 
 #################################################
@@ -246,6 +232,8 @@ sub polymorphisms {
   return \@poly;
 }
 
+# This is used in Gene::inparanoid_groups.
+# This grosses me out.
 sub wb_protein {
   my ($self,$species) = @_;
   
@@ -257,6 +245,7 @@ sub wb_protein {
 # Map a given ID to a species (This might also be a method instead of an ID)
 # Because of recpirocal BLASTing with elegans and briggsae and database XREFs
 # always try to use the ID of the hit first when doing identifications
+# This is used in Gene::inparanoid_groups();
 sub id2species {
   my ($self,$id) = @_;
   
