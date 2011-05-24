@@ -1,28 +1,38 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER highlight_box %]
+[%
 
-    [% WRAPPER $field_block title="Other names" key="other_names" -%] 
-         [% FOREACH name IN fields.other_names.data %]
-             [% tag2link(name) %]<br />
-         [% END %]
-    [% END %]
+WRAPPER highlight_box;
+
+    WRAPPER $field_block title="Name" key="name";
+          fields.name.data.label;
+    END;
         
-[% END %]
-
-[% WRAPPER $field_block title="Description" key="description" -%] 
-     [% # Turn uppercase into boldface %]
-     [% desc = fields.description.data;
-       desc.replace('([A-Z])','<b>$1</b>');
-     %]
-[% END %]
-
-[% laboratory(title="Designating laboratory") %]
+END;
 
 
-[%# WRAPPER $field_block title="Phenotype" key="phenotype" -%] 
-      [%# fields.phenotype.data %]
-[%# END %]
+WRAPPER $field_block title="Description" key="description";
+     # Turn uppercase into boldface
+     desc = fields.description.data;
+     desc.replace('([A-Z])','<b>$1</b>');
+END;
 
-[% remarks() %]
+WRAPPER $field_block title="Other names" key="other_names";
+       FOREACH name IN fields.other_names.data;
+           tag2link(name) _ '<br />';
+       END;
+END;
+
+laboratory(title="Designating laboratory");
+
+
+# WRAPPER $field_block title="Phenotype" key="phenotype" ;
+      # fields.phenotype.data;
+# END;
+
+
+remarks();
+
+
+%]

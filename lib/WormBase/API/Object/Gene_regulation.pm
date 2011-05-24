@@ -5,9 +5,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-# TODO:
-#  better descriptions for data returned (in datapack)
-
 =pod
 
 =head1 NAME
@@ -35,6 +32,10 @@ http://wormbase.org/species/gene_regulation
 =head2 Overview
 
 =cut
+
+# sub name {}
+# Supplied by Role; POD will automatically be inserted here
+# << include name >>
 
 # sub summary {}
 # Supplied by Role; POD will automatically be inserted here
@@ -90,27 +91,28 @@ B<Response example>
 =cut
 
 sub methods {
-	my ($self) = @_;
-
-	my %nontext_tags = map {$_ => 1} qw(Antibody_info Transgene);
-	my %data;
-	foreach my $method (@{$self ~~ '@Method'}) {
-		$data{$method} = $nontext_tags{$method} ?
-		                 $self->_pack_objects([$method->col]) :
-						 {map {$_ => undef} $method->col};
-
-		undef $data{$method} unless %{$data{$method}};
-	}
-
-	return {
-		description => 'Method',
-		data		=> %data ? \%data : undef,
-	};
+    my $self   = shift;
+    my $object = $self->shift;
+    
+    my %nontext_tags = map {$_ => 1} qw(Antibody_info Transgene);
+    my %data;
+    foreach my $method ($object->Method) {
+	$data{$method} = $nontext_tags{$method} ?
+	    $self->_pack_objects([$method->col]) :
+	{map {$_ => undef} $method->col};
+	
+	undef $data{$method} unless %{$data{$method}};
+    }
+    
+    return { description => 'the method used to determine the gene regulation',
+	     data	 => %data ? \%data : undef,
+    };
 }
 
 =head3 regulators
 
-Returns a datapack with the regulator involved in gene regulation.
+This method returns a data structure containing
+the regulator gene in the described regulation entity.
 
 =over
 
@@ -157,34 +159,35 @@ B<Response example>
 =cut
 
 sub regulators {
-	my ($self) = @_;
+    my $self   = shift;
+    my $object = $self->object;
 
-	my %regulator = map {$_ => [$_->col]} @{$self ~~ '@Regulator'};
-	if (exists $regulator{Regulator_info}) {
-		foreach (@{$regulator{Regulator_info}}) {
-			$regulator{$_} = [$_->col];
-		}
-		delete $regulator{Regulator_info};
+    my %regulator = map {$_ => [$_->col]} $object->Regulator;
+    if (exists $regulator{Regulator_info}) {
+	foreach (@{$regulator{Regulator_info}}) {
+	    $regulator{$_} = [$_->col];
 	}
-
-	foreach (keys %regulator) {
-		if ($_ eq 'Other_regulator') {
-			$regulator{$_} = {map {$_ => undef} @{$regulator{$_}}};
-		}
-		else {
-			$regulator{$_} = $self->_pack_objects($regulator{$_});
-		}
+	delete $regulator{Regulator_info};
+    }
+    
+    foreach (keys %regulator) {
+	if ($_ eq 'Other_regulator') {
+	    $regulator{$_} = {map {$_ => undef} @{$regulator{$_}}};
 	}
-
-	return {
-		description => 'Regulators',
-		data		=> %regulator ? \%regulator : undef,
-	};
+	else {
+	    $regulator{$_} = $self->_pack_objects($regulator{$_});
+	}
+    }
+    
+    return { description => 'regulators in the gene regulation entity',
+	     data		=> %regulator ? \%regulator : undef,
+    };
 }
 
 =head3 targets
-
-Returns a datapack containing what the regulator regulates.
+    
+This method returns a data structure containing
+genes that are the target of regulation.
 
 =over
 
@@ -231,38 +234,37 @@ B<Response example>
 =cut
 
 sub targets {
-	my ($self) = @_;
-
-	my $target_info = $self->_pack_objects($self ~~ '@Expr_pattern'); # Target_info->Expr_pattern
-
-	my %targets;
-	foreach my $target_type (@{$self ~~ '@Target'}) {
-		next unless $target_type eq 'Target_info';
-		my $targets = $self->_pack_objects([$target_type->col]);
-		$targets{$target_type} = $targets if %$targets;
-	}
-
-	my %data;
-	$data{target_info} = $target_info if %$target_info;
-	$data{targets}	   = \%targets if %targets;
-
-	return {
-		description => 'Targets',
-		data		=> %data ? \%data : undef,
-	};
+    my $self   = shift;
+    my $object = $self->object;
+    
+    my $target_info = $self->_pack_objects($object->Expr_pattern); # Target_info->Expr_pattern
+    
+    my %targets;
+    foreach my $target_type ($object->Target) {
+	next unless $target_type eq 'Target_info';
+	my $targets = $self->_pack_objects([$target_type->col]);
+	$targets{$target_type} = $targets if %$targets;
+    }
+    
+    my %data;
+    $data{target_info} = $target_info if %$target_info;
+    $data{targets}	   = \%targets if %targets;
+    
+    return { description => 'genes that are targets of regulation',
+	     data	 => %data ? \%data : undef,
+    };
 }
 
-=head3 regulation
+=head3 type
 
 Returns a datapack detailing the kind of regulation (whether positive, negative,
-or none). The presence of a key indicates that kind of regulation -- the
-associated value may or may not be undef.
+or none).
 
 =over
 
 =item PERL API
 
- $data = $model->regulation();
+ $data = $model->type();
 
 =item REST API
 
@@ -294,7 +296,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulation
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/type
 
 B<Response example>
 
@@ -302,31 +304,36 @@ B<Response example>
 
 =cut
 
-sub regulation {
-	my ($self) = @_;
+sub type {
+    my $self   = shift;
+    my $object = $self->object;
 
-	my %data;
-	foreach my $reg_type (@{$self ~~ '@Result'}) {
-		undef $data{$reg_type};
 
-        # the presence of the undef above indicates that there is indeed
-        # this kind of regulation. the following finds details about it.
+    my %data;
 
-		foreach my $condition_type ($reg_type->col) {
-			my %conditions = $self->_pack_objects($condition_type->col);
-			$data{$reg_type}{$condition_type} = %conditions ? \%conditions : undef;
-		}
+    # Is regulation the right tag?
+    foreach my $reg_type ($object->Regulation) {
+	undef $data{$reg_type};
+	
+	# the presence of the undef above indicates that there is indeed
+	# this kind of regulation. the following finds details about it.
+	
+	foreach my $condition_type ($reg_type->col) {
+	    my %conditions = $self->_pack_objects($condition_type->col);
+	    $data{$reg_type}{$condition_type} = %conditions ? \%conditions : undef;
 	}
-
-	return {
-		description => 'What kind of regulation (positive, negative, none)',
-		data		=> %data ? \%data : undef,
-	};
+    }
+    
+    return {
+	description => 'What kind of regulation (positive, negative, none)',
+	data		=> %data ? \%data : undef,
+    };
 }
 
 =head3 types
 
-Returns a datapack containing the type of change effected by the regulation.
+This method returns a data structure containing the type 
+of change effected by the regulation.
 
 =over
 
@@ -373,19 +380,19 @@ B<Response example>
 =cut
 
 sub types {
-	my ($self) = @_;
-
-	my @types = map {$_->name} @{$self ~~ '@Type'};
-
-	return {
-		description => 'Type',
-		data		=> @types ? \@types : undef,
-	};
+    my ($self) = @_;
+    
+    my @types = map {$_->name} @{$self ~~ '@Type'};
+    
+    return { description => 'types of change effected by the regulation',
+	     data	 => @types ? \@types : undef,
+    };
 }
 
 =head3 molecule_regulators
 
-Returns a datapack with the ?Molecule involved in the regulation.
+This method returns a data structure molecules
+that regulate the regulation (?).
 
 =over
 
@@ -442,64 +449,20 @@ sub molecule_regulators {
 	};
 }
 
-=head3 references
+#######################################
+#
+# The References Widget
+#
+#######################################
 
-Returns a datapack containing reference papers.
-
-=over
-
-=item PERL API
-
- $data = $model->references();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene regulation ID (eg WBPaper00035152_bah-1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/references
-
-B<Response example>
-
-<div class="response-example"></div>
+=head2 References
 
 =cut
 
-sub references {
-	my ($self) = @_;
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
 
-	my $packed_refs = $self->_pack_objects($self ~~ '@Reference');
-
-	return {
-		description => 'References',
-		data		=> %$packed_refs ? $packed_refs : undef,
-	};
-}
 
 
 __PACKAGE__->meta->make_immutable;

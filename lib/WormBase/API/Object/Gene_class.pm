@@ -46,8 +46,6 @@ http://wormbase.org/species/gene_class
 # Supplied by Role; POD will automatically be inserted here.
 # << include laboratory >>
 
-
-
 =head3 phenotype
 
 This method will return a data structure containing
@@ -176,30 +174,27 @@ B<Response example>
 
 sub current_genes {
     my $self   = shift;
-    my $object = $self->object;
+    my $object = $self->object; 
     
-    my @genes  = $object->Genes;
-
     my %data;
-    foreach my $gene (@genes) {
+    foreach my $gene ($object->Genes) {
 	
 	my $species = $gene->Species;
 	
 	my $sequence_name = $gene->Sequence_name;
 	my $locus_name    = $gene->Public_name;
 	my $name = ($locus_name ne $sequence_name) ? "$locus_name ($locus_name)" : "$locus_name";
-
+	
 	# Some redundancy in the data structure here while
 	# we decide how to format this data.
 	push @{$data{$species}},
-	{ species  => "$species",
+	{ species  => $self->_split_genus_species($species),
 	  locus    => $self->_pack_obj($gene),
 	  sequence => "$sequence_name",
 	};		     
     }
-    my $data = { description => 'genes assigned to the gene class, organized by species',
-		 data        => \%data };
-    return $data;
+    return { description => 'genes assigned to the gene class, organized by species',
+	     data        => \%data };
 }
 
 #######################################
@@ -267,21 +262,19 @@ B<Response example>
 sub former_genes {
     my $self   = shift;
     my $object = $self->object;
-    
-    my %data_pack;
-    my @genes = $object->Old_member;
-    
-    foreach my $old_gene (@genes) {
+        
+    my %data;
+    foreach my $old_gene ($object->Old_member) {
 	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
 	
 	my $data = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
 	
 	my $species = $gene->Species;
-	push @{$data_pack{$species}},$data;
+	push @{$data{$species}},$data;
     }
     
     my $data = { description => 'genes formerly in the class that have been reassigned to a new class',
-		 data        => \%data_pack };    
+		 data        => \%data };    
 }
 
 
@@ -340,9 +333,9 @@ sub reassigned_genes {
     my $self   = shift;
     my $object = $self->object;
     my $dbh = $self->ace_dsn->dbh;
-     
+    
     my @genes = eval {$dbh->fetch(-query=>qq{find Gene where Other_name="$object*"})};
-    my %data_pack;
+    my %data;
     foreach my $gene (@genes) {
 	my $species = $gene->Species;
 	
@@ -352,11 +345,11 @@ sub reassigned_genes {
 	my @other_names =  grep { /$public_name/ } $gene->Other_name;
 	foreach (@other_names) {
 	    my $data = $self->_stash_former_member($gene,$_);
-	    push @{$data_pack{$species}},$data;
+	    push @{$data{$species}},$data;
 	}
     }
     my $data = { description => 'genes that have been reassigned a new name in the same class',
-		 data        => \%data_pack };    
+		 data        => \%data };    
     return $data;
 }
 
