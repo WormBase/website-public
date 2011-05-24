@@ -1,5 +1,44 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+ 
+   taxonomy;
+
+   WRAPPER $field_block title="Sequence";
+        tag2link(fields.sequence_name.data);
+   END;
+
+   WRAPPER $field_block title="Locus";
+        tag2link(fields.locus_name.data);
+   END;
+
+   WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
+        IF fields.other_names.data.size>0; 
+              fields.other_names.data.join(', '); 
+        END;
+   END;
+
+   WRAPPER $field_block title="Type";
+           fields.classification.data.type;
+   END;
+
+   status;
+
+   WRAPPER $field_block title="Cloned By" key="cloned_by";
+           tag2link(fields.name.cloned_by.data.cloned_by);
+   END;
+
+   WRAPPER $field_block title="WormBase ID";
+           fields.name.data.id _ ' v' _ fields.version.data;
+   END;
+
+END;
+
+
+%]
+
 
 [% WRAPPER $field_block title='Summary' key='summary' %]
    [% IF fields.summary.data; fields.summary.data; END %]

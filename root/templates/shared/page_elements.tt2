@@ -346,6 +346,8 @@
 %]
 
 [% MACRO dataTable_list(header,data,table,style) BLOCK %]
+  The dataTable_list macro is nearly deprecated.  See instead:
+  build_data_table() and jquery_data_table_html(). -- TH
 
   [% IF data && data.size > 0;  
        # Set up some suitable defaults
@@ -1007,7 +1009,8 @@ END;
                           _ ' members)'
                           _ '</div>';
                  '<div class="returned">';
-                    dataTable_list(names, rows, "table_${species}_${key}");
+#                    dataTable_list(names, rows, "table_${species}_${key}");
+                    jquery_data_table_html(names, rows, "table_${species}_${key}_${table_count}");
                 '</div>';         
 	     END; # END of nested WRAPPER
            END; # END IF species contains data
@@ -1083,7 +1086,7 @@ END;
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
 
    # Conditionally set up different types of pages.
-   # Class indexes (of both species and resource persuasions; these do not display individual objects)
+   # Class index (of both species and resource persuasions; these do not display individual objects)
    IF is_class_index;
 
       # Kludge: set the "object" of index pages to species
