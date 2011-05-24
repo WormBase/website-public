@@ -208,6 +208,7 @@
 			IF val.match('^http');
 			     val='<a href="' _ val _ '">Lab link</a>';
                         END;
+			
 			# enter data in row
 	                row.push(val);
   		END;
@@ -298,6 +299,19 @@
                           '<span class="species">' _ cell.genus.chunk(1).0 _ '.' _ cell.species _ '</span>';
                       ELSIF cell.class.defined;
                           tag2link(cell);
+	              ELSIF cell.match('ARRAY');
+		          cell.join('<br>');
+		      ELSIF cell.evidence.check.defined;
+		      'here';
+                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/'
+			  _ obj.name.data.id 
+			  _ '/'
+			  _ cell.evidence.tag
+			  _ '/'
+			  _ cell.evidence.index 
+			  _ '/'
+			  _ cell.evidence.right
+			  _ '"></a>';		      
                       ELSE;
 		          cell;
                       END;
@@ -463,24 +477,6 @@
 
 [% BLOCK widget_block %]
    <!-- start [% widget.name %] widget -->
-   [% IF c.request.referer.search("/db/") %]
-      [% is_classic = 1 %]
-   [% END %]
-   [% IF is_classic %]
-
-   <tr class="databody" valign="top">	
-       <th class="searchtitle" colspan="2" width="125px">
-	   <a name="[% widget.name %]">[% widget.title FILTER ucfirst %]</a>
-       </th>
-       <td>
-       <table border="0" cellspacing="4" cellpadding="0">
-       <section class="widget">
-            <div class="primary-container">
-                <div id="[%- widget.name -%]"></div>
-                 [% content %]
-
-   [% ELSE %]
-
    <section class="widget">
           
           <div class="primary-container">
@@ -510,17 +506,9 @@
       
    </section>
 
-      [% END %]
-    [% IF is_classic %]
-       </table>
-      </td>
-     </tr>
-     <!-- END [% title %] section -->
-     [% END %]
+   <!-- end [% widget.name %] widget -->
 
-     <!-- end [% widget.name %] widget -->
-
-     [%# server_details($widget.name _ " widget") %]
+   [%# server_details($widget.name _ " widget") %]
 
 [% END %]
 
@@ -536,7 +524,8 @@
 
 
 [% BLOCK widget_sortable_block %]
-   <!-- start [% widget.name %] widget -->
+ 
+   <!-- start [% id %] widget -->
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
                 <header> 
                 <div class="ui-corner-top widget-header">
@@ -558,8 +547,6 @@
 [% UNLESS c.req.action == '/' %]
                     <a  tip="download" class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 
-                    <!-- A button for hiding empty fields -->
-<!--                     <a tip="toggle empty fields" class="button tip-simple tr ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a> -->
 [% END %] 
                     
 
@@ -567,7 +554,7 @@
 		<div id="widget-feed"></div>  
 
       </div> 
-   <!-- end [% widget.name %] widget -->
+   <!-- end [% id %] widget -->
 
 [% END %]
 
@@ -1260,3 +1247,46 @@ END;
 END;
 %]
 
+
+
+
+
+
+
+[%#
+ #####################################################
+ #
+ #  Debugging
+ #
+ #    Simple view debugging. Should be passed the name 
+ #    of the component since this is localized to the template
+ #    (or block). That is, it doesn't work as expected when
+ #    used via PROCESS or INCLUDE
+ #  
+ ####################################################
+%]
+
+[%# MACRO identify_templates BLOCK;
+
+   # If called, debug_view is already set.  Is it set to comment, browser, or log?
+
+   msg = "template: $this_component; caller: $template.name";
+
+   IF c.config.debug_view == "comment";
+      comment("$title; $msg");
+   ELSE;
+        '<p class="debug-view">' _ "$title; $msg" _ '</p>';
+   END;
+
+   c.stash.keys.join("--");
+
+END;
+%]
+
+[% BLOCK generic_debug_info %]
+   <h5>General information:</h5>
+   <pre>
+   Catalyst action : [% c.controller.action_for(this) %]<br />
+          template : [% template.name %]
+   </pre>
+[% END %]

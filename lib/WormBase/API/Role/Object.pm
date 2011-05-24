@@ -1585,6 +1585,14 @@ sub _parsed_species {
     return lc(substr($genus_species, 0, 1)) . "_$species";
 }
 
+# Take a string of Genus species and return a 
+# data structure suitable for marking up species in the view.
+
+sub _split_genus_species {
+    my ($self,$string) = @_;
+    my ($genus,$species) = split(/\s/,$string);
+    return { genus => $genus, species => $species };
+}
 
 # Description: checks data returned by extenral model for standards
 #              compliance and fixes the data if necessary and possible.
