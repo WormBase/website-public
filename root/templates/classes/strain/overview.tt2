@@ -21,11 +21,13 @@
        # Instead, let's mark up the genotype string.
 
        genotype=fields.genotype.data;
-       markup=[fields.genes.data,fields.alleles.data,fields.rearrangements.data,
-	       fields.clones.data,
-	       fields.transgenes.data];
+       markup=[fields.genes.data,
+		fields.alleles.data,
+		fields.rearrangements.data,
+	        fields.clones.data,
+	        fields.transgenes.data];
 
-       FOREACH array IN markup;
+       FOREACH array IN markup;           
       	   FOREACH entry IN array;
 	       IF genotype.match(entry.label);
 	           genotype=genotype.replace(entry.label,tag2link(entry));
@@ -102,20 +104,18 @@ END;
    END;
 
 
-   WRAPPER $field_block title="Phenotypes";
-      WRAPPER $field_block title="Observed" key="phenotypes_observed";
-         FOREACH phenotype IN fields.phenotypes_observed.data;
+   WRAPPER $field_block title="Phenotypes Observed" key="phenotypes";
+         FOREACH phenotype IN fields.phenotypes.data;
              phenotype;
           END;
-      END;
+   END;
 
-      WRAPPER $field_block title="Not Observed" key="phenotypes_not_observed";
+   WRAPPER $field_block title="Phenotypes Not Observed" key="phenotypes_not_observed";
           FOREACH phenotype IN fields.phenotypes_not_observed.data;
                phenotype;         
           END;
-      END;
    END;
 
-remarks;
+   remarks;
 
 %]

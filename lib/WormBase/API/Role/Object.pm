@@ -14,10 +14,17 @@ use WormBase::API::ModelMap;
 # Phenotypes observed/not_observed
 # Where do hashtables (used for decisions) go? See _common_name()
 
-has 'MAX_DISPLAY_NUM' => (
-    is      => 'ro',
-    default => 10,
-);
+#######################################################
+#
+# Attributes. Some of these aren't really Object Roles.
+#
+#######################################################
+
+# NECESSARY?
+#has 'MAX_DISPLAY_NUM' => (
+#    is      => 'ro',
+#    default => 10,
+#);
 
 has 'object' => (
     is  => 'rw',
@@ -38,13 +45,27 @@ has 'tmp_base' => (
     is => 'ro',
 );
 
+
 has 'pre_compile' => (
     is => 'ro',
 );
 
+
+# Set up our temporary directory (typically outside of our application)
+sub tmp_dir {
+    my $self = shift;
+    my @sub_dirs = @_;
+    my $path = File::Spec->catfile($self->tmp_base, @sub_dirs);
+
+    mkpath($path, 0, 0777) unless -d $path;
+    return $path;
+}
+
+
+
 #######################################################
 #
-# Generic methods
+# Generic methods, shared across Ace classes.
 #
 #######################################################
 
@@ -160,19 +181,6 @@ sub _make_common_name {
 
 	$name //= $object->name;
     return "$name";
-}
-
-# deprecated in favour of _common_name
-sub bestname {
-    my ($self, $gene) = @_;
-    return unless $gene && $gene->class eq 'Gene';
-    my $name =
-         $gene->Public_name
-      || $gene->CGC_name
-      || $gene->Molecular_name
-      || eval {$gene->Corresponding_CDS->Corresponding_protein}
-      || $gene;
-    return $name;
 }
 
 =head3 other_names
@@ -1089,6 +1097,81 @@ sub _build_phenotype_data {
     return @data_pack ? \@data_pack : undef;
 }
 
+
+
+=head3 references
+
+Currently, the WormBase web app uses a custom search
+to retrieve references. This method will return 
+references directly cross-referenced to the current
+object.
+
+=over
+
+=item PERL API
+
+ $data = $model->references();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a class and object ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/references
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+# Template: Currently none. Method provided for API users.
+
+has 'references' => (
+    is       => 'ro',
+    required => 1,
+    lazy     => 1,
+    builder  => '_build_references',
+);
+
+
+sub _build_references {
+    my $self   = shift;
+    my $object = $self->object;
+    # Could also use ModelMap...
+    my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
+    my $data = $self->_pack_objects($object->$tag);
+    return { description => 'references associated with this object',
+	     data        => %$data ? $data : undef };
+}
+
 =head3 remarks
 
 This method will return a data structure containing
@@ -1490,6 +1573,19 @@ sub _build_xrefs {
     };
 }
 
+
+
+
+
+
+
+#################################################
+#
+#   Convenience methods
+#
+################################################
+
+
 sub mysql_dsn {
     my ($self, $source) = @_;
     return $self->dsn->{"mysql_" . $source};
@@ -1507,15 +1603,7 @@ sub ace_dsn {
     return $self->dsn->{"acedb"};
 }
 
-# Set up our temporary directory (typically outside of our application)
-sub tmp_dir {
-    my $self = shift;
-    my @sub_dirs = @_;
-    my $path = File::Spec->catfile($self->tmp_base, @sub_dirs);
 
-    mkpath($path, 0, 0777) unless -d $path;
-    return $path;
-}
 
 sub tmp_image_dir {
     my $self = shift;
@@ -1593,6 +1681,15 @@ sub _split_genus_species {
     my ($genus,$species) = split(/\s/,$string);
     return { genus => $genus, species => $species };
 }
+
+
+
+############################################################
+#
+# Private Methods
+#
+############################################################
+
 
 # Description: checks data returned by extenral model for standards
 #              compliance and fixes the data if necessary and possible.
@@ -1722,10 +1819,108 @@ sub _check_data_content {
     return @compliance_problems ? ($data, @compliance_problems) : ();
 }
 
+
+
 ############################################################
 #
-# Private Methods
+# Methods provided as a convenience for API users.
+# Not used directly as part of the webapp.
 #
 ############################################################
+
+################################################
+#   REFERENCES
+################################################
+
+sub _get_references {
+  my ($self,$filter) = @_;
+  my $object = $self->object;
+  
+  # References are not standardized. They may be under the Reference or Paper tag.
+  # Dynamically select the correct tag - this is a kludge until these are defined.
+  my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
+  
+  my $dbh = $self->dbh_ace;
+  
+  my $class = $object->class;
+  my @references;
+  if ( $filter eq 'all' ) {
+      @references = $object->$tag;
+  } elsif ( $filter eq 'gazette_abstracts' ) {
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WBG_abstract",
+	  -fill  => 1);
+  } elsif ( $filter eq 'published_literature' ) {
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag PMID",
+	  -fill => 1);
+      
+      #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
+      #      @$references;
+  } elsif ( $filter eq 'meeting_abstracts' ) {
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag Meeting_abstract",
+	  -fill => 1
+	  );
+  } elsif ( $filter eq 'wormbook_abstracts' ) {
+      @references = $dbh->fetch(
+	  -query => "find $class $object; follow $tag WormBook",
+	  -fill => 1
+	  );
+      # Hmm.  I don't know how to do this yet...
+      #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
+  }
+  return \@references;
+}
+
+# This is a convenience method for returning all methods. It
+# isn't a field itself and is not included in the References widget.
+sub all_references {
+    my $self = shift;
+    my $references = $self->_get_references('all');
+    my $result = { description => 'all references for the object',
+		   data        => $references,
+    };
+    return $result;
+}
+
+sub published_literature {
+    my $self = shift;
+    my $references = $self->_get_references('published_literarture');
+    my $result = { description => 'published references only, no abstracts',
+		   data        => $references,
+    };
+    return $result;
+}
+
+sub meeting_abstracts {
+    my $self = shift;
+    my $references = $self->_get_references('meeting_abstracts');
+    my $result = { description => 'meeting abstracts',
+		   data        => $references,
+    };
+    return $result;
+}
+
+sub gazette_abstracts {
+    my $self = shift;
+    my $references = $self->_get_references('gazette_abstracts');
+    my $result = { description => 'gazette abstracts',
+		   data        => $references,
+    };
+    return $result;
+}
+
+sub wormbook_abstracts {
+    my $self = shift;
+    my $references = $self->_get_references('wormbook_abstracts');
+    my $result = { description => 'wormbook abstracts',
+		   data        => $references,
+    };
+    return $result;
+}
+
+
+
 
 1;

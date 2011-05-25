@@ -4,6 +4,30 @@ use Moose;
 
 use overload '~~' => \&_overload_ace, fallback => 1;
 
+
+=head1 NAME
+
+WormBase::Model - Model superclass
+
+=head1 DESCRIPTION
+
+The WormBase model superclass.  Methods that need to be accessed in
+more than a single model belong here.
+
+=head1 METHODS
+
+=head1 AUTHOR
+
+Todd Harris
+
+=head1 LICENSE
+
+This library is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+
 sub _overload_ace {
     my ($self,$param)=@_;
     if($param =~ s/^@//) {my @results=eval {$self->object->$param}; return \@results;}
@@ -11,60 +35,6 @@ sub _overload_ace {
 } 
 #use Bio::Graphics::Browser;
 # extends 'WormBase::API';
-
-#use parent qw/Class::Accessor/;
-#__PACKAGE__->mk_accessors(qw/object log/);
-#our $AUTOLOAD;
-
-#sub new {
-#  my ($this,$args) = @_;
-#  my $package = ref($this) || $this;
-#  
-#  my $self = bless $args,$package;
-#  $self->log->debug("Instantiating $package...");
-
-#  # The class arg may either be passed in via the arguments hash in the controller
-#  # or decided dynamically.
-#  
-#  # Fetch an object and stash it
-#  my $object = $args->{ace_model}->get_object($args->{class},$args->{request});
-#  $self->object($object) if $object;
-#  return $self;
-#}
-
-
-
-=head1
-
-# Fetch an object and stash it
-has 'dbh_ace'        => (is => 'ro');
-has 'gff_handle'     => (is => 'ro');
-#			 , lazy => 1
-#			 , default => \&build_gff_handle);
-has 'name'           => (is => 'ro');
-has 'class'          => (is => 'ro');
-has 'object' => (is => 'ro'
-			 , lazy    => 1
-			 , default => \&build_ace_object);
-
-sub build_ace_object {
-  my $self = shift;
-  my $dbh = $self->dbh_ace;
-  my $class = $self->class;
-  my $name  = $self->name;
-  my $object = $dbh->get_object($class,$name);
-  return $object;
-}
-
-sub object {
-    my $self  = shift;
-    # Fetch an object and stash it
-    my $object = $self->ace_model->get_object($self->class,$self->request);
-    $self->object($object) if $object;
-}
-
-
-=cut
 
 
 # Provided with a list of objects, turn them into a data structure like
@@ -74,20 +44,6 @@ sub object {
 #                     },
 #           }
  
-
-# Conditionally fetch the correct GFF DBH according to the 
-# species of the current object.
-
-# dbh_gff should be the GFF ITSELF.  Instead it's the model.
-# THIS should just return the dbh_gff. It's NOT
-#sub dbh_gff {
-#  my ($self,$dsn) = @_;
-#  my $object  = $self->object;
-#  my $species = $self->_parsed_species();
-
-#  my $dbh     = $dsn ? $self->{gff_model}->dbh($dsn) : $self->{gff_model}->dbh($species);
-#  return $dbh;
-#}
 
 sub _wrap {
     my $self = shift;
@@ -109,47 +65,11 @@ sub _wrap {
     return wantarray ? @wrapped : $wrapped[0];
 }
 
-# Is this a rest-style request (in which case I shoudln't return
-# WormBase::API or their internal Ace::Objects)
-# but stringified versions of the objects.
-# Unfrtunately this isn't possible because of the complexity of
-# of the data structures.
-# For REST, I try to return all possible available data
-# instead of leaving an open-ended
-# data access end-point.
-sub build_data_structure {
-    my ($self,$data,$description) = @_;
-    
-    my $structure = { resultset =>  $data,
-	              description => $description,
-		      
-    };
-    return $structure;
-}
-
-
-
-
-
 
 
 # Get a direct handle to the AceDB.
-# DEPRECATED?
+# DEPRECATED? REDUNDANT?
 sub dbh_ace { shift->{ace_model}->{dbh}; }
-
-#################################################
-#
-#    COMMON MODEL ELEMENTS
-#
-# The following items occur in multiple
-# places in the ACedb model.
-#
-# Feel free to override any in a subclass.
-# If you do so, it may also be necessary
-# to provide a custom template.
-#
-################################################
-
 
 
 #################################################
@@ -339,7 +259,7 @@ sub build_gbrowse_img {
 
 
 
-
+# DEPRECATED?
 #################################################
 #  Phenotypes
 #  (Was: DisplayPhenotypes, is_NOT_phene, FormatPhenotypeHash, etc)
@@ -1065,108 +985,6 @@ sub _covered {
 }
 
 
-#################################################
-#
-#   REFERENCES
-#
-# References occur throughout the model.
-#
-# Note that the top level widget is called references.  
-#
-################################################
-
-# This does not correspond to references proper in an AceDB model
-# but a Reference or Paper tag for any object.
-# Classes that DON'T use Reference: Interaction, Person, Author, Journal
-
-# Web app: the references itself pulls in all four reference types by forward()).
-sub _get_references {
-  my ($self,$filter) = @_;
-  my $object = $self->object;
-  
-  # References are not standardized. They may be under the Reference or Paper tag.
-  # Dynamically select the correct tag - this is a kludge until these are defined.
-  my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
-  
-  my $dbh = $self->dbh_ace;
-  
-  my $class = $object->class;
-  my @references;
-  if ( $filter eq 'all' ) {
-      @references = $object->$tag;
-  } elsif ( $filter eq 'gazette_abstracts' ) {
-      @references = $dbh->fetch(
-	  -query => "find $class $object; follow $tag WBG_abstract",
-	  -fill  => 1);
-  } elsif ( $filter eq 'published_literature' ) {
-      @references = $dbh->fetch(
-	  -query => "find $class $object; follow $tag PMID",
-	  -fill => 1);
-      
-      #    @filtered = grep { $_->CGC_name || $_->PMID || $_->Medline_name }
-      #      @$references;
-  } elsif ( $filter eq 'meeting_abstracts' ) {
-      @references = $dbh->fetch(
-	  -query => "find $class $object; follow $tag Meeting_abstract",
-	  -fill => 1
-	  );
-  } elsif ( $filter eq 'wormbook_abstracts' ) {
-      @references = $dbh->fetch(
-	  -query => "find $class $object; follow $tag WormBook",
-	  -fill => 1
-	  );
-      # Hmm.  I don't know how to do this yet...
-      #    @filtered = grep { $_->Remark =~ /.*WormBook.*/i } @$references;
-  }
-  return \@references;
-}
-
-# This is a convenience method for returning all methods. It
-# isn't a field itself and is not included in the References widget.
-sub all_references {
-    my $self = shift;
-    my $references = $self->_get_references('all');
-    my $result = { description => 'all references for the object',
-		   data        => $references,
-    };
-    return $result;
-}
-
-sub published_literature {
-    my $self = shift;
-    my $references = $self->_get_references('published_literarture');
-    my $result = { description => 'published references only, no abstracts',
-		   data        => $references,
-    };
-    return $result;
-}
-
-sub meeting_abstracts {
-    my $self = shift;
-    my $references = $self->_get_references('meeting_abstracts');
-    my $result = { description => 'meeting abstracts',
-		   data        => $references,
-    };
-    return $result;
-}
-
-sub gazette_abstracts {
-    my $self = shift;
-    my $references = $self->_get_references('gazette_abstracts');
-    my $result = { description => 'gazette abstracts',
-		   data        => $references,
-    };
-    return $result;
-}
-
-sub wormbook_abstracts {
-    my $self = shift;
-    my $references = $self->_get_references('wormbook_abstracts');
-    my $result = { description => 'wormbook abstracts',
-		   data        => $references,
-    };
-    return $result;
-}
 
 
 
@@ -1174,6 +992,7 @@ sub wormbook_abstracts {
 
 
 # The rearrange helper method
+# CAN BE PURGED ONCE _parse_evidence_hash is dealt with
 sub rearrange {
     my ($self,$order,@param) = @_;
     return unless @param;
@@ -1219,95 +1038,6 @@ sub rearrange {
 
 
 
-
-
-#################################################
-#
-#   SINGLETON TAGS
-#
-# AUTOLOAD simple methods that access a single
-# tag from the object and do not manipulate
-# the data in any way
-#
-# This corresponds to something like this:
-#
-# sub author {
-#   my ($self) = @_;
-#   my $object = $self->object;
-#   return $object->Author;
-# }
-#
-# NOTE: For the web app, you can only rely
-# on AUTOLOAD when the field title corresponds
-# to the object name!  If it diverges, AUTOLOAD
-# will fail horribly.
-#
-# To circumvent this, I could have a field2tag mapping
-# hash for presentation
-#
-################################################
-
-=pod
-
-sub AUTOLOAD {
-  my ($self) = @_;
-
-  my $type = ref($self);
-#    or croak
-#      "AUTOLOAD: $self is not an object. Web app: ensure that field name in config matches tag name in class";
-
-  my $name = $AUTOLOAD;
-  $name =~ s/.*://;  # Strip qualified portion
-  
-  # Not necessary - let's allow everything and capture errors by eval
-  #  unless (exists $self->{_permitted}->{$name}) {
-  #    croak "Can't access $name tag in class $type";
-  #  }
-  
-  # TODO: This should also be able to handle accessors
-
-  # This might be an accessor.
-  if ($self->{$name}) {
-    return $self->{$name};
-  } else {
-
-    # Otherwise it's a request for an ace tag.
-    # Pull out the ace object
-    my $ace_obj = $self->object;
-
-    # Now fetch the tag, assuming array context.
-    # Does this result in additional template overhead?
-    # We will eval, too, just to capture tags that might not
-    # exist in the current Class.
-    my $method = ucfirst($name);
-    my ($data) = eval { $ace_obj->$method };
-    return $data;
-  }
-}
-
-=cut
-
-=head1 NAME
-
-WormBase::Model - Model superclass
-
-=head1 DESCRIPTION
-
-The WormBase model superclass.  Methods that need to be accessed in
-more than a single model belong here.
-
-=head1 METHODS
-
-=head1 AUTHOR
-
-Todd Harris
-
-=head1 LICENSE
-
-This library is free software, you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 __PACKAGE__->meta->make_immutable;
 
