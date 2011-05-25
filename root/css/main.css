@@ -942,7 +942,9 @@ div.field .field .field-content {
 /* Special field elements */
 /* Google Map */
 div#google-map { 
-    position:absolute;
+    position:relative;
+    height: auto;
+    overflow:hidden;
 /*     right:140px; */
 /*     top:50px; */
 }

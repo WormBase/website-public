@@ -666,7 +666,7 @@ sub make_links {
             my ($matching_cds) = $object->Matching_cds if $object;
             ($corr_gene) = $matching_cds->Gene if $matching_cds;
         }
-        my $corr_gene_name = $self->bestname($corr_gene) if $corr_gene;
+        my $corr_gene_name = $self->common_name($corr_gene) if $corr_gene;
 	
         $corr_gene_link = { class=>"gene", id=>$corr_gene_name, label=>"[Corr. Gene: $corr_gene_name]"}	    
 	    if $corr_gene_name;
