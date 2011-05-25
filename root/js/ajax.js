@@ -51,17 +51,18 @@
 
     var reg = $jq(this).closest('#register-form');	
     var email = reg.find("#email");
+    var wbemail = reg.find("#wbemail");
     var username= reg.find("#name");
     var password = reg.find("#password");
     var wbid = reg.find("#wbid");
-    if(validate_fields(email,username,password,reg.find("#confirm-password")) == false) {
+    if(validate_fields(email,username,password,reg.find("#confirm-password"), wbemail) == false) {
         return false;
     }
     
     $jq.ajax({
           type: "POST",
           url: "/rest/register",
-          data: {username:username.val(),email:email.val(),password:password.val(), wbid:wbid.val()},
+          data: {username:username.val(),email:email.val(), wbemail:wbemail.val(), password:password.val(), wbid:wbid.val()},
           success: function(data){
                 if(data==0) {
                 alert("The email address has already been registered!"); 
