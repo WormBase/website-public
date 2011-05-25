@@ -3,14 +3,13 @@
 
 div#splash-box{
   margin:0 -0.6em;
-/*   margin:0; */
-  padding:0.5em 0 0.5em 0;
   position:relative;
   background-image:url('/img/home.png');
   background-repeat:no-repeat;
   padding:1.5em;
   padding-left:2.5em;
   font-size:1.5em;
+  height:7em;
 }
 
 div#splash-box>p{
@@ -23,7 +22,6 @@ div#splash-box>p{
 div#create-prompt {
   font-size:0.7em;
   background:white;
-  font-weight:bold;
   position:absolute;
   right:1em;
   bottom:1em;
@@ -33,15 +31,18 @@ div#create-prompt {
   background:#E9EEF2;
 }
 
-div#create-prompt>span {
+#default-login span {
   font-weight:normal;
   font-size:0.8em;
   float:left;
   margin:1em 0 0 0;
+  position:relative;
+  height:1em;
 }
 
 #create-account{
-  clear:both;
+/*   clear:both; */
+  clear:left;
   padding:0.4em 0.8em;
   font-size:0.9em;
   color:white;
@@ -50,14 +51,11 @@ div#create-prompt>span {
   width:5em;
   display:block;
   cursor:pointer;
+  border:none;
   background: #406F9C;
   background: #406F9C -moz-linear-gradient(90deg, #406F9C, #8CA4BA);
   background: #406F9C -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8CA4BA), to(#406F9C));
   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#8CA4BA,endColorStr=#406F9C);
-}
-
-#create-account>span{
-  float:right;
 }
 
 #create-account:hover{
@@ -163,6 +161,7 @@ div.more .ui-icon {
   top:-6px;
   left:50%;
 }
+
 
 #fade {
    color: #999999;

@@ -10,18 +10,18 @@ String.prototype.trim = function () {
 }
  
 
-function validate_fields(email,username, password, confirm_password){
-	if( email.val() ==""){
-		      alert("Please provide your email address."); email.focus();return false;
-	} else if( validate_email(email.val(),"Not a valid email address!")==false) {
-		      email.focus();return false;
+function validate_fields(email,username, password, confirm_password, wbemail){
+	if( (email.val() =="") && (wbemail.val() == "")){
+		      email.focus().addClass("ui-state-error");return false;
+	} else if( email.val() && (validate_email(email.val(),"Not a valid email address!")==false)) {
+		      email.focus().addClass("ui-state-error");return false;
 	} else if( username.val() =="") {
-		      alert("Please provide your username");username.focus(); return false;
+		      username.focus().addClass("ui-state-error"); return false;
 	} else if(password) {
 	    if( password.val() ==""){
-		      alert("Please provide your password."); password.focus();return false;
+		      password.focus().addClass("ui-state-error");return false;
 	    } else if( password.val() != confirm_password.val()) {
-			alert("The passwords do not match. Please enter again"); password.focus();return false;
+			alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
 	    }  
 	} else {
 	  return true;

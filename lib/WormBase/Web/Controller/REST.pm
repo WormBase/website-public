@@ -233,6 +233,42 @@ sub get_session {
 }
 
 
+sub get_user_info :Path('/auth/info') :Args(1) :ActionClass('REST'){}
+
+sub get_user_info_GET{
+  my ( $self, $c, $name) = @_;
+
+  my $api = $c->model('WormBaseAPI');
+  my $object = $api->fetch({class => 'Person',
+                    name  => $name,
+                    }) or die "$!";
+
+
+
+  my $message;
+  my @users = $c->model('Schema::User')->search({wbid=>$name, wb_link_confirm=>1});
+  if(@users){
+    $message = "This account has already been linked";
+  }elsif($object->email->{data}){
+      my @email = @{$object->email->{data}};
+    my $email = $email[0];
+    $message = "An email will be sent to <a href='mailto:$email '>$email</a> upon registration to confirm your identity";
+  }else{
+    $message = "This account cannot be linked at this time";
+  }
+  $self->status_ok(
+      $c,
+      entity =>  {
+          wbid => $name,
+          fullname => $object->full_name->{data} || $object->name->{data}->{label},
+          email => $object->email->{data},
+          message => $message,
+      },
+  );
+
+}
+
+
 sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 
 sub history_GET {
@@ -372,46 +408,81 @@ sub rest_register_POST {
     my ( $self, $c) = @_;
      
     my $email = $c->req->params->{email};
+    my $wbemail = $c->req->params->{wbemail};
     my $username = $c->req->params->{username};
     my $password = $c->req->params->{password};
-    if($email && $username && $password){
-	my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
-	$csh->add($password);
-	my $hash_password= $csh->generate();
-	my @users = $c->model('Schema::User')->search({email_address=>$email});
-  	foreach (@users){
-	   if($_->password && $_->active){
-	      $c->res->body(0);
-	      return 0;
-	    }
-	}  
-	my $user=$c->model('Schema::User')->find_or_create({email_address=>$email, username=>$username, password=>$hash_password,active=>0}) ;
-	 
-	foreach my $key (sort keys %{$c->req->params}){
-	  $c->stash->{info}->{$key}=$c->req->params->{$key};
-	}
-	$c->stash->{noboiler}=1;
-	 
-	$csh->clear();
-	$csh->add($email."_".$username);
-	my $digest = $csh->generate();
-	$digest =~ s/^{SSHA}//;
-	$digest =~ s/\+/\%2B/g;
-	$c->stash->{digest}=$c->uri_for('/confirm')."?u=".$user->id."&code=".$digest ;
-	
-	$c->stash->{email} = {
-	    to       => $email,
-	    from     => $c->config->{register_email},
-	    subject  => "WormBase Account Activation", 
-	    template => "auth/register_email.tt2",
-	};
-	
-	$c->forward( $c->view('Email::Template') );
-	$c->res->body(1);
-	
+    my $wbid = $c->req->params->{wbid};
+    if(($email || $wbemail) && $username && $password){
+      my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
+      $csh->add($password);
+      my $hash_password= $csh->generate();
+      my @users = $c->model('Schema::Email')->search({email=>$email});
+      @users = map { $_->user } @users;
+      push( @users, $c->model('Schema::User')->search({wbid=>$wbid}));
+      foreach (@users){
+        if($_->password && $_->active){
+            $c->res->body(0);
+            return 0;
+          }
+      }  
+      my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
+      my $user_id = $user->id;
+
+      my @emails = split(/,/, $email);
+      foreach my $e (@emails){
+        $c->model('Schema::Email')->find_or_create({email=>$e, user_id=>$user_id}) ;
+        $self->rest_register_email($c, $e, $username, $user_id);
+      }
+
+      my @wbemails = split(/,/, $wbemail);
+      foreach my $wbe (@wbemails){
+        $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id}) ;
+        $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
+      }
     }
-    return 1;
 }
+
+
+sub rest_register_email {
+  my ($self,$c,$email,$username,$user_id, $wbid) = @_;
+
+
+  $c->stash->{info}->{username}=$username;
+  $c->stash->{info}->{email}=$email;
+
+  $c->stash->{noboiler}=1;
+  
+  my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
+  $csh->add($email."_".$username);
+  my $digest = $csh->generate();
+  $digest =~ s/^{SSHA}//;
+  $digest =~ s/\+/\%2B/g;
+  my $url = $c->uri_for('/confirm')."?u=".$user_id."&code=".$digest;
+
+  if($wbid){
+    $c->stash->{info}->{wbid}=$wbid;
+    my $csh2 = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
+    $csh2->add($email."_".$wbid);
+    my $wb_hash = $csh2->generate();
+    $wb_hash =~ s/^{SSHA}//;
+    $wb_hash =~ s/\+/\%2B/g;
+    $url = $url . "&wb=" . $wb_hash;
+  }
+
+  $c->stash->{digest}=$url;
+  
+  $c->log->debug(" send out email to $email");
+  $c->stash->{email} = {
+      to       => $email,
+      from     => $c->config->{register_email},
+      subject  => "WormBase Account Activation", 
+      template => "auth/register_email.tt2",
+  };
+  
+  $c->forward( $c->view('Email::Template') );
+
+}
+
 
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 

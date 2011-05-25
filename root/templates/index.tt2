@@ -1,17 +1,21 @@
 [% SET class = 'home' %]
 
 <div id="splash-box">
+
     <h1>Explore Worm Biology</h1>
 <!--      <br />Compare. Analyze. Share.-->
 <!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
       <p>facilitating insights into <br />nematode biology</p>
       [% UNLESS c.user_exists %]
         <div id="create-prompt" class="ui-corner-all">
-           Join the online worm community! <br />
-              <div id="create-account" class="ui-corner-large-all lightbox" id="register" href="[% c.uri_for('/register') %]">
-                  sign up ›
-              </div>
-             <span> Already a member? <b><a class='lightbox' id="login" href="[% c.uri_for('/login') %]">login</a></b></span>
+
+           <b>Join the online worm community!</b>
+              <div id="default-login" style="overflow:none">
+              <a id="create-account" class="ui-corner-large-all" onClick='$jq("#create-prompt").load("[% c.uri_for("/register") %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' id="register" href="[% c.uri_for('/register') %]">
+               <b>   sign up ›</b>
+              </a>
+             <span> Already a member? <b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login') %]">login</a></b></span>
+             </div>
         </div>
     [% END %]
 </div>
