@@ -38,14 +38,6 @@ http://wormbase.org/species/strain
 # Supplied by Role; POD will automatically be inserted here.
 # << include taxonomy >>
 
-# sub other_names { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include other_names >>
-
-# sub description {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include description >>
-
 =head3 genotype
 
 This method will return a data structure containing 
@@ -464,7 +456,7 @@ B<Response example>
 sub reference_strain {
     my $self   = shift;
     my $object = $self->object;
-
+    
     my ($strain) = map { $self->_pack_obj($_) } $object->Reference_strain;
     return { description => 'reference strain for the current strain',
 	     data        => $strain || undef };   
@@ -709,7 +701,7 @@ sub phenotypes {
     my $self = shift;
     my $object = $self->object;
 
-    my $data = $self->_pack_phenotypes('Phenotype_not_observed');
+    my $data = $self->_pack_phenotypes('Phenotype');
     return { description => 'phenotypes observed in this strain',
 	     data        => @$data ? $data : undef };
 }
@@ -921,7 +913,7 @@ sub contact {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Contact;
-    return { description => 'the person who built the strain',
+    return { description => 'the person who built the strain, or who to contact about it',
 	     data        => $made_by ? $self->_pack_obj($made_by,$made_by->Standard_name) : undef };
 }
 
@@ -1404,7 +1396,7 @@ sub log_size_of_population {
     my $self = shift;
     my $object = $self->object;
     my $size   = $object->Log_size_of_population;
-    return { description => 'thelog size of the population when isolated',
+    return { description => 'the log size of the population when isolated',
 	     data        => "$size" || undef,
     };
 }
@@ -1609,7 +1601,7 @@ information on natural isolates.
 
 =item PERL API
 
- $data = $model->date_isolated();
+ $data = $model->natural_isolates();
 
 =item REST API
 
@@ -1652,7 +1644,7 @@ B<Response example>
 =cut
 
 sub natural_isolates {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
 
     my $dsn = $self->ace_dsn->dbh;
@@ -1681,8 +1673,6 @@ sub natural_isolates {
     return { description => 'a list of wild isolates of strains contained in WormBase',
 	     data        => @data ? \@data : undef };
 }
-
-
 
 
 __PACKAGE__->meta->make_immutable;

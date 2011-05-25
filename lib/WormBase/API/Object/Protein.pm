@@ -75,78 +75,9 @@ has 'cds' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include taxonomy >>
 
-
-=head3 central_dogma
-
-This method returns a data structure containing the 
-the central dogma from the perspective of this protein.
-
-=over
-
-=item PERL API
-
- $data = $model->central_dogma();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A protein ID (eg WP:CE33017)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/central_dogma
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=cut
-
-sub central_dogma {
-    my $self   = shift;
-
-    my @cds = grep{$_->Method ne 'history'} @{$self->cds};
-
-    # From a list of CDSs for the protein, get the corresponding gene(s)
-    my %seen;
-    my @genes = grep { ! $seen{%_}++ } map { $_->Gene } grep{ $_->Method ne 'history'}  @cds;
-    @genes = map { $self->_pack_obj($_,$_->Public_name) } @genes;
-
-    # Fetch all transcripts that make this protein
-    my @transcripts = map { $self->_pack_obj($_) } map {$_->Corresponding_transcript}  @cds;
-
-    # Finally, all CDS
-    @cds = map { $self->_pack_obj($_) } @cds;
-    
-    return { description => 'the central dogma from the perspective of this protein',
-	     data        => { genes       => @genes       ? \@genes       : undef,
-			      transcripts => @transcripts ? \@transcripts : undef,
-			      cds         => @cds         ? \@cds         : undef },
-    };
-}
+# sub central_dogma { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include central_dogma >>
 
 
 =head3 corresponding_gene
@@ -376,10 +307,9 @@ B<Response example>
 
 sub type {
     my $self = shift;
-    my $data = { description => 'The type of the protein',
-		 data        =>  eval {$self->cds->[0]->Method} || 'None' ,
+    return { description => 'The type of the protein',
+	     data        =>  eval {$self->cds->[0]->Method} || 'None' ,
     }; 
-    return $data;
 }
 
 # sub description { }
@@ -586,7 +516,7 @@ B<Response example>
 sub estimated_isoelectric_point {
     my $self = shift;
   
-    my $pic     = pICalculator->new();
+    my $pic     = WormBase::Util::pICalculator->new();
     my $seq     = Bio::PrimarySeq->new($self->peptide);
     $pic->seq($seq);
     my $iep     = $pic->iep;
@@ -736,10 +666,7 @@ sub homology_groups {
 	my $type  = $k->Group_type;
 	push @hg ,{ type  => "$type"  || '',
 		    title => "$title" || '',
-		    link => { id=>"$k",
-			      label=>$k->name,
-			      class=>$k->class,
-		    }
+		    id    => $self->_pack_obj($k),
 	};
     }
     return { description => 'KOG homology groups of the protein',
@@ -747,16 +674,16 @@ sub homology_groups {
     
 }
 
-=head3 orthologous_genes
+=head3 orthologs
 
 This method returns a data structure containing 
-genes orthologous to the current protein.
+genes orthologs to the current protein.
 
 =over
 
 =item PERL API
 
- $data = $model->orthologous_genes();
+ $data = $model->orthologs();
 
 =item REST API
 
@@ -788,7 +715,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/orthologous_genes
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE02346/orthologs
 
 B<Response example>
 
@@ -796,14 +723,13 @@ B<Response example>
 
 =cut
 
-sub orthologous_genes {
+sub orthologs {
     my $self   = shift;
     my $object = $self->object;
     my @data;
     foreach ($object->Ortholog_gene) {
-	my $species = $_->Species;
-	push @data, { species => "$species",
-		      gene    => $self->_pack_obj($_,$_->Public_name) };
+	push @data, { species => $self->_split_genus_species($_->Species),
+		      gene    => $self->_pack_obj($_) };
     }
 
     return { description => 'orthologous genes of the protein',
@@ -867,10 +793,9 @@ sub homology_image {
     my $panel=$self->_draw_image($self->object,1);
     my $gd=$panel->gd;
     #show dynamic images
-    my $data = { description => 'a dynamically generated image representing homologous regions of the protein',
-		 data        => $gd,
+    return { description => 'a dynamically generated image representing homologous regions of the protein',
+	     data        => $gd,
     };
-    return $data;
 =pod print image as file
     my ($suffix,$img,$boxes);
     if ($gd->isa('Ace::Object')) {
@@ -1052,7 +977,6 @@ sub pfam_graph {
 
 	    }
     }
-
 
     # extract the exons, then map them
     # onto the protein backbone.

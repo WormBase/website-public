@@ -132,10 +132,10 @@ sub interactor {
     my $self   = shift;
     my $object = $self->object;
     my @genes  = $object->Interactor;
-    @genes = map { $self->_pack_obj( $_, $_->Public_name ) } @genes;
-    return {
-        description => 'The genes in this interaction',
-        data        => @genes ? \@genes : undef,
+    @genes = map { $self->_pack_obj( $_ ) } @genes;
+
+    return { description => 'The genes in this interaction',
+	     data        => @genes ? \@genes : undef,
     };
 }
 

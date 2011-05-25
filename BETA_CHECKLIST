@@ -1,0 +1,89 @@
+Species display and internal linking.
+      display should be consistent: G. species, italiczied, and linked when it's one of ours.
+
+tag2link
+* Fails in some cases (or fails to provide generic "all" for classes/objects that are missing species)
+
+Central Dogma display
+* replace gene models on gene
+* also make available on Sequence and protein.
+* Maybe retire the sequence page? Or merge with clone?
+
+Consistency of Overview widgets:
+     H1 header?
+     hilight box and contents?
+
+Purge template identifier (or fix) at the top of each template
+
+
+References widget / handling
+
+* use the xapian search or refernece XREFs in ace?
+* if using xapian, what impact does this have on API?
+* are the xapian search results sensible?
+* Role::Object::references() already exists but needs to be
+  expanded (ie to make it easier to sort references by year or type)
+  As it is, it simply returns a packed list of reference objects.
+* Be sure to include pseudo-POD in models that use references()
+* can probably purge convenience methods in Role::Object (such as meeting_abstracts)
+* The publications template of person has some rudimentary 
+  formatting (and the corresponding method some logic).
+
+
+API
+* Drop pseudoPOD and just document public methods in Role?
+* Documentation CGI can set up POD where appropriate.x
+* set up api.wormbase.org
+
+
+Temporary images
+* paths
+* generating server for load balancing or NFS
+
+GBrowse
+* integration
+* links
+* branding
+
+Class-level summary widgets.
+* Are URLs correct? Seeing requests like:
+    CACHE: rest/widget/laboratory//all_labs: NOT PRESENT; generating widget.
+* Species-associated class level widgets (strain) not working.
+
+
+Class review and formatting
+
+    	   	 review	   ui	   conf format	references
+analysis	 x     	   x	   x		-
+anatomy_term	 -	   -	   x		-
+antibody	 x	   x	   x		-
+clone		 -	   -	   -		-
+e*_cluster	 -	   -	   -		-
+expr_pattern	 -	   -	   -		-
+feature		 -	   -	   -		-
+gene		 x	   x	   -		-
+gene_class	 x	   x	   -		-
+gene_cluster	 x	   x	   -		-
+gene_regulation	 -	   -	   -		-
+go_term		 -	   -	   -		-
+interaction	 -	   -	   -		-
+laboratory	 x	   x	   x		-
+life_stage	 x	   x	   x		-
+molecule	 -	   -	   x		-
+motif		 x	   x	   x		-
+paper		 x	   x	   x		-
+pcr_oligo	 -	   -	   x		-
+person		 x	   x	   x		-
+phenotype	 -	   -	   x		-
+picture		 -	   -	   x		-
+position_matrix	 -	   -	   x		-
+protein		 x	   x	   x		-
+rnai		 -	   -	   x		-
+sequence	 -	   -	   x		-
+strain		 x	   x	   x		-
+structure_data	 -	   -	   x		-
+transgene	 -	   -	   x		-
+variation	 -	   -	   x		-
+
+
+

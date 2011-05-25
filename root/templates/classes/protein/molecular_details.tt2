@@ -2,47 +2,55 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% WRAPPER $field_block title="Length" %]
-  [% fields.sequence.data.length %] aa
-[% END %]
+[% 
 
-[% WRAPPER $field_block title="Protein Sequence" %]
-  [% seq = fields.sequence.data.sequence %]
-  [% format_seq = "" %]
-  [% FOREACH line IN seq.chunk(80) %]
-     [% format_seq = format_seq _ line.chunk(10).join(' ')  %]
-     [% UNLESS loop.last %] [% format_seq = format_seq _ "<br />" %] [% END %]  
-  [% END %]
-    <div class="sequence-download">
-                        <form action="/rest/download/">
-			  <input type="hidden" name="type" value="[% object.name.data.id %].fa" >
-			  <input type="hidden" name="sequence" value="[% format_seq %]" >
-			  <input type="submit" value="download"> 
-		      </form>
-    </div>
+   WRAPPER $field_block title="Length" key="sequence";
+       fields.sequence.data.length _ ' aa';
+   END;
 
-      <div class="toggle">View Sequence</div>
-     <div class="sequence-container">
- 		[% format_seq %]    
-     </div>
-[% END %]
+   WRAPPER $field_block title="Protein Sequence";
+       seq = fields.sequence.data.sequence;
+       format_seq = "";
+       FOREACH line IN seq.chunk(80);
+           format_seq = format_seq _ line.chunk(10).join(' ');
+           UNLESS loop.last;
+                format_seq = format_seq _ "<br />";
+           END;  
+       END;
+       '<div class="sequence-download">';
+                        '<form action="/rest/download/">';
+			 '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >';
+			 '<input type="hidden" name="sequence" value="' _ ormat_seq  _ '" >';
+			 '<input type="submit" value="download">';
+		      '</form>';
+       '</div>';
 
-[% WRAPPER $field_block title="Estimated Molecular Weight" %]
-  [% fields.estimated_molecular_weight.data %]
-[% END %]
+       '<div class="toggle">View Sequence</div>';
+       '<div class="sequence-container">';
+ 		 format_seq;
+       '</div>';
+    END;
 
-[% WRAPPER $field_block title="Estimated Isoelectric Point" %]
-  [% fields.estimated_isoelectric_point.data %]
-[% END %]
+   WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight_data";
+        fields.estimated_molecular_weight.data;
+   END;
 
-[% WRAPPER $field_block title="Amino Acid Composition" key="amino_acid_composition" %]
-  [% data = fields.amino_acid_composition.data  %]
-  [% keys = data.keys.sort  %]
-  <table  border= 0, width= '100%' ><tr><td> [% keys.join('</td><td>')%] </td></tr>
-  <tr>
-  [% FOREACH key IN keys %]
-  <td>[% data.$key %]</td>
-  [% END %]
-  </tr>
-  </table>
-[% END %]
+   WRAPPER $field_block title="Estimated Isoelectric Point" key="estimated_isoelectric_point";
+        fields.estimated_isoelectric_point.data;
+   END;
+
+   WRAPPER $field_block title="Amino Acid Composition" key="amino_acid_composition";
+        data = fields.amino_acid_composition.data;
+        keys = data.keys.sort;
+        '<table  border="0", width="100%" ><tr><td>';
+             keys.join('</td><td>');
+	      '</td></tr>';
+           '<tr>';
+            FOREACH key IN keys;
+               '<td>' _ data.$key _ '</td>';
+            END;
+           '</tr>';
+        '</table>';
+    END;
+
+%]
