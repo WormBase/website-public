@@ -64,8 +64,6 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "password",
   { data_type => "text", is_nullable => 1 },
-  "email_address",
-  { data_type => "text", is_nullable => 1 },
   "first_name",
   { data_type => "text", is_nullable => 1 },
   "last_name",
@@ -74,6 +72,10 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "active",
   { data_type => "integer", is_nullable => 1 },
+  "wbid",
+  { data_type => "text", is_nullable => 1 },
+  "wb_link_confirm",
+  { data_type => "boolean", is_nullable => 1 },
 );
 __PACKAGE__->set_primary_key("id");
 
@@ -82,6 +84,7 @@ __PACKAGE__->set_primary_key("id");
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+lEYBqay22QmTazn+Cga1A
 __PACKAGE__->has_many(users_to_roles=>'WormBase::Schema::Result::UserRole', 'user_id');
 __PACKAGE__->has_many(open_ids=>'WormBase::Schema::Result::OpenID', 'user_id');
+__PACKAGE__->has_many(email_address=>'WormBase::Schema::Result::Email', 'user_id');
 __PACKAGE__->many_to_many(roles => 'users_to_roles', 'role');
 
 __PACKAGE__->many_to_many(issues => 'users_to_issues', 'issue');

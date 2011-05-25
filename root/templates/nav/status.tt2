@@ -1,25 +1,35 @@
 <script type="text/javascript" >
-$jq(".lightbox").colorbox();
+// $jq(".lightbox").colorbox();
 $jq("#bench-status").load("/rest/workbench");
 function popWin(url) {
   var win = window.open(url,'pop','status=no,resizable=yes,height=2px,width=2px');
   win.blur();
 };
 
+
+$jq("#login").live('click', function(){
+  $jq(this).siblings().toggle();
+  $jq(this).toggleClass("open ui-corner-top");
+});
+
+
 </script>   
- 
+ [% ref = c.req.referer.split('/').last %]
 [% IF c.user_exists %]
 
-  <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">Welcome [% username(c.user) %]<span href="/bench" id="bench-status"></span></a></li>
+  <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% username(c.user) %]<span href="/bench" id="bench-status"></span></a></li>
   <li><a href="" onClick="popWin('/logout')">Logout</a></li>
 [% ELSE %]
-  <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(c.stash.section=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
-  <li><a id="login" href="[% c.uri_for('/login') %]">Login</a></li>
-  <div id="register" href="[% c.uri_for('/register') %]" style="display: none"></div>
+  <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
 
-  <!-- <li><a  class='lightbox' id="login" href="[% c.uri_for('/login') %]"  >Login</a></li>
-  <div  class='lightbox' id="register" href="[% c.uri_for('/register') %]" style="display: none" ></div>
-  -->
+  <li id="login-box"><a id="login">Login</a>
+    <ul class="dropdown ui-corner-all">
+    [% PROCESS auth/login.tt2 %]
+    </ul>
+  </li>
+
+<!--   <div  class='lightbox' id="register" href="[% c.uri_for('/register') %]" style="display: none" ></div> -->
+  
 [% END %]
  
  

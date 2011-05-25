@@ -74,7 +74,7 @@
 .ui-icon-1-2 { background-position: -48px 0px; }
 
 .ui-icon-stars { width: 20px; height: 20px; 
-background-image: url(../img/stars.png); 
+background-image: url(../img/stars.png) !important; 
 cursor:pointer;}
 
 .ui-icon-star-filled { background-position: 0px 0px; }
@@ -121,6 +121,9 @@ cursor:pointer;}
 
 
 
+.ui-autocomplete {
+  z-index:15 !important;
+}
 
 
 

@@ -3,17 +3,24 @@
 <p>
 You supplied the following registration information:
 </p> 
-&nbsp;&nbsp;&nbsp;&nbsp;Username: [% info.username %]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Password: [% info.password %]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name: [% info.username %]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E-mail:   [% info.email %]<br>
 <p>
 <p>
-To activate your account and complete the sign up process, please click on the following link:<br>
+[% IF info.wbid %]
+You will also be linked to the following WormBase identity:
+</p>
+</p>
+&nbsp;&nbsp;&nbsp;&nbsp;[% text2link('person', info.wbid, info.wbid) %]<br>
+<p>
+<p>
+[% END %]
+To activate your account and validate this email (<b>[% info.email %]</b>), please click on the following link:<br>
   <a href="[% digest %]">[% digest %]</a><br>
 </p> 
 <p>
-Thank you,</br>
+Thank you,<br /><br />
 
-The WormBase Consortium
+The WormBase Consortium<br />
 help@wormbase.org
 </p> 

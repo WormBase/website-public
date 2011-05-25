@@ -225,7 +225,7 @@ ul.nav-bar li {
   position:relative;
 }
 
-ul.nav-bar li a{
+ul.nav-bar li>a{
   float:left;
   padding:0.4em 2.8em 0 1.9em;
   margin:0;
@@ -254,7 +254,7 @@ ul.nav-bar li span.ui-icon {
   visibility:hidden;
 }
 
-ul.nav-bar li a.hover, ul.nav-bar li a.selected, ul.nav-bar span.status-bar li a:hover,  ul.nav-bar span.status-bar li a.selected{
+ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{
   color:black;
   border-bottom:5px solid #CDCDCD;
 }
@@ -289,6 +289,64 @@ ul.nav-bar ul.dropdown {
   padding:0;
   width:100%;
   list-style-type: none;
+}
+
+#login-box ul.dropdown {
+  width:auto;
+  left:auto;
+  right:0;
+  top:1.6em;
+  padding-top:0.5em;
+}
+
+.login-holder{
+  position:relative;
+  margin:0.5em 1em;
+}
+
+span.holder {
+  position:absolute;
+  top:0.5em;
+  left:0.5em;
+}
+
+
+#login-box>a.open {
+  background:white;
+  border:1px solid #CDCDCD;
+  z-index:9999;
+  color:black;
+  position:relative;
+  border-bottom:none;
+  padding-right:1.8em;
+}
+
+#login-form button{
+  float:left;
+}
+
+#login-form div.social {
+  clear:both;
+/*   background:#EEE; */
+  background:#E9EEF2;
+  font-size:0.8em;
+  border-top:1px solid #CDCDCD;
+  overflow:hidden;
+  position:relative;
+  padding:0.5em 0 1em 1em;
+}
+
+.login-form {
+  padding:0.5em 0 0 !important;
+  font-weight: normal !important;
+  background: white !important;
+  width: 14.5em !important;
+}
+
+.registration-form {
+  padding: 1em !important;
+  background: #E9EEF2 !important;
+  width: 21.5em !important;
 }
 
 ul.nav-bar ul.dropdown li {
@@ -610,7 +668,7 @@ padding:1.4em;
 }
 
 
-#footer ul,li {
+#footer ul, #footer li {
     list-style:none;
     margin-left:0;
     padding-left:0;
@@ -1660,6 +1718,7 @@ div.title {
   padding:0.3em;
   float:left;
 }
+
 
 
 

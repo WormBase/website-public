@@ -1,5 +1,6 @@
-[% IF reload || error_notice  %] 
 <script> 
+[% IF reload || error_notice  %] 
+
    
    [% IF error_notice %]
       alert("Login not successful!");
@@ -11,41 +12,47 @@
       else { opener.location.reload(1);}
   [% END %] 
   window.close();
-
-</script>
 [% END %]  
+
+hideTextOnFocus(".email");
+hideTextOnFocus(".password");
+</script>
 
 
   
 <!-- Login form -->
-<form method="post" onsubmit="popWin('/auth/login?email='+this.email.value+'&password='+this.password.value)" style="float:left;">
-<h4>Sign in with your WormBase Account</h4>
-<input type="hidden" name="continue" value="[% continue %]"/>
-<table>
-  <tr>
-    <th >Email:</th>
-    <td><input id="email" type="text" name="email" size="15"/></td> 
-  <tr>
-  <tr>
-    <th>Password:</th>
-    <td><input id="password" type="password" name="password" size="15"/></td>
-  </tr>
-  <div style="height: 0.8em; overflow: hidden;"> </div>
-  <tr>
-    <td ><input type="checkbox" id="remember" name="remember" size="10">Remember me</input></td>
-    <td align="right"><input type="submit" value="Login" id="login"  /></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-	<div style="height: 1em; overflow: hidden;"> </div>
-	<a href="#">Forgot Password</a>  | <a  class='switch-colorbox register' href="" >Register</a>
-	 
-    </td>
-  </tr>
-</table>
-</form>
+<div id="login-form">
+  [%# change this to secure_uri_for when https works %]
+  <form method="post" action="[% c.uri_for("/auth/login") %]" style="float:left;">
+<!--   <form method="post" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;"> -->
 
-[% PROCESS "auth/openid.tt2" %]
- 
- 
+    <div class="login-holder">
+        <span id="fade" class="holder">email</span>
+        <input class="email" type="text" name="email" size="22"/>
+    </div>
+    <div class="login-holder">
+        <span id="fade" class="holder">password</span>
+        <input class="password" type="password" name="password" size="22"/>
+    </div>
+    <div class="login-holder" style="margin: -0.2em 0 0.5em; padding:0 1em;">
+      <input type="submit" value="Login" id="login"/>
+      <div id="fade" style="padding:0 1em;float:right;margin-top:-3px;"><input type="checkbox" id="remember" name="remember" size="10">Remember me</input><br />
+                      <a href="[% c.uri_for('/register') %]" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/register") %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' style="padding:0;margin:0;">create an account</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="social">
+    <span style="position:absolute;top:30px;">...or sign in with</span>
+    <div style="float:right;padding-right:1em;">
+      <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');">
+          <span>Google</span>
+      </button>
+      <br style="clear:both" />
+      <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');">
+          <span>Facebook</span>
+      </button>
+    </div>
+  </div>
+</div>
  

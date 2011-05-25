@@ -52,8 +52,6 @@
    var contentBox = $jq(".comment-content"),
       contentBoxDefault = "write a comment..."
 
-
-  
   contentBox.live('focus',function() {
     if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
     $jq(".comment-submit").show();
@@ -127,6 +125,7 @@
       nav.animate({width: w, display: 'block'});
       ptitle.animate({marginLeft: marginLeft, display: 'block'});
       nav.children("#title").children("div").toggle();
+//       alert("width:" + nav.width());
       $jq(this).attr("title", msg);
       $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
@@ -229,6 +228,25 @@ function updateCounts(url){
 }
 
 
+function hideTextOnFocus(selector){
+  var area = $jq(selector);
+    
+  if(area.attr("value") != ""){
+    area.siblings().fadeOut();
+  }
+  area.focus(function(){
+    $jq(this).siblings().fadeOut();
+  });
+
+  area.blur(function(){
+    if($jq(this).attr("value") == ""){
+      $jq(this).siblings().fadeIn();
+    }
+  });
+}
+
+
+
 
 
 var Breadcrumbs = {
@@ -236,7 +254,7 @@ var Breadcrumbs = {
     this.bc = $jq('#breadcrumbs');
     this.children = this.bc.children(),
     this.bCount = this.children.size();
-    if(this.bCount < 3){ return; }; //Two or less items, don't bother with breadcrumbs
+    if(this.bCount < 3){ return; }; //less than three items, don't bother with breadcrumbs
     
     this.bc.empty();
     var hidden = this.children.slice(0, (this.bCount - 2));
