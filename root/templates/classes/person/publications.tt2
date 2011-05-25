@@ -1,0 +1,28 @@
+[%
+
+WRAPPER $field_block title="Publications" key="publications";
+
+	FOREACH year IN fields.publications.data.keys.nsort.reverse;
+	    '<h3>' _ year _ '</h3>';
+ 	     FOREACH publication IN fields.publications.data.$year;	        
+    	         tag2link(publication.object);
+		 '<br />';
+	     END;
+	END;
+END;
+
+
+WRAPPER $field_block title="Meeting Abstracts" key="meeting_abstracts";
+
+	FOREACH year IN fields.meeting_abstracts.data.keys.nsort.reverse;
+	    '<h3>' _ year _ '</h3>'; 
+
+ 	     FOREACH publication IN fields.meeting_abstracts.data.$year;
+    	         tag2link(publication.object);
+		 '<br />';
+	     END;
+
+	END;
+END;
+
+%]

@@ -43,61 +43,34 @@ has 'address_data' => (
     }
     );
 
-has 'publication_hr' => (
+has 'publication_data' => (
     is      => 'ro',
     isa     => 'HashRef',
     lazy    => 1,
     default => sub {
     	
-	my $self = shift;
+	my $self   = shift;
 	my $object = $self->object;
-	my %data_pack;
+	my %data;       
 	
-	#### data pull and packaging
-	
-	my @papers = $object->Paper;
-	
-	foreach my $paper (@papers) {
-	    my $paper_id = $paper;
-		my @authors = $paper->Author;
-		my $brief_citation = $paper->Brief_citation;
-		my $type = 'Paper';
-		
-		
-		my $publication_date = $paper->Publication_date; 
-		my ($publication_year, $disc) = split /\-/,$publication_date;
-		
-		my $meeting_abstract;
-		$meeting_abstract = $paper->Meeting_abstract;
-		
-		if ($meeting_abstract) {
-		
-			$type = 'Meeting_abstact';
-		}
-		
-		my %publication_info = (
-			'label' => "$brief_citation",
-			'class' => 'Paper',
-			'id' => "$paper_id"
-		);
-		
-		if ($data_pack{$type}{$publication_year}) {
-			
-			my $pub_ar = $data_pack{$type}{$publication_year};
-			push @$pub_ar, \%publication_info;
-		}
-		else {
-		
-			$data_pack{$type}{$publication_year} = [\%publication_info];
-		}	
-	}
-	
-	####
+	foreach my $paper ($object->Paper) {
+	    my @authors = $paper->Author;
+	    my $brief_citation = $paper->Brief_citation;
+	    
+	    my $date = $paper->Publication_date; 
+	    my ($year, $disc) = split /\-/,$date;	   
 
-	return \%data_pack;
-    
+	    my $type = $paper->Meeting_abstract ? 'Meeting_abstract' : 'Paper';
+	    
+
+	    push @{$data{$type}{$year}},
+	    { brief_citation => "$brief_citation",
+	      object         => $self->_pack_obj($paper,"$brief_citation")
+	    };	    
+	}	
+	return \%data;	
     }
-
+    
 );
 
 #######################################
@@ -114,32 +87,32 @@ has 'publication_hr' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-
-
 =head3 street_address
 
 This method returns a data structure containing the 
 street address of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->street_address();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -153,24 +126,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/street_address
 
-=head5 Response example
+B<Response example>
 
- { "name"           : "WBPerson242",
-   "class"          : "person",
-   "uri"            : "http://todd.wormbase.org/page/person/WBPerson242"}                               
-   "street_address" : { "data" : [ "Department of Neuroscience",
-                                   "Brown University",
-                                   "185 Meeting Street, SFH458",
-                                   "Mailbox GL-N",
-                                   "Providence, RI 02912"
-                                 ],
-                         "description" : "street address of the person"
-                      },
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -187,25 +151,27 @@ sub street_address {
 This method returns a data structure containing the 
 country that the person lives in, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->country();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -219,19 +185,13 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/country
 
-=head5 Response example
+<div class="response-example"></div>
 
- { "name"    : "WBPerson242",
-   "class"   : "person",    
-   "uri"     : "http://todd.wormbase.org/page/person/WBPerson242"}     
-   "country" : { "data" : "United States of America",
-                 "description" : "country of residence of the person, if known"
-               },
- }
+=back
 
 =cut
 
@@ -244,29 +204,31 @@ sub country {
 }
 
 =head3 institution
-
+    
 This method returns a data structure containing the 
 institution of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->institution();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -280,19 +242,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/institution
 
-=head5 Response example
+B<Response example>
 
- { "name"           : "WBPerson242",
-   "class"          : "person",
-   "uri"            : "http://todd.wormbase.org/page/person/WBPerson242"}                               
-   "institution"    : { "data" : "Brown University, Providence RI, USA",
-                        "description" : "the institutional affiliation of the person",
-                      }, 
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -309,25 +267,27 @@ sub institution {
 This method returns a data structure containing the 
 email addresses of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->email();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -341,20 +301,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/email
 
-=head5 Response example
+B<Response example>
 
- { "name"           : "WBPerson242",
-   "class"          : "person",
-   "uri"            : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "email" : { "data" : [ "myemail@yahoo.com",
-                          "myotheremail@gmail.com" ],
-              "description" : "email addresses of the person, if known",
-   },
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -367,29 +322,31 @@ sub email {
 }
 
 =head3 lab_phone
-
+    
 This method returns a data structure containing the 
 lab phone number of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->lab_phone();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -403,19 +360,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_phone
 
-=head5 Response example
+B<Response example>
 
- { "name"       : "WBPerson242",
-   "class"      : "person",
-   "uri"        : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "lab_phone"  : { "data" : "1-123-456-7890",
-                    "description" : "laboratory phone of the person",
-                  },
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -432,25 +385,27 @@ sub lab_phone {
 This method returns a data structure containing the 
 office phone of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->office_phone();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -464,19 +419,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/office_phone
 
-=head5 Response example
+B<Response example>
 
- { "name"         : "WBPerson242",
-   "class"        : "person",
-   "uri"          : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "office_phone" : { "data" : "1-345-678-9876"
-                      "description" : "office phone number of the person, if known",
-   },
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -493,25 +444,27 @@ sub office_phone {
 This method returns a data structure containing
 other phone numbers of the person.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->street_other_phone();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -525,19 +478,16 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/other_phone
 
-=head5 Response example
+B<Response example>
 
- { "name"        : "WBPerson242",
-   "class"       : "person",
-   "uri"         : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "other_phone" : { "data"        : "1-234-567-9876"
-                     "description" : "other phone numbers of the person },
-   },
- }
+<div class="response-example"></div>
+
+=back
+
 
 =cut
 
@@ -554,25 +504,27 @@ sub other_phone {
 This method returns a data structure containing the 
 fax number of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->fax();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -586,19 +538,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request examplr>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/fax
 
-=head5 Response example
+B<Response example>
 
- { "name"      : "WBPerson242",
-   "class"     : "person",
-   "uri"       : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "fax"       : { "data" : "1-234-444-4455",
-                   "description" : "fax number of the person, if known",
-   },
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -616,25 +564,27 @@ sub fax {
 This method returns a data structure containing the 
 web site of the person, if known.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->web_page();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -648,19 +598,16 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/web_page
 
-=head5 Response example
+B<Response example>
 
- { "name"        : "WBPerson242",
-   "class"       : "person",
-   "uri"         : "http://todd.wormbase.org/page/person/WBPerson242"}
-   "web_page"    : { "data"        : "www.myawesomelabwebsite.org"
-                     "description" : "web site of the person, if known",
-   },
- }
+<div class="response-example"></div>
+
+=back
+
 
 =cut
 
@@ -694,25 +641,27 @@ This method returns a data structure containing
 previous laboratories of the person, as well as
 the current representative of that lab.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->previous_laboratories();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -726,13 +675,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_laboratories
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -760,25 +711,27 @@ This method returns a data structure containing
 the strain designation of the current lab affiliation
 of the person.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->strain_designation();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -792,13 +745,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/strain_designation
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -820,25 +775,27 @@ This method returns a data structure containing
 the allele designation of the current lab affiliation
 of the person.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->allele_designation();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -852,13 +809,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/allele_designation
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -877,25 +836,27 @@ sub allele_designation {
 This method returns a data structure containing
 the current lab representative of the affiliated lab.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->lab_representative();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -909,13 +870,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/lab_representative
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -942,25 +905,27 @@ This method returns a data structure containing
 gene classes assigned to the current lab affiliation
 of the person.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data->gene_classes();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -974,16 +939,17 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/gene_classes
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
 
-=cut
+=back
 
+=cut
 
 sub gene_classes {
     my $self   = shift;
@@ -994,7 +960,7 @@ sub gene_classes {
     @gene_classes = map { $self->_pack_obj($_) } @gene_classes;
     
     my $data = { description => 'gene classes assigned to laboratory',
-		 data        => \@gene_classes };
+		 data        => @gene_classes ? \@gene_classes : undef};
     return $data;
 }
 
@@ -1013,25 +979,27 @@ sub gene_classes {
 This method returns a data structure containing
 other names that the person might possibly publishh under.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data->possibly_publishes_as();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1045,18 +1013,20 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/possibly_publishes_as
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
 sub possibly_publishes_as {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
     
     my @names = map { "$_" } $object->Possibly_publishes_as;
@@ -1066,7 +1036,7 @@ sub possibly_publishes_as {
 }
 
 
-# sub statu { }
+# sub status { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include status >>
 
@@ -1076,25 +1046,27 @@ This method returns a data structure containing
 the date the information about this person was
 last verified.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data->last_verified();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1108,13 +1080,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/last_verified
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1143,25 +1117,27 @@ sub last_verified {
 This method will return a data structure of people supervised 
 by the query person.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->supervised();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1175,26 +1151,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised
 
-=head5 Response example
+B<Response example>
 
- { "name"        : "WBPerson242",
-   "class"       : "person",
-   "description" : "people supervised by this person"},
-   "uri"         : "http://todd.wormbase.org/page/person/WBPerson242"
-   "supervised"  : { "data": [{
-                                "name": {"class": "Person",
-                                         "label": "Emily Bates",
-                                         "id"   : "WBPerson1652"},
-                                "level": "Phd | Lab visitor | Grad",
-                                "start_date" : "01 JAN 1998 00:00:00",
-                                "end_date"   : "01 JAN 1999 00:00:00",
-                                "duration":"1998-1999",
-		 	      }],
- }
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1211,25 +1176,27 @@ sub supervised {
 This method will return a data structure containing
 people that this person has been supervised by.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->supervised_by();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1243,11 +1210,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/supervised_by
 
-=head5 Response example
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1264,25 +1235,27 @@ sub supervised_by {
 This method will return a data structure containing
 people that this person has worked or collaborated with.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->worked_with();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 WBPerson ID
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1296,11 +1269,15 @@ WBPerson ID
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/worked_with
 
-=head5 Response example
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
 
 =cut
 
@@ -1319,91 +1296,29 @@ sub worked_with {
 #######################################
 #
 # The Publications widget
-#
-# Likely all to go away; will still need support for the API
+#   This is a special instance of references
 #
 #######################################
-sub papers {
-    my $self = shift;
-    my %data;
-    my $description = 'Papers by the person';
-    my $publication = $self->publication_hr;
-    my $data_pack = $publication->{'Paper'};
+sub publications {
+    my $self   = shift;
+    my $object = $self->object;
+    my $publication = $self->publication_data;
+    my $data        = $publication->{'Paper'};
     
-    $data{'data'} = $data_pack;
-    $data{'description'} = $description;
-    
-    return \%data;
-    
+    return { description => 'Publications by this person',
+	     data        => $data };    
 }
 
 
 sub meeting_abstracts {
     my $self = shift;
-    my %data;
-    my $description = 'Meeting presentations by the person';
-    my $publication_hg = $self->publication_hr;
-    my $data_pack = $publication_hg->{'Meeting_abstact'};
-    
-    $data{'data'} = $data_pack;
-    $data{'description'} = $description;
-    
-    return \%data;
-}
-sub papers_old {
-    
-    my $self = shift;
     my $object = $self->object;
-    my %data;
-    my $desc = 'notes';
-    my %data_pack;
+
+    my $publication = $self->publication_data;
+    my $data        = $publication->{'Meeting_abstract'};
     
-    #### data pull and packaging
-    
-    my @papers = $object->Paper;
-    
-    foreach my $paper (@papers) {
-	
-	
-	my $paper_id = $paper;
-	my @authors = $paper->Author;
-	my $brief_citation = $paper->Brief_citation;
-	my $type = 'Paper';
-	
-	
-	my $publication_date = $paper->Publication_date; 
-	my ($publication_year, $disc) = split /\-/,$publication_date;
-	
-	my $meeting_abstract;
-	$meeting_abstract = $paper->Meeting_abstract;
-	if ($meeting_abstract) {
-	    
-	    $type = 'Meeting_abstact';
-	}
-	
-	my %publication_info = (
-	    'label' => "$brief_citation",
-	    'class' => 'Paper',
-	    'id' => "$paper_id"
-	    );
-	
-	if ($data_pack{$type}{$publication_year}) {
-	    
-	    my $pub_ar = $data_pack{$type}{$publication_year};
-	    push @$pub_ar, \%publication_info;
-	}
-	else {
-	    
-	    $data_pack{$type}{$publication_year} = [\%publication_info];
-	}
-	
-    }
-    
-    ####
-    
-    $data{'data'} = \%data_pack;
-    $data{'description'} = $desc;
-    return \%data;
+    return { description => 'Publications by this person',
+	     data        => $data };    
 }
 
 
@@ -1415,52 +1330,53 @@ sub papers_old {
 # Provided for external API users; not displayed on Person Summary
 #
 #######################################
-sub first_name {
-    my $self = shift;
-    my $object     = $self->object;
-    my $first_name = $object->First_name;    
-    my $data = { description => 'first name of the person',
-		 data        => "$first_name" || undef };
-    return $data;
-}
-
-sub last_name {
-    my $self = shift;
-    my $object = $self->object;
-    my $last_name = $object->Last_name;    
-    my $data = { description => 'last name of the person',
-		 data        => "$last_name" || undef };
-    return $data;
-}
-
-sub standard_name {
-    my $self = shift;
-    my $object = $self->object;
-    my $standard_name = $object->Standard_name;    
-    my $data = { description => '"standard" name of the person',
-		 data        => "$standard_name" || undef };
-    return $data;
-}    
-
-sub full_name {
-    my $self = shift;
-    my $object    = $self->object;
-    my $full_name = $object->Full_name;    
-    my $data = { description => 'full name of the person',
-		 data        => "$full_name" || undef };
-    return $data;
-}
-
-# Probably don't need to be packed, just displayed as strings
-sub aka {
-    my $self = shift;
-    my $object = $self->object;
-    my @aka = $object->Also_known_as;    
-    @aka = map { $self->_pack_obj($_) } @aka;
-    my $data = { description => 'aliases of the person',
-		 data        => \@aka || undef };
-    return $data;
-}
+# Can probably deprecate all of these methods.
+#sub first_name {
+#    my $self = shift;
+#    my $object     = $self->object;
+#    my $first_name = $object->First_name;    
+#    my $data = { description => 'first name of the person',
+#		 data        => "$first_name" || undef };
+#    return $data;
+#}
+#
+#sub last_name {
+#    my $self = shift;
+#    my $object = $self->object;
+#    my $last_name = $object->Last_name;    
+#    my $data = { description => 'last name of the person',
+#		 data        => "$last_name" || undef };
+#    return $data;
+#}
+#
+#sub standard_name {
+#    my $self = shift;
+#    my $object = $self->object;
+#    my $standard_name = $object->Standard_name;    
+#    my $data = { description => '"standard" name of the person',
+#		 data        => "$standard_name" || undef };
+#    return $data;
+#}    
+#
+#sub full_name {
+#    my $self = shift;
+#    my $object    = $self->object;
+#    my $full_name = $object->Full_name;    
+#    my $data = { description => 'full name of the person',
+#		 data        => "$full_name" || undef };
+#    return $data;
+#}
+#
+## Probably don't need to be packed, just displayed as strings
+#sub aka {
+#    my $self = shift;
+#    my $object = $self->object;
+#    my @aka = $object->Also_known_as;    
+#    @aka = map { $self->_pack_obj($_) } @aka;
+#    my $data = { description => 'aliases of the person',
+#		 data        => \@aka || undef };
+#    return $data;
+#}
 
 
 
@@ -1475,10 +1391,9 @@ sub _get_lineage_data {
     my $self   = shift;
     my $tag    = shift;
     my $object = $self->object;
-    my @data_pack;
     
     my @relationship = $object->$tag;
-    
+    my @data;
     foreach my $relation (@relationship) {	
 	my $name = $relation->Standard_name;
 	my ($level, $start, $end) = $relation->right->row;
@@ -1492,7 +1407,7 @@ sub _get_lineage_data {
 	
 	my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
 	
-	push @data_pack, {
+	push @data, {
 	    'name'       => $self->_pack_obj($relation,$name),
 	    'level'      => "$level",
 	    'start_date' => "$start",
@@ -1500,7 +1415,7 @@ sub _get_lineage_data {
 	    'duration'   => "$duration"
 	};
     }	
-    return \@data_pack;
+    return @data ? \@data : undef;
 }
 
 
