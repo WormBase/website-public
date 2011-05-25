@@ -225,7 +225,9 @@ ul.nav-bar li {
   position:relative;
 }
 
-ul.nav-bar li>a{
+
+/* ul.nav-bar li>a{ */
+ul.nav-bar li a{
   float:left;
   padding:0.4em 2.8em 0 1.9em;
   margin:0;
@@ -254,7 +256,9 @@ ul.nav-bar li span.ui-icon {
   visibility:hidden;
 }
 
-ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{
+/*
+ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{ */
+ul.nav-bar li a.hover, ul.nav-bar li a.selected, ul.nav-bar span.status-bar li a:hover,  ul.nav-bar span.status-bar li>a.selected{
   color:black;
   border-bottom:5px solid #CDCDCD;
 }
@@ -291,6 +295,7 @@ ul.nav-bar ul.dropdown {
   list-style-type: none;
 }
 
+/* Is this all merge cruft - TH? */
 #login-box ul.dropdown {
   width:auto;
   left:auto;
@@ -348,6 +353,8 @@ span.holder {
   background: #E9EEF2 !important;
   width: 21.5em !important;
 }
+/* login.* : Merge cruft up to other comment? */
+
 
 ul.nav-bar ul.dropdown li {
   padding:0.5em 0;
@@ -668,7 +675,8 @@ padding:1.4em;
 }
 
 
-#footer ul, #footer li {
+/*#footer ul, #footer li { */
+#footer ul, li {
     list-style:none;
     margin-left:0;
     padding-left:0;
@@ -1000,7 +1008,9 @@ div.field .field .field-content {
 /* Special field elements */
 /* Google Map */
 div#google-map { 
-    position:absolute;
+    position:relative;
+    height: auto;
+    overflow:hidden;
 /*     right:140px; */
 /*     top:50px; */
 }
