@@ -8,13 +8,20 @@ CREATE TABLE users (
             id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
             username      char(255),
             password      char(255),
-            email_address char(255),
             first_name    char(100),
             last_name     char(100),
             gtalk_key	  text,
             active        int(11),
             wbid          char(255),
             wb_link_confirm     BOOLEAN
+);
+
+DROP TABLE IF EXISTS email;
+CREATE TABLE email(
+            user_id INTEGER,
+            email char(255),
+            validated   BOOLEAN,
+            PRIMARY KEY (user_id, email)
 );
 
 DROP TABLE IF EXISTS roles;

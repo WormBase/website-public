@@ -33,37 +33,57 @@ sub register :Path("/register") {
 
 sub confirm :Path("/confirm") {
      my ( $self, $c ) = @_;
-     
      $c->stash->{'template'}='me.tt2';
      my $user=$c->model('Schema::User')->find($c->req->params->{u});
-     
-     if($user && !$user->active) {
+     my $wb = $c->req->params->{wb};
+     my @emails = $user->email_address;
 
-	my $valid = Crypt::SaltedHash->validate("{SSHA}".$c->req->params->{code}, $user->email_address."_".$user->username);
-	if($valid) {
-	  $c->log->debug("digest validated for user",$user->id);
-	  my @users = $c->model('Schema::User')->search({email_address=>$user->email_address});
-	  foreach (@users){
-	       
- 	      next if( $_->active eq 0);
-	      $c->log->debug("user registered email before, update the account...");
-	      $_->set_columns({"password"=>$user->password,"username"=>$user->username});
-	      $user->delete();
-	      $user=$_;
-	      last;
-	  }
-	  
-	  $user->active(1);
-	  if($user->email_address && $user->email_address =~ /\@wormbase\.org/) {
-		my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-		$c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
-	  }
-	  $user->update();
-	  $c->stash->{notify}="Your account is now activated, please login!";
-	  return 1;
-	}
+    if($wb) {
+      my $wb_valid;
+      foreach my $email (@emails) {
+#           $wb_valid = Crypt::SaltedHash->validate("{SSHA}".$wb, $email."_".$user->wbid) 
+          $wb_valid = Crypt::SaltedHash->validate("{SSHA}".$wb, $email->email."_".$user->wbid) unless $wb_valid;
+      }
+      if($wb_valid){
+        $user->wb_link_confirm(1);
+        $user->update();
+      }
     }
-    
+
+#      if($user && !$user->active) { 
+      my $valid;
+      foreach my $email (@emails) {
+          if(Crypt::SaltedHash->validate("{SSHA}".$c->req->params->{code}, $email->email."_".$user->username)) {
+            $email->validated(1);
+            $email->update();
+            $valid = 1;
+          }
+      }
+      if($valid) {
+#         $c->log->debug("digest validated for user",$user->id);
+#         my @users = $c->model('Schema::User')->search({email_address=>$user->email_address});
+#         foreach (@users){
+#             
+#             next if( $_->active eq 0);
+#             $c->log->debug("user registered email before, update the account...");
+#             $_->set_columns({"password"=>$user->password,"username"=>$user->username});
+#             $user->delete();
+#             $user=$_;
+#             last;
+#         }
+        
+        $user->active(1);
+#         if($user->email_address && $user->email_address =~ /\@wormbase\.org/) {
+#           my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
+#           $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+#         }
+        $user->update();
+
+        $c->stash->{notify}="Your account is now activated, please login!";
+        return 1;
+      }
+#     }
+   
     $c->stash->{notify}="This link is not valid or has already expired!";
 }
  
@@ -98,25 +118,40 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my $email     = $c->req->body_parameters->{email};
      my $password = $c->req->body_parameters->{password}; 
 
-     if (   $email   &&  $password  )
-     {
-	    my $rs = $c->model('Schema::User')->search({ email_address => $email,active=>1 ,password => { '!=', undef }});
-	  
+     if (   $email   &&  $password  ) {
+        my $rs = $c->model('Schema::User')->search({active=>1, email=>$email, validated=>1, password => { '!=', undef }},
+                {   select => [ 
+                      'id',
+                      'password', 
+                      'username',
+                    ],
+                    as => [ qw/
+                      id
+                      password
+                      username
+                    /], 
+                    join=>'email_address'
+                });
+
             if ( $c->authenticate( {
                                      password => $password,
 				    'dbix_class' => { resultset => $rs }
 				  } ) ) {
 		
-                $c->log->debug('Username login was successful.'. $c->user->get("firstname"));
-		$self->reload($c);
-#  		$c->res->redirect($c->req->params->{continue});
+                $c->log->debug('Username login was successful. '. $c->user->get("username") . $c->user->get("password"));
+
+                $self->reload($c);
+                if($c->user_exists()){
+                $c->log->debug("user exists");
+
+                }
+#      		$c->res->redirect($c->req->params->{continue});
             } else {
-		$c->log->debug('Login incorrect.'.$email);
+                $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
             }
-     }
-     else {
-            # invalid form input
+     } else {
+        # invalid form input
 	    $c->stash->{'error_notice'}='Invalid username or password.';
      }
 }
@@ -127,21 +162,23 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 #      $c->user_session->{redirect_after_login} ||= $param->{'continue'};
 #      $c->stash->{'template'}='auth/openid.tt2';
 
+
+     # Twitter has been removed from the options in the UI
      if(defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
-	  my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
-				    consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
-				    consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",
+        my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
+                      consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
+                      consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",
 
-	  );
-	  my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
+        );
+        my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
 
-	  $c->response->cookies->{oauth} = {
-	      value => {
-		  token => $nt->request_token,
-		  token_secret => $nt->request_token_secret,
-	      },
-	  };
-	  $c->response->redirect($url);
+        $c->response->cookies->{oauth} = {
+            value => {
+            token => $nt->request_token,
+            token_secret => $nt->request_token_secret,
+            },
+        };
+        $c->response->redirect($url);
 
     } else {
 	# eval necessary because LWPx::ParanoidAgent
@@ -154,7 +191,12 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 	    my $email=$param->{'openid.ext1.value.email'};
 	    $c->stash->{'status_msg'}='OpenID login was successful.';
 	    $self->auth_local($c,$c->user->url,$email,$param->{'openid.ext1.value.firstname'}, $param->{'openid.ext1.value.lastname'} );
-	  
+#         $c->stash->{email} = $email;
+#         $c->stash->{full_name} = $param->{'openid.ext1.value.firstname'} . " " . $param->{'openid.ext1.value.lastname'};
+#         $c->stash->{openid} = $c->user->url;
+#     $c->stash->{noboiler} = 0;
+#         $c->stash->{template}='auth/register.tt2';
+#         $c->forward('WormBase::Web::View::TT') ;
 	  }
 	  else {
 	    $c->stash->{'error_notice'}='Failure during OpenID login';
@@ -195,49 +237,52 @@ sub auth_local {
       my ($openid,$user);
       $openid =  $c->model('Schema::OpenID')->find_or_create({ openid_url => $id });
       unless ($openid->user_id) {
-	my $username ;
-	if($first_name) {
-	    $username = $first_name  ;
-	} elsif($last_name) {
-	    $username = $last_name  ;
-	} else {
-	    $username = $id;
-	}
-	my @users=$c->model('Schema::User')->search({email_address=>$email});
-	
-	foreach (@users){
- 	      next if( $_->active eq 0);
-	      $user=$_; 
-	      last;
-	}
-	if($email && $user) {
-		$username = $user->username if($user->username);
-		$user->set_columns({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1});
-		$user->update();
-	}else{
-		$user=$c->model('Schema::User')->find_or_create({username=>$username, email_address=>$email, first_name=>$first_name, last_name=>$last_name, active=>1}) ;
-	}
-	#assing curator role to wormbase.org domain user
-	if($email && $email =~ /\@wormbase\.org/) {
-	  my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-	  $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
-	}
-	$openid->user_id($user->id);
-	$openid->update();
+        my $username ;
+        if($first_name) {
+            $username = $first_name  ;
+        } elsif($last_name) {
+            $username = $last_name  ;
+        } else {
+            $username = $id;
+        }
+          my @users = $c->model('Schema::Email')->search({email=>$email});
+          @users = map { $_->user } @users;
+    # 	my @users=$c->model('Schema::User')->search({email_address=>$email});
+        
+        foreach (@users){
+              next if( $_->active eq 0);
+              $user=$_; 
+              last;
+        }
+        if($email && $user) {
+            $username = $user->username if($user->username);
+            $user->set_columns({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1});
+            $user->update();
+        }else{
+            $user=$c->model('Schema::User')->find_or_create({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1}) ;
+            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id}) ;
+
+        }
+        #assing curator role to wormbase.org domain user
+        if($email && $email =~ /\@wormbase\.org/) {
+          my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
+          $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+        }
+        $openid->user_id($user->id);
+        $openid->update();
       }
     
       # Re-authenticate against local DBIx store
       $c->config->{user_session}->{migrate}=1;
       if ( $c->authenticate({ id=>$openid->user_id }, 'members') ) {
         $c->stash->{'status_msg'}='Local Login was also successful.';
-	 $c->log->debug('Local Login was also successful.');
-	$self->reload($c) ;
+        $c->log->debug('Local Login was also successful.');
+        $self->reload($c) ;
 #   	$c->res->redirect($c->user_session->{redirect_after_login});
       }
       else {
-	 $c->log->debug('Local login failed');
+        $c->log->debug('Local login failed');
         $c->stash->{'error_notice'}='Local login failed.';
-       
       }
 }
 
@@ -259,7 +304,8 @@ sub logout :Path("/logout") {
     $c->logout;
     $c->stash->{noboiler} = 1;  
     $c->stash->{'template'}='auth/login.tt2';
-    $self->reload($c,1) ;
+    $c->response->redirect($c->uri_for('/'));
+#     $self->reload($c,1) ;
 }
 
 

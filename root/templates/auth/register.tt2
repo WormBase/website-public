@@ -20,7 +20,7 @@
         <span id="fade" class="holder">password</span>
         <input id="password" type="password" name="password" size="22" value="[% password %]"/>
     </div>
-              <input id="create-account" type="submit" style="position:absolute;bottom:1em;left:1em;font-weight:bold;width:7em;" class="register-button ui-corner-large-all" value="sign up ›"/>  
+              <input id="create-account" type="submit" style="position:absolute;bottom:1em;left:1em;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/>  
 
 <!-- <input id="create-account" type="submit" style="visibility:hidden;height:0;padding:0;margin:0;" class="register-button"/>   -->
 </div>
@@ -38,7 +38,7 @@
 
 
               <div id="default-login" style="overflow:none">
-             <input id="create-account" type="submit" style="visibility:hidden;font-weight:bold;width:7em;" class="register-button ui-corner-large-all" value="sign up ›"/> 
+             <input id="create-account" type="submit" style="visibility:hidden;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/> 
              <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
              </div>
 
@@ -67,13 +67,15 @@ hideTextOnFocus("#password");
         <span id="fade">full name</span> <br />
         <input id="name" type="text" name="name" size="30" value="[% full_name %]"/>
     </div>
+    <div class="login-holder" style="display:none">
+        <span id="fade">confirmation email</span><br />
+        <input id="wbemail" type="text" name="wbemail" size="30" value="" disabled=1/>
+    </div>
     <div class="login-holder">
         <span id="fade">email</span><br />
         <input id="email" type="text" name="email" size="30" value="[% email %]"/>
     </div>
-    <div id="email2holder" class="login-holder" style="display:none;padding-left:1em;">
-        <span id="fade">additional email</span><br />
-        <input id="email2" type="text" name="email2" size="28" value="[% email %]"/>
+    <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;display:none;">
     </div>
     <div class="login-holder">
         <span id="fade">password</span><br />
@@ -131,15 +133,18 @@ select yourself to link your wormbase information <br /><br />
           dataType: 'json',
           success: function(data){
                 $jq("input#name").attr("value", data.fullname).attr("disabled", 1);
+                var email = "" + data.email;
                 if(data.email){
-                  if(( $jq("input#email").attr("disabled") != 1) && ($jq("input#email").attr("value") != data.email) && ($jq("input#email").attr("value") != "")){
-                    $jq("#email2holder").show();
+                  var re = new RegExp($jq("input#email").attr("value"),"gi");
+                  if (((email.match(re))) || !($jq("input#email").attr("value"))){
+                    $jq("#email").attr("disabled", 1).parent().hide(); 
                   }
-                  $jq("input#email").attr("value", data.email).attr("disabled", 1);
-                }else if( $jq("input#email").attr("disabled") == 1){
-                  $jq("input#email").attr("value", "[% email %]").attr("disabled", 0);
-                  $jq("#email2holder").hide();
+                  $jq("input#wbemail").attr("value", email).parent().show();
+                }else{
+                  $jq("input#wbemail").attr("value", "").parent().hide();
+                  $jq("#email").attr("disabled", 0).parent().show(); 
                 }
+                $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
                 $jq("input#wbid").attr("value", data.wbid);
             },
           error: function(request,status,error) {
@@ -155,10 +160,11 @@ select yourself to link your wormbase information <br /><br />
 
   function resetFields(){
     $jq(".ui-state-highlight").removeClass("ui-state-highlight");
-    $jq("#email2holder").hide();
-    $jq("input#email").attr("value", "[% email %]").attr("disabled", 0);
+    $jq("input#wbemail").attr("value", "").parent().hide();
+    $jq("input#email").attr("value", "[% email %]").attr("disabled", 0).parent().show();
     $jq("input#name").attr("value", "[% full_name %]").attr("disabled", 0);
     $jq("input#wbid").attr("value", "");
+    $jq(".register-notice").hide();
   }
 </script>
 [% END %]

@@ -10,10 +10,10 @@ String.prototype.trim = function () {
 }
  
 
-function validate_fields(email,username, password, confirm_password){
-	if( email.val() ==""){
+function validate_fields(email,username, password, confirm_password, wbemail){
+	if( (email.val() =="") && (wbemail.val() == "")){
 		      email.focus().addClass("ui-state-error");return false;
-	} else if( validate_email(email.val(),"Not a valid email address!")==false) {
+	} else if( email.val() && (validate_email(email.val(),"Not a valid email address!")==false)) {
 		      email.focus().addClass("ui-state-error");return false;
 	} else if( username.val() =="") {
 		      username.focus().addClass("ui-state-error"); return false;
