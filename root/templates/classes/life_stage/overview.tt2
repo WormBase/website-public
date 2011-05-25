@@ -3,72 +3,76 @@
 
 <h2>[% fields.name.data.name %]</h2>
             
-[% WRAPPER highlight_box %]
+[% 
 
-        [% taxonomy %]
+WRAPPER highlight_box;
 
-        [% WRAPPER $field_block title="Life Stage"-%] 
-              [% tag2link(fields.name.data,fields.name.data.name) %]
-        [% END %]
+    taxonomy;
 
-[% END %]
+    WRAPPER $field_block title="Life Stage"; 
+          tag2link(fields.name.data,fields.name.data.name);
+    END;
 
-[% WRAPPER $field_block title="Definition" key="definition" %]
-      [% fields.definition.data %]
-[% END %]
+END;
 
-[% WRAPPER $field_block title="Other names" key="other_names" %]
-      [% fields.other_names.data.join(' ') FILTER lower %]
-[% END %]
+WRAPPER $field_block title="Definition" key="definition";
+     fields.definition.data;
+END;
+
+WRAPPER $field_block title="Other names" key="other_names";
+     fields.other_names.data.join(' ') FILTER lower;
+END;
 
 
-[% IF (fields.followed_by_life_stage.data.size > 0)
+IF (fields.followed_by_life_stage.data.size > 0)
        ||
-      (fields.preceded_by_life_stage.data.size > 0) %]
+      (fields.preceded_by_life_stage.data.size > 0);
 
-       [% WRAPPER $field_block title="" %]
+       WRAPPER $field_block title="";
 
-       <!-- Developmental timing information -->
-       <div class="inline-columns">
-        [% IF fields.preceded_by_life_stage.data.size > 0 %]
-           <div>
-              <b>Preceded By</b><br />
-              [% FOREACH item IN fields.preceded_by_life_stage.data %]
-                 [% tag2link(item) %]<br />
-              [% END %]
-           </div>
-           <div>
-               <img src="/img/arrows/right.gif">
-           </div>
-	  [% END %]
-       <div>
-            <h2>[% object.name.data.id %]</h2>
-       </div>
-        [% IF fields.followed_by_life_stage.data.size > 0 %]
-            <div>
-                 <img src="/img/arrows/right.gif">
-            </div>  
-            <div>
-                <b>Followed by</b><br />
-                 [% FOREACH item IN fields.followed_by_life_stage.data %]
-                   [% tag2link(item) %]<br />
-                 [% END %] 
-           </div>
-         [% END %]
-     </div>
-    [% END %]
-[% END %]
+       '<!-- Developmental timing information -->';
+       '<div class="inline-columns">';
+          IF fields.preceded_by_life_stage.data.size > 0;
+            '<div>';
+              '<b>Preceded By</b><br />';
+                FOREACH item IN fields.preceded_by_life_stage.data;
+                   tag2link(item) _ '<br />';
+                END;
+           '</div>';
+           '<div>';
+               '<img src="/img/arrows/right.gif">';
+           '</div>';
+	  END;
+       '<div>';
+            '<h2>' _ object.name.data.id _ '</h2>';
+      '</div>';
+       IF fields.followed_by_life_stage.data.size > 0;
+            '<div>';
+                 '<img src="/img/arrows/right.gif">';
+            '</div> ';
+            '<div>';
+                '<b>Followed by</b><br />';
+                FOREACH item IN fields.followed_by_life_stage.data;
+                    tag2link(item) _ '<br />';
+                END; 
+           '</div>';
+         END;
+     '</div>';
+    END;
+END;
 
-[% WRAPPER $field_block title="Contained in" key="contained_in_life_stage" %]
-      [% FOREACH item IN fields.contained_in_life_stage.data %]
-        [% tag2link(item) %]<br />			 
-      [% END %]
-[% END %]
+WRAPPER $field_block title="Contained in" key="contained_in_life_stage";
+      FOREACH item IN fields.contained_in_life_stage.data;
+        tag2link(item) _ '<br />'; 
+      END;
+END;
 
-[% WRAPPER $field_block title="Substages" key="substages" %]
-   [% FOREACH item IN fields.substages.data %]
-     [% tag2link(item) %]<br />			 
-   [% END %]		  
-[% END %]
+WRAPPER $field_block title="Substages" key="substages";
+   FOREACH item IN fields.substages.data;
+     tag2link(item) _ '<br />';
+   END;
+END;
 
-[% remarks(no_toggle=1) %]
+remarks(no_toggle=1);
+
+%]
