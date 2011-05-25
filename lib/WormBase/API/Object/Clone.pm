@@ -91,7 +91,7 @@ B<Response example>
 
 sub type {
     my ($self) = @_;
-
+    
     my $type = $self ~~ 'Type';
     return {
 	description => 'The type of this clone',
@@ -152,18 +152,18 @@ B<Response example>
 
 sub sequences {
     my ($self) = @_;
-
+    
     # this part looks suspiciously like it overlaps with _build__segments below...
     my %sequences;
     foreach my $seq (@{$self ~~ '@Sequence'}) {
         my $chrom = $self->_pack_obj($seq->Interpolated_map_position);
         my $map   = $seq->Interpolated_map_position(2);
-
+	
         my ($ref, $start, $end);
         if (my ($coords) = $self->_seq2coords($seq)) {
             ($ref, $start, $end) = @$coords;
         }
-
+	
         $sequences{$seq} = $self->_pack_obj(
             $seq, undef, # $seq and resolve label within _pack_obj
             start => $start,
@@ -171,9 +171,9 @@ sub sequences {
             ref   => $ref,
             chrom => $chrom,
             map   => $map && "$map",
-        );
+	    );
     }
-
+    
     return {
         description => 'sequences associated with this clone',
         data		=> %sequences ? \%sequences : undef,
@@ -182,11 +182,11 @@ sub sequences {
 
 sub _seq2coords {
     my ($self, @seqs) = @_;
-
+    
     return map {[$_->abs_ref, $_->abs_start, $_->abs_stop]}
-           map {my $db = $self->gff_dsn($self->_parsed_species($_));
-                $db->segment($_->class => $_)}
-               @seqs;
+    map {my $db = $self->gff_dsn($self->_parsed_species($_));
+	 $db->segment($_->class => $_)}
+    @seqs;
 }
 
 =head3 lengths
@@ -303,11 +303,11 @@ B<Response example>
 
 sub maps {
     my ($self) = @_;
-
+    
     # get Maps from object itself, otherwise try for Maps from Pmap
     my $map = $self ~~ '@Map';
     $map = eval {[$self->object->Pmap->Map] } unless @$map;
-
+    
     return {
 	description => 'maps assigned to this clone',
 	data	    => $map && @$map ? $self->_pack_objects($map) : undef,
@@ -750,15 +750,19 @@ B<Response example>
 
 =cut
 
-sub references {
-    my ($self) = @_;
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
 
-    my $data = $self->_pack_objects($self ~~ '@Reference');
-    return {
-	description => 'references that cite this clone',
-	data	    => %$data ? $data : undef,
-    };
-}
+#sub references {
+#    my ($self) = @_;
+#    die;
+#    my $data = $self->_pack_objects($self ~~ '@Reference');
+#    return {
+#	description => 'references that cite this clone',
+#	data	    => %$data ? $data : undef,
+#    };
+#}
 
 =head3 physical_picture
 
