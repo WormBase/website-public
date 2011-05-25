@@ -547,8 +547,71 @@ has 'central_dogma' => (
     lazy_build => 1,
 );
 
-# the following is a candidate for retrofitting with ModelMap
+
 sub _build_central_dogma {
+    my $self   = shift;
+    my $object = $self->object;
+    my $class  = $object->class;
+   
+    # Need to get the root element, a gene.
+    my $gene;
+    if ($class eq 'Gene') {
+	$gene = $object;
+    } elsif ($class eq 'CDS') {
+	$gene = $object->Gene;
+    } elsif ($class eq 'Protein') {
+	my %seen;
+	my @cds = grep { $_->Method ne 'history' } $object->Corresponding_CDS;
+	$gene = $cds[0]->Gene;
+    } else {
+    }
+
+    my $gff = $self->gff_dsn;
+        
+    my %data;    
+    $data{gene} = $self->_pack_obj($gene);
+
+    foreach my $cds ($gene->Corresponding_CDS) {
+	my $protein = $cds->Corresponding_protein;
+
+	my $transcript = $cds->Corresponding_transcript;
+	
+	# Fetch the intron/exon sequences from GFF
+#	my ($seq_obj) = sort {$b->length<=>$a->length}
+#	grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $transcript);
+	
+	my ($seq_obj) = $gff->fetch_group(Transcript => $transcript);
+	
+#	$self->log->debug("seq obj: " . $seq_obj);
+	$seq_obj->ref($seq_obj); # local coordinates
+	# Is the genefinder specific formatting cruft?
+	my %seenit;
+	my @features =
+	    sort {$a->start <=> $b->start}
+	grep { $_->info eq $cds && !$seenit{$_->start}++ }
+	$seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
+	my @exons;
+	foreach (@features) {
+	    push @exons, { start => $_->start,
+			   stop  => $_->stop,
+			   seq   => $_->dna };
+	}
+	
+	push @{$data{gene_models}},{ cds     => $self->_pack_obj($cds),
+				     exons   => \@exons,
+				     protein => $self->_pack_obj($protein)
+	};
+    }
+    
+    return { description => 'the central dogma from the perspective of this protein',
+	     data        => \%data };
+}
+
+
+
+
+# the following is a candidate for retrofitting with ModelMap
+sub _build_central_dogma2 {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
@@ -581,11 +644,11 @@ sub _build_central_dogma {
 	    };
 	}
     }
-
+    
     $data->{gene} = $self->_pack_obj($gene);
 
     return {
-        description => "teh central dogma of the current object",
+        description => "the central dogma of the current object",
         data        => $data,
     };
 }
