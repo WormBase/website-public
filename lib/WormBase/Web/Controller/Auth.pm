@@ -107,8 +107,7 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
       $c->stash->{'template'}='auth/popup.tt2';
       $c->stash->{'provider'}= $c->req->params;
     }else{
-	$c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url});
-
+      $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url});
     }
     
 }
@@ -145,7 +144,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                 $c->log->debug("user exists");
 
                 }
-#      		$c->res->redirect($c->req->params->{continue});
+     		$c->res->redirect($c->req->params->{continue});
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -154,6 +153,11 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
         # invalid form input
 	    $c->stash->{'error_notice'}='Invalid username or password.';
      }
+}
+
+sub auth_wbid :Path('/auth/wbid') {
+     my ( $self, $c) = @_;
+  $c->stash->{'template'}='auth/wbid.tt2';
 }
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
@@ -191,14 +195,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 	    my $email=$param->{'openid.ext1.value.email'};
 	    $c->stash->{'status_msg'}='OpenID login was successful.';
 	    $self->auth_local($c,$c->user->url,$email,$param->{'openid.ext1.value.firstname'}, $param->{'openid.ext1.value.lastname'} );
-#         $c->stash->{email} = $email;
-#         $c->stash->{full_name} = $param->{'openid.ext1.value.firstname'} . " " . $param->{'openid.ext1.value.lastname'};
-#         $c->stash->{openid} = $c->user->url;
-#     $c->stash->{noboiler} = 0;
-#         $c->stash->{template}='auth/register.tt2';
-#         $c->forward('WormBase::Web::View::TT') ;
-	  }
-	  else {
+	  } else {
 	    $c->stash->{'error_notice'}='Failure during OpenID login';
 	  }
       #  };
@@ -239,16 +236,16 @@ sub auth_local {
       unless ($openid->user_id) {
         my $username ;
         if($first_name) {
-            $username = $first_name  ;
+            $username = $first_name . " " . $last_name ;
         } elsif($last_name) {
             $username = $last_name  ;
         } else {
             $username = $id;
         }
-          my @users = $c->model('Schema::Email')->search({email=>$email});
-          @users = map { $_->user } @users;
+        my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
+        @users = map { $_->user } @users;
     # 	my @users=$c->model('Schema::User')->search({email_address=>$email});
-        
+
         foreach (@users){
               next if( $_->active eq 0);
               $user=$_; 
@@ -256,12 +253,14 @@ sub auth_local {
         }
         if($email && $user) {
             $username = $user->username if($user->username);
-            $user->set_columns({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1});
+            $c->log->debug("adding openid to existing user $username");
+            $user->set_columns({username=>$username, active=>1});
             $user->update();
         }else{
-            $user=$c->model('Schema::User')->find_or_create({username=>$username, first_name=>$first_name, last_name=>$last_name, active=>1}) ;
-            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id}) ;
-
+            $c->stash->{prompt_wbid} = 1;
+            $c->log->debug("creating new user $username, $email");
+            $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
+            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id});
         }
         #assing curator role to wormbase.org domain user
         if($email && $email =~ /\@wormbase\.org/) {
@@ -304,8 +303,8 @@ sub logout :Path("/logout") {
     $c->logout;
     $c->stash->{noboiler} = 1;  
     $c->stash->{'template'}='auth/login.tt2';
-    $c->response->redirect($c->uri_for('/'));
-#     $self->reload($c,1) ;
+#     $c->response->redirect($c->uri_for('/'));
+    $self->reload($c,1) ;
 }
 
 
@@ -337,19 +336,23 @@ sub profile :Path("/profile") {
  
 
 sub profile_update :Path("/profile_update") {
-     my ( $self, $c ) = @_;
-     $c->stash->{'template'}='me.tt2';
-     my $user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email_address},active =>1});
-     if($c->req->params->{email_address} && $user && $user->id ne $c->user->id){
-	$c->stash->{notify}="The email address has already been registered. Update Fail!";return 0 ;
-      }
-     foreach my $col (sort keys %{$c->req->params}){
-	# $c->log->debug("$col ok".$c->req->params->{$col});
-	 $c->user->$col($c->req->params->{$col});
-      }
-      $c->user->update();
-      $c->stash->{notify}='User Information Updated!';
-      
+  my ( $self, $c ) = @_;
+  $c->stash->{'template'}='me.tt2';
+  my $email = $c->req->params->{email_address};
+
+  if($email){
+    my @emails = $c->model('Schema::Email')->search({email=>$email, validated=>1});
+    foreach (@emails) {
+        $c->stash->{notify}="The email address has already been registered. Update Fail!";
+        return 0;         
+    }
+    $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->id});
+    $c->controller('REST')->rest_register_email($c, $email, $c->user->username, $c->user->id);
+    $c->stash->{notify}="An email has been sent to $email";
+  }
+  $c->user->username($c->req->params->{username}) if $c->req->params->{username};
+  $c->user->update();
+  $c->res->redirect($c->uri_for("me"));
 } 
 
 

@@ -1,0 +1,104 @@
+[% IF c.user_exists %]
+
+  [% IF c.user.wb_link_confirm %]
+    You are already linked to [% text2link('person', c.user.wbid, c.user.wbid) %]
+    [% STOP %]
+  [% END %]
+
+
+<h1 style="padding:1em;">Link your WormBase information</h1>
+<div style="float:left" class="detail-box ui-corner-all" >
+<h2>Is this you?</h2>
+select yourself to link your wormbase information <br /><br />
+<div id="person-search"></div>
+        <input id="email" type="text" name="email" size="0" style="display:none"/>
+        <input id="wbid" type="text" name="wbid" size="0" style="display:none"/>
+        <input id="confirm" type="text" name="confirm" size="0" style="display:none" value=""/>
+</div>
+
+<div style="float:left;margin:1em;">
+    <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;visibility:hidden;">
+    </div>
+    <input id="link-account" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
+    <br /><br /><span>None of these are you? <a href="[% c.user_session.redirect_after_login  || '/' %]">skip this step</a></span>
+</div>
+
+[% emails = [] %]
+[% FOREACH ea IN c.user.valid_emails %]
+    [% emails.push(ea.email) %]
+[% END %]
+[% uri_name = emails.join(' ') _ ' ' _ c.user.username | uri %]
+<script>
+  $jq("#person-search").load("[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1");
+
+  $jq(".results-person .result li a").live('click', function(){
+      $jq(".ui-state-highlight").removeClass("ui-state-highlight");
+      var wbid = $jq(this).attr("href").split('/').pop();
+
+      $jq.ajax({
+          type: "GET",
+          url: "/auth/info/" + wbid,
+          dataType: 'json',
+          success: function(data){
+                $jq("input#wbid").attr("value", data.wbid);
+                $jq("input#email").attr("value", data.email);
+                $jq("#link-account").attr("disabled", 0);
+                $jq("input#confirm").attr("value", "");
+                var emails = ["[% emails.join('", "') %]"];
+                if(data.email && data.status_ok){
+                  var e = "" + data.email;
+                  for(var i=0; i<emails.length; i++){
+                    var re = new RegExp(emails[i],"gi");
+                    if (e.match(re)){
+                      $jq(".register-notice").css("visibility", "hidden");
+                      $jq("input#confirm").attr("value", 1);
+                      return;
+                    }
+                  }
+                }else{
+                  $jq("#link-account").attr("disabled", 1);
+                }
+                $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").css("visibility", "visible");
+
+            },
+          error: function(request,status,error) {
+              alert(request + " " + status + " " + error );
+            }
+      });
+
+
+      $jq(this).parent().parent().addClass("ui-state-highlight");
+      return false;
+  });
+
+
+  $jq("#link-account").live('click',function() {
+    var wbid = $jq("input#wbid").val();
+    var email = $jq("input#email").val();
+    var confirm = $jq("input#confirm").val();
+    
+    $jq.ajax({
+          type: "POST",
+          url: "/rest/link_wbid",
+          data: {username:"[% c.user.username %]", confirm:confirm, wbemail:email, wbid:wbid, user_id:"[% c.user.id %]"},
+          success: function(data){
+            if(!(confirm)){ alert("an email has been sent to " + email);}
+            window.location.href="[% c.user_session.redirect_after_login  || '/' %]";
+            },
+          error: function(request,status,error) {
+              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
+                  return; 
+              alert(request + " " + status + " " + error );
+            }
+      });
+    return false;
+    });
+
+</script>
+[% ELSE %]
+Please login before using this feature
+
+<div class="ui-corner-all" style="width:16em;border:1px solid #CCC;margin:1em;">
+    [% PROCESS auth/login.tt2 %]
+</div>
+[% END %]

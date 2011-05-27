@@ -19,9 +19,8 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS email;
 CREATE TABLE email(
             user_id INTEGER,
-            email char(255),
-            validated   BOOLEAN,
-            PRIMARY KEY (user_id, email)
+            email char(255) PRIMARY KEY,
+            validated   BOOLEAN
 );
 
 DROP TABLE IF EXISTS roles;
