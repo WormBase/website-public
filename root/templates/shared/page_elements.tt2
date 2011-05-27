@@ -816,6 +816,85 @@ END;
 %]
 
 
+[% MACRO central_dogma BLOCK %]
+  
+  NOT DONE!
+  
+   <table border="1">
+      <tr><td colspan="4">Central Dogma</td></tr>
+
+      <tr>
+         <td rowspan="[% fields.central_dogma.data.gene_models.size + 1 %]">
+              [% tag2link(fields.central_dogma.data.gene) %]
+         </td>
+         <td>Transcript</td><td>Exons</td><td>Protein</td>
+      </tr>
+
+  	 [% FOREACH gene_model IN fields.central_dogma.data.gene_models %]
+      <tr>
+	 <td>
+	      [% tag2link(gene_model.cds) %]
+	 </td>
+
+         <td>
+	      <pre>
+	      [% FOREACH exon IN gene_model.exons;
+                   'exon' _ loop.count _ ': ' _ exon.start _ '..' _ exon.stop  _ '<br />';
+               END;
+	       %]
+	       </pre>
+         </td>
+	 
+	 <td>
+	      [% tag2link(gene_model.protein) %]
+	 </td>
+      </tr>
+	 [% END %]
+
+          </td>
+      </tr>
+</table>
+
+
+
+       <div class="inline-columns">
+          [% IF fields.central_dogma.data.gene %]
+           <div>
+              <b>Gene</b><br />
+              [%# FOREACH item IN fields.central_dogma.data.genes %]
+                 [% tag2link(gene) %]<br />
+              [%# END %]
+           </div>
+	  [% END %]
+
+          [% IF fields.central_dogma.data.transcripts.size > 0 %]
+            <div>
+                 <img src="/img/arrows/right.gif">
+            </div>  
+            <div>
+                <b>Transcripts</b><br />
+                 [% FOREACH item IN fields.central_dogma.data.transcripts %]
+                   [% tag2link(item) %]<br />
+                 [% END %] 
+           </div>
+         [% END %]
+
+          [% IF fields.central_dogma.data.cds.size > 0 %]
+            <div>
+                 <img src="/img/arrows/right.gif">
+            </div>  
+            <div>
+                <b>CDS</b><br />
+                 [% FOREACH item IN fields.central_dogma.data.cds %]
+                   [% tag2link(item) %]<br />
+                 [% END %] 
+           </div>
+         [% END %]
+
+     </div>
+
+[% END %]
+
 
 [% MACRO laboratory BLOCK ;
      # The Laboratory field
@@ -1083,9 +1162,10 @@ END;
    widgets = [];
    widgets.push({ title="Page Content" type="title"});
 
-   IF section == 'species' && is_class_index;
-      section = 'species_list';
-   END;
+# TH: Merge conflict. Not sure how to resolve.
+#   IF section == 'species' && is_class_index;
+#      section = 'species_list';
+#   END;
    # Get the default (configuration provided) list of widgets.
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
 
@@ -1174,7 +1254,9 @@ END;
           myhref = c.uri_for('/rest','widget','static',class,widget.name);
 
       # Species summary and index page widgets
-      ELSIF section == 'species' && is_class_index;
+      # TH: Merge conflict; Might need additional elsif clause to capture class index pages.
+      ELSIF section == 'species_list';
+#      ELSIF section == 'species' && is_class_index;
           myhref = c.uri_for('/rest','widget','species',this_object_id,widget.name);
       ELSE;
            myhref = c.uri_for('/rest','widget',class,   this_object_id,widget.name);
