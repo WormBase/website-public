@@ -88,7 +88,7 @@ sub run {
     my $sequence = $sequences->[0];
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
-    my $bestname = $self->bestname($sequence);
+    my $bestname = $self->common_name($sequence);  # Is this a sequence or a gene?
     my $gff_dsn= $self->gff_dsn;
     $gff_dsn->ace($sequence->db);
     $gff_dsn->reconnect();

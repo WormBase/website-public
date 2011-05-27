@@ -25,35 +25,35 @@ use Class::MOP;
 
     my $WB2ACE_MAP_DONE = 0;
     my %WB2ACE_MAP = ( # WB models -> Ace models (values are Ace tags/values)
-        class => { # HAS DEFAULT
-            Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
-            Person    => [qw(Person Author)],
-            Sequence  => [qw(Sequence CDS)],
-            Rnai      => 'RNAi',
-            Go_term   => 'GO_term',
-        },
-        common_name => {
-            Person       => 'Standard_name',
-            Gene         => [qw(Public_name CGC_name Molecular_name)],
-            # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
-            Feature      => ['Public_name', 'Other_name'],
-            Variation    => 'Public_name',
-            Phenotype    => 'Primary_name',
-            Gene_class   => 'Main_name',
-            Species      => 'Common_name',
-            Molecule     => [qw(Public_name Name)],
-            Anatomy_term => 'Term',
-            GO_term      => 'Term',
-        },
-        laboratory => {
-            Gene_class  => 'Designating_laboratory',
-            PCR_product => 'From_laboratory',
-            Sequence    => 'From_laboratory',
-            CDS         => 'From_laboratory',
-            Transgene   => 'Location',
-            Strain      => 'Location',
-            Antibody    => 'Location',
-        },
+		       class => { # HAS DEFAULT
+			   Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
+			   Person    => [qw(Person Author)],
+			   Sequence  => [qw(Sequence CDS)],
+			   Rnai      => 'RNAi',
+			   Go_term   => 'GO_term',
+		       },
+		       common_name => {
+			   Person       => 'Standard_name',
+			   Gene         => [qw(Public_name CGC_name Molecular_name)],
+			   # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
+			   Feature      => ['Public_name', 'Other_name'],
+			   Variation    => 'Public_name',
+			   Phenotype    => 'Primary_name',
+			   Gene_class   => 'Main_name',
+			   Species      => 'Common_name',
+			   Molecule     => [qw(Public_name Name)],
+			   Anatomy_term => 'Term',
+			   GO_term      => 'Term',
+		       },
+		       laboratory => {
+			   Gene_class  => 'Designating_laboratory',
+			   PCR_product => 'From_laboratory',
+			   Sequence    => 'From_laboratory',
+			   CDS         => 'From_laboratory',
+			   Transgene   => 'Location',
+			   Strain      => 'Location',
+			   Antibody    => 'Location',
+		       },			  
     );
 
     my $ACE2WB_MAP_DONE = 0;

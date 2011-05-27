@@ -754,16 +754,6 @@ B<Response example>
 # Supplied by Role; POD will automatically be inserted here.
 # << include references >>
 
-#sub references {
-#    my ($self) = @_;
-#    die;
-#    my $data = $self->_pack_objects($self ~~ '@Reference');
-#    return {
-#	description => 'references that cite this clone',
-#	data	    => %$data ? $data : undef,
-#    };
-#}
-
 =head3 physical_picture
 
 This method will return a data structure containing

@@ -43,7 +43,7 @@ http://wormbase.org/species/expr_pattern
 
 sub _build__common_name {
     my ($self) = @_;
-    my $bestname = $self->bestname($self ~~ 'Gene');
+    my $bestname = $self->common_name($self ~~ 'Gene');
 
     return "Expression pattern for $bestname" if $bestname;
     return $self->object->name;
