@@ -243,26 +243,27 @@ sub get_user_info_GET{
                     name  => $name,
                     }) or die "$!";
 
-
-
   my $message;
+  my $status_ok = 1;
   my @users = $c->model('Schema::User')->search({wbid=>$name, wb_link_confirm=>1});
   if(@users){
+    $status_ok = 0;
     $message = "This account has already been linked";
   }elsif($object->email->{data}){
-      my @email = @{$object->email->{data}};
-    my $email = $email[0];
-    $message = "An email will be sent to <a href='mailto:$email '>$email</a> upon registration to confirm your identity";
+    my $email = @{$object->email->{data}}[0];
+    $message = "An email will be sent to <a href='mailto:$email '>$email</a> to confirm your identity";
   }else{
+    $status_ok = 0;
     $message = "This account cannot be linked at this time";
   }
   $self->status_ok(
       $c,
       entity =>  {
           wbid => $name,
-          fullname => $object->full_name->{data} || $object->name->{data}->{label},
+          fullname => $object->name->{data}->{label},
           email => $object->email->{data},
           message => $message,
+          status_ok => $status_ok,
       },
   );
 
@@ -401,6 +402,31 @@ sub download_GET {
 #         $c->serve_static_file('root/test.html');
     $c->response->body($c->req->param("sequence"));
 }
+
+sub rest_link_wbid :Path('/rest/link_wbid') :Args(0) :ActionClass('REST') {}
+sub rest_link_wbid_POST {
+    my ( $self, $c) = @_;
+    my $wbemail = $c->req->params->{wbemail};
+    my $username = $c->req->params->{username};
+    my $user_id = $c->req->params->{user_id};
+    my $wbid = $c->req->params->{wbid};
+    my $confirm = $c->req->params->{confirm};
+
+    my @wbemails = split(/,/, $wbemail);
+    foreach my $wbe (@wbemails){
+      unless($confirm){
+        $c->user->wbid($wbid);
+        $c->user->update();
+        $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id});
+        $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
+      }else{
+        $c->user->wbid($wbid);
+        $c->user->wb_link_confirm(1);
+        $c->user->update();
+        $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
+      }
+    }
+}
  
 sub rest_register :Path('/rest/register') :Args(0) :ActionClass('REST') {}
 
@@ -416,9 +442,14 @@ sub rest_register_POST {
       my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
       $csh->add($password);
       my $hash_password= $csh->generate();
-      my @users = $c->model('Schema::Email')->search({email=>$email});
-      @users = map { $_->user } @users;
-      push( @users, $c->model('Schema::User')->search({wbid=>$wbid}));
+
+      my @emails = $c->model('Schema::Email')->search({email=>$email, validated=>1});
+      foreach (@emails) {
+          $c->res->body(0);
+          return 0;         
+      }
+
+      my @users = $c->model('Schema::User')->search({wbid=>$wbid, wb_link_confirm=>1});
       foreach (@users){
         if($_->password && $_->active){
             $c->res->body(0);
@@ -428,14 +459,16 @@ sub rest_register_POST {
       my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
       my $user_id = $user->id;
 
-      my @emails = split(/,/, $email);
+      @emails = split(/,/, $email);
       foreach my $e (@emails){
+        $e =~ s/\s//g;
         $c->model('Schema::Email')->find_or_create({email=>$e, user_id=>$user_id}) ;
         $self->rest_register_email($c, $e, $username, $user_id);
       }
 
       my @wbemails = split(/,/, $wbemail);
       foreach my $wbe (@wbemails){
+        $wbe =~ s/\s//g;
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id}) ;
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
       }

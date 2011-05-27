@@ -3,9 +3,29 @@
 <form id="profile" action="[% c.uri_for('/profile_update') %]" method="post">
   <fieldset id="basicinfo-field">
     <legend>Basic Information</legend>
-        <dl><dt>Full name <input type="text" name="first_name" value ="[% c.user.first_name %]" /> <input type="text" name="last_name" value ="[% c.user.last_name %]" /> </dt></dl>            
-        <dl><dt>Display Name<input size="50" type="text" name="username" value ="[% c.user.username %]" />   </dt></dl>  
-	<dl><dt>Email <input type="text" name="email_address" value ="[% c.user.email_address %]" />   </dt></dl> 
+        <dl><dt>Full name <input size="50" type="text" name="username" value ="[% c.user.username %]" /> </dt></dl>            
+	<dl><dt>Emails: 
+        [% FOREACH email IN c.user.email_address %]
+          <dd>[% email.email %]          
+          [% UNLESS email.validated %]
+            <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
+          [% END %]   
+</dd>
+        [% END %]
+    <dd>Add an additional email address: <input type="text" name="email_address" /> 
+    </dd>  
+    </dt></dl> 
+
+    <dl><dt>WormBase person: 
+      [% IF c.user.wbid %]
+        [% text2link('person', c.user.wbid, c.user.wbid) %] 
+        [% UNLESS c.user.wb_link_confirm %]
+          <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
+        [% END %]
+      [% ELSE %]
+        <a href="[% c.uri_for('/auth/wbid') %]">none linked</a>
+      [% END %]
+    </dt></dl>
   <input type="submit" value="Update"/>
 </fieldset>
 </form>
