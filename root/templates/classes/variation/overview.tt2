@@ -4,9 +4,14 @@
 <h2>[% fields.name.data.label %]</h2>
             
 [%
+
 WRAPPER highlight_box;
 
    taxonomy;
+
+   WRAPPER $field_block title="Status" key="status";       
+        fields.status.data;
+   END;
 
    WRAPPER $field_block title="WormBase ID";
           fields.name.data.id;
@@ -30,10 +35,6 @@ IF fields.other_names.data.id.defined;
      WRAPPER $field_block title="Other Names" key="other_names";
    	  object_list(fields.other_names.data);
      END;
-END;
-
-WRAPPER $field_block title="Status" key="status";       
-     fields.status.data;
 END;
 
 remarks(no_toggle=1);

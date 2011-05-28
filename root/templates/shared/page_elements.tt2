@@ -927,17 +927,17 @@ END;
 END;
 %]
 
-[% MACRO phenotype_not BLOCK ;
+[% MACRO phenotype_not_observed BLOCK ;
 
-   WRAPPER $field_block title="Phenotype NOT Observed" key="phenotype_not";
+   WRAPPER $field_block title="Phenotype NOT Observed" key="phenotype_not_observed";
 
    build_data_table(order=['phenotype_info','description','remark'],
                     columns={ 
                     	phenotype_info => 'Phenotype',
-		        description        => 'Description',
-	 		remark             => 'Remark',
+		        description    => 'Description',
+	 		remark         => 'Remark',
                     },
-                    key='phenotype_not');
+                    key='phenotype_not_observed');
     END;	  	      
    
    END;

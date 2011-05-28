@@ -2,303 +2,251 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% 
-WRAPPER $field_block title="Variation Type" key="variation_type";
-      fields.variation_type.data.general_class _ ': ' _ fields.variation_type.data.physical_class;
+
+
+WRAPPER $field_block title="Variation Type" key='variation_type';
+        fields.variation_type.data.general_class.join('; ') _ ': ' _ fields.variation_type.data.physical_class FILTER lower;
 END;
 
-%]
 
-   [% WRAPPER $field_block title="Variation Type" key='variation_type' %]
-           [% fields.variation_type.data.general_class.join('; ') %]: [% fields.variation_type.data.physical_class FILTER lower %]
-   [% END %]
-
-
-   [% WRAPPER $field_block title="Sequencing Status" key="sequencing_status" %]
-       [% fields.sequencing_status.data %]
-   [% END %]
+WRAPPER $field_block title="Sequencing Status" key="sequencing_status";
+         fields.sequencing_status.data;
+END;
 
    
-   [% # WRAPPER $field_block title="5' gap" key="five_prime_gap" %]
-   [% # fields.five_prime_gap.data %]
-   [% # END %]
+# WRAPPER $field_block title="5' gap" key="five_prime_gap";
+   # fields.five_prime_gap.data;
+# END;
 
-   [% # WRAPPER $field_block title="3' gap" key="three_prime_gap" %]
-   [% # fields.three_prime_gap.data %]
-   [% # END %]
+# WRAPPER $field_block title="3' gap" key="three_prime_gap";
+   # fields.three_prime_gap.data;
+# END;
 
-   [% # Nucleotide change: one or more possible changes for this allele %]
-   [% WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change" %]
+# Nucleotide change: one or more possible changes for this allele;
+WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
-       [% FOREACH change IN fields.nucleotide_change.data %]
+    FOREACH change IN fields.nucleotide_change.data;
 
-           [% # Let's only display deletions/insertions < 100 bp %]
-           [% IF change.wildtype.length < 100 %]
-                  [% change.wildtype %]
-           [% ELSE %]      
-                  [% change.wildtype.lenth %] bp deletion
-           [% END %]
-           /
-           [% IF change.mutant.length < 100 %]
-                  [% change.mutant %]
-           [% ELSE %]      
-                  [% change.mutant.length %] bp insertion
-           [% END %]
-           ([% change.wildtype_label %]/[% change.mutant_label %])<br />
-       [% END %]
-   [% END %]
+          # Let's only display deletions/insertions < 100 bp;
+           IF change.wildtype.length < 100;
+                  change.wildtype;
+           ELSE;
+                  change.wildtype.length _ ' bp deletion';
+           END;
+           '/';
+           IF change.mutant.length < 100;
+                  change.mutant;
+           ELSE;      
+                  change.mutant.length _ ' bp insertion';
+           END;
+           '(' _ change.wildtype_label _ '/' _ change.mutant_label _ ')' _ '<br />';
+       END;
+   END;
 
-   <!-- flanking sequences OFF: 2010.06 -->
-   [% WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences" %]
-      <div class="sequence">
-          <span class="inline-sequence">
-           5' flank -- [% fields.flanking_sequences.data.left_flank %]  &nbsp; [% fields.flanking_sequences.data.right_flank %] -- 3' flank
-          </span>           
-     </div>
-   [% END %]
-
-
-   [% WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products" %]
-       [% object_list(fields.flanking_pcr_products.data) %]
-   [% END %]
+   # flanking sequences OFF: 2010.06 
+   WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences";
+      '<div class="sequence">';
+          '<span class="inline-sequence">';
+           "5' flank -- " _ fields.flanking_sequences.data.left_flank _ '&nbsp;' _ fields.flanking_sequences.data.right_flank _ "-- 3' flank";
+          '</span>';
+     '</div>';
+   END;
 
 
+   WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products";
+       object_list(fields.flanking_pcr_products.data);
+   END;
 
-   [%# Conditionally display some information if this is a polymorphism %]
+   
+   # Conditionally display some information if this is a polymorphism
 
-   [% IF fields.polymorphism_type.data %]
-   <div class="caveat-emptor">This variation has been identified as a polymophism.</div>
-   [% WRAPPER $field_block title="Polymorphism type" key="polymorphism" -%] 
-                [% fields.polymorphism_type.data %]
-   [% END %]
+   IF fields.polymorphism_type.data;
+       '<div class="caveat-emptor">This variation has been identified as a polymophism.</div>';
+       WRAPPER $field_block title="Polymorphism type" key="polymorphism";
+                fields.polymorphism_type.data;
+       END;
 
-   [% WRAPPER $field_block title="Reference strain" key ="reference_strain"  -%] 
-                [% tag2link(fields.reference_strain.data) %]
-   [% END %]
+       WRAPPER $field_block title="Reference strain" key ="reference_strain";
+                tag2link(fields.reference_strain.data);
+       END;
 
-   [% WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status" -%] 
-                [% fields.polymorphism_status.data %]
-   [% END %]
+       WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status";
+                fields.polymorphism_status.data;
+       END;
 
-   [% WRAPPER $field_block title="Assays" key="assay" -%] 
+       WRAPPER $field_block title="Assays" key="assay";
+           FOREACH assay IN fields.polymorphism_assays.data;
+               '<h5>';
+		   IF assay.assay_type.match('rflp');
+	   	      'RFLP assay';
+		   ELSE;
+		      'Sequence-only assay';
+		   END;
+	       '</h5>';
 
-       [% FOREACH assay IN fields.polymorphism_assays.data %]
-           <h5>
-		[% IF assay.assay_type.match('rflp') %]
-	   	   RFLP assay
-		[% ELSE %]
-		   Sequence-only assay
-		[% END %]
-	    </h5>
+   	       '<table>';
+			 '<tr><td>Verified PCR product</td><td>' _ tag2link(fields.polymorphism_assays.data.$assay.pcr_product) _ '</td></tr>';
+	    		 '<tr><td>Left Oligo</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.left_oligo _ '</td></tr>';
+	    		 '<tr><td>Right Oligo</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.right_oligo _ '</td></tr>';
+			 '<tr><td>PCR conditions</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions _ '</td></tr>';
+			 '<tr><td>Sequence</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.dna _ '</td></tr>';
+	    '</table>';
 
-	    <table>
-			 <tr><td>Verified PCR product</td><td>[% tag2link(fields.polymorphism_assays.data.$assay.pcr_product) %]</td></tr>
-	    		 <tr><td>Left Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.left_oligo %]</td></tr>
-	    		 <tr><td>Right Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.right_oligo %]</td></tr>
-			 <tr><td>PCR conditions</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions %]</td></tr>
-			 <tr><td>Sequence</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.dna %]</td></tr>
-	    </table>
+	    '<table>';
+	    	    '<tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>';
+		    '<tr><td>Reference strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
+		         '<td>' _ assay.reference_strain_bands _ '</td>';
+ 	 	    '<tr>';
+		    '<tr><td>Polymorphic strain digest</td>';
+		         '<td>' _ assay.polymorphic_strain_digest _ '</td><td>' _ assay.polymorphic_strain_bands _ '</td>';
+		    '<tr>';
+	    '</table>';
+          END;
+        END;
+    END;
 
-	    <table>
-	    	    <tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>
-		    <tr><td>Reference strain digest</td><td>[% assay.reference_strain_digest %]</td>
-		         <td>[% assay.reference_strain_bands %]</td>
- 	 	    <tr>
-		    <tr><td>Polymorphic strain digest</td>
-		         <td>[% assay.polymorphic_strain_digest %]</td><td>[% assay.polymorphic_strain_bands %]</td>
-		    <tr>
-	    </table>
-       [% END %]
-      [% END %]
-    [% END %]
+   # Mutation context
+   WRAPPER $field_block title="Context" key="context";
+        '<div class="inline-sequence">';
+            fields.context.data.wildtype_fragment _  '-- wild type<br>';
+            fields.context.data.mutant_fragment _  '-- mutant';
+            '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
+     '</div>';
+     '<div class="toggle">View Sequence</div>';
+	   '<div class="sequence-container">';
+	       '<p>';
+                       fields.context.data.wildtype_header _ '<br />';
+                       fields.context.data.wildtype_full _ '<br />';
+	       '</p>';
+               '<p>';
+                       fields.context.data.mutant_header _ '<br />';
+                       fields.context.data.mutant_full _ '<br />';
+               '</p>';
+     '</div>';
+   END;
 
+   # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field
+   IF fields.cgh_deleted_probes.data.left_flank != "";
+        WRAPPER $field_block title="CGH Deleted Probes" key="CGH Deleted Probes";
+           '<div class="sequence">';
+              '<span class="inline-sequence">';
+              "5' flank -- " _ fields.cgh_deleted_probes.data.left_flank _ " " _ fields.cgh_deleted_probes.data.right_flank _ "-- 3' flank";
+             '</span>';
+          '</div>';
+       END;
 
+       WRAPPER $field_block title="Deletion Verification" key="deletion_verification";
+          fields.deletion_verification.data;
+       END;
 
+   END;
 
-   [% WRAPPER $field_block title="Context" key="context" %]
-     <div class="inline-sequence">
-            [% fields.context.data.wildtype_fragment %] -- wild type<br>
-            [% fields.context.data.mutant_fragment %] -- mutant
-            <p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>
-     </div>
-     <div class="toggle">View Sequence</div>
-	   <div class="sequence-container">
-	       <p>
-                       [% fields.context.data.wildtype_header %]<br />
-                       [% fields.context.data.wildtype_full %]<br />
-	       </p>
-               <p>
-                       [% fields.context.data.mutant_header %]<br />
-                       [% fields.context.data.mutant_full %]<br />
-               </p>
-     </div>
-   [% END %]
+   WRAPPER $field_block title="Features Affected" key="features_affected";
+#       '<table border="1" width="100%">';
+#	  	'<tr>';
+#			'<td>feature type</td>';
+#			'<td>feature</td>';
+#			'<td>details</td>';
+#		'</tr>';
+#
+#         FOREACH feature_type IN fields.features_affected.data.keys;
+#                FOREACH feature IN fields.features_affected.data.$feature_type.keys;
+#		
+#                '<tr>';
+#                   '<td>' _ feature_type _ '</td>';
+# =======
+       FOREACH feature_type IN fields.features_affected.data.sort;
+           '<div class="toggle">';
+                pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size);
+                '(' _ fields.features_affected.data.$feature_type.size _ ')';
+           '</div>';
+           '<div style="display:none">';
+           FOREACH feature_name IN fields.features_affected.data.$feature_type.sort;
+               '<div style="margin-bottom:0.25em; margin-top:0.25em">';
+               feature = fields.features_affected.data.$feature_type.$feature_name;
+               IF feature_type == 'Chromosome';
+                    feature.label;
+               ELSE;
+	             tag2link(feature);
+               END;
+	       '<br>';
 
-   [% # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field %]
-   [% IF fields.cgh_deleted_probes.data.left_flank != "" %]
-       [% WRAPPER $field_block title="CGH Deleted Probes" key="CGH Deleted Probes" %]
-          <div class="sequence">
-             <span class="inline-sequence">
-              5' flank -- [% fields.cgh_deleted_probes.data.left_flank %]  [% fields.cgh_deleted_probes.data.right_flank %] -- 3' flank
-             </span>           
-          </div>
-       [% END %]
+     	       protein_effects = feature.protein_effects;
+               IF protein_effects;
+                  FOREACH effect_type IN protein_effects.sort;
+                     effect = protein_effects.$effect_type;
+                     'Effect on protein: ' _ effect_type.replace('_', ' ');
+                      effect.subtype || effect.position || '';
+		      effect.description _ '<br />';
+                   END;
+               END;
 
-       [% WRAPPER $field_block title="Deletion Verification" key="deletion_verification" %]
-          [% fields.deletion_verification.data %]
-       [% END %]
-
-   [% END %]
-
-   [% WRAPPER $field_block title="Features Affected" key="features_affected" %]
-<<<<<<< /usr/local/wormbase/website/tharris-primary/root/templates/classes/variation/molecular_details.tt2
-       <table border="1" width="100%">
-	  	<tr>
-			<td>feature type</td>
-			<td>feature</td>
-			<td>details</td>
-		</tr>
-
-       [% FOREACH feature_type IN fields.features_affected.data.keys %]
-                [% FOREACH feature IN fields.features_affected.data.$feature_type.keys %]
-		
-                <tr>
-                   <td>[% feature_type %]</td>
-=======
-       [% FOREACH feature_type IN fields.features_affected.data.sort %]
-           <div class="toggle">
-                [% pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) %]
-                ([% fields.features_affected.data.$feature_type.size %])
-           </div>
-           <div style="display:none">
-           [% FOREACH feature_name IN fields.features_affected.data.$feature_type.sort %]
-              <div style="margin-bottom:0.25em; margin-top:0.25em">
-                [% feature = fields.features_affected.data.$feature_type.$feature_name %]
->>>>>>> /tmp/molecular_details.tt2~other.xAHYCZ
-               [% IF feature_type == 'Chromosome' %]
-                  [% feature.label %]
-               [% ELSE %]
-	              [% tag2link(feature) %]
-               [% END %]<br>
-
-     		      [% protein_effects = feature.protein_effects %]
-                  [% IF protein_effects %]
-                  [% FOREACH effect_type IN protein_effects.sort %]
-                     [% effect = protein_effects.$effect_type %]
-                     Effect on protein: [% effect_type.replace('_', ' ') %]
-                     [% effect.subtype || effect.position || '' %] [% effect.description %]<br />
-                  [% END %]
-                  [% END %]
-
-     		      [% location_effects = feature.location_effects %]
-                  [% IF location_effects %]
-                  [% FOREACH effect_type IN location_effects.sort %]
-                     [% effect = location_effects.$effect_type %]
-			         Contained in: [% effect_type.replace('_', ' ') %]<br />
-                  [% END %]
-                  [% END %]
+     	       location_effects = feature.location_effects;
+                  IF location_effects;
+                      FOREACH effect_type IN location_effects.sort;
+                          effect = location_effects.$effect_type;
+	                  'Contained in: ' _ effect_type.replace('_', ' ') _ '<br />';
+                      END;
+                  END;
 
 
-     		      [% IF feature.abs_start %]
-                    <div class="sequence-container" style="display:block">
-                         <table>
-				         <tr>
-						<td>absolute start</td>
-						<td>absolute stop</td>
-						<td>feature start</td>
-						<td>feature stop</td>
-						<td>start relative to feature</td>
-						<td>stop relative to feature</td>
-					  </tr>
-					   <tr>
-			                   <td>[% feature.abs_start %]</td>
-			                   <td>[% feature.abs_stop %]</td>
-			                   <td>[% feature.fstart %]</td>
-			                   <td>[% feature.fstop %]</td>
-			                   <td>[% feature.start %]</td>
-			                   <td>[% feature.stop %]</td>
-					   </tr>
-				    </table>
-			       </div>
-                 [% END %]
+     		  IF feature.abs_start;
+                      '<div class="sequence-container" style="display:block">';
+                         '<table>';
+				 '<tr>';
+						'<td>absolute start</td>';
+						'<td>absolute stop</td>';
+						'<td>feature start</td>';
+						'<td>feature stop</td>';
+						'<td>start relative to feature</td>';
+						'<td>stop relative to feature</td>';
+					  '</tr>';
+					   '<tr>';
+			                   '<td>' _ feature.abs_start _ '</td>';
+			                   '<td>' _ feature.abs_stop _ '</td>';
+			                   '<td>' _ feature.fstart   _ '</td>';
+			                   '<td>' _ feature.fstop    _ '</td>';
+			                   '<td>' _ feature.start    _ '</td>';
+			                   '<td>' _ feature.stop     _ '</td>';
+					   '</tr>';
+				    '</table>';
+			       '</div>';
+                 END;
 		
 
-                 [% IF feature.wildtype_translation_full %]
-                 <div class="toggle">View conceptual translation</div>
-                      <div class="sequence-container">
-                           <pre>> wildtype<br />[% feature.wildtype_translation_full %]</pre>
-                           <pre>> wildtype<br />[% feature.mutant_translation_full %]</pre>
-                      </div>
-                 </div>
-                 [%  END %]
-             </div>
-             [% END # of feature loop %]
-             </div>
-       [% END # of feature type loop %]   
-   [% END # of Features Affected WRAPPER %]
+                 IF feature.wildtype_translation_full;
+                 '<div class="toggle">View conceptual translation</div>';
+                      '<div class="sequence-container">';
+                           '<pre>> wildtype<br />' _ feature.wildtype_translation_full _ '</pre>';
+                           '<pre>> wildtype<br />' _ feature.mutant_translation_full _ '</pre>';
+                      '</div>';
+                 '</div>';
+                 END;
+             '</div>';
+              END; # of feature loop
+             '</div>';
+       END; # of feature type loop; 
+   END; # of Features Affected WRAPPER;
 
-   [% WRAPPER $field_block title="Detection Method" key="detection_method" %]
-      [% fields.detection_method.data %]
-   [% END %]
+   WRAPPER $field_block title="Detection Method" key="detection_method";
+      fields.detection_method.data;
+   END;
 
-   [% WRAPPER $field_block title="Affects Splice Site" key=''
-              disabled=!(fields.affects_splice_site.data.donor || fields.affects_splice_site.data.acceptor) %]
-      [% IF fields.affects_splice_site.data.acceptor %]
-      [% WRAPPER $field_block title="Acceptor" key='' %]
-         [% fields.affects_splice_site.data.acceptor %]
-      [% END %]
-      [% END %]
-      [% IF fields.affects_splice_site.data.donor %]
-      [% WRAPPER $field_block title="Donor" key='' %]
-         [% fields.affects_splice_site.data.donor %]
-      [% END %]
-      [% END %]
-   [% END %]
+   WRAPPER $field_block title="Affects Splice Site" key="" disabled=!(fields.affects_splice_site.data.donor || fields.affects_splice_site.data.acceptor);
+      IF fields.affects_splice_site.data.acceptor;
+         WRAPPER $field_block title="Acceptor" key='';
+            fields.affects_splice_site.data.acceptor;
+         END;
+     END;
+     IF fields.affects_splice_site.data.donor;
+        WRAPPER $field_block title="Donor" key='';
+          fields.affects_splice_site.data.donor;
+        END;
+     END;
+   END;
 
-   [% WRAPPER $field_block title="Causes Frameshift" key="causes_frameshift" %]
-      [% fields.causes_frameshift.data %]
-   [% END %]
+   WRAPPER $field_block title="Causes Frameshift" key="causes_frameshift";
+      fields.causes_frameshift.data;
+   END;
 
-   [% WRAPPER $field_block title="Polymorphism type" key="polymorphism" -%] 
-                [% fields.polymorphism_type.data %]
-   [% END %]
-
-   [% WRAPPER $field_block title="Reference strain" key ="reference_strain"  -%] 
-                [% tag2link(fields.reference_strain.data) %]
-   [% END %]
-
-   [% WRAPPER $field_block title="Polymorphism status" key ="polymorphism_status" -%] 
-                [% fields.polymorphism_status.data %]
-   [% END %]
-
-   [% WRAPPER $field_block title="Assays" key="assay" -%] 
-
-       [% FOREACH assay IN fields.polymorphism_assays.data %]
-           <h5>
-		[% IF assay.assay_type.match('rflp') %]
-	   	   RFLP assay
-		[% ELSE %]
-		   Sequence-only assay
-		[% END %]
-	    </h5>
-
-	    <table>
-			 <tr><td>Verified PCR product</td><td>[% tag2link(fields.polymorphism_assays.data.$assay.pcr_product) %]</td></tr>
-	    		 <tr><td>Left Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.left_oligo %]</td></tr>
-	    		 <tr><td>Right Oligo</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.right_oligo %]</td></tr>
-			 <tr><td>PCR conditions</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions %]</td></tr>
-			 <tr><td>Sequence</td><td>[% fields.polymorphism_assays.data.$assay.pcr_product.dna %]</td></tr>
-	    </table>
-
-	    <table>
-	    	    <tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>
-		    <tr><td>Reference strain digest</td><td>[% assay.reference_strain_digest %]</td>
-		         <td>[% assay.reference_strain_bands %]</td>
- 	 	    <tr>
-		    <tr><td>Polymorphic strain digest</td>
-		         <td>[% assay.polymorphic_strain_digest %]</td><td>[% assay.polymorphic_strain_bands %]</td>
-		    <tr>
-	    </table>
-       [% END %]
-
-    [% END %]
-
+%]
