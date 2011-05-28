@@ -16,7 +16,7 @@ Model for the Ace ?Transgene class.
 
 =head1 URL
 
-http://wormbase.org/species/transgene
+http://wormbase.org/species/*/transgene
 
 =head1 TODO
 
@@ -92,11 +92,9 @@ sub synonym {
     my $self    = shift;
     my $object  = $self->object;
     my $synonym = $object->Synonym;
-    my $data = { description => 'a synonym for the transgene',
-		 data        =>  "$synonym" || undef };
-    return $data;
+    return { description => 'a synonym for the transgene',
+	     data        =>  "$synonym" || undef };
 }
-
 
 # sub summary { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -106,7 +104,7 @@ sub synonym {
 =head3 driven_by_gene
 
 This method will return a data structure containing
-information about how the transgene is expressed.
+the gene that drives the gene.
 
 =over
 
@@ -159,17 +157,16 @@ sub driven_by_gene {
     my $object = $self->object;
     
     my $gene   = $object->Driven_by_gene;
-    $gene = ($gene) ? $self->_pack_obj($gene,$gene->Public_name) : undef;
-    my $data = { description => 'gene that drives the transgene',
-		 data        => $gene };
+    $gene = ($gene) ? $self->_pack_obj($gene) : undef;
+    return { description => 'gene that drives the transgene',
+	     data        => $gene };
 }
-
 
 
 =head3 driven_by_construct
 
 This method will return a data structure containing
-information about how the transgene is expressed.
+the construct driving the transgene.
 
 =over
 
@@ -222,9 +219,8 @@ sub driven_by_construct {
     my $object = $self->object;
     
     my $construct = $object->Driven_by_construct;
-    my $data = { description => 'construct that drives the transgene',
-		 data        => $construct || undef };
-    return $data;
+    return { description => 'construct that drives the transgene',
+	     data        => $construct || undef };
 }
 
 # sub remarks {}
@@ -283,27 +279,22 @@ B<Response example>
 
 =cut 
 
-# sub remarks { }
-
 sub reporter_construct {
-    my $self = shift;
+    my $self   = shift;
     my $object = $self->object;
-    
-    my %reporters = map { $_ => $_ } $object->Reporter_product;
-    
-    if ($reporters{Other_reporter}) {
-	my $text = $reporters{Other_reporter}->right;
-	$reporters{other} = $text;
-	$reporters{Other_reporter} = undef;
-    } elsif ($reporters{Gene}) {
-	my $gene = $reporters{Gene}->right;
-	$reporters{Gene} = $self->_pack_obj($gene,$gene->Public_name); 
-    } else {	
+    my %reporters;
+    foreach ($object->Reporter_product) {
+	if ($_ eq 'Gene') {
+	    $reporters{gene} = $self->_pack_obj($_);
+	} elsif ($_ eq 'Other_reporter') {	    
+	    $reporters{'other reporter'} = $_->right;
+	} else {
+	    $reporters{$_} = "$_";
+	}
     }
     
-    my $data = { description => 'reporter construct for this transgene',
-		 data        => \%reporters };
-    return $data;
+    return { description => 'reporter construct for this transgene',
+	     data        => %reporters ? \%reporters : undef };
 }
 
 
@@ -314,10 +305,12 @@ sub reporter_construct {
 #
 #######################################
 
+=head2 Isolation
+
 =head3 author
 
-This method will return a data structure of the 
-reporter construct driven by the transgene.
+This method will return a data structure containing
+the author that constructed the transgene.
 
 =over
 
@@ -355,7 +348,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/reporter_construct
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transgene/gmIs13/author
 
 B<Response example>
 
@@ -376,9 +369,8 @@ sub author {
 	$person = $person ? $self->_pack_obj($person,$person->Standard_name) : undef;
     }
     
-    my $data = { description => 'the person who created the transgene',
-		 data        => $person };
-    return $data;
+    return { description => 'the person who created the transgene',
+	     data        => $person };
 }
 
 # sub laboratory { }
@@ -441,9 +433,8 @@ sub clone {
     my $object = $self->object;
     my $clone  = $object->Clone;
     $clone = $clone ? $self->_pack_obj($clone) : undef;
-    my $data = { description => 'the clone of this transgene',
-		 data        => $clone };
-    return $data;
+    return { description => 'the clone of this transgene',
+	     data        => $clone };
 }
 
 
@@ -503,8 +494,8 @@ sub fragment {
     my $self   = shift;
     my $object = $self->object;
     my $frag = $object->Fragment;
-    my $data = { description => 'clone fragments contained in this transgene',
-		 data        => $frag || undef };
+    return { description => 'clone fragments contained in this transgene',
+	     data        => $frag || undef };
 }
 
 
@@ -566,9 +557,8 @@ sub injected_into_strains {
     my @cgc_strains = $object->Injected_into_CGC_strain;
     my @data = map { $self->_pack_obj($_) } @cgc_strains;
     push @data,map { "$_" } $object->Injected_into;
-    my $data    = { description => 'strains that the transgene has been injected into',
-		    data        => @data ? \@data : undef};
-    return $data;
+    return { description => 'strains that the transgene has been injected into',
+	     data        => @data ? \@data : undef};
 }
 
 =head3 integrated_by
@@ -632,13 +622,12 @@ sub integrated_by {
 	push @methods,$text;
     } 
     push @methods,keys %methods;
-    my $data = { description => 'how the transgene was integrated (if it has been)',
-		 data        => @methods ? \@methods : undef };
-    return $data;
+    return { description => 'how the transgene was integrated (if it has been)',
+	     data        => @methods ? \@methods : undef };
 }
 
 
-=head3 integrated_by
+=head3 integrated_at
 
 This method will return a data structure containing
 the map position of the transgene if it has been integrated.
@@ -647,7 +636,7 @@ the map position of the transgene if it has been integrated.
 
 =item PERL API
 
- $data = $model->integrated_by();
+ $data = $model->integrated_at();
 
 =item REST API
 
@@ -694,9 +683,8 @@ sub integrated_at {
     my $object   = $self->object;
     my $position = $object->Map;
 
-    my $data = { description => 'map position of the integrated transgene',
-		 data        => $position ? "$position" : undef};
-    return $data;
+    return { description => 'map position of the integrated transgene',
+	     data        => $position ? "$position" : undef};
 }
 
 =head3 rescues
@@ -755,9 +743,8 @@ sub rescues {
     my $object = $self->object;
     my @genes  = $object->Rescue;
     @genes = map {$self->pack_obj($_) } @genes;
-    my $data = { description => 'genes that may be rescued by this transgene',
-		 data        => \@genes };
-    return $data;
+    return { description => 'genes that may be rescued by this transgene',
+	     data        => @genes ? \@genes : undef };
 }
 
 
@@ -768,13 +755,14 @@ sub rescues {
 #
 #######################################
 
-# sub phenotype {}
+# sub phenotypes {}
 # Supplied by Role; POD will automatically be inserted here.
-# <<include phenotype>>
+# <<include phenotypes>>
 
-# sub phenotype_not_observed {}
+# sub phenotypes_not_observed {}
 # Supplied by Role; POD will automatically be inserted here.
-# <<include phenotype_not_observed>>
+# <<include phenotypes_not_observed>>
+
 
 #######################################
 #
@@ -841,9 +829,8 @@ sub marker_for {
     my $self   = shift;
     my $object = $self->object;
     my $marker = $object->Marker_for;
-    my $data   = { description => 'stringing decribing what the transgene is a marker for',
-		   data        =>  $marker || undef };
-    return $data;
+    return { description => 'string decribing what the transgene is a marker for',
+	     data        =>  $marker || undef };
 }
 
 
@@ -903,39 +890,9 @@ sub marked_rearrangement {
     my $object = $self->object;
     my @rearrangements = $object->Marked_rearrangement;
     @rearrangements    = map { $self->_pack_obj($_) } @rearrangements;
-    my $data   = { description => 'rearrangements that the transgene can be used as a marker for',
-		   data        =>  @rearrangements ? \@rearrangements : undef };
-    return $data;
+    return { description => 'rearrangements that the transgene can be used as a marker for',
+	     data        =>  @rearrangements ? \@rearrangements : undef };
 }
-
-
-####################
-# Internal methods
-####################
-sub _get_phenotype_data {    
-    my ($self,$object,$not) = @_;
-
-    my $tag;    
-    if ($not) {	
-	$tag = 'Phenotype_not_observed';
-    } else {	
-	$tag = 'Phenotype';
-    }
-    
-    my @data;
-    foreach my $phenotype ($object->$tag) {		
-	my $phenotype_name = $phenotype->Primary_name;
-	my $remark         = $phenotype->Remark;
-	# my $paper_evidence = $phenotype->; ## at('Paper_evidence')
-	
-	push @data,{ phenotype => $self->_pack_obj($phenotype,$phenotype_name),
-		     remark    => "$remark",
-	};
-    }
-    return \@data;
-}
-
-
 
 __PACKAGE__->meta->make_immutable;
 

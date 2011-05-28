@@ -2,9 +2,9 @@
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-[% phenotype %]
+[% phenotypes %]
 
-[% phenotype_not_observed %]
+[% phenotypes_not_observed %]
 
 	
 [%

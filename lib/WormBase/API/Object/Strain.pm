@@ -646,141 +646,16 @@ sub throws_males {
 	     data        => "$males" || undef };
 }
 
-=head3 phenotypes
 
-This method will return a data structure containing
-phenotypes observed in the strain.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotypes();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub phenotypes {
-    my $self = shift;
-    my $object = $self->object;
-
-    my $data = $self->_pack_phenotypes('Phenotype');
-    return { description => 'phenotypes observed in this strain',
-	     data        => @$data ? $data : undef };
-}
+# sub phenotypes {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include phenotypes >>
 
 
-=head3 phenotypes_not_observed
+# sub phenotypes_not_observed {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include phenotypes_not_observed >>
 
-This method will return a data structure containing
-phenotypes observed in the strain.
-
-=over
-
-=item PERL API
-
- $data = $model->phenotypes_not_observed();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-a Strain ID (eg CB1)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/strain/CB1/phenotypes_not_observed
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub phenotypes_not_observed {
-    my $self = shift;
-    my $object = $self->object;
-    my $data = $self->_pack_phenotypes('Phenotype_not_observed');
-
-    return { description => 'phenotypes NOT observed in this strain',
-	     data        => @$data ? $data : undef };
-}
-
-sub _pack_phenotypes {
-    my ($self,$tag) = @_;
-    my $object = $self->object;
-    my @phenotypes = $object->$tag;
-    my @data;
-    foreach my $phenotype (@phenotypes) {
-	my $short = $phenotype->Short_name;
-	push @data,
-	{ phenotype => $self->_pack_obj($phenotype,$phenotype->Primary_name),
-	  short_name => "$short",
-	};
-    }	
-    return \@data;
-}
 
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.

@@ -2,28 +2,27 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [%
+
 WRAPPER $field_block title="Author" key="author";
     fields.author.data;
 END;
 
 laboratory(title="Created in lab");
-%]
 
-[%#
- # Clone and Fragment: disabled 2011.03.18 at curator request;
- WRAPPER $field_block title="Construction";
-      WRAPPER $field_block title="Clone" key="clone";
-          tag2link(fields.clone.data);
-      END;
 
-      WRAPPER $field_block title="Fragment" key="fragment";
-         tag2link(fields.fragment.data);
-      END;  
-  END;
-%]
+# Clone and Fragment: disabled 2011.03.18 at curator request;
+#WRAPPER $field_block title="Construction";
+#      WRAPPER $field_block title="Clone" key="clone";
+#          tag2link(fields.clone.data);
+#      END;
+#
+#      WRAPPER $field_block title="Fragment" key="fragment";
+#         tag2link(fields.fragment.data);
+#      END;  
+#  END;
 
-[%
-   WRAPPER $field_block title="Injected Into Strains" key="injected_into_strains";
+
+WRAPPER $field_block title="Injected Into Strains" key="injected_into_strains";
         IF fields.injected_into_strains;
            '<span class="caveat-emptor">Strains available from the CGC are displayed in <b>boldface</b></span>';
            FOREACH strain IN fields.injected_into_strains.data;
@@ -34,25 +33,24 @@ laboratory(title="Created in lab");
                END;
           END;
       END;
-   END; 
+END; 
  
-   WRAPPER $field_block title="Rescues" key="rescues";
+WRAPPER $field_block title="Rescues" key="rescues";
        FOREACH item IN fields.rescues.data;
            tag2link(item) _ '<br />';
        END;
-  END;  
+END;  
 
-  WRAPPER $field_block title="Integration";
-     WRAPPER $field_block title="Integrated By" key="integrated_by";
-          FOREACH item IN fields.integrated_by.data;
-            tag2link(item) _ '<br />';
-          END;
-     END;
+WRAPPER $field_block title="Integrated By" key="integrated_by";
+      FOREACH item IN fields.integrated_by.data;
+         tag2link(item) _ '<br />';
+      END;
+END;
 
-     WRAPPER $field_block title="Integrated at" key="integrated_at";
-         FOREACH item IN fields.integrated_at.data;
-            item _ '<br />';
-         END;
-     END;
-  END;
+WRAPPER $field_block title="Integrated at" key="integrated_at";
+      FOREACH item IN fields.integrated_at.data;
+         item _ '<br />';
+      END;
+END;
+
 %]

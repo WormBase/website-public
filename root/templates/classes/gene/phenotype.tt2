@@ -3,7 +3,11 @@
 
 
 
+[%# This phenotype processing diverges from the standard processing ... %]
+[%# See also Varation.pm for alternative data processing/structure... %]
+
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
+
   Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
   [% FOREACH type IN ['pheno','pheno_not'] %]
     [% IF fields.phenotype.data.$type.size>0 %]
