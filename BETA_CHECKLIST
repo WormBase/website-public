@@ -1,9 +1,21 @@
+Check default widgets for each class.
+
+Check empty fields; doe toggle work?
+
+
+Standardize Overview widgets.
+
+
 Species display and internal linking.
       display should be consistent: G. species, italiczied, and linked when it's one of ours.
 
 Phenotypes:
-* Standardize display (lots of unique processing around)
-* unify Model processing.
+* Standardize processing
+  * Variation.pm has unique processing that could be slotted into the Role.
+  * Gene.pm uses the flat files. ugh.
+* Macros could be moved to shared/widgets/phenotypes.tt2
+* shared widget could be expanded to include special cases like variation/phenotypes.tt2
+
 
 tag2link
 * Fails in some cases (or fails to provide generic "all" for classes/objects that are missing species)
@@ -90,7 +102,7 @@ rnai		 -	   -	   x		-
 sequence	 -	   -	   x		-
 strain		 x	   x	   x		-
 structure_data	 -	   -	   x		-
-transgene	 -	   -	   x		-
+transgene	 x	   x	   x		-
 variation	 x	   x	   x		-
 
 

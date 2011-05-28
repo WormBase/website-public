@@ -19,7 +19,7 @@ END;
 
     
 w = [];
-IF fields.driven_by_gen.data.defined;
+IF fields.driven_by_gene.data.defined;
     w.push(tag2link(fields.driven_by_gene.data));
 END; 
   
@@ -33,22 +33,13 @@ IF w.size > 0;
    END;
 END;
 
-# WRAPPER $field_block title="Gene" key="driven_by_gene";
-    # tag2link(fields.driven_by_gene.data);
-# END;
-
-# WRAPPER $field_block title="Construct" key="driven_by_construct";
-    # fields.driven_by_construct.data;
-# END;
-
 
 WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct";
-   FOREACH reporter IN fields.reporter_construct.data.keys;
-       # reporter;
-       IF reporter == "Gene";
+   FOREACH reporter IN fields.reporter_construct.data.keys;   
+       IF reporter == "gene";
           tag2link(fields.reporter_construct.data.$reporter);
        ELSE;
-           reporter.value;
+           fields.reporter_construct.data.$reporter;
        END;
    END;
 END;

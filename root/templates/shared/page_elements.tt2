@@ -912,35 +912,43 @@ END;
   END;
 %]
 
-[% MACRO phenotype BLOCK ;
+[%# 
 
-   WRAPPER $field_block title="Phenotype" key="phenotype";
+    Shared phenotypes and phenotypes_not_observed macros. These macros
+    could conceivably be folded into shared/widgets/phenotypes.tt2, although
+    there are some specific phenotype.tt2 widgets that have some additional
+    fields.
+%]
 
-       build_data_table(order=['phenotype_info','description','remark'],
+[% MACRO phenotypes BLOCK ;
+
+   WRAPPER $field_block title="Phenotypes" key="phenotypes";
+
+       build_data_table(order=['phenotype','description','remarks'],
                         columns={ 
-                      	phenotype_info => 'Phenotype',
-		      	description    => 'Description',
-			remark         => 'Remark',
+                      	phenotype    => 'Phenotype',
+		      	description  => 'Description',
+			remarks       => 'Remarks',
                     },
-                    key='phenotype');
+                    key='phenotypes');
     END;
 END;
 %]
 
-[% MACRO phenotype_not_observed BLOCK ;
+[% MACRO phenotypes_not_observed BLOCK ;
 
-   WRAPPER $field_block title="Phenotype NOT Observed" key="phenotype_not_observed";
+   WRAPPER $field_block title="Phenotypes NOT Observed" key="phenotypes_not_observed";
 
-   build_data_table(order=['phenotype_info','description','remark'],
+   build_data_table(order=['phenotype','description','remarks'],
                     columns={ 
-                    	phenotype_info => 'Phenotype',
+                    	phenotype      => 'Phenotype',
 		        description    => 'Description',
-	 		remark         => 'Remark',
+	 		remarks        => 'Remark',
                     },
-                    key='phenotype_not_observed');
-    END;	  	      
+                    key='phenotypes_not_observed');
+      END;	  	      
    
-   END;
+ END;
 %]
 
 

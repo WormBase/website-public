@@ -104,17 +104,9 @@ END;
    END;
 
 
-   WRAPPER $field_block title="Phenotypes Observed" key="phenotypes";
-         FOREACH phenotype IN fields.phenotypes.data;
-             phenotype;
-          END;
-   END;
+   phenotypes;
 
-   WRAPPER $field_block title="Phenotypes Not Observed" key="phenotypes_not_observed";
-          FOREACH phenotype IN fields.phenotypes_not_observed.data;
-               phenotype;         
-          END;
-   END;
+   phenotypes_not_observed;
 
    remarks;
 
