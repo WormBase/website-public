@@ -774,9 +774,9 @@ sub delivered_by {
 # Supplied by Role; POD will automatically be inserted here.
 # <<include phenotype>>
 
-# sub phenotype_not {}
+# sub phenotype_not_observed {}
 # Supplied by Role; POD will automatically be inserted here.
-# <<include phenotype_not>>
+# <<include phenotype_not_observed>>
 
 ############################################################
 #
