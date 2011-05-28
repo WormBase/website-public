@@ -3,7 +3,6 @@
 
 [%
 
-
 laboratory(title="Laboratory");
 
 WRAPPER $field_block title="Isolated By (author)" key="isolated_by_author";
@@ -14,10 +13,6 @@ WRAPPER $field_block title="Isolated By" key="isolated_by";
         tag2link(fields.isolated_by.data);
 END;
 
-# Deprecated by xrefs.
-#WRAPPER $field_block title="Source Database" key="source_database";
-#      '<a href="' _ fields.source_database.data.remote_url _ '">' _ fields.source_database.data.remote_text _ '</a>';
-#END;
 
 # To be deprecated by xrefs. Confirm.
 WRAPPER $field_block title="External Source" key="external_source";

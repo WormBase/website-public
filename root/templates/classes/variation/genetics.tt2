@@ -11,52 +11,7 @@ WRAPPER $field_block title="Reference Allele" key="reference_allele";
          tag2link(fields.reference_allele.data);
 END;
 
-%]
 
-[%# Old approach
-WRAPPER $field_block title="Other Alleles" key="other_alleles";
-
-    '<section>
-	 <div class="subfield">
-    	     <div class="subfield-title">Sequenced alleles</div>
-	     <div class="subfield-content">';
-		    FOREACH variation IN fields.other_alleles.data.sequenced_alleles;
-                        tag2link(variation);
-		    END;
-   	          '</div>
-              </div>
-	  </section>';
-
- 	  '<section>		      
-	      <div class="subfield">
-    	          <div class="subfield-title">Unsequenced alleles</div>
-	          <div class="subfield-content">';
-		      FOREACH variation IN fields.other_alleles.data.unsequenced_alleles;
-                           tag2link(variation);
-		      END;
-	          '</div>
-              </div>
-	  </section>';
-
-	  '<section>
-	      <div class="subfield">
-    	          <div class="subfield-title">Polymorphisms</div>
-	          <div class="subfield-content">';
-		        FOREACH variation IN fields.other_alleles.data.polymorphisms;
-    	                  '<span class="allele">';
-                              '<a href="' _ c.uri_for_action('report', 'variation' , variation ) 
-			                  _ '">' _ variation _ '</a>';
-			  '</span>';
-		        END;
-                  '</div>
-	       </div>
-	  </section>';
-
-   END;   
-%]
-
-
-[%
 WRAPPER $field_block  title="Other alleles" key="other_alleles";
 	build_data_table (
 		order = [ 
@@ -72,25 +27,38 @@ WRAPPER $field_block  title="Other alleles" key="other_alleles";
 			status        => 'Status',
 			},
 		key = 'other_alleles');
-
-END;	
-%]
+   END;	
 
 
+   # Strains
+   WRAPPER $field_block title="Strains" key="strains";
+#    '<div class="toggle">Found ';
+#           searchlink('strain', object.name.data.id, fields.strains.count.total.size
+#           _  " " 
+#           _ pluralize('strain', fields.strains.count.total));
+#	   '</div>';
+#    '<div class="toggle-container">';
+#    fields.strains.count.carrying_gene_alone;
 
-   [% WRAPPER $field_block title="Strains" key="strains" %]
-  <div class="toggle">Found [% searchlink('strain', object.name.data.id, fields.strains.data.total _ " " _ pluralize("strain", fields.strains.data.total)) %]</div>
-  <div class="toggle-container">
-    [% venn("Carrying " _ tag2link(object.name.data) _ " alone", fields.strains.data.singletons, 
-            "Available from the CGC", fields.strains.data.cgc, 
-            "", fields.strains.data.both, 
-            "Other strains", fields.strains.data.other) %]
-  </div>
+     venn("Carrying " _ tag2link(object.name.data) _ " alone", 
+                                         fields.strains.count.carrying_gene_alone,
+    	    "Available from the CGC",    fields.strains.count.available_from_cgc,
+    	    "",                          fields.strains.count.carrying_gene_alone_and_cgc,
+    	    "Other strains",             fields.strains.count.others);
 
-   [% END %]
+#    '</div>';
 
-[%
-WRAPPER $field_block title="Rescued By Transgene" key="rescued_by_transgene";
+       build_data_table(order=['strain','genotype','cgc'],
+                         columns={ strain    => 'Strain',
+	        	              cgc       => 'Available from CGC?',
+		                  genotype  => 'Genotype',
+                                 },
+                         key='strains');
+   END;
+
+
+   WRAPPER $field_block title="Rescued By Transgene" key="rescued_by_transgene";
          tag2link(fields.rescued_by_transgene.data);
-END;
+   END;
+
 %]

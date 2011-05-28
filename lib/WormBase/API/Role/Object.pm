@@ -1069,15 +1069,16 @@ sub _build_phenotype{
 	};
 }
 
-=head3 phenotype_not
+=head3 phenotype_not_observed
 
-This method will return a data structure with phenotypes not associated with the RNAi.
+This method will return a data structure containing
+phenotypes specifically NOT observed in the object (RNAi, Variation, etc).
 
 =over
 
 =item PERL API
 
- $data = $model->phenotype_not();
+ $data = $model->phenotype_not_observed();
 
 =item REST API
 
@@ -1091,7 +1092,7 @@ No
 
 B<Parameters>
 
-An RNAi id (eg WBRNAi00000001)
+An RNAi id (eg WBRNAi00000001), a Variation ID (eg WBVar001441331), etc.
 
 B<Returns>
 
@@ -1109,7 +1110,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/phenotype_not
+curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/phenotype_not_observed
 
 B<Response example>
 
@@ -1119,24 +1120,20 @@ B<Response example>
 
 =cut 
 
-
-
-has 'phenotype_not' => (
+has 'phenotype_not_observed' => (
     is       => 'ro',
     required => 1,
     lazy     => 1,
-    builder  => '_build_phenotype_not',
+    builder  => '_build_phenotype_not_observed',
 );
 
-## method to build data
 
-sub _build_phenotype_not {
+sub _build_phenotype_not_observed {
 	my $self = shift;
 	my $data = $self->_build_phenotype_data('Phenotype_not_observed'); 	
 	return {
 		data => $data,
-		description =>'phenotypes not associated with this term',
-	};
+		description =>'phenotypes NOT observed or associated with this object' };
 }
 
 sub _build_phenotype_data {
