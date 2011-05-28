@@ -16,7 +16,7 @@ Model for the Ace ?Rnai class.
 
 =head1 URL
 
-http://wormbase.org/species/rnai
+http://wormbase.org/species/*/rnai
 
 =head1 METHODS/URIs
 
@@ -35,6 +35,65 @@ http://wormbase.org/species/rnai
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
+
+=head3 historical_name
+
+This method will return a data structure containing
+the historical name of the RNAi.
+
+=over
+
+=item PERL API
+
+ $data = $model->historical_name();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An RNAi id (eg WBRNAi00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/historical_name
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub historical_name {
+    my $self = shift;
+    my $object = $self->object;
+    my $name   = $object->History_name;
+    return { description => 'historical name of he rnai',
+	     data        => "$name" || undef };
+}
 
 # sub taxonomy { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -92,18 +151,107 @@ B<Response example>
 
 sub targets {
     my ($self) = @_;
-    my %data;
-    my $targets_hr = _classify_targets( $self->object );
-    foreach my $target_type ( 'Primary targets', 'Secondary targets' ) {
-        my $genes = eval { $targets_hr->{$target_type} };
-        $data{$target_type} =
-          $genes;    # are the key,value pair important? otherwise omit...
+    my $object = $self->object;
+
+    my %seen;    
+    my @genes = $object->Gene;
+    push @genes, grep { !$seen{$_}++ } $object->Predicted_gene;
+    
+    my @data;
+    foreach my $gene (@genes) {
+        my @types = $gene->col;
+	
+        foreach (@types) {
+            my ($remark) = $_->col;
+	    push @data, {target_type => $remark =~ /primary/ ? 'Primary target' : 'Secondary target',
+			 gene        => $self->_pack_obj($gene)
+	    };
+        }
     }
-    return {
-        description => 'notes',
-        data        => %data || undef,
-    };
+    
+    return { description => 'gene targets of the RNAi experiment',
+	     data        => @data ? \@data : undef };
 }
+
+
+=head3 movies
+
+This method will return a data structure with links to 
+movies demonstrating the phenotype observed in the RNAi
+experiment.
+
+=over
+
+=item PERL API
+
+ $data = $model->movies();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An RNAi id (eg WBRNAi00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub movies {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @tag_objects = $object->Supporting_data->col;
+    my @data        = map { $_ = $self->_pack_obj($_) } @tag_objects;
+    return { data        => @data ? \@data : undef,
+	     description => 'movies documenting effect of rnai' };
+}
+
+
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
+
+#######################################
+#
+# The Details Widget
+#
+#######################################
+
+=head2 Overview
 
 =head3 reagent
 
@@ -159,11 +307,9 @@ sub reagent {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->PCR_product;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'prc products off this rnai'
+    my @data        = map { $_ = $self->_pack_obj($_) } $object->PCR_product;
+    return { data        => @data ? \@data : undef,
+	     description => 'prc products used to generate this RNAi'
     };
 }
 
@@ -221,11 +367,9 @@ sub sequence {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Sequence_info->right;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'rnai sequence'
+    my @data   = map { "$_" } @tag_objects;
+    return { data        => @data ? \@data : undef,
+	     description => 'rnai sequence'
     };
 }
 
@@ -282,140 +426,11 @@ B<Response example>
 sub assay {
     my $self      = shift;
     my $object    = $self->object || shift;
-    my $data_pack = ( $object->PCR_product ) ? 'PCR product' : 'Sequence';
-    return {
-        'data'        => $data_pack,
-        'description' => 'assay performed on the rnai'
-    };
+    my $data      = $object->PCR_product  ? 'PCR product' : 'Sequence';
+    return {data        => $data ? "$data" : undef,
+	    description => 'assay performed on the rnai' };
 }
 
-=head3 history_name
-
-This method will return a data structure with history for the RNAi name.
-
-=over
-
-=item PERL API
-
- $data = $model->history_name();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/history_name
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub history_name {
-    my ($self) = @_;
-    return {
-        description => 'history ofthe rnai',
-        data        => $self ~~ 'History_name' || $self->object,
-    };
-}
-
-=head3 movies
-
-This method will return a data structure with movie data on the RNAi.
-
-=over
-
-=item PERL API
-
- $data = $model->movies();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An RNAi id (eg WBRNAi00000001)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/rnai/WBRNAi00000001/movies
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub movies {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->Supporting_data->col;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'movies documenting effect of rnai'
-    };
-}
-
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
 
 =head3 genotype
 
@@ -468,12 +483,11 @@ B<Response example>
 =cut 
 
 sub genotype {
-    my ($self) = @_;
-
-    return {
-        description => 'genotype of rnai strain',
-        data        => $self ~~ 'Genotype',
-    };
+    my $self   = shift;
+    my $object = $self->object;
+    my $genotype = $object->Genotype;
+    return { description => 'genotype of rnai strain',
+	     data        => "$genotype" || undef };
 }
 
 =head3 strain
@@ -527,11 +541,10 @@ B<Response example>
 =cut 
 
 sub strain {
-    my ($self) = @_;
-    return {
-        description => 'strain of origin of rnai',
-        data        => $self->_pack_obj( $self ~~ 'Strain' ),
-    };
+    my $self   = shift;
+    my $object = $self->object;
+    return { description => 'strain of origin of rnai',
+	     data        => $self->_pack_obj( $object->Strain) };
 }
 
 =head3 interactions
@@ -644,12 +657,12 @@ B<Response example>
 =cut 
 
 sub treatment {
-    my ($self) = @_;
-
+    my $self   = shift;
+    my $object = $self->object;
+    my $treatment = $object->Treatment;
     return {
         description => 'experimental conditions for rnai analysis',
-        data        => $self ~~ 'Treatment',
-    };
+        data        => "$treatment" || undef };
 }
 
 =head3 life_stage
@@ -713,7 +726,8 @@ sub life_stage {
 
 =head3 delivered_by
 
-This method will return a data structure with delivered_by associations to the RNAi.
+This method will return a data structure desribing
+how the RNAi was delivered to the organism.
 
 =over
 
@@ -762,21 +776,26 @@ B<Response example>
 =cut 
 
 sub delivered_by {
-    my ($self) = @_;
-    return {
-        description => 'origing of rnai',
-        data        => $self ~~ 'Delivered_by',
-    };
+    my $self   = shift;
+    my $object = $self->object;
+    my $delivered = $object->Delivered_by;
+    return { description => 'how the RNAi was delivered to the animal',
+	     data        => "$delivered" || undef };
 }
 
+############################################################
+#
+# The Phenotypes widget
+#
+############################################################
 
-# sub phenotype {}
+# sub phenotypes {}
 # Supplied by Role; POD will automatically be inserted here.
-# <<include phenotype>>
+# <<include phenotypes>>
 
-# sub phenotype_not_observed {}
+# sub phenotypes_not_observed {}
 # Supplied by Role; POD will automatically be inserted here.
-# <<include phenotype_not_observed>>
+# <<include phenotypes_not_observed>>
 
 ############################################################
 #
@@ -792,31 +811,6 @@ sub delivered_by {
 # Supplied by Role; POD will automatically be inserted here.
 # << include xrefs >>
 
-###############
-## INTERNAL
-###############
-
-sub _classify_targets {
-    my $exp = shift;
-    my %seen;
-    my %categories;
-    my @genes = grep { !$seen{ $_->Molecular_name }++ } $exp->Gene;
-    push @genes, grep { !$seen{$_}++ } $exp->Predicted_gene;
-
-    foreach my $gene (@genes) {
-        my @types = $gene->col;
-
-        foreach (@types) {
-            my ($remark) = $_->col;
-            my $status =
-              ( $remark =~ /primary/ )
-              ? 'Primary targets'
-              : 'Secondary targets';
-            push @{ $categories{$status} }, $gene;
-        }
-    }
-    return \%categories;
-}
 
 __PACKAGE__->meta->make_immutable;
 

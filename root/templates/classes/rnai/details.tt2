@@ -1,0 +1,49 @@
+[%
+
+WRAPPER $field_block title="Genotype" key="Genotype";
+     tag2link(fields.genotype.data);
+END;
+
+WRAPPER $field_block title="Strain" key="strain";
+     tag2link(fields.strain.data);
+END;
+
+
+# reagent
+WRAPPER $field_block title="Reagent" key="reagent";
+    FOREACH item IN fields.reagent.data;
+       tag2link(item);
+    END;
+END;
+
+
+# Sequence. Needs better, maybe fasta.
+WRAPPER $field_block title="Sequence" key="sequence";
+    FOREACH item IN fields.sequence.data;
+       item;
+    END;
+END;
+
+# Assay
+WRAPPER $field_block title="Assay" key="assay";
+     fields.assay.data;
+END;
+
+
+# Treatment
+WRAPPER $field_block title="Treatment" key="treatment";
+     fields.treatment.data;
+END;
+
+# Life Stage
+WRAPPER $field_block title="Life Stage" key="life_stage";
+     fields.life_stage.data;
+END;
+
+
+# Delivered by
+WRAPPER $field_block title="Delivered By" key="delivered_by";
+     fields.delivered_by.data;
+END;
+
+%]

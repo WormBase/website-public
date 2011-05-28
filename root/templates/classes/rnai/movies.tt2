@@ -1,0 +1,12 @@
+[%
+
+# Movies
+WRAPPER $field_block title="Movies" key="movies";
+    FOREACH item IN fields.movies.data;
+       tag2link(item);
+    END;
+END;
+
+'(See the embedding code in website/classic/cgi-perl/seq/rnai)';
+
+%]
