@@ -17,15 +17,15 @@ with 'WormBase::API::Role::Position';
 
 =head1 NAME
 
-WormBase::API::Object::Analysis
+WormBase::API::Object::Variation
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Analysis class.
+Model for the Ace ?Variation class.
 
 =head1 URL
 
-http://wormbase.org/resources/analysis
+http://wormbase.org/species/*/variation
 
 =head1 METHODS/URIs
 
@@ -59,6 +59,59 @@ sub cgc_name {
         data        => $self->_pack_obj($self ~~ 'CGC_name'),
     };
 }
+
+
+=head3 variation_type
+
+This method returns a data structure containing
+the broad classification of the variation, eg SNP,
+Allele, etc.
+
+=over
+
+=item PERL API
+
+ $data = $model->variation_type();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/variation_type
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # A unified classification of the type of variation
 # general class: SNP, allele, etc
@@ -108,6 +161,1334 @@ sub variation_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+# sub status {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include status >>
+
+
+############################################################
+#
+# The External Links widget
+#
+############################################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+=head3 source_database
+
+This method returns a data structure containing
+the source database of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->source_database();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/source_database
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
+# CAN BE REPLACED WITH << xrefs >>
+sub source_database {
+    my ($self) = @_;
+
+    my ($remote_url,$remote_text);
+    if (my $source_db = $self ~~ 'Database') {
+        my $name = $source_db->Name;
+        my $id   = $self->object->Database(3);
+
+        # Using the URL constructor in the database (for now)
+        # TODO: Should probably pull these out and keep URLs in config
+        my $url  = $source_db->URL_constructor;
+        # Create a direct link to the external site
+
+        if ($url && $id) {
+            $name =~ s/_/ /g;
+            $remote_url = sprintf($url,$id);
+            $remote_text = "$name";
+        }
+    }
+
+    return {
+        description => 'remote source database, if known',
+        data        => {
+            remote_url => $remote_url,
+            remote_text => $remote_text,
+        }
+    };
+}
+
+
+
+
+
+
+############################################################
+#
+# The Genetics Widget
+#
+############################################################
+
+=head2 Genetics
+
+=head3 gene_class
+
+This method returns a data structure containing
+the gene class that the gene has been assigned to, for
+example "unc", "vab", or "egl".
+
+=over
+
+=item PERL API
+
+ $data = $model->gene_class();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/gene_class
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub gene_class {
+    my ($self) = @_;
+
+    return {
+        description => 'the class of the gene the variation falls in, if any',
+        data        => $self->_pack_obj($self ~~ 'Gene_class'),
+    };
+}
+
+=head3 corresponding_gene
+
+This method returns a data structure containing
+the gene that the variation is contained in, if any.
+
+=over
+
+=item PERL API
+
+ $data = $model->corresponding_gene();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/corresponding_gene
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# This should return the CGC name, sequence name (if name), and WBGeneID...
+sub corresponding_gene {
+    my ($self) = @_;
+
+    return {
+        description => 'gene in which this variation is found (if any)',
+        data        => $self->_pack_obj($self ~~ 'Gene'),
+    };
+}
+
+=head3 reference_allele
+
+This method returns a data structure containing
+the reference allele for the corresponding gene
+of the current variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->reference_allele();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_allele
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub reference_allele {
+    my ($self) = @_;
+
+    my $allele = eval {$self->object->Gene->Reference_allele};
+    return {
+        description => 'the reference allele for the containing gene (if any)',
+        data        => $allele && $self->_pack_obj($allele),
+    };
+}
+
+=head3 other_alleles
+
+This method returns a data structure containing
+other alleles of the corresponding gene of the
+variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->other_alleles();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/other_alleles
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub other_alleles {
+    my ($self) = @_;
+
+    my $name = $self ~~ 'name';
+    my $data;
+    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
+        next if $allele eq $name;
+
+        my $packed_allele = $self->_pack_obj($allele);
+
+        if ($allele->SNP) {
+            push @{$data->{data}->{polymorphisms}}, $packed_allele;
+        }
+        elsif ($allele->Sequence || $allele->Flanking_sequences) {
+            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+        }
+        else {
+            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
+        }
+    }
+
+    return {
+        description => 'other alleles of the containing gene (if known)',
+        data        => $data,
+    };
+}
+
+=head3 strains
+
+This method returns a data structure containing
+strains carrying the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->strains();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/strains
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub strains {
+    my $self   = shift;
+    my $object = $self->object;    
+    my @data;
+    my %count;
+    foreach ($object->Strain) {
+	my @genes = $_->Gene;
+	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+	
+	my $packed = $self->_pack_obj($_);
+	
+	# All of the counts can go away if
+	# we discard the venn diagram.
+	push @{$count{total}},$packed;
+	push @{$count{available_from_cgc}},$packed if $cgc;
+	
+	if (@genes == 1 && !$_->Transgene){
+	    push @{$count{carrying_gene_alone}},$packed;
+	    if ($cgc) {
+		push @{$count{carrying_gene_alone_and_cgc}},$packed;
+	    }	    
+	} else {
+	    push @{$count{others}},$packed;
+	}       
+	
+	my $genotype = $_->Genotype;
+	push @data, { strain   => $packed,
+		      cgc      => $cgc ? 'yes' : 'no',
+		      genotype => "$genotype",
+	};
+    }
+    
+    return { description => 'strains carrying gene',
+	     data        => \@data,
+	     count       => \%count };
+}
+
+
+=head3 rescued_by_transgene
+    
+This method returns a data structure containing
+transgenes (if any) that rescue the mutant phenotype
+of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->rescued_by_transgene();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/rescued_by_transgene
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub rescued_by_transgene {
+    my ($self) = @_;
+    
+    return {
+        description => 'transgenes that rescue phenotype(s) caused by this variation',
+        data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
+    };
+}
+
+
+
+
+############################################################
+#
+# The Isolation Widget
+#
+############################################################
+
+=head2 Isolation
+
+=cut
+
+# sub laboratory { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include laboratory >>
+
+=head3 external_source
+
+This method returns a data structure containing
+the external source of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->external_source();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/external_source
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub external_source {
+    my ($self) = @_;
+
+    my $hash;
+    my ($remote_url,$remote_text);
+    foreach my $dbsnp (@{$self ~~ '@Database'}) {
+        next unless $dbsnp eq 'dbSNP_ss';
+        $remote_text = $dbsnp->right(2);
+        my $url  = $dbsnp->URL_constructor;
+        # Create a direct link to the external site
+
+        if ($url && $remote_text) {
+            # 	    (my $name = $dbsnp) =~ s/_/ /g;
+            $hash->{$dbsnp} = {
+                remote_url => sprintf($url, $remote_text),
+                remote_text => "dbSNP: $remote_text",
+            };
+        }
+    }
+
+    return {
+        description => 'dbSNP ss#, if known',
+        data        => $hash,
+    };
+}
+
+
+
+=head3 isolated_by_author
+
+This method returns a data structure containing
+the author that isolated the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->isolated_by_author();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by_author
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub isolated_by_author {
+    my ($self) = @_;
+
+    return {
+        description => 'the author credited with generating the mutation',
+        data        => $self->_pack_obj($self ~~ 'Author'),
+    };
+}
+
+=head3 isolated_by
+
+This method returns a data structure containing
+the atuhor or person that isolated the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->isolated_by();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_by
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub isolated_by {
+    my ($self) = @_;
+
+    return {
+        description => 'the person credited with generating the mutation',
+        data        => $self->_pack_obj($self ~~ 'Person'),
+    };
+}
+
+=head3 date_isolated
+
+This method returns a data structure containing
+the date the variation was isolated, if known.
+
+=over
+
+=item PERL API
+
+ $data = $model->date_isolated();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/date_isolated
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub date_isolated {
+    my ($self) = @_;
+
+    my $date = $self ~~ 'Date';
+    return {
+        description => 'date the mutation was isolated',
+        data        => $date && "$date",
+    };
+}
+
+=head3 mutagen
+
+This method returns a data structure containing
+the mutagen used to generate the variation, if known.
+
+=over
+
+=item PERL API
+
+ $data = $model->mutagen();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/mutagen
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub mutagen {
+    my ($self) = @_;
+
+    my $mutagen = $self ~~ 'Mutagen';
+    return {
+        description => 'mutagen used to generate the variation',
+        data        => $mutagen && "$mutagen",,
+    };
+}
+
+=head3 isolated_via_forward_genetics
+
+This method returns a data structure describing
+if the mutation was isolated via forward genetics.
+
+=over
+
+=item PERL API
+
+ $data = $model->isolated_via_forward_genetics();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_forward_genetics
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Q: What are the contents of this tag?
+sub isolated_via_forward_genetics {
+    my ($self) = @_;
+
+    return {
+        description => 'was the mutation isolated by forward genetics?',
+        data        => $self ~~ 'Forward_genetics',
+    };
+}
+
+=head3 isolated_via_reverse_genetics
+
+This method returns a data structure describing
+if the variation was isolated by reverse genetics.
+
+=over
+
+=item PERL API
+
+ $data = $model->isolated_via_reverse_genetics();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/isolated_via_reverse_genetics
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+# Q: what are the contents of this tag?
+sub isolated_via_reverse_genetics {
+    my ($self) = @_;
+
+    return {
+        description => 'was the mutation isolated by reverse genetics?',
+        data        => $self ~~ 'Reverse_genetics',
+    };
+}
+
+=head3 transposon_excision
+
+This method returns a data structure describing
+if the variation was isolated by a transposon excision.
+
+=over
+
+=item PERL API
+
+ $data = $model->transposon_excision();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_excision
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub transposon_excision {
+    my ($self) = @_;
+
+    my $transposon = $self ~~ 'Transposon_excision';
+    return {
+        description => 'was the variation generated by a transposon excision event, and if so, of which family?',
+        data        => $transposon && "$transposon",
+    };
+}
+
+=head3 transposon_insertion
+
+This method returns a data structure describing
+if the variation was generated by a transposon insertion event.
+
+=over
+
+=item PERL API
+
+ $data = $model->transposon_insertion();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/transposon_insertion
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub transposon_insertion {
+    my ($self) = @_;
+
+    my $transposon = $self ~~ 'Transposon_insertion';
+    return {
+        description => 'was the variation generated by a transposon insertion event, and if so, of which family?',
+        data        => $transposon && "$transposon",
+    };
+}
+
+
+
+=head3 derived_from
+
+This method returns a data structure containing
+what variation the variation in question was derived from.
+
+=over
+
+=item PERL API
+
+ $data = $model->derived_from();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derived_from
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub derived_from {
+    my ($self) = @_;
+    
+    return {
+        description => 'variation from which this one was derived',
+        data        => $self->_pack_obj($self ~~ 'Derived_from'),
+    };
+}
+
+
+
+=head3 derivative
+
+This method returns a data structure containing
+variations derived from this variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->derivative();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/derivative
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub derivative {
+    my ($self) = @_;
+
+    my $derivatives = $self->_pack_objects($self ~~ '@Derivative');
+    return {
+        description => 'variations derived from this variation',
+        data => %$derivatives ? $derivatives : undef,
+    };
+}
+
+
+
+
+############################################################
+#
+# The Location Widget
+#
+############################################################
+
+=head2 Location
+
+=cut
+
+# sub genomic_position {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_position >>
+
+# sub genetic_position {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include genetic_position >>
+
+# sub genomic_image {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_image >>
+
+sub _build_genomic_position {
+    my ($self) = @_;
+
+    my $adjustment = sub {
+        my ($abs_start, $abs_stop) = @_;
+        return $abs_stop - $abs_start < 100
+             ? ($abs_start - 50, $abs_stop + 50)
+             : ($abs_start, $abs_stop);
+
+    };
+
+    my @positions = $self->_genomic_position($self->_segments, $adjustment);
+    return {
+        description => 'The genomic location of the sequence',
+        data        => @positions ? \@positions : undef,
+    };
+}
+
+sub _build_tracks {
+    my ($self) = @_;
+    return {
+        description => 'tracks displayed in GBrowse',
+        data => [ $self->_parsed_species eq 'c_elegans'
+                  ? qw(CG CANONICAL Allele TRANSPOSONS) : 'WBG' ],
+    };
+}
+
+sub _build_genomic_image {
+    my ($self) = @_;
+
+    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
+    my $UNMAPPED_SPAN = 10000;
+
+    my $position;
+    if (my $segment = $self->_segments->[0]) {
+        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
+
+        # Generate a link to the genome browser
+        # This is hard-coded and needs to be cleaned up.
+        # Is the segment smaller than 100? Let's adjust
+        my ($low,$high);
+        if ($abs_stop - $abs_start < 100) {
+            $low  = $abs_start - 50;
+            $high = $abs_stop  + 50;
+        }
+        else {
+            $low  = $abs_start;
+            $high = $abs_stop;
+        }
+
+        my $split  = $UNMAPPED_SPAN / 2;
+        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
+
+        ($position) = $self->_genomic_position([$segment || ()]);
+    }
+
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    };
+}
+
+sub _build__segments {
+    my ($self) = @_;
+    my $obj    = $self->object;
+
+    return [$self->gff_dsn->segment($obj->class => $obj)];
+}
+
 
 ############################################################
 #
@@ -115,15 +1496,119 @@ sub variation_type {
 #
 ############################################################
 
+=head3 sequencing_status
+
+This method returns a data structure containing
+the sequencing status of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->sequencing_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/sequencing_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub sequencing_status {
     my ($self) = @_;
-
+    
     my $status = $self ~~ 'SeqStatus';
     return {
         description => 'sequencing status of the variation',
         data        => $status && "$status",
     };
 }
+
+
+=head3 nucleotide_change
+
+This method returns a data structure containing
+both the wild type and mutant variants of the 
+variation, if known.
+
+=over
+
+=item PERL API
+
+ $data = $model->nucleotide_change();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nucleotide_change
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # Returns a data structure containing
 # wild type sequence - the wild type (or reference) sequence
@@ -133,7 +1618,7 @@ sub sequencing_status {
 
 sub nucleotide_change {
     my ($self) = @_;
-
+    
     # Nucleotide change details (from ace)
     my $variations = $self->_compile_nucleotide_changes($self->object);
     return {
@@ -142,13 +1627,65 @@ sub nucleotide_change {
     };
 }
 
+=head3 flanking_sequences
+
+This method returns a data structure containing
+sequences immediately 5' and 3' of the variation,
+if known.
+
+=over
+
+=item PERL API
+
+ $data = $model->flanking_sequences();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_sequences
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub flanking_sequences {
     my ($self) = @_;
     my $object = $self->object;
-
+    
     my $left_flank  = $object->Flanking_sequences(1);
     my $right_flank = $object->Flanking_sequences(2);
-
+    
     return {
         description => 'sequences flanking the variation',
         data        => {
@@ -158,13 +1695,65 @@ sub flanking_sequences {
     };
 }
 
+=head3 cgh_deleted_probes
+
+This method returns a data structure containing
+deleted probes detected by comparative genome
+hybridization (CGH).
+
+=over
+
+=item PERL API
+
+ $data = $model->cgh_deleted_probes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/cgh_deleted_probes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub cgh_deleted_probes {
     my ($self) = @_;
     my $object = $self->object;
-
+    
     my $left_flank  = $object->CGH_deleted_probes(1);
     my $right_flank = $object->CGH_deleted_probes(2);
-
+    
     return {
         description => 'probes used for CGH of deletion alleles',
         data        => {
@@ -174,12 +1763,64 @@ sub cgh_deleted_probes {
     };
 }
 
+=head3 context
+
+This method returns a data structure containing
+strings reconstructing the sequence of the variation
+in genomic context (if known).
+
+=over
+
+=item PERL API
+
+ $data = $model->context();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/context
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 # Show the variation in context.
 sub context {
     my ($self) = @_;
-
+    
     my $name   = $self ~~ 'Public_name';
-
+    
     # Display a formatted string that shows the mutation in context
     my $flank = 250;
     my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
@@ -196,14 +1837,116 @@ sub context {
     };
 }
 
+=head3 deletion_verification
+
+This method returns a data structure containing
+whether or not a deletion allele has been verified.
+
+=over
+
+=item PERL API
+
+ $data = $model->deletion_verification();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/deletion_verification
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub deletion_verification {
     my ($self) = @_;
-
+    
     return {
         description => 'the method used to verify deletion alleles',
         data        => $self ~~ 'Deletion_verification',
     };
 }
+
+=head3 features_affected
+
+This method returns a data structure containing
+features affected by the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->features_affected();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/features_affected
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # Display the position of the variation within a number of features
 # Foreach item that the variation is known to affect, display a table
@@ -211,18 +1954,18 @@ sub deletion_verification {
 sub features_affected {
     my ($self) = @_;
     my $object = $self->object;
-
+    
     # This is mostly constructed from Molecular_change hash associated with
     # tags in Affects, with the exception of Clone and Chromosome
     my $affects = {};
-
+    
     # Clone and Chromosome are calculated, not provided in the DB.
     # Feature and Interactor are handled a bit differently.
-
+    
     foreach my $type_affected ($object->Affects) {
         foreach my $item_affected ($type_affected->col) { # is a subtree
             my $affected_hash = $affects->{$type_affected}->{$item_affected} = $self->_pack_obj($item_affected);
-
+	    
             # Genes ONLY have gene
             if ($type_affected eq 'Gene') {
                 $affected_hash->{entry}++;
@@ -280,6 +2023,58 @@ sub features_affected {
     };
 }
 
+=head3 possibly_affects
+
+This method returns a data structure containing
+features that are possibly -- but haven't been 
+demonstrated to -- be affected by the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->possibly_affects();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/possibly_affects
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub possibly_affects {
     my ($self) = @_;
 
@@ -288,6 +2083,57 @@ sub possibly_affects {
         data        => $self->_pack_obj($self ~~ 'Possibly_affects'),
     };
 }
+
+=head3 flanking_pcr_products
+
+This method returns a data structure containing
+pcr products that flank the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->flanking_pcr_products();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/flanking_pcr_products
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub flanking_pcr_products {
     my ($self) = @_;
@@ -298,6 +2144,57 @@ sub flanking_pcr_products {
         data        => %$packed ? $packed : undef,
     };
 }
+
+=head3 affects_splice_site
+
+This method returns a data structure containing
+description if the variation affects splice sites.
+
+=over
+
+=item PERL API
+
+ $data = $model->affects_splice_site();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/affects_splice_site
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # TODO: Needs evidence
 sub affects_splice_site {
@@ -313,6 +2210,57 @@ sub affects_splice_site {
     };
 }
 
+=head3 causes_frameshift
+
+This method returns a data structure containing
+describing if the variation causes a frameshift.
+
+=over
+
+=item PERL API
+
+ $data = $model->causes_frameshift();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/causes_frameshift
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub causes_frameshift {
     my ($self) = @_;
 
@@ -322,6 +2270,58 @@ sub causes_frameshift {
         data         => $frameshift && "$frameshift",
     };
 }
+
+=head3 detection_method
+
+This method returns a data structure containing
+available detection methods for the variation --
+particularly for SNPs.
+
+=over
+
+=item PERL API
+
+ $data = $model->detection_method();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/detection_method
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub detection_method {
     my ($self) = @_;
@@ -336,9 +2336,61 @@ sub detection_method {
 
 ############################################################
 #
-# POLYMORPHISM DETAILS
+# POLYMORPHISM DETAILS (folder into Molecular Details widget)
 #
 ############################################################
+
+=head3 polymorphism_type
+
+This method returns a data structure containing
+the broad classification of the variation if it is
+a polymorphism, for example (SNP|RFLP).
+
+=over
+
+=item PERL API
+
+ $data = $model->polymorphism_type();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymoprhism_type
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub polymorphism_type {
     my ($self) = @_;
@@ -357,6 +2409,57 @@ sub polymorphism_type {
     };
 }
 
+=head3 polymorphism_status
+
+If the variation is a polymorphism, this method
+will return a data structure containing it's status.
+
+=over
+
+=item PERL API
+
+ $data = $model->polymorphism_status();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_status
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub polymorphism_status {
     my ($self) = @_;
 
@@ -367,6 +2470,57 @@ sub polymorphism_status {
     };
 }
 
+=head3 reference_strain
+
+If the variation is a polymorphism, this method
+will return the reference strain.
+
+=over
+
+=item PERL API
+
+ $data = $model->reference_strain();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/reference_strain
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 # For polymorphisms
 sub reference_strain {
     my ($self) = @_;
@@ -376,6 +2530,57 @@ sub reference_strain {
         data        => $self->_pack_obj($self ~~ 'Strain'),
     };
 }
+
+=head3 polymorphism_assays
+
+For variations that are polymorphisms, this method
+will return assays useful for its detection.
+
+=over
+
+=item PERL API
+
+ $data = $model->polymorphism_assays();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/polymorphism_assays
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # Details related to assaying polymorphisms
 sub polymorphism_assays {
@@ -461,104 +2666,124 @@ sub polymorphism_assays {
 # OOOH!  Need to handle this.
 #++ 					 'variation and motif image',p(motif_picture(1,$entry)));
 
-############################################################
-#
-# LOCATION
-#
-############################################################
 
-=head2 Location
-
-=cut
-
-sub _build_genomic_position {
-    my ($self) = @_;
-
-    my $adjustment = sub {
-        my ($abs_start, $abs_stop) = @_;
-        return $abs_stop - $abs_start < 100
-             ? ($abs_start - 50, $abs_stop + 50)
-             : ($abs_start, $abs_stop);
-
-    };
-
-    my @positions = $self->_genomic_position($self->_segments, $adjustment);
-    return {
-        description => 'The genomic location of the sequence',
-        data        => @positions ? \@positions : undef,
-    };
-}
-
-sub _build_tracks {
-    my ($self) = @_;
-    return {
-        description => 'tracks displayed in GBrowse',
-        data => [ $self->_parsed_species eq 'c_elegans'
-                  ? qw(CG CANONICAL Allele TRANSPOSONS) : 'WBG' ],
-    };
-}
-
-sub _build_genomic_image_position {
-    my ($self) = @_;
-
-    # TO DO: MOVE UNMAPPED_SPAN TO CONFIG
-    my $UNMAPPED_SPAN = 10000;
-
-    my $position;
-    if (my $segment = $self->_segments->[0]) {
-        my ($ref,$abs_start,$abs_stop,$start,$stop) = $self->_seg2coords($segment);
-
-        # Generate a link to the genome browser
-        # This is hard-coded and needs to be cleaned up.
-        # Is the segment smaller than 100? Let's adjust
-        my ($low,$high);
-        if ($abs_stop - $abs_start < 100) {
-            $low  = $abs_start - 50;
-            $high = $abs_stop  + 50;
-        }
-        else {
-            $low  = $abs_start;
-            $high = $abs_stop;
-        }
-
-        my $split  = $UNMAPPED_SPAN / 2;
-        ($segment) = $self->gff_dsn->segment($ref,$low-$split,$low+$split);
-
-        ($position) = $self->_genomic_position([$segment || ()]);
-    }
-
-    return {
-        description => 'The genomic location of the sequence to be displayed by GBrowse',
-        data        => $position,
-    };
-}
-
-sub _build__segments {
-    my ($self) = @_;
-    my $obj    = $self->object;
-
-    return [$self->gff_dsn->segment($obj->class => $obj)];
-}
-
-# sub genetic_position {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genetic_position >>
 
 ############################################################
 #
-# PHENOTYPE
+# The Phenotype Widget
 #
 ############################################################
+
+=head3 nature_of_variation
+
+This method returns a data structure containing
+the nature of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->nature_of_variation();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/nature_of_variation
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub nature_of_variation {
     my ($self) = @_;
-
+    
     my $nature = $self ~~ 'Nature_of_variation';
     return {
         description => 'nature of the variation',
         data        => $nature && "$nature",
     };
 }
+
+=head3 dominance
+
+Describes if the variation is dominant or not.
+
+=over
+
+=item PERL API
+
+ $data = $model->dominance();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/dominance
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # Q: Model needs to be organized under a single Dominance tag
 # Q: is this one or many?
@@ -579,6 +2804,57 @@ sub dominance {
     };
 }
 
+=head3 phenotype_remark
+
+This method returns a data structure containing
+a brief remark on the phenotype of the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->phenotype_remark();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/phenotype_remark
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
 sub phenotype_remark {
     my ($self) = @_;
 
@@ -588,6 +2864,57 @@ sub phenotype_remark {
         data        => $remark && "$remark",
     };
 }
+
+=head3 temperature_sensitivity
+
+This method returns a data structure containing
+the temperature sensitivity of the variation, if known.
+
+=over
+
+=item PERL API
+
+ $data = $model->temperature_sensitivity();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/temperature_sensitivity
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 # TODO: needs evidence
 sub temperature_sensitivity {
@@ -601,306 +2928,121 @@ sub temperature_sensitivity {
     };
 }
 
-sub phenotype {
-	my ($self) = @_;
+=head3 phenotype
 
+This method returns a data structure containing
+the phenotype of strains carrying the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->phenotype();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/phenotype
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub phenotype_old {
+	my ($self) = @_;
 	return $self->_pull_phenotype_data('Phenotype');
 }
 
-sub phenotype_not {
-	my ($self) = @_;
+=head3 phenotype_not_observed
 
-	return $self->_pull_phenotype_data('Phenotype_not_observed');
+This method returns a data structure containing
+phenotypes not observed in strains carrying the variation.
+
+=over
+
+=item PERL API
+
+ $data = $model->phenotype_not_observed();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/phenotype_not_observed
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub phenotype_not_observed_old {
+    my ($self) = @_;    
+    return $self->_pull_phenotype_data('Phenotype_not_observed');
 }
 
 
-############################################################
-#
-# GENETICS
-#  NEEDS: Mapping data
-############################################################
-sub gene_class {
-    my ($self) = @_;
-
-    return {
-        description => 'the class of the gene the variation falls in, if any',
-        data        => $self->_pack_obj($self ~~ 'Gene_class'),
-    };
-}
-
-# This should return the CGC name, sequence name (if name), and WBGeneID...
-sub corresponding_gene {
-    my ($self) = @_;
-
-    return {
-        description => 'gene in which this variation is found (if any)',
-        data        => $self->_pack_obj($self ~~ 'Gene'),
-    };
-}
-
-sub reference_allele {
-    my ($self) = @_;
-
-    my $allele = eval {$self->object->Gene->Reference_allele};
-    return {
-        description => 'the reference allele for the containing gene (if any)',
-        data        => $allele && $self->_pack_obj($allele),
-    };
-}
-
-sub other_alleles {
-    my ($self) = @_;
-
-    my $name = $self ~~ 'name';
-    my $data;
-    foreach my $allele (eval {$self->Gene->Allele(-fill => 1)}) {
-        next if $allele eq $name;
-
-        my $packed_allele = $self->_pack_obj($allele);
-
-        if ($allele->SNP) {
-            push @{$data->{data}->{polymorphisms}}, $packed_allele;
-        }
-        elsif ($allele->Sequence || $allele->Flanking_sequences) {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
-        else {
-            push @{$data->{data}->{sequenced_alleles}}, $packed_allele;
-        }
-    }
-
-    return {
-        description => 'other alleles of the containing gene (if known)',
-        data        => $data,
-    };
-}
-
-sub strains {
-    my ($self) = @_;
-
-    my (@strains,@singletons,@cgc,@others,@both, $count);
-    foreach my $strain (@{$self ~~ '@Strain'}) {
-        $count++;
-        my @genes = $strain->Gene;
-        my $cgc = $strain->Location eq 'CGC';
-        my $packed_strain = $self->_pack_obj($strain);
-
-        if (@genes == 1) {
-            push @both, $packed_strain if $cgc;
-            push @singletons, $packed_strain;
-        }
-        elsif ($cgc) {
-            push @cgc, $packed_strain;
-        }
-        else {
-            push @others, $packed_strain;
-        }
-    }
-
-    my %data;
-    $data{singleton} = \@singletons if @singletons;
-    $data{both}      = \@both if @both;
-    $data{cgc}       = \@cgc if @cgc;
-    $data{others}    = \@others if @others;
-    $data{total}     = $count if $count;
-
-    return {
-        description => 'strains carrying this variation',
-        data        => %data ? \%data : undef,
-    };
-}
-
-sub rescued_by_transgene {
-    my ($self) = @_;
-
-    return {
-        description => 'transgenes that rescue phenotype(s) caused by this variation',
-        data        => $self->_pack_obj($self ~~ 'Rescued_by_Transgene'),
-    };
-}
 
 
-############################################################
-#
-# HISTORY
-#
-############################################################
-
-=head2 History
-
-=cut
-
-# sub laboratory { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include laboratory >>
-
-sub isolated_by_author {
-    my ($self) = @_;
-
-    return {
-        description => 'the author credited with generating the mutation',
-        data        => $self->_pack_obj($self ~~ 'Author'),
-    };
-}
-
-sub isolated_by {
-    my ($self) = @_;
-
-    return {
-        description => 'the person credited with generating the mutation',
-        data        => $self->_pack_obj($self ~~ 'Person'),
-    };
-}
-
-sub date_isolated {
-    my ($self) = @_;
-
-    my $date = $self ~~ 'Date';
-    return {
-        description => 'date the mutation was isolated',
-        data        => $date && "$date",
-    };
-}
-
-sub mutagen {
-    my ($self) = @_;
-
-    my $mutagen = $self ~~ 'Mutagen';
-    return {
-        description => 'mutagen used to generate the variation',
-        data        => $mutagen && "$mutagen",,
-    };
-}
-
-# Q: What are the contents of this tag?
-sub isolated_via_forward_genetics {
-    my ($self) = @_;
-
-    return {
-        description => 'was the mutation isolated by forward genetics?',
-        data        => $self ~~ 'Forward_genetics',
-    };
-}
-
-# Q: what are the contents of this tag?
-sub isolated_via_reverse_genetics {
-    my ($self) = @_;
-
-    return {
-        description => 'was the mutation isolated by reverse genetics?',
-        data        => $self ~~ 'Reverse_genetics',
-    };
-}
-
-sub transposon_excision {
-    my ($self) = @_;
-
-    my $transposon = $self ~~ 'Transposon_excision';
-    return {
-        description => 'was the variation generated by a transposon excision event, and if so, of which family?',
-        data        => $transposon && "$transposon",
-    };
-}
-
-sub transposon_insertion {
-    my ($self) = @_;
-
-    my $transposon = $self ~~ 'Transposon_insertion';
-    return {
-        description => 'was the variation generated by a transposon insertion event, and if so, of which family?',
-        data        => $transposon && "$transposon",
-    };
-}
-
-############################################################
-#
-# The External Links widget
-#
-############################################################
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-# Q: How is this used? Is this used in conjunction with the various KO Consortium tags?
-# CAN BE REPLACED WITH << xrefs >>
-sub source_database {
-    my ($self) = @_;
-
-    my ($remote_url,$remote_text);
-    if (my $source_db = $self ~~ 'Database') {
-        my $name = $source_db->Name;
-        my $id   = $self->object->Database(3);
-
-        # Using the URL constructor in the database (for now)
-        # TODO: Should probably pull these out and keep URLs in config
-        my $url  = $source_db->URL_constructor;
-        # Create a direct link to the external site
-
-        if ($url && $id) {
-            $name =~ s/_/ /g;
-            $remote_url = sprintf($url,$id);
-            $remote_text = "$name";
-        }
-    }
-
-    return {
-        description => 'remote source database, if known',
-        data        => {
-            remote_url => $remote_url,
-            remote_text => $remote_text,
-        }
-    };
-}
-
-sub external_source {
-    my ($self) = @_;
-
-    my $hash;
-    my ($remote_url,$remote_text);
-    foreach my $dbsnp (@{$self ~~ '@Database'}) {
-        next unless $dbsnp eq 'dbSNP_ss';
-        $remote_text = $dbsnp->right(2);
-        my $url  = $dbsnp->URL_constructor;
-        # Create a direct link to the external site
-
-        if ($url && $remote_text) {
-            # 	    (my $name = $dbsnp) =~ s/_/ /g;
-            $hash->{$dbsnp} = {
-                remote_url => sprintf($url, $remote_text),
-                remote_text => "dbSNP: $remote_text",
-            };
-        }
-    }
-
-    return {
-        description => 'dbSNP ss#, if known',
-        data        => $hash,
-    };
-}
-
-sub derived_from {
-    my ($self) = @_;
-
-    return {
-        description => 'variation from which this one was derived',
-        data        => $self->_pack_obj($self ~~ 'Derived_from'),
-    };
-}
-
-sub derivative {
-    my ($self) = @_;
-
-    my $derivatives = $self->_pack_objects($self ~~ '@Derivative');
-    return {
-        description => 'variations derived from this variation',
-        data => %$derivatives ? $derivatives : undef,
-    };
-}
 
 ############################################################
 #
@@ -915,7 +3057,7 @@ my %associated_meta = ( # this can be used to identify protein effects
     Frameshift  => [qw(description)],
     Nonsense    => [qw(subtype description)],
     Splice_site => [qw(subtype description)],
-);
+    );
 
 sub _retrieve_molecular_changes {
     my ($self, $changed_item) = @_; # actually, changed_item is a subtree
@@ -932,7 +3074,7 @@ sub _retrieve_molecular_changes {
         my %change_data;
         my $keys = $associated_meta{$change_type} || [];
         @change_data{@$keys, 'evidence_type', 'evidence'}
-            = map {"$_"} @raw_change_data;
+	= map {"$_"} @raw_change_data;
 
         if ($associated_meta{$change_type}) { # only protein effects have extra data
             $protein_effects{$change_type} = \%change_data;
@@ -1028,6 +3170,7 @@ sub _compile_nucleotide_changes {
     return \@variations;
 }
 
+
 # Fetch the coordinates of the variation in a given feature
 # Much in here could be generic
 sub _fetch_coords_in_feature {
@@ -1056,9 +3199,9 @@ sub _do_simple_conceptual_translation {
     my ($self, $cds, $datahash) = @_;
 
     my ($pos, $formatted_aa_change) = @{$datahash}{'position', 'description' }
-        or return;
+    or return;
     my $wt_protein = eval { $cds->Corresponding_protein->asPeptide }
-        or return;
+    or return;
 
     my $object = $self->object;
 
@@ -1071,7 +3214,7 @@ sub _do_simple_conceptual_translation {
     my $mut_aa = $2;
 
     # if ($type eq 'Nonsense') {
-    # 	$mut_aa = '*';
+    #   $mut_aa = '*';
     # }
 
     # Substitute the mut_aa into the wildtype protein
@@ -1084,31 +3227,32 @@ sub _do_simple_conceptual_translation {
 
     # Create short strings of the proteins for display
     $wt_protein_fragment = ($pos - 19)
- 	. '...'
- 	. substr($wt_protein,$pos - 20,19)
- 	. ' '
- 	. '<b>' . substr($wt_protein,$pos-1,1) . '</b>'
- 	. ' '
- 	. substr($wt_protein,$pos,20)
- 	. '...'
- 	. ($pos + 19);
+        . '...'
+        . substr($wt_protein,$pos - 20,19)
+        . ' '
+        . '<b>' . substr($wt_protein,$pos-1,1) . '</b>'
+        . ' '
+        . substr($wt_protein,$pos,20)
+        . '...'
+        . ($pos + 19);
     $mut_protein_fragment = ($pos - 19)
- 	. '...'
- 	. substr($mut_protein,$pos - 20,19)
- 	. ' '
- 	. '<b>' . substr($mut_protein,$pos-1,1) . '</b>'
- 	. ' '
- 	. substr($mut_protein,$pos,20)
- 	.  '...'
- 	. ($pos + 19);
+        . '...'
+        . substr($mut_protein,$pos - 20,19)
+        . ' '
+        . '<b>' . substr($mut_protein,$pos-1,1) . '</b>'
+        . ' '
+        . substr($mut_protein,$pos,20)
+        .  '...'
+        . ($pos + 19);
 
     my $wt_trans = "> $cds"
- 	    . $self->_do_markup($wt_protein, $pos-1, $wt_aa, undef, 'is_peptide');
+	. $self->_do_markup($wt_protein, $pos-1, $wt_aa, undef, 'is_peptide');
     my $mut_trans = "> $cds ($object: $formatted_aa_change)"
- 	    . $self->_do_markup($mut_protein, $pos-1, $mut_aa, undef, 'is_peptide');
+	. $self->_do_markup($mut_protein, $pos-1, $mut_aa, undef, 'is_peptide');
 
     return ($wt_protein_fragment, $mut_protein_fragment, $wt_trans, $mut_trans);
 }
+
 
 # Markup features relative to the CDS or to raw genomic features
 sub _do_markup {
@@ -1153,7 +3297,7 @@ sub _do_markup {
         for (my $i=80; $i < length $seq; $i += 80) {
             push @markup,['newline',$i];
         }
-        #	push @markup,map {['newline',80*$_]} (1..length($seq)/80);
+        #       push @markup,map {['newline',80*$_]} (1..length($seq)/80);
     }
 
     if ($flank_length) {
@@ -1343,9 +3487,9 @@ sub _build_sequence_strings {
 
     # MOVE INTO TEST
     #    if (DEBUG_ADVANCED) {
-    #	#      print "right flank : $right_flank",br;
-    # 	$debug .= "WT PLUS STRAND .................. : $wt_plus"  . br;
-    # 	$debug .= "MUT PLUS STRAND ................. : $mut_plus" . br;
+    #   #      print "right flank : $right_flank",br;
+    #   $debug .= "WT PLUS STRAND .................. : $wt_plus"  . br;
+    #   $debug .= "MUT PLUS STRAND ................. : $mut_plus" . br;
     #     }
 
     # Mark up the reported flanking sequences in the full sequence
@@ -1357,9 +3501,9 @@ sub _build_sequence_strings {
 
     # Create a full length mutant dna string so that I can mark it up.
     my $mut_dna =
- 	substr($dna,$mutation_start - 500,500)
- 	. $mut_plus
- 	. substr($dna,$mutation_start + $mutation_length,500);
+        substr($dna,$mutation_start - 500,500)
+        . $mut_plus
+        . substr($dna,$mutation_start + $mutation_length,500);
 
 
     my $wt_full = $self->_do_markup($dna,$mutation_start,$wt_plus,length($reported_left_flank));
@@ -1375,20 +3519,22 @@ sub _build_sequence_strings {
     #     return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
     # }
     # else {
-        my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
-        my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
-        return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
+    my $wt_seq  = lc join('',$left_flank,$wt_plus,$right_flank);
+    my $mut_seq = lc join('',$left_flank,$mut_plus,$right_flank);
+    return ($wt_seq,$mut_seq,$wt_full,$mut_full,$debug);
     # }
 }
 
+
+
 sub _pull_phenotype_data {
     my ($self, $phenotype_tag) = @_;
-	my $object = $self->object;
+    my $object = $self->object;
 
-	my @phenotype_data; ## return data structure contains set of : not, phenotype_id; array ref for each characteristic in each element
+    my @phenotype_data; ## return data structure contains set of : not, phenotype_id; array ref for each characteristic in each element
 
-	#my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
-  	#foreach my $phenotype_tag (@phenotype_tags) {
+        #my @phenotype_tags = ('Phenotype', 'Phenotype_not_observed');
+        #foreach my $phenotype_tag (@phenotype_tags) {
     my @phenotypes = $object->$phenotype_tag;
 
     foreach my $phenotype (@phenotypes) {
@@ -1401,33 +3547,33 @@ sub _pull_phenotype_data {
         my %tagset = (
             'Paper_evidence' => 1,
             'Remark' => 1,
-            #    		'Person_evidence' => 1,
-            #		  'Phenotype_assay' => 1,
-            #		  'Penetrance' => 1,
-            #		  'Temperature_sensitive' => 1,
-            #		  'Anatomy_term' => 1,
-            #		  'Recessive' => 1,
-            #		  'Semi_dominant' => 1,
-            #		  'Dominant' => 1,
-            #		  'Haplo_insufficient' => 1,
-            # 		  'Loss_of_function' => 1,
-            #		  'Gain_of_function' => 1,
-            #		  'Maternal' => 1,
-            #		  'Paternal' => 1
+            #                   'Person_evidence' => 1,
+            #             'Phenotype_assay' => 1,
+            #             'Penetrance' => 1,
+            #             'Temperature_sensitive' => 1,
+            #             'Anatomy_term' => 1,
+            #             'Recessive' => 1,
+            #             'Semi_dominant' => 1,
+            #             'Dominant' => 1,
+            #             'Haplo_insufficient' => 1,
+            #             'Loss_of_function' => 1,
+            #             'Gain_of_function' => 1,
+            #             'Maternal' => 1,
+            #             'Paternal' => 1
 
-        ); ### extra data commented out off data pull system 20090922 to simplify table build and data pull
+	    ); ### extra data commented out off data pull system 20090922 to simplify table build and data pull
 
         my %extra_tier = (
             Phenotype_assay       => 1,
             Temperature_sensitive => 1,
             # Penetrance => 1,
-        );
+	    );
 
         my %gof_set = (
             Gain_of_function => 1,
             Maternal         => 1,
             # Paternal => 1,
-        );
+	    );
 
         my %no_details = (
             Recessive          => 1,
@@ -1437,24 +3583,23 @@ sub _pull_phenotype_data {
             Paternal           => 1,
             # Loss_of_function => 1,
             # Gain_of_function => 1,
-        );
-
+	    );
 
         foreach my $phenotype_subtag (@phenotype_subtags) {
-			if (!($tagset{$phenotype_subtag})) {
-				next;
-			}
-			else {
-				my @ps_column = $phenotype_subtag->col;
+	    if (!($tagset{$phenotype_subtag})) {
+		next;
+	    }
+	    else {
+		my @ps_column = $phenotype_subtag->col;
 
-				## data to be incorporated into @ps_data;
+                                ## data to be incorporated into @ps_data;
 
-				my $character;
-				my $remark;
-				my $evidence_line;
+		my $character;
+		my $remark;
+		my $evidence_line;
 
-				## process Penetrance data
-				if ($phenotype_subtag =~ m/Penetrance/) {
+                                ## process Penetrance data
+		if ($phenotype_subtag =~ m/Penetrance/) {
                     foreach my $ps_column_element (@ps_column) {
                         if ($ps_column_element =~ m/Range/) {
                             next;
@@ -1470,8 +3615,8 @@ sub _pull_phenotype_data {
                             $evidence_line =  join "; ", @pen_links;
                         }
                     }
-				}
-				elsif ($phenotype_subtag =~ m/Remark/) { # get remark
+		}
+		elsif ($phenotype_subtag =~ m/Remark/) { # get remark
                     my @remarks = $phenotype_subtag->col;
                     my $remarks = join "; ", @remarks;
                     my $details_url = "/db/misc/etree?name=$phenotype;class=Phenotype";
@@ -1479,14 +3624,14 @@ sub _pull_phenotype_data {
                     $remarks = "$remarks\ $details_link";
                     $p_data{'remark'} = $remarks; #$phenotype_subtag->right
                     next;
-				}
-				elsif ($phenotype_subtag =~ m/Paper_evidence/) { ## get evidences
+		}
+		elsif ($phenotype_subtag =~ m/Paper_evidence/) { ## get evidences
                     my @phenotype_paper_evidence = $phenotype_subtag->col;
                     my @phenotype_paper_links = eval {map {format_reference(-reference=>$_,-format=>'short') if $_;} @phenotype_paper_evidence}; #;
                     $p_data{'paper_evidence'} = join "; ", @phenotype_paper_links;
                     next;
-				}
-				elsif ($phenotype_subtag =~ m/Anatomy_term/) { ## process Anatomy_term data
+		}
+		elsif ($phenotype_subtag =~ m/Anatomy_term/) { ## process Anatomy_term data
                     my ($char,$text,$evidence) = $phenotype_subtag ->row;
                     my @at_evidence = $phenotype_subtag -> right -> right -> col;
 
@@ -1502,8 +3647,8 @@ sub _pull_phenotype_data {
 
                     $evidence_line = join "; ", @at_links;
 
-				}
-				elsif ($phenotype_subtag =~ m/Phenotype_assay/) { ## process extra tier data
+		}
+		elsif ($phenotype_subtag =~ m/Phenotype_assay/) { ## process extra tier data
                     foreach my $character_detail (@ps_column) {
                         my $cd_info = $character_detail->right; # right @cd_info
                         my @cd_evidence = $cd_info->right->col;
@@ -1519,9 +3664,9 @@ sub _pull_phenotype_data {
                         push  @ps_data, $phenotype_st_line ;
                     }
                     next;
-				}
-				elsif ($phenotype_subtag =~ m/Temperature_sensitive/) {
-                    foreach my $character_detail (@ps_column) {
+		}
+		elsif ($phenotype_subtag =~ m/Temperature_sensitive/) {
+		    foreach my $character_detail (@ps_column) {
                         my $cd_info = $character_detail->right;
                         my @cd_evidence = $cd_info->right->col;
 
@@ -1536,8 +3681,8 @@ sub _pull_phenotype_data {
                     }
 
                     next;
-				}
-				elsif ( $phenotype_subtag =~ m/Gain_of_function/) { # $gof_set{}
+		}
+		elsif ( $phenotype_subtag =~ m/Gain_of_function/) { # $gof_set{}
                     my ($char,$text,$evidence) = $phenotype_subtag->row;
                     my @gof_evidence;
 
@@ -1563,8 +3708,8 @@ sub _pull_phenotype_data {
                     my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
                     push  @ps_data, $phenotype_st_line ;
                     next;
-				}
-				elsif ( $phenotype_subtag =~ m/Loss_of_function/) { # $gof_set{}
+		}
+		elsif ( $phenotype_subtag =~ m/Loss_of_function/) { # $gof_set{}
                     my ($char,$text,$evidence) = $phenotype_subtag->row;
                     my @lof_evidence;
 
@@ -1591,8 +3736,8 @@ sub _pull_phenotype_data {
                     push  @ps_data, $phenotype_st_line ;
                     next;
 
-				}
-				elsif ( $phenotype_subtag =~ m/Maternal/) { # $gof_set{}
+		}
+		elsif ( $phenotype_subtag =~ m/Maternal/) { # $gof_set{}
                     my ($char,$text,$evidence) = $phenotype_subtag->row;
 
                     my @mom_evidence;
@@ -1619,8 +3764,8 @@ sub _pull_phenotype_data {
                     my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
                     push  @ps_data, $phenotype_st_line ;
                     next;
-				}
-				elsif ($no_details{$phenotype_subtag}) { ## process no details data
+		}
+		elsif ($no_details{$phenotype_subtag}) { ## process no details data
                     my @nd_evidence;
                     eval {
                         @nd_evidence = $phenotype_subtag->right->col;
@@ -1634,11 +3779,11 @@ sub _pull_phenotype_data {
 
                         $evidence_line = join "; ", @nd_links;
                     }
-				}
+		}
 
-				my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
-				push  @ps_data, $phenotype_st_line ; ## let @ps_data evolve to include characteristic; remarks; and evidence line
-			}
+		my $phenotype_st_line = join "|", ($phenotype_subtag,$character,$remark,$evidence_line);
+		push  @ps_data, $phenotype_st_line ; ## let @ps_data evolve to include characteristic; remarks; and evidence line
+	    }
 
         }
 
@@ -1662,6 +3807,12 @@ sub _pull_phenotype_data {
         data        => @phenotype_data ? \@phenotype_data : undef,
     };
 }
+
+
+
+
+
+
 
 __PACKAGE__->meta->make_immutable;
 

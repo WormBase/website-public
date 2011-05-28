@@ -2458,7 +2458,6 @@ sub treefam {
 #
 # The Interactions Widget
 #   template: classes/gene/interactions.tt2
-# NOT DONE
 #
 #######################################
 

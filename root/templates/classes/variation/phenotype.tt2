@@ -1,34 +1,39 @@
 [% # This generic statement belongs at the start of every template %]
 [%  PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
+
+[% phenotype %]
+
+[% phenotype_not_observed %]
+
 	
 [%
 
   'TH: data processing and view redundancy with other phenotypes?';
 
-   WRAPPER $field_block title="Phenotype" key=phenotype;
+   WRAPPER $field_block title="Phenotype" key="phenotype_old";
 
-    'TH: check data model for conformation. view called for "data_pack".
+    'TH: check data model for conformation. view called for "data_pack"';
 
       build_data_table(order=['phenotype','remark'],
                               columns={ phenotype => 'Phenotype',
 		                        remark    => 'Remark',
                                        },
-                         key='phenotype');
+                         key='phenotype_old');
    END;
 
    '<hr>';
 
 
-   WRAPPER $field_block title="Phenotype NOT observed" key="phenotype_not";
+   WRAPPER $field_block title="Phenotype NOT observed" key="phenotype_not_observed_old";
 
-    'TH: check data model for conformation. view called for "data_pack".
+    'TH: check data model for conformation. view called for "data_pack".';
 
       build_data_table(order=['phenotype','remark'],
                               columns={ phenotype => 'Phenotype',
 		                        remark    => 'Remark',
                                        },
-                         key='phenotype_not');
+                         key='phenotype_not_observed');
    END;
 
 %]

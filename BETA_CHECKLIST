@@ -1,6 +1,10 @@
 Species display and internal linking.
       display should be consistent: G. species, italiczied, and linked when it's one of ours.
 
+Phenotypes:
+* Standardize display (lots of unique processing around)
+* unify Model processing.
+
 tag2link
 * Fails in some cases (or fails to provide generic "all" for classes/objects that are missing species)
 
@@ -29,6 +33,10 @@ References widget / handling
 * The publications template of person has some rudimentary 
   formatting (and the corresponding method some logic).
 
+General UI:
+Class summary pages.
+      * make sure search/browse works for classes
+
 
 API
 * Drop pseudoPOD and just document public methods in Role?
@@ -37,8 +45,8 @@ API
 
 
 Temporary images
-* paths
-* generating server for load balancing or NFS
+* Are paths correct and portable to different environments?
+* Is generating server in URL for load balancing? Or should we just write to NFS?
 
 GBrowse
 * integration
@@ -57,16 +65,16 @@ Class review and formatting
 analysis	 x     	   x	   x		-
 anatomy_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
-clone		 -	   -	   -		-
-e*_cluster	 -	   -	   -		-
-expr_pattern	 -	   -	   -		-
-feature		 -	   -	   -		-
-gene		 x	   x	   -		-
-gene_class	 x	   x	   -		-
-gene_cluster	 x	   x	   -		-
-gene_regulation	 -	   -	   -		-
-go_term		 -	   -	   -		-
-interaction	 -	   -	   -		-
+clone		 -	   -	   x		-
+e*_cluster	 -	   -	   x		-
+expr_pattern	 -	   -	   x		-
+feature		 -	   -	   x		-
+gene		 x	   x	   x		-
+gene_class	 x	   x	   x		-
+gene_cluster	 x	   x	   x		-
+gene_regulation	 -	   -	   x		-
+go_term		 -	   -	   x		-
+interaction	 -	   -	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
 molecule	 -	   -	   x		-
@@ -83,7 +91,7 @@ sequence	 -	   -	   x		-
 strain		 x	   x	   x		-
 structure_data	 -	   -	   x		-
 transgene	 -	   -	   x		-
-variation	 -	   -	   x		-
+variation	 x	   x	   x		-
 
 
 
