@@ -515,8 +515,8 @@ B<Response example>
 sub binds_gene_product {
     my $self   = shift;
     my $object = $self->object;
-    my @data = map {$_ = $self->_pack_obj($_)} $object->Bound_by_product_of;
-    return { data => @data ? \@data : undef,
+    my $data = $self->_pack_objects($object->Bound_by_product_of);
+    return { data => %$data ? $data : undef,
 	     description => 'gene products that bind to the feature' };
 }
 
@@ -578,7 +578,7 @@ sub transcription_factor {
 
     my $factor = $object->Transcription_factor;
     return { description => 'Transcription factor of the feature',
-	     data        => $factor && $self->_common_name($factor), }; # no TFactor model 
+	     data        => $factor && $self->_pack_obj($factor) };
 }
 
 

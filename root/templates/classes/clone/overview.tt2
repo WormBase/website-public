@@ -6,7 +6,7 @@
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences' %]
-   [% tag2linkAll(fields.sequences.data) %]
+   [% link_objects(fields.sequences.data) %]
 [% END %]
 
 [%# this looks suspiciously like Genomic position in the Location widget... %]
@@ -47,7 +47,7 @@
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Assigned to map', fields.maps.data.size) key='maps' %]
-   [% tag2linkAll(fields.maps.data) %]
+   [% link_objects(fields.maps.data) %]
 [% END %]
 
 [% WRAPPER $field_block title='Sequence status' key='sequence_status' %]
@@ -61,7 +61,7 @@
 [% END %]
 
 [% WRAPPER $field_block title='Canonical for' key='canonical_for' %]
-   [% tag2linkAll(fields.canonical_for.data) %]
+   [% link_objects(fields.canonical_for.data) %]
 [% END %]
 
 [% WRAPPER $field_block title='Refer to canonical clone' key='canonical_parent' %]
@@ -82,11 +82,11 @@
 [% END %]
 
 [% WRAPPER $field_block title='Screened negative for' key='screened_negative' %]
-   [% tag2linkAll(fields.screened_negative.data) %]
+   [% link_objects(fields.screened_negative.data) %]
 [% END %]
 
 [% WRAPPER $field_block title='Gridded on' key='gridded_on' %]
-   [% tag2linkAll(fields.gridded_on.data) %]
+   [% link_objects(fields.gridded_on.data) %]
 [% END %]
 
 [% remarks(no_toggle=1) %]

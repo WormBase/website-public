@@ -10,7 +10,7 @@ extends 'WormBase::API::Object';
 
 =head1 NAME
 
-## headvar WormBase::API::Object::Molecule
+WormBase::API::Object::Molecule
 
 =head1 SYNPOSIS
 
@@ -18,7 +18,7 @@ Model for the Ace ?Molecule class.
 
 =head1 URL
 
-http://wormbase.org/resources/molecule
+http://wormbase.org/species/*/molecule
 
 =head1 TODO
 
@@ -42,7 +42,7 @@ http://wormbase.org/resources/molecule
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
-=head3 synonym
+=head3 synonyms
 
 This method will return a data structure with synonyms for the molecule name.
 
@@ -50,7 +50,7 @@ This method will return a data structure with synonyms for the molecule name.
 
 =item PERL API
 
- $data = $model->synonym();
+ $data = $model->synonyms();
 
 =item REST API
 
@@ -82,7 +82,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/synonym
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/synonyms
 
 B<Response example>
 
@@ -92,79 +92,20 @@ B<Response example>
 
 =cut 
 
-sub synonym {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $self->_pack_objects([$object->Synonym]);
+sub synonyms {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $data    = $self->_pack_objects([$object->Synonym]);
     return {
-        'data'        => %$data_pack ? $data_pack : undef,
+        'data'        => %$data ? $data : undef,
         'description' => 'synonyms for the molecule name'
     };
 }
 
-=head3 db
-
-This method will return a data structure with db information for the molecule.
-
-=over
-
-=item PERL API
-
- $data = $model->db();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Molecule id (eg D054852)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/db
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub db { # AD: for now, just dropping this out as a table structure. will abstract this later
-    my $self             = shift;
-    my @databases = map {[map {"$_"} $_->row]} @{$self ~~ '@Database'};
-
-    return {
-        'data'        => @databases ? \@databases : undef,
-        'description' => 'database information for external resources'
-    };
-}
 
 =head3 gene_regulation
 
-This method will return a data structure with gene_regulation processes involving the molecule.
+This method will return a data structure with gene regulation processes involving the molecule.
 
 =over
 
@@ -213,8 +154,7 @@ B<Response example>
 =cut 
 
 sub gene_regulation {
-    my $self       = shift;
-
+    my $self     = shift;
     my $gene_reg = $self->_pack_objects($self ~~ '@Gene_regulator');
     return {
         'data'        => %$gene_reg ? $gene_reg : undef,
@@ -224,7 +164,7 @@ sub gene_regulation {
 
 =head3 molecule_use
 
-This method will return a data structure with information on molecule_use.
+This method will return a data structure with information on how the molecule is used.
 
 =over
 
@@ -279,7 +219,7 @@ sub molecule_use {
     my @uses = map {[$_->row]} @{$self ~~ '@Molecule_use'};
     # (use, evidence type, evidence)
 
-    @uses = map {"$_->[0]"} @uses; # drop evidence...
+    @uses = map {"$_->[0]"} @uses; # drop evidence.
     return {
         'data'        => @uses ? \@uses : undef,
         'description' => 'uses for the molecule'
@@ -292,7 +232,8 @@ sub molecule_use {
 #
 ############################
 
-=head3 affected_variation
+
+=head3 affected_variations
 
 This method will return a data structure with variations affected by the molecule.
 
@@ -300,7 +241,7 @@ This method will return a data structure with variations affected by the molecul
 
 =item PERL API
 
- $data = $model->affected_variation();
+ $data = $model->affected_variations();
 
 =item REST API
 
@@ -332,7 +273,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_variation
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_variations
 
 B<Response example>
 
@@ -342,7 +283,7 @@ B<Response example>
 
 =cut 
 
-sub affected_variation {
+sub affected_variations {
     my $self      = shift;
     my $data_pack = $self->_affects('Variation');
 
@@ -353,7 +294,7 @@ sub affected_variation {
     };
 }
 
-=head3 affected_strain
+=head3 affected_strains
 
 This method will return a data structure with strains affected by the molecule.
 
@@ -361,7 +302,7 @@ This method will return a data structure with strains affected by the molecule.
 
 =item PERL API
 
- $data = $model->affected_strain();
+ $data = $model->affected_strains();
 
 =item REST API
 
@@ -393,7 +334,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_strain
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_strains
 
 B<Response example>
 
@@ -403,7 +344,7 @@ B<Response example>
 
 =cut 
 
-sub affected_strain {
+sub affected_strains {
     my $self      = shift;
     my $data_pack = $self->_affects('Strain');
 
@@ -413,7 +354,7 @@ sub affected_strain {
     };
 }
 
-=head3 affected_transgene
+=head3 affected_transgenes
 
 This method will return a data structure with transgenes affected by the molecule.
 
@@ -421,7 +362,7 @@ This method will return a data structure with transgenes affected by the molecul
 
 =item PERL API
 
- $data = $model->affected_transgene();
+ $data = $model->affected_transgenes();
 
 =item REST API
 
@@ -453,7 +394,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_transgene
+curl -H content-type:application/json http://api.wormbase.org/rest/field/molecule/D054852/affected_transgenes
 
 B<Response example>
 
@@ -463,7 +404,7 @@ B<Response example>
 
 =cut 
 
-sub affected_transgene {
+sub affected_transgenes {
     my $self      = shift;
     my $data_pack = $self->_affects('Transgene');
 
@@ -533,6 +474,23 @@ sub affected_rnai {
     };
 }
 
+
+#######################################
+#
+# The External Links widget
+#   template: shared/widgets/xrefs.tt2
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
+
 ##########################
 #
 # Internal methods
@@ -554,6 +512,8 @@ sub _affects {
     return %data_pack ? \%data_pack : undef;
 
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
 

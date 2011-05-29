@@ -19,8 +19,9 @@ WRAPPER $field_block title="Description" key="description";
 END;
 
 WRAPPER $field_block title="Other names" key="other_names";
+
        FOREACH name IN fields.other_names.data;
-           tag2link(name) _ '<br />';
+           name _ '<br />';
        END;
 END;
 

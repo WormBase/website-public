@@ -45,7 +45,7 @@ the title of the analysis, if there is one.
 
 =item PERL API
 
- $data = $model->titlee();
+ $data = $model->title();
 
 =item REST API
 

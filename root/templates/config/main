@@ -28,20 +28,11 @@
    END;
 
    # Link a hash of objects
-   MACRO tag2linkAll(hash) BLOCK;
+   # Suitable for hashes of objects created by _pack_objects()
+   MACRO link_objects(hash) BLOCK;
       result = [];
 	  FOREACH key IN hash.sort;
 	     result.push(tag2link(hash.$key));
-	  END;
-	  result.join(', ');
-   END;
-
-   # Link an array of (packed) objects.
-   # This has room for improvement.
-   MACRO link_objects(list) BLOCK;
-      result = [];
-	  FOREACH item IN list;
-	     result.push(tag2link(item));
 	  END;
 	  result.join('<br />');
    END;

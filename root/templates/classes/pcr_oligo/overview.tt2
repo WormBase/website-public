@@ -30,27 +30,27 @@
 
 [% WRAPPER $field_block title=(pluralize('Gene', fields.overlapping_genes.data.size) _ 
            ' Overlapping the Amplicon') key='overlapping_genes' %]
-   [% tag2linkAll(fields.overlapping_genes.data) %]
+   [% link_objects(fields.overlapping_genes.data) %]
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Overlaps CDS', fields.overlaps_CDS.data.size)
            key='overlaps_CDS' %]
-   [% tag2linkAll(fields.overlaps_CDS.data) %]
+   [% link_objects(fields.overlaps_CDS.data) %]
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Overlaps transcript', fields.overlaps_transcript.data.size)
            key='overlaps_transcript' %]
-   [% tag2linkAll(fields.overlaps_transcript.data) %]
+   [% link_objects(fields.overlaps_transcript.data) %]
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Overlaps pseudogene', fields.overlaps_pseudogene.data.size)
            key='overlaps_pseudogene' %]
-   [% tag2linkAll(fields.overlaps_pseudogene.data) %]
+   [% link_objects(fields.overlaps_pseudogene.data) %]
 [% END %]
 
 [% WRAPPER $field_block title=pluralize('Overlaps variation', fields.overlaps_variation.data.size)
            key='overlaps_variation' %]
-   [% tag2linkAll(fields.overlaps_variation.data) %]
+   [% link_objects(fields.overlaps_variation.data) %]
 [% END %]
 
 [% WRAPPER $field_block title='Amplified cDNA?' key='amplified' %]
@@ -86,7 +86,7 @@
    [% laboratory %]
 
    [% WRAPPER $field_block title='Microarray results' key='microarray_results' %]
-      [% tag2linkAll(fields.microarray_results.data) %]
+      [% link_objects(fields.microarray_results.data) %]
    [% END %]
 
    [% WRAPPER $field_block title='Assay conditions' key='assay_conditions' %]

@@ -44,7 +44,7 @@ END
        Cropped pictures:<br>
           <div style="padding-left:0.5em;">
           [% img2linkAll(fields.cropped_pictures.data).replace('Picture d', 'D') %]
-          [% #tag2linkAll(fields.cropped_pictures.data) 
+          [% #link_objects(fields.cropped_pictures.data) 
              # there is experimental support but currently can't make it target the lightbox %]
           </div>
        </div>
@@ -72,10 +72,10 @@ END
    [% results.join(', ') %]
 [% END %]
 [% WRAPPER $field_block title=pluralize('Anatomical feature', fields.anatomy_terms.data.size), key='anatomy_terms' %]
-   [% tag2linkAll(fields.anatomy_terms.data) %]
+   [% link_objects(fields.anatomy_terms.data) %]
 [% END %]
 [% WRAPPER $field_block title=pluralize('Cellular component', fields.go_terms.data.size), key='go_terms' %]
-   [% tag2linkAll(fields.go_terms.data) %]
+   [% link_objects(fields.go_terms.data) %]
 [% END %]
 
 [% WRAPPER $field_block title='WB Paper' key='reference'-%]
