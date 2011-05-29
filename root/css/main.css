@@ -190,10 +190,23 @@ div#header .release_date { }
 }
 
 
+/* System wide error message */
+div#error-box {    
+    margin-top:50px;
+    margin-bottom:50px;
+    margin-left:auto;
+    margin-right:auto;
+    width:600px;
+    padding:2em;
+    font-size:1.1em;
+}
 
 
-
-
+/* This is the ACTUAL error message */
+div.error-message-technical {
+    font-family:Courier;
+    margin-left:1em;
+}
 
 
 

@@ -2,7 +2,7 @@ Check default widgets for each class.
 
 Check empty fields; does toggle work?
 
-Need some sort of simple list macro to display small lists of objetcts not requiring data table.
+Need some sort of simple list macro to display small lists of objetcts not requiring data table. (see tag2linkAll)
 
 Generic, ubiquitous, and intuitive sequence downloads.
 
@@ -79,17 +79,18 @@ Class review and formatting
 
     	   	 review	   ui	   conf format	references
 analysis	 x     	   x	   x		-
-anatomy_term	 -	   -	   x		-
+NdlC: anatomy_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 -	   -	   x		-
 e*_cluster	 -	   -	   x		-
 expr_pattern	 -	   -	   x		-
-feature		 -	   -	   x		-
+feature		 x	   x	   x		-
+feature_data     x	   -	   x		-	no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-
 gene_cluster	 x	   x	   x		-
 gene_regulation	 -	   -	   x		-
-go_term		 -	   -	   x		-
+NdlC: go_term		 -	   -	   x		-
 interaction	 -	   -	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
@@ -98,7 +99,7 @@ motif		 x	   x	   x		-
 paper		 x	   x	   x		-
 pcr_oligo	 -	   -	   x		-
 person		 x	   x	   x		-
-phenotype	 -	   -	   x		-
+NdlC: phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
 position_matrix	 -	   -	   x		-
 protein		 x	   x	   x		-
