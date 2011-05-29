@@ -16,26 +16,20 @@ WRAPPER $field_block title="Associations" key="associations";
 			},
 		key = 'associations');
 END;
-
-WRAPPER $field_block title="Defined by" key="defined_by";	
-
-    build_data_table (
-		order = [ 
-			'label',
-			'object',
-			],
-		columns = {				 		
-			label => 'Defined via',
-			object => 'Object',
-			},
-		key = 'defined_by');
 	
 
 WRAPPER $field_block title='Bound by product of' key ='binds_gene_product';
     FOREACH data IN fields.binds_gene_product.data;
          tag2link(data) _ '<br>';
     END;
-    tag2linkAll(fields.binds_gene_product.data);
+#    tag2linkAll(fields.binds_gene_product.data);
 END;
+
+WRAPPER $field_block title='Transcription factor' key ='transcription_factor';
+    FOREACH data IN fields.transcription_factor.data;
+         tag2link(data) _ '<br>';
+    END;
+END;
+
 
 %]

@@ -5,37 +5,58 @@
 <h2>[% tag2link(fields.name.data) %]</h2>
 
 
+[%
 
-<div class="details ui-corner-all">
-	[% WRAPPER $field_block title="WormBase ID"-%] 
-		[% fields.name.data.id %]
-	[% END %]
-</div>
+WRAPPER highlight_box;
 
+  taxonomy;
 
-[% WRAPPER $field_block title='Description' %]
-   [% IF fields.description.data; markup(fields.description.data); END  %]
-[% END %]
+  WRAPPER $field_block title="WormBase ID";
+       fields.name.data.id;
+  END;
 
-[% remarks(no_toggle=1) %]
-
-[% WRAPPER $field_block title='Method' key='method' %]
-   [% IF fields.method.data; fields.method.data; END %]
-[% END %]
+END;
 
 
-[% WRAPPER $field_block title='Parent' key='sequence' %]
-   [% tag2link(fields.sequence.data) %]
-[% END %]
-
-[% WRAPPER $field_block title='Flanking sequence' key='flanking_sequences' %]
-   [% IF fields.flanking_sequences.data %]
-      [% tag2link(fields.flanking_sequences.data.seq) %]: [% fields.flanking_sequences.data.flanks.join('-----') %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title='Annotation' key='annotation' %]
-   [% IF fields.annotation.data; markup(fields.annotation.data); END %]
-[% END %]\\\
+WRAPPER $field_block title='Description' key="description";
+   markup(fields.description.data);
+END;
 
 
+WRAPPER $field_block title='Flanking sequence' key='flanking_sequences';
+      tag2link(fields.flanking_sequences.data.seq) _ ": <pre>5' " _ fields.flanking_sequences.data.flanks.join('-' _ fields.name.data.label _ '-') _ " 3'</pre>";
+END;
+
+
+WRAPPER $field_block title='Annotation' key='annotation';
+   fields.annotation.data;
+END;
+
+WRAPPER $field_block title='Sequence Ontology Terms' key='sequence_ontology_terms';
+   fields.sequence_ontology_terms.data.join("<br />");
+END;
+
+
+WRAPPER $field_block title='Method' key='method';
+    fields.method.data;
+END;
+
+
+WRAPPER $field_block title="Defined by" key="defined_by";	
+
+    build_data_table (
+		order = [ 
+			'label',
+			'object',
+			],
+		columns = {				 		
+			label => 'Defined via',
+			object => 'Object',
+			},
+		key = 'defined_by');
+END;
+
+
+remarks(no_toggle=1);
+
+%]
