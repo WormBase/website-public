@@ -16,7 +16,7 @@ Model for the Ace ?Expression_cluster class.
 
 =head1 URL
 
-http://wormbase.org/species/expresssion_cluster
+http://wormbase.org/species/*/expresssion_cluster
 
 =head1 METHODS/URIs
 
@@ -36,96 +36,6 @@ http://wormbase.org/species/expresssion_cluster
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
-=head3 gene
-
-This method will return a data structure with genes in the expression_cluster.
-
-=over
-
-=item PERL API
-
- $data = $model->gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expression_cluster id (eg [cgc5767]:cluster_88)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub gene {
-    my $self   = shift;
-    my $object = $self->object;
-    my @tag_objects = $object->Gene;
-    my @data_pack;  
-    foreach my $tag_object (@tag_objects) {
-    	my $tag_data = $self->_pack_obj($tag_object);
-    	my $species = $tag_object->Species;
-    	push @data_pack, {
-    		gene => $tag_data,
-    		species => "$species",
-    	}
-    } 
-    return {
-    	data        => @data_pack ? \@data_pack : undef,
-        description => 'The corresponding gene',
-           
-	};
-}
-
-sub gene_20110427_sav {
-    my $self   = shift;
-    my $object = $self->object;
-    my @tag_objects = $object->Gene;
-    my @data_pack   = map{$_ = $self->_pack_obj($_)} @tag_objects
-      if @tag_objects;
-    return {
-    	data        => @data_pack ? \@data_pack : undef,
-        description => 'The corresponding gene',
-           
-	};
-}
-
-
-#     my %return;
-#     map {
-#         { $ret{"$_"} = $self->_pack_obj( $_, $_->Public_name ) }
-#     } $object->Gene;
-
-#     };
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
@@ -188,16 +98,240 @@ sub algorithm {
     my $self   = shift;
     my $object = $self->object;
     my $algorithm =  $object->Algorithm;
-    my $data   = {
-        description => 'Algorithm used to determine cluster',
-        data        =>"$algorithm" || undef,
+    return { description => 'Algorithm used to determine cluster',
+	     data        => "$algorithm" || undef,
     };
-    return $data;
 }
+
+
+
+#######################################
+#
+# The Genes widget
+#
+#######################################
+
+=head2 Genes
+
+=head3 genes
+
+This method will return a data structure 
+with genes contained in the expression cluster.
+
+=over
+
+=item PERL API
+
+ $data = $model->genes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression_cluster id (eg [cgc5767]:cluster_88)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/genes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub genes {
+    my $self   = shift;
+    my $object = $self->object;
+    my @data;  
+    foreach ($object->Gene) {
+#    	my $species = $_->Species;
+#    	push @data, {
+#    		gene    => $self->_pack_obj($gene),
+#    		species => "$species",
+#    	}
+
+    	push @data, $self->_pack_obj($_);
+    } 
+    return { data        => @data ? \@data : undef,
+	     description => 'genes contained in this expression cluster' };
+
+}
+
+
+#######################################
+#
+# The Associations widget
+#
+#######################################
+
+=head2 Associations
+
+=head3 anatomy_terms
+
+This method will return a data structure with anatomy 
+ontology terms associated with the expression cluster.
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression_cluster id (eg [cgc5767]:cluster_88)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/anatomy_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub anatomy_terms {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @data;
+    foreach ($object->Anatomy_term) {
+	my $definition   = $_->Definition;
+	push @data, {
+	    anatomy_term => $self->_pack_object($_),
+	    definition => "$definition",
+	};
+    }
+    return { data        => @data ? \@data : undef,
+	     description => 'anatomy terms associated with this expression cluster'
+    };
+}
+
+=head3 expression_patterns
+    
+This method will return a data structure 
+with expression patterns associated with
+the expression_cluster.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_patterns();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression_cluster id (eg [cgc5767]:cluster_88)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/expression_patterns
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub expression_patterns {
+    my $self        = shift;
+    my $object      = $self->object;
+    my @data   = map { $_ = $self->_pack_obj($_) } $object->Expr_pattern;
+    return { data        => @data ? \@data : undef,
+	     description => 'expression patterns associated with this cluster'
+    };
+}
+
+
+#######################################
+#
+# The Clustered Data widget
+#
+#######################################
+
+=head2 Clustered Data
 
 =head3 microarray
 
-This method will return a data structure with microarray results from the expression_cluster.
+This method will return a data structure with 
+microarray results from the expression cluster.
 
 =over
 
@@ -248,50 +382,37 @@ B<Response example>
 sub microarray {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Microarray_results;
-    my @data_pack;  
-    
-    foreach my $tag_object (@tag_objects) {
-    	my $microarray_result = $self->_pack_obj($tag_object);
-    	my $experiment = $self->_pack_obj($tag_object->Result) if $tag_object->Result;
-    	my $minimum = $tag_object->Min;
-    	my $maximum = $tag_object->Max;
+
+    my @data;      
+    foreach ($object->Microarray_results) {
+    	my $microarray_result = $self->_pack_obj($_);
+    	my $experiment = $self->_pack_obj($_->Result) if $_->Result;
+    	my $minimum = $_->Min;
+    	my $maximum = $_->Max;
     	
-
-		push @data_pack, {
-			microarray => $microarray_result,
-			experiment => $experiment,
-			minimum => "$minimum",
-			maximum => "$maximum",
-							};
-	}
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'microarray results from expression cluster'
+	push @data, {
+	    microarray => $microarray_result,
+	    experiment => $experiment,
+	    minimum => "$minimum",
+	    maximum => "$maximum",
+	};
+    }
+    return { data        => @data ? \@data : undef,
+	     description => 'microarray results from expression cluster'
     };
 }
 
 
-sub microarray_20110427_sav {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->Microarray_results;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'microarray results from expression cluster'
-    };
-}
-=head3 sage_tag
+=head3 sage_tags
 
-This method will return a data structure with sage_tags analyzing the expression_cluster.
+This method will return a data structure with 
+sage tags analyzing the expression_cluster.
 
 =over
 
 =item PERL API
 
- $data = $model->sage_tag();
+ $data = $model->sage_tags();
 
 =item REST API
 
@@ -323,7 +444,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/sage_tag
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/sage_tags
 
 B<Response example>
 
@@ -333,161 +454,30 @@ B<Response example>
 
 =cut
 
-sub sage_tag {
+sub sage_tags {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->SAGE_tag;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'Sage tags associated with this expression_cluster'
+    my @data        = map { $_ = $self->_pack_obj($_) } $object->SAGE_tag;
+    return { data        => @data ? \@data : undef,
+	     description => 'Sage tags associated with this expression_cluster'
     };
 }
 
-=head3 expr_pattern
 
-This method will return a data structure with expr_patterns associated with the expression_cluster.
 
-=over
+#######################################
+#
+# The References widget
+#
+#######################################
 
-=item PERL API
-
- $data = $model->expr_pattern();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expression_cluster id (eg [cgc5767]:cluster_88)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/expr_pattern
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
+=head2 References
 
 =cut
 
-sub expr_pattern {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->Expr_pattern;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data'        => @tag_objects ? \@data_pack : undef,
-        'description' => 'expression patterns associated with this cluster'
-    };
-}
-
-=head3 anatomy_term
-
-This method will return a data structure with anatomy_terms associated with the expression_cluster.
-
-=over
-
-=item PERL API
-
- $data = $model->anatomy_term();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expression_cluster id (eg [cgc5767]:cluster_88)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression_cluster/[cgc5767]:cluster_88/anatomy_term
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub anatomy_term {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->Anatomy_term;
-    my @data_pack;
-	foreach my $tag_object (@tag_objects) {
-		my $definition = $tag_object->Definition;
-		my $anatomy_term = $self->_pack_obj($tag_object);
-		push @data_pack, {
-			anatomy_term => $anatomy_term,
-			definition => "$definition",
-							};
-	}
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'anatomy term annotated with this expression cluster'
-    };
-}
-
-sub anatomy_term_20110427_sav {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->Anatomy_term;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'anatomy term annotated with this expression cluster'
-    };
-}
-
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
 
 
 __PACKAGE__->meta->make_immutable;

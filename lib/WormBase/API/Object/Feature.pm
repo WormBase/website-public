@@ -185,6 +185,10 @@ sub annotation {
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+# sub taxonomy {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include taxonomy >>
+
 =head3 sequence_ontology_terms
 
 This method will return a data structure
@@ -511,8 +515,7 @@ B<Response example>
 sub binds_gene_product {
     my $self   = shift;
     my $object = $self->object;
-    my @tag_objects = $object->Bound_by_product_of;
-    my @data = map {$_ = $self->_pack_obj($_)} @tag_objects if @tag_objects;
+    my @data = map {$_ = $self->_pack_obj($_)} $object->Bound_by_product_of;
     return { data => @data ? \@data : undef,
 	     description => 'gene products that bind to the feature' };
 }

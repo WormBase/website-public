@@ -3,8 +3,11 @@ Check default widgets for each class.
 Check empty fields; does toggle work?
 
 Need some sort of simple list macro to display small lists of objetcts not requiring data table. (see tag2linkAll)
+     In cases where the number of items is large, should also provide a link to download as CSV
 
 Generic, ubiquitous, and intuitive sequence downloads.
+
+Error reporting: to user, to staff.  Formatting.
 
 
 Standardize Overview widgets.
@@ -82,7 +85,7 @@ analysis	 x     	   x	   x		-
 NdlC: anatomy_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 -	   -	   x		-
-e*_cluster	 -	   -	   x		-
+e*_cluster	 x	   x	   x		-
 expr_pattern	 -	   -	   x		-
 feature		 x	   x	   x		-
 feature_data     x	   -	   x		-	no templates; none needed?

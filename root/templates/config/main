@@ -27,6 +27,7 @@
       END;
    END;
 
+   # Link a hash of objects
    MACRO tag2linkAll(hash) BLOCK;
       result = [];
 	  FOREACH key IN hash.sort;
@@ -35,6 +36,15 @@
 	  result.join(', ');
    END;
 
+   # Link an array of (packed) objects.
+   # This has room for improvement.
+   MACRO link_objects(list) BLOCK;
+      result = [];
+	  FOREACH item IN list;
+	     result.push(tag2link(item));
+	  END;
+	  result.join('<br />');
+   END;
 
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;

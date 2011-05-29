@@ -1,0 +1,19 @@
+[%
+
+WRAPPER $field_block title="Genes" key="genes";
+	link_objects(fields.genes.data);
+END;
+
+#    build_data_table (
+#		order = [ 
+#			'gene',
+#			'species', 
+#			],
+#		columns = {				 		
+#			gene => 'Gene',
+#			species => 'Species',
+#			},
+#		key = 'genes');
+#END;
+
+%]
