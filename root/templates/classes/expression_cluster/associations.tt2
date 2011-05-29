@@ -3,9 +3,7 @@
 
 [% 
 
-
-WRAPPER $field_block title="Anatomy Term" key="anatomy_term";
-'TH: duplicated with go_term/associations?";
+WRAPPER $field_block title="Anatomy Terms" key="anatomy_terms";
 
     build_data_table (
 		order = [ 
@@ -16,21 +14,11 @@ WRAPPER $field_block title="Anatomy Term" key="anatomy_term";
 			anatomy_term => 'Anatomy_term',
 			definition => 'Definition',
 			},
-		key = 'anatomy_term');
+		key = 'anatomy_terms');
 END;
 
-
-WRAPPER $field_block title="Gene" key="gene";
-    build_data_table (
-		order = [ 
-			'gene',
-			'species', 
-			],
-		columns = {				 		
-			gene => 'Gene',
-			species => 'Species',
-			},
-		key = 'gene');
+WRAPPER $field_block title="Expression Patterns" key="expression_patterns";
+    link_objects(fields.expression_patterns.data);
 END;
 	
 

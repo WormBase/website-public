@@ -22,10 +22,8 @@ WRAPPER $field_block title="Microarray" key="microarray";
 END;
 
 
-WRAPPER $field_block title="sage_tag" key="sage_tag";
-    FOREACH data IN fields.sage_tag.data;
-	 tag2link(data) _ '<br>';
-    END; 
+WRAPPER $field_block title="SAGE tags" key="sage_tags";
+     link_objects(fields.sage_tag.data);
 END;
 
 %]

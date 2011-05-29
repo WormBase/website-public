@@ -4,18 +4,24 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 
-<div class="details ui-corner-all">
-	[% WRAPPER $field_block title="WormBase ID"-%] 
-		[% fields.name.data.id %]
-	[% END %]
-</div>
+[%
 
-[% WRAPPER $field_block title='Description' key='description' %]
-   [% IF fields.description.data; markup(fields.description.data); END  %]
-[% END %]
+WRAPPER highlight_box;
+ 
+   WRAPPER $field_block title="WormBase ID"; 
+        fields.name.data.id;
+   END;
+END;
 
-[% remarks(no_toggle=1) %]
+WRAPPER $field_block title='Description' key='description';
+   markup(fields.description.data);
+END;
 
-[% WRAPPER $field_block title="Algorithm" key="algorithm"-%] 
-	[% fields.algorithm.data %]
-[% END %]
+
+WRAPPER $field_block title="Algorithm" key="algorithm";
+     fields.algorithm.data;
+END;
+
+remarks(no_toggle=1);
+
+%]
