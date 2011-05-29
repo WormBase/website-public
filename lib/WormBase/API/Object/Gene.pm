@@ -3104,7 +3104,7 @@ sub orfeome_primers {
     my $object = $self->object;
     
     my @segments = @{$self->_segments};
-    my @ost = map {$self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
+    my @ost = map { $self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
     
     return { description =>  "ORFeome Project primers and sequences",
 	     data        =>  \@ost };

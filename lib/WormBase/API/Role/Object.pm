@@ -1884,8 +1884,7 @@ sub _build_xrefs {
 
     my @databases = $object->Database;
     my %dbs;
-    foreach my $db (@databases) {
-
+    foreach my $db (@databases) {	
         my $name            = $db->Name || "$db";
         my $description     = $db->Description;
         my $url             = $db->URL;
@@ -1896,7 +1895,7 @@ sub _build_xrefs {
         # Possibly multiple entries for a single DB
         my @ids = map {
             my @types = $_->col;
-            @types ? map { "$_" } @types : $_->right->name;
+            @types ? map { "$_" } @types : eval { $_->right->name } ;
         } $db->col;
 
         $dbs{$db} = {
@@ -1994,6 +1993,9 @@ sub tmp_acedata_dir {
     return $self->tmp_dir('acedata', @_);
 }
 
+# A simple array would probably suffice. We could sort objects
+# in view according to name key supplied by _pack_obj.
+# But might be messy to change.
 sub _pack_objects {
     my ($self, $objects) = @_;
     return {map {$_ => $self->_pack_obj($_)} @$objects};

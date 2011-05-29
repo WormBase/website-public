@@ -2644,8 +2644,8 @@ sub polymorphism_assays {
             ) } or last;
 
             $dna = $segment->dna;
-        }
-                                                                           }
+	    }
+	}
         $pcr_data{pcr_product} = $self->_pack_obj(
             $pcr_product, undef, # let _pack_obj resolve label
             left_oligo     => $left_oligo && "$left_oligo",

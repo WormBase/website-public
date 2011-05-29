@@ -51,7 +51,7 @@ WRAPPER $field_block title="Derived From" key="derived_from";
 END;
 
 WRAPPER $field_block title="Derivate" key="derivative";
-     tag2linkAll(fields.derivative.data);
+     link_objects(fields.derivative.data);
 END;
 
 %]

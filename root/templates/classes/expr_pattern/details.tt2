@@ -8,19 +8,19 @@
 	[% END %]
 	[% IF details.antibody_infos %]
 		[% pluralize("Antibody", details.antibody_infos.size) %]
-			used for this assay: [% tag2linkAll(details.antibody_infos) %]<br>
+			used for this assay: [% link_objects(details.antibody_infos) %]<br>
 	[% END %]
 	[% IF details.transgenes %]
 		[% pluralize("Transgene", details.transgenes.size) %] 
-			used for this assay: [% tag2linkAll(details.transgenes) %]<br>
+			used for this assay: [% link_objects(details.transgenes) %]<br>
 	[% END %]
 	[% IF details.strains %]
 		[% pluralize("Strain", details.strains.size) %]: 
-			[% tag2linkAll(details.strains) %]<br>
+			[% link_objects(details.strains) %]<br>
 	[% END %]
 	[% IF details.authors %]
 		[% pluralize("Author", details.authors.size) %]: 
-			[% tag2linkAll(details.authors) %]<br>
+			[% link_objects(details.authors) %]<br>
 	[% END %]
 	[% IF details.date %]
 		Date: [% details.date %]
@@ -31,7 +31,7 @@
 	[% FOREACH type IN fields.expressed_by.data.sort %]
        [% typelabel = type.replace('_', ' ') FILTER ucfirst %]
        [% WRAPPER $field_block title=pluralize(typelabel, fields.expressed_by.data.$type.size) key='' %]
-          [% tag2linkAll(fields.expressed_by.data.$type) %]<br>
+          [% link_objects(fields.expressed_by.data.$type) %]<br>
        [% END %]
 	[% END %]
 [% END %]
@@ -40,7 +40,7 @@
    [% FOREACH type IN fields.expressed_in.data.sort %]
       [% typelabel = type.replace('_', ' ') FILTER ucfirst %]
       [% WRAPPER $field_block title=pluralize(typelabel, fields.expressed_in.data.$type.size) key='' %]
-         [% tag2linkAll(fields.expressed_in.data.$type) %]
+         [% link_objects(fields.expressed_in.data.$type) %]
       [% END %]
    [% END %]
 [% END %]

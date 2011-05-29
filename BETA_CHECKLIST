@@ -8,6 +8,7 @@ Need some sort of simple list macro to display small lists of objetcts not requi
 Generic, ubiquitous, and intuitive sequence downloads.
 
 Error reporting: to user, to staff.  Formatting.
+      Ajax errors loading widgets trickle through and report "oops" but aren't caught?
 
 
 Standardize Overview widgets.
@@ -80,24 +81,26 @@ Class-level summary widgets.
 
 Class review and formatting
 
+clone, expr_pattern, gene_regulation, interaction, pcr_oligo, phenotype, picture, position_matrix, structure_data
+
     	   	 review	   ui	   conf format	references
 analysis	 x     	   x	   x		-
-NdlC: anatomy_term	 -	   -	   x		-
+NdlC: a*_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 -	   -	   x		-
 e*_cluster	 x	   x	   x		-
 expr_pattern	 -	   -	   x		-
 feature		 x	   x	   x		-
-feature_data     x	   -	   x		-	no templates; none needed?
+feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
-gene_class	 x	   x	   x		-
+gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
 gene_regulation	 -	   -	   x		-
-NdlC: go_term		 -	   -	   x		-
+NdlC: go_term    -	   -	   x		-
 interaction	 -	   -	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
-molecule	 -	   -	   x		-
+molecule	 x	   x	   x		-
 motif		 x	   x	   x		-
 paper		 x	   x	   x		-
 pcr_oligo	 -	   -	   x		-
@@ -112,3 +115,8 @@ strain		 x	   x	   x		-
 structure_data	 -	   -	   x		-
 transgene	 x	   x	   x		-
 variation	 x	   x	   x		-
+
+
+
+
+
