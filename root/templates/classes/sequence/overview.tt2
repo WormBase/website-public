@@ -3,26 +3,31 @@
 
 <h2>[% tag2link(fields.name.data) %]</h2>
 	
-[% WRAPPER $field_block title="Origin" key='origin' %]
-  [% fields.origin.data && tag2link(fields.origin.data) %]
-[% END %]
+[% 
 
- [% WRAPPER $field_block title="Sequence Type" key="sequence_type" %]
-	[% fields.sequence_type.data || '' %]
- [% END %]
- 
-[% WRAPPER $field_block title="Description" key='description' %]
-	[% fields.description.data && markup(fields.description.data) %]
-[% END %]
+WRAPPER highlight_box;
 
-[% WRAPPER $field_block title="Status" key='status' %]
-	 	[% fields.status.data || '' %]
-     [% END %]
-     
-     [% WRAPPER $field_block title="Method" key='method' %]
-        [% fields.method.data || '' %]
-     [% END %]
+   taxonomy;
 
-[% WRAPPER $field_block title="Available From" key="available_from" %]
-  [% fields.available_from.data && tag2link(fields.available_from.data) %]
-[% END %]
+   WRAPPER $field_block title="Type" key="sequence_type";
+	fields.sequence_type.data;
+   END;
+
+END;
+
+
+WRAPPER $field_block title="Description" key='description';
+	 markup(fields.description.data);
+END;
+
+WRAPPER $field_block title="Identity" key='identity';
+	 fields.identity.data;
+END;
+
+WRAPPER $field_block title="Method" key='method';
+        fields.method.data;
+END;
+
+remarks;
+
+%]
