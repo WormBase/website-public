@@ -4,83 +4,68 @@
 
 WRAPPER highlight_box;
  
-   taxonomy;
-
-   WRAPPER $field_block title="Sequence";
-        tag2link(fields.sequence_name.data);
-   END;
-
-   WRAPPER $field_block title="Locus";
-        tag2link(fields.locus_name.data);
-   END;
-
-   WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
-        IF fields.other_names.data.size>0; 
-              fields.other_names.data.join(', '); 
-        END;
-   END;
-
-   WRAPPER $field_block title="Type";
+   WRAPPER $field_block title="Type" key='type';
            fields.classification.data.type;
    END;
 
-   status;
-
-   WRAPPER $field_block title="Cloned By" key="cloned_by";
-           tag2link(fields.name.cloned_by.data.cloned_by);
-   END;
-
    WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id _ ' v' _ fields.version.data;
+           fields.name.data.id;
    END;
 
 END;
 
 
+WRAPPER $field_block title='Summary' key='summary';
+   fields.summary.data;
+END;
+
+WRAPPER $field_block title='Methods' key='methods';
+   FOREACH method IN fields.methods.data.sort;
+   	  WRAPPER $field_block title=method.replace('_', ' ');
+	  	 IF fields.methods.data.$method.pairs.0.value;  # it's a packed obj
+		 	link_objects(fields.methods.data.$method);
+		 ELSE;
+			fields.methods.data.$method.sort.join(', ') || 'No extra data';
+		 END;
+	   END;
+    END;
+END;
+
+
+WRAPPER $field_block title='Type Of Change' key='type_of_change';
+   FOREACH reg_type IN fields.type_of_change.data.sort;
+   	  # WRAPPER $field_block title=reg_type.replace('_', ' ');
+	  reg_type.replace('_',' ');
+	  '<br />' _ link_objects(fields.type_of_change.data.$reg_type);
+	  #END;
+    END;
+END;
+
+WRAPPER $field_block title='Regulators' key='regulators';
+   FOREACH regulator IN fields.regulators.data.sort;
+   	WRAPPER $field_block title=regulator.replace('_',' ');
+	  	 IF fields.regulators.data.$regulator.pairs.0.value; # it's a packed obj
+		    link_objects(fields.regulators.data.$regulator);
+		 ELSE; # it's just text
+		 	fields.regulators.data.$regulator.sort.join(', ');
+		 END;
+	   END;
+    END;
+END;
+
+WRAPPER $field_block title='Targets' key='targets';
+    FOREACH target_type IN fields.targets.data.sort;
+   	  WRAPPER $field_block title=target_type.replace('_', ' ') key="$target_type";
+	  	 link_objects(fields.targets.data.$target_type);
+	  END;
+   END;
+END;
+
+WRAPPER $field_block title='Molecule Regulators' key='molecule_regulators';
+   link_objects(fields.molecule_regulators.data);
+END;
+
+remarks;
+
+
 %]
-
-
-[% WRAPPER $field_block title='Summary' key='summary' %]
-   [% IF fields.summary.data; fields.summary.data; END %]
-[% END %]
-
-[% WRAPPER $field_block title='Methods' key='methods' %]
-   [% FOREACH method IN fields.methods.data.sort %]
-   	  [% WRAPPER $field_block title=method.replace('_', ' ') %]
-	  	 [% IF fields.methods.data.$method.pairs.0.value # it's a packed obj %]
-		 	[% link_objects(fields.methods.data.$method) %]
-		 [% ELSE %]
-		 	[% fields.methods.data.$method.sort.join(', ') || 'No extra data' %]
-		 [% END %]
-	  [% END %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title='Regulation' key='regulation' %]
-   [% FOREACH reg_type IN fields.regulation.data.sort %]
-   	  [% WRAPPER $field_block title=reg_type.replace('_', ' ') %]
-	  	 [% link_objects(fields.regulation.data.$reg_type) %]
-	  [% END %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title='Regulators' key='regulators' %]
-   [% FOREACH regulator IN fields.regulators.data.sort %]
-   	  [% WRAPPER $field_block title=regulator.replace('_',' ') %]
-	  	 [% IF fields.regulators.data.$regulator.pairs.0.value # it's a packed obj %]
-		 	[% link_objects(fields.regulators.data.$regulator) %]
-		 [% ELSE # it's just text %]
-		 	[% fields.regulators.data.$regulator.sort.join(', ') %]
-		 [% END %]
-	  [% END %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title='Targets' key='targets' %]
-   [% FOREACH target_type IN fields.targets.data.sort %]
-   	  [% WRAPPER $field_block title=target_type.replace('_', ' ') %]
-	  	 [% link_objects(fields.targets.data.$target_type) %]
-	  [% END %]
-   [% END %]
-[% END %]
-

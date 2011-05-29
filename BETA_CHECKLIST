@@ -43,25 +43,24 @@ Purge template identifier (or fix) at the top of each template
 
 References widget / handling
 
-* use the xapian search or refernece XREFs in ace?
-* if using xapian, what impact does this have on API?
-* are the xapian search results sensible?
-* Role::Object::references() already exists but needs to be
-  expanded (ie to make it easier to sort references by year or type)
-  As it is, it simply returns a packed list of reference objects.
-* Be sure to include pseudo-POD in models that use references()
-* can probably purge convenience methods in Role::Object (such as meeting_abstracts)
-* The publications template of person has some rudimentary 
-  formatting (and the corresponding method some logic).
+  * use the xapian search or refernece XREFs in ace?
+  * if using xapian, what impact does this have on API?
+  * are the xapian search results sensible?
+  * Role::Object::references() already exists but needs to be
+    expanded (ie to make it easier to sort references by year or type)
+    As it is, it simply returns a packed list of reference objects.
+  * Be sure to include pseudo-POD in models that use references()
+  * can probably purge convenience methods in Role::Object (such as meeting_abstracts)
+  * The publications template of person has some rudimentary 
+    formatting (and the corresponding method some logic).
+  * wormbase.conf might need to be updated if using XREFd references and the inherted references().
+      In particular, need to make sure that each References widget includes the "fields references"
+      to ensure the data structure is populated.
 
 General UI:
 Class summary pages.
       * make sure search/browse works for classes
 
-Reference handling
-	 * should be able to either
-	    1. use search system and/or
-	    2. use XREFed references
 
 
 API
@@ -88,7 +87,6 @@ Class-level summary widgets.
 Class review and formatting
 
 expr_profile
-gene_regulation, 
 interaction, 
 pcr_oligo, 
 phenotype, 
@@ -109,7 +107,7 @@ feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
-gene_regulation	 -	   -	   x		-
+gene_regulation	 x	   x	   x		-
 homology_group 	 -	   -	   -		-	
 NdlC: go_term    -	   -	   x		-
 interaction	 -	   -	   x		-

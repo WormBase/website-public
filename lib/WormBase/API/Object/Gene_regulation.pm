@@ -17,7 +17,7 @@ Model for the Ace ?Gene_regulation class.
 
 =head1 URL
 
-http://wormbase.org/species/gene_regulation
+http://wormbase.org/species/*/gene_regulation
 
 =head1 METHODS/URIs
 
@@ -92,7 +92,7 @@ B<Response example>
 
 sub methods {
     my $self   = shift;
-    my $object = $self->shift;
+    my $object = $self->object;
     
     my %nontext_tags = map {$_ => 1} qw(Antibody_info Transgene);
     my %data;
@@ -246,19 +246,15 @@ sub targets {
 	$targets{$target_type} = $targets if %$targets;
     }
     
-    my %data;
-    $data{target_info} = $target_info if %$target_info;
-    $data{targets}	   = \%targets if %targets;
-    
     return { description => 'genes that are targets of regulation',
-	     data	 => %data ? \%data : undef,
-    };
+	     data	 => {  target_info => $target_info ? $target_info : undef,
+			       targets     => %targets ? \%targets : undef } };
 }
 
 =head3 type
 
-Returns a datapack detailing the kind of regulation (whether positive, negative,
-or none).
+Returns a data structure detailing the type
+of regulation (whether positive, negative, or none).
 
 =over
 
@@ -308,16 +304,9 @@ sub type {
     my $self   = shift;
     my $object = $self->object;
 
-
     my %data;
-
     # Is regulation the right tag?
-    foreach my $reg_type ($object->Regulation) {
-	undef $data{$reg_type};
-	
-	# the presence of the undef above indicates that there is indeed
-	# this kind of regulation. the following finds details about it.
-	
+    foreach my $reg_type ($object->Result) {
 	foreach my $condition_type ($reg_type->col) {
 	    my %conditions = $self->_pack_objects($condition_type->col);
 	    $data{$reg_type}{$condition_type} = %conditions ? \%conditions : undef;
@@ -325,12 +314,12 @@ sub type {
     }
     
     return {
-	description => 'What kind of regulation (positive, negative, none)',
-	data		=> %data ? \%data : undef,
+	description => 'the type of regulation (positive, negative, none)',
+	data	    => %data ? \%data : undef,
     };
 }
 
-=head3 types
+=head3 type_of_change
 
 This method returns a data structure containing the type 
 of change effected by the regulation.
@@ -339,7 +328,7 @@ of change effected by the regulation.
 
 =item PERL API
 
- $data = $model->types();
+ $data = $model->type_of_change();
 
 =item REST API
 
@@ -371,7 +360,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/types
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/type_of_change
 
 B<Response example>
 
@@ -379,11 +368,10 @@ B<Response example>
 
 =cut
 
-sub types {
+sub type_of_change {
     my ($self) = @_;
     
-    my @types = map {$_->name} @{$self ~~ '@Type'};
-    
+    my @types = map {$_->name} @{$self ~~ '@Type'};    
     return { description => 'types of change effected by the regulation',
 	     data	 => @types ? \@types : undef,
     };
@@ -442,10 +430,9 @@ sub molecule_regulators {
 	my ($self) = @_;
 
 	my $molecule_regs = $self->_pack_objects($self ~~ '@Molecule_regulator');
-
 	return {
-		description => 'Molecule regulator',
-		data		=> %$molecule_regs ? $molecule_regs : undef,
+	    description => 'Molecule regulator',
+	    data	=> %$molecule_regs ? $molecule_regs : undef,
 	};
 }
 
