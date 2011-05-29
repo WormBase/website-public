@@ -1,6 +1,10 @@
 Check default widgets for each class.
 
-Check empty fields; doe toggle work?
+Check empty fields; does toggle work?
+
+Need some sort of simple list macro to display small lists of objetcts not requiring data table.
+
+Generic, ubiquitous, and intuitive sequence downloads.
 
 
 Standardize Overview widgets.
@@ -98,12 +102,9 @@ phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
 position_matrix	 -	   -	   x		-
 protein		 x	   x	   x		-
-rnai		 -	   -	   x		-
-sequence	 -	   -	   x		-
+rnai		 x	   x	   x		-
+sequence	 x	   x	   x		-
 strain		 x	   x	   x		-
 structure_data	 -	   -	   x		-
 transgene	 x	   x	   x		-
 variation	 x	   x	   x		-
-
-
-

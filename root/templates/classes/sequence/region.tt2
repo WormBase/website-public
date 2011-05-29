@@ -1,7 +1,6 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-
 [% IF (fields.corresponding_gene.data.size > 0)
        ||
    (fields.corresponding_transcript.size > 0) 
