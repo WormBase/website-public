@@ -16,7 +16,7 @@ Model for the Ace ?Homology_group class.
 
 =head1 URL
 
-http://wormbase.org/species/homology_group
+http://wormbase.org/species/*/homology_group
 
 =head1 METHODS/URIs
 
@@ -39,7 +39,6 @@ http://wormbase.org/species/homology_group
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
-
 
 =head3 title
 
@@ -92,24 +91,23 @@ B<Response example>
 =cut 
 
 sub title {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $object->Title;
-    return {
-        'data'        => $data_pack ? "$data_pack" : undef,
-        'description' => 'title for this homology_group'
+    my $self   = shift;
+    my $object = $self->object;
+    my $title  = $object->Title;
+    return {data        => "$title" || undef,
+	    description => 'title for this homology group'
     };
 }
 
-=head3 group_type
+=head3 type
 
-This method will return a data structure with the group_type of the homology_group.
+This method will return a data structure with the type of the homology_group.
 
 =over
 
 =item PERL API
 
- $data = $model->group_type();
+ $data = $model->type();
 
 =item REST API
 
@@ -141,7 +139,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/group_type
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/type
 
 B<Response example>
 
@@ -151,36 +149,26 @@ B<Response example>
 
 =cut 
 
-sub group_type {
+sub type {
     my $self           = shift;
     my $object         = $self->object;
     my $homology_group = $object->Homology_group;
-    my $homology_code;
-
-    if ($homology_group =~ /COG/ ) {
-        $homology_code = $object->COG_code;
-    }
-    my $data_pack = {
-        'homology_group' => "$homology_group",
-        'cog_code'       => $homology_code
-    };
-    
-    my @contents = values %$data_pack;
-    return {
-        'data'        => @contents ? $data_pack : undef,
-        'description' => 'type of homology_group'
-    };
+    my $homology_code = $homology_group =~ /COG/ ? $object->COG_code : undef;
+    return {data        => { homology_group => "$homology_group",
+			     cog_code       => "$homology_code" },
+	    description => 'type of homology group' };
 }
 
-=head3 go_term
+=head3 gene_ontology_terms
 
-This method will return a data structure with the go_terms associated with the homology_group.
+This method will return a data structure containing 
+the gene ontology terms associated with the homology group.
 
 =over
 
 =item PERL API
 
- $data = $model->go_term();
+ $data = $model->gene_ontology_terms();
 
 =item REST API
 
@@ -212,7 +200,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/go_term
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/gene_ontology_terms
 
 B<Response example>
 
@@ -222,35 +210,32 @@ B<Response example>
 
 =cut 
 
-sub go_term {
+sub gene_ontology_terms {
     my $self      = shift;
     my $object    = $self->object;
-    my @tag_objects  = $object->GO_term;
-    my @data_pack;
-    foreach my $tag_object (@tag_objects) {
-    	my $tag_data = $self->_pack_obj($tag_object);
-    	my $definition = $tag_object->Definition;
-    	push @data_pack, {
-    		go_term => $tag_data,
-    		definition => "$definition",
+    my @data;
+    foreach  ($object->GO_term) {
+    	my $definition = $_->Definition;
+    	push @data, {
+	    go_term   => $self->_pack_obj($_),
+	    definition => "$definition",
     	}
     } 	
 
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'go terms related to this homology group'
-    };
+    return { data => @data ? \@data : undef,
+	     description => 'gene ontology terms associated to this homology group' };
 }
 
-=head3 protein
+=head3 proteins
 
-This method will return a data structure with the proteins in the homology_group.
+This method will return a data structure containing
+the proteins listed in the homology_group.
 
 =over
 
 =item PERL API
 
- $data = $model->protein();
+ $data = $model->proteins();
 
 =item REST API
 
@@ -282,7 +267,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/protein
+curl -H content-type:application/json http://api.wormbase.org/rest/field/homology_group/InP_Cae_000935/proteins
 
 B<Response example>
 
@@ -292,26 +277,39 @@ B<Response example>
 
 =cut 
 
-sub protein {
+sub proteins {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Protein;
-    my @data_pack;
-    foreach my $tag_object (@tag_objects) {
-    	my $tag_data = $self->_pack_obj($tag_object);
-    	my $species = $self->_pack_obj($tag_object->Species) if $tag_object->Species;
-    	my $description = $tag_object->Description;
-    	push @data_pack, {
-    		protein => $tag_data,
-    		species => $species,
-    		description =>"$description",
+    my @data;
+    foreach ($object->Protein) {
+    	my $species = $self->_pack_obj($_->Species) if $_->Species;
+    	my $description = $_->Description;
+    	push @data, {
+	    protein => $self->_pack_obj($_),
+	    species => $species,
+	    description => "$description",
     	}
     }
-    return {
-        'data' => @data_pack ? \@data_pack : undef,
-        'description' => 'proteins related to this homology_group'
+    return { data        => @data ? \@data : undef,
+	     description => 'proteins related to this homology_group'
     };
 }
+
+#######################################
+#
+# The External Links widget
+#   template: shared/widgets/xrefs.tt2
+#
+#######################################
+
+=head2 External Links
+
+=cut
+
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
+
 
 __PACKAGE__->meta->make_immutable;
 
