@@ -21,4 +21,3 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.
 [% ELSE %]
    No curated images available.
 [% END %]
-

@@ -21,7 +21,7 @@ Model for the Ace ?Expr_pattern class.
 
 =head1 URL
 
-http://wormbase.org/species/expr_pattern
+http://wormbase.org/species/*/expr_pattern
 
 =head1 METHODS/URIs
 
@@ -42,9 +42,11 @@ http://wormbase.org/species/expr_pattern
 # << include name >>
 
 sub _build__common_name {
-    my ($self) = @_;
-    my $bestname = $self->common_name($self ~~ 'Gene');
-
+    my $self     = shift;
+    my $object   = $self->object;
+    my $gene     = $object->Gene;
+    my $bestname = $gene->Public_name;
+    
     return "Expression pattern for $bestname" if $bestname;
     return $self->object->name;
 }
@@ -115,14 +117,97 @@ B<Response example>
 =cut
 
 sub subcellular_locations {
-	my ($self) = @_;
+    my ($self) = @_;
     my @subcellular_locs = map {"$_"} @{$self ~~ '@Subcellular_localization'};
+    
+    return {
+	description	=> 'Subcellular locations of this expression pattern',
+	data		=> @subcellular_locs ? \@subcellular_locs : undef,
+    };
+}
+
+=head3 expression_image
+
+This method will return a data structure containing the string to use with
+/draw to retrieve the curated expression images, if they exist.
+
+=over
+
+=item PERL API
+
+ $data = $model->expression_image();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr12)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/expression_image
+
+B<Response example>
+
+<div class="response-example"></div>
+
+B<Usage example>
+
+http://wormbase.org/draw/$data
+
+=back
+
+=cut
+
+sub expression_image {
+    my ($self) = @_;
+
+	my $data;
+	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
+	$data = 'jpg?class=expr_object&id=' . $self->object if (-e $file && !-z $file);
 
 	return {
-		description	=> 'Subcellular locations of this expression pattern',
-		data		=> @subcellular_locs ? \@subcellular_locs : undef,
+		description => 'Image of the expression pattern',
+		data        => $data,
 	};
 }
+
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
+
+#######################################
+#
+# The Details widget
+#
+#######################################
+
+=head2 Details
+
+=cut
 
 =head3 expressed_by
 
@@ -317,8 +402,8 @@ sub anatomy_ontology {
 	}, @{$self ~~ '@Anatomy_term'};
 
 	return {
-		description => 'TODO',
-		data		=> @anatomy_terms ? \@anatomy_terms : undef,
+		description => 'anatomy ontology terms associated with this expression pattern',
+		data	    => @anatomy_terms ? \@anatomy_terms : undef,
 	};
 }
 
@@ -398,73 +483,14 @@ sub experimental_details {
 }
 
 
-=head3 expression_image
 
-This method will return a data structure containing the string to use with
-/draw to retrieve the curated expression images, if they exist.
+#######################################
+#
+# The Curated Images widget
+#
+#######################################
 
-=over
-
-=item PERL API
-
- $data = $model->expression_image();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Expression pattern ID (eg Expr12)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/expression_image
-
-B<Response example>
-
-<div class="response-example"></div>
-
-B<Usage example>
-
-http://wormbase.org/draw/$data
-
-=back
-
-=cut
-
-sub expression_image {
-    my ($self) = @_;
-
-	my $data;
-	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
-	$data = 'jpg?class=expr_object&id=' . $self->object if (-e $file && !-z $file);
-
-	return {
-		description => 'Image of the expression pattern',
-		data        => $data,
-	};
-}
+=heads2
 
 =head3 curated_images
 
@@ -547,6 +573,9 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
 	};
 }
 
+
+
+# TODO
 sub movies {
 	my ($self) = @_;
 	my $data;

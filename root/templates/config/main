@@ -37,6 +37,17 @@
 	  result.join('<br />');
    END;
 
+   # List -- but don't link -- objects
+   # Suitable for hashes of objects created by _pack_objects()
+   MACRO list_objects(hash) BLOCK;
+      result = [];
+	  FOREACH key IN hash.sort;
+	     result.push(hash.$key);
+	  END;
+	  result.join('<br />');
+   END;
+
+
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
 
