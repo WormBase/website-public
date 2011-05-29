@@ -1,93 +1,106 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title='Type' key='type' %]
-   [% IF fields.type.data; fields.type.data; END %]
-[% END %]
 
-[% WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences' %]
-   [% link_objects(fields.sequences.data) %]
-[% END %]
+<h2>[% fields.name.data.label %]</h2>
 
-[%# this looks suspiciously like Genomic position in the Location widget... %]
-[% WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='sequences' %]
-   [% links = [] %]
-   [% FOREACH seqname IN fields.sequences.data.sort %]
-      [% seq = fields.sequences.data.$seqname %]
-      [% IF seq.start && seq.end && seq.ref %]
-         [% quarter_len = (seq.end - seq.start) div 4 %]
-         [% label = seq.ref _ ':' _ seq.start _ '..' _ seq.end %]
-         [% external_link('genomic_location', label, 
+[% 
+
+WRAPPER highlight_box;
+ 
+   taxonomy;
+
+   WRAPPER $field_block title='Type' key='type';
+      fields.type.data;
+   END;
+
+   WRAPPER $field_block title="WormBase ID";
+           fields.name.data.id;
+   END;
+
+END;
+
+
+WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences';
+   link_objects(fields.sequences.data);
+END;
+
+# this looks suspiciously like Genomic position in the Location widget...
+WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='sequences';
+   links = [];
+   FOREACH seqname IN fields.sequences.data.sort;
+      seq = fields.sequences.data.$seqname;
+      IF seq.start && seq.end && seq.ref;
+         quarter_len = (seq.end - seq.start) div 4;
+         label = seq.ref _ ':' _ seq.start _ '..' _ seq.end;
+         external_link('genomic_location', label, 
                           'c_elegans?ref=' _ seq.ref.replace('CHROMOSOME_','')  _
                           '&start=' _ (seq.start - quarter_len) _
-                          '&stop='  _ (seq.end   + quarter_len)) %]
-      [% END %]
-   [% END %]
-[% END %]
+                          '&stop='  _ (seq.end   + quarter_len));
+      END;
+   END;
+END;
 
-[% expression_patterns %]
-
-
-[% map_positions = [] %]
-[% FOREACH seqname IN fields.sequences.data.sort %]
-   [% seq = fields.sequences.data.$seqname %]
-   [% IF seq.chrom && seq.map.defined %]
-      [% map_positions.push(tag2link(seq.chrom) _ ':' _ seq.map) %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title='Interpolated genetic map position' key=''
-   disabled = map_positions.size == 0 %]
-   [% map_positions.join(', ') %]
-[% END %]
+expression_patterns;
 
 
-[% WRAPPER $field_block title='Measured length' key='length' %]
-   [% IF fields.length.data.Gel_length; fields.length.data.Gel_length _ ' kb'; END %]
-[% END %]
+map_positions = [];
+FOREACH seqname IN fields.sequences.data.sort;
+   seq = fields.sequences.data.$seqname;
+   IF seq.chrom && seq.map.defined;
+      map_positions.push(tag2link(seq.chrom) _ ':' _ seq.map);
+   END;
+END;
 
-[% WRAPPER $field_block title=pluralize('Assigned to map', fields.maps.data.size) key='maps' %]
-   [% link_objects(fields.maps.data) %]
-[% END %]
+WRAPPER $field_block title='Measured length' key='lengths';
+     IF fields.lengths.data.Gel_length; fields.lengths.data.Gel_length _ ' kb'; END;
+     IF fields.lengths.data.Seq_length; fields.lengths.data.Seq_length _ ' kb'; END;	
+END;
 
-[% WRAPPER $field_block title='Sequence status' key='sequence_status' %]
-   [% IF fields.sequence_status.data.exists('Accession_number') %]
-      Submitted to EMBL/Genbank (Acc #<a href="">[% fields.sequence_status.data.Accession_number %]</a>)
-   [% ELSIF fields.sequence_status.data.exists('Finished') %]
-      Finished
-   [% ELSIF fields.sequence_status.data.exists('Shotgun') %]
-      Shotgun
-   [% END %]
-[% END %]
+WRAPPER $field_block title=pluralize('Assigned to map', fields.maps.data.size) key='maps';
+   link_objects(fields.maps.data);
+END;
 
-[% WRAPPER $field_block title='Canonical for' key='canonical_for' %]
-   [% link_objects(fields.canonical_for.data) %]
-[% END %]
+WRAPPER $field_block title='Sequence status' key='sequence_status';
+   IF fields.sequence_status.data.exists('Accession_number');
+      'Submitted to EMBL/Genbank (Acc #<a href="">' _ fields.sequence_status.data.Accession_number _ '</a>)';
+   ELSIF fields.sequence_status.data.exists('Finished');
+     'Finished';
+   ELSIF fields.sequence_status.data.exists('Shotgun');
+      'Shotgun';
+   END;
+END;
 
-[% WRAPPER $field_block title='Refer to canonical clone' key='canonical_parent' %]
-   [% canons = [] %]
-   [% FOREACH canon IN fields.canonical_parent.data %]
-      [% canons.push(tag2link(canon)) %]
-   [% END %]
-   [% canons.join(', ') %]
-[% END %]
+WRAPPER $field_block title='Canonical for' key='canonical_for';
+   link_objects(fields.canonical_for.data);
+END;
 
-[% WRAPPER $field_block title='Screened positive for' key='screened_positive' %]
-   [% screened = [] %]
-   [% FOREACH clone_name IN fields.screened_positive.data.sort %]
-      [% clone = fields.screened_positive.data.$clone_name %]
-      [% screened.push(tag2link(clone, clone.weak ? clone.label _ ' (weak)' : '')) %]
-   [% END %]
-   [% screened.join(', ') %]
-[% END %]
+WRAPPER $field_block title='Refer to canonical clone' key='canonical_parent';
+   canons = [];
+   FOREACH canon IN fields.canonical_parent.data;
+      canons.push(tag2link(canon));
+   END;
+   canons.join(', ');
+END;
 
-[% WRAPPER $field_block title='Screened negative for' key='screened_negative' %]
-   [% link_objects(fields.screened_negative.data) %]
-[% END %]
+WRAPPER $field_block title='Screened positive for' key='screened_positive';
+   screened = [];
+   FOREACH clone_name IN fields.screened_positive.data.sort;
+      clone = fields.screened_positive.data.$clone_name;
+      screened.push(tag2link(clone, clone.weak ? clone.label _ ' (weak)' : ''));
+   END;
+   screened.join(', ');
+END;
 
-[% WRAPPER $field_block title='Gridded on' key='gridded_on' %]
-   [% link_objects(fields.gridded_on.data) %]
-[% END %]
+WRAPPER $field_block title='Screened negative for' key='screened_negative';
+   link_objects(fields.screened_negative.data);
+END;
 
-[% remarks(no_toggle=1) %]
+WRAPPER $field_block title='Gridded on' key='gridded_on';
+   link_objects(fields.gridded_on.data);
+END;
+
+remarks();
+
+%]
 
