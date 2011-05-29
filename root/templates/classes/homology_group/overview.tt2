@@ -1,0 +1,48 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+ 
+
+   WRAPPER $field_block title="WormBase ID";
+           fields.name.data.id;
+   END;
+
+END;
+
+WRAPPER $field_block title="Title" key="title";
+    fields.title.data;
+END;
+
+
+WRAPPER $field_block title="Type" key="group_type";
+    fields.type.data.homology_group;
+    IF fields.type.data.cog_code; ' (' _ fields.type.data.cog.code _ ')'; END;
+END;
+
+
+WRAPPER $field_block title="Gene Ontology Terms" key="gene_ontology_terms";
+       build_data_table(order=['go_term','definition'],
+                        columns={ go_term         => 'GO Term',
+	   	                  definition      => 'Definition',
+				  },
+                         key='gene_ontology_terms');
+END;
+
+
+WRAPPER $field_block title="Proteins" key="proteins";
+       build_data_table(order=['species','protein','description'],
+                        columns={ species   => 'Species',
+	   	                  protein   => 'Protein',
+				  description => 'Description'
+				  },
+                         key='proteins');
+END;
+
+remarks;
+
+%]

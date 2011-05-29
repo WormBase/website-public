@@ -96,31 +96,31 @@ structure_data
 
     	   	 review	   ui	   conf format	references
 analysis	 x     	   x	   x		-
-NdlC: a*_term	 -	   -	   x		-
+anatomy_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 x	   x	   x		-
 e*_cluster	 x	   x	   x		-
 expr_pattern	 x	   x	   x		-
-expr_profile
+expr_profile	 -	   -	   -		-
 feature		 x	   x	   x		-
 feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
 gene_regulation	 x	   x	   x		-
-homology_group 	 -	   -	   -		-	
-NdlC: go_term    -	   -	   x		-
+homology_group 	 x	   x	   x		-	
+go_term    	 -	   -	   x		-
 interaction	 -	   -	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
-microarray_results-	   -	   -		-
+micro*results	 -	   -	   -		-
 molecule	 x	   x	   x		-
 motif		 x	   x	   x		-
 operon		 -	   -	   -		-
 paper		 x	   x	   x		-
 pcr_oligo	 -	   -	   x		-
 person		 x	   x	   x		-
-NdlC: phenotype	 -	   -	   x		-
+phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
 position_matrix	 -	   -	   x		-
 protein		 x	   x	   x		-
