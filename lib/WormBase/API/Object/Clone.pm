@@ -18,7 +18,7 @@ Model for the Ace ?Clone class.
 
 =head1 URL
 
-http://wormbase.org/species/clone
+http://wormbase.org/species/*/clone
 
 =head1 METHODS/URIs
 
@@ -93,10 +93,8 @@ sub type {
     my ($self) = @_;
     
     my $type = $self ~~ 'Type';
-    return {
-	description => 'The type of this clone',
-	data		=> $type && "$type",
-    };
+    return { description => 'The type of this clone',
+	     data		=> $type && "$type" };
 }
 
 =head3 sequences
@@ -192,7 +190,7 @@ sub _seq2coords {
 =head3 lengths
 
 This method will return a data structure containing
-the lenths of clones as estimated by gel electrophoresis.
+the lengths of clones as estimated by gel electrophoresis.
 
 =over
 
@@ -438,7 +436,7 @@ sub canonical_for {
     my $canonical = $self->_pack_objects($self ~~ '@Canonical_for');
     return {
 	description => 'clones that the requested clone is a canonical representative of',
-	data		=> %$canonical ? $canonical : undef,
+	data	    => %$canonical ? $canonical : undef,
     };
 }
 
@@ -699,54 +697,53 @@ sub gridded_on {
     };
 }
 
-=head3 references
 
-This method will return a data structure containing
-references citing this clone.
 
-=over
+#######################################
+#
+# The External Links widget
+#   template: shared/widgets/xrefs.tt2
+#
+#######################################
 
-=item PERL API
+=head2 External Links
 
- $data = $model->references();
+=cut
 
-=item REST API
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
-B<Request Method>
 
-GET
 
-B<Requires Authentication>
+#######################################
+#
+# The Location Widget
+#
+#######################################
 
-No
+=head2 Location
 
-B<Parameters>
+=cut
 
-A clone id (eg JC8)
+# sub genomic_position { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_position >>
 
-B<Returns>
+# sub genomic_image { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_image >>
 
-=over 4
 
-=item *
 
-200 OK and JSON, HTML, or XML
 
-=item *
+#######################################
+#
+# The References Widget
+#
+#######################################
 
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/references
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
+=head2 References
 
 =cut
 
@@ -754,69 +751,11 @@ B<Response example>
 # Supplied by Role; POD will automatically be inserted here.
 # << include references >>
 
-=head3 physical_picture
 
-This method will return a data structure containing
-a link to an image representing this clone.
 
-=over
-
-=item PERL API
-
- $data = $model->physical_picture();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A clone id (eg JC8)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/physical_picture
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut
-
-sub physical_picture { # TODO (TH: And probably not necessary)
-    my ($self) = @_;
-
-    # not what $PmapGFF translates to, e.g. $DBGFF --> $self->gff_dsn
-    # see classic code seq/clone
-
-    return {
-        description => 'Physical picture data',
-        data        => 'NOT IMPLEMENTED',
-    };
-}
-
+########################################
+## PRIVATE METHODS
+########################################
 sub _build_tracks {
     return {
         description => 'tracks',
@@ -829,76 +768,6 @@ sub _build__segments {
     return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
 }
 
-
-#######################################
-#
-# The External Links widget
-#
-#######################################
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
-
-
-#######################################
-#
-# The External Links widget
-#
-#######################################
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
-
-
-#######################################
-#
-# The External Links widget
-#
-#######################################
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
-
-
-#######################################
-#
-# The External Links widget
-#
-#######################################
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
-########################################
-## PRIVATE METHODS
-########################################
 
 # override default remarks from Role::Object
 sub _build_remarks {
@@ -913,6 +782,27 @@ sub _build_remarks {
         data        => @remarks ? \@remarks : undef,
     };
 }
+
+
+
+########################################
+## DEPRECATED METHODS
+########################################
+
+sub physical_picture { # TODO (TH: And probably not necessary)
+    my ($self) = @_;
+
+    # not what $PmapGFF translates to, e.g. $DBGFF --> $self->gff_dsn
+    # see classic code seq/clone
+
+    return {
+        description => 'Physical picture data',
+        data        => 'NOT IMPLEMENTED',
+    };
+}
+
+
+
 
 __PACKAGE__->meta->make_immutable;
 

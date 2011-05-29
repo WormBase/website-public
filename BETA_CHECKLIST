@@ -81,13 +81,20 @@ Class-level summary widgets.
 
 Class review and formatting
 
-clone, expr_pattern, gene_regulation, interaction, pcr_oligo, phenotype, picture, position_matrix, structure_data
+expr_pattern, 
+gene_regulation, 
+interaction, 
+pcr_oligo, 
+phenotype, 
+picture, 
+position_matrix, 
+structure_data
 
     	   	 review	   ui	   conf format	references
 analysis	 x     	   x	   x		-
 NdlC: a*_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
-clone		 -	   -	   x		-
+clone		 x	   x	   x		-
 e*_cluster	 x	   x	   x		-
 expr_pattern	 -	   -	   x		-
 feature		 x	   x	   x		-
