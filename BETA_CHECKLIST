@@ -2,8 +2,9 @@ Check default widgets for each class.
 
 Check empty fields; does toggle work?
 
-Need some sort of simple list macro to display small lists of objetcts not requiring data table. (see tag2linkAll)
+Need some sort of simple list macro to display small lists of objetcts not requiring data table.
      In cases where the number of items is large, should also provide a link to download as CSV
+     So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects).
 
 Generic, ubiquitous, and intuitive sequence downloads.
 
@@ -57,6 +58,11 @@ General UI:
 Class summary pages.
       * make sure search/browse works for classes
 
+Reference handling
+	 * should be able to either
+	    1. use search system and/or
+	    2. use XREFed references
+
 
 API
 * Drop pseudoPOD and just document public methods in Role?
@@ -81,7 +87,7 @@ Class-level summary widgets.
 
 Class review and formatting
 
-expr_pattern, 
+expr_profile
 gene_regulation, 
 interaction, 
 pcr_oligo, 
@@ -96,19 +102,23 @@ NdlC: a*_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 x	   x	   x		-
 e*_cluster	 x	   x	   x		-
-expr_pattern	 -	   -	   x		-
+expr_pattern	 x	   x	   x		-
+expr_profile
 feature		 x	   x	   x		-
 feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
 gene_regulation	 -	   -	   x		-
+homology_group 	 -	   -	   -		-	
 NdlC: go_term    -	   -	   x		-
 interaction	 -	   -	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
+microarray_results-	   -	   -		-
 molecule	 x	   x	   x		-
 motif		 x	   x	   x		-
+operon		 -	   -	   -		-
 paper		 x	   x	   x		-
 pcr_oligo	 -	   -	   x		-
 person		 x	   x	   x		-

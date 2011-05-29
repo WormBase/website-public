@@ -6,22 +6,36 @@
 <a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>
 [% END %]
 
-[% WRAPPER $field_block title="Description" key='description'-%]
-   [% IF fields.description.data %]
-      [% markup(fields.description.data) %]
 
-      [% IF fields.is_bc_strain.data %]
-		<b>N.B.</b>: GFP constructs were generated as part of the 
-		<a href="http://elegans.bcgsc.ca/home/ge_consortium.html">
-		BC <i>C. elegans</i> Gene Expression Consortium</a>
-      [% END %]
-   [% END %]
-[% END %]
+[%
 
-[% WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_locations.data.size) key='subcellular_locations'-%]
-	[% FOREACH loc IN fields.subcellular_locations.data %]
-		[% loc %]<br>
-	[% END %]
-[% END %]
+WRAPPER highlight_box;
+ 
+   status;
 
-[% remarks %]
+   WRAPPER $field_block title="WormBase ID";
+           fields.name.data.id;
+   END;
+
+END;
+
+
+WRAPPER $field_block title="" key='description';
+      # The main concise description
+      '<div class="text-width" style="clear:left">';
+         markup(fields.description.data);
+      '</div>';
+
+
+      IF fields.is_bc_strain.data;
+	'<b>N.B.</b>: GFP constructs were generated as part of the <a href="http://elegans.bcgsc.ca/home/ge_consortium.html">BC <i>C. elegans</i> Gene Expression Consortium</a>';
+      END;
+END;
+
+WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_locations.data.size) key='subcellular_locations';
+	fields.subcellular_locations.data.join('<br />');
+END;
+
+remarks;
+
+%]
