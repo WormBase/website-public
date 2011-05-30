@@ -16,7 +16,7 @@ Model for the Ace ?Motif class.
 
 =head1 URL
 
-http://wormbase.org/species/position_matrix
+http://wormbase.org/species/*/position_matrix
 
 =head1 METHODS/URIs
 
@@ -100,9 +100,71 @@ has 'pm_datadir' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+=head3 type
+
+This method will return a data structure with the type
+of position matrix (frequency | weight).
+
+=over
+
+=item PERL API
+
+ $data = $model->type();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Postion_matrix ID (eg WBPmat00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/type
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub type {
+    my $self    = shift;
+    my $object  = $self->object;
+    my $data    = $self->Type;
+    return { data        => "$data" || undef,
+	     description => 'the type of position matrix', };
+}
+
+
+
 =head3 associated_feature
 
-This method will return a data structure with the associated feature to the requested position matrix.
+This method will return a data structure with features
+associated with the requested position matrix.
 
 =over
 
@@ -150,20 +212,19 @@ B<Response example>
 
 =cut 
 
+# Only a scalar?
 sub associated_feature {
-    my $self               = shift;
-    my $object             = $self->object;
-    my $associated_feature = $object->Associated_feature;
-    my $data_pack          = $self->_pack_obj($associated_feature);
-    return {
-        'data'        => $data_pack,
-        'description' => 'feature associated with motif'
-    };
+    my $self    = shift;
+    my $object  = $self->object;
+    my $data    = $self->_pack_obj($object->Associated_feature);
+    return { data        => $data || undef,
+	     description => 'feature associated with motif' };
 }
 
 =head3 associated_position_matrix
 
-This method will return a data structure with the associated position_matrix to the requested position matrix.
+This method will return a data structure with other matrices
+associated with the current matrix.
 
 =over
 
@@ -212,19 +273,17 @@ B<Response example>
 =cut 
 
 sub associated_position_matrix {
-    my $self          = shift;
-    my $object        = $self->object;
-    my $associated_pm = $object->Associated_with_Position_Matrix;
-    my $data_pack     = $self->_pack_obj($associated_pm);
-    return {
-        'data'        => $data_pack,
-        'description' => 'other motif associated with motif'
-    };
+    my $self     = shift;
+    my $object   = $self->object;
+    my $data     = $self->_pack_obj($object->Associated_with_Position_Matrix);
+    return {data        => $data || undef,
+	    description => 'other matrix associated with motif' };
 }
 
 =head3 consensus
 
-This method will return a data structure with the consensus sequence for the requested position matrix.
+This method will return a data structure with the
+consensus sequence for the requested position matrix.
 
 =over
 
@@ -272,17 +331,141 @@ B<Response example>
 
 =cut 
 
- sub consensus {
-    my $self              = shift;
-    my $object            = $self->object;
+sub consensus {
+    my $self    = shift;
+    my $object  = $self->object;
+    
+    # Why is this hard-coded here? Why isn't this an attribute or in configuration? How/Where is this file created?
     my %name2consensus = _build_hash($self->pm_datadir . "pm_id2consensus_seq.txt");
     ## $self->pre_compile->{pm_id2consensus_seq_file}
-    my $data_pack         = $name2consensus{$object};
-    return {
-        'data'        => $data_pack,
-        'description' => 'consensus sequence for motif'
+    my $data           = $name2consensus{$object};
+    return { data        => $data || undef,
+	     description => 'consensus sequence for motif',
     };
  }
+
+
+=head3 bound_by_gene_product
+
+This method will return a data structure containing 
+a list of genes that to bind to the motif;
+
+=over
+
+=item PERL API
+
+ $data = $model->bound_by_gene_product();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Postion_matrix ID (eg WBPmat00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001/bound_by_gene_product
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub bound_by_gene_product {
+    my $self   = shift;
+    my $object = $self->object;
+    my $data = $self->_pack_objects($object->Bound_by_gene_product);
+    return { data => %$data ? $data : undef,
+	     description => 'gene products that bind to the motif' };
+}
+
+
+
+=head3 transcription_factors
+
+This method will return a data structure containing
+the transcription factors that associate with this motif.
+
+=over
+
+=item PERL API
+
+ $data = $model->transcription_factors();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Postion_matrix ID (eg WBPmat00000001)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/position_matrix/WBPmat00000001transcription_factors
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub transcription_factors {
+    my $self   = shift;
+    my $object = $self->object;
+
+    my $factor = $object->Transcription_factor;
+    return { description => 'Transcription factor of the feature',
+	     data        => "$factor" || undef};
+}
+
 
 ############################
 ## logo
@@ -314,7 +497,7 @@ No
 
 B<Parameters>
 
-a Postion_matrix ID WBPmat00000001
+a Postion_matrix ID (eg WBPmat00000001)
 
 B<Returns>
 
@@ -373,6 +556,7 @@ sub position_data {
 ## internal methods
 ###########################
 
+# OMG another flat file data slurp? Really?
 sub _build_hash {
     my ($file_name) = @_;
     open FILE, "<$file_name" or die "Cannot open the file: $file_name\n";

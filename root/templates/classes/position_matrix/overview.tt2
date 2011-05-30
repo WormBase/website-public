@@ -1,19 +1,49 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% WRAPPER $field_block title="associated_feature" key="associated_feature" -%] 
-	[%  tag2link(fields.associated_feature.data) %]
-[% END %]
 
-[% WRAPPER $field_block title="associated_position_matrix" key="associated_position_matrix" -%] 
-	[%  tag2link(fields.associated_position_matrix.data) %]
-[% END %]
 
-[% WRAPPER $field_block title="consensus" key="consensus"-%] 
-	[%  fields.consensus.data %]
-[% END %]
+<h2>[% fields.name.data.label %]</h2>
 
-TH: eh?
-[%# WRAPPER $field_block title="position_data" key="position_data" -%] 
-	[%# dataTable_list(['Header1','Header2','Header3' ... ],fields.<subroutine>.<key>.<table_number>.aaData,'<table_name>') %]
-[%# END %]
+[%
+
+WRAPPER highlight_box;
+ 
+
+   WRAPPER $field_block title="WormBase ID";
+           fields.name.data.id;
+   END;
+
+END;
+
+description;
+
+WRAPPER $field_block title="Associated feature" key="associated_feature";
+	tag2link(fields.associated_feature.data);
+END;
+
+WRAPPER $field_block title="Associated position matrix" key="associated_position_matrix"; 
+	tag2link(fields.associated_position_matrix.data);
+END;
+
+WRAPPER $field_block title="Consensus" key="consensus";
+	fields.consensus.data;
+END;
+
+
+WRAPPER $field_block title="Bound By Gene Product" key="bound_by_gene_product";
+	link_objects(fields.bound_by_gene_product.data);
+END;
+
+WRAPPER $field_block title="Transcription Factors" key="transcription_factors";
+	link_objects(fields.transcription_factors.data);
+END;
+
+#TH: eh? Data structure in position_data needs to be deconvoluted?
+# WRAPPER $field_block title="Position data" key="position_data";
+	# dataTable_list(['Header1','Header2','Header3' ... ],fields.<subroutine>.<key>.<table_number>.aaData,'<table_name>');
+#END;
+
+remarks;
+
+%]
