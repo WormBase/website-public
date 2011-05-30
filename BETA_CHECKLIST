@@ -1,6 +1,14 @@
+The following data access and formatting needs to be standardized; some
+already are partially standardized:
+    GO_term, Phenotype
+
 Check default widgets for each class.
 
 Check empty fields; does toggle work?
+
+
+
+Tree display is broken
 
 Need some sort of simple list macro to display small lists of objetcts not requiring data table.
      In cases where the number of items is large, should also provide a link to download as CSV
@@ -10,6 +18,10 @@ Generic, ubiquitous, and intuitive sequence downloads.
 
 Error reporting: to user, to staff.  Formatting.
       Ajax errors loading widgets trickle through and report "oops" but aren't caught?
+
+    Calling URLs that SHOULD result in 404s do NOT.
+      http://todd.wormbase.org/species/todd -> returns 500, not 404
+      http://todd.wormbase.org/specis/todd  -> return 404, with different formatting.
 
 
 Standardize Overview widgets.
@@ -86,12 +98,13 @@ Class-level summary widgets.
 
 Class review and formatting
 
+NORIE: anatomy_term
 expr_profile
-interaction, 
+NORIE: go_term
+operon
 pcr_oligo, 
-phenotype, 
+NORIE: phenotype, 
 picture, 
-position_matrix, 
 structure_data
 
     	   	 review	   ui	   conf format	references
@@ -110,7 +123,7 @@ gene_cluster	 x	   x	   x		-
 gene_regulation	 x	   x	   x		-
 homology_group 	 x	   x	   x		-	
 go_term    	 -	   -	   x		-
-interaction	 -	   -	   x		-
+interaction	 x	   x	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
 micro*results	 -	   -	   -		-
@@ -122,7 +135,7 @@ pcr_oligo	 -	   -	   x		-
 person		 x	   x	   x		-
 phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
-position_matrix	 -	   -	   x		-
+position_matrix	 x	   x	   x		-
 protein		 x	   x	   x		-
 rnai		 x	   x	   x		-
 sequence	 x	   x	   x		-

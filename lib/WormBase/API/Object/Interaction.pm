@@ -16,7 +16,7 @@ Model for the Ace ?Interaction class.
 
 =head1 URL
 
-http://wormbase.org/species/interaction
+http://wormbase.org/species/*/interaction
 
 =head1 METHODS/URIs
 
@@ -74,6 +74,17 @@ has 'effected' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# Override Role to give a better label for name.
+sub _build_name { 
+    my $self = shift;
+    my $object = $self->object;
+    my $label = join(' : ',map { $_->Public_name } $object->Interactor);
+    return {
+        description => "The name and WormBase internal ID of $object",
+        data        =>  $self->_pack_obj($object,$label),
+    };
+}
+
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
@@ -129,25 +140,25 @@ B<Response example>
 =cut 
 
 sub interactor {
-    my $self   = shift;
+    my $self   = shift;   
     my $object = $self->object;
-    my @genes  = $object->Interactor;
-    @genes = map { $self->_pack_obj( $_ ) } @genes;
-
-    return { description => 'The genes in this interaction',
-	     data        => @genes ? \@genes : undef,
+    my @interacting = $object->Interactor;
+    my $genes  = $self->_pack_objects(\@interacting);
+    return { description => 'the genes in this interaction',
+	     data        => %$genes ? $genes : undef,
     };
 }
 
-=head3 interaction_type
+=head3 type
 
-This method will return a data structure with the interaction_type.
+This method will return a data structure describing the 
+type of interaction.
 
 =over
 
 =item PERL API
 
- $data = $model->interaction_type();
+ $data = $model->type();
 
 =item REST API
 
@@ -179,7 +190,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/interaction_type
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/type
 
 B<Response example>
 
@@ -189,11 +200,11 @@ B<Response example>
 
 =cut 
 
-sub interaction_type {
+sub type {
     my $self   = shift;
     my $object = $self->object;
     my $type   = $object->Interaction_type;
-    my %interaction_info;
+#    my %interaction_info;
 
 #     $interaction_info{'effector'} = $self->_pack_obj($type->Effector->col)
 #       if $type->Effector;
@@ -203,16 +214,14 @@ sub interaction_type {
 #         my @genes = map { $self->_pack_obj($_) } $type->Non_directional;
 #         $interaction_info{'non_directional'} = \@genes;
 #     }
-    return {
-        description => 'The type of interaction.',
-        data        => {
-            type             => $type,
-            interaction_info => \%interaction_info,
-        }
-    };
+    return { description => 'The type of interaction.',
+	     data        => "$type" || undef };
+#            interaction_info => \%interaction_info,
+#        }
+#    };
 }
 
-=head3 phenotype
+=head3 phenotypes
 
 This method will return a data structure with phenotypes observed with the interaction.
 
@@ -220,7 +229,7 @@ This method will return a data structure with phenotypes observed with the inter
 
 =item PERL API
 
- $data = $model->phenotype();
+ $data = $model->phenotypes();
 
 =item REST API
 
@@ -252,7 +261,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotype
+curl -H content-type:application/json http://api.wormbase.org/rest/field/interaction/WBInteraction0000779/phenotypes
 
 B<Response example>
 
@@ -262,20 +271,15 @@ B<Response example>
 
 =cut 
 
-sub phenotype {
+# Override phenotypes provided by the role.
+sub _build_phenotypes {
     my $self      = shift;
     my $object    = $self->object;
     my $it        = $object->Interaction_type;
-    my $phenotype = $it->Interaction_phenotype->right
-      if $it->Interaction_phenotype;
-    my $phenotype_name = $phenotype->Primary_name if $phenotype;
-    my $data_pack = $self->_pack_obj( $phenotype, $phenotype_name );
-
-    return {
-        'data' => $data_pack,
-        'description' =>
-          'description of the phenotype associated with this interaction'
-    };
+    my @phenes    = $it->Interaction_phenotype->right if $it && $it->Interaction_phenotype;
+    my $phenotypes = $self->_pack_objects(\@phenes)   if @phenes;
+    return { data        => $phenotypes,
+	     description => 'phenotypes assoiated with this interaction' };
 }
 
 =head3 rnai
@@ -332,13 +336,10 @@ sub rnai {
     my $self      = shift;
     my $object    = $self->object;
     my $it        = $object->Interaction_type;
-    my $rnai      = $it->Interaction_RNAi->right if $it->Interaction_RNAi;
-    my $data_pack = $self->_pack_obj($rnai);
-    return {
-        'data' => $data_pack,
-        'description' =>
-          'description of the rnai involved with this interaction'
-    };
+    my @rnais     = $it->Interaction_RNAi->right if $it && $it->Interaction_RNAi;
+    my $rnai      = $self->_pack_objects(\@rnais) if @rnais;
+    return { data => $rnai,
+	     description => 'rnais involved with this interaction' };
 }
 
 ###########################
@@ -402,11 +403,11 @@ B<Response example>
 =cut 
 
 sub effector_data {
-    my $self      = shift;
-    my $data_pack = $self->_interactor_data('effector');
+    my $self = shift;
+    my $data = $self->_interactor_data('effector');
 
     return {
-        data        => $data_pack || undef,
+        data        => $data || undef,
         description => 'data on the effector genes of the interaction'
     };
 }
@@ -462,11 +463,10 @@ B<Response example>
 =cut 
 
 sub effected_data {
-    my $self      = shift;
-    my $data_pack = $self->_interactor_data('effected');
-
+    my $self = shift;
+    my $data = $self->_interactor_data('effected');
     return {
-        data        => $data_pack,
+        data        => $data,
         description => 'data on the effected genes of the interaction'
     };
 }
@@ -545,6 +545,22 @@ sub non_directional_data {
 # sub xrefs {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include xrefs >>
+
+#######################################
+#
+# The References Widget
+#
+#######################################
+
+=head2 References
+
+=cut
+
+# sub references {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include references >>
+
+
 
 #######################################
 #
