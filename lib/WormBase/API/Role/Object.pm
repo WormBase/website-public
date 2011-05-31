@@ -1993,9 +1993,10 @@ sub tmp_acedata_dir {
     return $self->tmp_dir('acedata', @_);
 }
 
-# A simple array would probably suffice. We could sort objects
-# in view according to name key supplied by _pack_obj.
-# But might be messy to change.
+# A simple array would probably suffice instead of a hash
+# (whcih is used in the view for sorting).
+# We could sort objects in view according to name key 
+# supplied by _pack_obj but might be messy to change now.
 sub _pack_objects {
     my ($self, $objects) = @_;
     return {map {$_ => $self->_pack_obj($_)} @$objects};

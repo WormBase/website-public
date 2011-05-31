@@ -1,0 +1,53 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+<h2>[% tag2link(fields.name.data) %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+ 
+   WRAPPER $field_block title="Method" key="method"; 
+        fields.method.data;
+   END;
+
+   WRAPPER $field_block title="WormBase ID"; 
+        fields.name.data.id;
+   END;
+END;
+
+IF fields.pcr_data.keys > 0;
+   WRAPPER $field_block title='PCR Information' key='pcr_data';	
+	FOREACH key IN fields.pcr_data.data.keys.sort;
+	    key _ ': ' _ fields.pcr_data.data.$key _ '<br />';
+        END;
+   END;
+END;
+
+WRAPPER $field_block title='Profiles' key='profiles';
+	link_objects(fields.profiles.data);
+END;
+
+WRAPPER $field_block title='PCR Products' key='pcr_products';
+	link_objects(fields.pcr_products.data);
+END;
+	
+WRAPPER $field_block title='Expression Map' key='expression_map';
+	tag2link(fields.expression_map.data);
+END;
+
+WRAPPER $field_block title='RNAi' key='rnai';
+    build_data_table (
+		order = [ 'rnai','strain','genotype', ],
+		columns = {				 		
+			rnai    => 'RNAi',
+			strain => 'Strain',
+			genotype => 'Genotype',
+			},
+		key = 'rnai');
+END;
+
+remarks;
+
+%]

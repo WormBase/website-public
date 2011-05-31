@@ -101,11 +101,11 @@ our %BLAST_FILTERS = ("filter" => "-F T",);
  
 
 sub index {
-   my ($self,$param) = @_;
-   $self->autoload($param) if  $param->{'autoload'};
+   my ($self,$params) = @_;
+   $self->autoload($params) if  $params->{'autoload'};
 
    my %data = (
-       query_sequence => $param->{query_sequence} || '',
+       query_sequence => $params->{query_sequence} || '',
        check_query_type_nucl => '',
        check_query_type_prot => 'checked="1"',
        selected_blastn => '',
