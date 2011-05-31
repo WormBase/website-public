@@ -16,7 +16,7 @@ Model for the Ace ?Expr_profile class.
 
 =head1 URL
 
-http://wormbase.org/species/expr_profile
+http://wormbase.org/species/*/expr_profile
 
 =head1 METHODS/URIs
 
@@ -36,9 +36,28 @@ http://wormbase.org/species/expr_profile
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# sub remarks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include remarks >>
+
+# sub method {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include method >>
+
+#######################################
+#
+# The Details widget
+#
+#######################################
+
+=head2 Details
+
+=cut
+
 =head3 pcr_data
 
-This method will return a data structure with pcr_data on the expr_profile.
+This method will return a data structure 
+with PCR data on the expression profile.
 
 =over
 
@@ -103,9 +122,7 @@ sub pcr_data {
     my ( $x_coord, $y_coord, $mountain ) =
       ( $expr_map->X_coord, $expr_map->Y_coord, $expr_map->Mountain );
     my $radius = 4;
-    my %data_pack;
-
-    my $data_pack = {
+    return { data => {
         primer     => "$primer",
         seq        => "$seq",
         chromosome => $chromosome,
@@ -115,16 +132,15 @@ sub pcr_data {
         y_coord    => "$y_coord",
         mountain   => "$mountain",
         radius     => $radius
-    };
-    return {
-        'data'        => $data_pack,
-        'description' => 'pcr data on the expression profile'
+	     },
+	    description => 'pcr data of the expression profile'
     };
 }
 
 =head3 profiles
 
-This method will return a data structure with profiles for the expr_profile.
+This method will return a data structure 
+with specific profiles of the expression profile object.
 
 =over
 
@@ -175,7 +191,7 @@ B<Response example>
 sub profiles {
     my $self    = shift;
     my $profile = $self->object;
-    my @data_pack;
+    my @data;
     my $dbgff = $self->gff_dsn;
     my $db    = $self->ace_dsn;
     
@@ -194,25 +210,24 @@ sub profiles {
 	    unless @p;    # used as a flag that we fetched an appropriate object
         @p = map { $db->fetch( -class => 'Expr_profile', -name => $_->name ) } @p;
         foreach my $p (@p) {
-            my $data_pack = $self->_pack_obj($p);
-            push @data_pack, $data_pack;
+            push @data, $self->_pack_obj($p);
         }
     }
-    return {
-        'data'        =>  @data_pack ? \@data_pack : undef,
-        'description' => 'expression profiles for set of genes',
+    return { data        =>  @data ? \@data : undef,
+	     description => 'expression profiles for set of genes',
     };
 }
 
-=head3 pcr_product
+=head3 pcr_products
     
-This method will return a data structure with pcr_products generated from the expr_profile.
+This method will return a data structure with 
+PCR products generated from the expression profile.
     
 =over
 
 =item PERL API
 
- $data = $model->pcr_product();
+ $data = $model->pcr_products();
 
 =item REST API
 
@@ -244,7 +259,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_product
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/pcr_products
 
 B<Response example>
 
@@ -254,26 +269,27 @@ B<Response example>
 
 =cut 
 
-sub pcr_product {
+sub pcr_products {
     my $self       = shift;
     my $object     = $self->object;
-    my $tag_object = $object->PCR_product;
-    my $data_pack  = $self->_pack_obj($tag_object);
-    return {
-        'data'        => $data_pack,
-        'description' => 'pcr_product for expr_profile'
+    my @pcrs       = $object->PCR_product;
+    my $data       = $self->_pack_objects(\@pcrs);
+    return { data        => $data || undef,
+	     description => 'pcr_products for the expression profile',
     };
 }
 
-=head3 expr_map
-
-This method will return a data structure with expr_map associated with the expr_profile.
-
+=head3 expression_map
+    
+This method will return a data structure 
+containing the expression map associated with the
+requested expression profile.
+    
 =over
 
 =item PERL API
 
- $data = $model->expr_map();
+ $data = $model->expression_map();
 
 =item REST API
 
@@ -305,7 +321,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/expr_map
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expr_profile/R10E9.2/expression_map
 
 B<Response example>
 
@@ -315,24 +331,14 @@ B<Response example>
 
 =cut 
 
-sub expr_map {
+sub expression_map {
     my $self       = shift;
     my $object     = $self->object;
-    my $tag_object = $object->Expr_map;
-    my $data_pack  = $self->_pack_obj($tag_object);
-    return {
-        'data'        => $data_pack,
-        'description' => 'expression map data for expr_profile'
+    my $data       = $self->_pack_obj($object->Expr_map);
+    return { data        => $data || undef,
+	     description => 'expression map data for expr_profile'
     };
 }
-
-# sub remarks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include remarks >>
-
-# sub method {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include method >>
 
 =head3 rnai
 
@@ -382,43 +388,27 @@ B<Response example>
 
 =back
 
-=cut `
+=cut
+
 sub rnai {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->RNAi_result;
-    my @data_pack;
-    
-    foreach my $tag_object (@tag_objects) {
-    	my $tag_data = $self->_pack_obj($tag_object);
-    	my $strain = $self->_pack_obj($tag_object->Strain) if $tag_object->Strain;
-    	my $treatment = $tag_object->Treatment;
+    my @data;
+    foreach my $rnai ($object->RNAi_result) {
+    	my $strain   = $self->_pack_obj($rnai->Strain) if $rnai->Strain;
+    	my $genotype = $rnai->Genotype;
     	
-    	push @data_pack, {
-    		rnai => $tag_data,
-    		strain =>$strain,
-    		treatment =>"$treatment",
-    	}
+    	push @data, {
+	    rnai      => $self->_pack_obj($rnai),
+	    strain    => $strain,
+	    genotype  => "$genotype",
+    	};
     }
-    return {
-        'data'        => @tag_objects ? \@data_pack : undef,
-        'description' => 'rnais associated with this expr_profile',
-    };
+    return { data => @data ? \@data : undef,
+	     description => 'RNAis associated with this expression profile', };
 }
 
 
-
-sub rnai_20110427 {
-    my $self        = shift;
-    my $object      = $self->object;
-    my @tag_objects = $object->RNAi_result;
-    my @data_pack   = map { $_ = $self->_pack_obj($_) } @tag_objects
-      if @tag_objects;
-    return {
-        'data'        => @tag_objects ? \@data_pack : undef,
-        'description' => 'rnais associated with this expr_profile',
-    };
-}
 
 __PACKAGE__->meta->make_immutable;
 

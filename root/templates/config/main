@@ -29,12 +29,21 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO link_objects(hash) BLOCK;
-      result = [];
-	  FOREACH key IN hash.sort;
-	     result.push(tag2link(hash.$key));
+   MACRO link_objects(data) BLOCK;
+      # Is this a hash?
+      IF data.keys;
+          result = [];
+	  FOREACH key IN data.sort;
+	     result.push(tag2link(data.$key));
 	  END;
 	  result.join('<br />');
+      # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
+      ELSE;
+	  FOREACH item IN data;
+	     result.push(tag2link(item));
+	  END;
+	  result.join('<br />');
+      END;
    END;
 
    # List -- but don't link -- objects

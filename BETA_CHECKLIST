@@ -12,7 +12,14 @@ Tree display is broken
 
 Need some sort of simple list macro to display small lists of objetcts not requiring data table.
      In cases where the number of items is large, should also provide a link to download as CSV
-     So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects).
+     So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects
+     or of manually created list of objects.
+
+     _pack_objects and list_object/link_objects is kind of bizarre.
+     * pack_objects expects array ref and returns hashref (see above; used for sorting in view)
+     * checking for def/undef in order to hide empty fields in kind of odd and not 100% consistent...
+     
+
 
 Generic, ubiquitous, and intuitive sequence downloads.
 
@@ -99,7 +106,6 @@ Class-level summary widgets.
 Class review and formatting
 
 NORIE: anatomy_term
-expr_profile
 NORIE: go_term
 operon
 pcr_oligo, 
@@ -114,15 +120,15 @@ antibody	 x	   x	   x		-
 clone		 x	   x	   x		-
 e*_cluster	 x	   x	   x		-
 expr_pattern	 x	   x	   x		-
-expr_profile	 -	   -	   -		-
+expr_profile	 x	   x	   x		-    
 feature		 x	   x	   x		-
 feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
 gene_regulation	 x	   x	   x		-
-homology_group 	 x	   x	   x		-	
 go_term    	 -	   -	   x		-
+homology_group 	 x	   x	   x		-	
 interaction	 x	   x	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
