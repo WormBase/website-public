@@ -88,9 +88,8 @@ __PACKAGE__->has_many(valid_emails=>'WormBase::Schema::Result::Email', 'user_id'
 __PACKAGE__->has_many(email_address=>'WormBase::Schema::Result::Email', 'user_id');
 __PACKAGE__->many_to_many(roles => 'users_to_roles', 'role');
 
-__PACKAGE__->many_to_many(issues => 'users_to_issues', 'issue');
-__PACKAGE__->has_many(users_to_issues=>'WormBase::Schema::Result::UserIssue', 'user_id');
-
+__PACKAGE__->has_many(issues_reported=>'WormBase::Schema::Result::Issue', 'reporter_id');
+__PACKAGE__->has_many(issues_responsible=>'WormBase::Schema::Result::Issue', 'responsible_id');
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 1;

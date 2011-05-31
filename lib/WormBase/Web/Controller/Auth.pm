@@ -260,7 +260,7 @@ sub auth_local {
             $c->stash->{prompt_wbid} = 1;
             $c->log->debug("creating new user $username, $email");
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
-            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id});
+            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id}) if $email;
         }
         #assing curator role to wormbase.org domain user
         if($email && $email =~ /\@wormbase\.org/) {
@@ -302,9 +302,11 @@ sub logout :Path("/logout") {
     # Clear the user's state
     $c->logout;
     $c->stash->{noboiler} = 1;  
+
     $c->stash->{'template'}='auth/login.tt2';
 #     $c->response->redirect($c->uri_for('/'));
     $self->reload($c,1) ;
+#     $c->session_expire_key( __user => 0 );
 }
 
 

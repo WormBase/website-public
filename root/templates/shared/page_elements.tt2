@@ -54,6 +54,14 @@
 [%- END %]
 [%- END %]
 
+[% MACRO linkUser(user) BLOCK %]
+  [% IF user.wbid %]
+    [% text2link('person', user.wbid, user.username) %]
+  [% ELSE %]
+    [% user.username %]
+  [% END %]
+[%- END %]
+
 [% MACRO linkPage(page) BLOCK %]
     [% label = page.title %]
     [% UNLESS label; label = page.url; END; %]
@@ -67,20 +75,35 @@
  
 [% MACRO issue_table(issues) BLOCK %]
 [% IF issues %]
-[% USE time_dir = Time.Duration %]
-  <table border=1 width=100%><tr><th>#</th><th>Title</th><th>State</th><th>Object</th><th>Time</th> 
-    <th>Report by</th><th>Responsible</th>
-    [% IF c.check_user_roles('admin') %]<th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>[% END %]
-    </tr>
-      [% FOREACH IS IN issues %]
-	 <tr><td>[% IS.id %]</td><td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td><td>[% IS.state %]</td>
-        <td>[% linkPage(IS.page) %]</td> 
-	    <td>[%  time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
-	    <td>[% username(IS.owner) %]</td><td>[% username(IS.assigned_to) %]</td>
-	    [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
-	  </tr>
+  [% USE time_dir = Time.Duration %]
+  <table border=0 width=100% class="issue-table">
+    <tr align=left>
+      <th>#</th>
+      <th>Title</th>
+      <th>State</th>
+      <th>Page</th>
+      <th>Time</th> 
+      <th>Reported by</th>
+      <th>Responsible</th>
+      [% IF c.check_user_roles('admin') %]
+        <th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
       [% END %]
-      </table>
+    </tr>
+    [% even = 1 %]
+    [% FOREACH IS IN issues %]
+      [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
+      <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
+        <td><a href="[% url %]">[% IS.id %]</a></td>
+        <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td>
+        <td>[% IS.state %]</td>
+        <td>[% linkPage(IS.page) %]</td> 
+        <td>[% time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
+        <td>[% linkUser(IS.reporter) %]</td>
+        <td>[% linkUser(IS.responsible) %]</td>
+        [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
+      </tr>
+    [% END %]
+  </table>
   [% ELSE %]
    <span id="fade"> no issues have been found</span>
   [% END %]
