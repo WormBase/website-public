@@ -1,0 +1,35 @@
+[%
+
+WRAPPER $field_block title="Effector" key="effector_data";
+    build_data_table (
+		order = [ 
+			'gene',
+			'interactions',
+			],
+		columns = {				 		
+			gene => 'Gene',
+			interactions => 'Interactions',
+			},
+		key = 'effector_data');
+END;
+
+
+WRAPPER $field_block title="Effected" key="effected_data";
+    build_data_table (
+		order = [ 
+			'gene',
+			'interactions',
+			],
+		columns = {				 		
+			gene => 'Gene',
+			interactions => 'Interactions',
+			},
+		key = 'effected_data');
+END;
+
+
+#WRAPPER $field_block title="non_directional_data" key="non_directional_data";
+#	link_objects(fields.non_directional_data.data); 
+#END;
+
+%]
