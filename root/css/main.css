@@ -1591,6 +1591,15 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#BBFFAA;
 }
 
+.issue-table{
+  background:#EEE;
+  padding:0.5em;
+}
+
+.issue-table .r0 {
+  background:#FFF;
+}
+
 .issue-text{
   width :97%;
   font-family: Helvetica, sans-serif;
@@ -1604,6 +1613,13 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 
 .issue-user {
   width : 60%;
+}
+
+.issue-content{
+  position:relative; 
+  background-color:#fcfcfc;
+  border: 1px solid #ddd; 
+  padding: 1em;
 }
 
  

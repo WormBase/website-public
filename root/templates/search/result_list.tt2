@@ -58,7 +58,7 @@
         <div class="text-min" style="height:auto;max-height:2.4em;">
            [% mystring %]    
         </div>
-        [% IF mystring > 150 %]
+        [% IF mystring.length > 150 %]
               <div class="more">
                    <div class="ui-icon ui-icon-triangle-1-s"></div>
               </div>

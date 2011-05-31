@@ -379,8 +379,11 @@ sub set_cache {
 
 sub secure_uri_for {
     my ($self, @args) = @_;
+    
     my $u = $self->uri_for(@args);
-    $u->scheme('https');
+    if($self->config->{installation_type} =~ m/production/){
+      $u->scheme('https');
+    }
     return $u;
 }
 
