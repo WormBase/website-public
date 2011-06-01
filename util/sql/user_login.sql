@@ -20,7 +20,8 @@ DROP TABLE IF EXISTS email;
 CREATE TABLE email(
             user_id INTEGER,
             email char(255) PRIMARY KEY,
-            validated   BOOLEAN
+            validated   BOOLEAN,
+            primary_email   BOOLEAN
 );
 
 DROP TABLE IF EXISTS roles;

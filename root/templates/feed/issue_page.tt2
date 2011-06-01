@@ -33,7 +33,7 @@
 <div class="issue-content" >
   <h2>#[% issue.id %] [% issue.title %] </h2>
   <span id="fade">
-    Reported by [% linkUser(issue.owner) %] on [% linkPage(issue.page) %],
+    Reported by [% linkUser(issue.reporter) %] on [% linkPage(issue.page) %],
     [% USE time_dir = Time.Duration %]
     created [% time_dir.ago(current_time - issue.submit_time, 1) %]
   </span>
@@ -43,7 +43,7 @@
 <div class="issue-content" >
   <table width="40%">
     <tr><th>Status:</th><td>[% issue.state %]</td> 
-    <th>Responsible:</th><td>[% linkUser(issue.assigned_to) %]</td></tr>
+    <th>Responsible:</th><td>[% linkUser(issue.responsible) %]</td></tr>
   </table>	
 </div>
 
@@ -56,8 +56,8 @@
     [% id = th.thread_id %]
     <li id="reply-[% id %]">
     
-    <a href="#">[% username(th.user) %]</a>  
-    <span id="fade">written [% time_dir.ago(current_time - th.submit_time) %]</span>
+    [% linkUser(th.user) %]
+    <span id="fade">[% time_dir.ago(current_time - th.submit_time, 1) %]</span>
     <a href="#reply-[% id %]" style="position:absolute;right:1em">#[% id %]</a>
     <p>[% th.content %]</p>
     </li>

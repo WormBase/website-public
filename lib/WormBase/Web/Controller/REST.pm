@@ -432,7 +432,6 @@ sub rest_register :Path('/rest/register') :Args(0) :ActionClass('REST') {}
 
 sub rest_register_POST {
     my ( $self, $c) = @_;
-     
     my $email = $c->req->params->{email};
     my $wbemail = $c->req->params->{wbemail};
     my $username = $c->req->params->{username};
@@ -456,6 +455,7 @@ sub rest_register_POST {
             return 0;
           }
       }  
+
       my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
       my $user_id = $user->id;
 
@@ -472,6 +472,7 @@ sub rest_register_POST {
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id}) ;
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
       }
+
     }
 }
 
@@ -542,7 +543,8 @@ $c->log->debug("page: " . $page . ", url:" . $url);
       if($page) {
         @issues = $page->issues;
       }else {
-        @issues= $c->user->issues if $c->user;
+        @issues= $c->user->issues_reported if $c->user;
+        push(@issues, $c->user->issues_responsible);
       }
       if($c->req->params->{count}){
         $c->response->body(scalar(@issues));
@@ -673,20 +675,14 @@ sub issue_email{
  my ($self,$c,$issue,$new,$content,$change) = @_;
  my $subject='New Issue';
  my $bcc;
-  if($issue->reporter){
-    my @bcc = $issue->reporter->valid_emails;
-    $bcc= join(',', map{$_->email } @bcc);
-  }
+ $bcc = $issue->reporter->primary_email->email if $issue->reporter;
 
  unless($new == 1){
     $subject='Issue Update';
     my @threads= $issue->threads;
-    if($issue->responsible){
-      my @bcc = $issue->responsible->valid_emails;
-      $bcc = $bcc . ", " . join(',', map{$_->email } @bcc);
-    }
+    $bcc = "$bcc, " . $issue->responsible->primary_email->email if $issue->responsible;
     my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email} @threads;
  }
  $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
  
