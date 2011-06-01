@@ -1,15 +1,34 @@
+The following data access and formatting needs to be standardized; some
+already are partially standardized:
+    GO_term, Phenotype
+
 Check default widgets for each class.
 
 Check empty fields; does toggle work?
 
+
+
+Tree display is broken
+
 Need some sort of simple list macro to display small lists of objetcts not requiring data table.
      In cases where the number of items is large, should also provide a link to download as CSV
-     So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects).
+     So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects
+     or of manually created list of objects.
+
+     _pack_objects and list_object/link_objects is kind of bizarre.
+     * pack_objects expects array ref and returns hashref (see above; used for sorting in view)
+     * checking for def/undef in order to hide empty fields in kind of odd and not 100% consistent...
+     
+
 
 Generic, ubiquitous, and intuitive sequence downloads.
 
 Error reporting: to user, to staff.  Formatting.
       Ajax errors loading widgets trickle through and report "oops" but aren't caught?
+
+    Calling URLs that SHOULD result in 404s do NOT.
+      http://todd.wormbase.org/species/todd -> returns 500, not 404
+      http://todd.wormbase.org/specis/todd  -> return 404, with different formatting.
 
 
 Standardize Overview widgets.
@@ -43,25 +62,24 @@ Purge template identifier (or fix) at the top of each template
 
 References widget / handling
 
-* use the xapian search or refernece XREFs in ace?
-* if using xapian, what impact does this have on API?
-* are the xapian search results sensible?
-* Role::Object::references() already exists but needs to be
-  expanded (ie to make it easier to sort references by year or type)
-  As it is, it simply returns a packed list of reference objects.
-* Be sure to include pseudo-POD in models that use references()
-* can probably purge convenience methods in Role::Object (such as meeting_abstracts)
-* The publications template of person has some rudimentary 
-  formatting (and the corresponding method some logic).
+  * use the xapian search or refernece XREFs in ace?
+  * if using xapian, what impact does this have on API?
+  * are the xapian search results sensible?
+  * Role::Object::references() already exists but needs to be
+    expanded (ie to make it easier to sort references by year or type)
+    As it is, it simply returns a packed list of reference objects.
+  * Be sure to include pseudo-POD in models that use references()
+  * can probably purge convenience methods in Role::Object (such as meeting_abstracts)
+  * The publications template of person has some rudimentary 
+    formatting (and the corresponding method some logic).
+  * wormbase.conf might need to be updated if using XREFd references and the inherted references().
+      In particular, need to make sure that each References widget includes the "fields references"
+      to ensure the data structure is populated.
 
 General UI:
 Class summary pages.
       * make sure search/browse works for classes
 
-Reference handling
-	 * should be able to either
-	    1. use search system and/or
-	    2. use XREFed references
 
 
 API
@@ -95,49 +113,48 @@ Things Abby is working on (repeated items):
 * GBrowse
 * Chat
 * Workbench
-* Add survey
+* Survey
 
 
 Class review and formatting
 
-expr_profile
-gene_regulation, 
-interaction, 
+NORIE: anatomy_term
+NORIE: go_term
+operon
 pcr_oligo, 
-phenotype, 
+NORIE: phenotype, 
 picture, 
-position_matrix, 
 structure_data
 
     	   	 review	   ui	   conf format	references
 analysis	 x     	   x	   x		-
-NdlC: a*_term	 -	   -	   x		-
+anatomy_term	 -	   -	   x		-
 antibody	 x	   x	   x		-
 clone		 x	   x	   x		-
 e*_cluster	 x	   x	   x		-
 expr_pattern	 x	   x	   x		-
-expr_profile
+expr_profile	 x	   x	   x		-    
 feature		 x	   x	   x		-
 feature_data     x	   -	   x		-    no templates; none needed?
 gene		 x	   x	   x		-
 gene_class	 x	   x	   x		-    
 gene_cluster	 x	   x	   x		-
-gene_regulation	 -	   -	   x		-
-homology_group 	 -	   -	   -		-	
-NdlC: go_term    -	   -	   x		-
-interaction	 -	   -	   x		-
+gene_regulation	 x	   x	   x		-
+go_term    	 -	   -	   x		-
+homology_group 	 x	   x	   x		-	
+interaction	 x	   x	   x		-
 laboratory	 x	   x	   x		-
 life_stage	 x	   x	   x		-
-microarray_results-	   -	   -		-
+micro*results	 -	   -	   -		-
 molecule	 x	   x	   x		-
 motif		 x	   x	   x		-
 operon		 -	   -	   -		-
 paper		 x	   x	   x		-
 pcr_oligo	 -	   -	   x		-
 person		 x	   x	   x		-
-NdlC: phenotype	 -	   -	   x		-
+phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
-position_matrix	 -	   -	   x		-
+position_matrix	 x	   x	   x		-
 protein		 x	   x	   x		-
 rnai		 x	   x	   x		-
 sequence	 x	   x	   x		-
