@@ -57,7 +57,7 @@ hideTextOnFocus("#password");
   [%# change this to secure_uri_for when https works %]
 <!-- <div style="float:left;"> -->
 <!--   <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left"> -->
-  <form method="post" action="[% c.secure_uri_for("/register") %]" style="float:left;">
+  <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <h1>Join the online worm community!</h1>
 <div style="font-size:1.3em">
@@ -97,7 +97,7 @@ hideTextOnFocus("#password");
              </div>
 <br />
 
-<div style="font-weight:normal;font-size:10pt;clear:both;">
+<div style="font-weight:normal;font-size:10pt;clear:both;padding:2em;">
 <!--   <div class="social"> -->
     <span>...or sign in with</span>
       <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');">

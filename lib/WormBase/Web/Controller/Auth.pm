@@ -33,7 +33,7 @@ sub register :Path("/register") {
 
 sub confirm :Path("/confirm") {
      my ( $self, $c ) = @_;
-     $c->stash->{'template'}='me.tt2';
+     $c->stash->{'template'}='index.tt2';
      my $user=$c->model('Schema::User')->find($c->req->params->{u});
      my $wb = $c->req->params->{wb};
      my @emails = $user->email_address;
@@ -54,6 +54,9 @@ sub confirm :Path("/confirm") {
       my $valid;
       foreach my $email (@emails) {
           if(Crypt::SaltedHash->validate("{SSHA}".$c->req->params->{code}, $email->email."_".$user->username)) {
+            unless(defined $user->primary_email){
+              $email->primary_email(1);
+            }
             $email->validated(1);
             $email->update();
             $valid = 1;
@@ -132,19 +135,18 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                     join=>'email_address'
                 });
 
-            if ( $c->authenticate( {
-                                     password => $password,
+            if ( $c->authenticate( { password => $password,
 				    'dbix_class' => { resultset => $rs }
 				  } ) ) {
 		
                 $c->log->debug('Username login was successful. '. $c->user->get("username") . $c->user->get("password"));
 
-                $self->reload($c);
-                if($c->user_exists()){
-                $c->log->debug("user exists");
 
-                }
-     		$c->res->redirect($c->req->params->{continue});
+#                 $self->reload($c);
+
+                $c->res->redirect($c->uri_for('/'));
+
+#                 $c->res->redirect($c->uri_for($c->req->path));
             } else {
                 $c->log->debug('Login incorrect.'.$email);
                 $c->stash->{'error_notice'}='Login incorrect.';
@@ -260,7 +262,7 @@ sub auth_local {
             $c->stash->{prompt_wbid} = 1;
             $c->log->debug("creating new user $username, $email");
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
-            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id}) if $email;
+            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id, primary_email=>1}) if $email;
         }
         #assing curator role to wormbase.org domain user
         if($email && $email =~ /\@wormbase\.org/) {

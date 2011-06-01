@@ -55,7 +55,7 @@
 [%- END %]
 
 [% MACRO linkUser(user) BLOCK %]
-  [% IF user.wbid %]
+  [% IF (user.wbid && user.wb_link_confirm) %]
     [% text2link('person', user.wbid, user.username) %]
   [% ELSE %]
     [% user.username %]
@@ -76,7 +76,7 @@
 [% MACRO issue_table(issues) BLOCK %]
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
-  <table border=0 width=100% class="issue-table">
+  <table border=0 cellspacing=0 width=100% class="issue-table">
     <tr align=left>
       <th>#</th>
       <th>Title</th>
@@ -130,6 +130,7 @@
 
 [% #get page info %]
 [% BLOCK page_info %]
+  [% path = c.req.path %]
   [% url = c.req.base _ c.req.path %]
 
   [% label = c.req.path %]
