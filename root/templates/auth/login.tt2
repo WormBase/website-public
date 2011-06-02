@@ -3,7 +3,7 @@
    [% IF error_notice %]
       alert("Login not successful!");
    [% ELSIF prompt_wbid %]
-      opener.location.href="[% c.uri_for('/auth/wbid') %]";
+      opener.location.href="[% c.uri_for('/auth/wbid') %]?redirect=[% redirect %]";
    [% ELSIF logout || ! operator %]
       opener.location.reload(1);
    [% ELSE %]
