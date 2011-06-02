@@ -35,7 +35,7 @@
       [% file = "search/" _ class _ ".tt2" %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
-  [% CATCH %]
+  [% CATCH file %]
      [% tag2link(item.name,item.label) %]      
      </li>
 
@@ -63,9 +63,11 @@
                    <div class="ui-icon ui-icon-triangle-1-s"></div>
               </div>
         [% END %]
-    [% END %]
 
+    [% END %]
      <span id="fade">[% item.footer %]</span>
+  [% CATCH %]
+    [% error %]
   [% END %]
 
  [% UNLESS c.stash.bench %]</div>[% END %]

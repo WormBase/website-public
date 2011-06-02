@@ -26,6 +26,7 @@ sub register :Path("/register") {
      $c->stash->{email} = $c->req->body_parameters->{email};
      $c->stash->{full_name} = $c->req->body_parameters->{name};
      $c->stash->{password} = $c->req->body_parameters->{password}; 
+     $c->stash->{redirect} = $c->req->body_parameters->{redirect}; 
   }
   $c->stash->{'template'}='auth/register.tt2';
 #     $c->stash->{'continue'}=$c->req->params->{continue};
@@ -102,6 +103,7 @@ sub auth : Chained('/') PathPart('auth')  CaptureArgs(0) {
      my ( $self, $c) = @_;
      $c->stash->{noboiler} = 1;  
      $c->stash->{'template'}='auth/login.tt2';
+     $c->stash->{redirect} = $c->req->params->{redirect};
 }
 
 sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
@@ -110,7 +112,9 @@ sub auth_popup : Chained('auth') PathPart('popup')  Args(0){
       $c->stash->{'template'}='auth/popup.tt2';
       $c->stash->{'provider'}= $c->req->params;
     }else{
-      $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url});
+      $c->log->debug("redirect: " . $c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
+
+      $c->res->redirect($c->uri_for('/auth/openid')."?openid_identifier=".$c->req->params->{url}."&redirect=".$c->req->params->{redirect});
     }
     
 }
@@ -159,12 +163,18 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
 
 sub auth_wbid :Path('/auth/wbid') {
      my ( $self, $c) = @_;
-  $c->stash->{'template'}='auth/wbid.tt2';
+    $c->stash->{redirect} = $c->req->params->{redirect};
+    $c->stash->{'template'}='auth/wbid.tt2';
 }
 
 sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
      my ( $self, $c) = @_;
+
+     $c->user_session->{redirect} = $c->user_session->{redirect} || $c->req->params->{redirect};
+     my $redirect = $c->user_session->{redirect};
      my $param = $c->req->params;
+
+
 #      $c->user_session->{redirect_after_login} ||= $param->{'continue'};
 #      $c->stash->{'template'}='auth/openid.tt2';
 
@@ -196,7 +206,8 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 	  if ( $c->authenticate({}, 'openid' ) ) {
 	    my $email=$param->{'openid.ext1.value.email'};
 	    $c->stash->{'status_msg'}='OpenID login was successful.';
-	    $self->auth_local($c,$c->user->url,$email,$param->{'openid.ext1.value.firstname'}, $param->{'openid.ext1.value.lastname'} );
+
+	    $self->auth_local($c,$c->user->url,$email,$param->{'openid.ext1.value.firstname'}, $param->{'openid.ext1.value.lastname'}, $redirect );
 	  } else {
 	    $c->stash->{'error_notice'}='Failure during OpenID login';
 	  }
@@ -230,7 +241,8 @@ sub auth_twitter : Chained('auth') PathPart('twitter')  Args(0){
 
 
 sub auth_local {
-     my ($self, $c,$id,$email,$first_name,$last_name) = @_;
+     my ($self, $c,$id,$email,$first_name,$last_name, $redirect) = @_;
+
       # Create basic user entry unless already found
       # (or use auto_create_user: 1)	
       my ($openid,$user);
@@ -246,7 +258,6 @@ sub auth_local {
         }
         my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
         @users = map { $_->user } @users;
-    # 	my @users=$c->model('Schema::User')->search({email_address=>$email});
 
         foreach (@users){
               next if( $_->active eq 0);
@@ -260,6 +271,7 @@ sub auth_local {
             $user->update();
         }else{
             $c->stash->{prompt_wbid} = 1;
+            $c->stash->{redirect} = $redirect;
             $c->log->debug("creating new user $username, $email");
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
             $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id, primary_email=>1}) if $email;
