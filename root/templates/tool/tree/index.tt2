@@ -1,15 +1,7 @@
 <h1>WormBase Tree Display</h1>
 
-<h1>TODO</h1>
-<ul>
-<li> Documentation to be handled by site-wide system
-<li> better formatting
-<li> more complete documentation
-<li> documentation shared on run/
-</ul>
-
 <p>
-This is the WormBase tree display, useful for browsing the raw data of an object or eploring the underlying data model.
+This is the WormBase Tree Display, useful for browsing the raw data of an object or exploring the underlying data model.
 </p>
 
 <p>
