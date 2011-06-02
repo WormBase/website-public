@@ -7,9 +7,9 @@ Check default widgets for each class.
 Check empty fields; does toggle work?
 
 
+Tree display is broken - Todd
 
-Tree display is broken
-
+Todd
 Need some sort of simple list macro to display small lists of objetcts not requiring data table.
      In cases where the number of items is large, should also provide a link to download as CSV
      So far: list_objects & link_objects, two methods for generating a simple list (of hashes of objects created by _pack_objects
@@ -19,12 +19,10 @@ Need some sort of simple list macro to display small lists of objetcts not requi
      * pack_objects expects array ref and returns hashref (see above; used for sorting in view)
      * checking for def/undef in order to hide empty fields in kind of odd and not 100% consistent...
      
-
-
-Generic, ubiquitous, and intuitive sequence downloads.
+Generic, ubiquitous, and intuitive sequence downloads. TODD
 
 Error reporting: to user, to staff.  Formatting.
-      Ajax errors loading widgets trickle through and report "oops" but aren't caught?
+    Ajax errors loading widgets trickle through and report "oops" but aren't caught?
 
     Calling URLs that SHOULD result in 404s do NOT.
       http://todd.wormbase.org/species/todd -> returns 500, not 404
@@ -92,7 +90,7 @@ Temporary images
 * Are paths correct and portable to different environments?
 * Is generating server in URL for load balancing? Or should we just write to NFS?
 
-GBrowse
+GBrowse - Abby
 * integration
 * links
 * branding
@@ -102,13 +100,17 @@ Class-level summary widgets.
     CACHE: rest/widget/laboratory//all_labs: NOT PRESENT; generating widget.
 * Species-associated class level widgets (strain) not working.
 
+Survey   : Todd to draw up, Abby to add link
+workshop :
+beta     : announce
+
+
 
 Class review and formatting
 
 NORIE: anatomy_term
 NORIE: go_term
 operon
-pcr_oligo, 
 NORIE: phenotype, 
 picture, 
 structure_data
@@ -137,7 +139,7 @@ molecule	 x	   x	   x		-
 motif		 x	   x	   x		-
 operon		 -	   -	   -		-
 paper		 x	   x	   x		-
-pcr_oligo	 -	   -	   x		-
+pcr_oligo	 x	   x	   x		-
 person		 x	   x	   x		-
 phenotype	 -	   -	   x		-
 picture		 -	   -	   x		-
