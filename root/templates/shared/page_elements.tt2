@@ -1347,7 +1347,6 @@ END;
   END;
 
 
-
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
 
 
@@ -1363,7 +1362,7 @@ END;
           'updateLayout();';
     END;
 
-       'updateCounts("' _ path _ '");';
+       'updateCounts("' _ c.req.base _ c.req.path _ '");';
   '</script>';
 
 END;

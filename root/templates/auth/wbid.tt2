@@ -20,7 +20,7 @@ select yourself to link your wormbase information <br /><br />
     <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;visibility:hidden;">
     </div>
     <input id="link-account" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
-    <br /><br /><span>None of these are you? <a href="[% c.user_session.redirect_after_login  || '/' %]">skip this step</a></span>
+    <br /><br /><span>None of these are you? <a href="[% redirect  || '/' %]">skip this step</a></span>
 </div>
 
 [% emails = [] %]
@@ -80,10 +80,11 @@ select yourself to link your wormbase information <br /><br />
     $jq.ajax({
           type: "POST",
           url: "/rest/link_wbid",
-          data: {username:"[% c.user.username %]", confirm:confirm, wbemail:email, wbid:wbid, user_id:"[% c.user.id %]"},
+          data: {username:"[% c.user.username %]", confirm:confirm, wbemail:email, wbid:wbid, user_id:"[% c.user.id %]", redirect:"[% redirect %]"},
           success: function(data){
-            if(!(confirm)){ alert("an email has been sent to " + email);}
-            window.location.href="[% c.user_session.redirect_after_login  || '/' %]";
+//             if(!(confirm)){ alert("an email has been sent to " + email);}
+//             window.location.href="[% c.user_session.redirect_after_login  || '/' %]";
+                  $jq("#content").html(data);
             },
           error: function(request,status,error) {
               if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
