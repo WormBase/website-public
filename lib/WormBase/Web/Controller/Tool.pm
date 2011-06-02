@@ -68,7 +68,7 @@ sub issue :Path("tools/issues") Args {
     $c->stash->{template} = "feed/issue_page.tt2";
     my $issue = $c->model('Schema::Issue')->find($id);
     $c->stash->{issue} = $issue;
-    my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id ASC' } ); 
+    my @threads= $issue->threads(undef,{order_by=>'thread_id ASC' } ); 
     $c->stash->{current_time}=time();
     my $last;
     if(@threads){
@@ -76,7 +76,7 @@ sub issue :Path("tools/issues") Args {
       $last = $threads[scalar @threads -1];
       $c->stash->{last_edit}=$last->user ;
     }
-    $c->stash->{last_edit}= $issue->owner unless($last);
+    $c->stash->{last_edit}= $issue->reporter unless($last);
     if($c->check_user_roles('admin')) {
 	my $role=$c->model('Schema::Role')->find({role=>'curator'});
 	$c->stash->{curators}=[$role->users];

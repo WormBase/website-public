@@ -100,6 +100,19 @@ Class-level summary widgets.
     CACHE: rest/widget/laboratory//all_labs: NOT PRESENT; generating widget.
 * Species-associated class level widgets (strain) not working.
 
+
+Things Abby is working on (repeated items):
+* Login/Registration
+* Issues/Comments
+* Layout saving
+* Summary pages
+* Search
+* References
+* GBrowse
+* Chat
+* Workbench
+* Survey
+
 Survey   : Todd to draw up, Abby to add link
 workshop :
 beta     : announce

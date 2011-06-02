@@ -1,10 +1,8 @@
 <!-- Register form -->
 
 [% IF noboiler %]
-  [%# change this to secure_uri_for when https works %]
 <!-- <div style="float:left;"> -->
-  <form method="post" action="[% c.uri_for("/register") %]" style="float:left;">
-<!--   <form method="post" action="[% c.secure_uri_for("/auth/auth_local") %]" style="float:left;"> -->
+  <form method="post" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <b><center>Join the online worm community!</center></b> 
 <div style="float:left;margin-left:-1em;">
@@ -58,8 +56,8 @@ hideTextOnFocus("#password");
 
   [%# change this to secure_uri_for when https works %]
 <!-- <div style="float:left;"> -->
-  <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left">
-<!--   <form method="post" action="[% c.secure_uri_for("/auth/auth_local") %]" style="float:left;"> -->
+<!--   <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left"> -->
+  <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <h1>Join the online worm community!</h1>
 <div style="font-size:1.3em">
@@ -99,7 +97,7 @@ hideTextOnFocus("#password");
              </div>
 <br />
 
-<div style="font-weight:normal;font-size:10pt;clear:both;">
+<div style="font-weight:normal;font-size:10pt;clear:both;padding:2em;">
 <!--   <div class="social"> -->
     <span>...or sign in with</span>
       <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');">
@@ -172,5 +170,38 @@ select yourself to link your wormbase information <br /><br />
     $jq("input#wbid").attr("value", "");
     $jq(".register-notice").hide();
   }
+
+
+  $jq(".register-button").live('click',function() {
+
+    var reg = $jq(this).closest('#register-form');  
+    var email = reg.find("#email");
+    var wbemail = reg.find("#wbemail");
+    var username= reg.find("#name");
+    var password = reg.find("#password");
+    var wbid = reg.find("#wbid");
+    if(validate_fields(email,username,password,reg.find("#confirm-password"), wbemail) == false) {
+        return false;
+    }
+    
+    $jq.ajax({
+          type: "POST",
+          url: "/rest/register",
+          data: {username:username.val(),email:email.val(), wbemail:wbemail.val(), password:password.val(), wbid:wbid.val()},
+          success: function(data){
+                if(data==0) {
+                alert("The email address has already been registered!"); 
+                } else {
+                displayNotification("Thank you for registering at WormBase, a confirmation emaill will be sent to " + email.val() + " soon.");
+                }
+            },
+          error: function(request,status,error) {
+              if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
+                  return; 
+              alert(request + " " + status + " " + error );
+            }
+      });
+    return false;
+    });
 </script>
 [% END %]
