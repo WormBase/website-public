@@ -475,7 +475,7 @@ sub concise_description {
     
     return {
 	description => "A manually curated description of the gene's function",
-	data        => $description };
+	data        => "$description" };
 }
 
 

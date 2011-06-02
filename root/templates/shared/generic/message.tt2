@@ -1,0 +1,17 @@
+
+<div style="margin:2em;">
+  <div class="ui-corner-all" style="padding:2em; border:1px solid #CCC; background:#EEE;">
+    [% message %]
+  </div>
+
+  <p><span id="fade">
+    [% IF redirect %]
+      You will be automatically redirected to <a href="[% redirect %]">[% redirect %]</a>. Or <a href="[% redirect %]">click here</a>.
+      <script>
+        setTimeout('location.replace("[% redirect %]");',3000);
+      </script>
+    [% ELSE %]
+      go to <a href='[% c.uri_for("/")%]'>WormBase home</a>
+    [% END %]
+  </span></p>
+</div>

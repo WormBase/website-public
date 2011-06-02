@@ -18,9 +18,10 @@
         <span id="fade" class="holder">password</span>
         <input id="password" type="password" name="password" size="22" value="[% password %]"/>
     </div>
-              <input id="create-account" type="submit" style="position:absolute;bottom:1em;left:1em;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/>  
+    <input id="redirect" type="text" name="redirect" size="22" style="display:none;" value=""/>
 
-<!-- <input id="create-account" type="submit" style="visibility:hidden;height:0;padding:0;margin:0;" class="register-button"/>   -->
+    <input id="create-account" type="submit" style="position:absolute;bottom:1em;left:1em;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/>  
+
 </div>
 <div style="float:left;border-left:1px solid #CDCDCD;font-weight:normal;font-size:10pt;padding:1em 0 1em 1em;margin-top:0.5em;">
   <div class="social">
@@ -45,7 +46,7 @@
 
 
 <script>
-
+$jq("#redirect").attr("value", window.location);
 hideTextOnFocus("#name");
 hideTextOnFocus("#email");
 hideTextOnFocus("#password");
@@ -53,7 +54,7 @@ hideTextOnFocus("#password");
 </script>
 
 [% ELSE %]
-
+[% redirect %]
   [%# change this to secure_uri_for when https works %]
 <!-- <div style="float:left;"> -->
 <!--   <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left"> -->
@@ -87,6 +88,7 @@ hideTextOnFocus("#password");
     </div>
 
         <input id="wbid" type="text" name="wbid" size="0" style="display:none"/>
+        <input id="redirect" type="text" name="redirect" size="0" value="[% redirect %]" style="display:none;" />
 </div>
 
 
@@ -173,13 +175,13 @@ select yourself to link your wormbase information <br /><br />
 
 
   $jq(".register-button").live('click',function() {
-
     var reg = $jq(this).closest('#register-form');  
     var email = reg.find("#email");
     var wbemail = reg.find("#wbemail");
     var username= reg.find("#name");
     var password = reg.find("#password");
     var wbid = reg.find("#wbid");
+    var redirect = reg.find("#redirect");
     if(validate_fields(email,username,password,reg.find("#confirm-password"), wbemail) == false) {
         return false;
     }
@@ -187,12 +189,12 @@ select yourself to link your wormbase information <br /><br />
     $jq.ajax({
           type: "POST",
           url: "/rest/register",
-          data: {username:username.val(),email:email.val(), wbemail:wbemail.val(), password:password.val(), wbid:wbid.val()},
+          data: {username:username.val(),email:email.val(), wbemail:wbemail.val(), password:password.val(), wbid:wbid.val(), redirect:redirect.val()},
           success: function(data){
                 if(data==0) {
                 alert("The email address has already been registered!"); 
                 } else {
-                displayNotification("Thank you for registering at WormBase, a confirmation emaill will be sent to " + email.val() + " soon.");
+                  $jq("#content").html(data);
                 }
             },
           error: function(request,status,error) {

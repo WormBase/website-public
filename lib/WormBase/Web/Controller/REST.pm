@@ -419,13 +419,19 @@ sub rest_link_wbid_POST {
         $c->user->update();
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id});
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
+        $c->stash->{message} = "<h2>Thank you!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
       }else{
         $c->user->wbid($wbid);
         $c->user->wb_link_confirm(1);
         $c->user->update();
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
+        $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to $wbid</p>" ; 
       }
     }
+
+    $c->stash->{template} = "shared/generic/message.tt2"; 
+    $c->stash->{redirect} = $c->req->params->{redirect};
+    $c->forward('WormBase::Web::View::TT');
 }
  
 sub rest_register :Path('/rest/register') :Args(0) :ActionClass('REST') {}
@@ -472,8 +478,17 @@ sub rest_register_POST {
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id}) ;
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
       }
+      
+      push(@emails, @wbemails);
+      $c->stash->{template} = "shared/generic/message.tt2"; 
+      $c->stash->{message} = "<h2>Thank you!</h2> <p>Thank you for registering at <a href='" . $c->uri_for("/") . "'>wormbase.org</a>. An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . " to confirm your registration</p>" ; 
+      $c->stash->{redirect} = $c->req->params->{redirect};
+      $c->forward('WormBase::Web::View::TT');
 
     }
+
+
+
 }
 
 

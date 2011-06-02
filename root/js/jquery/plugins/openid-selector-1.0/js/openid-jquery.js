@@ -137,8 +137,8 @@ var openid = {
 	 
 
 		$jq('#openid_form').attr("target", "popup");
-		var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']   ;
-		 
+		var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + window.location ;
+
 		 
 		if (provider['label']) {
 			 pop_url += '&label=' + provider['label'];	
