@@ -20,7 +20,8 @@ DROP TABLE IF EXISTS email;
 CREATE TABLE email(
             user_id INTEGER,
             email char(255) PRIMARY KEY,
-            validated   BOOLEAN
+            validated   BOOLEAN,
+            primary_email   BOOLEAN
 );
 
 DROP TABLE IF EXISTS roles;
@@ -52,19 +53,11 @@ CREATE TABLE comments (
             content TEXT
 );
 
-
-DROP TABLE IF EXISTS users_to_issues;
-CREATE TABLE users_to_issues (
-            user_id INTEGER,
-            issue_id INTEGER,
-            PRIMARY KEY (user_id, issue_id)
-);
-
 DROP TABLE IF EXISTS issues;
 CREATE TABLE issues (
-            id INTEGER AUTO_INCREMENT PRIMARY KEY,
-	    reporter INTEGER,
-	    assigned_to INTEGER,
+        id INTEGER AUTO_INCREMENT PRIMARY KEY,
+	    reporter_id INTEGER,
+	    responsible_id INTEGER,
 	    title TEXT ,
         page_id INTEGER,
 	    submit_time char(50),
@@ -74,12 +67,12 @@ CREATE TABLE issues (
 
 DROP TABLE IF EXISTS issues_threads;
 CREATE TABLE issues_threads (
-            thread_id  INTEGER,
-            issue_id INTEGER,
+        thread_id  INTEGER,
+        issue_id INTEGER,
 	    user_id INTEGER,
 	    submit_time char(50),
 	    content TEXT,
-            PRIMARY KEY (thread_id, issue_id)
+        PRIMARY KEY (thread_id, issue_id)
 );
 
 DROP TABLE IF EXISTS user_saved;

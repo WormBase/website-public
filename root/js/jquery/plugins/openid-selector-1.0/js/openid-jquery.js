@@ -19,10 +19,13 @@ var providers_large = {
         name: 'OpenID',     
         label: 'Enter your OpenID',
         url: null
-    }, 
+    }
+    , 
     facebook: {
         name: 'Facebook',      
         url:  'http://facebook.anyopenid.com/'
+//           oauth_version:"2.0",
+//           oauth_server:"https://graph.facebook.com/oauth/authorize"
     }, 
     twitter: {
         name: 'Twitter',     
@@ -125,7 +128,6 @@ var openid = {
     },
     /* Provider image click */
     signin: function(box_id, onload) {
-    
     	var provider = providers[box_id];
   		if (! provider) {
   			return;
@@ -135,7 +137,6 @@ var openid = {
 	 
 
 		$jq('#openid_form').attr("target", "popup");
-		
 		var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']   ;
 		 
 		 

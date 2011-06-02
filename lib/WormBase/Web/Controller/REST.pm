@@ -250,8 +250,8 @@ sub get_user_info_GET{
     $status_ok = 0;
     $message = "This account has already been linked";
   }elsif($object->email->{data}){
-    my $email = @{$object->email->{data}}[0];
-    $message = "An email will be sent to <a href='mailto:$email '>$email</a> to confirm your identity";
+    my $emails = join (', ', map {"<a href='mailto:$_'>$_</a>"} @{$object->email->{data}});
+    $message = "An email will be sent to " . $emails . " to confirm your identity";
   }else{
     $status_ok = 0;
     $message = "This account cannot be linked at this time";
@@ -432,7 +432,6 @@ sub rest_register :Path('/rest/register') :Args(0) :ActionClass('REST') {}
 
 sub rest_register_POST {
     my ( $self, $c) = @_;
-     
     my $email = $c->req->params->{email};
     my $wbemail = $c->req->params->{wbemail};
     my $username = $c->req->params->{username};
@@ -456,6 +455,7 @@ sub rest_register_POST {
             return 0;
           }
       }  
+
       my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
       my $user_id = $user->id;
 
@@ -472,6 +472,7 @@ sub rest_register_POST {
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id}) ;
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
       }
+
     }
 }
 
@@ -542,7 +543,8 @@ $c->log->debug("page: " . $page . ", url:" . $url);
       if($page) {
         @issues = $page->issues;
       }else {
-        @issues= $c->user->issues if $c->user;
+        @issues= $c->user->issues_reported if $c->user;
+        push(@issues, $c->user->issues_responsible);
       }
       if($c->req->params->{count}){
         $c->response->body(scalar(@issues));
@@ -600,8 +602,7 @@ sub feed_POST {
       my $user = $self->check_user_info($c);
       return unless $user;
       $c->log->debug("create new issue $content ",$user->id);
-      my $issue = $c->model('Schema::Issue')->find_or_create({reporter=>$user->id, title=>$title,page_id=>$page->page_id,content=>$content,state=>"new",'submit_time'=>time()});
-      $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue->id}) ;
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id, title=>$title,page_id=>$page->page_id,content=>$content,state=>"new",'submit_time'=>time()});
       $self->issue_email($c,$issue,1,$content);
 	}
     }elsif($type eq 'thread'){
@@ -619,8 +620,8 @@ sub feed_POST {
 	   if($assigned_to) {
 	      my $people=$c->model('Schema::User')->find($assigned_to);
 	      $hash->{assigned_to}={old=>$issue->assigned_to,new=>$people};
-	      $issue->assigned_to($assigned_to)  ;
-	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
+	      $issue->responsible_id($assigned_to);
+# 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
 	   }
 	   $issue->update();
 	    
@@ -631,11 +632,11 @@ sub feed_POST {
 	   };
 	   if($content){
 		$c->log->debug("create new thread for issue #$issue_id!");
-		my @threads= $issue->issues_to_threads(undef,{order_by=>'thread_id DESC' } ); 
+		my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
 		my $thread_id=1;
 		$thread_id = $threads[0]->thread_id +1 if(@threads);
 		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
-		$c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
+# 		$c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
 	  }  
 	  if($state || $assigned_to || $content){
 	     
@@ -673,15 +674,15 @@ TODO: This is currently just returning a dummy object
 sub issue_email{
  my ($self,$c,$issue,$new,$content,$change) = @_;
  my $subject='New Issue';
- my $bcc ;
- $bcc= $issue->owner->email_address  if($issue->owner);
+ my $bcc;
+ $bcc = $issue->reporter->primary_email->email if $issue->reporter;
 
  unless($new == 1){
     $subject='Issue Update';
-    my @threads= $issue->issues_to_threads;
-    $bcc .= ",".$issue->assigned_to->email_address if($issue->assigned_to);
+    my @threads= $issue->threads;
+    $bcc = "$bcc, " . $issue->responsible->primary_email->email if $issue->responsible;
     my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->email_address} @threads;
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email} @threads;
  }
  $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
  
@@ -983,7 +984,7 @@ sub widget_home_GET {
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
-    $c->forward('WormBase::Web::View::TT')
+    $c->forward('WormBase::Web::View::TT');
 }
 
 sub recently_saved {
@@ -1109,7 +1110,7 @@ sub issue_rss {
       my $time = ago((time() - $_->submit_time), 1);
         push @rss, {      time=>$_->submit_time,
                           time_lapse=>$time,
-                          people=>$_->owner,
+                          people=>$_->reporter,
                           title=>$_->title,
                           page=>$_->page,
                   id=>$_->id,

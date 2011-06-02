@@ -29,47 +29,49 @@
     });
 </script>
 
-<style>
-.issue-content{
-  position:relative;
- background-color:#fcfcfc;
- border: 1px solid #ddd; 
- padding: 10px 20px;
-}
-</style>
-<div style=" margin:0 3em " >
-<div class="issue-content">
-<h2>#[% issue.id %] [% issue.title %] 
- [% array=issue.location.split('/') %]
-<br><font size="2">Reported by <a href="#">[% username(issue.owner) %],</a> on [% text2link(array.3,array.4, array.6 _ ' ' _ array.3 _ ' page ' _ array.5 _ ' section') %]
-[% USE time_dir = Time.Duration %]
-created <span id="fade">[% time_dir.ago(current_time - issue.submit_time) %]</span>
-last edited by <a href="#">[% username(last_edit) %]</a> 
-</font></h2>
-<p>[% issue.content %] </p>
-<table width="40%">
-<tr><th>Status:</th><td>[% issue.state %]</td> 
- <th>Responsible:</th><td>[% username(issue.assigned_to) %]</td></tr>
-</table>	
+<div style=" margin:1em 0" >
+<div class="issue-content" >
+  <h2>#[% issue.id %] [% issue.title %] </h2>
+  <span id="fade">
+    Reported by [% linkUser(issue.reporter) %] on [% linkPage(issue.page) %],
+    [% USE time_dir = Time.Duration %]
+    created [% time_dir.ago(current_time - issue.submit_time, 1) %]
+  </span>
+  <p>[% issue.content %] </p>
 </div>
 
+<div class="issue-content" >
+  <table width="40%">
+    <tr><th>Status:</th><td>[% issue.state %]</td> 
+    <th>Responsible:</th><td>[% linkUser(issue.responsible) %]</td></tr>
+  </table>	
+</div>
+
+<h3 style="padding:1em 1em 0.5em;">Comments</h3>
 <div  class="issue-content">
-<h3>Replies</h3>
+
 <ul>
-[% FOREACH th IN threads %]
-[% id = th.thread_id %]
-<li id="reply-[% id %]">
- 
-<a href="#">[% username(th.user) %]</a>  
-<span id="fade">written [% time_dir.ago(current_time - th.submit_time) %]</span>
-<a href="#reply-[% id %]" style="position:absolute;right:1em">#[% id %]</a>
-<p>[% th.content %]</p>
-</li>
+[% IF threads %]
+  [% FOREACH th IN threads %]
+    [% id = th.thread_id %]
+    <li id="reply-[% id %]">
+    
+    [% linkUser(th.user) %]
+    <span id="fade">[% time_dir.ago(current_time - th.submit_time, 1) %]</span>
+    <a href="#reply-[% id %]" style="position:absolute;right:1em">#[% id %]</a>
+    <p>[% th.content %]</p>
+    </li>
+  [% END %]
+[% ELSE %]
+  No comments added for this issue yet.
 [% END %]
+
 </ul>
 </div>
 
+
 <div id="threads-new" class="issue-content">
+<h3>Add Comment</h3>
 [% IF c.check_user_roles('admin') %]
     set state to
     <select id="issue_status">
@@ -89,7 +91,7 @@ last edited by <a href="#">[% username(last_edit) %]</a>
     [% END %]
     </select>
 [% END %]
-<h3>Reply</h3>
+
 <p>
 [% user_login_info %]
 <form>

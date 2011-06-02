@@ -4,6 +4,7 @@
   <div id="issues-new" class="layout-box" style="padding: 15px 24px;">
 
    <h4>Existing Issues</h4>
+  <br />
   [% issue_table(issues,issues_type) %]
   <br /><br />
 

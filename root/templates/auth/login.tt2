@@ -5,12 +5,13 @@
    [% ELSIF prompt_wbid %]
       opener.location.href="[% c.uri_for('/auth/wbid') %]";
    [% ELSIF logout || ! operator %]
-      opener.location.reload(1); 
+      opener.location.reload(1);
    [% ELSE %]
       var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
       if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')) %]"; }
       else { opener.location.reload(1);}
   [% END %] 
+
   window.close();
 
 [% END %]  
@@ -24,8 +25,8 @@ hideTextOnFocus(".password");
 <!-- Login form -->
 <div id="login-form">
   [%# change this to secure_uri_for when https works %]
-  <form method="post" action="[% c.uri_for("/auth/login") %]" style="float:left;">
-<!--   <form method="post" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;"> -->
+<!--   <form method="post" action="[% c.uri_for("/auth/login") %]" style="float:left;"> -->
+  <form method="post" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
 
     <div class="login-holder">
         <span id="fade" class="holder">email</span>

@@ -9,7 +9,11 @@
           <dd>[% email.email %]          
           [% UNLESS email.validated %]
             <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
-          [% END %]   
+          [% ELSE %]
+            [% IF email.primary_email %]
+              <span id="fade">primary</span>
+            [% END %]
+          [% END %]
 </dd>
         [% END %]
     <dd>Add an additional email address: <input type="text" name="email_address" /> 
