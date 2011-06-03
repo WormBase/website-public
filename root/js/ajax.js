@@ -385,8 +385,10 @@
         success:function(data){
           ajaxPanel.html(data);
         },
-        error:function(request,status,error){
+        error:function(xhr, ajaxOptions, thrownError){
+          var error = $jq(xhr.responseText);
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+          ajaxPanel.append(error.find(".error-message-technical").html());
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
