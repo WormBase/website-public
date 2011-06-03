@@ -557,9 +557,11 @@ $c->log->debug("page: " . $page . ", url:" . $url);
       my @issues;
       if($page) {
         @issues = $page->issues;
+        $c->stash->{issue_type} = 'page';
       }else {
         @issues= $c->user->issues_reported if $c->user;
         push(@issues, $c->user->issues_responsible);
+        $c->stash->{issue_type} = 'user';
       }
       if($c->req->params->{count}){
         $c->response->body(scalar(@issues));

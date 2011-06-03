@@ -57,8 +57,10 @@
 [% MACRO linkUser(user) BLOCK %]
   [% IF (user.wbid && user.wb_link_confirm) %]
     [% text2link('person', user.wbid, user.username) %]
-  [% ELSE %]
+  [% ELSIF user.username %]
     [% user.username %]
+  [% ELSE %]
+    <span id="fade"><i>[user deleted]</i></span>
   [% END %]
 [%- END %]
 
@@ -73,7 +75,7 @@
     [% END %]
 [% END %]
  
-[% MACRO issue_table(issues) BLOCK %]
+[% MACRO issue_table(issues, issue_type) BLOCK %]
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
   <table border=0 cellspacing=0 width=100% class="issue-table">
@@ -81,7 +83,7 @@
       <th>#</th>
       <th>Title</th>
       <th>State</th>
-      <th>Page</th>
+      [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
       <th>Time</th> 
       <th>Reported by</th>
       <th>Responsible</th>
@@ -96,10 +98,10 @@
         <td><a href="[% url %]">[% IS.id %]</a></td>
         <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td>
         <td>[% IS.state %]</td>
-        <td>[% linkPage(IS.page) %]</td> 
+        [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
         <td>[% time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
-        <td>[% linkUser(IS.reporter) %]</td>
-        <td>[% linkUser(IS.responsible) %]</td>
+        <td>[% IF IS.reporter_id; linkUser(IS.reporter); END %]</td>
+        <td>[% IF IS.responsible_id; linkUser(IS.responsible); END %]</td>
         [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
       </tr>
     [% END %]

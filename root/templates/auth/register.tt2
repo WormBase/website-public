@@ -54,7 +54,6 @@ hideTextOnFocus("#password");
 </script>
 
 [% ELSE %]
-[% redirect %]
   [%# change this to secure_uri_for when https works %]
 <!-- <div style="float:left;"> -->
 <!--   <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left"> -->

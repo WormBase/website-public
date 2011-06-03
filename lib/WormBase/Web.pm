@@ -381,7 +381,7 @@ sub secure_uri_for {
     my ($self, @args) = @_;
     
     my $u = $self->uri_for(@args);
-    if($self->config->{installation_type} =~ m/production/){
+    if($self->config->{enable_ssl}){
       $u->scheme('https');
     }
     return $u;
