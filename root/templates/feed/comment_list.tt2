@@ -2,13 +2,15 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 [% IF comments %]
 [% USE time_dir = Time.Duration %]
-  <table border=1 width=100%><tr><th>#</th><th>Class</th><th>Section</th><th>Object</th><th>Time</th> 
-    <th>Report by</th><th>content</th>
+  <table class="issue-table" border=0 cellspacing=0 width=100%>
+    <tr align=left><th>#</th><th>Page</th><th>Time</th> 
+    <th>Report by</th><th>content</th></tr>
+    [% even = 1 %]
       [% FOREACH IS IN comments %]
-	 [% array=IS.location.split('/') %]
-	 <tr><td>[% IS.id %]</td><td>[% array.3 %]</td><td>[% array.5 %]</td><td>[% text2link(array.3,array.4 ,array.6) %]</td> 
+	 <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
+<td>[% IS.id %]</td><td>[% linkPage(IS.page) %]</td> 
 	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
-	    <td>[% IS.reporter %]</td><td>[% IS.content %]</td>
+	    <td>[% linkUser(IS.reporter) %]</td><td>[% IS.content %]</td>
 	  </tr>
       [% END %]
       </table>

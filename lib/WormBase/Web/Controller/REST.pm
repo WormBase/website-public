@@ -589,11 +589,17 @@ sub feed_POST {
         }
       }else{
         my $content= $c->req->params->{content};
-        my $name= $c->req->params->{name};
 
         my $url = $c->req->params->{url};
         my $page = $c->model('Schema::Page')->find({url=>$url});
-        my $commment = $c->model('Schema::Comment')->find_or_create({reporter=>$name, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
+
+        my $user = $c->user;
+        unless($c->user_exists){
+          $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
+          $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->id});
+        }
+
+        my $commment = $c->model('Schema::Comment')->find_or_create({reporter_id=>$user->id, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
 
       }
     }
@@ -636,7 +642,7 @@ sub feed_POST {
 	   }
 	   if($assigned_to) {
 	      my $people=$c->model('Schema::User')->find($assigned_to);
-	      $hash->{assigned_to}={old=>$issue->assigned_to,new=>$people};
+	      $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
 	      $issue->responsible_id($assigned_to);
 # 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
 	   }
@@ -692,7 +698,7 @@ sub issue_email{
  my ($self,$c,$issue,$new,$content,$change) = @_;
  my $subject='New Issue';
  my $bcc;
- $bcc = $issue->reporter->primary_email->email if $issue->reporter;
+ $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
 
  unless($new == 1){
     $subject='Issue Update';
