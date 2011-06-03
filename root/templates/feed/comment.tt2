@@ -19,7 +19,7 @@
       <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
     [% END %]
 
-    <a href="">[% cm.reporter %]</a>
+    [% linkUser(cm.reporter) %]
     [% cm.content %] <br />
 
     <span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>

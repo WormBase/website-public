@@ -73,13 +73,18 @@
 // 	    var name = feed.find("#comment-name").val();
         var email = feed.find("#email");
         var name= feed.find("#display-name");
-        if(email.attr('id') && name.attr('id')) {
-           if(validate_fields(email,name)==false) {return false;}
-        }  
-        if(!(name.val())){ name = name.attr('value'); 
+//         if(email.attr('id') && name.attr('id')) {
+//           if(!(validate_fields(email,name))){
+//            alert("invalid name or email");
+//            return;
+//           }
+//         }  
+        if(!(name.val())){ 
+          name = name.attr('value'); 
         }else{
-         name = name.val(); 
+          name = name.val(); 
         }
+
 	    var content = feed.find(".comment-content").val();
 	    if(content == "" || content == "write a comment..."){
 		    alert("Please provide your name & comment"); return false;
@@ -87,7 +92,7 @@
 	    $jq.ajax({
 	      type: 'POST',
 	      url: rel,
-	      data: { name:name, location: page, content: content, url: url},
+	      data: { name:name, email: email.val(), location: page, content: content, url: url},
 	      success: function(data){
  			displayNotification("Comment Submitted!");
 			feed.find("#comment-box").prepend(data);
@@ -97,7 +102,6 @@
 			    alert(request + " " + status + " " + error);
 		      }
 	    });
-
         var box = $jq('<div class="comment-box"><a href="">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
         var comments = $jq("#comments");
         comments.prepend(box);

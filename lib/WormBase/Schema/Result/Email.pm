@@ -30,7 +30,7 @@ __PACKAGE__->add_columns(
   "primary_email",
   { data_type => "boolean", default_value => "", is_nullable => 1 },
 );
-__PACKAGE__->set_primary_key("email");
+__PACKAGE__->set_primary_key("user_id", "email");
 
 
 # Created by DBIx::Class::Schema::Loader v0.07001 @ 2010-08-20 14:27:11

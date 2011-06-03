@@ -91,6 +91,7 @@ __PACKAGE__->many_to_many(roles => 'users_to_roles', 'role');
 
 __PACKAGE__->has_many(issues_reported=>'WormBase::Schema::Result::Issue', 'reporter_id');
 __PACKAGE__->has_many(issues_responsible=>'WormBase::Schema::Result::Issue', 'responsible_id');
+__PACKAGE__->has_many(comments=>'WormBase::Schema::Result::Comment', 'reporter_id');
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 1;

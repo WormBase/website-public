@@ -19,9 +19,10 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS email;
 CREATE TABLE email(
             user_id INTEGER,
-            email char(255) PRIMARY KEY,
+            email char(255),
             validated   BOOLEAN,
-            primary_email   BOOLEAN
+            primary_email   BOOLEAN,
+            PRIMARY KEY (user_id, email)
 );
 
 DROP TABLE IF EXISTS roles;
@@ -47,7 +48,7 @@ CREATE TABLE openid (
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
-            reporter char(50),
+            reporter_id INTEGER,
             page_id INTEGER,
             submit_time char(50),
             content TEXT
