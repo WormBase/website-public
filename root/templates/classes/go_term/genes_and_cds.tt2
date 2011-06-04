@@ -1,10 +1,8 @@
 [% # This generic statement belongs at the start of every template %]
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
-[% 
 
-# I don't know what/where this is.
-genes;
+[% 
 
 WRAPPER $field_block title="Genes" key="genes";
 
@@ -20,15 +18,10 @@ WRAPPER $field_block title="Genes" key="genes";
 			evidence_details => 'Evidence Details'
 			},
 		key = 'genes');
-
 END;
 
-# I don't know what/where this is.
-# genes_n_cds? Really?
-genes_n_cds;
-
-
 WRAPPER $field_block title="Genes and CDS" key="genes_n_cds";
+
     build_data_table (
 		order = [ 
 			'gene_info',
@@ -48,14 +41,10 @@ WRAPPER $field_block title="Genes and CDS" key="genes_n_cds";
 			},
 		key = 'genes_n_cds');
 END;
- 
- 
- 
-# I don't know what/where this is.
-cds;
 
-WRAPPER $field_block title="CDS" key="CDS";
-	[% build_data_table (
+WRAPPER $field_block title="CDS" key="cds";
+	
+	build_data_table (
 		order = [ 
 			'gene',
 			'evidence_code'
@@ -67,10 +56,10 @@ WRAPPER $field_block title="CDS" key="CDS";
 			evidence_details => 'Evidence Details'
 			},
 		key = 'cds');
+
 END;
 
 %]
-
 
 
 
