@@ -7,7 +7,8 @@ Check default widgets for each class.
 Check empty fields; does toggle work?
 
 
-Tree display is broken - Todd
+DONE: Todd: Tree display is broken
+      For post-beta, see: https://bitbucket.org/tharris/wormbase/issue/601/tree-display-requires-page-reload
 
 Todd
 Need some sort of simple list macro to display small lists of objetcts not requiring data table.
@@ -19,7 +20,7 @@ Need some sort of simple list macro to display small lists of objetcts not requi
      * pack_objects expects array ref and returns hashref (see above; used for sorting in view)
      * checking for def/undef in order to hide empty fields in kind of odd and not 100% consistent...
      
-Generic, ubiquitous, and intuitive sequence downloads. TODD
+Todd: Generic, ubiquitous, and intuitive sequence downloads.
 
 Error reporting: to user, to staff.  Formatting.
     Ajax errors loading widgets trickle through and report "oops" but aren't caught?
