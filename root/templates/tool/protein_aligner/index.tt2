@@ -1,5 +1,9 @@
 <h1>Protein Alignments</h1>
-<form method="POST" action="[% c.uri_for('tools','show_mult_align','run') %]">
+
+<p>This is the Wormbase protein aligner. To use it, enter a WormBase protein ID.</p>
+
+
+<form method="POST" action="[% c.uri_for('tools','protein_aligner','run') %]">
 
 Symbol: 
 <input type="text" name="sequence" value="[% sequence %]" />(e.g. <cite>WP:CE25104</cite>)
