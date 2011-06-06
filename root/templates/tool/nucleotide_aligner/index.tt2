@@ -1,5 +1,8 @@
 <h1>Nucleotide Aligner</h1>
-<form method="POST" action="[% c.uri_for('tools','aligner','run') %]"> 
+
+<p>This is the Wormbase protein aligner. To use it, enter a WormBase sequence ID.</p>
+
+<form method="POST" action="[% c.uri_for('tools','nucleotide_aligner','run') %]"> 
 Symbol:  <input type="text" name="sequence" value="[% sequence %]">(e.g. <cite>AC3.6</cite> or <cite>B0019.1</cite>)
 <input type="submit" value ="Run" /> 
 </form>
