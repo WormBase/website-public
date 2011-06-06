@@ -1,4 +1,4 @@
-package WormBase::API::Service::aligner;
+package WormBase::API::Service::nucleotide_aligner;
 
 use Bio::Graphics::Browser2::Util;
 use Ace 1.51; 

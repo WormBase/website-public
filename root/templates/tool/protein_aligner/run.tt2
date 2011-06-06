@@ -1,4 +1,4 @@
-[% INCLUDE tool/show_mult_align/index.tt2 UNLESS noboiler %] 
+[% INCLUDE tool/protein_aligner/index.tt2 UNLESS noboiler %] 
 
 [% msg %]
 <p>

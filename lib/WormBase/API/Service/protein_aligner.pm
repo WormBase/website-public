@@ -1,4 +1,4 @@
-package WormBase::API::Service::show_mult_align;
+package WormBase::API::Service::protein_aligner;
 
 use Bio::Graphics::Browser2::PadAlignment;
 use Bio::Graphics::Browser2::Markup;
