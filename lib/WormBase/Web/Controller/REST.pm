@@ -414,23 +414,22 @@ sub rest_link_wbid_POST {
 
     my @wbemails = split(/,/, $wbemail);
     foreach my $wbe (@wbemails){
+      $c->user->wbid($wbid);
       unless($confirm){
-        $c->user->wbid($wbid);
-        $c->user->update();
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id});
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
         $c->stash->{message} = "<h2>Thank you!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
       }else{
-        $c->user->wbid($wbid);
         $c->user->wb_link_confirm(1);
-        $c->user->update();
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
         $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to $wbid</p>" ; 
       }
+      $c->user->update();
     }
 
     $c->stash->{template} = "shared/generic/message.tt2"; 
     $c->stash->{redirect} = $c->req->params->{redirect};
+    $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
 }
  
@@ -1070,6 +1069,12 @@ sub _get_search_result {
     my @parts = split(/\//,$page->url); 
     my $class = $parts[-2];
     my $id = uri_unescape($parts[-1]);
+
+#     THIS SHOULD BE REMOVED, need to standardize naming of WB models
+    if($class =~ m/go_term/g){
+      $class = "GO_Term";
+    }
+
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
     $c->log->debug("class: $class, id: $id");
@@ -1088,6 +1093,7 @@ sub _get_search_result {
             footer => "$footer",
                     };
 }
+
 
 sub comment_rss {
  my ($self,$c,$count) = @_;

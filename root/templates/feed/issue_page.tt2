@@ -43,7 +43,7 @@
 <div class="issue-content" >
   <table width="40%">
     <tr><th>Status:</th><td>[% issue.state %]</td> 
-    <th>Responsible:</th><td>[% linkUser(issue.responsible) %]</td></tr>
+    <th>Responsible:</th><td>[% IF issue.responsible; linkUser(issue.responsible); ELSE; '<span id="fade">no one</span>'; END;%]</td></tr>
   </table>	
 </div>
 
@@ -95,10 +95,10 @@
 <p>
 [% user_login_info %]
 <form>
-<textarea class="issue-text" rows="5"   id="content"></textarea>
+<textarea class="issue-text" rows="5"   id="content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
 <p>
-<input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]"/> 
- <input type='reset' value='Reset' />
+<input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]" [% UNLESS c.user_exists; 'disabled=1'; END;%] /> 
+ <input type='reset' value='Reset' [% UNLESS c.user_exists; 'disabled=1'; END;%] />
 </p>
 </form>
 </div>

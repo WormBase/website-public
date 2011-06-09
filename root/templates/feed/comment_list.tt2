@@ -3,17 +3,28 @@
 [% IF comments %]
 [% USE time_dir = Time.Duration %]
   <table class="issue-table" border=0 cellspacing=0 width=100%>
-    <tr align=left><th>#</th><th>Page</th><th>Time</th> 
-    <th>Report by</th><th>content</th></tr>
-    [% even = 1 %]
+    <tr align=left>
+      <th>Page</th>
+      <th>Time</th> 
+      <th>Report by</th>
+      <th>content</th>
+      <th></th>
+    </tr>
+      [% even = 1 %]
       [% FOREACH IS IN comments %]
-	 <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
-<td>[% IS.id %]</td><td>[% linkPage(IS.page) %]</td> 
-	    <td>[%  time_dir.ago(current_time - IS.submit_time)  %]</td>  
-	    <td>[% linkUser(IS.reporter) %]</td><td>[% IS.content %]</td>
+      <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
+        <td>[% linkPage(IS.page) %]</td> 
+	    <td>[%  time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
+	    <td>[% linkUser(IS.reporter) %]</td>
+        <td>[% IS.content %]</td>
+        <td>  
+          [% IF c.check_user_roles('admin') || c.check_user_roles('curator') || (c.user.id == IS.reporter_id) %]
+            <a tip="delete comment" class="tip-simple tr comment-delete" id="[% IS.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
+          [% END %]
+        </td>
 	  </tr>
       [% END %]
-      </table>
+  </table>
   [% ELSE %]
    <span id="fade"> no comments have been found</span>
   [% END %]

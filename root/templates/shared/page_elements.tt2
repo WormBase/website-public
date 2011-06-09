@@ -7,14 +7,13 @@
 %]
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]	
-    <script type="text/javascript" >
-    $jq(".lightbox").colorbox();
-    </script> 
-	<table width="100%">			      
-		    <tr>
-			    <th>
-				<a class='lightbox' href="[% c.uri_for('/login') %]" title="WormBase user login!" >Login</a>
-			    </th>
+
+<!-- 	<table width="100%">			       -->
+<!-- 		    <tr> -->
+<!-- 			    <th> -->
+				<div style="padding:0.5em">You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature</div>
+<!-- 			    </th> -->
+[% IF 0 %]
 			    <td>
 			      or
 			    </td>
@@ -23,9 +22,11 @@
 				  <div style="height: 0.4em; overflow: hidden;"> </div>
 				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
 			    </td>
-		    </tr>
-	 </table>
-    [% ELSIF !c.user.email_address || ! c.user.username %]
+[% END %]
+<!-- 		    </tr> -->
+<!-- 	 </table> -->
+    [% ELSIF 0 %]
+    [%# ELSIF !c.user.email_address || ! c.user.username %]
 	<table width="100%">
 		    <tr>
 			    <th>
@@ -42,6 +43,9 @@
 		    </tr>
 	    </table>
     [% END %]
+    <script type="text/javascript" >
+    $jq(".lightbox").colorbox();
+    </script> 
 [% END %]
 
 [% MACRO username(user) BLOCK %]

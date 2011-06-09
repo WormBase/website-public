@@ -96,6 +96,7 @@
 	      success: function(data){
  			displayNotification("Comment Submitted!");
 			feed.find("#comment-box").prepend(data);
+            feed.find(".comment-content").val("write a comment...");
             updateCounts(url);
 		      },
 	      error: function(request,status,error) {
@@ -198,8 +199,8 @@
 
     });
 
-  ajaxGet($jq(".user-history"), "/rest/history?count=3");
-  ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
+//   ajaxGet($jq(".user-history"), "/rest/history?count=3");
+//   ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
 
 
     $jq("div.text-min").live('click',function() {expand($jq(this), $jq(this).next());});
