@@ -1,7 +1,16 @@
 
 <div style="margin:2em;">
   <div class="ui-corner-all" style="padding:2em; border:1px solid #CCC; background:#EEE;">
+    [% UNLESS (c.user_exists || redirect) %]
+      <div class="ui-corner-all" style="width:15em;border: 1px solid #CCC; background: white;float:right; padding-top:1em;">
+        <span style="font-weight:bold; padding:1em;">Login to WormBase!</span>
+        [% PROCESS auth/login.tt2 %]
+      </div>
+    [% END %]
+
     [% message %]
+
+    <div style="clear:both"></div>
   </div>
 
   <p><span id="fade">

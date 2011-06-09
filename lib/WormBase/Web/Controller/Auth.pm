@@ -33,26 +33,16 @@ sub register :Path("/register") {
 }
 
 sub confirm :Path("/confirm") {
-     my ( $self, $c ) = @_;
-     $c->stash->{'template'}='index.tt2';
-     my $user=$c->model('Schema::User')->find($c->req->params->{u});
-     my $wb = $c->req->params->{wb};
-     my @emails = $user->email_address;
+    my ( $self, $c ) = @_;
+    my $user=$c->model('Schema::User')->find($c->req->params->{u});
+    my $wb = $c->req->params->{wb};
 
-    if($wb) {
-      my $wb_valid;
-      foreach my $email (@emails) {
-#           $wb_valid = Crypt::SaltedHash->validate("{SSHA}".$wb, $email."_".$user->wbid) 
-          $wb_valid = Crypt::SaltedHash->validate("{SSHA}".$wb, $email->email."_".$user->wbid) unless $wb_valid;
-      }
-      if($wb_valid){
-        $user->wb_link_confirm(1);
-        $user->update();
-      }
-    }
+    $c->stash->{template} = "shared/generic/message.tt2"; 
 
-#      if($user && !$user->active) { 
-      my $valid;
+    my $message;
+    if(($user && !$user->active) || ($user && $wb && !$user->wb_link_confirm) || ( $user && ($user->valid_emails < $user->email_address))) { 
+      my @emails = $user->email_address;
+      my $seen_email;
       foreach my $email (@emails) {
           if(Crypt::SaltedHash->validate("{SSHA}".$c->req->params->{code}, $email->email."_".$user->username)) {
             unless(defined $user->primary_email){
@@ -60,35 +50,25 @@ sub confirm :Path("/confirm") {
             }
             $email->validated(1);
             $email->update();
-            $valid = 1;
+            $user->active(1);
+            $message = $message . "Your account is now activated, please login! "; 
+            $seen_email = 1;
           }
-      }
-      if($valid) {
-#         $c->log->debug("digest validated for user",$user->id);
-#         my @users = $c->model('Schema::User')->search({email_address=>$user->email_address});
-#         foreach (@users){
-#             
-#             next if( $_->active eq 0);
-#             $c->log->debug("user registered email before, update the account...");
-#             $_->set_columns({"password"=>$user->password,"username"=>$user->username});
-#             $user->delete();
-#             $user=$_;
-#             last;
-#         }
-        
-        $user->active(1);
-#         if($user->email_address && $user->email_address =~ /\@wormbase\.org/) {
-#           my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-#           $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
-#         }
-        $user->update();
 
-        $c->stash->{notify}="Your account is now activated, please login!";
-        return 1;
+          if($wb) {
+            if(Crypt::SaltedHash->validate("{SSHA}".$wb, $email->email."_".$user->wbid)){
+              $user->wb_link_confirm(1);
+              $message = $message . "Your account is now linked to " . $user->wbid; 
+              $seen_email = 1;
+            }
+          }
+          last if $seen_email;
       }
-#     }
-   
-    $c->stash->{notify}="This link is not valid or has already expired!";
+      $user->update();
+    } 
+
+    $c->stash->{message} = $message || "This link is not valid or has already expired.";
+    $c->forward('WormBase::Web::View::TT');
 }
  
 =pod

@@ -27,6 +27,10 @@
   [% END %]
 [% END %]
 
+  [% UNLESS object %]
+    [% page_class = c.req.path.replace('[/_]', '-') %]
+  [% ELSE; page_class = class; END; %]
+
     [% UNLESS no_layout %]
     <div id="buttons-nav">
 
@@ -43,7 +47,7 @@
             <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
             <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
             <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-            <div class="list-layouts" type="[% class %]"></div>
+            <div class="list-layouts" type="[% page_class %]"></div>
           </ul>
         </div>
 
@@ -111,7 +115,9 @@
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon"></div></div>
   </div>
 
-  <div id="widget-holder" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]">
+
+
+  <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]">
 
 
 
@@ -139,6 +145,9 @@
 
 
     <script>
+  ajaxGet($jq(".user-history"), "/rest/history?count=3");
+  ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
+
       [%# IF object %]
 
 [% PROCESS page_info %]

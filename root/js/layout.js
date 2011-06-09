@@ -19,13 +19,13 @@
     }
 
     function deleteLayout(layout){
-      var $class = $jq("#widget-holder").attr("class");
+      var $class = $jq("#widget-holder").attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout + "?delete=1");
       $jq("div.columns ul div li#layout-" + layout).remove();
     }
 
     function setLayout(layout){
-      var $class = $jq("#widget-holder").attr("class");
+      var $class = $jq("#widget-holder").attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout, function(data) {
           var nodeList = data.childNodes[0].childNodes;
           var len = nodeList.length;
@@ -115,7 +115,7 @@
       }
 
       var holder =  $jq("#widget-holder");
-      var $class = holder.attr("class");
+      var $class = holder.attr("wclass");
       var left = holder.children(".left").children(".visible")
                         .map(function() { return this.id;})
                         .get();

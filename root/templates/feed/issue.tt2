@@ -10,23 +10,26 @@
 
   [% IF url %]
     <h4>Create new issue</h4>
-	<table id="issueTable" width="70%" >
+    [% user_login_info %]
+	<table id="issueTable" width="70%">
 		<tr>
 			<th width="10%">Title:</th>
-			<td colspan="2" ><input class="issue-text" id="title" maxlength="100"  type="text" name="title"  /></td>
+			<td colspan="2" ><input [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="title" maxlength="100"  type="text" name="title"  /></td>
 		</tr>
 				 
 		<tr>
 			<th width="10%">Content:</th>
 			<td colspan="2" >
-				<textarea class="issue-text" id="content" rows="10"     name="content"  ></textarea>
+				<textarea [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="content" rows="10"     name="content"  ></textarea>
 			</td>
 		</tr>
 	</table>
-	[% user_login_info %]
+
 	  </br><p>
-	    <input type='submit' value='Report Your Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
+	    <input type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Your Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
 	  </p>
+
+
   [% END %]
 
    </div>
