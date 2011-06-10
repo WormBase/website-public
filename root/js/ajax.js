@@ -376,6 +376,18 @@
         content.parents("li").addClass("visible");
         return false;
     }
+    
+    function openAllWidgets(){
+      var widgets = $jq("#navigation .module-load");
+      var widget = widgets.first();
+      for(i=0; i<widgets.length; i++){
+        if($jq("#" + widget.attr("wname") + ".visible").length == 0){
+          widget.click();
+        }
+        widget = widget.next();
+      }
+      return false;
+    }
 
     function setLoading(panel) {
       panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
