@@ -25,6 +25,7 @@ $jq(document).ready(function(){
 
   var timer;
   $jq("#nav-bar ul li").hover(function () {
+            $jq("div.columns>ul").hide();
       if(timer){
         $jq(this).siblings("li").children("ul.dropdown").hide();
         $jq(this).siblings("li").children("a").removeClass("hover");

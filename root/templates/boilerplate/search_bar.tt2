@@ -1,32 +1,29 @@
 
    <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="search(); return false;">
-
     [% val = "search..." %]
-    [% IF query %]
-       [% val = query %]
-    [% END %]
+    [% IF query; val = query; END; %]
+
     <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
     <input class="ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
-
-
   </form>
-         <select id="searchSelect" onChange="search_change(this.options[selectedIndex].value);">
 
-    [% FOREACH option IN c.config.search_dropdown.option %]
-     
-        [% IF option.id == "all" %]
-            <option value="[%- option.id -%]" selected>[%- option.title -%]</option>
-        [% ELSE %]
-            <option value="[%- option.id -%]">[%- option.title -%]</option>
-        [% END %]
+  <ul id="searchSelect">
+    <li>
+      <span style="float:right;background-image: url(/img/down.png);height:16px;width:16px;"></span>
+      <span id="current-search" style="float:right">All</span>
+      <ul>
+      [% FOREACH option IN c.config.search_dropdown.option %]
+              <li value="[%- option.id -%]" onClick='search_change("[% option.id %]");'><a>[%- option.title -%]</a></li>
+      [% END %]
+      </ul>
+    </li>
+  </ul>
+
+  <script>
+    [% IF type %]
+      search_change("[% type %]");
+    [% ELSIF class %]
+      search_change("[% class %]");
     [% END %]
 
-          </select>
-<script>
-[% IF class %]
-  search_change("[% class %]");
-[% END %]
-[% IF type %]
-  search_change("[% type %]");
-[% END %]
-</script>
+  </script>
