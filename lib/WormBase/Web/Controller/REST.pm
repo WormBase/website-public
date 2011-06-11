@@ -422,7 +422,7 @@ sub rest_link_wbid_POST {
       }else{
         $c->user->wb_link_confirm(1);
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
-        $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to $wbid</p>" ; 
+        $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to <a href=\"" . $c->uri_for('/resources', 'person', $wbid) . "\">$wbid</a></p>" ; 
       }
       $c->user->update();
     }
@@ -854,7 +854,7 @@ sub widget_GET {
 	
     # If you have a tool that you want to display inline as a widget, be certain to add it here.
     # Otherwise, it will try to load a template under class/action.tt2...
-    } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
+    } elsif ($widget eq "aligner" || $widget eq "show_mult_align" || $widget eq 'tree') {
       return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
       return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
     }
@@ -1069,12 +1069,6 @@ sub _get_search_result {
     my @parts = split(/\//,$page->url); 
     my $class = $parts[-2];
     my $id = uri_unescape($parts[-1]);
-
-#     THIS SHOULD BE REMOVED, need to standardize naming of WB models
-    if($class =~ m/go_term/g){
-      $class = "GO_Term";
-    }
-
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
     $c->log->debug("class: $class, id: $id");

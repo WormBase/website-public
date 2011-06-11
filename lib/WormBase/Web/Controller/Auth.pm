@@ -333,22 +333,32 @@ sub profile :Path("/profile") {
 
 sub profile_update :Path("/profile_update") {
   my ( $self, $c ) = @_;
-  $c->stash->{'template'}='me.tt2';
   my $email = $c->req->params->{email_address};
-
+  my $username = $c->req->params->{username};
+  my $message;
   if($email){
+    my $found;
     my @emails = $c->model('Schema::Email')->search({email=>$email, validated=>1});
     foreach (@emails) {
-        $c->stash->{notify}="The email address has already been registered. Update Fail!";
-        return 0;         
+        $message="The email address <a href='mailto:$email'>$email</a> has already been registered.";     
+        $found = 1;
     }
-    $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->id});
-    $c->controller('REST')->rest_register_email($c, $email, $c->user->username, $c->user->id);
-    $c->stash->{notify}="An email has been sent to $email";
+    unless($found){
+      $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->id});
+      $c->controller('REST')->rest_register_email($c, $email, $c->user->username, $c->user->id);
+      $message="An email has been sent to <a href='mailto:$email'>$email</a>. ";
+    }
   }
-  $c->user->username($c->req->params->{username}) if $c->req->params->{username};
-  $c->user->update();
-  $c->res->redirect($c->uri_for("me"));
+  unless($c->user->username =~ /^$username$/){
+    $c->user->username($username);
+    $c->user->update();
+    $message= $message . "Your name has been updated to $username";
+  }
+
+  $c->stash->{message} = $message; 
+  $c->stash->{template} = "shared/generic/message.tt2"; 
+  $c->stash->{redirect} = $c->uri_for("me");
+  $c->forward('WormBase::Web::View::TT');
 } 
 
 

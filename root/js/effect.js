@@ -97,8 +97,8 @@
     });
     $jq("#widget-holder").children("#widget-header").disableSelection();
 
-    $jq("div.columns a, div.columns div.ui-icon, div.columns ul li").live('click', function() {
-      $jq("div.columns ul").toggle();
+    $jq("div.columns a, div.columns div.ui-icon, div.columns>ul>li>a").live('click', function() {
+      $jq("div.columns>ul").toggle();
     });
 
 
