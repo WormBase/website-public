@@ -39,6 +39,7 @@
 
     <link media="screen" rel="stylesheet" href="/js/jquery/plugins/colorbox/example4/colorbox.css" />
     <script type="text/javascript" src="/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js"></script>
+
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.1.custom.css" rel="stylesheet" />-->
     <!--<link type="text/css" href="/js/jquery/current-theme/css/theme/jquery-ui-1.8.2.custom.css" rel="stylesheet" />-->
     <link type="text/css" href="/js/jquery/current-theme/development-bundle/themes/theme/jquery.ui.all.css" rel="stylesheet" />

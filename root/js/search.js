@@ -61,21 +61,10 @@ function search() {
 function search_change(new_search) {
   if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
   cur_search_type = new_search;
-  selectOptionByValue(document.getElementById("searchSelect"), new_search);
+  
+  $jq("#current-search").text(new_search.charAt(0).toUpperCase() + new_search.replace(/[_]/, ' ').slice(1));
 }
 
-function selectOptionByValue(selObj, val){
-    var A= selObj.options, L= A.length;
-    while(L){
-        if (A[--L].value== val){
-            selObj.selectedIndex= L;
-            return;
-            L= 0;
-        }
-    }
-    A[A.length] = new Option(val.charAt(0).toUpperCase() + val.slice(1),val);
-    selObj.selectedIndex = A.length-1;
-}
 
 
 function SearchResult(q, type, species, widget){

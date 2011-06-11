@@ -35,19 +35,25 @@
     <div id="buttons-nav">
 
       [% IF object %]
-        <!-- <a   tip="view comments" class="button section-button tip-simple ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a> -->
         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
+        <a   tip="view comments" class="button section-button tip-simple ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
       [% END %]
 
-        <a   tip="print page" class="button print tip-simple  ui-corner-all"><span class="ui-icon ui-icon-print"></span></a>
-        <div class="columns"><a class="button ui-corner-all tip-simple" tip="set layout"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
+<!--         <a   tip="print page" class="button print tip-simple  ui-corner-all"><span class="ui-icon ui-icon-print"></span></a> -->
+        <div class="columns"><a class="button ui-corner-all tip-simple" tip="settings"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
           <ul>
-            <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
-            <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
-            <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
-            <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-            <div class="list-layouts" type="[% page_class %]"></div>
+            <li><span id="fade">layout</span><span class="ui-icon ui-icon-triangle-1-e" style="float:right;margin-top:0.2em;"></span>
+              <ul>
+              <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
+              <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
+              <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
+              <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
+              <div class="list-layouts" type="[% page_class %]" style="font-size:0.7em"></div>
+              </ul>
+            </li>
+            <li><a id="fade" onClick="openAllWidgets(); return false;">open all</a></li>
+            <li><a id="fade" class="print">print</a></li>
           </ul>
         </div>
 

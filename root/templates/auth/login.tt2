@@ -11,9 +11,7 @@
       if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')) %]"; }
       else { opener.location.reload(1);}
   [% END %] 
-
   window.close();
-
 [% END %]  
 
 hideTextOnFocus(".email");
@@ -24,9 +22,7 @@ hideTextOnFocus(".password");
   
 <!-- Login form -->
 <div id="login-form">
-  [%# change this to secure_uri_for when https works %]
-<!--   <form method="post" action="[% c.uri_for("/auth/login") %]" style="float:left;"> -->
-  <form method="post" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
+  <form method="post" align="left" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
 
     <div class="login-holder">
         <span id="fade" class="holder">email</span>

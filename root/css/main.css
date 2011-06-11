@@ -239,8 +239,7 @@ ul.nav-bar li {
 }
 
 
-/* ul.nav-bar li>a{ */
-ul.nav-bar li a{
+ul.nav-bar li>a{
   float:left;
   padding:0.4em 2.8em 0 1.9em;
   margin:0;
@@ -269,9 +268,8 @@ ul.nav-bar li span.ui-icon {
   visibility:hidden;
 }
 
-/*
-ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{ */
-ul.nav-bar li a.hover, ul.nav-bar li a.selected, ul.nav-bar span.status-bar li a:hover,  ul.nav-bar span.status-bar li>a.selected{
+
+ul.nav-bar li>a.hover, ul.nav-bar li>a.selected, ul.nav-bar span.status-bar li>a:hover,  ul.nav-bar span.status-bar li>a.selected{ 
   color:black;
   border-bottom:5px solid #CDCDCD;
 }
@@ -308,7 +306,7 @@ ul.nav-bar ul.dropdown {
   list-style-type: none;
 }
 
-/* Is this all merge cruft - TH? */
+/* Login and registration styling  - header, home page, and login popup */
 #login-box ul.dropdown {
   width:auto;
   left:auto;
@@ -328,7 +326,6 @@ span.holder {
   left:0.5em;
 }
 
-
 #login-box>a.open {
   background:white;
   border:1px solid #CDCDCD;
@@ -345,7 +342,6 @@ span.holder {
 
 #login-form div.social {
   clear:both;
-/*   background:#EEE; */
   background:#E9EEF2;
   font-size:0.8em;
   border-top:1px solid #CDCDCD;
@@ -354,11 +350,15 @@ span.holder {
   padding:0.5em 0 1em 1em;
 }
 
+#login-form > form {
+  width:14.5em;
+}
+
 .login-form {
   padding:0.5em 0 0 !important;
   font-weight: normal !important;
   background: white !important;
-  width: 14.5em !important;
+  width: 14em !important;
 }
 
 .registration-form {
@@ -366,7 +366,7 @@ span.holder {
   background: #E9EEF2 !important;
   width: 21.5em !important;
 }
-/* login.* : Merge cruft up to other comment? */
+/* END of login and registration styling */
 
 
 ul.nav-bar ul.dropdown li {
@@ -635,7 +635,6 @@ div#footer a:hover{
     padding: 0;
     height: 12em;
     font-size:0.9em;
-/*     margin-top:1em; */
 }
 
 #footercredit {
@@ -665,31 +664,24 @@ div#footercredit a{
     margin:0 auto;
     height:2em;
     padding-bottom:5em;
-/*    text-align:center;  */
 }
 
 
 #footer .footer-column {
-        float:left; 
-        display: inline-block;
-/* 	border:1px solid black; */
-/*         padding:5px; */
-padding:1.4em;
-        width:20%;
+  float:left; 
+  display: inline-block;
+  padding:1.4em;
+  width:20%;
 }
 
 .footer-column .footer-title {
-/*    color: #333333; */
-/*    display: block; */
-/*     font-size: 110%; */
     font-weight: bold;
     margin-bottom: 1em;
     white-space: nowrap;
 }
 
 
-/*#footer ul, #footer li { */
-#footer ul, li {
+#footer ul, #footer li {
     list-style:none;
     margin-left:0;
     padding-left:0;
@@ -858,6 +850,15 @@ div.columns ul {
   display:none;
 }
 
+div.columns ul ul{
+  left:100%;
+  top:0;
+}
+
+div.columns ul li:hover>ul{
+  display:block;
+}
+
 div.columns ul li{
   list-style: none; 
   position:relative;
@@ -868,7 +869,7 @@ div.columns ul li{
 }
 
 div.columns ul li:hover{
-  background: #FAF7DE;
+  background: #FFFFDF;
 }
 
 div.columns ul li div{
@@ -888,19 +889,6 @@ div.columns ul div input#layout-input {
   padding:0;
 }
 
-div.columns ul div li div.ui-icon {
-  clear:both;
-  float:right;
-  opacity:0.3;
-  filter:alpha(opacity=30);
-  -moz-opacity:0.3;
-}
-
-div.columns ul div li div.ui-icon:hover {
-  opacity:1;
-  filter:alpha(opacity=100);
-  -moz-opacity:1;
-}
 
 
 
