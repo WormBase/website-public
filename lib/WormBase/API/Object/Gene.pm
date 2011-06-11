@@ -804,8 +804,9 @@ B<Response example>
 =cut 
 
 sub version { 
+    my $version = shift->object->Version;
     return { description => 'the current WormBase version of the gene',
-	     data        => shift->object->Version };
+	     data        => "$version" };
 }
 
 
