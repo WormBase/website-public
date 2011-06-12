@@ -1,7 +1,0 @@
----
-# Assets: UI widgets, pixel glyphs, etc
-
-# Iconographic buttons
-wormbase_button : /static/images/icons/wormbase_button.gif
-pubmed_button   : /static/images/icons/wormbase_button.gif
-

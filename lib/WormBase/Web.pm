@@ -31,7 +31,7 @@ use HTTP::Status qw(:constants :is status_message);
 #   What type of installation are we?
 #   
 #   The startup script should set an environment variable
-#   for installation type, or it defaults to development)
+#   for installation type; otherwise it defaults to staging.
 #
 ##################################################
 my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'staging';
