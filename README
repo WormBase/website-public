@@ -1,115 +1,33 @@
-Run script/wormbase_server.pl to test the application.
+WormBase Website Repository
+===========================
 
-Add StackTrace as an option to the Application: lib/WormBase.pm
+This repository contains the WormBase Web application.
 
+Installation
+------------
 
-# Create a model for the gene class
-script/wormbase_create.pl model Gene
+* cd $approot
+* perl Makefile.PL
+* make installdeps
 
-# And a controller
-script/wormbase_create.pl controller Gene
+Running the application
+-----------------------
 
-# Add a simple list method to the Gene controller that
-# serves to list all genes in a little table
+To run the app using the built-in Catalyst server:
 
-# Create a TT helper for views
-script/wormbase_create.pl view TT TT
+> ./script/wormbase_server.pl -p 8000
 
-# Create a TT template page for Gene page list
-mkdir root/src/gene
-copy the list.tt2 from MyApp (note that we're missing boatloads of files that were created in the demo by TTSite
+For more control you can use your own configuration:
 
+> Wormbase_CONFIG_LOCAL_SUFFIX=tharris ./script/wormbase_server.pl -p 8000
 
-use the inline View
-script/wormbase_create.pl view TT::Inline TT
+This will use configuration in $approot/wormbase_tharris.conf
+to override the default wormbase.conf file.
 
-$c->view('TT::Inline')->render();
+Running the application via Starman
+-----------------------------------
 
-
-
-
-Modules:
-Catalyst::View::TT - allows independent rendering of templates
-
-my $output = $c->view('TT')->render(
-    $c, 'mytemplate.tt', \%args
-);
+> ./bin/starman-staging.sh
 
 
-
-
-
-
-Installing Catalyst and dependencies (Mac OS X, intel)
-
-1. Fetch Catalyst (5.7008)
-
-> cd ~/src
-> curl -O http://search.cpan.org/CPAN/authors/id/M/MR/MRAMBERG/Catalyst-Runtime-5.7008.tar.gz
-
-> cd ~/build
-> tar xzf ../src/Catalyst*
-> cd Catalyst*
-
-Or, better yet, via CPAN:
- sudo perl -MCPAN -e shell
- cpan> install Task::Catalyst
- cpan> install Catalyst::Devel
- cpan> install Template
-
-Install extra modules
-
-Catalyst::Plugin::Session::Store::FastMmap
-Catalyst::Model::Adaptor
-Catalyst::Controller::REST
-
-XML::SAX
-
-
-
-Third party libraries
----------------------------
-Install BioPerl
-// This script will build and install bioperl in a local path
-./install/bioperl.sh  // See script for details.
-
--- For optional modules, choose [i] interactive.
--- For "Install [a]ll Bioperl scripts, [n]one, or choose groups [i]nteractively? [a]" choose none.
-
-install GBrowse
-./install/gbrowse.sh // see the script...
-NOTE: this FAILS on Mac OSX.  The INSTALLSITESCRIPT option in Makefile.PL needs to be set to $OPTIONS{BIN}
-
-
-
-Models:
-One of the problems of the current approach is that get_params() cannot act easily as a search.
-It *assumes* that it will be able to retrieve an object which may be incorrect.
-
-
-
-
-
-
-DEPLOYMENT
-
-
-
-
-
-
-Overall flow.
-
-1. Request from user: /gene/ID/species
-
-2. Controller action called:
-
-WormBase::Web::Controller::species()
-
-3. Model instantiated by controller method:
-
-species():  $model= $c->model('Gene');
-
-Instantiating the model's new() method also ends up fetching the objects.
-
-4. 
+Todd Harris (todd@wormbase.org)
