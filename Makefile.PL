@@ -22,6 +22,7 @@ requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Controller::CGIBin';
 requires 'Catalyst::Model::Adaptor';
+requires 'Catalyst::Model::Xapian::Result';
 requires 'Catalyst::Log::Log4perl';
 requires 'Catalyst::Plugin::Authentication';          
 requires 'Catalyst::Plugin::Authorization::Roles';          
@@ -46,12 +47,12 @@ requires 'Ace'                                    => '1.92';     # Good 'ole Ace
 requires 'Badge::GoogleTalk';                                    # 
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        # 
-requires 'Bio::Graphics::Browser2::Markup';                       # Sequence Summary page
+#requires 'Bio::Graphics::Browser2::Markup';                       # Sequence Summary page
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
 requires 'Config::General';                                      #
-requires 'Crypt::SaltedHash'                      => '0.06';     #
+requires 'Crypt::SaltedHash';                                    # => '0.06';
 requires 'Crypt::SSLeay'; 			                 # For openid support
 requires 'CHI';                                                  # Cache
 requires 'CHI::Driver::Memcached::libmemcached';                 # Cache
@@ -87,12 +88,13 @@ requires 'Package::Stash'                        => '0.21';      #
 requires 'Package::Stash::XS'                    => '0.18';      #
 requires 'Params::Util';                                         #
 requires 'Term::ReadLine';                                       #
+requires 'Search::Xapian';                                       #
 requires 'Sub::Exporter';                                        #
 requires 'Sub::Install';                                         #
 requires 'Sub::Identify';                                        #
 requires 'SVG';                                                  #
 requires 'Task::Weaken';                                         #
-requires 'Template::Plugin::Time::Duration ';
+requires 'Template::Plugin::Time::Duration';                     #
 requires 'Test::YAML::Valid';                                    #
 requires 'Test::Pod::Coverage';                                  #
 requires 'Text::Glob';                                           #
