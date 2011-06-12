@@ -1,16 +1,8 @@
 package WormBase::Web;
 
+
 use Moose;
 use namespace::autoclean;
-
-# Set flags, roles, and plugins
-#  -Debug
-#      Activates the debug mode for useful log messages
-#  ConfigLoader
-#      Loads a Config::General config file from the application root
-#  Static::Simple
-#      Will serve static files from the application's root directory
-# StackTrace
 use Catalyst qw/
 	  ConfigLoader
 	  Cache
@@ -26,51 +18,27 @@ use Catalyst qw/
           StackTrace
 	  Scheduler
            /;
-
 extends 'Catalyst';
+our $VERSION = '0.02';
 
 use Catalyst::Log::Log4perl; 
 use HTTP::Status qw(:constants :is status_message);
 
 
-our $VERSION = '0.02';
- 
 
-=pod
+##################################################
+#
+#   What type of installation are we?
+#   
+#   The startup script should set an environment variable
+#   for installation type, or it defaults to development)
+#
+##################################################
+my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'development';
 
-Instead of config loader, I might write my own configuration parser/loader.
-I hate not being able to use logic in the configuration file
-as well as having configuration tied to application setup.
 
-Here's an example from D rolsky
-
-use R2::Config;
-use Moose;
-
-my $Config;
-
-BEGIN
-{
-    extends 'Catalyst';
-
-    $Config = R2::Config->new();
-
-    Catalyst->import( @{ $Config->catalyst_imports() } );
-}
-
-__PACKAGE__->config( name => 'R2',
-                     %{ $Config->catalyst_config() },
-    );
-
-=cut
-
- 
-
-# Create a log4perl instance
 __PACKAGE__->log(
-    Catalyst::Log::Log4perl->new(
-        __PACKAGE__->path_to( 'conf', 'log4perl.conf' )->stringify
-    )
+    Catalyst::Log::Log4perl->new(__PACKAGE__->path_to( 'conf', 'log4perl', "$installation_type.conf")->stringify)
     );
 
 
@@ -206,19 +174,6 @@ __PACKAGE__->config->{'View::JSON'} = {
 
 ##################################################
 #
-#   What type of installation are we?
-#   THIS NEEDS TO BE MANUALLY CHANGED!
-#
-##################################################
-
-# What type of installation are we: development | mirror | local | production ?
-# Unfortunately, we set it here instead of in
-# our configuration file since it isn't loaded until application setup.
-__PACKAGE__->config->{installation_type} = 'development';
-
-
-##################################################
-#
 #   Dynamically establish the cache backend
 #
 ##################################################
@@ -226,19 +181,17 @@ __PACKAGE__->config->{installation_type} = 'development';
 # First, if we are a development site, we still want
 # to test the caching mechanism, we just don't want 
 # it to persist.
-my $expires_in = (__PACKAGE__->config->{installation_type} eq 'production')
+my $expires_in = ($installation_type eq 'production')
     ? '4 weeks'
     : '1 minute';
-
-# I don't yet have access to the configuration file. installation_type
-# is statically set above. LAME!!
-my $servers = (__PACKAGE__->config->{installation_type} eq 'production')
-    ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
-    : [ '127.0.0.1:11211' ];
 
 # Memcached/libmemcached support built into the app.
 # Development and mirror distributions should point to localhost.
 # The production installation points to our distributed memcached.
+my $servers = ($installation_type eq 'production')
+    ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
+    : [ '127.0.0.1:11211' ];
+
 __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     class          => "CHI",
     driver         => 'Memcached::libmemcached',
@@ -247,9 +200,11 @@ __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
 };
 
 
+# Start the application!
+__PACKAGE__->setup;
 
 
-    
+
 
 ##################################################
 #
@@ -257,9 +212,15 @@ __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
 #
 ##################################################
 
+
+
+
  
-# Finally! Start the application!
-__PACKAGE__->setup;
+
+
+
+
+
 
 sub finalize_error {
 	my $c = shift;
