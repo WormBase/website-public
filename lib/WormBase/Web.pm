@@ -34,7 +34,7 @@ use HTTP::Status qw(:constants :is status_message);
 #   for installation type, or it defaults to development)
 #
 ##################################################
-my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'development';
+my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'staging';
 
 
 __PACKAGE__->log(
@@ -134,18 +134,12 @@ __PACKAGE__->config(
     });
 
 
-# THIS NEEDS TO BE MANUALLY CHANGED IN PRODUCTION
 # Dynamically set the base URL for production; also requires the prepare_path
 #if (__PACKAGE__->config->{installation_type} eq 'production') {
 #    __PACKAGE__->config->{base} = 'http://www.wormbase.org:2011/';
 #} else {
 ##    __PACKAGE__->config->{base} = '';
 #}
-
-# Conditionally set the using front end proxy flag
-__PACKAGE__->config->{using_frontend_proxy} = 1;
-
-
 
 
 

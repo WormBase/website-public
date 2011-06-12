@@ -10,14 +10,8 @@ export PORT=5000
 export WORMBASE_INSTALLATION_TYPE="production"
 
 # Set my local configuration prefix so wormbase_production.conf takes precedence.
-# This is mainly to override timer.
-#export WormBase_CONFIG_LOCAL_SUFFIX="production"
-
-
-#export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/production/lib:$PERL5LIB
-#export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
-#export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
-#export PATH="/usr/local/wormbase/extlib/bin:$PATH"
+# Used to override the location of the user database.
+export WormBase_CONFIG_LOCAL_SUFFIX="production"
 
 
 export PERL5LIB=/usr/local/wormbase/shared/extlib/lib/perl5:/usr/local/wormbase/shared/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/shared/website/production/lib:$PERL5LIB
