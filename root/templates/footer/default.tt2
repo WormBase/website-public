@@ -2,8 +2,10 @@
 [% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- begin boilerplate/footer -->
-      <div id="spacer"></div>
-    </div>
+    <div id="spacer"></div>
+    
+</div>
+
 <div id="footer">
     <div id="footer-nav">
        <div class="footer-column">
@@ -40,6 +42,15 @@
         <ul>
           <li></li>
           <li></li>
+          <li></li>
+        </ul>
+    </div>
+
+    <div class="footer-column">
+       <div class="footer-title">Status</div>
+        <ul>
+          <li>Beta Test Known Issues</li>
+          <li>User Survey</li>
           <li></li>
         </ul>
     </div>
