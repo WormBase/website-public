@@ -103,7 +103,7 @@
 			    alert(request + " " + status + " " + error);
 		      }
 	    });
-        var box = $jq('<div class="comment-box"><a href="">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
+        var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
         var comments = $jq("#comments");
         comments.prepend(box);
         return false;
