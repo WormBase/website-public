@@ -186,12 +186,46 @@ my $servers = ($installation_type eq 'production')
     ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
     : [ '127.0.0.1:11211' ];
 
+#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+#    class          => 'CHI',
+#    driver         => 'Memcached::libmemcached',
+#    servers        => $servers, 
+#    expires_in     => $expires_in,	
+#};#
+
+# CHI based memcache
+#__PACKAGE__->config->{'Plugin::Cache'}{backends}{memcache} = {
+#    class          => 'CHI',
+#    driver         => 'Memcached::libmemcached',
+#    servers        => $servers, 
+#    expires_in     => $expires_in,	
+#};
+
+
+# Path to the cache is hard-coded.
+# If I pre-cache via WWW::Mech will the cache be portable?
+# Also, can I make this dynamic?
+#__PACKAGE__->config->{'Plugin::Cache'}{backends}{filecache} = {
+#    class          => 'CHI',
+#    driver         => 'File',
+#    root_dir       => '/usr/local/wormbase/shared/test_cache',
+#    store          => 'File',
+#    depth          => 3,
+#    max_key_length => 64,
+#};
+
+# For now, let's make the file cache the default.
+#__PACKAGE__->config->{'Plugin::Cache'}{default_store} = 'File';
+
 __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    class          => "CHI",
-    driver         => 'Memcached::libmemcached',
-    servers        => $servers, 
-    expires_in     => $expires_in,	
+    class          => 'CHI',
+    driver         => 'File',
+    root_dir       => '/usr/local/wormbase/shared/test_cache',
+    store          => 'File',
+    depth          => 3,
+    max_key_length => 64,
 };
+
 
 
 # Start the application!
@@ -269,18 +303,19 @@ sub get_example_object {
 
 ########################################
 #
-#  Helper methods for interacting 
-#  with the cache.
-#
-# I don't think the cache is working...
+#  Helper methods for interacting with the cache.
 #
 ########################################
 sub check_cache {
-    my ($self,@keys) = @_;
+    my ($self,$name,@keys) = @_;
     
-    # First get the cache
+    # First get the cache.
+    # Single cache.
     my $cache = $self->cache;
- 
+
+    # filecache or memcache?
+    # my $cache = $self->cache(backend => $name);
+    
 =pod
     # Now get the database version from the cache. Heh.
     my $version;
@@ -299,26 +334,46 @@ sub check_cache {
     my $cache_id = join("/",@keys);
     # Now check the cache for the data we are looking for.
     my $cached_data = $cache->get($cache_id);
-    my $memd = $self->default_cache_backend->memd;
-#     my $cached_data = $memd->get($cache_id);
-    my $cached_server;
-     
 
-    if ($cached_data) {
-      $cached_server=$memd->get_server_for_key($cache_id) if($self->config->{timer}||$self->check_user_roles('admin'));
-      $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
+    # From which memcached server did this come from?
+    my $cache_server;
+    if ($name eq 'memcache'
+	&& ($self->config->{timer} || $self->check_user_roles('admin'))) {
+	if ($cached_data) {
+	    $cache_server = $cache->get_server_for_key($cache_id);
+	}
     } else {
-      $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+	$cache_server = 'filecache' if $cached_data;
+    }
+    
+    if ($cached_data) {
+	$self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cache_server.");
+    } else {
+	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
     }
 
-    return ($cache_id,$cached_data,$cached_server);
+#	my $memd = $self->default_cache_backend->memd;
+##     my $cached_data = $memd->get($cache_id);
+#	my $cached_server;
+#	
+#	if ($cached_data) {
+#	    $cached_server = $memd->get_server_for_key($cache_id) if ($self->config->{timer} || $self->check_user_roles('admin'));
+#	    $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
+#	} else {
+#	    $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+#    }
+
+    return ($cache_id,$cached_data,$cache_server);
 }
 
  
 # Provided with a pregenerated cache_id and (probably hash reference) of data,
 # store it in the cache.
 sub set_cache {
-    my ($self,$cache_id,$data) = @_;
+    my ($self,$name,$cache_id,$data) = @_;
+
+#    my $cache = $self->cache(backend => $name);
+#    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $name: $!");
     $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
     return;
 }

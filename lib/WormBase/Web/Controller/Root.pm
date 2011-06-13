@@ -56,7 +56,8 @@ sub draw :Path("/draw") Args(1) {
     if ($params->{class} && $params->{id}
         && (!defined $params->{size} || $params->{size} > 0)) {
         my @keys = ('image', $params->{class}, $params->{id}, $params->{size} // ());
-        ($cache_id,$cached_img) = $c->check_cache(@keys);
+        # ($cache_id,$cached_img) = $c->check_cache(@keys);
+	($cache_id,$cached_img) = $c->check_cache('filecache',@keys);
         unless($cached_img){ # not cached -- make new image and cache
             # the following line is a security risk
             my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
@@ -72,7 +73,8 @@ sub draw :Path("/draw") Args(1) {
                 $new_img->copyResized($cached_img, 0, 0, 0, 0, $nw, $nh, $w, $h);
                 $cached_img = $new_img;
             }
-            $c->set_cache($cache_id,$cached_img);
+#            $c->set_cache($cache_id,$cached_img);
+            $c->set_cache('filecache',$cache_id,$cached_img);
         }
     }
     else {
