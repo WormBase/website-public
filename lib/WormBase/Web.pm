@@ -135,11 +135,11 @@ __PACKAGE__->config(
 
 
 # Dynamically set the base URL for production; also requires the prepare_path
-#if (__PACKAGE__->config->{installation_type} eq 'production') {
-#    __PACKAGE__->config->{base} = 'http://www.wormbase.org:2011/';
-#} else {
-##    __PACKAGE__->config->{base} = '';
-#}
+if ($installation_type eq 'production') {
+    __PACKAGE__->config->{base} = 'http://beta.wormbase.org/';
+} else {
+#    __PACKAGE__->config->{base} = '';
+}
 
 
 
@@ -218,6 +218,8 @@ sub finalize_error {
 # There's a problem with c.uri_for when running behind a reverse proxy.
 # We need to reset the base URL.
 # We set the base URL above (which should probably be dynamic...)
+# This isn't the best way of doing this as it only accounts for 
+# URIs generated with c.uri_for.
 after prepare_path => sub {
     my $c = shift;
     if ($c->config->{base}) {
