@@ -32,7 +32,8 @@
 <td>
 [% user_login_info %]
 [% IF c.user_exists %]
-<a href="[% c.uri_for('/me') %]" id="display-name" value="[% username(c.user) %]">[% username(c.user) %]</a> says: 
+[% linkUser(c.user) %] says: 
+<input style="display:none" id="display-name" value="[% c.user.username %]" />
 [% END %]
 </td>
 		</tr>

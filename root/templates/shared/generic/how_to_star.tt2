@@ -3,27 +3,29 @@ When you see a star on WormBase:
 <ol>
 <li style="width:11em"><div id="test-star" class="workbench-status-example"></div>
 
-1. Click on the star: </li>
+Click on the star: </li>
 
 <div id="star-instructions" class="star-instructions text-width">
-  <li>2. You will be notified at the top of your screen that the item has been saved.
-  <li>3. View your item by opening <br /> &nbsp &nbsp
+  <li>You will be notified at the top of your screen that the item has been saved.
+  <li>View your item by opening <br /> &nbsp &nbsp
   <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
   <a href="javascript:void(0)" onClick='$jq("#nav-my_library").trigger("open"); return true;'>'My Library'</a> (literature).
   </li>
   <img src="img/reports_library.png">
-  <li>4. View your item by going to <a href="/me">'My Wormbase'</a></li>
+  <li>View your item by going to <a href="/me">'My Wormbase'</a></li>
   <img src="img/my_wormbase.png">
 </div>
 </ol>
 </div>
 <script>
   var instruct = (function(){
-    $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=[% get_url('page', 'example') %]");
-    $jq(".star-instructions").hide();
-    $jq(".example .bench-update").live('click', function() {
-      $jq(".star-instructions").toggle();
+    $jq(".workbench-status-example").load("/rest/workbench/star?wbid=example&name=example&class=page&url=/", function(){
+    $jq(".example #save").live('click', function() {
+        $jq(".star-instructions").show();
+      });
     });
+    $jq(".star-instructions").hide();
+
   });
   instruct();
 </script>

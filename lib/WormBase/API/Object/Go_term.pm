@@ -1,4 +1,4 @@
-package WormBase::API::Object::Go_term;
+package WormBase::API::Object::GO_Term;
 use Moose;
 
 with 'WormBase::API::Role::Object';
@@ -1086,6 +1086,19 @@ sub cell {
         data        => $data_pack,
         description => ' annotated with this term'
     };
+}
+
+#################################
+#
+# Browser widget
+#
+#################################
+
+
+sub get_host {
+	my $self = shift;
+	my $host = 'norie.wormbase.org'; ## $ENV{'SERVER_NAME'}
+	return $host;
 }
 
 #################################

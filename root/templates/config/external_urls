@@ -59,20 +59,20 @@
            = { description  = 'The WormBase Genome Browser'
                maintainer   = 'WormBase'
                email        = 'help@wormbase.org',
-               base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
-               search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
-               # base         = '/gb2/gbrowse/'
-	       # search      = '/gb2/gbrowse/%s'   
+               #base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
+               #search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
+                base         = '/gb2/gbrowse/'
+	        search      = '/gb2/gbrowse/%s'   
              }
 
    gbrowse_image 
            = { description  = 'The WormBase Genome Browser Image'
 			      maintainer   = ''
 
-base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
-search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
-			      # base         = '/gb2/gbrowse_img/'
-			      # search      = '/gb2/gbrowse_img/%s'   
+#base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
+#search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
+			      base         = '/gb2/gbrowse_img/'
+			      search      = '/gb2/gbrowse_img/%s'   
 			    }
 		 
         INTERPRO = { search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }

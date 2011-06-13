@@ -704,7 +704,7 @@ sub issue_email{
     my @threads= $issue->threads;
     $bcc = "$bcc, " . $issue->responsible->primary_email->email if $issue->responsible;
     my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email} @threads;
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email if $_->user} @threads;
  }
  $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
  
