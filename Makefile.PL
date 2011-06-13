@@ -55,7 +55,8 @@ requires 'Config::General';                                      #
 requires 'Crypt::SaltedHash';                                    # => '0.06';
 requires 'Crypt::SSLeay'; 			                 # For openid support
 requires 'CHI';                                                  # Cache
-requires 'CHI::Driver::Memcached::libmemcached';                 # Cache
+requires 'CHI::Driver::Memcached::libmemcached';                 # Cache (in memory)
+requires 'CHI::Driver::File';                                    # Cache (on disk)
 requires 'Class::MOP';                                           # => '1.12';
 requires 'Data::Dump';                                           #
 requires 'Data::OptList';                                        #
