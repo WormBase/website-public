@@ -6,36 +6,4 @@
 
 [% phenotypes_not_observed %]
 
-	
-[%
-
-  'TH: data processing and view redundancy with other phenotypes?';
-
-   WRAPPER $field_block title="Phenotype" key="phenotype_old";
-
-    'TH: check data model for conformation. view called for "data_pack"';
-
-      build_data_table(order=['phenotype','remark'],
-                              columns={ phenotype => 'Phenotype',
-		                        remark    => 'Remark',
-                                       },
-                         key='phenotype_old');
-   END;
-
-   '<hr>';
-
-
-   WRAPPER $field_block title="Phenotype NOT observed" key="phenotype_not_observed_old";
-
-    'TH: check data model for conformation. view called for "data_pack".';
-
-      build_data_table(order=['phenotype','remark'],
-                              columns={ phenotype => 'Phenotype',
-		                        remark    => 'Remark',
-                                       },
-                         key='phenotype_not_observed');
-   END;
-
-%]
-
 
