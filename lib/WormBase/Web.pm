@@ -206,16 +206,6 @@ __PACKAGE__->setup;
 #
 ##################################################
 
-
-
-
- 
-
-
-
-
-
-
 sub finalize_error {
 	my $c = shift;
 	$c->config->{'response_status'}=$c->response->status;

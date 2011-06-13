@@ -11,7 +11,7 @@ export WORMBASE_INSTALLATION_TYPE="production"
 
 # Set my local configuration prefix so wormbase_production.conf takes precedence.
 # Used to override the location of the user database.
-export WormBase_CONFIG_LOCAL_SUFFIX="production"
+export CATALYST_CONFIG_LOCAL_SUFFIX="production"
 
 
 export PERL5LIB=/usr/local/wormbase/shared/extlib/lib/perl5:/usr/local/wormbase/shared/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/shared/website/production/lib:$PERL5LIB
