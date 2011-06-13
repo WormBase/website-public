@@ -73,26 +73,14 @@
      </div>
 
     <div id="footermeta">
-<div id="footer-icons">
-  <a id="footer-mail" href="mailto:help@wormbase.org"></a>
-  <a id="footer-tweet" href="http://twitter.com/wormbase"></a>
-  <a id="footer-rss" href="http://feeds.feedburner.com/wormbase"></a>
-</div>
-                <!--  Database version <a tip="[% c.config.codename %]" class="tip-simple feed ui-corner-all">[% constants.acedb_version %]</a> -->
-                [% # The current release of the software and its codename %]
- [%# server_details("") %] 
-     <!--       <br />[% c.config.codename %]
-
-            <br />[% server_details("") %] 
-                <br />Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s-->
-<!--
-          [%# INCLUDE elements/social/sharethis.tt2 %]
-          <a href="http://wiki.wormbase.org/index.php/WormBaseWiki:Copyrights">Copyright </a> |
-          <a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy</a>-->
-
+        <div id="footer-icons">
+          <a id="footer-mail" href="mailto:help@wormbase.org"></a>
+          <a id="footer-tweet" href="http://twitter.com/wormbase"></a>
+          <a id="footer-rss" href="http://feeds.feedburner.com/wormbase"></a>
+       </div>
     </div>
-
 </div>
+
 
 
 
@@ -103,3 +91,13 @@
 [% INCLUDE google_analytics %]
 
     </div><!--end wrap-->
+
+
+<!--  
+
+      Database Version [% constants.acedb_version %] 
+      Software Version: [% c.config.codename %]
+      [% server_details("") %]
+      Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s-->                
+ 
+-->
