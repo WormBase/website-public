@@ -41,25 +41,25 @@ my $test_type = 'methods';
 
 ## list methods to be tested here
 my @methods = qw(
-			phenotype
+			get_host name
 				);
-### genes		definition	genes_n_cds term
+### genes		definition	genes_n_cds term phenotype
 
 if ($test_type eq 'methods') {
 	$tester->run_common_tests({
 		names                   => $test_objects,
 		include_methods => \@methods,    
 	});
-#
-#	foreach my $test_object (@$test_objects) {
-#		my $wb_object = $tester->fetch_object_ok($test_object);	
-#		foreach my $method (@methods) {
-#			print "\n#######\n";
-#			note("Testing $method()...");
-#			my $result = $wb_object->$method;
-#			PrintOut::print_data($result); ## 
-#		}
-#	}
+
+	foreach my $test_object (@$test_objects) {
+		my $wb_object = $tester->fetch_object_ok($test_object);	
+		foreach my $method (@methods) {
+			print "\n#######\n";
+			note("Testing $method()...");
+			my $result = $wb_object->$method;
+			PrintOut::print_data($result); ## 
+		}
+	}
 }
 else {
 	$tester->run_common_tests({
