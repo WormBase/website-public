@@ -5,7 +5,7 @@
 
 [% widget = widget %]
  
-[% link=c.config.external_url.tree_lister _ object.name.data.id %]
+[% link=c.config.external_url.tree_lister _ object.name.data.id _ ";host=norie.wormbase.org" %]
  
  				       
      <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
