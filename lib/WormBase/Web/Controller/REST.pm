@@ -768,7 +768,8 @@ sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$data) = $c->check_cache('available_widgets');
+#    my ($cache_id,$data) = $c->check_cache('available_widgets');
+    my ($cache_id,$data) = $c->check_cache('filecache','available_widgets');
 
     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     
@@ -860,13 +861,14 @@ sub widget_GET {
     }
     
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
+#    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
+    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
 
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
       $c->stash->{fields} = $cached_data;
-      $c->stash->{cache} = $cache_server if($cache_server);
+      $c->stash->{cache} = $cache_server if ($cache_server);
     } else {
 
       # No result? Generate and cache the widget.		
@@ -898,7 +900,8 @@ sub widget_GET {
       }
 
       # Cache the field data for this widget.
-      $c->set_cache($cache_id,$c->stash->{fields});
+#      $c->set_cache($cache_id,$c->stash->{fields});
+      $c->set_cache('filecache',$cache_id,$c->stash->{fields});
     }
 
     $c->stash->{class} = $class;
@@ -1234,7 +1237,8 @@ sub available_fields_GET {
 
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$data) = $c->check_cache('available_fields');
+#    my ($cache_id,$data) = $c->check_cache('available_fields');
+    my ($cache_id,$data) = $c->check_cache('filecache','available_fields');
 
     unless ($data) {	
 	my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
@@ -1243,7 +1247,8 @@ sub available_fields_GET {
 	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
 	    $data->{$field} = "$uri";
 	}
-	$c->set_cache($cache_id,$data);
+#	$c->set_cache($cache_id,$data);
+	$c->set_cache('filecache',$cache_id,$data);
     }
     
     $self->status_ok( $c, entity => { data => $data,
