@@ -1,4 +1,4 @@
-package WormBase::API::Object::GO_Term;
+package WormBase::API::Object::Go_term;
 use Moose;
 
 with 'WormBase::API::Role::Object';
