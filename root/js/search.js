@@ -58,11 +58,12 @@ function search() {
     location.href = '/search/' + cur_search_type + '/' + f;
 }
 
-function search_change(new_search) {
+function search_change(new_search, focus) {
   if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
   cur_search_type = new_search;
   
   $jq("#current-search").text(new_search.charAt(0).toUpperCase() + new_search.replace(/[_]/, ' ').slice(1));
+  if(focus){ $jq("#Search").focus();}
 }
 
 

@@ -249,7 +249,7 @@ sub get_user_info_GET{
   if(@users){
     $status_ok = 0;
     $message = "This account has already been linked";
-  }elsif($object->email->{data}){
+  }elsif($object && $object->email->{data}){
     my $emails = join (', ', map {"<a href='mailto:$_'>$_</a>"} @{$object->email->{data}});
     $message = "An email will be sent to " . $emails . " to confirm your identity";
   }else{
@@ -267,6 +267,12 @@ sub get_user_info_GET{
       },
   );
 
+}
+
+sub system_message :Path('/rest/system_message') :Args(1) :ActionClass('REST') {}
+sub system_message_POST {
+    my ($self,$c,$message_id) = @_;
+    $c->user_session->{close_system_message}->{$message_id} = 1;
 }
 
 

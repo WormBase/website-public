@@ -14,14 +14,12 @@
  [% UNLESS result_class; result_class = 'page'; END; %]
 
   <li>
-          [% wbid = item.name.id.remove(':') %]
-          [% wbid = wbid.remove('/') %]
-          [% wbid = wbid.remove(' ') %]
+          [% wbid = item.name.id.remove('[:/ &\.]') %]
           [% IF item.name.class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
           <div class="workbench-status-[% wbid %]"></div>
 
           <script>
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% result_class %]&url=[% item.name.url || get_url(result_class, item.name.id, item.name.taxonomy) %]&is_obj=[% is_obj %]");
+          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% item.name.class FILTER lower %]&url=[% (item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy)) | uri %]&is_obj=[% is_obj %]");
           </script>
 
  

@@ -6,8 +6,8 @@
     <tr align=left>
       <th>Page</th>
       <th>Time</th> 
-      <th>Report by</th>
-      <th>content</th>
+      <th>Author</th>
+      <th>Comment</th>
       <th></th>
     </tr>
       [% even = 1 %]

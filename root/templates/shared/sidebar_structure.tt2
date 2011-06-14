@@ -63,7 +63,8 @@
       [% title = '<span id="breadcrumbs">' _ title _ '</span>' %]
       <div id="page-title" class="[% section %]-bg">
       <h2>
-          [% wbid = this_object_id.remove(':') %]
+
+          [% wbid = this_object_id.remove('[:/ &\.]') %]
           <div class="workbench-status-[% wbid %]"></div>
           [% title %]          
       </h2>
@@ -75,10 +76,6 @@
      
 
   <div id="navigation">
-
-
-
-
     <div id="title">
       [% IF c.action.name == 'index' %]
         <h2><a href="#">WormBase</a></h2>
@@ -161,7 +158,7 @@
         [% save = 'reports' %]
         [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
 
-        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lcfirst %]&type=[% c.stash.section %]&id=[% object.name.data.id %]&url=[% url %]&save_to=[% save %]&is_obj=[% is_obj %]");
+        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lower %]&type=[% c.stash.section | uri %]&id=[% object.name.data.id | uri %]&url=[% url | uri %]&save_to=[% save %]&is_obj=[% is_obj %]");
 
       [%# END %]
 

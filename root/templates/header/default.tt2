@@ -3,6 +3,21 @@
 
 <!-- BEGIN boilerplate/banner -->
 <div id="wrap">
+
+      [% message_id = c.config.system_message.id %]
+      [% IF message_id AND !c.user_session.close_system_message.$message_id %]
+        <div id="system-message">
+          [% c.config.system_message.message %]
+          <span class="system-message-close" onClick="systemMessage('hide', '[% message_id %]')">
+            <span class=" ui-icon ui-icon-close"></span>
+          </span>
+        </div>
+        <div class="system-message-spacer" ></div>
+        <script>
+          systemMessage('show');
+        </script>
+      [% END %]
+
 <div id="header">
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
