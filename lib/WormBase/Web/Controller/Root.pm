@@ -43,7 +43,9 @@ sub footer :Path("/footer") Args(0) {
       my ($self,$c) = @_;
       $c->stash->{noboiler}=1;
       $c->stash->{template} = 'footer/default.tt2';
- } 
+} 
+
+
 =head2 DEFAULT
 
 The default action is run last when no other action matches.
@@ -642,7 +644,7 @@ sub end : ActionClass('RenderView') {
   if($path =~ /\.html/){
 	$c->serve_static_file($c->path_to("root/static/$path"));
   } else{
-  	$c->forward('WormBase::Web::View::TT') unless(  $c->req->path =~ /cgi-bin|cgibin/i || $c->action->name eq 'draw');
+  	$c->forward('WormBase::Web::View::TT') unless ($c->req->path =~ /cgi-bin|cgibin/i || $c->action->name eq 'draw');
  }
 
   # 404 errors will be caught in default.

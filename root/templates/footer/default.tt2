@@ -8,52 +8,93 @@
 
 <div id="footer">
     <div id="footer-nav">
+
        <div class="footer-column">
+          <div class="footer-title">About Nematodes</div>
+             <ul>
+               <li><a href="[% c.uri_for('/resources', 'documentation','nomenclature') %]">Nomenclature Guide</a></li>
+             </ul>                
+<!--	   </div> -->
+
+<!--       <div class="footer-column"> -->
           <div class="footer-title">About WormBase</div>
            <ul>
-             <li><a href="http://wiki.wormbase.org/index.php/Citing_WormBase">Citing WormBase</a></li>
-             <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy">Acceptable Use Policy<a/></li>
-             <li><a href="http://wiki.wormbase.org/index.php/Acceptable_use_policy#Privacy_statement">Privacy Statement</a></li>
-             <li><a href="[% c.uri_for('/resources', 'advisory_board') %]">Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#mission-statement' %]">Mission Statement</a></li> 
+              <li><a href="[% c.uri_for('/resources', 'documentation','advisory_board') %]">Scientific Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
+              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
+              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#copyright'         %]">Copyright Statement</a></li>
+              <li><a href="[% c.uri_for('/resources', 'documentation','citing_wormbase') %]">Citing WormBase</a></li>
            </ul>                
-         </div>
+       
+       </div>
 
 
        <div class="footer-column">
           <div class="footer-title">Support</div>
            <ul>
+    	     <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDRxMEFfUnV0Q1JTRk9fcHNiODNFQnc6MQ">Request a private demo</a></li>
              <li><a href="/tools/operator">Chat with an online curator</a></li>
-             <li><a href="#">Submit data</a></li>
-             <li><a href="mailto:feedback@wormbase.org">Ask a question</a></li>
+             <li><a href="[% c.uri_for('/resources', 'documentation','submit_data') %]">Submit data to WormBase</a></li>
+             <li><a href="mailto:feedback@wormbase.org">Ask a question by email</a></li>
            </ul>                
          </div>
 
     <div class="footer-column">
-       <div class="footer-title">Social</div>
+       <div class="footer-title">Community</div>
         <ul>
           <li><a href="http://forums.wormbase.org">WormBase Discussion Forums</a></li>
-          <li><a href="http://blog.wormbase.org">WormBase Blog</a></li>	  
+          <li><a href="http://blog.wormbase.org">M9: The WormBase Blog</a></li>	  
+	  <li><a href="http://twitter.com/wormbase">Follow us on Twitter</a></li>
         </ul>
  
     </div>
 
+
     <div class="footer-column">
-       <div class="footer-title">Recent Papers</div>
+       <div class="footer-title">Beta Test</div>
         <ul>
-          <li></li>
-          <li></li>
+          <li>Known Issues</li>
+          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">User Survey</a></li>
           <li></li>
         </ul>
     </div>
 
     <div class="footer-column">
-       <div class="footer-title">Status</div>
+       <div class="footer-title">Data Freezes</div>
         <ul>
-          <li>Beta Test Known Issues</li>
-          <li>User Survey</li>
-          <li></li>
+	  <li>
+                 <select id="data-freezes"> 
+                     <option selected="selected" value="--">--</option> 
+                     <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
+                     <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
+                     <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option> 
+                     <option value="http://ws204.wormbase.org">WS204 (13 Aug 2009)</option> 
+                     <option value="http://ws200.wormbase.org">WS200 (16 Mar 2009)</option> 
+                     <option value="http://ws190.wormbase.org">WS190 (07 May 2008)</option> 
+                     <option value="http://ws180.wormbase.org">WS180 (07 Sep 2007)</option> 
+                     <option value="http://ws170.wormbase.org">WS170 (09 Feb 2007)</option> 
+                     <option value="http://ws160.wormbase.org">WS160 (31 Jul 2006)</option> 
+                     <option value="http://ws150.wormbase.org">WS150 (30 Nov 2005)</option> 
+                     <option value="http://ws140.wormbase.org">WS140 (26 Mar 2005)</option> 
+                     <option value="http://ws130.wormbase.org">WS130 (16 Aug 2004)</option> 
+                     <option value="http://ws120.wormbase.org">WS120 (07 Mar 2004)</option> 
+                     <option value="http://ws110.wormbase.org">WS110 (01 Oct, 2003)</option> 
+                     <option value="http://ws100.wormbase.org">WS100 (10 May 2003)</option> 
+                 </select>  
+           </li>
+        </ul>
+
+
+       <div class="footer-title">Developer/Data Mining</div>
+        <ul>
+	  <li>Data mining resources</li>
+          <li>APIs: RESTful | Perl</li>
+          <li>Amazon EC2 WormBase AMI</li>
+	  <li>Code Repositories: <a href="http://github.com/organizations/WormBase">git</a>; <a href="http://bitbucket.org/tharris/wormbase">hg</a></li>
         </ul>
     </div>
+
    </div>
 
    <br clear="all" />
@@ -64,9 +105,7 @@
       -->     
           <p>
              
-               WormBase is supported by a grant from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a> <br />
-               at the <a href="http://www.nih.gov/">US National Institutes of Health</a> #P41 HG02223 and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
-
+               WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a><br /> at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
 
           </p>
 
@@ -98,6 +137,6 @@
       Database Version [% constants.acedb_version %] 
       Software Version: [% c.config.codename %]
       [% server_details("") %]
-      Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s-->                
+      Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s
  
 -->

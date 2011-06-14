@@ -1,6 +1,14 @@
  $jq(document).ready(function() {
     window.onhashchange = readHash;
 
+   // Simple redirect to frozen releases (in footer).
+   // Could probably be generic.
+   $jq('#data-freezes').change(function(){	   
+	   alert($jq(this).val());
+	   window.open($jq(this).val(),'_blank');
+       });
+
+
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
@@ -534,6 +542,10 @@
           }
         });
     }
+
+
+
+
 
 
 
