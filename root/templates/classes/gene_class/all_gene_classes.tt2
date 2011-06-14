@@ -1,0 +1,18 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[%
+
+WRAPPER $field_block title="Gene Classes" key="all_gene_classes";
+
+   build_data_table(order=['gene_class','laboratory','description','phenotype','genes'],
+                    columns={ gene_class     => 'Gene Class',
+		    	      laboratory     => 'Laboratory',
+		              description    => 'Description',
+			      phenotype      => 'Phenotype',
+			      genes          => 'Number of Genes',
+			      },
+                    key='all_gene_classes'); 
+END;
+
+%]
