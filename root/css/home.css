@@ -244,6 +244,7 @@ div.more .ui-icon {
   right:0;
   top:100%;
   z-index:598;
+  font-size:0.9em;
 }
 
 #searchSelect ul li{

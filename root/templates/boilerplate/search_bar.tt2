@@ -13,7 +13,7 @@
       <span id="current-search" style="float:right">All</span>
       <ul>
       [% FOREACH option IN c.config.search_dropdown.option %]
-              <li value="[%- option.id -%]" onClick='search_change("[% option.id %]");'><a>[%- option.title -%]</a></li>
+              <li value="[%- option.id -%]" onClick='search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
       [% END %]
       </ul>
     </li>
