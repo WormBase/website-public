@@ -535,11 +535,14 @@
 
 
 
+  var system_message = false;
   function systemMessage(action, messageId){
     if(action == 'show'){
       $jq("#system-message").add(".system-message-spacer").show().animate({height:"20px"}, 'slow');
+      system_message = true;
     }else{
       $jq("#system-message").add(".system-message-spacer").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
+      system_message = false;
     }
   }
