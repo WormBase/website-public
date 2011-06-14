@@ -133,10 +133,8 @@
 
 
 <!--  
-
       Database Version [% constants.acedb_version %] 
       Software Version: [% c.config.codename %]
       [% server_details("") %]
       Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s
- 
 -->
