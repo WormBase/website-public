@@ -59,9 +59,10 @@
 
 
       /* This is the system-wide dialog */
-      $jq(".system-message-close").click(function() {
-	      $jq("div#system-message").hide();
-	  })
+//       $jq(".system-message-close").click(function() {
+// 	      $jq("div#system-message").hide();
+//           $jq("div.system-message-spacer").hide();
+// 	  })
   
       $jq(".role-update").live('click',function() {
 	$jq.ajax({
@@ -260,9 +261,6 @@
         });
       return false;
       });
-
-    
-
     });
 
   //this function displayes the notification message at the top of the report page
@@ -544,8 +542,14 @@
     }
 
 
-
-
-
-
-
+  var system_message = false;
+  function systemMessage(action, messageId){
+    if(action == 'show'){
+      $jq("#system-message").add(".system-message-spacer").show().animate({height:"20px"}, 'slow');
+      system_message = true;
+    }else{
+      $jq("#system-message").add(".system-message-spacer").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
+      $jq.post("/rest/system_message/" + messageId);
+      system_message = false;
+    }
+  }

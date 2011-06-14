@@ -1191,11 +1191,6 @@ END;
 
 [% MACRO report_page BLOCK;
 
-   IF c.config.system_message;
-      '<div id="system-message">' 
-            _ c.config.system_message 
-            _ '<a class="system-message-close" href="#">Dismiss</a></div>';
-   END;
 
    widgets = [];
    widgets.push({ title="Page Content" type="title"});

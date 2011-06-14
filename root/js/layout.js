@@ -183,6 +183,9 @@ $jq(function() {
         if (objSmallerThanWindow){
           if ($window.scrollTop() > offset) {
               var newpos = $window.scrollTop() - offset + 0 + at_default;
+              if(system_message){
+               newpos = newpos + 20; 
+              }
 
               if (newpos > bottomPos) {
                   newpos = bottomPos;

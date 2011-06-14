@@ -135,39 +135,33 @@ div#header .release_date { }
 
 /* System message, for displaying site-wide warnings and alerts */
 #system-message {
-    border: 1px solid #C0D8BE;
-    background: #E4F6E0;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
-    line-height: 16px;
-    padding: 1em 19px 1em 12px;
-/*    margin-bottom: 15px; */
-    margin-top: 25px;
-    margin-bottom: 25px;
-    margin-left:10px;
-    margin-right:0em;
-    border-top-left-radius: 8px 8px;
-    border-top-right-radius: 8px 8px;
-    border-bottom-right-radius: 8px 8px;
-    border-bottom-left-radius: 8px 8px;
+  background: #406F9C;
+  color:white;
+  margin:0em;
+  text-align:center;
+  font-weight:bold; 
+  position:fixed;
+  z-index:999999;
+  border-bottom:1px solid black;
 }
 
-
-#system-message .system-message-close:hover {
-    background: url('/img/buttons/dismiss.png') 100% -16px no-repeat;
-    color: #666;
+#system-message a{
+  color:white;
+  text-decoration:underline;
 }
-
 
 #system-message .system-message-close {
-   background: url('/img/buttons/dismiss.png') 100% 0 no-repeat;
-   display: block-inline;
-   color: #999;
-   float: right;
-   font-size: 11px;
-   padding-right: 15px;
-   text-decoration: none;
+  float:right;
+  background: white;
+  margin:0.2em 1.5em 0 0;
+  cursor:pointer;
+}
+
+.system-message-spacer, #system-message {
+  height:0px;
+  width:100%;
+  padding: 0.3em 0em 0.2em;
+  display:none;
 }
 
 /* user warnings */
