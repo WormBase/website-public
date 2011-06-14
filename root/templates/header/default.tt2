@@ -82,7 +82,10 @@
           </ul>
       </li>
     [% END %]
-  <span class="status-bar"></span>
+
+    <li><a href="[% c.uri_for('resources','downloads') %]">Downloads</a></li>
+ 
+    <span class="status-bar"></span>
     </ul>
   </div>
  

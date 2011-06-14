@@ -18,7 +18,101 @@ Model for the Ace ?Gene_class class.
 
 http://wormbase.org/species/gene_class
 
-=head1 METHODS/URIs
+=head1 CLASS LEVEL METHODS
+
+=cut
+
+
+#######################################
+#
+# Class-level methods
+#
+#######################################
+
+=head2 all_gene_classes
+
+=head3 all_gene_classes
+
+This method will return a data structure containing
+all gene classes.
+
+=over
+
+=item PERL API
+
+ $data = $model->all_gene_classes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+The keyword 'all'.
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_class/all/all_gene_classes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub all_gene_classes {
+    my $self   = shift;
+
+    my $db   = $self->ace_dsn->dbh;
+    my @gene_class = $db->fetch(-query=>qq/find Gene_class/);
+    my @rows;
+    
+    foreach (@gene_class) {
+	my $lab   = $_->Designating_laboratory;
+	my $desc  = $_->Description; 
+	my $phene = $_->Phenotype;
+	my @genes = $_->Genes;
+        push @rows, { gene_class => $self->_pack_obj($_),
+		      laboratory => $self->_pack_obj($lab),
+		      description => "$desc",
+		      phenotype   => "$phene",
+		      genes       => scalar @genes };
+    }
+    
+    return { description => 'a summary of all gene classes',
+	     data        => \@rows };   
+}
+
+
+#######################################
+#
+# Object-level methods
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS
 
 =cut
 
@@ -352,6 +446,7 @@ sub reassigned_genes {
 		 data        => \%data };    
     return $data;
 }
+
 
 ##############################
 #
