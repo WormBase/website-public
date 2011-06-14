@@ -15,8 +15,6 @@ use parent 'WormBase::Web::Controller';
 #   /resources/CLASS/OBJECT -> a report page
 #
 #   And things that don't handle objects
-#   /resources/advisory_board
-#   /resources/nomenclature
 #   /resources/reagents
 # 
 ##############################################################
@@ -47,7 +45,7 @@ sub resources_class_index :Path('/resources') :Args(1)  {
       $c->stash->{section} = 'resources';
       $c->stash->{class}   = $class;
       
-      # Special cases: like advisory_board, reagents, nomenclature
+      # Special cases: like reagents
       # These will have a property of "static" set to "true".
       # We need to generate links to these a bit differently
       # since they do not have objects associated with them:
@@ -67,10 +65,27 @@ sub resources_class_index :Path('/resources') :Args(1)  {
 
 }
 
+
+
 # eg /resources/{CLASS}/{OBJECT}
 sub resources_report :Path("/resources") Args(2) {
     my ($self,$c,$class,$name) = @_;
     $self->_get_report($c, $class, $name);
+}
+
+# Documentation: 
+# Two directory hierarcy:
+# about: privacy, copyright, mission statement (one document)
+# advisory_board
+sub documentation :Path('/resources/documentation') Args(1) {
+    my ($self,$c,$category) = @_;
+    $c->stash->{section}  = 'resources';
+    $c->stash->{template} = "resources/documentation/$category.tt2";
+}
+
+sub downloads :Path('/resources/downloads') Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{template} = "resources/downloads.tt2";
 }
 
 

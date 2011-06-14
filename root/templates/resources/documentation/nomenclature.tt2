@@ -1,7 +1,12 @@
+<div id="page-with-no-widgets">
 
+<ol id="toc"></ol>
+     
 
+<div id="documentation-with-toc">
+  <h1>Nematode Nomenclature Guide</h1>
 
-<h1>Genetic Nomenclature for <span class="species">Caenorhabditis elegans</span></h1>
+  <h2>Genetic Nomenclature for <span class="species">Caenorhabditis elegans</span></h2>
 
 <p>
 Genetic nomenclature for <span class="species">Caenorhabditis elegans</span>
@@ -11,7 +16,7 @@ with the <a href="http://www.cbs.umn.edu/CGC/">
 </p>
 
 
-<h2> How to Register a New Gene Class or Gene Name</h2>
+<h3> How to Register a New Gene Class or Gene Name</h3>
 
 <p>
 Investigators wishing to register new gene names for 
@@ -21,7 +26,7 @@ or by email application to <span class="email">genenames@wormbase.org</span>
 </p>
 
 
-<h2> How to Register a New Laboratory and Receive Lab, Strain and Allele designations  </h2>
+<h3> How to Register a New Laboratory and Receive Lab, Strain and Allele designations  </h3>
 
 <p>
 Specific identifying codes (CGC designations) are assigned to each
@@ -38,8 +43,7 @@ Investigators requiring new CGC designations should apply to <span class="email"
 </p>
 
 
-
-<h1> Summary Guidelines for Proposing New Gene Names</h1>
+<h3> Summary Guidelines for Proposing New Gene Names</h3>
 
 <ul>
 <li>
@@ -103,7 +107,7 @@ publication or disclosure in an abstract.
 
 
 
-<h1>Standard Genetic Nomenclature Recommendations</h1>
+<h2>Standard Genetic Nomenclature Recommendations</h2>
 
 <p>
 This summary is based on the original proposals for 
@@ -114,7 +118,7 @@ recommendations that have been distributed in
 </p>
 
 
-<h2>Genetic Loci</h2>
+<h3>Genetic Loci</h3>
 
 <ul>
 <li>
@@ -178,7 +182,7 @@ eif-3.C</em> encode proteins of the conserved translation factor eIF3.
 </ul>
 
 
-<h3>Gene Name Conflicts</h3>
+<h4>Gene Name Conflicts</h4>
 
 <p>
 Gene names that have been established in the published literature
@@ -191,7 +195,7 @@ concerned.
 </p>
 
 
-<h3>Homologous Genes</h3>
+<h4>Homologous Genes</h4>
 
 <p>
 If a homolog of a known <span class="species">C. elegans</span> gene
@@ -207,7 +211,7 @@ defines the <span class="species">C. elegans</span> synaptotagmin gene.
 </p>
 
 
-<h3>Alleles and Mutations</h3>
+<h4>Alleles and Mutations</h4>
 
 <ul>
 <li>
@@ -250,7 +254,7 @@ or, more commonly, by including the plus sign in parentheses, <em>dpy-5(+)</em>.
 </ul>
 
 
-<h3>Gene Knockouts</h3>
+<h4>Gene Knockouts</h4>
 
 <li>
 Most gene knockouts constructed to date are small deletions (<5 kb) generated
@@ -277,7 +281,7 @@ as described in the Chromosomal Aberrations section.
 </ul>
 
 
-<h3>Modifers: Suppressors, Revertants and Enhancers</h3>
+<h4>Modifers: Suppressors, Revertants and Enhancers</h4>
 
 <li>
 There is no special nomenclature for modifier mutations. Many extragenic
@@ -299,7 +303,7 @@ are named differently, as described in the Chromosomal Aberrations section.
 
 
 
-<h3>Chromosomal Aberrations</h3>
+<h4>Chromosomal Aberrations</h4>
 
 <li>
 Duplications (<em>Dp</em>) deficiencies (<em>Df</em>), inversions (<em>In</em>)
@@ -312,7 +316,7 @@ structure can be designated using the abbreviation <em>C</em>, e.g., <em>mnC1(II
 </ul>
 
 
-<h2>Transposons and Transposon Insertions</h2>
+<h3>Transposons and Transposon Insertions</h3>
 
 <ul>
 <li>
@@ -351,7 +355,7 @@ insertion of a Mos transposon into an intergenic region on <em>LGIII</em>.
 </ul>
 
 
-<h2>RFLPs and SNPs</h2>
+<h3>RFLPs and SNPs</h3>
 
 <ul>
 <li>
@@ -369,7 +373,7 @@ identified in the laboratory of K. Kornfeld.
 </p>
 
 
-<h2> Natural Copy Number Variants</h2>
+<h3> Natural Copy Number Variants</h3>
 
 <p>
 Dozens of independent natural isolates of <span class="species">C. elegans</span>
@@ -385,7 +389,7 @@ by a number. Duplications and insertions are named with the prefix <em>niDp</em>
 
 
 
-<h2>Introgressed regions in near-isogenic lines (aka congenic lines)</h2>
+<h3>Introgressed regions in near-isogenic lines (aka congenic lines)</h3>
 
 <p>
 Genetic regions that have been introgressed from one natural isolate of 
@@ -405,7 +409,7 @@ using the symbol &gt;, with this example being written <em>qqR1(X, CB4856&gt;N2)
 </p>
 
 
-<h2>Transgenes</h2>
+<h3>Transgenes</h3>
 
 <ul>
 <li>
@@ -449,7 +453,7 @@ translational fusions.
 </ul>
 
 
-<h2>Genotypes</h2>
+<h3>Genotypes</h3>
 
 <ul>
 
@@ -525,7 +529,7 @@ also be written <em>dpy-5 +/+ unc-13 or dpy-5/unc-13.</em>
 </ul>
 
 
-<h2>Mitochondrial Genome</h2>
+<h3>Mitochondrial Genome</h3>
 
 <p>
 The mitochondrial genotype of a worm can be expressed using the standard
@@ -538,7 +542,7 @@ can be expressed using a double forward slash, //. For example: <em>uaDf5//+</em
 
 
 
-<h2>DNA sequences</h2>
+<h3>DNA sequences</h3>
 
 <ul>
 <li>
@@ -566,7 +570,7 @@ EST (Expressed Sequence Tag) clones have received names with prefixes such as cm
 </ul>
 
 
-<h2>Proteins</h2>
+<h3>Proteins</h3>
 
 <ul>
 <li>
@@ -584,7 +588,7 @@ mutant TRA-1A protein with a Pro to Leu change at codon 79 would be written: TRA
 </ul>
 
 
-<h2>RNA Molecules</h2>
+<h3>RNA Molecules</h3>
 
 <ul>
 <li>
@@ -603,7 +607,7 @@ Example: miR-2 for the RNA derived from <em>mir-2</em>.
 </ul>
 
 
-<h2>Phenotypes</h2>
+<h3>Phenotypes</h3>
 
 <ul>
 <li>
@@ -637,7 +641,7 @@ movement, but dumpy with respect to body shape).
 
 
 
-<h2>RNAi Phenotypes</h2>
+<h3>RNAi Phenotypes</h3>
 
 <ul>
 <li>
@@ -658,7 +662,7 @@ phenotypes, the more general phenotype descriptors could be used
 </ul>
 
 
-<h2>Strains</h2>
+<h3>Strains</h3>
 
 <ul>
 <li>
@@ -686,7 +690,7 @@ or accumulation of modifier mutations.
 </ul>
 
 
-<h2>Sources</h2>
+<h3>Sources</h3>
 
 <ul>
 <li>
@@ -699,3 +703,6 @@ should be addressed to: <span class="email">genenames@wormbase.org</span> or
 to the curator for <span class="species">C. elegans</span> Genetic Mapping and Genetic Nomenclature (Dr Jonathan Hodgkin, Genetics Unit, Department of Biochemistry, University of Oxford, UK): <span class="email">jonathan.hodgkin@bioch.ox.ac.uk</span>.
 </li>
 </ul>
+
+</div>
+</div>

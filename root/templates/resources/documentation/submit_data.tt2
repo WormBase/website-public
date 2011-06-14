@@ -1,0 +1,45 @@
+<h1> 
+     Submit your data to WormBase
+</h1> 
+<div class="container"> 
+     <p> 
+     	 WormBase offers multiple options for submitting
+	 	  	     your data. We can also provide assistance in formatting and processing
+			     	  	    for easy incorporation into WormBase.
+					    	         By submitting your data to WormBase, you help to ensure its long-term
+							                availability as well as place it within a rich, highly cross-referenced context.
+									</p> 
+</div> 
+<div id="narrowcontainer"> 
+<h3> 
+     Online forms
+</h3> 
+<div class="block"> 
+     Online submission of data greatly helps us integrate data
+     	    into WormBase using automatic verification and enforcing
+	    	 standardization of formats and names. We encourage users to submit their data via our <a href="/db/curate/online_forms">online forms</a> of common data types. Doing so ensures that we capture all the data we need thus facilitating prompt inclusion of your data into WormBase.
+</div> 
+<h3> 
+     Email the WormBase Team
+</h3> 
+<div class="block"> 
+     Not sure which form to use? Too busy?  Send us an email using <a href="/db/misc/feedback">this web form</a> or to <div class="point"> 
+     	 <a href="mailto:submit@wormbase.org">submit@wormbase.org</a> 
+	 </div> 
+	 <b> 
+	     Rest assured, we'll see your email!
+	     </b> 
+	     <br /> 
+	      Emails sent to this address are delivered to the entire
+	      	     WormBase development team. We'll triage your query and respond
+		     	      promptly.
+</div> 
+<h3> 
+     Email a curator or developer directly
+</h3> 
+<div class="block"> 
+     Have a specific question, comment, or complaint?  Would you
+         like your comment to remain in confidence?  Feel free to
+	     contact one of our <a href="/wiki/index.php/WormBase_Consortium">curators or developers</a> directly.
+</div> 
+</div> 

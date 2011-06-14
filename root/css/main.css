@@ -456,6 +456,36 @@ li.visible div.widget-container {
     line-height:1.2em;
 }
 
+/* pages in resources/documentation/* have no widgets. */
+/* We might want to add TOCs to some as well. See resources/documentation/nomenclature.tt2 as guide */
+#page-with-no-widgets  {
+    width:1000px;
+    margin-top:2em;
+}
+
+#page-with-no-widgets #documentation-with-toc {
+   float:right;
+   width:550px;
+}
+
+#page-with-no-widgets #documentation-without-toc {
+   width:900px;
+   margin-right:auto;
+   margin-left:auto;
+}
+
+#page-with-no-widgets #toc {
+    float:left;
+    margin-left:50px;
+    width:300px;
+    padding:20px;
+    padding-left:25px;
+    font-size:0.8em;
+    background-color:#E9EEF2;
+    border:1px solid gray;
+}
+
+
 
 .widget-header {
     background: #C2D1DF;
@@ -634,7 +664,7 @@ div#footer a:hover{
     clear:both;
     padding: 0;
 /*    height:12em; */
-    height:20em;
+    height:22em;
     font-size:0.9em;
 }
 
@@ -665,21 +695,24 @@ div#footercredit a{
     margin:0 auto;
     height:2em;
 /*    padding-bottom:5em; */
-    padding-bottom:10em;
+    padding-bottom:12em;
 }
 
 
 #footer .footer-column {
   float:left; 
   display: inline-block;
+  line-height:1.3em;
   padding:1.4em;
   width:15%;
 }
 
 .footer-column .footer-title {
     font-weight: bold;
+/*    font-size:1.1em; */
     margin-bottom: 1em;
     white-space: nowrap;
+    padding-top:10px;
 }
 
 
@@ -692,7 +725,7 @@ div#footercredit a{
 
 
 #footer li a {
-    display:block;
+/*    display:block; */
 }
 
 
