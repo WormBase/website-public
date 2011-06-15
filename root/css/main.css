@@ -451,6 +451,37 @@ li.visible div.widget-container {
 }
 
 
+/* pages in resources/documentation/* have no widgets. */
+/* We might want to add TOCs to some as well. See resources/documentation/nomenclature.tt2 as guide */
+#page-with-no-widgets  {
+    width:1000px;
+    margin-top:2em;
+}
+
+#page-with-no-widgets #documentation-with-toc {
+   float:right;
+   width:550px;
+}
+
+#page-with-no-widgets #documentation-without-toc {
+   width:900px;
+   margin-right:auto;
+   margin-left:auto;
+}
+
+#page-with-no-widgets #toc {
+    float:left;
+    margin-left:50px;
+    width:300px;
+    padding:20px;
+    padding-left:25px;
+    font-size:0.8em;
+    background-color:#E9EEF2;
+    border:1px solid gray;
+}
+
+
+
 .widget-header {
     background: #C2D1DF;
 }
