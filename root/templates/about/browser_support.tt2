@@ -1,0 +1,213 @@
+<div id="page-with-no-widgets">
+
+<ul id="toc"></ul>
+
+<div id="documentation-with-toc">
+
+<h1>Browser Support Statement</h1>
+<p>
+This document describes the browser support policy at WormBase.
+</p>
+<p>
+Support decisions are based on current site usage statistics (November 2010) as well as anticipated browser and OS releases. The aim is to cover > 95% of requests with A-grade support as defined below.
+</p>
+
+<h2>Operating Systems</h2>
+
+<p>
+Operating systems in use among WormBase users are evenly divided between MacOS and Windows, with other operating systems contributing a tiny minority percentage. 
+</p>
+<p>
+<table border="1">
+   <tr><th>OS</th><th>% Requests</th></tr>
+   <tr><td>Mac OS</td><td>50%</td></tr>
+   <tr><td>Windows</td><td>48%</td></tr>
+   <tr><td>Linux</td><td>2%</td></tr>
+</table>
+</p>
+<h3>Windows XP  and Windows 7</h3>
+<p>
+Windows XP users make up more than half of all Windows users but numbers should be declining dramatically in 2011.  For now, we will provide A-grade support for the most current browsers on XP, to be revisited in 2011.
+</p>
+
+<h3>Mac OS X</h3>
+<p>
+Mac users are split between three OS versions 10.6 (47%); 10.5 (37%); and 10.4 (5%).  Apple is expected to release a new operating system (10.7) in 2011.
+</p>
+
+<h3>iOS devices and Android</h3>
+
+<p>
+As of November 2010, WormBase is seeing increasing access through mobile devices like the iPad. We expect tablet style devices to become fixtures in laboratory environments. Full support for browsers on these devices is planned.
+</p>
+
+<h2>Browser Use</h2>
+
+<p>
+<table border="1">
+   <tr><th>Browser</th><th>Requests</th></tr>
+   <tr><td>Firefox</td><td>37%</td></tr>
+   <tr><td>Safari</td><td>31%</td></tr>
+   <tr><td>Internet Explorer</td><td>20%</td></tr>
+   <tr><td>Chrome</td><td>9%</td></tr>
+   <tr><td>others</td><td>3%</td></tr>
+</table>
+</p>
+
+<h2>Support Matrix</h2>
+
+  <style>
+     .agrade {
+         color:green;
+      }
+      .cgrade {
+          color:red;
+       }
+   </style>
+<p> 
+  <table summary="This chart lists browsers that receive A-Grade support as defined by Graded Browser Support." border="1">
+      <thead>
+        <tr border="1" class="first">
+          <td></td>
+          <th><abbr title="Microsoft Windows XP">Win XP</abbr></th>
+          <th><abbr title="Microsoft Windows 7">Win 7</abbr></th>
+          <th><abbr title="Macintosh 10.5">Mac 10.5</abbr></th>
+          <th><abbr title="Macintosh 10.6">Mac 10.6</abbr></th>
+          <th><abbr title="Linux (Ubuntu 9)">Linux</abbr></th>
+          <th><abbr title="iOS 4.x">iOS 4.x</abbr></th>
+          <th><abbr title="Android 2.2">Android 2.2</abbr></th>
+
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <th><abbr title="Mozilla Firefox 3.6.x">Firefox 3.6.x</abbr></th>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th><abbr title="Mozilla Firefox 4.x">Firefox 4.x</abbr></th>
+          <td class="na"></td>
+          <td class="agrade">A-grade (upon GA release)</td>
+          <td class="na"></td>
+          <td class="agrade">A-grade (upon GA release)</td>
+          <td class="agrade">A-grade (upon GA release)</td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th><abbr title="Chrome (latest stable)">Chrome (latest stable)</abbr></th>
+          <td class="na"></td>
+          <td class="agrade">A-grade</td> 
+          <td class="na"></td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th><abbr title="Internet Explorer 9.0">IE 9.0</abbr></th>
+          <td class="na"></td>
+          <td class="agrade">A-grade (upon GA release)</td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+       <tr>
+          <th><abbr title="Internet Explorer 8.0">IE 8.0</abbr></th>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+       <tr>
+          <th><abbr title="Internet Explorer 7.0">IE 7.0</abbr></th>
+          <td class="na"></td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th>Safari 5.0</th>
+          <td class="na"></td>
+          <td class="cgrade">C-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th>Safari for iOS</th>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="agrade">A-grade</td>
+          <td class="na"></td>
+        </tr>
+
+        <tr>
+          <th>Webkit for Android</th>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="na"></td>
+          <td class="agrade">A-grade</td>
+        </tr>
+
+      </tbody>
+    </table>
+</p>
+
+<h2>Grade Level Definitions</h2>
+<p></p>
+
+<h3>A-grade</h3>
+<p>
+A-grade support is the highest support level. By taking full advantage of the powerful capabilities of modern web standards, the A-grade experience provides advanced functionality and visual fidelity.
+</p>
+<p>
+A-grade browsers are identified on a whitelist. Approximately 96% of our audience enjoys an A-grade experience.
+</p>
+<p>
+Summary: A-grade browsers are identified, capable, modern and common. QA tests all A-grade browsers, and bugs are addressed with high priority.
+</p>
+<h3>C-grade</h3>
+<p>
+C-grade supported browser/OS combinations should be able to view content and navigate site without added CSS or Javascript support.
+</p>
+<p>
+QA testing of C-grade browsers will be done in the browser itself or in a modern browser with JavaScript and CSS disabled.Verify that JavaScript and CSS resources are withheld from C-grade browsers based on user agent.
+</p>
+
+<p>
+Author: Todd Harris (todd@wormbase.org; todd@hiline.co)
+</p>
+
+</div>
+</div>

@@ -261,26 +261,28 @@ sub _build_other_names {
 This method returns a data structure containing
 the best BLASTP matches for the current gene or protein.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->best_blastp_matches();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class of gene or protein and a gene
 or protein ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -294,7 +296,7 @@ or protein ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|PROTEIN]/[OBJECT]/best_blastp_matches
 
