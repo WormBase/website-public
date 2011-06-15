@@ -182,11 +182,7 @@ $jq(function() {
         var objSmallerThanWindow = $sidebar.outerHeight() < $window.height();
         if (objSmallerThanWindow){
           if ($window.scrollTop() > offset) {
-              var newpos = $window.scrollTop() - offset + 0 + at_default;
-              if(system_message){
-               newpos = newpos + 20; 
-              }
-
+              var newpos = $window.scrollTop() - offset + at_default + system_message;
               if (newpos > bottomPos) {
                   newpos = bottomPos;
               }

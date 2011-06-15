@@ -157,7 +157,7 @@ div#header .release_date { }
   cursor:pointer;
 }
 
-.system-message-spacer, #system-message {
+.system-message {
   height:0px;
   width:100%;
   padding: 0.3em 0em 0.2em;
@@ -450,6 +450,7 @@ li.visible div.widget-container {
     line-height:1.2em;
 }
 
+
 /* pages in resources/documentation/* have no widgets. */
 /* We might want to add TOCs to some as well. See resources/documentation/nomenclature.tt2 as guide */
 #page-with-no-widgets  {
@@ -659,7 +660,7 @@ div#footer a:hover{
     clear:both;
     padding: 0;
 /*    height:12em; */
-    height:22em;
+    height:20em;
     font-size:0.9em;
 }
 
@@ -690,24 +691,21 @@ div#footercredit a{
     margin:0 auto;
     height:2em;
 /*    padding-bottom:5em; */
-    padding-bottom:12em;
+    padding-bottom:10em;
 }
 
 
 #footer .footer-column {
   float:left; 
   display: inline-block;
-  line-height:1.3em;
   padding:1.4em;
   width:15%;
 }
 
 .footer-column .footer-title {
     font-weight: bold;
-/*    font-size:1.1em; */
     margin-bottom: 1em;
     white-space: nowrap;
-    padding-top:10px;
 }
 
 
@@ -720,7 +718,7 @@ div#footercredit a{
 
 
 #footer li a {
-/*    display:block; */
+    display:block;
 }
 
 
