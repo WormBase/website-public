@@ -19,12 +19,12 @@
 <!--       <div class="footer-column"> -->
           <div class="footer-title">About WormBase</div>
            <ul>
-              <li><a href="[% c.uri_for('/userguide','policies') _ '#mission-statement' %]">Mission Statement</a></li> 
-              <li><a href="[% c.uri_for('/userguide','advisory_board') %]">Scientific Advisory Board</a></li>
-              <li><a href="[% c.uri_for('/userguide','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
-              <li><a href="[% c.uri_for('/userguide','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
-              <li><a href="[% c.uri_for('/resources','policies') _ '#copyright'         %]">Copyright Statement</a></li>
-              <li><a href="[% c.uri_for('/resources','citing_wormbase') %]">Citing WormBase</a></li>
+              <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission Statement</a></li> 
+              <li><a href="[% c.uri_for('/about','advisory_board') %]">Scientific Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright Statement</a></li>
+              <li><a href="[% c.uri_for('/about','citing_wormbase') %]">Citing WormBase</a></li>
            </ul>                
        
        </div>

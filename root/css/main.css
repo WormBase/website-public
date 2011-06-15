@@ -477,8 +477,9 @@ li.visible div.widget-container {
     font-size:0.8em;
     background-color:#E9EEF2;
     border:1px solid gray;
-}
 
+  list-style: none; 
+}
 
 
 .widget-header {

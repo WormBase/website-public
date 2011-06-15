@@ -4,6 +4,6 @@
 
 <ul>
 [% FOREACH class IN classes.sort %]
-  <li><a href="/userguide/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
+  <li><a href="/userguide/developers/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
 [% END %]
 </ul>   
