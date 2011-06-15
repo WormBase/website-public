@@ -1,14 +1,6 @@
  $jq(document).ready(function() {
     window.onhashchange = readHash;
 
-   // Simple redirect to frozen releases (in footer).
-   // Could probably be generic.
-   $jq('#data-freezes').change(function(){	   
-	   alert($jq(this).val());
-	   window.open($jq(this).val(),'_blank');
-       });
-
-
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
@@ -542,14 +534,14 @@
     }
 
 
-  var system_message = false;
+
+  var system_message = 0; //used for the scrolling sidebar - amount to add to top-margin
   function systemMessage(action, messageId){
     if(action == 'show'){
-      $jq("#system-message").add(".system-message-spacer").show().animate({height:"20px"}, 'slow');
-      system_message = true;
+      $jq(".system-message").show().animate({height:"20px"}, 'slow');
+      system_message = 20; 
     }else{
-      $jq("#system-message").add(".system-message-spacer").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
+      $jq(".system-message").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
-      system_message = false;
     }
   }
