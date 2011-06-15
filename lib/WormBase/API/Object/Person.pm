@@ -18,8 +18,6 @@ Model for the Ace ?Person class.
 
 http://wormbase.org/resources/person
 
-=head1 METHODS/URIs
-
 =cut
 
 has 'address_data' => (
@@ -72,6 +70,29 @@ has 'publication_data' => (
     }
     
 );
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
+
 
 #######################################
 #

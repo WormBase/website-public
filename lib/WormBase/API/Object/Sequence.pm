@@ -22,8 +22,6 @@ Model for the Ace ?Sequence class.
 
 http://wormbase.org/species/sequence
 
-=head1 METHODS/URIs
-
 =cut
 
 
@@ -129,6 +127,28 @@ sub _build_type {
     $type ||= 'unknown';
     return $type;
 }
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
 
 
 ############################################################

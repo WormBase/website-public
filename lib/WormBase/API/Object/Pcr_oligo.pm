@@ -26,8 +26,6 @@ when specific to a single Ace model.
 
 http://wormbase.org/resources/pcr_oligo
 
-=head1 METHODS/URIs
-
 =cut
 
 has '_segment' => (
@@ -62,6 +60,29 @@ has '_object_class' => (
 		return $class;
 	},
 );
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 ################################################################################
 # Methods pertaining to all three classes

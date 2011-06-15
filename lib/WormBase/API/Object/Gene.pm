@@ -147,6 +147,28 @@ sub _build_phen_data {
 
 #######################################
 #
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
 # The Overview Widget
 #   template: classes/gene/overview.tt2
 #

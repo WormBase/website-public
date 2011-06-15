@@ -18,9 +18,31 @@ Model for the Ace ?GO_Term class.
 
 http://wormbase.org/species/go_term
 
-=head1 METHODS/URIs
+=cut
+
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

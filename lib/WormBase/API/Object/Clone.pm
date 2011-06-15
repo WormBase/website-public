@@ -20,9 +20,30 @@ Model for the Ace ?Clone class.
 
 http://wormbase.org/species/*/clone
 
-=head1 METHODS/URIs
+=cut
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

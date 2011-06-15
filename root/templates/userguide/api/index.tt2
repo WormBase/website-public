@@ -1,0 +1,9 @@
+<h1>WormBase API Documentation</h1>
+
+<h2>Class Index</h2>
+
+<ul>
+[% FOREACH class IN classes.sort %]
+  <li><a href="/userguide/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
+[% END %]
+</ul>   

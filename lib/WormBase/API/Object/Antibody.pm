@@ -16,11 +16,32 @@ Model for the Ace ?Antibody class.
 
 =head1 URL
 
-http://wormbase.org/species/antibody
-
-=head1 METHODS/URIs
+http://wormbase.org/species/*/antibody
 
 =cut
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

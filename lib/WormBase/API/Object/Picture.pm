@@ -19,8 +19,6 @@ Model for the Ace ?Picture class.
 
 http://wormbase.org/resources/picture
 
-=head1 METHODS/URIs
-
 =cut
 
 has 'reference' => (
@@ -67,6 +65,28 @@ sub _build__common_name {
 
     return $name // $self->object->name;
 }
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 # sub name { }
 # Supplied by Role; POD will automatically be inserted here.

@@ -18,8 +18,6 @@ Model for the Ace ?Motif class.
 
 http://wormbase.org/species/*/position_matrix
 
-=head1 METHODS/URIs
-
 =cut
 
 has 'pm_datadir' => (
@@ -77,6 +75,29 @@ has 'pm_datadir' => (
 #         return \%image_pointer;
 #     }
 # );
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #
