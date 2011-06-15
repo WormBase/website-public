@@ -2073,7 +2073,7 @@ sub nematode_orthologs {
     }
     
     return { description => 'precalculated ortholog assignments for this gene',
-	     data        =>  \@data };
+	     data        =>  @data ? \@data : undef };
 
 }
 
@@ -2134,7 +2134,7 @@ sub human_orthologs {
 	push @data, $self->_parse_ortholog_other($_);
     }
     return { description => 'human orthologs of this gene',
-	     data        => \@data };    
+	     data        => @data ? \@data : undef};    
 }
 
 
@@ -2195,7 +2195,7 @@ sub other_orthologs {
 	push @data, $self->_parse_ortholog_other($_);
     }
     return { description => 'orthologs of this gene to other species outside of core nematodes at WormBase',
-	     data        => \@data };    
+	     data        => @data ? \@data : undef };    
 }
 
 # Private helper method to standardize structure of other orthologs.
@@ -2268,7 +2268,7 @@ sub paralogs {
     }
     
     return { description => 'precalculated paralog assignments',
-	     data        =>  \@data };
+	     data        =>  @data ? \@data : undef};
 }
 
 
@@ -2405,7 +2405,7 @@ sub protein_domains {
 	}
     }
     return { description => "protein domains of the gene",
-	     data        => \%unique_motifs
+	     data        => %unique_motifs ? \%unique_motifs : undef,
     };
 }
 
@@ -3692,9 +3692,10 @@ sub _build__segments {
 # Find the longest GFF segment
 sub _longest_segment {
     my ($self) = @_;
+    # Not all genes are cloned and will have segments associated with them.
     my ($longest)
-       = sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}
-              @{$self->_segments};
+	= sort { $b->abs_end - $b->abs_start <=> $a->abs_end - $a->_abs_start}
+    @{$self->_segments} if $self->_segments;
     return $longest;
 }
 

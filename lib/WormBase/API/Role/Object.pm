@@ -321,20 +321,27 @@ sub _build_best_blastp_matches {
     my $class  = $object->class;
 
     my $proteins;
+    # Only for genes or proteins.
     if ($class eq 'Gene') {
         $proteins = $self->all_proteins;
     }
     elsif ($class eq 'Protein') {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
-    }
-    else {
-        return {
-            description => 'no proteins found, no best blastp hits to display',
-            data        => undef,
-        };
-    }
+    } else { }
 
+#        return {
+#            description => 'no proteins found, no best blastp hits to display',
+#            data        => undef,
+#        };
+#    }
+    
+    if (@$proteins == 0) {
+	return { description => 'no proteins found, no best blastp hits to display',
+		 data        => undef,
+	};
+    }
+    
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
 
     my @pep_homol = $biggest->Pep_homol;
