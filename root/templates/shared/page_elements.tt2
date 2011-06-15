@@ -1195,10 +1195,10 @@ END;
    widgets = [];
    widgets.push({ title="Page Content" type="title"});
 
-# TH: Merge conflict. Not sure how to resolve.
-#   IF section == 'species' && is_class_index;
-#      section = 'species_list';
-#   END;
+   IF section == 'species' && is_class_index;
+      section = 'species_list';
+   END;
+
    # Get the default (configuration provided) list of widgets.
    widget_list = c.config.sections.$section.$class.widgets.keys.sort;
 
@@ -1223,11 +1223,6 @@ END;
                        href  = c.uri_for('/rest','widget', 'index', species, class,'basic_search')
                        type  = section == 'species' ? class : section
                      });
-#                      { id    = 'advanced_search'
-#                        title = 'Advanced Search'
-#                        href  = c.uri_for('/rest','widget','index', species, class,'advanced_search')
-#                        type  = section == 'species' ? class : section
-#                      });
 
       IF((species == 'all')||(class == 'all'));
         widgets.push({   id  = 'summary',
@@ -1287,9 +1282,7 @@ END;
           myhref = c.uri_for('/rest','widget','static',class,widget.name);
 
       # Species summary and index page widgets
-      # TH: Merge conflict; Might need additional elsif clause to capture class index pages.
       ELSIF section == 'species_list';
-#      ELSIF section == 'species' && is_class_index;
           myhref = c.uri_for('/rest','widget','species',this_object_id,widget.name);
       ELSE;
            myhref = c.uri_for('/rest','widget',class,   this_object_id,widget.name);
@@ -1313,7 +1306,9 @@ END;
       tool_list.unshift('tree');
   END;
 
-  IF tool_list.size > 0;  widgets.push({ title="Tools" type="title"}); END;
+  #IF tool_list.size > 0;  
+      widgets.push({ title="Tools" type="title"}); 
+  #END;
   FOREACH widget_name IN tool_list;
       widget = c.config.sections.tools.$widget_name;
       # What context should this widget be displayed in ?
@@ -1333,7 +1328,7 @@ END;
       widgets.push(w);
    END;
 
-   IF object;
+  # IF object;
    tools = ['comment', 'issue'];
    FOREACH widget_name IN tools;
        t = widget_name FILTER ucfirst;
@@ -1345,7 +1340,7 @@ END;
     
        widgets.push(w);
   END;
-  END;
+#  END;
 
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;

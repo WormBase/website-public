@@ -6,13 +6,13 @@
 
       [% message_id = c.config.system_message.id %]
       [% IF message_id AND !c.user_session.close_system_message.$message_id %]
-        <div id="system-message">
+        <div id="system-message" class="system-message">
           [% c.config.system_message.message %]
           <span class="system-message-close" onClick="systemMessage('hide', '[% message_id %]')">
             <span class=" ui-icon ui-icon-close"></span>
           </span>
         </div>
-        <div class="system-message-spacer" ></div>
+        <div class="system-message" ></div>
         <script>
           systemMessage('show');
         </script>
@@ -82,10 +82,7 @@
           </ul>
       </li>
     [% END %]
-<!--
-    <li><a href="[% c.uri_for('resources','downloads') %]">Downloads</a></li>
---> 
-    <span class="status-bar"></span>
+  <span class="status-bar"></span>
     </ul>
   </div>
  
