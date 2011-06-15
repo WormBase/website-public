@@ -244,7 +244,7 @@ sub auth_local {
               $user=$_; 
               last;
         }
-        if($email && $user) {
+        if ($email && $user) {
             $username = $user->username if($user->username);
             $c->log->debug("adding openid to existing user $username");
             $user->set_columns({username=>$username, active=>1});
@@ -256,11 +256,25 @@ sub auth_local {
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
             $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id, primary_email=>1}) if $email;
         }
-        #assing curator role to wormbase.org domain user
-        if($email && $email =~ /\@wormbase\.org/) {
+
+	# HARD-CODED!  The following people become admins automatically.
+	if ($email =~ m{
+                        todd\@wormbase\.org            |
+                        abby\@wormbase\.org            |
+                        abigail\.cabunoc\@oicr\.on\.ca |
+                        lincoln\.stein\@gmail\.com     | 
+                        todd\@hiline\.co               |
+                        todd\@me\.co                   |
+                        xshi\@wormbase\.org
+                       }x) {
+	    my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
+	    $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+	} elsif ($email && $email =~ /\@wormbase\.org/) {
+          # assigning curator role to wormbase.org domain user
           my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
           $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
         }
+
         $openid->user_id($user->id);
         $openid->update();
       }
