@@ -19,9 +19,31 @@ Model for the Ace ?Gene_regulation class.
 
 http://wormbase.org/species/*/gene_regulation
 
-=head1 METHODS/URIs
+=cut
+
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 ################################################################################
 #

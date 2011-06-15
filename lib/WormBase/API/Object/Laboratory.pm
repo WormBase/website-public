@@ -19,19 +19,16 @@ Model for the Ace ?Laboratory class.
 
 http://wormbase.org/resources/laboratory
 
-=head1 TODO
-
-=head1 METHODS/URIs
-
 =cut
-
 
 
 #######################################
 #
-# Class summary widgets
+# CLASS METHODS
 #
-#######################################6
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =head2 Summary data
 
@@ -117,6 +114,16 @@ sub all_labs {
 
 
 
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
 
 
 #######################################

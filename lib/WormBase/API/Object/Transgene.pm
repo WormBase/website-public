@@ -18,11 +18,29 @@ Model for the Ace ?Transgene class.
 
 http://wormbase.org/species/*/transgene
 
-=head1 TODO
+=cut
 
-=head1 METHODS/URIs
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

@@ -25,8 +25,6 @@ Model for the Ace ?Paper class.
 
 http://wormbase.org/resources/paper
 
-=head1 METHODS/URIs
-
 =cut
 
 has '_authors' => (
@@ -48,6 +46,28 @@ has '_parsed_authors' => (
 		return {map {$_ => [parse_name_initials($_)]} @{$self->_authors}};
 	},
 );
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
 
 
 #######################################

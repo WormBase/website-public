@@ -18,8 +18,6 @@ Model for the Ace ?Interaction class.
 
 http://wormbase.org/species/*/interaction
 
-=head1 METHODS/URIs
-
 =cut
 
 has 'effector' => (
@@ -59,6 +57,30 @@ has 'effected' => (
 #         return \@non_directional_interactors;
 #     }
 # );
+
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

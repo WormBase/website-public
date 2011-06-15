@@ -18,7 +18,7 @@ Model for the Ace ?Gene_class class.
 
 http://wormbase.org/species/gene_class
 
-=head1 CLASS LEVEL METHODS
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
 
@@ -29,7 +29,7 @@ http://wormbase.org/species/gene_class
 #
 #######################################
 
-=head2 all_gene_classes
+=head2 Summary Data
 
 =head3 all_gene_classes
 
@@ -112,7 +112,7 @@ sub all_gene_classes {
 #
 #######################################
 
-=head1 INSTANCE LEVEL METHODS
+=head1 INSTANCE LEVEL METHODS/URIs
 
 =cut
 

@@ -1826,25 +1826,27 @@ sub _build_taxonomy { # this overlaps with parsed_species
 This method will return a data structure containing
 external database cross-references for the requested object.
 
-=head4 PERL API
+=over
+
+=item Perl API
 
  $data = $model->xrefs();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class and object ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -1858,11 +1860,11 @@ A class and object ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/CLASS/OBJECT/xrefs
 
-=head5 Response example
+B<Response example>
 
 <div class="response-example"></div>
 

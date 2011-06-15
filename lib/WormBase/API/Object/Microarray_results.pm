@@ -19,9 +19,30 @@ Model for the Ace ?Microarray_results class.
 
 http://wormbase.org/species/microarray_results
 
-=head1 METHODS/URIs
+=cut
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

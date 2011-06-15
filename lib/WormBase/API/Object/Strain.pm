@@ -18,9 +18,29 @@ Model for the Ace ?Strain class.
 
 http://wormbase.org/species/strain
 
-=head1 METHODS/URIs
+=cut
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #######################################
 #

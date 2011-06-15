@@ -18,9 +18,30 @@ Model for the Ace ?Feature_data class.
 
 http://wormbase.org/species/(feature_data
 
-=head1 METHODS/URIs
+=cut
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
 
 =cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
+
 
 #########################
 #

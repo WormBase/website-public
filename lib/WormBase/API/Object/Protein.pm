@@ -30,8 +30,6 @@ Model for the Ace ?Protein class.
 
 http://wormbase.org/species/protein
 
-=head1 METHODS/URIs
-
 =cut
 
 has 'peptide' => (
@@ -55,6 +53,28 @@ has 'cds' => (
 	return $self ~~ '@Corresponding_CDS';
     }
     );
+
+
+#######################################
+#
+# CLASS METHODS
+#
+#######################################
+
+=head1 CLASS LEVEL METHODS/URIs
+
+=cut
+
+
+#######################################
+#
+# INSTANCE METHODS
+#
+#######################################
+
+=head1 INSTANCE LEVEL METHODS/URIs
+
+=cut
 
 
 ############################################################
