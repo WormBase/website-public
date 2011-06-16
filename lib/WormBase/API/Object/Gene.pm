@@ -147,28 +147,6 @@ sub _build_phen_data {
 
 #######################################
 #
-# CLASS METHODS
-#
-#######################################
-
-=head1 CLASS LEVEL METHODS/URIs
-
-=cut
-
-
-#######################################
-#
-# INSTANCE METHODS
-#
-#######################################
-
-=head1 INSTANCE LEVEL METHODS/URIs
-
-=cut
-
-
-#######################################
-#
 # The Overview Widget
 #   template: classes/gene/overview.tt2
 #
@@ -828,9 +806,8 @@ B<Response example>
 =cut 
 
 sub version { 
-    my $version = shift->object->Version;
     return { description => 'the current WormBase version of the gene',
-	     data        => "$version" };
+	     data        => shift->object->Version };
 }
 
 
@@ -2731,6 +2708,7 @@ sub phenotype {
 
     return $data;    
 }
+
 
 sub rnai {
     my $self = shift;
