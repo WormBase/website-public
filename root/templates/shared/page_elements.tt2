@@ -1234,9 +1234,9 @@ END;
   END;
 
 # Debug
-#   'section     : ' _ section      _ "<br />";
-#   'class       : ' _ class   _ "<br />";
-#   'species     : ' _ species   _ "<br />";
+#    'section     : ' _ section      _ "<br />";
+#    'class       : ' _ class   _ "<br />";
+#    'species     : ' _ species   _ "<br />";
 
   # Get the default (configuration provided) list of widgets.
   widget_list = section_fetch.widgets.keys.sort;
@@ -1287,7 +1287,7 @@ END;
   END;
 
   # Add tools.
-  tool_list = section_fetch.$class.tools.keys.sort || [];
+  tool_list = section_fetch.tools.keys.sort || [];
 
   # object pages automatically get the tree display
   IF object; tool_list.unshift('tree'); END;
@@ -1329,8 +1329,11 @@ END;
   # Open some sections by default, depending on what we are displaying.
   '<script>';
     UNLESS c.user_session.layout.$page_class.0.defined;
-
+          IF is_class_index;
+          defaults = section_fetch.default_widgets_summary.keys;
+          ELSE;
           defaults = section_fetch.default_widgets.keys;
+          END;
           UNLESS defaults;
             IF overview;
               '$jq("#nav-overview").trigger("open");';
@@ -1344,7 +1347,6 @@ END;
           END;
           'updateLayout();';
     END;
-
        'updateCounts("' _ c.req.base _ c.req.path _ '");';
   '</script>';
 

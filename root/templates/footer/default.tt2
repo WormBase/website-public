@@ -10,21 +10,23 @@
     <div id="footer-nav">
 
        <div class="footer-column">
-          <div class="footer-title">About Nematodes</div>
+          <div class="footer-title">About</div>
              <ul>
-               <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature Guide</a></li>
+               <li><span><b>Nematodes</b></span></li>
+               <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
              </ul>                
 <!--	   </div> -->
 
 <!--       <div class="footer-column"> -->
-          <div class="footer-title">About WormBase</div>
+          
            <ul>
-              <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission Statement</a></li> 
-              <li><a href="[% c.uri_for('/about','advisory_board') %]">Scientific Advisory Board</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright Statement</a></li>
-              <li><a href="[% c.uri_for('/about','citing_wormbase') %]">Citing WormBase</a></li>
+              <li><span><b>WormBase</b></span></li>
+              <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission</a></li> 
+              <li><a href="[% c.uri_for('/about','advisory_board') %]">Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright</a></li>
+              <li><a href="[% c.uri_for('/about','citing_wormbase') %]">Citing</a></li>
            </ul>                
        
        </div>
@@ -33,30 +35,32 @@
        <div class="footer-column">
           <div class="footer-title">Support</div>
            <ul>
-    	     <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDRxMEFfUnV0Q1JTRk9fcHNiODNFQnc6MQ">Request a private demo</a></li>
-             <li><a href="/tools/operator">Chat with an online curator</a></li>
-             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit data to WormBase</a></li>
-             <li><a href="mailto:feedback@wormbase.org">Ask a question by email</a></li>
+    	     <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDRxMEFfUnV0Q1JTRk9fcHNiODNFQnc6MQ">Private Demo</a></li>
+             <li><a href="/tools/operator">Chat</a></li>
+             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit</a></li>
+             <li><a href="mailto:feedback@wormbase.org">Email</a></li>
+             <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
            </ul>                
          </div>
 
     <div class="footer-column">
        <div class="footer-title">Community</div>
         <ul>
-          <li><a href="http://forums.wormbase.org">WormBase Discussion Forums</a></li>
-          <li><a href="http://blog.wormbase.org">M9: The WormBase Blog</a></li>	  
-	  <li><a href="http://twitter.com/wormbase">Follow us on Twitter</a></li>
+          <li><a href="http://forums.wormbase.org">Forum</a></li>
+          <li><a href="http://blog.wormbase.org">Blog</a></li>	  
+          <li><a href="http://twitter.com/wormbase">Twitter</a></li>
         </ul>
- 
+
     </div>
 
 
     <div class="footer-column">
-       <div class="footer-title">Beta Test</div>
+       <div class="footer-title">Developer</div>
         <ul>
-          <li>Known Issues</li>
-          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">User Survey</a></li>
-          <li></li>
+          <li><a>Amazon EC2 AMI</a></li>
+          <li><span>Repository: <a href="http://github.com/organizations/WormBase">git</a> <a href="http://bitbucket.org/tharris/wormbase">hg</a></span></li>
+          <li><a>Data Mining</a></li>
+          <li><a>API</a></li>
         </ul>
     </div>
 
@@ -84,15 +88,13 @@
                  </select>  
            </li>
         </ul>
-
-
-       <div class="footer-title">Developer/Data Mining</div>
+<br /><br />
+       <div class="footer-title">Beta Test</div>
         <ul>
-	  <li>Data mining resources</li>
-          <li>APIs: RESTful | Perl</li>
-          <li>Amazon EC2 WormBase AMI</li>
-	  <li>Code Repositories: <a href="http://github.com/organizations/WormBase">git</a>; <a href="http://bitbucket.org/tharris/wormbase">hg</a></li>
+          <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
+          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
         </ul>
+
     </div>
 
    </div>
@@ -103,11 +105,9 @@
      <!--     Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
           <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
       -->     
-          <p>
-             
-               WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a><br /> at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
-
-          </p>
+             <span>
+               WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a></span><br /><span>at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
+              </span>
 
      </div>
 
