@@ -42,9 +42,9 @@ my $tester = WormBase::Test::API::Object->new({
 
 ## list methods to be tested here
 my @methods = qw(
-		diseases
+		phenotype
 				);
-###concise_description human_orthologs other_orthologs
+###concise_description human_orthologs other_orthologs diseases
 
 if ($test_type eq 'methods') {
 	$tester->run_common_tests({
