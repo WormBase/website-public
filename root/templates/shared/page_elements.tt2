@@ -1191,124 +1191,82 @@ END;
 
 [% MACRO report_page BLOCK;
 
+  widgets = [];
+  widgets.push({ title="Page Content" type="title"});
 
-   widgets = [];
-   widgets.push({ title="Page Content" type="title"});
-
-   IF section == 'species' && is_class_index;
-      section = 'species_list';
-   END;
-
-   # Get the default (configuration provided) list of widgets.
-   widget_list = c.config.sections.$section.$class.widgets.keys.sort;
-
-
-   # Conditionally set up different types of pages.
-   # Class index (of both species and resource persuasions; these do not display individual objects)
-   IF is_class_index;
-
-      # Kludge: set the "object" of index pages to species
-      # so that we can have species specific search widgets
-      SET this_object_id    = species; 
-      SET this_object_label = species; 
-
-      # Index pages automatically get Browse and search widgets.
-      widgets.push({   id  = 'browse',
-                       title = 'Browse',
-                       href  = c.uri_for('/rest','widget', 'index', species, class,'browse'),
-                       type  = section == 'species' ? class : section
-                      },
-                     {   id  = 'basic_search'
-                       title = 'Basic search'
-                       href  = c.uri_for('/rest','widget', 'index', species, class,'basic_search')
-                       type  = section == 'species' ? class : section
-                     });
-
-      IF((species == 'all')||(class == 'all'));
-        widgets.push({   id  = 'summary',
-                        title = 'Summary',
-                        href  = c.uri_for('/rest','widget', 'index', species, class,'summary'),
-                        type  = section == 'species' ? class : section
-                        });
-      END;
-
-   # This is an object report page.
-   ELSIF (object);
-   #ELSIF ((section == 'species' || section == 'resources') && class && object);
-      SET this_object_id    = object.name.data.id;
-      SET this_object_label = object.name.data.label;
-
-      # Push overview to the top.
-      widget_list.unshift('overview');
-
-#    ELSIF section == 'species_list';
-# 
-#       SET this_object_id    = species;
-#       SET this_object_label = species;
-# 
-#       # Push overview to the top.
-#       widget_list.unshift('overview');
-
-   ELSE;
-
-   END;
-
-
+  SET base = '/rest/widget';
+  SET section_fetch = section;
+  # Conditionally set up different types of pages.
+  IF is_class_index && ((!class || class == 'all') || (species && species != 'all'));
+    SET this_object_id    = class; 
+    SET this_object_label = species; 
+    base = base _ '/index';
+    arg1 = species;
+    IF species; section_fetch = 'species_list'; END;
+  ELSE;
+    SET this_object_id    = object.name.data.id || 'all';
+    SET this_object_label = object.name.data.label || 'all';
+    arg1 = class;
+  END;
 
 # Debug
 #   'section     : ' _ section      _ "<br />";
 #   'class       : ' _ class   _ "<br />";
 #   'species     : ' _ species   _ "<br />";
 
-    path = c.req.base _ c.req.path;
+  # Get the default (configuration provided) list of widgets.
+  widget_list = c.config.sections.$section_fetch.$class.widgets.keys.sort;
 
-   widget_list = widget_list.unique;
-   
-   FOREACH widget_name IN widget_list;
-      # Fetch the actual widget configuration.
-      widget = c.config.sections.$section.$class.widgets.$widget_name;
+  FOREACH widget_list.grep('^overview$');
+    widget_list.unshift('overview');
+  END;
+  widget_list = widget_list.unique;
 
-      # What context should this widget be displayed in, and what type of page are we?
-      IF is_class_index;
-         NEXT IF widget.display == "report";
-         # NEXT;
-      ELSE;
-         NEXT IF widget.display == "index";
-      END;
 
-      # Some resource types are just simple static files.
-      # These will have a structure of /resources/CLASS/widget
-      IF is_static;
-          myhref = c.uri_for('/rest','widget','static',class,widget.name);
+  FOREACH widget_name IN widget_list;
+    # Fetch the actual widget configuration.
+    widget = c.config.sections.$section_fetch.$class.widgets.$widget_name;
 
-      # Species summary and index page widgets
-      ELSIF section == 'species_list';
-          myhref = c.uri_for('/rest','widget','species',this_object_id,widget.name);
-      ELSE;
-           myhref = c.uri_for('/rest','widget',class,   this_object_id,widget.name);
-      END;
+    # What context should this widget be displayed in, and what type of page are we?
+    IF is_class_index;
+        NEXT IF widget.display == "report";
+    ELSE;
+        NEXT IF widget.display == "index";
+    END;
 
-      w = {  id    = widget_name
-             title = widget.title
-             href  = myhref
-             type  = section == "resources" ? 'resources' : class
-            };
-    
-     widgets.push(w);
+    w = {  id    = widget_name
+            title = widget.title
+            href  = c.uri_for(base, arg1, this_object_id, widget_name)
+            type  = section == 'species' ? class : section
+          };
+
+    widgets.push(w);
+  END;
+
+
+  IF is_class_index;
+    index_widgets = ['browse', 'basic_search'];
+    IF((species == 'all')||(class == 'all'));
+      index_widgets.push('summary');
+    END;
+
+    FOREACH widget_name IN index_widgets;
+      t = widget_name FILTER ucfirst;
+      widgets.push({ id = widget_name
+                title = t.replace('_', ' ')
+                href  = c.uri_for('/rest','widget', 'index', species, class, widget_name),
+                type = section == 'species' ? class : section
+            });
+    END;
   END;
 
   # Add tools.
- 
-  tool_list = c.config.sections.$section.$class.tools.keys.sort || [];
+  tool_list = c.config.sections.$section_fetch.$class.tools.keys.sort || [];
 
-  # resources/* and species/* automatically get the tree display (and index pages)
-  IF object;
-      tool_list.unshift('tree');
-  END;
+  # object pages automatically get the tree display
+  IF object; tool_list.unshift('tree'); END;
 
-  #IF tool_list.size > 0;  
-      widgets.push({ title="Tools" type="title"}); 
-  #END;
+  widgets.push({ title="Tools" type="title"}); 
   FOREACH widget_name IN tool_list;
       widget = c.config.sections.tools.$widget_name;
       # What context should this widget be displayed in ?
@@ -1317,7 +1275,6 @@ END;
       ELSE;
          NEXT IF widget.display == "index";
       END;
-
       
       w = { id = widget_name
              title = widget.title
@@ -1328,19 +1285,16 @@ END;
       widgets.push(w);
    END;
 
-  # IF object;
-   tools = ['comment', 'issue'];
-   FOREACH widget_name IN tools;
-       t = widget_name FILTER ucfirst;
-       w = { id = widget_name
-             title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
-             href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ path
-             type = 'tools'
-            };
-    
-       widgets.push(w);
+
+  FOREACH widget_name IN ['comment', 'issue'];
+      t = widget_name FILTER ucfirst;
+      w = { id = widget_name
+            title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
+            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.base _ c.req.path
+            type = 'tools'
+          };
+      widgets.push(w);
   END;
-#  END;
 
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
@@ -1351,9 +1305,13 @@ END;
 
     UNLESS c.user_session.layout.$class.0.defined;
 
-          defaults = c.config.sections.$section.$class.default_widgets.keys;	
-          FOREACH d IN defaults;
-            '$jq("#nav-' _ d _ '").trigger("open");';
+          defaults = c.config.sections.$section_fetch.$class.default_widgets.keys;
+          UNLESS defaults;
+          'resetLayout(["browse"], ["basic_search"], 50);';
+          ELSE;
+            FOREACH d IN defaults;
+              '$jq("#nav-' _ d _ '").trigger("open");';
+            END;
           END;
           'updateLayout();';
     END;

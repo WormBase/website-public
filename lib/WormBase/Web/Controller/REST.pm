@@ -818,7 +818,6 @@ sub widget_GET {
     my $headers = $c->req->headers;
     $c->log->debug("widget GET header ".$headers->content_type);
     $c->log->debug($headers);
-    $c->stash->{is_class_index} = 0;  
 
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
@@ -835,9 +834,8 @@ sub widget_GET {
       $c->log->debug("The request is " . $name);
       
       # Fetch a WormBase::API::Object::* object
-      if ($name eq '*' || $name eq 'all' || $widget eq 'browse') {
-          $c->stash->{species} = $name;
-#           $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+      if ($name eq '*' || $name eq 'all') {
+          $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
       } else {
           $c->stash->{object} = $api->fetch({class => ucfirst($class),
                             name  => $name,
@@ -961,41 +959,28 @@ sub widget_static_GET {
 }
 
 
-# widgets on the species summary pages
-sub widget_species :Path('/rest/widget/species') :Args(2) :ActionClass('REST') {}
-
-sub widget_species_GET {
-    my ($self,$c,$species,$widget) = @_; 
-    $c->log->debug("getting species widget");
-
-    $c->stash->{template} = "species/$species/$widget.tt2";
-    $c->stash->{noboiler} = 1;
-    $c->forward('WormBase::Web::View::TT')
-}
-
-
-# for the generic summary page widgets (Browse, Search, etc)
+# for the generic summary page widgets
 sub widget_class_index :Path('/rest/widget/index') :Args(3) :ActionClass('REST') {}
 
 sub widget_class_index_GET {
     my ($self,$c,$species,$class, $widget) = @_; 
-    $c->log->debug("getting one of the class index page widgets");
-
+    
+    $c->stash->{widget} = $widget;
     $c->stash->{species} = $species;
     $c->stash->{class} = $class;
-    
-    # Save the name of the widget.
-    $c->stash->{widget} = $widget;
 
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
 
-    # Set the template
-    $c->stash->{template}="shared/widgets/$widget.tt2";
+    if($widget=~m/browse|basic_search|summary/){
+      $c->stash->{template}="shared/widgets/$widget.tt2";
+    }elsif($class=~m/all/){
+      $c->stash->{template} = "species/$species/$widget.tt2";
+    }else{
+      $c->stash->{template} = "species/$species/$class/$widget.tt2";
+    }
     $c->detach('WormBase::Web::View::TT'); 
 }
-
-
 
 
 sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
