@@ -539,9 +539,11 @@
   function systemMessage(action, messageId){
     if(action == 'show'){
       $jq(".system-message").show().animate({height:"20px"}, 'slow');
+      $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
       $jq(".system-message").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
+      $jq("#notifications").css("top", "0");
     }
   }

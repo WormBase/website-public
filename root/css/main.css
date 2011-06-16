@@ -683,7 +683,7 @@ section.widget .secondary-container {
    FOOTER ================================== */
 
 div#footer{
-    color:white;
+    color:#CCC;
     background:black;
     margin:0;
     overflow:auto;
@@ -701,17 +701,17 @@ div#footer a:hover{
 #footer, #spacer {
     clear:both;
     padding: 0;
-/*    height:12em; */
-    height:20em;
-    font-size:0.9em;
+    height:30em;
 }
 
 #footercredit {
     text-align: left;
     position:absolute;
-    bottom:0;
+    bottom:1em;
     left:1.4em;
     overflow:hidden;
+    font-size:0.9em;
+    line-height:1.4em;
 }
 div#footercredit a{
   color:#6FA2D9;
@@ -719,10 +719,8 @@ div#footercredit a{
 
 
 #footermeta {
-    text-align: right;
     overflow:hidden;
     position:absolute;
-    font-size:0.9em;
     bottom:1em;
     right:1.4em;
     overflow:hidden;
@@ -732,8 +730,9 @@ div#footercredit a{
 #footer #footer-nav {
     margin:0 auto;
     height:2em;
-/*    padding-bottom:5em; */
+    padding:2em 0 10em 2em;
     padding-bottom:10em;
+    position:relative;
 }
 
 
@@ -741,7 +740,7 @@ div#footercredit a{
   float:left; 
   display: inline-block;
   padding:1.4em;
-  width:15%;
+  width:14%;
 }
 
 .footer-column .footer-title {
@@ -755,14 +754,14 @@ div#footercredit a{
     list-style:none;
     margin-left:0;
     padding-left:0;
-     
 }
 
-
-#footer li a {
+#footer li>a, #footer li>span {
     display:block;
+    padding:0.5em;
+    font-size:0.9em;
+    white-space:nowrap;
 }
-
 
 
 /*********************************
