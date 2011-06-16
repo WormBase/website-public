@@ -27,10 +27,6 @@
   [% END %]
 [% END %]
 
-  [% UNLESS object %]
-    [% page_class = c.req.path.replace('[/_]', '-') %]
-  [% ELSE; page_class = class; END; %]
-
     [% UNLESS no_layout %]
     <div id="buttons-nav">
 
@@ -165,8 +161,8 @@
     if(location.hash.length > 0){
       readHash();
     }else{
-      [% IF c.user_session.layout.$class.0.defined %]
-          location.hash = "[% c.user_session.layout.$class.0.lstring %]";
+      [% IF c.user_session.layout.$page_class.0.defined %]
+          location.hash = "[% c.user_session.layout.$page_class.0.lstring %]";
           readHash();
       [% END %]
     }

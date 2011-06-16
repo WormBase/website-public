@@ -1209,18 +1209,28 @@ END;
   widgets.push({ title="Page Content" type="title"});
 
   SET base = '/rest/widget';
-  SET section_fetch = section;
+
   # Conditionally set up different types of pages.
   IF is_class_index && ((!class || class == 'all') || (species && species != 'all'));
     SET this_object_id    = class; 
     SET this_object_label = species; 
     base = base _ '/index';
     arg1 = species;
-    IF species; section_fetch = 'species_list'; END;
+    IF species; 
+      section_fetch = 'species_list'; 
+      IF class == 'all';
+        section_fetch = c.config.sections.species_list.$species;
+      ELSE;
+        section_fetch = c.config.sections.species_list.$species.$class;
+      END;
+    ELSE;
+        section_fetch = c.config.sections.$section;
+    END;
   ELSE;
     SET this_object_id    = object.name.data.id || 'all';
     SET this_object_label = object.name.data.label || 'all';
     arg1 = class;
+    section_fetch = c.config.sections.$section.$class;
   END;
 
 # Debug
@@ -1229,17 +1239,18 @@ END;
 #   'species     : ' _ species   _ "<br />";
 
   # Get the default (configuration provided) list of widgets.
-  widget_list = c.config.sections.$section_fetch.$class.widgets.keys.sort;
+  widget_list = section_fetch.widgets.keys.sort;
 
   FOREACH widget_list.grep('^overview$');
     widget_list.unshift('overview');
+    overview;
   END;
   widget_list = widget_list.unique;
 
-
   FOREACH widget_name IN widget_list;
+    IF widget_name;
     # Fetch the actual widget configuration.
-    widget = c.config.sections.$section_fetch.$class.widgets.$widget_name;
+    widget = section_fetch.widgets.$widget_name;
 
     # What context should this widget be displayed in, and what type of page are we?
     IF is_class_index;
@@ -1255,6 +1266,7 @@ END;
           };
 
     widgets.push(w);
+    END;
   END;
 
 
@@ -1275,7 +1287,7 @@ END;
   END;
 
   # Add tools.
-  tool_list = c.config.sections.$section_fetch.$class.tools.keys.sort || [];
+  tool_list = section_fetch.$class.tools.keys.sort || [];
 
   # object pages automatically get the tree display
   IF object; tool_list.unshift('tree'); END;
@@ -1316,12 +1328,15 @@ END;
 
   # Open some sections by default, depending on what we are displaying.
   '<script>';
+    UNLESS c.user_session.layout.$page_class.0.defined;
 
-    UNLESS c.user_session.layout.$class.0.defined;
-
-          defaults = c.config.sections.$section_fetch.$class.default_widgets.keys;
+          defaults = section_fetch.default_widgets.keys;
           UNLESS defaults;
-          'resetLayout(["browse"], ["basic_search"], 50);';
+            IF overview;
+              '$jq("#nav-overview").trigger("open");';
+            ELSE;
+            'resetLayout(["browse"], ["basic_search"], 50);';
+            END;
           ELSE;
             FOREACH d IN defaults;
               '$jq("#nav-' _ d _ '").trigger("open");';
