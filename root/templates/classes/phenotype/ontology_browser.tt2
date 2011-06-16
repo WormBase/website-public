@@ -5,11 +5,9 @@
 
 [% widget = widget %]
  
-[% link=c.config.external_url.tree_lister _ object.name.data.id %]
+[% base = c.req.base %] 
+[% base_elements = base.split('/') %]
+[% link=c.config.external_url.tree_lister _ object.name.data.id _ ";host=" _ base_elements.2 %]
  
- 				       
      <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
       </iframe>  
- 
-
-   
