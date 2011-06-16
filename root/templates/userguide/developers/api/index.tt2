@@ -1,3 +1,5 @@
+<div id="userguide">
+<div id="userguide-without-toc">
 <h1>WormBase API Documentation</h1>
 
 <h2>Class Index</h2>
@@ -7,3 +9,6 @@
   <li><a href="/userguide/developers/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
 [% END %]
 </ul>   
+
+</div>
+</div>
