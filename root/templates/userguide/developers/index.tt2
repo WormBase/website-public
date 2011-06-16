@@ -1,8 +1,6 @@
 <div id="page-with-no-widgets">
 
 
-<h1>THIS DOCUMENT IS A WORK IN PROGRESS - Todd Harris 2011.06.15</h1>
-
 <ol id="toc"></ol>
 
 <div id="documentation-with-toc">
@@ -112,7 +110,9 @@ to facilitate queries. To use WormBase::API, you'll need to know Perl
 but will NOT need to know anything about the underlying data model.
 </p>
 
+<p>
 Checkout the code from our <a href="http://bitbucket.org/wormbase/tharris">Mercurial repository</a>.
+</p>
 
 <h3>Bio::DB::GFF / Bio::DB::SeqFeatureStore</h3>
 
@@ -138,11 +138,16 @@ Drawbacks  : You need to reverse engineer the data schema. Why would you do that
 <h2>Query Languages</h2>
 <p></p>
 
-<h3>AQL</h3>
-<p></p>
+<h3>Ace Query Language</h3>
+<p>The Ace Query Language lets you write SQL-like queries directly against AceDB databases.  
+    [<a href="[% c.uri_for('/userguide','developers','wormbase_query_langugages') _ '#aql' %]">Documentation and examples</a>]
+</p>
 
-<h3>WQL</h3>
-<p></p>
+<h3>WormBase Query Language</h3>
+<p>The WormBase Query Language lets you write SQL-like queries directly against AceDB databases. It's syntax is closer to
+    SQL and easier to learn than SQL.
+    [<a href="[% c.uri_for('/userguide','developers','wormbase_query_langugages') _ '#wql' %]">Documentation and examples</a>]
+</p>
 
 
 
