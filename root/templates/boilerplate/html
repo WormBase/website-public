@@ -55,6 +55,8 @@
         <link type="text/css" href="/css/icons.css" rel="stylesheet" />
         <link type="text/css" href="/css/social_buttons.css" rel="stylesheet" />
     [% END %]
+
+    [% INCLUDE google_analytics %]
   </head>
 
   <body>  
