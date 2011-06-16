@@ -5,29 +5,65 @@ use warnings;
 use parent 'WormBase::Web::Controller';
 use FindBin qw/$Bin/;
 
+__PACKAGE__->config->{libroot} = "$Bin/../../lib/WormBase/API";
 
 ##############################################################
 #
-#   Docs
+#   The WormBase User Guide. Yay!
 # 
 ##############################################################
 
-__PACKAGE__->config->{libroot} = "$Bin/../../lib/WormBase/API";
-
-
-#opendir (DIR,"$libroot/Object") || die "Couldn't open the lib dir for processing";
-
-# Userguide could conceivably contain other things besides just documentation.
-sub docs :Path('/userguide') :Args(0)   {
+sub general_index :Path('/userguide') :Args(0)   {
     my ($self,$c) = @_;
     $c->stash->{template} = 'userguide/index.tt2';
+}
+
+sub index :Path('/userguide') :Args(1)   {
+    my ($self,$c,$page) = @_;
+    $c->stash->{template} = "userguide/$page.tt2";
 }
 
 
 
 
-# The index of the API
-sub api :Path('/userguide/api') : Args(0) {
+##############################################################
+#
+#   For Users
+# 
+##############################################################
+sub users_index :Path('/userguide/users') : Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{template} = 'userguide/users/index.tt2';
+}
+
+
+
+##############################################################
+#
+#   For Educators
+# 
+##############################################################
+sub educators_index :Path("/userguide/educators") : Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{template} = 'userguide/educators/index.tt2';
+}
+
+
+
+
+##############################################################
+#
+#   Developer resources
+# 
+##############################################################
+sub developers_index :Path('/userguide/developers') : Args(0) {
+    my ($self,$c) = @_;
+    $c->stash->{template} = 'userguide/developers/index.tt2';
+}
+
+
+# The index of the API. Just lists classes.
+sub api_index :Path('/userguide/developers/api') : Args(0) {
     my ($self,$c) = @_;
     
     # Get a list of available classes.
@@ -36,12 +72,12 @@ sub api :Path('/userguide/api') : Args(0) {
     my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
     
     $c->stash->{classes}  = \@classes;
-    $c->stash->{template} = 'userguide/api/index.tt2';
+    $c->stash->{template} = 'userguide/developers/api/index.tt2';
 }
 
 
 # API for a given class
-sub api_class_documentation :Path('/userguide/api') : Args(1) {
+sub api_class :Path('/userguide/developers/api') : Args(1) {
     my($self,$c,$class) = @_;
 
     # Hardcoded
@@ -74,10 +110,8 @@ sub api_class_documentation :Path('/userguide/api') : Args(1) {
 #    system("rm -f /var/tmp/pod.tmp");
     $c->stash->{class}    = ucfirst($class);
     $c->stash->{pod}      = $html;
-    $c->stash->{template} = 'userguide/api/class_documentation.tt2';
+    $c->stash->{template} = 'userguide/developers/api/class_documentation.tt2';
 }
-
-
 
 # Parse code snippets from Role/Object.pm
 sub _get_pod {
@@ -97,7 +131,6 @@ sub _get_pod {
 	}    
     }
     close LIB2;    
-    $c->log->debug("here aI am with %pod");
     return \%pod;
 }
 

@@ -3,8 +3,9 @@
 # settings
 export APP="production"
 export APPLIB="WormBase"
-export WORKERS=5
+export WORKERS=20
 export PORT=5000
+export MAX_REQUESTS=500
 
 # Set some configuration variables.
 export WORMBASE_INSTALLATION_TYPE="production"
