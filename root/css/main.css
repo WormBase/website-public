@@ -954,7 +954,6 @@ div.widget-section-header {
 
 
 
-/* CURRENTLY LIVE: Added by boilerplate/field */
 
 /* widget field titles: ie Identification > IDs */
 div.field {
@@ -992,6 +991,21 @@ div.field-content {
     margin-left:9.5em;
     width:auto;
 }
+
+
+/* Curator specific fields */
+div.field-curator {
+  clear:left;
+  float:left;
+  line-height:1.2em;
+  padding:0.5em;
+  margin-top:1em;
+  background:#CCFFFF;
+  border:1px solid gray;
+/*   height:1%; */
+/*   overflow:auto; */
+}
+
 
 
 

@@ -199,6 +199,20 @@
 [% END %]
 
 
+[% BLOCK curator_block %]
+     [% # Curator (and sometimes admin) specific content) %]
+
+    <div class="field-curator" id="[% title FILTER html %]">
+         <div class="field-title">
+                  [% IF title ; title _ ': '; END; %]
+         </div>
+
+         <div class="field-content">
+             [% content %]
+          </div>
+     </div>
+[% END %]
+
 
 
 

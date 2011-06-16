@@ -11,6 +11,7 @@ export APP="production"    # Should contain a full checked out version of source
 export APPLIB="WormBase"   # WormBase::Web?
 export WORKERS=5
 export PORT=5000
+export MAX_REQUESTS=1000
 # this runs site-init.sh, assuming it's in the same directory
 . "$( cd "$( dirname "$0" )" && pwd )/wormbase-init.sh"
 EOF
