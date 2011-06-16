@@ -424,6 +424,8 @@ sub cloned_by {
 
     # This is an evidence hash. We're assuming scalar context.
     my ($tag,$source) = $cloned_by->row  if $cloned_by;   
+
+    return unless $cloned_by;
     return { description => 'the person or laboratory who cloned this gene',
 	     data        => {
 		 'cloned_by' => "$cloned_by",
