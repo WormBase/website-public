@@ -55,7 +55,7 @@
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
               [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
-                <li><a href="[% c.uri_for('/species',option,class) %]">[% c.config.sections.species.$class.title || c.config.sections.resources.$class.title %]</a></li>
+                <li><a href="[% c.uri_for('/species',option,class) %]">[% pluralize(c.config.sections.species.$class.title || c.config.sections.resources.$class.title) %]</a></li>
               [% END %]
 
               </ul>
@@ -68,6 +68,7 @@
           [% FOREACH option IN c.config.sections.$title.sort() %]
             [% IF option == 'title'; NEXT; END; %]
 			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
+            [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
             <li>[% IF option == 'operator' %]
 		     <a id="[% option %]" href="#"  
 			[% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
@@ -76,7 +77,7 @@
 		      > 
 		[% ELSE %]<a href="/[% title %]/[% option %]"> 
 		[% END %]
-		[% c.config.sections.$title.$option.title %]</a></li>
+		[% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
           [% END %]
         [% END %]
           </ul>

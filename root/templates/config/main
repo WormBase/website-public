@@ -92,6 +92,8 @@
     END;
 
 
+
+
 # use this to pluraize a word
 # there exists a TT plugin which does this, but better.
 #   See: Template::Plugin::Lingua::EN::Inflect
@@ -151,6 +153,14 @@
     ret =  ret _ "</table>";
     ret;
     END;
+
+
+# Used to determine the type of page for layout saving
+  MACRO page_class BLOCK;
+    UNLESS object;
+      c.req.path.replace('[/_]', '-');
+    ELSE; class; END;
+  END;
 
 
 # Use to create outgoing links from the site
