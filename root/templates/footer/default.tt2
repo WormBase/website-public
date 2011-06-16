@@ -121,20 +121,19 @@
 </div>
 
 
-
-
-
-
-
 <!-- end boilerplate/footer -->
-[% INCLUDE google_analytics %]
 
     </div><!--end wrap-->
 
 
 <!--  
-      Database Version [% constants.acedb_version %] 
-      Software Version: [% c.config.codename %]
-      [% server_details("") %]
-      Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s
+
+      Database Version: [%- constants.acedb_version -%]
+
+      Software Version: [%- c.config.codename -%]
+
+      [%- server_details("") -%]
+
+      Loading time: [%- FILTER format('%5f') -%][%- c.stats.elapsed -%][%- END -%]s
+
 -->
