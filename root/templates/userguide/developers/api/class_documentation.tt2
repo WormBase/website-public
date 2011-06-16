@@ -1,6 +1,12 @@
+<div id="userguide">
+
+<div id="userguide-without-toc">
 <h1>WormBase::API Documentation</h1>
 <p></p>
+
 
 <h2>Class: [% class %]</h2>
 
 [% pod %]
+</div>
+</div>
