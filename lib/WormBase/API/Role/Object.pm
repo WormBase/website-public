@@ -261,26 +261,28 @@ sub _build_other_names {
 This method returns a data structure containing
 the best BLASTP matches for the current gene or protein.
 
-=head4 PERL API
+=over
+
+=item PERL API
 
  $data = $model->best_blastp_matches();
 
-=head4 REST API
+=item REST API
 
-=head5 Request Method
+B<Request Method>
 
 GET
 
-=head5 Requires Authentication
+B<Requires Authentication>
 
 No
 
-=head5 Parameters
+B<Parameters>
 
 A class of gene or protein and a gene
 or protein ID.
 
-=head5 Returns
+B<Returns>
 
 =over 4
 
@@ -294,7 +296,7 @@ or protein ID.
 
 =back
 
-=head5 Request example
+B<Request example>
 
 curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|PROTEIN]/[OBJECT]/best_blastp_matches
 
@@ -319,20 +321,27 @@ sub _build_best_blastp_matches {
     my $class  = $object->class;
 
     my $proteins;
+    # Only for genes or proteins.
     if ($class eq 'Gene') {
         $proteins = $self->all_proteins;
     }
     elsif ($class eq 'Protein') {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
-    }
-    else {
-        return {
-            description => 'no proteins found, no best blastp hits to display',
-            data        => undef,
-        };
-    }
+    } else { }
 
+#        return {
+#            description => 'no proteins found, no best blastp hits to display',
+#            data        => undef,
+#        };
+#    }
+    
+    if (@$proteins == 0) {
+	return { description => 'no proteins found, no best blastp hits to display',
+		 data        => undef,
+	};
+    }
+    
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
 
     my @pep_homol = $biggest->Pep_homol;

@@ -1,0 +1,25 @@
+<div id="page-with-no-widgets">
+
+
+<ol id="toc"></ol>
+     
+
+<div id="documentation-with-toc">
+
+<h1>About WormBase</h1>
+
+    <h2>Mission Statement</h2>
+<p>
+       here is the mission statement.
+</p>
+
+   <h2>General Policies</h2>
+
+   <ul>
+     <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy Statement</a><em>-- the information we collect and how it is used</em></li>
+     <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright Statement</a></li>
+     <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a> <em>-- rights and responsibilities of users</em></li>
+     <li><a href="[% c.uri_for('/about','browser_support') %]">Browser Support Statement</a><em>-- official graded browser support statement</em></li>
+    </ul> 
+</div>
+</div>

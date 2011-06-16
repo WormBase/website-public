@@ -12,19 +12,19 @@
        <div class="footer-column">
           <div class="footer-title">About Nematodes</div>
              <ul>
-               <li><a href="[% c.uri_for('/resources', 'documentation','nomenclature') %]">Nomenclature Guide</a></li>
+               <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature Guide</a></li>
              </ul>                
 <!--	   </div> -->
 
 <!--       <div class="footer-column"> -->
           <div class="footer-title">About WormBase</div>
            <ul>
-              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#mission-statement' %]">Mission Statement</a></li> 
-              <li><a href="[% c.uri_for('/resources', 'documentation','advisory_board') %]">Scientific Advisory Board</a></li>
-              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
-              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
-              <li><a href="[% c.uri_for('/resources', 'documentation','policies') _ '#copyright'         %]">Copyright Statement</a></li>
-              <li><a href="[% c.uri_for('/resources', 'documentation','citing_wormbase') %]">Citing WormBase</a></li>
+              <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission Statement</a></li> 
+              <li><a href="[% c.uri_for('/about','advisory_board') %]">Scientific Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy Statement</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use Policy</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright Statement</a></li>
+              <li><a href="[% c.uri_for('/about','citing_wormbase') %]">Citing WormBase</a></li>
            </ul>                
        
        </div>
@@ -35,7 +35,7 @@
            <ul>
     	     <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDRxMEFfUnV0Q1JTRk9fcHNiODNFQnc6MQ">Request a private demo</a></li>
              <li><a href="/tools/operator">Chat with an online curator</a></li>
-             <li><a href="[% c.uri_for('/resources', 'documentation','submit_data') %]">Submit data to WormBase</a></li>
+             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit data to WormBase</a></li>
              <li><a href="mailto:feedback@wormbase.org">Ask a question by email</a></li>
            </ul>                
          </div>
@@ -121,20 +121,19 @@
 </div>
 
 
-
-
-
-
-
 <!-- end boilerplate/footer -->
-[% INCLUDE google_analytics %]
 
     </div><!--end wrap-->
 
 
 <!--  
-      Database Version [% constants.acedb_version %] 
-      Software Version: [% c.config.codename %]
-      [% server_details("") %]
-      Loading time: [% FILTER format('%5f') %][% c.stats.elapsed %][% END %]s
+
+      Database Version: [%- constants.acedb_version -%]
+
+      Software Version: [%- c.config.codename -%]
+
+      [%- server_details("") -%]
+
+      Loading time: [%- FILTER format('%5f') -%][%- c.stats.elapsed -%][%- END -%]s
+
 -->
