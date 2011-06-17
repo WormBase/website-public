@@ -228,8 +228,12 @@ sub auth_GET {
 
 sub get_session {
     my ($self,$c) = @_;
-    my $sid = $c->get_session_id;
-    return $c->model('Schema::Session')->find({id=>"session:$sid"});
+    unless($c->user_exists){
+      my $sid = $c->get_session_id;
+      return $c->model('Schema::Session')->find({id=>"session:$sid"});
+    }else{
+      return $c->model('Schema::Session')->find({id=>"user:" . $c->user->id});
+    }
 }
 
 

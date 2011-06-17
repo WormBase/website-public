@@ -3,6 +3,7 @@ package WormBase::Web;
 
 use Moose;
 use namespace::autoclean;
+use Hash::Merge;
 use Catalyst qw/
 	  ConfigLoader
 	  Cache
@@ -379,6 +380,12 @@ sub set_cache {
 }
 
 
+#######################################################
+#
+#    Helper Methods
+#
+#######################################################
+
 sub secure_uri_for {
     my ($self, @args) = @_;
     
@@ -387,6 +394,66 @@ sub secure_uri_for {
       $u->scheme('https');
     }
     return $u;
+}
+
+# overloaded from Per_User plugin to move saved items
+sub merge_session_to_user {
+   my $c = shift;
+   
+    $c->log->debug("merging guest session into per user session") if $c->debug;
+
+    my $merge_behavior = Hash::Merge::get_behavior;
+    my $clone_behavior = Hash::Merge::get_clone_behavior;
+
+    Hash::Merge::set_behavior( $c->config->{user_session}{merge_type} );
+    Hash::Merge::set_clone_behavior(0);
+
+    my $sid = $c->get_session_id;
+    my $s_db = $c->model('Schema::Session')->find({id=>"session:$sid"});
+    my $uid = $c->user->id;
+
+    my @user_saved = $s_db->user_saved;
+
+    my $user_items = $c->model('Schema::UserSave')->search_rs({session_id=>"user:$uid"});
+
+    foreach my $saved_item (@user_saved){
+      unless($user_items->search({page_id=>$saved_item->page_id})){
+        $saved_item->session_id("user:$uid");
+      }else{
+        $saved_item->delete();
+      }
+      $saved_item->update();
+    }
+
+    my $user_history = $c->model('Schema::UserHistory')->search_rs({session_id=>"user:$uid"});
+    my @save_history = $s_db->user_history;
+    foreach my $s_history (@save_history){
+      my $u_history = $user_history->find({page_id=>$s_history->page_id});
+      unless($u_history){
+        $s_history->session_id("user:$uid");
+      }else{
+        $u_history->latest_visit < $s_history->latest_visit ? $u_history->latest_visit($s_history->latest_visit) : '' ;
+        $u_history->visit_count($u_history->visit_count + $s_history->visit_count);
+        $s_history->delete();
+        $u_history->update();
+      }
+      $s_history->update();
+    }
+
+    my $s    = $c->session;
+    my @keys =
+      grep { !/^__/ } keys %$s;    # __user, __expires, etc don't apply here
+
+    my %right;
+    @right{@keys} = delete @{$s}{@keys};
+
+    %{ $c->user_session } =
+      %{ Hash::Merge::merge( $c->user_session || {}, \%right ) };
+
+    Hash::Merge::set_behavior($merge_behavior);
+    Hash::Merge::set_clone_behavior($clone_behavior);
+
+
 }
 
 
