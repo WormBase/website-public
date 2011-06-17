@@ -57,37 +57,6 @@
     END;
 
 
-    # Inparanoid groups
-    WRAPPER $field_block title=pluralize("InParanoid group", fields.inparanoid_groups.data.size) 
-       key="inparanoid_groups";
-
-   #   '<div class="toggle">';
-           fields.inparanoid_groups.data.size;
-           'InParanoid groups for' _ object.name.data.label;
-   #    '</div>'; 
-   #    '<div class="toggle-container">';
-           FOREACH cluster IN fields.inparanoid_groups.data;
-              '<table  border="1" width="100%">';
-                  '<tr><td colspan=2>InParanoid cluster: ';
-                        tag2link(cluster);
-                  '</td></tr>';
-     
-   	          FOREACH species IN cluster.proteins.keys.sort;
-   	          '<tr>';
-    	             '<td>' _ species.replace('_',' ') _ '</td>';
-	             '<td>';
-		         FOREACH obj IN cluster.proteins.$species;
-		             tag2link(obj);
-	                 END;
-	             '</td>';
-	          '</tr>';
-	          END;
-            '</table> <br>';  
-         END;
-   #   '</div>';  
-   END;
-
-
    WRAPPER $field_block title="Protein domains" key="protein_domains"; 
          FOREACH i IN fields.protein_domains.data.keys.sort;
              tag2link(fields.protein_domains.data.$i);
