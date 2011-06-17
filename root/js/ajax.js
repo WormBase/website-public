@@ -538,7 +538,7 @@
   var system_message = 0; //used for the scrolling sidebar - amount to add to top-margin
   function systemMessage(action, messageId){
     if(action == 'show'){
-      $jq(".system-message").show().animate({height:"20px"}, 'slow');
+      $jq(".system-message").show().css("display", "block").animate({height:"20px"}, 'slow');
       $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
