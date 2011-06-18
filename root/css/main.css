@@ -747,6 +747,8 @@ div#footercredit a{
     font-weight: bold;
     margin-bottom: 1em;
     white-space: nowrap;
+    font-size:1.1em;
+    color:#eee;
 }
 
 
@@ -757,12 +759,18 @@ div#footercredit a{
 }
 
 #footer li>a, #footer li>span {
-    display:block;
-    padding:0.5em;
+/*    display:block;  */
+    line-height:2em;
+/*    padding:0.4em; */
     font-size:0.9em;
     white-space:nowrap;
+    color:#aaa;
 }
 
+
+#footer li>span {
+    color:#eee;
+}
 
 /*********************************
 

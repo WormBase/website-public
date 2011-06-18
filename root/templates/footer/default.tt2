@@ -12,7 +12,7 @@
        <div class="footer-column">
           <div class="footer-title">About</div>
              <ul>
-               <li><span><b>Nematodes</b></span></li>
+               <li><span>Nematodes</span></li>
                <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
              </ul>                
 <!--	   </div> -->
@@ -20,7 +20,7 @@
 <!--       <div class="footer-column"> -->
           
            <ul>
-              <li><span><b>WormBase</b></span></li>
+              <li><span>WormBase</span></li>
               <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission</a></li> 
               <li><a href="[% c.uri_for('/about','advisory_board') %]">Advisory Board</a></li>
               <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy</a></li>
@@ -35,9 +35,9 @@
        <div class="footer-column">
           <div class="footer-title">Support</div>
            <ul>
-    	     <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDRxMEFfUnV0Q1JTRk9fcHNiODNFQnc6MQ">Private Demo</a></li>
+    	     <li><a href="http://wormbase.org/beta">Request Private Demo</a></li>
              <li><a href="/tools/operator">Chat</a></li>
-             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit</a></li>
+             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit Data</a></li>
              <li><a href="mailto:feedback@wormbase.org">Email</a></li>
              <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
            </ul>                
@@ -58,9 +58,9 @@
        <div class="footer-title">Developer</div>
         <ul>
           <li><a>Amazon EC2 AMI</a></li>
-          <li><span>Repository: <a href="http://github.com/organizations/WormBase">git</a> <a href="http://bitbucket.org/tharris/wormbase">hg</a></span></li>
+	  <li><span>Code: </span><a href="http://github.com/organizations/WormBase">git</a> <a href="http://bitbucket.org/tharris/wormbase">hg</a></li>
           <li><a>Data Mining</a></li>
-          <li><a>API</a></li>
+          <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
     </div>
 
