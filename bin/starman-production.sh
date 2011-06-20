@@ -3,7 +3,7 @@
 # settings
 export APP="production"
 export APPLIB="WormBase"
-export WORKERS=20
+export WORKERS=10
 export PORT=5000
 export MAX_REQUESTS=500
 
