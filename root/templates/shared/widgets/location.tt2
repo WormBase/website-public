@@ -5,17 +5,17 @@
 
     genetic_position;
 
-    IF fields.genomic_position.data.label;
-       WRAPPER $field_block title="Genomic position" key="genomic_position";
+    WRAPPER $field_block title="Genomic position" key="genomic_position";
+       IF fields.genomic_position.data;
           # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
 	   FOREACH position IN fields.genomic_position.data;
                 tag2link(position);
 	   END;
-       END;
-   ELSE;
-      '<div class="caveat-emptor">This gene has not been placed on the genome or its coordinates are unknown.</div>';
+      ELSE;
+       
+         '<div class="caveat-emptor">This gene has not been placed on the genome or its coordinates are unknown.</div>';
+      END;
    END;
-
 
     '<div style="clear:both;">';
     IF fields.genomic_image.data;
