@@ -1,6 +1,6 @@
  $jq(document).ready(function() {
     window.onhashchange = readHash;
-
+    $jq.ajaxSetup( {timeout: 9999 });
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
@@ -208,18 +208,28 @@
     $jq("div.more").live('click',function() {expand($jq(this).prev(), $jq(this));});
     function expand(txt, more){
          var h = txt.height();
-         if(h<35){h='100%';}else{h='2.4em';}
+         if(h<35){
+           h='100%';
+                  //expand the shorted items before the text, also
+            txt.prev('.ellipsis')
+            .add(txt.prev().prev().prev('.author-list'))
+            .add(txt.prev().prev().prev().prev().children('.paper-title'))
+            .removeClass('ellipsis');
+         }else{
+           h='2.4em';
+                  //expand the shorted items before the text, also
+            txt.prev(":not(.gene-link)")
+            .add(txt.prev().prev().prev('.author-list'))
+            .add(txt.prev().prev().prev().prev().children('.paper-title'))
+            .addClass('ellipsis');
+         }
          txt.css("max-height", "none");
          txt.animate({height:h});
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
          more.toggleClass('open');
 
-         //expand the shorted items before the text, also
-         txt.prev()
-            .add(txt.prev().prev().prev('.author-list'))
-            .add(txt.prev().prev().prev().prev().children('.paper-title'))
-            .toggleClass('ellipsis');
+
     }
 
     $jq("div.text-min").live('mouseover mouseout',function() {

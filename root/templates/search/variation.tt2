@@ -5,7 +5,7 @@
     </li>
 
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
-    [% item.status %], [% item.variation_type.general_class %]
+    [% item.status %], [% item.variation_type.general_class.join(', ') %]
         [% IF item.variation_type.physical_class %]
            ([% item.variation_type.physical_class %])
         [% END %]
@@ -13,6 +13,15 @@
             <br />Corresponding Gene: [% tag2link(item.corresponding_gene) %]
         [% END %]
         [% IF item.remarks.size > 0 %]
-           <br />[% markup(item.remarks.join('<br>'), 0, 1, 1) %]
+           [% mystring = markup(item.remarks.join('<br>'), 0, 1, 1) %]
+
+
+          <div class="text-min" style="height:auto;max-height:2.4em;">
+            [% mystring %]   
+          </div>
+          [% IF mystring.length > 150 %]
+                <div class="more">
+                    <div class="ui-icon ui-icon-triangle-1-s"></div>
+                </div>
+          [% END %]
         [% END %]
-        <br />
