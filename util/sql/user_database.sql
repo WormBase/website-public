@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS wormbase_user;
 CREATE DATABASE wormbase_user;
 USE wormbase_user;
-GRANT SELECT ON `wormbase_user`.* TO 'wormbase'@'localhost';
+GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
