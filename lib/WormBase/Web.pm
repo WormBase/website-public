@@ -417,7 +417,7 @@ sub merge_session_to_user {
     my $user_items = $c->model('Schema::UserSave')->search_rs({session_id=>"user:$uid"});
 
     foreach my $saved_item (@user_saved){
-      unless($user_items->search({page_id=>$saved_item->page_id})){
+      unless($user_items->find({page_id=>$saved_item->page_id})){
         $saved_item->session_id("user:$uid");
       }else{
         $saved_item->delete();

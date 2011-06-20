@@ -625,11 +625,11 @@ div.loading {
   padding:1em 0 0;
 }
 
-.widget-header div.ui-icon:hover {
+/*.widget-header div.ui-icon:hover {
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
-}
+}*/
 
 h3 div.module-min {
   float:left;

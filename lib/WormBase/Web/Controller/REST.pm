@@ -545,38 +545,49 @@ sub rest_register_email {
 sub feed :Path('/rest/feed') :Args :ActionClass('REST') {}
 
 sub feed_GET {
-    my ($self,$c,$type) = @_;
+    my ($self,$c,@args) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{current_time}=time();
 
-    my $url = $c->req->params->{url};
-    my $page = $c->model('Schema::Page')->find({url=>$url});
-$c->log->debug("page: " . $page . ", url:" . $url);
-    $c->stash->{url} = $url;
+    my $type = shift @args;
+    
+    if($type eq "download"){
+      my $class = shift @args;
+      my $wbid = shift @args;
+      my $widget = shift @args;
+      my $name = shift @args;
 
+      $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
 
-    if($type eq "comment"){
-      my @comments = $page->comments;
-      if($c->req->params->{count}){
-        $c->response->body("(" . scalar(@comments) . ")");
-        return;
+    }else{
+
+      my $url = $c->req->params->{url};
+      my $page = $c->model('Schema::Page')->find({url=>$url});
+      $c->stash->{url} = $url;
+
+      if($type eq "comment"){
+        my @comments = $page->comments;
+        if($c->req->params->{count}){
+          $c->response->body("(" . scalar(@comments) . ")");
+          return;
+        }
+        $c->stash->{comments} = \@comments if(@comments);  
+      }elsif($type eq "issue"){
+        my @issues;
+        if($page) {
+          @issues = $page->issues;
+          $c->stash->{issue_type} = 'page';
+        }else {
+          @issues= $c->user->issues_reported if $c->user;
+          push(@issues, $c->user->issues_responsible);
+          $c->stash->{issue_type} = 'user';
+        }
+        if($c->req->params->{count}){
+          $c->response->body(scalar(@issues));
+          return;
+        }
+        $c->stash->{issues} = \@issues if(@issues);  
       }
-      $c->stash->{comments} = \@comments if(@comments);  
-    }elsif($type eq "issue"){
-      my @issues;
-      if($page) {
-        @issues = $page->issues;
-        $c->stash->{issue_type} = 'page';
-      }else {
-        @issues= $c->user->issues_reported if $c->user;
-        push(@issues, $c->user->issues_responsible);
-        $c->stash->{issue_type} = 'user';
-      }
-      if($c->req->params->{count}){
-        $c->response->body(scalar(@issues));
-        return;
-      }
-      $c->stash->{issues} = \@issues if(@issues);  
     }
       
      $c->stash->{template} = "feed/$type.tt2"; 

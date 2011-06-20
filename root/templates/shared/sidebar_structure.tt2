@@ -14,9 +14,6 @@
 [%#               type = "title"                                                %]
 [%#             }                                                               %]
 
-    [% UNLESS no_layout %]
-    <div id="buttons-nav">
-
 [% UNLESS c.req.action == 'me' %]
   [% widgets.push({ title="My WormBase" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
@@ -29,6 +26,11 @@
     %]
     [% widgets.push(w) %]
   [% END %]
+  [% END %]
+
+    [% UNLESS no_layout %]
+    <div id="buttons-nav">
+[% UNLESS c.req.action == 'me' %]
         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
@@ -47,7 +49,7 @@
               </ul>
             </li>
             <li><a id="fade" onClick="openAllWidgets(); return false;">open all</a></li>
-            <li><a id="fade" class="print">print</a></li>
+<!--             <li><a id="fade" class="print">print</a></li> -->
           </ul>
         </div>
 
