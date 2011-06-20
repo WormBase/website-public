@@ -1,3 +1,14 @@
+Remove unused modules
+GO processing/display support (perhaps via go-db-perl)
+Todd: move code to git
+Caching: change to caching rendered templates
+Precache: precahce with Test::WWW::Mechanize::Catalyst
+
+
+
+
+
+
 The following data access and formatting needs to be standardized; some
 already are partially standardized:
     GO_term, Phenotype
