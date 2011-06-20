@@ -5,7 +5,7 @@
 
     genetic_position;
 
-    IF fields.genomic_position.data.start;
+    IF fields.genomic_position.data.label;
        WRAPPER $field_block title="Genomic position" key="genomic_position";
           # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
 	   FOREACH position IN fields.genomic_position.data;
