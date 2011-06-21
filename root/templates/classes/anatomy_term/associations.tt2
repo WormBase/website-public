@@ -1,0 +1,33 @@
+[% 
+    WRAPPER $field_block title="Transgenes" key="transgenes";
+       FOREACH data IN fields.transgenes.data;
+        tag2link(data) _ '<br />';
+       END;
+    END;
+
+    WRAPPER $field_block title="Expression patterns" key="expression_patterns";
+       FOREACH data IN fields.expression_patterns.data;
+        tag2link(data.expression_pattern) _ '<br />';
+       END;
+    END;
+
+    WRAPPER $field_block title="Gene ontology" key="gene_ontology";
+       FOREACH data IN fields.gene_ontology.data;
+        tag2link(data.term) _ '<br />';
+       END;
+    END;
+
+    WRAPPER $field_block title="Anatomy function" key="anatomy_functions";
+       fields.anatomy_functions.data;
+    END;
+
+    WRAPPER $field_block title="Anatomy function NOTS" key="anatomy_function_nots";
+       fields.anatomy_function_nots.data;
+    END;
+
+    WRAPPER $field_block title="Expression clusters" key="expression_clusters";
+       FOREACH data IN fields.expression_clusters.data;
+        tag2link(data.ec_data) _ '<br />';
+       END;
+    END;
+%]
