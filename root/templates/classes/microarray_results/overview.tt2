@@ -1,0 +1,11 @@
+[% 
+
+    WRAPPER $field_block title="gene" key="gene";
+       tag2link(fields.gene.data);
+    END;
+
+    WRAPPER $field_block title="cds" key="cds";
+       tag2link(fields.cds.data);
+    END;
+
+%]

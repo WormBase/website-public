@@ -167,6 +167,7 @@ sub _get_obj {
   unless (defined $ret{name}) {
     $ret{name}{id} = $doc->get_value(1);
     $ret{name}{class} = $doc->get_value(2);
+    $ret{name}{label} = $doc->get_value(1);
   }
   return \%ret;
 }
