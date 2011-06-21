@@ -93,7 +93,7 @@ sub search_exact {
 
     my $query=$class->syn_qp->parse_query( $q, 1|2 );
     my $enq       = $class->syn_db->enquire ( $query );
-    $c->log->debug("query:" . $query->get_description());
+#     $c->log->debug("query:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0,1 );
 

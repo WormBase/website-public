@@ -1,42 +1,45 @@
 [% UNLESS noboiler %]<h1>Nucleotide Aligner for [% sequence %]</h1>[% END %]
+
 [% msg %]
+
 [% UNLESS noboiler %]
-<p>
-<form method="post" action="[% c.uri_for('tools','nucleotide_aligner','run') %]" name="f">
+  <p>
+  <form method="post" action="[% c.uri_for('tools','nucleotide_aligner','run') %]" name="f">
 
-<p><b>Modify parameters for display: &nbsp</b> 
-<br> Gene <input type="text" name="sequence" value="[% sequence %]" size="[% size %]"> from 
-<input type="text" name="start" value="[% start %]" size="5"> to 
-<input type="text" name="end" value="[% end %]" size="5"> 
-<br> 
-<b>Alignment method: </b> 
-<br> 
-[% FOREACH type IN types.keys.sort %]
-<input type="checkbox" name="algorithm" value="[% type %]" [% IF algorithm.$type == 1 %]checked[% END %] >[% labels.$type %] 
-[% END %]
-<br> 
-<b>Flip Sequences</b> 
-<input type="checkbox" name="flip"   [% IF flip %]checked[% END %] >Flip <br> <b>Length of unaligned sequence allowed at ends</b> 
-<input type="hidden" name="override_flip" value="1" > 
-<select name="ragged" >
-[% FOREACH number IN [0,5,10,23,50,100] %]
-  <option value="[% number %]" [% IF number==factor %]selected[% END %]>[% number %]</option>
-[% END %]
-</select> <br>
-</p>
-<input type="submit" name="Change" value="Change" ><br>
-</form> 
-</p>
+  <p><b>Modify parameters for display: &nbsp</b> 
+  <br> Gene <input type="text" name="sequence" value="[% sequence %]" size="[% size %]"> from 
+  <input type="text" name="start" value="[% start %]" size="5"> to 
+  <input type="text" name="end" value="[% end %]" size="5"> 
+  <br> 
+  <b>Alignment method: </b> 
+  <br> 
+  [% FOREACH type IN types.keys.sort %]
+    <input type="checkbox" name="algorithm" value="[% type %]" [% IF algorithm.$type == 1 %]checked[% END %] >[% labels.$type %] 
+  [% END %]
+  <br> 
+  <b>Flip Sequences</b> 
+  <input type="checkbox" name="flip"   [% IF flip %]checked[% END %] >Flip <br> <b>Length of unaligned sequence allowed at ends</b> 
+  <input type="hidden" name="override_flip" value="1" > 
+  <select name="ragged" >
+  [% FOREACH number IN [0,5,10,23,50,100] %]
+    <option value="[% number %]" [% IF number==factor %]selected[% END %]>[% number %]</option>
+  [% END %]
+  </select> <br>
+  </p>
+  <input type="submit" name="Change" value="Change" ><br>
+  </form> 
+  </p>
 
 [% END %]
 
-[% IF long %]<h3 class="error" align="CENTER">Sorry, alignment display is limited to [% max_len %] bp</h3>
+[% IF long %]
+  <h3 class="error" align="CENTER">Sorry, alignment display is limited to [% max_len %] bp</h3>
 [% ELSE %]
 
  [% IF picture.data %]
 	[% tag2link(picture.data, image(site.external_urls.gbrowse_image.base _ picture.data.label)) %] 
       [% END %]
  
-<p>
-[% content %]
+  <p>
+  [% content %]
 [% END %]
