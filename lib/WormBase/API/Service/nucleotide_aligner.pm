@@ -10,12 +10,6 @@ use Data::Dumper;
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
-
-has 'search' => (
-    is         => 'ro',
-    isa        => 'WormBase::API::Service::Search',
-    );
-
 has 'algorithms' => (
     is         => 'rw',
     isa        => 'HashRef',
@@ -62,7 +56,7 @@ sub index {
 
 
 sub run {
-    my ($self,$param) = @_;
+    my ($self,$c,$param) = @_;
     my $sequence_id = $param->{"sequence"};
  
     my @array;
@@ -83,12 +77,19 @@ sub run {
     }
     $self->set_tracks(\@types);
 
-    my $sequences = $self->search->gene({pattern=>$sequence_id,tool=>1});
-    return {msg=>"No such sequence ID known."} unless @$sequences  ;
-    my $sequence = $sequences->[0];
+    my $api = $c->model('WormBaseAPI');
+
+    my ($it,$res)= $api->xapian->search_exact($c, $sequence_id, 'gene');
+
+    my $o = @{$it->{struct}}[0];
+    my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;
+    my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
+
+
+    return {msg=>"No such sequence ID known."} unless $sequence  ;
+
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
-    my $bestname = $self->common_name($sequence);  # Is this a sequence or a gene?
     my $gff_dsn= $self->gff_dsn;
     $gff_dsn->ace($sequence->db);
     $gff_dsn->reconnect();
@@ -224,7 +225,11 @@ sub run {
     
   # Link into gbrowse image using the sequence object (a gene object)
     $self->log->debug("ALIGNER: before print_image: $align_start $align_end\n");
-    $hash->{picture}= $self->genomic_picture($sequence, $align_start, $align_end);
+ my $gene = $api->fetch({aceclass=> $o->get_document->get_value(0),
+                          name => $o->get_document->get_value(1)}) or die "$!";
+
+
+    $hash->{picture}= $gene->genomic_image;
 #     print_image($sequence,$align_start,$align_end,\@align_types);
 
     ##################################################

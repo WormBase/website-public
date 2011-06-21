@@ -42,12 +42,10 @@
     # Matching cDNAs
     WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas";
        'Found ' _ searchlink('sequence', object.name.data.id, fields.matching_cdnas.data.size _ " matching cDNAs");
-       '<span id="fade">TODO: check if sequence search working</span>';
     END;
 
     WRAPPER $field_block title="Primer pairs" key="primer_pairs";
        'Found ' _ searchlink('pcr_product', object.name.data.id, fields.primer_pairs.data.size _ " primer pairs");
-       '<span id="fade">TODO: implement primer pair search</span>';
     END;
 
     WRAPPER $field_block title="ORFeome Primers" key="orfeome_primers";
@@ -58,12 +56,11 @@
 
     WRAPPER $field_block title="SAGE tags" key="sage_tags";
        'Found ' _ searchlink('sage_tag', object.name.data.id, fields.sage_tags.data.size _ " SAGE tags");
-       '<span id="fade">TODO: implement SAGE tag search</span>';
     END;
 
     WRAPPER $field_block title="Microarray probes" key="microarray_probes";
          FOREACH item IN fields.microarray_probes.data;
-             tag2link(item);
+             tag2link(item) _ ', ';
          END;        
     END;
 

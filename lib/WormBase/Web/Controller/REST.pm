@@ -874,7 +874,7 @@ sub widget_GET {
 	
     # If you have a tool that you want to display inline as a widget, be certain to add it here.
     # Otherwise, it will try to load a template under class/action.tt2...
-    } elsif ($widget eq "aligner" || $widget eq "show_mult_align" || $widget eq 'tree') {
+    } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
       return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
       return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
     }

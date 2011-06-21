@@ -31,18 +31,21 @@ sub tool :Path("/tools") Args {
     
     # Does the data already exist in the cache?
     
-    if ($action eq 'run' && $tool eq 'aligner' && !(defined $c->req->params->{Change})) {
-	
-	my ($cache_id,$cache_server);
-	($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
-	unless ($data) {  
-	    $data = $api->_tools->{$tool}->$action($c->req->params);
-	    $c->set_cache($cache_id,$data);
-	} else {
-	    $c->stash->{cache} = $cache_server if($cache_server);
-	}
+    if ($action eq 'run' && $tool =~/aligner/ && !(defined $c->req->params->{Change})) {
+      my ($cache_id,$cache_server);
+      ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
+      unless ($data) {  
+          $data = $api->_tools->{$tool}->$action($c, $c->req->params);
+          $c->set_cache($cache_id,$data);
+      } else {
+          $c->stash->{cache} = $cache_server if($cache_server);
+      }
     } else{
-	$data= $api->_tools->{$tool}->$action($c->req->params);
+      if($tool =~/aligner/){
+        $data = $api->_tools->{$tool}->$action($c, $c->req->params);
+      }else{
+        $data = $api->_tools->{$tool}->$action($c->req->params);
+      }
     }
     
     # Um. Not sure how this works for other tools.    
