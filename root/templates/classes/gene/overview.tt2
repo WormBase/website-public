@@ -9,11 +9,11 @@ WRAPPER highlight_box;
  
    taxonomy;
 
-   WRAPPER $field_block title="Sequence";
+   WRAPPER $field_block title="Sequence" key="sequence_name";
         tag2link(fields.sequence_name.data);
    END;
 
-   WRAPPER $field_block title="Locus";
+   WRAPPER $field_block title="Locus" key="locus_name";
         tag2link(fields.locus_name.data);
    END;
 

@@ -241,7 +241,7 @@
 
     MACRO span_class(text, class, ace_class, link) BLOCK;
       UNLESS link;
-         "<span class=\"$class\">" _ text2link(ace_class text, text) _ "</span>";
+         "<span class=\"$class\">" _ searchlink(ace_class, text, text) _ "</span>";
       ELSE;
       "<span class=\"$class\">$text</span>";
       END;
