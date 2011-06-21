@@ -597,7 +597,7 @@ sub locus_name {
     my $object = $self->object;
     my $locus  = $object->CGC_name;
     return { description => 'the locus name (also known as the CGC name) of the gene',
-	     data        => $locus ? $self->_pack_obj($locus) : '' }
+	     data        => $locus ? $self->_pack_obj($locus->CGC_name_for, "$locus") : undef }
 }
 
 
@@ -666,7 +666,7 @@ sub sequence_name {
     my $object   = $self->object;
     my $sequence = $object->Sequence_name;
     return { description => 'the primary corresponding sequence name of the gene, if known',
-	     data        => $self->_pack_obj($sequence) };
+	     data        => $sequence ? $self->_pack_obj($sequence->Sequence_name_for, "$sequence") : undef };
 }
 
 

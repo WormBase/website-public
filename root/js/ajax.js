@@ -1,6 +1,6 @@
  $jq(document).ready(function() {
     window.onhashchange = readHash;
-    $jq.ajaxSetup( {timeout: 9999 });
+    $jq.ajaxSetup( {timeout: 99999 });
     ajaxGet($jq(".status-bar"), "/rest/auth");
      $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
