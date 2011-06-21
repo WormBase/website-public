@@ -224,7 +224,7 @@
 # Markup any variation name in text
     MACRO markup_var(text, link) BLOCK;
       text = "$text";
-      text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+(\))?)+)', span_class('$1', "var",'variation', link));
+      text.replace('(\b((\()?(ttTi|stP|hIn|[a-z]{1,3}|[a-z]*CE2-)\d+)+)', span_class('$1', "var",'variation', link));
     END;
 
 # format taxonomy
