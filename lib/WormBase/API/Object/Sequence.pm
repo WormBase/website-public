@@ -443,7 +443,7 @@ B<Response example>
 sub matching_transcript {
     my $self = shift;
     my $object = $self->object;
-    my @transcripts = map { $self->_pack_obj($_) } $object->Matching_transcript;
+    my @transcripts = map { $self->_pack_obj($_) } $object->Matching_transcript // undef;
     return { description => 'matching transcripts of the sequence',
 	     data        =>  @transcripts ? \@transcripts : undef };
 }
@@ -1144,9 +1144,9 @@ B<Response example>
 
 sub source_clone {
     my ($self) = @_;
-    my $clone = map { $self->_pack_obj($_) } $self ~~ 'Clone' || $self->sequence->Clone;
+    my $clone = $self ~~ 'Clone' || $self->sequence ? $self->sequence->Clone : undef;
     return { description => 'The Source clone of the sequence',
-	     data        => $clone ? $clone->name : undef };
+	     data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
 }
 
 
