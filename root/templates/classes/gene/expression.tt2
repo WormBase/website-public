@@ -27,7 +27,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
 	      IF ep.value.image;
 		   '<a style="float:left" class="ui-icon ui-icon-image exprbox" rel="expression_pattern_images" href="#' _ ep.value.object.id _ '" title="' _ ep.value.object.label _ '"></a>';
 	      END;
-	      tag2link(ep.value.object) _ ': ' _ markup(ep.value.details,0) _ '</li>';
+	      tag2link(ep.value.object, ep.value.object.id) _ ': ' _ markup(ep.value.details,0) _ '</li>';
          END;
       '</ul>';
 END;
