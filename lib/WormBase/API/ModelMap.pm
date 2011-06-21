@@ -28,7 +28,7 @@ use Class::MOP;
 		       class => { # HAS DEFAULT
 			   Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
 			   Person    => [qw(Person Author)],
-			   Sequence  => [qw(Sequence CDS)],
+			   Sequence  => [qw(Sequence CDS cds)],
 			   Rnai      => 'RNAi',
                Go_term   => 'GO_term',
 		       },

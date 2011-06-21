@@ -63,7 +63,7 @@ sub gene {
     my $self = shift;
     my $object = $self->object;
     my $data = { description => 'The corresponding gene',
-         data        =>  $self->_pack_obj($object->Gene, $object->Gene->Public_name), 
+         data        =>  $self->_pack_obj($object->Gene), 
     };
     return $data;
 }
