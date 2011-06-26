@@ -143,7 +143,6 @@ sub _build_phen_data {
 }
 
 
-###### GENE PHENOTYPE DEV ######
 
 has 'phenotype_id2name' => (
 	is =>'rw',
@@ -182,215 +181,7 @@ has 'phenotype_data' => (
 );
 
 
-# ##### subroutines ###############
-# 
-sub _gene_rnai_pheno_data_compile { ## on going
-    my ($self) = @_;
-   	my $object = $self->object;
-    my $na = '';
-	my $output = "";
-	my $p2n = "";
-	my %uniq; 
-	my %phenotype2name;	
-	    
-	foreach my $rnai ($object->RNAi_result) {
-	    
-	    my @phenotypes = $rnai->Phenotype;
-		
-	    foreach my $interaction ($rnai->Interaction) {
-		my @types = $interaction->Interaction_type;
-			foreach (@types) {		    
-				push @phenotypes,map { $_->right } grep { $_ eq 'Interaction_phenotype' } $_->col;		    
-			}
-	    }
-	    next unless @phenotypes > 0;
-	    
-	    foreach my $phenotype (@phenotypes) {
-	    	my $phenotype_name = $phenotype->Primary_name;
-	    	$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
-	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-	    }
-	}
 
-	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);	
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	return $output;
-}
-
-sub _gene_rnai_pheno_not_data_compile {
-    my ($self) = @_;
-	my $object = $self->object;
-    my $output = "";
-	my $p2n = "";
-    
-    my $na = 'Not';
-	my @rnai = $object->RNAi_result;    
-	my %uniq; 
-	my %phenotype2name;
-	
-	foreach my $rnai (@rnai) {
-	    my @phenotypes = $rnai->Phenotype_not_observed;
-	    
-	    foreach my $phenotype (@phenotypes) {		
-	    	my $phenotype_name = $phenotype->Primary_name;
-			$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
-	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-	    }
-	}
-	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	return $output;
-}
-
-sub _gene_xgene_pheno_data_compile{
-
-	my $self = shift @_;		
-	my $object = $self->object;
-	my %lines;
-	my %lines_not;
-	my $p2n = "";
-		
-	my @xgenes = $object->Drives_Transgene;
-	my @xgene_product = $object->Transgene_product;
-	my @xgene_rescue = $object->Rescued_by_transgene;
-	
-	push @xgenes,@xgene_product;
-	push @xgenes,@xgene_rescue;
-	
-	my %phenotype2name;
-	
-	foreach my $xgene (@xgenes) {
-
-		my @phenotypes = $xgene->Phenotype;
-	
-		foreach my $phenotype (@phenotypes) {
-			my $phenotype_name = $phenotype->Primary_name;
-			my $na = "";
-			$lines{"$object\|$xgene\|$phenotype\|$na"} = 1;
-			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-		}	
-		
-		my @phenotype_nots = $xgene->Phenotype_not_observed;
-		
-		foreach my $phenotype_not (@phenotype_nots) {
-			my $phenotype_name = $phenotype_not->Primary_name;
-			my $na = "Not";
-			$lines_not{"$object\|$xgene\|$phenotype_not\|$na"} = 1;
-			$phenotype2name{"$phenotype_not\=\>$phenotype_name"} = 1;
-		}		
-	}
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	my $output = join ("\n" , keys %lines);
-	my $output_not = join ("\n" , keys %lines_not);
-	return $output,$output_not ;
-}
- 
-sub _variation_data_compile{
-	
-	my $self = shift @_;						
-	my $object = $self->object;
-	my %lines;
-	my %lines_not;
-	my $p2n = "";
-	my %phenotype2name;
-	
-	my @variations = $object->Allele;
-	
-	foreach my $variation (@variations) {
-
-		my $seq_status = $variation->SeqStatus;
-		my $variation_name = $variation->Public_name;
-		my @phenotypes = $variation->Phenotype;
-		my @phenotype_nots = $variation->Phenotype_not_observed;
-		
-		foreach my $phenotype (@phenotypes) {
-			my $phenotype_name = $phenotype->Primary_name;
-			my $na = "";
-			$lines{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
-			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-		}
-		foreach my $phenotype (@phenotype_nots) {	
-			my $na = "Not";			
-			my $phenotype_name = $phenotype->Primary_name;
-			$lines_not{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
-			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-			
-		}
-	}
-	
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	my $output = join ("\n" , keys %lines);
-	my $output_not = join ("\n" , keys %lines_not);
-	return $output, $output_not;
-}
-
-
-sub _rnai_data_compile{
-
-	my $self = shift;
-	my $class = 'RNAi';
-	my %lines;
-	my $gene_rnai_data = $self->gene_rnai_pheno_data;
-	my %rnais;
-	my @rnai_datalines = split "\n",$gene_rnai_data;
-	my $DB = $self->ace_dsn;
-	
-	foreach my $dataline (@rnai_datalines) {
-		chomp $dataline;
-		my ($gene,$rnai,$pheno,$not) = split /\|/,$dataline;
-		$rnais{$rnai} = 1;
-	}
-	
-	foreach my $unique_rnai (keys %rnais) {
-		my $rnai_object = $DB->fetch(-class => $class, -name =>$unique_rnai); #, , -count => 20, -offset=>6800	
-		my $ref;
-		
-		eval { $ref = $rnai_object->Reference;}; 
-		
-		my $genotype;
-		my @experimental_details; # = $rnai_object->Experiment;
-	
-		eval {@experimental_details = $rnai_object->Experiment;};
-	
-		foreach my $experimental_detail (@experimental_details) {
-				
-			if($experimental_detail =~ m/Genotype/) {
-			
-				$genotype = $experimental_detail->right;
-				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
-			}
-			
-			if($experimental_detail =~ m/Strain/) {
-			
-				my $strain = $experimental_detail->right;
-				$genotype = $strain->Genotype;
-				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
-			}	
-		} 
-	
-		if(!($genotype)) {
-			$lines{"$rnai_object\|$genotype\|$ref"} = 1;
-		} else {
-			next;
-		}
-	}
-
-	my $output = join("\n",keys %lines);
-	return $output;
-}
 
 
 #################################
@@ -4265,6 +4056,216 @@ sub _get_variation_data {
 		push @return_data, "$phene\|$vars_line";
 	}
 	return \@return_data, \%variation_id2name;
+}
+
+
+
+sub _gene_rnai_pheno_data_compile { ## on going
+    my ($self) = @_;
+   	my $object = $self->object;
+    my $na = '';
+	my $output = "";
+	my $p2n = "";
+	my %uniq; 
+	my %phenotype2name;	
+	    
+	foreach my $rnai ($object->RNAi_result) {
+	    
+	    my @phenotypes = $rnai->Phenotype;
+		
+	    foreach my $interaction ($rnai->Interaction) {
+		my @types = $interaction->Interaction_type;
+			foreach (@types) {		    
+				push @phenotypes,map { $_->right } grep { $_ eq 'Interaction_phenotype' } $_->col;		    
+			}
+	    }
+	    next unless @phenotypes > 0;
+	    
+	    foreach my $phenotype (@phenotypes) {
+	    	my $phenotype_name = $phenotype->Primary_name;
+	    	$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
+	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+	    }
+	}
+
+	$output = $output . join("\n",keys %uniq);
+	$p2n = $p2n . join("\n",keys %phenotype2name);	
+	my $phenotype_id2name = $self->phenotype_id2name;
+	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+	$self->phenotype_id2name("$phenotype_id2name");
+	return $output;
+}
+
+sub _gene_rnai_pheno_not_data_compile {
+    my ($self) = @_;
+	my $object = $self->object;
+    my $output = "";
+	my $p2n = "";
+    
+    my $na = 'Not';
+	my @rnai = $object->RNAi_result;    
+	my %uniq; 
+	my %phenotype2name;
+	
+	foreach my $rnai (@rnai) {
+	    my @phenotypes = $rnai->Phenotype_not_observed;
+	    
+	    foreach my $phenotype (@phenotypes) {		
+	    	my $phenotype_name = $phenotype->Primary_name;
+			$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
+	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+	    }
+	}
+	$output = $output . join("\n",keys %uniq);
+	$p2n = $p2n . join("\n",keys %phenotype2name);
+	
+	my $phenotype_id2name = $self->phenotype_id2name;
+	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+	$self->phenotype_id2name("$phenotype_id2name");
+	return $output;
+}
+
+sub _gene_xgene_pheno_data_compile{
+
+	my $self = shift @_;		
+	my $object = $self->object;
+	my %lines;
+	my %lines_not;
+	my $p2n = "";
+		
+	my @xgenes = $object->Drives_Transgene;
+	my @xgene_product = $object->Transgene_product;
+	my @xgene_rescue = $object->Rescued_by_transgene;
+	
+	push @xgenes,@xgene_product;
+	push @xgenes,@xgene_rescue;
+	
+	my %phenotype2name;
+	
+	foreach my $xgene (@xgenes) {
+
+		my @phenotypes = $xgene->Phenotype;
+	
+		foreach my $phenotype (@phenotypes) {
+			my $phenotype_name = $phenotype->Primary_name;
+			my $na = "";
+			$lines{"$object\|$xgene\|$phenotype\|$na"} = 1;
+			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+		}	
+		
+		my @phenotype_nots = $xgene->Phenotype_not_observed;
+		
+		foreach my $phenotype_not (@phenotype_nots) {
+			my $phenotype_name = $phenotype_not->Primary_name;
+			my $na = "Not";
+			$lines_not{"$object\|$xgene\|$phenotype_not\|$na"} = 1;
+			$phenotype2name{"$phenotype_not\=\>$phenotype_name"} = 1;
+		}		
+	}
+	$p2n = $p2n . join("\n",keys %phenotype2name);
+	my $phenotype_id2name = $self->phenotype_id2name;
+	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+	$self->phenotype_id2name("$phenotype_id2name");
+	my $output = join ("\n" , keys %lines);
+	my $output_not = join ("\n" , keys %lines_not);
+	return $output,$output_not ;
+}
+ 
+sub _variation_data_compile{
+	
+	my $self = shift @_;						
+	my $object = $self->object;
+	my %lines;
+	my %lines_not;
+	my $p2n = "";
+	my %phenotype2name;
+	
+	my @variations = $object->Allele;
+	
+	foreach my $variation (@variations) {
+
+		my $seq_status = $variation->SeqStatus;
+		my $variation_name = $variation->Public_name;
+		my @phenotypes = $variation->Phenotype;
+		my @phenotype_nots = $variation->Phenotype_not_observed;
+		
+		foreach my $phenotype (@phenotypes) {
+			my $phenotype_name = $phenotype->Primary_name;
+			my $na = "";
+			$lines{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
+			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+		}
+		foreach my $phenotype (@phenotype_nots) {	
+			my $na = "Not";			
+			my $phenotype_name = $phenotype->Primary_name;
+			$lines_not{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
+			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+			
+		}
+	}
+	
+	$p2n = $p2n . join("\n",keys %phenotype2name);
+	my $phenotype_id2name = $self->phenotype_id2name;
+	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+	$self->phenotype_id2name("$phenotype_id2name");
+	my $output = join ("\n" , keys %lines);
+	my $output_not = join ("\n" , keys %lines_not);
+	return $output, $output_not;
+}
+
+
+sub _rnai_data_compile{
+
+	my $self = shift;
+	my $class = 'RNAi';
+	my %lines;
+	my $gene_rnai_data = $self->gene_rnai_pheno_data;
+	my %rnais;
+	my @rnai_datalines = split "\n",$gene_rnai_data;
+	my $DB = $self->ace_dsn;
+	
+	foreach my $dataline (@rnai_datalines) {
+		chomp $dataline;
+		my ($gene,$rnai,$pheno,$not) = split /\|/,$dataline;
+		$rnais{$rnai} = 1;
+	}
+	
+	foreach my $unique_rnai (keys %rnais) {
+		my $rnai_object = $DB->fetch(-class => $class, -name =>$unique_rnai); #, , -count => 20, -offset=>6800	
+		my $ref;
+		
+		eval { $ref = $rnai_object->Reference;}; 
+		
+		my $genotype;
+		my @experimental_details; # = $rnai_object->Experiment;
+	
+		eval {@experimental_details = $rnai_object->Experiment;};
+	
+		foreach my $experimental_detail (@experimental_details) {
+				
+			if($experimental_detail =~ m/Genotype/) {
+			
+				$genotype = $experimental_detail->right;
+				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
+			}
+			
+			if($experimental_detail =~ m/Strain/) {
+			
+				my $strain = $experimental_detail->right;
+				$genotype = $strain->Genotype;
+				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
+			}	
+		} 
+	
+		if(!($genotype)) {
+			$lines{"$rnai_object\|$genotype\|$ref"} = 1;
+		} else {
+			next;
+		}
+	}
+
+	my $output = join("\n",keys %lines);
+	return $output;
 }
 
 
