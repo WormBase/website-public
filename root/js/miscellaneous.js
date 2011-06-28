@@ -8,7 +8,30 @@ $jq('input[value=[% c.user.roles %]]:radio').attr('checked', 'checked');
 String.prototype.trim = function () {
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
 }
+    
 
+
+
+
+function filterData(data){
+    // filter all the nasties out
+    // no body tags
+    data = data.replace(/<?body[^>]*>/g,'');
+    data = data.replace(/<?\/body[^>]*>/g,'');
+    // no linebreaks
+    data = data.replace(/[\r|\n]+/g,'');
+    // no comments
+    data = data.replace(/<--[\S\s]*?-->/g,'');
+    // no noscript blocks
+    data = data.replace(/<noscript[^>]*>[\S\s]*?<\/noscript>/g,'');
+    // no script blocks
+    data = data.replace(/<script[^>]*>[\S\s]*?<\/script>/g,'');
+    // no self closing scripts
+    data = data.replace(/<script.*\/>/,'');
+    // [... add as needed ...]
+    return data;
+}
+ 
 
 // Automatically generate table of contents in #documentation-with-toc divs
 // use by the jquery table of contents plugin.  See resources/documentation/nomenclature for example.

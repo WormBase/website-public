@@ -32,7 +32,11 @@
     <div id="buttons-nav">
 [% UNLESS c.req.action == 'me' %]
         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
+        <!--
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
+        -->
+        <!-- TH: quick test of drawing help text from wiki -->
+        <a   tip="page help" class="button section-button tip-simple ui-corner-all" name="help"  href="Website:Help:[%- object.class -%]_Summary"><span class="ui-icon ui-icon-help"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
 [% END %]
 
