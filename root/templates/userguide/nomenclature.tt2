@@ -1,3 +1,14 @@
+<div id='UserGuideNomenclature'></div>
+<script>
+   loadWikiContent('UserGuide:Nomenclature');
+</script>
+
+This is a link to a non-existent wiki page.
+<a href="Title_page" class="wiki-help">help</a>
+
+
+
+
 <div id="userguide">
 
 <ol id="toc"></ol>
