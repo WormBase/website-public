@@ -30,6 +30,6 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("page_id", "widget_id");
 
 __PACKAGE__->belongs_to(page=>'WormBase::Schema::Result::Page','page_id');
-__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id'); 
+#__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id'); 
 
 1;
