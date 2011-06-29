@@ -1,41 +1,6 @@
-Please cite WormBase as follows:
+<script>
+   loadWikiContent('Citing_WormBase');
+</script>
+<div id="test-wiki-content"></div>
 
- WormBase web site, http://www.wormbase.org, release WSXX, date XXX.
-
-Use the current WS release number and release date in your citation. This information is available at the top of the WormBase home page.
-
-For data analysis and citation purposes, WormBase offers periodic freezes of both the database and WormBase software. These freezes, occuring with every tenth release of the database, are permanently archived at wsXXX.wormbase.org. They can be cited using the following URLs:
-
- WS204    29 Jul 2009            http://ws204.wormbase.org/
- WS200    20 Mar 2009            http://ws200.wormbase.org/
- WS190    16 May 2008            http://ws190.wormbase.org/
- WS180    07 Sep 2007            http://ws180.wormbase.org/
- WS170    09 February 2007       http://ws170.wormbase.org/
- WS160    31 July 2006           http://ws160.wormbase.org/
- WS150    30 November 2005       http://ws150.wormbase.org/
- WS140    26 March 2005          http://ws140.wormbase.org/
- WS130    10 October 2004        http://ws130.wormbase.org/
- WS120    1 March 2004           http://ws120.wormbase.org/
- WS110    1 October 2003         http://ws110.wormbase.org/
- WS100    10 May 2003            http://ws100.wormbase.org/
-
-==== Citing A Specific Page ====
-
-If you'd like to cite a specific page, you should use the WormBase "get" URL. Although pages may change or be retired, this special URL ensures that an object of interest will always be available, even if specific displays are retired.
-
-Make note of the "name" and "class" of the current page:
-
-  http://www.wormbase.org/db/gene/gene?name=unc-26;class=Gene_name
-
-Substitute these values into the "Get" URL:
-
-  http://www.wormbase.org/db/get?name=NAME;class=CLASS
-
-From the example above, the URL would be:
-
-  http://www.wormbase.org/db/get?name=unc-26;class=Gene_name
-
-==== Published references ====
-
-You may also wish to cite the [[Publications|WormBase Nucleic Acids Research papers]].
-
+<a href="Updating_The_Development_Server" class="wiki-help">help</a>

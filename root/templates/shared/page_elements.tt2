@@ -1205,7 +1205,6 @@ END;
 [% # Callers should pass an array of widgets and the page title     %]
 
 [% MACRO report_page BLOCK;
-
   widgets = [];
   widgets.push({ title="Page Content" type="title"});
 

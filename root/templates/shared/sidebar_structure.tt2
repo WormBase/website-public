@@ -159,6 +159,6 @@
       $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lower %]&type=[% c.stash.section | uri %]&id=[% object.name.data.id | uri %]&url=[% url | uri %]&save_to=[% save %]&is_obj=[% is_obj %]");
 
 
-      [% PROCESS get_layout($page_class) %]
+      [% get_layout($page_class) %]
    
     </script>
