@@ -132,9 +132,25 @@ div#header .release_date { }
        ERRORS AND WARNINGS
 
   ************************************** */
+#system-message {
+  border: 1px solid #C0D8BE;
+  background: #E4F6E0;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  line-height: 16px;
+  padding: 1em 19px 1em 12px;
+  margin:25px 0px 25px 10px;
+  border-top-left-radius: 8px 8px;
+  border-top-right-radius: 8px 8px;
+  border-bottom-left-radius: 8px 8px;
+  border-bottom-right-radius: 8px 8px;
+}
+
+
 
 /* System message, for displaying site-wide warnings and alerts */
-#system-message {
+#top-system-message {
   background: #406F9C;
   color:white;
   margin:0em;
@@ -145,12 +161,12 @@ div#header .release_date { }
   border-bottom:1px solid black;
 }
 
-#system-message a{
+#top-system-message a{
   color:white;
   text-decoration:underline;
 }
 
-#system-message .system-message-close {
+#top-system-message .system-message-close {
   float:right;
   background: white;
   margin:0.2em 1.5em 0 0;

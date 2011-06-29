@@ -70,6 +70,23 @@
         END;
    END;
 
+
+   MACRO get_layout(page_class) BLOCK;
+    '<script>';
+
+      'if(location.hash.length > 0){';
+        'readHash();';
+      '}else{';
+        IF c.user_session.layout.$page_class.0.defined;
+            'location.hash = "' + c.user_session.layout.$page_class.0.lstring + '";';
+            'readHash();';
+        END;
+      '}';
+
+
+    '</script>';
+   END;
+
 # Like tag2link, but for cases where we only have text and no object.
 # You must provide both the id and text.
 # URLs

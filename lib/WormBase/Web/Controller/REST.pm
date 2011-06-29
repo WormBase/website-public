@@ -1106,7 +1106,7 @@ sub comment_rss {
         my $time = ago((time() - $_->submit_time), 1);
         push @rss, {      time=>$_->submit_time,
                           time_lapse=>$time,
-                          people=>$_->reporter,
+                          people=>$_->reporter_id,
                           page=>$_->page,
                           content=>$_->content,
                           id=>$_->id,

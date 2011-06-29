@@ -6,7 +6,7 @@
 
       [% message_id = c.config.system_message.id %]
       [% IF message_id AND !c.user_session.close_system_message.$message_id %]
-        <div id="system-message" class="system-message">
+        <div id="top-system-message" class="system-message">
           [% c.config.system_message.message %]
           <span class="system-message-close" onClick="systemMessage('hide', '[% message_id %]')">
             <span class=" ui-icon ui-icon-close"></span>
