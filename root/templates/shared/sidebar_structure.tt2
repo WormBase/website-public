@@ -148,28 +148,17 @@
 
 
     <script>
-  ajaxGet($jq(".user-history"), "/rest/history?count=3");
-  ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
+      ajaxGet($jq(".user-history"), "/rest/history?count=3");
+      ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
 
-      [%# IF object %]
+      [% PROCESS page_info %]
+      [% lclass = object.name.data.class FILTER lcfirst %]
+      [% save = 'reports' %]
+      [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
 
-[% PROCESS page_info %]
-        [% lclass = object.name.data.class FILTER lcfirst %]
-        [% save = 'reports' %]
-        [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
+      $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lower %]&type=[% c.stash.section | uri %]&id=[% object.name.data.id | uri %]&url=[% url | uri %]&save_to=[% save %]&is_obj=[% is_obj %]");
 
-        $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lower %]&type=[% c.stash.section | uri %]&id=[% object.name.data.id | uri %]&url=[% url | uri %]&save_to=[% save %]&is_obj=[% is_obj %]");
 
-      [%# END %]
-
-    if(location.hash.length > 0){
-      readHash();
-    }else{
-      [% IF c.user_session.layout.$page_class.0.defined %]
-          location.hash = "[% c.user_session.layout.$page_class.0.lstring %]";
-          readHash();
-      [% END %]
-    }
+      [% PROCESS get_layout($page_class) %]
    
-
     </script>

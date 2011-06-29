@@ -112,3 +112,23 @@ CREATE TABLE sessions (
     );
 
 
+DROP TABLE IF EXISTS page_widgets;
+CREATE TABLE page_widgets (
+        page_id INTEGER,
+        widget_id INTEGER,
+        widget_title char(72),
+        PRIMARY KEY (page_id, widget_id)
+);
+
+
+DROP TABLE IF EXISTS widgets;
+CREATE TABLE widgets (
+        widget_id INTEGER,
+        content text,
+        user_id INTEGER,
+        widget_date DATETIME,
+        current_version   BOOLEAN,
+        PRIMARY KEY (widget_id)
+);
+
+

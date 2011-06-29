@@ -240,6 +240,7 @@ sub auth_local {
         @users = map { $_->user } @users;
 
         foreach (@users){
+			  next unless $_;
               next if( $_->active eq 0);
               $user=$_; 
               last;
