@@ -30,11 +30,10 @@ END
 <div id="picture-left-column" style="float:left;width:35%;max-width:35%;overflow:hidden;">
     <a href="[% img_loc %]" target="_blank"><img src="[% img_src %]" style="max-width:100%"></a><br>
     [% cite_image(fields.external_source.data, fields.reference.data) %]<br>
-    <small>Click on the image to see the original.</small>
 
     [% IF fields.cropped_from.data %]
        <div style="margin-top:1em;clear:both">
-       Cropped from [% img2link(fields.cropped_from.data) %]
+       [% img2link(fields.cropped_from.data,'See original image') %]
        [% #tag2link(fields.cropped_from.data) %]
        </div>
     [% END %]
@@ -51,6 +50,7 @@ END
     [% END %]
 
     [% remarks %]
+
 </div>
 
 <div id="picture-right-column" style="margin-left:40%;">
@@ -78,7 +78,7 @@ END
    [% link_objects(fields.go_terms.data) %]
 [% END %]
 
-[% WRAPPER $field_block title='WB Paper' key='reference'-%]
+[% WRAPPER $field_block title='Paper' key='reference'-%]
    [% tag2link(fields.reference.data) %]
 [% END %]
 

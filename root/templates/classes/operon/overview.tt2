@@ -1,0 +1,33 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+<h2>[% tag2link(fields.name.data) %]</h2>
+	
+[% 
+
+WRAPPER highlight_box;
+
+   taxonomy;
+
+   WRAPPER $field_block title="Type" key="sequence_type";
+	fields.sequence_type.data;
+   END;
+
+END;
+
+
+WRAPPER $field_block title="Description" key='description';
+	 markup(fields.description.data);
+END;
+
+WRAPPER $field_block title="Identity" key='identity';
+	 fields.identity.data;
+END;
+
+WRAPPER $field_block title="Method" key='method';
+        fields.method.data;
+END;
+
+remarks;
+
+%]

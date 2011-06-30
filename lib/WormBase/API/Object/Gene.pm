@@ -2500,111 +2500,6 @@ sub interactions {
 
 
 
-=head3 regulation_on_expression_level
-
-This method returns a data structure containing the 
-a data table describing the regulation on expression
-level.
-
-=over
-
-=item PERL API
-
- $data = $model->regulation_on_expression_level();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A gene ID (WBGene00006763)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
-
-B<Response example>
-
-=cut
-
-sub regulation_on_expression_level {
-    my $self   = shift;
-    my $object = $self->object;
-    return unless ($object->Gene_regulation);
-    
-    my @stash;
-
-    # Explore the relationship in both directions.
-    foreach my $tag (qw/Trans_regulator Trans_target/) {
-	my $join = ($tag eq 'Trans_regulator') ? 'regulated by' : 'regulates';
-	if (my @gene_reg = $object->$tag(-filled=>1)) {
-	    foreach my $gene_reg (@gene_reg) {
-		my ($string,$target);
-		if ($tag eq 'Trans_regulator') {
-		    $target = $gene_reg->Trans_regulated_gene(-filled=>1)
-			|| $gene_reg->Trans_regulated_seq(-filled=>1)
-			|| $gene_reg->Other_regulated(-filled=>1);
-		} else {
-		    $target = $gene_reg->Trans_regulator_gene(-filled=>1)
-			|| $gene_reg->Trans_regulator_seq(-filled=>1)
-			|| $gene_reg->Other_regulator(-filled=>1);
-		}
-		# What is the nature of the regulation?
-		# If Positive_regulate and Negative_regulate are present
-		# in the same gene object, then it means the localization is changed.  Go figure.
-		if ($gene_reg->Positive_regulate && $gene_reg->Negative_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Changes localization of '
-			: 'Localization changed by ';
-		} elsif ($gene_reg->Result eq 'Does_not_regulate') {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Does not regulate '
-			: 'Not regulated by ';
-		} elsif ($gene_reg->Positive_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Positively regulates '
-			: 'Positively regulated by ';
-		} elsif ($gene_reg->Negative_regulate) {
-		    $string .= ($tag eq 'Trans_regulator')
-			? 'Negatively regulates '
-			: 'Negatively regulated by ';
-		}
-	
-		my $common_name     = $self->_public_name($target);
-		push @stash,{ string => $string,
-			      target => $self->_pack_obj($target, $common_name),
-			      gene_regulation => $self->_pack_obj($gene_reg)};
-	    }
-	}
-    }
-    return { description => 'Regulation on expression level',
-	     data        => \@stash };
-}
-
-
-
-
 #######################################
 #
 # The Location Widget
@@ -3332,6 +3227,122 @@ sub transgene_products {
 	description => 'transgenes that express this gene',
 	data        => \@data };    
 }
+
+#######################################
+#
+# The Regulation Widget
+#   template: classes/gene/regulation.tt2
+#
+#######################################
+
+=head2 Regulation
+
+=cut
+
+=head3 regulation_on_expression_level
+
+This method returns a data structure containing the 
+a data table describing the regulation on expression
+level.
+
+=over
+
+=item PERL API
+
+ $data = $model->regulation_on_expression_level();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A gene ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/regulation_on_expression_level
+
+B<Response example>
+
+=cut
+
+sub regulation_on_expression_level {
+    my $self   = shift;
+    my $object = $self->object;
+    return unless ($object->Gene_regulation);
+    
+    my @stash;
+
+    # Explore the relationship in both directions.
+    foreach my $tag (qw/Trans_regulator Trans_target/) {
+	my $join = ($tag eq 'Trans_regulator') ? 'regulated by' : 'regulates';
+	if (my @gene_reg = $object->$tag(-filled=>1)) {
+	    foreach my $gene_reg (@gene_reg) {
+		my ($string,$target);
+		if ($tag eq 'Trans_regulator') {
+		    $target = $gene_reg->Trans_regulated_gene(-filled=>1)
+			|| $gene_reg->Trans_regulated_seq(-filled=>1)
+			|| $gene_reg->Other_regulated(-filled=>1);
+		} else {
+		    $target = $gene_reg->Trans_regulator_gene(-filled=>1)
+			|| $gene_reg->Trans_regulator_seq(-filled=>1)
+			|| $gene_reg->Other_regulator(-filled=>1);
+		}
+		# What is the nature of the regulation?
+		# If Positive_regulate and Negative_regulate are present
+		# in the same gene object, then it means the localization is changed.  Go figure.
+		if ($gene_reg->Positive_regulate && $gene_reg->Negative_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Changes localization of '
+			: 'Localization changed by ';
+		} elsif ($gene_reg->Result eq 'Does_not_regulate') {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Does not regulate '
+			: 'Not regulated by ';
+		} elsif ($gene_reg->Positive_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Positively regulates '
+			: 'Positively regulated by ';
+		} elsif ($gene_reg->Negative_regulate) {
+		    $string .= ($tag eq 'Trans_regulator')
+			? 'Negatively regulates '
+			: 'Negatively regulated by ';
+		}
+	
+		my $common_name     = $self->_public_name($target);
+		push @stash,{ string => $string,
+			      target => $self->_pack_obj($target, $common_name),
+			      gene_regulation => $self->_pack_obj($gene_reg)};
+	    }
+	}
+    }
+    return { description => 'Regulation on expression level',
+	     data        => \@stash };
+}
+
+
+
 
 
 

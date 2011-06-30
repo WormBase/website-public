@@ -3,58 +3,73 @@
 
 [% 
 
-WRAPPER $field_block title="Experimental Details";
+WRAPPER $field_block title="Experiment";
 	 details = fields.experimental_details.data; # alias
 	 FOREACH technique IN details.types;
-		technique.0.replace('_',' ') _ ' assay: ' _ technique.1 _ '<br>';
+	 	 IF technique.1;
+    		      technique.0.replace('_',' ') _ ' assay: ' _ technique.1 _ '<br>';		     
+     		 ELSE;
+		      technique.0.replace('_',' ') _ '<br>';
+		 END;
 	 END;
-	 IF details.antibody_infos;
-		pluralize("Antibody", details.antibody_infos.size);
-		' used for this assay: '  _ link_objects(details.antibody_infos) _ '<br>';
+	 IF details.antibody_info;
+		pluralize("Antibody", details.antibody_info.size);
+		' used for this assay: '  _ link_objects(details.antibody_info) _ '<br>';
 	 END;
-	 IF details.transgenes;
-		pluralize("Transgene", details.transgenes.size); 
-			' used for this assay: ' _ link_objects(details.transgenes) _ '<br>';
+	 IF details.transgene;
+		pluralize("Transgene", details.transgene.size); 
+			' used for this assay: ' _ link_objects(details.transgene) _ '<br>';
 	 END;
 	 IF details.strains;
 		pluralize("Strain", details.strains.size) _ ': ';
 			link_objects(details.strains) _ '<br>';
 	 END;
-	 IF details.authors;
-		pluralize("Author", details.authors.size) _ ': '; 
-			 link_objects(details.authors) _ '<br>';
+	 IF details.author;
+		pluralize("Author", details.author.size) _ ': '; 
+			 link_objects(details.author) _ '<br>';
 	 END;
 	 IF details.date;
 		'Date: ' _ details.date;
 	 END;
 END;
 
-
-WRAPPER $field_block title="Expressed By" key="expressed_by";
+# Flattened at request of D. Raciti, 2011.06.28
+#WRAPPER $field_block title="Expressed By" key="expressed_by";
 	FOREACH type IN fields.expressed_by.data.sort;
         typelabel = type.replace('_', ' ') FILTER ucfirst;
+	$type;
         WRAPPER $field_block title=pluralize(typelabel, fields.expressed_by.data.$type.size) key='';
            link_objects(fields.expressed_by.data.$type) _ '<br>';
         END;
     END;
-END;
+#END;
 
-WRAPPER $field_block title="Expressed In" key='expressed_in';
+WRAPPER $field_block title="Expressed In" key='';
+
+   WRAPPER $field_block title="Anatomy term" key='anatomy_ontology';
+      result = [];
+	  FOREACH item IN fields.anatomy_ontology.data;
+		 result.push(tag2link(item.anatomy_term));
+	  END;
+       result.join(', ');
+   END;
+
+   WRAPPER $field_block title="GO term" key='gene_ontology';
+      result = [];
+	  FOREACH item IN fields.gene_ontology.data;
+		 result.push(tag2link(item.go_term));
+	  END;
+       result.join(', ');
+   END;
+
+
    FOREACH type IN fields.expressed_in.data.sort;
        typelabel = type.replace('_', ' ') FILTER ucfirst;
        WRAPPER $field_block title=pluralize(typelabel, fields.expressed_in.data.$type.size) key='';
            link_objects(fields.expressed_in.data.$type);
        END;
    END;
-END;
 
-WRAPPER $field_block title="Anatomical Features" key='anatomy_ontology';
-    result = [];
-	FOREACH item IN fields.anatomy_ontology.data;
-		result.push(tag2link(item.anatomy_term));
-	END;
-     result.join(', ');
 END;
-
 
 %]
