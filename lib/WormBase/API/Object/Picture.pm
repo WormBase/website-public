@@ -55,11 +55,11 @@ sub _build__common_name {
     my $name;
     if (my $expr_patterns = $self->expression_patterns->{data}) {
         if (@$expr_patterns > 1) { # according to curator, this won't happen...
-            $name = "Picture depicting multiple expression patterns";
+            $name = "Multiple expression patterns";
         }
         else { # should be 1 item
             my $exprname = $expr_patterns->[0]->{expression_pattern}->{label};
-            $name = "Picture depicting $exprname";
+            $name = "$exprname";
         }
     }
 

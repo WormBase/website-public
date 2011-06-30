@@ -1,0 +1,77 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[% IF (fields.corresponding_gene.data.size > 0)
+       ||
+   (fields.corresponding_transcript.size > 0) 
+       ||
+   (fields.corresponding_cds.size > 0) 
+       ||
+   (fields.corresponding_protein.size > 0) 
+%]
+
+    <div class="inline-columns">
+   [% IF fields.corresponding_gene.data.size > 0 %]
+       <div>
+          <b>Gene</b><br />
+              [% FOREACH item IN fields.corresponding_gene.data %]
+                 [% tag2link(item) %]<br />
+              [% END %]
+           </div>
+           <div>
+               <img src="/img/arrows/right.gif">
+           </div>
+    [% END %]
+
+   [% IF fields.matching_transcript.data.size > 0 %]
+       <div>
+          <b>Matching Transcripts</b><br />
+              [% FOREACH item IN fields.matching_transcript.data %]
+                 [% tag2link(item) %]<br />
+              [% END %]
+           </div>
+           <div>
+               <img src="/img/arrows/right.gif">
+           </div>
+    [% END %]
+
+   [% IF fields.matching_cds.data.size > 0 %]
+       <div>
+          <b>Corresponding CDS</b><br />
+              [% FOREACH item IN fields.matching_cds.data %]
+                 [% tag2link(item) %]<br />
+              [% END %]
+           </div>
+           <div>
+               <img src="/img/arrows/right.gif">
+           </div>
+    [% END %]
+
+   [% IF fields.corresponding_protein.data.size > 0 %]
+       <div>
+          <b>Corresponding Protein</b><br />
+              [% FOREACH item IN fields.corresponding_protein.data %]
+                 [% tag2link(item) %]<br />
+              [% END %]
+           </div>
+    [% END %]
+[% END %]
+</div>
+
+
+<br clear="all">
+[% IF fields.matching_cdnas.data %]
+         <div class="toggle">Matching cDNAs</div>
+         <div class="returned">
+             [% FOREACH key IN fields.matching_cdnas.data %]
+          	 [% tag2link(key) %]<br>
+             [% END %] 
+         </div>
+     [% END %] 
+
+[% WRAPPER $field_block title="Transcripts in this region" key="transcripts" %]
+  [% FOREACH key IN  c.stash.fields.transcripts.data %]
+      [% tag2link(key) %]<br>
+   [% END %]
+[% END %]
+ 

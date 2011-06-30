@@ -1,0 +1,14 @@
+[%# PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+[%
+
+   WRAPPER $field_block title="Regulation on Expression Level" key="regulation_on_expression_level";
+       FOREACH item IN fields.regulation_on_expression_level.data;
+             item.string;
+             tag2link(item.target);
+	     ' (' _  tag2link(item.gene_regulation, "details") _ ')';
+             '<br />';
+        END;
+   END;
+
+%]
