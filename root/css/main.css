@@ -1099,6 +1099,7 @@ div.field .field .field-title {
   font-size    : 1em;
   padding-right: 0.5em;
   width        : 8em;
+  font-weight  : normal;
 }
 
 div.field .field .field-title>span{

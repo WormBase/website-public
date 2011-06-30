@@ -29,20 +29,21 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO link_objects(data) BLOCK;
+   MACRO link_objects(data,separator) BLOCK;      
+      IF separator == ''; separator = '<br />'; END;
       # Is this a hash?
       IF data.keys;
           result = [];
 	  FOREACH key IN data.sort;
 	     result.push(tag2link(data.$key));
 	  END;
-	  result.join('<br />');
+	  result.join(separator);
       # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
       ELSE;
 	  FOREACH item IN data;
 	     result.push(tag2link(item));
 	  END;
-	  result.join('<br />');
+	  result.join(seperator);
       END;
    END;
 

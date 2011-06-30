@@ -2010,6 +2010,7 @@ sub tmp_acedata_dir {
 # supplied by _pack_obj but might be messy to change now.
 sub _pack_objects {
     my ($self, $objects) = @_;
+#    $objects = ref $objects ? $objects : [ $objects ];
     return {map {$_ => $self->_pack_obj($_)} @$objects} if $objects;
 }
 
