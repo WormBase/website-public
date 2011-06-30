@@ -489,7 +489,7 @@ $jq('.wiki-help').live('click',function(){
 
 
 
-// Load MediaWiki content into our site automatically via YQL and xpath
+// Load MediaWiki content into our site via YQL and xpath
 // when the widget loads OR on click.
 // Requires:
 // A template page with the following markup:

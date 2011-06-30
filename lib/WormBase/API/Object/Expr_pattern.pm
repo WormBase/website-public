@@ -69,7 +69,8 @@ sub _build__common_name {
     my $bestname = $gene->Public_name;
     
     return "Expression pattern for $bestname" if $bestname;
-    return $self->object->name;
+    return "Source Image";
+#    return $self->object->name;
 }
 
 # sub description {}
@@ -358,7 +359,7 @@ sub expressed_in {
 	} # TODO: what to do about pedigree stuff?
 
 	return {
-		description => 'TODO',
+		description => 'where the expression has been noted',
 		data		=> %data ? \%data : undef
 	};
 }
@@ -428,6 +429,72 @@ sub anatomy_ontology {
 	};
 }
 
+
+=head3 gene_ontology
+
+This method will return a data structure containing
+gene ontology entries associated with this expression pattern.
+
+=over
+
+=item PERL API
+
+ $data = $model->gene_ontology();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An Expression pattern ID (eg Expr12)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/expression/Expr12/gene_ontology
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub gene_ontology {
+    my ($self) = @_;
+    
+    my @go_terms = map {
+	go_term => $self->_pack_obj($_),
+	definition => $_->Definition->name,
+    }, @{$self ~~ '@GO_term'};
+    
+    return {
+	description => 'gene ontology terms associated with this expression pattern',
+	data	    => @go_terms ? \@go_terms : undef,
+	};
+}
+
 =head3 experimental_details
 
 This method will return a data structure containing
@@ -490,7 +557,7 @@ sub experimental_details {
 
     foreach (qw(Antibody_info Transgene Strain Author)) {
         my $val = $self ~~ "\@$_";
-        $data{$_} = $self->_pack_objects($val) if @$val;
+        $data{lc($_)} = $self->_pack_objects($val) if @$val;
     }
 
     if (my $date = $self ~~ 'Date') {

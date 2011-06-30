@@ -1,0 +1,56 @@
+[% # This generic statement belongs at the start of every template %]
+[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+
+
+[% 
+
+  WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";
+  data = fields.print_feature.data.exons;
+  'NOTE: Transcript is on ' _ data.orientation  _ ') strand.<br>';
+  '<table>';
+    '<tr><th></th><th colspan="2">Relative to Itself</th><th colspan="2">Relative to ' _ data.parent _ '</th></tr>';
+    '<tr><th>Exon #</th><th>Start</th><th>End</th><th>Start</th><th>End</th></tr>';
+    FOREACH row IN data.rows;
+        '<tr align="right"><td>' _ row.no _ '</td>';
+	'<td>' _ row.start _ '</td>';
+	'<td>' _ row.end   _ '</td>';
+	'<td>' _ row.ref_start _ '</td>';
+	'<td>' _ row.ref_end   _ '</td></tr>';
+     END;
+  '</table>';
+  END;
+
+
+  WRAPPER $field_block title="Blast" key="print_blast";
+        data= fields.print_blast.data;
+        '<form method="post" action="' _ c.uri_for('/tools','blast_blat') _ '">';
+	FOREACH key IN data.target;
+	     '<input type="submit" name="autoload" value="Blast ' _ data.source _  ' against ' _ key _ '" />';
+	END;
+    '</form>';
+  END; 
+
+  WRAPPER $field_block title="Sequence" key="print_sequence";
+    data=fields.print_sequence.data;
+    FOREACH key IN data.keys.sort;
+	IF data.$key.header.defined;
+	'<div class="sequence-section" >';
+               '<div class="sequence-download">';
+                        '<form action="/rest/download/">';
+			    '<input type="hidden" name="type" value="' _ data.$key.header _ '.fa" >';
+			    ' <input type="hidden" name="sequence" value="' _ data.$key.content.remove('<span.*?>|</span>') _ '" >';
+			    '<input type="submit" value="download">';
+		     '</form>';
+                '</div>';
+                '<div class="toggle">' _ data.$key.header _ '</div>';
+	        '<div class="sequence-container" >';
+                     content = data.$key.content.replace('\n', '<br />');
+		     content;
+	       '</div>';
+        '</div>';
+     END;
+  END; 
+
+END;
+
+%] 

@@ -4,10 +4,6 @@
 
 WRAPPER highlight_box;
  
-   WRAPPER $field_block title="Type" key='type';
-           fields.classification.data.type;
-   END;
-
    WRAPPER $field_block title="WormBase ID";
            fields.name.data.id;
    END;
@@ -41,7 +37,7 @@ WRAPPER $field_block title='Type Of Change' key='type_of_change';
     END;
 END;
 
-WRAPPER $field_block title='Regulators' key='regulators';
+WRAPPER $field_block title='Regulated By' key='regulators';
    FOREACH regulator IN fields.regulators.data.sort;
    	WRAPPER $field_block title=regulator.replace('_',' ');
 	  	 IF fields.regulators.data.$regulator.pairs.0.value; # it's a packed obj
@@ -53,12 +49,53 @@ WRAPPER $field_block title='Regulators' key='regulators';
     END;
 END;
 
+
+WRAPPER $field_block title='Regulates' key='';
+	FOREACH regulation IN fields.regulates.data;
+
+	    regulation_type = regulation.regulation_type;
+
+	    # Make the type read in English.
+	    IF regulation_type == 'Positive_regulate';
+	       regulation_type = 'positively regulates';
+	    ELSIF regulation_type == 'Negative_regulate';
+	       regulation_type = 'negatively regulates';
+	    ELSE;
+	       regulation_rype = 'does not regulate';
+            END;     
+
+	    target_type     = regulation.target_type;
+	    target          = regulation.target;
+
+	    # Print out a semi-prose description.
+	    regulation_type _ " " _ tag2link(target);
+
+	    FOREACH condition_type IN regulation.conditions;	       
+  	        value = condition_type.value;
+		IF value;
+	           ' in ' _ link_objects(value,', ') _ '<br >';
+		END;
+            END;	
+        END;
+
+       IF fields.reference_expression_pattern.data;
+          "See the " _ link_objects(fields.reference_expression_pattern.data)  _ " for a reference of where this gene regulation event is thought to occur.";
+       END;
+
+END;	    
+
+
+
+
 WRAPPER $field_block title='Targets' key='targets';
+
     FOREACH target_type IN fields.targets.data.sort;
    	  WRAPPER $field_block title=target_type.replace('_', ' ') key="$target_type";
 	  	 link_objects(fields.targets.data.$target_type);
 	  END;
    END;
+
+
 END;
 
 WRAPPER $field_block title='Molecule Regulators' key='molecule_regulators';

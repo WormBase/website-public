@@ -119,10 +119,12 @@ sub methods {
     my %nontext_tags = map {$_ => 1} qw(Antibody_info Transgene);
     my %data;
     foreach my $method ($object->Method) {
-	$data{$method} = $nontext_tags{$method} ?
-	    $self->_pack_objects([$method->col]) :
-	{map {$_ => undef} $method->col};
-	
+	if ($nontext_tags{$method}) {
+	    my @col = $method->col;
+	    $data{$method} = $self->_pack_objects(\@col);
+	} else {
+	    $data{$method} = {map {$_ => undef} $method->col};
+	}
 	undef $data{$method} unless %{$data{$method}};
     }
     
@@ -132,7 +134,7 @@ sub methods {
 }
 
 =head3 regulators
-
+    
 This method returns a data structure containing
 the regulator gene in the described regulation entity.
 
@@ -183,8 +185,9 @@ B<Response example>
 sub regulators {
     my $self   = shift;
     my $object = $self->object;
-
+    
     my %regulator = map {$_ => [$_->col]} $object->Regulator;
+
     if (exists $regulator{Regulator_info}) {
 	foreach (@{$regulator{Regulator_info}}) {
 	    $regulator{$_} = [$_->col];
@@ -197,7 +200,8 @@ sub regulators {
 	    $regulator{$_} = {map {$_ => undef} @{$regulator{$_}}};
 	}
 	else {
-	    $regulator{$_} = $self->_pack_objects($regulator{$_});
+	    my @regulators = @{$regulator{$_}};
+	    $regulator{$_} = $self->_pack_objects(\@regulators);
 	}
     }
     
@@ -206,16 +210,17 @@ sub regulators {
     };
 }
 
-=head3 targets
+=head3 reference_expression_pattern
     
 This method returns a data structure containing
-genes that are the target of regulation.
+a reference expression pattern for where the gene
+regulation is thought to occur.
 
 =over
 
 =item PERL API
 
- $data = $model->targets();
+ $data = $model->reference_expression_pattern();
 
 =item REST API
 
@@ -247,7 +252,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/targets
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/reference_expression_pattern
 
 B<Response example>
 
@@ -255,34 +260,26 @@ B<Response example>
 
 =cut
 
-sub targets {
+sub reference_expression_pattern {
     my $self   = shift;
     my $object = $self->object;
     
-    my $target_info = $self->_pack_objects($object->Expr_pattern); # Target_info->Expr_pattern
-    
-    my %targets;
-    foreach my $target_type ($object->Target) {
-	next unless $target_type eq 'Target_info';
-	my $targets = $self->_pack_objects([$target_type->col]);
-	$targets{$target_type} = $targets if %$targets;
-    }
-    
-    return { description => 'genes that are targets of regulation',
-	     data	 => {  target_info => $target_info ? $target_info : undef,
-			       targets     => %targets ? \%targets : undef } };
+    my @expr    = $object->Expr_pattern;
+    my $linked  = $self->_pack_objects(\@expr); # Target_info->Expr_pattern
+    return { description => 'the reference expression pattern for where the gene regulation occurs',
+	     data	 => %$linked ? $linked : undef };
 }
 
-=head3 type
+=head3 regulates
 
-Returns a data structure detailing the type
-of regulation (whether positive, negative, or none).
+Returns a data structure detailing what the regulator regulates
+and how (positive, negative, or none) with supporting evidence.
 
 =over
 
 =item PERL API
 
- $data = $model->type();
+ $data = $model->regulates();
 
 =item REST API
 
@@ -314,7 +311,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/type
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene_regulation/WBPaper00035152_bah-1/regulates
 
 B<Response example>
 
@@ -322,22 +319,34 @@ B<Response example>
 
 =cut
 
-sub type {
+sub regulates {
     my $self   = shift;
     my $object = $self->object;
+    
+    my @data;
+    my $type = $object->Result;
 
-    my %data;
-    # Is regulation the right tag?
-    foreach my $reg_type ($object->Result) {
-	foreach my $condition_type ($reg_type->col) {
-	    my %conditions = $self->_pack_objects($condition_type->col);
-	    $data{$reg_type}{$condition_type} = %conditions ? \%conditions : undef;
+    my %conditions;
+    foreach my $condition_type ($type->col) {
+#	$conditions{$condition_type} = map { $self->_pack_obj($_) } $condition_type->right;
+	$conditions{$condition_type} = $self->_pack_objects( [ $condition_type->col ] );
+    }
+
+    foreach my $target_type ($object->Target) {
+	next if $target_type eq 'Target_info';  # captured elsewhere as reference_expression_pattern
+	my @targets = $target_type->col;
+	foreach (@targets) {
+	    push @data, { target          => $self->_pack_obj($_),
+			  target_type     => "$target_type",
+			  regulation_type => "$type",
+			  conditions      => \%conditions,
+	    }
 	}
     }
     
     return {
 	description => 'the type of regulation (positive, negative, none)',
-	data	    => %data ? \%data : undef,
+	data	    => @data ? \@data : undef,
     };
 }
 
@@ -449,13 +458,16 @@ B<Response example>
 =cut
 
 sub molecule_regulators {
-	my ($self) = @_;
-
-	my $molecule_regs = $self->_pack_objects($self ~~ '@Molecule_regulator');
-	return {
-	    description => 'Molecule regulator',
-	    data	=> %$molecule_regs ? $molecule_regs : undef,
-	};
+    my $self   = shift;
+    my $object = $self->object;
+    
+    my @molecules = map { $self->pack_obj($_) } $object->Molecule_regulator;
+    
+#    my $molecule_regs = $self->_pack_objects( [ $self ~~ '@Molecule_regulator' ] );
+    return {
+	description => 'Molecule regulator',
+	data	=> @molecules ? \@molecules : undef,
+    };
 }
 
 #######################################
