@@ -1,4 +1,4 @@
-package Disease; ## WormBase::API::Object:: ## temp
+package WormBase::API::Object::Disease; 
 use Moose;
 use Ace; ## temp
 
@@ -12,24 +12,17 @@ has 'omim_id' => (
 	isa => 'Str',
 );
 
-# has 'orthology_datadir' => ( ## temp
-#     is  => 'ro',
-#     lazy => 1,
-#     default => sub {
-# 	my $self=shift;
-# 	my $version = $self->ace_dsn->version;
-# 	return $self->pre_compile->{base} . $version . "/orthology/";
-#     }
-# );
-
 has 'orthology_datadir' => ( ## temp
     is  => 'ro',
     lazy => 1,
     default => sub {
 	my $self=shift;
-	return "/usr/local/wormbase/databases/WS225/orthology/";
+	my $version = $self->ace_dsn->version;
+	return $self->pre_compile->{base} . $version . "/orthology/";
     }
 );
+
+
 
 has 'omim2all_ortholog_data' => (
     is  => 'ro',
