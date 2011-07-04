@@ -1,9 +1,8 @@
 package WormBase::API::Object::Disease; 
 use Moose;
-use Ace; ## temp
 
-# with 'WormBase::API::Role::Object';
-# extends 'WormBase::API::Object';
+with 'WormBase::API::Role::Object';
+extends 'WormBase::API::Object';
 
 ### data
 
@@ -90,16 +89,6 @@ has 'id2name' => (
     } 
 );
 
-
-has 'dbh' => (
-	is => 'ro',
-	lazy => 1,
-	default => sub {
-		my $self = shift;
-		my $dbh = Ace->connect(-host=>'localhost',-port=>2005);
-		return $dbh;
-	}
-);
 
 has 'genes_ar' => (
 	is => 'ro',
