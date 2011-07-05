@@ -29,21 +29,20 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO link_objects(data,separator) BLOCK;      
-      IF separator == ''; separator = '<br />'; END;
+   MACRO link_objects(data) BLOCK;
       # Is this a hash?
       IF data.keys;
           result = [];
 	  FOREACH key IN data.sort;
 	     result.push(tag2link(data.$key));
 	  END;
-	  result.join(separator);
+	  result.join('<br />');
       # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
       ELSE;
 	  FOREACH item IN data;
 	     result.push(tag2link(item));
 	  END;
-	  result.join(seperator);
+	  result.join('<br />');
       END;
    END;
 
@@ -64,28 +63,11 @@
           c.uri_for('/species', taxonomy,class, id);
         ELSIF (class == 'bench');
           c.uri_for('/me', id);
-        # ELSIF (class == 'picture');
-        #   c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+         ELSIF (class == 'picture');
+           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
         ELSE;
           c.uri_for('/resources', class, id);
         END;
-   END;
-
-
-   MACRO get_layout(page_class) BLOCK;
-    '<script>';
-
-      'if(location.hash.length > 0){';
-        'readHash();';
-      '}else{';
-        IF c.user_session.layout.$page_class.0.defined;
-            'location.hash = "' + c.user_session.layout.$page_class.0.lstring + '";';
-            'readHash();';
-        END;
-      '}';
-
-
-    '</script>';
    END;
 
 # Like tag2link, but for cases where we only have text and no object.

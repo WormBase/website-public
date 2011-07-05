@@ -142,7 +142,7 @@
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
-      for(widget in leftList){
+      for(var widget = 0; widget < leftList.length; widget++){
         var widget_name = leftList[widget];
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
@@ -150,7 +150,7 @@
           openWidget(widget_name, nav, content, ".left");
         }
       }
-      for(widget in rightList){
+      for(var widget = 0; widget < rightList.length; widget++){
         var widget_name = rightList[widget];
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
@@ -158,7 +158,9 @@
           openWidget(widget_name, nav, content, ".right");
         }
       }
-      updateLayout();
+      if(location.hash.length > 0){
+        updateLayout();
+      }
     }
 
 
