@@ -1328,11 +1328,12 @@ END;
 
   # Open some sections by default, depending on what we are displaying.
   '<script>';
+    'if(location.hash.length == 0){';
     UNLESS c.user_session.layout.$page_class.0.defined;
           IF is_class_index;
-          defaults = section_fetch.default_widgets_summary.keys;
+            defaults = section_fetch.default_widgets_summary.keys;
           ELSE;
-          defaults = section_fetch.default_widgets.keys;
+            defaults = section_fetch.default_widgets.keys;
           END;
           FOREACH defaults.grep('^overview$');
             defaults.unshift('overview');
@@ -1351,7 +1352,7 @@ END;
           END;
           'updateLayout();';
     END;
-       'updateCounts("' _ c.req.base _ c.req.path _ '");';
+    '}';
   '</script>';
 
 END;

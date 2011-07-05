@@ -14,6 +14,12 @@
 [%#               type = "title"                                                %]
 [%#             }                                                               %]
 
+[% UNLESS object %]
+    [% page_class = c.req.path.replace('[/_]', '-') %]
+    [% UNLESS page_class;page_class='home'; END;%] 
+[% ELSE; page_class = class; END; %]
+
+
 [% UNLESS c.req.action == 'me' %]
   [% widgets.push({ title="My WormBase" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
@@ -26,16 +32,13 @@
     %]
     [% widgets.push(w) %]
   [% END %]
-  [% END %]
+[% END %]
 
     [% UNLESS no_layout %]
     <div id="buttons-nav">
 [% UNLESS c.req.action == 'me' %]
         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  name="issue" ><span class="ui-icon ui-icon-notice"></span></a>
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" name="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
-        <!-- TH: quick test of drawing help text from wiki -->
-        <a   tip="page help" class="button section-button tip-simple ui-corner-all" name="help"  href="Website:Help:[%- section -%]_Summary"><span class="ui-icon ui-icon-help"></span></a>
-
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
 [% END %]
 
@@ -152,7 +155,7 @@
 
     <script>
       ajaxGet($jq(".user-history"), "/rest/history?count=3");
-      ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
+      [% UNLESS no_layout %] ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type")); [% END %]
 
       [% PROCESS page_info %]
       [% lclass = object.name.data.class FILTER lcfirst %]
@@ -162,6 +165,14 @@
       $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% label | uri  %]&class=[% object.name.data.class FILTER lower %]&type=[% c.stash.section | uri %]&id=[% object.name.data.id | uri %]&url=[% url | uri %]&save_to=[% save %]&is_obj=[% is_obj %]");
 
 
-      [% get_layout($page_class) %]
-   
+      if(location.hash.length > 0){
+        readHash();
+      }else{
+        [% IF c.user_session.layout.$page_class.0.defined; %]
+            location.hash = "[% c.user_session.layout.$page_class.0.lstring %]";
+            readHash();
+        [% END %]
+      }
+
+       updateCounts("[% c.req.base _ c.req.path%]");
     </script>
