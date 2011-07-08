@@ -52,6 +52,11 @@ sub species_index :Path('/species') :Args(1)   {
 	$c->stash->{noboiler} = 1;
     }
 
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
+
     if ($species eq 'all' || $self->_is_species($c,$species)) {
       $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
       $c->stash->{class}      = 'all';
@@ -131,6 +136,11 @@ sub class_index :Path("/species") Args(2) {
 	$c->stash->{noboiler} = 1;
     }
 
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
+
     # Is this a species known to WormBase?
     if ($species eq 'all' || $self->_is_species($c,$species)) {
 
@@ -177,6 +187,12 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{query_name} = $name;
     $c->stash->{class}      = $class;
     $c->log->debug($name);
+
+
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
     
     my $api = $c->model('WormBaseAPI');
     my $object = $api->fetch({class=> ucfirst($class),

@@ -29,6 +29,11 @@ sub resources :Path('/resources') :Args(0)   {
       $c->stash->{is_class_index} = 1;      
     $c->stash->{template} = "resources/report.tt2";
       $c->stash->{class}   = 'all';
+
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
 #     $c->stash->{template} = 'report.tt2';
 }
 
@@ -40,6 +45,11 @@ sub resources_class_index :Path('/resources') :Args(1)  {
     }
     
     $c->stash->{template} = "resources/report.tt2";
+
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
     
     if (defined $c->config->{'sections'}->{'resources'}->{$class}){
       $c->stash->{section} = 'resources';
@@ -129,6 +139,11 @@ sub _get_report {
     $c->stash->{query_name} = $name;
     $c->stash->{class}      = $class;
     $c->log->debug($name);
+
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
     
     my $api = $c->model('WormBaseAPI');
     my $object = $api->fetch({class=> ucfirst($class),

@@ -27,6 +27,9 @@ Root level controller actions for the WormBase web application.
 sub index :Path Args(0) {
     my ($self,$c) = @_;
     $c->stash->{template} = 'index.tt2';
+    my $page = $c->model('Schema::Page')->find({url=>"/"});
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
 }
 sub gbrowse :Path("/gbrowse") Args(0) {
     my ($self,$c) = @_;

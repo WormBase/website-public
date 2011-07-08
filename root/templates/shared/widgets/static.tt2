@@ -1,0 +1,20 @@
+[% IF widget %]
+  [% widget.content %]
+
+  <br /><br />
+  <span id="fade">Last edited by [% linkUser(widget.user) %]</span>
+[% ELSE %]
+
+  <form method="post" align="left" action="[% c.uri_for("/rest/widget/static/0") %]" style="float:left;">
+
+    title: <input type="text" name="widget_title" size="22"/> <br />
+
+    <textarea id="widget_content" name="widget_content" rows="10" ></textarea>
+    <br />
+<input type="text" name="path" style="display:none" size="22" value="[% path %]"/>
+    <input type="submit" value="Create widget" id="create"/>
+
+
+  </form>
+
+[% END %]

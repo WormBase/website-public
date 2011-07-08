@@ -127,7 +127,7 @@ CREATE TABLE widgets (
         content text,
         user_id INTEGER,
         widget_date DATETIME,
-        current_version   BOOLEAN,
+        current_version  char(50),
         PRIMARY KEY (widget_id)
 );
 
