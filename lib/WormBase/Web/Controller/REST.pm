@@ -579,7 +579,7 @@ sub feed_GET {
           $c->stash->{issue_type} = 'page';
         }else {
           @issues= $c->user->issues_reported if $c->user;
-          push(@issues, $c->user->issues_responsible);
+          push(@issues, $c->user->issues_responsible) if $c->user;
           $c->stash->{issue_type} = 'user';
         }
         if($c->req->params->{count}){
@@ -961,16 +961,39 @@ sub widget_GET {
 
 # For "static" pages -- which are most likely resources --
 # that do not need to handle objects. They have a different linking structure
-# eg /rest/widget/static/nomenclature/overview
-# and have the "static = true" property set in teh configuration file.
-sub widget_static :Path('/rest/widget/static') :Args(2) :ActionClass('REST') {}
+sub widget_static :Path('/rest/widget/static') :Args(1) :ActionClass('REST') {}
 
 sub widget_static_GET {
-    my ($self,$c,$class,$widget) = @_; 
-    $c->log->debug("getting resource widget");
-    $c->stash->{template} = "resources/$class/$widget.tt2";
+    my ($self,$c,$widget_id) = @_; 
+    $c->log->debug("getting static widget");
+    $c->stash->{template} = "shared/widgets/static.tt2";
     $c->stash->{noboiler} = 1;
-    $c->forward('WormBase::Web::View::TT')
+    $c->stash->{widget} = $c->model('Schema::Widget')->find({widget_id=>$widget_id, current_version=>1});
+    $c->stash->{path} = $c->request->params->{path};
+    $c->forward('WormBase::Web::View::TT');
+}
+
+sub widget_static_POST {
+    my ($self,$c,$widget_id) = @_; 
+    $c->log->debug("updating static widget");
+    if($c->check_any_user_role(qw/admin curator/)){
+      my $widget_title = $c->request->body_parameters->{widget_title};
+      my $widget_content = $c->request->body_parameters->{widget_content};
+
+      if($widget_id > 0){
+        my $old_widget = $c->model('Schema::Widget')->find({widget_id=>$widget_id, current_version=>1});
+        $old_widget->current_version(0);
+        $old_widget->update();
+
+        my $new_widget = $c->model('Schema::Widget')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time(), current_version=>1});
+      }else{
+          my $page = $c->model('Schema::Page')->find({url=>$c->request->body_parameters->{path}});
+#           my $path = $c->request->body_parameters->{path};
+          my $widget = $c->model('Schema::Widget')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time(), current_version=>1});
+
+          my $page_widget = $c->model('Schema::PageWidgets')->create({ page_id=>$page->page_id, widget_id=>$widget->widget_id, widget_title=>$widget_title});
+      }
+    }
 }
 
 

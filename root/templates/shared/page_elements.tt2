@@ -137,7 +137,7 @@
 [% #get page info %]
 [% BLOCK page_info %]
   [% path = c.req.path %]
-  [% url = c.req.base _ c.req.path %]
+  [% url = c.req.uri.path %]
 
   [% label = c.req.path %]
   [% IF (c.action.name == 'index'); label = 'home'; 
@@ -1197,7 +1197,30 @@ END;
   END; # END of MACRO
 %]
 
+[% MACRO add_static_widgets BLOCK %]
 
+  [% FOREACH widget IN static_widgets %]
+    [% widget_name = widget.widget_title %]
+    [% t = widget_name.replace('_', ' ') FILTER ucfirst %]
+    [% w = { id = widget_name
+            title = t
+            href =  c.uri_for('/rest','widget','static',widget.widget_id)
+            type = 'static'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+  [% IF c.check_user_roles('admin') %]
+    [% w = { id = 'add_widget'
+            title = 'Add new widget...'
+            href =  c.uri_for('/rest','widget','static','add_widget') _ '?path=' _ c.req.uri.path
+            type = 'static'
+            };
+    %]
+    [% widgets.push(w) %]
+  [% END %]
+
+[% END %]
 
 
 [% # Report Page elements; shared for species, resources, and tools %]
@@ -1243,7 +1266,7 @@ END;
 
   FOREACH widget_list.grep('^overview$');
     widget_list.unshift('overview');
-    overview;
+    overview = 1;
   END;
   widget_list = widget_list.unique;
 
@@ -1286,6 +1309,8 @@ END;
     END;
   END;
 
+  add_static_widgets;
+
   # Add tools.
   tool_list = section_fetch.tools.keys.sort || [];
 
@@ -1316,7 +1341,7 @@ END;
       t = widget_name FILTER ucfirst;
       w = { id = widget_name
             title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
-            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.base _ c.req.path
+            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path
             type = 'tools'
           };
       widgets.push(w);
@@ -1325,33 +1350,33 @@ END;
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
 
-
   # Open some sections by default, depending on what we are displaying.
   '<script>';
     'if(location.hash.length == 0){';
-    UNLESS c.user_session.layout.$page_class.0.defined;
-          IF is_class_index;
-            defaults = section_fetch.default_widgets_summary.keys;
+      UNLESS c.user_session.layout.$page_class.0.defined;
+        IF is_class_index;
+          defaults = section_fetch.default_widgets_summary.keys;
+        ELSE;
+          defaults = section_fetch.default_widgets.keys;
+        END;
+        FOREACH defaults.grep('^overview$');
+          defaults.unshift('overview');
+        END;
+        defaults = defaults.unique;
+
+        UNLESS defaults.first;
+          IF overview;
+            '$jq("#nav-overview").trigger("open");';
           ELSE;
-            defaults = section_fetch.default_widgets.keys;
+          'resetLayout(["browse"], ["basic_search"], 50);';
           END;
-          FOREACH defaults.grep('^overview$');
-            defaults.unshift('overview');
+        ELSE;
+          FOREACH d IN defaults;
+            '$jq("#nav-' _ d _ '").trigger("open");';
           END;
-          defaults = defaults.unique;
-          UNLESS defaults;
-            IF overview;
-              '$jq("#nav-overview").trigger("open");';
-            ELSE;
-            'resetLayout(["browse"], ["basic_search"], 50);';
-            END;
-          ELSE;
-            FOREACH d IN defaults;
-              '$jq("#nav-' _ d _ '").trigger("open");';
-            END;
-          END;
-          'updateLayout();';
-    END;
+        END;
+        'updateLayout();';
+      END;
     '}';
   '</script>';
 

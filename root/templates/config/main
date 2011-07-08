@@ -57,17 +57,18 @@
    END;
 
 
-   MACRO get_url(class, id, taxonomy) BLOCK;
+   MACRO get_url(class, id, taxonomy, fullpath) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy,class, id);
+          uri = c.uri_for('/species', taxonomy,class, id);
         ELSIF (class == 'bench');
-          c.uri_for('/me', id);
+          uri = c.uri_for('/me', id);
          ELSIF (class == 'picture');
-           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+           uri = c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
         ELSE;
-          c.uri_for('/resources', class, id);
+          uri = c.uri_for('/resources', class, id);
         END;
+        IF fullpath; uri; ELSE; uri.path; END;
    END;
 
 # Like tag2link, but for cases where we only have text and no object.
@@ -158,7 +159,9 @@
 # Used to determine the type of page for layout saving
   MACRO page_class BLOCK;
     UNLESS object;
-      c.req.path.replace('[/_]', '-');
+      ret = c.req.path.replace('[/_]', '-');
+      UNLESS ret;ret='home'; END;
+      ret;
     ELSE; class; END;
   END;
 

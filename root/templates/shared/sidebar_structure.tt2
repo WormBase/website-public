@@ -14,12 +14,6 @@
 [%#               type = "title"                                                %]
 [%#             }                                                               %]
 
-[% UNLESS object %]
-    [% page_class = c.req.path.replace('[/_]', '-') %]
-    [% UNLESS page_class;page_class='home'; END;%] 
-[% ELSE; page_class = class; END; %]
-
-
 [% UNLESS c.req.action == 'me' %]
   [% widgets.push({ title="My WormBase" type="title"}) %]
   [% FOREACH widget_name IN ['reports', 'my_library'] -%]
@@ -174,5 +168,5 @@
         [% END %]
       }
 
-       updateCounts("[% c.req.base _ c.req.path%]");
+       updateCounts("[% c.req.uri.path %]");
     </script>
