@@ -578,7 +578,7 @@
                     <div class="module-close" wname="[% id %]" title="close"></div>
 <!--                     <div class="module-max" wname="[% id %]" title="pop out"></div>
     -->               
-                    <h3><div class="module-min" wname="[% id %]"></div><span>[% title %]</span>
+                    <h3><div class="module-min" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>
@@ -593,8 +593,10 @@
 [%# UNLESS c.req.action == '/' %]
 [% UNLESS type.match('(tool)|(me)') %]
                     <a  tip="download" class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
-
 [% END %] 
+[% IF type.match('(static)') && c.check_any_user_role("admin", "curator") %]
+                    <a  tip="edit" onClick='StaticWidgets.edit("[% id %]"); $jq(this).hide();' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
+[% END %]
                     
 
                 </div>
@@ -1201,9 +1203,8 @@ END;
 
   [% FOREACH widget IN static_widgets %]
     [% widget_name = widget.widget_title %]
-    [% t = widget_name.replace('_', ' ') FILTER ucfirst %]
-    [% w = { id = widget_name
-            title = t
+    [% w = { id = 'static-widget-' _ widget.widget_id
+            title = widget.widget_title
             href =  c.uri_for('/rest','widget','static',widget.widget_id)
             type = 'static'
             };
@@ -1211,9 +1212,9 @@ END;
     [% widgets.push(w) %]
   [% END %]
   [% IF c.check_user_roles('admin') %]
-    [% w = { id = 'add_widget'
+    [% w = { id = 'static-widget--1'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','add_widget') _ '?path=' _ c.req.uri.path
+            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path
             type = 'static'
             };
     %]

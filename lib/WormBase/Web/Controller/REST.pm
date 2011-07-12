@@ -968,7 +968,7 @@ sub widget_static_GET {
     $c->log->debug("getting static widget");
     $c->stash->{template} = "shared/widgets/static.tt2";
     $c->stash->{noboiler} = 1;
-    $c->stash->{widget} = $c->model('Schema::Widget')->find({widget_id=>$widget_id, current_version=>1});
+    $c->stash->{widget} = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
     $c->stash->{path} = $c->request->params->{path};
     $c->forward('WormBase::Web::View::TT');
 }
@@ -981,17 +981,21 @@ sub widget_static_POST {
       my $widget_content = $c->request->body_parameters->{widget_content};
 
       if($widget_id > 0){
-        my $old_widget = $c->model('Schema::Widget')->find({widget_id=>$widget_id, current_version=>1});
-        $old_widget->current_version(0);
-        $old_widget->update();
-
-        my $new_widget = $c->model('Schema::Widget')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time(), current_version=>1});
+        my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
+        $widget->content($c->model('Schema::WidgetContent')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
+#         $widget->revision_id($new_revision->revision_id);
+#         $widget->content($new_revision);
+        $widget->widget_title($widget_title);
+        $widget->update();
+       
       }else{
-          my $page = $c->model('Schema::Page')->find({url=>$c->request->body_parameters->{path}});
-#           my $path = $c->request->body_parameters->{path};
-          my $widget = $c->model('Schema::Widget')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time(), current_version=>1});
+          my $url = $c->request->body_parameters->{path};
+          my $page = $c->model('Schema::Page')->find({url=>$url});
+          my $widget = $c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title});
 
-          my $page_widget = $c->model('Schema::PageWidgets')->create({ page_id=>$page->page_id, widget_id=>$widget->widget_id, widget_title=>$widget_title});
+          my $content = $c->model('Schema::WidgetContent')->create({widget_id=>$widget->widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
+          $widget->revision_id($content->revision_id);
+          $widget->update();
       }
     }
 }

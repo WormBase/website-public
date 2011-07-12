@@ -246,6 +246,37 @@ function hideTextOnFocus(selector){
 }
 
 
+var StaticWidgets = {
+  update: function(widget_id, path){
+    
+      var widget = $jq("li#static-widget-" + widget_id);
+      var widget_title = widget.find("input#widget_title").val();
+      var widget_content = widget.find("textarea#widget_content").val();
+
+      $jq.ajax({
+            type: "POST",
+            url: "/rest/widget/static/" + widget_id,
+            data: {widget_title:widget_title, path:path, widget_content:widget_content},
+            success: function(data){
+              location.reload();
+              },
+            error: function(request,status,error) {
+                alert(request + " " + status + " " + error );
+              }
+        }); 
+  },
+  edit: function(wname) {
+    var widget = $jq("#" + wname);
+    var title = widget.find("h3 span.widget-title");
+    title.html("<input style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
+    
+    var content = widget.find("div.static-widget-content");
+    var w_content = content.parent();
+    w_content.html('<textarea id="widget_content" name="widget_content" rows=10 style="width:95%">' + content.html() + '</textarea><br /><input type="submit" value="Save widget" onClick=\'StaticWidgets.update("' + wname.split("-").pop() + '");\'/>');
+  }
+}
+
+
 
 
 

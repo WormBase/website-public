@@ -112,23 +112,23 @@ CREATE TABLE sessions (
     );
 
 
-DROP TABLE IF EXISTS page_widgets;
-CREATE TABLE page_widgets (
+DROP TABLE IF EXISTS widgets;
+CREATE TABLE widgets (
+        widget_id INTEGER AUTO_INCREMENT PRIMARY KEY,
         page_id INTEGER,
-        widget_id INTEGER,
         widget_title char(72),
-        PRIMARY KEY (page_id, widget_id)
+        widget_order INTEGER,
+        revision_id INTEGER
 );
 
 
-DROP TABLE IF EXISTS widgets;
-CREATE TABLE widgets (
+DROP TABLE IF EXISTS widget_content;
+CREATE TABLE widget_content (
+        revision_id INTEGER AUTO_INCREMENT PRIMARY KEY,
         widget_id INTEGER,
         content text,
         user_id INTEGER,
-        widget_date DATETIME,
-        current_version  char(50),
-        PRIMARY KEY (widget_id)
+        widget_date char(50)
 );
 
 
