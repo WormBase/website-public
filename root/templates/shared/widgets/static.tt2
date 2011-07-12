@@ -1,20 +1,20 @@
 [% IF widget %]
-  [% widget.content %]
-
-  <br /><br />
-  <span id="fade">Last edited by [% linkUser(widget.user) %]</span>
+  <div class="static-widget-content">
+  [% widget.content.content %]
+  </div>
+  <br />
+  <span id="fade">Last edited by [% linkUser(widget.content.user) %]</span>
 [% ELSE %]
 
-  <form method="post" align="left" action="[% c.uri_for("/rest/widget/static/0") %]" style="float:left;">
-
-    title: <input type="text" name="widget_title" size="22"/> <br />
-
-    <textarea id="widget_content" name="widget_content" rows="10" ></textarea>
+    To create the widget, start typing in the box below<br />
+    <textarea id="widget_content" name="widget_content" rows=10 style="width:95%"></textarea>
     <br />
-<input type="text" name="path" style="display:none" size="22" value="[% path %]"/>
-    <input type="submit" value="Create widget" id="create"/>
+    <input type="submit" value="Create widget" onClick='StaticWidgets.update("-1", "[% path %]");' id="create_widget"/>
 
 
-  </form>
-
+  <script>
+    var title = $jq("#static-widget--1").find("h3 span.widget-title");
+    title.html("<input onFocus=\"if(this.value=='Widget title'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
+    
+  </script>
 [% END %]

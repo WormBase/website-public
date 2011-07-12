@@ -19,7 +19,7 @@ select yourself to link your wormbase information <br /><br />
 <div style="float:left;margin:1em;">
     <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;visibility:hidden;">
     </div>
-    <input id="link-account" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
+    <input id="link-account" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›"/>  
     <br /><br /><span>None of these are you? <a href="[% redirect  || '/' %]">skip this step</a></span>
 </div>
 
@@ -42,7 +42,7 @@ select yourself to link your wormbase information <br /><br />
           success: function(data){
                 $jq("input#wbid").attr("value", data.wbid);
                 $jq("input#email").attr("value", data.email);
-                $jq("#link-account").attr("disabled", 0);
+//                 $jq("#link-account").attr("disabled", 0);
                 $jq("input#confirm").attr("value", "");
                 var emails = ["[% emails.join('", "') %]"];
                 if(data.email && data.status_ok){
