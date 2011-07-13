@@ -28,13 +28,13 @@ __PACKAGE__->add_columns(
   "widget_order",
   { data_type => "integer", is_nullable => 1 },
   "revision_id",
-  { data_type => "integer", is_nullable => 1 },
+  { data_type => "integer", is_nullable => 0 },
 );
 
 __PACKAGE__->set_primary_key("widget_id");
 
 __PACKAGE__->belongs_to(page=>'WormBase::Schema::Result::Page','page_id');
-__PACKAGE__->has_one(content=>'WormBase::Schema::Result::WidgetContent', { 'foreign.revision_id' => 'self.revision_id' });
+__PACKAGE__->might_have(content=>'WormBase::Schema::Result::WidgetContent', { 'foreign.revision_id' => 'self.revision_id' });
 
 #__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id'); 
 

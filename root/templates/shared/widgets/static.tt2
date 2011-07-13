@@ -1,10 +1,20 @@
 [% IF widget %]
+  [% UNLESS rev %]
   <div class="static-widget-content">
   [% widget.content.content %]
   </div>
+  [% ELSE %]
+    <span id="fade">Revision as of [% rev_date %] by [% linkUser(rev.user) %]</span><br />
+    <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">go to current version</a>
+    <br /><br />
+    <div class="static-widget-content">
+    [% rev.content %]
+    </div>
+  [% END %]
   <br />
-  <span id="fade">Last edited by [% linkUser(widget.content.user) %]</span>
+  <span id="fade">Last edited by [% linkUser(widget.content.user) %] – [% timestamp %] </span>
 [% ELSE %]
+    [% UNLESS revisions %]
 
     To create the widget, start typing in the box below<br />
     <textarea id="widget_content" name="widget_content" rows=10 style="width:95%"></textarea>
@@ -15,6 +25,14 @@
   <script>
     var title = $jq("#static-widget--1").find("h3 span.widget-title");
     title.html("<input onFocus=\"if(this.value=='Widget title'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
-    
   </script>
+  [% ELSE %]
+<br /><br />
+    <h3>history</h3>
+    [% FOREACH rev IN revisions %]
+      <span id="fade">
+        [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
+        [% linkUser(rev.user) %] – <a onClick='$jq("div#static-widget-[% widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]").parent().find(".ui-state-highlight").removeClass("ui-state-highlight");return false;' href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a></span><br />
+    [% END %]
+  [% END %]
 [% END %]

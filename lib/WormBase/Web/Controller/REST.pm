@@ -10,6 +10,7 @@ use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
 use URI::Escape;
+use DateTime;
 
 __PACKAGE__->config(
     'default' => 'text/x-yaml',
@@ -959,17 +960,34 @@ sub widget_GET {
    
 }
 
-# For "static" pages -- which are most likely resources --
+# For "static" pages
 # that do not need to handle objects. They have a different linking structure
 sub widget_static :Path('/rest/widget/static') :Args(1) :ActionClass('REST') {}
 
 sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("getting static widget");
-    $c->stash->{template} = "shared/widgets/static.tt2";
+    if($c->req->params->{history}){
+      my @revisions = $c->model('Schema::WidgetContent')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
+      map {
+        my $time = DateTime->from_epoch( epoch => $_->widget_date);
+        $_->{time_lapse} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
+      } @revisions;
+      $c->stash->{revisions} = \@revisions if @revisions;
+      $c->stash->{widget_id} = $widget_id;
+    } else {
+      if($c->req->params->{rev}){
+        my $rev = $c->model('Schema::WidgetContent')->find({revision_id=>$c->req->params->{rev}});
+        $c->stash->{rev} = $rev;
+        my $time = DateTime->from_epoch( epoch => $rev->widget_date);
+        $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
+      }
+      $c->stash->{widget} = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
+      $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->widget_date), 1) if($widget_id > 0);
+      $c->stash->{path} = $c->request->params->{path};
+    }
     $c->stash->{noboiler} = 1;
-    $c->stash->{widget} = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
-    $c->stash->{path} = $c->request->params->{path};
+    $c->stash->{template} = "shared/widgets/static.tt2";
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -977,25 +995,26 @@ sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("updating static widget");
     if($c->check_any_user_role(qw/admin curator/)){
+      if($c->req->params->{delete} && $c->check_user_role("admin")){
+        my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
+        $widget->delete();
+        $widget->update();
+        return;
+      }
       my $widget_title = $c->request->body_parameters->{widget_title};
       my $widget_content = $c->request->body_parameters->{widget_content};
 
       if($widget_id > 0){
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->content($c->model('Schema::WidgetContent')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
-#         $widget->revision_id($new_revision->revision_id);
-#         $widget->content($new_revision);
         $widget->widget_title($widget_title);
         $widget->update();
-       
       }else{
           my $url = $c->request->body_parameters->{path};
           my $page = $c->model('Schema::Page')->find({url=>$url});
-          my $widget = $c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title});
-
-          my $content = $c->model('Schema::WidgetContent')->create({widget_id=>$widget->widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
-          $widget->revision_id($content->revision_id);
-          $widget->update();
+          my $content = $c->model('Schema::WidgetContent')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
+          $content->widget($c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title, revision_id=>$content->revision_id}));
+          $content->update();
       }
     }
 }
