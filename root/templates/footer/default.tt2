@@ -58,7 +58,7 @@
        <div class="footer-title">Developer</div>
         <ul>
           <li><a>Amazon EC2 AMI</a></li>
-	  <li><span>Code: </span><a href="http://github.com/organizations/WormBase">git</a> <a href="http://bitbucket.org/tharris/wormbase">hg</a></li>
+	  <li><a href="http://github.com/organizations/WormBase">Git Repositories</a></li>
           <li><a>Data Mining</a></li>
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
