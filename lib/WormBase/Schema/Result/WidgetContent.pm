@@ -34,6 +34,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("revision_id");
 
 __PACKAGE__->belongs_to(user=>'WormBase::Schema::Result::User','user_id');
+__PACKAGE__->belongs_to(widget=>'WormBase::Schema::Result::Widgets','widget_id');
+
 #__PACKAGE__->has_many(widgets=>'WormBase::Schema::Result::Widgets', 'widget_id'); 
 
 1;
