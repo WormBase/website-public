@@ -76,6 +76,7 @@ requires 'JSON';                                                 #
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
 requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
+requires 'Memcached::libmemcached';                              #
 requires 'Module::Install';                                      #
 requires 'Moose'                                 => '1.21';      #
 requires 'MooseX::AbstractFactory';                              #
