@@ -1634,8 +1634,8 @@ sub strains {
 	};
     }
     
-    return { description => 'strains carrying gene',
-	     data        => \@data,
+    return { description => 'strains carrying this gene',
+	     data        => @data ? \@data : undef,
 	     count       => \%count };
 }
 
