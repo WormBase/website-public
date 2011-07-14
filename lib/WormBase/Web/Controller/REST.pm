@@ -636,31 +636,45 @@ sub feed_POST {
 	    }
 	  }
 	}else{
-	  my $content= $c->req->params->{content};
-	  my $title= $c->req->params->{title};
-
-      my $url = $c->req->params->{url};
-
-      my $page = $c->model('Schema::Page')->find({url=>$url});
-
-      my $user = $self->check_user_info($c);
-      return unless $user;
-      $c->log->debug("create new issue $content ",$user->id);
-      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id, title=>$title,page_id=>$page->page_id,content=>$content,state=>"new",'submit_time'=>time()});
-      $self->issue_email($c,$issue,1,$content);
+	  my $content    = $c->req->params->{content};
+	  my $title      = $c->req->params->{title};
+	  my $is_private = $c->req->params->{isprivate};
+	  
+	  my $url = $c->req->params->{url};
+	  $c->log->debug(keys %{$c->req->params});
+	  my $page = $c->model('Schema::Page')->find({url=>$url});
+	  $c->log->debug("private: $is_private");
+	  my $user = $self->check_user_info($c);
+	  return unless $user;
+	  $c->log->debug("create new issue $content ",$user->id);
+	  my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id,
+								  title=>$title,
+								  page_id=>$page->page_id,
+								  content=>$content,
+								  state      =>"new",
+								  is_private => $is_private,
+								  'submit_time'=>time()});
+	  $self->issue_email($c,$issue,1,$content);
 	}
     }elsif($type eq 'thread'){
 	my $content= $c->req->params->{content};
-	my $issue_id= $c->req->params->{issue};
-	my $state= $c->req->params->{state};
+	my $issue_id = $c->req->params->{issue};
+	my $state    = $c->req->params->{state};
+	my $severity = $c->req->params->{severity};
 	my $assigned_to= $c->req->params->{assigned_to};
 	if($issue_id) { 
 	   my $hash;
 	   my $issue = $c->model('Schema::Issue')->find($issue_id);
-	   if($state) {
+	   if ($state) {
 	      $hash->{status}={old=>$issue->state,new=>$state};
 	      $issue->state($state) ;
 	   }
+
+	   if ($severity) {
+	      $hash->{severity}={old=>$issue->severity,new=>$severity};
+	      $issue->severity($severity);
+	   }
+
 	   if($assigned_to) {
 	      my $people=$c->model('Schema::User')->find($assigned_to);
 	      $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};

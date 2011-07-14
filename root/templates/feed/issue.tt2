@@ -1,5 +1,9 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
+<script>
+ $jq(".issue-submit").live('click',function() {
+ $jq("#issue-submit-box").replaceWith("Issue submitted succesfully.");
+    });
+</script>
+
 
   <div id="issues-new" class="layout-box" style="padding: 15px 24px;">
 
@@ -9,6 +13,8 @@
   <br /><br />
 
   [% IF url %]
+    
+    <div id="issue-submit-box">
     <h4>Create new issue</h4>
     [% user_login_info %]
 	<table id="issueTable" width="70%">
@@ -23,13 +29,23 @@
 				<textarea [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="content" rows="10"     name="content"  ></textarea>
 			</td>
 		</tr>
-	</table>
+
+		<tr>
+		    <td></td>
+	            <td><input type='checkbox' value='yes' class="issue-is-private" id="isprivate" /> </td>
+                    <td>
+                    <div class="caveat-emptor">By default, reported issues are visible by everyone.<br />
+	              Check this box if you'd prefer to report this issue privately to WormBase staff.</div>
+                    </td>
+                
+                </tr>
+  	  </table>
+
 
 	  </br><p>
-	    <input type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Your Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
+	    <input type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 
 	  </p>
-
-
+     </div>
   [% END %]
 
    </div>

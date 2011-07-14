@@ -1696,6 +1696,35 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#FFF;
 }
 
+.issue-table tr.critical {
+   background-color:#FED;
+   border-color:#E88;
+   color:#A22;
+}   
+
+.issue-table tr.major {
+   background-color:#DFF;
+   border-color:#BEE;
+   color:#099;
+}   
+
+.issue-table tr.normal {
+   background-color:#FDB;
+   border-color:#EEA;
+   color:#880;
+}   
+
+.issue-table tr.duplicate {
+   background-color:#DDD;
+   border-color:#DDD;
+   color:#OOO;
+}   
+
+.issue-table tr:hover {
+    background-color:#DDD;
+}
+
+
 .issue-text{
   width :97%;
   font-family: Helvetica, sans-serif;
