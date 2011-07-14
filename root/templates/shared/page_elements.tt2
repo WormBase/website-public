@@ -636,10 +636,13 @@
                 <div id="widget-footer">
 [%# UNLESS c.req.action == '/' %]
 [% UNLESS type.match('(tool)|(me)') %]
-                    <a  tip="download" class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
+                    <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 
-[% IF type.match('(static)') && c.check_any_user_role("admin", "curator") %]
+[% IF type.match('(static)')  %]
+    [% IF c.check_any_user_role("admin", "curator") %]
                     <a  tip="edit" onClick='StaticWidgets.edit("[% id %]"); $jq(this).hide();' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
+    [% END %]
+                    <a  tip="view history" onClick='$jq(this).toggleClass("ui-state-highlight");StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
                     
 

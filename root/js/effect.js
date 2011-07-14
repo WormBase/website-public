@@ -268,11 +268,42 @@ var StaticWidgets = {
   edit: function(wname) {
     var widget = $jq("#" + wname);
     var title = widget.find("h3 span.widget-title");
-    title.html("<input style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
+    title.html("<input style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.text() + "\" />");
     
     var content = widget.find("div.static-widget-content");
     var w_content = content.parent();
-    w_content.html('<textarea id="widget_content" name="widget_content" rows=10 style="width:95%">' + content.html() + '</textarea><br /><input type="submit" value="Save widget" onClick=\'StaticWidgets.update("' + wname.split("-").pop() + '");\'/>');
+    var widget_id = wname.split("-").pop();
+    w_content.html('<textarea id="widget_content" name="widget_content" rows=10 style="width:95%">' + content.text() + '</textarea><br /><input type="submit" value="Save widget" onClick=\'StaticWidgets.update("' 
+                      + widget_id
+                      + '");\'/><input type="submit" value="Cancel" onClick=\'location.reload();\'/><input type="submit" value="Delete" onClick=\'StaticWidgets.delete("' 
+                      + widget_id
+                      + '");\'/>');
+  },
+  delete: function(widget_id){
+    if(confirm("are you sure you want to delete this widget?")){
+      $jq.ajax({
+        type: "POST",
+        url: "/rest/widget/static/" + widget_id + "?delete=1",
+        success: function(data){
+          location.reload();
+          },
+        error: function(request,status,error) {
+            alert(request + " " + status + " " + error );
+          }
+      }); 
+    }
+  },
+  history: function(wname){
+    var widget = $jq("#" + wname);
+    var history = widget.find("div#" + wname + "-history");
+    if(history.size() > 0){
+      history.toggle();
+    }else{
+      var widget_id = wname.split("-").pop();
+      var history = $jq('<div id="' + wname + '-history"></div>'); 
+      history.load("rest/widget/static/" + widget_id + "?history=1");
+      widget.find("div.content").append(history);
+    }
   }
 }
 
