@@ -180,7 +180,12 @@
 	    $jq.ajax({
 	      type: 'POST',
 	      url: rel,
-	      data: {title:feed.find("#title").val(), content: feed.find("#content").val(), email:email.val() ,username:username.val() , url:url,},
+	      data: {title:feed.find("#title").val(), 
+			    content: feed.find("#content").val(), 
+			    email:email.val() ,
+			    username:username.val() , 
+			    url:url,
+			    isprivate:feed.find("#isprivate").val()},
 	      success: function(data){
 			    if(data==0) {
 				   alert("The email address has already been registered! Please sign in."); 

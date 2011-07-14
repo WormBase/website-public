@@ -11,7 +11,13 @@
 	      $jq.ajax({
 		type: 'POST',
 		url: url,
-		data: {content: $jq("textarea").val(),issue:[% issue.id %],state:$jq("#issue_status option:selected").val(),assigned_to:$jq("#issue_assigned_to option:selected").val(),email:email.val() ,username:username.val()  },
+		data: {content: $jq("textarea").val(),
+		       issue:[% issue.id %],
+                       state:$jq("#issue_status option:selected").val(),
+                       severity:$jq("#issue_severity option:selected").val(),
+                       assigned_to:$jq("#issue_assigned_to option:selected").val(),
+                       email:email.val(),
+                       username:username.val()  },
 		success: function(data){
 			    if(data==0) {
 				   alert("The email address has already been registered! Please sign in."); 
@@ -31,7 +37,7 @@
 
 <div style=" margin:1em 0" >
 <div class="issue-content" >
-  <h2>#[% issue.id %] [% issue.title %] </h2>
+  <h2>#[% issue.id %] [% issue.title %] [% IF issue.is_private; '<em>(reported privately)</em>'; END %]</h2>
   <span id="fade">
     Reported by [% linkUser(issue.reporter) %] on [% linkPage(issue.page) %],
     [% USE time_dir = Time.Duration %]
@@ -41,9 +47,13 @@
 </div>
 
 <div class="issue-content" >
-  <table width="40%">
-    <tr><th>Status:</th><td>[% issue.state %]</td> 
-    <th>Responsible:</th><td>[% IF issue.responsible; linkUser(issue.responsible); ELSE; '<span id="fade">no one</span>'; END;%]</td></tr>
+  <table width="60%">
+    <tr>
+    <th>Status:</th><td>[% issue.state %]</td> 
+    <th>Severity:</th><td>[% IF issue.severity; issue.severity; ELSE; '<span id="fade">unassigned</span>'; END;%]</td>
+    <th>Responsible:</th><td>[% IF issue.responsible; linkUser(issue.responsible); ELSE; '<span id="fade">unassigned</span>'; END;%]</td>
+    </tr>
+
   </table>	
 </div>
 
@@ -72,8 +82,18 @@
 
 <div id="threads-new" class="issue-content">
 <h3>Add Comment</h3>
+
+<p>
+[% user_login_info %]
+<form>
+<textarea class="issue-text" rows="5"   id="content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
+
 [% IF c.check_user_roles('admin') %]
-    set state to
+<p>
+<h3>Adjust Properties</h3>
+</p>
+ <p>
+    State:
     <select id="issue_status">
     <option value="" selected="selected">---------------</option>
     <option value="new">new</option>
@@ -83,19 +103,29 @@
     <option value="duplicated">duplicated</option>
     </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-    assign issue to 
+    Severity:
+    <select id="issue_severity">
+    <option value="" selected="selected">---------------</option>
+    <option value="critical">critical</option>
+    <option value="severe">severe</option>
+    <option value="normal">normal</option>
+    <option value="trivial">trivial</option>
+    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    Responsible:
     <select id="issue_assigned_to">
     <option value="" selected="selected">------------------</option>
     [% FOREACH p IN curators %]
       <option value="[% p.id %]">[% username(p) %]</option>
     [% END %]
     </select>
+  </p>
 [% END %]
 
-<p>
-[% user_login_info %]
-<form>
-<textarea class="issue-text" rows="5"   id="content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
+
+
+
+
 <p>
 <input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]" [% UNLESS c.user_exists; 'disabled=1'; END;%] /> 
  <input type='reset' value='Reset' [% UNLESS c.user_exists; 'disabled=1'; END;%] />

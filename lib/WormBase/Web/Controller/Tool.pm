@@ -68,6 +68,7 @@ sub issue :Path("tools/issues") Args {
       $c->stash->{current_time}=time();
       return;
     }
+
     $c->stash->{template} = "feed/issue_page.tt2";
     my $issue = $c->model('Schema::Issue')->find($id);
     $c->stash->{issue} = $issue;
