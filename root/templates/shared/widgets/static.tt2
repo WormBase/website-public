@@ -3,16 +3,21 @@
   <div class="static-widget-content">
   [% widget.content.content %]
   </div>
+<br />
+  <span id="fade">Last edited by [% linkUser(widget.content.user) %] – [% timestamp %] </span>
   [% ELSE %]
-    <span id="fade">Revision as of [% rev_date %] by [% linkUser(rev.user) %]</span><br />
-    <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">go to current version</a>
-    <br /><br />
+    <div class="ui-state-error" style="padding:0.5em;">
+      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id) %]?history=1' onClick='StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %] </span><br />
+      <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">go to current revision</a>
+    </div>
+    <br />
     <div class="static-widget-content">
     [% rev.content %]
     </div>
+    <br />
+    <span id="fade">edited by [% linkUser(rev.user) %] – [% rev_date %] </span>
   [% END %]
-  <br />
-  <span id="fade">Last edited by [% linkUser(widget.content.user) %] – [% timestamp %] </span>
+  
 [% ELSE %]
     [% UNLESS revisions %]
 
@@ -32,7 +37,9 @@
     [% FOREACH rev IN revisions %]
       <span id="fade">
         [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
-        [% linkUser(rev.user) %] – <a onClick='$jq("div#static-widget-[% widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]").parent().find(".ui-state-highlight").removeClass("ui-state-highlight");return false;' href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a></span><br />
+        [% linkUser(rev.user) %] – <a onClick='$jq("div#static-widget-[% widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]").parent().find(".ui-state-highlight").removeClass("ui-state-highlight");return false;' href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a>
+        [% UNLESS first; ' – latest version'; first = 1; END; %] 
+      </span><br />
     [% END %]
   [% END %]
 [% END %]

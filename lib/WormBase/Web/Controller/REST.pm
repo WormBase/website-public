@@ -990,13 +990,16 @@ sub widget_static_GET {
       $c->stash->{revisions} = \@revisions if @revisions;
       $c->stash->{widget_id} = $widget_id;
     } else {
+      my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
+      $c->stash->{widget} = $widget;
       if($c->req->params->{rev}){
         my $rev = $c->model('Schema::WidgetContent')->find({revision_id=>$c->req->params->{rev}});
-        $c->stash->{rev} = $rev;
-        my $time = DateTime->from_epoch( epoch => $rev->widget_date);
-        $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
+        unless($rev->revision_id == $widget->content->revision_id){
+          $c->stash->{rev} = $rev;
+          my $time = DateTime->from_epoch( epoch => $rev->widget_date);
+          $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
+        }
       }
-      $c->stash->{widget} = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
       $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->widget_date), 1) if($widget_id > 0);
       $c->stash->{path} = $c->request->params->{path};
     }

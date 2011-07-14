@@ -642,7 +642,7 @@
     [% IF c.check_any_user_role("admin", "curator") %]
                     <a  tip="edit" onClick='StaticWidgets.edit("[% id %]"); $jq(this).hide();' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
-                    <a  tip="view history" onClick='$jq(this).toggleClass("ui-state-highlight");StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
+                    <a  tip="view history" id="history-button" onClick='StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
                     
 
