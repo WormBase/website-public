@@ -416,17 +416,22 @@ B<Response example>
 =cut
 
 sub anatomy_ontology {
-	my ($self) = @_;
+    my $self = shift;
+    my $object = $self->object;
+    my @terms  = $object->Anatomy_term;
 
-	my @anatomy_terms = map {
-		anatomy_term => $self->_pack_obj($_),
-		definition => $_->Definition->name,
-	}, @{$self ~~ '@Anatomy_term'};
-
-	return {
-		description => 'anatomy ontology terms associated with this expression pattern',
-		data	    => @anatomy_terms ? \@anatomy_terms : undef,
+    my @data;
+    foreach (@terms) {
+	push @data,{ 
+	    anatomy_term => $self->_pack_obj($_),
+	    definition   => $_->Definition,
 	};
+    }
+    
+    return {
+	description => 'anatomy ontology terms associated with this expression pattern',
+	data	    => @data ? \@data : undef,
+    };
 }
 
 
