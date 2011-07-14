@@ -83,6 +83,7 @@
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
 
+<!-- Eventually provide a filter of results 
   <p>
   <h4>Filter (not wired yet)</h4>
 
@@ -113,9 +114,9 @@
     [% END %]
     </select>
   </p>
+ -->
 
-
-  <table border=0 cellspacing=0 width=100% class="issue-table">
+  <table border="0" cellspacing="0" width="100%" class="issue-table">
     <tr align=left>
       <th>#</th>
       <th>Title</th>
@@ -155,7 +156,7 @@
     [% END %]
   </table>
   [% ELSE %]
-   <span id="fade"> no issues have been found</span>
+   <span id="fade">No issues have been reported.</span>
   [% END %]
 [% END %]
 
