@@ -298,11 +298,13 @@ var StaticWidgets = {
     var history = widget.find("div#" + wname + "-history");
     if(history.size() > 0){
       history.toggle();
+      widget.find("a#history-button").toggleClass("ui-state-highlight");
     }else{
       var widget_id = wname.split("-").pop();
       var history = $jq('<div id="' + wname + '-history"></div>'); 
       history.load("rest/widget/static/" + widget_id + "?history=1");
       widget.find("div.content").append(history);
+      widget.find("a#history-button").addClass("ui-state-highlight");
     }
   }
 }
