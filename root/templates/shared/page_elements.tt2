@@ -82,13 +82,47 @@
 [% MACRO issue_table(issues, issue_type) BLOCK %]
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
+
+  <p>
+  <h4>Filter (not wired yet)</h4>
+
+    State:
+    <select id="issue_status">
+    <option value="" selected="selected">---------------</option>
+    <option value="new">new</option>
+    <option value="open">open</option>
+    <option value="resolved">resolved</option>
+    <option value="hold">hold</option>
+    <option value="duplicated">duplicated</option>
+    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    Severity:
+    <select id="issue_severity">
+    <option value="" selected="selected">---------------</option>
+    <option value="critical">critical</option>
+    <option value="severe">severe</option>
+    <option value="normal">normal</option>
+    <option value="trivial">trivial</option>
+    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    Responsible:
+    <select id="issue_assigned_to">
+    <option value="" selected="selected">------------------</option>
+    [% FOREACH p IN curators %]
+      <option value="[% p.id %]">[% username(p) %]</option>
+    [% END %]
+    </select>
+  </p>
+
+
   <table border=0 cellspacing=0 width=100% class="issue-table">
     <tr align=left>
       <th>#</th>
       <th>Title</th>
       <th>State</th>
+      <th>Severity</th>
       [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
-      <th>Time</th> 
+      <th>Date</th> 
       <th>Reported by</th>
       <th>Responsible</th>
       [% IF c.check_user_roles('admin') %]
@@ -97,11 +131,21 @@
     </tr>
     [% even = 1 %]
     [% FOREACH IS IN issues %]
+
+      [% IF IS.is_private; 
+         IF !c.check_user_roles('admin')   ; NEXT ; END;
+         IF !c.check_user_roles('curator') ; NEXT ; END;
+      END;
+      %]
+     
+
       [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
-      <tr [% IF(even == 1); 'class="r0"'; even = 0; ELSE; 'class="r1"'; even =1; END; %]>
+      <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a></td>
+        <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
+	    [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
         <td>[% IS.state %]</td>
+        <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
         <td>[% time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
         <td>[% IF IS.reporter_id; linkUser(IS.reporter); END %]</td>

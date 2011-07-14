@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS wormbase_user;
-CREATE DATABASE wormbase_user;
-USE wormbase_user;
-GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
+DROP DATABASE IF EXISTS wormbase_user_todd;
+CREATE DATABASE wormbase_user_todd;
+USE wormbase_user_todd;
+GRANT ALL PRIVILEGES ON `wormbase_user_todd`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -63,6 +63,8 @@ CREATE TABLE issues (
         page_id INTEGER,
 	    submit_time char(50),
 	    state char(10),
+            severity char(10),
+            is_private char(10),
 	    content TEXT 
 );
 
