@@ -638,9 +638,9 @@
 [% UNLESS type.match('(tool)|(me)') %]
                     <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 
-[% IF type.match('(static)')  %]
+[% IF type.match('(static)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator") %]
-                    <a  tip="edit" onClick='StaticWidgets.edit("[% id %]"); $jq(this).hide();' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
+                    <a  tip="edit" id="edit-button"  onClick='StaticWidgets.edit("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
                     <a  tip="view history" id="history-button" onClick='StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
@@ -1261,7 +1261,7 @@ END;
   [% IF c.check_user_roles('admin') %]
     [% w = { id = 'static-widget--1'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path
+            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path  _ '&edit=1'
             type = 'static'
             };
     %]

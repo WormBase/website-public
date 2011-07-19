@@ -103,6 +103,7 @@ requires 'Template::Plugin::Time::Duration';                     #
 requires 'Test::YAML::Valid';                                    #
 requires 'Test::Pod::Coverage';                                  #
 requires 'Text::Glob';                                           #
+requires 'Text::WikiText';                                       #
 requires 'Time::Duration';                                       #
 requires 'WWW::Mechanize';                                       #
 requires 'XML::Simple';                                          #
