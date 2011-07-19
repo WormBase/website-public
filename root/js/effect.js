@@ -6,9 +6,9 @@
    $jq('#operator').live('click',function()  
     { 
       if($jq('#operator').attr("rel")) {
-	 $jq.post("/rest/livechat?open=1",function() {
-		window.location.href="/tools/operator";
-	  });
+     $jq.post("/rest/livechat?open=1",function() {
+        window.location.href="/tools/operator";
+      });
       }else {
         var opBox = $jq("#operator-box");
 //         ajaxGet(opBox, "/rest/livechat");
@@ -30,11 +30,11 @@
           opBox.children().hide();
 
         }, 4000)
-// 	  if($jq("#operator-box").size()==0) {  
-// 		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
-// 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
-// 		  $jq("#operator-box").draggable();
-// 	   } 
+//    if($jq("#operator-box").size()==0) {  
+//        $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
+//        ajaxGet($jq("#operator-box"), "/rest/livechat");
+//        $jq("#operator-box").draggable();
+//     } 
       }
     });  
 
@@ -42,7 +42,7 @@
 //     {  
 // 
 //       $jq.post("/rest/livechat",function() {
-// 	  $jq('#operator-box').remove();
+//    $jq('#operator-box').remove();
 //       });
 //          
 //     }); 
@@ -71,14 +71,14 @@
   });
 
      $jq(".add-delete").live('click',function() {
-	$jq(this).toggleClass( "ui-icon-circle-minus"); 
+    $jq(this).toggleClass( "ui-icon-circle-minus"); 
     });
 
     $jq(".feed").live('click',function() {
-	var url=$jq(this).attr("rel");
-	var div=$jq(this).parent().next("#widget-feed");
-	div.filter(":hidden").empty().load(url);
-	div.slideToggle('fast');
+    var url=$jq(this).attr("rel");
+    var div=$jq(this).parent().next("#widget-feed");
+    div.filter(":hidden").empty().load(url);
+    div.slideToggle('fast');
     });
 
     $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
