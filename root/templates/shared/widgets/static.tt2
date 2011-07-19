@@ -1,45 +1,54 @@
-[% IF widget %]
+[% IF edit %]
+    To edit the widget, start typing in the box below<br />
+    <textarea id="widget_content" name="widget_content" style="width:95%;min-height:30em;">[% UNLESS rev; widget.content.content; ELSE; rev.content; END; %]</textarea>
+    <br />
+    <input type="submit" value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]" onClick='StaticWidgets.update("[% widget.widget_id %]", "[% path %]");' id="create_widget"/>
+    [% IF widget %]
+      <input type="submit" value="Cancel" onClick='StaticWidgets.reload("[% widget.widget_id %]");'/>
+      [% IF c.check_user_roles("admin") %]
+        <input type="submit" value="Delete" onClick='StaticWidgets.delete("[% widget.widget_id %]");'/>
+      [% END %]
+    [% END %]
+  <script>
+    var widget = $jq("#static-widget-[% widget.widget_id || '-1' %]");
+    var title = widget.find("h3 span.widget-title");
+    if(title.children("input").size() == 0){
+//     widget.find("a#edit-button").addClass("ui-state-highlight");
+    title.html("<input onFocus=\"if(this.value=='Add new widget...'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
+    }
+    var textarea = widget.find("textarea#widget_content").markItUp(myWikiSettings);
+//     textarea.style.height = (textarea.scrollHeight*2) + "px"; 
+  </script>
+[% ELSIF widget %]
   [% UNLESS rev %]
   <div class="static-widget-content">
-  [% widget.content.content %]
+  [% widget_content %]
   </div>
 <br />
   <span id="fade">Last edited by [% linkUser(widget.content.user) %] – [% timestamp %] </span>
   [% ELSE %]
     <div class="ui-state-error" style="padding:0.5em;">
-      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id) %]?history=1' onClick='StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %] </span><br />
-      <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">go to current revision</a>
+      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id) %]?history=1' onClick='StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the 
+      <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">current revision</a></span><br />
     </div>
     <br />
     <div class="static-widget-content">
-    [% rev.content %]
+    [% rev_content %]
     </div>
     <br />
     <span id="fade">edited by [% linkUser(rev.user) %] – [% rev_date %] </span>
   [% END %]
   
-[% ELSE %]
-    [% UNLESS revisions %]
-
-    To create the widget, start typing in the box below<br />
-    <textarea id="widget_content" name="widget_content" rows=10 style="width:95%"></textarea>
-    <br />
-    <input type="submit" value="Create widget" onClick='StaticWidgets.update("-1", "[% path %]");' id="create_widget"/>
-
-
-  <script>
-    var title = $jq("#static-widget--1").find("h3 span.widget-title");
-    title.html("<input onFocus=\"if(this.value=='Widget title'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
-  </script>
-  [% ELSE %]
-<br /><br />
+[% ELSIF revisions %]
+    <br /><br />
     <h3>history</h3>
     [% FOREACH rev IN revisions %]
       <span id="fade">
         [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
-        [% linkUser(rev.user) %] – <a onClick='$jq("div#static-widget-[% widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]").parent().find(".ui-state-highlight").removeClass("ui-state-highlight");return false;' href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a>
+        [% linkUser(rev.user) %] – 
+            <a onClick='StaticWidgets.reload("[% widget_id %]", "[% rev.revision_id %]");return false;' 
+               href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a>
         [% UNLESS first; ' – latest version'; first = 1; END; %] 
       </span><br />
     [% END %]
-  [% END %]
 [% END %]

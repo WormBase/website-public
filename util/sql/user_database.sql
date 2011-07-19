@@ -104,7 +104,7 @@ CREATE TABLE user_history (
         PRIMARY KEY (session_id, page_id)
 );
 
-INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator');
+INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator'),('5','editor');
 
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (

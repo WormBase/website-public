@@ -10,6 +10,8 @@ use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
 use URI::Escape;
+use Text::WikiText;
+use Text::WikiText::Output::HTML;
 use DateTime;
 
 __PACKAGE__->config(
@@ -410,7 +412,6 @@ sub download_GET {
     $c->response->header('Content-Type' => 'text/html');
     $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
 #     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-#         $c->serve_static_file('root/test.html');
     $c->response->body($c->req->param("sequence"));
 }
 
@@ -981,7 +982,7 @@ sub widget_static :Path('/rest/widget/static') :Args(1) :ActionClass('REST') {}
 sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("getting static widget");
-    if($c->req->params->{history}){
+    if($c->req->params->{history}){ # just getting history of widget
       my @revisions = $c->model('Schema::WidgetContent')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
       map {
         my $time = DateTime->from_epoch( epoch => $_->widget_date);
@@ -989,20 +990,28 @@ sub widget_static_GET {
       } @revisions;
       $c->stash->{revisions} = \@revisions if @revisions;
       $c->stash->{widget_id} = $widget_id;
-    } else {
+    } else { # getting actual widget
+      my $parser = Text::WikiText->new;
       my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
       $c->stash->{widget} = $widget;
-      if($c->req->params->{rev}){
+      if($c->req->params->{rev}){ # getting a certain revision of the widget
         my $rev = $c->model('Schema::WidgetContent')->find({revision_id=>$c->req->params->{rev}});
         unless($rev->revision_id == $widget->content->revision_id){
           $c->stash->{rev} = $rev;
+          my $document = $parser->parse($rev->content);
+          $c->stash->{rev_content} = Text::WikiText::Output::HTML->new->dump($document);
           my $time = DateTime->from_epoch( epoch => $rev->widget_date);
           $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
         }
       }
+      if(!($c->stash->{rev}) && $widget){
+        my $document = $parser->parse($widget->content->content);
+        $c->stash->{widget_content} = Text::WikiText::Output::HTML->new->dump($document);
+      }
       $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->widget_date), 1) if($widget_id > 0);
       $c->stash->{path} = $c->request->params->{path};
     }
+    $c->stash->{edit} = $c->req->params->{edit};
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "shared/widgets/static.tt2";
     $c->forward('WormBase::Web::View::TT');
@@ -1011,8 +1020,8 @@ sub widget_static_GET {
 sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("updating static widget");
-    if($c->check_any_user_role(qw/admin curator/)){
-      if($c->req->params->{delete} && $c->check_user_role("admin")){
+    if($c->check_any_user_role(qw/admin curator/)){ #only admins and curators can modify widgets
+      if($c->req->params->{delete} && $c->check_user_role("admin")){ #only admins can delete
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
@@ -1021,12 +1030,12 @@ sub widget_static_POST {
       my $widget_title = $c->request->body_parameters->{widget_title};
       my $widget_content = $c->request->body_parameters->{widget_content};
 
-      if($widget_id > 0){
+      if($widget_id > 0){ # modifying a widget
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->content($c->model('Schema::WidgetContent')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
         $widget->widget_title($widget_title);
         $widget->update();
-      }else{
+      }elsif($c->check_user_role("admin")){ #creating a widget - only admin
           my $url = $c->request->body_parameters->{path};
           my $page = $c->model('Schema::Page')->find({url=>$url});
           my $content = $c->model('Schema::WidgetContent')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
@@ -1141,9 +1150,10 @@ sub _get_search_result {
     my @parts = split(/\//,$page->url); 
     my $class = $parts[-2];
     my $id = uri_unescape($parts[-1]);
+    $c->log->debug("class: $class, id: $id");
+
     my $obj = $api->fetch({class=> ucfirst($class),
                               name => $id}) or die "$!";
-    $c->log->debug("class: $class, id: $id");
     my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
     unless (defined $ret{name}) {
       $ret{name}{id} = $id;
