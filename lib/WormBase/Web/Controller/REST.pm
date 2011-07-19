@@ -18,10 +18,10 @@ __PACKAGE__->config(
     'default' => 'text/x-yaml',
     'stash_key' => 'rest',
     'map' => {
-	'text/x-yaml' => 'YAML',,
-	'text/html'          => 'YAML::HTML',
-	'text/xml' => 'XML::Simple',
-	'application/json'   => 'JSON',
+    'text/x-yaml' => 'YAML',,
+    'text/html'          => 'YAML::HTML',
+    'text/xml' => 'XML::Simple',
+    'application/json'   => 'JSON',
     }
     );
 
@@ -51,11 +51,11 @@ sub livechat_GET {
       my $status = $badge->get_status();
       my $away_status = $badge->is_away();
       if($online_status && $status ne 'Busy' && !$away_status) {
-	  $c->log->debug("get gtalk badge for ",$op->username);
-  	  $c->stash->{badge_html}  = $badge->get_badge();
-	  $c->stash->{operator}  = $op;
-	  $c->log->debug($c->stash->{badge_html});
-	  last;
+      $c->log->debug("get gtalk badge for ",$op->username);
+      $c->stash->{badge_html}  = $badge->get_badge();
+      $c->stash->{operator}  = $op;
+      $c->log->debug($c->stash->{badge_html});
+      last;
       }
     }
     $c->stash->{noboiler}=1;
@@ -83,9 +83,9 @@ sub print_POST {
       my $file = $api->_tools->{print}->run($path);
      
       if ($file) {
-	  $c->log->debug("here is the file: $file");	 
-	  $file =~ s/.*print/\/print/;
-	  $c->res->body($file);
+      $c->log->debug("here is the file: $file");     
+      $file =~ s/.*print/\/print/;
+      $c->res->body($file);
       }
 
     }
@@ -97,7 +97,7 @@ sub workbench_GET {
     my ( $self, $c) = @_;
     my $session = $self->get_session($c);
     my $url = $c->req->params->{url};
-	if($url){
+    if($url){
       my $class = $c->req->params->{class};
       my $save_to = $c->req->params->{save_to};
       my $is_obj = $c->req->params->{is_obj} || 0;
@@ -121,7 +121,7 @@ sub workbench_GET {
             $c->model('Schema::UserSave')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
       }
     }
- 	$c->stash->{noboiler} = 1;
+    $c->stash->{noboiler} = 1;
     my $count = $session->pages->count;
     $c->stash->{count} = $count || 0;
 
@@ -344,12 +344,12 @@ sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
 sub update_role_POST {
       my ($self,$c,$id,$value,$checked) = @_;
       
-	my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
-	my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
-	
-	my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
-	$users_to_roles->delete()  unless($checked eq 'true');
-	$users_to_roles->update();
+    my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
+    my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
+    
+    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+    $users_to_roles->delete()  unless($checked eq 'true');
+    $users_to_roles->update();
        
 }
 
@@ -363,24 +363,24 @@ sub evidence_GET {
     $c->log->debug($headers);
    
     unless ($c->stash->{object}) {
-	# Fetch our external model
-	my $api = $c->model('WormBaseAPI');
+    # Fetch our external model
+    my $api = $c->model('WormBaseAPI');
  
-	# Fetch the object from our driver	 
-	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-	$c->log->debug("The requested class is " . ucfirst($class));
-	$c->log->debug("The request is " . $name);
-	
-	# Fetch a WormBase::API::Object::* object
-	# But wait. Some methods return lists. Others scalars...
-	$c->stash->{object} =  $api->fetch({class=> ucfirst($class),
-					    name => $name}) or die "$!";
+    # Fetch the object from our driver   
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
+    
+    # Fetch a WormBase::API::Object::* object
+    # But wait. Some methods return lists. Others scalars...
+    $c->stash->{object} =  $api->fetch({class=> ucfirst($class),
+                        name => $name}) or die "$!";
     }
     
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     if ( $c->is_ajax() ) {
-	$c->stash->{noboiler} = 1;
+    $c->stash->{noboiler} = 1;
     }
 
     my $object = $c->stash->{object};
@@ -393,12 +393,12 @@ sub evidence_GET {
     $c->forward('WormBase::Web::View::TT');
     my $uri = $c->uri_for("/reports",$class,$name);
     $self->status_ok($c, entity => {
-	                 class  => $class,
-			 name   => $name,
-	                 uri    => "$uri",
-			 evidence => $data
-		     }
-	);
+                     class  => $class,
+             name   => $name,
+                     uri    => "$uri",
+             evidence => $data
+             }
+    );
 }
 
 
@@ -626,82 +626,82 @@ sub feed_POST {
       }
     }
     elsif($type eq 'issue'){
-	if($c->req->params->{method} eq 'delete'){
-	  my $id = $c->req->params->{issues};
-	  if($id){
-	    foreach (split('_',$id) ) {
-		my $issue = $c->model('Schema::Issue')->find($_);
-		$c->log->debug("delete issue #",$issue->id);
-		$issue->delete();
-		$issue->update();
-	    }
-	  }
-	}else{
-	  my $content    = $c->req->params->{content};
-	  my $title      = $c->req->params->{title};
-	  my $is_private = $c->req->params->{isprivate};
-	  
-	  my $url = $c->req->params->{url};
-	  $c->log->debug(keys %{$c->req->params});
-	  my $page = $c->model('Schema::Page')->find({url=>$url});
-	  $c->log->debug("private: $is_private");
-	  my $user = $self->check_user_info($c);
-	  return unless $user;
-	  $c->log->debug("create new issue $content ",$user->id);
-	  my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id,
-								  title=>$title,
-								  page_id=>$page->page_id,
-								  content=>$content,
-								  state      =>"new",
-								  is_private => $is_private,
-								  'submit_time'=>time()});
-	  $self->issue_email($c,$issue,1,$content);
-	}
+    if($c->req->params->{method} eq 'delete'){
+      my $id = $c->req->params->{issues};
+      if($id){
+        foreach (split('_',$id) ) {
+        my $issue = $c->model('Schema::Issue')->find($_);
+        $c->log->debug("delete issue #",$issue->id);
+        $issue->delete();
+        $issue->update();
+        }
+      }
+    }else{
+      my $content    = $c->req->params->{content};
+      my $title      = $c->req->params->{title};
+      my $is_private = $c->req->params->{isprivate};
+      
+      my $url = $c->req->params->{url};
+      $c->log->debug(keys %{$c->req->params});
+      my $page = $c->model('Schema::Page')->find({url=>$url});
+      $c->log->debug("private: $is_private");
+      my $user = $self->check_user_info($c);
+      return unless $user;
+      $c->log->debug("create new issue $content ",$user->id);
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id,
+                                  title=>$title,
+                                  page_id=>$page->page_id,
+                                  content=>$content,
+                                  state      =>"new",
+                                  is_private => $is_private,
+                                  'submit_time'=>time()});
+      $self->issue_email($c,$issue,1,$content);
+    }
     }elsif($type eq 'thread'){
-	my $content= $c->req->params->{content};
-	my $issue_id = $c->req->params->{issue};
-	my $state    = $c->req->params->{state};
-	my $severity = $c->req->params->{severity};
-	my $assigned_to= $c->req->params->{assigned_to};
-	if($issue_id) { 
-	   my $hash;
-	   my $issue = $c->model('Schema::Issue')->find($issue_id);
-	   if ($state) {
-	      $hash->{status}={old=>$issue->state,new=>$state};
-	      $issue->state($state) ;
-	   }
+    my $content= $c->req->params->{content};
+    my $issue_id = $c->req->params->{issue};
+    my $state    = $c->req->params->{state};
+    my $severity = $c->req->params->{severity};
+    my $assigned_to= $c->req->params->{assigned_to};
+    if($issue_id) { 
+       my $hash;
+       my $issue = $c->model('Schema::Issue')->find($issue_id);
+       if ($state) {
+          $hash->{status}={old=>$issue->state,new=>$state};
+          $issue->state($state) ;
+       }
 
-	   if ($severity) {
-	      $hash->{severity}={old=>$issue->severity,new=>$severity};
-	      $issue->severity($severity);
-	   }
+       if ($severity) {
+          $hash->{severity}={old=>$issue->severity,new=>$severity};
+          $issue->severity($severity);
+       }
 
-	   if($assigned_to) {
-	      my $people=$c->model('Schema::User')->find($assigned_to);
-	      $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
-	      $issue->responsible_id($assigned_to);
-# 	      $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
-	   }
-	   $issue->update();
-	    
-	   my $user = $self->check_user_info($c);
-	   return unless $user;
-	   my $thread  = { owner=>$user,
-			  submit_time=>time(),
-	   };
-	   if($content){
-		$c->log->debug("create new thread for issue #$issue_id!");
-		my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
-		my $thread_id=1;
-		$thread_id = $threads[0]->thread_id +1 if(@threads);
-		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
-# 		$c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
-	  }  
-	  if($state || $assigned_to || $content){
-	     
-	      $self->issue_email($c,$issue,$thread,$content,$hash);
-	  }
-	}
+       if($assigned_to) {
+          my $people=$c->model('Schema::User')->find($assigned_to);
+          $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
+          $issue->responsible_id($assigned_to);
+#         $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
+       }
+       $issue->update();
+        
+       my $user = $self->check_user_info($c);
+       return unless $user;
+       my $thread  = { owner=>$user,
+              submit_time=>time(),
+       };
+       if($content){
+        $c->log->debug("create new thread for issue #$issue_id!");
+        my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
+        my $thread_id=1;
+        $thread_id = $threads[0]->thread_id +1 if(@threads);
+        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
+#       $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
+      }  
+      if($state || $assigned_to || $content){
+         
+          $self->issue_email($c,$issue,$thread,$content,$hash);
+      }
+    }
     }
 }
 
@@ -709,15 +709,15 @@ sub check_user_info {
   my ($self,$c) = @_;
   my $user;
   if($c->user_exists) {
-	  $user=$c->user; 
-	  $user->username($c->req->params->{username}) if($c->req->params->{username});
-	  $user->email_address($c->req->params->{email}) if($c->req->params->{email});
+      $user=$c->user; 
+      $user->username($c->req->params->{username}) if($c->req->params->{username});
+      $user->email_address($c->req->params->{email}) if($c->req->params->{email});
   }else{
-	  if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
-	    $c->res->body(0) ;return 0 ;
-	  }
-	  $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
-	  $user->username($c->req->params->{username}),
+      if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
+        $c->res->body(0) ;return 0 ;
+      }
+      $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
+      $user->username($c->req->params->{username}),
   }
   $user->update();
   return $user;
@@ -753,12 +753,12 @@ sub issue_email{
  $c->stash->{noboiler} = 1;
  $c->log->debug(" send out email to $bcc");
  $c->stash->{email} = {
-		  to      => $c->config->{issue_email},
-		  cc => $bcc,
-		  from    => $c->config->{issue_email},
-		  subject => $subject, 
-		  template => "feed/issue_email.tt2",
-	      };
+          to      => $c->config->{issue_email},
+          cc => $bcc,
+          from    => $c->config->{issue_email},
+          subject => $subject, 
+          template => "feed/issue_email.tt2",
+          };
    
   $c->forward( $c->view('Email::Template') );
 }
@@ -771,16 +771,16 @@ sub pages_GET {
 
     my %data;
     foreach my $page (@pages) {
-	my $uri = $c->uri_for('/page',$page,'WBGene00006763');
-	$data{$page} = "$uri";
+    my $uri = $c->uri_for('/page',$page,'WBGene00006763');
+    $data{$page} = "$uri";
     }
 
     $self->status_ok( $c,
-		      entity => { resultset => {  data => \%data,
-						  description => 'Available (dynamic) pages at WormBase',
-				  }
-		      }
-	);
+              entity => { resultset => {  data => \%data,
+                          description => 'Available (dynamic) pages at WormBase',
+                  }
+              }
+    );
 }
 
 
@@ -811,19 +811,19 @@ sub available_widgets_GET {
     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     
     foreach my $widget (@widgets) {
-	my $uri = $c->uri_for('/widget',$class,$name,$widget);
-	push @$data, { widgetname => $widget,
-		       widgeturl  => "$uri"
-	};
-	$c->cache->set($cache_id,$data);
+    my $uri = $c->uri_for('/widget',$class,$name,$widget);
+    push @$data, { widgetname => $widget,
+               widgeturl  => "$uri"
+    };
+    $c->cache->set($cache_id,$data);
     }
     
     # Retain the widget order
     $self->status_ok( $c, entity => {
-	data => $data,
-	description => "All widgets available for $class:$name",
-		      }
-	);
+    data => $data,
+    description => "All widgets available for $class:$name",
+              }
+    );
 }
 
 
@@ -859,7 +859,7 @@ sub widget_GET {
       # Fetch our external model
       my $api = $c->model('WormBaseAPI');
       
-      # Fetch the object from our driver	 
+      # Fetch the object from our driver     
       $c->log->debug("WormBaseAPI model is $api " . ref($api));
       $c->log->debug("The requested class is " . ucfirst($class));
       $c->log->debug("The request is " . $name);
@@ -887,7 +887,7 @@ sub widget_GET {
       $c->stash->{template} = "shared/widgets/references.tt2";
       $c->forward('WormBase::Web::View::TT');
       return;
-	
+    
     # If you have a tool that you want to display inline as a widget, be certain to add it here.
     # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
@@ -906,7 +906,7 @@ sub widget_GET {
       $c->stash->{cache} = $cache_server if ($cache_server);
     } else {
 
-      # No result? Generate and cache the widget.		
+      # No result? Generate and cache the widget.       
       # Load the stash with the field contents for this widget.
       # The widget itself is loaded by REST; fields are not.
       my @fields = $c->_get_widget_fields($class,$widget);
@@ -949,24 +949,24 @@ sub widget_GET {
 
     # Set the template
     $c->stash->{template}="shared/generic/rest_widget.tt2";
-    $c->stash->{child_template} = $c->_select_template($widget,$class,'widget'); 	
+    $c->stash->{child_template} = $c->_select_template($widget,$class,'widget');    
 
     # Forward to the view for rendering HTML.
     my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
     $c->detach('WormBase::Web::View::TT') unless($format) ;
     
-	# TODO: AGAIN THIS IS THE REFERENCE OBJECT
+    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
     $self->status_ok($c, entity => {
-	class   => $class,
-	name    => $name,
-	uri     => "$uri",
-	fields => $c->stash->{fields},
-		     }
-	);
+    class   => $class,
+    name    => $name,
+    uri     => "$uri",
+    fields => $c->stash->{fields},
+             }
+    );
    $format ||= 'text/html';
    my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
    $c->log->debug("$filename download in the format: $format");
@@ -1319,21 +1319,21 @@ sub available_fields_GET {
 #    my ($cache_id,$data) = $c->check_cache('available_fields');
     my ($cache_id,$data) = $c->check_cache('filecache','available_fields');
 
-    unless ($data) {	
-	my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
-	
-	foreach my $field (@fields) {
-	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
-	    $data->{$field} = "$uri";
-	}
-#	$c->set_cache($cache_id,$data);
-	$c->set_cache('filecache',$cache_id,$data);
+    unless ($data) {    
+    my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
+    
+    foreach my $field (@fields) {
+        my $uri = $c->uri_for('/rest/field',$class,$name,$field);
+        $data->{$field} = "$uri";
+    }
+#   $c->set_cache($cache_id,$data);
+    $c->set_cache('filecache',$cache_id,$data);
     }
     
     $self->status_ok( $c, entity => { data => $data,
-				      description => "All fields that comprise the $widget for $class:$name",
-		      }
-	);
+                      description => "All fields that comprise the $widget for $class:$name",
+              }
+    );
 }
 
 
@@ -1355,29 +1355,29 @@ sub field_GET {
     $c->log->debug($headers);
 
     unless ($c->stash->{object}) {
-	# Fetch our external model
-	my $api = $c->model('WormBaseAPI');
+    # Fetch our external model
+    my $api = $c->model('WormBaseAPI');
  
-	# Fetch the object from our driver	 
-	$c->log->debug("WormBaseAPI model is $api " . ref($api));
-	$c->log->debug("The requested class is " . ucfirst($class));
-	$c->log->debug("The request is " . $name);
-	
-	# Fetch a WormBase::API::Object::* object
-	# * and all are placeholders to match the /species/class/object structure for species/class index pages
-	if ($name eq '*' || $name eq 'all') {
-	    $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-	} else {
-	    $c->stash->{object} = $api->fetch({class => ucfirst($class),
-					       name  => $name,
-					      }) or die "$!";
-	}
+    # Fetch the object from our driver   
+    $c->log->debug("WormBaseAPI model is $api " . ref($api));
+    $c->log->debug("The requested class is " . ucfirst($class));
+    $c->log->debug("The request is " . $name);
+    
+    # Fetch a WormBase::API::Object::* object
+    # * and all are placeholders to match the /species/class/object structure for species/class index pages
+    if ($name eq '*' || $name eq 'all') {
+        $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+    } else {
+        $c->stash->{object} = $api->fetch({class => ucfirst($class),
+                           name  => $name,
+                          }) or die "$!";
+    }
     }
     
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     if ( $c->is_ajax() ) {
-	$c->stash->{noboiler} = 1;
+    $c->stash->{noboiler} = 1;
     }
 
     my $object = $c->stash->{object};
@@ -1397,12 +1397,12 @@ sub field_GET {
     $c->stash->{template} = $c->_select_template($field,$class,'field'); 
 
     $self->status_ok($c, entity => {
-	                 class  => $class,
-			 name   => $name,
-	                 uri    => "$uri",
-			 $field => $data
-		     }
-	);
+                     class  => $class,
+             name   => $name,
+                     uri    => "$uri",
+             $field => $data
+             }
+    );
 }
 
 
