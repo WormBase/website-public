@@ -248,7 +248,7 @@ function hideTextOnFocus(selector){
 
 var StaticWidgets = {
   update: function(widget_id, path){
-    
+      if(!widget_id){ widget_id = "-1"; }
       var widget = $jq("li#static-widget-" + widget_id);
       var widget_title = widget.find("input#widget_title").val();
       var widget_content = widget.find("textarea#widget_content").val();
@@ -256,9 +256,10 @@ var StaticWidgets = {
       $jq.ajax({
             type: "POST",
             url: "/rest/widget/static/" + widget_id,
+            dataType: 'json',
             data: {widget_title:widget_title, path:path, widget_content:widget_content},
             success: function(data){
-                StaticWidgets.reload(widget_id);
+                  StaticWidgets.reload(widget_id, 0, data.widget_id);
               },
             error: function(request,status,error) {
                 alert(request + " " + status + " " + error );
@@ -279,7 +280,7 @@ var StaticWidgets = {
     }
 
   },
-  reload: function(widget_id, rev_id){
+  reload: function(widget_id, rev_id, content_id){
     var w_content = $jq("#static-widget-" + widget_id + "-content");
     var widget = w_content.parent();
     var title = widget.find("h3 span.widget-title input");
@@ -287,7 +288,8 @@ var StaticWidgets = {
       title.parent().html(title.val());
     }
     widget.find("a.button").removeClass("ui-state-highlight");
-    var url = "/rest/widget/static/" + widget_id;
+    $jq("#nav-static-widget-" + widget_id).text(title.val());
+    var url = "/rest/widget/static/" + (content_id || widget_id);
     if(rev_id) { url = url + "?rev=" + rev_id; } 
     w_content.load(url);
   },
@@ -297,11 +299,11 @@ var StaticWidgets = {
         type: "POST",
         url: "/rest/widget/static/" + widget_id + "?delete=1",
         success: function(data){
-              StaticWidgets.reload(widget_id);
-          },
+          $jq("#nav-static-widget-" + widget_id).click().hide();
+        },
         error: function(request,status,error) {
-            alert(request + " " + status + " " + error );
-          }
+          alert(request + " " + status + " " + error );
+        }
       }); 
     }
   },
