@@ -983,7 +983,7 @@ sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("getting static widget");
     if($c->req->params->{history}){ # just getting history of widget
-      my @revisions = $c->model('Schema::WidgetContent')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
+      my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
       map {
         my $time = DateTime->from_epoch( epoch => $_->widget_date);
         $_->{time_lapse} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
@@ -995,8 +995,8 @@ sub widget_static_GET {
       my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
       $c->stash->{widget} = $widget;
       if($c->req->params->{rev}){ # getting a certain revision of the widget
-        my $rev = $c->model('Schema::WidgetContent')->find({revision_id=>$c->req->params->{rev}});
-        unless($rev->revision_id == $widget->content->revision_id){
+        my $rev = $c->model('Schema::WidgetRevision')->find({widget_revision_id=>$c->req->params->{rev}});
+        unless($rev->widget_revision_id == $widget->content->widget_revision_id){
           $c->stash->{rev} = $rev;
           my $document = $parser->parse($rev->content);
           $c->stash->{rev_content} = Text::WikiText::Output::HTML->new->dump($document);
@@ -1019,9 +1019,9 @@ sub widget_static_GET {
 
 sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
-    $c->log->debug("updating static widget");
+    $c->log->debug("updating STATIC WIDGET");
     if($c->check_any_user_role(qw/admin curator/)){ #only admins and curators can modify widgets
-      if($c->req->params->{delete} && $c->check_user_role("admin")){ #only admins can delete
+      if($c->req->params->{delete} && $c->check_user_roles("admin")){ #only admins can delete
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
@@ -1032,16 +1032,25 @@ sub widget_static_POST {
 
       if($widget_id > 0){ # modifying a widget
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
-        $widget->content($c->model('Schema::WidgetContent')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
+        $widget->content($c->model('Schema::WidgetRevision')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
         $widget->widget_title($widget_title);
         $widget->update();
-      }elsif($c->check_user_role("admin")){ #creating a widget - only admin
+      }elsif($c->check_user_roles("admin")){ #creating a widget - only admin
           my $url = $c->request->body_parameters->{path};
           my $page = $c->model('Schema::Page')->find({url=>$url});
-          my $content = $c->model('Schema::WidgetContent')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
-          $content->widget($c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title, revision_id=>$content->revision_id}));
+          my $content = $c->model('Schema::WidgetRevision')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
+          $content->widget($c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title, widget_revision_id=>$content->widget_revision_id}));
           $content->update();
+          $widget_id = $content->widget->widget_id;
       }
+    $c->log->debug("WIDGET ID: " . $widget_id);
+      $self->status_created(
+          $c,
+          location => $c->req->uri->as_string,
+          entity =>  {
+              widget_id => "$widget_id",
+          },
+      );
     }
 }
 

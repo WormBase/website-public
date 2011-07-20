@@ -46,8 +46,8 @@
       <span id="fade">
         [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
         [% linkUser(rev.user) %] – 
-            <a onClick='StaticWidgets.reload("[% widget_id %]", "[% rev.revision_id %]");return false;' 
-               href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.revision_id %]">[% rev.time_lapse %]</a>
+            <a onClick='StaticWidgets.reload("[% widget_id %]", "[% rev.widget_revision_id %]");return false;' 
+               href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.widget_revision_id %]">[% rev.time_lapse %]</a>
         [% UNLESS first; ' – latest version'; first = 1; END; %] 
       </span><br />
     [% END %]
