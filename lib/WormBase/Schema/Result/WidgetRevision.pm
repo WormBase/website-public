@@ -1,4 +1,4 @@
-package WormBase::Schema::Result::WidgetContent;
+package WormBase::Schema::Result::WidgetRevision;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
@@ -16,10 +16,10 @@ WormBase::Schema::Result::Widgets
 
 =cut
 
-__PACKAGE__->table("widget_content");
+__PACKAGE__->table("widget_revision");
 
 __PACKAGE__->add_columns(
-  "revision_id",
+  "widget_revision_id",
   { data_type => "integer", is_nullable => 0 },
   "widget_id",
   { data_type => "integer", is_nullable => 1 },
@@ -31,7 +31,7 @@ __PACKAGE__->add_columns(
   { data_type => "char(50)", is_nullable => 1 },
 );
 
-__PACKAGE__->set_primary_key("revision_id");
+__PACKAGE__->set_primary_key("widget_revision_id");
 
 __PACKAGE__->belongs_to(user=>'WormBase::Schema::Result::User','user_id');
 __PACKAGE__->belongs_to(widget=>'WormBase::Schema::Result::Widgets','widget_id');

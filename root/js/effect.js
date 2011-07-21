@@ -6,9 +6,9 @@
    $jq('#operator').live('click',function()  
     { 
       if($jq('#operator').attr("rel")) {
-	 $jq.post("/rest/livechat?open=1",function() {
-		window.location.href="/tools/operator";
-	  });
+     $jq.post("/rest/livechat?open=1",function() {
+        window.location.href="/tools/operator";
+      });
       }else {
         var opBox = $jq("#operator-box");
 //         ajaxGet(opBox, "/rest/livechat");
@@ -30,11 +30,11 @@
           opBox.children().hide();
 
         }, 4000)
-// 	  if($jq("#operator-box").size()==0) {  
-// 		  $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
-// 		  ajaxGet($jq("#operator-box"), "/rest/livechat");
-// 		  $jq("#operator-box").draggable();
-// 	   } 
+//    if($jq("#operator-box").size()==0) {  
+//        $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
+//        ajaxGet($jq("#operator-box"), "/rest/livechat");
+//        $jq("#operator-box").draggable();
+//     } 
       }
     });  
 
@@ -42,7 +42,7 @@
 //     {  
 // 
 //       $jq.post("/rest/livechat",function() {
-// 	  $jq('#operator-box').remove();
+//    $jq('#operator-box').remove();
 //       });
 //          
 //     }); 
@@ -71,14 +71,14 @@
   });
 
      $jq(".add-delete").live('click',function() {
-	$jq(this).toggleClass( "ui-icon-circle-minus"); 
+    $jq(this).toggleClass( "ui-icon-circle-minus"); 
     });
 
     $jq(".feed").live('click',function() {
-	var url=$jq(this).attr("rel");
-	var div=$jq(this).parent().next("#widget-feed");
-	div.filter(":hidden").empty().load(url);
-	div.slideToggle('fast');
+    var url=$jq(this).attr("rel");
+    var div=$jq(this).parent().next("#widget-feed");
+    div.filter(":hidden").empty().load(url);
+    div.slideToggle('fast');
     });
 
     $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
@@ -248,7 +248,7 @@ function hideTextOnFocus(selector){
 
 var StaticWidgets = {
   update: function(widget_id, path){
-    
+      if(!widget_id){ widget_id = "-1"; }
       var widget = $jq("li#static-widget-" + widget_id);
       var widget_title = widget.find("input#widget_title").val();
       var widget_content = widget.find("textarea#widget_content").val();
@@ -256,28 +256,42 @@ var StaticWidgets = {
       $jq.ajax({
             type: "POST",
             url: "/rest/widget/static/" + widget_id,
+            dataType: 'json',
             data: {widget_title:widget_title, path:path, widget_content:widget_content},
             success: function(data){
-              location.reload();
+                  StaticWidgets.reload(widget_id, 0, data.widget_id);
               },
             error: function(request,status,error) {
                 alert(request + " " + status + " " + error );
               }
         }); 
   },
-  edit: function(wname) {
-    var widget = $jq("#" + wname);
-    var title = widget.find("h3 span.widget-title");
-    title.html("<input style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.text() + "\" />");
+  edit: function(wname, rev) {
     
-    var content = widget.find("div.static-widget-content");
-    var w_content = content.parent();
     var widget_id = wname.split("-").pop();
-    w_content.html('<textarea id="widget_content" name="widget_content" rows=10 style="width:95%">' + content.text() + '</textarea><br /><input type="submit" value="Save widget" onClick=\'StaticWidgets.update("' 
-                      + widget_id
-                      + '");\'/><input type="submit" value="Cancel" onClick=\'location.reload();\'/><input type="submit" value="Delete" onClick=\'StaticWidgets.delete("' 
-                      + widget_id
-                      + '");\'/>');
+    var w_content = $jq("#" + wname + "-content");
+    var widget = w_content.parent();
+    var edit_button = widget.find("a#edit-button");
+    if(edit_button.hasClass("ui-state-highlight")){
+      StaticWidgets.reload(widget_id);
+    }else{
+      edit_button.addClass("ui-state-highlight");
+      w_content.load("/rest/widget/static/" + widget_id + "?edit=1");
+    }
+
+  },
+  reload: function(widget_id, rev_id, content_id){
+    var w_content = $jq("#static-widget-" + widget_id + "-content");
+    var widget = w_content.parent();
+    var title = widget.find("h3 span.widget-title input");
+    if(title.size()>0){
+      title.parent().html(title.val());
+    }
+    widget.find("a.button").removeClass("ui-state-highlight");
+    $jq("#nav-static-widget-" + widget_id).text(title.val());
+    var url = "/rest/widget/static/" + (content_id || widget_id);
+    if(rev_id) { url = url + "?rev=" + rev_id; } 
+    w_content.load(url);
   },
   delete: function(widget_id){
     if(confirm("are you sure you want to delete this widget?")){
@@ -285,11 +299,11 @@ var StaticWidgets = {
         type: "POST",
         url: "/rest/widget/static/" + widget_id + "?delete=1",
         success: function(data){
-          location.reload();
-          },
+          $jq("#nav-static-widget-" + widget_id).click().hide();
+        },
         error: function(request,status,error) {
-            alert(request + " " + status + " " + error );
-          }
+          alert(request + " " + status + " " + error );
+        }
       }); 
     }
   },
@@ -298,11 +312,13 @@ var StaticWidgets = {
     var history = widget.find("div#" + wname + "-history");
     if(history.size() > 0){
       history.toggle();
+      widget.find("a#history-button").toggleClass("ui-state-highlight");
     }else{
       var widget_id = wname.split("-").pop();
       var history = $jq('<div id="' + wname + '-history"></div>'); 
       history.load("rest/widget/static/" + widget_id + "?history=1");
       widget.find("div.content").append(history);
+      widget.find("a#history-button").addClass("ui-state-highlight");
     }
   }
 }
@@ -358,3 +374,39 @@ var Breadcrumbs = {
   }
 }
 
+
+
+// ----------------------------------------------------------------------------
+// markItUp!
+// ----------------------------------------------------------------------------
+// Copyright (C) 2008 Jay Salvat
+// http://markitup.jaysalvat.com/
+// ----------------------------------------------------------------------------
+myWikiSettings = {
+    nameSpace:          "wiki", // Useful to prevent multi-instances CSS conflict
+    previewParserPath:  "~/sets/wiki/preview.php",
+    onShiftEnter:       {keepDefault:false, replaceWith:'\n\n'},
+    markupSet:  [
+        {name:'Heading 1', key:'1', openWith:'== ', closeWith:' ==', placeHolder:'Your title here...' },
+        {name:'Heading 2', key:'2', openWith:'=== ', closeWith:' ===', placeHolder:'Your title here...' },
+        {name:'Heading 3', key:'3', openWith:'==== ', closeWith:' ====', placeHolder:'Your title here...' },
+        {name:'Heading 4', key:'4', openWith:'===== ', closeWith:' =====', placeHolder:'Your title here...' },
+        {name:'Heading 5', key:'5', openWith:'====== ', closeWith:' ======', placeHolder:'Your title here...' },
+        {separator:'---------------' },        
+        {name:'Bold', key:'B', openWith:"'''", closeWith:"'''"}, 
+        {name:'Italic', key:'I', openWith:"''", closeWith:"''"}, 
+        {name:'Stroke through', key:'S', openWith:'<s>', closeWith:'</s>'}, 
+        {separator:'---------------' },
+        {name:'Bulleted list', openWith:'(!(* |!|*)!)'}, 
+        {name:'Numeric list', openWith:'(!(# |!|#)!)'}, 
+        {separator:'---------------' },
+        {name:'Picture', key:'P', replaceWith:'[[Image:[![Url:!:http://]!]|[![name]!]]]'}, 
+        {name:'Link', key:'L', openWith:'[[![Link]!] ', closeWith:']', placeHolder:'Your text to link here...' },
+        {name:'Url', openWith:'[[![Url:!:http://]!] ', closeWith:']', placeHolder:'Your text to link here...' },
+        {separator:'---------------' },
+        {name:'Quotes', openWith:'(!(> |!|>)!)'},
+        {name:'Code', openWith:'(!(<source lang="[![Language:!:php]!]">|!|<pre>)!)', closeWith:'(!(</source>|!|</pre>)!)'}, 
+        {separator:'---------------' },
+//         {name:'Preview', call:'preview', className:'preview'}
+    ]
+}

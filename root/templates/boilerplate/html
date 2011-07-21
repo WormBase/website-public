@@ -56,6 +56,13 @@
         <link type="text/css" href="/css/social_buttons.css" rel="stylesheet" />
     [% END %]
 
+    [% IF  c.check_any_user_role("admin", "curator") %]
+      <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/skins/markitup/style.css" />
+      <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/sets/wiki/style.css" />
+      <script type="text/javascript" src="/js/jquery/plugins/markitup/jquery.markitup.js"></script>
+      <script type="text/javascript" src="/js/jquery/plugins/markitup/sets/wiki/set.js"></script>
+    [% END %]
+
     [% INCLUDE google_analytics %]
   </head>
 
