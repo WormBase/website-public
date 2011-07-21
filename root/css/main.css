@@ -446,10 +446,6 @@ li.visible div.widget-container {
   font-size:0.9em;
 }
 
-.content h2 {
-  margin:0.3em;
-  float:left;
-}
 
 /* Resources pages like "Find Reagents" have different formatting needs than others */
 /* Trump some of the earlier settings */

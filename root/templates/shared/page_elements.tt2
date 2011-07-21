@@ -6,42 +6,42 @@
 ####################################################
 %]
 [% MACRO user_login_info BLOCK %]
-    [% UNLESS c.user_exists %]	
+    [% UNLESS c.user_exists %]  
 
-<!-- 	<table width="100%">			       -->
-<!-- 		    <tr> -->
-<!-- 			    <th> -->
-				<div style="padding:0.5em">You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature</div>
-<!-- 			    </th> -->
+<!--    <table width="100%">                   -->
+<!--            <tr> -->
+<!--                <th> -->
+                <div style="padding:0.5em">You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature</div>
+<!--                </th> -->
 [% IF 0 %]
-			    <td>
-			      or
-			    </td>
-			    <td>
-				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
-				  <div style="height: 0.4em; overflow: hidden;"> </div>
-				Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
-			    </td>
+                <td>
+                  or
+                </td>
+                <td>
+                Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
+                  <div style="height: 0.4em; overflow: hidden;"> </div>
+                Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
+                </td>
 [% END %]
-<!-- 		    </tr> -->
-<!-- 	 </table> -->
+<!--            </tr> -->
+<!--     </table> -->
     [% ELSIF 0 %]
     [%# ELSIF !c.user.email_address || ! c.user.username %]
-	<table width="100%">
-		    <tr>
-			    <th>
-				
-			    </th>
-			    <td>
-			      Please leave your username and email address
-			    </td>
-			    <td align='left'>
-				Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
-				  <div style="height: 0.4em; overflow: hidden;"> </div>
-				Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
-			    </td>
-		    </tr>
-	    </table>
+    <table width="100%">
+            <tr>
+                <th>
+                
+                </th>
+                <td>
+                  Please leave your username and email address
+                </td>
+                <td align='left'>
+                Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
+                  <div style="height: 0.4em; overflow: hidden;"> </div>
+                Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
+                </td>
+            </tr>
+        </table>
     [% END %]
     <script type="text/javascript" >
     $jq(".lightbox").colorbox();
@@ -144,7 +144,7 @@
       <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
         <td><a href="[% url %]">[% IS.id %]</a></td>
         <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-	    [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
+        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
@@ -280,38 +280,38 @@
 
 [% MACRO build_data_table BLOCK;
 
-	# declare rows array
+    # declare rows array
         local_rows = [];
 
-	# loop through each element in <subroutine>.<return_data_key>.<... to array data> array
+    # loop through each element in <subroutine>.<return_data_key>.<... to array data> array
         # (or through data passed in that may have been built by the caller)
         local_data = passed_data ? passed_data : fields.$key.data;
 
-	FOREACH r IN local_data;
-  		row = [];
-			
-		# loop through each element in order array (for columns) , declared above
-		FOREACH o IN order;			
-			# get value (val) from the row r
-     		        val = r.$o;
-			IF val.match('^http');
-			     val='<a href="' _ val _ '">Lab link</a>';
+    FOREACH r IN local_data;
+        row = [];
+            
+        # loop through each element in order array (for columns) , declared above
+        FOREACH o IN order;         
+            # get value (val) from the row r
+                    val = r.$o;
+            IF val.match('^http');
+                 val='<a href="' _ val _ '">Lab link</a>';
                         END;
-			
-			# enter data in row
-	                row.push(val);
-  		END;
-				
-		# enter data row array into rows
-		local_rows.push(row);
-	  END;
-	  	  	  
-	  # populate name array;
-	  headers = [];
-	  FOREACH o IN order; headers.push(columns.$o); END;
-	  
-	  # generate table
-	  jquery_data_table_html(headers, local_rows, "table_${key}_by");	
+            
+            # enter data in row
+                    row.push(val);
+        END;
+                
+        # enter data row array into rows
+        local_rows.push(row);
+      END;
+              
+      # populate name array;
+      headers = [];
+      FOREACH o IN order; headers.push(columns.$o); END;
+      
+      # generate table
+      jquery_data_table_html(headers, local_rows, "table_${key}_by");   
 
     END; # END of MACRO
 %]
@@ -333,91 +333,91 @@
        IF rows.size < 11;
           paginate        = 'false';
           pagination_type = 'false';
-	  length          = 'false';
-	  lengthMenu      = 'false';
+      length          = 'false';
+      lengthMenu      = 'false';
           filter          = 'false';
           info            = 'false';
        ELSIF rows.size < 51;
           paginate        = 'false';
           pagination_type = 'false';
-	  length          = 'false';
-	  lengthMenu      = 'false';
-	  filter          = 'true';
+      length          = 'false';
+      lengthMenu      = 'false';
+      filter          = 'true';
           info            = 'false';
        ELSE;
           paginate        = 'true';
           pagination_type = 'full_numbers';
-	  length          = 'true';
+      length          = 'true';
           lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
           filter          = 'true';
-	  info            = 'true'; 
+      info            = 'true'; 
       END;
 
    %]
 
 
     <script type="text/javascript" >
-	$jq(document).ready(function() {
-	    $jq('#[% table_name %]').dataTable({
+    $jq(document).ready(function() {
+        $jq('#[% table_name %]').dataTable({
                 "bPaginate"        : [% paginate %],
-		"bLengthChange"    : [% length   %],
+        "bLengthChange"    : [% length   %],
 //                "bJQueryUI"        : true,
                 "sPaginationType"  : "[% pagination_type %]",
-		"bFilter"          : [% filter %],		
-		"bInfo"            : [% info %],
-     	        [% style %]
-	} );
+        "bFilter"          : [% filter %],      
+        "bInfo"            : [% info %],
+                [% style %]
+    } );
       } );
     </script>
 
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
-	<thead>
-		<tr>
-		    [% FOREACH header IN table_headers %]  
-			<th>[% header %]</th>
-		    [% END %]
-		</tr>
-	</thead>
-	<tbody>
-	    [% 
+    <thead>
+        <tr>
+            [% FOREACH header IN table_headers %]  
+            <th>[% header %]</th>
+            [% END %]
+        </tr>
+    </thead>
+    <tbody>
+        [% 
                 FOREACH row IN rows;
-		   '<tr>';
+           '<tr>';
                    FOREACH cell IN row;
-		      '<td>'; 
+              '<td>'; 
                       IF cell.species.defined;
                           '<span class="species">' _ cell.genus.chunk(1).0 _ '.' _ cell.species _ '</span>';
                       ELSIF cell.class.defined;
                           tag2link(cell);
-	              ELSIF cell.match('ARRAY');
-		          cell.join('<br>');
-		      ELSIF cell.evidence.check.defined;
-		      'here';
+                  ELSIF cell.match('ARRAY');
+                  cell.join('<br>');
+              ELSIF cell.evidence.check.defined;
+              'here';
                           '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/'
-			  _ obj.name.data.id 
-			  _ '/'
-			  _ cell.evidence.tag
-			  _ '/'
-			  _ cell.evidence.index 
-			  _ '/'
-			  _ cell.evidence.right
-			  _ '"></a>';		      
+              _ obj.name.data.id 
+              _ '/'
+              _ cell.evidence.tag
+              _ '/'
+              _ cell.evidence.index 
+              _ '/'
+              _ cell.evidence.right
+              _ '"></a>';             
                       ELSE;
-		          cell;
+                  cell;
                       END;
-		      '</td>';
-		   END;
-		   '</tr>';
-	       END;
+              '</td>';
+           END;
+           '</tr>';
+           END;
              %]
-	</tbody>
+    </tbody>
 
-	<tfoot>
-		<tr>
-			 [% FOREACH header IN table_headers %]  
-     			       <th>[% header %]</th>
-			 [% END %]
-		</tr>
-	</tfoot>
+    <tfoot>
+        <tr>
+             [% FOREACH header IN table_headers %]  
+                       <th>[% header %]</th>
+             [% END %]
+        </tr>
+    </tfoot>
 
       </table>
    [% END %] 
@@ -443,74 +443,74 @@
        IF data.size < 11;
           paginate        = 'false';
           pagination_type = 'false';
-	  length          = 'false';
-	  lengthMenu      = 'false';
+      length          = 'false';
+      lengthMenu      = 'false';
           filter          = 'false';
           info            = 'false';
        ELSIF data.size < 51;
           paginate        = 'false';
           pagination_type = 'false';
-	  length          = 'false';
-	  lengthMenu      = 'false';
-	  filter          = 'true';
+      length          = 'false';
+      lengthMenu      = 'false';
+      filter          = 'true';
           info            = 'false';
        ELSE;
           paginate        = 'true';
           pagination_type = 'full_numbers';
-	  length          = 'true';
+      length          = 'true';
           lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
           filter          = 'true';
-	  info            = 'true'; 
+      info            = 'true'; 
       END;
 
    %]
 
 
     <script type="text/javascript" >
-	$jq(document).ready(function() {
-	    $jq('#[% table %]').dataTable({
+    $jq(document).ready(function() {
+        $jq('#[% table %]').dataTable({
                 "bPaginate"        : [% paginate %],
-		"bLengthChange"    : [% length   %],
+        "bLengthChange"    : [% length   %],
 //                "bJQueryUI"        : true,
                 "sPaginationType"  : "[% pagination_type %]",
-		"bFilter"          : [% filter %],		
-		"bInfo"            : [% info %],
-     	        [% style %]
-	} );
+        "bFilter"          : [% filter %],      
+        "bInfo"            : [% info %],
+                [% style %]
+    } );
       } );
     </script>
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table %]">
-	<thead>
-		<tr>
-		    [% FOREACH item IN header %]  
-			<th>[% item %]</th>
-		    [% END %]
-		</tr>
-	</thead>
-	<tbody>
-	    [% FOREACH row IN data %]
-		<tr>
-		      [% FOREACH item IN row %]   
-		      <td> 
+    <thead>
+        <tr>
+            [% FOREACH item IN header %]  
+            <th>[% item %]</th>
+            [% END %]
+        </tr>
+    </thead>
+    <tbody>
+        [% FOREACH row IN data %]
+        <tr>
+              [% FOREACH item IN row %]   
+              <td> 
                 [% IF item.species.defined %]
                   <span class="species">[% item.genus.chunk(1).0 %]. [% item.species %]</span>
                 [% ELSIF item.class.defined %]
                   [% tag2link(item) %]
                 [% ELSE %][% item %]
                 [% END %]
-		      </td>
-		      [% END %]
-		</tr>
-	    [% END %]
-	</tbody>
+              </td>
+              [% END %]
+        </tr>
+        [% END %]
+    </tbody>
 
-	<tfoot>
-		<tr>
-			 [% FOREACH item IN header %]  
-			<th>[% item %]</th>
-			[% END %]
-		</tr>
-	</tfoot>
+    <tfoot>
+        <tr>
+             [% FOREACH item IN header %]  
+            <th>[% item %]</th>
+            [% END %]
+        </tr>
+    </tfoot>
 
       </table>
    [% END %] 
@@ -519,13 +519,13 @@
 
 [% MACRO short_list(objects) BLOCK %]
 
-   [% FOREACH row IN objects.list %]	
+   [% FOREACH row IN objects.list %]    
        [% FOREACH item IN row %]
-	 [% IF item.class.defined %]
-			    [% tag2link(item) %]
-			   [% ELSE %][% item %]
-	[% END %]
-	  [% UNLESS loop.last %];[% END %]
+     [% IF item.class.defined %]
+                [% tag2link(item) %]
+               [% ELSE %][% item %]
+    [% END %]
+      [% UNLESS loop.last %];[% END %]
       [% END %]
       [% UNLESS loop.last %]<br>[% END %]
    [% END %]           
@@ -542,7 +542,7 @@
 [% MACRO object_list(objects) BLOCK %]
 
             [% FOREACH object IN objects.keys %]
-	         [%- tag2link(objects.$object) -%]
+             [%- tag2link(objects.$object) -%]
                      [%- UNLESS loop.last -%], [% END %]
             [% END %]
 [% END %]
@@ -575,7 +575,7 @@
                      <h3>[% widget.title %]</h3>
                 </header>
 
-	        [%# Porque? %]
+            [%# Porque? %]
                 <a name="[% widget.name %]"></a>
 
                 <div id="[%- widget.name -%]"></div>
@@ -633,22 +633,22 @@
                 <div id="[%- id -%]-content" class="content">
                 [% content %]
                 </div>
-		 
+         
                 <div id="widget-footer">
 [%# UNLESS c.req.action == '/' %]
 [% UNLESS type.match('(tool)|(me)') %]
                     <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 
-[% IF type.match('(static)')  %]
+[% IF type.match('(static)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator") %]
-                    <a  tip="edit" onClick='StaticWidgets.edit("[% id %]"); $jq(this).hide();' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
+                    <a  tip="edit" id="edit-button"  onClick='StaticWidgets.edit("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
-                    <a  tip="view history" onClick='$jq(this).toggleClass("ui-state-highlight");StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
+                    <a  tip="view history" id="history-button" onClick='StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
                     
 
                 </div>
-		<div id="widget-feed"></div>  
+        <div id="widget-feed"></div>  
 
       </div> 
    <!-- end [% id %] widget -->
@@ -765,10 +765,10 @@
                <td colspan="3">
                   <span class="smalldescription">
                          Supplying your contact information
-			 is optional.  Doing so will enable us
-		         to contact you for further details
-		         and to let you know when your
-		         suggestions have been addressed.
+             is optional.  Doing so will enable us
+                 to contact you for further details
+                 and to let you know when your
+                 suggestions have been addressed.
                  </span>
                </td>
              </tr>
@@ -781,12 +781,12 @@
                 <td>
                     <select name="suggestions">
                       <option value="general_comment">General comment</option>
-		      <option value="annotations_incorrect">Annotations are incorrect</option>
-		      <option value="annotations_incomplete">Annotations are incomplete</option>
-		      <option value="speed">The page takes too long to load</option>
-		      <option value="bug">The page has a software bug in it</option>
-		      <option value="requested_feature">Request for a new feature</option>
-		    </select>
+              <option value="annotations_incorrect">Annotations are incorrect</option>
+              <option value="annotations_incomplete">Annotations are incomplete</option>
+              <option value="speed">The page takes too long to load</option>
+              <option value="bug">The page has a software bug in it</option>
+              <option value="requested_feature">Request for a new feature</option>
+            </select>
                </td>
             </tr>
             <tr>
@@ -798,16 +798,16 @@
             <tr>
                <td>Institution:</td>
                <td><input type="text" name="institution"  size="50"></td></tr>
-	    <tr>
+        <tr>
                <td>Email Address:</td>
-	       <td><input type="text" name="submitted_email" size="50"></td>
-	    </tr>
-	    <tr>
-	       <td colspan="2">&nbsp;</td>
-	       <td align="right">
-	       	   <input type="submit" name="Submit Comments" value="Submit Comments">
-		   <input type="reset" name="Clear Form" value="Clear Form">
-	       </td>
+           <td><input type="text" name="submitted_email" size="50"></td>
+        </tr>
+        <tr>
+           <td colspan="2">&nbsp;</td>
+           <td align="right">
+               <input type="submit" name="Submit Comments" value="Submit Comments">
+           <input type="reset" name="Clear Form" value="Clear Form">
+           </td>
             </tr>
         </table>
       </div>
@@ -852,10 +852,10 @@ END;
 
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
                               columns={ taxonomy => 'Species',
-		                        hit      => 'Hit',
-			     	     description => 'Description',
-				        evalue   => 'BLAST e-value',
-				        percent  => '% Length' 
+                                hit      => 'Hit',
+                         description => 'Description',
+                        evalue   => 'BLAST e-value',
+                        percent  => '% Length' 
                                  },
                          key='best_blastp_matches');
     END;
@@ -881,8 +881,8 @@ END;
 
        build_data_table(order=['expression_pattern','description','author'],
                       columns={ expression_pattern => 'Pattern',
-		                description        => 'Description',
-			        author             => 'Author',
+                        description        => 'Description',
+                    author             => 'Author',
                              },
                     key='expression_patterns');
     END;
@@ -925,26 +925,26 @@ END;
          <td>Transcript</td><td>Exons</td><td>Protein</td>
       </tr>
 
-  	 [% FOREACH gene_model IN fields.central_dogma.data.gene_models %]
+     [% FOREACH gene_model IN fields.central_dogma.data.gene_models %]
       <tr>
-	 <td>
-	      [% tag2link(gene_model.cds) %]
-	 </td>
+     <td>
+          [% tag2link(gene_model.cds) %]
+     </td>
 
          <td>
-	      <pre>
-	      [% FOREACH exon IN gene_model.exons;
+          <pre>
+          [% FOREACH exon IN gene_model.exons;
                    'exon' _ loop.count _ ': ' _ exon.start _ '..' _ exon.stop  _ '<br />';
                END;
-	       %]
-	       </pre>
+           %]
+           </pre>
          </td>
-	 
-	 <td>
-	      [% tag2link(gene_model.protein) %]
-	 </td>
+     
+     <td>
+          [% tag2link(gene_model.protein) %]
+     </td>
       </tr>
-	 [% END %]
+     [% END %]
 
           </td>
       </tr>
@@ -960,7 +960,7 @@ END;
                  [% tag2link(gene) %]<br />
               [%# END %]
            </div>
-	  [% END %]
+      [% END %]
 
           [% IF fields.central_dogma.data.transcripts.size > 0 %]
             <div>
@@ -1021,9 +1021,9 @@ END;
 
        build_data_table(order=['phenotype','description','remarks'],
                         columns={ 
-                      	phenotype    => 'Phenotype',
-		      	description  => 'Description',
-			remarks       => 'Remarks',
+                        phenotype    => 'Phenotype',
+                description  => 'Description',
+            remarks       => 'Remarks',
                     },
                     key='phenotypes');
     END;
@@ -1036,12 +1036,12 @@ END;
 
    build_data_table(order=['phenotype','description','remarks'],
                     columns={ 
-                    	phenotype      => 'Phenotype',
-		        description    => 'Description',
-	 		remarks        => 'Remark',
+                        phenotype      => 'Phenotype',
+                description    => 'Description',
+            remarks        => 'Remark',
                     },
                     key='phenotypes_not_observed');
-      END;	  	      
+      END;            
    
  END;
 %]
@@ -1144,47 +1144,47 @@ END;
                 WRAPPER $field_block title="" key="$key";
 
                    # declare array of columns named via keys in the data structure
-	           IF key == 'current_genes';
-	                order = ['species','locus', 'sequence'];
-		    
-		         # declare hash for column headers, keyed as above
-	                 headers = {   species  => 'Species',
+               IF key == 'current_genes';
+                    order = ['species','locus', 'sequence'];
+            
+                 # declare hash for column headers, keyed as above
+                     headers = {   species  => 'Species',
                                        locus    => 'Locus',
                                        sequence => 'Sequence' };
                   ELSE;
- 	                 order = ['species','former_name', 'new_name','sequence'];
-		       
-		         # declare hash for column headers, keyed as above
-	                 headers = {   species     => 'Species',
+                     order = ['species','former_name', 'new_name','sequence'];
+               
+                 # declare hash for column headers, keyed as above
+                     headers = {   species     => 'Species',
                                        former_name => 'Former name',
-				       new_name    => 'New name',
-                                       sequence    => 'Sequence' };	  
-    	          END;
+                       new_name    => 'New name',
+                                       sequence    => 'Sequence' };   
+                  END;
 
                  # declare rows array
                  rows = [];
   
                  FOREACH r IN fields.$key.data.$species;
-          	           row = [];
-		           # loop through each element in order array (for columns) , declared above
-		           FOREACH o IN order;			
-			         # get value (val) from the row r
-     		                 val = r.$o;
-			         # enter data in row
-	                         row.push(val);
-      		           END;
-		           # enter data row array into rows
+                       row = [];
+                   # loop through each element in order array (for columns) , declared above
+                   FOREACH o IN order;          
+                     # get value (val) from the row r
+                             val = r.$o;
+                     # enter data in row
+                             row.push(val);
+                       END;
+                   # enter data row array into rows
                            rows.push(row);
                  END;
-					  
+                      
                  # populate name array;
-	         names = [];
-	         FOREACH o IN order; names.push(headers.$o); END;
-                 table_count = table_count + 1;		      	  
+             names = [];
+             FOREACH o IN order; names.push(headers.$o); END;
+                 table_count = table_count + 1;               
 
-    	          # generate table
+                  # generate table
                  '<div class="toggle">';
-       	                 '<span class="species">' 
+                         '<span class="species">' 
                           _ species 
                           _ '</span> (' 
                           _ fields.$key.data.$species.size 
@@ -1194,7 +1194,7 @@ END;
 #                    dataTable_list(names, rows, "table_${species}_${key}");
                     jquery_data_table_html(names, rows, "table_${species}_${key}_${table_count}");
                 '</div>';         
-	     END; # END of nested WRAPPER
+         END; # END of nested WRAPPER
            END; # END IF species contains data
          END; # END of SPECIES
      END; # END of primary WRAPPER 
@@ -1223,26 +1223,26 @@ END;
        FOREACH facet IN facets;
             IF fields.$key.data.$facet > 0;
                 WRAPPER $field_block title="$facet" key="$key";
-		     					  
-                   table_count = table_count + 1;		      	  
+                                  
+                   table_count = table_count + 1;                 
  
-    	          # generate table
-#       	                 '<span class="species">'
+                  # generate table
+#                            '<span class="species">'
 #                          _ facet 
 #                          _ '</span> (' 
 #                          _ fields.$key.data.$facet.size 
 #                          _ ' assocations)';
 
-                  # Here we assume that the inner data structure as an array of hashes	
+                  # Here we assume that the inner data structure as an array of hashes  
                   build_data_table(order = ['method','term', 'evidence_code'],
-	                         columns = {   method   => 'Method',
+                             columns = {   method   => 'Method',
                                                  term   => 'Term',
                                         evidence_code   => 'Evidence' },
-	                         passed_data = fields.$key.data.$facet,
-			             key     = "table_${table_count}_go");   
+                             passed_data = fields.$key.data.$facet,
+                         key     = "table_${table_count}_go");   
 
-    	         END; # END of WRAPPER
-              END; # END IF facet contains data	   
+                 END; # END of WRAPPER
+              END; # END IF facet contains data    
          END; # END of facets
   END; # END of MACRO
 %]
@@ -1262,7 +1262,7 @@ END;
   [% IF c.check_user_roles('admin') %]
     [% w = { id = 'static-widget--1'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path
+            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path  _ '&edit=1'
             type = 'static'
             };
     %]

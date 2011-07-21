@@ -7,7 +7,7 @@
       IF (species == 'all' && class=='all');
         breadcrumbs.push('<span>All Species</span>');
       ELSE;
-        breadcrumbs.push('<a href="' _ c.uri_for('/species','all') _ '">All Species</a>');
+        breadcrumbs.push('<a href="' _ c.uri_for('/species','all') _ '">Species</a>');
         IF class == 'all';
           breadcrumbs.push('<span class="species">'
                 _ c.config.sections.species_list.$species.title

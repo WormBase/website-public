@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS wormbase_user_todd;
-CREATE DATABASE wormbase_user_todd;
-USE wormbase_user_todd;
-GRANT ALL PRIVILEGES ON `wormbase_user_todd`.* TO 'wormbase'@'localhost';
+DROP DATABASE IF EXISTS wormbase_user;
+CREATE DATABASE wormbase_user;
+USE wormbase_user;
+GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -63,8 +63,8 @@ CREATE TABLE issues (
         page_id INTEGER,
 	    submit_time char(50),
 	    state char(10),
-            severity char(10),
-            is_private char(10),
+        severity char(10),
+        is_private char(10),
 	    content TEXT 
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE user_history (
         PRIMARY KEY (session_id, page_id)
 );
 
-INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator');
+INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','operator'),('5','editor');
 
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
@@ -120,13 +120,13 @@ CREATE TABLE widgets (
         page_id INTEGER,
         widget_title char(72),
         widget_order INTEGER,
-        revision_id INTEGER
+        widget_revision_id INTEGER
 );
 
 
-DROP TABLE IF EXISTS widget_content;
-CREATE TABLE widget_content (
-        revision_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+DROP TABLE IF EXISTS widget_revision;
+CREATE TABLE widget_revision (
+        widget_revision_id INTEGER AUTO_INCREMENT PRIMARY KEY,
         widget_id INTEGER,
         content text,
         user_id INTEGER,
