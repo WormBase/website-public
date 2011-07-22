@@ -1,16 +1,25 @@
 [% IF edit %]
     To edit the widget, start typing in the box below<br />
-    <textarea id="widget_content" name="widget_content" style="width:95%;min-height:30em;">[% UNLESS rev; widget.content.content; ELSE; rev.content; END; %]</textarea>
+    <textarea id="widget_content" 
+              name="widget_content" 
+              style="width:95%;min-height:30em;">[% widget.content.content; %]</textarea>
     <br />
-    <input type="submit" value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]" onClick='StaticWidgets.update("[% widget.widget_id %]", "[% path %]");' id="create_widget"/>
+    <input type="submit" 
+           value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]" 
+           onClick='StaticWidgets.update("[% widget.widget_id %]", "[% path %]");' 
+           id="create_widget"/>
     [% IF widget %]
-      <input type="submit" value="Cancel" onClick='StaticWidgets.reload("[% widget.widget_id %]");'/>
+      <input type="submit" 
+             value="Cancel"
+             onClick='StaticWidgets.reload("[% widget.widget_id %]");'/>
       [% IF c.check_user_roles("admin") %]
-        <input type="submit" value="Delete" onClick='StaticWidgets.delete("[% widget.widget_id %]");'/>
+        <input type="submit" 
+               value="Delete" 
+               onClick='StaticWidgets.delete("[% widget.widget_id %]");'/>
       [% END %]
     [% END %]
   <script>
-    var widget = $jq("#static-widget-[% widget.widget_id || '-1' %]");
+    var widget = $jq("#static-widget-[% widget.widget_id || '0' %]");
     var title = widget.find("h3 span.widget-title");
     if(title.children("input").size() == 0){
 //     widget.find("a#edit-button").addClass("ui-state-highlight");
@@ -22,10 +31,11 @@
 [% ELSIF widget %]
   [% UNLESS rev %]
   <div class="static-widget-content">
-  [% widget_content %]
-  </div>
-<br />
-  <span id="fade">Last edited by [% linkUser(widget.content.user) %] – [% timestamp %] </span>
+    [% widget_content %]
+  </div><br />
+  <span id="fade">
+    Last edited by [% linkUser(widget.content.user) %] – [% timestamp %]
+  </span>
   [% ELSE %]
     <div class="ui-state-error" style="padding:0.5em;">
       <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id) %]?history=1' onClick='StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the 

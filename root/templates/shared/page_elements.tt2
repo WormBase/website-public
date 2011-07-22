@@ -646,8 +646,8 @@
                 <header> 
                 <div class="ui-corner-top widget-header">
                     <div class="module-close" wname="[% id %]" title="close"></div>
-<!--                     <div class="module-max" wname="[% id %]" title="pop out"></div>
-    -->               
+[% IF 0 %]                     <div class="module-max" wname="[% id %]" title="pop out"></div>
+[% END %]              
                     <h3><div class="module-min" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
@@ -1285,9 +1285,9 @@ END;
     [% widgets.push(w) %]
   [% END %]
   [% IF c.check_user_roles('admin') %]
-    [% w = { id = 'static-widget--1'
+    [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path  _ '&edit=1'
+            href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'
             type = 'static'
             };
     %]
