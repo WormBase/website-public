@@ -1019,9 +1019,12 @@ sub widget_static_GET {
 
 sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
-    $c->log->debug("updating STATIC WIDGET");
-    if($c->check_any_user_role(qw/admin curator/)){ #only admins and curators can modify widgets
-      if($c->req->params->{delete} && $c->check_user_roles("admin")){ #only admins can delete
+
+    #only admins and curators can modify widgets
+    if($c->check_any_user_role(qw/admin curator/)){ 
+
+      #only admins can delete
+      if($c->req->params->{delete} && $c->check_user_roles("admin")){ 
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
         $widget->delete();
         $widget->update();
@@ -1030,20 +1033,31 @@ sub widget_static_POST {
       my $widget_title = $c->request->body_parameters->{widget_title};
       my $widget_content = $c->request->body_parameters->{widget_content};
 
-      if($widget_id > 0){ # modifying a widget
+      my $widget_revision = $c->model('Schema::WidgetRevision')->create({
+                    content=>$widget_content, 
+                    user_id=>$c->user->id, 
+                    widget_date=>time()});
+
+      # modifying a widget
+      if($widget_id > 0){
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
-        $widget->content($c->model('Schema::WidgetRevision')->create({widget_id=>$widget_id, content=>$widget_content, user_id=>$c->user->id, widget_date=>time()}));
+        $widget->content($widget_revision);
+        $widget_revision->widget_id($widget_id);
         $widget->widget_title($widget_title);
         $widget->update();
-      }elsif($c->check_user_roles("admin")){ #creating a widget - only admin
+
+      #creating a widget - only admin
+      }elsif($c->check_user_roles("admin")){ 
           my $url = $c->request->body_parameters->{path};
           my $page = $c->model('Schema::Page')->find({url=>$url});
-          my $content = $c->model('Schema::WidgetRevision')->create({content=>$widget_content, user_id=>$c->user->id, widget_date=>time()});
-          $content->widget($c->model('Schema::Widgets')->create({ page_id=>$page->page_id, widget_title=>$widget_title, widget_revision_id=>$content->widget_revision_id}));
-          $content->update();
-          $widget_id = $content->widget->widget_id;
+          $widget_revision->widget($c->model('Schema::Widgets')->create({ 
+                    page_id=>$page->page_id, 
+                    widget_title=>$widget_title, 
+                    widget_revision_id=>$widget_revision->widget_revision_id}));
+          $widget_id = $widget_revision->widget->widget_id;
       }
-    $c->log->debug("WIDGET ID: " . $widget_id);
+      $widget_revision->update();
+
       $self->status_created(
           $c,
           location => $c->req->uri->as_string,
