@@ -20,6 +20,7 @@
     [% END %]
 
     [% linkUser(cm.reporter) %]
+    <br clear="all">
     [% cm.content %] <br />
 
     <span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>
@@ -30,11 +31,13 @@
 <table   width="100%" >
 		<tr>
 <td>
-[% user_login_info %]
-[% IF c.user_exists %]
-[% linkUser(c.user) %] says: 
-<input style="display:none" id="display-name" value="[% c.user.username %]" />
-[% END %]
+[% 
+   user_login_info;
+   IF c.user_exists;
+      linkUser(c.user,'suppress_twitter'); 
+      ' says: <input style="display:none" id="display-name" value="' _ c.user.username _ '" />';
+   END;
+%]
 </td>
 		</tr>
 				 

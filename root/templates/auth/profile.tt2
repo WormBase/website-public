@@ -16,13 +16,16 @@
           [% END %]
 </dd>
         [% END %]
-    <dd>Add an additional email address: <input type="text" name="email_address" /> 
-    </dd>  
+    <dd>Add an additional email address: <input type="text" name="email_address" /> </dd>  
     </dt></dl> 
+    
+    <dl><dt>Twitter handle <input size="25" type="text" name="twitter" value ="[% c.user.twitter %]" /> 
+       <div class="caveat-emptor">If provided, we'll display a button next to your name to make it easier for people to follow you.</div>
+    </dt></dl>            
 
-    <dl><dt>WormBase person: 
+    <dl><dt>WormBase:
       [% IF c.user.wbid %]
-        [% text2link('person', c.user.wbid, c.user.wbid) %] 
+        [% text2link('person', c.user.wbid, 'View Public Profile') %] 
         [% UNLESS c.user.wb_link_confirm %]
           <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
         [% END %]
