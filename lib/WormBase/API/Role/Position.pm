@@ -203,7 +203,9 @@ sub _build_genetic_position {
     }
     else {
         ($chromosome,undef,$position,undef,$error) = eval{$object->Map(1)->row};
-        $method = 'experimentally determined' if $chromosome;
+        # TH: Can't conclude that this is experimentally determined. Model used inconsistently.
+        #  $method = 'experimentally determined' if $chromosome;  
+	$method = '';
     }
 
     # Nothing yet? Trying fetching interpolated position.

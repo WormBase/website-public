@@ -58,15 +58,26 @@
 [%- END %]
 [%- END %]
 
-[% MACRO linkUser(user) BLOCK %]
-  [% IF (user.wbid && user.wb_link_confirm) %]
-    [% text2link('person', user.wbid, user.username) %]
-  [% ELSIF user.username %]
-    [% user.username %]
-  [% ELSE %]
-    <span id="fade"><i>[user deleted]</i></span>
-  [% END %]
-[%- END %]
+[% MACRO linkUser(user,suppress_social) BLOCK;
+    IF (user.wbid && user.wb_link_confirm);
+       text2link('person', user.wbid, user.username);
+    ELSIF user.username;
+       user.username;
+    ELSE;
+      '<span id="fade"><i>[user deleted]</i></span>';
+    END;
+
+    IF c.user.twitter && !suppress_social;
+           '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
+                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
+				  _ c.user.twitter 
+				  _ '</a>'
+				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
+
+    END;
+  END;
+%]
+
 
 [% MACRO linkPage(page) BLOCK %]
     [% label = page.title %]
@@ -83,6 +94,7 @@
 [% IF issues %]
   [% USE time_dir = Time.Duration %]
 
+<!-- Eventually provide a filter of results 
   <p>
   <h4>Filter (not wired yet)</h4>
 
@@ -113,9 +125,9 @@
     [% END %]
     </select>
   </p>
+ -->
 
-
-  <table border=0 cellspacing=0 width=100% class="issue-table">
+  <table border="0" cellspacing="0" width="100%" class="issue-table">
     <tr align=left>
       <th>#</th>
       <th>Title</th>
@@ -132,7 +144,6 @@
     [% even = 1 %]
     [% FOREACH IS IN issues %]
       [% is_private = IS.is_private %]
-
       [% IF is_private.search('yes'); 
          UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
       END;
@@ -155,7 +166,7 @@
     [% END %]
   </table>
   [% ELSE %]
-   <span id="fade"> no issues have been found</span>
+   <span id="fade">No issues have been reported.</span>
   [% END %]
 [% END %]
 
@@ -260,6 +271,20 @@
 
 
 
+[% MACRO check_for_empty_widget(keys) BLOCK;
+    data_exists = 0;
+    FOREACH key IN keys;
+       IF fields.$key.data;
+           data_exists = 1;
+	   LAST;
+       END;
+    END;
+
+    UNLESS data_exists;
+        '<div class="caveat-emptor">No additional data available.</div>';
+    END;
+  END;
+%]
 
 [%#
 

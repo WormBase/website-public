@@ -175,7 +175,7 @@
 	    var email = feed.find("#email");
 	    var username= feed.find("#display-name");
         var is_private = 'no';
-        if(feed.find("#isprivate:checked")) { is_private = 'yes'; }
+        if(feed.find("#isprivate:checked").size()>0) { is_private = 'yes'; }
 	    if(email.attr('id') && username.attr('id')) {
 	       if(validate_fields(email,username)==false) {return false;}
 	    }  

@@ -1041,6 +1041,7 @@ sub widget_static_POST {
       # modifying a widget
       if($widget_id > 0){
         my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
+
         $widget->content($widget_revision);
         $widget_revision->widget_id($widget_id);
         $widget->widget_title($widget_title);
