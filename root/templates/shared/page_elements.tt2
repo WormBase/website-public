@@ -131,13 +131,11 @@
     </tr>
     [% even = 1 %]
     [% FOREACH IS IN issues %]
-
       [% IF IS.is_private; 
-         IF !c.check_user_roles('admin')   ; NEXT ; END;
-         IF !c.check_user_roles('curator') ; NEXT ; END;
+         UNLESS c.check_any_user_role('admin', 'curator'); 'hi?'; NEXT ; END;
       END;
       %]
-     
+
 
       [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
       <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
