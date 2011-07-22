@@ -1055,6 +1055,11 @@ sub widget_static_POST {
                     widget_title=>$widget_title, 
                     widget_revision_id=>$widget_revision->widget_revision_id}));
           $widget_id = $widget_revision->widget->widget_id;
+      }else{
+        $self->status_bad_request(
+          $c,
+          message => "You do not have premissions to create a widget!",
+        );
       }
       $widget_revision->update();
 
