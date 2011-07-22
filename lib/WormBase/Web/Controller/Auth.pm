@@ -327,15 +327,16 @@ sub profile :Path("/profile") {
     if($c->check_user_roles('admin')){
       my $iter=$c->model('Schema::User') ;
       while( my $user= $iter->next){
-	  my $hash = { username=>$user->username,
-			email=>$user->email_address,
-			first_name=>$user->first_name,
-			last_name=>$user->last_name,
-			id=>$user->id,
-		      };
-	 
+	  my $hash = { username   => $user->username,
+		       email      => $user->email_address,
+		       first_name => $user->first_name,
+		       last_name  => $user->last_name,
+		       twitter    => $user->twitter,
+		       id         => $user->id,
+	  };
+	  
 	  my @roles =$user->roles;
-	    
+	  
 	  map{$hash->{$_->role}=1;} @roles if(@roles);
 	  push @array,$hash;
       }
@@ -350,13 +351,14 @@ sub profile_update :Path("/profile_update") {
   my ( $self, $c ) = @_;
   my $email = $c->req->params->{email_address};
   my $username = $c->req->params->{username};
+  my $twitter  = $c->req->params->{twitter};
   my $message;
   if($email){
-    my $found;
-    my @emails = $c->model('Schema::Email')->search({email=>$email, validated=>1});
-    foreach (@emails) {
-        $message="The email address <a href='mailto:$email'>$email</a> has already been registered.";     
-        $found = 1;
+      my $found;
+      my @emails = $c->model('Schema::Email')->search({email=>$email, validated=>1});
+      foreach (@emails) {
+	  $message="The email address <a href='mailto:$email'>$email</a> has already been registered.";     
+	  $found = 1;
     }
     unless($found){
       $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->id});
@@ -368,6 +370,13 @@ sub profile_update :Path("/profile_update") {
     $c->user->username($username);
     $c->user->update();
     $message= $message . "Your name has been updated to $username";
+  }
+
+  # Should be able to do this generically, not for every new profile field.
+  unless ($c->user->twitter =~ /^$twitter$/) {
+      $c->user->twitter($twitter);
+      $c->user->update();
+      $message = $message . "Your Twitter handle has been updated to $twitter";
   }
 
   $c->stash->{message} = $message; 

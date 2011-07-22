@@ -1683,6 +1683,10 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#BBFFAA;
 }
 
+.issue-layout-box {
+    padding:15px 24px;
+}
+
 .issue-table{
   background:#EEE;
   padding:0.5em;
@@ -1695,31 +1699,35 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
 .issue-table tr.critical {
    background-color:#FED;
    border-color:#E88;
-   color:#A22;
+/*  color:#A22; */
 }   
 
 .issue-table tr.major {
    background-color:#DFF;
    border-color:#BEE;
-   color:#099;
+/*   color:#099; */
 }   
 
 .issue-table tr.normal {
    background-color:#FDB;
    border-color:#EEA;
-   color:#880;
+/*   color:#880; */
 }   
 
 .issue-table tr.duplicate {
    background-color:#DDD;
    border-color:#DDD;
-   color:#OOO;
+/*   color:#OOO; */
 }   
 
 .issue-table tr:hover {
-    background-color:#DDD;
+    background-color:#FFEC8B;
 }
 
+/* The submit box on the issue form */
+.issue-submit-box {
+    padding-top:3em;
+}
 
 .issue-text{
   width :97%;
@@ -1728,7 +1736,7 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   color:gray;
   font-size: 1em;
 }
-.issue-text:focus{
+.issue-text:focus {
   color:black;
 }
 
