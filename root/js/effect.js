@@ -248,7 +248,7 @@ function hideTextOnFocus(selector){
 
 var StaticWidgets = {
   update: function(widget_id, path){
-      if(!widget_id){ widget_id = "-1"; }
+      if(!widget_id){ widget_id = "0"; }
       var widget = $jq("li#static-widget-" + widget_id);
       var widget_title = widget.find("input#widget_title").val();
       var widget_content = widget.find("textarea#widget_content").val();

@@ -174,6 +174,8 @@
 	    var feed = $jq(this).closest('#issues-new');
 	    var email = feed.find("#email");
 	    var username= feed.find("#display-name");
+        var is_private = 'no';
+        if(feed.find("#isprivate:checked")) { is_private = 'yes'; }
 	    if(email.attr('id') && username.attr('id')) {
 	       if(validate_fields(email,username)==false) {return false;}
 	    }  
@@ -185,7 +187,7 @@
 			    email:email.val() ,
 			    username:username.val() , 
 			    url:url,
-			    isprivate:feed.find("#isprivate").val()},
+			    isprivate:is_private},
 	      success: function(data){
 			    if(data==0) {
 				   alert("The email address has already been registered! Please sign in."); 
