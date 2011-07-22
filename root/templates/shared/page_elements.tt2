@@ -145,7 +145,6 @@
     [% FOREACH IS IN issues %]
       [% is_private = IS.is_private %]
 
-[% is_private %]
       [% IF is_private.search('yes'); 
          UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
       END;
