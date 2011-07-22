@@ -1253,6 +1253,7 @@ sub widget_me_GET {
       $self->feed_GET($c,"issue");
       return;
     }
+
     if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
 
     my $session = $self->get_session($c);
@@ -1268,6 +1269,28 @@ sub widget_me_GET {
     $c->forward('WormBase::Web::View::TT');
     return;
 }
+
+
+
+
+
+######################################################
+#
+#   ADMIN WIDGETS 
+#
+######################################################
+
+sub widget_admin :Path('/rest/widget/admin') :Args(1) :ActionClass('REST') {}
+
+sub widget_admin_GET {
+    my ($self,$c,$widget) = @_; 
+    my $api = $c->model('WormBaseAPI');
+    my $type;
+    $c->stash->{'bench'} = 1;
+    $c->res->redirect("/admin/$widget");
+    return;
+}
+
 
 
 
