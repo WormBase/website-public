@@ -143,19 +143,19 @@
     </tr>
     [% even = 1 %]
     [% FOREACH IS IN issues %]
+      [% is_private = IS.is_private %]
 
-      [% IF IS.is_private; 
-         IF !c.check_user_roles('admin')   ; NEXT ; END;
-         IF !c.check_user_roles('curator') ; NEXT ; END;
+      [% IF is_private.search('yes'); 
+         UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
       END;
       %]
-     
+
 
       [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
       <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
         <td><a href="[% url %]">[% IS.id %]</a></td>
         <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
+        [% IF is_private.search('yes') ; ' <em>reported privately</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
@@ -646,8 +646,8 @@
                 <header> 
                 <div class="ui-corner-top widget-header">
                     <div class="module-close" wname="[% id %]" title="close"></div>
-<!--                     <div class="module-max" wname="[% id %]" title="pop out"></div>
-    -->               
+[% IF 0 %]                     <div class="module-max" wname="[% id %]" title="pop out"></div>
+[% END %]              
                     <h3><div class="module-min" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
@@ -1285,9 +1285,9 @@ END;
     [% widgets.push(w) %]
   [% END %]
   [% IF c.check_user_roles('admin') %]
-    [% w = { id = 'static-widget--1'
+    [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','-1') _ '?path=' _ c.req.uri.path  _ '&edit=1'
+            href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'
             type = 'static'
             };
     %]
