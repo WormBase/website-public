@@ -19,7 +19,13 @@
     <dd>Add an additional email address: <input type="text" name="email_address" /> </dd>  
     </dt></dl> 
     
-    <dl><dt>Twitter handle <input size="25" type="text" name="twitter" value ="[% c.user.twitter %]" /> 
+    <dl><dt>Twitter:
+       Unlinked
+       Link
+       <div class="caveat-emptor">If linked, we'll display a button next to your name to make it easier for people to follow you.</div>
+    </dt></dl> 
+
+    <dl><dt>Twitter handle @<input size="25" type="text" name="twitter" value ="[% c.user.twitter %]" /> 
        <div class="caveat-emptor">If provided, we'll display a button next to your name to make it easier for people to follow you.</div>
     </dt></dl>            
 
@@ -37,49 +43,13 @@
 </fieldset>
 </form>
 
-[%#- admin section -%]
-[% IF c.check_user_roles('admin') %]
- 
-
-<fieldset >
- <legend>List of All User Information</legend> 
-    [% rows = [];FOREACH obj IN users %]
-    [% admin = "<input type='checkbox' class='role-update' value='admin' id='" _ obj.id _ "' />" ;
-	IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
-	curator = "<input type='checkbox' class='role-update' value='curator' id='" _ obj.id _ "' />" ;
-	IF obj.curator ;curator=curator.replace('id=','checked id=') ; END;
-	operator = "<input type='checkbox' class='role-update' value='operator' id='" _ obj.id _ "' />" ;
-	IF obj.operator ; operator=operator.replace('id=','checked id='); END ;
-
-    %]
-	[% rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator,operator]); %]
-    [% END %]
-
-
-    [%# dataTable_list(['username','email','first name','last name','admin','curator','operator'],rows,'user_list') %]
-    [% 
-
-       build_data_table(order=['username','email','first name','last name','admin','curator','operator'],
-                        columns={ username          => 'Username',
-	   	                  email             => 'Email',
-	  	                  first_name        => 'First Name',
-			          last_name         => 'Last Name',
-			          admin             => 'Admin',
-				  curator           => 'Curator',
-				  operator          => 'Operator',
-                               },
-			 passed_data = rows,
-                         key='user_list');
-      %]
-
-</fieldset>
-
-[% END %]
-[%#- curator section -%]
-[% IF c.check_user_roles('curator') %]
-[% END %] 
-
 
 [% ELSE %]
 <div>Plese log in to edit your profile</div>
 [% END %]
+
+
+[%#- curator section -%]
+[% IF c.check_user_roles('curator') %]
+[% END %] 
+

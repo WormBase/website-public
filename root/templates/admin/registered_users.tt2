@@ -1,0 +1,49 @@
+
+[%#- admin section -%]
+[% IF c.check_user_roles('admin') %]
+ 
+<fieldset >
+ <legend>All Registered Users</legend> 
+    [% 
+       rows = [];
+       FOREACH obj IN users;
+
+           admin = "<input type='checkbox' class='role-update' value='admin' id='" _ obj.id _ "' />" ;
+   	   IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
+	   
+           curator = "<input type='checkbox' class='role-update' value='curator' id='" _ obj.id _ "' />" ;
+    	   IF obj.curator ;curator=curator.replace('id=','checked id=') ; END;
+	
+           operator = "<input type='checkbox' class='role-update' value='operator' id='" _ obj.id _ "' />" ;
+	   IF obj.operator ; operator=operator.replace('id=','checked id='); END ;
+
+	   obj.curator = curator;
+	   obj.admin   = admin;
+	   obj.operator = operator;
+#	   rows.push([obj.username,obj.email,obj.first_name,obj.last_name,admin,curator,operator]);
+	   email = obj.email_address;
+	   obj.email = email;
+	   rows.push(obj);
+       END 
+    %]
+
+
+    [%# dataTable_list(['username','email','first name','last name','admin','curator','operator'],rows,'user_list') %]
+    [% 
+
+       build_data_table(order=['username','email','first name','last name','admin','curator','operator'],
+                        columns={ username          => 'Username',
+	   	                  email             => 'Email',
+	  	                  first_name        => 'First Name',
+			          last_name         => 'Last Name',
+			          admin             => 'Admin',
+				  curator           => 'Curator',
+				  operator          => 'Operator',
+                               },
+			 passed_data = rows,
+                         key='user_list');
+      %]
+</fieldset>
+
+
+[% END %]

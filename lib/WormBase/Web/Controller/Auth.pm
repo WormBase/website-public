@@ -265,7 +265,7 @@ sub auth_local {
                         abigail\.cabunoc\@oicr\.on\.ca |
                         lincoln\.stein\@gmail\.com     | 
                         todd\@hiline\.co               |
-                        todd\@me\.co                   |
+                        me\@todd\.co                   |
                         xshi\@wormbase\.org
                        }x) {
 	    my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
@@ -323,27 +323,6 @@ sub profile :Path("/profile") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='auth/profile.tt2';
-    my @array;
-    if($c->check_user_roles('admin')){
-      my $iter=$c->model('Schema::User') ;
-      while( my $user= $iter->next){
-	  my $hash = { username   => $user->username,
-		       email      => $user->email_address,
-		       first_name => $user->first_name,
-		       last_name  => $user->last_name,
-		       twitter    => $user->twitter,
-		       id         => $user->id,
-	  };
-	  
-	  my @roles =$user->roles;
-	  
-	  map{$hash->{$_->role}=1;} @roles if(@roles);
-	  push @array,$hash;
-      }
-      
-      $c->stash->{users}=\@array;
-    }
-  
 } 
  
 

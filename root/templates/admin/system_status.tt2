@@ -1,0 +1,14 @@
+[% 
+
+   IF c.check_user_roles('admin');
+
+      '<fieldset id="server-status">
+        <legend>Server Status</legend>
+
+       </fieldset>';
+
+   ELSE;
+      'This is the admin-only system status widget.';
+   END;
+
+%]

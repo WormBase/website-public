@@ -24,6 +24,21 @@
     [% widgets.push(w) %]
   [% END %]
 
+  
+  [% IF c.check_user_roles('admin') %]
+    [% widgets.push({ id    = 'registered_users',
+         	      title = 'Registered Users',
+                      href  =  c.uri_for('/rest','widget','admin','registered_users'),
+                      type  = "admin"
+                    });
+	widgets.push({ id    = 'system_status',
+         	      title = 'System Status',
+                      href  =  c.uri_for('/rest','widget','admin','system_status'),
+                      type  = "admin"
+                    });
+    %]
+  [% END %]
+ 
   [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
 
     <script>
