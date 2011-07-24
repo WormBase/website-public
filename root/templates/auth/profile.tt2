@@ -18,16 +18,7 @@
         [% END %]
     <dd>Add an additional email address: <input type="text" name="email_address" /> </dd>  
     </dt></dl> 
-    
-    <dl><dt>Twitter:
-       Unlinked
-       Link
-       <div class="caveat-emptor">If linked, we'll display a button next to your name to make it easier for people to follow you.</div>
-    </dt></dl> 
-
-    <dl><dt>Twitter handle @<input size="25" type="text" name="twitter" value ="[% c.user.twitter %]" /> 
-       <div class="caveat-emptor">If provided, we'll display a button next to your name to make it easier for people to follow you.</div>
-    </dt></dl>            
+    </form>
 
     <dl><dt>WormBase:
       [% IF c.user.wbid %]
@@ -40,12 +31,73 @@
       [% END %]
     </dt></dl>
   <input type="submit" value="Update"/>
+
 </fieldset>
-</form>
+
+<fieldset id="social-field">	
+    <legend>3rd Party Sites</legend>
+
+    <div class="caveat-emptor">Link your WormBase account to third party sites to make it easier to share and bookmark information and connect with other researchers.</div>
+    
+    [% sites = [ 'twitter', 'google', 'facebook' ];
+       FOREACH site IN sites;
+          title = site FILTER ucfirst;
+
+        '<dl><dt><h3>' _ title _ '</h3>';
+	    '<div class="caveat-emptor">';
+            IF site == 'twitter';
+                 'If linked, we\'ll display a link next to your name to make it easier for people to follow you.';
+            ELSE;
+	         'blah blah blah';
+	    END;
+            '</div>';
+
+          '<div class="social">';
+	       already_seen = 0;               
+
+	       # Get all of the sites the user has authenticated against
+	       # and compare to those we are currently listing. Inefficient.
+               FOREACH remote_site IN c.user.open_ids;
+                    IF remote_site.provider == site;
+    		        '<img src="/img/green_checkmark.png" height="40px" alt="status: linked" />; <a href="">revoke access</a>';   
+
+                        IF site == 'twitter';
+	                    '<button class="social_buttons sb_' _ site _ ' sb_24"><span>' _ title _ '</span></button>';
+#			      '<a href="http://twitter.com/' _ remote_site.screen_name 
+#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
+#				  _ remote_site.screen_name 
+#				  _ '</a>'
+#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
+	                ELSE;
+		    		        
+		            # We've authenticated against this site. Disable button, and an indicator that we are linked, and a link to revoke.
+	                    '<button class="social_buttons sb_' _ site _ ' sb_24"><span>' _ title _ '</span></button>';
+			END;
+			already_seen = 1;
+			LAST;
+	            END;
+	       END;
+
+               # Not seen? Provide a link to authenticate against the service.
+	       UNLESS already_seen;
+                   '<button class="social_buttons sb_' _ site _ ' sb_24" onClick="openid.signin(\'' _ site _ '\');return false;">';
+                   '<span>' _ title _ '</span></button> UNLINKED 2';
+	       END;       
+           
+         END;
+       %]
+
+       </div>
+
+
+    </dt></dl> 
+
+</fieldset>
+
 
 
 [% ELSE %]
-<div>Plese log in to edit your profile</div>
+<div>Please log in to edit your profile</div>
 [% END %]
 
 
