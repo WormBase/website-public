@@ -67,14 +67,14 @@
       '<span id="fade"><i>[user deleted]</i></span>';
     END;
 
-    IF c.user.twitter && !suppress_social;
-           '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
-                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
-				  _ c.user.twitter 
-				  _ '</a>'
-				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
-
-    END;
+#    IF c.user.twitter && !suppress_social;
+#           '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
+#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
+#				  _ c.user.twitter 
+#				  _ '</a>'
+#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
+#
+#    END;
   END;
 %]
 
@@ -144,6 +144,7 @@
     [% even = 1 %]
     [% FOREACH IS IN issues %]
       [% is_private = IS.is_private %]
+
       [% IF is_private.search('yes'); 
          UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
       END;
