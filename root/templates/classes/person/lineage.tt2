@@ -4,7 +4,7 @@
 [% 
 
 # Oftentimes this is an empty widget.
-check_for_empty_widget('supervised','supervised_by','worked_with');
+check_for_empty_widget(['supervised','supervised_by','worked_with']);
   
 WRAPPER $field_block title="Supervised" key="supervised";
       build_data_table(

@@ -47,9 +47,19 @@ hideTextOnFocus(".password");
           <span>Google</span>
       </button>
       <br style="clear:both" />
+      <button class="social_buttons sb_twitter sb_24" onClick="openid.signin('twitter');">
+          <span>Twitter</span>
+      </button>
+      <br style="clear:both" />
       <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');">
           <span>Facebook</span>
       </button>
+<!--
+      <br style="clear:both" />
+      <button class="social_buttons sb_linkedin sb_24" onClick="openid.signin('linkedin');">
+          <span>LinkedIn</span>
+      </button>
+-->
     </div>
   </div>
 </div>
