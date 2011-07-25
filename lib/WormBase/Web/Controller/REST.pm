@@ -621,7 +621,7 @@ sub feed_POST {
           $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->id});
         }
 
-        my $commment = $c->model('Schema::Comment')->find_or_create({reporter_id=>$user->id, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
+        my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
 
       }
     }
@@ -654,7 +654,7 @@ sub feed_POST {
                                   content=>$content,
                                   state      =>"new",
                                   is_private => $is_private,
-                                  'submit_time'=>time()});
+                                  'timestamp'=>time()});
       $self->issue_email($c,$issue,1,$content);
     }
     }elsif($type eq 'thread'){
@@ -687,14 +687,14 @@ sub feed_POST {
        my $user = $self->check_user_info($c);
        return unless $user;
        my $thread  = { owner=>$user,
-              submit_time=>time(),
+              timestamp=>time(),
        };
        if($content){
         $c->log->debug("create new thread for issue #$issue_id!");
         my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
         my $thread_id=1;
         $thread_id = $threads[0]->thread_id +1 if(@threads);
-        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
+        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->id});
 #       $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
       }  
       if($state || $assigned_to || $content){
@@ -1202,10 +1202,10 @@ sub _get_search_result {
 sub comment_rss {
  my ($self,$c,$count) = @_;
  my @rss;
- my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+ my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
  map {
-        my $time = ago((time() - $_->submit_time), 1);
-        push @rss, {      time=>$_->submit_time,
+        my $time = ago((time() - $_->timestamp), 1);
+        push @rss, {      time=>$_->timestamp,
                           time_lapse=>$time,
                           people=>$_->reporter,
                           page=>$_->page,
@@ -1218,16 +1218,16 @@ sub comment_rss {
 
 sub issue_rss {
  my ($self,$c,$count) = @_;
- my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
+ my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} );
      
     my %seen;
     my @rss;
     while($_ = $threads->next) {
       unless(exists $seen{$_->issue_id}) {
       $seen{$_->issue_id} =1 ;
-      my $time = ago((time() - $_->submit_time), 1);
-      push @rss, {  time=>$_->submit_time,
+      my $time = ago((time() - $_->timestamp), 1);
+      push @rss, {  time=>$_->timestamp,
             time_lapse=>$time,
             people=>$_->user,
             title=>$_->issue->title,
@@ -1240,8 +1240,8 @@ sub issue_rss {
     };
 
     map {    
-      my $time = ago((time() - $_->submit_time), 1);
-        push @rss, {      time=>$_->submit_time,
+      my $time = ago((time() - $_->timestamp), 1);
+        push @rss, {      time=>$_->timestamp,
                           time_lapse=>$time,
                           people=>$_->reporter,
                           title=>$_->title,
