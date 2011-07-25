@@ -106,9 +106,8 @@ INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','oper
 
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
-        id           char(72) primary key,
+        session_id     char(72) primary key,
         session_data text,
-        user_id INTEGER,
         expires      int(10)
     );
 

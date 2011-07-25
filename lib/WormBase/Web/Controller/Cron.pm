@@ -10,7 +10,7 @@ sub remove_sessions : Private {
     my $field = $c->session_store_dbi_expires_field;
     my $rs=  $c->model("Schema::Session")->search({ $field => { '!=', undef },$field => { '<', time },});
     while(my $obj=$rs->next){
-	$c->log->debug("delete session:",$obj->id);
+	$c->log->debug("delete session:",$obj->session_id);
 	$obj->delete();
 	$obj->update();
     }
