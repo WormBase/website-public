@@ -20,7 +20,7 @@ __PACKAGE__->table("openid");
 
 __PACKAGE__->add_columns(
   "openid_url",
-  { data_type => "text", is_nullable => 0 },
+  { data_type => "char(255)", is_nullable => 0 },
   "user_id",
   { data_type => "integer", is_nullable => 1 },
 );

@@ -30,8 +30,8 @@ CREATE TABLE email(
 
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
-            id   INTEGER PRIMARY KEY,
-            role TEXT
+            role_id   INTEGER PRIMARY KEY,
+            role char(255)
 );
 
 DROP TABLE IF EXISTS users_to_roles;
@@ -50,7 +50,7 @@ CREATE TABLE openid (
 
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
-            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            comment_id INTEGER AUTO_INCREMENT PRIMARY KEY,
             user_id INTEGER,
             page_id INTEGER,
             timestamp INTEGER,
@@ -67,7 +67,7 @@ CREATE TABLE issues (
 	    timestamp char(50),
 	    state char(10),
         severity char(10),
-        is_private char(10),
+        is_private BOOLEAN,
 	    content TEXT 
 );
 
@@ -113,6 +113,7 @@ DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
         id           char(72) primary key,
         session_data text,
+        user_id INTEGER,
         expires      int(10)
     );
 
@@ -133,6 +134,14 @@ CREATE TABLE widget_revision (
         widget_id INTEGER,
         content text,
         user_id INTEGER,
+        timestamp INTEGER
+);
+
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages (
+        message_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        message text,
+        message_type char(72),
         timestamp INTEGER
 );
 

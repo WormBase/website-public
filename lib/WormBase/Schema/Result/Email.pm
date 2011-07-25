@@ -24,7 +24,7 @@ __PACKAGE__->add_columns(
   "user_id",
   { data_type => "integer", default_value => 0, is_nullable => 1 },
   "email",
-  { data_type => "text", default_value => "", is_nullable => 0 },
+  { data_type => "char(255)", default_value => "", is_nullable => 0 },
   "validated",
   { data_type => "boolean", default_value => "", is_nullable => 1 },
   "primary_email",
