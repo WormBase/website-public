@@ -27,8 +27,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
    "user_id",
   { data_type => "integer", is_nullable => 1 },
-   "widget_date",
-  { data_type => "char(50)", is_nullable => 1 },
+   "timestamp",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 __PACKAGE__->set_primary_key("widget_revision_id");
