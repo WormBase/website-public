@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS wormbase_user_todd;
-CREATE DATABASE wormbase_user_todd;
-USE wormbase_user_todd;
+DROP DATABASE IF EXISTS wormbase_user;
+CREATE DATABASE wormbase_user;
+USE wormbase_user;
 GRANT ALL PRIVILEGES ON `wormbase_user_todd`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
@@ -10,9 +10,6 @@ CREATE TABLE users (
             password      char(255),
             first_name    char(100),
             last_name     char(100),
-	    twitter       char(100),
-	    googleplus    char(100),
-	    facebook      char(100),
             gtalk_key	  text,
             active        int(11),
             wbid          char(255),

@@ -1,0 +1,28 @@
+<h1>Nearby Genes</h1>
+
+<p>
+Provided with a gene, find nearby genes within a configurable distance.
+</p>
+
+If on a gene page, just display the search and not the examples.
+<p>
+Examples:<br />
+<a href="[% c.uri_for('tools','nearby_genes','run') %]?name=WBGene00006758;class=Gene">Browse the unc-20 gene</a>.<br />
+<a href="[% c.uri_for('tools','nearby_genes','run') %]?name=?Gene;class=Model">Browse the Gene class data model</a>.<br />
+</p>
+
+	  "Search in a window ",popup_menu(-name=>'window',-value=>[1,2,3,4,5,7,10],
+					   -onChange=>'document.form1.submit()'),'cM wide'),
+
+<p>
+<form method="POST" action="[% c.uri_for('tools','nearby_genes','run') %]"> 
+  <table>
+     <tr><th>Name</th>
+         <td><input type="text" name="name" onchange="document.question.submit()" /></td>
+         <th>Class</th> 
+         <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>
+         <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
+    </tr>
+  </table>
+</form>
+</p>

@@ -30,68 +30,71 @@
         <a href="[% c.uri_for('/auth/wbid') %]">none linked</a>
       [% END %]
     </dt></dl>
-  <input type="submit" value="Update"/>
+  <input type="submit" value="Update" />
 
 </fieldset>
 
 <fieldset id="social-field">	
-    <legend>3rd Party Sites</legend>
+    <legend>Linked Accounts</legend>
 
-    <div class="caveat-emptor">Link your WormBase account to third party sites to make it easier to share and bookmark information and connect with other researchers.</div>
-    
+    <div class="caveat-emptor">
+        <p>You can link your WormBase account to other sites to make it easier to share information and connect with other researchers.</p>
+	<p>For example, if you link your Twitter account, we'll provide directly links to your account to make it easier for other users to follow you.</p>
+	<p>WormBase will never share your information and you can revoke access at any time.</p>
+     </div>
+
     [% sites = [ 'twitter', 'google', 'facebook' ];
-       FOREACH site IN sites;
+
+	'<table>';
+        FOREACH site IN sites;
           title = site FILTER ucfirst;
 
-        '<dl><dt><h3>' _ title _ '</h3>';
-	    '<div class="caveat-emptor">';
-            IF site == 'twitter';
-                 'If linked, we\'ll display a link next to your name to make it easier for people to follow you.';
-            ELSE;
-	         'blah blah blah';
-	    END;
-            '</div>';
+	  SWITCH site;
+	  CASE 'twitter';
+	       revoke = 'https://twitter.com/settings/applications';
+	       avatar = twitter_avatar_url;
+	       profile = 'http://twitter.com/' _ twitter_screen_name;
+	  CASE 'google';
+	       revoke = '';
+	       avatar = '';
+	       caveat = '';
+	       profile = '';
+	  CASE 'facebook';
+	       revoke = '';
+	       avatar = '';
+	       caveat = '';
+	       profile = '';
+	  END;
 
-          '<div class="social">';
-	       already_seen = 0;               
 
-	       # Get all of the sites the user has authenticated against
-	       # and compare to those we are currently listing. Inefficient.
-               FOREACH remote_site IN c.user.open_ids;
-                    IF remote_site.provider == site;
-    		        '<img src="/img/green_checkmark.png" height="40px" alt="status: linked" />; <a href="">revoke access</a>';   
+	  '<tr>';
+	       IF linked_accounts.$site;
+	          img = "greendot.gif";
 
-                        IF site == 'twitter';
-	                    '<button class="social_buttons sb_' _ site _ ' sb_24"><span>' _ title _ '</span></button>';
+#			    '<td><a href="' _ revoke _ '">revoke access</a></td>';
 #			      '<a href="http://twitter.com/' _ remote_site.screen_name 
 #                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
 #				  _ remote_site.screen_name 
 #				  _ '</a>'
-#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
-	                ELSE;
-		    		        
-		            # We've authenticated against this site. Disable button, and an indicator that we are linked, and a link to revoke.
-	                    '<button class="social_buttons sb_' _ site _ ' sb_24"><span>' _ title _ '</span></button>';
-			END;
-			already_seen = 1;
-			LAST;
-	            END;
+#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';				
+	       ELSE;
+	          img = "reddot.gif";
 	       END;
 
-               # Not seen? Provide a link to authenticate against the service.
-	       UNLESS already_seen;
-                   '<button class="social_buttons sb_' _ site _ ' sb_24" onClick="openid.signin(\'' _ site _ '\');return false;">';
-                   '<span>' _ title _ '</span></button> UNLINKED 2';
-	       END;       
+      	       '<td><img src="/img/dots/' _ img _ '" height="20px" alt="status: linked" /></td>';
+               '<td><div class="social">';
+               '<button class="social_buttons sb_' _ site _ ' sb_24" onClick="openid.signin(\'' _ site _ '\');return false;">';
+               '<span>' _ title _ '</span></button></div>';
+	       '</td>';
+               '<td><a href="' _ profile _ '"><img src="' _ avatar _ '" /></a></td>';
+	      	       
+	       '</tr>';
            
          END;
+	 '</table>';
        %]
 
        </div>
-
-
-    </dt></dl> 
-
 </fieldset>
 
 
