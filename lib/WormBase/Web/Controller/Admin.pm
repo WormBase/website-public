@@ -40,10 +40,7 @@ sub registered_users :Path("registered_users") {
       while( my $user= $iter->next){
 	  my $hash = { username   => $user->username,
 		       email      => $user->email_address,
-		       first_name => $user->first_name,
-		       last_name  => $user->last_name,
-		       twitter    => $user->twitter,
-		       id         => $user->id,
+		       id         => $user->user_id,
 	  };
 	  
 	  my @roles =$user->roles;
