@@ -19,7 +19,7 @@ WormBase::Schema::Result::Issue
 __PACKAGE__->table("comments");
 
 __PACKAGE__->add_columns(
-  "id",
+  "comment_id",
   { data_type => "integer", is_nullable => 0 },
   "user_id",
   { data_type => "integer", is_nullable => 1 },
@@ -31,7 +31,7 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
 );
 
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key("comment_id");
 
 __PACKAGE__->belongs_to(page=>'WormBase::Schema::Result::Page','page_id');
 __PACKAGE__->belongs_to(reporter=>'WormBase::Schema::Result::User','user_id');

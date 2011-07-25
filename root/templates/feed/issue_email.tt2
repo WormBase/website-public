@@ -1,7 +1,7 @@
 
 
-[% IF new == 1 %]New issue[% ELSE %]Issue Update[% END %] [% issue.id %]: [% issue.title %]
-[% url=c.uri_for(c.controller('tool').action_for('issue'),issue.id) %]
+[% IF new == 1 %]New issue[% ELSE %]Issue Update[% END %] [% issue.issue_id %]: [% issue.title %]
+[% url=c.uri_for(c.controller('tool').action_for('issue'),issue.issue_id) %]
 <br><a href="[% url %]">[% url %]</a>
 
 [% USE date %]

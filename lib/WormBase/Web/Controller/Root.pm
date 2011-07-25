@@ -104,7 +104,7 @@ sub issue_rss {
 			people=>$_->user,
 			title=>$_->issue->title,
 			location=>$_->issue->page,
-			id=>$_->issue->id,
+			id=>$_->issue->issue_id,
 			re=>1,
 		    } ;
       }
@@ -113,10 +113,10 @@ sub issue_rss {
 
     map {	 
 		push @rss, {      time=>$_->timestamp,
-					      people=>$_->owner,
+					      people=>$_->reporter,
 					      title=>$_->title,
 					      location=>$_->page,
-				  id=>$_->id,
+				  id=>$_->issue_id,
 			};
 	} @issues;
 

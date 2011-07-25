@@ -355,7 +355,7 @@ sub auth_local {
             $c->stash->{redirect} = $redirect;
             $c->log->debug("creating new user $username, $email");
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
-            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id, primary_email=>1}) if $email;
+            $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->user_id, primary_email=>1}) if $email;
         }
 	
 	# HARD-CODED!  The following people become admins automatically if they've
@@ -464,8 +464,8 @@ sub profile_update :Path("/profile_update") {
 	  $found = 1;
     }
     unless($found){
-      $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->id});
-      $c->controller('REST')->rest_register_email($c, $email, $c->user->username, $c->user->id);
+      $c->model('Schema::Email')->find_or_create({email=>$email, user_id=>$c->user->user_id});
+      $c->controller('REST')->rest_register_email($c, $email, $c->user->username, $c->user->user_id);
       $message="An email has been sent to <a href='mailto:$email'>$email</a>. ";
     }
   }
@@ -490,7 +490,7 @@ sub add_operator :Path("/add_operator") {
       $key =~ s/\&amp.*//;
       $c->log->debug("get the $key");
       my $role=$c->model('Schema::Role')->find({role=>"operator"}) ;
-      $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->id,role_id=>$role->id});
+      $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->user_id,role_id=>$role->role_id});
       $c->user->set_columns({"gtalk_key"=>$key});
       $c->user->update();
       $c->res->redirect($c->uri_for("me"));
