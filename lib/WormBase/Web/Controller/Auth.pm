@@ -389,7 +389,7 @@ sub auth_local {
     
     # Re-authenticate against local DBIx store
     $c->config->{user_session}->{migrate}=1;
-    if ( $c->authenticate({ id=>$authid->user_id }, 'members') ) {
+    if ( $c->authenticate({ user_id=>$authid->user_id }, 'members') ) {
         $c->stash->{'status_msg'} = 'Local Login was also successful.';
         $c->log->debug('Local Login was also successful.');
         $self->reload($c) ;
