@@ -47,7 +47,7 @@ __PACKAGE__->config->{'Plugin::Session'} = {
               expires   => 3600,
 	      dbi_dbh   => 'Schema', 
 	      dbi_table => 'sessions',
-	      dbi_id_field => 'id',
+	      dbi_id_field => 'session_id',
 	      dbi_data_field => 'session_data',
 	      dbi_expires_field => 'expires',
 };
@@ -409,7 +409,7 @@ sub merge_session_to_user {
     Hash::Merge::set_clone_behavior(0);
 
     my $sid = $c->get_session_id;
-    my $s_db = $c->model('Schema::Session')->find({id=>"session:$sid"});
+    my $s_db = $c->model('Schema::Session')->find({session_id=>"session:$sid"});
     my $uid = $c->user->user_id;
 
     my @user_saved = $s_db->user_saved;
