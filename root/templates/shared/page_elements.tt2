@@ -159,7 +159,7 @@
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
-        <td>[% time_dir.ago(current_time - IS.submit_time, 1)  %]</td>  
+        <td>[% time_dir.ago(current_time - IS.timestamp, 1)  %]</td>  
         <td>[% IF IS.reporter_id; linkUser(IS.reporter); END %]</td>
         <td>[% IF IS.responsible_id; linkUser(IS.responsible); END %]</td>
         [% IF c.check_user_roles('admin') %]<td><input type='checkbox' class="issue-deletebox" name="[% IS.id %]" /></td>[% END %]
