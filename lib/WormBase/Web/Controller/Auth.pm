@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
 use Net::Twitter;
+use Facebook::Graph;
 use Data::Dumper;
 use Crypt::SaltedHash;
 
@@ -14,7 +15,6 @@ sub login :Path("/login") {
      my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'} = 'auth/login.tt2';
-#      $c->stash->{'template'}='auth/login-fullpage.tt2';
     $c->stash->{'continue'} = $c->req->params->{continue};
 }
 
@@ -28,7 +28,7 @@ sub register :Path("/register") {
      $c->stash->{password}  = $c->req->body_parameters->{password}; 
      $c->stash->{redirect}  = $c->req->body_parameters->{redirect}; 
   }
-  $c->stash->{'template'}='auth/register.tt2';
+  $c->stash->{template} = 'auth/register.tt2';
 #     $c->stash->{'continue'}=$c->req->params->{continue};
 }
 
@@ -55,7 +55,7 @@ sub confirm :Path("/confirm") {
 	      $seen_email = 1;
           }
 	  
-          if($wb) {
+          if ($wb) {
 	      if(Crypt::SaltedHash->validate("{SSHA}".$wb, $email->email."_".$user->wbid)){
 		  $user->wb_link_confirm(1);
 		  $message = $message . "Your account is now linked to " . $user->wbid; 
@@ -107,7 +107,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
      my $email     = $c->req->body_parameters->{email};
      my $password = $c->req->body_parameters->{password}; 
 
-     if (   $email   &&  $password  ) {
+     if ( $email && $password ) {
         my $rs = $c->model('Schema::User')->search({active=>1, email=>$email, validated=>1, password => { '!=', undef }},
                 {   select => [ 
                       'id',
@@ -139,8 +139,8 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
                 $c->stash->{'error_notice'}='Login incorrect.';
             }
      } else {
-        # invalid form input
-	    $c->stash->{'error_notice'}='Invalid username or password.';
+	 # invalid form input
+	 $c->stash->{'error_notice'}='Invalid username or password.';
      }
 }
 
@@ -160,38 +160,47 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 #      $c->user_session->{redirect_after_login} ||= $param->{'continue'};
 #      $c->stash->{'template'}='auth/openid.tt2';
      
-     # Twitter uses OAUTH, not openid.
-     # We probably shouldn't be saving our consumer_secret here...
-     if (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
-	 my $nt = Net::Twitter->new(traits              => [qw/API::REST OAuth/], 
-				    consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
-				    consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",				    
-	     );
+     # Facebook
+     if (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ 'facebook') {
+	 my $fb = $self->connect_to_facebook($c); 
+	 $c->response->redirect($fb->authorize->uri_as_string);
+	     
+	# Twitter uses OAUTH, not openid.
+	# We probably shouldn't be saving our consumer_secret here...
+     } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
+	 my $nt = $self->connect_to_twitter($c);
 
-	 # The URL that the user will be returned to after authenticating.
-	 my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
+	 # Weird. I have to approve app each and every time since I can't
+	 # get session data appropriate for the user until I log in. Circular.
+
+	 # Are we already linked to Twitter? Are our auth tokens still good?
+         #  unless ($self->check_twitter_authorization_status($c)) {
+	     
+	     # The URL that the user will be returned to after authenticating.
+	     my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
 	 
-	 $c->response->cookies->{oauth} = {
-	     value => {
-		 token        => $nt->request_token,
-		 token_secret => $nt->request_token_secret,
-	     },
-	 };
-	 $c->response->redirect($url);
-	 
+	     $c->response->cookies->{oauth} = {
+		 value => {
+		     token        => $nt->request_token,
+		     token_secret => $nt->request_token_secret,
+		 },
+	     };
+	     $c->response->redirect($url);
+
     } else {
 	# eval necessary because LWPx::ParanoidAgent
 	# croaks if invalid URL is specified
 	#  eval {
 	# Authenticate against OpenID to get user URL
 	$c->config->{user_session}->{migrate}=0;
-	
+
 	if ( $c->authenticate({}, 'openid' ) ) {
-	    $c->stash->{'status_msg'}='OpenID login was successful.';
+	    $c->stash->{'status_msg'} = 'OpenID login was successful.';
 
 	    # Google and other OpenID sites.
 	    $self->auth_local({c          => $c, 
 			       openid_url => $c->user->url,
+			       # Entirely google specific here.
 			       email      => $param->{'openid.ext1.value.email'},
 			       first_name => $param->{'openid.ext1.value.firstname'}, 
 			       last_name  => $param->{'openid.ext1.value.lastname'}, 
@@ -205,6 +214,49 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 }
 
 
+sub connect_to_facebook {
+    my ($self,$c) = @_;
+
+    my $secret = $c->config->{facebook_secret_key};
+    my $app_id = $c->config->{facebook_app_id};
+
+    my $fb = Facebook::Graph->new({app_id  => $app_id,
+				   secret  => $secret,
+				   postback => $c->uri_for('/auth/facebook/')});
+    return $fb;
+}
+
+# The URL users are returned to after authenticating with Facebook (postback, even though it's a GET. Typical).
+sub auth_facebook_callback : Chained('auth') PathPart('facebook')  Args(0){
+    my ($self,$c) = @_;
+
+    my $authorization_code = $c->req->params->{code};
+   
+    my $fb = $self->connect_to_facebook($c);
+    
+    $fb->request_access_token($authorization_code);
+    my $access_token = $fb->access_token;
+
+    # Get the user's name and email.
+    # See the Facebook Graph API: http://developers.facebook.com/docs/reference/api/
+    # and perldoc for Facebook::Graph.
+    my $response   = $fb->query->find('me')->request;
+    my $user       = $response->as_hashref;
+    my $email      = $user->{email};  # can throw errors if not authorized by user
+    
+    $self->auth_local({c          => $c, 
+		       provider   => 'facebook',		       
+		       oauth_access_token   => $access_token,
+		       first_name  => $user->{first_name},
+		       last_name   => $user->{last_name},
+		       screen_name => $user->{username},
+		       email       => $email,
+#		       oauth_access_token_secret => $access_token_secret,
+		       auth_type     => 'oauth',
+		      });        
+}
+
+
 # The URL users are returned to after authenticating with Twitter.
 sub auth_twitter_callback : Chained('auth') PathPart('twitter')  Args(0){
     my($self, $c) = @_;
@@ -212,87 +264,73 @@ sub auth_twitter_callback : Chained('auth') PathPart('twitter')  Args(0){
     my %cookie   = $c->request->cookies->{oauth}->value;
     my $verifier = $c->req->params->{oauth_verifier};
     
-    my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
-			       consumer_key        => "TuFZDWcjPpm2NKxUrbpLww",
-			       consumer_secret     => "XPnhhewZMU1byZNKVNOP5LjR6bKlgK37hLU7H6oc3w",
-	);
+    my $nt = $self->connect_to_twitter($c);
+
     $nt->request_token($cookie{token});
     $nt->request_token_secret($cookie{token_secret});
     
     my ($access_token, $access_token_secret, $user_id, $screen_name)
 	= $nt->request_access_token(verifier => $verifier);
         
-    # We don't let people authorize via twitter, but we DO
-    # let them link their Twitter account.
-#    my $openid =  $c->model('Schema::OpenID')->find_or_create({ oauth_access_token => $access_token });
-#    unless ($openid->user_id) {
-#	$openid->oauth_access_token_secret($access_token_secret);
-#	$openid->user_id($c->user->id);
-#	$openid->provider('twitter');
-#	$openid->username($screen_name);
-#	$openid->auth_type('oauth');
-#	$openid->update();
-#    } 
-
     $self->auth_local({c          => $c, 
-#		       url        => $id,
 		       provider   => 'twitter',		       
 		       oauth_access_token        => $access_token,
 		       oauth_access_token_secret => $access_token_secret,
-#		       email      => $param->{'openid.ext1.value.email'},
-#		       first_name => $param->{'openid.ext1.value.firstname'}, 
-#		       last_name  => $param->{'openid.ext1.value.lastname'}, 
-		       screen_name => $screen_name,
-		       auth_type  => 'oauth',		      
-#		       redirect   => $redirect,
-		      });
-        
- #   $c->stash->{redirect} = $c->uri_for("me");
- #   $c->forward('WormBase::Web::View::TT');      
+		       screen_name   => $screen_name,
+		       auth_type     => 'oauth',
+		      });        
 }
 
 
 sub auth_local {
-#    my ($self, $c,$id,$email,$first_name,$last_name, $auth_type,$redirect) = @_;
     my ($self,$params) = @_;
     my $c          = $params->{c};
-    my $url        = $params->{openid_url};
-    my $first_name = $params->{first_name};
-    my $last_name  = $params->{last_name};
-    my $email      = $params->{email};
     my $auth_type  = $params->{auth_type};
-    my $redirect   = $params->{redirect};
-  
-    my $user;
 
-    # Create a new user unless they've already authenticated by
-    # openid or oauth.
+    # Create a new openid or oauth entry in openid. POSSIBLITY FOR DUPLICATION HERE?
+    # Should echeck and see if the user is already logged in.
     # (or use auto_create_user: 1)
     my $authid;
     if ($auth_type eq 'openid') {
-	$authid = $c->model('Schema::OpenID')->find_or_create({ openid_url => $url });
-    } else { 
+	$authid = $c->model('Schema::OpenID')->find_or_create({ openid_url => $params->{openid_url} });
+    } elsif ($auth_type eq 'oauth') {
 	$authid = $c->model('Schema::OpenID')->find_or_create({ oauth_access_token        => $params->{oauth_access_token},
 								oauth_access_token_secret => $params->{oauth_access_token_secret}
 							      });
     }
-    
-    # If we haven't yet associated a user_id to the new entry, we need to do so now.
+  
+    my $first_name = $params->{first_name};
+    my $last_name  = $params->{last_name};
+    my $email      = $params->{email};
+    my $redirect   = $params->{redirect};
+
+    my $user;  
+    # If we haven't yet associated a user_id to the new openid/oauth entry, do so now.
     unless ($authid->user_id) {
-        my $username ;
+
+	# create a username based on
+	#   * supplied first/last
+	#   * extracted first/last (google)
+	#   * screen name (Twitter)
+	#   * or URL (really?)
+        my $username;      
         if ($first_name) {
-            $username = $first_name . " " . $last_name ;
+            $username = $first_name . " " . $last_name;
         } elsif ($last_name) {
-            $username = $last_name  ;
+            $username = $last_name;
+	} elsif ($params->{screen_name}) {
+	    $username = $params->{screen_name};
         } else {
-            $username = $url;
+            $username = $params->{openid_url};
         }
 
-	# Twitter (and other oauth providers) don't provide an email.
-	# We can't use that to reliably link a new oauth entry to a user.
+	# Does a user already exist for this account?  Try looking up by email.
+	# This logic won't work if:
+	# 1. Initially logging in using something like Twitter with doesn't provide email or first/last name.
+	# 2. A user is trying to associate one of these accounts
+	#    with an existing account.
         my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
         @users = map { $_->user } @users;
-
 
         foreach (@users){
 	    next unless $_;
@@ -301,22 +339,17 @@ sub auth_local {
 	    last;
         }
 
-
-	# Not all openid/oauth provide a return email.
-	# This logic won't work if:
-	# 1. Initially logging in using something like Twitter.
-	# 2. A user is trying to associate one of these accounts
-	#    with an existing account.
+	# We're attaching something like a new Google account association to an existing user.
         if ($email && $user) {
             $username = $user->username if ($user->username);
             $c->log->debug("adding openid to existing user $username");
             $user->set_columns({username=>$username, active=>1});
             $user->update();
-	} elsif ($c->user && $auth_type eq 'oauth') {
+	} elsif (($c->user && $auth_type eq 'oauth') || ($params->{provider} eq 'facebook')) {
 	    $user = $c->user unless $user;
-#        } else {
 	}
 
+	# No user exists yet?  Let's create a new one.
 	unless ($user) {
             $c->stash->{prompt_wbid} = 1;
             $c->stash->{redirect} = $redirect;
@@ -324,16 +357,15 @@ sub auth_local {
             $user=$c->model('Schema::User')->create({username=>$username, active=>1}) ;
             $c->model('Schema::Email')->find_or_create({email=>$email, validated=>1, user_id=>$user->id, primary_email=>1}) if $email;
         }
-
-
 	
-	# HARD-CODED!  The following people become admins automatically.
+	# HARD-CODED!  The following people become admins automatically if they've
+	# logged in with this email or openid account.
 	if ($email =~ m{
                         todd\@wormbase\.org            |
+                        todd\@hiline\.co               |
                         abby\@wormbase\.org            |
                         abigail\.cabunoc\@oicr\.on\.ca |
                         lincoln\.stein\@gmail\.com     | 
-                        todd\@hiline\.co               |
                         me\@todd\.co                   |
                         xshi\@wormbase\.org
                        }x) {
@@ -345,21 +377,20 @@ sub auth_local {
 	    $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
         }
 
-	if ($auth_type eq 'oauth') {
-	    warn join("; " ,$user,$user->id,$auth_type,$params->{provider},$params->{screen_name},$authid);
+	# Update the authid entry
+	if ($authid) {
+	    $authid->user_id($user->id);                   # Link to my user.
+	    $authid->auth_type($auth_type);                # One of openid or oauth
+	    $authid->provider($params->{provider});        # twitter, google, etc.
+	    $authid->screen_name($params->{screen_name});  # mostly only used by twitter.
+	    $authid->update();
 	}
-       
-        $authid->user_id($user->id);
-	$authid->auth_type($auth_type);          # One of openid or oauth
-	$authid->provider($params->{provider});  # twitter, google, etc.
-	$authid->screen_name($params->{screen_name});  # mostly only used by twitter.
-        $authid->update();
     }
     
     # Re-authenticate against local DBIx store
     $c->config->{user_session}->{migrate}=1;
     if ( $c->authenticate({ id=>$authid->user_id }, 'members') ) {
-        $c->stash->{'status_msg'}='Local Login was also successful.';
+        $c->stash->{'status_msg'} = 'Local Login was also successful.';
         $c->log->debug('Local Login was also successful.');
         $self->reload($c) ;
 #   	$c->res->redirect($c->user_session->{redirect_after_login});
@@ -395,10 +426,28 @@ sub logout :Path("/logout") {
 }
 
 
+# This is the PRIVATE profile.
 sub profile :Path("/profile") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
-    $c->stash->{'template'}='auth/profile.tt2';
+
+    # Fetch accounts that this user has linked to and key them by provider.
+    # could do this with a group by constraint, too.
+    my @accounts = $c->model('Schema::OpenID')->search({user_id => $c->user->id});
+    foreach my $account (@accounts) {
+	$c->stash->{linked_accounts}->{$account->provider} = $account;
+    }
+
+    # Twitter information
+    if ($self->is_linked_to_twitter($c)) {
+	
+    }
+
+    # Facebook information
+    
+    # Google information
+
+    $c->stash->{template} = 'auth/profile.tt2';
 } 
  
 
@@ -406,7 +455,6 @@ sub profile_update :Path("/profile_update") {
   my ( $self, $c ) = @_;
   my $email    = $c->req->params->{email_address};
   my $username = $c->req->params->{username};
-  my $twitter  = $c->req->params->{twitter};
   my $message;
   if($email){
       my $found;
@@ -425,13 +473,6 @@ sub profile_update :Path("/profile_update") {
     $c->user->username($username);
     $c->user->update();
     $message= $message . "Your name has been updated to $username";
-  }
-
-  # Should be able to do this generically, not for every new profile field.
-  unless ($c->user->twitter =~ /^$twitter$/) {
-      $c->user->twitter($twitter);
-      $c->user->update();
-      $message = $message . "Your Twitter handle has been updated to $twitter";
   }
 
   $c->stash->{message} = $message; 
@@ -457,6 +498,55 @@ sub add_operator :Path("/add_operator") {
 	 $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
     }
 }
+
+    
+sub connect_to_twitter {
+    my ($self,$c) = @_;
+
+    my $consumer_key    = $c->config->{twitter_consumer_key};
+    my $consumer_secret = $c->config->{twitter_consumer_secret};
+
+    my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
+			       consumer_key        => $consumer_key,
+			       consumer_secret     => $consumer_secret,
+	);
+    return $nt;
+}
+
+
+# Has the current user linked their account to Twitter?
+sub is_linked_to_twitter {
+    my ($self,$c) = @_;
+    my $twitter = $c->model('Schema::OpenID')->find({user_id => $c->user->id,
+						     provider => 'twitter' });
+
+    # Authenticate.
+    if ($twitter) {
+	my $nt = $self->connect_to_twitter($c);
+
+	$nt->access_token($twitter->oauth_access_token);
+	$nt->access_token_secret($twitter->oauth_access_token_secret);
+
+	 if ( $nt->authorized ) {
+	     # Get the avatar URL.	     
+	     my $data = $nt->show_user($twitter->screen_name);
+	     $c->stash->{twitter_avatar_url} = $data->{profile_image_url};
+	     $c->stash->{twitter_screen_name} = $twitter->screen_name;    # Here or just in view?
+	 } else { 
+	     # Privs have been revoked. Remove entry from open_id;
+	     $twitter->delete;
+	 }
+	 
+    }
+}
+
+
+# Has the current user linked their account to Facebook?
+# If so, do we still have an active token?
+sub is_linked_to_facebook {
+
+}
+
 
 =head1 AUTHOR
 

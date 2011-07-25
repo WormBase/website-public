@@ -4,17 +4,9 @@
 [%
 
 '<h2>' _ fields.name.data.label; 
-      IF c.user.twitter;
-        '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
-                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
-				  _ c.user.twitter 
-				  _ '</a>'
-				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
-      END;
 '</h2>';
 
 WRAPPER highlight_box;
-
 
    WRAPPER $field_block title="Email";
         fields.email.data.join("<br>");
@@ -38,6 +30,8 @@ WRAPPER highlight_box;
 
 END;
 
+
+extended_social_links(fields.name.data.id);
 
 WRAPPER $field_block title="Address" key="street_address";
    fields.street_address.data.join('<br>');

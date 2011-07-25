@@ -68,8 +68,6 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "last_name", 
   { data_type => "text", is_nullable => 1 },
-  "twitter", 
-  { data_type => "text", is_nullable => 1 },
   "gtalk_key",
   { data_type => "text", is_nullable => 1 },
   "active",
@@ -86,7 +84,6 @@ __PACKAGE__->set_primary_key("id");
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+lEYBqay22QmTazn+Cga1A
 __PACKAGE__->has_many(users_to_roles=>'WormBase::Schema::Result::UserRole', 'user_id');
 __PACKAGE__->has_many(open_ids=>'WormBase::Schema::Result::OpenID', 'user_id');
-#__PACKAGE__->has_many(oauth=>'WormBase::Schema::Result::OAuth', 'user_id');
 __PACKAGE__->has_one(primary_email=>'WormBase::Schema::Result::Email', 'user_id', ,{ where => { validated => 1, primary_email => 1 } });
 __PACKAGE__->has_many(valid_emails=>'WormBase::Schema::Result::Email', 'user_id', ,{ where => { validated => 1 } });
 __PACKAGE__->has_many(email_address=>'WormBase::Schema::Result::Email', 'user_id');

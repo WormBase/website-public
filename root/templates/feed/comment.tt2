@@ -34,7 +34,7 @@
 [% 
    user_login_info;
    IF c.user_exists;
-      linkUser(c.user,'suppress_twitter'); 
+      linkUser(c.user,'suppress_social_links'); 
       ' says: <input style="display:none" id="display-name" value="' _ c.user.username _ '" />';
    END;
 %]
