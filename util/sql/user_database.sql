@@ -5,14 +5,9 @@ GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-            id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
+            user_id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
             username      char(255),
             password      char(255),
-            first_name    char(100),
-            last_name     char(100),
-	    twitter       char(100),
-	    googleplus    char(100),
-	    facebook      char(100),
             gtalk_key	  text,
             active        int(11),
             wbid          char(255),
@@ -59,7 +54,7 @@ CREATE TABLE comments (
 
 DROP TABLE IF EXISTS issues;
 CREATE TABLE issues (
-        id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        issue_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	    reporter_id INTEGER,
 	    responsible_id INTEGER,
 	    title TEXT ,

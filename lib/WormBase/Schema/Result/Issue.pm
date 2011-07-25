@@ -19,7 +19,7 @@ WormBase::Schema::Result::Issue
 __PACKAGE__->table("issues");
 
 __PACKAGE__->add_columns(
-    "id",
+    "issue_id",
     { data_type => "integer", is_nullable => 0 },
     "reporter_id",
     { data_type => "integer", is_nullable => 1 },
@@ -41,7 +41,7 @@ __PACKAGE__->add_columns(
     { data_type => "text", is_nullable => 1 },
     );
 
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key("issue_id");
 
 __PACKAGE__->has_many(threads=>'WormBase::Schema::Result::IssueThread', 'issue_id'); 
 __PACKAGE__->belongs_to(reporter=>'WormBase::Schema::Result::User','reporter_id');

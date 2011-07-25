@@ -410,7 +410,7 @@ sub merge_session_to_user {
 
     my $sid = $c->get_session_id;
     my $s_db = $c->model('Schema::Session')->find({id=>"session:$sid"});
-    my $uid = $c->user->id;
+    my $uid = $c->user->user_id;
 
     my @user_saved = $s_db->user_saved;
 

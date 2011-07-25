@@ -235,7 +235,7 @@ sub get_session {
       my $sid = $c->get_session_id;
       return $c->model('Schema::Session')->find({id=>"session:$sid"});
     }else{
-      return $c->model('Schema::Session')->find({id=>"user:" . $c->user->id});
+      return $c->model('Schema::Session')->find({id=>"user:" . $c->user->user_id});
     }
 }
 
@@ -474,7 +474,7 @@ sub rest_register_POST {
       }  
 
       my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
-      my $user_id = $user->id;
+      my $user_id = $user->user_id;
 
       @emails = split(/,/, $email);
       foreach my $e (@emails){
@@ -618,10 +618,10 @@ sub feed_POST {
         my $user = $c->user;
         unless($c->user_exists){
           $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
-          $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->id});
+          $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->user_id});
         }
 
-        my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
+        my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->user_id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
 
       }
     }
@@ -631,7 +631,7 @@ sub feed_POST {
       if($id){
         foreach (split('_',$id) ) {
         my $issue = $c->model('Schema::Issue')->find($_);
-        $c->log->debug("delete issue #",$issue->id);
+        $c->log->debug("delete issue #",$issue->issue_id);
         $issue->delete();
         $issue->update();
         }
@@ -647,8 +647,8 @@ sub feed_POST {
       $c->log->debug("private: $is_private");
       my $user = $self->check_user_info($c);
       return unless $user;
-      $c->log->debug("create new issue $content ",$user->id);
-      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id,
+      $c->log->debug("create new issue $content ",$user->user_id);
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->user_id,
                                   title=>$title,
                                   page_id=>$page->page_id,
                                   content=>$content,
@@ -694,8 +694,7 @@ sub feed_POST {
         my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
         my $thread_id=1;
         $thread_id = $threads[0]->thread_id +1 if(@threads);
-        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->id});
-#       $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
+        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
       }  
       if($state || $assigned_to || $content){
          
@@ -743,7 +742,7 @@ sub issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email if $_->user} @threads;
  }
- $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
+ $subject = '[WormBase.org] '.$subject.' '.$issue->issue_id.': '.$issue->title;
  
  $c->stash->{issue}=$issue;
  
@@ -1035,7 +1034,7 @@ sub widget_static_POST {
 
       my $widget_revision = $c->model('Schema::WidgetRevision')->create({
                     content=>$widget_content, 
-                    user_id=>$c->user->id, 
+                    user_id=>$c->user->user_id, 
                     timestamp=>time()});
 
       # modifying a widget
@@ -1232,7 +1231,7 @@ sub issue_rss {
           people=>$_->user,
           title=>$_->issue->title,
           page=>$_->issue->page,
-          id=>$_->issue->id,
+          id=>$_->issue->issue_id,
           re=>1,
           } ;
     }

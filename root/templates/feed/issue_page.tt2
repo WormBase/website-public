@@ -12,7 +12,7 @@
 		type: 'POST',
 		url: url,
 		data: {content: $jq("textarea").val(),
-		       issue:[% issue.id %],
+		       issue:[% issue.issue_id %],
                        state:$jq("#issue_status option:selected").val(),
                        severity:$jq("#issue_severity option:selected").val(),
                        assigned_to:$jq("#issue_assigned_to option:selected").val(),
@@ -37,7 +37,7 @@
 
 <div style=" margin:1em 0" >
 <div class="issue-content" >
-  <h2>#[% issue.id %] [% issue.title %] [% IF issue.is_private; '<em>(reported privately)</em>'; END %]</h2>
+  <h2>#[% issue.issue_id %] [% issue.title %] [% IF issue.is_private; '<em>(reported privately)</em>'; END %]</h2>
   <span id="fade">
     Reported by [% linkUser(issue.reporter) %] on [% linkPage(issue.page) %],
     [% USE time_dir = Time.Duration %]
