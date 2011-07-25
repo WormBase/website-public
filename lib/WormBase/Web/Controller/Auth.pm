@@ -269,11 +269,11 @@ sub auth_local {
                         xshi\@wormbase\.org
                        }x) {
 	    my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-	    $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+	    $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->role_id});
 	} elsif ($email && $email =~ /\@wormbase\.org/) {
           # assigning curator role to wormbase.org domain user
           my $role=$c->model('Schema::Role')->find({role=>"curator"}) ;
-          $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->id});
+          $c->model('Schema::UserRole')->find_or_create({user_id=>$user->id,role_id=>$role->role_id});
         }
 
         $openid->user_id($user->id);
@@ -373,7 +373,7 @@ sub add_operator :Path("/add_operator") {
       $key =~ s/\&amp.*//;
       $c->log->debug("get the $key");
       my $role=$c->model('Schema::Role')->find({role=>"operator"}) ;
-      $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->id,role_id=>$role->id});
+      $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->id,role_id=>$role->role_id});
       $c->user->set_columns({"gtalk_key"=>$key});
       $c->user->update();
       $c->res->redirect($c->uri_for("me"));

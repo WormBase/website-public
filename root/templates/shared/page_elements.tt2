@@ -143,9 +143,8 @@
     </tr>
     [% even = 1 %]
     [% FOREACH IS IN issues %]
-      [% is_private = IS.is_private %]
 
-      [% IF is_private.search('yes'); 
+      [% IF IS.is_private; 
          UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
       END;
       %]
@@ -155,7 +154,7 @@
       <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
         <td><a href="[% url %]">[% IS.id %]</a></td>
         <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-        [% IF is_private.search('yes') ; ' <em>reported privately</em>' ; END %]</td>
+        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]

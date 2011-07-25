@@ -347,7 +347,7 @@ sub update_role_POST {
     my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
     my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
     
-    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->role_id);
     $users_to_roles->delete()  unless($checked eq 'true');
     $users_to_roles->update();
        
@@ -605,7 +605,7 @@ sub feed_POST {
         my $id = $c->req->params->{id};
         if($id){
           my $comment = $c->model('Schema::Comment')->find($id);
-          $c->log->debug("delete comment #",$comment->id);
+          $c->log->debug("delete comment #",$comment->comment_id);
           $comment->delete();
           $comment->update();
         }
@@ -1210,48 +1210,48 @@ sub comment_rss {
                           people=>$_->reporter,
                           page=>$_->page,
                           content=>$_->content,
-                          id=>$_->id,
+                          id=>$_->comment_id,
              };
      } @comments;
  return \@rss;
 }
 
 sub issue_rss {
- my ($self,$c,$count) = @_;
- my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} );
-     
-    my %seen;
-    my @rss;
-    while($_ = $threads->next) {
-      unless(exists $seen{$_->issue_id}) {
-      $seen{$_->issue_id} =1 ;
-      my $time = ago((time() - $_->timestamp), 1);
-      push @rss, {  time=>$_->timestamp,
-            time_lapse=>$time,
-            people=>$_->user,
-            title=>$_->issue->title,
-            page=>$_->issue->page,
-            id=>$_->issue->id,
-            re=>1,
-            } ;
-      }
-      last if(scalar(keys %seen)>=$count)  ;
-    };
+  my ($self,$c,$count) = @_;
+  my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+  my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+    
+  my %seen;
+  my @rss;
+  while($_ = $threads->next) {
+    unless(exists $seen{$_->issue_id}) {
+    $seen{$_->issue_id} =1 ;
+    my $time = ago((time() - $_->timestamp), 1);
+    push @rss, {  time=>$_->timestamp,
+          time_lapse=>$time,
+          people=>$_->user,
+          title=>$_->issue->title,
+          page=>$_->issue->page,
+          id=>$_->issue->id,
+          re=>1,
+          } ;
+    }
+    last if(scalar(keys %seen)>=$count)  ;
+  };
 
-    map {    
-      my $time = ago((time() - $_->timestamp), 1);
-        push @rss, {      time=>$_->timestamp,
-                          time_lapse=>$time,
-                          people=>$_->reporter,
-                          title=>$_->title,
-                          page=>$_->page,
-                  id=>$_->id,
-            };
-    } @issues;
+  map {    
+    my $time = ago((time() - $_->timestamp), 1);
+      push @rss, {      time=>$_->timestamp,
+                        time_lapse=>$time,
+                        people=>$_->reporter,
+                        title=>$_->title,
+                        page=>$_->page,
+                id=>$_->id,
+          };
+  } @issues;
 
-    my @sort = sort {$b->{time} <=> $a->{time}} @rss;
-    return \@sort;
+  my @sort = sort {$b->{time} <=> $a->{time}} @rss;
+  return \@sort;
 }
 
 sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
