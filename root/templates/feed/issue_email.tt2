@@ -6,7 +6,7 @@
 
 [% USE date %]
 <p>[% IF new==1 ; obj= issue;  ELSE ; obj= new; END; %]
-[% username(obj.owner) %] on [% date.format(obj.submit_time, '%a, %d %b %y %H:%M:%S', 'en_GB') %]
+[% username(obj.owner) %] on [% date.format(obj.timestamp, '%a, %d %b %y %H:%M:%S', 'en_GB') %]
 </p>
 
 <p>Comment:

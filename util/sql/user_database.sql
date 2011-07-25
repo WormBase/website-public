@@ -65,9 +65,9 @@ CREATE TABLE oauth (
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
-            reporter_id INTEGER,
+            user_id INTEGER,
             page_id INTEGER,
-            submit_time char(50),
+            timestamp INTEGER,
             content TEXT
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE issues (
 	    responsible_id INTEGER,
 	    title TEXT ,
         page_id INTEGER,
-	    submit_time char(50),
+	    timestamp char(50),
 	    state char(10),
         severity char(10),
         is_private char(10),
@@ -90,7 +90,7 @@ CREATE TABLE issues_threads (
         thread_id  INTEGER,
         issue_id INTEGER,
 	    user_id INTEGER,
-	    submit_time char(50),
+	    timestamp char(50),
 	    content TEXT,
         PRIMARY KEY (thread_id, issue_id)
 );

@@ -21,10 +21,10 @@ __PACKAGE__->table("comments");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_nullable => 0 },
-  "reporter_id",
+  "user_id",
   { data_type => "integer", is_nullable => 1 },
-   "submit_time",
-  { data_type => "char(50)", is_nullable => 1 },
+   "timestamp",
+  { data_type => "integer", is_nullable => 1 },
   "page_id",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "content",
@@ -34,7 +34,7 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->belongs_to(page=>'WormBase::Schema::Result::Page','page_id');
-__PACKAGE__->belongs_to(reporter=>'WormBase::Schema::Result::User','reporter_id');
+__PACKAGE__->belongs_to(reporter=>'WormBase::Schema::Result::User','user_id');
 
 #__PACKAGE__->has_many(issues_to_threads=>'WormBase::Schema::Result::IssueThread', 'issue_id'); 
 # __PACKAGE__->belongs_to(owner=>'WormBase::Schema::Result::User','reporter');

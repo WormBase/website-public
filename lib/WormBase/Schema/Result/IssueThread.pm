@@ -27,8 +27,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
    "user_id",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
-    "submit_time",
-  { data_type => "char(50)", is_nullable => 1 },
+    "timestamp",
+  { data_type => "integer", is_nullable => 1 },
     "content",
   { data_type => "text", is_nullable => 1 },
 );

@@ -41,7 +41,7 @@
   <span id="fade">
     Reported by [% linkUser(issue.reporter) %] on [% linkPage(issue.page) %],
     [% USE time_dir = Time.Duration %]
-    created [% time_dir.ago(current_time - issue.submit_time, 1) %]
+    created [% time_dir.ago(current_time - issue.timestamp, 1) %]
   </span>
   <p>[% issue.content %] </p>
 </div>
@@ -67,7 +67,7 @@
     <li id="reply-[% id %]">
     
     [% linkUser(th.user) %]
-    <span id="fade">[% time_dir.ago(current_time - th.submit_time, 1) %]</span>
+    <span id="fade">[% time_dir.ago(current_time - th.timestamp, 1) %]</span>
     <a href="#reply-[% id %]" style="position:absolute;right:1em">#[% id %]</a>
     <p>[% th.content %]</p>
     </li>
