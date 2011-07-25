@@ -118,7 +118,7 @@ sub workbench_GET {
             $saved->update(); 
       } else{
             $c->stash->{notify} = "$name has been added to your $loc"; 
-            $c->model('Schema::UserSave')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
+            $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
     }
     $c->stash->{noboiler} = 1;
@@ -302,12 +302,12 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
 
-    @hist = sort { $b->get_column('latest_visit') <=> $a->get_column('latest_visit')} @hist;
+    @hist = sort { $b->get_column('timestamp') <=> $a->get_column('timestamp')} @hist;
 
     my @histories;
     map {
       if($_->visit_count > 0){
-        my $time = $_->get_column('latest_visit');
+        my $time = $_->get_column('timestamp');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
                             visits => $_->visit_count,
                             page => $_->page,
@@ -332,8 +332,8 @@ sub history_POST {
 
     my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
     $c->log->debug("logging:" . $page->page_id . " is_obj: " . $is_obj);
-    my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $hist->set_column(latest_visit=>time());
+    my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
+    $hist->set_column(timestamp=>time());
     $hist->set_column(visit_count=>($hist->visit_count + 1));
     $hist->update;
 }
@@ -983,9 +983,9 @@ sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("getting static widget");
     if($c->req->params->{history}){ # just getting history of widget
-      my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
+      my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'timestamp DESC'});
       map {
-        my $time = DateTime->from_epoch( epoch => $_->widget_date);
+        my $time = DateTime->from_epoch( epoch => $_->timestamp);
         $_->{time_lapse} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
       } @revisions;
       $c->stash->{revisions} = \@revisions if @revisions;
@@ -1000,7 +1000,7 @@ sub widget_static_GET {
           $c->stash->{rev} = $rev;
           my $document = $parser->parse($rev->content);
           $c->stash->{rev_content} = Text::WikiText::Output::HTML->new->dump($document);
-          my $time = DateTime->from_epoch( epoch => $rev->widget_date);
+          my $time = DateTime->from_epoch( epoch => $rev->timestamp);
           $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
         }
       }
@@ -1008,7 +1008,7 @@ sub widget_static_GET {
         my $document = $parser->parse($widget->content->content);
         $c->stash->{widget_content} = Text::WikiText::Output::HTML->new->dump($document);
       }
-      $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->widget_date), 1) if($widget_id > 0);
+      $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->timestamp), 1) if($widget_id > 0);
       $c->stash->{path} = $c->request->params->{path};
     }
     $c->stash->{edit} = $c->req->params->{edit};
@@ -1036,7 +1036,7 @@ sub widget_static_POST {
       my $widget_revision = $c->model('Schema::WidgetRevision')->create({
                     content=>$widget_content, 
                     user_id=>$c->user->id, 
-                    widget_date=>time()});
+                    timestamp=>time()});
 
       # modifying a widget
       if($widget_id > 0){
@@ -1053,7 +1053,7 @@ sub widget_static_POST {
           $widget_revision->widget($c->model('Schema::Widgets')->create({ 
                     page_id=>$page->page_id, 
                     widget_title=>$widget_title, 
-                    widget_revision_id=>$widget_revision->widget_revision_id}));
+                    current_revision_id=>$widget_revision->widget_revision_id}));
           $widget_id = $widget_revision->widget->widget_id;
       }else{
         $self->status_bad_request(
@@ -1121,20 +1121,20 @@ sub widget_home_GET {
 sub recently_saved {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
-    my @saved = $c->model('Schema::UserSave')->search(undef,
+    my @saved = $c->model('Schema::Starred')->search(undef,
                 {   select => [ 
                       'page_id', 
-                      { max => 'time_saved', -as => 'latest_save' }, 
+                      { max => 'timestamp', -as => 'latest_save' }, 
                     ],
                     as => [ qw/
                       page_id 
-                      time_saved
+                      timestamp
                     /], 
                     order_by=>'latest_save DESC', 
                     group_by=>[ qw/page_id/]
                 })->slice(0, $count-1);
 
-    my @ret = map { $self->_get_search_result($c, $api, $_->page, ago((time() - $_->time_saved), 1)) } @saved;
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, ago((time() - $_->timestamp), 1)) } @saved;
 
     $c->stash->{type} = 'all'; 
 
@@ -1149,7 +1149,7 @@ sub most_popular {
     my $interval = "> UNIX_TIMESTAMP() - 86400"; # one day ago
 #     my $interval = "> UNIX_TIMESTAMP() - 3600"; # one hour ago
 #     my $interval = "> UNIX_TIMESTAMP() - 60"; # one minute ago
-    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1, latest_visit => \$interval},
+    my @saved = $c->model('Schema::History')->search({is_obj=>1, timestamp => \$interval},
                 {   select => [ 
                       'page.page_id', 
                       { sum => 'visit_count', -as => 'total_visit' }, 
@@ -1279,7 +1279,7 @@ sub widget_me_GET {
     my @reports = $session->user_saved->search({save_to => $widget});
 #     $c->log->debug("getting saved reports @reports for user $session->id");  
 
-    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->time_saved), 1) ) } @reports;
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 

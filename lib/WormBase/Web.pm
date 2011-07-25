@@ -414,7 +414,7 @@ sub merge_session_to_user {
 
     my @user_saved = $s_db->user_saved;
 
-    my $user_items = $c->model('Schema::UserSave')->search_rs({session_id=>"user:$uid"});
+    my $user_items = $c->model('Schema::Starred')->search_rs({session_id=>"user:$uid"});
 
     foreach my $saved_item (@user_saved){
       unless($user_items->find({page_id=>$saved_item->page_id})){
@@ -425,14 +425,14 @@ sub merge_session_to_user {
       $saved_item->update();
     }
 
-    my $user_history = $c->model('Schema::UserHistory')->search_rs({session_id=>"user:$uid"});
+    my $user_history = $c->model('Schema::History')->search_rs({session_id=>"user:$uid"});
     my @save_history = $s_db->user_history;
     foreach my $s_history (@save_history){
       my $u_history = $user_history->find({page_id=>$s_history->page_id});
       unless($u_history){
         $s_history->session_id("user:$uid");
       }else{
-        $u_history->latest_visit < $s_history->latest_visit ? $u_history->latest_visit($s_history->latest_visit) : '' ;
+        $u_history->timestamp < $s_history->timestamp ? $u_history->timestamp($s_history->timestamp) : '' ;
         $u_history->visit_count($u_history->visit_count + $s_history->visit_count);
         $s_history->delete();
         $u_history->update();
