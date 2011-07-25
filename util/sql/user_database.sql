@@ -1,7 +1,6 @@
 DROP DATABASE IF EXISTS wormbase_user;
 CREATE DATABASE wormbase_user;
 USE wormbase_user;
-GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -38,10 +37,27 @@ CREATE TABLE users_to_roles (
 
 DROP TABLE IF EXISTS openid;
 CREATE TABLE openid (
-            openid_url char(255) PRIMARY KEY,
-            user_id INTEGER
-            
+            auth_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            openid_url char(255),
+            user_id INTEGER,            
+            provider char(255),
+            oauth_access_token char(255),
+            oauth_access_token_secret char(255),
+            screen_name char(255),
+            auth_type char(20)
 );
+
+DROP TABLE IF EXISTS oauth;
+CREATE TABLE oauth (
+       oauth_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+       user_id INTEGER,
+       provider char(255),
+       access_token char(255),
+       access_token_secret char(255),
+       username char(255)
+);
+
+
 
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
