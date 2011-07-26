@@ -3,6 +3,9 @@
     <textarea id="widget_content" 
               name="widget_content" 
               style="width:95%;min-height:30em;">[% widget.content.content; %]</textarea>
+    order:
+    <input type="text" id="widget-order" value="[% widget.widget_order || 0 %]"/>
+    <br />
     <br />
     <input type="submit" 
            value="[% IF widget; 'Save widget'; ELSE; 'Create widget'; END; %]" 
@@ -18,6 +21,7 @@
                onClick='StaticWidgets.delete("[% widget.widget_id %]");'/>
       [% END %]
     [% END %]
+
   <script>
     var widget = $jq("#static-widget-[% widget.widget_id || '0' %]");
     var title = widget.find("h3 span.widget-title");

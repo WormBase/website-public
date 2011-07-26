@@ -251,13 +251,14 @@ var StaticWidgets = {
       if(!widget_id){ widget_id = "0"; }
       var widget = $jq("li#static-widget-" + widget_id);
       var widget_title = widget.find("input#widget_title").val();
+      var widget_order = widget.find("input#widget-order").val();
       var widget_content = widget.find("textarea#widget_content").val();
 
       $jq.ajax({
             type: "POST",
             url: "/rest/widget/static/" + widget_id,
             dataType: 'json',
-            data: {widget_title:widget_title, path:path, widget_content:widget_content},
+            data: {widget_title:widget_title, path:path, widget_content:widget_content, widget_order:widget_order},
             success: function(data){
                   StaticWidgets.reload(widget_id, 0, data.widget_id);
               },
