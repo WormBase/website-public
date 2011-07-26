@@ -23,4 +23,6 @@
       go to <a href='[% c.uri_for("/")%]'>WormBase home</a>
     [% END %]
   </span></p>
+    <div style="clear:both"></div>
 </div>
+    <div style="clear:both"></div>

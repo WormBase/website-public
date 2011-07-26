@@ -1031,6 +1031,7 @@ sub widget_static_POST {
       }
       my $widget_title = $c->request->body_parameters->{widget_title};
       my $widget_content = $c->request->body_parameters->{widget_content};
+      my $widget_order = $c->request->body_parameters->{widget_order};
 
       my $widget_revision = $c->model('Schema::WidgetRevision')->create({
                     content=>$widget_content, 
@@ -1043,6 +1044,7 @@ sub widget_static_POST {
         $widget->content($widget_revision);
         $widget_revision->widget_id($widget_id);
         $widget->widget_title($widget_title);
+        $widget->widget_order($widget_order);
         $widget->update();
 
       #creating a widget - only admin
@@ -1052,6 +1054,7 @@ sub widget_static_POST {
           $widget_revision->widget($c->model('Schema::Widgets')->create({ 
                     page_id=>$page->page_id, 
                     widget_title=>$widget_title, 
+                    widget_order=>$widget_order,
                     current_revision_id=>$widget_revision->widget_revision_id}));
           $widget_id = $widget_revision->widget->widget_id;
       }else{

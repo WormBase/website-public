@@ -1299,7 +1299,14 @@ END;
             type = 'static'
             };
     %]
-    [% widgets.push(w) %]
+    [% IF widget.widget_order > 0 %]
+      [% widget_order = widget.widget_order %]
+
+      [% # I assign to ws just so that the result doesn't print %]
+      [% ws = widgets.splice(widget_order, 0, [w]) %]
+    [% ELSE %]
+      [% widgets.push(w) %]
+    [% END %]
   [% END %]
   [% IF c.check_user_roles('admin') %]
     [% w = { id = 'static-widget-0'
@@ -1308,9 +1315,9 @@ END;
             type = 'static'
             };
     %]
-    [% widgets.push(w) %]
-  [% END %]
 
+      [% widgets.push(w) %]
+  [% END %]
 [% END %]
 
 
