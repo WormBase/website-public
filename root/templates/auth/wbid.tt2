@@ -84,7 +84,9 @@ select yourself to link your wormbase information <br /><br />
           success: function(data){
 //             if(!(confirm)){ alert("an email has been sent to " + email);}
 //             window.location.href="[% c.user_session.redirect_after_login  || '/' %]";
-                  $jq("#content").html(data);
+                  var content = $jq("#content");
+                  content.children().not("#spacer").remove();
+                  content.prepend(data);
             },
           error: function(request,status,error) {
               if(xmlHttpRequest.readyState == 0 || xmlHttpRequest.status == 0) 
