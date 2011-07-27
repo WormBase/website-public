@@ -193,7 +193,9 @@ select yourself to link your wormbase information <br /><br />
                 if(data==0) {
                 alert("The email address has already been registered!"); 
                 } else {
-                  $jq("#content").html(data);
+                  var content = $jq("#content");
+                  content.children().not("#spacer").remove();
+                  content.prepend(data);
                 }
             },
           error: function(request,status,error) {
