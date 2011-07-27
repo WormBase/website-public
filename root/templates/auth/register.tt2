@@ -1,7 +1,6 @@
 <!-- Register form -->
 
 [% IF noboiler %]
-<!-- <div style="float:left;"> -->
   <form method="post" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <b><center>Join the online worm community!</center></b> 
@@ -42,7 +41,6 @@
              </div>
 
 </form>
-<!-- </div> -->
 
 
 <script>
@@ -54,9 +52,7 @@ hideTextOnFocus("#password");
 </script>
 
 [% ELSE %]
-  [%# change this to secure_uri_for when https works %]
-<!-- <div style="float:left;"> -->
-<!--   <form method="post" id="register-form" action="[% c.uri_for("/register") %]" style="float:left"> -->
+
   <form method="post" id="register-form" action="[% c.secure_uri_for("/register") %]" style="float:left;">
 
 <h1>Join the online worm community!</h1>
@@ -137,17 +133,18 @@ select yourself to link your wormbase information <br /><br />
           url: "/auth/info/" + wbid,
           dataType: 'json',
           success: function(data){
-                $jq("input#name").attr("value", data.fullname).attr("disabled", 1);
-                var email = "" + data.email;
+                $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
+                var email = new String(data.email);
                 if(data.email && data.status_ok){
                   var re = new RegExp($jq("input#email").attr("value"),"gi");
                   if (((email.match(re))) || !($jq("input#email").attr("value"))){
-                    $jq("#email").attr("disabled", 1).parent().hide(); 
+                    $jq("#email").attr("disabled", "disabled").parent().hide(); 
+
                   }
                   $jq("input#wbemail").attr("value", email).parent().show();
                 }else{
                   $jq("input#wbemail").attr("value", "").parent().hide();
-                  $jq("#email").attr("disabled", 0).parent().show(); 
+                  $jq("#email").removeAttr("disabled").parent().show(); 
                 }
                 $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
                 $jq("input#wbid").attr("value", data.wbid);
@@ -166,8 +163,8 @@ select yourself to link your wormbase information <br /><br />
   function resetFields(){
     $jq(".ui-state-highlight").removeClass("ui-state-highlight");
     $jq("input#wbemail").attr("value", "").parent().hide();
-    $jq("input#email").attr("value", "[% email %]").attr("disabled", 0).parent().show();
-    $jq("input#name").attr("value", "[% full_name %]").attr("disabled", 0);
+    $jq("input#email").attr("value", "[% email %]").removeAttr("disabled").parent().show();
+    $jq("input#name").attr("value", "[% full_name %]").removeAttr("disabled");
     $jq("input#wbid").attr("value", "");
     $jq(".register-notice").hide();
   }

@@ -23,19 +23,19 @@ $jq(document).ready(function(){
        	   });
 
 function validate_fields(email,username, password, confirm_password, wbemail){
-	if( (email.val() =="") && (wbemail.val() == "")){
+	if( (email.val() =="") && (!wbemail || wbemail.val() == "")){
 		      email.focus().addClass("ui-state-error");return false;
 	} else if( email.val() && (validate_email(email.val(),"Not a valid email address!")==false)) {
 		      email.focus().addClass("ui-state-error");return false;
-	} else if( username.val() =="") {
-		      username.focus().addClass("ui-state-error"); return false;
 	} else if(password) {
-	    if( password.val() ==""){
-		      password.focus().addClass("ui-state-error");return false;
-	    } else if( password.val() != confirm_password.val()) {
-			alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
-	    }  
-	} else {
+        if( password.val() ==""){
+              password.focus().addClass("ui-state-error");return false;
+        } else if( confirm_password && (password.val() != confirm_password.val())) {
+            alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
+        }  
+    } else if( username && username.val() =="") {
+		      username.focus().addClass("ui-state-error"); return false;
+	}  else {
 	  return true;
 	}
 }

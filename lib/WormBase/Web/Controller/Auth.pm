@@ -110,12 +110,12 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
      if ( $email && $password ) {
         my $rs = $c->model('Schema::User')->search({active=>1, email=>$email, validated=>1, password => { '!=', undef }},
                 {   select => [ 
-                      'id',
+                      'me.user_id',
                       'password', 
                       'username',
                     ],
                     as => [ qw/
-                      id
+                      user_id
                       password
                       username
                     /], 

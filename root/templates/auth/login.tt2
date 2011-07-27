@@ -2,6 +2,7 @@
 [% IF reload || error_notice  %] 
    [% IF error_notice %]
       alert("Login not successful!");
+      window.location = "/";
    [% ELSIF prompt_wbid %]
       opener.location.href="[% c.uri_for('/auth/wbid') %]?redirect=[% redirect %]";
    [% ELSIF logout || ! operator %]
@@ -33,7 +34,7 @@ hideTextOnFocus(".password");
         <input class="password" type="password" name="password" size="22"/>
     </div>
     <div class="login-holder" style="margin: -0.2em 0 0.5em; padding:0 1em;">
-      <input type="submit" value="Login" id="login"/>
+      <input type="submit" onClick='var form = $jq("#login-form"); return validate_fields(form.find("input.email"), null, form.find("input.password")  );' value="Login" id="login"/>
       <div id="fade" style="padding:0 1em;float:right;margin-top:-3px;"><input type="checkbox" id="remember" name="remember" size="10">Remember me</input><br />
                       <a href="[% c.uri_for('/register') %]" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/register") %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' style="padding:0;margin:0;">create an account</a>
       </div>
@@ -47,21 +48,9 @@ hideTextOnFocus(".password");
           <span>Google</span>
       </button>
       <br style="clear:both" />
-[% IF 0 %]
-      <button class="social_buttons sb_twitter sb_24" onClick="openid.signin('twitter');">
-          <span>Twitter</span>
-      </button>
-      <br style="clear:both" />
-[% END %]
       <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');">
           <span>Facebook</span>
       </button>
-[% IF 0 %]
-      <br style="clear:both" />
-      <button class="social_buttons sb_linkedin sb_24" onClick="openid.signin('linkedin');">
-          <span>LinkedIn</span>
-      </button>
-[% END %]
     </div>
   </div>
 </div>
