@@ -558,9 +558,11 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
-
-      $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
-
+      if($widget=~m/^static-widget-([\d])/){
+        $c->stash->{url} = $c->uri_for('widget/static', $1);
+      }else{
+        $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
+      }
     }else{
 
       my $url = $c->req->params->{url};
@@ -1013,7 +1015,35 @@ sub widget_static_GET {
     $c->stash->{edit} = $c->req->params->{edit};
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "shared/widgets/static.tt2";
-    $c->forward('WormBase::Web::View::TT');
+
+
+
+    if($c->stash->{widget}){
+      my $widget = $c->stash->{widget};
+      my $headers = $c->req->headers;
+      # Forward to the view for rendering HTML.
+      my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
+      $c->detach('WormBase::Web::View::TT') unless($format) ;
+      
+      my $uri = $c->uri_for("/rest/widget",$widget_id);
+      $self->status_ok($c, entity => {
+      id   => $widget_id,
+      name    => $widget->widget_title,
+      content => $widget->content->content,
+      uri     => "$uri"
+              }
+      );
+
+    $format ||= 'text/html';
+    if ($format =~m/text\/html/) {
+      $c->forward('WormBase::Web::View::TT');
+      return;
+    }
+    my $filename = "static-widget-" . $widget_id.".".$c->config->{api}->{content_type}->{$format};
+    $c->log->debug("$filename download in the format: $format");
+    $c->response->header('Content-Type' => $format);
+    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
+   }else{$c->forward('WormBase::Web::View::TT');}
 }
 
 sub widget_static_POST {

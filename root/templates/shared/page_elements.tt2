@@ -608,53 +608,6 @@ END;
   [% END %]
 [% END %]
 
-[% BLOCK widget_block %]
-   <!-- start [% widget.name %] widget -->
-   <section class="widget">
-          
-          <div class="primary-container">
-                <header>         
-                     <h3>[% widget.title %]</h3>
-                </header>
-
-            [%# Porque? %]
-                <a name="[% widget.name %]"></a>
-
-                <div id="[%- widget.name -%]"></div>
-                [% content %]
-
-                <footer>
-                <div id="widget-footer">
-                    Download: 
-                    [% FOREACH type IN c.config.api.content_type %]
-                        <a class="ajax [%- widget.name -%]" href="[% c.uri_for('/rest','widget',class,object.name.data.id,widget.name) %]">
-                             [%- type -%]
-                        </a>
-                        [% UNLESS loop.last %] | [% END %]
-                     [% END %]
-                </div>
-                </footer>
-
-      </div>
-      
-   </section>
-
-   <!-- end [% widget.name %] widget -->
-
-   [%# server_details($widget.name _ " widget") %]
-
-[% END %]
-
-[% BLOCK home_box %]
-  <div id="[% id %]" class="[% class %]">
-    <div class="content-box"><h3>[% title %]</h3>
-    <div class="inner-box">
-      [% content %]
-    </div>
-    </div>
-  </div>
-[% END %]
-
 
 [% BLOCK widget_sortable_block %]
  
