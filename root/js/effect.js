@@ -245,7 +245,6 @@ function hideTextOnFocus(selector){
   });
 }
 
-
 var StaticWidgets = {
   update: function(widget_id, path){
       if(!widget_id){ widget_id = "0"; }
