@@ -15,15 +15,15 @@
 <div id="comments">
 [% FOREACH cm IN comments %]
   <div class="comment-box">
-    [% IF c.check_user_roles('admin') || c.check_user_roles('curator') || (c.user.id == cm.reporter_id) %]
-      <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
+    [% IF c.check_user_roles('admin') || c.check_user_roles('curator') || (c.user.id == cm.user_id) %]
+      <a tip="delete comment" class="tip-simple tr comment-delete" id="[% cm.comment_id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
     [% END %]
 
     [% linkUser(cm.reporter) %]
     <br clear="all">
     [% cm.content %] <br />
 
-    <span id="fade">[%  time_dir.ago((current_time - cm.submit_time), 1)  %]</span>
+    <span id="fade">[%  time_dir.ago((current_time - cm.timestamp), 1)  %]</span>
   </div>
 [% END %]
 
@@ -34,7 +34,7 @@
 [% 
    user_login_info;
    IF c.user_exists;
-      linkUser(c.user,'suppress_twitter'); 
+      linkUser(c.user,'suppress_social_links'); 
       ' says: <input style="display:none" id="display-name" value="' _ c.user.username _ '" />';
    END;
 %]

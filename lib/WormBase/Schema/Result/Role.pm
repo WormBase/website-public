@@ -33,12 +33,12 @@ __PACKAGE__->table("roles");
 =cut
 
 __PACKAGE__->add_columns(
-  "id",
+  "role_id",
   { data_type => "integer", is_nullable => 0 },
   "role",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "char(255)", is_nullable => 1 },
 );
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key("role_id");
 
 
 # Created by DBIx::Class::Schema::Loader v0.07001 @ 2010-08-20 14:27:11

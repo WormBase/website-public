@@ -174,8 +174,7 @@
 	    var feed = $jq(this).closest('#issues-new');
 	    var email = feed.find("#email");
 	    var username= feed.find("#display-name");
-        var is_private = 'no';
-        if(feed.find("#isprivate:checked")) { is_private = 'yes'; }
+        var is_private = feed.find("#isprivate:checked").size();
 	    if(email.attr('id') && username.attr('id')) {
 	       if(validate_fields(email,username)==false) {return false;}
 	    }  

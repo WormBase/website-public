@@ -1,18 +1,12 @@
 DROP DATABASE IF EXISTS wormbase_user;
 CREATE DATABASE wormbase_user;
 USE wormbase_user;
-GRANT ALL PRIVILEGES ON `wormbase_user`.* TO 'wormbase'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-            id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
+            user_id            INTEGER AUTO_INCREMENT PRIMARY KEY, 
             username      char(255),
             password      char(255),
-            first_name    char(100),
-            last_name     char(100),
-	    twitter       char(100),
-	    googleplus    char(100),
-	    facebook      char(100),
             gtalk_key	  text,
             active        int(11),
             wbid          char(255),
@@ -30,8 +24,8 @@ CREATE TABLE email(
 
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
-            id   INTEGER PRIMARY KEY,
-            role TEXT
+            role_id   INTEGER PRIMARY KEY,
+            role char(255)
 );
 
 DROP TABLE IF EXISTS users_to_roles;
@@ -43,31 +37,48 @@ CREATE TABLE users_to_roles (
 
 DROP TABLE IF EXISTS openid;
 CREATE TABLE openid (
-            openid_url char(255) PRIMARY KEY,
-            user_id INTEGER
-            
+            auth_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            openid_url char(255),
+            user_id INTEGER,            
+            provider char(255),
+            oauth_access_token char(255),
+            oauth_access_token_secret char(255),
+            screen_name char(255),
+            auth_type char(20)
 );
+
+DROP TABLE IF EXISTS oauth;
+CREATE TABLE oauth (
+       oauth_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+       user_id INTEGER,
+       provider char(255),
+       access_token char(255),
+       access_token_secret char(255),
+       username char(255)
+);
+
+
 
 DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
-            id INTEGER AUTO_INCREMENT PRIMARY KEY,
-            reporter_id INTEGER,
+            comment_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            user_id INTEGER,
             page_id INTEGER,
-            submit_time char(50),
+            timestamp INTEGER,
             content TEXT
 );
 
 DROP TABLE IF EXISTS issues;
 CREATE TABLE issues (
-        id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        issue_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	    reporter_id INTEGER,
 	    responsible_id INTEGER,
 	    title TEXT ,
         page_id INTEGER,
-	    submit_time char(50),
+	    timestamp char(50),
 	    state char(10),
         severity char(10),
-        is_private char(10),
+        is_private BOOLEAN,
 	    content TEXT 
 );
 
@@ -76,18 +87,18 @@ CREATE TABLE issues_threads (
         thread_id  INTEGER,
         issue_id INTEGER,
 	    user_id INTEGER,
-	    submit_time char(50),
+	    timestamp char(50),
 	    content TEXT,
         PRIMARY KEY (thread_id, issue_id)
 );
 
-DROP TABLE IF EXISTS user_saved;
-CREATE TABLE user_saved (
-		user_saved_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+DROP TABLE IF EXISTS starred;
+CREATE TABLE starred (
 		session_id char(72),
 		page_id INTEGER,
         save_to char(50),
-        time_saved INTEGER
+        timestamp INTEGER,
+        PRIMARY KEY (session_id, page_id)
 );
 
 DROP TABLE IF EXISTS pages;
@@ -98,11 +109,11 @@ CREATE TABLE pages (
         is_obj BOOLEAN
 );
 
-DROP TABLE IF EXISTS user_history;
-CREATE TABLE user_history (
+DROP TABLE IF EXISTS history;
+CREATE TABLE history (
 		session_id char(72),
 		page_id INTEGER,
-        latest_visit INTEGER,
+        timestamp INTEGER,
         visit_count INTEGER,
         PRIMARY KEY (session_id, page_id)
 );
@@ -111,7 +122,7 @@ INSERT INTO `roles` VALUES ('1','admin'),('2','curator'),('3','user'),('4','oper
 
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
-        id           char(72) primary key,
+        session_id     char(72) primary key,
         session_data text,
         expires      int(10)
     );
@@ -123,7 +134,7 @@ CREATE TABLE widgets (
         page_id INTEGER,
         widget_title char(72),
         widget_order INTEGER,
-        widget_revision_id INTEGER
+        current_revision_id INTEGER
 );
 
 
@@ -133,7 +144,15 @@ CREATE TABLE widget_revision (
         widget_id INTEGER,
         content text,
         user_id INTEGER,
-        widget_date char(50)
+        timestamp INTEGER
 );
 
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages (
+        message_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        message text,
+        message_type char(72),
+        timestamp INTEGER
+);
 
+INSERT INTO `users_to_roles` VALUES ('1', '1');

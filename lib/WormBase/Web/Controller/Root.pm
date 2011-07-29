@@ -91,8 +91,8 @@ sub draw :Path("/draw") Args(1) {
 
 sub issue_rss {
  my ($self,$c,$count) = @_;
- my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
+ my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} );
      
     my %seen;
     my @rss;
@@ -100,11 +100,11 @@ sub issue_rss {
       unless(exists $seen{$_->issue_id}) {
 	  $seen{$_->issue_id} =1 ;
 	  
-	  push @rss, {	time=>$_->submit_time,
+	  push @rss, {	time=>$_->timestamp,
 			people=>$_->user,
 			title=>$_->issue->title,
 			location=>$_->issue->page,
-			id=>$_->issue->id,
+			id=>$_->issue->issue_id,
 			re=>1,
 		    } ;
       }
@@ -112,11 +112,11 @@ sub issue_rss {
     };
 
     map {	 
-		push @rss, {      time=>$_->submit_time,
-					      people=>$_->owner,
+		push @rss, {      time=>$_->timestamp,
+					      people=>$_->reporter,
 					      title=>$_->title,
 					      location=>$_->page,
-				  id=>$_->id,
+				  id=>$_->issue_id,
 			};
 	} @issues;
 
