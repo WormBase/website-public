@@ -118,7 +118,7 @@ sub workbench_GET {
             $saved->update(); 
       } else{
             $c->stash->{notify} = "$name has been added to your $loc"; 
-            $c->model('Schema::UserSave')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, time_saved=>time()}) ;
+            $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
     }
     $c->stash->{noboiler} = 1;
@@ -233,9 +233,9 @@ sub get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
       my $sid = $c->get_session_id;
-      return $c->model('Schema::Session')->find({id=>"session:$sid"});
+      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
     }else{
-      return $c->model('Schema::Session')->find({id=>"user:" . $c->user->id});
+      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
     }
 }
 
@@ -302,12 +302,12 @@ sub history_GET {
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
 
-    @hist = sort { $b->get_column('latest_visit') <=> $a->get_column('latest_visit')} @hist;
+    @hist = sort { $b->get_column('timestamp') <=> $a->get_column('timestamp')} @hist;
 
     my @histories;
     map {
       if($_->visit_count > 0){
-        my $time = $_->get_column('latest_visit');
+        my $time = $_->get_column('timestamp');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
                             visits => $_->visit_count,
                             page => $_->page,
@@ -332,8 +332,8 @@ sub history_POST {
 
     my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
     $c->log->debug("logging:" . $page->page_id . " is_obj: " . $is_obj);
-    my $hist = $c->model('Schema::UserHistory')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $hist->set_column(latest_visit=>time());
+    my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
+    $hist->set_column(timestamp=>time());
     $hist->set_column(visit_count=>($hist->visit_count + 1));
     $hist->update;
 }
@@ -347,7 +347,7 @@ sub update_role_POST {
     my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
     my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
     
-    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->id);
+    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->role_id);
     $users_to_roles->delete()  unless($checked eq 'true');
     $users_to_roles->update();
        
@@ -474,7 +474,7 @@ sub rest_register_POST {
       }  
 
       my $user=$c->model('Schema::User')->find_or_create({username=>$username, password=>$hash_password,active=>0,wbid=>$wbid,wb_link_confirm=>0}) ;
-      my $user_id = $user->id;
+      my $user_id = $user->user_id;
 
       @emails = split(/,/, $email);
       foreach my $e (@emails){
@@ -605,7 +605,7 @@ sub feed_POST {
         my $id = $c->req->params->{id};
         if($id){
           my $comment = $c->model('Schema::Comment')->find($id);
-          $c->log->debug("delete comment #",$comment->id);
+          $c->log->debug("delete comment #",$comment->comment_id);
           $comment->delete();
           $comment->update();
         }
@@ -618,10 +618,10 @@ sub feed_POST {
         my $user = $c->user;
         unless($c->user_exists){
           $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
-          $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->id});
+          $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->user_id});
         }
 
-        my $commment = $c->model('Schema::Comment')->find_or_create({reporter_id=>$user->id, page_id=>$page->page_id, content=>$content,'submit_time'=>time()});
+        my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->user_id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
 
       }
     }
@@ -631,7 +631,7 @@ sub feed_POST {
       if($id){
         foreach (split('_',$id) ) {
         my $issue = $c->model('Schema::Issue')->find($_);
-        $c->log->debug("delete issue #",$issue->id);
+        $c->log->debug("delete issue #",$issue->issue_id);
         $issue->delete();
         $issue->update();
         }
@@ -647,14 +647,14 @@ sub feed_POST {
       $c->log->debug("private: $is_private");
       my $user = $self->check_user_info($c);
       return unless $user;
-      $c->log->debug("create new issue $content ",$user->id);
-      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->id,
+      $c->log->debug("create new issue $content ",$user->user_id);
+      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->user_id,
                                   title=>$title,
                                   page_id=>$page->page_id,
                                   content=>$content,
                                   state      =>"new",
                                   is_private => $is_private,
-                                  'submit_time'=>time()});
+                                  'timestamp'=>time()});
       $self->issue_email($c,$issue,1,$content);
     }
     }elsif($type eq 'thread'){
@@ -687,15 +687,14 @@ sub feed_POST {
        my $user = $self->check_user_info($c);
        return unless $user;
        my $thread  = { owner=>$user,
-              submit_time=>time(),
+              timestamp=>time(),
        };
        if($content){
         $c->log->debug("create new thread for issue #$issue_id!");
         my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
         my $thread_id=1;
         $thread_id = $threads[0]->thread_id +1 if(@threads);
-        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,submit_time=>$thread->{submit_time},user_id=>$user->id});
-#       $c->model('Schema::UserIssue')->find_or_create({user_id=>$user->id,issue_id=>$issue_id}) ;
+        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
       }  
       if($state || $assigned_to || $content){
          
@@ -743,7 +742,7 @@ sub issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email if $_->user} @threads;
  }
- $subject = '[WormBase.org] '.$subject.' '.$issue->id.': '.$issue->title;
+ $subject = '[WormBase.org] '.$subject.' '.$issue->issue_id.': '.$issue->title;
  
  $c->stash->{issue}=$issue;
  
@@ -983,9 +982,9 @@ sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
     $c->log->debug("getting static widget");
     if($c->req->params->{history}){ # just getting history of widget
-      my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'widget_date DESC'});
+      my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'timestamp DESC'});
       map {
-        my $time = DateTime->from_epoch( epoch => $_->widget_date);
+        my $time = DateTime->from_epoch( epoch => $_->timestamp);
         $_->{time_lapse} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
       } @revisions;
       $c->stash->{revisions} = \@revisions if @revisions;
@@ -1000,7 +999,7 @@ sub widget_static_GET {
           $c->stash->{rev} = $rev;
           my $document = $parser->parse($rev->content);
           $c->stash->{rev_content} = Text::WikiText::Output::HTML->new->dump($document);
-          my $time = DateTime->from_epoch( epoch => $rev->widget_date);
+          my $time = DateTime->from_epoch( epoch => $rev->timestamp);
           $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
         }
       }
@@ -1008,7 +1007,7 @@ sub widget_static_GET {
         my $document = $parser->parse($widget->content->content);
         $c->stash->{widget_content} = Text::WikiText::Output::HTML->new->dump($document);
       }
-      $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->widget_date), 1) if($widget_id > 0);
+      $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->timestamp), 1) if($widget_id > 0);
       $c->stash->{path} = $c->request->params->{path};
     }
     $c->stash->{edit} = $c->req->params->{edit};
@@ -1035,8 +1034,8 @@ sub widget_static_POST {
 
       my $widget_revision = $c->model('Schema::WidgetRevision')->create({
                     content=>$widget_content, 
-                    user_id=>$c->user->id, 
-                    widget_date=>time()});
+                    user_id=>$c->user->user_id, 
+                    timestamp=>time()});
 
       # modifying a widget
       if($widget_id > 0){
@@ -1053,7 +1052,7 @@ sub widget_static_POST {
           $widget_revision->widget($c->model('Schema::Widgets')->create({ 
                     page_id=>$page->page_id, 
                     widget_title=>$widget_title, 
-                    widget_revision_id=>$widget_revision->widget_revision_id}));
+                    current_revision_id=>$widget_revision->widget_revision_id}));
           $widget_id = $widget_revision->widget->widget_id;
       }else{
         $self->status_bad_request(
@@ -1121,20 +1120,20 @@ sub widget_home_GET {
 sub recently_saved {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
-    my @saved = $c->model('Schema::UserSave')->search(undef,
+    my @saved = $c->model('Schema::Starred')->search(undef,
                 {   select => [ 
                       'page_id', 
-                      { max => 'time_saved', -as => 'latest_save' }, 
+                      { max => 'timestamp', -as => 'latest_save' }, 
                     ],
                     as => [ qw/
                       page_id 
-                      time_saved
+                      timestamp
                     /], 
                     order_by=>'latest_save DESC', 
                     group_by=>[ qw/page_id/]
                 })->slice(0, $count-1);
 
-    my @ret = map { $self->_get_search_result($c, $api, $_->page, ago((time() - $_->time_saved), 1)) } @saved;
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, ago((time() - $_->timestamp), 1)) } @saved;
 
     $c->stash->{type} = 'all'; 
 
@@ -1149,7 +1148,7 @@ sub most_popular {
     my $interval = "> UNIX_TIMESTAMP() - 86400"; # one day ago
 #     my $interval = "> UNIX_TIMESTAMP() - 3600"; # one hour ago
 #     my $interval = "> UNIX_TIMESTAMP() - 60"; # one minute ago
-    my @saved = $c->model('Schema::UserHistory')->search({is_obj=>1, latest_visit => \$interval},
+    my @saved = $c->model('Schema::History')->search({is_obj=>1, timestamp => \$interval},
                 {   select => [ 
                       'page.page_id', 
                       { sum => 'visit_count', -as => 'total_visit' }, 
@@ -1202,56 +1201,56 @@ sub _get_search_result {
 sub comment_rss {
  my ($self,$c,$count) = @_;
  my @rss;
- my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
+ my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
  map {
-        my $time = ago((time() - $_->submit_time), 1);
-        push @rss, {      time=>$_->submit_time,
+        my $time = ago((time() - $_->timestamp), 1);
+        push @rss, {      time=>$_->timestamp,
                           time_lapse=>$time,
                           people=>$_->reporter,
                           page=>$_->page,
                           content=>$_->content,
-                          id=>$_->id,
+                          id=>$_->comment_id,
              };
      } @comments;
  return \@rss;
 }
 
 sub issue_rss {
- my ($self,$c,$count) = @_;
- my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'submit_time DESC'} )->slice(0, $count-1);
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'submit_time DESC'} );
-     
-    my %seen;
-    my @rss;
-    while($_ = $threads->next) {
-      unless(exists $seen{$_->issue_id}) {
-      $seen{$_->issue_id} =1 ;
-      my $time = ago((time() - $_->submit_time), 1);
-      push @rss, {  time=>$_->submit_time,
-            time_lapse=>$time,
-            people=>$_->user,
-            title=>$_->issue->title,
-            page=>$_->issue->page,
-            id=>$_->issue->id,
-            re=>1,
-            } ;
-      }
-      last if(scalar(keys %seen)>=$count)  ;
-    };
+  my ($self,$c,$count) = @_;
+  my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+  my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
+    
+  my %seen;
+  my @rss;
+  while($_ = $threads->next) {
+    unless(exists $seen{$_->issue_id}) {
+    $seen{$_->issue_id} =1 ;
+    my $time = ago((time() - $_->timestamp), 1);
+    push @rss, {  time=>$_->timestamp,
+          time_lapse=>$time,
+          people=>$_->user,
+          title=>$_->issue->title,
+          page=>$_->issue->page,
+          id=>$_->issue->issue_id,
+          re=>1,
+          } ;
+    }
+    last if(scalar(keys %seen)>=$count)  ;
+  };
 
-    map {    
-      my $time = ago((time() - $_->submit_time), 1);
-        push @rss, {      time=>$_->submit_time,
-                          time_lapse=>$time,
-                          people=>$_->reporter,
-                          title=>$_->title,
-                          page=>$_->page,
-                  id=>$_->id,
-            };
-    } @issues;
+  map {    
+    my $time = ago((time() - $_->timestamp), 1);
+      push @rss, {      time=>$_->timestamp,
+                        time_lapse=>$time,
+                        people=>$_->reporter,
+                        title=>$_->title,
+                        page=>$_->page,
+                id=>$_->id,
+          };
+  } @issues;
 
-    my @sort = sort {$b->{time} <=> $a->{time}} @rss;
-    return \@sort;
+  my @sort = sort {$b->{time} <=> $a->{time}} @rss;
+  return \@sort;
 }
 
 sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
@@ -1279,7 +1278,7 @@ sub widget_me_GET {
     my @reports = $session->user_saved->search({save_to => $widget});
 #     $c->log->debug("getting saved reports @reports for user $session->id");  
 
-    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->time_saved), 1) ) } @reports;
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
