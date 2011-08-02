@@ -67,6 +67,7 @@ requires 'Devel::GlobalDestruction';                             #
 requires 'Devel::StackTrace';                                    #
 requires 'HTML::Parser';                                         #
 requires 'HTML::Entities';                                       #
+requires 'Facebook::Graph';                                      #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
 requires 'GO::Parser';                                           #
@@ -85,6 +86,7 @@ requires 'MooseX::MethodAttributes::Inheritable';                # => '0.24';
 requires 'MooseX::Role::WithOverloading';                        # => '0.05';
 requires 'MRO::Compat';                                          #
 requires 'Net::Twitter';                                         #
+requires 'Net::OAuth::Simple';                                   #
 requires 'Number::Format';                                       #
 requires 'namespace::clean';                                     #
 requires 'namespace::autoclean';                                 #

@@ -2,8 +2,8 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% MACRO apa_persons(persons) BLOCK %]
-   [% IF persons.size > 7 %]
-   	  [% persons.slice(0,5).join(", ") %], . . . [% persons.-1 %]
+   [% IF persons.size > 30 %]
+   	  [% persons.slice(0,28).join(", ") %], . . . [% persons.-1 %]
    [% ELSIF persons.size > 1    # 2..6 %]
    	  [% persons.slice(0,persons.size - 2).join(", ") %], &amp; [% persons.-1 %]
    [% ELSIF persons.size == 1 %]

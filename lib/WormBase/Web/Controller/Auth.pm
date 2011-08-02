@@ -160,13 +160,22 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 #      $c->user_session->{redirect_after_login} ||= $param->{'continue'};
 #      $c->stash->{'template'}='auth/openid.tt2';
      
-     # Facebook
+     # Facebook: OAuth
      if (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ 'facebook') {
 	 my $fb = $self->connect_to_facebook($c); 
 	 $c->response->redirect($fb->authorize->uri_as_string);
+
+     # Mendeley: OAuth
+     } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ 'mendeley') {
+	 my $mendeley = $c->model('Mendeley')->private_api;
+
+	 my $url = $mendeley->get_authorization_url();
+
+	 # The URL that the user will be returned to after authenticating.
+	 $mendeley->callback($c->uri_for('/auth/mendeley'));
+	 $c->response->redirect($url);
 	     
-	# Twitter uses OAUTH, not openid.
-	# We probably shouldn't be saving our consumer_secret here...
+     # Twitter uses OAUTH, not openid.	
      } elsif (defined $param->{'openid_identifier'} && $param->{'openid_identifier'} =~ /twitter/i) {
 	 my $nt = $self->connect_to_twitter($c);
 
@@ -176,18 +185,19 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 	 # Are we already linked to Twitter? Are our auth tokens still good?
          #  unless ($self->check_twitter_authorization_status($c)) {
 	     
-	     # The URL that the user will be returned to after authenticating.
-	     my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
+	 # The URL that the user will be returned to after authenticating.
+	 my $url = $nt->get_authorization_url(callback => $c->uri_for('/auth/twitter'));
 	 
-	     $c->response->cookies->{oauth} = {
-		 value => {
-		     token        => $nt->request_token,
-		     token_secret => $nt->request_token_secret,
-		 },
-	     };
-	     $c->response->redirect($url);
-
-    } else {
+	 # Save the current request tokens as a cookie.
+	 $c->response->cookies->{oauth} = {
+	     value => {
+		 token        => $nt->request_token,
+		 token_secret => $nt->request_token_secret,
+	     },
+	 };
+	 $c->response->redirect($url);
+	 
+     } else {
 	# eval necessary because LWPx::ParanoidAgent
 	# croaks if invalid URL is specified
 	#  eval {
@@ -214,6 +224,7 @@ sub auth_openid : Chained('auth') PathPart('openid')  Args(0){
 }
 
 
+
 sub connect_to_facebook {
     my ($self,$c) = @_;
 
@@ -225,6 +236,21 @@ sub connect_to_facebook {
 				   postback => $c->uri_for('/auth/facebook/')});
     return $fb;
 }
+
+sub connect_to_twitter {
+    my ($self,$c) = @_;
+
+    my $consumer_key    = $c->config->{twitter_consumer_key};
+    my $consumer_secret = $c->config->{twitter_consumer_secret};
+
+    my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
+			       consumer_key        => $consumer_key,
+			       consumer_secret     => $consumer_secret,
+	);
+    return $nt;
+}
+
+
 
 # The URL users are returned to after authenticating with Facebook (postback, even though it's a GET. Typical).
 sub auth_facebook_callback : Chained('auth') PathPart('facebook')  Args(0){
@@ -281,6 +307,25 @@ sub auth_twitter_callback : Chained('auth') PathPart('twitter')  Args(0){
 		      });        
 }
 
+
+# The URL users are returned to after authenticating with Mendeley.
+sub auth_mendeley_callback : Chained('auth') PathPart('mendeley')  Args(0){
+    my($self, $c) = @_;
+
+    my %cookie   = $c->request->cookies->{oauth}->value;
+    my $verifier = $c->req->params->{oauth_verifier};    
+
+    my $mendeley = $c->model('Mendeley')->private_api;
+    my ($access_token, $access_token_secret) = $mendeley->request_access_token;
+        
+    $self->auth_local({c          => $c, 
+		       provider   => 'mendeley',
+		       oauth_access_token        => $access_token,
+		       oauth_access_token_secret => $access_token_secret,
+#		       screen_name   => $screen_name,
+		       auth_type     => 'oauth',
+		      });        
+}
 
 sub auth_local {
     my ($self,$params) = @_;
@@ -431,6 +476,7 @@ sub profile :Path("/profile") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
 
+    # This PROBABLY belongs in the model.
     # Fetch accounts that this user has linked to and key them by provider.
     # could do this with a group by constraint, too.
     my @accounts = $c->model('Schema::OpenID')->search({user_id => $c->user->id});
@@ -446,6 +492,10 @@ sub profile :Path("/profile") {
     # Facebook information
     
     # Google information
+
+    # Mendeley
+    # my $mendeley = $c->model('Mendeley')->private_api;
+    # $c->stash->{mendeley} = $mendeley;
 
     $c->stash->{template} = 'auth/profile.tt2';
 } 
@@ -500,18 +550,7 @@ sub add_operator :Path("/add_operator") {
 }
 
     
-sub connect_to_twitter {
-    my ($self,$c) = @_;
 
-    my $consumer_key    = $c->config->{twitter_consumer_key};
-    my $consumer_secret = $c->config->{twitter_consumer_secret};
-
-    my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], 
-			       consumer_key        => $consumer_key,
-			       consumer_secret     => $consumer_secret,
-	);
-    return $nt;
-}
 
 
 # Has the current user linked their account to Twitter?
@@ -524,8 +563,10 @@ sub is_linked_to_twitter {
     if ($twitter) {
 	my $nt = $self->connect_to_twitter($c);
 
-	$nt->access_token($twitter->oauth_access_token);
-	$nt->access_token_secret($twitter->oauth_access_token_secret);
+#	$nt->access_token($twitter->oauth_access_token);
+#	$nt->access_token_secret($twitter->oauth_access_token_secret);
+	$nt->access_token($twitter->access_token);
+	$nt->access_token_secret($twitter->access_token_secret);
 
 	 if ( $nt->authorized ) {
 	     # Get the avatar URL.	     
@@ -546,6 +587,9 @@ sub is_linked_to_twitter {
 sub is_linked_to_facebook {
 
 }
+
+
+
 
 
 =head1 AUTHOR

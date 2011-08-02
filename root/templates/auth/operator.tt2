@@ -6,7 +6,7 @@ and copy paste the html code into here:<br>
 <form method="POST" onsubmit="window.location.href='[% c.uri_for('add_operator') %]' + '?content='+ escape(this.content.value);return false;">
 <textarea id="content" rows="10" cols="80" ></textarea>
 <p>
-<input type='submit' value='Let me help'/> 
+<input type='submit' value='Continue'/> 
 </p>
 </form>
  
