@@ -186,6 +186,7 @@ div#header .release_date { }
     color:gray;
 }
 
+
 /* Not found; a warning for when a request is not found in the database */
 .not-found {
    color: red;
@@ -1928,4 +1929,30 @@ div.title {
   left:-5px;
   top:-12px;
   cursor:pointer;
+}
+
+
+
+
+
+
+/* markup for information drawn from third parties */
+.mendeley-image {
+    float:left;
+    vertical-align:middle;
+}
+
+/* call out to Mendeley */
+.mendeley-nod {
+    font-style:italic;
+    color:gray;
+    font-size:1.3em;
+    padding-bottom:1.2em;
+    padding-top:3em;
+}
+
+.mendeley-citation {
+    margin-left:2em;
+    padding-bottom:1em;
+    clear:both;
 }

@@ -1,0 +1,46 @@
+[%
+
+   # DOI? 
+   IF fields.pmid.data;
+       id   = fields.pmid.data;
+       type = 'pmid';
+   ELSIF fields.doi.data;
+        id   = fields.doi.data;
+        type = 'doi';
+   END;
+
+
+   '<div class="mendeley-image"><a href="http://mendeley.com/"><img src="/img/thirdparty/mendeley-vertical.png" /></a></div>';
+   '<div class="mendeley-nod">Related papers provided by <a href="http://mendeley.com">Mendeley</a>.</div>';
+
+   related = c.model('Mendeley').related_papers(id,type);
+
+   FOREACH paper IN related.documents;
+       '<div class="mendeley-citation">';
+          # Authors
+       	  FOREACH author IN paper.authors;
+	       IF loop.size == 1 && author.surname;
+	            author.surname _ ', ' _ author.forename _ '. ';
+	       ELSIF loop.last && author.surname;
+	           ' & ' _ author.surname _ ', ' _ author.forename _ '. ';
+	       ELSE;
+	           author.surname _ ', ' _ author.forename _ ', ';
+               END;
+	  END;
+
+	  ' (' _ paper.year _ '). '
+	  _ '<br />'
+	  _ '<a href="' 
+  	  _ paper.mendeley_url
+	  _ '">'
+	  _ paper.title
+	  _ '</a> '
+	  _ paper.publication_outlet
+	  _ '.';
+
+       '</div>';
+    END;
+
+
+%]
+
