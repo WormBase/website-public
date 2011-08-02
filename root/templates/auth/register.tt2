@@ -11,7 +11,7 @@
     </div>
     <div class="login-holder">
         <span id="fade" class="holder">email</span>
-        <input id="email" type="text" name="email" size="22" value="[% email %]"/>
+        <input id="email" type="email" name="email" size="22" value="[% email %]"/>
     </div>
     <div class="login-holder">
         <span id="fade" class="holder">password</span>
@@ -59,16 +59,16 @@ hideTextOnFocus("#password");
 <div style="font-size:1.3em">
     <div class="login-holder">
         <span id="fade">full name</span> <br />
-        <input id="name" type="text" name="name" size="30" value="[% full_name %]" />
+        <input id="name" type="text" name="name" size="30" placeholder="John Smith" value="[% full_name %]" />
     </div>
     <div class="login-holder" style="display:none">
         <span id="fade">confirmation email</span><br />
-        <input id="wbemail" type="text" name="wbemail" size="30" value="" disabled=1/>
+        <input id="wbemail" type="email" name="wbemail" size="30" value="" disabled=1/>
     </div>
 
     <div class="login-holder">
         <span id="fade">email</span><br />
-        <input id="email" type="text" name="email" size="30" value="[% email %]"/>
+        <input id="email" type="email" name="email" size="30"  placeholder="john@example.net"  value="[% email %]"/>
     </div>
     <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;display:none;">
     </div>
