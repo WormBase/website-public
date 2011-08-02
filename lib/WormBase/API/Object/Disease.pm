@@ -4,12 +4,25 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-### data
 
-has 'omim_id' => (
-	is  => 'rw',
-	isa => 'Str',
-);
+=pod 
+
+=head1 NAME
+
+WormBase::API::Object::Disease
+
+=head1 SYNPOSIS
+
+Model for the Ace ?Disease class.
+
+=head1 URL
+
+http://wormbase.org/species/disease
+
+=cut
+
+
+### data
 
 has 'orthology_datadir' => ( ## temp
     is  => 'ro',
@@ -110,10 +123,124 @@ has 'genes_ar' => (
 
 ### methods
 
+##############################
+#
+# Overview Widget
+#
+###############################
+
+=head2 Overview
+
+=cut
+
+=head3 id
+
+This method returns a data structure containing the 
+omim_id of the disease
+
+=over
+
+=item PERL API
+
+ $data = $model->id();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+OMIM ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/id
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+
 sub id {
 	my $self = shift;
 	return $self->omim_id;
 }
+
+=head3 name
+
+This method returns a data structure containing the 
+name of the disease
+
+=over
+
+=item PERL API
+
+ $data = $model->name();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+OMIM ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/name
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 
 sub name {
 	my $self = shift;
@@ -122,6 +249,57 @@ sub name {
 	return $name;
 }
 
+=head3 name
+
+This method returns a data structure containing the 
+description of the disease
+
+=over
+
+=item PERL API
+
+ $data = $model->description();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+OMIM ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/description
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 sub description {
 	my $self = shift;
 	my $id = $self->omim_id;
@@ -129,6 +307,59 @@ sub description {
 	return $description;
 
 }
+
+
+=head3 genes
+
+This method returns a data structure containing the 
+genes associated with the disease
+
+=over
+
+=item PERL API
+
+ $data = $model->genes();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+OMIM ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/disease/182870/genes
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
 
 sub genes {
 	my $self = shift;
@@ -142,20 +373,6 @@ sub genes {
 	}
 	return \@genes;
 }
-
-
-sub build_hash{  ##temp
-	my ($file_name) = @_;
-	open FILE, "< $file_name" or die "Cannot open the file: $file_name\n";
-	my %hash;
-	foreach my $line (<FILE>) {
-		chomp ($line);
-		my ($key, $value) = split '=>',$line;
-		$hash{$key} = $value;
-	}
-	return %hash;
-}
-
 
 
 1;
