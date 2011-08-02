@@ -59,11 +59,16 @@ function search() {
 }
 
 function search_change(new_search, focus) {
-  if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "all"; }
+  if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
   cur_search_type = new_search;
+  if(new_search == "all"){
+   new_search = "for anything"
+  }else{
+   new_search = "for a " + new_search.replace(/[_]/, ' ') 
+  }
   
-  $jq("#current-search").text(new_search.charAt(0).toUpperCase() + new_search.replace(/[_]/, ' ').slice(1));
-  if(focus){ $jq("#Search").focus();}
+  $jq("#current-search").text(new_search);
+//   if(focus){ $jq("#Search").focus();}
 }
 
 

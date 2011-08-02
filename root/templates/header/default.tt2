@@ -1,5 +1,5 @@
  [% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
+[%# PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
 
 <!-- BEGIN boilerplate/banner -->
 <div id="wrap">
@@ -83,11 +83,11 @@
           </ul>
       </li>
     [% END %]
-  <span class="status-bar"></span>
+  <span class="status-bar" style="min-width:20em;min-height:1.5em;"></span>
     </ul>
   </div>
  
-  [% PROCESS timer %]
+  [%# PROCESS timer %]
 
 </div>
 

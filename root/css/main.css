@@ -19,7 +19,7 @@ body, html {
     height:100%;
 }
 
-h1,h2,h3,h4,h5,h6 { color:black; margin:0;}
+h1,h2,h3,h4,h5,h6 { color:black; margin:0; font-weight:bold;}
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
 h2 { font-size:1.4em; }  /* 21.6px ; page title */

@@ -2,22 +2,25 @@
    <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="search(); return false;">
     [% val = "search..." %]
     [% IF query; val = query; END; %]
-
-    <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
     <input class="ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
+
+    <div id="searchBody">
+      <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
+      <ul id="searchSelect">
+        <li>
+          <span style="float:right;background-image: url(/img/down.png);height:16px;width:16px;"></span>
+          <span id="current-search" style="float:right">All</span>
+          <ul>
+          [% FOREACH option IN c.config.search_dropdown.option %]
+                  <li value="[%- option.id -%]" onClick='search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
+          [% END %]
+          </ul>
+        </li>
+      </ul>
+    </div>
   </form>
 
-  <ul id="searchSelect">
-    <li>
-      <span style="float:right;background-image: url(/img/down.png);height:16px;width:16px;"></span>
-      <span id="current-search" style="float:right">All</span>
-      <ul>
-      [% FOREACH option IN c.config.search_dropdown.option %]
-              <li value="[%- option.id -%]" onClick='search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
-      [% END %]
-      </ul>
-    </li>
-  </ul>
+
 
   <script>
     [% IF type %]

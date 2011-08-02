@@ -65,6 +65,7 @@ CREATE TABLE comments (
             user_id INTEGER,
             page_id INTEGER,
             timestamp INTEGER,
+            parent_id INTEGER,
             content TEXT
 );
 

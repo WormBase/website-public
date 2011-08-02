@@ -1,10 +1,10 @@
       [% tag2link(item.name) %]
     </li>
 
-<div class="text-min" style="height:auto;max-height:2.4em;">
+<div class="text-min" style="height:auto;max-height:2.2em;">
   [% item.summary %]    
 </div>
-<div class="text-min" style="height:auto;max-height:2.4em;">
+<div class="text-min" style="height:auto;max-height:2.2em;">
   [% tag2link(item.corresponding_gene) %]    
 </div>
 [% IF item.summary.length > 150 %]

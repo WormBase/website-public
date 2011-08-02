@@ -31,7 +31,5 @@ mySettings = {
 		{separator:'---------------' },
 		{name:'Quotes', openWith:'(!(> |!|>)!)', placeHolder:''},
 		{name:'Code', openWith:'(!(<source lang="[![Language:!:php]!]">|!|<pre>)!)', closeWith:'(!(</source>|!|</pre>)!)'}, 
-		{separator:'---------------' },
-		{name:'Preview', call:'preview', className:'preview'}
 	]
 }
