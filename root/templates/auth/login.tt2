@@ -27,7 +27,7 @@ hideTextOnFocus(".password");
 
     <div class="login-holder">
         <span id="fade" class="holder">email</span>
-        <input class="email" type="text" name="email" size="22"/>
+        <input class="email" type="email" name="email" size="22"/>
     </div>
     <div class="login-holder">
         <span id="fade" class="holder">password</span>

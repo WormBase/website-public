@@ -39,11 +39,11 @@
 
     <div class="caveat-emptor">
         <p>You can link your WormBase account to other sites to make it easier to share information and connect with other researchers.</p>
-	<p>For example, if you link your Twitter account, we'll provide directly links to your account to make it easier for other users to follow you.</p>
+	<p>For example, if you link your Twitter account, we'll provide links to your account to make it easier for other users to follow you.</p>
 	<p>WormBase will never share your information and you can revoke access at any time.</p>
      </div>
 
-    [% sites = [ 'twitter', 'google', 'facebook' ];
+    [% sites = [ 'twitter', 'google', 'facebook', 'mendeley' ];
 
 	'<table>';
         FOREACH site IN sites;
@@ -57,12 +57,14 @@
 	  CASE 'google';
 	       revoke = '';
 	       avatar = '';
-	       caveat = '';
 	       profile = '';
 	  CASE 'facebook';
 	       revoke = '';
 	       avatar = '';
-	       caveat = '';
+	       profile = '';
+	  CASE 'mendeley';
+	       revoke = '';
+	       avatar = '';
 	       profile = '';
 	  END;
 
@@ -91,9 +93,9 @@
 	       '</tr>';
            
          END;
+
 	 '</table>';
        %]
-
        </div>
 </fieldset>
 
