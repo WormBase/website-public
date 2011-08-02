@@ -29,7 +29,7 @@
 //     widget.find("a#edit-button").addClass("ui-state-highlight");
     title.html("<input onFocus=\"if(this.value=='Add new widget...'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
     }
-    var textarea = widget.find("textarea#widget_content").markItUp(myWikiSettings);
+    var textarea = widget.find("textarea#widget_content").markItUp(mySettings);
 //     textarea.style.height = (textarea.scrollHeight*2) + "px"; 
   </script>
 [% ELSIF widget %]
