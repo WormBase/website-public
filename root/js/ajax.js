@@ -56,14 +56,16 @@
 // 	  })
   
       $jq(".role-update").live('click',function() {
-	$jq.ajax({
-		  type: "POST",
-		  url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+$jq(this).attr('checked'), 
-		  error: function(request,status,error) {
-			  alert(request + " " + status + " " + error );
-		    }
-	  });
-    });
+        var checked;
+        if($jq(this).attr('checked')){ checked = 'true';}
+        $jq.ajax({
+              type: "POST",
+              url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked, 
+              error: function(request,status,error) {
+                  alert(request + " " + status + " " + error );
+                }
+        });
+      });
 
       $jq(".comment-submit").live('click',function() {
 	    var rel= $jq(this).attr("rel");

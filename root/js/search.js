@@ -62,9 +62,13 @@ function search_change(new_search, focus) {
   if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
   cur_search_type = new_search;
   if(new_search == "all"){
-   new_search = "for anything"
+   new_search = "for anything";
   }else{
-   new_search = "for a " + new_search.replace(/[_]/, ' ') 
+    var search_for = "for a";
+    if(new_search.match(/^[aeiou]/)){
+      search_for = search_for + "n";
+    }
+    new_search = search_for + " " + new_search.replace(/[_]/, ' ');
   }
   
   $jq("#current-search").text(new_search);
