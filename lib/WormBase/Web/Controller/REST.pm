@@ -342,15 +342,16 @@ sub history_POST {
 sub update_role :Path('/rest/update/role') :Args :ActionClass('REST') {}
 
 sub update_role_POST {
-      my ($self,$c,$id,$value,$checked) = @_;
+    my ($self,$c,$id,$value,$checked) = @_;
       
-    my $user=$c->model('Schema::User')->find({id=>$id}) if($id);
-    my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
-    
-    my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->role_id);
-    $users_to_roles->delete()  unless($checked eq 'true');
-    $users_to_roles->update();
-       
+    if($c->check_user_roles('admin')){
+      my $user=$c->model('Schema::User')->find({user_id=>$id}) if($id);
+      my $role=$c->model('Schema::Role')->find({role=>$value}) if($value);
+      
+      my $users_to_roles=$c->model('Schema::UserRole')->find_or_create(user_id=>$id,role_id=>$role->role_id);
+      $users_to_roles->delete()  unless($checked eq 'true');
+      $users_to_roles->update();
+    }
 }
 
 sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}

@@ -29,12 +29,12 @@
     [% widgets.push({ id    = 'registered_users',
          	      title = 'Registered Users',
                       href  =  c.uri_for('/rest','widget','admin','registered_users'),
-                      type  = "admin"
+                      type  = "me"
                     });
 	widgets.push({ id    = 'system_status',
          	      title = 'System Status',
                       href  =  c.uri_for('/rest','widget','admin','system_status'),
-                      type  = "admin"
+                      type  = "me"
                     });
     %]
   [% END %]

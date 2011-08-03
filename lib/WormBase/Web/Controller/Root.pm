@@ -162,8 +162,7 @@ sub default :Path {
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
     $c->stash->{'section'} = 'me';
-    my $class = 'bench';
-    $c->stash->{'class'} = $class;
+    $c->stash->{'class'} = "me";
     $c->stash->{template} = "me.tt2";
 } 
 
