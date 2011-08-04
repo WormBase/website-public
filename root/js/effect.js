@@ -158,6 +158,7 @@
   });*/
 
   $jq(".tip-simple").live('mouseover', function(){
+//     alert($jq(this).attr("tip"));
     if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
       var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
       tip.appendTo($jq(this)).show();
