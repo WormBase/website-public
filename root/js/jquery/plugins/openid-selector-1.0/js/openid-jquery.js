@@ -31,7 +31,13 @@ var providers_large = {
         name: 'Twitter',     
         url: 'http://twitter.com/oauth/authenticate'
     },
-    
+
+    mendeley: { 
+         name: 'Mendeley',
+         label: 'Your Mendeley account',
+         url:   'http://mendeley.com/'
+    },
+
     wordpress: {
         name: 'Wordpress',
         label: 'Enter your Wordpress.com username',
