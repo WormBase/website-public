@@ -1,15 +1,16 @@
-<a class="bench-update" 
+<a class="bench-update tip-simple tr" 
     wbid="[% c.stash.star.wbid %]" 
     href="/rest/workbench" 
     name="[% c.stash.star.name %]" 
+    tip="[% IF c.stash.star.value == 1; 'remove report'; ELSE;'save report';END;%]" 
     objclass="[% c.stash.star.class %]" 
     is_obj="[% c.stash.star.is_obj %]" 
     url="[% c.stash.star.url | uri %]">
 <div id="save" class="ui-icon ui-icon-stars
 [% IF c.stash.star.value == 1 %]
-  ui-icon-star-yellow" title="remove this report" 
+  ui-icon-star-yellow"
 [% ELSE %]
-  ui-icon-star-gray" title="save this report" 
+  ui-icon-star-gray"
 [% END %]
 ></div>
 </a>   
