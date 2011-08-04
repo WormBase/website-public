@@ -1,5 +1,4 @@
 <script type="text/javascript" >
-// $jq(".lightbox").colorbox();
 $jq("#bench-status").load("/rest/workbench");
 function popWin(url) {
   var win = window.open(url,'pop','status=no,resizable=yes,height=2px,width=2px');
@@ -27,8 +26,6 @@ $jq("#login").live('click', function(){
     [% PROCESS auth/login.tt2 %]
     </ul>
   </li>
-
-<!--   <div  class='lightbox' id="register" href="[% c.uri_for('/register') %]" style="display: none" ></div> -->
   
 [% END %]
  

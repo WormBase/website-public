@@ -11,7 +11,6 @@
       });
       }else {
         var opBox = $jq("#operator-box");
-//         ajaxGet(opBox, "/rest/livechat");
         ajaxGet(opBox, "/rest/livechat", 0, 
         function(){ 
           if(opBox.hasClass("minimize")){
@@ -30,23 +29,8 @@
           opBox.children().hide();
 
         }, 4000)
-//    if($jq("#operator-box").size()==0) {  
-//        $jq('#operator-box-wrap').html('<div id="operator-box"  class="ui-corner-all" ></div>');
-//        ajaxGet($jq("#operator-box"), "/rest/livechat");
-//        $jq("#operator-box").draggable();
-//     } 
       }
     });  
-
-//   $jq('#operator-box-close').live('click',function()  
-//     {  
-// 
-//       $jq.post("/rest/livechat",function() {
-//    $jq('#operator-box').remove();
-//       });
-//          
-//     }); 
-//     
   
 
    var contentBox = $jq(".comment-content"),
@@ -62,17 +46,6 @@
       $jq(".comment-submit").hide();
     }
   });
-  
-
-     $jq(".switch-colorbox").live('click',function() {
-    var mytitle = $jq(this).attr("class").split(" ");
-    $jq("#"+mytitle[1]).trigger('click');
-    return false;
-  });
-
-     $jq(".add-delete").live('click',function() {
-    $jq(this).toggleClass( "ui-icon-circle-minus"); 
-    });
 
     $jq(".feed").live('click',function() {
     var url=$jq(this).attr("rel");
@@ -100,15 +73,6 @@
     $jq("div.columns a, div.columns div.ui-icon, div.columns>ul>li>a").live('click', function() {
       $jq("div.columns>ul").toggle();
     });
-
-
-// TODO:get jquery icons working for toggle
-//   $jq(".toggle").live('click',function() {
-//               $jq(this).next().slideToggle("fast");
-//               $jq(this).toggleClass("ui-icon-triangle-1-e");
-//               $jq(this).toggleClass("ui-icon-triangle-1-s");
-//               return false;
-//         });
 
      $jq(".toggle").live('click',function() {
               $jq(this).toggleClass("active").next().slideToggle("fast");
