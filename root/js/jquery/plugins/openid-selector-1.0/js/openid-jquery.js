@@ -158,7 +158,6 @@ var openid = {
 	 
 	var win2 = window.open(url,"popup","status=no,resizable=yes,height="+h+",width="+w+",left=" + screenx + ",top=" + screeny + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
 	win2.focus();
-	//$jq("#lightbox").colorbox.close();
 	
     },
     /* Sign-in button click */
