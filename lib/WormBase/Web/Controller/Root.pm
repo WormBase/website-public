@@ -145,7 +145,7 @@ sub default :Path {
 	if ($c->config->{debug}) {
 	  $c->stash->{template} = 'debug/index.tt2';
 	} else {
-	    $c->stash->{template} = 'report.tt2';
+	    $c->stash->{template} = 'species/report.tt2';
 	    $c->stash->{path} = $c->request->path;
 	}
     } else {
@@ -458,7 +458,7 @@ sub widget :Path("/widget") Args(3) {
 sub get_report :Path("/db/get") Args(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{template} = 'report.tt2';
+    $c->stash->{template} = 'species/report.tt2';
 
     my $aceclass = $c->req->param('class');
     my $name  = $c->req->param('name');
