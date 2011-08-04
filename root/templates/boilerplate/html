@@ -10,30 +10,26 @@
       [% END %]
     </title>
 
-<!--         <link type="text/css" href="/css/reset.css" rel="stylesheet" /> -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>   
+    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css" rel="stylesheet" />
 
+    <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script> 
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>   
-<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/raphael-min.js"></script>
 
-<script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
+    <script>
+      var $jq=  jQuery.noConflict();
+    </script>
 
-<script type="text/javascript" src="/js/raphael-min.js"></script>
-  <script>
-  var $jq=  jQuery.noConflict();
-</script>
-<!--    <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="/js/jquery/current-theme/js/jquery-ui-1.8.2.custom.min.js"></script>
-  --> 
     [% FOREACH item IN JavaScripts %]
-     <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
+      <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
     [% END %] 
 
      <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
 
     <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.css"/>
+    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.min.css"/>
    
     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/>
@@ -48,7 +44,7 @@
     <link type="text/css" href="/css/icons.css" rel="stylesheet" />
     <link type="text/css" href="/css/social_buttons.css" rel="stylesheet" />
 
-    [% IF  c.check_any_user_role("admin", "curator") %]
+    [% IF  c.check_any_user_role("admin", "curator", "editor") %]
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/skins/markitup/style.css" />
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/sets/wiki/style.css" />
       <script type="text/javascript" src="/js/jquery/plugins/markitup/jquery.markitup.js"></script>

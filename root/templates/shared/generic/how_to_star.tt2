@@ -11,9 +11,9 @@ Click on the star: </li>
   <a href="javascript:void(0)" onClick='$jq("#nav-reports").trigger("open"); return true;'>'My Reports'</a> or 
   <a href="javascript:void(0)" onClick='$jq("#nav-my_library").trigger("open"); return true;'>'My Library'</a> (literature).
   </li>
-  <img src="/img/reports_library.png">
+  <img src="/img/reports_library.jpg">
   <li>View your item by going to <a href="/me">'My Wormbase'</a></li>
-  <img src="/img/my_wormbase.png">
+  <img src="/img/my_wormbase.jpg">
 </div>
 </ol>
 </div>

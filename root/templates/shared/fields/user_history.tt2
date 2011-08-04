@@ -9,4 +9,4 @@
 </div>
   </li>
 [% END %]
-  <li><a id="fade" onclick="history_clear()">clear history</span></li>
+  <li><a id="fade" onclick='ajaxGet($jq("div#user_history"), "/rest/history?clear=1");'>clear history</span></li>

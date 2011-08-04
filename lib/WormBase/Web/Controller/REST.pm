@@ -290,14 +290,20 @@ sub history_GET {
     my $clear = $c->req->params->{clear};
     $c->log->debug("history");
     my $session = $self->get_session($c);
-    my @hist = $session->user_history;
+
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = "shared/fields/user_history.tt2"; 
 
     if($clear){ 
       $c->log->debug("clearing");
       $session->user_history->delete();
       $session->update();
+      $c->stash->{history} = "";
+      $c->forward('WormBase::Web::View::TT');
+      $self->status_ok($c,entity => {});
     }
 
+    my @hist = $session->user_history;
     my $size = @hist;
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }
@@ -315,8 +321,7 @@ sub history_GET {
       }
     } @hist[0..$count-1];
     $c->stash->{history} = \@histories;
-    $c->stash->{noboiler} = 1;
-    $c->stash->{template} = "shared/fields/user_history.tt2"; 
+
     $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
