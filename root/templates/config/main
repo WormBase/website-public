@@ -16,7 +16,7 @@
      unknown   => 'unknown/not applicable',     # what to display if a field is empty/not applicable.
    };
   
-   JavaScripts = ['ajax','layout','effect','log','style','search','jquery.tablescroll','miscellaneous','nav']  ;
+   JavaScripts = ['ajax','layout','effect','log','search','miscellaneous','nav']  ;
    WB2ACE_MAP = c.model('WormBaseAPI').modelmap.WB2ACE_MAP.class;
    ACE2WB_MAP = c.model('WormBaseAPI').modelmap.ACE2WB_MAP.class;
 

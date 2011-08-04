@@ -43,8 +43,6 @@
 
     <script type="text/javascript" src="/js/jquery/plugins/jquery.tableofcontents.min.js"></script>
 
-    <link type="text/css" rel="stylesheet" href="/css/jquery.tablescroll.css"/>
-
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
     <link type="text/css" href="/css/home.css" rel="stylesheet" />
     <link type="text/css" href="/css/icons.css" rel="stylesheet" />
