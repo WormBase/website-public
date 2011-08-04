@@ -56,8 +56,9 @@
 
     $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
     $jq(".tooltip").addClass("ui-icon ui-icon-lightbulb");
-     openid.init('openid_identifier');
-     $jq("#openid_identifier").focus();
+    
+    openid.init('openid_identifier');
+    $jq("#openid_identifier").focus();
 
     $jq(".sortable").sortable({
       handle: '.widget-header, #widget-footer',
@@ -68,6 +69,7 @@
       forcePlaceholderSize: true,
       update: function(event, ui) { updateLayout(); },
     });
+    
     $jq("#widget-holder").children("#widget-header").disableSelection();
 
     $jq("div.columns a, div.columns div.ui-icon, div.columns>ul>li>a").live('click', function() {
@@ -89,7 +91,6 @@
       nav.animate({width: w, display: 'block'});
       ptitle.animate({marginLeft: marginLeft, display: 'block'});
       nav.children("#title").children("div").toggle();
-//       alert("width:" + nav.width());
       $jq(this).attr("title", msg);
       $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
     });
@@ -122,7 +123,6 @@
   });*/
 
   $jq(".tip-simple").live('mouseover', function(){
-//     alert($jq(this).attr("tip"));
     if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
       var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
       tip.appendTo($jq(this)).show();

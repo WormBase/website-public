@@ -1,10 +1,11 @@
  $jq(document).ready(function() {
 
-
     window.onhashchange = readHash;
     $jq.ajaxSetup( {timeout: 99999 });
+    
     ajaxGet($jq(".status-bar"), "/rest/auth");
-     $jq(".print").live('click',function() {
+    
+    $jq(".print").live('click',function() {
 	  var layout= window.location.hash.replace('#','');
 	  var print = $jq(this);
 	   
@@ -23,37 +24,15 @@
 			      alert(request + " " + status + " " + error );
 			}
 	      });
-	  
     }); 
 
-
-     /* The Login Page. Probably doesn't belong here ... */
-      $jq('.toggle-link').click(function() {
-          // Hide all the existing forms and show the current one.
-          $jq("div.login-option").hide();
-          $jq("div#" + $jq(this).attr("id")).show();
-	  $jq("li.form-links").show();
-	  $jq("li." + $jq(this).attr("id") + '-link').hide();	  
-	  if ($jq(this).attr("id").match(/login/) ) {
-	      $jq("li.login-type").toggle();
-	  } 	 
-	  });
 	 
       $jq(".section-button").click(function() {
-	      var section = $jq(this).attr('name');
+	      var section = $jq(this).attr('wname');
 	      $jq("#nav-" + section).trigger("open");
 	      goToAnchor(section);
-	      // Change the state of the button, too
-// 	      $jq(this).toggleClass("selected");  //should it be a toggle?
 	  });
 
-
-
-      /* This is the system-wide dialog */
-//       $jq(".system-message-close").click(function() {
-// 	      $jq("div#system-message").hide();
-//           $jq("div.system-message-spacer").hide();
-// 	  })
   
       $jq(".role-update").live('click',function() {
         var checked;
@@ -72,15 +51,9 @@
         var url= $jq(this).attr("url");
 	    var page= $jq(this).attr("page");
 	    var feed = $jq(this).closest('#comment-new');
-// 	    var name = feed.find("#comment-name").val();
         var email = feed.find("#email");
         var name= feed.find("#display-name");
-//         if(email.attr('id') && name.attr('id')) {
-//           if(!(validate_fields(email,name))){
-//            alert("invalid name or email");
-//            return;
-//           }
-//         }  
+
         if(!(name.val())){ 
           name = name.attr('value'); 
         }else{
@@ -293,27 +266,6 @@
       }
       $jq(this).hide();
     });
-
-
-// NOTE: Is this used anywhere???
-//   $jq(".update").live('click',function() {
-// 
-//     $jq(this).text("updating").show();
-//     var url     = $jq(this).attr("href");
-//     // Multiple classes specified. Split so I can rejoin.
-//     var mytitle = $jq(this).attr("class").split(" ");
-//     $jq("#" + mytitle[1]).load(url,
-//                     function(response, status, xhr) {
-//                           if (status == "error") {
-//                           var msg = "Sorry but there was an error: ";
-//                           $jq("#error").html(msg + xhr.status + " " + xhr.statusText);
-//                           }
-//                           $jq(this).children(".toggle").toggleClass("active");
-//                       });
-//         
-//   return false;
-//   });
-
 
   // used in sidebar view, to open and close widgets when selected
   $jq(".module-load, .module-close").live('click',function() {
@@ -552,11 +504,11 @@ function loadWikiContent(title,container){
 
 
 function addWidgetEffects(widget_container) {
-      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
-      widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
-      widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
-      widget_container.find("#widget-footer").hide();
-      widget_container.find(".widget-header").children("h3").children("span.hide").hide();
+    widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
+    widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
+    widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
+    widget_container.find("#widget-footer").hide();
+    widget_container.find(".widget-header").children("h3").children("span.hide").hide();
 
     widget_container.find(".widget-header").hover(
       function () {
@@ -568,82 +520,39 @@ function addWidgetEffects(widget_container) {
     );
 
     widget_container.hover(
-        function () {
-          $jq(this).find(".widget-header").children(".ui-icon").show();
-          if($jq(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
-            $jq(this).find("#widget-footer").show();
-          }
-        }, 
-        function () {
-          $jq(this).find(".widget-header").children(".ui-icon").hide();
-          $jq(this).find("#widget-footer").hide();
+      function () {
+        $jq(this).find(".widget-header").children(".ui-icon").show();
+        if($jq(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
+          $jq(this).find("#widget-footer").show();
         }
-      );
-
-       widget_container.find("div.module-min").hover(
-        function () {
-          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-circle-triangle-s");
-          }else{ $jq(this).addClass("ui-icon-circle-triangle-e");}
-        }, 
-        function () {
-          $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
-          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-triangle-1-s");
-          }else{ $jq(this).addClass("ui-icon-triangle-1-e");}
-        }
-      );
-
-       widget_container.find("div.module-close").hover(
-        function () {
-          $jq(this).addClass("ui-icon-circle-close");
-        }, 
-        function () {
-          $jq(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
-        }
-      );
-    }
-
-    function history_clear(){
-        ajaxGet($jq("div#user_history"), "/rest/history?clear=1");
-    }
-
-
-  // Load a (specific) field or widget dynamically onClick.
-  $jq("a.ajax").click(function() {
-      var url     = $jq(this).attr("href");
-      var format  = $jq(this).text();
-  
-      // Multiple classes specified. Split so I can rejoin.
-      var mytitle = $jq(this).attr("class").split(" ");
-      if (format == "yml") {
-          format = "text/x-yaml";
+      }, 
+      function () {
+        $jq(this).find(".widget-header").children(".ui-icon").hide();
+        $jq(this).find("#widget-footer").hide();
       }
+    );
 
-      $jq.ajax({
-                 type: "GET",
-                 url : url,
-                 contentType: 'application/x-www-form-urlencoded',
-                 dataType: format,
-                 success: function(data){
-                      //  Add some description prior to dumping the content
-                      var content = "<p>REST request for " + url + "<br />Content-Type: " + format + "</p>";
-                       $jq("#" + mytitle[1] + ".returned-data").show();
-                       $jq("#" + mytitle[1] + ".returned-data").html(content);                         
+    widget_container.find("div.module-min").hover(
+      function () {
+        if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-circle-triangle-s");
+        }else{ $jq(this).addClass("ui-icon-circle-triangle-e");}
+      }, 
+      function () {
+        $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
+        if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-triangle-1-s");
+        }else{ $jq(this).addClass("ui-icon-triangle-1-e");}
+      }
+    );
 
-                        // Embed in <pre> if this is not html
-                        if (format == "html") {
-                        } else { 
-                          data = "<pre>" + data + "</pre>";
-                        }
-
-                       $jq("#" + mytitle[1] + ".returned-data").append(data);
-                   },
-                   error: function(request,status,error) {
-                         alert(request + " " + status + " " + error + " " + format);
-                   }
-        });
-  return false;
-  });
-
+    widget_container.find("div.module-close").hover(
+      function () {
+        $jq(this).addClass("ui-icon-circle-close");
+      }, 
+      function () {
+        $jq(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
+      }
+    );
+}
  
     function operator(){
         var opTimer;
