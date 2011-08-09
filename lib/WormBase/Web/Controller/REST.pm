@@ -15,13 +15,13 @@ use Text::WikiText::Output::HTML;
 use DateTime;
 
 __PACKAGE__->config(
-    'default' => 'text/x-yaml',
-    'stash_key' => 'rest',
-    'map' => {
-    'text/x-yaml' => 'YAML',,
-    'text/html'          => 'YAML::HTML',
-    'text/xml' => 'XML::Simple',
-    'application/json'   => 'JSON',
+    'default'          => 'text/x-yaml',
+    'stash_key'        => 'rest',
+    'map'              => {
+	'text/x-yaml'      => 'YAML',
+	'text/html'        => 'YAML::HTML',
+	'text/xml'         => 'XML::Simple',
+	'application/json' => 'JSON',
     }
     );
 
@@ -812,25 +812,24 @@ sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
 
     # Does the data for this widget already exist in the cache?
-#    my ($cache_id,$data) = $c->check_cache('available_widgets');
-    my ($cache_id,$data) = $c->check_cache('filecache','available_widgets');
-
+    my ($cache_id,$data,$cache_server) = $c->check_cache('filecache','available_widgets');
+    
     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     
     foreach my $widget (@widgets) {
-    my $uri = $c->uri_for('/widget',$class,$name,$widget);
-    push @$data, { widgetname => $widget,
-               widgeturl  => "$uri"
-    };
-    $c->cache->set($cache_id,$data);
+	my $uri = $c->uri_for('/widget',$class,$name,$widget);
+	push @$data, { widgetname => $widget,
+		       widgeturl  => "$uri"
+	};
+	$c->cache->set($cache_id,$data);
     }
     
     # Retain the widget order
     $self->status_ok( $c, entity => {
-    data => $data,
-    description => "All widgets available for $class:$name",
-              }
-    );
+	data => $data,
+	description => "All widgets available for $class:$name",
+		      }
+	);
 }
 
 
@@ -857,12 +856,27 @@ sub widget_GET {
     $c->log->debug("widget GET header ".$headers->content_type);
     $c->log->debug($headers);
 
+    # Have we pre-cached the HTML for this widget? If so, deliver it.
+    # We will test for DATA caches below (eg: things previously requested
+    # but not specifically cached)
+    my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
+
+    # We'll only test for pre-cached pages in production environments.
+    if ($c->config->{installation_type} eq 'production') {
+	if ($cache_source eq 'precache') {
+	    my $response   = $c->response;
+	    $response->body($cache_id);
+	    return;
+	}
+    }
+    
     # It seems silly to fetch an object if we are going to be pulling
     # fields from the cache but I still need for various page formatting duties.
     unless ($c->stash->{object}) {
         # AD: this condition is an illusion -- the stash will never have an object
         #     unless we were forwarded here by another action. since this is a
         #     RESTful action, that likely isn't the case.
+	# TH: Yes, you're absolutely correct. Conditional from pre-REST implementation?
       # Fetch our external model
       my $api = $c->model('WormBaseAPI');
       
@@ -902,47 +916,46 @@ sub widget_GET {
       return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
     }
     
+    
     # Does the data for this widget already exist in the cache?
-#    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('rest','widget',$class,$name,$widget);
-    my ($cache_id,$cached_data,$cache_server) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
+    # my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
 
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
-      $c->stash->{fields} = $cached_data;
-      $c->stash->{cache} = $cache_server if ($cache_server);
+	$c->stash->{fields} = $cached_data;
+	$c->stash->{cache} = $cache_source if ($cache_source);
     } else {
-
-      # No result? Generate and cache the widget.       
-      # Load the stash with the field contents for this widget.
-      # The widget itself is loaded by REST; fields are not.
-      my @fields = $c->_get_widget_fields($class,$widget);
-
-      my $fatal_non_compliance = 0;
-      foreach my $field (@fields) {
-          unless ($field) { next;}
-          $c->log->debug($field);
-          my $data = $object->$field; # $object->can($field) for a check
-          if ($c->config->{installation_type} eq 'development' and
-              my ($fixed_data, @problems) = $object->_check_data($data, $class)) {
-              $data = $fixed_data;
-              $c->log->fatal("${class}::$field returns non-compliant data: ");
-              $c->log->fatal("\t$_") foreach @problems;
-
-              $fatal_non_compliance = $c->config->{fatal_non_compliance};
-          }
-
-          # Conditionally load up the stash (for now) for HTML requests.
-          # Alternatively, we could return JSON and have the client format it.
-          $c->stash->{fields}->{$field} = $data; 
-      }
-
+	
+	# No result? Generate and cache the widget.       
+	# Load the stash with the field contents for this widget.
+	# The widget itself is loaded by REST; fields are not.
+	my @fields = $c->_get_widget_fields($class,$widget);
+	
+	my $fatal_non_compliance = 0;
+	foreach my $field (@fields) {
+	    unless ($field) { next;}
+	    $c->log->debug($field);
+	    my $data = $object->$field; # $object->can($field) for a check
+	    if ($c->config->{installation_type} eq 'development' and
+		my ($fixed_data, @problems) = $object->_check_data($data, $class)) {
+		$data = $fixed_data;
+		$c->log->fatal("${class}::$field returns non-compliant data: ");
+		$c->log->fatal("\t$_") foreach @problems;
+		
+		$fatal_non_compliance = $c->config->{fatal_non_compliance};
+	    }
+	    
+	    # Conditionally load up the stash (for now) for HTML requests.
+	    # Alternatively, we could return JSON and have the client format it.
+	    $c->stash->{fields}->{$field} = $data; 
+	}
+	
       if ($fatal_non_compliance) {
           die "Non-compliant data. See log for fatal error.\n"
       }
 
       # Cache the field data for this widget.
-#      $c->set_cache($cache_id,$c->stash->{fields});
       $c->set_cache('filecache',$cache_id,$c->stash->{fields});
     }
 
@@ -968,18 +981,17 @@ sub widget_GET {
     # IE the page on WormBase where this should go.
     my $uri = $c->uri_for("/page",$class,$name);
     $self->status_ok($c, entity => {
-    class   => $class,
-    name    => $name,
-    uri     => "$uri",
-    fields => $c->stash->{fields},
-             }
-    );
-   $format ||= 'text/html';
-   my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
-   $c->log->debug("$filename download in the format: $format");
-   $c->response->header('Content-Type' => $format);
-   $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
-   
+	class   => $class,
+	name    => $name,
+	uri     => "$uri",
+	fields => $c->stash->{fields},
+		     }
+	);
+    $format ||= 'text/html';
+    my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
+    $c->log->debug("$filename download in the format: $format");
+    $c->response->header('Content-Type' => $format);
+    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);  
 }
 
 # For "static" pages
@@ -1402,27 +1414,24 @@ sub available_fields : Path('/rest/available_fields') :Args(3) :ActionClass('RES
 
 sub available_fields_GET {
     my ($self,$c,$widget,$class,$name) = @_;
-
-
-    # Does the data for this widget already exist in the cache?
-#    my ($cache_id,$data) = $c->check_cache('available_fields');
-    my ($cache_id,$data) = $c->check_cache('filecache','available_fields');
-
-    unless ($data) {    
-    my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
     
-    foreach my $field (@fields) {
-        my $uri = $c->uri_for('/rest/field',$class,$name,$field);
-        $data->{$field} = "$uri";
-    }
-#   $c->set_cache($cache_id,$data);
-    $c->set_cache('filecache',$cache_id,$data);
+    # Does the data for this widget already exist in the cache?
+    my ($cache_id,$data,$cache_server) = $c->check_cache('filecache','available_fields');
+    
+    unless ($data) {    
+	my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
+	
+	foreach my $field (@fields) {
+	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
+	    $data->{$field} = "$uri";
+	}
+	$c->set_cache('filecache',$cache_id,$data);
     }
     
     $self->status_ok( $c, entity => { data => $data,
-                      description => "All fields that comprise the $widget for $class:$name",
-              }
-    );
+				      description => "All fields that comprise the $widget for $class:$name",
+		      }
+	);
 }
 
 
