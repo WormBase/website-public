@@ -239,7 +239,7 @@ div#header div#nav-bar {
 
 ul.nav-bar {
   margin:0;
-  padding-left:0.5em;
+  padding-left:0em;
   list-style-type: none;
   font-size:1em;
 }
@@ -252,7 +252,7 @@ ul.nav-bar li {
 
 ul.nav-bar li>a{
   float:left;
-  padding:0.4em 2.8em 0 1.9em;
+  padding:0.4em 2.3em 0 1.5em;
   margin:0;
   color:#555;
   height:1.3em;
@@ -264,11 +264,11 @@ ul.nav-bar span.status-bar {
   float:right;
   clear:right;
   margin:0;
-  padding:0 0.5em 0 0;
+  padding:0;
 }
 
 ul.nav-bar span.status-bar li a {
-  padding-right:1.9em;
+  padding-right:1.5em;
 }
 
 ul.nav-bar li span.ui-icon {
@@ -575,13 +575,13 @@ li.visible div.widget-container {
   background-color:#C2D1DF;
 }
 
-#widget-me .widget-header, #navigation .me.ui-selected, .me-bg {
+#widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
     background: #E3DDC5;
 }
-#widget-resources .widget-header, #navigation .resources.ui-selected, .resources-bg  {
+#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg  {
     background: #D0DEC1;
 }
-#widget-tools .widget-header, #navigation .tools.ui-selected, .tools-bg  {
+#widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
     background: #CFC1DE; 
 }
 
@@ -995,7 +995,7 @@ div.columns ul div input#layout-input {
 
 #page-title {
   margin:1.5em -1em -2em 175px;
-  padding:0 1em 0 0;
+  padding:0 2em 0 0;
   position:relative;
 /*  background-color:#C2D1DF;*/
   z-index:10;
@@ -1004,7 +1004,7 @@ div.columns ul div input#layout-input {
 #page-title h2 {
   font-size:24px;
   color:#222;
-  padding:0.5em 1em 0.5em 10px;
+  padding:0.5em 0 0.5em 10px;
 }
 
 #page-title h2 .bench-update{
@@ -1451,19 +1451,20 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border-top: 1px solid #CCC;
 }
 
-
-
-#navigation {
+.navigation {
   width: 12em;
-  float: left;
-  clear:left;
-  position:relative;
   margin:-2.8em 0 1em 0em;
   border-bottom:1px solid #CDCDCD;
   background:white;
 }
 
-#navigation #title{
+#navigation {
+  float: left;
+  clear:left;
+  position:relative;
+}
+
+.navigation #title{
 /*   background:#333; */
   background:black;
   height:2em;
@@ -1471,38 +1472,38 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   padding:0.7em 1.5em 0;
   overflow:hidden;
 }
-#navigation #title:hover{
+.navigation #title:hover{
   background:#555;
 }
 
-#navigation h4, #navigation h4 a {
+.navigation h4, .navigation h4 a {
   color:white;
   padding:0;
   margin:0;
 }
-#navigation h2, #navigation h2 a {
+.navigation h2, .navigation h2 a {
   color:white;
   padding:0 0.2em;
 }
 
-#navigation ul li:hover {
+.navigation ul li:hover {
   background: #FFFFDF;
 }
 
-#navigation ul li.ui-selected { 
+.navigation ul li.ui-selected { 
   background: #C2D1DF; 
   color: black; 
 }
 
-#navigation ul { 
+.navigation ul { 
   list-style-type: none; 
   margin: 0 0 0 0em; 
   padding: 0;
   overflow: hidden;
 }
 
-#navigation ul li { 
-  padding:0.5em 0.5em 0.6em 2em;
+.navigation ul li { 
+  padding:0.5em 0.5em 0.6em 1.5em;
   font-size: 0.9em; 
   height: 1em;
   overflow:hidden;
@@ -1510,7 +1511,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
 }
 
-#navigation ul li.title { 
+.navigation ul li.title { 
   background: #FFF;
   font-size: 0.9em; 
   cursor:auto;
@@ -1521,14 +1522,14 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border-top:1px solid #CDCDCD;
 }
 
-#navigation ul li span.ui-icon{ 
+.navigation ul li span.ui-icon{ 
   visibility:hidden;
   position:absolute;
   right:0.5em;
   top:0.5em;
 }
 
-#navigation ul li.ui-selected span.ui-icon, #navigation ul li:hover span.ui-icon  { 
+.navigation ul li.ui-selected span.ui-icon, .navigation ul li:hover span.ui-icon  { 
   visibility:visible;
 }
 
@@ -1588,23 +1589,33 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   border:0.15em dashed #AAA;
 }
 
-#navigation div.small li{
+.navigation div.small li{
   font-size:0.7em;
   line-height:1em;
-  padding-left:2.5em;
+  padding-left:2em;
 }
 
 .text-width {
   max-width:35em;
 }
 
-div.detail-box, div.search-summary {
+div.detail-box{
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
-  float:right;
+  float:left;
   margin:0.5em;
   max-width:300px;
+}
+
+div.search-summary {
+  background:#E9EEF2;
+  padding: 0.5em 0.5em 0.5em 1.4em;
+  border-bottom: 1px solid #CDCDCD;
+}
+
+div#all-search-results {
+  float:left;
 }
 
 div.detail-box div.field div.field-title {
@@ -1651,6 +1662,24 @@ div.detail-box div.field div.field-content{
   left:0.3em;
   height:6px;
   background-position:-64px -23px;
+}
+
+.star>.tip{
+  left:auto;
+  top:0;
+  right:3em;
+  bottom:auto;
+/*   background:#AAA; */
+/*   border:2px solid black; */
+}
+
+.star>.tip span.ui-icon-triangle-1-s{
+  position:absolute;
+  top:0.5em;
+  height:16px;
+  width:6px;
+  background-position: -39px -16px;
+  left:100%;
 }
 
 .tr>.tip{
@@ -1885,7 +1914,7 @@ div.title {
   width:12em;
   float:left;
   font-size: 0.9em;
-/*   margin: 1em 0 0 0; */
+  margin: 0 0 0 0.5em;
   background:white;
   height:2.8em;
 }

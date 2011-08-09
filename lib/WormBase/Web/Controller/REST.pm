@@ -133,11 +133,6 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 
 sub workbench_star_GET{
     my ( $self, $c) = @_;
-    my $wbid = $c->req->params->{wbid};
-    my $name = $c->req->params->{name};
-    my $class = $c->req->params->{class};
-    my $is_obj = $c->req->params->{is_obj};
-
     my $url = $c->req->params->{url};
     my $page = $self->get_session($c)->pages->find({url=>$url});
 
@@ -146,11 +141,11 @@ sub workbench_star_GET{
     } else{
         $c->stash->{star}->{value} = 0;
     }
-    $c->stash->{star}->{wbid} = $wbid;
-    $c->stash->{star}->{name} = $name;
-    $c->stash->{star}->{class} = $class;
+    $c->stash->{star}->{wbid} = $c->req->params->{wbid};
+    $c->stash->{star}->{name} = $c->req->params->{name};
+    $c->stash->{star}->{class} = $c->req->params->{class};
     $c->stash->{star}->{url} = $url;
-    $c->stash->{star}->{is_obj} = $is_obj;
+    $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');

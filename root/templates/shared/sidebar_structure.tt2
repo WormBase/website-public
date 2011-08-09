@@ -58,11 +58,12 @@
 
       [% title = '<span id="breadcrumbs">' _ title _ '</span>' %]
       <div id="page-title" class="[% section %]-bg">
-      <h2>
+      <h2
 [% UNLESS c.req.action == 'me' %]
-          [% wbid = this_object_id.remove('[:/ &\.]') %]
+        class="tip-simple star" tip="save item">
+          [% wbid = this_object_id.remove('[:/ &\.\[\]]') %]
           <div class="workbench-status-[% wbid %]"></div>
-[% END %]   
+[% ELSE; '>'; END; %]   
           [% title %]  
      
       </h2>
@@ -73,7 +74,7 @@
 <div id="widgets">
      
 
-  <div id="navigation">
+  <div id="navigation" class="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
         <h2><a href="#">WormBase</a></h2>

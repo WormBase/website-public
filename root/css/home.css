@@ -122,7 +122,7 @@ top:-0.5em;
 
 .text-min {
   clear:left;
-  height:2.2em;
+  height:2.4em;
   overflow:hidden;
   width:auto;
   text-overflow: ellipsis;
@@ -180,18 +180,38 @@ div.more .ui-icon {
 	list-style-type: none;
 	}
 
-
-/* The search bar form */
-
-#searchBody {
-    border-right:1px dotted gray;
-/*     overflow:hidden; */
-    float:right;
-  margin: 0.3em;
-/*   width:80%; */
-  height:1.5em;
+.result {
+  padding:0 0.5em;
 }
 
+.result:hover {
+  background-color: #E9EEF2;
+}
+
+
+/* The search bar form */
+#searchResultForm {
+  float:left;
+  position:relative;
+  padding:0;
+  width:80%;
+}
+
+#searchBody {
+  border-right:1px dotted gray;
+  float:right;
+  margin: 0.3em;
+  position:relative;
+  background:white;
+}
+
+#searchResultForm #searchBody {
+  width:80%;
+  margin: 0;
+  padding:0.3em;
+  float:left;
+  border:none;
+}
 
 #searchForm {
   float:right;
@@ -202,7 +222,7 @@ div.more .ui-icon {
   background:#FFF;
 /*   width:19em; */
 }
-#searchForm input.text{  
+#searchForm input.text, #searchResultForm input.text{  
   float:left;
   width:8em;
   color: #565656;  
@@ -210,12 +230,15 @@ div.more .ui-icon {
   padding: 0.3em; 
   text-align: left;  
   height:15px;
-/*   margin: 0.3em; */
   margin:0;
-/*   border-right:1px dotted gray; */
 }  
 
-#searchForm input.ui-icon{
+#searchResultForm input.text{
+  width:97%;
+  margin: 0;
+}
+
+#searchForm input.ui-icon, #searchResultForm input.ui-icon{
   float:right;
   margin:0.3em 0.5em 0 0;
   padding:0;
@@ -223,6 +246,19 @@ div.more .ui-icon {
   cursor:pointer;
   border:none;
   display:inline;
+}
+
+#searchResultForm input.ui-icon {
+  margin:0;
+}
+
+.searchIcon{
+  background-color:white;
+  border:1px solid #CCC;
+  margin:0 0.3em;
+  float:left;
+  padding:0.5em;
+  cursor:pointer;
 }
 
 #searchSelect {
