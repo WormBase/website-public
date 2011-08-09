@@ -46,8 +46,9 @@ $jq(document).ready(function(){
 
 var cur_search_type = 'all';
 
-function search() {
-    var f = $jq("#Search").attr("value");
+function search(box) {
+    if(!box){ box = "Search"; }else{ cur_search_type = 'all'; } 
+    var f = $jq("#" + box).attr("value");
     if(f == "search..." || !f){
       f = "*";
     }

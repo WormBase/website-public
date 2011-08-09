@@ -166,13 +166,13 @@
 
 
   var loadcount = 0;
+  var at_default = -45;
 
 $jq(function() {
 
     var $sidebar   = $jq("#navigation"),
         $window    = $jq(window),
-        offset     = 0,
-        at_default = -45;
+        offset     = 0;
 
     $window.scroll(function() {
       if($sidebar.offset()){
