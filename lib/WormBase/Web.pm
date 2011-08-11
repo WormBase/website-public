@@ -42,13 +42,12 @@ __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(__PACKAGE__->path_to( 'conf', 'log4perl', "$installation_type.conf")->stringify)
     );
 
-
 __PACKAGE__->config->{'Plugin::Session'} = {
-              expires   => 3600,
-	      dbi_dbh   => 'Schema', 
-	      dbi_table => 'sessions',
-	      dbi_id_field => 'session_id',
-	      dbi_data_field => 'session_data',
+              expires           => 3600,
+	      dbi_dbh           => 'Schema', 
+	      dbi_table         => 'sessions',
+	      dbi_id_field      => 'session_id',
+	      dbi_data_field    => 'session_data',
 	      dbi_expires_field => 'expires',
 };
 
@@ -124,24 +123,12 @@ __PACKAGE__->config->{authentication} =
 # These should ALWAYS be served in static mode.
 __PACKAGE__->config(
     static => {
-    dirs => [qw/ css js img tmp /],
-#    include_path => [ '/tmp/wormbase',
-#              __PACKAGE__->config->{root},
-#        ],  
-    include_path => [ '/usr/local/wormbase/shared/tmp',
-              __PACKAGE__->config->{root},
-        ],  
+	dirs => [qw/ css js img tmp /],
+	include_path => [ '/usr/local/wormbase/shared/tmp',
+			  __PACKAGE__->config->{root},
+	    ]
 #   logging  => 1,
     });
-
-
-# Dynamically set the base URL for production; also requires the prepare_path
-if ($installation_type eq 'production') {
-    __PACKAGE__->config->{base} = 'http://beta.wormbase.org/';
-} else {
-#    __PACKAGE__->config->{base} = '';
-}
-
 
 
 
@@ -159,12 +146,6 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => {
         },
     },
 } ) or die "$!";
-
-
-
-# Which elements of the data structure should be exposed in JSON renders?
-__PACKAGE__->config->{'View::JSON'} = {
-    expose_stash => 'data' };
 
 
 ##################################################
@@ -187,38 +168,18 @@ my $servers = ($installation_type eq 'production')
     ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
     : [ '127.0.0.1:11211' ];
 
-#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-#    class          => 'CHI',
-#    driver         => 'Memcached::libmemcached',
-#    servers        => $servers, 
-#    expires_in     => $expires_in,	
-#};#
-
-# CHI based memcache
-#__PACKAGE__->config->{'Plugin::Cache'}{backends}{memcache} = {
-#    class          => 'CHI',
-#    driver         => 'Memcached::libmemcached',
-#    servers        => $servers, 
-#    expires_in     => $expires_in,	
-#};
-
+# 1. Dual caches: memcached and file, one of which
+#    needs to have a symbolic name of "default"
+__PACKAGE__->config->{'Plugin::Cache'}{backends}{memcache} = {
+    class          => 'CHI',
+    driver         => 'Memcached::libmemcached',
+    servers        => $servers,
+    expires_in     => $expires_in,
+};
 
 # Path to the cache is hard-coded.
 # If I pre-cache via WWW::Mech will the cache be portable?
-# Also, can I make this dynamic?
-#__PACKAGE__->config->{'Plugin::Cache'}{backends}{filecache} = {
-#    class          => 'CHI',
-#    driver         => 'File',
-#    root_dir       => '/usr/local/wormbase/shared/test_cache',
-#    store          => 'File',
-#    depth          => 3,
-#    max_key_length => 64,
-#};
-
-# For now, let's make the file cache the default.
-#__PACKAGE__->config->{'Plugin::Cache'}{default_store} = 'File';
-
-__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+__PACKAGE__->config->{'Plugin::Cache'}{backends}{default} = {
     class          => 'CHI',
     driver         => 'File',
     root_dir       => '/usr/local/wormbase/shared/cache',
@@ -227,6 +188,26 @@ __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
     max_key_length => 64,
 };
 
+# For now, let's make the file cache the default. NOT NECESSARY.
+#__PACKAGE__->config->{'Plugin::Cache'}{default_store} = 'filecache';
+
+
+# 2. Using a single cache of either File or memcache
+#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+#    class          => 'CHI',
+#    driver         => 'File',
+#    root_dir       => '/usr/local/wormbase/shared/cache',
+#    store          => 'File',
+#    depth          => 3,
+#    max_key_length => 64,
+#};
+
+#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+#    class          => 'CHI',
+#    driver         => 'Memcached::libmemcached',
+#    servers        => $servers, 
+#    expires_in     => $expires_in,	
+#};
 
 
 # Start the application!
@@ -234,21 +215,11 @@ __PACKAGE__->setup;
 
 
 
-
 ##################################################
 #
 #   Set headers for squid
 #
-##################################################
-
-sub finalize_error {
-	my $c = shift;
-	$c->config->{'response_status'}=$c->response->status;
-	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
- 	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_server_error($c->config->{'response_status'})); 
-	$c->maybe::next::method; 
-}
- 
+################################################## 
 
 # There's a problem with c.uri_for when running behind a reverse proxy.
 # We need to reset the base URL.
@@ -263,6 +234,16 @@ after prepare_path => sub {
 };
     
 
+
+sub finalize_error {
+	my $c = shift;
+	$c->config->{'response_status'}=$c->response->status;
+	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
+ 	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_server_error($c->config->{'response_status'})); 
+	$c->maybe::next::method; 
+}
+
+
 #if __PACKAGE__->config->{debug}
 #$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
 
@@ -271,8 +252,7 @@ after prepare_path => sub {
 
 =pod
 
-Detect if a controller request is via ajax to disable
-template wrapping.
+Detect if a controller request is via ajax to disable template wrapping.
 
 =cut
 
@@ -309,18 +289,37 @@ sub get_example_object {
 ########################################
 sub check_cache {
     my ($self,$name,@keys) = @_;
+
+    # First, check and see if this content exists 
+    # in pre-cache.
+    
+    my $cache_root = sprintf($self->config->{cache_root},WormBase::Web->model('WormBaseAPI')->version);
+    # Opaque: results in /class/widget/name.html.
+    my $target = join('/',$cache_root,$keys[2],$keys[4],"$keys[3].html");
+    if (-e $target) {
+	# Return a file glob of the precached HTML
+	open HTML,"<$target";
+	my $glob = \*HTML;
+	return ($glob,undef,'precache');
+    }
     
     # First get the cache.
-    # Single cache.
-    my $cache = $self->cache;
+    # 1. Single cache approach
+    # my $cache = $self->cache;
 
-    # filecache or memcache?
-    # my $cache = $self->cache(backend => $name);
+    # 2. Dual cache approach: filecache or memcache?
+    # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
+    $name = 'default' if $name eq 'filecache';
+    my $cache = $self->cache(backend => $name);
+
+    # Version entries in the cache.
+    # Now get the database version from the cache. Heh.
     
 =pod
-    # Now get the database version from the cache. Heh.
+	
     my $version;
     unless ($version = $cache->get('wormbase_version')) {
+	
 	# The version isn't cached. So on this our first
 	# check of the cache, stash the database version.
 	
@@ -328,20 +327,23 @@ sub check_cache {
 	$cache->set('wormbase_version',$version);
 	$self->log->warn("tried to set a cache key");
     }
- 
-    # Build a cache key that includes the version.
-    my $cache_id = join("_",@keys,$version);
-=cut
-    my $cache_id = join("/",@keys);
-    # Now check the cache for the data we are looking for.
-    my $cached_data = $cache->get($cache_id);
 
+    # Build a cache key that includes the version.
+    #my $cache_id = join("_",@keys,$version);
+
+=cut
+ 
+    my $cache_id = join("/",@keys);
+    
+    # Check the cache for the data we are looking for.
+    my $cached_data = $cache->get($cache_id);
+    
     # From which memcached server did this come from?
     my $cache_server;
     if ($name eq 'memcache'
 	&& ($self->config->{timer} || $self->check_user_roles('admin'))) {
 	if ($cached_data) {
-	    $cache_server = $cache->get_server_for_key($cache_id);
+	    $cache_server = 'memcache: ' . $cache->get_server_for_key($cache_id);
 	}
     } else {
 	$cache_server = 'filecache' if $cached_data;
@@ -353,29 +355,25 @@ sub check_cache {
 	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
     }
 
-#	my $memd = $self->default_cache_backend->memd;
-##     my $cached_data = $memd->get($cache_id);
-#	my $cached_server;
-#	
-#	if ($cached_data) {
-#	    $cached_server = $memd->get_server_for_key($cache_id) if ($self->config->{timer} || $self->check_user_roles('admin'));
-#	    $self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cached_server.");
-#	} else {
-#	    $self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
-#    }
-
     return ($cache_id,$cached_data,$cache_server);
 }
 
  
-# Provided with a pregenerated cache_id and (probably hash reference) of data,
+# Provided with a pre-generated cache_id and hash reference of data,
 # store it in the cache.
 sub set_cache {
     my ($self,$name,$cache_id,$data) = @_;
 
-#    my $cache = $self->cache(backend => $name);
-#    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $name: $!");
-    $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
+    # 1. Dual cache approach
+    # filecache or memcache?
+    # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
+    $name = 'default' if $name eq 'filecache';
+    my $cache = $self->cache(backend => $name);
+    $self->log->warn("Trying to set the cache: $cache $name, $cache_id");
+    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $name: $!");
+
+    # 2. single cache approach
+    # $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
     return;
 }
 

@@ -637,21 +637,21 @@ B<Response example>
 =cut
 
 sub curated_images { # Caveat: this is very tightly coupled with the Picture model
-	my ($self) = @_;
-
+    my ($self) = @_;
+    
     my %data;
-
+    
     foreach my $pic ($self->_wrap(@{$self ~~ '@Picture'})) {
         my $img_data = $pic->image->{data}; # can't render the image if there is no file!
         next unless $img_data;
-
+	
         my $id          = $pic->object->name;
         my $extsrc_data = $pic->external_source->{data};
         my $src_data    = $pic->reference->{data} || $pic->contact->{data};
-
+	
         # assumption: extsrc_data has 1 to 1 relation to src_data
         my $group = ($src_data && $src_data->{id}) || 'none';
-
+	
         push @{$data{$group}}, {
             id              => $id,
             draw            => $img_data,
@@ -659,11 +659,11 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
             source          => $src_data,
         };
     }
-
-	return {
-		description => 'Curated images of the expression pattern',
-		data        => %data ? \%data : undef,
-	};
+    
+    return {
+	description => 'Curated images of the expression pattern',
+	data        => %data ? \%data : undef,
+    };
 }
 
 
