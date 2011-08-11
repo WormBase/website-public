@@ -47,8 +47,8 @@ input, select, th, td { font-size:1em; }
 
 #content {
   background:white;
-/*   padding:0; */
   padding:0 1em;
+  margin:0;
 }
 
 /* Global Links */
@@ -95,20 +95,19 @@ Note: firefox seems to render header objects funny
 div#header {
   padding:0;
   position:relative;
-/*   background:#333; */
   background:black;
-  margin-bottom:0.5em;
+  border:none;
 }
 
 div#header h1 a, div#header h1 {
-  padding: 0.2em;
+  padding: 0.2em 0.2em 0.2em 0;
   margin:0;
   color:white;
   display:inline;
 }
 
-div#header h1:hover{
-  background:#555;
+div#header h1:hover a{
+  color:#CCC;
 }
 
 div#header p {
@@ -119,7 +118,7 @@ div#header p {
 }
 
 div#header div#title {
-  padding:0.4em 1em;
+  padding:0.4em 1.4em;
 }
 
 div#header .release_date { }
@@ -232,7 +231,7 @@ div.error-message-technical {
 
 div#header div#nav-bar {
   background:#EEE;
-  height:2em;
+  height:2.1em;
   margin:0;
   border-bottom:1px solid #DDD;
 }
@@ -252,7 +251,7 @@ ul.nav-bar li {
 
 ul.nav-bar li>a{
   float:left;
-  padding:0.4em 2.3em 0 1.5em;
+  padding:0.5em 2em 0 1.4em;
   margin:0;
   color:#555;
   height:1.3em;
@@ -307,7 +306,7 @@ ul.nav-bar ul.dropdown {
   margin:0;
   display:none;
   position:absolute;
-  top:1.9em;
+  top:2em;
   left:-1px;
   background:white;
   border:1px solid #CDCDCD;
@@ -344,7 +343,7 @@ span.holder {
   color:black;
   position:relative;
   border-bottom:none;
-  padding-right:1.8em;
+  padding-right:1.5em;
 }
 
 #login-form button{
@@ -439,7 +438,7 @@ li.visible div.widget-container {
 }
 
 .content {
-  padding:1em;
+  padding: 1.8em 1em;
   padding-bottom:1.8em;
   overflow:auto;
   list-style:disc outside none;
@@ -979,7 +978,6 @@ div.columns div{
 }
 
 div.columns ul div input#layout-input {
-/*   width:5em; */
   width:100%;
   color: #999999;
   font-size: 0.75em;
@@ -995,9 +993,8 @@ div.columns ul div input#layout-input {
 
 #page-title {
   margin:1.5em -1em -2em 175px;
-  padding:0 2em 0 0;
+  padding:0 1.5em 0 0;
   position:relative;
-/*  background-color:#C2D1DF;*/
   z-index:10;
 }
 
@@ -1567,12 +1564,12 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   list-style: none;
   position:relative;
   background:white;
-  padding:1em 1em 0.5em 0.7em;
+  padding:1em 1.5em 0.5em 0.7em;
   border-left:1px solid #CCC;
 }
 
 #widget-holder.title-padding{
-  padding-top: 1.7em;
+  padding-top: 1.8em;
 }
 
 .sortable{
@@ -1603,7 +1600,7 @@ div.detail-box{
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 0.5em;
-  float:left;
+  float:right;
   margin:0.5em;
   max-width:300px;
 }
@@ -1677,8 +1674,8 @@ div.detail-box div.field div.field-content{
   position:absolute;
   top:0.5em;
   height:16px;
-  width:6px;
-  background-position: -39px -16px;
+  width:5px;
+  background-position: -40px -16px;
   left:100%;
 }
 
@@ -1807,6 +1804,7 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   position:fixed;       
   bottom:7em;
   right:0;  
+  z-index:100;
 }
 
 #operator-box{
@@ -1816,7 +1814,7 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   padding:0.5em; 
   border:1px solid #CDCDCD;
   background:#E9EEF2;
-  z-index:100;
+/*   z-index:100; */
   cursor:pointer
 }
 
@@ -1904,7 +1902,6 @@ div.inline-columns img {
 }
 
 div.title {
-    padding:0.5em 0em 0 0em;
     padding:0;
     margin:0 -1em;
     position:relative;
@@ -1913,8 +1910,7 @@ div.title {
 #buttons-nav {
   width:12em;
   float:left;
-  font-size: 0.9em;
-  margin: 0 0 0 0.5em;
+  margin: 0 0 0 0.4em;
   background:white;
   height:2.8em;
 }
@@ -1940,8 +1936,7 @@ div.title {
 /* Effects */
 #breadcrumbs {
   position:relative;
-  padding-left:5px;
-/*   margin-left:10px; */
+/*   padding-left:5px; */
   width:100%;
 }
 
@@ -1951,11 +1946,11 @@ div.title {
   height:auto;
   width: auto;
   overflow:hidden;
-  margin:0 5px 0 15px;
+  margin:0 4px 0 12px;
 }
 #breadcrumbs-expand  {
   position:absolute;
-  left:-5px;
+  left:-12px;
   top:-12px;
   cursor:pointer;
 }

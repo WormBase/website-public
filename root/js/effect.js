@@ -258,7 +258,7 @@ var StaticWidgets = {
     if(rev_id) { url = url + "?rev=" + rev_id; } 
     w_content.load(url);
   },
-  delete: function(widget_id){
+  delete_widget: function(widget_id){
     if(confirm("are you sure you want to delete this widget?")){
       $jq.ajax({
         type: "POST",
@@ -295,10 +295,11 @@ var StaticWidgets = {
 var Breadcrumbs = {
   init: function() {
     this.bc = $jq('#breadcrumbs');
+    if (!this.bc) { return; };
     this.children = this.bc.children(),
     this.bCount = this.children.size();
     if(this.bCount < 3){ return; }; //less than three items, don't bother with breadcrumbs
-    
+    this.exp = false;
     this.bc.empty();
     var hidden = this.children.slice(0, (this.bCount - 2));
     var shown = this.children.slice((this.bCount - 2));
@@ -313,28 +314,28 @@ var Breadcrumbs = {
     
     this.expand.hover( function() { 
         Breadcrumbs.arrow.animate({fill:"#999", scale:"0.6, 0.4"}, 200);
-        this.bc.animate({left:'+=10'}, 200);
       }, function() {  Breadcrumbs.arrow.animate({fill:"#666", scale:"0.6, 0.4"}, 200); 
       }
     );
     this.expand.click( function(){
-      if( Breadcrumbs.hiddenContainer.width()<10 ){ Breadcrumbs.show(); }
+      if( Breadcrumbs.exp ){ Breadcrumbs.show(); }
       else{ Breadcrumbs.hide(); }
     });
-    this.hiddenContainer.css('font-size', '0.6em');
     this.width = this.hiddenContainer.width();
     this.hide();
   },
   
   show: function(){
-    Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width, visibility:'visible'}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");});
+    Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
     Breadcrumbs.expand.attr("tip", "minimize");
     Breadcrumbs.arrow.rotate(180);
+    Breadcrumbs.exp = false;
   },
   
   hide: function() {
-    Breadcrumbs.hiddenContainer.animate({width:0, visibility:'hidden'});     
+    Breadcrumbs.hiddenContainer.animate({width:0}, function(){ Breadcrumbs.hiddenContainer.css("visibility", 'hidden');});     
     Breadcrumbs.expand.attr("tip", "expand");
     Breadcrumbs.arrow.rotate(180);
+    Breadcrumbs.exp = true;
   }
 }
