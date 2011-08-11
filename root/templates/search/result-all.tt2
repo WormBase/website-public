@@ -19,7 +19,11 @@
       <div id="search-count-summary" class="navigation" style="margin:0">
         <div class="search-summary">
         <b>[% query %]</b> [class:[% type %]] <br />
-        [species:<span class="species">[% IF species; c.config.sections.species_list.$species.title; ELSE; c.config.sections.species_list.all.title; END;%]</span>]
+        
+            [%  IF species; '[species:<span class="species">' _ c.config.sections.species_list.$species.title _ '</span>]'; 
+                ELSIF (type && c.config.sections.resources.$type.defined); '';
+                ELSE; '[species:<span class="species">' _ c.config.sections.species_list.all.title _ '</span>]'; 
+                END;%]
         </div>
         <ul>
       [% IF type == 'all' %]

@@ -23,7 +23,7 @@ div#create-prompt {
   font-size:0.7em;
   background:white;
   position:absolute;
-  right:1em;
+  right:1.5em;
   bottom:1em;
   padding:1em;
   text-align:center;
@@ -70,35 +70,29 @@ div#create-prompt {
 #results {
   max-width:49em;
   font-size:0.9em;
-    margin: 0;
-    padding:0em;
-/*   float:left; */
+  margin: 0;
+  padding:0;
 }
+
+#results ul {
+  margin:0 -0.5em;
+  padding:0.3em 0 0 0;
+  list-style-type: none;
+}
+
 #results ul li{
    padding-top:0.5em;
    font-size:1.1em;
-/*    height:1.3em; */
 }
 
 #results ul li a{
    text-decoration:underline; 
-}
-#results span.forest-green{
-   color: #228B22;
 }
 
 #results ul li div.date{
   text-decoration:none;
   float:right;
 }
-
-/* #results ul div > span#fade{ */
-/*   margin:-2em 0 0 0; */
-/*padding:0;*/
-/* border:1px solid red; */
-/*position:relative;
-top:-0.5em;
-}*/
 
 #load-results {
   width:100%;
@@ -173,15 +167,10 @@ div.more .ui-icon {
 	padding:0;
 	}
 
-#results ul {
-	margin:0;
-	padding:0;
-    padding-top:0.3em;
-	list-style-type: none;
-	}
+
 
 .result {
-  padding:0 0.5em;
+  padding:0 0.5em 0.5em;
 }
 
 .result:hover {
@@ -218,18 +207,19 @@ div.more .ui-icon {
   position:relative;
   padding:0;
   height:30px;
-  margin:0.6em 1em 0 0;
+  margin:0.5em 1.5em 0 0;
   background:#FFF;
-/*   width:19em; */
 }
+
 #searchForm input.text, #searchResultForm input.text{  
   float:left;
   width:8em;
   color: #565656;  
   border:none;
-  padding: 0.3em; 
+  padding: 0 0.3em; 
+  font-size:1em;
   text-align: left;  
-  height:15px;
+  height:1.3em;
   margin:0;
 }  
 
@@ -257,21 +247,21 @@ div.more .ui-icon {
   border:1px solid #CCC;
   margin:0 0.3em;
   float:left;
-  padding:0.5em;
+  padding:0.6em;
   cursor:pointer;
 }
 
 #searchSelect {
   float:left;
   padding:0;
-/*   margin:0.5em; */
   margin:0.2em 0.5em;
   list-style:none;
   height:auto;
   background:#E9EEF2;
   color:black;
-  font-size:11pt;
+  font-size:10pt;
   position:relative;
+  max-width:10em;
 }
 
 #searchSelect li{
@@ -318,6 +308,10 @@ div.more .ui-icon {
 
 #searchSelect:hover ul {
   display:block;
+}
+
+#all-search-results {
+  padding:2em 0 0 0.5em;
 }
 
 

@@ -298,7 +298,7 @@ sub history_GET {
       $self->status_ok($c,entity => {});
     }
 
-    my @hist = $session->user_history;
+    my @hist = $session->user_history if $session;
     my $size = @hist;
     my $count = $c->req->params->{count} || $size;
     if($count > $size) { $count = $size; }

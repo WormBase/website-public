@@ -4,7 +4,7 @@
   <script>
   sr[% IF widget; widget ; END;%].search.setTotal([% c.stash.count %]);
   </script>
- [% IF results.size > 0 %]<br /><b>Page [% page %] </b>[% END %]
+ [% IF results.size > 0 %]<br /><b style="padding-left:0.5em;">Page [% page %] </b>[% END %]
 [% END %]
 [% FOREACH item IN results %]
 

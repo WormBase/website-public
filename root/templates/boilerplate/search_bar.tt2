@@ -8,7 +8,7 @@
       <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
       <ul id="searchSelect">
         <li>
-          <span style="float:right;background-image: url(/img/down.png);height:16px;width:16px;"></span>
+          <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
           <span id="current-search" style="float:right">All</span>
           <ul>
           [% FOREACH option IN c.config.search_dropdown.option %]
