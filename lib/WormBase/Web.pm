@@ -288,59 +288,64 @@ sub get_example_object {
 #
 ########################################
 sub check_cache {
-    my ($self,$name,@keys) = @_;
+    my ($self,$cache_name,@keys) = @_;
+    
+    # First, has this content been precached?
+    # CouchDB. Located on localhost.
+    my $couch = WormBase::Web->model('CouchDB');
+    # Results in class_widget_name (for widgets)
+    my $uuid = join('_',@keys);
+    
+    # Here, we're using couch to store HTML attachments.
+    # We MAY want to parameterize this in the future
+    # so that we can fetch documents, too.
+    my $content = $couch->get_attachment($uuid,lc($self->model('WormBaseAPI')->version));
+    return ($uuid,$content,'precache') if $content;
 
-    # First, check and see if this content exists 
-    # in pre-cache.
-    
-    my $cache_root = sprintf($self->config->{cache_root},WormBase::Web->model('WormBaseAPI')->version);
-    # Opaque: results in /class/widget/name.html.
-    my $target = join('/',$cache_root,$keys[2],$keys[4],"$keys[3].html");
-    if (-e $target) {
-	# Return a file glob of the precached HTML
-	open HTML,"<$target";
-	my $glob = \*HTML;
-	return ($glob,undef,'precache');
-    }
-    
+    # On-Disk precache
+#    my $cache_root = sprintf($self->config->{cache_root},WormBase::Web->model('WormBaseAPI')->version);
+#    # Results in /class/widget/name.html
+#    my $target = join('/',$cache_root,@keys);
+#    if (-e $target) {
+#	# Return a file glob of the precached HTML
+#	open HTML,"<$target";
+#	my $glob = \*HTML;
+#	return ($glob,undef,'precache');
+#    }
+
+    # We aren't precached? See if the data structure has been cached by the app.
+    # 1. Single cache approach    
     # First get the cache.
-    # 1. Single cache approach
     # my $cache = $self->cache;
 
     # 2. Dual cache approach: filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $name = 'default' if $name eq 'filecache';
-    my $cache = $self->cache(backend => $name);
+    $cache_name = 'default' if $cache_name eq 'filecache';
+    my $cache = $self->cache(backend => $cache_name);
 
     # Version entries in the cache.
-    # Now get the database version from the cache. Heh.
-    
-=pod
-	
+    # Now get the database version from the cache. Heh.    
     my $version;
     unless ($version = $cache->get('wormbase_version')) {
 	
 	# The version isn't cached. So on this our first
-	# check of the cache, stash the database version.
-	
+	# check of the cache, stash the database version.	
 	$version = $self->model('WormBaseAPI')->version;
 	$cache->set('wormbase_version',$version);
-	$self->log->warn("tried to set a cache key");
     }
 
     # Build a cache key that includes the version.
-    #my $cache_id = join("_",@keys,$version);
-
-=cut
- 
-    my $cache_id = join("/",@keys);
+    # This makes it easy to expire cache elements
+    # when there is a new version of the database.
+    my $cache_id = join("_",@keys,$version); 
+    #my $cache_id = join("/",@keys);
     
     # Check the cache for the data we are looking for.
     my $cached_data = $cache->get($cache_id);
     
     # From which memcached server did this come from?
     my $cache_server;
-    if ($name eq 'memcache'
+    if ($cache_name eq 'memcache'
 	&& ($self->config->{timer} || $self->check_user_roles('admin'))) {
 	if ($cached_data) {
 	    $cache_server = 'memcache: ' . $cache->get_server_for_key($cache_id);
@@ -362,15 +367,15 @@ sub check_cache {
 # Provided with a pre-generated cache_id and hash reference of data,
 # store it in the cache.
 sub set_cache {
-    my ($self,$name,$cache_id,$data) = @_;
+    my ($self,$cache_name,$cache_id,$data) = @_;
 
     # 1. Dual cache approach
     # filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $name = 'default' if $name eq 'filecache';
-    my $cache = $self->cache(backend => $name);
-    $self->log->warn("Trying to set the cache: $cache $name, $cache_id");
-    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $name: $!");
+    $cache_name = 'default' if $cache_name eq 'filecache';
+    my $cache = $self->cache(backend => $cache_name);
+    $self->log->warn("Trying to set the cache: $cache $cache_name, $cache_id");
+    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
 
     # 2. single cache approach
     # $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
