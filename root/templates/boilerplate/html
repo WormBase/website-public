@@ -17,7 +17,6 @@
     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/openid-selector/css/openid.css"/>
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
     <link type="text/css" href="/css/home.css" rel="stylesheet" />
-    <link type="text/css" href="/css/icons.css" rel="stylesheet" />
     <link type="text/css" href="/css/social_buttons.css" rel="stylesheet" />
 
     <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
