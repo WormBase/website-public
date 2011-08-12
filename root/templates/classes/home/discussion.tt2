@@ -17,7 +17,7 @@
 <div id="results">
   <ul>
   [% FOREACH cm IN c.stash.comments %]
-    <div class="entry"> 
+    <div class="entry result"> 
       <li><span class="ellipsis" style="max-width:60%;float:left;">"[% cm.content %]</span>" -[% linkUser(cm.people) %]</li>
       [% cm.time_lapse %] - [% linkPage(cm.page) %]
       <br />

@@ -1,8 +1,7 @@
-<a class="bench-update tip-simple tr" 
+<a class="bench-update" 
     wbid="[% c.stash.star.wbid %]" 
     href="/rest/workbench" 
     name="[% c.stash.star.name %]" 
-    tip="[% IF c.stash.star.value == 1; 'remove report'; ELSE;'save report';END;%]" 
     objclass="[% c.stash.star.class %]" 
     is_obj="[% c.stash.star.is_obj %]" 
     url="[% c.stash.star.url | uri %]">

@@ -4,17 +4,17 @@
   <script>
   sr[% IF widget; widget ; END;%].search.setTotal([% c.stash.count %]);
   </script>
- [% IF results.size > 0 %]<br /><b>Page [% page %] </b>[% END %]
+ [% IF results.size > 0 %]<br /><b style="padding-left:0.5em;">Page [% page %] </b>[% END %]
 [% END %]
 [% FOREACH item IN results %]
 
- [% UNLESS c.stash.bench %]<div class="result">[% END %]
+ [%# UNLESS c.stash.bench %]<div class="result tip-simple star" tip="save item">[% #END %]
  [% USE String(item.name.class); result_class = String.lower; %]
  [% result_class = c.config.sections.species.$result_class.title || c.config.sections.resources.$result_class.title FILTER lower %]
  [% UNLESS result_class; result_class = 'page'; END; %]
 
   <li>
-          [% wbid = item.name.id.remove('[:/ &\.]') %]
+          [% wbid = item.name.id.remove('[:/ &\.\[\]]') %]
           [% IF item.name.class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
           <div class="workbench-status-[% wbid %]"></div>
           <script>
@@ -67,5 +67,5 @@
     [% error %]
   [% END %]
 
- [% UNLESS c.stash.bench %]</div>[% END %]
+ [%# UNLESS c.stash.bench %]</div>[%# END %]
 [% END %]

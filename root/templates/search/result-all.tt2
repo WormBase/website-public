@@ -1,44 +1,68 @@
+      <div id="page-title" class="species-bg">
+      <h2>  
 
+   <form method="post"  id="searchResultForm" action="" onsubmit="search('SearchResult'); return false;">
+    <div id="searchBody" class="ui-corner-all">
+      <input class="text" id="SearchResult" name="query" type="text" value="[% query %]"> 
+    </div>
+    <div class="searchIcon ui-corner-all" onclick="search('SearchResult'); return false;">
+      <input class="ui-icon ui-icon-search" type="submit" onclick="search('SearchResult'); return false;" value="">
+    </div>
+  </form>
 
+<br style="clear:both" />
 
-      <div id="search-count-summary" class="search-summary ui-corner-all">
-        query: <b>[% query %]</b><br />
-        class: [% type %] <br />
-        species: <span class="species">[% IF species; c.config.sections.species_list.$species.title; ELSE; c.config.sections.species_list.all.title; END;%]</span>
-        <br />
-        <br />
+      </h2>
+      </div>
+<div id="widgets">
+<div id="navigation">
+      <div id="search-count-summary" class="navigation" style="margin:0">
+        <div class="search-summary">
+        <b>[% query %]</b> [class:[% type %]] <br />
+        
+            [%  IF species; '[species:<span class="species">' _ c.config.sections.species_list.$species.title _ '</span>]'; 
+                ELSIF (type && c.config.sections.resources.$type.defined); '';
+                ELSE; '[species:<span class="species">' _ c.config.sections.species_list.all.title _ '</span>]'; 
+                END;%]
+        </div>
+        <ul>
       [% IF type == 'all' %]
         [% FOREACH sec IN ['species', 'resources'] %]
           [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
               [% IF cls == 'title'; NEXT; END; %]
               [% searchurl = "/search/" _ cls _ "/" _ query _ "?inline=1" %]
               [% IF species; searchurl = searchurl _ "&species=" _ species; END; %]
-              <li style="display:none"><a onClick='loadResults("[% searchurl %]"); return false;' href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
+              <li onClick='loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;' style="display:none">
+                <a onClick='loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
                 <span class="count" href="/search/count/[% species %]/[% cls %]/[% query %]"></span>
+                <span class="ui-icon ui-icon-triangle-1-e"></span>
               </li>
           [% END %]
         [% END %]
       [% END %]
-
-      [% IF( !(species) && (c.config.sections.$type.defined || type == 'all') )%]
-        <br />
+      [% IF( !(species) && (c.config.sections.species.$type.defined || type == 'all') )%]
         [% FOREACH s IN c.config.sections.species_list.keys.sort %]
           [% IF s == 'all'; NEXT; END; %]
           [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
             [% searchurl = "/search/" _ type _ "/" _ query _ "?inline=1&species=" _ s %]
-            <li style="display:none"><a onClick='loadResults("[% searchurl %]"); return false;' class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
+            <li onClick='loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;'  style="display:none">
+              <a onClick='loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
               <span class="count" href="/search/count/[% s %]/[% type %]/[% query %]"></span>
+              <span class="ui-icon ui-icon-triangle-1-e"></span>
             </li>
           [% END %]
         [% END %]
       [% END %]
+      </ul>
       </div>
+</div>
 
-
-
+<div id="widget-holder">
 <div id="all-search-results"></div>
-
+</div>
+</div>
 <script>
+  at_default = 0; 
   $jq("#all-search-results").empty(); 
   ajaxGet($jq("#all-search-results"), "/search/[% type %]/[% query %]/?inline=1[% IF species; '&species=' _ species; END %]");
 
@@ -57,6 +81,8 @@
     $jq("#all-search-results").empty(); 
     ajaxGet($jq("#all-search-results"), url);
     loadcount = 0;
+    $jq(window).scrollTop(0);
+    $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
     return false;
   }
 </script>

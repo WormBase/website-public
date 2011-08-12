@@ -187,7 +187,7 @@
     $jq("div.more").live('click',function() {expand($jq(this).prev(), $jq(this));});
     function expand(txt, more){
          var h = txt.height();
-         if(h<35){
+         if(h<40){
            h='100%';
                   //expand the shorted items before the text, also
             txt.prev('.ellipsis')
@@ -207,8 +207,6 @@
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
          more.toggleClass('open');
-
-
     }
 
     $jq("div.text-min").live('mouseover mouseout',function() {
@@ -590,7 +588,7 @@ function addWidgetEffects(widget_container) {
       $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
-      $jq(".system-message").animate({height:"0px", padding:"0"}, 'slow', '',function(){ $jq(this).hide();});
+      $jq(".system-message").animate({height:"0px"}, 'slow', '',function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
       $jq("#notifications").css("top", "0");
     }
