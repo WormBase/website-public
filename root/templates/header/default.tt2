@@ -83,12 +83,11 @@
           </ul>
       </li>
     [% END %]
-  <span class="status-bar" style="min-width:20em;min-height:1.5em;"></span>
+  <span class="status-bar"></span>
     </ul>
   </div>
  
   [%# PROCESS timer %]
-
 </div>
 
 <div id="operator-box-wrap">

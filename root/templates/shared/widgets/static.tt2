@@ -18,7 +18,7 @@
       [% IF c.check_user_roles("admin") %]
         <input type="submit" 
                value="Delete" 
-               onClick='StaticWidgets.delete("[% widget.widget_id %]");'/>
+               onClick='StaticWidgets.delete_widget("[% widget.widget_id %]");'/>
       [% END %]
     [% END %]
 
