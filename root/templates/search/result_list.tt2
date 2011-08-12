@@ -8,7 +8,7 @@
 [% END %]
 [% FOREACH item IN results %]
 
- [%# UNLESS c.stash.bench %]<div class="result tip-simple star" tip="save item">[% #END %]
+ [%# UNLESS c.stash.bench %]<div class="result tip-simple star" tip="save">[% #END %]
  [% USE String(item.name.class); result_class = String.lower; %]
  [% result_class = c.config.sections.species.$result_class.title || c.config.sections.resources.$result_class.title FILTER lower %]
  [% UNLESS result_class; result_class = 'page'; END; %]
