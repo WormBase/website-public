@@ -859,15 +859,20 @@ sub widget_GET {
     # Have we pre-cached the HTML for this widget? If so, deliver it.
     # We will test for DATA caches below (eg: things previously requested
     # but not specifically cached)
-    my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
-
-    # We'll only test for pre-cached pages in production environments.
+    # Cache key something like "$class_$widget_$name"
+    # my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
+    my ($cache_id,$cached_data,$cache_source);
+    
+    # We'll only check the cache if we are a production environment.
     if ($c->config->{installation_type} eq 'production') {
-	if ($cache_source eq 'precache') {
-	    my $response   = $c->response;
-	    $response->body($cache_id);
-	    return;
-	}
+	($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache',$class,$widget,$name);
+    }
+
+    # The precache via couchdb contains rendered HTML.
+    if ($cache_source eq 'precache') {
+	my $response   = $c->response;
+	$response->body($cached_data);
+	return;
     }
     
     # It seems silly to fetch an object if we are going to be pulling
@@ -917,9 +922,6 @@ sub widget_GET {
     }
     
     
-    # Does the data for this widget already exist in the cache?
-    # my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
-
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
