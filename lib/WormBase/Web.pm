@@ -300,8 +300,10 @@ sub check_cache {
     # We MAY want to parameterize this in the future
     # so that we can fetch documents, too.
     my $content = $couch->get_attachment($uuid,lc($self->model('WormBaseAPI')->version));
-    return ($uuid,$content,'precache') if $content;
-
+    if ($content) {
+	$self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb; retrieving attachment");
+	return ($uuid,$content,'precache') if $content;
+    }
     # On-Disk precache
 #    my $cache_root = sprintf($self->config->{cache_root},WormBase::Web->model('WormBaseAPI')->version);
 #    # Results in /class/widget/name.html
