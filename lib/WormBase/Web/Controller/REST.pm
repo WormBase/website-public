@@ -953,7 +953,8 @@ sub widget_GET {
       }
 
       # Cache the field data for this widget.
-      $c->set_cache('filecache',$cache_id,$c->stash->{fields});
+      # I added an eval cause this was breaking for some data. WE SHOULD FIX DATA RETURNED IN AN UNUSUAL STRUCTURE - AC
+      eval {$c->set_cache('filecache',$cache_id,$c->stash->{fields});}
     }
 
     $c->stash->{class} = $class;
