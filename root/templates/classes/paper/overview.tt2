@@ -16,7 +16,7 @@
 	[% authors.push(tag2link(author)) %]
 [% END %]
 
-<div class="detail-box ui-corner-all">
+[% WRAPPER highlight_box; %]
 	[% 
 	   url = get_url(fields.name.data.class, fields.name.data.id)
 	   title = fields.title.data
@@ -43,10 +43,10 @@
 	[% WRAPPER $field_block title="WormBase ID"-%]
 	   [% fields.name.data.id %]
 	[% END %]
-</div>
+[% END %]
 
 
-<div style="margin:1em;max-width:65%;">
+<div class="text-width">
 [%# BEGIN CITATION %]
 	[% IF authors.size > 0 %]
 		[% apa_persons(authors) %]
@@ -94,8 +94,8 @@
 	   [% external_link($DOI _ fields.doi.data, 'doi:' _ fields.doi.data) %]
 	[% END %]
 [%# END OF CITATION. %]
-
-	<p>
+</div>
+	<p class="text-width">
 	[% IF fields.abstract.data %]
 	   [% markup(fields.abstract.data) %]
 	   [% IF fields.remarks.data %]
@@ -124,7 +124,7 @@
 	   [% END %]
 	   <b>Keywords:</b> [% keywords.join(', ') %]
 	[% END %]
-</div>
+
 
 
 

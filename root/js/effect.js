@@ -88,8 +88,8 @@
       var msg = "open sidebar";
       var marginLeft = '-1em';
       if(w == 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
-      nav.animate({width: w, display: 'block'});
-      ptitle.animate({marginLeft: marginLeft, display: 'block'});
+      nav.animate({width: w}).show();
+      ptitle.animate({marginLeft: marginLeft}).show();
       nav.children("#title").children("div").toggle();
       $jq(this).attr("title", msg);
       $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");

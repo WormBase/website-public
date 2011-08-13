@@ -1,68 +1,15 @@
 /* Icons
 ----------------------------------*/
 
-/* states and images */
-.ui-icon-large { width: 20px; height: 20px; background-image: url(../img/themeroller-icon-set-vector-20px-2010-06-01.png);}
+/*/* states and images */
+/* .ui-icon-large { width: 20px; height: 20px; background-image: url(../img/themeroller-icon-set-vector-20px-2010-06-01.png);} */
 
 /* positioning */
-.ui-icon-carat-1-n.ui-icon-large { background-position: 0 0; }
-.ui-icon-carat-1-ne.ui-icon-large { background-position: -20px 0; }
-.ui-icon-carat-1-e.ui-icon-large { background-position: -40px 0; }
-.ui-icon-carat-1-se.ui-icon-large { background-position: -60px 0; }
-.ui-icon-carat-1-s.ui-icon-large { background-position: -80px 0; }
-.ui-icon-carat-1-sw.ui-icon-large { background-position: -100px 0; }
-.ui-icon-carat-1-w.ui-icon-large { background-position: -120px 0; }
-.ui-icon-carat-1-nw.ui-icon-large { background-position: -140px 0; }
-.ui-icon-carat-2-n-s.ui-icon-large { background-position: -160px 0; }
-.ui-icon-carat-2-e-w.ui-icon-large { background-position: -180px 0; }
-.ui-icon-triangle-1-n.ui-icon-large { background-position: 0 -20px; }
-.ui-icon-triangle-1-ne.ui-icon-large { background-position: -20px -20px; }
-.ui-icon-triangle-1-e.ui-icon-large { background-position: -42px -20px; } /*not pixel aligned??*/
-.ui-icon-triangle-1-se.ui-icon-large { background-position: -60px -20px; }
-.ui-icon-triangle-1-s.ui-icon-large { background-position: -80px -22px; } /*not pixel aligned??*/
-.ui-icon-triangle-1-sw.ui-icon-large { background-position: -100px -20px; }
-.ui-icon-triangle-1-w.ui-icon-large { background-position: -120px -20px; }
-.ui-icon-triangle-1-nw.ui-icon-large { background-position: -140px -20px; }
-.ui-icon-triangle-2-n-s.ui-icon-large { background-position: -160px -20px; }
-.ui-icon-triangle-2-e-w.ui-icon-large { background-position: -180px -20px; }
-
-.ui-icon-plusthick.ui-icon-large { background-position: -40px -160px; }
-.ui-icon-minus.ui-icon-large { background-position: -60px -160px; }
-.ui-icon-minusthick.ui-icon-large { background-position: -80px -160px; }
+/*.ui-icon-triangle-1-s.ui-icon-large { background-position: -80px -22px; }
 .ui-icon-close.ui-icon-large { background-position: -100px -160px; }
-.ui-icon-closethick.ui-icon-large { background-position: -120px -160px; }
-
-.ui-icon-notice.ui-icon-large { background-position: -40px -180px; }
-.ui-icon-help.ui-icon-large { background-position: -60px -180px; }
-.ui-icon-check.ui-icon-large { background-position: -80px -180px; }
-
-.ui-icon-play.ui-icon-large { background-position: 0 -200px; }
-.ui-icon-pause.ui-icon-large { background-position: -20px -200px; }
-
-.ui-icon-stop.ui-icon-large { background-position: -120px -200px; }
-
-.ui-icon-circle-plus.ui-icon-large { background-position: 0 -240px; }
-.ui-icon-circle-minus.ui-icon-large { background-position: -20px -240px; }
 .ui-icon-circle-close.ui-icon-large { background-position: -40px -240px; }
 .ui-icon-circle-triangle-e.ui-icon-large { background-position: -60px -240px; }
 .ui-icon-circle-triangle-s.ui-icon-large { background-position: -80px -240px; }
-.ui-icon-circle-triangle-w.ui-icon-large { background-position: -100px -240px; }
-.ui-icon-circle-triangle-n.ui-icon-large { background-position: -120px -240px; }
-
-.ui-icon-circle-check.ui-icon-large { background-position: -260px -240px; }
-.ui-icon-circlesmall-plus.ui-icon-large { background-position: 0 -260px; }
-.ui-icon-circlesmall-minus.ui-icon-large { background-position: -20px -260px; }
-.ui-icon-circlesmall-close.ui-icon-large { background-position: -40px -260px; }
-.ui-icon-squaresmall-plus.ui-icon-large { background-position: -60px -260px; }
-.ui-icon-squaresmall-minus.ui-icon-large { background-position: -80px -260px; }
-.ui-icon-squaresmall-close.ui-icon-large { background-position: -100px -260px; }
-.ui-icon-grip-dotted-vertical.ui-icon-large { background-position: 0 -280px; }
-.ui-icon-grip-dotted-horizontal.ui-icon-large { background-position: -20px -280px; }
-.ui-icon-grip-solid-vertical.ui-icon-large { background-position: -40px -280px; }
-.ui-icon-grip-solid-horizontal.ui-icon-large { background-position: -60px -280px; }
-.ui-icon-gripsmall-diagonal-se.ui-icon-large { background-position: -80px -280px; }
-.ui-icon-grip-diagonal-se.ui-icon-large { background-position: -100px -280px; }
-
 
 .ui-icon-column { width: 16px; height: 16px; background-image: url(../img/columns.png);}
 .ui-icon-pdf {width: 16px; height: 16px; margin-top:0.1em; cursor:pointer; float:right; background-image: url(../img/pdf-icon.png); }
@@ -71,16 +18,16 @@
 .ui-icon-1 { background-position: 0px 0px; }
 .ui-icon-1-1 { background-position: -16px 0px; }
 .ui-icon-2-1 { background-position: -32px 0px; }
-.ui-icon-1-2 { background-position: -48px 0px; }
-
+.ui-icon-1-2 { background-position: -48px 0px; }*/
+/*
 .ui-icon-stars { width: 20px; height: 20px; 
 background-image: url(../img/stars.png) !important; 
-cursor:pointer;}
+cursor:pointer;}*/
 
-.ui-icon-star-filled { background-position: 0px 0px; }
-.ui-icon-star-outline  { background-position: -20px 0px; }
+/* .ui-icon-star-filled { background-position: 0px 0px; } */
+/* .ui-icon-star-outline  { background-position: -20px 0px; } */
 /* .ui-icon-star-yellow { background-position: -60px 0px; } */
-
+/*
 .ui-icon-star-gray  { 
   background-position: -40px 0px; 
   opacity:0.5;
@@ -105,17 +52,62 @@ cursor:pointer;}
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
+}*/
+
+
+
+
+
+/*/* states and images */
+.ui-icon-large { width: 20px; height: 20px; background-image: url(../img/new-icons.png);}
+
+/* positioning */
+.ui-icon-triangle-1-e.ui-icon-large { background-position: 0px 0px; }
+.ui-icon-triangle-1-s.ui-icon-large { background-position: -40px 0px; }
+.ui-icon-close.ui-icon-large { background-position: -80px 0px; }
+.ui-icon-circle-close.ui-icon-large { background-position: -100px 0px; }
+.ui-icon-circle-triangle-e.ui-icon-large { background-position: -20px 0px; }
+.ui-icon-circle-triangle-s.ui-icon-large { background-position: -60px 0px; }
+
+.ui-icon-column { width: 16px; height: 16px; background-image: url(../img/columns.png);}
+.ui-icon-pdf {width: 16px; height: 16px; margin-top:0.1em; cursor:pointer; float:right; background-image: url(../img/pdf-icon.png); }
+.ui-icon-pubmed { width: 40px; height: 17px; cursor:pointer;  background-image : url(../img/buttons/pubmed.gif); }
+
+.ui-icon-1 { background-position: 0px 0px; }
+.ui-icon-1-1 { background-position: -16px 0px; }
+.ui-icon-2-1 { background-position: -32px 0px; }
+.ui-icon-1-2 { background-position: -48px 0px; }
+
+.ui-icon-stars { width: 20px; height: 20px; 
+background-image: url(../img/new-icons.png) !important; 
+cursor:pointer;}
+
+
+.ui-icon-star-gray  { 
+  background-position: -120px 0px; 
+/*  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;*/
 }
 
+.ui-icon-star-gray:hover  { 
+  background-position: -160px 0px; 
+/*  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1*/
+}
 
-.ui-corner-large-tl { -moz-border-radius-topleft: 20px; -webkit-border-top-left-radius: 20px; border-top-left-radius: 20px; }
-.ui-corner-large-tr { -moz-border-radius-topright: 20px; -webkit-border-top-right-radius: 20px; border-top-right-radius: 20px; }
-.ui-corner-large-bl { -moz-border-radius-bottomleft: 20px; -webkit-border-bottom-left-radius: 20px; border-bottom-left-radius: 20px; }
-.ui-corner-large-br { -moz-border-radius-bottomright: 20px; -webkit-border-bottom-right-radius: 20px; border-bottom-right-radius: 20px; }
-.ui-corner-large-top { -moz-border-radius-topleft: 20px; -webkit-border-top-left-radius: 20px; border-top-left-radius: 20px; -moz-border-radius-topright: 20px; -webkit-border-top-right-radius: 20px; border-top-right-radius: 20px; }
-.ui-corner-large-bottom { -moz-border-radius-bottomleft: 20px; -webkit-border-bottom-left-radius: 20px; border-bottom-left-radius: 20px; -moz-border-radius-bottomright: 20px; -webkit-border-bottom-right-radius: 20px; border-bottom-right-radius: 20px; }
-.ui-corner-large-right {  -moz-border-radius-topright: 20px; -webkit-border-top-right-radius: 20px; border-top-right-radius: 20px; -moz-border-radius-bottomright: 20px; -webkit-border-bottom-right-radius: 20px; border-bottom-right-radius: 20px; }
-.ui-corner-large-left { -moz-border-radius-topleft: 20px; -webkit-border-top-left-radius: 20px; border-top-left-radius: 20px; -moz-border-radius-bottomleft: 20px; -webkit-border-bottom-left-radius: 20px; border-bottom-left-radius: 20px; }
+.ui-icon-star-yellow  { 
+  background-position: -140px 0px; 
+/*  opacity:0.7;
+  filter:alpha(opacity=70);
+  -moz-opacity:0.7;*/
+}
+
+.ui-icon-star-yellow:hover  { 
+  background-position: -180px 0px; 
+}
+
 .ui-corner-large-all { -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px; }
 
 
