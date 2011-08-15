@@ -75,6 +75,7 @@ sub create_document {
     my $params = shift;
     my $attachment = $params->{attachment};
     my $uuid       = $params->{uuid};
+    my $database   = $params->{database};
     my $msg;
 
     my $res;
@@ -83,7 +84,7 @@ sub create_document {
     # and must include the attachment content.
     if ($attachment) {
 	$msg  = $self->_prepare_request({method  => 'PUT',
-					 path    => "$uuid/attachment",
+					 path    => "$database/$uuid/attachment",
 					 content => "$attachment" } 
 	    );
 	$res = $self->_send_request($msg);
@@ -120,7 +121,7 @@ sub get_document {
 # Returns the HTML of the attachement; otherwise return false.
 sub get_attachment {
     my $self     = shift;
-    my $uuid     = shift;    # UUID should incllude server.
+    my $uuid     = shift;
     my $database = shift;
     my $msg  = $self->_prepare_request({ method => 'GET',
 					 path   => "$database/$uuid/attachment" });
