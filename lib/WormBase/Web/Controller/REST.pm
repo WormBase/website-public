@@ -863,9 +863,9 @@ sub widget_GET {
     my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
     if (($c->config->{cache_content} eq 'true') && ($content_type eq 'text/html')) {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
-							uuid       => $uuid,
-							#hostname   => $c->req->base,
+							uuid       => $uuid,							
 						       });
+#hostname   => $c->req->base,
     }
     
     # We're only caching rendered HTML. If it's present, return it.

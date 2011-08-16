@@ -77,9 +77,8 @@ sub create_document {
     my $uuid       = $params->{uuid};
     my $database   = $params->{database};
     my $host       = $params->{hostname}; # PUTS are special; they'll be sent to a single server via proxy.
-    my $msg;
 
-    my $res;
+    my ($res,$msg);
 
     # Attachments have a different URI target
     # and must include the attachment content.
@@ -166,11 +165,16 @@ sub _prepare_request {
     my $content = $opts->{content};
     my $host    = $opts->{host};    # Send all requests back to the original server.
 
-    # Send the request BACK to the original host.
+    # ¡Muy importante!
+    # CouchDB requests will go back the original host (or the name of the proxy)
+    # with the couchdb port appended.
+
+    # Single server installations will need to have port 5984 open.
+    # Proxy server installations will need to direct PUT requests to the appropriate backend server.
+    
     # my $host = $self->host;
     my $port = $self->port;
         
-#    my $uri  = URI->new("http://$host:$port/$path");
     $host =~ s/\/$//;
     my $uri  = URI->new("$host:$port/$path");
     my $msg  = HTTP::Request->new($method,$uri);

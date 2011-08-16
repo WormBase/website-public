@@ -1,6 +1,5 @@
 package WormBase::Web;
 
-
 use Moose;
 use namespace::autoclean;
 use Hash::Merge;
@@ -348,7 +347,7 @@ sub check_cache {
     }
     
     if ($cached_data) {
-	$self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
+	$self->log->debug("CACHE2: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     } else {
 	$self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
     }
@@ -368,6 +367,8 @@ sub set_cache {
     # 1. Dual cache approach
     # filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
+
+    $self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
 
     # One approach: store everything in a *single* couch.
     # No replication or NFS required.
@@ -394,9 +395,7 @@ sub set_cache {
 	$cache_name = 'default' if $cache_name eq 'filecache';
 	my $cache = $self->cache(backend => $cache_name);
 	$cache->set($uuid,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
-    }
-    
-    $self->log->debug("Tried to set the cache: $cache_name, $uuid");
+    }    
 	
     # 2. single cache approach
     # $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
