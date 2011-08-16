@@ -864,7 +864,7 @@ sub widget_GET {
     if (($c->config->{cache_content} eq 'true') && ($content_type eq 'text/html')) {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
 							uuid       => $uuid,
-							hostname   => $c->req->base,
+							#hostname   => $c->req->base,
 						       });
     }
     
