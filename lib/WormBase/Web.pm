@@ -294,15 +294,17 @@ sub check_cache {
     
     # First, has this content been precached?
     # CouchDB. Located on localhost.
-    my $couch = WormBase::Web->model('CouchDB');
+    if ($cache_name eq 'couchdb') {
+	my $couch = WormBase::Web->model('CouchDB');
     
-    # Here, we're using couch to store HTML attachments.
-    # We MAY want to parameterize this in the future
-    # so that we can fetch documents, too.
-    my $content = $couch->get_attachment($uuid,lc($self->model('WormBaseAPI')->version));
-    if ($content) {
-	$self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb; retrieving attachment");
-	return ($content,'couchdb') if $content;
+	# Here, we're using couch to store HTML attachments.
+	# We MAY want to parameterize this in the future
+	# so that we can fetch documents, too.
+	my $content = $couch->get_attachment($uuid,lc($self->model('WormBaseAPI')->version));
+	if ($content) {
+	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb; retrieving attachment");
+	    return ($content,'couchdb') if $content;
+	}
     }
 
     # Not in Couch? Perhaps we've been cached by the app.
@@ -312,19 +314,19 @@ sub check_cache {
 
     # 2. Dual cache approach: filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $cache_name = 'default' if $cache_name eq 'filecache';
+    $cache_name = 'default' if $cache_name eq 'filecache' || $cache_name eq 'couchdb';
     my $cache = $self->cache(backend => $cache_name);
-
-    # Version entries in the cache.
-    # Now get the database version from the cache. Heh.    
-    my $version;
-    unless ($version = $cache->get('wormbase_version')) {
-	
-	# The version isn't cached. So on this our first
-	# check of the cache, stash the database version.	
-	$version = $self->model('WormBaseAPI')->version;
-	$cache->set('wormbase_version',$version);
-    }
+    
+#    # Version entries in the cache.
+#    # Now get the database version from the cache. Heh.    
+#    my $version;
+#    unless ($version = $cache->get('wormbase_version')) {
+#	
+#	# The version isn't cached. So on this our first
+#	# check of the cache, stash the database version.	
+#	$version = $self->model('WormBaseAPI')->version;
+#	$cache->set('wormbase_version',$version);
+#    }
 
     # Check the cache for the data we are looking for.
     my $cached_data = $cache->get($uuid);
@@ -526,6 +528,21 @@ sub _get_widget_fields {
     return @fields;
 }
 
+# Returns boolean check to see if this widget should be precached.
+# Small performance tweak to prevent couchdb lookups when not warranted.
+sub _widget_is_precached {
+    my ($self,$class,$widget) = @_;
+    my $section = $self->config->{sections}{species}{$class}
+               || $self->config->{sections}{resources}{$class};
+
+    # this is here to prevent a widget section from getting added to config
+    unless(defined $section->{widgets}{$widget}){ return (); }
+
+    return 1 if $section->{widgets}{$widget}{precache};
+    return 0;
+}
+
+    
 
 
 =head1 NAME

@@ -848,23 +848,24 @@ sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
    
     my $headers = $c->req->headers;
-    $c->log->debug("widget GET header ".$headers->content_type);
+    $c->log->debug("widget GET header " . $headers->content_type);
     $c->log->debug($headers);
 
-    # Have we pre-cached the HTML for this widget? If so, deliver it.
-    # We will test for DATA caches below (eg: things previously requested
-    # but not specifically cached)
+    # Is this a widget that we've precached?
+    # If so, set a flag to check for it's presence
+    # in the portabe couchdb cache.
+    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';
+
     # Cache key something like "$class_$widget_$name"
     my ($cached_data,$cache_source);
-
     my $uuid = join('_',$class,$widget,$name);
     # We'll only check the cache if we are a production environment.
     # This will first check couch, and if not present, filecache.
-    if ($c->config->{cache_content}) {
-	($cached_data,$cache_source) = $c->check_cache({cache_name => 'filecache',
-							      uuid => $uuid });
+    if ($c->config->{cache_content} eq 'true') {
+	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
+							uuid       => $uuid });
     }
-
+    
     # We're only caching rendered HTML. If it's present, return it.
     if ($cached_data) {
 	my $response = $c->response;
@@ -965,7 +966,7 @@ sub widget_GET {
     my $html = $c->view('TT')->render($c,$c->{stash}->{child_template}); 
     if ($html) {
 	# eval {$c->set_cache('filecache',$cache_id,$html);};
-	$c->set_cache('couchdb',$uuid,$html);
+	$c->set_cache('filecache',$uuid,$html);  # Or: couchdb or memcached
 	my $response = $c->response;
 	$response->body($html);
 	return;
