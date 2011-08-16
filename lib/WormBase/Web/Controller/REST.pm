@@ -846,7 +846,8 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-   
+    $c->log->debug("we're requesting the widget $widget");
+
     # Is this a widget that we've precached?
     # If so, set a flag to check for it's presence
     # in the portabe couchdb cache.
@@ -865,7 +866,7 @@ sub widget_GET {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
 							uuid       => $uuid,							
 						       });
-#hostname   => $c->req->base,
+                                                        #hostname   => $c->req->base,
     }
     
     # We're only caching rendered HTML. If it's present, return it.
@@ -968,13 +969,18 @@ sub widget_GET {
 	    
 	    # eval {$c->set_cache('filecache',$cache_id,$html);};
 	    # Or: couchdb or memcached
+	    
+	    # HARD-CODED to staging.wormbase.org for now.
+	    # We need to open 5984 in production OR configure nginx to proxy pass requests.
 	    $c->set_cache({cache_name => 'couchdb',
 			   uuid       => $uuid,
 			   data       => $html,
-			   hostname   => $c->req->base });
+			   hostname   => 'http://staging.wormbase.org/',
+#			   hostname   => $c->req->base });
+			  });
 	}
 	my $response = $c->response;
-	$response->body($html);
+	$response->body($html);	
 	return;
     }
 
