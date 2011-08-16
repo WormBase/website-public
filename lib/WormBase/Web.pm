@@ -291,7 +291,9 @@ sub check_cache {
     my ($self,$params) = @_;
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
-    
+    my $host       = $params->{hostname};
+    $host        ||= 'http://127.0.0.1/';
+
     # First, has this content been precached?
     # CouchDB. Located on localhost.
     if ($cache_name eq 'couchdb') {
@@ -300,9 +302,12 @@ sub check_cache {
 	# Here, we're using couch to store HTML attachments.
 	# We MAY want to parameterize this in the future
 	# so that we can fetch documents, too.
-	my $content = $couch->get_attachment($uuid,lc($self->model('WormBaseAPI')->version));
+	my $content = $couch->get_attachment({uuid     => $uuid,
+					      database => lc($self->model('WormBaseAPI')->version),
+					      host     => $host });
+#	$self->log->warn("host is $host; uuid: $uuid");
 	if ($content) {
-	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb; retrieving attachment");
+	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host; retrieving attachment");
 	    return ($content,'couchdb') if $content;
 	}
     }
@@ -343,19 +348,22 @@ sub check_cache {
     }
     
     if ($cached_data) {
-	$self->log->debug("CACHE: $uuid: ALREADY CACHED; retrieving from server $cache_server.");
+	$self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     } else {
-	$self->log->debug("CACHE: $uuid: NOT PRESENT; generating widget.");
+	$self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
     }
 
     return ($cached_data,$cache_server);
 }
 
  
-# Provided with a pre-generated cache_id and hash reference of data,
-# store it in the cache.
+# Provided with a pre-generated cache_id and data, store it in one of our caches.
 sub set_cache {
-    my ($self,$cache_name,$uuid,$data) = @_;
+    my ($self,$params) = @_;
+    my $cache_name = $params->{cache_name},
+    my $uuid       = $params->{uuid};
+    my $data       = $params->{data};
+    my $host       = $params->{hostname};
 
     # 1. Dual cache approach
     # filecache or memcache?
@@ -372,7 +380,8 @@ sub set_cache {
 
 	my $response = $couch->create_document({attachment => $data,
 						uuid       => $uuid,			     
-						database   => lc($self->model('WormBaseAPI')->version)
+						database   => lc($self->model('WormBaseAPI')->version),
+						hostname   => $host,						    
 					       });
 	if ($response->{error}) {
 	    $self->log->warn("Couldn't set the cache for $uuid!");
@@ -532,13 +541,13 @@ sub _get_widget_fields {
 # Small performance tweak to prevent couchdb lookups when not warranted.
 sub _widget_is_precached {
     my ($self,$class,$widget) = @_;
-    my $section = $self->config->{sections}{species}{$class}
-               || $self->config->{sections}{resources}{$class};
-
+    my $section = 
+	$self->config->{sections}{species}{$class}
+    || $self->config->{sections}{resources}{$class};
+    
     # this is here to prevent a widget section from getting added to config
     unless(defined $section->{widgets}{$widget}){ return (); }
-
-    return 1 if $section->{widgets}{$widget}{precache};
+    return 1 if defined $section->{widgets}{$widget}{precache};
     return 0;
 }
 
