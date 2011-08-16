@@ -76,6 +76,7 @@ sub create_document {
     my $attachment = $params->{attachment};
     my $uuid       = $params->{uuid};
     my $database   = $params->{database};
+    my $host       = $params->{hostname}; # PUTS are special; they'll be sent to a single server via proxy.
     my $msg;
 
     my $res;
@@ -85,7 +86,9 @@ sub create_document {
     if ($attachment) {
 	$msg  = $self->_prepare_request({method  => 'PUT',
 					 path    => "$database/$uuid/attachment",
-					 content => "$attachment" } 
+					 content => "$attachment",
+					 host    => $host,
+					}
 	    );
 	$res = $self->_send_request($msg);
     } else {
@@ -120,11 +123,15 @@ sub get_document {
 # GET couchdbhost/version/uuid/attachment
 # Returns the HTML of the attachement; otherwise return false.
 sub get_attachment {
-    my $self     = shift;
-    my $uuid     = shift;
-    my $database = shift;
+    my ($self,$params) = @_;
+    my $uuid     = $params->{uuid};
+    my $database = $params->{database};
+    my $host     = $params->{host};
     my $msg  = $self->_prepare_request({ method => 'GET',
-					 path   => "$database/$uuid/attachment" });
+					 path   => "$database/$uuid/attachment",
+					 host   => $host,					 
+				       });
+    
     my $res  = $self->_send_request($msg);    
     if ($res->is_success) {
 	return $res->content;
@@ -155,13 +162,17 @@ sub get_attachment {
 sub _prepare_request {
     my ($self,$opts) = @_;
     my $method  = $opts->{method};
-    my $path    = $opts->{path};    # Path should INCLUDE server.
+    my $path    = $opts->{path};    # Path should INCLUDE server (ie database name)
     my $content = $opts->{content};
+    my $host    = $opts->{host};    # Send all requests back to the original server.
 
-    my $host = $self->host;
+    # Send the request BACK to the original host.
+    # my $host = $self->host;
     my $port = $self->port;
         
-    my $uri  = URI->new("http://$host:$port/$path");
+#    my $uri  = URI->new("http://$host:$port/$path");
+    $host =~ s/\/$//;
+    my $uri  = URI->new("$host:$port/$path");
     my $msg  = HTTP::Request->new($method,$uri);
 
     # Append content to the body if it exists (this is the attachment mechanism)

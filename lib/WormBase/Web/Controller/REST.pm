@@ -847,23 +847,25 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
    
-    my $headers = $c->req->headers;
-    $c->log->debug("widget GET header " . $headers->content_type);
-    $c->log->debug($headers);
-
     # Is this a widget that we've precached?
     # If so, set a flag to check for it's presence
     # in the portabe couchdb cache.
-    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';
+    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';    
 
     # Cache key something like "$class_$widget_$name"
     my ($cached_data,$cache_source);
     my $uuid = join('_',$class,$widget,$name);
-    # We'll only check the cache if we are a production environment.
+
+    # We'll only check the cache if the site has the cache_content flag set,
+    # and if this is a request for HTML.
     # This will first check couch, and if not present, filecache.
-    if ($c->config->{cache_content} eq 'true') {
+    my $headers = $c->req->headers;
+    my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
+    if (($c->config->{cache_content} eq 'true') && ($content_type eq 'text/html')) {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
-							uuid       => $uuid });
+							uuid       => $uuid,
+							hostname   => $c->req->base,
+						       });
     }
     
     # We're only caching rendered HTML. If it's present, return it.
@@ -884,9 +886,9 @@ sub widget_GET {
       my $api = $c->model('WormBaseAPI');
       
       # Fetch the object from our driver     
-      $c->log->debug("WormBaseAPI model is $api " . ref($api));
-      $c->log->debug("The requested class is " . ucfirst($class));
-      $c->log->debug("The request is " . $name);
+      # $c->log->debug("WormBaseAPI model is $api " . ref($api));
+      # $c->log->debug("The requested class is " . ucfirst($class));
+      # $c->log->debug("The request is " . $name);
       
       # Fetch a WormBase::API::Object::* object
       if ($name eq '*' || $name eq 'all') {
@@ -896,7 +898,7 @@ sub widget_GET {
                             name  => $name,
                             }) or die "$!";
       }
-      $c->log->debug("Tried to instantiate: $class");
+      # $c->log->debug("Tried to instantiate: $class");
     }
 
     my $object = $c->stash->{object};
@@ -927,7 +929,7 @@ sub widget_GET {
     my $fatal_non_compliance = 0;
     foreach my $field (@fields) {
 	unless ($field) { next;}
-	$c->log->debug($field);
+	# $c->log->debug("Processing field: $field");	
 	my $data = $object->$field; # $object->can($field) for a check
 	if ($c->config->{installation_type} eq 'development' and
 	    my ($fixed_data, @problems) = $object->_check_data($data, $class)) {
@@ -946,7 +948,6 @@ sub widget_GET {
 	die "Non-compliant data. See log for fatal error.\n"
     }
     
-
     # Save the name and class of the widget.
     $c->stash->{class} = $class;
     $c->stash->{widget} = $widget;
@@ -958,15 +959,20 @@ sub widget_GET {
     $c->stash->{template}="shared/generic/rest_widget.tt2";
     $c->stash->{child_template} = $c->_select_template($widget,$class,'widget');    
 
-    # Forward to the view for rendering HTML.
-    my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
-#    $c->detach('WormBase::Web::View::TT') unless ($format) ;
- 
-    # OR: render the view then cache the content.
-    my $html = $c->view('TT')->render($c,$c->{stash}->{child_template}); 
-    if ($html) {
-	# eval {$c->set_cache('filecache',$cache_id,$html);};
-	$c->set_cache('filecache',$uuid,$html);  # Or: couchdb or memcached
+    # Forward to the view to render HTML
+    if ($content_type eq 'text/html') {
+	my $html = $c->view('TT')->render($c,$c->{stash}->{child_template}); 
+
+	# If we have content and the site is caching it, cache it.
+	if ($html && $c->config->{cache_content}) {
+	    
+	    # eval {$c->set_cache('filecache',$cache_id,$html);};
+	    # Or: couchdb or memcached
+	    $c->set_cache({cache_name => 'couchdb',
+			   uuid       => $uuid,
+			   data       => $html,
+			   hostname   => $c->req->base });
+	}
 	my $response = $c->response;
 	$response->body($html);
 	return;
@@ -977,21 +983,26 @@ sub widget_GET {
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for("/page",$class,$name);
-    $self->status_ok($c, entity => {
-	class   => $class,
-	name    => $name,
-	uri     => "$uri",
-	fields => $c->stash->{fields},
+    my $uri = $c->uri_for("/page",$class,$name);   # THIS IS NO LONGER THE CORRECT URI FOR THE PAGE!
+    $self->status_ok($c, 
+		     entity => {
+			 class   => $class,
+			 name    => $name,
+			 uri     => "$uri",
+			 fields => $c->stash->{fields},
 		     }
 	);
-    $format ||= 'text/html';
-    my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
-    $c->log->debug("$filename download in the format: $format");
-    $c->response->header('Content-Type' => $format);
+    my $filename = join('_',$class,$name,$widget) . '.' . $c->config->{api}->{content_type}->{$content_type};
+    $c->log->debug("$filename download in the format: $content_type");
+    $c->response->header('Content-Type' => $content_type);
     $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);  
 }
 
+
+# This is the original widget() method. Retain for reference.
+# It needs to be updated to use the new check_cache and set_cache interface.
+
+sub widget_data_cache :Path('/rest/widget_data_cache') :Args(3) :ActionClass('REST') {}
 
 # This version polls for and caches data structures in the filecache.
 sub widget_data_cache_GET {
@@ -1133,7 +1144,7 @@ sub widget_data_cache_GET {
 	class   => $class,
 	name    => $name,
 	uri     => "$uri",
-	fields => $c->stash->{fields},
+	fields  => $c->stash->{fields},
 		     }
 	);
     $format ||= 'text/html';
