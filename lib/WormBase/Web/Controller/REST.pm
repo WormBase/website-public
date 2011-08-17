@@ -861,11 +861,11 @@ sub widget_GET {
     # This will first check couch, and if not present, filecache.
     my $headers = $c->req->headers;
     my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
-    if (($c->config->{cache_content}) && ($content_type eq 'text/html')) {
+    if (($c->config->{installation_type} eq 'production') && ($content_type eq 'text/html')) {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
 							uuid       => $uuid,							
 						       });
-                                                        #hostname   => $c->req->base,
+	#hostname   => $c->req->base,
     }    
     
     # We're only caching rendered HTML. If it's present, return it.
@@ -967,7 +967,7 @@ sub widget_GET {
 	my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
 
 	# If we have content and the site is caching it, cache it.
-	if ($html && $c->config->{cache_content}) {
+	if ($html && $c->config->{installation_type} eq 'production') {
 	    
 	    # eval {$c->set_cache('filecache',$cache_id,$html);};
 	    # Or: couchdb or memcached
@@ -976,9 +976,8 @@ sub widget_GET {
 	    # We need to open 5984 in production OR configure nginx to proxy pass requests.
 	    $c->set_cache({cache_name => 'couchdb',
 			   uuid       => $uuid,
-			   data       => $html,
-			   hostname   => 'http://staging.wormbase.org/',
-#			   hostname   => $c->req->base });
+			   data       => $html,			  
+#			   host       => $c->req->base,  # eg http://beta.wormbase.org/ or http://todd.wormbase.org/
 			  });
 	}
 
