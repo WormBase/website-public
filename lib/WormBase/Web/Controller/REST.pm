@@ -164,7 +164,6 @@ sub layout_POST {
     $i = ((sort {$b <=> $a} keys %{$c->user_session->{'layout'}->{$class}})[0]) + 1;
     $c->log->debug("not default: $i");
   }
-  $c->log->debug($i);
 
   my $lstring = $c->request->body_parameters->{'lstring'};
   $c->user_session->{'layout'}->{$class}->{$i}->{'name'} = $layout;
@@ -846,7 +845,7 @@ sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
-    $c->log->debug("we're requesting the widget $widget");
+    $c->log->debug("        ------> we're requesting the widget $widget");
 
     # Is this a widget that we've precached?
     # If so, set a flag to check for it's presence
@@ -862,17 +861,19 @@ sub widget_GET {
     # This will first check couch, and if not present, filecache.
     my $headers = $c->req->headers;
     my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
-    if (($c->config->{cache_content} eq 'true') && ($content_type eq 'text/html')) {
+    if (($c->config->{cache_content}) && ($content_type eq 'text/html')) {
 	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
 							uuid       => $uuid,							
 						       });
                                                         #hostname   => $c->req->base,
-    }
+    }    
     
     # We're only caching rendered HTML. If it's present, return it.
     if ($cached_data) {
-	my $response = $c->response;
-	$response->body($cached_data);
+	$c->response->status(200);
+	$c->response->header('Content-Type' => 'text/html');
+	$c->response->body($cached_data);
+	$c->detach();
 	return;
     }
     
@@ -887,36 +888,37 @@ sub widget_GET {
       my $api = $c->model('WormBaseAPI');
       
       # Fetch the object from our driver     
-      # $c->log->debug("WormBaseAPI model is $api " . ref($api));
-      # $c->log->debug("The requested class is " . ucfirst($class));
-      # $c->log->debug("The request is " . $name);
+      #$c->log->debug("WormBaseAPI model is $api " . ref($api));
+      #$c->log->debug("The requested class is " . ucfirst($class));
+      #$c->log->debug("The request is " . $name);
       
       # Fetch a WormBase::API::Object::* object
       if ($name eq '*' || $name eq 'all') {
           $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
       } else {
           $c->stash->{object} = $api->fetch({class => ucfirst($class),
-                            name  => $name,
-                            }) or die "$!";
+					     name  => $name,
+					    }) or die "Couldn't fetch an object: $!";
       }
       # $c->log->debug("Tried to instantiate: $class");
     }
 
     my $object = $c->stash->{object};
+
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
-    if ($widget eq "references") {
+    if ($widget eq 'references') {
       $c->stash->{class}    = $class;
       $c->stash->{query}    = $name;
       $c->stash->{noboiler} = 1;
       
       # Looking up the template is slow; hard-coded here.
-      $c->stash->{template} = "shared/widgets/references.tt2";
+      $c->stash->{template} = 'shared/widgets/references.tt2';
       $c->forward('WormBase::Web::View::TT');
       return;
     
-    # If you have a tool that you want to display inline as a widget, be certain to add it here.
-    # Otherwise, it will try to load a template under class/action.tt2...
+      # If you have a tool that you want to display inline as a widget, be certain to add it here.
+      # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
       return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
       return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
@@ -957,12 +959,12 @@ sub widget_GET {
     $c->stash->{noboiler} = 1;
 
     # Set the template
-    $c->stash->{template}="shared/generic/rest_widget.tt2";
+    $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
     $c->stash->{child_template} = $c->_select_template($widget,$class,'widget');    
 
     # Forward to the view to render HTML
     if ($content_type eq 'text/html') {
-	my $html = $c->view('TT')->render($c,$c->{stash}->{child_template}); 
+	my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
 
 	# If we have content and the site is caching it, cache it.
 	if ($html && $c->config->{cache_content}) {
@@ -979,8 +981,11 @@ sub widget_GET {
 #			   hostname   => $c->req->base });
 			  });
 	}
-	my $response = $c->response;
-	$response->body($html);	
+
+	$c->response->status(200);
+	$c->response->header('Content-Type' => 'text/html');
+	$c->response->body($html);
+	$c->detach();
 	return;
     }
 
@@ -1016,7 +1021,6 @@ sub widget_data_cache_GET {
    
     my $headers = $c->req->headers;
     $c->log->debug("widget GET header ".$headers->content_type);
-    $c->log->debug($headers);
 
     # Have we pre-cached the HTML for this widget? If so, deliver it.
     # We will test for DATA caches below (eg: things previously requested
