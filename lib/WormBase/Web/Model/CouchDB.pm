@@ -15,6 +15,14 @@ extends qw/Catalyst::Model/;
 has 'host'            => (is => 'ro', isa => 'Str',  required => 0);
 has 'port'            => (is => 'ro', isa => 'Str',  required => 0);
 
+has 'write_host'      => (is => 'ro', isa => 'Str', required => 1);
+has 'write_host_port' => (is => 'ro', isa => 'Str', required => 1);
+
+has 'read_host'      => (is => 'ro', isa => 'Str', required => 1);
+has 'read_host_port' => (is => 'ro', isa => 'Str', required => 1);
+
+
+
 has ua              => ( isa => 'Object', is => 'rw', lazy => 1, builder => '_build_ua' );
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent       => ( isa => 'Str', is => 'ro', default => "WormBase::Update/0.01" );
@@ -76,7 +84,8 @@ sub create_document {
     my $attachment = $params->{attachment};
     my $uuid       = $params->{uuid};
     my $database   = $params->{database};
-    my $host       = $params->{hostname}; # PUTS are special; they'll be sent to a single server via proxy.
+    my $host       = $params->{host} || $self->write_host;  # PUTS are special; they'll be sent to a single server via proxy.
+    my $port       = $params->{port} || $self->write_host_port;
 
     my ($res,$msg);
 
@@ -87,6 +96,7 @@ sub create_document {
 					 path    => "$database/$uuid/attachment",
 					 content => "$attachment",
 					 host    => $host,
+					 port    => $port,
 					}
 	    );
 	$res = $self->_send_request($msg);
@@ -125,10 +135,13 @@ sub get_attachment {
     my ($self,$params) = @_;
     my $uuid     = $params->{uuid};
     my $database = $params->{database};
-    my $host     = $params->{host};
+    my $host     = $params->{host} || $self->read_host;
+    my $port     = $params->{port} || $self->read_host_port;
+
     my $msg  = $self->_prepare_request({ method => 'GET',
 					 path   => "$database/$uuid/attachment",
 					 host   => $host,					 
+					 port   => $port,
 				       });
     
     my $res  = $self->_send_request($msg);    
@@ -158,12 +171,16 @@ sub get_attachment {
 #    return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 #}
 
+
+# Override $host here to make a request against a specific server, otherwise, request is against loopback.
+# Override $port here to make a request against a non-standard port, otherwise default port of 5984.
 sub _prepare_request {
     my ($self,$opts) = @_;
     my $method  = $opts->{method};
     my $path    = $opts->{path};    # Path should INCLUDE server (ie database name)
     my $content = $opts->{content};
     my $host    = $opts->{host};    # Send all requests back to the original server.
+    my $port    = $opts->{port};
 
     # ¡Muy importante!
     # CouchDB requests will go back the original host (or the name of the proxy)
@@ -171,15 +188,12 @@ sub _prepare_request {
 
     # Single server installations will need to have port 5984 open.
     # Proxy server installations will need to direct PUT requests to the appropriate backend server.
-    
-    # my $host = $self->host;
-    my $port = $self->port;
         
     $host =~ s/\/$//;
-    my $uri  = URI->new("$host:$port/$path");
+    my $uri  = URI->new("http://$host:$port/$path");
     my $msg  = HTTP::Request->new($method,$uri);
 
-    # Append content to the body if it exists (this is the attachment mechanism)
+    # Append content to the body if it exists (this is the attachment mechanism for couchdb)
     if ($content) {
 	$msg->content($content);
     }

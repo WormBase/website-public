@@ -25,7 +25,6 @@ use Catalyst::Log::Log4perl;
 use HTTP::Status qw(:constants :is status_message);
 
 
-
 ##################################################
 #
 #   What type of installation are we?
@@ -37,6 +36,7 @@ use HTTP::Status qw(:constants :is status_message);
 my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'staging';
 
 
+# Specific loggers for differnet environments
 __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(__PACKAGE__->path_to( 'conf', 'log4perl', "$installation_type.conf")->stringify)
     );
@@ -290,20 +290,21 @@ sub check_cache {
     my ($self,$params) = @_;
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
-    my $host       = $params->{hostname};
-    $host        ||= 'http://127.0.0.1/';
 
     # First, has this content been precached?
     # CouchDB. Located on localhost.
     if ($cache_name eq 'couchdb') {
 	my $couch = WormBase::Web->model('CouchDB');
+	my $host  = $couch->read_host;
+	
+	$self->log->debug("    ---> Checking cache $cache_name at $host for $uuid...");
     
 	# Here, we're using couch to store HTML attachments.
 	# We MAY want to parameterize this in the future
 	# so that we can fetch documents, too.
 	my $content = $couch->get_attachment({uuid     => $uuid,
 					      database => lc($self->model('WormBaseAPI')->version),
-					      host     => $host });
+					     });
 	if ($content) {
 	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host; retrieving attachment");
 	    return ($content,'couchdb');
@@ -361,16 +362,18 @@ sub set_cache {
     my $cache_name = $params->{cache_name},
     my $uuid       = $params->{uuid};
     my $data       = $params->{data};
-    my $host       = $params->{hostname};
 
     # 1. Dual cache approach
     # filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
 
-    $self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
-
     # One approach: store everything in a *single* couch.
     # No replication or NFS required.
+
+    # BEWARE!  Some set_cache operations will FAIL.
+    # We're PUTting everything to one place, but the read caches are distributed.
+    # If we look in a read cache and don't yet see something,
+    # we will still try and cache it resulting in a conflict.
     if ($cache_name eq 'couchdb') {
 
 	# First, has this content been precached?
@@ -378,10 +381,12 @@ sub set_cache {
 	my $couch = WormBase::Web->model('CouchDB');
 	# Results in class_widget_name (for widgets)
 
+	my $host = $couch->write_host;
+	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
+
 	my $response = $couch->create_document({attachment => $data,
 						uuid       => $uuid,			     
 						database   => lc($self->model('WormBaseAPI')->version),
-						hostname   => $host,						    
 					       });
 	if ($response->{error}) {
 	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
