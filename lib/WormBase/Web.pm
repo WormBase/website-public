@@ -304,10 +304,9 @@ sub check_cache {
 	my $content = $couch->get_attachment({uuid     => $uuid,
 					      database => lc($self->model('WormBaseAPI')->version),
 					      host     => $host });
-#	$self->log->warn("host is $host; uuid: $uuid");
 	if ($content) {
 	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host; retrieving attachment");
-	    return ($content,'couchdb') if $content;
+	    return ($content,'couchdb');
 	}
     }
 
@@ -347,7 +346,7 @@ sub check_cache {
     }
     
     if ($cached_data) {
-	$self->log->debug("CACHE2: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
+	$self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     } else {
 	$self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
     }
@@ -385,7 +384,7 @@ sub set_cache {
 						hostname   => $host,						    
 					       });
 	if ($response->{error}) {
-	    $self->log->warn("Couldn't set the cache for $uuid!");
+	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
 	} else {
 	    return 1;
 	}
