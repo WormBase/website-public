@@ -44,6 +44,7 @@ requires 'Catalyst::View::GD';
 
 # Application dependencies
 requires 'Ace'                                    => '1.92';     # Good 'ole AcePerl.
+#requires 'AnyEvent::CouchDB';                                    #
 requires 'Badge::GoogleTalk';                                    # 
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        # 

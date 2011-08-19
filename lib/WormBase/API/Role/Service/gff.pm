@@ -70,7 +70,7 @@ sub connect {
     
     # TODO: MYSQL ARGUMENTS ARE NOT BEING EXTRACTED CORRECTLY FROM THE CONF FILE!
     my $gff_args = {};
-    $self->log->debug($self->mysql_host);
+    $self->log->debug(" mysql host: " . $self->mysql_host);
     
     $gff_args->{-user} = $self->mysql_user;
     $gff_args->{-pass} = $self->mysql_pass; #if $self->mysql_pass;
