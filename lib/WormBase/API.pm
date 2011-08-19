@@ -153,7 +153,7 @@ sub _build__services {
 
             my $full_name = $source ? "${db_type}_${source}" : $db_type;
             $services{$full_name} = $service;
-            $self->log->debug("service $full_name registered by not yet connected");
+            $self->log->debug("service $full_name registered but not yet connected");
         }
     }
 
