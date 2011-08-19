@@ -42,9 +42,8 @@
     <script>
     'if(location.hash.length == 0){';
   [% UNLESS c.user_session.layout.$class.defined %]
-    var leftList = ["news", "discussion"];
-    var rightList = ["activity"];
-    resetLayout(leftList, rightList, 60);
+    wbPage['hash'] = 'var leftList = ["news", "discussion"];var rightList = ["activity"];WB.resetLayout(leftList, rightList, 60);';
+//     eval(wbPage['hash']);
   [% END %]
     '}';
     </script>

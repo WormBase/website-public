@@ -62,27 +62,8 @@
 </div>
 </div>
 <script>
-  at_default = 0; 
-  $jq("#all-search-results").empty(); 
-  ajaxGet($jq("#all-search-results"), "/search/[% type %]/[% query %]/?inline=1[% IF species; '&species=' _ species; END %]");
-
-
-  $jq("#search-count-summary").find(".count").each(function() {
-    $jq(this).load($jq(this).attr("href"), function(){
-      if($jq(this).text() == '0'){
-        $jq(this).parent().remove();
-      }else {
-        $jq(this).parent().show();
-      }
-    });
-  });
-
-  function loadResults(url){
-    $jq("#all-search-results").empty(); 
-    ajaxGet($jq("#all-search-results"), url);
-    loadcount = 0;
-    $jq(window).scrollTop(0);
-    $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
-    return false;
-  }
+  wbPage['search'] = new Array();
+  wbPage['search']['type'] = "[% type %]";
+  wbPage['search']['query'] = "[% query %]";
+  wbPage['search']['species'] = "[% IF species; '&species=' _ species; END %]";
 </script>

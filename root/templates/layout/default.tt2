@@ -12,7 +12,7 @@
 
       [% IF c.request.param('query') %]
         <script>
-          displayNotification("redirected from search [% c.request.param('query') %]");
+          WB.displayNotification("redirected from search [% c.request.param('query') %]");
         </script>
       [% END %]
 

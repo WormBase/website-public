@@ -1,6 +1,6 @@
  [% # This generic statement belongs at the start of every template %]
 [%# PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
-
+<script>  var wbPage = new Array();</script>
 <!-- BEGIN boilerplate/banner -->
 <div id="wrap">
 
@@ -14,7 +14,7 @@
         </div>
         <div class="system-message" ></div>
         <script>
-          systemMessage('show');
+          wbPage['systemMessage'] = 1;
         </script>
       [% END %]
 
@@ -35,11 +35,12 @@
     <ul class="nav-bar">
     [% FOREACH title IN c.config.nav_bar.option %]
       <li><a href="/[% title %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
+          <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% c.config.sections.$title.title %]</a>
           <ul class="dropdown">
 
             [% IF (title == 'species') %]
-     
+           
 	
     	[%# Force C. elegans to the top without having to hard-code it in configuration %]
         [% species = c.config.sections.species_list.keys.sort %]
@@ -50,7 +51,7 @@
           [% FOREACH option IN species %]
             [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
 
-            <li><a href="/[% title %]/[% option %]" class="species">[% c.config.sections.species_list.$option.title %]</a>
+            <li><a href="/[% title %]/[% option %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$option.title %]</a>
               <ul class="dropdown">  
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
@@ -87,7 +88,7 @@
     </ul>
   </div>
  
-  [%# PROCESS timer %]
+  [% PROCESS timer %]
 </div>
 
 <div id="operator-box-wrap">
@@ -96,14 +97,20 @@
 [% END %]
 </div> 
 
-<script>
- 
-operator();
- 
+  
 [% PROCESS page_info %]
-$jq.post("/rest/history", { 'ref': "[% url %]" , 'name' : "[% label %]", 'id':"[% object.name.data.id %]", 'class':"[% object.name.data.class %]", 'type': "[% c.stash.section %]", 'is_obj': "[% is_obj %]" });
- 
- 
+      [% save = 'reports' %]
+      [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
+[% wbid = object.name.data.id.remove('[:/ &\.\[\]]') %]
+<script>
+  wbPage['ref'] = "[% url %]";
+  wbPage['wbid'] = "[% wbid %]";
+  wbPage['name'] = "[% label | uri %]";
+  wbPage['id'] = "[% object.name.data.id | uri %]";
+  wbPage['class'] = "[% object.name.data.class FILTER lower %]";
+  wbPage['type'] = "[% c.stash.section | uri %]";
+  wbPage['is_obj'] = "[% is_obj %]";
+  wbPage['save'] = "[% save %]";
 </script>
 
 <!-- END boilerplate/banner -->

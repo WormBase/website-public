@@ -1,52 +1,52 @@
  
   $jq(document).ready(function() {
     
-     Breadcrumbs.init();
+//      Breadcrumbs.init();
     
-   $jq('#operator').live('click',function()  
-    { 
-      if($jq('#operator').attr("rel")) {
-     $jq.post("/rest/livechat?open=1",function() {
-        window.location.href="/tools/operator";
-      });
-      }else {
-        var opBox = $jq("#operator-box");
-        ajaxGet(opBox, "/rest/livechat", 0, 
-        function(){ 
-          if(opBox.hasClass("minimize")){
-            opBox.children().hide();
-          }
-        });
-        opLoaded = true;
-        if(opBox.hasClass("minimize")){
-            opBox.removeClass("minimize");
-            opBox.animate({width:"9em"});
-            opBox.children().show();
-        }
-        opTimer = setTimeout(function() {
-          opBox.addClass("minimize");
-          opBox.animate({width:"1.5em"});
-          opBox.children().hide();
-
-        }, 4000)
-      }
-    });  
+//    $jq('#operator').live('click',function()  
+//     { 
+//       if($jq('#operator').attr("rel")) {
+//      $jq.post("/rest/livechat?open=1",function() {
+//         window.location.href="/tools/operator";
+//       });
+//       }else {
+//         var opBox = $jq("#operator-box");
+//         ajaxGet(opBox, "/rest/livechat", 0, 
+//         function(){ 
+//           if(opBox.hasClass("minimize")){
+//             opBox.children().hide();
+//           }
+//         });
+//         opLoaded = true;
+//         if(opBox.hasClass("minimize")){
+//             opBox.removeClass("minimize");
+//             opBox.animate({width:"9em"});
+//             opBox.children().show();
+//         }
+//         opTimer = setTimeout(function() {
+//           opBox.addClass("minimize");
+//           opBox.animate({width:"1.5em"});
+//           opBox.children().hide();
+// 
+//         }, 4000)
+//       }
+//     });  
   
 
-   var contentBox = $jq(".comment-content"),
-      contentBoxDefault = "write a comment..."
-
-  contentBox.live('focus',function() {
-    if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
-    $jq(".comment-submit").show();
-  });
-  contentBox.live('blur',function() {
-    if($jq(this).val().trim() == "") {
-      $jq(this).attr("value",contentBoxDefault);
-      $jq(".comment-submit").hide();
-    }
-  });
-
+//    var contentBox = $jq(".comment-content"),
+//       contentBoxDefault = "write a comment..."
+// 
+//   contentBox.live('focus',function() {
+//     if($jq(this).val().trim() == contentBoxDefault) $jq(this).attr("value", "");
+//     $jq(".comment-submit").show();
+//   });
+//   contentBox.live('blur',function() {
+//     if($jq(this).val().trim() == "") {
+//       $jq(this).attr("value",contentBoxDefault);
+//       $jq(".comment-submit").hide();
+//     }
+//   });
+/*
     $jq(".feed").live('click',function() {
     var url=$jq(this).attr("rel");
     var div=$jq(this).parent().next("#widget-feed");
@@ -55,10 +55,7 @@
     });
 
     $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
-    $jq(".tooltip").addClass("ui-icon ui-icon-lightbulb");
-    
-    openid.init('openid_identifier');
-    $jq("#openid_identifier").focus();
+
 
     $jq(".sortable").sortable({
       handle: '.widget-header, #widget-footer',
@@ -109,7 +106,7 @@
           $jq(this).removeClass("ui-icon-circle-triangle-e");
           $jq(this).addClass("ui-icon-circle-triangle-s");
         }
-      });
+      });*/
 
 
 /*
@@ -122,18 +119,18 @@
       
   });*/
 
-  $jq(".tip-simple").live('mouseover', function(){
-    if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
-      var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
-      tip.appendTo($jq(this)).show();
-    }
-  });
-  $jq(".tip-simple").live('mouseout', function(){
-    $jq(this).children("div.tip-elem").hide();
-  });
+//   $jq(".tip-simple").live('mouseover', function(){
+//     if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
+//       var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
+//       tip.appendTo($jq(this)).show();
+//     }
+//   });
+//   $jq(".tip-simple").live('mouseout', function(){
+//     $jq(this).children("div.tip-elem").hide();
+//   });
   
   
-
+/*
     $jq(".tooltip").live('mouseover',function() {
         $jq(this).cluetip({
         activation: 'click',
@@ -150,36 +147,36 @@
         //    data : "id=" + employee_id,
         //},
           });
-    });
+    });*/
 
 
 
-  var rss = new Raphael("footer-rss", 35, 30).path("M4.135,16.762c3.078,0,5.972,1.205,8.146,3.391c2.179,2.187,3.377,5.101,3.377,8.202h4.745c0-9.008-7.299-16.335-16.269-16.335V16.762zM4.141,8.354c10.973,0,19.898,8.975,19.898,20.006h4.743c0-13.646-11.054-24.749-24.642-24.749V8.354zM10.701,25.045c0,1.815-1.471,3.287-3.285,3.287s-3.285-1.472-3.285-3.287c0-1.813,1.471-3.285,3.285-3.285S10.701,23.231,10.701,25.045z").attr({fill: "#FFF", stroke: "none"});
-  var t = new Raphael("footer-tweet", 35, 30).path("M23.295,22.567h-7.213c-2.125,0-4.103-2.215-4.103-4.736v-1.829h11.232c1.817,0,3.291-1.469,3.291-3.281c0-1.813-1.474-3.282-3.291-3.282H11.979V6.198c0-1.835-1.375-3.323-3.192-3.323c-1.816,0-3.29,1.488-3.29,3.323v11.633c0,6.23,4.685,11.274,10.476,11.274h7.211c1.818,0,3.318-1.463,3.318-3.298S25.112,22.567,23.295,22.567z").attr({fill: "#FFF", stroke: "none"});
-  var email = new Raphael("footer-mail", 35, 30).path("M28.516,7.167H3.482l12.517,7.108L28.516,7.167zM16.74,17.303C16.51,17.434,16.255,17.5,16,17.5s-0.51-0.066-0.741-0.197L2.5,10.06v14.773h27V10.06L16.74,17.303z").attr({fill: "#FFF", stroke: "none"});
-
-  icon_hover(rss);
-  icon_hover(t);
-  icon_hover(email);
-
-  function icon_hover(e1){
-    e1.hover(function (event) {
-      this.attr({fill: "#6FA2D9"});
-    }, function (event) {
-      this.attr({fill: "white"});
-    });
-  }
+//   var rss = new Raphael("footer-rss", 35, 30).path("M4.135,16.762c3.078,0,5.972,1.205,8.146,3.391c2.179,2.187,3.377,5.101,3.377,8.202h4.745c0-9.008-7.299-16.335-16.269-16.335V16.762zM4.141,8.354c10.973,0,19.898,8.975,19.898,20.006h4.743c0-13.646-11.054-24.749-24.642-24.749V8.354zM10.701,25.045c0,1.815-1.471,3.287-3.285,3.287s-3.285-1.472-3.285-3.287c0-1.813,1.471-3.285,3.285-3.285S10.701,23.231,10.701,25.045z").attr({fill: "#FFF", stroke: "none"});
+//   var t = new Raphael("footer-tweet", 35, 30).path("M23.295,22.567h-7.213c-2.125,0-4.103-2.215-4.103-4.736v-1.829h11.232c1.817,0,3.291-1.469,3.291-3.281c0-1.813-1.474-3.282-3.291-3.282H11.979V6.198c0-1.835-1.375-3.323-3.192-3.323c-1.816,0-3.29,1.488-3.29,3.323v11.633c0,6.23,4.685,11.274,10.476,11.274h7.211c1.818,0,3.318-1.463,3.318-3.298S25.112,22.567,23.295,22.567z").attr({fill: "#FFF", stroke: "none"});
+//   var email = new Raphael("footer-mail", 35, 30).path("M28.516,7.167H3.482l12.517,7.108L28.516,7.167zM16.74,17.303C16.51,17.434,16.255,17.5,16,17.5s-0.51-0.066-0.741-0.197L2.5,10.06v14.773h27V10.06L16.74,17.303z").attr({fill: "#FFF", stroke: "none"});
+// 
+//   icon_hover(rss);
+//   icon_hover(t);
+//   icon_hover(email);
+// 
+//   function icon_hover(e1){
+//     e1.hover(function (event) {
+//       this.attr({fill: "#6FA2D9"});
+//     }, function (event) {
+//       this.attr({fill: "white"});
+//     });
+//   }
 
   });
 
 
 
  
-function commentNow(widget){
-  goToAnchor("comment-content-" + widget);
-  $jq("#comment-content-" + widget).focus();
-}
-
+// function commentNow(widget){
+//   goToAnchor("comment-content-" + widget);
+//   $jq("#comment-content-" + widget).focus();
+// }
+/*
 function updateCounts(url){
   var comments = $jq(".comment-count");
 
@@ -190,26 +187,26 @@ function updateCounts(url){
       $jq(".issue-count").html("!").css({color:"red"});
     } 
   });
-}
+}*/
 
 
-function hideTextOnFocus(selector){
-  var area = $jq(selector);
-    
-  if(area.attr("value") != ""){
-    area.siblings().fadeOut();
-  }
-  area.focus(function(){
-    $jq(this).siblings().fadeOut();
-  });
-
-  area.blur(function(){
-    if($jq(this).attr("value") == ""){
-      $jq(this).siblings().fadeIn();
-    }
-  });
-}
-
+// function hideTextOnFocus(selector){
+//   var area = $jq(selector);
+//     
+//   if(area.attr("value") != ""){
+//     area.siblings().fadeOut();
+//   }
+//   area.focus(function(){
+//     $jq(this).siblings().fadeOut();
+//   });
+// 
+//   area.blur(function(){
+//     if($jq(this).attr("value") == ""){
+//       $jq(this).siblings().fadeIn();
+//     }
+//   });
+// }
+/*
 var StaticWidgets = {
   update: function(widget_id, path){
       if(!widget_id){ widget_id = "0"; }
@@ -272,26 +269,26 @@ var StaticWidgets = {
       }); 
     }
   },
-  history: function(wname){
-    var widget = $jq("#" + wname);
-    var history = widget.find("div#" + wname + "-history");
-    if(history.size() > 0){
-      history.toggle();
-      widget.find("a#history-button").toggleClass("ui-state-highlight");
-    }else{
-      var widget_id = wname.split("-").pop();
-      var history = $jq('<div id="' + wname + '-history"></div>'); 
-      history.load("rest/widget/static/" + widget_id + "?history=1");
-      widget.find("div.content").append(history);
-      widget.find("a#history-button").addClass("ui-state-highlight");
-    }
-  }
-}
+//   history: function(wname){
+//     var widget = $jq("#" + wname);
+//     var history = widget.find("div#" + wname + "-history");
+//     if(history.size() > 0){
+//       history.toggle();
+//       widget.find("a#history-button").toggleClass("ui-state-highlight");
+//     }else{
+//       var widget_id = wname.split("-").pop();
+//       var history = $jq('<div id="' + wname + '-history"></div>'); 
+//       history.load("rest/widget/static/" + widget_id + "?history=1");
+//       widget.find("div.content").append(history);
+//       widget.find("a#history-button").addClass("ui-state-highlight");
+//     }
+//   }
+}*/
 
 
 
 
-
+/*
 var Breadcrumbs = {
   init: function() {
     this.bc = $jq('#breadcrumbs');
@@ -306,10 +303,9 @@ var Breadcrumbs = {
     this.hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
     this.hiddenContainer.append(hidden).children().after(' &raquo; ');
 
-    this.bc.append('<span id="breadcrumbs-expand" class="tip-simple" tip="exapand"></span>').append(this.hiddenContainer).append(shown);
+    this.bc.append('<span id="breadcrumbs-expand" class="tip-simple ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(this.hiddenContainer).append(shown);
     this.bc.children(':last').before(" &raquo; ");
    
-    this.arrow = new Raphael("breadcrumbs-expand", 35, 50).path("m 20.546006,26.799417 -18.8190097,24.999999 0,-50.0000002 18.8190097,25.0000012 z").attr({fill: "#666", stroke: "none", scale:"0.6, 0.4", rotation:"180"});
     this.expand = $jq("#breadcrumbs-expand");
     
     this.expand.hover( function() { 
@@ -328,14 +324,14 @@ var Breadcrumbs = {
   show: function(){
     Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
     Breadcrumbs.expand.attr("tip", "minimize");
-    Breadcrumbs.arrow.rotate(180);
+    Breadcrumbs.expand.removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
     Breadcrumbs.exp = false;
   },
   
   hide: function() {
     Breadcrumbs.hiddenContainer.animate({width:0}, function(){ Breadcrumbs.hiddenContainer.css("visibility", 'hidden');});     
     Breadcrumbs.expand.attr("tip", "expand");
-    Breadcrumbs.arrow.rotate(180);
+    Breadcrumbs.expand.removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
     Breadcrumbs.exp = true;
   }
-}
+}*/

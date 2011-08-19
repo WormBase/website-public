@@ -10,55 +10,47 @@
       [% END %]
     </title>
 
-    <link type="text/css" rel="stylesheet" href="/css/reset.css"/>
     <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css" rel="stylesheet" />
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.min.css"/>
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/>
-    <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/openid-selector/css/openid.css"/>
-    <link type="text/css" href="/css/main.css" rel="stylesheet" />
-    <link type="text/css" href="/css/home.css" rel="stylesheet" />
-    <link type="text/css" href="/css/social_buttons.css" rel="stylesheet" />
+    <link type="text/css" href="/css/main.min.css" rel="stylesheet" />
+  </head>
+
+  <body>  
+    [%- content -%]    
+
+
+
 
     <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
-
     <script>
       google.load("jquery", "1.6.2");
       google.load("jqueryui", "1.8.6");
-    </script>
-
-
-    <script>
+</script>
+<script>
       var $jq=  jQuery.noConflict();
+      var se = document.createElement('script');
+      se.src = "/js/every-page.js";
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
+
+
+      [% INCLUDE google_analytics %]
     </script>
+  
+<!--     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.min.css"/> -->
+<!--     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/> -->
 
-    [% FOREACH item IN JavaScripts %]
-      <script type="text/javascript" src="[% '/js/' _ item _ '.js' %]" ></script>    
-    [% END %] 
-
-    <script type="text/javascript" src="/js/jquery/plugins/jquery.highlight-1.1.js"></script>
-    <script type="text/javascript" src="/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script>
-    <script type="text/javascript" src="/js/jquery/plugins/openid-selector/js/openid-jquery.js"></script>
-    <script type="text/javascript" src="/js/jquery/plugins/jquery.tableofcontents.min.js"></script>
-    <script type="text/javascript" src="/js/raphael-min.js"></script>
+<!--     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script> -->
+<!--     <script type="text/javascript" src="/js/jquery/plugins/jquery.tableofcontents.min.js"></script> -->
 
     [% IF  c.check_any_user_role("admin", "curator", "editor") %]
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/skins/markitup/style.css" />
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/sets/wiki/style.css" />
       <script type="text/javascript" src="/js/jquery/plugins/markitup/jquery.markitup.js"></script>
     [% END %]
-      <script type="text/javascript" src="/js/jquery/plugins/markitup/sets/wiki/set.js"></script>
+<!--       <script type="text/javascript" src="/js/jquery/plugins/markitup/sets/wiki/set.js"></script> -->
 
     [% IF class == 'expr_pattern' %]
         <link media="screen" rel="stylesheet" href="/js/jquery/plugins/colorbox/colorbox/colorbox.css" />
         <script type="text/javascript" src="/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js"></script>
     [% END %]
-
-    [% INCLUDE google_analytics %]
-
-  </head>
-
-  <body>  
-    [%- content -%]    
   </body>
 </html>
