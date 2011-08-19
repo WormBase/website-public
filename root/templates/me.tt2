@@ -43,7 +43,8 @@
 
     <script>
   [% UNLESS c.user_session.layout.me.0.defined %]
-    resetLayout(["reports"], ["my_library"], 50);
+     wbPage['hash'] = 'WB.resetLayout(["reports"], ["my_library"], 50);';
+//       eval(wbPage['hash']);
   [% END %]
     </script>
 

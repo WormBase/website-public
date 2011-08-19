@@ -1,5 +1,5 @@
 
-   <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="search(); return false;">
+   <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="WB.search(); return false;">
     [% val = "search..." %]
     [% IF query; val = query; END; %]
     <input class="ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
@@ -20,13 +20,3 @@
     </div>
   </form>
 
-
-
-  <script>
-    [% IF type %]
-      search_change("[% type %]");
-    [% ELSIF class %]
-      search_change("[% class %]");
-    [% END %]
-
-  </script>

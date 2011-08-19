@@ -15,8 +15,8 @@
   window.close();
 [% END %]  
 
-hideTextOnFocus(".email");
-hideTextOnFocus(".password");
+WB.hideTextOnFocus(".email");
+WB.hideTextOnFocus(".password");
 </script>
 
 
@@ -44,11 +44,11 @@ hideTextOnFocus(".password");
   <div class="social">
     <span style="position:absolute;top:30px;">...or sign in with</span>
     <div style="float:right;padding-right:1em;">
-      <button class="social_buttons sb_google sb_24" onClick="openid.signin('google');">
+      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
           <span>Google</span>
       </button>
       <br style="clear:both" />
-      <button class="social_buttons sb_facebook sb_24" onClick="openid.signin('facebook');">
+      <button class="social_buttons sb_facebook sb_24" onClick="WB.openid.signin('facebook');">
           <span>Facebook</span>
       </button>
     </div>

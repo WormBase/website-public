@@ -43,9 +43,7 @@
             </tr>
         </table>
     [% END %]
-    <script type="text/javascript" >
-    $jq(".lightbox").colorbox();
-    </script> 
+
 [% END %]
 
 [% MACRO username(user) BLOCK %]
@@ -400,7 +398,8 @@ END;
 
     <script type="text/javascript" >
     $jq(document).ready(function() {
-        $jq('#[% table_name %]').dataTable({
+        WB.getDataTables(function(){
+     $jq('#[% table_name %]').dataTable({
                 "bPaginate"        : [% paginate %],
         "bLengthChange"    : [% length   %],
 //                "bJQueryUI"        : true,
@@ -408,7 +407,7 @@ END;
         "bFilter"          : [% filter %],      
         "bInfo"            : [% info %],
                 [% style %]
-    } );
+    } );});
       } );
     </script>
 
@@ -636,9 +635,9 @@ END;
 [% END %] 
 [% IF type.match('(static)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator") %]
-                    <a  tip="edit" id="edit-button"  onClick='StaticWidgets.edit("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
+                    <a  tip="edit" id="edit-button"  onClick='WB.StaticWidgets.edit("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
-                    <a  tip="view history" id="history-button" onClick='StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
+                    <a  tip="view history" id="history-button" onClick='WB.StaticWidgets.history("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-clock ui-button"></span></a>
 [% END %]
                     
 
@@ -681,7 +680,6 @@ END;
    <!-- GA -->
 
 
-<script type="text/javascript">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-16257183-1']);
@@ -694,7 +692,6 @@ END;
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>
 
 [% END %]
 
@@ -1314,7 +1311,7 @@ END;
 
   # Get the default (configuration provided) list of widgets.
   widget_list = section_fetch.widgets.keys.sort;
-
+  overview = 0;
   FOREACH widget_list.grep('^overview$');
     widget_list.unshift('overview');
     overview = 1;
@@ -1400,11 +1397,12 @@ END;
 
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
+%]
 
-  # Open some sections by default, depending on what we are displaying.
-  '<script>';
-    'if(location.hash.length == 0){';
-      UNLESS c.user_session.layout.$page_class.0.defined;
+  [% # Open some sections by default, depending on what we are displaying. %]
+  <script>
+    if(location.hash.length == 0){
+      [% UNLESS c.user_session.layout.$page_class.0.defined;
         IF is_class_index;
           defaults = section_fetch.default_widgets_summary.keys;
         ELSE;
@@ -1414,25 +1412,28 @@ END;
           defaults.unshift('overview');
         END;
         defaults = defaults.unique;
+       %]
 
-        UNLESS defaults.first;
-          IF overview;
-            '$jq("#nav-overview").trigger("open");';
-          ELSE;
-          'resetLayout(["browse"], ["basic_search"], 50);';
-          END;
-        ELSE;
-          FOREACH d IN defaults;
-            '$jq("#nav-' _ d _ '").trigger("open");';
-          END;
-        END;
-        'updateLayout();';
-      END;
-    '}';
-  '</script>';
+        [% UNLESS defaults.first %]
+          [% IF overview %]
+            wbPage['hash'] = '$jq("#nav-overview").trigger("open");WB.updateLayout();';
+          [% ELSE %]
+            wbPage['hash'] = 'WB.resetLayout(["browse"], ["basic_search"], 50);WB.updateLayout();';
+          [% END %]
+        [% ELSE %]
+          var open = "";
+          [% FOREACH d IN defaults %]
+             open = open + '$jq("#nav-[% d %]").trigger("open");';
+          [% END %]
+            wbPage['hash'] = open + 'WB.updateLayout();';
+        [% END %]
+      [% END %]
+//       eval(wbPage['hash']);
+    }
+  </script>
 
-END;
-%]
+[% END; %]
+
 
 
 

@@ -9,7 +9,7 @@ The References widget itself is composed of multiple sections, each of which is 
 
   <div id="reference-results">
                     <script>
-                    ajaxGet($jq("#reference-results"), "[% path _ "?class=" _ c.stash.class _ ";inline=1" %]");
+                    WB.ajaxGet($jq("#reference-results"), "[% path _ "?class=" _ c.stash.class _ ";inline=1" %]");
                     </script>
   </div>
 

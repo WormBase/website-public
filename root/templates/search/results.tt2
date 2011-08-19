@@ -39,7 +39,7 @@
 <script>
     var sr[% IF widget; widget ; END;%] = { 
       init: function(){
-        this.search = new SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]');
+        this.search = new WB.SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]');
         this.search.setTotal([% c.stash.count %]);
       }
     }

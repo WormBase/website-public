@@ -1,51 +1,51 @@
  $jq(document).ready(function() {
 
-    window.onhashchange = readHash;
-    $jq.ajaxSetup( {timeout: 99999 });
+//     window.onhashchange = readHash;
+//     $jq.ajaxSetup( {timeout: 99999 });
     
-    ajaxGet($jq(".status-bar"), "/rest/auth");
+//     ajaxGet($jq(".status-bar"), "/rest/auth");
     
-    $jq(".print").live('click',function() {
-	  var layout= window.location.hash.replace('#','');
-	  var print = $jq(this);
-	   
-	    $jq.ajax({
-		      type: "POST",
-		      url : '/rest/print',
-		      data: {layout:layout}, 
-		       beforeSend:function(){
-			  setLoading(print); 
-			},
-		      success: function(data){
-			  print.html('');
-			  window.location.href=data;
-			},
-		      error: function(request,status,error) {
-			      alert(request + " " + status + " " + error );
-			}
-	      });
-    }); 
+//     $jq(".print").live('click',function() {
+// 	  var layout= window.location.hash.replace('#','');
+// 	  var print = $jq(this);
+// 	   
+// 	    $jq.ajax({
+// 		      type: "POST",
+// 		      url : '/rest/print',
+// 		      data: {layout:layout}, 
+// 		       beforeSend:function(){
+// 			  setLoading(print); 
+// 			},
+// 		      success: function(data){
+// 			  print.html('');
+// 			  window.location.href=data;
+// 			},
+// 		      error: function(request,status,error) {
+// 			      alert(request + " " + status + " " + error );
+// 			}
+// 	      });
+//     }); 
 
 	 
-      $jq(".section-button").click(function() {
-	      var section = $jq(this).attr('wname');
-	      $jq("#nav-" + section).trigger("open");
-	      goToAnchor(section);
-	  });
+//       $jq(".section-button").click(function() {
+// 	      var section = $jq(this).attr('wname');
+// 	      $jq("#nav-" + section).trigger("open");
+// 	      goToAnchor(section);
+// 	  });
 
   
-      $jq(".role-update").live('click',function() {
-        var checked;
-        if($jq(this).attr('checked')){ checked = 'true';}
-        $jq.ajax({
-              type: "POST",
-              url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked, 
-              error: function(request,status,error) {
-                  alert(request + " " + status + " " + error );
-                }
-        });
-      });
-
+//       $jq(".role-update").live('click',function() {
+//         var checked;
+//         if($jq(this).attr('checked')){ checked = 'true';}
+//         $jq.ajax({
+//               type: "POST",
+//               url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked, 
+//               error: function(request,status,error) {
+//                   alert(request + " " + status + " " + error );
+//                 }
+//         });
+//       });
+/*
       $jq(".comment-submit").live('click',function() {
 	    var rel= $jq(this).attr("rel");
         var url= $jq(this).attr("url");
@@ -102,45 +102,45 @@
           }
       });
       $jq(this).parent().remove();
-    });
+    });*/
 
-     $jq(".issue-delete").live('click',function() {
-	  var url= $jq(this).attr("rel");
-	   
-	  var id=new Array();
-	  $jq(".issue-deletebox").filter(":checked").each(function(){
-	     id.push($jq(this).attr('name'));
-	  });
-	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
-	  if(answer){
-// 	    var reload = $jq(this).closest('.widget-container').find('.reload');
-	    $jq.ajax({
-		      type: "POST",
-		      url : url,
-		      data: {method:"delete",issues:id.join('_')}, 
-		      success: function(data){
-// 			      reload.trigger('click');
-			      window.location.reload(1);
-                              updateCounts(url);
-			},
-		      error: function(request,status,error) {
-			      alert(request + " " + status + " " + error );
-			}
-	      });
-	  } 
-    }); 
+//      $jq(".issue-delete").live('click',function() {
+// 	  var url= $jq(this).attr("rel");
+// 	   
+// 	  var id=new Array();
+// 	  $jq(".issue-deletebox").filter(":checked").each(function(){
+// 	     id.push($jq(this).attr('name'));
+// 	  });
+// 	  var answer= confirm("Do you really want to delete these issues: #"+id.join(' #'));
+// 	  if(answer){
+// // 	    var reload = $jq(this).closest('.widget-container').find('.reload');
+// 	    $jq.ajax({
+// 		      type: "POST",
+// 		      url : url,
+// 		      data: {method:"delete",issues:id.join('_')}, 
+// 		      success: function(data){
+// // 			      reload.trigger('click');
+// 			      window.location.reload(1);
+//                               updateCounts(url);
+// 			},
+// 		      error: function(request,status,error) {
+// 			      alert(request + " " + status + " " + error );
+// 			}
+// 	      });
+// 	  } 
+//     }); 
     
 
      // Should be a user supplied site-wide option for this.
      // which can be over-ridden on any widget.
      // Toggle should empty look of button
-     $jq("#hide-empty-fields").live('click', function() { 	    
-          $jq(".disabled" ).toggle();    
-          $jq(this).toggleClass('ui-state-highlight');
-     });
+//      $jq("#hide-empty-fields").live('click', function() { 	    
+//           $jq(".disabled" ).toggle();    
+//           $jq(this).toggleClass('ui-state-highlight');
+//      });
 
 
-
+/*
 
     $jq(".issue-submit").live('click',function() {
 	    var rel= $jq(this).attr("rel");
@@ -178,11 +178,11 @@
 
 	    return false;
 
-    });
+    });*/
 
 //   ajaxGet($jq(".user-history"), "/rest/history?count=3");
 //   ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));
-
+/*
     $jq("div.text-min").live('click',function() {expand($jq(this), $jq(this).next());});
     $jq("div.more").live('click',function() {expand($jq(this).prev(), $jq(this));});
     function expand(txt, more){
@@ -211,60 +211,60 @@
 
     $jq("div.text-min").live('mouseover mouseout',function() {
       $jq(this).next().toggleClass('opaque');
-    });
-
+    });*/
+/*
     $jq(".reload").live('click', function() {
       var widget_name = $jq(this).attr("wname");
       var nav = $jq("#nav-" + widget_name);
       var url     = nav.attr("href");
       ajaxGet($jq("div#" + widget_name + "-content"), url);
-    });
+    });*/
 
-      $jq(".bench-update").live('click',function() {
-        var wbid     = $jq(this).attr("wbid");
-        var $class     = $jq(this).attr("objclass");
-        var label     = $jq(this).attr("name");
-        var obj_url  = $jq(this).attr("url");
-        var is_obj  = $jq(this).attr("is_obj");
-        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
-
-        $jq("#bench-status").load(url, function(){
-          ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
-          $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-          if($class != "paper"){
-            ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
-          }
-          if($class == "paper"){
-            ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
-          }
-        });
-      return false;
-      });
+//       $jq(".bench-update").live('click',function() {
+//         var wbid     = $jq(this).attr("wbid");
+//         var $class     = $jq(this).attr("objclass");
+//         var label     = $jq(this).attr("name");
+//         var obj_url  = $jq(this).attr("url");
+//         var is_obj  = $jq(this).attr("is_obj");
+//         var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+// 
+//         $jq("#bench-status").load(url, function(){
+//           ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
+//           $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
+//           if($class != "paper"){
+//             ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
+//           }
+//           if($class == "paper"){
+//             ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
+//           }
+//         });
+//       return false;
+//       });
     });
 
   //this function displayes the notification message at the top of the report page
-  var notifyTimer;
-  function displayNotification(message){
-      if(notifyTimer){
-        clearTimeout(notifyTimer);
-        notifyTimer = null;
-      }
-      var notification = $jq("#notifications");
-      notification.show().children("#notification-text").text(message);
-
-      notifyTimer = setTimeout(function() {
-            notification.fadeOut(400);
-          }, 3000)
-  }
-
-  $jq("#notifications").live('click', function() {
-      if(notifyTimer){
-        clearTimeout(notifyTimer);
-        notifyTimer = null;
-      }
-      $jq(this).hide();
-    });
-
+//   var notifyTimer;
+//   function displayNotification(message){
+//       if(notifyTimer){
+//         clearTimeout(notifyTimer);
+//         notifyTimer = null;
+//       }
+//       var notification = $jq("#notifications");
+//       notification.show().children("#notification-text").text(message);
+// 
+//       notifyTimer = setTimeout(function() {
+//             notification.fadeOut(400);
+//           }, 3000)
+//   }
+// 
+//   $jq("#notifications").live('click', function() {
+//       if(notifyTimer){
+//         clearTimeout(notifyTimer);
+//         notifyTimer = null;
+//       }
+//       $jq(this).hide();
+//     });
+/*
   // used in sidebar view, to open and close widgets when selected
   $jq(".module-load, .module-close").live('click',function() {
     var widget_name = $jq(this).attr("wname");
@@ -354,32 +354,32 @@
         widget = widget.next();
       }
       return false;
-    }
+    }*/
 
-    function setLoading(panel) {
-      panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
-    }
-
-    function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
-      $jq.ajax({
-        url: $url,
-        beforeSend:function(){
-          if(!noLoadImg){ setLoading(ajaxPanel); }
-        },
-        success:function(data){
-          ajaxPanel.html(data);
-        },
-        error:function(xhr, ajaxOptions, thrownError){
-          var error = $jq(xhr.responseText);
-          ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-          ajaxPanel.append(error.find(".error-message-technical").html());
-        },
-        complete:function(XMLHttpRequest, textStatus){
-          if(callback){ callback(); }
-        }
-      });
-
-    }
+//     function setLoading(panel) {
+//       panel.html('<div class="loading"><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+//     }
+// 
+//     function ajaxGet(ajaxPanel, $url, noLoadImg, callback) {
+//       $jq.ajax({
+//         url: $url,
+//         beforeSend:function(){
+//           if(!noLoadImg){ setLoading(ajaxPanel); }
+//         },
+//         success:function(data){
+//           ajaxPanel.html(data);
+//         },
+//         error:function(xhr, ajaxOptions, thrownError){
+//           var error = $jq(xhr.responseText);
+//           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+//           ajaxPanel.append(error.find(".error-message-technical").html());
+//         },
+//         complete:function(XMLHttpRequest, textStatus){
+//           if(callback){ callback(); }
+//         }
+//       });
+// 
+//     }
 
 
 // Load wiki content into a page or widget by binding to a div.
@@ -500,7 +500,7 @@ function loadWikiContent(title,container){
 
 
 
-
+/*
 function addWidgetEffects(widget_container) {
     widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
     widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
@@ -550,37 +550,37 @@ function addWidgetEffects(widget_container) {
         $jq(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
       }
     );
-}
+}*/
  
-    function operator(){
-        var opTimer;
-        var opLoaded = false;
-        $jq('#operator-box').live('click',function()  
-        { 
-          var opBox = $jq(this);
-          if(!(opLoaded)){
-            ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
-                    function(){ 
-                      if($jq("#operator-box").hasClass("minimize")){
-                        $jq("#operator-box").children().hide();
-                      }
-                    });
-            opLoaded = true;
-          }
-          if(opBox.hasClass("minimize")){
-              opBox.removeClass("minimize");
-              opBox.animate({width:"9em"});
-              opBox.children().show();
-          }else{
-            opBox.addClass("minimize");
-            opBox.animate({width:"1.5em"});
-            opBox.children().hide();
-          }
-        });
-    }
+//     function operator(){
+//         var opTimer;
+//         var opLoaded = false;
+//         $jq('#operator-box').live('click',function()  
+//         { 
+//           var opBox = $jq(this);
+//           if(!(opLoaded)){
+//             ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
+//                     function(){ 
+//                       if($jq("#operator-box").hasClass("minimize")){
+//                         $jq("#operator-box").children().hide();
+//                       }
+//                     });
+//             opLoaded = true;
+//           }
+//           if(opBox.hasClass("minimize")){
+//               opBox.removeClass("minimize");
+//               opBox.animate({width:"9em"});
+//               opBox.children().show();
+//           }else{
+//             opBox.addClass("minimize");
+//             opBox.animate({width:"1.5em"});
+//             opBox.children().hide();
+//           }
+//         });
+//     }
 
 
-
+/*
   var system_message = 0; //used for the scrolling sidebar - amount to add to top-margin
   function systemMessage(action, messageId){
     if(action == 'show'){
@@ -592,7 +592,7 @@ function addWidgetEffects(widget_container) {
       $jq.post("/rest/system_message/" + messageId);
       $jq("#notifications").css("top", "0");
     }
-  }
+  }*/
 
 
 

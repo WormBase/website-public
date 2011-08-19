@@ -194,7 +194,7 @@
           "<a href=\"$url\" title=\"$desc\">$text</a>";
        ELSE;
        "<a href=\"$url\" 
-           onClick=\"recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
+           onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" title=\"$desc\">$text</a>";
        END;
     END;
