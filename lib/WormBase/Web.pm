@@ -1,6 +1,5 @@
 package WormBase::Web;
 
-
 use Moose;
 use namespace::autoclean;
 use Hash::Merge;
@@ -26,7 +25,6 @@ use Catalyst::Log::Log4perl;
 use HTTP::Status qw(:constants :is status_message);
 
 
-
 ##################################################
 #
 #   What type of installation are we?
@@ -38,6 +36,7 @@ use HTTP::Status qw(:constants :is status_message);
 my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'staging';
 
 
+# Specific loggers for differnet environments
 __PACKAGE__->log(
     Catalyst::Log::Log4perl->new(__PACKAGE__->path_to( 'conf', 'log4perl', "$installation_type.conf")->stringify)
     );
@@ -288,90 +287,120 @@ sub get_example_object {
 #
 ########################################
 sub check_cache {
-    my ($self,$name,@keys) = @_;
+    my ($self,$params) = @_;
+    my $cache_name = $params->{cache_name};
+    my $uuid       = $params->{uuid};
 
-    # First, check and see if this content exists 
-    # in pre-cache.
+    # First, has this content been precached?
+    # CouchDB. Located on localhost.
+    if ($cache_name eq 'couchdb') {
+	my $couch = WormBase::Web->model('CouchDB');
+	my $host  = $couch->read_host;
+	
+	$self->log->debug("    ---> Checking cache $cache_name at $host for $uuid...");
     
-    my $cache_root = sprintf($self->config->{cache_root},WormBase::Web->model('WormBaseAPI')->version);
-    # Opaque: results in /class/widget/name.html.
-    my $target = join('/',$cache_root,$keys[2],$keys[4],"$keys[3].html");
-    if (-e $target) {
-	# Return a file glob of the precached HTML
-	open HTML,"<$target";
-	my $glob = \*HTML;
-	return ($glob,undef,'precache');
+	# Here, we're using couch to store HTML attachments.
+	# We MAY want to parameterize this in the future
+	# so that we can fetch documents, too.
+	my $content = $couch->get_attachment({uuid     => $uuid,
+					      database => lc($self->model('WormBaseAPI')->version),
+					     });
+	if ($content) {
+	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host; retrieving attachment");
+	    return ($content,'couchdb');
+	}
     }
-    
+
+    # Not in Couch? Perhaps we've been cached by the app.
+    # 1. Single cache approach    
     # First get the cache.
-    # 1. Single cache approach
     # my $cache = $self->cache;
 
     # 2. Dual cache approach: filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $name = 'default' if $name eq 'filecache';
-    my $cache = $self->cache(backend => $name);
-
-    # Version entries in the cache.
-    # Now get the database version from the cache. Heh.
+    $cache_name = 'default' if $cache_name eq 'filecache' || $cache_name eq 'couchdb';
+    my $cache = $self->cache(backend => $cache_name);
     
-=pod
-	
-    my $version;
-    unless ($version = $cache->get('wormbase_version')) {
-	
-	# The version isn't cached. So on this our first
-	# check of the cache, stash the database version.
-	
-	$version = $self->model('WormBaseAPI')->version;
-	$cache->set('wormbase_version',$version);
-	$self->log->warn("tried to set a cache key");
-    }
+#    # Version entries in the cache.
+#    # Now get the database version from the cache. Heh.    
+#    my $version;
+#    unless ($version = $cache->get('wormbase_version')) {
+#	
+#	# The version isn't cached. So on this our first
+#	# check of the cache, stash the database version.	
+#	$version = $self->model('WormBaseAPI')->version;
+#	$cache->set('wormbase_version',$version);
+#    }
 
-    # Build a cache key that includes the version.
-    #my $cache_id = join("_",@keys,$version);
-
-=cut
- 
-    my $cache_id = join("/",@keys);
-    
     # Check the cache for the data we are looking for.
-    my $cached_data = $cache->get($cache_id);
+    my $cached_data = $cache->get($uuid);
     
     # From which memcached server did this come from?
     my $cache_server;
-    if ($name eq 'memcache'
+    if ($cache_name eq 'memcache'
 	&& ($self->config->{timer} || $self->check_user_roles('admin'))) {
 	if ($cached_data) {
-	    $cache_server = 'memcache: ' . $cache->get_server_for_key($cache_id);
+	    $cache_server = 'memcache: ' . $cache->get_server_for_key($uuid);
 	}
     } else {
 	$cache_server = 'filecache' if $cached_data;
     }
     
     if ($cached_data) {
-	$self->log->debug("CACHE: $cache_id: ALREADY CACHED; retrieving from server $cache_server.");
+	$self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     } else {
-	$self->log->debug("CACHE: $cache_id: NOT PRESENT; generating widget.");
+	$self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
     }
 
-    return ($cache_id,$cached_data,$cache_server);
+    return ($cached_data,$cache_server);
 }
 
  
-# Provided with a pre-generated cache_id and hash reference of data,
-# store it in the cache.
+# Provided with a pre-generated cache_id and data, store it in one of our caches.
 sub set_cache {
-    my ($self,$name,$cache_id,$data) = @_;
+    my ($self,$params) = @_;
+    my $cache_name = $params->{cache_name},
+    my $uuid       = $params->{uuid};
+    my $data       = $params->{data};
 
     # 1. Dual cache approach
     # filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $name = 'default' if $name eq 'filecache';
-    my $cache = $self->cache(backend => $name);
-    $self->log->warn("Trying to set the cache: $cache $name, $cache_id");
-    $cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data into $name: $!");
 
+    # One approach: store everything in a *single* couch.
+    # No replication or NFS required.
+
+    # BEWARE!  Some set_cache operations will FAIL.
+    # We're PUTting everything to one place, but the read caches are distributed.
+    # If we look in a read cache and don't yet see something,
+    # we will still try and cache it resulting in a conflict.
+    if ($cache_name eq 'couchdb') {
+
+	# First, has this content been precached?
+	# CouchDB. Located on localhost.
+	my $couch = WormBase::Web->model('CouchDB');
+	# Results in class_widget_name (for widgets)
+
+	my $host = $couch->write_host;
+	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
+
+	my $response = $couch->create_document({attachment => $data,
+						uuid       => $uuid,			     
+						database   => lc($self->model('WormBaseAPI')->version),
+					       });
+	if ($response->{error}) {
+	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
+	} else {
+	    return 1;
+	}
+
+    # The unified cache interface
+    } else {
+	$cache_name = 'default' if $cache_name eq 'filecache';
+	my $cache = $self->cache(backend => $cache_name);
+	$cache->set($uuid,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
+    }    
+	
     # 2. single cache approach
     # $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
     return;
@@ -511,6 +540,21 @@ sub _get_widget_fields {
     return @fields;
 }
 
+# Returns boolean check to see if this widget should be precached.
+# Small performance tweak to prevent couchdb lookups when not warranted.
+sub _widget_is_precached {
+    my ($self,$class,$widget) = @_;
+    my $section = 
+	$self->config->{sections}{species}{$class}
+    || $self->config->{sections}{resources}{$class};
+    
+    # this is here to prevent a widget section from getting added to config
+    unless(defined $section->{widgets}{$widget}){ return (); }
+    return 1 if defined $section->{widgets}{$widget}{precache};
+    return 0;
+}
+
+    
 
 
 =head1 NAME
