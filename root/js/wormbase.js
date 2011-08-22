@@ -8,15 +8,13 @@
      
   var WB = (function(){
     
-    
     function init(){
       window.onhashchange = readHash;
-//       var wbPage = wbPage;
-      
+      var pageInfo = $jq("#header").data("page");
       if($jq(".user-history").size()>0){
         function histUpdate(){
           WB.ajaxGet($jq(".user-history"), "/rest/history?count=3");
-          setTimeout(histUpdate, 9e6); //update the history every now and then
+          setTimeout(histUpdate, 6e5); //update the history every now and then
           return;
         }
         histUpdate();
@@ -24,23 +22,33 @@
       if($jq(".list-layouts").size()>0){WB.ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
     
       
-      $jq.post("/rest/history", { 'ref': wbPage['ref'] , 'name' : wbPage['name'], 'id':wbPage['id'], 'class':wbPage['class'], 'type': wbPage['type'], 'is_obj': wbPage['is_obj'] });
+      $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
-      search_change(wbPage['class']);
-      if(wbPage['systemMessage']) {systemMessage('show');}
-      if(wbPage['search']) {allResults(wbPage['search']['type'], wbPage['search']['species'], wbPage['search']['query']);}
+      search_change(pageInfo['class']);
+      if($jq("#top-system-message").size()>0) {systemMessage('show');}
+      var searchAll = $jq("#all-search-results");
+      if(searchAll.size()>0) { 
+        var searchInfo = searchAll.data("search");
+        allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
+      } 
 
       Breadcrumbs.init();
         
-      if($jq(".workbench-status-" + wbPage['wbid']).size()>0){$jq(".workbench-status-" + wbPage['wbid']).load("/rest/workbench/star?wbid=" + wbPage['wbid'] + "&name=" + wbPage['name'] + "&class=" + wbPage['class'] + "&type=" + wbPage['type'] + "&id=" + wbPage['id'] + "&url=" + wbPage['ref'] + "&save_to=" + wbPage['save'] + "&is_obj=" + wbPage['is_obj']);}
+      if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
-      updateCounts(wbPage['ref']);
- 
+      updateCounts(pageInfo['ref']);
+      var layout;
       if(location.hash.length > 0){
         readHash();
-      }else{
-        eval(wbPage['hash']);
+      }else if(layout = $jq("#widget-holder").data("layout")){
+        if(layout['hash']){
+          location.hash = layout['hash'];
+        }else{
+          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
+          updateLayout();
+        }
       }
+      
       searchInit();
       navBarInit();
       operator();
@@ -573,7 +581,7 @@
         total = 0,
         countSpan = $jq((widget ? "." + widget + "-widget" : '') + " #count"),
         resultDiv = $jq((widget ? "." + widget + "-widget" : '') + " .load-results");
-    var queryList = query.replace(/[,\.\*]/, ' ').split(' ');
+    var queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
     this.setTotal = function(t){
     total = t;
@@ -581,6 +589,7 @@
     }
     
     function queryHighlight(div){
+      if(queryList.length == 0) { return; }
       getHighlight(function(){
         for (var i=0; i<queryList.length; i++){
           if(queryList[i]) { div.highlight(queryList[i]); }
@@ -897,7 +906,7 @@
 
       columns(leftWidth, (100-leftWidth), 1);
       for(var widget = 0; widget < leftList.length; widget++){
-        var widget_name = leftList[widget];
+        var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
           var content = "div#" + widget_name + "-content";
@@ -905,7 +914,7 @@
         }
       }
       for(var widget = 0; widget < rightList.length; widget++){
-        var widget_name = rightList[widget];
+        var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name);
           var content = "div#" + widget_name + "-content";
@@ -1190,18 +1199,18 @@ $jq(function() {
   }
   
 
-  function getDataTables(callback){
-    getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.min.css", callback);
-    return;
-  }
-  function getHighlight(callback){
-    getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
-    return;
-  }
-  function getCluetip(callback){
-    getPlugin("cluetip", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css", callback);
-    return;
-  }
+    function getDataTables(callback){
+      getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.min.css", callback);
+      return;
+    }
+    function getHighlight(callback){
+      getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
+      return;
+    }
+    function getCluetip(callback){
+      getPlugin("cluetip", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css", callback);
+      return;
+    }
   
   
     function getPlugin(name, url, stylesheet, callback){
@@ -1212,7 +1221,7 @@ $jq(function() {
           setTimeout(getPlugin(name, url, stylesheet, callback),1);
           return;
         }
-        callback; 
+        callback(); 
       }
       return;
     }
@@ -1229,6 +1238,8 @@ $jq(function() {
       SearchResult: SearchResult,
       updateLayout: updateLayout,
       search: search,
+      search_change: search_change,
+      loadResults: loadResults,
       openid: openid,
       StaticWidgets: StaticWidgets,
       recordOutboundLink: recordOutboundLink,

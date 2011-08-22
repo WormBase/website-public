@@ -24,23 +24,16 @@
     <script>
       google.load("jquery", "1.6.2");
       google.load("jqueryui", "1.8.6");
-</script>
-<script>
+    </script>
+    <script>
       var $jq=  jQuery.noConflict();
       var se = document.createElement('script');
-      se.src = "/js/every-page.js";
+      se.src = "/js/wormbase.js";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
 
 
       [% INCLUDE google_analytics %]
     </script>
-  
-<!--     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/dataTables/media/css/demo_table.min.css"/> -->
-<!--     <link type="text/css" rel="stylesheet" href="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css"/> -->
-
-<!--     <script type="text/javascript" src="/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js"></script> -->
-<!--     <script type="text/javascript" src="/js/jquery/plugins/jquery.tableofcontents.min.js"></script> -->
-
     [% IF  c.check_any_user_role("admin", "curator", "editor") %]
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/skins/markitup/style.css" />
       <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/sets/wiki/style.css" />

@@ -49,7 +49,7 @@
               </ul>
             </li>
             <li><a id="fade" onClick="openAllWidgets(); return false;">open all</a></li>
-<!--             <li><a id="fade" class="print">print</a></li> -->
+<!--             <li><a id="fade" id="print">print</a></li> -->
           </ul>
         </div>
 
@@ -121,13 +121,37 @@
 
 
 
-  <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]">
+  <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]"
 
 
+      [% IF c.user_session.layout.$page_class.0.defined || layout %]
+            data-layout = '{"hash": "[% c.user_session.layout.$page_class.0.lstring || layout %]"}'
+      [% ELSE;
+        IF is_class_index;
+          defaults = section_fetch.default_widgets_summary.keys;
+        ELSE;
+          defaults = section_fetch.default_widgets.keys;
+        END;
+        FOREACH defaults.grep('^overview$');
+          defaults.unshift('overview');
+        END;
+        defaults = defaults.unique;
+       %]
 
+        [% UNLESS defaults.first %]
+          [% IF overview %]
+            data-layout='{"leftlist":["overview"]}'
+          [% ELSE %]
+            data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
+          [% END %]
+        [% ELSE %]
+            data-layout='{"leftlist": ["
+             [% defaults.join('", "') %]
+             "]}'
+        [% END %]
+      [% END %]
 
-
-
+  >
 
     <div class="sortable left">
       [% FOREACH w IN widgets -%]
@@ -145,13 +169,3 @@
     <div class="sortable right"></div>
   </div>
 </div>
-
-
-
-    <script>
-      if(location.hash.length < 1){
-        [% IF c.user_session.layout.$page_class.0.defined; %]
-            location.hash = "[% c.user_session.layout.$page_class.0.lstring %]";
-        [% END %]
-      }
-    </script>
