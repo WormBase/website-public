@@ -45,6 +45,7 @@
           location.hash = layout['hash'];
         }else{
           resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
+          reloadLayout = false;
           updateLayout();
         }
       }
@@ -1243,7 +1244,6 @@ $jq(function() {
       hideTextOnFocus: hideTextOnFocus,
       systemMessage: systemMessage,
       Breadcrumbs: Breadcrumbs,
-      resetLayout: resetLayout,
       setLoading: setLoading,
       SearchResult: SearchResult,
       updateLayout: updateLayout,
