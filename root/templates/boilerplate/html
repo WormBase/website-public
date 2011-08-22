@@ -19,7 +19,6 @@
 
 
 
-
     <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
     <script>
       google.load("jquery", "1.6.2");
@@ -30,20 +29,7 @@
       var se = document.createElement('script');
       se.src = "/js/wormbase.js";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
-
-
       [% INCLUDE google_analytics %]
     </script>
-    [% IF  c.check_any_user_role("admin", "curator", "editor") %]
-      <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/skins/markitup/style.css" />
-      <link rel="stylesheet" type="text/css" href="/js/jquery/plugins/markitup/sets/wiki/style.css" />
-      <script type="text/javascript" src="/js/jquery/plugins/markitup/jquery.markitup.js"></script>
-    [% END %]
-<!--       <script type="text/javascript" src="/js/jquery/plugins/markitup/sets/wiki/set.js"></script> -->
-
-    [% IF class == 'expr_pattern' %]
-        <link media="screen" rel="stylesheet" href="/js/jquery/plugins/colorbox/colorbox/colorbox.css" />
-        <script type="text/javascript" src="/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js"></script>
-    [% END %]
   </body>
 </html>

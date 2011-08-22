@@ -1211,6 +1211,16 @@ $jq(function() {
       getPlugin("cluetip", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css", callback);
       return;
     }
+    function getMarkItUp(callback){
+      getPlugin("markitup", "/js/jquery/plugins/markitup/jquery.markitup.js", "/js/jquery/plugins/markitup/skins/markitup/style.css", function(){
+      getPlugin("markitup-wiki", "/js/jquery/plugins/markitup/sets/wiki/set.js", "/js/jquery/plugins/markitup/sets/wiki/style.css", callback);
+      });
+      return;
+    }
+    function getColorbox(callback){
+      getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
+      return;
+    }
   
   
     function getPlugin(name, url, stylesheet, callback){
@@ -1243,7 +1253,9 @@ $jq(function() {
       openid: openid,
       StaticWidgets: StaticWidgets,
       recordOutboundLink: recordOutboundLink,
-      getDataTables: getDataTables
+      getDataTables: getDataTables,
+      getMarkItUp: getMarkItUp,
+      getColorbox: getColorbox
     }
   })();
 
