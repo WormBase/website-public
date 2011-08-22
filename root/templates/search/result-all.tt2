@@ -1,12 +1,12 @@
       <div id="page-title" class="species-bg">
       <h2>  
 
-   <form method="post"  id="searchResultForm" action="" onsubmit="search('SearchResult'); return false;">
+   <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
       <input class="text" id="SearchResult" name="query" type="text" value="[% query %]"> 
     </div>
-    <div class="searchIcon ui-corner-all" onclick="search('SearchResult'); return false;">
-      <input class="ui-icon ui-icon-search" type="submit" onclick="search('SearchResult'); return false;" value="">
+    <div class="searchIcon ui-corner-all" onclick="WB.search('SearchResult'); return false;">
+      <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
     </div>
   </form>
 
@@ -32,8 +32,8 @@
               [% IF cls == 'title'; NEXT; END; %]
               [% searchurl = "/search/" _ cls _ "/" _ query _ "?inline=1" %]
               [% IF species; searchurl = searchurl _ "&species=" _ species; END; %]
-              <li onClick='loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;' style="display:none">
-                <a onClick='loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
+              <li onClick='WB.loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;' style="display:none">
+                <a onClick='WB.loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
                 <span class="count" href="/search/count/[% species %]/[% cls %]/[% query %]"></span>
                 <span class="ui-icon ui-icon-triangle-1-e"></span>
               </li>
@@ -45,8 +45,8 @@
           [% IF s == 'all'; NEXT; END; %]
           [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
             [% searchurl = "/search/" _ type _ "/" _ query _ "?inline=1&species=" _ s %]
-            <li onClick='loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;'  style="display:none">
-              <a onClick='loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
+            <li onClick='WB.loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;'  style="display:none">
+              <a onClick='WB.loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
               <span class="count" href="/search/count/[% s %]/[% type %]/[% query %]"></span>
               <span class="ui-icon ui-icon-triangle-1-e"></span>
             </li>
@@ -58,12 +58,6 @@
 </div>
 
 <div id="widget-holder">
-<div id="all-search-results"></div>
+<div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query %]", "species": "[% IF species %]&species=[% species; END;%]" }'></div>
 </div>
 </div>
-<script>
-  wbPage['search'] = new Array();
-  wbPage['search']['type'] = "[% type %]";
-  wbPage['search']['query'] = "[% query %]";
-  wbPage['search']['species'] = "[% IF species; '&species=' _ species; END %]";
-</script>

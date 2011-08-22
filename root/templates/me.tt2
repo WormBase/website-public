@@ -39,13 +39,7 @@
     %]
   [% END %]
  
-  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets %]
+  [% PROCESS "shared/sidebar_structure.tt2" widgets=widgets layout="1-0-5"%]
 
-    <script>
-  [% UNLESS c.user_session.layout.me.0.defined %]
-     wbPage['hash'] = 'WB.resetLayout(["reports"], ["my_library"], 50);';
-//       eval(wbPage['hash']);
-  [% END %]
-    </script>
 
 

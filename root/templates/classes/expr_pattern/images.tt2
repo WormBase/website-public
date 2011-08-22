@@ -2,7 +2,9 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 <script type="text/javascript">
+WB.getColorbox(function(){
 $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.4"});
+});
 </script>
 
 [% IF fields.curated_images.data %]	
