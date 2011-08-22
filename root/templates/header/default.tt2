@@ -8,17 +8,18 @@
       [% IF message_id AND !c.user_session.close_system_message.$message_id %]
         <div id="top-system-message" class="system-message">
           [% c.config.system_message.message %]
-          <span class="system-message-close" onClick="systemMessage('hide', '[% message_id %]')">
+          <span class="system-message-close" onClick="WB.systemMessage('hide', '[% message_id %]')">
             <span class=" ui-icon ui-icon-close"></span>
           </span>
         </div>
         <div class="system-message" ></div>
-        <script>
-          wbPage['systemMessage'] = 1;
-        </script>
       [% END %]
 
-<div id="header">
+[% PROCESS page_info %]
+      [% save = 'reports' %]
+      [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
+[% wbid = object.name.data.id.remove('[:/ &\.\[\]]') %]
+<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]" }'>
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
@@ -98,20 +99,6 @@
 </div> 
 
   
-[% PROCESS page_info %]
-      [% save = 'reports' %]
-      [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
-[% wbid = object.name.data.id.remove('[:/ &\.\[\]]') %]
-<script>
-  wbPage['ref'] = "[% url %]";
-  wbPage['wbid'] = "[% wbid %]";
-  wbPage['name'] = "[% label | uri %]";
-  wbPage['id'] = "[% object.name.data.id | uri %]";
-  wbPage['class'] = "[% object.name.data.class FILTER lower %]";
-  wbPage['type'] = "[% c.stash.section | uri %]";
-  wbPage['is_obj'] = "[% is_obj %]";
-  wbPage['save'] = "[% save %]";
-</script>
 
 <!-- END boilerplate/banner -->
    

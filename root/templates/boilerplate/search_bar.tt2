@@ -2,7 +2,7 @@
    <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="WB.search(); return false;">
     [% val = "search..." %]
     [% IF query; val = query; END; %]
-    <input class="ui-icon ui-icon-search" type="submit" onclick="search(); return false;" value="">
+    <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
 
     <div id="searchBody">
       <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
@@ -12,7 +12,7 @@
           <span id="current-search" style="float:right">All</span>
           <ul>
           [% FOREACH option IN c.config.search_dropdown.option %]
-                  <li value="[%- option.id -%]" onClick='search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
+                  <li value="[%- option.id -%]" onClick='WB.search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
           [% END %]
           </ul>
         </li>
