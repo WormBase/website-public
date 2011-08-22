@@ -1311,11 +1311,11 @@ END;
 
   # Get the default (configuration provided) list of widgets.
   widget_list = section_fetch.widgets.keys.sort;
-  overview = 0;
-  FOREACH widget_list.grep('^overview$');
+  ov_list = widget_list.grep('^overview$');
+  FOREACH ov_list;
     widget_list.unshift('overview');
-    overview = 1;
   END;
+  IF ov_list.size > 0; overview = 1; END;
   widget_list = widget_list.unique;
 
   FOREACH widget_name IN widget_list;
@@ -1395,42 +1395,8 @@ END;
       widgets.push(w);
   END;
 
-
-  PROCESS "shared/sidebar_structure.tt2" widgets=widgets;
+  PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;
 %]
-
-  [% # Open some sections by default, depending on what we are displaying. %]
-  <script>
-    if(location.hash.length == 0){
-      [% UNLESS c.user_session.layout.$page_class.0.defined;
-        IF is_class_index;
-          defaults = section_fetch.default_widgets_summary.keys;
-        ELSE;
-          defaults = section_fetch.default_widgets.keys;
-        END;
-        FOREACH defaults.grep('^overview$');
-          defaults.unshift('overview');
-        END;
-        defaults = defaults.unique;
-       %]
-
-        [% UNLESS defaults.first %]
-          [% IF overview %]
-            wbPage['hash'] = '$jq("#nav-overview").trigger("open");WB.updateLayout();';
-          [% ELSE %]
-            wbPage['hash'] = 'WB.resetLayout(["browse"], ["basic_search"], 50);WB.updateLayout();';
-          [% END %]
-        [% ELSE %]
-          var open = "";
-          [% FOREACH d IN defaults %]
-             open = open + '$jq("#nav-[% d %]").trigger("open");';
-          [% END %]
-            wbPage['hash'] = open + 'WB.updateLayout();';
-        [% END %]
-      [% END %]
-//       eval(wbPage['hash']);
-    }
-  </script>
 
 [% END; %]
 
