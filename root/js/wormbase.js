@@ -13,13 +13,13 @@
       var pageInfo = $jq("#header").data("page");
       if($jq(".user-history").size()>0){
         function histUpdate(){
-          WB.ajaxGet($jq(".user-history"), "/rest/history?count=3");
+          ajaxGet($jq(".user-history"), "/rest/history?count=3");
           setTimeout(histUpdate, 6e5); //update the history every now and then
           return;
         }
         histUpdate();
       }
-      if($jq(".list-layouts").size()>0){WB.ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
+      if($jq(".list-layouts").size()>0){ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
     
       
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
@@ -33,6 +33,8 @@
       } 
 
       Breadcrumbs.init();
+      comment.init(pageInfo);
+      issue.init(pageInfo);
         
       if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
@@ -113,7 +115,7 @@
       $jq(".section-button").click(function() {
           var section = $jq(this).attr('wname');
           $jq("#nav-" + section).trigger("open");
-          WB.goToAnchor(section);
+          goToAnchor(section);
       });
       
       $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
@@ -1001,7 +1003,128 @@ $jq(function() {
       } 
     });
   }
+  
+  
+  
+  function validate_fields(email,username, password, confirm_password, wbemail){
+      if( (email.val() =="") && (!wbemail || wbemail.val() == "")){
+                email.focus().addClass("ui-state-error");return false;
+      } else if( email.val() && (validate_email(email.val(),"Not a valid email address!")==false)) {
+                email.focus().addClass("ui-state-error");return false;
+      } else if(password) {
+          if( password.val() ==""){
+                password.focus().addClass("ui-state-error");return false;
+          } else if( confirm_password && (password.val() != confirm_password.val())) {
+              alert("The passwords do not match. Please enter again"); password.focus().addClass("ui-state-error");return false;
+          }  
+      } else if( username && username.val() =="") {
+                username.focus().addClass("ui-state-error"); return false;
+      }  else {
+        return true;
+      }
+  }
 
+  function validate_email(field,alerttxt){
+    var apos=field.indexOf("@"),
+        dotpos=field.lastIndexOf(".");
+    if (apos<1||dotpos-apos<2)
+      {alert(alerttxt);return false;}
+    else {return true;}
+  } 
+  
+  
+  var comment = {
+    init: function(pageInfo){
+      comment.url = pageInfo['ref'];
+    },
+    submit: function(cm){
+        var feed = cm.closest('#comment-new'),
+            content = feed.find(".comment-content").val();
+        if(content == "" || content == "write a comment..."){
+            alert("Please provide your name & comment"); return false;
+        }
+        $jq.ajax({
+          type: 'POST',
+          url: '/rest/feed/comment',
+          data: { content: content, url: comment.url},
+          success: function(data){
+            displayNotification("Comment Submitted!");
+            feed.find("#comment-box").prepend(data);
+            feed.find(".comment-content").val("write a comment...");
+            updateCounts(url);
+              },
+          error: function(request,status,error) {
+                alert(request + " " + status + " " + error);
+              }
+        });
+        var box = $jq('<div class="comment-box"><a href="/me">' + name + '</a> ' + content + '<br /><span id="fade">just now</span></div>');
+        var comments = $jq("#comments");
+        comments.prepend(box);
+        return false;
+    },
+    delete: function(cm){
+       var $id=cm.attr("id");
+      var url= cm.attr("rel");
+      
+      $jq.ajax({
+        type: "POST",
+        url : url,
+        data: {method:"delete",id:$id}, 
+        success: function(data){
+                      updateCounts(url);
+          },
+        error: function(request,status,error) {
+            alert(request + " " + status + " " + error );
+          }
+      });
+      cm.parent().remove(); 
+    }
+    
+  }
+
+
+  var issue = {
+    init: function(pageInfo){
+      issue.url = pageInfo['ref'];
+    },
+   submit:function(is){
+        var rel= is.attr("rel");
+        var url = is.attr("url");
+        var page= is.attr("page");
+        var feed = is.closest('#issues-new');
+        var email = feed.find("#email");
+        var username= feed.find("#display-name");
+        var is_private = feed.find("#isprivate:checked").size();
+        if(email.attr('id') && username.attr('id')) {
+           if(validate_fields(email,username)==false) {return false;}
+        }  
+        $jq.ajax({
+          type: 'POST',
+          url: rel,
+          data: {title:feed.find("#title").val(), 
+                content: feed.find("#content").val(), 
+                email:email.val() ,
+                username:username.val() , 
+                url:issue.url,
+                isprivate:is_private},
+          success: function(data){
+                if(data==0) {
+                   alert("The email address has already been registered! Please sign in."); 
+                }else {
+                  displayNotification("Problem Submitted! We will be in touch soon.");
+                  feed.closest('#widget-feed').hide(); 
+                              updateCounts(url);
+                }
+              },
+          error: function(request,status,error) {
+                alert(request + " " + status + " " + error);
+              }
+        });
+
+        return false;
+   }
+    
+  }
 
 
   var StaticWidgets = {
@@ -1242,6 +1365,7 @@ $jq(function() {
       displayNotification: displayNotification, 
       ajaxGet: ajaxGet,
       hideTextOnFocus: hideTextOnFocus,
+      goToAnchor: goToAnchor,
       systemMessage: systemMessage,
       Breadcrumbs: Breadcrumbs,
       setLoading: setLoading,
@@ -1253,6 +1377,8 @@ $jq(function() {
       openid: openid,
       StaticWidgets: StaticWidgets,
       recordOutboundLink: recordOutboundLink,
+      comment: comment,
+      issue: issue,
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox
