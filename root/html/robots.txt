@@ -1,0 +1,4 @@
+# No crawling, for now.
+User-agent: *
+Disallow: /
+
