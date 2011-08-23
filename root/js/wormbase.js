@@ -23,8 +23,11 @@
   var WB = (function(){
     
     function init(){
+      var pageInfo = $jq("#header").data("page"),
+          searchAll = $jq("#all-search-results"),
+          layout;
+            
       window.onhashchange = readHash;
-      var pageInfo = $jq("#header").data("page");
       if($jq(".user-history").size()>0){
         function histUpdate(){
           ajaxGet($jq(".user-history"), "/rest/history?count=3");
@@ -34,13 +37,12 @@
         histUpdate();
       }
       if($jq(".list-layouts").size()>0){ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
-    
       
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
       search_change(pageInfo['class']);
       if($jq("#top-system-message").size()>0) {systemMessage('show');}
-      var searchAll = $jq("#all-search-results");
+
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
@@ -53,7 +55,7 @@
       if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
-      var layout;
+
       if(location.hash.length > 0){
         readHash();
       }else if(layout = $jq("#widget-holder").data("layout")){
@@ -66,9 +68,7 @@
         }
       }
       
-      searchInit();
       navBarInit();
-      operator();
       pageInit();
       widgetInit();
       effects();
@@ -77,6 +77,7 @@
     
     var timer;
     function navBarInit(){
+      searchInit();
       $jq("#nav-bar").find("ul li").hover(function () {
           $jq("div.columns>ul").hide();
           if(timer){
@@ -105,6 +106,7 @@
     
     
     function pageInit(){
+      operator();
       $jq("#print").click(function() {
         var layout= location.hash.replace('#',''),
             print = $jq(this);
@@ -197,6 +199,7 @@
     }
     
     function widgetInit(){
+      if($jq("#widget-holder").size()==0){return;}
       // used in sidebar view, to open and close widgets when selected
       $jq("#widgets").find(".module-load, .module-close").click(function() {
         var widget_name = $jq(this).attr("wname"),
@@ -296,7 +299,6 @@
     
     
     function effects(){
-      
       $jq("#content").delegate(".toggle", 'click', function(){
             $jq(this).toggleClass("active").next().slideToggle("fast");
             return false;
