@@ -85,7 +85,7 @@
             $jq(this).children("ul.dropdown").find("a").removeClass("hover");
             $jq(this).children("ul.dropdown").find("ul.dropdown").hide();
             clearTimeout(timer);
-            timer = null;
+            timer = undefined;
           }
           $jq(this).children("ul.dropdown").show();
           $jq(this).children("a").addClass("hover");
@@ -93,7 +93,7 @@
           var toHide = $jq(this);
           if(timer){
             clearTimeout(timer);
-            timer = null;
+            timer = undefined;
           }
           timer = setTimeout(function() {
                 toHide.children("ul.dropdown").hide();
@@ -362,7 +362,7 @@
     function displayNotification (message){
         if(notifyTimer){
           clearTimeout(notifyTimer);
-          notifyTimer = null;
+          notifyTimer = undefined;
         }
         var notification = $jq("#notifications");
         notification.show().children("#notification-text").text(message);
@@ -374,7 +374,7 @@
     $jq("#notifications").click(function() {
       if(notifyTimer){
         clearTimeout(notifyTimer);
-        notifyTimer = null;
+        notifyTimer = undefined;
       }
       $jq(this).hide();
     });
@@ -387,7 +387,7 @@
       $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
-      $jq(".system-message").animate({height:"0px"}, 'slow', '',function(){ $jq(this).hide();});
+      $jq(".system-message").animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
       $jq("#notifications").css("top", "0");
     }
@@ -586,8 +586,8 @@
     var query = decodeURI(q),
         page = 1.0,
         total = 0,
-        countSpan = $jq((widget ? "." + widget + "-widget" : '') + " #count"),
-        resultDiv = $jq((widget ? "." + widget + "-widget" : '') + " .load-results"),
+        countSpan = $jq((widget ? "." + widget + "-widget " : '') + "#count"),
+        resultDiv = $jq((widget ? "." + widget + "-widget " : '') + ".load-results"),
         queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
     this.setTotal = function(t){
