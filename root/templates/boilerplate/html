@@ -10,7 +10,7 @@
       [% END %]
     </title>
 
-    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.min.css" rel="stylesheet" />
   </head>
 
@@ -22,12 +22,12 @@
     <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
     <script>
       google.load("jquery", "1.6.2");
-      google.load("jqueryui", "1.8.6");
+      google.load("jqueryui", "1.8.16");
     </script>
     <script>
       var $jq=  jQuery.noConflict();
       var se = document.createElement('script');
-      se.src = "/js/wormbase.js";
+      se.src = "/js/wormbase.min.js";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>
