@@ -52,6 +52,18 @@
                          key='user_list');
       %]
 </fieldset>
-
+<script>
+      $jq(".role-update").click(function() {
+        var checked;
+        if($jq(this).attr('checked')){ checked = 'true';}
+        $jq.ajax({
+              type: "POST",
+              url : "/rest/update/role/"+$jq(this).attr('id')+"/"+$jq(this).attr('value')+"/"+checked, 
+              error: function(request,status,error) {
+                  alert(request + " " + status + " " + error );
+                }
+        });
+      });
+</script>
 
 [% END %]

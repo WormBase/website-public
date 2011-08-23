@@ -16,7 +16,7 @@
 [% FOREACH cm IN comments %]
   <div class="comment-box">
     [% IF c.check_user_roles('admin') || c.check_user_roles('curator') || (c.user.id == cm.user_id) %]
-      <a tip="delete comment" onClick='WB.comment.delete($jq(this));' class="tip-simple tr comment-delete" id="[% cm.comment_id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
+      <a tip="delete comment" onClick='WB.comment.cmDelete($jq(this));' class="tip-simple tr comment-delete" id="[% cm.comment_id %]" rel="[% c.uri_for('/rest','feed','comment') %]"><span class="ui-icon ui-icon-close ui-button"></span></a>
     [% END %]
 
     [% linkUser(cm.reporter) %]

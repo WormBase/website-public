@@ -127,7 +127,7 @@ END;
       <th>Reported by</th>
       <th>Responsible</th>
       [% IF c.check_user_roles('admin') %]
-        <th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
+        <th><button class="issue-delete" onClick="WB.issue.isDelete($jq(this));return false;" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
       [% END %]
     </tr>
     [% even = 1 %]

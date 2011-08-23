@@ -1,10 +1,24 @@
+/*!
+ * WormBase
+ * http://wormbase.org/
+ *
+ * WormBase copyright © 1999-2011 
+ * California Institute of Technology, 
+ * Ontario Institute for Cancer Research,
+ * Washington University at St. Louis, and 
+ * The Wellcome Trust Sanger Institute.
+ *
+ * WormBase is supported by a grant from the 
+ * National Human Genome Research Institute at the 
+ * US National Institutes of Health # P41 HG02223 and the 
+ * British Medical Research Council.
+ *
+ * author: Abigail Cabunoc 
+ *         abigail.cabunoc@oicr.on.ca
+ */
 
- 
- 
- 
-(function(window, document, undefined){ 
-  var document = window.document,
-      location = window.location;
++function(window, document, undefined){ 
+  var location = window.location;
      
   var WB = (function(){
     
@@ -14,7 +28,7 @@
       if($jq(".user-history").size()>0){
         function histUpdate(){
           ajaxGet($jq(".user-history"), "/rest/history?count=3");
-          setTimeout(histUpdate, 6e5); //update the history every now and then
+          setTimeout(histUpdate, 6e5); //update the history every 10min
           return;
         }
         histUpdate();
@@ -91,23 +105,23 @@
     
     
     function pageInit(){
-      $jq("#print").live('click',function() {
-        var layout= window.location.hash.replace('#','');
-        var print = $jq(this);
+      $jq("#print").click(function() {
+        var layout= location.hash.replace('#',''),
+            print = $jq(this);
         
           $jq.ajax({
-                type: "POST",
-                url : '/rest/print',
-                data: {layout:layout}, 
-                beforeSend:function(){
+              type: "POST",
+              url : '/rest/print',
+              data: {layout:layout}, 
+              beforeSend:function(){
                 WB.setLoading(print); 
               },
-                success: function(data){
+              success: function(data){
                 print.html('');
-                window.location.href=data;
+                location.href=data;
               },
-                error: function(request,status,error) {
-                    alert(request + " " + status + " " + error );
+              error: function(request,status,error) {
+                alert(request + " " + status + " " + error );
               }
             });
       });
@@ -117,8 +131,6 @@
           $jq("#nav-" + section).trigger("open");
           goToAnchor(section);
       });
-      
-      $jq("#nav-min-icon").addClass("ui-icon ui-icon-triangle-1-w");
 
       if($jq(".sortable").size()>0){
         $jq(".sortable").sortable({
@@ -135,16 +147,16 @@
       $jq("#widget-holder").children("#widget-header").disableSelection();
 
       
-      $jq("div#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
+      $jq("#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
         $jq("div.columns>ul").toggle();
       });
       
       $jq("#nav-min").click(function() {
-        var nav = $jq("#navigation");
-        var ptitle = $jq("#page-title");
-        var w = nav.width();
-        var msg = "open sidebar";
-        var marginLeft = '-1em';
+        var nav = $jq("#navigation"),
+            ptitle = $jq("#page-title"),
+            w = nav.width(),
+            msg = "open sidebar",
+            marginLeft = '-1em';
         if(w == 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
         nav.animate({width: w}).show();
         ptitle.animate({marginLeft: marginLeft}).show();
@@ -153,13 +165,13 @@
         $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
       });
             
-      $jq(".bench-update").live('click',function() {
-        var wbid     = $jq(this).attr("wbid");
-        var $class     = $jq(this).attr("objclass");
-        var label     = $jq(this).attr("name");
-        var obj_url  = $jq(this).attr("url");
-        var is_obj  = $jq(this).attr("is_obj");
-        var url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+      $jq("#content").delegate(".bench-update", 'click', function(){
+        var wbid     = $jq(this).attr("wbid"),
+            $class     = $jq(this).attr("objclass"),
+            label     = $jq(this).attr("name"),
+            obj_url  = $jq(this).attr("url"),
+            is_obj  = $jq(this).attr("is_obj"),
+            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
 
         $jq("#bench-status").load(url, function(){
           WB.ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
@@ -185,24 +197,22 @@
     }
     
     function widgetInit(){
-      
-    
       // used in sidebar view, to open and close widgets when selected
       $jq("#widgets").find(".module-load, .module-close").click(function() {
-        var widget_name = $jq(this).attr("wname");
-        var nav = $jq("#nav-" + widget_name);
-        var content = "div#" + widget_name + "-content";
+        var widget_name = $jq(this).attr("wname"),
+            nav = $jq("#nav-" + widget_name),
+            content = "div#" + widget_name + "-content";
         if(!nav.hasClass('ui-selected')){
           if($jq(content).text().length < 4){
-              var column = ".left";
-              var holder = $jq("#widget-holder");
+              var column = ".left",
+                  holder = $jq("#widget-holder");
               if(getLeftWidth(holder) >= 90){
                 if(holder.children(".right").children(".visible").height()){
                   column = ".right";
                 }
               }else{
-                var leftHeight = parseFloat(holder.children(".left").css("height"));
-                var rightHeight = parseFloat(holder.children(".right").css("height"));
+                var leftHeight = parseFloat(holder.children(".left").css("height")),
+                    rightHeight = parseFloat(holder.children(".right").css("height"));
                 if (rightHeight < leftHeight){ column = ".right"; }
               }
               openWidget(widget_name, nav, content, column);
@@ -220,9 +230,9 @@
       });
 
       $jq("#widget-holder").find(".module-max").click(function() {
-        var module = $jq(this).parents(".widget-container")
+        var module = $jq(this).parents(".widget-container"),
     //     if(module.find(".cboxElement").trigger('click').size() < 1){
-          var clone = module.clone();
+            clone = module.clone(),
     //       clone.find(".module-max").remove();
     //       clone.find(".module-close").remove();
     //       clone.find(".module-min").remove();
@@ -235,47 +245,46 @@
     //     }
 
     // code for external pop out window - if we need that
-        var popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
+          popout = window.open("", "test", "height=" + module.height() + ",width=" + module.width());
         popout.document.write(document.head.innerHTML);
         popout.document.write(clone.html());
       });
 
       // used in sidebar view, to open and close widgets when selected
       $jq("#widgets").find(".module-load, .module-close").bind('open',function() {
-        var widget_name = $jq(this).attr("wname");
-        var nav = $jq("#nav-" + widget_name);
-        var content = "div#" + widget_name + "-content";
+        var widget_name = $jq(this).attr("wname"),
+            nav = $jq("#nav-" + widget_name),
+            content = "div#" + widget_name + "-content";
 
         openWidget(widget_name, nav, content, ".left");
         return false;
       });
+      
       $jq("#widget-holder").find(".module-min").click(function() {
-        var module = $jq("div#" + $jq(this).attr("wname") + "-content");
+        var module = $jq("#" + $jq(this).attr("wname") + "-content"),
+            button = $jq(this);
         module.next().slideToggle("fast");
         module.slideToggle("fast");
-        $jq(this).parent().toggleClass("minimized");
-        if ($jq(this).attr("show") != 1){
-          $jq(this).attr("show", 1).attr("title", "maximize");
-          $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
-          $jq(this).addClass("ui-icon-circle-triangle-e");
+        button.parent().toggleClass("minimized");
+        if (button.attr("show") != 1){
+          button.attr("show", 1).attr("title", "maximize");
+          button.removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
+          button.addClass("ui-icon-circle-triangle-e");
         }else{
-          $jq(this).attr("show", 0).attr("title", "minimize");
-          $jq(this).removeClass("ui-icon-circle-triangle-e");
-          $jq(this).addClass("ui-icon-circle-triangle-s");
+          button.attr("show", 0).attr("title", "minimize");
+          button.removeClass("ui-icon-circle-triangle-e");
+          button.addClass("ui-icon-circle-triangle-s");
         }
       });
       
       $jq("#widget-holder").find(".reload").click(function() {
-        var widget_name = $jq(this).attr("wname");
-        var nav = $jq("#nav-" + widget_name);
-        var url     = nav.attr("href");
+        var widget_name = $jq(this).attr("wname"),
+            nav = $jq("#nav-" + widget_name),
+            url = nav.attr("href");
         WB.ajaxGet($jq("div#" + widget_name + "-content"), url);
       });
-        
       
-      
-      
-      $jq(".feed").live('click',function() {
+      $jq(".feed").click(function() {
         var url=$jq(this).attr("rel");
         var div=$jq(this).parent().next("#widget-feed");
         div.filter(":hidden").empty().load(url);
@@ -288,28 +297,27 @@
     
     function effects(){
       
-      
-      $jq(".toggle").live('click',function() {
+      $jq("#content").delegate(".toggle", 'click', function(){
             $jq(this).toggleClass("active").next().slideToggle("fast");
             return false;
       });
         
-      $jq(".tooltip").live('mouseover',function() {
-          getCluetip();
-          $jq(this).cluetip({
-          activation: 'click',
-          sticky: true, 
-          cluetipClass: 'jtip',
-          dropShadow: false, 
-          closePosition: 'title',
-          arrows: true, 
-          hoverIntent: false,
+      $jq("#content").delegate(".tooltip", 'mouseover', function(){
+          var tip = $jq(this);
+          getCluetip(function(){
+            tip.cluetip({
+              activation: 'click',
+              sticky: true, 
+              cluetipClass: 'jtip',
+              dropShadow: false, 
+              closePosition: 'title',
+              arrows: true, 
+              hoverIntent: false,
+              });
             });
-        
       });
-            
-      $jq("div.text-min").live('click',function() {expand($jq(this), $jq(this).next());});
-      $jq("div.more").live('click',function() {expand($jq(this).prev(), $jq(this));});
+      $jq("#content").delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
+      $jq("#content").delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
       function expand(txt, more){
           var h = txt.height();
           if(h<40){
@@ -333,20 +341,19 @@
           more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
           more.toggleClass('open');
       }
-
-      $jq("div.text-min").live('mouseover mouseout',function() {
+      $jq("#content").delegate(".text-min", 'mouseover mouseout', function(){ 
         $jq(this).next().toggleClass('opaque');
       });
       
       
       
-      $jq(".tip-simple").live('mouseover', function(){
+      $jq("#content").delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
           var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
           tip.appendTo($jq(this)).show();
         }
       });
-      $jq(".tip-simple").live('mouseout', function(){
+      $jq("#content").delegate(".tip-simple", 'mouseout', function(){ 
         $jq(this).children("div.tip-elem").hide();
       });
     }
@@ -413,8 +420,8 @@
     }
     
       function operator(){
-        var opTimer;
-        var opLoaded = false;
+        var opTimer,
+            opLoaded = false;
         $jq('#operator-box').click(function(){ 
           var opBox = $jq(this);
           if(!(opLoaded)){
@@ -440,7 +447,7 @@
         $jq('#operator').click(function() { 
           if($jq('#operator').attr("rel")) {
             $jq.post("/rest/livechat?open=1",function() {
-              window.location.href="/tools/operator";
+              location.href="/tools/operator";
             });
           }else {
             var opBox = $jq("#operator-box");
@@ -503,7 +510,8 @@
     function searchInit(){
       var searchBox = $jq("#Search"),
           searchBoxDefault = "search...",
-          searchForm = $jq("#searchForm")
+          searchForm = $jq("#searchForm"),
+          lastXhr;
 
       searchBox.focus(function(e){
         $jq(this).addClass("active");
@@ -520,7 +528,6 @@
         if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
       });
       
-      var lastXhr;
       $jq( "#Search" ).autocomplete({
           source: function( request, response ) {
               lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
@@ -577,14 +584,11 @@
 
   function SearchResult(q, type, species, widget){
     var query = decodeURI(q),
-        type = type,
-        species = species,
-        widget = widget,
         page = 1.0,
         total = 0,
         countSpan = $jq((widget ? "." + widget + "-widget" : '') + " #count"),
-        resultDiv = $jq((widget ? "." + widget + "-widget" : '') + " .load-results");
-    var queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
+        resultDiv = $jq((widget ? "." + widget + "-widget" : '') + " .load-results"),
+        queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
     this.setTotal = function(t){
     total = t;
@@ -603,14 +607,15 @@
     queryHighlight($jq("div#results" + (widget ? "." + widget + "-widget" : '')));
     
     resultDiv.click(function(){
+      var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
+          div = $jq("<div></div>"),
+          res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
+
       $jq(this).removeClass("load-results");
-      
       page++;
-      var url = $jq(this).attr("href") + page + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
-      var div = $jq("<div></div>");
+      
       setLoading(div);
       
-      var res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
       res.html("loading...");
       div.load(url, function(response, status, xhr) {
         var left = total - (page*10);
@@ -645,12 +650,12 @@
   }
   
   function allResults(type, species, query){
+    var url = "/search/" + type + "/" + query + "/?inline=1";
+    
     at_default = 0; 
     $jq("#all-search-results").empty(); 
-    var url = "/search/" + type + "/" + query + "/?inline=1";
     if(species) { url = url + "&species=" + species;} 
     ajaxGet($jq("#all-search-results"), url);
-
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
@@ -678,10 +683,12 @@
 
    
     function openWidget(widget_name, nav, content, column){
-        $jq(content).closest("li").appendTo($jq("#widget-holder").children(column));
-        var content = $jq(content);
+        var content = $jq(content),
+            url     = nav.attr("href");
+            
+        content.closest("li").appendTo($jq("#widget-holder").children(column));
         addWidgetEffects(content.parent(".widget-container"));
-        var url     = nav.attr("href");
+
         ajaxGet(content, url);
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
@@ -794,8 +801,8 @@
     function setLayout(layout){
       var $class = $jq("#widget-holder").attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout, function(data) {
-          var nodeList = data.childNodes[0].childNodes;
-          var len = nodeList.length;
+          var nodeList = data.childNodes[0].childNodes,
+              len = nodeList.length;
           for(i=0; i<len; i++){
             var node = nodeList.item(i);
             if(node.nodeName == "data"){
@@ -822,9 +829,9 @@
     }
     
     function updateURLHash (left, right, leftWidth) {
-      var l = $jq.map(left, function(i) { return getWidgetID(i);});
-      var r = $jq.map(right, function(i) { return getWidgetID(i);});
-      var ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
+      var l = $jq.map(left, function(i) { return getWidgetID(i);}),
+          r = $jq.map(right, function(i) { return getWidgetID(i);}),
+          ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
       if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
         reloadLayout = false;
       }
@@ -837,9 +844,9 @@
         var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
         if(!h){ return; }
         
-        var l = h[0];
-        var r = h[1];
-        var w = (h[2] * 10);
+        var l = h[0],
+            r = h[1],
+            w = (h[2] * 10);
         
         if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
@@ -851,55 +858,49 @@
     
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
-    var widgetList = function() {
-        if (this.wl) return this.wl;
-        var instance = this;
-        var navigation = $jq("#navigation");
-        var list = navigation.find(".module-load")
+    var widgetList = this.wl || (function() {
+        var instance = this,
+            navigation = $jq("#navigation"),
+            list = navigation.find(".module-load")
                   .map(function() { return this.getAttribute("wname");})
                   .get();
         this.wl = { list: list };
         return this.wl;
-    }
+        })();
     
     //returns order of widget in widget list in radix (base 36) 0-9a-z
     function getWidgetID (widget_name) {
-        var wl = widgetList();
-        return wl.list.indexOf(widget_name).toString(36);
+        return widgetList.list.indexOf(widget_name).toString(36);
     }
     
     //returns widget name 
     function getWidgetName (widget_id) {
-        var wl = widgetList();
-        return wl.list[parseInt(widget_id,36)];
+        return widgetList.list[parseInt(widget_id,36)];
     }
 
     function updateLayout(layout, callback){
-      l = 'default';
+      var holder =  $jq("#widget-holder"),
+          $class = holder.attr("wclass"),
+          left = holder.children(".left").children(".visible")
+                            .map(function() { return this.id;})
+                            .get(),
+          right = holder.children(".right").children(".visible")
+                            .map(function() { return this.id;})
+                            .get(),
+          leftWidth = getLeftWidth(holder),
+          lstring = updateURLHash(left, right, leftWidth),
+          l = 'default';
       if((typeof layout) == 'string'){
         l = escape(layout); 
       }
-
-      var holder =  $jq("#widget-holder");
-      var $class = holder.attr("wclass");
-      var left = holder.children(".left").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var right = holder.children(".right").children(".visible")
-                        .map(function() { return this.id;})
-                        .get();
-      var leftWidth = getLeftWidth(holder);
-      var lstring = updateURLHash(left, right, leftWidth);
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
         if(callback){ callback(); }
       });
-
     }
 
     function getLeftWidth(holder){
-      var totWidth = parseFloat(holder.css("width"));
-//       var leftWidth = parseFloat(holder.children(".left").css("width"));
-      var leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
+      var totWidth = parseFloat(holder.css("width")),
+          leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
       return Math.round(leftWidth); //if you don't round, the slightest change causes an update
     }
 
@@ -1062,7 +1063,7 @@ $jq(function() {
         comments.prepend(box);
         return false;
     },
-    delete: function(cm){
+    cmDelete: function(cm){
        var $id=cm.attr("id");
       var url= cm.attr("rel");
       
@@ -1088,13 +1089,13 @@ $jq(function() {
       issue.url = pageInfo['ref'];
     },
    submit:function(is){
-        var rel= is.attr("rel");
-        var url = is.attr("url");
-        var page= is.attr("page");
-        var feed = is.closest('#issues-new');
-        var email = feed.find("#email");
-        var username= feed.find("#display-name");
-        var is_private = feed.find("#isprivate:checked").size();
+        var rel= is.attr("rel"),
+            url = is.attr("url"),
+            page= is.attr("page"),
+            feed = is.closest('#issues-new'),
+            email = feed.find("#email"),
+            username= feed.find("#display-name"),
+            is_private = feed.find("#isprivate:checked").size();
         if(email.attr('id') && username.attr('id')) {
            if(validate_fields(email,username)==false) {return false;}
         }  
@@ -1122,18 +1123,39 @@ $jq(function() {
         });
 
         return false;
+   },
+   isDelete: function(button){
+      var url = button.attr("rel"),
+          id = new Array();
+      $jq(".issue-deletebox").filter(":checked").each(function(){
+         id.push($jq(this).attr('name'));
+      });
+      var answer = confirm("Do you really want to delete these issues: #"+id.join(' #'));
+      if(answer){
+        $jq.ajax({
+              type: "POST",
+              url : url,
+              data: {method:"delete",issues:id.join('_')}, 
+              success: function(data){
+                  window.location.reload(1);
+                  updateCounts(url);
+              },
+              error: function(request,status,error) {
+                  alert(request + " " + status + " " + error );
+            }
+          });
+      } 
    }
-    
   }
 
 
   var StaticWidgets = {
     update: function(widget_id, path){
         if(!widget_id){ widget_id = "0"; }
-        var widget = $jq("li#static-widget-" + widget_id);
-        var widget_title = widget.find("input#widget_title").val();
-        var widget_order = widget.find("input#widget-order").val();
-        var widget_content = widget.find("textarea#widget_content").val();
+        var widget = $jq("li#static-widget-" + widget_id),
+            widget_title = widget.find("input#widget_title").val(),
+            widget_order = widget.find("input#widget-order").val(),
+            widget_content = widget.find("textarea#widget_content").val();
 
         $jq.ajax({
               type: "POST",
@@ -1149,11 +1171,10 @@ $jq(function() {
           }); 
     },
     edit: function(wname, rev) {
-      
-      var widget_id = wname.split("-").pop();
-      var w_content = $jq("#" + wname + "-content");
-      var widget = w_content.parent();
-      var edit_button = widget.find("a#edit-button");
+      var widget_id = wname.split("-").pop(),
+          w_content = $jq("#" + wname + "-content"),
+          widget = w_content.parent(),
+          edit_button = widget.find("a#edit-button");
       if(edit_button.hasClass("ui-state-highlight")){
         StaticWidgets.reload(widget_id);
       }else{
@@ -1163,15 +1184,15 @@ $jq(function() {
 
     },
     reload: function(widget_id, rev_id, content_id){
-      var w_content = $jq("#static-widget-" + widget_id + "-content");
-      var widget = w_content.parent();
-      var title = widget.find("h3 span.widget-title input");
+      var w_content = $jq("#static-widget-" + widget_id + "-content"),
+          widget = w_content.parent(),
+          title = widget.find("h3 span.widget-title input"),
+          url = "/rest/widget/static/" + (content_id || widget_id);
       if(title.size()>0){
         title.parent().html(title.val());
       }
       widget.find("a.button").removeClass("ui-state-highlight");
       $jq("#nav-static-widget-" + widget_id).text(title.val());
-      var url = "/rest/widget/static/" + (content_id || widget_id);
       if(rev_id) { url = url + "?rev=" + rev_id; } 
       w_content.load(url);
     },
@@ -1190,14 +1211,14 @@ $jq(function() {
       }
     },
     history: function(wname){
-      var widget = $jq("#" + wname);
-      var history = widget.find("div#" + wname + "-history");
+      var widget = $jq("#" + wname),
+         history = widget.find("div#" + wname + "-history");
       if(history.size() > 0){
         history.toggle();
         widget.find("a#history-button").toggleClass("ui-state-highlight");
       }else{
-        var widget_id = wname.split("-").pop();
-        var history = $jq('<div id="' + wname + '-history"></div>'); 
+        var widget_id = wname.split("-").pop(),
+            history = $jq('<div id="' + wname + '-history"></div>'); 
         history.load("rest/widget/static/" + widget_id + "?history=1");
         widget.find("div.content").append(history);
         widget.find("a#history-button").addClass("ui-state-highlight");
@@ -1225,7 +1246,6 @@ $jq(function() {
     
       this.expand = $jq("#breadcrumbs-expand");
       
-  ;
       this.expand.click( function(){
         if( Breadcrumbs.exp ){ Breadcrumbs.show(); }
         else{ Breadcrumbs.hide(); }
@@ -1271,7 +1291,7 @@ $jq(function() {
         if (! provider) {
             return;
         }
-        var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + window.location;
+        var pop_url = '/auth/popup?id='+box_id + '&url=' + provider['url']  + '&redirect=' + location;
         this.popupWin(pop_url);
       },
 
@@ -1370,7 +1390,10 @@ $jq(function() {
       Breadcrumbs: Breadcrumbs,
       setLoading: setLoading,
       SearchResult: SearchResult,
-      updateLayout: updateLayout,
+      resetLayout: resetLayout,
+      deleteLayout: deleteLayout,
+      columns: columns,
+      setLayout: setLayout,
       search: search,
       search_change: search_change,
       loadResults: loadResults,
@@ -1394,4 +1417,4 @@ $jq(function() {
  });
 
  window.WB = WB;
-})(this,document);
+}(this,document);
