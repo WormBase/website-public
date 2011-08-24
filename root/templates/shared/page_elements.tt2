@@ -7,41 +7,14 @@
 %]
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]  
-
-<!--    <table width="100%">                   -->
-<!--            <tr> -->
-<!--                <th> -->
-                <div style="padding:0.5em">You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature</div>
-<!--                </th> -->
-[% IF 0 %]
-                <td>
-                  or
-                </td>
-                <td>
-                Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30">
-                  <div style="height: 0.4em; overflow: hidden;"> </div>
-                Email <input  class="issue-user" id="email" maxlength="50" type="text" name="email"  /> <br /><span id="fade">your email address will not be published</span>
-                </td>
-[% END %]
-<!--            </tr> -->
-<!--     </table> -->
-    [% ELSIF 0 %]
-    [%# ELSIF !c.user.email_address || ! c.user.username %]
-    <table width="100%">
-            <tr>
-                <th>
-                
-                </th>
-                <td>
-                  Please leave your username and email address
-                </td>
-                <td align='left'>
-                Name <input class="issue-user" id="display-name" name="display-name" type="text"   maxlength="30" value="[% c.user.username %]">
-                  <div style="height: 0.4em; overflow: hidden;"> </div>
-                Email <input class="issue-user" id="email" maxlength="50" type="text" name="email"  value="[% c.user.email_address %]"/> 
-                </td>
-            </tr>
-        </table>
+          <div style="padding:0.5em">
+            You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature
+          </div>
+          <script>
+          WB.getColorbox(function(){
+            $jq(".lightbox").colorbox();
+          });
+          </script>
     [% END %]
 
 [% END %]
@@ -154,7 +127,7 @@ END;
       <th>Reported by</th>
       <th>Responsible</th>
       [% IF c.check_user_roles('admin') %]
-        <th><button class="issue-delete" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
+        <th><button class="issue-delete" onClick="WB.issue.isDelete($jq(this));return false;" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
       [% END %]
     </tr>
     [% even = 1 %]
