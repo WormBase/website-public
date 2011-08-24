@@ -18,13 +18,15 @@
  */
 
 +function(window, document, undefined){ 
-  var location = window.location;
+  var location = window.location,
+      $jq = jQuery.noConflict();
      
   var WB = (function(){
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
+          listLayouts = $jq(".list-layouts"),
           layout;
             
       window.onhashchange = readHash;
@@ -36,7 +38,7 @@
         }
         histUpdate();
       }
-      if($jq(".list-layouts").size()>0){ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
+      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
       
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
@@ -146,7 +148,6 @@
         });
       }
       
-      $jq("#widget-holder").children("#widget-header").disableSelection();
 
       
       $jq("#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
@@ -167,26 +168,7 @@
         $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
       });
             
-      $jq("#content").delegate(".bench-update", 'click', function(){
-        var wbid     = $jq(this).attr("wbid"),
-            $class     = $jq(this).attr("objclass"),
-            label     = $jq(this).attr("name"),
-            obj_url  = $jq(this).attr("url"),
-            is_obj  = $jq(this).attr("is_obj"),
-            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
 
-        $jq("#bench-status").load(url, function(){
-          WB.ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
-          $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-          if($class != "paper"){
-            WB.ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
-          }
-          if($class == "paper"){
-            WB.ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
-          }
-        });
-      return false;
-      });
       
       
       // Should be a user supplied site-wide option for this.
@@ -199,23 +181,25 @@
     }
     
     function widgetInit(){
-      if($jq("#widget-holder").size()==0){return;}
+      var widgetHolder = $jq("#widget-holder"),
+          widgets = $jq("#widgets");
+      if(widgetHolder.size()==0){return;}
+      
       // used in sidebar view, to open and close widgets when selected
-      $jq("#widgets").find(".module-load, .module-close").click(function() {
+      widgets.find(".module-load, .module-close").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = "div#" + widget_name + "-content";
         if(!nav.hasClass('ui-selected')){
           if($jq(content).text().length < 4){
-              var column = ".left",
-                  holder = $jq("#widget-holder");
-              if(getLeftWidth(holder) >= 90){
-                if(holder.children(".right").children(".visible").height()){
+              var column = ".left";
+              if(getLeftWidth(widgetHolder) >= 90){
+                if(widgetHolder.children(".right").children(".visible").height()){
                   column = ".right";
                 }
               }else{
-                var leftHeight = parseFloat(holder.children(".left").css("height")),
-                    rightHeight = parseFloat(holder.children(".right").css("height"));
+                var leftHeight = parseFloat(widgetHolder.children(".left").css("height")),
+                    rightHeight = parseFloat(widgetHolder.children(".right").css("height"));
                 if (rightHeight < leftHeight){ column = ".right"; }
               }
               openWidget(widget_name, nav, content, column);
@@ -231,8 +215,10 @@
         updateLayout();
         return false;
       });
+      
+      widgetHolder.children("#widget-header").disableSelection();
 
-      $jq("#widget-holder").find(".module-max").click(function() {
+      widgetHolder.find(".module-max").click(function() {
         var module = $jq(this).parents(".widget-container"),
     //     if(module.find(".cboxElement").trigger('click').size() < 1){
             clone = module.clone(),
@@ -254,7 +240,7 @@
       });
 
       // used in sidebar view, to open and close widgets when selected
-      $jq("#widgets").find(".module-load, .module-close").bind('open',function() {
+      widgets.find(".module-load, .module-close").bind('open',function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = "div#" + widget_name + "-content";
@@ -263,7 +249,7 @@
         return false;
       });
       
-      $jq("#widget-holder").find(".module-min").click(function() {
+      widgetHolder.find(".module-min").click(function() {
         var module = $jq("#" + $jq(this).attr("wname") + "-content"),
             button = $jq(this);
         module.next().slideToggle("fast");
@@ -280,7 +266,7 @@
         }
       });
       
-      $jq("#widget-holder").find(".reload").click(function() {
+      widgetHolder.find(".reload").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             url = nav.attr("href");
@@ -299,12 +285,13 @@
     
     
     function effects(){
-      $jq("#content").delegate(".toggle", 'click', function(){
+      var content = $jq("#content");
+      content.delegate(".toggle", 'click', function(){
             $jq(this).toggleClass("active").next().slideToggle("fast");
             return false;
       });
         
-      $jq("#content").delegate(".tooltip", 'mouseover', function(){
+      content.delegate(".tooltip", 'mouseover', function(){
           var tip = $jq(this);
           getCluetip(function(){
             tip.cluetip({
@@ -318,8 +305,8 @@
               });
             });
       });
-      $jq("#content").delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
-      $jq("#content").delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
+      content.delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
+      content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
       function expand(txt, more){
           var h = txt.height();
           if(h<40){
@@ -343,20 +330,38 @@
           more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
           more.toggleClass('open');
       }
-      $jq("#content").delegate(".text-min", 'mouseover mouseout', function(){ 
+      content.delegate(".text-min", 'mouseover mouseout', function(){ 
         $jq(this).next().toggleClass('opaque');
       });
       
       
       
-      $jq("#content").delegate(".tip-simple", 'mouseover', function(){ 
+      content.delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
           var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
           tip.appendTo($jq(this)).show();
         }
       });
-      $jq("#content").delegate(".tip-simple", 'mouseout', function(){ 
+      content.delegate(".tip-simple", 'mouseout', function(){ 
         $jq(this).children("div.tip-elem").hide();
+      });
+      content.delegate(".bench-update", 'click', function(){
+        var wbid     = $jq(this).attr("wbid"),
+            $class     = $jq(this).attr("objclass"),
+            label     = $jq(this).attr("name"),
+            obj_url  = $jq(this).attr("url"),
+            is_obj  = $jq(this).attr("is_obj"),
+            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+
+        $jq("#bench-status").load(url, function(){
+          ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
+          if($class != "paper"){
+            ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
+          }else{
+            ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
+          }
+        });
+      return false;
       });
     }
     
@@ -384,12 +389,13 @@
     
        
    function systemMessage(action, messageId){
+     var systemMessage = $jq(".system-message");
     if(action == 'show'){
-      $jq(".system-message").show().css("display", "block").animate({height:"20px"}, 'slow');
+      systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
       $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
-      $jq(".system-message").animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
+      systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
       $jq("#notifications").css("top", "0");
     }
@@ -447,7 +453,7 @@
         });
         
         $jq('#operator').click(function() { 
-          if($jq('#operator').attr("rel")) {
+          if($jq(this).attr("rel")) {
             $jq.post("/rest/livechat?open=1",function() {
               location.href="/tools/operator";
             });
@@ -530,7 +536,7 @@
         if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
       });
       
-      $jq( "#Search" ).autocomplete({
+      searchBox.autocomplete({
           source: function( request, response ) {
               lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
                   if ( xhr === lastXhr ) {
@@ -643,8 +649,9 @@
   }
 
   function loadResults(url){
-    $jq("#all-search-results").empty(); 
-    ajaxGet($jq("#all-search-results"), url);
+    var allSearch = $jq("#all-search-results");
+    allSearch.empty(); 
+    ajaxGet(allSearch, url);
     loadcount = 0;
     $jq(window).scrollTop(0);
     $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
@@ -652,12 +659,13 @@
   }
   
   function allResults(type, species, query){
-    var url = "/search/" + type + "/" + query + "/?inline=1";
+    var url = "/search/" + type + "/" + query + "/?inline=1",
+        allSearch = $jq("#all-search-results");
     
     at_default = 0; 
-    $jq("#all-search-results").empty(); 
+    allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
-    ajaxGet($jq("#all-search-results"), url);
+    ajaxGet(allSearch, url);
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
@@ -783,14 +791,15 @@
 //The layout methods
     var reloadLayout = true; //keeps track of whether or not to reload the layout on hash change
     function columns(leftWidth, rightWidth, noUpdate){
+      var widgetHolder = $jq("#widget-holder");
       if(leftWidth>99){
-        $jq("#widget-holder").children(".sortable").css('min-height', '0');
+        widgetHolder.children(".sortable").css('min-height', '0');
       }else{
-        $jq("#widget-holder").children(".sortable").css('min-height', '5em');
+        widgetHolder.children(".sortable").css('min-height', '5em');
       }
-      $jq("#widget-holder").children(".left").css("width",leftWidth + "%");
+      widgetHolder.children(".left").css("width",leftWidth + "%");
       if(rightWidth==0){rightWidth=100;}
-      $jq("#widget-holder").children(".right").css("width",rightWidth + "%");
+      widgetHolder.children(".right").css("width",rightWidth + "%");
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -907,7 +916,7 @@
     }
 
     function resetLayout(leftList, rightList, leftWidth){
-      $jq("div#navigation").find(".ui-selected").removeClass("ui-selected");
+      $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
@@ -1419,4 +1428,5 @@ $jq(function() {
  });
 
  window.WB = WB;
+ window.$jq = $jq;
 }(this,document);
