@@ -1,12 +1,12 @@
-          <li onClick="resetLayout(['overview', 'location'], [], 100)"><div id="fade">reset</div></li>
-          <li onClick="resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
+          <li onClick="WB.resetLayout(['overview', 'location'], [], 100)"><div id="fade">reset</div></li>
+          <li onClick="WB.resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
           [% FOREACH layout IN c.stash.layouts.keys.nsort %]
             [% UNLESS layout; NEXT; END; %]
          <li id="layout-[% layout %]">
-              <div class="ui-icon ui-icon-close" onClick="deleteLayout('[% layout %]')"></div>
-              <div id="fade" onClick="setLayout(escape('[% layout %]'))">[% c.stash.layouts.$layout %]</div></li>
+              <div class="ui-icon ui-icon-close" onClick="WB.deleteLayout('[% layout %]')"></div>
+              <div id="fade" onClick="WB.setLayout(escape('[% layout %]'))">[% c.stash.layouts.$layout %]</div></li>
           [% END %]
-          <form onsubmit="newLayout(this.layout.value);return false;"><input id="layout-input" type="text" name="layout" value="save layout">
+          <form onsubmit="WB.newLayout(this.layout.value);return false;"><input id="layout-input" type="text" name="layout" value="save layout">
           </form>
 
 <script>

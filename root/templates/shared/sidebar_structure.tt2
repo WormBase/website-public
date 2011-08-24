@@ -35,16 +35,14 @@
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" wname="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
 [% END %]
-
-<!--         <a   tip="print page" class="button print tip-simple  ui-corner-all"><span class="ui-icon ui-icon-print"></span></a> -->
         <div class="columns" id="column-dropdown"><a class="button ui-corner-all tip-simple" tip="settings"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
           <ul>
             <li><span id="fade">layout</span><span class="ui-icon ui-icon-triangle-1-e" style="float:right;margin-top:0.2em;"></span>
               <ul>
-              <li onClick="columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
-              <li onClick="columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
-              <li onClick="columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
-              <li onClick="columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
+              <li onClick="WB.columns(100, 100)"><div class="ui-icon-column ui-icon-1"></div></li>
+              <li onClick="WB.columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
+              <li onClick="WB.columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
+              <li onClick="WB.columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
               <div class="list-layouts" type="[% page_class %]" style="font-size:0.7em"></div>
               </ul>
             </li>
@@ -116,7 +114,7 @@
           href="[% c.uri_for('/rest','widget','me','user_history') %]" 
           load=1>see more...</li>[% END %]</div>
     </ul>
-    <div id="nav-min" title="close sidebar"><div id="nav-min-icon"></div></div>
+    <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
 
 
