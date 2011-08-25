@@ -23,8 +23,7 @@
     <script>
       google.load("jquery", "1.6.2");
       google.load("jqueryui", "1.8.16");
-    </script>
-    <script>
+
       var se = document.createElement('script');
       se.src = "/js/wormbase.min.js";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);

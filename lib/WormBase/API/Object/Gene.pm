@@ -3435,7 +3435,7 @@ sub gene_models {
 
   foreach my $sequence (sort { $a cmp $b } @$seqs) {
     my %data = ();
-    my $model = { label => $sequence->name, class => $sequence->class, id => $sequence->name};
+    my $model = $self->_pack_obj($sequence);
     my $gff = $self->fetch_gff_gene($sequence) or next;
     my $cds = ($sequence->class eq 'CDS') ? $sequence : eval { $sequence->Corresponding_CDS };
 
@@ -3496,7 +3496,7 @@ sub gene_models {
       my $aa   = "$peplen aa";
       $data{length_protein} = $aa if $aa;
     }
-    my $protein_desc = { label => $protein->name, id => $protein->name, class=>$protein->class};
+    my $protein_desc = $self->_pack_obj($protein);
     $data{model}   = $model    if $model;
     $data{protein} = $protein_desc if $protein_desc;
 
