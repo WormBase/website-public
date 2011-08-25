@@ -40,6 +40,7 @@ use Class::MOP;
 			   Variation    => 'Public_name',
 			   Phenotype    => 'Primary_name',
 			   Gene_class   => 'Main_name',
+               Gene_name    => 'Public_name_for',
 			   Species      => 'Common_name',
 			   Molecule     => [qw(Public_name Name)],
 			   Anatomy_term => 'Term',

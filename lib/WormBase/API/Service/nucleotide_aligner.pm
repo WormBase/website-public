@@ -90,7 +90,7 @@ sub run {
 
     $self->object($sequence);
     $sequence->db->class('Ace::Object::Wormbase');
-    my $gff_dsn= $self->gff_dsn;
+    my $gff_dsn= $self->gff_dsn || return undef;
     $gff_dsn->ace($sequence->db);
     $gff_dsn->reconnect();
     my $dbgff =  $gff_dsn->dbh ;

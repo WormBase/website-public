@@ -1485,7 +1485,6 @@ div.columns {
 }
 
 div.columns ul {
-  font-size:1.3em;
   width:4.5em;
   position:absolute;
   z-index:999;
@@ -1966,7 +1965,6 @@ white-space:nowrap;
     font-family: Courier, monospace;
     font-size: 0.8em;
     overflow: hidden;
-    width: 80%; 
     clear: both;
     display: none;   /* Hidden by default */
 }

@@ -73,7 +73,7 @@
 	   '<br /><br />';
 	   '<div class="toggle">Treefam image</div>';
            '<div class="toggle-container">'; 
-                '<iframe name="treefam" src=' _ url(obj,obj) _ 'width="680" height="500" scrolling="auto"></iframe>';
+                '<iframe width="680" height="500" name="treefam" src=' _ url(obj,obj) _ 'width="680" height="500" scrolling="auto"></iframe>';
            '</div>';
         END;
         'Phylogenetic trees provided by the' _ text2link('treefam','','Treefam') _ ' project.';
