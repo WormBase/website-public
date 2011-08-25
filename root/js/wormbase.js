@@ -25,7 +25,7 @@
     var timer,
         notifyTimer,
         cur_search_type = 'all',
-        reloadLayout = true, //keeps track of whether or not to reload the layout on hash change
+        reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
         at_default = -45,
         system_message = 0,
@@ -237,6 +237,8 @@
       }
     }
     
+    
+    
     function widgetInit(){
       var widgetHolder = $jq("#widget-holder"),
           widgets = $jq("#widgets"),
@@ -245,6 +247,7 @@
           
       if(widgetHolder.size()==0){return;}
       
+      window.onhashchange = readHash;
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -252,11 +255,10 @@
           location.hash = layout['hash'];
         }else{
           resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
-          reloadLayout = false;
+          reloadLayout++;
           updateLayout();
         }
       }
-      window.onhashchange = readHash;
       
       if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
       
@@ -428,14 +430,16 @@
 
         $jq("#bench-status").load(url, function(){
           ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
-          if($class != "paper"){
-            ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
-          }else{
-            ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
-          }
+          $class != "paper" ? ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1) : ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
         });
       return false;
       });
+      
+      var down = $jq("<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>");
+      content.delegate(".sequence-link", 'onload', function(){
+        $jq(this).append(down);
+        alert("ALERT");
+      })
     }
     
 
@@ -771,7 +775,9 @@
         content.closest("li").appendTo($jq("#widget-holder").children(column));
         addWidgetEffects(content.parent(".widget-container"));
 
-        ajaxGet(content, url);
+        if(content.text().length < 4){
+          ajaxGet(content, url);
+        }
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
         return false;
@@ -783,17 +789,7 @@
         ajaxGet($jq("div#" + widget_name + "-content"), url);
     }
     
-    function openAllWidgets(){
-      var widgets = $jq("#navigation .module-load");
-      var widget = widgets.first();
-      for(i=0; i<widgets.length; i++){
-        if($jq("#" + widget.attr("wname") + ".visible").length == 0){
-          widget.click();
-        }
-        widget = widget.next();
-      }
-      return false;
-    }
+
     
     
     
@@ -922,14 +918,14 @@
           r = $jq.map(right, function(i) { return getWidgetID(i);}),
           ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
       if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
-        reloadLayout = false;
+        reloadLayout++;
       }
       location.hash = ret;
       return ret;
     }
     
     function readHash() {
-      if(reloadLayout){
+      if(reloadLayout == 0){
         var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
         if(!h){ return; }
         
@@ -941,7 +937,7 @@
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
         resetLayout(l,r,w);
       }else{
-        reloadLayout = true;
+        reloadLayout--;
       }
     }
     
@@ -961,6 +957,16 @@
     function getWidgetID (widget_name) {
         return widgetList.list.indexOf(widget_name).toString(36);
     }
+   
+    function openAllWidgets(){
+      var hash = "";
+      for(i=0; i< widgetList.list.length; i++){
+        hash = hash + (i.toString(36));
+      }
+      window.location.hash = hash + "--10";
+      return false;
+    }
+    
     
     //returns widget name 
     function getWidgetName (widget_id) {
@@ -1509,6 +1515,7 @@ $jq(function() {
       setLoading: setLoading,
       SearchResult: SearchResult,
       resetLayout: resetLayout,
+      openAllWidgets: openAllWidgets,
       deleteLayout: deleteLayout,
       columns: columns,
       setLayout: setLayout,
@@ -1531,7 +1538,7 @@ $jq(function() {
 
 
  $jq(document).ready(function() {
-      $jq.ajaxSetup( {timeout: 99999 });
+      $jq.ajaxSetup( {timeout: 6e4 }); //one minute timeout on ajax requests
       WB.init();
  });
 

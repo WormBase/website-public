@@ -569,17 +569,18 @@ B<Response example>
 
 =cut 
 
-sub injected_into_strains {
-    my $self   = shift;
-    my $object = $self->object;
-    my @cgc_strains = $object->Injected_into_CGC_strain;
-    my @data = map { $self->_pack_obj($_) } @cgc_strains;
-    push @data,map { "$_" } $object->Injected_into;
-    return { description => 'strains that the transgene has been injected into',
-	     data        => @data ? \@data : undef};
-}
+# -not in the schema anymore? -AC
+# sub injected_into_strains {
+#     my $self   = shift;
+#     my $object = $self->object;
+#     my @cgc_strains = $object->Injected_into_CGC_strain;
+#     my @data = map { $self->_pack_obj($_) } @cgc_strains;
+#     push @data,map { "$_" } $object->Injected_into;
+#     return { description => 'strains that the transgene has been injected into',
+# 	     data        => @data ? \@data : undef};
+# }
 
-=head3 integrated_by
+=head3 integration_method
 
 This method will return a data structure containing
 how the transgene was integrated (if it was).
@@ -588,7 +589,7 @@ how the transgene was integrated (if it was).
 
 =item PERL API
 
- $data = $model->integrated_by();
+ $data = $model->integration_method();
 
 =item REST API
 
@@ -630,21 +631,15 @@ B<Response example>
 
 =cut 
 
-sub integrated_by {    
+sub integration_method {    
     my $self   = shift;
     my $object = $self->object;
-    my %methods = map { $_ => $_ } $object->Integrated_by;
-    my @methods;
-    if ($methods{Other_integration_method}) {
-	my $text = $methods{Other_integration_method}->right;
-	push @methods,$text;
-    } 
-    push @methods,keys %methods;
+    my $method = $object->Integration_method;
     return { description => 'how the transgene was integrated (if it has been)',
-	     data        => @methods ? \@methods : undef };
+	     data        => $method ? \$method : undef };
 }
 
-
+# 
 =head3 integrated_at
 
 This method will return a data structure containing

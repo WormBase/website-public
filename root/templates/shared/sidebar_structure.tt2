@@ -43,10 +43,10 @@
               <li onClick="WB.columns(50, 50)"><div class="ui-icon ui-icon-column ui-icon-1-1"></div></li>
               <li onClick="WB.columns(70, 30)"><div class="ui-icon ui-icon-column ui-icon-2-1"></div></li>
               <li onClick="WB.columns(30, 70)"><div class="ui-icon ui-icon-column ui-icon-1-2"></div></li>
-              <div class="list-layouts" type="[% page_class %]" style="font-size:0.7em"></div>
+              <div class="list-layouts" type="[% page_class %]"></div>
               </ul>
             </li>
-            <li><a id="fade" onClick="openAllWidgets(); return false;">open all</a></li>
+            <li><a id="fade" onClick="WB.openAllWidgets(); return false;">open all</a></li>
 <!--             <li><a id="fade" id="print">print</a></li> -->
           </ul>
         </div>

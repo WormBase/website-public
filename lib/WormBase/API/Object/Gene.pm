@@ -1131,7 +1131,7 @@ sub microarray_topology_map_position {
     # I don't think this will work; have sequences been statshed in the object?
     my $sequences = $self->sequences;
     return unless @$sequences;
-    my @segments = @{$self->_segments};
+    my @segments = @{$self->_segments} if $self->_segments;
     my $seg = $segments[0] or return;
     my @p = map {$_->info} $seg->features('experimental_result_region:Expr_profile');
     return unless @p;
@@ -2127,7 +2127,7 @@ sub other_orthologs {
 # Private helper method to standardize structure of other orthologs.
 sub _parse_ortholog_other {
     my ($self,$ortholog) = @_;
-    my $methods  = join('; ',map { "$_" } $ortholog->right->col);
+    my $methods  = $ortholog->right ? join('; ',map { "$_" } $ortholog->right->col): undef;
     return { ortholog => $self->_pack_obj($ortholog),
 	     method   => $methods,
 	     species  => $self->_split_genus_species($ortholog->Species)
@@ -2947,8 +2947,7 @@ B<Response example>
 sub orfeome_primers {
     my $self   = shift;
     my $object = $self->object;
-    
-    my @segments = @{$self->_segments};
+    my @segments = $self->_segments ? @{$self->_segments} : undef ;
     my @ost = map { $self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
     
     return { description =>  "ORFeome Project primers and sequences",
@@ -3147,7 +3146,7 @@ sub transgenes {
     foreach ($object->Drives_transgene) {
 	my $summary = $_->Summary;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => $_->Location ? $self->_pack_obj($_->Location) : '',
+		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
 		      summary    => "$summary",
 	};
     }
@@ -3216,7 +3215,7 @@ sub transgene_products {
     foreach ($object->Transgene_product) {
 	my $summary = $_->Summary;
 	push @data, { transgene  => $self->_pack_obj($_),
-		      laboratory => $_->Location ? $self->_pack_obj($_->Location) : '',
+		      laboratory => eval {$_->Location} ? $self->_pack_obj($_->Location) : '',
 		      summary    => "$summary",
 	};
     }
@@ -3541,7 +3540,7 @@ sub fetch_gff_gene {
  my ($self,$transcript) = @_;
 
   my $trans;
-  my $GFF = $self->gff_dsn();
+  my $GFF = $self->gff_dsn() || return undef;
 
   if ($self->object->Species =~ /briggsae/) {
       ($trans)      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript);
@@ -3600,12 +3599,14 @@ sub _fetch_transcripts {
 sub _build__segments {
     my ($self) = @_;
     my $sequences = $self->sequences;
-    my $dbh = $self->gff_dsn();
+    my @segments;
+    my $dbh = $self->gff_dsn() || return \@segments;
 
     my $object = $self->object;
     my $species = $object->Species;
 
-    my @segments;
+#     unless(ref($dbh) eq "HASH"){ return \@segments; }
+
     # Yuck. Still have some species specific stuff here.
 
     if (@$sequences and $species =~ /briggsae/) {
@@ -4144,7 +4145,7 @@ sub _gene_xgene_pheno_data_compile{
 		
 	my @xgenes = $object->Drives_Transgene;
 	my @xgene_product = $object->Transgene_product;
-	my @xgene_rescue = $object->Rescued_by_transgene;
+	my @xgene_rescue = eval{ $object->Rescued_by_transgene };
 	
 	push @xgenes,@xgene_product;
 	push @xgenes,@xgene_rescue;
