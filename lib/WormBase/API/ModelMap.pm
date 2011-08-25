@@ -28,7 +28,7 @@ use Class::MOP;
 		       class => { # HAS DEFAULT
 			   Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
 			   Person    => [qw(Person Author)],
-			   Sequence  => [qw(Sequence CDS cds)],
+			   Sequence  => [qw(Transcript Sequence CDS cds)],
 			   Rnai      => 'RNAi',
 			   Go_term   => 'GO_term',
 		       },
@@ -53,7 +53,8 @@ use Class::MOP;
 			   Transgene   => 'Location',
 			   Strain      => 'Location',
 			   Antibody    => 'Location',
-		       },			  
+		       },
+		       
     );
 
     my $ACE2WB_MAP_DONE = 0;

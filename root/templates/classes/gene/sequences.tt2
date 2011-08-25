@@ -4,7 +4,9 @@
 
 [% 
 
-WRAPPER $field_block title=pluralized("Gene model", fields.gene_models.data) key="gene_models";
+IF fields.gene_models.data;
+
+#   WRAPPER $field_block title=pluralized("Gene model", fields.gene_models.data) key="gene_models";
 
         rows = [];
         remarks_seen = {};
@@ -30,6 +32,7 @@ WRAPPER $field_block title=pluralized("Gene model", fields.gene_models.data) key
 
             # now construct the model string, appending footnotes. Jesus.
             model = r.model;
+	    model.class = 'Sequence';
             r.model = tag2link(model) _ "<span class=\"superscript\">" _ footnotes.join(',') _ "</span>";
             rows.push(r);
 
@@ -57,15 +60,25 @@ WRAPPER $field_block title=pluralized("Gene model", fields.gene_models.data) key
        END;
       '</div>';
 
+#   END;
+
+ELSE;
+
+    '<div class="caveat-emptor">This gene has not been cloned or placed on the physical map; no sequence information exists.</div>';
+
 END;
 
 
-WRAPPER $field_block title="Other sequences" key="other_sequences";
-     build_data_table(order=['sequence','description'],
-                      columns={ sequence    => 'Sequence',
-		                description => 'Description',
-                              },
-                      key='other_sequences');
-END;
+
+
+
+# TH: Disabled 2011.08.17; Safe to delete after 2011.10.17
+# WRAPPER $field_block title="Other sequences" key="other_sequences";
+#     build_data_table(order=['sequence','description'],
+#                      columns={ sequence    => 'Sequence',
+#		                description => 'Description',
+#                              },
+#                      key='other_sequences');
+#END;
 
 %]

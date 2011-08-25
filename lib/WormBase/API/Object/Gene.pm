@@ -184,8 +184,6 @@ has 'phenotype_data' => (
 
 
 
-#################################
-
 #######################################
 #
 # The Overview Widget
@@ -3505,14 +3503,14 @@ sub gene_models {
     push @rows,\%data;
   }
 
-   # data is returned in this structure for use with dataTables macro
-   my $data = { description => "The gene models table info",
-                data        =>  \@rows };
+   my $data = { description => 'gene models for this gene',
+                data        =>  @rows ? \@rows : undef};
    return $data;
 }
 
 
 
+# TH: Retired 2011.08.17; safe to delete or transmogrify to some other function.
 # should we return entire sequence obj or just linking/description info? -AC
 sub other_sequences {
     my $self   = shift;
