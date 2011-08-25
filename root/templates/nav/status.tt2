@@ -1,32 +1,14 @@
-<script type="text/javascript" >
-$jq("#bench-status").load("/rest/workbench");
-function popWin(url) {
-  var win = window.open(url,'pop','status=no,resizable=yes,height=2px,width=2px');
-  win.blur();
-};
-
-
-$jq("#login").live('click', function(){
-  $jq(this).siblings().toggle();
-  $jq(this).toggleClass("open ui-corner-top");
-});
-
-
-</script>   
- [% ref = c.req.referer.split('/').last %]
+[% ref = c.req.referer.split('/').last %]
 [% IF c.user_exists %]
-
-  <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% c.user.username %]<span href="/bench" id="bench-status"></span></a></li>
-  <li><a href="" onClick="popWin('/logout')">Logout</a></li>
+  <li><a href="[% c.uri_for('/me') %]" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">Welcome [% c.user.username %]<span href="/me" id="bench-status"></span></a></li>
+  <li><a id="logout" href="#">Logout</a></li>
 [% ELSE %]
   <li><a href="/me" title="go to your workspace" id="section-me" class="[% IF(ref=='me'); 'selected'; END;%]">My WormBase <span href="/me" id="bench-status"></span></a></li>
-
   <li id="login-box"><a id="login">Login</a>
     <ul class="dropdown ui-corner-all">
     [% PROCESS auth/login.tt2 %]
     </ul>
   </li>
-  
 [% END %]
- 
+
  

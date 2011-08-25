@@ -1,39 +1,4 @@
-<script>
- $jq(".issue-update").live('click',function() {
-	
-	      var url= $jq(this).attr("rel");
-	      var thread = $jq(this).closest('#threads-new');
-	      var email = thread.find("#email");
-	      var username= thread.find("#display-name");
-	      if(email.attr('id') && username.attr('id')) {
-		if(validate_fields(email,username)==false) {return false;}
-	      }   
-	      $jq.ajax({
-		type: 'POST',
-		url: url,
-		data: {content: $jq("textarea").val(),
-		       issue:[% issue.issue_id %],
-                       state:$jq("#issue_status option:selected").val(),
-                       severity:$jq("#issue_severity option:selected").val(),
-                       assigned_to:$jq("#issue_assigned_to option:selected").val(),
-                       email:email.val(),
-                       username:username.val()  },
-		success: function(data){
-			    if(data==0) {
-				   alert("The email address has already been registered! Please sign in."); 
-			    }else {
-				  window.location.reload();  
-			    }
-			},
-		error: function(request,status,error) {
-			      alert(request + " " + status + " " + error);
-			}
-	      });
-	
-	    return false;
 
-    });
-</script>
 
 <div style=" margin:1em 0" >
 <div class="issue-content" >
@@ -127,7 +92,7 @@
 
 
 <p>
-<input type='submit' value='Update Issue' class="issue-update" rel="[% c.uri_for('/rest','feed','thread') %]" [% UNLESS c.user_exists; 'disabled=1'; END;%] /> 
+<input type='submit' value='Update Issue' class="issue-update" onClick="WB.issue.update($jq(this), '[% issue.issue_id %]');" rel="[% c.uri_for('/rest','feed','thread') %]" [% UNLESS c.user_exists; 'disabled=1'; END;%] /> 
  <input type='reset' value='Reset' [% UNLESS c.user_exists; 'disabled=1'; END;%] />
 </p>
 </form>

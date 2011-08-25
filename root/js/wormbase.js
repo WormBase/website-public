@@ -22,23 +22,27 @@
       $jq = jQuery.noConflict();
      
   var WB = (function(){
+    var timer,
+        notifyTimer,
+        cur_search_type = 'all',
+        reloadLayout = true, //keeps track of whether or not to reload the layout on hash change
+        loadcount = 0,
+        at_default = -45,
+        system_message = 0,
+        plugins = new Array(),
+        loading = false;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
-          searchAll = $jq("#all-search-results"),
-          listLayouts = $jq(".list-layouts"),
-          layout;
-            
-      window.onhashchange = readHash;
+          searchAll = $jq("#all-search-results");
+      
       if($jq(".user-history").size()>0){
-        function histUpdate(){
+        (function histUpdate(){
           ajaxGet($jq(".user-history"), "/rest/history?count=3");
           setTimeout(histUpdate, 6e5); //update the history every 10min
           return;
-        }
-        histUpdate();
+        })();
       }
-      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
       
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
@@ -57,18 +61,6 @@
       if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
-
-      if(location.hash.length > 0){
-        readHash();
-      }else if(layout = $jq("#widget-holder").data("layout")){
-        if(layout['hash']){
-          location.hash = layout['hash'];
-        }else{
-          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
-          reloadLayout = false;
-          updateLayout();
-        }
-      }
       
       navBarInit();
       pageInit();
@@ -76,8 +68,7 @@
       effects();
     }
    
-    
-    var timer;
+
     function navBarInit(){
       searchInit();
       $jq("#nav-bar").find("ul li").hover(function () {
@@ -103,22 +94,35 @@
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
-        ajaxGet($jq(".status-bar"), "/rest/auth");
+        ajaxGet($jq(".status-bar"), "/rest/auth", undefined, function(){
+          $jq("#bench-status").load("/rest/workbench");
+          var login = $jq("#login");
+          if(login.size() > 0){
+            login.click(function(){
+              $jq(this).siblings().toggle();
+              $jq(this).toggleClass("open ui-corner-top");
+            });
+          }else{
+            $jq("#logout").click(function(){
+              window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+            });
+          }
+        });
     }
     
-    
     function pageInit(){
+      var personSearch = $jq("#person-search");
+      
       operator();
       $jq("#print").click(function() {
-        var layout= location.hash.replace('#',''),
+        var layout = location.hash.replace('#',''),
             print = $jq(this);
-        
           $jq.ajax({
               type: "POST",
               url : '/rest/print',
               data: {layout:layout}, 
               beforeSend:function(){
-                WB.setLoading(print); 
+                setLoading(print); 
               },
               success: function(data){
                 print.html('');
@@ -148,8 +152,6 @@
         });
       }
       
-
-      
       $jq("#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
         $jq("div.columns>ul").toggle();
       });
@@ -167,9 +169,6 @@
         $jq(this).attr("title", msg);
         $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
       });
-            
-
-      
       
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
@@ -178,12 +177,88 @@
             $jq(".disabled" ).toggle();    
             $jq(this).toggleClass('ui-state-highlight');
       });
+      if(personSearch.size()>0){
+          ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
+            personSearch.delegate(".results-person .result li a", 'click', function(){
+                $jq(".ui-state-highlight").removeClass("ui-state-highlight");
+                var wbid = $jq(this).attr("href").split('/').pop();
+                $jq.ajax({
+                    type: "GET",
+                    url: "/auth/info/" + wbid,
+                    dataType: 'json',
+                    success: function(data){
+                          var linkAccount = $jq("#link-account");
+                          if(linkAccount.size()==0){
+                            $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
+                            var email = new String(data.email);
+                            if(data.email && data.status_ok){
+                              var re = new RegExp($jq("input#email").attr("value"),"gi");
+                              if (((email.match(re))) || !($jq("input#email").attr("value"))){
+                                $jq("#email").attr("disabled", "disabled").parent().hide(); 
+                              }
+                              $jq("input#wbemail").attr("value", email).parent().show();
+                            }else{
+                              $jq("input#wbemail").attr("value", "").parent().hide();
+                              $jq("#email").removeAttr("disabled").parent().show(); 
+                            }
+                            $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
+                            $jq("input#wbid").attr("value", data.wbid);
+                          }else{
+                            $jq("input#wbid").attr("value", data.wbid);
+                            $jq("input#email").attr("value", data.email);
+                            linkAccount.removeAttr("disabled");
+                            $jq("input#confirm").attr("value", "");
+                            var emails = ["[% emails.join('", "') %]"];
+                            if(data.email && data.status_ok){
+                              var e = "" + data.email;
+                              for(var i=0; i<emails.length; i++){
+                                var re = new RegExp(emails[i],"gi");
+                                if (e.match(re)){
+                                  $jq(".register-notice").css("visibility", "hidden");
+                                  $jq("input#confirm").attr("value", 1);
+                                  return;
+                                }
+                              }
+                            }else{
+                              linkAccount.attr("disabled", 1);
+                            }
+                            $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").css("visibility", "visible");
+
+                          }
+                      },
+                    error: function(request,status,error) {
+                        alert(request + " " + status + " " + error );
+                      }
+                });
+                $jq(this).parent().parent().addClass("ui-state-highlight");
+                return false;
+            });
+          });
+      }
     }
     
     function widgetInit(){
       var widgetHolder = $jq("#widget-holder"),
-          widgets = $jq("#widgets");
+          widgets = $jq("#widgets"),
+          listLayouts = $jq(".list-layouts"),
+          layout;
+          
       if(widgetHolder.size()==0){return;}
+      
+      if(location.hash.length > 0){
+        readHash();
+      }else if(layout = widgetHolder.data("layout")){
+        if(layout['hash']){
+          location.hash = layout['hash'];
+        }else{
+          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
+          reloadLayout = false;
+          updateLayout();
+        }
+      }
+      window.onhashchange = readHash;
+      
+      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
       
       // used in sidebar view, to open and close widgets when selected
       widgets.find(".module-load, .module-close").click(function() {
@@ -267,10 +342,7 @@
       });
       
       widgetHolder.find(".reload").click(function() {
-        var widget_name = $jq(this).attr("wname"),
-            nav = $jq("#nav-" + widget_name),
-            url = nav.attr("href");
-        WB.ajaxGet($jq("div#" + widget_name + "-content"), url);
+        reloadWidget($jq(this).attr("wname"));
       });
       
       $jq(".feed").click(function() {
@@ -282,6 +354,7 @@
     }
     
     
+
     
     
     function effects(){
@@ -365,7 +438,7 @@
       });
     }
     
-    var notifyTimer;
+
     function displayNotification (message){
         if(notifyTimer){
           clearTimeout(notifyTimer);
@@ -554,8 +627,7 @@
     }
 
 
-    var cur_search_type = 'all';
-
+    
     function search(box) {
         if(!box){ box = "Search"; }else{ cur_search_type = 'all'; } 
         var f = $jq("#" + box).attr("value");
@@ -705,6 +777,12 @@
         return false;
     }
     
+    function reloadWidget(widget_name){
+        var nav = $jq("#nav-" + widget_name),
+            url = nav.attr("href");
+        ajaxGet($jq("div#" + widget_name + "-content"), url);
+    }
+    
     function openAllWidgets(){
       var widgets = $jq("#navigation .module-load");
       var widget = widgets.first();
@@ -789,7 +867,7 @@
 /***************************/
 
 //The layout methods
-    var reloadLayout = true; //keeps track of whether or not to reload the layout on hash change
+    
     function columns(leftWidth, rightWidth, noUpdate){
       var widgetHolder = $jq("#widget-holder");
       if(leftWidth>99){
@@ -943,9 +1021,7 @@
 
 
 
-  var loadcount = 0;
-  var at_default = -45;
-  var system_message = 0;
+
 
 $jq(function() {
 
@@ -1126,6 +1202,7 @@ $jq(function() {
                   displayNotification("Problem Submitted! We will be in touch soon.");
                   feed.closest('#widget-feed').hide(); 
                               updateCounts(url);
+                  reloadWidget('issue');
                 }
               },
           error: function(request,status,error) {
@@ -1156,6 +1233,38 @@ $jq(function() {
             }
           });
       } 
+   },
+   update: function(is, issue_id){
+          var url= is.attr("rel"),
+              thread = is.closest('#threads-new'),
+              email = thread.find("#email"),
+              username= thread.find("#display-name");
+          if(email.attr('id') && username.attr('id')) {
+        if(validate_fields(email,username)==false) {return false;}
+          }   
+          $jq.ajax({
+        type: 'POST',
+        url: url,
+        data: {content: $jq("textarea").val(),
+               issue:issue_id,
+                       state:$jq("#issue_status option:selected").val(),
+                       severity:$jq("#issue_severity option:selected").val(),
+                       assigned_to:$jq("#issue_assigned_to option:selected").val(),
+                       email:email.val(),
+                       username:username.val()  },
+        success: function(data){
+                if(data==0) {
+                   alert("The email address has already been registered! Please sign in."); 
+                }else {
+                  window.location.reload();  
+                }
+            },
+        error: function(request,status,error) {
+                  alert(request + " " + status + " " + error);
+            }
+          });
+    
+        return false;
    }
   }
 
@@ -1296,7 +1405,6 @@ $jq(function() {
   var providers = $jq.extend({}, providers_large);
 
   var openid = {
-      /* Provider image click */
       signin: function(box_id, onload) {
         var provider = providers[box_id];
         if (! provider) {
@@ -1318,8 +1426,7 @@ $jq(function() {
   };
   
   
-  var plugins = new Array();
-  var loading = false;
+
   function getScript(name, url, stylesheet, callback) {
     var head = document.documentElement,
         script = document.createElement("script"),
@@ -1409,6 +1516,7 @@ $jq(function() {
       search_change: search_change,
       loadResults: loadResults,
       openid: openid,
+      validate_fields: validate_fields,
       StaticWidgets: StaticWidgets,
       recordOutboundLink: recordOutboundLink,
       comment: comment,

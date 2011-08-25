@@ -45,9 +45,9 @@
 
 <script>
 $jq("#redirect").attr("value", window.location);
-hideTextOnFocus("#name");
-hideTextOnFocus("#email");
-hideTextOnFocus("#password");
+WB.hideTextOnFocus("#name");
+WB.hideTextOnFocus("#email");
+WB.hideTextOnFocus("#password");
 
 </script>
 
@@ -89,7 +89,7 @@ hideTextOnFocus("#password");
 
 
               <div id="default-login" style="overflow:none">
-              <input id="create-account" type="submit" style="font-weight:bold;font-size:1.3em;width:7em;" class="register-button ui-corner-large-all" value="sign up ›"/>  
+              <input id="create-account" type="submit" style="font-weight:bold;font-size:1.3em;width:7em;" onClick="register($jq(this));return false;" class="register-button ui-corner-large-all" value="sign up ›"/>  
              <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
              </div>
 <br />
@@ -111,7 +111,8 @@ hideTextOnFocus("#password");
 <div style="float:left" class="detail-box ui-corner-all" >
 <h2>Is this you?</h2>
 select yourself to link your wormbase information <br /><br />
-<div id="person-search"></div>
+[% uri_name = full_name _ ' ' _ email FILTER uri %]
+<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1"></div>
 
   <div onClick="resetFields();" style="background:white;cursor:pointer; padding:1em; border-top:1px solid #CDCDCD;margin:1em -0.5em -0.5em;" class="ui-corner-bottom">
       <h4>None of these are me</h4><a href="#">I'll fill in my own information</a>
@@ -120,46 +121,6 @@ select yourself to link your wormbase information <br /><br />
 </div>
 
 <script>
-[% uri_name = full_name _ ' ' _ email FILTER uri %]
-  $jq("#person-search").load("[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1");
-
-
-  $jq(".results-person .result li a").live('click', function(){
-      $jq(".ui-state-highlight").removeClass("ui-state-highlight");
-      var wbid = $jq(this).attr("href").split('/').pop();
-
-      $jq.ajax({
-          type: "GET",
-          url: "/auth/info/" + wbid,
-          dataType: 'json',
-          success: function(data){
-                $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
-                var email = new String(data.email);
-                if(data.email && data.status_ok){
-                  var re = new RegExp($jq("input#email").attr("value"),"gi");
-                  if (((email.match(re))) || !($jq("input#email").attr("value"))){
-                    $jq("#email").attr("disabled", "disabled").parent().hide(); 
-
-                  }
-                  $jq("input#wbemail").attr("value", email).parent().show();
-                }else{
-                  $jq("input#wbemail").attr("value", "").parent().hide();
-                  $jq("#email").removeAttr("disabled").parent().show(); 
-                }
-                $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
-                $jq("input#wbid").attr("value", data.wbid);
-            },
-          error: function(request,status,error) {
-              alert(request + " " + status + " " + error );
-            }
-      });
-
-
-      $jq(this).parent().parent().addClass("ui-state-highlight");
-      return false;
-  });
-
-
   function resetFields(){
     $jq(".ui-state-highlight").removeClass("ui-state-highlight");
     $jq("input#wbemail").attr("value", "").parent().hide();
@@ -170,18 +131,17 @@ select yourself to link your wormbase information <br /><br />
   }
 
 
-  $jq(".register-button").live('click',function() {
-    var reg = $jq(this).closest('#register-form');  
-    var email = reg.find("#email");
-    var wbemail = reg.find("#wbemail");
-    var username= reg.find("#name");
-    var password = reg.find("#password");
-    var wbid = reg.find("#wbid");
-    var redirect = reg.find("#redirect");
-    if(validate_fields(email,username,password,reg.find("#confirm-password"), wbemail) == false) {
+  function register(r){
+    var reg = r.closest('#register-form'),  
+        email = reg.find("#email"),
+        wbemail = reg.find("#wbemail"),
+        username= reg.find("#name"),
+        password = reg.find("#password"),
+        wbid = reg.find("#wbid"),
+        redirect = reg.find("#redirect");
+    if(WB.validate_fields(email,username,password,reg.find("#confirm-password"), wbemail) == false) {
         return false;
     }
-    
     $jq.ajax({
           type: "POST",
           url: "/rest/register",
@@ -202,6 +162,6 @@ select yourself to link your wormbase information <br /><br />
             }
       });
     return false;
-    });
+    }
 </script>
 [% END %]
