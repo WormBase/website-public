@@ -15,7 +15,7 @@ IF fields.gene_models.data;
 	# Take apart the data structure JUST to add in the footnotes!
 	# This is really ineffecient.
         FOREACH r IN fields.gene_models.data;
-	
+
             # Calculate footnotes for this gene model.
             footnotes = [];
 	    FOREACH remark IN r.remarks;
@@ -32,21 +32,21 @@ IF fields.gene_models.data;
 
             # now construct the model string, appending footnotes. Jesus.
             model = r.model;
-	    model.class = 'Sequence';
+            model.class = 'Sequence';
             r.model = tag2link(model) _ "<span class=\"superscript\">" _ footnotes.join(',') _ "</span>";
             rows.push(r);
 
         END;
 
-        build_data_table(order=['model','status','length_spliced','length_unspliced','protein','length_protein'],
-                         columns = { model => 'Gene Model',
-                                     status => 'Status',
-	         	             length_spliced   => 'Length (spliced)',
-			             length_unspliced => 'Length (unspliced)',
-                                     protein => 'Protein',
-                                     length_protein => 'Amino Acids'},
-                             passed_data=rows,
-                             key='gene_models_constructed');
+        build_data_table( order = ['model','status','length_spliced','length_unspliced','protein','length_protein'],
+                          columns = { model => 'Gene Model',
+                                      status => 'Status',
+                                      length_spliced   => 'Length (spliced)',
+                                      length_unspliced => 'Length (unspliced)',
+                                      protein => 'Protein',
+                                      length_protein => 'Amino Acids'},
+                          passed_data = rows,
+                          key = 'gene_models_constructed' );
 
 
       # Dump out the (ordered) footnotes.
