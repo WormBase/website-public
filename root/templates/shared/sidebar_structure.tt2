@@ -88,10 +88,13 @@
       [% END %]
     </div>
     <ul>
+      <div>
     [% FOREACH w IN widgets -%]
       [% IF w.type == "title" %]
-      <li class="title">[% w.title %]</li>
-      [% ELSE %]
+      </div>
+      <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s"></span>[% w.title %]</li>
+      <div>
+     [% ELSE %]
       <li id="nav-[% w.id %]" 
          class="
           [% IF w.type != "title" %]
@@ -103,8 +106,9 @@
       </li>
       [% END %]
     [% END %]
-  
-      <li class="title">Recent Activity</li>
+      </div>
+      <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s"></span>Recent Activity</li>
+      <div>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
 [% UNLESS c.req.action == 'me' %]
@@ -113,6 +117,7 @@
           wname="user_history"
           href="[% c.uri_for('/rest','widget','me','user_history') %]" 
           load=1>see more...</li>[% END %]</div>
+      </div>
     </ul>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
