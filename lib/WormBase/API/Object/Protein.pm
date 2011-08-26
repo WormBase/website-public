@@ -811,6 +811,7 @@ B<Response example>
 sub homology_image {
     my $self=shift;
     my $panel=$self->_draw_image($self->object,1);
+    return unless $panel;
     my $gd=$panel->gd;
     #show dynamic images
     return { description => 'a dynamically generated image representing homologous regions of the protein',
@@ -1001,7 +1002,7 @@ sub pfam_graph {
     # extract the exons, then map them
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
-    my $gffdb = $self->gff_dsn;
+    my $gffdb = $self->gff_dsn || return;
     my ($seq_obj) = $gffdb->segment(CDS => $gene);
 
     my (@exons,@segmented_exons);
@@ -1432,7 +1433,7 @@ sub _draw_image {
   # Get out the gene - will use to extract the exons, then map them
   # onto the protein backbone.
   my $gene    = $self->cds->[0];
-  my $gffdb = $self->gff_dsn($self->_parsed_species);
+  my $gffdb = $self->gff_dsn($self->_parsed_species) || return;
 # print $gffdb;
   my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene);
 

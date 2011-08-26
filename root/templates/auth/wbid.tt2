@@ -10,7 +10,12 @@
 <div style="float:left" class="detail-box ui-corner-all" >
 <h2>Is this you?</h2>
 select yourself to link your wormbase information <br /><br />
-<div id="person-search"></div>
+[% emails = [] %]
+[% FOREACH ea IN c.user.valid_emails %]
+    [% emails.push(ea.email) %]
+[% END %]
+[% uri_name = emails.join(' ') _ ' ' _ c.user.username | uri %]
+<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1"></div>
         <input id="email" type="text" name="email" size="0" style="display:none"/>
         <input id="wbid" type="text" name="wbid" size="0" style="display:none"/>
         <input id="confirm" type="text" name="confirm" size="0" style="display:none" value=""/>
@@ -19,63 +24,18 @@ select yourself to link your wormbase information <br /><br />
 <div style="float:left;margin:1em;">
     <div class="login-holder ui-corner-all register-notice" id="system-message" style="width:16em;visibility:hidden;">
     </div>
-    <input id="link-account" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
+    <input id="link-account" onClick="linkAccount();" type="submit" style="font-size:1.3em;width:7em;" value="this is me ›" disabled=1/>  
     <br /><br /><span>None of these are you? <a href="[% redirect  || '/' %]">skip this step</a></span>
 </div>
 
-[% emails = [] %]
-[% FOREACH ea IN c.user.valid_emails %]
-    [% emails.push(ea.email) %]
-[% END %]
-[% uri_name = emails.join(' ') _ ' ' _ c.user.username | uri %]
+
 <script>
-  $jq("#person-search").load("[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1");
+  
 
-  $jq(".results-person .result li a").live('click', function(){
-      $jq(".ui-state-highlight").removeClass("ui-state-highlight");
-      var wbid = $jq(this).attr("href").split('/').pop();
-
-      $jq.ajax({
-          type: "GET",
-          url: "/auth/info/" + wbid,
-          dataType: 'json',
-          success: function(data){
-                $jq("input#wbid").attr("value", data.wbid);
-                $jq("input#email").attr("value", data.email);
-                $jq("#link-account").removeAttr("disabled");
-                $jq("input#confirm").attr("value", "");
-                var emails = ["[% emails.join('", "') %]"];
-                if(data.email && data.status_ok){
-                  var e = "" + data.email;
-                  for(var i=0; i<emails.length; i++){
-                    var re = new RegExp(emails[i],"gi");
-                    if (e.match(re)){
-                      $jq(".register-notice").css("visibility", "hidden");
-                      $jq("input#confirm").attr("value", 1);
-                      return;
-                    }
-                  }
-                }else{
-                  $jq("#link-account").attr("disabled", 1);
-                }
-                $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").css("visibility", "visible");
-
-            },
-          error: function(request,status,error) {
-              alert(request + " " + status + " " + error );
-            }
-      });
-
-
-      $jq(this).parent().parent().addClass("ui-state-highlight");
-      return false;
-  });
-
-
-  $jq("#link-account").live('click',function() {
-    var wbid = $jq("input#wbid").val();
-    var email = $jq("input#email").val();
-    var confirm = $jq("input#confirm").val();
+  function linkAccount(){
+    var wbid = $jq("input#wbid").val(),
+        email = $jq("input#email").val(),
+        confirm = $jq("input#confirm").val();
     
     $jq.ajax({
           type: "POST",
@@ -93,7 +53,7 @@ select yourself to link your wormbase information <br /><br />
             }
       });
     return false;
-    });
+    }
 
 </script>
 [% ELSE %]

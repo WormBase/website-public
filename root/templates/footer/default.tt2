@@ -63,7 +63,13 @@
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
     </div>
-
+    <div class="footer-column">
+       <div class="footer-title">Beta Test</div>
+        <ul>
+          <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
+          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
+        </ul>
+    </div>
     <div class="footer-column">
        <div class="footer-title">Data Freezes</div>
         <ul>
@@ -88,13 +94,6 @@
                  </select>  
            </li>
         </ul>
-<br /><br />
-       <div class="footer-title">Beta Test</div>
-        <ul>
-          <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
-          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
-        </ul>
-
     </div>
 
    </div>

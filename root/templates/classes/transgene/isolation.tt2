@@ -22,18 +22,19 @@ laboratory(title="Created in lab");
 #  END;
 
 
-WRAPPER $field_block title="Injected Into Strains" key="injected_into_strains";
-        IF fields.injected_into_strains;
-           '<span class="caveat-emptor">Strains available from the CGC are displayed in <b>boldface</b></span>';
-           FOREACH strain IN fields.injected_into_strains.data;
-               IF strain.label;
-                   '<b>' _ tag2link(strain) _ '</b><br />';
-               ELSE;
-                   strain _ '<br />';
-               END;
-          END;
-      END;
-END; 
+# not in ace schema anymore -AC
+# WRAPPER $field_block title="Injected Into Strains" key="injected_into_strains";
+#         IF fields.injected_into_strains;
+#            '<span class="caveat-emptor">Strains available from the CGC are displayed in <b>boldface</b></span>';
+#            FOREACH strain IN fields.injected_into_strains.data;
+#                IF strain.label;
+#                    '<b>' _ tag2link(strain) _ '</b><br />';
+#                ELSE;
+#                    strain _ '<br />';
+#                END;
+#           END;
+#       END;
+# END; 
  
 WRAPPER $field_block title="Rescues" key="rescues";
        FOREACH item IN fields.rescues.data;
@@ -41,10 +42,8 @@ WRAPPER $field_block title="Rescues" key="rescues";
        END;
 END;  
 
-WRAPPER $field_block title="Integrated By" key="integrated_by";
-      FOREACH item IN fields.integrated_by.data;
-         tag2link(item) _ '<br />';
-      END;
+WRAPPER $field_block title="Integration method" key="integration_method";
+      fields.integration_method;
 END;
 
 WRAPPER $field_block title="Integrated at" key="integrated_at";

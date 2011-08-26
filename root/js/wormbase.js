@@ -18,25 +18,31 @@
  */
 
 +function(window, document, undefined){ 
-  var location = window.location;
+  var location = window.location,
+      $jq = jQuery.noConflict();
      
   var WB = (function(){
+    var timer,
+        notifyTimer,
+        cur_search_type = 'all',
+        reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
+        loadcount = 0,
+        at_default = -45,
+        system_message = 0,
+        plugins = new Array(),
+        loading = false;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
-          searchAll = $jq("#all-search-results"),
-          layout;
-            
-      window.onhashchange = readHash;
+          searchAll = $jq("#all-search-results");
+      
       if($jq(".user-history").size()>0){
-        function histUpdate(){
+        (function histUpdate(){
           ajaxGet($jq(".user-history"), "/rest/history?count=3");
           setTimeout(histUpdate, 6e5); //update the history every 10min
           return;
-        }
-        histUpdate();
+        })();
       }
-      if($jq(".list-layouts").size()>0){ajaxGet($jq(".list-layouts"), "/rest/layout_list/" + $jq(".list-layouts").attr("type"));}
       
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
@@ -55,18 +61,6 @@
       if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
-
-      if(location.hash.length > 0){
-        readHash();
-      }else if(layout = $jq("#widget-holder").data("layout")){
-        if(layout['hash']){
-          location.hash = layout['hash'];
-        }else{
-          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
-          reloadLayout = false;
-          updateLayout();
-        }
-      }
       
       navBarInit();
       pageInit();
@@ -74,8 +68,7 @@
       effects();
     }
    
-    
-    var timer;
+
     function navBarInit(){
       searchInit();
       $jq("#nav-bar").find("ul li").hover(function () {
@@ -101,22 +94,35 @@
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
-        ajaxGet($jq(".status-bar"), "/rest/auth");
+        ajaxGet($jq(".status-bar"), "/rest/auth", undefined, function(){
+          $jq("#bench-status").load("/rest/workbench");
+          var login = $jq("#login");
+          if(login.size() > 0){
+            login.click(function(){
+              $jq(this).siblings().toggle();
+              $jq(this).toggleClass("open ui-corner-top");
+            });
+          }else{
+            $jq("#logout").click(function(){
+              window.open('/logout','pop','status=no,resizable=yes,height=2px,width=2px').blur();
+            });
+          }
+        });
     }
     
-    
     function pageInit(){
+      var personSearch = $jq("#person-search");
+      
       operator();
       $jq("#print").click(function() {
-        var layout= location.hash.replace('#',''),
+        var layout = location.hash.replace('#',''),
             print = $jq(this);
-        
           $jq.ajax({
               type: "POST",
               url : '/rest/print',
               data: {layout:layout}, 
               beforeSend:function(){
-                WB.setLoading(print); 
+                setLoading(print); 
               },
               success: function(data){
                 print.html('');
@@ -146,9 +152,6 @@
         });
       }
       
-      $jq("#widget-holder").children("#widget-header").disableSelection();
-
-      
       $jq("#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
         $jq("div.columns>ul").toggle();
       });
@@ -166,28 +169,6 @@
         $jq(this).attr("title", msg);
         $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
       });
-            
-      $jq("#content").delegate(".bench-update", 'click', function(){
-        var wbid     = $jq(this).attr("wbid"),
-            $class     = $jq(this).attr("objclass"),
-            label     = $jq(this).attr("name"),
-            obj_url  = $jq(this).attr("url"),
-            is_obj  = $jq(this).attr("is_obj"),
-            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
-
-        $jq("#bench-status").load(url, function(){
-          WB.ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
-          $jq("#bench-status").addClass("highlight").delay(3000).queue( function(){ $jq(this).removeClass("highlight"); $jq(this).dequeue();});       
-          if($class != "paper"){
-            WB.ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1);
-          }
-          if($class == "paper"){
-            WB.ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
-          }
-        });
-      return false;
-      });
-      
       
       // Should be a user supplied site-wide option for this.
       // which can be over-ridden on any widget.
@@ -196,26 +177,106 @@
             $jq(".disabled" ).toggle();    
             $jq(this).toggleClass('ui-state-highlight');
       });
+      if(personSearch.size()>0){
+          ajaxGet(personSearch, personSearch.attr("href"), undefined, function(){
+            personSearch.delegate(".results-person .result li a", 'click', function(){
+                $jq(".ui-state-highlight").removeClass("ui-state-highlight");
+                var wbid = $jq(this).attr("href").split('/').pop();
+                $jq.ajax({
+                    type: "GET",
+                    url: "/auth/info/" + wbid,
+                    dataType: 'json',
+                    success: function(data){
+                          var linkAccount = $jq("#link-account");
+                          if(linkAccount.size()==0){
+                            $jq("input#name").attr("value", data.fullname).attr("disabled", "disabled");
+                            var email = new String(data.email);
+                            if(data.email && data.status_ok){
+                              var re = new RegExp($jq("input#email").attr("value"),"gi");
+                              if (((email.match(re))) || !($jq("input#email").attr("value"))){
+                                $jq("#email").attr("disabled", "disabled").parent().hide(); 
+                              }
+                              $jq("input#wbemail").attr("value", email).parent().show();
+                            }else{
+                              $jq("input#wbemail").attr("value", "").parent().hide();
+                              $jq("#email").removeAttr("disabled").parent().show(); 
+                            }
+                            $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").show();
+                            $jq("input#wbid").attr("value", data.wbid);
+                          }else{
+                            $jq("input#wbid").attr("value", data.wbid);
+                            $jq("input#email").attr("value", data.email);
+                            linkAccount.removeAttr("disabled");
+                            $jq("input#confirm").attr("value", "");
+                            var emails = ["[% emails.join('", "') %]"];
+                            if(data.email && data.status_ok){
+                              var e = "" + data.email;
+                              for(var i=0; i<emails.length; i++){
+                                var re = new RegExp(emails[i],"gi");
+                                if (e.match(re)){
+                                  $jq(".register-notice").css("visibility", "hidden");
+                                  $jq("input#confirm").attr("value", 1);
+                                  return;
+                                }
+                              }
+                            }else{
+                              linkAccount.attr("disabled", 1);
+                            }
+                            $jq(".register-notice").html("<span id='fade'>" +  data.message + "</span>").css("visibility", "visible");
+
+                          }
+                      },
+                    error: function(request,status,error) {
+                        alert(request + " " + status + " " + error );
+                      }
+                });
+                $jq(this).parent().parent().addClass("ui-state-highlight");
+                return false;
+            });
+          });
+      }
     }
     
+    
+    
     function widgetInit(){
-      if($jq("#widget-holder").size()==0){return;}
+      var widgetHolder = $jq("#widget-holder"),
+          widgets = $jq("#widgets"),
+          listLayouts = $jq(".list-layouts"),
+          layout;
+          
+      if(widgetHolder.size()==0){return;}
+      
+      window.onhashchange = readHash;
+      if(location.hash.length > 0){
+        readHash();
+      }else if(layout = widgetHolder.data("layout")){
+        if(layout['hash']){
+          location.hash = layout['hash'];
+        }else{
+          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
+          reloadLayout++;
+          updateLayout();
+        }
+      }
+      
+      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
+      
       // used in sidebar view, to open and close widgets when selected
-      $jq("#widgets").find(".module-load, .module-close").click(function() {
+      widgets.find(".module-load, .module-close").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = "div#" + widget_name + "-content";
         if(!nav.hasClass('ui-selected')){
           if($jq(content).text().length < 4){
-              var column = ".left",
-                  holder = $jq("#widget-holder");
-              if(getLeftWidth(holder) >= 90){
-                if(holder.children(".right").children(".visible").height()){
+              var column = ".left";
+              if(getLeftWidth(widgetHolder) >= 90){
+                if(widgetHolder.children(".right").children(".visible").height()){
                   column = ".right";
                 }
               }else{
-                var leftHeight = parseFloat(holder.children(".left").css("height")),
-                    rightHeight = parseFloat(holder.children(".right").css("height"));
+                var leftHeight = parseFloat(widgetHolder.children(".left").css("height")),
+                    rightHeight = parseFloat(widgetHolder.children(".right").css("height"));
                 if (rightHeight < leftHeight){ column = ".right"; }
               }
               openWidget(widget_name, nav, content, column);
@@ -231,8 +292,10 @@
         updateLayout();
         return false;
       });
+      
+      widgetHolder.children("#widget-header").disableSelection();
 
-      $jq("#widget-holder").find(".module-max").click(function() {
+      widgetHolder.find(".module-max").click(function() {
         var module = $jq(this).parents(".widget-container"),
     //     if(module.find(".cboxElement").trigger('click').size() < 1){
             clone = module.clone(),
@@ -254,7 +317,7 @@
       });
 
       // used in sidebar view, to open and close widgets when selected
-      $jq("#widgets").find(".module-load, .module-close").bind('open',function() {
+      widgets.find(".module-load, .module-close").bind('open',function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
             content = "div#" + widget_name + "-content";
@@ -263,7 +326,7 @@
         return false;
       });
       
-      $jq("#widget-holder").find(".module-min").click(function() {
+      widgetHolder.find(".module-min").click(function() {
         var module = $jq("#" + $jq(this).attr("wname") + "-content"),
             button = $jq(this);
         module.next().slideToggle("fast");
@@ -280,11 +343,8 @@
         }
       });
       
-      $jq("#widget-holder").find(".reload").click(function() {
-        var widget_name = $jq(this).attr("wname"),
-            nav = $jq("#nav-" + widget_name),
-            url = nav.attr("href");
-        WB.ajaxGet($jq("div#" + widget_name + "-content"), url);
+      widgetHolder.find(".reload").click(function() {
+        reloadWidget($jq(this).attr("wname"));
       });
       
       $jq(".feed").click(function() {
@@ -296,15 +356,17 @@
     }
     
     
+
     
     
     function effects(){
-      $jq("#content").delegate(".toggle", 'click', function(){
+      var content = $jq("#content");
+      content.delegate(".toggle", 'click', function(){
             $jq(this).toggleClass("active").next().slideToggle("fast");
             return false;
       });
         
-      $jq("#content").delegate(".tooltip", 'mouseover', function(){
+      content.delegate(".tooltip", 'mouseover', function(){
           var tip = $jq(this);
           getCluetip(function(){
             tip.cluetip({
@@ -318,8 +380,8 @@
               });
             });
       });
-      $jq("#content").delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
-      $jq("#content").delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
+      content.delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
+      content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
       function expand(txt, more){
           var h = txt.height();
           if(h<40){
@@ -343,24 +405,44 @@
           more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
           more.toggleClass('open');
       }
-      $jq("#content").delegate(".text-min", 'mouseover mouseout', function(){ 
+      content.delegate(".text-min", 'mouseover mouseout', function(){ 
         $jq(this).next().toggleClass('opaque');
       });
       
       
       
-      $jq("#content").delegate(".tip-simple", 'mouseover', function(){ 
+      content.delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
           var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
           tip.appendTo($jq(this)).show();
         }
       });
-      $jq("#content").delegate(".tip-simple", 'mouseout', function(){ 
+      content.delegate(".tip-simple", 'mouseout', function(){ 
         $jq(this).children("div.tip-elem").hide();
       });
+      content.delegate(".bench-update", 'click', function(){
+        var wbid     = $jq(this).attr("wbid"),
+            $class     = $jq(this).attr("objclass"),
+            label     = $jq(this).attr("name"),
+            obj_url  = $jq(this).attr("url"),
+            is_obj  = $jq(this).attr("is_obj"),
+            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+
+        $jq("#bench-status").load(url, function(){
+          ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
+          $class != "paper" ? ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1) : ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
+        });
+      return false;
+      });
+      
+      var down = $jq("<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>");
+      content.delegate(".sequence-link", 'onload', function(){
+        $jq(this).append(down);
+        alert("ALERT");
+      })
     }
     
-    var notifyTimer;
+
     function displayNotification (message){
         if(notifyTimer){
           clearTimeout(notifyTimer);
@@ -384,12 +466,13 @@
     
        
    function systemMessage(action, messageId){
+     var systemMessage = $jq(".system-message");
     if(action == 'show'){
-      $jq(".system-message").show().css("display", "block").animate({height:"20px"}, 'slow');
+      systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
       $jq("#notifications").css("top", "20px");
       system_message = 20; 
     }else{
-      $jq(".system-message").animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
+      systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
       $jq("#notifications").css("top", "0");
     }
@@ -447,7 +530,7 @@
         });
         
         $jq('#operator').click(function() { 
-          if($jq('#operator').attr("rel")) {
+          if($jq(this).attr("rel")) {
             $jq.post("/rest/livechat?open=1",function() {
               location.href="/tools/operator";
             });
@@ -530,7 +613,7 @@
         if($jq(this).attr("value") == "") $jq(this).attr("value", searchBoxDefault);
       });
       
-      $jq( "#Search" ).autocomplete({
+      searchBox.autocomplete({
           source: function( request, response ) {
               lastXhr = $jq.getJSON( "/search/autocomplete/" + cur_search_type, request, function( data, status, xhr ) {
                   if ( xhr === lastXhr ) {
@@ -548,8 +631,7 @@
     }
 
 
-    var cur_search_type = 'all';
-
+    
     function search(box) {
         if(!box){ box = "Search"; }else{ cur_search_type = 'all'; } 
         var f = $jq("#" + box).attr("value");
@@ -643,8 +725,9 @@
   }
 
   function loadResults(url){
-    $jq("#all-search-results").empty(); 
-    ajaxGet($jq("#all-search-results"), url);
+    var allSearch = $jq("#all-search-results");
+    allSearch.empty(); 
+    ajaxGet(allSearch, url);
     loadcount = 0;
     $jq(window).scrollTop(0);
     $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
@@ -652,12 +735,13 @@
   }
   
   function allResults(type, species, query){
-    var url = "/search/" + type + "/" + query + "/?inline=1";
+    var url = "/search/" + type + "/" + query + "/?inline=1",
+        allSearch = $jq("#all-search-results");
     
     at_default = 0; 
-    $jq("#all-search-results").empty(); 
+    allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
-    ajaxGet($jq("#all-search-results"), url);
+    ajaxGet(allSearch, url);
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
@@ -691,23 +775,21 @@
         content.closest("li").appendTo($jq("#widget-holder").children(column));
         addWidgetEffects(content.parent(".widget-container"));
 
-        ajaxGet(content, url);
+        if(content.text().length < 4){
+          ajaxGet(content, url);
+        }
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
         return false;
     }
     
-    function openAllWidgets(){
-      var widgets = $jq("#navigation .module-load");
-      var widget = widgets.first();
-      for(i=0; i<widgets.length; i++){
-        if($jq("#" + widget.attr("wname") + ".visible").length == 0){
-          widget.click();
-        }
-        widget = widget.next();
-      }
-      return false;
+    function reloadWidget(widget_name){
+        var nav = $jq("#nav-" + widget_name),
+            url = nav.attr("href");
+        ajaxGet($jq("div#" + widget_name + "-content"), url);
     }
+    
+
     
     
     
@@ -781,16 +863,17 @@
 /***************************/
 
 //The layout methods
-    var reloadLayout = true; //keeps track of whether or not to reload the layout on hash change
+    
     function columns(leftWidth, rightWidth, noUpdate){
+      var widgetHolder = $jq("#widget-holder");
       if(leftWidth>99){
-        $jq("#widget-holder").children(".sortable").css('min-height', '0');
+        widgetHolder.children(".sortable").css('min-height', '0');
       }else{
-        $jq("#widget-holder").children(".sortable").css('min-height', '5em');
+        widgetHolder.children(".sortable").css('min-height', '5em');
       }
-      $jq("#widget-holder").children(".left").css("width",leftWidth + "%");
+      widgetHolder.children(".left").css("width",leftWidth + "%");
       if(rightWidth==0){rightWidth=100;}
-      $jq("#widget-holder").children(".right").css("width",rightWidth + "%");
+      widgetHolder.children(".right").css("width",rightWidth + "%");
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -835,14 +918,14 @@
           r = $jq.map(right, function(i) { return getWidgetID(i);}),
           ret = l.join('') + "-" + r.join('') + "-" + (leftWidth/10);
       if(location.hash && decodeURI(location.hash).match(/^[#](.*)$/)[1] != ret){
-        reloadLayout = false;
+        reloadLayout++;
       }
       location.hash = ret;
       return ret;
     }
     
     function readHash() {
-      if(reloadLayout){
+      if(reloadLayout == 0){
         var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
         if(!h){ return; }
         
@@ -854,7 +937,7 @@
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
         resetLayout(l,r,w);
       }else{
-        reloadLayout = true;
+        reloadLayout--;
       }
     }
     
@@ -874,6 +957,16 @@
     function getWidgetID (widget_name) {
         return widgetList.list.indexOf(widget_name).toString(36);
     }
+   
+    function openAllWidgets(){
+      var hash = "";
+      for(i=0; i< widgetList.list.length; i++){
+        hash = hash + (i.toString(36));
+      }
+      window.location.hash = hash + "--10";
+      return false;
+    }
+    
     
     //returns widget name 
     function getWidgetName (widget_id) {
@@ -907,7 +1000,7 @@
     }
 
     function resetLayout(leftList, rightList, leftWidth){
-      $jq("div#navigation").find(".ui-selected").removeClass("ui-selected");
+      $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
@@ -934,9 +1027,7 @@
 
 
 
-  var loadcount = 0;
-  var at_default = -45;
-  var system_message = 0;
+
 
 $jq(function() {
 
@@ -1117,6 +1208,7 @@ $jq(function() {
                   displayNotification("Problem Submitted! We will be in touch soon.");
                   feed.closest('#widget-feed').hide(); 
                               updateCounts(url);
+                  reloadWidget('issue');
                 }
               },
           error: function(request,status,error) {
@@ -1147,6 +1239,38 @@ $jq(function() {
             }
           });
       } 
+   },
+   update: function(is, issue_id){
+          var url= is.attr("rel"),
+              thread = is.closest('#threads-new'),
+              email = thread.find("#email"),
+              username= thread.find("#display-name");
+          if(email.attr('id') && username.attr('id')) {
+        if(validate_fields(email,username)==false) {return false;}
+          }   
+          $jq.ajax({
+        type: 'POST',
+        url: url,
+        data: {content: $jq("textarea").val(),
+               issue:issue_id,
+                       state:$jq("#issue_status option:selected").val(),
+                       severity:$jq("#issue_severity option:selected").val(),
+                       assigned_to:$jq("#issue_assigned_to option:selected").val(),
+                       email:email.val(),
+                       username:username.val()  },
+        success: function(data){
+                if(data==0) {
+                   alert("The email address has already been registered! Please sign in."); 
+                }else {
+                  window.location.reload();  
+                }
+            },
+        error: function(request,status,error) {
+                  alert(request + " " + status + " " + error);
+            }
+          });
+    
+        return false;
    }
   }
 
@@ -1287,7 +1411,6 @@ $jq(function() {
   var providers = $jq.extend({}, providers_large);
 
   var openid = {
-      /* Provider image click */
       signin: function(box_id, onload) {
         var provider = providers[box_id];
         if (! provider) {
@@ -1309,8 +1432,7 @@ $jq(function() {
   };
   
   
-  var plugins = new Array();
-  var loading = false;
+
   function getScript(name, url, stylesheet, callback) {
     var head = document.documentElement,
         script = document.createElement("script"),
@@ -1393,6 +1515,7 @@ $jq(function() {
       setLoading: setLoading,
       SearchResult: SearchResult,
       resetLayout: resetLayout,
+      openAllWidgets: openAllWidgets,
       deleteLayout: deleteLayout,
       columns: columns,
       setLayout: setLayout,
@@ -1400,6 +1523,7 @@ $jq(function() {
       search_change: search_change,
       loadResults: loadResults,
       openid: openid,
+      validate_fields: validate_fields,
       StaticWidgets: StaticWidgets,
       recordOutboundLink: recordOutboundLink,
       comment: comment,
@@ -1414,9 +1538,10 @@ $jq(function() {
 
 
  $jq(document).ready(function() {
-      $jq.ajaxSetup( {timeout: 99999 });
+      $jq.ajaxSetup( {timeout: 6e4 }); //one minute timeout on ajax requests
       WB.init();
  });
 
  window.WB = WB;
+ window.$jq = $jq;
 }(this,document);

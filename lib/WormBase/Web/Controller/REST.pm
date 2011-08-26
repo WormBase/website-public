@@ -310,7 +310,10 @@ sub history_GET {
         my $time = $_->get_column('timestamp');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
                             visits => $_->visit_count,
-                            page => $_->page,
+                            page => { title => URI::Escape::uri_unescape($_->page->title),
+                                      url => $_->page->url,
+                                      is_obj => $_->page->is_obj,
+                                    },
                           };
       }
     } @hist[0..$count-1];
@@ -540,7 +543,6 @@ sub rest_register_email {
   };
   
   $c->forward( $c->view('Email::Template') );
-
 }
 
 
