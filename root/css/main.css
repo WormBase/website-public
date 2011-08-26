@@ -2011,11 +2011,10 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .navigation #title{
-/*   background:#333; */
   background:black;
   height:2em;
   color:white;
-  padding:0.7em 1.5em 0;
+  padding:0.7em 1.4em 0;
   overflow:hidden;
 }
 .navigation #title:hover{
@@ -2024,7 +2023,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 .navigation h4, .navigation h4 a {
   color:white;
-  padding:0.2em 0 0;
+  padding:0.3em 0 0;
   margin:0;
 }
 .navigation h2, .navigation h2 a {
@@ -2048,7 +2047,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .navigation ul li { 
-  padding:0.5em 0.5em 0.6em 1.5em;
+  padding:0.4em 0.5em 0.7em 1.5em;
   font-size: 0.9em; 
   height: 1em;
   overflow:hidden;
@@ -2059,7 +2058,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .navigation ul li.title { 
   background: #FFF;
   font-size: 0.9em; 
-  cursor:auto;
   font-weight: bold;
   padding-left: 1.5em;
   padding-top: 10px;
