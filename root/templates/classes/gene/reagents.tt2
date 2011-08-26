@@ -50,7 +50,7 @@
 
     WRAPPER $field_block title="ORFeome Primers" key="orfeome_primers";
          FOREACH item IN fields.orfeome_primers.data;
-             tag2link(item);
+             tag2link(item) _ '<br /> ';
          END;
     END;
 
@@ -60,7 +60,7 @@
 
     WRAPPER $field_block title="Microarray probes" key="microarray_probes";
          FOREACH item IN fields.microarray_probes.data;
-             tag2link(item) _ ', ';
+             tag2link(item) _ '<br />';
          END;        
     END;
 

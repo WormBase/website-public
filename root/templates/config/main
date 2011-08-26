@@ -74,7 +74,7 @@
 # You must provide both the id and text.
 # URLs
     MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
-      class =  class FILTER lower;
+      class = (ACE2WB_MAP.$class || class) FILTER lower;
       IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
           external_link(class, text, id);
@@ -83,6 +83,7 @@
           IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
           IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;
           "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
+          IF (class=='sequence');"<a class='button ui-corner-all tip-simple slink' tip='download'><span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span></a>";END;
        END;
    END;
 

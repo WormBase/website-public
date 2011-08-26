@@ -579,7 +579,8 @@ sub _build_central_dogma {
          data        => undef };
     }
 
-    my $gff = $self->gff_dsn;
+    my $gff = $self->gff_dsn || return { description => 'the central dogma from the perspective of this protein',
+         data        => undef };
         
     my %data;    
     $data{gene} = $self->_pack_obj($gene);
@@ -593,6 +594,7 @@ sub _build_central_dogma {
 #	my ($seq_obj) = sort {$b->length<=>$a->length}
 #	grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $transcript);
 	
+    eval {$gff->fetch_group()}; return if $@;
 	my ($seq_obj) = $gff->fetch_group(Transcript => $transcript);
 	
 #	$self->log->debug("seq obj: " . $seq_obj);

@@ -434,12 +434,6 @@
         });
       return false;
       });
-      
-      var down = $jq("<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>");
-      content.delegate(".sequence-link", 'onload', function(){
-        $jq(this).append(down);
-        alert("ALERT");
-      })
     }
     
 
@@ -960,13 +954,12 @@
    
     function openAllWidgets(){
       var hash = "";
-      for(i=0; i< widgetList.list.length; i++){
+      for(i=0; i<(widgetList.list.length-3); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
       return false;
     }
-    
     
     //returns widget name 
     function getWidgetName (widget_id) {
@@ -1007,16 +1000,16 @@
       for(var widget = 0; widget < leftList.length; widget++){
         var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
-          var nav = $jq("#nav-" + widget_name);
-          var content = "div#" + widget_name + "-content";
+          var nav = $jq("#nav-" + widget_name),
+              content = "div#" + widget_name + "-content";
           openWidget(widget_name, nav, content, ".left");
         }
       }
       for(var widget = 0; widget < rightList.length; widget++){
         var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
-          var nav = $jq("#nav-" + widget_name);
-          var content = "div#" + widget_name + "-content";
+          var nav = $jq("#nav-" + widget_name),
+              content = "div#" + widget_name + "-content";
           openWidget(widget_name, nav, content, ".right");
         }
       }
