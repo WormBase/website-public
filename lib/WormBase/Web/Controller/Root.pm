@@ -32,11 +32,11 @@ sub index :Path Args(0) {
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 }
-sub gbrowse :Path("/gbrowse") Args(0) {
-    my ($self,$c) = @_;
-    $c->stash->{noboiler}=1;
-    $c->stash->{template} = 'gbrowse.tt2';
-}
+#sub gbrowse :Path("/gbrowse") Args(0) {
+#    my ($self,$c) = @_;
+#    $c->stash->{noboiler}=1;
+#    $c->stash->{template} = 'gbrowse.tt2';
+#}
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
