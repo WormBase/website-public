@@ -2000,14 +2000,18 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .navigation {
   width: 12em;
   margin:-2.8em 0 1em 0em;
-  border-bottom:1px solid #CDCDCD;
+  min-height:15em;
+  height:100%;
   background:white;
-}
-
-#navigation {
   float: left;
   clear:left;
   position:relative;
+}
+
+#navigation {
+  width: 12em;
+  border-bottom:1px solid #CDCDCD;
+/*   display:none; */
 }
 
 .navigation #title{
@@ -2016,6 +2020,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   color:white;
   padding:0.7em 1.4em 0;
   overflow:hidden;
+  z-index:-1;
 }
 .navigation #title:hover{
   background:#555;
@@ -2468,9 +2473,12 @@ div.title {
 #buttons-nav {
   width:12em;
   float:left;
-  margin: 0 0 0 0.4em;
+  margin:0 0 0 -1em;
+  padding:0 0 0 1.4em;
   background:white;
   height:2.8em;
+  z-index:10;
+  position:relative;
 }
 
 #buttons-nav .button{
