@@ -71,7 +71,7 @@
 
 <div id="widgets">
      
-
+<!--   <div class="navigation"></div> -->
   <div id="navigation" class="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]

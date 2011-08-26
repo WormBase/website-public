@@ -293,6 +293,10 @@
         return false;
       });
       
+      $jq("#navigation").find(".title").click(function(){
+        $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
+      });
+      
       widgetHolder.children("#widget-header").disableSelection();
 
       widgetHolder.find(".module-max").click(function() {
@@ -1026,7 +1030,9 @@ $jq(function() {
 
     var $sidebar   = $jq("#navigation"),
         $window    = $jq(window),
-        offset     = 0;
+        widgetHolder = $jq("#widget-holder");
+        offset     = 0,
+        count      = 0;
 
     $window.scroll(function() {
       if($sidebar.offset()){
@@ -1050,6 +1056,11 @@ $jq(function() {
                   'margin-top', at_default
               );
           }
+        }else if(count==0){ 
+          if($sidebar.outerHeight() < widgetHolder.height()){
+            count++; 
+            $sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+          }
         }
       } 
       var results    = $jq("#results.lazyload-widget"); //load inside so we can catch the results loaded by ajax calls
@@ -1063,7 +1074,6 @@ $jq(function() {
       }
 
     });
-
 });
 
     if(!Array.indexOf){
