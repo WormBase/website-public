@@ -71,8 +71,8 @@
 
 <div id="widgets">
      
-<!--   <div class="navigation"></div> -->
-  <div id="navigation" class="navigation">
+  <div class="navigation">
+  <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
         <h2><a href="#">WormBase</a></h2>
@@ -121,7 +121,7 @@
     </ul>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
-
+  </div>
 
 
   <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]"

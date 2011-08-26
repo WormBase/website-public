@@ -27,7 +27,6 @@
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
-        at_default = -45,
         system_message = 0,
         plugins = new Array(),
         loading = false;
@@ -157,7 +156,7 @@
       });
       
       $jq("#nav-min").click(function() {
-        var nav = $jq("#navigation"),
+        var nav = $jq(".navigation").add("#navigation"),
             ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
@@ -735,8 +734,6 @@
   function allResults(type, species, query){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
-    
-    at_default = 0; 
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url);
@@ -1028,38 +1025,43 @@
 
 $jq(function() {
 
-    var $sidebar   = $jq("#navigation"),
+    var sidebar   = $jq("#navigation"),
         $window    = $jq(window),
-        widgetHolder = $jq("#widget-holder");
+        widgetHolder = $jq("#widget-holder"),
         offset     = 0,
+        at_default = -45,
+        static = 0,
         count      = 0;
 
     $window.scroll(function() {
-      if($sidebar.offset()){
-        if(!offset){offset = $sidebar.offset().top;}
-
-        var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight() - 20;
-        if( bottomPos < 0 )
-            bottomPos = at_default;
-        var objSmallerThanWindow = $sidebar.outerHeight() < $window.height();
-        if (objSmallerThanWindow){
-          if ($window.scrollTop() > offset) {
-              var newpos = $window.scrollTop() - offset + at_default + system_message;
-              if (newpos > bottomPos) {
-                  newpos = bottomPos;
-              }
-              $sidebar.stop().css(
-                'margin-top', newpos
-              );
-          } else {
-              $sidebar.stop().css(
-                  'margin-top', at_default
-              );
+      if(sidebar.offset()){
+        if(!offset){offset = sidebar.offset().top;}
+        var objSmallerThanWindow = sidebar.outerHeight() < $window.height(),
+            scrollTop = $window.scrollTop(),
+            maxScroll = $jq(document).height() - sidebar.outerHeight() - $jq("#footer").outerHeight();
+            
+            
+        if(static==0){
+          if (objSmallerThanWindow){
+            if ((scrollTop > offset) && (scrollTop < maxScroll)) {
+                sidebar.stop().css('position', 'fixed').css('top', system_message);
+                static++;
+            }else if(scrollTop > maxScroll){
+                sidebar.stop().css('top', 0 - (scrollTop - maxScroll));
+            }
+          }else if(count==0){ 
+            if(sidebar.outerHeight() < widgetHolder.height()){
+              count++; 
+              sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+            }
           }
-        }else if(count==0){ 
-          if($sidebar.outerHeight() < widgetHolder.height()){
-            count++; 
-            $sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+        }else{
+          if (scrollTop < offset) {
+              sidebar.stop().css('position', 'relative').css('top', 0);
+              static--;
+          }else if(scrollTop > maxScroll){
+              sidebar.stop().css('position', 'fixed').css('top', 0 - (scrollTop - maxScroll));
+              static--;
           }
         }
       } 
