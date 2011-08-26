@@ -66,7 +66,7 @@ sub _build__common_name {
     my $self     = shift;
     my $object   = $self->object;
     my $gene     = $object->Gene;
-    my $bestname = $gene->Public_name;
+    my $bestname = $gene->Public_name if $gene;
     
     return "Expression pattern for $bestname" if $bestname;
     return "Source Image";

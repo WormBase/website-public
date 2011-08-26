@@ -1,9 +1,6 @@
 [%# PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-<script type="text/javascript" >
-$jq(".exprbox").colorbox({width:"90%", inline:true});
-</script>
   
 [% 
 
@@ -11,7 +8,14 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
     gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
         '<a href="/draw/' _ gene_image _ '" target="_blank" >' _ image("/draw/" _ gene_image) _ '</a>';
-    END;	
+%]
+<script type="text/javascript" >
+WB.getColorbox(function(){
+$jq(".exprbox").colorbox({width:"90%", inline:true});
+});
+
+</script>
+[%    END;	
 	
     '<div style="display:none">';
 	 FOREACH ep IN fields.anatomic_expression_patterns.data.expr;

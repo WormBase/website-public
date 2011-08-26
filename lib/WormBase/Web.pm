@@ -288,6 +288,7 @@ sub get_example_object {
 ########################################
 sub check_cache {
     my ($self,$params) = @_;
+    return unless (ref($params) eq "HASH");
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
 

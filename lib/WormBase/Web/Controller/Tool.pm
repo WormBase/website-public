@@ -36,7 +36,12 @@ sub tool :Path("/tools") Args {
       ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
       unless ($data) {  
           $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-          $c->set_cache($cache_id,$data);
+#    I don't know how to set up caching now with the new cache stuff... -AC
+#           $c->set_cache('filecache',$cache_id,$data);
+#         $c->set_cache({cache_name => 'couchdb',
+#                uuid       => $cache_id,
+#                data       => $data,           
+#               });
       } else {
           $c->stash->{cache} = $cache_server if($cache_server);
       }

@@ -165,7 +165,7 @@ sub _make_common_name {
     if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
         $tag = [$tag] unless ref $tag;
         foreach my $tag (@$tag) {
-            last if $name = $object->$tag;
+            last if $name = eval{ $object->$tag };
         }
     }
 
@@ -571,8 +571,12 @@ sub _build_central_dogma {
     } elsif ($class eq 'Protein') {
 	my %seen;
 	my @cds = grep { $_->Method ne 'history' } $object->Corresponding_CDS;
-	$gene = $cds[0]->Gene;
+	$gene = $cds[0]->Gene if $cds[0];
     } else {
+    }
+    unless ($gene) {
+    return { description => 'the central dogma from the perspective of this protein',
+         data        => undef };
     }
 
     my $gff = $self->gff_dsn;

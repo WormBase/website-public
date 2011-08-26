@@ -1,10 +1,3 @@
-<script>
- $jq(".issue-submit").live('click',function() {
- $jq("#issue-submit-box").replaceWith("Issue submitted succesfully.");
-    });
-</script>
-
-
   <div id="issues-new" class="issue-layout-box">
 
    <h4>Existing Issues</h4>
