@@ -8,6 +8,7 @@ use lib "$FindBin::Bin/lib";
 use WormBase::Web;
 use Plack::Builder;
 
+# system("source $FindBin::Bin/wormbase.env");
 
 #my $app = sub { WormBase::Web->psgi_app(@_) };
 #my $app = WormBase::Web->apply_default_middlewares(WormBase::Web->psgi_app);
