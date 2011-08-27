@@ -2000,23 +2000,27 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .navigation {
   width: 12em;
   margin:-2.8em 0 1em 0em;
-  border-bottom:1px solid #CDCDCD;
+  min-height:15em;
+  height:100%;
   background:white;
-}
-
-#navigation {
   float: left;
   clear:left;
   position:relative;
 }
 
+#navigation {
+  width: 12em;
+  border-bottom:1px solid #CDCDCD;
+/*   display:none; */
+}
+
 .navigation #title{
-/*   background:#333; */
   background:black;
   height:2em;
   color:white;
-  padding:0.7em 1.5em 0;
+  padding:0.7em 1.4em 0;
   overflow:hidden;
+  z-index:-1;
 }
 .navigation #title:hover{
   background:#555;
@@ -2024,7 +2028,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 .navigation h4, .navigation h4 a {
   color:white;
-  padding:0.2em 0 0;
+  padding:0.3em 0 0;
   margin:0;
 }
 .navigation h2, .navigation h2 a {
@@ -2048,7 +2052,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .navigation ul li { 
-  padding:0.5em 0.5em 0.6em 1.5em;
+  padding:0.4em 0.5em 0.7em 1.5em;
   font-size: 0.9em; 
   height: 1em;
   overflow:hidden;
@@ -2059,7 +2063,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .navigation ul li.title { 
   background: #FFF;
   font-size: 0.9em; 
-  cursor:auto;
   font-weight: bold;
   padding-left: 1.5em;
   padding-top: 10px;
@@ -2072,6 +2075,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:absolute;
   right:0.5em;
   top:0.5em;
+}
+
+.navigation ul li.title span.ui-icon{ 
+  visibility:visible;
+  position:absolute;
+  left:0.2em;
+  top:0.7em;
 }
 
 .navigation ul li.ui-selected span.ui-icon, .navigation ul li:hover span.ui-icon  { 
@@ -2449,6 +2459,11 @@ div.inline-columns img {
   background:white;
 }
 
+.button.slink{
+  float:left;
+  margin:0 0.5em 0 0;
+}
+
 div.title {
     padding:0;
     margin:0 -1em;
@@ -2458,9 +2473,12 @@ div.title {
 #buttons-nav {
   width:12em;
   float:left;
-  margin: 0 0 0 0.4em;
+  margin:0 0 0 -1em;
+  padding:0 0 0 1.4em;
   background:white;
   height:2.8em;
+  z-index:10;
+  position:relative;
 }
 
 #buttons-nav .button{

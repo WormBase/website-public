@@ -9,13 +9,14 @@
 [% FOREACH item IN results %]
 
  [%# UNLESS c.stash.bench %]<div class="result tip-simple star" tip="save">[% #END %]
- [% USE String(item.name.class); result_class = String.lower; %]
- [% result_class = c.config.sections.species.$result_class.title || c.config.sections.resources.$result_class.title FILTER lower %]
+ [% class = item.name.class %]
+ [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
+ [% result_class = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lower %]
  [% UNLESS result_class; result_class = 'page'; END; %]
 
   <li>
           [% wbid = item.name.id.remove('[:/ &\.\[\]]') %]
-          [% IF item.name.class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
+          [% IF class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
           <div class="workbench-status-[% wbid %]"></div>
           <script>
           $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% item.name.class FILTER lower %]&url=[% (item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy)) | uri %]&is_obj=[% is_obj %]");
@@ -28,7 +29,6 @@
   [% END %]
 
   [% TRY %]
-      [% class = item.name.class FILTER lower %]
       [% file = "search/" _ class _ ".tt2" %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
@@ -61,7 +61,7 @@
               </div>
         [% END %]
 
-    [% END %]
+    [% ELSE; '<br />'; END; %]
      <span id="fade">[% item.footer %]</span>
   [% CATCH %]
     [% error %]

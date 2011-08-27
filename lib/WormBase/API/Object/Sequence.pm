@@ -741,7 +741,7 @@ sub _build_tracks {
 sub _build_genomic_image {
     my ($self) = @_;
     my $seq = $self->object;
-    return unless(defined $self->_segments && $self->_segments->[0]->length< 100_0000);
+    return unless(defined $self->_segments && defined $self->_segments->[0] && $self->_segments->[0]->length< 100_0000);
 
     my $source = $self->_parsed_species;
     my $segment = $self->_segments->[0];
@@ -1279,7 +1279,7 @@ sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
     my %hash;
-    my $gff = $self->gff;
+    my $gff = $self->gff || return;
     my $seq_obj;
     if ($self->_parsed_species =~ /briggsae/) {
 		($seq_obj) = sort {$b->length<=>$a->length}
@@ -1667,6 +1667,7 @@ sub _is_merged {
 sub _build__segments {
 	my ($self) = @_;
 	my $object = $self->object;
+    return [] unless $self->gff;
 	# special case: return the union of 3' and 5' EST if possible
 	if ($self->type =~ /EST/) {
 		if ($object =~ /(.+)\.[35]$/) {

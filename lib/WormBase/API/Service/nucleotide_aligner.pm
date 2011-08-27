@@ -80,8 +80,8 @@ sub run {
     my $api = $c->model('WormBaseAPI');
 
     my ($it,$res)= $api->xapian->search_exact($c, $sequence_id, 'gene');
-
-    my $o = @{$it->{struct}}[0];
+    unless ($it->{pager}->{total_entries} == 1 ){ return; }
+    my $o = @{$it->{struct}}[0] || return;
     my $service_dbh = $api->_services->{$api->default_datasource}->dbh || return 0;
     my $sequence = $service_dbh->fetch(-class => $o->get_document->get_value(0), -name => $o->get_document->get_value(1));
 
@@ -93,7 +93,7 @@ sub run {
     my $gff_dsn= $self->gff_dsn || return undef;
     $gff_dsn->ace($sequence->db);
     $gff_dsn->reconnect();
-    my $dbgff =  $gff_dsn->dbh ;
+    my $dbgff =  $gff_dsn->dbh || return undef;
     $self->log->debug("GFF database:",$dbgff);
     $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
