@@ -3540,7 +3540,8 @@ sub fetch_gff_gene {
  my ($self,$transcript) = @_;
 
   my $trans;
-  my $GFF = $self->gff_dsn() || return undef;
+  my $GFF = $self->gff_dsn() || return $trans;
+  eval {$GFF->fetch_group()}; return $trans if $@;
 
   if ($self->object->Species =~ /briggsae/) {
       ($trans)      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript);
@@ -3605,7 +3606,7 @@ sub _build__segments {
     my $object = $self->object;
     my $species = $object->Species;
 
-#     unless(ref($dbh) eq "HASH"){ return \@segments; }
+    eval {$dbh->segment()}; return \@segments if $@;
 
     # Yuck. Still have some species specific stuff here.
 

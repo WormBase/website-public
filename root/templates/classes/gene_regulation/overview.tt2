@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.name.data.label %]</h2>
 
 [%
 
@@ -11,9 +11,9 @@ WRAPPER highlight_box;
 END;
 
 
-WRAPPER $field_block title='Summary' key='summary';
+'<div style="clear:left;padding:0.5em 0;">';
    fields.summary.data;
-END;
+'</div>';
 
 WRAPPER $field_block title='Methods' key='methods';
    FOREACH method IN fields.methods.data.sort;

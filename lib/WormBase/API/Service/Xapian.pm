@@ -49,7 +49,7 @@ sub search {
 
     my $enq       = $class->db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
-    if($type =~ /paper/){
+    if($type && $type =~ /paper/){
         $enq->set_docid_order(ENQ_DESCENDING);
         $enq->set_weighting_scheme(Search::Xapian::BoolWeight->new());
     }

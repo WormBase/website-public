@@ -27,7 +27,6 @@
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
-        at_default = -45,
         system_message = 0,
         plugins = new Array(),
         loading = false;
@@ -157,7 +156,7 @@
       });
       
       $jq("#nav-min").click(function() {
-        var nav = $jq("#navigation"),
+        var nav = $jq(".navigation").add("#navigation"),
             ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
@@ -291,6 +290,10 @@
         }
         updateLayout();
         return false;
+      });
+      
+      $jq("#navigation").find(".title").click(function(){
+        $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
       });
       
       widgetHolder.children("#widget-header").disableSelection();
@@ -434,12 +437,6 @@
         });
       return false;
       });
-      
-      var down = $jq("<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>");
-      content.delegate(".sequence-link", 'onload', function(){
-        $jq(this).append(down);
-        alert("ALERT");
-      })
     }
     
 
@@ -737,8 +734,6 @@
   function allResults(type, species, query){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
-    
-    at_default = 0; 
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url);
@@ -960,13 +955,12 @@
    
     function openAllWidgets(){
       var hash = "";
-      for(i=0; i< widgetList.list.length; i++){
+      for(i=0; i<(widgetList.list.length-3); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
       return false;
     }
-    
     
     //returns widget name 
     function getWidgetName (widget_id) {
@@ -1007,16 +1001,16 @@
       for(var widget = 0; widget < leftList.length; widget++){
         var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
-          var nav = $jq("#nav-" + widget_name);
-          var content = "div#" + widget_name + "-content";
+          var nav = $jq("#nav-" + widget_name),
+              content = "div#" + widget_name + "-content";
           openWidget(widget_name, nav, content, ".left");
         }
       }
       for(var widget = 0; widget < rightList.length; widget++){
         var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
-          var nav = $jq("#nav-" + widget_name);
-          var content = "div#" + widget_name + "-content";
+          var nav = $jq("#nav-" + widget_name),
+              content = "div#" + widget_name + "-content";
           openWidget(widget_name, nav, content, ".right");
         }
       }
@@ -1031,31 +1025,43 @@
 
 $jq(function() {
 
-    var $sidebar   = $jq("#navigation"),
+    var sidebar   = $jq("#navigation"),
         $window    = $jq(window),
-        offset     = 0;
+        widgetHolder = $jq("#widget-holder"),
+        offset     = 0,
+        at_default = -45,
+        static = 0,
+        count      = 0;
 
     $window.scroll(function() {
-      if($sidebar.offset()){
-        if(!offset){offset = $sidebar.offset().top;}
-
-        var bottomPos = $sidebar.parent().height() - $sidebar.outerHeight() - 20;
-        if( bottomPos < 0 )
-            bottomPos = at_default;
-        var objSmallerThanWindow = $sidebar.outerHeight() < $window.height();
-        if (objSmallerThanWindow){
-          if ($window.scrollTop() > offset) {
-              var newpos = $window.scrollTop() - offset + at_default + system_message;
-              if (newpos > bottomPos) {
-                  newpos = bottomPos;
-              }
-              $sidebar.stop().css(
-                'margin-top', newpos
-              );
-          } else {
-              $sidebar.stop().css(
-                  'margin-top', at_default
-              );
+      if(sidebar.offset()){
+        if(!offset){offset = sidebar.offset().top;}
+        var objSmallerThanWindow = sidebar.outerHeight() < $window.height(),
+            scrollTop = $window.scrollTop(),
+            maxScroll = $jq(document).height() - sidebar.outerHeight() - $jq("#footer").outerHeight();
+            
+            
+        if(static==0){
+          if (objSmallerThanWindow){
+            if ((scrollTop > offset) && (scrollTop < maxScroll)) {
+                sidebar.stop().css('position', 'fixed').css('top', system_message);
+                static++;
+            }else if(scrollTop > maxScroll){
+                sidebar.stop().css('top', 0 - (scrollTop - maxScroll));
+            }
+          }else if(count==0){ 
+            if(sidebar.outerHeight() < widgetHolder.height()){
+              count++; 
+              sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+            }
+          }
+        }else{
+          if (scrollTop < offset) {
+              sidebar.stop().css('position', 'relative').css('top', 0);
+              static--;
+          }else if(scrollTop > maxScroll){
+              sidebar.stop().css('position', 'fixed').css('top', 0 - (scrollTop - maxScroll));
+              static--;
           }
         }
       } 
@@ -1070,7 +1076,6 @@ $jq(function() {
       }
 
     });
-
 });
 
     if(!Array.indexOf){

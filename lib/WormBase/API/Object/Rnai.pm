@@ -249,8 +249,8 @@ B<Response example>
 sub movies {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Supporting_data->col;
-    my @data        = map { $_ = $self->_pack_obj($_) } @tag_objects;
+    my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
+    my @data        = map { $_ = $self->_pack_obj($_) } @tag_objects if @tag_objects;
     return { data        => @data ? \@data : undef,
 	     description => 'movies documenting effect of rnai' };
 }

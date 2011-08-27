@@ -1003,7 +1003,7 @@ sub pfam_graph {
     # onto the protein backbone.
     my $gene    = $self->cds->[0];
     my $gffdb = $self->gff_dsn || return;
-    my ($seq_obj) = $gffdb->segment(CDS => $gene);
+    my ($seq_obj) = eval{$gffdb->segment(CDS => $gene)}; return if $@;
 
     my (@exons,@segmented_exons);
     # Translate the bp start and stop positions into the approximate amino acid
@@ -1435,7 +1435,8 @@ sub _draw_image {
   my $gene    = $self->cds->[0];
   my $gffdb = $self->gff_dsn($self->_parsed_species) || return;
 # print $gffdb;
-  my ($seq_obj) = $gffdb->dbh->segment(CDS => $gene);
+  my $dbh = $gffdb->dbh || return;
+  my ($seq_obj) = $dbh->segment(CDS => $gene);
 
   my (@exons,@segmented_exons);
 

@@ -68,7 +68,7 @@ sub search :Path('/search') Args {
     }
 
 
-    if( !($c->stash->{noboiler}) && (( !($species) && (defined $c->config->{sections}{$type} || $type == 'all') ) || ($type == 'all'))) {
+    if( !($c->stash->{noboiler}) ) {
             $c->stash->{template} = "search/result-all.tt2";
             $c->stash->{species} = $species;
             $c->stash->{page} = $page_count;

@@ -636,7 +636,7 @@ sub integration_method {
     my $object = $self->object;
     my $method = $object->Integration_method;
     return { description => 'how the transgene was integrated (if it has been)',
-	     data        => $method ? \$method : undef };
+	     data        => $method ? $method : undef };
 }
 
 # 

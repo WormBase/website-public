@@ -43,7 +43,7 @@ WRAPPER $field_block title="Rescues" key="rescues";
 END;  
 
 WRAPPER $field_block title="Integration method" key="integration_method";
-      fields.integration_method;
+      fields.integration_method.data;
 END;
 
 WRAPPER $field_block title="Integrated at" key="integrated_at";
