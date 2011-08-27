@@ -4,22 +4,31 @@ use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/lib";
+# Supplied by environment.
 #use lib "$FindBin::Bin/../../extlib";
 use WormBase::Web;
 use Plack::Builder;
 
-# system("source $FindBin::Bin/wormbase.env");
+
+
+# Want to launch several variations of your app 
+# on a single host? No problem!
+
+#   use Plack::Builder;
+#   builder {
+#       mount '/todd'     => $todds_app;
+#       mount '/abby'     => $abbys_app;
+#       mount '/xshi'     => $xshis_app;
+#       mount '/staging'  => $staging_app;
+#   }
 
 #my $app = sub { WormBase::Web->psgi_app(@_) };
+
+# Default middlewares will NOT be added.
+# Might want to add these manually.
 #my $app = WormBase::Web->apply_default_middlewares(WormBase::Web->psgi_app);
 #$app;
 
-
-
-#WormBase::Web->setup_engine('PSGI');
-#my $app = sub { WormBase::Web->run(@_) };
-#my $app = WormBase::Web->psgi_app(@_);
-#
 builder {
     enable "Plack::Middleware::ReverseProxy";
     WormBase::Web->psgi_app;
