@@ -15,7 +15,7 @@ export WORMBASE_INSTALLATION_TYPE="cloud"
 export CATALYST_CONFIG_LOCAL_SUFFIX="cloud"
 
 
-export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/production/lib:$PERL5LIB
+export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/$APP/lib:$PERL5LIB
 export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
 export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
 export PATH="/usr/local/wormbase/extlib/bin:$PATH"

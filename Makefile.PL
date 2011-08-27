@@ -71,9 +71,9 @@ requires 'HTML::Entities';                                       #
 requires 'Facebook::Graph';                                      #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
-requires 'GO::Parser';                                           #
-requires 'GO::Utils';                                            #
-requires 'go-db-perl';                                           #
+#requires 'GO::Parser';                                           #
+#requires 'GO::Utils';                                            #
+#requires 'go-db-perl';                                           #
 requires 'JSON';                                                 #
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
@@ -117,7 +117,7 @@ requires 'YAML';                                                 #
 requires 'Plack::Test::Adopt::Catalyst';                         #
 requires 'Task::Plack';                                          #
 requires 'Catalyst::Controller::Metal';                          #
-requires 'Catalyst::Engine::PSGI';                               #
+#requires 'Catalyst::Engine::PSGI';                               #
 requires 'Catalyst::Helper::PSGI';                               #
 requires 'Starman';                                              #
 
