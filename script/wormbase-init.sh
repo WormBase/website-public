@@ -12,10 +12,10 @@ if [ ! $APP ]; then
     export PORT=5000
     export WORKERS=10
 
-    export PERL5LIB=/usr/local/wormbase/website/extlib/lib/perl5:/usr/local/wormbase/website/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/lib:$PERL5LIB
-    export MODULEBUILDRC="/usr/local/wormbase/website/extlib/.modulebuildrc"
-    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/website/extlib"
-    export PATH="/usr/local/wormbase/website/extlib/bin:$PATH"
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/production/lib:$PERL5LIB
+    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
+    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
+    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
     
 # Set some configuration variables.
     export WORMBASE_INSTALLATION_TYPE="production"
