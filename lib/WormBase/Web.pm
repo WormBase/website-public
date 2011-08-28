@@ -396,6 +396,7 @@ sub set_cache {
 						uuid       => $uuid,			     
 						database   => lc($self->model('WormBaseAPI')->version),
 					       });
+	$self->log->debug($response);
 	if ($response->{error}) {
 	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
 	} else {

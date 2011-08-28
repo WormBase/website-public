@@ -110,6 +110,7 @@ sub create_document {
 	my $data = $self->_parse_result($res);
 	return $data;
     } else {
+	return $res->status;
 	return 0;
     }
 }
