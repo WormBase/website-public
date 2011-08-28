@@ -106,13 +106,16 @@ sub create_document {
 	$res  = $self->_send_request($msg);
     }
     
-    if ($res->is_success) {
-	my $data = $self->_parse_result($res);
-	return $data;
-    } else {
-	return $res->status;
-	return 0;
-    }
+    # Just return the HTTP::REsponse.
+    return $res;
+    
+#    if ($res->is_success) {
+#	my $data = $self->_parse_result($res);
+#	return $data;
+#    } else {
+#	return $res->status;
+#	return 0;
+#    }
 }
 
 
