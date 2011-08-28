@@ -105,9 +105,13 @@ sub create_document {
 					 path   => $uuid });
 	$res  = $self->_send_request($msg);
     }
-
-    my $data = $self->_parse_result($res);
-    return $data;
+    
+    if ($res->is_success) {
+	my $data = $self->_parse_result($res);
+	return $data;
+    } else {
+	return 0;
+    }
 }
 
 
