@@ -385,9 +385,9 @@ sub set_cache {
 	# Documents may already be listed in the couchdb
 	# but attachments may not be available yet.
 	# In these cases, simply return without setting the cache.
-	return 1 if ($couch->get_document({uuid     => $uuid,
-					 database => lc($self->model('WormBaseAPI')->version),
-					}));
+#	return 1 if ($couch->get_document({uuid     => $uuid,
+#					 database => lc($self->model('WormBaseAPI')->version),
+#					}));
 		   
 	my $host = $couch->write_host;
 	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
@@ -396,12 +396,16 @@ sub set_cache {
 						uuid       => $uuid,			     
 						database   => lc($self->model('WormBaseAPI')->version),
 					       });
-	$self->log->debug($response);
-	if ($response->{error}) {
-	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
-	} else {
-	    return 1;
-	}
+
+	# Instead of pre-checking for cases where newly added documents/attachments
+	# aren't yet present, we'll just ignore inserts that raise conflicts.
+	return 1;
+
+#	if ($response->{error}) {
+#	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
+#	} else {
+#	    return 1;
+#	}
 
     # The unified cache interface
     } else {
