@@ -5,7 +5,7 @@
 # If the APP environment variable isn't set, 
 # assume we are running in production.
 if [ ! $APP ]; then
-    echo "APP is not defined; assuming a production deployment"
+    echo "   ---> APP is not defined; assuming a production deployment"
     export APP=production
     export APPROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
@@ -94,18 +94,18 @@ _start() {
     fi
     
     echo ""
-    echo "Attempting to start..."
+    echo "   Attempting to start..."
     
     for i in 1 2 3 4 ; do
 	sleep 1
 	if check_running ; then
-	    echo "  ...$APP is now starting up"
+	    echo "     $APP is now starting up"
 	    return 0
 	fi
     done
 
   # Try again if we've failed.
-    echo "Failed. Trying again..."
+    echo "   Failed. Trying again..."
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
 	    --chdir $APPROOT/$APP --exec $STARMAN -- -I$APPROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPROOT/$APP/wormbase.psgi
@@ -117,7 +117,7 @@ _start() {
     for i in 1 2 3 4 ; do
 	sleep 1
 	if check_running ; then
-	    echo "  ...$APP is now starting up"
+	    echo "     $APP is now starting up"
 	    return 0
 	fi
     done
@@ -126,7 +126,7 @@ _start() {
 }
 
 start() {
-    log_daemon_msg "Starting $APP" $STARMAN
+    #log_daemon_msg "Starting $APP" $STARMAN
     echo ""
 
     if check_running; then
