@@ -1,8 +1,0 @@
-# Sample .hgignore file for WormBase.
-# Copy this to .hgignore
-
-extlib/
-extlib.original
-blib/
-inc/
-wormbase.env

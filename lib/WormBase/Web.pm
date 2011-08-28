@@ -299,7 +299,7 @@ sub check_cache {
 	my $host  = $couch->read_host;
 	my $port  = $couch->read_host_port;
 	
-	$self->log->debug("    ---> Checking cache $cache_name at $host for $uuid...");
+	$self->log->debug("    ---> Checking cache $cache_name at $host:$port for $uuid...");
     
 	# Here, we're using couch to store HTML attachments.
 	# We MAY want to parameterize this in the future
