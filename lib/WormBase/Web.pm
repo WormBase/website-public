@@ -385,7 +385,7 @@ sub set_cache {
 	# Documents may already be listed in the couchdb
 	# but attachments may not be available yet.
 	# In these cases, simply return without setting the cache.
-	return if ($couch->get_document({uuid     => $uuid,
+	return 1 if ($couch->get_document({uuid     => $uuid,
 					 database => lc($self->model('WormBaseAPI')->version),
 					}));
 		   
