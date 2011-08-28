@@ -300,7 +300,7 @@ sub check_cache {
 	my $port  = $couch->read_host_port;
 	
 	$self->log->debug("    ---> Checking cache $cache_name at $host:$port for $uuid...");
-    
+
 	# Here, we're using couch to store HTML attachments.
 	# We MAY want to parameterize this in the future
 	# so that we can fetch documents, too.
@@ -372,17 +372,23 @@ sub set_cache {
     # One approach: store everything in a *single* couch.
     # No replication or NFS required.
 
-    # BEWARE!  Some set_cache operations will FAIL.
+    # BEWARE!  Some set_cache operations will FAIL if the cache is distributed.
     # We're PUTting everything to one place, but the read caches are distributed.
     # If we look in a read cache and don't yet see something,
-    # we will still try and cache it resulting in a conflict.
+    # we will still try and cache it to the core resulting in a conflict.
     if ($cache_name eq 'couchdb') {
 
-	# First, has this content been precached?
-	# CouchDB. Located on localhost.
 	my $couch = WormBase::Web->model('CouchDB');
-	# Results in class_widget_name (for widgets)
 
+	# CouchDB Kludge
+	# Make sure the document doesn't already exist.
+	# Documents may already be listed in the couchdb
+	# but attachments may not be available yet.
+	# In these cases, simply return without setting the cache.
+	return if ($couch->get_document({uuid     => $uuid,
+					 database => lc($self->model('WormBaseAPI')->version),
+					}));
+		   
 	my $host = $couch->write_host;
 	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
 
