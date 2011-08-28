@@ -297,6 +297,7 @@ sub check_cache {
     if ($cache_name eq 'couchdb') {
 	my $couch = WormBase::Web->model('CouchDB');
 	my $host  = $couch->read_host;
+	my $port  = $couch->read_host_port;
 	
 	$self->log->debug("    ---> Checking cache $cache_name at $host for $uuid...");
     
@@ -307,7 +308,7 @@ sub check_cache {
 					      database => lc($self->model('WormBaseAPI')->version),
 					     });
 	if ($content) {
-	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host; retrieving attachment");
+	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
 	    return ($content,'couchdb');
 	}
     }
