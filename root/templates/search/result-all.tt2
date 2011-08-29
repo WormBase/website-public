@@ -15,6 +15,7 @@
       </h2>
       </div>
 <div id="widgets">
+<div class="navigation" style="margin:0">
 <div id="navigation">
       <div id="search-count-summary" class="navigation" style="margin:0">
         <div class="search-summary">
@@ -56,7 +57,7 @@
       </ul>
       </div>
 </div>
-
+</div>
 <div id="widget-holder">
 <div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query %]", "species": "[% IF species %]&species=[% species; END;%]" }'></div>
 </div>
