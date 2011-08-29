@@ -846,23 +846,22 @@ sub widget_GET {
     my ($self,$c,$class,$name,$widget) = @_; 
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-    # Is this a widget that we've precached?
-    # If so, set a flag to check for it's presence
-    # in the portabe couchdb cache.
-    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';    
+    # Small performance tweak.
+    # Is this a widget marked in config as one that should be precached?
+    # If so, set a flag to check for it's presence in the portable couchdb cache.
+#    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';    
 
     # Cache key something like "$class_$widget_$name"
     my ($cached_data,$cache_source);
     my $uuid = join('_',$class,$widget,$name);
 
-    # We'll only check the cache if the site has the cache_content flag set,
-    # and if this is a request for HTML.
-    # This will first check couch, and if not present, filecache.
+    # Check the cache only if this is a request for HTML.
+    # check_cache will check couch first.
     my $headers = $c->req->headers;
     my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
     if (($c->config->{installation_type} eq 'production') && ($content_type eq 'text/html')) {
-	($cached_data,$cache_source) = $c->check_cache({cache_name => $cache_name,
-							uuid       => $uuid,							
+	($cached_data,$cache_source) = $c->check_cache({cache_name => 'couchdb',
+							uuid       => $uuid,
 						       });
 	#hostname   => $c->req->base,
     }    
@@ -1008,7 +1007,8 @@ sub widget_GET {
 }
 
 
-# This is the original widget() method. Retain for reference.
+# This is the original widget() method that cached data structures
+# instead of rendered HTML. Retain for reference.
 # It needs to be updated to use the new check_cache and set_cache interface.
 
 sub widget_data_cache :Path('/rest/widget_data_cache') :Args(3) :ActionClass('REST') {}
