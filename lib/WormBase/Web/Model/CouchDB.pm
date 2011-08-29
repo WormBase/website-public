@@ -105,9 +105,17 @@ sub create_document {
 					 path   => $uuid });
 	$res  = $self->_send_request($msg);
     }
-
-    my $data = $self->_parse_result($res);
-    return $data;
+    
+    # Just return the HTTP::REsponse.
+    return $res;
+    
+#    if ($res->is_success) {
+#	my $data = $self->_parse_result($res);
+#	return $data;
+#    } else {
+#	return $res->status;
+#	return 0;
+#    }
 }
 
 
@@ -115,17 +123,23 @@ sub create_document {
 # curl -X PUT $couchdb/$release/uuid
 # curl -X GET http://127.0.0.1:5984/ws226/gene_WBGene00006763_overview
 sub get_document {
-    my $self = shift;
-    my $uuid = shift;
+    my ($self,$params) = @_;
+    my $uuid     = $params->{uuid};
+    my $database = $params->{database};
+    my $host     = $params->{host} || $self->read_host;
+    my $port     = $params->{port} || $self->read_host_port;
+
     my $msg  = $self->_prepare_request({ method => 'GET',
-					 path   => $uuid });
+                                         path   => "$database/$uuid",
+                                         host   => $host,
+                                         port   => $port,
+                                       });
     my $res  = $self->_send_request($msg);
     if ($res->is_success) {
-	return $res->content;
+        return $res->content;
     } else {
-	return 0;
+        return 0;
     }
-
 }
 
 
@@ -183,7 +197,7 @@ sub _prepare_request {
     my $port    = $opts->{port};
 
     # ¡Muy importante!
-    # CouchDB requests will go back the original host (or the name of the proxy)
+    # CouchDB requests will go back to the original host (or the name of the proxy)
     # with the couchdb port appended.
 
     # Single server installations will need to have port 5984 open.
