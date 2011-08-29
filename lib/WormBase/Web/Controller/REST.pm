@@ -310,10 +310,7 @@ sub history_GET {
         my $time = $_->get_column('timestamp');
         push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
                             visits => $_->visit_count,
-                            page => { title => URI::Escape::uri_unescape($_->page->title),
-                                      url => $_->page->url,
-                                      is_obj => $_->page->is_obj,
-                                    },
+                            page => $_->page,
                           };
       }
     } @hist[0..$count-1];
@@ -329,7 +326,7 @@ sub history_POST {
     $c->log->debug("history logging");
     my $session = $self->get_session($c);
     my $path = $c->request->body_parameters->{'ref'};
-    my $name = $c->request->body_parameters->{'name'};
+    my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
     my $is_obj = $c->request->body_parameters->{'is_obj'};
 
     my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});

@@ -27,7 +27,6 @@
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
-        system_message = 0,
         plugins = new Array(),
         loading = false;
     
@@ -51,6 +50,7 @@
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
+        Scrolling.search;
       } 
 
       Breadcrumbs.init();
@@ -64,7 +64,7 @@
       navBarInit();
       pageInit();
       widgetInit();
-      effects();
+      effects($jq("body"));
     }
    
 
@@ -243,7 +243,6 @@
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-          
       if(widgetHolder.size()==0){return;}
       
       window.onhashchange = readHash;
@@ -292,9 +291,8 @@
         return false;
       });
       
-      $jq("#navigation").find(".title").click(function(){
-        $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
-      });
+     
+      Scrolling.sidebarInit();
       
       widgetHolder.children("#widget-header").disableSelection();
 
@@ -362,8 +360,8 @@
 
     
     
-    function effects(){
-      var content = $jq("#content");
+    function effects(content){
+//       var content = $jq("#content");
       content.delegate(".toggle", 'click', function(){
             $jq(this).toggleClass("active").next().slideToggle("fast");
             return false;
@@ -423,6 +421,14 @@
       content.delegate(".tip-simple", 'mouseout', function(){ 
         $jq(this).children("div.tip-elem").hide();
       });
+      
+      content.delegate(".slink", 'mouseover', function(){
+          var slink = $jq(this);
+          getColorbox(function(){
+            slink.colorbox({data: slink.attr("href") });
+          });
+      });
+      
       content.delegate(".bench-update", 'click', function(){
         var wbid     = $jq(this).attr("wbid"),
             $class     = $jq(this).attr("objclass"),
@@ -467,10 +473,11 @@
     if(action == 'show'){
       systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
       $jq("#notifications").css("top", "20px");
-      system_message = 20; 
+      Scrolling.set_system_message(20); 
     }else{
       systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
       $jq.post("/rest/system_message/" + messageId);
+      Scrolling.set_system_message(0); 
       $jq("#notifications").css("top", "0");
     }
   }
@@ -675,6 +682,8 @@
     total = t;
     countSpan.html(total);
     }
+    
+    Scrolling.search;
     
     function queryHighlight(div){
       if(queryList.length == 0) { return; }
@@ -1022,61 +1031,81 @@
 
 
 
+var Scrolling = (function(){
+  var $window = $jq(window),
+      system_message = 0;
 
-$jq(function() {
-
+  function sidebarInit(){
     var sidebar   = $jq("#navigation"),
-        $window    = $jq(window),
+        offset = sidebar.offset().top,
         widgetHolder = $jq("#widget-holder"),
-        offset     = 0,
-        at_default = -45,
-        static = 0,
-        count      = 0;
-
+        static = 0, // 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
+        count = 0; //semaphore
+        
+    sidebar.find(".title").click(function(){
+      $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
+    }); 
+    
     $window.scroll(function() {
       if(sidebar.offset()){
-        if(!offset){offset = sidebar.offset().top;}
-        var objSmallerThanWindow = sidebar.outerHeight() < $window.height(),
+        var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
             scrollTop = $window.scrollTop(),
-            maxScroll = $jq(document).height() - sidebar.outerHeight() - $jq("#footer").outerHeight();
-            
-            
-        if(static==0){
-          if (objSmallerThanWindow){
+            maxScroll = $jq(document).height() - (sidebar.outerHeight() + $jq("#footer").outerHeight() + system_message + 20); //the 20 is for padding before footer
+          
+        if (objSmallerThanWindow){
+          if(static==0){
             if ((scrollTop > offset) && (scrollTop < maxScroll)) {
                 sidebar.stop().css('position', 'fixed').css('top', system_message);
                 static++;
             }else if(scrollTop > maxScroll){
-                sidebar.stop().css('top', 0 - (scrollTop - maxScroll));
+                sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
             }
-          }else if(count==0){ 
-            if(sidebar.outerHeight() < widgetHolder.height()){
-              count++; 
-              sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+          }else{
+            if (scrollTop < offset) {
+                sidebar.stop().css('position', 'relative').css('top', 0);
+                static--;
+            }else if(scrollTop > maxScroll){
+                sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
+                static--;
             }
           }
-        }else{
-          if (scrollTop < offset) {
-              sidebar.stop().css('position', 'relative').css('top', 0);
-              static--;
-          }else if(scrollTop > maxScroll){
-              sidebar.stop().css('position', 'fixed').css('top', 0 - (scrollTop - maxScroll));
-              static--;
+        }else if(count==0){ 
+          // try to make the sidebar smaller
+          if(sidebar.outerHeight() < widgetHolder.height()){
+            //close lowest section. delay for animation. Add counting semaphore to lock
+            count++;
+            sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
           }
         }
       } 
-      var results    = $jq("#results.lazyload-widget"); //load inside so we can catch the results loaded by ajax calls
-
-      if(results.offset() && loadcount < 3){
-        var rHeight = results.height() + results.offset().top;
-        var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
-        if(rBottomPos < 400) {
-          results.children(".load-results").trigger('click');
-        }
-      }
-
     });
-});
+  }
+  
+  var search = search || (function searchInit(){
+      $window.scroll(function() {
+        var results    = $jq("#results.lazyload-widget"); 
+
+        if(results.offset() && loadcount < 3){
+          var rHeight = results.height() + results.offset().top;
+          var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
+          if(rBottomPos < 400) {
+            results.children(".load-results").trigger('click');
+          }
+        }
+      });
+      return true;
+    })();
+  
+  function set_system_message(val){
+    system_message = val;
+  }
+  
+  return{
+    sidebarInit:sidebarInit,
+    search:search,
+    set_system_message:set_system_message
+  }
+})();
 
     if(!Array.indexOf){
         Array.prototype.indexOf = function(obj){
@@ -1535,7 +1564,8 @@ $jq(function() {
       issue: issue,
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
-      getColorbox: getColorbox
+      getColorbox: getColorbox,
+      effects: effects
     }
   })();
 

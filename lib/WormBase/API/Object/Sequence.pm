@@ -502,7 +502,7 @@ B<Response example>
 sub matching_cds {
     my $self   = shift;
     my $object = $self->object;
-    my @cds = map { $self->_pack_obj($_) } $object->Matching_CDS;
+    my @cds = eval{ map { $self->_pack_obj($_) } $object->Matching_CDS };
     return { description => 'matching CDSs of the sequence',
 	     data        => @cds ? \@cds : undef };
 }

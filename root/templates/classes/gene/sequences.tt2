@@ -20,14 +20,14 @@ IF fields.gene_models.data;
             footnotes = [];
 	    FOREACH remark IN r.remarks;
                # Seen it?
-               IF remarks_seen.defined(remark);
-               ELSE;
+               UNLESS remarks_seen.exists(remark);
                   remarks_seen.$remark = remarks_seen.size + 1;
+                  ordered_footnotes.push(remark);
                END;                   
 
                # Save the footnote number for this model.
                footnotes.push(remarks_seen.$remark);
-               ordered_footnotes.push(remark);
+
             END;
 
             # now construct the model string, appending footnotes. Jesus.

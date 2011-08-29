@@ -79,6 +79,7 @@ div#splash-box{
   padding-left:2.5em;
   font-size:1.5em;
   height:7em;
+  z-index:1;
 }
 
 div#splash-box>p{
@@ -2000,7 +2001,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 .navigation {
   width: 12em;
   margin:-2.8em 0 1em 0em;
-  min-height:15em;
+  min-height:3em;
   height:100%;
   background:white;
   float: left;
