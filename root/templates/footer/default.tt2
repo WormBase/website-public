@@ -112,9 +112,9 @@
 
     <div id="footermeta">
 <!--         <div id="footer-icons"> -->
-          <a id="footer-mail" class="social-icons" href="mailto:help@wormbase.org"></a>
-          <a id="footer-tweet" class="social-icons" href="http://twitter.com/wormbase"></a>
-          <a id="footer-rss" class="social-icons" href="http://feeds.feedburner.com/wormbase"></a>
+          <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
+          <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
+          <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
 <!--        </div> -->
     </div>
 </div>

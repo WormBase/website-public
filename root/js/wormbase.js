@@ -64,7 +64,7 @@
       navBarInit();
       pageInit();
       widgetInit();
-      effects($jq("body"));
+      effects();
     }
    
 
@@ -110,7 +110,8 @@
     }
     
     function pageInit(){
-      var personSearch = $jq("#person-search");
+      var personSearch = $jq("#person-search"),
+          colDropdown = $jq("#column-dropdown");
       
       operator();
       $jq("#print").click(function() {
@@ -151,9 +152,19 @@
         });
       }
       
-      $jq("#column-dropdown").find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
+      
+      colDropdown.find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
         $jq("div.columns>ul").toggle();
       });
+      
+      colDropdown.children("ul").children("li").hover(
+        function(){
+          $jq(this).children("ul").show();
+        },
+        function(){
+          var layout = $jq(this).children("ul");
+          setTimeout(function(){layout.hide();}, 500);
+        });
       
       $jq("#nav-min").click(function() {
         var nav = $jq(".navigation").add("#navigation"),
@@ -360,10 +371,12 @@
 
     
     
-    function effects(content){
-//       var content = $jq("#content");
-      content.delegate(".toggle", 'click', function(){
-            $jq(this).toggleClass("active").next().slideToggle("fast");
+    function effects(){
+      var content = $jq("#content");
+      $jq("body").delegate(".toggle", 'click', function(){
+            $jq(this).toggleClass("active").next().slideToggle("fast", function(){
+            if($jq.colorbox){ $jq.colorbox.resize(); }
+            });
             return false;
       });
         
@@ -425,7 +438,10 @@
       content.delegate(".slink", 'mouseover', function(){
           var slink = $jq(this);
           getColorbox(function(){
-            slink.colorbox({data: slink.attr("href") });
+            slink.colorbox({data: slink.attr("href"), 
+                            width: "750px", 
+                            height: "550px",
+                            title: function(){ return slink.prev().text() + " sequence"; }});
           });
       });
       
@@ -436,7 +452,6 @@
             obj_url  = $jq(this).attr("url"),
             is_obj  = $jq(this).attr("is_obj"),
             url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
-
         $jq("#bench-status").load(url, function(){
           ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
           $class != "paper" ? ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1) : ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
@@ -505,7 +520,6 @@
           if(callback){ callback(); }
         }
       });
-
     }
     
       function operator(){
@@ -556,7 +570,6 @@
               opBox.addClass("minimize");
               opBox.animate({width:"1.5em"});
               opBox.children().hide();
-
             }, 4e3)
           }
         }); 

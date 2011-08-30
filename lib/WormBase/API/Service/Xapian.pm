@@ -149,6 +149,8 @@ sub _wrap_objs {
   my $api = $c->model('WormBaseAPI');
   my $fields = $self->_fields->{$class};
 
+  return unless $object;
+
   unless($fields){
     my $f;
     if ( defined $c->config->{sections}{species}{$class}){
