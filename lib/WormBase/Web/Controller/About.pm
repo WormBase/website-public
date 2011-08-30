@@ -13,9 +13,10 @@ use parent 'WormBase::Web::Controller';
 # 
 ##############################################################
 
-sub index :Path('/about') :Args(0)   {
+sub about :Path('/about') :Args(0)   {
     my ($self,$c) = @_;
-    $c->stash->{template} = 'about/index.tt2';
+    $c->stash->{section} = 'resources';
+    $c->stash->{template} = 'about/report.tt2';
 }
 
 sub about_documentation :Path('/about') :Args(1)   {

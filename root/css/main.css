@@ -79,7 +79,7 @@ div#splash-box{
   padding-left:2.5em;
   font-size:1.5em;
   height:7em;
-  z-index:1;
+  z-index:6;
 }
 
 div#splash-box>p{
@@ -1289,8 +1289,8 @@ div#footercredit a{
     position:absolute;
     bottom:1em;
     right:1.4em;
-    width:100px;
-    height:30px;
+    width:120px;
+/*     height:30px; */
 }
 
 
@@ -1342,6 +1342,37 @@ div#footercredit a{
   background-image:url('/img/new-icons.png');
   height:30px;
   width:30px;
+  background-position:0px 0px;
+}
+
+#footermeta a{
+  height:30px;
+  width: 30px;
+  overflow: hidden;
+  float:right;
+  padding:0 5px;
+}
+
+#footer-mail .social-icons  {
+  background-position:-30px -20px;
+}
+
+#footer-mail .social-icons:hover  {
+  background-position:-30px -50px;
+}
+
+#footer-tweet .social-icons  {
+  background-position:-60px -20px;
+}
+#footer-tweet .social-icons:hover  {
+  background-position:-60px -50px;
+}
+
+#footer-rss .social-icons  {
+  background-position:0px -20px;
+}
+#footer-rss .social-icons:hover  {
+  background-position:0px -50px;
 }
 
 /*********************************
@@ -1501,10 +1532,6 @@ div.columns ul {
 div.columns ul ul{
   left:100%;
   top:0;
-}
-
-div.columns ul li:hover>ul{
-  display:block;
 }
 
 div.columns ul li{
@@ -2100,7 +2127,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   cursor:pointer;
 /*   background: #AAA; */
   background: #EFEFEF;
-  z-index:9;
+  z-index:5;
   border-left:1px solid #CCC;
 }
 
@@ -2478,7 +2505,6 @@ div.title {
   padding:0 0 0 1.4em;
   background:white;
   height:2.8em;
-  z-index:10;
   position:relative;
 }
 

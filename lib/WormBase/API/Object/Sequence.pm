@@ -1569,7 +1569,7 @@ sub print_feature {
     # (The pre-WS116 version didn't either).
     # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
     if (my @genes = $s->get('Transcript')) {
-		print h3('Predicted Genes & Transcriptional Units');
+# 		print 'Predicted Genes & Transcriptional Units';
 		my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
 		my @rows;
 		foreach (sort {$a->right <=> $b->right} @genes) {
@@ -1582,8 +1582,8 @@ sub print_feature {
 			my $class = ($CDS) ? $CDS : $gene;
 			my $locus  = eval { $class->Locus };
 			my ($desc) = $class->Brief_identification;
-			($desc)    ||= $class->Remark ;
-			($desc)    ||= $class->DB_remark ;
+			($desc)    ||= $class->Remark;
+			($desc)    ||= $class->DB_remark;
 
 			# this sounds like important information - why is it undef'd?
 			#  undef $desc if $desc =~ /possible trans-splice site at \d+/;
@@ -1627,7 +1627,7 @@ sub print_feature {
 
     my @feature = $s->get('Feature');
     if (@feature) {
-		print h3("Other features");
+# 		print "Other features";
 		my @rows;
 		for my $f (@feature) {
 			(my $label = $f) =~ s/(inverted|tandem)/$1 repeat/;
