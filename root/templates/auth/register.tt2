@@ -112,7 +112,7 @@ WB.hideTextOnFocus("#password");
 <h2>Is this you?</h2>
 select yourself to link your wormbase information <br /><br />
 [% uri_name = full_name _ ' ' _ email FILTER uri %]
-<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1"></div>
+<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1&nostar=1"></div>
 
   <div onClick="resetFields();" style="background:white;cursor:pointer; padding:1em; border-top:1px solid #CDCDCD;margin:1em -0.5em -0.5em;" class="ui-corner-bottom">
       <h4>None of these are me</h4><a href="#">I'll fill in my own information</a>
