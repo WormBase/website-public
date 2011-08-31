@@ -288,7 +288,11 @@ sub get_example_object {
 ########################################
 sub check_cache {
     my ($self,$params) = @_;
-    return unless (ref($params) eq "HASH");
+
+    # Don't bother checking the cache in certain circumstances.
+    # return if ($c->check_any_user_role(qw/admin curator/));
+
+    return unless (ref($params) eq "HASH");  # TH: we should fix all calls so check is unnecessary.
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
 
@@ -361,6 +365,11 @@ sub check_cache {
 # Provided with a pre-generated cache_id and data, store it in one of our caches.
 sub set_cache {
     my ($self,$params) = @_;
+
+    # Don't bother setting the cache under certain circumstances
+    return if ($self->check_any_user_role(qw/admin curator/));
+    return if ($self->config->{installation_type} eq 'development'); 
+
     my $cache_name = $params->{cache_name},
     my $uuid       = $params->{uuid};
     my $data       = $params->{data};
