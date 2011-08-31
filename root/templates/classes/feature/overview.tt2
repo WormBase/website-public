@@ -2,7 +2,7 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 
-<h2>[% tag2link(fields.name.data) %]</h2>
+<h2 style="float:left">[% tag2link(fields.name.data) %]</h2>
 
 
 [%
