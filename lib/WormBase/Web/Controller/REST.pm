@@ -96,6 +96,7 @@ sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
     my $session = $self->get_session($c);
+
     my $url = $c->req->params->{url};
     if($url){
       my $class = $c->req->params->{class};
@@ -124,7 +125,7 @@ sub workbench_GET {
     $c->stash->{noboiler} = 1;
     my $count = $session->pages->count;
     $c->stash->{count} = $count || 0;
-
+$c->response->headers->expires(time);
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
@@ -148,6 +149,7 @@ sub workbench_star_GET{
     $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -208,6 +210,7 @@ sub layout_list_GET {
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -315,7 +318,7 @@ sub history_GET {
       }
     } @hist[0..$count-1];
     $c->stash->{history} = \@histories;
-
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
@@ -1479,6 +1482,7 @@ sub widget_me_GET {
     my $api = $c->model('WormBaseAPI');
     my $type;
     $c->stash->{'bench'} = 1;
+$c->response->headers->expires(time);
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
