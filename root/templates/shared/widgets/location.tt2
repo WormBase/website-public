@@ -2,33 +2,31 @@
 [% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 
 [% 
-
+    
     genetic_position;
 
-    WRAPPER $field_block title="Genomic position" key="genomic_position";
-       IF fields.genomic_position.data;
-          # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
-	   FOREACH position IN fields.genomic_position.data;
-                tag2link(position);
-	   END;
-      ELSE;
-       
-         '<div class="caveat-emptor">This gene has not been placed on the genome or its coordinates are unknown.</div>';
-      END;
-   END;
+    WRAPPER $field_block title="Genomic position";
+           IF fields.genomic_position.data;
+             # label=  fields.genomic_position.data.chromosome _ ":" _ fields.genomic_position.data.start _ ".." _ fields.genomic_position.data.stop
+       	       FOREACH position IN fields.genomic_position.data;
+                   tag2link(position);
+     	       END;
 
-    '<div style="clear:both;">';
-    IF fields.genomic_image.data;
-       # setting vars up
-            img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;
-            IF fields.tracks.data;
-                 img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
-            END;
-       '<br><br>';
+               '<div style="clear:both;">';
+               IF fields.genomic_image.data;
+                    # setting vars up
+                    img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;
+                    IF fields.tracks.data;
+                        img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
+                    END;
+                    '<br><br>';
 
-       tag2link(fields.genomic_image.data, image(img_url));
-       # tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)); 
+                    tag2link(fields.genomic_image.data, image(img_url));
+                     # tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)); 
+                END;
+                '</div>';
+           ELSE;       
+              '<div class="caveat-emptor">This gene has not been placed on the physical map or its coordinates are unknown.</div>';
+           END;
     END;
-
-    '</div>';
 %]

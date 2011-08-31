@@ -199,6 +199,7 @@ END;
 
     <div class="field
 
+    [%# Add a class to disable / hide empty fields %]
     [% TRY; IF (key && !fields.$key.data.defined) || disabled; " disabled "; END; END;%]
 
 " id="[% title FILTER html %]">
@@ -857,8 +858,9 @@ END;
 
 
 [% MACRO genetic_position BLOCK ;
-     WRAPPER $field_block title="Genetic position" key="genetic_position";
-         fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
+     WRAPPER $field_block title="Genetic position";
+          IF fields.genetic_position.data.chromosome;
+            fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
 
 #     fields.genetic_position.data.chromosome _ ': ' _ fields.genetic_position.data.position;
 #       IF fields.genetic_position.data.error;
@@ -870,6 +872,10 @@ END;
 #        } else {
 #            $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
 
+
+      ELSE;       
+         '<div class="caveat-emptor">This gene has not been placed on the genetic map or its coordinates are unknown.</div>';
+      END;
 
     END;
 END;

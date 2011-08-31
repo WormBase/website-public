@@ -32,6 +32,47 @@ sub index :Path Args(0) {
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 }
+
+
+=head2 DEFAULT
+
+The default action is run last when no other action matches.
+
+=cut
+
+sub default :Path {
+    my ($self,$c) = @_;
+    $c->log->warn("DEFAULT: couldn't find an appropriate action");
+    
+    my $path = $c->request->path;
+
+    # A user may be trying to request the top level page
+    # for a class. Capturing that here saves me
+    # having to create a separate index for each class.
+    my ($class) = $path =~ /reports\/(.*)/;
+
+    # Does this path exist as one of our pages?
+    # This saves me from having to add an index action for
+    # each class.  Each class will have a single default screen.
+    if (defined $class && $c->config->{pages}->{$class}) {
+	
+	# Use the debug index pages.
+	if ($c->config->{debug}) {
+	  $c->stash->{template} = 'debug/index.tt2';
+	} else {
+	    $c->stash->{template} = 'species/report.tt2';
+	    $c->stash->{path} = $c->request->path;
+	}
+    } else {
+	# 404: Page not found...
+   	$c->stash->{template} = 'status/404.tt2';
+	$c->error('page not found');
+	$c->response->status(404);
+    }
+}
+
+
+
 #sub gbrowse :Path("/gbrowse") Args(0) {
 #    my ($self,$c) = @_;
 #    $c->stash->{noboiler}=1;
@@ -49,20 +90,16 @@ sub footer :Path("/footer") Args(0) {
       $c->stash->{template} = 'footer/default.tt2';
 } 
 
-
-=head2 DEFAULT
-
-The default action is run last when no other action matches.
-
-=cut
 sub draw :Path("/draw") Args(1) {
     my ($self,$c,$format) = @_;
-    my ($cache_id,$cached_img);
+    my ($cache_source,$cached_img);
     my $params = $c->req->params;
     if ($params->{class} && $params->{id}
         && (!defined $params->{size} || $params->{size} > 0)) {
         my @keys = ('image', $params->{class}, $params->{id}, $params->{size} // ());
-	($cache_id,$cached_img) = $c->check_cache('filecache',@keys);
+	my $uuid = join('-',@keys);
+	($cached_img,$cache_source) = $c->check_cache({ cache_name => 'couchdb',
+							uuid       => $uuid });
         unless($cached_img){ # not cached -- make new image and cache
             # the following line is a security risk
             my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
@@ -78,7 +115,9 @@ sub draw :Path("/draw") Args(1) {
                 $new_img->copyResized($cached_img, 0, 0, 0, 0, $nw, $nh, $w, $h);
                 $cached_img = $new_img;
             }
-            $c->set_cache('filecache',$cache_id,$cached_img);
+	    $c->set_cache({cache_name => 'couchdb',
+			   uuid       => $uuid,
+			   data       => $cached_img });
         }
     }
     else {
@@ -122,39 +161,6 @@ sub issue_rss {
     my @sort = sort {$b->{time} <=> $a->{time}} @rss;
     return \@sort;
 }
-
-
-sub default :Path {
-    my ($self,$c) = @_;
-    $c->log->warn("DEFAULT: couldn't find an appropriate action");
-    
-    my $path = $c->request->path;
-
-    # A user may be trying to request the top level page
-    # for a class. Capturing that here saves me
-    # having to create a separate index for each class.
-    my ($class) = $path =~ /reports\/(.*)/;
-
-    # Does this path exist as one of our pages?
-    # This saves me from having to add an index action for
-    # each class.  Each class will have a single default screen.
-    if (defined $class && $c->config->{pages}->{$class}) {
-	
-	# Use the debug index pages.
-	if ($c->config->{debug}) {
-	  $c->stash->{template} = 'debug/index.tt2';
-	} else {
-	    $c->stash->{template} = 'species/report.tt2';
-	    $c->stash->{path} = $c->request->path;
-	}
-    } else {
-	# 404: Page not found...
-   	$c->stash->{template} = 'status/404.tt2';
-	$c->error('page not found');
-	$c->response->status(404);
-    }
-}
-
  
 
  
@@ -440,119 +446,6 @@ sub widget :Path("/widget") Args(3) {
 # 
 # 
 # 
-
-
-############################################################
-#
-#   GET report pages
-#   URL space: /db/get
-#   Params: NONE
-#
-#   Redirect to the right report page given the class and
-#   name of an object as URL params.
-#   Caveat: currently assumes Ace class is given. Requires
-#   name & class to correspond exactly to an object in AceDB
-#
-############################################################
-sub get_report :Path("/db/get") Args(0) {
-    my ($self, $c) = @_;
-
-    $c->stash->{template} = 'species/report.tt2';
-
-    my $aceclass = $c->req->param('class');
-    my $name  = $c->req->param('name');
-    # TODO: handle when these are not provided and when the object doesn't exist
-
-    my $api    = $c->model('WormBaseAPI');
-    my $ACE2WB = $api->modelmap->ACE2WB_MAP->{class};
-
-    my $class           = $ACE2WB->{$aceclass} or $c->detach;
-    my $canonical_class = lc $class;
-
-    my $url;
-    if (exists $c->config->{sections}->{species}->{$canonical_class}) { # /species
-        my $species = 'c_elegans'; # for now... one would have to fetch the object...
-        $url = $c->uri_for('/species', $species, $canonical_class, $name);
-    }
-    else { # /report
-        $url = $c->uri_for('/resources', $canonical_class, $name);
-    }
-
-    $c->res->redirect($url);
-}
-
-
-##############################################################
-#
-#   "CLASSIC" PAGES
-#   URL space : /db
-#   Params    : class, object, page
-#
-#   Serve up pages using classic formatting so we don't
-#   have to maintain two codebases
-#   
-#   Old-style URLs have the format of
-#   /db/DIRECTORY/[CLASS]?name=[NAME]
-# 
-##############################################################
-sub classic_report :Path("/db") Args(2) {
-    my ($self,$c,$directory,$class) = @_;
-
-    # $directory is not really necessary. We don't use it.
- 
-    # Set the name of the widget. This is used 
-    # to choose a template and label sections.
-#    $c->stash->{page}  = $class;    # Um. Necessary?
-#    unless ($c->config->{pages}->{$class}) {
-#	my $link = $c->config->{external_url}->{uc($class)};
-#	$link  ||= $c->config->{external_url}->{lc($class)};
-#	if ($link =~ /\%s/) {
-#	    $link=sprintf($link,split(',',$name));
-#	} else {
-#	    $link.=$name;
-#	}
-#	$c->response->redirect($link);
-#	$c->detach;
-#    }
-
-    $c->stash->{class} = $class;
-    
-    # Let's set a stash parameter to enable classic wrapping
-    $c->stash->{is_classic}++;
-
-    # Save the query name
-    $c->stash->{query} = $c->request->query_parameters->{name} || "";
-
-    # Instantiate our external model directly (see below for alternate)
-    my $api = $c->model('WormBaseAPI');
-    
-    # TODO
-    # I may not want to actually fetch an object.
-    # Maybe I'd be visiting the page without an object specified...If so, I should default to search panel
-        
-    # I don't think I need to fetch an object.  I just need to return the appropriate page template.
-    # Then, each widget will make calls to the rest API.
-    
-    if ($c->stash->{query}) {
-	my $object = $api->fetch({class=> ucfirst($class),
-				  name => $c->stash->{query}
-				 }) or die "$!";
-	
-	# $c->log->debug("Instantiated an external object: " . ref($object));
-	$c->stash->{object} = $object;  # Store the internal ace object. Goofy.
-    }
-
-    # Stash the symbolic name of all widgets that comprise this page in default order.
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    $c->stash->{widgets} = \@widgets;
-
-    # Set the classic template
-    $c->stash->{template} = 'layout/classic.tt2';
-}
-
-
-
-
 
 
 
