@@ -4,6 +4,29 @@
 
 [% 
 
+  WRAPPER $field_block title="Sequence" key="print_sequence";
+    data=fields.print_sequence.data;
+    FOREACH key IN data.keys.sort;
+	IF data.$key.header.defined;
+	'<div class="sequence-section" >';
+               '<div class="sequence-download">';
+                        '<form action="/rest/download/">';
+			    '<input type="hidden" name="type" value="' _ data.$key.header _ '.fa" >';
+			    ' <input type="hidden" name="sequence" value="' _ data.$key.content.remove('<span.*?>|</span>') _ '" >';
+			    '<input type="submit" value="download">';
+		     '</form>';
+                '</div>';
+                '<div class="toggle">' _ data.$key.header _ '</div>';
+	        '<div class="sequence-container" >';
+                     content = data.$key.content.replace('\n', '<br />');
+		     content;
+	       '</div>';
+        '</div>';
+       END;
+     END; 
+  END;
+
+
   WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";
   data = fields.print_feature.data.exons;
   'NOTE: Transcript is on ' _ data.orientation  _ ') strand.<br>';
@@ -29,28 +52,5 @@
 	END;
     '</form>';
   END; 
-
-  WRAPPER $field_block title="Sequence" key="print_sequence";
-    data=fields.print_sequence.data;
-    FOREACH key IN data.keys.sort;
-	IF data.$key.header.defined;
-	'<div class="sequence-section" >';
-               '<div class="sequence-download">';
-                        '<form action="/rest/download/">';
-			    '<input type="hidden" name="type" value="' _ data.$key.header _ '.fa" >';
-			    ' <input type="hidden" name="sequence" value="' _ data.$key.content.remove('<span.*?>|</span>') _ '" >';
-			    '<input type="submit" value="download">';
-		     '</form>';
-                '</div>';
-                '<div class="toggle">' _ data.$key.header _ '</div>';
-	        '<div class="sequence-container" >';
-                     content = data.$key.content.replace('\n', '<br />');
-		     content;
-	       '</div>';
-        '</div>';
-     END;
-  END; 
-
-END;
 
 %] 
