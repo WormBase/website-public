@@ -135,8 +135,8 @@ sub public_api_request {
 
 #    die $uri;
 #    die $response->content;
-    return $self->log->warn("$method on $uri failed: " . $response->status_line . " - " . $response->content)
-	unless ( $response->is_success );
+#     return $self->log->warn("$method on $uri failed: " . $response->status_line . " - " . $response->content)
+# 	unless ( $response->is_success );
     
     return $response;
 }
