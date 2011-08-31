@@ -805,7 +805,7 @@ sub available_widgets_GET {
     my ($self,$c,$class,$name) = @_;
 
     # Does the data for this widget already exist in the cache?
-    my ($cache_id,$data,$cache_server) = $c->check_cache({cache_name => 'filecache', uuid => 'available_widgets'});
+    my ($data,$cache_server) = $c->check_cache({cache_name => 'couchdb', uuid => 'available_widgets'});
     
     my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
     
@@ -814,7 +814,7 @@ sub available_widgets_GET {
 	push @$data, { widgetname => $widget,
 		       widgeturl  => "$uri"
 	};
-	$c->cache->set('filecache','available_widgets',$data);
+	$c->cache->set('couchdb','available_widgets',$data);
     }
     
     # Retain the widget order
@@ -859,7 +859,10 @@ sub widget_GET {
     # check_cache will check couch first.
     my $headers = $c->req->headers;
     my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
-    if (($c->config->{installation_type} eq 'production') && ($content_type eq 'text/html')) {
+    if (($c->config->{installation_type} eq 'production') 
+	&& ($content_type eq 'text/html')) {
+	
+	# Shouldn't this be $self? Would break check_cache();
 	($cached_data,$cache_source) = $c->check_cache({cache_name => 'couchdb',
 							uuid       => $uuid,
 						       });
@@ -964,14 +967,12 @@ sub widget_GET {
     if ($content_type eq 'text/html') {
 	my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
 
-	# If we have content and the site is caching it, cache it.
-	if ($html && $c->config->{installation_type} eq 'production') {
+	# If we have content, cache it.
+	if ($html) {
 	    
 	    # eval {$c->set_cache('filecache',$cache_id,$html);};
-	    # Or: couchdb or memcached
-	    
-	    # HARD-CODED to staging.wormbase.org for now.
-	    # We need to open 5984 in production OR configure nginx to proxy pass requests.
+	    # Or: couchdb or memcached	
+    
 	    $c->set_cache({cache_name => 'couchdb',
 			   uuid       => $uuid,
 			   data       => $html,			  
@@ -1030,7 +1031,7 @@ sub widget_data_cache_GET {
     my $uuid = join('_',$class,$widget,$name);
     # We'll only check the cache if we are a production environment.
     if ($c->config->{installation_type} eq 'production') {
-	($cached_data,$cache_source) = $c->check_cache({check_cache => 'filecache',uuid => $uuid });
+	($cached_data,$cache_source) = $c->check_cache({cache_name => 'filecache',uuid => $uuid });
     }
 
     # The precache via couchdb contains rendered HTML.
@@ -1597,7 +1598,9 @@ sub available_fields_GET {
 	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
 	    $data->{$field} = "$uri";
 	}
-	$c->set_cache('filecache','available_fields',$data);
+	$c->set_cache({cache_name => 'filecache',
+		       uuid       => 'available_fields',
+		       data       => $data });
     }
     
     $self->status_ok( $c, entity => { data => $data,
