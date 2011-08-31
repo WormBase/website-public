@@ -3,7 +3,7 @@
 
 [%
 
-'<h2>' _ fields.name.data.label; 
+'<h2 style="float:left">' _ fields.name.data.label; 
 '</h2>';
 
 WRAPPER highlight_box;
@@ -31,12 +31,14 @@ WRAPPER highlight_box;
 END;
 
 
-extended_social_links(fields.name.data.id);
 
-WRAPPER $field_block title="Address" key="street_address";
+
+'<div class="text-width" style="clear:left;padding:0.5em 0;">';
    fields.street_address.data.join('<br>');
    TRY; IF fields.country.data; "<br>" ; fields.country.data; END; END;
-END;
+'</div>';
+
+extended_social_links(fields.name.data.id);
 
 WRAPPER $field_block title="Institution" key="institution";
     fields.institution.data;

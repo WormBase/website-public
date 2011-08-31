@@ -9,10 +9,13 @@ BEGIN { extends 'Catalyst::Controller::REST' }
 
 
 __PACKAGE__->config(
-    'default' => 'JSON',
-    'stash_key' => 'rest',
-    'map' => {
-    'application/json'   => 'JSON',
+    'default'          => 'text/x-yaml',
+    'stash_key'        => 'rest',
+    'map'              => {
+    'text/x-yaml'      => 'YAML',
+    'text/html'        => 'YAML::HTML',
+    'text/xml'         => 'XML::Simple',
+    'application/json' => 'JSON',
     }
     );
 
@@ -55,6 +58,8 @@ sub search :Path('/search') Args {
     $c->log->debug("search $query");
       
     my $search = $type unless($type=~/all/);
+$c->response->headers->expires(time);
+    $c->response->header('Content-Type' => 'text/html');
 
     if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline"))) && ($page_count < 2)){
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
@@ -62,7 +67,7 @@ sub search :Path('/search') Args {
         my $o = @{$it->{struct}}[0];
         my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
         unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
-        $c->res->redirect($url);
+        $c->res->redirect($url, 307);
         return;
       }
     }
