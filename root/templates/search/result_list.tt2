@@ -8,7 +8,7 @@
 [% END %]
 [% FOREACH item IN results %]
 
- [%# UNLESS c.stash.bench %]<div class="result tip-simple star" tip="save">[% #END %]
+ [%# UNLESS c.stash.bench %]<div class="result [% UNLESS nostar %]tip-simple star[% END %]" tip="save">[% #END %]
  [% class = item.name.class %]
  [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
  [% result_class = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lower %]
@@ -17,11 +17,12 @@
   <li>
           [% wbid = item.name.id.remove('[:/ &\.\[\]]') %]
           [% IF class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
+          [% UNLESS nostar %]
           <div class="workbench-status-[% wbid %]"></div>
           <script>
           $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% item.name.class FILTER lower %]&url=[% (item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy)) | uri %]&is_obj=[% is_obj %]");
           </script>
-
+          [% END %]
  
 
   [% IF type == 'all' %]

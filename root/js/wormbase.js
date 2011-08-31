@@ -677,7 +677,7 @@
 
 
 
-  function SearchResult(q, type, species, widget){
+  function SearchResult(q, type, species, widget, nostar){
     var query = decodeURI(q),
         page = 1.0,
         total = 0,
@@ -704,7 +704,7 @@
     queryHighlight($jq("div#results" + (widget ? "." + widget + "-widget" : '')));
     
     resultDiv.click(function(){
-      var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '');
+      var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');
           div = $jq("<div></div>"),
           res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
 
