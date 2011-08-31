@@ -15,7 +15,7 @@ select yourself to link your wormbase information <br /><br />
     [% emails.push(ea.email) %]
 [% END %]
 [% uri_name = emails.join(' ') _ ' ' _ c.user.username | uri %]
-<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1"></div>
+<div id="person-search" href="[% c.uri_for('/search/person/' _  uri_name  )%]?inline=1&nostar=1"></div>
         <input id="email" type="text" name="email" size="0" style="display:none"/>
         <input id="wbid" type="text" name="wbid" size="0" style="display:none"/>
         <input id="confirm" type="text" name="confirm" size="0" style="display:none" value=""/>
