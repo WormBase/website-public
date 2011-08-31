@@ -716,8 +716,7 @@ sub previous_laboratories {
     my @data;
     foreach (@labs) {
 	my $representative = $_->Representative;
-	my $name = $representative->Standard_name; 
-	my $rep = $self->_pack_obj($representative,$name);
+	my $rep = $self->_pack_obj($representative);
 	push @data,[ $self->_pack_obj($_),$rep ];
     }
        
