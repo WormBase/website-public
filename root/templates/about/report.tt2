@@ -1,0 +1,9 @@
+[%- # This is the generic report page for species-associated entitities at WormBase -%]
+
+[% 
+      title = "About";
+      report_page(title);
+%]
+
+
+

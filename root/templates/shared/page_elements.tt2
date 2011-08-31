@@ -134,7 +134,7 @@ END;
     [% FOREACH IS IN issues %]
 
       [% IF IS.is_private; 
-         UNLESS c.check_any_user_role('admin', 'curator'); NEXT ; END;
+         UNLESS (c.check_any_user_role('admin', 'curator') || (c.user.user_id == IS.reporter.user_id)); NEXT ; END;
       END;
       %]
 
@@ -1219,7 +1219,7 @@ END;
     [% w = { id = 'static-widget-' _ widget.widget_id
             title = widget.widget_title
             href =  c.uri_for('/rest','widget','static',widget.widget_id)
-            type = 'static'
+            type = section == 'species' ? class : (section ? section : 'static')
             };
     %]
     [% IF widget.widget_order > 0 %]
@@ -1235,7 +1235,7 @@ END;
     [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
             href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'
-            type = 'static'
+            type = section == 'species' ? class : (section ? section : 'static')
             };
     %]
 

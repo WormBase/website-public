@@ -260,13 +260,7 @@
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
-        if(layout['hash']){
-          location.hash = layout['hash'];
-        }else{
-          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
-          reloadLayout++;
-          updateLayout();
-        }
+        resetPageLayout(layout);
       }
       
       if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
@@ -914,6 +908,17 @@
         }, "xml");
     }
     
+    function resetPageLayout(layout){
+      layout = layout || $jq("#widget-holder").data("layout");
+      if(layout['hash']){
+          location.hash = layout['hash'];
+      }else{
+          resetLayout(layout['leftlist'], layout['rightlist'] || [], layout['leftwidth'] || 100);
+          reloadLayout++;
+          updateLayout();
+      }
+    }
+    
     function goToAnchor(anchor){
       document.getElementById(anchor).scrollIntoView(true);
     }
@@ -1053,7 +1058,8 @@ var Scrolling = (function(){
         offset = sidebar.offset().top,
         widgetHolder = $jq("#widget-holder"),
         static = 0, // 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
-        count = 0; //semaphore
+        count = 0, //semaphore
+        titles;
         
     sidebar.find(".title").click(function(){
       $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
@@ -1082,12 +1088,12 @@ var Scrolling = (function(){
                 static--;
             }
           }
-        }else if(count==0){ 
+        }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
           // try to make the sidebar smaller
           if(sidebar.outerHeight() < widgetHolder.height()){
             //close lowest section. delay for animation. Add counting semaphore to lock
             count++;
-            sidebar.find(".ui-icon-triangle-1-s").last().parent().click().delay(250).queue(function(){ count--; });
+            titles.last().parent().click().delay(250).queue(function(){ count--; });
           }
         }
       } 
@@ -1289,34 +1295,23 @@ var Scrolling = (function(){
    },
    update: function(is, issue_id){
           var url= is.attr("rel"),
-              thread = is.closest('#threads-new'),
-              email = thread.find("#email"),
-              username= thread.find("#display-name");
-          if(email.attr('id') && username.attr('id')) {
-        if(validate_fields(email,username)==false) {return false;}
-          }   
+              thread = is.closest('#threads-new');
           $jq.ajax({
-        type: 'POST',
-        url: url,
-        data: {content: $jq("textarea").val(),
-               issue:issue_id,
-                       state:$jq("#issue_status option:selected").val(),
-                       severity:$jq("#issue_severity option:selected").val(),
-                       assigned_to:$jq("#issue_assigned_to option:selected").val(),
-                       email:email.val(),
-                       username:username.val()  },
-        success: function(data){
-                if(data==0) {
-                   alert("The email address has already been registered! Please sign in."); 
-                }else {
-                  window.location.reload();  
+            type: 'POST',
+            url: url,
+            data: { content: $jq("textarea").val(),
+                    issue:issue_id,
+                    state:$jq("#issue_status option:selected").val(),
+                    severity:$jq("#issue_severity option:selected").val(),
+                    assigned_to:$jq("#issue_assigned_to option:selected").val()},
+            success: function(data){
+                      window.location.reload();  
+                },
+            error: function(request,status,error) {
+    // I don't know why this always throws an error if everything goes well....
+//                       alert(request + " " + status + " " + error);
                 }
-            },
-        error: function(request,status,error) {
-                  alert(request + " " + status + " " + error);
-            }
           });
-    
         return false;
    }
   }
@@ -1566,6 +1561,7 @@ var Scrolling = (function(){
       deleteLayout: deleteLayout,
       columns: columns,
       setLayout: setLayout,
+      resetPageLayout: resetPageLayout,
       search: search,
       search_change: search_change,
       loadResults: loadResults,

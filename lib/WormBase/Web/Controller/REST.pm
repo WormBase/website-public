@@ -96,6 +96,7 @@ sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
     my $session = $self->get_session($c);
+
     my $url = $c->req->params->{url};
     if($url){
       my $class = $c->req->params->{class};
@@ -124,7 +125,7 @@ sub workbench_GET {
     $c->stash->{noboiler} = 1;
     my $count = $session->pages->count;
     $c->stash->{count} = $count || 0;
-
+$c->response->headers->expires(time);
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
@@ -148,6 +149,7 @@ sub workbench_star_GET{
     $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -208,6 +210,7 @@ sub layout_list_GET {
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -315,7 +318,7 @@ sub history_GET {
       }
     } @hist[0..$count-1];
     $c->stash->{history} = \@histories;
-
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
@@ -671,12 +674,10 @@ sub feed_POST {
           $hash->{status}={old=>$issue->state,new=>$state};
           $issue->state($state) ;
        }
-
        if ($severity) {
           $hash->{severity}={old=>$issue->severity,new=>$severity};
           $issue->severity($severity);
        }
-
        if($assigned_to) {
           my $people=$c->model('Schema::User')->find($assigned_to);
           $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
@@ -698,7 +699,6 @@ sub feed_POST {
         $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
       }  
       if($state || $assigned_to || $content){
-         
           $self->issue_email($c,$issue,$thread,$content,$hash);
       }
     }
@@ -731,28 +731,28 @@ TODO: This is currently just returning a dummy object
 =cut
 
 sub issue_email{
- my ($self,$c,$issue,$new,$content,$change) = @_;
- my $subject='New Issue';
- my $bcc;
- $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
+  my ($self,$c,$issue,$new,$content,$change) = @_;
+  my $subject='New Issue';
+  my $bcc;
+  $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
 
- unless($new == 1){
+  unless($new == 1){
     $subject='Issue Update';
     my @threads= $issue->threads;
-    $bcc = "$bcc, " . $issue->responsible->primary_email->email if $issue->responsible;
+    $bcc = "$bcc, " . $issue->responsible->primary_email->email if ($issue->responsible && $issue->responsible->primary_email);
     my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email if $_->user} @threads;
- }
- $subject = '[WormBase.org] '.$subject.' '.$issue->issue_id.': '.$issue->title;
- 
- $c->stash->{issue}=$issue;
- 
- $c->stash->{new}=$new;
- $c->stash->{content}=$content;
- $c->stash->{change}=$change;
- $c->stash->{noboiler} = 1;
- $c->log->debug(" send out email to $bcc");
- $c->stash->{email} = {
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
+  }
+  $subject = '[WormBase.org] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+
+  $c->stash->{issue}=$issue;
+
+  $c->stash->{new}=$new;
+  $c->stash->{content}=$content;
+  $c->stash->{change}=$change;
+  $c->stash->{noboiler} = 1;
+  $c->log->debug(" send out email to $bcc");
+  $c->stash->{email} = {
           to      => $c->config->{issue_email},
           cc => $bcc,
           from    => $c->config->{issue_email},
@@ -1482,6 +1482,7 @@ sub widget_me_GET {
     my $api = $c->model('WormBaseAPI');
     my $type;
     $c->stash->{'bench'} = 1;
+$c->response->headers->expires(time);
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;

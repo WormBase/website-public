@@ -28,6 +28,7 @@
         </div>
         <ul>
       [% IF type == 'all' %]
+             <li class="title toggle">Classes<span class="ui-icon ui-icon-triangle-1-s"></span></li><div>
         [% FOREACH sec IN ['species', 'resources'] %]
           [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
               [% IF cls == 'title'; NEXT; END; %]
@@ -40,8 +41,10 @@
               </li>
           [% END %]
         [% END %]
+        </div>
       [% END %]
       [% IF( !(species) && (c.config.sections.species.$type.defined || type == 'all') )%]
+             <li class="title toggle">Species<span class="ui-icon ui-icon-triangle-1-s"></span></li><div>
         [% FOREACH s IN c.config.sections.species_list.keys.sort %]
           [% IF s == 'all'; NEXT; END; %]
           [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
@@ -53,9 +56,11 @@
             </li>
           [% END %]
         [% END %]
+        </div>
       [% END %]
       </ul>
       </div>
+<br style="clear:both"/>
 </div>
 </div>
 <div id="widget-holder">
