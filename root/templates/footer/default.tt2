@@ -21,12 +21,12 @@
           
            <ul>
               <li><span>WormBase</span></li>
-              <li><a href="[% c.uri_for('/about') _ '#mission-statement' %]">Mission</a></li> 
-              <li><a href="[% c.uri_for('/about','advisory_board') %]">Advisory Board</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#privacy-statement' %]">Privacy</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#acceptable-use'    %]">Acceptable Use</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#copyright'         %]">Copyright</a></li>
-              <li><a href="[% c.uri_for('/about','citing_wormbase') %]">Citing</a></li>
+              <li><a href="[% c.uri_for('/about') _ '#0--10' %]">Mission</a></li> 
+              <li><a href="[% c.uri_for('/about','advisory_board') _ '#012345678--10' %]">Advisory Board</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#1--10' %]">Privacy</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#0--10'    %]">Acceptable Use</a></li>
+              <li><a href="[% c.uri_for('/about','policies') _ '#2--10'         %]">Copyright</a></li>
+              <li><a href="[% c.uri_for('/about','citing_wormbase') _ '#012--10' %]">Citing</a></li>
            </ul>                
        
        </div>

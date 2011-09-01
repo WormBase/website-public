@@ -1965,13 +1965,15 @@ div.evidence tr.updated {
 }
 
 .sequence-download {
-   float:right;        
+/*    float:right;         */
+  position:absolute;
+  top:0;
+  right:0;
 }
 .sequence-section {
-    padding-bottom:5px;
-    margin-bottom:2px;
-    margin-top:15px;
-    text-align:left;
+  min-width:25em;
+  min-height:2em;
+  position:relative;
 }
 
 .locus, .var {
@@ -1985,8 +1987,9 @@ white-space:nowrap;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
 	font-size: 1em;
 	font-weight: normal;
-    height:16px;
-    clear:left;
+}
+#overview-content .toggle{
+  clear:left;
 }
 
 .toggle-container {

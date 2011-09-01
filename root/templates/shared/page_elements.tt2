@@ -607,7 +607,7 @@ END;
 [% UNLESS type.match('(tool)|(me)') %]
                     <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 
-[% IF type.match('(static)') && (id != 'static-widget--1')  %]
+[% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator") %]
                     <a  tip="edit" id="edit-button"  onClick='WB.StaticWidgets.edit("[% id %]");' class="button tip-simple tr ui-corner-all"><span class="ui-icon ui-icon-pencil ui-button"></span></a>
     [% END %]
