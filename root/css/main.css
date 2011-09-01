@@ -82,8 +82,34 @@ div#splash-box{
   z-index:6;
 }
 
+div#splash-box.tutorial{
+  background-image:url('/img/home-fade.jpg');
+}
+
+div#tutorial-left{
+  background-image:url('/img/tutorial-left.png');
+  background-repeat:no-repeat;
+  width:700px;
+  height:10em;
+  position:absolute;
+  left:1em;
+  top:0.5em;
+  z-index:-1;
+}
+
+div#tutorial-right{
+  background-image:url('/img/tutorial-right.png');
+  position:absolute;
+  right:1.5em;
+  top:0.5em;
+  background-repeat:no-repeat;
+  width:250px;
+  height:9em;
+  z-index:-1;
+}
+
 div#splash-box>p{
-  margin:0.3em 0 1em 0.6em;
+  margin:-0.2em 0 1em 0.6em;
   margin-left:1.5em;
   text-align:center;
   width:15em;
