@@ -1,9 +1,11 @@
   <div id="issues-new" class="issue-layout-box">
 
+    [% IF (!url || url != '/') %]
    <h4>Existing Issues</h4>
   <br />
   [% issue_table(issues,issue_type) %]
   <br /><br />
+    [% END %]
 
   [% IF url %]
     
@@ -37,6 +39,9 @@
         <div id="issue-submit-box">
 	    <input onClick="WB.issue.submit($jq(this));" type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
         </div>
+  [% ELSE %]
+  <b><a href="[% c.uri_for('/tools/issues/report') %]">Report an issue</a></b><br />
+
   [% END %]
 
    </div>
