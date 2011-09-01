@@ -712,7 +712,7 @@ sub previous_laboratories {
     my $self   = shift;
     my $object = $self->object;
     
-    my @labs  = $object->Old_laboratory;
+    my @labs  = eval{$object->Old_laboratory};
     my @data;
     foreach (@labs) {
 	my $representative = $_->Representative;
@@ -781,7 +781,7 @@ sub strain_designation {
     my $self   = shift;
     my $object = $self->object;
        
-    my $lab   = $object->Laboratory;
+    my $lab   = eval {$object->Laboratory};
     $lab = $self->_pack_obj($lab) if $lab;
        
     my $data = { description => 'strain designation of the affiliated lab',
@@ -844,7 +844,7 @@ B<Response example>
 sub allele_designation {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = $object->Laboratory;
+    my $lab    = eval{$object->Laboratory};
     my $allele_designation = ($lab) ? $lab->Allele_designation->name : undef;
     my $data = { description => 'allele designation of the affiliated laboratory',
 		 data        => $allele_designation };
@@ -905,7 +905,7 @@ B<Response example>
 sub lab_representative {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = $object->Laboratory;
+    my $lab    = eval{$object->Laboratory};
     
     my $rep;
     if ($lab) { 
@@ -974,7 +974,7 @@ B<Response example>
 sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = $object->Laboratory;
+    my $lab    = eval{$object->Laboratory};
 
     my @gene_classes = $lab ? $lab->Gene_classes : undef;
     @gene_classes = map { $self->_pack_obj($_) } @gene_classes;
@@ -1115,13 +1115,13 @@ B<Response example>
 sub last_verified {
     my $self      = shift;
     my $object    = $self->object;
-    my $timestamp = $object->Last_verified;
+    my $timestamp = eval{$object->Last_verified};
     my @date = split /\ /, $timestamp;
     my $date = join " ", @date[0 .. 2];
     my $data = { data        => "$date",
 		 description => 'date curated information last verified',
     };
-    return $data;
+    return $data ? $data : undef;
 }
 
 
@@ -1412,7 +1412,7 @@ sub _get_lineage_data {
     my $tag    = shift;
     my $object = $self->object;
     
-    my @relationship = $object->$tag;
+    my @relationship = eval{$object->$tag};
     my @data;
     foreach my $relation (@relationship) {	
 	my $name = $relation->Standard_name;

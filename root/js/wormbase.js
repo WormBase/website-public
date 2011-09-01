@@ -744,6 +744,7 @@
     loadcount = 0;
     $jq(window).scrollTop(0);
     $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
+    Scrolling.resetSidebar();
     return false;
   }
   
@@ -1051,13 +1052,18 @@
 
 var Scrolling = (function(){
   var $window = $jq(window),
-      system_message = 0;
+      system_message = 0,
+      static = 0;// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
+  
+  function resetSidebar(){
+    static = 0;
+    $jq("#navigation").stop().css('position', 'relative').css('top', 0);
+  }
 
   function sidebarInit(){
     var sidebar   = $jq("#navigation"),
         offset = sidebar.offset().top,
         widgetHolder = $jq("#widget-holder"),
-        static = 0, // 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
         count = 0, //semaphore
         titles;
         
@@ -1094,6 +1100,8 @@ var Scrolling = (function(){
             //close lowest section. delay for animation. Add counting semaphore to lock
             count++;
             titles.last().parent().click().delay(250).queue(function(){ count--; });
+          }else{
+            sidebar.stop().css('position', 'relative').css('top', 0);
           }
         }
       } 
@@ -1122,7 +1130,8 @@ var Scrolling = (function(){
   return{
     sidebarInit:sidebarInit,
     search:search,
-    set_system_message:set_system_message
+    set_system_message:set_system_message, 
+    resetSidebar:resetSidebar
   }
 })();
 
