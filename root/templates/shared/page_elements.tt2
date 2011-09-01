@@ -11,9 +11,13 @@
             You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature
           </div>
           <script>
+window.onload = function ()
+{
           WB.getColorbox(function(){
             $jq(".lightbox").colorbox();
           });
+}
+
           </script>
     [% END %]
 
