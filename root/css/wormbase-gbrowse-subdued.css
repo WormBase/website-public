@@ -1,0 +1,63 @@
+/* Header */
+
+ul.nav-bar ul.dropdown {
+  font-size:1em;
+}
+
+
+form#searchForm ul.dropdown {
+ font-size:1em;
+}
+
+ 
+/* footer */
+
+div#footer{
+    position:relative;
+}
+
+#spacer {
+    height: 3em; 
+}
+
+.tabmenu_active   { cursor: pointer;
+			color: black;
+			background-color: beige;
+			font-size: 11pt;
+			font-weight: bold;
+                        font-family: sans-serif;
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			border-top:  1px solid;
+			border-left: 1px solid;
+			border-right: 1px solid;
+			border-bottom: 1px solid;
+			border-bottom-color: beige;
+			z-index: 10;
+		      }
+.tabmenu_inactive { cursor: pointer;
+			color: blue;
+			font-size: 11pt;
+			background-color: transparent;
+			font-weight: bold;
+                        font-family: sans-serif;
+			padding-top:   5px;
+			padding-left:  5px;
+			padding-right: 5px;
+		      }
+.tabmenu_inactive:hover {
+     text-decoration: none;
+     background-color: #F5F5BF;
+}
+.tabbed {
+    background-color: transparent;
+}
+.tabmenu {
+    background-color: transparent;
+}
+.tabbody {
+    background-color: beige;
+    padding-top: 5px;
+    border:   1px solid;
+}
