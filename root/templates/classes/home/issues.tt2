@@ -12,5 +12,6 @@ No outstanding issues remaining!
   [% END %]
   </ul>
 </div>
+  <b><a href="[% c.uri_for('/tools/issues/report') %]">Report an issue</a></b><br />
   <a href="[% c.uri_for('/tools/issues') %]">View More ›</a>
 [% END %]
