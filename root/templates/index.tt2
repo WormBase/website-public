@@ -1,12 +1,15 @@
 [% SET class = 'home' %]
 
-<div id="splash-box">
+[% tutorial = 1 %]
+[% IF c.user_exists; tutorial = 0; END; %]
+<div id="splash-box" [% IF tutorial; 'class="tutorial"'; END %]>
+<!--     <div class="handwriting" style="position:absolute; bottom:1em; left:2em; width:6em;">conrol what you see on the page</div> -->
 
-    <h1>Explore Worm Biology</h1>
+    <h1 style="padding-top:0.4em;">Explore Worm Biology</h1>
 <!--      <br />Compare. Analyze. Share.-->
 <!--       <br />a central data repository for <span class="species">Caenorhabditis</span> biology -->
       <p>facilitating insights into <br />nematode biology</p>
-      [% UNLESS c.user_exists %]
+      [% UNLESS (c.user_exists || tutorial) %]
         <div id="create-prompt" class="ui-corner-all">
 
            <b>Join the online worm community!</b>
@@ -17,6 +20,10 @@
              <span> Already a member? <b><a id="login" onClick='$jq("#create-prompt").load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;' href="[% c.uri_for('/login') %]">login</a></b></span>
              </div>
         </div>
+    [% END %]
+    [% IF tutorial %]
+    <div id="tutorial-left"></div>
+    <div id="tutorial-right"></div>
     [% END %]
 </div>
 
