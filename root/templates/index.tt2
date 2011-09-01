@@ -1,6 +1,6 @@
 [% SET class = 'home' %]
 
-[% tutorial = 1 %]
+[% UNLESS (c.user_session.tutorial > 5 ); tutorial = 1; END;%]
 [% IF c.user_exists; tutorial = 0; END; %]
 <div id="splash-box" [% IF tutorial; 'class="tutorial"'; END %]>
 <!--     <div class="handwriting" style="position:absolute; bottom:1em; left:2em; width:6em;">conrol what you see on the page</div> -->
@@ -24,8 +24,10 @@
     [% IF tutorial %]
     <div id="tutorial-left"></div>
     <div id="tutorial-right"></div>
+[%  c.user_session.tutorial = c.user_session.tutorial + 1 %]
     [% END %]
 </div>
+
 
   [% widgets = [] %]
   [% widgets.push({ title="Page Content" type="title"}) %]
