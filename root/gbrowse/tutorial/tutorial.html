@@ -133,7 +133,7 @@ installation.  It should be located at
 <p>
 
 Similarly, check that you can find the gbrowse.conf configuration
-directory.  It should be located at <b>/usr/local/wormbase/website/tharris-primary/conf/gbrowse</b> and contain the main
+directory.  It should be located at <b>/usr/local/wormbase/website/tharris/conf/gbrowse</b> and contain the main
 configuration file "GBrowse.conf" and the example yeast genome
 datasource file "yeast_simple.conf" (among several others).
 
@@ -148,7 +148,7 @@ ignore this step.
 % <b>su</b>
 Password: <b>*********</b>
 # <b>chown my_user_name /usr/local/wormbase/tmp/gbrowse/databases</b>
-# <b>chown my_user_name /usr/local/wormbase/website/tharris-primary/conf/gbrowse</b>
+# <b>chown my_user_name /usr/local/wormbase/website/tharris/conf/gbrowse</b>
 # <b>exit</b>
 %
 </pre></blockquote>
@@ -217,12 +217,12 @@ Now we will need a GBrowse config file to tell GBrowse how to render
 this data set.  In the subdirectory <a
 href="conf_files">/usr/local/wormbase/website/tharris/root/gbrowse/tutorial/conf_files</a>, you will find a sample configuration
 file named <a href="conf_files/volvox.conf">volvox.conf</a>.  Copy
-this into your GBrowse configuration directory (/usr/local/wormbase/website/tharris-primary/conf/gbrowse).
+this into your GBrowse configuration directory (/usr/local/wormbase/website/tharris/conf/gbrowse).
 
 <p>
 
 You'll now edit the main GBrowse.conf configuration file to tell it
-about the new data source. Open <b>/usr/local/wormbase/website/tharris-primary/conf/gbrowse/GBrowse.conf</b> with a text
+about the new data source. Open <b>/usr/local/wormbase/website/tharris/conf/gbrowse/GBrowse.conf</b> with a text
 editor, scroll to the bottom, and add this stanza to the bottom of the
 file:
 
@@ -3078,7 +3078,7 @@ see how it affects the display (Figure 27).
 
 <p>
 
-Plugin files live in /usr/local/wormbase/website/tharris-primary/conf/gbrowse/plugins. To view plugin
+Plugin files live in /usr/local/wormbase/website/tharris/conf/gbrowse/plugins. To view plugin
 documentation, find the plugin file, which usually lives under
 gbrowse.conf/plugins, and run the perldoc command with the -F ("file")
 option:
@@ -3270,7 +3270,7 @@ this directory writable by the web server user!
 
 Copy the data source configuration file <a
 href="conf_files/elegans_core.conf">elegans_core.conf</a> into <a
-href="file:////usr/local/wormbase/website/tharris-primary/conf/gbrowse">/usr/local/wormbase/website/tharris-primary/conf/gbrowse/</a>, and create a suitable stanza in
+href="file:////usr/local/wormbase/website/tharris/conf/gbrowse">/usr/local/wormbase/website/tharris/conf/gbrowse/</a>, and create a suitable stanza in
 GBrowse.conf to describe this new data source:
 
 <blockquote><pre>
@@ -3776,7 +3776,7 @@ individual annotation files we looked at earlier (elegans_sts.gff3,
 etc), and removing the redundant comment lines from the top of the
 file.  Now copy the configuration file <a
 href="conf_files/elegans_extra.conf">elegans_extra.conf</a> into the
-/usr/local/wormbase/website/tharris-primary/conf/gbrowse/ directory.  Have a look at this config file, and
+/usr/local/wormbase/website/tharris/conf/gbrowse/ directory.  Have a look at this config file, and
 note that it contains the appropriate "das mapmaster" and "das
 category" configuration objects.
 
@@ -3856,7 +3856,7 @@ http://localhost/cgi-bin/das/elegans_extra?category=transcription.
 
 We can take advantage of this feature to add a menu of external DAS
 annotations to the browser.  Open
-"/usr/local/wormbase/website/tharris-primary/conf/gbrowse/elegans_core.conf" and insert the following
+"/usr/local/wormbase/website/tharris/conf/gbrowse/elegans_core.conf" and insert the following
 section right after the "plugins =" line:
 
 <blockquote><pre>
@@ -4026,7 +4026,7 @@ time <b>redirect</b> its output into a new configuration file named
 "ucsc_hg16.conf":
 
 <blockquote><pre>
-% <b>make_das_conf.pl http://genome.cse.ucsc.edu/cgi-bin/das/hg16 &gt;/usr/local/wormbase/website/tharris-primary/conf/gbrowse/ucsc_hg16.conf</b>
+% <b>make_das_conf.pl http://genome.cse.ucsc.edu/cgi-bin/das/hg16 &gt;/usr/local/wormbase/website/tharris/conf/gbrowse/ucsc_hg16.conf</b>
 </pre></blockquote>
 
 That should be all you need to do, unless you are behind a firewall
@@ -4703,7 +4703,7 @@ volvox_expression/
 
 Copy the configuration file <a
 href="conf_files/volvox_refactored.conf">volvox_refactored.conf</a>
-into <b>/usr/local/wormbase/website/tharris-primary/conf/gbrowse</b>, and edit GBrowse.conf to point to it:
+into <b>/usr/local/wormbase/website/tharris/conf/gbrowse</b>, and edit GBrowse.conf to point to it:
 
 <blockquote class="example"><pre>
 [volvox]
