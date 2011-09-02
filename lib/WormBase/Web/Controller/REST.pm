@@ -743,7 +743,7 @@ sub issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
   }
-  $subject = '[WormBase.org] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+  $subject = '[WormBase Issues] '.$subject.' '.$issue->issue_id.': '.$issue->title;
 
   $c->stash->{issue}=$issue;
 
