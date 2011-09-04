@@ -92,6 +92,12 @@ sub issue :Path("tools/issues") Args {
     }
 } 
 
+sub issue_report :Path("tools/issues/report") Args(0) {
+    my ($self, $c) = @_; 
+    $c->stash->{template} = "feed/issue.tt2";
+    $c->stash->{url} = "/";
+}
+
 sub operator :Path("tools/operator") Args {
     my ($self, $c) = @_; 
     $c->stash->{template} = "auth/operator.tt2";
