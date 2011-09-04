@@ -1,6 +1,6 @@
 [%#
 
-Generic Debug Index page.
+Generic Debug Index page. - DEPRECATED. SAFE TO DELETE/IGNORE
 
 This lists available widgets and fields for any class when called
 without parameters.

@@ -1,0 +1,74 @@
+<h3>Genotypes</h3>
+
+<ul>
+
+<li>
+The genotype of an animal is specified by listing all known differences
+between its genotype and that of wild type, which is defined by convention
+as Bristol N2. Each such difference is assigned a unique name. The currently
+recognized types of difference, described at greater length elsewhere in
+these guidelines, are:
+</li>
+
+<ul>
+<li>
+Simple mutations.Example: <em>e2123</em>.
+</li>
+
+<li>
+New transposon insertions. Example: <em>eTi13</em>.
+</li>
+
+<li>
+Sequence polymorphisms. Example: <em>stP17</em>.
+</li>
+
+<li>
+Transgenes (extrachromosomal arrays). Example: <em>stEx5</em>.
+</li>
+
+<li>
+Transgenes (chromosomally inserted). Example: <em>mdIs18</em>.
+</li>
+
+<li>
+Chromosomal aberrations (duplications, deficiencies, inversions,
+translocations, and crossover suppressors). Examples: <em>nDp17, uaDf5, hIn1, eT1, mnC1</em>.
+</li>
+</ul>
+
+
+<li>
+Where necessary, wild type sequence can be indicated using the symbol +.
+</li>
+
+<li>
+Because every genetic "feature" (i.e., difference from Bristol N2) has a unique 
+name, an animal's genotype is fully specified by listing all the named features
+that it carries. Example: <em>e2123; mdIs18</em>.
+</li>
+
+<li>
+For clarity and convenience, additional information about genes, chromosomes, 
+transgene contents, etc can be added as described elsewhere in this document, 
+to produce a more informative genotype. Example: <em>pha-1(e2123ts) III; mdIs18[pha-1(+) unc-17::GFP]</em>
+</li>
+
+<li>
+Mutants carrying more than one mutation are designated by sequentially 
+listing mutant genes or mutations according to the left-right (= up-down) 
+order on the genetic map. Different linkage groups are separated by a 
+semicolon and given in the order <em>I, II, III, IV, V, X, f, M. I-V</em> 
+are the five autosomes, <em>X</em> is the <em>X</em> chromosome, <em>f</em>
+refers to free duplications or chromosomal fragments, and <em>M</em> 
+is the mitochondrial genome. For example: <em>dpy-5(e61) I; bli-2(e768) II; unc-32(e189) III</em>.
+</li>
+
+<li>
+Heterozygotes, with allelic differences between chromosomes, are designated by
+separating mutations on the two homologous chromosomes with a slash. Where
+unambiguous, wild-type alleles can be designated by a plus sign alone, or even
+omitted. For example, <em>dpy-5(e61) unc-13(+)/dpy-5(+) unc-13(e51) I</em> can
+also be written <em>dpy-5 +/+ unc-13 or dpy-5/unc-13.</em>
+</li>
+</ul>

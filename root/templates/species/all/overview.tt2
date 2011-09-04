@@ -1,4 +1,71 @@
+<h2>Species Available Through WormBase</h2>
+
+<div class="widget-description">
+    The following species are available to different extents through the WormBase website.
+    At a minimum, we collect and standardize sequence and annotations of any species that 
+    may be of immediate interest to our users.  Species that are more closely related to 
+    <em>C. elegans</em> are more deeply integrated into the resource, with available 
+    Genome Browsers, BLAST searching, and active curation.
+</div>
+
+<table>
+   <tr>
+       <th>Species</th>
+       <th>Tier</th>
+       <th>Genome</th>
+       <th>Version</th>
+       <th>Origin</th>
+       <th>Comments</th>
+   </tr>
+
+
+    [% FOR option IN c.config.sections.species_list.keys.sort; %]
+       [% NEXT IF option == 'all'; %]
+       [% species = c.config.sections.species_list.$option; %]
+
+  <tr>
+      <td>
+         <span class="species"><a href="/species/[% option %]">[% species.genus %] [% species.species %]</a></span>
+      </td>
+      <!--
+      <td><a href=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=[% species.ncbi_taxonomy_id %]">
+             [% species.ncbi_taxonomy_id %]
+          </a>
+      </td>
+      -->
+      <td>[% species.tier %]</td>
+      <td>[% IF species.gbrowse %]
+               <a href="/tools/genome/gbrowse/[% option %]">yes</a>
+          [% END %]
+      </td>
+      <!--
+      <td>[% species.gene_models_in_wormbase %]</td>     
+       -->
+      <td>[% species.current_version %]        </td>
+      <td>[% species.source.name %]            </td>
+      <td>[% species.notes.keys.join(' ') %]                  </td>
+   </tr>
+   [% END %]
+</table>
+
+
+
+<pre>
+
+The <b>Genome</b> column in the table indicates whether the genome has been added to WormBase.
+
+The <b>Genes</b> column in the table indicates whether gene structures have been added to WormBase.
+</pre>
+
+=== The genome status ===
+
+
+
+
+
+
 <h2>About WormBase Tiers</h2>
+
 
 <p>
 Different species in WormBase are classified in various tiers depending
@@ -24,54 +91,3 @@ on the amount of curation effort we are able to put into maintaining them.
 <p>
 <b>Tier V</b> - Proposed tier for organisms with only genome information and no coherent transcriptome. There are no examples of this in WormBase at present.
 </p>
-
-
-=== Genome ===
-
-The '''Genome''' column in the table indicates whether the genome has been added to WormBase.
-
-=== Gene ===
-
-The '''Genes''' column in the table indicates whether gene structures have been added to WormBase.
-
-=== The genome status ===
-
-
-<table>
-   <tr>
-       <th>Species</th>
-       <th>Tier</th>
-       <th>Genome</th>
-       <th>Version</th>
-       <th>Origin</th>
-       <th>Comments</th>
-   </tr>
-
-
-  [% FOR option IN c.config.sections.species_list.keys.sort %]
-  [% species = c.config.sections.species_list.$option %]
-  <tr>
-      <td>
-         <span class="species"><a href="/species/[% option %]">[% species.genus %] [% species.species %]</a></span>
-      </td>
-      <!--
-      <td><a href=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=[% species.ncbi_taxonomy_id %]">
-             [% species.ncbi_taxonomy_id %]
-          </a>
-      </td>
-      -->
-      <td>[% species.tier %]</td>
-      <td>[% IF species.gbrowse %]
-               <a href="/db/gb2/gbrowse/[% option %]">yes</a>
-          [% END %]
-      </td>
-      <!--
-      <td>[% species.gene_models_in_wormbase %]</td>     
-       -->
-      <td>[% species.current_version %]        </td>
-      <td>[% species.source.name %]            </td>
-      <td>[% species.notes.keys.join(' ') %]                  </td>
-   </tr>
-   [% END %]
-</table>
-

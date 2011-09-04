@@ -1008,6 +1008,43 @@ sub widget_GET {
 }
 
 
+
+
+# Widgets specific to the Userguide. Total kludge to avoid hacking report_page macro in page_elements.tt2.
+
+sub widget_userguide :Path('/rest/widget/userguide') :Args(3) :ActionClass('REST') {}
+
+sub widget_userguide_GET {
+    my ($self,$c,$category,$subcategory,$widget) = @_; 
+
+    # Save the name and "class" of the widget.
+    $c->stash->{category}    = $category;
+    $c->stash->{subcategory} = $subcategory;
+    $c->stash->{widget}   = $widget;
+    $c->stash->{noboiler} = 1;
+
+    # Set the template
+    $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
+    if ($category eq 'index') {	
+	$c->stash->{child_template} = "userguide/$category/$widget.tt2";
+    } else {
+	$c->stash->{child_template} = "userguide/$category/$subcategory/$widget.tt2";
+    }
+
+    # Forward to the view to render HTML
+    my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
+    
+    $c->response->status(200);
+    $c->response->header('Content-Type' => 'text/html');
+    $c->response->body($html);
+    $c->detach();
+    return;
+}
+
+
+
+
+
 # This is the original widget() method that cached data structures
 # instead of rendered HTML. Retain for reference.
 # It needs to be updated to use the new check_cache and set_cache interface.

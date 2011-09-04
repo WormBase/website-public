@@ -1,5 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
 [% IF search_guide %]
 <h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
 [% END %]

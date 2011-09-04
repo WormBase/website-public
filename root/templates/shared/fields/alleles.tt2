@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
-
 [% WRAPPER "boilerplate/field" title="Alleles" -%]
     <!-- LIBRARY-IZE THIS - ORIGINAL USES TABLIEZIE -->
     [% FOREACH allele=alleles.sort %]

@@ -1,0 +1,13 @@
+<h2>Query Languages</h2>
+<p></p>
+
+<h3>Ace Query Language</h3>
+<p>The Ace Query Language lets you write SQL-like queries directly against AceDB databases.  
+    [<a href="[% c.uri_for('/userguide','developers','wormbase_query_langugages') _ '#aql' %]">Documentation and examples</a>]
+</p>
+
+<h3>WormBase Query Language</h3>
+<p>The WormBase Query Language lets you write SQL-like queries directly against AceDB databases. It's syntax is closer to
+    SQL and easier to learn than SQL.
+    [<a href="[% c.uri_for('/userguide','developers','wormbase_query_langugages') _ '#wql' %]">Documentation and examples</a>]
+</p>

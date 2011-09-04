@@ -16,7 +16,7 @@ downstream analyses.
 </p>
 
 
-<h2>Public FTP site</h2>
+<h2>Public FTP site: <a href="ftp://ftp.wormbase.org/pub/wormbase">ftp.wormbase.org</a></h2>
 
 <p>
 WormBase maintains a public FTP where you can find many commonly requested files 
@@ -25,10 +25,6 @@ for files of interest, then check the FTP site.  If you still can't find what
 you are looking for, drop us an email at staff@wormbase.org and we'll be
 happy to help.
 </p>
-
-  <p>
-    <h3><a href="ftp://ftp.wormbase.org/pub/wormbase">ftp.wormbase.org</a></h3>
-  </p>
 
 <h2>File names and Formats</h2>
 
@@ -43,6 +39,7 @@ the contents and version of the file after downloading).
 For example, every filename contains 
 </p>
 
+<p>
 <pre>
    g_species.WSXXX.descriptor.suffix.compression
    |          |    |          |      |
@@ -54,6 +51,7 @@ For example, every filename contains
    Such as:
    c_elegans.WS225.annotations.gff2.gz
 </pre>
+</p>
 
 <h2>Commonly Requested Data</h2>
 
@@ -69,12 +67,13 @@ Download the latest (production) release of WormBase and all subsidiary files (~
 <p>
 Download the latest (development) release of WormBase and all subsidiary files (~40 GB):
 </p>
- 
+
+<p> 
 <pre>
 <a href="ftp://ftp.wormbase.org/pub/wormbase/releases/current-dev.wormbase.org-release">
      ftp://ftp.wormbase.org/pub/wormbase/releases/current-dev.wormbase.org-release</a>
 </pre>
-
+</p>
 
 
 <h2>Downloads By Species</h2>

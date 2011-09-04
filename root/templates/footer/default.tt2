@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
-
 <!-- begin boilerplate/footer -->
     <div id="spacer"></div>
     
@@ -67,7 +64,7 @@
        <div class="footer-title">Beta Test</div>
         <ul>
           <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
-          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
+          <li><a target="_blank" href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
         </ul>
     </div>
     <div class="footer-column">

@@ -791,14 +791,16 @@ div#error-box {
     margin-right:auto;
     width:600px;
     padding:2em;
-    font-size:1.1em;
+    font-size:1.0em;
 }
 
 
 /* This is the ACTUAL error message */
+/* root/templates/status/404.tt2 */
 div.error-message-technical {
     font-family:Courier;
-    margin-left:1em;
+    margin-left:2em;
+    font-size:0.6em;
 }
 
 
@@ -1143,6 +1145,12 @@ li.visible div.widget-container {
     border:0;
 }
 
+.widget-description {
+    width:60%;
+    color:red;
+}
+
+
 #widget-me {
    border: 1px solid #BDB8A4;
 }
@@ -1249,11 +1257,6 @@ fieldset {
   padding:1em;
 }
 
-
-/* These are subfields - NOT IN USE? */
-section.widget .secondary-container {
-
-}
 
 /*********************************
    
@@ -1407,61 +1410,6 @@ div#footercredit a{
 
 *********************************/
 
-/* Formatting for the main index page */
-/* These should be things like container instead */
-div.page_listing {
-    padding-bottom:5px;
-    margin-bottom:2px;
-    text-align:left;
-    /*    border-bottom:1px dotted gray; */
-}
-
-div.widget_listing {
-    margin-left:30px;
-    text-align:left;
-}
-
-
-
-/* Formatting for the debug index page */
-div.debug-widget-title {
-    font-size:1.4em;
-    padding-bottom:5px;
-    margin-bottom:2px;
-    margin-top:15px;
-    text-align:left;
-    border-bottom:1px dotted gray;
-}
-
-div.debug-field-list {
-    margin-left:15px;
-}
-
-.debug-field-list .field-name {
-    text-align:right;
-    padding-right:15px;
-    width:300px;
-}
-
-.debug-field-list p.generic a {
-    color:gray;
-    font-style:italic;    
-}
-
-.debug-field-list p.common a {
-    color:gray;
-    font-style:italic;
-}
-
-.debug-field-list p.custom a {
-    color:red; 
-    font-style:italic;
-}
-
-p.debug-view {
-    font-family:Courier;
-    font-size:0.8em;
-}
 
 .description {
    font-style:italic;
@@ -1506,12 +1454,15 @@ p.debug-view {
            WIDGETS
  
    ********************************* */
+/*    border:1px dotted gray; */
+/*
 div.widget {
     padding:1px;
     margin:2px;
-/*    border:1px dotted gray; */
+
     background-color:seafoam;
 }
+*/
 
 /* The widget title bar. This needs to be a div so I can 
    target it for widget controls like toggle, drag, etc.
@@ -1521,12 +1472,14 @@ div.widget {
    that lack presentational information, but styled with classes
    can be confusing.
 */
+/*
 div.widget .title {
     border-bottom:1px solid black;
     padding:3px 0px 3px 6px;
     background-color:#BCC;
     text-transform:uppercase;
 }
+*/
 
 /* Links to download widgets in a variety of formats */
 div.downloadable-formats {
@@ -2346,25 +2299,52 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#FFF;
 }
 
-.issue-table tr.critical {
+/* markup of issues by state/severity */
+.issue-table tr.new {
    background-color:#FED;
    border-color:#E88;
-/*  color:#A22; */
+  color:#A22;
 }   
 
-.issue-table tr.major {
+.issue-table tr.open {
    background-color:#DFF;
    border-color:#BEE;
 /*   color:#099; */
 }   
 
-.issue-table tr.normal {
+.issue-table tr.hold {
    background-color:#FDB;
    border-color:#EEA;
 /*   color:#880; */
 }   
 
-.issue-table tr.duplicate {
+.issue-table tr.resolved {
+   background-color:#DDD;
+   border-color:#DDD;
+/*   color:#OOO; */
+}   
+
+
+/* markup of issue content by severity (offline) */
+.issue-table tr.critical-offline {
+   background-color:#FED;
+   border-color:#E88;
+/*  color:#A22; */
+}   
+
+.issue-table tr.major-offline {
+   background-color:#DFF;
+   border-color:#BEE;
+/*   color:#099; */
+}   
+
+.issue-table tr.normal-offline {
+   background-color:#FDB;
+   border-color:#EEA;
+/*   color:#880; */
+}   
+
+.issue-table tr.duplicate-offline {
    background-color:#DDD;
    border-color:#DDD;
 /*   color:#OOO; */

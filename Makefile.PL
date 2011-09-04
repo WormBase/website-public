@@ -44,11 +44,10 @@ requires 'Catalyst::View::GD';
 
 # Application dependencies
 requires 'Ace'                                    => '1.92';     # Good 'ole AcePerl.
-#requires 'AnyEvent::CouchDB';                                    #
+#requires 'AnyEvent::CouchDB';                                   #
 requires 'Badge::GoogleTalk';                                    # 
 requires 'Bio::Perl'                              => '1.006001'; #
 requires 'Bio::Graphics';                                        # 
-#requires 'Bio::Graphics::Browser2::Markup';                       # Sequence Summary page
 requires 'B::Hooks::EndOfScope';                                 #
 requires 'Cache::Memcached::libmemcached';                       #
 requires 'CGI::Simple::Cookie';                                  #
