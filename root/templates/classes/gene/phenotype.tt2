@@ -1,7 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
-
 
 [%# This phenotype processing diverges from the standard processing ... %]
 [%# See also Varation.pm for alternative data processing/structure... %]

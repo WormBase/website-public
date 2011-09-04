@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 [% # Affected * belong in Phenotype widget? %]
 [% MACRO tag2linkAffected(affectedHash) BLOCK;
    # TODO: handle phenotype; this is just a data dump

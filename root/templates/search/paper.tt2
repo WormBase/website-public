@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 <div class="ellipsis paper-title">[% tag2link(item.name,item.title,"",item.name.label)%]</div>
 </li>
 [% authors = [] %]

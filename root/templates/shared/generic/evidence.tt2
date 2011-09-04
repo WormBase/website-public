@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
   [% FOREACH type IN evidence.keys -%] 
       <b>[% type.replace('_',' ') %]</b>:  
       [% FOREACH object IN evidence.$type.keys %] 

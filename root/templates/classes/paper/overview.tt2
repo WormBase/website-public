@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 [% MACRO apa_persons(persons) BLOCK %]
    [% IF persons.size > 30 %]
    	  [% persons.slice(0,28).join(", ") %], . . . [% persons.-1 %]

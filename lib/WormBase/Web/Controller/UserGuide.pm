@@ -13,15 +13,40 @@ __PACKAGE__->config->{libroot} = "$Bin/../../lib/WormBase/API";
 # 
 ##############################################################
 
-sub general_index :Path('/userguide') :Args(0)   {
-    my ($self,$c) = @_;
-    $c->stash->{template} = 'userguide/index.tt2';
+#sub userguide : Chained('/') PathPart('userguide') CaptureArgs(0) {
+sub userguide : Chained('/') Path('/userguide') :Args(0) {
+    my ($self,$c,$args) = @_;
+    $c->stash->{section}  = 'userguide';
+    $c->stash->{category} = 'index';
+    $c->stash->{template} = 'userguide/index.tt2';   # Overridden by chained actions
 }
 
-sub index :Path('/userguide') :Args(1)   {
-    my ($self,$c,$page) = @_;
-    $c->stash->{template} = "userguide/$page.tt2";
+# /userguide/developers|users|educators
+sub category_index : Chained('/') PathPart('userguide') :Args(1)   {
+    my ($self,$c,$category) = @_;
+    $c->stash->{category} = $category;
+    $c->stash->{template} = "userguide/$category/index.tt2";
 }
+
+# At the expense of maintainability, we could 
+# do this all in one fell swoop like this, too.
+#sub subcategories : Chained('/') PathPart('userguide') :Args   {
+#    my ($self,$c,@args) = @_;
+#
+#    $c->stash->{section} = 'userguide';
+#        
+#    my ($category,$subcategory,$page) = @args;
+#
+#    # Get a list of available classes.
+#    if ($subcategory eq 'api') {  # /userguide/developers/api
+#	my $dir = "$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object";
+#	opendir(DIR,$dir) or $c->log->debug("Couldn't open $dir");
+#	my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
+#    	$c->stash->{classes}  = \@classes;
+#    }
+#
+#    $c->stash->{template} = 'userguide/' . join('/',@args) . '/index.tt2';
+#}
 
 
 
@@ -31,10 +56,6 @@ sub index :Path('/userguide') :Args(1)   {
 #   For Users
 # 
 ##############################################################
-sub users_index :Path('/userguide/users') : Args(0) {
-    my ($self,$c) = @_;
-    $c->stash->{template} = 'userguide/users/index.tt2';
-}
 
 
 
@@ -43,10 +64,6 @@ sub users_index :Path('/userguide/users') : Args(0) {
 #   For Educators
 # 
 ##############################################################
-sub educators_index :Path("/userguide/educators") : Args(0) {
-    my ($self,$c) = @_;
-    $c->stash->{template} = 'userguide/educators/index.tt2';
-}
 
 
 
@@ -56,33 +73,40 @@ sub educators_index :Path("/userguide/educators") : Args(0) {
 #   Developer resources
 # 
 ##############################################################
-sub developers_index :Path('/userguide/developers') : Args(0) {
-    my ($self,$c) = @_;
-    $c->stash->{template} = 'userguide/developers/index.tt2';
-}
 
 
 # The index of the API. Just lists classes.
-sub api_index :Path('/userguide/developers/api') : Args(0) {
-    my ($self,$c) = @_;
+#sub api_index :Path('/userguide/developers/api') : Args(0) {
+# /userguide/developers/api|query_languagues|webdev
+sub developer_docs : Chained('userguide') Path('developers') Args(1)   {
+    my ($self,$c,$subcategory) = @_;
+
+    $c->stash->{category}    = 'developers';
+    $c->stash->{subcategory} = $subcategory;
     
     # Get a list of available classes.
-    my $dir = '/usr/local/wormbase/website/tharris/lib/WormBase/API/Object';
-    opendir(DIR,$dir) or $c->log->debug("Couldn't open $dir");
-    my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
-    
-    $c->stash->{classes}  = \@classes;
-    $c->stash->{template} = 'userguide/developers/api/index.tt2';
+    # The API index includes a list of available classes.
+    if ($subcategory eq 'api') {
+	my $dir = "$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object";
+	opendir(DIR,$dir) or $c->log->debug("Couldn't open $dir");
+	my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
+	
+	$c->stash->{classes}  = \@classes;
+    }
+
+    $c->stash->{class}    = $subcategory;
+    $c->stash->{template} = "userguide/developers/$subcategory/index.tt2";
 }
 
 
 # API for a given class
-sub api_class :Path('/userguide/developers/api') : Args(1) {
+# /userguide/developer/api
+sub api_class_docs : Chained('developer_docs') Path('api') Args(1) {
+#sub api_class : Chained('api_index') Path('/userguide/developers/api') : Args(1) {
     my($self,$c,$class) = @_;
-
-    # Hardcoded
+    
     $class = ucfirst($class);
-    open (LIB,"/usr/local/wormbase/website/tharris/lib/WormBase/API/Object/$class.pm") || $c->log->debug("Couldn't open the current library file");
+    open (LIB,"$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object/$class.pm") || $c->log->debug("Couldn't open the current library file");
     
     my $pod = $self->_get_pod($c);
     my @code;

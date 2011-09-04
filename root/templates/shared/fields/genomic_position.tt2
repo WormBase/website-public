@@ -1,9 +1,5 @@
 [% SET title="Genomic Position" %]
 
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
-
-
 [% WRAPPER "boilerplate/field" title="Genomic Position" -%]
       Chromosome [% genomic_position.chromosome %]:[% genomic_position.abs_start %]..[% genomic_position.abs_stop %] bp
 [% END %]

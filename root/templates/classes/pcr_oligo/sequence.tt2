@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 [% IF fields.segment.data %]
 <div style="font-family:monospace;margin:1em;">
    [% segment = fields.segment.data %]

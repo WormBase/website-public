@@ -1,0 +1,6 @@
+<h2>Architecture</h2>
+<p>
+WormBase consists of an <a href="http://www.acedb.org/">AceDB data store</a>,
+a series of MySQL databases storing genomic annotations, and flat files
+for specialized applications on the website.
+</p>

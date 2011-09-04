@@ -1,0 +1,109 @@
+<h2>Genetic Nomenclature for <span class="species">Caenorhabditis elegans</span></h2>
+
+<p>
+Genetic nomenclature for <span class="species">Caenorhabditis elegans</span>
+is supervised by <a href="http://wormbase.org/">WormBase</a> in collaboration 
+with the <a href="http://www.cbs.umn.edu/CGC/">
+<span class="species">Caenorhabditis</span> Genetics Center (CGC)</a>.
+</p>
+
+
+<h3> How to Register a New Gene Class or Gene Name</h3>
+
+<p>
+Investigators wishing to register new gene names for 
+<span class="species">C. elegans</span> should note the summary guidelines 
+below and apply online via <a href="http://minerva.caltech.edu/~azurebrd/cgi-bin/forms/gene_name.cgi">WormBase</a> 
+or by email application to <span class="email">genenames@wormbase.org</span>
+</p>
+
+
+<h3> How to Register a New Laboratory and Receive Lab, Strain and Allele designations  </h3>
+
+<p>
+Specific identifying codes (CGC designations) are assigned to each
+laboratory engaged in dedicated long-term genetic research on 
+<span class="species">C. elegans</span>. Each such laboratory is
+assigned a lab/strain code, for naming strains, and an allele code,
+for naming mutations and transgenes. These codes are listed at the 
+<a href="http://biosci.umn.edu/CGC/nomenclature/code.html">CGC</a> 
+and on the <a href="http://www.wormbase.org/wiki/index.php/Nomenclature">WormBase wiki</a>.
+</p>
+
+<p>
+Investigators requiring new CGC designations should apply to <span class="email">jonathan.hodgkin@bioch.ox.ac.uk</span>
+</p>
+
+
+<h3> Summary Guidelines for Proposing New Gene Names</h3>
+
+<ul>
+<li>
+Gene names must conform to the standard format of 3 or 4 letters, hyphen, number.
+</li>
+
+<li>
+Genes can be named on the basis of a mutant phenotype or on the basis of the predicted protein product or RNA product.
+</li>
+
+<li>
+If a new gene clearly belongs in an existing gene class (of which more 
+than 2000 now exist), then a new gene number will be assigned after 
+consultation with the laboratory responsible for the gene class in question.
+Gene classes and the corresponding assigning laboratory for each gene 
+class are listed at the <a href="http://biosci.umn.edu/CGC/nomenclature/genes.html">CGC</a>
+and on the <a href="http://www.wormbase.org/wiki/index.php/Nomenclature">WormBase wiki</a>. 
+</li>
+
+<li>
+If the establishment of a new gene class name seems more appropriate, 
+then an approval for this gene name must be obtained, preferably 
+online via <a href="http://minerva.caltech.edu/~azurebrd/cgi-bin/forms/gene_name.cgi">WormBase</a> 
+or by email application to <span class="email">genenames@wormbase.org</span>.
+</li>
+
+<li>
+Gene names based on homology with a previously named gene in another 
+well-studied organism, such as <span class="species">Saccharomyces cerevisiae</span>
+or <span class="species">Mus musculus</span>, are often appropriate and 
+desirable, especially where there is convincing orthology between genes.
+</li>
+
+<li>
+Gene names and gene numbering schemes that conform to established 
+nomenclature proposals for particular protein classes are desirable.
+</li>
+
+<li>
+Gene names that are memorable, informative and simply explained are encouraged.
+</li>
+
+<li>
+Gene names based solely on RNAi phenotypes or high-throughput analysis
+of gene expression or protein interactions are discouraged.
+</li>
+
+<li>
+Gene names including <em>c</em> (for <em>caenorhabditis</em>), 
+<em>ce</em> (for <span class="species">C. elegans</span>), <em>n</em>
+(for nematode) or <em>w</em> (for worm) are discouraged. 
+<span class="species">C. elegans</span> as the organism of origin
+can be specified with a prefix (<em>Cel</em>-) if desired. 
+</li>
+
+<li>
+New gene name classes can be assigned in confidence, prior to formal
+publication or disclosure in an abstract.
+</li>
+</ul>
+
+
+<h2>Standard Genetic Nomenclature Recommendations</h2>
+
+<p>
+This summary is based on the original proposals for 
+<span class="species">C. elegans</span> nomenclature (Horvitz <em>et al</em>., 
+1979 <em>Mol. Gen. Genet</em>. <b>175</b>: 129-133), plus additional
+recommendations that have been distributed in 
+<em>The Worm Breeder's Gazette</em> or posted on <a href="http://www.wormbase.org">WormBase</a>.
+</p>
