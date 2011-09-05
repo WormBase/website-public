@@ -64,13 +64,18 @@ sub default :Path {
 	    $c->stash->{path} = $c->request->path;
 	}
     } else {
-	# 404: Page not found...
-   	$c->stash->{template} = 'status/404.tt2';
-	$c->error('page not found');
-	$c->response->status(404);
+	$c->detach('/soft_404');
     }
 }
 
+sub soft_404 :Path('/soft_404') {
+    my ($self,$c) = @_;
+    # 404: Page not found...
+    $c->stash->{template} = 'status/404.tt2';
+    $c->error('page not found');
+    $c->response->status(404);
+}
+    
 
 
 #sub gbrowse :Path("/gbrowse") Args(0) {

@@ -70,9 +70,10 @@ sub resources_class_index :Path('/resources') :Args(1)  {
       $c->stash->{is_class_index} = 1;      
       
     } else {
-	$c->detach;
+	# We aren't a recognized resource (ie specified in config or a custom action).
+	# Detach to a soft 404.
+	$c->detach('/soft_404');
     }
-
 }
 
 
@@ -83,16 +84,18 @@ sub resources_report :Path("/resources") Args(2) {
     $self->_get_report($c, $class, $name);
 }
 
-# Documentation: 
-# Two directory hierarcy:
-# about: privacy, copyright, mission statement (one document)
-# advisory_board
-sub documentation :Path('/resources/documentation') Args(1) {
-    my ($self,$c,$category) = @_;
-    $c->stash->{section}  = 'resources';
-    $c->stash->{template} = "resources/documentation/$category.tt2";
-}
+# TH 2011.09.05: I think this is deprecated.
+## Documentation: 
+## Two directory hierarcy:
+## about: privacy, copyright, mission statement (one document)
+## advisory_board
+#sub documentation :Path('/resources/documentation') Args(1) {
+#    my ($self,$c,$category) = @_;
+#    $c->stash->{section}  = 'resources';
+#    $c->stash->{template} = "resources/documentation/$category.tt2";
+#}
 
+# Not in use, but retain. Could be useful.
 sub downloads :Path('/resources/downloads') Args(0) {
     my ($self,$c) = @_;
     $c->stash->{template} = "resources/downloads.tt2";

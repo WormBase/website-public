@@ -1333,8 +1333,8 @@ END;
     END;
   END;
 
-
-  IF is_class_index;
+  # is_static refers to pages that don't handle objects (/resources/reagents)
+  IF is_class_index && !is_static;
     index_widgets = ['browse', 'basic_search'];
     IF((species == 'all')||(class == 'all'));
       index_widgets.push('summary');
