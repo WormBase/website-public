@@ -1,3 +1,5 @@
+DEPRECATED: THIS WIDGET IS NOW MAINTAINED VIA THE WEB INTERFACE.
+
 <ul>
 <li><a href="http://www.wormbase.org/">WormBase</a>
 <li>WormBook</li>

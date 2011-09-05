@@ -1,12 +1,22 @@
-The templates in this directory create species
-guide.
+The templates in this directory are responsible for BOTH
+class report pages 
 
-Actions in: W::W::Controller::Species
+    /species/c_elegans/gene/WBGene0000001
 
-/species/guide         -> species_summary-all.tt2
-/species/guide/SPECIES -> species_summary-individual.tt2
+and the species summary pages
 
-Widgets are under the "component" URL space:
+   /species/all and /species/c_elegans
 
-/species/guide/component/overview         -> summary/overview.tt2
-/species/guide/component/SPECIES/overview -> SPECIES/overview.tt2
+
+report.tt2: Sets up the page. You should NOT need to edit this.
+
+For the species summary pages:
+--------------------------------
+The directories like all/ and {SPECIES_NAME}/ contain custom
+widgets that are generated programmatically and/or that require
+Template::Toolkit code.  ALL OTHER WIDGETS ARE CREATED VIA THE WEB
+INTERFACE.
+
+Actions are found in W::W::Controller::Species.
+
+T. Harris (todd@wormbase.org)

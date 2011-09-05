@@ -1,6 +1,4 @@
-[%- # This is the generic WormBase Report page  for resources -%]
-[%- # It automatically creates the sidebar from configuration -%]
-[%- # It handles Index pages (/species/gene) and Reports (/species/gene/WBGene00006763) %]
+[%- # This is the generic WormBase Report page for resources -%]
 
 [% 
 

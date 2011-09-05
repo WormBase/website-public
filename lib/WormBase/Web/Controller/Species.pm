@@ -60,66 +60,14 @@ sub species_index :Path('/species') :Args(1)   {
     if ($species eq 'all' || $self->_is_species($c,$species)) {
       $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
       $c->stash->{class}      = 'all';
-      $c->stash->{is_class_index} = 1;  
+      $c->stash->{is_class_index} = 1;   # 0? 
+      $c->stash->{is_static}      = 1;	 # Disable widgets like "browse" and "search" 
       $c->stash->{species}    = $species;           # Class is the subsection	
       $c->stash->{template}   = 'species/report.tt2';
     } else {
-	$c->detach;   # We are neither a supported class or proper species name. Error!	   
+	$c->detach('/soft_404');   # We are neither a supported class or proper species name. Error!
     }
 }
-
-
-
-##############################################################
-#
-#   Species page components
-#   URL space : /species and /species/guide
-# 
-##############################################################
-
-
-# SHOULDN'T THESE BE REST TARGETS?
-# Component widgets of the guide
-# /species/guide/component: two cases
-# 1. /species/guide/component/ARG - a widget for the overview page
-# 2. /species/guide/component/SPECIES/ARG - a widget for an individual page
-
-# Now rest targets and probably no longer necessary.
-#sub species_component_widgets :Path("/species/guide/component") Args {
-#    my ($self,$c, @args) = @_;
-#    $c->stash->{section} = 'species';
-#
-#    # These could be species index page widgets
-#    if (@args == 1) {
-#      my $widget = shift @args;
-#      $c->stash->{template} = "species/summary/$widget.tt2";
-#
-#    # Or per-species widgets
-#    } elsif (@args == 2) {
-#      my $species = shift @args;
-#      my $widget = shift @args;
-#      $c->stash->{template} = "species/$species/$widget.tt2";
-#      $c->stash->{name}= join(' ',
-#			      $c->config->{species_list}->{$species}->{genus},
-#			      $c->config->{species_list}->{$species}->{species});
-#      
-#      # Necessary?
-##      unless ($c->stash->{object}) {
-##	  my $api = $c->model('WormBaseAPI');  
-##	  $c->log->debug("WormBaseAPI model is $api " . ref($api));
-##	  $c->stash->{object} =  $api->fetch({class=> ucfirst("species"),
-##					      name => $c->stash->{name}}) or die "$!";
-##      }
-##      my $object= $c->stash->{object};
-##      my @fields = $c->_get_widget_fields("species_summary",$widget);
-##      foreach my $field (@fields){
-##	  $c->stash->{fields}->{$field} = $object->$field; 
-##      }      
-#    }
-#    $c->stash->{noboiler} = 1;
-#    $c->forward('WormBase::Web::View::TT');
-#}
-
 
 
 
@@ -146,7 +94,6 @@ sub class_index :Path("/species") Args(2) {
 
 #	if ($self->_is_class($c,$class)) {
     $c->stash->{template} = 'species/report.tt2';
-# 	    $c->stash->{template}    = 'species/species-class_index.tt2';
 	    $c->stash->{section}     = 'species';
 	    $c->stash->{class}       = $class;
 	   

@@ -13,10 +13,22 @@ __PACKAGE__->config->{libroot} = "$Bin/../../lib/WormBase/API";
 # 
 ##############################################################
 
+# Here's the dynamic way of doing this, usingwidgets maintained in the DB.
+
+#sub userguide :Path('/userguide') :Args(0)   {
+#    my ($self,$c) = @_;
+#    $c->stash->{section} = 'resources';
+#    $c->stash->{template} = 'userguide/report.tt2';
+#    my $page = $c->model('Schema::Page')->find({url=>"/about"});
+#    my @widgets = $page->static_widgets if $page;
+#    $c->stash->{static_widgets} = \@widgets if (@widgets);
+#}
+
+
 #sub userguide : Chained('/') PathPart('userguide') CaptureArgs(0) {
 sub userguide : Chained('/') Path('/userguide') :Args(0) {
     my ($self,$c,$args) = @_;
-    $c->stash->{section}  = 'userguide';
+    $c->stash->{section}  = 'resource';
     $c->stash->{category} = 'index';
     $c->stash->{template} = 'userguide/index.tt2';   # Overridden by chained actions
 }
@@ -157,6 +169,7 @@ sub _get_pod {
     close LIB2;    
     return \%pod;
 }
+
 
 
 1;
