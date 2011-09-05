@@ -34,8 +34,8 @@
            <ul>
     	     <li><a href="http://wormbase.org/beta">Request Private Demo</a></li>
              <li><a href="/tools/operator">Chat</a></li>
-             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit Data</a></li>
-             <li><a href="mailto:feedback@wormbase.org">Email</a></li>
+              <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'         %]">Submit Data</a></li>
+             <li><a href="mailto:help@wormbase.org">Email</a></li>
              <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
            </ul>                
          </div>
@@ -56,7 +56,7 @@
         <ul>
           <li><a>Amazon EC2 AMI</a></li>
 	  <li><a href="http://github.com/organizations/WormBase">Git Repositories</a></li>
-          <li><a>Data Mining</a></li>
+          <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
     </div>

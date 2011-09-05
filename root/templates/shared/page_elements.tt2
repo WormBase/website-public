@@ -1407,7 +1407,7 @@ END;
 
   SET base = '/rest/widget/userguide';
 
-  # The userguide has a two-tiered hierarchy. eg: /userguide/developr/api
+  # The userguide has a two-tiered hierarchy. eg: /userguide/developer/api
   # to make it easier to organize templates on the filesystem.
   # We need to add a param for the top level category.
   IF category == 'index'; subcategory = 'any'; END;
@@ -1419,7 +1419,7 @@ END;
       w = {  id     = name
             title = wtitle,
             href  = c.uri_for(base, category, subcategory, name)
-            type  = 'userguide'
+            type  = 'resources'
           };
 
     widgets.push(w);
