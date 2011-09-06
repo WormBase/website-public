@@ -2,7 +2,7 @@
 
    <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
    <h3>
-       Oh my heck. We've encountered an error.
+       Something's gone horribly wrong.
    </h3>
 
    <p>      
@@ -11,14 +11,14 @@
 
    <p>
       If you'd like to send us a personal message please send our support
-      team an <a href="mailto:feedback@wormbase.org">email</a> including this error report:
+      team an <a href="mailto:help@wormbase.org">email</a> including this error report:
    </p>
 
    <div class="error-message-technical">
       Expected URL: [% c.req.path %]<br />
       Server Error: 500<br />
       Error Message:<br />
-             [% c.error.join("<br>"); %]
+             [% c.error.join("<br />"); %]
    </div>
 
 </div>

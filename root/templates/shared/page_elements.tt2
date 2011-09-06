@@ -144,7 +144,17 @@ END;
 
 
       [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
-      <tr [% IF(even == 1); 'class="r0 ' _ IS.severity _ '"'; even = 0; ELSE; 'class="r1 ' _ IS.severity _ '"'; even=1; END; %]>
+      <tr 
+        [% IF (even == 1); 
+	     myclass='r0';
+	     even=0;
+	   ELSE;
+	      myclass='r1';
+	      even=1;
+	   END;	   
+        %]
+	class="[% myclass %] [% IS.severity %] [% IS.state %]">
+
         <td><a href="[% url %]">[% IS.id %]</a></td>
         <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
         [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
@@ -1323,8 +1333,8 @@ END;
     END;
   END;
 
-
-  IF is_class_index;
+  # is_static refers to pages that don't handle objects (/resources/reagents)
+  IF is_class_index && !is_static;
     index_widgets = ['browse', 'basic_search'];
     IF((species == 'all')||(class == 'all'));
       index_widgets.push('summary');
@@ -1388,6 +1398,53 @@ END;
 
 
 
+[%# This is an expedient replication of report_page to support the userguide. 
+    Instead of specifying in config a list of widgets, we just pass them in %]
+
+[% MACRO userguide_page BLOCK;
+  widgets = [];
+  widgets.push({ title="Page Content" type="title"});
+
+  SET base = '/rest/widget/userguide';
+
+  # The userguide has a two-tiered hierarchy. eg: /userguide/developer/api
+  # to make it easier to organize templates on the filesystem.
+  # We need to add a param for the top level category.
+  IF category == 'index'; subcategory = 'any'; END;
+
+  FOREACH widget IN widget_list;    
+     hash = widget.keys;
+     name = hash.0;
+     wtitle = widget.$name;
+      w = {  id     = name
+            title = wtitle,
+            href  = c.uri_for(base, category, subcategory, name)
+            type  = 'resources'
+          };
+
+    widgets.push(w);
+  END;
+
+  widgets.push({ title="Tools" type="title"}); 
+
+  FOREACH widget_name IN ['comment', 'issue'];
+      t = widget_name FILTER ucfirst;
+      w = { id = widget_name
+            title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
+            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path
+            type = 'tools'
+          };
+      widgets.push(w);
+  END;
+
+  PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;
+%]
+
+[% END; %]
+
+
+
+
 
 
 [%#
@@ -1401,23 +1458,6 @@ END;
  #    used via PROCESS or INCLUDE
  #  
  ####################################################
-%]
-
-[%# MACRO identify_templates BLOCK;
-
-   # If called, debug_view is already set.  Is it set to comment, browser, or log?
-
-   msg = "template: $this_component; caller: $template.name";
-
-   IF c.config.debug_view == "comment";
-      comment("$title; $msg");
-   ELSE;
-        '<p class="debug-view">' _ "$title; $msg" _ '</p>';
-   END;
-
-   c.stash.keys.join("--");
-
-END;
 %]
 
 [% BLOCK generic_debug_info %]

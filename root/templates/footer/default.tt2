@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(this_component=component.name) IF c.config.debug_view %]
-
 <!-- begin boilerplate/footer -->
     <div id="spacer"></div>
     
@@ -37,8 +34,8 @@
            <ul>
     	     <li><a href="http://wormbase.org/beta">Request Private Demo</a></li>
              <li><a href="/tools/operator">Chat</a></li>
-             <li><a href="[% c.uri_for('/userguide','submit_data') %]">Submit Data</a></li>
-             <li><a href="mailto:feedback@wormbase.org">Email</a></li>
+              <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'         %]">Submit Data</a></li>
+             <li><a href="mailto:help@wormbase.org">Email</a></li>
              <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
            </ul>                
          </div>
@@ -59,7 +56,7 @@
         <ul>
           <li><a>Amazon EC2 AMI</a></li>
 	  <li><a href="http://github.com/organizations/WormBase">Git Repositories</a></li>
-          <li><a>Data Mining</a></li>
+          <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
     </div>
@@ -67,7 +64,7 @@
        <div class="footer-title">Beta Test</div>
         <ul>
           <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
-          <li><a href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
+          <li><a target="_blank" href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
         </ul>
     </div>
     <div class="footer-column">

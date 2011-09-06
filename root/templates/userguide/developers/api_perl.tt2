@@ -1,0 +1,67 @@
+
+<h3>AcePerl.pm</h3>
+
+<p>
+<pre>
+Description  : Perl interface for AceDB
+Good for     : data mining core annotations of WormBase
+Skills       : Perl object-oriented scripting
+Advantages   : Time-tested
+Drawbacks    : Sequence features might need to be accessed by another API; need to know the data model.
+</pre>
+</p>
+
+<p>
+Directly access the AceDB database and query it using
+the <a href="">AcePerl</a> API.  You'll need to know Perl and be familiar
+with the underlying data model. AcePerl is the most tried and true
+mechanism for programmatically accessing WormBase.
+</p>
+
+<h3>WormBase::API.pm</h3>
+
+<p>
+<pre>
+Description  : Perl interface for WormBase
+Good for     : data mining all of WormBase
+Skills       : Perl object-oriented scripting
+Advantages   : Abstracts data model;methods very biological
+Drawbacks    : Doesn't span all database contents
+</pre>
+</p>
+
+
+<p>
+Use the Perl WormBase::API (the same API that powers the RESTful interface).
+This API provides a higher level interface and an abstracts the data model. Because of this
+the interface more closely reflects the underlying biology and not its organization
+in the database. For example, to fetch the sequence of a protein.
+</p>
+
+<p>
+<pre>
+    my $sequence = $protein->sequence;
+</pre>
+</p>
+
+<p>
+The WormBase::API also wraps some functions of Bio::DB::GFF/SeqFeatureStore
+to facilitate queries. To use WormBase::API, you'll need to know Perl 
+but will NOT need to know anything about the underlying data model.
+</p>
+
+<p>
+Checkout the code from our <a href="http://github.com/wormbase/website">Github repository</a>.
+</p>
+
+<h3>Bio::DB::GFF / Bio::DB::SeqFeatureStore</h3>
+
+<p>
+<pre>
+Description  : Perl interfaces for MySQL sequence annotation databases
+Good for     : data mining any annotation connected to the genome
+Skills       : Perl object-oriented scripting
+Advantages   : Fast to develop and run
+Drawbacks    : Doesn't cover non-sequence related annotations
+</pre>
+</p>

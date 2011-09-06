@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
- 
 [% 
 
    WRAPPER $field_block title="Homology Groups" key="homology_groups";

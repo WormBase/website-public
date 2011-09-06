@@ -7,15 +7,26 @@
 if [ ! $APP ]; then
     echo "   ---> APP is not defined; assuming a production deployment"
     export APP=production
-    export APPROOT=/usr/local/wormbase/website
+    export APP_ROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
     export PORT=5000
     export WORKERS=10
 
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:/usr/local/wormbase/website/production/lib:$PERL5LIB
+    # Configure our GBrowse App
+    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
+    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
+
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
     export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
     export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
     export PATH="/usr/local/wormbase/extlib/bin:$PATH"
+
+    # GBrowse ONLY production sites
+#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
+#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
+#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
+#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
+
     
 # Set some configuration variables.
     export WORMBASE_INSTALLATION_TYPE="production"
@@ -29,11 +40,11 @@ fi
 # Fetch local defaults
 PIDDIR=/tmp
 PIDFILE=$PIDDIR/${APP}.pid
-APPLIB=$APPROOT/$APP/WormBase
+APPLIB=$APP_ROOT/$APP/WormBase
 
 
-if [ ! -d "$APPROOT/$APP" ]; then
-    echo "\$APPROOT/$APP does not exist"
+if [ ! -d "$APP_ROOT/$APP" ]; then
+    echo "\$APP_ROOT/$APP does not exist"
     exit 1
 fi
 
@@ -73,24 +84,24 @@ check_compile() {
 _start() {
 
     echo "Launching WormBase app with the following parameters..."
-    echo "     appdir  : $APPROOT/$APP"
+    echo "     appdir  : $APP_ROOT/$APP"
     echo "     pidfile : $PIDFILE"
     echo "     workers : $WORKERS"
     echo "    max_reqs : $MAX_REQUESTS"
     echo "        port : $PORT" 
     
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
-#  --chdir $APPROOT/$APP --startas $STARMAN "$STARMAN_OPTS"
+#  --chdir $APP_ROOT/$APP --startas $STARMAN "$STARMAN_OPTS"
     
 #  /sbin/start-stop-daemon --start --pidfile $PIDFILE \
-#  --chdir $APPROOT/$APP --exec $STARMAN -- "$STARMAN_OPTS"
+#  --chdir $APP_ROOT/$APP --exec $STARMAN -- "$STARMAN_OPTS"
     
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APPROOT/$APP --exec $STARMAN -- -I$APPROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPROOT/$APP/wormbase.psgi
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi
     else
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APPROOT/$APP --exec $STARMAN -- -I$APPROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APPROOT/$APP/wormbase.psgi
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/$APP/wormbase.psgi
     fi
     
     echo ""
@@ -108,10 +119,10 @@ _start() {
     echo "   Failed. Trying again..."
     if [ $DAEMONIZE ]; then
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APPROOT/$APP --exec $STARMAN -- -I$APPROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPROOT/$APP/wormbase.psgi
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APP_ROOT/$APP/wormbase.psgi
     else
 	/sbin/start-stop-daemon --start --pidfile $PIDFILE \
-	    --chdir $APPROOT/$APP --exec $STARMAN -- -I$APPROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APPROOT/$APP/wormbase.psgi
+	    --chdir $APP_ROOT/$APP --exec $STARMAN -- -I$APP_ROOT/$APP/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS  $APP_ROOT/$APP/wormbase.psgi
     fi
     
     for i in 1 2 3 4 ; do

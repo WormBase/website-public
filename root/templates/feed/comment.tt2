@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 <div id="comment-new" class="layout-box text-width">
 <h4 style="float:right">
   <a href="javascript:void(0)" onClick='WB.goToAnchor("comment-content-[% widget %]");$jq("#comment-content-[% widget %]").focus();'>

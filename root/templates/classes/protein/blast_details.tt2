@@ -1,6 +1,7 @@
 <div class="toggle" id="blast_details_toggle" >BLAST FULL LIST</div>  
 <div  id="blast_details_dataTable">
-  [% dataTable_list(['Hit','Species','Description','E Value','Source Range','Target Range'],blast_details.data,'blast_details_dataTable') %]
+  [% dataTable_list(['Hit',
+                     'Species','Description','E Value','Source Range','Target Range'],blast_details.data,'blast_details_dataTable') %]
 </div>
 <script>
 $jq("#blast_details_toggle").toggleClass("active");

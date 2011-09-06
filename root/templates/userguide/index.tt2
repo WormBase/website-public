@@ -1,80 +1,27 @@
-<div id="userguide">
+[%
+    breadcrumbs = [];
 
-<ul id="toc"></ul>
-
-<div id="userguide-with-toc">
-<h1>Official WormBase User Guide</h1>
-
-<p></p>
-
-<h2>Available User Guides</h2>
-
-<p>We've created three user guides for different interest and experience levels.</p>
-
-<h3>Users</h3>
-
-<p>
-Most users will find something of interest in the main User's Guide 
-outlining the structure, data, and tools available to WormBase.</p>
-
-<blockquote>
-<a href="[% c.uri_for('/userguide/users') %]">User's Guide To WormBase</a>
-</blockquote>
-
-<h3>Educators</h3>
-
-<p>
-Those wishing to use WormBase in a teaching setting will find tips and 
-tricks in the Educators Guide.</p>
-
-<blockquote><a href="[% c.uri_for('/userguide/educators') %]">Educator's Guide To WormBase</a>
-</blockquote>
-
-<h3>Developers</h3>
-
-<p>Finally, those wishing to develop tools to leverage the data and infrastructure
-of WormBase should read through the Developer's Guide.</p>
-
-<blockquote>
-<a href="[% c.uri_for('/userguide/developers') %]">Developer's Guide To WormBase</a>
-</blockquote>
-
-
-<h2>Downloads</h2>
-
-  <p>
-    See the <a href="[% c.uri_for('/userguide','downloads') %]">Downloads page</a> and visit the FTP site at <a href="ftp://ftp.wormbase.org/pub/wormbase">ftp.wormbase.org</a>.
-  </p>
-
-
-
-<h2>Getting Help</h2>
-
-<p>
-Still can't find the information you're looking for? We're here to help.
-</p>
-
-<h3>Chat with us</h3>
-<p>If we're available, you can <a href="/tools/operator">chat online with a curator or developer</a>, right now!</p>
-
-<h3>Send us an email</h3>
-<p>If you prefer, you can email us at <a href="mailto:help@wormbase.org">help@wormbase.org</a>. We'll get back to you within 24 hours.</p>
-
-
-<h3>Discuss on the WormBase Forums</h3>
-<p>Post your question to other research colleagues on the <a href="http://forums.wormbase.org/">Worm Community Forums</a>.</p>
-
-
-<h2>Staying Up-To-Date</h2>
-
-<p>Do you want to stay up-to-date with new data and new features at WormBase? Here's how.</p>
-
-<ul>
-<li>Follow us on Twitter</li>
-<li>Subscribe to our low-traffic mailing list</li>
-<li>Read our blog</li>
-</ul>
-
-
-</div>
-</div>
+    IF (category=='index');
+      breadcrumbs.push('<span>Userguide</span>');
+    ELSE;
+      breadcrumbs.push('<a href="'_ c.uri_for('/userguide') _ '">Userguide</a>');
+      UNLESS object;
+        breadcrumbs.push('<span>' _ c.config.sections.$section.$class.title _ '</span>');
+      ELSE;
+        breadcrumbs.push('<a href="'
+            _ c.uri_for('/userguide',class) _ '">'
+            _ c.config.sections.$section.$class.title
+            _ '</a>');
+        breadcrumbs.push('<span>' _ object.name.data.label _ '</span>');
+      END;
+    END;
+   
+    title = breadcrumbs.join(" &raquo; ");
+    userguide_page(title = title,
+    		   widget_list => [ { overview    = 'Overview' },
+		                    { downloads   = 'Downloads' },
+				    { submit_data = 'Submit Data' },
+		   	            { staying_up_to_date = 'Stay up-to-date' },
+				      ]);
+       
+%]

@@ -1,30 +1,33 @@
-<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">  
+<!--
+<div class="ui-state-highlight ui-corner-all" style="margin: 3em; padding: 0 .7em;">   </div>
+-->
 
-<h3>
-<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
-The page you requested was not found
-</h3>
+<div id="error-box">
 
-You may have clicked an expired link or mistyped the address.
+   <h3>
+       <!--<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> -->
+       We're sorry!
+   </h3>
 
-<ul>
-<li><a href="[% c.uri_for("/") %]">Return Home</a></li>
-<li><a href = "javascript:history.back()">Go Back</a></li>
-</ul>
+   <p>
+     The web address that you entered is not a functioning page at WormBase. You
+     may have clicked an expired link or mistyped the address.
+   </p>
 
-<p>
-If you think this page SHOULD exist, copy and paste the following information and send <a href="mailto:feedback@wormbase.org">WormBase</a> an email:
-</p>
+   <p>
+     If you think this page SHOULD exist, copy and paste the following information
+     and send <a href="mailto:help@wormbase.org">WormBase</a> an email:
+   </p>
 
-<p>
-Expected URL: [% c.req.path %]<br>
-Server Error: 404 <br>
-Error Message:
-<span class="error">
-  [% FOREACH e IN c.error %]
-    [% e %]<br>
-  [% END %]
-</span>
-</p>
+   <div class="error-message-technical">
+     Requested URL: [% c.req.path %]<br>
+     Server Error: 404 <br />
+     Error Message:
+       [% c.error.join('<br />') %]
+   </div>
+
+   <p>
+       Why not go to the Wormbase <a href="[% c.uri_for("/") %]">Home Page </a> or <a href = "javascript:history.back()">return from where you came?</a>
+   </p>
 
 </div>

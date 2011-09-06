@@ -13,6 +13,10 @@ use Plack::App::CGIBin;
 use Plack::Builder;
 
 
+# The symbolic name of our application.
+my $app      = $ENV{APP};
+my $app_root = $ENV{APP_ROOT};
+
 # Want to launch several variations of your app 
 # on a single host? No problem!
 
@@ -37,7 +41,7 @@ use Plack::Builder;
 
 # 2. Or CGIBin. Still hard-coded for user.
 my $gbrowse = Plack::App::CGIBin->new(
-    root => '/usr/local/wormbase/website/tharris/root/gbrowse/cgi',
+    root => "$app_root/$app/root/gbrowse/cgi",
     )->to_app;
 
 # 3. OR just by proxy
@@ -66,14 +70,9 @@ builder {
 	enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer ModuleVersions Memory Environment) ];
     }
 
-
     # GBrowse CGIs and static files.
     mount '/tools/genome'   => $gbrowse;
-    mount "/gbrowse-static" => Plack::App::File->new(root => "/usr/local/wormbase/website/tharris/root/gbrowse");    
-
-    # Mounting GBrowse as an app
-#    mount '/gb'  => $gb2;
-#    mount '/cgi' => $gbrowse;
+    mount "/gbrowse-static" => Plack::App::File->new(root => "$app_root/$app/root/gbrowse");
 
     # Plack proxying GBrowse
 #    mount '/tools/genome' => $remote_gbrowse;

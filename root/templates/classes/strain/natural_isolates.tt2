@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 <h3>This is the widget title or subtitle; need to standardize across site or drop altogether.</h3>
 
 [% WRAPPER highlight_box %]

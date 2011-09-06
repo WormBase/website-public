@@ -1,0 +1,48 @@
+<script>
+ $jq(".issue-submit").live('click',function() {
+ $jq("#issue-submit-box").replaceWith("Issue submitted succesfully.");
+    });
+</script>
+
+
+  <div id="issues-new" class="issue-layout-box">
+
+   <h4>Search For Gene Expression</h4>
+  <br />
+
+  [% IF url %]
+    
+    <h4>Create new issue</h4>
+    [% user_login_info %]
+	<table id="issueTable" width="70%">
+		<tr>
+			<th width="10%">Title:</th>
+			<td colspan="2" ><input [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="title" maxlength="100"  type="text" name="title"  /></td>
+		</tr>
+				 
+		<tr>
+			<th width="10%">Content:</th>
+			<td colspan="2" >
+				<textarea [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="content" rows="10"     name="content"  ></textarea>
+			</td>
+		</tr>
+
+		<tr>
+		    <td></td>
+	            <td><input type='checkbox' value='yes' class="issue-is-private" id="isprivate" /> </td>
+                    <td>
+                    <div class="caveat-emptor">By default, reported issues are visible by everyone.<br />
+	              Check this box if you'd prefer to report this issue privately to WormBase staff.</div>
+                    </td>
+                
+                </tr>
+  	  </table>
+
+
+        <div id="issue-submit-box">
+	    <input type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
+        </div>
+  [% END %]
+
+   </div>
+ 

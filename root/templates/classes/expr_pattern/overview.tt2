@@ -1,6 +1,3 @@
-[% # This generic statement belongs at the start of every template %]
-[% PROCESS identify_templates(my_component=component.name) IF c.config.debug_view %]
-
 [% gene_image = fields.expression_image.data %]
 [% IF gene_image %]
 <a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>

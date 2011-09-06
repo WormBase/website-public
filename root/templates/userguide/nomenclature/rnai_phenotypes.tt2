@@ -1,0 +1,19 @@
+<h3>RNAi Phenotypes</h3>
+
+<ul>
+<li>
+Animals in which an endogenous gene has been down-regulated
+by RNA interference (RNAi), after exposure to double-stranded
+RNA corresponding to that gene, can be referred to as mutants,
+using italicized <em>RNAi</em> as the mutation name. Example: 
+<em>mog-4(RNAi)</em>, C08F8.8<em>(RNAi)</em>
+</li>
+
+<li>
+Phenotypes induced by RNAi can be named using conventional 
+mutant phenotype descriptors, such as Unc, Muv, Fem. For 
+high-throughput RNAi screens, which may detect only conspicuous
+phenotypes, the more general phenotype descriptors could be used
+(see the <a href="http://wormbase.org/db/misc/phenotype"> Phenotype Ontology</a>).
+</li>
+</ul>
