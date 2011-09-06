@@ -5,8 +5,8 @@ No outstanding issues remaining!
 <div id="results">
     <ul class="results-issues">
   [% FOREACH IS IN c.stash.issues %]
-    <div class="entry"> 
-      <li><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.issue_id) %]"> [% IF IS.re %]Re: [% END %][% IS.title %]</a></li>
+    <div class="result"> 
+      <li><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]"> [% IF IS.re %]Re: [% END %][% IS.title %]</a></li>
       [% IS.time_lapse %] by [% linkUser(IS.people) %] - [% linkPage(IS.page) %]
     </div>
   [% END %]

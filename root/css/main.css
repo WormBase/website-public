@@ -2401,20 +2401,6 @@ table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   padding: 1em;
 }
 
- 
-.entry {
-  padding:0 0 0.7em;
-/*   margin:0 0 0.5em; */
-/*   border-bottom:1px solid #EEE; */
-}
-
-.entry>h3 a{
-  color:black;
-}
-.entry>h3 a:hover{
-  color:#0000B8;
-}
-
 #operator-box-wrap{  
   position:fixed;       
   bottom:7em;
