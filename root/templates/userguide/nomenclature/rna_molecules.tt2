@@ -1,0 +1,17 @@
+<h3>RNA Molecules</h3>
+
+<ul>
+<li>
+Messenger RNA species can be written by using the protein product 
+as a descriptor, for example TRA-1A mRNA, TRA-1B mRNA, in order 
+to allow distinction between different splice variants.
+</li>
+
+<li>
+Non-coding RNA species can be written using the gene name as a 
+descriptor, for example <em>lin-4</em> RNA. Small RNA species 
+derived from <em>mir</em> genes (micro-RNAs) can be written miR-,
+followed by a number corresponding to the <em>mir</em> gene. 
+Example: miR-2 for the RNA derived from <em>mir-2</em>.
+</li>
+</ul>

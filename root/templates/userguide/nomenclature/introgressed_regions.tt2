@@ -1,0 +1,18 @@
+<h3>Introgressed regions in near-isogenic lines (aka congenic lines)</h3>
+
+<p>
+Genetic regions that have been introgressed from one natural isolate of 
+<span class="species">C. elegans</span> onto the background of a different
+natural isolate are named in a manner similar to that used for deficiencies 
+(<em>Df</em>) and duplications (<em>Dp</em>). Each Introgressed Region is 
+given an italicized name consisting of the relevant laboratory mutation 
+prefix, the letters <em>IR</em>, and a number. Thus, a region from the X 
+chromosome of Hawaiian strain CB4856 crossed onto a Bristol N2 background,
+and created in the Kruglyak lab (allele code <em>qq</em>) has been given
+the name <em>qqIR1</em>. Additional information about genetic map location 
+and strain origin can be provided in an optional parenthesis. So this 
+example could be more fully written as <em>qqIR1(X, CB4856)</em>, with 
+the implicit assumption that the strain background is Bristol N2. The 
+strain background and the direction of introgression can also be specified, 
+using the symbol &gt;, with this example being written <em>qqR1(X, CB4856&gt;N2)</em>.
+</p>

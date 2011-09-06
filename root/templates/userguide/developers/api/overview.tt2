@@ -1,0 +1,8 @@
+
+<h2>Class Index</h2>
+
+<ul>
+[% FOREACH class IN classes.sort %]
+  <li><a href="/userguide/developers/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
+[% END %]
+</ul>   

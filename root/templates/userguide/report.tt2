@@ -1,0 +1,20 @@
+[%- # This is the generic report page for species-associated entitities at WormBase -%]
+
+[% 
+      breadcrumbs = [];
+      
+      IF title;
+        breadcrumbs.push('<a href="' _ c.uri_for('/userguide') _ '">Userguide</a>');
+        title = title FILTER ucfirst;
+        title = title.replace('_', ' ');
+        breadcrumbs.push('<span>' _ title _ '</span>');
+      ELSE;
+        breadcrumbs.push('<span>Userguide</span>');
+      END;
+
+      title = breadcrumbs.join(' &raquo; ');
+      report_page(title);
+%]
+
+
+

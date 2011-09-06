@@ -1,4 +1,4 @@
-<h3>Debug Index: Available Classes</h3>
+<h3>Debug Index: Available Classes DEPRECATED SAFE TO DELETE/IGNORE</h3>
 
 [% FOREACH page IN c.config.pages.keys.sort %]
 [% SET count=0 %]

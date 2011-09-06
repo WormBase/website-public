@@ -1,0 +1,26 @@
+<h3>Strains</h3>
+
+<ul>
+<li>
+A strain is a set of individuals of a particular genotype with the
+capacity to produce more individuals of the same genotype. Strains 
+are given nonitalicized names consisting of two or three uppercase 
+letters followed by a number. The strain letter prefixes refer to 
+the laboratory of origin and are distinct from the mutation letter 
+prefixes. Examples: CB1833 is a strain of genotype <em>dpy-5(e61) unc-13(e51)</em>,
+originally constructed by S. Brenner at the MRC Laboratory of 
+Molecular Biology (strain prefix CB, allele prefix <em>e</em>), 
+and MT688 is a strain of genotype <em>unc-32(e189) +/+ lin-12(n137) III; him-5(e1467) V</em>,
+constructed in the laboratory of H.R. Horvitz at M.I.T. (strain prefix MT, allele prefix <em>n</em>).
+</li>
+
+<li>
+Strain prefixes are listed at the <a href="http://biosci.umn.edu/CGC/nomenclature/code.html">CGC</a>.
+</li>
+
+<li>
+Strains can and should be preserved as frozen stocks at -70C or ideally in
+liquid nitrogen, in order to ensure long-term maintenance and to avoid drift
+or accumulation of modifier mutations.
+</li>
+</ul>

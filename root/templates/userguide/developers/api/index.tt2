@@ -1,14 +1,13 @@
-<div id="userguide">
-<div id="userguide-without-toc">
-<h1>WormBase API Documentation</h1>
+[%
+    breadcrumbs = [];
+    breadcrumbs.push('<a href="'_ c.uri_for('/userguide') _ '">Userguide</a>');
+    breadcrumbs.push('<a href="'_ c.uri_for('/userguide','developers') _ '">Developers</a>');
+    breadcrumbs.push('<span>RESTful API</span>');
+    title = breadcrumbs.join(" &raquo; ");
+    userguide_page(title = title,
+    		   widget_list => [ { overview    = 'Overview' },
+		   	            { all_classes = 'All Classes' },
+				      ]);
+       
+%]
 
-<h2>Class Index</h2>
-
-<ul>
-[% FOREACH class IN classes.sort %]
-  <li><a href="/userguide/developers/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
-[% END %]
-</ul>   
-
-</div>
-</div>

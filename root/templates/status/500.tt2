@@ -1,8 +1,10 @@
 <div id="error-box" class="ui-state-error ui-corner-all">  
 
    <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
+
    <h3>
-      Internal Server Error
+       <!--<span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> -->
+       We're sorry!
    </h3>
 
    <p>      

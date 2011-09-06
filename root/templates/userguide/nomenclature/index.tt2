@@ -1,0 +1,25 @@
+[%
+    breadcrumbs = [];
+    breadcrumbs.push('<a href="'_ c.uri_for('/userguide') _ '">Userguide</a>');
+    breadcrumbs.push('<span>Nomenclature</span>');
+    title = breadcrumbs.join(" &raquo; ");
+    userguide_page(title = title,
+    		   widget_list => [ { overview = 'Overview' },
+		   	            { genetic_loci = 'Genetic Loci' },
+				    { transposons  = 'Transposons'   },
+				    { rflps_and_snpgs      = 'RFLPs and SNPs'  },
+				    { copy_number_variants = 'Copy Number Variants'     },
+				    { introgressed_regions = 'Introgressed Regions' },
+				    { transgenes           = 'Transgenes' },
+				    { genotypes            = 'Genotypes'  },
+				    { mitochondrial_genome = 'Mitochondrial Genome' },
+				    { dna_sequence         = 'DNA Sequence '        },
+				    { proteins             = 'Proteins'             },
+				    { rna_molecules        = 'RNA Molecules'        },
+				    { phenotypes           = 'Phenotypes'           },
+				    { rnai_phenotypes      = 'RNAi Phenotypes'      },
+				    { strains              = 'Strains'              },
+				    { sources              = 'Sources'              },
+				      ]);
+       
+%]
