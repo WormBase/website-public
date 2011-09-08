@@ -360,14 +360,6 @@
         div.filter(":hidden").empty().load(url);
         div.slideToggle('fast');
       });
-      
-      var st = $jq(".star-tutorial"); 
-      if(st.size()>0){
-        st.click(function(){ 
-          st.toggleClass("star-selected"); 
-          window.location.hash = '01-42-6';
-        });
-      }
     }
     
     function effects(){
