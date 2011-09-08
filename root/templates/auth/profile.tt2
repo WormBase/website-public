@@ -85,7 +85,7 @@
 
       	       '<td><img src="/img/dots/' _ img _ '" height="20px" alt="status: linked" /></td>';
                '<td><div class="social">';
-               '<button class="social_buttons sb_' _ site _ ' sb_24" onClick="openid.signin(\'' _ site _ '\');return false;">';
+               '<button class="social_buttons sb_' _ site _ ' sb_24" onClick="WB.openid.signin(\'' _ site _ '\');return false;">';
                '<span>' _ title _ '</span></button></div>';
 	       '</td>';
                '<td><a href="' _ profile _ '"><img src="' _ avatar _ '" /></a></td>';
