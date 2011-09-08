@@ -437,17 +437,16 @@
       });
       
       content.delegate(".bench-update", 'click', function(){
-        var wbid     = $jq(this).attr("wbid"),
-            $class     = $jq(this).attr("objclass"),
-            label     = $jq(this).attr("name"),
-            obj_url  = $jq(this).attr("url"),
-            is_obj  = $jq(this).attr("is_obj"),
-            url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
+        var update = $jq(this),
+            wbid = update.attr("wbid"),
+            save_to = update.attr("save_to"),
+            url = update.attr("ref") + '?name=' + escape(update.attr("name")) + "&url=" + escape(update.attr("href")) + "&save_to=" + save_to + "&is_obj=" + update.attr("is_obj"),
+            con = $jq("div#" + save_to + "-content");
+        $jq(".workbench-status-" + wbid).find("#save").toggleClass("ui-icon-star-yellow ui-icon-star-gray");
         $jq("#bench-status").load(url, function(){
-          $jq(".workbench-status-" + wbid).find(".ui-icon-stars").toggleClass("ui-icon-star-yellow").toggleClass("ui-icon-star-gray");
-          $class != "paper" ? ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1) : ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
+          if(con.text().length > 3){ ajaxGet(con, "/rest/widget/me/" + save_to, 1); }
         });
-      return false;
+        return false;
       });
     }
     
