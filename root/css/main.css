@@ -491,6 +491,19 @@ div#tutorial-right{
   z-index:-1;
 }
 
+div.star-tutorial{
+  height:110px;
+  width:170px;
+  position:absolute;
+  right:59px;
+  bottom:16px;
+  cursor:pointer;
+}
+
+div.star-tutorial:hover, .star-selected{
+  background-image:url('/img/home-yellow.png');
+}
+
 div#splash-box>p{
   margin:-0.2em 0 1em 0.6em;
   margin-left:1.5em;
