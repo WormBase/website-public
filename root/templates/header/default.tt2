@@ -69,14 +69,15 @@
             [% IF option == 'title'; NEXT; END; %]
 			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
-            <li>[% IF option == 'operator' %]
-		     <a id="[% option %]" href="#"  
-			[% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
-			  rel="redirect" 
-			[%  END  %]
-		      > 
-		[% ELSE %]<a href="/[% title %]/[% option %]"> 
-		[% END %]
+            <li>
+              [% IF option == 'operator' %]
+                <a id="[% option %]" href="#"  
+                  [% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
+                    rel="redirect" 
+                  [%  END  %]
+                > 
+              [% ELSE %]<a href="[% c.config.sections.$title.$option.url || title _ '/' _ option %]"> 
+              [% END %]
 		[% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
           [% END %]
         [% END %]

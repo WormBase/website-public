@@ -414,7 +414,6 @@ sub download_GET {
     $filename =~ s/\s/_/g;
     $c->response->header('Content-Type' => 'text/html');
     $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
     $c->response->body($c->req->param("sequence"));
 }
 

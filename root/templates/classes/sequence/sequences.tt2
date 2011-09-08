@@ -7,7 +7,7 @@
 	'<div class="sequence-section" >';
       '<div class="sequence-download">';
           '<form action="/rest/download/">';
-            '<input type="hidden" name="type" value="' _ data.$key.header _ '.fa" >';
+            '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >';
             ' <input type="hidden" name="sequence" value="' _ data.$key.content.remove('<span.*?>|</span>') _ '" >';
             '<input type="submit" value="download">';
           '</form>';
