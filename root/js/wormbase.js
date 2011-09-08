@@ -444,7 +444,7 @@
             is_obj  = $jq(this).attr("is_obj"),
             url     = $jq(this).attr("href") + '?name=' + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj;
         $jq("#bench-status").load(url, function(){
-          ajaxGet($jq(".workbench-status-" + wbid), "/rest/workbench/star?wbid=" + wbid + "&name=" + escape(label) + "&class=" + $class + "&url=" + obj_url + "&is_obj=" + is_obj, 1);
+          $jq(".workbench-status-" + wbid).find(".ui-icon-stars").toggleClass("ui-icon-star-yellow").toggleClass("ui-icon-star-gray");
           $class != "paper" ? ajaxGet($jq("div#reports-content"), "/rest/widget/me/reports", 1) : ajaxGet($jq("div#my_library-content"), "/rest/widget/me/my_library", 1);
         });
       return false;
