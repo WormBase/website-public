@@ -18,7 +18,7 @@
     [% END %]
     [% IF tutorial %]
     <a href="/?tutorial_off=1" style="position:absolute;height: 25px;width: 150px;left:300px;bottom: 10px;"></a>
-    <div class="star-tutorial bench-update" wbid="example" href="/rest/workbench" name="example" objclass="page" is_obj="" url="%2F" onClick='$jq(this).toggleClass("star-selected"); window.location.hash = "01-42-6";'></div>
+    <div class="star-tutorial bench-update" wbid="example" ref="/rest/workbench" name="example" save_to="reports" is_obj="" href="%2F" onClick='$jq(this).toggleClass("star-selected"); window.location.hash = "01-42-6";'></div>
     <div id="tutorial-left"></div>
     <div id="tutorial-right"></div>
 [%  c.user_session.tutorial = c.user_session.tutorial + 1 %]

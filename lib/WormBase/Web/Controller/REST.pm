@@ -99,16 +99,10 @@ sub workbench_GET {
 
     my $url = $c->req->params->{url};
     if($url){
-      my $class = $c->req->params->{class};
       my $save_to = $c->req->params->{save_to};
       my $is_obj = $c->req->params->{is_obj} || 0;
-#       $c->stash->{is_obj} = $is_obj;
-      my $loc = "saved reports";
-      $save_to = 'reports' unless $save_to;
-      if ($class eq 'paper') {
-        $loc = "library";
-        $save_to = 'my_library';
-      }
+
+      my $loc = $save_to eq 'reports' ?  "favourites" : "library";
       my $name = $c->req->params->{name};
 
       my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
@@ -123,9 +117,8 @@ sub workbench_GET {
       }
     }
     $c->stash->{noboiler} = 1;
-    my $count = $session->pages->count;
-    $c->stash->{count} = $count || 0;
-$c->response->headers->expires(time);
+    $c->stash->{count} = $session->pages->count || 0;
+    $c->response->headers->expires(time);
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
@@ -144,12 +137,12 @@ sub workbench_star_GET{
     }
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
     $c->stash->{star}->{name} = $c->req->params->{name};
-    $c->stash->{star}->{class} = $c->req->params->{class};
+    $c->stash->{star}->{save_to} = $c->req->params->{class} eq 'paper' ?  "my_library" : "reports";
     $c->stash->{star}->{url} = $url;
     $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
-$c->response->headers->expires(time);
+    $c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
