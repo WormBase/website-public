@@ -20,14 +20,14 @@
     <!-- we use the (non-free) prototip2 library to add tooltips. It's not free, but
          nearly. The domain graphics code should cope if it's not loaded, so you
          could just omit the prototip load -->
-    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/prototip.js"></script>
+<!--     <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/prototip.js"></script> -->
 
     <!-- prototip allows for configuring a "style", which is done here -->
-    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/tip_definition.js"></script>
+<!--     <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/tip_definition.js"></script> -->
 
     <!-- stylesheets. We only really need the rules that are specific to the tooltips -->
     <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/pfam.css" type="text/css" />
-    <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/prototip.css" type="text/css" />
+<!--     <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/prototip.css" type="text/css" /> -->
 
     <!-- IE, being IE, needs extra help. In particular we need to add an extra library
          that implements <canvas> using the VML drawing layer in IE. And, so that 

@@ -38,7 +38,6 @@
        </a>
   </div>   
 [% END %]
-   
 
 
 [% best_blastp_matches %]
