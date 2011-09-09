@@ -294,6 +294,7 @@
           $jq(content).parents("li").removeClass("visible"); 
         }
         updateLayout();
+        Scrolling.sidebarMove();
         return false;
       });
       
@@ -917,7 +918,8 @@
     }
     
     function goToAnchor(anchor){
-      document.getElementById(anchor).scrollIntoView(true);
+      document.getElementById(anchor).scrollIntoView(false);
+      Scrolling.sidebarMove();
     }
 
     function newLayout(layout){
@@ -1049,25 +1051,19 @@
 var Scrolling = (function(){
   var $window = $jq(window),
       system_message = 0,
-      static = 0;// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
-  
+      static = 0,// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
+      sidebar,
+      offset,
+      widgetHolder,
+      count = 0, //semaphore
+      titles;
+                 
   function resetSidebar(){
     static = 0;
     $jq("#navigation").stop().css('position', 'relative').css('top', 0);
   }
-
-  function sidebarInit(){
-    var sidebar   = $jq("#navigation"),
-        offset = sidebar.offset().top,
-        widgetHolder = $jq("#widget-holder"),
-        count = 0, //semaphore
-        titles;
-        
-    sidebar.find(".title").click(function(){
-      $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
-    }); 
-    
-    $window.scroll(function() {
+  
+  function sidebarMove() {
       if(sidebar.offset()){
         var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
             scrollTop = $window.scrollTop(),
@@ -1095,12 +1091,25 @@ var Scrolling = (function(){
           if(sidebar.outerHeight() < widgetHolder.height()){
             //close lowest section. delay for animation. Add counting semaphore to lock
             count++;
-            titles.last().parent().click().delay(250).queue(function(){ count--; });
+            titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
           }else{
             sidebar.stop().css('position', 'relative').css('top', 0);
           }
         }
       } 
+    }
+  
+  function sidebarInit(){
+    sidebar   = $jq("#navigation");
+    offset = sidebar.offset().top;
+    widgetHolder = $jq("#widget-holder");
+        
+    sidebar.find(".title").click(function(){
+      $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
+    }); 
+    
+    $window.scroll(function() {
+      Scrolling.sidebarMove();
     });
   }
   
@@ -1127,6 +1136,7 @@ var Scrolling = (function(){
     sidebarInit:sidebarInit,
     search:search,
     set_system_message:set_system_message, 
+    sidebarMove: sidebarMove,
     resetSidebar:resetSidebar
   }
 })();
