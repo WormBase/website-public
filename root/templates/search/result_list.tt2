@@ -8,12 +8,11 @@
 [% END %]
 [% FOREACH item IN results %]
 
- [%# UNLESS c.stash.bench %]<div class="result [% UNLESS nostar %]tip-simple star[% END %]" tip="save">[% #END %]
+ <div class="result [% UNLESS nostar %]tip-simple star[% END %]" tip="save">
  [% class = item.name.class %]
  [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
  [% result_class = c.config.sections.species.$class.title || c.config.sections.resources.$class.title FILTER lower %]
  [% UNLESS result_class; result_class = 'page'; END; %]
-
   <li>
           [% wbid = item.name.id.remove('[:/ &\.\[\]]') %]
           [% IF class == 'page'; is_obj = 0; ELSE; is_obj = 1; END; %]
