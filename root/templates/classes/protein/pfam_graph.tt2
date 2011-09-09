@@ -2,20 +2,20 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
     <script type="text/javascript">google.load("prototype", "1.6.1");</script>
 
     <!-- the following libraries are all hosted on the Pfam site, but can obviously be
          retrieved and served locally -->
 
     <!-- the domain graphics library -->
-    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/domain_graphics.js"></script>
+    <script type="text/javascript" src="/js/pfam/domain_graphics.js"></script>
 
     <!-- in order to standardize the look of text, and in order to make it work at
          all in older browsers (and IE), we need the canvas text library. And, in turn,
          that library uses a font description in a separate javascript file -->
-    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/canvas.text.js?reimplement=true&amp;dontUseMoz=true"></script>
-    <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/faces/optimer-bold-normal.js"></script>
+    <script type="text/javascript" src="/js/pfam/canvas.text.js?reimplement=true&amp;dontUseMoz=true"></script>
+    <script type="text/javascript" src="/js/pfam/optimer-bold-normal.js"></script>
 
     <!-- we use the (non-free) prototip2 library to add tooltips. It's not free, but
          nearly. The domain graphics code should cope if it's not loaded, so you
@@ -26,7 +26,7 @@
 <!--     <script type="text/javascript" src="http://pfam.sanger.ac.uk/static/javascripts/tip_definition.js"></script> -->
 
     <!-- stylesheets. We only really need the rules that are specific to the tooltips -->
-    <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/pfam.css" type="text/css" />
+    <link rel="stylesheet" href="/js/pfam/pfam.css" type="text/css" />
 <!--     <link rel="stylesheet" href="http://pfam.sanger.ac.uk/static/css/prototip.css" type="text/css" /> -->
 
     <!-- IE, being IE, needs extra help. In particular we need to add an extra library
