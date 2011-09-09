@@ -99,22 +99,19 @@ sub workbench_GET {
 
     my $url = $c->req->params->{url};
     if($url){
-      my $save_to = $c->req->params->{save_to};
+      my $save_to = $c->req->params->{save_to} || 'reports';
       my $is_obj = $c->req->params->{is_obj} || 0;
-
-      my $loc = $save_to eq 'reports' ?  "favourites" : "library";
       my $name = $c->req->params->{name};
 
       my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
-            $c->stash->{notify} = "$name has been removed from your $loc";
             $saved->delete();
             $saved->update(); 
       } else{
-            $c->stash->{notify} = "$name has been added to your $loc"; 
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
+      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library"); 
     }
     $c->stash->{noboiler} = 1;
     $c->stash->{count} = $session->pages->count || 0;
@@ -131,7 +128,7 @@ sub workbench_star_GET{
     my $page = $self->get_session($c)->pages->find({url=>$url});
 
     if($page) {
-          $c->stash->{star}->{value} = 1;
+        $c->stash->{star}->{value} = 1;
     } else{
         $c->stash->{star}->{value} = 0;
     }
@@ -1512,7 +1509,7 @@ sub widget_me_GET {
     my $api = $c->model('WormBaseAPI');
     my $type;
     $c->stash->{'bench'} = 1;
-$c->response->headers->expires(time);
+    $c->response->headers->expires(time);
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
@@ -1529,8 +1526,6 @@ $c->response->headers->expires(time);
 
     my $session = $self->get_session($c);
     my @reports = $session->user_saved->search({save_to => $widget});
-#     $c->log->debug("getting saved reports @reports for user $session->id");  
-
     my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
     $c->stash->{'results'} = \@ret;
