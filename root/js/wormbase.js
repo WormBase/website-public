@@ -337,17 +337,14 @@
       widgetHolder.find(".module-min").click(function() {
         var module = $jq("#" + $jq(this).attr("wname") + "-content"),
             button = $jq(this);
-        module.next().slideToggle("fast");
-        module.slideToggle("fast");
-        button.parent().toggleClass("minimized");
-        if (button.attr("show") != 1){
+            
+        module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
+        button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
+        
+        if (button.attr("title") != "maximize"){
           button.attr("show", 1).attr("title", "maximize");
-          button.removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-triangle-1-s");
-          button.addClass("ui-icon-circle-triangle-e");
         }else{
           button.attr("show", 0).attr("title", "minimize");
-          button.removeClass("ui-icon-circle-triangle-e");
-          button.addClass("ui-icon-circle-triangle-s");
         }
       });
       
@@ -356,8 +353,8 @@
       });
       
       $jq(".feed").click(function() {
-        var url=$jq(this).attr("rel");
-        var div=$jq(this).parent().next("#widget-feed");
+        var url=$jq(this).attr("rel"),
+            div=$jq(this).parent().next("#widget-feed");
         div.filter(":hidden").empty().load(url);
         div.slideToggle('fast');
       });
@@ -727,9 +724,11 @@
           var msg = "Sorry but there was an error: ";
           $jq(this).html(msg + xhr.status + " " + xhr.statusText);
         }
+        Scrolling.sidebarMove();
       });
       div.appendTo($jq(this).parent().children("ul"));
       loadcount++;
+      Scrolling.sidebarMove();
     });
     
   }
@@ -739,10 +738,15 @@
     allSearch.empty(); 
     ajaxGet(allSearch, url);
     loadcount = 0;
-    $jq(window).scrollTop(0);
+    scrollToTop();
     $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
-    Scrolling.resetSidebar();
     return false;
+  }
+  
+  function scrollToTop(){
+    $jq(window).scrollTop(0);
+    Scrolling.resetSidebar();
+    return undefined;
   }
   
   function allResults(type, species, query){
@@ -771,11 +775,6 @@
     }catch(err){}
   }
 
-
-
-
- 
-
    
     function openWidget(widget_name, nav, content, column){
         var content = $jq(content),
@@ -785,7 +784,7 @@
         addWidgetEffects(content.parent(".widget-container"));
 
         if(content.text().length < 4){
-          ajaxGet(content, url);
+          ajaxGet(content, url, undefined, function(){ Scrolling.sidebarMove();});
         }
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
@@ -918,8 +917,19 @@
     }
     
     function goToAnchor(anchor){
-      document.getElementById(anchor).scrollIntoView(false);
-      Scrolling.sidebarMove();
+      var elem = document.getElementById(anchor);
+      if(!(isScrolledIntoView(elem))){
+        elem.scrollIntoView(false);
+        Scrolling.sidebarMove();
+      }
+    }
+    
+    function isScrolledIntoView(elem){
+        var docViewTop = $jq(window).scrollTop(),
+            docViewBottom = docViewTop + $jq(window).height(),
+            elemTop = $jq(elem).offset().top,
+            elemBottom = elemTop + $jq(elem).height();
+        return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
     }
 
     function newLayout(layout){
@@ -1068,7 +1078,11 @@ var Scrolling = (function(){
         var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
             scrollTop = $window.scrollTop(),
             maxScroll = $jq(document).height() - (sidebar.outerHeight() + $jq("#footer").outerHeight() + system_message + 20); //the 20 is for padding before footer
-          
+
+        if(sidebar.outerHeight() > widgetHolder.height()){
+            resetSidebar();
+            return;
+        }
         if (objSmallerThanWindow){
           if(static==0){
             if ((scrollTop > offset) && (scrollTop < maxScroll)) {
@@ -1087,14 +1101,9 @@ var Scrolling = (function(){
             }
           }
         }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
-          // try to make the sidebar smaller
-          if(sidebar.outerHeight() < widgetHolder.height()){
-            //close lowest section. delay for animation. Add counting semaphore to lock
-            count++;
-            titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
-          }else{
-            sidebar.stop().css('position', 'relative').css('top', 0);
-          }
+          //close lowest section. delay for animation. Add counting semaphore to lock
+          count++;
+          titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
         }
       } 
     }
@@ -1132,7 +1141,7 @@ var Scrolling = (function(){
     system_message = val;
   }
   
-  return{
+  return {
     sidebarInit:sidebarInit,
     search:search,
     set_system_message:set_system_message, 
@@ -1589,7 +1598,8 @@ var Scrolling = (function(){
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
-      effects: effects
+      effects: effects,
+      scrollToTop: scrollToTop
     }
   })();
 

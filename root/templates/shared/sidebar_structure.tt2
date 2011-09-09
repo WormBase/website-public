@@ -81,7 +81,7 @@
           <div class="workbench-status-[% wbid %]"></div>
         [% END %]
         [% IF object %]
-          <h4 class="ellipsis">[% tag2link(object.name.data) %]</h4>
+          <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">[% tag2link(object.name.data) %]</h4>
         [% ELSE %]
           <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
         [% END %]
