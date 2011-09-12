@@ -123,7 +123,6 @@
   </div>
   </div>
 
-
   <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]"
 
 
@@ -141,10 +140,19 @@
         defaults = defaults.unique;
        %]
 
-        [% UNLESS defaults.first %]
-          [% IF overview %]
+        [% IF static_widgets %]
+          data-layout='{"leftlist": ["
+            [% swidgets = [];
+              FOREACH widget IN static_widgets.sort(widget_order); 
+                swidgets.push('static-widget-' _ widget.widget_id);
+              END;
+              swidgets.join('", "')
+            %]
+            "]}'
+        [% ELSIF !(defaults.first) %]
+          [% IF (overview==1) %]
             data-layout='{"leftlist":["overview"]}'
-          [% ELSIF is_class_index %]
+          [% ELSIF (is_class_index && !is_static) %]
             data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
           [% END %]
         [% ELSE %]

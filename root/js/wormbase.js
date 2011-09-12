@@ -992,9 +992,9 @@
     }
    
     function openAllWidgets(noTools){
-      var hash = "";
-      var length = noTools ? widgetList.list.length - 3 - ($jq("#navigation").find(".tools").size()) : widgetList.list.length-3;
-      for(i=0; i<(length); i++){
+      var hash = "",
+          tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
+      for(i=0; i<(widgetList.list.length - 3 - tools); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
