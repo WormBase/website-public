@@ -15,9 +15,9 @@
 [% PROCESS page_info %]
       [% save = 'reports' %]
       [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
-[% wbid = object.name.data.id.remove('[:/ &\.\[\]]') %]
+[% wbid = this_object_id.remove('[:/ &\.\[\]]') %]
 [% label = label.remove('[\'"]') %]
-<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]" }'>
+<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid || class %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]" }'>
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
