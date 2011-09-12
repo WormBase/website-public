@@ -262,6 +262,8 @@
         readHash();
       }else if(layout = widgetHolder.data("layout")){
         resetPageLayout(layout);
+      }else{
+        openAllWidgets(true);
       }
       
       if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
@@ -989,9 +991,10 @@
         return widgetList.list.indexOf(widget_name).toString(36);
     }
    
-    function openAllWidgets(){
+    function openAllWidgets(noTools){
       var hash = "";
-      for(i=0; i<(widgetList.list.length-3); i++){
+      var length = noTools ? widgetList.list.length - 3 - ($jq("#navigation").find(".tools").size()) : widgetList.list.length-3;
+      for(i=0; i<(length); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
