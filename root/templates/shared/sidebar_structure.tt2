@@ -144,7 +144,7 @@
         [% UNLESS defaults.first %]
           [% IF overview %]
             data-layout='{"leftlist":["overview"]}'
-          [% ELSE %]
+          [% ELSIF is_class_index %]
             data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
           [% END %]
         [% ELSE %]
