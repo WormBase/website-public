@@ -61,7 +61,7 @@ sub species_index :Path('/species') :Args(1)   {
       $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
       $c->stash->{class}      = 'all';
       $c->stash->{is_class_index} = 1;   # 0? 
-      $c->stash->{is_static}      = 1;	 # Disable widgets like "browse" and "search" 
+#       $c->stash->{is_static}      = 1;	 # Disable widgets like "browse" and "search" 
       $c->stash->{species}    = $species;           # Class is the subsection	
       $c->stash->{template}   = 'species/report.tt2';
     } else {
