@@ -289,13 +289,17 @@
           }else{
             $jq(content).parents("li").addClass("visible");
             nav.addClass("ui-selected");
+            moduleMin($jq(content).prev().find(".module-min"), false, "maximize");
           }
           goToAnchor(widget_name);
+          updateLayout();
         } else {
-          nav.removeClass("ui-selected");
-          $jq(content).parents("li").removeClass("visible"); 
+          moduleMin($jq(content).prev().find(".module-min"), false, "minimize", function(){
+            nav.removeClass("ui-selected");
+            $jq(content).parents("li").removeClass("visible"); 
+            updateLayout();
+          });
         }
-        updateLayout();
         Scrolling.sidebarMove();
         return false;
       });
@@ -338,17 +342,6 @@
       
       widgetHolder.find(".module-min").click(function() {
         moduleMin($jq(this), true);
-//         var module = $jq("#" + $jq(this).attr("wname") + "-content"),
-//             button = $jq(this);
-//             
-//         module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
-//         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
-//         
-//         if (button.attr("title") != "maximize"){
-//           button.attr("show", 1).attr("title", "maximize");
-//         }else{
-//           button.attr("show", 0).attr("title", "minimize");
-//         }
       });
       
       
@@ -453,17 +446,16 @@
       });
     }
     
-    function moduleMin(button, hover){
-        var module = $jq("#" + button.attr("wname") + "-content");
-            
-        module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
-        button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
-        hover ? button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s") : button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e");
-        if (button.attr("title") != "maximize"){
-          button.attr("show", 1).attr("title", "maximize");
-        }else{
-          button.attr("show", 0).attr("title", "minimize");
-        }
+    function moduleMin(button, hover, direction, callback) {
+      var module = $jq("#" + button.attr("wname") + "-content");
+      if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
+      module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
+      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
+      if(hover){ 
+        module.next().slideToggle("fast"); 
+        button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
+      }
+      (button.attr("title") != "maximize") ? button.attr("show", 1).attr("title", "maximize") : button.attr("show", 0).attr("title", "minimize");
     }
     
 
@@ -803,8 +795,8 @@
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){ Scrolling.sidebarMove();});
-          moduleMin(content.prev().find(".module-min"));
         }
+        moduleMin(content.prev().find(".module-min"), false, "maximize");
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
         return false;
@@ -822,7 +814,7 @@
     
       
   function addWidgetEffects(widget_container, callback) {
-      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "maximize");
+      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-e").attr("title", "maximize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
       widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
       widget_container.find("#widget-footer").hide();
@@ -938,7 +930,7 @@
     function goToAnchor(anchor){
       var elem = document.getElementById(anchor);
       if(!(isScrolledIntoView(elem))){
-        elem.scrollIntoView(false);
+        elem.scrollIntoView();
         Scrolling.sidebarMove();
       }
     }
@@ -1110,7 +1102,7 @@ var Scrolling = (function(){
                 sidebar.stop().css('position', 'fixed').css('top', system_message);
                 static++;
             }else if(scrollTop > maxScroll){
-                sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
+                sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
             }
           }else{
             if (scrollTop < offset) {
