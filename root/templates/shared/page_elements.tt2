@@ -605,7 +605,7 @@ END;
                     <div class="module-close" wname="[% id %]" title="close"></div>
 [% IF 0 %]                     <div class="module-max" wname="[% id %]" title="pop out"></div>
 [% END %]              
-                    <h3><div class="module-min" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
+                    <h3 class="minimized"><div class="module-min" wname="[% id %]" show="0"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
                     </h3>

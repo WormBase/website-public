@@ -1428,6 +1428,7 @@ li.visible div.widget-container {
   list-style:disc outside none;
   clear:both;
   font-size:0.9em;
+  display:none;
 }
 
 
