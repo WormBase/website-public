@@ -108,8 +108,7 @@ sub draw :Path("/draw") Args(1) {
             uuid       => $uuid,
         });
 
-        if (1) {
-        #unless($cached_img) {  # not cached -- make new image and cache
+        unless($cached_img) {  # not cached -- make new image and cache
             # the following line is a security risk
             my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
                        . "/".$params->{id} . "." . $format;
