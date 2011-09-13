@@ -337,19 +337,22 @@
       });
       
       widgetHolder.find(".module-min").click(function() {
-        var module = $jq("#" + $jq(this).attr("wname") + "-content"),
-            button = $jq(this);
-            
-        module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
-        button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
-        
-        if (button.attr("title") != "maximize"){
-          button.attr("show", 1).attr("title", "maximize");
-        }else{
-          button.attr("show", 0).attr("title", "minimize");
-        }
+        moduleMin($jq(this), true);
+//         var module = $jq("#" + $jq(this).attr("wname") + "-content"),
+//             button = $jq(this);
+//             
+//         module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
+//         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
+//         
+//         if (button.attr("title") != "maximize"){
+//           button.attr("show", 1).attr("title", "maximize");
+//         }else{
+//           button.attr("show", 0).attr("title", "minimize");
+//         }
       });
       
+      
+
       widgetHolder.find(".reload").click(function() {
         reloadWidget($jq(this).attr("wname"));
       });
@@ -448,6 +451,19 @@
         });
         return false;
       });
+    }
+    
+    function moduleMin(button, hover){
+        var module = $jq("#" + button.attr("wname") + "-content");
+            
+        module.slideToggle("fast").next().slideToggle("fast", function(){Scrolling.sidebarMove();});
+        button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
+        hover ? button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s") : button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e");
+        if (button.attr("title") != "maximize"){
+          button.attr("show", 1).attr("title", "maximize");
+        }else{
+          button.attr("show", 0).attr("title", "minimize");
+        }
     }
     
 
@@ -783,10 +799,11 @@
             url     = nav.attr("href");
             
         content.closest("li").appendTo($jq("#widget-holder").children(column));
-        addWidgetEffects(content.parent(".widget-container"));
 
         if(content.text().length < 4){
+          addWidgetEffects(content.parent(".widget-container"));
           ajaxGet(content, url, undefined, function(){ Scrolling.sidebarMove();});
+          moduleMin(content.prev().find(".module-min"));
         }
         nav.addClass("ui-selected");
         content.parents("li").addClass("visible");
@@ -804,8 +821,8 @@
     
     
       
-  function addWidgetEffects(widget_container) {
-      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
+  function addWidgetEffects(widget_container, callback) {
+      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "maximize");
       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
       widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
       widget_container.find("#widget-footer").hide();
@@ -994,6 +1011,7 @@
     function openAllWidgets(noTools){
       var hash = "",
           tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
+      if(widgetList.list.length == 0){ return; }
       for(i=0; i<(widgetList.list.length - 3 - tools); i++){
         hash = hash + (i.toString(36));
       }
