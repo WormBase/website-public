@@ -470,8 +470,9 @@ div#splash-box.tutorial{
 }
 
 div#tutorial-left{
-  background-image:url('/img/tutorial-left.png');
+  background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
+  background-position: -235px 0;
   width:700px;
   height:10em;
   position:absolute;
@@ -481,14 +482,19 @@ div#tutorial-left{
 }
 
 div#tutorial-right{
-  background-image:url('/img/tutorial-right.png');
+  background-image:url('/img/tutorial.png');
+  background-repeat:no-repeat;
   position:absolute;
   right:1.5em;
   top:0.5em;
   background-repeat:no-repeat;
-  width:250px;
+  width:229px;
   height:9em;
   z-index:-1;
+}
+
+#skip-tutorial:hover{
+  background:url('/img/home-arrow.png') no-repeat 110px 10px;
 }
 
 div.star-tutorial{

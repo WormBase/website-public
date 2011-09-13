@@ -1291,7 +1291,7 @@ END;
         section_fetch = c.config.sections.$section;
     END;
   ELSE;
-    SET this_object_id    = object.name.data.id || 'all';
+    SET this_object_id    = object.name.data.id || class || 'all';
     SET this_object_label = object.name.data.label || 'all';
     arg1 = class;
     section_fetch = c.config.sections.$section.$class;
@@ -1304,11 +1304,12 @@ END;
 
   # Get the default (configuration provided) list of widgets.
   widget_list = section_fetch.widgets.keys.sort;
-  ov_list = widget_list.grep('^overview$');
-  FOREACH ov_list;
+
+  displayed_widgets = [];
+  FOREACH widget_list.grep('^overview$');
     widget_list.unshift('overview');
   END;
-  IF ov_list.size > 0; overview = 1; END;
+
   widget_list = widget_list.unique;
 
   FOREACH widget_name IN widget_list;
@@ -1322,6 +1323,7 @@ END;
     ELSE;
         NEXT IF widget.display == "index";
     END;
+    displayed_widgets.push(widget_name);
 
     w = {  id    = widget_name
             title = widget.title
@@ -1332,6 +1334,10 @@ END;
     widgets.push(w);
     END;
   END;
+  displayed_widgets = displayed_widgets.grep('^overview$');
+  IF displayed_widgets.size > 0; overview = 1; END;
+
+  add_static_widgets;
 
   # is_static refers to pages that don't handle objects (/resources/reagents)
   IF is_class_index && !is_static;
@@ -1349,8 +1355,6 @@ END;
             });
     END;
   END;
-
-  add_static_widgets;
 
   # Add tools.
   tool_list = section_fetch.tools.keys.sort || [];

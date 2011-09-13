@@ -17,7 +17,7 @@
       [% IF object.name.data.class.match('paper'); save = 'my_library'; END; %]
 [% wbid = object.name.data.id.remove('[:/ &\.\[\]]') %]
 [% label = label.remove('[\'"]') %]
-<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]" }'>
+<div id="header" data-page='{"ref": "[% url %]", "wbid": "[% wbid || class %]", "name": "[% label | uri %]", "id" : "[% object.name.data.id | uri %]", "class" : "[% object.name.data.class FILTER lower %]", "type" : "[% c.stash.section | uri %]", "is_obj": "[% is_obj %]", "save": "[% save %]" }'>
 
   [% PROCESS "boilerplate/search_bar.tt2" %]
 
@@ -76,7 +76,7 @@
                     rel="redirect" 
                   [%  END  %]
                 > 
-              [% ELSE %]<a href="[% c.config.sections.$title.$option.url || title _ '/' _ option %]"> 
+              [% ELSE %]<a href="[% c.config.sections.$title.$option.url || '/' _ title _ '/' _ option %]"> 
               [% END %]
 		[% IF title == 'resources'; pluralize(c.config.sections.$title.$option.title); ELSE; c.config.sections.$title.$option.title; END; %]</a></li>
           [% END %]
