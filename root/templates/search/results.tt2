@@ -34,14 +34,14 @@
     [% END %]
 </div>
 
-<script>
-    var sr[% IF widget; widget ; END;%] = { 
-      init: function(){
-        this.search = new WB.SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]', '[% nostar || 0%]');
-        this.search.setTotal([% c.stash.count %]);
-      }
-    }
-    sr[% IF widget; widget ; END;%].init();
 
+<script async>
+    $jq(".results-[% type %]").find(".load-star").each(function(){
+      $jq(this).load($jq(this).attr("href"));
+    });
+    [% IF (count && count > 10) %]
+        WB.SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]', '[% nostar || 0 %]', '[% count %]');
+    [% END %]
 </script>
+
 <!-- End result list -->

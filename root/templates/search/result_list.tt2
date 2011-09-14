@@ -1,9 +1,6 @@
 
-
+<div id="page-count" data-count="[% c.stash.count %]"></div>
 [% IF (page && page > 1) %]
-  <script>
-  sr[% IF widget; widget ; END;%].search.setTotal([% c.stash.count %]);
-  </script>
  [% IF results.size > 0 %]<br /><b style="padding-left:0.5em;">Page [% page %] </b>[% END %]
 [% END %]
 [% FOREACH item IN results %]
@@ -15,10 +12,11 @@
   <li>
         [% UNLESS nostar %]
           [% wbid = get_star_id(item.name.id) %]
-          [% make_star(wbid) %]
-          <script>
-          $jq(".workbench-status-[% wbid %]").load("/rest/workbench/star?wbid=[% wbid %]&name=[% item.name.label | uri %]&class=[% item.name.class FILTER lower %]&url=[% (item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy)) | uri %]&is_obj=[% class == 'page' ? 0 : 1 %]");
-          </script>
+          [%  name = item.name.label | uri; 
+              class = item.name.class | lower; 
+              url = item.name.url || get_url(item.name.class, item.name.id, item.name.taxonomy) | uri; %]
+          [% href = "/rest/workbench/star?wbid=" _ wbid _ "&name=" _ name _ "&class=" _ class _ "&url=" _ url _ "&is_obj=" _ (class == 'page' ? 0 : 1) %]
+          [% make_star(wbid, href) %]
         [% END %]
  
 

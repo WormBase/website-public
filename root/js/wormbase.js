@@ -57,7 +57,7 @@
       comment.init(pageInfo);
       issue.init(pageInfo);
         
-      if($jq(".workbench-status-" + pageInfo['wbid']).size()>0){$jq(".workbench-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
+      if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
       
@@ -438,7 +438,7 @@
             save_to = update.attr("save_to"),
             url = update.attr("ref") + '?name=' + escape(update.attr("name")) + "&url=" + escape(update.attr("href")) + "&save_to=" + save_to + "&is_obj=" + update.attr("is_obj"),
             con = $jq("div#" + save_to + "-content");
-        $jq(".workbench-status-" + wbid).find("#save").toggleClass("ui-icon-star-yellow ui-icon-star-gray");
+        $jq(".star-status-" + wbid).find("#save").toggleClass("ui-icon-star-yellow ui-icon-star-gray");
         $jq("#bench-status").load(url, function(){
           if(con.text().length > 3){ ajaxGet(con, "/rest/widget/me/" + save_to, 1); }
         });
@@ -681,19 +681,14 @@
 
 
 
-  function SearchResult(q, type, species, widget, nostar){
+  function SearchResult(q, type, species, widget, nostar, t){
     var query = decodeURI(q),
         page = 1.0,
-        total = 0,
+        total = t,
         countSpan = $jq((widget ? "." + widget + "-widget " : '') + "#count"),
         resultDiv = $jq((widget ? "." + widget + "-widget " : '') + ".load-results"),
         queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
-    this.setTotal = function(t){
-    total = t;
-    countSpan.html(total);
-    }
-    
     Scrolling.search;
     
     function queryHighlight(div){
@@ -735,7 +730,15 @@
           $jq(this).html(msg + xhr.status + " " + xhr.statusText);
         }
         Scrolling.sidebarMove();
+        
+        div.find(".load-star").each(function(){
+          $jq(this).load($jq(this).attr("href"));
+        });
+
+        total = div.find("#page-count").data("count") || total;
+        countSpan.html(total);
       });
+
       div.appendTo($jq(this).parent().children("ul"));
       loadcount++;
       Scrolling.sidebarMove();

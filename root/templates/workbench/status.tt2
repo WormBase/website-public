@@ -5,11 +5,5 @@
     is_obj="[% c.stash.star.is_obj %]" 
     save_to="[% c.stash.star.save_to %]" 
     href="[% c.stash.star.url %]">
-<div id="save" class="ui-icon ui-icon-stars
-[% IF c.stash.star.value == 1 %]
-  ui-icon-star-yellow"
-[% ELSE %]
-  ui-icon-star-gray"
-[% END %]
-></div>
+  <div id="save" class="ui-icon ui-icon-stars ui-icon-star-[% c.stash.star.value == 1 ? 'yellow' : 'gray'; %]"></div>
 </a>   
