@@ -57,11 +57,11 @@
       [% title = '<span id="breadcrumbs">' _ title _ '</span>' %]
       <div id="page-title" class="[% section %]-bg">
       <h2
-[% UNLESS c.req.action == 'me' %]
-        class="tip-simple star" tip="save">
-          [% wbid = this_object_id.remove('[:/ &\.\[\]]') %]
-          <div class="workbench-status-[% wbid %]"></div>
-[% ELSE; '>'; END; %]   
+        [% UNLESS c.req.action == 'me' %]
+          class="tip-simple star" tip="save">
+          [% wbid = get_star_id(this_object_id) %]
+          [% make_star(wbid) %]
+        [% ELSE; '>'; END; %]   
           [% title %]  
      
       </h2>
@@ -75,35 +75,27 @@
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
-        <h2><a href="#">WormBase</a></h2>
+        <h2 onClick="WB.scrollToTop();return false;">WormBase</h2>
       [% ELSE %]
-        [% UNLESS c.req.action == 'me' %]
-          <div class="workbench-status-[% wbid %]"></div>
-        [% END %]
-        [% IF object %]
-          <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">[% tag2link(object.name.data) %]</h4>
-        [% ELSE %]
-          <h4 class="ellipsis"><a href="#">[% title %]</a></h4>
-        [% END %]
+        [% UNLESS c.req.action == 'me'; make_star(wbid); END %]
+        <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">
+          [% object ? tag2link(object.name.data) : title %]
+        </h4>
       [% END %]
     </div>
     <ul>
       <div>
     [% FOREACH w IN widgets -%]
       [% IF w.type == "title" %]
-      </div>
-      <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s"></span>[% w.title %]</li>
-      <div>
-     [% ELSE %]
-      <li id="nav-[% w.id %]" 
-         class="
-          [% IF w.type != "title" %]
-            module-load
-          [% END %]
-          [% w.type %]"
-          wname="[% w.id %]"
-          href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
-      </li>
+        </div>
+        <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s"></span>[% w.title %]</li>
+        <div>
+      [% ELSE %]
+        <li id="nav-[% w.id %]" 
+            class="module-load [% w.type %]"
+            wname="[% w.id %]"
+            href="[% w.href %]">[% w.title %]<span class="ui-icon ui-icon-triangle-1-e"></span>
+        </li>
       [% END %]
     [% END %]
       </div>
