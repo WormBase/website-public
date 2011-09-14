@@ -289,8 +289,17 @@ END;
            IF extsrc;
               link = extsrc.template;
               FOR match IN extsrc.template.match('\<([^>]+)\>', 'global');
-                  link = link.replace("\<$match\>", external_link(extsrc.template_items.$match.url,
-                                                                  extsrc.template_items.$match.text));
+                  IF extsrc.template_items.size == 1; # Person heuristic
+                     IF src; # there is an internal source... tag it
+                        replacement = tag2link(src);
+                     ELSE; # we only have their name?
+                        replacement = extsrc.template_items.$match.text;
+                     END;
+                  ELSE;
+                     replacement = external_link(extsrc.template_items.$match.url,
+                                                extsrc.template_items.$match.text);
+                  END;
+                  link = link.replace("\<$match\>", replacement);
               END;
               link;
            ELSIF src;
