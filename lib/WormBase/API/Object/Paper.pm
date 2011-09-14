@@ -142,7 +142,7 @@ B<Response example>
 
 sub title {
     my ($self) = @_;
-    my $title = $self ~~ 'Title' // $self ~~ 'name';
+    my $title = $self ~~ 'Title' // $self ~~ 'name'; # always defined
     $title =~ s/\.*$//;
     return {
         description	=> 'The title of the publication',
@@ -266,10 +266,10 @@ B<Response example>
 sub pages {
     my ($self) = @_;
     my $page = $self ~~ 'Page';
-    $page =~ s/\.*$// if $page;
+    $page =~ s/\.*$// if $page; # stringified if defined
     return {
         description => 'The pages of the publication',
-        data        => "$page",
+        data        => $page,
     };
 }
 
@@ -914,10 +914,11 @@ B<Response example>
 #                 than parsing a name! :(
 sub publisher {
 	my ($self) = @_;
+    my $publisher = $self ~~ 'Publisher';
 
 	return {
 		description => 'Publisher of the publication',
-		data		=> $self ~~ 'Publisher',
+		data		=> $publisher && "$publisher",
 	};
 }
 
@@ -1107,7 +1108,7 @@ sub pmid {
 
     return {
         description => 'PubMed ID of publication',
-        data => "$pmid",
+        data        => $pmid // "$pmid",
     };
 }
 
