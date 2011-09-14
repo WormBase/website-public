@@ -83,6 +83,8 @@ END;
       <a href="[% page.url %]">[% label %]</a>
     [% END %]
 [% END %]
+
+
  
 [% MACRO issue_table(issues, issue_type) BLOCK %]
 [% IF issues %]
@@ -205,6 +207,15 @@ END;
   [% is_obj = object.defined %]
   [% IF object; label = object.name.data.label; END; %]
 [% END %]
+
+[% MACRO get_star_id(id) BLOCK;
+  id.remove('[:/ &\.\[\]]');
+  END %]
+
+[% MACRO make_star(wbid) BLOCK;
+  '<div class="workbench-status-' _ wbid _ '"></div>';
+  END %]
+
 
 [%# options:
    print="always" to print the field even if there is no data 
