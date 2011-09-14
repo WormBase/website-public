@@ -17,7 +17,6 @@ WRAPPER $field_block title="Genes" key="genes";
 END;
 
 WRAPPER $field_block title="Genes and CDS" key="genes_n_cds";
-
     build_data_table (
 		order = [ 
 			'gene_info',
@@ -39,7 +38,7 @@ WRAPPER $field_block title="Genes and CDS" key="genes_n_cds";
 END;
 
 WRAPPER $field_block title="CDS" key="cds";
-	
+  'TESTTTT' _ fields.cds.data.first.evidence_details;
 	build_data_table (
 		order = [ 
 			'gene',

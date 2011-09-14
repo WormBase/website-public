@@ -387,10 +387,8 @@ sub cds {
 
             my ( $evidence_code, $evidence_details ) =
               $self->_get_GO_evidence( $object, $gene );
-            my $gene_info;
-           	$gene_info = eval{$self->_pack_object($gene);};
             my $gene_data = {
-                'gene'             => $gene_info,
+                'gene'             => $self->_pack_obj($gene),
                 'evidence_code'    => $evidence_code,
                 'evidence_details' => $evidence_details
             };
@@ -503,16 +501,15 @@ sub genes_n_cds {
 
     foreach my $gene (@genes) {
         my $cgc_name;
-        $cgc_name = eval{$gene->CGC_name;};
+        $cgc_name = eval{$gene->CGC_name;} || '';
         my $seq;
-        $seq = eval{$gene->Sequence_name;};
-        my $desc = $gene->Concise_description || $gene->Provisional_description;
+        $seq = eval{$gene->Sequence_name;} || '';
+        my $desc = $gene->Concise_description || $gene->Provisional_description || '';
         my ( $evidence_code, $evidence_details ) =
           $self->_get_GO_evidence( $term, $gene );
-        my $gene_info = $self->_pack_obj($gene);
 
         my $gene_data = {
-            'gene_info'        => $gene_info,
+            'gene_info'        => $self->_pack_obj($gene),
             'cgc_name'         => "$cgc_name",
             'seq'              => "$seq",
             'description'      => "$desc",
@@ -665,9 +662,9 @@ sub motif {
     eval { @motifs = $term->Motif; };
 
     foreach my $motif (@motifs) {
-        my $motif_desc = $motif->Description;
+        my $motif_desc = eval {$motif->Description};
         my ( $evidence_code, $evidence_details ) =
-          get_GO_evidence( $term, $motif );
+          $self->_get_GO_evidence( $term, $motif );
         my $motif_info = $self->_pack_obj($motif);
         my $motif_data = {
             'motif_info'       => $motif_info,
@@ -1156,23 +1153,22 @@ sub _get_tag_data {
 }
 
 sub _get_GO_evidence {
-
     my ( $term, $gene ) = @_;
-    my @go_terms;
-    eval { @go_terms = $gene->GO_Term; };
+    my @go_terms = eval { $gene->GO_Term; };
     my $evidence_code;
     my $evidence_detail;
+    my $method;
 
     foreach my $go_term (@go_terms) {
-
         if ( $go_term eq $term ) {
-            eval { $evidence_code = $go_term->right; };
-            eval { $go_term->right->right->right; };
-            $evidence_detail = last;
+          $evidence_code =  $go_term->right;
+          $evidence_detail = $go_term->right->right->right; 
         }
     }
-    return ( $evidence_code, $evidence_detail );
+    return ( "$evidence_code", "$evidence_detail" );
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
 
