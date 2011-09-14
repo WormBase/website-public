@@ -30,11 +30,11 @@
 
     [% UNLESS no_layout %]
     <div id="buttons-nav">
-[% UNLESS c.req.action == 'me' %]
+    [% UNLESS c.req.action == 'me' %]
         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  wname="issue" ><span class="ui-icon ui-icon-notice"></span></a>
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" wname="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
-[% END %]
+    [% END %]
         <div class="columns" id="column-dropdown"><a class="button ui-corner-all tip-simple" tip="settings"><span class="ui-icon ui-icon-gear"></span><span class="ui-icon ui-icon-triangle-1-s"></span></a>
           <ul>
             <li><span id="fade">layout</span><span class="ui-icon ui-icon-triangle-1-e" style="float:right;margin-top:0.2em;"></span>

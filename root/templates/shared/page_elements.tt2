@@ -212,8 +212,8 @@ END;
   id.remove('[:/ &\.\[\]]');
   END %]
 
-[% MACRO make_star(wbid) BLOCK;
-  '<div class="workbench-status-' _ wbid _ '"></div>';
+[% MACRO make_star(wbid, href) BLOCK;
+  '<div class="star-status-' _ wbid _ ' load-star" href="' _ href _ '"></div>';
   END %]
 
 
