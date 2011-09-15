@@ -1,9 +1,3 @@
-[% IF c.stash.notify %]
-<script>
-  displayNotification("[% c.stash.notify %]");
-</script>
-[% END %]
-
 
   [% path = c.uri_for('/me') %]
   [% title = "My WormBase"  %]
