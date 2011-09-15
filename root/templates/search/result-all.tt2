@@ -34,8 +34,8 @@
               [% IF cls == 'title'; NEXT; END; %]
               [% searchurl = "/search/" _ cls _ "/" _ query _ "?inline=1" %]
               [% IF species; searchurl = searchurl _ "&species=" _ species; END; %]
-              <li onClick='WB.loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;' style="display:none">
-                <a onClick='WB.loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
+              <li class="load-results ui-helper-hidden" href="[% searchurl %]">
+                <a href="[% searchurl %]">[% c.config.sections.$sec.$cls.title %]</a>: 
                 <span class="count" href="/search/count/[% species %]/[% cls %]/[% query %]"></span>
                 <span class="ui-icon ui-icon-triangle-1-e"></span>
               </li>
@@ -49,8 +49,8 @@
           [% IF s == 'all'; NEXT; END; %]
           [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
             [% searchurl = "/search/" _ type _ "/" _ query _ "?inline=1&species=" _ s %]
-            <li onClick='WB.loadResults("[% searchurl %]"); $jq(this).addClass("ui-selected"); return false;'  style="display:none">
-              <a onClick='WB.loadResults("[% searchurl %]"); $jq(this).parent().addClass("ui-selected"); return false;' class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
+            <li class="load-results ui-helper-hidden" href="[% searchurl %]">
+              <a class="species" href="[% searchurl %]">[% c.config.sections.species_list.$s.title %]</a>: 
               <span class="count" href="/search/count/[% s %]/[% type %]/[% query %]"></span>
               <span class="ui-icon ui-icon-triangle-1-e"></span>
             </li>

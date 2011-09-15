@@ -32,7 +32,8 @@
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
-          searchAll = $jq("#all-search-results");
+          searchAll = $jq("#all-search-results"),
+          sysMessage = $jq("#top-system-message").children(".system-message-close");
           
       if($jq(".user-history").size()>0){
         (function histUpdate(){
@@ -45,7 +46,7 @@
       $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
 
       search_change(pageInfo['class']);
-      if($jq("#top-system-message").size()>0) {systemMessage('show');}
+      if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
@@ -796,6 +797,12 @@
           $jq(this).parent().show();
         }
       });
+    });
+    
+    $jq("#navigation").find(".load-results").click(function(){
+      loadResults($jq(this).attr("href"));
+      $jq(this).addClass("ui-selected");
+      return false;
     });
   }
 
@@ -1603,12 +1610,9 @@ var Scrolling = (function(){
     
     return{
       init: init,
-      displayNotification: displayNotification, 
       ajaxGet: ajaxGet,
       hideTextOnFocus: hideTextOnFocus,
       goToAnchor: goToAnchor,
-      systemMessage: systemMessage,
-      Breadcrumbs: Breadcrumbs,
       setLoading: setLoading,
       resetLayout: resetLayout,
       openAllWidgets: openAllWidgets,
@@ -1618,7 +1622,6 @@ var Scrolling = (function(){
       resetPageLayout: resetPageLayout,
       search: search,
       search_change: search_change,
-      loadResults: loadResults,
       openid: openid,
       validate_fields: validate_fields,
       StaticWidgets: StaticWidgets,
@@ -1628,7 +1631,6 @@ var Scrolling = (function(){
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
-      effects: effects,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop
     }
