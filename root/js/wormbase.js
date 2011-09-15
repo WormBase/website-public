@@ -764,7 +764,9 @@
   function loadResults(url){
     var allSearch = $jq("#all-search-results");
     allSearch.empty(); 
-    ajaxGet(allSearch, url);
+    ajaxGet(allSearch, url, undefined, function(){
+      checkSearch(allSearch);
+    });
     loadcount = 0;
     scrollToTop();
     $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
