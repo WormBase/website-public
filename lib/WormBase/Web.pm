@@ -481,7 +481,8 @@ sub merge_session_to_user {
       unless($u_history){
         $s_history->session_id("user:$uid");
       }else{
-        $u_history->timestamp < $s_history->timestamp ? $u_history->timestamp($s_history->timestamp) : '' ;
+          $u_history->timestamp($s_history->timestamp)
+            if $u_history->timestamp < $s_history->timestamp;
         $u_history->visit_count($u_history->visit_count + $s_history->visit_count);
         $s_history->delete();
         $u_history->update();

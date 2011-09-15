@@ -32,7 +32,7 @@
      %]<br>
      Server Error: 404 <br />
      Error Message:
-       [% c.error.join('<br />') %]
+       [% IF c.error; c.error.join('<br />'); END %]
    </div>
 
    <p>
