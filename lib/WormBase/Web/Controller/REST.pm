@@ -898,15 +898,9 @@ sub widget_GET {
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
     if ($widget eq 'references') {
-      $c->stash->{class}    = $class;
-      $c->stash->{query}    = $name;
-      $c->stash->{noboiler} = 1;
-      
-      # Looking up the template is slow; hard-coded here.
-      $c->stash->{template} = 'shared/widgets/references.tt2';
-      $c->forward('WormBase::Web::View::TT');
+      my $url = $c->uri_for('/search', 'paper', $name) . '?widget=refences&class=' . $class . ";inline=1";
+      $c->res->redirect($url, 307);
       return;
-    
       # If you have a tool that you want to display inline as a widget, be certain to add it here.
       # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {

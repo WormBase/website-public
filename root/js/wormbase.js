@@ -33,7 +33,7 @@
     function init(){
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results");
-      
+          
       if($jq(".user-history").size()>0){
         (function histUpdate(){
           ajaxGet($jq(".user-history"), "/rest/history?count=3");
@@ -50,7 +50,6 @@
       if(searchAll.size()>0) { 
         var searchInfo = searchAll.data("search");
         allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
-        Scrolling.search;
       } 
 
       Breadcrumbs.init();
@@ -60,6 +59,7 @@
       if($jq(".star-status-" + pageInfo['wbid']).size()>0){$jq(".star-status-" + pageInfo['wbid']).load("/rest/workbench/star?wbid=" + pageInfo['wbid'] + "&name=" + pageInfo['name'] + "&class=" + pageInfo['class'] + "&type=" + pageInfo['type'] + "&id=" + pageInfo['id'] + "&url=" + pageInfo['ref'] + "&save_to=" + pageInfo['save'] + "&is_obj=" + pageInfo['is_obj']);}
 
       updateCounts(pageInfo['ref']);
+      if(pageInfo['notify']){ displayNotification(pageInfo['notify']); }
       
       navBarInit();
       pageInit();
@@ -436,11 +436,12 @@
         var update = $jq(this),
             wbid = update.attr("wbid"),
             save_to = update.attr("save_to"),
-            url = update.attr("ref") + '?name=' + escape(update.attr("name")) + "&url=" + escape(update.attr("href")) + "&save_to=" + save_to + "&is_obj=" + update.attr("is_obj"),
-            con = $jq("div#" + save_to + "-content");
+            url = update.attr("ref") + '?name=' + escape(update.attr("name")) + "&url=" + escape(update.attr("href")) + "&save_to=" + save_to + "&is_obj=" + update.attr("is_obj");
         $jq(".star-status-" + wbid).find("#save").toggleClass("ui-icon-star-yellow ui-icon-star-gray");
         $jq("#bench-status").load(url, function(){
-          if(con.text().length > 3){ ajaxGet(con, "/rest/widget/me/" + save_to, 1); }
+          if($jq("div#" + save_to + "-content").text().length > 3){ 
+            reloadWidget(save_to, 1);
+          }
         });
         return false;
       });
@@ -674,22 +675,32 @@
       }
       
       $jq("#current-search").text(new_search);
-    //   if(focus){ $jq("#Search").focus();}
     }
 
 
 
+  function checkSearch(div){
+    var results = div.find("#results"),
+        searchData = (results.size() > 0) ? results.data("search") : undefined;
+    if(!searchData){ return; }
+    SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);  
+  }
 
-
-  function SearchResult(q, type, species, widget, nostar, t){
+  function SearchResult(q, type, species, widget, nostar, t, container){
     var query = decodeURI(q),
         page = 1.0,
         total = t,
-        countSpan = $jq((widget ? "." + widget + "-widget " : '') + "#count"),
-        resultDiv = $jq((widget ? "." + widget + "-widget " : '') + ".load-results"),
+        countSpan = container.find("#count"),
+        resultDiv = container.find((widget ? "." + widget + "-widget " : '') + ".load-results"),
         queryList = query ? query.replace(/[,\.\*]/, ' ').split(' ') : [];
 
-    Scrolling.search;
+    function init(){
+      container.find("#results").find(".load-star").each(function(){
+        $jq(this).load($jq(this).attr("href"));
+      });
+    }
+    
+
     
     function queryHighlight(div){
       if(queryList.length == 0) { return; }
@@ -700,51 +711,55 @@
       });
     }
     
-    queryHighlight($jq("div#results" + (widget ? "." + widget + "-widget" : '')));
+    queryHighlight(container.find("div#results"));
+    init();
     
-    resultDiv.click(function(){
-      var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');
-          div = $jq("<div></div>"),
-          res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
+    if(total > 10){
+      if(container.find(".lazyload-widget").size() > 0){ Scrolling.search(); }
+      resultDiv.click(function(){
+        var url = $jq(this).attr("href") + (page + 1) + "?" + (species ? "species=" + species : '') + (widget ? "&widget=" + widget : '') + (nostar ? "&nostar=" + nostar : '');
+            div = $jq("<div></div>"),
+            res = $jq((widget ? "." + widget + "-widget" : '') + " #load-results");
 
-      $jq(this).removeClass("load-results");
-      page++;
-      
-      setLoading(div);
-      
-      res.html("loading...");
-      div.load(url, function(response, status, xhr) {
-        var left = total - (page*10);
-        if(left > 0){
-          if(left>10){left=10;}
-          res.addClass("load-results");
-          res.html("load " + left + " more results");
-        }else{
-          res.remove();
-        }
-
-        queryHighlight(div);
-
-        if (status == "error") {
-          var msg = "Sorry but there was an error: ";
-          $jq(this).html(msg + xhr.status + " " + xhr.statusText);
-        }
-        Scrolling.sidebarMove();
+        $jq(this).removeClass("load-results");
+        page++;
         
-        div.find(".load-star").each(function(){
-          $jq(this).load($jq(this).attr("href"));
+        setLoading(div);
+        
+        res.html("loading...");
+        div.load(url, function(response, status, xhr) {
+          total = div.find("#page-count").data("count") || total;
+          var left = total - (page*10);
+          if(left > 0){
+            if(left>10){left=10;}
+            res.addClass("load-results");
+            res.html("load " + left + " more results");
+          }else{
+            res.remove();
+          }
+
+          queryHighlight(div);
+
+          if (status == "error") {
+            var msg = "Sorry but there was an error: ";
+            $jq(this).html(msg + xhr.status + " " + xhr.statusText);
+          }
+          Scrolling.sidebarMove();
+          
+          div.find(".load-star").each(function(){
+            $jq(this).load($jq(this).attr("href"));
+          });
+
+          countSpan.html(total);
         });
 
-        total = div.find("#page-count").data("count") || total;
-        countSpan.html(total);
+        div.appendTo($jq(this).parent().children("ul"));
+        loadcount++;
+        Scrolling.sidebarMove();
       });
-
-      div.appendTo($jq(this).parent().children("ul"));
-      loadcount++;
-      Scrolling.sidebarMove();
-    });
+    }
     
-  }
+  } //end SearchResult
 
   function loadResults(url){
     var allSearch = $jq("#all-search-results");
@@ -767,7 +782,9 @@
         allSearch = $jq("#all-search-results");
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
-    ajaxGet(allSearch, url);
+    ajaxGet(allSearch, url, undefined, function(){
+      checkSearch(allSearch);
+    });
 
     $jq("#search-count-summary").find(".count").each(function() {
       $jq(this).load($jq(this).attr("href"), function(){
@@ -797,7 +814,9 @@
 
         if(content.text().length < 4){
           addWidgetEffects(content.parent(".widget-container"));
-          ajaxGet(content, url, undefined, function(){ Scrolling.sidebarMove();});
+          ajaxGet(content, url, undefined, function(){ 
+            Scrolling.sidebarMove();checkSearch(content);
+          });
         }
         moduleMin(content.prev().find(".module-min"), false, "maximize");
         nav.addClass("ui-selected");
@@ -805,15 +824,10 @@
         return false;
     }
     
-    function reloadWidget(widget_name){
-        var nav = $jq("#nav-" + widget_name),
-            url = nav.attr("href");
-        ajaxGet($jq("div#" + widget_name + "-content"), url);
+    function reloadWidget(widget_name, noLoad){
+        var con = $jq("div#" + widget_name + "-content");
+        ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
-    
-
-    
-    
     
       
   function addWidgetEffects(widget_container, callback) {
@@ -1138,10 +1152,10 @@ var Scrolling = (function(){
     });
   }
   
-  var search = search || (function searchInit(){
+  var search = function searchInit(){
+      if(loadcount >= 3){ return; }
       $window.scroll(function() {
-        var results    = $jq("#results.lazyload-widget"); 
-
+        var results    = $jq("#results");
         if(results.offset() && loadcount < 3){
           var rHeight = results.height() + results.offset().top;
           var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
@@ -1150,8 +1164,7 @@ var Scrolling = (function(){
           }
         }
       });
-      return true;
-    })();
+    };
   
   function set_system_message(val){
     system_message = val;
@@ -1595,7 +1608,6 @@ var Scrolling = (function(){
       systemMessage: systemMessage,
       Breadcrumbs: Breadcrumbs,
       setLoading: setLoading,
-      SearchResult: SearchResult,
       resetLayout: resetLayout,
       openAllWidgets: openAllWidgets,
       deleteLayout: deleteLayout,
@@ -1615,6 +1627,7 @@ var Scrolling = (function(){
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
       effects: effects,
+      checkSearch: checkSearch,
       scrollToTop: scrollToTop
     }
   })();

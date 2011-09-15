@@ -64,6 +64,6 @@
 </div>
 </div>
 <div id="widget-holder">
-<div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query %]", "species": "[% IF species %]&species=[% species; END;%]" }'></div>
+<div id="all-search-results" data-search='{"type": "[% type %]", "query": "[% query %]", "species": "[% IF species; species; END;%]" }'></div>
 </div>
 </div>

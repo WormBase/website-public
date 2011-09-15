@@ -2,9 +2,9 @@
 <h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
 [% END %]
 
-
 <!-- begin result list -->
-<div id="results" class="[% widget || 'lazyload' %]-widget">
+<div id="results" class="[% widget || 'lazyload' %]-widget" 
+    data-search='{"query": "[% query %]","type": "[% type %]", "species": "[% species %]", "widget": "[% widget %]", "nostar": "[% nostar || 0 %]", "count": "[% count %]" }'>
   [% UNLESS no_count %]
     [% IF results.size > 0 %]
     [% lowerClass = c.config.sections.species.$type.title || c.config.sections.resources.$type.title FILTER lcfirst %]
@@ -33,15 +33,5 @@
     <div id="load-results" class='load-results' href="[% searchLink %]">load 10 more results</div>
     [% END %]
 </div>
-
-
-<script async>
-    $jq(".results-[% type %]").find(".load-star").each(function(){
-      $jq(this).load($jq(this).attr("href"));
-    });
-    [% IF (count && count > 10) %]
-        WB.SearchResult('[% query %]', '[% type %]', '[% species %]', '[% widget %]', '[% nostar || 0 %]', '[% count %]');
-    [% END %]
-</script>
 
 <!-- End result list -->
