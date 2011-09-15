@@ -1,26 +1,13 @@
 [%- # This is the default layout -%]
-      <div id="notifications" class="ui-corner-bottom">
-            <span id="notification-text"></span>
-            <span class="ui-icon ui-icon-close tip-simple br" tip="close"></span>
-      </div>
-<!--    <div id="wrap">-->
+
     [% PROCESS header/default.tt2 %]
 
-<!--    <div id="content">-->
+
       <span class="message">[% status_msg %]</span>
       <span class="error">[% error_msg %]</span>
 
-      [% IF c.request.param('query') %]
-        <script>
-          WB.displayNotification("redirected from search [% c.request.param('query') %]");
-        </script>
-      [% END %]
-
 
            [% content %]
-<!--      <div id="spacer"></div>
-    </div>-->
      
  
     [% PROCESS footer/default.tt2 %]    
-<!--     </div> -->

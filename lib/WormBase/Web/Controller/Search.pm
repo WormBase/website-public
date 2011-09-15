@@ -59,7 +59,7 @@ sub search :Path('/search') Args {
     $c->log->debug("search $query");
       
     my $search = $type unless($type=~/all/);
-$c->response->headers->expires(time);
+  $c->response->headers->expires(time);
     $c->response->header('Content-Type' => 'text/html');
 
     if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline"))) && ($page_count < 2)){
