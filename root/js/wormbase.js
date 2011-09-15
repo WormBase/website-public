@@ -138,7 +138,7 @@
       $jq(".section-button").click(function() {
           var section = $jq(this).attr('wname');
           $jq("#nav-" + section).trigger("open");
-          goToAnchor(section);
+          Scrolling.goToAnchor(section);
       });
 
       if($jq(".sortable").size()>0){
@@ -292,7 +292,7 @@
             nav.addClass("ui-selected");
             moduleMin($jq(content).prev().find(".module-min"), false, "maximize");
           }
-          goToAnchor(widget_name);
+          Scrolling.goToAnchor(widget_name);
           updateLayout();
         } else {
           moduleMin($jq(content).prev().find(".module-min"), false, "minimize", function(){
@@ -953,21 +953,11 @@
       }
     }
     
-    function goToAnchor(anchor){
-      var elem = document.getElementById(anchor);
-      if(!(isScrolledIntoView(elem))){
-        elem.scrollIntoView();
-        Scrolling.sidebarMove();
-      }
-    }
+
     
-    function isScrolledIntoView(elem){
-        var docViewTop = $jq(window).scrollTop(),
-            docViewBottom = docViewTop + $jq(window).height(),
-            elemTop = $jq(elem).offset().top,
-            elemBottom = elemTop + $jq(elem).height();
-        return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
-    }
+
+    
+
 
     function newLayout(layout){
       updateLayout(layout, function() {
@@ -1112,6 +1102,23 @@ var Scrolling = (function(){
     $jq("#navigation").stop().css('position', 'relative').css('top', 0);
   }
   
+  function goToAnchor(anchor){
+      var elem = document.getElementById(anchor);
+      if(!(isScrolledIntoView(elem))){
+        $jq('html,body').animate({
+          scrollTop: $jq(elem).offset().top - system_message - 10
+        }, 2000, function(){ Scrolling.sidebarMove(); });
+      }
+  }
+    
+  function isScrolledIntoView(elem){
+      var docViewTop = $jq(window).scrollTop(),
+          docViewBottom = docViewTop + $jq(window).height(),
+          elemTop = $jq(elem).offset().top,
+          elemBottom = elemTop + $jq(elem).height();
+      return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
+  }
+  
   function sidebarMove() {
       if(sidebar.offset()){
         var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
@@ -1184,7 +1191,8 @@ var Scrolling = (function(){
     search:search,
     set_system_message:set_system_message, 
     sidebarMove: sidebarMove,
-    resetSidebar:resetSidebar
+    resetSidebar:resetSidebar,
+    goToAnchor: goToAnchor
   }
 })();
 
@@ -1612,10 +1620,11 @@ var Scrolling = (function(){
       init: init,
       ajaxGet: ajaxGet,
       hideTextOnFocus: hideTextOnFocus,
-      goToAnchor: goToAnchor,
+      goToAnchor: Scrolling.goToAnchor,
       setLoading: setLoading,
       resetLayout: resetLayout,
       openAllWidgets: openAllWidgets,
+      displayNotification: displayNotification,
       deleteLayout: deleteLayout,
       columns: columns,
       setLayout: setLayout,
