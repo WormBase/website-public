@@ -1,5 +1,50 @@
+<h3>RESTful Interface</h3>
+<p>
+<pre>
+Description  : Fast and easy interface to WormBase, all data uniquely addressable
+Good for     : mashups, lightweight data mining
+Skills       : command line, web development 
+Advantages   : Easy to learn
+Drawbacks    : Downstream steps may still require programming
+</pre>
+</p>
 
-<h3>AcePerl.pm</h3>
+<p>
+Our extensive RESTful interface makes programmatically accessing
+data easier than ever before.  Every piece of data in WormBase is permanently
+addressable at a unique URI.  The granularity ranges from individual data 
+elements (that we call fields), to small snippets (widgets),all the way
+up to entire pages.  Each addressable element is available in a variety of
+formats, including XML, HTML, JSON, YAML, and TXT.  Some elements can also
+be returned as PDFs.
+</p>
+
+<p>
+In many ways, the RESTful interface is the easiest and most powerful
+way to fetch data from WormBase. This is a great way to create mashups
+of WormBase data for inclusion on your own website, too.
+</p>
+
+<p>
+The following URI will generate the Gene overview widget for the specified gene:
+</p>
+
+<pre>
+<a class="ajax overview" href="[% c.uri_for('/rest','widget','gene','WBGene00006763','overview') %]">/rest/widget/gene/WBGene00006763/overview</a>
+  |     |      |        |           |
+  |     |      |        |           widget or field
+  |     |      |        object ID
+  |     |      class
+  |      type: field|widget|page
+  the REST portal
+</pre>
+
+<p>
+You can see all available classes, widgets, fields, and pages on the <a href="[% c.uri_for('/userguide','developers','api-rest') %]">RESTful Interface Documentation</a> page.
+</p>
+
+
+<h3>Perl: AcePerl.pm</h3>
 
 <p>
 <pre>
@@ -18,7 +63,7 @@ with the underlying data model. AcePerl is the most tried and true
 mechanism for programmatically accessing WormBase.
 </p>
 
-<h3>WormBase::API.pm</h3>
+<h3>Perl: WormBase::API.pm</h3>
 
 <p>
 <pre>
@@ -54,7 +99,7 @@ but will NOT need to know anything about the underlying data model.
 Checkout the code from our <a href="http://github.com/wormbase/website">Github repository</a>.
 </p>
 
-<h3>Bio::DB::GFF / Bio::DB::SeqFeatureStore</h3>
+<h3>Perl: Bio::DB::GFF / Bio::DB::SeqFeatureStore</h3>
 
 <p>
 <pre>
