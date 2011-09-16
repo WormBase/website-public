@@ -3,8 +3,8 @@ package WormBase::Web::Controller::ClassicCompatibility;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
- 
-__PACKAGE__->config->{namespace} = '';
+
+__PACKAGE__->config->{namespace} = 'db';
 
 =head1 NAME
 
@@ -18,7 +18,7 @@ Backwards compatability for old-style WormBase URIs.
 
 =cut
 
-=head2 classic_get
+=head2 get
 
   GET report pages
   URL space: /db/get
@@ -29,10 +29,11 @@ redirect to the correct report page.
 
 Caveat: currently assumes Ace class is given. Requires
 name & class to correspond exactly to an object in AceDB
+or the lower case Ace class
 
 =cut
 
-sub classic_get :Path("/db/get") Args(0) {
+sub get :Local Args(0) {
     my ($self, $c) = @_;
 
     $c->stash->{template} = 'species/report.tt2';
@@ -40,42 +41,77 @@ sub classic_get :Path("/db/get") Args(0) {
     my $requested_class = $c->req->param('class');
     my $name            = $c->req->param('name');
 
-    # TODO: handle when these are not provided and when the object doesn't exist
     my $api    = $c->model('WormBaseAPI');
     my $ACE2WB = $api->modelmap->ACE2WB_MAP->{class};
 
-    my $class           = $ACE2WB->{$requested_class} or $c->detach;
+    # hack for locus (legacy):
+    $requested_class = 'Gene' if lc $requested_class eq 'locus';
+
+    # there may be input (perhaps external, hand-typed input or even automated
+    # input from a non-WB tool) which specifies a class in the incorrect casing
+    # but is otherwise legitimate (e.g. Go_term, which should be GO_term). this
+    # could be a problem in those kinds of input.
+    my $class = $ACE2WB->{$requested_class}
+             || $ACE2WB->{lc $requested_class} # canonical Ace class
+             or $c->detach('/soft_404');
+
     my $canonical_class = lc $class;
 
     my $url;
     if (exists $c->config->{sections}->{species}->{$canonical_class}) { # /species
-	
-	unless ($c->stash->{object}) {
+        unless ($c->stash->{object}) {
+            # Fetch our external model
+            my $api = $c->model('WormBaseAPI');
 
-	    # Fetch our external model
-	    my $api = $c->model('WormBaseAPI');
-      
-	    # Fetch a WormBase::API::Object::* object
-	    if ($name eq '*' || $name eq 'all') {
-		$c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-	    } else {
-		$c->stash->{object} = $api->fetch({class => ucfirst($class),
-						   name  => $name,
-						  }) or die "Couldn't fetch an object: $!";
-	    }
-	    # $c->log->debug("Tried to instantiate: $class");
-	}
-	
-	my $object = $c->stash->{object};
-	my $species = eval { $object->Species } || 'any';
+            # Fetch a WormBase::API::Object::* object
+            if ($name eq '*' || $name eq 'all') {
+                $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+            }
+            else {
+                $c->stash->{object} = $api->fetch({
+                    class => ucfirst($class),
+                    name  => $name,
+                }) or die "Couldn't fetch an object: $!";
+            }
+            # $c->log->debug("Tried to instantiate: $class");
+        }
+
+        my $object = $c->stash->{object};
+        my $species = eval { $object->Species } || 'any';
         $url = $c->uri_for('/species', $species, $canonical_class, $name);
-    } else { # /report
+    }
+    else {                      # /report
         $url = $c->uri_for('/resources', $canonical_class, $name);
     }
 
     $c->res->redirect($url);
 }
 
+# TODO: POD
+
+# if there are enough of these, a GBrowse controller might be warranted
+sub gbrowse_popup :Path('misc/gbrowse_popup') {
+    my ($self, $c) = @_;
+
+    # WARNING: quickly hacked together code ahead! consider making a proper
+    #          model for GBrowse data instead of passing an object in
+    my $name  = $c->req->params->{name}  || '';
+    my $class = $c->req->params->{class} || '';
+    my $type  = $c->req->params->{type}  || '';
+
+    if ($type eq 'CG') {
+        my $wbobj = $c->model('WormBaseAPI')->fetch({class => $class, name => $name});
+        $c->stash(gene => $wbobj->obj) if $wbobj;
+    }
+    elsif ($type eq 'EXPR_PATTERN') {
+        # TODO
+    }
+
+    $c->stash(
+        template => 'gbrowse/gbrowse_popup.tt2',
+        noboiler => 1
+    );
+}
 
 =pod 
 
