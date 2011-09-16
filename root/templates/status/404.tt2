@@ -20,7 +20,16 @@
    </p>
 
    <div class="error-message-technical">
-     Requested URL: [% c.req.path %]<br>
+     Requested URL:
+     [%
+        c.req.path;
+        IF c.req.query_params.size; '?'; END;
+           params = [];
+        FOREACH pair IN c.req.query_params.pairs;
+           params.push(pair.key _ '=' _ pair.value);
+        END;
+        params.join(';');
+     %]<br>
      Server Error: 404 <br />
      Error Message:
        [% c.error.join('<br />') %]
