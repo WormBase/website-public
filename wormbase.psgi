@@ -16,6 +16,15 @@ use Plack::Builder;
 # The symbolic name of our application.
 my $app      = $ENV{APP};
 my $app_root = $ENV{APP_ROOT};
+my $app_path;
+
+if (defined $app_root) {
+    $app_path = ( defined $app ? "$app_root/$app" : "$app_root/wormbase" );
+}
+else { # no app[root] provided; dynamically determine the location of the app
+    $app_path = WormBase::Web->path_to('/');
+}
+
 
 # Want to launch several variations of your app 
 # on a single host? No problem!
@@ -41,8 +50,8 @@ my $app_root = $ENV{APP_ROOT};
 
 # 2. Or CGIBin. Still hard-coded for user.
 my $gbrowse = Plack::App::CGIBin->new(
-    root => "$app_root/$app/root/gbrowse/cgi",
-    )->to_app;
+    root => "$app_path/root/gbrowse/cgi",
+)->to_app;
 
 # 3. OR just by proxy
 #my $remote_gbrowse        = Plack::App::Proxy->new(remote => "http://206.108.125.173:8000/tools/genome")->to_app;
@@ -53,7 +62,6 @@ my $gbrowse = Plack::App::CGIBin->new(
 # The WormBase APP
 ######################
 my $wormbase = WormBase::Web->psgi_app(@_);
-
 
 builder {
 
@@ -72,7 +80,7 @@ builder {
 
     # GBrowse CGIs and static files.
     mount '/tools/genome'   => $gbrowse;
-    mount "/gbrowse-static" => Plack::App::File->new(root => "$app_root/$app/root/gbrowse");
+    mount "/gbrowse-static" => Plack::App::File->new(root => "$app_path/root/gbrowse");
 
     # Plack proxying GBrowse
 #    mount '/tools/genome' => $remote_gbrowse;
