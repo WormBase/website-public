@@ -2479,7 +2479,7 @@ sub interactions {
 	    ($effector,$effected) = @non_directional;  # WBGenes
 	    $direction = 'non-directional';
 	} else { 
-	    $effector  = $type->Effector->right;
+	    $effector  = $type->Effector->right if $type->Effector;
 	    $effected  = $type->Effected->right;
 	    $direction = 'Effector->Effected';
 	}
