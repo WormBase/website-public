@@ -1,3 +1,12 @@
+<!--
+<ul>
+[% FOREACH class IN classes.sort %]
+  <li><a href="/userguide/developers/api/[% class.remove("\.pm") %]">[% class.remove("\.pm") %]</a></li>
+[% END %]
+</ul>   
+-->
+
+
 <h3>RESTful Interface</h3>
 <p>
 <pre>
@@ -39,6 +48,8 @@ The following URI will generate the Gene overview widget for the specified gene:
   the REST portal
 </pre>
 
+<!--
 <p>
 You can see all available classes, widgets, fields, and pages on the <a href="[% c.uri_for('/userguide','developers','api') %]">RESTful Interface Documentation</a> page.
 </p>
+-->

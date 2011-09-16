@@ -4,11 +4,10 @@
     breadcrumbs.push('<span>Developers</span>');
     title = breadcrumbs.join(" &raquo; ");
     userguide_page(title = title,
-    		   widget_list => [ { overview = 'Overview' },
+    		   widget_list => [ { overview = 'Overview'         },
 		   	            { architecture = 'Architecture' },
 				    { data_model   = 'Data Model'   },
-				    { api_restful  = 'RESTful API'  },
-				    { api_perl     = 'Perl API'     },
+				    { apis         = 'APIs'         },
 				    { mysql_access = 'MySQL access' },
 				    { query_languages = 'Query Languages' },
 				      ]);
