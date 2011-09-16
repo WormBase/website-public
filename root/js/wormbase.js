@@ -295,6 +295,7 @@
           Scrolling.goToAnchor(widget_name);
           updateLayout();
         } else {
+          Scrolling.scrollUp($jq(content).parents("li"));
           moduleMin($jq(content).prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
             $jq(content).parents("li").removeClass("visible"); 
@@ -1091,9 +1092,11 @@ var Scrolling = (function(){
   var $window = $jq(window),
       system_message = 0,
       static = 0,// 1 = sidebar fixed position top of page. 0 = sidebar in standard pos
+      footerHeight = $jq("#footer").outerHeight(),
       sidebar,
       offset,
       widgetHolder,
+      body = $jq('html,body'),
       count = 0, //semaphore
       titles;
                  
@@ -1105,15 +1108,26 @@ var Scrolling = (function(){
   function goToAnchor(anchor){
       var elem = document.getElementById(anchor);
       if(!(isScrolledIntoView(elem))){
-        $jq('html,body').animate({
-          scrollTop: $jq(elem).offset().top - system_message - 10
+        body.stop().animate({
+          scrollTop: Math.min($jq(elem).offset().top - system_message - 10, $jq(document).height() - footerHeight - ($window.height()*0.6) )
         }, 2000, function(){ Scrolling.sidebarMove(); });
       }
   }
+  
+  function scrollUp(elem){
+    var elemBottom = $jq(elem).offset().top + $jq(elem).height(),
+        docViewTop = $window.scrollTop(),
+        maxScroll = $jq(document).height() - footerHeight - ($window.height()) - elem.height();
+    if((elemBottom <= docViewTop) || (docViewTop > maxScroll)){
+      body.stop().animate({
+          scrollTop: $window.scrollTop() - elem.height()
+      }, "fast", function(){ Scrolling.sidebarMove(); });
+    }
+  }
     
   function isScrolledIntoView(elem){
-      var docViewTop = $jq(window).scrollTop(),
-          docViewBottom = docViewTop + $jq(window).height(),
+      var docViewTop = $window.scrollTop(),
+          docViewBottom = docViewTop + $window.height() - 50,
           elemTop = $jq(elem).offset().top,
           elemBottom = elemTop + $jq(elem).height();
       return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
@@ -1123,7 +1137,7 @@ var Scrolling = (function(){
       if(sidebar.offset()){
         var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
             scrollTop = $window.scrollTop(),
-            maxScroll = $jq(document).height() - (sidebar.outerHeight() + $jq("#footer").outerHeight() + system_message + 20); //the 20 is for padding before footer
+            maxScroll = $jq(document).height() - (sidebar.outerHeight() + footerHeight + system_message + 20); //the 20 is for padding before footer
 
         if(sidebar.outerHeight() > widgetHolder.height()){
             resetSidebar();
@@ -1169,10 +1183,10 @@ var Scrolling = (function(){
   }
   
   var search = function searchInit(){
-      if(loadcount >= 3){ return; }
+      if(loadcount >= 6){ return; }
       $window.scroll(function() {
         var results    = $jq("#results");
-        if(results.offset() && loadcount < 3){
+        if(results.offset() && loadcount < 6){
           var rHeight = results.height() + results.offset().top;
           var rBottomPos = rHeight - ($window.height() + $window.scrollTop())
           if(rBottomPos < 400) {
@@ -1192,7 +1206,8 @@ var Scrolling = (function(){
     set_system_message:set_system_message, 
     sidebarMove: sidebarMove,
     resetSidebar:resetSidebar,
-    goToAnchor: goToAnchor
+    goToAnchor: goToAnchor,
+    scrollUp: scrollUp
   }
 })();
 
