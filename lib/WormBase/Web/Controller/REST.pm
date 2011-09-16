@@ -99,23 +99,33 @@ sub workbench_GET {
 
     my $url = $c->req->params->{url};
     if($url){
-      my $save_to = $c->req->params->{save_to} || 'reports';
+      my $class = $c->req->params->{class};
+      my $save_to = $c->req->params->{save_to};
       my $is_obj = $c->req->params->{is_obj} || 0;
+#       $c->stash->{is_obj} = $is_obj;
+      my $loc = "saved reports";
+      $save_to = 'reports' unless $save_to;
+      if ($class eq 'paper') {
+        $loc = "library";
+        $save_to = 'my_library';
+      }
       my $name = $c->req->params->{name};
 
       my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
+            $c->stash->{notify} = "$name has been removed from your $loc";
             $saved->delete();
             $saved->update(); 
       } else{
+            $c->stash->{notify} = "$name has been added to your $loc"; 
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
-      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library"); 
     }
     $c->stash->{noboiler} = 1;
-    $c->stash->{count} = $session->pages->count || 0;
-    $c->response->headers->expires(time);
+    my $count = $session->pages->count;
+    $c->stash->{count} = $count || 0;
+$c->response->headers->expires(time);
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
@@ -128,18 +138,18 @@ sub workbench_star_GET{
     my $page = $self->get_session($c)->pages->find({url=>$url});
 
     if($page) {
-        $c->stash->{star}->{value} = 1;
+          $c->stash->{star}->{value} = 1;
     } else{
         $c->stash->{star}->{value} = 0;
     }
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
     $c->stash->{star}->{name} = $c->req->params->{name};
-    $c->stash->{star}->{save_to} = $c->req->params->{class} eq 'paper' ?  "my_library" : "reports";
+    $c->stash->{star}->{class} = $c->req->params->{class};
     $c->stash->{star}->{url} = $url;
     $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
-    $c->response->headers->expires(time);
+$c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -404,6 +414,7 @@ sub download_GET {
     $filename =~ s/\s/_/g;
     $c->response->header('Content-Type' => 'text/html');
     $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
+#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
     $c->response->body($c->req->param("sequence"));
 }
 
@@ -898,9 +909,15 @@ sub widget_GET {
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
     if ($widget eq 'references') {
-      my $url = $c->uri_for('/search', 'paper', $name) . '?widget=refences&class=' . $class . ";inline=1";
-      $c->res->redirect($url, 307);
+      $c->stash->{class}    = $class;
+      $c->stash->{query}    = $name;
+      $c->stash->{noboiler} = 1;
+      
+      # Looking up the template is slow; hard-coded here.
+      $c->stash->{template} = 'shared/widgets/references.tt2';
+      $c->forward('WormBase::Web::View::TT');
       return;
+    
       # If you have a tool that you want to display inline as a widget, be certain to add it here.
       # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
@@ -993,27 +1010,38 @@ sub widget_GET {
 
 
 
-# Widgets specific to the Userguide. Total kludge to avoid hacking report_page macro in page_elements.tt2.
 
-sub widget_userguide :Path('/rest/widget/userguide') :Args(3) :ActionClass('REST') {}
+# Widgets specific to the Userguide.
+# The userguide has its own report to facilitate a deeper structure.
+sub widget_userguide :Path('/rest/widget/userguide') :ActionClass('REST') {}
 
 sub widget_userguide_GET {
-    my ($self,$c,$category,$subcategory,$widget) = @_; 
+    my ($self,$c,@args) = @_; 
+    my $path = join('/',@args);
 
-    # Save the name and "class" of the widget.
-    $c->stash->{category}    = $category;
-    $c->stash->{subcategory} = $subcategory;
-    $c->stash->{widget}   = $widget;
-    $c->stash->{noboiler} = 1;
-
-    # Set the template
     $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
-    if ($category eq 'index') {	
-	$c->stash->{child_template} = "userguide/$category/$widget.tt2";
-    } else {
-	$c->stash->{child_template} = "userguide/$category/$subcategory/$widget.tt2";
-    }
+    $c->stash->{child_template} = "userguide/$path.tt2";
+    $c->stash->{noboiler}       = 1;
 
+    # Get a list of available classes.
+    # The API index includes a list of available classes.
+    if ($path =~ m{all_classes}) {
+	my $dir = "$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object";
+	opendir(DIR,$dir) or $c->log->debug("Couldn't open $dir");
+	my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
+	
+	$c->stash->{classes}  = \@classes;
+#	$c->stash->{template} = 'userguide/developers/api-rest/all_classes.tt2';
+
+	# Kludge for individual classes.
+    # we don't really want each of these to have their own page.
+    } elsif ($path =~ m{api-rest/class/(.*)}) {
+	my $class = $1;
+	$c->stash->{class} = $class;
+	WormBase::Web::Controller::UserGuide->_get_pod($c,$class);
+	$c->stash->{child_template} = "userguide/developers/api-rest/class_documentation_generic.tt2";
+    }
+	       
     # Forward to the view to render HTML
     my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
     
@@ -1023,6 +1051,7 @@ sub widget_userguide_GET {
     $c->detach();
     return;
 }
+
 
 
 
@@ -1503,7 +1532,7 @@ sub widget_me_GET {
     my $api = $c->model('WormBaseAPI');
     my $type;
     $c->stash->{'bench'} = 1;
-    $c->response->headers->expires(time);
+$c->response->headers->expires(time);
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
@@ -1520,6 +1549,8 @@ sub widget_me_GET {
 
     my $session = $self->get_session($c);
     my @reports = $session->user_saved->search({save_to => $widget});
+#     $c->log->debug("getting saved reports @reports for user $session->id");  
+
     my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
     $c->stash->{'results'} = \@ret;

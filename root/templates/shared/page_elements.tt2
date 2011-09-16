@@ -1421,20 +1421,29 @@ END;
   widgets = [];
   widgets.push({ title="Page Content" type="title"});
 
-  SET base = '/rest/widget/userguide';
+  path = c.request.path;
+  SET base = "/rest/widget/$path";
 
-  # The userguide has a two-tiered hierarchy. eg: /userguide/developer/api
+  # The userguide has an n-tiered hierarchy. eg: /userguide/developer/api
   # to make it easier to organize templates on the filesystem.
   # We need to add a param for the top level category.
   IF category == 'index'; subcategory = 'any'; END;
 
   FOREACH widget IN widget_list;    
-     hash = widget.keys;
-     name = hash.0;
-     wtitle = widget.$name;
-      w = {  id     = name
+      hash = widget.keys;
+      name = hash.0;
+      wtitle = widget.$name;    
+     
+      # No need to append the name for our final path for class documentation; HACK HACK HACK!
+      IF path.match("api-rest/class");
+              myhref = c.uri_for('/rest','widget',path);
+      ELSE;
+              myhref = c.uri_for('/rest','widget',path,name);
+      END;
+      
+      w = { id    = name
             title = wtitle,
-            href  = c.uri_for(base, category, subcategory, name)
+            href  = myhref,
             type  = 'resources'
           };
 

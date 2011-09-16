@@ -4,10 +4,10 @@
     breadcrumbs.push('<a href="'_ c.uri_for('/userguide','developers') _ '">Developers</a>');
     breadcrumbs.push('<span>RESTful API</span>');
     title = breadcrumbs.join(" &raquo; ");
+
     userguide_page(title = title,
     		   widget_list => [ { overview    = 'Overview' },
 		   	            { all_classes = 'All Classes' },
 				      ]);
-       
 %]
 
