@@ -99,33 +99,23 @@ sub workbench_GET {
 
     my $url = $c->req->params->{url};
     if($url){
-      my $class = $c->req->params->{class};
-      my $save_to = $c->req->params->{save_to};
+      my $save_to = $c->req->params->{save_to} || 'reports';
       my $is_obj = $c->req->params->{is_obj} || 0;
-#       $c->stash->{is_obj} = $is_obj;
-      my $loc = "saved reports";
-      $save_to = 'reports' unless $save_to;
-      if ($class eq 'paper') {
-        $loc = "library";
-        $save_to = 'my_library';
-      }
       my $name = $c->req->params->{name};
 
       my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
-            $c->stash->{notify} = "$name has been removed from your $loc";
             $saved->delete();
             $saved->update(); 
-      } else{
-            $c->stash->{notify} = "$name has been added to your $loc"; 
+      } else{; 
             $c->model('Schema::Starred')->find_or_create({session_id=>$session->id,page_id=>$page->page_id, save_to=>$save_to, timestamp=>time()}) ;
       }
+      $c->stash->{notify} = "$name has been " . ($saved ? 'removed from' : 'added to') . " your " . ($save_to eq 'reports' ?  "favourites" : "library");
     }
     $c->stash->{noboiler} = 1;
-    my $count = $session->pages->count;
-    $c->stash->{count} = $count || 0;
-$c->response->headers->expires(time);
+    $c->stash->{count} = $session->pages->count || 0;     
+    $c->response->headers->expires(time);
     $c->stash->{template} = "workbench/count.tt2";
     $c->forward('WormBase::Web::View::TT');
 } 
@@ -144,12 +134,12 @@ sub workbench_star_GET{
     }
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
     $c->stash->{star}->{name} = $c->req->params->{name};
-    $c->stash->{star}->{class} = $c->req->params->{class};
+    $c->stash->{star}->{save_to} = $c->req->params->{class} eq 'paper' ?  "my_library" : "reports";
     $c->stash->{star}->{url} = $url;
     $c->stash->{star}->{is_obj} = $c->req->params->{is_obj};
     $c->stash->{template} = "workbench/status.tt2";
     $c->stash->{noboiler} = 1;
-$c->response->headers->expires(time);
+    $c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -909,14 +899,8 @@ sub widget_GET {
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
     if ($widget eq 'references') {
-      $c->stash->{class}    = $class;
-      $c->stash->{query}    = $name;
-      $c->stash->{noboiler} = 1;
-      
-      # Looking up the template is slow; hard-coded here.
-      $c->stash->{template} = 'shared/widgets/references.tt2';
-      $c->forward('WormBase::Web::View::TT');
-      return;
+        my $url = $c->uri_for('/search', 'paper', $name) . '?widget=refences&class=' . $class . ";inline=1";
+        $c->res->redirect($url, 307);
     
       # If you have a tool that you want to display inline as a widget, be certain to add it here.
       # Otherwise, it will try to load a template under class/action.tt2...
@@ -1532,7 +1516,7 @@ sub widget_me_GET {
     my $api = $c->model('WormBaseAPI');
     my $type;
     $c->stash->{'bench'} = 1;
-$c->response->headers->expires(time);
+    $c->response->headers->expires(time);
     if($widget=~m/user_history/){
       $self->history_GET($c);
       return;
@@ -1549,7 +1533,6 @@ $c->response->headers->expires(time);
 
     my $session = $self->get_session($c);
     my @reports = $session->user_saved->search({save_to => $widget});
-#     $c->log->debug("getting saved reports @reports for user $session->id");  
 
     my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
