@@ -1,23 +1,13 @@
-[% IF gene;
-   desc =
-         gene.Concise_description.join(' ')
-      || gene.Concise_description.join(' ')
-      || gene.Detailed_description.join(' ')
-      || gene.Provisional_description.join(' ')
-      || gene.Sequence_features.join(' ')
-      || gene.Molecular_function.join(' ')
-      || gene.Biological_process.join(' ')
-      || gene.Functional_pathway.join(' ')
-      || gene.Functional_physical_interaction.join(' ')
-      || gene.Expression.join(' ')
-      || gene.Other_description.join(' ')
-      || gene.Remarks.join(' ');
-   ELSE
-      desc = '';
-   END;
-%]
 <div style='padding:5px'>
-[% IF desc %]<b>[% c.req.params.name %]</b>: [% desc %]</b>
-[% ELSE    %][%c.req.params.name %]
-[% END     %]
+[% IF c.req.params.type == 'CG' %]
+    [% IF desc %]<b>[% c.req.params.name %]</b>: [% desc.replace('^(.{512}).+','$1...') %]</b>
+    [% ELSE    %][%c.req.params.name %]
+    [% END     %]
+[% ELSIF c.req.params.type == 'EXPR_PATTERN' %]
+    <span style="color:steelblue">[% title %]</span><br>
+    <p><i>[% desc %]</i></p>
+    [% IF expr_image %]
+       <img src="/draw/[% expr_image %]" style="width:300px">
+    [% END %]
+[% END %]
 </div>
