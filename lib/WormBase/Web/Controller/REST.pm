@@ -1289,7 +1289,7 @@ sub widget_static_POST {
     my ($self,$c,$widget_id) = @_; 
 
     #only admins and curators can modify widgets
-    if($c->check_any_user_role(qw/admin curator/)){ 
+    if($c->check_any_user_role(qw/admin curator editor/)){ 
 
       #only admins can delete
       if($c->req->params->{delete} && $c->check_user_roles("admin")){ 

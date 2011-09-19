@@ -360,7 +360,7 @@ sub external_source {
         $source = { template => "$template" };
 
         foreach my $dbtag (qw(Journal_URL Publisher_URL)) {
-            my $db = $obj->$dbtag;
+            my $db = $obj->$dbtag or next;
             my $text = $db->Name || $db->name;
             my $url = $db->URL;
 
@@ -370,6 +370,10 @@ sub external_source {
             };
         }
 
+        if (my $person_name = $obj->Person_name) {
+            $source->{template_items}->{Person_name}->{text} = $person_name;
+            # if it's a person and they are a WBPerson then... ?
+        }
 
         if (my ($dbnode) = $obj->Article_URL) {
             my ($db, $field, $accessor) = $dbnode->row;
