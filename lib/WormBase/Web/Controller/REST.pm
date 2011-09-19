@@ -901,7 +901,7 @@ sub widget_GET {
     if ($widget eq 'references') {
         my $url = $c->uri_for('/search', 'paper', $name) . '?widget=refences&class=' . $class . ";inline=1";
         $c->res->redirect($url, 307);
-    
+        return;
       # If you have a tool that you want to display inline as a widget, be certain to add it here.
       # Otherwise, it will try to load a template under class/action.tt2...
     } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
