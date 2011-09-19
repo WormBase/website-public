@@ -1097,6 +1097,7 @@ var Scrolling = (function(){
       offset,
       widgetHolder,
       body = $jq('html,body'),
+      scrollingDown = 0,
       count = 0, //semaphore
       titles;
                  
@@ -1106,28 +1107,29 @@ var Scrolling = (function(){
   }
   
   function goToAnchor(anchor){
-      var elem = document.getElementById(anchor);
-      if(!(isScrolledIntoView(elem))){
+      var elem = document.getElementById(anchor),
+          scroll = isScrolledIntoView(elem) ? undefined : $jq(elem).offset().top - system_message - 10;
+      if(scroll){
         body.stop().animate({
-          scrollTop: Math.min($jq(elem).offset().top - system_message - 10, $jq(document).height() - footerHeight - ($window.height()*0.6) )
-        }, 2000, function(){ Scrolling.sidebarMove(); });
+          scrollTop: scroll
+        }, 2000, function(){ Scrolling.sidebarMove(); scrollingDown = 0;});
+        scrollingDown = (body.scrollTop() < scroll) ? 1 : 0;
       }
   }
   
   function scrollUp(elem){
     var elemBottom = $jq(elem).offset().top + $jq(elem).height(),
-        docViewTop = $window.scrollTop(),
-        maxScroll = $jq(document).height() - footerHeight - ($window.height()) - elem.height();
-    if((elemBottom <= docViewTop) || (docViewTop > maxScroll)){
+        docViewTop = $window.scrollTop();
+    if((elemBottom <= docViewTop) ){ 
       body.stop().animate({
-          scrollTop: $window.scrollTop() - elem.height()
+          scrollTop: $window.scrollTop() - elem.height() - 10
       }, "fast", function(){ Scrolling.sidebarMove(); });
     }
   }
     
   function isScrolledIntoView(elem){
       var docViewTop = $window.scrollTop(),
-          docViewBottom = docViewTop + $window.height() - 50,
+          docViewBottom = docViewTop + ($window.height()*0.75),
           elemTop = $jq(elem).offset().top,
           elemBottom = elemTop + $jq(elem).height();
       return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
@@ -1158,11 +1160,12 @@ var Scrolling = (function(){
             }else if(scrollTop > maxScroll){
                 sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
                 static--;
+                if(scrollingDown == 1){body.stop(); scrollingDown = 0; }
             }
           }
         }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
-          //close lowest section. delay for animation. Add counting semaphore to lock
-          count++;
+          //close lowest section. delay for animation. 
+          count++; //Add counting semaphore to lock
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
         }
       } 
