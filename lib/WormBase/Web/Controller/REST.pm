@@ -148,7 +148,6 @@ sub layout :Path('/rest/layout') :Args(2) :ActionClass('REST') {}
 sub layout_POST {
   my ( $self, $c, $class, $layout) = @_;
   $layout = 'default' unless $layout;
-#   my %layoutHash = %{$c->user_session->{'layout'}->{$class}};
   my $i = 0;
   if($layout ne 'default'){
     $c->log->debug("max: " . join(',', (sort {$b <=> $a} keys %{$c->user_session->{'layout'}->{$class}})));
@@ -274,41 +273,45 @@ sub history :Path('/rest/history') :Args(0) :ActionClass('REST') {}
 
 sub history_GET {
     my ($self,$c) = @_;
-    my $clear = $c->req->params->{clear};
-    $c->log->debug("history");
+
+    $c->response->headers->expires(time);
     my $session = $self->get_session($c);
+    my $history_change = $c->req->params->{history_on};
 
     $c->stash->{noboiler} = 1;
-    $c->stash->{template} = "shared/fields/user_history.tt2"; 
+    $c->stash->{template} = $history_change ? "shared/fields/turn_history_on.tt2" : "shared/fields/user_history.tt2"; 
 
-    if($clear){ 
-      $c->log->debug("clearing");
-      $session->user_history->delete();
-      $session->update();
-      $c->stash->{history} = "";
-      $c->forward('WormBase::Web::View::TT');
-      $self->status_ok($c,entity => {});
-    }
 
-    my @hist = $session->user_history if $session;
-    my $size = @hist;
-    my $count = $c->req->params->{count} || $size;
-    if($count > $size) { $count = $size; }
-
-    @hist = sort { $b->get_column('timestamp') <=> $a->get_column('timestamp')} @hist;
-
-    my @histories;
-    map {
-      if($_->visit_count > 0){
-        my $time = $_->get_column('timestamp');
-        push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
-                            visits => $_->visit_count,
-                            page => $_->page,
-                          };
+    if(($c->user_session->{'history_on'} == 1) && !$history_change){
+      if($c->req->params->{clear}){ 
+        $session->user_history->delete();
+        $session->update();
+        $c->stash->{history} = "";
+        $c->forward('WormBase::Web::View::TT');
+        $self->status_ok($c,entity => {});
       }
-    } @hist[0..$count-1];
-    $c->stash->{history} = \@histories;
-$c->response->headers->expires(time);
+
+      my $sidebar = $c->req->params->{sidebar};
+      my @hist = $session->user_history if $session;
+      my $size = @hist;
+      my $count = $sidebar ? 3 : $size;
+      if($count > $size) { $count = $size; }
+
+      @hist = sort { $b->get_column('timestamp') <=> $a->get_column('timestamp')} @hist;
+
+      my @histories;
+      map {
+        if($_->visit_count > 0){
+          my $time = $_->get_column('timestamp');
+          push @histories, {  time_lapse => concise(ago(time()-$time, 1)),
+                              visits => $_->visit_count,
+                              page => $_->page,
+                            };
+        }
+      } @hist[0..$count-1];
+      $c->stash->{history} = \@histories;
+      $c->stash->{sidebar} = $sidebar if $sidebar;
+    }
     $c->forward('WormBase::Web::View::TT');
     $self->status_ok($c,entity => {});
 }
@@ -316,18 +319,19 @@ $c->response->headers->expires(time);
 
 sub history_POST {
     my ($self,$c) = @_;
-    $c->log->debug("history logging");
-    my $session = $self->get_session($c);
-    my $path = $c->request->body_parameters->{'ref'};
-    my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
-    my $is_obj = $c->request->body_parameters->{'is_obj'};
+    if($c->user_session->{'history_on'} == 1){
+      my $session = $self->get_session($c);
+      my $path = $c->request->body_parameters->{'ref'};
+      my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
+      my $is_obj = $c->request->body_parameters->{'is_obj'};
 
-    my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
-    $c->log->debug("logging:" . $page->page_id . " is_obj: " . $is_obj);
-    my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
-    $hist->set_column(timestamp=>time());
-    $hist->set_column(visit_count=>($hist->visit_count + 1));
-    $hist->update;
+      my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
+      my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
+      $hist->set_column(timestamp=>time());
+      $hist->set_column(visit_count=>($hist->visit_count + 1));
+      $hist->update;
+    }
+    $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
 }
 
  
@@ -1363,7 +1367,7 @@ sub widget_home_GET {
     }
     elsif($widget=~m/activity/){
       $c->stash->{recent} = $self->recently_saved($c,3);
-      $c->stash->{popular} = $self->most_popular($c,3);
+      $c->stash->{popular} = $self->most_popular($c,5);
     }   
     elsif($widget=~m/discussion/){
       $c->stash->{comments} = $self->comment_rss($c,2);

@@ -39,25 +39,25 @@
 
      [% text = [ ];
         # Lots of variations of something that might be a description.
-	 text.push(item.title)                  IF item.title;
-	 text.push(item.type)                   IF item.type;
-	 text.push(item.description)            IF item.description;
-     text.push(item.definition)             IF item.definition;
-	 text.push(item.remarks.join("<br />")) IF item.remarks;
-	 text.push(item.summary)                IF item.summary;
+        text.push(item.title)                  IF item.title;
+        text.push(item.type)                   IF item.type;
+        text.push(item.description)            IF item.description;
+        text.push(item.definition)             IF item.definition;
+        text.push(item.remarks.join("<br />")) IF item.remarks;
+        text.push(item.summary)                IF item.summary;
 
-	mystring = text.join("<br>");
+        mystring = text.join("<br>");
         IF mystring; %]
 
         <div class="text-min" style="height:auto;max-height:2.4em;">
            [% mystring %]    
         </div>
-        [% IF mystring.length > 150 %]
-              <div class="more">
-                   <div class="ui-icon ui-icon-triangle-1-s"></div>
-              </div>
-        [% END %]
-    [% END %]
+          [% IF mystring.length > 150 %]
+                <div class="more">
+                    <div class="ui-icon ui-icon-triangle-1-s"></div>
+                </div>
+          [% END %]
+        [% ELSE; '<br />'; END; %]
      <span id="fade">[% item.footer %]</span>
   [% CATCH %]
     [% error %]

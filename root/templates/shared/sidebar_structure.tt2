@@ -103,7 +103,7 @@
       <div>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
-[% UNLESS c.req.action == 'me' %]
+[% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
       <li id="nav-user_history" 
           class="module-load me" 
           wname="user_history"
@@ -163,7 +163,7 @@
           [% PROCESS widget_sortable_block type=w.type id=w.id title=w.title -%]
           </li>   
       [% END %]
-[% UNLESS c.req.action == 'me' %]
+[% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
           <li id="user_history" class="widget">
           [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
           </li>
