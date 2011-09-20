@@ -1,11 +1,26 @@
 
-[% FOREACH h IN c.stash.history %]
-  <li><div class="ellipsis">
-    [% linkPage(h.page) %]
-    
-   <span id="fade"> - [% h.time_lapse %] 
-  [% IF h.visits > 1 %]([% h.visits %] visits) [% END %]
-  </span>
-</div>
-  </li>
+[% IF c.user_session.history_on == 1 %]
+  [% FOREACH h IN c.stash.history %]
+    <li>
+      <div class="ellipsis">
+      [% linkPage(h.page) %]
+        <span id="fade"> - [% h.time_lapse %] 
+        [% IF h.visits > 1 %]([% h.visits %] visits) [% END %]
+        </span>
+      </div>
+    </li>
+  [% END %]
+  [% UNLESS sidebar %]
+    <li><a id="fade" onclick='WB.ajaxGet($jq("div#user_history"), "/rest/history?clear=1");'>clear history</a></li>
+
+    <a href="/" onclick='WB.ajaxGet($jq(this).closest(".content"), "/rest/history?history_on=1");return false;'>turn off history</a>
+
+  [% END %]
+[% ELSE %]
+  <div style="padding:0 1em 0.5em 1.5em">
+    <div class="ui-button history-logging ui-corner-large-all" href="/rest/history?history_on=1" onMouseOver='WB.historyOn("get")'>turn on history ›</div><br />
+    <span id="fade">history logging is off</span>
+  </div>
 [% END %]
+
+

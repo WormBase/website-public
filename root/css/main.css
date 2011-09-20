@@ -849,11 +849,11 @@ div.more .ui-icon {
   margin:1em 0;
 }
 
-.example img {
+.how-to-star img {
   margin-left:1em;
 }
 
-.example {
+.how-to-star {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
   padding: 1em;
@@ -864,40 +864,6 @@ div.more .ui-icon {
   font-weight:bold
 }
 
-
-
-#openid {
-margin-left:2em ;
-width:170px;
-float:right;
-position:relative;
-}
-
-#content-slider {
-  width:74px;
-  margin-left:25px;
-  height: 115px;
-  overflow: hidden;
-}
-
-#openid_choice {
-  width: 800px;
-  position:relative;
-}
-
-#left {
-  float: left;
-  margin-top:50px; 
-  margin-left:5px;
-  position:absolute;
-} 
-
-#right {
-  float: left;
-  margin-top:50px; 
-  margin-left:102px; 
-  position:absolute;
-} 
 
 .comment-box {
   margin:0.5em 0;
@@ -962,34 +928,9 @@ cursor:pointer;}
 .ui-corner-large-all { -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px; }
 
 
-
-
 .ui-autocomplete {
   z-index:15 !important;
 }
-
-
-
-
-
-/* Button
-----------------------------------*/
-
-.ui-button { 
-  display: inline-block; 
-  position: relative; 
-  padding: 0; 
-  margin-right: .1em; 
-  text-decoration: none !important; 
-  cursor: pointer; 
-  text-align: center; 
-  zoom: 1; 
-overflow: visible; 
-
-} /* the overflow property removes extra width in IE */
-
-
-
 
 
 
@@ -1532,7 +1473,6 @@ li.visible div.widget-container {
     border-bottom:1px dotted #CDCDCD;
     height:1em;
     cursor:pointer;
-
 }
 
 .widget-header>div.ui-icon {
@@ -1613,35 +1553,35 @@ li.visible div.widget-container {
 }
 
 
-div.ui-icon-large {
+.widget-container div.ui-icon-large {
   float:right;
   cursor:pointer;
   margin:0.4em;
 }
 
-div.loading {
+.widget-container div.loading {
   width:100%;
   text-align:center;
   padding:1em 0 0;
 }
 
-h3 div.module-min {
+.widget-container h3 div.module-min {
   float:left;
   margin:2px;
 }
 
-h3 span {
+.widget-container h3 span {
   float:left;
 }
 
-h3 span.ui-icon {
+.widget-container h3 span.ui-icon {
   margin:0.2em;
   opacity:0.7;
   filter:alpha(opacity=70);
   -moz-opacity:0.7;
 }
 
-h3 span.ui-icon:hover {
+.widget-container h3 span.ui-icon:hover {
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
@@ -1663,16 +1603,6 @@ fieldset {
    Per-Page styling
    
 *********************************/
-
-/* A list of available views */
-#available-views {
-    color:black;
-    overflow:hidden;
-    position:absolute;
-    bottom:0.5em;
-    right:1em;
-    font-size:0.8em;
-}
 
 /* =========================================
    FOOTER ================================== */
@@ -1815,16 +1745,6 @@ div#footercredit a{
    font-style:italic;
 }
 
-
-
-#returned-data {
-    font-family:Courier;
-    width:800px;
-    padding:25px;
-    background:#FFFFCC;
-    border:1px solid black;
-    display:none;
-}
 
 .returned-data {
     font-family:Courier;
@@ -2086,46 +2006,6 @@ div#google-map {
 
 
 
-/* Subfields - structure mimics that of fields */
-div.subfield { 
-      clear:left;
-      float:left;
-      line-height:1.2em;
-      padding:0.2em;
-/*       margin-left:6em; */
-}
-
-div.subfield h6 {   
-    float:left;
-/* position:relative; */
-    width:10em;
-    text-align:right;
-    margin-top:0em;   // Force top alignment with content even though we are an h element
-}
-
-div.subfield p {
-    margin-left:1em;
-}
-
-div.subfield-title {
-    font-size    : 1em;
-    /*     padding-bottom: 0.5em; */
-    height       : auto;	
-    float:left;
-    text-align:right;
-    padding-right:0.5em;
-    width:9em;
-}
-
-div.subfield .subfield-content {
-    margin-left:9.5em;
-    text-align:left;
-    width:auto;
-/*  overflow:hidden; */
-}
-
-
-
 
 
 
@@ -2145,33 +2025,6 @@ div#alert {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/* Allele-specific markup */
-/* Markup to show when the sequence identity of an allele is known */
-span .identity_known {
-    font-weight:bold;    
-}
-
-span .identity_unknown {  }
-
-span.feature_flank {
-    text-transform:lowercase;
-}
-
-span.highlighted_feature {
-    text-transform:uppercase;
-    font-weight:bold;
-}
 
 
 
@@ -2560,9 +2413,33 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   padding-left:2em;
 }
 
+
 .text-width {
   max-width:35em;
 }
+
+.history-logging {
+/*   background: #9C4041; */
+  padding:0.5em;
+  color: white;
+  margin:0.3em 0;
+  font-weight:bold;
+  border:none;
+  background: #9C4041;
+  background: #9C4041 -moz-linear-gradient(90deg, #9C4041, #C98788);
+  background: #9C4041 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#C98788), to(#9C4041));
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C98788,endColorStr=#9C4041);
+}
+
+
+
+.history-logging:hover{
+  background: #C98788;
+  background: #C98788 -moz-linear-gradient(90deg, #9C4041, #D4A3A4);
+  background: #C98788 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#D4A3A4), to(#9C4041));
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=#D4A3A4,endColorStr=#9C4041);
+}
+
 
 div.detail-box{
   border:1px solid #CDCDCD;

@@ -248,28 +248,6 @@ END;
      </div>
 [% END %]
 
-[% BLOCK subfield_block %]
-    <div class="subfield" id="[% title FILTER html %]">
-         <div class="subfield-title">
-
-              [%# Is there a description? Set it as a tool tip %]
-               [% IF fields.$key.description %]
-                <a title="[% fields.$key.description %]">
-                 [% title %]:
-                 </a>
-              [% ELSE %]
-                  [% title %]:
-              [% END %]
-
-          </div>
-
-          <div class="subfield-content">
-             [% content %]
-          </div>
-     </div>
-[% END %]
-
-
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
 

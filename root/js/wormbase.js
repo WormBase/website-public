@@ -33,18 +33,19 @@
     function init(){
       var pageInfo = $jq("#header").data("page"),
           searchAll = $jq("#all-search-results"),
-          sysMessage = $jq("#top-system-message").children(".system-message-close");
-          
-      if($jq(".user-history").size()>0){
-        (function histUpdate(){
-          ajaxGet($jq(".user-history"), "/rest/history?count=3");
-          setTimeout(histUpdate, 6e5); //update the history every 10min
-          return;
-        })();
+          sysMessage = $jq("#top-system-message").children(".system-message-close"),
+          history_on = (pageInfo['history'] == 1) ? 1 : undefined;
+
+      if(history_on){
+        $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
       }
       
-      $jq.post("/rest/history", { 'ref': pageInfo['ref'] , 'name' : pageInfo['name'], 'id':pageInfo['id'], 'class':pageInfo['class'], 'type': pageInfo['type'], 'is_obj': pageInfo['is_obj'] });
+      if($jq(".user-history").size()>0){
+        histUpdate(history_on);
+      }
+      
 
+      
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
@@ -66,6 +67,18 @@
       pageInit();
       widgetInit();
       effects();
+    }
+    
+    
+    function histUpdate(history_on){
+      var uhc = $jq("#user_history-content");
+      
+      ajaxGet($jq(".user-history"), "/rest/history?sidebar=1");
+      if(uhc.size()>0 && uhc.text().length > 4) ajaxGet(uhc, "/rest/history");
+      if(history_on){
+        setTimeout(histUpdate, 6e5); //update the history every 10min
+      }
+      return;
     }
    
 
@@ -1481,6 +1494,20 @@ var Scrolling = (function(){
       }
     }
   }
+  
+  
+  function historyOn(action, value, callback){
+    if(action == 'get'){
+        getColorbox(function(){
+            $jq(".history-logging").colorbox();
+            if(callback) callback();
+        });
+    }else{
+      $jq.post("/rest/history", { 'history_on': value }, function(){ if(callback) callback(); });
+      histUpdate(value == 1 ? 1 : undefined);
+      if($jq.colorbox) $jq.colorbox.close();
+    }
+  }
 
 
   var Breadcrumbs = {
@@ -1659,7 +1686,8 @@ var Scrolling = (function(){
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
       checkSearch: checkSearch,
-      scrollToTop: scrollToTop
+      scrollToTop: scrollToTop,
+      historyOn: historyOn
     }
   })();
 
