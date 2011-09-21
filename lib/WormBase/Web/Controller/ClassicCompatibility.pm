@@ -55,21 +55,21 @@ sub get :Local Args(0) {
              || $ACE2WB->{lc $requested_class} # canonical Ace class
              or $c->detach('/soft_404');
 
-    my $canonical_class = lc $class;
+    my $normed_class = lc $class;
 
     my $url;
-    if (exists $c->config->{sections}->{species}->{$canonical_class}) { # /species
+    if (exists $c->config->{sections}->{species}->{$normed_class}) { # /species
         unless ($c->stash->{object}) {
             # Fetch our external model
             my $api = $c->model('WormBaseAPI');
 
             # Fetch a WormBase::API::Object::* object
             if ($name eq '*' || $name eq 'all') {
-                $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
+                $c->stash->{object} = $api->instantiate_empty({class => $class});
             }
             else {
                 $c->stash->{object} = $api->fetch({
-                    class => ucfirst($class),
+                    class => $class,
                     name  => $name,
                 }) or die "Couldn't fetch an object: $!";
             }
@@ -78,10 +78,10 @@ sub get :Local Args(0) {
 
         my $object = $c->stash->{object};
         my $species = eval { $object->Species } || 'any';
-        $url = $c->uri_for('/species', $species, $canonical_class, $name);
+        $url = $c->uri_for('/species', $species, $normed_class, $name);
     }
     else {                      # /report
-        $url = $c->uri_for('/resources', $canonical_class, $name);
+        $url = $c->uri_for('/resources', $normed_class, $name);
     }
 
     $c->res->redirect($url);
