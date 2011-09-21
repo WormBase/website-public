@@ -25,43 +25,57 @@ use Class::MOP;
 
     my $WB2ACE_MAP_DONE = 0;
     my %WB2ACE_MAP = ( # WB models -> Ace models (values are Ace tags/values)
-		       class => { # HAS DEFAULT
-			   Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
-			   Person    => [qw(Person Author)],
-			   Sequence  => [qw(Transcript Sequence CDS cds)],
-			   Rnai      => 'RNAi',
-			   Go_term   => 'GO_term',
-		       },
-		       common_name => {
-			   Person       => 'Standard_name',
-			   Gene         => [qw(Public_name CGC_name Molecular_name)],
-			   # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
-			   Feature      => ['Public_name', 'Other_name'],
-			   Variation    => 'Public_name',
-			   Phenotype    => 'Primary_name',
-			   Gene_class   => 'Main_name',
-               Gene_name    => 'Public_name_for',
-			   Species      => 'Common_name',
-			   Molecule     => [qw(Public_name Name)],
-			   Anatomy_term => 'Term',
-			   GO_term      => 'Term',
-		       },
-		       laboratory => {
-			   Gene_class  => 'Designating_laboratory',
-			   PCR_product => 'From_laboratory',
-			   Sequence    => 'From_laboratory',
-			   CDS         => 'From_laboratory',
-			   Transgene   => 'Location',
-			   Strain      => 'Location',
-			   Antibody    => 'Location',
-		       },
-		       
+        class => {     # HAS DEFAULT
+            Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
+            Person    => [qw(Person Author)],
+            Sequence  => [qw(Transcript Sequence CDS cds)],
+            Rnai      => 'RNAi',
+            Go_term   => 'GO_term',
+        },
+        common_name => {
+            Person       => 'Standard_name',
+            Gene         => [qw(Public_name CGC_name Molecular_name)],
+            # for gene, still missing $gene->Corresponding_CDS->Corresponding_protein
+            Feature      => ['Public_name', 'Other_name'],
+            Variation    => 'Public_name',
+            Phenotype    => 'Primary_name',
+            Gene_class   => 'Main_name',
+            Gene_name    => 'Public_name_for',
+            Species      => 'Common_name',
+            Molecule     => [qw(Public_name Name)],
+            Anatomy_term => 'Term',
+            GO_term      => 'Term',
+        },
+        laboratory => {
+            Gene_class  => 'Designating_laboratory',
+            PCR_product => 'From_laboratory',
+            Sequence    => 'From_laboratory',
+            CDS         => 'From_laboratory',
+            Transgene   => 'Location',
+            Strain      => 'Location',
+            Antibody    => 'Location',
+        },
     );
 
     my $ACE2WB_MAP_DONE = 0;
     my %ACE2WB_MAP = ( # Ace models -> WB models (values are WB attrs/values)
         # class HAS DEFAULT (and will be dynamically populated)
     );
+
+    # the canonical representation of Ace classes is lower case (arbitrary)
+    sub _canonize_ace {
+        return lc $_[0];
+    }
+
+    # Note: In fact, there is currently no (currently) observed canonical
+    #       representation of WB model classes; the URL suggests lower case,
+    #       the modules suggest title-case (but not always). It is recommended
+    #       such a canonical representation be adopted e.g. always title-case
+    #       for back-end representation and always lower-case for URLs.
+    #       -AD
+    sub _canonize_wb { # present for completeness
+        return ucfirst lc $_[0];
+    }
 
     sub _map_wb2ace {
         # map the classes (with short name)
@@ -94,15 +108,22 @@ use Class::MOP;
 
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
 			my $fullwb = "${base}::$wb";
+            my $canonical_ace_class;
             if (ref $ace eq 'ARRAY') { # multiple Ace to single WB
                 foreach my $ace_class (@$ace) {
-                    $classmap->{$ace_class}		||= $wb;
-					$fullclassmap->{$ace_class} ||= $fullwb;
+                    $canonical_ace_class = _canonize_ace($ace_class);
+                    $classmap->{$ace_class}		          ||= $wb;
+                    $classmap->{$canonical_ace_class}     ||= $wb;
+					$fullclassmap->{$ace_class}           ||= $fullwb;
+                    $fullclassmap->{$canonical_ace_class} ||= $fullwb;
                 }
             }
             else {              # assume scalar; 1-to-1
-                $classmap->{$ace}     ||= $wb;
-				$fullclassmap->{$ace} ||= $fullwb;
+                $canonical_ace_class = _canonize_ace($ace);
+                $classmap->{$ace}                     ||= $wb;
+                $classmap->{$canonical_ace_class}     ||= $wb;
+				$fullclassmap->{$ace}                 ||= $fullwb;
+                $fullclassmap->{$canonical_ace_class} ||= $fullwb;
             }
         }
 
