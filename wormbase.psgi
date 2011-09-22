@@ -12,6 +12,8 @@ use Plack::Builder;
 use Bio::Graphics::Browser2;
 use Bio::Graphics::Browser2::Render::HTML;
 
+use constant DEV_DEFAULT_GB => 'cgi-bin';
+
 # The symbolic name of our application.
 my $app      = $ENV{APP};
 my $app_root = $ENV{APP_ROOT};
@@ -37,14 +39,16 @@ else { # no app[root] provided; use catalyst to figure it out
 
 my $wormbase = WormBase::Web->psgi_app(@_);
 
-my $gbrowse; # GB app
+my $gbrowse;
 my $gbrowse_static = Plack::App::File->new(root => "$app_path/root/gbrowse");
-my $gbrowse_integration = $ENV{GBROWSE_INTEGRATION} ||
-    (WormBase::Web->config->{installation_type} eq 'development' ? 'psgi' : '');
+
 $ENV{GBROWSE_CONF} ||= "$app_path/conf/gbrowse";
+my $gbrowse_integration = $ENV{GBROWSE_INTEGRATION}
+    || (WormBase::Web->config->{installation_type} eq 'development' ?
+        DEV_DEFAULT_GB : '');
 
 # Will detect development vs production server. By default, production servers
-# will use reverse proxy for GB and development server will use PSGI-wrapped
+# will use reverse proxy for GB and development server will use CGI bin'd
 # GB. This can be overriden with $ENV{GBROWSE_INTEGRATION}.
 
 if ($gbrowse_integration =~ /cgi-?bin/io) {
@@ -59,7 +63,7 @@ elsif ($gbrowse_integration =~ /psgi/io) { # wrap GBrowse up like a PSGI app
     # Ideally, GBrowse could provide a psgi_app method like
     # Bio::Graphics::Browser2->psgi_app(@_) which would do exactly this:
     # (even more ideally, a rewrite from the ground up with PSGI in mind)
-    $gbrowse = CGI::Emulate::PSGI->handler(sub {
+    my $gb = CGI::Emulate::PSGI->handler(sub {
        use CGI;
        my $globals = Bio::Graphics::Browser2->open_globals;
        CGI::initialize_globals();
@@ -68,6 +72,13 @@ elsif ($gbrowse_integration =~ /psgi/io) { # wrap GBrowse up like a PSGI app
        warn $@ if $@;
        $render->destroy;
     });
+
+    my $gb_img = Plack::App::WrapCGI->new(script => "$app_path/root/gbrowse/cgi/gbrowse_img")->to_app;
+
+    $gbrowse = builder {
+        mount '/gbrowse'     => $gb;
+        mount '/gbrowse_img' => $gb_img;
+    };
 }
 else { # proxy (fallback)
     # hardcoded addresses... should be in config or env, or config files
@@ -86,12 +97,7 @@ builder {
     }
 
     # GB
-    if ($gbrowse_integration =~ /cgi-?bin/io) { 
-        mount '/tools/genome'         => $gbrowse
-    }
-    else {
-        mount '/tools/genome/gbrowse' => $gbrowse
-    }
+    mount '/tools/genome'   => $gbrowse;
     mount "/gbrowse-static" => Plack::App::File->new(root => "$app_path/root/gbrowse");
 
     # The core app.
