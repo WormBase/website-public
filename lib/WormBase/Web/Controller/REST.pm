@@ -327,7 +327,7 @@ sub history_POST {
       my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
       my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
       $hist->set_column(timestamp=>time());
-      $hist->set_column(visit_count=>($hist->visit_count + 1));
+      $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
       $hist->update;
     }
     $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
