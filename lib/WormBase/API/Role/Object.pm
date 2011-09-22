@@ -1151,16 +1151,16 @@ sub _build_phenotypes_data {
     my $self = shift;
     my $tag = shift;
     my $object = $self->object;
-    my @data;
-    foreach my $phenotype ($object->$tag) {
-        my $description = $phenotype->Description;
-	my $remarks     = $phenotype->Remark;
-	push @data, { 
-	    phenotype   => $self->_pack_obj($phenotype),
-	    description => "$description", 
-	    remarks     => "$remarks" };
-    }
-    return @data ? \@data : undef;
+
+    return map {
+        my $desc = $_->Description;
+        my $remark = $_->Remark;
+        {
+            phenotype   => $self->_pack_obj($_),
+            description => $desc    && "$desc",
+            remarks     => $remark && "$remark",
+        };
+    } @{$self ~~ '@tag'};
 }
 
 
