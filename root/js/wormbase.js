@@ -286,38 +286,51 @@
       widgets.find(".module-load, .module-close").click(function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
-            content = "div#" + widget_name + "-content";
+            content = $jq("#" + widget_name + "-content");
         if(!nav.hasClass('ui-selected')){
-          if($jq(content).text().length < 4){
-              var column = ".left";
-              if(getLeftWidth(widgetHolder) >= 90){
+          if(content.text().length < 4){
+              var column = ".left",
+                  lWidth = getLeftWidth(widgetHolder);
+              if(lWidth >= 90){
                 if(widgetHolder.children(".right").children(".visible").height()){
                   column = ".right";
                 }
               }else{
-                var leftHeight = parseFloat(widgetHolder.children(".left").css("height")),
-                    rightHeight = parseFloat(widgetHolder.children(".right").css("height"));
+                var leftHeight = height(widgetHolder.children(".left").children(".visible"));
+                    rightHeight = height(widgetHolder.children(".right").children(".visible"));
                 if (rightHeight < leftHeight){ column = ".right"; }
               }
               openWidget(widget_name, nav, content, column);
           }else{
-            $jq(content).parents("li").addClass("visible");
+            content.parents("li").addClass("visible");
             nav.addClass("ui-selected");
-            moduleMin($jq(content).prev().find(".module-min"), false, "maximize");
+            moduleMin(content.prev().find(".module-min"), false, "maximize");
           }
           Scrolling.goToAnchor(widget_name);
           updateLayout();
         } else {
-          Scrolling.scrollUp($jq(content).parents("li"));
-          moduleMin($jq(content).prev().find(".module-min"), false, "minimize", function(){
+          Scrolling.scrollUp(content.parents("li"));
+          moduleMin(content.prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
-            $jq(content).parents("li").removeClass("visible"); 
+            content.parents("li").removeClass("visible"); 
             updateLayout();
           });
         }
         Scrolling.sidebarMove();
         return false;
       });
+      
+      
+      function height(list){
+        var len = 0; 
+        for(var i=0; i<list.length; i++){ 
+          len += $jq(list[i]).height();
+        } 
+        return len;
+      }
+      
+
+
       
      
       Scrolling.sidebarInit();
@@ -349,7 +362,7 @@
       widgets.find(".module-load, .module-close").bind('open',function() {
         var widget_name = $jq(this).attr("wname"),
             nav = $jq("#nav-" + widget_name),
-            content = "div#" + widget_name + "-content";
+            content = $jq("#" + widget_name + "-content");
 
         openWidget(widget_name, nav, content, ".left");
         return false;
@@ -830,8 +843,7 @@
 
    
     function openWidget(widget_name, nav, content, column){
-        var content = $jq(content),
-            url     = nav.attr("href");
+        var url     = nav.attr("href");
             
         content.closest("li").appendTo($jq("#widget-holder").children(column));
 
@@ -854,12 +866,12 @@
     
       
   function addWidgetEffects(widget_container, callback) {
-      widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-e").attr("title", "maximize");
-      widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
-      widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
-      widget_container.find("#widget-footer").hide();
-      widget_container.find(".widget-header").children("h3").children("span.hide").hide();
-
+//       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
+//       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
+//       widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
+//       widget_container.find("#widget-footer").hide();
+//       widget_container.find(".widget-header").children("h3").children("span.hide").hide();
+  
       widget_container.find(".widget-header").hover(
         function () {
           $jq(this).children("h3").children("span").show();
@@ -924,15 +936,18 @@
 //The layout methods
     
     function columns(leftWidth, rightWidth, noUpdate){
-      var widgetHolder = $jq("#widget-holder");
-      if(leftWidth>99){
-        widgetHolder.children(".sortable").css('min-height', '0');
+      var sortable = $jq("#widget-holder").children(".sortable"),
+          tWidth = $jq("#widget-holder").innerWidth();
+      sortable.filter(".column-narrow").removeClass("column-narrow");
+      if(leftWidth>95){
+        sortable.removeClass('table-columns').addClass('one-column');
+        rightWidth = leftWidth = 100;
       }else{
-        widgetHolder.children(".sortable").css('min-height', '5em');
+        sortable.addClass('table-columns').removeClass('one-column');
+        if ((leftWidth < 35) || (leftWidth > 65)){ sortable.filter( (leftWidth < 35) ? ".left" : ".right").addClass("column-narrow"); }
       }
-      widgetHolder.children(".left").css("width",leftWidth + "%");
-      if(rightWidth==0){rightWidth=100;}
-      widgetHolder.children(".right").css("width",rightWidth + "%");
+      sortable.filter(".left").css("width",leftWidth + "%");
+      sortable.filter(".right").css("width",rightWidth + "%");
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -974,7 +989,7 @@
 
 
     function newLayout(layout){
-      updateLayout(layout, function() {
+      updateLayout(layout, undefined, function() {
         $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
             if (status == "error") {
                 var msg = "Sorry but there was an error: ";
@@ -998,7 +1013,8 @@
     
     function readHash() {
       if(reloadLayout == 0){
-        var h = decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-');
+        var hash = location.hash,
+            h = decodeURI(hash).match(/^[#](.*)$/)[1].split('-');
         if(!h){ return; }
         
         var l = h[0],
@@ -1007,7 +1023,7 @@
         
         if(l){ l = $jq.map(l.split(''), function(i) { return getWidgetName(i);}); }
         if(r){ r = $jq.map(r.split(''), function(i) { return getWidgetName(i);}); }
-        resetLayout(l,r,w);
+        resetLayout(l,r,w,hash);
       }else{
         reloadLayout--;
       }
@@ -1046,33 +1062,34 @@
         return widgetList.list[parseInt(widget_id,36)];
     }
 
-    function updateLayout(layout, callback){
+    function updateLayout(layout, hash, callback){
       var holder =  $jq("#widget-holder"),
           $class = holder.attr("wclass"),
-          left = holder.children(".left").children(".visible")
-                            .map(function() { return this.id;})
-                            .get(),
-          right = holder.children(".right").children(".visible")
-                            .map(function() { return this.id;})
-                            .get(),
-          leftWidth = getLeftWidth(holder),
-          lstring = updateURLHash(left, right, leftWidth),
-          l = 'default';
-      if((typeof layout) == 'string'){
-        l = escape(layout); 
-      }
+          lstring = hash || readLayout(holder),
+          l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
         if(callback){ callback(); }
       });
     }
-
-    function getLeftWidth(holder){
-      var totWidth = parseFloat(holder.css("width")),
-          leftWidth = (parseFloat(holder.children(".left").css("width"))/totWidth)*100;
-      return Math.round(leftWidth); //if you don't round, the slightest change causes an update
+    
+    function readLayout(holder){
+      var left = holder.children(".left").children(".visible")
+                      .map(function() { return this.id;})
+                      .get(),
+          right = holder.children(".right").children(".visible")
+                      .map(function() { return this.id;})
+                      .get(),
+          leftWidth = getLeftWidth(holder);
+      return updateURLHash(left, right, leftWidth);
     }
 
-    function resetLayout(leftList, rightList, leftWidth){
+    function getLeftWidth(holder){
+      var totWidth = parseFloat(holder.outerWidth()),
+          leftWidth = (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
+      return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
+    }
+
+    function resetLayout(leftList, rightList, leftWidth, hash){
       $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
@@ -1081,7 +1098,7 @@
         var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
-              content = "div#" + widget_name + "-content";
+              content = $jq("#" + widget_name + "-content");
           openWidget(widget_name, nav, content, ".left");
         }
       }
@@ -1089,12 +1106,12 @@
         var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
-              content = "div#" + widget_name + "-content";
+              content = $jq("#" + widget_name + "-content");
           openWidget(widget_name, nav, content, ".right");
         }
       }
       if(location.hash.length > 0){
-        updateLayout();
+        updateLayout(undefined, hash);
       }
     }
 
@@ -1132,8 +1149,8 @@ var Scrolling = (function(){
   
   function scrollUp(elem){
     var elemBottom = $jq(elem).offset().top + $jq(elem).height(),
-        docViewTop = $window.scrollTop();
-    if((elemBottom <= docViewTop) ){ 
+        docViewBottom = $window.scrollTop() + $window.height();
+    if((elemBottom <= docViewBottom) ){ 
       body.stop().animate({
           scrollTop: $window.scrollTop() - elem.height() - 10
       }, "fast", function(){ Scrolling.sidebarMove(); });
@@ -1625,7 +1642,7 @@ var Scrolling = (function(){
   
 
     function getDataTables(callback){
-      getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.min.css", callback);
+      getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.css", callback);
       return;
     }
     function getHighlight(callback){
@@ -1695,7 +1712,7 @@ var Scrolling = (function(){
 
 
  $jq(document).ready(function() {
-      $jq.ajaxSetup( {timeout: 6e4 }); //one minute timeout on ajax requests
+      $jq.ajaxSetup( {timeout: 12e4 }); //2 minute timeout on ajax requests
       WB.init();
  });
 

@@ -12,8 +12,8 @@ IF object.name.data.class == 'Protein';
    END;
 
 ELSE;
-
-    WRAPPER $field_block title="Curatorial History" key="history";
+    '<h4>Curatorial history</h4><br />';
+    #WRAPPER $field_block title="Curatorial History" key="history";
        build_data_table(order=['version','date','action','remark','gene','curator'],
                          columns={ version => 'Version',
 		                   date    => 'Date',
@@ -23,7 +23,7 @@ ELSE;
 				   curator => 'Curator'
                                  },
                          key='history');
-    END;
+    #END;
 
 END;
 

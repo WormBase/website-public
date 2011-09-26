@@ -932,7 +932,7 @@ sub fourd_expression_movies {
 	};
     }
     return { description => 'interactive 4D expression movies',
-	     data        => \%data };
+	     data        => %data ? \%data : undef };
 }
 
 
@@ -1009,7 +1009,7 @@ sub anatomic_expression_patterns {
     }
     
     return { description => 'expression patterns for the gene',
-	     data        => \%data_pack };
+	     data        => %data_pack ? \%data_pack : undef };
 }
 
 =head3 microarray_expression_data
@@ -1393,7 +1393,7 @@ sub alleles {
     }
     
     return { description => 'alleles found within this gene',
-	     data        => \@data };
+	     data        => @data ? \@data : undef };
 }
 
 =head3 polymorphisms
@@ -1546,7 +1546,7 @@ sub reference_allele {
     
     my @array = map { $self->_pack_obj($_) } @$ref_alleles;
     return { description => 'the reference allele of the gene',
-	     data        => \@array };
+	     data        => @array ? \@array : undef };
 }
 
 =head3 strains
@@ -1695,9 +1695,9 @@ sub rearrangements {
     my @negative = map { $self->_pack_obj($_) } $object->Outside_rearr;
 
     return { description => 'rearrangements involving this gene',
-	     data        => { positive => \@positive,
+	     data        => (@positive || @negative) ? { positive => \@positive,
 			      negative => \@negative
-	     }
+	     } : undef
     };
 }
 
@@ -2753,7 +2753,7 @@ sub antibodies {
   }
 
   return {  description =>  "antibodies generated against protein products or gene fusions",
-	    data        =>  \@data };
+	    data        =>  @data ? \@data : undef };
 }
 
 
@@ -2815,7 +2815,7 @@ sub matching_cdnas {
     my %unique;
     my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
     return { description => 'cDNAs matching this gene',
-	     data        => \@mcdnas };
+	     data        => @mcdnas? \@mcdnas : undef };
 }
 
 
@@ -2889,7 +2889,7 @@ sub microarray_probes {
     }
     
     return { description => "microarray probes",
-	     data => \@stash,
+	     data => @stash ? \@stash : undef,
     };
 }
 
@@ -2951,7 +2951,7 @@ sub orfeome_primers {
     my @ost = map { $self->_pack_obj($_)} map {$_->info} map { $_->features('alignment:BLAT_OST_BEST','PCR_product:Orfeome') } @segments if ($object->Corresponding_CDS || $object->Corresponding_Pseudogene);
     
     return { description =>  "ORFeome Project primers and sequences",
-	     data        =>  \@ost };
+	     data        =>  @ost ? \@ost : undef };
 }
 
 
@@ -3082,7 +3082,7 @@ sub sage_tags {
     my @sage_tags = map {$self->_pack_obj($_)} $object->Sage_tag;
     
     return {  description =>  "SAGE tags identified",
-	      data        =>  \@sage_tags
+	      data        =>  @sage_tags ? \@sage_tags : undef
     };
 }
 
@@ -3153,7 +3153,7 @@ sub transgenes {
     
     return {
 	description => 'transgenes expressed by this gene',
-	data        => \@data };    
+	data        => @data ? \@data : undef };    
 }
 
 =head3 transgene_products
@@ -3222,7 +3222,7 @@ sub transgene_products {
     
     return {
 	description => 'transgenes that express this gene',
-	data        => \@data };    
+	data        => @data ? \@data : undef };    
 }
 
 #######################################

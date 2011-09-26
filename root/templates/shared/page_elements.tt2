@@ -224,22 +224,14 @@ END;
 [% BLOCK field_block %]
 
     <div class="field
-
     [%# Add a class to disable / hide empty fields %]
     [% TRY; IF (key && !fields.$key.data.defined) || disabled; " disabled "; END; END;%]
 
-" id="[% title FILTER html %]">
+        ">
          <div class="field-title">
-
-              [%# Is there a description? Set it as a tool tip %]
-               [% IF tooltip OR fields.$key.description %]
                   <span title="[% tooltip ? tooltip : fields.$key.description %]">
                      [% IF title ; title _ ': '; END; %]
                    </span>
-              [% ELSE %]
-                  [% IF title ; title _ ': '; END; %]
-              [% END %]
-
           </div>
 
           <div class="field-content">
@@ -375,21 +367,22 @@ END;
 
 
     <script type="text/javascript" >
-    $jq(document).ready(function() {
+//     $jq(document).ready(function() {
         WB.getDataTables(function(){
-     $jq('#[% table_name %]').dataTable({
-                "bPaginate"        : [% paginate %],
-        "bLengthChange"    : [% length   %],
-//                "bJQueryUI"        : true,
-                "sPaginationType"  : "[% pagination_type %]",
-        "bFilter"          : [% filter %],      
-        "bInfo"            : [% info %],
-                [% style %]
-    } );});
-      } );
+          $jq('#[% table_name %]').dataTable({
+            "bPaginate"        : [% paginate %],
+            "bLengthChange"    : [% length   %],
+  //                 "bJQueryUI"        : true,
+            "sPaginationType"  : "[% pagination_type %]",
+            "bFilter"          : [% filter %],      
+            "bInfo"            : [% info %],
+            [% style %]
+          });
+        });
+//     });
     </script>
 
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
     <thead>
         <tr>
             [% FOREACH header IN table_headers %]  
@@ -430,13 +423,13 @@ END;
              %]
     </tbody>
 
-    <tfoot>
-        <tr>
-             [% FOREACH header IN table_headers %]  
-                       <th>[% header %]</th>
-             [% END %]
-        </tr>
-    </tfoot>
+<!--     <tfoot> -->
+<!--         <tr> -->
+             [%# FOREACH header IN table_headers %]  
+<!--                        <th>[%# header %]</th> -->
+             [%# END %]
+<!--         </tr> -->
+<!--     </tfoot> -->
 
       </table>
    [% END %] 
@@ -446,95 +439,6 @@ END;
 
 
 
-
-
-[%# We SHOULD be able to build data tables from arrays which would be faster
-     than taking a data strucutre from the db, building a second data structure,
-     dumping to a table and then styling it.      
-%]
-
-[% MACRO dataTable_list(header,data,table,style) BLOCK %]
-  The dataTable_list macro is nearly deprecated.  See instead:
-  build_data_table() and jquery_data_table_html(). -- TH
-
-  [% IF data && data.size > 0;  
-       # Set up some suitable defaults
-       IF data.size < 11;
-          paginate        = 'false';
-          pagination_type = 'false';
-          length          = 'false';
-          lengthMenu      = 'false';
-          filter          = 'false';
-          info            = 'false';
-       ELSIF data.size < 51;
-          paginate        = 'false';
-          pagination_type = 'false';
-      	  length          = 'false';
-      	  lengthMenu      = 'false';
-      	  filter          = 'true';
-          info            = 'false';
-       ELSE;
-          paginate        = 'true';
-          pagination_type = 'full_numbers';
-      	  length          = 'true';
-          lengthMenu      = '[[50, 100, 150, -1], [50, 100, 200, "All"]]';
-          filter          = 'true';
-      	  info            = 'true'; 
-      END;
-
-   %]
-
-
-    <script type="text/javascript" >
-    $jq(document).ready(function() {
-        $jq('#[% table %]').dataTable({
-                "bPaginate"        : [% paginate %],
-        "bLengthChange"    : [% length   %],
-//                "bJQueryUI"        : true,
-                "sPaginationType"  : "[% pagination_type %]",
-        "bFilter"          : [% filter %],      
-        "bInfo"            : [% info %],
-                [% style %]
-    } );
-      } );
-    </script>
-    <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table %]">
-    <thead>
-        <tr>
-            [% FOREACH item IN header %]  
-            <th>[% item %]</th>
-            [% END %]
-        </tr>
-    </thead>
-    <tbody>
-        [% FOREACH row IN data %]
-        <tr>
-              [% FOREACH item IN row %]   
-              <td> 
-                [% IF item.species.defined %]
-                  <span class="species">[% item.genus.chunk(1).0 %]. [% item.species %]</span>
-                [% ELSIF item.class.defined %]
-                  [% tag2link(item) %]
-                [% ELSE %][% item %]
-                [% END %]
-              </td>
-              [% END %]
-        </tr>
-        [% END %]
-    </tbody>
-
-    <tfoot>
-        <tr>
-             [% FOREACH item IN header %]  
-            <th>[% item %]</th>
-            [% END %]
-        </tr>
-    </tfoot>
-
-      </table>
-   [% END %] 
-
-[% END %] 
 
 [% MACRO short_list(objects) BLOCK %]
 
@@ -592,12 +496,12 @@ END;
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
                 <header> 
                 <div class="ui-corner-top widget-header">
-                    <div class="module-close" wname="[% id %]" title="close"></div>
-[% IF 0 %]                     <div class="module-max" wname="[% id %]" title="pop out"></div>
+                    <div class="module-close ui-icon ui-icon-large ui-icon-close ui-helper-hidden" wname="[% id %]" title="close"></div>
+[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink ui-helper-hidden" wname="[% id %]" title="pop out"></div>
 [% END %]              
-                    <h3 class="minimized"><div class="module-min" wname="[% id %]" show="0"></div><span class="widget-title">[% title %]</span>
+                    <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]" show="0"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
-                        <span class="ui-icon ui-icon-arrow-4 hide" title="move"></span>
+                        <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
                 </div>
                 </header>
@@ -606,8 +510,7 @@ END;
                 [% content %]
                 </div>
          
-                <div id="widget-footer">
-[%# UNLESS c.req.action == '/' %]
+                <div id="widget-footer" class="ui-helper-hidden">
 [% UNLESS type.match('(tool)|(me)') %]
                     <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 

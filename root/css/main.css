@@ -572,6 +572,10 @@ div#create-prompt {
   padding:0;
 }
 
+.column-narrow #results {
+  max-width:30em;
+}
+
 #results ul {
   margin:0 -0.5em;
   padding:0.3em 0 0 0;
@@ -1362,6 +1366,10 @@ li.visible div.widget-container {
   display:block;
 }
 
+.widget-container .ui-helper-hidden {
+  display:none;
+}
+
 .content {
   padding: 1em;
   padding-bottom:1.8em;
@@ -1369,7 +1377,6 @@ li.visible div.widget-container {
   list-style:disc outside none;
   clear:both;
   font-size:0.9em;
-  display:none;
 }
 
 
@@ -1516,9 +1523,9 @@ li.visible div.widget-container {
 }
 
 
-.widget-container:hover {
-    background:#FAFAFA;
-}
+/* .widget-container:hover { */
+/*     background:#FAFAFA; */
+/* } */
 
 .widget-container #widget-feed{
     display:none;
@@ -1905,25 +1912,20 @@ div.field {
   float:left;
   line-height:1.2em;
   padding:0.2em;
-/*   height:1%; */
-/*   overflow:auto; */
+  width:100%;
 }
 
-div.field h5 {
-  float:left;
-position:relative;
-  width:8em;
-  text-align:right;
-  margin-top:0em;   /* Pitch default h2 margin and force top alignment with p content */
+div.field:hover{
+/*   background:#EEE; */
 }
 
 div.field-title {
-  float        : left;
-  text-align   : right; 
-  font-size    : 1em;
-  padding-right: 0.5em;
-  width        : 9em;
-  font-weight  : bold;
+  float: left;
+  text-align: right; 
+  font-size: 1.05em;
+  padding:0 0.5em 0 0;
+  width: 10em;
+  font-weight: bold;
 }
 
 div.field-title>span{
@@ -1932,8 +1934,7 @@ div.field-title>span{
 }
 
 div.field-content {
-    margin-left:9.5em;
-    width:auto;
+  float: left;
 }
 
 
@@ -1946,8 +1947,6 @@ div.field-curator {
   margin-top:1em;
   background:#CCFFFF;
   border:1px solid gray;
-/*   height:1%; */
-/*   overflow:auto; */
 }
 
 
@@ -1960,25 +1959,16 @@ div.field .field{
   float:left;
   line-height:1.2em;
   padding:0.2em;
-/*   height:1%; */
-/*   overflow:auto; */
 }
 
-div.field .field h5 {
-  float:left;
-position:relative;
-  width:8em;
-  text-align:right;
-  margin-top:0em;   /* Pitch default h2 margin and force top alignment with p content */
-}
 
 div.field .field .field-title {
-  float        : left;
-  text-align   : right; 
-  font-size    : 1em;
+  float: left;
+  text-align: right; 
+  font-size: 1em;
   padding-right: 0.5em;
-  width        : 8em;
-  font-weight  : normal;
+  width: 7em;
+  font-weight: normal;
 }
 
 div.field .field .field-title>span{
@@ -1987,8 +1977,8 @@ div.field .field .field-title>span{
 }
 
 div.field .field .field-content {
-    margin-left:10em;
-    width:auto;
+  float:left;
+  max-width:35em;
 }
 
 
@@ -2257,24 +2247,25 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
   clear:both;
   overflow:hidden;
+/*   display:table; */
+/*   table-layout:fixed; */
   border-top: 1px solid #CCC;
 }
 
 .navigation {
   width: 12em;
-  margin:-2.8em 0 1em 0em;
   min-height:3em;
   height:100%;
   background:white;
   float: left;
   clear:left;
   position:relative;
+  margin:-2.8em 0 1em 0em;
 }
 
 #navigation {
   width: 12em;
   border-bottom:1px solid #CDCDCD;
-/*   display:none; */
 }
 
 .navigation #title{
@@ -2385,8 +2376,18 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   list-style: none;
   position:relative;
   background:white;
-  padding:1em 1.5em 0.5em 0.7em;
+  height:100%;
+  max-width: 100%;
   border-left:1px solid #CCC;
+  padding:1em 1.5em 0.5em 0.7em;
+  table-layout:fixed;
+
+}
+
+#outer-widget-holder{
+  overflow:hidden;
+  position:relative;
+  height:100%;
 }
 
 #widget-holder.title-padding{
@@ -2395,10 +2396,25 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 
 .sortable{
   width:100%;
-  float:left;
-  position:relative;
+  min-width:15em;
   margin:0;
 }
+
+.one-column {
+  display:inline;
+  float:left;
+  position:relative;
+  width:100%;
+}
+
+.table-columns {
+  display:table-cell;
+  table-layout:fixed;
+  float:none;
+  position:static;
+  vertical-align:top;
+}
+
 
 .placeholder {
   background:white;
@@ -2561,6 +2577,10 @@ table tr.venn-b, table th.venn-b, table td.venn-b {
 
 table tr.venn-ab, table th.venn-ab, table td.venn-ab {
   background:#BBFFAA;
+}
+
+table.venn tr.venn-data td {
+  max-width:8em;
 }
 
 .issue-layout-box {

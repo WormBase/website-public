@@ -45,7 +45,7 @@ END;
 # Structured descriptions
 IF fields.structured_description.data.keys.size > 0;
     '<div class="toggle">Details</div>';
-    '<div class="returned">';
+    '<div class="returned field">';
     id = 0;
     FOREACH sd IN fields.structured_description.data.keys;
           USE String(sd.replace('_', ' '));
