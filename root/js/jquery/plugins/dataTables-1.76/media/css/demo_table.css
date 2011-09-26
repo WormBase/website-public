@@ -33,8 +33,12 @@
 .dataTables_wrapper {
 	position: relative;
 /*	min-height: 302px; */
+     border:1px solid #CDCDCD; 
+    margin:0 0 0.5em 0;
+    background:#E9EEF2;
 	clear: both;
-	_height: 302px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
 	zoom: 1; /* Feeling sorry for IE */
 }
 
@@ -57,16 +61,18 @@
 .dataTables_length {
 	width: 40%;
 	float: left;
+    padding:0.5em 0 0 0.5em;
 }
 
 .dataTables_filter {
 	width: 50%;
 	float: right;
 	text-align: right;
+    padding:0.5em 0.5em 0 0;
 }
 
 .dataTables_info {
-	width: 60%;
+/* 	width: 60%; */
 	float: left;
 }
 
@@ -130,6 +136,7 @@ table.display thead th {
 	border-bottom: 1px solid black;
 	font-weight: bold;
 	cursor: pointer;
+    color: #666;
 	* cursor: hand;
 }
 

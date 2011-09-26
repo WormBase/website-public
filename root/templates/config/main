@@ -126,14 +126,14 @@
     
 # create venn type diagram with tables and colours
     MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none) BLOCK;
-    ret = "<br/><table cellspacing=\"0\" cellpadding=\"5\">";
+    ret = "<br/><table class=\"venn\" cellspacing=\"0\" cellpadding=\"5\">";
     ret =  ret _ "<tr class=\"venn-a\"><th colspan=\"2\">$title_a</th></tr>";
           ret =  ret _ "<tr><th class=\"venn-a\"></th>";
           ret =  ret _ "<th class=\"venn-ab\"></th>";
           ret =  ret _ "<th class=\"venn-b\">$title_b</th>";
           ret =  ret _ "<th>$title_none</th>";
           ret =  ret _ "</tr>";
-          ret =  ret _ "<tr><td class=\"venn-a\">";
+          ret =  ret _ "<tr class=\"venn-data\"><td class=\"venn-a\">";
         FOREACH obj IN list_a;
                ret =  ret _ "<b>" _ tag2link(obj) _ " </b>";
         END;
