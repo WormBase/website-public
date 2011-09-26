@@ -396,7 +396,7 @@ sub _build_best_blastp_matches {
 
         # Not all proteins are populated with the species
         $species ||= $best{$method}{hit}->Species;
-        $species =~ s/^(\w)\w* /$1. /;
+        $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
         my $class;
