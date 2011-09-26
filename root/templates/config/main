@@ -64,6 +64,8 @@
           uri = c.uri_for('/me', id);
          ELSIF (class == 'picture');
            uri = c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+        ELSIF (class == 'genomic_location');
+           uri = c.uri_for('/tools', 'genome', 'gbrowse', id);
         ELSE;
           uri = c.uri_for('/resources', class, id);
         END;
@@ -80,9 +82,15 @@
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, taxonomy);
-          IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
-          IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;
+
+          IF class =='gene';
+             text = markup_locus("$text", "locus", 1);
+          ELSIF class =='variation' || class=='variation_name';
+             text = markup_var("$text","var", 1);
+          END;
+
           "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
+
           IF (class=='sequence');
             "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ "' class='button ui-corner-all tip-simple slink' tip='download'>";
               "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
@@ -194,13 +202,9 @@
        END;
 
        UNLESS url; url = link; END;
-       IF (link == 'genomic_location' OR link == 'gbrowse_image' );
-          "<a href=\"$url\" title=\"$desc\">$text</a>";
-       ELSE;
        "<a href=\"$url\" 
            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" title=\"$desc\">$text</a>";
-       END;
     END;
 
 
