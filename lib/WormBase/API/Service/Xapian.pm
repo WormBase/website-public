@@ -163,7 +163,7 @@ sub _wrap_objs {
   }
 
   my %data;
-  $data{obj_name}=$object;
+  $data{obj_name}="$object";
   $data{footer} = $footer if $footer;
   foreach my $field (@$fields) {
     my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.

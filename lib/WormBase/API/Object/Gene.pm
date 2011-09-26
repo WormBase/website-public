@@ -1069,7 +1069,7 @@ sub microarray_expression_data {
     my $object = $self->object;
     my %data;
     my @microarray_results = $object->Microarray_results;	
-    return { data        => $self->_pack_objects(\@microarray_results),
+    return { data        => @microarray_results ? $self->_pack_objects(\@microarray_results) : undef,
 	     description => 'gene expression determined via microarray analysis'};
 }
 
@@ -1199,7 +1199,7 @@ sub expression_cluster {
     my $self   = shift;
     my $object = $self->object;
     my @expr_clusters = $object->Expression_cluster;  
-    return { data        => $self->_pack_objects(\@expr_clusters),
+    return { data        => @expr_clusters ? $self->_pack_objects(\@expr_clusters) : undef,
 	     description => 'expression cluster data' };
 }
 
@@ -1894,14 +1894,16 @@ sub history {
 		
                 # For some cases, the remark is actually a gene object
                 if ($action eq 'Merged_into'
-		    || $action eq 'Acquires_merge'
+                    || $action eq 'Acquires_merge'
                     || $action eq 'Split_from'
-		    || $action eq 'Split_into') {
-		    $gene = $remark;
-		    $remark = undef;
+                    || $action eq 'Split_into') {
+                      $gene = $remark;
+                      $remark = undef;
                 }
+                $action =~ s/_/ /g;  
             } else {
-		($gene) = $version->row;
+# 		($gene) = $version->row;
+next;
             }    
 	    
 	    push @data,{ history => "$history",
