@@ -181,7 +181,8 @@ sub _build__tools {
     return \%tools;
 }
 
-# Fetches a WormBase object corresponding to an Ace object.
+# Fetches a WormBase object corresponding to an Ace object
+# or the Ace object itself if nowrap is specified.
 # TODO: Standardize return values. Currently returns object if fetched,
 #       0 if can't get DB handle, and -1 if can't seem to fetch object.
 #       Consider throwing an exception and return;, respectively. Will
@@ -189,11 +190,12 @@ sub _build__tools {
 sub fetch {
     my ($self,$args) = @_;
 
-    my ($object, $class, $aceclass, $name)
-        = @{$args}{qw(object class aceclass name)};
+    my ($object, $class, $aceclass, $name, $nowrap)
+        = @{$args}{qw(object class aceclass name nowrap)};
 
     if ($object) {
         $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$object->class};
+        $self->log->debug("[API::fetch()]", " object $object, inferred WB class $class");
     }
     else {
         my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
@@ -201,32 +203,52 @@ sub fetch {
         # resolve classes to properly retrieve object
         if ($class) { # WB class was provided
             $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class}
-                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class}
-                     || return 0; # don't know which aceclass
+                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class};
+
+            unless ($aceclass) { # don't know which aceclass;
+                $self->log->warn("[API::fetch()]", " class $class, UNKNOWN ace class");
+                return 0;
+            }
         }
         else { # aceclass provided (assumption), WB class not
-            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass}
-                or return 0; # an aceclass we don't handle [yet]?
+            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass};
+
+            unless ($class) { # an aceclass we don't handle [yet]?
+                $self->log->warn("[API::fetch()]", " ace class $aceclass, UNKNOWN WB class");
+                return 0;
+            }
         }
 
         # HACK for variation -- resolve variation name first
         if ($aceclass eq 'Variation' and $name !~ /^WBVar/ and
             my $var_name = $service_dbh->fetch(-class => 'Variation_name', -name => $name)) {
+            my $orig_name = $name; # for debug
             $name = $var_name->Public_name_for || $var_name->Other_name_for || $name;
+            $self->log->debug("[API::fetch()]", " Variation hack, $orig_name, found $name");
         }
 
         # Try fetching an object (from the default data source)
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {
+                $self->log->debug("[API::fetch()]",
+                                  " attempt to fetch $name of ace class $ace");
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
 			}
 		}
 		else { # assume a single Ace class
+            $self->log->debug("[API::fetch()]",
+                              " attempt to fetch $name of ace class $aceclass");
 			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);
 		}
     }
 
-    return -1 unless(defined $object); #&& ($name eq 'all' || $name eq '*'));
+    unless (defined $object) { #&& ($name eq 'all' || $name eq '*'));
+        $self->log->warning("[API::fetch()]", " could NOT fetch object");
+        return -1;
+    }
+
+    return $object if $nowrap;
+
     return WormBase::API::Factory->create($class, {
 		object      => $object,
 		log         => $self->log,

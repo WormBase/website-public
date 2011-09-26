@@ -2,20 +2,21 @@ package WormBase::API::Service::tree;
 
 use Moose;
 
-with 'WormBase::API::Role::Object'; 
+with 'WormBase::API::Role::Object';
 
 use Ace 1.51;
 use CGI 2.42 qw/:standard :html3 escape/;
-use CGI::Carp qw/fatalsToBrowser/;
+#use CGI::Carp qw/fatalsToBrowser/;
 #use Ace::Browser::AceSubs qw(:DEFAULT Style);
-use Ace::Browser::TreeSubs;
+use Ace::Browser::TreeSubs qw(AceImageHackURL);
 
-
-use constant MAXEXPAND => 10;
+use constant MAXEXPAND   => 10;
 use constant CLOSEDCOLOR => "#909090";
 use constant OPENCOLOR   => "#FF0000";
 
 use vars qw/$request_name $request_class $view $dsn @expand @squash/;
+
+use namespace::autoclean -except => 'meta';
 
 sub index {
     my ($self) = @_;
