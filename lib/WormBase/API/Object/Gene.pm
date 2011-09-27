@@ -922,9 +922,8 @@ B<Response example>
 
 sub fourd_expression_movies {
     my $self   = shift;
-    my @expressions = grep { ($_->Author =~ /Mohler/ && $_->MovieURL) }
-                           @{$self ~~ '@Expr_pattern'};
 
+    my $author;
     my %data = map {
         my $details = $_->Pattern;
         my $url     = $_->MovieURL;
@@ -934,7 +933,7 @@ sub fourd_expression_movies {
             object  => $self->_pack_obj($_),
         };
     } grep {
-        ($_->Author =~ /Mohler/ && $_->MovieURL)
+        (($author = $_->Author) && $author =~ /Mohler/ && $_->MovieURL)
     } @{$self ~~ '@Expr_pattern'};
 
     return {
@@ -1001,7 +1000,8 @@ sub anatomic_expression_patterns {
     my $object = $self->object;
     my %data_pack;
     # All expression patterns except Mohlers, presented elsewhere.
-    my @eps = grep { !($_->Author =~ /Mohler/ && $_->MovieURL) } $object->Expr_pattern;
+    my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
+                   $object->Expr_pattern;
     
     my $file = $self->pre_compile->{gene_expr}."/".$object.".jpg";
     $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if (-e $file && ! -z $file);
@@ -1614,39 +1614,43 @@ B<Response example>
 
 sub strains {
     my $self   = shift;
-    my $object = $self->object;    
+
     my @data;
     my %count;
-    foreach ($object->Strain) {
-	my @genes = $_->Gene;
-	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+    foreach ($self->object->Strain) {
+        my @genes = $_->Gene;
+        my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
 
-	my $packed = $self->_pack_obj($_);
+        my $packed = $self->_pack_obj($_);
 
-	# All of the counts can go away if
-	# we discard the venn diagram.
-	push @{$count{total}},$packed;
-	push @{$count{available_from_cgc}},$packed if $cgc;
+        # All of the counts can go away if
+        # we discard the venn diagram.
+        push @{$count{total}},$packed;
+        push @{$count{available_from_cgc}},$packed if $cgc;
 
-	if (@genes == 1 && !$_->Transgene){
-	    push @{$count{carrying_gene_alone}},$packed;
-	    if ($cgc) {
-		push @{$count{carrying_gene_alone_and_cgc}},$packed;
-	    }	    
-	} else {
-	    push @{$count{others}},$packed;
-	}       
-	
-	my $genotype = $_->Genotype;
-	push @data, { strain   => $packed,
-		      cgc      => $cgc ? 'yes' : 'no',
-		      genotype => "$genotype",
-	};
+        if (@genes == 1 && !$_->Transgene) {
+            push @{$count{carrying_gene_alone}},$packed;
+            if ($cgc) {
+                push @{$count{carrying_gene_alone_and_cgc}},$packed;
+            }
+        }
+        else {
+            push @{$count{others}},$packed;
+        }
+
+        my $genotype = $_->Genotype;
+        push @data, {
+            strain   => $packed,
+            cgc      => $cgc ? 'yes' : 'no',
+            genotype => $genotype && "$genotype",
+        };
     }
-    
-    return { description => 'strains carrying this gene',
-	     data        => @data ? \@data : undef,
-	     count       => \%count };
+
+    return {
+        description => 'strains carrying this gene',
+        data        => @data ? \@data : undef,
+        count       => %count ? \%count : undef,
+    };
 }
 
 =head3 rearrangements
@@ -3351,7 +3355,8 @@ sub regulation_on_expression_level {
                     $string .= ($tag eq 'Trans_regulator')
                     ? 'Changes localization of '
                     : 'Localization changed by ';
-                } elsif ($gene_reg->Result eq 'Does_not_regulate') {
+                } elsif ($gene_reg->Result
+                         and $gene_reg->Result eq 'Does_not_regulate') {
                     $string .= ($tag eq 'Trans_regulator')
                     ? 'Does not regulate '
                     : 'Not regulated by ';
@@ -4157,9 +4162,10 @@ sub _gene_rnai_pheno_data_compile { ## on going
 
 	$output = $output . join("\n",keys %uniq);
 	$p2n = $p2n . join("\n",keys %phenotype2name);	
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
+	if (my $phenotype_id2name = $self->phenotype_id2name) {
+        $phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+        $self->phenotype_id2name("$phenotype_id2name");
+    }
 	return $output;
 }
 
@@ -4290,40 +4296,38 @@ sub _rnai_data_compile{
 	my %rnais;
 	my @rnai_datalines = split "\n",$gene_rnai_data;
 	my $DB = $self->ace_dsn;
-	
+
 	foreach my $dataline (@rnai_datalines) {
 		chomp $dataline;
 		my ($gene,$rnai,$pheno,$not) = split /\|/,$dataline;
 		$rnais{$rnai} = 1;
 	}
-	
+
 	foreach my $unique_rnai (keys %rnais) {
-		my $rnai_object = $DB->fetch(-class => $class, -name =>$unique_rnai); #, , -count => 20, -offset=>6800	
+		my $rnai_object = $DB->fetch(-class => $class, -name =>$unique_rnai); #, , -count => 20, -offset=>6800
 		my $ref;
-		
-		eval { $ref = $rnai_object->Reference;}; 
-		
+
+		eval { $ref = $rnai_object->Reference;};
+
 		my $genotype;
 		my @experimental_details; # = $rnai_object->Experiment;
-	
+
 		eval {@experimental_details = $rnai_object->Experiment;};
-	
+
 		foreach my $experimental_detail (@experimental_details) {
-				
+
 			if($experimental_detail =~ m/Genotype/) {
-			
-				$genotype = $experimental_detail->right;
+				$genotype = $experimental_detail->right || ''; # what happens when there's nothing?
 				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
 			}
-			
+
 			if($experimental_detail =~ m/Strain/) {
-			
 				my $strain = $experimental_detail->right;
-				$genotype = $strain->Genotype;
+				$genotype = $strain->Genotype || ''; # what happens when there's nothing?
 				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
-			}	
-		} 
-	
+			}
+		}
+
 		if(!($genotype)) {
 			$lines{"$rnai_object\|$genotype\|$ref"} = 1;
 		} else {
