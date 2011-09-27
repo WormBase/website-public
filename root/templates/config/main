@@ -56,20 +56,19 @@
    END;
 
 
-   MACRO get_url(class, id, taxonomy, fullpath) BLOCK;
+   MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          uri = c.uri_for('/species', taxonomy,class, id);
+          c.uri_for('/species', taxonomy,class, id).path;
         ELSIF (class == 'bench');
-          uri = c.uri_for('/me', id);
+          c.uri_for('/me', id).path;
          ELSIF (class == 'picture');
-           uri = c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
         ELSIF (class == 'genomic_location');
-           uri = c.uri_for('/tools', 'genome', 'gbrowse', id);
+           c.uri_for('/tools', 'genome', 'gbrowse').path _ '/' _ id;
         ELSE;
-          uri = c.uri_for('/resources', class, id);
+          c.uri_for('/resources', class, id).path;
         END;
-        IF fullpath; uri; ELSE; uri.path; END;
    END;
 
 # Like tag2link, but for cases where we only have text and no object.
