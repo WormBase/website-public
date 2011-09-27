@@ -1,9 +1,18 @@
+<entry><h3>Random page of the hour:</h3></entry>
+  [% results = c.stash.random %]
+  [% PROCESS "search/results.tt2" no_count=1%]
+<br />
+<br />
 
 <entry><h3>What's popular on WormBase:</h3></entry>
 <span id="fade">*information gathered from consenting users</span>
-[% results = c.stash.popular %]
-[% PROCESS "search/results.tt2" no_count=1%]
-
+[% IF c.user_session.history_on == 1 %]
+  [% results = c.stash.popular %]
+  [% PROCESS "search/results.tt2" no_count=1%]
+[% ELSE %]
+  [% PROCESS "shared/fields/user_history.tt2" %]
+    <span>You must activate history logging to view the popular items on WormBase</span>
+[% END %]
 <br />
 <br />
 

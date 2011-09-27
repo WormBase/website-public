@@ -1359,22 +1359,50 @@ sub widget_class_index_GET {
 
 sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 
+
 sub widget_home_GET {
     my ($self,$c,$widget) = @_; 
     $c->log->debug("getting home page widget");
-    if($widget=~m/issues/){
+    if($widget=~m/issues/) {
       $c->stash->{issues} = $self->issue_rss($c,2);
-    }
-    elsif($widget=~m/activity/){
+    } elsif($widget=~m/activity/) {
       $c->stash->{recent} = $self->recently_saved($c,3);
-      $c->stash->{popular} = $self->most_popular($c,5);
-    }   
-    elsif($widget=~m/discussion/){
+      if ($c->user_session->{'history_on'} == 1){
+        $c->stash->{popular} = $self->most_popular($c,5)
+      } 
+      $c->stash->{random} = $self->random_page($c);
+
+    } elsif($widget=~m/discussion/) {
       $c->stash->{comments} = $self->comment_rss($c,2);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
+}
+
+my $random;
+sub random_page {
+  my ($self,$c) = @_;
+  my $api = $c->model('WormBaseAPI');
+
+  my @rand;
+  if( !$random || ((time() - $random->{time}) > 3600)){
+    @rand = $c->model('Schema::Page')->search({is_obj=>1},
+                {   select => [ 
+                      'page_id', 
+                      'url',
+                      'is_obj'
+                    ],
+                    order_by=>'RAND()'
+                })->slice(0, 0);
+    $random->{id} = $rand[0]->page_id;
+    $random->{time} = time();
+  }else{
+    @rand = $c->model('Schema::Page')->search({is_obj=>1, page_id=>$random->{id}});
+  }
+  @rand = map { $self->_get_search_result($c, $api, $_);  } @rand;
+
+  return \@rand;
 }
 
 sub recently_saved {
