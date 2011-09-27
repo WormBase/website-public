@@ -8,17 +8,6 @@ with    'WormBase::API::Role::Position';
 
 #####################
 
-### configuration items
-
-# my $version = 'WS213';  
-
-# our $gene_pheno_datadir = "/usr/local/wormbase/databases/$version/gene";
-# our $rnai_details_file = "rnai_data.txt";
-# our $gene_rnai_phene_file = "gene_rnai_pheno.txt";
-# our $gene_variation_phene_file = "variation_data.txt";
-# our $phenotype_name_file = "phenotype_id2name.txt";
-# our $gene_xgene_phene_file = "gene_xgene_pheno.txt";
-
 =pod 
 
 =head1 NAME

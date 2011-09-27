@@ -573,7 +573,7 @@ div#create-prompt {
 }
 
 .column-narrow #results {
-  max-width:30em;
+  max-width:22em;
 }
 
 #results ul {
