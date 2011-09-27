@@ -1820,8 +1820,8 @@ has 'taxonomy' => (
 sub _build_taxonomy { # this overlaps with parsed_species
     my ($self) = @_;
 
-    my ($genus, $species) = (($self ~~ 'Species') =~ /(.*) (.*)/);
-    # TODO: what if $self ~~ 'Species' is undef?
+    my $spec = $self ~~ 'Species';
+    my ($genus, $species) = ($spec ? $spec =~ /(.*) (.*)/ : qw(Caenorhabditis elegans));
 
     return {
         description => 'the genus and species of the current object',
