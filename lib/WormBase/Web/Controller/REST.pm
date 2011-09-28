@@ -353,48 +353,53 @@ sub update_role_POST {
 sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
 
 sub evidence_GET {
-    my ($self,$c,$class,$name,$tag,$index,$right) = @_;
+    my ( $self, $c, $class, $name, $tag, $index, $right ) = @_;
 
     my $headers = $c->req->headers;
-    $c->log->debug($headers->header('Content-Type'));
+    $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
-   
-    unless ($c->stash->{object}) {
-    # Fetch our external model
-    my $api = $c->model('WormBaseAPI');
- 
-    # Fetch the object from our driver   
-    $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    $c->log->debug("The requested class is " . ucfirst($class));
-    $c->log->debug("The request is " . $name);
-    
-    # Fetch a WormBase::API::Object::* object
-    # But wait. Some methods return lists. Others scalars...
-    $c->stash->{object} =  $api->fetch({class=> ucfirst($class),
-                        name => $name}) or die "$!";
+
+    unless ( $c->stash->{object} ) {
+        # Fetch our external model
+        my $api = $c->model('WormBaseAPI');
+
+        # Fetch the object from our driver
+        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
+        $c->log->debug( "The requested class is " . ucfirst($class) );
+        $c->log->debug( "The request is " . $name );
+
+        # Fetch a WormBase::API::Object::* object
+        # But wait. Some methods return lists. Others scalars...
+        $c->stash->{object} = $api->fetch(
+            {   class => ucfirst($class),
+                name  => $name
+            }
+        ) or die "$!";
     }
-    
+
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     if ( $c->is_ajax() ) {
-    $c->stash->{noboiler} = 1;
+        $c->stash->{noboiler} = 1;
     }
 
     my $object = $c->stash->{object};
-    my @node = $object->object->$tag; 
+    my @node   = $object->object->$tag;
     $right ||= 0;
     $index ||= 0;
-    my $data = $object-> _get_evidence($node[$index]->right($right));
+    my $data = $object->_get_evidence( $node[$index]->right($right) );
     $c->stash->{evidence} = $data;
-    $c->stash->{template} = "shared/generic/evidence.tt2"; 
+    $c->stash->{template} = "shared/generic/evidence.tt2";
     $c->forward('WormBase::Web::View::TT');
-    my $uri = $c->uri_for("/reports",$class,$name);
-    $self->status_ok($c, entity => {
-                     class  => $class,
-             name   => $name,
-                     uri    => "$uri",
-             evidence => $data
-             }
+    my $uri = $c->uri_for( "/reports", $class, $name );
+    $self->status_ok(
+        $c,
+        entity => {
+            class    => $class,
+            name     => $name,
+            uri      => "$uri",
+            evidence => $data
+        }
     );
 }
 
@@ -837,163 +842,190 @@ eg http://localhost/rest/widget/[CLASS]/[NAME]/[FIELD]
 sub widget :Path('/rest/widget') :Args(3) :ActionClass('REST') {}
 
 sub widget_GET {
-    my ($self,$c,$class,$name,$widget) = @_; 
+    my ( $self, $c, $class, $name, $widget ) = @_;
     $c->log->debug("        ------> we're requesting the widget $widget");
 
-    # Small performance tweak.
-    # Is this a widget marked in config as one that should be precached?
-    # If so, set a flag to check for it's presence in the portable couchdb cache.
-#    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';    
+# Small performance tweak.
+# Is this a widget marked in config as one that should be precached?
+# If so, set a flag to check for it's presence in the portable couchdb cache.
+#    my $cache_name = $c->_widget_is_precached($class,$widget) ? 'couchdb' : 'filecache';
 
     # Cache key something like "$class_$widget_$name"
-    my ($cached_data,$cache_source);
-    my $uuid = join('_',$class,$widget,$name);
+    my ( $cached_data, $cache_source );
+    my $uuid = join( '_', $class, $widget, $name );
 
     # Check the cache only if this is a request for HTML.
     # check_cache will check couch first.
     my $headers = $c->req->headers;
-    my $content_type = $headers->content_type || $c->req->params->{'content-type'} || 'text/html';
-    if (($c->config->{installation_type} eq 'production') 
-	&& ($content_type eq 'text/html')) {
-	
-	# Shouldn't this be $self? Would break check_cache();
-	($cached_data,$cache_source) = $c->check_cache({cache_name => 'couchdb',
-							uuid       => $uuid,
-						       });
-	#hostname   => $c->req->base,
-    }    
-    
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
+    if (   ( $c->config->{installation_type} eq 'production' )
+        && ( $content_type eq 'text/html' ) )
+    {
+
+        # Shouldn't this be $self? Would break check_cache();
+        ( $cached_data, $cache_source ) = $c->check_cache(
+            {   cache_name => 'couchdb',
+                uuid       => $uuid,
+            }
+        );
+
+        #hostname   => $c->req->base,
+    }
+
     # We're only caching rendered HTML. If it's present, return it.
     if ($cached_data) {
-	$c->response->status(200);
-	$c->response->header('Content-Type' => 'text/html');
-	$c->response->body($cached_data);
-	$c->detach();
-	return;
+        $c->response->status(200);
+        $c->response->header( 'Content-Type' => 'text/html' );
+        $c->response->body($cached_data);
+        $c->detach();
+        return;
     }
-    
-    # It seems silly to fetch an object if we are going to be pulling
-    # fields from the cache but I still need for various page formatting duties.
-    unless ($c->stash->{object}) {
-        # AD: this condition is an illusion -- the stash will never have an object
-        #     unless we were forwarded here by another action. since this is a
-        #     RESTful action, that likely isn't the case.
-	# TH: Yes, you're absolutely correct. Conditional from pre-REST implementation?
-      # Fetch our external model
-      my $api = $c->model('WormBaseAPI');
-      
-      # Fetch the object from our driver     
-      #$c->log->debug("WormBaseAPI model is $api " . ref($api));
-      #$c->log->debug("The requested class is " . ucfirst($class));
-      #$c->log->debug("The request is " . $name);
-      
-      # Fetch a WormBase::API::Object::* object
-      if ($name eq '*' || $name eq 'all') {
-          $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-      } else {
-          $c->stash->{object} = $api->fetch({class => ucfirst($class),
-					     name  => $name,
-					    }) or die "Couldn't fetch an object: $!";
-      }
-      # $c->log->debug("Tried to instantiate: $class");
+
+  # It seems silly to fetch an object if we are going to be pulling
+  # fields from the cache but I still need for various page formatting duties.
+    unless ( $c->stash->{object} ) {
+        # Fetch our external model
+        my $api = $c->model('WormBaseAPI');
+
+        # Fetch a WormBase::API::Object::* object
+        if ( $name eq '*' || $name eq 'all' ) {
+            $c->stash->{object}
+                = $api->instantiate_empty( { class => ucfirst($class) } );
+        }
+        else {
+            $c->stash->{object} = $api->fetch(
+                {   class => ucfirst($class),
+                    name  => $name,
+                }
+            ) or die "Couldn't fetch an object: $!";
+        }
+
+        # $c->log->debug("Tried to instantiate: $class");
     }
 
     my $object = $c->stash->{object};
 
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
-    if ($widget eq 'references') {
-        my $url = $c->uri_for('/search', 'paper', $name) . '?widget=refences&class=' . $class . ";inline=1";
-        $c->res->redirect($url, 307);
+    if ( $widget eq 'references' ) {
+        my $url
+            = $c->uri_for( '/search', 'paper', $name )
+            . '?widget=refences&class='
+            . $class
+            . ";inline=1";
+        $c->res->redirect( $url, 307 );
         return;
-      # If you have a tool that you want to display inline as a widget, be certain to add it here.
-      # Otherwise, it will try to load a template under class/action.tt2...
-    } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
-      return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
-      return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
+
+# If you have a tool that you want to display inline as a widget, be certain to add it here.
+# Otherwise, it will try to load a template under class/action.tt2...
     }
-    
-    # Generate and cache the widget.       
+    elsif ($widget eq "nucleotide_aligner"
+        || $widget eq "protein_aligner"
+        || $widget eq 'tree' )
+    {
+        return $c->res->redirect(
+            "/tools/$widget/run?inline=1;name=$name;class=$class")
+            if ( $widget eq 'tree' );
+        return $c->res->redirect(
+            "/tools/" . $widget . "/run?inline=1&sequence=$name" );
+    }
+
+    # Generate and cache the widget.
     # Load the stash with the field contents for this widget.
     # The widget itself is loaded by REST; fields are not.
-    my @fields = $c->_get_widget_fields($class,$widget);
-    
+    my @fields = $c->_get_widget_fields( $class, $widget );
+
     my $fatal_non_compliance = 0;
     foreach my $field (@fields) {
-	unless ($field) { next;}
-	# $c->log->debug("Processing field: $field");	
-	my $data = $object->$field; # $object->can($field) for a check
-	if ($c->config->{installation_type} eq 'development' and
-	    my ($fixed_data, @problems) = $object->_check_data($data, $class)) {
-	    $data = $fixed_data;
-	    $c->log->fatal("${class}::$field returns non-compliant data: ");
-	    $c->log->fatal("\t$_") foreach @problems;
-	    
-	    $fatal_non_compliance = $c->config->{fatal_non_compliance};
-	}
-	
-	# Conditionally load up the stash (for now) for HTML requests.	
-	$c->stash->{fields}->{$field} = $data; 
+        unless ($field) { next; }
+
+        # $c->log->debug("Processing field: $field");
+        my $data = $object->$field;    # $object->can($field) for a check
+        if ( $c->config->{installation_type} eq 'development'
+            and my ( $fixed_data, @problems )
+            = $object->_check_data( $data, $class ) )
+        {
+            $data = $fixed_data;
+            $c->log->fatal("${class}::$field returns non-compliant data: ");
+            $c->log->fatal("\t$_") foreach @problems;
+
+            $fatal_non_compliance = $c->config->{fatal_non_compliance};
+        }
+
+        # Conditionally load up the stash (for now) for HTML requests.
+        $c->stash->{fields}->{$field} = $data;
     }
-	
+
     if ($fatal_non_compliance) {
-	die "Non-compliant data. See log for fatal error.\n"
+        die "Non-compliant data. See log for fatal error.\n";
     }
-    
+
     # Save the name and class of the widget.
-    $c->stash->{class} = $class;
+    $c->stash->{class}  = $class;
     $c->stash->{widget} = $widget;
 
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
 
     # Set the template
-    $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
-    $c->stash->{child_template} = $c->_select_template($widget,$class,'widget');    
+    $c->stash->{template} = 'shared/generic/rest_widget.tt2';
+    $c->stash->{child_template}
+        = $c->_select_template( $widget, $class, 'widget' );
 
     # Forward to the view to render HTML
-    if ($content_type eq 'text/html') {
-	my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
+    if ( $content_type eq 'text/html' ) {
+        my $html = $c->view('TT')->render( $c, $c->{stash}->{template} );
 
-	# If we have content, cache it.
-	if ($html) {
-	    
-	    # eval {$c->set_cache('filecache',$cache_id,$html);};
-	    # Or: couchdb or memcached	
-    
-	    $c->set_cache({cache_name => 'couchdb',
-			   uuid       => $uuid,
-			   data       => $html,			  
+        # If we have content, cache it.
+        if ($html) {
+
+            # eval {$c->set_cache('filecache',$cache_id,$html);};
+            # Or: couchdb or memcached
+
+            $c->set_cache(
+                {   cache_name => 'couchdb',
+                    uuid       => $uuid,
+                    data       => $html,
+
 #			   host       => $c->req->base,  # eg http://beta.wormbase.org/ or http://todd.wormbase.org/
-			  });
-	}
+                }
+            );
+        }
 
-	$c->response->status(200);
-	$c->response->header('Content-Type' => 'text/html');
-	$c->response->body($html);
-	$c->detach();
-	return;
+        $c->response->status(200);
+        $c->response->header( 'Content-Type' => 'text/html' );
+        $c->response->body($html);
+        $c->detach();
+        return;
     }
 
-    
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for("/page",$class,$name);   # THIS IS NO LONGER THE CORRECT URI FOR THE PAGE!
-    $self->status_ok($c, 
-		     entity => {
-			 class   => $class,
-			 name    => $name,
-			 uri     => "$uri",
-			 fields => $c->stash->{fields},
-		     }
-	);
-    my $filename = join('_',$class,$name,$widget) . '.' . $c->config->{api}->{content_type}->{$content_type};
+    my $uri = $c->uri_for( "/page", $class, $name )
+        ;    # THIS IS NO LONGER THE CORRECT URI FOR THE PAGE!
+    $self->status_ok(
+        $c,
+        entity => {
+            class  => $class,
+            name   => $name,
+            uri    => "$uri",
+            fields => $c->stash->{fields},
+        }
+    );
+    my $filename = join( '_', $class, $name, $widget ) . '.'
+        . $c->config->{api}->{content_type}->{$content_type};
     $c->log->debug("$filename download in the format: $content_type");
-    $c->response->header('Content-Type' => $content_type);
-    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);  
+    $c->response->header( 'Content-Type' => $content_type );
+    $c->response->header(
+        'Content-Disposition' => 'attachment; filename=' . $filename );
 }
+
+
 
 
 
@@ -1053,120 +1085,138 @@ sub widget_data_cache :Path('/rest/widget_data_cache') :Args(3) :ActionClass('RE
 
 # This version polls for and caches data structures in the filecache.
 sub widget_data_cache_GET {
-    my ($self,$c,$class,$name,$widget) = @_; 
-   
-    my $headers = $c->req->headers;
-    $c->log->debug("widget GET header ".$headers->content_type);
+    my ( $self, $c, $class, $name, $widget ) = @_;
 
-    # Have we pre-cached the HTML for this widget? If so, deliver it.
-    # We will test for DATA caches below (eg: things previously requested
-    # but not specifically cached)
-    # Cache key something like "$class_$widget_$name"
-    # my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
-    my ($cached_data,$cache_source);
-    
-    my $uuid = join('_',$class,$widget,$name);
+    my $headers = $c->req->headers;
+    $c->log->debug( "widget GET header " . $headers->content_type );
+
+# Have we pre-cached the HTML for this widget? If so, deliver it.
+# We will test for DATA caches below (eg: things previously requested
+# but not specifically cached)
+# Cache key something like "$class_$widget_$name"
+# my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
+    my ( $cached_data, $cache_source );
+
+    my $uuid = join( '_', $class, $widget, $name );
+
     # We'll only check the cache if we are a production environment.
-    if ($c->config->{installation_type} eq 'production') {
-	($cached_data,$cache_source) = $c->check_cache({cache_name => 'filecache',uuid => $uuid });
+    if ( $c->config->{installation_type} eq 'production' ) {
+        ( $cached_data, $cache_source )
+            = $c->check_cache( { cache_name => 'filecache', uuid => $uuid } );
     }
 
     # The precache via couchdb contains rendered HTML.
-    if ($cache_source eq 'precache') {
-	my $response   = $c->response;
-	$response->body($cached_data);
-	return;
+    if ( $cache_source eq 'precache' ) {
+        my $response = $c->response;
+        $response->body($cached_data);
+        return;
     }
-    
-    # It seems silly to fetch an object if we are going to be pulling
-    # fields from the cache but I still need for various page formatting duties.
-    unless ($c->stash->{object}) {
-        # AD: this condition is an illusion -- the stash will never have an object
-        #     unless we were forwarded here by another action. since this is a
-        #     RESTful action, that likely isn't the case.
-	# TH: Yes, you're absolutely correct. Conditional from pre-REST implementation?
-      # Fetch our external model
-      my $api = $c->model('WormBaseAPI');
-      
-      # Fetch the object from our driver     
-      $c->log->debug("WormBaseAPI model is $api " . ref($api));
-      $c->log->debug("The requested class is " . ucfirst($class));
-      $c->log->debug("The request is " . $name);
-      
-      # Fetch a WormBase::API::Object::* object
-      if ($name eq '*' || $name eq 'all') {
-          $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-      } else {
-          $c->stash->{object} = $api->fetch({class => ucfirst($class),
-                            name  => $name,
-                            }) or die "$!";
-      }
-      $c->log->debug("Tried to instantiate: $class");
+
+  # It seems silly to fetch an object if we are going to be pulling
+  # fields from the cache but I still need for various page formatting duties.
+    unless ( $c->stash->{object} ) {
+
+# AD: this condition is an illusion -- the stash will never have an object
+#     unless we were forwarded here by another action. since this is a
+#     RESTful action, that likely isn't the case.
+# TH: Yes, you're absolutely correct. Conditional from pre-REST implementation?
+# Fetch our external model
+        my $api = $c->model('WormBaseAPI');
+
+        # Fetch the object from our driver
+        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
+        $c->log->debug( "The requested class is " . ucfirst($class) );
+        $c->log->debug( "The request is " . $name );
+
+        # Fetch a WormBase::API::Object::* object
+        if ( $name eq '*' || $name eq 'all' ) {
+            $c->stash->{object}
+                = $api->instantiate_empty( { class => ucfirst($class) } );
+        }
+        else {
+            $c->stash->{object} = $api->fetch(
+                {   class => ucfirst($class),
+                    name  => $name,
+                }
+            ) or die "$!";
+        }
+        $c->log->debug("Tried to instantiate: $class");
     }
 
     my $object = $c->stash->{object};
+
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
-    if ($widget eq "references") {
-      $c->stash->{class}    = $class;
-      $c->stash->{query}    = $name;
-      $c->stash->{noboiler} = 1;
-      
-      # Looking up the template is slow; hard-coded here.
-      $c->stash->{template} = "shared/widgets/references.tt2";
-      $c->forward('WormBase::Web::View::TT');
-      return;
-    
-    # If you have a tool that you want to display inline as a widget, be certain to add it here.
-    # Otherwise, it will try to load a template under class/action.tt2...
-    } elsif ($widget eq "nucleotide_aligner" || $widget eq "protein_aligner" || $widget eq 'tree') {
-      return $c->res->redirect("/tools/$widget/run?inline=1;name=$name;class=$class") if ($widget eq 'tree');
-      return $c->res->redirect("/tools/" . $widget . "/run?inline=1&sequence=$name");
+    if ( $widget eq "references" ) {
+        $c->stash->{class}    = $class;
+        $c->stash->{query}    = $name;
+        $c->stash->{noboiler} = 1;
+
+        # Looking up the template is slow; hard-coded here.
+        $c->stash->{template} = "shared/widgets/references.tt2";
+        $c->forward('WormBase::Web::View::TT');
+        return;
+
+# If you have a tool that you want to display inline as a widget, be certain to add it here.
+# Otherwise, it will try to load a template under class/action.tt2...
     }
-    
-    
+    elsif ($widget eq "nucleotide_aligner"
+        || $widget eq "protein_aligner"
+        || $widget eq 'tree' )
+    {
+        return $c->res->redirect(
+            "/tools/$widget/run?inline=1;name=$name;class=$class")
+            if ( $widget eq 'tree' );
+        return $c->res->redirect(
+            "/tools/" . $widget . "/run?inline=1&sequence=$name" );
+    }
+
     # The cache ONLY includes the field data for the widget, nothing else.
     # This is because most backend caches cannot store globs.
     if ($cached_data) {
-	$c->stash->{fields} = $cached_data;
-	$c->stash->{cache} = $cache_source if ($cache_source);
-    } else {
-	
-	# No result? Generate and cache the widget.       
-	# Load the stash with the field contents for this widget.
-	# The widget itself is loaded by REST; fields are not.
-	my @fields = $c->_get_widget_fields($class,$widget);
-	
-	my $fatal_non_compliance = 0;
-	foreach my $field (@fields) {
-	    unless ($field) { next;}
-	    $c->log->debug($field);
-	    my $data = $object->$field; # $object->can($field) for a check
-	    if ($c->config->{installation_type} eq 'development' and
-		my ($fixed_data, @problems) = $object->_check_data($data, $class)) {
-		$data = $fixed_data;
-		$c->log->fatal("${class}::$field returns non-compliant data: ");
-		$c->log->fatal("\t$_") foreach @problems;
-		
-		$fatal_non_compliance = $c->config->{fatal_non_compliance};
-	    }
-	    
-	    # Conditionally load up the stash (for now) for HTML requests.
-	    # Alternatively, we could return JSON and have the client format it.
-	    $c->stash->{fields}->{$field} = $data; 
-	}
-	
-      if ($fatal_non_compliance) {
-          die "Non-compliant data. See log for fatal error.\n"
-      }
+        $c->stash->{fields} = $cached_data;
+        $c->stash->{cache} = $cache_source if ($cache_source);
+    }
+    else {
 
-      # Cache the field data for this widget.
-      # I added an eval cause this was breaking for some data. WE SHOULD FIX DATA RETURNED IN AN UNUSUAL STRUCTURE - AC
-      eval {$c->set_cache('filecache',$uuid,$c->stash->{fields});}
+        # No result? Generate and cache the widget.
+        # Load the stash with the field contents for this widget.
+        # The widget itself is loaded by REST; fields are not.
+        my @fields = $c->_get_widget_fields( $class, $widget );
+
+        my $fatal_non_compliance = 0;
+        foreach my $field (@fields) {
+            unless ($field) { next; }
+            $c->log->debug($field);
+            my $data = $object->$field;    # $object->can($field) for a check
+            if ( $c->config->{installation_type} eq 'development'
+                and my ( $fixed_data, @problems )
+                = $object->_check_data( $data, $class ) )
+            {
+                $data = $fixed_data;
+                $c->log->fatal(
+                    "${class}::$field returns non-compliant data: ");
+                $c->log->fatal("\t$_") foreach @problems;
+
+                $fatal_non_compliance = $c->config->{fatal_non_compliance};
+            }
+
+          # Conditionally load up the stash (for now) for HTML requests.
+          # Alternatively, we could return JSON and have the client format it.
+            $c->stash->{fields}->{$field} = $data;
+        }
+
+        if ($fatal_non_compliance) {
+            die "Non-compliant data. See log for fatal error.\n";
+        }
+
+# Cache the field data for this widget.
+# I added an eval cause this was breaking for some data. WE SHOULD FIX DATA RETURNED IN AN UNUSUAL STRUCTURE - AC
+        eval { $c->set_cache( 'filecache', $uuid, $c->stash->{fields} ); };
     }
 
     $c->stash->{class} = $class;
-    
+
     # Save the name of the widget.
     $c->stash->{widget} = $widget;
 
@@ -1174,30 +1224,39 @@ sub widget_data_cache_GET {
     $c->stash->{noboiler} = 1;
 
     # Set the template
-    $c->stash->{template}="shared/generic/rest_widget.tt2";
-    $c->stash->{child_template} = $c->_select_template($widget,$class,'widget');    
+    $c->stash->{template} = "shared/generic/rest_widget.tt2";
+    $c->stash->{child_template}
+        = $c->_select_template( $widget, $class, 'widget' );
 
     # Forward to the view for rendering HTML.
-    my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
-    $c->detach('WormBase::Web::View::TT') unless ($format) ;
- 
+    my $format = $headers->header('Content-Type')
+        || $c->req->params->{'content-type'};
+    $c->detach('WormBase::Web::View::TT') unless ($format);
+
     # TODO: AGAIN THIS IS THE REFERENCE OBJECT
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for("/page",$class,$name);
-    $self->status_ok($c, entity => {
-	class   => $class,
-	name    => $name,
-	uri     => "$uri",
-	fields  => $c->stash->{fields},
-		     }
-	);
+    my $uri = $c->uri_for( "/page", $class, $name );
+    $self->status_ok(
+        $c,
+        entity => {
+            class  => $class,
+            name   => $name,
+            uri    => "$uri",
+            fields => $c->stash->{fields},
+        }
+    );
     $format ||= 'text/html';
-    my $filename = $class."_".$name."_".$widget.".".$c->config->{api}->{content_type}->{$format};
+    my $filename
+        = $class . "_" 
+        . $name . "_" 
+        . $widget . "."
+        . $c->config->{api}->{content_type}->{$format};
     $c->log->debug("$filename download in the format: $format");
-    $c->response->header('Content-Type' => $format);
-    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);  
+    $c->response->header( 'Content-Type' => $format );
+    $c->response->header(
+        'Content-Disposition' => 'attachment; filename=' . $filename );
 }
 
 
@@ -1650,27 +1709,37 @@ eg  GET /rest/fields/[WIDGET]/[CLASS]/[NAME]
 sub available_fields : Path('/rest/available_fields') :Args(3) :ActionClass('REST') {}
 
 sub available_fields_GET {
-    my ($self,$c,$widget,$class,$name) = @_;
-    
+    my ( $self, $c, $widget, $class, $name ) = @_;
+
     # Does the data for this widget already exist in the cache?
-    my ($data,$cache_server) = $c->check_cache({cache_name => 'filecache', uuid => 'available_fields'});
-    
-    unless ($data) {    
-	my @fields = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
-	
-	foreach my $field (@fields) {
-	    my $uri = $c->uri_for('/rest/field',$class,$name,$field);
-	    $data->{$field} = "$uri";
-	}
-	$c->set_cache({cache_name => 'filecache',
-		       uuid       => 'available_fields',
-		       data       => $data });
+    my ( $data, $cache_server )
+        = $c->check_cache(
+        { cache_name => 'filecache', uuid => 'available_fields' } );
+
+    unless ($data) {
+        my @fields
+            = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
+
+        foreach my $field (@fields) {
+            my $uri = $c->uri_for( '/rest/field', $class, $name, $field );
+            $data->{$field} = "$uri";
+        }
+        $c->set_cache(
+            {   cache_name => 'filecache',
+                uuid       => 'available_fields',
+                data       => $data
+            }
+        );
     }
-    
-    $self->status_ok( $c, entity => { data => $data,
-				      description => "All fields that comprise the $widget for $class:$name",
-		      }
-	);
+
+    $self->status_ok(
+        $c,
+        entity => {
+            data => $data,
+            description =>
+                "All fields that comprise the $widget for $class:$name",
+        }
+    );
 }
 
 
@@ -1685,60 +1754,67 @@ eg http://localhost/rest/field/[CLASS]/[NAME]/[FIELD]
 sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
 
 sub field_GET {
-    my ($self,$c,$class,$name,$field) = @_;
+    my ( $self, $c, $class, $name, $field ) = @_;
 
     my $headers = $c->req->headers;
-    $c->log->debug($headers->header('Content-Type'));
+    $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
 
-    unless ($c->stash->{object}) {
-    # Fetch our external model
-    my $api = $c->model('WormBaseAPI');
- 
-    # Fetch the object from our driver   
-    $c->log->debug("WormBaseAPI model is $api " . ref($api));
-    $c->log->debug("The requested class is " . ucfirst($class));
-    $c->log->debug("The request is " . $name);
-    
-    # Fetch a WormBase::API::Object::* object
-    # * and all are placeholders to match the /species/class/object structure for species/class index pages
-    if ($name eq '*' || $name eq 'all') {
-        $c->stash->{object} = $api->instantiate_empty({class => ucfirst($class)});
-    } else {
-        $c->stash->{object} = $api->fetch({class => ucfirst($class),
-                           name  => $name,
-                          }) or die "$!";
+    unless ( $c->stash->{object} ) {
+
+        # Fetch our external model
+        my $api = $c->model('WormBaseAPI');
+
+        # Fetch the object from our driver
+        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
+        $c->log->debug( "The requested class is " . ucfirst($class) );
+        $c->log->debug( "The request is " . $name );
+
+# Fetch a WormBase::API::Object::* object
+# * and all are placeholders to match the /species/class/object structure for species/class index pages
+        if ( $name eq '*' || $name eq 'all' ) {
+            $c->stash->{object}
+                = $api->instantiate_empty( { class => ucfirst($class) } );
+        }
+        else {
+            $c->stash->{object} = $api->fetch(
+                {   class => ucfirst($class),
+                    name  => $name,
+                }
+            ) or die "$!";
+        }
     }
-    }
-    
+
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
     if ( $c->is_ajax() ) {
-    $c->stash->{noboiler} = 1;
+        $c->stash->{noboiler} = 1;
     }
 
     my $object = $c->stash->{object};
-    my $data = $object->$field();
+    my $data   = $object->$field();
 
-    # Should be conditional based on content type (only need to populate the stash for HTML)
-     $c->stash->{$field} = $data;
+# Should be conditional based on content type (only need to populate the stash for HTML)
+    $c->stash->{$field} = $data;
 
     # Anything in $c->stash->{rest} will automatically be serialized
     #  $c->stash->{rest} = $data;
-    
+
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
-    my $uri = $c->uri_for("/species",$class,$name);
+    my $uri = $c->uri_for( "/species", $class, $name );
 
-    $c->stash->{template} = $c->_select_template($field,$class,'field'); 
+    $c->stash->{template} = $c->_select_template( $field, $class, 'field' );
 
-    $self->status_ok($c, entity => {
-                     class  => $class,
-             name   => $name,
-                     uri    => "$uri",
-             $field => $data
-             }
+    $self->status_ok(
+        $c,
+        entity => {
+            class  => $class,
+            name   => $name,
+            uri    => "$uri",
+            $field => $data
+        }
     );
 }
 
