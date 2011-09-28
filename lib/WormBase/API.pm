@@ -88,21 +88,16 @@ has tool => (
 # builds a search object with the default datasource
 sub _build_xapian {
   my $self = shift;
-  my $service_instance = $self->_services->{$self->default_datasource}; 
-  my $root  = $self->conf_dir;
-  my $config = new Config::General(
-				  -ConfigFile      => "$root/../wormbase.conf",
-				  -InterPolateVars => 1
-    );
-  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
-  my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
+  my $service_instance = $self->_services->{$self->default_datasource};
+
+  my $path = $self->pre_compile->{base} . '/' . $self->version . '/search';
+  my $db = Search::Xapian::Database->new("$path/main");
+  my $syn_db = Search::Xapian::Database->new("$path/syn");
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
-  my $syn_qp = Search::Xapian::QueryParser->new($db);
-  $qp->set_database($db);
-  $syn_qp->set_database($syn_db);
+  my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
   $qp->set_default_op(OP_OR);
- 
+
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
   $qp->add_valuerangeprocessor($species_svrp);
@@ -112,7 +107,7 @@ sub _build_xapian {
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);
 
-  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
+  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
 }
 
 # Version should be provided by the default datasource or set explicitly.
