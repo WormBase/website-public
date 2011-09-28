@@ -423,20 +423,23 @@ END;
              %]
     </tbody>
 
-<!--     <tfoot> -->
-<!--         <tr> -->
-             [%# FOREACH header IN table_headers %]  
-<!--                        <th>[%# header %]</th> -->
-             [%# END %]
-<!--         </tr> -->
-<!--     </tfoot> -->
-
       </table>
    [% END %] 
 
 [% END %] 
 
-
+[% MACRO empty_widget_check BLOCK;
+  not_empty;
+  FOREACH field IN fields.keys;
+    IF fields.$field.data.defined;
+      not_empty = 1;
+      LAST;
+    END;
+  END; %]
+  [% UNLESS not_empty %]
+    <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
+  [% END %]
+[% END %]
 
 
 

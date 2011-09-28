@@ -431,13 +431,12 @@ sub cloned_by {
     # This is an evidence hash. We're assuming scalar context.
     my ($tag,$source) = $cloned_by->row  if $cloned_by;   
 
-    return unless $cloned_by;
     return { description => 'the person or laboratory who cloned this gene',
-	     data        => {
+	     data        => $cloned_by ? {
 		 'cloned_by' => "$cloned_by",
 		 'tag'       => "$tag",
 		 'source'    => $self->_pack_obj($source),
-	     },
+	     } : undef,
     };
 }
 
@@ -774,7 +773,7 @@ sub structured_description {
       $ret{$type} = \@nodes if (@nodes > 0);
    }
    return { description => "structured descriptions of gene function",
-	    data        =>  \%ret };
+	    data        =>  %ret ? \%ret : undef };
 }
 
 # sub taxonomy {}
@@ -1127,10 +1126,9 @@ sub microarray_topology_map_position {
     my %data;
     map {$data{"$_"} = $self->_pack_obj($_,eval{'Mountain '.$_->Expr_map->Mountain}||$_)} @p;
     
-    my $data = {description =>"microarray topology map",
-                data => \%data
+    return {description =>"microarray topology map",
+                data => %data ? \%data : undef
     };
-    return $data;
 }
 
 =head3 expression_cluster
@@ -1280,12 +1278,9 @@ sub anatomy_function {
       push @data, \%anatomy_fn_data;
     }
 
+    return { description =>  "anatomy function",
+         data        =>  @data ? \@data : undef };
 
-    my %data;
-
-    $data{'data'} = \@data;
-    $data{'description'} = "anatomy function";
-    return \%data;
 }
 
 
@@ -1449,7 +1444,7 @@ sub polymorphisms {
     }
     
     return { description => 'polymorphisms and natural variations found within this gene',
-	     data        => \@data };
+	     data        => @data ? \@data : undef };
 }
 
 # Private method: glean some information about a variation.
@@ -1469,12 +1464,11 @@ sub _process_variation {
     }
 
     $type = "transposon insertion" if $variation->Transposon_insertion;
-    my %data = ( variation => $self->_pack_obj($variation),
+    return { variation => $self->_pack_obj($variation),
 		 type              => "$type",
 		 molecular_change  => "$molecular_change",
 		 sequence_known    => $sequence_known,
-		 affects           => lc("$affects") );
-    return \%data;
+		 affects           => lc("$affects") };
 }
 
 =head3 reference_allele
@@ -1803,7 +1797,7 @@ sub gene_ontology {
     }
     
     return { description => 'gene ontology assocations',
-	     data        => \%data }; 
+	     data        => %data ? \%data : undef }; 
 }
 
 
@@ -2387,7 +2381,7 @@ sub treefam {
     }			
     
     return { description => 'data and IDs related to rendering Treefam trees',
-	     data        => \@data,
+	     data        => @data ? \@data : undef,
     };
 }
 
@@ -2484,7 +2478,7 @@ sub interactions {
 		      phenotype   => $self->_pack_obj($phenotype) };
     }
     return { description => 'genetic and predicted interactions',
-	     data        => \@data };
+	     data        => @data ? \@data : undef };
 }
 
 
@@ -2533,25 +2527,27 @@ sub _build_genomic_position {
 
 sub phenotype {
     my $self = shift;
-    my $data = { description => 'The Phenotype summary of the gene',
-		 data        => { pheno=>$self->phen_data->{pheno_table},	
-				  pheno_not=>$self->phen_data->{pheno_table_not},
-				},
-	};
+    my $pheno = $self->phen_data->{pheno_table};
+    my $pheno_not = $self->phen_data->{pheno_table_not};
 
-    return $data;    
+    return {    description => 'The Phenotype summary of the gene',
+                data        => ($pheno || $pheno_not) ? {    pheno=>$pheno,	
+                                    pheno_not=>$pheno_not,
+				} : undef,
+	};  
 }
 
 
 sub rnai {
     my $self = shift;
-    my $data = { description => 'The RNAi summary of the gene',
-         data        => { rnai=>$self->phen_data->{rnai_details_table},
-                  rnai_not=>$self->phen_data->{rnai_not_details_table},
-                },
-    };
+    my $rnai = $self->phen_data->{rnai_details_table};
+    my $rnai_not = $self->phen_data->{rnai_not_details_table};
 
-    return $data;    
+    return {    description => 'The Phenotype summary of the gene',
+                data        => ($rnai || $rnai_not) ? {    rnai=>$rnai, 
+                                    rnai_not=>$rnai_not,
+                } : undef,
+    };   
 }
 # TH: THIS IS A VIEW TASK.
 sub _print_rnai_details_table {
@@ -2584,7 +2580,7 @@ sub _print_rnai_details_table {
 		};
 	}
 
-	return \@array;
+	return @array ? \@array : undef;
 }
 
 sub _print_phenotype_table {
@@ -2665,7 +2661,7 @@ sub _print_phenotype_table {
 			  }
     }
 
-    return \@data;
+    return @data ? \@data : undef;
 } 
 
 
@@ -2806,7 +2802,7 @@ sub matching_cdnas {
     my %unique;
     my @mcdnas = map {$self->_pack_obj($_)} grep {!$unique{$_}++} map {$_->Matching_cDNA} $object->Corresponding_CDS;
     return { description => 'cDNAs matching this gene',
-	     data        => @mcdnas? \@mcdnas : undef };
+	     data        => \@mcdnas };
 }
 
 
@@ -3011,7 +3007,7 @@ sub primer_pairs {
     map { $_->features('PCR_product:GenePair_STS','structural:PCR_product') } @segments;
     
     return { description =>  "Primer pairs",
-	     data        =>  \@primer_pairs };
+	     data        =>  @primer_pairs ? \@primer_pairs : undef };
 }
 
 =head3 sage_tags
@@ -3326,7 +3322,7 @@ sub regulation_on_expression_level {
 	}
     }
     return { description => 'Regulation on expression level',
-	     data        => \@stash };
+	     data        => @stash ? \@stash : undef };
 }
 
 
@@ -3493,9 +3489,8 @@ sub gene_models {
     push @rows,\%data;
   }
 
-   my $data = { description => 'gene models for this gene',
+   return { description => 'gene models for this gene',
                 data        =>  @rows ? \@rows : undef};
-   return $data;
 }
 
 
@@ -3514,7 +3509,7 @@ sub other_sequences {
 
     return { 
 	description => 'Other sequences associated with gene',
-	data        => \@data,
+	data        => @data ? \@data : undef,
     };
 }
 

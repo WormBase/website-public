@@ -282,7 +282,7 @@ sub history_GET {
     $c->stash->{template} = $history_change ? "shared/fields/turn_history_on.tt2" : "shared/fields/user_history.tt2"; 
 
 
-    if(($c->user_session->{'history_on'} == 1) && !$history_change){
+    if(($c->user_session->{'history_on'} == '1') && !$history_change){
       if($c->req->params->{clear}){ 
         $session->user_history->delete();
         $session->update();
