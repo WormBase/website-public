@@ -269,7 +269,7 @@ sub widget :Path("/widget") Args(3) {
     $c->log->debug("Instantiated an external object: " . ref($object));
     
     # Should I stash the object so I only need to fetch it once?
-    $c->stash->{object} = $object;
+#    $c->stash->{object} = $object;
 
     # Fetch the field content and stash it.
     
