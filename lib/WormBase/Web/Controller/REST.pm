@@ -232,9 +232,8 @@ sub get_user_info_GET{
   my ( $self, $c, $name) = @_;
 
   my $api = $c->model('WormBaseAPI');
-  my $object = $api->fetch({class => 'Person',
-                    name  => $name,
-                    }) or die "$!";
+  my $object = $api->fetch({ class => 'Person', name  => $name });
+  # what if there's no object?
 
   my $message;
   my $status_ok = 1;
@@ -359,23 +358,8 @@ sub evidence_GET {
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
 
-    unless ( $c->stash->{object} ) {
-        # Fetch our external model
-        my $api = $c->model('WormBaseAPI');
-
-        # Fetch the object from our driver
-        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
-        $c->log->debug( "The requested class is " . ucfirst($class) );
-        $c->log->debug( "The request is " . $name );
-
-        # Fetch a WormBase::API::Object::* object
-        # But wait. Some methods return lists. Others scalars...
-        $c->stash->{object} = $api->fetch(
-            {   class => ucfirst($class),
-                name  => $name
-            }
-        ) or die "$!";
-    }
+    my $object = $c->model('WormBaseAPI')->fetch({ class => ucfirst $class, name => $name });
+    # what if there's no object?
 
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
@@ -383,7 +367,6 @@ sub evidence_GET {
         $c->stash->{noboiler} = 1;
     }
 
-    my $object = $c->stash->{object};
     my @node   = $object->object->$tag;
     $right ||= 0;
     $index ||= 0;
@@ -884,29 +867,11 @@ sub widget_GET {
         return;
     }
 
-  # It seems silly to fetch an object if we are going to be pulling
-  # fields from the cache but I still need for various page formatting duties.
-    unless ( $c->stash->{object} ) {
-        # Fetch our external model
-        my $api = $c->model('WormBaseAPI');
-
-        # Fetch a WormBase::API::Object::* object
-        if ( $name eq '*' || $name eq 'all' ) {
-            $c->stash->{object}
-                = $api->instantiate_empty( { class => ucfirst($class) } );
-        }
-        else {
-            $c->stash->{object} = $api->fetch(
-                {   class => ucfirst($class),
-                    name  => $name,
-                }
-            ) or die "Couldn't fetch an object: $!";
-        }
-
-        # $c->log->debug("Tried to instantiate: $class");
-    }
-
-    my $object = $c->stash->{object};
+    my $api = $c->model('WormBaseAPI');
+    my $object = ($name eq '*' || $name eq 'all'
+               ? $api->instantiate_empty({ class => ucfirst $class })
+               : $api->fetch({ class => ucfirst $class, name => $name }));
+    # what if there's no object?
 
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
@@ -1112,38 +1077,11 @@ sub widget_data_cache_GET {
         return;
     }
 
-  # It seems silly to fetch an object if we are going to be pulling
-  # fields from the cache but I still need for various page formatting duties.
-    unless ( $c->stash->{object} ) {
-
-# AD: this condition is an illusion -- the stash will never have an object
-#     unless we were forwarded here by another action. since this is a
-#     RESTful action, that likely isn't the case.
-# TH: Yes, you're absolutely correct. Conditional from pre-REST implementation?
-# Fetch our external model
-        my $api = $c->model('WormBaseAPI');
-
-        # Fetch the object from our driver
-        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
-        $c->log->debug( "The requested class is " . ucfirst($class) );
-        $c->log->debug( "The request is " . $name );
-
-        # Fetch a WormBase::API::Object::* object
-        if ( $name eq '*' || $name eq 'all' ) {
-            $c->stash->{object}
-                = $api->instantiate_empty( { class => ucfirst($class) } );
-        }
-        else {
-            $c->stash->{object} = $api->fetch(
-                {   class => ucfirst($class),
-                    name  => $name,
-                }
-            ) or die "$!";
-        }
-        $c->log->debug("Tried to instantiate: $class");
-    }
-
-    my $object = $c->stash->{object};
+    my $api = $c->model('WormBaseAPI');
+    my $object = $name eq '*' || $name eq 'all'
+               ? $api->instantiate_empty({ class => ucfirst $class })
+               : $api->fetch({ class => ucfirst $class, name => $name });
+    # what if there's no object?
 
     # Is this a request for the references widget?
     # Return it (of course, this will ONLY be HTML).
@@ -1760,30 +1698,11 @@ sub field_GET {
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
 
-    unless ( $c->stash->{object} ) {
-
-        # Fetch our external model
-        my $api = $c->model('WormBaseAPI');
-
-        # Fetch the object from our driver
-        $c->log->debug( "WormBaseAPI model is $api " . ref($api) );
-        $c->log->debug( "The requested class is " . ucfirst($class) );
-        $c->log->debug( "The request is " . $name );
-
-# Fetch a WormBase::API::Object::* object
-# * and all are placeholders to match the /species/class/object structure for species/class index pages
-        if ( $name eq '*' || $name eq 'all' ) {
-            $c->stash->{object}
-                = $api->instantiate_empty( { class => ucfirst($class) } );
-        }
-        else {
-            $c->stash->{object} = $api->fetch(
-                {   class => ucfirst($class),
-                    name  => $name,
-                }
-            ) or die "$!";
-        }
-    }
+    my $api = $c->model('WormBaseAPI');
+    my $object = $name eq '*' || $name eq 'all'
+               ? $api->instantiate_empty({ class => ucfirst $class })
+               : $api->fetch({ class => ucfirst $class, name => $name });
+    # what if there's no object?
 
     # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
@@ -1791,7 +1710,6 @@ sub field_GET {
         $c->stash->{noboiler} = 1;
     }
 
-    my $object = $c->stash->{object};
     my $data   = $object->$field();
 
 # Should be conditional based on content type (only need to populate the stash for HTML)

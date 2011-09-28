@@ -147,14 +147,14 @@ sub _get_report {
     my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
-    
-    my $api = $c->model('WormBaseAPI');
-    my $object = $api->fetch({class=> ucfirst($class),
-                  name => $name}) || $self->error_custom($c, 500, "can't connect to database");
-     
-    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 
-    $c->stash->{object} = $object;  # Store the internal ace object. Goofy.
+    my $object = $c->model('WormBaseAPI')->fetch({
+        class=> ucfirst($class),
+        name => $name
+    })
+    or $self->error_custom($c, 500, "can't connect to database"); # don't think this is correct
+
+    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 }
 
 
