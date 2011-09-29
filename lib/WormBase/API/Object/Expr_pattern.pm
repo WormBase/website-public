@@ -417,20 +417,18 @@ B<Response example>
 
 sub anatomy_ontology {
     my $self = shift;
-    my $object = $self->object;
-    my @terms  = $object->Anatomy_term;
 
-    my @data;
-    foreach (@terms) {
-	push @data,{ 
-	    anatomy_term => $self->_pack_obj($_),
-	    definition   => $_->Definition,
-	};
-    }
-    
+    my @data = map {
+        my $def = $_->Definition;
+        {
+            anatomy_term => $self->_pack_obj($_),
+            definition   => $def && "$def",
+        };
+    } $self->object->Anatomy_term;
+
     return {
-	description => 'anatomy ontology terms associated with this expression pattern',
-	data	    => @data ? \@data : undef,
+        description => 'anatomy ontology terms associated with this expression pattern',
+        data	    => @data ? \@data : undef,
     };
 }
 
