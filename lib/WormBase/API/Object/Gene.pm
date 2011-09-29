@@ -1004,7 +1004,7 @@ sub anatomic_expression_patterns {
                    $object->Expr_pattern;
 
     foreach my $ep (@eps) {
-        my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg";
+        my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg");
         $data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=$ep" if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  $ep->Pattern(-filled=>1) . $ep->Subcellular_localization(-filled=>1);
@@ -4158,9 +4158,9 @@ sub _gene_rnai_pheno_data_compile { ## on going
 	}
 
 	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);	
+	$p2n .= join("\n",keys %phenotype2name);	
 	if (my $phenotype_id2name = $self->phenotype_id2name) {
-        $phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
+        $phenotype_id2name .= "\n$p2n" if defined $p2n;
         $self->phenotype_id2name("$phenotype_id2name");
     }
 	return $output;
@@ -4171,27 +4171,28 @@ sub _gene_rnai_pheno_not_data_compile {
 	my $object = $self->object;
     my $output = "";
 	my $p2n = "";
-    
+
     my $na = 'Not';
-	my @rnai = $object->RNAi_result;    
+	my @rnai = $object->RNAi_result;
 	my %uniq; 
 	my %phenotype2name;
-	
+
 	foreach my $rnai (@rnai) {
 	    my @phenotypes = $rnai->Phenotype_not_observed;
-	    
-	    foreach my $phenotype (@phenotypes) {		
+
+	    foreach my $phenotype (@phenotypes) {
 	    	my $phenotype_name = $phenotype->Primary_name;
 			$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
 	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
 	    }
 	}
 	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
+	$p2n .= join("\n",keys %phenotype2name);
+
+	if (my $phenotype_id2name = $self->phenotype_id2name) {
+        $phenotype_id2name .= "\n$p2n" if defined $p2n;
+        $self->phenotype_id2name("$phenotype_id2name");
+    }
 	return $output;
 }
 
@@ -4232,10 +4233,11 @@ sub _gene_xgene_pheno_data_compile{
 			$phenotype2name{"$phenotype_not\=\>$phenotype_name"} = 1;
 		}		
 	}
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
+	$p2n .= join("\n",keys %phenotype2name);
+	if (my $phenotype_id2name = $self->phenotype_id2name) {
+        $phenotype_id2name .= "\n$p2n" if defined $p2n;
+        $self->phenotype_id2name("$phenotype_id2name");
+    }
 	my $output = join ("\n" , keys %lines);
 	my $output_not = join ("\n" , keys %lines_not);
 	return $output,$output_not ;
@@ -4273,11 +4275,12 @@ sub _variation_data_compile{
 			
 		}
 	}
-	
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
+
+	$p2n .= join("\n",keys %phenotype2name);
+	if (my $phenotype_id2name = $self->phenotype_id2name) {
+        $phenotype_id2name .= "\n$p2n" if defined $p2n;
+        $self->phenotype_id2name("$phenotype_id2name");
+    }
 	my $output = join ("\n" , keys %lines);
 	my $output_not = join ("\n" , keys %lines_not);
 	return $output, $output_not;
@@ -4325,7 +4328,7 @@ sub _rnai_data_compile{
 			}
 		}
 
-		if(!($genotype)) {
+		if(!$genotype) { # ... $genotype is false. why is it used below?
 			$lines{"$rnai_object\|$genotype\|$ref"} = 1;
 		} else {
 			next;
