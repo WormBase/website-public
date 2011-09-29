@@ -2,13 +2,14 @@ package WormBase::API;
 
 use Moose;                       # Moosey goodness
 
-use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
-use Config::General;
+use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
-use WormBase::API::ModelMap;
+use Config::General;
 use Class::MOP;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
@@ -90,9 +91,9 @@ sub _build_xapian {
   my $self = shift;
   my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = $self->pre_compile->{base} . '/' . $self->version . '/search';
-  my $db = Search::Xapian::Database->new("$path/main");
-  my $syn_db = Search::Xapian::Database->new("$path/syn");
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
+  my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
