@@ -1,5 +1,7 @@
 package WormBase::API::Object::Gene;
 use Moose;
+use File::Spec::Functions qw(catfile catdir);
+use namespace::autoclean -except => 'meta';
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
@@ -31,9 +33,9 @@ has 'gene_pheno_datadir' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $version = $self->ace_dsn->version;
-	return $self->pre_compile->{base}.$version.$self->pre_compile->{gene};
+        my $self=shift;
+        return catfile($self->pre_compile->{base}, $self->ace_dsn->version,
+                       $self->pre_compile->{gene});
     }
 );
 
@@ -42,9 +44,9 @@ has 'orthology_datadir' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $version = $self->ace_dsn->version;
-	return $self->pre_compile->{base} . $version . "/orthology/";
+        my $self=shift;
+        return catfile($self->pre_compile->{base}, $self->ace_dsn->version,
+                       'orthology');
     }
 );
 
@@ -53,11 +55,10 @@ has 'all_proteins' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $cds = $self ~~ '@Corresponding_CDS';
-	return undef unless $cds;
-	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @$cds  ;
-	return \@proteins;
+        my $self=shift;
+        my $cds = $self ~~ '@Corresponding_CDS';
+        return undef unless $cds;
+        return [ map {$_->Corresponding_protein(-fill=>1)} @$cds ];
     }
 );
  
@@ -65,9 +66,7 @@ has 'sequences' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my @seq = $self->_fetch_sequences;
-	return \@seq;
+        return [ shift->_fetch_sequences ];
     }
 );
 
@@ -75,12 +74,11 @@ has 'tracks' => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
-        my ($self) = @_;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->_parsed_species =~ /elegans/ ?
+            data        => shift->_parsed_species =~ /elegans/ ?
                            [qw(CG CANONICAL Allele RNAi)] : [qw/CG/],
-        },
+        };
     }
 );
 
@@ -91,9 +89,7 @@ has 'phen_data' => (
     isa => 'HashRef',
     lazy => 1,
     default => sub {
-      my $self=shift;
-      my $ret = $self->_build_phen_data;
-      return $ret;
+        return shift->_build_phen_data;
     }
 );
 
@@ -999,25 +995,28 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     my %data_pack;
+
+    my $file = catfile($self->pre_compile->{gene_expr}, "$object.jpg");
+    $data_pack{"image"}="jpg?class=gene_expr&id=$object"   if (-e $file && ! -z $file);
+
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
                    $object->Expr_pattern;
-    
-    my $file = $self->pre_compile->{gene_expr}."/".$object.".jpg";
-    $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if (-e $file && ! -z $file);
-    
+
     foreach my $ep (@eps) {
-	my $file = $self->pre_compile->{expr_object}."/".$ep.".jpg";
-	$data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=". $ep   if (-e $file && ! -z $file);
-	# $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
-        my $pattern =  join '', ($ep->Pattern(-filled=>1), $ep->Subcellular_localization(-filled=>1));
-        $pattern    =~ s/(.{384}).+/$1\.\.\. /;
+        my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg";
+        $data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=$ep" if (-e $file && ! -z $file);
+        # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+        my $pattern =  $ep->Pattern(-filled=>1) . $ep->Subcellular_localization(-filled=>1);
+        $pattern    =~ s/(.{384}).+/$1.../;
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
-    
-    return { description => 'expression patterns for the gene',
-	     data        => %data_pack ? \%data_pack : undef };
+
+    return {
+        description => 'expression patterns for the gene',
+        data        => %data_pack ? \%data_pack : undef,
+    };
 }
 
 =head3 microarray_expression_data
@@ -2274,10 +2273,10 @@ B<Response example>
 sub human_diseases {
     my $self = shift;
     my $object = $self->object;
-	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
-	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
-	my %omim_id2disease_name = build_hash($self->orthology_datadir . 'omim_id2disease_name.txt');
-	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
+	my %gene_id2omim_ids = build_hash(catfile($self->orthology_datadir, 'gene_id2omim_ids.txt'));
+	my %omim_id2disease_desc = build_hash(catfile($self->orthology_datadir, 'omim_id2disease_desc.txt'));
+	my %omim_id2disease_name = build_hash(catfile($self->orthology_datadir, 'omim_id2disease_name.txt'));
+	my $disease_list = $gene_id2omim_ids{$object};
 	my @diseases = split /%/,$disease_list;
 	my @data_pack;
 	foreach my $disease_id (@diseases) {
@@ -3944,26 +3943,25 @@ sub _get_phenotype_names {
 
 	my ($self, $rnai_ar, $var_ar) = @_;
 	my %phene_master;
-	
+
 	foreach my $rnai_phene_line (@$rnai_ar) {
-	
 		my ($phene_id, $disc) = split /\|/,$rnai_phene_line;
 		$phene_master{$phene_id} = 1;
 	}
-	
+
 	foreach my $var_phene_line (@$var_ar) {
-	
 		my ($phene_id, $disc) = split /\|/,$var_phene_line;	
 		$phene_master{$phene_id} = 1;
 	}
-	
+
 	my %phene_id2name;
-	my %fullset_phene_id2name = build_hash($self->gene_pheno_datadir.$self->pre_compile->{phenotype_name_file});
+	my %fullset_phene_id2name
+        = build_hash(catfile($self->gene_pheno_datadir,
+                             $self->pre_compile->{phenotype_name_file}));
 	foreach my $phene_id (keys %phene_master) {
-				
 		$phene_id2name{$phene_id} = $fullset_phene_id2name{$phene_id};  ## $phene_primary_name
 	}
-	
+
 	return \%phene_id2name;
 }
 

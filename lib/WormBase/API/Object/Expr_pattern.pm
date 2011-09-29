@@ -1,6 +1,8 @@
 package WormBase::API::Object::Expr_pattern;
 
 use Moose;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -141,10 +143,10 @@ B<Response example>
 sub subcellular_locations {
     my ($self) = @_;
     my @subcellular_locs = map {"$_"} @{$self ~~ '@Subcellular_localization'};
-    
+
     return {
-	description	=> 'Subcellular locations of this expression pattern',
-	data		=> @subcellular_locs ? \@subcellular_locs : undef,
+        description	=> 'Subcellular locations of this expression pattern',
+        data		=> @subcellular_locs ? \@subcellular_locs : undef,
     };
 }
 
@@ -205,10 +207,11 @@ http://wormbase.org/draw/$data
 
 sub expression_image {
     my ($self) = @_;
+    my $object = $self->object;
 
 	my $data;
-	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
-	$data = 'jpg?class=expr_object&id=' . $self->object if (-e $file && !-z $file);
+	my $file = File::Spec->catfile($self->pre_compile->{expr_object}, "$object.jpg");
+	$data = "jpg?class=expr_object&id=$object" if (-e $file && !-z $file);
 
 	return {
 		description => 'Image of the expression pattern',
