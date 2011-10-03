@@ -292,6 +292,7 @@ sub check_cache {
     # Don't bother checking the cache in certain circumstances.
     # return if ($c->check_any_user_role(qw/admin curator/));
 
+    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
     return unless (ref($params) eq "HASH");  # TH: we should fix all calls so check is unnecessary.
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};

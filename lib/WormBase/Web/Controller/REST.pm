@@ -844,8 +844,7 @@ sub widget_GET {
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
-    if (   ( $c->config->{installation_type} eq 'production' )
-        && ( $content_type eq 'text/html' ) )
+    if ( $content_type eq 'text/html' )
     {
 
         # Shouldn't this be $self? Would break check_cache();
@@ -1065,10 +1064,8 @@ sub widget_data_cache_GET {
     my $uuid = join( '_', $class, $widget, $name );
 
     # We'll only check the cache if we are a production environment.
-    if ( $c->config->{installation_type} eq 'production' ) {
-        ( $cached_data, $cache_source )
-            = $c->check_cache( { cache_name => 'filecache', uuid => $uuid } );
-    }
+    ( $cached_data, $cache_source )
+        = $c->check_cache( { cache_name => 'filecache', uuid => $uuid } );
 
     # The precache via couchdb contains rendered HTML.
     if ( $cache_source eq 'precache' ) {
