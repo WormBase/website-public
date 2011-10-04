@@ -913,10 +913,12 @@ sub widget_GET {
             = $object->_check_data( $data, $class ) )
         {
             $data = $fixed_data;
-            $c->log->fatal("${class}::$field returns non-compliant data: ");
-            $c->log->fatal("\t$_") foreach @problems;
-
             $fatal_non_compliance = $c->config->{fatal_non_compliance};
+            my $log = $fatal_non_compliance ? 'fatal' : 'warn';
+
+            $c->log->$log("${class}::$field returns non-compliant data: ");
+            $c->log->$log("\t$_") foreach @problems;
+
         }
 
         # Conditionally load up the stash (for now) for HTML requests.
