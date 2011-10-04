@@ -1,10 +1,8 @@
 package WormBase::Web::Controller::Tool;
 
-
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
- 
 
 __PACKAGE__->config->{namespace} = '';
 
@@ -22,44 +20,42 @@ sub tool :Path("/tools") Args {
     my $tool = shift @args;
     my $action= shift @args || "index";
     $c->log->debug("using $tool and running $action\n");
-    
+
     $c->stash->{section} = "tools";
     $c->stash->{template}="tool/$tool/$action.tt2";
     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
     my $api = $c->model('WormBaseAPI');
     my $data;
-    
+
     # Does the data already exist in the cache?
-    
+
     if ($action eq 'run' && $tool =~/aligner/ && !(defined $c->req->params->{Change})) {
-      my ($cache_id,$cache_server);
-      ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
-      unless ($data) {  
-          $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-#    I don't know how to set up caching now with the new cache stuff... -AC
-#           $c->set_cache('filecache',$cache_id,$data);
-#         $c->set_cache({cache_name => 'couchdb',
-#                uuid       => $cache_id,
-#                data       => $data,           
-#               });
-      } else {
-          $c->stash->{cache} = $cache_server if($cache_server);
-      }
-    } else{
-      if($tool =~/aligner/){
-        $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-      }else{
-        $data = $api->_tools->{$tool}->$action($c->req->params);
-      }
+        my ($cache_id,$cache_server);
+        ($cache_id,$data,$cache_server) = $c->check_cache('tools', $tool, $c->req->params->{sequence});
+        unless ($data) {
+            $data = $api->_tools->{$tool}->$action($c, $c->req->params);
+            $c->set_cache('filecache',$cache_id,$data);
+        }
+        else {
+            $c->stash->{cache} = $cache_server if($cache_server);
+        }
     }
-    
-    # Um. Not sure how this works for other tools.    
+    elsif ($tool =~/aligner/) {
+        $data = $api->_tools->{$tool}->$action($c, $c->req->params);
+    }
+    else {
+        $data = $api->_tools->{$tool}->$action($c->req->params);
+    }
+
+    # Create different actions for different tools instead of using
+    #   this single catch-all action? -AD
     if ($tool eq 'tree') {
-	$c->stash->{data} = $data;
-    } else {
-	for my $key (keys %$data){
-	    $c->stash->{$key}=$data->{$key};
-	}
+        $c->stash->{data} = $data;
+    }
+    else {
+        for my $key (keys %$data) {
+            $c->stash->{$key}=$data->{$key};
+        }
     }
 }
 
@@ -90,7 +86,7 @@ sub issue :Path("tools/issues") Args {
 	my $role=$c->model('Schema::Role')->find({role=>'curator'});
 	$c->stash->{curators}=[$role->users];
     }
-} 
+}
 
 sub issue_report :Path("tools/issues/report") Args(0) {
     my ($self, $c) = @_; 
@@ -110,7 +106,7 @@ sub comment :Path("tools/comments") Args {
     $c->stash->{comments} = \@comments;
     $c->stash->{current_time}=time();
     return;
-} 
+}
 
 
 1;
