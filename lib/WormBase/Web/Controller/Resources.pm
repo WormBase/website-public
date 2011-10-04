@@ -149,12 +149,14 @@ sub _get_report {
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
     my $object = $c->model('WormBaseAPI')->fetch({
-        class=> ucfirst($class),
-        name => $name
+        class  => ucfirst($class),
+        name   => $name,
     })
     or $self->error_custom($c, 500, "can't connect to database"); # don't think this is correct
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+
+    $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
 }
 
 

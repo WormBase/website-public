@@ -239,7 +239,7 @@ sub fetch {
     }
 
     unless (defined $object) { #&& ($name eq 'all' || $name eq '*'));
-        $self->log->warning("[API::fetch()]", " could NOT fetch object");
+        $self->log->warn("[API::fetch()]", " could NOT fetch object");
         return -1;
     }
 
