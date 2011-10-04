@@ -1364,7 +1364,7 @@ sub widget_home_GET {
       $c->stash->{issues} = $self->issue_rss($c,2);
     } elsif($widget=~m/activity/) {
       $c->stash->{recent} = $self->recently_saved($c,3);
-      if ($c->user_session->{'history_on'} == 1){
+      if ($c->user_session->{'history_on'}){
         $c->stash->{popular} = $self->most_popular($c,5)
       } 
       $c->stash->{random} = $self->random_page($c);
