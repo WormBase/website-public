@@ -158,21 +158,21 @@ sub _build__services {
 
 sub _build__tools {
     my ($self) = @_;
-     my %tools;
-#register all the tools
+    my %tools;
     for my $tool (sort keys %{$self->tool}) {
-      my $class = __PACKAGE__ . "::Service::$tool" ;	
-      Class::MOP::load_class($class);
-      # Instantiate the service providing it with
-      # access to some of our configuration variables
-      my $hash = {	pre_compile => $self->tool->{$tool},
-					log      => $self->log,
-					dsn	 => $self->_services, 
-					tmp_base  => $self->tmp_base,
-				      };
-#      $hash->{search} = $self->search if ($tool eq 'aligner');    # TODO: Needs to be updated for Xapian.
-      $tools{$tool}  = $class->new($hash);
-      $self->log->debug( "service $tool registered");
+        my $class = __PACKAGE__ . "::Service::$tool";
+        Class::MOP::load_class($class);
+
+        # Instantiate the service providing it with
+        # access to some of our configuration variables
+        $tools{$tool}  = $class->new({
+            pre_compile => $self->tool->{$tool},
+            log         => $self->log,
+            dsn         => $self->_services, 
+            tmp_base    => $self->tmp_base,
+            # ($tool eq 'aligner' ? (search => $self->search) : ()),
+        });
+        $self->log->debug( "service $tool registered");
     }
     return \%tools;
 }
