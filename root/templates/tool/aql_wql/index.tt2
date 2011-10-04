@@ -1,3 +1,48 @@
+[% IF error %]
+<pre>[% error %]</pre> <!-- should be styled -->
+[% END %]
 <form method="POST" action="[% c.uri_for('tools', 'aql_wql', 'run') %]">
+      <input type="radio" name="query-type" value="AQL" id="qtype-aql" [% IF query_type != 'WQL' %]checked="checked"[% END %]/>
+      <label for="qtype-aql">AQL</label>
+      <input type="radio" name="query-type" value="WQL" id="qtype-wql" [% IF query_type == 'WQL' %]checked="checked"[% END %]/>
+      <label for="qtype-wql">WQL</label>
+      <br />
+      <input type="radio" name="result-type" value="HTML" id="rtype-html" [% IF result_type != 'Text' %]checked="checked"[% END %]/>
+      <label for="rtype-html">HTML</label>
+      <input type="radio" name="result-type" value="Text" id="rtype-text" [% IF result_type == 'Text' %]checked="checked"[% END %]/>
+      <label for="rtype-text">Plain Text</label>
+      <br />
+
+      <textarea name="ql-query">[%IF query; query; END;%]</textarea>
+      <br />
+
       <input type="submit" name="submit" value="Submit" />
 </form>
+
+[% IF data %]
+   <table>
+   [% IF query_type == 'WQL' %]
+      [% obj = data.next %]
+      [% WHILE obj %]
+         <tr><td>[% IF result_type == 'Text'; obj.label; ELSE; tag2link(obj) ; END %]</td></tr>
+         [% obj = data.next %]
+      [% END %]
+   [% ELSE %]
+      [% FOREACH row IN data %]
+         <tr>
+        [% FOREACH obj IN row %]
+           <td>[% IF obj.size > 1; tag2link(obj); ELSE; obj.label; END %]</td>
+        [% END %]
+        </tr>
+      [% END %]
+   [% END %]
+   </table>
+[% ELSIF data.exists %]
+   <p>No Data found</p>   
+[% END %]
+
+[% USE dumper %]
+<pre>
+DEBUG:
+[% dumper.dump(c.stash) %]
+</pre>
