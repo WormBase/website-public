@@ -1,23 +1,32 @@
-#!/usr/bin/env perl
 use strict;
 use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/lib";
-# Supplied by environment.
-#use lib "$FindBin::Bin/../../extlib";
 use WormBase::Web;
 use Plack::App::CGIBin;
-#use Plack::App::WrapCGI;
-#use Plack::App::Proxy;
+use Plack::App::Proxy;
 use Plack::Builder;
 
+# GBrowse
+use Bio::Graphics::Browser2;
+use Bio::Graphics::Browser2::Render::HTML;
+
+use constant DEV_DEFAULT_GB => 'cgi-bin';
 
 # The symbolic name of our application.
 my $app      = $ENV{APP};
 my $app_root = $ENV{APP_ROOT};
+my $app_path;
 
-# Want to launch several variations of your app 
+if ($app_root) {
+    $app_path = ( $app ? "$app_root/$app" : "$app_root/wormbase" );
+}
+else { # no app[root] provided; use catalyst to figure it out
+    $app_path = WormBase::Web->path_to('/');
+}
+
+# Want to launch several variations of your app
 # on a single host? No problem!
 
 #   use Plack::Builder;
@@ -28,71 +37,70 @@ my $app_root = $ENV{APP_ROOT};
 #       mount '/staging'  => $staging_app;
 #   }
 
-# GBrowse:
-# For now, nginx is proxying requests to back end machine gbrowse host.
-
-# A better way to do this would be to wrap the GBrowse CGIs.
-# Then every checked out source could have their own gbrowse instance
-# without having to fiddle with webserver configuration.
-
-# 1. WrapCGI
-#my $gb2 = Plack::App::WrapCGI->new(script => "/usr/local/wormbase/website/tharris/root/gbrowse/cgi/gbrowse")->to_app;
-#my $gb2 = Plack::App::WrapCGI->new(script => "/usr/local/wormbase/services/gbrowse2/current/cgi/gb2/gbrowse")->to_app;
-
-# 2. Or CGIBin. Still hard-coded for user.
-my $gbrowse = Plack::App::CGIBin->new(
-    root => "$app_root/$app/root/gbrowse/cgi",
-    )->to_app;
-
-# 3. OR just by proxy
-#my $remote_gbrowse        = Plack::App::Proxy->new(remote => "http://206.108.125.173:8000/tools/genome")->to_app;
-#my $remote_gbrowse_static = Plack::App::Proxy->new(remote => "http://206.108.125.173:8000/gbrowse2")->to_app;
-
-
-######################
-# The WormBase APP
-######################
 my $wormbase = WormBase::Web->psgi_app(@_);
 
+my $gbrowse;
+my $gbrowse_static = Plack::App::File->new(root => "$app_path/root/gbrowse");
+
+$ENV{GBROWSE_CONF} ||= "$app_path/conf/gbrowse";
+my $gbrowse_integration = $ENV{GBROWSE_INTEGRATION}
+    || (WormBase::Web->config->{installation_type} eq 'development' ?
+        DEV_DEFAULT_GB : '');
+
+# Will detect development vs production server. By default, production servers
+# will use reverse proxy for GB and development server will use CGI bin'd
+# GB. This can be overriden with $ENV{GBROWSE_INTEGRATION}.
+
+if ($gbrowse_integration =~ /cgi-?bin/io) {
+    $gbrowse = Plack::App::CGIBin->new( # emulate CGI bin
+        root    => "$app_path/root/gbrowse/cgi",
+        exec_cb => sub { 1 },
+    )->to_app;
+}
+elsif ($gbrowse_integration =~ /psgi/io) { # wrap GBrowse up like a PSGI app
+    # BUG: starman crashes intermittently.
+
+    # Ideally, GBrowse could provide a psgi_app method like
+    # Bio::Graphics::Browser2->psgi_app(@_) which would do exactly this:
+    # (even more ideally, a rewrite from the ground up with PSGI in mind)
+    my $gb = CGI::Emulate::PSGI->handler(sub {
+       use CGI;
+       my $globals = Bio::Graphics::Browser2->open_globals;
+       CGI::initialize_globals();
+       my $render = Bio::Graphics::Browser2::Render::HTML->new($globals);
+       eval { $render->run() };
+       warn $@ if $@;
+       $render->destroy;
+    });
+
+    my $gb_img = Plack::App::WrapCGI->new(script => "$app_path/root/gbrowse/cgi/gbrowse_img")->to_app;
+
+    $gbrowse = builder {
+        mount '/gbrowse'     => $gb;
+        mount '/gbrowse_img' => $gb_img;
+    };
+}
+else { # proxy (fallback)
+    # hardcoded addresses... should be in config or env, or config files
+    $gbrowse        = Plack::App::Proxy->new(remote => "http://206.108.125.173:8000/tools/genome")->to_app;
+    $gbrowse_static = Plack::App::Proxy->new(remote => "http://206.108.125.173:8000/gbrowse2")->to_app;
+}
 
 builder {
-
-# Default middlewares will NOT be added.
-# Might want to add these manually.
-#my $app = WormBase::Web->apply_default_middlewares(WormBase::Web->psgi_app);
-#$app;
-    
     # Typically running behind reverse proxy.
     enable "Plack::Middleware::ReverseProxy";
-    
+
     # Add debug panels if we are a development environment.
     if ($ENV{PSGI_DEBUG_PANELS}) {
-	enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer ModuleVersions Memory Environment) ];
+        enable 'Debug', panels => [ qw(DBITrace PerlConfig CatalystLog Timer
+                                       ModuleVersions Memory Environment) ];
     }
 
-    # GBrowse CGIs and static files.
+    # GB
     mount '/tools/genome'   => $gbrowse;
-    mount "/gbrowse-static" => Plack::App::File->new(root => "$app_root/$app/root/gbrowse");
-
-    # Plack proxying GBrowse
-#    mount '/tools/genome' => $remote_gbrowse;
-#    mount '/gbrowse2' => $remote_gbrowse_static;
+    mount "/gbrowse-static" => Plack::App::File->new(root => "$app_path/root/gbrowse");
 
     # The core app.
     mount '/'    => $wormbase;
 };
 
-
-
-# Without using URLMap::mount
-#builder {
-#    enable "Plack::Middleware::ReverseProxy";
-#    WormBase::Web->psgi_app;
-#};
-
-
-#builder {
-#    enable_if { $_[0]->{REMOTE_ADDR} eq '127.0.0.1' }
-#    "Plack::Middleware::ReverseProxy";
-#    $wormbase;
-#};

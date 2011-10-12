@@ -2,13 +2,14 @@ package WormBase::API;
 
 use Moose;                       # Moosey goodness
 
-use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
-use Config::General;
+use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
-use WormBase::API::ModelMap;
+use Config::General;
 use Class::MOP;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
@@ -88,21 +89,16 @@ has tool => (
 # builds a search object with the default datasource
 sub _build_xapian {
   my $self = shift;
-  my $service_instance = $self->_services->{$self->default_datasource}; 
-  my $root  = $self->conf_dir;
-  my $config = new Config::General(
-				  -ConfigFile      => "$root/../wormbase.conf",
-				  -InterPolateVars => 1
-    );
-  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
-  my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
+  my $service_instance = $self->_services->{$self->default_datasource};
+
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
+  my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
-  my $syn_qp = Search::Xapian::QueryParser->new($db);
-  $qp->set_database($db);
-  $syn_qp->set_database($syn_db);
+  my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
   $qp->set_default_op(OP_OR);
- 
+
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
   $qp->add_valuerangeprocessor($species_svrp);
@@ -112,7 +108,7 @@ sub _build_xapian {
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);
 
-  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
+  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
 }
 
 # Version should be provided by the default datasource or set explicitly.
@@ -162,26 +158,27 @@ sub _build__services {
 
 sub _build__tools {
     my ($self) = @_;
-     my %tools;
-#register all the tools
+    my %tools;
     for my $tool (sort keys %{$self->tool}) {
-      my $class = __PACKAGE__ . "::Service::$tool" ;	
-      Class::MOP::load_class($class);
-      # Instantiate the service providing it with
-      # access to some of our configuration variables
-      my $hash = {	pre_compile => $self->tool->{$tool},
-					log      => $self->log,
-					dsn	 => $self->_services, 
-					tmp_base  => $self->tmp_base,
-				      };
-#      $hash->{search} = $self->search if ($tool eq 'aligner');    # TODO: Needs to be updated for Xapian.
-      $tools{$tool}  = $class->new($hash);
-      $self->log->debug( "service $tool registered");
+        my $class = __PACKAGE__ . "::Service::$tool";
+        Class::MOP::load_class($class);
+
+        # Instantiate the service providing it with
+        # access to some of our configuration variables
+        $tools{$tool}  = $class->new({
+            pre_compile => $self->tool->{$tool},
+            log         => $self->log,
+            dsn         => $self->_services, 
+            tmp_base    => $self->tmp_base,
+            # ($tool eq 'aligner' ? (search => $self->search) : ()),
+        });
+        $self->log->debug( "service $tool registered");
     }
     return \%tools;
 }
 
-# Fetches a WormBase object corresponding to an Ace object.
+# Fetches a WormBase object corresponding to an Ace object
+# or the Ace object itself if nowrap is specified.
 # TODO: Standardize return values. Currently returns object if fetched,
 #       0 if can't get DB handle, and -1 if can't seem to fetch object.
 #       Consider throwing an exception and return;, respectively. Will
@@ -189,11 +186,12 @@ sub _build__tools {
 sub fetch {
     my ($self,$args) = @_;
 
-    my ($object, $class, $aceclass, $name)
-        = @{$args}{qw(object class aceclass name)};
+    my ($object, $class, $aceclass, $name, $nowrap)
+        = @{$args}{qw(object class aceclass name nowrap)};
 
     if ($object) {
         $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$object->class};
+        $self->log->debug("[API::fetch()]", " object $object, inferred WB class $class");
     }
     else {
         my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
@@ -201,32 +199,52 @@ sub fetch {
         # resolve classes to properly retrieve object
         if ($class) { # WB class was provided
             $aceclass = $self->modelmap->WB2ACE_MAP->{class}->{$class}
-                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class}
-                     || return 0; # don't know which aceclass
+                     || $self->modelmap->WB2ACE_MAP->{fullclass}->{$class};
+
+            unless ($aceclass) { # don't know which aceclass;
+                $self->log->warn("[API::fetch()]", " class $class, UNKNOWN ace class");
+                return 0;
+            }
         }
         else { # aceclass provided (assumption), WB class not
-            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass}
-                or return 0; # an aceclass we don't handle [yet]?
+            $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$aceclass};
+
+            unless ($class) { # an aceclass we don't handle [yet]?
+                $self->log->warn("[API::fetch()]", " ace class $aceclass, UNKNOWN WB class");
+                return 0;
+            }
         }
 
         # HACK for variation -- resolve variation name first
         if ($aceclass eq 'Variation' and $name !~ /^WBVar/ and
             my $var_name = $service_dbh->fetch(-class => 'Variation_name', -name => $name)) {
+            my $orig_name = $name; # for debug
             $name = $var_name->Public_name_for || $var_name->Other_name_for || $name;
+            $self->log->debug("[API::fetch()]", " Variation hack, $orig_name, found $name");
         }
 
         # Try fetching an object (from the default data source)
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {
+                $self->log->debug("[API::fetch()]",
+                                  " attempt to fetch $name of ace class $ace");
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
 			}
 		}
 		else { # assume a single Ace class
+            $self->log->debug("[API::fetch()]",
+                              " attempt to fetch $name of ace class $aceclass");
 			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);
 		}
     }
 
-    return -1 unless(defined $object); #&& ($name eq 'all' || $name eq '*'));
+    unless (defined $object) { #&& ($name eq 'all' || $name eq '*'));
+        $self->log->warn("[API::fetch()]", " could NOT fetch object");
+        return -1;
+    }
+
+    return $object if $nowrap;
+
     return WormBase::API::Factory->create($class, {
 		object      => $object,
 		log         => $self->log,

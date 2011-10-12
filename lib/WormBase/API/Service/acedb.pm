@@ -1,9 +1,19 @@
 package WormBase::API::Service::acedb;
 
 use Moose;
-use Ace ();
+use Ace;
 
-has 'dbh' => (
+use namespace::clean -except => 'meta';
+
+{
+    # the following stops Ace from caching in memory and default to
+    # file cache or fetch directly from AceDB.
+    no warnings 'redefine';
+    *Ace::memory_cache_store = sub {};
+}
+
+
+has 'dbh'     => (
     is        => 'rw',
     isa       => 'Ace',
     predicate => 'has_dbh',
@@ -15,16 +25,16 @@ has 'dbh' => (
 with 'WormBase::API::Role::Service';
 
 has 'timeout' => (
-    is  => 'ro',
-    isa => 'Str'
+    is        => 'ro',
+    isa       => 'Str'
 );
 
 has 'query_timeout' => (
-    is  => 'ro',
-    isa => 'Str'
+    is              => 'ro',
+    isa             => 'Str'
 );
 
-has 'program' => (
+has 'program'  => (
     is         => 'ro',
     lazy_build => 1,
 );
@@ -34,7 +44,7 @@ sub _build_program {
     return $self->conf->{program};
 }
 
-has 'path' => (
+has 'path'     => (
     is         => 'ro',
     lazy_build => 1,
 );
@@ -45,15 +55,15 @@ sub _build_path {
 }
 
 around 'reconnect' => sub {
-    my $orig = shift;
-    my $self = shift;
+    my $orig       =  shift;
+    my $self       =  shift;
 
     my $dbh;
     if (my $prog = $self->program and my $path = $self->path) {
         # go straight to connecting
-        $self->log->debug("try 0: Connecting to ", $self->symbolic_name,
+        $self->log->debug("try #0: Connecting to ", $self->symbolic_name,
                           " locally at $path using $prog");
-        $dbh = $self->connect;
+        $dbh     = $self->connect;
     }
 
     # use the fallback reconnect if program is not available
@@ -64,31 +74,34 @@ around 'reconnect' => sub {
 
 sub connect {
     my $self = shift;
+    my $conf = $self->conf;
 
-    # my @cache = (-cache => {
-    #     cache_root => $self->conf->{cache_root},
-    #     max_size   => $self->conf->{cache_size}
-	#     || $Cache::SizeAwareCache::NO_MAX_SIZE
-	#     || -1,                  # hardcoded $NO_MAX_SIZE constant
-	#     default_expires_in  => $self->conf->{cache_expires},
-	#     auto_purge_interval => $self->conf->{cache_auto_purge_interval},
-    # })
-    #     if $self->conf->{cache_root};
+    my %cache_args         =  (
+        cache_root         => $conf->{cache_root},
+        max_size           => $conf->{cache_size},
+	    default_expires_in => $conf->{cache_expires},
+    ) if $conf->{cache_root};
 
-    my %options = ( # will always have this...
-        -user => $self->user,
-        -pass => $self->pass,
+    if ($conf->{cache_auto_purge_interval} ne '') {
+        $cache_args{cache_auto_purge_interval} = 
+            $conf->{cache_auto_purge_interval};
+    }
+
+    my %options =  ( # will always have this...
+        -user   => $self->user,
+        -pass   => $self->pass,
     );
 
-    if (my $prog = $self->program and my $path = $self->path) {
+    if (my $prog                      = $self->program and my $path = $self->path) {
         @options{'-program', '-path'} = ($prog, $path);
     }
     else {
         @options{'-host', '-port'} = ($self->host, $self->port);
     }
 
-    return Ace->connect(%options);
-    #			   @cache);
+    $options{-cache} = \%cache_args if %cache_args;
+
+    return Ace->connect(%options) || die Ace->error;
 }
 
 sub ping {

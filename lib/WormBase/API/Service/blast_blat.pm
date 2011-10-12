@@ -1325,26 +1325,36 @@ sub autoload {
 
     my ($id, $species, $db) = $object =~ /^Blast (\S+) against (\S+) (\S+)/;
 
+    $self->log->debug("[API::Service::blast_blat::autoload()]",
+                      " \$id=$id, \$species=$species, \$db=$db");
+
     return unless $id && $db && $species;
 
-    my ($obj) = $self->ace_dsn->fetch(CDS => $id);
-    ($obj) = $self->ace_dsn->fetch(Sequence => $id) unless $obj;
+    my $obj = WormBase::Web->model('WormBaseAPI')->fetch({
+        class  => 'Sequence',
+        name   => $id,
+        nowrap => 1
+    });
 
-    return unless $obj;
+    unless ($obj) {
+        $self->log->warn("[API::Service::blast_blat::autoload()]",
+                         " object $object not found");
+        return;
+    }
+
     $param->{'search_type'} = 'blast';
 
     if ($db =~ /protein/) {
-	$param->{'blast_app'} = 'blastp';
-	$param->{'query_sequence'} = $obj->asPeptide;
-	$param->{'query_type'} = 'prot';
-	$param->{'database'} = lc($species.'_'.$db);
+        $param->{'blast_app'} = 'blastp';
+        $param->{'query_sequence'} = $obj->asPeptide;
+        $param->{'query_type'} = 'prot';
+        $param->{'database'} = lc($species.'_'.$db);
     }
-
     else {
-	$param->{'blast_app'} = 'blastn';
-	$param->{'query_sequence'} = $obj->asDNA;
-	$param->{'query_type'} = 'nucl';
-	$param->{'database'} = lc($species.'_'.$db);
+        $param->{'blast_app'} = 'blastn';
+        $param->{'query_sequence'} = $obj->asDNA;
+        $param->{'query_type'} = 'nucl';
+        $param->{'database'} = lc($species.'_'.$db);
     }
 }
 

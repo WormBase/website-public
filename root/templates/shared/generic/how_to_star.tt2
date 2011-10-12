@@ -1,4 +1,4 @@
-<div class="example ui-corner-all"><h3>You can save items on WormBase!</h3> 
+<div class="how-to-star ui-corner-all"><h3>You can save items on WormBase!</h3> 
 When you see a star on WormBase:
 <ol>
 <li style="width:11em"><div id="test-star" class="star-status-example"></div>

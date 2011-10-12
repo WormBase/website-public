@@ -9,7 +9,6 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
 WB.getColorbox(function(){
 $jq(".exprbox").colorbox({width:"90%", inline:true});
 });
-
 </script>
 [%    END;	
 	
@@ -21,7 +20,7 @@ $jq(".exprbox").colorbox({width:"90%", inline:true});
 	    END;
 	  END;
      '</div>';
-     '<ul>';
+     '<ul class="text-width">';
         FOREACH ep IN fields.anatomic_expression_patterns.data.expr;             
               '<li>';
 	      IF ep.value.image;

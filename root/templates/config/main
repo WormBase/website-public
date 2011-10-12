@@ -56,18 +56,19 @@
    END;
 
 
-   MACRO get_url(class, id, taxonomy, fullpath) BLOCK;
+   MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          uri = c.uri_for('/species', taxonomy,class, id);
+          c.uri_for('/species', taxonomy,class, id).path;
         ELSIF (class == 'bench');
-          uri = c.uri_for('/me', id);
+          c.uri_for('/me', id).path;
          ELSIF (class == 'picture');
-           uri = c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
+        ELSIF (class == 'genomic_location');
+           c.uri_for('/tools', 'genome', 'gbrowse').path _ '/' _ id;
         ELSE;
-          uri = c.uri_for('/resources', class, id);
+          c.uri_for('/resources', class, id).path;
         END;
-        IF fullpath; uri; ELSE; uri.path; END;
    END;
 
 # Like tag2link, but for cases where we only have text and no object.
@@ -80,9 +81,15 @@
           external_link(class, text, id);
        ELSE;
           url = get_url(class, id, taxonomy);
-          IF (class =='gene'); text = markup_locus("$text", "locus", 1); END;
-          IF (class =='variation' || class=='variation_name'); text = markup_var("$text","var", 1); END;
+
+          IF class =='gene';
+             text = markup_locus("$text", "locus", 1);
+          ELSIF class =='variation' || class=='variation_name';
+             text = markup_var("$text","var", 1);
+          END;
+
           "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
+
           IF (class=='sequence');
             "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ "' class='button ui-corner-all tip-simple slink' tip='download'>";
               "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
@@ -126,14 +133,14 @@
     
 # create venn type diagram with tables and colours
     MACRO venn(title_a, list_a, title_b, list_b, title_ab, list_ab, title_none, list_none) BLOCK;
-    ret = "<br/><table cellspacing=\"0\" cellpadding=\"5\">";
+    ret = "<br/><table class=\"venn\" cellspacing=\"0\" cellpadding=\"5\">";
     ret =  ret _ "<tr class=\"venn-a\"><th colspan=\"2\">$title_a</th></tr>";
           ret =  ret _ "<tr><th class=\"venn-a\"></th>";
           ret =  ret _ "<th class=\"venn-ab\"></th>";
           ret =  ret _ "<th class=\"venn-b\">$title_b</th>";
           ret =  ret _ "<th>$title_none</th>";
           ret =  ret _ "</tr>";
-          ret =  ret _ "<tr><td class=\"venn-a\">";
+          ret =  ret _ "<tr class=\"venn-data\"><td class=\"venn-a\">";
         FOREACH obj IN list_a;
                ret =  ret _ "<b>" _ tag2link(obj) _ " </b>";
         END;
@@ -178,7 +185,6 @@
 #          Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
-       link =  link FILTER lower;
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
@@ -193,14 +199,11 @@
        ELSE;
           url = site.external_urls.$link.base;
        END;
+
        UNLESS url; url = link; END;
-       IF (link == 'genomic_location' OR link == 'gbrowse_image' );
-          "<a href=\"$url\" title=\"$desc\">$text</a>";
-       ELSE;
        "<a href=\"$url\" 
            onClick=\"WB.recordOutboundLink(this, \'Outbound Links\', \'$url\');\" 
            target=\"_blank\" title=\"$desc\">$text</a>";
-       END;
     END;
 
 
@@ -289,8 +292,17 @@ END;
            IF extsrc;
               link = extsrc.template;
               FOR match IN extsrc.template.match('\<([^>]+)\>', 'global');
-                  link = link.replace("\<$match\>", external_link(extsrc.template_items.$match.url,
-                                                                  extsrc.template_items.$match.text));
+                  IF extsrc.template_items.size == 1; # Person heuristic
+                     IF src; # there is an internal source... tag it
+                        replacement = tag2link(src);
+                     ELSE; # we only have their name?
+                        replacement = extsrc.template_items.$match.text;
+                     END;
+                  ELSE;
+                     replacement = external_link(extsrc.template_items.$match.url,
+                                                extsrc.template_items.$match.text);
+                  END;
+                  link = link.replace("\<$match\>", replacement);
               END;
               link;
            ELSIF src;
@@ -316,7 +328,6 @@ END;
 
    # Set some default templates
    DEFAULT field_block  = "field_block";
-   DEFAULT subfield_block  = "subfield_block";
    DEFAULT widget_block = "widget_block";
 
    # Our custom URL mapping plugin.

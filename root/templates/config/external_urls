@@ -55,27 +55,6 @@
 
 # Done to here only!
 
-   genomic_location 
-           = { description  = 'The WormBase Genome Browser'
-               maintainer   = 'WormBase'
-               email        = 'help@wormbase.org',
-          #     base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
-          #     search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
-               # base         = '/gb2/gbrowse/'
-	        #search      = '/gb2/gbrowse/%s'   
-                base         = '/tools/genome/gbrowse/'
-            search      = '/tools/genome/gbrowse/%s'   
-             }
-
-   gbrowse_image 
-           = { description  = 'The WormBase Genome Browser Image'
-			      maintainer   = ''
-
-base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
-search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
-	#		      base         = '/gb2/gbrowse_img/'
-	#		      search      = '/gb2/gbrowse_img/%s'   
-			    }
 		 
         INTERPRO = { search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
 
@@ -175,6 +154,27 @@ $DOI             = 'http://dx.doi.org/';
 
 [%# MIGRATING THESE URLs ON AN AS-NEEDED BASIS 
 
+   genomic_location 
+           = { description  = 'The WormBase Genome Browser'
+               maintainer   = 'WormBase'
+               email        = 'help@wormbase.org',
+          #     base         = 'http://www.wormbase.org/db/gb2/gbrowse/'
+          #     search       = 'http://www.wormbase.org/db/gb2/gbrowse/%s'
+               # base         = '/gb2/gbrowse/'
+	        #search      = '/gb2/gbrowse/%s'   
+                base         = '/tools/genome/gbrowse/'
+            search      = '/tools/genome/gbrowse/%s'   
+             }
+
+   gbrowse_image 
+           = { description  = 'The WormBase Genome Browser Image'
+			      maintainer   = ''
+
+base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
+search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
+	#		      base         = '/gb2/gbrowse_img/'
+	#		      search      = '/gb2/gbrowse_img/%s'   
+			    }
 
         ensembl = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
 

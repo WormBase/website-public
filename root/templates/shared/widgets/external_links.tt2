@@ -18,11 +18,9 @@
       # WRAPPER $field_block title=hash.$db.name tooltip=hash.$db.description;
 
 	  FOREACH id IN hash.$db.ids; 
-	     
-              href= FILTER format(hash.$db.url_constructor); id; END; 
+          href= FILTER format(hash.$db.url_constructor); id; END; 
 	      # We'll use description info from the website and not the DB.
- 	      link = external_link(href,id,id);
-
+ 	      link = external_link(href,id);
               # Should be a table of resource, ID linked to page description, maintainer.
              rows.push( { maintainer  = site.external_urls.$db.maintainer,
                           name        = '<a href="' _ site.external_urls.$db.base _ '">' _ db _ '</a>',                   
