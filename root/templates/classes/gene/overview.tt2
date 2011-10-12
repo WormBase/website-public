@@ -45,11 +45,11 @@ END;
 # Structured descriptions
 IF fields.structured_description.data.keys.size > 0;
     '<div class="toggle">Details</div>';
-    '<div class="returned">';
+    '<div class="returned field">';
     id = 0;
     FOREACH sd IN fields.structured_description.data.keys;
           USE String(sd.replace('_', ' '));
-          WRAPPER $subfield_block title=String.capital;
+          WRAPPER $field_block title=String.capital;
                FOREACH obj IN fields.structured_description.data.$sd;
                    '<div class="text-width" style="margin:0.5em">';
                       markup(obj.text);

@@ -103,7 +103,7 @@
       <div>
       <div class="user-history small" id="user_history"></div>
       <div class="small">
-[% UNLESS c.req.action == 'me' %]
+[% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
       <li id="nav-user_history" 
           class="module-load me" 
           wname="user_history"
@@ -114,7 +114,7 @@
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
   </div>
-
+<!-- <div id="outer-widget-holder"> -->
   <div id="widget-holder" wclass="[% page_class %]" class="[% class %][% UNLESS no_layout; " title-padding"; END; %]"
 
 
@@ -147,6 +147,8 @@
           [% ELSIF (is_class_index && !is_static) %]
             data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
           [% END %]
+        [% ELSIF section_fetch.default_widgets.exists('hash') %]
+            data-layout = '{"hash": "[% section_fetch.default_widgets.hash %]"}'
         [% ELSE %]
             data-layout='{"leftlist": ["
              [% defaults.join('", "') %]
@@ -156,19 +158,21 @@
 
   >
 
-    <div class="sortable left">
+    <div class="sortable left one-column">
       [% FOREACH w IN widgets -%]
           [% IF w.type == "title"; NEXT; END; %]
           <li id="[% w.id %]" class="widget">
           [% PROCESS widget_sortable_block type=w.type id=w.id title=w.title -%]
           </li>   
       [% END %]
-[% UNLESS c.req.action == 'me' %]
+[% UNLESS (!(c.user_session.history_on == 1) || (c.req.action == 'me')) %]
           <li id="user_history" class="widget">
           [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
           </li>
 [% END %]   
     </div>
-    <div class="sortable right"></div>
+    <div class="sortable right one-column"></div>
+
   </div>
+<!--   </div> -->
 </div>

@@ -149,14 +149,14 @@ sub reconnect {
         }
 
         $self->mark_down_host($self->host);
-        $self->log->fatal($self->host." is down!");
-        $self->log->fatal($@) if $@;
+        $self->log->error($self->host." is down!");
+        $self->log->error($@) if $@;
         $self->host(0);
 
         last if $tries > $self->conf->{reconnect};
     }
 
-    $self->log->fatal("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
+    $self->log->error("Tried $tries times but still could not connect to the  ".$self->symbolic_name." !");
     return 0;
 }
 

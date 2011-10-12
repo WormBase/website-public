@@ -16,7 +16,7 @@
     '<div style="clear:both;">';
     IF fields.genomic_image.data;
              # setting vars up
-             img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;
+             img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
              IF fields.tracks.data;
                  img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
              END;

@@ -1,0 +1,13 @@
+
+
+<div class="text-width">
+[% UNLESS c.user_session.history_on == 1 %]
+  By turning on history logging, WormBase will collect your browsing information to better serve you.
+  This information may be used to calculate and display popular pages within WormBase.
+  <br /><br />You can turn off history logging at any time. <br /><br />
+  <div class="ui-button history-logging ui-corner-large-all" onClick='WB.historyOn("post", 1)'>turn on history ›</div>
+[% ELSE %]
+  Are you sure you want to turn off history logging?
+  <div class="ui-button history-logging ui-corner-large-all" onClick='WB.historyOn("post", 0);$jq(this).closest(".content").load("/rest/history");'>turn off history ›</div>
+[% END %]
+</div>

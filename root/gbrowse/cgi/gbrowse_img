@@ -108,7 +108,7 @@ sub run {
 	return;
     }
 
-    $render->set_source() && exit;  # may cause a redirect and exit 
+    # $render->set_source() && exit;  # may cause a redirect and exit 
     $render->init();
 
     if ($render->data_source->must_authenticate 

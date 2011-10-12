@@ -13,9 +13,9 @@
        build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
                         columns={ variation         => 'Allele',
 	   	                  type              => 'Type',
-	  	                  molecular_change  => 'Molecular change',
-			          affects           => 'Protein effect',
-			          sequence_known    => 'Sequence known?',
+	  	                  molecular_change  => 'Molecular<br /> change',
+			          affects           => 'Protein<br /> effect',
+			          sequence_known    => 'Sequence<br /> known?',
                                },
                          key='alleles');
    END;
@@ -25,22 +25,15 @@
         build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
                          columns={ variation         => 'Polymorphism',
 	   	                   type              => 'Type',
-		                   molecular_change  => 'Molecular change',
+		                   molecular_change  => 'Molecular<br /> change',
 			           affects           => 'Location',
-			           sequence_known    => 'Sequence known?',
+			           sequence_known    => 'Sequence<br /> known?',
                                  },
                          key='polymorphisms');
     END;
 
    # Strains
    WRAPPER $field_block title="Strains" key="strains";
-#    '<div class="toggle">Found ';
-#           searchlink('strain', object.name.data.id, fields.strains.count.total.size
-#           _  " " 
-#           _ pluralize('strain', fields.strains.count.total));
-#	   '</div>';
-#    '<div class="toggle-container">';
-#    fields.strains.count.carrying_gene_alone;
 
      venn("Carrying " _ tag2link(object.name.data) _ " alone", 
                                          fields.strains.count.carrying_gene_alone,
@@ -48,11 +41,11 @@
     	    "",                          fields.strains.count.carrying_gene_alone_and_cgc,
     	    "Other strains",             fields.strains.count.others);
 
-#    '</div>';
+
 
        build_data_table(order=['strain','genotype','cgc'],
                          columns={ strain    => 'Strain',
-	        	              cgc       => 'Available from CGC?',
+	        	              cgc       => 'Available<br /> from CGC?',
 		                  genotype  => 'Genotype',
                                  },
                          key='strains');
@@ -60,14 +53,14 @@
 
 
    WRAPPER $field_block title="Rearrangements" key="rearrangements";
-      IF fields.rearrangements.data.positive;
+      IF fields.rearrangements.data.positive.size > 0;
         tag2link(object.name.data) _ ' inside: ';
-	FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
-	'<br />';
+        FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
+        '<br />';
       END;
-      IF fields.rearrangements.data.negative;
+      IF fields.rearrangements.data.negative.size > 0;
         tag2link(object.name.data) _ ' outside: ';
-	FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
+        FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
       END;
    END;
 
