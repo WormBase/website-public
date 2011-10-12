@@ -30,7 +30,7 @@ if (open ($processes, "/bin/ps -eo pid,rss,comm | grep starman | ")) {
 	
 	if ($mem >= $bytes) {
 	    push @memory_hogs, $pid;
-	    $memory_hogs{$pid} = $mem/1024) / 1024);
+	    $memory_hogs{$pid} = ($mem/1024) / 1024;
 	}
     }
     
