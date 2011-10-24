@@ -101,7 +101,7 @@ sub search :Path('/search') Args {
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $api->xapian->_get_obj($c, $api, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
+    my @ret = map { $api->xapian->_get_obj($c, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";

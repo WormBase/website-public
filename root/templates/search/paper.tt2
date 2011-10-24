@@ -11,7 +11,8 @@
 
 [% IF item.abstract %]
 <div class="text-min">
-  [% markup(item.abstract.join(),0) %]    
+  [% ab = item.abstract.join() | html %]
+  [% markup(ab,0) %]    
 </div>
 <div class="more">
 <div class="ui-icon ui-icon-triangle-1-s"></div>
