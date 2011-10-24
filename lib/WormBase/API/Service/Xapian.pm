@@ -110,6 +110,12 @@ sub search_exact {
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
 }
 
+sub random {
+    my ( $class, $c) = @_;
+    my $count = $class->db->get_doccount;
+    return $class->_get_obj($c, $class->db->get_document(int(rand($count)) + 1));
+}
+
 sub search_count {
  my ( $class, $c, $q, $type, $species) = @_;
 
@@ -151,48 +157,8 @@ sub extract_data {
 }
 
 
-
-# input: list of ace objects
-# output: list of Result objects
-sub _wrap_objs {
-  my $self  = shift;
-  my $c = shift;
-  my $object  = shift;
-  my $class = shift;
-  my $footer = shift;
-
-  my $api = $c->model('WormBaseAPI');
-  my $fields = $self->_fields->{$class};
-
-  return unless $object;
-
-  unless($fields){
-    my $f;
-    if ( defined $c->config->{sections}{species}{$class}){
-      $f = $c->config->{sections}->{species}->{$class}->{search}->{fields};
-    } else{
-      $f = $c->config->{sections}->{resources}->{$class}->{search}->{fields};
-    }
-    push(@$fields, @$f) if $f;
-    $self->_fields->{$class} = $fields;
-  }
-
-  my %data;
-  $data{obj_name}="$object";
-  $data{footer} = $footer if $footer;
-  foreach my $field (@$fields) {
-    my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
-    $field_data = $field_data->{data};
-    $data{$field} = $field_data;
-  }
-  return \%data;
-}
-
-
-
-
 sub _get_obj {
-  my ($self, $c, $api, $doc, $footer) = @_;
+  my ($self, $c, $doc, $footer) = @_;
   my $species = $doc->get_value(5);
 
   $c->log->debug("class:" . $doc->get_value(0) . ", name:" . $doc->get_value(1));
@@ -204,7 +170,7 @@ sub _get_obj {
     $ret{taxonomy}{species} = $s->{species};
   }
     $ret{ptype} = $doc->get_value(7);
-  %ret = %{$self->_split_fields($c, $api, \%ret, uri_unescape($doc->get_data()))};
+  %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};
   if($doc->get_value(4) =~ m/^(\d{4})/){
     $ret{year} = $1;
   }
@@ -215,9 +181,9 @@ sub _get_obj {
 }
 
 sub _split_fields {
-  my ($self, $c, $api, $ret, $data) = @_;
+  my ($self, $c, $ret, $data) = @_;
 
-  $data =~ s/\\([\;\/\\%\"])/$1/g;
+  $data =~ s/\\([\;\/\\%\:"])/$1/g;
   while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
     my $d = $2;
     my $label = $1;
@@ -226,7 +192,7 @@ sub _split_fields {
     my $array = $ret->{$label} || ();
 
     if($d =~ m/^WB/){
-     $d = $self->_get_tag_info($c, $api, $d, $label);
+     $d = $self->_get_tag_info($c, $d, $label);
     }elsif($label =~ m/^author$/){
       my $id = $d;
       my $l = $id;
@@ -247,12 +213,12 @@ sub _split_fields {
 }
 
 sub _get_tag_info {
-  my ($self, $c, $api, $id, $class, $fill) = @_;
+  my ($self, $c, $id, $class, $fill, $footer) = @_;
   my ($it,$res)= $self->search_exact($c, $id, $class);
   if($it->{pager}->{total_entries} > 0 ){
     my $doc = @{$it->{struct}}[0]->get_document();
     if($fill){
-      return $self->_get_obj($c, $api, $doc);
+      return $self->_get_obj($c, $doc, $footer);
     }
     return $self->_pack_search_obj($c, $doc);
   }
@@ -260,7 +226,7 @@ sub _get_tag_info {
            label => $id,
            class => $class
   };
-  $tag = { name => $tag } if $fill;
+  $tag = { name => $tag, footer => $footer } if $fill;
   return $tag;
 }
 

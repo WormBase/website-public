@@ -1363,11 +1363,14 @@ sub widget_home_GET {
     if($widget=~m/issues/) {
       $c->stash->{issues} = $self->issue_rss($c,2);
     } elsif($widget=~m/activity/) {
-      $c->stash->{recent} = $self->recently_saved($c,3);
       if ($c->user_session->{'history_on'} == 1){
-        $c->stash->{popular} = $self->most_popular($c,5)
+        $c->stash->{popular} = $self->most_popular($c,5);
       } 
-      $c->stash->{random} = $self->random_page($c);
+      if($c->check_any_user_role(qw/admin curator/)){ 
+        $c->stash->{recent} = $self->recently_saved($c,3);
+      }
+      my @rand = ($c->model('WormBaseAPI')->xapian->random($c));
+      $c->stash->{random} = \@rand;
 
     } elsif($widget=~m/discussion/) {
       $c->stash->{comments} = $self->comment_rss($c,2);
@@ -1375,31 +1378,6 @@ sub widget_home_GET {
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
-}
-
-my $random;
-sub random_page {
-  my ($self,$c) = @_;
-  my $api = $c->model('WormBaseAPI');
-
-  my @rand;
-  if( !$random || ((time() - $random->{time}) > 3600)){
-    @rand = $c->model('Schema::Page')->search({is_obj=>1},
-                {   select => [ 
-                      'page_id', 
-                      'url',
-                      'is_obj'
-                    ],
-                    order_by=>'RAND()'
-                })->slice(0, 0);
-    $random->{id} = $rand[0]->page_id;
-    $random->{time} = time();
-  }else{
-    @rand = $c->model('Schema::Page')->search({is_obj=>1, page_id=>$random->{id}});
-  }
-  @rand = map { $self->_get_search_result($c, $api, $_);  } @rand;
-
-  return \@rand;
 }
 
 sub recently_saved {
@@ -1463,17 +1441,8 @@ sub _get_search_result {
     my $class = $parts[-2];
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
-#       my %ret;
 
-      return $api->xapian->_get_tag_info($c, $api, $id, $class, 1);
-#     my $obj = $api->fetch({class=> ucfirst($class),
-#                               name => $id}) or die "$!";
-#     my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
-#     unless (defined $ret{name}) {
-#       $ret{name}{id} = $id;
-#       $ret{name}{class} = $class;
-#     }
-#     return \%ret;
+    return $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
   }
 
   return { 'name' => {  url => $page->url, 
