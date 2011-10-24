@@ -217,7 +217,7 @@ sub _get_obj {
 sub _split_fields {
   my ($self, $c, $api, $ret, $data) = @_;
 
-  $data =~ s/\\([\;\/\\%])/$1/g;
+  $data =~ s/\\([\;\/\\%\"])/$1/g;
   while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
     my $d = $2;
     my $label = $1;
