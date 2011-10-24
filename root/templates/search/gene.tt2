@@ -2,10 +2,11 @@
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
+[% desc = item.concise_description.join('<br />') %]
 <div class="text-min" style="height:auto;max-height:2.4em;">
-  [% markup(item.concise_description) %]    
+  [% markup(desc) %]    
 </div>
-[% IF item.concise_description.length > 150 %]
+[% IF desc.length > 150 %]
   <div class="more">
   <div class="ui-icon ui-icon-triangle-1-s"></div>
   </div>

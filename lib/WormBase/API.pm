@@ -96,17 +96,21 @@ sub _build_xapian {
     );
   my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
   my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
+
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($db);
   $qp->set_database($db);
   $syn_qp->set_database($syn_db);
   $qp->set_default_op(OP_OR);
- 
+   my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
+
   my $type_svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   my $species_svrp = Search::Xapian::NumberValueRangeProcessor->new(3, "species:");
+  $qp->add_valuerangeprocessor($ptype_svrp);
   $qp->add_valuerangeprocessor($species_svrp);
   $qp->add_valuerangeprocessor($type_svrp);
+
 
 
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);

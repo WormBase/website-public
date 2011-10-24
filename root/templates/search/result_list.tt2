@@ -22,6 +22,8 @@
 
   [% IF type == 'all' %]
     <span id="fade">[% result_class %]:</span>
+  [% ELSIF item.ptype %]
+    <span id="fade">[% item.ptype.replace('[/_]', ' '); %]:</span>
   [% END %]
 
   [% TRY %]
@@ -33,18 +35,18 @@
      </li>
 
      [%# Always include the taxonomy if it exists %]
-     [% IF item.taxonomy.genus %]
+     [% IF item.taxonomy %]
            <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
      [% END %]
 
      [% text = [ ];
         # Lots of variations of something that might be a description.
-        text.push(item.title)                  IF item.title;
-        text.push(item.type)                   IF item.type;
-        text.push(item.description)            IF item.description;
-        text.push(item.definition)             IF item.definition;
-        text.push(item.remarks.join("<br />")) IF item.remarks;
-        text.push(item.summary)                IF item.summary;
+        text.push(item.title.join(", "))                  IF item.title;
+        text.push(item.type.join(", "))                   IF item.type;
+        text.push(item.description.join("<br />"))            IF item.description;
+        text.push(item.definition.join("<br />"))             IF item.definition;
+        text.push(item.remark.join("<br />")) IF item.remark;
+        text.push(item.summary.join("<br />"))                IF item.summary;
 
         mystring = text.join("<br>");
         IF mystring; %]

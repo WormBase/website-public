@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Moose;
 use JSON::XS;
+use URI::Escape;
+# use String::Escape qw( printable unprintable );
 
 BEGIN { extends 'Catalyst::Controller::REST' }
 
@@ -33,6 +35,7 @@ sub search :Path('/search') Args {
     my $page_count = shift @args || 1;
 
     my $species = $c->req->param("species");
+    my $ptype = $c->req->param("type");
     $c->stash->{widget} = $c->req->param("widget") if $c->req->param("widget");
     $c->stash->{nostar} = $c->req->param("nostar") if $c->req->param("nostar");
 
@@ -49,19 +52,16 @@ sub search :Path('/search') Args {
       $c->stash->{noboiler} = 1;
     }
 
-
-    if($query=~/^\*$/){
-      $query = " ";
-    }
     my $tmp_query = $query;
     $tmp_query =~ s/-/_/g;
-    $tmp_query .= " $query" unless($tmp_query =~ /$query/ );
+    $tmp_query .= " $query" unless( ($query=~/^\*$/) || $tmp_query =~ /$query/ );
     $c->log->debug("search $query");
       
     my $search = $type unless($type=~/all/);
-  $c->response->headers->expires(time);
+    $c->response->headers->expires(time);
     $c->response->header('Content-Type' => 'text/html');
 
+    # if it finds an exact match, redirect to the page
     if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline"))) && ($page_count < 2)){
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
       if($it->{pager}->{total_entries} == 1 ){
@@ -74,6 +74,7 @@ sub search :Path('/search') Args {
     }
 
 
+    # if we're on a search page, setup the search first. Load results as ajax later.
     if( !($c->stash->{noboiler}) ) {
             $c->stash->{template} = "search/result-all.tt2";
             $c->stash->{species} = $species;
@@ -93,13 +94,14 @@ sub search :Path('/search') Args {
 #         $c->set_cache($cache_id, $it);
 #     }
 
+    # this is the actual search
     my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $species);
 
     $c->stash->{species} = $species;
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
-    my @ret = map { $self->_get_obj($c, $_->get_document) } @{$it->{struct}}; #see if you can cache @ret
+    my @ret = map { $api->xapian->_get_obj($c, $api, $_->get_document ) } @{$it->{struct}}; #see if you can cache @ret
     $c->stash->{results} = \@ret;
     $c->stash->{querytime} = $it->{querytime};
     $c->stash->{query} = $query || "*";
@@ -123,7 +125,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
     my $class = $o->get_document->get_value(2);
     my $id = $o->get_document->get_value(1);
     my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5));
-    my $label = $o->get_document->get_data() || $id;
+    my $label = $o->get_document->get_value(6) || $id;
     my $objs = {    class   =>  $class,
                     id      =>  $id,
                     label   =>  $label,
@@ -160,22 +162,6 @@ sub _get_url {
     return $c->uri_for('/species',$species || 'all' ,$class,$id)->as_string;
   }
   return $c->uri_for('/resources',$class,$id)->as_string;
-}
-
-sub _get_obj {
-  my ($self, $c, $doc) = @_;
-  my $api = $c->model('WormBaseAPI');
-  $c->log->debug("class:" . $doc->get_value(0) . ", name:" . $doc->get_value(1));
-  if($doc->get_value(2) =~ /cell/){ return; } #remove this after you rebuilt the search database
-  my $obj = $api->fetch({aceclass=> $doc->get_value(0),
-                          name => $doc->get_value(1)}) or die "$!";
-  my %ret = %{$api->xapian->_wrap_objs($c, $obj, $doc->get_value(2))};
-  unless (defined $ret{name}) {
-    $ret{name}{id} = $doc->get_value(1);
-    $ret{name}{class} = $doc->get_value(2);
-    $ret{name}{label} = $doc->get_value(1);
-  }
-  return \%ret;
 }
 
 
