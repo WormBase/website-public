@@ -18,7 +18,7 @@
       Expected URL: [% c.req.path %]<br />
       Server Error: 500<br />
       Error Message:<br />
-             [% c.error.join("<br />"); %]
+             [% c.error.join('<br />') %]
    </div>
 
 </div>

@@ -682,7 +682,7 @@
         if(f == "search..." || !f){
           f = "*";
         }
-        f = encodeURIComponent(f);
+        f = encodeURIComponent(f.trim());
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
 

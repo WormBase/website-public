@@ -1,11 +1,8 @@
       [% tag2link(item.name) %]
     </li>
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
-    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
-[% IF item.gene %]
-  Corresponding Gene: [% link_objects(item.gene, ', ') %]
-[% END %]
-[% desc = item.remark.join('<br />') %]
+[% desc = item.description.1 %]
 <div class="text-min" style="height:auto;max-height:2.4em;">
   [% markup(desc) %]    
 </div>

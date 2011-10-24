@@ -1466,15 +1466,17 @@ sub _get_search_result {
     my $class = $parts[-2];
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
+#       my %ret;
 
-    my $obj = $api->fetch({class=> ucfirst($class),
-                              name => $id}) or die "$!";
-    my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
-    unless (defined $ret{name}) {
-      $ret{name}{id} = $id;
-      $ret{name}{class} = $class;
-    }
-    return \%ret;
+      return $api->xapian->_get_tag_info($c, $api, $id, $class, 1);
+#     my $obj = $api->fetch({class=> ucfirst($class),
+#                               name => $id}) or die "$!";
+#     my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
+#     unless (defined $ret{name}) {
+#       $ret{name}{id} = $id;
+#       $ret{name}{class} = $class;
+#     }
+#     return \%ret;
   }
 
   return { 'name' => {  url => $page->url, 

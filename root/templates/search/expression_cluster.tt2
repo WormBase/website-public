@@ -9,11 +9,16 @@
       [% tag2link(item.name) %]
     </li>
         [% IF item.algorithm %]
-            Algorithm: [% item.algorithm %]<br />
+            Algorithm: [% item.algorithm.join(',') %]<br />
         [% END %]
-        [% IF item.description %]
-            Description: [% item.description %]<br />
-        [% END %]
-        [% IF item.remark %]
-            Remark: [% item.remark %]<br />
-        [% END %]
+        <div class="text-min" style="height:auto;max-height:2.4em;">
+        [% text = []; %]
+        [% text.push(item.description.join('<br />')) IF item.description %]
+        [% text.push(item.remark.join('<br />')) IF item.remark  %]
+        [% mystring = text.join('<br />'); mystring;%]
+        </div>
+          [% IF mystring.length > 150 %]
+                <div class="more">
+                    <div class="ui-icon ui-icon-triangle-1-s"></div>
+                </div>
+          [% END %]
