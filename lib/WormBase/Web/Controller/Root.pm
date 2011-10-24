@@ -27,8 +27,9 @@ Root level controller actions for the WormBase web application.
 sub index :Path Args(0) {
     my ($self,$c) = @_;
     $c->stash->{template} = 'index.tt2';
-    $c->log->warn($c->config->{memcached}->{servers});
-    my $page = $c->model('Schema::Page')->find({url=>"/"});
+    $c->log->debug('Cache servers: ',
+                   join(', ', keys %{$c->config->{memcached}->{servers}}));
+    my ($page) = $c->model('Schema::Page')->search({url=>"/"});
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
     $c->stash->{tutorial_off} = $c->req->param('tutorial_off');
@@ -269,7 +270,7 @@ sub widget :Path("/widget") Args(3) {
     $c->log->debug("Instantiated an external object: " . ref($object));
     
     # Should I stash the object so I only need to fetch it once?
-    $c->stash->{object} = $object;
+#    $c->stash->{object} = $object;
 
     # Fetch the field content and stash it.
     

@@ -109,12 +109,13 @@ B<Response example>
 =cut
 
 sub title {
-    my $self = shift;
-    my $object = $self->object;
-    my $title  = $object->Title;
-    my $data = { description => 'the title of the analysis',
-		 data        => "$title" || undef};
-    return $data;
+    my ($self) = @_;
+    my $title = $self ~~ 'Title';
+
+    return {
+        description => 'the title of the analysis',
+        data        => $title && "$title",
+    };
 }
 
 # sub description { }
@@ -174,13 +175,13 @@ B<Response example>
 =cut
 
 sub based_on_wb_release {
-    my $self = shift;
-    my $object = $self->object;
-   
-    my $release = $object->Based_on_WB_Release;
-    my $data = { description => 'the WormBase release the analysis is based on',
-		 data        => "$release" || undef };
-    return $data;
+    my ($self) = @_;
+    my $release = $self ~~ 'Based_on_WB_Release';
+
+    return {
+        description => 'the WormBase release the analysis is based on',
+        data        => $release && "$release",
+    };
 }
 
 
@@ -236,13 +237,13 @@ B<Response example>
 =cut
 
 sub based_on_db_release {
-    my $self = shift;
-    my $object = $self->object;
-   
-    my $release = $object->Based_on_DB_Release;
-    my $data = { description => 'the database release the analysis is based on',
-		 data        => "$release" || undef };
-    return $data;
+    my ($self) = @_;
+    my $release = $self ~~ 'Based_on_DB_Release';
+
+    return {
+        description => 'the database release the analysis is based on',
+        data        => $release && "$release",
+    };
 }
 
 =head3 project
@@ -422,17 +423,12 @@ B<Response example>
 =cut
 
 sub conducted_by {
-    my $self = shift;
-    my $object = $self->object;
-   
-    my $person = $object->Conducted_by;
-    if ($person) {
-	my $name = $person->Standard_name;
-	$person = $self->_pack_obj($person,$name);
-    }
-    my $data    = { description => 'the person that conducted the analysis',
-		    data        => $person ? $person : undef };
-    return $data;
+    my ($self) = @_;
+
+    return {
+        description => 'the person that conducted the analysis',
+        data        => $self->_pack_obj($self ~~ 'Conducted_by'),
+    };
 }
 
 

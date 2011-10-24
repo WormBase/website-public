@@ -396,7 +396,7 @@ sub _build_best_blastp_matches {
 
         # Not all proteins are populated with the species
         $species ||= $best{$method}{hit}->Species;
-        $species =~ s/^(\w)\w* /$1. /;
+        $species =~ s/^(\w)\w* /$1. / if $species;
         my $description = $best{$method}{hit}->Description
           || $best{$method}{hit}->Gene_name;
         my $class;
@@ -1151,16 +1151,16 @@ sub _build_phenotypes_data {
     my $self = shift;
     my $tag = shift;
     my $object = $self->object;
-    my @data;
-    foreach my $phenotype ($object->$tag) {
-        my $description = $phenotype->Description;
-	my $remarks     = $phenotype->Remark;
-	push @data, { 
-	    phenotype   => $self->_pack_obj($phenotype),
-	    description => "$description", 
-	    remarks     => "$remarks" };
-    }
-    return @data ? \@data : undef;
+
+    return map {
+        my $desc = $_->Description;
+        my $remark = $_->Remark;
+        {
+            phenotype   => $self->_pack_obj($_),
+            description => $desc    && "$desc",
+            remarks     => $remark && "$remark",
+        };
+    } @{$self ~~ '@tag'};
 }
 
 
@@ -1820,8 +1820,8 @@ has 'taxonomy' => (
 sub _build_taxonomy { # this overlaps with parsed_species
     my ($self) = @_;
 
-    my ($genus, $species) = (($self ~~ 'Species') =~ /(.*) (.*)/);
-    # TODO: what if $self ~~ 'Species' is undef?
+    my $spec = $self ~~ 'Species';
+    my ($genus, $species) = ($spec ? $spec =~ /(.*) (.*)/ : qw(Caenorhabditis elegans));
 
     return {
         description => 'the genus and species of the current object',

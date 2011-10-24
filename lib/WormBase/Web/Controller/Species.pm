@@ -124,38 +124,37 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{class}    = $class;
     $c->stash->{is_class_index} = 0;  
     $c->stash->{template} = 'species/report.tt2';
-    
+
     unless ($c->config->{sections}->{species}->{$class}) { 
 	# class doesn't exist in this section
-	$c->detach;
+        $c->detach;
     }
-    
+
     $c->stash->{species}    = $species;
     $c->stash->{query_name} = $name;
     $c->stash->{class}      = $class;
-    $c->log->debug($name);
-
 
     # get static widgets for this page
     my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
-    
-    my $api = $c->model('WormBaseAPI');
-    my $object = $api->fetch({class=> ucfirst($class),
-			      name => $name}) || $self->error_custom($c, 500, "can't connect to database");
-    
+    my $object = $c->model('WormBaseAPI')->fetch({
+        class  => ucfirst($class),
+        name   => $name,
+    }) || $self->error_custom($c, 500, "can't connect to database");
+
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
-    
-    if($c->req->param('left') || $c->req->param('right')) {
-	$c->log->debug("print the page as pdf");
-	$c->stash->{print}={	    left=>[split /-/, $c->req->param('left')],
-				    right=>[split /-/, $c->req->param('right')],
-				    leftWidth=>$c->req->param('leftwidth'),
-	};
+
+    if ($c->req->param('left') || $c->req->param('right')) {
+        $c->log->debug("print the page as pdf");
+        $c->stash->{print} = {
+            left=>[split /-/, $c->req->param('left')],
+            right=>[split /-/, $c->req->param('right')],
+            leftWidth=>$c->req->param('leftwidth'),
+        };
     }
-    $c->stash->{object} = $object;  # Store the WB object.
-   
+
+    $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
 }
 
 

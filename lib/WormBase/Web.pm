@@ -292,6 +292,7 @@ sub check_cache {
     # Don't bother checking the cache in certain circumstances.
     # return if ($c->check_any_user_role(qw/admin curator/));
 
+    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
     return unless (ref($params) eq "HASH");  # TH: we should fix all calls so check is unnecessary.
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
@@ -299,22 +300,24 @@ sub check_cache {
     # First, has this content been precached?
     # CouchDB. Located on localhost.
     if ($cache_name eq 'couchdb') {
-	my $couch = WormBase::Web->model('CouchDB');
-	my $host  = $couch->read_host;
-	my $port  = $couch->read_host_port;
-	
-	$self->log->debug("    ---> Checking cache $cache_name at $host:$port for $uuid...");
+        my $couch = WormBase::Web->model('CouchDB');
+        my $host  = $couch->read_host;
+        my $port  = $couch->read_host_port;
 
-	# Here, we're using couch to store HTML attachments.
-	# We MAY want to parameterize this in the future
-	# so that we can fetch documents, too.
-	my $content = $couch->get_attachment({uuid     => $uuid,
-					      database => lc($self->model('WormBaseAPI')->version),
-					     });
-	if ($content) {
-	    $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
-	    return ($content,'couchdb');
-	}
+        $self->log->debug("    ---> Checking cache $cache_name at $host:$port for $uuid...");
+
+        # Here, we're using couch to store HTML attachments.
+        # We MAY want to parameterize this in the future
+        # so that we can fetch documents, too.
+        my $content = $couch->get_attachment({
+            uuid     => $uuid,
+            database => lc($self->model('WormBaseAPI')->version),
+        });
+
+        if ($content) {
+            $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
+            return ($content,'couchdb');
+        }
     }
 
     # Not in Couch? Perhaps we've been cached by the app.
@@ -326,7 +329,7 @@ sub check_cache {
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
     $cache_name = 'default' if $cache_name eq 'filecache' || $cache_name eq 'couchdb';
     my $cache = $self->cache(backend => $cache_name);
-    
+
 #    # Version entries in the cache.
 #    # Now get the database version from the cache. Heh.    
 #    my $version;
@@ -340,22 +343,24 @@ sub check_cache {
 
     # Check the cache for the data we are looking for.
     my $cached_data = $cache->get($uuid);
-    
+
     # From which memcached server did this come from?
     my $cache_server;
     if ($cache_name eq 'memcache'
-	&& ($self->config->{timer} || $self->check_user_roles('admin'))) {
-	if ($cached_data) {
-	    $cache_server = 'memcache: ' . $cache->get_server_for_key($uuid);
-	}
-    } else {
-	$cache_server = 'filecache' if $cached_data;
+        && ($self->config->{timer} || $self->check_user_roles('admin'))) {
+        if ($cached_data) {
+            $cache_server = 'memcache: ' . $cache->get_server_for_key($uuid);
+        }
     }
-    
+    else {
+        $cache_server = 'filecache' if $cached_data;
+    }
+
     if ($cached_data) {
-	$self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
-    } else {
-	$self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
+        $self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
+    }
+    else {
+        $self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
     }
 
     return ($cached_data,$cache_server);
@@ -481,7 +486,8 @@ sub merge_session_to_user {
       unless($u_history){
         $s_history->session_id("user:$uid");
       }else{
-        $u_history->timestamp < $s_history->timestamp ? $u_history->timestamp($s_history->timestamp) : '' ;
+          $u_history->timestamp($s_history->timestamp)
+            if $u_history->timestamp < $s_history->timestamp;
         $u_history->visit_count($u_history->visit_count + $s_history->visit_count);
         $s_history->delete();
         $u_history->update();
