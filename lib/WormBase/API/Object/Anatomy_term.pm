@@ -58,21 +58,15 @@ http://wormbase.org/species/*/anatomy_term
 # << include name >>
 
 sub term {
+	my ($self) = @_;
 
-	my $self = shift;
-    my $object = $self->object;
-	my $label = $object->Term;
+    my $data = $self->_pack_obj($self ~~ 'Term');
+    $data->{class} = 'Anatomy_term' if $data; # important or no?
 
-	my $data_pack = {
-		'id' =>"$`object",
-		'label' =>"$label",
-		'Class' => 'Anatomy_term'
-	};
-	
 	return {
-		'data'=> $data_pack,
-		'description' => 'Term in the Anatomy ontology'
-		};
+		data        => $data,
+		description => 'Term in the Anatomy ontology',
+    };
 }
 
 
@@ -431,28 +425,15 @@ sub gene_ontology {
     my $self     = shift;
     my $object   = $self->object;
     my @go_terms = $object->GO_term;
-	my @data_pack;
 
-    foreach my $go_term (@go_terms) {
-        my $term    = $go_term->Term;
-        my $ao_code = $go_term->right;
-        my $gt_data = $self->_pack_obj($go_term, $term);
-        
-        ## {
-        #    'id'    => "$go_term",
-        #    'label' => "$term",
-        #    'class' => 'GO_term'
-        # };
-        
-        push @data_pack,
-          {
-            'term'    => $gt_data,
-            'ao_code' => "$ao_code"
-          };
-    }
+    my @data = map {
+        term    => $self->_pack_obj($_), # will this be needed?
+        ao_code => $self->_pack_obj($_->right), # or does View expect text?
+    }, @{$self ~~ '@GO_term'}; # array of hashes -- note the comma
+
     return {
-        'data'        => @data_pack ? \@data_pack : undef,
-        'description' => 'go_terms associated with this anatomy_term'
+        data        => @data ? \@data : undef,
+        description => 'go_terms associated with this anatomy_term',
     };
 }
 
@@ -508,12 +489,11 @@ B<Response example>
 =cut 
 
 sub anatomy_functions {
-    my $self      = shift;
-    my $object    = $self->object;
-    my $data_pack = $self->_anatomy_function('Anatomy_function');
+    my ($self) = @_;
+
     return {
-        'data'        => $data_pack,
-        'description' => 'anatomy_functions associatated with this anatomy_term'
+        data        => $self->_anatomy_function('Anatomy_function'),
+        description => 'anatomy_functions associatated with this anatomy_term',
     };
 }
 
@@ -606,27 +586,14 @@ sub anatomy_function_nots {
 #######################################
 
 sub _anatomy_function {
-    my $self              = shift;
-    my $tag               = shift;
-    my $object = $self->object;
-    my @anatomy_functions = $object->$tag;
-	my @data_pack;
-	
-    foreach my $anatomy_function (@anatomy_functions) {
-    	#my $af_term = $anatomy_function->Term;
-        my $phenotype      = $anatomy_function->Phenotype;
-        my $phenotype_name = $phenotype->Primary_name;
-        my $gene_data      = $self->_pack_obj( $anatomy_function->Gene ) if $anatomy_function->Gene;
-		my $af_data = $self->_pack_obj($anatomy_function); ## ,$af_term
-		my $phenotype_data = $self->_pack_obj($phenotype,$phenotype_name);
-		
-        push @data_pack,
-          {
-            'af_data' => $af_data,
-            'phenotype' => $phenotype_data,
-            'gene' => $gene_data
-          };
-    }
+    my ($self, $tag) = @_;
+
+	my @data_pack = map {
+            af_data   => $self->_pack_obj($_),
+            phenotype => $self->_pack_obj(scalar $_->Phenotype),
+            gene      => $self->_pack_obj(scalar $_->Gene),
+    }, $self->object->$tag; # array of hashes -- note the comma
+
     return @data_pack ? \@data_pack : undef;
 }
 

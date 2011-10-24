@@ -2,13 +2,14 @@ package WormBase::API;
 
 use Moose;                       # Moosey goodness
 
-use namespace::clean -except => 'meta';
 use WormBase::API::Factory;      # Our object factory
-use Config::General;
+use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
-use WormBase::API::ModelMap;
+use Config::General;
 use Class::MOP;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
@@ -88,20 +89,26 @@ has tool => (
 # builds a search object with the default datasource
 sub _build_xapian {
   my $self = shift;
-  my $service_instance = $self->_services->{$self->default_datasource}; 
-  my $root  = $self->conf_dir;
-  my $config = new Config::General(
-				  -ConfigFile      => "$root/../wormbase.conf",
-				  -InterPolateVars => 1
-    );
-  my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
-  my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
+# <<<<<<< HEAD
+#   my $service_instance = $self->_services->{$self->default_datasource}; 
+#   my $root  = $self->conf_dir;
+#   my $config = new Config::General(
+# 				  -ConfigFile      => "$root/../wormbase.conf",
+# 				  -InterPolateVars => 1
+#     );
+#   my $db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/main");
+#   my $syn_db = Search::Xapian::Database->new($config->{'DefaultConfig'}->{'Model::WormBaseAPI'}->{args}->{pre_compile}->{base} . $self->version() . "/search/syn");
+# 
+# =======
+  my $service_instance = $self->_services->{$self->default_datasource};
 
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
+  my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
+# >>>>>>> wormbase/master
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
-  my $syn_qp = Search::Xapian::QueryParser->new($db);
-  $qp->set_database($db);
-  $syn_qp->set_database($syn_db);
+  my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
   $qp->set_default_op(OP_OR);
    my $ptype_svrp = Search::Xapian::NumberValueRangeProcessor->new(8, "ptype:");
 
@@ -116,7 +123,7 @@ sub _build_xapian {
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);
 
-  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, c => $config, api => $self, syn_db => $syn_db, syn_qp => $syn_qp}); 
+  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
 }
 
 # Version should be provided by the default datasource or set explicitly.
@@ -166,21 +173,21 @@ sub _build__services {
 
 sub _build__tools {
     my ($self) = @_;
-     my %tools;
-#register all the tools
+    my %tools;
     for my $tool (sort keys %{$self->tool}) {
-      my $class = __PACKAGE__ . "::Service::$tool" ;	
-      Class::MOP::load_class($class);
-      # Instantiate the service providing it with
-      # access to some of our configuration variables
-      my $hash = {	pre_compile => $self->tool->{$tool},
-					log      => $self->log,
-					dsn	 => $self->_services, 
-					tmp_base  => $self->tmp_base,
-				      };
-#      $hash->{search} = $self->search if ($tool eq 'aligner');    # TODO: Needs to be updated for Xapian.
-      $tools{$tool}  = $class->new($hash);
-      $self->log->debug( "service $tool registered");
+        my $class = __PACKAGE__ . "::Service::$tool";
+        Class::MOP::load_class($class);
+
+        # Instantiate the service providing it with
+        # access to some of our configuration variables
+        $tools{$tool}  = $class->new({
+            pre_compile => $self->tool->{$tool},
+            log         => $self->log,
+            dsn         => $self->_services, 
+            tmp_base    => $self->tmp_base,
+            # ($tool eq 'aligner' ? (search => $self->search) : ()),
+        });
+        $self->log->debug( "service $tool registered");
     }
     return \%tools;
 }
@@ -247,7 +254,7 @@ sub fetch {
     }
 
     unless (defined $object) { #&& ($name eq 'all' || $name eq '*'));
-        $self->log->warning("[API::fetch()]", " could NOT fetch object");
+        $self->log->warn("[API::fetch()]", " could NOT fetch object");
         return -1;
     }
 

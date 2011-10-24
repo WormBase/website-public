@@ -1,10 +1,8 @@
 package WormBase::Web::View::TT;
 
-#use strict;
-#use parent 'Catalyst::View::TT';
-use Moose;
-extends 'Catalyst::View::TT';
-
+use strict;
+use parent 'Catalyst::View::TT';
+use Template::Constants ':debug';
 
 __PACKAGE__->config({
 		     INCLUDE_PATH => [
@@ -34,7 +32,7 @@ __PACKAGE__->config({
 #				      util   => 'WormBase::Web::View::Template::Plugin::Util',
 				     },
 #		     TIMER        => 1,
-		     DEBUG        => 1,
+#		     DEBUG        => DEBUG_DIRS | DEBUG_STASH | DEBUG_CONTEXT | DEBUG_PROVIDER | DEBUG_SERVICE,
 		     CONSTANTS    => {
 			 acedb_version => sub {
 			     WormBase::Web->model('WormBaseAPI')->version
