@@ -280,9 +280,7 @@ sub history_GET {
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = $history_change ? "shared/fields/turn_history_on.tt2" : "shared/fields/user_history.tt2"; 
 
-
-    if(($c->user_session->{'history_on'} == '1') && !$history_change){
-#     if(($c->user_session->{'history_on'} || 0 == 1) && !$history_change){
+    if(($c->user_session->{'history_on'} || 0 == 1) && !$history_change){
       if($c->req->params->{clear}){ 
         $session->user_history->delete();
         $session->update();
@@ -1363,7 +1361,7 @@ sub widget_home_GET {
     if($widget=~m/issues/) {
       $c->stash->{issues} = $self->issue_rss($c,2);
     } elsif($widget=~m/activity/) {
-      if ($c->user_session->{'history_on'} == 1){
+      if ($c->user_session->{'history_on'} || 0 == 1){
         $c->stash->{popular} = $self->most_popular($c,5);
       } 
       if($c->check_any_user_role(qw/admin curator/)){ 
