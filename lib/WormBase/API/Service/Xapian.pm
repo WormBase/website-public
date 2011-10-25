@@ -22,11 +22,15 @@ has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
-has '_fields'   => (
-    is          => 'rw',
-    isa         => 'HashRef',
-    default     => sub { {} },
-    );
+has '_doccount' => (
+    is          => 'ro',
+    isa         => 'Int',
+    lazy        => 1,
+    default     => sub {
+      my $self = shift;
+      return $self->db->get_doccount;
+    },
+);
 
 
 sub search {
@@ -112,8 +116,7 @@ sub search_exact {
 
 sub random {
     my ( $class, $c) = @_;
-    my $count = $class->db->get_doccount;
-    return $class->_get_obj($c, $class->db->get_document(int(rand($count)) + 1));
+    return $class->_get_obj($c, $class->db->get_document(int(rand($class->_doccount)) + 1));
 }
 
 sub search_count {
@@ -161,20 +164,17 @@ sub _get_obj {
   my ($self, $c, $doc, $footer) = @_;
   my $species = $doc->get_value(5);
 
-  $c->log->debug("class:" . $doc->get_value(0) . ", name:" . $doc->get_value(1));
-
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
-  if(my $s = $c->config->{sections}->{species_list}->{$species}){
+  if(my $s = $c->config->{sections}{species_list}{$species}){
     $ret{taxonomy}{genus} = $s->{genus};
     $ret{taxonomy}{species} = $s->{species};
   }
-    $ret{ptype} = $doc->get_value(7);
+  $ret{ptype} = $doc->get_value(7);
   %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};
   if($doc->get_value(4) =~ m/^(\d{4})/){
     $ret{year} = $1;
   }
-
 
   $ret{footer} = $footer if $footer;
   return \%ret;
@@ -183,32 +183,27 @@ sub _get_obj {
 sub _split_fields {
   my ($self, $c, $ret, $data) = @_;
 
-  $data =~ s/\\([\;\/\\%\:"])/$1/g;
+  $data =~ s/\\([\;\/\\%\"])/$1/g;
   while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
-    my $d = $2;
-    my $label = $1;
+    my ($d, $label) = ($2, $1);
+    my $array = $ret->{$label} || ();
     $data = $3;
     
-    my $array = $ret->{$label} || ();
-
     if($d =~ m/^WB/){
      $d = $self->_get_tag_info($c, $d, $label);
     }elsif($label =~ m/^author$/){
-      my $id = $d;
-      my $l = $id;
+      my ($id, $l);
       if($d =~ m/^(.*)\s(WBPerson\S*)$/){
         $id = $2;
         $l = $1;
       }
-      $d = { id =>$id, 
-             label=>$l,
+      $d = { id =>$id || $d, 
+             label=>$l || $d,
              class=>'person'}
     }
-
     push(@{$array}, $d);
     $ret->{$label} = $array;
   }
-
   return $ret;
 }
 
