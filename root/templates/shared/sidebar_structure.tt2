@@ -71,7 +71,7 @@
 
 <div id="widgets">
      
-  <div class="navigation">
+  <div class="navigation navigation-min">
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]

@@ -1,11 +1,12 @@
 
+
 <div id="page-count" data-count="[% c.stash.count %]"></div>
 [% IF (page && page > 1) %]
  [% IF results.size > 0 %]<br /><b style="padding-left:0.5em;">Page [% page %] </b>[% END %]
 [% END %]
 [% FOREACH item IN results %]
 
- <div class="result [% UNLESS nostar %]tip-simple star[% END %]" tip="save">
+ <div class="result [% UNLESS nostar %]tip-simple star[% END %] result-[% type %]" tip="save">
  [% class = item.name.class %]
  [% class = (ACE2WB_MAP.$class || class) FILTER lower; %]
  [% result_class = (c.config.sections.species.$class.title || c.config.sections.resources.$class.title || 'page') FILTER lower %]
@@ -36,21 +37,20 @@
 
      [%# Always include the taxonomy if it exists %]
      [% IF item.taxonomy %]
-           <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
+           <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span><br />
      [% END %]
 
      [% text = [ ];
         # Lots of variations of something that might be a description.
-        text.push(item.title.join(", "))                  IF item.title;
-        text.push(item.type.join(", "))                   IF item.type;
-        text.push(item.description.join("<br />"))            IF item.description;
-        text.push(item.definition.join("<br />"))             IF item.definition;
-        text.push(item.remark.join("<br />")) IF item.remark;
-        text.push(item.summary.join("<br />"))                IF item.summary;
-
+        text.push(item.title.join(", "))                    IF item.title;
+        text.push(item.type.join(", "))                     IF item.type;
+        text.push(item.description.join("<br />"))          IF item.description;
+        text.push(item.definition.join("<br />"))           IF item.definition;
+        text.push(item.remark.join("<br />"))               IF item.remark;
+        text.push(item.summary.join("<br />"))              IF item.summary;
         mystring = text.join("<br>");
-        IF mystring; %]
 
+        IF mystring %]
         <div class="text-min" style="height:auto;max-height:2.4em;">
            [% mystring %]    
         </div>
@@ -59,10 +59,11 @@
                     <div class="ui-icon ui-icon-triangle-1-s"></div>
                 </div>
           [% END %]
-        [% ELSE; '<br />'; END; %]
+        [% END; %]
      <span id="fade">[% item.footer %]</span>
   [% CATCH %]
     [% error %]
   [% END %]
   </div>
 [% END %]
+

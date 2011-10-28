@@ -150,8 +150,12 @@ sub search_count :Path('/search/count') :Args(3) {
   my $api = $c->model('WormBaseAPI');
 
   my $search = $type unless($type=~/all/);
-  $q =~ s/-/_/g;
-  my $count = $api->xapian->search_count($c, $q, $search, $species);
+
+  my $tmp_query = $q;
+  $tmp_query =~ s/-/_/g;
+  $tmp_query .= " $q" unless( ($q=~/^\*$/) || $tmp_query =~ /$q/ );
+
+  my $count = $api->xapian->search_count($c, $tmp_query, $search, $species);
   $c->response->body("$count");
   return;
 }

@@ -79,7 +79,7 @@ sub connect {
     my %cache_args         =  (
         cache_root         => $conf->{cache_root},
         max_size           => $conf->{cache_size},
-	    default_expires_in => $conf->{cache_expires},
+           default_expires_in => $conf->{cache_expires},
     ) if $conf->{cache_root};
 
     if ($conf->{cache_auto_purge_interval} ne '') {

@@ -127,11 +127,7 @@ sub workbench_star_GET{
     my $url = $c->req->params->{url};
     my $page = $self->get_session($c)->pages->find({url=>$url});
 
-    if($page) {
-          $c->stash->{star}->{value} = 1;
-    } else{
-        $c->stash->{star}->{value} = 0;
-    }
+    $c->stash->{star}->{value} = $page ? 1 : 0;
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
     $c->stash->{star}->{name} = $c->req->params->{name};
     $c->stash->{star}->{save_to} = $c->req->params->{class} eq 'paper' ?  "my_library" : "reports";
@@ -317,7 +313,7 @@ sub history_GET {
 
 sub history_POST {
     my ($self,$c) = @_;
-    if($c->user_session->{'history_on'} == 1){
+    if($c->user_session->{'history_on'} || 0 == 1){
       my $session = $self->get_session($c);
       my $path = $c->request->body_parameters->{'ref'};
       my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
@@ -866,9 +862,12 @@ sub widget_GET {
     }
 
     my $api = $c->model('WormBaseAPI');
-    my $object = ($name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
-               : $api->fetch({ class => ucfirst $class, name => $name }));
+#     my $object = ($name eq '*' || $name eq 'all'
+#                ? $api->instantiate_empty({ class => ucfirst $class })
+#                : $api->fetch({ class => ucfirst $class, name => $name }));
+        $c->log->debug("fetching: $class, $name");
+my $object = $api->fetch({ class => ucfirst $class, name => $name });
+
     # what if there's no object?
 
     # Is this a request for the references widget?
@@ -876,9 +875,9 @@ sub widget_GET {
     if ( $widget eq 'references' ) {
         my $url
             = $c->uri_for( '/search', 'paper', $name )
-            . '?widget=refences&class='
+            . '?widget=references&class='
             . $class
-            . ";inline=1";
+            . "&inline=1";
         $c->res->redirect( $url, 307 );
         return;
 
@@ -904,9 +903,8 @@ sub widget_GET {
     my $fatal_non_compliance = 0;
     foreach my $field (@fields) {
         unless ($field) { next; }
-
-        # $c->log->debug("Processing field: $field");
-        my $data = $object->$field;    # $object->can($field) for a check
+        $c->log->debug("Processing field: $field");
+        my $data = $object->$field;# if $object->can($field); # for a check
         if ( $c->config->{installation_type} eq 'development'
             and my ( $fixed_data, @problems )
             = $object->_check_data( $data, $class ) )
@@ -1534,6 +1532,7 @@ sub widget_me_GET {
 
     my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
+    $c->stash->{'widget'} = $widget;
     $c->stash->{'results'} = \@ret;
     $c->stash->{'type'} = $type; 
     $c->stash->{template} = "workbench/widget.tt2";

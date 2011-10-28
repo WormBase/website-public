@@ -40,18 +40,17 @@ sub search {
     $page_size  ||=  10;
 
     if($type){
+      $q .= " $type..$type";
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
-        $q .= " $type..$type ptype:$s..$s";
+        $q .= " ptype:$s..$s" if defined $s;
         $species = undef;
-      }else{
-        $q .= " $type..$type";
       }
     }
 
     if($species){
         my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s";
+        $q .= " species:$s..$s" if defined $s;
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
@@ -98,9 +97,8 @@ sub search_exact {
     my ( $class, $c, $q, $type) = @_;
   
     my ($query, $enq);
-    if( $q =~ m/^WB/i ){
-      $q = "$type$q" if $type;
-      $query=$class->qp->parse_query( $q, 1|2 );
+    if( $type && ($q =~ m/^WB/i) ){
+      $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
     }else{
       $q .= " $type..$type" if $type;
@@ -109,6 +107,11 @@ sub search_exact {
     }
 
     my $mset      = $enq->get_mset( 0,1 );
+    if($mset->empty()){
+      $query=$class->qp->parse_query( $q, 1|2 );
+      $enq       = $class->db->enquire ( $query );
+      $mset      = $enq->get_mset( 0,1 );
+    }
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
@@ -123,18 +126,17 @@ sub search_count {
  my ( $class, $c, $q, $type, $species) = @_;
 
     if($type){
+      $q .= " $type..$type";
       if(($type =~ m/paper/) && ($species)){
         my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
-        $q .= " $type..$type ptype:$s..$s";
+        $q .= " ptype:$s..$s" if defined $s;
         $species = undef;
-      }else{
-        $q .= " $type..$type";
       }
     }
 
     if($species){
         my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-        $q .= " species:$s..$s";
+        $q .= " species:$s..$s" if defined $s;
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
