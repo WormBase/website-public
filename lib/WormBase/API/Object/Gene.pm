@@ -2613,10 +2613,10 @@ sub _print_rnai_details_table {
 
 		my ($rnaix,$phenes,$genotype,$ref) = split /\|/,$rnai_detail;
 		my @phenes = split /\&/, $phenes;
-        my $paper = $self->_pack_obj($self->ace_dsn->fetch(
-            -class => 'Paper', -name => $ref
-        ));
-        $paper->{label} = substr $paper->{label}, 1, -1 if $paper->{label};
+        my $paper;
+        if ($ref and $paper = $self->_pack_obj($self->ace_dsn->fetch(Paper => $ref))) {
+            $paper->{label} = substr $paper->{label}, 1, -1 if $paper->{label};
+        }
 
 		my @phenotype_set = map {
 			class => 'phenotype',
