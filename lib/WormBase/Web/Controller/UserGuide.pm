@@ -55,7 +55,7 @@ sub _get_pod {
     
     # Write code to temp file
     open (TMP,">/var/tmp/pod.tmp");
-    print TMP join('',@code);
+    print TMP @code;
     close TMP;
     
     # Now turn it into POD...

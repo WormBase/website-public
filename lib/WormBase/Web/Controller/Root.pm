@@ -3,6 +3,8 @@ package WormBase::Web::Controller::Root;
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
+use File::Spec;
+use namespace::autoclean -except => 'meta';
  
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in WormBase.pm
@@ -111,8 +113,10 @@ sub draw :Path("/draw") Args(1) {
 
         unless($cached_img) {  # not cached -- make new image and cache
             # the following line is a security risk
-            my $source = $c->model('WormBaseAPI')->pre_compile->{$params->{class}}
-                       . "/".$params->{id} . "." . $format;
+            my $source = File::Spec->catfile(
+                $c->model('WormBaseAPI')->pre_compile->{$params->{class}},
+                "$params->{id}.$format"
+            );
             $c->log->debug("Attempt to draw image: $source");
 
             $cached_img = GD::Image->new($source);

@@ -1,6 +1,8 @@
 package WormBase::API::Object::Picture;
 
 use Moose;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -285,8 +287,7 @@ sub image {
     my $filename = $self ~~ 'Name'
         or return $datapack;
 
-    my $file = $self->pre_compile->{picture} . '/'
-             . $reference. '/' . $filename;
+    my $file = File::Spec->catfile($self->pre_compile->{picture}, $reference, $filename);
     return $datapack unless -e $file && !-z $file;
 
     $filename =~ /^(.+)\.(.+)$/ or return $datapack; # greedy . will match 'a.b.c.jpg' properly

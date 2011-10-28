@@ -1,5 +1,7 @@
 package WormBase::API::Object::Gene;
 use Moose;
+use File::Spec::Functions qw(catfile catdir);
+use namespace::autoclean -except => 'meta';
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
@@ -26,14 +28,13 @@ http://wormbase.org/species/*/gene
 
 =cut
 
-
 has 'gene_pheno_datadir' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $version = $self->ace_dsn->version;
-	return $self->pre_compile->{base}.$version.$self->pre_compile->{gene};
+        my $self=shift;
+        return catfile($self->pre_compile->{base}, $self->ace_dsn->version,
+                       $self->pre_compile->{gene});
     }
 );
 
@@ -42,9 +43,9 @@ has 'orthology_datadir' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $version = $self->ace_dsn->version;
-	return $self->pre_compile->{base} . $version . "/orthology/";
+        my $self=shift;
+        return catfile($self->pre_compile->{base}, $self->ace_dsn->version,
+                       'orthology');
     }
 );
 
@@ -53,48 +54,50 @@ has 'all_proteins' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $cds = $self ~~ '@Corresponding_CDS';
-	return undef unless $cds;
-	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @$cds  ;
-	return \@proteins;
+        my $self=shift;
+        my $cds = $self ~~ '@Corresponding_CDS';
+        return undef unless $cds;
+        return [ map {$_->Corresponding_protein(-fill=>1)} @$cds ];
     }
 );
- 
+
 has 'sequences' => (
     is  => 'ro',
     lazy => 1,
-    default => sub {
-	my $self=shift;
-	my @seq = $self->_fetch_sequences;
-	return \@seq;
-    }
+    builder => '_build_sequences',
 );
+
+sub _build_sequences {
+	my $self = shift;
+	my $gene = $self->object;
+    my %seen;
+    my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
+    for my $cds ($gene->Corresponding_CDS) {
+        next if defined $seen{$cds};
+        my @transcripts = grep {!$seen{$cds}++} $cds->Corresponding_transcript;
+        push (@seqs, @transcripts ? @transcripts : $cds);
+    }
+    return \@seqs if @seqs;
+    return [$gene->Corresponding_Pseudogene];
+}
 
 has 'tracks' => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
-        my ($self) = @_;
         return {
             description => 'tracks displayed in GBrowse',
-            data        => $self->_parsed_species =~ /elegans/ ?
+            data        => shift->_parsed_species =~ /elegans/ ?
                            [qw(CG CANONICAL Allele RNAi)] : [qw/CG/],
-        },
+        };
     }
 );
-
-
 
 has 'phen_data' => (
     is => 'ro',
     isa => 'HashRef',
     lazy => 1,
-    default => sub {
-      my $self=shift;
-      my $ret = $self->_build_phen_data;
-      return $ret;
-    }
+    builder => '_build_phen_data',
 );
 
 sub _build_phen_data {
@@ -131,47 +134,47 @@ sub _build_phen_data {
     };
 }
 
-
-
 has 'phenotype_id2name' => (
-	is =>'rw',
+    is      => 'rw', # bleh
+    lazy    => 1,
+    default => '',
 );
 
-has 'gene_rnai_pheno_data' => (
-	is =>'rw',
+has '_xgene_pheno_data' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_gene_xgene_pheno_data_compile',
+);
+
+has '_variation_data' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_variation_data_compile',
+);
+
+has '_rnai_pheno_data' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_gene_rnai_pheno_data_compile',
 );
 
 has 'phenotype_data' => (
-	is => 'ro',	
-	lazy => 1,
-	default => sub {
-		my $self = shift;
-		my $gene_rnai_pheno_data = $self->_gene_rnai_pheno_data_compile();
-		my $gene_rnai_pheno_not_data = $self->_gene_rnai_pheno_not_data_compile();
-		my ($gene_xgene_data,$gene_xgene_data_not) = $self->_gene_xgene_pheno_data_compile();		
-		my ($gene_variation_data,$gene_variation_data_not) = $self->_variation_data_compile();
-		$self->gene_rnai_pheno_data($gene_rnai_pheno_data . "\n" . $gene_rnai_pheno_not_data); 
-		my $rnai_data = $self->_rnai_data_compile();
-		my $p2n = $self->phenotype_id2name;
-		
-		my $return = {
-						gene_rnai_pheno_data => $gene_rnai_pheno_data,
-						gene_rnai_pheno_not_data => $gene_rnai_pheno_not_data,
-						gene_xgene_data => $gene_xgene_data,
-						gene_xgene_data_not => $gene_xgene_data_not,
-						gene_variation_data => $gene_variation_data,
-						gene_variation_data_not => $gene_variation_data_not,
-						rnai_data => $rnai_data,
-						p2n => $p2n
-		
-		};
-		return $return;
-	}
+	is      => 'ro',
+	lazy    => 1,
+    default => sub {
+        my $self = shift;
+        return {
+            gene_rnai_pheno_data     => $self->_rnai_pheno_data->[0],
+            gene_rnai_pheno_not_data => $self->_rnai_pheno_data->[1],
+            gene_xgene_data          => $self->_xgene_pheno_data->[0],
+            gene_xgene_data_not      => $self->_xgene_pheno_data->[1],
+            gene_variation_data      => $self->_variation_data->[0],
+            gene_variation_data_not  => $self->_variation_data->[1],
+            rnai_data                => $self->_rnai_data_compile,
+            p2n                      => $self->phenotype_id2name,
+        };
+    }
 );
-
-
-
-
 
 #######################################
 #
@@ -633,7 +636,7 @@ B<Response example>
 
 =cut 
 
-sub locus_name { 
+sub locus_name {
     my $self   = shift;
     my $object = $self->object;
     my $locus  = $object->CGC_name;
@@ -999,25 +1002,28 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     my %data_pack;
+
+    my $file = catfile($self->pre_compile->{gene_expr}, "$object.jpg");
+    $data_pack{"image"}="jpg?class=gene_expr&id=$object"   if (-e $file && ! -z $file);
+
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
                    $object->Expr_pattern;
-    
-    my $file = $self->pre_compile->{gene_expr}."/".$object.".jpg";
-    $data_pack{"image"}="jpg?class=gene_expr&id=". $object   if (-e $file && ! -z $file);
-    
+
     foreach my $ep (@eps) {
-	my $file = $self->pre_compile->{expr_object}."/".$ep.".jpg";
-	$data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=". $ep   if (-e $file && ! -z $file);
-	# $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
-        my $pattern =  join '', ($ep->Pattern(-filled=>1), $ep->Subcellular_localization(-filled=>1));
-        $pattern    =~ s/(.{384}).+/$1\.\.\. /;
+        my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg");
+        $data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=$ep" if (-e $file && ! -z $file);
+        # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+        my $pattern =  $ep->Pattern(-filled=>1) || '' . $ep->Subcellular_localization(-filled=>1) || '';
+        $pattern    =~ s/(.{384}).+/$1.../;
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
-    
-    return { description => 'expression patterns for the gene',
-	     data        => %data_pack ? \%data_pack : undef };
+
+    return {
+        description => 'expression patterns for the gene',
+        data        => %data_pack ? \%data_pack : undef,
+    };
 }
 
 =head3 microarray_expression_data
@@ -2075,7 +2081,7 @@ B<Response example>
 =cut
 
 # I sure do wish we had some descriptions for human genes.
-sub human_orthologs {    
+sub human_orthologs {
     my $self = shift;
     my $object = $self->object;
     my @data;
@@ -2137,7 +2143,7 @@ B<Response example>
 
 =cut
 
-sub other_orthologs {    
+sub other_orthologs {
     my $self = shift;
     my $object = $self->object;
     my @data;
@@ -2273,23 +2279,23 @@ B<Response example>
 # THIS SERIOUSLY NEEDS TO BE FIXED.
 sub human_diseases {
     my $self = shift;
-    my $object = $self->object;
-	my %gene_id2omim_ids = build_hash($self->orthology_datadir . 'gene_id2omim_ids.txt');
-	my %omim_id2disease_desc = build_hash($self->orthology_datadir . 'omim_id2disease_desc.txt');
-	my %omim_id2disease_name = build_hash($self->orthology_datadir . 'omim_id2disease_name.txt');
-	my $disease_list = $gene_id2omim_ids{$object};                                                                                                            
-	my @diseases = split /%/,$disease_list;
-	my @data_pack;
-	foreach my $disease_id (@diseases) {
-		push @data_pack, {
-					omim_id 	=> $disease_id,
-					disease 	=> $omim_id2disease_name{$disease_id},
-					description => $omim_id2disease_desc{$disease_id},
-					};	
-	}
+
+	my %gene_id2omim_ids = _build_hash(catfile($self->orthology_datadir,
+                                               'gene_id2omim_ids.txt'));
+	my %omim_id2disease_desc = _build_hash(catfile($self->orthology_datadir,
+                                                   'omim_id2disease_desc.txt'));
+	my %omim_id2disease_name = _build_hash(catfile($self->orthology_datadir,
+                                                   'omim_id2disease_name.txt'));
+
+	my @data_pack = map { {
+        omim_id 	=> $_,
+        disease 	=> $omim_id2disease_name{$_},
+        description => $omim_id2disease_desc{$_},
+    } } split /%/, ($gene_id2omim_ids{$self->object} || '');
+
 	return {
-		'data'=> @data_pack ? \@data_pack : undef,
-		'description' => 'Diseases related to the gene'
+        data        => @data_pack ? \@data_pack : undef,
+		description => 'Diseases related to the gene',
 	};
 }
 
@@ -2515,7 +2521,7 @@ sub interactions {
         my $phenotype = $type->Interaction_phenotype;
         push @data,
             {
-            interaction => $self->_pack_obj($_),
+            interaction => $self->_pack_obj($interaction),
             type        => "$type",
             effector    => $self->_pack_obj($effector),
             effected    => $self->_pack_obj($effected),
@@ -2578,11 +2584,13 @@ sub phenotype {
     my $pheno = $self->phen_data->{pheno_table};
     my $pheno_not = $self->phen_data->{pheno_table_not};
 
-    return {    description => 'The Phenotype summary of the gene',
-                data        => ($pheno || $pheno_not) ? {    pheno=>$pheno,	
-                                    pheno_not=>$pheno_not,
-				} : undef,
-	};  
+    return {
+        description => 'The Phenotype summary of the gene',
+        data        => ($pheno || $pheno_not) ? {
+            pheno     => $pheno,
+            pheno_not => $pheno_not,
+        } : undef,
+	};
 }
 
 
@@ -2596,6 +2604,7 @@ sub rnai {
         },
     };
 }
+
 # TH: THIS IS A VIEW TASK.
 sub _print_rnai_details_table {
 	my ($self, $rnai_details_ar, $phene_id2name_hr) = @_;
@@ -2604,14 +2613,14 @@ sub _print_rnai_details_table {
 
 		my ($rnaix,$phenes,$genotype,$ref) = split /\|/,$rnai_detail;
 		my @phenes = split /\&/, $phenes;
-		my $ref_obj = $self->ace_dsn->fetch(-class=>'Paper', -name=>$ref);
-		my $paper = $self->_wrap($ref_obj);
-		my $citation_hash = $paper->intext_citation->{data};
-		my $formatted_ref = $citation_hash ? substr $citation_hash->{citation}, 1, -1 : undef ;
+        my $paper = $self->_pack_obj($self->ace_dsn->fetch(
+            -class => 'Paper', -name => $ref
+        ));
+        $paper->{label} = substr $paper->{label}, 1, -1 if $paper->{label};
 
 		my @phenotype_set = map {
 			class => 'phenotype',
-			id => $_,
+			id    => $_,
 			label => $$phene_id2name_hr{$_},
 		}, @phenes;
 
@@ -2623,7 +2632,7 @@ sub _print_rnai_details_table {
 			},
 			phenotype => \@phenotype_set,
 			genotype  => $genotype,
-			cite	  => $self->_pack_obj($ref_obj,$formatted_ref),
+			cite	  => $paper,
 		};
 	}
 
@@ -3481,7 +3490,7 @@ sub gene_models {
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
         my $model = $self->_pack_obj($sequence);
-        my $gff   = $self->fetch_gff_gene($sequence) or next;
+        my $gff   = $self->_fetch_gff_gene($sequence) or next;
         my $cds
             = ( $sequence->class eq 'CDS' )
             ? $sequence
@@ -3599,7 +3608,7 @@ sub other_sequences {
 #   INTERNAL METHODS
 #
 #########################################
-sub fetch_gff_gene {
+sub _fetch_gff_gene { # pending deletion
  my ($self,$transcript) = @_;
 
   my $trans;
@@ -3643,9 +3652,8 @@ sub _go_method_detail {
     }
 }
 
- 
 # Fetch unique transcripts (Transcripts or Pseudogenes) for the gene
-sub _fetch_transcripts {  
+sub _fetch_transcripts { # pending deletion
     my $self = shift;
     my $object = $self->object;
     my %seen;
@@ -3702,7 +3710,7 @@ sub _longest_segment {
     return $longest;
 }
 
-sub _select_protein_description {
+sub _select_protein_description { # pending deletion
     my ($self,$seq,$protein) = @_;
     my %labels = (Pseudogene => 'Pseudogene; not attached to protein',
 		  history     => 'historical prediction',
@@ -3727,7 +3735,7 @@ sub _fetch_protein_ids {
 }
 
 # TODO: This could logically be moved into a template
-sub _other_notes {
+sub _other_notes { # pending deletion
     my ($self,$object) = @_;
     
     my @notes;
@@ -3758,10 +3766,7 @@ sub _other_notes {
     return \@notes;
 }
 
-
-
-
-sub parse_year {
+sub parse_year { # pending deletion
     my $date = shift;
     $date =~ /.*(\d\d\d\d).*/;
     my $year = $1 || $date;
@@ -3786,7 +3791,7 @@ sub _is_cached {
 
 
 
-sub _y2h_data {
+sub _y2h_data { # pending deletion
     my ($self,$object,$limit,$c) = @_;
     my %tags = ('YH_bait'   => 'Target_overlapping_CDS',
 		'YH_target' => 'Bait_overlapping_CDS');
@@ -3847,7 +3852,7 @@ sub _y2h_data {
 
 
 # This is one big ugly hack job
-sub _go_evidence_code {
+sub _go_evidence_code { # pending deletion
     my ($self,$term) = @_;
     my @type      = $term->col;
     my @evidence  = $term->right->col if $term->right;
@@ -3920,20 +3925,6 @@ sub _go_evidence_code {
     return @results;
 }
 
-sub _fetch_sequences {
-	my $self = shift;
-	my $gene = $self->object;
-    my %seen;
-    my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
-    my @cds = $gene->Corresponding_CDS;
-    foreach (@cds) {
-	next if defined $seen{$_};
-	my @transcripts = grep {!$seen{$_}++} $_->Corresponding_transcript;
-	push (@seqs,(@transcripts)? @transcripts : $_);
-    }
-    @seqs = $gene->Corresponding_Pseudogene unless @seqs;
-	return @seqs;
-}
 
 
 
@@ -3941,29 +3932,27 @@ sub _fetch_sequences {
 ### syntax: $phene_id2name_hr = get_phenotype_names(rnai_ar,var_ar)
 
 sub _get_phenotype_names {
-
 	my ($self, $rnai_ar, $var_ar) = @_;
 	my %phene_master;
-	
+
 	foreach my $rnai_phene_line (@$rnai_ar) {
-	
 		my ($phene_id, $disc) = split /\|/,$rnai_phene_line;
 		$phene_master{$phene_id} = 1;
 	}
-	
+
 	foreach my $var_phene_line (@$var_ar) {
-	
-		my ($phene_id, $disc) = split /\|/,$var_phene_line;	
+		my ($phene_id, $disc) = split /\|/,$var_phene_line;
 		$phene_master{$phene_id} = 1;
 	}
-	
+
 	my %phene_id2name;
-	my %fullset_phene_id2name = build_hash($self->gene_pheno_datadir.$self->pre_compile->{phenotype_name_file});
+	my %fullset_phene_id2name
+        = _build_hash(catfile($self->gene_pheno_datadir,
+                             $self->pre_compile->{phenotype_name_file}));
 	foreach my $phene_id (keys %phene_master) {
-				
 		$phene_id2name{$phene_id} = $fullset_phene_id2name{$phene_id};  ## $phene_primary_name
 	}
-	
+
 	return \%phene_id2name;
 }
 
@@ -3972,114 +3961,103 @@ sub _get_phenotype_names {
 sub _get_xgene_data {
 
 	my ($self, $positive_results) = @_; ## , $phenotype_ar
-	
-	my $gene_xgene_data; 
+
+	my $gene_xgene_data;
 	if($positive_results) {
-	
+
 		$gene_xgene_data = $self->phenotype_data->{'gene_xgene_data'}; # `grep $gene  $gene_xgene_phene_file | grep -v Not `;
-	
+
 	} else {
-	
+
 		$gene_xgene_data = $self->phenotype_data->{'gene_xgene_data_not'};#`grep $gene $gene_xgene_phene_file | grep Not `;
-	
+
 	}
-	
+
 	#print "$gene_variation_data\n";
-	
+
 	my @gene_xgene_data = split /\n/, $gene_xgene_data;
-	
+
 	my %phenotype_xgene;
-	
+
 	foreach my $xgene_data_line (@gene_xgene_data) {
 		my ($gene,$xgene,$phenotype,$not,$seq_stat)  = split /\|/, $xgene_data_line;
 		$xgene = $xgene . "+" . $seq_stat if $seq_stat;
 		$phenotype_xgene{$phenotype}{$xgene} = 1;
-		
+
 	}
-	
+
 	my @return_data;
 
 	foreach my $phene (keys %phenotype_xgene) {
-	
+
 		my $xgenes_hr = $phenotype_xgene{$phene};
 		my @xgenes = keys %$xgenes_hr;
 		my $xgenes_line = join "&", @xgenes;
 		push @return_data, "$phene\|$xgenes_line";
 	}
 
-	return \@return_data;	
+	return \@return_data;
 }
 
 
 sub _get_phenotype_data {
 
 	my ($self, $positive_results) = @_;
-	
+
 	my %rnai_phenotypes;
 	my %rnai_genotype;
 	my %rnai_ref;
 
 	my $rnai_data = $self->phenotype_data->{'rnai_data'};
 	my @rnai_data_lines = split "\n", $rnai_data;
-	
+
 	foreach my $rnai_data_line (@rnai_data_lines) {
-	
+
 		chomp $rnai_data_line;
 		my ($rnai,$genotype,$ref) = split /\|/,$rnai_data_line;
 		# print "$rnai_data_line\n";
-		
+
 		$rnai_genotype{$rnai} = $genotype;
 		$rnai_ref{$rnai} = $ref;
-		
+
 	}
-	
+
 	my $gene_phenotype_data;
-	
+
 	if($positive_results) {
-	
+
 		$gene_phenotype_data =  $self->phenotype_data->{gene_rnai_pheno_data}; #`grep $gene $gene_rnai_phene_file | grep -v Not `;
-	
+
 	} else {
-	
+
 		$gene_phenotype_data = $self->phenotype_data->{gene_rnai_pheno_not_data}; # = `grep $gene $gene_rnai_phene_file | grep Not `;
 	}
-	
+
 
 	#print "$gene_phenotype_data\n";
 	my @gene_phenotype_data = split /\n/,$gene_phenotype_data;
 	my %rnai_pheno_data;
 	my %pheno_rnai_data;
 	foreach my $gene_phenotype_data_line (@gene_phenotype_data) {
-	
+
 		#print "\=\>$gene_phenotype_data_line\n";
-		
+
 		my ($gene_id,$rnai_id,$pheno_id) = split /\|/,$gene_phenotype_data_line;
-		
+
 		$rnai_pheno_data{$rnai_id}{$pheno_id} = 1;
 		$pheno_rnai_data{$pheno_id}{$rnai_id} = 1;
-	
+
 	}
 
-	my @rnais  = keys %rnai_pheno_data;
-	my @details;
-	my @phenotype_return;
-	
-	foreach my $rnai (@rnais) {
-	
-		my $pheno_ids_hr =  $rnai_pheno_data{$rnai};
-		my $pheno_ids = join "&", keys %$pheno_ids_hr;
-	
-		push @details, "$rnai\|$pheno_ids\|$rnai_genotype{$rnai}\|$rnai_ref{$rnai}";
-	}
-	
-	foreach my $phenotype (keys %pheno_rnai_data) {
-	
-		my $rnai_ids_hr = $pheno_rnai_data{$phenotype};
-		my @rnai_ids = keys %$rnai_ids_hr;
-		my $rnai_id_count = @rnai_ids;
-		push @phenotype_return, "$phenotype\|$rnai_id_count";
-	}
-	
+    my @details = map {
+        join '|', $_, join('&', keys %{$rnai_pheno_data{$_}}),
+                  $rnai_genotype{$_} || '', $rnai_ref{$_} || '';
+    } keys %rnai_pheno_data;
+
+	my @phenotype_return = map {
+        $_ . '|' . scalar keys %{$pheno_rnai_data{$_}};
+    } keys %pheno_rnai_data;
+
 	return \@details, \@phenotype_return;
 
 }
@@ -4096,17 +4074,17 @@ sub _get_variation_data {
 
 	my ($self,$positive_results) = @_; ## , $phenotype_ar
 	my $gene_variation_data;
-    
+
 	if($positive_results) {
-	
+
 		$gene_variation_data = $self->phenotype_data->{'gene_variation_data'}; # `grep $gene $gene_variation_phene_file | grep -v Not `;
-	
+
 	} else {
-	
+
 		$gene_variation_data = $self->phenotype_data->{'gene_variation_data_not'}; #`grep $gene $gene_variation_phene_file | grep Not `;
-	
+
 	}
-	
+
 	my @gene_variation_data = split /\n/, $gene_variation_data;
 	my %phenotype_variation;
 	my %variation_id2name;
@@ -4115,11 +4093,11 @@ sub _get_variation_data {
 		my ($gene,$var,$phenotype,$not,$seq_stat,$var_name)  = split /\|/, $var_data_line;
 		$variation_id2name{$var} = $var_name;
 		$var = $var . "+" . $seq_stat;
-		$phenotype_variation{$phenotype}{$var} = 1;	
+		$phenotype_variation{$phenotype}{$var} = 1;
 	}
 
 	my @return_data;
-	
+
 	foreach my $phene (keys %phenotype_variation) {
 		my $vars_hr = $phenotype_variation{$phene};
 		my @vars = keys %$vars_hr;
@@ -4129,218 +4107,150 @@ sub _get_variation_data {
 	return \@return_data, \%variation_id2name;
 }
 
-
-
-sub _gene_rnai_pheno_data_compile { ## on going
+sub _gene_rnai_pheno_data_compile {
     my ($self) = @_;
    	my $object = $self->object;
     my $na = '';
-	my $output = "";
 	my $p2n = "";
-	my %uniq; 
-	my %phenotype2name;	
-	    
-	foreach my $rnai ($object->RNAi_result) {
-	    
-	    my @phenotypes = $rnai->Phenotype;
-		
-	    foreach my $interaction ($rnai->Interaction) {
-		my @types = $interaction->Interaction_type;
-			foreach (@types) {		    
-				push @phenotypes,map { $_->right } grep { $_ eq 'Interaction_phenotype' } $_->col;		    
-			}
-	    }
-	    next unless @phenotypes > 0;
-	    
-	    foreach my $phenotype (@phenotypes) {
-	    	my $phenotype_name = $phenotype->Primary_name;
-	    	$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
-	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-	    }
-	}
-
-	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);	
-	if (my $phenotype_id2name = $self->phenotype_id2name) {
-        $phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-        $self->phenotype_id2name("$phenotype_id2name");
-    }
-	return $output;
-}
-
-sub _gene_rnai_pheno_not_data_compile {
-    my ($self) = @_;
-	my $object = $self->object;
-    my $output = "";
-	my $p2n = "";
-    
-    my $na = 'Not';
-	my @rnai = $object->RNAi_result;    
-	my %uniq; 
+	my %unique;
+    my %unique_not;
 	my %phenotype2name;
-	
-	foreach my $rnai (@rnai) {
-	    my @phenotypes = $rnai->Phenotype_not_observed;
-	    
-	    foreach my $phenotype (@phenotypes) {		
-	    	my $phenotype_name = $phenotype->Primary_name;
-			$uniq{"$object\|$rnai\|$phenotype\|$na"} = 1;
-	    	$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-	    }
+
+	foreach my $rnai ($object->RNAi_result) {
+        my @phenotypes = (
+            $rnai->Phenotype,
+            map  { $_->right }                     # get the objects
+                grep { $_ eq 'Interaction_phenotype' } # only phenotypes (tag)
+                map  { $_->col   }                     # get the interactions themselves
+                map  { $_->Interaction_type }          # types of interaction
+                $rnai->Interaction,
+        );
+
+        my @phenotypes_not = $rnai->Phenotype_not_observed;
+
+        foreach my $phenotype (@phenotypes) {
+            ++$unique{join '|', $object, $rnai, $phenotype, ''};
+            $phenotype2name{$phenotype} = $phenotype->Primary_name;
+        }
+
+        foreach my $phenotype (@phenotypes_not) {
+            ++$unique_not{join '|', $object, $rnai, $phenotype, 'Not'};
+            $phenotype2name{$phenotype} = $phenotype->Primary_name;
+        }
 	}
-	$output = $output . join("\n",keys %uniq);
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	return $output;
+
+	if (my $phenotype_id2name = $self->phenotype_id2name) {
+        $self->phenotype_id2name(join("\n", $phenotype_id2name , keys %phenotype2name));
+    }
+
+    return [ join("\n", keys %unique), join("\n", keys %unique_not) ];
 }
 
 sub _gene_xgene_pheno_data_compile{
-
-	my $self = shift @_;		
+	my $self = shift;
 	my $object = $self->object;
 	my %lines;
 	my %lines_not;
-	my $p2n = "";
-		
+
 	my @xgenes = $object->Drives_Transgene;
 	my @xgene_product = $object->Transgene_product;
 	my @xgene_rescue = eval{ $object->Rescued_by_transgene };
-	
+
 	push @xgenes,@xgene_product;
 	push @xgenes,@xgene_rescue;
-	
+
 	my %phenotype2name;
-	
+
 	foreach my $xgene (@xgenes) {
 
 		my @phenotypes = $xgene->Phenotype;
-	
 		foreach my $phenotype (@phenotypes) {
 			my $phenotype_name = $phenotype->Primary_name;
 			my $na = "";
 			$lines{"$object\|$xgene\|$phenotype\|$na"} = 1;
 			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-		}	
-		
+		}
+
 		my @phenotype_nots = $xgene->Phenotype_not_observed;
-		
+
 		foreach my $phenotype_not (@phenotype_nots) {
 			my $phenotype_name = $phenotype_not->Primary_name;
 			my $na = "Not";
 			$lines_not{"$object\|$xgene\|$phenotype_not\|$na"} = 1;
 			$phenotype2name{"$phenotype_not\=\>$phenotype_name"} = 1;
-		}		
+		}
 	}
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	my $output = join ("\n" , keys %lines);
-	my $output_not = join ("\n" , keys %lines_not);
-	return $output,$output_not ;
+
+	$self->phenotype_id2name(join "\n", $self->phenotype_id2name, keys %phenotype2name);
+	return [ join("\n", sort keys %lines), join("\n", sort keys %lines_not) ];
 }
- 
-sub _variation_data_compile{
-	
-	my $self = shift @_;						
+
+sub _variation_data_compile {
+	my $self = shift;
 	my $object = $self->object;
 	my %lines;
 	my %lines_not;
-	my $p2n = "";
 	my %phenotype2name;
-	
-	my @variations = $object->Allele;
-	
-	foreach my $variation (@variations) {
 
+	my @variations = $object->Allele;
+
+	foreach my $variation (@variations) {
 		my $seq_status = $variation->SeqStatus;
 		my $variation_name = $variation->Public_name;
 		my @phenotypes = $variation->Phenotype;
 		my @phenotype_nots = $variation->Phenotype_not_observed;
-		
+
 		foreach my $phenotype (@phenotypes) {
 			my $phenotype_name = $phenotype->Primary_name;
 			my $na = "";
 			$lines{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
 			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
 		}
-		foreach my $phenotype (@phenotype_nots) {	
-			my $na = "Not";			
+		foreach my $phenotype (@phenotype_nots) {
+			my $na = "Not";
 			my $phenotype_name = $phenotype->Primary_name;
 			$lines_not{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
 			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
-			
 		}
 	}
-	
-	$p2n = $p2n . join("\n",keys %phenotype2name);
-	my $phenotype_id2name = $self->phenotype_id2name;
-	$phenotype_id2name = $phenotype_id2name . "\n" . $p2n;
-	$self->phenotype_id2name("$phenotype_id2name");
-	my $output = join ("\n" , keys %lines);
-	my $output_not = join ("\n" , keys %lines_not);
-	return $output, $output_not;
+
+	$self->phenotype_id2name(join "\n", $self->phenotype_id2name, keys %phenotype2name);
+    return [ join("\n", keys %lines), join("\n", keys %lines_not) ];
 }
 
 
-sub _rnai_data_compile{
-
+sub _rnai_data_compile {
 	my $self = shift;
-	my $class = 'RNAi';
-	my %lines;
-	my $gene_rnai_data = $self->gene_rnai_pheno_data;
-	my %rnais;
-	my @rnai_datalines = split "\n",$gene_rnai_data;
-	my $DB = $self->ace_dsn;
 
-	foreach my $dataline (@rnai_datalines) {
-		chomp $dataline;
-		my ($gene,$rnai,$pheno,$not) = split /\|/,$dataline;
-		$rnais{$rnai} = 1;
-	}
+	my %lines;
+	my $dbh = $self->ace_dsn;
+
+    my %rnais = map { (split /\|/)[1] => 1 }  # rnai => 1
+                map { split /\n/ }            # gene|rnai|pheno|not? on each line
+                @{$self->_rnai_pheno_data};   # (@rnai, @rnai_not)
 
 	foreach my $unique_rnai (keys %rnais) {
-		my $rnai_object = $DB->fetch(-class => $class, -name =>$unique_rnai); #, , -count => 20, -offset=>6800
-		my $ref;
+		my $rnai_object = $dbh->fetch(-class => 'RNAi', -name => $unique_rnai); #, , -count => 20, -offset=>6800
+		my $ref = eval { $rnai_object->Reference };
 
-		eval { $ref = $rnai_object->Reference;};
-
-		my $genotype;
-		my @experimental_details; # = $rnai_object->Experiment;
-
-		eval {@experimental_details = $rnai_object->Experiment;};
-
-		foreach my $experimental_detail (@experimental_details) {
-
+        my $genotype;
+		foreach my $experimental_detail (eval { $rnai_object->Experiment }) {
 			if($experimental_detail =~ m/Genotype/) {
-				$genotype = $experimental_detail->right || ''; # what happens when there's nothing?
+				$genotype = $experimental_detail->right || '';
 				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
 			}
-
-			if($experimental_detail =~ m/Strain/) {
+			elsif($experimental_detail =~ m/Strain/) {
 				my $strain = $experimental_detail->right;
-				$genotype = $strain->Genotype || ''; # what happens when there's nothing?
+				$genotype = $strain->Genotype || '';
 				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
 			}
-		}
-
-		if(!($genotype)) {
-			$lines{"$rnai_object\|$genotype\|$ref"} = 1;
-		} else {
-			next;
 		}
 	}
 
-	my $output = join("\n",keys %lines);
-	return $output;
+    return join "\n", keys %lines;
 }
 
-
-sub build_hash{
-
+sub _build_hash {
 	my ($file_name) = @_;
 	open FILE, "< $file_name" or die "Cannot open the file: $file_name\n";
 
@@ -4357,21 +4267,21 @@ sub build_hash{
 
 # helper method, retrieve public name from objects
 sub _public_name {
-    
+
     my ($self,$object) = @_;
-    my $common_name;    
+    my $common_name;
     my $class = eval{$object->class} || "";
-   
+
     if ($class =~ /gene/i) {
-        $common_name = 
+        $common_name =
         $object->Public_name
         || $object->CGC_name
         || $object->Molecular_name
         || eval { $object->Corresponding_CDS->Corresponding_protein }
         || $object;
     }
-    elsif ($class =~ /protein/i) { 
-        $common_name = 
+    elsif ($class =~ /protein/i) {
+        $common_name =
         $object->Gene_name
         || eval { $object->Corresponding_CDS->Corresponding_protein }
         ||$object;
@@ -4379,17 +4289,12 @@ sub _public_name {
     else {
         $common_name = $object;
     }
-    
+
     my $data = $common_name;
     return "$data";
 
 
 }
-
-
-
-
-
 
 #######################################
 #
@@ -4401,81 +4306,73 @@ sub _public_name {
 ## NB: figure out the naming convention for proteins
 
 # NOTE: this method is not used
-sub proteins {
-    my $self   = shift;
-    my $object = $self->object;   
-    my $desc = 'proteins related to gene';   
-        
-    my @cds    = $object->Corresponding_CDS;
-    my @proteins  = map { $_->Corresponding_protein } @cds;
-    @proteins = map {$self->_pack_obj($_, $self->public_name($_, $_->class))} @proteins;
-		
-    return { description => 'proteins encoded by this gene',
-	     data        => \@proteins };
-}
+# sub proteins {
+#     my $self   = shift;
+#     my $object = $self->object;
+#     my $desc = 'proteins related to gene';
+
+#     my @cds    = $object->Corresponding_CDS;
+#     my @proteins  = map { $_->Corresponding_protein } @cds;
+#     @proteins = map {$self->_pack_obj($_, $self->public_name($_, $_->class))} @proteins;
+
+#     return { description => 'proteins encoded by this gene',
+# 	     data        => \@proteins };
+# }
 
 
-# Fetch all CDSs associated with a gene.
-## figure out naming convention for CDs
+# # Fetch all CDSs associated with a gene.
+# ## figure out naming convention for CDs
 
-# NOTE: this method is not used
-sub cds {
-    my $self   = shift;
-    my $object = $self->object;    
-    my @cds    = $object->Corresponding_CDS;
-    my $data_pack = $self->basic_package(\@cds);
-    
-    return { description => 'CDSs encoded by this gene',
-	     data        => $data_pack };
-}
+# # NOTE: this method is not used
+# sub cds {
+#     my $self   = shift;
+#     my $object = $self->object;
+#     my @cds    = $object->Corresponding_CDS;
+#     my $data_pack = $self->basic_package(\@cds);
 
-
-
-# Fetch Homology Group Objects for this gene.
-# Each is associated with a protein and we should probably
-# retain that relationship
-
-# NOTE: this method is not used
-# TH: NOT YET CLEANED UP
-sub kogs {
-    my $self   = shift;
-    my $object = $self->object;
-    my @cds    = $object->Corresponding_CDS;
-    my %data;
-    my %data_pack;
-    
-    if (@cds) {
-	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
-	if (@proteins) {
-	    my %seen;
-	    my @kogs = grep {$_->Group_type ne 'InParanoid_group' } grep {!$seen{$_}++} 
-	         map {$_->Homology_group} @proteins;
-	    if (@kogs) {
-	    	
-	    	$data_pack{$object} = \@kogs;
-			$data{'data'} = \%data_pack;
-
-	    } else { 
-	    
-	    	$data_pack{$object} = 1;
-	    
-	    }
-	}
-    } else {
-		$data_pack{$object} = 1;	
-    }
-    
-    $data{'description'} = "KOGs related to gene";
- 	return \%data;
-}
+#     return { description => 'CDSs encoded by this gene',
+# 	     data        => $data_pack };
+# }
 
 
 
+# # Fetch Homology Group Objects for this gene.
+# # Each is associated with a protein and we should probably
+# # retain that relationship
 
+# # NOTE: this method is not used
+# # TH: NOT YET CLEANED UP
+# sub kogs {
+#     my $self   = shift;
+#     my $object = $self->object;
+#     my @cds    = $object->Corresponding_CDS;
+#     my %data;
+#     my %data_pack;
 
+#     if (@cds) {
+# 	my @proteins  = map {$_->Corresponding_protein(-fill=>1)} @cds;
+# 	if (@proteins) {
+# 	    my %seen;
+# 	    my @kogs = grep {$_->Group_type ne 'InParanoid_group' } grep {!$seen{$_}++}
+# 	         map {$_->Homology_group} @proteins;
+# 	    if (@kogs) {
 
+# 	    	$data_pack{$object} = \@kogs;
+# 			$data{'data'} = \%data_pack;
 
+# 	    } else {
 
+# 	    	$data_pack{$object} = 1;
+
+# 	    }
+# 	}
+#     } else {
+# 		$data_pack{$object} = 1;
+#     }
+
+#     $data{'description'} = "KOGs related to gene";
+#  	return \%data;
+# }
 
 __PACKAGE__->meta->make_immutable;
 
