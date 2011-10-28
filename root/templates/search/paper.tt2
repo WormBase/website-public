@@ -1,11 +1,13 @@
-<div class="ellipsis paper-title">[% tag2link(item.name,item.title.join,"",item.name.label)%]</div>
+<div class="ellipsis paper-title"><span>[% tag2link(item.name,item.title.join,"",item.name.label)%]</span></div>
 </li>
 
 
-<div class="ellipsis author-list" style="padding-right:0.5em;max-width:60%;float:left;">[% link_objects(item.author, ', ') %]</div>
+<div class="ellipsis author-list" style="padding-right:0.5em;width:50%;float:left;position:relative;">
+  <span>[% link_objects(item.author, ', ') %]</span>
+</div>
 [% IF ((item.journal) OR (item.year)) %]
-<div style="float:left">[</div><div class="ellipsis" style="float:left;padding-right:0.2em;max-width:32%;">
-  [% item.journal.join() %][% IF ((item.journal) AND (item.year)); ", "; END %] 
+<div style="float:left">[</div><div class="" style="float:left;padding-right:0.2em;position:relative;">
+  <span>[% item.journal.join() %][% IF ((item.journal) AND (item.year)); ", "; END %]</span>
   </div>[% item.year %]]
 [% END %]
 

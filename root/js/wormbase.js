@@ -181,7 +181,7 @@
         });
       
       $jq("#nav-min").click(function() {
-        var nav = $jq(".navigation").add("#navigation"),
+        var nav = $jq(".navigation-min").add("#navigation"),
             ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
@@ -728,7 +728,6 @@
       });
     }
     
-
     
     function queryHighlight(div){
       if(queryList.length == 0) { return; }
@@ -796,8 +795,8 @@
       checkSearch(allSearch);
     });
     loadcount = 0;
-    scrollToTop();
-    $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
+    if(!allSearch.hasClass("references"))
+      scrollToTop();
     return false;
   }
   
@@ -821,14 +820,14 @@
         if($jq(this).text() == '0'){
           $jq(this).parent().remove();
         }else {
-          $jq(this).parent().show();
+          $jq(this).parent().show().parent().prev().show();
         }
       });
     });
     
-    $jq("#navigation").find(".load-results").click(function(){
+    $jq("#search-count-summary").find(".load-results").click(function(){
       loadResults($jq(this).attr("href"));
-      $jq(this).addClass("ui-selected");
+      $jq(this).addClass("ui-selected").siblings().removeClass("ui-selected");
       return false;
     });
   }
@@ -938,13 +937,13 @@
     function columns(leftWidth, rightWidth, noUpdate){
       var sortable = $jq("#widget-holder").children(".sortable"),
           tWidth = $jq("#widget-holder").innerWidth();
-      sortable.filter(".column-narrow").removeClass("column-narrow");
+//       sortable.filter(".column-narrow").removeClass("column-narrow");
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
       }else{
         sortable.addClass('table-columns').removeClass('one-column');
-        if ((leftWidth < 35) || (leftWidth > 65)){ sortable.filter( (leftWidth < 35) ? ".left" : ".right").addClass("column-narrow"); }
+//         if ((leftWidth < 35) || (leftWidth > 65)){ sortable.filter( (leftWidth < 35) ? ".left" : ".right").addClass("column-narrow"); }
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
@@ -1704,7 +1703,8 @@ var Scrolling = (function(){
       getColorbox: getColorbox,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
-      historyOn: historyOn
+      historyOn: historyOn,
+      allResults: allResults
     }
   })();
 
