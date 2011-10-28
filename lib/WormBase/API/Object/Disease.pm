@@ -1,5 +1,8 @@
 package WormBase::API::Object::Disease; 
+
 use Moose;
+use File::Spec::Functions qw(catfile catdir);
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -28,9 +31,10 @@ has 'orthology_datadir' => ( ## temp
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $version = $self->ace_dsn->version;
-	return $self->pre_compile->{base} . $version . "/orthology/";
+        my $self=shift;
+
+        return catdir($self->pre_compile->{base},
+                                  $self->ace_dsn->version, 'orthology');
     }
 );
 
@@ -39,44 +43,48 @@ has 'orthology_datadir' => ( ## temp
 has 'omim2all_ortholog_data' => (
     is  => 'ro',
     lazy => 1,
-    default => sub {		
+    default => sub {
 		my $self = shift;
-		my  %omim2all_ortholog_data = build_hash($self->orthology_datadir . "omim_id2all_ortholog_data.txt");
-		return \%omim2all_ortholog_data;
-    } 
+		return {
+            build_hash(catfile($self->orthology_datadir,
+                                           'omim_id2all_ortholog_data.txt'))
+        };
+    }
 );
 
 has 'name2id' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-    
-    my $self = shift;
-    my  %name2id = build_hash($self->orthology_datadir . "name2id.txt");
-	return \%name2id;
-    } 
+        my $self = shift;
+        return {
+            build_hash(catfile($self->orthology_datadir, 'name2id.txt'))
+        };
+    }
 );
 
 
 has 'omim_id2disease_desc' => (
     is  => 'ro',
     lazy => 1,
-    default => sub {		
+    default => sub {
 		my $self = shift;
-		my  %omim_id2disease_desc = build_hash($self->orthology_datadir . "omim_id2disease_desc.txt");
-		return \%omim_id2disease_desc;
-    } 
+		return {
+            build_hash(catfile($self->orthology_datadir, 'omim_id2disease_desc.txt'))
+        };
+    }
 );
 
 
 has 'omim_id2txt_notes' => (
     is  => 'ro',
     lazy => 1,
-    default => sub {		
+    default => sub {
 		my $self = shift;
-		my  %omim_id2txt_notes = build_hash($self->orthology_datadir . "omim_id2disease_notes.txt");
-		return \%omim_id2txt_notes;
-    } 
+		return {
+            build_hash(catfile($self->orthology_datadir, 'omim_id2disease_notes.txt'))
+        };
+    }
 );
 
 has 'omim2disease_name' => (
@@ -84,9 +92,10 @@ has 'omim2disease_name' => (
     lazy => 1,
     default => sub {
 		my $self = shift;
-		my  %omim2disease_name = build_hash($self->orthology_datadir . "omim_id2disease_name.txt");
-		return \%omim2disease_name;
-    } 
+		return {
+            build_hash(catfile($self->orthology_datadir, 'omim_id2disease_name.txt'))
+        };
+    }
 );
 
 
