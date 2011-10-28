@@ -246,6 +246,8 @@ sub call_method_ok {
     croak 'Must provide object and method as arguments'
         unless $object && $method;
 
+    $method = $method->name if ref $method && $method->isa('Class::MOP::Method');
+
     my $data = eval {$object->$method};
     $Test->ok(! $@, "$method called without problems")
         or $Test->diag("$object call $method: $@");

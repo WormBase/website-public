@@ -577,12 +577,6 @@ sub compliant_methods_ok {
     }); # end of subtest
 }
 
-# deprecated. here for current testing code but will be removed soon.
-sub listed_methods_ok {
-    my ($self, $args) = @_;
-    $self->compliant_methods_ok($args);
-}
-
 =item B<compliant_data_ok($data, $testname)>
 
     $ok = $tester->compliant_data_ok($data, $testname);
