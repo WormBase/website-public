@@ -2227,11 +2227,12 @@ sub paralogs {
 # Private helper method to standardize structure of homologs.
 sub _parse_homologs {
     my ($self, $homologs, $method_sub) = @_;
+    my $dbh = $self->ace_dsn->dbh;
     return [
         map {
             ortholog => $self->_pack_obj($_), # homolog => ?
             method   => scalar $method_sub->($_),
-            species  => $self->_split_genus_species($_->Species),
+            species  => $self->_split_genus_species($dbh->raw_species($_)),
         }, @$homologs # note the comma
     ];
 }
@@ -2284,29 +2285,36 @@ B<Response example>
 
 =cut
 
-# THIS SERIOUSLY NEEDS TO BE FIXED.
-sub human_diseases {
-    my $self = shift;
+{ # closure for human_diseases
+    my $gene2omim;
+    my $omim2disease_desc;
+    my $omim2disease_name;
 
-	my %gene_id2omim_ids = _build_hash(catfile($self->orthology_datadir,
-                                               'gene_id2omim_ids.txt'));
-	my %omim_id2disease_desc = _build_hash(catfile($self->orthology_datadir,
-                                                   'omim_id2disease_desc.txt'));
-	my %omim_id2disease_name = _build_hash(catfile($self->orthology_datadir,
-                                                   'omim_id2disease_name.txt'));
+    # THIS SERIOUSLY NEEDS TO BE FIXED.
 
-	my @data_pack = map { {
-        omim_id 	=> $_,
-        disease 	=> $omim_id2disease_name{$_},
-        description => $omim_id2disease_desc{$_},
-    } } split /%/, ($gene_id2omim_ids{$self->object} || '');
+    # the above is a temporary fix; at least the files will be loaded
+    #   in once only... a more permanent solution would be a database, even if
+    #   a simple one based on BDB or SQLite. -AD
+    sub human_diseases {
+        my $self = shift;
 
-	return {
-        data        => @data_pack ? \@data_pack : undef,
-		description => 'Diseases related to the gene',
-	};
+        $gene2omim         ||= _build_hash(catfile($self->orthology_datadir, 'gene_id2omim_ids.txt'));
+        $omim2disease_desc ||= _build_hash(catfile($self->orthology_datadir, 'omim_id2disease_desc.txt'));
+        $omim2disease_name ||= _build_hash(catfile($self->orthology_datadir, 'omim_id2disease_name.txt'));
+
+        my @data_pack = map {
+            omim_id 	=> $_,
+            disease 	=> $omim2disease_name->{$_},
+            description => $omim2disease_desc->{$_},
+        }, split /%/, ($gene2omim->{$self->object} || ''); # note the comma for map!
+
+        return {
+            data        => @data_pack ? \@data_pack : undef,
+            description => 'Diseases related to the gene',
+        };
+    }
+
 }
-
 
 =head3 protein_domains
 
@@ -3941,29 +3949,20 @@ sub _go_evidence_code { # pending deletion
 ### get phenotype ids from outputs of get_phenotype_data() and get_variation_data() and provides corresponding phenotype names
 ### syntax: $phene_id2name_hr = get_phenotype_names(rnai_ar,var_ar)
 
-sub _get_phenotype_names {
-	my ($self, $rnai_ar, $var_ar) = @_;
-	my %phene_master;
+{
+    my $phene2name;
 
-	foreach my $rnai_phene_line (@$rnai_ar) {
-		my ($phene_id, $disc) = split /\|/,$rnai_phene_line;
-		$phene_master{$phene_id} = 1;
-	}
+    sub _get_phenotype_names {
+        my ($self, $rnai_ar, $var_ar) = @_;
 
-	foreach my $var_phene_line (@$var_ar) {
-		my ($phene_id, $disc) = split /\|/,$var_phene_line;
-		$phene_master{$phene_id} = 1;
-	}
+        $phene2name ||= _build_hash(catfile($self->gene_pheno_datadir,
+                                            $self->pre_compile->{phenotype_name_file}));
 
-	my %phene_id2name;
-	my %fullset_phene_id2name
-        = _build_hash(catfile($self->gene_pheno_datadir,
-                             $self->pre_compile->{phenotype_name_file}));
-	foreach my $phene_id (keys %phene_master) {
-		$phene_id2name{$phene_id} = $fullset_phene_id2name{$phene_id};  ## $phene_primary_name
-	}
-
-	return \%phene_id2name;
+        return {
+            map { $_ => $phene2name->{$_} }
+            map { (split /\|/, $_, 2)[0] } @$rnai_ar, @$var_ar
+        };
+    }
 }
 
 
@@ -4212,15 +4211,15 @@ sub _variation_data_compile {
 
 		foreach my $phenotype (@phenotypes) {
 			my $phenotype_name = $phenotype->Primary_name;
-			my $na = "";
-			$lines{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
-			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+			$lines{join '|', $object, $variation, $phenotype, '', $seq_status, $variation_name} = 1;
+			$phenotype2name{"$phenotype=>$phenotype_name"} = 1;
 		}
 		foreach my $phenotype (@phenotype_nots) {
 			my $na = "Not";
 			my $phenotype_name = $phenotype->Primary_name;
-			$lines_not{"$object\|$variation\|$phenotype\|$na\|$seq_status\|$variation_name"} = 1;
-			$phenotype2name{"$phenotype\=\>$phenotype_name"} = 1;
+			$lines_not{join '|', $object, $variation, $phenotype,
+                       'Not', $seq_status, $variation_name}       = 1;
+			$phenotype2name{"$phenotype=>$phenotype_name"} = 1;
 		}
 	}
 
@@ -4247,12 +4246,12 @@ sub _rnai_data_compile {
 		foreach my $experimental_detail (eval { $rnai_object->Experiment }) {
 			if($experimental_detail =~ m/Genotype/) {
 				$genotype = $experimental_detail->right || '';
-				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
+				$lines{join '|', $rnai_object, $genotype, $ref} = 1;
 			}
 			elsif($experimental_detail =~ m/Strain/) {
 				my $strain = $experimental_detail->right;
 				$genotype = $strain->Genotype || '';
-				$lines{"$rnai_object\|$genotype\|$ref"} = 1;
+				$lines{join '|', $rnai_object, $genotype, $ref} = 1;
 			}
 		}
 	}
@@ -4261,16 +4260,9 @@ sub _rnai_data_compile {
 }
 
 sub _build_hash {
-	my ($file_name) = @_;
-	open FILE, "< $file_name" or die "Cannot open the file: $file_name\n";
+    open my $fh, '<', $_[0] or die $!;
 
-	my %hash;
-	foreach my $line (<FILE>) {
-		chomp ($line);
-		my ($key, $value) = split '=>',$line;
-		$hash{$key} = $value;
-	}
-	return %hash;
+    return { map { chomp; split /=>/, $_, 2 } <$fh> };
 }
 
 
