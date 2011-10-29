@@ -1,7 +1,7 @@
 package WormBase::API::Service::acedb;
 
 use Moose;
-use Ace;
+use WormBase::Ace;
 
 use namespace::clean -except => 'meta';
 
@@ -92,7 +92,7 @@ sub connect {
             if $conf->{cache_auto_purge_interval};
     }
 
-    return Ace->connect(%options) || die Ace->error;
+    return WormBase::Ace->connect(%options) || die WormBase::Ace->error;
 }
 
 sub ping {

@@ -1817,10 +1817,10 @@ has 'taxonomy' => (
 );
 
 # Parse out species "from a Genus species" string.
-sub _build_taxonomy { # this overlaps with parsed_species
+sub _build_taxonomy {           # this overlaps with parsed_species
     my ($self) = @_;
 
-    my $spec = $self ~~ 'Species';
+    my $spec = $self->ace_dsn->dbh->raw_species($self->object);
     my ($genus, $species) = ($spec ? $spec =~ /(.*) (.*)/ : qw(Caenorhabditis elegans));
 
     return {
@@ -2031,9 +2031,13 @@ sub _pack_obj {
 sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
-    my $genus_species = eval {$object->Species} or return 'c_elegans';
-    my ($species) = $genus_species =~ /.*[ _](.*)/o;
-    return lc(substr($genus_species, 0, 1)) . "_$species";
+
+    if (my $genus_species = $self->ace_dsn->dbh->raw_species($object)) {
+        my ($g, $species) = $genus_species =~ /(.).*[ _](.+)/o;
+        return "${g}_$species";
+    }
+
+    return 'c_elegans';
 }
 
 # Take a string of Genus species and return a 

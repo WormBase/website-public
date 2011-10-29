@@ -1014,7 +1014,7 @@ sub anatomic_expression_patterns {
         my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg");
         $data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=$ep" if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
-        my $pattern =  $ep->Pattern(-filled=>1) || '' . $ep->Subcellular_localization(-filled=>1) || '';
+        my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
         $pattern    =~ s/(.{384}).+/$1.../;
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
@@ -2017,19 +2017,18 @@ B<Response example>
 
 sub nematode_orthologs {
     my $self   = shift;
-    my $object = $self->object;
 
-    my @data;
-    foreach ($object->Ortholog) {
-	my $methods  = join('; ',map { "$_" } $_->right(2)->col);
-	push @data, { ortholog => $self->_pack_obj($_),
-		      method   => $methods,
-		      species  => $self->_split_genus_species($_->Species)
-	};
-    }
-    
-    return { description => 'precalculated ortholog assignments for this gene',
-	     data        =>  @data ? \@data : undef };
+    my $data = $self->_parse_homologs(
+        [ $self->object->Ortholog ],
+        sub {
+            $_[0]->right(2) ? join('; ', map { "$_" } $_->right(2)->col) : undef;
+        }
+    );
+
+    return {
+        description => 'precalculated ortholog assignments for this gene',
+        data        =>  @$data ? $data : undef,
+    };
 
 }
 
@@ -2083,14 +2082,18 @@ B<Response example>
 # I sure do wish we had some descriptions for human genes.
 sub human_orthologs {
     my $self = shift;
-    my $object = $self->object;
-    my @data;
-    foreach ($object->Ortholog_other) {
-	next unless $_->name =~ /ENSEMBL:ENSP\d{1}.*/;	
-	push @data, $self->_parse_ortholog_other($_);
-    }
-    return { description => 'human orthologs of this gene',
-	     data        => @data ? \@data : undef};    
+
+    my $data = $self->_parse_homologs(
+        [ grep { /ENSEMBL:ENSP\d/o } $self->object->Ortholog_other ],
+        sub {
+            $_[0]->right ? join('; ', map { "$_" } $_[0]->right->col) : undef;
+        }
+    );
+
+    return {
+        description => 'human orthologs of this gene',
+        data        => @$data ? $data : undef,
+    };
 }
 
 
@@ -2145,22 +2148,16 @@ B<Response example>
 
 sub other_orthologs {
     my $self = shift;
-    my $object = $self->object;
-    my @data;
-    foreach ($object->Ortholog_other) {
-	push @data, $self->_parse_ortholog_other($_);
-    }
-    return { description => 'orthologs of this gene to other species outside of core nematodes at WormBase',
-	     data        => @data ? \@data : undef };    
-}
+    my $data = $self->_parse_homologs(
+        [ $self->object->Ortholog_other ],
+        sub {
+            $_[0]->right ? join('; ', map { "$_" } $_[0]->right->col) : undef;
+        }
+    );
 
-# Private helper method to standardize structure of other orthologs.
-sub _parse_ortholog_other {
-    my ($self,$ortholog) = @_;
-    my $methods  = $ortholog->right ? join('; ',map { "$_" } $ortholog->right->col): undef;
-    return { ortholog => $self->_pack_obj($ortholog),
-	     method   => $methods,
-	     species  => $self->_split_genus_species($ortholog->Species)
+    return {
+        description => 'orthologs of this gene to other species outside of core nematodes at WormBase',
+        data        => @$data ? $data : undef,
     };
 }
 
@@ -2213,20 +2210,31 @@ B<Response example>
 
 sub paralogs {
     my $self   = shift;
-    my $object = $self->object;
-    my @data;
-    foreach ($object->Paralog) {
-	my $methods  = join('; ',map { "$_" } $_->right(2)->col);
-	push @data, { ortholog => $self->_pack_obj($_),
-		      method   => $methods,
-		      species  => $self->_split_genus_species($_->Species)
-	};
-    }
-    
-    return { description => 'precalculated paralog assignments',
-	     data        =>  @data ? \@data : undef};
+
+    my $data = $self->_parse_homologs(
+        [ $self->object->Paralog ],
+        sub {
+            $_[0]->right(2) ? join('; ', map { "$_" } $_->right(2)->col) : undef;
+        }
+    );
+
+    return {
+        description => 'precalculated paralog assignments',
+        data        =>  @$data ? $data : undef
+    };
 }
 
+# Private helper method to standardize structure of homologs.
+sub _parse_homologs {
+    my ($self, $homologs, $method_sub) = @_;
+    return [
+        map {
+            ortholog => $self->_pack_obj($_), # homolog => ?
+            method   => scalar $method_sub->($_),
+            species  => $self->_split_genus_species($_->Species),
+        }, @$homologs # note the comma
+    ];
+}
 
 =head3 human_diseases
 
@@ -2348,14 +2356,14 @@ B<Response example>
 =cut
 
 sub protein_domains {
-    my $self   = shift;
+    my $self = shift;
 
     my %unique_motifs;
     for my $protein ( @{ $self->all_proteins } ) {
-        my @motifs = $protein->Motif_homol;
-        foreach my $motif (@motifs) {
-            $unique_motifs{ $motif->Title } = $self->_pack_obj($motif)
-                unless $unique_motifs{ $motif->Title };
+        for my $motif ($protein->Motif_homol) {
+            if (my $title = $motif->Title) {
+                $unique_motifs{$title} ||= $self->_pack_obj($motif);
+            }
         }
     }
 
@@ -2519,6 +2527,7 @@ sub interactions {
         }
 
         my $phenotype = $type->Interaction_phenotype;
+
         push @data,
             {
             interaction => $self->_pack_obj($interaction),
@@ -3585,17 +3594,18 @@ sub gene_models {
 # should we return entire sequence obj or just linking/description info? -AC
 sub other_sequences {
     my $self   = shift;
-    my $object = $self->object;
-    my @data;
-    foreach ($object->Other_sequence) {
-	my $title = $_->Title;
-	push @data, {sequence    => $self->_pack_obj($_),
-		     description => "$title" };
-    }
 
-    return { 
-	description => 'Other sequences associated with gene',
-	data        => @data ? \@data : undef,
+    my @data = map {
+        my $title = $_->Title;
+        {
+            sequence => $self->_pack_obj($_),
+            description => $title && "$title",
+        }
+    } $self->object->Other_sequence;
+
+    return {
+        description => 'Other sequences associated with gene',
+        data        => @data ? \@data : undef,
     };
 }
 
