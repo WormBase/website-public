@@ -2034,7 +2034,7 @@ sub _parsed_species {
 
     if (my $genus_species = $self->ace_dsn->dbh->raw_species($object)) {
         my ($g, $species) = $genus_species =~ /(.).*[ _](.+)/o;
-        return "${g}_$species";
+        return lc "${g}_$species";
     }
 
     return 'c_elegans';
