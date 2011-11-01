@@ -272,6 +272,7 @@
       if(widgetHolder.size()==0){return;}
       
       window.onhashchange = readHash;
+      window.onresize = setWidth;
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -412,33 +413,13 @@
       content.delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
       content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
       function expand(txt, more){
-          var h = txt.height();
-          if(h<40){
-            h='100%';
-                    //expand the shorted items before the text, also
-              txt.prev('.ellipsis')
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .removeClass('ellipsis');
-          }else{
-            h='2.4em';
-                    //expand the shorted items before the text, also
-              txt.prev(":not(.gene-link)")
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .addClass('ellipsis');
-          }
-          txt.css("max-height", "none");
-          txt.animate({height:h});
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
-          more.toggleClass('open');
+          var h = (txt.height() < 40) ? '100%' : '2.4em';
+          txt.animate({height:h}).css("max-height", "none").parent().find(".expand").toggleClass('ellipsis');
+          more.toggleClass('open').children(".ui-icon").toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
       }
       content.delegate(".text-min", 'mouseover mouseout', function(){ 
         $jq(this).next().toggleClass('opaque');
       });
-      
-      
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
@@ -820,7 +801,7 @@
         if($jq(this).text() == '0'){
           $jq(this).parent().remove();
         }else {
-          $jq(this).parent().show().parent().prev().show();
+          $jq(this).parent().show().parent().prev(".title").show();
         }
       });
     });
@@ -828,8 +809,13 @@
     $jq("#search-count-summary").find(".load-results").click(function(){
       loadResults($jq(this).attr("href"));
       $jq(this).addClass("ui-selected").siblings().removeClass("ui-selected");
+      $jq("#curr-ref-text").html($jq(this).html());
       return false;
     });
+    
+    if (type == 'paper')
+      setWidth();
+    
   }
 
 
@@ -947,6 +933,7 @@
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
+      setWidth();
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -1112,6 +1099,11 @@
       if(location.hash.length > 0){
         updateLayout(undefined, hash);
       }
+    }
+    
+    function setWidth(){
+      var ref = $jq("#references-content");
+      (ref.innerWidth() < 840) ? ref.addClass("widget-narrow") : ref.removeClass("widget-narrow");
     }
 
 

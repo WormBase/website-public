@@ -15,7 +15,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
-        IF fields.other_names.data.size>0; 
+        IF fields.other_names.data; 
               fields.other_names.data.join(', '); 
         END;
    END;
@@ -43,7 +43,7 @@ END;
 '</div>';
 
 # Structured descriptions
-IF fields.structured_description.data.keys.size > 0;
+IF fields.structured_description.data;
     '<div class="toggle">Details</div>';
     '<div class="returned field">';
     id = 0;
@@ -65,7 +65,7 @@ END;
 
 
 # Legacy Information
-IF fields.legacy_information.data.size > 0;
+IF fields.legacy_information.data;
      '<div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>';
      '<div class="returned">';
           FOREACH desc IN fields.legacy_information.data;

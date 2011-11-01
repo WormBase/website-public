@@ -1532,7 +1532,7 @@ li.visible div.widget-container {
 #widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
     background: #E3DDC5;
 }
-#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation ul li.ui-selected {
+#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation .ui-selected {
     background: #D0DEC1;
 }
 #widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
@@ -2281,12 +2281,48 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 #references-content .navigation {
-/*   margin:-1em 0 0 -1em; */
   margin: 0em;
-/*   background:#EFEFEF; */
   border:1px solid #CDCDCD;
   float:right;
+  list-style-type: none; 
+  padding:0;
 }
+
+/* when the references are narrow */
+
+#references-content.widget-narrow .navigation {
+  border:none;
+}
+#references-content.widget-narrow .navigation li{
+  position:relative;
+  margin:0;
+}
+
+#references-content.widget-narrow .navigation ul{
+  display:none;
+  position:absolute;
+  left:0;
+  top:100%;
+  width:100%;
+  background:white;
+  z-index:100;
+  border:1px solid #CDCDCD;
+  margin:0;
+  padding:0;
+}
+
+#references-content.widget-narrow #current-ref {
+  display:block;
+  padding: 0.5em 1.5em;
+  margin:0;
+  font-size:0.9em;
+}
+
+#references-content.widget-narrow li:hover ul {
+  display:block;
+}
+
+/* end narrow references */
 
 #references-content li { 
   border:none;
@@ -2322,7 +2358,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   background: #FFFFDF;
 }
 
-.navigation ul li.ui-selected { 
+.navigation .ui-selected { 
   background: #C2D1DF; 
   color: black; 
 }
