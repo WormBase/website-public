@@ -51,14 +51,9 @@
         mystring = text.join("<br>");
 
         IF mystring %]
-        <div class="text-min" style="height:auto;max-height:2.4em;">
+        <div class="text-min">
            [% mystring %]    
         </div>
-          [% IF mystring.length > 150 %]
-                <div class="more">
-                    <div class="ui-icon ui-icon-triangle-1-s"></div>
-                </div>
-          [% END %]
         [% END; %]
      <span id="fade">[% item.footer %]</span>
   [% CATCH %]

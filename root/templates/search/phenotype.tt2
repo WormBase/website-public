@@ -3,11 +3,6 @@
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
 [% desc = item.description.1 %]
-<div class="text-min" style="height:auto;max-height:2.4em;">
+<div class="text-min">
   [% markup(desc) %]    
 </div>
-[% IF desc.length > 150 %]
-  <div class="more">
-  <div class="ui-icon ui-icon-triangle-1-s"></div>
-  </div>
-[% END %]
