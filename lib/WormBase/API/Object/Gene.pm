@@ -2232,7 +2232,7 @@ sub _parse_homologs {
         map {
             ortholog => $self->_pack_obj($_), # homolog => ?
             method   => scalar $method_sub->($_),
-            species  => $self->_split_genus_species($dbh->raw_fetch_species($_)),
+            species  => $self->_split_genus_species($dbh->raw_fetch($_, 'Species')),
         }, @$homologs # note the comma
     ];
 }

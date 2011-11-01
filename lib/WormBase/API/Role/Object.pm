@@ -2289,7 +2289,4 @@ sub wormbook_abstracts {
     return $result;
 }
 
-
-
-
 1;
