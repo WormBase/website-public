@@ -10,7 +10,7 @@ has 'dbh'     => (
     isa       => 'Ace',
     predicate => 'has_dbh',
     writer    => 'set_dbh',
-    handles   => [qw/fetch raw_query find fetch_many/],
+    handles   => [qw/fetch raw_query find fetch_many raw_fetch/],
 );
 
 # Roles to consume.

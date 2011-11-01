@@ -32,6 +32,9 @@ use Class::MOP;
             Rnai      => 'RNAi',
             Go_term   => 'GO_term',
         },
+        # the following are the tags for extracting a "common" or "public" name
+        # for objects automatically. when adding a new one, please consider
+        # writing a corresponding "raw" version in WormBase::Ace
         common_name => {
             Person       => 'Standard_name',
             Gene         => [qw(Public_name CGC_name Molecular_name)],

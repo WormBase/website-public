@@ -164,8 +164,10 @@ sub _make_common_name {
     my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
     if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
         $tag = [$tag] unless ref $tag;
+        my $dbh = $self->ace_dsn->dbh;
+
         foreach my $tag (@$tag) {
-            last if $name = eval{ $object->$tag };
+            last if $name = $dbh->raw_fetch($object, $tag);
         }
     }
 
@@ -180,7 +182,7 @@ sub _make_common_name {
     }
 
 	$name //= $object->name;
-    return "$name";
+    return $name; # caution: $name should be a string!
 }
 
 =head3 other_names
@@ -1820,7 +1822,7 @@ has 'taxonomy' => (
 sub _build_taxonomy {           # this overlaps with parsed_species
     my ($self) = @_;
 
-    my $spec = $self->ace_dsn->dbh->raw_species($self->object);
+    my $spec = $self->ace_dsn->raw_fetch($self->object, 'Species');
     my ($genus, $species) = ($spec ? $spec =~ /(.*) (.*)/ : qw(Caenorhabditis elegans));
 
     return {
@@ -2032,7 +2034,7 @@ sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
 
-    if (my $genus_species = $self->ace_dsn->dbh->raw_species($object)) {
+    if (my $genus_species = $self->ace_dsn->raw_fetch($object, 'Species')) {
         my ($g, $species) = $genus_species =~ /(.).*[ _](.+)/o;
         return lc "${g}_$species";
     }
