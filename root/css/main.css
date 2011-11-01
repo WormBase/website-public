@@ -616,7 +616,6 @@ div#create-prompt {
   -ms-text-overflow: ellipsis;  
   display:block;
   height:1.3em;
-/*   position:relative; */
 }
 
 .ellipsis>span{
@@ -629,7 +628,7 @@ div#create-prompt {
   -ms-text-overflow: ellipsis;  
 }
 
-.text-min {
+.text-min-expand {
   clear:left;
   height:2.4em;
   overflow:hidden;

@@ -16,8 +16,6 @@
   [% ab = item.abstract.join() | html %]
   [% markup(ab,0) %]    
 </div>
-<div class="more">
-<div class="ui-icon ui-icon-triangle-1-s"></div>
-</div>
+
 [% END %]
 
