@@ -146,7 +146,12 @@ sub _build__phenotypes {
 
     # gather variation info
     for my $allele ($object->Allele) {
-        my $packed_allele = $self->_pack_obj($allele);
+        my $seq_status = $allele->SeqStatus;
+
+        my $packed_allele = $self->_pack_obj(
+            $allele, undef,
+            boldface => $seq_status ? scalar($seq_status =~ /sequenced/i) : 0,
+        );
 
         foreach ($allele->Phenotype) {
             $phenotypes{observed}{$_}{object}        //= $self->_pack_obj($_);

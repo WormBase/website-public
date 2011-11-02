@@ -23,7 +23,11 @@
                   <td>
                      [% IF phenotype.allele %]
                         Alleles:
-                        [% link_objects(phenotype.allele) %]
+                        [% FOREACH allele IN phenotype.allele.values %]
+                           [% IF allele.boldface %] <b>[% tag2link(allele) %]</b>
+                           [% ELSE %]                  [% tag2link(allele) %]
+                           [% END %]
+                        [% END %]
                      [% END %]
                      [% IF phenotype.transgene %]
                         Transgene(s):
