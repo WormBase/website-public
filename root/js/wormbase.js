@@ -410,15 +410,14 @@
               });
             });
       });
-      content.delegate(".text-min-expand", 'click', function(){ expand($jq(this), $jq(this).next());});
-      content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
-      function expand(txt, more){
-          var h = (txt.height() < 40) ? '100%' : '2.4em';
-          txt.animate({height:h}).css("max-height", "none").parent().find(".expand").toggleClass('ellipsis');
-          more.toggleClass('open').children(".ui-icon").toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
-      }
-      content.delegate(".text-min-expand", 'mouseover mouseout', function(){ 
-        $jq(this).next().toggleClass('opaque');
+      content.delegate(".text-min", 'click', function(){
+        var container = $jq(this),
+            txt = container.children(".text-min-expand"),
+            more = txt.next(),
+            h = (txt.height() < 40) ? '100%' : '2.4em';
+        txt.animate({height:h}).css("max-height", "none");
+        more.toggleClass('open').children().toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+        container.parent().find(".expand").toggleClass('ellipsis');
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
@@ -713,8 +712,9 @@
     function formatResults(div){
       var expands = div.find(".text-min");
       for(var i=-1, el, l = expands.size(); ((el = expands.slice(++i, i+1)) && i < l);){
-        if(el.height() > 30)
-          el.addClass("text-min-expand").after('<div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>');
+        (el.height() > 35) ? 
+          el.html('<div class="text-min-expand">' + el.text() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+          : el.removeClass("text-min");
       }
 
       if(queryList.length == 0) { return; }
