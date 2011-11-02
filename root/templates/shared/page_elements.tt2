@@ -397,7 +397,7 @@ END;
                    FOREACH cell IN row;
               '<td>'; 
                       IF cell.species.defined;
-                          '<span class="species">' _ cell.genus.chunk(1).0 _ '.' _ cell.species _ '</span>';
+                          '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                       ELSIF cell.class.defined;
                           tag2link(cell);
                   ELSIF cell.match('ARRAY');
