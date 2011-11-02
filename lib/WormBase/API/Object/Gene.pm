@@ -2235,14 +2235,23 @@ sub paralogs {
 # Private helper method to standardize structure of homologs.
 sub _parse_homologs {
     my ($self, $homologs, $method_sub) = @_;
-    my $dbh = $self->ace_dsn->dbh;
-    return [
-        map {
-            ortholog => $self->_pack_obj($_), # homolog => ?
+
+    my @parsed;
+    foreach (@$homologs) {
+        my $packed_homolog = $self->_pack_obj($_);
+        my $species = $packed_homolog->{taxonomy};
+        my ($g, $spec) = split /_/, $species;
+        push @parsed, {
+            ortholog => $packed_homolog,
             method   => scalar $method_sub->($_),
-            species  => $self->_split_genus_species($dbh->raw_fetch($_, 'Species')),
-        }, @$homologs # note the comma
-    ];
+            species  => {
+                genus   => ucfirst $g,
+                species => $spec,
+            },
+        };
+    }
+
+    return \@parsed;
 }
 
 =head3 human_diseases
