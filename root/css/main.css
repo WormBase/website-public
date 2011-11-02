@@ -636,6 +636,12 @@ div#create-prompt {
   text-overflow: ellipsis;
 }
 
+.text-min:hover div.more, div.more:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
+}
+
 div.more {
   cursor:pointer;
   position:relative;
@@ -647,17 +653,6 @@ div.more {
   -moz-opacity:0.3;
 }
 
-div.more:hover {
-    opacity:1;
-    filter:alpha(opacity=100);
-    -moz-opacity:1;
-}
-
-div.opaque {
-  opacity:1;
-  filter:alpha(opacity=100);
-  -moz-opacity:1;
-}
 
 div.more.open {
   border-top:none;
