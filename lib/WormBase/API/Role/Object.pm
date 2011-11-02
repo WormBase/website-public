@@ -2015,7 +2015,8 @@ sub tmp_acedata_dir {
 sub _pack_objects {
     my ($self, $objects) = @_;
 #    $objects = ref $objects ? $objects : [ $objects ];
-    return {map {$_ => $self->_pack_obj($_)} @$objects} if $objects;
+    return unless $objects;
+    return {map {$_ => $self->_pack_obj($_)} @$objects};
 }
 
 sub _pack_obj {
