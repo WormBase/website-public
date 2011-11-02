@@ -28,8 +28,6 @@ http://wormbase.org/species/*/gene
 
 =cut
 
-my %phenotype2name;
-
 has '_all_proteins' => (
     is  => 'ro',
     lazy => 1,
@@ -103,7 +101,7 @@ sub _build__rnai_results {
                 grep { $_ eq 'Interaction_phenotype' }
                 map  { $_->col }
                 map  { $_->Interaction_type }
-                $rnai->Interaction,
+                $rnai->Interaction(-filltag => 'Interaction_type'),
         );
 
         my @phenotypes_nobs = $rnai->Phenotype_not_observed;
@@ -2083,20 +2081,31 @@ B<Response example>
 
 =cut
 
-# I sure do wish we had some descriptions for human genes.
-sub human_orthologs {
-    my $self = shift;
+has '_other_orthologs' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__other_orthologs',
+);
 
-    my $data = $self->_parse_homologs(
-        [ grep { /ENSEMBL:ENSP\d/o } $self->object->Ortholog_other ],
+sub _build__other_orthologs {
+    my ($self) = @_;
+    return $self->_parse_homologs(
+        [ $self->object->Ortholog_other ],
         sub {
             $_[0]->right ? join('; ', map { "$_" } $_[0]->right->col) : undef;
         }
     );
+}
+
+# I sure do wish we had some descriptions for human genes.
+sub human_orthologs {
+    my $self = shift;
+
+    my @data = grep { $_->{ortholog}{id} =~ /ENSEMBL:ENSP\d/ } @{$self->_other_orthologs};
 
     return {
         description => 'human orthologs of this gene',
-        data        => @$data ? $data : undef,
+        data        => @data ? \@data : undef,
     };
 }
 
@@ -2151,13 +2160,8 @@ B<Response example>
 =cut
 
 sub other_orthologs {
-    my $self = shift;
-    my $data = $self->_parse_homologs(
-        [ $self->object->Ortholog_other ],
-        sub {
-            $_[0]->right ? join('; ', map { "$_" } $_[0]->right->col) : undef;
-        }
-    );
+    my ($self) = @_;
+    my $data = $self->_other_orthologs;
 
     return {
         description => 'orthologs of this gene to other species outside of core nematodes at WormBase',

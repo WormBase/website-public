@@ -308,6 +308,9 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|P
 
 # Template: [% best_blastp_matches %]
 
+# This is A Bad Idea. if _all_proteins is ever changed in Gene,
+# nobody will notice there's a problem until a Gene page is open
+# with homology widget open. Solution: make a new role. -AD
 has 'best_blastp_matches' => (
     is       => 'ro',
     required => 1,
@@ -325,7 +328,7 @@ sub _build_best_blastp_matches {
     my $proteins;
     # Only for genes or proteins.
     if ($class eq 'Gene') {
-        $proteins = $self->all_proteins;
+        $proteins = $self->_all_proteins;
     }
     elsif ($class eq 'Protein') {
         # current_object might already be a protein.
