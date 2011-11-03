@@ -28,7 +28,8 @@
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
         plugins = new Array(),
-        loading = false;
+        loading = false,
+        suppressColumns = false;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
@@ -272,7 +273,7 @@
       if(widgetHolder.size()==0){return;}
       
       window.onhashchange = readHash;
-      window.onresize = setWidth;
+      window.onresize = resize;
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -324,8 +325,8 @@
       
       function height(list){
         var len = 0; 
-        for(var i=0; i<list.length; i++){ 
-          len += $jq(list[i]).height();
+        for(var i=-1, l = list.length; i++<l;){ 
+          len += list.eq(i).height();
         } 
         return len;
       }
@@ -711,7 +712,7 @@
     
     function formatResults(div){
       var expands = div.find(".text-min");
-      for(var i=-1, el, l = expands.size(); ((el = expands.slice(++i, i+1)) && i < l);){
+      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
         (el.height() > 35) ? 
           el.html('<div class="text-min-expand">' + el.text() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
           : el.removeClass("text-min");
@@ -821,7 +822,7 @@
     });
     
     if (type == 'paper')
-      setWidth();
+      resize();
     
   }
 
@@ -940,7 +941,7 @@
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
-      setWidth();
+
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -1061,6 +1062,7 @@
           lstring = hash || readLayout(holder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
+      resize();
         if(callback){ callback(); }
       });
     }
@@ -1077,9 +1079,9 @@
     }
 
     function getLeftWidth(holder){
-      var totWidth = parseFloat(holder.outerWidth()),
-          leftWidth = (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
-      return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
+      var totWidth = suppressColumns ? 10 : parseFloat(holder.outerWidth()),
+          leftWidth = suppressColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
+          return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth, hash){
@@ -1108,9 +1110,12 @@
       }
     }
     
-    function setWidth(){
+    function resize(){
       var ref = $jq("#references-content");
-      (ref.innerWidth() < 845) ? ref.addClass("widget-narrow") : ref.removeClass("widget-narrow");
+      if(suppressColumns != (suppressColumns = (document.documentElement.clientWidth < 800)))
+        suppressColumns ? columns(100, 100) : readHash();
+      if(ref)
+        (ref.innerWidth() < 845) ? ref.addClass("widget-narrow") : ref.removeClass("widget-narrow");
     }
 
 
