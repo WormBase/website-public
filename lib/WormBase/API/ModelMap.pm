@@ -5,6 +5,14 @@ use warnings;
 use Module::Pluggable::Object;
 use Class::MOP;
 
+use constant OBJ_BASE => 'WormBase::API::Object';
+
+BEGIN {
+    # load all the object classes
+    Class::MOP::load_class($_)
+      foreach Module::Pluggable::Object->new(search_path => [OBJ_BASE])->plugins;
+}
+
 # If we want to make this more object-oriented, we would add a class attribute
 # (e.g. _ACE_MODEL) to WormBase::API::Object. That attribute would default to
 # the model name and would be overridden for the special cases, e.g. Pcr_oligo,
@@ -16,7 +24,6 @@ use Class::MOP;
 # coded with speed in mind.
 
 { # limit the scope of the lexical variables to prevent tampering
-    my $base = 'WormBase::API::Object';
 
     # NOTE: all entries use the short WB names (without the package base) unless
     #  specified.
@@ -83,16 +90,13 @@ use Class::MOP;
 
     sub _map_wb2ace {
         # map the classes (with short name)
-        my $mp = Module::Pluggable::Object->new(search_path => [$base]);
 
 		$WB2ACE_MAP{class}     ||= {};
 		$WB2ACE_MAP{fullclass} ||= {};
 		my ($classmap, $fullclassmap) = @WB2ACE_MAP{qw(class fullclass)};
 
-        foreach my $fullwbclass ($mp->plugins) {
-            # it is necessary to load the classes as anything that is using
-            # ModelMap likely wants to tinker with that class
-            Class::MOP::load_class($fullwbclass);
+        my @classes = Module::Pluggable::Object->new(search_path => [OBJ_BASE])->plugins;
+        foreach my $fullwbclass (@classes) {
 			my $wbclass = (split /::/, $fullwbclass)[-1];
             # the exceptional cases have already been mapped.
             $classmap->{$wbclass} ||= $wbclass;
@@ -111,7 +115,7 @@ use Class::MOP;
 		my $fullclassmap = $ACE2WB_MAP{fullclass} ||= {};
 
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
-			my $fullwb = "${base}::$wb";
+			my $fullwb = join('::', OBJ_BASE, $wb);
             my $canonical_ace_class;
             if (ref $ace eq 'ARRAY') { # multiple Ace to single WB
                 foreach my $ace_class (@$ace) {
