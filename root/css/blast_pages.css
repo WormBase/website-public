@@ -7,7 +7,7 @@ $Id: blast_pages.css,v 1.1.1.1 2010-01-25 15:47:07 tharris Exp $
 
 */
 div.blast_container {
-  display:none;
+/*   display:none; */
 } 
 
 /* Header */

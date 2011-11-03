@@ -226,7 +226,7 @@ sub process_input {
         }
 
         $command_line = catfile($self->pre_compile->{BLAST_EXEC_DIR}, '/bin/blastall')
-                      . qq[-p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
+                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
     }
 
     elsif ($search_type eq "blat") {
@@ -376,7 +376,7 @@ sub display_results {
 	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref);
 
         $self->log->debug( "$address: processing results file: done" );
-
+  
         my $vars = {
             query_name 	       => $query_name,
             kviewer_image_content      => $kviewer_image_content,
@@ -483,7 +483,7 @@ sub result2html {
 		    if $expand_link;
 =cut
 		$link= $hash->{$hit} = {	
-							    #expand_area_counter=>$expand_area_counter,
+							     expand_area_counter=>$expand_area_counter,
 								sequence_link=> $sequence_link,
 								expand_link=>$expand_link,
 								alignment_link=>$alignment_link,

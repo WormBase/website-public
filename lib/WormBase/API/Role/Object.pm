@@ -1997,7 +1997,7 @@ sub tmp_image_uri {
 
     # URI (pre-NFS): /images/wb-web1/00/00/00...
     # URI: /images/00/00/00...
-    my $uri = '/' . $path_and_file;
+    my $uri = ($path_and_file=~m/^\//)? $path_and_file :'/' . $path_and_file;
     return $uri;
 }
 
