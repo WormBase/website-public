@@ -9,31 +9,15 @@
     [% count = 0 %]
     [% FOREACH obj IN data %]
 	[% count = count + 1  %]
-	<option id="[% count %]">[% count _ ":" _ obj.query_name %]</option>
+	<option id="[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>
     [% END %] 
 </select>
  
 
 [% count = 0 %] 
 [% FOREACH obj IN data %]
-  [% count = count + 1  %]
-  [% INCLUDE tool/blast_blat/display.tt2 %] 
+  [% count = count + 1  %]  
+  [% PROCESS tools/blast_blat/display.tt2  obj=obj %] 
 [% END %]
 
-
-<script type="text/javascript">
  
-
-    $jq(".blast_blat").change(function () {
-          
-	   
-	  $jq(".blast_container:visible").hide();
-           
-           var str = $jq(".blast_blat option:selected").attr("id");
-            
-          $jq("." + str).show();
-	  
-        })
-        .change();
- 
-</script> 

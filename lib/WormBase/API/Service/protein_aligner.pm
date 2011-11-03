@@ -46,7 +46,7 @@ sub index {
 
 
 sub run {
-    my ($self,$param) = @_;
+    my ($self,$c,$param) = @_;
     my $peptide_id = $param->{"sequence"};
     my $protRecord = $self->ace_dsn->fetch("Protein"=> $peptide_id);
     return {msg=>"Sorry, 0 results found for this protein"} unless $protRecord  ;
