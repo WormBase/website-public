@@ -28,8 +28,7 @@
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
         plugins = new Array(),
-        loading = false,
-        suppressColumns = false;
+        loading = false;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
@@ -273,7 +272,7 @@
       if(widgetHolder.size()==0){return;}
       
       window.onhashchange = readHash;
-      window.onresize = resize;
+      window.onresize = Layout.resize;
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -663,6 +662,7 @@
         if(f == "search..." || !f){
           f = "*";
         }
+
         f = encodeURIComponent(f.trim());
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
@@ -822,7 +822,7 @@
     });
     
     if (type == 'paper')
-      resize();
+      Layout.resize();
     
   }
 
@@ -930,7 +930,8 @@
     
     function columns(leftWidth, rightWidth, noUpdate){
       var sortable = $jq("#widget-holder").children(".sortable"),
-          tWidth = $jq("#widget-holder").innerWidth();
+          tWidth = $jq("#widget-holder").innerWidth(),
+          leftWidth = Layout.suppressColumns() ? 100 : leftWidth;
 //       sortable.filter(".column-narrow").removeClass("column-narrow");
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
@@ -1062,8 +1063,8 @@
           lstring = hash || readLayout(holder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
-      resize();
-        if(callback){ callback(); }
+      Layout.resize();
+      if(callback){ callback(); }
       });
     }
     
@@ -1079,9 +1080,8 @@
     }
 
     function getLeftWidth(holder){
-      var totWidth = suppressColumns ? 10 : parseFloat(holder.outerWidth()),
-          leftWidth = suppressColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
-          return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
+      var leftWidth = Layout.suppressColumns() ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
+      return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth, hash){
@@ -1110,14 +1110,27 @@
       }
     }
     
+    
+var Layout = (function(){
+  var sColumns = false,
+      ref = $jq("#references-content");
+      
     function resize(){
-      var ref = $jq("#references-content");
-      if(suppressColumns != (suppressColumns = (document.documentElement.clientWidth < 800)))
-        suppressColumns ? columns(100, 100) : readHash();
-      if(ref)
-        (ref.innerWidth() < 845) ? ref.addClass("widget-narrow") : ref.removeClass("widget-narrow");
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < 800)))
+        sColumns ? columns(100, 100) : readHash();
+      if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
+        ref.toggleClass("widget-narrow");
     }
-
+    
+    function suppressColumns(){
+     return sColumns; 
+    }
+    
+  return {
+      suppressColumns: suppressColumns,
+      resize: resize
+  }
+})();
 
 
 
@@ -1723,3 +1736,10 @@ var Scrolling = (function(){
  window.WB = WB;
  window.$jq = $jq;
 }(this,document);
+
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}

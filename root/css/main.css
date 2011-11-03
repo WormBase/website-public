@@ -2295,12 +2295,13 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 #references-content.widget-narrow .navigation ul{
   display:none;
   position:absolute;
-  left:0;
+  left:-2;
   top:100%;
   width:100%;
   background:white;
   z-index:100;
   border:1px solid #CDCDCD;
+  border-top:none;
   margin:0;
   padding:0;
 }
