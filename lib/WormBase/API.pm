@@ -2,7 +2,6 @@ package WormBase::API;
 
 use Moose;                       # Moosey goodness
 
-use WormBase::API::Factory;      # Our object factory
 use WormBase::API::ModelMap;
 use WormBase::API::Service::Xapian;
 use Search::Xapian qw/:all/;
@@ -248,26 +247,60 @@ sub fetch {
     }
 
     return $object if $nowrap;
-
-    return WormBase::API::Factory->create($class, {
-		object      => $object,
-		log         => $self->log,
-		dsn			=> $self->_services,
-		tmp_base    => $self->tmp_base,
-		pre_compile => $self->pre_compile,
-	});
+    return $self->instantiate_object($class => $object);
 }
 
 # Instantiate but without fetching an ace object
 sub instantiate_empty {
-    my ($self,$args) = @_;
-    my $class   = $args->{class};
-    return WormBase::API::Factory->create($class, {
-        log         => $self->log,
-        dsn         => $self->_services,
-        tmp_base    => $self->tmp_base,
-        pre_compile => $self->pre_compile,
-    });
+    my ($self,$class) = @_;
+    unless ($class) {
+        $self->log->error('[API::instantiate_empty]',
+                          ' Tried to instantiate an empty object without a class');
+        return;
+    }
+    return $self->instantiate_object($class);
+}
+
+sub wrap {
+    my $self = shift;
+    my @wrapped = map { $self->instantiate_object($_) } @_;
+
+    # User might have passed and expected just a single object
+    return wantarray ? @wrapped : $wrapped[0];
+}
+
+{
+    my $PREFIX = __PACKAGE__ . '::Object::';
+    my $PACKRE = qr/^$PREFIX/;
+
+    # $self->instantiate_object($object); will infer from $object->class and ModelMap
+    # $self->instantiate_object($class => $object);
+    sub instantiate_object {
+        my ($self, $class, $object) = @_;
+        if (ref $class) {       # instantiate_object($obj) form
+            $object = $class;
+            $class  = $self->modelmap->ACE2WB_MAP->{fullclass}{$object->class};
+        }
+
+        if (!defined $class) {
+            $self->log->error('[API::instantiate_object]',
+                              " Tried to instantiate a WB object without a corresponding WB class");
+            return;
+        }
+
+        $class = $PREFIX . $class unless $class =~ $PACKRE;
+
+        # $class should already be loaded by ModelMap
+        return $class->new(
+            object      => $object,
+            log         => $self->log,
+            dsn         => $self->_services,
+            tmp_base    => $self->tmp_base,
+            pre_compile => $self->pre_compile,
+            _api        => $self,
+        );
+    }
+
 }
 
 1;

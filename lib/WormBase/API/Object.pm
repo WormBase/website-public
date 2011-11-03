@@ -4,6 +4,9 @@ use Moose;
 
 use overload '~~' => \&_overload_ace, fallback => 1;
 
+has '_api' => (
+    is => 'ro',
+);
 
 =head1 NAME
 
@@ -27,50 +30,11 @@ it under the same terms as Perl itself.
 
 =cut
 
-
 sub _overload_ace {
     my ($self,$param)=@_;
     if($param =~ s/^@//) {my @results=eval {$self->object->$param}; return \@results;}
     else { return eval {$self->object->$param};}
-} 
-#use Bio::Graphics::Browser;
-# extends 'WormBase::API';
-
-
-# Provided with a list of objects, turn them into a data structure like
-#  data => { obj1 => { id    => 'OBJECT ID',
-#                      label => 'text label'  // generically object name
-#                      class => 'OBJECT CLASS',
-#                     },
-#           }
- 
-
-sub _wrap {
-    my $self = shift;
-    my @objects = grep defined, @_ or return;
-
-    my @wrapped = map {
-        my $class = WormBase::API::ModelMap->ACE2WB_MAP->{class}->{$_->class};
-            # or croak "Cannot find WB class for Ace class ", $_->class;
-        WormBase::API::Factory->create($class, {
-            object      => $_->fetch, # should step into object, if haven't done so
-            dsn         => $self->dsn,
-            pre_compile => $self->pre_compile,
-            tmp_base    => $self->tmp_base,
-			log         => $self->log,
-        });
-    } @objects; # end of map
-
-    # User might have passed and expected just a single object
-    return wantarray ? @wrapped : $wrapped[0];
 }
-
-
-
-# Get a direct handle to the AceDB.
-# DEPRECATED? REDUNDANT?
-sub dbh_ace { shift->{ace_model}->{dbh}; }
-
 
 #################################################
 #
