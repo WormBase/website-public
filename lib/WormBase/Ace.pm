@@ -64,4 +64,7 @@ significantly slower than the simple pattern.
     }
 }
 
+# NO FILE CACHE. GIVES ENOUGH HEADACHES.
+sub cache {}
+
 1;
