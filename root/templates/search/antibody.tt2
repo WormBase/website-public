@@ -1,12 +1,7 @@
       [% tag2link(item.name) %]
     </li>
 
-<div class="text-min" style="height:auto;max-height:2.2em;">
+<div class="text-min">
   [% summary = item.summary.join(); summary; %]    
   [% link_objects(item.gene) %]    
 </div>
-[% IF summary.length > 150 %]
-<div class="more">
-<div class="ui-icon ui-icon-triangle-1-s"></div>
-</div>
-[% END %]

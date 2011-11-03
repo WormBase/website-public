@@ -100,16 +100,19 @@ sub search_exact {
     if( $type && ($q =~ m/^WB/i) ){
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
     }else{
       $q .= " $type..$type" if $type;
       $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
     }
 
     my $mset      = $enq->get_mset( 0,1 );
     if($mset->empty()){
       $query=$class->qp->parse_query( $q, 1|2 );
       $enq       = $class->db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
       $mset      = $enq->get_mset( 0,1 );
     }
 
@@ -214,10 +217,12 @@ sub _get_tag_info {
   my ($it,$res)= $self->search_exact($c, $id, $class);
   if($it->{pager}->{total_entries} > 0 ){
     my $doc = @{$it->{struct}}[0]->get_document();
-    if($fill){
-      return $self->_get_obj($c, $doc, $footer);
+    if($doc->get_value(1) =~ m/$id/g){
+      if($fill){
+        return $self->_get_obj($c, $doc, $footer);
+      }
+      return $self->_pack_search_obj($c, $doc);
     }
-    return $self->_pack_search_obj($c, $doc);
   }
   my $tag =  { id => $id,
            label => $id,

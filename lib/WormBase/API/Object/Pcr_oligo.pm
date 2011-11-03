@@ -3,6 +3,7 @@ package WormBase::API::Object::Pcr_oligo;
 use Moose;
 
 with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 extends 'WormBase::API::Object';
 
 # TODO:
@@ -28,19 +29,6 @@ http://wormbase.org/resources/pcr_oligo
 
 =cut
 
-has '_segment' => (
-	is		 => 'ro',
-	required => 1,
-	lazy	 => 1,
-	default	 => sub {
-		my ($self) = @_;
-		my $object = $self->object;
-		my $class = $object->class;
-		$class .= ':reagent' if $class eq 'Oligo_set';
-		return $self->gff_dsn->segment($class => $object);
-	},
-);
-
 has '_oligos' => (
 	is => 'ro',
 	required => 1,
@@ -55,12 +43,19 @@ has '_object_class' => (
 	is => 'ro',
 	required => 1,
 	default => sub {
-		my ($self) = @_;
-		(my $class = $self ~~ 'class') =~ s/_/ /g;
+		(my $class = shift ~~ 'class') =~ s/_/ /go;
 		return $class;
 	},
 );
 
+# satisfy Role::Position requirements
+sub _build__segments {
+    my $self = shift;
+    my $object = $self->object;
+    my $class = $object->class;
+    $class .= ':reagent' if $class eq 'Oligo_set';
+    return [ $self->gff_dsn->segment($class => $object) // () ];
+}
 
 #######################################
 #
@@ -282,7 +277,7 @@ sub overlapping_genes {
             label => $name,
             class => 'Gene',
         }
-    } $self->_overlapping_genes($self->_segment);
+    } map { $_->features('CDS:curated') } @{$self->_segments};
 
 	return {
 		description => 'Overlapping genes of this ' . $self->_object_class,
@@ -707,7 +702,7 @@ sub segment {
 	my ($self) = @_;
 
 	my %data;
-	if (my $segment = $self->_segment) {
+	if (my ($segment) = @{$self->_segments}) {
 		%data = map { $_ => $segment->$_ }
 		        qw(refseq ref abs_start abs_stop start stop length dna);
 	}
@@ -922,11 +917,6 @@ sub assay_conditions {
 ########################################
 ## Private Methods
 ########################################
-
-sub _overlapping_genes {
-	my ($self, @segments) = @_;
-	return map { $_->features('CDS:curated') } @segments;
-}
 
 __PACKAGE__->meta->make_immutable;
 

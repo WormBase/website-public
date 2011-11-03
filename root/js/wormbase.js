@@ -28,7 +28,8 @@
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
         plugins = new Array(),
-        loading = false;
+        loading = false,
+        suppressColumns = false;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
@@ -272,6 +273,7 @@
       if(widgetHolder.size()==0){return;}
       
       window.onhashchange = readHash;
+      window.onresize = resize;
       if(location.hash.length > 0){
         readHash();
       }else if(layout = widgetHolder.data("layout")){
@@ -323,8 +325,8 @@
       
       function height(list){
         var len = 0; 
-        for(var i=0; i<list.length; i++){ 
-          len += $jq(list[i]).height();
+        for(var i=-1, l = list.length; i++<l;){ 
+          len += list.eq(i).height();
         } 
         return len;
       }
@@ -409,36 +411,15 @@
               });
             });
       });
-      content.delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
-      content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
-      function expand(txt, more){
-          var h = txt.height();
-          if(h<40){
-            h='100%';
-                    //expand the shorted items before the text, also
-              txt.prev('.ellipsis')
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .removeClass('ellipsis');
-          }else{
-            h='2.4em';
-                    //expand the shorted items before the text, also
-              txt.prev(":not(.gene-link)")
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .addClass('ellipsis');
-          }
-          txt.css("max-height", "none");
-          txt.animate({height:h});
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
-          more.toggleClass('open');
-      }
-      content.delegate(".text-min", 'mouseover mouseout', function(){ 
-        $jq(this).next().toggleClass('opaque');
+      content.delegate(".text-min", 'click', function(){
+        var container = $jq(this),
+            txt = container.children(".text-min-expand"),
+            more = txt.next(),
+            h = (txt.height() < 40) ? '100%' : '2.4em';
+        txt.animate({height:h}).css("max-height", "none");
+        more.toggleClass('open').children().toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+        container.parent().find(".expand").toggleClass('ellipsis');
       });
-      
-      
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
@@ -729,7 +710,14 @@
     }
     
     
-    function queryHighlight(div){
+    function formatResults(div){
+      var expands = div.find(".text-min");
+      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
+        (el.height() > 35) ? 
+          el.html('<div class="text-min-expand">' + el.text() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+          : el.removeClass("text-min");
+      }
+
       if(queryList.length == 0) { return; }
       getHighlight(function(){
         for (var i=0; i<queryList.length; i++){
@@ -738,7 +726,7 @@
       });
     }
     
-    queryHighlight(container.find("div#results"));
+    formatResults(container.find("div#results"));
     init();
     
     if(total > 10){
@@ -765,7 +753,7 @@
             res.remove();
           }
 
-          queryHighlight(div);
+          formatResults(div);
 
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
@@ -820,16 +808,22 @@
         if($jq(this).text() == '0'){
           $jq(this).parent().remove();
         }else {
-          $jq(this).parent().show().parent().prev().show();
+          $jq(this).parent().show().parent().prev(".title").show();
         }
       });
     });
     
     $jq("#search-count-summary").find(".load-results").click(function(){
-      loadResults($jq(this).attr("href"));
-      $jq(this).addClass("ui-selected").siblings().removeClass("ui-selected");
+      var button = $jq(this);
+      loadResults(button.attr("href"));
+      button.addClass("ui-selected").siblings().removeClass("ui-selected").parent().siblings().find(".ui-selected").removeClass("ui-selected");
+      $jq("#curr-ref-text").html(button.html());
       return false;
     });
+    
+    if (type == 'paper')
+      resize();
+    
   }
 
 
@@ -947,6 +941,7 @@
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
+
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -1067,6 +1062,7 @@
           lstring = hash || readLayout(holder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
+      resize();
         if(callback){ callback(); }
       });
     }
@@ -1083,9 +1079,9 @@
     }
 
     function getLeftWidth(holder){
-      var totWidth = parseFloat(holder.outerWidth()),
-          leftWidth = (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
-      return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
+      var totWidth = suppressColumns ? 10 : parseFloat(holder.outerWidth()),
+          leftWidth = suppressColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
+          return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
     function resetLayout(leftList, rightList, leftWidth, hash){
@@ -1112,6 +1108,14 @@
       if(location.hash.length > 0){
         updateLayout(undefined, hash);
       }
+    }
+    
+    function resize(){
+      var ref = $jq("#references-content");
+      if(suppressColumns != (suppressColumns = (document.documentElement.clientWidth < 800)))
+        suppressColumns ? columns(100, 100) : readHash();
+      if(ref)
+        (ref.innerWidth() < 845) ? ref.addClass("widget-narrow") : ref.removeClass("widget-narrow");
     }
 
 
