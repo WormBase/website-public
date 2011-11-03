@@ -59,7 +59,7 @@
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy,class, id).path;
+          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
         ELSIF (class == 'bench');
           c.uri_for('/me', id).path;
          ELSIF (class == 'picture');

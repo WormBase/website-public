@@ -1,8 +1,8 @@
-<div class="ellipsis paper-title"><span>[% tag2link(item.name,item.title.join,"",item.name.label)%]</span></div>
+<div class="ellipsis expand paper-title"><span>[% tag2link(item.name,item.title.join,"",item.name.label)%]</span></div>
 </li>
 
 
-<div class="ellipsis author-list" style="padding-right:0.5em;width:50%;float:left;position:relative;">
+<div class="ellipsis expand author-list" style="padding-right:0.5em;width:50%;float:left;position:relative;">
   <span>[% link_objects(item.author, ', ') %]</span>
 </div>
 [% IF ((item.journal) OR (item.year)) %]
@@ -16,8 +16,6 @@
   [% ab = item.abstract.join() | html %]
   [% markup(ab,0) %]    
 </div>
-<div class="more">
-<div class="ui-icon ui-icon-triangle-1-s"></div>
-</div>
+
 [% END %]
 

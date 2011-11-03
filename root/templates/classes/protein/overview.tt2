@@ -15,7 +15,7 @@
    END;
  
 END;
- 
+ '<div class="text-width" style="clear:left">';
 #WRAPPER $field_block title="";
 #  central_dogma;
 #END;
@@ -29,5 +29,5 @@ WRAPPER $field_block title="Description" key="description";
 END;
 
 remarks;
-
+'</div>';
 %]

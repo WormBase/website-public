@@ -376,6 +376,4 @@ sub _get_interpolated_position {
     return;
 }
 
-
-
 1;

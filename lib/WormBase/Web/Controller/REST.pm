@@ -102,8 +102,7 @@ sub workbench_GET {
       my $save_to = $c->req->params->{save_to} || 'reports';
       my $is_obj = $c->req->params->{is_obj} || 0;
       my $name = $c->req->params->{name};
-
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $saved->delete();
@@ -125,7 +124,9 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 sub workbench_star_GET{
     my ( $self, $c) = @_;
     my $url = $c->req->params->{url};
-    my $page = $self->get_session($c)->pages->find({url=>$url});
+    my $page = $self->get_session($c)->pages->search({url=>$url}, {rows=>1})->next;
+#     my $page = $self->get_session($c)->pages->find({url=>$url});
+
 
     $c->stash->{star}->{value} = $page ? 1 : 0;
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
