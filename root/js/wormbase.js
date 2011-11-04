@@ -1367,7 +1367,6 @@ var Scrolling = (function(){
    submit:function(is){
         var rel= is.attr("rel"),
             url = is.attr("url"),
-            page= is.attr("page"),
             feed = is.closest('#issues-new'),
             email = feed.find("#email"),
             username= feed.find("#display-name"),
@@ -1382,7 +1381,7 @@ var Scrolling = (function(){
                 content: feed.find("#content").val(), 
                 email:email.val() ,
                 username:username.val() , 
-                url:issue.url,
+                url: url || issue.url,
                 isprivate:is_private},
           success: function(data){
                 if(data==0) {

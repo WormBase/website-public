@@ -40,7 +40,7 @@
 	    <input onClick="WB.issue.submit($jq(this));" type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
         </div>
   [% ELSE %]
-  <b><a href="[% c.uri_for('/tools/issues/report') %]">Report an issue</a></b><br />
+  <b><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Report an issue</a></b><br />
 
   [% END %]
 
