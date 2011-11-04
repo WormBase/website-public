@@ -2349,7 +2349,7 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   color:white;
 }
 
-.navigation ul li:hover {
+.navigation ul li:hover:not(.ui-selected) {
   background: #FFFFDF;
 }
 
