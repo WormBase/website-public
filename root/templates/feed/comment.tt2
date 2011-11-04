@@ -1,12 +1,12 @@
 <div id="comment-new" class="layout-box text-width">
 <h4 style="float:right">
   <a href="javascript:void(0)" onClick='WB.goToAnchor("comment-content-[% widget %]");$jq("#comment-content-[% widget %]").focus();'>
-    [% IF comments.size > 0 %] add a comment
+    [% IF comments.size %] add a comment
     [% ELSE %] be the first to comment
     [% END %]
   </a>
 </h4>
-<h4><a class="comment-count">[% comments.size + 0 %]</a> [% pluralize("Comment", comments.size) %]</h4>
+<h4><a class="comment-count">[% comments.size || 0 %]</a> [% pluralize("Comment", comments.size) %]</h4>
 [% USE time_dir = Time.Duration %]
 
 <div id="comments">

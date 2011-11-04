@@ -1253,39 +1253,31 @@ END;
   END;
 
   # Add tools.
-  tool_list = section_fetch.tools.keys.sort || [];
+  IF section_fetch.tools;
+    tool_list = section_fetch.tools.keys.sort || [];
 
-  # object pages automatically get the tree display
-  IF object; tool_list.unshift('tree'); END;
+    # object pages automatically get the tree display
+    IF object; tool_list.unshift('tree'); END;
 
-  widgets.push({ title="Tools" type="title"}); 
-  FOREACH widget_name IN tool_list;
-      widget = c.config.sections.tools.$widget_name;
-      # What context should this widget be displayed in ?
-      IF is_index;
-         NEXT IF widget.display == "report";
-      ELSE;
-         NEXT IF widget.display == "index";
-      END;
+
+    widgets.push({ title="Tools" type="title"}); 
+    FOREACH widget_name IN tool_list;
+        widget = c.config.sections.tools.$widget_name;
+        # What context should this widget be displayed in ?
+        IF is_index;
+          NEXT IF widget.display == "report";
+        ELSE;
+          NEXT IF widget.display == "index";
+        END;
+        
+        w = { id = widget_name
+              title = widget.title
+              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+              type = 'tools'
+              };
       
-      w = { id = widget_name
-             title = widget.title
-             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
-             type = 'tools'
-            };
-    
-      widgets.push(w);
-   END;
-
-
-  FOREACH widget_name IN ['comment', 'issue'];
-      t = widget_name FILTER ucfirst;
-      w = { id = widget_name
-            title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
-            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path
-            type = 'tools'
-          };
-      widgets.push(w);
+        widgets.push(w);
+    END;
   END;
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;

@@ -546,7 +546,7 @@ sub feed_GET {
     }else{
 
       my $url = $c->req->params->{url};
-      my $page = $c->model('Schema::Page')->find({url=>$url});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
       $c->stash->{url} = $url;
 
       if($type eq "comment"){

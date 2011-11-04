@@ -921,9 +921,7 @@
 
 
 /***************************/
-// layout functions
-// author: Abigail Cabunoc
-// abigail.cabunoc@oicr.on.ca      
+// layout functions   
 /***************************/
 
 //The layout methods
@@ -932,13 +930,11 @@
       var sortable = $jq("#widget-holder").children(".sortable"),
           tWidth = $jq("#widget-holder").innerWidth(),
           leftWidth = Layout.suppressColumns() ? 100 : leftWidth;
-//       sortable.filter(".column-narrow").removeClass("column-narrow");
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
       }else{
         sortable.addClass('table-columns').removeClass('one-column');
-//         if ((leftWidth < 35) || (leftWidth > 65)){ sortable.filter( (leftWidth < 35) ? ".left" : ".right").addClass("column-narrow"); }
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
