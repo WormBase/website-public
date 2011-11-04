@@ -123,7 +123,7 @@ __PACKAGE__->config->{authentication} =
 __PACKAGE__->config(
     static => {
 	dirs => [qw/ css js img tmp /],
-	include_path => [ '/usr/local/wormbase/shared/tmp',
+	include_path => [ '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
 			  __PACKAGE__->config->{root},
 	    ]
 #   logging  => 1,

@@ -66,7 +66,7 @@ sub get :Local Args(0) {
 
         # Fetch a WormBase::API::Object::* object
         if ($name eq '*' || $name eq 'all') {
-            $object = $api->instantiate_empty({class => $class});
+            $object = $api->instantiate_empty($class);
         }
         else {
             $object = $api->fetch({

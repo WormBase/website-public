@@ -864,7 +864,7 @@ sub widget_GET {
 
     my $api = $c->model('WormBaseAPI');
 #     my $object = ($name eq '*' || $name eq 'all'
-#                ? $api->instantiate_empty({ class => ucfirst $class })
+#                ? $api->instantiate_empty(ucfirst $class)
 #                : $api->fetch({ class => ucfirst $class, name => $name }));
         $c->log->debug("fetching: $class, $name");
 my $object = $api->fetch({ class => ucfirst $class, name => $name });
@@ -1076,7 +1076,7 @@ sub widget_data_cache_GET {
 
     my $api = $c->model('WormBaseAPI');
     my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
+               ? $api->instantiate_empty(ucfirst $class)
                : $api->fetch({ class => ucfirst $class, name => $name });
     # what if there's no object?
 
@@ -1669,7 +1669,7 @@ sub field_GET {
 
     my $api = $c->model('WormBaseAPI');
     my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
+               ? $api->instantiate_empty(ucfirst $class)
                : $api->fetch({ class => ucfirst $class, name => $name });
     # what if there's no object?
 

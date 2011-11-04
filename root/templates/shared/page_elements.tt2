@@ -146,7 +146,7 @@ END;
       %]
 
 
-      [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
+      [% url = c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]
       <tr 
         [% IF (even == 1); 
 	     myclass='r0';
@@ -159,7 +159,7 @@ END;
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
+        <td><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]</a>
         [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
