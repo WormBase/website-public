@@ -177,7 +177,7 @@ sub _make_common_name {
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_wrap($object)->_common_name;
+            $name = $self->_api->wrap($object)->_common_name;
         }
     }
 
@@ -2002,7 +2002,7 @@ sub tmp_image_uri {
 
     # URI (pre-NFS): /images/wb-web1/00/00/00...
     # URI: /images/00/00/00...
-    my $uri = '/' . $path_and_file;
+    my $uri = ($path_and_file=~m/^\//)? $path_and_file :'/' . $path_and_file;
     return $uri;
 }
 
@@ -2213,7 +2213,7 @@ sub _get_references {
   # Dynamically select the correct tag - this is a kludge until these are defined.
   my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
   
-  my $dbh = $self->dbh_ace;
+  my $dbh = $self->ace_dsn;
   
   my $class = $object->class;
   my @references;

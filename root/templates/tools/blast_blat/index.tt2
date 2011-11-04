@@ -3,15 +3,12 @@
 </head>
  
 
-<form method="POST" action="[% c.uri_for('tools','blast_blat','run') %]">
+<form method="POST" action="[% c.uri_for('/tools','blast_blat','run') %]">
 
 <div class="form_container">
 
 <h1>BLAST/BLAT SEARCH</h1>
 
-<!--
-<div class="warning">BLAST/BLAT services at WormBase are currently unavailable.  We hope to have services restored by 9AM ET, 11 December 2008.  We apologize for any inconvenience.</div>
--->
 
 <div class="spacer">
     &nbsp;
