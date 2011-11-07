@@ -2739,7 +2739,7 @@ table.venn tr.venn-data td {
 
 #operator-box-wrap{  
   position:fixed;       
-  bottom:7em;
+  bottom:10em;
   right:0;  
   z-index:100;
 }
@@ -2747,12 +2747,31 @@ table.venn tr.venn-data td {
 #operator-box{
   position:absolute;  
   height:5em; 
-  right:0;    
+  right:0; 
   padding:0.5em; 
   border:1px solid #CDCDCD;
   background:#E9EEF2;
-/*   z-index:100; */
-  cursor:pointer
+  z-index:100;
+  cursor:pointer;
+}
+
+#issue-box{
+  position:absolute;  
+  height:1.5em; 
+  right:0;   
+  top:5em;
+  padding:1em 0.5em 0.5em; 
+  background: hsl(359,20%,80%);
+  border:1px solid #CDCDCD;
+  cursor:pointer;
+  z-index:101;
+  white-space: nowrap;
+}
+
+#issue-box.minimize{
+  background: hsl(359,42%,43%);
+  z-index:99;
+  border:none;
 }
 
 #operator-box.minimize{
@@ -2770,6 +2789,11 @@ table.venn tr.venn-data td {
 #operator-box.minimize:hover{
   background-color:#0F2F4D;
   width:2em;
+}
+
+#issue-box.minimize:hover{
+  background: hsl(359,42%,30%);
+  width:1.5em;
 }
 
 #operator-box.minimize>div{
