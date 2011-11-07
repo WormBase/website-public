@@ -151,27 +151,33 @@ sub _setup_log4perl {
 sub _setup_cache {
     my $c = shift;
 
-    my $servers = $c->config->{memcached}{server}
+    my $memcache_servers = $c->config->{memcached}{server}
         or die 'No memcached server(s) specified';
-    $servers = [$servers] unless ref $servers eq 'ARRAY';
+    $memcache_servers = [$memcache_servers]
+        unless ref $memcache_servers eq 'ARRAY';
 
     $c->config->{'Plugin::Cache'}{backends}{memcache} = {
         class          => 'CHI',
         driver         => 'Memcached::libmemcached',
-        servers        => $servers,
+        servers        => $memcache_servers,
         expires_in     => $c->config->{memcached}{expires},
     };
 
-    $c->config->{'Plugin::Cache'}{backends}{default} = {
+    my $cache_dir = $c->config->{filecache}{root} // do {
+        require File::Temp; File::Temp->newdir;
+    };
+
+    $c->config->{'Plugin::Cache'}{backends}{file} = {
         class          => 'CHI',
         driver         => 'File',
-        root_dir       => '/usr/local/wormbase/shared/cache',
+        root_dir       => $cache_dir,
         store          => 'File',
         depth          => 3,
         max_key_length => 64,
     };
 
-    $c->config->{'Plugin::Cache'}{default_store} = 'filecache';
+    $c->config->{'Plugin::Cache'}{backends}{default}
+        = $c->config->{'Plugin::Cache'}{backends}{file};
 
     # FOLLOWING IS FOR SINGLE CACHE:
 
