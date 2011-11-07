@@ -535,23 +535,11 @@
         $jq('#operator-box').click(function(){ 
           var opBox = $jq(this);
           if(!(opLoaded)){
-            ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
-                    function(){ 
-                      if($jq("#operator-box").hasClass("minimize")){
-                        $jq("#operator-box").children().hide();
-                      }
-                    });
+            ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
             opLoaded = true;
           }
-          if(opBox.hasClass("minimize")){
-              opBox.removeClass("minimize");
-              opBox.animate({width:"9em"});
-              opBox.children().show();
-          }else{
-            opBox.addClass("minimize");
-            opBox.animate({width:"1.5em"});
-            opBox.children().hide();
-          }
+          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}) : opBox.animate({width:"1.5em"});
+          opBox.toggleClass("minimize").children().toggle();
         });
         
         $jq('#operator').click(function() { 
@@ -561,25 +549,21 @@
             });
           }else {
             var opBox = $jq("#operator-box");
-            ajaxGet(opBox, "/rest/livechat", 0, 
-            function(){ 
-              if(opBox.hasClass("minimize")){
-                opBox.children().hide();
-              }
-            });
+            ajaxGet(opBox, "/rest/livechat", 0);
             opLoaded = true;
-            if(opBox.hasClass("minimize")){
-                opBox.removeClass("minimize");
-                opBox.animate({width:"9em"});
-                opBox.children().show();
-            }
+            if(opBox.hasClass("minimize"))
+                opBox.removeClass("minimize").animate({width:"9em"}).children().show();
             opTimer = setTimeout(function() {
-              opBox.addClass("minimize");
-              opBox.animate({width:"1.5em"});
-              opBox.children().hide();
+              opBox.addClass("minimize").animate({width:"1.5em"}).children().hide();
             }, 4e3)
           }
         }); 
+        
+        $jq("#issue-box").click(function(){
+          var isBox = $jq(this);
+          (isBox.hasClass("minimize")) ? isBox.animate({width:"8em"}) : isBox.animate({width:"1.5em"});
+          isBox.toggleClass("minimize").children().toggle();
+        });
     }
     
   function hideTextOnFocus(selector){
@@ -1270,18 +1254,10 @@ var Scrolling = (function(){
       
   function updateCounts(url){
     var comments = $jq(".comment-count");
-    if(comments.size() == 0){ return; }
-    
-    comments.load("/rest/feed/comment?count=1;url=" + url);
-    var is = $jq("<span></span>");
-    is.load("/rest/feed/issue?count=1;url=" + url, function(){
-      if(is.html() != "0"){
-        $jq(".issue-count").html("!").css({color:"red"});
-      } 
-    });
+    if(comments.size() > 0)
+      comments.load("/rest/feed/comment?count=1;url=" + url);
   }
-  
-  
+
   
   function validate_fields(email,username, password, confirm_password, wbemail){
       if( (email.val() =="") && (!wbemail || wbemail.val() == "")){
@@ -1387,10 +1363,7 @@ var Scrolling = (function(){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 
                 }else {
-                  displayNotification("Problem Submitted! We will be in touch soon.");
-                  feed.closest('#widget-feed').hide(); 
-                              updateCounts(url);
-                  reloadWidget('issue');
+                  window.location = url || issue.url;
                 }
               },
           error: function(request,status,error) {
@@ -1414,7 +1387,6 @@ var Scrolling = (function(){
               data: {method:"delete",issues:id.join('_')}, 
               success: function(data){
                   window.location.reload(1);
-                  updateCounts(url);
               },
               error: function(request,status,error) {
                   alert(request + " " + status + " " + error );
