@@ -3,6 +3,20 @@ package WormBase::Web;
 use Moose;
 use namespace::autoclean;
 use Hash::Merge;
+
+BEGIN {
+    # override configloader's finalize_config to setup
+    # plugins after config files are loaded
+    require Catalyst::Plugin::ConfigLoader;  # load the loader
+    no warnings 'redefine';                  # suppress redefinition warning
+    my $orig = \&Catalyst::Plugin::ConfigLoader::finalize_config;
+    *Catalyst::Plugin::ConfigLoader::finalize_config = sub {
+        my $c = shift;
+        $orig->($c, @_);
+        $c->_setup_plugins;
+    };
+}
+
 use Catalyst qw/
 	  ConfigLoader
 	  Cache
@@ -10,209 +24,188 @@ use Catalyst qw/
 	  Unicode
 	  ErrorCatcher
 	  Authentication
-	  Authorization::Roles  
+	  Authorization::Roles
 	  Session
 	  Session::PerUser
 	  Session::Store::DBI
  	  Session::State::Cookie
-          StackTrace
+      StackTrace
 	  Scheduler
-           /;
+/;
+
 extends 'Catalyst';
 our $VERSION = '0.02';
 
 use Catalyst::Log::Log4perl; 
 use HTTP::Status qw(:constants :is status_message);
 
-
-##################################################
-#
-#   What type of installation are we?
-#   
-#   The startup script should set an environment variable
-#   for installation type; otherwise it defaults to staging.
-#
-##################################################
-my $installation_type = $ENV{WORMBASE_INSTALLATION_TYPE} || 'staging';
-
-
-# Specific loggers for differnet environments
-__PACKAGE__->log(
-    Catalyst::Log::Log4perl->new(__PACKAGE__->path_to( 'conf', 'log4perl', "$installation_type.conf")->stringify)
-    );
-
-__PACKAGE__->config->{'Plugin::Session'} = {
-              expires           => 3600,
-	      dbi_dbh           => 'Schema', 
-	      dbi_table         => 'sessions',
-	      dbi_id_field      => 'session_id',
-	      dbi_data_field    => 'session_data',
-	      dbi_expires_field => 'expires',
-};
-
- 
-__PACKAGE__->config->{authentication} =
-          {
-              default_realm => 'default',
-              realms => {
-                default => {
-                  credential => {
-                    class => 'Password',
-                    password_field => 'password',
-                    #password_type => 'clear'
-                    password_type => 'salted_hash',
-                    password_salt_len => 4,
-                  },
-                  store => {
-                    class => 'DBIx::Class',
-                    user_model => 'Schema::User',
-                    role_relation => 'roles',
-                    role_field => 'role',
-                    #  ignore_fields_in_find => [ 'remote_name' ],
-                    #  use_userdata_from_session => 0,
-                  }
-                },
-                openid => {
-                  credential => {
-                    class => 'OpenID',
-                    ua_class => 'LWP::UserAgent',
-                    extensions => [
-                      'http://openid.net/srv/ax/1.0' => {
-                        mode => 'fetch_request',
-                        'type.nickname' => 'http://axschema.org/namePerson/friendly',
-                        'type.email' => 'http://axschema.org/contact/email',
-                        # 'type.fullname' => 'http://axschema.org/namePerson',
-                        'type.firstname' => 'http://axschema.org/namePerson/first',
-                        'type.lastname' => 'http://axschema.org/namePerson/last',
-                        # 'type.dob' => 'http://axschema.org/birthDate',
-                        'type.gender' => 'http://axschema.org/person/gender',
-                        'type.country' => 'http://axschema.org/contact/country/home',
-                        'type.language' => 'http://axschema.org/pref/language',
-                        'type.timezone' => 'http://axschema.org/pref/timezone',
-                        required => 'nickname,email,firstname,lastname',
-                        if_available => 'gender,country,language,timezone',
-                      },
-                    ],  
-                  },
-                },
-                members => {
-                  credential => {
-                    class => 'Password',
-                    password_field => 'password',
-                    password_type => 'none'
-                  },
-                  store => {
-                    class => 'DBIx::Class',
-                    user_model => 'Schema::User',
-                    role_relation => 'roles',
-                    role_field => 'role',
-                    # use_userdata_from_session => 0,
-                  }
-                },
-
-              }
-          };
-
-
-
-
-
-# Set configuration for static files
-# Force specific directories to be handled by Static::Simple.
-# These should ALWAYS be served in static mode.
-__PACKAGE__->config(
-    static => {
-	dirs => [qw/ css js img tmp /],
-	include_path => [ '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
-			  __PACKAGE__->config->{root},
-	    ]
-#   logging  => 1,
-    });
-
-
-
-# Configure the application based on the type of installation.
 # Application-wide configuration is located in wormbase.conf
 # which can be over-ridden by wormbase_local.conf.
 __PACKAGE__->config( 'Plugin::ConfigLoader' => {
-    file => 'wormbase.conf',
+    file   => 'wormbase.conf',
     driver => {
-        'General' => {
+        General => {
             -InterPolateVars => 1,
             -ForceArray      => 0,
             # Plugin::ConfigLoader uses Config::Any[::General]
             # which ForceArray by default. We don't want that.
         },
     },
-} ) or die "$!";
+});
 
+__PACKAGE__->config('Plugin::Session', {
+    expires           => 3600,
+    dbi_dbh           => 'Schema', 
+    dbi_table         => 'sessions',
+    dbi_id_field      => 'session_id',
+    dbi_data_field    => 'session_data',
+    dbi_expires_field => 'expires',
+});
 
-##################################################
-#
-#   Dynamically establish the cache backend
-#
-##################################################
+__PACKAGE__->config->{authentication} = {
+    default_realm => 'default',
+    realms => {
+        default => {
+            credential => {
+                class             => 'Password',
+                password_field    => 'password',
+                #password_type    => 'clear'
+                password_type     => 'salted_hash',
+                password_salt_len => 4,
+            },
+            store => {
+                class         => 'DBIx::Class',
+                user_model    => 'Schema::User',
+                role_relation => 'roles',
+                role_field    => 'role',
+                #  ignore_fields_in_find     => [ 'remote_name' ],
+                #  use_userdata_from_session => 0,
+            }
+        },
+        openid => {
+            credential => {
+                class      => 'OpenID',
+                ua_class   => 'LWP::UserAgent',
+                extensions => [
+                    'http://openid.net/srv/ax/1.0' => {
+                        mode              => 'fetch_request',
+                        'type.nickname'   => 'http://axschema.org/namePerson/friendly',
+                        'type.email'      => 'http://axschema.org/contact/email',
+                        # 'type.fullname' => 'http://axschema.org/namePerson',
+                        'type.firstname'  => 'http://axschema.org/namePerson/first',
+                        'type.lastname'   => 'http://axschema.org/namePerson/last',
+                        # 'type.dob'      => 'http://axschema.org/birthDate',
+                        'type.gender'     => 'http://axschema.org/person/gender',
+                        'type.country'    => 'http://axschema.org/contact/country/home',
+                        'type.language'   => 'http://axschema.org/pref/language',
+                        'type.timezone'   => 'http://axschema.org/pref/timezone',
+                        required          => 'nickname,email,firstname,lastname',
+                        if_available     => 'gender,country,language,timezone',
+                    },
+                ],
+            },
+        },
+        members => {
+            credential => {
+                class          => 'Password',
+                password_field => 'password',
+                password_type  => 'none'
+            },
+            store => {
+                class         => 'DBIx::Class',
+                user_model    => 'Schema::User',
+                role_relation => 'roles',
+                role_field    => 'role',
+                # use_userdata_from_session => 0,
+            }
+        },
 
-# First, if we are a development site, we still want
-# to test the caching mechanism, we just don't want 
-# it to persist.
-my $expires_in = ($installation_type eq 'production')
-    ? '4 weeks'
-    : '1 minute';
-
-# Memcached/libmemcached support built into the app.
-# Development and mirror distributions should point to localhost.
-# The production installation points to our distributed memcached.
-my $servers = ($installation_type eq 'production')
-    ? [ '206.108.125.175:11211', '206.108.125.177:11211' , '206.108.125.190:11211','206.108.125.168:11211','206.108.125.178:11211']
-    : [ '127.0.0.1:11211' ];
-
-# 1. Dual caches: memcached and file, one of which
-#    needs to have a symbolic name of "default"
-__PACKAGE__->config->{'Plugin::Cache'}{backends}{memcache} = {
-    class          => 'CHI',
-    driver         => 'Memcached::libmemcached',
-    servers        => $servers,
-    expires_in     => $expires_in,
+    }
 };
-
-# Path to the cache is hard-coded.
-# If I pre-cache via WWW::Mech will the cache be portable?
-__PACKAGE__->config->{'Plugin::Cache'}{backends}{default} = {
-    class          => 'CHI',
-    driver         => 'File',
-    root_dir       => '/usr/local/wormbase/shared/cache',
-    store          => 'File',
-    depth          => 3,
-    max_key_length => 64,
-};
-
-# For now, let's make the file cache the default. NOT NECESSARY.
-#__PACKAGE__->config->{'Plugin::Cache'}{default_store} = 'filecache';
-
-
-# 2. Using a single cache of either File or memcache
-#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-#    class          => 'CHI',
-#    driver         => 'File',
-#    root_dir       => '/usr/local/wormbase/shared/cache',
-#    store          => 'File',
-#    depth          => 3,
-#    max_key_length => 64,
-#};
-
-#__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-#    class          => 'CHI',
-#    driver         => 'Memcached::libmemcached',
-#    servers        => $servers, 
-#    expires_in     => $expires_in,	
-#};
-
 
 # Start the application!
 __PACKAGE__->setup;
 
+################################################################################
+#
+#   Helper methods to be called after config file loads
+#
+################################################################################
 
+# perhaps this should just loop through a list of subs...
+sub _setup_plugins {
+    my $c = shift;
+    $c->_setup_log4perl;
+    $c->_setup_cache;
+    $c->_setup_static;
+}
+
+sub _setup_log4perl {
+    # Specific loggers for different environments
+    my $c = shift;
+    my $path = $c->path_to('conf', 'log4perl',
+                           $c->config->{installation_type} . '.conf');
+    $c->log(Catalyst::Log::Log4perl->new($path->stringify));
+}
+
+sub _setup_cache {
+    my $c = shift;
+
+    my $servers = $c->config->{memcached}{server}
+        or die 'No memcached server(s) specified';
+    $servers = [$servers] unless ref $servers eq 'ARRAY';
+
+    $c->config->{'Plugin::Cache'}{backends}{memcache} = {
+        class          => 'CHI',
+        driver         => 'Memcached::libmemcached',
+        servers        => $servers,
+        expires_in     => $c->config->{memcached}{expires},
+    };
+
+    $c->config->{'Plugin::Cache'}{backends}{default} = {
+        class          => 'CHI',
+        driver         => 'File',
+        root_dir       => '/usr/local/wormbase/shared/cache',
+        store          => 'File',
+        depth          => 3,
+        max_key_length => 64,
+    };
+
+    $c->config->{'Plugin::Cache'}{default_store} = 'filecache';
+
+    # FOLLOWING IS FOR SINGLE CACHE:
+
+    #__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+    #    class          => 'CHI',
+    #    driver         => 'File',
+    #    root_dir       => '/usr/local/wormbase/shared/cache',
+    #    store          => 'File',
+    #    depth          => 3,
+    #    max_key_length => 64,
+    #};
+
+    #__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
+    #    class          => 'CHI',
+    #    driver         => 'Memcached::libmemcached',
+    #    servers        => $servers,
+    #    expires_in     => $expires_in,
+    #};
+}
+
+# Set configuration for static files
+# Force specific directories to be handled by Static::Simple.
+# These should ALWAYS be served in static mode.
+sub _setup_static {
+    my $c = shift;
+    $c->config(static => {
+        dirs         => [qw/ css js img tmp /],
+        include_path => [
+            '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
+            __PACKAGE__->config->{root},
+        ],
+        #   logging  => 1,
+    });
+}
 
 ##################################################
 #
@@ -228,26 +221,18 @@ __PACKAGE__->setup;
 after prepare_path => sub {
     my $c = shift;
     if ($c->config->{base}) {
-    $c->req->base(URI->new($c->config->{base}));
+        $c->req->base(URI->new($c->config->{base}));
     }
 };
-    
-
 
 sub finalize_error {
 	my $c = shift;
 	$c->config->{'response_status'}=$c->response->status;
 	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
  	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_server_error($c->config->{'response_status'})); 
-	$c->maybe::next::method; 
+	$c->maybe::next::method;
 }
 
-
-#if __PACKAGE__->config->{debug}
-#$ENV{CATALYST_DEBUG_CONFIG} && print STDERR 'cat config looks like: '. dump(__PACKAGE__->config) . "\n";# . dump(%INC)."\n";
-
-
- 
 
 =pod
 
@@ -261,25 +246,23 @@ sub is_ajax {
   return $headers->header('X-Requested-With');
 }
 
-
-
 sub get_example_object {
   my ($self,$class) = @_;
   my $api = $self->model('WormBaseAPI');
 
   my $ace = $api->_services->{acedb};
   # Fetch the total number of objects
-  my $total = $ace->fetch(-class => ucfirst($class),
-              -name  => '*');
-  
+  my $total = $ace->fetch(
+      -class => ucfirst($class),
+      -name  => '*'
+  );
+
   my $object_index = 1 + int rand($total-1);
 
   # Fetch one object starting from the randomly determined one
   my ($object) = $ace->fetch(ucfirst($class),'*',1,$object_index);
   return $object;
 }
-
-
 
 ########################################
 #
@@ -366,7 +349,6 @@ sub check_cache {
     return ($cached_data,$cache_server);
 }
 
- 
 # Provided with a pre-generated cache_id and data, store it in one of our caches.
 sub set_cache {
     my ($self,$params) = @_;
@@ -402,7 +384,7 @@ sub set_cache {
 #	return 1 if ($couch->get_document({uuid     => $uuid,
 #					 database => lc($self->model('WormBaseAPI')->version),
 #					}));
-		   
+
 	my $host = $couch->write_host;
 	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
 
@@ -581,9 +563,6 @@ sub _widget_is_precached {
     return 1 if defined $section->{widgets}{$widget}{precache};
     return 0;
 }
-
-    
-
 
 =head1 NAME
 
