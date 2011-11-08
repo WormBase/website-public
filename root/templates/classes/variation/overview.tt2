@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.name.data.label %]</h2>
             
 [%
 
@@ -16,7 +16,7 @@ WRAPPER highlight_box;
 
 END;
 
-
+'<div class="text-width" style="clear:left">';
 WRAPPER $field_block title="Variation Type" key='variation_type';
         fields.variation_type.data.general_class.join('; ');
 	': ';
@@ -33,7 +33,7 @@ IF fields.other_names.data.id.defined;
    	  object_list(fields.other_names.data);
      END;
 END;
-
+'</div>';
 remarks(no_toggle=1);
 
 %]

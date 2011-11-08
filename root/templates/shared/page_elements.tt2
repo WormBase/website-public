@@ -502,7 +502,7 @@ END;
                     <div class="module-close ui-icon ui-icon-large ui-icon-close ui-helper-hidden" wname="[% id %]" title="close"></div>
 [% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink ui-helper-hidden" wname="[% id %]" title="pop out"></div>
 [% END %]              
-                    <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]" show="0"></div><span class="widget-title">[% title %]</span>
+                    <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
@@ -932,11 +932,9 @@ END;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
    IF no_toggle == 1;  
-      '<div class="text-width">';
        WRAPPER $field_block title="Remarks" key="remarks";
           markup(fields.remarks.data.join('<br>'),0);
        END;
-      '</div>';
    ELSE;
       WRAPPER $field_block title="" key="remarks";
          '<div class="toggle">Curatorial remarks</div>';
