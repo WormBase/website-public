@@ -281,8 +281,7 @@ sub check_cache {
     # Don't bother checking the cache in certain circumstances.
     # return if ($c->check_any_user_role(qw/admin curator/));
 
-    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
-    return unless (ref($params) eq "HASH");  # TH: we should fix all calls so check is unnecessary.
+#    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
     my $cache_name = $params->{cache_name};
     my $uuid       = $params->{uuid};
 
@@ -341,15 +340,15 @@ sub check_cache {
             $cache_server = 'memcache: ' . $cache->get_server_for_key($uuid);
         }
     }
-    else {
-        $cache_server = 'filecache' if $cached_data;
+    elsif ($cached_data) {
+        $cache_server = 'file';
     }
 
     if ($cached_data) {
         $self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     }
     else {
-        $self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name; generating widget.");
+        $self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name");
     }
 
     return ($cached_data,$cache_server);
@@ -430,7 +429,7 @@ sub set_cache {
 
 sub secure_uri_for {
     my ($self, @args) = @_;
-    
+
     my $u = $self->uri_for(@args);
     if($self->config->{enable_ssl}){
       $u->scheme('https');
@@ -505,36 +504,6 @@ sub merge_session_to_user {
 #    TEMPLATE SELECTION
 #
 #######################################################
-
-# Template assignment is a bit of a hack.
-# Maybe I should just maintain
-# a hash, where each field/widget lists its corresponding template
-sub _select_template {
-    my ($self,$render_target,$class,$type) = @_;
-
-    # Normally, the template defaults to action name.
-    # However, we have some shared templates which are
-    # not located under root/classes/CLASS
-    if ($type eq 'field') { 
-    # Some templates are shared across Models
-    if (defined $self->config->{common_fields}->{$render_target}) {
-        return "shared/fields/$render_target.tt2";
-        # Others are specific
-    } else {
-        return "classes/$class/$render_target.tt2";
-    }
-    } else {       
-	# Widget template selection
-	# Some widgets are shared across Models
-	if (defined $self->config->{common_widgets}->{$render_target}) {
-	    return "shared/widgets/$render_target.tt2";
-	} else {  
-	    return "classes/$class/$render_target.tt2"; 
-	}
-    }   
-}
-
-
 
 sub _get_widget_fields {
     my ($self,$class,$widget) = @_;
