@@ -101,7 +101,7 @@
 [% END %]
   <div id="issue-box" class="ui-corner-left minimize">
     <span class="ui-icon ui-icon-alert"></span>
-    <span class="ui-helper-hidden"><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Report an Issue</a></span>
+    <span class="ui-helper-hidden"><b><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Report a bug</a></b></span>
   </div>
 </div> 
 
