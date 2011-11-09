@@ -73,16 +73,16 @@ sub create_database {
 }
 
 # Create a new document with an optional attachment.
-# curl -X PUT $couchdb/$release/uuid
-# curl -X PUT $couchdb/$release/uuid/attachment (if adding an attachment, too)
-#   curl -X PUT http://$couchdb/$version/$uuid \
+# curl -X PUT $couchdb/$release/key
+# curl -X PUT $couchdb/$release/key/attachment (if adding an attachment, too)
+#   curl -X PUT http://$couchdb/$version/$key \
 #        -d @/usr/local/wormbase/databases/WS226/cache/gene/overview/WBGene00006763.html -H "Content-Type: text/html"
 # Assuming here that we are ONLY stocking our couchdb, not updating it.
 sub create_document {
     my $self = shift;
     my $params = shift;
     my $attachment = $params->{attachment};
-    my $uuid       = $params->{uuid};
+    my $key        = $params->{key};
     my $database   = $params->{database};
     my $host       = $params->{host} || $self->write_host;  # PUTS are special; they'll be sent to a single server via proxy.
     my $port       = $params->{port} || $self->write_host_port;
@@ -93,7 +93,7 @@ sub create_document {
     # and must include the attachment content.
     if ($attachment) {
 	$msg  = $self->_prepare_request({method  => 'PUT',
-					 path    => "$database/$uuid/attachment",
+					 path    => "$database/$key/attachment",
 					 content => "$attachment",
 					 host    => $host,
 					 port    => $port,
@@ -102,7 +102,7 @@ sub create_document {
 	$res = $self->_send_request($msg);
     } else {
 	$msg  = $self->_prepare_request({method => 'PUT',
-					 path   => $uuid });
+					 path   => $key });
 	$res  = $self->_send_request($msg);
     }
     
@@ -120,17 +120,17 @@ sub create_document {
 
 
 # Fetch a document
-# curl -X PUT $couchdb/$release/uuid
+# curl -X PUT $couchdb/$release/key
 # curl -X GET http://127.0.0.1:5984/ws226/gene_WBGene00006763_overview
 sub get_document {
     my ($self,$params) = @_;
-    my $uuid     = $params->{uuid};
+    my $key      = $params->{key};
     my $database = $params->{database};
     my $host     = $params->{host} || $self->read_host;
     my $port     = $params->{port} || $self->read_host_port;
 
     my $msg  = $self->_prepare_request({ method => 'GET',
-                                         path   => "$database/$uuid",
+                                         path   => "$database/$key",
                                          host   => $host,
                                          port   => $port,
                                        });
@@ -143,17 +143,17 @@ sub get_document {
 }
 
 
-# GET couchdbhost/version/uuid/attachment
+# GET couchdbhost/version/key/attachment
 # Returns the HTML of the attachement; otherwise return false.
 sub get_attachment {
     my ($self,$params) = @_;
-    my $uuid     = $params->{uuid};
+    my $key      = $params->{key};
     my $database = $params->{database};
     my $host     = $params->{host} || $self->read_host;
     my $port     = $params->{port} || $self->read_host_port;
 
     my $msg  = $self->_prepare_request({ method => 'GET',
-					 path   => "$database/$uuid/attachment",
+					 path   => "$database/$key/attachment",
 					 host   => $host,					 
 					 port   => $port,
 				       });

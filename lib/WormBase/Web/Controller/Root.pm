@@ -98,10 +98,10 @@ sub draw :Path("/draw") Args(1) {
     my $params = $c->req->params;
     if ($params->{class} && $params->{id}) {
         my @keys = ('image', $params->{class}, $params->{id});
-        my $uuid = join('-',@keys);
+        my $key = join('-',@keys);
         ($cached_img,$cache_source) = $c->check_cache({
             cache_name => 'couchdb',
-            uuid       => $uuid,
+            key        => $key,
         });
 
         unless($cached_img) {  # not cached -- make new image and cache
@@ -115,7 +115,7 @@ sub draw :Path("/draw") Args(1) {
             $cached_img = GD::Image->new($source);
             $c->set_cache({
                 cache_name => 'couchdb',
-                uuid       => $uuid,
+                key        => $key,
                 data       => $cached_img
             });
         }
