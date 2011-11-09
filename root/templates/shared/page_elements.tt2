@@ -1270,7 +1270,8 @@ END;
         
         w = { id = widget_name
               title = widget.title
-              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+              href =  c.uri_for('/tools',widget.name, 'run') _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
+
               type = 'tools'
               };
       
