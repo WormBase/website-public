@@ -15,19 +15,12 @@ Running the application
 
 To run the app using the built-in Catalyst server:
 
-> ./script/wormbase_server.pl -p 8000
-
-For more control you can use your own configuration:
-
-> Wormbase_CONFIG_LOCAL_SUFFIX=tharris ./script/wormbase_server.pl -p 8000
-
-This will use configuration in $approot/wormbase_tharris.conf
-to override the default wormbase.conf file.
+> script/wormbase_server.pl -p 8000
 
 Running the application via Starman
 -----------------------------------
 
-> ./bin/starman-staging.sh
+> starman --port 8000 --workers 10 wormbase.psgi
 
 
 Todd Harris (todd@wormbase.org)
