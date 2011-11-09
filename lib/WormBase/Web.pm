@@ -282,8 +282,9 @@ sub check_cache {
     # return if ($c->check_any_user_role(qw/admin curator/));
 
 #    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
-    my $cache_name = $params->{cache_name};
-    my $uuid       = $params->{uuid};
+#    my $cache_name = $params->{cache_name};
+    my $cache_name = 'couchdb';
+    my $key        = $params->{key};
 
     # First, has this content been precached?
     # CouchDB. Located on localhost.
@@ -292,18 +293,18 @@ sub check_cache {
         my $host  = $couch->read_host;
         my $port  = $couch->read_host_port;
 
-        $self->log->debug("    ---> Checking cache $cache_name at $host:$port for $uuid...");
+        $self->log->debug("    ---> Checking cache $cache_name at $host:$port for $key...");
 
         # Here, we're using couch to store HTML attachments.
         # We MAY want to parameterize this in the future
         # so that we can fetch documents, too.
         my $content = $couch->get_attachment({
-            uuid     => $uuid,
+            key      => $key,
             database => lc($self->model('WormBaseAPI')->version),
         });
 
         if ($content) {
-            $self->log->debug("CACHE: $uuid: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
+            $self->log->debug("CACHE: $key: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
             return ($content,'couchdb');
         }
     }
@@ -330,14 +331,14 @@ sub check_cache {
 #    }
 
     # Check the cache for the data we are looking for.
-    my $cached_data = $cache->get($uuid);
+    my $cached_data = $cache->get($key);
 
     # From which memcached server did this come from?
     my $cache_server;
     if ($cache_name eq 'memcache'
         && ($self->config->{timer} || $self->check_user_roles('admin'))) {
         if ($cached_data) {
-            $cache_server = 'memcache: ' . $cache->get_server_for_key($uuid);
+            $cache_server = 'memcache: ' . $cache->get_server_for_key($key);
         }
     }
     elsif ($cached_data) {
@@ -345,10 +346,10 @@ sub check_cache {
     }
 
     if ($cached_data) {
-        $self->log->debug("CACHE: $uuid: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
+        $self->log->debug("CACHE: $key: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
     }
     else {
-        $self->log->debug("CACHE: $uuid: NOT PRESENT in $cache_name");
+        $self->log->debug("CACHE: $key: NOT PRESENT in $cache_name");
     }
 
     return ($cached_data,$cache_server);
@@ -362,8 +363,9 @@ sub set_cache {
     return if ($self->check_any_user_role(qw/admin curator/));
     return if ($self->config->{installation_type} eq 'development'); 
 
-    my $cache_name = $params->{cache_name},
-    my $uuid       = $params->{uuid};
+#    my $cache_name = $params->{cache_name} // 'default',
+    my $cache_name = 'couchdb';
+    my $key        = $params->{key};
     my $data       = $params->{data};
 
     # 1. Dual cache approach
@@ -377,9 +379,46 @@ sub set_cache {
     # We're PUTting everything to one place, but the read caches are distributed.
     # If we look in a read cache and don't yet see something,
     # we will still try and cache it to the core resulting in a conflict.
-    if ($cache_name eq 'couchdb') {
+#    if ($cache_name eq 'couchdb') {
+    if (1) { # DELETE ME
+        my $couch = WormBase::Web->model('CouchDB');
 
-	my $couch = WormBase::Web->model('CouchDB');
+        # CouchDB Kludge
+        # Make sure the document doesn't already exist.
+        # Documents may already be listed in the couchdb
+        # but attachments may not be available yet.
+        # In these cases, simply return without setting the cache.
+        #	return 1 if ($couch->get_document({key     => $key,
+        #					 database => lc($self->model('WormBaseAPI')->version),
+        #					}));
+
+        my $host = $couch->write_host;
+        $self->log->debug("SETTING CACHE: $key into $cache_name on $host");
+
+        my $response = $couch->create_document({
+            attachment => $data,
+            key        => $key,
+            database   => lc($self->model('WormBaseAPI')->version),
+        });
+
+        # Instead of pre-checking for cases where newly added documents/attachments
+        # aren't yet present, we'll just ignore inserts that raise conflicts.
+
+        # if ($response->{error}) {
+        #     $self->log->warn("Couldn't set the cache for $key!" . $response->{error});
+        # }
+        # else {
+        #     return 1;
+        # }
+
+        # The unified cache interface
+    }
+#    else {
+    if (1) { # DELETE ME
+        $cache_name = 'default'; # DELETE ME
+        my $cache = $self->cache(backend => $cache_name);
+        $cache->set($key,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
+    }
 
 	# CouchDB Kludge
 	# Make sure the document doesn't already exist.

@@ -705,7 +705,7 @@ sub widget_GET {
 
     # Cache key something like "$class_$widget_$name"
     my ( $cached_data, $cache_source );
-    my $uuid = join( '_', $class, $widget, $name );
+    my $key = join( '_', $class, $widget, $name );
 
     # Check the cache only if this is a request for HTML.
     # check_cache will check couch first.
@@ -720,13 +720,10 @@ sub widget_GET {
     {
 
         # Shouldn't this be $self? Would break check_cache();
-        ( $cached_data, $cache_source ) = $c->check_cache(
-            {   cache_name => 'couchdb',
-                uuid       => $uuid,
-            }
-        );
-
-        #hostname   => $c->req->base,
+        ( $cached_data, $cache_source ) = $c->check_cache({
+            cache_name => 'couchdb',
+            key        => $key,
+        });
     }
 
     # We're only caching rendered HTML. If it's present, return it.
@@ -808,7 +805,7 @@ sub widget_GET {
 
             $c->set_cache(
                 {   cache_name => 'couchdb',
-                    uuid       => $uuid,
+                    key        => $key,
                     data       => $html,
 #			   host       => $c->req->base,  # eg http://beta.wormbase.org/ or http://todd.wormbase.org/
                 }
