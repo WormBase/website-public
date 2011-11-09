@@ -18,12 +18,12 @@ __PACKAGE__->config(
     'default'          => 'text/x-yaml',
     'stash_key'        => 'rest',
     'map'              => {
-	'text/x-yaml'      => 'YAML',
-	'text/html'        => 'YAML::HTML',
-	'text/xml'         => 'XML::Simple',
-	'application/json' => 'JSON',
+        'text/x-yaml'      => 'YAML',
+        'text/html'        => 'YAML::HTML',
+        'text/xml'         => 'XML::Simple',
+        'application/json' => 'JSON',
     }
-    );
+);
 
 =head1 NAME
 
@@ -789,7 +789,7 @@ sub widget_GET {
     # Set the template
     $c->stash->{template} = 'shared/generic/rest_widget.tt2';
     $c->stash->{child_template}
-        = $c->_select_template( $widget, $class, 'widget' );
+        = $self->_select_template('widget', $class, $widget);
 
     # Forward to the view to render HTML
     if ( $content_type eq 'text/html' ) {
@@ -883,7 +883,6 @@ sub widget_userguide_GET {
     $c->detach();
     return;
 }
-
 
 
 # For "static" pages
@@ -1304,6 +1303,39 @@ sub _issue_rss {
 
   my @sort = sort {$b->{time} <=> $a->{time}} @rss;
   return \@sort;
+}
+
+# Template assignment is a bit of a hack.
+# Maybe I should just maintain
+# a hash, where each field/widget lists its corresponding template
+sub _select_template {
+    my ($self, $type, $class, $render_target) = @_;
+
+    my $config = $self->_app->config;
+
+    # Normally, the template defaults to action name.
+    # However, we have some shared templates which are
+    # not located under root/classes/CLASS
+    if ($type eq 'field') {
+        # Some templates are shared across Models
+        if ($config->{common_fields}->{$render_target}) {
+            return "shared/fields/$render_target.tt2";
+            # Others are specific
+        }
+        else {
+            return "classes/$class/$render_target.tt2";
+        }
+    }
+    else {
+        # Widget template selection
+        # Some widgets are shared across Models
+        if ($config->{common_widgets}->{$render_target}) {
+            return "shared/widgets/$render_target.tt2";
+        }
+        else {
+            return "classes/$class/$render_target.tt2";
+        }
+    }
 }
 
 

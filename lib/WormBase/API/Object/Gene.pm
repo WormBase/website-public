@@ -854,7 +854,7 @@ B<Response example>
 sub version {
     return {
         description => 'the current WormBase version of the gene',
-        data        => shift->object->Version->name,
+        data        => eval { shift->object->Version->name },
     };
 }
 
