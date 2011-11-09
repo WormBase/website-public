@@ -54,7 +54,7 @@ IF fields.structured_description.data;
                    '<div class="text-width" style="margin:0.5em">';
                       markup(obj.text);
                       IF obj.evidence.check;
-                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/' _ object.name.data.id _ '/' _ obj.evidence.tag _ '/' _ obj.evidence.index _ '"></a>';
+                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/' _ fields.name.data.id _ '/' _ obj.evidence.tag _ '/' _ obj.evidence.index _ '"></a>';
                       END;
                    '</div>';
                END;

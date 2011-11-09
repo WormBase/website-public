@@ -1,6 +1,7 @@
+
   <div id="issues-new" class="issue-layout-box">
 
-    [% IF (!url || url != '/') %]
+    [% IF (!url) %]
    <h4>Existing Issues</h4>
   <br />
   [% issue_table(issues,issue_type) %]

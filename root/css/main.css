@@ -572,10 +572,6 @@ div#create-prompt {
   padding:0;
 }
 
-/*.column-narrow #results {
-  max-width:22em;
-}*/
-
 #results ul {
   margin:0 -0.5em;
   padding:0.3em 0 0 0;
@@ -609,7 +605,7 @@ div#create-prompt {
   background:#CCC;
 }
 
-.ellipsis {
+.ellipsis, .ellipsis>span {
   overflow: hidden;  
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;  
@@ -619,13 +615,9 @@ div#create-prompt {
 }
 
 .ellipsis>span{
-  overflow: hidden; 
   white-space: nowrap;
   position:absolute;
   max-width:100%;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;  
-  -ms-text-overflow: ellipsis;  
 }
 
 .text-min-expand {
@@ -653,7 +645,6 @@ div.more {
   -moz-opacity:0.3;
 }
 
-
 div.more.open {
   border-top:none;
   border-bottom:1px solid black;
@@ -665,18 +656,10 @@ div.more .ui-icon {
   left:50%;
 }
 
-
 #fade {
    color: #999999;
    font-size: 0.8em;
 }
-
-.padding{
-    margin:0;
-    padding:0;
-    }
-
-
 
 .result {
   padding:0 0.5em 0.5em;
@@ -715,7 +698,7 @@ div.more .ui-icon {
   float:right;
   position:relative;
   padding:0;
-  height:30px;
+  height:2em;
   margin:0.5em 1.5em 0 0;
   background:#FFF;
 }
@@ -768,13 +751,9 @@ div.more .ui-icon {
   height:auto;
   background:#E9EEF2;
   color:black;
-  font-size:10pt;
+  font-size:0.9em;
   position:relative;
   max-width:10em;
-}
-
-#searchSelect li{
-  width:100%;
 }
 
 #searchSelect li:hover{
@@ -804,15 +783,12 @@ div.more .ui-icon {
   margin:0;
   padding:0.3em 0;
   text-align:right;
+  width:100%;
 }
 
 #searchSelect ul li a{
   padding:0.5em;
   white-space:nowrap;
-}
-
-#searchSelect ul li a:hover{
-  color:black;
 }
 
 #searchSelect:hover ul {
@@ -860,14 +836,6 @@ div.more .ui-icon {
   -moz-opacity:1;
 }
 
-#star-instructions li {
-  margin:1em 0;
-}
-
-.how-to-star img {
-  margin-left:1em;
-}
-
 .how-to-star {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
@@ -878,7 +846,6 @@ div.more .ui-icon {
 .highlight {
   font-weight:bold
 }
-
 
 .comment-box {
   margin:0.5em 0;
@@ -959,6 +926,13 @@ body, html {
     height:100%;
 }
 
+
+/*@media screen and (max-device-width: 480px) {
+  body {
+    font-size:150%;
+  }
+}*/
+
 h1,h2,h3,h4,h5,h6 { color:black; margin:0; font-weight:bold;}
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
@@ -1018,16 +992,11 @@ p  {
     margin:1em 0;
 }
 
-img {
-    border:0px;
-}
-
 
 /*********************************
    
    Headers
 
-Note: firefox seems to render header objects funny
    
 *********************************/
 div#header {
@@ -1377,10 +1346,6 @@ li.visible div.widget-container {
   display:block;
 }
 
-.widget-container .ui-helper-hidden {
-  display:none;
-}
-
 .content {
   padding: 1em;
   padding-bottom:1.8em;
@@ -1389,23 +1354,6 @@ li.visible div.widget-container {
   clear:both;
   font-size:0.9em;
 }
-
-
-/* Resources pages like "Find Reagents" have different formatting needs than others */
-/* Trump some of the earlier settings */
-#resources {
-   width:600px;
-}
-
-#resources h2 {
-   float:none;
-}
-
-#resources p {
-    margin-left:2em;
-    line-height:1.2em;
-}
-
 
 /* pages in resources/documentation/* have no widgets. */
 /* We might want to add TOCs to some as well. See resources/documentation/nomenclature.tt2 as guide */
@@ -1442,7 +1390,9 @@ li.visible div.widget-container {
     margin-left:1em;
 }
 
-
+.bare-page {
+  padding:2em !important;
+}
 
 /* *******************************
    USERGUIDE SPECIFIC FORMATTING 
@@ -1499,19 +1449,13 @@ li.visible div.widget-container {
   cursor:pointer;
 }
 
-.widget-header h3.minimized{
+.widget-container.minimized .widget-header h3{
     border:0;
 }
 
 .widget-container:hover .widget-header>.ui-icon {
   display:block;
 }
-
-.widget-description {
-    width:60%;
-    color:red;
-}
-
 
 #widget-me {
    border: 1px solid #BDB8A4;
@@ -1547,10 +1491,6 @@ li.visible div.widget-container {
     bottom:0.4em;
     right:0.2em;
     display:none;
-}
-#widget-footer.footer-left {
-  left:0.2em;
-  right:auto;
 }
 
 .widget-container:hover #widget-footer {
@@ -1616,9 +1556,9 @@ li.visible div.widget-container {
 
 /* Fieldsets : used on profile and admin pages */
 fieldset { 
-    display: block;
-    border: 2px groove threedface;
-    margin-bottom:1em;
+  display: block;
+  border: 2px groove threedface;
+  margin-bottom:1em;
   padding:1em;
 }
 
@@ -1674,7 +1614,6 @@ div#footercredit a{
     bottom:1em;
     right:1.4em;
     width:120px;
-/*     height:30px; */
 }
 
 
@@ -1709,14 +1648,11 @@ div#footercredit a{
 }
 
 #footer li>a, #footer li>span {
-/*    display:block;  */
     line-height:2em;
-/*    padding:0.4em; */
     font-size:0.9em;
     white-space:nowrap;
     color:#aaa;
 }
-
 
 #footer li>span {
     color:#eee;
@@ -1765,28 +1701,10 @@ div#footercredit a{
 
 *********************************/
 
-
-.description {
-   font-style:italic;
-}
-
-
-.returned-data {
-    font-family:Courier;
-    width:800px;
-    padding:25px;
-    background:#FFFFCC;
-    border:1px solid black;
-    display:none;
-}
-
 .returned {
    display:none;
-/*    background:#EEE; */
-/*    margin-top:5px; */
    padding:5px;
    padding-left:30px;
-/*    padding-right:10px; */
 }
 
 .superscript      { vertical-align:super; 
@@ -1799,40 +1717,13 @@ div#footercredit a{
            WIDGETS
  
    ********************************* */
-/*    border:1px dotted gray; */
-/*
-div.widget {
-    padding:1px;
-    margin:2px;
 
-    background-color:seafoam;
-}
-*/
-
-/* The widget title bar. This needs to be a div so I can 
-   target it for widget controls like toggle, drag, etc.
-
-   On the other hand, these titles should maybe just be
-   structural elements such as H1. DIVs and SPANs
-   that lack presentational information, but styled with classes
-   can be confusing.
-*/
-/*
-div.widget .title {
-    border-bottom:1px solid black;
-    padding:3px 0px 3px 6px;
-    background-color:#BCC;
-    text-transform:uppercase;
-}
-*/
 
 /* Links to download widgets in a variety of formats */
 div.downloadable-formats {
     float:right;
     font-size:0.9em;    
 }
-
-
 
 div.columns {
   float:left;
@@ -1891,8 +1782,6 @@ div.columns ul div input#layout-input {
 
 
 
-
-
 #page-title {
   margin:1.5em -1em -2.2em 175px;
   padding:0 1.5em 0 0;
@@ -1911,18 +1800,6 @@ div.columns ul div input#layout-input {
 }
 
 
-/* Formatting for the debug index page */
-div.widget-section-header {
-    padding-bottom:5px;
-    margin-bottom:2px;
-    margin-top:15px;
-    text-align:left;
-    border-bottom:1px dotted gray;
-}
-
-
-
-
 
 /* widget field titles: ie Identification > IDs */
 div.field {
@@ -1931,10 +1808,6 @@ div.field {
   line-height:1.2em;
   padding:0.2em;
   width:100%;
-}
-
-div.field:hover{
-/*   background:#EEE; */
 }
 
 div.field-title {
@@ -2007,63 +1880,6 @@ div#google-map {
     position:relative;
     height: auto;
     overflow:hidden;
-/*     right:140px; */
-/*     top:50px; */
-}
-
-
-
-
-
-
-
-
-
-
-
-/* Containers */
-/* Alert box */
-div#alert { 
-    background-color: #BFD5E8;
-    text-align:center;
-    border-bottom:2px solid gray;
-    padding:10px;
-    margin-bottom:10px;
-}
-
-
-
-
-
-
-
-
-/* Evidence Formatting */
-div.evidence {
-    background-color:#FFDDDD;
-    padding:5px;
-    font-size:12px;
-    margin-left:30px;
-}
-div.evidence .title {}   /* Currently a static title of "evidence" */
-div.evidence .type {     /* ie Paper              */
-    float:left;
-    padding-right:5px;
-}
-div.evidence .source {}  /* ie Harris et al., 2003 */
-
-
-div.evidence tr { 
-  text-align:top;
-}
-
-div.evidence td { 
-  text-align:top;
-}
-
-div.evidence tr.updated { 
-  font-weight:bold;
-  text-align:right;
 }
 
 
@@ -2072,8 +1888,6 @@ div.evidence tr.updated {
 /* dataheader and datacell are used in page-wide tables such as in the 
    listing of all rearrangements by chrom on the rearrangment page */
 
-.abstract         { background-color: #FFEEEE;     padding-bottom:5px;}
-.acetree          { font-size: small; }
 .code             { 
                     background-color: #CCFFFF;
                     font-family: Courier, monospace;
@@ -2093,8 +1907,6 @@ div.evidence tr.updated {
    =============================================== */
 .species { font-style: italic; }
 
-.no-wrap { white-space: nowrap; }
-
 /* The variation summary */
 .cgc-strain {   /* strains available from the CGC */
     font-style:italic;
@@ -2102,50 +1914,6 @@ div.evidence tr.updated {
 
 .strains-with-single-variation {
      font-weight:bold;
-}
-
-
-
-
-
-/* Generic presentation elements */
-/* List of items, displayed inline */
-.inline-list {
-    display:none;
-    margin: 2em;
-    width: 60%;
-    padding: 2px;
-}
-
-.inline-list p {
-    display: inline;
-}
-
-.inline-list ul, .inline-list li {
-    display: inline;
-    margin: 0;
-    padding: 0;
-    color: #339;
-}
-
-
-/* List of items, displayed normally */
-.standard-list {
-    display:none;
-    margin: 2em;
-    width: 60%;
-    padding: 2px;
-}
-
-.standard-list p {
-    display: block;
-}
-
-.standard-list ul, .standard-list li {
-    display: block;
-    margin: 0;
-    padding: 0;
-    color: #339;
 }
 
 
@@ -2182,28 +1950,6 @@ div.evidence tr.updated {
 }
 
 
-/*expandable text container */
-.abstract-container {
-    font-size: 1em;
-    overflow: hidden;
-    clear: both;
-    display: none;   /* Hidden by default */
-    position:relative;
-    left:30px;
-    background-color: #EEEEFF;
-    border: 1px solid black;
-    padding: 5px;
-/*     width:80%; */
-}
-
-.results-abstract {
-    padding-bottom:5px;
-}
-
-.fasta-sequence {
-   font-family: Courier, monospace;
-}
-
 .sequence-download {
 /*    float:right;         */
   position:absolute;
@@ -2228,6 +1974,7 @@ white-space:nowrap;
 	font-size: 1em;
 	font-weight: normal;
 }
+
 #overview-content .toggle{
   clear:left;
 }
@@ -2265,8 +2012,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
   clear:both;
   overflow:hidden;
-/*   display:table; */
-/*   table-layout:fixed; */
   border-top: 1px solid #CCC;
 }
 
@@ -2417,7 +2162,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   right:-9px;
   top:0;
   cursor:pointer;
-/*   background: #AAA; */
   background: #EFEFEF;
   z-index:5;
   border-left:1px solid #CCC;
@@ -2554,7 +2298,6 @@ div.detail-box div.field div.field-content{
 
 .bench-update {
   float:right;
-/*   margin-left:1em; */
 }
 
 .disabled {
@@ -2593,8 +2336,6 @@ div.detail-box div.field div.field-content{
   top:0;
   right:3em;
   bottom:auto;
-/*   background:#AAA; */
-/*   border:2px solid black; */
 }
 
 .star>.tip span.ui-icon-triangle-1-s{
@@ -2733,10 +2474,6 @@ table.venn tr.venn-data td {
   color:black;
 }
 
-.issue-user {
-  width : 60%;
-}
-
 .issue-content{
   position:relative; 
   background-color:#fcfcfc;
@@ -2811,22 +2548,6 @@ table.venn tr.venn-data td {
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
-
-.email {   }   /* email address formatting */
-
-div#advisory-board        { padding:2em; }
-#advisory-board h2        { float:none;}
-#advisory-board img {
-    border : 3px solid gray;
-    width  : 100px;
-}
-#advisory-board .description { 
-     font-style:normal;
-     clear:both; 
-     padding: 1em 0em 2em 0em;
-     width:500px;
-     font-size:1.2em;
-}
 
 
 /* Currently used on the life-stage page */

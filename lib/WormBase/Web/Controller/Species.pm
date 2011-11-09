@@ -53,7 +53,8 @@ sub species_index :Path('/species') :Args(1)   {
     }
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
@@ -85,7 +86,8 @@ sub class_index :Path("/species") Args(2) {
     }
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
@@ -135,7 +137,8 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{class}      = $class;
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
     my $object = $c->model('WormBaseAPI')->fetch({

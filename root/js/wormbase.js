@@ -127,7 +127,7 @@
           colDropdown = $jq("#column-dropdown");
       
       operator();
-      Scrolling.sidebarInit();
+
       $jq("#print").click(function() {
         var layout = location.hash.replace('#',''),
             print = $jq(this);
@@ -269,8 +269,12 @@
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-      if(widgetHolder.size()==0){return;}
-      
+      if(widgetHolder.size()==0){
+        $jq("#content").addClass("bare-page");
+        return;
+      }
+      Scrolling.sidebarInit();
+            
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
       Layout.Breadcrumbs.init();
@@ -460,7 +464,7 @@
       var module = $jq("#" + button.attr("wname") + "-content");
       if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
-      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized").closest(".widget-container").toggleClass("minimized");
+      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
       if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
       (button.attr("title") != "maximize") ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
@@ -782,6 +786,7 @@
   function allResults(type, species, query){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
+    Scrolling.sidebarInit();
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
