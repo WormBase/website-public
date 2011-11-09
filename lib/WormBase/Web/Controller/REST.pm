@@ -95,7 +95,7 @@ sub print_POST {
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
-    my $session = $self->get_session($c);
+    my $session = $self->_get_session($c);
 
     my $url = $c->req->params->{url};
     if($url){
@@ -124,7 +124,7 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 sub workbench_star_GET{
     my ( $self, $c) = @_;
     my $url = $c->req->params->{url};
-    my $page = $self->get_session($c)->pages->search({url=>$url}, {rows=>1})->next;
+    my $page = $self->_get_session($c)->pages->search({url=>$url}, {rows=>1})->next;
 
     $c->stash->{star}->{value} = $page ? 1 : 0;
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
