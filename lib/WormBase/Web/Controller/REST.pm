@@ -218,19 +218,17 @@ sub get_user_info_GET{
 
   my $api = $c->model('WormBaseAPI');
   my $object = $api->fetch({ class => 'Person', name  => $name });
-  # what if there's no object?
 
   my $message;
-  my $status_ok = 1;
+  my $status_ok;
   my @users = $c->model('Schema::User')->search({wbid=>$name, wb_link_confirm=>1});
   if(@users){
-    $status_ok = 0;
     $message = "This account has already been linked";
   }elsif($object && $object->email->{data}){
     my $emails = join (', ', map {"<a href='mailto:$_'>$_</a>"} @{$object->email->{data}});
     $message = "An email will be sent to " . $emails . " to confirm your identity";
+    $status_ok = 1;
   }else{
-    $status_ok = 0;
     $message = "This account cannot be linked at this time";
   }
   $self->status_ok(
@@ -240,7 +238,7 @@ sub get_user_info_GET{
           fullname => $object->name->{data}->{label},
           email => $object->email->{data},
           message => $message,
-          status_ok => $status_ok,
+          status_ok => $status_ok || 0,
       },
   );
 

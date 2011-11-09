@@ -1217,6 +1217,7 @@ END;
     ELSE;
         NEXT IF widget.display == "index";
     END;
+
     displayed_widgets.push(widget_name);
 
     w = {  id    = widget_name
