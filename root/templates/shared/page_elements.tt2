@@ -603,24 +603,6 @@ END;
  #
  ####################################################
 %]
-[% BLOCK disqus_comments %]
-<!-- Commenting powered by Disqus -->
-<script type="text/javascript">
-//<![CDATA[
-(function() {
-    var links = document.getElementsByTagName('a');
-    var query = '?';
-    for(var i = 0; i < links.length; i++) {
-        if(links[i].href.indexOf('#disqus_thread') >= 0) {
-            query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-        }
-    }
-    document.write('<script type="text/javascript" src="http://disqus.com/forums/wormbase/get_num_replies.js' + query + '"></' + 'script>');
-})();
-//]]>
-</script>
-[% END %]
-
 
 
 [% BLOCK suggestions2wormbase %]
@@ -800,7 +782,7 @@ END;
       <tr><td colspan="4">Central Dogma</td></tr>
 
       <tr>
-         <td rowspan="[% fields.central_dogma.data.gene_models.size + 1 %]">
+         <td rowspan="[% fields.central_dogma.data.gene_models.size || 0 + 1 %]">
               [% tag2link(fields.central_dogma.data.gene) %]
          </td>
          <td>Transcript</td><td>Exons</td><td>Protein</td>
@@ -1080,51 +1062,6 @@ END;
   END; # END of MACRO
 %]
 
-
-
-
-[%# 
-
-   gene_ontology; custom data table processing used on the Gene Summary.
-
-   This is essentially generic processing for a nested data structure
-   intended to be multiple tables.
-   
-   eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
-
-%]
-
-[% MACRO gene_ontology BLOCK;
-
-       # One table for each key (here, a GO facet)
-       facets = fields.$key.data.keys.sort;
-
-       FOREACH facet IN facets;
-            IF fields.$key.data.$facet > 0;
-                WRAPPER $field_block title="$facet" key="$key";
-                                  
-                   table_count = table_count + 1;                 
- 
-                  # generate table
-#                            '<span class="species">'
-#                          _ facet 
-#                          _ '</span> (' 
-#                          _ fields.$key.data.$facet.size 
-#                          _ ' assocations)';
-
-                  # Here we assume that the inner data structure as an array of hashes  
-                  build_data_table(order = ['method','term', 'evidence_code'],
-                             columns = {   method   => 'Method',
-                                                 term   => 'Term',
-                                        evidence_code   => 'Evidence' },
-                             passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go");   
-
-                 END; # END of WRAPPER
-              END; # END IF facet contains data    
-         END; # END of facets
-  END; # END of MACRO
-%]
 
 [% MACRO add_static_widgets BLOCK %]
 
