@@ -1,25 +1,35 @@
+[%# 
+
+   gene_ontology; custom data table processing used on the Gene Summary.
+
+   This is essentially generic processing for a nested data structure
+   intended to be multiple tables.
+   
+   eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
+
+%]
+
 [% 
-    gene_ontology(title="Gene Ontology" key="gene_ontology");
+       key="gene_ontology";
+       # One table for each key (here, a GO facet)
+       facets = fields.$key.data.keys.sort;
+
+       table_count = 0;
+       FOREACH facet IN facets;
+            IF fields.$key.data.$facet > 0;
+                WRAPPER $field_block title="$facet" key="$key";
+                   table_count = table_count + 1;                 
+
+                  # Here we assume that the inner data structure as an array of hashes  
+                  build_data_table(order = ['method','term', 'evidence_code'],
+                             columns = {   method   => 'Method',
+                                                 term   => 'Term',
+                                        evidence_code   => 'Evidence' },
+                             passed_data = fields.$key.data.$facet,
+                         key     = "table_${table_count}_go");   
+
+                 END; # END of WRAPPER
+              END; # END IF facet contains data    
+         END; # END of facets
+
 %]
-
-
-
-[%#    This is the OLD gene ontology formatting.
-FOREACH annotation_basis IN fields.gene_ontology.data.keys.sort;
-    FOREACH term_type IN fields.gene_ontology.data.$annotation_basis.keys.sort;
-        USE String(term_type.replace('_', ' '));
-        WRAPPER $field_block title=String;
-           '<table>';
-            FOREACH data IN fields.gene_ontology.data.$annotation_basis.$term_type.keys.sort;
-	      obj = fields.gene_ontology.data.$annotation_basis.$term_type.$data;
-              '<tr><td>' _ obj.display_method _ '</td>';		  
-		  '<td>' _ tag2link(obj.term) _  '</td>'
-		  '<td>' _ obj.evidence_code _  '</td>';
-	      '</tr>';
-         END;
-       '</table>';
-    END;
-   END; 
-END;
-%]
-  
