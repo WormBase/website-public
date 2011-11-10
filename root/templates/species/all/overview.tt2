@@ -1,6 +1,6 @@
 <h2>Species Available Through WormBase</h2>
 
-<div class="widget-description">
+<div class="text-width" style="color:red">
     The following species are available to different extents through the WormBase website.
     At a minimum, we collect and standardize sequence and annotations of any species that 
     may be of immediate interest to our users.  Species that are more closely related to 

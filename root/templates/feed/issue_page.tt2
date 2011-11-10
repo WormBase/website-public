@@ -1,6 +1,6 @@
 
 
-<div style=" margin:1em 0" >
+
 <div class="issue-content" >
   <h2>#[% issue.issue_id %] [% issue.title %] [% IF issue.is_private; '<em>(reported privately)</em>'; END %]</h2>
   <span id="fade">
@@ -51,7 +51,7 @@
 <p>
 [% user_login_info %]
 <form>
-<textarea class="issue-text" rows="5"   id="content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
+<textarea class="issue-text" rows="5"   id="issue-content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
 
 [% IF c.check_user_roles('admin') %]
 <p>
@@ -97,5 +97,5 @@
 </p>
 </form>
 </div>
-</div>
+
  

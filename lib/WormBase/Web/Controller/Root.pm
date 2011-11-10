@@ -58,18 +58,17 @@ sub default :Path {
     # Does this path exist as one of our pages?
     # This saves me from having to add an index action for
     # each class.  Each class will have a single default screen.
-    if (defined $class && $c->config->{pages}->{$class}) {
-	
-	# Use the debug index pages.
-	if ($c->config->{debug}) {
-	  $c->stash->{template} = 'debug/index.tt2';
-	} else {
-	    $c->stash->{template} = 'species/report.tt2';
-	    $c->stash->{path} = $c->request->path;
-	}
-    } else {
-	$c->detach('/soft_404');
-    }
+#     if (defined $class && $c->config->{pages}->{$class}) {
+#       # Use the debug index pages.
+#       if ($c->config->{debug}) {
+#         $c->stash->{template} = 'debug/index.tt2';
+#       } else {
+#           $c->stash->{template} = 'species/report.tt2';
+#           $c->stash->{path} = $c->request->path;
+#       }
+#     } else {
+      $c->detach('/soft_404');
+#     }
 }
 
 sub soft_404 :Path('/soft_404') {
@@ -81,12 +80,6 @@ sub soft_404 :Path('/soft_404') {
 }
     
 
-
-#sub gbrowse :Path("/gbrowse") Args(0) {
-#    my ($self,$c) = @_;
-#    $c->stash->{noboiler}=1;
-#    $c->stash->{template} = 'gbrowse.tt2';
-#}
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
@@ -134,39 +127,6 @@ sub draw :Path("/draw") Args(1) {
     $c->detach('WormBase::Web::View::Graphics');
 }
 
-sub issue_rss {
-    my ($self,$c,$count) = @_;
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} );
-
-    my %seen;
-    my @rss;
-    while ($_ = $threads->next) {
-        unless (exists $seen{$_->issue_id}) {
-            $seen{$_->issue_id} =1 ;
-
-            push @rss, {
-                time     => $_->timestamp,
-                people   => $_->user,
-                title    => $_->issue->title,
-                location => $_->issue->page,
-                id       => $_->issue->issue_id,
-                re       => 1,
-            } ;
-        }
-        last if keys %seen >= $count;
-    }
-
-    my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
-    push @rss, map {
-        time     => $_->timestamp,
-        people   => $_->reporter,
-        title    => $_->title,
-        location => $_->page,
-        id       => $_->issue_id,
-    }, @issues;                 # mind the comma
-
-    return [ sort { $b->{time} <=> $a->{time} } @rss ];
-}
 
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
@@ -181,15 +141,6 @@ sub me :Path("/me") Args(0) {
 #
 #######################################################
 
-# Configure widgets and fields for a given page
-sub configure : Chained('/') PathPart('configure') Args(1) {
-  
-  # Fetch all available widgets for a page
-  # Let users drag and drop widgets onto the configuration target ala WordPress 
-
-  # Let users pick and choose which data bits to display
-  
-}
 
 =head2 end
     

@@ -34,10 +34,15 @@ sub search :Path('/search') Args {
     my $query = shift @args;
     my $page_count = shift @args || 1;
 
+    # hack for references widget
+    if($page_count =~ m/references/){
+      $type = 'paper';
+      $page_count = 1;
+    }
+
     my $species = $c->req->param("species");
-    my $ptype = $c->req->param("type");
-    $c->stash->{widget} = $c->req->param("widget") if $c->req->param("widget");
-    $c->stash->{nostar} = $c->req->param("nostar") if $c->req->param("nostar");
+    $c->stash->{widget} = $c->req->param("widget");
+    $c->stash->{nostar} = $c->req->param("nostar");
 
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
 

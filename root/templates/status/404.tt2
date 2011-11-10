@@ -36,7 +36,7 @@
    </div>
 
    <p>
-       Why not go to the Wormbase <a href="[% c.uri_for("/") %]">Home Page </a> or <a href = "javascript:history.back()">return from where you came?</a>
+       Why not go to the Wormbase <a href="[% c.uri_for("/") %]">Home Page </a> or <a href = "javascript:history.back()">go back?</a>
    </p>
 
 </div>

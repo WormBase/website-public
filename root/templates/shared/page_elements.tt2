@@ -127,6 +127,7 @@ END;
     <tr align=left>
       <th>#</th>
       <th>Title</th>
+      <th>Visibility</th>
       <th>State</th>
       <th>Severity</th>
       [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
@@ -159,8 +160,8 @@ END;
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
+        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
+        <td>[% IF IS.is_private ; ' <em>private</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
@@ -243,7 +244,7 @@ END;
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
 
-    <div class="field-curator" id="[% title FILTER html %]">
+    <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
                   [% IF title ; title _ ': '; END; %]
          </div>
@@ -497,17 +498,15 @@ END;
  
    <!-- start [% id %] widget -->
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
-                <header> 
                 <div class="ui-corner-top widget-header">
-                    <div class="module-close ui-icon ui-icon-large ui-icon-close ui-helper-hidden" wname="[% id %]" title="close"></div>
-[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink ui-helper-hidden" wname="[% id %]" title="pop out"></div>
+                    <div class="module-close ui-icon ui-icon-large ui-icon-close" wname="[% id %]" title="close"></div>
+[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink" wname="[% id %]" title="pop out"></div>
 [% END %]              
                     <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
                 </div>
-                </header>
 
                 <div id="[%- id -%]-content" class="content">
                 [% content %]
@@ -603,24 +602,6 @@ END;
  #
  ####################################################
 %]
-[% BLOCK disqus_comments %]
-<!-- Commenting powered by Disqus -->
-<script type="text/javascript">
-//<![CDATA[
-(function() {
-    var links = document.getElementsByTagName('a');
-    var query = '?';
-    for(var i = 0; i < links.length; i++) {
-        if(links[i].href.indexOf('#disqus_thread') >= 0) {
-            query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-        }
-    }
-    document.write('<script type="text/javascript" src="http://disqus.com/forums/wormbase/get_num_replies.js' + query + '"></' + 'script>');
-})();
-//]]>
-</script>
-[% END %]
-
 
 
 [% BLOCK suggestions2wormbase %]
@@ -800,7 +781,7 @@ END;
       <tr><td colspan="4">Central Dogma</td></tr>
 
       <tr>
-         <td rowspan="[% fields.central_dogma.data.gene_models.size + 1 %]">
+         <td rowspan="[% fields.central_dogma.data.gene_models.size || 0 + 1 %]">
               [% tag2link(fields.central_dogma.data.gene) %]
          </td>
          <td>Transcript</td><td>Exons</td><td>Protein</td>
@@ -1081,51 +1062,6 @@ END;
 %]
 
 
-
-
-[%# 
-
-   gene_ontology; custom data table processing used on the Gene Summary.
-
-   This is essentially generic processing for a nested data structure
-   intended to be multiple tables.
-   
-   eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
-
-%]
-
-[% MACRO gene_ontology BLOCK;
-
-       # One table for each key (here, a GO facet)
-       facets = fields.$key.data.keys.sort;
-
-       FOREACH facet IN facets;
-            IF fields.$key.data.$facet > 0;
-                WRAPPER $field_block title="$facet" key="$key";
-                                  
-                   table_count = table_count + 1;                 
- 
-                  # generate table
-#                            '<span class="species">'
-#                          _ facet 
-#                          _ '</span> (' 
-#                          _ fields.$key.data.$facet.size 
-#                          _ ' assocations)';
-
-                  # Here we assume that the inner data structure as an array of hashes  
-                  build_data_table(order = ['method','term', 'evidence_code'],
-                             columns = {   method   => 'Method',
-                                                 term   => 'Term',
-                                        evidence_code   => 'Evidence' },
-                             passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go");   
-
-                 END; # END of WRAPPER
-              END; # END IF facet contains data    
-         END; # END of facets
-  END; # END of MACRO
-%]
-
 [% MACRO add_static_widgets BLOCK %]
 
   [% FOREACH widget IN static_widgets %]
@@ -1217,6 +1153,7 @@ END;
     ELSE;
         NEXT IF widget.display == "index";
     END;
+
     displayed_widgets.push(widget_name);
 
     w = {  id    = widget_name
@@ -1251,7 +1188,7 @@ END;
   END;
 
   # Add tools.
-  IF section_fetch.tools;
+  IF section_fetch.tools.keys.size || 0 > 0;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
@@ -1270,7 +1207,8 @@ END;
         
         w = { id = widget_name
               title = widget.title
-              href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
+              href =  c.uri_for('/tools',widget.name, 'run') _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
+
               type = 'tools'
               };
       

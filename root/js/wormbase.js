@@ -127,7 +127,7 @@
           colDropdown = $jq("#column-dropdown");
       
       operator();
-      Scrolling.sidebarInit();
+
       $jq("#print").click(function() {
         var layout = location.hash.replace('#',''),
             print = $jq(this);
@@ -269,8 +269,12 @@
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-      if(widgetHolder.size()==0){return;}
-      
+      if(widgetHolder.size()==0){
+        $jq("#content").addClass("bare-page");
+        return;
+      }
+      Scrolling.sidebarInit();
+            
       window.onhashchange = Layout.readHash;
       window.onresize = Layout.resize;
       Layout.Breadcrumbs.init();
@@ -460,7 +464,7 @@
       var module = $jq("#" + button.attr("wname") + "-content");
       if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
-      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized").closest(".widget-container").toggleClass("minimized");
+      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
       if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
       (button.attr("title") != "maximize") ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
@@ -562,7 +566,7 @@
         
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
-          (isBox.hasClass("minimize")) ? isBox.animate({width:"8em"}) : isBox.animate({width:"1.5em"});
+          (isBox.hasClass("minimize")) ? isBox.animate({width:"12em"}) : isBox.animate({width:"1.5em"});
           isBox.toggleClass("minimize").children().toggle();
         });
     }
@@ -782,6 +786,7 @@
   function allResults(type, species, query){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
+    Scrolling.sidebarInit();
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
@@ -844,12 +849,6 @@
     
       
   function addWidgetEffects(widget_container) {
-      widget_container.find(".widget-header").hover(
-        function () {
-          $jq(this).children("h3").children("span.hide").toggle();
-        }
-      );
-
       widget_container.find("div.module-min").hover(
         function () {
           var button = $jq(this);
@@ -994,7 +993,7 @@ var Layout = (function(){
       var hash = "",
           tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
       if(widgetList.list.length == 0){ return; }
-      for(i=0; i<(widgetList.list.length - 3 - tools); i++){
+      for(i=0; i<(widgetList.list.length - 2 - tools); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
@@ -1352,19 +1351,12 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            email = feed.find("#email"),
-            username = feed.find("#display-name"),
             is_private = feed.find("#isprivate:checked").size();
-        if(email.attr('id') && username.attr('id')) {
-           if(validate_fields(email,username)==false) {return false;}
-        }  
         $jq.ajax({
           type: 'POST',
           url: rel,
-          data: {title:feed.find("#title").val(), 
-                content: feed.find("#content").val(), 
-                email:email.val() ,
-                username:username.val() , 
+          data: {title:feed.find("#issue-title option:selected").val(), 
+                content: feed.find("#issue-content").val(), 
                 url: url || issue.url,
                 isprivate:is_private},
           success: function(data){
@@ -1496,7 +1488,7 @@ var Scrolling = (function(){
       }else{
         var widget_id = wname.split("-").pop(),
             history = $jq('<div id="' + wname + '-history"></div>'); 
-        history.load("rest/widget/static/" + widget_id + "?history=1");
+        history.load("/rest/widget/static/" + widget_id + "?history=1");
         widget.find("div.content").append(history);
         widget.find("a#history-button").addClass("ui-state-highlight");
       }
