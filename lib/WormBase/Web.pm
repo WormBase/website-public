@@ -281,10 +281,9 @@ sub check_cache {
     # Don't bother checking the cache in certain circumstances.
     # return if ($c->check_any_user_role(qw/admin curator/));
 
-#    return if $self->config->{installation_type} eq 'development'; # don't cache on dev installs
-#    my $cache_name = $params->{cache_name};
-    my $cache_name = 'couchdb';
-    my $key        = $params->{key};
+    $self->log->debug('CACHE IS ', $self->config->{cache} ? 'ON' : 'OFF');
+    return unless $self->config->{cache};
+    my ($cache_name, $key) = @{$params}{qw(cache_name key)};
 
     # First, has this content been precached?
     # CouchDB. Located on localhost.
@@ -316,7 +315,7 @@ sub check_cache {
 
     # 2. Dual cache approach: filecache or memcache?
     # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $cache_name = 'default' if $cache_name eq 'filecache' || $cache_name eq 'couchdb';
+    $cache_name = 'default' if $cache_name eq 'couchdb';
     my $cache = $self->cache(backend => $cache_name);
 
 #    # Version entries in the cache.
@@ -360,27 +359,21 @@ sub set_cache {
     my ($self,$params) = @_;
 
     # Don't bother setting the cache under certain circumstances
+    return unless $self->config->{cache};
     return if ($self->check_any_user_role(qw/admin curator/));
-    return if ($self->config->{installation_type} eq 'development'); 
 
-#    my $cache_name = $params->{cache_name} // 'default',
-    my $cache_name = 'couchdb';
+    my $cache_name = $params->{cache_name} // 'default',
     my $key        = $params->{key};
     my $data       = $params->{data};
-
-    # 1. Dual cache approach
-    # filecache or memcache?
-    # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-
-    # One approach: store everything in a *single* couch.
-    # No replication or NFS required.
 
     # BEWARE!  Some set_cache operations will FAIL if the cache is distributed.
     # We're PUTting everything to one place, but the read caches are distributed.
     # If we look in a read cache and don't yet see something,
     # we will still try and cache it to the core resulting in a conflict.
-#    if ($cache_name eq 'couchdb') {
-    if (1) { # DELETE ME
+
+    # should probably have an abstraction layer or generalize this instead of
+    # setting up cases per cache type we have -AD
+    if ($cache_name eq 'couchdb') {
         my $couch = WormBase::Web->model('CouchDB');
 
         # CouchDB Kludge
@@ -400,62 +393,12 @@ sub set_cache {
             key        => $key,
             database   => lc($self->model('WormBaseAPI')->version),
         });
-
-        # Instead of pre-checking for cases where newly added documents/attachments
-        # aren't yet present, we'll just ignore inserts that raise conflicts.
-
-        # if ($response->{error}) {
-        #     $self->log->warn("Couldn't set the cache for $key!" . $response->{error});
-        # }
-        # else {
-        #     return 1;
-        # }
-
-        # The unified cache interface
     }
-#    else {
-    if (1) { # DELETE ME
-        $cache_name = 'default'; # DELETE ME
-        my $cache = $self->cache(backend => $cache_name);
-        $cache->set($key,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
+    else {
+        $self->cache(backend => $cache_name)->set($key, $data)
+            or $self->log->warn("Couldn't cache data into $cache_name: $!");
     }
 
-	# CouchDB Kludge
-	# Make sure the document doesn't already exist.
-	# Documents may already be listed in the couchdb
-	# but attachments may not be available yet.
-	# In these cases, simply return without setting the cache.
-#	return 1 if ($couch->get_document({uuid     => $uuid,
-#					 database => lc($self->model('WormBaseAPI')->version),
-#					}));
-
-	my $host = $couch->write_host;
-	$self->log->debug("SETTING CACHE: $uuid into $cache_name on $host");
-
-	my $response = $couch->create_document({attachment => $data,
-						uuid       => $uuid,			     
-						database   => lc($self->model('WormBaseAPI')->version),
-					       });
-
-	# Instead of pre-checking for cases where newly added documents/attachments
-	# aren't yet present, we'll just ignore inserts that raise conflicts.
-	return 1;
-
-#	if ($response->{error}) {
-#	    $self->log->warn("Couldn't set the cache for $uuid!" . $response->{error});
-#	} else {
-#	    return 1;
-#	}
-
-    # The unified cache interface
-    } else {
-	$cache_name = 'default' if $cache_name eq 'filecache';
-	my $cache = $self->cache(backend => $cache_name);
-	$cache->set($uuid,$data) or $self->log->warn("Couldn't cache data into $cache_name: $!");
-    }    
-	
-    # 2. single cache approach
-    # $self->cache->set($cache_id,$data) or $self->log->warn("Couldn't cache data: $!");
     return;
 }
 
