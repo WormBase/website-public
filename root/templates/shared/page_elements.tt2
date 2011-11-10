@@ -127,6 +127,7 @@ END;
     <tr align=left>
       <th>#</th>
       <th>Title</th>
+      <th>Visibility</th>
       <th>State</th>
       <th>Severity</th>
       [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
@@ -159,8 +160,8 @@ END;
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
+        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
+        <td>[% IF IS.is_private ; ' <em>private</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
@@ -243,7 +244,7 @@ END;
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
 
-    <div class="field-curator" id="[% title FILTER html %]">
+    <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
                   [% IF title ; title _ ': '; END; %]
          </div>
@@ -497,17 +498,15 @@ END;
  
    <!-- start [% id %] widget -->
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
-                <header> 
                 <div class="ui-corner-top widget-header">
-                    <div class="module-close ui-icon ui-icon-large ui-icon-close ui-helper-hidden" wname="[% id %]" title="close"></div>
-[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink ui-helper-hidden" wname="[% id %]" title="pop out"></div>
+                    <div class="module-close ui-icon ui-icon-large ui-icon-close" wname="[% id %]" title="close"></div>
+[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink" wname="[% id %]" title="pop out"></div>
 [% END %]              
                     <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
                 </div>
-                </header>
 
                 <div id="[%- id -%]-content" class="content">
                 [% content %]
@@ -1189,7 +1188,7 @@ END;
   END;
 
   # Add tools.
-  IF section_fetch.tools;
+  IF section_fetch.tools.keys.size || 0 > 0;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display

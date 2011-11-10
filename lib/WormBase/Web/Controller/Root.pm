@@ -58,17 +58,17 @@ sub default :Path {
     # Does this path exist as one of our pages?
     # This saves me from having to add an index action for
     # each class.  Each class will have a single default screen.
-    if (defined $class && $c->config->{pages}->{$class}) {
-      # Use the debug index pages.
-      if ($c->config->{debug}) {
-        $c->stash->{template} = 'debug/index.tt2';
-      } else {
-          $c->stash->{template} = 'species/report.tt2';
-          $c->stash->{path} = $c->request->path;
-      }
-    } else {
-	$c->detach('/soft_404');
-    }
+#     if (defined $class && $c->config->{pages}->{$class}) {
+#       # Use the debug index pages.
+#       if ($c->config->{debug}) {
+#         $c->stash->{template} = 'debug/index.tt2';
+#       } else {
+#           $c->stash->{template} = 'species/report.tt2';
+#           $c->stash->{path} = $c->request->path;
+#       }
+#     } else {
+      $c->detach('/soft_404');
+#     }
 }
 
 sub soft_404 :Path('/soft_404') {
@@ -80,12 +80,6 @@ sub soft_404 :Path('/soft_404') {
 }
     
 
-
-#sub gbrowse :Path("/gbrowse") Args(0) {
-#    my ($self,$c) = @_;
-#    $c->stash->{noboiler}=1;
-#    $c->stash->{template} = 'gbrowse.tt2';
-#}
 sub header :Path("/header") Args(0) {
     my ($self,$c) = @_;
     $c->stash->{noboiler}=1;
@@ -147,15 +141,6 @@ sub me :Path("/me") Args(0) {
 #
 #######################################################
 
-# Configure widgets and fields for a given page
-sub configure : Chained('/') PathPart('configure') Args(1) {
-  
-  # Fetch all available widgets for a page
-  # Let users drag and drop widgets onto the configuration target ala WordPress 
-
-  # Let users pick and choose which data bits to display
-  
-}
 
 =head2 end
     
