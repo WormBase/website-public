@@ -778,6 +778,9 @@ sub widget_GET {
         $c->stash->{fields}->{$field} = $data;
     }
 
+    # Hack for empty widgets - know what object they're on
+    $c->stash->{object}->{name} = $c->stash->{fields}->{name} || $object->name;
+
     if ($fatal_non_compliance) {
         die "Non-compliant data. See log for fatal error.\n";
     }
