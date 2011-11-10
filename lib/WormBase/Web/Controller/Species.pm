@@ -157,7 +157,7 @@ sub object_report :Path("/species") Args(3) {
         };
     }
 
-    $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
+    $c->stash->{object}->{name} = $object->name if $object; # a hack to avoid storing Ace objects...
 }
 
 

@@ -76,6 +76,7 @@
       if(history_on){
         setTimeout(histUpdate, 6e5); //update the history every 10min
       }
+      reloadWidget('activity');
       return;
     }
    
@@ -843,8 +844,9 @@
     }
     
     function reloadWidget(widget_name, noLoad){
-        var con = $jq("div#" + widget_name + "-content");
-        ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
+        var con = $jq("#" + widget_name + "-content");
+        if(con.size() > 0)
+          ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
       
