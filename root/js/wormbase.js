@@ -566,7 +566,7 @@
         
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
-          (isBox.hasClass("minimize")) ? isBox.animate({width:"8em"}) : isBox.animate({width:"1.5em"});
+          (isBox.hasClass("minimize")) ? isBox.animate({width:"12em"}) : isBox.animate({width:"1.5em"});
           isBox.toggleClass("minimize").children().toggle();
         });
     }
@@ -1351,19 +1351,12 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            email = feed.find("#email"),
-            username = feed.find("#display-name"),
             is_private = feed.find("#isprivate:checked").size();
-        if(email.attr('id') && username.attr('id')) {
-           if(validate_fields(email,username)==false) {return false;}
-        }  
         $jq.ajax({
           type: 'POST',
           url: rel,
-          data: {title:feed.find("#title").val(), 
-                content: feed.find("#content").val(), 
-                email:email.val() ,
-                username:username.val() , 
+          data: {title:feed.find("#issue-title option:selected").val(), 
+                content: feed.find("#issue-content").val(), 
                 url: url || issue.url,
                 isprivate:is_private},
           success: function(data){
@@ -1495,7 +1488,7 @@ var Scrolling = (function(){
       }else{
         var widget_id = wname.split("-").pop(),
             history = $jq('<div id="' + wname + '-history"></div>'); 
-        history.load("rest/widget/static/" + widget_id + "?history=1");
+        history.load("/rest/widget/static/" + widget_id + "?history=1");
         widget.find("div.content").append(history);
         widget.find("a#history-button").addClass("ui-state-highlight");
       }

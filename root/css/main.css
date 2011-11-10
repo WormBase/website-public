@@ -605,6 +605,19 @@ div#create-prompt {
   background:#CCC;
 }
 
+.author-list {
+  padding-right:0.5em;
+  width:50%;
+  float:left;
+  position:relative;
+}
+
+.paper-journal{
+  float:left;
+  padding-right:0.2em;
+  position:relative;
+}
+
 .ellipsis, .ellipsis>span {
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;  
@@ -1336,27 +1349,7 @@ ul.dropdown li.selected {
    
 *********************************/
 
-li div.widget-container {
-    padding:0;
-    margin:0 0 0.7em 0.7em;
-    display:none;
-    background-color:#FFFFFF; 
-    position:relative;
-    border:1px solid #A0ACB8;
-}
 
-li.visible div.widget-container {
-  display:block;
-}
-
-.content {
-  padding: 1em;
-  padding-bottom:1.8em;
-  overflow:auto;
-  list-style:disc outside none;
-  clear:both;
-  font-size:0.9em;
-}
 
 /* pages in resources/documentation/* have no widgets. */
 /* We might want to add TOCs to some as well. See resources/documentation/nomenclature.tt2 as guide */
@@ -1434,122 +1427,9 @@ li.visible div.widget-container {
 }
 
 
-.widget-header {
-    background: #C2D1DF;
-}
-
-.widget-header h3 {
-    margin:0px;
-    padding:0.3em 0.3em 0.5em;
-    border-bottom:1px dotted #CDCDCD;
-    height:1em;
-    cursor:pointer;
-}
-
-.widget-header>div.ui-icon {
-  float:right;
-  margin:0.4em;
-  cursor:pointer;
-}
-
-.widget-container.minimized .widget-header h3{
-    border:0;
-}
-
-.widget-container:hover .widget-header>.ui-icon {
-  display:block;
-}
-
-#widget-me {
-   border: 1px solid #BDB8A4;
-}
-#widget-resources {
-    border: 1px solid #ACB8A0;
-}
-#widget-tools {
-    border: 1px solid #ABA0B8; 
-}
-
-.species-bg, .species_list-bg {
-  background-color:#C2D1DF;
-}
-
-#widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
-    background: #E3DDC5;
-}
-#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation .ui-selected {
-    background: #D0DEC1;
-}
-#widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
-    background: #CFC1DE; 
-}
-
-
-.widget-container #widget-feed{
-    display:none;
-}
-.widget-container #widget-footer {
-    font-size:0.9em;    
-    position:absolute;
-    bottom:0.4em;
-    right:0.2em;
-    display:none;
-}
-
-.widget-container:hover #widget-footer {
-  display:block;
-}
-
-.widget-container.minimized:hover #widget-footer{
-  display:none;
-}
 
 
 
-#widget-footer a {
-  height:1.2em;
-  padding:0 0.3em;
-  position:relative;
-  margin:0 0.2em;
-}
-
-#widget-footer>span{
-  float:right;
-  width:1em;
-  margin:1em 0 0 0;
-  cursor:pointer;
-}
-
-
-.widget-container div.ui-icon-large {
-  float:right;
-  cursor:pointer;
-  margin:0.4em;
-}
-
-.widget-container div.loading {
-  width:100%;
-  text-align:center;
-  padding:1em 0 0;
-}
-
-.widget-container h3 div.module-min {
-  float:left;
-  margin:2px;
-}
-
-.widget-container h3 span {
-  float:left;
-}
-
-.widget-container h3 span.ui-icon {
-  margin:0.2em;
-  display:none;
-}
-
-.widget-container h3:hover span.ui-icon {
-  display:block;
-}
 
 
 /* Fieldsets : used on profile and admin pages */
@@ -1710,18 +1590,7 @@ div#footercredit a{
                   }
 
 
-/*********************************
-
-           WIDGETS
- 
-   ********************************* */
-
-
-/* Links to download widgets in a variety of formats */
-div.downloadable-formats {
-    float:right;
-    font-size:0.9em;    
-}
+/* Formatting for column selection dropdown */
 
 div.columns {
   float:left;
@@ -1776,7 +1645,7 @@ div.columns ul div input#layout-input {
   padding:0;
 }
 
-
+/* END Formatting for column selection dropdown */
 
 
 
@@ -1798,6 +1667,120 @@ div.columns ul div input#layout-input {
 }
 
 
+/*********************************
+
+           WIDGETS
+ 
+   ********************************* */
+
+/* Styles for the standard widget */
+
+li div.widget-container {
+  padding:0;
+  margin:0 0 0.7em 0.7em;
+  display:none;
+  background-color:#FFFFFF; 
+  position:relative;
+  border:1px solid #A0ACB8;
+}
+
+.content {
+  padding: 1em 1em 1.8em 1em;
+  overflow:auto;
+  list-style:disc outside none;
+  clear:both;
+  font-size:0.9em;
+}
+
+.widget-header, .species-bg, .species_list-bg  {
+    background-color: #C2D1DF;
+}
+
+.widget-container:hover #widget-footer,
+.widget-header:hover .ui-icon,
+.widget-container:hover .widget-header .ui-icon-large,
+li.visible div.widget-container {
+    display:block;
+}
+
+.widget-container #widget-feed, 
+.widget-container #widget-footer, 
+.widget-header .ui-icon,
+.widget-container.minimized:hover #widget-footer{
+    display:none;
+}
+
+.widget-header h3 {
+  margin:0px;
+  padding:0.3em 0.3em 0.5em;
+  border:0;
+  height:1em;
+  cursor:pointer;
+}
+
+.widget-container #widget-footer {
+  position:absolute;
+  bottom:0.4em;
+  right:0.3em;
+}
+
+#widget-footer a {
+  padding:0 0.3em;
+  margin:0 0.2em;
+}
+
+.widget-header .ui-icon {
+  margin:0.2em;
+}
+
+.widget-header div.ui-icon-large {
+  float:right;
+  cursor:pointer;
+  margin:0.4em;
+}
+
+.widget-header h3 div.module-min {
+  float:left;
+  margin:2px;
+}
+
+.widget-header h3 span {
+  float:left;
+}
+
+.widget-container div.loading {
+  width:100%;
+  text-align:center;
+  padding:1em 0 0;
+}
+
+/* colour changes for the different types of widgets */
+
+#widget-me {
+    border-color: #BDB8A4;
+}
+#widget-resources {
+    border-color: #ACB8A0;
+}
+#widget-tools {
+    border-color: #ABA0B8; 
+}
+
+#widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
+    background-color: #E3DDC5;
+}
+#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation .ui-selected {
+    background-color: #D0DEC1;
+}
+#widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
+    background-color: #CFC1DE; 
+}
+
+/* END styles for standard widgets */
+
+
+
+
 
 /* widget field titles: ie Identification > IDs */
 div.field {
@@ -1811,31 +1794,23 @@ div.field {
 div.field-title {
   float: left;
   text-align: right; 
-  font-size: 1.05em;
+  font-size: 1em;
   padding:0 0.5em 0 0;
   width: 10em;
   font-weight: bold;
-}
-
-div.field-title>span{
-  padding:0;
-  margin:0;
 }
 
 div.field-content {
   float: left;
 }
 
-
 /* Curator specific fields */
 div.field-curator {
-  clear:left;
-  float:left;
-  line-height:1.2em;
-  padding:0.5em;
-  margin-top:1em;
+  margin:1em;
+  padding:1em;
   background:#CCFFFF;
   border:1px solid gray;
+  width:80%;
 }
 
 
@@ -1843,30 +1818,12 @@ div.field-curator {
 
 /* Subfields: fields inside of fields */
 /* widget field titles: ie Identification > IDs */
-div.field .field{
-  clear:left;
-  float:left;
-  line-height:1.2em;
-  padding:0.2em;
-}
-
 
 div.field .field .field-title {
-  float: left;
-  text-align: right; 
-  font-size: 1em;
-  padding-right: 0.5em;
   width: 7em;
-  font-weight: normal;
-}
-
-div.field .field .field-title>span{
-  padding:0;
-  margin:0;
 }
 
 div.field .field .field-content {
-  float:left;
   max-width:35em;
 }
 
@@ -1890,10 +1847,9 @@ div#google-map {
                     background-color: #CCFFFF;
                     font-family: Courier, monospace;
                     border:1px solid grey;
-                    font-size:12px;
-                    width:75%;
-                    margin:10px;
-                    padding:5px;
+                    font-size:1em;
+                    margin:1em;
+                    padding:0.5em;
 }
 
 
@@ -1949,7 +1905,6 @@ div#google-map {
 
 
 .sequence-download {
-/*    float:right;         */
   position:absolute;
   top:0;
   right:0;
@@ -1961,13 +1916,13 @@ div#google-map {
 }
 
 .locus, .var {
-font-style:italic;
-display:inline;
-white-space:nowrap;
+  font-style:italic;
+  display:inline;
+  white-space:nowrap;
 }
 
 .toggle {
-	padding: 5px 0 0 30px;
+	padding: 0.5em 0 0 2em;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
 	font-size: 1em;
 	font-weight: normal;
@@ -2243,7 +2198,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .history-logging {
-/*   background: #9C4041; */
   padding:0.5em;
   color: white;
   margin:0.3em 0;
@@ -2389,7 +2343,7 @@ table.venn tr.venn-data td {
 }
 
 .issue-layout-box {
-    padding:15px 24px;
+    padding:1em 2em;
 }
 
 .issue-table{
@@ -2456,20 +2410,12 @@ table.venn tr.venn-data td {
     background-color:#FFEC8B;
 }
 
-/* The submit box on the issue form */
-.issue-submit-box {
-    padding-top:3em;
-}
-
 .issue-text{
   width :97%;
+  max-width:35em;
   font-family: Helvetica, sans-serif;
   padding:0.5em;
-  color:gray;
   font-size: 1em;
-}
-.issue-text:focus {
-  color:black;
 }
 
 .issue-content{
@@ -2477,6 +2423,10 @@ table.venn tr.venn-data td {
   background-color:#fcfcfc;
   border: 1px solid #ddd; 
   padding: 1em;
+}
+
+#issues-new, #issues-new>div {
+  margin-top:1em;
 }
 
 #operator-box-wrap{  
@@ -2573,7 +2523,7 @@ div.inline-columns img {
 }
 
 .button{
-  float:right;
+  float:left;
   border:1px solid #BBB;
   background:#EEE;
   cursor:pointer;
@@ -2589,7 +2539,6 @@ div.inline-columns img {
 }
 
 .button.slink{
-  float:left;
   margin:0 0.5em 0 0;
 }
 
@@ -2630,7 +2579,6 @@ div.title {
 /* Effects */
 #breadcrumbs {
   position:relative;
-/*   padding-left:5px; */
   width:100%;
 }
 
@@ -2648,44 +2596,6 @@ div.title {
   top:5px;
   cursor:pointer;
 }
-
-
-
-
-
-
-/* markup for information drawn from third parties */
-.mendeley-image {
-    float:left;
-    vertical-align:middle;
-}
-
-/* call out to Mendeley */
-.mendeley-nod {
-    font-style:italic;
-    color:gray;
-    font-size:1.3em;
-    padding-bottom:1.2em;
-    padding-top:3em;
-}
-
-.mendeley-citation {
-    margin-left:2em;
-    padding-bottom:1em;
-    clear:both;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

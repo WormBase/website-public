@@ -1,5 +1,5 @@
 
-  <div id="issues-new" class="issue-layout-box">
+<!--   <div id="issues-new" class="issue-layout-box"> -->
 
     [% IF (!url) %]
    <h4>Existing Issues</h4>
@@ -10,40 +10,46 @@
 
   [% IF url %]
     
-    <h4>Create new issue</h4>
-    [% user_login_info %]
-	<table id="issueTable" width="70%">
-		<tr>
-			<th width="10%">Title:</th>
-			<td colspan="2" ><input [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="title" maxlength="100"  type="text" name="title"  /></td>
-		</tr>
-				 
-		<tr>
-			<th width="10%">Content:</th>
-			<td colspan="2" >
-				<textarea [% UNLESS c.user_exists; 'disabled=1'; END %] class="issue-text" id="content" rows="10"     name="content"  ></textarea>
-			</td>
-		</tr>
+    <h3>Contact WormBase Help</h3>
+      <div id="issues-new">
 
-		<tr>
-		    <td></td>
-	            <td><input type='checkbox' value='yes' class="issue-is-private" id="isprivate" /> </td>
-                    <td>
-                    <div class="caveat-emptor">By default, reported issues are visible by everyone.<br />
-	              Check this box if you'd prefer to report this issue privately to WormBase staff.</div>
-                    </td>
-                
-                </tr>
-  	  </table>
+        [% user_login_info %]
 
+        <div>
+          Type of question:<br />
+          <select name="email[subject]" id="issue-title" class="valid">
+            <option value="No Question Type"></option>
+            <option value="Bug Report">Bug Report</option>
+            <option value="My Account">My Account</option>
+            <option value="Feature Request">Feature Request</option>
+            <option value="Content Correction">Content Correction</option>
+            <option value="How Do I ...?">How Do I ...?</option>
+            <option value="Everything's broken!">Everything's broken!</option>
+          </select>
+        </div>
+
+        <div>
+          Question:<br />
+          <textarea [% UNLESS c.user_exists; 'disabled=1'; END %] class="text-width issue-text" id="issue-content" rows="10"     name="content"  ></textarea>
+        </div>
 
         <div id="issue-submit-box">
-	    <input onClick="WB.issue.submit($jq(this));" type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Report Issue' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
+          <input onClick="WB.issue.submit($jq(this));" type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
+          <input onClick="window.location = '[% url %]'" type='submit' [% UNLESS c.user_exists; 'disabled=1'; END %] value='Cancel' />   
         </div>
+
+        <div>
+          <input type='checkbox' value='yes' class="issue-is-private" id="isprivate" style="float:left"/> 
+          <div id="fade" style="float:left;padding-left:1em;">
+              By default, reported issues are visible by everyone.<br />
+              Check this box if you'd prefer to report this issue privately to WormBase staff.
+          </div>
+        </div>
+      </div>
   [% ELSE %]
   <b><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Report an issue</a></b><br />
 
   [% END %]
 
-   </div>
+<!--    </div> -->
  

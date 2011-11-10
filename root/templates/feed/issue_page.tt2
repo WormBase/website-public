@@ -51,7 +51,7 @@
 <p>
 [% user_login_info %]
 <form>
-<textarea class="issue-text" rows="5"   id="content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
+<textarea class="issue-text" rows="5"   id="issue-content" [% UNLESS c.user_exists; 'disabled=1'; END;%]></textarea>
 
 [% IF c.check_user_roles('admin') %]
 <p>
