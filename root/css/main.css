@@ -1503,6 +1503,10 @@ li.visible div.widget-container {
     border:0;
 }
 
+.widget-container:hover .widget-header>.ui-icon {
+  display:block;
+}
+
 .widget-description {
     width:60%;
     color:red;
@@ -1534,13 +1538,8 @@ li.visible div.widget-container {
 }
 
 
-/* .widget-container:hover { */
-/*     background:#FAFAFA; */
-/* } */
-
 .widget-container #widget-feed{
     display:none;
-
 }
 .widget-container #widget-footer {
     font-size:0.9em;    
@@ -1552,6 +1551,14 @@ li.visible div.widget-container {
 #widget-footer.footer-left {
   left:0.2em;
   right:auto;
+}
+
+.widget-container:hover #widget-footer {
+  display:block;
+}
+
+.widget-container.minimized:hover #widget-footer{
+  display:none;
 }
 
 
