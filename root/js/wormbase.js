@@ -849,12 +849,6 @@
     
       
   function addWidgetEffects(widget_container) {
-      widget_container.find(".widget-header").hover(
-        function () {
-          $jq(this).children("h3").children("span.hide").toggle();
-        }
-      );
-
       widget_container.find("div.module-min").hover(
         function () {
           var button = $jq(this);
@@ -999,7 +993,7 @@ var Layout = (function(){
       var hash = "",
           tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
       if(widgetList.list.length == 0){ return; }
-      for(i=0; i<(widgetList.list.length - 3 - tools); i++){
+      for(i=0; i<(widgetList.list.length - 2 - tools); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";

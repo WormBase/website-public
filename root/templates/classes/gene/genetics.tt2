@@ -53,12 +53,12 @@
 
 
    WRAPPER $field_block title="Rearrangements" key="rearrangements";
-      IF fields.rearrangements.data.positive.size > 0;
+      IF fields.rearrangements.data.positive;
         tag2link(object.name.data) _ ' inside: ';
         FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
         '<br />';
       END;
-      IF fields.rearrangements.data.negative.size > 0;
+      IF fields.rearrangements.data.negative;
         tag2link(object.name.data) _ ' outside: ';
         FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
       END;
