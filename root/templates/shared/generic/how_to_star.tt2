@@ -5,7 +5,7 @@ When you see a star on WormBase:
 
 Click on the star: </li>
 
-<div id="star-instructions" class="star-instructions text-width">
+<div id="star-instructions" style="margin:1em 0;" class="star-instructions text-width">
 
 </div>
 </ol>

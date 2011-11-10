@@ -1,3 +1,4 @@
+
 [% IF comments %]
 [% USE time_dir = Time.Duration %]
 
@@ -34,5 +35,3 @@
   [% ELSE %]
    <span id="fade">No comments have been posted yet.</span>
   [% END %]
- 
- 
