@@ -9,14 +9,20 @@
         type = 'doi';
    END;
 
+   '<div style="float:right"><a href="http://mendeley.com/"><img src="/img/thirdparty/mendeley-vertical.png" /></a></div>';
 
-   '<div class="mendeley-image"><a href="http://mendeley.com/"><img src="/img/thirdparty/mendeley-vertical.png" /></a></div>';
-   '<div class="mendeley-nod">Related papers provided by <a href="http://mendeley.com">Mendeley</a>.</div>';
+   '<h3>Related papers provided by <a href="http://mendeley.com">Mendeley</a>.</h3><br />';
+   
 
    related = c.model('Mendeley').related_papers(id,type);
-
+   '<div id="results"><ul>';
    FOREACH paper IN related.documents;
-       '<div class="mendeley-citation">';
+       '<div class="result"><li>'
+      _ '<a href="' 
+      _ paper.mendeley_url
+      _ '">'
+      _ paper.title 
+      _ '</a></li>';
           # Authors
        	  FOREACH author IN paper.authors;
 	       IF loop.size == 1 && author.surname;
@@ -28,18 +34,11 @@
                END;
 	  END;
 
-	  ' (' _ paper.year _ '). '
-	  _ '<br />'
-	  _ '<a href="' 
-  	  _ paper.mendeley_url
-	  _ '">'
-	  _ paper.title
-	  _ '</a> '
-	  _ paper.publication_outlet
-	  _ '.';
+	  ' [' _ paper.publication_outlet _ ', ' _ paper.year _ '] ';
 
        '</div>';
     END;
+    '</ul></div>';
 
 
 %]
