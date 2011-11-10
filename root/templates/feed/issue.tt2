@@ -17,7 +17,7 @@
 
         <div>
           Type of question:<br />
-          <select name="email[subject]" id="issue-title" class="valid">
+          <select [% UNLESS c.user_exists; 'disabled=1'; END %] name="email[subject]" id="issue-title" class="valid">
             <option value="No Question Type"></option>
             <option value="Bug Report">Bug Report</option>
             <option value="My Account">My Account</option>
@@ -39,7 +39,7 @@
         </div>
 
         <div>
-          <input type='checkbox' value='yes' class="issue-is-private" id="isprivate" style="float:left"/> 
+          <input [% UNLESS c.user_exists; 'disabled=1'; END %] type='checkbox' value='yes' class="issue-is-private" id="isprivate" style="float:left"/> 
           <div id="fade" style="float:left;padding-left:1em;">
               By default, reported issues are visible by everyone.<br />
               Check this box if you'd prefer to report this issue privately to WormBase staff.

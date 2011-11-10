@@ -58,6 +58,7 @@ sub livechat_GET {
       last;
       }
     }
+    $c->response->headers->expires(time);
     $c->stash->{noboiler}=1;
     $c->forward('WormBase::Web::View::TT');
 }
@@ -173,7 +174,7 @@ sub layout_GET {
 
 
   $c->log->debug("lstring:" . $lstring);
-
+    $c->response->headers->expires(time);
   $self->status_ok(
       $c,
       entity =>  {
@@ -207,6 +208,7 @@ sub auth_GET {
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
+    $c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
 }
 
@@ -535,7 +537,7 @@ sub feed_GET {
       $c->stash->{url} = $url;
 
       if($type eq "comment"){
-        my @comments = $page->comments;
+        my @comments = $page->comments if $page;
         if($c->req->params->{count}){
           $c->response->body("(" . scalar(@comments) . ")");
           return;
@@ -561,7 +563,7 @@ sub feed_GET {
       
      $c->stash->{template} = "feed/$type.tt2"; 
      $c->forward('WormBase::Web::View::TT') ;
-    
+      $c->response->headers->expires(time);
      #$self->status_ok($c,entity => {});
 }
 
@@ -894,6 +896,7 @@ sub widget_static :Path('/rest/widget/static') :Args(1) :ActionClass('REST') {}
 
 sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
+    $c->response->headers->expires(time);
     $c->log->debug("getting static widget");
     if($c->req->params->{history}){ # just getting history of widget
       my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'timestamp DESC'});
@@ -1047,6 +1050,7 @@ sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 
 sub widget_home_GET {
     my ($self,$c,$widget) = @_; 
+    $c->response->headers->expires(time);
     $c->log->debug("getting home page widget");
     if($widget eq 'issues') {
       $c->stash->{issues} = $self->_issue_rss($c,2);
