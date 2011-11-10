@@ -59,14 +59,13 @@ sub default :Path {
     # This saves me from having to add an index action for
     # each class.  Each class will have a single default screen.
     if (defined $class && $c->config->{pages}->{$class}) {
-	
-	# Use the debug index pages.
-	if ($c->config->{debug}) {
-	  $c->stash->{template} = 'debug/index.tt2';
-	} else {
-	    $c->stash->{template} = 'species/report.tt2';
-	    $c->stash->{path} = $c->request->path;
-	}
+      # Use the debug index pages.
+      if ($c->config->{debug}) {
+        $c->stash->{template} = 'debug/index.tt2';
+      } else {
+          $c->stash->{template} = 'species/report.tt2';
+          $c->stash->{path} = $c->request->path;
+      }
     } else {
 	$c->detach('/soft_404');
     }
@@ -134,39 +133,6 @@ sub draw :Path("/draw") Args(1) {
     $c->detach('WormBase::Web::View::Graphics');
 }
 
-sub issue_rss {
-    my ($self,$c,$count) = @_;
-    my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} );
-
-    my %seen;
-    my @rss;
-    while ($_ = $threads->next) {
-        unless (exists $seen{$_->issue_id}) {
-            $seen{$_->issue_id} =1 ;
-
-            push @rss, {
-                time     => $_->timestamp,
-                people   => $_->user,
-                title    => $_->issue->title,
-                location => $_->issue->page,
-                id       => $_->issue->issue_id,
-                re       => 1,
-            } ;
-        }
-        last if keys %seen >= $count;
-    }
-
-    my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
-    push @rss, map {
-        time     => $_->timestamp,
-        people   => $_->reporter,
-        title    => $_->title,
-        location => $_->page,
-        id       => $_->issue_id,
-    }, @issues;                 # mind the comma
-
-    return [ sort { $b->{time} <=> $a->{time} } @rss ];
-}
 
 sub me :Path("/me") Args(0) {
     my ( $self, $c ) = @_;
