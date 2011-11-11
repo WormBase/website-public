@@ -154,8 +154,7 @@ sub _get_report {
     my $object = $c->model('WormBaseAPI')->fetch({
         class  => ucfirst($class),
         name   => $name,
-    })
-    or $self->error_custom($c, 500, "can't connect to database"); # don't think this is correct
+    }); # error handling?
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 
