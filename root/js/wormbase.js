@@ -704,7 +704,7 @@
       var expands = div.find(".text-min");
       for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
         (el.height() > 35) ? 
-          el.html('<div class="text-min-expand">' + el.text() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+          el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
           : el.removeClass("text-min");
       }
 
