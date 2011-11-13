@@ -73,13 +73,14 @@ sub tools :Path Args {
 
     if ($action eq 'run' && $tool =~/aligner/ && !(defined $c->req->params->{Change})) {
         my $cache_id ='tools_'.$tool.'_'.$c->req->params->{sequence};
-        ($data,$cache_server) = $c->check_cache( { cache_name => 'filecache', uuid => $cache_id } );
+        ($data,$cache_server) = $c->check_cache( { cache_name => 'filecache', key => $cache_id } );
 
         unless ($data) {
 	    $c->log->debug("not in cache, run $tool\n");
             $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-            $c->set_cache(    {   cache_name => 'filecache',
-                uuid       => $cache_id,
+            $c->set_cache({
+                cache_name => 'file',
+                key        => $cache_id,
                 data       => $data
             });
         }

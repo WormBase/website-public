@@ -3530,23 +3530,28 @@ sub other_sequences {
 #
 #########################################
 sub _fetch_gff_gene {
- my ($self,$transcript) = @_;
+    my ($self,$transcript) = @_;
 
-  my $trans;
-  my $GFF = $self->gff_dsn() || return $trans;
-  eval {$GFF->fetch_group()}; return $trans if $@;
+    my $trans;
+    my $GFF = $self->gff_dsn() or return; # should probably log this?
+    eval {$GFF->fetch_group()};
+    return if $@; # should probably log this
 
-  if ($self->object->Species =~ /briggsae/) {
-      ($trans)      = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript);
-  }
-  ($trans)      = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript) unless $trans;
+    if ($self->object->Species =~ /briggsae/) {
+        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
+            and return $trans;
+    }
 
-  # Now pseudogenes
-  ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript) unless ($trans);
+    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
+        and return $trans;
 
-  # RNA transcripts - this is getting out of hand
-  ($trans) = $GFF->segment(Transcript => $transcript) unless ($trans);
-  return $trans;
+    # Now pseudogenes
+    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
+        and return $trans;
+
+    # RNA transcripts - this is getting out of hand
+    ($trans) = $GFF->segment(Transcript => $transcript);
+    return $trans;
 }
 
 # This is for GO processing

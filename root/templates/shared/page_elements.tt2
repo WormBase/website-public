@@ -24,15 +24,6 @@ getBox();
 
 [% END %]
 
-[% MACRO username(user) BLOCK %]
-[% IF user.username %]
- [% IF user.username.length>20%][% user.username.substr(0,20) %][% ELSE %][% user.username %][% END %]
-[% ELSIF user %]
- [% IF user.first_name.defined ; name = user.first_name FILTER ucfirst ; END;
-    IF user.last_name.defined; lastname= user.last_name FILTER ucfirst; name = name _ ' ' _ lastname  ; END; %] 
-[% IF name.defined %][% name %][% ELSE %]Anonymous[% END %] 
-[%- END %]
-[%- END %]
 
 [% MACRO linkUser(user,suppress_social) BLOCK;
     IF (user.wbid && user.wb_link_confirm);
@@ -42,22 +33,12 @@ getBox();
     ELSE;
       '<span id="fade"><i>[user deleted]</i></span>';
     END;
-
-#    IF c.user.twitter && !suppress_social;
-#           '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
-#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
-#				  _ c.user.twitter 
-#				  _ '</a>'
-#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
-#
-#    END;
   END;
 %]
 
 
 
 [% MACRO extended_social_links BLOCK;
-
       IF c.user.open_ids;
          FOREACH id IN c.user.open_ids;	 
 	    IF id.provider == 'twitter';
@@ -256,23 +237,6 @@ END;
 [% END %]
 
 
-
-
-[% MACRO check_for_empty_widget(keys) BLOCK;
-    data_exists = 0;
-    FOREACH key IN keys;
-       IF fields.$key.data;
-           data_exists = 1;
-	   LAST;
-       END;
-    END;
-
-    UNLESS data_exists;
-        '<div class="caveat-emptor">No additional data available.</div>';
-    END;
-  END;
-%]
-
 [%#
 
     Build a JQuery dataTable.
@@ -368,19 +332,16 @@ END;
 
 
     <script type="text/javascript" >
-//     $jq(document).ready(function() {
         WB.getDataTables(function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
-  //                 "bJQueryUI"        : true,
             "sPaginationType"  : "[% pagination_type %]",
             "bFilter"          : [% filter %],      
             "bInfo"            : [% info %],
             [% style %]
           });
         });
-//     });
     </script>
 
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
@@ -444,23 +405,6 @@ END;
 
 
 
-[% MACRO short_list(objects) BLOCK %]
-
-   [% FOREACH row IN objects.list %]    
-       [% FOREACH item IN row %]
-     [% IF item.class.defined %]
-                [% tag2link(item) %]
-               [% ELSE %][% item %]
-    [% END %]
-      [% UNLESS loop.last %];[% END %]
-      [% END %]
-      [% UNLESS loop.last %]<br>[% END %]
-   [% END %]           
-
-    
-
-[% END %]
-
 [% 
   # For dsiplaying a list of objects in a field
   # Should probably be expanded to included some actual formatting,
@@ -479,18 +423,6 @@ END;
 <div style="float:right;padding:1em;"> | 
 <button id="my-cart"></button> <a href="/bench">([% c.user_session.bench.register.size %])</a>
 </div>
-[% END %]
-
-[% BLOCK links_block %]
-  [% FOREACH link IN external_links.data.keys %]
-    [% IF link == 'aceview' %]
-      <li>[% external_link(link,'AceView', external_links.data.$link) %]</li>
-    [% ELSIF link == 'ncbi_refseq'%]
-      [% FOREACH ref_link IN external_links.data.$link %]
-      <li>[% external_link(link, "NCBI<span id=\"fade\"> - " _ ref_link _ "</span>", ref_link) %]</li>
-      [% END %]
-    [% END %]
-  [% END %]
 [% END %]
 
 
@@ -604,95 +536,6 @@ END;
 %]
 
 
-[% BLOCK suggestions2wormbase %]
-<!-- Suggestion Box -->
-<div class="feedback">
-   <h2>Suggestion Box</h2>
-   <form method="post" action="/db/misc/submit_feedback" enctype="application/x-www-form-urlencoded">
-     We greatly value your feedback.  If you have found
-     something incorrect, broken, or frustrating on this page,
-     let us know so that we can improve the quality of
-     annotation and the ease with which it is available.
-     <br /><br />
-
-     <b>Comments, questions, or feedback:</b>
-     <div class="indent">
-         <table border="0">
-             <tr>
-               <td colspan="3">
-                  <span class="smalldescription">
-                         Supplying your contact information
-             is optional.  Doing so will enable us
-                 to contact you for further details
-                 and to let you know when your
-                 suggestions have been addressed.
-                 </span>
-               </td>
-             </tr>
-        
-             <tr>
-                <td rowspan="4">
-                   <textarea name="comments" rows="7" cols="60" maxlength="10" style="width:95%"></textarea>
-                </td>
-                <td>Category<i>(optional)</i>: </td>
-                <td>
-                    <select name="suggestions">
-                      <option value="general_comment">General comment</option>
-              <option value="annotations_incorrect">Annotations are incorrect</option>
-              <option value="annotations_incomplete">Annotations are incomplete</option>
-              <option value="speed">The page takes too long to load</option>
-              <option value="bug">The page has a software bug in it</option>
-              <option value="requested_feature">Request for a new feature</option>
-            </select>
-               </td>
-            </tr>
-            <tr>
-               <td>Submitted by:</td>
-               <td>
-                  <input type="text" name="submitted_by"  size="50">
-               </td>
-            </tr>
-            <tr>
-               <td>Institution:</td>
-               <td><input type="text" name="institution"  size="50"></td></tr>
-        <tr>
-               <td>Email Address:</td>
-           <td><input type="text" name="submitted_email" size="50"></td>
-        </tr>
-        <tr>
-           <td colspan="2">&nbsp;</td>
-           <td align="right">
-               <input type="submit" name="Submit Comments" value="Submit Comments">
-           <input type="reset" name="Clear Form" value="Clear Form">
-           </td>
-            </tr>
-        </table>
-      </div>
-    </form>
-</div>
-[% END %]
-
-
-
-
-
-
-
-
-
-
-
-[%# is it necessary to link an object back to itself? %]
-[% MACRO name BLOCK;
-   WRAPPER $field_block title="Name" key="name";
-      tag2link(fields.name.data);
-   END;
-END;
-%]
-
-
-[% MACRO common_name GET name # an alias for name %]
-
 [% MACRO other_names BLOCK; 
       WRAPPER $field_block title="Other names" key="other_names";
            FOREACH name IN fields.other_names.data;
@@ -745,31 +588,6 @@ END;
     END;
 
    END;
-%]
-
-
-[% MACRO genetic_position BLOCK ;
-     WRAPPER $field_block title="Genetic position";
-          IF fields.genetic_position.data.chromosome;
-            fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
-
-#     fields.genetic_position.data.chromosome _ ': ' _ fields.genetic_position.data.position;
-#       IF fields.genetic_position.data.error;
-#          "+/-";
-#          fields.genetic_position.data.error;
-#       END;
-#    if ($position == 0) {
-#            $label = $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;
-#        } else {
-#            $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
-
-
-      ELSE;       
-         '<div class="caveat-emptor">This gene has not been placed on the genetic map or its coordinates are unknown.</div>';
-      END;
-
-    END;
-END;
 %]
 
 
@@ -956,26 +774,6 @@ END;
 
 
 
-[% MACRO xrefs BLOCK;
-
- USE Dumper;
- '<pre>';
- Dumper.dump(fields.xrefs.data);
- '</pre>';
-
-  hash = fields.xrefs.data;
-  FOREACH db IN hash.keys.sort;
-       db;
-       hash.$db.url;
-  END;
-END;
-%]
-
-
-
-
-
-
 
 
 [%# 
@@ -1059,6 +857,14 @@ END;
          END; # END of SPECIES
      END; # END of primary WRAPPER 
   END; # END of MACRO
+%]
+
+[%# 
+    #######################################################
+
+      Page MACROS, used to construct class pages
+
+    #######################################################
 %]
 
 
@@ -1168,8 +974,6 @@ END;
   displayed_widgets = displayed_widgets.grep('^overview$');
   IF displayed_widgets.size > 0; overview = 1; END;
 
-  add_static_widgets;
-
   # is_static refers to pages that don't handle objects (/resources/reagents)
   IF is_class_index && !is_static;
     index_widgets = ['browse', 'basic_search'];
@@ -1186,6 +990,9 @@ END;
             });
     END;
   END;
+
+
+  add_static_widgets;
 
   # Add tools.
   IF section_fetch.tools.keys.size || 0 > 0;
