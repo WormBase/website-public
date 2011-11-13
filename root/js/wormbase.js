@@ -76,6 +76,7 @@
       if(history_on){
         setTimeout(histUpdate, 6e5); //update the history every 10min
       }
+      reloadWidget('activity');
       return;
     }
    
@@ -703,7 +704,7 @@
       var expands = div.find(".text-min");
       for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
         (el.height() > 35) ? 
-          el.html('<div class="text-min-expand">' + el.text() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+          el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
           : el.removeClass("text-min");
       }
 
@@ -843,8 +844,9 @@
     }
     
     function reloadWidget(widget_name, noLoad){
-        var con = $jq("div#" + widget_name + "-content");
-        ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
+        var con = $jq("#" + widget_name + "-content");
+        if(con.size() > 0)
+          ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
       
