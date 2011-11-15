@@ -570,7 +570,7 @@ sub feed_GET {
 sub feed_POST {
     my ($self,$c,$type) = @_;
     if($type eq 'comment'){
-      if($c->req->params->{method} eq 'delete'){
+      if($c->req->params->{method}  || '' eq 'delete'){
         my $id = $c->req->params->{id};
         if($id){
           my $comment = $c->model('Schema::Comment')->find($id);
@@ -595,14 +595,14 @@ sub feed_POST {
       }
     }
     elsif($type eq 'issue'){
-    if($c->req->params->{method} eq 'delete'){
+    if($c->req->params->{method} || '' eq 'delete'){
       my $id = $c->req->params->{issues};
       if($id){
         foreach (split('_',$id) ) {
-        my $issue = $c->model('Schema::Issue')->find($_);
-        $c->log->debug("delete issue #",$issue->issue_id);
-        $issue->delete();
-        $issue->update();
+          my $issue = $c->model('Schema::Issue')->find($_);
+          $c->log->debug("delete issue #",$issue->issue_id);
+          $issue->delete();
+          $issue->update();
         }
       }
     }else{
@@ -612,7 +612,7 @@ sub feed_POST {
       
       my $url = $c->req->params->{url};
       $c->log->debug(keys %{$c->req->params});
-      my $page = $c->model('Schema::Page')->find({url=>$url});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
       $c->log->debug("private: $is_private");
       my $user = $self->_check_user_info($c);
       return unless $user;
@@ -1320,26 +1320,88 @@ sub _select_template {
     # Normally, the template defaults to action name.
     # However, we have some shared templates which are
     # not located under root/classes/CLASS
-    if ($type eq 'field') {
+    if (($type eq 'field') && ($config->{common_fields}->{$render_target})) {
         # Some templates are shared across Models
-        if ($config->{common_fields}->{$render_target}) {
-            return "shared/fields/$render_target.tt2";
-            # Others are specific
-        }
-        else {
-            return "classes/$class/$render_target.tt2";
-        }
-    }
-    else {
+        return "shared/fields/$render_target.tt2";
+    }elsif (($type eq 'widget') && ($config->{common_widgets}->{$render_target})){
         # Widget template selection
         # Some widgets are shared across Models
-        if ($config->{common_widgets}->{$render_target}) {
-            return "shared/widgets/$render_target.tt2";
-        }
-        else {
-            return "classes/$class/$render_target.tt2";
-        }
+        return "shared/widgets/$render_target.tt2";
+    } else {
+      return "classes/$class/$render_target.tt2";
     }
+}
+
+
+
+
+######################################################
+#
+#   FIELDS
+#
+######################################################
+
+=head2 available_fields(), available_fields_GET()
+
+Fetch all available fields for a given WIDGET, PAGE, NAME
+
+eg  GET /rest/fields/[WIDGET]/[CLASS]/[NAME]
+
+/rest/class/*/widget/field
+
+=cut
+
+
+=head field(), field_GET()
+
+Provided with a class, name, and field, return its content
+
+eg http://localhost/rest/field/[CLASS]/[NAME]/[FIELD]
+
+=cut
+
+sub field :Path('/rest/field') :Args(3) :ActionClass('REST') {}
+
+sub field_GET {
+    my ( $self, $c, $class, $name, $field ) = @_;
+
+    my $headers = $c->req->headers;
+    $c->log->debug( $headers->header('Content-Type') );
+    $c->log->debug($headers);
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
+    my $api = $c->model('WormBaseAPI');
+    my $object = $name eq '*' || $name eq 'all'
+               ? $api->instantiate_empty(ucfirst $class)
+               : $api->fetch({ class => ucfirst $class, name => $name });
+
+    # Supress boilerplate wrapping.
+    $c->stash->{noboiler} = 1;
+
+    my $data   = $object->$field();
+
+    # Include the full uri to the *requested* object.
+    # IE the page on WormBase where this should go.
+    # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
+    my $uri = $c->uri_for( "/species", $class, $name );
+
+    $c->stash->{template} = $self->_select_template( 'field', $class, $field );
+    $c->response->header( 'Content-Type' => $content_type );
+    if ( $content_type eq 'text/html' ) {
+      $c->stash->{$field} = $data;
+      $c->forward('WormBase::Web::View::TT');
+    }
+    $self->status_ok(
+        $c,
+        entity => {
+            class  => $class,
+            name   => $name,
+            uri    => "$uri",
+            $field => $data
+        }
+    );
 }
 
 
