@@ -854,7 +854,7 @@
     
     function reloadWidget(widget_name, noLoad){
         var con = $jq("#" + widget_name + "-content");
-        if(con.size() > 0)
+        if(con.size() > 4)
           ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
