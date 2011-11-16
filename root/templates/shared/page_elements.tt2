@@ -24,15 +24,6 @@ getBox();
 
 [% END %]
 
-[% MACRO username(user) BLOCK %]
-[% IF user.username %]
- [% IF user.username.length>20%][% user.username.substr(0,20) %][% ELSE %][% user.username %][% END %]
-[% ELSIF user %]
- [% IF user.first_name.defined ; name = user.first_name FILTER ucfirst ; END;
-    IF user.last_name.defined; lastname= user.last_name FILTER ucfirst; name = name _ ' ' _ lastname  ; END; %] 
-[% IF name.defined %][% name %][% ELSE %]Anonymous[% END %] 
-[%- END %]
-[%- END %]
 
 [% MACRO linkUser(user,suppress_social) BLOCK;
     IF (user.wbid && user.wb_link_confirm);
@@ -42,22 +33,12 @@ getBox();
     ELSE;
       '<span id="fade"><i>[user deleted]</i></span>';
     END;
-
-#    IF c.user.twitter && !suppress_social;
-#           '&nbsp;&nbsp;<a href="http://twitter.com/' _ c.user.twitter 
-#                                  _ '" class="twitter-follow-button" data-show-count="true">Follow @' 
-#				  _ c.user.twitter 
-#				  _ '</a>'
-#				  _ '<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>';
-#
-#    END;
   END;
 %]
 
 
 
 [% MACRO extended_social_links BLOCK;
-
       IF c.user.open_ids;
          FOREACH id IN c.user.open_ids;	 
 	    IF id.provider == 'twitter';
@@ -127,6 +108,7 @@ END;
     <tr align=left>
       <th>#</th>
       <th>Title</th>
+      <th>Visibility</th>
       <th>State</th>
       <th>Severity</th>
       [% UNLESS (issue_type == 'page') %]<th>Page</th>[% END %]
@@ -146,7 +128,7 @@ END;
       %]
 
 
-      [% url = c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]
+      [% url = c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]
       <tr 
         [% IF (even == 1); 
 	     myclass='r0';
@@ -159,8 +141,8 @@ END;
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td><a href="[% c.uri_for(c.controller('tool').action_for('issue'),IS.id) %]">[% IS.title %]</a>
-        [% IF IS.is_private ; ' <em>reported privately</em>' ; END %]</td>
+        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
+        <td>[% IF IS.is_private ; ' <em>private</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
         [% UNLESS (issue_type == 'page') %]<td>[% linkPage(IS.page) %]</td>[% END %]
@@ -243,7 +225,7 @@ END;
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
 
-    <div class="field-curator" id="[% title FILTER html %]">
+    <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
                   [% IF title ; title _ ': '; END; %]
          </div>
@@ -254,23 +236,6 @@ END;
      </div>
 [% END %]
 
-
-
-
-[% MACRO check_for_empty_widget(keys) BLOCK;
-    data_exists = 0;
-    FOREACH key IN keys;
-       IF fields.$key.data;
-           data_exists = 1;
-	   LAST;
-       END;
-    END;
-
-    UNLESS data_exists;
-        '<div class="caveat-emptor">No additional data available.</div>';
-    END;
-  END;
-%]
 
 [%#
 
@@ -367,19 +332,16 @@ END;
 
 
     <script type="text/javascript" >
-//     $jq(document).ready(function() {
         WB.getDataTables(function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
-  //                 "bJQueryUI"        : true,
             "sPaginationType"  : "[% pagination_type %]",
             "bFilter"          : [% filter %],      
             "bInfo"            : [% info %],
             [% style %]
           });
         });
-//     });
     </script>
 
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
@@ -397,7 +359,7 @@ END;
                    FOREACH cell IN row;
               '<td>'; 
                       IF cell.species.defined;
-                          '<span class="species">' _ cell.genus.chunk(1).0 _ '.' _ cell.species _ '</span>';
+                          '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                       ELSIF cell.class.defined;
                           tag2link(cell);
                   ELSIF cell.match('ARRAY');
@@ -423,39 +385,25 @@ END;
              %]
     </tbody>
 
-<!--     <tfoot> -->
-<!--         <tr> -->
-             [%# FOREACH header IN table_headers %]  
-<!--                        <th>[%# header %]</th> -->
-             [%# END %]
-<!--         </tr> -->
-<!--     </tfoot> -->
-
       </table>
    [% END %] 
 
 [% END %] 
 
-
-
-
-
-[% MACRO short_list(objects) BLOCK %]
-
-   [% FOREACH row IN objects.list %]    
-       [% FOREACH item IN row %]
-     [% IF item.class.defined %]
-                [% tag2link(item) %]
-               [% ELSE %][% item %]
-    [% END %]
-      [% UNLESS loop.last %];[% END %]
-      [% END %]
-      [% UNLESS loop.last %]<br>[% END %]
-   [% END %]           
-
-    
-
+[% MACRO empty_widget_check BLOCK;
+  not_empty;
+  FOREACH field IN fields.keys;
+    IF fields.$field.data.defined;
+      not_empty = 1;
+      LAST;
+    END;
+  END; %]
+  [% UNLESS not_empty %]
+    <span class="caveat-emptor">No [% (c.config.sections.species.$class.widgets.$widget.title || c.config.sections.resources.$class.widgets.$widget.title) FILTER lower %] data for [% object.name.data.label %]</span>
+  [% END %]
 [% END %]
+
+
 
 [% 
   # For dsiplaying a list of objects in a field
@@ -477,34 +425,20 @@ END;
 </div>
 [% END %]
 
-[% BLOCK links_block %]
-  [% FOREACH link IN external_links.data.keys %]
-    [% IF link == 'aceview' %]
-      <li>[% external_link(link,'AceView', external_links.data.$link) %]</li>
-    [% ELSIF link == 'ncbi_refseq'%]
-      [% FOREACH ref_link IN external_links.data.$link %]
-      <li>[% external_link(link, "NCBI<span id=\"fade\"> - " _ ref_link _ "</span>", ref_link) %]</li>
-      [% END %]
-    [% END %]
-  [% END %]
-[% END %]
-
 
 [% BLOCK widget_sortable_block %]
  
    <!-- start [% id %] widget -->
           <div id="widget-[% type %]" class="widget-container ui-corner-all">
-                <header> 
                 <div class="ui-corner-top widget-header">
-                    <div class="module-close ui-icon ui-icon-large ui-icon-close ui-helper-hidden" wname="[% id %]" title="close"></div>
-[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink ui-helper-hidden" wname="[% id %]" title="pop out"></div>
+                    <div class="module-close ui-icon ui-icon-large ui-icon-close" wname="[% id %]" title="close"></div>
+[% IF 0 %]                     <div class="module-max ui-icon ui-icon-extlink" wname="[% id %]" title="pop out"></div>
 [% END %]              
-                    <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]" show="0"></div><span class="widget-title">[% title %]</span>
+                    <h3><div class="module-min ui-icon-large ui-icon-triangle-1-s" title="minimize" wname="[% id %]"></div><span class="widget-title">[% title %]</span>
         [% IF (type == 'me') %]<span wname="[% id %]" class="reload ui-icon ui-icon-arrowrefresh-1-s" title="reload"></span>[% END %]
                         <span class="ui-icon ui-icon-arrow-4 hide ui-helper-hidden" title="move"></span>
                     </h3>
                 </div>
-                </header>
 
                 <div id="[%- id -%]-content" class="content">
                 [% content %]
@@ -600,114 +534,7 @@ END;
  #
  ####################################################
 %]
-[% BLOCK disqus_comments %]
-<!-- Commenting powered by Disqus -->
-<script type="text/javascript">
-//<![CDATA[
-(function() {
-    var links = document.getElementsByTagName('a');
-    var query = '?';
-    for(var i = 0; i < links.length; i++) {
-        if(links[i].href.indexOf('#disqus_thread') >= 0) {
-            query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-        }
-    }
-    document.write('<script type="text/javascript" src="http://disqus.com/forums/wormbase/get_num_replies.js' + query + '"></' + 'script>');
-})();
-//]]>
-</script>
-[% END %]
 
-
-
-[% BLOCK suggestions2wormbase %]
-<!-- Suggestion Box -->
-<div class="feedback">
-   <h2>Suggestion Box</h2>
-   <form method="post" action="/db/misc/submit_feedback" enctype="application/x-www-form-urlencoded">
-     We greatly value your feedback.  If you have found
-     something incorrect, broken, or frustrating on this page,
-     let us know so that we can improve the quality of
-     annotation and the ease with which it is available.
-     <br /><br />
-
-     <b>Comments, questions, or feedback:</b>
-     <div class="indent">
-         <table border="0">
-             <tr>
-               <td colspan="3">
-                  <span class="smalldescription">
-                         Supplying your contact information
-             is optional.  Doing so will enable us
-                 to contact you for further details
-                 and to let you know when your
-                 suggestions have been addressed.
-                 </span>
-               </td>
-             </tr>
-        
-             <tr>
-                <td rowspan="4">
-                   <textarea name="comments" rows="7" cols="60" maxlength="10" style="width:95%"></textarea>
-                </td>
-                <td>Category<i>(optional)</i>: </td>
-                <td>
-                    <select name="suggestions">
-                      <option value="general_comment">General comment</option>
-              <option value="annotations_incorrect">Annotations are incorrect</option>
-              <option value="annotations_incomplete">Annotations are incomplete</option>
-              <option value="speed">The page takes too long to load</option>
-              <option value="bug">The page has a software bug in it</option>
-              <option value="requested_feature">Request for a new feature</option>
-            </select>
-               </td>
-            </tr>
-            <tr>
-               <td>Submitted by:</td>
-               <td>
-                  <input type="text" name="submitted_by"  size="50">
-               </td>
-            </tr>
-            <tr>
-               <td>Institution:</td>
-               <td><input type="text" name="institution"  size="50"></td></tr>
-        <tr>
-               <td>Email Address:</td>
-           <td><input type="text" name="submitted_email" size="50"></td>
-        </tr>
-        <tr>
-           <td colspan="2">&nbsp;</td>
-           <td align="right">
-               <input type="submit" name="Submit Comments" value="Submit Comments">
-           <input type="reset" name="Clear Form" value="Clear Form">
-           </td>
-            </tr>
-        </table>
-      </div>
-    </form>
-</div>
-[% END %]
-
-
-
-
-
-
-
-
-
-
-
-[%# is it necessary to link an object back to itself? %]
-[% MACRO name BLOCK;
-   WRAPPER $field_block title="Name" key="name";
-      tag2link(fields.name.data);
-   END;
-END;
-%]
-
-
-[% MACRO common_name GET name # an alias for name %]
 
 [% MACRO other_names BLOCK; 
       WRAPPER $field_block title="Other names" key="other_names";
@@ -764,31 +591,6 @@ END;
 %]
 
 
-[% MACRO genetic_position BLOCK ;
-     WRAPPER $field_block title="Genetic position";
-          IF fields.genetic_position.data.chromosome;
-            fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
-
-#     fields.genetic_position.data.chromosome _ ': ' _ fields.genetic_position.data.position;
-#       IF fields.genetic_position.data.error;
-#          "+/-";
-#          fields.genetic_position.data.error;
-#       END;
-#    if ($position == 0) {
-#            $label = $link_group . sprintf(":%2.2f +/- %2.3f cM %s","0",$error) ;
-#        } else {
-#            $label = $link_group . ($position ? sprintf(":%2.2f +/- %2.3f cM %s",$position,$error): '');
-
-
-      ELSE;       
-         '<div class="caveat-emptor">This gene has not been placed on the genetic map or its coordinates are unknown.</div>';
-      END;
-
-    END;
-END;
-%]
-
-
 [% MACRO central_dogma BLOCK %]
   
   NOT DONE!
@@ -797,7 +599,7 @@ END;
       <tr><td colspan="4">Central Dogma</td></tr>
 
       <tr>
-         <td rowspan="[% fields.central_dogma.data.gene_models.size + 1 %]">
+         <td rowspan="[% fields.central_dogma.data.gene_models.size || 0 + 1 %]">
               [% tag2link(fields.central_dogma.data.gene) %]
          </td>
          <td>Transcript</td><td>Exons</td><td>Protein</td>
@@ -929,11 +731,9 @@ END;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
    IF no_toggle == 1;  
-      '<div class="text-width">';
        WRAPPER $field_block title="Remarks" key="remarks";
           markup(fields.remarks.data.join('<br>'),0);
        END;
-      '</div>';
    ELSE;
       WRAPPER $field_block title="" key="remarks";
          '<div class="toggle">Curatorial remarks</div>';
@@ -971,26 +771,6 @@ END;
    END;
 END;
 %]
-
-
-
-[% MACRO xrefs BLOCK;
-
- USE Dumper;
- '<pre>';
- Dumper.dump(fields.xrefs.data);
- '</pre>';
-
-  hash = fields.xrefs.data;
-  FOREACH db IN hash.keys.sort;
-       db;
-       hash.$db.url;
-  END;
-END;
-%]
-
-
-
 
 
 
@@ -1079,51 +859,14 @@ END;
   END; # END of MACRO
 %]
 
-
-
-
 [%# 
+    #######################################################
 
-   gene_ontology; custom data table processing used on the Gene Summary.
+      Page MACROS, used to construct class pages
 
-   This is essentially generic processing for a nested data structure
-   intended to be multiple tables.
-   
-   eg. data contains a hash.array.hashrefs (instead of single tier array.hashrefs)
-
+    #######################################################
 %]
 
-[% MACRO gene_ontology BLOCK;
-
-       # One table for each key (here, a GO facet)
-       facets = fields.$key.data.keys.sort;
-
-       FOREACH facet IN facets;
-            IF fields.$key.data.$facet > 0;
-                WRAPPER $field_block title="$facet" key="$key";
-                                  
-                   table_count = table_count + 1;                 
- 
-                  # generate table
-#                            '<span class="species">'
-#                          _ facet 
-#                          _ '</span> (' 
-#                          _ fields.$key.data.$facet.size 
-#                          _ ' assocations)';
-
-                  # Here we assume that the inner data structure as an array of hashes  
-                  build_data_table(order = ['method','term', 'evidence_code'],
-                             columns = {   method   => 'Method',
-                                                 term   => 'Term',
-                                        evidence_code   => 'Evidence' },
-                             passed_data = fields.$key.data.$facet,
-                         key     = "table_${table_count}_go");   
-
-                 END; # END of WRAPPER
-              END; # END IF facet contains data    
-         END; # END of facets
-  END; # END of MACRO
-%]
 
 [% MACRO add_static_widgets BLOCK %]
 
@@ -1216,6 +959,7 @@ END;
     ELSE;
         NEXT IF widget.display == "index";
     END;
+
     displayed_widgets.push(widget_name);
 
     w = {  id    = widget_name
@@ -1229,8 +973,6 @@ END;
   END;
   displayed_widgets = displayed_widgets.grep('^overview$');
   IF displayed_widgets.size > 0; overview = 1; END;
-
-  add_static_widgets;
 
   # is_static refers to pages that don't handle objects (/resources/reagents)
   IF is_class_index && !is_static;
@@ -1249,40 +991,36 @@ END;
     END;
   END;
 
+
+  add_static_widgets;
+
   # Add tools.
-  tool_list = section_fetch.tools.keys.sort || [];
+  IF section_fetch.tools.keys.size || 0 > 0;
+    tool_list = section_fetch.tools.keys.sort || [];
 
-  # object pages automatically get the tree display
-  IF object; tool_list.unshift('tree'); END;
+    # object pages automatically get the tree display
+    IF object; tool_list.unshift('tree'); END;
 
-  widgets.push({ title="Tools" type="title"}); 
-  FOREACH widget_name IN tool_list;
-      widget = c.config.sections.tools.$widget_name;
-      # What context should this widget be displayed in ?
-      IF is_index;
-         NEXT IF widget.display == "report";
-      ELSE;
-         NEXT IF widget.display == "index";
-      END;
+
+    widgets.push({ title="Tools" type="title"}); 
+    FOREACH widget_name IN tool_list;
+        widget = c.config.sections.tools.$widget_name;
+        # What context should this widget be displayed in ?
+        IF is_index;
+          NEXT IF widget.display == "report";
+        ELSE;
+          NEXT IF widget.display == "index";
+        END;
+        
+        w = { id = widget_name
+              title = widget.title
+              href =  c.uri_for('/tools',widget.name, 'run') _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
+
+              type = 'tools'
+              };
       
-      w = { id = widget_name
-             title = widget.title
-             href =  c.uri_for('/rest','widget',class,this_object_id,widget.name)
-             type = 'tools'
-            };
-    
-      widgets.push(w);
-   END;
-
-
-  FOREACH widget_name IN ['comment', 'issue'];
-      t = widget_name FILTER ucfirst;
-      w = { id = widget_name
-            title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
-            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path
-            type = 'tools'
-          };
-      widgets.push(w);
+        widgets.push(w);
+    END;
   END;
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;

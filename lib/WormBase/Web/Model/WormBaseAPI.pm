@@ -1,6 +1,5 @@
 package WormBase::Web::Model::WormBaseAPI;
 use parent qw/Catalyst::Model::Adaptor/;
-#use parent qw/Catalyst::Model::Factory/;
 
 # Fetch the default args and pass along some extras
 # including our C::Log::Log4perl

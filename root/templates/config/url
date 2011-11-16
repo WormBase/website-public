@@ -1,9 +1,0 @@
-[% base = c.req.base;
-
-#   site.url = {
-#     base    = base
-#     home    = "${base}welcome"
-#     message = "${base}message"
-#   }
-
--%]

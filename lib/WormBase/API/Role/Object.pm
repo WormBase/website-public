@@ -164,8 +164,10 @@ sub _make_common_name {
     my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
     if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
         $tag = [$tag] unless ref $tag;
+        my $dbh = $self->ace_dsn->dbh;
+
         foreach my $tag (@$tag) {
-            last if $name = eval{ $object->$tag };
+            last if $name = $dbh->raw_fetch($object, $tag);
         }
     }
 
@@ -175,12 +177,12 @@ sub _make_common_name {
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_wrap($object)->_common_name;
+            $name = $self->_api->wrap($object)->_common_name;
         }
     }
 
 	$name //= $object->name;
-    return "$name";
+    return $name; # caution: $name should be a string!
 }
 
 =head3 other_names
@@ -306,6 +308,9 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/[GENE|P
 
 # Template: [% best_blastp_matches %]
 
+# This is A Bad Idea. if _all_proteins is ever changed in Gene,
+# nobody will notice there's a problem until a Gene page is open
+# with homology widget open. Solution: make a new role. -AD
 has 'best_blastp_matches' => (
     is       => 'ro',
     required => 1,
@@ -323,7 +328,7 @@ sub _build_best_blastp_matches {
     my $proteins;
     # Only for genes or proteins.
     if ($class eq 'Gene') {
-        $proteins = $self->all_proteins;
+        $proteins = $self->_all_proteins;
     }
     elsif ($class eq 'Protein') {
         # current_object might already be a protein.
@@ -1151,16 +1156,18 @@ sub _build_phenotypes_data {
     my $self = shift;
     my $tag = shift;
     my $object = $self->object;
-
-    return map {
+#     $tag = '@'.$tag;
+    return [ map {
         my $desc = $_->Description;
         my $remark = $_->Remark;
         {
-            phenotype   => $self->_pack_obj($_),
+            phenotype   =>  $self->_pack_obj($_),
             description => $desc    && "$desc",
             remarks     => $remark && "$remark",
         };
-    } @{$self ~~ '@tag'};
+    } @{$self ~~ '@'.$tag} ];
+   
+     
 }
 
 
@@ -1817,10 +1824,10 @@ has 'taxonomy' => (
 );
 
 # Parse out species "from a Genus species" string.
-sub _build_taxonomy { # this overlaps with parsed_species
+sub _build_taxonomy {           # this overlaps with parsed_species
     my ($self) = @_;
 
-    my $spec = $self ~~ 'Species';
+    my $spec = $self->ace_dsn->raw_fetch($self->object, 'Species');
     my ($genus, $species) = ($spec ? $spec =~ /(.*) (.*)/ : qw(Caenorhabditis elegans));
 
     return {
@@ -1997,7 +2004,7 @@ sub tmp_image_uri {
 
     # URI (pre-NFS): /images/wb-web1/00/00/00...
     # URI: /images/00/00/00...
-    my $uri = '/' . $path_and_file;
+    my $uri = ($path_and_file=~m/^\//)? $path_and_file :'/' . $path_and_file;
     return $uri;
 }
 
@@ -2013,7 +2020,8 @@ sub tmp_acedata_dir {
 sub _pack_objects {
     my ($self, $objects) = @_;
 #    $objects = ref $objects ? $objects : [ $objects ];
-    return {map {$_ => $self->_pack_obj($_)} @$objects} if $objects;
+    return unless $objects;
+    return {map {$_ => $self->_pack_obj($_)} @$objects};
 }
 
 sub _pack_obj {
@@ -2031,9 +2039,13 @@ sub _pack_obj {
 sub _parsed_species {
     my ($self, $object) = @_;
     $object ||= $self->object;
-    my $genus_species = eval {$object->Species} or return 'c_elegans';
-    my ($species) = $genus_species =~ /.*[ _](.*)/o;
-    return lc(substr($genus_species, 0, 1)) . "_$species";
+
+    if (my $genus_species = $self->ace_dsn->raw_fetch($object, 'Species')) {
+        my ($g, $species) = $genus_species =~ /(.).*[ _](.+)/o;
+        return lc "${g}_$species";
+    }
+
+    return 'c_elegans';
 }
 
 # Take a string of Genus species and return a 
@@ -2203,7 +2215,7 @@ sub _get_references {
   # Dynamically select the correct tag - this is a kludge until these are defined.
   my $tag = (eval {$object->Reference}) ? 'Reference' : 'Paper';
   
-  my $dbh = $self->dbh_ace;
+  my $dbh = $self->ace_dsn;
   
   my $class = $object->class;
   my @references;
@@ -2282,8 +2294,5 @@ sub wormbook_abstracts {
     };
     return $result;
 }
-
-
-
 
 1;

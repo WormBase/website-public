@@ -1,5 +1,8 @@
 package WormBase::API::Object::Position_matrix;
+
 use Moose;
+use File::Spec::Functions qw(catfile catdir);
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -25,9 +28,8 @@ has 'pm_datadir' => (
     lazy => 1,
     default  => sub {
 		my $self= shift;
-		my $version = $self->ace_dsn->version;
-		return $self->pre_compile->{base} . $version . "/position_matrix/";
-		#$self->pre_compile->{position_matrix};
+        return catdir($self->pre_compile->{base}, $self->ace_dsn->version,
+                      'position_matrix');
     }
 );
 
@@ -355,13 +357,13 @@ B<Response example>
 sub consensus {
     my $self    = shift;
     my $object  = $self->object;
-    
+
     # Why is this hard-coded here? Why isn't this an attribute or in configuration? How/Where is this file created?
-    my %name2consensus = _build_hash($self->pm_datadir . "pm_id2consensus_seq.txt");
-    ## $self->pre_compile->{pm_id2consensus_seq_file}
+    my %name2consensus = _build_hash(catfile($self->pm_datadir, 'pm_id2consensus_seq.txt'));
     my $data           = $name2consensus{$object};
-    return { data        => $data || undef,
-	     description => 'consensus sequence for motif',
+    return {
+        data        => $data || undef,
+        description => 'consensus sequence for motif',
     };
  }
 

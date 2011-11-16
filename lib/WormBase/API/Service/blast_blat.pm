@@ -8,9 +8,10 @@ use Bio::Graphics;
 use Bio::SeqFeature::Generic;
 use Bio::SeqIO;
 use File::Slurp qw(slurp);
+use File::Spec::Functions qw(catfile);
 use GD::Simple;
+use namespace::autoclean -except => 'meta';
 
- 
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
@@ -34,49 +35,47 @@ has 'BLAST_DATABASES' => (
     is  => 'ro',
     lazy => 1,
     default => sub {
-	my $self=shift;
-	my $hash;
-	my $BLAST_DIR = $self->pre_compile->{base}.$self->ace_dsn->version.$self->pre_compile->{blast};
-	foreach my $species (split /\s+|\t/, $self->pre_compile->{b_genome}){
-	    (my $type = $species) =~ s/.*_//;
-	      $hash->{$type."_genome"} = {
-		      type     => "nucl",
-		      location => "$BLAST_DIR/$species/genomic.fa"
-	      } ;
-	      $hash->{$type."_protein"} = {
-		      type     => "prot",
-		      location => "$BLAST_DIR/$species/peptide.fa"
-	      } if(grep /$species/, split /\s+|\t/, $self->pre_compile->{b_protein}) ;
-	     $hash->{$type."_gene"} = {
-		      type     => "nucl",
-		      location => "$BLAST_DIR/$species/genes.fa"
-	      }	 if(grep /$species/, split /\s+|\t/,$self->pre_compile->{b_gene}) ;
-	     $hash->{$type."_est"} = {
-		      type     => "nucl",
-		      location => "$BLAST_DIR/$species/ests.fa"
-	      }	 if(grep /$species/, split /\s+|\t/,$self->pre_compile->{b_est}) ;
-	}
+        my $self=shift;
+        my $hash;
+        my $BLAST_DIR = catfile($self->pre_compile->{base}, $self->ace_dsn->version,
+                                $self->pre_compile->{blast});
+        foreach my $species (split /\s+|\t/, $self->pre_compile->{b_genome}) {
+            (my $type = $species) =~ s/.*_//;
+            $hash->{$type."_genome"} = {
+                type     => "nucl",
+                location => catfile($BLAST_DIR, $species, 'genomic.fa'),
+            } ;
+            $hash->{$type."_protein"} = {
+                type     => "prot",
+                location => catfile($BLAST_DIR, $species, 'peptide.fa'),
+            } if (grep /$species/, split /\s+|\t/, $self->pre_compile->{b_protein}) ;
+            $hash->{$type."_gene"} = {
+                type     => "nucl",
+                location => catfile($BLAST_DIR, $species, 'genes.fa'),
+            }	 if (grep /$species/, split /\s+|\t/,$self->pre_compile->{b_gene}) ;
+            $hash->{$type."_est"} = {
+                type     => "nucl",
+                location => catfile($BLAST_DIR, $species, 'ests.fa'),
+            }	 if (grep /$species/, split /\s+|\t/,$self->pre_compile->{b_est}) ;
+        }
 
-        
-	foreach my $archive (split /\s+|\t/,$self->pre_compile->{ARCHIVES}) {
-	    
-	    my $BLAST_DIR = $self->pre_compile->{base}.$archive.$self->pre_compile->{blast};
-	    $hash->{"elegans_genome_$archive"} = {
-		type     => "nucl",
-		location => "$BLAST_DIR/c_elegans/genomic.fa"
-		};
-	    
-	    $hash->{"elegans_protein_$archive"} = {
-		type     => "prot",
-		location => "$BLAST_DIR/c_elegans/peptide.fa"
-		};
-	}
+        foreach my $archive (split /\s+|\t/,$self->pre_compile->{ARCHIVES}) {
+            my $BLAST_DIR = catfile($self->pre_compile->{base}, $archive,
+                                    $self->pre_compile->{blast});
+            $hash->{"elegans_genome_$archive"} = {
+                type     => "nucl",
+                location => catfile($BLAST_DIR, 'c_elegans', 'genomic.fa'),
+            };
+            $hash->{"elegans_protein_$archive"} = {
+                type     => "prot",
+                location => catfile($BLAST_DIR, 'c_elegans', 'peptide.fa'),
+            };
+        }
 
-       return $hash;
+        return $hash;
     }
 );
- 
- 
+
 our %BLAST_APPLICATIONS = (
     blastn  => {query_type => "nucl", database_type => "nucl"},
     blastp  => {query_type => "prot", database_type => "prot"},
@@ -226,8 +225,8 @@ sub process_input {
             }
         }
 
-        $command_line =
-          $self->pre_compile->{BLAST_EXEC_DIR}.qq[/bin/blastall -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
+        $command_line = catfile($self->pre_compile->{BLAST_EXEC_DIR}, '/bin/blastall')
+                      . qq[ -p $blast_app -d $database_location -i $query_file -e $blast_e_value $blast_filter -o $out_file >& $out_file.err];
     }
 
     elsif ($search_type eq "blat") {
@@ -244,7 +243,8 @@ sub process_input {
 
         # Currently only DNA searches are supported, if expanded adjust query and db types accordingly
         $command_line =
-          $self->pre_compile->{BLAT_CLIENT}.qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
+            $self->pre_compile->{BLAT_CLIENT}
+            . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
     }
 
     else {
@@ -349,46 +349,46 @@ sub display_results {
 #note!!!!!!! this will not work currately if the format of the out put change.
     $blast_app=uc($blast_app);
     foreach my $file (split /$blast_app/, $stream) {
-	next unless($file);
-	push @result_file_array, $blast_app.$file;	 
+        next unless($file);
+        push @result_file_array, $blast_app.$file;	 
     }
     my @final;
 
     foreach (@$data) {
-	my ($query_name, $alignment_image,  $score_key_image, $kviewer_adds_ref, $genome_links_ref,
-	    $expand_links_ref, $image_map_pieces_ref) = @$_;
-	my ($alignment_image_file_name) = $alignment_image =~ /([^\/]+)$/;
-	my ($score_key_image_file_name) = $score_key_image =~ /([^\/]+)$/;
+        my ($query_name, $alignment_image,  $score_key_image, $kviewer_adds_ref, $genome_links_ref,
+            $expand_links_ref, $image_map_pieces_ref) = @$_;
+        my ($alignment_image_file_name) = $alignment_image =~ /([^\/]+)$/;
+        my ($score_key_image_file_name) = $score_key_image =~ /([^\/]+)$/;
 
-	my $alignment_image_url = $self->tmp_image_uri($self->image_dir."/$alignment_image_file_name");
-	my $score_key_image_url = $self->tmp_image_uri($self->image_dir."/$score_key_image_file_name");
+        my $alignment_image_url =
+            $self->tmp_image_uri(catfile($self->image_dir, $alignment_image_file_name));
+        my $score_key_image_url =
+            $self->tmp_image_uri(catfile($self->image_dir, $score_key_image_file_name));
 
-	# Retrieve kviewer image and imagemap
+        # Retrieve kviewer image and imagemap
 
-	my $kviewer_image_content;
-	my $kviewer_imagemap;
-	my $address = $ENV{REMOTE_ADDR};
-      
-	
-	# Slurp result file
-	my $result_file_content =
+        my $kviewer_image_content;
+        my $kviewer_imagemap;
+        my $address = $ENV{REMOTE_ADDR};
+
+        # Slurp result file
+        my $result_file_content =
 	    $self->result2html(shift @result_file_array, $genome_links_ref, $expand_links_ref);
-	
-	$self->log->debug( "$address: processing results file: done" );
-	
-    
-	my $vars = {
-	    query_name 	       => $query_name,
-	    kviewer_image_content      => $kviewer_image_content,
-	    kviewer_imagemap           => $kviewer_imagemap,
-	    score_key_image_url        => $score_key_image_url,
-	    alignment_image_url        => $alignment_image_url,
-	    image_map_pieces           => $image_map_pieces_ref,
-	    result_file_content        => $result_file_content,
-	    hsp_genome_link_part_limit => $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT},
-	    hsp_alignment_image_limit  => $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT},
-	};
-      push @final, $vars;
+
+        $self->log->debug( "$address: processing results file: done" );
+  
+        my $vars = {
+            query_name 	       => $query_name,
+            kviewer_image_content      => $kviewer_image_content,
+            kviewer_imagemap           => $kviewer_imagemap,
+            score_key_image_url        => $score_key_image_url,
+            alignment_image_url        => $alignment_image_url,
+            image_map_pieces           => $image_map_pieces_ref,
+            result_file_content        => $result_file_content,
+            hsp_genome_link_part_limit => $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT},
+            hsp_alignment_image_limit  => $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT},
+        };
+        push @final, $vars;
     }
 
     return {data=>\@final};
@@ -483,7 +483,7 @@ sub result2html {
 		    if $expand_link;
 =cut
 		$link= $hash->{$hit} = {	
-							    #expand_area_counter=>$expand_area_counter,
+							     expand_area_counter=>$expand_area_counter,
 								sequence_link=> $sequence_link,
 								expand_link=>$expand_link,
 								alignment_link=>$alignment_link,

@@ -18,12 +18,12 @@ __PACKAGE__->config(
     'default'          => 'text/x-yaml',
     'stash_key'        => 'rest',
     'map'              => {
-	'text/x-yaml'      => 'YAML',
-	'text/html'        => 'YAML::HTML',
-	'text/xml'         => 'XML::Simple',
-	'application/json' => 'JSON',
+        'text/x-yaml'      => 'YAML',
+        'text/html'        => 'YAML::HTML',
+        'text/xml'         => 'XML::Simple',
+        'application/json' => 'JSON',
     }
-    );
+);
 
 =head1 NAME
 
@@ -58,6 +58,7 @@ sub livechat_GET {
       last;
       }
     }
+    $c->response->headers->expires(time);
     $c->stash->{noboiler}=1;
     $c->forward('WormBase::Web::View::TT');
 }
@@ -95,15 +96,14 @@ sub print_POST {
 sub workbench :Path('/rest/workbench') :Args(0) :ActionClass('REST') {}
 sub workbench_GET {
     my ( $self, $c) = @_;
-    my $session = $self->get_session($c);
+    my $session = $self->_get_session($c);
 
     my $url = $c->req->params->{url};
     if($url){
       my $save_to = $c->req->params->{save_to} || 'reports';
       my $is_obj = $c->req->params->{is_obj} || 0;
       my $name = $c->req->params->{name};
-
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$url,title=>$name,is_obj=>$is_obj});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $saved->delete();
@@ -125,13 +125,9 @@ sub workbench_star :Path('/rest/workbench/star') :Args(0) :ActionClass('REST') {
 sub workbench_star_GET{
     my ( $self, $c) = @_;
     my $url = $c->req->params->{url};
-    my $page = $self->get_session($c)->pages->find({url=>$url});
+    my $page = $self->_get_session($c)->pages->search({url=>$url}, {rows=>1})->next;
 
-    if($page) {
-          $c->stash->{star}->{value} = 1;
-    } else{
-        $c->stash->{star}->{value} = 0;
-    }
+    $c->stash->{star}->{value} = $page ? 1 : 0;
     $c->stash->{star}->{wbid} = $c->req->params->{wbid};
     $c->stash->{star}->{name} = $c->req->params->{name};
     $c->stash->{star}->{save_to} = $c->req->params->{class} eq 'paper' ?  "my_library" : "reports";
@@ -178,7 +174,7 @@ sub layout_GET {
 
 
   $c->log->debug("lstring:" . $lstring);
-
+    $c->response->headers->expires(time);
   $self->status_ok(
       $c,
       entity =>  {
@@ -212,17 +208,8 @@ sub auth_GET {
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = "nav/status.tt2"; 
     $self->status_ok($c,entity => {});
+    $c->response->headers->expires(time);
     $c->forward('WormBase::Web::View::TT');
-}
-
-sub get_session {
-    my ($self,$c) = @_;
-    unless($c->user_exists){
-      my $sid = $c->get_session_id;
-      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
-    }else{
-      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
-    }
 }
 
 
@@ -233,19 +220,17 @@ sub get_user_info_GET{
 
   my $api = $c->model('WormBaseAPI');
   my $object = $api->fetch({ class => 'Person', name  => $name });
-  # what if there's no object?
 
   my $message;
-  my $status_ok = 1;
+  my $status_ok;
   my @users = $c->model('Schema::User')->search({wbid=>$name, wb_link_confirm=>1});
   if(@users){
-    $status_ok = 0;
     $message = "This account has already been linked";
   }elsif($object && $object->email->{data}){
     my $emails = join (', ', map {"<a href='mailto:$_'>$_</a>"} @{$object->email->{data}});
     $message = "An email will be sent to " . $emails . " to confirm your identity";
+    $status_ok = 1;
   }else{
-    $status_ok = 0;
     $message = "This account cannot be linked at this time";
   }
   $self->status_ok(
@@ -255,7 +240,7 @@ sub get_user_info_GET{
           fullname => $object->name->{data}->{label},
           email => $object->email->{data},
           message => $message,
-          status_ok => $status_ok,
+          status_ok => $status_ok || 0,
       },
   );
 
@@ -274,12 +259,11 @@ sub history_GET {
     my ($self,$c) = @_;
 
     $c->response->headers->expires(time);
-    my $session = $self->get_session($c);
+    my $session = $self->_get_session($c);
     my $history_change = $c->req->params->{history_on};
 
     $c->stash->{noboiler} = 1;
     $c->stash->{template} = $history_change ? "shared/fields/turn_history_on.tt2" : "shared/fields/user_history.tt2"; 
-
 
     if(($c->user_session->{'history_on'} || 0 == 1) && !$history_change){
       if($c->req->params->{clear}){ 
@@ -292,9 +276,8 @@ sub history_GET {
 
       my $sidebar = $c->req->params->{sidebar};
       my @hist = $session->user_history if $session;
-      my $size = @hist;
-      my $count = $sidebar ? 3 : $size;
-      if($count > $size) { $count = $size; }
+      my $size = @hist || 0;
+      my $count = ($sidebar && ($size > 3)) ? 3 : $size;
 
       @hist = sort { $b->get_column('timestamp') <=> $a->get_column('timestamp')} @hist;
 
@@ -318,13 +301,13 @@ sub history_GET {
 
 sub history_POST {
     my ($self,$c) = @_;
-    if($c->user_session->{'history_on'} == 1){
-      my $session = $self->get_session($c);
-      my $path = $c->request->body_parameters->{'ref'};
+    if($c->user_session->{'history_on'} || 0 == 1){
+      my $session = $self->_get_session($c);
+      my $url = $c->request->body_parameters->{'ref'};
       my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
       my $is_obj = $c->request->body_parameters->{'is_obj'};
 
-      my $page = $c->model('Schema::Page')->find_or_create({url=>$path,title=>$name,is_obj=>$is_obj});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
       $hist->set_column(timestamp=>time());
       $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
@@ -550,11 +533,11 @@ sub feed_GET {
     }else{
 
       my $url = $c->req->params->{url};
-      my $page = $c->model('Schema::Page')->find({url=>$url});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
       $c->stash->{url} = $url;
 
       if($type eq "comment"){
-        my @comments = $page->comments;
+        my @comments = $page->comments if $page;
         if($c->req->params->{count}){
           $c->response->body("(" . scalar(@comments) . ")");
           return;
@@ -580,14 +563,14 @@ sub feed_GET {
       
      $c->stash->{template} = "feed/$type.tt2"; 
      $c->forward('WormBase::Web::View::TT') ;
-    
+      $c->response->headers->expires(time);
      #$self->status_ok($c,entity => {});
 }
 
 sub feed_POST {
     my ($self,$c,$type) = @_;
     if($type eq 'comment'){
-      if($c->req->params->{method} eq 'delete'){
+      if($c->req->params->{method}  || '' eq 'delete'){
         my $id = $c->req->params->{id};
         if($id){
           my $comment = $c->model('Schema::Comment')->find($id);
@@ -612,14 +595,14 @@ sub feed_POST {
       }
     }
     elsif($type eq 'issue'){
-    if($c->req->params->{method} eq 'delete'){
+    if($c->req->params->{method} || '' eq 'delete'){
       my $id = $c->req->params->{issues};
       if($id){
         foreach (split('_',$id) ) {
-        my $issue = $c->model('Schema::Issue')->find($_);
-        $c->log->debug("delete issue #",$issue->issue_id);
-        $issue->delete();
-        $issue->update();
+          my $issue = $c->model('Schema::Issue')->find($_);
+          $c->log->debug("delete issue #",$issue->issue_id);
+          $issue->delete();
+          $issue->update();
         }
       }
     }else{
@@ -629,9 +612,9 @@ sub feed_POST {
       
       my $url = $c->req->params->{url};
       $c->log->debug(keys %{$c->req->params});
-      my $page = $c->model('Schema::Page')->find({url=>$url});
+      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
       $c->log->debug("private: $is_private");
-      my $user = $self->check_user_info($c);
+      my $user = $self->_check_user_info($c);
       return unless $user;
       $c->log->debug("create new issue $content ",$user->user_id);
       my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->user_id,
@@ -641,7 +624,7 @@ sub feed_POST {
                                   state      =>"new",
                                   is_private => $is_private,
                                   'timestamp'=>time()});
-      $self->issue_email($c,$issue,1,$content);
+      $self->_issue_email($c,$issue,1,$content);
     }
     }elsif($type eq 'thread'){
     my $content= $c->req->params->{content};
@@ -668,7 +651,7 @@ sub feed_POST {
        }
        $issue->update();
         
-       my $user = $self->check_user_info($c);
+       my $user = $self->_check_user_info($c);
        return unless $user;
        my $thread  = { owner=>$user,
               timestamp=>time(),
@@ -681,88 +664,10 @@ sub feed_POST {
         $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
       }  
       if($state || $assigned_to || $content){
-          $self->issue_email($c,$issue,$thread,$content,$hash);
+          $self->_issue_email($c,$issue,$thread,$content,$hash);
       }
     }
     }
-}
-
-sub check_user_info {
-  my ($self,$c) = @_;
-  my $user;
-  if($c->user_exists) {
-      $user=$c->user; 
-      $user->username($c->req->params->{username}) if($c->req->params->{username});
-      $user->email_address($c->req->params->{email}) if($c->req->params->{email});
-  }else{
-      if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
-        $c->res->body(0) ;return 0 ;
-      }
-      $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
-      $user->username($c->req->params->{username}),
-  }
-  $user->update();
-  return $user;
-}
-=head2 pages() pages_GET()
-
-Return a list of all available pages and their URIs
-
-TODO: This is currently just returning a dummy object
-
-=cut
-
-sub issue_email{
-  my ($self,$c,$issue,$new,$content,$change) = @_;
-  my $subject='New Issue';
-  my $bcc;
-  $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
-
-  unless($new == 1){
-    $subject='Issue Update';
-    my @threads= $issue->threads;
-    $bcc = "$bcc, " . $issue->responsible->primary_email->email if ($issue->responsible && $issue->responsible->primary_email);
-    my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
-  }
-  $subject = '[WormBase Issues] '.$subject.' '.$issue->issue_id.': '.$issue->title;
-
-  $c->stash->{issue}=$issue;
-
-  $c->stash->{new}=$new;
-  $c->stash->{content}=$content;
-  $c->stash->{change}=$change;
-  $c->stash->{noboiler} = 1;
-  $c->log->debug(" send out email to $bcc");
-  $c->stash->{email} = {
-          to      => $c->config->{issue_email},
-          cc => $bcc,
-          from    => $c->config->{issue_email},
-          subject => $subject, 
-          template => "feed/issue_email.tt2",
-          };
-   
-  $c->forward( $c->view('Email::Template') );
-}
-
-sub pages : Path('/rest/pages') :Args(0) :ActionClass('REST') {}
-
-sub pages_GET {
-    my ($self,$c) = @_;
-    my @pages = keys %{ $c->config->{pages} };
-
-    my %data;
-    foreach my $page (@pages) {
-    my $uri = $c->uri_for('/page',$page,'WBGene00006763');
-    $data{$page} = "$uri";
-    }
-
-    $self->status_ok( $c,
-              entity => { resultset => {  data => \%data,
-                          description => 'Available (dynamic) pages at WormBase',
-                  }
-              }
-    );
 }
 
 
@@ -772,41 +677,6 @@ sub pages_GET {
 #   WIDGETS
 #
 ######################################################
-
-=head2 available_widgets(), available_widgets_GET()
-
-For a given CLASS and OBJECT, return a list of all available WIDGETS
-
-eg http://localhost/rest/available_widgets/gene/WBGene00006763
-
-=cut
-
-sub available_widgets : Path('/rest/available_widgets') :Args(2) :ActionClass('REST') {}
-
-sub available_widgets_GET {
-    my ($self,$c,$class,$name) = @_;
-
-    # Does the data for this widget already exist in the cache?
-    my ($data,$cache_server) = $c->check_cache({cache_name => 'couchdb', uuid => 'available_widgets'});
-    
-    my @widgets = @{$c->config->{pages}->{$class}->{widget_order}};
-    
-    foreach my $widget (@widgets) {
-	my $uri = $c->uri_for('/widget',$class,$name,$widget);
-	push @$data, { widgetname => $widget,
-		       widgeturl  => "$uri"
-	};
-	$c->cache->set('couchdb','available_widgets',$data);
-    }
-    
-    # Retain the widget order
-    $self->status_ok( $c, entity => {
-	data => $data,
-	description => "All widgets available for $class:$name",
-		      }
-	);
-}
-
 
 
 
@@ -835,7 +705,7 @@ sub widget_GET {
 
     # Cache key something like "$class_$widget_$name"
     my ( $cached_data, $cache_source );
-    my $uuid = join( '_', $class, $widget, $name );
+    my $key = join( '_', $class, $widget, $name );
 
     # Check the cache only if this is a request for HTML.
     # check_cache will check couch first.
@@ -844,58 +714,36 @@ sub widget_GET {
         = $headers->content_type
         || $c->req->params->{'content-type'}
         || 'text/html';
-    if ( $content_type eq 'text/html' )
-    {
+    $c->response->header( 'Content-Type' => $content_type );
 
+    if ( $content_type eq 'text/html' ) {
         # Shouldn't this be $self? Would break check_cache();
-        ( $cached_data, $cache_source ) = $c->check_cache(
-            {   cache_name => 'couchdb',
-                uuid       => $uuid,
-            }
-        );
-
-        #hostname   => $c->req->base,
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
     }
 
     # We're only caching rendered HTML. If it's present, return it.
     if ($cached_data) {
         $c->response->status(200);
-        $c->response->header( 'Content-Type' => 'text/html' );
         $c->response->body($cached_data);
         $c->detach();
         return;
     }
 
+    # No boiler since this is an XHR request.
+    $c->stash->{noboiler} = 1;
+
+
+    # references widget - no need for an object
+    # only html
+    if ( $widget eq 'references' ) {
+          $c->req->params->{widget} = 'references';
+          $c->go('search', 'search');
+    }
+
     my $api = $c->model('WormBaseAPI');
     my $object = ($name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
+               ? $api->instantiate_empty(ucfirst $class)
                : $api->fetch({ class => ucfirst $class, name => $name }));
-    # what if there's no object?
-
-    # Is this a request for the references widget?
-    # Return it (of course, this will ONLY be HTML).
-    if ( $widget eq 'references' ) {
-        my $url
-            = $c->uri_for( '/search', 'paper', $name )
-            . '?widget=refences&class='
-            . $class
-            . ";inline=1";
-        $c->res->redirect( $url, 307 );
-        return;
-
-# If you have a tool that you want to display inline as a widget, be certain to add it here.
-# Otherwise, it will try to load a template under class/action.tt2...
-    }
-    elsif ($widget eq "nucleotide_aligner"
-        || $widget eq "protein_aligner"
-        || $widget eq 'tree' )
-    {
-        return $c->res->redirect(
-            "/tools/$widget/run?inline=1;name=$name;class=$class")
-            if ( $widget eq 'tree' );
-        return $c->res->redirect(
-            "/tools/" . $widget . "/run?inline=1&sequence=$name" );
-    }
 
     # Generate and cache the widget.
     # Load the stash with the field contents for this widget.
@@ -905,9 +753,8 @@ sub widget_GET {
     my $fatal_non_compliance = 0;
     foreach my $field (@fields) {
         unless ($field) { next; }
-
-        # $c->log->debug("Processing field: $field");
-        my $data = $object->$field;    # $object->can($field) for a check
+        $c->log->debug("Processing field: $field");
+        my $data = $object->$field;# if $object->can($field); # for a check
         if ( $c->config->{installation_type} eq 'development'
             and my ( $fixed_data, @problems )
             = $object->_check_data( $data, $class ) )
@@ -925,6 +772,9 @@ sub widget_GET {
         $c->stash->{fields}->{$field} = $data;
     }
 
+    # Hack for empty widgets - know what object they're on
+    $c->stash->{object}->{name} = $c->stash->{fields}->{name} || $object->name;
+
     if ($fatal_non_compliance) {
         die "Non-compliant data. See log for fatal error.\n";
     }
@@ -933,36 +783,18 @@ sub widget_GET {
     $c->stash->{class}  = $class;
     $c->stash->{widget} = $widget;
 
-    # No boiler since this is an XHR request.
-    $c->stash->{noboiler} = 1;
-
     # Set the template
     $c->stash->{template} = 'shared/generic/rest_widget.tt2';
     $c->stash->{child_template}
-        = $c->_select_template( $widget, $class, 'widget' );
+        = $self->_select_template('widget', $class, $widget);
 
     # Forward to the view to render HTML
     if ( $content_type eq 'text/html' ) {
         my $html = $c->view('TT')->render( $c, $c->{stash}->{template} );
 
-        # If we have content, cache it.
-        if ($html) {
-
-            # eval {$c->set_cache('filecache',$cache_id,$html);};
-            # Or: couchdb or memcached
-
-            $c->set_cache(
-                {   cache_name => 'couchdb',
-                    uuid       => $uuid,
-                    data       => $html,
-
-#			   host       => $c->req->base,  # eg http://beta.wormbase.org/ or http://todd.wormbase.org/
-                }
-            );
-        }
+        $c->set_cache($key => $html) if $html;
 
         $c->response->status(200);
-        $c->response->header( 'Content-Type' => 'text/html' );
         $c->response->body($html);
         $c->detach();
         return;
@@ -972,8 +804,7 @@ sub widget_GET {
     # PERHAPS I SHOULD INCLUDE FIELDS?
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for( "/page", $class, $name )
-        ;    # THIS IS NO LONGER THE CORRECT URI FOR THE PAGE!
+    my $uri = $c->req->referer;   
     $self->status_ok(
         $c,
         entity => {
@@ -986,7 +817,6 @@ sub widget_GET {
     my $filename = join( '_', $class, $name, $widget ) . '.'
         . $c->config->{api}->{content_type}->{$content_type};
     $c->log->debug("$filename download in the format: $content_type");
-    $c->response->header( 'Content-Type' => $content_type );
     $c->response->header(
         'Content-Disposition' => 'attachment; filename=' . $filename );
 }
@@ -1039,172 +869,13 @@ sub widget_userguide_GET {
 }
 
 
-
-
-
-
-# This is the original widget() method that cached data structures
-# instead of rendered HTML. Retain for reference.
-# It needs to be updated to use the new check_cache and set_cache interface.
-
-sub widget_data_cache :Path('/rest/widget_data_cache') :Args(3) :ActionClass('REST') {}
-
-# This version polls for and caches data structures in the filecache.
-sub widget_data_cache_GET {
-    my ( $self, $c, $class, $name, $widget ) = @_;
-
-    my $headers = $c->req->headers;
-    $c->log->debug( "widget GET header " . $headers->content_type );
-
-# Have we pre-cached the HTML for this widget? If so, deliver it.
-# We will test for DATA caches below (eg: things previously requested
-# but not specifically cached)
-# Cache key something like "$class_$widget_$name"
-# my ($cache_id,$cached_data,$cache_source) = $c->check_cache('filecache','rest','widget',$class,$name,$widget);
-    my ( $cached_data, $cache_source );
-
-    my $uuid = join( '_', $class, $widget, $name );
-
-    # We'll only check the cache if we are a production environment.
-    ( $cached_data, $cache_source )
-        = $c->check_cache( { cache_name => 'filecache', uuid => $uuid } );
-
-    # The precache via couchdb contains rendered HTML.
-    if ( $cache_source eq 'precache' ) {
-        my $response = $c->response;
-        $response->body($cached_data);
-        return;
-    }
-
-    my $api = $c->model('WormBaseAPI');
-    my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
-               : $api->fetch({ class => ucfirst $class, name => $name });
-    # what if there's no object?
-
-    # Is this a request for the references widget?
-    # Return it (of course, this will ONLY be HTML).
-    if ( $widget eq "references" ) {
-        $c->stash->{class}    = $class;
-        $c->stash->{query}    = $name;
-        $c->stash->{noboiler} = 1;
-
-        # Looking up the template is slow; hard-coded here.
-        $c->stash->{template} = "shared/widgets/references.tt2";
-        $c->forward('WormBase::Web::View::TT');
-        return;
-
-# If you have a tool that you want to display inline as a widget, be certain to add it here.
-# Otherwise, it will try to load a template under class/action.tt2...
-    }
-    elsif ($widget eq "nucleotide_aligner"
-        || $widget eq "protein_aligner"
-        || $widget eq 'tree' )
-    {
-        return $c->res->redirect(
-            "/tools/$widget/run?inline=1;name=$name;class=$class")
-            if ( $widget eq 'tree' );
-        return $c->res->redirect(
-            "/tools/" . $widget . "/run?inline=1&sequence=$name" );
-    }
-
-    # The cache ONLY includes the field data for the widget, nothing else.
-    # This is because most backend caches cannot store globs.
-    if ($cached_data) {
-        $c->stash->{fields} = $cached_data;
-        $c->stash->{cache} = $cache_source if ($cache_source);
-    }
-    else {
-
-        # No result? Generate and cache the widget.
-        # Load the stash with the field contents for this widget.
-        # The widget itself is loaded by REST; fields are not.
-        my @fields = $c->_get_widget_fields( $class, $widget );
-
-        my $fatal_non_compliance = 0;
-        foreach my $field (@fields) {
-            unless ($field) { next; }
-            $c->log->debug($field);
-            my $data = $object->$field;    # $object->can($field) for a check
-            if ( $c->config->{installation_type} eq 'development'
-                and my ( $fixed_data, @problems )
-                = $object->_check_data( $data, $class ) )
-            {
-                $data = $fixed_data;
-                $c->log->fatal(
-                    "${class}::$field returns non-compliant data: ");
-                $c->log->fatal("\t$_") foreach @problems;
-
-                $fatal_non_compliance = $c->config->{fatal_non_compliance};
-            }
-
-          # Conditionally load up the stash (for now) for HTML requests.
-          # Alternatively, we could return JSON and have the client format it.
-            $c->stash->{fields}->{$field} = $data;
-        }
-
-        if ($fatal_non_compliance) {
-            die "Non-compliant data. See log for fatal error.\n";
-        }
-
-# Cache the field data for this widget.
-# I added an eval cause this was breaking for some data. WE SHOULD FIX DATA RETURNED IN AN UNUSUAL STRUCTURE - AC
-        eval { $c->set_cache( 'filecache', $uuid, $c->stash->{fields} ); };
-    }
-
-    $c->stash->{class} = $class;
-
-    # Save the name of the widget.
-    $c->stash->{widget} = $widget;
-
-    # No boiler since this is an XHR request.
-    $c->stash->{noboiler} = 1;
-
-    # Set the template
-    $c->stash->{template} = "shared/generic/rest_widget.tt2";
-    $c->stash->{child_template}
-        = $c->_select_template( $widget, $class, 'widget' );
-
-    # Forward to the view for rendering HTML.
-    my $format = $headers->header('Content-Type')
-        || $c->req->params->{'content-type'};
-    $c->detach('WormBase::Web::View::TT') unless ($format);
-
-    # TODO: AGAIN THIS IS THE REFERENCE OBJECT
-    # PERHAPS I SHOULD INCLUDE FIELDS?
-    # Include the full uri to the *requested* object.
-    # IE the page on WormBase where this should go.
-    my $uri = $c->uri_for( "/page", $class, $name );
-    $self->status_ok(
-        $c,
-        entity => {
-            class  => $class,
-            name   => $name,
-            uri    => "$uri",
-            fields => $c->stash->{fields},
-        }
-    );
-    $format ||= 'text/html';
-    my $filename
-        = $class . "_" 
-        . $name . "_" 
-        . $widget . "."
-        . $c->config->{api}->{content_type}->{$format};
-    $c->log->debug("$filename download in the format: $format");
-    $c->response->header( 'Content-Type' => $format );
-    $c->response->header(
-        'Content-Disposition' => 'attachment; filename=' . $filename );
-}
-
-
-
-
 # For "static" pages
 # that do not need to handle objects. They have a different linking structure
 sub widget_static :Path('/rest/widget/static') :Args(1) :ActionClass('REST') {}
 
 sub widget_static_GET {
     my ($self,$c,$widget_id) = @_; 
+    $c->response->headers->expires(time);
     $c->log->debug("getting static widget");
     if($c->req->params->{history}){ # just getting history of widget
       my @revisions = $c->model('Schema::WidgetRevision')->search({widget_id=>$widget_id}, {order_by=>'timestamp DESC'});
@@ -1258,7 +929,7 @@ sub widget_static_GET {
       );
 
     $format ||= 'text/html';
-    if ($format =~m/text\/html/) {
+    if ($format eq 'text/html') {
       $c->forward('WormBase::Web::View::TT');
       return;
     }
@@ -1344,7 +1015,7 @@ sub widget_class_index_GET {
 
     if($widget=~m/browse|basic_search|summary/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
-    }elsif($class=~m/all/){
+    }elsif($class eq 'all'){
       $c->stash->{template} = "species/$species/$widget.tt2";
     }else{
       $c->stash->{template} = "species/$species/$class/$widget.tt2";
@@ -1358,50 +1029,140 @@ sub widget_home :Path('/rest/widget/home') :Args(1) :ActionClass('REST') {}
 
 sub widget_home_GET {
     my ($self,$c,$widget) = @_; 
+    $c->response->headers->expires(time);
     $c->log->debug("getting home page widget");
-    if($widget=~m/issues/) {
-      $c->stash->{issues} = $self->issue_rss($c,2);
-    } elsif($widget=~m/activity/) {
-      $c->stash->{recent} = $self->recently_saved($c,3);
-      if ($c->user_session->{'history_on'} == 1){
-        $c->stash->{popular} = $self->most_popular($c,5)
+    if($widget eq 'issues') {
+      $c->stash->{issues} = $self->_issue_rss($c,2);
+    } elsif($widget eq 'activity') {
+      if ($c->user_session->{'history_on'} || 0 == 1){
+        $c->stash->{popular} = $self->_most_popular($c,5);
       } 
-      $c->stash->{random} = $self->random_page($c);
+      if($c->check_any_user_role(qw/admin curator/)){ 
+        $c->stash->{recent} = $self->_recently_saved($c,3);
+      }
+      my @rand = ($c->model('WormBaseAPI')->xapian->random($c));
+      $c->stash->{random} = \@rand;
 
-    } elsif($widget=~m/discussion/) {
-      $c->stash->{comments} = $self->comment_rss($c,2);
+    } elsif($widget eq 'discussion') {
+      $c->stash->{comments} = $self->_comment_rss($c,2);
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;
     $c->forward('WormBase::Web::View::TT');
 }
 
-my $random;
-sub random_page {
-  my ($self,$c) = @_;
-  my $api = $c->model('WormBaseAPI');
 
-  my @rand;
-  if( !$random || ((time() - $random->{time}) > 3600)){
-    @rand = $c->model('Schema::Page')->search({is_obj=>1},
-                {   select => [ 
-                      'page_id', 
-                      'url',
-                      'is_obj'
-                    ],
-                    order_by=>'RAND()'
-                })->slice(0, 0);
-    $random->{id} = $rand[0]->page_id;
-    $random->{time} = time();
-  }else{
-    @rand = $c->model('Schema::Page')->search({is_obj=>1, page_id=>$random->{id}});
-  }
-  @rand = map { $self->_get_search_result($c, $api, $_);  } @rand;
+sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
 
-  return \@rand;
+sub widget_me_GET {
+    my ($self,$c,$widget) = @_; 
+    my $api = $c->model('WormBaseAPI');
+    my $type;
+    $c->stash->{'bench'} = 1;
+    $c->response->headers->expires(time);
+    if($widget eq 'user_history'){
+      $self->history_GET($c);
+      return;
+    } elsif($widget eq 'profile'){
+      $c->stash->{noboiler} = 1;
+      $c->res->redirect('/profile');
+      return;
+    }elsif($widget eq 'issue'){
+      $self->feed_GET($c,"issue");
+      return;
+    }
+
+    if($widget eq 'my_library'){ $type = 'paper';} else { $type = 'all';}
+
+    my $session = $self->_get_session($c);
+    my @reports = $session->user_saved->search({save_to => $widget});
+
+    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
+
+    $c->stash->{'widget'} = $widget;
+    $c->stash->{'results'} = \@ret;
+    $c->stash->{'type'} = $type; 
+    $c->stash->{template} = "workbench/widget.tt2";
+    $c->stash->{noboiler} = 1;
+    $c->forward('WormBase::Web::View::TT');
+    return;
 }
 
-sub recently_saved {
+
+
+######################################################
+#
+#   Private methods
+#
+######################################################
+
+
+sub _get_session {
+    my ($self,$c) = @_;
+    unless($c->user_exists){
+      my $sid = $c->get_session_id;
+      return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
+    }else{
+      return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
+    }
+}
+
+
+sub _check_user_info {
+  my ($self,$c) = @_;
+  my $user;
+  if($c->user_exists) {
+      $user=$c->user; 
+      $user->username($c->req->params->{username}) if($c->req->params->{username});
+      $user->email_address($c->req->params->{email}) if($c->req->params->{email});
+  }else{
+      if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
+        $c->res->body(0) ;return 0 ;
+      }
+      $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
+      $user->username($c->req->params->{username}),
+  }
+  $user->update();
+  return $user;
+}
+
+
+
+sub _issue_email{
+  my ($self,$c,$issue,$new,$content,$change) = @_;
+  my $subject='New Issue';
+  my $bcc;
+  $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
+
+  unless($new == 1){
+    $subject='Issue Update';
+    my @threads= $issue->threads;
+    $bcc = "$bcc, " . $issue->responsible->primary_email->email if ($issue->responsible && $issue->responsible->primary_email);
+    my %seen=();  
+    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
+  }
+  $subject = '[WormBase Issues] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+
+  $c->stash->{issue}=$issue;
+
+  $c->stash->{new}=$new;
+  $c->stash->{content}=$content;
+  $c->stash->{change}=$change;
+  $c->stash->{noboiler} = 1;
+  $c->log->debug(" send out email to $bcc");
+  $c->stash->{email} = {
+          to      => $c->config->{issue_email},
+          cc => $bcc,
+          from    => $c->config->{issue_email},
+          subject => $subject, 
+          template => "feed/issue_email.tt2",
+          };
+   
+  $c->forward( $c->view('Email::Template') );
+}
+
+
+sub _recently_saved {
  my ($self,$c,$count) = @_;
     my $api = $c->model('WormBaseAPI');
     my @saved = $c->model('Schema::Starred')->search(undef,
@@ -1424,7 +1185,7 @@ sub recently_saved {
     return \@ret;
 }
 
-sub most_popular {
+sub _most_popular {
  my ($self,$c,$count) = @_;
 
     my $api = $c->model('WormBaseAPI');
@@ -1463,14 +1224,7 @@ sub _get_search_result {
     my $id = uri_unescape($parts[-1]);
     $c->log->debug("class: $class, id: $id");
 
-    my $obj = $api->fetch({class=> ucfirst($class),
-                              name => $id}) or die "$!";
-    my %ret = %{$api->xapian->_wrap_objs($c, $obj, $class, $footer);};
-    unless (defined $ret{name}) {
-      $ret{name}{id} = $id;
-      $ret{name}{class} = $class;
-    }
-    return \%ret;
+    return $api->xapian->_get_tag_info($c, $id, $class, 1, $footer);
   }
 
   return { 'name' => {  url => $page->url, 
@@ -1482,7 +1236,7 @@ sub _get_search_result {
 }
 
 
-sub comment_rss {
+sub _comment_rss {
  my ($self,$c,$count) = @_;
  my @rss;
  my @comments = $c->model('Schema::Comment')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
@@ -1499,7 +1253,7 @@ sub comment_rss {
  return \@rss;
 }
 
-sub issue_rss {
+sub _issue_rss {
   my ($self,$c,$count) = @_;
   my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
   my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
@@ -1537,86 +1291,28 @@ sub issue_rss {
   return \@sort;
 }
 
-sub widget_me :Path('/rest/widget/me') :Args(1) :ActionClass('REST') {}
+# Template assignment is a bit of a hack.
+# Maybe I should just maintain
+# a hash, where each field/widget lists its corresponding template
+sub _select_template {
+    my ($self, $type, $class, $render_target) = @_;
 
-sub widget_me_GET {
-    my ($self,$c,$widget) = @_; 
-    my $api = $c->model('WormBaseAPI');
-    my $type;
-    $c->stash->{'bench'} = 1;
-    $c->response->headers->expires(time);
-    if($widget=~m/user_history/){
-      $self->history_GET($c);
-      return;
-    } elsif($widget=~m/profile/){
-      $c->stash->{noboiler} = 1;
-      $c->res->redirect('/profile');
-      return;
-    }elsif($widget=~m/issue/){
-      $self->feed_GET($c,"issue");
-      return;
+    my $config = $self->_app->config;
+
+    # Normally, the template defaults to action name.
+    # However, we have some shared templates which are
+    # not located under root/classes/CLASS
+    if (($type eq 'field') && ($config->{common_fields}->{$render_target})) {
+        # Some templates are shared across Models
+        return "shared/fields/$render_target.tt2";
+    }elsif (($type eq 'widget') && ($config->{common_widgets}->{$render_target})){
+        # Widget template selection
+        # Some widgets are shared across Models
+        return "shared/widgets/$render_target.tt2";
+    } else {
+      return "classes/$class/$render_target.tt2";
     }
-
-    if($widget=~m/my_library/){ $type = 'paper';} else { $type = 'all';}
-
-    my $session = $self->get_session($c);
-    my @reports = $session->user_saved->search({save_to => $widget});
-
-    my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
-
-    $c->stash->{'results'} = \@ret;
-    $c->stash->{'type'} = $type; 
-    $c->stash->{template} = "workbench/widget.tt2";
-    $c->stash->{noboiler} = 1;
-    $c->forward('WormBase::Web::View::TT');
-    return;
 }
-
-
-
-
-
-######################################################
-#
-#   ADMIN WIDGETS 
-#
-######################################################
-
-sub widget_admin :Path('/rest/widget/admin') :Args(1) :ActionClass('REST') {}
-
-sub widget_admin_GET {
-    my ($self,$c,$widget) = @_; 
-    my $api = $c->model('WormBaseAPI');
-    my $type;
-    $c->stash->{'bench'} = 1;
-    $c->res->redirect("/admin/$widget");
-    return;
-}
-
-
-
-
-
-
-
-######################################################
-#
-#   SPECIES WIDGETS (as opposed to /species)
-#
-######################################################
-#sub widget_species :Path('/rest/widget/species_summary') :Args(2) :ActionClass('REST') {}
-#
-#sub widget_species_GET {
-#    my ($self,$c,$species,$widget) = @_; 
-#    $c->log->debug("getting species widget");#
-#
-#    $c->stash->{template} = "species/$species/$widget.tt2";
-#    $c->stash->{noboiler} = 1;
-#}
-
-
-
-
 
 
 
@@ -1633,51 +1329,9 @@ Fetch all available fields for a given WIDGET, PAGE, NAME
 
 eg  GET /rest/fields/[WIDGET]/[CLASS]/[NAME]
 
-
-# This makes more sense than what I have now:
-/rest/class/*/available_widgets  - all available widgets
-/rest/class/*/widget   - the content for a given widget
-
-/rest/class/*/widget/available_fields - all available fields for a widget
 /rest/class/*/widget/field
 
 =cut
-
-sub available_fields : Path('/rest/available_fields') :Args(3) :ActionClass('REST') {}
-
-sub available_fields_GET {
-    my ( $self, $c, $widget, $class, $name ) = @_;
-
-    # Does the data for this widget already exist in the cache?
-    my ( $data, $cache_server )
-        = $c->check_cache(
-        { cache_name => 'filecache', uuid => 'available_fields' } );
-
-    unless ($data) {
-        my @fields
-            = eval { @{ $c->config->{pages}->{$class}->{widgets}->{$widget} }; };
-
-        foreach my $field (@fields) {
-            my $uri = $c->uri_for( '/rest/field', $class, $name, $field );
-            $data->{$field} = "$uri";
-        }
-        $c->set_cache(
-            {   cache_name => 'filecache',
-                uuid       => 'available_fields',
-                data       => $data
-            }
-        );
-    }
-
-    $self->status_ok(
-        $c,
-        entity => {
-            data => $data,
-            description =>
-                "All fields that comprise the $widget for $class:$name",
-        }
-    );
-}
 
 
 =head field(), field_GET()
@@ -1696,34 +1350,31 @@ sub field_GET {
     my $headers = $c->req->headers;
     $c->log->debug( $headers->header('Content-Type') );
     $c->log->debug($headers);
-
+    my $content_type 
+        = $headers->content_type
+        || $c->req->params->{'content-type'}
+        || 'text/html';
     my $api = $c->model('WormBaseAPI');
     my $object = $name eq '*' || $name eq 'all'
-               ? $api->instantiate_empty({ class => ucfirst $class })
+               ? $api->instantiate_empty(ucfirst $class)
                : $api->fetch({ class => ucfirst $class, name => $name });
-    # what if there's no object?
 
-    # Did we request the widget by ajax?
     # Supress boilerplate wrapping.
-    if ( $c->is_ajax() ) {
-        $c->stash->{noboiler} = 1;
-    }
+    $c->stash->{noboiler} = 1;
 
     my $data   = $object->$field();
-
-# Should be conditional based on content type (only need to populate the stash for HTML)
-    $c->stash->{$field} = $data;
-
-    # Anything in $c->stash->{rest} will automatically be serialized
-    #  $c->stash->{rest} = $data;
 
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
     my $uri = $c->uri_for( "/species", $class, $name );
 
-    $c->stash->{template} = $c->_select_template( $field, $class, 'field' );
-
+    $c->stash->{template} = $self->_select_template( 'field', $class, $field );
+    $c->response->header( 'Content-Type' => $content_type );
+    if ( $content_type eq 'text/html' ) {
+      $c->stash->{$field} = $data;
+      $c->forward('WormBase::Web::View::TT');
+    }
     $self->status_ok(
         $c,
         entity => {
@@ -1735,11 +1386,6 @@ sub field_GET {
     );
 }
 
-
-
-
-
-=cut
 
 =head1 AUTHOR
 

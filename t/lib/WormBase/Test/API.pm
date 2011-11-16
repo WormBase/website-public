@@ -97,9 +97,10 @@ sub new {
         $self->api($args->{api});
     }
     elsif ($args->{conf_file}) { # make the API object using conf file
-        my $api = $self->build_api($args->{conf_file});
+        my ($api, $conf) = $self->build_api($args->{conf_file});
         $Test->ok($api && $api->isa($API_BASE), 'Created WormBase API object');
         $self->api($api);
+        $self->{conf} = $conf; # no mutator
     }
     else {
         croak "Must either provide api object or conf_file";
@@ -125,7 +126,18 @@ sub api {
     return $self->{api};
 }
 
+=item B<conf()>
+
+    my $conf = $tester->conf;
+    ... $conf->{sections} ...;
+
 =back
+
+=cut
+
+sub conf {
+    return shift->{conf};
+}
 
 =head2 Utility Methods
 
@@ -158,6 +170,11 @@ A local version of the config file will also loaded. For example, if
 then a.conf will be loaded first, then a_local.conf (if it exists) will be merged
 with the current config, then b.conf will be merged, then b_local.conf (if
 it exists), then c, and finally c_local (if it exists).
+
+In list context, will return the API and the config hash produced from the
+config file(s).
+
+    ($api, $conf) = $tester->build_api('a.conf', 'b.conf');
 
 =cut
 
@@ -194,7 +211,9 @@ sub build_api {
 
     croak "Config does not contain Model::WormBaseAPI settings."
         unless exists $conf->{'Model::WormBaseAPI'}; # indicates something amiss...
-    return WormBase::API->new($conf->{'Model::WormBaseAPI'}->{args});
+
+    my $api = WormBase::API->new($conf->{'Model::WormBaseAPI'}->{args});
+    return wantarray ? ($api, $conf) : $api;
 }
 
 =item B<fetch_object($argshash)>

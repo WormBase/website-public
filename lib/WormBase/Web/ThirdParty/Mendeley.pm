@@ -57,11 +57,11 @@ sub _build_api {
 sub related_papers {
     my ($self,$id,$type) = @_;
     
-    my $uuid = $self->fetch_mendeley_id($id,$type);    
+    my $key = $self->fetch_mendeley_id($id,$type);    
 
     # Now get related documents.
     my $url    = 'http://api.mendeley.com/oapi/documents/related';
-    my $params = "$uuid";
+    my $params = "$key";
     
     # Make request
     my $response = $self->public_api_request($url,$params,'get');
@@ -92,7 +92,7 @@ sub fetch_mendeley_id {
     
     my $json = JSON::Any->new();
     my $data = $json->jsonToObj( $response->content );
-    return $data->{uuid};
+    return $data->{key};
 }
 
 

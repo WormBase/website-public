@@ -53,7 +53,8 @@ sub species_index :Path('/species') :Args(1)   {
     }
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
@@ -85,7 +86,8 @@ sub class_index :Path("/species") Args(2) {
     }
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
@@ -135,13 +137,14 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{class}      = $class;
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
     my $object = $c->model('WormBaseAPI')->fetch({
         class  => ucfirst($class),
         name   => $name,
-    }) || $self->error_custom($c, 500, "can't connect to database");
+    }); # error handling?
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 
@@ -154,7 +157,7 @@ sub object_report :Path("/species") Args(3) {
         };
     }
 
-    $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
+    $c->stash->{object}->{name} = $object->name if $object; # a hack to avoid storing Ace objects...
 }
 
 

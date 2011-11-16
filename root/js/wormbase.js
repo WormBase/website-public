@@ -24,6 +24,7 @@
   var WB = (function(){
     var timer,
         notifyTimer,
+        colTimer,
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
@@ -45,16 +46,9 @@
       }
       
 
-      
       search_change(pageInfo['class']);
       if(sysMessage.size()>0) {systemMessage('show'); sysMessage.click(function(){ systemMessage('hide', sysMessage.data("id")); });}
 
-      if(searchAll.size()>0) { 
-        var searchInfo = searchAll.data("search");
-        allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
-      } 
-
-      Breadcrumbs.init();
       comment.init(pageInfo);
       issue.init(pageInfo);
         
@@ -65,7 +59,12 @@
       
       navBarInit();
       pageInit();
-      widgetInit();
+      if(searchAll.size()>0) { 
+        var searchInfo = searchAll.data("search");
+        allResults(searchInfo['type'], searchInfo['species'], searchInfo['query']);
+      } else {
+        widgetInit();
+      }
       effects();
     }
     
@@ -78,6 +77,7 @@
       if(history_on){
         setTimeout(histUpdate, 6e5); //update the history every 10min
       }
+      reloadWidget('activity');
       return;
     }
    
@@ -85,17 +85,18 @@
     function navBarInit(){
       searchInit();
       $jq("#nav-bar").find("ul li").hover(function () {
+          var navItem = $jq(this);
           $jq("div.columns>ul").hide();
           if(timer){
-            $jq(this).siblings("li").children("ul.dropdown").hide();
-            $jq(this).siblings("li").children("a").removeClass("hover");
-            $jq(this).children("ul.dropdown").find("a").removeClass("hover");
-            $jq(this).children("ul.dropdown").find("ul.dropdown").hide();
+            navItem.siblings("li").children("ul.dropdown").hide();
+            navItem.siblings("li").children("a").removeClass("hover");
+            navItem.children("ul.dropdown").find("a").removeClass("hover");
+            navItem.children("ul.dropdown").find("ul.dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
-          $jq(this).children("ul.dropdown").show();
-          $jq(this).children("a").addClass("hover");
+          navItem.children("ul.dropdown").show();
+          navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
           if(timer){
@@ -107,13 +108,13 @@
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
+        
         ajaxGet($jq(".status-bar"), "/rest/auth", undefined, function(){
           $jq("#bench-status").load("/rest/workbench");
           var login = $jq("#login");
           if(login.size() > 0){
             login.click(function(){
-              $jq(this).siblings().toggle();
-              $jq(this).toggleClass("open ui-corner-top");
+              $jq(this).toggleClass("open ui-corner-top").siblings().toggle();
             });
           }else{
             $jq("#logout").click(function(){
@@ -128,6 +129,7 @@
           colDropdown = $jq("#column-dropdown");
       
       operator();
+
       $jq("#print").click(function() {
         var layout = location.hash.replace('#',''),
             print = $jq(this);
@@ -162,7 +164,7 @@
           connectWith: '.sortable',
           opacity: 0.6,
           forcePlaceholderSize: true,
-          update: function(event, ui) { updateLayout(); },
+          update: function(event, ui) { Layout.updateLayout(); },
         });
       }
       
@@ -173,15 +175,23 @@
       
       colDropdown.children("ul").children("li").hover(
         function(){
+          if(colTimer){ 
+            clearTimeout(colTimer);
+            colTimer = undefined;
+          }
           $jq(this).children("ul").show();
         },
         function(){
           var layout = $jq(this).children("ul");
-          setTimeout(function(){layout.hide();}, 500);
+          if(colTimer){ 
+            clearTimeout(colTimer);
+            colTimer = undefined;
+          }
+          colTimer = setTimeout(function(){layout.hide();}, 500);
         });
       
       $jq("#nav-min").click(function() {
-        var nav = $jq(".navigation").add("#navigation"),
+        var nav = $jq(".navigation-min").add("#navigation"),
             ptitle = $jq("#page-title"),
             w = nav.width(),
             msg = "open sidebar",
@@ -269,15 +279,21 @@
           widgets = $jq("#widgets"),
           listLayouts = $jq(".list-layouts"),
           layout;
-      if(widgetHolder.size()==0){return;}
-      
-      window.onhashchange = readHash;
+      if(widgetHolder.size()==0){
+        $jq("#content").addClass("bare-page");
+        return;
+      }
+      Scrolling.sidebarInit();
+            
+      window.onhashchange = Layout.readHash;
+      window.onresize = Layout.resize;
+      Layout.Breadcrumbs.init();
       if(location.hash.length > 0){
-        readHash();
+        Layout.readHash();
       }else if(layout = widgetHolder.data("layout")){
-        resetPageLayout(layout);
+        Layout.resetPageLayout(layout);
       }else{
-        openAllWidgets(true);
+        Layout.openAllWidgets(true);
       }
       
       if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
@@ -290,7 +306,7 @@
         if(!nav.hasClass('ui-selected')){
           if(content.text().length < 4){
               var column = ".left",
-                  lWidth = getLeftWidth(widgetHolder);
+                  lWidth = Layout.getLeftWidth(widgetHolder);
               if(lWidth >= 90){
                 if(widgetHolder.children(".right").children(".visible").height()){
                   column = ".right";
@@ -307,13 +323,13 @@
             moduleMin(content.prev().find(".module-min"), false, "maximize");
           }
           Scrolling.goToAnchor(widget_name);
-          updateLayout();
+          Layout.updateLayout();
         } else {
           Scrolling.scrollUp(content.parents("li"));
           moduleMin(content.prev().find(".module-min"), false, "minimize", function(){
             nav.removeClass("ui-selected");
             content.parents("li").removeClass("visible"); 
-            updateLayout();
+            Layout.updateLayout();
           });
         }
         Scrolling.sidebarMove();
@@ -323,8 +339,8 @@
       
       function height(list){
         var len = 0; 
-        for(var i=0; i<list.length; i++){ 
-          len += $jq(list[i]).height();
+        for(var i=-1, l = list.length; i++<l;){ 
+          len += list.eq(i).height();
         } 
         return len;
       }
@@ -333,7 +349,7 @@
 
       
      
-      Scrolling.sidebarInit();
+
       
       widgetHolder.children("#widget-header").disableSelection();
 
@@ -409,36 +425,15 @@
               });
             });
       });
-      content.delegate(".text-min", 'click', function(){ expand($jq(this), $jq(this).next());});
-      content.delegate(".more", 'click', function(){ expand($jq(this).prev(), $jq(this));});
-      function expand(txt, more){
-          var h = txt.height();
-          if(h<40){
-            h='100%';
-                    //expand the shorted items before the text, also
-              txt.prev('.ellipsis')
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .removeClass('ellipsis');
-          }else{
-            h='2.4em';
-                    //expand the shorted items before the text, also
-              txt.prev(":not(.gene-link)")
-              .add(txt.prev().prev().prev('.author-list'))
-              .add(txt.prev().prev().prev().prev().children('.paper-title'))
-              .addClass('ellipsis');
-          }
-          txt.css("max-height", "none");
-          txt.animate({height:h});
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-s');
-          more.children(".ui-icon").toggleClass('ui-icon-triangle-1-n');
-          more.toggleClass('open');
-      }
-      content.delegate(".text-min", 'mouseover mouseout', function(){ 
-        $jq(this).next().toggleClass('opaque');
+      content.delegate(".text-min", 'click', function(){
+        var container = $jq(this),
+            txt = container.children(".text-min-expand"),
+            more = txt.next(),
+            h = (txt.height() < 40) ? '100%' : '2.4em';
+        txt.animate({height:h}).css("max-height", "none");
+        more.toggleClass('open').children().toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+        container.parent().find(".expand").toggleClass('ellipsis');
       });
-      
-      
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
         if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
@@ -479,12 +474,10 @@
       var module = $jq("#" + button.attr("wname") + "-content");
       if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
-      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").parent().toggleClass("minimized");
-      if(hover){ 
-        module.next().slideToggle("fast"); 
+      button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
+      if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
-      }
-      (button.attr("title") != "maximize") ? button.attr("show", 1).attr("title", "maximize") : button.attr("show", 0).attr("title", "minimize");
+      (button.attr("title") != "maximize") ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
     }
     
 
@@ -499,29 +492,31 @@
         notifyTimer = setTimeout(function() {
               notification.fadeOut(400);
             }, 3e3)
+            
+        notification.click(function() {
+          if(notifyTimer){
+            clearTimeout(notifyTimer);
+            notifyTimer = undefined;
+          }
+          $jq(this).hide();
+        });
     }
-    $jq("#notifications").click(function() {
-      if(notifyTimer){
-        clearTimeout(notifyTimer);
-        notifyTimer = undefined;
-      }
-      $jq(this).hide();
-    });
     
-    
+
        
    function systemMessage(action, messageId){
-     var systemMessage = $jq(".system-message");
-    if(action == 'show'){
-      systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
-      $jq("#notifications").css("top", "20px");
-      Scrolling.set_system_message(20); 
-    }else{
-      systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
-      $jq.post("/rest/system_message/" + messageId);
-      Scrolling.set_system_message(0); 
-      $jq("#notifications").css("top", "0");
-    }
+     var systemMessage = $jq(".system-message"),
+         notifications = $jq("#notifications");
+      if(action == 'show'){
+        systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
+        notifications.css("top", "20px");
+        Scrolling.set_system_message(20); 
+      }else{
+        systemMessage.animate({height:"0px"}, 'slow', undefined,function(){ $jq(this).hide();});
+        $jq.post("/rest/system_message/" + messageId);
+        Scrolling.set_system_message(0); 
+        notifications.css("top", "0");
+      }
   }
 
 
@@ -555,23 +550,11 @@
         $jq('#operator-box').click(function(){ 
           var opBox = $jq(this);
           if(!(opLoaded)){
-            ajaxGet($jq("#operator-box"), "/rest/livechat", 0, 
-                    function(){ 
-                      if($jq("#operator-box").hasClass("minimize")){
-                        $jq("#operator-box").children().hide();
-                      }
-                    });
+            ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
             opLoaded = true;
           }
-          if(opBox.hasClass("minimize")){
-              opBox.removeClass("minimize");
-              opBox.animate({width:"9em"});
-              opBox.children().show();
-          }else{
-            opBox.addClass("minimize");
-            opBox.animate({width:"1.5em"});
-            opBox.children().hide();
-          }
+          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}) : opBox.animate({width:"1.5em"});
+          opBox.toggleClass("minimize").children().toggle();
         });
         
         $jq('#operator').click(function() { 
@@ -581,25 +564,21 @@
             });
           }else {
             var opBox = $jq("#operator-box");
-            ajaxGet(opBox, "/rest/livechat", 0, 
-            function(){ 
-              if(opBox.hasClass("minimize")){
-                opBox.children().hide();
-              }
-            });
+            ajaxGet(opBox, "/rest/livechat", 0);
             opLoaded = true;
-            if(opBox.hasClass("minimize")){
-                opBox.removeClass("minimize");
-                opBox.animate({width:"9em"});
-                opBox.children().show();
-            }
+            if(opBox.hasClass("minimize"))
+                opBox.removeClass("minimize").animate({width:"9em"}).children().show();
             opTimer = setTimeout(function() {
-              opBox.addClass("minimize");
-              opBox.animate({width:"1.5em"});
-              opBox.children().hide();
+              opBox.addClass("minimize").animate({width:"1.5em"}).children().hide();
             }, 4e3)
           }
         }); 
+        
+        $jq("#issue-box").click(function(){
+          var isBox = $jq(this);
+          (isBox.hasClass("minimize")) ? isBox.animate({width:"12em"}) : isBox.animate({width:"1.5em"});
+          isBox.toggleClass("minimize").children().toggle();
+        });
     }
     
   function hideTextOnFocus(selector){
@@ -682,7 +661,8 @@
         if(f == "search..." || !f){
           f = "*";
         }
-        f = encodeURIComponent(f);
+
+        f = encodeURIComponent(f.trim());
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
 
@@ -728,9 +708,15 @@
       });
     }
     
-
     
-    function queryHighlight(div){
+    function formatResults(div){
+      var expands = div.find(".text-min");
+      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
+        (el.height() > 35) ? 
+          el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+          : el.removeClass("text-min");
+      }
+
       if(queryList.length == 0) { return; }
       getHighlight(function(){
         for (var i=0; i<queryList.length; i++){
@@ -739,7 +725,7 @@
       });
     }
     
-    queryHighlight(container.find("div#results"));
+    formatResults(container.find("div#results"));
     init();
     
     if(total > 10){
@@ -766,7 +752,7 @@
             res.remove();
           }
 
-          queryHighlight(div);
+          formatResults(div);
 
           if (status == "error") {
             var msg = "Sorry but there was an error: ";
@@ -796,8 +782,8 @@
       checkSearch(allSearch);
     });
     loadcount = 0;
-    scrollToTop();
-    $jq("#navigation").find(".ui-selected").removeClass("ui-selected");
+    if(!allSearch.hasClass("references"))
+      scrollToTop();
     return false;
   }
   
@@ -810,6 +796,7 @@
   function allResults(type, species, query){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
+    Scrolling.sidebarInit();
     allSearch.empty(); 
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
@@ -821,16 +808,22 @@
         if($jq(this).text() == '0'){
           $jq(this).parent().remove();
         }else {
-          $jq(this).parent().show();
+          $jq(this).parent().show().parent().prev(".title").show();
         }
       });
     });
     
-    $jq("#navigation").find(".load-results").click(function(){
-      loadResults($jq(this).attr("href"));
-      $jq(this).addClass("ui-selected");
+    $jq("#search-count-summary").find(".load-results").click(function(){
+      var button = $jq(this);
+      loadResults(button.attr("href"));
+      button.addClass("ui-selected").siblings().removeClass("ui-selected").parent().siblings().find(".ui-selected").removeClass("ui-selected");
+      $jq("#curr-ref-text").html(button.html());
       return false;
     });
+    
+    if (type == 'paper')
+      Layout.resize();
+    
   }
 
 
@@ -860,94 +853,67 @@
     }
     
     function reloadWidget(widget_name, noLoad){
-        var con = $jq("div#" + widget_name + "-content");
-        ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
+        var con = $jq("#" + widget_name + "-content");
+        if(con.size() > 0)
+          ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
       
-  function addWidgetEffects(widget_container, callback) {
-//       widget_container.find("div.module-min").addClass("ui-icon-large ui-icon-triangle-1-s").attr("title", "minimize");
-//       widget_container.find("div.module-close").addClass("ui-icon ui-icon-large ui-icon-close").hide();
-//       widget_container.find("div.module-max").addClass("ui-icon ui-icon-extlink").hide();
-//       widget_container.find("#widget-footer").hide();
-//       widget_container.find(".widget-header").children("h3").children("span.hide").hide();
-  
-      widget_container.find(".widget-header").hover(
-        function () {
-          $jq(this).children("h3").children("span").show();
-        },
-        function () {
-          $jq(this).children("h3").children("span.hide").hide();
-        }
-      );
-
-      widget_container.hover(
-        function () {
-          $jq(this).find(".widget-header").children(".ui-icon").show();
-          if($jq(this).find(".widget-header").children("h3").children(".module-min").attr("show") != 1){
-            $jq(this).find("#widget-footer").show();
-          }
-        }, 
-        function () {
-          $jq(this).find(".widget-header").children(".ui-icon").hide();
-          $jq(this).find("#widget-footer").hide();
-        }
-      );
-
+  function addWidgetEffects(widget_container) {
       widget_container.find("div.module-min").hover(
         function () {
-          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-circle-triangle-s");
-          }else{ $jq(this).addClass("ui-icon-circle-triangle-e");}
+          var button = $jq(this);
+          button.addClass((button.hasClass("show") ? "ui-icon-circle-triangle-e" : "ui-icon-circle-triangle-s"));
         }, 
         function () {
-          $jq(this).removeClass("ui-icon-circle-triangle-s").removeClass("ui-icon-circle-triangle-e");
-          if ($jq(this).attr("show")!=1){ $jq(this).addClass("ui-icon-triangle-1-s");
-          }else{ $jq(this).addClass("ui-icon-triangle-1-e");}
+          var button = $jq(this);
+          button.removeClass("ui-icon-circle-triangle-s ui-icon-circle-triangle-e").addClass((button.hasClass("show") ? "ui-icon-triangle-1-e" : "ui-icon-triangle-1-s"));
         }
       );
 
       widget_container.find("div.module-close").hover(
         function () {
-          $jq(this).addClass("ui-icon-circle-close");
-        }, 
-        function () {
-          $jq(this).removeClass("ui-icon-circle-close").addClass("ui-icon-close");
+          $jq(this).toggleClass("ui-icon-circle-close ui-icon-close");
         }
       );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-/***************************/
-// layout functions
-// author: Abigail Cabunoc
-// abigail.cabunoc@oicr.on.ca      
-/***************************/
-
-//The layout methods
+    
+    
+var Layout = (function(){
+  var sColumns = false,
+      ref = $jq("#references-content"),
+    //get an ordered list of all the widgets as they appear in the sidebar.
+    //only generate once, save for future
+      widgetList = this.wl || (function() {
+        var instance = this,
+            navigation = $jq("#navigation"),
+            list = navigation.find(".module-load")
+                  .map(function() { return this.getAttribute("wname");})
+                  .get();
+        this.wl = { list: list };
+        return this.wl;
+        })();
+      
+    function resize(){
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < 800)))
+        sColumns ? columns(100, 100) : readHash();
+      if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
+        ref.toggleClass("widget-narrow");
+    }
     
     function columns(leftWidth, rightWidth, noUpdate){
       var sortable = $jq("#widget-holder").children(".sortable"),
-          tWidth = $jq("#widget-holder").innerWidth();
-      sortable.filter(".column-narrow").removeClass("column-narrow");
+          tWidth = $jq("#widget-holder").innerWidth(),
+          leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
       }else{
         sortable.addClass('table-columns').removeClass('one-column');
-        if ((leftWidth < 35) || (leftWidth > 65)){ sortable.filter( (leftWidth < 35) ? ".left" : ".right").addClass("column-narrow"); }
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");
+
       if(!noUpdate){ updateLayout(); }
     }
 
@@ -981,11 +947,6 @@
           updateLayout();
       }
     }
-    
-
-    
-
-    
 
 
     function newLayout(layout){
@@ -1029,17 +990,7 @@
       }
     }
     
-    //get an ordered list of all the widgets as they appear in the sidebar.
-    //only generate once, save for future
-    var widgetList = this.wl || (function() {
-        var instance = this,
-            navigation = $jq("#navigation"),
-            list = navigation.find(".module-load")
-                  .map(function() { return this.getAttribute("wname");})
-                  .get();
-        this.wl = { list: list };
-        return this.wl;
-        })();
+
     
     //returns order of widget in widget list in radix (base 36) 0-9a-z
     function getWidgetID (widget_name) {
@@ -1050,7 +1001,7 @@
       var hash = "",
           tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
       if(widgetList.list.length == 0){ return; }
-      for(i=0; i<(widgetList.list.length - 3 - tools); i++){
+      for(i=0; i<(widgetList.list.length - 2 - tools); i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
@@ -1068,7 +1019,8 @@
           lstring = hash || readLayout(holder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
-        if(callback){ callback(); }
+      Layout.resize();
+      if(callback){ callback(); }
       });
     }
     
@@ -1084,8 +1036,7 @@
     }
 
     function getLeftWidth(holder){
-      var totWidth = parseFloat(holder.outerWidth()),
-          leftWidth = (parseFloat(holder.children(".left").outerWidth())/totWidth)*100;
+      var leftWidth = sColumns ?  ((decodeURI(location.hash).match(/^[#](.*)$/)[1].split('-')[2]) * 10): (parseFloat(holder.children(".left").outerWidth())/(parseFloat(holder.outerWidth())))*100;
       return Math.round(leftWidth/10) * 10; //if you don't round, the slightest change causes an update
     }
 
@@ -1094,7 +1045,7 @@
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
-      for(var widget = 0; widget < leftList.length; widget++){
+      for(var widget = 0, l = leftList ? leftList.length : 0; widget < l; widget++){
         var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
@@ -1102,7 +1053,7 @@
           openWidget(widget_name, nav, content, ".left");
         }
       }
-      for(var widget = 0; widget < rightList.length; widget++){
+      for(var widget = 0, l = rightList ? rightList.length : 0; widget < l; widget++){
         var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
@@ -1114,7 +1065,67 @@
         updateLayout(undefined, hash);
       }
     }
+    
+    
+    
 
+  var Breadcrumbs = (function(){
+    var bc = $jq("#breadcrumbs"),
+        bExp = false,
+        hiddenContainer,
+        bWidth,
+        bCount;
+        
+    function init() {
+      if (!bc || ((bCount = bc.children().size()) < 3)) { return; }
+      var children = bc.children(),        
+          hidden = children.slice(0, (bCount - 2)),
+          shown = children.slice((bCount - 2)),
+          expand;
+      bc.empty();
+      hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
+      hiddenContainer.append(hidden).children().after(' &raquo; ');
+
+      bc.append('<span id="breadcrumbs-expand" class="tip-simple ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(hiddenContainer).append(shown);
+      bc.children(':last').addClass("page-title").before(" &raquo; ");
+    
+      expand = $jq("#breadcrumbs-expand");
+      expand.click( function(){
+        (bExp = !bExp) ? show($jq(this)) : hide($jq(this));
+      });
+      bWidth = hiddenContainer.width();
+      hide(expand);
+    }
+    
+    function show(expand){
+      hiddenContainer.animate({width:bWidth}, function(){ hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
+      expand.attr("tip", "minimize").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
+    }
+    
+    function hide(expand){
+      hiddenContainer.animate({width:0}, function(){ hiddenContainer.css("visibility", 'hidden');});     
+      expand.attr("tip", "expand").removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
+    }
+    
+    return {
+     init: init
+    }
+  })();
+    
+  return {
+      resize: resize,
+      deleteLayout: deleteLayout,
+      columns: columns,
+      openAllWidgets: openAllWidgets,
+      resetLayout: resetLayout,
+      setLayout: setLayout,
+      resetPageLayout: resetPageLayout,
+      readHash: readHash,
+      getLeftWidth: getLeftWidth,
+      updateLayout: updateLayout,
+      Breadcrumbs: Breadcrumbs
+  }
+})();
 
 
 
@@ -1258,18 +1269,10 @@ var Scrolling = (function(){
       
   function updateCounts(url){
     var comments = $jq(".comment-count");
-    if(comments.size() == 0){ return; }
-    
-    comments.load("/rest/feed/comment?count=1;url=" + url);
-    var is = $jq("<span></span>");
-    is.load("/rest/feed/issue?count=1;url=" + url, function(){
-      if(is.html() != "0"){
-        $jq(".issue-count").html("!").css({color:"red"});
-      } 
-    });
+    if(comments.size() > 0)
+      comments.load("/rest/feed/comment?count=1;url=" + url);
   }
-  
-  
+
   
   function validate_fields(email,username, password, confirm_password, wbemail){
       if( (email.val() =="") && (!wbemail || wbemail.val() == "")){
@@ -1355,31 +1358,20 @@ var Scrolling = (function(){
    submit:function(is){
         var rel= is.attr("rel"),
             url = is.attr("url"),
-            page= is.attr("page"),
             feed = is.closest('#issues-new'),
-            email = feed.find("#email"),
-            username= feed.find("#display-name"),
             is_private = feed.find("#isprivate:checked").size();
-        if(email.attr('id') && username.attr('id')) {
-           if(validate_fields(email,username)==false) {return false;}
-        }  
         $jq.ajax({
           type: 'POST',
           url: rel,
-          data: {title:feed.find("#title").val(), 
-                content: feed.find("#content").val(), 
-                email:email.val() ,
-                username:username.val() , 
-                url:issue.url,
+          data: {title:feed.find("#issue-title option:selected").val(), 
+                content: feed.find("#issue-content").val(), 
+                url: url || issue.url,
                 isprivate:is_private},
           success: function(data){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 
                 }else {
-                  displayNotification("Problem Submitted! We will be in touch soon.");
-                  feed.closest('#widget-feed').hide(); 
-                              updateCounts(url);
-                  reloadWidget('issue');
+                  window.location = url || issue.url;
                 }
               },
           error: function(request,status,error) {
@@ -1403,7 +1395,6 @@ var Scrolling = (function(){
               data: {method:"delete",issues:id.join('_')}, 
               success: function(data){
                   window.location.reload(1);
-                  updateCounts(url);
               },
               error: function(request,status,error) {
                   alert(request + " " + status + " " + error );
@@ -1505,7 +1496,7 @@ var Scrolling = (function(){
       }else{
         var widget_id = wname.split("-").pop(),
             history = $jq('<div id="' + wname + '-history"></div>'); 
-        history.load("rest/widget/static/" + widget_id + "?history=1");
+        history.load("/rest/widget/static/" + widget_id + "?history=1");
         widget.find("div.content").append(history);
         widget.find("a#history-button").addClass("ui-state-highlight");
       }
@@ -1526,48 +1517,6 @@ var Scrolling = (function(){
     }
   }
 
-
-  var Breadcrumbs = {
-    init: function() {
-      this.bc = $jq('#breadcrumbs');
-      if (!this.bc) { return; };
-      this.children = this.bc.children(),
-      this.bCount = this.children.size();
-      if(this.bCount < 3){ return; }; //less than three items, don't bother with breadcrumbs
-      this.exp = false;
-      this.bc.empty();
-      var hidden = this.children.slice(0, (this.bCount - 2));
-      var shown = this.children.slice((this.bCount - 2));
-      this.hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
-      this.hiddenContainer.append(hidden).children().after(' &raquo; ');
-
-      this.bc.append('<span id="breadcrumbs-expand" class="tip-simple ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(this.hiddenContainer).append(shown);
-      this.bc.children(':last').before(" &raquo; ");
-    
-      this.expand = $jq("#breadcrumbs-expand");
-      
-      this.expand.click( function(){
-        if( Breadcrumbs.exp ){ Breadcrumbs.show(); }
-        else{ Breadcrumbs.hide(); }
-      });
-      this.width = this.hiddenContainer.width();
-      this.hide();
-    },
-    
-    show: function(){
-      Breadcrumbs.hiddenContainer.animate({width:Breadcrumbs.width}, function(){ Breadcrumbs.hiddenContainer.css("width", "auto");}).css("visibility", 'visible');
-      Breadcrumbs.expand.attr("tip", "minimize");
-      Breadcrumbs.expand.removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-w");
-      Breadcrumbs.exp = false;
-    },
-    
-    hide: function() {
-      Breadcrumbs.hiddenContainer.animate({width:0}, function(){ Breadcrumbs.hiddenContainer.css("visibility", 'hidden');});     
-      Breadcrumbs.expand.attr("tip", "expand");
-      Breadcrumbs.expand.removeClass("ui-icon-triangle-1-w").addClass("ui-icon-triangle-1-e");
-      Breadcrumbs.exp = true;
-    }
-  }
 
 
 
@@ -1684,13 +1633,13 @@ var Scrolling = (function(){
       hideTextOnFocus: hideTextOnFocus,
       goToAnchor: Scrolling.goToAnchor,
       setLoading: setLoading,
-      resetLayout: resetLayout,
-      openAllWidgets: openAllWidgets,
+      resetLayout: Layout.resetLayout,
+      openAllWidgets: Layout.openAllWidgets,
       displayNotification: displayNotification,
-      deleteLayout: deleteLayout,
-      columns: columns,
-      setLayout: setLayout,
-      resetPageLayout: resetPageLayout,
+      deleteLayout: Layout.deleteLayout,
+      columns: Layout.columns,
+      setLayout: Layout.setLayout,
+      resetPageLayout: Layout.resetPageLayout,
       search: search,
       search_change: search_change,
       openid: openid,
@@ -1704,7 +1653,8 @@ var Scrolling = (function(){
       getColorbox: getColorbox,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
-      historyOn: historyOn
+      historyOn: historyOn,
+      allResults: allResults
     }
   })();
 
@@ -1719,3 +1669,10 @@ var Scrolling = (function(){
  window.WB = WB;
  window.$jq = $jq;
 }(this,document);
+
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}

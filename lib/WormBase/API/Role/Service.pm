@@ -163,7 +163,7 @@ sub reconnect {
 # get hosts to try to connect to
 sub select_hosts {
     my ($self) = @_;
-    my $get_downed_hosts = $self->get_downed_hosts(1);
+    my $get_downed_hosts = $self->get_downed_hosts('write');
     my @live_hosts;
     foreach my $host ( @{$self->hosts} ) {
         if ( my $pack = $get_downed_hosts->{$host}) {
@@ -222,7 +222,7 @@ sub select_hosts {
 sub mark_down_host {
     my $self   = shift;
     my $host   = shift || return;
-    my $get_downed_hosts = shift || $self->get_downed_hosts(1) || return;
+    my $get_downed_hosts = shift || $self->get_downed_hosts('write') || return;
 
     $self->log->info("marking $host down");
     $get_downed_hosts->{$host} = pack('L',time());

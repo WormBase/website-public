@@ -13,6 +13,7 @@ use MRO::Compat;
 use Time::HiRes qw/gettimeofday tv_interval/;
 use Config::General;
 use Number::Format qw(:subs :vars);
+use URI::Escape;
 
 
 has 'db' => (isa => 'Search::Xapian::Database', is => 'rw');
@@ -21,11 +22,15 @@ has 'syn_db' => (isa => 'Search::Xapian::Database', is => 'rw');
 has 'qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 
-has '_fields'   => (
-    is          => 'rw',
-    isa         => 'HashRef',
-    default     => sub { {} },
-    );
+has '_doccount' => (
+    is          => 'ro',
+    isa         => 'Int',
+    lazy        => 1,
+    default     => sub {
+      my $self = shift;
+      return $self->db->get_doccount;
+    },
+);
 
 
 sub search {
@@ -34,15 +39,18 @@ sub search {
     $page       ||= 1;
     $page_size  ||=  10;
 
-
     if($type){
       $q .= " $type..$type";
+      if(($type =~ m/paper/) && ($species)){
+        my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        $q .= " ptype:$s..$s" if defined $s;
+        $species = undef;
+      }
     }
 
     if($species){
-      my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-      $c->log->debug("species search $s");
-      $q .= " species:$s..$s";
+        my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
@@ -50,8 +58,7 @@ sub search {
     my $enq       = $class->db->enquire ( $query );
     $c->log->debug("query:" . $query->get_description());
     if($type && $type =~ /paper/){
-        $enq->set_docid_order(ENQ_DESCENDING);
-        $enq->set_weighting_scheme(Search::Xapian::BoolWeight->new());
+          $enq->set_sort_by_value(4);
     }
     my $mset      = $enq->get_mset( ($page-1)*$page_size,
                                      $page_size );
@@ -88,17 +95,34 @@ sub search_autocomplete {
 
 sub search_exact {
     my ( $class, $c, $q, $type) = @_;
-
-    if($type){ $q .= " $type..$type";}
-
-    my $query=$class->syn_qp->parse_query( $q, 1|2 );
-    my $enq       = $class->syn_db->enquire ( $query );
-#     $c->log->debug("query:" . $query->get_description());
+  
+    my ($query, $enq);
+    if( $type && ($q =~ m/^WB/i) ){
+      $query=$class->qp->parse_query( "$type$q", 1|2 );
+      $enq       = $class->db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
+    }else{
+      $q .= " $type..$type" if $type;
+      $query=$class->syn_qp->parse_query( $q, 1|2 );
+      $enq       = $class->syn_db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
+    }
 
     my $mset      = $enq->get_mset( 0,1 );
+    if($mset->empty()){
+      $query=$class->qp->parse_query( $q, 1|2 );
+      $enq       = $class->db->enquire ( $query );
+      $c->log->debug("query:" . $query->get_description());
+      $mset      = $enq->get_mset( 0,1 );
+    }
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,
         search=>$class,query=>$q,query_obj=>$query,page=>1,page_size=>1 });
+}
+
+sub random {
+    my ( $class, $c) = @_;
+    return $class->_get_obj($c, $class->db->get_document(int(rand($class->_doccount)) + 1));
 }
 
 sub search_count {
@@ -106,10 +130,16 @@ sub search_count {
 
     if($type){
       $q .= " $type..$type";
+      if(($type =~ m/paper/) && ($species)){
+        my $s = $c->config->{sections}->{resources}->{paper}->{paper_types}->{$species};
+        $q .= " ptype:$s..$s" if defined $s;
+        $species = undef;
+      }
     }
+
     if($species){
-      my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
-      $q .= " species:$s..$s";
+        my $s = $c->config->{sections}->{species_list}->{$species}->{ncbi_taxonomy_id};
+        $q .= " species:$s..$s" if defined $s;
     }
 
     my $query=$class->qp->parse_query( $q, 512|16 );
@@ -117,8 +147,7 @@ sub search_count {
     $c->log->debug("query:" . $query->get_description());
 
     my $mset      = $enq->get_mset( 0, 500000 );
-return format_number($mset->get_matches_estimated());
-#     return $mset->get_matches_estimated();
+    return format_number($mset->get_matches_estimated());
 }
  
  
@@ -136,41 +165,82 @@ sub extract_data {
 }
 
 
+sub _get_obj {
+  my ($self, $c, $doc, $footer) = @_;
+  my $species = $doc->get_value(5);
 
-# input: list of ace objects
-# output: list of Result objects
-sub _wrap_objs {
-  my $self  = shift;
-  my $c = shift;
-  my $object  = shift;
-  my $class = shift;
-  my $footer = shift;
-
-  my $api = $c->model('WormBaseAPI');
-  my $fields = $self->_fields->{$class};
-
-  return unless $object;
-
-  unless($fields){
-    my $f;
-    if ( defined $c->config->{sections}{species}{$class}){
-      $f = $c->config->{sections}->{species}->{$class}->{search}->{fields};
-    } else{
-      $f = $c->config->{sections}->{resources}->{$class}->{search}->{fields};
-    }
-    push(@$fields, @$f) if $f;
-    $self->_fields->{$class} = $fields;
+  my %ret;
+  $ret{name} = $self->_pack_search_obj($c, $doc);
+  if(my $s = $c->config->{sections}{species_list}{$species}){
+    $ret{taxonomy}{genus} = $s->{genus};
+    $ret{taxonomy}{species} = $s->{species};
+  }
+  $ret{ptype} = $doc->get_value(7);
+  %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};
+  if($doc->get_value(4) =~ m/^(\d{4})/){
+    $ret{year} = $1;
   }
 
-  my %data;
-  $data{obj_name}="$object";
-  $data{footer} = $footer if $footer;
-  foreach my $field (@$fields) {
-    my $field_data = $object->$field;     # if  $object->meta->has_method($field); # Would be nice. Have to make sure config is good now.
-    $field_data = $field_data->{data};
-    $data{$field} = $field_data;
-  }
-  return \%data;
+  $ret{footer} = $footer if $footer;
+  return \%ret;
 }
+
+sub _split_fields {
+  my ($self, $c, $ret, $data) = @_;
+
+  $data =~ s/\\([\;\/\\%\"])/$1/g;
+  while($data =~ m/^([\S]*)[=](.*)[\n]([\s\S]*)$/){
+    my ($d, $label) = ($2, $1);
+    my $array = $ret->{$label} || ();
+    $data = $3;
+    
+    if($d =~ m/^WB/){
+     $d = $self->_get_tag_info($c, $d, $label);
+    }elsif($label =~ m/^author$/){
+      my ($id, $l);
+      if($d =~ m/^(.*)\s(WBPerson\S*)$/){
+        $id = $2;
+        $l = $1;
+      }
+      $d = { id =>$id || $d, 
+             label=>$l || $d,
+             class=>'person'}
+    }
+    push(@{$array}, $d);
+    $ret->{$label} = $array;
+  }
+  return $ret;
+}
+
+sub _get_tag_info {
+  my ($self, $c, $id, $class, $fill, $footer) = @_;
+  my ($it,$res)= $self->search_exact($c, $id, $class);
+  if($it->{pager}->{total_entries} > 0 ){
+    my $doc = @{$it->{struct}}[0]->get_document();
+    if($doc->get_value(1) =~ m/$id/g){
+      if($fill){
+        return $self->_get_obj($c, $doc, $footer);
+      }
+      return $self->_pack_search_obj($c, $doc);
+    }
+  }
+  my $tag =  { id => $id,
+           label => $id,
+           class => $class
+  };
+  $tag = { name => $tag, footer => $footer } if $fill;
+  return $tag;
+}
+
+sub _pack_search_obj {
+  my ($self, $c, $doc, $label) = @_;
+  my $id = $doc->get_value(1);
+  return {  id => $id,
+            label => $label || $doc->get_value(6) || $id,
+            class => $doc->get_value(2),
+            taxonomy => $doc->get_value(5)
+  }
+}
+
 
 1;
