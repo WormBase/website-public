@@ -24,6 +24,7 @@
   var WB = (function(){
     var timer,
         notifyTimer,
+        colTimer,
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
@@ -174,11 +175,19 @@
       
       colDropdown.children("ul").children("li").hover(
         function(){
+          if(colTimer){ 
+            clearTimeout(colTimer);
+            colTimer = undefined;
+          }
           $jq(this).children("ul").show();
         },
         function(){
           var layout = $jq(this).children("ul");
-          setTimeout(function(){layout.hide();}, 500);
+          if(colTimer){ 
+            clearTimeout(colTimer);
+            colTimer = undefined;
+          }
+          colTimer = setTimeout(function(){layout.hide();}, 500);
         });
       
       $jq("#nav-min").click(function() {
@@ -868,9 +877,6 @@
         }
       );
   }
-
-
-
     
     
 var Layout = (function(){
@@ -1039,7 +1045,7 @@ var Layout = (function(){
       $jq("#widget-holder").children().children("li").removeClass("visible");
 
       columns(leftWidth, (100-leftWidth), 1);
-      for(var widget = 0; widget < leftList.length; widget++){
+      for(var widget = 0, l = leftList ? leftList.length : 0; widget < l; widget++){
         var widget_name = $jq.trim(leftList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
@@ -1047,7 +1053,7 @@ var Layout = (function(){
           openWidget(widget_name, nav, content, ".left");
         }
       }
-      for(var widget = 0; widget < rightList.length; widget++){
+      for(var widget = 0, l = rightList ? rightList.length : 0; widget < l; widget++){
         var widget_name = $jq.trim(rightList[widget]);
         if(widget_name.length > 0){
           var nav = $jq("#nav-" + widget_name),
@@ -1081,7 +1087,7 @@ var Layout = (function(){
       hiddenContainer.append(hidden).children().after(' &raquo; ');
 
       bc.append('<span id="breadcrumbs-expand" class="tip-simple ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(hiddenContainer).append(shown);
-      bc.children(':last').before(" &raquo; ");
+      bc.children(':last').addClass("page-title").before(" &raquo; ");
     
       expand = $jq("#breadcrumbs-expand");
       expand.click( function(){
