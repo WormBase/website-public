@@ -1156,16 +1156,18 @@ sub _build_phenotypes_data {
     my $self = shift;
     my $tag = shift;
     my $object = $self->object;
-
-    return map {
+#     $tag = '@'.$tag;
+    return [ map {
         my $desc = $_->Description;
         my $remark = $_->Remark;
         {
-            phenotype   => $self->_pack_obj($_),
+            phenotype   =>  $self->_pack_obj($_),
             description => $desc    && "$desc",
             remarks     => $remark && "$remark",
         };
-    } @{$self ~~ '@tag'};
+    } @{$self ~~ '@'.$tag} ];
+   
+     
 }
 
 
