@@ -28,7 +28,7 @@
 
 [% WRAPPER $field_block title="Motif Summary" %]
      
-  <iframe src ="[% c.uri_for('/field','protein',object.name.data.id,'pfam_graph') %]" width="100%" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
+  <iframe src ="[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]" width="100%" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
   <p>Your browser does not support iframes.</p>
   </iframe> 
 
