@@ -92,7 +92,9 @@ sub connect {
             if $conf->{cache_auto_purge_interval};
     }
 
-    return WormBase::Ace->connect(%options) || die WormBase::Ace->error;
+    my $dbh = WormBase::Ace->connect(%options)
+        or $self->log->error(WormBase::Ace->error);
+    return $dbh;
 }
 
 sub ping {

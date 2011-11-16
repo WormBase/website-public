@@ -144,7 +144,7 @@ sub object_report :Path("/species") Args(3) {
     my $object = $c->model('WormBaseAPI')->fetch({
         class  => ucfirst($class),
         name   => $name,
-    }) || $self->error_custom($c, 500, "can't connect to database");
+    }); # error handling?
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 

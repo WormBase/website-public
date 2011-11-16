@@ -67,22 +67,18 @@ sub tools :Path Args {
     $c->stash->{template}="tools/$tool/$action.tt2";
     $c->stash->{noboiler} = 1 if($c->req->params->{inline});
     my $api = $c->model('WormBaseAPI');
-    my ($data,$cache_server);
+    my ($data, $cache_server);
 
     # Does the data already exist in the cache?
 
     if ($action eq 'run' && $tool =~/aligner/ && !(defined $c->req->params->{Change})) {
         my $cache_id ='tools_'.$tool.'_'.$c->req->params->{sequence};
-        ($data,$cache_server) = $c->check_cache( { cache_name => 'filecache', key => $cache_id } );
+        ($data, $cache_server) = $c->check_cache($cache_id, 'filecache');
 
         unless ($data) {
 	    $c->log->debug("not in cache, run $tool\n");
             $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-            $c->set_cache({
-                cache_name => 'file',
-                key        => $cache_id,
-                data       => $data
-            });
+            $c->set_cache($cache_id => $data, 'filecache');
         }
         else {
             $c->stash->{cache} = $cache_server if($cache_server);
