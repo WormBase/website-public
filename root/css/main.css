@@ -1654,12 +1654,16 @@ div.columns ul div input#layout-input {
   padding:0 1.5em 0 0;
   position:relative;
   z-index:10;
+  height:3.5em;
 }
 
 #page-title h2 {
   font-size:24px;
   color:#222;
   padding:0.5em 0 0.5em 10px;
+  height:2em;
+  white-space:nowrap;
+  position:relative;
 }
 
 #page-title h2 .bench-update{
@@ -1789,6 +1793,7 @@ div.field {
   line-height:1.2em;
   padding:0.2em;
   width:100%;
+  position:relative;
 }
 
 div.field-title {
@@ -2453,7 +2458,7 @@ table.venn tr.venn-data td {
   right:0;   
   top:5em;
   padding:1em 0.5em 0.5em; 
-  background: hsl(359,20%,80%);
+  background: #D6C2C2;
   border:1px solid #CDCDCD;
   cursor:pointer;
   z-index:101;
@@ -2461,7 +2466,7 @@ table.venn tr.venn-data td {
 }
 
 #issue-box.minimize{
-  background: hsl(359,42%,43%);
+  background: #9C4041;
   z-index:99;
   border:none;
 }
@@ -2484,7 +2489,7 @@ table.venn tr.venn-data td {
 }
 
 #issue-box.minimize:hover{
-  background: hsl(359,42%,30%);
+  background: #6D2C2D;
   width:1.5em;
 }
 
@@ -2597,7 +2602,9 @@ div.title {
   cursor:pointer;
 }
 
-
+#breadcrumbs span.page-title{
+  overflow:hidden;
+}
 
 
 /*
