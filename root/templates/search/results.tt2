@@ -1,3 +1,30 @@
+
+[% IF (widget == 'references') && results.size > 0%]
+<ul class="navigation ui-corner-all" id="search-count-summary">
+
+  <li> <span id="current-ref" class="ui-helper-hidden ui-selected"><span id="curr-ref-text">All publications</span><span class="ui-icon ui-icon-triangle-1-s" style="float:right;"></span></span>
+  <ul>
+            [% searchurl = "/search/paper/" _ query _ "?inline=1" %]
+            <li class="load-results ui-selected" href="[% searchurl %]">
+              <a href="[% searchurl %]">All publications</a>: 
+              <span class="count" href="/search/count/all/paper/[% query | uri %]"></span>
+            </li>
+
+        [% FOREACH s IN c.config.sections.resources.paper.paper_types.sort %]
+            [% searchurl = "/search/paper/" _ query _ "?inline=1&species=" _ s %]
+            <li class="load-results ui-helper-hidden" href="[% searchurl %]">
+              <a href="[% searchurl %]">[% s.replace('[/_]', ' ');%]</a>: 
+              <span class="count" href="/search/count/[% s %]/paper/[% query | uri %]"></span>
+            </li>
+        [% END %]
+
+        </div>
+  </ul>
+  </li>
+</ul>
+<div id="all-search-results" class="[% widget %]" style="float:left;clear:left;">
+[% END %]
+
 [% IF search_guide %]
 <h4>can't find the object [% search_guide %], maybe you are looking for:</h4>
 [% END %]
@@ -34,4 +61,11 @@
     [% END %]
 </div>
 
+[% IF widget == 'references' %]
+</div>
+
+<script>
+  WB.allResults('paper', '', '[% query %]');
+</script>
+[% END %]
 <!-- End result list -->

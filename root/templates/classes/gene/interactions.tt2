@@ -2,11 +2,8 @@
 
    WRAPPER $field_block title="Interactions" key="interactions";
       'Found ';
-       IF fields.interactions.data.size == 1;
-            searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interaction");
-       ELSE;
-            searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " interactions");
-       END;
+      searchlink('interaction', object.name.data.id, fields.interactions.data.size _ " " _ pluralize("interaction", fields.interactions.data.size));
+
 
       build_data_table(order=['type','effector','effected','direction','phenotype','interaction'],
      	               columns={type  => 'Interaction Type',

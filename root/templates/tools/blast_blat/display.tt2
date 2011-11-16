@@ -61,7 +61,7 @@
 				  [% ELSE %][% line.line %]<br/><br/>
 				  [% END %]
 				  [% IF line.link.expand_link %]
-				     <img class="expand_button" expand_area_count="[% expand_area_counter %]" src="/blast_blat/blank.png"/>
+				     <img class="expand_button" expand_area_count="[% expand_area_counter %]" src="/img/blast_blat/blank.png"/>
 				  [% END %]  
 				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link %]">[Alignment]</a>[% END %]
 				  [% tag2link(line.link.genome_link) %]

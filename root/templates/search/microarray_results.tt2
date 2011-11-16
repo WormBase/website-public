@@ -8,9 +8,9 @@
 
       [% tag2link(item.name) %]
     </li>
-        [% IF item.gene.defined('label') %]
-            Locus: [% tag2link(item.gene) %]<br />
+        [% IF item.gene %]
+            Locus: [% link_objects(item.gene) %]<br />
         [% END %]
-        [% IF item.cds.defined('label') %]
-            Prediction Gene: [% tag2link(item.cds) %]<br />
+        [% IF item.cds) %]
+            Prediction Gene: [% link_objects(item.cds) %]<br />
         [% END %]

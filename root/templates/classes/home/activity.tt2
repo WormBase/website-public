@@ -1,6 +1,6 @@
-<entry><h3>Random page of the hour:</h3></entry>
+<entry><h3>Random page:</h3></entry>
   [% results = c.stash.random %]
-  [% PROCESS "search/results.tt2" no_count=1%]
+  [% PROCESS "search/results.tt2" no_count=1 type='all'%]
 <br />
 <br />
 

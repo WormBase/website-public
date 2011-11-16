@@ -572,10 +572,6 @@ div#create-prompt {
   padding:0;
 }
 
-.column-narrow #results {
-  max-width:22em;
-}
-
 #results ul {
   margin:0 -0.5em;
   padding:0.3em 0 0 0;
@@ -609,19 +605,49 @@ div#create-prompt {
   background:#CCC;
 }
 
-.ellipsis {
-  white-space: nowrap;
-  overflow: hidden;  
+.author-list {
+  padding-right:0.5em;
+  width:50%;
+  float:left;
+  position:relative;
+}
+
+.paper-journal{
+  float:left;
+  padding-right:0.2em;
+  position:relative;
+}
+
+.ellipsis, .ellipsis>span {
   text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;  
+  -ms-text-overflow: ellipsis;  
+  overflow: hidden;
+  height:1.3em;
+}
+
+.ellipsis {
   display:block;
 }
 
-.text-min {
+.ellipsis>span{
+  white-space: nowrap;
+  position:absolute;
+  max-width:100%;
+}
+
+.text-min-expand {
   clear:left;
   height:2.4em;
   overflow:hidden;
   width:auto;
   text-overflow: ellipsis;
+}
+
+.text-min:hover div.more, div.more:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+  -moz-opacity:1;
 }
 
 div.more {
@@ -635,18 +661,6 @@ div.more {
   -moz-opacity:0.3;
 }
 
-div.more:hover {
-    opacity:1;
-    filter:alpha(opacity=100);
-    -moz-opacity:1;
-}
-
-div.opaque {
-  opacity:1;
-  filter:alpha(opacity=100);
-  -moz-opacity:1;
-}
-
 div.more.open {
   border-top:none;
   border-bottom:1px solid black;
@@ -658,18 +672,10 @@ div.more .ui-icon {
   left:50%;
 }
 
-
 #fade {
    color: #999999;
    font-size: 0.8em;
 }
-
-.padding{
-    margin:0;
-    padding:0;
-    }
-
-
 
 .result {
   padding:0 0.5em 0.5em;
@@ -708,7 +714,7 @@ div.more .ui-icon {
   float:right;
   position:relative;
   padding:0;
-  height:30px;
+  height:2em;
   margin:0.5em 1.5em 0 0;
   background:#FFF;
 }
@@ -761,13 +767,9 @@ div.more .ui-icon {
   height:auto;
   background:#E9EEF2;
   color:black;
-  font-size:10pt;
+  font-size:0.9em;
   position:relative;
   max-width:10em;
-}
-
-#searchSelect li{
-  width:100%;
 }
 
 #searchSelect li:hover{
@@ -797,15 +799,12 @@ div.more .ui-icon {
   margin:0;
   padding:0.3em 0;
   text-align:right;
+  width:100%;
 }
 
 #searchSelect ul li a{
   padding:0.5em;
   white-space:nowrap;
-}
-
-#searchSelect ul li a:hover{
-  color:black;
 }
 
 #searchSelect:hover ul {
@@ -814,6 +813,10 @@ div.more .ui-icon {
 
 #all-search-results {
   padding:2em 0 0 0.5em;
+}
+
+#references-content #all-search-results {
+  padding-top:0;
 }
 
 
@@ -849,14 +852,6 @@ div.more .ui-icon {
   -moz-opacity:1;
 }
 
-#star-instructions li {
-  margin:1em 0;
-}
-
-.how-to-star img {
-  margin-left:1em;
-}
-
 .how-to-star {
   border:1px solid #CDCDCD;
   background:#E9EEF2;
@@ -867,7 +862,6 @@ div.more .ui-icon {
 .highlight {
   font-weight:bold
 }
-
 
 .comment-box {
   margin:0.5em 0;
@@ -948,6 +942,13 @@ body, html {
     height:100%;
 }
 
+
+/*@media screen and (max-device-width: 480px) {
+  body {
+    font-size:150%;
+  }
+}*/
+
 h1,h2,h3,h4,h5,h6 { color:black; margin:0; font-weight:bold;}
 
 h1 { font-size:1.8em;   }  /* 24px   ; site title */
@@ -971,7 +972,7 @@ input, select, th, td { font-size:1em; }
   height: auto !important;
   width:100%;
   position: relative;
-  min-width: 780px;
+  min-width: 640px;
 }
 
 #content {
@@ -1007,16 +1008,11 @@ p  {
     margin:1em 0;
 }
 
-img {
-    border:0px;
-}
-
 
 /*********************************
    
    Headers
 
-Note: firefox seems to render header objects funny
    
 *********************************/
 div#header {
@@ -1353,47 +1349,6 @@ ul.dropdown li.selected {
    
 *********************************/
 
-li div.widget-container {
-    padding:0;
-    margin:0 0 0.7em 0.7em;
-    display:none;
-    background-color:#FFFFFF; 
-    position:relative;
-    border:1px solid #A0ACB8;
-}
-
-li.visible div.widget-container {
-  display:block;
-}
-
-.widget-container .ui-helper-hidden {
-  display:none;
-}
-
-.content {
-  padding: 1em;
-  padding-bottom:1.8em;
-  overflow:auto;
-  list-style:disc outside none;
-  clear:both;
-  font-size:0.9em;
-}
-
-
-/* Resources pages like "Find Reagents" have different formatting needs than others */
-/* Trump some of the earlier settings */
-#resources {
-   width:600px;
-}
-
-#resources h2 {
-   float:none;
-}
-
-#resources p {
-    margin-left:2em;
-    line-height:1.2em;
-}
 
 
 /* pages in resources/documentation/* have no widgets. */
@@ -1431,7 +1386,9 @@ li.visible div.widget-container {
     margin-left:1em;
 }
 
-
+.bare-page {
+  padding:2em !important;
+}
 
 /* *******************************
    USERGUIDE SPECIFIC FORMATTING 
@@ -1470,137 +1427,16 @@ li.visible div.widget-container {
 }
 
 
-.widget-header {
-    background: #C2D1DF;
-}
-
-.widget-header h3 {
-    margin:0px;
-    padding:0.3em 0.3em 0.5em;
-    border-bottom:1px dotted #CDCDCD;
-    height:1em;
-    cursor:pointer;
-}
-
-.widget-header>div.ui-icon {
-  float:right;
-  margin:0.4em;
-  cursor:pointer;
-}
-
-.widget-header h3.minimized{
-    border:0;
-}
-
-.widget-description {
-    width:60%;
-    color:red;
-}
 
 
-#widget-me {
-   border: 1px solid #BDB8A4;
-}
-#widget-resources {
-    border: 1px solid #ACB8A0;
-}
-#widget-tools {
-    border: 1px solid #ABA0B8; 
-}
-
-.species-bg, .species_list-bg {
-  background-color:#C2D1DF;
-}
-
-#widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
-    background: #E3DDC5;
-}
-#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg  {
-    background: #D0DEC1;
-}
-#widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
-    background: #CFC1DE; 
-}
-
-
-/* .widget-container:hover { */
-/*     background:#FAFAFA; */
-/* } */
-
-.widget-container #widget-feed{
-    display:none;
-
-}
-.widget-container #widget-footer {
-    font-size:0.9em;    
-    position:absolute;
-    bottom:0.4em;
-    right:0.2em;
-    display:none;
-}
-#widget-footer.footer-left {
-  left:0.2em;
-  right:auto;
-}
-
-
-
-#widget-footer a {
-  height:1.2em;
-  padding:0 0.3em;
-  position:relative;
-  margin:0 0.2em;
-}
-
-#widget-footer>span{
-  float:right;
-  width:1em;
-  margin:1em 0 0 0;
-  cursor:pointer;
-}
-
-
-.widget-container div.ui-icon-large {
-  float:right;
-  cursor:pointer;
-  margin:0.4em;
-}
-
-.widget-container div.loading {
-  width:100%;
-  text-align:center;
-  padding:1em 0 0;
-}
-
-.widget-container h3 div.module-min {
-  float:left;
-  margin:2px;
-}
-
-.widget-container h3 span {
-  float:left;
-}
-
-.widget-container h3 span.ui-icon {
-  margin:0.2em;
-  opacity:0.7;
-  filter:alpha(opacity=70);
-  -moz-opacity:0.7;
-}
-
-.widget-container h3 span.ui-icon:hover {
-  opacity:1;
-  filter:alpha(opacity=100);
-  -moz-opacity:1;
-}
 
 
 
 /* Fieldsets : used on profile and admin pages */
 fieldset { 
-    display: block;
-    border: 2px groove threedface;
-    margin-bottom:1em;
+  display: block;
+  border: 2px groove threedface;
+  margin-bottom:1em;
   padding:1em;
 }
 
@@ -1656,7 +1492,6 @@ div#footercredit a{
     bottom:1em;
     right:1.4em;
     width:120px;
-/*     height:30px; */
 }
 
 
@@ -1691,14 +1526,11 @@ div#footercredit a{
 }
 
 #footer li>a, #footer li>span {
-/*    display:block;  */
     line-height:2em;
-/*    padding:0.4em; */
     font-size:0.9em;
     white-space:nowrap;
     color:#aaa;
 }
-
 
 #footer li>span {
     color:#eee;
@@ -1747,28 +1579,10 @@ div#footercredit a{
 
 *********************************/
 
-
-.description {
-   font-style:italic;
-}
-
-
-.returned-data {
-    font-family:Courier;
-    width:800px;
-    padding:25px;
-    background:#FFFFCC;
-    border:1px solid black;
-    display:none;
-}
-
 .returned {
    display:none;
-/*    background:#EEE; */
-/*    margin-top:5px; */
    padding:5px;
    padding-left:30px;
-/*    padding-right:10px; */
 }
 
 .superscript      { vertical-align:super; 
@@ -1776,45 +1590,7 @@ div#footercredit a{
                   }
 
 
-/*********************************
-
-           WIDGETS
- 
-   ********************************* */
-/*    border:1px dotted gray; */
-/*
-div.widget {
-    padding:1px;
-    margin:2px;
-
-    background-color:seafoam;
-}
-*/
-
-/* The widget title bar. This needs to be a div so I can 
-   target it for widget controls like toggle, drag, etc.
-
-   On the other hand, these titles should maybe just be
-   structural elements such as H1. DIVs and SPANs
-   that lack presentational information, but styled with classes
-   can be confusing.
-*/
-/*
-div.widget .title {
-    border-bottom:1px solid black;
-    padding:3px 0px 3px 6px;
-    background-color:#BCC;
-    text-transform:uppercase;
-}
-*/
-
-/* Links to download widgets in a variety of formats */
-div.downloadable-formats {
-    float:right;
-    font-size:0.9em;    
-}
-
-
+/* Formatting for column selection dropdown */
 
 div.columns {
   float:left;
@@ -1869,9 +1645,7 @@ div.columns ul div input#layout-input {
   padding:0;
 }
 
-
-
-
+/* END Formatting for column selection dropdown */
 
 
 
@@ -1880,12 +1654,16 @@ div.columns ul div input#layout-input {
   padding:0 1.5em 0 0;
   position:relative;
   z-index:10;
+  height:3.5em;
 }
 
 #page-title h2 {
   font-size:24px;
   color:#222;
   padding:0.5em 0 0.5em 10px;
+  height:2em;
+  white-space:nowrap;
+  position:relative;
 }
 
 #page-title h2 .bench-update{
@@ -1893,14 +1671,116 @@ div.columns ul div input#layout-input {
 }
 
 
-/* Formatting for the debug index page */
-div.widget-section-header {
-    padding-bottom:5px;
-    margin-bottom:2px;
-    margin-top:15px;
-    text-align:left;
-    border-bottom:1px dotted gray;
+/*********************************
+
+           WIDGETS
+ 
+   ********************************* */
+
+/* Styles for the standard widget */
+
+li div.widget-container {
+  padding:0;
+  margin:0 0 0.7em 0.7em;
+  display:none;
+  background-color:#FFFFFF; 
+  position:relative;
+  border:1px solid #A0ACB8;
 }
+
+.content {
+  padding: 1em 1em 1.8em 1em;
+  overflow:auto;
+  list-style:disc outside none;
+  clear:both;
+  font-size:0.9em;
+}
+
+.widget-header, .species-bg, .species_list-bg  {
+    background-color: #C2D1DF;
+}
+
+.widget-container:hover #widget-footer,
+.widget-header:hover .ui-icon,
+.widget-container:hover .widget-header .ui-icon-large,
+li.visible div.widget-container {
+    display:block;
+}
+
+.widget-container #widget-feed, 
+.widget-container #widget-footer, 
+.widget-header .ui-icon,
+.widget-container.minimized:hover #widget-footer{
+    display:none;
+}
+
+.widget-header h3 {
+  margin:0px;
+  padding:0.3em 0.3em 0.5em;
+  border:0;
+  height:1em;
+  cursor:pointer;
+}
+
+.widget-container #widget-footer {
+  position:absolute;
+  bottom:0.4em;
+  right:0.3em;
+}
+
+#widget-footer a {
+  padding:0 0.3em;
+  margin:0 0.2em;
+}
+
+.widget-header .ui-icon {
+  margin:0.2em;
+}
+
+.widget-header div.ui-icon-large {
+  float:right;
+  cursor:pointer;
+  margin:0.4em;
+}
+
+.widget-header h3 div.module-min {
+  float:left;
+  margin:2px;
+}
+
+.widget-header h3 span {
+  float:left;
+}
+
+.widget-container div.loading {
+  width:100%;
+  text-align:center;
+  padding:1em 0 0;
+}
+
+/* colour changes for the different types of widgets */
+
+#widget-me {
+    border-color: #BDB8A4;
+}
+#widget-resources {
+    border-color: #ACB8A0;
+}
+#widget-tools {
+    border-color: #ABA0B8; 
+}
+
+#widget-me .widget-header, .navigation .me.ui-selected, .me-bg {
+    background-color: #E3DDC5;
+}
+#widget-resources .widget-header, .navigation .resources.ui-selected, .resources-bg, #widget-resources .navigation .ui-selected {
+    background-color: #D0DEC1;
+}
+#widget-tools .widget-header, .navigation .tools.ui-selected, .tools-bg  {
+    background-color: #CFC1DE; 
+}
+
+/* END styles for standard widgets */
 
 
 
@@ -1913,40 +1793,29 @@ div.field {
   line-height:1.2em;
   padding:0.2em;
   width:100%;
-}
-
-div.field:hover{
-/*   background:#EEE; */
+  position:relative;
 }
 
 div.field-title {
   float: left;
   text-align: right; 
-  font-size: 1.05em;
+  font-size: 1em;
   padding:0 0.5em 0 0;
   width: 10em;
   font-weight: bold;
-}
-
-div.field-title>span{
-  padding:0;
-  margin:0;
 }
 
 div.field-content {
   float: left;
 }
 
-
 /* Curator specific fields */
 div.field-curator {
-  clear:left;
-  float:left;
-  line-height:1.2em;
-  padding:0.5em;
-  margin-top:1em;
+  margin:1em;
+  padding:1em;
   background:#CCFFFF;
   border:1px solid gray;
+  width:80%;
 }
 
 
@@ -1954,30 +1823,12 @@ div.field-curator {
 
 /* Subfields: fields inside of fields */
 /* widget field titles: ie Identification > IDs */
-div.field .field{
-  clear:left;
-  float:left;
-  line-height:1.2em;
-  padding:0.2em;
-}
-
 
 div.field .field .field-title {
-  float: left;
-  text-align: right; 
-  font-size: 1em;
-  padding-right: 0.5em;
   width: 7em;
-  font-weight: normal;
-}
-
-div.field .field .field-title>span{
-  padding:0;
-  margin:0;
 }
 
 div.field .field .field-content {
-  float:left;
   max-width:35em;
 }
 
@@ -1989,63 +1840,6 @@ div#google-map {
     position:relative;
     height: auto;
     overflow:hidden;
-/*     right:140px; */
-/*     top:50px; */
-}
-
-
-
-
-
-
-
-
-
-
-
-/* Containers */
-/* Alert box */
-div#alert { 
-    background-color: #BFD5E8;
-    text-align:center;
-    border-bottom:2px solid gray;
-    padding:10px;
-    margin-bottom:10px;
-}
-
-
-
-
-
-
-
-
-/* Evidence Formatting */
-div.evidence {
-    background-color:#FFDDDD;
-    padding:5px;
-    font-size:12px;
-    margin-left:30px;
-}
-div.evidence .title {}   /* Currently a static title of "evidence" */
-div.evidence .type {     /* ie Paper              */
-    float:left;
-    padding-right:5px;
-}
-div.evidence .source {}  /* ie Harris et al., 2003 */
-
-
-div.evidence tr { 
-  text-align:top;
-}
-
-div.evidence td { 
-  text-align:top;
-}
-
-div.evidence tr.updated { 
-  font-weight:bold;
-  text-align:right;
 }
 
 
@@ -2054,16 +1848,13 @@ div.evidence tr.updated {
 /* dataheader and datacell are used in page-wide tables such as in the 
    listing of all rearrangements by chrom on the rearrangment page */
 
-.abstract         { background-color: #FFEEEE;     padding-bottom:5px;}
-.acetree          { font-size: small; }
 .code             { 
                     background-color: #CCFFFF;
                     font-family: Courier, monospace;
                     border:1px solid grey;
-                    font-size:12px;
-                    width:75%;
-                    margin:10px;
-                    padding:5px;
+                    font-size:1em;
+                    margin:1em;
+                    padding:0.5em;
 }
 
 
@@ -2075,8 +1866,6 @@ div.evidence tr.updated {
    =============================================== */
 .species { font-style: italic; }
 
-.no-wrap { white-space: nowrap; }
-
 /* The variation summary */
 .cgc-strain {   /* strains available from the CGC */
     font-style:italic;
@@ -2084,50 +1873,6 @@ div.evidence tr.updated {
 
 .strains-with-single-variation {
      font-weight:bold;
-}
-
-
-
-
-
-/* Generic presentation elements */
-/* List of items, displayed inline */
-.inline-list {
-    display:none;
-    margin: 2em;
-    width: 60%;
-    padding: 2px;
-}
-
-.inline-list p {
-    display: inline;
-}
-
-.inline-list ul, .inline-list li {
-    display: inline;
-    margin: 0;
-    padding: 0;
-    color: #339;
-}
-
-
-/* List of items, displayed normally */
-.standard-list {
-    display:none;
-    margin: 2em;
-    width: 60%;
-    padding: 2px;
-}
-
-.standard-list p {
-    display: block;
-}
-
-.standard-list ul, .standard-list li {
-    display: block;
-    margin: 0;
-    padding: 0;
-    color: #339;
 }
 
 
@@ -2164,30 +1909,7 @@ div.evidence tr.updated {
 }
 
 
-/*expandable text container */
-.abstract-container {
-    font-size: 1em;
-    overflow: hidden;
-    clear: both;
-    display: none;   /* Hidden by default */
-    position:relative;
-    left:30px;
-    background-color: #EEEEFF;
-    border: 1px solid black;
-    padding: 5px;
-/*     width:80%; */
-}
-
-.results-abstract {
-    padding-bottom:5px;
-}
-
-.fasta-sequence {
-   font-family: Courier, monospace;
-}
-
 .sequence-download {
-/*    float:right;         */
   position:absolute;
   top:0;
   right:0;
@@ -2199,17 +1921,18 @@ div.evidence tr.updated {
 }
 
 .locus, .var {
-font-style:italic;
-display:inline;
-white-space:nowrap;
+  font-style:italic;
+  display:inline;
+  white-space:nowrap;
 }
 
 .toggle {
-	padding: 5px 0 0 30px;
+	padding: 0.5em 0 0 2em;
 	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
 	font-size: 1em;
 	font-weight: normal;
 }
+
 #overview-content .toggle{
   clear:left;
 }
@@ -2247,8 +1970,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   position:relative;
   clear:both;
   overflow:hidden;
-/*   display:table; */
-/*   table-layout:fixed; */
   border-top: 1px solid #CCC;
 }
 
@@ -2261,6 +1982,55 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   clear:left;
   position:relative;
   margin:-2.8em 0 1em 0em;
+}
+
+#references-content .navigation {
+  margin: 0em;
+  border:1px solid #CDCDCD;
+  float:right;
+  list-style-type: none; 
+  padding:0;
+}
+
+/* when the references are narrow */
+
+#references-content.widget-narrow .navigation {
+  border:none;
+}
+#references-content.widget-narrow .navigation li{
+  position:relative;
+  margin:0;
+}
+
+#references-content.widget-narrow .navigation ul{
+  display:none;
+  position:absolute;
+  left:-2;
+  top:100%;
+  width:100%;
+  background:white;
+  z-index:100;
+  border:1px solid #CDCDCD;
+  border-top:none;
+  margin:0;
+  padding:0;
+}
+
+#references-content.widget-narrow #current-ref {
+  display:block;
+  padding: 0.5em 1.5em;
+  margin:0;
+  font-size:0.9em;
+}
+
+#references-content.widget-narrow li:hover ul {
+  display:block;
+}
+
+/* end narrow references */
+
+#references-content li { 
+  border:none;
 }
 
 #navigation {
@@ -2289,11 +2059,11 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   color:white;
 }
 
-.navigation ul li:hover {
+.navigation ul li:hover:not(.ui-selected) {
   background: #FFFFDF;
 }
 
-.navigation ul li.ui-selected { 
+.navigation .ui-selected { 
   background: #C2D1DF; 
   color: black; 
 }
@@ -2320,7 +2090,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   font-weight: bold;
   padding-left: 1.5em;
   padding-top: 10px;
-/*   margin-top:5px; */
   border-top:1px solid #CDCDCD;
 }
 
@@ -2351,7 +2120,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
   right:-9px;
   top:0;
   cursor:pointer;
-/*   background: #AAA; */
   background: #EFEFEF;
   z-index:5;
   border-left:1px solid #CCC;
@@ -2435,7 +2203,6 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 }
 
 .history-logging {
-/*   background: #9C4041; */
   padding:0.5em;
   color: white;
   margin:0.3em 0;
@@ -2488,7 +2255,6 @@ div.detail-box div.field div.field-content{
 
 .bench-update {
   float:right;
-/*   margin-left:1em; */
 }
 
 .disabled {
@@ -2527,8 +2293,6 @@ div.detail-box div.field div.field-content{
   top:0;
   right:3em;
   bottom:auto;
-/*   background:#AAA; */
-/*   border:2px solid black; */
 }
 
 .star>.tip span.ui-icon-triangle-1-s{
@@ -2584,7 +2348,7 @@ table.venn tr.venn-data td {
 }
 
 .issue-layout-box {
-    padding:15px 24px;
+    padding:1em 2em;
 }
 
 .issue-table{
@@ -2651,24 +2415,12 @@ table.venn tr.venn-data td {
     background-color:#FFEC8B;
 }
 
-/* The submit box on the issue form */
-.issue-submit-box {
-    padding-top:3em;
-}
-
 .issue-text{
   width :97%;
+  max-width:35em;
   font-family: Helvetica, sans-serif;
   padding:0.5em;
-  color:gray;
   font-size: 1em;
-}
-.issue-text:focus {
-  color:black;
-}
-
-.issue-user {
-  width : 60%;
 }
 
 .issue-content{
@@ -2678,9 +2430,13 @@ table.venn tr.venn-data td {
   padding: 1em;
 }
 
+#issues-new, #issues-new>div {
+  margin-top:1em;
+}
+
 #operator-box-wrap{  
   position:fixed;       
-  bottom:7em;
+  bottom:10em;
   right:0;  
   z-index:100;
 }
@@ -2688,12 +2444,31 @@ table.venn tr.venn-data td {
 #operator-box{
   position:absolute;  
   height:5em; 
-  right:0;    
+  right:0; 
   padding:0.5em; 
   border:1px solid #CDCDCD;
   background:#E9EEF2;
-/*   z-index:100; */
-  cursor:pointer
+  z-index:100;
+  cursor:pointer;
+}
+
+#issue-box{
+  position:absolute;  
+  height:1.5em; 
+  right:0;   
+  top:5em;
+  padding:1em 0.5em 0.5em; 
+  background: #D6C2C2;
+  border:1px solid #CDCDCD;
+  cursor:pointer;
+  z-index:101;
+  white-space: nowrap;
+}
+
+#issue-box.minimize{
+  background: #9C4041;
+  z-index:99;
+  border:none;
 }
 
 #operator-box.minimize{
@@ -2713,6 +2488,11 @@ table.venn tr.venn-data td {
   width:2em;
 }
 
+#issue-box.minimize:hover{
+  background: #6D2C2D;
+  width:1.5em;
+}
+
 #operator-box.minimize>div{
   display:none;
 }
@@ -2721,22 +2501,6 @@ table.venn tr.venn-data td {
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
-
-.email {   }   /* email address formatting */
-
-div#advisory-board        { padding:2em; }
-#advisory-board h2        { float:none;}
-#advisory-board img {
-    border : 3px solid gray;
-    width  : 100px;
-}
-#advisory-board .description { 
-     font-style:normal;
-     clear:both; 
-     padding: 1em 0em 2em 0em;
-     width:500px;
-     font-size:1.2em;
-}
 
 
 /* Currently used on the life-stage page */
@@ -2764,7 +2528,7 @@ div.inline-columns img {
 }
 
 .button{
-  float:right;
+  float:left;
   border:1px solid #BBB;
   background:#EEE;
   cursor:pointer;
@@ -2780,7 +2544,6 @@ div.inline-columns img {
 }
 
 .button.slink{
-  float:left;
   margin:0 0.5em 0 0;
 }
 
@@ -2821,7 +2584,6 @@ div.title {
 /* Effects */
 #breadcrumbs {
   position:relative;
-/*   padding-left:5px; */
   width:100%;
 }
 
@@ -2840,45 +2602,9 @@ div.title {
   cursor:pointer;
 }
 
-
-
-
-
-
-/* markup for information drawn from third parties */
-.mendeley-image {
-    float:left;
-    vertical-align:middle;
+#breadcrumbs span.page-title{
+  overflow:hidden;
 }
-
-/* call out to Mendeley */
-.mendeley-nod {
-    font-style:italic;
-    color:gray;
-    font-size:1.3em;
-    padding-bottom:1.2em;
-    padding-top:3em;
-}
-
-.mendeley-citation {
-    margin-left:2em;
-    padding-bottom:1em;
-    clear:both;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

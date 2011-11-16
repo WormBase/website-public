@@ -31,7 +31,7 @@
     [% UNLESS no_layout %]
     <div id="buttons-nav">
     [% UNLESS c.req.action == 'me' %]
-        <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  wname="issue" ><span class="ui-icon ui-icon-notice"></span></a>
+<!--         <a   tip="report a problem" class="button section-button tip-simple ui-corner-all"  wname="issue" ><span class="ui-icon ui-icon-notice"></span></a> -->
         <a   tip="view comments" class="button section-button tip-simple ui-corner-all" wname="comment"  ><span class="ui-icon ui-icon-comment"></span></a>
         <a tip="toggle empty fields" class="button tip-simple ui-corner-all" id="hide-empty-fields" href="javascript:void(0)"><span class="ui-icon ui-icon-carat-2-e-w ui-button"></span></a>
     [% END %]
@@ -71,7 +71,7 @@
 
 <div id="widgets">
      
-  <div class="navigation">
+  <div class="navigation navigation-min">
   <div id="navigation">
     <div id="title">
       [% IF c.action.name == 'index' %]
@@ -110,6 +110,13 @@
           href="[% c.uri_for('/rest','widget','me','user_history') %]" 
           load=1>see more...</li>[% END %]</div>
       </div>
+[% UNLESS ((c.req.action == 'me') || (c.req.action == '/')) %]
+      <li class="title module-load tools" 
+          id="nav-comment" 
+          wname="comment" 
+          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path %]">Comments <a class="comment-count"></a>
+      </li>
+[% END %]
     </ul>
     <div id="nav-min" title="close sidebar"><div id="nav-min-icon" class="ui-icon ui-icon-triangle-1-w"></div></div>
   </div>
@@ -170,6 +177,14 @@
           [% PROCESS widget_sortable_block type="me" id="user_history" title="My History"-%]
           </li>
 [% END %]   
+[% UNLESS ((c.req.action == 'me') || (c.req.action == '/')) %]
+          <li id="comment" class="widget">
+[% cTitle = 'Comments' _ (this_object_label ? ' on ' _ this_object_label : '') %]
+[% cTitle = cTitle _ ' <a class="comment-count"></a>' %]
+
+          [% PROCESS widget_sortable_block type="tools" id="comment" title=cTitle-%]
+          </li>
+[% END %]
     </div>
     <div class="sortable right one-column"></div>
 

@@ -31,7 +31,8 @@ sub resources :Path('/resources') :Args(0)   {
       $c->stash->{class}   = 'all';
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 #     $c->stash->{template} = 'report.tt2';
@@ -47,7 +48,8 @@ sub resources_class_index :Path('/resources') :Args(1)  {
     $c->stash->{template} = "resources/report.tt2";
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
     
@@ -144,15 +146,15 @@ sub _get_report {
     $c->log->debug($name);
 
     # get static widgets for this page
-    my $page = $c->model('Schema::Page')->find({url=>$c->req->uri->path});
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+
     my @widgets = $page->static_widgets if $page;
     $c->stash->{static_widgets} = \@widgets if (@widgets);
 
     my $object = $c->model('WormBaseAPI')->fetch({
         class  => ucfirst($class),
         name   => $name,
-    })
-    or $self->error_custom($c, 500, "can't connect to database"); # don't think this is correct
+    }); # error handling?
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
 

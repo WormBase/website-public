@@ -28,38 +28,28 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO link_objects(data) BLOCK;
+   MACRO link_objects(data, separator) BLOCK;
+      result = [];
       # Is this a hash?
       IF data.keys;
-          result = [];
-	  FOREACH key IN data.sort;
-	     result.push(tag2link(data.$key));
-	  END;
-	  result.join('<br />');
+        FOREACH key IN data.sort;
+          result.push(tag2link(data.$key));
+        END;
+        result.join('<br />');
       # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
       ELSE;
-	  FOREACH item IN data;
-	     result.push(tag2link(item));
-	  END;
-	  result.join('<br />');
+        FOREACH item IN data;
+          result.push(tag2link(item));
+        END;
+        result.join(separator || '<br />');
       END;
-   END;
-
-   # List -- but don't link -- objects
-   # Suitable for hashes of objects created by _pack_objects()
-   MACRO list_objects(hash) BLOCK;
-      result = [];
-	  FOREACH key IN hash.sort;
-	     result.push(hash.$key);
-	  END;
-	  result.join('<br />');
    END;
 
 
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy,class, id).path;
+          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
         ELSIF (class == 'bench');
           c.uri_for('/me', id).path;
          ELSIF (class == 'picture');
@@ -123,7 +113,7 @@
 		 ELSIF (matches = word.match('^(.*)ius$'));
 		 	word = matches.0 _ 'ii';					# radius -> radii 
          ELSIF (matches = word.match('^(.*)ss$'));
-            word = matches.0 _ 'ses';                   # class -> classes 
+            word = matches.0 _ 'sses';                   # class -> classes 
 		 ELSE; 
 		 	word = word _ "s";                          # fallback
 		 END;
@@ -185,6 +175,7 @@
 #          Has google analytics code to record clicks and opens new window
     MACRO external_link(link, text, id) BLOCK;
        UNLESS text; text = id; UNLESS text; RETURN; END; END;
+       link = link FILTER lower;
        IF (link == 'sw' OR link == 'sptrembl' OR link == 'tr'); link = 'uniprot'; END; #HACK: maybe do this somewhere else
        desc = site.external_urls.$link.description;
        IF id;
@@ -260,32 +251,11 @@
 
 #  Add params to have options on what to markup.  ie. omim, locus...
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      UNLESS omim.defined; omim = 1; END;
-      UNLESS locus.defined; locus = 1; END;
-      UNLESS var.defined; var = 1; END;
-      UNLESS link.defined; link = 0; END;
-      IF locus; text = markup_locus(text, link); END;
-      IF var; text = markup_var(text, link); END;
-      IF omim; text = markup_omim(text); END;
+      IF ((locus || 1) == 1); text = markup_locus(text, (link || 0)); END;
+      IF ((var || 1) == 1); text = markup_var(text, (link || 0)); END;
+      IF ((locus || 1) == 1); text = markup_omim(text); END;
       text;
     END;
-
-# Dynamically select a tempate: custom or common
-MACRO select_field_template(field,class) BLOCK;
-     IF c.config.common_fields.$field;
-              "shared/fields/" _ field _ ".tt2";
-     ELSE;
-              "classes/" _ class _ "/" _ field _ '.tt2';
-     END;
-END;
-
-MACRO select_widget_template(widget,class) BLOCK;
-     IF c.config.common_widgets.$widget;
-              "shared/widgets/" _ widget _ ".tt2";
-     ELSE;
-              "classes/" _ class _ "/" _ widget _ '.tt2';
-     END;
-END;
 
      MACRO cite_image(extsrc,src) BLOCK;
            '<small>';
@@ -317,10 +287,7 @@ END;
      END;
 
    # load up any other configuration items 
-   PROCESS config/col
-         + config/url
-	 + config/external_urls
-         + config/assets;
+   PROCESS config/external_urls;
 
    # set defaults for variables, etc.
    DEFAULT 
@@ -329,16 +296,6 @@ END;
    # Set some default templates
    DEFAULT field_block  = "field_block";
    DEFAULT widget_block = "widget_block";
-
-   # Our custom URL mapping plugin.
-   # Usage: url.Link();
-   # USE url;
-
-   # Data munging utilities
-   # USE Util;
-
-   # Basic table formatting. Perhaps these should be dynamic instead
-   #USE Table(list, rows=5)
 
    # For debugging ONLY!
    USE Dumper(Indent=1);
@@ -349,127 +306,6 @@ END;
    # image: wrap a src in an image tag using the format plugin
    USE image  = format('<img src="%s" valign="middle" width="100%">');
    USE toggle = format('<img border="0" height="11" src="%s" width="6" alt="&gt;" valign="middle"> %s');
-   USE link = format('<a href="%s" target="_blank">%s</a>');
-
-
-   # Move to lib/formatting?
-   MACRO comment(msg) BLOCK;
-      "<!-- " _ msg _ " -->";
-    END;
- 
-    MACRO display_evidence(object) BLOCK;
-
-      data = util.parse_hash(object);
-      IF data;
-
-	# Format the evidence into a table with the intent
-	# it will be displayed as a mouseover.
-	# This is (nearly) contrary to the way it is handled
- 	# now, where it is displayed inline in about a billion different ways.
-    # It seems to me that this should actually be a template.
-    # Can I include a template/wrapper from within a macro?
-    "<div class=\"evidence\">";
-    "<div class=\"title\">Evidence</div>";
-
-	# Conditionally format the data for each type of evidence seen
-	# I could prioritize the display by ordering the keys in the hash
-	FOREACH key IN data.keys;
-		type = data.$key;  # Stringiying an object as a hash key kills it. Need value.
-
-        "<div class=\"type\">Type: $type</div>";
-
-		# Conceal curator confirmed entries
-		NEXT IF type == "Curator_confirmed";
-
- 		# Grab the first level entries for each.
-    		# there is additional information
-    		sources = type.col;
-
-    		# Add appropriate markup for each type of Evidence seen
-        "<div class=\"source\">";
-    	IF type == 'Paper_evidence';
-
-		    FOREACH paper IN sources;
-				# Do a short format
-				url.Link(item=paper text=paper.Title);
-				"<br>";
-			END;
-		ELSIF type == 'Published_as';
-			FOREACH item IN sources
-				url.Link(item);
-				"<br>";
-			END;
-		ELSIF type == 'Person_evidence' || type == 'Curator_confirmed';
-			FOREACH person IN sources;
-				url.Link(item=person text=person.Standard_name);
-				"<br>";
-			END;
-		ELSIF type == 'Author_evidence';
-			FOREACH author IN sources;
-				url.Link(author);
-				"<br>";
-			END;
-		ELSIF type == 'Accession_evidence';
-			FOREACH source IN sources;
-				params = source.row;
-				# my $accession_links   ||= Configuration->Protein_links;
-				# my $link_rule = $accession_links->{$database};
-				# $data = $link_rule ? a({-href=>sprintf($link_rule,$accession),
-				#-target=>'_blank'},"$database:$accession")
-			  	#: ObjectLink($accession,"$database:$accession");
-				"ACCESSION EVIDENCE NOT DONE";
-			END;
-		ELSIF type == 'Protein_id_evidence';
-      			#$data = join($join,map { a({-href=>Configuration->Entrezp},$_) } @sources);
-      			"PROTEIN ID EVIDENCE NOT DONE";
-		ELSIF type == 'GO_term_evidence'
-			|| type == 'Laboratory_evidence'
-			|| type == 'Expr_pattern_evidence'
-			|| type == 'Microarray_results_evidence'
-			|| type == 'Gene_regulation_evidence';
-			FOREACH source IN sources;
-				url.Link(source);
-				"<br>";
-			END;
-		ELSIF type == 'RNAi_evidence';
-			FOREACH source IN sources;
-				IF source.History_name;
-					mytext="$source ($source.History_name)";
-				ELSE;
-					name=source;
-				END;
-				url.Link(item=source text=mytext);
-			END;
-		ELSIF type == 'CGC_data_submission';
-		ELSIF type == 'Inferred_automatically';
-			FOREACH source IN sources;
-				"$source<br>";
-			END;
-		ELSIF type == 'Date_last_updated';
-			FOREACH source IN sources;
-				"$source<br>";
-			END;
-		END;	
-		"</div>";
-	END;
-	"</div>";
-    END;
-  END;
-
-
-    MACRO toggle(title,content,open) BLOCK;
-      "<p>";
-      '<div class="togglebox">';
-         '<div class="togglebox_title">';
-  	 '<a href="#" class="toggle">';
-              '<span class="closed">'_ image(site.toggles.closed) _ "</span> $title</a>";
-         "</div>";
-         '<div class="togglebox_content" style="display:none">';
-             content;
-         "</div>";
-       "</div>";
-    END;
-
 
   ###########################################
   # Class-to-action mapping

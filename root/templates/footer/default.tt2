@@ -34,9 +34,10 @@
            <ul>
     	     <li><a href="http://wormbase.org/beta">Request Private Demo</a></li>
              <li><a href="/tools/operator">Chat</a></li>
-              <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'         %]">Submit Data</a></li>
+              <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
              <li><a href="mailto:help@wormbase.org">Email</a></li>
              <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
+             <li><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
            </ul>                
          </div>
 

@@ -1,6 +1,8 @@
 package WormBase::API::Object::Expr_pattern;
 
 use Moose;
+use File::Spec;
+use namespace::autoclean -except => 'meta';
 
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
@@ -141,10 +143,10 @@ B<Response example>
 sub subcellular_locations {
     my ($self) = @_;
     my @subcellular_locs = map {"$_"} @{$self ~~ '@Subcellular_localization'};
-    
+
     return {
-	description	=> 'Subcellular locations of this expression pattern',
-	data		=> @subcellular_locs ? \@subcellular_locs : undef,
+        description	=> 'Subcellular locations of this expression pattern',
+        data		=> @subcellular_locs ? \@subcellular_locs : undef,
     };
 }
 
@@ -205,10 +207,11 @@ http://wormbase.org/draw/$data
 
 sub expression_image {
     my ($self) = @_;
+    my $object = $self->object;
 
 	my $data;
-	my $file = $self->pre_compile->{expr_object}."/".$self->object.".jpg";
-	$data = 'jpg?class=expr_object&id=' . $self->object if (-e $file && !-z $file);
+	my $file = File::Spec->catfile($self->pre_compile->{expr_object}, "$object.jpg");
+	$data = "jpg?class=expr_object&id=$object" if (-e $file && !-z $file);
 
 	return {
 		description => 'Image of the expression pattern',
@@ -636,20 +639,20 @@ B<Response example>
 
 sub curated_images { # Caveat: this is very tightly coupled with the Picture model
     my ($self) = @_;
-    
+
     my %data;
-    
-    foreach my $pic ($self->_wrap(@{$self ~~ '@Picture'})) {
+
+    foreach my $pic ($self->_api->wrap(@{$self ~~ '@Picture'})) {
         my $img_data = $pic->image->{data}; # can't render the image if there is no file!
         next unless $img_data;
-	
+
         my $id          = $pic->object->name;
         my $extsrc_data = $pic->external_source->{data};
         my $src_data    = $pic->reference->{data} || $pic->contact->{data};
-	
+
         # assumption: extsrc_data has 1 to 1 relation to src_data
         my $group = ($src_data && $src_data->{id}) || 'none';
-	
+
         push @{$data{$group}}, {
             id              => $id,
             draw            => $img_data,
@@ -657,10 +660,10 @@ sub curated_images { # Caveat: this is very tightly coupled with the Picture mod
             source          => $src_data,
         };
     }
-    
+
     return {
-	description => 'Curated images of the expression pattern',
-	data        => %data ? \%data : undef,
+        description => 'Curated images of the expression pattern',
+        data        => %data ? \%data : undef,
     };
 }
 

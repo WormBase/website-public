@@ -269,7 +269,7 @@ sub pages {
     $page =~ s/\.*$// if $page; # stringified if defined
     return {
         description => 'The pages of the publication',
-        data        => $page,
+        data        => $page ? "$page" : undef,
     };
 }
 
