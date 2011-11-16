@@ -80,7 +80,6 @@ requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(o
 requires 'Memcached::libmemcached';                              #
 requires 'Module::Install';                                      #
 requires 'Moose'                                 => '1.21';      #
-requires 'MooseX::AbstractFactory';                              #
 requires 'MooseX::NonMoose';                                     # => '0.17';
 requires 'MooseX::MethodAttributes::Inheritable';                # => '0.24';
 requires 'MooseX::Role::WithOverloading';                        # => '0.05';
@@ -120,7 +119,8 @@ requires 'Catalyst::Controller::Metal';                          #
 #requires 'Catalyst::Engine::PSGI';                               #
 requires 'Catalyst::Helper::PSGI';                               #
 requires 'Starman';                                              #
-
+requires 'URI::Escape::XS';
+requires 'Any::Loger::Adapter::Log4perl';                        # cache logging
 
 install_script glob('script/*.pl');
 auto_install;
