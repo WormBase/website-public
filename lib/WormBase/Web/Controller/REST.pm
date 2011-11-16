@@ -716,14 +716,9 @@ sub widget_GET {
         || 'text/html';
     $c->response->header( 'Content-Type' => $content_type );
 
-    if ( $content_type eq 'text/html' )
-    {
-
+    if ( $content_type eq 'text/html' ) {
         # Shouldn't this be $self? Would break check_cache();
-        ( $cached_data, $cache_source ) = $c->check_cache({
-            cache_name => 'couchdb',
-            key        => $key,
-        });
+        ( $cached_data, $cache_source ) = $c->check_cache($key);
     }
 
     # We're only caching rendered HTML. If it's present, return it.
@@ -797,20 +792,7 @@ sub widget_GET {
     if ( $content_type eq 'text/html' ) {
         my $html = $c->view('TT')->render( $c, $c->{stash}->{template} );
 
-        # If we have content, cache it.
-        if ($html) {
-
-            # eval {$c->set_cache('filecache',$cache_id,$html);};
-            # Or: couchdb or memcached
-
-            $c->set_cache(
-                {   cache_name => 'couchdb',
-                    key        => $key,
-                    data       => $html,
-#			   host       => $c->req->base,  # eg http://beta.wormbase.org/ or http://todd.wormbase.org/
-                }
-            );
-        }
+        $c->set_cache($key => $html) if $html;
 
         $c->response->status(200);
         $c->response->body($html);
