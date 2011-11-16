@@ -3,22 +3,12 @@ package WormBase::Web;
 use Moose;
 use namespace::autoclean;
 use Hash::Merge;
-
-BEGIN {
-    # override configloader's finalize_config to setup
-    # plugins after config files are loaded
-    require Catalyst::Plugin::ConfigLoader;  # load the loader
-    no warnings 'redefine';                  # suppress redefinition warning
-    my $orig = \&Catalyst::Plugin::ConfigLoader::finalize_config;
-    *Catalyst::Plugin::ConfigLoader::finalize_config = sub {
-        my $c = shift;
-        $orig->($c, @_);
-        $c->_setup_plugins;
-    };
-}
+use Catalyst::Log::Log4perl;
+use Log::Any::Adapter;
+use HTTP::Status qw(:constants :is status_message);
 
 use Catalyst qw/
-	  ConfigLoader
+      ConfigLoader
 	  Cache
 	  Static::Simple
 	  Unicode
@@ -36,9 +26,6 @@ use Catalyst qw/
 extends 'Catalyst';
 our $VERSION = '0.02';
 
-use Catalyst::Log::Log4perl; 
-use HTTP::Status qw(:constants :is status_message);
-
 # Application-wide configuration is located in wormbase.conf
 # which can be over-ridden by wormbase_local.conf.
 __PACKAGE__->config( 'Plugin::ConfigLoader' => {
@@ -55,7 +42,7 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => {
 
 __PACKAGE__->config('Plugin::Session', {
     expires           => 3600,
-    dbi_dbh           => 'Schema', 
+    dbi_dbh           => 'Schema',
     dbi_table         => 'sessions',
     dbi_id_field      => 'session_id',
     dbi_data_field    => 'session_data',
@@ -123,6 +110,16 @@ __PACKAGE__->config->{authentication} = {
     }
 };
 
+after setup_finalize => sub {
+    my $c = shift;
+
+    if ($c->config->{cache}{enabled} and $c->config->{cache}{couchdb}{enabled}) {
+        # this is a hack to let the namespace be the db version which
+        # is not available until after plugins are setup
+        $c->cache('couchdb')->namespace(lc $c->model('WormBaseAPI')->version);
+    }
+};
+
 # Start the application!
 __PACKAGE__->setup;
 
@@ -132,13 +129,13 @@ __PACKAGE__->setup;
 #
 ################################################################################
 
-# perhaps this should just loop through a list of subs...
-sub _setup_plugins {
+sub finalize_config { # overriding Plugin::ConfigLoader
     my $c = shift;
+    $c->next::method(@_);
     $c->_setup_log4perl;
     $c->_setup_cache;
     $c->_setup_static;
-}
+};
 
 sub _setup_log4perl {
     # Specific loggers for different environments
@@ -146,56 +143,93 @@ sub _setup_log4perl {
     my $path = $c->path_to('conf', 'log4perl',
                            $c->config->{installation_type} . '.conf');
     $c->log(Catalyst::Log::Log4perl->new($path->stringify));
+    Log::Any::Adapter->set({ category => qr/^CHI/ }, 'Log4perl');
 }
 
 sub _setup_cache {
     my $c = shift;
 
-    my $memcache_servers = $c->config->{memcached}{server}
-        or die 'No memcached server(s) specified';
-    $memcache_servers = [$memcache_servers]
-        unless ref $memcache_servers eq 'ARRAY';
+    my $cacheconfig = $c->config->{cache};
+    my $pluginconfig = $c->config->{'Plugin::Cache'} ||= {};
 
-    $c->config->{'Plugin::Cache'}{backends}{memcache} = {
-        class          => 'CHI',
-        driver         => 'Memcached::libmemcached',
-        servers        => $memcache_servers,
-        expires_in     => $c->config->{memcached}{expires},
-    };
+    # install a fake memory cache so that the Cache plugin is satisfied
+    if ( ! $cacheconfig->{enabled} ) {
+        $c->meta->superclasses(
+            $c->meta->superclasses,
+            'Catalyst::Plugin::Cache::Store::Memory'
+        ); # ouch. my guess is that this may spontaneously break
+        $pluginconfig->{backend} = { store => 'Memory' };
+        return;
+    }
 
-    my $cache_dir = $c->config->{filecache}{root} // do {
-        require File::Temp; File::Temp->newdir;
-    };
+    my $default = $cacheconfig->{default}
+        or die 'Require a default cache backend in config';
 
-    $c->config->{'Plugin::Cache'}{backends}{file} = {
-        class          => 'CHI',
-        driver         => 'File',
-        root_dir       => $cache_dir,
-        store          => 'File',
-        depth          => 3,
-        max_key_length => 64,
-    };
+    # perhaps we should look into using a main cache with
+    # an L1 or mirror subcache... see CHI subcaches
 
-    $c->config->{'Plugin::Cache'}{backends}{default}
-        = $c->config->{'Plugin::Cache'}{backends}{file};
+    # in the future, we may just pass in the conf directly into
+    # the backend hash. settings in the conf file will be immediately
+    # reflected in the cache plugin without modification here
 
-    # FOLLOWING IS FOR SINGLE CACHE:
+    if ($cacheconfig->{couchdb}{enabled}) {
+        $pluginconfig->{backends}{couchdb} = {
+            class        => 'CHI',
+            driver_class => 'WormBase::CHI::Driver::Couch',
+            server       => $cacheconfig->{couchdb}{server},
+            host         => $cacheconfig->{couchdb}{host},
+            port         => $cacheconfig->{couchdb}{port},
+            # must be set up in $app->setup_finalize and pray that the
+            # cache is not touched before then.
+            namespace    => 'DUMMY',
+        };
+    }
 
-    #__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    #    class          => 'CHI',
-    #    driver         => 'File',
-    #    root_dir       => '/usr/local/wormbase/shared/cache',
-    #    store          => 'File',
-    #    depth          => 3,
-    #    max_key_length => 64,
-    #};
+    if ($cacheconfig->{memcached}{enabled}) {
+        my $memcached_servers = $cacheconfig->{memcached}{server}
+            or die 'No memcached server(s) specified';
+        $memcached_servers = [$memcached_servers]
+            unless ref $memcached_servers eq 'ARRAY';
 
-    #__PACKAGE__->config->{'Plugin::Cache'}{backend} = {
-    #    class          => 'CHI',
-    #    driver         => 'Memcached::libmemcached',
-    #    servers        => $servers,
-    #    expires_in     => $expires_in,
-    #};
+        $pluginconfig->{backends}{memcached} = {
+            class          => 'CHI',
+            driver         => 'Memcached::libmemcached',
+            servers        => $memcached_servers,
+            expires_in     => $cacheconfig->{memcached}{expires},
+        };
+    }
+
+    if ($cacheconfig->{filecache}{enabled}) {
+        my $cache_dir = $cacheconfig->{filecache}{root} // do {
+            require File::Temp; File::Temp->newdir;
+        };
+
+        $pluginconfig->{backends}{filecache} = {
+            class          => 'CHI',
+            driver         => 'File',
+            root_dir       => $cache_dir,
+            store          => 'File',
+            depth          => 3,
+            max_key_length => 64,
+        };
+    }
+
+    $pluginconfig->{backends}{default} = undef; # see get_cache_backend
+}
+
+# this can be very confusing if _setup_cache above sets a default
+# in the plugin config... so don't do it.
+sub get_cache_backend { # overriding Plugin::Cache
+    my ($c, $name) = @_;
+
+    if (my $backend = $c->_cache_backends->{$name}) {
+        return $backend;
+    }
+
+    return $c->_cache_backends->{$c->config->{cache}{default}}
+        if $name eq 'default';
+
+    return;
 }
 
 # Set configuration for static files
@@ -275,133 +309,48 @@ sub get_example_object {
 #  Helper methods for interacting with the cache.
 #
 ########################################
+
 sub check_cache {
-    my ($self,$params) = @_;
+    my ($self, $key, $cache_name) = @_;
 
-    # Don't bother checking the cache in certain circumstances.
-    # return if ($c->check_any_user_role(qw/admin curator/));
+    return unless $self->config->{cache}{enabled};
+    $cache_name ||= 'default';
 
-    $self->log->debug('CACHE IS ', $self->config->{cache} ? 'ON' : 'OFF');
-    return unless $self->config->{cache};
-    my ($cache_name, $key) = @{$params}{qw(cache_name key)};
+    my $cache = $self->cache($cache_name);
+    unless ($cache) {
+        $self->log->error('No cache backend with name ', $cache_name);
+        return;
+    }
 
-    # First, has this content been precached?
-    # CouchDB. Located on localhost.
-    if ($cache_name eq 'couchdb') {
-        my $couch = WormBase::Web->model('CouchDB');
-        my $host  = $couch->read_host;
-        my $port  = $couch->read_host_port;
-
-        $self->log->debug("    ---> Checking cache $cache_name at $host:$port for $key...");
-
-        # Here, we're using couch to store HTML attachments.
-        # We MAY want to parameterize this in the future
-        # so that we can fetch documents, too.
-        my $content = $couch->get_attachment({
-            key      => $key,
-            database => lc($self->model('WormBaseAPI')->version),
-        });
-
-        if ($content) {
-            $self->log->debug("CACHE: $key: ALREADY CACHED in couchdb at $host:$port; retrieving attachment");
-            return ($content,'couchdb');
+    if (my $data = $cache->get($key)) {
+        if (wantarray) {
+            my $data_origin = $cache_name;
+            $data_origin .= ': ' . $cache->memd->get_server_for_key($key)
+                if $cache_name eq 'memcached';
+            return ($data, $data_origin);
         }
-    }
-
-    # Not in Couch? Perhaps we've been cached by the app.
-    # 1. Single cache approach    
-    # First get the cache.
-    # my $cache = $self->cache;
-
-    # 2. Dual cache approach: filecache or memcache?
-    # Kludge: Plugin::Cache requires one of the backends to be symbolically named 'default'
-    $cache_name = 'default' if $cache_name eq 'couchdb';
-    my $cache = $self->cache(backend => $cache_name);
-
-#    # Version entries in the cache.
-#    # Now get the database version from the cache. Heh.    
-#    my $version;
-#    unless ($version = $cache->get('wormbase_version')) {
-#	
-#	# The version isn't cached. So on this our first
-#	# check of the cache, stash the database version.	
-#	$version = $self->model('WormBaseAPI')->version;
-#	$cache->set('wormbase_version',$version);
-#    }
-
-    # Check the cache for the data we are looking for.
-    my $cached_data = $cache->get($key);
-
-    # From which memcached server did this come from?
-    my $cache_server;
-    if ($cache_name eq 'memcache'
-        && ($self->config->{timer} || $self->check_user_roles('admin'))) {
-        if ($cached_data) {
-            $cache_server = 'memcache: ' . $cache->get_server_for_key($key);
-        }
-    }
-    elsif ($cached_data) {
-        $cache_server = 'file';
-    }
-
-    if ($cached_data) {
-        $self->log->debug("CACHE: $key: ALREADY CACHED in $cache_name; retrieving from server $cache_server.");
-    }
-    else {
-        $self->log->debug("CACHE: $key: NOT PRESENT in $cache_name");
-    }
-
-    return ($cached_data,$cache_server);
-}
-
-# Provided with a pre-generated cache_id and data, store it in one of our caches.
-sub set_cache {
-    my ($self,$params) = @_;
-
-    # Don't bother setting the cache under certain circumstances
-    return unless $self->config->{cache};
-    return if ($self->check_any_user_role(qw/admin curator/));
-
-    my $cache_name = $params->{cache_name} // 'default',
-    my $key        = $params->{key};
-    my $data       = $params->{data};
-
-    # BEWARE!  Some set_cache operations will FAIL if the cache is distributed.
-    # We're PUTting everything to one place, but the read caches are distributed.
-    # If we look in a read cache and don't yet see something,
-    # we will still try and cache it to the core resulting in a conflict.
-
-    # should probably have an abstraction layer or generalize this instead of
-    # setting up cases per cache type we have -AD
-    if ($cache_name eq 'couchdb') {
-        my $couch = WormBase::Web->model('CouchDB');
-
-        # CouchDB Kludge
-        # Make sure the document doesn't already exist.
-        # Documents may already be listed in the couchdb
-        # but attachments may not be available yet.
-        # In these cases, simply return without setting the cache.
-        #	return 1 if ($couch->get_document({key     => $key,
-        #					 database => lc($self->model('WormBaseAPI')->version),
-        #					}));
-
-        my $host = $couch->write_host;
-        $self->log->debug("SETTING CACHE: $key into $cache_name on $host");
-
-        my $response = $couch->create_document({
-            attachment => $data,
-            key        => $key,
-            database   => lc($self->model('WormBaseAPI')->version),
-        });
-    }
-    else {
-        $self->cache(backend => $cache_name)->set($key, $data)
-            or $self->log->warn("Couldn't cache data into $cache_name: $!");
+        return $data;
     }
 
     return;
 }
 
+sub set_cache {
+    my ($self, $key, $data, $cache_name) = @_;
+
+    return unless $self->config->{cache}{enabled};
+    return if $self->check_any_user_role(qw/admin curator/);
+
+    $cache_name ||= 'default';
+
+    my $cache = $self->cache($cache_name);
+    unless ($cache) {
+        $self->log->error('No cache backend with name ', $cache_name);
+        return;
+    }
+
+    return $cache->set($key => $data);
+}
 
 #######################################################
 #
