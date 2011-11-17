@@ -1607,6 +1607,8 @@ sub _build_remarks {
     # Need to add in evidence handling.
     my @evidence = map {$_->col} @remarks;
 
+    @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
+
     @remarks = map {"$_"} @remarks; # stringify them
 
     # TODO: handling of Evidence nodes
@@ -1911,7 +1913,7 @@ sub _build_xrefs {
         my $url_constructor = $db->URL_constructor;
         my $email           = $db->Email;
         my $remote_text     = $db->right(1);
-
+	$url_constructor =~ s/<Gene&RNAID>$/\%s/ ;
         # Possibly multiple entries for a single DB
         my @ids = map {
             my @types = $_->col;

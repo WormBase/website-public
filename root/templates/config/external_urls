@@ -142,7 +142,12 @@
 		     maintainer  = 'help@wormbook.org'
 		     base        = 'http://www.wormbook.org/'
 		     search      = 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
-	} 
+	}
+
+
+	Phenobank2 = { base        = 'http://worm.mpi-cbg.de/phenobank2/cgi-bin/MenuPage.py'
+			maintainer  = ''
+		    }
    }
 
 -%]
