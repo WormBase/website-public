@@ -3,10 +3,14 @@
 # Movies
 WRAPPER $field_block title="Movies" key="movies";
     FOREACH item IN fields.movies.data;
-       tag2link(item);
+       '<div class="toggle">';
+	'<a href="/movies/' _ item.id _ '">' _ item.label _ '</a>';  
+	'</div>';
+     '<div class="returned"> <embed bgcolor="white" volume="75" loop="true" width="300" height="250" 
+      src="/movies/' _ item.id _ '" controller="true" pluginspace="http://www.apple.com/quicktime/download" /></div>';
     END;
 END;
 
-'(See the embedding code in website/classic/cgi-perl/seq/rnai)';
+#'(See the embedding code in website/classic/cgi-perl/seq/rnai)';
 
 %]
