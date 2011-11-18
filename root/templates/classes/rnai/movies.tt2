@@ -6,11 +6,24 @@ WRAPPER $field_block title="Movies" key="movies";
        '<div class="toggle">';
 	'<a href="/movies/' _ item.id _ '">' _ item.label _ '</a>';  
 	'</div>';
-     '<div class="returned"> <embed bgcolor="white" volume="75" loop="true" width="300" height="250" 
-      src="/movies/' _ item.id _ '" controller="true" pluginspace="http://www.apple.com/quicktime/download" /></div>';
+     '<div class="returned"> 
+	<OBJECT  WIDTH="320"HEIGHT="180"
+	CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
+	<PARAM name="SRC" VALUE="/movies/' _ item.id _ '">
+	<PARAM name="AUTOPLAY" VALUE="true">
+	<PARAM name="CONTROLLER" VALUE="true">
+	<EMBED SRC="/movies/' _ item.id _ ' " WIDTH="300" HEIGHT="250" AUTOPLAY="true" CONTROLLER="true" PLUGINSPAGE="http://www.apple.com/quicktime/download/">
+	</EMBED>
+	</OBJECT>
+
+      </div>';
     END;
 END;
 
-#'(See the embedding code in website/classic/cgi-perl/seq/rnai)';
-
 %]
+
+<div class="todo">
+  
+  TODO: add a download button or note eg. "right click to save movie", movie may not play under linux, use gecko-mediaplayer instead of totem 
+</div>
+ 
