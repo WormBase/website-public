@@ -248,10 +248,9 @@ has 'other_names' => (
 sub _build_other_names {
     my ($self) = @_;
     my $object = $self->object;
-    my @names  = $object->Other_name;
 
     # We will just stringify other names; no sense in linking them.
-    @names = map { "$_" } @names;
+    my @names = map { "$_" } $object->Other_name;
     return {
         description => "other names that have been used to refer to $object",
         data        => @names ? \@names : undef
@@ -480,7 +479,7 @@ sub _build_best_blastp_matches {
         push @hits, {
             taxonomy => $taxonomy,
             hit      => $self->_pack_obj($hit),
-            description => "$description",
+            description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
             percent     => sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
         };
@@ -1607,6 +1606,8 @@ sub _build_remarks {
     # Need to add in evidence handling.
     my @evidence = map {$_->col} @remarks;
 
+    @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
+
     @remarks = map {"$_"} @remarks; # stringify them
 
     # TODO: handling of Evidence nodes
@@ -1911,7 +1912,7 @@ sub _build_xrefs {
         my $url_constructor = $db->URL_constructor;
         my $email           = $db->Email;
         my $remote_text     = $db->right(1);
-
+	$url_constructor =~ s/<Gene&RNAID>$/\%s/ ;
         # Possibly multiple entries for a single DB
         my @ids = map {
             my @types = $_->col;
@@ -1919,13 +1920,13 @@ sub _build_xrefs {
         } $db->col;
 
         $dbs{$db} = {
-            name            => "$name",
-            description     => "$description",
-            url             => "$url",
-            url_constructor => "$url_constructor",
-            email           => "$email",
+            name            => $name            && "$name",
+            description     => $description     && "$description",
+            url             => $url             && "$url",
+            url_constructor => $url_constructor && "$url_constructor",
+            email           => $email           && "$email",
+            label           => $remote_text     && "$remote_text",
             ids             => \@ids,
-            label           => "$remote_text"
         };
     }
 
@@ -1934,7 +1935,7 @@ sub _build_xrefs {
 
     return {
         description => 'external databases and IDs containing additional information on the object',
-        data => %dbs ? \%dbs : undef,
+        data        => %dbs ? \%dbs : undef,
     };
 }
 

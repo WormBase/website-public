@@ -120,7 +120,7 @@ requires 'Catalyst::Controller::Metal';                          #
 requires 'Catalyst::Helper::PSGI';                               #
 requires 'Starman';                                              #
 requires 'URI::Escape::XS';
-requires 'Any::Loger::Adapter::Log4perl';                        # cache logging
+requires 'Log::Any::Adapter::Log4perl';                          # cache logging
 
 install_script glob('script/*.pl');
 auto_install;
