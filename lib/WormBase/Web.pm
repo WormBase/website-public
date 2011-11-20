@@ -112,7 +112,7 @@ __PACKAGE__->config->{authentication} = {
 
 after setup_finalize => sub {
     my $c = shift;
-
+    
     if ($c->config->{cache}{enabled} and $c->config->{cache}{couchdb}{enabled}) {
         # this is a hack to let the namespace be the db version which
         # is not available until after plugins are setup
@@ -241,9 +241,10 @@ sub _setup_static {
         dirs         => [qw/ css js img tmp /],
         include_path => [
             '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
-            __PACKAGE__->config->{root},
+            __PACKAGE__->config->{root},__PACKAGE__->config->{static_movie_base},
         ],
         #   logging  => 1,
+	 
     });
 }
 
@@ -266,7 +267,7 @@ after prepare_path => sub {
 };
 
 sub finalize_error {
-	my $c = shift;
+	my $c = shift; 
 	$c->config->{'response_status'}=$c->response->status;
 	$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'} = ["Catalyst::Plugin::ErrorCatcher::Email", "WormBase::Web::ErrorCatcherEmit"];
  	shift @{$c->config->{'Plugin::ErrorCatcher'}->{'emit_module'}} unless(is_server_error($c->config->{'response_status'})); 

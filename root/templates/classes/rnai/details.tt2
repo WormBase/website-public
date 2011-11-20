@@ -18,12 +18,8 @@ END;
 
 
 # Sequence. Needs better, maybe fasta.
-WRAPPER $field_block title="Sequence" key="sequence";
-    FOREACH item IN fields.sequence.data;
-       item;
-    END;
-END;
-
+sequence;
+ 
 # Assay
 WRAPPER $field_block title="Assay" key="assay";
      fields.assay.data;
