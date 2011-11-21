@@ -405,9 +405,14 @@
     function effects(){
       var content = $jq("#content");
       $jq("body").delegate(".toggle", 'click', function(){
-            $jq(this).toggleClass("active").next().slideToggle("fast", function(){
-            if($jq.colorbox){ $jq.colorbox.resize(); }
-            });
+            var tog = $jq(this);
+            tog.toggleClass("active").next().slideToggle("fast", function(){
+                if($jq.colorbox){ $jq.colorbox.resize(); }
+              });
+            if(tog.hasClass("load-toggle")){
+              ajaxGet(tog.next(), tog.attr("href"));
+              tog.removeClass("load-toggle");
+            }
             return false;
       });
         
@@ -533,7 +538,7 @@
         success:function(data){
           ajaxPanel.html(data);
         },
-        error:function(xhr, ajaxOptions, thrownError){
+        error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
           ajaxPanel.append(error.find(".error-message-technical").html());
@@ -1516,6 +1521,29 @@ var Scrolling = (function(){
       if($jq.colorbox) $jq.colorbox.close();
     }
   }
+  
+  function loadRSS(id, url){
+    var container = $jq("#" + id);
+    setLoading(container);
+    getFeed(function(){
+      $jq.jGFeed(url,
+        function(feeds){
+          // Check for errors
+          if(!feeds){
+            // there was an error
+            return false;
+          }
+          var txt = '<div id="results"><ul>';
+          for(var i=-1, entry; (entry = feeds.entries[++i]);){
+            txt += '<div class="result"><li><div class="date" id="fade">' + entry.publishedDate.substring(0, 16) + '</div>'
+                + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
+                + '<div class="text-min">' + entry.contentSnippet + '</div></div>';
+          }
+          txt += '</ul></div>';
+          container.html(txt);
+        }, 3);
+    });
+  }
 
 
 
@@ -1612,6 +1640,11 @@ var Scrolling = (function(){
       getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
       return;
     }
+    
+    function getFeed(callback){
+      getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
+      return;
+    }
   
   
     function getPlugin(name, url, stylesheet, callback){
@@ -1654,7 +1687,8 @@ var Scrolling = (function(){
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
       historyOn: historyOn,
-      allResults: allResults
+      allResults: allResults,
+      loadRSS: loadRSS
     }
   })();
 
