@@ -771,9 +771,40 @@ END;
 END;
 %]
 
+[% MACRO sequence(number) BLOCK; 
+    WRAPPER $field_block title="Sequence" key='sequence';
+	 sequence_list=[];
+	IF fields.sequence.data.sequence.defined;
+	    sequence_list.push(fields.sequence.data);
+	      
+	ELSE ;
+	    sequence_list = fields.sequence.data;
+	END;
+	FOREACH obj IN sequence_list ;
+	      seq = obj.sequence;  
+	      format_seq = "";
+	      FOREACH line IN seq.chunk(80);
+		  format_seq = format_seq _ line.chunk(10).join(' ');
+		  UNLESS loop.last;
+			format_seq = format_seq _ "\n";
+		  END;  
+	      END;
+	      '<div class="sequence-download">';
+				'<form action="/rest/download/">';
+				'<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >';
+				'<input type="hidden" name="sequence" value="' _ format_seq  _ '" >';
+				'<input type="submit" value="download">';
+			      '</form>';
+	      '</div>';
 
-
-
+	      '<div class="toggle">view sequence (length:' _ obj.length _')</div>';
+	      '<div class="sequence-container">';
+			format_seq.replace('\n','<br/>');
+	      '</div>';
+	 END;
+    END;
+END;
+%]
 
 [%# 
     #######################################################

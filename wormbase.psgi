@@ -42,6 +42,7 @@ my $wormbase = WormBase::Web->psgi_app(@_);
 my $gbrowse;
 my $gbrowse_static = Plack::App::File->new(root => "$app_path/root/gbrowse");
 
+
 $ENV{GBROWSE_CONF} ||= "$app_path/conf/gbrowse";
 my $gbrowse_integration = $ENV{GBROWSE_INTEGRATION}
     || (WormBase::Web->config->{installation_type} eq 'development' ?
@@ -99,7 +100,7 @@ builder {
     # GB
     mount '/tools/genome'   => $gbrowse;
     mount "/gbrowse-static" => Plack::App::File->new(root => "$app_path/root/gbrowse");
-
+#     mount '/movies' => Plack::App::File->new(root => "/usr/local/ftp/pub/wormbase/datasets-published/fraser_2000/movies");
     # The core app.
     mount '/'    => $wormbase;
 };

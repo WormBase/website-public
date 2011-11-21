@@ -22,7 +22,7 @@
 	      # We'll use description info from the website and not the DB.
  	      link = external_link(href,id);
               # Should be a table of resource, ID linked to page description, maintainer.
-             rows.push( { maintainer  = site.external_urls.$db.maintainer,
+             rows.push( { maintainer  = maintainer,
                           name        = '<a href="' _ site.external_urls.$db.base _ '">' _ db _ '</a>',                   
                           link        = external_link(href,id,id),
 #		          description = site.external_urls.$db.description,
