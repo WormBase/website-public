@@ -1,5 +1,4 @@
 [% 
-
 IF fields.gene_models.data;
 
 #   WRAPPER $field_block title=pluralized("Gene model", fields.gene_models.data) key="gene_models";

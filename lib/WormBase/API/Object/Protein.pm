@@ -690,7 +690,7 @@ sub homology_groups {
 	};
     }
     return { description => 'KOG homology groups of the protein',
-	     data        => \@hg };
+	     data        => @hg ? \@hg : undef };
     
 }
 
@@ -815,7 +815,7 @@ sub homology_image {
     my $gd=$panel->gd;
     #show dynamic images
     return { description => 'a dynamically generated image representing homologous regions of the protein',
-	     data        => $gd,
+	     data        => $gd ? $gd : undef,
     };
 =pod print image as file
     my ($suffix,$img,$boxes);
@@ -1564,7 +1564,7 @@ sub _draw_image {
 	      $description   .= " ";
 # 	my $desc= $homol->Description} || $homol->Gene_name || "";
 	      $description   .= $homol->Description || $homol->Gene_name || "";
-	      $description   .=  $homol->Corresponding_CDS->Brief_identification ||""
+	      $description   .=  $homol->Corresponding_CDS ? $homol->Corresponding_CDS->Brief_identification ||"" : ""
 		  if $species =~ /elegans|briggsae/;
 	      my $t = $best_only ? "best hit, " : '';
 	      $feature->desc("$description (${t}e-val=$score)") if $description;

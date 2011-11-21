@@ -547,9 +547,9 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-
+   IF c.stash.fields.best_blastp_matches.data;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
-
+    
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
                               columns={ taxonomy => 'Species',
                                 hit      => 'Hit',
@@ -559,17 +559,16 @@ END;
                                  },
                          key='best_blastp_matches');
     END;
-
+  END;
    
+
+
         WRAPPER $field_block title="";
            '<div id="blast_details">';
-             '<a class="update blast_details"';
-              ' href="' _ c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '">';
-               '[View full BLASTP List]</a>';
+'<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
+'<div class="returned field"></div>';
          '</div>';
        END;
-
-
 END;
 %]
 
