@@ -581,8 +581,8 @@
         
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
-          (isBox.hasClass("minimize")) ? isBox.animate({width:"12em"}) : isBox.animate({width:"1.5em"});
           isBox.toggleClass("minimize").children().toggle();
+          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "12em"})
         });
     }
     
