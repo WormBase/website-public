@@ -171,9 +171,10 @@ sub _get_obj {
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
-  if(my $s = $c->config->{sections}{species_list}{$species}){
-    $ret{taxonomy}{genus} = $s->{genus};
-    $ret{taxonomy}{species} = $s->{species};
+  if($species =~ m/^(.)_(.*)$/){
+    my $s = $c->config->{sections}{species_list}{$species};
+    $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
+    $ret{taxonomy}{species} = $s->{species} || $2;
   }
   $ret{ptype} = $doc->get_value(7);
   %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};

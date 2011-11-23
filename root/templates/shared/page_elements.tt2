@@ -558,17 +558,18 @@ END;
                         percent  => '% Length' 
                                  },
                          key='best_blastp_matches');
-    END;
-  END;
-   
-
-
         WRAPPER $field_block title="";
            '<div id="blast_details">';
 '<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
 '<div class="returned field"></div>';
          '</div>';
        END;
+    END;
+  END;
+   
+
+
+
 END;
 %]
 
