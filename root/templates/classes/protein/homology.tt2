@@ -25,7 +25,7 @@
      END;
 
 %]
-[% WRAPPER $field_block title="Motif Summary" %]
+[% WRAPPER $field_block title="Motif Summary" key="pfam_graph"%]
   <iframe src ="[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]" width="536" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
   <p>Your browser does not support iframes.</p>
   </iframe> 
