@@ -213,7 +213,7 @@
                 if (optionError) {
                   optionError.call(link, xhr, textStatus, $cluetip, $cluetipInner);
                 } else {
-                  $cluetipInner.html('<i>sorry, the contents could not be loaded</i>');  
+                  $cluetipInner.html('<i>Sorry, the contents could not be loaded; please try again later</i>');  
                 }
               }
             },
