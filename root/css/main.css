@@ -1657,6 +1657,10 @@ div.columns ul div input#layout-input {
   height:3.5em;
 }
 
+#page-title.search-bg {
+  height:auto;
+}
+
 #page-title h2 {
   font-size:24px;
   color:#222;
@@ -1696,7 +1700,7 @@ li div.widget-container {
   font-size:0.9em;
 }
 
-.widget-header, .species-bg, .species_list-bg  {
+.widget-header, .species-bg, .search-bg, .species_list-bg  {
     background-color: #C2D1DF;
 }
 
@@ -2457,8 +2461,8 @@ table.venn tr.venn-data td {
   position:absolute;  
   height:1.5em; 
   right:0;   
-  top:5em;
-  padding:1em 0.5em 0.5em; 
+  top:6.5em;
+  padding:0.5em 0.3em 0.3em 0.5em; 
   background: #D6C2C2;
   border:1px solid #CDCDCD;
   cursor:pointer;
@@ -2470,6 +2474,7 @@ table.venn tr.venn-data td {
   background: #9C4041;
   z-index:99;
   border:none;
+  width:1em;
 }
 
 #operator-box.minimize{
@@ -2490,8 +2495,8 @@ table.venn tr.venn-data td {
 }
 
 #issue-box.minimize:hover{
-  background: #6D2C2D;
-  width:1.5em;
+  background: #B81417; 
+  width:1.5em !important;
 }
 
 #operator-box.minimize>div{

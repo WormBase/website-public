@@ -1,6 +1,7 @@
       <div id="news-box"></div>
-<script>
-  WB.setLoading($jq("#news-box"));
-</script>
-  <script language="javascript" src="http://dev.wormbase.org/db/misc/inline_feed_jquery?src=http%3A%2F%2Fblog.wormbase.org%2Fcategories%2Fnews%2Ffeed%2F;load_box=news-box" type="text/javascript"></script>
+
 <br />      <a href="http://blog.wormbase.org/">View More ›</a>
+
+<script>
+  WB.loadRSS("news-box", 'http://blog.wormbase.org/categories/news/feed/?callback=?');
+</script>

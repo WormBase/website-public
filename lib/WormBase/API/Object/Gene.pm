@@ -1933,12 +1933,12 @@ sub history {
             }
 
             push @data, {
-                history => "$history",
-                version => "$version",
-                type    => "$type",
-                date    => "$date",
-                action  => "$action",
-                remark  => "$remark",
+                history => $history && "$history",
+                version => $version && "$version",
+                type    => $type && "$type",
+                date    => $date && "$date",
+                action  => $action && "$action",
+                remark  => $remark && "$remark",
                 gene    => $self->_pack_obj($gene),
                 curator => $self->_pack_obj($curator),
             };
@@ -3441,17 +3441,19 @@ sub gene_models {
         # We will create unique list of footnotes in the view.
         $data{remarks} = @notes ? \@notes : undef;
 
-        if ( $confirm eq 'Confirmed' ) {
-            $data{status} = "confirmed by cDNA(s)";
-        }
-        elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
-            $data{status} = "partially confirmed by cDNA(s)";
-        }
-        elsif ( $confirm eq 'Partially_confirmed' ) {
-            $data{status} = "partially confirmed";
-        }
-        elsif ( $cds && $cds->Method eq 'history' ) {
-            $data{status} = 'historical';
+        if ($confirm) {
+            if ( $confirm eq 'Confirmed' ) {
+                $data{status} = "confirmed by cDNA(s)";
+            }
+            elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
+                $data{status} = "partially confirmed by cDNA(s)";
+            }
+            elsif ( $confirm eq 'Partially_confirmed' ) {
+                $data{status} = "partially confirmed";
+            }
+            elsif ( $cds && $cds->Method eq 'history' ) {
+                $data{status} = 'historical';
+            }
         }
         else {
             $data{status} = "predicted";
