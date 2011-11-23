@@ -127,26 +127,26 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{is_class_index} = 0;  
     $c->stash->{template} = 'species/report.tt2';
 
-    unless ($c->config->{sections}->{species}->{$class}) { 
-	# class doesn't exist in this section
-        $c->detach;
-    }
+    $c->detach unless $self->_is_class($c, $class);
 
     $c->stash->{species}    = $species;
     $c->stash->{query_name} = $name;
     $c->stash->{class}      = $class;
 
-    # get static widgets for this page
-    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
-
-    my @widgets = $page->static_widgets if $page;
-    $c->stash->{static_widgets} = \@widgets if (@widgets);
     my $object = $c->model('WormBaseAPI')->fetch({
         class  => ucfirst($class),
         name   => $name,
     }); # error handling?
 
     $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+
+
+    if($object){
+      $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
+      if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
+        $c->res->redirect("/species/$taxonomy/$class/$name", 307);
+      }
+    }
 
     if ($c->req->param('left') || $c->req->param('right')) {
         $c->log->debug("print the page as pdf");
@@ -157,7 +157,11 @@ sub object_report :Path("/species") Args(3) {
         };
     }
 
-    $c->stash->{object}->{name} = $object->name if $object; # a hack to avoid storing Ace objects...
+    # get static widgets for this page
+    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
+    my @widgets = $page->static_widgets if $page;
+    $c->stash->{static_widgets} = \@widgets if (@widgets);
+
 }
 
 
