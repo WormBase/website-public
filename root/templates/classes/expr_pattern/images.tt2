@@ -1,6 +1,6 @@
 <script type="text/javascript">
 WB.getColorbox(function(){
-$jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.4"});
+$jq(".picturebox").colorbox({width:"80%", height:"80%", opacity:"0.4"});
 });
 </script>
 
