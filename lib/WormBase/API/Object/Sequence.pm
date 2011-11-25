@@ -382,8 +382,7 @@ B<Response example>
 
 sub corresponding_gene {
     my $self   = shift;
-    my $object = $self->object;
-    my @genes = map { $self->_pack_obj($_) } $object->Gene;
+    my @genes = map { $self->_pack_obj($_) } $self ~~ 'Gene';
     
     return { description => 'corresponding gene of the sequence, if known',
 	     data        => @genes? \@genes : undef };
@@ -442,8 +441,7 @@ B<Response example>
 
 sub matching_transcript {
     my $self = shift;
-    my $object = $self->object;
-    my @transcripts = map { $self->_pack_obj($_) } $object->Matching_transcript // undef;
+    my @transcripts = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_transcript'} ;
     return { description => 'matching transcripts of the sequence',
 	     data        =>  @transcripts ? \@transcripts : undef };
 }
@@ -501,8 +499,7 @@ B<Response example>
 
 sub matching_cds {
     my $self   = shift;
-    my $object = $self->object;
-    my @cds = eval{ map { $self->_pack_obj($_) } $object->Matching_CDS };
+    my @cds = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_CDS'} ;
     return { description => 'matching CDSs of the sequence',
 	     data        => @cds ? \@cds : undef };
 }
@@ -1000,9 +997,10 @@ sub orfeome_assays {
     my ($self) = @_;
     my (@orfeome,@pcr);
     if ($self->type =~ /gene|coding sequence|cDNA/) {
+		 
 		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS',
 													 'structural:PCR_product') }
-		           @{$self->_segments} if @{$self->_segments};
+		           @{$self->_segments} if( ref $self->_segments eq 'ARRAY' && @{$self->_segments});
 		@orfeome = grep {/^mv_/} @pcr;
     }
 
@@ -1144,7 +1142,8 @@ B<Response example>
 
 sub source_clone {
     my ($self) = @_;
-    my $clone = $self ~~ 'Clone' || $self->sequence ? $self->sequence->Clone : undef;
+     
+    my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
     return { description => 'The Source clone of the sequence',
 	     data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
 }
