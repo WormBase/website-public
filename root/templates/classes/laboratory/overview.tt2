@@ -13,7 +13,7 @@ WRAPPER highlight_box;
    END;
 
 END;
-
+'<div class="text-width" style="clear:left">';
 WRAPPER $field_block title="Lab Website";
     '<a href="http://' _ fields.website.data _ '">' _ fields.website.data _ '</a><br>';
 END;
@@ -29,7 +29,7 @@ END;
 WRAPPER $field_block title="Allele designation" key="allele_designation";
     fields.allele_designation.data;
 END;
-
+'</div>';
 %]
  
    
