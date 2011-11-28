@@ -117,22 +117,15 @@ BEGIN {
         while (my ($wb, $ace) = each %{$WB2ACE_MAP{class}}) {
 			my $fullwb = join('::', OBJ_BASE, $wb);
             my $canonical_ace_class;
-            if (ref $ace eq 'ARRAY') { # multiple Ace to single WB
-                foreach my $ace_class (@$ace) {
+          
+            foreach my $ace_class (ref $ace eq 'ARRAY' ? @$ace:($ace)) {
                     $canonical_ace_class = _canonize_ace($ace_class);
                     $classmap->{$ace_class}		          ||= $wb;
                     $classmap->{$canonical_ace_class}     ||= $wb;
 					$fullclassmap->{$ace_class}           ||= $fullwb;
                     $fullclassmap->{$canonical_ace_class} ||= $fullwb;
                 }
-            }
-            else {              # assume scalar; 1-to-1
-                $canonical_ace_class = _canonize_ace($ace);
-                $classmap->{$ace}                     ||= $wb;
-                $classmap->{$canonical_ace_class}     ||= $wb;
-				$fullclassmap->{$ace}                 ||= $fullwb;
-                $fullclassmap->{$canonical_ace_class} ||= $fullwb;
-            }
+           
         }
 
         $ACE2WB_MAP_DONE = 1;
