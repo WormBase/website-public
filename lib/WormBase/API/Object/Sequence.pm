@@ -679,7 +679,7 @@ sub transcripts {
     if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
 	$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 	@transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
-	map { $_->features('protein_coding_primary_transcript:Coding_transcript') }
+	map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
 	@{$self->_segments};
     }
     
@@ -703,14 +703,7 @@ sub transcripts {
 # Supplied by Role; POD will automatically be inserted here.
 # << include genomic_position >>
 
-sub _build_genomic_position {
-    my ($self) = @_;
-    my @positions = $self->_genomic_position($self->_segments);
-    return {
-        description => 'The genomic location of the sequence',
-        data        => @positions ? \@positions : undef,
-    };
-}
+ 
 
 # sub tracks {}
 # Supplied by Role; POD will automatically be inserted here.
@@ -998,9 +991,8 @@ sub orfeome_assays {
     my (@orfeome,@pcr);
     if ($self->type =~ /gene|coding sequence|cDNA/) {
 		 
-		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS',
-													 'structural:PCR_product') }
-		           @{$self->_segments} if( ref $self->_segments eq 'ARRAY' && @{$self->_segments});
+		@pcr     = map {$_->info} map { eval {$_->features('PCR_product:GenePair_STS', 'structural:PCR_product')} }
+		           @{$self->_segments}  ;
 		@orfeome = grep {/^mv_/} @pcr;
     }
 
@@ -1078,7 +1070,7 @@ sub microarray_assays {
 		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 
 		@microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
-		               map { $_->features('reagent:Oligo_set') } @{$self->_segments};
+		               map { eval{ $_->features('reagent:Oligo_set')} } @{$self->_segments};
 	}
 
     return {
@@ -1688,7 +1680,7 @@ sub _build__segments {
 			my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
 			if ($seg_start && $seg_stop) {
 				my $union = $seg_start->union($seg_stop);
-				return $union if $union;
+				return [$union] if $union;
 			}
 		}
 	}
