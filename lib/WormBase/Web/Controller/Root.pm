@@ -99,10 +99,7 @@ sub draw :Path("/draw") Args(1) {
     if ($params->{class} && $params->{id}) {
         my @keys = ('image', $params->{class}, $params->{id});
         my $key = join('-',@keys);
-        ($cached_img,$cache_source) = $c->check_cache({
-            cache_name => 'couchdb',
-            key        => $key,
-        });
+        ($cached_img,$cache_source) = $c->check_cache($key, 'filecache');
 
         unless($cached_img) {  # not cached -- make new image and cache
             # the following line is a security risk
@@ -113,11 +110,7 @@ sub draw :Path("/draw") Args(1) {
             $c->log->debug("Attempt to draw image: $source");
 
             $cached_img = GD::Image->new($source);
-            $c->set_cache({
-                cache_name => 'couchdb',
-                key        => $key,
-                data       => $cached_img
-            });
+            $c->set_cache($key => $cached_img, 'filecache');
         }
     }
     else {
