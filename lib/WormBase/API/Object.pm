@@ -943,7 +943,7 @@ sub _covered {
   }
   my $total = 0;
   foreach my $merged (@merged) {
-    $total += $merged->[1]-$merged->[0];
+    $total += $merged->[1]-$merged->[0]+1;
   }
   $total;
 }
