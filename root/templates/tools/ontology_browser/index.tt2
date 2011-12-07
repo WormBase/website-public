@@ -17,7 +17,7 @@
 </tr><tr><th>Phenotype</th><td>provides a simple mechanism to search the phenotype ontology</td>
 <td> 
 phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=embryonic lethal late emb;class=phenotype">embryonic lethal late emb</a>
-<br />phenotype ID<a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
+<br />phenotype ID <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
 </td>
 </tr>
 </table>
