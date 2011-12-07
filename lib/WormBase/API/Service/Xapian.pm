@@ -25,7 +25,6 @@ has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has '_doccount' => (
     is          => 'ro',
     isa         => 'Int',
-    lazy        => 1,
     default     => sub {
       my $self = shift;
       return $self->db->get_doccount;
