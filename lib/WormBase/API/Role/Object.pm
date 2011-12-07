@@ -50,6 +50,9 @@ has 'pre_compile' => (
     is => 'ro',
 );
 
+has 'search' => (
+    is => 'ro',
+);
 
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
