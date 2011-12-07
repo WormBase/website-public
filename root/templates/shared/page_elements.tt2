@@ -302,10 +302,9 @@ END;
 %]
      
 [% MACRO jquery_data_table_html(table_headers,rows,table_name,style) BLOCK %]
-
   [% IF rows && rows.size > 0;  
        # Set up some suitable defaults
-       IF rows.size < 11;
+       IF rows.size < 11 || (rows.size < 51 && table_headers.size < 3);
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
@@ -558,12 +557,10 @@ END;
                         percent  => '% Length' 
                                  },
                          key='best_blastp_matches');
-        WRAPPER $field_block title="";
            '<div id="blast_details">';
 '<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
-'<div class="returned field"></div>';
+'<div class="returned field" style="width:100%"></div>';
          '</div>';
-       END;
     END;
   END;
    
@@ -773,36 +770,38 @@ END;
 %]
 
 [% MACRO sequence(number) BLOCK; 
-    WRAPPER $field_block title="Sequence" key='sequence';
-	 sequence_list=[];
-	IF fields.sequence.data.sequence.defined;
-	    sequence_list.push(fields.sequence.data);
-	      
-	ELSE ;
-	    sequence_list = fields.sequence.data;
-	END;
-	FOREACH obj IN sequence_list ;
-	      seq = obj.sequence;  
-	      format_seq = "";
-	      FOREACH line IN seq.chunk(80);
-		  format_seq = format_seq _ line.chunk(10).join(' ');
-		  UNLESS loop.last;
-			format_seq = format_seq _ "\n";
-		  END;  
-	      END;
-	      '<div class="sequence-download">';
-				'<form action="/rest/download/">';
-				'<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >';
-				'<input type="hidden" name="sequence" value="' _ format_seq  _ '" >';
-				'<input type="submit" value="download">';
-			      '</form>';
-	      '</div>';
 
-	      '<div class="toggle">view sequence (length:' _ obj.length _')</div>';
-	      '<div class="sequence-container">';
-			format_seq.replace('\n','<br/>');
-	      '</div>';
-	 END;
+    sequence_list = fields.sequence.data.sequence.defined ? [fields.sequence.data] : fields.sequence.data;
+    to_print;
+
+    FOREACH obj IN sequence_list ;
+      seq = obj.sequence;  
+      NEXT IF seq.length == 0;
+      format_seq = "";
+      FOREACH line IN seq.chunk(80);
+        format_seq = format_seq _ line.chunk(10).join(' ');
+        UNLESS loop.last;
+          format_seq = format_seq _ "\n";
+        END;  
+      END;
+
+      to_print = to_print _ '<div class="sequence-download">'
+                                _ '<form action="/rest/download/">'
+                                _ '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >'
+                                _ '<input type="hidden" name="sequence" value="' _ format_seq  _ '" >'
+                                _ '<input type="submit" value="download">'
+                                _ '</form>'
+                          _ '</div>'
+
+      _ '<div class="toggle">view sequence (' _ obj.length _' ' _ (object.name.data.class.match('Protein') ? 'nt' : 'bp') _ ')</div>'
+      _ '<div class="sequence-container">'
+        _ format_seq.replace('\n','<br/>')
+      _ '</div>';
+    END;
+    IF to_print.length > 0;
+      WRAPPER $field_block title="Sequence" key='sequence';
+        to_print;
+      END;
     END;
 END;
 %]
