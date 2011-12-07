@@ -473,7 +473,7 @@ div#tutorial-left{
   background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
   background-position: -235px 0;
-  width:700px;
+  width:695px;
   height:10em;
   position:absolute;
   left:1em;
@@ -697,7 +697,7 @@ div.more .ui-icon {
 #searchBody {
   border-right:1px dotted gray;
   float:right;
-  margin: 0.3em;
+  margin: 0.4em;
   position:relative;
   background:white;
 }
@@ -2550,6 +2550,11 @@ div.inline-columns img {
 
 .button.slink{
   margin:0 0.5em 0 0;
+  height:1em;
+}
+
+.button.slink .ui-icon{
+  margin:0;
 }
 
 div.title {
