@@ -1,4 +1,4 @@
-[% UNLESS noboiler %]<h1>Nucleotide Aligner for [% sequence %]</h1>[% END %]
+[% UNLESS noboiler %]<h1>Nucleotide Aligner for [% c.stash.sequence %]</h1>[% END %]
 
 [% msg %]
 
@@ -7,7 +7,7 @@
   <form method="post" action="[% c.uri_for('/tools','nucleotide_aligner','run') %]" name="f">
 
   <p><b>Modify parameters for display: &nbsp</b> 
-  <br> Gene <input type="text" name="sequence" value="[% sequence %]" size="[% size %]"> from 
+  <br> Gene <input type="text" name="sequence" value="[% c.stash.sequence %]" size="[% size %]"> from 
   <input type="text" name="start" value="[% start %]" size="5"> to 
   <input type="text" name="end" value="[% end %]" size="5"> 
   <br> 
