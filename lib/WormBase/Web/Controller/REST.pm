@@ -1369,11 +1369,14 @@ sub field_GET {
     # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
     my $uri = $c->uri_for( "/species", $class, $name );
 
-    $c->stash->{template} = $self->_select_template( 'field', $class, $field );
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
+       $c->stash->{template} = $self->_select_template( 'field', $class, $field );
       $c->stash->{$field} = $data;
       $c->forward('WormBase::Web::View::TT');
+    }elsif($content_type =~ m/image/i) {
+      my $gd = $data->{data};
+      $c->res->body($gd->png);
     }
     $self->status_ok(
         $c,
