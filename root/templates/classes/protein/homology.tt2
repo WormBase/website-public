@@ -30,12 +30,11 @@
   <p>Your browser does not support iframes.</p>
   </iframe> 
 
-        [% WRAPPER $field_block title="" %]
+
            <div id="motif_details">
 <div class="toggle load-toggle" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]" id="blast_details_toggle" >View full Motif Details</div> 
 <div class="returned field"></div>
          </div>
-      [% END %] 
 [% END %]
 
 

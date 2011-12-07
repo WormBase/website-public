@@ -154,7 +154,7 @@ sub corresponding_gene {
 
     # From a list of CDSs for the protein, get the corresponding gene(s)
     my @genes = grep{ $_->Method ne 'history'}  @{$self->cds};
-    @genes = map { $self->_pack_obj($_) } @genes;
+    @genes = map { $self->_pack_obj($_->Gene) } @genes;
     return { description => 'The corressponding gene of the protein',
 	     data        => @genes ? \@genes : undef }; 
 }
@@ -268,7 +268,6 @@ B<Response example>
 
 sub corresponding_cds {
     my $self = shift;
-    my %seen;
     my @cds = grep{$_->Method ne 'history'} @{$self->cds};
     @cds = map { $self->_pack_obj($_) } @cds;
     return  { description => 'the corresponding CDSs of the protein',
@@ -596,25 +595,23 @@ B<Response example>
 sub amino_acid_composition {
     my $self = shift;
     return unless ($self->peptide);
-    my $selenocysteine_count = 
-	(my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
-
-    my $seq     = Bio::PrimarySeq->new($hack_seq);
+    my $seq     = Bio::PrimarySeq->new($self->peptide);
     my $stats   = Bio::Tools::SeqStats->new($seq);
     
     my %abbrev = (A=>'Ala',R=>'Arg',N=>'Asn',D=>'Asp',C=>'Cys',E=>'Glu',
 		  Q=>'Gln',G=>'Gly',H=>'His',I=>'Ile',L=>'Leu',K=>'Lys',
-		  M=>'Met',F=>'Phe',P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
-		  Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa');
+		  M=>'Met',F=>'Phe',O=>'Pyl*', P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
+		  Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa**');
     # Amino acid content
     my $composition = $stats->count_monomers;
-    if ($selenocysteine_count > 0) {
-	$composition->{C} -= $selenocysteine_count;
-	$composition->{U} += $selenocysteine_count;
-    }
-    my %aminos = map {$abbrev{$_}=>$composition->{$_}} keys %$composition;
+
+    delete $composition->{O} unless $composition->{O};
+    delete $composition->{U} unless $composition->{U};
+    my @aminos;
+    map { push @aminos, { aa=>$abbrev{$_}, comp=>$composition->{$_} }} keys %$composition;
+
     return { description => 'The amino acid composition of the protein',
-	     data        =>  \%aminos ,
+	     data        =>  \@aminos ,
     }; 
 }
 
