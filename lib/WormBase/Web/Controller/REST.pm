@@ -1100,7 +1100,7 @@ sub widget_me_GET {
 sub _get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
-      my $sid = $c->get_session_id;
+      my $sid = $c->sessionid;
       return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
     }else{
       return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
