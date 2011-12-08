@@ -72,8 +72,8 @@ sub search :Path('/search') Args {
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];
         my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
-        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
-        $c->res->redirect($url, 307);
+        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?from=search&query=$query";}
+        $c->res->redirect($url, 307);  #should this be inside unless? -xq
         return;
       }
     }

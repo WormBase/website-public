@@ -175,8 +175,8 @@ $DOI             = 'http://dx.doi.org/';
            = { description  = 'The WormBase Genome Browser Image'
 			      maintainer   = ''
 
-base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
-search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
+base = '/tools/genome/gbrowse_img/'
+search = '/tools/genome/gbrowse_img/%s'
 	#		      base         = '/gb2/gbrowse_img/'
 	#		      search      = '/gb2/gbrowse_img/%s'   
 			    }

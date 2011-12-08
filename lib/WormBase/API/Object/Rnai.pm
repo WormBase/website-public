@@ -111,7 +111,7 @@ sub historical_name {
     my $self = shift;
     my $object = $self->object;
     my $name   = $object->History_name;
-    return { description => 'historical name of he rnai',
+    return { description => 'historical name of the rnai',
 	     data        => "$name" || undef };
 }
 
@@ -388,7 +388,7 @@ sub sequence {
     my $object      = $self->object;
     my @tag_objects = $object->Sequence_info->right;
     my @data   = map { {sequence=>"$_",
-			length=>length($_)
+			length=>length($_),
 		      } 
 		} @tag_objects;
     return { data        => @data ? \@data : undef,

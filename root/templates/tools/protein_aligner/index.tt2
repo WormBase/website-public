@@ -6,6 +6,6 @@
 <form method="POST" action="[% c.uri_for('/tools','protein_aligner','run') %]">
 
 Symbol: 
-<input type="text" name="sequence" value="[% sequence %]" /> (e.g. <cite>WP:CE25115 or BP:CBP00571</cite>)
+<input type="text" name="sequence" value="[% c.stash.sequence %]" /> (e.g. <cite>WP:CE25115 or BP:CBP00571</cite>)
 <input type="submit" value ="Run" />
 </form>

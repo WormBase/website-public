@@ -25,7 +25,7 @@ END
 
 <h1>[% fields.name.data.label %]</h1>
 
-<div id="picture-left-column" style="float:left;width:35%;max-width:35%;overflow:hidden;">
+<div id="picture-left-column" style="float:left;max-width:35%;overflow:hidden;">
     <a href="[% img_loc %]" target="_blank"><img src="[% img_src %]" style="max-width:100%"></a><br>
     [% cite_image(fields.external_source.data, fields.reference.data) %]<br>
 
@@ -51,7 +51,7 @@ END
 
 </div>
 
-<div id="picture-right-column" style="margin-left:40%;">
+<div id="picture-right-column" style="float:left;max-width:60%;margin-left:1em;padding-right:1em;text-align:justify">
 <p>
 [% IF fields.description.data %]
    [% fields.description.data %]
@@ -94,7 +94,7 @@ $jq('a:not([target])').click(function () {
    return false;
 });
 $jq('a:[target="lightbox"]').click(function () {
-   location=this.href;
+   $jq.colorbox({href:this.href,width:"80%", height:"80%", opacity:"0.4"});
    return false;
 });
 </script>
