@@ -1958,8 +1958,9 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
 
 .tooltip {
-	 padding: 0 0 0 20px;
-	background: url(/img/ui_widgets/Magnifying-Glass-icon.png) no-repeat ;
+	margin-left: 7px;
+	padding:0 0 0 20px;
+	background:url(/img/ui_widgets/evidence-icon.jpeg) no-repeat;
 }
 
 

@@ -421,7 +421,8 @@ sub sequence {
     my $peptide = $self->peptide;
     return { description => 'the peptide sequence of the protein',
 	     data        => { sequence => $peptide,
-			      length   => length $peptide,			      
+			      length   => length $peptide,	
+			      type => 'aa',  
 	     },
     };
 }

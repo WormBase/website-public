@@ -181,16 +181,18 @@ B<Response example>
 sub _build_genetic_position {
     my ($self) = @_;
     my $object = $self->object;
-    my $class  = $object->class;
+    my $class  = $self->_api->modelmap->ACE2WB_MAP->{class}->{$object->class};
     my ($chromosome,$position,$error,$method);
-
+ 
     # CDSs and Sequence are only interpolated
     # AD: no... only Sequence... (that's what the models suggests)
     #  if ($class eq 'CDS' || $class eq 'Sequence') {
     if ($class eq 'Sequence' || $class eq 'Variation') {
-        if (eval {$object->Interpolated_map_position}) { # eval added here... should always have Interpolated_map_position?
+        my $imp = eval {$object->Interpolated_map_position};
+        if ($imp) { 
             ($chromosome,$position,$error) = $object->Interpolated_map_position(1)->row;
             $method = 'interpolated';
+	     
         }
         else {
             # Try fetching from the gene
@@ -199,6 +201,7 @@ sub _build_genetic_position {
                 $position   = $gene->get(Map=>3);
                 $method = 'interpolated';
             }
+	    
         }
     }
     else {

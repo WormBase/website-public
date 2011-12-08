@@ -50,6 +50,9 @@ has 'pre_compile' => (
     is => 'ro',
 );
 
+has 'search' => (
+    is => 'ro',
+);
 
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
@@ -929,8 +932,8 @@ sub _build_laboratory {
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
     if (my $lab = eval {$object->$tag}) {
-        $data->{laboratory} = $self->_pack_obj($lab);
-
+        $data->{laboratory} = $self->_pack_obj($lab,$lab->Mail);
+	 
         my $representative = $lab->Representative;
         my $name           = $representative->Standard_name;
         my $rep            = $self->_pack_obj($representative, $name);

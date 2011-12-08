@@ -382,8 +382,7 @@ B<Response example>
 
 sub corresponding_gene {
     my $self   = shift;
-    my $object = $self->object;
-    my @genes = map { $self->_pack_obj($_) } $object->Gene;
+    my @genes = map { $self->_pack_obj($_) } $self ~~ 'Gene';
     
     return { description => 'corresponding gene of the sequence, if known',
 	     data        => @genes? \@genes : undef };
@@ -442,8 +441,7 @@ B<Response example>
 
 sub matching_transcript {
     my $self = shift;
-    my $object = $self->object;
-    my @transcripts = map { $self->_pack_obj($_) } $object->Matching_transcript // undef;
+    my @transcripts = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_transcript'} ;
     return { description => 'matching transcripts of the sequence',
 	     data        =>  @transcripts ? \@transcripts : undef };
 }
@@ -501,8 +499,7 @@ B<Response example>
 
 sub matching_cds {
     my $self   = shift;
-    my $object = $self->object;
-    my @cds = eval{ map { $self->_pack_obj($_) } $object->Matching_CDS };
+    my @cds = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_CDS'} ;
     return { description => 'matching CDSs of the sequence',
 	     data        => @cds ? \@cds : undef };
 }
@@ -682,7 +679,7 @@ sub transcripts {
     if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
 	$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 	@transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
-	map { $_->features('Transcript:Coding_transcript') }
+	map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
 	@{$self->_segments};
     }
     
@@ -706,14 +703,7 @@ sub transcripts {
 # Supplied by Role; POD will automatically be inserted here.
 # << include genomic_position >>
 
-sub _build_genomic_position {
-    my ($self) = @_;
-    my @positions = $self->_genomic_position($self->_segments);
-    return {
-        description => 'The genomic location of the sequence',
-        data        => @positions ? \@positions : undef,
-    };
-}
+ 
 
 # sub tracks {}
 # Supplied by Role; POD will automatically be inserted here.
@@ -1000,9 +990,9 @@ sub orfeome_assays {
     my ($self) = @_;
     my (@orfeome,@pcr);
     if ($self->type =~ /gene|coding sequence|cDNA/) {
-		@pcr     = map {$_->info} map { $_->features('PCR_product:GenePair_STS',
-													 'structural:PCR_product') }
-		           @{$self->_segments} if @{$self->_segments};
+		 
+		@pcr     = map {$_->info} map { eval {$_->features('PCR_product:GenePair_STS', 'structural:PCR_product')} }
+		           @{$self->_segments}  ;
 		@orfeome = grep {/^mv_/} @pcr;
     }
 
@@ -1080,7 +1070,7 @@ sub microarray_assays {
 		$self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 
 		@microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
-		               map { $_->features('reagent:Oligo_set') } @{$self->_segments};
+		               map { eval{ $_->features('reagent:Oligo_set')} } @{$self->_segments};
 	}
 
     return {
@@ -1144,7 +1134,8 @@ B<Response example>
 
 sub source_clone {
     my ($self) = @_;
-    my $clone = $self ~~ 'Clone' || $self->sequence ? $self->sequence->Clone : undef;
+     
+    my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
     return { description => 'The Source clone of the sequence',
 	     data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
 }
@@ -1278,7 +1269,7 @@ B<Response example>
 sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
-    my %hash;
+    my @data;
     my $gff = $self->gff || return;
     my $seq_obj;
     if ($self->_parsed_species =~ /briggsae/) {
@@ -1289,18 +1280,19 @@ sub print_sequence {
     }
 	else {
 		($seq_obj) = sort {$b->length<=>$a->length}
-		# 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
-		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
+			grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
+# 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
+
 		# BLECH!  If provided with a gene ID and alt splices are present just guess
 		# and fetch the first CDS or Transcript
 		# We really should display a list for all of these.
 
 		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		# 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
-		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
+		  	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
+# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
 		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-		# 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
-		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
+		 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
+# 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
     }
 
     ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
@@ -1308,27 +1300,32 @@ sub print_sequence {
     if (!$seq_obj || length($seq_obj->dna) < 2) { # miserable broken workaround
 		# try to use acedb
 		if (my $fasta = $s->asDNA) {
-			$hash{dna} = { 	header=>"FASTA Sequence",
-							content=>"$fasta\n"
+			push @data,{ 	header=>"FASTA Sequence",
+					sequence=>"$fasta",
+					length=>length($fasta),
 						   };	##$fasta;
 
 			$self->length(length $fasta);
 		}
 		else {
-			$hash{dna} =  "<p>Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3</p>";
+			push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
 		}
 		goto END;
     }
 
+#print est alignments, maybe put into view directly
 	#     print_genomic_position($s,$type);
-
-    $hash{est} = "name=$s;class=CDS";
+#     $hash{est} = "name=$s;class=CDS";
 
 
     if (eval { $s->Properties eq 'cDNA'} ) {
 		# try to use acedb
 		if (my $fasta = $s->asDNA) {
-			$hash{dna}  = $fasta;
+			push @data, { 	
+				header => "FASTA Sequence",
+				sequence => "$fasta",
+				length => length($fasta),
+			   };
 		}
 		goto END;
     }
@@ -1364,19 +1361,26 @@ sub print_sequence {
 			:
 		    $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
 		}
-		$hash{unspliced} = _print_unspliced($markup,$seq_obj,$unspliced,@features);
-		$hash{spliced} = _print_spliced($markup,@features);
-		$hash{protein} = _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
+		my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
+		 
+		push @data, $test;
+		push @data, _print_spliced($markup,@features);
+		push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
     }
 	else {
 		# Otherwise we've got genomic DNA here
-		$hash{dna} =  _to_fasta($s,$unspliced);
+# 		$hash{dna} =  _to_fasta($s,$unspliced);
+		push @data, { 	
+			header => "Genomic Sequence",
+	     		sequence => "$unspliced",
+			length => $length,
+			   };
     }
     $self->length($length);
 
   END:
     return { description => 'the sequence of the sequence',
-	     data        => %hash ? \%hash : undef };
+	     data        => \@data };
 }
 
 =head3 print_homologies
@@ -1676,7 +1680,7 @@ sub _build__segments {
 			my ($seg_stop)  = $self->gff->segment(Sequence => "$base.5");
 			if ($seg_start && $seg_stop) {
 				my $union = $seg_start->union($seg_stop);
-				return $union if $union;
+				return [$union] if $union;
 			}
 		}
 	}
@@ -1706,14 +1710,17 @@ sub _print_unspliced {
 			push @markup,[$style,$start,$start+$length];
 			push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
 		}
-		push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
-		push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
-		my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
+ 		push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
+ 		push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
+# 		my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
 		$markup->markup(\$unspliced,\@markup);
 		return {
 			#download => $download,
-			header=>"unspliced + UTR - $length bp",
-			content=>">$name (unspliced + UTR - $length bp)\n".$unspliced,
+			header=>"unspliced + UTR",
+			sequence=>$unspliced,
+			length => $length,
+			style=> 1,
+			
 		};
 	}
 }
@@ -1737,38 +1744,42 @@ sub _print_spliced {
 		$last += $length;
 	}
 
-	push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
-	push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
+ 	push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
+ 	push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
 	my $name = eval { $features[0]->refseq->name } ;
-	my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
+# 	my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
 	$markup->markup(\$spliced,\@markup);
-
+	 
 	return {					# download => $download ,
-		header=>"spliced + UTR - $splen bp",
-		content=>">$name (spliced + UTR - $splen bp)\n".$spliced,
+		header=>"spliced + UTR",
+		sequence=>$spliced,
+		length=> $splen,
+		style=> 1,
 	} if $name;
 
 }
 
 sub _print_protein {
 	my ($markup,$features,$genetic_code) = @_;
-	my @markup;
+# 	my @markup;
 	my $trimmed = join('',map {$_->dna} grep {$_->method eq 'coding_exon'} @$features);
 	return unless $trimmed;		# Hack for mRNA
 	my $peptide = Bio::Seq->new(-seq=>$trimmed)->translate->seq;
 	my $change  = $peptide =~/\w+\*$/ ? 1 : 0;
 	my $plen = length($peptide) - $change;
 
-	@markup = map {['space',10*$_]}      (1..length($peptide)/10);
-	push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
+# 	@markup = map {['space',10*$_]}      (1..length($peptide)/10);
+# 	push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
 	my $name = eval { $features->[0]->refseq->name };
-	my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
-	$markup->markup(\$peptide,\@markup);
+# 	my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
+# 	$markup->markup(\$peptide,\@markup);
 	$peptide =~ s/^\s+//;
 
 	return {					# download => $download,
-		header=>"conceptual translation - $plen aa",
-		content=>">$name (conceptual translation - $plen aa)\n".$peptide,
+		header=>"conceptual translation",
+		sequence=>$peptide,
+		type => "aa",
+		length => $plen,
 	};
 }
 
