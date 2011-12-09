@@ -381,7 +381,7 @@ sub merge_session_to_user {
     Hash::Merge::set_behavior( $c->config->{user_session}{merge_type} );
     Hash::Merge::set_clone_behavior(0);
 
-    my $sid = $c->get_session_id;
+    my $sid = $c->sessionid;
     my $s_db = $c->model('Schema::Session')->find({session_id=>"session:$sid"});
     my $uid = $c->user->user_id;
 
