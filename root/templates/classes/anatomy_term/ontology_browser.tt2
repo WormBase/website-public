@@ -1,12 +1,4 @@
-[% widget = c.stash.widget %]
-
-[% widget = widget %]
- 
-
-[% base = c.req.base %] 
-[% base_elements = base.split('/') %]
-[% link=c.config.external_url.tree_lister _ object.name.data.id _ ";host=" _ base_elements.2 %]
- 
+[% link='/tools/ontology_browser/run?inline=1&class=anatomy_term&name=' _ object.name.data.id  %]
      <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
       </iframe>  
  
