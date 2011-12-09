@@ -1375,8 +1375,8 @@ sub field_GET {
       $c->stash->{$field} = $data;
       $c->forward('WormBase::Web::View::TT');
     }elsif($content_type =~ m/image/i) {
-      my $gd = $data->{data};
-      $c->res->body($gd->png);
+      
+      $c->res->body($data);
     }
     $self->status_ok(
         $c,

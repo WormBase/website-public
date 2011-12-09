@@ -887,12 +887,13 @@ B<Response example>
 
 sub homology_image {
     my $self=shift;
-    my $panel=$self->_draw_image($self->object,1);
-    return unless $panel;
-    my $gd=$panel->gd;
+#     my $panel=$self->_draw_image($self->object,1);
+#     return unless $panel;
+#     my $gd=$panel->gd;
     #show dynamic images
     return { description => 'a dynamically generated image representing homologous regions of the protein',
-	     data        => $gd ? $gd : undef,
+# 	     data        => $gd ? $gd->png : undef,
+	     data => 1,
     };
 =pod print image as file
     my ($suffix,$img,$boxes);
@@ -926,6 +927,16 @@ sub homology_image {
 =cut
 }
 
+
+sub rest_homology_image {
+    my $self=shift;
+    my $panel=$self->_draw_image($self->object,1);
+    return unless $panel;
+    my $gd=$panel->gd;
+    #show dynamic images
+    return $gd->png;
+     
+}
 =head3 motifs
 
 This method returns a data structure containing

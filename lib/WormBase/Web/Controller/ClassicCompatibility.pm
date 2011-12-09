@@ -129,12 +129,14 @@ sub gbrowse_popup :Path('misc/gbrowse_popup') :Args(0) {
                 # of this and just use the virtual worm image if possible
                 my ($groupname, $imgs) = each %$cimg;
                 my $img_data = $imgs->[0]->{draw};
-                my $url = "$img_data->{format}?id=$img_data->{name}"
-                        . "&class=$img_data->{class}";
-                $c->stash(expr_image => $url);
+               
+                $c->stash(expr_image => $img_data->{class}.'/'.name =>$img_data->{name}.".".$img_data->{format}
+			);
             }
             else {
-                $c->stash(expr_image => $pattern->expression_image->{data});
+                $c->stash(expr_image => $pattern->expression_image->{data}
+				     
+			);
             }
 
             # TEXT

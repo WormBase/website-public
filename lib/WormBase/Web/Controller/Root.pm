@@ -116,8 +116,10 @@ sub draw :Path("/draw") Args(1) {
     else {
         $cached_img = $c->flash->{gd};
     }
-    $c->stash(gd_image => $cached_img);
-    $c->detach('WormBase::Web::View::Graphics');
+#       $c->response->header( 'Content-Type' => 'image/png');
+    $c->res->body($cached_img);
+#     $c->stash(gd_image => $cached_img);
+#     $c->detach('WormBase::Web::View::Graphics');
 }
 
 
