@@ -56,6 +56,7 @@ BEGIN {
             Anatomy_term => 'Term',
             GO_term      => 'Term',
             Motif        => 'Title',
+            Protein      => 'Gene_name',
         },
         laboratory => {
             Gene_class  => 'Designating_laboratory',

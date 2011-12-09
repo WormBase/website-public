@@ -384,38 +384,29 @@ B<Response example>
 sub best_human_match {
     my ($self) = @_;
     my $object = $self->object;
-    my @pep_homol = $object->Pep_homol;
+    my @pep_homol =  grep { $_ =~ /^ENSEMBL/ } $object->Pep_homol;
 
-    # find the best pep_homol in each category
-    my %best;
+    my $best;
     for my $hit (@pep_homol) {
-        next unless ($hit =~ /^ENSEMBL/); # get only human hits
-        my ($method, $score) = $hit->row(1) or next;
+        my $score = $hit->right(2);
 
-        my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
+        my $prev_score = (!$best) ? $score : $best->{score};
         $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score . '0'
                                                   : "$prev_score.0000";
         my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0'
                                                 : "$score.0000";
-
-        $best{$method} =
-          {score => $score, hit => $hit, adjusted_score => $curr_score}
-          if !$best{$method} || $prev_score < $curr_score;
+        $best =
+          {score => $score, hit => $hit}
+          if !$best || $prev_score < $curr_score;
     }
-
-    # Adding the +0 forces numeric context
-    my ($method) = sort {$best{$b}{adjusted_score} + 0 <=> $best{$a}{adjusted_score} + 0} keys %best;
-
-    my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
-    my $best_human_hit =  {
-        hit      => $self->_pack_obj($best{$method}{hit}),
-        description => $description && "$description",
-        evalue      => sprintf("%7.3g", 10**-$best{$method}{score}),
-    };
 
     return {
         description => 'best human BLASTP hit',
-        data        => $best_human_hit ? \$best_human_hit : undef
+        data        => {
+                hit         => $self->_pack_obj($best->{hit}, $best->{hit}->Gene_name),
+                description => $best->{hit}->Description || $best->{hit}->Gene_name,
+                evalue      => sprintf("%7.3g", 10**-$best->{score})
+            }
     };
 }
 
@@ -766,15 +757,14 @@ B<Response example>
 sub homology_groups {
     my $self   = shift;
     my $object = $self->object;
-    my @kogs = $object->Homology_group;
     my @hg;
-    foreach my $k (@kogs) {
-	my $title = $k->Title;
-	my $type  = $k->Group_type;
-	push @hg ,{ type  => "$type"  || '',
-		    title => "$title" || '',
-		    id    => $self->_pack_obj($k),
-	};
+    foreach my $k ($object->Homology_group) {
+      my $title = $k->Title;
+      my $type  = $k->Group_type;
+      push @hg ,{ type  => "$type"  || '',
+              title => "$title" || '',
+              id    => $self->_pack_obj($k),
+      };
     }
     return { description => 'KOG homology groups of the protein',
 	     data        => @hg ? \@hg : undef };
@@ -1238,7 +1228,7 @@ B<Response example>
 sub motif_details {
     my $self = shift;
     
-    my $raw_features = $self ~~ '@Feature';
+#     my $raw_features = $self ~~ '@Feature';
     my $motif_homol = $self ~~ '@Motif_homol';
     
     #  return unless $obj->Feature;
@@ -1246,19 +1236,19 @@ sub motif_details {
     # Summary by Motif
     my @tot_positions;
     
-    if (@$raw_features > 0 || @$motif_homol > 0) {
+    if (@$motif_homol > 0) {
 	my %positions;
 	
-	foreach my $feature (@$raw_features) {
-	    %positions = map {$_ => $_->right(1)} $feature->col;
-	    foreach my $start (sort {$a <=> $b} keys %positions) {			
-		my $stop =  $positions{$start};
-		push @tot_positions,[ ( "$feature",'','',
-					"$start",
-					"$stop")
-		];
-	    }
-	}
+# 	foreach my $feature (@$raw_features) {
+# 	    %positions = map {$_ => $_->right(1)} $feature->col;
+# 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
+# 		my $stop =  $positions{$start};
+# 		push @tot_positions,[ ( "$feature",'','',
+# 					"$start",
+# 					"$stop")
+# 		];
+# 	    }
+# 	}
  	
 	# Now deal with the motif_homol features
 	foreach my $feature (@$motif_homol) {
@@ -1402,7 +1392,7 @@ sub blast_details {
       
       # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
       my $eval = $h->{score};
-      push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
+      push @rows,[($self->_pack_obj($h->{hit}),$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
 		   $h->{source},
 		   $h->{target})];
       
