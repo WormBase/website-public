@@ -224,6 +224,7 @@ END;
 
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
+  [% IF c.check_user_roles('curator') OR c.check_user_roles('admin') %]
 
     <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
@@ -234,6 +235,7 @@ END;
              [% content %]
           </div>
      </div>
+  [% END %]
 [% END %]
 
 
