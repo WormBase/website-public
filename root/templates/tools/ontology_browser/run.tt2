@@ -23,8 +23,8 @@
 	      [% FOREACH parent IN path %]
 		    <br>[% padding %]<b>[% parent.type %]</b> [% tag2link(parent) %] 
 		    [% padding = padding _ '&nbsp;&nbsp;&nbsp;&nbsp;' %]
-		    [% IF parent.association %]
-		      (association(s) - to term: [% parent.association %])
+		    [% IF parent.association_count || parent.association_count_total %]
+		      (association(s) - to term: [% parent.association_count %])
 		    [% END %]
 			[% IF loop.last %] 
 				<br>[% padding %]- [% tag2link(term) %]	
