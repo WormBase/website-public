@@ -9,6 +9,10 @@
    WRAPPER curator_block title="Status" key="status";
       fields.status.data;
    END;
+
+   WRAPPER $field_block title="Length" key="sequence";
+      fields.sequence.data.length _ ' ' _ fields.sequence.data.type;
+   END;
  
    WRAPPER $field_block title="WormBase ID";
        fields.name.data.id;
