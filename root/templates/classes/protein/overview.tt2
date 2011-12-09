@@ -41,15 +41,21 @@ END;
 
 WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
     fields.estimated_molecular_weight.data;
-    ' (estimated)';
+    ' <span id="fade">(estimated)</span>';
 END;
 
 WRAPPER $field_block title="Isoelectric point" key="estimated_isoelectric_point";
     fields.estimated_isoelectric_point.data;
-    ' (estimated)';
+    ' <span id="fade">(estimated)</span>';
 END;
+
+
 
 
 remarks;
 '</div>';
+WRAPPER $field_block title="Best human homolog" key="best_human_match";
+    tag2link(fields.best_human_match.data.hit, fields.best_human_match.data.description);
+    ' (E value:' _ fields.best_human_match.data.evalue _ ')';
+END;
 %]
