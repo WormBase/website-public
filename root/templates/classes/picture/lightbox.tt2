@@ -19,8 +19,9 @@ END
 
 [%
    img = fields.image.data 
-   img_loc = '/draw/' _ img.format _ '?class=' _ img.class _ '&id=' _ img.name
-   img_src = img_loc _ '_600' # 600 thumbnail. img.name MUST be the last thing in img_loc
+   img_loc = img.class _ '/' _ img.name _ '.' _ img.format ;
+   
+   img_src = img.class _ '/' _ img.name _ '_600.' _ img.format ; # 600 thumbnail. img.name MUST be the last thing in img_loc
 %]
 
 <h1>[% fields.name.data.label %]</h1>

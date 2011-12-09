@@ -7,7 +7,7 @@
     <span style="color:steelblue">[% title %]</span><br>
     <p><i>[% desc %]</i></p>
     [% IF expr_image %]
-       <img src="/draw/[% expr_image %]" style="width:300px">
+       <img src="[% expr_image %]" style="width:300px">
     [% END %]
 [% END %]
 </div>
