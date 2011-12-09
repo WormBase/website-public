@@ -302,10 +302,9 @@ END;
 %]
      
 [% MACRO jquery_data_table_html(table_headers,rows,table_name,style) BLOCK %]
-
   [% IF rows && rows.size > 0;  
        # Set up some suitable defaults
-       IF rows.size < 11;
+       IF rows.size < 11 || (rows.size < 51 && table_headers.size < 3);
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
@@ -558,12 +557,10 @@ END;
                         percent  => '% Length' 
                                  },
                          key='best_blastp_matches');
-        WRAPPER $field_block title="";
            '<div id="blast_details">';
 '<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
-'<div class="returned field"></div>';
+'<div class="returned field" style="width:100%"></div>';
          '</div>';
-       END;
     END;
   END;
    
@@ -773,60 +770,43 @@ END;
 %]
 
 [% MACRO sequence(field_key) BLOCK; 
-    UNLESS field_key.defined ;field_key = 'sequence' ;END;
+    UNLESS field_key.defined; field_key = 'sequence'; END;
 
-    WRAPPER $field_block title="Sequence" key=field_key;
-	 sequence_list=[];
-	IF fields.$field_key.data.sequence.defined;
-	    sequence_list.push(fields.$field_key.data);
-	      
-	ELSE ;
-	    sequence_list = fields.$field_key.data;
-	END;
-	FOREACH obj IN sequence_list ;
-	      IF obj.sequence.defined;
-		  
-		  format_seq = "";
-		  UNLESS obj.style.defined;
-		      FOREACH line IN obj.sequence.chunk(80);
-			  format_seq = format_seq _ line.chunk(10).join(' ');
-			  UNLESS loop.last;
-				format_seq = format_seq _ "\n";
-			  END;  
-		      END;
-		  ELSE ; format_seq = obj.sequence ;
-		  END;
-		  download_seq = '>' _ object.name.data.id ;
-		  IF obj.header.defined ;
-			tag = obj.header; 
-			  download_seq = download_seq _ '|' _ tag;  
-		  ELSE; 
-			tag = ""; 
-		  END;
-		  download_seq = download_seq _ "\n" _ format_seq.remove('<span.*?>|</span>| ');;
+    sequence_list = fields.sequence.data.sequence.defined ? [fields.sequence.data] : fields.sequence.data;
+    to_print;
 
-		  '<div class="sequence-section" >';
-		  '<div class="sequence-download">';
-				    '<form action="/rest/download/">';
-				    '<input type="hidden" name="type" value="' _ object.name.data.id _ '_' _ tag _ '.fa" >';
-				    '<input type="hidden" name="sequence" value="' _ download_seq _ '">';
-				    '<input type="submit" value="download">';
-				  '</form>';
-		  '</div>';
-		   
-		   '<div class="toggle">' _ tag _ ' ' _ obj.length;
-			      IF obj.type == 'aa' ;
-				' aa';
-			      ELSE; ' bp' ; END;
-		    '</div>';
-		  '<div class="sequence-container">';
-			   '<pre>' _ format_seq.replace _ '</pre>';
-		  '</div>';
-		   '</div>';
-	      ELSE; 
-		  obj;
-	      END ;
-	 END;
+    FOREACH obj IN sequence_list;
+      IF obj.sequence.defined;
+        seq = obj.sequence;  
+        NEXT IF seq.length == 0;
+        format_seq = "";
+        FOREACH line IN seq.chunk(80);
+          format_seq = format_seq _ line.chunk(10).join(' ');
+          UNLESS loop.last;
+            format_seq = format_seq _ "\n";
+          END;  
+        END;
+
+        to_print = to_print _ '<div class="sequence-download">'
+                                  _ '<form action="/rest/download/">'
+                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >'
+                                  _ '<input type="hidden" name="sequence" value="' _ format_seq  _ '" >'
+                                  _ '<input type="submit" value="download">'
+                                  _ '</form>'
+                            _ '</div>'
+
+        _ '<div class="toggle">view sequence (' _ obj.length _' ' _ (obj.type == 'aa' ? 'aa' : 'bp') _ ')</div>'
+        _ '<div class="sequence-container">'
+          _ format_seq.replace('\n','<br/>')
+        _ '</div>';
+      ELSE;
+        to_print = to_print _ obj;
+      END;
+    END;
+    IF to_print.length > 0;
+      WRAPPER $field_block title="Sequence" key=field_key;
+        to_print;
+      END;
     END;
 END;
 %]

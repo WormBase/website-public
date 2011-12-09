@@ -1542,7 +1542,7 @@ var Scrolling = (function(){
             txt += '<div class="result"><li><div class="date" id="fade">' 
                 + entry.publishedDate.substring(0, 16) + '</div>'
                 + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
-                + '<div class="text-min">' + entry.content.replace(/\<\/?p\>/g, '') + '</div></div>';
+                + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
           }
           txt += '</ul></div>';
           container.html(txt);

@@ -111,7 +111,12 @@ sub _build_xapian {
   my $svrp = Search::Xapian::StringValueRangeProcessor->new(2);
   $syn_qp->add_valuerangeprocessor($svrp);
 
-  return WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
+  my $xapian = WormBase::API::Service::Xapian->new({db => $db, qp => $qp, syn_db => $syn_db, syn_qp => $syn_qp});
+
+  $xapian->search($self, "*", 1, "gene");
+  $xapian->search_autocomplete($self, "*", "gene");
+
+  return $xapian;
 }
 
 # Version should be provided by the default datasource or set explicitly.
