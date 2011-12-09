@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.corresponding_gene.data.0 ? (fields.corresponding_gene.data.0.label) : fields.name.data.label | upper%]</h2>
 
 
 [% 
@@ -6,7 +6,7 @@
  
    taxonomy;
 
-   WRAPPER $field_block title="Status" key="status";
+   WRAPPER curator_block title="Status" key="status";
       fields.status.data;
    END;
  
@@ -22,22 +22,33 @@ END;
 #  central_dogma;
 #END;
 
-WRAPPER $field_block title="Type";
+WRAPPER curator_block title="Type";
    fields.type.data;
 END;
 
-WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size);
+WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size) key="corresponding_gene";
     link_objects(fields.corresponding_gene.data);
 END;
 
 
-WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size);
+WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size) key="corresponding_transcripts";
     link_objects(fields.corresponding_transcripts.data);
 END;
 
 WRAPPER $field_block title="Description" key="description";
     fields.description.data;
 END;
+
+WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
+    fields.estimated_molecular_weight.data;
+    ' (estimated)';
+END;
+
+WRAPPER $field_block title="Isoelectric point" key="estimated_isoelectric_point";
+    fields.estimated_isoelectric_point.data;
+    ' (estimated)';
+END;
+
 
 remarks;
 '</div>';

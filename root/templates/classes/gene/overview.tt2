@@ -92,11 +92,10 @@ END;
 
 
 # curator section
-IF c.check_user_roles('curator') OR c.check_user_roles('admin');
    WRAPPER curator_block title="Old website";
       '<a target="_blank" href="http://www.wormbase.org/db/gene/gene?name=' _ fields.name.data.id _ '">' _ fields.name.data.id _ '</a>';
    END;
-END;
+
 
 
 %]

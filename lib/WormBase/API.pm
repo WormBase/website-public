@@ -176,7 +176,7 @@ sub _build__tools {
         $tools{$tool}  = $class->new({
             pre_compile => $self->tool->{$tool},
             log         => $self->log,
-	    search 	=> $self->xapian,
+            search 	    => $self->xapian,
             dsn         => $self->_services, 
             tmp_base    => $self->tmp_base,
             # ($tool eq 'aligner' ? (search => $self->search) : ()),
