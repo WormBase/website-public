@@ -1,6 +1,6 @@
 [% gene_image = fields.expression_image.data %]
 [% IF gene_image %]
-<a href="[% "/draw/" _ gene_image  %]" target="_blank" >[% image("/draw/" _ gene_image)  %]</a>
+<a href="[% gene_image %]" target="_blank" >[% image(gene_image)  %]</a>
 [% END %]
 
 

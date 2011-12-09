@@ -242,6 +242,7 @@ sub _setup_static {
         include_path => [
             '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
             __PACKAGE__->config->{root},__PACKAGE__->config->{static_movie_base},
+	    __PACKAGE__->config->{static_image_base},
         ],
         #   logging  => 1,
 	 
