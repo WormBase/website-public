@@ -1,4 +1,5 @@
 [% WRAPPER boilerplate/html # need the CSS %]
+<div class="picture_lightbox">
 
 [% MACRO img2link(img, label) BLOCK;
    UNLESS label; label = img.label || img.id; END;
@@ -87,10 +88,10 @@ END
 </div>
 </div>
 
-
+</div>
 
 <script type="text/javascript">
-$jq('a:not([target])').click(function () {
+$jq('.picture_lightbox a:not([target])').click(function () {
    parent.location=this.href; 
    return false;
 });
