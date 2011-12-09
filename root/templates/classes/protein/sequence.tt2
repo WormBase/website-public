@@ -2,7 +2,7 @@
 
    sequence;
 
-   WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight_data";
+   WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight";
         fields.estimated_molecular_weight.data;
    END;
 

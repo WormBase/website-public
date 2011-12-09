@@ -331,6 +331,94 @@ sub type {
     }; 
 }
 
+
+=head3 best_human_match 
+
+This method returns a data structure containing the 
+best human blast hit for the protein
+
+=over
+
+=item PERL API
+
+ $data = $model->best_human_match();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/best_human_match
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub best_human_match {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @pep_homol = $object->Pep_homol;
+
+    # find the best pep_homol in each category
+    my %best;
+    for my $hit (@pep_homol) {
+        next unless ($hit =~ /^ENSEMBL/); # get only human hits
+        my ($method, $score) = $hit->row(1) or next;
+
+        my $prev_score = (!$best{$method}) ? $score : $best{$method}{score};
+        $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score . '0'
+                                                  : "$prev_score.0000";
+        my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0'
+                                                : "$score.0000";
+
+        $best{$method} =
+          {score => $score, hit => $hit, adjusted_score => $curr_score}
+          if !$best{$method} || $prev_score < $curr_score;
+    }
+
+    # Adding the +0 forces numeric context
+    my ($method) = sort {$best{$b}{adjusted_score} + 0 <=> $best{$a}{adjusted_score} + 0} keys %best;
+
+    my $description = $best{$method}{hit}->Description || $best{$method}{hit}->Gene_name;
+    my $best_human_hit =  {
+        hit      => $self->_pack_obj($best{$method}{hit}),
+        description => $description && "$description",
+        evalue      => sprintf("%7.3g", 10**-$best{$method}{score}),
+    };
+
+    return {
+        description => 'best human BLASTP hit',
+        data        => $best_human_hit ? \$best_human_hit : undef
+    };
+}
+
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
@@ -342,6 +430,7 @@ sub type {
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
+
 
 
 ############################################################
@@ -1398,6 +1487,13 @@ sub history {
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };
 }
+
+
+
+
+
+
+
 
  
 
