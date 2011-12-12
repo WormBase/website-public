@@ -82,7 +82,7 @@
 
         "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
 
-        IF (class=='sequence');
+        IF (class=='sequence' || class=='protein');
           "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ "' class='button ui-corner-all tip-simple slink' tip='download'>";
             "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
           "</a>";
