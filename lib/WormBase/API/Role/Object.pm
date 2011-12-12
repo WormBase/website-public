@@ -336,17 +336,11 @@ sub _build_best_blastp_matches {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
     } else { }
-
-#        return {
-#            description => 'no proteins found, no best blastp hits to display',
-#            data        => undef,
-#        };
-#    }
     
     if (@$proteins == 0) {
-	return { description => 'no proteins found, no best blastp hits to display',
-		 data        => undef,
-	};
+      return { description => 'no proteins found, no best blastp hits to display',
+          data        => undef,
+      };
     }
     
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;

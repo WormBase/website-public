@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.corresponding_gene.data.0 ? (fields.corresponding_gene.data.0.label) : fields.name.data.label | upper%]</h2>
 
 
 [% 
@@ -6,8 +6,12 @@
  
    taxonomy;
 
-   WRAPPER $field_block title="Status" key="status";
+   WRAPPER curator_block title="Status" key="status";
       fields.status.data;
+   END;
+
+   WRAPPER $field_block title="Length" key="sequence";
+      fields.sequence.data.length _ ' ' _ fields.sequence.data.type;
    END;
  
    WRAPPER $field_block title="WormBase ID";
@@ -22,16 +26,16 @@ END;
 #  central_dogma;
 #END;
 
-WRAPPER $field_block title="Type";
+WRAPPER curator_block title="Type";
    fields.type.data;
 END;
 
-WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size);
+WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size) key="corresponding_gene";
     link_objects(fields.corresponding_gene.data);
 END;
 
 
-WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size);
+WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size) key="corresponding_transcripts";
     link_objects(fields.corresponding_transcripts.data);
 END;
 
@@ -39,6 +43,23 @@ WRAPPER $field_block title="Description" key="description";
     fields.description.data;
 END;
 
+WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
+    fields.estimated_molecular_weight.data;
+    ' <span id="fade">(estimated)</span>';
+END;
+
+WRAPPER $field_block title="Isoelectric point" key="estimated_isoelectric_point";
+    fields.estimated_isoelectric_point.data;
+    ' <span id="fade">(estimated)</span>';
+END;
+
+
+
+
 remarks;
 '</div>';
+WRAPPER $field_block title="Best human homolog" key="best_human_match";
+    tag2link(fields.best_human_match.data.hit, fields.best_human_match.data.description);
+    ' (E value:' _ fields.best_human_match.data.evalue _ ')';
+END;
 %]
