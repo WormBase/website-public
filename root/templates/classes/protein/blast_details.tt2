@@ -1,7 +1,7 @@
 
 <div  id="blast_details_dataTable">
   [% jquery_data_table_html(['Hit',
-                     'Species','Description','E Value','Source Range','Target Range'],blast_details.data,'blast_details_dataTable_full') %]
+                     'Species','Description','E Value','Source Range','Target Range'],blast_details.data,'blast_details_dataTable_full', '"aoColumns": [ null,null,null,{ "sType": "numeric" },null,null]') %]
 </div>
 
     

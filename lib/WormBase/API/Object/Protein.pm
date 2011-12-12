@@ -331,6 +331,85 @@ sub type {
     }; 
 }
 
+
+=head3 best_human_match 
+
+This method returns a data structure containing the 
+best human blast hit for the protein
+
+=over
+
+=item PERL API
+
+ $data = $model->best_human_match();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/best_human_match
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub best_human_match {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @pep_homol =  grep { $_ =~ /^ENSEMBL/ } $object->Pep_homol;
+
+    my $best;
+    for my $hit (@pep_homol) {
+        my $score = $hit->right(2);
+
+        my $prev_score = (!$best) ? $score : $best->{score};
+        $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score . '0'
+                                                  : "$prev_score.0000";
+        my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0'
+                                                : "$score.0000";
+        $best =
+          {score => $score, hit => $hit}
+          if !$best || $prev_score < $curr_score;
+    }
+
+    return {
+        description => 'best human BLASTP hit',
+        data        => {
+                hit         => $self->_pack_obj($best->{hit}, $best->{hit}->Gene_name),
+                description => $best->{hit}->Description || $best->{hit}->Gene_name,
+                evalue      => sprintf("%7.3g", 10**-$best->{score})
+            }
+    };
+}
+
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
@@ -342,6 +421,7 @@ sub type {
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
+
 
 
 ############################################################
@@ -677,15 +757,14 @@ B<Response example>
 sub homology_groups {
     my $self   = shift;
     my $object = $self->object;
-    my @kogs = $object->Homology_group;
     my @hg;
-    foreach my $k (@kogs) {
-	my $title = $k->Title;
-	my $type  = $k->Group_type;
-	push @hg ,{ type  => "$type"  || '',
-		    title => "$title" || '',
-		    id    => $self->_pack_obj($k),
-	};
+    foreach my $k ($object->Homology_group) {
+      my $title = $k->Title;
+      my $type  = $k->Group_type;
+      push @hg ,{ type  => "$type"  || '',
+              title => "$title" || '',
+              id    => $self->_pack_obj($k),
+      };
     }
     return { description => 'KOG homology groups of the protein',
 	     data        => @hg ? \@hg : undef };
@@ -1160,7 +1239,7 @@ B<Response example>
 sub motif_details {
     my $self = shift;
     
-    my $raw_features = $self ~~ '@Feature';
+#     my $raw_features = $self ~~ '@Feature';
     my $motif_homol = $self ~~ '@Motif_homol';
     
     #  return unless $obj->Feature;
@@ -1168,19 +1247,19 @@ sub motif_details {
     # Summary by Motif
     my @tot_positions;
     
-    if (@$raw_features > 0 || @$motif_homol > 0) {
+    if (@$motif_homol > 0) {
 	my %positions;
 	
-	foreach my $feature (@$raw_features) {
-	    %positions = map {$_ => $_->right(1)} $feature->col;
-	    foreach my $start (sort {$a <=> $b} keys %positions) {			
-		my $stop =  $positions{$start};
-		push @tot_positions,[ ( "$feature",'','',
-					"$start",
-					"$stop")
-		];
-	    }
-	}
+# 	foreach my $feature (@$raw_features) {
+# 	    %positions = map {$_ => $_->right(1)} $feature->col;
+# 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
+# 		my $stop =  $positions{$start};
+# 		push @tot_positions,[ ( "$feature",'','',
+# 					"$start",
+# 					"$stop")
+# 		];
+# 	    }
+# 	}
  	
 	# Now deal with the motif_homol features
 	foreach my $feature (@$motif_homol) {
@@ -1324,7 +1403,7 @@ sub blast_details {
       
       # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
       my $eval = $h->{score};
-      push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
+      push @rows,[($self->_pack_obj($h->{hit}),$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
 		   $h->{source},
 		   $h->{target})];
       
@@ -1409,6 +1488,13 @@ sub history {
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };
 }
+
+
+
+
+
+
+
 
  
 

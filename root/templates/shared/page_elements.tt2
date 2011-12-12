@@ -224,6 +224,7 @@ END;
 
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
+  [% IF c.check_user_roles('curator') OR c.check_user_roles('admin') %]
 
     <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
@@ -234,6 +235,7 @@ END;
              [% content %]
           </div>
      </div>
+  [% END %]
 [% END %]
 
 
@@ -286,7 +288,7 @@ END;
       FOREACH o IN order; headers.push(columns.$o); END;
       
       # generate table
-      jquery_data_table_html(headers, local_rows, "table_${key}_by");   
+      jquery_data_table_html(headers, local_rows, "table_${key}_by", style);   
 
     END; # END of MACRO
 %]
@@ -328,7 +330,6 @@ END;
       END;
 
    %]
-
 
     <script type="text/javascript" >
         WB.getDataTables(function(){
@@ -550,13 +551,14 @@ END;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
     
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
-                              columns={ taxonomy => 'Species',
-                                hit      => 'Hit',
-                         description => 'Description',
-                        evalue   => 'BLAST e-value',
-                        percent  => '% Length' 
-                                 },
-                         key='best_blastp_matches');
+                       columns={ taxonomy => 'Species',
+                                 hit      => 'Hit',
+                                 description => 'Description',
+                                 evalue   => 'BLAST e-value',
+                                 percent  => '% Length'
+                                },
+                       key='best_blastp_matches', 
+                       style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
 '<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
 '<div class="returned field" style="width:100%"></div>';
