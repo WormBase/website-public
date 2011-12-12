@@ -2556,7 +2556,7 @@ sub interactions {
             $direction = 'Effector->Effected';
         }
 
-        my $phenotype = $type->Interaction_phenotype;
+        my $phenotype = eval {$type->Interaction_phenotype->right};
 
         push @data,
             {
