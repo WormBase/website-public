@@ -399,14 +399,14 @@ sub best_human_match {
           {score => $score, hit => $hit}
           if !$best || $prev_score < $curr_score;
     }
-
+    
     return {
         description => 'best human BLASTP hit',
-        data        => {
-                hit         => $self->_pack_obj($best->{hit}, $best->{hit}->Gene_name),
+        data        => $best->{hit} ? {
+                hit         => $self->_pack_obj($best->{hit}),
                 description => $best->{hit}->Description || $best->{hit}->Gene_name,
                 evalue      => sprintf("%7.3g", 10**-$best->{score})
-            }
+            } : undef
     };
 }
 
@@ -1118,8 +1118,6 @@ sub pfam_graph {
 				     v_align=>"bottom",
 				     metadata => {
 					 type=>"exon".$count,
-					 start=>$end_holder,
-					 end=>$end,
 				     },
 	    };
 	    $end_holder = $end+1;
@@ -1156,7 +1154,6 @@ sub pfam_graph {
 				     metadata => {
 					 database=>$obj->{type},
 					 description=>"$desc",
-					 start=>$obj->{start},
 					 identifier=>$identifier,
 				     },
 	    };

@@ -447,7 +447,7 @@
             slink.colorbox({data: slink.attr("href"), 
                             width: "750px", 
                             height: "550px",
-                            title: function(){ return slink.prev().text() + " sequence"; }});
+                            title: function(){ return slink.prev().text() + " " + slink.data("class"); }});
           });
       });
       
@@ -1651,6 +1651,11 @@ var Scrolling = (function(){
       getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
       return;
     }
+    
+    function getPfam(callback){
+      getPlugin("pfam", "/js/pfam/domain_graphics.min.js", undefined, callback);
+      return;
+    }
   
   
     function getPlugin(name, url, stylesheet, callback){
@@ -1690,6 +1695,7 @@ var Scrolling = (function(){
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
+      getPfam: getPfam,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
       historyOn: historyOn,
