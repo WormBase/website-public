@@ -9,7 +9,7 @@ use Config::General;
 use Class::MOP;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
-
+use Data::Dumper;
 with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
 # We assume that there is a single default data source.
@@ -91,7 +91,7 @@ sub _build_xapian {
 
   my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search/disease');
   my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
   my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);
@@ -176,7 +176,7 @@ sub _build__tools {
         $tools{$tool}  = $class->new({
             pre_compile => $self->tool->{$tool},
             log         => $self->log,
-            search 	    => $self->xapian,
+	    search 	=> $self->xapian,
             dsn         => $self->_services, 
             tmp_base    => $self->tmp_base,
             # ($tool eq 'aligner' ? (search => $self->search) : ()),
@@ -231,17 +231,25 @@ sub fetch {
             $name = $var_name->Public_name_for || $var_name->Other_name_for || $name;
             $self->log->debug("[API::fetch()]", " Variation hack, $orig_name, found $name");
         }
-
+ 
         # Try fetching an object (from the default data source)
 		if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
 			foreach my $ace (@$aceclass) {
-                $self->log->debug("[API::fetch()]",
+				$self->log->debug("[API::fetch()]",
                                   " attempt to fetch $name of ace class $ace");
 				last if $object = $service_dbh->fetch(-class => $ace, -name => $name);
 			}
+		}elsif ($aceclass eq 'Disease' ) {
+		     $self->log->debug("[API::fetch()]",
+                                  " attempt to fetch $name of ace class $aceclass");
+ 		     $object = $self->xapian->_get_tag_info($self, $name, lc($aceclass),1);  
+		     
+  		     $self->log->debug("aaaaaaaaaaaaaaaaaaomim i".Dumper($object) );
+ 	 
+		     
 		}
 		else { # assume a single Ace class
-            $self->log->debug("[API::fetch()]",
+		    $self->log->debug("[API::fetch()]",
                               " attempt to fetch $name of ace class $aceclass");
 			$object = $service_dbh->fetch(-class => $aceclass, -name => $name);
 		}

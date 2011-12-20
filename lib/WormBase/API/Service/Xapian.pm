@@ -96,7 +96,7 @@ sub search_exact {
     my ( $class, $c, $q, $type) = @_;
   
     my ($query, $enq);
-    if( $type && ($q =~ m/^WB/i) ){
+    if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease') ){
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());

@@ -735,11 +735,17 @@ sub widget_GET {
 
     # references widget - no need for an object
     # only html
-    if ( $widget eq 'references' ) {
-          $c->req->params->{widget} = 'references';
+    if ( $widget =~ m/references|disease/i ) {
+          $c->req->params->{widget} = $widget;
           $c->go('search', 'search');
     }
-
+=pod  this is going to conflict with the hash# for widgets
+    if ( $widget eq 'ontology_browser' ) {
+          $c->req->params->{widget} = 'ontology_browser';
+          $c->res->redirect("/tools/ontology_browser/run?inline=1&class=$class&name=$name");
+	  $c->detach();
+    }
+=cut
     my $api = $c->model('WormBaseAPI');
     my $object = ($name eq '*' || $name eq 'all'
                ? $api->instantiate_empty(ucfirst $class)
