@@ -33,10 +33,14 @@ sub search :Path('/search') Args {
     my $type = shift @args;
     my $query = shift @args;
     my $page_count = shift @args || 1;
-
+   
     # hack for references widget
     if($page_count =~ m/references/){
       $type = 'paper';
+      $page_count = 1;
+    }
+    if($page_count =~ m/disease/){
+      $type = $page_count;
       $page_count = 1;
     }
 
@@ -67,7 +71,7 @@ sub search :Path('/search') Args {
     $c->response->header('Content-Type' => 'text/html');
 
     # if it finds an exact match, redirect to the page
-    if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->req->param("inline"))) && ($page_count < 2)){
+    if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->stash->{noboiler})) && ($page_count < 2)){
       my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];
