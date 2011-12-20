@@ -91,7 +91,7 @@ sub _build_xapian {
 
   my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search/disease');
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
   my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
   my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);
@@ -242,11 +242,7 @@ sub fetch {
 		}elsif ($aceclass eq 'Disease' ) {
 		     $self->log->debug("[API::fetch()]",
                                   " attempt to fetch $name of ace class $aceclass");
- 		     $object = $self->xapian->_get_tag_info($self, $name, lc($aceclass),1);  
-		     
-  		     $self->log->debug("aaaaaaaaaaaaaaaaaaomim i".Dumper($object) );
- 	 
-		     
+ 		     $object = $self->xapian->_get_tag_info($self, $name, lc($aceclass),1);       
 		}
 		else { # assume a single Ace class
 		    $self->log->debug("[API::fetch()]",
