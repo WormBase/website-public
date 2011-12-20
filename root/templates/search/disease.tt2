@@ -1,0 +1,16 @@
+     [% tag2link(item.name) %] 
+      <span>[[% text2link('omim',item.name.id,'OMIM:' _ item.name.id) %]] </span>
+    </li>
+  
+    [% IF item.gene %]
+    <span>Related C.elegans Genes[% FOREACH gene IN item.gene %]
+	[% tag2link(gene) %]
+	[% UNLESS loop.last %], [% END %]
+	[% END %]
+    </span>
+    [% END %]
+
+ 
+<div class="text-min">
+  [% item.description.join("<br />") %]
+</div>
