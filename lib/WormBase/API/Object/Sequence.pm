@@ -1297,7 +1297,7 @@ sub print_sequence {
 
     ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
     # Haven't fetched a GFF segment? Try Ace.
-    if (!$seq_obj || length($seq_obj->dna) < 2) { # miserable broken workaround
+    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
 		# try to use acedb
 		if (my $fasta = $s->asDNA) {
 			push @data,{ 	header=>"FASTA Sequence",
@@ -1569,40 +1569,6 @@ sub print_feature {
     my $s = $self->object;
     my %hash;
 
-    # NB: This is not completely functional - it doesn't display cloned, named genes
-    # (The pre-WS116 version didn't either).
-    # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
-    if (my @genes = $s->get('Transcript')) {
-# 		print 'Predicted Genes & Transcriptional Units';
-		my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
-		my @rows;
-		foreach (sort {$a->right <=> $b->right} @genes) {
-			my $gene = $data{$_};
-			# 	my $href = a({ -href=>Object2URL($gene) },$gene);
-			next unless defined $gene;
-			my $CDS    = $gene->Corresponding_CDS;
-
-			# Fetch the information from the CDS if it exists, else from the transcript
-			my $class = ($CDS) ? $CDS : $gene;
-			my $locus  = eval { $class->Locus };
-			my ($desc) = $class->Brief_identification;
-			($desc)    ||= $class->Remark;
-			($desc)    ||= $class->DB_remark;
-
-			# this sounds like important information - why is it undef'd?
-			#  undef $desc if $desc =~ /possible trans-splice site at \d+/;
-			$desc ||= '&nbsp;';
-			my ($start,$end)=$_->right->row;
-			push @rows, {	start=>$start,
-							end=>$end,
-							name=>{	label => $gene, id=>$gene, class=>$gene->class},
-							gene=>$locus ? {label => $locus, id=>$locus, class=>$locus->class} : '-',
-							predicted_type=>=> $gene || '?',
-							comment=>$desc,
-						};
-		}
-		$hash{predicted_units}{rows}=\@rows;
-    }
 
     if (my @exons = $s->get('Source_Exons')) {
 		my ($start,$orientation,$parent) = $self->_get_parent_coords($s);
@@ -1625,7 +1591,7 @@ sub print_feature {
 							ref_end=>=> $ae,
 						};
 		}
-		$hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation};
+		$hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation} if @exons;
     }
 
 
@@ -1644,12 +1610,57 @@ sub print_feature {
 					comment=>=> $fields[3],
 				};
 			}
-			$hash{features}={ rows=>\@rows, label =>$label};
+			$hash{features}={ rows=>\@rows, label =>$label} if @rows;
 		}
 
     }
     return { description => 'features contained within the sequence',
-	     data        => %hash ? \%hash : undef };
+	     data        => keys %hash ? \%hash : undef };
+}
+
+
+
+sub predicted_units {
+    my ($self) = @_;
+    my $s = $self->object;
+    my @rows;
+
+    # NB: This is not completely functional - it doesn't display cloned, named genes
+    # (The pre-WS116 version didn't either).
+    # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
+    if (my @genes = $s->get('Transcript')) {
+#       print 'Predicted Genes & Transcriptional Units';
+        my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
+#         my @rows;
+        foreach (sort {$a->right <=> $b->right} @genes) {
+            my $gene = $data{$_};
+            #   my $href = a({ -href=>Object2URL($gene) },$gene);
+            next unless defined $gene;
+            my $CDS    = $gene->Corresponding_CDS;
+
+            # Fetch the information from the CDS if it exists, else from the transcript
+            my $class = ($CDS) ? $CDS : $gene;
+            my $locus  = eval { $class->Locus };
+            my ($desc) = $class->Brief_identification;
+            ($desc)    ||= $class->Remark;
+            ($desc)    ||= $class->DB_remark;
+
+            # this sounds like important information - why is it undef'd?
+            #  undef $desc if $desc =~ /possible trans-splice site at \d+/;
+            $desc ||= '&nbsp;';
+            my ($start,$end)=$_->right->row;
+            push @rows, {   start=>$start,
+                            end=>$end,
+                            name=>$self->_pack_obj($gene),
+                            gene=>$locus ? $self->_pack_obj($locus) : '-',
+                            predicted_type=>=> $gene || '?',
+                            comment=>$desc,
+                        };
+        }
+    }
+
+    return { description => 'features contained within the sequence',
+         data        => @rows ? \@rows : undef };
 }
 
 
