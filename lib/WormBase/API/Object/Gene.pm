@@ -2023,7 +2023,7 @@ sub nematode_orthologs {
     my $data = $self->_parse_homologs(
         [ $self->object->Ortholog ],
         sub {
-            $_[0]->right(2) ? join('; ', map { "$_" } $_->right(2)->col) : undef;
+            $_[0]->right(2) ? join('; ', map { "$_" } $_[0]->right(2)->col) : undef;
         }
     );
 
