@@ -1,7 +1,7 @@
 [% 
     WRAPPER $field_block title="GO Terms";
          FOREACH data IN fields.go_term.data;
-            tag2link(data) _ <br>';
+            tag2link(data) _ '<br>';
          END;            
      END;
 %]

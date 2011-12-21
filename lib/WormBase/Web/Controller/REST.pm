@@ -332,42 +332,7 @@ sub update_role_POST {
     }
 }
 
-sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
-
-sub evidence_GET {
-    my ( $self, $c, $class, $name, $tag, $index, $right ) = @_;
-
-    my $headers = $c->req->headers;
-    $c->log->debug( $headers->header('Content-Type') );
-    $c->log->debug($headers);
-
-    my $object = $c->model('WormBaseAPI')->fetch({ class => ucfirst $class, name => $name });
-    # what if there's no object?
-
-    # Did we request the widget by ajax?
-    # Supress boilerplate wrapping.
-    if ( $c->is_ajax() ) {
-        $c->stash->{noboiler} = 1;
-    }
-
-    my @node   = $object->object->$tag;
-    $right ||= 0;
-    $index ||= 0;
-    my $data = $object->_get_evidence( $node[$index]->right($right) );
-    $c->stash->{evidence} = $data;
-    $c->stash->{template} = "shared/generic/evidence.tt2";
-    $c->forward('WormBase::Web::View::TT');
-    my $uri = $c->uri_for( "/reports", $class, $name );
-    $self->status_ok(
-        $c,
-        entity => {
-            class    => $class,
-            name     => $name,
-            uri      => "$uri",
-            evidence => $data
-        }
-    );
-}
+ 
 
 
 sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}

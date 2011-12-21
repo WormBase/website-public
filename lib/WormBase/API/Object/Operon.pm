@@ -192,8 +192,8 @@ sub structure {
         my $gene_info = $self->_pack_obj($gene);
         my %spliced_leader;
         foreach my $sl ( $gene->col ) {
-            my @evidence = $sl->col;
-            $spliced_leader{$sl} = \@evidence
+            
+            $spliced_leader{$sl} = $self->_get_evidence($sl);
               ;    # each spliced leader key is linked to an array of evidence
         }
         push @data_pack,
@@ -267,9 +267,8 @@ sub history {
      foreach my $history_type (@history_types) {
          my %histories;
          foreach my $h ( $history_type->col ) {
-             my @evidence = $h->col;
-             @evidence = $self->_get_evidence_names(\@evidence);
-             $histories{$h} = \@evidence;
+             
+             $histories{$h} = $self->_get_evidence($h);
          }
          $data_pack{$history_type} = \%histories;
      }
@@ -284,7 +283,7 @@ sub history {
 # Internal Methods
 #
 ##########################
-
+=pod replace by the standard evidence method _get_evidence
 sub _get_evidence_names {
 	my $self = shift;
     my $evidences = shift;
@@ -315,6 +314,7 @@ sub _get_evidence_names {
     }
     return @ret;
 }
+=cut
 
 __PACKAGE__->meta->make_immutable;
 

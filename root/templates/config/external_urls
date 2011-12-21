@@ -56,9 +56,11 @@
 # Done to here only!
 
 		 
-        INTERPRO = { search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
+      
 
-
+	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
+		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
+		   }
 
 
          ensembl = { description = 'The Ensembl Project'
@@ -232,7 +234,7 @@ search = '/tools/genome/gbrowse_img/%s'
 		       }
 
 
-	Interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
+	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
 		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac='
 		   }
 	Intronerator = { base   = ''

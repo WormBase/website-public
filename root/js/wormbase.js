@@ -416,11 +416,13 @@
             return false;
       });
         
-      content.delegate(".tooltip", 'mouseover', function(){
+      content.delegate(".tooltip", 'click', function(){
           var tip = $jq(this);
           getCluetip(function(){
             tip.cluetip({
+	      local:true,
               activation: 'click',
+	      width:350,
               sticky: true, 
               cluetipClass: 'jtip',
               dropShadow: false, 
