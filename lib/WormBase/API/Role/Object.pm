@@ -742,11 +742,16 @@ sub _build_description {
         $tag = 'Description';
     }
     # do many models have multiple description values?
-    my $description = eval {join(' ', $object->$tag)} || undef;
-
+    my $description ;
+    if($class eq 'Phenotype'){
+      my @array =map {{text=>"$_",evidence=>$self->_get_evidence($_)}}  @{$self ~~ "\@$tag"} ;
+      $description = @array? \@array:undef;
+    }else{
+	$description = eval {join(' ', $object->$tag)} || undef;
+    }
     return {
         description => "description of the $class $object",
-        data        => $description && "$description",
+        data        => $description,
     };
 
     ## deal with evidence... ?

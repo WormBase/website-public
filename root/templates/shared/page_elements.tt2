@@ -5,6 +5,31 @@
 #
 ####################################################
 %]
+
+[% MACRO evidence(data, id) BLOCK %]
+  [% IF data %]
+    [% UNLESS id.defined %] [% id =0 %] [% END %]
+    <div id="evidence_[% id %]" style="display:none" >
+	[% FOREACH type IN data.keys -%] 
+	    <b>[% type.replace('_',' ') %]</b>:  
+	    [% FOREACH object IN data.$type.keys %] 
+		
+	      [% IF data.$type.$object.class.defined %]
+	      [% tag2link(data.$type.$object) %]
+	      [% ELSE %]
+	      [% data.$type.$object.label %]  
+	      [% END %]
+	      [% UNLESS loop.last %];[% END %]
+	    [% END %] 
+	    [% UNLESS loop.last %]<br>[% END %]
+	[% END %] 			    
+    </div>
+  <span class="tooltip" href="#evidence_[% id %]" title="Evidence" rel="#evidence_[% id %]"></span>
+		      
+  [% END %]
+
+[% END %]
+
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]  
           <div style="padding:0.5em">
@@ -345,6 +370,7 @@ END;
         [% 
                 FOREACH row IN rows;
            '<tr>';
+		   index=loop.index;
                    FOREACH cell IN row;
               '<td>'; 
                       IF cell.species.defined;
@@ -353,17 +379,9 @@ END;
                           tag2link(cell);
                   ELSIF cell.match('ARRAY');
                   cell.join('<br>');
-              ELSIF cell.evidence.check.defined;
-              'here';
-                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/'
-              _ obj.name.data.id 
-              _ '/'
-              _ cell.evidence.tag
-              _ '/'
-              _ cell.evidence.index 
-              _ '/'
-              _ cell.evidence.right
-              _ '"></a>';             
+              ELSIF cell.evidence.defined;
+		    cell.text;
+		    evidence(cell.evidence,table_name _ index);
                       ELSE;
                   cell;
                       END;

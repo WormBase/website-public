@@ -785,11 +785,16 @@ sub structured_description {
                   Expression
                   Detailed_description);
    foreach my $type (@types){
+      my @objs = $self->object->$type;
+      my @array = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } @objs;
+      $ret{$type} = \@array if (@array > 0);
+=pod
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
       my $index=-1;
       @nodes = map {$index++; {text=>"$_", evidence=> {tag => $type,index=>$index, check => $self->check_empty($_)}}} @nodes;
       $ret{$type} = \@nodes if (@nodes > 0);
+=cut
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
@@ -1826,7 +1831,7 @@ sub gene_ontology {
 
             push @{ $data{$facet} }, {
                 method        => $1,
-                evidence_code => "$evidence_code",
+                evidence_code => {text=>"$evidence_code",evidence=>$self->_get_evidence($evidence_code)},
                 term          => $self->_pack_obj($go_term),
             };
         }
@@ -3773,8 +3778,8 @@ sub _y2h_data { # pending deletion
 }
 
 
-
-# This is one big ugly hack job
+=pod
+# This is one big ugly hack job, evidence is handled by _get_evidence in API/Object.pm
 sub _go_evidence_code { # pending deletion
     my ($self,$term) = @_;
     my @type      = $term->col;
@@ -3847,6 +3852,8 @@ sub _go_evidence_code { # pending deletion
     #my @proteins = $term->at('Protein_id_evidence');
     return @results;
 }
+
+=cut 
 
 sub _build_hash {
     open my $fh, '<', $_[0] or die $!;
