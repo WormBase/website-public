@@ -22,6 +22,14 @@ CREATE TABLE email(
             PRIMARY KEY (user_id, email)
 );
 
+DROP TABLE IF EXISTS password_reset;
+CREATE TABLE password_reset(
+            user_id INTEGER,
+            token char(50),
+            expires   INTEGER,
+            PRIMARY KEY (user_id)
+);
+
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
             role_id   INTEGER PRIMARY KEY,

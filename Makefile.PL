@@ -40,7 +40,7 @@ requires 'Catalyst::Plugin::StackTrace';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::View::JSON';
 requires 'Catalyst::View::Email';
-requires 'Catalyst::View::GD';
+#requires 'Catalyst::View::GD';
 
 # Application dependencies
 requires 'Ace'                                    => '1.92';     # Good 'ole AcePerl.
@@ -59,6 +59,7 @@ requires 'CHI::Driver::Memcached::libmemcached';                 # Cache (in mem
 requires 'CHI::Driver::File';                                    # Cache (on disk)
 requires 'Class::MOP';                                           # => '1.12';
 requires 'Data::Dump';                                           #
+requires 'Data::GUID';											 #
 requires 'Data::OptList';                                        #
 requires 'DBI';                                                  #
 requires 'DBD::mysql';                                           #

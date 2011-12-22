@@ -1,7 +1,6 @@
 package WormBase::API::Object;
 
 use Moose;
-use Data::Dumper;
 use overload '~~' => \&_overload_ace, fallback => 1;
 
 has '_api' => (
