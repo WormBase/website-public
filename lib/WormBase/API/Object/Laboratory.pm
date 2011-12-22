@@ -85,31 +85,35 @@ B<Response example>
 
 =cut
 
-sub all_labs {
-    my $self   = shift;
+{ # temporary fix. see Gene_class for comment on class methods
+    my $all_labs;
 
-    my $db   = $self->ace_dsn->dbh;
-    my @labs = $db->fetch(-query=>qq/find Laboratory/);
-    my @rows;
-    
-    foreach my $lab (sort { $a cmp $b } @labs) {
-	my $wb       = $lab->Representative;
-	my $allele   = join('; ',$lab->Allele_designation);	
-	my $url      = $lab->URL;
-	$url = lc($url);
-	$url = $url !~ /^http/i ? "http://$url" : $url;  # Fix urls. Why here?
-	my ($institute)  = $lab->Mail;
-	my $email        = $lab->E_mail;
-	push @rows,{ lab             => $self->_pack_obj($lab),
-		     representative  => $wb ? $self->_pack_obj($wb,$wb->Standard_name) : "$lab",
-		     email           => "$email",
-		     allele_designation => "$allele",
-		     url                => "$url",
-		     affiliation        => "$institute",
-	};
+    sub all_labs {
+        my $self   = shift;
+
+        return $all_labs ||= {
+            description => 'all labs registered with WormBase and the Caenorhabditis Genetics Center',
+            data        => [
+                map {
+                    my $url = $_->URL ; # raw_fetch candidate
+                    if (defined $url) {
+                        (my $tmp = lc $url) =~ s{^(?!http://)}{http://};
+                        $url = $tmp;
+                    }
+
+                    {
+                        lab                => $self->_pack_obj($_),
+                        representative     => $self->_pack_obj(scalar $_->Representative)
+                                              // $_->name,
+                        email              => scalar eval { $_->E_mail->name },
+                        allele_designation => join('; ', $_->Allele_designation),
+                        url                => $url,
+                        affiliation        => scalar eval { ($_->Mail)[0] },
+                    };
+                } $self->ace_dsn->dbh->fetch(-query => "find Laboratory")
+            ],
+        };
     }
-    return { description => 'all labs registered with WormBase and the Caenorhabditis Genetics Center',
-	     data        => @rows ? \@rows : undef };   
 }
 
 
