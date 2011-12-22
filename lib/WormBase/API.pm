@@ -9,7 +9,7 @@ use Config::General;
 use Class::MOP;
 use File::Spec;
 use namespace::autoclean -except => 'meta';
-use Data::Dumper;
+
 with 'WormBase::API::Role::Logger'; # A basic Log::Log4perl screen appender
 
 # We assume that there is a single default data source.
@@ -91,7 +91,7 @@ sub _build_xapian {
 
   my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search/disease');
   my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
   my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);

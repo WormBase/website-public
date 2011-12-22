@@ -5,7 +5,6 @@ use Ace 1.51;
 use Bio::Graphics::Browser2::PadAlignment;
 use LWP::Simple;
 use Bio::Graphics::Browser2::Markup;
-use Data::Dumper;
 
 use Moose;
 with 'WormBase::API::Role::Object'; 
