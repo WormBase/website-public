@@ -28,6 +28,23 @@ sub password_index : Chained('password') PathPart('index')  Args(0){
     my ( $self, $c ) = @_;
     
     $c->stash->{token}  = $c->req->param("id")  ;
+    if($c->stash->{token}) {
+	  my @users = $c->model('Schema::Password')->search({token=>$c->stash->{token} });
+	  my $flag=0;
+	  foreach (@users){
+		 if($_->expires < time() ){
+		      $_->delete();
+		      $_->update();
+		  }else{
+		     $flag=1;
+		  }
+	   }
+	  unless($flag){
+	      $c->stash->{template} = "shared/generic/message.tt2"; 
+	      $c->stash->{message} = "the link has expired";
+	      return;
+	 } 
+    }
 }
 
 sub password_email : Chained('password') PathPart('email')  Args(0){
@@ -43,7 +60,18 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
 	  my $time = time() + $c->config->{password_reset_expires};
 	  foreach (@users){
 	      next unless($_->user->password);
-	      $c->model('Schema::Password')->find_or_create({token=>$c->stash->{token}, user_id=>$_->user_id,expires=>$time});
+	      my $password = $c->model('Schema::Password')->find($_->user_id);
+	      if($password){
+		  if( time() < $password->expires ){
+		      $c->stash->{token} = $password->token;
+		  }else {
+		     $password->token($c->stash->{token}) ;
+		     $password->expires($time) ;
+		     $password->update();
+		  }
+	      }else{
+		$c->model('Schema::Password')->create({token=>$c->stash->{token}, user_id=>$_->user_id,expires=>$time});
+	      }
 	  }
 	  $c->stash->{noboiler} = 1;
 	  $c->log->debug(" send out password reset email to $email");
