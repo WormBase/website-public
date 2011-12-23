@@ -1,8 +1,8 @@
 package WormBase::API::Object::Motif;
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
+with    'WormBase::API::Role::Object';
 
 =pod 
 
@@ -193,14 +193,14 @@ sub gene_ontology  {
     foreach my $go_term ($motif->GO_term) {
 	my $definition = $go_term->Definition;
 	my ($evidence) = $go_term->right;
-	my $term       = $go_term->GO_term;
+	my $term       = $go_term;
 	my $go_data;
-	my $term_data  = $self->pack_obj($term);
+	my $term_data  = $self->_pack_obj($term);
 	
 	push @data,{		
 	    go_term  => $term_data,	
 	    definition => $definition,
-	    evidence   => $evidence
+	    evidence   => $evidence? {text=>"$evidence",evidence=>$self->_get_evidence($evidence)}:undef,
 	};	
     }
     return { data        => @data ? \@data : undef,

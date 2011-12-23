@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.corresponding_gene.data.0 ? (fields.corresponding_gene.data.0.label) : fields.name.data.label | upper%]</h2>
 
 
 [% 
@@ -6,28 +6,97 @@
  
    taxonomy;
 
-   WRAPPER $field_block title="Status" key="status";
+   WRAPPER curator_block title="Status" key="status";
       fields.status.data;
    END;
+
+   WRAPPER $field_block title="Length" key="sequence";
+      fields.sequence.data.length _ ' ' _ fields.sequence.data.type;
+   END;
+
+
+WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
+    fields.estimated_molecular_weight.data;
+    ' <span id="fade">(estimated)</span>';
+END;
+
+WRAPPER $field_block title="Isoelectric point" key="estimated_isoelectric_point";
+    fields.estimated_isoelectric_point.data;
+    ' <span id="fade">(estimated)</span>';
+END;
+
  
    WRAPPER $field_block title="WormBase ID";
        fields.name.data.id;
    END;
- 
+   WRAPPER $field_block title="Download";
+      class = fields.name.data.class FILTER lower;
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   END;
 END;
  '<div class="text-width" style="clear:left">';
 #WRAPPER $field_block title="";
 #  central_dogma;
 #END;
 
-WRAPPER $field_block title="Type";
+WRAPPER curator_block title="Type";
    fields.type.data;
+END;
+
+WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size) key="corresponding_gene";
+    link_objects(fields.corresponding_gene.data);
+END;
+
+
+WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size) key="corresponding_transcripts";
+    link_objects(fields.corresponding_transcripts.data);
 END;
 
 WRAPPER $field_block title="Description" key="description";
     fields.description.data;
 END;
 
+
+
+
 remarks;
+
+WRAPPER $field_block title="Best human ortholog" key="best_human_match";
+    tag2link(fields.best_human_match.data.hit, fields.best_human_match.data.description);
+    '<br />(E value:' _ fields.best_human_match.data.evalue _ ')';
+END;
 '</div>';
+
+
+
 %]
+
+<div style="clear:both">
+[% FOREACH t IN fields.pfam_graph.data.keys.sort %]
+[% t %]:
+  <div class="pfam_graph" id="dg-[% t %]" data-seq='
+    [% FOREACH line IN fields.pfam_graph.data.$t.split(',') %]
+      [%  match = line.match('href\":\"(.*)/(.*)\"') %] 
+      [% IF match %]
+        [% type = match.0 %] [% acc=match.1 %]
+        "href":"[% site.external_urls.$type.search.replace("%s",acc) %]"
+      [% ELSE %][% line %][% END %]
+      [% UNLESS loop.last %],[% END %]
+    [% END %]
+  '></div>
+[% END %]
+</div>
+
+<script>
+  WB.getPfam(function(){
+    $jq(".pfam_graph").each(function() { 
+        var p = PfamGraphic;
+        p.initialize();
+        p.render("#" + this.id, $jq("#" + this.id).data("seq"));
+    });
+  });
+</script>
+
+<script>
+  //WB.ajaxGet($jq("#pfram_graph_holder"),"[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]");
+</script>

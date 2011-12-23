@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.label %]</h2>
+<h2 style="float:left">[% fields.name.data.label %]</h2>
 
 [% 
 
@@ -12,20 +12,17 @@ END;
 
 
 <div class="text-width" style="clear:left">
-    [% fields.description.data.description %]
-</div>
+    [%# fields.description.data.description %]
+ 
 
 
 [%
 
 WRAPPER $field_block  title="Description" key="description";
-     
-    fields.description.data;
-        # IF fields.description.data.evidence;
-	#     c.session.des= fields.description.data;
-        #     c.session.object= object.object;
-	#     '<a class="tooltip" href="#" title="evidence information" rel="/rest/evidence/phenotype/['_ object.name.data.id _ '/description></a>';
-        # END;
+    FOREACH obj IN  fields.description.data;
+      obj.text;
+      evidence(obj.evidence);
+    END;
 END;
 
 WRAPPER $field_block  title="Synonyms"  key="synonyms";
@@ -53,3 +50,4 @@ END;
 remarks;
 
 %]
+</div>

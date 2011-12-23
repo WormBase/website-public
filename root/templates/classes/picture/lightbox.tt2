@@ -1,4 +1,5 @@
 [% WRAPPER boilerplate/html # need the CSS %]
+<div class="picture_lightbox">
 
 [% MACRO img2link(img, label) BLOCK;
    UNLESS label; label = img.label || img.id; END;
@@ -19,13 +20,14 @@ END
 
 [%
    img = fields.image.data 
-   img_loc = '/draw/' _ img.format _ '?class=' _ img.class _ '&id=' _ img.name
-   img_src = img_loc _ '_600' # 600 thumbnail. img.name MUST be the last thing in img_loc
+   img_loc = img.class _ '/' _ img.name _ '.' _ img.format ;
+   
+   img_src = img.class _ '/' _ img.name _ '_600.' _ img.format ; # 600 thumbnail. img.name MUST be the last thing in img_loc
 %]
 
 <h1>[% fields.name.data.label %]</h1>
 
-<div id="picture-left-column" style="float:left;width:35%;max-width:35%;overflow:hidden;">
+<div id="picture-left-column" style="float:left;max-width:35%;overflow:hidden;">
     <a href="[% img_loc %]" target="_blank"><img src="[% img_src %]" style="max-width:100%"></a><br>
     [% cite_image(fields.external_source.data, fields.reference.data) %]<br>
 
@@ -51,7 +53,7 @@ END
 
 </div>
 
-<div id="picture-right-column" style="margin-left:40%;">
+<div id="picture-right-column" style="float:left;max-width:60%;margin-left:1em;padding-right:1em;text-align:justify">
 <p>
 [% IF fields.description.data %]
    [% fields.description.data %]
@@ -86,15 +88,15 @@ END
 </div>
 </div>
 
-
+</div>
 
 <script type="text/javascript">
-$jq('a:not([target])').click(function () {
+$jq('.picture_lightbox a:not([target])').click(function () {
    parent.location=this.href; 
    return false;
 });
 $jq('a:[target="lightbox"]').click(function () {
-   location=this.href;
+   $jq.colorbox({href:this.href,width:"80%", height:"80%", opacity:"0.4"});
    return false;
 });
 </script>

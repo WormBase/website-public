@@ -405,17 +405,24 @@
     function effects(){
       var content = $jq("#content");
       $jq("body").delegate(".toggle", 'click', function(){
-            $jq(this).toggleClass("active").next().slideToggle("fast", function(){
-            if($jq.colorbox){ $jq.colorbox.resize(); }
-            });
+            var tog = $jq(this);
+            tog.toggleClass("active").next().slideToggle("fast", function(){
+                if($jq.colorbox){ $jq.colorbox.resize(); }
+              });
+            if(tog.hasClass("load-toggle")){
+              ajaxGet(tog.next(), tog.attr("href"));
+              tog.removeClass("load-toggle");
+            }
             return false;
       });
         
-      content.delegate(".tooltip", 'mouseover', function(){
+      content.delegate(".tooltip", 'click', function(){
           var tip = $jq(this);
           getCluetip(function(){
             tip.cluetip({
+	      local:true,
               activation: 'click',
+	      width:350,
               sticky: true, 
               cluetipClass: 'jtip',
               dropShadow: false, 
@@ -424,15 +431,6 @@
               hoverIntent: false,
               });
             });
-      });
-      content.delegate(".text-min", 'click', function(){
-        var container = $jq(this),
-            txt = container.children(".text-min-expand"),
-            more = txt.next(),
-            h = (txt.height() < 40) ? '100%' : '2.4em';
-        txt.animate({height:h}).css("max-height", "none");
-        more.toggleClass('open').children().toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
-        container.parent().find(".expand").toggleClass('ellipsis');
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
@@ -451,7 +449,7 @@
             slink.colorbox({data: slink.attr("href"), 
                             width: "750px", 
                             height: "550px",
-                            title: function(){ return slink.prev().text() + " sequence"; }});
+                            title: function(){ return slink.prev().text() + " " + slink.data("class"); }});
           });
       });
       
@@ -533,7 +531,7 @@
         success:function(data){
           ajaxPanel.html(data);
         },
-        error:function(xhr, ajaxOptions, thrownError){
+        error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
           ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
           ajaxPanel.append(error.find(".error-message-technical").html());
@@ -576,8 +574,8 @@
         
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
-          (isBox.hasClass("minimize")) ? isBox.animate({width:"12em"}) : isBox.animate({width:"1.5em"});
           isBox.toggleClass("minimize").children().toggle();
+          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "12em"})
         });
     }
     
@@ -644,7 +642,7 @@
                   }
               });
           },
-          minLength: 2,
+          minLength: 3,
           select: function( event, ui ) {
               location.href = ui.item.url;
           }
@@ -693,6 +691,24 @@
     if(!searchData){ return; }
     SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);  
   }
+  
+  function formatExpand(div){
+      var expands = div.find(".text-min");
+      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
+        if (el.height() > 35){
+          el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
+            .click(function(){
+            var container = $jq(this),
+                txt = container.children(".text-min-expand");
+            txt.animate({height:(txt.height() < 40) ? '100%' : '2.4em'})
+               .css("max-height", "none")
+               .next().toggleClass('open').children()
+               .toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+            container.parent().find(".expand").toggleClass('ellipsis');
+          });
+        }
+      }
+  }
 
   function SearchResult(q, type, species, widget, nostar, t, container){
     var query = decodeURI(q),
@@ -710,12 +726,7 @@
     
     
     function formatResults(div){
-      var expands = div.find(".text-min");
-      for(var i=-1, el, l = expands.size(); ((el = expands.eq(++i)) && i < l);){
-        (el.height() > 35) ? 
-          el.html('<div class="text-min-expand">' + el.html() + '</div><div class="more"><div class="ui-icon ui-icon-triangle-1-s"></div></div>')
-          : el.removeClass("text-min");
-      }
+      formatExpand(div);
 
       if(queryList.length == 0) { return; }
       getHighlight(function(){
@@ -854,7 +865,7 @@
     
     function reloadWidget(widget_name, noLoad){
         var con = $jq("#" + widget_name + "-content");
-        if(con.size() > 0)
+        if(con.text().length > 4)
           ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
@@ -1516,6 +1527,31 @@ var Scrolling = (function(){
       if($jq.colorbox) $jq.colorbox.close();
     }
   }
+  
+  function loadRSS(id, url){
+    var container = $jq("#" + id);
+    setLoading(container);
+    getFeed(function(){
+      $jq.jGFeed(url,
+        function(feeds){
+          // Check for errors
+          if(!feeds){
+            // there was an error
+            return false;
+          }
+          var txt = '<div id="results"><ul>';
+          for(var i=-1, entry; (entry = feeds.entries[++i]);){
+            txt += '<div class="result"><li><div class="date" id="fade">' 
+                + entry.publishedDate.substring(0, 16) + '</div>'
+                + '<a href="' + entry.link + '">' + entry.title + '</a></li>'
+                + '<div class="text-min">' + entry.content.replace(/(\<\/?p\>|\<br\>)/g, '') + '</div></div>';
+          }
+          txt += '</ul></div>';
+          container.html(txt);
+          formatExpand(container);
+        }, 3);
+    });
+  }
 
 
 
@@ -1612,6 +1648,16 @@ var Scrolling = (function(){
       getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
       return;
     }
+    
+    function getFeed(callback){
+      getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
+      return;
+    }
+    
+    function getPfam(callback){
+      getPlugin("pfam", "/js/pfam/domain_graphics.min.js", undefined, callback);
+      return;
+    }
   
   
     function getPlugin(name, url, stylesheet, callback){
@@ -1651,10 +1697,12 @@ var Scrolling = (function(){
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
+      getPfam: getPfam,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
       historyOn: historyOn,
-      allResults: allResults
+      allResults: allResults,
+      loadRSS: loadRSS
     }
   })();
 

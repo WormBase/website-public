@@ -46,16 +46,15 @@ END;
 IF fields.structured_description.data;
     '<div class="toggle">Details</div>';
     '<div class="returned field">';
-    id = 0;
+    
     FOREACH sd IN fields.structured_description.data.keys;
           USE String(sd.replace('_', ' '));
           WRAPPER $field_block title=String.capital;
                FOREACH obj IN fields.structured_description.data.$sd;
                    '<div class="text-width" style="margin:0.5em">';
                       markup(obj.text);
-                      IF obj.evidence.check;
-                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/' _ fields.name.data.id _ '/' _ obj.evidence.tag _ '/' _ obj.evidence.index _ '"></a>';
-                      END;
+                      evidence(obj.evidence,sd);
+		      
                    '</div>';
                END;
            END;
@@ -92,11 +91,10 @@ END;
 
 
 # curator section
-IF c.check_user_roles('curator') OR c.check_user_roles('admin');
    WRAPPER curator_block title="Old website";
       '<a target="_blank" href="http://www.wormbase.org/db/gene/gene?name=' _ fields.name.data.id _ '">' _ fields.name.data.id _ '</a>';
    END;
-END;
+
 
 
 %]

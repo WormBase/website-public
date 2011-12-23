@@ -785,11 +785,16 @@ sub structured_description {
                   Expression
                   Detailed_description);
    foreach my $type (@types){
+      my @objs = $self->object->$type;
+      my @array = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } @objs;
+      $ret{$type} = \@array if (@array > 0);
+=pod
       my $node = $self->object->$type or next;
       my @nodes = $self->object->$type;
       my $index=-1;
       @nodes = map {$index++; {text=>"$_", evidence=> {tag => $type,index=>$index, check => $self->check_empty($_)}}} @nodes;
       $ret{$type} = \@nodes if (@nodes > 0);
+=cut
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
@@ -1004,17 +1009,17 @@ sub anatomic_expression_patterns {
     my $self   = shift;
     my $object = $self->object;
     my %data_pack;
-
-    my $file = catfile($self->pre_compile->{gene_expr}, "$object.jpg");
-    $data_pack{"image"}="jpg?class=gene_expr&id=$object"   if (-e $file && ! -z $file);
+    
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expr}, "$object.jpg");
+    $data_pack{"image"}=catfile($self->pre_compile->{gene_expr}, "$object.jpg") if (-e $file && ! -z $file);
 
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
                    $object->Expr_pattern;
 
     foreach my $ep (@eps) {
-        my $file = catfile($self->pre_compile->{expr_object}, "$ep.jpg");
-        $data_pack{"expr"}{"$ep"}{image}="jpg?class=expr_object&id=$ep" if (-e $file && ! -z $file);
+        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expr_object}, "$ep.jpg");
+        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expr_object}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
         $pattern    =~ s/(.{384}).+/$1.../;
@@ -1826,7 +1831,7 @@ sub gene_ontology {
 
             push @{ $data{$facet} }, {
                 method        => $1,
-                evidence_code => "$evidence_code",
+                evidence_code => {text=>"$evidence_code",evidence=>$self->_get_evidence($evidence_code)},
                 term          => $self->_pack_obj($go_term),
             };
         }
@@ -1933,12 +1938,12 @@ sub history {
             }
 
             push @data, {
-                history => "$history",
-                version => "$version",
-                type    => "$type",
-                date    => "$date",
-                action  => "$action",
-                remark  => "$remark",
+                history => $history && "$history",
+                version => $version && "$version",
+                type    => $type && "$type",
+                date    => $date && "$date",
+                action  => $action && "$action",
+                remark  => $remark && "$remark",
                 gene    => $self->_pack_obj($gene),
                 curator => $self->_pack_obj($curator),
             };
@@ -2023,7 +2028,7 @@ sub nematode_orthologs {
     my $data = $self->_parse_homologs(
         [ $self->object->Ortholog ],
         sub {
-            $_[0]->right(2) ? join('; ', map { "$_" } $_->right(2)->col) : undef;
+            $_[0]->right(2) ? join('; ', map { "$_" } $_[0]->right(2)->col) : undef;
         }
     );
 
@@ -2556,7 +2561,7 @@ sub interactions {
             $direction = 'Effector->Effected';
         }
 
-        my $phenotype = $type->Interaction_phenotype;
+        my $phenotype = eval {$type->Interaction_phenotype->right};
 
         push @data,
             {
@@ -3441,17 +3446,19 @@ sub gene_models {
         # We will create unique list of footnotes in the view.
         $data{remarks} = @notes ? \@notes : undef;
 
-        if ( $confirm eq 'Confirmed' ) {
-            $data{status} = "confirmed by cDNA(s)";
-        }
-        elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
-            $data{status} = "partially confirmed by cDNA(s)";
-        }
-        elsif ( $confirm eq 'Partially_confirmed' ) {
-            $data{status} = "partially confirmed";
-        }
-        elsif ( $cds && $cds->Method eq 'history' ) {
-            $data{status} = 'historical';
+        if ($confirm) {
+            if ( $confirm eq 'Confirmed' ) {
+                $data{status} = "confirmed by cDNA(s)";
+            }
+            elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
+                $data{status} = "partially confirmed by cDNA(s)";
+            }
+            elsif ( $confirm eq 'Partially_confirmed' ) {
+                $data{status} = "partially confirmed";
+            }
+            elsif ( $cds && $cds->Method eq 'history' ) {
+                $data{status} = 'historical';
+            }
         }
         else {
             $data{status} = "predicted";
@@ -3771,8 +3778,8 @@ sub _y2h_data { # pending deletion
 }
 
 
-
-# This is one big ugly hack job
+=pod
+# This is one big ugly hack job, evidence is handled by _get_evidence in API/Object.pm
 sub _go_evidence_code { # pending deletion
     my ($self,$term) = @_;
     my @type      = $term->col;
@@ -3845,6 +3852,8 @@ sub _go_evidence_code { # pending deletion
     #my @proteins = $term->at('Protein_id_evidence');
     return @results;
 }
+
+=cut 
 
 sub _build_hash {
     open my $fh, '<', $_[0] or die $!;

@@ -20,24 +20,22 @@
 
      WRAPPER $field_block title="Protein Schematic" key="homology_image";
           # image(fields.homology_image.data);
-          c.flash.gd = fields.homology_image.data;
-          image("/draw/protein");
+           image("/rest/field/protein/" _ object.name.data.id  _ "/rest_homology_image?content-type=image/png");
      END;
 
 %]
-
-[% WRAPPER $field_block title="Motif Summary" %]
-     
-  <iframe src ="[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]" width="100%" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
+[% WRAPPER $field_block title="Motif Summary" key="pfam_graph"%]
+  <iframe src ="[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]" width="536" style="margin:0 auto" frameborder=0 scrolling="auto" ALLOWTRANSPARENCY="true">
   <p>Your browser does not support iframes.</p>
   </iframe> 
 
-  <div id="motif_details">
-       <a class="update motif_details" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]">
-          [View full Motif Details]
-       </a>
-  </div>   
+
+           <div id="motif_details">
+<div class="toggle load-toggle" href="[% c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') %]" id="blast_details_toggle" >View full Motif Details</div> 
+<div class="returned field"></div>
+         </div>
 [% END %]
+
 
 
 [% best_blastp_matches %]

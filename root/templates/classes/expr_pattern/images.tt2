@@ -1,6 +1,6 @@
 <script type="text/javascript">
 WB.getColorbox(function(){
-$jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.4"});
+$jq(".picturebox").colorbox({width:"80%", height:"80%", opacity:"0.4"});
 });
 </script>
 
@@ -9,8 +9,9 @@ $jq(".picturebox").colorbox({iframe:true, width:"80%", height:"80%", opacity:"0.
    <div style="display:inline-block;">
       [% FOREACH img IN fields.curated_images.data.$group %]
       <div style="display:inline-block;max-width:200px;margin:1em;">
-         <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox">
-         <img src="/draw/[% img.draw.format | uri %]?class=[% img.draw.class | uri %]&id=[% img.draw.name | uri %]_200"
+         <a class="picturebox" rel="curated_images" href="/rest/widget/picture/[% img.id %]/lightbox" >
+	  
+         <img src="[% img.draw.class %]/[% img.draw.name %]_200.[% img.draw.format %]"
               alt="[% img.id %] thumbnail" style="max-width:100%;margin:auto;display:block;"></a><br>
       </div>
       [% END %]

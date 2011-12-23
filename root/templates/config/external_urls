@@ -56,9 +56,11 @@
 # Done to here only!
 
 		 
-        INTERPRO = { search = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s' }
+      
 
-
+	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
+		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'
+		   }
 
 
          ensembl = { description = 'The Ensembl Project'
@@ -175,8 +177,8 @@ $DOI             = 'http://dx.doi.org/';
            = { description  = 'The WormBase Genome Browser Image'
 			      maintainer   = ''
 
-base = 'http://www.wormbase.org/db/gb2/gbrowse_img/'
-search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
+base = '/tools/genome/gbrowse_img/'
+search = '/tools/genome/gbrowse_img/%s'
 	#		      base         = '/gb2/gbrowse_img/'
 	#		      search      = '/gb2/gbrowse_img/%s'   
 			    }
@@ -232,7 +234,7 @@ search = 'http://www.wormbase.org/db/gb2/gbrowse_img/%s'
 		       }
 
 
-	Interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
+	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
 		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac='
 		   }
 	Intronerator = { base   = ''

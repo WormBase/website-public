@@ -25,7 +25,6 @@ has 'syn_qp' => (isa => 'Search::Xapian::QueryParser', is => 'rw');
 has '_doccount' => (
     is          => 'ro',
     isa         => 'Int',
-    lazy        => 1,
     default     => sub {
       my $self = shift;
       return $self->db->get_doccount;
@@ -97,7 +96,7 @@ sub search_exact {
     my ( $class, $c, $q, $type) = @_;
   
     my ($query, $enq);
-    if( $type && ($q =~ m/^WB/i) ){
+    if( $type && ( ($q =~ m/^WB/i) || $type eq 'disease') ){
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
@@ -171,9 +170,10 @@ sub _get_obj {
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($c, $doc);
-  if(my $s = $c->config->{sections}{species_list}{$species}){
-    $ret{taxonomy}{genus} = $s->{genus};
-    $ret{taxonomy}{species} = $s->{species};
+  if($species =~ m/^(.)_(.*)$/){
+    my $s = $c->config->{sections}{species_list}{$species};
+    $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
+    $ret{taxonomy}{species} = $s->{species} || $2;
   }
   $ret{ptype} = $doc->get_value(7);
   %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};

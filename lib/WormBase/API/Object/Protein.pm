@@ -154,7 +154,7 @@ sub corresponding_gene {
 
     # From a list of CDSs for the protein, get the corresponding gene(s)
     my @genes = grep{ $_->Method ne 'history'}  @{$self->cds};
-    @genes = map { $self->_pack_obj($_) } @genes;
+    @genes = map { $self->_pack_obj($_->Gene) } @genes;
     return { description => 'The corressponding gene of the protein',
 	     data        => @genes ? \@genes : undef }; 
 }
@@ -268,7 +268,6 @@ B<Response example>
 
 sub corresponding_cds {
     my $self = shift;
-    my %seen;
     my @cds = grep{$_->Method ne 'history'} @{$self->cds};
     @cds = map { $self->_pack_obj($_) } @cds;
     return  { description => 'the corresponding CDSs of the protein',
@@ -332,6 +331,85 @@ sub type {
     }; 
 }
 
+
+=head3 best_human_match 
+
+This method returns a data structure containing the 
+best human blast hit for the protein
+
+=over
+
+=item PERL API
+
+ $data = $model->best_human_match();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A protein ID (eg WP:CE33017)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/protein/WP:CE33017/best_human_match
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=cut
+
+sub best_human_match {
+    my ($self) = @_;
+    my $object = $self->object;
+    my @pep_homol =  grep { $_ =~ /^ENSEMBL/ } $object->Pep_homol;
+
+    my $best;
+    for my $hit (@pep_homol) {
+        my $score = $hit->right(2);
+
+        my $prev_score = (!$best) ? $score : $best->{score};
+        $prev_score = ($prev_score =~ /\d+\.\d+/) ? $prev_score . '0'
+                                                  : "$prev_score.0000";
+        my $curr_score = ($score =~ /\d+\.\d+/) ? $score . '0'
+                                                : "$score.0000";
+        $best =
+          {score => $score, hit => $hit}
+          if !$best || $prev_score < $curr_score;
+    }
+    
+    return {
+        description => 'best human BLASTP hit',
+        data        => $best->{hit} ? {
+                hit         => $self->_pack_obj($best->{hit}),
+                description => $best->{hit}->Description || $best->{hit}->Gene_name,
+                evalue      => sprintf("%7.3g", 10**-$best->{score})
+            } : undef
+    };
+}
+
 # sub description { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
@@ -343,6 +421,7 @@ sub type {
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
+
 
 
 ############################################################
@@ -422,7 +501,8 @@ sub sequence {
     my $peptide = $self->peptide;
     return { description => 'the peptide sequence of the protein',
 	     data        => { sequence => $peptide,
-			      length   => length $peptide,			      
+			      length   => length $peptide,	
+			      type => 'aa',  
 	     },
     };
 }
@@ -596,25 +676,23 @@ B<Response example>
 sub amino_acid_composition {
     my $self = shift;
     return unless ($self->peptide);
-    my $selenocysteine_count = 
-	(my $hack_seq = $self->peptide)  =~ tr/Uu/Cc/;  # primaryseq doesn't like selenocysteine, so make it a cysteine
-
-    my $seq     = Bio::PrimarySeq->new($hack_seq);
+    my $seq     = Bio::PrimarySeq->new($self->peptide);
     my $stats   = Bio::Tools::SeqStats->new($seq);
     
     my %abbrev = (A=>'Ala',R=>'Arg',N=>'Asn',D=>'Asp',C=>'Cys',E=>'Glu',
 		  Q=>'Gln',G=>'Gly',H=>'His',I=>'Ile',L=>'Leu',K=>'Lys',
-		  M=>'Met',F=>'Phe',P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
-		  Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa');
+		  M=>'Met',F=>'Phe',O=>'Pyl*', P=>'Pro',S=>'Ser',T=>'Thr',W=>'Trp',
+		  Y=>'Tyr',V=>'Val',U=>'Sec*',X=>'Xaa**');
     # Amino acid content
     my $composition = $stats->count_monomers;
-    if ($selenocysteine_count > 0) {
-	$composition->{C} -= $selenocysteine_count;
-	$composition->{U} += $selenocysteine_count;
-    }
-    my %aminos = map {$abbrev{$_}=>$composition->{$_}} keys %$composition;
+
+    delete $composition->{O} unless $composition->{O};
+    delete $composition->{U} unless $composition->{U};
+    my @aminos;
+    map { push @aminos, { aa=>$abbrev{$_}, comp=>$composition->{$_} }} keys %$composition;
+
     return { description => 'The amino acid composition of the protein',
-	     data        =>  \%aminos ,
+	     data        =>  \@aminos ,
     }; 
 }
 
@@ -679,18 +757,17 @@ B<Response example>
 sub homology_groups {
     my $self   = shift;
     my $object = $self->object;
-    my @kogs = $object->Homology_group;
     my @hg;
-    foreach my $k (@kogs) {
-	my $title = $k->Title;
-	my $type  = $k->Group_type;
-	push @hg ,{ type  => "$type"  || '',
-		    title => "$title" || '',
-		    id    => $self->_pack_obj($k),
-	};
+    foreach my $k ($object->Homology_group) {
+      my $title = $k->Title;
+      my $type  = $k->Group_type;
+      push @hg ,{ type  => "$type"  || '',
+              title => "$title" || '',
+              id    => $self->_pack_obj($k),
+      };
     }
     return { description => 'KOG homology groups of the protein',
-	     data        => \@hg };
+	     data        => @hg ? \@hg : undef };
     
 }
 
@@ -810,12 +887,13 @@ B<Response example>
 
 sub homology_image {
     my $self=shift;
-    my $panel=$self->_draw_image($self->object,1);
-    return unless $panel;
-    my $gd=$panel->gd;
+#     my $panel=$self->_draw_image($self->object,1);
+#     return unless $panel;
+#     my $gd=$panel->gd;
     #show dynamic images
     return { description => 'a dynamically generated image representing homologous regions of the protein',
-	     data        => $gd,
+# 	     data        => $gd ? $gd->png : undef,
+	     data => 1,
     };
 =pod print image as file
     my ($suffix,$img,$boxes);
@@ -849,6 +927,16 @@ sub homology_image {
 =cut
 }
 
+
+sub rest_homology_image {
+    my $self=shift;
+    my $panel=$self->_draw_image($self->object,1);
+    return unless $panel;
+    my $gd=$panel->gd;
+    #show dynamic images
+    return $gd->png;
+     
+}
 =head3 motifs
 
 This method returns a data structure containing
@@ -1030,8 +1118,6 @@ sub pfam_graph {
 				     v_align=>"bottom",
 				     metadata => {
 					 type=>"exon".$count,
-					 start=>$end_holder,
-					 end=>$end,
 				     },
 	    };
 	    $end_holder = $end+1;
@@ -1068,7 +1154,6 @@ sub pfam_graph {
 				     metadata => {
 					 database=>$obj->{type},
 					 description=>"$desc",
-					 start=>$obj->{start},
 					 identifier=>$identifier,
 				     },
 	    };
@@ -1151,7 +1236,7 @@ B<Response example>
 sub motif_details {
     my $self = shift;
     
-    my $raw_features = $self ~~ '@Feature';
+#     my $raw_features = $self ~~ '@Feature';
     my $motif_homol = $self ~~ '@Motif_homol';
     
     #  return unless $obj->Feature;
@@ -1159,19 +1244,19 @@ sub motif_details {
     # Summary by Motif
     my @tot_positions;
     
-    if (@$raw_features > 0 || @$motif_homol > 0) {
+    if (@$motif_homol > 0) {
 	my %positions;
 	
-	foreach my $feature (@$raw_features) {
-	    %positions = map {$_ => $_->right(1)} $feature->col;
-	    foreach my $start (sort {$a <=> $b} keys %positions) {			
-		my $stop =  $positions{$start};
-		push @tot_positions,[ ( "$feature",'','',
-					"$start",
-					"$stop")
-		];
-	    }
-	}
+# 	foreach my $feature (@$raw_features) {
+# 	    %positions = map {$_ => $_->right(1)} $feature->col;
+# 	    foreach my $start (sort {$a <=> $b} keys %positions) {			
+# 		my $stop =  $positions{$start};
+# 		push @tot_positions,[ ( "$feature",'','',
+# 					"$start",
+# 					"$stop")
+# 		];
+# 	    }
+# 	}
  	
 	# Now deal with the motif_homol features
 	foreach my $feature (@$motif_homol) {
@@ -1315,7 +1400,7 @@ sub blast_details {
       
       # warn "$h->{hit} is bad" if $method =~ /worm|briggsae/ && ! $h->{hit}->Corresponding_CDS;
       my $eval = $h->{score};
-      push @rows,[({label=>"$id",class=>"$class",id=>"$id_link"},$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
+      push @rows,[($self->_pack_obj($h->{hit}),$taxonomy,"$description",sprintf("%7.3g",10**-$eval),
 		   $h->{source},
 		   $h->{target})];
       
@@ -1400,6 +1485,13 @@ sub history {
     return { description => 'curatorial history of the protein',
 	     data        =>  @data ? \@data : undef };
 }
+
+
+
+
+
+
+
 
  
 
@@ -1564,7 +1656,7 @@ sub _draw_image {
 	      $description   .= " ";
 # 	my $desc= $homol->Description} || $homol->Gene_name || "";
 	      $description   .= $homol->Description || $homol->Gene_name || "";
-	      $description   .=  $homol->Corresponding_CDS->Brief_identification ||""
+	      $description   .=  $homol->Corresponding_CDS ? $homol->Corresponding_CDS->Brief_identification ||"" : ""
 		  if $species =~ /elegans|briggsae/;
 	      my $t = $best_only ? "best hit, " : '';
 	      $feature->desc("$description (${t}e-val=$score)") if $description;

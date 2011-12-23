@@ -5,6 +5,31 @@
 #
 ####################################################
 %]
+
+[% MACRO evidence(data, id) BLOCK %]
+  [% IF data %]
+    [% UNLESS id.defined %] [% id =0 %] [% END %]
+    <div id="evidence_[% id %]" style="display:none" >
+	[% FOREACH type IN data.keys -%] 
+	    <b>[% type.replace('_',' ') %]</b>:  
+	    [% FOREACH object IN data.$type.keys %] 
+		
+	      [% IF data.$type.$object.class.defined %]
+	      [% tag2link(data.$type.$object) %]
+	      [% ELSE %]
+	      [% data.$type.$object.label %]  
+	      [% END %]
+	      [% UNLESS loop.last %];[% END %]
+	    [% END %] 
+	    [% UNLESS loop.last %]<br>[% END %]
+	[% END %] 			    
+    </div>
+  <span class="tooltip" href="#evidence_[% id %]" title="Evidence" rel="#evidence_[% id %]"></span>
+		      
+  [% END %]
+
+[% END %]
+
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]  
           <div style="padding:0.5em">
@@ -224,6 +249,7 @@ END;
 
 [% BLOCK curator_block %]
      [% # Curator (and sometimes admin) specific content) %]
+  [% IF c.check_user_roles('curator') OR c.check_user_roles('admin') %]
 
     <div class="field field-curator" id="[% title FILTER html %]">
          <div class="field-title">
@@ -234,6 +260,7 @@ END;
              [% content %]
           </div>
      </div>
+  [% END %]
 [% END %]
 
 
@@ -286,7 +313,7 @@ END;
       FOREACH o IN order; headers.push(columns.$o); END;
       
       # generate table
-      jquery_data_table_html(headers, local_rows, "table_${key}_by");   
+      jquery_data_table_html(headers, local_rows, "table_${key}_by", style, table_build);   
 
     END; # END of MACRO
 %]
@@ -301,11 +328,10 @@ END;
      styling via javascript.
 %]
      
-[% MACRO jquery_data_table_html(table_headers,rows,table_name,style) BLOCK %]
-
+[% MACRO jquery_data_table_html(table_headers,rows,table_name,style,table_build) BLOCK %]
   [% IF rows && rows.size > 0;  
        # Set up some suitable defaults
-       IF rows.size < 11;
+       IF rows.size < 11 || (rows.size < 51 && table_headers.size < 3);
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
@@ -328,21 +354,9 @@ END;
       	  info            = 'true'; 
       END;
 
+     UNLESS table_build;
+
    %]
-
-
-    <script type="text/javascript" >
-        WB.getDataTables(function(){
-          $jq('#[% table_name %]').dataTable({
-            "bPaginate"        : [% paginate %],
-            "bLengthChange"    : [% length   %],
-            "sPaginationType"  : "[% pagination_type %]",
-            "bFilter"          : [% filter %],      
-            "bInfo"            : [% info %],
-            [% style %]
-          });
-        });
-    </script>
 
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="[% table_name %]">
     <thead>
@@ -356,6 +370,7 @@ END;
         [% 
                 FOREACH row IN rows;
            '<tr>';
+		   index=loop.index;
                    FOREACH cell IN row;
               '<td>'; 
                       IF cell.species.defined;
@@ -364,17 +379,9 @@ END;
                           tag2link(cell);
                   ELSIF cell.match('ARRAY');
                   cell.join('<br>');
-              ELSIF cell.evidence.check.defined;
-              'here';
-                          '<a class="tooltip" href="#" title="evidence" rel="/rest/evidence/gene/'
-              _ obj.name.data.id 
-              _ '/'
-              _ cell.evidence.tag
-              _ '/'
-              _ cell.evidence.index 
-              _ '/'
-              _ cell.evidence.right
-              _ '"></a>';             
+              ELSIF cell.evidence.defined;
+		    cell.text;
+		    evidence(cell.evidence,table_name _ index);
                       ELSE;
                   cell;
                       END;
@@ -384,8 +391,20 @@ END;
            END;
              %]
     </tbody>
-
-      </table>
+  </table>
+    [% END %]
+    <script type="text/javascript" >
+        WB.getDataTables(function(){
+          $jq('#[% table_name %]').dataTable({
+            "bPaginate"        : [% paginate %],
+            "bLengthChange"    : [% length   %],
+            "sPaginationType"  : "[% pagination_type %]",
+            "bFilter"          : [% filter %],      
+            "bInfo"            : [% info %],
+            [% style %]
+          });
+        });
+    </script>
    [% END %] 
 
 [% END %] 
@@ -547,27 +566,26 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-
+   IF c.stash.fields.best_blastp_matches.data;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
-
+    
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
-                              columns={ taxonomy => 'Species',
-                                hit      => 'Hit',
-                         description => 'Description',
-                        evalue   => 'BLAST e-value',
-                        percent  => '% Length' 
-                                 },
-                         key='best_blastp_matches');
-    END;
-
-   
-        WRAPPER $field_block title="";
+                       columns={ taxonomy => 'Species',
+                                 hit      => 'Hit',
+                                 description => 'Description',
+                                 evalue   => 'BLAST e-value',
+                                 percent  => '% Length'
+                                },
+                       key='best_blastp_matches', 
+                       style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-             '<a class="update blast_details"';
-              ' href="' _ c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '">';
-               '[View full BLASTP List]</a>';
+'<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
+'<div class="returned field" style="width:100%"></div>';
          '</div>';
-       END;
+    END;
+  END;
+   
+
 
 
 END;
@@ -772,37 +790,44 @@ END;
 END;
 %]
 
-[% MACRO sequence(number) BLOCK; 
-    WRAPPER $field_block title="Sequence" key='sequence';
-	 sequence_list=[];
-	IF fields.sequence.data.sequence.defined;
-	    sequence_list.push(fields.sequence.data);
-	      
-	ELSE ;
-	    sequence_list = fields.sequence.data;
-	END;
-	FOREACH obj IN sequence_list ;
-	      seq = obj.sequence;  
-	      format_seq = "";
-	      FOREACH line IN seq.chunk(80);
-		  format_seq = format_seq _ line.chunk(10).join(' ');
-		  UNLESS loop.last;
-			format_seq = format_seq _ "\n";
-		  END;  
-	      END;
-	      '<div class="sequence-download">';
-				'<form action="/rest/download/">';
-				'<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >';
-				'<input type="hidden" name="sequence" value="' _ format_seq  _ '" >';
-				'<input type="submit" value="download">';
-			      '</form>';
-	      '</div>';
+[% MACRO sequence(field_key) BLOCK; 
+    UNLESS field_key.defined; field_key = 'sequence'; END;
 
-	      '<div class="toggle">view sequence (length:' _ obj.length _')</div>';
-	      '<div class="sequence-container">';
-			format_seq.replace('\n','<br/>');
-	      '</div>';
-	 END;
+    sequence_list = fields.sequence.data.sequence.defined ? [fields.sequence.data] : fields.sequence.data;
+    to_print;
+
+    FOREACH obj IN sequence_list;
+      IF obj.sequence.defined;
+        seq = obj.sequence;  
+        NEXT IF seq.length == 0;
+        format_seq = "";
+        FOREACH line IN seq.chunk(80);
+          format_seq = format_seq _ line.chunk(10).join(' ');
+          UNLESS loop.last;
+            format_seq = format_seq _ "\n";
+          END;  
+        END;
+
+        to_print = to_print _ '<div class="sequence-download">'
+                                  _ '<form action="/rest/download/">'
+                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >'
+                                  _ '<input type="hidden" name="sequence" value="' _ format_seq  _ '" >'
+                                  _ '<input type="submit" value="download">'
+                                  _ '</form>'
+                            _ '</div>'
+
+        _ '<div class="toggle">view sequence (' _ obj.length _' ' _ (obj.type == 'aa' ? 'aa' : 'bp') _ ')</div>'
+        _ '<div class="sequence-container">'
+          _ format_seq.replace('\n','<br/>')
+        _ '</div>';
+      ELSE;
+        to_print = to_print _ obj;
+      END;
+    END;
+    IF to_print.length > 0;
+      WRAPPER $field_block title="Sequence" key=field_key;
+        to_print;
+      END;
     END;
 END;
 %]

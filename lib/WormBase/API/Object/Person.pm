@@ -977,7 +977,7 @@ sub gene_classes {
     my $lab    = eval{$object->Laboratory};
 
     my @gene_classes = $lab ? $lab->Gene_classes : undef;
-    @gene_classes = map { $self->_pack_obj($_) } @gene_classes;
+    @gene_classes = map { $self->_pack_obj($_) } @gene_classes if $lab;
     
     my $data = { description => 'gene classes assigned to laboratory',
 		 data        => @gene_classes ? \@gene_classes : undef};
@@ -1051,7 +1051,7 @@ sub possibly_publishes_as {
     
     my @names = map { "$_" } $object->Possibly_publishes_as;
     my $data = { description => 'other names that the person might publish under',
-		 data        => \@names };
+		 data        => @names? \@names : undef };
     return $data;
 }
 
@@ -1118,10 +1118,10 @@ sub last_verified {
     my $timestamp = eval{$object->Last_verified};
     my @date = split /\ /, $timestamp;
     my $date = join " ", @date[0 .. 2];
-    my $data = { data        => "$date",
+    my $data = { data        => $date ? "$date" : undef,
 		 description => 'date curated information last verified',
     };
-    return $data ? $data : undef;
+    return $data;
 }
 
 

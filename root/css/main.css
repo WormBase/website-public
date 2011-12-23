@@ -473,7 +473,7 @@ div#tutorial-left{
   background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
   background-position: -235px 0;
-  width:700px;
+  width:695px;
   height:10em;
   position:absolute;
   left:1em;
@@ -697,7 +697,7 @@ div.more .ui-icon {
 #searchBody {
   border-right:1px dotted gray;
   float:right;
-  margin: 0.3em;
+  margin: 0.4em;
   position:relative;
   background:white;
 }
@@ -1657,6 +1657,10 @@ div.columns ul div input#layout-input {
   height:3.5em;
 }
 
+#page-title.search-bg {
+  height:auto;
+}
+
 #page-title h2 {
   font-size:24px;
   color:#222;
@@ -1696,7 +1700,7 @@ li div.widget-container {
   font-size:0.9em;
 }
 
-.widget-header, .species-bg, .species_list-bg  {
+.widget-header, .species-bg, .search-bg, .species_list-bg  {
     background-color: #C2D1DF;
 }
 
@@ -1954,8 +1958,9 @@ div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
 #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }
 
 .tooltip {
-	 padding: 0 0 0 20px;
-	background: url(/img/ui_widgets/Magnifying-Glass-icon.png) no-repeat ;
+	margin-left: 7px;
+	padding:0 0 0 20px;
+	background:url(/img/ui_widgets/evidence-icon.jpeg) no-repeat;
 }
 
 
@@ -2230,7 +2235,7 @@ div.detail-box{
   padding: 0.5em;
   float:right;
   margin:0.5em;
-  max-width:300px;
+  max-width:20em;
 }
 
 div.search-summary {
@@ -2244,7 +2249,7 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 7em;
+  width: 9em;
   padding-right: 0.5em;
 }
 
@@ -2456,8 +2461,8 @@ table.venn tr.venn-data td {
   position:absolute;  
   height:1.5em; 
   right:0;   
-  top:5em;
-  padding:1em 0.5em 0.5em; 
+  top:6.5em;
+  padding:0.5em 0.3em 0.3em 0.5em; 
   background: #D6C2C2;
   border:1px solid #CDCDCD;
   cursor:pointer;
@@ -2469,6 +2474,7 @@ table.venn tr.venn-data td {
   background: #9C4041;
   z-index:99;
   border:none;
+  width:1em;
 }
 
 #operator-box.minimize{
@@ -2489,8 +2495,8 @@ table.venn tr.venn-data td {
 }
 
 #issue-box.minimize:hover{
-  background: #6D2C2D;
-  width:1.5em;
+  background: #B81417; 
+  width:1.5em !important;
 }
 
 #operator-box.minimize>div{
@@ -2545,6 +2551,11 @@ div.inline-columns img {
 
 .button.slink{
   margin:0 0.5em 0 0;
+  height:1em;
+}
+
+.button.slink .ui-icon{
+  margin:0;
 }
 
 div.title {
