@@ -50,6 +50,9 @@ has 'pre_compile' => (
     is => 'ro',
 );
 
+has 'search' => (
+    is => 'ro',
+);
 
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
@@ -333,17 +336,11 @@ sub _build_best_blastp_matches {
         # current_object might already be a protein.
         $proteins = [$self->object] unless $proteins;
     } else { }
-
-#        return {
-#            description => 'no proteins found, no best blastp hits to display',
-#            data        => undef,
-#        };
-#    }
     
     if (@$proteins == 0) {
-	return { description => 'no proteins found, no best blastp hits to display',
-		 data        => undef,
-	};
+      return { description => 'no proteins found, no best blastp hits to display',
+          data        => undef,
+      };
     }
     
     my ($biggest) = sort {$b->Peptide(2)<=>$a->Peptide(2)} @$proteins;
@@ -745,11 +742,16 @@ sub _build_description {
         $tag = 'Description';
     }
     # do many models have multiple description values?
-    my $description = eval {join(' ', $object->$tag)} || undef;
-
+    my $description ;
+    if($class eq 'Phenotype'){
+      my @array =map {{text=>"$_",evidence=>$self->_get_evidence($_)}}  @{$self ~~ "\@$tag"} ;
+      $description = @array? \@array:undef;
+    }else{
+	$description = eval {join(' ', $object->$tag)} || undef;
+    }
     return {
         description => "description of the $class $object",
-        data        => $description && "$description",
+        data        => $description,
     };
 
     ## deal with evidence... ?
@@ -929,8 +931,8 @@ sub _build_laboratory {
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
     if (my $lab = eval {$object->$tag}) {
-        $data->{laboratory} = $self->_pack_obj($lab);
-
+        $data->{laboratory} = $self->_pack_obj($lab,$lab->Mail);
+	 
         my $representative = $lab->Representative;
         my $name           = $representative->Standard_name;
         my $rep            = $self->_pack_obj($representative, $name);

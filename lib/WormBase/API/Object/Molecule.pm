@@ -236,10 +236,10 @@ sub molecule_use {
     my ($self) = @_;
 
     # TODO: deal with evidence
-    my @uses = map {[$_->row]} @{$self ~~ '@Molecule_use'};
+    my @uses =  @{$self ~~ '@Molecule_use'};
     # (use, evidence type, evidence)
-
-    @uses = map {"$_->[0]"} @uses; # drop evidence.
+     @uses = map {{text=>"$_",evidence=>$self->_get_evidence($_)}} @uses;
+#     @uses = map {"$_->[0]"} @uses; # drop evidence.
     return {
         'data'        => @uses ? \@uses : undef,
         'description' => 'uses for the molecule'
@@ -526,7 +526,8 @@ sub _affects {
     # TODO: do something with evidence
     my %data_pack = map { $_->[0] => {
         obj       => $self->_pack_obj($_->[0]), # the affected obj
-        phenotype => $self->_pack_obj($_->[1])
+        phenotype => $self->_pack_obj($_->[1]),
+	evidence => $self->_get_evidence($_->[1]),
     }} @affected;
 
     return %data_pack ? \%data_pack : undef;

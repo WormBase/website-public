@@ -1,4 +1,4 @@
-<h2>[% fields.historical_name.data %]</h2>
+<h2 style="float:left">[% fields.historical_name.data %]</h2>
 
 [% 
 
@@ -16,6 +16,7 @@ WRAPPER highlight_box;
 
 END;
 
+'<div class="text-width" style="clear:left">';
 WRAPPER $field_block title="Historical Name" key="historical_name";
         fields.historical_name.data;
 END;  
@@ -35,5 +36,5 @@ END;
 
 remarks;
 
-	 
+'</div>'	 
 %]

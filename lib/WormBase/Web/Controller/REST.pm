@@ -332,42 +332,7 @@ sub update_role_POST {
     }
 }
 
-sub evidence :Path('/rest/evidence') :Args :ActionClass('REST') {}
-
-sub evidence_GET {
-    my ( $self, $c, $class, $name, $tag, $index, $right ) = @_;
-
-    my $headers = $c->req->headers;
-    $c->log->debug( $headers->header('Content-Type') );
-    $c->log->debug($headers);
-
-    my $object = $c->model('WormBaseAPI')->fetch({ class => ucfirst $class, name => $name });
-    # what if there's no object?
-
-    # Did we request the widget by ajax?
-    # Supress boilerplate wrapping.
-    if ( $c->is_ajax() ) {
-        $c->stash->{noboiler} = 1;
-    }
-
-    my @node   = $object->object->$tag;
-    $right ||= 0;
-    $index ||= 0;
-    my $data = $object->_get_evidence( $node[$index]->right($right) );
-    $c->stash->{evidence} = $data;
-    $c->stash->{template} = "shared/generic/evidence.tt2";
-    $c->forward('WormBase::Web::View::TT');
-    my $uri = $c->uri_for( "/reports", $class, $name );
-    $self->status_ok(
-        $c,
-        entity => {
-            class    => $class,
-            name     => $name,
-            uri      => "$uri",
-            evidence => $data
-        }
-    );
-}
+ 
 
 
 sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
@@ -735,11 +700,17 @@ sub widget_GET {
 
     # references widget - no need for an object
     # only html
-    if ( $widget eq 'references' ) {
-          $c->req->params->{widget} = 'references';
+    if ( $widget =~ m/references|disease/i ) {
+          $c->req->params->{widget} = $widget;
           $c->go('search', 'search');
     }
-
+=pod  this is going to conflict with the hash# for widgets
+    if ( $widget eq 'ontology_browser' ) {
+          $c->req->params->{widget} = 'ontology_browser';
+          $c->res->redirect("/tools/ontology_browser/run?inline=1&class=$class&name=$name");
+	  $c->detach();
+    }
+=cut
     my $api = $c->model('WormBaseAPI');
     my $object = ($name eq '*' || $name eq 'all'
                ? $api->instantiate_empty(ucfirst $class)
@@ -1100,7 +1071,7 @@ sub widget_me_GET {
 sub _get_session {
     my ($self,$c) = @_;
     unless($c->user_exists){
-      my $sid = $c->get_session_id;
+      my $sid = $c->sessionid;
       return $c->model('Schema::Session')->find({session_id=>"session:$sid"});
     }else{
       return $c->model('Schema::Session')->find({session_id=>"user:" . $c->user->user_id});
@@ -1369,11 +1340,14 @@ sub field_GET {
     # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
     my $uri = $c->uri_for( "/species", $class, $name );
 
-    $c->stash->{template} = $self->_select_template( 'field', $class, $field );
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
+       $c->stash->{template} = $self->_select_template( 'field', $class, $field );
       $c->stash->{$field} = $data;
       $c->forward('WormBase::Web::View::TT');
+    }elsif($content_type =~ m/image/i) {
+      
+      $c->res->body($data);
     }
     $self->status_ok(
         $c,

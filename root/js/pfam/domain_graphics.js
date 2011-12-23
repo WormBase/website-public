@@ -1,18 +1,41 @@
+//------------------------------------------------------------------------------
+//- note ----------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+// This file was modified to use jquery in place of prototype
+// There may be lots of bugs - abigail.cabunoc@oicr.on.ca
+
+
+//------------------------------------------------------------------------------
+//- polyfils --------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+$jq = jQuery.noConflict();
+Array.max = function( array ){
+    return Math.max.apply( Math, array );
+};
+    
+Array.prototype.flatten = function() {
+  return $jq.map( this, function(n){
+    if(n)
+      return n;
+  });
+};
 
 //------------------------------------------------------------------------------
 //- preamble -------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 // for the benefit of jslint, declare global variables from outside this script
-/*global $, $R, $w, $break, Class, console, Element, Hash, Event, document,
-  window, G_vmlCanvasManager, Template, Tip */
+// global $, $R, $w, $break, Class, console, Element, Hash, Event, document,
+//   window, G_vmlCanvasManager, Template, Tip 
 
 // spoof a console, if necessary, so that we can run in IE (<8) without having
 // to entirely disable debug messages
-if ( ! window.console ) {
-  window.console     = {};
-  window.console.log = function() {};
-}  
+// if ( ! window.console ) {
+//   window.console     = {};
+//   window.console.log = function() {};
+// }  
 
 //------------------------------------------------------------------------------
 //- class ----------------------------------------------------------------------
@@ -42,7 +65,8 @@ if ( ! window.console ) {
 // You should have received a copy of the GNU General Public License along with
 // this program. If not, see <http://www.gnu.org/licenses/>.
 
-var PfamGraphic = Class.create( {
+    
+var PfamGraphic =  {
   /**
    * @lends PfamGraphic#
    * @author John Tate
@@ -56,7 +80,7 @@ var PfamGraphic = Class.create( {
    * 
    * @private
    */
-  _canvases: new Hash(),
+  _canvases: {},
 
   /**
    * A boolean for keeping track of whether the "middle click listener" has
@@ -282,10 +306,10 @@ var PfamGraphic = Class.create( {
 
     // specification of various allowed values in the input
     this._markupSpec = {
-      valignValues:       $w( "top bottom" ),
-      linesStyleValues:   $w( "mixed bold dashed" ),
-      lollipopHeadValues: $w( "diamond circle square arrow pointer line" ),
-      regionEndValues:    $w( "curved straight jagged arrow" )
+      valignValues:       ["top", "bottom"],
+      linesStyleValues:   ["mixed", "bold", "dashed"],
+      lollipopHeadValues: ["diamond", "circle", "square", "arrow", "pointer", "line"],
+      regionEndValues:    ["curved", "straight", "jagged", "arrow"],
     };
 
     // store the heights of the various drawing elements (only used in the 
@@ -293,7 +317,8 @@ var PfamGraphic = Class.create( {
     this._heights = {};
 
     // somewhere to put <area> definitions for the domains and markups
-    this._areasHash = new Hash();
+    this._areasHash = {};
+
     
     // somewhere to cache the calculated steps for jagged edges 
     this._cache = {};
@@ -329,7 +354,7 @@ var PfamGraphic = Class.create( {
    * @returns {PfamGraphic} reference to this object
    */
   setParent: function( parent ) {
-    this._parent = $(parent);
+    this._parent = $jq(parent);
 
     if ( this._parent === undefined || this._parent === null ) {
       this._throw( "couldn't find the parent node" );
@@ -363,7 +388,7 @@ var PfamGraphic = Class.create( {
    * @returns {PfamGraphic} reference to this object
    */
   setCanvas: function( canvas ) {
-    this._canvas = $(canvas);
+    this._canvas = canvas;
 
     if ( this._canvas === undefined || this._canvas === null ) {
       this._throw( "couldn't find the canvas node" );
@@ -405,7 +430,8 @@ var PfamGraphic = Class.create( {
    * @returns {PfamGraphic} reference to this object
    */
   setImageParams: function( userImageParams ) {
-    this._imageParams = Object.extend( this._imageParams, userImageParams );
+//     this._imageParams = Object.extend( this._imageParams, userImageParams );
+    this._imageParams = userImageParams;
     this._applyImageParams = true;
     return this;
   },
@@ -483,9 +509,9 @@ var PfamGraphic = Class.create( {
     // validate the sequence object
 
     // first, it has to be an object...
-    if ( typeof sequence !== "object" ) {
-      this._throw( "must supply a valid sequence object" );
-    }
+//     if ( typeof sequence !== "object" ) {
+//       this._throw( "must supply a valid sequence object" );
+//     }
 
     // check that the sequence value makes sense
     if ( sequence.length === undefined ) {
@@ -552,7 +578,7 @@ var PfamGraphic = Class.create( {
     }
 
     // everything passes. Stash it
-    this._sequence = sequence;
+    this._sequence = JSON.parse(sequence);
 
     //----------------------------------
 
@@ -595,12 +621,12 @@ var PfamGraphic = Class.create( {
     //   o maximum top extend for lollipops
     //   o maximum top extend for bridges
     //   o half the domain height
-    this._canvasHeight = [ this._heights.lollipops.upMax,
+    this._canvasHeight = Array.max([ this._heights.lollipops.upMax,
                            this._heights.bridges.upMax,
-                           ( this._regionHeight / 2 + 1 ) ].max() +
-                         [ this._heights.lollipops.downMax,
+                           ( this._regionHeight / 2 + 1 ) ]) +
+                         Array.max([ this._heights.lollipops.downMax,
                            this._heights.bridges.downMax,
-                           ( this._regionHeight / 2 + 1 ) ].max() + 1;
+                           ( this._regionHeight / 2 + 1 ) ]) + 1;
                          // that single pixel is just a fudge factor...
 
     // finally, scale the height by the specified factor
@@ -627,11 +653,10 @@ var PfamGraphic = Class.create( {
 
     // set the baseline, relative to which the various elements will
     // actually be drawn
-    this._baseline = [ this._heights.lollipops.upMax,
-                       this._heights.bridges.upMax,
-                       this._imageParams.regionHeight / 2 ].max() + 1;
+    this._baseline = Array.max([ this._heights.lollipops.upMax || 0,
+                       this._heights.bridges.upMax || 0,
+                       ((this._imageParams.regionHeight || 0) / 2) ]) + 1;
                        // that single pixel is just a fudge factor...
-
     return this;
   },
   
@@ -770,12 +795,15 @@ var PfamGraphic = Class.create( {
     // events and add tooltips properly. Store them in a class variable so 
     // that this (*should*) work even if there are multiple PfamGraphic
     // objects in operation
-    this._canvases.set( this._canvas.identify(),
-                        { "parentEl":    this._parent,
-                          "areas":       this._areasList } );
+//     this._canvases.set( this._canvas.identify(),
+//                         { "parentEl":    this._parent,
+//                           "areas":       this._areasList } );
+    this._canvases[this._canvas] = { "parentEl":    this._parent,
+                                                "areas":       this._areasList };
 
     // add mouse event listeners
-    this._addListeners();
+    //AC - undo this later
+//     this._addListeners();
 
     return this;
   }, // end of "render"
@@ -808,11 +836,17 @@ var PfamGraphic = Class.create( {
     var s = this._sequence;
     s.length = this._parseInt( s.length );
     
-    [ s.motifs, s.regions, s.markups ].each( function( j ) {
-      $w( 'start end aliStart aliEnd' ).each( function( i ) {
-        i = this._parseInt( i );
-      }.bind( this ) );
-    }.bind( this ) );
+    for(j in [ s.motifs, s.regions, s.markups ]){
+      for(i in ['start', 'end', 'aliStart', 'aliEnd']){
+                i = this._parseInt( i );
+      }
+    }
+    
+//     [ s.motifs, s.regions, s.markups ].each( function( j ) {
+//       ['start', 'end', 'aliStart', 'aliEnd'].each( function( i ) {
+//         i = this._parseInt( i );
+//       }.bind( this ) );
+//     }.bind( this ) );
 
   },
 
@@ -854,15 +888,15 @@ var PfamGraphic = Class.create( {
     // instead, we need to use the plain old document.createElement and
     // then let prototype extend it:
     var canvas = document.createElement( "canvas" );
-    Element.extend( canvas );
+//     Element.extend( canvas );
 
     // have to set the dimensions explicitly too
     canvas.width = width;
     canvas.height = height;
 
     // add the new <canvas> to the parent and generate an identifier for it
-    this._parent.appendChild( canvas );
-    canvas.identify();
+    $jq(this._parent).append( canvas );
+//     canvas.identify();
 
     // make sure it gets initialised in bloody IE...
     // N.B. this "undefined" really needs the quotation marks !
@@ -879,7 +913,7 @@ var PfamGraphic = Class.create( {
     // walk up from the canvas parent until we get to a div and see how wide it
     // is. If it's narrower than the canvas, we need to add this extra class
     // to the parent, so that scrolling works everywhere
-    var wrapperDiv = this._parent.up("div");
+    var wrapperDiv = this._parent.closest("div");
     if ( wrapperDiv && width > wrapperDiv.scrollWidth ) {
       this._parent.addClassName( "canvasScroller" );
     }
@@ -912,132 +946,133 @@ var PfamGraphic = Class.create( {
     // add a listener for mouse movements over the canvas
     // console.log( "PfamGraphic._addListeners: adding listener to |%s|",
     //   this._canvas.identify() );
-    this._canvas.observe( "mousemove", function( e ) {
-
-      // find out where the event originated
-      var activeCanvas = e.findElement("canvas");
-
-      // retrieve the parent element and areas list for this particular canvas
-      var canvasSettings = this._canvases.get( activeCanvas.identify() );
-      var parentEl  = canvasSettings.parentEl;
-      var areasList = canvasSettings.areas;
-
-      // the offset coordinates of the canvas itself
-      var offset = activeCanvas.cumulativeOffset();
-      var cx = offset[0];
-      var cy = offset[1];
-
-      // take into account a scrolling offset
-      // var sx = activeCanvas.getOffsetParent().scrollLeft;
-      // var sy = activeCanvas.getOffsetParent().scrollTop;
-      var sx = parentEl.scrollLeft;
-      var sy = parentEl.scrollTop;
-      // console.log( "PfamGraphic._addListeners: parentEl: %s, scrollTop: %d",
-      //   parentEl.identify(), parentEl.scrollTop );
-
-      // the area coordinates are all stored relative to the top-left corner
-      // of the drawing area of the graphic, before the sequence end padding
-      // value has been added, and before the X- and Y-scale factors have been 
-      // applied. This means that the coordinates of the mouse event need to be
-      // adjusted accordingly. 
-      
-      // TODO It might prove sensible to adjust the coordinates of the areas 
-      // before they're stored, so that we don't have to do any calculations
-      // for a mouse event.
-
-      // the X-position of the event is adjusted to take into account the 
-      // offset of the graphic due to the sequence end padding value and
-      // the drawing offsets
-      var ip = this._imageParams;
-      var x = e.pointerX() - cx + sx - ip.sequenceEndPadding;
-          y = e.pointerY() - cy + sy;
-          activeArea = null;
-      x /= this._imageParams.xscale;
-      y /= this._imageParams.yscale;
-
-      // see if we're in an area
-      areasList.each( function( area ) {
-        if ( x >= area.coords[0] && x <= area.coords[2] &&
-             y >= area.coords[1] && y <= area.coords[3] ) {
-          activeArea = area;
-          // console.log( "PfamGraphic._addListeners: mouseover an area: ", area );
-          throw $break;
-        }
-      } );
-
-      if ( activeArea ) {
-        // console.log( "PfamGraphic._addListeners: in an active area: ", activeArea );
-
-        if ( this._inside !== activeArea ) {
-          // console.log( "PfamGraphic._addListeners: in a NEW active area" );
-
-          // we're in a new area
-          this._inside = activeArea;
-
-          if ( addTips && activeArea.tip ) {
-            var opts =  { title: activeArea.tip.title,
-                          stem: "topLeft" };
-            if ( this._options.tipStyle ) {
-              opts.style = this._options.tipStyle;
-            }
-            var t1 = new Tip(
-              parentEl,
-              activeArea.tip.body,
-              opts
-            );
-          }
-
-          // change the pointer if there's a link on this area
-          if ( activeArea.href ) {
-            var url;
-            if ( this._options.baseUrl && ! this._options.baseUrl.empty() ) {
-              url = this._options.baseUrl + activeArea.href;
-            } else {
-              url = activeArea.href;
-            }
-
-            activeCanvas.setStyle( { cursor: "pointer" } );
-            window.status = url;
-          }
-        }
-
-      } else {
-
-        // console.log( "PfamGraphic._addListeners: not in an area" );
-
-        // we aren't inside an area...
-        if ( this._inside ) {
-
-          activeCanvas.setStyle( { cursor: "default" } );
-
-          this._inside = null;
-          window.status = "";
-
-          if ( parentEl.prototip ) {
-            parentEl.prototip.remove();
-          }
-        }
-
-      }
-
-    }.bind( this ) );
+//     $jq(this._canvas).bind( "mousemove", function( e ) {
+// 
+//       // find out where the event originated
+//       var activeCanvas = e.findElement("canvas");
+// 
+//       // retrieve the parent element and areas list for this particular canvas
+// //       var canvasSettings = this._canvases.get( activeCanvas.identify() );
+//       var canvasSettings = this._canvases[activeCanvas.identify()];
+//       var parentEl  = canvasSettings.parentEl;
+//       var areasList = canvasSettings.areas;
+// 
+//       // the offset coordinates of the canvas itself
+//       var offset = activeCanvas.cumulativeOffset();
+//       var cx = offset[0];
+//       var cy = offset[1];
+// 
+//       // take into account a scrolling offset
+//       // var sx = activeCanvas.getOffsetParent().scrollLeft;
+//       // var sy = activeCanvas.getOffsetParent().scrollTop;
+//       var sx = parentEl.scrollLeft;
+//       var sy = parentEl.scrollTop;
+//       // console.log( "PfamGraphic._addListeners: parentEl: %s, scrollTop: %d",
+//       //   parentEl.identify(), parentEl.scrollTop );
+// 
+//       // the area coordinates are all stored relative to the top-left corner
+//       // of the drawing area of the graphic, before the sequence end padding
+//       // value has been added, and before the X- and Y-scale factors have been 
+//       // applied. This means that the coordinates of the mouse event need to be
+//       // adjusted accordingly. 
+//       
+//       // TODO It might prove sensible to adjust the coordinates of the areas 
+//       // before they're stored, so that we don't have to do any calculations
+//       // for a mouse event.
+// 
+//       // the X-position of the event is adjusted to take into account the 
+//       // offset of the graphic due to the sequence end padding value and
+//       // the drawing offsets
+//       var ip = this._imageParams;
+//       var x = e.pointerX() - cx + sx - ip.sequenceEndPadding;
+//           y = e.pointerY() - cy + sy;
+//           activeArea = null;
+//       x /= this._imageParams.xscale;
+//       y /= this._imageParams.yscale;
+// 
+//       // see if we're in an area
+//       areasList.each( function( area ) {
+//         if ( x >= area.coords[0] && x <= area.coords[2] &&
+//              y >= area.coords[1] && y <= area.coords[3] ) {
+//           activeArea = area;
+//           // console.log( "PfamGraphic._addListeners: mouseover an area: ", area );
+//           throw $break;
+//         }
+//       } );
+// 
+//       if ( activeArea ) {
+//         // console.log( "PfamGraphic._addListeners: in an active area: ", activeArea );
+// 
+//         if ( this._inside !== activeArea ) {
+//           // console.log( "PfamGraphic._addListeners: in a NEW active area" );
+// 
+//           // we're in a new area
+//           this._inside = activeArea;
+// 
+//           if ( addTips && activeArea.tip ) {
+//             var opts =  { title: activeArea.tip.title,
+//                           stem: "topLeft" };
+//             if ( this._options.tipStyle ) {
+//               opts.style = this._options.tipStyle;
+//             }
+//             var t1 = new Tip(
+//               parentEl,
+//               activeArea.tip.body,
+//               opts
+//             );
+//           }
+// 
+//           // change the pointer if there's a link on this area
+//           if ( activeArea.href ) {
+//             var url;
+//             if ( this._options.baseUrl && ! this._options.baseUrl.empty() ) {
+//               url = this._options.baseUrl + activeArea.href;
+//             } else {
+//               url = activeArea.href;
+//             }
+// 
+//             activeCanvas.setStyle( { cursor: "pointer" } );
+//             window.status = url;
+//           }
+//         }
+// 
+//       } else {
+// 
+//         // console.log( "PfamGraphic._addListeners: not in an area" );
+// 
+//         // we aren't inside an area...
+//         if ( this._inside ) {
+// 
+//           activeCanvas.setStyle( { cursor: "default" } );
+// 
+//           this._inside = null;
+//           window.status = "";
+// 
+//           if ( parentEl.prototip ) {
+//             parentEl.prototip.remove();
+//           }
+//         }
+// 
+//       }
+// 
+//     }.bind( this ) );
 
     //----------------------------------
 
     // watch for clicks on areas with URLs
-    this._canvas.observe( "click", function( e ) {
+    $jq(this._canvas).click(function( e ) {
       this._handleClick( e );
     }.bind( this ) );
 
-    if ( ! this._middleClickListenerAdded ) {
-      Event.observe( window, "click", function( e ) {
-        // we only want to handle middle clicks from the window
-        if ( e.isMiddleClick() ) {
-          this._handleClick( e );
-        }
-      }.bind( this ) );
-      this._middleClickListenerAdded = true;
-    }
+//     if ( ! this._middleClickListenerAdded ) {
+//       Event.observe( window, "click", function( e ) {
+//         // we only want to handle middle clicks from the window
+//         if ( e.isMiddleClick() ) {
+//           this._handleClick( e );
+//         }
+//       }.bind( this ) );
+//       this._middleClickListenerAdded = true;
+//     }
 
   }, // end of "_addListeners"
 
@@ -1057,7 +1092,9 @@ var PfamGraphic = Class.create( {
 
     var clickedElement = e.findElement("canvas");
     var canvasId       = clickedElement.identify();
-    var activeCanvas   = this._canvases.get( canvasId );
+//     var activeCanvas   = this._canvases.get( canvasId );
+    var activeCanvas   = this._canvases[canvasId];
+
 
     // we're only interested in clicks on the canvas(es)
     if ( activeCanvas === undefined ) {
@@ -1134,9 +1171,10 @@ var PfamGraphic = Class.create( {
 
     // console.log( "PfamGraphic._buildMarkups: assessing lollipops" );
 
-    var orderedMarkups = [];
-    this._sequence.markups.each( function( markup ) {
+    var orderedMarkups = {};
 
+    var markups = this._sequence.markups;
+    for(var i=-1, markup; (markup = markups[++i]);){
       var start = Math.floor( markup.start );
       if ( start === "NaN" ) {
         this._throw( "markup start position is not a number: '" + 
@@ -1148,20 +1186,23 @@ var PfamGraphic = Class.create( {
       }
 
       orderedMarkups[markup.start].push( markup );
-    }.bind(this) );
+    }
     
     // flatten to get rid of nested arrays and then strip out slots with 
     // "undefined" as a value
-    orderedMarkups = orderedMarkups.flatten().compact();
-    
+    orderedMarkups = $jq.map( orderedMarkups, function(n){
+                            if(n)
+                              return n;
+                          });
+
     // get the width of a residue. We need this when assessing whether lollipops
     // are overlapping
     var residueWidth = this._imageParams.residueWidth;
 
     // walk the markups, in order of start position, and build a map showing where
-    // the lollipops are found
-    orderedMarkups.each( function( markup ) {
-
+    // the lollipops are found);
+    for(var i=-1, markup; (markup = orderedMarkups[++i]);){
+      if((typeof markup) != 'object'){ continue; }
       var start = Math.floor( markup.start );
       if ( start === "NaN" ) {
         this._throw( "markup start position is not a number: '" + 
@@ -1172,7 +1213,7 @@ var PfamGraphic = Class.create( {
         heights.lollipops.markups.push( markup ); // store as a lollipop
       } else {
         bridgeMarkups.push( markup );   // store as a bridge
-        return; // equivalent to "next markup"
+        continue; // equivalent to "next markup"
       }
 
       if ( markup.v_align !== undefined &&
@@ -1182,7 +1223,7 @@ var PfamGraphic = Class.create( {
       }
 
       if ( markup.headStyle !== undefined &&
-           ! ms.lollipopHeadValues.include( markup.headStyle ) ) {
+           ! ($jq.inArray(markup.headStyle, ms.lollipopHeadValues) > -1) ) {
         this._throw( "markup 'headStyle' value is not valid: '" + 
                      markup.headStyle + "'" );
       }
@@ -1190,7 +1231,6 @@ var PfamGraphic = Class.create( {
       // see if we're drawing on the top or the bottom
       var up = ( markup.v_align === undefined || markup.v_align === "top" );
       // console.log( "PfamGraphic._buildMarkups: up: %s", up );
-
       var h = up ? heights.lollipops.up : heights.lollipops.down;
 
       // check for an overlap with another lollipop (which was added previously)
@@ -1198,8 +1238,8 @@ var PfamGraphic = Class.create( {
            h[ start                        ] !== undefined ||
            h[ start + ( 1 / residueWidth ) ] !== undefined ) {
 
-        var firstLollipopHeight = h.slice( start - ( 1 / residueWidth ), 
-                                           start + ( 1 / residueWidth ) ).max();
+        var firstLollipopHeight = Array.max(h.slice( start - ( 1 / residueWidth ), 
+                                           start + ( 1 / residueWidth ) ));
 
         h[ start ] = firstLollipopHeight + ip.lollipopToLollipopIncrement;
 
@@ -1211,13 +1251,12 @@ var PfamGraphic = Class.create( {
         // console.log( "PfamGraphic._buildMarkups: no duplicate markup at position %d; using default height",
         //   start );
         h[start] = ip.defaultMarkupHeight;
-
       }
 
-      var headSize = ip["headSize" + markup.headStyle.capitalize()];
+      var headSize = ip["headSize" + markup.headStyle.charAt(0).toUpperCase() + markup.headStyle.slice(1) ];
       // console.log( "PfamGraphic._buildMarkups: head size for '%s': %d",
       //   markup.headStyle, headSize );
-
+      
       if ( up ) {
         // maximum extent above the sequence line
         heights.lollipops.upMax = Math.max( h[start] + headSize,
@@ -1227,17 +1266,14 @@ var PfamGraphic = Class.create( {
         heights.lollipops.downMax = Math.max( h[start] + headSize,
                                               heights.lollipops.downMax );
       }
-
       // console.log( "PfamGraphic._buildMarkup: max heights for lollipops: up/down: %d / %d",
       //   heights.lollipops.upMax, heights.lollipops.downMax );
 
-    }.bind(this) );
+    }
 
-    bridgeMarkups.each( function( bridgeMarkup ) {
-
+    for(var i=-1, bridgeMarkup; (bridgeMarkup = bridgeMarkups[++i]);){
       // the hash that stores the bridge parameters
       var bridge = { markup: bridgeMarkup };
-
       // we need to keep track of the markup for a bridge, but also its
       // calculated height and direction
       heights.bridges.markups.push( bridge );
@@ -1263,7 +1299,7 @@ var PfamGraphic = Class.create( {
       // console.log( "PfamGraphic._buildMarkups: checking for overlapping bridges" );
 
       // find the maximum height of overlapping bridges
-      var maxBridgeHeight = hb.slice( start, end ).flatten().max();
+      var maxBridgeHeight = Array.max(hb.slice( start, end ).flatten());
       var bridgeHeight = ip.defaultMarkupHeight;
 
       // set the height of the current bridge either to the default height or 
@@ -1274,8 +1310,7 @@ var PfamGraphic = Class.create( {
         //   bridgeHeight );
 
       } else { 
-
-        if ( hb.slice( start, end ).flatten().include( bridgeHeight ) ) {
+        if ( $jq.inArray(bridgeHeight, hb.slice( start, end ).flatten()) > -1 ) {
 
           bridgeHeight = maxBridgeHeight + ip.bridgeToBridgeIncrement;
 
@@ -1288,12 +1323,11 @@ var PfamGraphic = Class.create( {
         }
 
       }
-
       // console.log( "PfamGraphic._buildMarkups: checking for overlapping lollipops" );
 
       // find the maximum height of overlapping lollipops (add a buffer to take into 
       // account the width of lollipop heads)
-      var maxLollipopHeight = hl.slice( start - 4, end + 4 ).max();
+      var maxLollipopHeight = Array.max(hl.flatten().slice( start - 4, end + 4 ));
 
       if ( maxLollipopHeight !== undefined ) {
 
@@ -1321,12 +1355,12 @@ var PfamGraphic = Class.create( {
       // height if so
       // console.log( "PfamGraphic._buildMarkups: checking again for a bridge at this height (%d)",
       //   bridgeHeight );
-      while ( hb.slice( start, end ).flatten().include( bridgeHeight ) ) {
+      while ( $jq.inArray(bridgeHeight, hb.slice( start, end ).flatten()) > -1) {
 
         bridgeHeight += ip.bridgeToBridgeIncrement;
         
-        // console.log( "PfamGraphic._buildMarkups: found overlapping bridge; setting bridge height to %d", 
-        //   bridgeHeight );
+        console.log( "PfamGraphic._buildMarkups: found overlapping bridge; setting bridge height to %d", 
+          bridgeHeight );
 
       }
 
@@ -1337,13 +1371,13 @@ var PfamGraphic = Class.create( {
       bridge.height = bridgeHeight;
 
       // and set the height on the map
-      $R( start, end ).each( function( pos ) { 
-        if ( hb[pos] === undefined ) {
+      for (var pos = start; pos < end +1; pos++){
+                if ( hb[pos] === undefined ) {
           hb[pos] = [];
         }
         hb[pos].push( bridgeHeight );
-      } );
-
+      }
+      
       if ( bridge.up ) {
         heights.bridges.upMax = Math.max( bridgeHeight, heights.bridges.upMax ) + 2;
       } else {
@@ -1353,12 +1387,11 @@ var PfamGraphic = Class.create( {
       // console.log( "PfamGraphic._buildMarkup: max heights for bridges: %d / %d",
       //   heights.bridges.upMax, heights.bridges.downMax );
 
-    }.bind(this) );
+    }
 
     // finally, push the data structure onto the object, to make it globally
     // accessible
     this._heights = heights;
-
   }, // end of "_buildMarkups"
 
   //----------------------------------------------------------------------------
@@ -1396,49 +1429,51 @@ var PfamGraphic = Class.create( {
     
     // draw the sequence
     var seqArea = this._drawSequence();
-
+    
     // draw the briges
-    this._heights.bridges.markups.each( function( bridge ) {
+    for(var i=-1, bridge; (bridge = this._heights.bridges.markups[++i]);){
       if ( bridge.display !== undefined &&
            bridge.display !== null &&
            ! bridge.display ) {
-        return;
+        continue;
       }
       this._drawBridge( bridge );
-    }.bind( this ) );
+    }
 
     // draw the lollipops after the bridges, so that the heads appear on top of
     // any overlapping bridges and draw them in reserve order, so that, where two
     // lollipops fall close to each other, the left-most lollipop is drawn above
     // the other
-    this._heights.lollipops.markups.reverse().each( function( lollipop ) {
+    for(var i=-1, lollipop; (lollipop = this._heights.lollipops.markups.reverse()[++i]);){
       if ( lollipop.display !== undefined &&
            lollipop.display !== null &&
            ! lollipop.display ) {
-        return;
+        continue;
       }
       this._drawLollipop( lollipop );
-    }.bind( this ) );
+    }
 
     // draw the regions
-    this._sequence.regions.each( function( region ) {
+    for(var i=-1, region; (region = this._sequence.regions[++i]);){
       if ( region.display !== undefined && 
            region.display !== null && 
            ! region.display ) {
-        return;
+        continue;
       }
       this._drawRegion( region );
-    }.bind( this ) );
+    }
 
     // draw the motifs
-    this._sequence.motifs.each( function( motif ) {
-      if ( motif.display !== undefined && 
-           motif.display !== null && 
-           ! motif.display ) {
-        return;
+    if(this._sequence.motifs){
+      for(var i=-1, motif; (motif = this._sequence.motifs[++i]);){
+        if ( motif.display !== undefined && 
+            motif.display !== null && 
+            ! motif.display ) {
+          continue;
+        }
+        this._drawMotif( motif );
       }
-      this._drawMotif( motif );
-    }.bind( this ) );
+    }
 
     // add the <area> details for the sequence last
     // this._areasList.push( seqArea );
@@ -1585,7 +1620,7 @@ var PfamGraphic = Class.create( {
     if ( markup.metadata ) {
       var md = markup.metadata;
     
-        tip.title = ( md.type || "Annotation" ).capitalize();
+        tip.title = ( md.type || "Annotation" );
         tip.body = 
           '<div class="tipContent">' +
           '  <dl>' +
@@ -1809,7 +1844,7 @@ var PfamGraphic = Class.create( {
 
     // store the canvas state before we start drawing
     this._context.save();
-  
+
     var start  = bridge.markup.start,
         end    = bridge.markup.end,
         height = bridge.height,
@@ -1859,7 +1894,7 @@ var PfamGraphic = Class.create( {
     if ( bridge.markup.metadata ) {
       var md = bridge.markup.metadata;
     
-        tip.title = ( md.type || "Bridge" ).capitalize();
+        tip.title = ( md.type || "Bridge" );
         tip.body =
           '<div class="tipContent">' +
           '  <dl>' +
@@ -1926,17 +1961,14 @@ var PfamGraphic = Class.create( {
    */
   _drawRegion: function( region ) {
     // console.log( "PfamGraphic._drawRegion: drawing region..." );
-
-    if ( ! this._markupSpec.regionEndValues.include( region.startStyle ) ) {
+    if ( ! ($jq.inArray(region.startStyle, this._markupSpec.regionEndValues)  > -1 ) ) {
       this._throw( "region start style is not valid: '" + region.startStyle + "'" );
     }
 
-    if ( ! this._markupSpec.regionEndValues.include( region.endStyle ) ) {
+    if ( ! ($jq.inArray(region.endStyle, this._markupSpec.regionEndValues) > -1 ) ) {
       this._throw( "region end style is not valid: '" + region.endStyle + "'" );
     }
-
     //----------------------------------
-
     // calculate dimensions for the inner shape
     var height = Math.floor( this._regionHeight ) - 2,
         radius = Math.round( height / 2 ),
@@ -1966,6 +1998,7 @@ var PfamGraphic = Class.create( {
     // to dark to light colour as y increases. First draw the shell, then fill it
 
     // fill the path with a gradient
+
     var gradient = this._context.createLinearGradient( x, y, x, y + height );
 
      gradient.addColorStop( 0, "#ffffff" );
@@ -2047,7 +2080,9 @@ var PfamGraphic = Class.create( {
                  coords:   [ xo + x,             yo + y, 
                              xo + x + width + 1, yo + y + height ] };
     this._areasList.push( area );
-    this._areasHash.set( "region_" + region.text + "_" + region.start + "_" + region.end, area); 
+    this._areasHash["region_" + region.text + "_" + region.start + "_" + region.end] = area; 
+
+/*    this._areasHash.set( "region_" + region.text + "_" + region.start + "_" + region.end, area); */
     
     // if there's a URL on the region, add it to the area'
     if ( region.href !== undefined ) {
@@ -2111,8 +2146,8 @@ var PfamGraphic = Class.create( {
       '    <dd>' + ( md.database || '<span class="na">n/a</span>' ) + '</dd>' +
       '  </dl>' +
       '</div>';
-    // console.log( "PfamGraphic._buildTip: tip title:    ", tipTitle );
-    // console.log( "PfamGraphic._buildTip: tip contents: ", tipBody );
+//     console.log( "PfamGraphic._buildTip: tip title:    ", tipTitle );
+//     console.log( "PfamGraphic._buildTip: tip contents: ", tipBody );
 
     area.tip = { title: tipTitle,
                  body:  tipBody };
@@ -2220,7 +2255,7 @@ var PfamGraphic = Class.create( {
                  coords: [ xo + x,         yo + y,  
                            xo + x + width, yo + y + height ] };
     this._areasList.push( area );
-    this._areasHash.set( "motif_" + label + "_" + motif.start + "_" + motif.end, area );
+    this._areasHash["motif_" + label + "_" + motif.start + "_" + motif.end] = area;
 
     // if there's a URL on the region, add it to the area'
     if ( motif.href !== undefined ) {
@@ -2796,5 +2831,7 @@ var PfamGraphic = Class.create( {
 
   //----------------------------------------------------------------------------
 
-} );
+};
+this.PfamGraphic = PfamGraphic;
+// );
 

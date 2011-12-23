@@ -3,7 +3,7 @@
 WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expression_patterns";
     gene_image = fields.anatomic_expression_patterns.data.image;
     IF gene_image;
-        '<a href="/draw/' _ gene_image _ '" target="_blank" >' _ image("/draw/" _ gene_image) _ '</a>';
+        '<a href="'_ gene_image _ '" target="_blank" >' _ image(gene_image) _ '</a>';
 %]
 <script type="text/javascript" >
 WB.getColorbox(function(){
@@ -15,8 +15,8 @@ $jq(".exprbox").colorbox({width:"90%", inline:true});
     '<div style="display:none">';
 	 FOREACH ep IN fields.anatomic_expression_patterns.data.expr;
 	    IF ep.value.image;
-	       '<div id="' _ ep.value.object.id _ '"><a href="/draw/' _ ep.value.image _ '" target="_blank">'
-	       _ image("/draw/" _ ep.value.image) _ '</a></div>';
+	       '<div id="' _ ep.value.object.id _ '"><a href="' _ ep.value.image _ '" target="_blank">'
+	       _ image(ep.value.image) _ '</a></div>';
 	    END;
 	  END;
      '</div>';

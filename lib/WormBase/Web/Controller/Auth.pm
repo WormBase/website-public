@@ -5,8 +5,8 @@ use warnings;
 use parent 'WormBase::Web::Controller';
 use Net::Twitter;
 use Facebook::Graph;
-use Data::Dumper;
 use Crypt::SaltedHash;
+use Data::GUID;
 
 __PACKAGE__->config->{namespace} = '';
  
@@ -17,6 +17,79 @@ sub login :Path("/login") {
     $c->stash->{'template'} = 'auth/login.tt2';
     $c->stash->{'continue'} = $c->req->params->{continue};
 }
+
+sub password : Chained('/') PathPart('password')  CaptureArgs(0) {
+     my ( $self, $c) = @_;
+    $c->stash->{noauth} = 1; 
+     $c->stash->{template} = 'auth/password.tt2';
+     
+}
+sub password_index : Chained('password') PathPart('index')  Args(0){
+    my ( $self, $c ) = @_;
+    
+    $c->stash->{token}  = $c->req->param("id")  ;
+}
+
+sub password_email : Chained('password') PathPart('email')  Args(0){
+    my ( $self, $c ) = @_;
+    my $email = $c->req->param("email");
+    $c->stash->{template} = "shared/generic/message.tt2"; 
+    
+	my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
+	if(@users){
+	   
+	  my $guid = Data::GUID->new;
+	  $c->stash->{token} = $guid->as_string;
+	  my $time = time() + $c->config->{password_reset_expires};
+	  foreach (@users){
+	      next unless($_->user->password);
+	      $c->model('Schema::Password')->find_or_create({token=>$c->stash->{token}, user_id=>$_->user_id,expires=>$time});
+	  }
+	  $c->stash->{noboiler} = 1;
+	  $c->log->debug(" send out password reset email to $email");
+	  $c->stash->{email} = {
+	      to       => $email,
+	      from     => $c->config->{register_email},
+	      subject  => "WormBase Password", 
+	      template => "auth/password_email.tt2",
+	  };
+	  $c->forward( $c->view('Email::Template') );
+
+	  $c->stash->{message} = "An email has been send, please check your mailbox."; 
+	}else{
+	  $c->stash->{message} = "no WormBase account is associated with this email"; 
+	} 
+   
+    $c->stash->{noboiler} = 0;
+     
+}
+
+ 
+
+sub password_reset : Chained('password') PathPart('reset')  Args(0){
+    my ( $self, $c ) = @_;
+    my $token = $c->req->param("token");
+    my $new_password = $c->req->param("password");
+    my $flag=0;
+ 
+    my @users = $c->model('Schema::Password')->search({token=>$token, expires => { '>', time() } });
+    foreach (@users){
+	  my $user = $_->user; 
+	  next unless($user->password);
+	  my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
+	  $csh->add($new_password);
+	  my $hash_password= $csh->generate();
+	  $user->password($hash_password);
+	  $_->delete;
+	  $user->update();
+	  $flag=1;
+    }
+    $c->stash->{template} = "shared/generic/message.tt2"; 
+    
+      
+     $c->stash->{message} = $flag? "you password has been reset" : "the link has expired";
+}
+ 
 
 sub register :Path("/register") {
   my ( $self, $c ) = @_;

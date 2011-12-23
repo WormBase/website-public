@@ -1,9 +1,4 @@
-<div class="toggle" id="motif_details_toggle" >View Motif Details</div>  
  <div id="motif_details_dataTable">
-	  [% dataTable_list(['Feature','Type','Description', 'Start','End'],motif_details.data,'motif_details_dataTable') %] 
+	  [% jquery_data_table_html(['Feature','Type','Description', 'Start','End'],motif_details.data,'motif_details_dataTable_full') %] 
 </div>
- 
-<script>
-$jq("#motif_details_toggle").toggleClass("active");
-</script>
     

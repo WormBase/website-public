@@ -1,5 +1,5 @@
 
-      <div id="page-title" class="species-bg">
+      <div id="page-title" class="search-bg">
       <h2>  
 
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">

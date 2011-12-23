@@ -82,29 +82,28 @@ B<Response example>
 
 =cut 
 
-sub all_gene_classes {
-    my $self   = shift;
+{ # temporary fix. this should actually be cached for the entire class.
+  # better yet, this should be designated as a class method, signaled at the
+  # controller level for caching
+    my $gene_classes;
 
-    my $db   = $self->ace_dsn->dbh;
-    my @gene_class = $db->fetch(-query=>qq/find Gene_class/);
-    my @rows;
-    
-    foreach (@gene_class) {
-	my $lab   = $_->Designating_laboratory;
-	my $desc  = $_->Description; 
-	my $phene = $_->Phenotype;
-	my @genes = $_->Genes;
-        push @rows, { gene_class => $self->_pack_obj($_),
-		      laboratory => $self->_pack_obj($lab),
-		      description => "$desc",
-		      phenotype   => "$phene",
-		      genes       => scalar @genes };
+    sub all_gene_classes {
+        my $self   = shift;
+
+        return $gene_classes ||= {
+            description => 'a summary of all gene classes',
+            data => [
+                map {
+                    gene_class  => $self->_pack_obj($_),
+                    laboratory  => $self->_pack_obj(scalar $_->Designating_laboratory),
+                    description => scalar eval { $_->Description->name },
+                    phenotype   => scalar eval { $_->Phenotype->name },
+                    genes       => scalar ( () = $_->Genes ),
+                }, $self->ace_dsn->dbh->fetch(-query => "find Gene_class")
+            ],
+        };
     }
-    
-    return { description => 'a summary of all gene classes',
-	     data        => \@rows };   
 }
-
 
 #######################################
 #
@@ -116,8 +115,7 @@ sub all_gene_classes {
 
 =cut
 
-#######################################
-#
+########################################
 # The Overview widget 
 #
 #######################################

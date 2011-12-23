@@ -92,40 +92,6 @@ sub footer :Path("/footer") Args(0) {
       $c->stash->{template} = 'footer/default.tt2';
 } 
 
-sub draw :Path("/draw") Args(1) {
-    my ($self,$c,$format) = @_;
-    my ($cache_source,$cached_img);
-    my $params = $c->req->params;
-    if ($params->{class} && $params->{id}) {
-        my @keys = ('image', $params->{class}, $params->{id});
-        my $key = join('-',@keys);
-        ($cached_img,$cache_source) = $c->check_cache({
-            cache_name => 'couchdb',
-            key        => $key,
-        });
-
-        unless($cached_img) {  # not cached -- make new image and cache
-            # the following line is a security risk
-            my $source = File::Spec->catfile(
-                $c->model('WormBaseAPI')->pre_compile->{$params->{class}},
-                "$params->{id}.$format"
-            );
-            $c->log->debug("Attempt to draw image: $source");
-
-            $cached_img = GD::Image->new($source);
-            $c->set_cache({
-                cache_name => 'couchdb',
-                key        => $key,
-                data       => $cached_img
-            });
-        }
-    }
-    else {
-        $cached_img = $c->flash->{gd};
-    }
-    $c->stash(gd_image => $cached_img);
-    $c->detach('WormBase::Web::View::Graphics');
-}
 
 
 sub me :Path("/me") Args(0) {

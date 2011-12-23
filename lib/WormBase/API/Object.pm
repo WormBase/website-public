@@ -1,7 +1,6 @@
 package WormBase::API::Object;
 
 use Moose;
-
 use overload '~~' => \&_overload_ace, fallback => 1;
 
 has '_api' => (
@@ -445,20 +444,18 @@ sub check_empty {
     return $flag;
 }
 
-sub evidence {
-  my ($self,$tag)=@_;
-  my @nodes=$self->object->$tag;
-  return $self->_get_evidence(@nodes);
-}
-
+ 
+# NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
+# index is needed when multiple evidence on the same page.
 sub _get_evidence {
-    my ($self,$nodes,$evidence_type)=@_;
-    $nodes = [$nodes] unless ref $nodes eq 'ARRAY';
+    my ($self,$node,$evidence_type)=@_;
+    my @nodes = eval{$node->col} ;
+    return undef unless(@nodes);
     my %data;
 
-    foreach my $node (@$nodes) {
-        next unless $node;
-	foreach my $type ($node->col) {
+   
+	foreach my $type (@nodes) {
+	     
 	    next if ($type eq 'CGC_data_submission') ;
 	     #if only extracting one/more specific evidence types
 	    if(defined $evidence_type) {
@@ -468,7 +465,32 @@ sub _get_evidence {
 	    foreach my $evidence ($type->col) {
 		my $label = $evidence;
 		my $class = eval { $evidence->class } ;
-		if ($type eq 'Paper_evidence') {
+		if($type eq 'Inferred_automatically'){
+		    if($node eq 'IMP'){
+		      $evidence =~ /(.*) \((WBPhenotype.*)\|(WBRNAi.*)\)/;
+		      my ($phene,$wb_phene,$wb_rnai) = ($1,$2,$3);
+		      if($wb_phene && ! exists $data{$type}{$wb_phene}){
+			  $label = $self->_api->fetch({class=>"Phenotype",name=>$wb_phene})->_common_name;
+			  $data{$type}{$wb_phene}={id => "$wb_phene", 
+						      label  => "$label", 
+						      class  => "Phenotype",
+						      }  ;
+		      }
+		      if($wb_rnai && ! exists $data{$type}{$wb_rnai}){
+ 			 
+			  $data{$type}{$wb_rnai}={id => "$wb_rnai", 
+						      label  => "$wb_rnai", 
+						      class  => "Rnai",
+						      } ;
+		      }
+		      next;
+		    }elsif($node eq 'IEA'){
+			($class,$evidence) = split /:/, $evidence;
+			 
+		    }
+		} elsif($type eq 'Variation_evidence'){
+		    $label = $self->_api->wrap($evidence)->_common_name;
+		}elsif ($type eq 'Paper_evidence') {
 		    my @authors    = eval { $evidence->Author };
 		    my $authors    = @authors <= 2 ? (join ' and ',@authors) : "$authors[0] et al.";
 		    my $year       = $self->_parse_year($evidence->Publication_date);
@@ -499,8 +521,7 @@ sub _get_evidence {
 	    }
 
 	}
-    }
-   return \%data;
+   return %data ? \%data :undef;
 }
 
 
@@ -527,6 +548,7 @@ sub _parse_hash {
   return $data;
 }
 
+# DEPRECATED by using _get_evidence
 
 # NOT DONE YET!
 sub _parse_evidence_hash {
@@ -676,6 +698,7 @@ sub _parse_evidence_hash {
   return undef unless $return;
   return $return;
 }
+ 
 
 ## Data is a collection of one or more phenotype
 ## hashes with top-level tags already extracted
@@ -810,6 +833,7 @@ sub _parse_phenotype_hash {
   return $stash;
 }
 
+
 # THIS PROBABLY BELONGS AS A COMPONENT OF THE VIEW INSTEAD OF THE MODEL
 sub _parse_molecular_change_hash {
   my ($self,$entry,$tag) = @_;
@@ -943,7 +967,7 @@ sub _covered {
   }
   my $total = 0;
   foreach my $merged (@merged) {
-    $total += $merged->[1]-$merged->[0];
+    $total += $merged->[1]-$merged->[0]+1;
   }
   $total;
 }
