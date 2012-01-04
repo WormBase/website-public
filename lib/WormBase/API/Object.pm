@@ -429,20 +429,7 @@ sub _parse_year {
     my $year = $1 || $date;
     return $year;
 }
-sub check_empty {
-  # if flag == 0 meaning empty to the right
-    my ($self,$nodes)=@_;
-    $nodes = [$nodes] unless ref $nodes eq 'ARRAY';
-    my $flag = 0;
-    foreach my $node (@$nodes) {
-	foreach my $type ($node->col) {
-	    $flag = 1;
-	    last;
-	}
-	last if($flag);
-    }
-    return $flag;
-}
+ 
 
  
 # NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
