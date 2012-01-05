@@ -454,8 +454,9 @@ sub _get_evidence {
 		my $class = eval { $evidence->class } ;
 		if($type eq 'Inferred_automatically'){
 		    if($node eq 'IMP'){
-		      $evidence =~ /(.*) \((WBPhenotype.*)\|(WBRNAi.*)\)/;
-		      my ($phene,$wb_phene,$wb_rnai) = ($1,$2,$3);
+		      $evidence =~ s/\((WBPhenotype.*)\|(WBRNAi.*)\)//;
+		      my ($wb_phene,$wb_rnai) = ($1,$2);
+# 		    $self->log->debug($evidence,"kkkkkkk $node aaaaaaaaaaaaaa",":",$wb_phene,":",$wb_rnai);
 		      if($wb_phene && ! exists $data{$type}{$wb_phene}){
 			  $label = $self->_api->fetch({class=>"Phenotype",name=>$wb_phene})->_common_name;
 			  $data{$type}{$wb_phene}={id => "$wb_phene", 
