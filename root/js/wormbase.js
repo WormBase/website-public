@@ -415,13 +415,12 @@
             }
             return false;
       });
-        
-      content.delegate(".tooltip", 'click', function(){
+      
+      getCluetip(function(){});// hack: callback is needed otherwise loading before head section
+      content.delegate(".tooltip", 'test', function(){
           var tip = $jq(this);
-          getCluetip(function(){
             tip.cluetip({
 	      local:true,
-              activation: 'click',
 	      width:350,
               sticky: true, 
               cluetipClass: 'jtip',
@@ -430,7 +429,7 @@
               arrows: true, 
               hoverIntent: false,
               });
-            });
+            
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
