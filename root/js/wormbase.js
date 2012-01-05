@@ -417,7 +417,7 @@
       });
       
       getCluetip(function(){});// hack: callback is needed otherwise loading before head section
-      content.delegate(".tooltip", 'test', function(){
+      content.delegate(".tooltip", 'cluetipEvent', function(){
           var tip = $jq(this);
             tip.cluetip({
 	      local:true,
