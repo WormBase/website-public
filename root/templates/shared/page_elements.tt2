@@ -25,7 +25,9 @@
 	[% END %] 			    
     </div>
   <span class="tooltip" href="#evidence_[% id %]" title="Evidence" rel="#evidence_[% id %]"></span>
-		      
+    <script type="text/javascript" >
+       $jq(".tooltip").trigger("test");
+    </script>
   [% END %]
 
 [% END %]
