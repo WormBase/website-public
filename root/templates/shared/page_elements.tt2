@@ -6,10 +6,12 @@
 ####################################################
 %]
 
-[% MACRO evidence(data, id) BLOCK %]
+[% MACRO evidence(data, id, text) BLOCK %]
+  <div class="[% IF data %]evidence result[% END %] text-min">
+  [% markup(text) %]
   [% IF data %]
     [% UNLESS id.defined %] [% id =0 %] [% END %]
-    <div id="evidence_[% id %]" style="display:none" >
+    <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
 	[% FOREACH type IN data.keys -%] 
 	    <b>[% type.replace('_',' ') %]</b>:  
 	    [% FOREACH object IN data.$type.keys %] 
@@ -22,12 +24,13 @@
 	      [% UNLESS loop.last %];[% END %]
 	    [% END %] 
 	    [% UNLESS loop.last %]<br>[% END %]
-	[% END %] 			    
+	[% END %]
     </div>
-  <span class="tooltip" href="#evidence_[% id %]" title="Evidence" rel="#evidence_[% id %]"></span>
-    <script type="text/javascript" >
-       $jq(".tooltip").trigger("cluetipEvent");
-    </script>
+    <div class="evidence-more-text"><span id="fade">show evidence</span></div>
+       <div class="more evidence-more">       
+        <div class="ui-icon ui-icon-triangle-1-s"></div>
+       </div>
+  </div>
   [% END %]
 
 [% END %]
