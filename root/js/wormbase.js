@@ -415,21 +415,11 @@
             }
             return false;
       });
-      
-      getCluetip(function(){});// hack: callback is needed otherwise loading before head section
-      content.delegate(".tooltip", 'cluetipEvent', function(){
-          var tip = $jq(this);
-            tip.cluetip({
-	      local:true,
-	      width:350,
-              sticky: true, 
-              cluetipClass: 'jtip',
-              dropShadow: false, 
-              closePosition: 'title',
-              arrows: true, 
-              hoverIntent: false,
-              });
-            
+  
+      content.delegate(".evidence", 'click', function(){
+        var ev = $jq(this);
+        ev.children(".ev-more").toggleClass('open').children('.ui-icon').toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+        ev.children(".ev").toggle('fast');
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
@@ -1633,10 +1623,7 @@ var Scrolling = (function(){
       getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
       return;
     }
-    function getCluetip(callback){
-      getPlugin("cluetip", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css", callback);
-      return;
-    }
+
     function getMarkItUp(callback){
       getPlugin("markitup", "/js/jquery/plugins/markitup/jquery.markitup.js", "/js/jquery/plugins/markitup/skins/markitup/style.css", function(){
       getPlugin("markitup-wiki", "/js/jquery/plugins/markitup/sets/wiki/set.js", "/js/jquery/plugins/markitup/sets/wiki/style.css", callback);
