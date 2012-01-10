@@ -418,19 +418,8 @@
   
       content.delegate(".evidence", 'click', function(){
         var ev = $jq(this);
-        ev.find(".evidence-more").toggleClass('open').children('.ui-icon').toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n')
-        ev.children(".evidence-more-text").toggle();
+        ev.children(".ev-more").toggleClass('open').children('.ui-icon').toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
         ev.children(".ev").toggle('fast');
-      });
-      
-      content.delegate(".evidence", 'mouseover', function(){
-        var ev = $jq(this);
-        if(!ev.find(".evidence-more").hasClass('open'))
-          ev.find(".evidence-more-text").show('fast');
-      });
-      
-      content.delegate(".evidence", 'mouseout', function(){
-          $jq(this).find(".evidence-more-text").hide();
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
