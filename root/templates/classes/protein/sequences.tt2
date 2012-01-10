@@ -2,12 +2,12 @@
 
    sequence;
 
-   WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight";
-        fields.estimated_molecular_weight.data;
-   END;
-
    WRAPPER $field_block title="Estimated Isoelectric Point" key="estimated_isoelectric_point";
         fields.estimated_isoelectric_point.data;
+   END;
+
+   WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight";
+        fields.estimated_molecular_weight.data;
    END;
 
    WRAPPER $field_block title="Amino Acid Composition" key="amino_acid_composition";
