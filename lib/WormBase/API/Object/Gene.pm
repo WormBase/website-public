@@ -3,6 +3,7 @@ package WormBase::API::Object::Gene;
 use Moose;
 use File::Spec::Functions qw(catfile catdir);
 use namespace::autoclean -except => 'meta';
+use File::Temp;
 
 extends 'WormBase::API::Object';
 with    'WormBase::API::Role::Object';
@@ -2534,8 +2535,109 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WB
 B<Response example>
 
 =cut
+sub _get_interation_info {
+    my ($interaction) = @_;
+    # Filter low confidence predicted interactions.
+	my $type = $interaction->Interaction_type;
+	return undef
+	    if ($interaction->Log_likelihood_score || 1000) <= 1.5
+                && $type =~ m/predicted/i; # what happens when no data?
 
-sub interactions {
+	 
+	my $phenotype = eval {$type->Interaction_phenotype->right};
+
+        my ( $effector, $effected, $direction );
+
+        my @non_directional = eval { $type->Non_directional->col };
+        if (@non_directional) {
+            ( $effector, $effected ) = @non_directional;    # WBGenes
+            $direction = 'non-directional';
+        }
+        else {
+            $effector  = $type->Effector->right if $type->Effector;
+            $effected  = $type->Effected->right;
+            $direction = 'Effector->Effected';
+        }    
+
+    return ($type, $effector, $effected, $direction, $phenotype);
+}
+
+
+sub interactions  {
+    my $self   = shift;
+    my $object = $self->object;
+    my ($nodes,$edges,$phenotypes,$types); #save pakced objects improves the speed
+    my @data;
+    # find interacted genes with this $object
+    foreach my $interaction ( $object->Interaction ) {
+         
+	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
+	next unless($effector);
+       
+	my $pack_effector=$self->_pack_obj($effector);
+	my $pack_effected=$self->_pack_obj($effected);
+	$nodes->{"$effector"}={pack=>$pack_effector,obj=>$effector};
+	$nodes->{"$effected"}={pack=>$pack_effected,obj=>$effected};
+
+	$edges->{"$interaction"}=1;  
+	$types->{"$type"}=1;
+	if( $phenotype) {
+	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
+	      $phenotype= $phenotypes->{"$phenotype"} ;
+	}
+
+        push @data,
+            {
+            interaction => $self->_pack_obj($interaction),
+            type        => "$type",
+            effector    => $pack_effector,
+            effected    => $pack_effected,
+            direction   => $direction,
+            phenotype   => $phenotype,
+            };
+    }
+    #find the interactions between all other genes
+    for my $key (sort keys %$nodes){
+	my $node = $nodes->{$key}->{obj};
+	foreach my $interaction ( $node->Interaction ) {
+	    next if(exists $edges->{"$interaction"});
+	    my $flag=0;
+	    foreach ($interaction->Interactor){
+	      next if($_ eq $node);
+	      unless ( exists $nodes->{$_}) { $flag=0; last;}
+	      $flag=1; 
+	    }
+	    next unless($flag == 1);
+	
+	    my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
+	    next unless($effector);
+
+	    $edges->{"$interaction"}=1;
+	    $types->{"$type"}=1;
+	    if( $phenotype) {
+	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
+	      $phenotype= $phenotypes->{"$phenotype"} ;
+	    }
+
+	    push @data,
+		{
+		interaction => $self->_pack_obj($interaction),
+		type        => "$type",
+		effector    => $nodes->{"$effector"}->{pack},
+		effected    => $nodes->{"$effected"}->{pack},
+		direction   => $direction,
+		phenotype   => $phenotype,
+		};
+	 }
+    }
+	 
+    return {
+        description => 'genetic and predicted interactions',
+        data        => {edges=>\@data,nodes=>$nodes,types=>$types},
+    };
+}
+
+sub interactions_old {
     my $self   = shift;
     my $object = $self->object;
 
