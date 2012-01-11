@@ -51,10 +51,8 @@ IF fields.structured_description.data;
           USE String(sd.replace('_', ' '));
           WRAPPER $field_block title=String.capital;
                FOREACH obj IN fields.structured_description.data.$sd;
-                   '<div class="text-width" style="margin:0.5em">';
-                      markup(obj.text);
-                      evidence(obj.evidence,sd);
-		      
+                   '<div class="text-width" >';
+                      evidence(obj.evidence,sd, obj.text);
                    '</div>';
                END;
            END;
