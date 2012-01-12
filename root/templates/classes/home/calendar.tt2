@@ -72,7 +72,7 @@ function formatGCalTime(gCalTime) {
 	((ld.getHours()>=12)?'PM':'AM');
   } else {
     // if only a DATE was matched
-    dateString =  parseInt(month, 10) + '/' + parseInt(dateMonth, 10);
+    dateString =  parseInt(month, 10) + '/' + parseInt(dateMonth, 10) + year;
   }
   return dateString;
 }
@@ -100,6 +100,7 @@ function listEvents(root, divId) {
     var title = entry.title.$t;
     var start = entry['gd$when'][0].startTime;
 
+
     // get the URL to link to the event
     for (var linki = 0; linki < entry['link'].length; linki++) {
       if (entry['link'][linki]['type'] == 'text/html' &&
@@ -109,6 +110,7 @@ function listEvents(root, divId) {
     }
 
     var dateString = formatGCalTime(start);
+    var endString  = formatGCalTime(end);    
     var li = document.createElement('li');
 
     // if we have a link to the event, create an 'a' element
@@ -117,7 +119,7 @@ function listEvents(root, divId) {
       entryLink.setAttribute('href', entryLinkHref);
       entryLink.appendChild(document.createTextNode(title));
       li.appendChild(entryLink);
-      li.appendChild(document.createTextNode(' - ' + dateString));
+      li.appendChild(document.createTextNode(' - ' + dateString + '-' + endString));
     } else {
       li.appendChild(document.createTextNode(title + ' - ' + dateString));
     }     
@@ -141,7 +143,7 @@ function insertAgenda(root) {
 </script>
 
 <p></p>
-<h3>Upcoming Meetings</h3>
+<h3>Upcoming Meetings and Deadlines</h3>
 <div id="agenda"><p>Loading...</p></div>
 
 <script type="text/javascript" src="//www.google.com/calendar/feeds/d6un9opku070sg8ngike6v4ki0%40group.calendar.google.com/public/full?alt=json-in-script&callback=insertAgenda&orderby=starttime&max-results=15&singleevents=true&sortorder=ascending&futureevents=true"></script>
