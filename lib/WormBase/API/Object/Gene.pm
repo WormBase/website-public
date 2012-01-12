@@ -2554,8 +2554,9 @@ sub _get_interation_info {
             $direction = 'non-directional';
         }
         else {
-            $effector  = $type->Effector->right if $type->Effector;
-            $effected  = $type->Effected->right;
+            $effector  = eval{$type->Effector->right} if $type->Effector;
+            $effected  = eval{$type->Effected->right};
+	    return undef unless(defined $effector && defined $effected);
             $direction = 'Effector->Effected';
         }    
 
@@ -2566,7 +2567,7 @@ sub _get_interation_info {
 sub interactions  {
     my $self   = shift;
     my $object = $self->object;
-    my ($nodes,$edges,$phenotypes,$types); #save pakced objects improves the speed
+    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save pakced objects improves the speed
     my @data;
     # find interacted genes with this $object
     foreach my $interaction ( $object->Interaction ) {
@@ -2574,10 +2575,10 @@ sub interactions  {
 	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
 	next unless($effector);
        
-	my $pack_effector=$self->_pack_obj($effector);
-	my $pack_effected=$self->_pack_obj($effected);
-	$nodes->{"$effector"}={pack=>$pack_effector,obj=>$effector};
-	$nodes->{"$effected"}={pack=>$pack_effected,obj=>$effected};
+	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
+	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
+	$nodes_obj->{"$effector"}=$effector;
+	$nodes_obj->{"$effected"}=$effected;
 
 	$edges->{"$interaction"}=1;  
 	$types->{"$type"}=1;
@@ -2590,15 +2591,15 @@ sub interactions  {
             {
             interaction => $self->_pack_obj($interaction),
             type        => "$type",
-            effector    => $pack_effector,
-            effected    => $pack_effected,
+            effector    => $nodes->{"$effector"},
+            effected    => $nodes->{"$effected"},
             direction   => $direction,
             phenotype   => $phenotype,
             };
     }
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
-	my $node = $nodes->{$key}->{obj};
+	my $node = $nodes_obj->{$key};
 	foreach my $interaction ( $node->Interaction ) {
 	    next if(exists $edges->{"$interaction"});
 	    my $flag=0;
@@ -2623,8 +2624,8 @@ sub interactions  {
 		{
 		interaction => $self->_pack_obj($interaction),
 		type        => "$type",
-		effector    => $nodes->{"$effector"}->{pack},
-		effected    => $nodes->{"$effected"}->{pack},
+		effector    => $nodes->{"$effector"},
+		effected    => $nodes->{"$effected"},
 		direction   => $direction,
 		phenotype   => $phenotype,
 		};

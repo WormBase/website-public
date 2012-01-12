@@ -66,8 +66,8 @@
 		    
 		    data: {
 			nodes: [   [% FOREACH node IN NODES.keys.sort %]
-				{ id: "[% NODES.$node.pack.label %]", label: "[% NODES.$node.pack.label %]" ,color:get_random_color(),
-				  link:"[% get_url(NODES.$node.pack.class, NODES.$node.pack.id ,NODES.$node.pack.taxonomy) %]",
+				{ id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]" ,color:get_random_color(),
+				  link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
 				 },
 				      [% END %]
 			      ], 
@@ -108,7 +108,7 @@
 			opacity:0.4,
 			hoverOpacity: 1,
 			sourceArrowShape: { defaultValue: "NONE", discreteMapper: edgeSourceArrowMapper },
-			sourceArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
+			targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
 			labelHorizontalAnchor: "center",
                         label: { passthroughMapper: { attrName: "type" } },
 			tooltipText: "<b>${label}: ${type}<br>${target} --- ${source}  ${direction}</br></b>",
