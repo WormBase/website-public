@@ -58,12 +58,11 @@
 
 <br clear="all">
 [% IF fields.matching_cdnas.data %]
-         <div class="toggle">Matching cDNAs</div>
-         <div class="returned">
+        [% WRAPPER toggle title="Matching cDNAs" %]
              [% FOREACH key IN fields.matching_cdnas.data %]
-          	 [% tag2link(key) %]<br>
+             [% tag2link(key) %]<br>
              [% END %] 
-         </div>
+        [% END %]
      [% END %] 
 
 [% WRAPPER $field_block title="Transcripts in this region" key="transcripts" %]

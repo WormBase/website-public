@@ -644,7 +644,7 @@ div#create-prompt {
   text-overflow: ellipsis;
 }
 
-.text-min:hover div.more, div.more:hover, .text-min:hover div.ev-more-text span, .text-min:hover .ev {
+.text-min:hover div.more, div.more:hover, .text-min:hover div.ev-more-text span, .text-min:hover .v {
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
@@ -662,9 +662,8 @@ div#create-prompt {
 .ev-more-text {
   text-align:center;
   font-size:0.8em;
-  width:5em;
+  width:4em;
   margin:0 auto;
-
 }
 
 .ev-more-text span {
@@ -673,6 +672,12 @@ div#create-prompt {
   background-color:white;
   padding:0 2px;
   color:#999;
+  text-align:center;
+  width:4em;
+}
+
+tr.odd .ev-more-text span {
+  background-color:#E2E4FF;
 }
 
 .ev-more {
@@ -681,7 +686,11 @@ div#create-prompt {
   height:1em;
 }
 
-.ev-more .ev {
+.ev {
+  font-size:0.9em;
+}
+
+.ev-more .v {
   position:absolute;
   opacity:0.3;
   filter:alpha(opacity=30);
@@ -690,8 +699,8 @@ div#create-prompt {
 }
 
 .ev-more .ui-icon {
-  position:absolute;
-  left:48%;
+  position:relative;
+  margin:0 auto 0;
   top:0.7em;
   z-index:3;
 }
@@ -725,9 +734,9 @@ div.more.open {
 }
 
 div.more .ui-icon {
-  position:absolute;
+  position:relative;
+  margin: 0 auto;
   top:-6px;
-  left:50%;
 }
 
 #fade {
@@ -977,7 +986,7 @@ div.more .ui-icon {
 background-image: url(../img/new-icons.png) !important; 
 cursor:pointer;}
 .ui-icon-star-gray  {  background-position: -120px 0px; }
-.ui-icon-star-gray:hover  {   background-position: -160px 0px; }
+.result:hover .ui-icon-star-gray, .ui-icon-star-gray:hover  {   background-position: -160px 0px; }
 .ui-icon-star-yellow  {   background-position: -140px 0px; }
 
 
@@ -1988,28 +1997,13 @@ div#google-map {
 }
 
 .toggle {
-	padding: 0.5em 0 0 2em;
-	background: url(/img/ui_widgets/blue_plus_small.png) no-repeat ;
-	font-size: 1em;
-	font-weight: normal;
+	padding: 0 0 0.5em;
+    cursor:pointer;
 }
 
 #overview-content .toggle{
   clear:left;
 }
-
-.toggle-container {
-    font-family: Courier, monospace;
-    font-size: 0.8em;
-    overflow: hidden;
-    clear: both;
-    display: none;   /* Hidden by default */
-}
-
-
-
-div.active {background: url(/img/ui_widgets/blue_minus_small.png) no-repeat;}
-
 
 /* Ajax loading animations */
 #loadingDiv { background: url(/img/animations/small_loader.gif) no-repeat center; }

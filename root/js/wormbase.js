@@ -413,6 +413,7 @@
               ajaxGet(tog.next(), tog.attr("href"));
               tog.removeClass("load-toggle");
             }
+            tog.children(".ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s");
             return false;
       });
   
@@ -1216,10 +1217,6 @@ var Scrolling = (function(){
     sidebar   = $jq("#navigation");
     offset = sidebar.offset().top;
     widgetHolder = $jq("#widget-holder");
-        
-    sidebar.find(".title").click(function(){
-      $jq(this).children(".ui-icon").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
-    }); 
     
     $window.scroll(function() {
       Scrolling.sidebarMove();
