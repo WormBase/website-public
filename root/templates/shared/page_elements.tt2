@@ -6,7 +6,7 @@
 ####################################################
 %]
 
-[% MACRO evidence(data, id, text) BLOCK %]
+[% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
   <div class="evidence result text-min">
     [% markup(text) %]
@@ -27,9 +27,9 @@
     </div>
 
     <div class="ev-more">
-      <div class="ev ev-more-line"></div>
-      <div class="ev-more-text"><span>evidence</span></div>
-      <div class="ev ui-icon ui-icon-triangle-1-s"></div>
+      <div class="v ev-more-line"></div>
+      <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
+      <div class="v ui-icon ui-icon-triangle-1-s"></div>
     </div>
   </div>
   [% ELSE %]
@@ -55,6 +55,21 @@ getBox();
     [% END %]
 
 [% END %]
+
+
+
+[% BLOCK toggle %]
+    <div class="toggle [% IF lazy; 'load-toggle'; END; %]" 
+         [% IF href; ' href="' _ href _ '"'; END; %]
+         [% IF id; ' id="' _ id _ '"'; END; %]>
+      <span style="float:left" class="ui-icon ui-icon-triangle-1-e"></span>
+      [% title %]
+    </div>
+    <div class="returned [% toggle_class %]">
+        [% content %]
+    </div>
+[% END %]
+
 
 
 [% MACRO linkUser(user,suppress_social) BLOCK;
@@ -387,7 +402,7 @@ END;
                   ELSIF cell.match('ARRAY');
                   cell.join('<br>');
               ELSIF cell.evidence.defined;
-		    evidence(cell.evidence,table_name _ index, cell.text);
+		    evidence(cell.evidence,table_name _ index, cell.text, 'details');
                       ELSE;
                   cell;
                       END;
@@ -585,8 +600,8 @@ END;
                        key='best_blastp_matches', 
                        style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-'<div class="toggle load-toggle" href="' _  c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') _ '" id="blast_details_toggle" >View full BLASTP List</div>'; 
-'<div class="returned field" style="width:100%"></div>';
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') id="blast_details_toggle";
+    END;
          '</div>';
     END;
   END;
@@ -760,10 +775,9 @@ END;
        END;
    ELSE;
       WRAPPER $field_block title="" key="remarks";
-         '<div class="toggle">Curatorial remarks</div>';
-         '<div class="returned">';
+        WRAPPER toggle title="Curatorial remarks";
               markup(fields.remarks.data.join('<br />'),0);
-         '</div>';
+        END;
       END;
    END;
 END;
@@ -800,7 +814,7 @@ END;
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     sequence_list = fields.sequence.data.sequence.defined ? [fields.sequence.data] : fields.sequence.data;
-    to_print;
+    sequences = {};
 
     FOREACH obj IN sequence_list;
       IF obj.sequence.defined;
@@ -814,25 +828,31 @@ END;
           END;  
         END;
 
-        to_print = to_print _ '<div class="sequence-download">'
+        sequences.$obj.download = '<div class="sequence-download">'
                                   _ '<form action="/rest/download/">'
                                   _ '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >'
                                   _ '<input type="hidden" name="sequence" value="' _ format_seq  _ '" >'
                                   _ '<input type="submit" value="download">'
                                   _ '</form>'
-                            _ '</div>'
+                            _ '</div>';
 
-        _ '<div class="toggle">view sequence (' _ obj.length _' ' _ (obj.type == 'aa' ? 'aa' : 'bp') _ ')</div>'
-        _ '<div class="sequence-container">'
-          _ format_seq.replace('\n','<br/>')
-        _ '</div>';
+        sequences.$obj.seq = format_seq.replace('\n','<br/>');
+        sequences.$obj.title = 'view sequence (' _ obj.length _' ' _ (obj.type == 'aa' ? 'aa' : 'bp') _ ')';
       ELSE;
-        to_print = to_print _ obj;
+        sequences.$obj.download = obj;
       END;
     END;
-    IF to_print.length > 0;
+    IF sequences.keys.size > 0;
       WRAPPER $field_block title="Sequence" key=field_key;
-        to_print;
+        FOREACH obj IN sequences.keys;
+          sequences.$obj.download;
+
+          IF sequences.$obj.seq;
+            WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container";
+              sequences.$obj.seq;
+            END;
+          END;
+        END;
       END;
     END;
 END;
