@@ -6,30 +6,35 @@
 ####################################################
 %]
 
-[% MACRO evidence(data, id) BLOCK %]
+[% MACRO evidence(data, id, text) BLOCK %]
   [% IF data %]
-    [% UNLESS id.defined %] [% id =0 %] [% END %]
-    <div id="evidence_[% id %]" style="display:none" >
+  <div class="evidence result text-min">
+    [% markup(text) %]
+    [% UNLESS id.defined; id =0; END %]
+    <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
 	[% FOREACH type IN data.keys -%] 
 	    <b>[% type.replace('_',' ') %]</b>:  
 	    [% FOREACH object IN data.$type.keys %] 
-		
 	      [% IF data.$type.$object.class.defined %]
-	      [% tag2link(data.$type.$object) %]
+            [% tag2link(data.$type.$object) %]
 	      [% ELSE %]
-	      [% data.$type.$object.label %]  
+            [% data.$type.$object.label %]  
 	      [% END %]
 	      [% UNLESS loop.last %];[% END %]
 	    [% END %] 
 	    [% UNLESS loop.last %]<br>[% END %]
-	[% END %] 			    
+	[% END %]
     </div>
-  <span class="tooltip" href="#evidence_[% id %]" title="Evidence" rel="#evidence_[% id %]"></span>
-    <script type="text/javascript" >
-       $jq(".tooltip").trigger("cluetipEvent");
-    </script>
-  [% END %]
 
+    <div class="ev-more">
+      <div class="ev ev-more-line"></div>
+      <div class="ev-more-text"><span>evidence</span></div>
+      <div class="ev ui-icon ui-icon-triangle-1-s"></div>
+    </div>
+  </div>
+  [% ELSE %]
+    [% markup(text) %]
+  [% END %]
 [% END %]
 
 [% MACRO user_login_info BLOCK %]
@@ -382,8 +387,7 @@ END;
                   ELSIF cell.match('ARRAY');
                   cell.join('<br>');
               ELSIF cell.evidence.defined;
-		    cell.text;
-		    evidence(cell.evidence,table_name _ index);
+		    evidence(cell.evidence,table_name _ index, cell.text);
                       ELSE;
                   cell;
                       END;

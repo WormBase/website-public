@@ -415,21 +415,11 @@
             }
             return false;
       });
-      
-      getCluetip(function(){});// hack: callback is needed otherwise loading before head section
-      content.delegate(".tooltip", 'cluetipEvent', function(){
-          var tip = $jq(this);
-            tip.cluetip({
-	      local:true,
-	      width:350,
-              sticky: true, 
-              cluetipClass: 'jtip',
-              dropShadow: false, 
-              closePosition: 'title',
-              arrows: true, 
-              hoverIntent: false,
-              });
-            
+
+      content.delegate(".evidence", 'click', function(){
+        var ev = $jq(this);
+        ev.children(".ev-more").toggleClass('open').children('.ui-icon').toggleClass('ui-icon-triangle-1-s ui-icon-triangle-1-n');
+        ev.children(".ev").toggle('fast');
       });
       
       content.delegate(".tip-simple", 'mouseover', function(){ 
@@ -469,12 +459,18 @@
     
     function moduleMin(button, hover, direction, callback) {
       var module = $jq("#" + button.attr("wname") + "-content");
+      
       if (direction && (button.attr("title") != direction) ){ if(callback){ callback()} return; }
       module.slideToggle("fast", function(){Scrolling.sidebarMove(); if(callback){ callback()}});
       button.toggleClass("ui-icon-triangle-1-s ui-icon-triangle-1-e").closest(".widget-container").toggleClass("minimized");
       if(hover)
         button.toggleClass("ui-icon-circle-triangle-e ui-icon-circle-triangle-s");
       (button.attr("title") != "maximize") ? button.attr("title", "maximize").addClass("show") : button.attr("title", "minimize").removeClass("show");
+      
+      module.find(".cyto_panel").each(function(index, domEle){
+		  domEle.selectedIndex = 0;
+	    });
+      
     }
     
 
@@ -1633,10 +1629,7 @@ var Scrolling = (function(){
       getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
       return;
     }
-    function getCluetip(callback){
-      getPlugin("cluetip", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.min.js", "/js/jquery/plugins/cluetip-1.0.6/jquery.cluetip.css", callback);
-      return;
-    }
+
     function getMarkItUp(callback){
       getPlugin("markitup", "/js/jquery/plugins/markitup/jquery.markitup.js", "/js/jquery/plugins/markitup/skins/markitup/style.css", function(){
       getPlugin("markitup-wiki", "/js/jquery/plugins/markitup/sets/wiki/set.js", "/js/jquery/plugins/markitup/sets/wiki/style.css", callback);
@@ -1645,6 +1638,13 @@ var Scrolling = (function(){
     }
     function getColorbox(callback){
       getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
+      return;
+    }
+    function getCytoscape(callback){
+      getPlugin("cytoscape_json", "/js/jquery/plugins/cytoscapeweb/js/min/json2.min.js", undefined, function(){ 
+      getPlugin("cytoscape_ac", "/js/jquery/plugins/cytoscapeweb/js/min/AC_OETags.min.js", undefined, function(){
+      getPlugin("cytoscape_web", "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb.min.js", undefined, callback);
+      })});
       return;
     }
     
@@ -1696,6 +1696,7 @@ var Scrolling = (function(){
       getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
       getColorbox: getColorbox,
+      getCytoscape: getCytoscape,
       getPfam: getPfam,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
