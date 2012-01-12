@@ -2015,6 +2015,8 @@ div#google-map {
 /* 	background:url(/img/ui_widgets/evidence-icon.png) no-repeat; */
 }
 
+#cytoscapeweb { width: 100%; height: 100%; }
+
 .exprbox {
  	padding:0 0 5px 28px; 
 	background:url(/img/ui_widgets/camera.gif) no-repeat;
