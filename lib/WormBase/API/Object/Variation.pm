@@ -641,8 +641,8 @@ sub strains {
     }
     
     return { description => 'strains carrying gene',
-	     data        => \@data,
-	     count       => \%count };
+	     data        => @data ? \@data : undef,
+	     count       => scalar keys %count ? \%count : undef };
 }
 
 
@@ -3076,7 +3076,7 @@ sub _compile_nucleotide_changes {
             wildtype       => "$wt",
             mutant         => "$mut",
             wildtype_label => $wt_label,
-            mutant_label   => $mut_label,
+            mutant_label   => "$mut_label",
         };
     }
     return \@variations;
