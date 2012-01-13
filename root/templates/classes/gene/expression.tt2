@@ -8,6 +8,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
 <script type="text/javascript" >
 WB.getColorbox(function(){
 $jq(".exprbox").colorbox({width:"90%", inline:true});
+$jq(".exprcamera").colorbox({width:"80%", height:"80%", opacity:"0.4"});
 });
 </script>
 [%    END;	
@@ -24,7 +25,8 @@ $jq(".exprbox").colorbox({width:"90%", inline:true});
         FOREACH ep IN fields.anatomic_expression_patterns.data.expr;             
               '<li>';
 	      IF ep.value.image;
-		   '<a  class="exprbox" rel="expression_pattern_images" href="#' _ ep.value.object.id _ '" title="' _ ep.value.object.label _ '"></a>';
+		   '<a style="float:left" class="ui-icon ui-icon-image exprbox" rel="expression_pattern_images" href="#' _ ep.value.object.id _ '" title="expression image for ' _ ep.value.object.id _ '"></a>';
+		   '<a  class="exprcamera"   href="/rest/field/expr_pattern/' _ ep.value.object.id _ '/curated_images"  title="curated pictures for ' _ ep.value.object.id _ '"></a>';
 	      END;
 	      tag2link(ep.value.object, ep.value.object.id) _ ': ' _ markup(ep.value.details,0) _ '</li>';
          END;
