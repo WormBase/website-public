@@ -34,5 +34,11 @@ WRAPPER $field_block title=pluralize("Subcellular Location", fields.subcellular_
 END;
 
 remarks;
+ 
+ 
+    INCLUDE shared/fields/curated_images.tt2 ;
 
 %]
+   <script type="text/javascript">
+  WB.getColorbox(function(){}); 
+</script>
