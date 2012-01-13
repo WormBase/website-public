@@ -240,7 +240,7 @@ sub contained_in_life_stage {
     my $object = $self->object;
     my @stages = map { $self->_pack_obj($_) } $object->Contained_in;
     return { description => 'contained in life stage',
-	     data        => \@stages };
+	     data        => @stages ? \@stages : undef };
 }
 
 =head3 preceded_by_life_stage
@@ -300,7 +300,7 @@ sub preceded_by_life_stage {
     my $object = $self->object;
     my @stages = map { $self->_pack_obj($_) } $object->Preceded_by;
     return { description => 'preceded by life stage',
-	     data        => \@stages  };
+	     data        => @stages ? \@stages : undef };
 }
 
 =head3 followed_by_life_stage
@@ -359,7 +359,7 @@ sub followed_by_life_stage {
     my $object = $self->object;
     my @stages = map { $self->_pack_obj($_) } $object->Followed_by;
     return { description => 'next life stage after this',
-	     data        => \@stages };
+	     data        => @stages ? \@stages : undef };
 }
 
 
@@ -440,7 +440,7 @@ sub cells {
     my @cells = $object->Cell;
     @cells = map { $self->_pack_obj($_) } @cells;
     return { description => 'cells at this lifestage',
-	     data        => \@cells };
+	     data        => @cells ? \@cells : undef };
 }
 
 =head3 cell_group
@@ -499,7 +499,7 @@ sub cell_group {
     my $object = $self->shift;
     my @cell_group = map { $self->_pack_obj($_) } $object->Cell_group;
     return { description => 'The prominent cell group for this life stage',
-	     data        => \@cell_group };
+	     data        => @cell_group ? \@cell_group : undef };
 }
 
 

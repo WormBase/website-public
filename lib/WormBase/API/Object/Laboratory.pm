@@ -4,7 +4,6 @@ use Moose;
 with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
 
-
 =pod 
 
 =head1 NAME
@@ -264,7 +263,8 @@ sub representatives {
     my @data;
     my @reps = $object->Representative;
     foreach (@reps) {
-	push @data,$self->_pack_obj($_,$_->Standard_name);
+	my $name = $_->Standard_name;
+	push @data,$self->_pack_obj($_, "$name");
     }
     
     return { description => 'official representatives of the laboratory',
@@ -503,7 +503,6 @@ B<Response example>
 sub website {
     my ($self) = @_;
     my ($scheme, $url) = split '://', $self ~~ 'URL', 2;
-
     return { description => 'website of the lab',
 	     data        => $url };
 }
@@ -565,7 +564,7 @@ sub strain_designation {
     my $name = $object->name;
              
     return { description => 'strain designation of the laboratory',
-	     data        => "$name" };
+	     data        => "$name" || undef };
 }
 
 
@@ -697,7 +696,7 @@ sub current_members {
     my $data   = $self->_get_members($object,'Registered_lab_members');
 
     return { description => 'current members of the laboratory',
-	     data        => $data };
+	     data        => @$data ? $data : undef };
 }
  
 
@@ -757,7 +756,7 @@ sub former_members {
     my $object = $self->object;
     my $data   = $self->_get_members($object,'Past_lab_members');
     return { description => 'former members of the laboratory',
-	     data        => $data };
+	     data        => @$data ? $data : undef };
 }
 
 sub _get_members {
@@ -799,7 +798,7 @@ sub _get_lineage_data {
     }
     my $name = $member->Standard_name;
     
-    return { 'name'       => $self->_pack_obj($member,$name),
+    return { 'name'       => $self->_pack_obj($member,"$name"),
 	     'level'      => "$level",
 	     'start_date' => "$start",
 	     'end_date'   => "$end",
@@ -946,14 +945,15 @@ B<Response example>
 sub alleles {
     my $self   = shift;
     my $object = $self->object;
-
     my @alleles = $object->Alleles;
     my @data;
     foreach (@alleles) {
 	my $gene = $_->Gene;
 	my $type = $_->Type_of_mutation;
-	push @data,{ allele    => $self->_pack_obj($_,$_->Public_name),
-		     gene      => $gene ? $self->_pack_obj($gene,$gene->Public_name) : undef,
+	my $allele_name = $_->Public_name;
+	my $gene_name = $gene->Public_name;
+	push @data,{ allele    => $self->_pack_obj($_,"$allele_name"),
+		     gene      => $gene ? $self->_pack_obj($gene,"$gene_name") : undef,
 		     type      => "$type",
 		     sequenced => ($_->Flanking_sequences) ? 'yes' : 'no', 
 	};
