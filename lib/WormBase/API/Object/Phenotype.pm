@@ -179,6 +179,7 @@ sub is_dead {
     my $self = shift;
     my $object = $self->object;
     my $alternate = $object->Dead->right if $object->Dead(0);
+    
     return {
         description => "The Note of the phenotype when it's retired and replaced by another.",
         data        => $alternate ? $self->_pack_obj($alternate,$self->best_phenotype_name($alternate)) : undef,
@@ -413,7 +414,7 @@ sub rnai {
     my $object    = $self->object;
     my $data_pack = $self->_rnai('RNAi');
     return {
-        'data'        => $data_pack,
+        'data'        => @$data_pack ? $data_pack : undef,
         'description' => 'RNAi experiments associated with this phenotype'
     };
 }
@@ -473,7 +474,7 @@ sub rnai_not {
     my $object    = $self->object;
     my $data_pack = $self->_rnai('Not_in_RNAi');
     return {
-        data        => $data_pack,
+        data        => @$data_pack ? $data_pack : undef,
         description => 'rnais not associated with this phenotype'
     };
 }
@@ -543,7 +544,7 @@ sub variation {
     my $object    = $self->object;
     my $data_pack = $self->_variation('Variation');
     return {
-        data        => $data_pack,
+        data        => @$data_pack ? $data_pack : undef,
         description => 'variations associated with this phenotype'
     };
 }
@@ -603,7 +604,7 @@ sub variation_not {
     my $object    = $self->object;
     my $data_pack = $self->_variation('Not_in_Variation');
     return {
-        'data'        => $data_pack,
+        'data'        => @$data_pack ? $data_pack : undef,
         'description' => 'variations not associated with this phenotype'
     };
 }
@@ -673,7 +674,7 @@ sub transgene {
     my $object    = $self->object;
     my $data_pack = $self->_transgene('Transgene');
     return {
-        'data'        => $data_pack,
+        'data'        => @$data_pack ? $data_pack : undef,
         'description' => 'transgenes associated with this phenotype'
     };
 }
@@ -733,7 +734,7 @@ sub transgene_not {
     my $object    = $self->object;
     my $data_pack = $self->_transgene('Not_in_Transgene');
     return {
-        'data'        => $data_pack,
+        'data'        => @$data_pack ? $data_pack : undef,
         'description' => 'transgenes not associated with this phenotype'
     };
 }

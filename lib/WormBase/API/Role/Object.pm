@@ -931,11 +931,12 @@ sub _build_laboratory {
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my $data; # trick: $data is undef until following code derefs it like hash (or not)!
     if (my $lab = eval {$object->$tag}) {
-        $data->{laboratory} = $self->_pack_obj($lab,$lab->Mail);
+	my $label = $lab->Mail;
+        $data->{laboratory} = $self->_pack_obj($lab, "$label");
 	 
         my $representative = $lab->Representative;
         my $name           = $representative->Standard_name;
-        my $rep            = $self->_pack_obj($representative, $name);
+        my $rep            = $self->_pack_obj($representative, "$name");
         $data->{representative} = $rep if $rep;
     }
 
@@ -1079,9 +1080,9 @@ has 'phenotypes' => (
 
 sub _build_phenotypes {	
 	my $self = shift;
-	my $data = $self->_build_phenotypes_data('Phenotype'); 	
+	my $data = $self->_build_phenotypes_data('Phenotype');
 	return {
-		data => $data,
+		data => @$data ? $data : undef,
 		description =>'phenotypes annotated with this term',
 	};
 }
@@ -1147,9 +1148,9 @@ has 'phenotypes_not_observed' => (
 
 sub _build_phenotypes_not_observed {
 	my $self = shift;
-	my $data = $self->_build_phenotypes_data('Phenotype_not_observed'); 	
+	my $data = $self->_build_phenotypes_data('Phenotype_not_observed');
 	return {
-		data => $data,
+		data => @$data ? $data : undef,
 		description =>'phenotypes NOT observed or associated with this object' };
 }
 
@@ -1162,13 +1163,11 @@ sub _build_phenotypes_data {
         my $desc = $_->Description;
         my $remark = $_->Remark;
         {
-            phenotype   =>  $self->_pack_obj($_),
+            phenotype   => $self->_pack_obj($_),
             description => $desc    && "$desc",
             remarks     => $remark && "$remark",
         };
     } @{$self ~~ '@'.$tag} ];
-   
-     
 }
 
 
@@ -2129,7 +2128,6 @@ sub _check_data_content {
 
     my @compliance_problems;
     my ($tmp, @problems);
-
     if ($ref eq 'ARRAY') {
         foreach (@$data) {
             if (($tmp, @problems) = $self->_check_data_content($_, @keys))
