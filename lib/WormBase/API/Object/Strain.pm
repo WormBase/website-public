@@ -171,8 +171,10 @@ B<Response example>
 sub genes {
     my $self   = shift;
     my $object = $self->object;
-    
-    my @genes = map { $self->_pack_obj($_,$_->Public_name) } $object->Gene;
+    my @genes = map {
+	my $name = $_->Public_name;
+	$self->_pack_obj($_,"$name")
+	} $object->Gene;
     return { description => 'genes contained in the strain',
 	     data        => @genes ? \@genes : undef };
 }
@@ -232,7 +234,10 @@ sub alleles {
     my $self   = shift;
     my $object = $self->object;
 
-    my @alleles = map { $self->_pack_obj($_,$_->Public_name) } $object->Variation;
+    my @alleles = map {
+	my $name = $_->Public_name;
+	$self->_pack_obj($_,"$name")
+	} $object->Variation;
     return { description => 'alleles contained in the strain',
 	     data        => @alleles ? \@alleles : undef };
 
@@ -749,8 +754,9 @@ sub made_by {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Made_by;
+    my $name = $made_by->Standard_name;
     return { description => 'the person who built the strain',
-	     data        => $made_by ? $self->_pack_obj($made_by,$made_by->Standard_name) : undef };
+	     data        => $made_by ? $self->_pack_obj($made_by, "$name") : undef };
 }
 
 =head3 contact

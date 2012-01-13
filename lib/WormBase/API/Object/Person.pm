@@ -911,7 +911,7 @@ sub lab_representative {
     if ($lab) { 
 	my $representative = $lab->Representative;
 	my $name = $representative->Standard_name; 
-	$rep = $self->_pack_obj($representative,$name);
+	$rep = $self->_pack_obj($representative, "$name");
     }
     
     my $data = { description => 'official representative of the laboratory',
@@ -1428,7 +1428,7 @@ sub _get_lineage_data {
 	my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
 	
 	push @data, {
-	    'name'       => $self->_pack_obj($relation,$name),
+	    'name'       => $self->_pack_obj($relation, "$name"),
 	    'level'      => "$level",
 	    'start_date' => "$start",
 	    'end_date'   => "$end",
