@@ -1024,6 +1024,15 @@ sub anatomic_expression_patterns {
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
         $pattern    =~ s/(.{384}).+/$1.../;
+		foreach($ep->Picture) {
+			 next unless($_->class eq 'Picture');
+	    	 my $pic = $self->_api->wrap($_);
+			 if( $pic->image->{data}) {
+        			$data_pack{"expr"}{"$ep"}{curated_images} = 1;
+					last;
+			 }	
+			
+		}
         $data_pack{"expr"}{"$ep"}{details} = $pattern;
         $data_pack{"expr"}{"$ep"}{object} = $self->_pack_obj($ep);
     }
