@@ -36,7 +36,7 @@ END;
 remarks;
  
  
-    PROCESS shared/fields/curated_images.tt2 curated_images= fields.curated_images;
+    PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_images;
 
 %]
    <script type="text/javascript">
