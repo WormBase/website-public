@@ -8,22 +8,24 @@
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
-    [% UNLESS id.defined %] [% id =0 %] [% END %]
-    <div id="evidence_[% id %]" style="display:none" >
-	[% FOREACH type IN data.keys -%] 
-	    <b>[% type.replace('_',' ') %]</b>:  
-	    [% FOREACH object IN data.$type.keys %] 
-		
-	      [% IF data.$type.$object.class.defined %]
-	      [% tag2link(data.$type.$object) %]
-	      [% ELSE %]
-	      [% data.$type.$object.label %]  
-	      [% END %]
-	      [% UNLESS loop.last %];[% END %]
-	    [% END %] 
-	    [% UNLESS loop.last %]<br>[% END %]
-	[% END %] 			    
+  <div class="evidence result text-min">
+    [% markup(text) %]
+    [% UNLESS id.defined; id =0; END %]
+    <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
+    [% FOREACH type IN data.keys -%] 
+        <b>[% type.replace('_',' ') %]</b>:  
+        [% FOREACH object IN data.$type.keys %] 
+          [% IF data.$type.$object.class.defined %]
+            [% tag2link(data.$type.$object) %]
+          [% ELSE %]
+            [% data.$type.$object.label %]  
+          [% END %]
+          [% UNLESS loop.last %];[% END %]
+        [% END %] 
+        [% UNLESS loop.last %]<br>[% END %]
+    [% END %]
     </div>
+
     <div class="ev-more">
       <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
@@ -33,7 +35,6 @@
   [% ELSE %]
     [% markup(text) %]
   [% END %]
-
 [% END %]
 
 [% MACRO user_login_info BLOCK %]
