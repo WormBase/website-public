@@ -2012,7 +2012,7 @@ div#google-map {
 .tooltip {
 	margin-left: 7px;
 	padding:0 0 0 20px;
-	background:url(/img/ui_widgets/evidence-icon.png) no-repeat;
+    cursor:pointer;
 }
 
 #cytoscapeweb { width: 100%; height: 100%; }
@@ -2292,7 +2292,8 @@ div.detail-box{
   padding: 0.5em;
   float:right;
   margin:0.5em;
-  max-width:20em;
+  max-width:25em;
+  min-width:19em;
 }
 
 div.search-summary {
@@ -2306,7 +2307,7 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 9em;
+  width: 8em;
   padding-right: 0.5em;
 }
 
