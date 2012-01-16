@@ -8,24 +8,22 @@
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
-  <div class="evidence result text-min">
-    [% markup(text) %]
-    [% UNLESS id.defined; id =0; END %]
-    <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
+    [% UNLESS id.defined %] [% id =0 %] [% END %]
+    <div id="evidence_[% id %]" style="display:none" >
 	[% FOREACH type IN data.keys -%] 
 	    <b>[% type.replace('_',' ') %]</b>:  
 	    [% FOREACH object IN data.$type.keys %] 
+		
 	      [% IF data.$type.$object.class.defined %]
-            [% tag2link(data.$type.$object) %]
+	      [% tag2link(data.$type.$object) %]
 	      [% ELSE %]
-            [% data.$type.$object.label %]  
+	      [% data.$type.$object.label %]  
 	      [% END %]
 	      [% UNLESS loop.last %];[% END %]
 	    [% END %] 
 	    [% UNLESS loop.last %]<br>[% END %]
-	[% END %]
+	[% END %] 			    
     </div>
-
     <div class="ev-more">
       <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
@@ -35,6 +33,7 @@
   [% ELSE %]
     [% markup(text) %]
   [% END %]
+
 [% END %]
 
 [% MACRO user_login_info BLOCK %]
@@ -390,26 +389,26 @@ END;
     </thead>
     <tbody>
         [% 
-                FOREACH row IN rows;
-           '<tr>';
-		   index=loop.index;
-                   FOREACH cell IN row;
-              '<td>'; 
-                      IF cell.species.defined;
-                          '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
-                      ELSIF cell.class.defined;
-                          tag2link(cell);
-                  ELSIF cell.match('ARRAY');
-                  cell.join('<br>');
-              ELSIF cell.evidence.defined;
-		    evidence(cell.evidence,table_name _ index, cell.text, 'details');
-                      ELSE;
-                  cell;
-                      END;
-              '</td>';
-           END;
-           '</tr>';
-           END;
+          FOREACH row IN rows;
+            '<tr>';
+            index=loop.index;
+            FOREACH cell IN row;
+                '<td>'; 
+                IF cell.species.defined;
+                    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
+                ELSIF cell.class.defined;
+                    tag2link(cell);
+                ELSIF cell.match('ARRAY');
+                    cell.join('<br>');
+                ELSIF cell.evidence.defined;
+                    evidence(cell.evidence,table_name _ index, cell.text, 'details');
+                ELSE;
+                    cell;
+                END;
+                '</td>';
+            END;
+            '</tr>';
+          END;
              %]
     </tbody>
   </table>

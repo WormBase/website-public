@@ -1904,6 +1904,7 @@ div.field .field .field-content {
 }
 
 
+
 /* Special field elements */
 /* Google Map */
 div#google-map { 
@@ -2011,15 +2012,14 @@ div#google-map {
 .tooltip {
 	margin-left: 7px;
 	padding:0 0 0 20px;
-    cursor:pointer;
-/* 	background:url(/img/ui_widgets/evidence-icon.png) no-repeat; */
+	background:url(/img/ui_widgets/evidence-icon.png) no-repeat;
 }
 
 #cytoscapeweb { width: 100%; height: 100%; }
 
-.exprbox {
- 	padding:0 0 5px 28px; 
-	background:url(/img/ui_widgets/camera.gif) no-repeat;
+.exprcamera {
+  	padding:0 0 5px 28px;  
+ 	background:url(/img/ui_widgets/camera.gif) no-repeat;
 }
 /*********************************
    
@@ -2292,8 +2292,7 @@ div.detail-box{
   padding: 0.5em;
   float:right;
   margin:0.5em;
-  max-width:25em;
-  min-width:19em;
+  max-width:20em;
 }
 
 div.search-summary {
@@ -2307,7 +2306,7 @@ div#all-search-results {
 }
 
 div.detail-box div.field div.field-title {
-  width: 8em;
+  width: 9em;
   padding-right: 0.5em;
 }
 

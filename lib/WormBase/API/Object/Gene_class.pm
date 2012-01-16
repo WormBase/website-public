@@ -286,7 +286,7 @@ sub current_genes {
 	};		     
     }
     return { description => 'genes assigned to the gene class, organized by species',
-	     data        => \%data };
+	     data        => scalar keys %data ? \%data : undef };
 }
 
 #######################################
@@ -366,7 +366,7 @@ sub former_genes {
     }
     
     my $data = { description => 'genes formerly in the class that have been reassigned to a new class',
-		 data        => \%data };    
+		 data        => scalar keys %data ? \%data : undef };    
 }
 
 
@@ -441,7 +441,7 @@ sub reassigned_genes {
 	}
     }
     my $data = { description => 'genes that have been reassigned a new name in the same class',
-		 data        => \%data };    
+		 data        => scalar keys %data ? \%data : undef };    
     return $data;
 }
 
