@@ -1179,7 +1179,7 @@ sub pfam_graph {
 
     return {
         description => 'The motif graph of the protein',
-        data        => $hash,
+        data        => scalar keys %$hash ? $hash : undef,
     };
 }
 } # end of block for pfam_graph
