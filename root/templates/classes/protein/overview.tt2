@@ -96,7 +96,3 @@ END;
     });
   });
 </script>
-
-<script>
-  //WB.ajaxGet($jq("#pfram_graph_holder"),"[% c.uri_for('/rest/field','protein',object.name.data.id,'pfam_graph') %]");
-</script>

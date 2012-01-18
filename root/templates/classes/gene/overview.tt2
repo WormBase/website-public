@@ -20,7 +20,7 @@ WRAPPER highlight_box;
         END;
    END;
 
-   WRAPPER $field_block title="Type";
+   WRAPPER $field_block title="Type" key="type";
            fields.classification.data.type;
    END;
 
@@ -38,15 +38,13 @@ END;
 
 
 # The main concise description
-'<div class="text-width" style="clear:left">';
+'<div class="text-width" style="clear:left; padding:0 0 0.5em;">';
     markup(fields.concise_description.data);
 '</div>';
 
 # Structured descriptions
 IF fields.structured_description.data;
-    '<div class="toggle">Details</div>';
-    '<div class="returned field">';
-    
+   WRAPPER toggle title="Details";
     FOREACH sd IN fields.structured_description.data.keys;
           USE String(sd.replace('_', ' '));
           WRAPPER $field_block title=String.capital;
@@ -57,34 +55,31 @@ IF fields.structured_description.data;
                END;
            END;
     END;
-    '</div>';
+   END;
 END;
 
 
 # Legacy Information
 IF fields.legacy_information.data;
-     '<div class="toggle">From <i>C. elegans I</i> and <i>II</i> </div>';
-     '<div class="returned">';
+   WRAPPER toggle title="From <i>C. elegans I</i> and <i>II</i>";
           FOREACH desc IN fields.legacy_information.data;
               '<li>';
                    markup(desc, 0);
               '</li>';
             END;
-         '</div>';
+   END;
 END;
 
 # Also Refers to
 # Usually we show empty fields; but some things we actually want to suppress when empty
 IF fields.also_refers_to.data;
-         '<div class="toggle">Also refers to</div>';
-         '<div class="returned">';
-         '<div class="caveat-emptor">';
+   WRAPPER toggle title="Also refers to";
                fields.name.data.label;
                'has also been used to refer to:';
                FOREACH item IN fields.also_refers_to.data;
                    tag2link(item);
                END;
-          '</div>';
+   END;
 END;
 
 

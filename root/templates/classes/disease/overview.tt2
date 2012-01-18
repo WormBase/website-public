@@ -1,0 +1,37 @@
+<h2 style="float:left">[% fields.name.data.label %]</h2>
+
+[%
+
+
+ 
+  
+
+   WRAPPER $field_block title="OMIM ID" key="name";
+           text2link('omim',fields.name.data.id,fields.name.data.id);
+   END;
+
+   WRAPPER $field_block title="related human genes" key="hs_genes";
+           fields.hs_genes.data.join('<br>');
+	     
+   END; 
+
+   WRAPPER $field_block title="Synonym" key="synonym";
+           fields.synonym.data.join('<br>');
+   END;
+
+   WRAPPER $field_block title="Description" key="notes";
+           fields.notes.data.join('<br>');
+	    text2link('omim',fields.name.data.id,' more...');
+   END;
+
+   WRAPPER $field_block title="Orthologous C.elegans genes" key="genes";
+           FOREACH gene IN fields.genes.data;
+	    tag2link(gene);
+	    UNLESS(loop.last); '<br>' ; END;
+	   END;
+	     
+   END;
+ 
+
+
+%]
