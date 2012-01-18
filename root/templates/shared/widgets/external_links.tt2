@@ -48,9 +48,6 @@
 #END;
 
 
-   ELSE;
-      '<span class="caveat-emptor">No external references available for ' _ object.name.data.label _ '.</span>';
-
    END;
 %]
 

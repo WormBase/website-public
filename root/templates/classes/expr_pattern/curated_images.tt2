@@ -1,4 +1,7 @@
-<script type="text/javascript">
+[% WRAPPER $field_block title="Curated Images" %]
+
+[% IF curated_images.data %]	
+   <script type="text/javascript">
 // WB.getColorbox(function(){}); 
  
 
@@ -15,11 +18,9 @@ return false;
  
 
 </script>
-
-[% IF fields.curated_images.data %]	
-   [% FOREACH group IN fields.curated_images.data.sort %]
+   [% FOREACH group IN curated_images.data.sort %]
    <div style="display:inline-block;">
-      [% FOREACH img IN fields.curated_images.data.$group %]
+      [% FOREACH img IN curated_images.data.$group %]
       <div style="display:inline-block;max-width:200px;margin:1em;">
          <a class="picturebox" rel="curated_images"  href="#" target="/rest/widget/picture/[% img.id %]/lightbox">
 	  
@@ -32,4 +33,6 @@ return false;
    [% END %]
 [% ELSE %]
    No curated images available.
+[% END %]
+
 [% END %]
