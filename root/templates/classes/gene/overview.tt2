@@ -10,7 +10,7 @@ WRAPPER highlight_box;
         tag2link(fields.sequence_name.data);
    END;
 
-   WRAPPER $field_block title="Locus" key="locus_name";
+   WRAPPER $field_block title="Public name" key="locus_name";
         tag2link(fields.locus_name.data);
    END;
 

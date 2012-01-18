@@ -83,7 +83,7 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
 	  };
 	  $c->forward( $c->view('Email::Template') );
 
-	  $c->stash->{message} = "An email has been send, please check your mailbox."; 
+	  $c->stash->{message} = "You should be receiving an email shortly describing how to reset your password.";
 	}else{
 	  $c->stash->{message} = "no WormBase account is associated with this email"; 
 	} 
