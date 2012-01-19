@@ -1601,7 +1601,7 @@ sub _build_remarks {
     my $object = $self->object;
 
     #    my @remarks = grep defined, map { $object->$_} qw/Remark/;
-    my @remarks = $object->Remark;
+    my @remarks = eval { $object->Remark };
     my $class   = $object->class;
 
     # Need to add in evidence handling.

@@ -29,7 +29,7 @@ END;
 
 
 #WRAPPER $field_block title="non_directional_data" key="non_directional_data";
-#	link_objects(fields.non_directional_data.data); 
+#	tags2link(fields.non_directional_data.data); 
 #END;
 
 %]

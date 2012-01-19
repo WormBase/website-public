@@ -3,7 +3,7 @@
 
 
 <div class="ellipsis expand author-list">
-  <span>[% link_objects(item.author, ', ') %]</span>
+  <span>[% tags2link(item.author, ', ') %]</span>
 </div>
 [% IF ((item.journal) OR (item.year)) %]
 <div style="float:left">[</div><div class="paper-journal">

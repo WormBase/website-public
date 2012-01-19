@@ -1,4 +1,4 @@
-[% IF fields.segment.data %]
+[%# IF fields.segment.data %]
 <div style="font-family:monospace;margin:1em;">
    [% segment = fields.segment.data %]
    >[% fields.name.data.label %] ([%fields.name.data.class %];
@@ -51,5 +51,5 @@
 <a href="/tools/genome/gbrowse/[% genom_link_part %]">
 [% image("/tools/genome/gbrowse_img/" _ genom_img_part) %]</a>
 </div>
-[% END %]
+[%# END %]
 

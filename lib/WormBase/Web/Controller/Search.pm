@@ -40,7 +40,7 @@ sub search :Path('/search') Args {
       $page_count = 1;
     }
     if($page_count =~ m/disease/){
-      $type = $page_count;
+      $type = 'disease';
       $page_count = 1;
     }
 

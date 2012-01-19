@@ -3,7 +3,7 @@
 
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span> <br />
 [% IF item.gene %]
-  Corresponding Gene: [% link_objects(item.gene, ', ') %]
+  Corresponding Gene: [% tags2link(item.gene, ', ') %]
 [% END %]
 [% desc = item.remark.join('<br />') %]
 <div class="text-min" >

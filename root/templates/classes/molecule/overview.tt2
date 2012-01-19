@@ -26,7 +26,7 @@ WRAPPER highlight_box;
 END;
 
 WRAPPER $field_block title=pluralize('Synonym', fields.synonyms.data.size) key="synonyms";
-    link_objects(fields.synonyms.data);
+    tags2link(fields.synonyms.data);
 END;
 
 WRAPPER $field_block title="Molecule Use" key="molecule_use";
@@ -34,7 +34,7 @@ WRAPPER $field_block title="Molecule Use" key="molecule_use";
 END;
 
 WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
-	link_objects(fields.gene_regulation.data);
+	tags2link(fields.gene_regulation.data);
 END;
 
 

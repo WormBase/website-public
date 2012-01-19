@@ -51,7 +51,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
 
    WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products";
-       object_list(fields.flanking_pcr_products.data);
+       tags2link(fields.flanking_pcr_products.data, ', ');
    END;
 
    

@@ -5,7 +5,7 @@
    ELSE;
        FOREACH reftype IN fields.refers_to.data.keys.sort;
           WRAPPER $field_block title=pluralize(reftype.replace('_',' '),fields.refers_to.data.$reftype.size);
-   	       link_objects(fields.refers_to.data.$reftype);
+   	       tags2link(fields.refers_to.data.$reftype);
           END;
        END;
    END;

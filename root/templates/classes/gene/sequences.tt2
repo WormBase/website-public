@@ -43,6 +43,7 @@ IF fields.gene_models.data;
 
 
       # Dump out the (ordered) footnotes.
+   IF ordered_footnotes.size > 0;
    WRAPPER toggle title="Footnotes";
       FOREACH remark IN ordered_footnotes;
           '<div style="margin:5px">';
@@ -50,6 +51,7 @@ IF fields.gene_models.data;
                   remark;
            '</div>';
        END;
+   END;
    END;
 
 
