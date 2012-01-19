@@ -3,14 +3,11 @@
     </li>
   
     [% IF item.gene %]
-    <span>Related C.elegans Genes[% FOREACH gene IN item.gene %]
-	[% tag2link(gene) %]
-	[% UNLESS loop.last %], [% END %]
-	[% END %]
+    <span>Related worm [% pluralize('gene', item.gene) %]:
+      [% tags2link(item.gene, ', ') %]
     </span>
     [% END %]
-
  
-<div class="text-min">
-  [% item.description.join("<br />") %]
-</div>
+    <div class="text-min">
+      [% item.description.join("<br />") %]  
+    </div>

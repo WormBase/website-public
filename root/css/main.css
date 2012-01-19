@@ -1648,8 +1648,7 @@ div#footercredit a{
 
 .returned {
    display:none;
-   padding:5px;
-   padding-left:30px;
+   padding:0 0 0.5em 1em;
 }
 
 .superscript      { vertical-align:super; 
@@ -2000,6 +1999,7 @@ div#google-map {
 .toggle {
 	padding: 0 0 0.5em;
     cursor:pointer;
+    margin: 0 0 0 -0.4em;
 }
 
 #overview-content .toggle{
@@ -2017,10 +2017,21 @@ div#google-map {
 
 #cytoscapeweb { width: 100%; height: 100%; }
 
-.exprcamera {
-  	padding:0 0 5px 28px;  
- 	background:url(/img/ui_widgets/camera.gif) no-repeat;
+.expr_patterns {
+  list-style-type: none;
+  padding:0;
 }
+
+.expr_patterns a {
+  float:left;
+}
+
+.expr_patterns li {
+  margin-top:0.5em;
+  overflow:hidden;
+}
+
+
 /*********************************
    
    Navigation for sidebar view
@@ -2171,6 +2182,10 @@ div#google-map {
 
 .navigation ul li.ui-selected span.ui-icon, .navigation ul li:hover span.ui-icon  { 
   visibility:visible;
+}
+
+.navigation .toggle {
+  margin:0;
 }
 
 

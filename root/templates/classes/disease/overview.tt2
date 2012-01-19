@@ -20,16 +20,14 @@
    END;
 
    WRAPPER $field_block title="Description" key="notes";
+        '<div class="text-width">';
            fields.notes.data.join('<br>');
 	    text2link('omim',fields.name.data.id,' more...');
+        '</div>';
    END;
 
-   WRAPPER $field_block title="Orthologous C.elegans genes" key="genes";
-           FOREACH gene IN fields.genes.data;
-	    tag2link(gene);
-	    UNLESS(loop.last); '<br>' ; END;
-	   END;
-	     
+   WRAPPER $field_block title="Orthologous worm genes" key="genes";
+          tags2link(fields.genes.data, '<br />');
    END;
  
 

@@ -1,7 +1,7 @@
 [%
 
 WRAPPER $field_block title="Genes" key="genes";
-	link_objects(fields.genes.data);
+	tags2link(fields.genes.data);
 END;
 
 #    build_data_table (

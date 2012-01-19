@@ -20,7 +20,7 @@ END;
 
 
 WRAPPER $field_block title="SAGE tags" key="sage_tags";
-     link_objects(fields.sage_tag.data);
+     tags2link(fields.sage_tag.data);
 END;
 
 %]

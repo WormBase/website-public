@@ -18,13 +18,13 @@ END;
 
 
 WRAPPER $field_block title="Phenotypes" key="phenotypes"; 
-	link_objects(fields.phenotypes.data);
+	tags2link(fields.phenotypes.data);
 END;
 
 
 
 WRAPPER $field_block title="interactor" key="interactor";
-	link_objects(fields.interactor.data);
+	tags2link(fields.interactor.data);
 END;
 
 WRAPPER $field_block title="RNAi" key="rnai";

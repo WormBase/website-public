@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2 style="float:left"><i>[% fields.name.data.label %]</i></h2>
 
 [%
 
@@ -20,7 +20,7 @@ WRAPPER highlight_box;
         END;
    END;
 
-   WRAPPER $field_block title="Type" key="type";
+   WRAPPER $field_block title="Type" key="classification";
            fields.classification.data.type;
    END;
 

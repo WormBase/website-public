@@ -27,11 +27,11 @@ END;
 
 
 WRAPPER $field_block title="Bound By Gene Product" key="bound_by_gene_product";
-	link_objects(fields.bound_by_gene_product.data);
+	tags2link(fields.bound_by_gene_product.data);
 END;
 
 WRAPPER $field_block title="Transcription Factors" key="transcription_factors";
-	link_objects(fields.transcription_factors.data);
+	tags2link(fields.transcription_factors.data);
 END;
 
 #TH: eh? Data structure in position_data needs to be deconvoluted?

@@ -44,12 +44,12 @@ WRAPPER curator_block title="Type";
 END;
 
 WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size) key="corresponding_gene";
-    link_objects(fields.corresponding_gene.data);
+    tags2link(fields.corresponding_gene.data);
 END;
 
 
 WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size) key="corresponding_transcripts";
-    link_objects(fields.corresponding_transcripts.data);
+    tags2link(fields.corresponding_transcripts.data);
 END;
 
 WRAPPER $field_block title="Description" key="description";

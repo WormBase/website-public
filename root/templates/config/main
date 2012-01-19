@@ -28,14 +28,14 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO link_objects(data, separator) BLOCK;
+   MACRO tags2link(data, separator) BLOCK;
       result = [];
       # Is this a hash?
       IF data.keys;
         FOREACH key IN data.sort;
           result.push(tag2link(data.$key));
         END;
-        result.join('<br />');
+        result.join(separator || '<br />');
       # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
       ELSE;
         FOREACH item IN data;
@@ -215,7 +215,7 @@
 # eg. OMIM:604297, 309000
     MACRO markup_omim(text) BLOCK;
       text = "$text";
-      text.replace('OMIM:(\d{6})((, )(\d{6}))?', text.search('OMIM:(\d{6})((, )(\d{6}))') ? external_link('OMIM','OMIM:$1', '$1') _  '$3' _ external_link('OMIM', '$4', '$4') : external_link('OMIM','OMIM:$1', '$1'));
+      text.replace('OMIM:(\d{6})((, )(\d{6}))?', text.search('OMIM:(\d{6})((, )(\d{6}))') ? external_link('omim','OMIM:$1', '$1') _  '$3' _ external_link('omim', '$4', '$4') : external_link('omim','OMIM:$1', '$1'));
     END;
 
 # Markup any locus reference in text

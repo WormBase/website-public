@@ -18,7 +18,7 @@
                      [% END %]
                      [% IF phenotype.transgene %]
                         Transgene(s):
-                        [% link_objects(phenotype.transgene) %]
+                        [% tags2link(phenotype.transgene) %]
                      [% END %]
                      [% IF phenotype.rnai_count %]
                         Supported by [% phenotype.rnai_count %] RNAi [% pluralize("experiment", phenotype.rnai_count) %]
@@ -32,11 +32,13 @@
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
    Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
 
+
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
       [% phenotypes = fields.phenotype.data.observed %]
         [% phen_table(phenotypes) %]
     </div>
+]
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
         [% phenotypes = fields.phenotype.data.not_observed %]
@@ -64,7 +66,7 @@
                   <tr>
                      <td>[% tag2link(rnai_result.object) %]</td>
                      <td>
-                        [% link_objects(rnai_result.$phen_type) %]
+                        [% tags2link(rnai_result.$phen_type) %]
                      </td>
                      <td>[% rnai_result.genotype %]</td>
                      <td>[% tag2link(rnai_result.reference) %]</td>

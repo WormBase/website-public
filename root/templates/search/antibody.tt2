@@ -3,5 +3,5 @@
 
 <div class="text-min">
   [% summary = item.summary.join(); summary; %]    
-  [% link_objects(item.gene) %]    
+  [% tags2link(item.gene) %]    
 </div>
