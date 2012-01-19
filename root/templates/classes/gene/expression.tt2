@@ -89,7 +89,6 @@ WRAPPER $field_block title="Site(s) of Action" key="anatomy_function"
     '</table>';
 END;
 
-
 %]
 <script type="text/javascript" >
 WB.getColorbox(function(){
