@@ -530,6 +530,70 @@ sub concise_description {
 }
 
 
+
+=head3 gene_class
+
+This method will return a data structure containing
+the gene class packed tag of the gene, if one exists.
+
+=over
+
+=item PERL API
+
+ $data = $model->gene_class();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_class
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub gene_class {
+    my $self   = shift;
+    my $object = $self->object;  
+    
+    my $gene_class = $self->_pack_obj($object->Gene_class);
+    
+    return {
+    description => "The gene class for this gene",
+    data        => $gene_class };
+}
+
+
 =head3 legacy_information
 
 This method will return a data structure containing
@@ -786,7 +850,8 @@ sub structured_description {
                   Sequence_features
                   Biological_process
                   Expression
-                  Detailed_description);
+                  Detailed_description
+                  Human_disease_relevance);
    foreach my $type (@types){
       my @objs = $self->object->$type;
       my @array = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } @objs;

@@ -13,15 +13,8 @@
     [% UNLESS id.defined; id =0; END %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>:  
-        [% FOREACH object IN data.$type.keys %] 
-          [% IF data.$type.$object.class.defined %]
-            [% tag2link(data.$type.$object) %]
-          [% ELSE %]
-            [% data.$type.$object.label %]  
-          [% END %]
-          [% UNLESS loop.last %];[% END %]
-        [% END %] 
+        <b>[% type.replace('_',' ') %]</b>:
+        [% tags2link(data.$type, '; ') %]  
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
     </div>

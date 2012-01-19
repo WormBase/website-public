@@ -22,7 +22,11 @@
     MACRO tag2link(data,text,title) BLOCK;  
       IF data.defined ;
          UNLESS text; text = data.label; END;
-         text2link(data.class, data.id, text, title, data.taxonomy);
+         IF data.class.defined;
+          text2link(data.class, data.id, text, title, data.taxonomy);
+         ELSE;
+          data.label;
+         END;
       END;
    END;
 
