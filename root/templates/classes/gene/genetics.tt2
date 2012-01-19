@@ -10,9 +10,10 @@
        
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
+       # Removed "type"; consider re-adding at a later date as the Variation model evolves.
+       #   	                  type              => 'Type',
        build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
                         columns={ variation         => 'Allele',
-	   	                  type              => 'Type',
 	  	                  molecular_change  => 'Molecular<br /> change',
 			          affects           => 'Protein<br /> effect',
 			          sequence_known    => 'Sequence<br /> known?',
@@ -54,12 +55,12 @@
 
    WRAPPER $field_block title="Rearrangements" key="rearrangements";
       IF fields.rearrangements.data.positive;
-        tag2link(object.name.data) _ ' inside: ';
+        object.name.data.label _ ' inside: ';
         FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
         '<br />';
       END;
       IF fields.rearrangements.data.negative;
-        tag2link(object.name.data) _ ' outside: ';
+        object.name.data.label _ ' outside: ';
         FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
       END;
    END;

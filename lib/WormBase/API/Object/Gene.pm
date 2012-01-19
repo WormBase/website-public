@@ -326,8 +326,10 @@ sub classification {
     # Protein coding?
     my @cds = $object->Corresponding_CDS;
     if (@cds) {
-        my $status = $cds[0]->Prediction_status ? 'confirmed' : 'unconfirmed';
-        $data->{type} = "protein coding ($status)";
+	# status removed by request of KLH: 2012.01.17
+#        my $status = $cds[0]->Prediction_status ? 'confirmed' : 'unconfirmed';
+#        $data->{type} = "protein coding ($status)";
+        $data->{type} = "protein coding";
     }
 
     # Is this a non-coding RNA?

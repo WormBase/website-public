@@ -21,7 +21,7 @@
                    table_count = table_count + 1;                 
 
                   # Here we assume that the inner data structure as an array of hashes  
-                  build_data_table(order = ['method','term', 'evidence_code'],
+                  build_data_table(order = ['term','evidence_code','method'],
                              columns = {   method   => 'Method',
                                                  term   => 'Term',
                                         evidence_code   => 'Evidence' },
