@@ -32,20 +32,23 @@
 
    # Link a hash of objects
    # Suitable for hashes of objects created by _pack_objects()
-   MACRO tags2link(data, separator) BLOCK;
+   MACRO tags2link(data, separator, expandable_title) BLOCK;
       result = [];
-      # Is this a hash?
       IF data.keys;
         FOREACH key IN data.sort;
           result.push(tag2link(data.$key));
         END;
-        result.join(separator || '<br />');
-      # An array (or possibly even a scalar: TT seems to treat single element arrays as scalars?)
       ELSE;
         FOREACH item IN data;
           result.push(tag2link(item));
         END;
-        result.join(separator || '<br />');
+      END;
+      IF (expandable_title && (result.size > 10));
+        WRAPPER toggle title=result.size _ ' ' _ expandable_title;
+          result.join(separator || '<br />');
+        END;
+      ELSE;
+      result.join(separator || '<br />');
       END;
    END;
 

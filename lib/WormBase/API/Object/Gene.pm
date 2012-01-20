@@ -1090,7 +1090,7 @@ sub anatomic_expression_patterns {
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expr_object}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
-        $pattern    =~ s/(.{384}).+/$1.../;
+#         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
 			 next unless($_->class eq 'Picture');
 	    	 my $pic = $self->_api->wrap($_);
@@ -1107,6 +1107,24 @@ sub anatomic_expression_patterns {
     return {
         description => 'expression patterns for the gene',
         data        => %data_pack ? \%data_pack : undef,
+    };
+}
+
+sub anatomy_terms {
+    my $self   = shift;
+    my $object = $self->object;
+
+
+    my %unique_anatomy_terms;
+    for my $ep ( $object->Expr_pattern ) {
+        for my $at ($ep->Anatomy_term) {
+          $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
+        }
+    }
+
+    return {
+        description => 'anatomy terms from expression patterns for the gene',
+        data        => %unique_anatomy_terms ? \%unique_anatomy_terms : undef,
     };
 }
 
