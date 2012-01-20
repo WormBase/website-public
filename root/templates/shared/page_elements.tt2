@@ -396,6 +396,10 @@ END;
                     cell.join('<br>');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
+                
+                ELSIF cell.first.keys.defined; #intended as check for list of _pack_obj
+                       tags2link(cell);
+
                 ELSE;
                     cell;
                 END;
