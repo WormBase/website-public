@@ -8,7 +8,7 @@
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
-  <div class="evidence result text-min">
+  <div class="evidence result">
     [% markup(text) %]
     [% UNLESS id.defined; id =0; END %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >

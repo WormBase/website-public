@@ -684,7 +684,7 @@
   function checkSearch(div){
     var results = div.find("#results"),
         searchData = (results.size() > 0) ? results.data("search") : undefined;
-    if(!searchData){ return; }
+    if(!searchData){ formatExpand(results); return; }
     SearchResult(searchData['query'], searchData["type"], searchData["species"], searchData["widget"], searchData["nostar"], searchData["count"], div);  
   }
   

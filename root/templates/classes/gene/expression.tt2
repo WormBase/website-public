@@ -11,7 +11,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
     END;	
 	
     hidden = '';
-    '<ul class="expr_patterns">';
+    '<ul class="expr_patterns" id="results">';
         FOREACH key IN fields.anatomic_expression_patterns.data.expr.keys.sort.reverse; 
           ep = fields.anatomic_expression_patterns.data.expr.$key;
           '<li>';
@@ -26,7 +26,7 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
               '<a  class="ui-icon ui-icon-image exprcamera"   href="/rest/field/expr_pattern/' _ ep.object.id _ '/curated_images"  title="curated pictures for ' _ ep.object.id _ '"></a>';      
             END;
           '</li>';
-          '<div class="text-width">' _ markup(ep.details,0) _ '</div>';
+          '<div class="text-width text-min">' _ markup(ep.details,0) _ '</div>';
         END;
     '</ul>';
 
@@ -34,6 +34,11 @@ WRAPPER $field_block title="Anatomic Expression Patterns" key="anatomic_expressi
         hidden;
     '</div>';
 END;
+
+WRAPPER $field_block title="Anatomy terms" key="anatomy_terms";
+  tags2link(fields.anatomy_terms.data, '<br />', 'anatomy terms');
+END;
+
 
 
 # This is BROKEN. Model issue? Returns a one-element empty data structure.
@@ -50,20 +55,14 @@ END;
 
 
 WRAPPER $field_block title="Expression Cluster" key="expression_cluster";
-   WRAPPER toggle title=fields.expression_cluster.data.keys.size _ " expression "  _ pluralize("cluster", fields.expression_cluster.data.keys.size);
-     tags2link(fields.expression_cluster.data);
-   END;
+  tags2link(fields.expression_cluster.data, '<br />', 'expression clusters');
 END;
 
 
 # Hard-coded link to SPELL at Caltech. Oh well.
 WRAPPER $field_block title="Microarray Expression Data" key="microarray_expression_data";
-   WRAPPER toggle title=fields.microarray_expression_data.data.keys.size 
-                              _ " microarray " 
-                              _ pluralize("result", fields.microarray_expression_data.data.keys.size);
-     tags2link(fields.microarray_expression_data.data);
-   END;
-   	'<a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
+     tags2link(fields.microarray_expression_data.data, '<br />', 'microarray expression results');
+   	'<br /><a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
 END;
 
 
