@@ -47,6 +47,7 @@
 			attrName: "direction",
 			entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
 	};
+      var edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 };
 
 // id of Cytoscape Web container div
                 var div_id = "cytoscapeweb";
@@ -54,14 +55,18 @@
                 // you could also use other formats (e.g. GraphML) or grab the network data via AJAX
                 var networ_json = {
                     dataSchema: {
-			nodes: [ { name: "label", type: "string" },
-				{ name: "color", type: "string" }, { name: "link", type: "string" },
-				  ],
+			nodes: [{ name: "label", type: "string" },
+				{ name: "color", type: "string" },
+				{ name: "link", type: "string" },
+			],
 				
 			edges: [ { name: "label", type: "string" },
 				{ name: "type", type: "string" },
-				{ name: "direction", type: "string" },{ name: "link", type: "string" },
-				 ]
+				{ name: "direction", type: "string" },
+				{ name: "width", type: "int" },
+				{ name: "phenotype", type: "string" },
+				//{ name: "link", type: "string" },
+			]
 		    },
 		    
 		    data: {
@@ -76,7 +81,9 @@
 				{ id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
 				  source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
 				  type: "[% obj.type %]", direction:"[% obj.direction %]",
-				  link:"[% get_url(obj.interaction.class, obj.interaction.id ,obj.interaction.taxonomy) %]",
+				  width: [% obj.interactions.size %],
+				  phenotype: "[% obj.phenotype.label %]",
+				  //link:"[% get_url(obj.interaction.class, obj.interaction.id ,obj.interaction.taxonomy) %]",
 				},
 				[% END %]
 			      ],
@@ -103,7 +110,7 @@
                         labelHorizontalAnchor: "center",
                     },
                     edges: {
-                        width: 3,
+                        width: { defaultValue: 0.5, continuousMapper: edgeWidthMapper },
 			color: { defaultValue: "#999999", discreteMapper: edgeColorMapper },
 			opacity:0.4,
 			hoverOpacity: 1,
@@ -111,9 +118,8 @@
 			targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
 			labelHorizontalAnchor: "center",
                         label: { passthroughMapper: { attrName: "type" } },
-			tooltipText: "<b>${label}: ${type}<br>${target} --- ${source}  ${direction}</br></b>",
+			tooltipText: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>",
  			tooltipBackgroundColor: "#fafafa",
-
                     }
                 };
 
@@ -138,9 +144,10 @@
                     vis.addListener("click", "nodes", function(event) {
 			window.open(event.target.data.link);
                     });
-                    vis.addListener("click", "edges", function(event) {
+                   /* Should be disabled until interactions are merged
+		    vis.addListener("click", "edges", function(event) {
                         window.open(event.target.data.link);
-		    });
+		    }); */ 
                 });
 		
 		$jq('.cyto_panel').change(function(){
@@ -175,13 +182,13 @@
       searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
 
 
-      build_data_table(order=['type','effector','effected','direction','phenotype','interaction'],
+      build_data_table(order=['type','effector','effected','direction','phenotype','interactions'],
      	               columns={type  => 'Interaction Type',
 		                effector => 'Effector',
 		                effected  => 'Effected',
 				direction => 'Direction',
 				phenotype => 'Phenotype',
-				interaction => 'Details',
+				interactions => 'Citations',
  		                },	    
 	               passed_data=fields.interactions.data.edges);
 
