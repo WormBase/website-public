@@ -181,6 +181,73 @@ sub _build__phenotypes {
     return \%phenotypes;
 }
 
+has '_interactions' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__interactions',
+);
+
+sub _build__interactions {
+    my $self = shift;
+    my $object = $self->object;
+    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save packed objects improves the speed
+    my %data;
+    my $show_local = 0;
+    # find interacted genes with this $object
+    foreach my $interaction ( $object->Interaction ) {
+         
+	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
+	next unless($effector);
+
+	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
+	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
+	$nodes_obj->{"$effector"}=$effector;
+	$nodes_obj->{"$effected"}=$effected;
+
+	$edges->{"$interaction"}=1;  
+	$types->{"$type"}=1;
+	if($phenotype) {
+	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
+	      $phenotype= $phenotypes->{"$phenotype"};
+	}
+	my $phenString = $phenotype ? $phenotype : "";
+	my $key = join(' ', "$effector", "$effected", "$type", $direction, $phenString);
+	my $altkey = join(' ', "$effected", "$effector", "$type", $direction, $phenString);
+
+	my $packInteraction = $self->_pack_obj($interaction);
+	if (exists $data{$key}){
+		push @{$data{$key}{interactions}}, $packInteraction;
+		#warn("same key with numInt: ", scalar @{$data{$key}{interactions}});
+	} elsif($direction ne 'Effector->Effected' && exists $data{$altkey}){
+		push @{$data{$altkey}{interactions}}, $packInteraction;
+		#warn("alt key with numInt: ", scalar @{$data{$key}{interactions}});
+	} else {
+	    my @interacArr;
+	    push @interacArr, $packInteraction;
+	    #warn("new key: ", $key);
+	    $data{$key} = {
+		interactions => \@interacArr,
+		type        => "$type",
+		effector    => $nodes->{"$effector"},
+		effected    => $nodes->{"$effected"},
+		direction   => $direction,
+		phenotype   => $phenotype,
+	    };
+	}
+    }
+
+    if(scalar keys %data < 100){
+	$show_local = 1;
+    }
+
+    my @results = (\%data,$nodes,$edges,$phenotypes,$types,$nodes_obj);
+    my %result = (
+	showall => $show_local,
+	results => \@results,
+    );
+    return \%result;
+}
+
 #######################################
 #
 # The Overview Widget
@@ -2660,37 +2727,21 @@ sub _get_interation_info {
 
 sub interactions  {
     my $self   = shift;
-    my $object = $self->object;
-    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save pakced objects improves the speed
-    my @data;
-    # find interacted genes with this $object
-    foreach my $interaction ( $object->Interaction ) {
-         
-	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
-	next unless($effector);
-       
-	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
-	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
-	$nodes_obj->{"$effector"}=$effector;
-	$nodes_obj->{"$effected"}=$effected;
-
-	$edges->{"$interaction"}=1;  
-	$types->{"$type"}=1;
-	if( $phenotype) {
-	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"} ;
-	}
-
-        push @data,
-            {
-            interaction => $self->_pack_obj($interaction),
-            type        => "$type",
-            effector    => $nodes->{"$effector"},
-            effected    => $nodes->{"$effected"},
-            direction   => $direction,
-            phenotype   => $phenotype,
-            };
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+    if($self->_interactions->{showall}){
+	$self->nearby_interactions();
     }
+    my @dataRet = (values %{$data});
+    return {
+        description => 'genetic and predicted interactions',
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+    };
+}
+
+sub nearby_interactions() {
+    my $self = shift;
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
 	my $node = $nodes_obj->{$key};
@@ -2711,24 +2762,38 @@ sub interactions  {
 	    $types->{"$type"}=1;
 	    if( $phenotype) {
 	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"} ;
+	      $phenotype= $phenotypes->{"$phenotype"};
 	    }
 
-	    push @data,
-		{
-		interaction => $self->_pack_obj($interaction),
-		type        => "$type",
-		effector    => $nodes->{"$effector"},
-		effected    => $nodes->{"$effected"},
-		direction   => $direction,
-		phenotype   => $phenotype,
+	    my $phenString = $phenotype ? $phenotype : "";
+	    my $key = join(' ', "$effector", "$effected", "$type", $direction, "$phenString");
+	    my $altkey = join(' ', "$effected", "$effector", "$type", $direction, "$phenString");
+
+	    my $packInteraction = $self->_pack_obj($interaction);
+	    if (exists $data->{$key}){
+		my $interacArr = $data->{$key}{interactions};
+		push @$interacArr, $packInteraction;
+	    } elsif($direction ne 'Effector->Effected' && exists $data->{$altkey}){
+		my $interacArr = $data->{$altkey}{interactions};
+		push @$interacArr, $packInteraction;
+	    } else {
+		my @interacArr;
+		push @interacArr, $packInteraction;
+		$data->{$key} = {
+		    interactions => \@interacArr,
+		    type        => "$type",
+		    effector    => $nodes->{"$effector"},
+		    effected    => $nodes->{"$effected"},
+		    direction   => $direction,
+		    phenotype   => $phenotype,
 		};
+	    }
 	 }
     }
-	 
+    my @dataRet = (values %{$data});
     return {
-        description => 'genetic and predicted interactions',
-        data        => {edges=>\@data,nodes=>$nodes,types=>$types},
+        description => 'additional genetic and predicted interactions',
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
     };
 }
 
