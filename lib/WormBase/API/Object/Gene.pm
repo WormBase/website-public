@@ -591,9 +591,13 @@ sub concise_description {
         || eval { $object->Gene_class->Description }
         || $self->name->{data}->{label} . ' gene';
     
+    my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
+    my $evidence = $self->_get_evidence(@evs[0]);
+    
     return {
-	description => "A manually curated description of the gene's function",
-	data        => "$description" };
+      description => "A manually curated description of the gene's function",
+      data        => { text => "$description", evidence => $evidence }
+    };
 }
 
 
@@ -921,15 +925,9 @@ sub structured_description {
                   Human_disease_relevance);
    foreach my $type (@types){
       my @objs = $self->object->$type;
+      @objs = grep { "$_" ne $self->object->Concise_description } @objs if $type eq "Provisional_description";
       my @array = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } @objs;
       $ret{$type} = \@array if (@array > 0);
-=pod
-      my $node = $self->object->$type or next;
-      my @nodes = $self->object->$type;
-      my $index=-1;
-      @nodes = map {$index++; {text=>"$_", evidence=> {tag => $type,index=>$index, check => $self->check_empty($_)}}} @nodes;
-      $ret{$type} = \@nodes if (@nodes > 0);
-=cut
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
@@ -1176,6 +1174,60 @@ sub anatomic_expression_patterns {
         data        => %data_pack ? \%data_pack : undef,
     };
 }
+
+
+
+=head3 anatomy_terms
+
+This method will return a hash 
+containing unique anatomy terms described from the
+expression patterns associated with this gene
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
 
 sub anatomy_terms {
     my $self   = shift;
@@ -1799,16 +1851,12 @@ sub strains {
         # All of the counts can go away if
         # we discard the venn diagram.
         push @{$count{total}},$packed;
-        push @{$count{available_from_cgc}},$packed if $cgc;
 
         if (@genes == 1 && !$_->Transgene) {
-            push @{$count{carrying_gene_alone}},$packed;
-            if ($cgc) {
-                push @{$count{carrying_gene_alone_and_cgc}},$packed;
-            }
+          $cgc ? push @{$count{carrying_gene_alone_and_cgc}},$packed : push @{$count{carrying_gene_alone}},$packed;
         }
         else {
-            push @{$count{others}},$packed;
+          $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
         }
 
         my $genotype = $_->Genotype;
@@ -2085,6 +2133,7 @@ sub history {
                 ( $vers, $date, $curator, $event, $action, $remark )
                     = $version->row;
 
+                next if $action eq 'Imported';
                 # For some cases, the remark is actually a gene object
                 if (   $action eq 'Merged_into'
                     || $action eq 'Acquires_merge'
