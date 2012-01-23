@@ -431,7 +431,6 @@ sub _parse_year {
 }
  
 
-# TODO: rewrite this to make use of tag2link and not store ace object in hash
 # NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
 # index is needed when multiple evidence on the same page.
 sub _get_evidence {
@@ -448,66 +447,55 @@ sub _get_evidence {
 	    if(defined $evidence_type) {
 		next unless(grep /^$type$/ , @$evidence_type);
 	    }
+
+        my @evidences;
+
 	    #the goal is to deal label and link seperately?
 	    foreach my $evidence ($type->col) {
-		my $label = $evidence;
-		my $class = eval { $evidence->class } ;
-		if($type eq 'Inferred_automatically'){
-		    if($node eq 'IMP'){
-		      $evidence =~ s/\((WBPhenotype.*)\|(WBRNAi.*)\)//;
-		      my ($wb_phene,$wb_rnai) = ($1,$2);
-# 		    $self->log->debug($evidence,"kkkkkkk $node aaaaaaaaaaaaaa",":",$wb_phene,":",$wb_rnai);
-		      if($wb_phene && ! exists $data{$type}{$wb_phene}){
-			  $label = $self->_api->fetch({class=>"Phenotype",name=>$wb_phene})->_common_name;
-			  $data{$type}{$wb_phene}={id => "$wb_phene", 
-						      label  => "$label", 
-						      class  => "Phenotype",
-						      }  ;
-		      }
-		      if($wb_rnai && ! exists $data{$type}{$wb_rnai}){
- 			 
-			  $data{$type}{$wb_rnai}={id => "$wb_rnai", 
-						      label  => "$wb_rnai", 
-						      class  => "Rnai",
-						      } ;
-		      }
-		      next;
-		    }elsif($node eq 'IEA'){
-			($class,$evidence) = split /:/, $evidence;
-			 
-		    }
-		} elsif($type eq 'Variation_evidence'){
-		    $label = $self->_api->wrap($evidence)->_common_name;
-		}elsif ($type eq 'Paper_evidence') {
-		    my @authors    = eval { $evidence->Author };
-		    my $authors    = @authors <= 2 ? (join ' and ',@authors) : "$authors[0] et al.";
-		    my $year       = $self->_parse_year($evidence->Publication_date);
-		    $label = "$authors, $year";
-		} elsif  ($type eq 'Person_evidence' || $type eq 'Curator_confirmed') {
-		    $label = $evidence->Standard_name;
-		} elsif ($type eq 'Accession_evidence') {
-		    my ($database,$accession) = $evidence->row;
-		    if(defined $accession && $accession) {
-			($evidence,$class) = ($accession,$database);
-			 $label = "$database:$accession";
-		    }     
-		} elsif($type eq 'GO_term_evidence') {
-		    my $desc = $evidence->Term || $evidence->Definition;
-		    $label .= (($desc) ? "($desc)" : '');
-		}elsif ($type eq 'Protein_id_evidence') {
-		    $class = "Entrezp";
-		} elsif ($type eq 'RNAi_evidence') {
-		    $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
-		} elsif ($type eq 'Date_last_updated') { 
-		    $label =~ s/\s00:00:00//;
-		    undef $class;
-		}  
-# 		$type =~ s/_/ /g;
-		$data{$type}{$evidence}{id} = "$evidence"; 
-		$data{$type}{$evidence}{label} = "$label"; 
-		$data{$type}{$evidence}{class} = lc($class) if(defined $class);
-	    }
+          my $label = $evidence;
+          my $packed;
+          my $class = eval { $evidence->class } ;
+          if($type eq 'Inferred_automatically'){
+              if($node eq 'IMP'){
+                $evidence =~ s/\((WBPhenotype.*)\|(WBRNAi.*)\)//;
+                my ($wb_phene,$wb_rnai) = ($1,$2);
+                if($wb_phene){
+                  $label = $self->_api->fetch({class=>"Phenotype",name=>$wb_phene})->_common_name;
+                  push( @evidences, { id=>$wb_phene, label=>$label, class=>'phenotype'});
+                }
+                if($wb_rnai){
+                    push( @evidences, { id=>$wb_rnai, label=>$wb_rnai, class=>'rnai'});
+                }
+                next;
+              }elsif($node eq 'IEA'){
+                ($class,$evidence) = split /:/, $evidence;
+              }
+          } elsif ($type eq 'Accession_evidence') {
+              my ($database,$accession) = $evidence->row;
+              if(defined $accession && $accession) {
+              ($evidence,$class) = ($accession,$database);
+              $label = "$accession";
+              }else {
+                next;
+              }     
+          } elsif($type eq 'GO_term_evidence') {
+              my $desc = $evidence->Term || $evidence->Definition;
+              $label .= (($desc) ? "($desc)" : '');
+          } elsif ($type eq 'Protein_id_evidence') {
+              $class = "Entrezp";
+          } elsif ($type eq 'RNAi_evidence') {
+              $label =  $evidence->History_name? $evidence . ' (' . $evidence->History_name . ')' : $evidence;    
+          } elsif ($type eq 'Date_last_updated') { 
+              $label =~ s/\s00:00:00//;
+              undef $class;
+          } else {
+              $packed = $self->_pack_obj($evidence);
+          } 
 
+          $class = (defined $class) ? lc("$class") : undef;
+          push( @evidences, $packed ? $packed : { id=> "$evidence", label => "$label", class => $class });
+	    }
+        $data{$type} = \@evidences;
 	}
    return %data ? \%data :undef;
 }
