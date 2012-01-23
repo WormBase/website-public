@@ -431,7 +431,7 @@ sub _parse_year {
 }
  
 
- 
+# TODO: rewrite this to make use of tag2link and not store ace object in hash
 # NOTE: the standarded evidence method, returns a hash ref, in the template call macro evidence(hash ref, index)
 # index is needed when multiple evidence on the same page.
 sub _get_evidence {
