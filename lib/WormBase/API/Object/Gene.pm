@@ -1996,27 +1996,6 @@ sub gene_ontology {
     my $self   = shift;
     my $object = $self->object;
 
-    # TH: This is really opaque. What is the value used for?
-    # Is it a display kludge?
-    my %annotation_bases = (
-        'EXP', 'p',
-        'IDA', 'p',
-        'IPI', 'p',
-        'IMP', 'p',
-        'IGI', 'p',
-        'IEP', 'p',
-        'ND',  'p',
-
-        'IEA', 'x',
-        'ISS', 'x',
-        'ISO', 'x',
-        'ISA', 'x',
-        'ISM', 'x',
-        'IGC', 'x',
-        'RCA', 'x',
-        'IC',  'x'
-    );
-
     my %data;
     foreach my $go_term ( $object->GO_term ) {
         foreach my $code ( $go_term->col ) {
@@ -2025,13 +2004,14 @@ sub gene_ontology {
 
             my $facet = $go_term->Type;
             $facet =~ s/_/ /g if $facet;
-
-            my $annotation_basis = $annotation_bases{$evidence_code};
+          
             $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
+            my $evidence = $self->_get_evidence($evidence_code);
+            $evidence->{'Description'}{$evidence_code->Description}{label} =$evidence_code->Description;
 
             push @{ $data{$facet} }, {
                 method        => $1,
-                evidence_code => {text=>"$evidence_code",evidence=>$self->_get_evidence($evidence_code)},
+                evidence_code => {text=>"$evidence_code",evidence=>$evidence},
                 term          => $self->_pack_obj($go_term),
             };
         }
