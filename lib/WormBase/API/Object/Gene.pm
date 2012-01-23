@@ -592,7 +592,7 @@ sub concise_description {
         || $self->name->{data}->{label} . ' gene';
     
     my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
-    my $evidence = $self->_get_evidence(@evs[0]);
+    my $evidence = $self->_get_evidence($evs[0]);
     
     return {
       description => "A manually curated description of the gene's function",
