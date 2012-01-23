@@ -1847,10 +1847,8 @@ sub strains {
         my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
 
         my $packed = $self->_pack_obj($_);
-
-        # All of the counts can go away if
-        # we discard the venn diagram.
-        push @{$count{total}},$packed;
+        my $genotype = $_->Genotype;
+        $packed->{genotype} = $genotype && "$genotype";
 
         if (@genes == 1 && !$_->Transgene) {
           $cgc ? push @{$count{carrying_gene_alone_and_cgc}},$packed : push @{$count{carrying_gene_alone}},$packed;
@@ -1858,19 +1856,11 @@ sub strains {
         else {
           $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
         }
-
-        my $genotype = $_->Genotype;
-        push @data, {
-            strain   => $packed,
-            cgc      => $cgc ? 'yes' : 'no',
-            genotype => $genotype && "$genotype",
-        };
     }
 
     return {
         description => 'strains carrying this gene',
-        data        => @data ? \@data : undef,
-        count       => %count ? \%count : undef,
+        data       => %count ? \%count : undef,
     };
 }
 
