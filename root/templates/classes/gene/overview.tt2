@@ -37,7 +37,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id _ ' v' _ fields.version.data;
+           fields.name.data.id;
    END;
 
 END;
