@@ -181,6 +181,73 @@ sub _build__phenotypes {
     return \%phenotypes;
 }
 
+has '_interactions' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build__interactions',
+);
+
+sub _build__interactions {
+    my $self = shift;
+    my $object = $self->object;
+    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save packed objects improves the speed
+    my %data;
+    my $show_local = 0;
+    # find interacted genes with this $object
+    foreach my $interaction ( $object->Interaction ) {
+         
+	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
+	next unless($effector);
+
+	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
+	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
+	$nodes_obj->{"$effector"}=$effector;
+	$nodes_obj->{"$effected"}=$effected;
+
+	$edges->{"$interaction"}=1;  
+	$types->{"$type"}=1;
+	if($phenotype) {
+	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
+	      $phenotype= $phenotypes->{"$phenotype"};
+	}
+	my $phenString = $phenotype ? $phenotype : "";
+	my $key = join(' ', "$effector", "$effected", "$type", $direction, $phenString);
+	my $altkey = join(' ', "$effected", "$effector", "$type", $direction, $phenString);
+
+	my $packInteraction = $self->_pack_obj($interaction);
+	if (exists $data{$key}){
+		push @{$data{$key}{interactions}}, $packInteraction;
+		#warn("same key with numInt: ", scalar @{$data{$key}{interactions}});
+	} elsif($direction ne 'Effector->Effected' && exists $data{$altkey}){
+		push @{$data{$altkey}{interactions}}, $packInteraction;
+		#warn("alt key with numInt: ", scalar @{$data{$key}{interactions}});
+	} else {
+	    my @interacArr;
+	    push @interacArr, $packInteraction;
+	    #warn("new key: ", $key);
+	    $data{$key} = {
+		interactions => \@interacArr,
+		type        => "$type",
+		effector    => $nodes->{"$effector"},
+		effected    => $nodes->{"$effected"},
+		direction   => $direction,
+		phenotype   => $phenotype,
+	    };
+	}
+    }
+
+    if(scalar keys %data < 100){
+	$show_local = 1;
+    }
+
+    my @results = (\%data,$nodes,$edges,$phenotypes,$types,$nodes_obj);
+    my %result = (
+	showall => $show_local,
+	results => \@results,
+    );
+    return \%result;
+}
+
 #######################################
 #
 # The Overview Widget
@@ -524,9 +591,77 @@ sub concise_description {
         || eval { $object->Gene_class->Description }
         || $self->name->{data}->{label} . ' gene';
     
+    my @evs = grep { "$_" eq "$description" } $object->Provisional_description;
+    my $evidence = $self->_get_evidence($evs[0]);
+    
     return {
-	description => "A manually curated description of the gene's function",
-	data        => "$description" };
+      description => "A manually curated description of the gene's function",
+      data        => { text => "$description", evidence => $evidence }
+    };
+}
+
+
+
+=head3 gene_class
+
+This method will return a data structure containing
+the gene class packed tag of the gene, if one exists.
+
+=over
+
+=item PERL API
+
+ $data = $model->gene_class();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/gene_class
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub gene_class {
+    my $self   = shift;
+    my $object = $self->object;  
+    
+    my $gene_class = $self->_pack_obj($object->Gene_class);
+    
+    return {
+    description => "The gene class for this gene",
+    data        => $gene_class };
 }
 
 
@@ -786,18 +921,13 @@ sub structured_description {
                   Sequence_features
                   Biological_process
                   Expression
-                  Detailed_description);
+                  Detailed_description
+                  Human_disease_relevance);
    foreach my $type (@types){
       my @objs = $self->object->$type;
+      @objs = grep { "$_" ne $self->object->Concise_description } @objs if $type eq "Provisional_description";
       my @array = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } @objs;
       $ret{$type} = \@array if (@array > 0);
-=pod
-      my $node = $self->object->$type or next;
-      my @nodes = $self->object->$type;
-      my $index=-1;
-      @nodes = map {$index++; {text=>"$_", evidence=> {tag => $type,index=>$index, check => $self->check_empty($_)}}} @nodes;
-      $ret{$type} = \@nodes if (@nodes > 0);
-=cut
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
@@ -1025,7 +1155,7 @@ sub anatomic_expression_patterns {
         $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expr_object}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
-        $pattern    =~ s/(.{384}).+/$1.../;
+#         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
 			 next unless($_->class eq 'Picture');
 	    	 my $pic = $self->_api->wrap($_);
@@ -1042,6 +1172,78 @@ sub anatomic_expression_patterns {
     return {
         description => 'expression patterns for the gene',
         data        => %data_pack ? \%data_pack : undef,
+    };
+}
+
+
+
+=head3 anatomy_terms
+
+This method will return a hash 
+containing unique anatomy terms described from the
+expression patterns associated with this gene
+
+=over
+
+=item PERL API
+
+ $data = $model->anatomy_terms();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/anatomy_terms
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub anatomy_terms {
+    my $self   = shift;
+    my $object = $self->object;
+
+
+    my %unique_anatomy_terms;
+    for my $ep ( $object->Expr_pattern ) {
+        for my $at ($ep->Anatomy_term) {
+          $unique_anatomy_terms{"$at"} ||= $self->_pack_obj($at);
+        }
+    }
+
+    return {
+        description => 'anatomy terms from expression patterns for the gene',
+        data        => %unique_anatomy_terms ? \%unique_anatomy_terms : undef,
     };
 }
 
@@ -1645,34 +1847,20 @@ sub strains {
         my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
 
         my $packed = $self->_pack_obj($_);
-
-        # All of the counts can go away if
-        # we discard the venn diagram.
-        push @{$count{total}},$packed;
-        push @{$count{available_from_cgc}},$packed if $cgc;
+        my $genotype = $_->Genotype;
+        $packed->{genotype} = $genotype && "$genotype";
 
         if (@genes == 1 && !$_->Transgene) {
-            push @{$count{carrying_gene_alone}},$packed;
-            if ($cgc) {
-                push @{$count{carrying_gene_alone_and_cgc}},$packed;
-            }
+          $cgc ? push @{$count{carrying_gene_alone_and_cgc}},$packed : push @{$count{carrying_gene_alone}},$packed;
         }
         else {
-            push @{$count{others}},$packed;
+          $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
         }
-
-        my $genotype = $_->Genotype;
-        push @data, {
-            strain   => $packed,
-            cgc      => $cgc ? 'yes' : 'no',
-            genotype => $genotype && "$genotype",
-        };
     }
 
     return {
         description => 'strains carrying this gene',
-        data        => @data ? \@data : undef,
-        count       => %count ? \%count : undef,
+        data       => %count ? \%count : undef,
     };
 }
 
@@ -1808,27 +1996,6 @@ sub gene_ontology {
     my $self   = shift;
     my $object = $self->object;
 
-    # TH: This is really opaque. What is the value used for?
-    # Is it a display kludge?
-    my %annotation_bases = (
-        'EXP', 'p',
-        'IDA', 'p',
-        'IPI', 'p',
-        'IMP', 'p',
-        'IGI', 'p',
-        'IEP', 'p',
-        'ND',  'p',
-
-        'IEA', 'x',
-        'ISS', 'x',
-        'ISO', 'x',
-        'ISA', 'x',
-        'ISM', 'x',
-        'IGC', 'x',
-        'RCA', 'x',
-        'IC',  'x'
-    );
-
     my %data;
     foreach my $go_term ( $object->GO_term ) {
         foreach my $code ( $go_term->col ) {
@@ -1837,13 +2004,14 @@ sub gene_ontology {
 
             my $facet = $go_term->Type;
             $facet =~ s/_/ /g if $facet;
-
-            my $annotation_basis = $annotation_bases{$evidence_code};
+          
             $display_method =~ m/.*_(.*)/;    # Strip off the spam-dexer.
+            my $evidence = $self->_get_evidence($evidence_code);
+            $evidence->{'Description'}{$evidence_code->Description}{label} =$evidence_code->Description;
 
             push @{ $data{$facet} }, {
                 method        => $1,
-                evidence_code => {text=>"$evidence_code",evidence=>$self->_get_evidence($evidence_code)},
+                evidence_code => {text=>"$evidence_code",evidence=>$evidence},
                 term          => $self->_pack_obj($go_term),
             };
         }
@@ -1935,6 +2103,7 @@ sub history {
                 ( $vers, $date, $curator, $event, $action, $remark )
                     = $version->row;
 
+                next if $action eq 'Imported';
                 # For some cases, the remark is actually a gene object
                 if (   $action eq 'Merged_into'
                     || $action eq 'Acquires_merge'
@@ -2577,37 +2746,21 @@ sub _get_interation_info {
 
 sub interactions  {
     my $self   = shift;
-    my $object = $self->object;
-    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save pakced objects improves the speed
-    my @data;
-    # find interacted genes with this $object
-    foreach my $interaction ( $object->Interaction ) {
-         
-	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
-	next unless($effector);
-       
-	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
-	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
-	$nodes_obj->{"$effector"}=$effector;
-	$nodes_obj->{"$effected"}=$effected;
-
-	$edges->{"$interaction"}=1;  
-	$types->{"$type"}=1;
-	if( $phenotype) {
-	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"} ;
-	}
-
-        push @data,
-            {
-            interaction => $self->_pack_obj($interaction),
-            type        => "$type",
-            effector    => $nodes->{"$effector"},
-            effected    => $nodes->{"$effected"},
-            direction   => $direction,
-            phenotype   => $phenotype,
-            };
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+    if($self->_interactions->{showall}){
+	$self->nearby_interactions();
     }
+    my @dataRet = (values %{$data});
+    return {
+        description => 'genetic and predicted interactions',
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+    };
+}
+
+sub nearby_interactions() {
+    my $self = shift;
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
 	my $node = $nodes_obj->{$key};
@@ -2628,24 +2781,38 @@ sub interactions  {
 	    $types->{"$type"}=1;
 	    if( $phenotype) {
 	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"} ;
+	      $phenotype= $phenotypes->{"$phenotype"};
 	    }
 
-	    push @data,
-		{
-		interaction => $self->_pack_obj($interaction),
-		type        => "$type",
-		effector    => $nodes->{"$effector"},
-		effected    => $nodes->{"$effected"},
-		direction   => $direction,
-		phenotype   => $phenotype,
+	    my $phenString = $phenotype ? $phenotype : "";
+	    my $key = join(' ', "$effector", "$effected", "$type", $direction, "$phenString");
+	    my $altkey = join(' ', "$effected", "$effector", "$type", $direction, "$phenString");
+
+	    my $packInteraction = $self->_pack_obj($interaction);
+	    if (exists $data->{$key}){
+		my $interacArr = $data->{$key}{interactions};
+		push @$interacArr, $packInteraction;
+	    } elsif($direction ne 'Effector->Effected' && exists $data->{$altkey}){
+		my $interacArr = $data->{$altkey}{interactions};
+		push @$interacArr, $packInteraction;
+	    } else {
+		my @interacArr;
+		push @interacArr, $packInteraction;
+		$data->{$key} = {
+		    interactions => \@interacArr,
+		    type        => "$type",
+		    effector    => $nodes->{"$effector"},
+		    effected    => $nodes->{"$effected"},
+		    direction   => $direction,
+		    phenotype   => $phenotype,
 		};
+	    }
 	 }
     }
-	 
+    my @dataRet = (values %{$data});
     return {
-        description => 'genetic and predicted interactions',
-        data        => {edges=>\@data,nodes=>$nodes,types=>$types},
+        description => 'additional genetic and predicted interactions',
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
     };
 }
 

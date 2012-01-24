@@ -326,8 +326,9 @@ B<Response example>
 
 sub type {
     my $self = shift;
+    my $data = eval {$self->cds->[0]->Method};
     return { description => 'The type of the protein',
-	     data        =>  eval {$self->cds->[0]->Method} || 'None' ,
+	     data        =>  "$data" || 'None',
     }; 
 }
 
@@ -404,7 +405,7 @@ sub best_human_match {
         description => 'best human BLASTP hit',
         data        => $best->{hit} ? {
                 hit         => $self->_pack_obj($best->{hit}),
-                description => $best->{hit}->Description || $best->{hit}->Gene_name,
+                description => sprintf($best->{hit}->Description) || sprintf($best->{hit}->Gene_name),
                 evalue      => sprintf("%7.3g", 10**-$best->{score})
             } : undef
     };

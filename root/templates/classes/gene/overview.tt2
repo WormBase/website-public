@@ -7,11 +7,11 @@ WRAPPER highlight_box;
    taxonomy;
 
    WRAPPER $field_block title="Sequence" key="sequence_name";
-        tag2link(fields.sequence_name.data);
+        fields.sequence_name.data.label;
    END;
 
    WRAPPER $field_block title="Public name" key="locus_name";
-        tag2link(fields.locus_name.data);
+        markup_locus(fields.locus_name.data.label, "locus", 1);
    END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
@@ -20,8 +20,14 @@ WRAPPER highlight_box;
         END;
    END;
 
+   IF fields.classification.data.type;
    WRAPPER $field_block title="Type" key="classification";
            fields.classification.data.type;
+   END;
+   END;
+
+   WRAPPER $field_block title="Gene class" key="gene_class";
+           tag2link(fields.gene_class.data);
    END;
 
    status;
@@ -31,29 +37,29 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id _ ' v' _ fields.version.data;
+           fields.name.data.id;
    END;
 
 END;
 
-
 # The main concise description
-'<div class="text-width" style="clear:left; padding:0 0 0.5em;">';
-    markup(fields.concise_description.data);
+'<div class="text-width" style="clear:left;">';
+    evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 '</div>';
 
+
 # Structured descriptions
-IF fields.structured_description.data;
+IF (fields.structured_description.data.keys.size > 0);
    WRAPPER toggle title="Details";
     FOREACH sd IN fields.structured_description.data.keys;
-          USE String(sd.replace('_', ' '));
-          WRAPPER $field_block title=String.capital;
-               FOREACH obj IN fields.structured_description.data.$sd;
-                   '<div class="text-width" >';
-                      evidence(obj.evidence,sd, obj.text);
-                   '</div>';
-               END;
-           END;
+      USE String(sd.replace('_', ' '));
+      WRAPPER $field_block title=String.capital;
+          FOREACH obj IN fields.structured_description.data.$sd;
+              '<div class="text-width">';
+                  evidence(obj.evidence,sd, obj.text);
+              '</div>';
+          END;
+      END;
     END;
    END;
 END;

@@ -10,9 +10,7 @@
        
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
-       # Removed "type"; consider re-adding at a later date as the Variation model evolves.
-       #   	                  type              => 'Type',
-       build_data_table(order=['variation','type','sequence_known','molecular_change','affects'],
+       build_data_table(order=['variation','sequence_known','molecular_change','affects'],
                         columns={ variation         => 'Allele',
 	  	                  molecular_change  => 'Molecular<br /> change',
 			          affects           => 'Protein<br /> effect',
@@ -37,32 +35,30 @@
    WRAPPER $field_block title="Strains" key="strains";
 
      venn("Carrying " _ tag2link(object.name.data) _ " alone", 
-                                         fields.strains.count.carrying_gene_alone,
-    	    "Available from the CGC",    fields.strains.count.available_from_cgc,
-    	    "",                          fields.strains.count.carrying_gene_alone_and_cgc,
-    	    "Other strains",             fields.strains.count.others);
+                                         fields.strains.data.carrying_gene_alone,
+    	    "Available from the CGC",    fields.strains.data.available_from_cgc,
+    	    "",                          fields.strains.data.carrying_gene_alone_and_cgc,
+    	    "Other strains",             fields.strains.data.others);
 
+    '<br />';
 
+    rows = [];
+    FOREACH type IN fields.strains.data.keys.sort;
+      cgc = (( type == 'available_from_cgc') || (type == 'carrying_gene_alone_and_cgc')) ? 1 : 0;
+      FOREACH strain IN fields.strains.data.$type;
+      rows.push( { strain  = tag2link(strain),
+                  genotype        = strain.genotype,
+                  cgc        = cgc ? external_link('cgc', 'yes', strain.id) : 'no',
+                } );
+      END;
+    END;
 
        build_data_table(order=['strain','genotype','cgc'],
                          columns={ strain    => 'Strain',
 	        	              cgc       => 'Available<br /> from CGC?',
 		                  genotype  => 'Genotype',
                                  },
-                         key='strains');
-   END;
-
-
-   WRAPPER $field_block title="Rearrangements" key="rearrangements";
-      IF fields.rearrangements.data.positive;
-        object.name.data.label _ ' inside: ';
-        FOREACH r IN fields.rearrangements.data.positive; tag2link(r) _ " "; END; 
-        '<br />';
-      END;
-      IF fields.rearrangements.data.negative;
-        object.name.data.label _ ' outside: ';
-        FOREACH r IN fields.rearrangements.data.negative; tag2link(r) _ " "; END; 
-      END;
+                         passed_data=rows);
    END;
 
 %]
