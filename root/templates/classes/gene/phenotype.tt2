@@ -1,48 +1,29 @@
 [%# This phenotype processing diverges from the standard processing ... %]
 [%# See also Varation.pm for alternative data processing/structure... %]
 
-[% MACRO phen_table(phenotypes) BLOCK %]
-         <table border=1 >
-            <tr><th>Phenotype</th><th>Supporting Evidence</th></tr>
-            [% FOREACH phen_pair IN phenotypes.pairs; phenotype = phen_pair.value %]
-               <tr>
-                  <td width=45%>[%  tag2link(phenotype.object) %]</td>
-                  <td>
-                     [% IF phenotype.allele %]
-                        Alleles:
-                        [% FOREACH allele IN phenotype.allele.values %]
-                           [% IF allele.boldface %] <b>[% tag2link(allele) %]</b>
-                           [% ELSE %]                  [% tag2link(allele) %]
-                           [% END %]
-                        [% END %]
-                     [% END %]
-                     [% IF phenotype.transgene %]
-                        Transgene(s):
-                        [% tags2link(phenotype.transgene) %]
-                     [% END %]
-                     [% IF phenotype.rnai_count %]
-                        Supported by [% phenotype.rnai_count %] RNAi [% pluralize("experiment", phenotype.rnai_count) %]
-                     [% END %]
-                  </td>
-               </tr> 
-            [% END %]
-         </table>
-[% END %]
-
 [% WRAPPER $field_block title="Phenotypes" key="phenotype" %]
    Alleles for which the sequence change is known are listed in <b>boldface</b>.<br><br>
 
 
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
-      [% phenotypes = fields.phenotype.data.observed %]
-        [% phen_table(phenotypes) %]
+[% 
+	build_data_table(order=['object','evidence'],
+			columns={object  => 'Phenotype',
+				 evidence  => 'Supporting Evidence',
+			}, key='phenotype_observed',
+			passed_data=fields.phenotype.data.observed.values);
+%]
     </div>
-]
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
-        [% phenotypes = fields.phenotype.data.not_observed %]
-        [% phen_table(phenotypes) %]
+[% 
+	build_data_table(order=['object','evidence'],
+			columns={object  => 'Phenotype',
+				 evidence  => 'Supporting Evidence',
+			}, key='phenotype_not_observed',
+			passed_data=fields.phenotype.data.not_observed.values);
+%]
    [% END %]
 [% END %]
 
@@ -50,31 +31,36 @@
    [% WRAPPER toggle title="RNAi Summary" %]
       [% rnai_results = fields.rnai.data.rnai_results %]
       [% FOREACH type IN ['rnai_with_pheno','rnai_without_pheno'] %]
-         [% rnais = fields.rnai.data.$type %]
-         [% IF rnais %]
-            <br>
-            [% IF type.search('without') %] 
-               [% phen_type = 'phenotypes_not_observed' %]
-               <i>No abnormalities were observed in the following experiments</i>
-            [% ELSE %]
-               [% phen_type = 'phenotypes_observed' %]
-               <i>The following phenotypes were observed via RNAi of [% object.name.data.label %]</i>
+	 [% rnais = fields.rnai.data.$type %]
+	 [% IF rnais %]
+	     [% rnai_values = [] %]
+	     [% FOREACH rnai IN rnais;
+		rnai_values.push(rnai_results.$rnai);
+	     END; %]
+	     [% IF type.search('without') %] 
+		<br /><i>No abnormalities were observed in the following experiments</i>
+		[% build_data_table(
+		    order = ['object', 'phenotypes_not_observed', 'genotype', 'reference'],
+		    columns = {
+			object			=> 'Experiment',
+			phenotypes_not_observed	=> 'Phenotype',
+			genotype		=> 'Strain/Genotype',
+			reference		=> 'Cited In',
+		    }, key='rnai_phen_not_obs',
+		    passed_data = rnai_values); %]
+		[% ELSE %]
+		<i>The following phenotypes were observed via RNAi of [% object.name.data.label %]</i>
+		[% build_data_table(
+		    order = ['object', 'phenotypes_observed', 'genotype', 'reference'],
+		    columns = {
+			object			=> 'Experiment',
+			phenotypes_observed	=> 'Phenotype',
+			genotype		=> 'Strain/Genotype',
+			reference		=> 'Cited In',
+		    }, key='rnai_phen_obs',
+		    passed_data = rnai_values); %]
             [% END %]
-            <table border=1 >
-               <tr><th>Experiment</th><th>Phenotypes</th><th>Strain/Genotype</th><th>Cited in</th></tr>
-               [% FOREACH rnai IN rnais; rnai_result = rnai_results.$rnai %]
-                  <tr>
-                     <td>[% tag2link(rnai_result.object) %]</td>
-                     <td>
-                        [% tags2link(rnai_result.$phen_type) %]
-                     </td>
-                     <td>[% rnai_result.genotype %]</td>
-                     <td>[% tag2link(rnai_result.reference) %]</td>
-                  </tr>
-               [% END %]
-            </table>
          [% END %]
       [% END %]
    [% END %]
-
 [% END %]

@@ -346,14 +346,14 @@ END;
 [% MACRO jquery_data_table_html(table_headers,rows,table_name,style,table_build) BLOCK %]
   [% IF rows && rows.size > 0;  
        # Set up some suitable defaults
-       IF rows.size < 11 || (rows.size < 51 && table_headers.size < 3);
+       IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
       	  lengthMenu      = 'false';
           filter          = 'false';
           info            = 'false';
-       ELSIF rows.size < 51;
+       ELSIF rows.size < 31;
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
@@ -382,12 +382,12 @@ END;
         </tr>
     </thead>
     <tbody>
-        [% 
+        [%
           FOREACH row IN rows;
             '<tr>';
             index=loop.index;
             FOREACH cell IN row;
-                '<td>'; 
+                '<td>';
                 IF cell.species.defined;
                     '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                 ELSIF cell.class.defined;
@@ -396,12 +396,14 @@ END;
                     cell.join('<br>');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
-                
-                ELSIF cell.first.keys.defined; #intended as check for list of _pack_obj
-                       tags2link(cell);
-
-                ELSE;
-                    cell;
+                ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
+                    tags2link(cell);
+                ELSIF cell.1.class.defined; #intended as check for list of _pack_obj for phenotypes
+                    tags2link(cell);
+                ELSIF cell.values.first.class.defined;
+                    tags2link(cell.values);
+		ELSE;
+		    cell;
                 END;
                 '</td>';
             END;
@@ -417,13 +419,13 @@ END;
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
             "sPaginationType"  : "[% pagination_type %]",
-            "bFilter"          : [% filter %],      
+            "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
             [% style %]
           });
         });
     </script>
-   [% END %] 
+   [% END %]
 
 [% END %] 
 
