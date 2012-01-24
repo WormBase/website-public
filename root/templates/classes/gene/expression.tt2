@@ -63,7 +63,8 @@ WRAPPER $field_block title="Microarray Expression Data" key="microarray_expressi
                               _ pluralize("result", fields.microarray_expression_data.data.keys.size);
      tags2link(fields.microarray_expression_data.data);
    END;
-   	'<a href="http://spell.caltech.edu:3000/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
+
+   	'<a href="[% config.external_urls.spell-caltech.base %]/spell/search/">SPELL microarray resource</a> (<a href="http://wiki.wormbase.org/index.php/SPELL">documentation</a>)';
 END;
 
 

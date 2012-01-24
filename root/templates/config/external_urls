@@ -53,10 +53,16 @@
        search      = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term=%s[accn]&doptcmdl=GenPept' 
      }
 
-# Done to here only!
+ # Our spell resource in the cloud.
+ spell-caltech
+   = { decription = 'WormBase Spell instance',
+       maintainer = 'WormBase',
+       base       = 'http://50.18.180.228:3000'
+     }
 
-		 
-      
+
+
+# Done to here only!
 
 	interpro = { base         = 'http://www.ebi.ac.uk/interpro/'
 		     search       = 'http://www.ebi.ac.uk/interpro/IEntry?ac=%s'

@@ -4,16 +4,6 @@ use Ace;
 use Moose;
 with 'WormBase::API::Role::Object'; 
 
-has 'algorithms' => (
-    is         => 'rw',
-    isa        => 'HashRef',
-    );
-
-has 'tracks' => (
-    is  => 'ro',
-    writer => 'set_tracks',
-);
-
 # The index page.
 sub index {
    my ($self) = @_;
@@ -47,6 +37,10 @@ sub run {
     $dbgff->add_aggregator('waba_alignment') if ($dbgff); 
     my $is_transcript = eval{$sequence->CDS} || eval {$sequence->Corresponding_CDS} || eval {$sequence->Corresponding_transcript};
     return {msg=>"Sequence is not a transcript."} unless ($is_transcript) ;
+
+
+
+
 
 
 
