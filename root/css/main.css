@@ -657,6 +657,7 @@ div#create-prompt {
 
 .evidence {
   cursor:pointer;
+  margin:0 -0.5em;
 }
 
 .ev-more-text {

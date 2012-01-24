@@ -1,10 +1,5 @@
 [%
 
-# USE Dumper;
-# '<pre>';
-# Dumper.dump(fields.xrefs.data);
-# '</pre>';
-
   IF fields.xrefs.data;
 
   rows = [];
@@ -14,39 +9,32 @@
       # This information is pulled from config which we might want to use in preference over ?Database;
       # Create a tooltip with information from information culled from both the database and our config.
       maintainer = site.external_urls.$db.maintainer;
-
-      # WRAPPER $field_block title=hash.$db.name tooltip=hash.$db.description;
-
+      links = "";
 	  FOREACH id IN hash.$db.ids; 
           href= FILTER format(hash.$db.url_constructor); id; END; 
 	      # We'll use description info from the website and not the DB.
- 	      link = external_link(href,id);
               # Should be a table of resource, ID linked to page description, maintainer.
-             rows.push( { maintainer  = maintainer,
-                          name        = '<a href="' _ site.external_urls.$db.base _ '">' _ db _ '</a>',                   
-                          link        = external_link(href,id,id),
-#		          description = site.external_urls.$db.description,
-		          full_description = hash.$db.description,     # full description from the DB
-                        } );
-
+          links = links _ external_link(href,id,id);
+          links = links _ '<br />';
 	  END;
-  	  # hash.$db.db_field;
-     END;
-#  END;
 
-# Does this need to be wrapped?
-# WRAPPER $field_block title="" key="";
+
+      rows.push( { maintainer  = maintainer,
+                  name        = external_link(site.external_urls.$db.base, db),
+                  link        = links,
+                  full_description = hash.$db.description,     # full description from the DB
+                } );
+     END;
+
+
 
    build_data_table(order=['name','link','full_description','maintainer'],
                     columns={ name        => 'Name',
 		    	      link        => 'Entry',
-#		              description => 'Description',
 			      full_description => 'Description',
 			      maintainer  => 'Maintainer',
 			      },
 		    passed_data = rows);
-#END;
-
 
    END;
 %]
