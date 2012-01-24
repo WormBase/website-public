@@ -134,12 +134,12 @@ sub _build__phenotypes {
 
         foreach ($xgene->Phenotype) {
             $phenotypes{observed}{$_}{object}          //= $self->_pack_obj($_);
-            $phenotypes{observed}{$_}{transgene}{$xgene} = $packed_xgene;
+            push @{$phenotypes{observed}{$_}{transgenes}}, $packed_xgene;
         }
 
         foreach ($xgene->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}          //= $self->_pack_obj($_);
-            $phenotypes{not_observed}{$_}{transgene}{$xgene} = $packed_xgene;
+            push @{$phenotypes{not_observed}{$_}{transgenes}}, $packed_xgene;
         }
     }
 
@@ -154,12 +154,12 @@ sub _build__phenotypes {
 
         foreach ($allele->Phenotype) {
             $phenotypes{observed}{$_}{object}        //= $self->_pack_obj($_);
-            $phenotypes{observed}{$_}{allele}{$allele} = $packed_allele;
+            push @{$phenotypes{observed}{$_}{alleles}}, $packed_allele;
         }
 
         foreach ($allele->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}        //= $self->_pack_obj($_);
-            $phenotypes{not_observed}{$_}{allele}{$allele} = $packed_allele
+            push @{$phenotypes{not_observed}{$_}{alleles}}, $packed_allele;
         }
 
         # ?Variation /Rescued/ ...
@@ -177,7 +177,23 @@ sub _build__phenotypes {
             }
         }
     }
-
+    #package data for use with build_data_table macro in template
+    for my $obs (qw(observed not_observed)) {
+	foreach (sort keys %{$phenotypes{$obs}}){
+	    my $transgenes = $phenotypes{$obs}{$_}{transgenes};
+	    my $alleles = $phenotypes{$obs}{$_}{alleles};
+	    my $rnai_count = $phenotypes{$obs}{$_}{rnai_count};
+	    my @evidence;
+	    if($transgenes && scalar @{$transgenes}){ push @evidence, ({label => 'Transgenes:'}, @{$transgenes}); }
+	    if($alleles && scalar @{$alleles}){ push @evidence, ({label => 'Alleles:'}, @{$alleles}); }
+	    if(@evidence && $rnai_count){
+		push @evidence, {label => "Supported by $rnai_count RNAi experiment(s)"};
+		$phenotypes{$obs}{$_}{evidence} = \@evidence;	    
+	    }
+	    elsif($rnai_count){$phenotypes{$obs}{$_}{evidence} = "Supported by $rnai_count RNAi experiment(s)"; }
+	    else {$phenotypes{$obs}{$_}{evidence} = @evidence ? \@evidence : undef};
+	}
+    }
     return \%phenotypes;
 }
 

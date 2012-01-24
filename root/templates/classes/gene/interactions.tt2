@@ -2,7 +2,7 @@
 
 [% NODES=fields.interactions.data.nodes %]
 [% TYPES=fields.interactions.data.types %]
- 
+
 <div id="cytoscapeweb_panel">
    Interaction Type <select class="cyto_panel" id="cyto_panel_type">
 	<option value=0 >All</option>
@@ -17,10 +17,38 @@
 	<option>non-directional</option>
       
     </select>
+
 </div> 
 <div id="cytoscapeweb" >
             Cytoscape Web will replace the contents of this div with your graph.
 </div> 
+
+
+          
+[% END %]       
+ 
+ 
+[% 
+
+   WRAPPER $field_block title="Interactions" key="interactions";
+      'Found ';
+      searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
+
+
+      build_data_table(order=['type','effector','effected','direction','phenotype','interactions'],
+     	               columns={type  => 'Interaction Type',
+		                effector => 'Effector',
+		                effected  => 'Effected',
+				direction => 'Direction',
+				phenotype => 'Phenotype',
+				interactions => 'Citations',
+ 		                }, key='interaction',
+	               passed_data=fields.interactions.data.edges);
+
+
+   END;
+
+%]
 
 <script type="text/javascript">
       
@@ -48,6 +76,11 @@
 			entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
 	};
       var edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 };
+
+      var toolTipMapper = {
+	  attrName: "phenotype",
+	  entries:[{attrValue: "", value: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>"},]
+      }
 
 // id of Cytoscape Web container div
                 var div_id = "cytoscapeweb";
@@ -118,7 +151,7 @@
 			targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
 			labelHorizontalAnchor: "center",
                         label: { passthroughMapper: { attrName: "type" } },
-			tooltipText: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>",
+			tooltipText: { defaultValue:"<b>${type}<br />${direction}<br />${source} --- ${target}<br />${phenotype}<br />${width} citation(s)</b>", discreteMapper: toolTipMapper },
  			tooltipBackgroundColor: "#fafafa",
                     }
                 };
@@ -153,7 +186,7 @@
 		$jq('.cyto_panel').change(function(){
 		      var direction = $jq("#cyto_panel_direction option:selected").val();
 		      var inter_type = $jq("#cyto_panel_type option:selected").val();
-
+		      
 		      if(direction ==0 && inter_type==0){
 				vis.removeFilter("edges",true);
 		      }else{
@@ -171,28 +204,3 @@
 		});
 	    });
 </script>
-          
-[% END %]       
- 
- 
-[% 
-
-   WRAPPER $field_block title="Interactions" key="interactions";
-      'Found ';
-      searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
-
-
-      build_data_table(order=['type','effector','effected','direction','phenotype','interactions'],
-     	               columns={type  => 'Interaction Type',
-		                effector => 'Effector',
-		                effected  => 'Effected',
-				direction => 'Direction',
-				phenotype => 'Phenotype',
-				interactions => 'Citations',
- 		                },	    
-	               passed_data=fields.interactions.data.edges);
-
-
-   END;
-
-%]
