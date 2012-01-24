@@ -24,7 +24,7 @@
                   build_data_table(order = ['term','evidence_code','method'],
                              columns = {   method   => 'Method',
                                                  term   => 'Term',
-                                        evidence_code   => 'Evidence' },
+                                        evidence_code   => 'Evidence Code' },
                              passed_data = fields.$key.data.$facet,
                          key     = "table_${table_count}_go");   
 

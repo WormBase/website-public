@@ -8,20 +8,13 @@
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
-  <div class="evidence result text-min">
+  <div class="evidence result">
     [% markup(text) %]
     [% UNLESS id.defined; id =0; END %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
-        <b>[% type.replace('_',' ') %]</b>:  
-        [% FOREACH object IN data.$type.keys %] 
-          [% IF data.$type.$object.class.defined %]
-            [% tag2link(data.$type.$object) %]
-          [% ELSE %]
-            [% data.$type.$object.label %]  
-          [% END %]
-          [% UNLESS loop.last %];[% END %]
-        [% END %] 
+        <b>[% type.replace('_',' ') %]</b>:
+        [% tags2link(data.$type, '; ') %]  
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
     </div>
@@ -403,6 +396,10 @@ END;
                     cell.join('<br>');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
+                
+                ELSIF cell.first.keys.defined; #intended as check for list of _pack_obj
+                       tags2link(cell);
+
                 ELSE;
                     cell;
                 END;

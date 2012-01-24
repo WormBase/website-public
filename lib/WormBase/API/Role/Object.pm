@@ -139,7 +139,6 @@ has 'name' => (
 sub _build_name {
     my ($self) = @_;
     my $object = $self->object;
-#    my $class  = $object->class;
     return {
         description => "The name and WormBase internal ID of $object",
         data        =>  $self->_pack_obj($object),
