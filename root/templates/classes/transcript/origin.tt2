@@ -1,0 +1,16 @@
+[% 
+
+laboratory;
+
+WRAPPER $field_block title="Available From" key="available_from";
+    tag2link(fields.available_from.data);
+END;
+
+
+WRAPPER $field_block title="Analysis" key="analysis";
+    FOREACH key IN fields.analysis.data.keys.sort;
+        key _ ': ' _ fields.analysis.data.$key _ '<br>';
+    END;
+END;
+
+%]

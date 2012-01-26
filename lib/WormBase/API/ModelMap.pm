@@ -35,7 +35,7 @@ BEGIN {
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
             Person    => [qw(Person Author)],
-            Sequence  => [qw(CDS Transcript Sequence cds)],
+            Transcript  => [qw(CDS Transcript cds)],
             Rnai      => 'RNAi',
             Go_term   => 'GO_term',
         },
@@ -62,6 +62,7 @@ BEGIN {
             Gene_class  => 'Designating_laboratory',
             PCR_product => 'From_laboratory',
             Sequence    => 'From_laboratory',
+            Transcript  => 'From_laboratory',
             CDS         => 'From_laboratory',
             Transgene   => 'Location',
             Strain      => 'Location',
