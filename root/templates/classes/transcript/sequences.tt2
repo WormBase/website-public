@@ -1,0 +1,49 @@
+[% 
+  sequence('print_sequence');
+  
+  WRAPPER $field_block title="Strand";
+    (fields.print_feature.data.orientation > 0) ? '+' : '-';
+  END;
+
+  WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";
+  data = fields.print_feature.data.exons;
+  '<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_predicted_exon_structure_by">';
+    '<thead>';
+    '<tr><th rowspan="2" colspan="1">Exon #</th><th rowspan="1" colspan="2">Relative to Itself</th><th rowspan="1" colspan="2">Relative to ' _ data.parent _ '</th></tr>';
+    '<tr><th rowspan="1" colspan="1">Start</th><th rowspan="1" colspan="1">End</th><th rowspan="1" colspan="1">Start</th><th rowspan="1" colspan="1">End</th></tr>';
+    '</thead>';
+    FOREACH row IN data.rows;
+        '<tr align="right"><td>' _ row.no _ '</td>';
+	'<td>' _ row.start _ '</td>';
+	'<td>' _ row.end   _ '</td>';
+	'<td>' _ row.ref_start _ '</td>';
+	'<td>' _ row.ref_end   _ '</td></tr>';
+     END;
+  '</table>';
+
+        build_data_table( order = ['no','start','end','ref_start','ref_end'],
+                          columns = { no => 'Exon #',
+                                      start => 'Start',
+                                      end   => 'End',
+                                      ref_start => 'Start',
+                                      ref_end => 'End'},
+                          passed_data = data.rows,
+                          key = 'predicted_exon_structure',
+                          table_build = 1);
+
+  END;
+
+
+  WRAPPER $field_block title="Predicted Genes & Transcriptional Units" key="predicted_units";
+        build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
+                          columns = { start => 'Start',
+                                      end => 'End',
+                                      name   => 'Name',
+                                      gene => 'Gene',
+                                      predicted_type => 'Predicted type',
+                                      comment => 'Comment'},
+                          passed_data = fields.predicted_units.data,
+                          key = 'predicted_units');
+  END;
+
+%] 
