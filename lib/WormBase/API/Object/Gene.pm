@@ -51,9 +51,11 @@ sub _build_sequences {
 	my $gene = $self->object;
     my %seen;
     my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
+
     for my $cds ($gene->Corresponding_CDS) {
         next if defined $seen{$cds};
         my @transcripts = grep {!$seen{$cds}++} $cds->Corresponding_transcript;
+
         push (@seqs, @transcripts ? @transcripts : $cds);
     }
     return \@seqs if @seqs;
@@ -3710,6 +3712,8 @@ sub gene_models {
 
     my @rows;
 
+    my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
+
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
     # I still need to fetch some details from sequence
     # Fetch a variety of information about all transcripts / CDS prior to printing
@@ -3717,50 +3721,14 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $model = $self->_pack_obj($sequence);
         my $gff   = $self->_fetch_gff_gene($sequence) or next;
         my $cds
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
 
-        my ( $confirm, $remark, $protein, @matching_cdna );
-        if ($cds) {
-            $confirm
-                = $cds->Prediction_status;   # with or without being confirmed
-            @matching_cdna
-                = $cds->Matching_cDNA;       # with or without matching_cdna
-            $protein = $cds->Corresponding_protein( -fill => 1 );
-        }
-
-        # Fetch all the notes for this given sequence / CDS
-        my @notes = map {"$_"} (
-            eval { $cds->DB_remark }, $sequence->DB_remark,
-            eval { $cds->Remark },    $sequence->Remark
-        );
-
-        # Save all the remarks for each gene model.
-        # We will create unique list of footnotes in the view.
-        $data{remarks} = @notes ? \@notes : undef;
-
-        if ($confirm) {
-            if ( $confirm eq 'Confirmed' ) {
-                $data{status} = "confirmed by cDNA(s)";
-            }
-            elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
-                $data{status} = "partially confirmed by cDNA(s)";
-            }
-            elsif ( $confirm eq 'Partially_confirmed' ) {
-                $data{status} = "partially confirmed";
-            }
-            elsif ( $cds && $cds->Method eq 'history' ) {
-                $data{status} = 'historical';
-            }
-        }
-        else {
-            $data{status} = "predicted";
-        }
-
+        my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
+        my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
         my $len_unspliced = $gff->length;
         my $len_spliced   = 0;
 
@@ -3788,17 +3756,23 @@ sub gene_models {
         }
         $len_spliced ||= '-';
 
-        $data{length_spliced}   = $len_spliced;
-        $data{length_unspliced} = $len_unspliced;
+        $data{length_spliced}   = $len_spliced if $coding;
+
+        my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+        $data{length_unspliced} = \@lengths;
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
-            my $aa     = "$peplen aa";
+            my $aa     = "$peplen";
             $data{length_protein} = $aa if $aa;
         }
-        my $protein_desc = $self->_pack_obj($protein);
-        $data{model}   = $model        if $model;
-        $data{protein} = $protein_desc if $protein_desc;
+        my $type = $sequence->Method;
+        $type =~ s/_/ /g;
+        @sequences =  map {$self->_pack_obj($_)} @sequences;
+        $data{type} = "$type";
+        $data{model}   = \@sequences;
+        $data{protein} = $self->_pack_obj($protein) if $coding;
+        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
 
         push @rows, \%data;
     }

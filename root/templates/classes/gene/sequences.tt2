@@ -1,59 +1,25 @@
 [% 
 IF fields.gene_models.data;
 
-        rows = [];
-        remarks_seen = {};
-        ordered_footnotes = [];
-
-	# Take apart the data structure JUST to add in the footnotes!
-	# This is really ineffecient.
-        FOREACH r IN fields.gene_models.data;
-
-            # Calculate footnotes for this gene model.
-            footnotes = [];
-	    FOREACH remark IN r.remarks;
-               # Seen it?
-               UNLESS remarks_seen.exists(remark);
-                  remarks_seen.$remark = remarks_seen.size + 1;
-                  ordered_footnotes.push(remark);
-               END;                   
-
-               # Save the footnote number for this model.
-               footnotes.push(remarks_seen.$remark);
-
-            END;
-
-            # now construct the model string, appending footnotes. Jesus.
-            model = r.model;
-            model.class = 'Sequence';
-            r.model = tag2link(model) _ "<span class=\"superscript\">" _ footnotes.join(',') _ "</span>";
-            rows.push(r);
-
-        END;
-
-        build_data_table( order = ['model','status','length_spliced','length_unspliced','protein','length_protein'],
-                          columns = { model => 'Gene Model',
-                                      status => 'Status',
-                                      length_spliced   => 'Length (spliced)',
-                                      length_unspliced => 'Length (unspliced)',
+    IF fields.gene_models.data.0.keys.size > 3; 
+        build_data_table( order = ['model', 'length_unspliced','type', 'cds', 'length_spliced','protein','length_protein'],
+                          columns = { model => 'Primary<br />Sequence ID',
+                                      type => 'Type',
+                                      length_spliced   => 'Coding<br />Transcript<br />Length (nt)',
+                                      length_unspliced => 'Sequence<br />Length (nt)',
+                                      cds => 'Coding<br />Transcript<br />(CDS)',
                                       protein => 'Protein',
-                                      length_protein => 'Amino Acids'},
-                          passed_data = rows,
+                                      length_protein => 'Protein<br />Length (aa)'},
+                          passed_data = fields.gene_models.data,
                           key = 'gene_models_constructed' );
-
-
-      # Dump out the (ordered) footnotes.
-   IF ordered_footnotes.size > 0;
-   WRAPPER toggle title="Footnotes";
-      FOREACH remark IN ordered_footnotes;
-          '<div style="margin:5px">';
-              '<span class="superscript">' _ loop.count _ '</span>';
-                  remark;
-           '</div>';
-       END;
-   END;
-   END;
-
+    ELSE;
+        build_data_table( order = ['model','length_unspliced','type'],
+                          columns = { model => 'Primary<br />Sequence ID',
+                                      type => 'Type',
+                                      length_unspliced => 'Sequence<br />Length (nt)'},
+                          passed_data = fields.gene_models.data,
+                          key = 'gene_models_constructed' );
+    END;
 
 END;
 
