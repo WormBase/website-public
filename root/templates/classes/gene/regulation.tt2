@@ -1,6 +1,6 @@
 [%
 
-   WRAPPER $field_block title="Regulation on Expression Level" key="regulation_on_expression_level";
+   WRAPPER $field_block title="Expression Level" key="regulation_on_expression_level";
        FOREACH item IN fields.regulation_on_expression_level.data;
              item.string;
              tag2link(item.target);
