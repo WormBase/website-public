@@ -741,8 +741,8 @@ sub _build_genomic_image {
     my $stop  = $segment->stop;
 
     # add another 10% to left and right
-    $start = int($start - 0.05*($stop-$start));
-    $stop  = int($stop  + 0.05*($stop-$start));
+    $start = int($start - 0.1*($stop-$start));
+    $stop  = int($stop  + 0.1*($stop-$start));
     my @segments;
     if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
         my $gene = eval { $seq->Gene;} || $seq;
