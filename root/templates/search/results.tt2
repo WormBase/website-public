@@ -23,6 +23,9 @@
   </li>
 </ul>
 <div id="all-search-results" class="[% widget %]" style="float:left;clear:left;">
+[% ELSIF widget && results.size == 0 %]
+  <span class="caveat-emptor">No [% widget.replace('[/_]', ' ') %] associated with this [% req_class || 'class'%]</span>
+  [% RETURN %]
 [% END %]
 
 [% IF search_guide %]
