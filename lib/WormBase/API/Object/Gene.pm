@@ -939,8 +939,7 @@ sub structured_description {
                   Sequence_features
                   Biological_process
                   Expression
-                  Detailed_description
-                  Human_disease_relevance);
+                  Detailed_description);
    foreach my $type (@types){
       my @objs = $self->object->$type;
       @objs = grep { "$_" ne $self->object->Concise_description } @objs if $type eq "Provisional_description";
@@ -949,6 +948,14 @@ sub structured_description {
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
+}
+
+sub human_disease_relevance {
+    my $self = shift;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
+
+    return {  description => "curated description of human disease relevance",
+              data        =>  @objs ? \@objs : undef };
 }
 
 # sub taxonomy {}
