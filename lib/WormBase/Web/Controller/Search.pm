@@ -47,6 +47,7 @@ sub search :Path('/search') Args {
     my $species = $c->req->param("species");
     $c->stash->{widget} = $c->req->param("widget");
     $c->stash->{nostar} = $c->req->param("nostar");
+    $c->stash->{req_class} = $c->req->param("class");
 
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
 
