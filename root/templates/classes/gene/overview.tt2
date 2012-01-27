@@ -47,9 +47,17 @@ END;
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 '</div>';
 
+IF (fields.human_disease_relevance.data.defined);
+'<h4>Human disease relevance:</h4>';
+    FOREACH obj IN fields.human_disease_relevance.data;
+        '<div class="text-width">';
+            evidence(obj.evidence,sd, obj.text);
+        '</div>';
+    END;
+END;
 
 # Structured descriptions
-IF (fields.structured_description.data.keys.size > 0);
+IF (fields.structured_description.data.defined);
    WRAPPER toggle title="Details";
     FOREACH sd IN fields.structured_description.data.keys;
       USE String(sd.replace('_', ' '));
