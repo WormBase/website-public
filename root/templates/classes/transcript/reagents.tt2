@@ -1,0 +1,21 @@
+[% 
+
+WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
+    FOREACH key IN fields.orfeome_assays.data.keys.sort;
+       tag2link(fields.orfeome_assays.data) _ '<br>';
+    END;
+END;
+
+WRAPPER $field_block title="Source Clone" key="source_clone";
+fileds.source_clone.data;
+     tag2link(fields.source_clone.data);
+END;
+
+WRAPPER $field_block title="Microarray Assays" key="microarray_assays";
+     FOREACH key IN fields.microarray_assays.data;
+         tag2link(key) _ '<br>';
+     END;
+END;
+
+
+%]

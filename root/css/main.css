@@ -1878,6 +1878,7 @@ div.field-title {
 
 div.field-content {
   float: left;
+  max-width:100%;
 }
 
 /* Curator specific fields */
@@ -1976,6 +1977,7 @@ div#google-map {
     overflow: hidden;
     clear: both;
     margin: 5px;
+    max-width:55em;
     display: none;   /* Hidden by default */
 }
 
