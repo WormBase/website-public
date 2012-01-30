@@ -394,8 +394,6 @@ END;
                     tag2link(cell);
                 ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
 		    tags2link(cell, '<br />', 'Results');
-                ELSIF cell.match('ARRAY');
-                    cell.join('<br>');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
 		ELSIF cell.first.evidence.defined;
@@ -430,7 +428,7 @@ END;
                 ELSIF cell.values.first.class.defined;
 		      tags2link(cell.values);
 		ELSE;
-		    cell;
+		    cell.join('<br />');
                 END;
                 '</td>';
             END;
@@ -598,7 +596,8 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-   IF c.stash.fields.best_blastp_matches.data;
+   matches = c.stash.fields.best_blastp_matches.data;
+   IF matches.hits;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
     
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
@@ -608,10 +607,11 @@ END;
                                  evalue   => 'BLAST e-value',
                                  percent  => '% Length'
                                 },
-                       key='best_blastp_matches', 
+                       key='best_blastp_matches',
+                       passed_data=matches.hits,
                        style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') id="blast_details_toggle";
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details') id="blast_details_toggle";
     END;
          '</div>';
     END;

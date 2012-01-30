@@ -2584,9 +2584,11 @@ sub protein_domains {
     my %unique_motifs;
     for my $protein ( @{ $self->_all_proteins } ) {
         for my $motif ($protein->Motif_homol) {
-            if (my $title = $motif->Title) {
-                $unique_motifs{$title} ||= $self->_pack_obj($motif);
-            }
+	    if("$motif" =~ /^INTERPRO:/){
+		if (my $title = $motif->Title) {
+		    $unique_motifs{$title} ||= $self->_pack_obj($motif);
+		}
+	    }
         }
     }
 
@@ -3757,7 +3759,7 @@ sub gene_models {
         $data{length_spliced}   = $len_spliced if $coding;
 
         my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
-        $data{length_unspliced} = \@lengths;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
