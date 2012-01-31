@@ -2,7 +2,7 @@
   sequence('print_sequence');
   
   WRAPPER $field_block title="Strand";
-    (fields.print_feature.data.orientation > 0) ? '+' : '-';
+    (fields.print_feature.data.orientation > 0) ? '(+)' : '(-)';
   END;
 
   WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";

@@ -192,7 +192,7 @@ sub synonyms {
         #my $synonym;
         #$synonym = eval{$entry->Primary_name->right;};
         # my $tag_info = $self->_pack_obj($synonym);
-        push @data, $self->_pack_obj($synonym);
+        push @data, "$synonym";
     }
     return {
         description =>
