@@ -1,9 +1,12 @@
-<h2>[% fields.name.data.label %]</h2>
+<h2>[% fields.name.data.label %] <span>([% fields.type.data %])</span></h2>
 
 [%
 
 WRAPPER highlight_box;
- 
+
+ WRAPPER $field_block title="type" key="type";
+    fields.type.data;
+END;
 
    WRAPPER $field_block title="WormBase ID";
            fields.name.data.id;
@@ -11,10 +14,12 @@ WRAPPER highlight_box;
 
 END;
 
+  '<div class="description">';
+    fields.remarks.data.join('<br />');
+  '</div>';
 
-WRAPPER $field_block title="type" key="type";
-    fields.type.data;
-END;
+
+
 
 
 WRAPPER $field_block title="Phenotypes" key="phenotypes"; 
