@@ -116,10 +116,8 @@ sub _gbrowse_url {       # should probably be called something else...
     if (defined $start && defined $stop && $ref) { # definedness sufficient?
         $ref =~ s/^CHROMOSOME_//;
         ($start, $stop) = ($stop, $start) if $start > $stop;
-        if ((my $length = $stop - $start + 1) < 500) {
-            $start = int($start - 0.05*$length);
-            $stop  = int($stop  + 0.05*$length);
-        }
+        $start = int($start - 0.2*($stop-$start));
+        $stop  = int($stop  + 0.05*($stop-$start));
         $ref .= ":$start..$stop";
     }
     return $ref;
