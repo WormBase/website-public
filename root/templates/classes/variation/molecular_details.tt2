@@ -10,15 +10,6 @@ WRAPPER $field_block title="Sequencing Status" key="sequencing_status";
          fields.sequencing_status.data;
 END;
 
-   
-# WRAPPER $field_block title="5' gap" key="five_prime_gap";
-   # fields.five_prime_gap.data;
-# END;
-
-# WRAPPER $field_block title="3' gap" key="three_prime_gap";
-   # fields.three_prime_gap.data;
-# END;
-
 # Nucleotide change: one or more possible changes for this allele;
 WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
@@ -42,10 +33,8 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    # flanking sequences OFF: 2010.06 
    WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences";
-      '<div class="sequence">';
-          '<span class="inline-sequence">';
+      '<div class="sequence-container">';
            "5' flank -- " _ fields.flanking_sequences.data.left_flank _ '&nbsp;' _ fields.flanking_sequences.data.right_flank _ "-- 3' flank";
-          '</span>';
      '</div>';
    END;
 
@@ -57,9 +46,8 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
    
    # Conditionally display some information if this is a polymorphism
 
-   IF fields.polymorphism_type.data;
-       '<div class="caveat-emptor">This variation has been identified as a polymophism.</div>';
-       WRAPPER $field_block title="Polymorphism type" key="polymorphism";
+
+       WRAPPER $field_block title="Polymorphism type" key="polymorphism_type";
                 fields.polymorphism_type.data;
        END;
 
@@ -100,35 +88,28 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 	    '</table>';
           END;
         END;
-    END;
 
    # Mutation context
    WRAPPER $field_block title="Context" key="context";
-        '<div class="inline-sequence">';
-            fields.context.data.wildtype_fragment _  '-- wild type<br>';
-            fields.context.data.mutant_fragment _  '-- mutant';
+     '<div class="sequence-container">';
+            format_sequence(fields.context.data.wildtype_fragment) _  ' -- wild type<br /><br />';
+            format_sequence(fields.context.data.mutant_fragment) _  ' -- mutant';
             '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
      '</div>';
-     '<div class="toggle">View Sequence</div>';
-	   '<div class="sequence-container">';
-	       '<p>';
-                       fields.context.data.wildtype_header _ '<br />';
-                       fields.context.data.wildtype_full _ '<br />';
-	       '</p>';
-               '<p>';
-                       fields.context.data.mutant_header _ '<br />';
-                       fields.context.data.mutant_full _ '<br />';
-               '</p>';
-     '</div>';
+
+      wildtype.sequence = fields.context.data.wildtype_full;
+      wildtype.header = fields.context.data.wildtype_header;
+      sequence(wildtype, '');
+      mutant.sequence = fields.context.data.mutant_full;
+      mutant.header = fields.context.data.mutant_header;
+      sequence(mutant, '');
    END;
 
    # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field
-   IF fields.cgh_deleted_probes.data.left_flank != "";
-        WRAPPER $field_block title="CGH Deleted Probes" key="CGH Deleted Probes";
-           '<div class="sequence">';
-              '<span class="inline-sequence">';
+   #IF fields.cgh_deleted_probes.data.left_flank != "";
+        WRAPPER $field_block title="CGH Deleted Probes" key="cgh_deleted_probes";
+           '<div class="sequence-container">';
               "5' flank -- " _ fields.cgh_deleted_probes.data.left_flank _ " " _ fields.cgh_deleted_probes.data.right_flank _ "-- 3' flank";
-             '</span>';
           '</div>';
        END;
 
@@ -136,80 +117,65 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
           fields.deletion_verification.data;
        END;
 
-   END;
+   #END;
 
    WRAPPER $field_block title="Features Affected" key="features_affected";
-#       '<table border="1" width="100%">';
-#	  	'<tr>';
-#			'<td>feature type</td>';
-#			'<td>feature</td>';
-#			'<td>details</td>';
-#		'</tr>';
-#
-#         FOREACH feature_type IN fields.features_affected.data.keys;
-#                FOREACH feature IN fields.features_affected.data.$feature_type.keys;
-#		
-#                '<tr>';
-#                   '<td>' _ feature_type _ '</td>';
-# =======
+
        FOREACH feature_type IN fields.features_affected.data.sort;
-           '<div class="toggle">';
-                pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size);
-                '(' _ fields.features_affected.data.$feature_type.size _ ')';
-           '</div>';
-           '<div style="display:none">';
+          t =  pluralize(feature_type.replace('_', ' '), fields.features_affected.data.$feature_type.size) _ ' (' _ fields.features_affected.data.$feature_type.size _ ')';
+          WRAPPER toggle title=t;
            FOREACH feature_name IN fields.features_affected.data.$feature_type.sort;
-               '<div style="margin-bottom:0.25em; margin-top:0.25em">';
+              '<div>';
                feature = fields.features_affected.data.$feature_type.$feature_name;
                IF feature_type == 'Chromosome';
                     feature.label;
                ELSE;
-	             tag2link(feature);
+                 tag2link(feature);
                END;
-	       '<br>';
+              '<br>';
 
-     	       protein_effects = feature.protein_effects;
+               protein_effects = feature.protein_effects;
                IF protein_effects;
                   FOREACH effect_type IN protein_effects.sort;
                      effect = protein_effects.$effect_type;
                      'Effect on protein: ' _ effect_type.replace('_', ' ');
                       effect.subtype || effect.position || '';
-		      effect.description _ '<br />';
+              effect.description _ '<br />';
                    END;
                END;
 
-     	       location_effects = feature.location_effects;
+               location_effects = feature.location_effects;
                   IF location_effects;
                       FOREACH effect_type IN location_effects.sort;
                           effect = location_effects.$effect_type;
-	                  'Contained in: ' _ effect_type.replace('_', ' ') _ '<br />';
+                      'Contained in: ' _ effect_type.replace('_', ' ') _ '<br />';
                       END;
                   END;
 
 
-     		  IF feature.abs_start;
-                      '<div class="sequence-container" style="display:block">';
+              IF feature.abs_start;
+                      '<div class="sequence-container">';
                          '<table>';
-				 '<tr>';
-						'<td>absolute start</td>';
-						'<td>absolute stop</td>';
-						'<td>feature start</td>';
-						'<td>feature stop</td>';
-						'<td>start relative to feature</td>';
-						'<td>stop relative to feature</td>';
-					  '</tr>';
-					   '<tr>';
-			                   '<td>' _ feature.abs_start _ '</td>';
-			                   '<td>' _ feature.abs_stop _ '</td>';
-			                   '<td>' _ feature.fstart   _ '</td>';
-			                   '<td>' _ feature.fstop    _ '</td>';
-			                   '<td>' _ feature.start    _ '</td>';
-			                   '<td>' _ feature.stop     _ '</td>';
-					   '</tr>';
-				    '</table>';
-			       '</div>';
+                 '<tr>';
+                        '<td>absolute start</td>';
+                        '<td>absolute stop</td>';
+                        '<td>feature start</td>';
+                        '<td>feature stop</td>';
+                        '<td>start relative to feature</td>';
+                        '<td>stop relative to feature</td>';
+                      '</tr>';
+                       '<tr>';
+                               '<td>' _ feature.abs_start _ '</td>';
+                               '<td>' _ feature.abs_stop _ '</td>';
+                               '<td>' _ feature.fstart   _ '</td>';
+                               '<td>' _ feature.fstop    _ '</td>';
+                               '<td>' _ feature.start    _ '</td>';
+                               '<td>' _ feature.stop     _ '</td>';
+                       '</tr>';
+                    '</table>';
+                   '</div>';
                  END;
-		
+        
 
                  IF feature.wildtype_translation_full;
                  '<div class="toggle">View conceptual translation</div>';
@@ -221,7 +187,9 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                  END;
              '</div>';
               END; # of feature loop
-             '</div>';
+            END;
+
+
        END; # of feature type loop; 
    END; # of Features Affected WRAPPER;
 
