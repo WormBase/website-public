@@ -68,8 +68,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => shift->_parsed_species =~ /elegans/ ?
-                           [qw(CG CANONICAL Allele RNAi)] : [qw/CG/],
+            data        => [qw/CG/],
         };
     }
 );
