@@ -10,7 +10,7 @@
   [% IF data %]
   <div class="evidence result">
     [% markup(text) %]
-    [% UNLESS id.defined; id =0; END %]
+    [% id = id || 0; %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
         <b>[% type.replace('_',' ') %]</b>:
@@ -753,14 +753,25 @@ END;
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
-   IF no_toggle == 1;  
-       WRAPPER $field_block title="Remarks" key="remarks";
-          markup(fields.remarks.data.join('<br>'),0);
-       END;
+
+   contents = '';
+   IF fields.remarks.data.0.text.defined;
+      FOREACH obj IN fields.remarks.data;
+        contents = contents _ evidence(obj.evidence,sd, obj.text);
+      END;
+   ELSE;
+      contents = contents _ markup(fields.remarks.data.join('<br />'),0);
+   END;
+
+   IF no_toggle == 1 && contents;  
+       #WRAPPER $field_block title="Remarks" key="remarks";
+        '<h4>Remarks:</h4>';
+          contents;
+       #END;
    ELSE;
       WRAPPER $field_block title="" key="remarks";
         WRAPPER toggle title="Curatorial remarks";
-              markup(fields.remarks.data.join('<br />'),0);
+              contents;
         END;
       END;
    END;
@@ -806,17 +817,22 @@ END;
 END;
 %]
 
-[% MACRO sequence(field_key) BLOCK; 
+[% MACRO sequence(field_key, field_title) BLOCK; 
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
-    sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+    IF fields.$field_key.data.defined;
+      sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+    ELSE;
+      sequence_list = field_key.sequence.defined ? [field_key] : field_key;
+      field_key = '';
+    END;
     sequences = {};
 
     FOREACH obj IN sequence_list;
       IF obj.sequence.defined;
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
-
+          
         format_seq = seq.match('\s') ? seq : format_sequence(seq);
         title = obj.header || 'sequence';
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
@@ -829,13 +845,14 @@ END;
                             _ '</div>';
 
         sequences.$obj.seq = format_seq | replace('\n', '<br />');
-        sequences.$obj.title = 'view ' _ title _ ' (' _ obj.length _' ' _ (obj.type ? obj.type : 'bp') _ ')';
+        sequences.$obj.title = 'view ' _ title;
+        IF obj.length; sequences.$obj.title = sequences.$obj.title  _ ' (' _ (obj.length) _' ' _ (obj.type ? obj.type : 'bp') _ ')'; END;
       ELSE;
         sequences.$obj.download = obj;
       END;
     END;
     IF sequences.keys.size > 0;
-      WRAPPER $field_block title="Sequence" key=field_key;
+      WRAPPER $field_block title=(field_title.defined ?  field_title : "Sequence") key=field_key;
         FOREACH obj IN sequences.keys;
           '<div style="position:relative;width:44em;">';
           sequences.$obj.download;

@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2>[% fields.name.data.label %]</h2>
 
 [% 
 
@@ -11,19 +11,14 @@ END;
 %]
 
 
-<div class="text-width" style="clear:left">
-    [%# fields.description.data.description %]
- 
-
-
+<div class="description">
 [%
 
-WRAPPER $field_block  title="Description" key="description";
     FOREACH obj IN  fields.description.data;
       evidence(obj.evidence, 0,obj.text);
     END;
-END;
 
+'</div>';
 WRAPPER $field_block  title="Synonyms"  key="synonyms";
      fields.synonyms.data.join("<br>");
 END;
@@ -49,4 +44,3 @@ END;
 remarks;
 
 %]
-</div>

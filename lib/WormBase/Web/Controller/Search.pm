@@ -77,7 +77,7 @@ sub search :Path('/search') Args {
       if($it->{pager}->{total_entries} == 1 ){
         my $o = @{$it->{struct}}[0];
         my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
-        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?from=search&query=$query";}
+        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
         $c->res->redirect($url, 307);  #should this be inside unless? -xq
         return;
       }
@@ -163,7 +163,7 @@ sub search_count :Path('/search/count') :Args(3) {
 
   my $tmp_query = $q;
   $tmp_query =~ s/-/_/g;
-  $tmp_query .= " $q" unless( ($q=~/^\*$/) || $tmp_query =~ /$q/ );
+  $tmp_query .= " $q" unless( $tmp_query =~ /$q/ );
 
   my $count = $api->xapian->search_count($c, $tmp_query, $search, $species);
   $c->response->body("$count");

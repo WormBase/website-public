@@ -19,7 +19,7 @@ END;
 
 WRAPPER $field_block title="" key='description';
       # The main concise description
-      '<div class="text-width" style="clear:left">';
+      '<div class="description">';
          markup(fields.description.data);
       '</div>';
 
