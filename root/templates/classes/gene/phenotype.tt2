@@ -7,10 +7,12 @@
 
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
-[% 
+[%
+	#build_data_table(order=['object','supporting','evidence'],
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
-				 evidence  => 'Supporting Evidence',
+				 #supporting  => 'Supporting Evidence',
+				 evidence => 'Supporting Evidence',
 			}, key='phenotype_observed',
 			passed_data=fields.phenotype.data.observed.values);
 %]
@@ -18,49 +20,13 @@
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
 [% 
+	#build_data_table(order=['object','supporting','evidence'],
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
-				 evidence  => 'Supporting Evidence',
+				 #supporting  => 'Supporting Evidence',
+				 evidence => 'Supporting Evidence',
 			}, key='phenotype_not_observed',
 			passed_data=fields.phenotype.data.not_observed.values);
 %]
-   [% END %]
-[% END %]
-
-[% WRAPPER $field_block title="RNAi" key="rnai" # inconsistent %]
-   [% WRAPPER toggle title="RNAi Summary" %]
-      [% rnai_results = fields.rnai.data.rnai_results %]
-      [% FOREACH type IN ['rnai_with_pheno','rnai_without_pheno'] %]
-	 [% rnais = fields.rnai.data.$type %]
-	 [% IF rnais %]
-	     [% rnai_values = [] %]
-	     [% FOREACH rnai IN rnais;
-		rnai_values.push(rnai_results.$rnai);
-	     END; %]
-	     [% IF type.search('without') %] 
-		<br /><i>No abnormalities were observed in the following experiments</i>
-		[% build_data_table(
-		    order = ['object', 'phenotypes_not_observed', 'genotype', 'reference'],
-		    columns = {
-			object			=> 'Experiment',
-			phenotypes_not_observed	=> 'Phenotype',
-			genotype		=> 'Strain/Genotype',
-			reference		=> 'Cited In',
-		    }, key='rnai_phen_not_obs',
-		    passed_data = rnai_values); %]
-		[% ELSE %]
-		<i>The following phenotypes were observed via RNAi of [% object.name.data.label %]</i>
-		[% build_data_table(
-		    order = ['object', 'phenotypes_observed', 'genotype', 'reference'],
-		    columns = {
-			object			=> 'Experiment',
-			phenotypes_observed	=> 'Phenotype',
-			genotype		=> 'Strain/Genotype',
-			reference		=> 'Cited In',
-		    }, key='rnai_phen_obs',
-		    passed_data = rnai_values); %]
-            [% END %]
-         [% END %]
-      [% END %]
    [% END %]
 [% END %]

@@ -135,12 +135,14 @@ sub _build__phenotypes {
 
         foreach ($xgene->Phenotype) {
             $phenotypes{observed}{$_}{object}          //= $self->_pack_obj($_);
-            push @{$phenotypes{observed}{$_}{transgenes}}, $packed_xgene;
+            push @{$phenotypes{observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
+	    push @{$phenotypes{observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($xgene->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}          //= $self->_pack_obj($_);
-            push @{$phenotypes{not_observed}{$_}{transgenes}}, $packed_xgene;
+            push @{$phenotypes{not_observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
         }
     }
 
@@ -152,15 +154,16 @@ sub _build__phenotypes {
             $allele, undef,
             boldface => $seq_status ? scalar($seq_status =~ /sequenced/i) : 0,
         );
-
         foreach ($allele->Phenotype) {
             $phenotypes{observed}{$_}{object}        //= $self->_pack_obj($_);
-            push @{$phenotypes{observed}{$_}{alleles}}, $packed_allele;
+            push @{$phenotypes{observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
+	    push @{$phenotypes{observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($allele->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}        //= $self->_pack_obj($_);
-            push @{$phenotypes{not_observed}{$_}{alleles}}, $packed_allele;
+            push @{$phenotypes{not_observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         # ?Variation /Rescued/ ...
@@ -168,31 +171,16 @@ sub _build__phenotypes {
 
     # extract rnai info
     while (my ($rnai, $rnai_details) = each %{$self->_rnai_results}) {
-        for my $obs (qw(observed not_observed)) {
-            my $phentype = 'phenotypes_' . $obs;
-            next unless $rnai_details->{$phentype};
-            while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$phentype}}) {
-                $phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
-                # $phenotypes{$obs}{$phenotype}{rnai}{$rnai} = $rnai_details->{object};
-                $phenotypes{$obs}{$phenotype}{rnai_count}++;
-            }
-        }
-    }
-    #package data for use with build_data_table macro in template
-    for my $obs (qw(observed not_observed)) {
-	foreach (sort keys %{$phenotypes{$obs}}){
-	    my $transgenes = $phenotypes{$obs}{$_}{transgenes};
-	    my $alleles = $phenotypes{$obs}{$_}{alleles};
-	    my $rnai_count = $phenotypes{$obs}{$_}{rnai_count};
-	    my @evidence;
-	    if($transgenes && scalar @{$transgenes}){ push @evidence, ({label => 'Transgenes:'}, @{$transgenes}); }
-	    if($alleles && scalar @{$alleles}){ push @evidence, ({label => 'Alleles:'}, @{$alleles}); }
-	    if(@evidence && $rnai_count){
-		push @evidence, {label => "Supported by $rnai_count RNAi experiment(s)"};
-		$phenotypes{$obs}{$_}{evidence} = \@evidence;	    
+	for my $obs (qw(observed not_observed)) {
+	    my $phentype = 'phenotypes_' . $obs;
+	    next unless $rnai_details->{$phentype};
+	    while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$phentype}}) {
+		$phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
+		# $phenotypes{$obs}{$phenotype}{rnai}{$rnai} = $rnai_details->{object};
+                # $phenotypes{$obs}{$phenotype}{rnai_count}++;
+		push @{$phenotypes{$obs}{$phenotype}{supporting}{'RNAi:'}}, $rnai_details->{object};
+		push @{$phenotypes{$obs}{$phenotype}{evidence}{'RNAi:'}}, {obj => $rnai_details->{object}, reference=>$rnai_details->{reference}};
 	    }
-	    elsif($rnai_count){$phenotypes{$obs}{$_}{evidence} = "Supported by $rnai_count RNAi experiment(s)"; }
-	    else {$phenotypes{$obs}{$_}{evidence} = @evidence ? \@evidence : undef};
 	}
     }
     return \%phenotypes;
@@ -216,8 +204,8 @@ sub _build__interactions {
 	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
 	next unless($effector);
 
-	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
-	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
+	$nodes->{"$effector"}= $self->_pack_obj($effector);
+	$nodes->{"$effected"}= $self->_pack_obj($effected);
 	$nodes_obj->{"$effector"}=$effector;
 	$nodes_obj->{"$effected"}=$effected;
 
@@ -249,6 +237,7 @@ sub _build__interactions {
 		effected    => $nodes->{"$effected"},
 		direction   => $direction,
 		phenotype   => $phenotype,
+		nearby	    => 0,
 	    };
 	}
     }
@@ -2601,9 +2590,11 @@ sub protein_domains {
     my %unique_motifs;
     for my $protein ( @{ $self->_all_proteins } ) {
         for my $motif ($protein->Motif_homol) {
-            if (my $title = $motif->Title) {
-                $unique_motifs{$title} ||= $self->_pack_obj($motif);
-            }
+	    if("$motif" =~ /^INTERPRO:/){
+		if (my $title = $motif->Title) {
+		    $unique_motifs{$title} ||= $self->_pack_obj($motif);
+		}
+	    }
         }
     }
 
@@ -2772,19 +2763,19 @@ sub interactions  {
     my $self   = shift;
     my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     if($self->_interactions->{showall}){
-	$self->nearby_interactions();
+	$self->nearby_interactions($data);
     }
     my @dataRet = (values %{$data});
     return {
         description => 'genetic and predicted interactions',
-        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types,showall=>$self->_interactions->{showall}},
     };
 }
 
-sub nearby_interactions() {
-    my $self = shift;
-    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
-
+sub nearby_interactions {
+    #this method loads nearby interactions (i.e. interactions between nodes that interact with the current gene)
+    my ($self, $data) = @_;
+    my ($old_data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
 	my $node = $nodes_obj->{$key};
@@ -2829,14 +2820,23 @@ sub nearby_interactions() {
 		    effected    => $nodes->{"$effected"},
 		    direction   => $direction,
 		    phenotype   => $phenotype,
+		    nearby	=> 1,
 		};
 	    }
 	 }
     }
-    my @dataRet = (values %{$data});
+}
+
+sub interaction_details {
+    my $self = shift;
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+
+    $self->nearby_interactions($data);
+
+    my @edges = (values %{$data});
     return {
-        description => 'additional genetic and predicted interactions',
-        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+	description	=> 'addtional nearby interactions',
+	data		=> {edges=>\@edges, nodes => $nodes, types => $types},
     };
 }
 
@@ -3765,7 +3765,7 @@ sub gene_models {
         $data{length_spliced}   = $len_spliced if $coding;
 
         my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
-        $data{length_unspliced} = \@lengths;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);

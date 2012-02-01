@@ -15,50 +15,44 @@
    t = pluralize("Drives Transgene", fields.transgenes.data.size);
    WRAPPER $field_block title="$t" key="transgenes";
    build_data_table(order=['transgene','summary','laboratory'],
-                    columns={ transgene    => 'Transgene',
-	   	              summary      => 'Summary',
-		              laboratory   => 'Laboratory',
-                             },
-                    key='transgenes');
+		    columns={ transgene    => 'Transgene',
+			      summary      => 'Summary',
+			      laboratory   => 'Laboratory',
+			     },
+		    key='transgenes');
    END;
 
    # Drive by transgene
    t = pluralize("Expressed in Transgene", fields.transgene_products.data.size);
    WRAPPER $field_block title="$t" key="transgene_products";
    build_data_table(order=['transgene','summary','laboratory'],
-                    columns={ transgene    => 'Transgene',
-	   	              summary      => 'Summary',
-		              laboratory   => 'Laboratory',
+		     columns={ transgene    => 'Transgene',
+			      summary      => 'Summary',
+			      laboratory   => 'Laboratory',
                             },
-                     key='transgene_products');
-   END;
+		     key='transgene_products');
+    END;
 
-
-
-
+### Jan 27, 2012: These fields were changed to use the tags2link macro and return the actual objects rather than linking to search results (which were sometimes invalid)
     # Matching cDNAs
     WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas";
-       'Found ' _ searchlink('sequence', object.name.data.id, fields.matching_cdnas.data.size _ " matching cDNAs");
+	tags2link(fields.matching_cdnas.data, '<br />', "matching cDNAs");
     END;
 
     WRAPPER $field_block title="Primer pairs" key="primer_pairs";
-       'Found ' _ searchlink('pcr_product', object.name.data.id, fields.primer_pairs.data.size _ " primer pairs");
+	tags2link(fields.primer_pairs.data, '<br />', "primer pairs");
     END;
 
     WRAPPER $field_block title="ORFeome Primers" key="orfeome_primers";
-         FOREACH item IN fields.orfeome_primers.data;
-             tag2link(item) _ '<br /> ';
-         END;
+	tags2link(fields.orfeome_primers.data, '<br />', "ORFeome primers");
     END;
 
     WRAPPER $field_block title="SAGE tags" key="sage_tags";
-       'Found ' _ searchlink('sage_tag', object.name.data.id, fields.sage_tags.data.size _ " SAGE tags");
+	tags2link(fields.sage_tags.data, '<br />', "SAGE tags");
     END;
 
     WRAPPER $field_block title="Microarray probes" key="microarray_probes";
-         FOREACH item IN fields.microarray_probes.data;
-             tag2link(item) _ '<br />';
-         END;        
+	tags2link(fields.microarray_probes.data, '<br />', "microarray probes");        
     END;
-
+###
 %]

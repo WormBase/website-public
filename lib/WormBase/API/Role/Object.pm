@@ -487,7 +487,7 @@ sub _build_best_blastp_matches {
 
     return {
         description => 'best BLASTP hits from selected species',
-        data        => @hits ? \@hits : undef
+        data        => {biggest=>"$biggest", hits => @hits ? \@hits : undef}
     };
 }
 

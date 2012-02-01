@@ -392,18 +392,43 @@ END;
                     '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                 ELSIF cell.class.defined;
                     tag2link(cell);
+                ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
+		    tags2link(cell, '<br />', 'Results');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
-                ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
-                    tags2link(cell);
-                ELSIF cell.1.class.defined; #intended as check for list of _pack_obj for phenotypes
-                    tags2link(cell);
+		ELSIF cell.first.evidence.defined;
+		    FOREACH result IN cell;
+			evidence(result.evidence,table_name _ index, result.text, 'details');
+			'<br />';
+		    END;
+                ELSIF cell.values.size; #hash of arrays (e.g. evidence column in phenotypes widget on gene page)
+                    FOREACH key IN cell.keys.sort;
+			IF cell.$key.size < 10;
+			    "$key<br />";
+			    IF cell.$key.first.evidence.defined;
+				FOREACH item IN cell.$key;
+				    evidence(item.evidence,table_name _ index, item.text, 'details');
+				END;
+			    ELSIF cell.$key.first.reference.defined;
+				FOREACH item IN cell.$key;
+				    obj = tag2link(item.obj);
+				    ref = tag2link(item.reference);
+				    "$obj($ref)<br />";
+				END;
+			    ELSE;
+				tags2link(cell.$key);
+			    END;
+			    IF !loop.last;
+				'<br />';
+			    END;
+			ELSE;
+			    tags2link(cell.$key, '<br />', key);
+			END;
+		    END;
                 ELSIF cell.values.first.class.defined;
-                    tags2link(cell.values);
-                ELSIF cell.0.defined;
-                    cell.join('<br>');
-                ELSE;
-                    cell;
+		      tags2link(cell.values);
+		ELSE;
+		    cell.join('<br />');
                 END;
                 '</td>';
             END;
@@ -571,7 +596,8 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-   IF c.stash.fields.best_blastp_matches.data;
+   matches = c.stash.fields.best_blastp_matches.data;
+   IF matches.hits;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
     
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
@@ -581,10 +607,11 @@ END;
                                  evalue   => 'BLAST e-value',
                                  percent  => '% Length'
                                 },
-                       key='best_blastp_matches', 
+                       key='best_blastp_matches',
+                       passed_data=matches.hits,
                        style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') id="blast_details_toggle";
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details') id="blast_details_toggle";
     END;
          '</div>';
     END;
