@@ -23,8 +23,13 @@
       IF data.defined ;
          UNLESS text; text = data.label; END;
          IF data.class.defined;
-          text2link(data.class, data.id, text, title, data.taxonomy);
-         ELSE;
+	    IF data.boldface;
+		ln = text2link(data.class, data.id, text, title, data.taxonomy);
+		"<b>$ln</b>";
+	    ELSE;
+		text2link(data.class, data.id, text, title, data.taxonomy);
+	    END;
+	 ELSE;
           data.label;
          END;
       END;
