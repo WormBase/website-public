@@ -51,9 +51,11 @@ sub _build_sequences {
 	my $gene = $self->object;
     my %seen;
     my @seqs = grep { !$seen{$_}++} $gene->Corresponding_transcript;
+
     for my $cds ($gene->Corresponding_CDS) {
         next if defined $seen{$cds};
         my @transcripts = grep {!$seen{$cds}++} $cds->Corresponding_transcript;
+
         push (@seqs, @transcripts ? @transcripts : $cds);
     }
     return \@seqs if @seqs;
@@ -66,8 +68,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => shift->_parsed_species =~ /elegans/ ?
-                           [qw(CG CANONICAL Allele RNAi)] : [qw/CG/],
+            data        => [qw/CG/],
         };
     }
 );
@@ -134,12 +135,14 @@ sub _build__phenotypes {
 
         foreach ($xgene->Phenotype) {
             $phenotypes{observed}{$_}{object}          //= $self->_pack_obj($_);
-            $phenotypes{observed}{$_}{transgene}{$xgene} = $packed_xgene;
+            push @{$phenotypes{observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
+	    push @{$phenotypes{observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($xgene->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}          //= $self->_pack_obj($_);
-            $phenotypes{not_observed}{$_}{transgene}{$xgene} = $packed_xgene;
+            push @{$phenotypes{not_observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
         }
     }
 
@@ -151,15 +154,16 @@ sub _build__phenotypes {
             $allele, undef,
             boldface => $seq_status ? scalar($seq_status =~ /sequenced/i) : 0,
         );
-
         foreach ($allele->Phenotype) {
             $phenotypes{observed}{$_}{object}        //= $self->_pack_obj($_);
-            $phenotypes{observed}{$_}{allele}{$allele} = $packed_allele;
+            push @{$phenotypes{observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
+	    push @{$phenotypes{observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($allele->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}        //= $self->_pack_obj($_);
-            $phenotypes{not_observed}{$_}{allele}{$allele} = $packed_allele
+            push @{$phenotypes{not_observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
         }
 
         # ?Variation /Rescued/ ...
@@ -167,17 +171,18 @@ sub _build__phenotypes {
 
     # extract rnai info
     while (my ($rnai, $rnai_details) = each %{$self->_rnai_results}) {
-        for my $obs (qw(observed not_observed)) {
-            my $phentype = 'phenotypes_' . $obs;
-            next unless $rnai_details->{$phentype};
-            while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$phentype}}) {
-                $phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
-                # $phenotypes{$obs}{$phenotype}{rnai}{$rnai} = $rnai_details->{object};
-                $phenotypes{$obs}{$phenotype}{rnai_count}++;
-            }
-        }
+	for my $obs (qw(observed not_observed)) {
+	    my $phentype = 'phenotypes_' . $obs;
+	    next unless $rnai_details->{$phentype};
+	    while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$phentype}}) {
+		$phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
+		# $phenotypes{$obs}{$phenotype}{rnai}{$rnai} = $rnai_details->{object};
+                # $phenotypes{$obs}{$phenotype}{rnai_count}++;
+		push @{$phenotypes{$obs}{$phenotype}{supporting}{'RNAi:'}}, $rnai_details->{object};
+		push @{$phenotypes{$obs}{$phenotype}{evidence}{'RNAi:'}}, {obj => $rnai_details->{object}, reference=>$rnai_details->{reference}};
+	    }
+	}
     }
-
     return \%phenotypes;
 }
 
@@ -199,8 +204,8 @@ sub _build__interactions {
 	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
 	next unless($effector);
 
-	$nodes->{"$effector"}= $self->_pack_obj($effector); ;
-	$nodes->{"$effected"}= $self->_pack_obj($effected); ;
+	$nodes->{"$effector"}= $self->_pack_obj($effector);
+	$nodes->{"$effected"}= $self->_pack_obj($effected);
 	$nodes_obj->{"$effector"}=$effector;
 	$nodes_obj->{"$effected"}=$effected;
 
@@ -232,6 +237,7 @@ sub _build__interactions {
 		effected    => $nodes->{"$effected"},
 		direction   => $direction,
 		phenotype   => $phenotype,
+		nearby	    => 0,
 	    };
 	}
     }
@@ -921,8 +927,7 @@ sub structured_description {
                   Sequence_features
                   Biological_process
                   Expression
-                  Detailed_description
-                  Human_disease_relevance);
+                  Detailed_description);
    foreach my $type (@types){
       my @objs = $self->object->$type;
       @objs = grep { "$_" ne $self->object->Concise_description } @objs if $type eq "Provisional_description";
@@ -931,6 +936,14 @@ sub structured_description {
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
+}
+
+sub human_disease_relevance {
+    my $self = shift;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
+
+    return {  description => "curated description of human disease relevance",
+              data        =>  @objs ? \@objs : undef };
 }
 
 # sub taxonomy {}
@@ -2577,9 +2590,11 @@ sub protein_domains {
     my %unique_motifs;
     for my $protein ( @{ $self->_all_proteins } ) {
         for my $motif ($protein->Motif_homol) {
-            if (my $title = $motif->Title) {
-                $unique_motifs{$title} ||= $self->_pack_obj($motif);
-            }
+	    if("$motif" =~ /^INTERPRO:/){
+		if (my $title = $motif->Title) {
+		    $unique_motifs{$title} ||= $self->_pack_obj($motif);
+		}
+	    }
         }
     }
 
@@ -2748,19 +2763,19 @@ sub interactions  {
     my $self   = shift;
     my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     if($self->_interactions->{showall}){
-	$self->nearby_interactions();
+	$self->nearby_interactions($data);
     }
     my @dataRet = (values %{$data});
     return {
         description => 'genetic and predicted interactions',
-        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types,showall=>$self->_interactions->{showall}},
     };
 }
 
-sub nearby_interactions() {
-    my $self = shift;
-    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
-
+sub nearby_interactions {
+    #this method loads nearby interactions (i.e. interactions between nodes that interact with the current gene)
+    my ($self, $data) = @_;
+    my ($old_data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
 	my $node = $nodes_obj->{$key};
@@ -2805,14 +2820,23 @@ sub nearby_interactions() {
 		    effected    => $nodes->{"$effected"},
 		    direction   => $direction,
 		    phenotype   => $phenotype,
+		    nearby	=> 1,
 		};
 	    }
 	 }
     }
-    my @dataRet = (values %{$data});
+}
+
+sub interaction_details {
+    my $self = shift;
+    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+
+    $self->nearby_interactions($data);
+
+    my @edges = (values %{$data});
     return {
-        description => 'additional genetic and predicted interactions',
-        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types},
+	description	=> 'addtional nearby interactions',
+	data		=> {edges=>\@edges, nodes => $nodes, types => $types},
     };
 }
 
@@ -3694,6 +3718,8 @@ sub gene_models {
 
     my @rows;
 
+    my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
+
     # $sequence could potentially be a Transcript, CDS, Pseudogene - but
     # I still need to fetch some details from sequence
     # Fetch a variety of information about all transcripts / CDS prior to printing
@@ -3701,50 +3727,14 @@ sub gene_models {
 
     foreach my $sequence ( sort { $a cmp $b } @$seqs ) {
         my %data  = ();
-        my $model = $self->_pack_obj($sequence);
         my $gff   = $self->_fetch_gff_gene($sequence) or next;
         my $cds
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
 
-        my ( $confirm, $remark, $protein, @matching_cdna );
-        if ($cds) {
-            $confirm
-                = $cds->Prediction_status;   # with or without being confirmed
-            @matching_cdna
-                = $cds->Matching_cDNA;       # with or without matching_cdna
-            $protein = $cds->Corresponding_protein( -fill => 1 );
-        }
-
-        # Fetch all the notes for this given sequence / CDS
-        my @notes = map {"$_"} (
-            eval { $cds->DB_remark }, $sequence->DB_remark,
-            eval { $cds->Remark },    $sequence->Remark
-        );
-
-        # Save all the remarks for each gene model.
-        # We will create unique list of footnotes in the view.
-        $data{remarks} = @notes ? \@notes : undef;
-
-        if ($confirm) {
-            if ( $confirm eq 'Confirmed' ) {
-                $data{status} = "confirmed by cDNA(s)";
-            }
-            elsif ( @matching_cdna && $confirm eq 'Partially_confirmed' ) {
-                $data{status} = "partially confirmed by cDNA(s)";
-            }
-            elsif ( $confirm eq 'Partially_confirmed' ) {
-                $data{status} = "partially confirmed";
-            }
-            elsif ( $cds && $cds->Method eq 'history' ) {
-                $data{status} = 'historical';
-            }
-        }
-        else {
-            $data{status} = "predicted";
-        }
-
+        my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
+        my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
         my $len_unspliced = $gff->length;
         my $len_spliced   = 0;
 
@@ -3772,17 +3762,23 @@ sub gene_models {
         }
         $len_spliced ||= '-';
 
-        $data{length_spliced}   = $len_spliced;
-        $data{length_unspliced} = $len_unspliced;
+        $data{length_spliced}   = $len_spliced if $coding;
+
+        my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
 
         if ($protein) {
             my $peplen = $protein->Peptide(2);
-            my $aa     = "$peplen aa";
+            my $aa     = "$peplen";
             $data{length_protein} = $aa if $aa;
         }
-        my $protein_desc = $self->_pack_obj($protein);
-        $data{model}   = $model        if $model;
-        $data{protein} = $protein_desc if $protein_desc;
+        my $type = $sequence->Method;
+        $type =~ s/_/ /g;
+        @sequences =  map {$self->_pack_obj($_)} @sequences;
+        $data{type} = "$type";
+        $data{model}   = \@sequences;
+        $data{protein} = $self->_pack_obj($protein) if $coding;
+        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)' if $coding;
 
         push @rows, \%data;
     }

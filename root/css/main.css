@@ -1878,6 +1878,7 @@ div.field-title {
 
 div.field-content {
   float: left;
+  max-width:100%;
 }
 
 /* Curator specific fields */
@@ -1962,21 +1963,14 @@ div#google-map {
 
 
 /* SEQUENCE STYLING */
-
-/* a snippet of sequence displayed inline */
-.inline-sequence {
-   font-family: Courier, monospace;
-   font-size:0.8em;
-}
-
-/* an expandable sequence container */
+/* sequence display formatting */
 .sequence-container {
     font-family: Courier, monospace;
     font-size: 0.8em;
     overflow: hidden;
     clear: both;
     margin: 5px;
-    display: none;   /* Hidden by default */
+    max-width:54em;
 }
 
 
@@ -2310,6 +2304,24 @@ div.detail-box{
   margin:0.5em;
   max-width:25em;
   min-width:19em;
+}
+
+div.description {
+  clear:left;
+  padding:0.5em 0;
+  max-width:35em;
+}
+
+div.description div.result{
+  padding:0.5em;
+  margin:-0.5em;
+}
+
+#overview .content h2:first-child{
+  float:left;
+}
+#overview .content h2:first-child span{
+  font-size:0.8em;
 }
 
 div.search-summary {
