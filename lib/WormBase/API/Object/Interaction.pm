@@ -226,21 +226,10 @@ sub type {
     my $self   = shift;
     my $object = $self->object;
     my $type   = $object->Interaction_type;
-#    my %interaction_info;
 
-#     $interaction_info{'effector'} = $self->_pack_obj($type->Effector->col)
-#       if $type->Effector;
-#     $interaction_info{'effected'} = $self->_pack_obj( $type->Effected )
-#       if $type->Effected;
-#     if ( $type->Non_directional ) {
-#         my @genes = map { $self->_pack_obj($_) } $type->Non_directional;
-#         $interaction_info{'non_directional'} = \@genes;
-#     }
+    $type =~ s/_/ /g;
     return { description => 'The type of interaction.',
 	     data        => "$type" || undef };
-#            interaction_info => \%interaction_info,
-#        }
-#    };
 }
 
 =head3 phenotypes

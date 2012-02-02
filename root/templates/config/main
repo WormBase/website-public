@@ -23,8 +23,13 @@
       IF data.defined ;
          UNLESS text; text = data.label; END;
          IF data.class.defined;
-          text2link(data.class, data.id, text, title, data.taxonomy);
-         ELSE;
+	    IF data.boldface;
+		ln = text2link(data.class, data.id, text, title, data.taxonomy);
+		"<b>$ln</b>";
+	    ELSE;
+		text2link(data.class, data.id, text, title, data.taxonomy);
+	    END;
+	 ELSE;
           data.label;
          END;
       END;
@@ -75,7 +80,6 @@
 # URLs
     MACRO text2link(class,id,text,title,taxonomy) BLOCK;  
       class = (ACE2WB_MAP.$class || class) FILTER lower;
-      #IF (class == 'sw' OR class == 'sptrembl' OR class == 'tr'); class = 'uniprot'; END; #HACK: maybe do this somewhere else
       IF site.external_urls.$class.defined; 
           external_link(class, text, id);
        ELSE;
@@ -89,7 +93,7 @@
 
         "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
 
-        IF (class=='sequence' || class=='protein');
+        IF (class=='sequence' || class=='protein' || class=='transcript' );
           "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ "' class='button ui-corner-all tip-simple slink' data-class='$class' tip='download'>";
             "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
           "</a>";

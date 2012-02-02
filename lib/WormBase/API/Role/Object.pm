@@ -487,7 +487,7 @@ sub _build_best_blastp_matches {
 
     return {
         description => 'best BLASTP hits from selected species',
-        data        => @hits ? \@hits : undef
+        data        => {biggest=>"$biggest", hits => @hits ? \@hits : undef}
     };
 }
 
@@ -1608,7 +1608,7 @@ sub _build_remarks {
 
     @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
 
-    @remarks = map {"$_"} @remarks; # stringify them
+    @remarks = map { { text => "$_", evidence =>$self->_get_evidence($_)} } @remarks; # stringify them
 
     # TODO: handling of Evidence nodes
     return {

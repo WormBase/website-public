@@ -1775,10 +1775,10 @@ sub cgh_deleted_probes {
     
     return {
         description => 'probes used for CGH of deletion alleles',
-        data        => {
+        data        => ($left_flank || $right_flank) ? {
             left_flank  => $left_flank && "$left_flank",
             right_flank => $left_flank && "$right_flank",
-        },
+        } : undef,
     };
 }
 
@@ -1850,8 +1850,8 @@ sub context {
             wildtype_full     => $wt_full,
             mutant_fragment   => $mut,
             mutant_full       => $mut_full,
-            wildtype_header   => "> Wild type N2, with $flank bp flanks",
-            mutant_header     => "> $name with $flank bp flanks"
+            wildtype_header   => "Wild type N2, with $flank bp flanks",
+            mutant_header     => "$name with $flank bp flanks"
         },
     };
 }
@@ -2416,8 +2416,7 @@ sub polymorphism_type {
     my $object = $self->object;
 
     # What type of polymorphism is this?
-    my $type = $object->SNP && $object->RFLP ? 'SNP and RFLP'
-             : $object->SNP                  ? 'SNP'
+    my $type = $object->SNP ? $object->RFLP ?  'SNP and RFLP' : 'SNP'
              : $object->Transposon_insertion ? $object->Transposon_insertion
                                                . ' transposon insertion'
              :                                 undef;
@@ -2481,8 +2480,9 @@ B<Response example>
 
 sub polymorphism_status {
     my ($self) = @_;
+    my $object = $self->object;
 
-    my $status = $self ~~ 'Confirmed_SNP' ? 'confirmed' : 'predicted';
+    my $status = $self ~~ 'Confirmed_SNP' ? 'confirmed' : ($object->SNP || $object->RFLP || $object->Transposon_insertion) ? 'predicted' : undef;
     return {
         description => 'experimental status of this polymorphism',
         data        => $status,

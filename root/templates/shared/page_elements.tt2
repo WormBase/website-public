@@ -10,7 +10,7 @@
   [% IF data %]
   <div class="evidence result">
     [% markup(text) %]
-    [% UNLESS id.defined; id =0; END %]
+    [% id = id || 0; %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
         <b>[% type.replace('_',' ') %]</b>:
@@ -346,14 +346,14 @@ END;
 [% MACRO jquery_data_table_html(table_headers,rows,table_name,style,table_build) BLOCK %]
   [% IF rows && rows.size > 0;  
        # Set up some suitable defaults
-       IF rows.size < 11 || (rows.size < 51 && table_headers.size < 3);
+       IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
       	  lengthMenu      = 'false';
           filter          = 'false';
           info            = 'false';
-       ELSIF rows.size < 51;
+       ELSIF rows.size < 31;
           paginate        = 'false';
           pagination_type = 'false';
       	  length          = 'false';
@@ -382,26 +382,53 @@ END;
         </tr>
     </thead>
     <tbody>
-        [% 
+        [%
           FOREACH row IN rows;
             '<tr>';
             index=loop.index;
             FOREACH cell IN row;
-                '<td>'; 
+                '<td>';
                 IF cell.species.defined;
                     '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                 ELSIF cell.class.defined;
                     tag2link(cell);
-                ELSIF cell.match('ARRAY');
-                    cell.join('<br>');
+                ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
+		    tags2link(cell, '<br />', 'Results');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
-                
-                ELSIF cell.first.keys.defined; #intended as check for list of _pack_obj
-                       tags2link(cell);
-
-                ELSE;
-                    cell;
+		ELSIF cell.first.evidence.defined;
+		    FOREACH result IN cell;
+			evidence(result.evidence,table_name _ index, result.text, 'details');
+			'<br />';
+		    END;
+                ELSIF cell.values.size; #hash of arrays (e.g. evidence column in phenotypes widget on gene page)
+                    FOREACH key IN cell.keys.sort;
+			IF cell.$key.size < 10;
+			    "$key<br />";
+			    IF cell.$key.first.evidence.defined;
+				FOREACH item IN cell.$key;
+				    evidence(item.evidence,table_name _ index, item.text, 'details');
+				END;
+			    ELSIF cell.$key.first.reference.defined;
+				FOREACH item IN cell.$key;
+				    obj = tag2link(item.obj);
+				    ref = tag2link(item.reference);
+				    "$obj($ref)<br />";
+				END;
+			    ELSE;
+				tags2link(cell.$key);
+			    END;
+			    IF !loop.last;
+				'<br />';
+			    END;
+			ELSE;
+			    tags2link(cell.$key, '<br />', key);
+			END;
+		    END;
+                ELSIF cell.values.first.class.defined;
+		      tags2link(cell.values);
+		ELSE;
+		    cell.join('<br />');
                 END;
                 '</td>';
             END;
@@ -417,13 +444,13 @@ END;
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
             "sPaginationType"  : "[% pagination_type %]",
-            "bFilter"          : [% filter %],      
+            "bFilter"          : [% filter %],
             "bInfo"            : [% info %],
             [% style %]
           });
         });
     </script>
-   [% END %] 
+   [% END %]
 
 [% END %] 
 
@@ -569,7 +596,8 @@ END;
 %]
 
 [% MACRO best_blastp_matches BLOCK;
-   IF c.stash.fields.best_blastp_matches.data;
+   matches = c.stash.fields.best_blastp_matches.data;
+   IF matches.hits;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
     
       build_data_table(order=['taxonomy','hit','description','evalue','percent'],
@@ -579,10 +607,11 @@ END;
                                  evalue   => 'BLAST e-value',
                                  percent  => '% Length'
                                 },
-                       key='best_blastp_matches', 
+                       key='best_blastp_matches',
+                       passed_data=matches.hits,
                        style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'blast_details') id="blast_details_toggle";
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details') id="blast_details_toggle";
     END;
          '</div>';
     END;
@@ -751,14 +780,25 @@ END;
 [% MACRO remarks BLOCK;
    # Expects the remarks key to be defined in the data stash
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
-   IF no_toggle == 1;  
-       WRAPPER $field_block title="Remarks" key="remarks";
-          markup(fields.remarks.data.join('<br>'),0);
-       END;
+
+   contents = '';
+   IF fields.remarks.data.0.text.defined;
+      FOREACH obj IN fields.remarks.data;
+        contents = contents _ evidence(obj.evidence,sd, obj.text);
+      END;
+   ELSE;
+      contents = contents _ markup(fields.remarks.data.join('<br />'),0);
+   END;
+
+   IF no_toggle == 1 && contents;  
+       #WRAPPER $field_block title="Remarks" key="remarks";
+        '<h4>Remarks:</h4>';
+          contents;
+       #END;
    ELSE;
       WRAPPER $field_block title="" key="remarks";
         WRAPPER toggle title="Curatorial remarks";
-              markup(fields.remarks.data.join('<br />'),0);
+              contents;
         END;
       END;
    END;
@@ -792,48 +832,63 @@ END;
 END;
 %]
 
-[% MACRO sequence(field_key) BLOCK; 
+[% MACRO format_sequence(seq) BLOCK;
+    format_seq = "";
+    FOREACH line IN seq.chunk(80);
+      format_seq = format_seq _ line.chunk(10).join(' ');
+      UNLESS loop.last;
+        format_seq = format_seq _ "\n";
+      END;  
+    END;
+    format_seq;
+END;
+%]
+
+[% MACRO sequence(field_key, field_title) BLOCK; 
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
-    sequence_list = fields.sequence.data.sequence.defined ? [fields.sequence.data] : fields.sequence.data;
+    IF fields.$field_key.data.defined;
+      sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
+    ELSE;
+      sequence_list = field_key.sequence.defined ? [field_key] : field_key;
+      field_key = '';
+    END;
     sequences = {};
 
     FOREACH obj IN sequence_list;
       IF obj.sequence.defined;
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
-        format_seq = "";
-        FOREACH line IN seq.chunk(80);
-          format_seq = format_seq _ line.chunk(10).join(' ');
-          UNLESS loop.last;
-            format_seq = format_seq _ "\n";
-          END;  
-        END;
-
+          
+        format_seq = seq.match('\s') ? seq : format_sequence(seq);
+        title = obj.header || 'sequence';
+        seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         sequences.$obj.download = '<div class="sequence-download">'
                                   _ '<form action="/rest/download/">'
-                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ '.fa" >'
-                                  _ '<input type="hidden" name="sequence" value="' _ format_seq  _ '" >'
+                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ title _ '.fa" >'
+                                  _ '<input type="hidden" name="sequence" value="' _ seq_html  _ '" >'
                                   _ '<input type="submit" value="download">'
                                   _ '</form>'
                             _ '</div>';
 
-        sequences.$obj.seq = format_seq.replace('\n','<br/>');
-        sequences.$obj.title = 'view sequence (' _ obj.length _' ' _ (obj.type == 'aa' ? 'aa' : 'bp') _ ')';
+        sequences.$obj.seq = format_seq | replace('\n', '<br />');
+        sequences.$obj.title = 'view ' _ title;
+        IF obj.length; sequences.$obj.title = sequences.$obj.title  _ ' (' _ (obj.length) _' ' _ (obj.type ? obj.type : 'bp') _ ')'; END;
       ELSE;
         sequences.$obj.download = obj;
       END;
     END;
     IF sequences.keys.size > 0;
-      WRAPPER $field_block title="Sequence" key=field_key;
+      WRAPPER $field_block title=(field_title.defined ?  field_title : "Sequence") key=field_key;
         FOREACH obj IN sequences.keys;
+          '<div style="position:relative;width:44em;">';
           sequences.$obj.download;
-
           IF sequences.$obj.seq;
             WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container";
               sequences.$obj.seq;
             END;
           END;
+          '</div>';
         END;
       END;
     END;

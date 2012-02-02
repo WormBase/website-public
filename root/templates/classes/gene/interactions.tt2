@@ -2,185 +2,49 @@
 
 [% NODES=fields.interactions.data.nodes %]
 [% TYPES=fields.interactions.data.types %]
- 
-<div id="cytoscapeweb_panel">
-   Interaction Type <select class="cyto_panel" id="cyto_panel_type">
-	<option value=0 >All</option>
-      [% FOREACH obj IN TYPES.keys.sort %]
-	<option>[% obj %]</option>
-      [% END %]
-    </select>
+[% NO_NEARBY=fields.interactions.data.edges.size > 450 %]
+[% edgeColors = ['#08298A','#B40431','#FF8000','#04B404','#8000FF','#191007','#73c6cd','#92d17b','#cC87AB4','#e4e870','#696D09'] %]
 
-   Direction <select class="cyto_panel" id="cyto_panel_direction">
-	<option value=0 >All</option>
-	<option>Effector->Effected</option>
-	<option>non-directional</option>
-      
-    </select>
-</div> 
-<div id="cytoscapeweb" >
-            Cytoscape Web will replace the contents of this div with your graph.
-</div> 
+    [% IF fields.interactions.data.showall || NO_NEARBY %]
+	    <div id="cytoscapeweb_panel">
+		Interaction Type <select class="cyto_panel" id="cyto_panel_type">
+		    <option value=0 >All</option>
+		  [% FOREACH obj IN TYPES.keys.sort %]
+		    <option>[% obj %]</option>
+		  [% END %]
+		</select>
+		Direction <select class="cyto_panel" id="cyto_panel_direction">
+		    <option value=0 >All</option>
+		    <option>Effector->Effected</option>
+		    <option>non-directional</option>
+		</select>
+	      [% IF !NO_NEARBY %]
+		Nearby Interactions <select class="cyto_panel" id="cyto_panel_nearby">
+		    <option value=0 >Show</option>
+		    <option>Hide</option>
+		</select>
+	      [% END %]
+	    </div>
+	    <div id="legend">
+		Edge-colors:
+		  [% FOREACH obj IN TYPES.keys.sort %]
+		     [% ind = loop.index %]
+		      <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
+		  [% END %]
+	    </div>
+	    <div id="cytoscapeweb" >
+		    Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+	    </div>
 
-<script type="text/javascript">
-      
-      function get_random_color() {
-	function c() {
-	  return Math.floor(Math.random()*256).toString(16)
-	}
-	return "#"+c()+c()+c();
-      }
+    [% ELSE %]
+	[% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field','gene',object.name.data.id,'interaction_details') id="interactions_toggle"%]
+	[% END %]
+    [% END %]
+[% END %]
 
-      var edgeColor = ["#08298A","#B40431","#FF8000", "#04B404","#8000FF", "#191007", "#73c6cd", "#92d17b", "#cC87AB4", "#e4e870" ,"#696D09"]
-      var edgeColorMapper = {
-			attrName: "type",
-			entries: [ [% FOREACH obj IN TYPES.keys.sort %]
-				    { attrValue: "[% obj %]",  value: edgeColor[[% loop.index %]] },
-				   [% END %]
-			         ]
-	};
-      var edgeSourceArrowMapper = {
-			attrName: "direction",
-			entries: [ { attrValue: "Effector->Effected", value: "T" },]
-	};
-      var edgeTargetArrowMapper = {
-			attrName: "direction",
-			entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
-	};
-      var edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 };
-
-// id of Cytoscape Web container div
-                var div_id = "cytoscapeweb";
-                
-                // you could also use other formats (e.g. GraphML) or grab the network data via AJAX
-                var networ_json = {
-                    dataSchema: {
-			nodes: [{ name: "label", type: "string" },
-				{ name: "color", type: "string" },
-				{ name: "link", type: "string" },
-			],
-				
-			edges: [ { name: "label", type: "string" },
-				{ name: "type", type: "string" },
-				{ name: "direction", type: "string" },
-				{ name: "width", type: "int" },
-				{ name: "phenotype", type: "string" },
-				//{ name: "link", type: "string" },
-			]
-		    },
-		    
-		    data: {
-			nodes: [   [% FOREACH node IN NODES.keys.sort %]
-				{ id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]" ,color:get_random_color(),
-				  link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
-				 },
-				      [% END %]
-			      ], 
-				
-			edges: [ [% FOREACH obj IN fields.interactions.data.edges %]
-				{ id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
-				  source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
-				  type: "[% obj.type %]", direction:"[% obj.direction %]",
-				  width: [% obj.interactions.size %],
-				  phenotype: "[% obj.phenotype.label %]",
-				  //link:"[% get_url(obj.interaction.class, obj.interaction.id ,obj.interaction.taxonomy) %]",
-				},
-				[% END %]
-			      ],
-			
-		    }
-                };
-                 // visual style we will use
-                var visual_style = {
-                    global: {
-                        backgroundColor: "#ffffff",
-			tooltipDelay: 100
-                    },
-                    nodes: {
-                        shape: "OCTAGON",
- 			opacity: 0.7,
-                        borderWidth: 0,
-			hoverGlowOpacity: 0.8,
-                        size: 30,
-			tooltipText: "<b>${label}</b>",
-			tooltipBackgroundColor: "#fafafa",
-                        color: {  passthroughMapper: { attrName: "color" }, },
-			hoverGlowColor: "#aae6ff",
- 			labelGlowOpacity: 1,
-                        labelHorizontalAnchor: "center",
-                    },
-                    edges: {
-                        width: { defaultValue: 0.5, continuousMapper: edgeWidthMapper },
-			color: { defaultValue: "#999999", discreteMapper: edgeColorMapper },
-			opacity:0.4,
-			hoverOpacity: 1,
-			sourceArrowShape: { defaultValue: "NONE", discreteMapper: edgeSourceArrowMapper },
-			targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
-			labelHorizontalAnchor: "center",
-                        label: { passthroughMapper: { attrName: "type" } },
-			tooltipText: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>",
- 			tooltipBackgroundColor: "#fafafa",
-                    }
-                };
-
-                // initialization options
-                var options = {
-                    // where you have the Cytoscape Web SWF
-                    swfPath: "/js/jquery/plugins/cytoscapeweb/swf/CytoscapeWeb",
-                    // where you have the Flash installer SWF
-                    flashInstallerPath: "/swf/playerProductInstall"
-                };
-	 
-  
-
-      WB.getCytoscape(function(){ 
-                // init and draw
-                var vis = new org.cytoscapeweb.Visualization(div_id, options);
-		 
-                vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
-                vis.ready(function() {
-                
-                    // add a listener for when nodes and edges are clicked
-                    vis.addListener("click", "nodes", function(event) {
-			window.open(event.target.data.link);
-                    });
-                   /* Should be disabled until interactions are merged
-		    vis.addListener("click", "edges", function(event) {
-                        window.open(event.target.data.link);
-		    }); */ 
-                });
-		
-		$jq('.cyto_panel').change(function(){
-		      var direction = $jq("#cyto_panel_direction option:selected").val();
-		      var inter_type = $jq("#cyto_panel_type option:selected").val();
-
-		      if(direction ==0 && inter_type==0){
-				vis.removeFilter("edges",true);
-		      }else{
-			  vis.filter("edges", function(edge) {
-				if(direction !=0 && inter_type!=0) {
-				    return edge.data.type == inter_type && edge.data.direction == direction;
-				}else if(direction !=0){
-				    return  edge.data.direction == direction;
-				}else{
-				    return edge.data.type == inter_type;
-				}
-			    }, true);
-			
-		      }
-		});
-	    });
-</script>
-          
-[% END %]       
- 
- 
-[% 
-
-   WRAPPER $field_block title="Interactions" key="interactions";
+[% WRAPPER $field_block title="Interactions" key="interactions";
       'Found ';
       searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
-
 
       build_data_table(order=['type','effector','effected','direction','phenotype','interactions'],
      	               columns={type  => 'Interaction Type',
@@ -189,10 +53,175 @@
 				direction => 'Direction',
 				phenotype => 'Phenotype',
 				interactions => 'Citations',
- 		                },	    
+ 		                }, key='interaction',
 	               passed_data=fields.interactions.data.edges);
-
-
-   END;
-
+    END;
 %]
+
+[% IF fields.interactions.data.showall || NO_NEARBY %]
+	<script type="text/javascript">
+	      
+	      function get_random_color() {
+		function c() {
+		  return Math.floor(Math.random()*256).toString(16)
+		}
+		return "#"+c()+c()+c();
+	      }
+
+	      var edgeColor = ["#08298A","#B40431","#FF8000", "#04B404","#8000FF", "#191007", "#73c6cd", "#92d17b", "#cC87AB4", "#e4e870" ,"#696D09"]
+	      var edgeColorMapper = {
+				attrName: "type",
+				entries: [ [% FOREACH obj IN TYPES.keys.sort %]
+					    { attrValue: "[% obj %]",  value: edgeColor[[% loop.index %]] },
+					  [% END %]
+					]
+		};
+	      var edgeSourceArrowMapper = {
+				attrName: "direction",
+				entries: [ { attrValue: "Effector->Effected", value: "T" },]
+		};
+	      var edgeTargetArrowMapper = {
+				attrName: "direction",
+				entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
+		};
+	      var edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 };
+	      var nodeColorMapper = { attrName: "number", minValue: "#04043D", maxValue: "#6FA2D9" };
+	      var toolTipMapper = {
+		  attrName: "phenotype",
+		  entries:[{attrValue: "", value: "<b>${type}<br />${direction}<br />${source} --- ${target}<br />${width} citation(s)</b>"},]
+	      }
+
+	// id of Cytoscape Web container div
+			var div_id = "cytoscapeweb";
+			
+			// you could also use other formats (e.g. GraphML) or grab the network data via AJAX
+			var networ_json = {
+			    dataSchema: {
+				nodes: [{ name: "label", type: "string" },
+					{ name: "number", type: "int" },
+					{ name: "color", type: "string" },
+					{ name: "link", type: "string" },
+				],
+					
+				edges: [ { name: "label", type: "string" },
+					{ name: "type", type: "string" },
+					{ name: "direction", type: "string" },
+					{ name: "width", type: "int" },
+					{ name: "phenotype", type: "string" },
+					{ name: "nearby", type: "int" },
+					//{ name: "link", type: "string" },
+				]
+			    },
+			    
+			    data: {
+				nodes: [   [% FOREACH node IN NODES.keys.sort %]
+					{ id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]" ,color:get_random_color(), number:[% loop.index %],
+					  link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
+					},
+					      [% END %]
+				      ], 
+					
+				edges: [ [% FOREACH obj IN fields.interactions.data.edges %]
+					{ id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
+					  source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
+					  type: "[% obj.type %]", direction:"[% obj.direction %]",
+					  width: [% obj.interactions.size %],
+					  phenotype: "[% obj.phenotype.label %]",
+					  nearby: [% obj.nearby %],
+					  //link:"[% get_url(obj.interaction.class, obj.interaction.id ,obj.interaction.taxonomy) %]",
+					},
+					[% END %]
+				      ],
+				
+			    }
+			};
+			// visual style we will use
+			var visual_style = {
+			    global: {
+				backgroundColor: "#ffffff",
+				tooltipDelay: 100
+			    },
+			    nodes: {
+				shape: "OCTAGON",
+				opacity: 0.7,
+				borderWidth: 0,
+				hoverGlowOpacity: 0.8,
+				size: 30,
+				tooltipText: "<b>${label}</b>",
+				tooltipBackgroundColor: "#fafafa",
+				//color: {  passthroughMapper: { attrName: "color" }, },
+				color: { continuousMapper: nodeColorMapper },
+				hoverGlowColor: "#aae6ff",
+				labelGlowOpacity: 1,
+				labelHorizontalAnchor: "center",
+			    },
+			    edges: {
+				width: { defaultValue: 0.5, continuousMapper: edgeWidthMapper },
+				color: { defaultValue: "#999999", discreteMapper: edgeColorMapper },
+				opacity:0.4,
+				hoverOpacity: 1,
+				sourceArrowShape: { defaultValue: "NONE", discreteMapper: edgeSourceArrowMapper },
+				targetArrowShape: { defaultValue: "NONE", discreteMapper: edgeTargetArrowMapper },
+				labelHorizontalAnchor: "center",
+				label: { passthroughMapper: { attrName: "type" } },
+				tooltipText: { defaultValue:"<b>${type}<br />${direction}<br />${source} --- ${target}<br />${phenotype}<br />${width} citation(s)</b>", discreteMapper: toolTipMapper },
+				tooltipBackgroundColor: "#fafafa",
+			    }
+			};
+
+			// initialization options
+			var options = {
+			    // where you have the Cytoscape Web SWF
+			    swfPath: "/js/jquery/plugins/cytoscapeweb/swf/CytoscapeWeb",
+			    // where you have the Flash installer SWF
+			    flashInstallerPath: "/swf/playerProductInstall"
+			};
+
+	      WB.getCytoscape(function(){ 
+			// init and draw
+			var vis = new org.cytoscapeweb.Visualization(div_id, options);
+			
+			vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
+			vis.ready(function() {
+			
+			    // add a listener for when nodes and edges are clicked
+			    vis.addListener("click", "nodes", function(event) {
+				window.open(event.target.data.link);
+			    });
+			  /* Should be disabled until interactions are merged
+			    vis.addListener("click", "edges", function(event) {
+				window.open(event.target.data.link);
+			    }); */ 
+			});
+			
+			$jq('.cyto_panel').change(function(){
+			      var direction = $jq("#cyto_panel_direction option:selected").val();
+			      var inter_type = $jq("#cyto_panel_type option:selected").val();
+			      var nearby = $jq("#cyto_panel_nearby option:selected").val();
+
+			      if(direction ==0 && inter_type==0 && nearby==0){
+					//vis.removeFilter("edges",true);
+					vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);
+			      }else{
+				  vis.filter("edges", function(edge) {
+					if(direction !=0 && inter_type!=0 && nearby!=0) {
+					    return edge.data.type == inter_type && edge.data.direction == direction && edge.data.nearby == 0;
+					}else if(direction !=0 && nearby!=0){
+					    return edge.data.direction == direction && edge.data.nearby == 0  && edge.data.type != "No_interaction";
+					}else if(direction !=0 && inter_type!=0){
+					    return edge.data.type == inter_type;
+					}else if(direction !=0){
+					    return edge.data.direction == direction && edge.data.type != "No_interaction";
+					}else if(inter_type !=0 && nearby!=0){
+					    return  edge.data.type == inter_type && edge.data.nearby == 0;
+					}else if(nearby != 0){
+					    return edge.data.nearby == 0 && edge.data.type != "No_interaction";
+					}else{
+					    return edge.data.type == inter_type;
+					}
+				    }, true);
+			      }
+			});
+		    });
+	</script>
+[% END %]

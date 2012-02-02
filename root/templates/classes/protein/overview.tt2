@@ -1,4 +1,4 @@
-<h2 style="float:left">[% fields.corresponding_gene.data.0 ? (fields.corresponding_gene.data.0.label) : fields.name.data.label | upper%]</h2>
+<h2>[% fields.corresponding_gene.data.0 ? (fields.corresponding_gene.data.0.label) : fields.name.data.label | upper%]</h2>
 
 
 [% 
@@ -34,7 +34,8 @@ END;
    '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
    END;
 END;
- '<div class="text-width" style="clear:left">';
+
+ '<div class="description">';
 #WRAPPER $field_block title="";
 #  central_dogma;
 #END;

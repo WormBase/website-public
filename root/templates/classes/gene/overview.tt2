@@ -1,4 +1,4 @@
-<h2 style="float:left"><i>[% fields.name.data.label %]</i></h2>
+<h2><i>[% fields.name.data.label %]</i></h2>
 
 [%
 
@@ -15,9 +15,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
-        IF fields.other_names.data; 
               fields.other_names.data.join(', '); 
-        END;
    END;
 
    IF fields.classification.data.type;
@@ -43,13 +41,21 @@ WRAPPER highlight_box;
 END;
 
 # The main concise description
-'<div class="text-width" style="clear:left;">';
+'<div class="description">';
     evidence(fields.concise_description.data.evidence, 'Provisional_description', fields.concise_description.data.text);
 '</div>';
 
+IF (fields.human_disease_relevance.data.defined);
+'<h4>Human disease relevance:</h4>';
+    FOREACH obj IN fields.human_disease_relevance.data;
+        '<div class="text-width">';
+            evidence(obj.evidence,sd, obj.text);
+        '</div>';
+    END;
+END;
 
 # Structured descriptions
-IF (fields.structured_description.data.keys.size > 0);
+IF (fields.structured_description.data.defined);
    WRAPPER toggle title="Details";
     FOREACH sd IN fields.structured_description.data.keys;
       USE String(sd.replace('_', ' '));
