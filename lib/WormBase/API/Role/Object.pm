@@ -1755,12 +1755,12 @@ sub _build_status {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-    my $status = $class eq 'Protein' ? ($object->Live ? 'live' : 'history')
+    my $status = $class eq 'Protein' ? ($object->Live ? undef : 'history')
 	: (eval{$object->Status} ? $object->Status : 'unverified');
 
     return {
-        description => "current status of the $class:$object",
-        data        => $status && "$status",
+        description => "current status of the $class:$object if not Live",
+        data        => ($status eq 'Live') ? undef : $status && "$status",
     };
 }
 

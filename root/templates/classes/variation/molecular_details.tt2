@@ -1,8 +1,11 @@
 [% 
-
+      wildtype_length = 0;
+      mutant_length = 0;
 
 WRAPPER $field_block title="Variation Type" key='variation_type';
-        fields.variation_type.data.general_class.join('; ') _ ': ' _ fields.variation_type.data.physical_class FILTER lower;
+      fields.variation_type.data.general_class.join('; ');
+      IF fields.variation_type.data.physical_class; ': '; END;
+      fields.variation_type.data.physical_class FILTER lower;
 END;
 
 
@@ -14,30 +17,33 @@ END;
 WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
     FOREACH change IN fields.nucleotide_change.data;
-
+          IF fields.nucleotide_change.data.size > 1; change.type _ ': '; END;
+          label = [];
           # Let's only display deletions/insertions < 100 bp;
-           IF change.wildtype.length < 100;
+           IF change.wildtype && (change.wildtype.length < 100);
                   change.wildtype;
-           ELSE;
+                  '/';
+                  label.push(change.wildtype_label);
+           ELSIF (change.wildtype.length > 0) ;
                   change.wildtype.length _ ' bp deletion';
            END;
-           '/';
-           IF change.mutant.length < 100;
+
+           IF change.mutant && (change.mutant.length < 100);
                   change.mutant;
-           ELSE;      
+                  label.push(change.mutant_label);
+                  
+           ELSIF (change.mutant.length > 0);      
                   change.mutant.length _ ' bp insertion';
+           ELSIF !change.wildtype;
+              '(sequence unknown / unlisted)';
            END;
-           '(' _ change.wildtype_label _ '/' _ change.mutant_label _ ')' _ '<br />';
+           IF label.size > 0;
+              ' (' _ label.join('/') _ ')' _ '<br />';
+           END;
+        wildtype_length = wildtype_length + change.wildtype.length;
+        mutant_length = mutant_length + change.mutant.length;
        END;
    END;
-
-   # flanking sequences OFF: 2010.06 
-   WRAPPER $field_block title="Flanking Sequences" key="flanking_sequences";
-      '<div class="sequence-container">';
-           "5' flank -- " _ fields.flanking_sequences.data.left_flank _ '&nbsp;' _ fields.flanking_sequences.data.right_flank _ "-- 3' flank";
-     '</div>';
-   END;
-
 
    WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products";
        tags2link(fields.flanking_pcr_products.data, ', ');
@@ -59,24 +65,24 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
                 fields.polymorphism_status.data;
        END;
 
-       WRAPPER $field_block title="Assays" key="assay";
-           FOREACH assay IN fields.polymorphism_assays.data;
+       WRAPPER $field_block title="Assays" key="polymorphism_assays";
+           FOREACH a IN fields.polymorphism_assays.data.keys;
                '<h5>';
+           assay = fields.polymorphism_assays.data.$a;
 		   IF assay.assay_type.match('rflp');
 	   	      'RFLP assay';
 		   ELSE;
 		      'Sequence-only assay';
 		   END;
 	       '</h5>';
-
    	       '<table>';
-			 '<tr><td>Verified PCR product</td><td>' _ tag2link(fields.polymorphism_assays.data.$assay.pcr_product) _ '</td></tr>';
-	    		 '<tr><td>Left Oligo</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.left_oligo _ '</td></tr>';
-	    		 '<tr><td>Right Oligo</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.right_oligo _ '</td></tr>';
-			 '<tr><td>PCR conditions</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.pcr_conditions _ '</td></tr>';
-			 '<tr><td>Sequence</td><td>' _ fields.polymorphism_assays.data.$assay.pcr_product.dna _ '</td></tr>';
+			 '<tr><td>Verified PCR product:</td><td>' _ tag2link(assay.pcr_product) _ '</td></tr>';
+	    		 '<tr><td>Left Oligo:</td><td class="sequence-container">' _ assay.pcr_product.left_oligo _ '</td></tr>';
+	    		 '<tr><td>Right Oligo:</td><td class="sequence-container">' _ assay.pcr_product.right_oligo _ '</td></tr>';
+			 IF assay.pcr_conditions.dna; '<tr><td>PCR conditions:</td><td>' _ assay.pcr_product.pcr_conditions _ '</td></tr>'; END;
+			 IF assay.pcr_product.dna; '<tr><td class="sequence-container">Sequence:</td><td>' _ assay.pcr_product.dna _ '</td></tr>'; END;
 	    '</table>';
-
+           IF assay.assay_type.match('rflp');
 	    '<table>';
 	    	    '<tr><th>Source</th><th>Enzyme</th><th>Resulting Bands</th></tr>';
 		    '<tr><td>Reference strain digest</td><td>' _ assay.reference_strain_digest _ '</td>';
@@ -86,38 +92,34 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 		         '<td>' _ assay.polymorphic_strain_digest _ '</td><td>' _ assay.polymorphic_strain_bands _ '</td>';
 		    '<tr>';
 	    '</table>';
+           END;
+'<br />';
           END;
         END;
 
    # Mutation context
    WRAPPER $field_block title="Context" key="context";
-     '<div class="sequence-container">';
-            format_sequence(fields.context.data.wildtype_fragment) _  ' -- wild type<br /><br />';
-            format_sequence(fields.context.data.mutant_fragment) _  ' -- mutant';
-            '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
-     '</div>';
+      '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
+      wildtype_length = (wildtype_length > 4000) ? 0 : 1;
+      mutant_length = (mutant_length > 4000) ? 0 : 1;
 
       wildtype.sequence = fields.context.data.wildtype_full;
-      wildtype.header = fields.context.data.wildtype_header;
-      sequence(wildtype, '');
+      wildtype.header = "wild type, with 250 bp flanks";
+      sequence(wildtype, '', wildtype_length);
       mutant.sequence = fields.context.data.mutant_full;
-      mutant.header = fields.context.data.mutant_header;
-      sequence(mutant, '');
+      mutant.header =  object.name.data.label _" with 250 bp flanks";
+      sequence(mutant, '', mutant_length);
    END;
 
-   # Over-ride user preferences and suppress display of CGH fields if this isn't a CGH field
-   #IF fields.cgh_deleted_probes.data.left_flank != "";
-        WRAPPER $field_block title="CGH Deleted Probes" key="cgh_deleted_probes";
-           '<div class="sequence-container">';
-              "5' flank -- " _ fields.cgh_deleted_probes.data.left_flank _ " " _ fields.cgh_deleted_probes.data.right_flank _ "-- 3' flank";
-          '</div>';
-       END;
+  WRAPPER $field_block title="CGH Deleted Probes" key="cgh_deleted_probes";
+      '<div class="sequence-container">';
+        "5' flank -- " _ fields.cgh_deleted_probes.data.left_flank _ " " _ fields.cgh_deleted_probes.data.right_flank _ "-- 3' flank";
+    '</div>';
+  END;
 
-       WRAPPER $field_block title="Deletion Verification" key="deletion_verification";
-          fields.deletion_verification.data;
-       END;
-
-   #END;
+  WRAPPER $field_block title="Deletion Verification" key="deletion_verification";
+    fields.deletion_verification.data;
+  END;
 
    WRAPPER $field_block title="Features Affected" key="features_affected";
 
