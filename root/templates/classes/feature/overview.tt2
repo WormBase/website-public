@@ -5,11 +5,6 @@
 
 WRAPPER highlight_box;
 
-  taxonomy;
-
-  WRAPPER $field_block title="WormBase ID";
-       fields.name.data.id;
-  END;
 
 END;
 
