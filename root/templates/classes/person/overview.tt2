@@ -19,9 +19,6 @@ WRAPPER highlight_box;
           # fields.fax.data;
    # END;
 
-   WRAPPER $field_block title="WormBase ID";
-         fields.name.data.id;
-   END;
 
 END;
 
