@@ -161,7 +161,7 @@ sub variation_type {
         push @types,'Allele';
     }
 
-    my $physical_type = $object->Type_of_mutation; # what about text?
+    my $physical_type = join('/', $object->Type_of_mutation); # what about text?
     if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
         $physical_type = 'Transposon insertion';
     }
@@ -614,35 +614,24 @@ sub strains {
     my @data;
     my %count;
     foreach ($object->Strain) {
-	my @genes = $_->Gene;
-	my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
-	
-	my $packed = $self->_pack_obj($_);
-	
-	# All of the counts can go away if
-	# we discard the venn diagram.
-	push @{$count{total}},$packed;
-	push @{$count{available_from_cgc}},$packed if $cgc;
-	
-	if (@genes == 1 && !$_->Transgene){
-	    push @{$count{carrying_gene_alone}},$packed;
-	    if ($cgc) {
-		push @{$count{carrying_gene_alone_and_cgc}},$packed;
-	    }	    
-	} else {
-	    push @{$count{others}},$packed;
-	}       
-	
-	my $genotype = $_->Genotype;
-	push @data, { strain   => $packed,
-		      cgc      => $cgc ? 'yes' : 'no',
-		      genotype => "$genotype",
-	};
+        my @genes = $_->Gene;
+        my $cgc   = ($_->Location eq 'CGC') ? 1 : 0;
+
+        my $packed = $self->_pack_obj($_);
+        my $genotype = $_->Genotype;
+        $packed->{genotype} = $genotype && "$genotype";
+
+        if (@genes == 1 && !$_->Transgene) {
+          $cgc ? push @{$count{carrying_gene_alone_and_cgc}},$packed : push @{$count{carrying_gene_alone}},$packed;
+        } else {
+          $cgc ? push @{$count{available_from_cgc}},$packed : push @{$count{others}},$packed;
+        }
     }
     
-    return { description => 'strains carrying gene',
-	     data        => @data ? \@data : undef,
-	     count       => scalar keys %count ? \%count : undef };
+    return {
+        description => 'strains carrying this gene',
+        data       => %count ? \%count : undef,
+    };
 }
 
 
@@ -1462,7 +1451,7 @@ sub _build_tracks {
     return {
         description => 'tracks displayed in GBrowse',
         data => [ $self->_parsed_species eq 'c_elegans'
-                  ? qw(CG CANONICAL Allele TRANSPOSONS) : 'WBG' ],
+                  ? qw(CG Allele TRANSPOSONS) : 'WBG' ],
     };
 }
 
@@ -1570,6 +1559,7 @@ sub sequencing_status {
     my ($self) = @_;
     
     my $status = $self ~~ 'SeqStatus';
+    $status =~ s/_/ /g;
     return {
         description => 'sequencing status of the variation',
         data        => $status && "$status",
@@ -1845,14 +1835,14 @@ sub context {
     my ($wt,$mut,$wt_full,$mut_full,$debug)  = $self->_build_sequence_strings;
     return {
         description => 'wildtype and mutant sequences in an expanded genomic context',
-        data        => {
+        data        => ($wt || $wt_full || $mut || $mut_full) ? {
             wildtype_fragment => $wt,
             wildtype_full     => $wt_full,
             mutant_fragment   => $mut,
             mutant_full       => $mut_full,
             wildtype_header   => "Wild type N2, with $flank bp flanks",
             mutant_header     => "$name with $flank bp flanks"
-        },
+        } : undef,
     };
 }
 
@@ -2653,7 +2643,7 @@ sub polymorphism_assays {
 
         my $dna;
 
-        if (my $pcr_node = first {$_ eq $pcr_product} $sequence->PCR_product) {{
+        if ($sequence && (my $pcr_node = first {$_ eq $pcr_product} $sequence->PCR_product)) {
             my ($start, $stop) = $pcr_node->row or last;
             my $gffdb = $self->gff_dsn or last;
             my ($segment) = eval { $gffdb->segment(
@@ -2664,11 +2654,11 @@ sub polymorphism_assays {
 
             $dna = $segment->dna;
 	    }
-	}
+	
         $pcr_data{pcr_product} = $self->_pack_obj(
             $pcr_product, undef, # let _pack_obj resolve label
             left_oligo     => $left_oligo && "$left_oligo",
-            right_oligo    => $right_oligo && "right_oligo",
+            right_oligo    => $right_oligo && "$right_oligo",
             pcr_conditions => $pcr_conditions && "$pcr_conditions",
             dna            => $dna && "$dna",
         );

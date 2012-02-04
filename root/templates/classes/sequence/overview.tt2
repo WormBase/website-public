@@ -4,14 +4,9 @@
 
 WRAPPER highlight_box;
 
-   taxonomy;
 
    WRAPPER $field_block title="Type" key="sequence_type";
 	fields.sequence_type.data;
-   END;
-
-   WRAPPER $field_block title="Download";
-   '<a href="' _ c.uri_for('/rest/widget', 'sequence', fields.name.data.id, 'sequences') _ '" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
    END;
 
 END;

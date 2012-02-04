@@ -3,16 +3,11 @@
 [% 
 
 WRAPPER highlight_box;
- 
-   taxonomy;
 
    WRAPPER $field_block title='Type' key='type';
       fields.type.data;
    END;
 
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
 
 END;
 
