@@ -267,7 +267,8 @@ END;
   [% IF c.check_user_roles('curator') OR c.check_user_roles('admin') %]
 
     <div class="field field-curator" id="[% title FILTER html %]">
-         <div class="field-title">
+         <div class="curator-title">This content is only visible to curators.</div>
+         <div class="curator-field-title">
                   [% IF title ; title _ ': '; END; %]
          </div>
 
