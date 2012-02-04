@@ -1,0 +1,33 @@
+[% 
+
+   IF c.check_user_roles('admin');
+     
+      'To do:
+
+
+    # Get the status of our server pool
+    # This is entirely dependent on our installation.
+
+    # Get a list of servers
+    # For each server, check (possibly using capistrano)
+    # - available disk space
+    # - starman status
+    # - cpu load
+    # - memory usage
+
+    # Would be nice to create RRD of each, too.
+   ';
+      '<fieldset id="server-status">
+       <legend>Apache Status</legend>
+     Other links:
+       webmaster tools
+       analytics
+
+
+       </fieldset>';
+
+   ELSE;
+      'This is the admin-only system status widget.';
+   END;
+
+%]
