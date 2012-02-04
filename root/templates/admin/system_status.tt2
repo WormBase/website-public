@@ -1,10 +1,32 @@
 [% 
 
    IF c.check_user_roles('admin');
+     
+      '<em>Recalculated on five minute interals. Values only valid when viewed on the production instance.</em>';
 
       '<fieldset id="server-status">
-        <legend>Server Status</legend>
+        <legend>Nginx Status</legend>
 
+            <h2>Load/connections per day</h2>
+                <img src="http://www.wormbase.org/stats/nginx/img/load-day.png">
+                <img src="http://www.wormbase.org/stats/nginx/img/connections-day.png">
+
+            <h2>Load per week</h2>
+                <img src="http://www.wormbase.org/stats/nginx/img/load-week.png">
+                <img src="http://www.wormbase.org/stats/nginx/img/connections-week.png">
+
+            <h2>Load per month</h2>
+                <img src="http://www.wormbase.org/stats/nginx/img/load-month.png">
+                <img src="http://www.wormbase.org/stats/nginx/img/connections-month.png">
+
+            <h2>Load per year</h2>
+               <img src="http://www.wormbase.org/stats/nginx/img/load-year.png">
+               <img src="http://www.wormbase.org/stats/nginx/img/connections-year.png">
+       </fieldset>';
+
+      '<fieldset id="server-status">
+          <legend>Apache Status</legend>
+	   <a href="http://50.19.229.229/stats/apache-ec2">
        </fieldset>';
 
    ELSE;

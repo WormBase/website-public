@@ -4,7 +4,7 @@
     breadcrumbs.push('<span>Developers</span>');
     title = breadcrumbs.join(" &raquo; ");
     userguide_page(title = title,
-    		   widget_list => [ { overview = 'Overview'         },
+    		   widget_list => [ { overview = 'Overview'         },		   	            
 		   	            { architecture = 'Architecture' },
 				    { data_model   = 'Data Model'   },
 				    { apis         = 'APIs'         },

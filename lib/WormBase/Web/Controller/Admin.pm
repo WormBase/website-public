@@ -81,6 +81,17 @@ sub system_status :Path("system_status") {
 } 
 
 
+# Fetch the status of our reverse proxy.
+# This is entirely dependent on our installation
+# and really only applicable to production.
+# RRD graphs of the proxy
+sub status_proxy :Path("status_proxy") {
+    my ( $self, $c ) = @_;
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = 'admin/status_proxy.tt2';
+} 
+
+
 
 
 

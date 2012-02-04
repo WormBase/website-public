@@ -30,6 +30,12 @@
                       href  =  c.uri_for('/admin','system_status'),
                       type  = "me"
                     });
+	widgets.push({ id    = 'status_proxy',
+         	      title = 'Status (Proxy)',
+                      href  =  c.uri_for('/admin','status_proxy'),
+                      type  = "me"
+                    });
+
     %]
   [% END %]
  
