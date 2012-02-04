@@ -61,10 +61,23 @@ sub registered_users :Path("registered_users") {
     }  
 } 
 
-sub system_status :Path("system_status") {
+
+# Create a quick system status overview with admin-level information 
+# (ie include names of backend servers)
+sub status_overview :Path("status_overview") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
-    $c->stash->{template} = 'admin/system_status.tt2';
+    $c->stash->{template} = 'admin/status_overview.tt2';
+
+    # Display a general table of all of our servers.
+    # server, uptime, 12, 24, 48, 72 hour status  
+} 
+
+
+sub status_servers :Path("status_servers") {
+    my ( $self, $c ) = @_;
+    $c->stash->{noboiler} = 1;
+    $c->stash->{template} = 'admin/status_servers.tt2';
 
     # Get the status of our server pool
     # This is entirely dependent on our installation.
