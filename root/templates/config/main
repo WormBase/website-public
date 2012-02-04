@@ -93,7 +93,7 @@
 
         "<a href=\"$url\" class=\"$class-link\" title=\"$title\">$text</a>";
 
-        IF (class=='sequence' || class=='protein' || class=='transcript' );
+        IF downloadable(class);
           "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ "' class='button ui-corner-all tip-simple slink' data-class='$class' tip='download'>";
             "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
           "</a>";
@@ -104,6 +104,13 @@
     MACRO searchlink(class, id, text) BLOCK;
        url = c.uri_for('/search', class, id);
        "<a href=\"$url\" class=\"$class-link\">$text</a>";
+    END;
+
+    # return true for a downloadable object
+    MACRO downloadable(class) BLOCK;
+      class = (class || object.name.data.class) | lower;
+      ret = (class=='sequence' || class=='protein' || class=='transcript' ) ? 1 : 0;
+      ret;
     END;
 
 
@@ -265,9 +272,9 @@
 
 #  Add params to have options on what to markup.  ie. omim, locus...
     MACRO markup(text, omim, locus, var, link) BLOCK;
-      IF ((locus || 1) == 1); text = markup_locus(text, (link || 0)); END;
-      IF ((var || 1) == 1); text = markup_var(text, (link || 0)); END;
-      IF ((locus || 1) == 1); text = markup_omim(text); END;
+      UNLESS (locus == 0); text = markup_locus(text, (link || 0)); END;
+      UNLESS (var == 0); text = markup_var(text, (link || 0)); END;
+      UNLESS (omim == 0); text = markup_omim(text); END;
       text;
     END;
 

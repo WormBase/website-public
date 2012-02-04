@@ -57,6 +57,7 @@ BEGIN {
             GO_term      => 'Term',
             Motif        => 'Title',
             Protein      => 'Gene_name',
+            Rnai         => 'History_name',
         },
         laboratory => {
             Gene_class  => 'Designating_laboratory',

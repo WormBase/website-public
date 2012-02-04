@@ -3,27 +3,24 @@
 [% 
   
   WRAPPER highlight_box;
-
-     WRAPPER $field_block title="";
-         taxonomy;
-     END;
-
-   END;
-
    other_names;
+  END;
 
+
+
+  '<div class="description">';
    WRAPPER $field_block title="Genotype";
        # fields.genotype.data;
        # Instead, let's mark up the genotype string.
 
        genotype=fields.genotype.data;
-       markup=[fields.genes.data,
+       linking=[fields.genes.data,
 		fields.alleles.data,
 		fields.rearrangements.data,
 	        fields.clones.data,
 	        fields.transgenes.data];
 
-       FOREACH array IN markup;           
+       FOREACH array IN linking;           
       	   FOREACH entry IN array;
 	       IF genotype.match(entry.label);
 	           genotype=genotype.replace(entry.label,tag2link(entry));
@@ -34,49 +31,9 @@
        genotype;
    
     END;
+
 %]
 
-
-[%# The "Contained" entries are integrated into the Genotype string.
-
- WRAPPER $field_block title="Contains";
-    WRAPPER $field_block title="Genes" key="genes";
-         FOREACH gene IN fields.genes.data;
-             tag2link(gene);
-	     '<br />';
-	 END;
-    END;
-
-    WRAPPER $field_block title="Alleles" key="alleles";
-         FOREACH allele IN fields.alleles.data;
-             tag2link(allele);;
-	     '<br />';
-	 END;
-    END;
-
-    WRAPPER $field_block title="Rearrangements" key="rearrangements";
-         FOREACH rearrangement IN fields.rearrangements.data;
-             tag2link(rearrangement);
-	     '<br />';
-	 END;
-    END;
-
-    WRAPPER $field_block title="Clones" key="clones";
-         FOREACH clone IN fields.clones.data;
-             tag2link(clone);
-	     '<br />';
-	 END;
-    END;
-
-    WRAPPER $field_block title="Transgenes" key="transgenes";
-         FOREACH gene IN fields.transgenes.data;
-             tag2link(gene);
-	     '<br />';
-	 END;
-    END;
-
-END;
- %]
 
 [% 
 
@@ -84,7 +41,7 @@ END;
         tag2link(fields.reference_strain.data);
    END;
 
-   WRAPPER $field_block title="Properties";
+  # WRAPPER $field_block title="Properties";
          WRAPPER $field_block title="Mutagen" key="mutagen";
              fields.mutagen.data;
          END;
@@ -97,9 +54,9 @@ END;
              fields.throws_males.data;
          END;
 
-   END;
+  # END;
 
-
+  '</div>';
    phenotypes;
 
    phenotypes_not_observed;

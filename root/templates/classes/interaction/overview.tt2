@@ -4,13 +4,9 @@
 
 WRAPPER highlight_box;
 
- WRAPPER $field_block title="type" key="type";
+  WRAPPER $field_block title="type" key="type";
     fields.type.data;
-END;
-
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
+  END;
 
 END;
 

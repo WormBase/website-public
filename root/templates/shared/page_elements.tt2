@@ -9,7 +9,7 @@
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
   <div class="evidence result">
-    [% markup(text) %]
+    [% markup("$text"); %]
     [% id = id || 0; %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
@@ -55,17 +55,17 @@ getBox();
     <div class="toggle [% IF lazy; 'load-toggle'; END; %]" 
          [% IF href; ' href="' _ href _ '"'; END; %]
          [% IF id; ' id="' _ id _ '"'; END; %]>
-      <span style="float:left" class="ui-icon ui-icon-triangle-1-e"></span>
+      <span style="float:left" class="ui-icon ui-icon-triangle-1-[% open ? 's' : 'e' %]"></span>
       [% title %]
     </div>
-    <div class="returned [% toggle_class %]">
+    <div class="returned [% toggle_class %]" [% IF open; 'style="display:block"'; END;%]>
         [% content %]
     </div>
 [% END %]
 
 
 
-[% MACRO linkUser(user,suppress_social) BLOCK;
+[% MACRO linkUser(user) BLOCK;
     IF (user.wbid && user.wb_link_confirm);
        text2link('person', user.wbid, user.username);
     ELSIF user.username;
@@ -213,7 +213,10 @@ END;
 [%# The Floating Box on the overview widget %]
 [% BLOCK highlight_box %]
     <div class="detail-box ui-corner-all">
+       [% taxonomy %]
        [% content %]
+       [% wb_id_field %]
+       [% download_field %]
     </div>
 [% END %] 
 
@@ -587,11 +590,8 @@ END;
 
 
 [% MACRO other_names BLOCK; 
-      WRAPPER $field_block title="Other names" key="other_names";
-           FOREACH name IN fields.other_names.data;
-              tag2link(name);
-              "<br /";
-           END;
+      WRAPPER $field_block title="Other names" key="other_names";;
+          fields.other_names.data.join(', ');
       END;
 END;
 %]
@@ -785,7 +785,7 @@ END;
    contents = '';
    IF fields.remarks.data.0.text.defined;
       FOREACH obj IN fields.remarks.data;
-        contents = contents _ evidence(obj.evidence,sd, obj.text);
+        contents = contents _ evidence(obj.evidence, '', obj.text);
       END;
    ELSE;
       contents = contents _ markup(fields.remarks.data.join('<br />'),0);
@@ -833,6 +833,25 @@ END;
 END;
 %]
 
+[% MACRO wb_id_field BLOCK; 
+   WRAPPER $field_block title="WormBase ID";
+          fields.name.data.id;
+   END;
+END;
+%]
+
+[% MACRO download_field BLOCK;
+   class = (ACE2WB_MAP.$class || class) FILTER lower;
+   IF downloadable(class);
+   WRAPPER $field_block title="Download";
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   END;
+  END;
+END;
+%]
+
+
+
 [% MACRO format_sequence(seq) BLOCK;
     format_seq = "";
     FOREACH line IN seq.chunk(80);
@@ -845,7 +864,7 @@ END;
 END;
 %]
 
-[% MACRO sequence(field_key, field_title) BLOCK; 
+[% MACRO sequence(field_key, field_title, open_toggle) BLOCK; 
     UNLESS field_key.defined; field_key = 'sequence'; END;
 
     IF fields.$field_key.data.defined;
@@ -885,7 +904,7 @@ END;
           '<div style="position:relative;width:44em;">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
-            WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container";
+            WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=open_toggle;
               sequences.$obj.seq;
             END;
           END;
@@ -895,6 +914,40 @@ END;
     END;
 END;
 %]
+
+
+[% MACRO strains BLOCK;
+     venn("Carrying " _ tag2link(object.name.data) _ " alone", 
+                                         fields.strains.data.carrying_gene_alone,
+            "Available from the CGC",    fields.strains.data.available_from_cgc,
+            "",                          fields.strains.data.carrying_gene_alone_and_cgc,
+            "Other strains",             fields.strains.data.others);
+
+    '<br />';
+
+    rows = [];
+    FOREACH type IN fields.strains.data.keys.sort;
+      cgc = (( type == 'available_from_cgc') || (type == 'carrying_gene_alone_and_cgc')) ? 1 : 0;
+      FOREACH strain IN fields.strains.data.$type;
+      rows.push( { strain  = tag2link(strain),
+                  genotype        = strain.genotype,
+                  cgc        = cgc ? external_link('cgc', 'yes', strain.id) : 'no',
+                } );
+      END;
+    END;
+
+       build_data_table(order=['strain','genotype','cgc'],
+                         columns={ strain    => 'Strain',
+                              cgc       => 'Available<br /> from CGC?',
+                          genotype  => 'Genotype',
+                                 },
+                         passed_data=rows);
+  END;
+%]
+
+
+
+
 
 [%# 
     #######################################################
@@ -1115,14 +1168,16 @@ END;
   add_static_widgets;
 
   # Add tools.
-  IF section_fetch.tools.keys.size || 0 > 0;
+  #IF section_fetch.tools.keys.size || 0 > 0;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
     IF object; tool_list.unshift('tree'); END;
 
 
-    widgets.push({ title="Tools" type="title"}); 
+    IF tool_list.size > 0; 
+      widgets.push({ title="Tools" type="title"}); 
+    END;
     FOREACH widget_name IN tool_list;
         widget = c.config.sections.tools.$widget_name;
         # What context should this widget be displayed in ?
@@ -1141,7 +1196,7 @@ END;
       
         widgets.push(w);
     END;
-  END;
+  #END;
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;
 %]
