@@ -98,7 +98,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
         END;
 
    # Mutation context
-   WRAPPER $field_block title="Context" key="context";
+   WRAPPER $field_block title="Sequence" key="context";
       '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
       wildtype_length = (wildtype_length > 4000) ? 0 : 1;
       mutant_length = (mutant_length > 4000) ? 0 : 1;
