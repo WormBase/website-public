@@ -1156,17 +1156,18 @@ sub anatomic_expression_patterns {
     my $object = $self->object;
     my %data_pack;
     
-    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expr}, "$object.jpg");
-    $data_pack{"image"}=catfile($self->pre_compile->{gene_expr}, "$object.jpg") if (-e $file && ! -z $file);
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
+    $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
                    $object->Expr_pattern;
 
     foreach my $ep (@eps) {
-        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expr_object}, "$ep.jpg");
-        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expr_object}, "$ep.jpg")  if (-e $file && ! -z $file);
+	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
+        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
 #         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
