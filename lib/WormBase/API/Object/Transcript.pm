@@ -214,7 +214,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/sequence_type
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/sequence_type
 
 B<Response example>
 
@@ -273,7 +273,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/identity
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/identity
 
 B<Response example>
 
@@ -370,7 +370,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/corresponding_gene
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/corresponding_gene
 
 B<Response example>
 
@@ -429,7 +429,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/matching_transcript
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_transcript
 
 B<Response example>
 
@@ -487,7 +487,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/matching_cds
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_cds
 
 B<Response example>
 
@@ -545,7 +545,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/corresponding_protein
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/corresponding_protein
 
 B<Response example>
 
@@ -603,7 +603,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/matching_cdnas
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_cdnas
 
 B<Response example>
 
@@ -662,7 +662,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/transcripts
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/transcripts
 
 B<Response example>
 
@@ -832,7 +832,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/available_from
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/available_from
 
 B<Response example>
 
@@ -896,7 +896,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/analysis
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/analysis
 
 B<Response example>
 
@@ -976,7 +976,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/orfeome_assays
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/orfeome_assays
 
 B<Response example>
 
@@ -1052,7 +1052,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/microarray_assays
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/microarray_assays
 
 B<Response example>
 
@@ -1122,7 +1122,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/source_clone
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/source_clone
 
 B<Response example>
 
@@ -1191,7 +1191,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/print_blast
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/print_blast
 
 B<Response example>
 
@@ -1254,7 +1254,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/print_sequence
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/print_sequence
 
 B<Response example>
 
@@ -1424,7 +1424,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/print_homologies
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/print_homologies
 
 B<Response example>
 
@@ -1554,7 +1554,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/print_feature
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/print_feature
 
 B<Response example>
 
@@ -1568,31 +1568,6 @@ sub print_feature {
     my ($self) = @_;
     my $s = $self->object;
     my %hash;
-
-
-    if (my @exons = $s->get('Source_Exons')) {
-        my ($start,$orientation,$parent) = $self->_get_parent_coords($s);
-
-        # This is just 1 or -1. Should have better formatting.
-        #    print p("orientation is $orientation");
-        my $index = 1;
-        my $last;
-        my @rows;
-        foreach (@exons) {
-            my ($es,$ee) = $_->row;
-            my $as = $orientation >= 0 ? $start+$es-1 : $start-$es+1;
-            my $ae = $orientation >= 0 ? $start+$ee-1 : $start-$ee+1;
-            my $last = $ee;
-
-            push @rows, {   no=>$index++,
-                            start=>$es,
-                            end=>$ee,
-                            ref_start=>$as,
-                            ref_end=>=> $ae,
-                        };
-        }
-        $hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation} if @exons;
-    }
 
 
     my @feature = $s->get('Feature');
@@ -1616,6 +1591,73 @@ sub print_feature {
     }
     return { description => 'features contained within the sequence',
          data        => keys %hash ? \%hash : undef };
+}
+
+
+=head3 predicted_exon_structure
+
+This method will return a data structure listing
+the exon structure contained within the sequence.
+
+=over
+
+=item PERL API
+
+ $data = $model->predicted_exon_structure();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/predicted_exon_structure
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub predicted_exon_structure {
+    my ($self) = @_;
+    my $s = $self->object;
+
+    my $index = 1;
+    my @exons = map { my ($es,$ee) = $_->row; 
+                      { no=>$index++,
+                        start=>$es,
+                        end=>$ee,}; 
+                    } $s->get('Source_Exons');
+
+    return { description => 'predicted exon structure within the sequence',
+             data        => @exons ? \@exons : undef };
 }
 
 

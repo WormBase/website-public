@@ -1608,7 +1608,7 @@ sub _build_remarks {
 
     @remarks = grep { !/phenobank/ } @remarks if($class =~ /^RNAi$/i);
 
-    @remarks = map {"$_"} @remarks; # stringify them
+    @remarks = map { { text => "$_", evidence =>$self->_get_evidence($_)} } @remarks; # stringify them
 
     # TODO: handling of Evidence nodes
     return {
@@ -1755,12 +1755,12 @@ sub _build_status {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-    my $status = $class eq 'Protein' ? ($object->Live ? 'live' : 'history')
+    my $status = $class eq 'Protein' ? ($object->Live ? undef : 'history')
 	: (eval{$object->Status} ? $object->Status : 'unverified');
 
     return {
-        description => "current status of the $class:$object",
-        data        => $status && "$status",
+        description => "current status of the $class:$object if not Live",
+        data        => ($status eq 'Live') ? undef : $status && "$status",
     };
 }
 

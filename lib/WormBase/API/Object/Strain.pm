@@ -754,7 +754,7 @@ sub made_by {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Made_by;
-    my $name = $made_by->Standard_name;
+    my $name = $made_by->Standard_name if $made_by;
     return { description => 'the person who built the strain',
 	     data        => $made_by ? $self->_pack_obj($made_by, "$name") : undef };
 }

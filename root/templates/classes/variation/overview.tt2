@@ -1,39 +1,33 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2 class="locus">[% fields.name.data.label %]</h2>
             
 [%
 
 WRAPPER highlight_box;
-
-   taxonomy;
-
    WRAPPER $field_block title="Status" key="status";       
         fields.status.data;
    END;
 
-   WRAPPER $field_block title="WormBase ID";
-          fields.name.data.id;
-   END;
+  WRAPPER $field_block title="Gene" key="corresponding_gene";
+          tag2link(fields.corresponding_gene.data);
+  END;
 
+  other_names;
 END;
 
-'<div class="text-width" style="clear:left">';
-WRAPPER $field_block title="Variation Type" key='variation_type';
-        fields.variation_type.data.general_class.join('; ');
-	': ';
-	fields.variation_type.data.physical_class FILTER lower;
-END;
+'<div class="description">';
 
-WRAPPER $field_block title="Gene" key="corresponding_gene";
-        tag2link(fields.corresponding_gene.data);
-END;
+    IF fields.variation_type.data.general_class.defined;
+    '<div>';
+      fields.variation_type.data.general_class.join('; ');
+      IF fields.variation_type.data.physical_class; ': '; END;
+      fields.variation_type.data.physical_class FILTER lower;
+      '<br /><br />';
+    '</div>';
+    END;
 
-
-IF fields.other_names.data.id.defined;
-     WRAPPER $field_block title="Other Names" key="other_names";
-   	  tags2link(fields.other_names.data, ', ');
-     END;
-END;
-'</div>';
 remarks(no_toggle=1);
+
+'</div>';
+
 
 %]

@@ -1,17 +1,14 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2>[% fields.name.data.label %]</h2>
 
 [%
 
 WRAPPER highlight_box;
- 
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
+
 
 END;
 
 
-'<div style="clear:left;padding:0.5em 0;">';
+'<div class="description">';
    fields.summary.data;
 '</div>';
 

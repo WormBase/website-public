@@ -68,8 +68,7 @@ has 'tracks' => (
     default => sub {
         return {
             description => 'tracks displayed in GBrowse',
-            data        => shift->_parsed_species =~ /elegans/ ?
-                           [qw(CG CANONICAL Allele RNAi)] : [qw/CG/],
+            data        => [qw/CG/],
         };
     }
 );
@@ -928,8 +927,7 @@ sub structured_description {
                   Sequence_features
                   Biological_process
                   Expression
-                  Detailed_description
-                  Human_disease_relevance);
+                  Detailed_description);
    foreach my $type (@types){
       my @objs = $self->object->$type;
       @objs = grep { "$_" ne $self->object->Concise_description } @objs if $type eq "Provisional_description";
@@ -938,6 +936,14 @@ sub structured_description {
    }
    return { description => "structured descriptions of gene function",
 	    data        =>  %ret ? \%ret : undef };
+}
+
+sub human_disease_relevance {
+    my $self = shift;
+    my @objs = map { {text=>"$_", evidence=>$self->_get_evidence($_) } } $self->object->Human_disease_relevance;
+
+    return {  description => "curated description of human disease relevance",
+              data        =>  @objs ? \@objs : undef };
 }
 
 # sub taxonomy {}
@@ -1150,17 +1156,18 @@ sub anatomic_expression_patterns {
     my $object = $self->object;
     my %data_pack;
     
-    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expr}, "$object.jpg");
-    $data_pack{"image"}=catfile($self->pre_compile->{gene_expr}, "$object.jpg") if (-e $file && ! -z $file);
+    my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{gene_expression_path}, "$object.jpg");
+    $data_pack{"image"}=catfile($self->pre_compile->{gene_expression_path}, "$object.jpg") if (-e $file && ! -z $file);
 
     # All expression patterns except Mohlers, presented elsewhere.
     my @eps = grep { !(($_->Author || '') =~ /Mohler/ && $_->MovieURL) }
                    $object->Expr_pattern;
 
     foreach my $ep (@eps) {
-        my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expr_object}, "$ep.jpg");
-        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expr_object}, "$ep.jpg")  if (-e $file && ! -z $file);
+	my $file = catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$ep.jpg");
+        $data_pack{"expr"}{"$ep"}{image}=catfile($self->pre_compile->{expression_object_path}, "$ep.jpg")  if (-e $file && ! -z $file);
         # $data_pack{"image"}{"$ep"}{image} = $self->_pattern_thumbnail($ep);
+
         my $pattern =  ($ep->Pattern(-filled=>1) || '') . ($ep->Subcellular_localization(-filled=>1) || '');
 #         $pattern    =~ s/(.{384}).+/$1.../;
 		foreach($ep->Picture) {
