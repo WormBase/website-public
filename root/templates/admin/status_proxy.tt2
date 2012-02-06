@@ -1,0 +1,37 @@
+[% 
+
+   IF c.check_user_roles('admin');
+     
+      '<p><em>This widget shows load levels of the reverse proxy, calculated at five minute intervals. Values are only valid
+           when viewed on the production instance.</em></p>';
+
+      '<h3>Load/connections per day</h3>
+           <p>
+                <img src="http://www.wormbase.org/stats/nginx/img/load-day.png">
+                <img src="http://www.wormbase.org/stats/nginx/img/connections-day.png">
+           </p>
+
+       <h3>Load per week</h3>
+           <p>
+               <img src="http://www.wormbase.org/stats/nginx/img/load-week.png">
+               <img src="http://www.wormbase.org/stats/nginx/img/connections-week.png">
+           </p>
+
+       <h3>Load per month</h3>
+           <p>           
+               <img src="http://www.wormbase.org/stats/nginx/img/load-month.png">
+               <img src="http://www.wormbase.org/stats/nginx/img/connections-month.png">
+           </p>
+
+       <h3>Load per year</h3>
+           <p>
+               <img src="http://www.wormbase.org/stats/nginx/img/load-year.png">
+               <img src="http://www.wormbase.org/stats/nginx/img/connections-year.png">
+           </p>
+       ';
+
+   ELSE;
+      'This is the admin-only system status widget.';
+   END;
+
+%]
