@@ -702,6 +702,7 @@ sub widget_GET {
     # only html
     if ( $widget =~ m/references|disease/i ) {
           $c->req->params->{widget} = $widget;
+          $c->req->params->{class} = $class;
           $c->go('search', 'search');
     }
 =pod  this is going to conflict with the hash# for widgets

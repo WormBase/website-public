@@ -71,6 +71,7 @@ requires 'HTML::Entities';                                       #
 requires 'Facebook::Graph';                                      #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
+requires 'Hash::Merge';
 #requires 'GO::Parser';                                           #
 #requires 'GO::Utils';                                            #
 #requires 'go-db-perl';                                           #

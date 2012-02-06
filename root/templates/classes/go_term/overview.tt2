@@ -1,10 +1,8 @@
-<h2 style="float:left">[% fields.name.data.label %]</h2>
+<h2>[% fields.name.data.label %]</h2>
 
 
 [% WRAPPER highlight_box %]
-	[% WRAPPER $field_block title="WormBase ID" key="name"-%] 
-		[%  fields.name.data.id %]
-	[% END %]
+
 [% END %]
 
 [% # WRAPPER $field_block title="term"-%] 

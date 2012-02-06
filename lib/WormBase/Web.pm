@@ -235,18 +235,19 @@ sub get_cache_backend { # overriding Plugin::Cache
 # Set configuration for static files
 # Force specific directories to be handled by Static::Simple.
 # These should ALWAYS be served in static mode.
+# In production, these directories are served by proxy.
 sub _setup_static {
     my $c = shift;
     $c->config(static => {
         dirs         => [qw/ css js img tmp /],
         include_path => [
             '/usr/local/wormbase/tmp','/usr/local/wormbase/shared/tmp',
-            __PACKAGE__->config->{root},__PACKAGE__->config->{static_movie_base},
-	    __PACKAGE__->config->{static_image_base},
+	    __PACKAGE__->config->{shared_html_base},
         ],
-        #   logging  => 1,
-	 
+        #   logging  => 1,	 
     });
+#            __PACKAGE__->config->{root},__PACKAGE__->config->{static_movie_base},
+
 }
 
 ##################################################

@@ -35,7 +35,7 @@ BEGIN {
         class => {     # HAS DEFAULT
             Pcr_oligo => [qw(PCR_product Oligo_set Oligo)],
             Person    => [qw(Person Author)],
-            Transcript  => [qw(CDS Transcript cds)],
+            Transcript  => [qw(CDS Transcript cds Pseudogene)],
             Rnai      => 'RNAi',
             Go_term   => 'GO_term',
         },
@@ -57,6 +57,7 @@ BEGIN {
             GO_term      => 'Term',
             Motif        => 'Title',
             Protein      => 'Gene_name',
+            Rnai         => 'History_name',
         },
         laboratory => {
             Gene_class  => 'Designating_laboratory',

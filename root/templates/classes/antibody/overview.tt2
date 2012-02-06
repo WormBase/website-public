@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.name %]</h2>
+<h2>[% fields.name.data.label %]</h2>
             
 [% 
 
@@ -8,7 +8,9 @@
 
    END;
 
-   summary;
+   '<div class="description">';
+   fields.summary.data;
+  '</div>';
 
    WRAPPER $field_block title="Gene target" key="corresponding_gene";
       tag2link(fields.corresponding_gene.data);
