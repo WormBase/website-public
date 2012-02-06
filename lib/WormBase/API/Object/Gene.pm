@@ -399,17 +399,16 @@ sub classification {
     # Protein coding?
     my @cds = $object->Corresponding_CDS;
     if (@cds) {
-	# status removed by request of KLH: 2012.01.17
-#        my $status = $cds[0]->Prediction_status ? 'confirmed' : 'unconfirmed';
-#        $data->{type} = "protein coding ($status)";
         $data->{type} = "protein coding";
     }
 
-    # Is this a non-coding RNA?
-    my @transcripts = $object->Corresponding_transcript;
-    foreach (@transcripts) {
-        $data->{type} = $_->Transcript;
-        last;
+    unless($data->{type}){
+      # Is this a non-coding RNA?
+      my @transcripts = $object->Corresponding_transcript;
+      foreach (@transcripts) {
+          $data->{type} = $_->Transcript;
+          last;
+      }
     }
 
     $data->{associated_sequence} = @cds ? 1 : 0;
