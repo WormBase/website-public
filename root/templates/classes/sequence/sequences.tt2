@@ -5,20 +5,6 @@
     (fields.print_feature.data.orientation > 0) ? '(+)' : '(-)';
   END;
 
-  WRAPPER $field_block title="Predicted Exon Structure" key="print_feature";
-  data = fields.print_feature.data.exons;
-
-
-        build_data_table( order = ['no','start','end'],
-                          columns = { no => 'Exon #',
-                                      start => 'Start',
-                                      end   => 'End'},
-                          passed_data = data.rows,
-                          key = 'predicted_exon_structure');
-
-  END;
-
-
   WRAPPER $field_block title="Predicted Genes & Transcriptional Units" key="predicted_units";
         build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
                           columns = { start => 'Start',
@@ -31,4 +17,8 @@
                           key = 'predicted_units');
   END;
 
-%] 
+  WRAPPER $field_block title="Transcripts in this region" key="transcripts";
+	tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
+  END;
+
+%]
