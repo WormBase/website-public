@@ -815,7 +815,7 @@ END;
 
 [% MACRO status BLOCK; 
       WRAPPER $field_block title="Status" key="status";
-           IF fields.status.data.defined; fields.status.data; END;
+           fields.status.data || 'Live';
       END;
 END;
 %]
