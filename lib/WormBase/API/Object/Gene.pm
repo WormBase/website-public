@@ -137,13 +137,13 @@ sub _build__phenotypes {
         foreach ($xgene->Phenotype) {
             $phenotypes{observed}{$_}{object}          //= $self->_pack_obj($_);
             push @{$phenotypes{observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
-	    push @{$phenotypes{observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
+	    push @{$phenotypes{observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($xgene->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}          //= $self->_pack_obj($_);
             push @{$phenotypes{not_observed}{$_}{supporting}{'Transgenes:'}}, $packed_xgene;
-	    push @{$phenotypes{not_observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene->{label}, evidence=>$self->_get_evidence($_)};
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Tansgenes:'}}, { text=>$packed_xgene, evidence=>$self->_get_evidence($_)};
         }
     }
 
@@ -158,13 +158,13 @@ sub _build__phenotypes {
         foreach ($allele->Phenotype) {
             $phenotypes{observed}{$_}{object}        //= $self->_pack_obj($_);
             push @{$phenotypes{observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
-	    push @{$phenotypes{observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
+	    push @{$phenotypes{observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele, evidence=>$self->_get_evidence($_)};
         }
 
         foreach ($allele->Phenotype_not_observed) {
             $phenotypes{not_observed}{$_}{object}        //= $self->_pack_obj($_);
             push @{$phenotypes{not_observed}{$_}{supporting}{'Alleles:'}}, $packed_allele;
-	    push @{$phenotypes{not_observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele->{label}, evidence=>$self->_get_evidence($_)};
+	    push @{$phenotypes{not_observed}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele, evidence=>$self->_get_evidence($_)};
         }
 
         # ?Variation /Rescued/ ...
