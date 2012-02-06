@@ -99,7 +99,11 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
 
    # Mutation context
    WRAPPER $field_block title="Sequence" key="context";
-      '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.</p>';
+      '<p class="caveat-emptor">Note: sequence is reported on the (+) strand.<br />';
+
+      '<span class="sequence-container" style="background-color:red">red</span> = mutation <br />';
+      '<span class="sequence-container" style="background-color:yellow">yellow</span> = flanking sequence <br /></p>';
+
       wildtype_length = (wildtype_length > 4000) ? 0 : 1;
       mutant_length = (mutant_length > 4000) ? 0 : 1;
 
@@ -109,6 +113,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
       mutant.sequence = fields.context.data.mutant_full;
       mutant.header =  object.name.data.label _" with 250 bp flanks";
       sequence(mutant, '', mutant_length);
+
    END;
 
   WRAPPER $field_block title="CGH Deleted Probes" key="cgh_deleted_probes";
