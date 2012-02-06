@@ -9,7 +9,11 @@
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
   <div class="evidence result">
-    [% markup(text) %]
+    [% IF text.label.defined %]
+	[% tag2link(text) %]
+    [% ELSE %]
+	[% markup(text) %]
+    [% END %]
     [% UNLESS id.defined; id =0; END %]
     <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
     [% FOREACH type IN data.keys -%] 
@@ -26,7 +30,11 @@
     </div>
   </div>
   [% ELSE %]
-    [% markup(text) %]
+    [% IF text.label.defined %]
+	[% tag2link(text) %]
+    [% ELSE %]
+	[% markup(text) %]
+    [% END %]
   [% END %]
 [% END %]
 

@@ -84,33 +84,30 @@ sub _build_type {
 	elsif (_is_gap($s)) {
 		$type = 'gap in genomic sequence -- for accounting purposes';
     }
-	elsif (eval { $s->Genomic_canonical(0) }) {
+	elsif ($s->Genomic_canonical(0)) {
 		$type = 'genomic';
     }
 	elsif ($self->_method eq 'Vancouver_fosmid') {
 		$type = 'genomic -- fosmid';
     }
-	elsif (eval { $s->Pseudogene(0) }) {
+	elsif ($s->Pseudogene(0)) {
 		$type = 'pseudogene';
     }
-	elsif (eval { $s->RNA_Pseudogene(0) }) {
-		$type = 'RNA_pseudogene';
-    }
-	elsif (eval { $s->Locus }) {
-		$type = 'confirmed gene';
-    }
-	elsif (eval { $s->Coding }) {
-		$type = 'predicted coding sequence';
-    }
+# 	elsif (eval { $s->RNA_Pseudogene(0) }) {
+# 		$type = 'RNA_pseudogene';
+#     }
+#	elsif ($s->Locus) {
+#		$type = 'confirmed gene';
+#    }
 	elsif ($s->get('cDNA')) {
 		($type) = $s->get('cDNA');
     }
 	elsif ($self->_method eq 'EST_nematode') {
 		$type   = 'non-Elegans nematode EST sequence';
     }
-	elsif (eval { $s->AC_number }) {
-		$type = 'external sequence';
-    }
+# 	elsif ($s->AC_number) {
+# 		$type = 'external sequence';
+#     }
 	elsif (eval{_is_merged($s)}) {
 		$type = 'merged sequence entry';
     }
@@ -118,11 +115,11 @@ sub _build_type {
 		$type = 'GenBank/EMBL Entry';
 		# This is going to need more robust processing to traverse object structure
     }
-	elsif (eval { $s->RNA} ) {
-		$type = eval {$s->RNA} . ' ' . eval {$s->RNA->right};
+	elsif ($s->RNA) {
+		$type = $s->RNA . ' ' . $s->RNA->right;
     }
 	else {
-		$type = eval {$s->Properties(1)};
+		$type = $s->Properties(1);
     }
     $type ||= 'unknown';
     return $type;
@@ -562,65 +559,6 @@ sub corresponding_protein {
 	     data        => @proteins ? \@proteins : undef };
 }
 
-=head3 matching_cdnas
-
-This method will return a data structure containing
-CDNAs that match the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_cdnas();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/matching_cdnas
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub matching_cdnas {
-    my ($self) = @_;
-    my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
-    return { description => 'cDNAs that match the sequence',
-	     data        => @cDNA ? \@cDNA : undef,
-    };
-}
-
 =head3 transcripts
 
 This method will return a data structure containing
@@ -745,7 +683,7 @@ sub _build_genomic_image {
     $stop  = int($stop  + 0.1*($stop-$start));
     my @segments;
     if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
-        my $gene = eval { $seq->Gene;} || $seq;
+        my $gene = $seq->Gene || $seq;
         @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
         @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
             unless @segments;	# CB discontinuity
@@ -1079,7 +1017,123 @@ sub microarray_assays {
 	};
 }
 
+=head3 pcr_products
 
+This method will return a data structure containing
+PCR products related to the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->pcr_products();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/pcr_products
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub pcr_products {
+    my $self = shift;
+    my @pcr = map { $self->_pack_obj($_) } @{$self ~~ '@PCR_product'};
+    return { description => 'PCR products for the sequence',
+	     data        => @pcr ? \@pcr : undef,
+    };
+}
+
+=head3 matching_cdnas
+
+This method will return a data structure containing
+CDNAs that match the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->matching_cdnas();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/matching_cdnas
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub matching_cdnas {
+    my ($self) = @_;
+    my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
+    return { description => 'cDNAs that match the sequence',
+	     data        => @cDNA ? \@cDNA : undef,
+    };
+}
 
 =head3 source_clone
 
@@ -1584,7 +1638,7 @@ sub print_feature {
 			my $ae = $orientation >= 0 ? $start+$ee-1 : $start-$ee+1;
 			my $last = $ee;
 
-			push @rows, {	no=>$index++,
+			push @rows, {   no=>$index++,
 							start=>$es,
 							end=>$ee,
 							ref_start=>$as,
