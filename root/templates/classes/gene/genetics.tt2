@@ -58,7 +58,7 @@
 	        	              cgc       => 'Available<br /> from CGC?',
 		                  genotype  => 'Genotype',
                                  },
-                         passed_data=rows);
+                         passed_data=rows, key='strains');
    END;
 
 %]
