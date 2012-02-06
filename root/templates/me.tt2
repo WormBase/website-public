@@ -36,7 +36,7 @@
                       type  = "me"
                     });
        widgets.push({ id    = 'status_servers',
-         	      title = 'Status (Overview)',
+         	      title = 'Status (Servers)',
                       href  =  c.uri_for('/admin','status_servers'),
                       type  = "me"
                     });

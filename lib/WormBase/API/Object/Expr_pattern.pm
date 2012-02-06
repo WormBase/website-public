@@ -210,8 +210,8 @@ sub expression_image {
     my $object = $self->object;
 
 	my $data;
-	my $file = File::Spec->catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expr_object}, "$object.jpg");
-	$data = File::Spec->catfile($self->pre_compile->{expr_object},"$object.jpg") if (-e $file && !-z $file);
+	my $file = File::Spec->catfile($self->pre_compile->{image_file_base},$self->pre_compile->{expression_object_path}, "$object.jpg");
+	$data = File::Spec->catfile($self->pre_compile->{expression_object_path},"$object.jpg") if (-e $file && !-z $file);
 
 	return {
 		description => 'Image of the expression pattern',
