@@ -473,8 +473,11 @@ sub _get_evidence {
           } elsif ($type eq 'Accession_evidence') {
               my ($database,$accession) = $evidence->row;
               if(defined $accession && $accession) {
+              if($accession =~ m/\D*\:(\d*)$/){
+                $accession = $1;
+              }
               ($evidence,$class) = ($accession,$database);
-              $label = "$accession";
+              $label = "$database:$accession";
               }else {
                 next;
               }     
