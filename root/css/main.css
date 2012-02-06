@@ -1882,7 +1882,12 @@ div.field-content {
 }
 
 /* Curator specific fields */
-div.field-curator {
+div.curator-title {
+  font-size:1.1em;
+  font-style:italic;
+}
+
+div.curator-field-title {
   margin:1em;
   padding:1em;
   background:#CCFFFF;

@@ -25,11 +25,24 @@
                       href  =  c.uri_for('/admin','registered_users'),
                       type  = "me"
                     });
-	widgets.push({ id    = 'system_status',
-         	      title = 'System Status',
-                      href  =  c.uri_for('/admin','system_status'),
+       widgets.push({ id    = 'status_overview',
+         	      title = 'Status (Overview)',
+                      href  =  c.uri_for('/admin','status_overview'),
                       type  = "me"
                     });
+       widgets.push({ id    = 'status_proxy',
+         	      title = 'Status (Proxy)',
+                      href  =  c.uri_for('/admin','status_proxy'),
+                      type  = "me"
+                    });
+       widgets.push({ id    = 'status_servers',
+         	      title = 'Status (Overview)',
+                      href  =  c.uri_for('/admin','status_servers'),
+                      type  = "me"
+                    });
+
+
+
     %]
   [% END %]
  
