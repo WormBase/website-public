@@ -107,8 +107,8 @@
 
          omim     = { description = 'OMIM: Online Mendelian Inheritance in Man'
                   maintainer  = 'info@ncbi.nlm.nih.gov'
-                  base        = 'http://www.ncbi.nlm.nih.gov/omim/'
-                  search      = 'http://www.ncbi.nlm.nih.gov/omim/%s'
+                  base        = 'http://www.omim.org'
+                  search      = 'http://www.omim.org/entry/%s'
                 }
 
 
