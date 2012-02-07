@@ -125,6 +125,7 @@ function updateOneOption(cloneArray, parentElement, optionCriterion, criterion) 
     }
 
     // If no option is selected in the new options, select the first one
+    // This should default to C. elegans
     if (!numberOptionsSelected && parentElement.options.length > 0) {
        parentElement.options[0].selected = true;
     }
