@@ -54,22 +54,23 @@ has 'blast_databases' => (
 					$species);
 		if (-e "$blast_dir/genomic.fa") {
 		    push @{$data->{genomic}},{ name     => join('_',$version,$species,'genomic.fa'),
-					       symbolic => "$symbolic ($version) genome",
+					       symbolic => "$symbolic genome ($version)",
 					       location => catfile($blast_dir, $species, 'genomic.fa'),
 		    };
 		}
 		if (-e "$blast_dir/peptide.fa") {
 		    push @{$data->{protein}},{ name     => join('_',$version,$species,'peptide.fa'),
-					       symbolic => "$symbolic ($version) proteins",
+					       symbolic => "$symbolic proteins ($version)",
 					       location => catfile($blast_dir, $species, 'peptide.fa'),
 		    };
 		}
-		if (-e "$blast_dir/genes.fa") {
-		    push @{$data->{genes}},{ name     => join('_',$version,$species,'genes.fa'),
-					     symbolic => "$symbolic ($version) genes",
-					     location => catfile($blast_dir, 'genes.fa'),
-		    };
-		}
+		# These aren't actually genes but genomic clones. Removing for now.
+#		if (-e "$blast_dir/genes.fa") {
+#		    push @{$data->{genes}},{ name     => join('_',$version,$species,'genes.fa'),
+#					     symbolic => "$symbolic ($version) genes",
+#					     location => catfile($blast_dir, 'genes.fa'),
+#		    };
+#		}
 		if (-e "$blast_dir/ests.fa") {
 		    push @{$data->{ests}},{ name     => join('_',$version,$species,'ests.fa'),
 					    symbolic => "$symbolic ($version) ESTs",
