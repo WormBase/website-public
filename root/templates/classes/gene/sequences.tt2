@@ -3,20 +3,20 @@ IF fields.gene_models.data;
 
     IF fields.gene_models.data.0.keys.size > 3; 
         build_data_table( order = ['model', 'length_unspliced','type', 'cds', 'length_spliced','protein','length_protein'],
-                          columns = { model => 'Primary<br />Sequence ID',
+                          columns = { model => 'Transcript',
                                       type => 'Type',
-                                      length_spliced   => 'Coding<br />Transcript<br />Length (nt)',
-                                      length_unspliced => 'Sequence<br />Length (nt)',
-                                      cds => 'Coding<br />Transcript<br />(CDS)',
+                                      length_spliced   => 'Coding<br />Sequence<br />Length (nt)',
+                                      length_unspliced => 'Transcript<br />Length (nt)',
+                                      cds => 'Coding<br />Sequence<br />(CDS)',
                                       protein => 'Protein',
                                       length_protein => 'Protein<br />Length (aa)'},
                           passed_data = fields.gene_models.data,
                           key = 'gene_models_constructed' );
     ELSE;
         build_data_table( order = ['model','length_unspliced','type'],
-                          columns = { model => 'Primary<br />Sequence ID',
+                          columns = { model => 'Transcript',
                                       type => 'Type',
-                                      length_unspliced => 'Sequence<br />Length (nt)'},
+                                      length_unspliced => 'Transcript<br />Length (nt)'},
                           passed_data = fields.gene_models.data,
                           key = 'gene_models_constructed' );
     END;
