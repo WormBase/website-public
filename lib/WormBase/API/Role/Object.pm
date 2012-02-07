@@ -1970,7 +1970,9 @@ sub ace_dsn {
 }
 
 
-
+# No longer using NFS because of piss-poor performance.
+# So I'll need to associate a back end node with the dynamic image.
+# Is this ONLY used by blast_blat?
 sub tmp_image_dir {
     my $self = shift;
 

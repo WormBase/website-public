@@ -44,6 +44,7 @@
     <div class="footer-column">
        <div class="footer-title">Community</div>
         <ul>
+          <li><a target="_blank" href="http://www.wormbook.org/">WormBook</a></li>
           <li><a target="_blank" href="http://forums.wormbase.org">Forum</a></li>
           <li><a target="_blank" href="http://blog.wormbase.org">Blog</a></li>	  
           <li><a target="_blank" href="http://twitter.com/wormbase">Twitter</a></li>
