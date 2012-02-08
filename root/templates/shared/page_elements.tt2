@@ -421,12 +421,6 @@ END;
 				FOREACH item IN cell.$key;
 				    evidence(item.evidence,table_name _ index, item.text, 'details');
 				END;
-			    ELSIF cell.$key.first.reference.defined;
-				FOREACH item IN cell.$key;
-				    obj = tag2link(item.obj);
-				    ref = tag2link(item.reference);
-				    "$obj($ref)<br />";
-				END;
 			    ELSE;
 				tags2link(cell.$key);
 			    END;
@@ -434,7 +428,15 @@ END;
 				'<br />';
 			    END;
 			ELSE;
-			    tags2link(cell.$key, '<br />', key);
+			    IF cell.$key.first.evidence.defined;
+				WRAPPER toggle title=cell.$key.size _ ' ' _ key;
+				    FOREACH item IN cell.$key;
+					evidence(item.evidence,table_name _ index, item.text, 'details');
+				    END;
+				END;
+			    ELSE;
+				tags2link(cell.$key, '<br />', key);
+			    END;
 			END;
 		    END;
                 ELSIF cell.values.first.class.defined;
@@ -609,7 +611,7 @@ END;
    IF matches.hits;
    WRAPPER $field_block title="Best BLASTP matches" key="best_blastp_matches";
     
-      build_data_table(order=['taxonomy','hit','description','evalue','percent'],
+      build_data_table(order=['evalue','taxonomy','hit','description','percent'],
                        columns={ taxonomy => 'Species',
                                  hit      => 'Hit',
                                  description => 'Description',
