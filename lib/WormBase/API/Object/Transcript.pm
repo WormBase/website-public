@@ -52,15 +52,24 @@ has 'sequence' => (
     }
    );
 
-# Role?
-has '_method' => (
+has 'method' => (
     is      => 'ro',
     lazy    => 1,
-    default => sub {
-        my ($self) = @_;
-        return $self ~~ 'Method';
-    },
+    builder => '_build_method',
     );
+
+sub _build_method {
+    my ($self) = @_;
+    my $class = $self->object->class;
+    my $method = $self ~~ 'Method';
+    if($self->object->Corresponding_transcript) {
+	$method = $self->object->Corresponding_transcript->Method;
+    }
+    return {
+        description => "the method used to describe the ",
+        data        => $method && "$method",
+    };
+}
 
 has 'genes' => (
     is  => 'ro',
@@ -87,7 +96,7 @@ sub _build_type {
     elsif (eval { $s->Genomic_canonical(0) }) {
         $type = 'genomic';
     }
-    elsif ($self->_method eq 'Vancouver_fosmid') {
+    elsif ($self->method eq 'Vancouver_fosmid') {
         $type = 'genomic -- fosmid';
     }
     elsif (eval { $s->Pseudogene(0) }) {
@@ -105,7 +114,7 @@ sub _build_type {
     elsif ($s->get('cDNA')) {
         ($type) = $s->get('cDNA');
     }
-    elsif ($self->_method eq 'EST_nematode') {
+    elsif ($self->method eq 'EST_nematode') {
         $type   = 'non-Elegans nematode EST sequence';
     }
     elsif (eval { $s->AC_number }) {
@@ -114,7 +123,7 @@ sub _build_type {
     elsif (eval{_is_merged($s)}) {
         $type = 'merged sequence entry';
     }
-    elsif ($self->_method eq 'NDB') {
+    elsif ($self->method eq 'NDB') {
         $type = 'GenBank/EMBL Entry';
         # This is going to need more robust processing to traverse object structure
     }
@@ -676,7 +685,7 @@ sub transcripts {
     my ($self) = @_;
     
     my @transcripts;
-    if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
+    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
     $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
     @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
     map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
@@ -846,7 +855,7 @@ sub available_from {
     my $self   = shift;
     my $object = $self->object;
     
-    my $data = $self->_method eq 'Vancouver_fosmid' && {
+    my $data = $self->method eq 'Vancouver_fosmid' && {
     label => 'GeneService',
     class => 'Geneservice_fosmids',
     };
@@ -1066,7 +1075,7 @@ sub microarray_assays {
     my ($self) = @_;
 
     my @microarrays;
-    if (($self ~~ 'Structure' || $self->_method eq 'Vancouver_fosmid') &&
+    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
         $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
 
         @microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
