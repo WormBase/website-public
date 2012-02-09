@@ -16,7 +16,6 @@
 
   END;
 
-
   WRAPPER $field_block title="Predicted Genes & Transcriptional Units" key="predicted_units";
         build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
                           columns = { start => 'Start',
@@ -27,6 +26,10 @@
                                       comment => 'Comment'},
                           passed_data = fields.predicted_units.data,
                           key = 'predicted_units');
+  END;
+
+  WRAPPER $field_block title="Transcripts in this region" key="transcripts";
+	tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
   END;
 
 %] 

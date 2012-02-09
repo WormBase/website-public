@@ -66,7 +66,7 @@ sub _build_method {
 	$method = $self->object->Corresponding_transcript->Method;
     }
     return {
-        description => "the method used to describe the ",
+        description => "the method used to describe the $class",
         data        => $method && "$method",
     };
 }
@@ -93,19 +93,10 @@ sub _build_type {
     elsif (_is_gap($s)) {
         $type = 'gap in genomic sequence -- for accounting purposes';
     }
-    elsif (eval { $s->Genomic_canonical(0) }) {
-        $type = 'genomic';
-    }
     elsif ($self->method eq 'Vancouver_fosmid') {
         $type = 'genomic -- fosmid';
     }
-    elsif (eval { $s->Pseudogene(0) }) {
-        $type = 'pseudogene';
-    }
-    elsif (eval { $s->RNA_Pseudogene(0) }) {
-        $type = 'RNA_pseudogene';
-    }
-    elsif (eval { $s->Locus }) {
+    elsif ($self ~~ '@Locus') {
         $type = 'confirmed gene';
     }
     elsif (eval { $s->Coding }) {
@@ -117,9 +108,9 @@ sub _build_type {
     elsif ($self->method eq 'EST_nematode') {
         $type   = 'non-Elegans nematode EST sequence';
     }
-    elsif (eval { $s->AC_number }) {
-        $type = 'external sequence';
-    }
+#     elsif (eval { $s->AC_number }) {
+#         $type = 'external sequence';
+#     }
     elsif (eval{_is_merged($s)}) {
         $type = 'merged sequence entry';
     }
@@ -127,11 +118,8 @@ sub _build_type {
         $type = 'GenBank/EMBL Entry';
         # This is going to need more robust processing to traverse object structure
     }
-    elsif (eval { $s->RNA} ) {
-        $type = eval {$s->RNA} . ' ' . eval {$s->RNA->right};
-    }
     else {
-        $type = eval {$s->Properties(1)};
+        $type = $s->Properties(1);
     }
     $type ||= 'unknown';
     return $type;
@@ -182,7 +170,7 @@ sub _build_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
-=head3 sequence_type
+=head3 transcript_type
 
 This method will return a data structure containing
 which type of sequence the requested object is.
@@ -191,7 +179,7 @@ which type of sequence the requested object is.
 
 =item PERL API
 
- $data = $model->sequence_type();
+ $data = $model->transcript_type();
 
 =item REST API
 
@@ -223,7 +211,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/sequence_type
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/transcript_type
 
 B<Response example>
 
@@ -233,7 +221,7 @@ B<Response example>
 
 =cut 
 
-sub sequence_type {
+sub transcript_type {
     my ($self) = @_;
     return {
     description => 'the general type of the sequence',
@@ -298,7 +286,6 @@ sub identity {
     # Cull a brief identification from each gene. Redundant with gene page and 
     # not necessarily accurate if we are looking at a splice variant.
     my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
-    $data .= ' (pseudogene)' if $data && $self->type eq 'pseudogene';
     
     return { description => 'the identity of the sequence',
          data        => $data || undef   };
@@ -312,489 +299,6 @@ sub identity {
 # sub remarks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
-
-
-############################################################
-#
-# The External Links widget
-#
-############################################################ 
-
-=head2 External Links
-
-=cut
-
-# sub xrefs {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include xrefs >>
-
-
-############################################################
-#
-# The Region (Genomic) widget.
-# Sort of redundant with location....
-#
-############################################################
-
-=head2 Region
-
-=head3 corresponding_gene
-
-This method will return a data structure containing
-the corresponding gene of the sequence object.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_gene();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/corresponding_gene
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub corresponding_gene {
-    my $self   = shift;
-    my @genes = map { $self->_pack_obj($_) } $self ~~ 'Gene';
-    
-    return { description => 'corresponding gene of the sequence, if known',
-         data        => @genes? \@genes : undef };
-}
-
-=head3 matching_transcript
-
-This method will return a data structure containing
-transcripts that match the current sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_transcript();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_transcript
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub matching_transcript {
-    my $self = shift;
-    my @transcripts = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_transcript'} ;
-    return { description => 'matching transcripts of the sequence',
-         data        =>  @transcripts ? \@transcripts : undef };
-}
-
-=head3 matching_cds
-
-This method will return a data structure containing
-matching CDSs of the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_cds();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_cds
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub matching_cds {
-    my $self   = shift;
-    my @cds = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_CDS'} ;
-    return { description => 'matching CDSs of the sequence',
-         data        => @cds ? \@cds : undef };
-}
-
-=head3 corresponding_protein
-
-This method will return a data structure containing
-proteins corresponding to the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->corresponding_protein();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/corresponding_protein
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub corresponding_protein {
-    my ($self) = @_;
-    my @proteins = map { $self->_pack_obj($_) } map { $_->Corresponding_protein } @{$self ~~ '@Matching_CDS'};
-    return { description => 'the corresponding protein of the sequence',
-         data        => @proteins ? \@proteins : undef };
-}
-
-=head3 matching_cdnas
-
-This method will return a data structure containing
-CDNAs that match the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_cdnas();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_cdnas
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub matching_cdnas {
-    my ($self) = @_;
-    my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
-    return { description => 'cDNAs that match the sequence',
-         data        => @cDNA ? \@cDNA : undef,
-    };
-}
-
-=head3 transcripts
-
-This method will return a data structure containing
-transcripts corresponding to the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->transcripts();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/transcripts
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub transcripts {
-    my ($self) = @_;
-    
-    my @transcripts;
-    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
-    $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
-    @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
-    map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
-    @{$self->_segments};
-    }
-    
-    return { description => 'Transcripts in this region of the sequence',
-         data        => @transcripts ? \@transcripts : undef, #class Sequence
-    };
-}
-
-
-############################################################
-#
-# The Location Widget
-#
-############################################################
-
-=head2 Location
-
-=cut
-
-# sub genomic_position { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_position >>
-
- 
-
-# sub tracks {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include tracks >>
-
-sub _build_tracks {
-    my ($self) = @_;
-
-    return {
-        description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(NG CG CDS PG PCR SNP TcI MOS CLO)] : undef,
-    };
-}
-
-# sub genomic_image { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include genomic_image >>
-
-# note for AD:
-# this one needs some reworking. it currently fetches the first segment
-# in $self->segments, recomputes the start & stop, fetches more segments
-# if the seq is a CDS or Transcript, and if more than 1 seg, selects the
-# first one that matches the start and stop (or just the first one).
-# throwing that segment back into genomic_position just wraps it up
-sub _build_genomic_image {
-    my ($self) = @_;
-    my $seq = $self->object;
-    return unless(defined $self->_segments && defined $self->_segments->[0] && $self->_segments->[0]->length< 100_0000);
-
-    my $source = $self->_parsed_species;
-    my $segment = $self->_segments->[0];
-
-    my $ref   = $segment->ref;
-    my $start = $segment->start;
-    my $stop  = $segment->stop;
-
-    # add another 10% to left and right
-    $start = int($start - 0.1*($stop-$start));
-    $stop  = int($stop  + 0.1*($stop-$start));
-    my @segments;
-    if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
-        my $gene = eval { $seq->Gene;} || $seq;
-        @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
-        @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
-            unless @segments;   # CB discontinuity
-    }
-    # In cases where more than one segment is retrieved
-    # (ie with EST or OST mappings)
-    # choose that which matches the original segment.
-    # This is slightly bizarre but expedient fix.
-    my $new_segment;
-    if (@segments > 1) {
-        foreach (@segments) {
-            if ($_->start == $start && $_->stop == $stop) {
-                $new_segment = $_;
-                last;
-            }
-        }
-    }
-
-    my ($position) = $self->_genomic_position([$new_segment || $segment || ()]);
-    return {
-        description => 'The genomic location of the sequence to be displayed by GBrowse',
-        data        => $position,
-    };
-}
-
-# sub genetic_position {}
-# Supplied by Role; POD will automatically be inserted here.
-# << include genetic_position >>
-
-
-
-############################################################
-#
-# The Origin widget
-#
-############################################################
-
-=head2 Origin
-
-=cut
 
 # sub laboratory { }
 # Supplied by Role; POD will automatically be inserted here.
@@ -864,77 +368,106 @@ sub available_from {
          data        => "$data" || undef };
 }
 
-=head3 analysis
+############################################################
+#
+# The External Links widget
+#
+############################################################ 
 
-This method will return a data structure containing
-the source analysis of the sequence.
+=head2 External Links
 
-=over
+=cut
 
-=item PERL API
+# sub xrefs {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include xrefs >>
 
- $data = $model->analysis();
 
-=item REST API
+############################################################
+#
+# The Location Widget
+#
+############################################################
 
-B<Request Method>
+=head2 Location
 
-GET
+=cut
 
-B<Requires Authentication>
+# sub genomic_position { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_position >>
 
-No
+ 
 
-B<Parameters>
+# sub tracks {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include tracks >>
 
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/analysis
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub analysis {
+sub _build_tracks {
     my ($self) = @_;
-    
-    my %so_data;
-    if (my $analysis = $self ~~ 'Analysis') {
-    $so_data{'Object'} = $analysis;
-    $so_data{'Description'} = $analysis->Description;
-    $so_data{'DB Info'} = $analysis->DB_info;
-    $so_data{'WB Release'} = $analysis->Based_on_WB_Release;
-    $so_data{'DB Release'} = $analysis->Based_on_DB_Release;
-    $so_data{'Sample'} = $analysis->Sample;
-    $so_data{'Paper'} = $analysis->Reference;
-    $so_data{'Conducted y'} = $analysis->Conducted_by;
-    $so_data{'Url'} = $analysis->URL;
-    }
-    
-    return { description => 'The Analysis info of the sequence',
-         data        => %so_data ? \%so_data : undef  };
+
+    return {
+        description => 'tracks to display in GBrowse',
+        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB CLO)] : undef,
+    };
 }
 
+# sub genomic_image { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include genomic_image >>
+
+# note for AD:
+# this one needs some reworking. it currently fetches the first segment
+# in $self->segments, recomputes the start & stop, fetches more segments
+# if the seq is a CDS or Transcript, and if more than 1 seg, selects the
+# first one that matches the start and stop (or just the first one).
+# throwing that segment back into genomic_position just wraps it up
+sub _build_genomic_image {
+    my ($self) = @_;
+    my $seq = $self->object;
+    return unless(defined $self->_segments && defined $self->_segments->[0] && $self->_segments->[0]->length< 100_0000);
+
+    my $source = $self->_parsed_species;
+    my $segment = $self->_segments->[0];
+
+    my $ref   = $segment->ref;
+    my $start = $segment->start;
+    my $stop  = $segment->stop;
+
+    # add another 10% to left and right
+    $start = int($start - 0.1*($stop-$start));
+    $stop  = int($stop  + 0.1*($stop-$start));
+    my @segments;
+    if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
+        my $gene = eval { $seq->Gene;} || $seq;
+        @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+        @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
+            unless @segments;   # CB discontinuity
+    }
+    # In cases where more than one segment is retrieved
+    # (ie with EST or OST mappings)
+    # choose that which matches the original segment.
+    # This is slightly bizarre but expedient fix.
+    my $new_segment;
+    if (@segments > 1) {
+        foreach (@segments) {
+            if ($_->start == $start && $_->stop == $stop) {
+                $new_segment = $_;
+                last;
+            }
+        }
+    }
+
+    my ($position) = $self->_genomic_position([$new_segment || $segment || ()]);
+    return {
+        description => 'The genomic location of the sequence to be displayed by GBrowse',
+        data        => $position,
+    };
+}
+
+# sub genetic_position {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include genetic_position >>
 
 ############################################################
 #
@@ -1149,7 +682,123 @@ sub source_clone {
          data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
 }
 
+=head3 pcr_products
 
+This method will return a data structure containing
+PCR products related to the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->pcr_products();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/pcr_products
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub pcr_products {
+    my $self = shift;
+    my @pcr = map { $self->_pack_obj($_) } $self->object->Corresponding_PCR_product;
+    return { description => 'PCR products for the sequence',
+	     data        => @pcr ? \@pcr : undef,
+    };
+}
+
+=head3 matching_cdnas
+
+This method will return a data structure containing
+CDNAs that match the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->matching_cdnas();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/matching_cdnas
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub matching_cdnas {
+    my ($self) = @_;
+    my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
+    return { description => 'cDNAs that match the sequence',
+         data        => @cDNA ? \@cDNA : undef,
+    };
+}
 
 ############################################################
 #
@@ -1714,7 +1363,72 @@ sub predicted_units {
          data        => @rows ? \@rows : undef };
 }
 
+=head3 transcripts
 
+This method will return a data structure containing
+transcripts corresponding to the requested object.
+
+=over
+
+=item PERL API
+
+ $data = $model->transcripts();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/transcripts
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub transcripts {
+    my ($self) = @_;
+    
+    my @transcripts;
+    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
+    $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
+    @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
+    map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
+    @{$self->_segments};
+    }
+    
+    return { description => 'Transcripts in this region of the sequence',
+         data        => @transcripts ? \@transcripts : undef, #class Sequence
+    };
+}
 
 ############################################################
 #

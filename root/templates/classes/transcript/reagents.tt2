@@ -1,21 +1,23 @@
 [% 
 
 WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
-    FOREACH key IN fields.orfeome_assays.data.keys.sort;
-       tag2link(fields.orfeome_assays.data) _ '<br>';
-    END;
+    tags2link(fields.orfeome_assays.data.values, '<br>', 'Results');
 END;
 
 WRAPPER $field_block title="Source Clone" key="source_clone";
-fileds.source_clone.data;
-     tag2link(fields.source_clone.data);
+    tag2link(fields.source_clone.data);
 END;
 
 WRAPPER $field_block title="Microarray Assays" key="microarray_assays";
-     FOREACH key IN fields.microarray_assays.data;
-         tag2link(key) _ '<br>';
-     END;
+    tags2link(fields.microarray_assays.data, '<br />', 'Results');
 END;
 
+WRAPPER $field_block title="PCR Products" key="pcr_products";
+    tags2link(fields.pcr_products.data, '<br />', 'Results');
+END;
+
+WRAPPER $field_block title="Matching cDNAs" key="matching_cdnas";
+    tags2link(fields.matching_cdnas.data, '<br />', 'Results');
+END;
 
 %]

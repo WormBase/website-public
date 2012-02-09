@@ -652,7 +652,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(NG CG CDS PG PCR SNP TcI MOS CLO)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB CLO)] : undef,
     };
 }
 
