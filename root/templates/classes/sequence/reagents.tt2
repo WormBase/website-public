@@ -1,9 +1,7 @@
 [% 
 
 WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
-    FOREACH key IN fields.orfeome_assays.data.keys.sort;
-       tag2link(fields.orfeome_assays.data) _ '<br>';
-    END;
+    tags2link(fields.orfeome_assays.data.values, '<br>', 'Results');
 END;
 
 WRAPPER $field_block title="Source Clone" key="source_clone";
