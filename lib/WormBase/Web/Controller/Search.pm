@@ -163,7 +163,7 @@ sub search_count :Path('/search/count') :Args(3) {
 
   my $tmp_query = $q;
   $tmp_query =~ s/-/_/g;
-  $tmp_query .= " $q" unless( $tmp_query =~ /$q/ );
+  $tmp_query .= " $q" unless( $tmp_query eq $q );
 
   my $count = $api->xapian->search_count($c, $tmp_query, $search, $species);
   $c->response->body("$count");
