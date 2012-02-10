@@ -13,7 +13,7 @@ WRAPPER highlight_box;
    END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
-              fields.other_names.data.join(', '); 
+        markup_locus(fields.other_names.data.join(', '), 1); 
    END;
 
    IF fields.classification.data.type;

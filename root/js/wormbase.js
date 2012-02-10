@@ -902,7 +902,7 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < 800)))
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < 1300)))
         sColumns ? columns(100, 100) : readHash();
       if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
