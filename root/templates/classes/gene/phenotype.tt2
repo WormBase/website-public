@@ -8,10 +8,8 @@
     <i>The following phenotypes have been observed in [% object.name.data.label %]</i><br/>
     <div>
 [%
-	#build_data_table(order=['object','supporting','evidence'],
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
-				 #supporting  => 'Supporting Evidence',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_observed',
 			passed_data=fields.phenotype.data.observed.values);
@@ -20,10 +18,8 @@
     <br />
    [% WRAPPER toggle title="<i>The following phenotypes have been reported as NOT observed in " _  object.name.data.label _ "</i>" %]
 [% 
-	#build_data_table(order=['object','supporting','evidence'],
 	build_data_table(order=['object','evidence'],
 			columns={object  => 'Phenotype',
-				 #supporting  => 'Supporting Evidence',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_not_observed',
 			passed_data=fields.phenotype.data.not_observed.values);

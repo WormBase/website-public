@@ -18,7 +18,7 @@
     END;
 
     WRAPPER $field_block title="Anatomy function" key="anatomy_functions";
-       fields.anatomy_functions.data;
+       tags2link(fields.anatomy_functions.data);
     END;
 
     WRAPPER $field_block title="Anatomy function NOTS" key="anatomy_function_nots";
