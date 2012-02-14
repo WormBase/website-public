@@ -8,26 +8,26 @@
 
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
-  <div class="evidence result">
+  <div class="evidence [% IF text %] result[% END %]">
     [% IF text.label.defined %]
 	[% tag2link(text) %]
     [% ELSE %]
 	[% markup("$text"); %]
     [% END %]
     [% id = id || 0; %]
-    <div id="evidence_[% id %]" class="ev ui-helper-hidden" >
+[% IF text %]    <div id="evidence_[% id %]" class="ev ui-helper-hidden" > [% END %]
     [% FOREACH type IN data.keys -%] 
         <b>[% type.replace('_',' ') %]</b>:
         [% tags2link(data.$type, '; ') %]  
         [% UNLESS loop.last %]<br>[% END %]
     [% END %]
-    </div>
-
+[% IF text %]    </div>
     <div class="ev-more">
       <div class="v ev-more-line"></div>
       <div class="ev-more-text"><span>[% label ? label : 'evidence' %]</span></div>
       <div class="v ui-icon ui-icon-triangle-1-s"></div>
     </div>
+[% END %]
   </div>
   [% ELSE %]
     [% IF text.label.defined %]
@@ -405,44 +405,42 @@ END;
                 ELSIF cell.class.defined;
                     tag2link(cell);
                 ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
-		    tags2link(cell, '<br />', 'Results');
+                    tags2link(cell, '<br />', 'Results');
                 ELSIF cell.evidence.defined;
                     evidence(cell.evidence,table_name _ index, cell.text, 'details');
-		ELSIF cell.first.evidence.defined;
-		    FOREACH result IN cell;
-			evidence(result.evidence,table_name _ index, result.text, 'details');
-			'<br />';
-		    END;
+                ELSIF cell.first.evidence.defined;
+                  FOREACH result IN cell;
+                    evidence(result.evidence,table_name _ index, result.text, 'details');
+                    '<br />';
+                  END;
                 ELSIF cell.values.size; #hash of arrays (e.g. evidence column in phenotypes widget on gene page)
-                    FOREACH key IN cell.keys.sort;
-			IF cell.$key.size < 10;
-			    "$key<br />";
-			    IF cell.$key.first.evidence.defined;
-				FOREACH item IN cell.$key;
-				    evidence(item.evidence,table_name _ index, item.text, 'details');
-				END;
-			    ELSE;
-				tags2link(cell.$key);
-			    END;
-			    IF !loop.last;
-				'<br />';
-			    END;
-			ELSE;
-			    IF cell.$key.first.evidence.defined;
-				WRAPPER toggle title=cell.$key.size _ ' ' _ key;
-				    FOREACH item IN cell.$key;
-					evidence(item.evidence,table_name _ index, item.text, 'details');
-				    END;
-				END;
-			    ELSE;
-				tags2link(cell.$key, '<br />', key);
-			    END;
-			END;
-		    END;
+                  FOREACH key IN cell.keys.sort;
+                    IF cell.$key.size < 10;
+                      "$key<br />";
+                      IF cell.$key.first.evidence.defined;
+                        FOREACH item IN cell.$key;
+                          evidence(item.evidence,table_name _ index, item.text, 'details');
+                        END;
+                      ELSIF cell.$key.first.reference.defined;
+                        FOREACH item IN cell.$key;
+                          obj = tag2link(item.obj);
+                          ref = tag2link(item.reference);
+                          "$obj($ref)<br />";
+                        END;
+                      ELSE;
+                        tags2link(cell.$key);
+                      END;
+                      IF !loop.last;
+                        '<br />';
+                      END;
+                    ELSE;
+                      tags2link(cell.$key, '<br />', key);
+                    END;
+                  END;
                 ELSIF cell.values.first.class.defined;
-		      tags2link(cell.values);
-		ELSE;
-		    cell.join('<br />');
+                  tags2link(cell.values);
+                ELSE;
+                  cell.join('<br />');
                 END;
                 '</td>';
             END;
@@ -760,11 +758,10 @@ END;
 
    WRAPPER $field_block title="Phenotypes" key="phenotypes";
 
-       build_data_table(order=['phenotype','description','remarks'],
+       build_data_table(order=['phenotype','evidence'],
                         columns={ 
                         phenotype    => 'Phenotype',
-                description  => 'Description',
-            remarks       => 'Remarks',
+                evidence  => 'Evidence'
                     },
                     key='phenotypes');
     END;
@@ -775,11 +772,10 @@ END;
 
    WRAPPER $field_block title="Phenotypes NOT Observed" key="phenotypes_not_observed";
 
-   build_data_table(order=['phenotype','description','remarks'],
-                    columns={ 
-                        phenotype      => 'Phenotype',
-                description    => 'Description',
-            remarks        => 'Remark',
+       build_data_table(order=['phenotype','evidence'],
+                        columns={ 
+                        phenotype    => 'Phenotype',
+                evidence  => 'Evidence'
                     },
                     key='phenotypes_not_observed');
       END;            
