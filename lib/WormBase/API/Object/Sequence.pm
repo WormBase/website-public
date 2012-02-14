@@ -1354,12 +1354,12 @@ sub print_sequence {
     if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
 		# try to use acedb
 		if (my $fasta = $s->asDNA) {
+            $fasta =~ s/^\s?>(.*)\n//;
+            $fasta =~ s/\s//g;
 			push @data,{ 	header=>"FASTA Sequence",
 					sequence=>"$fasta",
 					length=>length($fasta),
-						   };	##$fasta;
-
-			$self->length(length $fasta);
+						   };
 		}
 		else {
 			push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
@@ -1374,13 +1374,14 @@ sub print_sequence {
 
     if (eval { $s->Properties eq 'cDNA'} ) {
 		# try to use acedb
-		if (my $fasta = $s->asDNA) {
-			push @data, { 	
-				header => "FASTA Sequence",
-				sequence => "$fasta",
-				length => length($fasta),
-			   };
-		}
+        if (my $fasta = $s->asDNA) {
+            $fasta =~ s/^\s?>(.*)\n//;
+            $fasta =~ s/\s//g;
+            push @data,{    header=>"FASTA Sequence",
+                    sequence=>"$fasta",
+                    length=>length($fasta),
+                           };
+        }
 		goto END;
     }
 

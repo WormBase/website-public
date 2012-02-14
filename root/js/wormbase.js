@@ -889,6 +889,7 @@
 var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
+      maxWidth = (location.pathname == '/') ? 800 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
       widgetList = this.wl || (function() {
@@ -902,7 +903,7 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < 800)))
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
         sColumns ? columns(100, 100) : readHash();
       if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");

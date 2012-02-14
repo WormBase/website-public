@@ -893,9 +893,10 @@ END;
         format_seq = seq.match('\s') ? seq : format_sequence(seq);
         title = obj.header || 'sequence';
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
+        title_html = title | remove('(\<(/?[^\>]+)\>)');
         sequences.$obj.download = '<div class="sequence-download">'
                                   _ '<form action="/rest/download/">'
-                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ title _ '.fa" >'
+                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ title_html _ '.fa" >'
                                   _ '<input type="hidden" name="sequence" value="' _ seq_html  _ '" >'
                                   _ '<input type="submit" value="download">'
                                   _ '</form>'

@@ -3,7 +3,10 @@
     class = object.name.data.class FILTER lower;
      WRAPPER $field_block title="Genetic position";
       IF fields.genetic_position.data.chromosome;
-            fields.genetic_position.data.formatted _ ' (' _ fields.genetic_position.data.method _ ')';
+            fields.genetic_position.data.formatted;
+             IF fields.genetic_position.data.method;
+                ' (' _ fields.genetic_position.data.method _ ')';
+             END;
       ELSE;       
          '<div class="caveat-emptor">This ' _ class _ ' has not been placed on the genetic map or its coordinates are unknown.</div>';
       END;
