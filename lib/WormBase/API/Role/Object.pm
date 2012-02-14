@@ -1163,6 +1163,7 @@ sub _build_phenotypes_data {
         my $remark = $_->Remark;
         {
             phenotype   => $self->_pack_obj($_),
+            evidence => { evidence => $self->_get_evidence($_)},
             description => $desc    && "$desc",
             remarks     => $remark && "$remark",
         };

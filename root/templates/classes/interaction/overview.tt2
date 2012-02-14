@@ -4,21 +4,23 @@
 
 WRAPPER highlight_box;
 
-  WRAPPER $field_block title="type" key="type";
-    fields.type.data;
-  END;
-
 END;
 
   '<div class="description">';
-    fields.remarks.data.join('<br />');
+   IF fields.remarks.data.0.text.defined;
+      FOREACH obj IN fields.remarks.data;
+        evidence(obj.evidence, '', obj.text);
+      END;
+   ELSE;
+      markup(fields.remarks.data.join('<br />'),0);
+   END;
   '</div>';
 
 
 
 
 
-WRAPPER $field_block title="Phenotypes" key="phenotypes"; 
+WRAPPER $field_block title=pluralize("Phenotype", fields.phenotypes.data.size) key="phenotypes"; 
 	tags2link(fields.phenotypes.data);
 END;
 
@@ -29,7 +31,7 @@ WRAPPER $field_block title="interactor" key="interactor";
 END;
 
 WRAPPER $field_block title="RNAi" key="rnai";
-    tag2link(fields.rnai.data);
+    tags2link(fields.rnai.data);
 END;
 
 

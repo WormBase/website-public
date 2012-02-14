@@ -1997,7 +1997,7 @@ div#google-map {
 }
 
 .toggle {
-	padding: 0 0 0.5em;
+	padding: 0.25em 0 0;
     cursor:pointer;
     margin: 0 0 0 -0.4em;
 }
