@@ -203,18 +203,18 @@ sub _build__interactions {
 	my $altkey = join(' ', "$effected", "$effector", "$type", $direction, $phenString);
 
 	my $packInteraction = $self->_pack_obj($interaction);
+	my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
 	if (exists $data{$key}){
 		push @{$data{$key}{interactions}}, $packInteraction;
-		#warn("same key with numInt: ", scalar @{$data{$key}{interactions}});
+		push @{$data{$key}{citations}}, @papers;
 	} elsif($direction ne 'Effector->Effected' && exists $data{$altkey}){
 		push @{$data{$altkey}{interactions}}, $packInteraction;
-		#warn("alt key with numInt: ", scalar @{$data{$key}{interactions}});
+		push @{$data{$altkey}{citations}}, @papers;
 	} else {
-	    my @interacArr;
-	    push @interacArr, $packInteraction;
-	    #warn("new key: ", $key);
+	    my @interacArr = ($packInteraction);
 	    $data{$key} = {
-		interactions => \@interacArr,
+		interactions=> @interacArr ? \@interacArr : undef,
+		citations   => @papers ? \@papers : undef,
 		type        => "$type",
 		effector    => $nodes->{"$effector"},
 		effected    => $nodes->{"$effected"},
@@ -1702,21 +1702,27 @@ sub _process_variation {
     my $molecular_change = lc( $variation->Type_of_mutation || "other" );
     my $sequence_known = $variation->Flanking_sequences ? 'yes' : 'no';
 
-    my $affects;
+    my %effects;
+    my %locations;
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
-            ($affects) = $item_affected->col;
+	    foreach my $val ($item_affected->col){
+		if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
+		else { $effects{$val}++; }
+	    }
         }
     }
-
     $type = "transposon insertion" if $variation->Transposon_insertion;
+    my @effect = keys %effects;
+    my @location = keys %locations;
 
     my %data = (
         variation        => $self->_pack_obj($variation),
         type             => "$type",
         molecular_change => "$molecular_change",
         sequence_known   => $sequence_known,
-        affects          => $affects && lc $affects,
+        effects          => @effect ? \@effect : undef,
+	locations	 => @location ? \@location : undef,
     );
     return \%data;
 }
@@ -2746,7 +2752,7 @@ sub interactions  {
     my $self   = shift;
     my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     if($self->_interactions->{showall}){
-	$self->nearby_interactions($data);
+	$self->nearby_interactions($data, 1);
     }
     my @dataRet = (values %{$data});
     return {
@@ -2757,7 +2763,7 @@ sub interactions  {
 
 sub nearby_interactions {
     #this method loads nearby interactions (i.e. interactions between nodes that interact with the current gene)
-    my ($self, $data) = @_;
+    my ($self, $data, $show_local) = @_;
     my ($old_data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
     #find the interactions between all other genes
     for my $key (sort keys %$nodes){
@@ -2787,17 +2793,27 @@ sub nearby_interactions {
 	    my $altkey = join(' ', "$effected", "$effector", "$type", $direction, "$phenString");
 
 	    my $packInteraction = $self->_pack_obj($interaction);
+	    my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
 	    if (exists $data->{$key}){
 		my $interacArr = $data->{$key}{interactions};
 		push @$interacArr, $packInteraction;
+		if($show_local){
+		    my $paperArr = $data->{$key}{citations};
+		    push @$paperArr, @papers;
+		}
 	    } elsif($direction ne 'Effector->Effected' && exists $data->{$altkey}){
 		my $interacArr = $data->{$altkey}{interactions};
 		push @$interacArr, $packInteraction;
+		if($show_local){
+		    my $paperArr = $data->{$altkey}{citations};
+		    push @$paperArr, @papers;
+		}
 	    } else {
 		my @interacArr;
 		push @interacArr, $packInteraction;
 		$data->{$key} = {
-		    interactions => \@interacArr,
+		    interactions=> @interacArr ? \@interacArr : undef,
+		    citations	=> @papers && $show_local ? \@papers : undef,
 		    type        => "$type",
 		    effector    => $nodes->{"$effector"},
 		    effected    => $nodes->{"$effected"},
@@ -2814,7 +2830,7 @@ sub interaction_details {
     my $self = shift;
     my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
 
-    $self->nearby_interactions($data);
+    $self->nearby_interactions($data, 0);
 
     my @edges = (values %{$data});
     return {
@@ -2822,52 +2838,6 @@ sub interaction_details {
 	data		=> {edges=>\@edges, nodes => $nodes, types => $types},
     };
 }
-
-sub interactions_old {
-    my $self   = shift;
-    my $object = $self->object;
-
-    my @data;
-    foreach my $interaction ( $object->Interaction ) {
-        my $type = $interaction->Interaction_type;
-
-        # Filter low confidence predicted interactions.
-        next
-            if ($interaction->Log_likelihood_score || 1000) >= 1.5
-                && $type =~ /predicted/; # what happens when no data?
-
-        my ( $effector, $effected, $direction );
-
-        my @non_directional = eval { $type->Non_directional->col };
-        if (@non_directional) {
-            ( $effector, $effected ) = @non_directional;    # WBGenes
-            $direction = 'non-directional';
-        }
-        else {
-            $effector  = $type->Effector->right if $type->Effector;
-            $effected  = $type->Effected->right;
-            $direction = 'Effector->Effected';
-        }
-
-        my $phenotype = eval {$type->Interaction_phenotype->right};
-
-        push @data,
-            {
-            interaction => $self->_pack_obj($interaction),
-            type        => "$type",
-            effector    => $self->_pack_obj($effector),
-            effected    => $self->_pack_obj($effected),
-            direction   => $direction,
-            phenotype   => $self->_pack_obj($phenotype)
-            };
-    }
-    return {
-        description => 'genetic and predicted interactions',
-        data        => \@data
-    };
-}
-
-
 
 #######################################
 #

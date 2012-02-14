@@ -8,6 +8,7 @@
 
    WRAPPER $field_block title="Estimated Molecular Weight" key="estimated_molecular_weight";
         fields.estimated_molecular_weight.data;
+	" kD";
    END;
 
    WRAPPER $field_block title="Amino Acid Composition" key="amino_acid_composition";
