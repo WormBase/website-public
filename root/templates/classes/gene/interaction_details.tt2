@@ -2,6 +2,10 @@
 [% NODES = interaction_details.data.nodes %]
 [% EDGES = interaction_details.data.edges %]
 
+<style>
+	#resizable { width: 750px; height: 750px; padding: 0.5em; margin-left:auto; margin-right:auto; }
+</style>
+
 <div id="cytoscapeweb_panel">
     Interaction Type <select class="cyto_panel" id="cyto_panel_type">
 	<option value=0 >All</option>
@@ -20,8 +24,10 @@
     </select>
 </div>
 
-<div id="cytoscapeweb" >
-	Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+<div id="resizable" class="ui-widget-content">
+    <div id="cytoscapeweb">
+	    Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+    </div>
 </div>
 <div id="legend">
     Edge-colors:
@@ -196,4 +202,10 @@
 		      }
 		});
 	    });
+</script>
+
+<script>
+	$jq(function() {
+		$jq( "#resizable" ).resizable();
+	});
 </script>
