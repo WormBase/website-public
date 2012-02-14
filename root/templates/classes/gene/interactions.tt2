@@ -5,6 +5,10 @@
 [% NO_NEARBY=fields.interactions.data.edges.size > 450 %]
 [% edgeColors = ['#08298A','#B40431','#FF8000','#04B404','#8000FF','#191007','#73c6cd','#92d17b','#cC87AB4','#e4e870','#696D09'] %]
 
+<style>
+	#resizable { width: 750px; height: 750px; padding: 0.5em; margin-left:auto; margin-right:auto; }
+</style>
+
     [% IF fields.interactions.data.showall || NO_NEARBY %]
 	    <div id="cytoscapeweb_panel">
 		Interaction Type <select class="cyto_panel" id="cyto_panel_type">
@@ -25,17 +29,21 @@
 		</select>
 	      [% END %]
 	    </div>
-	    <div id="legend">
-		Edge-colors:
-		  [% FOREACH obj IN TYPES.keys.sort %]
-		     [% ind = loop.index %]
-		      <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
-		  [% END %]
+	    [% IF TYPES.keys %]
+		<div id="legend">
+		    Edge-colors:
+		      [% FOREACH obj IN TYPES.keys.sort %]
+			[% ind = loop.index %]
+			  <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
+		      [% END %]
+		      (Edge thickness relative to number of citations)
+		</div>
+	    [% END %]
+	    <div id="resizable" class="ui-widget-content">
+		<div id="cytoscapeweb">
+			Unable to load the CytoscapeWeb image. Please try again in a few minutes.
+		</div>
 	    </div>
-	    <div id="cytoscapeweb" >
-		    Unable to load the CytoscapeWeb image. Please try again in a few minutes.
-	    </div>
-
     [% ELSE %]
 	[% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field','gene',object.name.data.id,'interaction_details') id="interactions_toggle"%]
 	[% END %]
@@ -46,13 +54,14 @@
       'Found ';
       searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
 
-      build_data_table(order=['type','effector','effected','direction','phenotype','interactions'],
+      build_data_table(order=['interactions','type','effector','effected','direction','phenotype','citations'],
      	               columns={type  => 'Interaction Type',
 		                effector => 'Effector',
 		                effected  => 'Effected',
 				direction => 'Direction',
 				phenotype => 'Phenotype',
-				interactions => 'Citations',
+				interactions => 'Interactions',
+				citations => 'Citations',
  		                }, key='interaction',
 	               passed_data=fields.interactions.data.edges);
     END;
@@ -224,4 +233,11 @@
 			});
 		    });
 	</script>
+
+	<script>
+		$jq(function() {
+			$jq( "#resizable" ).resizable();
+		});
+	</script>
+
 [% END %]

@@ -11,10 +11,20 @@
       maintainer = site.external_urls.$db.maintainer;
       links = "";
 	  FOREACH id IN hash.$db.ids; 
-          href= FILTER format(hash.$db.url_constructor); id; END; 
+          href= FILTER format(site.external_urls.$db.search); id; END;
+
+	  #Note: some databases have base and schema defined in config file but some don't
+	  mark = markup(id);
+	  IF href;
+	      links = links _ external_link(href,id,id);
+	  ELSIF mark != id;
+	      links = links _ mark;
+	  ELSE;
+	      href= FILTER format(hash.$db.url_constructor); id; END;
+	      links = links _ external_link(href,id,id);	      
+	  END;
 	      # We'll use description info from the website and not the DB.
               # Should be a table of resource, ID linked to page description, maintainer.
-          links = links _ external_link(href,id,id);
           links = links _ '<br />';
 	  END;
 
