@@ -1967,17 +1967,20 @@ sub features_affected {
     # This is mostly constructed from Molecular_change hash associated with
     # tags in Affects, with the exception of Clone and Chromosome
     my $affects = {};
+#     my @affects;
     
     # Clone and Chromosome are calculated, not provided in the DB.
     # Feature and Interactor are handled a bit differently.
     
     foreach my $type_affected ($object->Affects) {
+        my @rows;
         foreach my $item_affected ($type_affected->col) { # is a subtree
-            my $affected_hash = $affects->{$type_affected}->{$item_affected} = $self->_pack_obj($item_affected);
-	    
+            my $affected_hash  = $self->_pack_obj($item_affected);
+            $affected_hash->{item} = $self->_pack_obj($item_affected);
             # Genes ONLY have gene
             if ($type_affected eq 'Gene') {
                 $affected_hash->{entry}++;
+            push(@rows, $affected_hash);
                 next;
             }
 
@@ -2008,7 +2011,9 @@ sub features_affected {
             # and the coordinates of the variation WITHIN the feature.
             @{$affected_hash}{qw(abs_start abs_stop fstart fstop start stop)}
                  = $self->_fetch_coords_in_feature($type_affected,$item_affected);
+            push(@rows, $affected_hash);
         }
+$affects->{$type_affected} = \@rows;
     } # end of FOR loop
 
     # Clone and Chromosome are not provided in the DB - we calculate them here.
@@ -2016,14 +2021,17 @@ sub features_affected {
         my @affects_this = $type_affected eq 'Clone'      ? $object->Sequence
                          : $type_affected eq 'Chromosome' ? eval {($object->Sequence->Interpolated_map_position)[0]}
                          :                        ();
-
+        my @rows;
         foreach (@affects_this) {
             next unless $_;
             my $hash = $affects->{$type_affected}->{$_} = $self->_pack_obj($_);
-
+# $affects->{$type_affected}->{$_}
             @{$hash}{qw(abs_start abs_stop fstart fstop start stop)}
                 = $self->_fetch_coords_in_feature($type_affected,$_);
+            $hash->{item} = $self->_pack_obj($_);
+            push(@rows, $hash);
         }
+        $affects->{$type_affected} = \@rows;
     }
 
     return {
