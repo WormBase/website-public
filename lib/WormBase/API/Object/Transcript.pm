@@ -1252,6 +1252,68 @@ sub print_feature {
 }
 
 
+
+=head3 strand
+
+This method will return a string indicating the orientation of the sequence
+
+=over
+
+=item PERL API
+
+ $data = $model->strand();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/strand
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub strand {
+    my ($self) = @_;
+
+    my $strand = $self->_segments->[0]->strand if $self->_segments->[0];
+    return { description => 'strand orientation of the sequence',
+         data        => $strand ? ($strand > 0) ? "+" : "-" : undef 
+    };
+}
+
+
+
 =head3 predicted_exon_structure
 
 This method will return a data structure listing
