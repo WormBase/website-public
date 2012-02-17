@@ -1756,7 +1756,7 @@ sub _build_status {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-    my $status = $class eq 'Protein' ? ($object->Live ? undef : 'history')
+    my $status = $class eq 'Protein' ? $object->Live
 	: (eval{$object->Status} ? $object->Status : 'unverified');
 
     return {

@@ -3688,7 +3688,6 @@ sub gene_models {
 
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
-        my $len_unspliced = $gff->length;
         my $len_spliced   = 0;
 
         for ( $gff->features('coding_exon') ) {

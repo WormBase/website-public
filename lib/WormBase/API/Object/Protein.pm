@@ -275,6 +275,68 @@ sub corresponding_cds {
 }
 
 
+
+
+
+sub corresponding_all {
+    my $self = shift;
+    my $protein = $self->object;
+    my @cds = grep{$_->Method ne 'history'} @{$self->cds};
+    my @rows;
+
+    foreach my $cds ( sort { $a cmp $b } @cds ) {
+        my %data  = ();
+        my $gff   = $self->_fetch_gff_gene($cds) or next;
+
+        my @sequences = $cds->Corresponding_transcript;
+        my $len_spliced   = 0;
+
+        for ( $gff->features('coding_exon') ) {
+
+            if ( $protein->Species =~ /elegans/ ) {
+                next unless $_->source eq 'Coding_transcript';
+            }
+            else {
+                next
+                    unless $_->method =~ /coding_exon/
+                        && $_->source eq 'Coding_transcript';
+            }
+            next unless $_->name eq $sequences[0];
+            $len_spliced += $_->length;
+        }
+
+        $len_spliced ||= '-';
+
+        $data{length_spliced}   = $len_spliced;
+
+        my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
+
+
+        my $peplen = $protein->Peptide(2);
+        my $aa     = "$peplen";
+        $data{length_protein} = $aa if $aa;
+
+        my $gene = $cds->Gene;
+
+        my $type = $sequences[0]->Method;
+        $type =~ s/_/ /g;
+        @sequences =  map {$self->_pack_obj($_)} @sequences;
+        $data{type} = "$type";
+        $data{model}   = \@sequences;
+        $data{protein} = $self->_pack_obj($protein);
+        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
+        $data{gene} = $self->_pack_obj($gene);
+        push @rows, \%data;
+    }
+
+    return {
+        description => 'corresponding cds, transcripts, gene for this protein',
+        data        => @rows ? \@rows : undef
+    };
+}
+
+
 =head3 type (DEPRECATING!)
 
 This method returns a data structure containing the 
@@ -1779,6 +1841,36 @@ sub hit_to_url {
     # Hack for flybase IDs
     $accession =~ s/CG/00/ if ($prefix =~ /FLYBASE/);
     return ($prefix,$accession);
+}
+
+#########################################
+#
+#   INTERNAL METHODS
+#
+#########################################
+sub _fetch_gff_gene {
+    my ($self,$transcript) = @_;
+
+    my $trans;
+    my $GFF = $self->gff_dsn() or return; # should probably log this?
+    eval {$GFF->fetch_group()};
+    return if $@; # should probably log this
+
+    if ($self->object->Species =~ /briggsae/) {
+        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
+            and return $trans;
+    }
+
+    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
+        and return $trans;
+
+    # Now pseudogenes
+    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
+        and return $trans;
+
+    # RNA transcripts - this is getting out of hand
+    ($trans) = $GFF->segment(Transcript => $transcript);
+    return $trans;
 }
 
 __PACKAGE__->meta->make_immutable;
