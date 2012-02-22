@@ -1,4 +1,4 @@
-<h2>[% fields.name.data.label %] ([% fields.transcript_type.data %])</h2>
+<h2>[% fields.name.data.label %] ([% fields.sequence_type.data %])</h2>
 
 [%
 
@@ -14,17 +14,15 @@ WRAPPER $field_block title="Identity" key='identity';
 END;
 
 WRAPPER $field_block title="Method" key='method';
-        fields.method.data;
+        fields.method.data.method;
+	IF fields.method.data.details.defined;
+	    ": ";
+	    fields.method.data.details;
+	END;
 END;
 
 remarks;
 
-WRAPPER curator_block title="Origin";
-    laboratory;
-
-    WRAPPER $field_block title="Available From" key="available_from";
-	tag2link(fields.available_from.data);
-    END;
-END;
+laboratory;
  '</div>';
 %]

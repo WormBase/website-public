@@ -5,6 +5,7 @@ use Moose;
 extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 with 'WormBase::API::Role::Position';
+with 'WormBase::API::Role::Sequence';
 
 use Bio::Graphics::Browser2::Markup;
 
@@ -24,34 +25,6 @@ http://wormbase.org/species/cds
 
 =cut
 
-
-has 'type' => (
-    is  => 'ro',
-    lazy_build => 1,
-   );
-
-has 'length' => (
-    is  => 'rw',
-   );
-
-has 'gff' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        return $self->gff_dsn;
-    }
-   );
-
-has 'sequence' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        return $self ~~ 'Sequence';
-    }
-   );
-
 has 'method' => (
     is      => 'ro',
     lazy    => 1,
@@ -65,20 +38,19 @@ sub _build_method {
     if($self->object->Corresponding_transcript) {
 	$method = $self->object->Corresponding_transcript->Method;
     }
+    my $details = $method->Remark;
     return {
         description => "the method used to describe the $class",
-        data        => $method && "$method",
+        data => {
+	    method => $method && "$method",
+	    details => $details && "$details",
+	}
     };
 }
 
-has 'genes' => (
+has 'type' => (
     is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        my %seen;
-        return [grep {!$seen{$_}++} @{$self ~~ '@Locus'}];
-    },
+    lazy_build => 1,
    );
 
 sub _build_type {
@@ -87,36 +59,17 @@ sub _build_type {
     # figure out where this sequence comes from
     # should rearrange in order of probability
     my $type;
-    if ($s =~ /^cb\d+\.fpc\d+$/) {
-        $type = 'C. briggsae draft contig';
-    }
-    elsif (_is_gap($s)) {
-        $type = 'gap in genomic sequence -- for accounting purposes';
-    }
-    elsif ($self->method eq 'Vancouver_fosmid') {
-        $type = 'genomic -- fosmid';
-    }
-    elsif ($self ~~ '@Locus') {
+    if ($self ~~ '@Locus') {
         $type = 'confirmed gene';
     }
-    elsif (eval { $s->Coding }) {
+    elsif ($s->Coding) {
         $type = 'predicted coding sequence';
     }
     elsif ($s->get('cDNA')) {
         ($type) = $s->get('cDNA');
     }
-    elsif ($self->method eq 'EST_nematode') {
-        $type   = 'non-Elegans nematode EST sequence';
-    }
-#     elsif (eval { $s->AC_number }) {
-#         $type = 'external sequence';
-#     }
     elsif (eval{_is_merged($s)}) {
         $type = 'merged sequence entry';
-    }
-    elsif ($self->method eq 'NDB') {
-        $type = 'GenBank/EMBL Entry';
-        # This is going to need more robust processing to traverse object structure
     }
     else {
         $type = $s->Properties(1);
@@ -170,127 +123,13 @@ sub _build_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include description >>
 
-=head3 transcript_type
+# sub sequence_type {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include sequence_type >>
 
-This method will return a data structure containing
-which type of sequence the requested object is.
-
-=over
-
-=item PERL API
-
- $data = $model->transcript_type();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/transcript_type
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub transcript_type {
-    my ($self) = @_;
-    return {
-    description => 'the general type of the sequence',
-    data        => $self->type,
-    };
-}
-
-=head3 identity
-
-This method will return a data structure containing
-the brief identity of the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->identity();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/identity
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub identity {
-    my ($self) = @_;
- 
-    # Cull a brief identification from each gene. Redundant with gene page and 
-    # not necessarily accurate if we are looking at a splice variant.
-    my $data = join(', ', @{$self->genes}, $self ~~ 'Brief_identification' || ());
-    
-    return { description => 'the identity of the sequence',
-         data        => $data || undef   };
-}
-
+# sub identity {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include identity >>
 
 # sub method {}
 # Supplied by Role; POD will automatically be inserted here.
@@ -303,70 +142,6 @@ sub identity {
 # sub laboratory { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include laboratory >>
-
-=head3 available_from
-
-This method will return a data structure containing
-available sources for the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->available_from();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/available_from
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub available_from {
-    my $self   = shift;
-    my $object = $self->object;
-    
-    my $data = $self->method eq 'Vancouver_fosmid' && {
-    label => 'GeneService',
-    class => 'Geneservice_fosmids',
-    };
-    
-    return { description => 'availability of clones of the sequence',
-         data        => "$data" || undef };
-}
 
 ############################################################
 #
@@ -408,7 +183,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB CLO)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB MOTIFS)] : undef,
     };
 }
 
@@ -475,328 +250,25 @@ sub _build_genomic_image {
 
 =head2 Reagents
 
-=head3 orfeome_assays
-
-This method will return a data structure containing
-orfeome_assays related to the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->orfeome_assays();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/orfeome_assays
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub orfeome_assays {
-    my ($self) = @_;
-    my (@orfeome,@pcr);
-    if ($self->type =~ /gene|coding sequence|cDNA/) {
-         
-        @pcr     = map {$_->info} map { eval {$_->features('PCR_product:GenePair_STS', 'structural:PCR_product')} }
-                   @{$self->_segments}  ;
-        @orfeome = grep {/^mv_/} @pcr;
-    }
-
-    my %data;
-    foreach my $id (@orfeome) {
-        $data{id}    = $id;
-        $data{label} = $id. " (".($id->Amplified(1) ? "PCR assay amplified"
-                                  : font({-color=>'red'},"PCR assay did NOT amplify")).")";
-        $data{class} ='pcr';
-    }
-
-    return {
-        description => 'The ORFeome Assays of the sequence',
-        data        => %data ? \%data : undef,
-    };
-}
-
-
-=head3 microarray_assays
-
-This method will return a data structure containing
-microarray assays related to the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->microarray_assays();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/microarray_assays
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub microarray_assays {
-    my ($self) = @_;
-
-    my @microarrays;
-    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
-        $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
-
-        @microarrays = map {$self->_pack_obj($_)} sort {$a cmp $b } map {$_->info}
-                       map { eval{ $_->features('reagent:Oligo_set')} } @{$self->_segments};
-    }
-
-    return {
-        description => 'The Microarray assays in this region of the sequence',
-        data        => @microarrays ? \@microarrays : undef,    #class Oligo_set
-    };
-}
-
-
-
-=head3 source_clone
-
-This method will return a data structure containing
-the source clone of the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->source_clone();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/source_clone
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub source_clone {
-    my ($self) = @_;
-     
-    my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
-    return { description => 'The Source clone of the sequence',
-         data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
-}
-
-=head3 pcr_products
-
-This method will return a data structure containing
-PCR products related to the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->pcr_products();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/pcr_products
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub pcr_products {
-    my $self = shift;
-    my @pcr = map { $self->_pack_obj($_) } $self->object->Corresponding_PCR_product;
-    return { description => 'PCR products for the sequence',
-	     data        => @pcr ? \@pcr : undef,
-    };
-}
-
-=head3 matching_cdnas
-
-This method will return a data structure containing
-CDNAs that match the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->matching_cdnas();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/matching_cdnas
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub matching_cdnas {
-    my ($self) = @_;
-    my @cDNA = map { $self->_pack_obj($_) } @{$self ~~ '@Matching_cDNA'};
-    return { description => 'cDNAs that match the sequence',
-         data        => @cDNA ? \@cDNA : undef,
-    };
-}
+# sub orfeome_assays {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include orfeome_assays >>
+
+# sub microarray_assays {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include microarray_assays >>
+
+# sub pcr_products {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include pcr_products >>
+
+# sub matching_cdnas {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include matching_cdnas >>
+
+# sub source_clone {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include source_clone >>
 
 ############################################################
 #
@@ -806,449 +278,30 @@ sub matching_cdnas {
 
 =head2 Sequence
 
-=head3 print_blast
 
-This method will return a data structure containing
-links to blast resources.
+# sub print_blast {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include print_blast >>
 
-=over
+# sub print_sequence {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include print_sequence >>
 
-=item PERL API
+# sub print_homologies {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include print_homologies >>
 
- $data = $model->print_blast();
+# sub print_feature {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include print_feature >>
 
-=item REST API
+# sub transcripts {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include transcripts >>
 
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/print_blast
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub print_blast {
-    my ($self) = @_;
-    my @target = ('Elegans genome');
-    push @target,"Elegans protein" if ($self ~~ 'Coding');
-    
-    return { description => 'links to BLAST analyses',
-         data        =>  { source => $self ~~ 'name',
-                   target => \@target,
-         },
-    };
-}
-
-=head3 print_sequence
-
-This method will return a data structure containing
-the sequence of the sequence. Um, yeah.
-
-=over
-
-=item PERL API
-
- $data = $model->print_sequence();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/print_sequence
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-# TODO: REWRITE THIS. This is very gory code. Some of it doesn't do what
-#       one would expect due to some Perl details...
-sub print_sequence {
-    my ($self) = @_;
-    my $s = $self->object;
-    my @data;
-    my $gff = $self->gff || return;
-    my $seq_obj;
-    if ($self->_parsed_species =~ /briggsae/) {
-        ($seq_obj) = sort {$b->length<=>$a->length}
-        $self->type =~ /^(genomic|confirmed gene|predicted coding sequence)$/i
-        ? grep {$_->method eq 'wormbase_cds'} $gff->fetch_group(Transcript => $s),
-        : '';
-    }
-    else {
-        ($seq_obj) = sort {$b->length<=>$a->length}
-            grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
-#       grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
-
-        # BLECH!  If provided with a gene ID and alt splices are present just guess
-        # and fetch the first CDS or Transcript
-        # We really should display a list for all of these.
-
-        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-            grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.a");
-#           grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.a");
-        ($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
-            grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
-#           grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
-    }
-
-    ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
-    # Haven't fetched a GFF segment? Try Ace.
-    if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
-        # try to use acedb
-        if (my $fasta = $s->asDNA) {
-            push @data,{    header=>"FASTA Sequence",
-                    sequence=>"$fasta",
-                    length=>length($fasta),
-                           };   ##$fasta;
-
-            $self->length(length $fasta);
-        }
-        else {
-            push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
-        }
-        goto END;
-    }
-
-#print est alignments, maybe put into view directly
-    #     print_genomic_position($s,$type);
-#     $hash{est} = "name=$s;class=CDS";
-
-
-    if (eval { $s->Properties eq 'cDNA'} ) {
-        # try to use acedb
-        if (my $fasta = $s->asDNA) {
-            push @data, {   
-                header => "FASTA Sequence",
-                sequence => "$fasta",
-                length => length($fasta),
-               };
-        }
-        goto END;
-    }
-
-    my $unspliced = lc $seq_obj->dna;
-    my $length = length($unspliced);
-    if (eval { $s->Coding_pseudogene } || eval {$s->Coding} || eval {$s->Corresponding_CDS}) {
-        my $markup = Bio::Graphics::Browser2::Markup->new;
-        $markup->add_style('utr'  => 'FGCOLOR gray');
-        $markup->add_style('cds'  => 'BGCOLOR cyan');
-        $markup->add_style('cds0' => 'BGCOLOR yellow');
-        $markup->add_style('cds1' => 'BGCOLOR orange');
-        $markup->add_style('uc'   => 'UPPERCASE');
-        $markup->add_style('newline' => "\n");
-        $markup->add_style('space'   => ' ');
-        my %seenit;
-
-        my @features;
-        if ($s->Species =~ /briggsae/) {
-            $seq_obj->ref($seq_obj); # local coordinates
-            @features = sort {$a->start <=> $b->start}
-            grep { $_->info eq $s && !$seenit{$_->start}++ }
-            $seq_obj->features('coding_exon:curated','UTR');
-        }
-        else {
-            $seq_obj->ref($seq_obj); # local coordinates
-            # Is the genefinder specific formatting cruft?
-            @features =
-            sort {$a->start <=> $b->start}
-            grep { $_->info eq $s && !$seenit{$_->start}++ }
-            ($s->Method eq 'Genefinder') ?
-            $seq_obj->features('coding_exon:' . $s->Method,'five_prime_UTR','three_prime_UTR')
-            :
-            $seq_obj->features(qw/five_prime_UTR:Coding_transcript exon:Pseudogene coding_exon:Coding_transcript three_prime_UTR:Coding_transcript/);
-        }
-        my $test = _print_unspliced($markup,$seq_obj,$unspliced,@features);
-         
-        push @data, $test;
-        push @data, _print_spliced($markup,@features);
-        push @data, _print_protein($markup,\@features) unless eval { $s->Coding_pseudogene };
-    }
-    else {
-        # Otherwise we've got genomic DNA here
-#       $hash{dna} =  _to_fasta($s,$unspliced);
-        push @data, {   
-            header => "Genomic Sequence",
-                sequence => "$unspliced",
-            length => $length,
-               };
-    }
-    $self->length($length);
-
-  END:
-    return { description => 'the sequence of the sequence',
-         data        => \@data };
-}
-
-=head3 print_homologies
-
-This method will return a data structure containing
-homologies of the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->print_homologies();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/print_homologies
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub print_homologies {
-    my ($self) = @_;
-    my $seq = $self->object;
-
-    # Restructuring into the ?CDS class partially kills this query
-    # Transcripts are not sequence features any more...
-    my $gff = $self->ace_dsn->raw_query("gif seqget $seq -coords 1 ".$self->length." ; seqfeatures")
-    if $self->length > 0;
-    return unless $gff;
-
-    my ($origin,$extent,%HITS);
-    foreach (split("\n",$gff)) {
-        next if m!^//!;         # ignore comments
-        next if m!^\0!;         # ignore ACEDB noise/grunge
-        if (/^\#\#sequence-region \S+ (\d+) (\d+)/) {
-            ($origin,$extent) = ($1,$2);
-            next;
-        }
-        next if /^\#/;
-        my ($junk,$description,$type,@data) = split("\t"); # parse
-        # This might be broken with WS121 restructuring
-        next unless $type eq 'similarity';
-        push @{$HITS{$description}},\@data;
-    }
-
-    my (%hit_objs);
-    my ($dnas,$proteins);       # jalview flags
-    my @rows;
-    for my $type (sort keys %HITS) {
-        my $label = $type=~ /hmmfs/ ? 'Motif' : $type;
-        # without stepping through whole array, figure out whether
-        # we have any protein or DNA alignments to display.
-        my ($class) = $HITS{$type}->[0]->[$#{$HITS{$type}->[0]}] =~ /^([^:]+)/;
-        $dnas++      if $class eq 'Sequence';
-        $proteins++  if $class eq 'Protein';
-
-        for my $hit (sort {$a->[0] <=> $b->[0] } @{$HITS{$type}}) {
-            my ($s_start,$s_end,$score,$strand,$frame,$packed_stuff) = @$hit;
-            my (undef,$xref,$t_start,$t_end) = split(/\s+/,$packed_stuff);
-
-            # obscure feature in gff 1a format: the name of the hit
-            # is preceded by the name of the class and a colon
-            my $class;
-            ($class,$xref) = $xref =~ /"([^:]+):(.+)"/;
-            $class ||= 'Homol';
-            $s_start -= ($origin - 1);
-            $s_end   -= ($origin - 1);
-
-            my ($title);
-            my $obj = $hit_objs{"$class:$xref"} ||= $self->ace_dsn->fetch(-class=>$class,-name=>$xref,-fill=>1);
-            if (ref($obj)) {
-                $title = $obj->get(Title=>1) ||
-                $obj->get(DB_remark=>1) ||
-                $obj->get(Remark=>1);
-            }
-
-            $title ||= 'Genomic' if $type =~ /brig/i;
-            $title ||= 'EST'     if $type =~ /EST/;
-            $title ||= 'Genomic' if $type =~ /cosmid/i;
-            $title ||= 'Protein' if $type =~ /blastx/i;
-            $title ||= '&nbsp;';
-
-            push @rows, {   method => $label,
-                            similarity => ref($obj) ?  {label => $obj, id=>$obj, class=>$obj->class}: $obj,
-                            type => $title,
-                            score => $score,
-                            genomic_region => "$s_start&nbsp;-&nbsp;$s_end",
-                            hit_region => "$t_start&nbsp;-&nbsp;$t_end",
-                            strand => $strand,
-                            frame => $frame,
-                        };
-
-
-        }
-    }
-    return { description => 'homologous sequences',
-         data        => @rows ? \@rows : undef };
-}
-
-=head3 print_feature
-
-This method will return a data structure listing
-features contained within the sequence.
-
-=over
-
-=item PERL API
-
- $data = $model->print_feature();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/print_feature
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub print_feature {
-    my ($self) = @_;
-    my $s = $self->object;
-    my %hash;
-
-
-    my @feature = $s->get('Feature');
-    if (@feature) {
-#       print "Other features";
-        my @rows;
-        for my $f (@feature) {
-            (my $label = $f) =~ s/(inverted|tandem)/$1 repeat/;
-            for my $i ($f->col) {
-                my @fields = $i->row;
-                push @rows, {
-                    start=>$fields[0],
-                    end=>$fields[1],
-                    score=>$fields[2],
-                    comment=>=> $fields[3],
-                };
-            }
-            $hash{features}={ rows=>\@rows, label =>$label} if @rows;
-        }
-
-    }
-    return { description => 'features contained within the sequence',
-         data        => keys %hash ? \%hash : undef };
-}
-
+# sub predicted_units {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include predicted_units >>
 
 =head3 predicted_exon_structure
 
@@ -1314,118 +367,6 @@ sub predicted_exon_structure {
 
     return { description => 'predicted exon structure within the sequence',
              data        => @exons ? \@exons : undef };
-}
-
-
-
-sub predicted_units {
-    my ($self) = @_;
-    my $s = $self->object;
-    my @rows;
-
-    # NB: This is not completely functional - it doesn't display cloned, named genes
-    # (The pre-WS116 version didn't either).
-    # That is, transcripts like JC8.10 are not listed under Transcripts in Ace WS116
-    if (my @genes = $s->get('Transcript')) {
-#       print 'Predicted Genes & Transcriptional Units';
-        my %data = map {$_=>$_} $s->follow(-tag=>'Transcript',-filled=>1);
-#         my @rows;
-        foreach (sort {$a->right <=> $b->right} @genes) {
-            my $gene = $data{$_};
-            #   my $href = a({ -href=>Object2URL($gene) },$gene);
-            next unless defined $gene;
-            my $CDS    = $gene->Corresponding_CDS;
-
-            # Fetch the information from the CDS if it exists, else from the transcript
-            my $class = ($CDS) ? $CDS : $gene;
-            my $locus  = eval { $class->Locus };
-            my ($desc) = $class->Brief_identification;
-            ($desc)    ||= $class->Remark;
-            ($desc)    ||= $class->DB_remark;
-
-            # this sounds like important information - why is it undef'd?
-            #  undef $desc if $desc =~ /possible trans-splice site at \d+/;
-            $desc ||= '&nbsp;';
-            my ($start,$end)=$_->right->row;
-            push @rows, {   start=>$start,
-                            end=>$end,
-                            name=>$self->_pack_obj($gene),
-                            gene=>$locus ? $self->_pack_obj($locus) : '-',
-                            predicted_type=>=> $gene || '?',
-                            comment=>$desc,
-                        };
-        }
-    }
-
-    return { description => 'features contained within the sequence',
-         data        => @rows ? \@rows : undef };
-}
-
-=head3 transcripts
-
-This method will return a data structure containing
-transcripts corresponding to the requested object.
-
-=over
-
-=item PERL API
-
- $data = $model->transcripts();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-A Sequence ID (eg JC8.10a)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/transcripts
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub transcripts {
-    my ($self) = @_;
-    
-    my @transcripts;
-    if (($self ~~ 'Structure' || $self->method eq 'Vancouver_fosmid') &&
-    $self->type =~ /genomic|confirmed gene|predicted coding sequence/) {
-    @transcripts = map { $self->_pack_obj($_) } sort {$a cmp $b } map {$_->info}
-    map { eval {$_->features('protein_coding_primary_transcript:Coding_transcript')} }
-    @{$self->_segments};
-    }
-    
-    return { description => 'Transcripts in this region of the sequence',
-         data        => @transcripts ? \@transcripts : undef, #class Sequence
-    };
 }
 
 ############################################################
