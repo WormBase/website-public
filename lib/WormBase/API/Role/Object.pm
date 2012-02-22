@@ -1915,10 +1915,15 @@ sub _build_xrefs {
         my $remote_text     = $db->right(1);
 	$url_constructor =~ s/<Gene&RNAID>$/\%s/ ;
         # Possibly multiple entries for a single DB
-        my @ids = map {
-            my @types = $_->col;
-            @types ? map { "$_" } @types : eval { $_->right->name } ;
-        } $db->col;
+	my @ids = map {
+	    my @types = $_->col;
+	    map { 
+		my $val = $_;
+		if ($val =~ /OMIM:(.*)/) {"$1"}
+		elsif ($val =~ /GI:(.*)/){"$1"}
+		else { "$_" }
+	    } @types;
+	} $db->col;
 
         $dbs{$db} = {
             name            => $name            && "$name",
