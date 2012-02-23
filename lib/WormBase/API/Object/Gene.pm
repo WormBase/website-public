@@ -3688,7 +3688,6 @@ sub gene_models {
 
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
-        my $len_unspliced = $gff->length;
         my $len_spliced   = 0;
 
         for ( $gff->features('coding_exon') ) {
@@ -3766,30 +3765,6 @@ sub other_sequences {
 #   INTERNAL METHODS
 #
 #########################################
-sub _fetch_gff_gene {
-    my ($self,$transcript) = @_;
-
-    my $trans;
-    my $GFF = $self->gff_dsn() or return; # should probably log this?
-    eval {$GFF->fetch_group()};
-    return if $@; # should probably log this
-
-    if ($self->object->Species =~ /briggsae/) {
-        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
-            and return $trans;
-    }
-
-    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
-        and return $trans;
-
-    # Now pseudogenes
-    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
-        and return $trans;
-
-    # RNA transcripts - this is getting out of hand
-    ($trans) = $GFF->segment(Transcript => $transcript);
-    return $trans;
-}
 
 # This is for GO processing
 # TH: I don't understand the significance of the nomenclature.

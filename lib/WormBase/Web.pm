@@ -199,6 +199,8 @@ sub _setup_cache {
         };
     }
 
+    # Gah. Not possible for the filecache to be versioned.
+    # I don't have access to the API until plugins are setup.
     if ($cacheconfig->{filecache}{enabled}) {
         my $cache_dir = $cacheconfig->{filecache}{root} // do {
             require File::Temp; File::Temp->newdir;

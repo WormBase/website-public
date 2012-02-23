@@ -875,7 +875,7 @@ END;
 
     IF fields.$field_key.data.defined;
       sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
-    ELSE;
+    ELSIF (field_key.sequence.defined || field_key.0.sequence.defined);
       sequence_list = field_key.sequence.defined ? [field_key] : field_key;
       field_key = '';
     END;

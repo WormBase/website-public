@@ -161,6 +161,10 @@ sub _build_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include available_from >>
 
+# sub corresponding_all { }
+# Supplied by Role; POD will automatically be inserted here.
+# << include corresponding_all >>
+
 ############################################################
 #
 # The External Links widget
@@ -312,6 +316,10 @@ sub _build_genomic_image {
 # sub print_feature {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include print_feature >>
+
+# sub strand {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include strand >>
 
 # sub transcripts {}
 # Supplied by Role; POD will automatically be inserted here.

@@ -193,7 +193,7 @@ No
 
 B<Parameters>
 
-A Sequence ID (eg JC8.10a)
+a class and an object ID.
 
 B<Returns>
 
@@ -257,7 +257,7 @@ No
 
 B<Parameters>
 
-A Sequence ID (eg JC8.10a)
+a class and an object ID.
 
 B<Returns>
 
@@ -303,6 +303,119 @@ sub analysis {
     
     return { description => 'The Analysis info of the sequence',
 	     data        => %so_data ? \%so_data : undef  };
+}
+
+=head3 corresponding_all
+
+This method will return a data structure containing
+the corresponding objects (transcripts, cds, protein).
+
+=over
+
+=item PERL API
+
+ $data = $model->corresponding_all();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[CLASS]/[OBJECT]/corresponding_all
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub corresponding_all {
+    my $self = shift;
+    my $cds = $self->object;
+    my @rows;
+
+        $cds
+            = ( $cds->class eq 'CDS' )
+            ? $cds
+            : eval { $cds->Corresponding_CDS };
+
+#     foreach my $cds ( sort { $a cmp $b } @cds ) {
+        my %data  = ();
+        my $gff   = $self->_fetch_gff_gene($cds) or next;
+        my $protein = $cds->Corresponding_protein if $cds;
+        my @sequences = $cds->Corresponding_transcript;
+        my $len_spliced   = 0;
+
+        for ( $gff->features('coding_exon') ) {
+
+            if ( $protein->Species =~ /elegans/ ) {
+                next unless $_->source eq 'Coding_transcript';
+            }
+            else {
+                next
+                    unless $_->method =~ /coding_exon/
+                        && $_->source eq 'Coding_transcript';
+            }
+            next unless $_->name eq $sequences[0];
+            $len_spliced += $_->length;
+        }
+
+        $len_spliced ||= '-';
+
+        $data{length_spliced}   = $len_spliced;
+
+        my @lengths = map { $self->_fetch_gff_gene($_)->length;} @sequences;
+        $data{length_unspliced} = @lengths ? \@lengths : undef;
+
+
+        my $peplen = $protein->Peptide(2);
+        my $aa     = "$peplen";
+        $data{length_protein} = $aa if $aa;
+
+        my $gene = $cds->Gene;
+
+        my $type = $sequences[0]->Method;
+        $type =~ s/_/ /g;
+        @sequences =  map {$self->_pack_obj($_)} @sequences;
+        $data{type} = "$type";
+        $data{model}   = \@sequences;
+        $data{protein} = $self->_pack_obj($protein);
+        $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
+        $data{gene} = $self->_pack_obj($gene);
+        push @rows, \%data;
+#     }
+
+    return {
+        description => 'corresponding cds, transcripts, gene for this protein',
+        data        => @rows ? \@rows : undef
+    };
 }
 
 ############################################################
@@ -804,6 +917,7 @@ sub print_sequence {
 	#     print_genomic_position($s,$type);
 #     $hash{est} = "name=$s;class=CDS";
 
+
     if (eval { $s->Properties eq 'cDNA'} ) {
 		# try to use acedb
         if (my $fasta = $s->asDNA) {
@@ -1081,7 +1195,6 @@ sub print_feature {
 		$hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation} if @exons;
     }
 
-
     my @feature = $s->get('Feature');
     if (@feature) {
 # 		print "Other features";
@@ -1197,6 +1310,65 @@ sub predicted_units {
 
     return { description => 'features contained within the sequence',
          data        => @rows ? \@rows : undef };
+}
+
+
+=head3 strand
+
+This method will return a string indicating the orientation of the sequence
+
+=over
+
+=item PERL API
+
+ $data = $model->strand();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A Sequence ID (eg JC8.10a)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/sequence/JC8.10a/strand
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub strand {
+    my ($self) = @_;
+    my $strand = $self->_segments->[0]->strand if $self->_segments->[0];
+    return { description => 'strand orientation of the sequence',
+         data        => $strand ? ($strand > 0) ? "+" : "-" : undef 
+    };
 }
 
 =head3 transcripts

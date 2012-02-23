@@ -1756,7 +1756,7 @@ sub _build_status {
     my ($self) = @_;
     my $object = $self->object;
     my $class  = $object->class;
-    my $status = $class eq 'Protein' ? ($object->Live ? undef : 'history')
+    my $status = $class eq 'Protein' ? $object->Live
 	: (eval{$object->Status} ? $object->Status : 'unverified');
 
     return {
@@ -2301,6 +2301,38 @@ sub wormbook_abstracts {
 		   data        => $references,
     };
     return $result;
+}
+
+
+
+#########################################
+#
+#   INTERNAL METHODS
+#
+#########################################
+sub _fetch_gff_gene {
+    my ($self,$transcript) = @_;
+
+    my $trans;
+    my $GFF = $self->gff_dsn() or return; # should probably log this?
+    eval {$GFF->fetch_group()};
+    return if $@; # should probably log this
+
+    if ($self->object->Species =~ /briggsae/) {
+        ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
+            and return $trans;
+    }
+
+    ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
+        and return $trans;
+
+    # Now pseudogenes
+    ($trans) = grep {$_->method eq 'pseudo'} $GFF->fetch_group(Pseudogene => $transcript)
+        and return $trans;
+
+    # RNA transcripts - this is getting out of hand
+    ($trans) = $GFF->segment(Transcript => $transcript);
+    return $trans;
 }
 
 1;
