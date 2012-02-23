@@ -5,32 +5,26 @@
   rows = [];
   hash = fields.xrefs.data;
   FOREACH db IN hash.keys.sort;
-
+      IF !site.external_urls.$db.defined;
+	  dbname = FILTER lower; db; END;  #e.g. OMIM(ACeDB) -> omim(external_urls)
+      ELSE;
+	  dbname = db;
+      END;
       # This information is pulled from config which we might want to use in preference over ?Database;
       # Create a tooltip with information from information culled from both the database and our config.
-      maintainer = site.external_urls.$db.maintainer;
+      maintainer = site.external_urls.$dbname.maintainer;
       links = "";
 	  FOREACH id IN hash.$db.ids; 
-          href= FILTER format(site.external_urls.$db.search); id; END;
-
-	  #Note: some databases have base and schema defined in config file but some don't
-	  mark = markup(id);
-	  IF href;
+	      href= FILTER format(site.external_urls.$dbname.search); id; END;
+		  # We'll use description info from the website and not the DB.
+		  # Should be a table of resource, ID linked to page description, maintainer.
 	      links = links _ external_link(href,id,id);
-	  ELSIF mark != id;
-	      links = links _ mark;
-	  ELSE;
-	      href= FILTER format(hash.$db.url_constructor); id; END;
-	      links = links _ external_link(href,id,id);	      
-	  END;
-	      # We'll use description info from the website and not the DB.
-              # Should be a table of resource, ID linked to page description, maintainer.
-          links = links _ '<br />';
+	      links = links _ '<br />';
 	  END;
 
 
       rows.push( { maintainer  = maintainer,
-                  name        = external_link(site.external_urls.$db.base, db),
+                  name        = external_link(site.external_urls.$dbname.base, db),
                   link        = links,
                   full_description = hash.$db.description,     # full description from the DB
                 } );

@@ -24,11 +24,6 @@ END;
 remarks;
 
 laboratory;
-
-WRAPPER $field_block title="Available From" key="available_from";
-    tag2link(fields.available_from.data);
-END;
-
  '</div>';
 %]
 

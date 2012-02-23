@@ -14,23 +14,26 @@ WRAPPER $field_block title="Identity" key='identity';
 END;
 
 WRAPPER $field_block title="Method" key='method';
-        fields.method.data;
+        fields.method.data.method;
+	IF fields.method.data.details.defined;
+	    ": ";
+	    fields.method.data.details;
+	END;
 END;
 
 remarks;
 
-WRAPPER curator_block title="Origin";
-    laboratory;
+laboratory;
 
-    WRAPPER $field_block title="Available From" key="available_from";
-	tag2link(fields.available_from.data);
-    END;
+WRAPPER $field_block title="Available From" key="available_from";
+    tag2link(fields.available_from.data);
+END;
 
-    WRAPPER $field_block title="Analysis" key="analysis";
-	FOREACH key IN fields.analysis.data.keys.sort;
-	    key _ ': ' _ fields.analysis.data.$key _ '<br>';
-	END;
+WRAPPER $field_block title="Analysis" key="analysis";
+    FOREACH key IN fields.analysis.data.keys.sort;
+	key _ ': ' _ fields.analysis.data.$key _ '<br>';
     END;
 END;
+
  '</div>';
 %]
