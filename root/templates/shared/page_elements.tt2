@@ -953,39 +953,6 @@ END;
 %]
 
 
-
-[%  MACRO cytoscape(NODES, EDGES, TYPES) BLOCK; %]
-    <script type="text/javascript">
-    (function(){
-      var data = {
-            nodes: [  [% FOREACH node IN NODES.keys.sort %]
-                          { id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]", number:[% loop.index %],
-                            link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
-                          },
-                      [% END %]
-                  ],
-            edges:[ [% FOREACH obj IN EDGES %]
-                          { id: "e[% loop.count %]", label: "[% obj.interaction.label %]" ,
-                            source: "[% obj.effector.label %]", target: "[% obj.effected.label %]",
-                            type: "[% obj.type %]", direction:"[% obj.direction %]",
-                            width: [% obj.interactions.size %],
-                            phenotype: "[% obj.phenotype.label %]",
-                            nearby: [% obj.nearby %],
-                          },
-                    [% END %]
-                  ],
-        },
-        types = [ [% FOREACH obj IN TYPES.keys.sort %]
-                          "[% obj %]",
-                    [% END %] ]
-      WB.setupCytoscape(data, types);
-    })();
-    </script>
-[%  END; %]
-
-
-
-
 [%# 
     #######################################################
 
