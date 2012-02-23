@@ -1,69 +1,36 @@
-[% IF fields.interactions.data.edges.size> 0 %]
-
-[% NODES=fields.interactions.data.nodes %]
-[% TYPES=fields.interactions.data.types %]
-[% NO_NEARBY=fields.interactions.data.edges.size > 450 %]
-[% edgeColors = ['#08298A','#B40431','#FF8000','#04B404','#8000FF','#191007','#73c6cd','#92d17b','#cC87AB4','#e4e870','#696D09'] %]
-
-
-    [% IF fields.interactions.data.showall || NO_NEARBY %]
-	    <div id="cytoscapeweb_panel">
-		Interaction Type <select class="cyto_panel" id="cyto_panel_type">
-		    <option value=0 >All</option>
-		  [% FOREACH obj IN TYPES.keys.sort %]
-		    <option>[% obj %]</option>
-		  [% END %]
-		</select>
-		Direction <select class="cyto_panel" id="cyto_panel_direction">
-		    <option value=0 >All</option>
-		    <option>Effector->Effected</option>
-		    <option>non-directional</option>
-		</select>
-	      [% IF !NO_NEARBY %]
-		Nearby Interactions <select class="cyto_panel" id="cyto_panel_nearby">
-		    <option value=0 >Show</option>
-		    <option>Hide</option>
-		</select>
-	      [% END %]
-	    </div>
-	    [% IF TYPES.keys %]
-		<div id="legend">
-		    Edge-colors:
-		      [% FOREACH obj IN TYPES.keys.sort %]
-			[% ind = loop.index %]
-			  <span style="color:[% edgeColors.$ind %]">[% obj %] </span>
-		      [% END %]
-		      (Edge thickness relative to number of citations)
-		</div>
-	    [% END %]
-	    <div id="resizable" class="ui-widget-content">
-		<div id="cytoscapeweb">
-			Unable to load the CytoscapeWeb image. Please try again in a few minutes.
-		</div>
-	    </div>
-    [% ELSE %]
-	[% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field','gene',object.name.data.id,'interaction_details') id="interactions_toggle"%]
-	[% END %]
-    [% END %]
-[% END %]
-
-[% WRAPPER $field_block title="Interactions" key="interactions";
+[%
+  MACRO interaction_table BLOCK;
+  WRAPPER $field_block title="Interactions" key="interactions";
       'Found ';
       searchlink('interaction', object.name.data.id, fields.interactions.data.edges.size _ " " _ pluralize("interaction", fields.interactions.data.size));
 
       build_data_table(order=['interactions','type','effector','effected','direction','phenotype','citations'],
-     	               columns={type  => 'Interaction Type',
-		                effector => 'Effector',
-		                effected  => 'Effected',
-				direction => 'Direction',
-				phenotype => 'Phenotype',
-				interactions => 'Interactions',
-				citations => 'Citations',
- 		                }, key='interaction',
-	               passed_data=fields.interactions.data.edges);
+                       columns={type  => 'Interaction Type',
+                        effector => 'Effector',
+                        effected  => 'Effected',
+                direction => 'Direction',
+                phenotype => 'Phenotype',
+                interactions => 'Interactions',
+                citations => 'Citations',
+                        }, key='interaction',
+                   passed_data=fields.interactions.data.edges);
     END;
+  END;
 %]
 
-[% IF fields.interactions.data.showall || NO_NEARBY %]
-    [% cytoscape( NODES, fields.interactions.data.edges, TYPES) %]
+
+
+[% IF fields.interactions.data.edges.size> 0 %]
+  [% TYPES = fields.interactions.data.types %]
+  [% NODES = fields.interactions.data.nodes %]
+  [% EDGES = fields.interactions.data.edges %]
+  [% NO_NEARBY = fields.interactions.data.edges.size > 450 %]
+  [% IF fields.interactions.data.showall || NO_NEARBY %]
+      [% WRAPPER classes/gene/interaction_details.tt2; %]
+           [% interaction_table %]
+      [% END %]
+  [% ELSE %]
+    [% WRAPPER toggle title="<b>View Interaction Network</b>" lazy=1 href=c.uri_for('/rest','field','gene',object.name.data.id,'interaction_details') id="interactions_toggle"%][% END %]
+    [% interaction_table %]
+  [% END %]
 [% END %]
