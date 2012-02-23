@@ -1542,7 +1542,7 @@ sub history {
 	my ($event,$prediction)  = $version->row(1);
 	push @data, { version    => "$version",
 		      event      => "$event",
-		      prediction => $self->_pack_obj($prediction), };
+		      prediction => {id=>"$prediction", class=>'gene'}, };
     }
     
     return { description => 'curatorial history of the protein',
@@ -1777,7 +1777,7 @@ sub _draw_image {
 			-bump        => 1,
 			-sort_order  => 'high_score',
 			-bgcolor     => $color,
-			-font2color  => 'red',
+			-font2color  => 'grey',
 			-height      => 6,
 			-linewidth   => 1,
 			-description => 1,

@@ -403,7 +403,11 @@ END;
                 IF cell.species.defined;
                     '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                 ELSIF cell.class.defined;
-                    tag2link(cell);
+                    IF cell.label.defined;
+                      tag2link(cell);
+                    ELSE;
+                      searchlink(cell.class, cell.id, cell.id);
+                    END;
                 ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
                     tags2link(cell, '<br />', 'Results');
                 ELSIF cell.evidence.defined;

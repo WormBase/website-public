@@ -334,7 +334,7 @@
 
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
-		base		= 'www.wormbase.org'
+		base		= 'http://www.wormbase.org'
 		email		= 'help@wormbase.org'
 		search		= 'http://www.wormbase.org/db/seq/protein?name=%s'
 	}
