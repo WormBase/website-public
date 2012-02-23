@@ -1,4 +1,4 @@
-package WormBase::API::Object::Transcript;
+package WormBase::API::Object::Cds;
 
 use Moose;
 
@@ -13,18 +13,17 @@ use Bio::Graphics::Browser2::Markup;
 
 =head1 NAME
 
-WormBase::API::Object::Transcript
+WormBase::API::Object::Cds
 
 =head1 SYNPOSIS
 
-Model for the Ace ?Transcript class.
+Model for the Ace ?Cds class.
 
 =head1 URL
 
-http://wormbase.org/species/transcript
+http://wormbase.org/species/cds
 
 =cut
-
 
 has 'method' => (
     is      => 'ro',
@@ -36,6 +35,9 @@ sub _build_method {
     my ($self) = @_;
     my $class = $self->object->class;
     my $method = $self ~~ 'Method';
+    if($self->object->Corresponding_transcript) {
+	$method = $self->object->Corresponding_transcript->Method;
+    }
     my $details = $method->Remark;
     return {
         description => "the method used to describe the $class",
@@ -57,33 +59,17 @@ sub _build_type {
     # figure out where this sequence comes from
     # should rearrange in order of probability
     my $type;
-    if ($s =~ /^cb\d+\.fpc\d+$/) {
-        $type = 'C. briggsae draft contig';
-    }
-    elsif (_is_gap($s)) {
-        $type = 'gap in genomic sequence -- for accounting purposes';
-    }
-    elsif ($self->method eq 'Vancouver_fosmid') {
-        $type = 'genomic -- fosmid';
-    }
-    elsif ($self ~~ '@Locus') {
+    if ($self ~~ '@Locus') {
         $type = 'confirmed gene';
     }
-    elsif (eval { $s->Coding }) {
+    elsif ($s->Coding) {
         $type = 'predicted coding sequence';
     }
     elsif ($s->get('cDNA')) {
         ($type) = $s->get('cDNA');
     }
-    elsif ($self->method eq 'EST_nematode') {
-        $type   = 'non-Elegans nematode EST sequence';
-    }
     elsif (eval{_is_merged($s)}) {
         $type = 'merged sequence entry';
-    }
-    elsif ($self->method eq 'NDB') {
-        $type = 'GenBank/EMBL Entry';
-        # This is going to need more robust processing to traverse object structure
     }
     else {
         $type = $s->Properties(1);
@@ -157,14 +143,6 @@ sub _build_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include laboratory >>
 
-# sub available_from { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include available_from >>
-
-# sub corresponding_all { }
-# Supplied by Role; POD will automatically be inserted here.
-# << include corresponding_all >>
-
 ############################################################
 #
 # The External Links widget
@@ -178,6 +156,7 @@ sub _build_type {
 # sub xrefs {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include xrefs >>
+
 
 ############################################################
 #
@@ -193,6 +172,8 @@ sub _build_type {
 # Supplied by Role; POD will automatically be inserted here.
 # << include genomic_position >>
 
+ 
+
 # sub tracks {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include tracks >>
@@ -202,7 +183,7 @@ sub _build_tracks {
 
     return {
         description => 'tracks to display in GBrowse',
-        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB)] : undef,
+        data => $self->_parsed_species =~ /elegans/ ? [qw(CG ESTB MOTIFS)] : undef,
     };
 }
 
@@ -232,12 +213,10 @@ sub _build_genomic_image {
     $start = int($start - 0.1*($stop-$start));
     $stop  = int($stop  + 0.1*($stop-$start));
     my @segments;
-    if ($seq->class eq 'CDS' or $seq->class eq 'Transcript') {
-        my $gene = eval { $seq->Gene;} || $seq;
-        @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
-        @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
-            unless @segments;   # CB discontinuity
-    }
+    my $gene = eval { $seq->Gene;} || $seq;
+    @segments = $self->gff->segment(-class=>'Coding_transcript',-name=>$gene);
+    @segments = grep {$_->method eq 'wormbase_cds'} $self->gff->fetch_group(CDS => $seq)
+	unless @segments;   # CB discontinuity
     # In cases where more than one segment is retrieved
     # (ie with EST or OST mappings)
     # choose that which matches the original segment.
@@ -271,8 +250,6 @@ sub _build_genomic_image {
 
 =head2 Reagents
 
-=cut
-
 # sub orfeome_assays {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include orfeome_assays >>
@@ -300,6 +277,7 @@ sub _build_genomic_image {
 ############################################################
 
 =head2 Sequence
+
 
 # sub print_blast {}
 # Supplied by Role; POD will automatically be inserted here.
@@ -370,7 +348,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/transcript/JC8.10a/predicted_exon_structure
+curl -H content-type:application/json http://api.wormbase.org/rest/field/cds/JC8.10a/predicted_exon_structure
 
 B<Response example>
 
@@ -428,6 +406,155 @@ sub _build__segments {
     return [map {$_->absolute(1);$_} sort {$b->length<=>$a->length} $self->gff->segment($object->class => $object)];
 }
 
+
+
+
+sub _print_unspliced {
+    my ($markup,$seq_obj,$unspliced,@features) = @_;
+    my $name = $seq_obj->info . ' (' . $seq_obj->start . '-' . $seq_obj->stop . ')';
+
+    my $length   = length $unspliced;
+    if ($length > 0) {
+        # mark up the feature locations
+
+        my @markup;
+        my $offset = $seq_obj->start;
+        my $counter = 0;
+        for my $feature (@features) {
+            my $start    = $feature->start - $offset;
+            my $length   = $feature->length;
+            my $style = $feature->method eq 'CDS'  ? 'cds'.$counter++%2
+            : $feature->method =~ /exon/ ? 'cds'.$counter++%2
+            : $feature->method =~ 'UTR' ? 'utr' : '';
+            push @markup,[$style,$start,$start+$length];
+            push @markup,['uc',$start,$start+$length] unless $style eq 'utr';
+        }
+        push @markup,map {['space',10*$_]}   (1..length($unspliced)/10);
+        push @markup,map {['newline',80*$_]} (1..length($unspliced)/80);
+#       my $download = _to_fasta("$name|unspliced + UTR - $length bp",$unspliced);
+        $markup->markup(\$unspliced,\@markup);
+        return {
+            #download => $download,
+            header=>"unspliced + UTR",
+            sequence=>$unspliced,
+            length => $length,
+            style=> 1,
+            
+        };
+    }
+}
+
+# Fetch and markup the spliced DNA
+# markup alternative exons
+sub _print_spliced {
+    my ($markup,@features) = @_;
+    my $spliced = join('',map {$_->dna} @features);
+    my $splen   = length $spliced;
+    my $last    = 0;
+    my $counter = 0;
+    my @markup  = ();
+    my $prefasta = $spliced;
+    for my $feature (@features) {
+        my $length = $feature->stop - $feature->start + 1;
+        my $style  = $feature->method =~ /UTR/i ? 'utr' : 'cds' . $counter++ %2;
+        my $end = $last + $length;
+        push @markup,[$style,$last,$end];
+        push @markup,['uc',$last,$end] if $feature->method =~ /exon/;
+        $last += $length;
+    }
+
+    push @markup,map {['space',10*$_]}   (1..length($spliced)/10);
+    push @markup,map {['newline',80*$_]} (1..length($spliced)/80);
+    my $name = eval { $features[0]->refseq->name } ;
+#   my $download=_to_fasta("$name|spliced + UTR - $splen bp",$spliced);
+    $markup->markup(\$spliced,\@markup);
+     
+    return {                    # download => $download ,
+        header=>"spliced + UTR",
+        sequence=>$spliced,
+        length=> $splen,
+        style=> 1,
+    } if $name;
+
+}
+
+sub _print_protein {
+    my ($markup,$features,$genetic_code) = @_;
+#   my @markup;
+    my $trimmed = join('',map {$_->dna} grep {$_->method eq 'coding_exon'} @$features);
+    return unless $trimmed;     # Hack for mRNA
+    my $peptide = Bio::Seq->new(-seq=>$trimmed)->translate->seq;
+    my $change  = $peptide =~/\w+\*$/ ? 1 : 0;
+    my $plen = length($peptide) - $change;
+
+#   @markup = map {['space',10*$_]}      (1..length($peptide)/10);
+#   push @markup,map {['newline',80*$_]} (1..length($peptide)/80);
+    my $name = eval { $features->[0]->refseq->name };
+#   my $download=_to_fasta("$name|conceptual translation - $plen aa",$peptide);
+#   $markup->markup(\$peptide,\@markup);
+    $peptide =~ s/^\s+//;
+
+    return {                    # download => $download,
+        header=>"conceptual translation",
+        sequence=>$peptide,
+        type => "aa",
+        length => $plen,
+    };
+}
+
+##use this or template to format sequence?
+
+sub _to_fasta {
+    my ($name,$dna) = @_;
+    $dna ||= '';
+    my @markup;
+    for (my $i=0; $i < length $dna; $i += 10) {
+        push (@markup,[$i,$i % 80 ? ' ':"\n"]);
+    }
+    _markup(\$dna,\@markup);
+    $dna =~ s/^\s+//;
+    $dna =~ s/\*$//;
+    return  {   header=>"Genomic Sequence",
+                content=>"&gt;$name\n$dna"
+               };
+}
+
+# insert HTML tags into a string without disturbing order
+sub _markup {
+    my $string = shift;
+    my $markups = shift;
+    for my $m (sort {$b->[0]<=>$a->[0]} @$markups) { #insert later tags first so position remains correct
+        my ($position,$markup) = @$m;
+        next unless $position <= length $$string;
+        substr($$string,$position,0) = $markup;
+    }
+}
+# get coordinates of parent for exons etc
+sub _get_parent_coords {
+    my ($self,$s) = @_;
+    my ($parent) = $self->sequence;
+    return unless $parent;
+    #  my $subseq = $parent->get('Subsequence');  # prevent automatic dereferencing
+
+    # Escape the sequence name for fetching
+    $s =~ s/\./\\./g;
+    # We may be dealing with transcripts, too.
+    my $se;
+    foreach my $tag (qw/CDS_child Transcript/) {
+        my $subseq = $parent->get($tag); # prevent automatic dereferencing
+        if ($subseq) {
+            $se = $subseq->at($s);
+            if ($se) {
+                my ($start,$stop) = $se->right->row;
+                my $orientation = $start <=> $stop;
+                return ($start,-$orientation,$parent);
+            }
+        }
+    }
+    return;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
+

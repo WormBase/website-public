@@ -1,0 +1,35 @@
+[% 
+  sequence('print_sequence');
+  
+  WRAPPER $field_block title="Strand" key='strand';
+    '(' _ c.stash.fields.strand.data _ ')';
+  END;
+
+  WRAPPER $field_block title="Predicted Exon Structure" key="predicted_exon_structure";
+
+        build_data_table( order = ['no','start','end'],
+                          columns = { no => 'Exon #',
+                                      start => 'Start',
+                                      end   => 'End'},
+                          passed_data = fields.predicted_exon_structure.data,
+                          key = 'predicted_exon_structure');
+
+  END;
+
+  WRAPPER $field_block title="Predicted Genes & Transcriptional Units" key="predicted_units";
+        build_data_table( order = ['start','end','name','gene', 'predicted_type', 'comment'],
+                          columns = { start => 'Start',
+                                      end => 'End',
+                                      name   => 'Name',
+                                      gene => 'Gene',
+                                      predicted_type => 'Predicted type',
+                                      comment => 'Comment'},
+                          passed_data = fields.predicted_units.data,
+                          key = 'predicted_units');
+  END;
+
+  WRAPPER $field_block title="Transcripts in this region" key="transcripts";
+	tags2link(c.stash.fields.transcripts.data, '<br />', 'Results');
+  END;
+
+%]
