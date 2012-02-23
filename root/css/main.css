@@ -2594,7 +2594,13 @@ table.venn tr.venn-data td {
   display:none;
 }
 
- 
+#resizable { 
+  width: 750px;
+  height: 750px;
+  padding: 0.5em;
+  margin:0 auto;
+}
+
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */
