@@ -295,6 +295,10 @@ sub _build_genomic_image {
 # Supplied by Role; POD will automatically be inserted here.
 # << include print_feature >>
 
+# sub strand {}
+# Supplied by Role; POD will automatically be inserted here.
+# << include strand >>
+
 # sub transcripts {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include transcripts >>
