@@ -109,7 +109,7 @@
     # return true for a downloadable object
     MACRO downloadable(class) BLOCK;
       class = (class || object.name.data.class) | lower;
-      ret = (class=='sequence' || class=='protein' || class=='transcript' ) ? 1 : 0;
+      ret = (class=='sequence' || class=='protein' || class=='transcript' || class=='cds' ) ? 1 : 0;
       ret;
     END;
 
