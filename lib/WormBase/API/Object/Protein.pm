@@ -91,6 +91,13 @@ has 'cds' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# do this for now. Remove once corresponding gene name added to Protein model.
+sub _build__common_name {
+    my ($self) = @_;
+    return uc($self->corresponding_gene->{data}[0]{label}) // $self->object->name;
+}
+
+
 # sub taxonomy { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include taxonomy >>
