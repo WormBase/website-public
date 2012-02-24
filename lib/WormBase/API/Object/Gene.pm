@@ -143,7 +143,7 @@ sub _build__phenotypes {
 
         my $packed_allele = $self->_pack_obj(
             $allele, undef,
-            boldface => $seq_status ? scalar($seq_status =~ /sequenced/i) : 0,
+            style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,
         );
 	for my $obs (qw(observed not_observed)) {
 	    foreach ($allele->Phenotype) {
