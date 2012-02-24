@@ -293,7 +293,7 @@
       }else if(layout = widgetHolder.data("layout")){
         Layout.resetPageLayout(layout);
       }else{
-        Layout.openAllWidgets(true);
+        Layout.openAllWidgets();
       }
       
       if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
@@ -408,6 +408,7 @@
             var tog = $jq(this);
             tog.toggleClass("active").next().slideToggle("fast", function(){
                 if($jq.colorbox){ $jq.colorbox.resize(); }
+                Scrolling.sidebarMove();
               });
             if(tog.hasClass("load-toggle")){
               ajaxGet(tog.next(), tog.attr("href"));
@@ -1005,11 +1006,11 @@ var Layout = (function(){
         return widgetList.list.indexOf(widget_name).toString(36);
     }
    
-    function openAllWidgets(noTools){
+    function openAllWidgets(){
       var hash = "",
-          tools = noTools ? $jq("#navigation").find(".tools").size() : 0;
+          wlen = $jq("#navigation").find("li.module-load:not(.tools,.me,.toggle)").size();
       if(widgetList.list.length == 0){ return; }
-      for(i=0; i<(widgetList.list.length - 2 - tools); i++){
+      for(i=0; i<wlen; i++){
         hash = hash + (i.toString(36));
       }
       window.location.hash = hash + "--10";
@@ -1198,17 +1199,17 @@ var Scrolling = (function(){
           if(static==0){
             if ((scrollTop > offset) && (scrollTop < maxScroll)) {
                 sidebar.stop().css('position', 'fixed').css('top', system_message);
-                static++;
+                static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
             }
           }else{
             if (scrollTop < offset) {
                 sidebar.stop().css('position', 'relative').css('top', 0);
-                static--;
+                static = 0;
             }else if(scrollTop > maxScroll){
                 sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
-                static--;
+                static = 0;
                 if(scrollingDown == 1){body.stop(); scrollingDown = 0; }
             }
           }
