@@ -6,10 +6,6 @@
  
     status;
 
-    WRAPPER $field_block title="Length" key="sequence";
-        fields.sequence.data.length _ ' ' _ fields.sequence.data.type;
-    END;
-
     WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
         fields.estimated_molecular_weight.data;
         ' kD <span id="fade">(estimated)</span>';
@@ -29,15 +25,6 @@ END;
 
 WRAPPER curator_block title="Type";
    fields.type.data;
-END;
-
-WRAPPER $field_block title=pluralize("Gene", fields.corresponding_gene.data.size) key="corresponding_gene";
-    tags2link(fields.corresponding_gene.data);
-END;
-
-
-WRAPPER $field_block title=pluralize("Transcript", fields.corresponding_transcripts.data.size) key="corresponding_transcripts";
-    tags2link(fields.corresponding_transcripts.data);
 END;
 
 WRAPPER $field_block title="Description" key="description";
