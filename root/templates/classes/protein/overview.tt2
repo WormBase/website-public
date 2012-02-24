@@ -12,7 +12,7 @@
 
     WRAPPER $field_block title="Molecular weight" key="estimated_molecular_weight";
         fields.estimated_molecular_weight.data;
-        ' <span id="fade">(estimated)</span>';
+        ' kD <span id="fade">(estimated)</span>';
     END;
 
     WRAPPER $field_block title="Isoelectric point" key="estimated_isoelectric_point";

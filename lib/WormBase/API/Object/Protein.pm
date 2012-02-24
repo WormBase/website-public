@@ -324,7 +324,7 @@ sub corresponding_all {
         @sequences =  map {$self->_pack_obj($_)} @sequences;
         $data{type} = "$type";
         $data{model}   = \@sequences;
-        $data{protein} = $self->_pack_obj($protein);
+        $data{protein} = $self->_pack_obj($protein, undef, style => 'font-weight:bold');
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
         $data{gene} = $self->_pack_obj($gene);
         push @rows, \%data;
