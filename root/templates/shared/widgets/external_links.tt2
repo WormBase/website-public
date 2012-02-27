@@ -26,7 +26,7 @@
       rows.push( { maintainer  = maintainer,
                   name        = external_link(site.external_urls.$dbname.base, db),
                   link        = links,
-                  full_description = hash.$db.description,     # full description from the DB
+                  full_description = site.external_urls.$dbname.description,     # full description from the DB
                 } );
      END;
 
