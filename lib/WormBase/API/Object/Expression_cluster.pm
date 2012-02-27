@@ -188,8 +188,8 @@ B<Response example>
 sub genes {
     my $self   = shift;
     my $object = $self->object;
-    my $data   = $self->_pack_objects($object->Gene);
-    return { data        => %$data ? $data : undef,
+    my @data = map {$self->_pack_obj($_)} $object->Gene;
+    return { data        => @data ? \@data : undef,
 	     description => 'genes contained in this expression cluster' };
 
 }
@@ -261,7 +261,7 @@ sub anatomy_terms {
     foreach ($object->Anatomy_term) {
 	my $definition   = $_->Definition;
 	push @data, {
-	    anatomy_term => $self->_pack_object($_),
+	    anatomy_term => $self->_pack_obj($_),
 	    definition => "$definition",
 	};
     }
@@ -469,8 +469,8 @@ B<Response example>
 sub sage_tags {
     my $self   = shift;
     my $object = $self->object;
-    my $data   = $self->_pack_objects($object->SAGE_tag);
-    return { data        => %$data ? $data : undef,
+    my @data   = $self->_pack_objects($object->SAGE_tag);
+    return { data        => @data ? \@data : undef,
 	     description => 'Sage tags associated with this expression_cluster'
     };
 }
