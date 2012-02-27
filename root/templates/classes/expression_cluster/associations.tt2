@@ -17,23 +17,5 @@ END;
 WRAPPER $field_block title="Expression Patterns" key="expression_patterns";
     tags2link(fields.expression_patterns.data);
 END;
-	
-
-WRAPPER $field_block title="Microarray" key="microarray";
-    build_data_table (
-		order = [ 
-			'microarray',
-			'experiment',
-			'minimum',
-			'maximum',
-			],
-		columns = {				 		
-			microarray => 'Microarray',
-			experiment => 'Experiment',
-			minimum =>'Minimum',
-			maximum =>'Maximum',
-			},
-		key = 'microarray');
-END;
 
 %]

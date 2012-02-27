@@ -551,7 +551,7 @@ B<Response example>
 
 sub anatomy_function_nots {
     my $self      = shift;
-    my $object    = $self->object;
+
     my $data_pack = $self->_anatomy_function('Anatomy_function_not');
     return {
         'data'        => $data_pack,
@@ -588,11 +588,19 @@ sub anatomy_function_nots {
 sub _anatomy_function {
     my ($self, $tag) = @_;
 
-	my @data_pack = map {
+    my @data_pack;
+    foreach ($self->object->$tag){
+	my @bp_inv = map {$self->_pack_obj($_)} $_->Involved;
+	my @bp_not_inv = map {$self->_pack_obj($_)} $_->Not_involved;
+	push @data_pack, \{
             af_data   => $self->_pack_obj($_),
             phenotype => $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),
-    }, $self->object->$tag; # array of hashes -- note the comma
+	    bp_inv    => @bp_inv ? \@bp_inv : undef,
+	    bp_not_inv=> @bp_not_inv ? \@bp_not_inv : undef,
+	    reference => $self->_pack_obj(scalar $_->Reference),
+	    };
+    } # array of hashes -- note the comma
 
     return @data_pack ? \@data_pack : undef;
 }

@@ -2,9 +2,9 @@
 
 [% 
 
-#WRAPPER highlight_box;
+WRAPPER highlight_box;
 
-#END;
+END;
 
 
 WRAPPER $field_block title="Database" key="database";
