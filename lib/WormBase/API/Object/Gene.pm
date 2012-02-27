@@ -653,6 +653,70 @@ sub gene_class {
 }
 
 
+
+=head3 operon
+
+This method will return a data structure containing
+the operon packed tag of the gene, if one exists.
+
+=over
+
+=item PERL API
+
+ $data = $model->operon();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/operon
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub operon {
+    my $self   = shift;
+    my $object = $self->object;  
+    
+    my $operon = $object->Contained_in_operon;
+    
+    return {
+    description => "Operon the gene is contained in",
+    data        => $operon ? $self->_pack_obj($operon) : undef};
+}
+
+
 =head3 legacy_information
 
 This method will return a data structure containing
