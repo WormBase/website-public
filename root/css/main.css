@@ -1882,17 +1882,18 @@ div.field-content {
 }
 
 /* Curator specific fields */
-div.curator-title {
-  font-size:1.1em;
-  font-style:italic;
-}
-
-div.curator-field-title {
+div.field-curator {
   margin:1em;
   padding:1em;
   background:#CCFFFF;
   border:1px solid gray;
   width:80%;
+}
+
+div.field-curator span.desc {
+  position:absolute;
+  right:0.4em;
+  bottom:0.2em;
 }
 
 
@@ -2594,7 +2595,13 @@ table.venn tr.venn-data td {
   display:none;
 }
 
- 
+#resizable { 
+  width: 750px;
+  height: 750px;
+  padding: 0.5em;
+  margin:0 auto;
+}
+
 
 
 /* = Generic styling added by TH; possibly redundant  ========================== */

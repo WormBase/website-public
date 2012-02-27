@@ -278,14 +278,14 @@ END;
   [% IF c.check_user_roles('curator') OR c.check_user_roles('admin') %]
 
     <div class="field field-curator" id="[% title FILTER html %]">
-         <div class="curator-title">This content is only visible to curators.</div>
-         <div class="curator-field-title">
+         <div class="field-title">
                   [% IF title ; title _ ': '; END; %]
          </div>
 
          <div class="field-content">
              [% content %]
-          </div>
+         </div>
+         <span id="fade" class="desc">curator only field</span>
      </div>
   [% END %]
 [% END %]
@@ -403,7 +403,11 @@ END;
                 IF cell.species.defined;
                     '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
                 ELSIF cell.class.defined;
-                    tag2link(cell);
+                    IF cell.label.defined;
+                      tag2link(cell);
+                    ELSE;
+                      searchlink(cell.class, cell.id, cell.id);
+                    END;
                 ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
                     tags2link(cell, '<br />', 'Results');
                 ELSIF cell.evidence.defined;
@@ -951,9 +955,6 @@ END;
                          passed_data=rows);
   END;
 %]
-
-
-
 
 
 [%# 
