@@ -20,18 +20,18 @@
    ACE2WB_MAP = c.model('WormBaseAPI').modelmap.ACE2WB_MAP.class;
 
     MACRO tag2link(data,text,title) BLOCK;  
-      IF data.defined ;
-         UNLESS text; text = data.label; END;
-         IF data.class.defined;
-	    IF data.boldface;
-		ln = text2link(data.class, data.id, text, title, data.taxonomy);
-		"<b>$ln</b>";
-	    ELSE;
-		text2link(data.class, data.id, text, title, data.taxonomy);
-	    END;
-	 ELSE;
+      IF data.defined;
+        UNLESS text; text = data.label; END;
+        IF data.class.defined;
+          ln = text2link(data.class, data.id, text, title, data.taxonomy);
+          IF data.style;
+            '<span style="'_ data.style _ "\">$ln</span>";
+          ELSE;
+            "$ln";
+          END;
+        ELSE;
           data.label;
-         END;
+        END;
       END;
    END;
 
@@ -109,7 +109,7 @@
     # return true for a downloadable object
     MACRO downloadable(class) BLOCK;
       class = (class || object.name.data.class) | lower;
-      ret = (class=='sequence' || class=='protein' || class=='transcript' ) ? 1 : 0;
+      ret = (class=='sequence' || class=='protein' || class=='transcript' || class=='cds' ) ? 1 : 0;
       ret;
     END;
 

@@ -91,6 +91,13 @@ has 'cds' => (
 # Supplied by Role; POD will automatically be inserted here.
 # << include name >>
 
+# do this for now. Remove once corresponding gene name added to Protein model.
+sub _build__common_name {
+    my ($self) = @_;
+    return uc($self->corresponding_gene->{data}[0]{label}) // $self->object->name;
+}
+
+
 # sub taxonomy { }
 # Supplied by Role; POD will automatically be inserted here.
 # << include taxonomy >>
@@ -324,7 +331,7 @@ sub corresponding_all {
         @sequences =  map {$self->_pack_obj($_)} @sequences;
         $data{type} = "$type";
         $data{model}   = \@sequences;
-        $data{protein} = $self->_pack_obj($protein);
+        $data{protein} = $self->_pack_obj($protein, undef, style => 'font-weight:bold');
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
         $data{gene} = $self->_pack_obj($gene);
         push @rows, \%data;
@@ -1542,7 +1549,7 @@ sub history {
 	my ($event,$prediction)  = $version->row(1);
 	push @data, { version    => "$version",
 		      event      => "$event",
-		      prediction => $self->_pack_obj($prediction), };
+		      prediction => {id=>"$prediction", class=>'gene'}, };
     }
     
     return { description => 'curatorial history of the protein',
@@ -1777,7 +1784,7 @@ sub _draw_image {
 			-bump        => 1,
 			-sort_order  => 'high_score',
 			-bgcolor     => $color,
-			-font2color  => 'red',
+			-font2color  => 'grey',
 			-height      => 6,
 			-linewidth   => 1,
 			-description => 1,
