@@ -27,9 +27,10 @@
     '<div style="clear:both;">';
     IF fields.genomic_image.data;
              # setting vars up
-            # img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
-             img_url = 'http://www.wormbase.org/db/gb2/gbrowse_img/' _ fields.genomic_image.data.id;
+	     # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
+             img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
 
+             # img_url = 'http://www.wormbase.org/db/gb2/gbrowse_img/' _ fields.genomic_image.data.id;
 
              IF fields.tracks.data;
                  img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
