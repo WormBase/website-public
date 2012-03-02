@@ -28,7 +28,9 @@
     IF fields.genomic_image.data;
              # setting vars up
 	     # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
-             img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
+             # img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
+	     # Or send all requests to production. Not ideal.
+	     img_url = 'http://beta.wormbase.org/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
 
              # img_url = 'http://www.wormbase.org/db/gb2/gbrowse_img/' _ fields.genomic_image.data.id;
 
