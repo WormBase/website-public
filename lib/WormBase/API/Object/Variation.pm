@@ -146,20 +146,34 @@ sub variation_type {
         push @types,"Knockout Consortium allele";
     }
 
-    if ($object->SNP) {
-        my $type = 'Polymorphism';
-        $type .= '; RFLP' if $object->RFLP;
-        $type .= $object->Confirmed_SNP ? ' (confirmed)' : ' (predicted)';
-        push @types, $type;
+    # TH: TEMPORARY HACK FOR WS230. Mary Ann will be making these
+    # types explicit in the database.
+    if ($object->Transposon_insertion(0) && !$object->Allele(0)) {
+	push @types,'Transposon Insertion';
+    } elsif ($object->Natural_variant(0) && !$object->SNP(0)) {
+	push @types,'Naturally Occurring Allele'; 
+    } elsif ($object->Natural_variant(0) && $object->SNP(0)) {
+	push @types,'SNP';
+    } elsif ($object->Allele(0) && $object->Natural_variant(0)) {
+	push @types,'Naturally Occurring Allele';
+    } elsif ($object->Allele(0) && $object->Transposon_insertion(0)) {
+	push @types,'Transposon Insertion';
+    } elsif ($object->SNP(0)) {
+	push @types,'SNP';
+    } else {
+	push @types,'Allele';
     }
 
-    if ($object->Natural_variant) {
-        push @types, 'Natural variant';
-    }
+    # Not sure what to do with this at the moment.  Off for now.
+#    if ($object->SNP) {
+#	# handled above.
+##        my $type = 'Polymorphism';
+#	my $type;
+#        $type .= '; RFLP' if $object->RFLP;
+#        $type .= $object->Confirmed_SNP ? ' (confirmed)' : ' (predicted)';
+#        push @types, $type;
+#    }
 
-    if (@types == 0) {
-        push @types,'Allele';
-    }
 
     my $physical_type = join('/', $object->Type_of_mutation); # what about text?
     if ($object->Transposon_insertion || $object->Method eq 'Transposon_insertion') {
@@ -2745,11 +2759,35 @@ B<Response example>
 sub nature_of_variation {
     my ($self) = @_;
     
-    my $nature = $self ~~ 'Nature_of_variation';
+    # WS230: Mary Ann is cleaning this up. For now we need to.
+    # use this heuristic
+    my $variation = $self->object;
+    my $nature;
+    if ($variation->Transposon_insertion(0) && !$variation->Allele(0)) {
+	$nature = 'Transposon Insertion';
+    } elsif ($variation->Natural_variant(0) && !$variation->SNP(0)) {
+	$nature = 'Naturally Occurring Allele'; 
+    } elsif ($variation->Natural_variant(0) && $variation->SNP(0)) {
+	$nature = 'SNP';
+    } elsif ($variation->Allele(0) && $variation->Natural_variant(0)) {
+	$nature = 'Naturally Occurring Allele';
+    } elsif ($variation->Allele(0) && $variation->Transposon_insertion(0)) {
+	$nature = 'Transposon Insertion';
+    } elsif ($variation->SNP(0)) {
+	$nature = 'SNP';
+    } else {
+	$nature = 'Allele';
+    }
     return {
-        description => 'nature of the variation',
-        data        => $nature && "$nature",
+	description => 'nature of the variation',
+	data        => $nature && "$nature",
     };
+    
+#    my $nature = $self ~~ 'Nature_of_variation';
+#    return {
+#        description => 'nature of the variation',
+#        data        => $nature && "$nature",
+#    };
 }
 
 =head3 dominance
