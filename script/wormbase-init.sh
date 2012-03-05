@@ -35,7 +35,39 @@ if [ ! $APP ]; then
 # Used to override the location of the user database.
     export CATALYST_CONFIG_LOCAL_SUFFIX="production"
     
+elif [ $APP == 'staging' ]; then
+    echo "   ---> APP is set to staging"
+    export APP=staging
+    export APP_ROOT=/usr/local/wormbase/website
+    export DAEMONIZE=true
+    export PORT=5000
+    export WORKERS=10
+
+    # Configure our GBrowse App
+    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
+    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
+
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
+    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
+    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
+    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
+
+    # GBrowse ONLY production sites
+#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
+#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
+#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
+#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
+
+    
+# Set some configuration variables.
+    export WORMBASE_INSTALLATION_TYPE="staging"
+    
+# Set my local configuration prefix so wormbase_staging.conf takes precedence.
+# Used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
+    
 fi
+
 
 # Fetch local defaults
 PIDDIR=/tmp
