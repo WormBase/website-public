@@ -101,7 +101,7 @@
 [% END %]
   <div id="issue-box" class="ui-corner-left minimize">
     <span class="ui-icon ui-icon-alert"></span>
-    <span class="ui-helper-hidden"><b><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Contact WormBase Help</a></b></span>
+    <span class="ui-helper-hidden"><span class="ui-icon ui-icon-circle-close"></span><b><a href="[% c.uri_for('/tools', 'support') _ '?url=' _ c.req.uri.path %]"> Contact WormBase Help</a></b></span>
   </div>
 </div> 
 

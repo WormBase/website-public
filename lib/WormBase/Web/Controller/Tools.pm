@@ -5,42 +5,18 @@ use warnings;
 use parent 'WormBase::Web::Controller';
 
 # TODO: blast_blat requires its own controller..
-
 sub index :Path :Args(0) {
     my ($self, $c) = @_;
     $c->stash->{template} = "tools/report.tt2";
     $c->stash->{section}  = "tools";
 }
 
-sub issue :Path('issues') Args {
-    my ( $self, $c ,$id) = @_;
-
+sub support :Path('support') :Args(0) {
+    my ($self, $c) = @_; 
     $c->stash->{section}  = "tools";
-    $c->stash->{current_time} = time();
-
-    if(!$id || $id =~ m/report/) {
-      $c->stash->{template} = "feed/issue.tt2";
-      if($id){ 
-        $c->stash->{url} = $c->req->params->{url} || "/";
-      }else{
-        $c->stash->{issues} = [$c->model('Schema::Issue')->search(undef)];
-      }
-      return;
-    }
-
-    my $issue = $c->model('Schema::Issue')->find($id);
-    my @threads = $issue->threads(undef,{order_by=>'thread_id ASC' } ); 
-    my $last = $threads[scalar @threads -1] if @threads;
-
-    $c->stash->{template} = "feed/issue_page.tt2";
-    $c->stash->{issue} = $issue;
-    $c->stash->{threads} = \@threads;
-    $c->stash->{last_edit} = $last ? $last->user : $issue->reporter;
-
-    if($c->check_user_roles('admin')) {
-      my $role=$c->model('Schema::Role')->find({role=>'curator'});
-      $c->stash->{curators}=[$role->users];
-    }
+    $c->stash->{template} = "feed/issue.tt2";
+    $c->stash->{url} = $c->req->params->{url} || "/";
+    return;
 }
 
 sub operator :Path("operator") Args {

@@ -16,7 +16,7 @@
 
 [% UNLESS c.req.action == 'me' %]
   [% widgets.push({ title="My WormBase" type="title"}) %]
-  [% FOREACH widget_name IN ['reports', 'my_library'] -%]
+  [% FOREACH widget_name IN ['favourites', 'my_library'] -%]
     [% widget = c.config.sections.me.widgets.$widget_name %]
     [% w = { id = widget_name
             title = widget.title
