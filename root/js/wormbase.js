@@ -572,7 +572,7 @@
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
           isBox.toggleClass("minimize").children().toggle();
-          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "12em"})
+          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
         });
     }
     
@@ -1364,12 +1364,18 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            is_private = feed.find("#isprivate:checked").size();
+            is_private = feed.find("#isprivate:checked").size(),
+            name = feed.find("#name"),
+            email = feed.find("#email");
+        if (!validate_fields(email, name))
+          return;
         $jq.ajax({
           type: 'POST',
           url: rel,
           data: {title:feed.find("#issue-title option:selected").val(), 
                 content: feed.find("#issue-content").val(), 
+                name: name.val(),
+                email: email.val(),
                 url: url || issue.url,
                 isprivate:is_private},
           success: function(data){

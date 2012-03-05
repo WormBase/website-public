@@ -2569,6 +2569,10 @@ table.venn tr.venn-data td {
   width:1em;
 }
 
+#issue-box span{
+  float:left;
+}
+
 #operator-box.minimize{
   background:#406F9C;
   background-image:url('/img/chat.png');
