@@ -928,20 +928,22 @@ sub _build_laboratory {
     my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
 
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
-    my $data; # trick: $data is undef until following code derefs it like hash (or not)!
-    if (my $lab = eval {$object->$tag}) {
-	my $label = $lab->Mail;
-        $data->{laboratory} = $self->_pack_obj($lab, "$label");
-	 
-        my $representative = $lab->Representative;
-        my $name           = $representative->Standard_name;
-        my $rep            = $self->_pack_obj($representative, "$name");
-        $data->{representative} = $rep if $rep;
-    }
+    my @data;
 
+    if (eval {$object->$tag}) {
+	foreach my $lab ($object->$tag) {
+	    my $label = $lab->Mail;
+	    my $representative = $lab->Representative;
+	    my $name           = $representative->Standard_name;
+	    push @data, {
+		laboratory => $self->_pack_obj($lab, "$label"),
+		representative => $self->_pack_obj($representative, "$name"),
+	    };
+	}
+    }
     return {
         description => "the laboratory where the $class was isolated, created, or named",
-        data        => $data,
+        data        => @data ? \@data : undef,
     };
 }
 
