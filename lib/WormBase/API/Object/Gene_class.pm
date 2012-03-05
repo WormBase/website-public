@@ -274,15 +274,15 @@ sub current_genes {
 	my $species = $gene->Species;
 	
 	my $sequence_name = $gene->Sequence_name;
-	my $locus_name    = $gene->Public_name;
-	my $name = ($locus_name ne $sequence_name) ? "$locus_name ($locus_name)" : "$locus_name";
+# 	my $locus_name    = $gene->Public_name;
+# 	my $name = ($locus_name ne $sequence_name) ? "$locus_name ($locus_name)" : "$locus_name";
 	
 	# Some redundancy in the data structure here while
 	# we decide how to format this data.
 	push @{$data{$species}},
 	{ species  => $self->_split_genus_species($species),
 	  locus    => $self->_pack_obj($gene),
-	  sequence => "$sequence_name",
+	  sequence => $self->_pack_obj($sequence_name),
 	};		     
     }
     return { description => 'genes assigned to the gene class, organized by species',
@@ -359,13 +359,13 @@ sub former_genes {
     foreach my $old_gene ($object->Old_member) {
 	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
 	
-	my $data = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
+	my $stashed = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
 	
 	my $species = $gene->Species;
-	push @{$data{$species}},$data;
+	push @{$data{$species}},$stashed;
     }
     
-    my $data = { description => 'genes formerly in the class that have been reassigned to a new class',
+    return { description => 'genes formerly in the class that have been reassigned to a new class',
 		 data        => scalar keys %data ? \%data : undef };    
 }
 
@@ -436,13 +436,12 @@ sub reassigned_genes {
 	my $public_name = $gene->Public_name;
 	my @other_names =  grep { /$public_name/ } $gene->Other_name;
 	foreach (@other_names) {
-	    my $data = $self->_stash_former_member($gene,$_);
-	    push @{$data{$species}},$data;
+	    my $stashed = $self->_stash_former_member($gene,$_);
+	    push @{$data{$species}},$stashed;
 	}
     }
-    my $data = { description => 'genes that have been reassigned a new name in the same class',
-		 data        => scalar keys %data ? \%data : undef };    
-    return $data;
+    return { description => 'genes that have been reassigned a new name in the same class',
+	      data        => scalar keys %data ? \%data : undef };    
 }
 
 

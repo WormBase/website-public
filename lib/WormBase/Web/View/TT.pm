@@ -4,6 +4,12 @@ use strict;
 use parent 'Catalyst::View::TT';
 use Template::Constants ':debug';
 
+use Template::Stash;
+
+$Template::Stash::ROOT_OPS->{ ref } = sub {
+   return ref ($_[0]);
+};
+
 __PACKAGE__->config({
 		     INCLUDE_PATH => [
 				      WormBase::Web->path_to( 'root', 'templates' ),

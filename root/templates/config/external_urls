@@ -199,6 +199,11 @@
 		search		= 'http://submit.modencode.org/submit/public/citation/%s'
 	}
 
+	modencodetissueya_cepsh = {
+		description	= 'MODEncode Genome Browser Wiggle Track for Tissue YA_CEPsh'
+		base		= 'http://modencode.oicr.on.ca/fgb2/gbrowse/worm/?label=PEMBRYO_FAX_WIG/YA_CEPsh'
+	}
+
 	MRC_geneservice = {
 		description	= 'Supplier of genomic products and contract research company'
 		base		= 'http://www.geneservice.co.uk/products/rnai/index.jsp'
@@ -356,6 +361,12 @@
 		maintainer	= ''
 		base		= 'http://www.ebi.ac.uk/uniprot'
 		search		= 'http://www.ebi.uniprot.org/entry/%s'
+	}
+
+	wormatlas = {
+		description = 'A C. elegans database of behavioral and structural anatomy'
+		base = 'http://wormatlas.org/'
+		search = 'http://wormatlas.org/%s'
 	}
 
 	wormbook = {

@@ -130,7 +130,9 @@ sub _build__phenotypes {
     for my $xgene ($object->Drives_Transgene, $object->Transgene_product) {
         my $packed_xgene = $self->_pack_obj($xgene);
 	for my $obs (qw(observed not_observed)) {
-	    foreach ($xgene->Phenotype) {
+	    my $phentype = 'Phenotype';
+	    $phentype .= '_not_observed' if $obs eq 'not_observed';
+	    foreach ($xgene->$phentype) {
 		$phenotypes{$obs}{$_}{object}          //= $self->_pack_obj($_);
 		push @{$phenotypes{$obs}{$_}{evidence}{'Transgenes:'}}, { text=>$packed_xgene, evidence=>$self->_get_evidence($_)};
 	    }
@@ -146,7 +148,9 @@ sub _build__phenotypes {
             style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,
         );
 	for my $obs (qw(observed not_observed)) {
-	    foreach ($allele->Phenotype) {
+	    my $phentype = 'Phenotype';
+	    $phentype .= '_not_observed' if $obs eq 'not_observed';
+	    foreach ($allele->$phentype) {
 		$phenotypes{$obs}{$_}{object}        //= $self->_pack_obj($_);
 		push @{$phenotypes{$obs}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele, evidence=>$self->_get_evidence($_)};
 	    }

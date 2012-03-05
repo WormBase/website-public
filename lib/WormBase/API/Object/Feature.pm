@@ -537,8 +537,8 @@ B<Response example>
 sub binds_gene_product {
     my $self   = shift;
     my $object = $self->object;
-    my $data = $self->_pack_objects($object->Bound_by_product_of);
-    return { data => %$data ? $data : undef,
+    my @data = map {$self->_pack_obj($_)} $object->Bound_by_product_of;
+    return { data => @data ? \@data : undef,
 	     description => 'gene products that bind to the feature' };
 }
 
