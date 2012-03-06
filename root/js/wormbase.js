@@ -580,15 +580,15 @@
     var area = $jq(selector);
       
     if(area.attr("value") != ""){
-      area.siblings().fadeOut();
+      area.siblings(".holder").fadeOut();
     }
     area.focus(function(){
-      $jq(this).siblings().fadeOut();
+      $jq(this).siblings(".holder").fadeOut();
     });
 
     area.blur(function(){
       if($jq(this).attr("value") == ""){
-        $jq(this).siblings().fadeIn();
+        $jq(this).siblings(".holder").fadeIn();
       }
     });
   }

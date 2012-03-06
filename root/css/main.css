@@ -745,6 +745,10 @@ div.more .ui-icon {
    font-size: 0.8em;
 }
 
+a#fade:hover {
+  text-decoration:underline;
+}
+
 .result {
   padding:0 0.5em 0.5em;
 }
@@ -1259,7 +1263,7 @@ ul.nav-bar span.status-bar {
   padding:0;
 }
 
-ul.nav-bar span.status-bar li a {
+ul.nav-bar span.status-bar li>a {
   padding-right:1.5em;
 }
 
@@ -1311,7 +1315,6 @@ ul.nav-bar ul.dropdown {
 
 /* Login and registration styling  - header, home page, and login popup */
 #login-box ul.dropdown {
-  width:auto;
   left:auto;
   right:0;
   top:1.6em;
@@ -1320,7 +1323,7 @@ ul.nav-bar ul.dropdown {
 
 .login-holder{
   position:relative;
-  margin:0.5em 1em;
+  margin:0.5em 0 0.5em 1em;
 }
 
 span.holder {
@@ -1336,7 +1339,7 @@ span.holder {
   color:black;
   position:relative;
   border-bottom:none;
-  padding-right:1.5em;
+  border-right:none;
 }
 
 #login-form button{
@@ -1350,18 +1353,19 @@ span.holder {
   border-top:1px solid #CDCDCD;
   overflow:hidden;
   position:relative;
-  padding:0.5em 0 1em 1em;
+  padding:0.5em 1em 1em 1em;
 }
 
-#login-form > form {
-  width:14.5em;
+#login-form div.social>div {
+  float:left;
+  padding:0.5em;
 }
 
 .login-form {
   padding:0.5em 0 0 !important;
   font-weight: normal !important;
   background: white !important;
-  width: 14em !important;
+  width: 16.5em !important;
 }
 
 .registration-form {
@@ -2746,6 +2750,7 @@ Use width:auto or a fixed width on the .social_buttons element
     outline: none;
     padding: 0;
     text-decoration: none !important;
+    margin:0.2em;
 }
 button::-moz-focus-inner { 
     border: 0;
