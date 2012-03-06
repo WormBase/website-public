@@ -587,11 +587,15 @@ sub anatomy_function_nots {
 
 sub _anatomy_function {
     my ($self, $tag) = @_;
-
+    my $object = $self->object;
     my @data_pack;
     foreach ($self->object->$tag){
-	my @bp_inv = map {$self->_pack_obj($_)} $_->Involved;
-	my @bp_not_inv = map {$self->_pack_obj($_)} $_->Not_involved;
+	my @bp_inv = map { if ("$_" eq "$object") {$_->Term}
+			   else {$self->_pack_obj($_)}
+			  } $_->Involved;
+	my @bp_not_inv = map { if ("$_" eq "$object") {$_->Term}
+			   else {$self->_pack_obj($_)}
+			  } $_->Not_involved;
 	push @data_pack, \{
             af_data   => $self->_pack_obj($_),
             phenotype => $self->_pack_obj(scalar $_->Phenotype),

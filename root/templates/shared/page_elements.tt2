@@ -314,38 +314,13 @@ END;
 
 [% MACRO build_data_table BLOCK;
 
-    # declare rows array
-        local_rows = [];
+      local_data = passed_data ? passed_data : fields.$key.data;
 
-    # loop through each element in <subroutine>.<return_data_key>.<... to array data> array
-        # (or through data passed in that may have been built by the caller)
-        local_data = passed_data ? passed_data : fields.$key.data;
-
-    FOREACH r IN local_data;
-        row = [];
-            
-        # loop through each element in order array (for columns) , declared above
-        FOREACH o IN order;         
-            # get value (val) from the row r
-                    val = r.$o;
-            IF val.match('^http');
-                 val='<a href="' _ val _ '">Lab link</a>';
-                        END;
-            
-            # enter data in row
-                    row.push(val);
-        END;
-                
-        # enter data row array into rows
-        local_rows.push(row);
-      END;
-              
-      # populate name array;
       headers = [];
       FOREACH o IN order; headers.push(columns.$o); END;
-      
+
       # generate table
-      jquery_data_table_html(headers, local_rows, "table_${key}_by", style, table_build);   
+      jquery_data_table_html(headers, local_data, "table_${key}_by", style, table_build, order);   
 
     END; # END of MACRO
 %]
@@ -360,8 +335,8 @@ END;
      styling via javascript.
 %]
      
-[% MACRO jquery_data_table_html(table_headers,rows,table_name,style,table_build) BLOCK %]
-  [% IF rows && rows.size > 0;  
+[% MACRO jquery_data_table_html(table_headers, rows,table_name,style,table_build, columns) BLOCK %]
+  [% IF rows && rows.size > 0;
        # Set up some suitable defaults
        IF rows.size < 11 || (rows.size < 31 && table_headers.size < 3);
           paginate        = 'false';
@@ -402,57 +377,23 @@ END;
         [%
           FOREACH row IN rows;
             '<tr>';
-            index=loop.index;
-            FOREACH cell IN row;
-                '<td>';
-                IF cell.species.defined;
-                    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
-                ELSIF cell.class.defined;
-                    IF cell.label.defined;
-                      tag2link(cell);
-                    ELSE;
-                      searchlink(cell.class, cell.id, cell.id);
-                    END;
-                ELSIF cell.first.class.defined; #intended as check for list of _pack_obj
-                    tags2link(cell, '<br />', 'Results');
-                ELSIF cell.evidence.defined;
-                    evidence(cell.evidence,table_name _ index, cell.text, 'details');
-                ELSIF cell.first.evidence.defined;
-                  FOREACH result IN cell;
-                    evidence(result.evidence,table_name _ index, result.text, 'details');
-                    '<br />';
-                  END;
-                ELSIF cell.values.size; #hash of arrays (e.g. evidence column in phenotypes widget on gene page)
-                  FOREACH key IN cell.keys.sort;
-                    IF cell.$key.size < 10;
-                      "$key<br />";
-                      IF cell.$key.first.evidence.defined;
-                        FOREACH item IN cell.$key;
-                          evidence(item.evidence,table_name _ index, item.text, 'details');
-                        END;
-                      ELSIF cell.$key.first.reference.defined;
-                        FOREACH item IN cell.$key;
-                          obj = tag2link(item.obj);
-                          ref = tag2link(item.reference);
-                          "$obj($ref)<br />";
-                        END;
-                      ELSE;
-                        tags2link(cell.$key);
-                      END;
-                      IF !loop.last;
-                        '<br />';
-                      END;
-                    ELSE;
-                      tags2link(cell.$key, '<br />', key);
-                    END;
-                  END;
-                ELSIF cell.values.first.class.defined;
-                  tags2link(cell.values);
-                ELSE;
-                  cell.join('<br />');
-                END;
-                '</td>';
-            END;
+	    IF ref(row) == 'HASH';
+		FOREACH col IN columns;
+		    cell = row.$col;
+		    IF cell.match('^http');
+			cell='<a href="' _ cell _ '">Lab link</a>';
+		    END;
+		    '<td>';
+		    cell_content(cell);
+		    '</td>';
+		END;
+	    ELSE;
+		FOREACH cell IN row;
+		    '<td>';
+		    cell_content(cell);
+		    '</td>';
+		END;
+	    END;
             '</tr>';
           END;
              %]
@@ -473,7 +414,49 @@ END;
     </script>
    [% END %]
 
-[% END %] 
+[% END %]
+
+[% MACRO cell_content(cell) BLOCK;
+	IF cell.species.defined;
+	    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
+	ELSIF cell.class.defined;
+	    IF cell.label.defined;
+	      tag2link(cell);
+	    ELSE;
+	      searchlink(cell.class, cell.id, cell.id);
+	    END;
+	ELSIF cell.evidence.defined;
+	    evidence(cell.evidence,table_name _ index, cell.text, 'details');
+	ELSIF ref(cell) == 'ARRAY';
+	  IF cell.size > 10;
+	      WRAPPER toggle title=cell.size _ ' Results';
+		FOREACH item IN cell;
+		  cell_content(item);
+		  IF !item.evidence.defined && !loop.last;
+		      '<br />';
+		  END;
+		END;
+	      END;
+	  ELSE;
+	      FOREACH item IN cell;
+		cell_content(item);
+		IF !item.evidence.defined && !loop.last;
+		    '<br />';
+		END;
+	      END;
+	  END;
+	ELSIF ref(cell) == 'HASH';
+	  # assumes that hash passed to cell should be output as the key followed by its value
+	  # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
+	  FOREACH key IN cell.keys.sort;
+	    "$key";
+	    cell_content(cell.$key);
+	  END;
+	ELSE;
+	   cell;
+	END;
+  END;
+%]
 
 [% MACRO empty_widget_check BLOCK;
   not_empty;
@@ -986,59 +969,23 @@ END;
        FOREACH species IN species_list;
             IF fields.$key.data.$species > 0;
                 WRAPPER $field_block title="" key="$key";
-
-                   # declare array of columns named via keys in the data structure
-               IF key == 'current_genes';
-                    order = ['species','locus', 'sequence'];
-            
-                 # declare hash for column headers, keyed as above
-                     headers = {   species  => 'Species',
-                                       locus    => 'Locus',
-                                       sequence => 'Sequence' };
-                  ELSE;
-                     order = ['species','former_name', 'new_name','sequence'];
-               
-                 # declare hash for column headers, keyed as above
-                     headers = {   species     => 'Species',
-                                       former_name => 'Former name',
-                       new_name    => 'New name',
-                                       sequence    => 'Sequence' };   
-                  END;
-
-                 # declare rows array
-                 rows = [];
-  
-                 FOREACH r IN fields.$key.data.$species;
-                       row = [];
-                   # loop through each element in order array (for columns) , declared above
-                   FOREACH o IN order;          
-                     # get value (val) from the row r
-                             val = r.$o;
-                     # enter data in row
-                             row.push(val);
-                       END;
-                   # enter data row array into rows
-                           rows.push(row);
-                 END;
-                      
-                 # populate name array;
-             names = [];
-             FOREACH o IN order; names.push(headers.$o); END;
-                 table_count = table_count + 1;               
-
-                  # generate table
-                 '<div class="toggle">';
-                         '<span class="species">' 
-                          _ species 
-                          _ '</span> (' 
-                          _ fields.$key.data.$species.size 
-                          _ ' members)'
-                          _ '</div>';
-                 '<div class="returned">';
-#                    dataTable_list(names, rows, "table_${species}_${key}");
-                    jquery_data_table_html(names, rows, "table_${species}_${key}_${table_count}");
-                '</div>';         
-         END; # END of nested WRAPPER
+		  WRAPPER toggle title=species _ '(' _ fields.$key.data.$species.size _ ' members)';
+		    IF key == 'current_genes';
+		      build_data_table(
+			  order=['locus', 'sequence'], 
+			  columns={ locus    => 'Locus',
+				    sequence => 'Sequence' },
+			  passed_data=fields.$key.data.$species, key= key _ loop.index);
+		    ELSE;
+		      build_data_table(
+			  order=['former_name', 'new_name', 'sequence'], 
+			  columns={ former_name => 'Former name',
+				    new_name    => 'New name',
+				    sequence => 'Sequence' },
+			  passed_data=fields.$key.data.$species, key= key _ loop.index);
+		    END;
+		  END; #END of toggle WRAPPER
+		END; # END of nested WRAPPER
            END; # END IF species contains data
          END; # END of SPECIES
      END; # END of primary WRAPPER 
