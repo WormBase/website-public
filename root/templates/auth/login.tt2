@@ -1,3 +1,38 @@
+
+<!-- Login form -->
+<div id="login-form">
+  <form method="post" align="left" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
+
+    <div class="login-holder">
+        <span id="fade" class="holder">email</span>
+        <input class="email" type="email" name="email" size="28"/>
+    </div>
+    <div class="login-holder">
+        <span id="fade" class="holder">password</span>
+        <input class="password" type="password" name="password" size="19"/>
+        <input type="submit" onClick='var form = $jq(this).closest("#login-form"); return WB.validate_fields(form.find("input.email"), null, form.find("input.password")  );' value="Login" id="login"/>
+    </div>
+    <div class="login-holder">
+      <input type="checkbox" id="remember" name="remember" size="10"><span id="fade"> Remember me · </span></input>
+      <span id="fade"><a href="[% c.uri_for('/register') %]" onClick='$jq(this).closest(".login-form").load("[% c.uri_for("/register") %]?inline=1").toggleClass("registration-form login-form"); return false;'>register</a> · </span>
+      <a id="fade" href="[% c.uri_for('/password/index') %]">forgot login?</a>
+    </div>
+  </form>
+
+  <div class="social">
+    <div><br />...or sign in with</div>
+    <div>
+      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
+          <span>Google</span>
+      </button>
+      <br style="clear:both" />
+      <button class="social_buttons sb_facebook sb_24" onClick="WB.openid.signin('facebook');">
+          <span>Facebook</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <script> 
 [% IF reload || error_notice  %] 
    [% IF error_notice %]
@@ -18,41 +53,3 @@
 WB.hideTextOnFocus(".email");
 WB.hideTextOnFocus(".password");
 </script>
-
-
-  
-<!-- Login form -->
-<div id="login-form">
-  <form method="post" align="left" action="[% c.secure_uri_for("/auth/login") %]" style="float:left;">
-
-    <div class="login-holder">
-        <span id="fade" class="holder">email</span>
-        <input class="email" type="email" name="email" size="22"/>
-    </div>
-    <div class="login-holder">
-        <span id="fade" class="holder">password</span>
-        <input class="password" type="password" name="password" size="22"/>
-    </div>
-    <div class="login-holder" style="margin: -0.2em 0 0.5em; padding:0 1em;">
-      <input type="submit" onClick='var form = $jq("#login-form"); return WB.validate_fields(form.find("input.email"), null, form.find("input.password")  );' value="Login" id="login"/>
-      <div id="fade" style="padding:0 1em;float:right;margin-top:-3px;"><input type="checkbox" id="remember" name="remember" size="10">Remember me</input><br />
-                      <a href="[% c.uri_for('/register') %]" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/register") %]?inline=1").addClass("registration-form").removeClass("login-form"); return false;' style="padding:0;margin:0;">create an account</a>
-        <br /> <a href="[% c.uri_for('/password/index') %]" style="padding:0;margin:0;">forget password?</a>
-      </div>
-    </div>
-  </form>
-
-  <div class="social">
-    <span style="position:absolute;top:30px;">...or sign in with</span>
-    <div style="float:right;padding-right:1em;">
-      <button class="social_buttons sb_google sb_24" onClick="WB.openid.signin('google');">
-          <span>Google</span>
-      </button>
-      <br style="clear:both" />
-      <button class="social_buttons sb_facebook sb_24" onClick="WB.openid.signin('facebook');">
-          <span>Facebook</span>
-      </button>
-    </div>
-  </div>
-</div>
- 

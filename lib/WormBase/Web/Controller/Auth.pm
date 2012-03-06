@@ -20,30 +20,22 @@ sub login :Path("/login") {
 
 sub password : Chained('/') PathPart('password')  CaptureArgs(0) {
      my ( $self, $c) = @_;
-    $c->stash->{noauth} = 1; 
      $c->stash->{template} = 'auth/password.tt2';
-     
 }
+
 sub password_index : Chained('password') PathPart('index')  Args(0){
     my ( $self, $c ) = @_;
-    
-    $c->stash->{token}  = $c->req->param("id")  ;
-    if($c->stash->{token}) {
-	  my @users = $c->model('Schema::Password')->search({token=>$c->stash->{token} });
-	  my $flag=0;
-	  foreach (@users){
-		 if($_->expires < time() ){
-		      $_->delete();
-		      $_->update();
-		  }else{
-		     $flag=1;
-		  }
-	   }
-	  unless($flag){
-	      $c->stash->{template} = "shared/generic/message.tt2"; 
-	      $c->stash->{message} = "the link has expired";
-	      return;
-	 } 
+    if($c->stash->{token}  = $c->req->param("id")) {
+	  my $user = $c->model('Schema::Password')->search({token=>$c->stash->{token} }, {rows=>1})->next;
+      if(!$user || $user->expires < time() ){
+          if($user){
+            $user->delete();
+            $user->update();
+          }
+
+          $c->stash->{template} = "shared/generic/message.tt2"; 
+          $c->stash->{message} = "the link has expired";
+      }
     }
 }
 
@@ -54,27 +46,26 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
     
 	my @users = $c->model('Schema::Email')->search({email=>$email, validated=>1});
 	if(@users){
-	   
 	  my $guid = Data::GUID->new;
 	  $c->stash->{token} = $guid->as_string;
 	  my $time = time() + $c->config->{password_reset_expires};
 	  foreach (@users){
-	      next unless($_->user->password);
+	      next unless($_->user);
 	      my $password = $c->model('Schema::Password')->find($_->user_id);
 	      if($password){
-		  if( time() < $password->expires ){
-		      $c->stash->{token} = $password->token;
-		  }else {
-		     $password->token($c->stash->{token}) ;
-		     $password->expires($time) ;
-		     $password->update();
-		  }
+            if( time() < $password->expires ){
+                $c->stash->{token} = $password->token;
+            }else {
+              $password->token($c->stash->{token}) ;
+              $password->expires($time) ;
+              $password->update();
+            }
 	      }else{
-		$c->model('Schema::Password')->create({token=>$c->stash->{token}, user_id=>$_->user_id,expires=>$time});
+            $password = $c->model('Schema::Password')->create({token=>$c->stash->{token}, user_id=>$_->user_id,expires=>$time});
 	      }
 	  }
 	  $c->stash->{noboiler} = 1;
-	  $c->log->debug(" send out password reset email to $email");
+	  $c->log->debug("send out password reset email to $email");
 	  $c->stash->{email} = {
 	      to       => $email,
 	      from     => $c->config->{register_email},
@@ -82,40 +73,32 @@ sub password_email : Chained('password') PathPart('email')  Args(0){
 	      template => "auth/password_email.tt2",
 	  };
 	  $c->forward( $c->view('Email::Template') );
-
 	  $c->stash->{message} = "You should be receiving an email shortly describing how to reset your password.";
-	}else{
-	  $c->stash->{message} = "no WormBase account is associated with this email"; 
-	} 
-   
+	}
+	$c->stash->{message} ||= "no WormBase account is associated with this email"; 
     $c->stash->{noboiler} = 0;
-     
 }
 
  
 
 sub password_reset : Chained('password') PathPart('reset')  Args(0){
     my ( $self, $c ) = @_;
-    my $token = $c->req->param("token");
-    my $new_password = $c->req->param("password");
-    my $flag=0;
- 
-    my @users = $c->model('Schema::Password')->search({token=>$token, expires => { '>', time() } });
-    foreach (@users){
-	  my $user = $_->user; 
-	  next unless($user->password);
+    my $token = $c->req->body_parameters->{token};
+    my $new_password = $c->req->body_parameters->{password};
+    $c->stash->{template} = "shared/generic/message.tt2"; 
+
+    my $pass = $c->model('Schema::Password')->search({token=>$token, expires => { '>', time() } }, {rows=>1})->next;
+    if($pass && (my $user = $pass->user)){
 	  my $csh = Crypt::SaltedHash->new() or die "Couldn't instantiate CSH: $!";
 	  $csh->add($new_password);
 	  my $hash_password= $csh->generate();
 	  $user->password($hash_password);
-	  $_->delete;
+	  $pass->delete;
 	  $user->update();
-	  $flag=1;
+      $pass->update();
+      $c->stash->{message} = "your password has been reset";
     }
-    $c->stash->{template} = "shared/generic/message.tt2"; 
-    
-      
-     $c->stash->{message} = $flag? "you password has been reset" : "the link has expired";
+    $c->stash->{message} ||= "the link has expired";
 }
  
 
