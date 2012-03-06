@@ -548,8 +548,8 @@
             ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
             opLoaded = true;
           }
-          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}) : opBox.animate({width:"1.5em"});
-          opBox.toggleClass("minimize").children().toggle();
+          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}).children().show() : opBox.animate({width:"1.5em"}).children().hide();
+          opBox.toggleClass("minimize");
         });
         
         $jq('#operator').click(function() { 
