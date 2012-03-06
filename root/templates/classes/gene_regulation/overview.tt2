@@ -54,20 +54,20 @@ WRAPPER $field_block title='Regulates' key='';
 
 	    # Make the type read in English.
 	    IF regulation_type == 'Positive_regulate';
-	       regulation_type = 'positively regulates';
+	       regulation_type = 'Positively regulates';
 	    ELSIF regulation_type == 'Negative_regulate';
-	       regulation_type = 'negatively regulates';
+	       regulation_type = 'Negatively regulates';
 	    ELSE;
-	       regulation_rype = 'does not regulate';
+	       regulation_type = 'Does not regulate';
             END;     
 
 	    target_type     = regulation.target_type;
 	    target          = regulation.target;
 
-	    # Print out a semi-prose description.
-	    regulation_type _ " " _ tag2link(target);
-
 	    FOREACH condition_type IN regulation.conditions;	       
+		# Print out a semi-prose description.
+		regulation_type _ " " _ tag2link(target);
+
   	        value = condition_type.value;
 		IF value;
 	           ' in ' _ tags2link(value,', ') _ '<br >';
@@ -78,21 +78,6 @@ WRAPPER $field_block title='Regulates' key='';
        IF fields.reference_expression_pattern.data;
           "See the " _ tags2link(fields.reference_expression_pattern.data)  _ " for a reference of where this gene regulation event is thought to occur.";
        END;
-
-END;	    
-
-
-
-
-WRAPPER $field_block title='Targets' key='targets';
-
-    FOREACH target_type IN fields.targets.data.sort;
-   	  WRAPPER $field_block title=target_type.replace('_', ' ') key="$target_type";
-	  	 tags2link(fields.targets.data.$target_type);
-	  END;
-   END;
-
-
 END;
 
 WRAPPER $field_block title='Molecule Regulators' key='molecule_regulators';

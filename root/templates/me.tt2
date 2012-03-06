@@ -30,6 +30,11 @@
                       href  =  c.uri_for('/admin','status_overview'),
                       type  = "me"
                     });
+       widgets.push({ id    = 'status_couchdb',
+         	      title = 'Status (CouchDB)',
+                      href  =  c.uri_for('/admin','status_couchdb'),
+                      type  = "me"
+                    });
        widgets.push({ id    = 'status_proxy',
          	      title = 'Status (Proxy)',
                       href  =  c.uri_for('/admin','status_proxy'),

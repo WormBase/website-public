@@ -112,7 +112,7 @@ sub title {
     my $self      = shift;
     my $object    = $self->object;
     my $title     = $object->Title;
-    return { data        => "$title",
+    return { data        => "$title" || undef,
 	     description => 'title of the gene cluster'
     };
 }
