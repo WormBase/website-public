@@ -3,7 +3,7 @@
 
 [% FOREACH l IN c.config.sections.$section.$page_class.layout.keys %]
     <li id="layout-[% l %]">
-    <div id="fade" onClick="location.hash ='[% c.config.sections.species.gene.layout.$l %]'">[% l %]</div></li>
+    <div id="fade" onClick="location.hash ='[% c.config.sections.species.$page_class.layout.$l %]'">[% l %]</div></li>
 [% END %]
 
 [% FOREACH l IN c.stash.layouts.keys.nsort %]
