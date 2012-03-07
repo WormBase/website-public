@@ -24,7 +24,6 @@
   var WB = (function(){
     var timer,
         notifyTimer,
-        colTimer,
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0,
@@ -169,27 +168,32 @@
       }
       
       
-      colDropdown.find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
-        $jq("div.columns>ul").toggle();
-      });
-      
-      colDropdown.children("ul").children("li").hover(
-        function(){
-          if(colTimer){ 
-            clearTimeout(colTimer);
-            colTimer = undefined;
+      colDropdown.hover(function () {
+          if(timer){
+            $jq("#nav-bar").find("ul li .hover").removeClass("hover");
+            $jq("#nav-bar").find("ul.dropdown").hide();
+            clearTimeout(timer);
+            timer = undefined;
           }
-          $jq(this).children("ul").show();
-        },
-        function(){
-          var layout = $jq(this).children("ul");
-          if(colTimer){ 
-            clearTimeout(colTimer);
-            colTimer = undefined;
+          colDropdown.children("ul").show();
+        }, function () {
+          if(timer){
+            clearTimeout(timer);
+            timer = undefined;
           }
-          colTimer = setTimeout(function(){layout.hide();}, 500);
+          if(colDropdown.find("#layout-input:focus").size() == 0){
+            timer = setTimeout(function() {
+                  colDropdown.children("ul").hide();
+                }, 300)
+          }else{
+            colDropdown.find("#layout-input").blur(function(){
+              timer = setTimeout(function() {
+                  colDropdown.children("ul").hide();
+                }, 600)
+            });
+          }
         });
-      
+
       $jq("#nav-min").click(function() {
         var nav = $jq(".navigation-min").add("#navigation"),
             ptitle = $jq("#page-title"),
@@ -296,7 +300,7 @@
         Layout.openAllWidgets();
       }
       
-      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
+//       if(listLayouts.children().size()==0){ajaxGet(listLayouts, "/rest/layout_list/"  + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"));}
       
       // used in sidebar view, to open and close widgets when selected
       widgets.find(".module-load, .module-close").click(function() {
@@ -890,7 +894,8 @@
 var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
-      maxWidth = (location.pathname == '/') ? 800 : 1300; //home page? allow narrower columns
+      wHolder = $jq("#widget-holder"),
+      maxWidth = (location.pathname == '/' || location.pathname == '/me') ? 800 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
       widgetList = this.wl || (function() {
@@ -911,8 +916,8 @@ var Layout = (function(){
     }
     
     function columns(leftWidth, rightWidth, noUpdate){
-      var sortable = $jq("#widget-holder").children(".sortable"),
-          tWidth = $jq("#widget-holder").innerWidth(),
+      var sortable = wHolder.children(".sortable"),
+          tWidth = wHolder.innerWidth(),
           leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
@@ -927,13 +932,13 @@ var Layout = (function(){
     }
 
     function deleteLayout(layout){
-      var $class = $jq("#widget-holder").attr("wclass");
+      var $class = wHolder.attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout + "?delete=1");
       $jq("div.columns ul div li#layout-" + layout).remove();
     }
 
     function setLayout(layout){
-      var $class = $jq("#widget-holder").attr("wclass");
+      var $class = wHolder.attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout, function(data) {
           var nodeList = data.childNodes[0].childNodes,
               len = nodeList.length;
@@ -947,7 +952,7 @@ var Layout = (function(){
     }
     
     function resetPageLayout(layout){
-      layout = layout || $jq("#widget-holder").data("layout");
+      layout = layout || wHolder.data("layout");
       if(layout['hash']){
           location.hash = layout['hash'];
       }else{
@@ -960,13 +965,20 @@ var Layout = (function(){
 
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
-        $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
+        $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
             if (status == "error") {
                 var msg = "Sorry but there was an error: ";
                 $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
               }
             });
           });
+      if(timer){
+        clearTimeout(timer);
+        timer = undefined;
+      }
+      timer = setTimeout(function() {
+          $jq("#column-dropdown").children("ul").hide();
+       }, 700)
       return false;
     }
     
@@ -1023,9 +1035,8 @@ var Layout = (function(){
     }
 
     function updateLayout(layout, hash, callback){
-      var holder =  $jq("#widget-holder"),
-          $class = holder.attr("wclass"),
-          lstring = hash || readLayout(holder),
+      var $class = wHolder.attr("wclass"),
+          lstring = hash || readLayout(wHolder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
       Layout.resize();
@@ -1132,7 +1143,8 @@ var Layout = (function(){
       readHash: readHash,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
-      Breadcrumbs: Breadcrumbs
+      Breadcrumbs: Breadcrumbs,
+      newLayout: newLayout
   }
 })();
 
@@ -1841,6 +1853,7 @@ var Scrolling = (function(){
       historyOn: historyOn,
       allResults: allResults,
       loadRSS: loadRSS,
+      newLayout: Layout.newLayout,
       setupCytoscape: setupCytoscape
     }
   })();

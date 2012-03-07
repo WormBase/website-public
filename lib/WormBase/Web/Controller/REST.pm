@@ -191,12 +191,15 @@ sub layout_list_GET {
   my @layouts = keys(%{$c->user_session->{'layout'}->{$class}});
   my %l;
   map {$l{$_} = $c->user_session->{'layout'}->{$class}->{$_}->{'name'};} @layouts;
-  $c->log->debug("layout list:" . join(',',@layouts));
+  $c->log->debug("$class layout list:" . join(',',@layouts));
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
-$c->response->headers->expires(time);
-    $c->forward('WormBase::Web::View::TT');
+  $c->stash->{section} = $c->req->params->{section};
+  $c->stash->{class} = $class;
+  $c->stash->{object}{name}{data}{class} = $class; #hack... sorry
+  $c->response->headers->expires(time);
+  $c->forward('WormBase::Web::View::TT');
 }
 
 
