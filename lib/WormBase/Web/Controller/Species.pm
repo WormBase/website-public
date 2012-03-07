@@ -49,24 +49,19 @@ sub species_index :Path('/species') :Args(1)   {
     my ($self,$c,$species) = @_;
 
     if (defined $c->req->param('inline')) {
-	$c->stash->{noboiler} = 1;
+      $c->stash->{noboiler} = 1;
     }
 
-    # get static widgets for this page
-    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
-
-    my @widgets = $page->static_widgets if $page;
-    $c->stash->{static_widgets} = \@widgets if (@widgets);
+    $self->_setup_page($c);
 
     if ($species eq 'all' || $self->_is_species($c,$species)) {
       $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
       $c->stash->{class}      = 'all';
       $c->stash->{is_class_index} = 1;   # 0? 
-#       $c->stash->{is_static}      = 1;	 # Disable widgets like "browse" and "search" 
       $c->stash->{species}    = $species;           # Class is the subsection	
       $c->stash->{template}   = 'species/report.tt2';
     } else {
-	$c->detach('/soft_404');   # We are neither a supported class or proper species name. Error!
+      $c->detach('/soft_404');   # We are neither a supported class or proper species name. Error!
     }
 }
 
@@ -82,20 +77,15 @@ sub species_index :Path('/species') :Args(1)   {
 sub class_index :Path("/species") Args(2) {
     my ($self,$c,$species,$class) = @_;
     if (defined $c->req->param('inline')) {
-	$c->stash->{noboiler} = 1;
+      $c->stash->{noboiler} = 1;
     }
 
-    # get static widgets for this page
-    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
-
-    my @widgets = $page->static_widgets if $page;
-    $c->stash->{static_widgets} = \@widgets if (@widgets);
+    # get static widgets / layout info for this page
+    $self->_setup_page($c);
 
     # Is this a species known to WormBase?
     if ($species eq 'all' || $self->_is_species($c,$species)) {
-
-#	if ($self->_is_class($c,$class)) {
-    $c->stash->{template} = 'species/report.tt2';
+        $c->stash->{template} = 'species/report.tt2';
 	    $c->stash->{section}     = 'species';
 	    $c->stash->{class}       = $class;
 	   
@@ -103,7 +93,7 @@ sub class_index :Path("/species") Args(2) {
 	    $c->stash->{is_class_index} = 1;       # used by report_page macro as a flag that this is an index page.
     } else {
 	# maybe search class names?
-	$c->detach;
+      $c->detach;
     }   
 }
 
@@ -157,11 +147,7 @@ sub object_report :Path("/species") Args(3) {
         };
     }
 
-    # get static widgets for this page
-    my $page = $c->model('Schema::Page')->search({url=>$c->req->uri->path}, {rows=>1})->next;
-    my @widgets = $page->static_widgets if $page;
-    $c->stash->{static_widgets} = \@widgets if (@widgets);
-
+    $self->_setup_page($c);
 }
 
 

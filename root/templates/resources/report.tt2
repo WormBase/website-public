@@ -8,7 +8,7 @@
       breadcrumbs.push('<span>Resources</span>');
     ELSE;
       breadcrumbs.push('<a href="'_ c.uri_for('/resources') _ '">Resources</a>');
-      UNLESS object;
+      UNLESS object.name.data.label;
         breadcrumbs.push('<span>' _ c.config.sections.$section.$class.title _ '</span>');
       ELSE;
         breadcrumbs.push('<a href="'

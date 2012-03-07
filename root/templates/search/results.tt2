@@ -23,7 +23,7 @@
   </li>
 </ul>
 <div id="all-search-results" class="[% widget %]" style="float:left;clear:left;">
-[% ELSIF widget && results.size == 0 %]
+[% ELSIF widget && results.size == 0 && !no_count%]
   <span class="caveat-emptor">No [% widget.replace('[/_]', ' ') %] associated with this [% req_class || 'class'%]</span>
   [% RETURN %]
 [% END %]

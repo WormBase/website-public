@@ -31,9 +31,7 @@ sub index :Path Args(0) {
     $c->stash->{template} = 'index.tt2';
     $c->log->debug('Cache servers: ',
                    join(', ', keys %{$c->config->{memcached}->{servers}}));
-    my ($page) = $c->model('Schema::Page')->search({url=>"/"});
-    my @widgets = $page->static_widgets if $page;
-    $c->stash->{static_widgets} = \@widgets if (@widgets);
+    $self->_setup_page($c);
     $c->stash->{tutorial_off} = $c->req->param('tutorial_off');
 }
 
