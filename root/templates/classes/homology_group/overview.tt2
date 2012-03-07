@@ -3,11 +3,6 @@
 [%
 
 WRAPPER highlight_box;
- 
-
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
 
 END;
 

@@ -143,14 +143,14 @@
               swidgets.join('", "')
             %]
             "]}'
+        [% ELSIF section_fetch.layout.exists('default') %]
+            data-layout = '{"hash": "[% section_fetch.layout.default %]"}'
         [% ELSIF !(defaults.first) %]
           [% IF (overview==1) %]
             data-layout='{"leftlist":["overview"]}'
           [% ELSIF (is_class_index && !is_static) %]
             data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
           [% END %]
-        [% ELSIF section_fetch.layout.exists('default') %]
-            data-layout = '{"hash": "[% section_fetch.layout.default %]"}'
         [% ELSE %]
             data-layout='{"leftlist": ["
              [% defaults.join('", "') %]
