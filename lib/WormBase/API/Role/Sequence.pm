@@ -900,10 +900,13 @@ sub print_sequence {
 		if (my $fasta = $s->asDNA) {
             $fasta =~ s/^\s?>(.*)\n//;
             $fasta =~ s/\s//g;
-			push @data,{ 	header=>"FASTA Sequence",
-					sequence=>"$fasta",
-					length=>length($fasta),
-						   };
+            my $len = length($fasta);
+            if($len > 0){
+              push @data,{ 	header=>"FASTA Sequence",
+                      sequence=>"$fasta",
+                      length=>$len,
+                            };
+            }
 		}
 		else {
 			push @data, "Sequence unavailable.  If this is a cDNA, try searching for $s.5 or $s.3";
@@ -921,10 +924,13 @@ sub print_sequence {
         if (my $fasta = $s->asDNA) {
             $fasta =~ s/^\s?>(.*)\n//;
             $fasta =~ s/\s//g;
-            push @data,{    header=>"FASTA Sequence",
-                    sequence=>"$fasta",
-                    length=>length($fasta),
-                           };
+            my $len = length($fasta);
+            if($len > 0){
+              push @data,{  header=>"FASTA Sequence",
+                      sequence=>"$fasta",
+                      length=>$len,
+                            };
+            }
         }
 		goto END;
     }
@@ -979,7 +985,7 @@ sub print_sequence {
 
   END:
     return { description => 'the sequence of the sequence',
-	     data        => \@data };
+	     data        => @data ? \@data : undef };
 }
 
 =head3 print_homologies

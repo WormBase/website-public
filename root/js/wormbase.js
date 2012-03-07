@@ -1226,9 +1226,12 @@ var Scrolling = (function(){
             }
           }
         }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
+
           //close lowest section. delay for animation. 
           count++; //Add counting semaphore to lock
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
+        }else{
+          sidebar.stop().css('position', 'relative').css('top', 0);
         }
       } 
     }
