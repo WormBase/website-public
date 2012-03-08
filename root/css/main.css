@@ -1353,7 +1353,7 @@ span.holder {
   border-top:1px solid #CDCDCD;
   overflow:hidden;
   position:relative;
-  padding:0.5em 1em 1em 1em;
+/*   padding:0.5em 1em 1em 1em; */
 }
 
 #login-form div.social>div {
@@ -1362,11 +1362,11 @@ span.holder {
 }
 
 #login-form input.email {
-  width:14em;
+  width:15em;
 }
 
 #login-form input.password {
-  width:9em;
+  width:10em;
 }
 
 #login-form input#login {
@@ -1383,7 +1383,12 @@ span.holder {
 .registration-form {
   padding: 1em !important;
   background: #E9EEF2 !important;
-  width: 21.5em !important;
+  width: 23em !important;
+}
+
+.registration-form .login-holder input{
+  width:12em;
+  margin-right:1em;
 }
 /* END of login and registration styling */
 
