@@ -1361,11 +1361,23 @@ span.holder {
   padding:0.5em;
 }
 
+#login-form input.email {
+  width:14em;
+}
+
+#login-form input.password {
+  width:9em;
+}
+
+#login-form input#login {
+  width:4.5em;
+}
+
 .login-form {
   padding:0.5em 0 0 !important;
   font-weight: normal !important;
   background: white !important;
-  width: 16.5em !important;
+  width: 17em !important;
 }
 
 .registration-form {
