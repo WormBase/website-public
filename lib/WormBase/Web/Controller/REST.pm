@@ -19,7 +19,7 @@ __PACKAGE__->config(
     'stash_key'        => 'rest',
     'map'              => {
         'text/x-yaml'      => 'YAML',
-        'text/html'        => 'YAML::HTML',
+        'text/html'        => [ 'View', 'TT' ], #'YAML::HTML',
         'text/xml'         => 'XML::Simple',
         'application/json' => 'JSON',
     }
@@ -340,15 +340,15 @@ sub update_role_POST {
 
 sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
 
-sub download_GET {
+sub download_POST {
     my ($self,$c) = @_;
      
-    my $filename=$c->req->param("type");
+    my $filename=$c->req->body_parameters->{filename};
     $filename =~ s/\s/_/g;
+        my $csv = "test";
     $c->response->header('Content-Type' => 'text/html');
-    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-    $c->response->body($c->req->param("sequence"));
+    $c->res->header('Content-Disposition', qq[attachment; filename="$filename"]);
+    $c->response->body($c->req->body_parameters->{content});
 }
 
 sub rest_link_wbid :Path('/rest/link_wbid') :Args(0) :ActionClass('REST') {}
