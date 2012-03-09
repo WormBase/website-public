@@ -36,5 +36,5 @@ remarks;
 
 %]
 <script type="text/javascript">
-  Plugin.getPlugin("colorbox", function(){}); 
+  WB.getPlugin("colorbox", function(){}); 
 </script>
