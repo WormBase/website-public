@@ -26,9 +26,7 @@
         notifyTimer,
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
-        loadcount = 0,
-        plugins = new Array(),
-        loading = false;
+        loadcount = 0;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
@@ -440,7 +438,7 @@
       
       content.delegate(".slink", 'mouseover', function(){
           var slink = $jq(this);
-          getColorbox(function(){
+          Plugin.getPlugin("colorbox", function(){
             slink.colorbox({data: slink.attr("href"), 
                             width: "800px", 
                             height: "550px",
@@ -466,7 +464,7 @@
       $jq("body").delegate(".generate-file-download", 'click', function(e){
           var filename = $jq(this).find("#filename").text(),
               content = $jq(this).find("#content").text();
-          getGenerateFile(function(){
+          Plugin.getPlugin("generateFile", function(){
           $jq.generateFile({
               filename    : filename,
               content     : content,
@@ -744,7 +742,7 @@
       formatExpand(div);
 
       if(queryList.length == 0) { return; }
-      getHighlight(function(){
+      Plugin.getPlugin("highlight", function(){
         for (var i=0; i<queryList.length; i++){
           if(queryList[i]) { div.highlight(queryList[i]); }
         }
@@ -1546,7 +1544,7 @@ var Scrolling = (function(){
   
   function historyOn(action, value, callback){
     if(action == 'get'){
-        getColorbox(function(){
+        Plugin.getPlugin("colorBox", function(){
             $jq(".history-logging").colorbox();
             if(callback) callback();
         });
@@ -1560,7 +1558,7 @@ var Scrolling = (function(){
   function loadRSS(id, url){
     var container = $jq("#" + id);
     setLoading(container);
-    getFeed(function(){
+    Plugin.getPlugin("jGFeed", function(){
       $jq.jGFeed(url,
         function(feeds){
           // Check for errors
@@ -1621,38 +1619,6 @@ var Scrolling = (function(){
   
   
 
-  function getScript(name, url, stylesheet, callback) {
-    var head = document.documentElement,
-        script = document.createElement("script"),
-        done = false;
-    loading = true;
-    script.src = url;
-    
-    if(stylesheet){
-     var link = document.createElement("link");
-     link.href = stylesheet;
-     link.rel="stylesheet";
-     document.getElementsByTagName("head")[0].appendChild(link)
-    }
-    
-    script.onload = script.onreadystatechange = function() {
-     if(!done && (!this.readyState ||
-       this.readyState === "loaded" || this.readyState === "complete")){
-       done = true;
-       loading = false;
-       plugins[name] = true;
-       callback();
-     
-        script.onload = script.onreadystatechange = null;
-        if( head && script.parentNode){
-          head.removeChild( script );
-        }
-      }
-    };
-    
-    head.insertBefore( script, head.firstChild);
-    return undefined;
-  }
   
   function setupCytoscape(data, types){
           var edgeColor = ["#08298A","#B40431","#FF8000", "#04B404","#8000FF", "#191007", "#73c6cd", "#92d17b", "#cC87AB4", "#e4e870" ,"#696D09"],
@@ -1738,7 +1704,7 @@ var Scrolling = (function(){
           for(var i=-1, type; (type = types[++i]);){
             visual_style.edges.color.discreteMapper.entries[i] = { attrValue: type,  value: edgeColor[i] };
           }
-          WB.getCytoscape(function(){ 
+          Plugin.getPlugin("cytoscape_web", function(){ 
             // init and draw
             var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options);
             
@@ -1786,64 +1752,90 @@ var Scrolling = (function(){
             });
             $jq( "#resizable" ).resizable();
     }
-  
-
-    function getDataTables(callback){
-      getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.css", callback);
-      return;
-    }
-    function getHighlight(callback){
-      getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
-      return;
-    }
 
     function getMarkItUp(callback){
-      getPlugin("markitup", "/js/jquery/plugins/markitup/jquery.markitup.js", "/js/jquery/plugins/markitup/skins/markitup/style.css", function(){
-      getPlugin("markitup-wiki", "/js/jquery/plugins/markitup/sets/wiki/set.js", "/js/jquery/plugins/markitup/sets/wiki/style.css", callback);
+      Plugin.getPlugin("markitup", function(){
+        Plugin.getPlugin("markitup-wiki", callback);
       });
       return;
     }
-    function getColorbox(callback){
-      getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
-      return;
-    }
-    function getCytoscape(callback){
-      getPlugin("cytoscape_json", "/js/jquery/plugins/cytoscapeweb/js/min/json2.min.js", undefined, function(){ 
-      getPlugin("cytoscape_ac", "/js/jquery/plugins/cytoscapeweb/js/min/AC_OETags.min.js", undefined, function(){
-      getPlugin("cytoscape_web", "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb.min.js", undefined, callback);
-      })});
-      return;
-    }
     
-    function getFeed(callback){
-      getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
-      return;
-    }
-    
+    var Plugin = (function(){
+      var plugins = new Array(),
+          loading = false,
+          pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
+                        dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
+                        jGFeed:"/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js",
+                        generateFile: "/js/jquery/plugins/generateFile.js",
+                        pfam: "/js/pfam/domain_graphics.min.js",
+                        markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
+                        cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
+          },
+          pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
+                        markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
+          };
+          
+      function getScript(name, url, stylesheet, callback) {
+        var head = document.documentElement,
+            script = document.createElement("script"),
+            done = false;
+        loading = true;
+        script.src = url;
         
-    function getGenerateFile(callback){
-      getPlugin("generateFile", "/js/jquery/plugins/generateFile.js", undefined, callback);
-      return;
-    }
-    
-    function getPfam(callback){
-      getPlugin("pfam", "/js/pfam/domain_graphics.min.js", undefined, callback);
-      return;
-    }
-  
-  
-    function getPlugin(name, url, stylesheet, callback){
-      if(!plugins[name]){
-        getScript(name, url, stylesheet, callback);
-      }else{
-        if(loading){
-          setTimeout(getPlugin(name, url, stylesheet, callback),1);
-          return;
+        if(stylesheet){
+          var link = document.createElement("link");
+          link.href = stylesheet;
+          link.rel="stylesheet";
+          document.getElementsByTagName("head")[0].appendChild(link)
         }
-        callback(); 
+        
+        script.onload = script.onreadystatechange = function() {
+        if(!done && (!this.readyState ||
+          this.readyState === "loaded" || this.readyState === "complete")){
+          done = true;
+          loading = false;
+          plugins[name] = true;
+          callback();
+        
+            script.onload = script.onreadystatechange = null;
+            if( head && script.parentNode){
+              head.removeChild( script );
+            }
+          }
+        };
+        
+        head.insertBefore( script, head.firstChild);
+        return undefined;
       }
-      return;
-    }
+      
+      function getPlugin(name, callback){
+        var script = pScripts[name],
+            css = pStyle[name];
+        loadPlugin(name, script, css, callback);
+        return;
+      }
+      
+      function loadPlugin(name, url, stylesheet, callback){
+        if(!plugins[name]){
+          getScript(name, url, stylesheet, callback);
+        }else{
+          if(loading){
+            setTimeout(getPlugin(name, url, stylesheet, callback),1);
+            return;
+          }
+          callback(); 
+        }
+        return;
+      }
+      
+      return {
+        getPlugin: getPlugin
+      };
+    })();
     
     return{
       init: init,
@@ -1866,18 +1858,15 @@ var Scrolling = (function(){
       recordOutboundLink: recordOutboundLink,
       comment: comment,
       issue: issue,
-      getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
-      getColorbox: getColorbox,
-      getCytoscape: getCytoscape,
-      getPfam: getPfam,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
       historyOn: historyOn,
       allResults: allResults,
       loadRSS: loadRSS,
       newLayout: Layout.newLayout,
-      setupCytoscape: setupCytoscape
+      setupCytoscape: setupCytoscape,
+      getPlugin: Plugin.getPlugin
     }
   })();
 
