@@ -52,7 +52,7 @@
            <script>
 window.onload = getBox;
 function getBox(){
-  WB.getColorbox(function(){
+  Plugin.getPlugin("colorbox", function(){
     $jq(".lightbox").colorbox();
   });
 }
@@ -401,7 +401,7 @@ END;
   </table>
     [% END %]
     <script type="text/javascript" >
-        WB.getDataTables(function(){
+        WB.getPlugin("dataTables", function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
