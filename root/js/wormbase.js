@@ -442,8 +442,9 @@
           var slink = $jq(this);
           getColorbox(function(){
             slink.colorbox({data: slink.attr("href"), 
-                            width: "750px", 
+                            width: "800px", 
                             height: "550px",
+                            scrolling: false,
                             title: function(){ return slink.prev().text() + " " + slink.data("class"); }});
           });
       });
@@ -461,6 +462,19 @@
         });
         return false;
       });
+      
+      $jq("body").delegate(".generate-file-download", 'click', function(e){
+          var filename = $jq(this).find("#filename").text(),
+              content = $jq(this).find("#content").text();
+          getGenerateFile(function(){
+          $jq.generateFile({
+              filename    : filename,
+              content     : content,
+              script      : '/rest/download'
+          });
+        });
+      });     
+      
     }
     
     function moduleMin(button, hover, direction, callback) {
@@ -1803,6 +1817,12 @@ var Scrolling = (function(){
     
     function getFeed(callback){
       getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
+      return;
+    }
+    
+        
+    function getGenerateFile(callback){
+      getPlugin("generateFile", "/js/jquery/plugins/generateFile.js", undefined, callback);
       return;
     }
     
