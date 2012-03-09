@@ -52,7 +52,7 @@
            <script>
 window.onload = getBox;
 function getBox(){
-  Plugin.getPlugin("colorbox", function(){
+  WB.getPlugin("colorbox", function(){
     $jq(".lightbox").colorbox();
   });
 }

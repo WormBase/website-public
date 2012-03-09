@@ -89,7 +89,7 @@ END;
 
 %]
 <script type="text/javascript" >
-Plugin.getPlugin("colorbox", function(){
+WB.getPlugin("colorbox", function(){
 $jq(".exprbox").colorbox({width:"90%", inline:true});
 $jq(".exprcamera").colorbox({width:"80%", height:"80%", opacity:"0.4"});
 });
