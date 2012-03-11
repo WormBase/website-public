@@ -37,7 +37,7 @@ has 'aggregators' => (
         my @array;
         my $ret = $self->conf->{data_sources}->{$self->source}->{aggregator};
 
-	if (ref $ret =~ /ARRAY/) {
+	if ($ret =~ /ARRAY/) {
 	    push(@array, @$ret);
 	} else {
 	    push(@array, $ret);
