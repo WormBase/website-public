@@ -36,7 +36,12 @@ has 'aggregators' => (
         my $self = shift;
         my @array;
         my $ret = $self->conf->{data_sources}->{$self->source}->{aggregator};
-        push(@array, @$ret);
+
+	if (ref $ret =~ /ARRAY/) {
+	    push(@array, @$ret);
+	} else {
+	    push(@array, $ret);
+	}
         return \@array;
     }
 );
