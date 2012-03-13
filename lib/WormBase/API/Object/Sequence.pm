@@ -35,7 +35,7 @@ sub _build_method {
     my ($self) = @_;
     my $class = $self->object->class;
     my $method = $self ~~ 'Method';
-    my $details = $method->Remark;
+    my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
         data => {

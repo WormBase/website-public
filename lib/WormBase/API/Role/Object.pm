@@ -1968,7 +1968,7 @@ sub mysql_dsn {
 sub gff_dsn {
     my ($self, $species) = @_;
     $species ||= $self->_parsed_species;
-    $self->log->debug("geting gff database species $species");
+    $self->log->debug("getting gff database species $species");
     return $self->dsn->{"gff_" . $species};
 }
 
@@ -2320,10 +2320,11 @@ sub _fetch_gff_gene {
     eval {$GFF->fetch_group()};
     return if $@; # should probably log this
 
-    if ($self->object->Species =~ /briggsae/) {
+#    if ($self->object->Species =~ /briggsae/) {
+    $self->log->warn("gff is: $GFF");
         ($trans) = grep {$_->method eq 'wormbase_cds'} $GFF->fetch_group(Transcript => $transcript)
             and return $trans;
-    }
+#    }
 
     ($trans) = grep {$_->method eq 'full_transcript'} $GFF->fetch_group(Transcript => $transcript)
         and return $trans;

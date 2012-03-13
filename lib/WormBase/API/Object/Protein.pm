@@ -94,7 +94,7 @@ has 'cds' => (
 # do this for now. Remove once corresponding gene name added to Protein model.
 sub _build__common_name {
     my ($self) = @_;
-    return uc($self->corresponding_gene->{data}[0]{label}) // $self->object->name;
+    return uc($self->corresponding_gene->{data}[0]{label}) || $self->object->name;
 }
 
 

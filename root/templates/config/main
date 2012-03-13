@@ -179,7 +179,7 @@
 
 # Used to determine the type of page for layout saving
   MACRO page_class BLOCK;
-    UNLESS object;
+    UNLESS (object.name.data.class);
       ret = c.req.path.replace('[/_]', '-');
       UNLESS ret;ret='home'; END;
       ret;

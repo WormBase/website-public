@@ -53,7 +53,7 @@
 
 
 <script>
-  WB.getPfam(function(){
+  WB.getPlugin("pfam", function(){
     $jq(".pfam_graph_homology").each(function() { 
         var p = PfamGraphic;
         p.initialize();
