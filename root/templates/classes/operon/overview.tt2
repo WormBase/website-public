@@ -21,10 +21,6 @@ WRAPPER $field_block title="Identity" key='identity';
 	 fields.identity.data;
 END;
 
-WRAPPER $field_block title="Method" key='method';
-        fields.method.data;
-END;
-
 remarks;
 
 %]
