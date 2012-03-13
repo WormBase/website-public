@@ -1,0 +1,25 @@
+<h2>[% fields.name.data.label %]</h2>
+
+[%
+
+WRAPPER highlight_box;
+    WRAPPER $field_block title="Status" key="status";
+	fields.status.data;
+    END;
+END;
+
+WRAPPER $field_block title="Sequence" key="sequence";
+    tag2link(fields.sequence.data);
+END;
+
+WRAPPER $field_block title="Protein Homology" key="protein_homology";
+    tags2link(fields.protein_homology.data, '<br />', 'Proteins');
+END;
+
+WRAPPER $field_block title="Homology" key="homology_data";
+    fields.homology_data.data;
+END;
+
+remarks;
+
+%]

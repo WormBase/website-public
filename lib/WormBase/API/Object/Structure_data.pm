@@ -97,18 +97,14 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/structu
 =cut
 
 sub sequence {
-	
 	my $self = shift;
-    my $object = $self->object;
-	my $tag_object = $object->Sequence;
-	my $protein = $tag_object->Protein if $tag_object;
-	my $data_pack = $self->_pack_obj($protein);
+	my $object = $self->object;
 
-	my $data = {
-		'data'=> $data_pack,
-		'description' => 'sequence of structure'
-				};
-	return $data;}
+	return {
+		data => $self->_pack_obj($object->Protein, "$object"),
+		description => 'sequence of structure',
+	};
+}
 
 =head2 protein_homology
 
@@ -158,20 +154,14 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/structu
 
 sub protein_homology {
 	my $self = shift;
-    my $object = $self->object;
-	my @data_pack;
-	my @tag_objects = $object->Protein;
-
-	foreach my $tag_object (@tag_objects) {
-		my $tag_info = $self->_pack_obj($tag_object);
-		push @data_pack, $tag_info;
-	}
+	my $object = $self->object;
 	
-	my $data = {
-		'data'=> \@data_pack,
-		'description' => 'protein homologs for this structure'
-		};
-	return $data;
+	my @data = map {$self->_pack_obj($_)} $object->Pep_homol;
+	
+	return {
+		data => @data ? \@data : undef,
+		description => 'Protein homologs for this structure'
+	};
 }
 
 =head2 homology_data
@@ -222,16 +212,11 @@ curl -H content-type:application/json http://api.wormbase.org/rest/field/structu
 
 sub homology_data {
 	my $self = shift;
-    my $object = $self->object;
-	my @data_pack;
-	my @tag_objects = $object->Homol_homol;
+	my $object = $self->object;
+	my @data = map {$self->_pack_obj($_)} $object->Homol_homol;
 
-	foreach my $tag_object (@tag_objects) {
-		my $tag_info = $self->_pack_obj($tag_object);
-		push @data_pack, $tag_info;
-	}
 	my $data = {
-		'data'=> @data_pack ? \@data_pack : undef ,
+		'data'=> @data ? \@data : undef ,
 		'description' => 'homology data re: this structure'
 		};
 	return $data;
