@@ -590,10 +590,10 @@ sub _anatomy_function {
     my $object = $self->object;
     my @data_pack;
     foreach ($self->object->$tag){
-	my @bp_inv = map { if ("$_" eq "$object") {$_->Term}
+	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Involved;
-	my @bp_not_inv = map { if ("$_" eq "$object") {$_->Term}
+	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Not_involved;
 	push @data_pack, \{

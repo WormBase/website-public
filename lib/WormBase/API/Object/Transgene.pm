@@ -173,11 +173,10 @@ B<Response example>
 sub driven_by_gene {
     my $self = shift;
     my $object = $self->object;
-    
-    my $gene   = $object->Driven_by_gene;
-    $gene = ($gene) ? $self->_pack_obj($gene) : undef;
+
     return { description => 'gene that drives the transgene',
-	     data        => $gene };
+	     data        => $self->_pack_obj($object->Driven_by_gene),
+    };
 }
 
 
@@ -238,7 +237,7 @@ sub driven_by_construct {
     
     my $construct = $object->Driven_by_construct;
     return { description => 'construct that drives the transgene',
-	     data        => $construct || undef };
+	     data        => "$construct" || undef };
 }
 
 # sub remarks {}
@@ -304,8 +303,9 @@ sub reporter_construct {
     foreach ($object->Reporter_product) {
 	if ($_ eq 'Gene') {
 	    $reporters{gene} = $self->_pack_obj($_);
-	} elsif ($_ eq 'Other_reporter') {	    
-	    $reporters{'other reporter'} = $_->right;
+	} elsif ($_ eq 'Other_reporter') {
+	    my $val = $_->right;
+	    $reporters{'other reporter'} = "$val";
 	} else {
 	    $reporters{$_} = "$_";
 	}
@@ -394,13 +394,14 @@ sub author {
     my $author = $object->Author;
 
     my $person;  # WBPeople only; Sorry, Charlie.
+    my $name;
     if ($author) {
 	$person = $author->Possible_person;
-	$person = $person ? $self->_pack_obj($person,$person->Standard_name) : undef;
+	$name = $person->Standard_name;
     }
     
     return { description => 'the person who created the transgene',
-	     data        => $person };
+	     data        => $self->_pack_obj($person, "$name") };
 }
 
 # sub laboratory { }
@@ -461,10 +462,9 @@ B<Response example>
 sub clone {
     my $self = shift;
     my $object = $self->object;
-    my $clone  = $object->Clone;
-    $clone = $clone ? $self->_pack_obj($clone) : undef;
+
     return { description => 'the clone of this transgene',
-	     data        => $clone };
+	     data        => $self->_pack_obj($object->Clone) };
 }
 
 
@@ -525,7 +525,7 @@ sub fragment {
     my $object = $self->object;
     my $frag = $object->Fragment;
     return { description => 'clone fragments contained in this transgene',
-	     data        => $frag || undef };
+	     data        => "$frag" || undef };
 }
 
 
@@ -648,7 +648,7 @@ sub integration_method {
     my $object = $self->object;
     my $method = $object->Integration_method;
     return { description => 'how the transgene was integrated (if it has been)',
-	     data        => $method ? $method : undef };
+	     data        => $method ? "$method" : undef };
 }
 
 # 
@@ -766,8 +766,8 @@ B<Response example>
 sub rescues {    
     my $self = shift;
     my $object = $self->object;
-    my @genes  = $object->Rescue;
-    @genes = map {$self->pack_obj($_) } @genes;
+
+    my @genes = map {$self->pack_obj($_) } $object->Rescue;
     return { description => 'genes that may be rescued by this transgene',
 	     data        => @genes ? \@genes : undef };
 }
@@ -855,7 +855,7 @@ sub marker_for {
     my $object = $self->object;
     my $marker = $object->Marker_for;
     return { description => 'string decribing what the transgene is a marker for',
-	     data        =>  $marker || undef };
+	     data        =>  "$marker" || undef };
 }
 
 
@@ -913,8 +913,8 @@ B<Response example>
 sub marked_rearrangement {
     my $self   = shift;
     my $object = $self->object;
-    my @rearrangements = $object->Marked_rearrangement;
-    @rearrangements    = map { $self->_pack_obj($_) } @rearrangements;
+
+    my @rearrangements    = map { $self->_pack_obj($_) } $object->Marked_rearrangement;
     return { description => 'rearrangements that the transgene can be used as a marker for',
 	     data        =>  @rearrangements ? \@rearrangements : undef };
 }

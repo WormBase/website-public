@@ -46,7 +46,7 @@ WRAPPER $field_block title="Defined by" key="defined_by";
 		key = 'defined_by');
 END;
 
-
-remarks(no_toggle=1);
-
+WRAPPER $field_block title="" key="remarks";
+    remarks(no_toggle=1);
+END;
 %]
