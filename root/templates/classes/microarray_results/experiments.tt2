@@ -1,0 +1,31 @@
+[% 
+
+    WRAPPER $field_block title="Experiment(s)" key="results";
+	build_data_table (
+	    order = ['experiment', 'life_stage', 'temp', 'clusters', 'references'],
+	    columns = {
+		experiment  => 'Experiment',
+		clusters    => 'Expression Cluster',
+		references  => 'References',
+		life_stage  => 'Life Stage',
+		temp        => 'Temperature',
+	    }, key = 'results' );
+    END;
+
+    WRAPPER $field_block title="Range" key="range";
+	'<b>Min:</b> ' _ fields.range.data.Min.val _ '(' _ fields.range.data.Min.experiment _ '), ';
+	'<b>Max:</b> ' _ fields.range.data.Max.val _ '(' _ fields.range.data.Max.experiment _ ')';
+    END;
+
+    WRAPPER $field_block title="Microarray(s)" key="microarray";
+	build_data_table (
+	    order = ['type', 'info', 'experiments', 'papers'],
+	    columns = {
+		type => 'Type',
+		info => 'Info',
+		experiments => '# of Experiments',
+		papers => 'References',
+		}, key = 'microarray' );
+    END;
+
+%]
