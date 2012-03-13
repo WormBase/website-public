@@ -173,10 +173,10 @@ B<Response example>
 sub type {
     my $self           = shift;
     my $object         = $self->object;
-    my $homology_group = $object->Homology_group;
+    my $homology_group = $object->Group_type;
     my $homology_code = $homology_group =~ /COG/ ? $object->COG_code : undef;
     return {data        => { homology_group => "$homology_group",
-			     cog_code       => "$homology_code" },
+			     code       => "$homology_code" },
 	    description => 'type of homology group' };
 }
 
@@ -306,7 +306,7 @@ sub proteins {
     	my $species = $self->_pack_obj($_->Species) if $_->Species;
     	my $description = $_->Description;
     	push @data, {
-	    protein => $self->_pack_obj($_),
+	    protein => $self->_pack_obj($_, "$_"),
 	    species => $species,
 	    description => "$description",
     	}

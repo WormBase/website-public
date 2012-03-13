@@ -317,6 +317,18 @@ sub reporter_construct {
 
 
 
+sub strains {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @data = map {$self->_pack_obj($_)} $object->Strain;
+
+    return {
+	description => 'Strains associated with this transgene',
+	data => @data ? \@data : undef,
+    }
+}
+
 #######################################
 #
 # The Isolation Widget

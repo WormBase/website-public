@@ -322,6 +322,12 @@
 		search		= 'http://rfam.sanger.ac.uk/family?acc=%s'
 	}
 
+	secsg = {
+		description	= 'The Southeast Collaboratory for Structural Genomics'
+		base		= 'http://www.secsg.org/'
+		search		= ''
+	}
+
 	sgd = {
 		description	= 'GO Term finder - Stanford University. SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae'
 		search		= 'http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=%s'

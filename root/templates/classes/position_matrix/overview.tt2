@@ -2,14 +2,7 @@
 
 [%
 
-WRAPPER highlight_box;
- 
-
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
-
-END;
+WRAPPER highlight_box; END;
 
 description;
 
@@ -30,14 +23,32 @@ WRAPPER $field_block title="Bound By Gene Product" key="bound_by_gene_product";
 	tags2link(fields.bound_by_gene_product.data);
 END;
 
-WRAPPER $field_block title="Transcription Factors" key="transcription_factors";
-	tags2link(fields.transcription_factors.data);
+WRAPPER $field_block title="Transcription Factor" key="transcription_factor";
+	tag2link(fields.transcription_factor.data);
 END;
 
 #TH: eh? Data structure in position_data needs to be deconvoluted?
 # WRAPPER $field_block title="Position data" key="position_data";
 	# dataTable_list(['Header1','Header2','Header3' ... ],fields.<subroutine>.<key>.<table_number>.aaData,'<table_name>');
 #END;
+
+WRAPPER $field_block title="Position data" key="position_data";
+    table_order = ['Type'];
+    table_columns = [];
+
+    FOREACH key IN fields.position_data.data.0.keys.sort;
+	table_order.push(key);
+	table_columns.push(key, key);
+    END;
+
+    table_order = table_order.unique;
+    column_hash = table_columns.hash;
+
+    build_data_table(
+	order = table_order,
+	columns = column_hash,
+	key='position_data' );
+END;
 
 remarks;
 

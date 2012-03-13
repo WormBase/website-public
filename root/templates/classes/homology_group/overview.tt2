@@ -13,7 +13,7 @@ END;
 
 WRAPPER $field_block title="Type" key="group_type";
     fields.type.data.homology_group;
-    IF fields.type.data.cog_code; ' (' _ fields.type.data.cog.code _ ')'; END;
+    IF fields.type.data.code; ' (' _ fields.type.data.code _ ')'; END;
 END;
 
 

@@ -8,7 +8,6 @@ WRAPPER highlight_box;
         fields.historical_name.data;
    END;  
 
-
 END;
 
 '<div class="text-width" style="clear:left">';

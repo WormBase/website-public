@@ -329,8 +329,18 @@ sub regulates {
 
     foreach my $type ($object->Result) {
 	foreach my $condition_type ($type->col) {
-	    $conditions{$condition_type} = $self->_pack_objects( [ $condition_type->col ] );
+	    if ("$condition_type" eq 'Subcellular_localization') {
+		my @values = map {"$_"} $condition_type->col;
+		$conditions{$condition_type} = @values ? \@values : undef;
+	    } else {
+		$conditions{$condition_type} = $self->_pack_objects( [ $condition_type->col ] );
+	    }
 	}
+
+	my $regtype;
+	if ("$type" eq 'Positive_regulate') { $regtype = 'Positively regulates' }
+	elsif ("$type" eq 'Negative_regulate') { $regtype = 'Negatively regulates' }
+	else { $regtype = 'Does not regulate' }
 
 	foreach my $target_type ($object->Target) {
 	    next if $target_type eq 'Target_info';  # captured elsewhere as reference_expression_pattern
@@ -338,7 +348,7 @@ sub regulates {
 	    foreach (@targets) {
 		push @data, { target          => $self->_pack_obj($_),
 			      target_type     => "$target_type" || undef,
-			      regulation_type => "$type" || undef,
+			      regulation_type => "$regtype" || undef,
 			      conditions      => scalar keys %conditions ? \%conditions : undef,
 		}
 	    }

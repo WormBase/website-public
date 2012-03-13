@@ -1,35 +1,49 @@
 [%
 
-WRAPPER $field_block title="Effector" key="effector_data";
+WRAPPER $field_block title="Effector Details" key="effector_data";
     build_data_table (
 		order = [ 
 			'gene',
 			'interactions',
+			'proteins'
 			],
-		columns = {				 		
+		columns = {
 			gene => 'Gene',
 			interactions => 'Interactions',
+			proteins => 'Proteins'
 			},
 		key = 'effector_data');
 END;
 
 
-WRAPPER $field_block title="Effected" key="effected_data";
+WRAPPER $field_block title="Effected Details" key="effected_data";
     build_data_table (
 		order = [ 
 			'gene',
 			'interactions',
+			'proteins'
 			],
-		columns = {				 		
+		columns = {
 			gene => 'Gene',
 			interactions => 'Interactions',
+			proteins => 'Proteins'
 			},
 		key = 'effected_data');
 END;
 
-
-#WRAPPER $field_block title="non_directional_data" key="non_directional_data";
-#	tags2link(fields.non_directional_data.data); 
-#END;
+WRAPPER $field_block title="Non-directional Interactor Details" key="non_directional_data";
+    build_data_table (
+		order = [ 
+			'gene',
+			'interactions',
+			'proteins'
+			],
+		columns = {
+			gene => 'Gene',
+			interactions => 'Interactions',
+			proteins => 'Proteins'
+			},
+		key = 'non_directional_data');
+END;
 
 %]

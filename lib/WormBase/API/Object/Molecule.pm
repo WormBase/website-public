@@ -115,9 +115,9 @@ B<Response example>
 sub synonyms {
     my $self    = shift;
     my $object  = $self->object;
-    my $data    = $self->_pack_objects([$object->Synonym]);
+    my @data    = map {"$_"} $object->Synonym;
     return {
-        'data'        => %$data ? $data : undef,
+        'data'        => @data ? \@data : undef,
         'description' => 'synonyms for the molecule name'
     };
 }
@@ -233,13 +233,11 @@ B<Response example>
 =cut 
 
 sub molecule_use {
-    my ($self) = @_;
-
+    my $self = shift;
+    my $object = $self->object;
     # TODO: deal with evidence
-    my @uses =  @{$self ~~ '@Molecule_use'};
+    my @uses = map {text=>"$_", evidence=>$self->_get_evidence($_)}, $object->Molecule_use;
     # (use, evidence type, evidence)
-     @uses = map {{text=>"$_",evidence=>$self->_get_evidence($_)}} @uses;
-#     @uses = map {"$_->[0]"} @uses; # drop evidence.
     return {
         'data'        => @uses ? \@uses : undef,
         'description' => 'uses for the molecule'
@@ -518,23 +516,20 @@ sub affected_rnai {
 ##########################
 
 sub _affects {
-
     my ($self, $tag) = @_;
-    my @affected = map {[$_->row]} @{$self ~~ "\@$tag"};
-    # (obj, phenotype, evidence type, evidence)
+    my $object = $self->object;
 
-    # TODO: do something with evidence
-    my %data_pack = map { $_->[0] => {
-        obj       => $self->_pack_obj($_->[0]), # the affected obj
-        phenotype => $self->_pack_obj($_->[1]),
-	evidence => $self->_get_evidence($_->[1]),
-    }} @affected;
-
-    return %data_pack ? \%data_pack : undef;
-
+    my @data;
+    foreach my $affected ($object->$tag){
+	my $phenotype = $affected->right;
+	my $evidence = {text => $self->_pack_obj($phenotype), evidence => $self->_get_evidence($phenotype)} if $affected->right(2);
+	push @data, {
+	    affected  => $self->_pack_obj($affected),
+	    phenotype => $evidence ? $evidence : $self->_pack_obj($phenotype),
+	};
+    }
+    return @data ? \@data : undef;
 }
-
-
 
 __PACKAGE__->meta->make_immutable;
 
