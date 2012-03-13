@@ -411,6 +411,32 @@ END;
 
 [% END %]
 
+[% MACRO interaction_cell(cell) BLOCK;
+    '<table id="interaction_cell_' _ loop.index _ '">';
+    IF cell.interaction.Effector || cell.interaction.Effected;
+      '<tr>';
+	  '<td>' _ tags2link(cell.interaction.Effector) _ '</td>';
+	  '<td style="font-size:25px">';
+	  IF cell.interaction.Effector.size > 1; '}'; END;
+	  '&rarr;</td>';
+	  '<td>' _ tags2link(cell.interaction.Effected) _ '</td>';
+      '</tr>';
+    END;
+    IF cell.interaction.Non_directional;
+      '<tr>';
+	  '<td colspan="3">';
+	  FOREACH val IN cell.interaction.Non_directional;
+	      tag2link(val);
+	      UNLESS loop.last;
+		  ' &mdash; ';
+	      END;
+	  END;
+	  '</td>';
+      '</tr>';
+    END;
+    '</table>';
+END; %]
+
 [% MACRO cell_content(cell) BLOCK;
 	IF cell.species.defined;
 	    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -422,6 +448,8 @@ END;
 	    END;
 	ELSIF cell.evidence.defined;
 	    evidence(cell.evidence,table_name _ index, cell.text, 'details');
+	ELSIF cell.interaction.defined;
+	    interaction_cell(cell);
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';

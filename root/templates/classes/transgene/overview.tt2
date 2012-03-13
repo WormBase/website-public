@@ -4,8 +4,6 @@
 
 WRAPPER highlight_box;
 
-   taxonomy;
-
    summary;
 
    WRAPPER $field_block title="Synonym" key="synonym";
@@ -24,12 +22,9 @@ IF fields.driven_by_construct.data.defined;
     w.push(fields.driven_by_construct.data);
 END;
 
-IF w.size > 0;
-   WRAPPER $field_block title=pluralize('Promoter');
-      w.join(', ');
-   END;
+WRAPPER $field_block title=pluralize('Promoter');
+    w.join(', ');
 END;
-
 
 WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct";
    FOREACH reporter IN fields.reporter_construct.data.keys;   
@@ -39,6 +34,10 @@ WRAPPER $field_block title=pluralize('Reporter product') key="reporter_construct
            fields.reporter_construct.data.$reporter;
        END;
    END;
+END;
+
+WRAPPER $field_block title="Strains" key='strains';
+  tags2link(fields.strains.data, '<br />', 'Strains');
 END;
 
 remarks;

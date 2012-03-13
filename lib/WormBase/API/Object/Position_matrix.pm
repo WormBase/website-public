@@ -359,7 +359,7 @@ sub consensus {
     my $object  = $self->object;
 
     # Why is this hard-coded here? Why isn't this an attribute or in configuration? How/Where is this file created?
-    my %name2consensus = _build_hash(catfile($self->pm_datadir, 'pm_id2consensus_seq.txt'));
+    my %name2consensus;# = _build_hash(catfile($self->pm_datadir, 'pm_id2consensus_seq.txt'));
     my $data           = $name2consensus{$object};
     return {
         data        => $data || undef,
@@ -422,8 +422,8 @@ B<Response example>
 sub bound_by_gene_product {
     my $self   = shift;
     my $object = $self->object;
-    my $data = $self->_pack_objects($object->Bound_by_gene_product);
-    return { data => %$data ? $data : undef,
+    my %data = $self->_pack_objects($object->Bound_by_gene_product);
+    return { data => %data ? \%data : undef,
 	     description => 'gene products that bind to the motif' };
 }
 
@@ -480,13 +480,13 @@ B<Response example>
 
 =cut
 
-sub transcription_factors {
+sub transcription_factor {
     my $self   = shift;
     my $object = $self->object;
 
-    my $factor = $object->Transcription_factor;
     return { description => 'Transcription factor of the feature',
-	     data        => "$factor" || undef};
+	     data        => $self->_pack_obj($object->Transcription_factor),
+    }
 }
 
 
@@ -550,28 +550,22 @@ B<Response example>
 sub position_data {
     my $self   = shift;
     my $object = $self->object;
-    my $sv     = $object->Site_values;
+    my @data;
 
-    my @row_1 = $sv->row;
-    my @row_2 = $sv->down->row;
-    my @row_3 = $sv->down->down->row;
-    my @row_4 = $sv->down->down->down->row;
+    foreach my $nucl ($object->Site_values) {
+	my %ndata;
+	$ndata{Type} = "$nucl" || undef;
 
-    my $base_r1 = shift @row_1;
-    my $base_r2 = shift @row_2;
-    my $base_r3 = shift @row_3;
-    my $base_r4 = shift @row_4;
-
-    my $data = {
-        $base_r1 => \@row_1,
-        $base_r2 => \@row_2,
-        $base_r3 => \@row_3,
-        $base_r4 => \@row_4
-    };
+	my $ind = "00";
+	foreach my $val ( $nucl->row(1)) {
+	    $ndata{$ind++} = "$val" || undef;
+	}
+	push @data, \%ndata;
+    }
 
     return {
-        'data'        => $data,
-        'description' => 'data for individual positions in motif'
+        data        => @data ? \@data : undef,
+        description => 'data for individual positions in motif',
     };
 }
 
