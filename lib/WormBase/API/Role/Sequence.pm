@@ -1306,7 +1306,7 @@ sub predicted_units {
                             end=>$end,
                             name=>$self->_pack_obj($gene),
                             gene=>$locus ? $self->_pack_obj($locus) : '-',
-                            predicted_type=>=> $gene || '?',
+                            predicted_type=>=> "$gene" || '?',
                             comment=>$desc,
                         };
         }

@@ -387,8 +387,8 @@ sub predicted_exon_structure {
     my $index = 1;
     my @exons = map { my ($es,$ee) = $_->row; 
                       { no=>$index++,
-                        start=>$es,
-                        end=>$ee,}; 
+                        start=>"$es",
+                        end=>"$ee",}; 
                     } $s->get('Source_Exons');
 
     return { description => 'predicted exon structure within the sequence',

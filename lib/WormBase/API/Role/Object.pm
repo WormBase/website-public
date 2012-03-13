@@ -932,7 +932,7 @@ sub _build_laboratory {
 
     if (eval {$object->$tag}) {
 	foreach my $lab ($object->$tag) {
-	    my $label = $lab->Mail;
+	    my $label = $lab->Mail || "$lab";
 	    my $representative = $lab->Representative;
 	    my $name           = $representative->Standard_name;
 	    push @data, {

@@ -3718,7 +3718,7 @@ sub gene_models {
     my $self   = shift;
     my $object = $self->object;
     my $seqs   = $self->sequences;
-
+    my %seen;
     my @rows;
 
     my $coding =  $self->object->Corresponding_CDS ? 1 : 0;
@@ -3735,6 +3735,7 @@ sub gene_models {
             = ( $sequence->class eq 'CDS' )
             ? $sequence
             : eval { $sequence->Corresponding_CDS };
+        next if $seen{$cds}++;
 
         my $protein = $cds->Corresponding_protein( -fill => 1 ) if $cds;
         my @sequences = $cds ? $cds->Corresponding_transcript : ($sequence);
