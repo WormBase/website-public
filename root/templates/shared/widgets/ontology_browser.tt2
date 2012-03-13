@@ -1,5 +1,6 @@
 [% link='/tools/ontology_browser/run?inline=1&class=' _ object.name.data.class _ '&name=' _ object.name.data.id  %]
-     <iframe name ="browser" src="[% link %]" width ="100%" height ="300" />
-      </iframe>  
+   <div id="o_browser"></div>
 
-   
+<script>
+  WB.ajaxGet($jq("#o_browser"), "[% link %]");
+</script>

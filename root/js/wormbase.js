@@ -923,6 +923,8 @@ var Layout = (function(){
     function resize(){
       if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
         sColumns ? columns(100, 100) : readHash();
+      if (wHolder.children(".sortable").hasClass("table-columns") && ((wHolder.children(".left").width() + wHolder.children(".right").width()) > wHolder.outerWidth()))
+        columns(100, 100);
       if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
     }
@@ -1177,7 +1179,7 @@ var Scrolling = (function(){
                  
   function resetSidebar(){
     static = 0;
-    $jq("#navigation").stop().css('position', 'relative').css('top', 0);
+    sidebar.stop().css('position', 'relative').css('top', 0);
   }
   
   function goToAnchor(anchor){
@@ -1221,29 +1223,29 @@ var Scrolling = (function(){
         }
         if (objSmallerThanWindow){
           if(static==0){
-            if ((scrollTop > offset) && (scrollTop < maxScroll)) {
+            if ((scrollTop >= offset) && (scrollTop <= maxScroll)){
                 sidebar.stop().css('position', 'fixed').css('top', system_message);
                 static = 1;
             }else if(scrollTop > maxScroll){
                 sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
+            }else{
+                resetSidebar();
             }
           }else{
             if (scrollTop < offset) {
-                sidebar.stop().css('position', 'relative').css('top', 0);
-                static = 0;
+                resetSidebar();
             }else if(scrollTop > maxScroll){
-                sidebar.stop().css('top', system_message - (scrollTop - maxScroll));
+                sidebar.stop().css('position', 'fixed').css('top', system_message - (scrollTop - maxScroll));
                 static = 0;
                 if(scrollingDown == 1){body.stop(); scrollingDown = 0; }
-            }
+            } 
           }
         }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
-
-          //close lowest section. delay for animation. 
           count++; //Add counting semaphore to lock
+          //close lowest section. delay for animation. 
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
         }else{
-          sidebar.stop().css('position', 'relative').css('top', 0);
+          resetSidebar();
         }
       } 
     }
@@ -1875,11 +1877,13 @@ var Scrolling = (function(){
 
  $jq(document).ready(function() {
       $jq.ajaxSetup( {timeout: 12e4 }); //2 minute timeout on ajax requests
-      WB.init();
+      if(!window.WB){
+        WB.init();
+        window.WB = WB;
+        window.$jq = $jq;
+      }
  });
-
- window.WB = WB;
- window.$jq = $jq;
+ 
 }(this,document);
 
 

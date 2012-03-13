@@ -2,18 +2,20 @@
 <h2>[% fields.name.data.label %]</h2>
 
 [% WRAPPER highlight_box %]
-
+    [% WRAPPER $field_block title="Synonyms" key="synonyms" -%] 
+        [% fields.synonyms.data.join(', ') %]
+    [% END %]
 [% END %]
 
-	[% WRAPPER $field_block title="Definition" key="definition"-%] 
+
+   <div class="description">
+	[%# WRAPPER $field_block title="Definition" key="definition"-%] 
 		[%  fields.definition.data %]
-	[% END %]
+	[%# END %]
+  </div>
 
 
 
-	[% WRAPPER $field_block title="Synonyms" key="synonyms" -%] 
-        [% fields.synonyms.data.join(', ') %]
-	[% END %]
 
 
 
