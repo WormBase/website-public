@@ -7,13 +7,6 @@ WRAPPER highlight_box;
    WRAPPER $field_block title="Experiment" key="name";
         fields.historical_name.data;
    END;  
-
-   taxonomy;
-
-   WRAPPER $field_block title="WormBase ID"; 
-             fields.name.data.id;
-   END;     
-
 END;
 
 '<div class="text-width" style="clear:left">';

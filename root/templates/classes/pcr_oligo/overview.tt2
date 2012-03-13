@@ -1,12 +1,13 @@
-<h2>[% tag2link(fields.name.data) %]</h2>
+<h2>[% fields.name.data.label %]</h2>
 
 [% 
 
 class = fields.name.data.class;
   
 WRAPPER highlight_box;
-
-
+    WRAPPER $field_block title='ORFeome Project' key='on_orfeome_project';
+	'<a href="..' _  fields.on_orfeome_project.data _ '">' _ fields.on_orfeome_project.data _ '</a>';
+    END;
 END;
 
 
@@ -62,11 +63,6 @@ WRAPPER $field_block title='Amplified cDNA?' key='amplified';
    END ;
 END;
 
-# TODO: the following should be in details box 
-WRAPPER $field_block title='ORFeome Project' key='on_orfeome_project';
-   '<a href="..' _  fields.on_orfeome_project.data _ '">' _ fields.on_orfeome_project.data _ '</a>';
-END;
-
 
 remarks;
 
@@ -91,5 +87,16 @@ IF class == 'PCR_product';
 END;
 
 # TODO: logic for product on ORFeome project;
+
+IF class == 'Oligo';
+
+   WRAPPER $field_block title='In Sequences' key='in_sequences';
+       tags2link(fields.in_sequences.data, '<br />', 'Sequences');
+    END;
+
+    WRAPPER $field_block title='PCR Products' key='pcr_products';
+       tags2link(fields.pcr_products.data, '<br />', 'PCR Products');
+    END;
+END;
 
 %]
