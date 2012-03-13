@@ -437,8 +437,8 @@ B<Response example>
 sub cells {
     my $self = shift;
     my $object = $self->object;
-    my @cells = $object->Cell;
-    @cells = map { $self->_pack_obj($_) } @cells;
+
+    my @cells = map { "$_" } $object->Cell;
     return { description => 'cells at this lifestage',
 	     data        => @cells ? \@cells : undef };
 }
@@ -496,8 +496,8 @@ B<Response example>
 
 sub cell_group {
     my $self   = shift;
-    my $object = $self->shift;
-    my @cell_group = map { $self->_pack_obj($_) } $object->Cell_group;
+    my $object = $self->object;
+    my @cell_group = map { "$_" } $object->Cell_group;
     return { description => 'The prominent cell group for this life stage',
 	     data        => @cell_group ? \@cell_group : undef };
 }

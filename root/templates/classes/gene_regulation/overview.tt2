@@ -2,11 +2,7 @@
 
 [%
 
-WRAPPER highlight_box;
-
-
-END;
-
+WRAPPER highlight_box; END;
 
 '<div class="description">';
    fields.summary.data;
@@ -23,7 +19,6 @@ WRAPPER $field_block title='Methods' key='methods';
 	   END;
     END;
 END;
-
 
 WRAPPER $field_block title='Type Of Change' key='type_of_change';
    FOREACH reg_type IN fields.type_of_change.data.sort;
@@ -46,33 +41,31 @@ WRAPPER $field_block title='Regulated By' key='regulators';
     END;
 END;
 
-
 WRAPPER $field_block title='Regulates' key='';
 	FOREACH regulation IN fields.regulates.data;
 
-	    regulation_type = regulation.regulation_type;
-
-	    # Make the type read in English.
-	    IF regulation_type == 'Positive_regulate';
-	       regulation_type = 'Positively regulates';
-	    ELSIF regulation_type == 'Negative_regulate';
-	       regulation_type = 'Negatively regulates';
-	    ELSE;
-	       regulation_type = 'Does not regulate';
-            END;     
-
-	    target_type     = regulation.target_type;
-	    target          = regulation.target;
-
-	    FOREACH condition_type IN regulation.conditions;	       
+	    '<b>' _ regulation.regulation_type _ ":</b><br />";
+	    
+	    FOREACH condition_type IN regulation.conditions;
 		# Print out a semi-prose description.
-		regulation_type _ " " _ tag2link(target);
+		tag2link(regulation.target);
 
   	        value = condition_type.value;
+		cond_type = FILTER lower; condition_type.key; END;
+		cond_type = cond_type.replace('_', ' ');
 		IF value;
-	           ' in ' _ tags2link(value,', ') _ '<br >';
+	            " in $cond_type: ";
+		    IF condition_type.key == 'Subcellular_localization';
+			FOREACH val IN value;
+			    val;
+			    UNLESS loop.last; ', '; END;
+			END;
+		    ELSE;
+			tags2link(value,', ');
+		    END;
 		END;
-            END;	
+		'<br >';
+            END;
         END;
 
        IF fields.reference_expression_pattern.data;
@@ -85,6 +78,5 @@ WRAPPER $field_block title='Molecule Regulators' key='molecule_regulators';
 END;
 
 remarks;
-
 
 %]

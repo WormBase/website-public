@@ -250,7 +250,7 @@ sub movies {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
-    my @data        = map { $_ = $self->_pack_obj($_,$_->Remark) } @tag_objects if @tag_objects;
+    my @data        = map { my $label = eval {$_->Remark} || "$_"; $_ = $self->_pack_obj($_,$label) } @tag_objects if @tag_objects;
     return { data        => @data ? \@data : undef,
 	     description => 'movies documenting effect of rnai' };
 }
@@ -386,7 +386,7 @@ B<Response example>
 sub sequence {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->Sequence_info->right;
+    my @tag_objects = $object->Sequence_info->right if $object->Sequence_info;
     my @data   = map { {sequence=>"$_",
 			length=>length($_),
 		      } 

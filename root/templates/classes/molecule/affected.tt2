@@ -1,0 +1,28 @@
+[%
+
+MACRO tableAffected(type, tag) BLOCK;
+    build_data_table(
+	order = ['affected', 'phenotype'],
+	columns = {
+	    affected  => "$type",
+	    phenotype => 'Phenotype',
+	}, key = "$tag" );
+END;
+
+WRAPPER $field_block title="RNAi" key="affected_rnai";
+      tableAffected('RNAi', 'affected_rnai');
+END;
+
+WRAPPER $field_block title="Transgenes" key="affected_transgenes";
+      tableAffected('Transgene', 'affected_transgenes');
+END;
+
+WRAPPER $field_block title="Variations" key="affected_variations";
+      tableAffected('Variation', 'affected_variations');
+END;
+
+WRAPPER $field_block title="Strains" key="affected_strains";
+      tableAffected('Strain', 'affected_strains');
+END;
+
+%]

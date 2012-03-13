@@ -913,6 +913,29 @@ sub assay_conditions {
 ## Methods pertaining to Oligo
 ########################################
 
+sub in_sequences {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @data = map {$self->_pack_obj($_)} eval {$object->In_sequence};
+
+    return {
+	description => 'Sequences containing this oligonucleotide',
+	data        => @data ? \@data : undef,
+    }
+}
+
+sub pcr_products {
+    my $self = shift;
+    my $object = $self->object;
+
+    my @data = map {$self->_pack_obj($_)} eval {$object->PCR_product};
+
+    return {
+	description => 'PCR prodcuts associateed with this oligonucleotide',
+	data        => @data ? \@data : undef,
+    }
+}
 
 ########################################
 ## Private Methods

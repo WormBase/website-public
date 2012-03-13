@@ -1,9 +1,9 @@
 package WormBase::API::Object::Operon;
 use Moose;
 
-with 'WormBase::API::Role::Object';
 extends 'WormBase::API::Object';
-
+with 'WormBase::API::Role::Object';
+with 'WormBase::API::Role::Position';
 =pod 
 
 =head1 NAME
@@ -20,6 +20,25 @@ http://wormbase.org/species/operon
 
 =cut
 
+has 'tracks' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            description => 'tracks displayed in GBrowse',
+            data        => [qw/CG OP/],
+        };
+    }
+);
+
+has 'gff' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+        my ($self) = @_;
+        return $self->gff_dsn;
+    }
+   );
 
 #######################################
 #
@@ -185,97 +204,20 @@ B<Response example>
 sub structure {
     my $self   = shift;
     my $operon = $self->object;
-    my @data_pack;
-    my @member_gene = $operon->Contains_gene;
+    my @data;
 
-    foreach my $gene (@member_gene) {
-        my $gene_info = $self->_pack_obj($gene);
-        my %spliced_leader;
-        foreach my $sl ( $gene->col ) {
-            
-            $spliced_leader{$sl} = $self->_get_evidence($sl);
-              ;    # each spliced leader key is linked to an array of evidence
-        }
-        push @data_pack,
+    foreach my $gene ($operon->Contains_gene) {
+        my @spliced = map {text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}, $gene->col;
+        push @data,
           {
-            gene_info   => $gene_info,
-            splice_info => \%spliced_leader
+            gene_info   => $self->_pack_obj($gene),
+            splice_info => @spliced ? \@spliced : undef,
           };
     }
     return {
-        'data'        => \@data_pack,
+        'data'        => @data ? \@data : undef,
         'description' => 'structure information for this operon'
     };
-}
-
-=head3 history
-
-This method will return a data structure with history of the operon.
-
-=over
-
-=item PERL API
-
- $data = $model->history();
-
-=item REST API
-
-B<Request Method>
-
-GET
-
-B<Requires Authentication>
-
-No
-
-B<Parameters>
-
-An Operon id (eg CEOP1140)
-
-B<Returns>
-
-=over 4
-
-=item *
-
-200 OK and JSON, HTML, or XML
-
-=item *
-
-404 Not Found
-
-=back
-
-B<Request example>
-
-curl -H content-type:application/json http://api.wormbase.org/rest/field/operon/CEOP1140/history
-
-B<Response example>
-
-<div class="response-example"></div>
-
-=back
-
-=cut 
-
-sub history {
-     my $self   = shift;
-     my $object = $self->object;
-     my %data_pack;
-     my @history_types = $object->History;
- 
-     foreach my $history_type (@history_types) {
-         my %histories;
-         foreach my $h ( $history_type->col ) {
-             
-             $histories{$h} = $self->_get_evidence($h);
-         }
-         $data_pack{$history_type} = \%histories;
-     }
-     return {
-         'data'        => @history_types ? \%data_pack : undef,
-         'description' => 'history of the information on the operon'
-     };
 }
 
 #########################
@@ -283,6 +225,14 @@ sub history {
 # Internal Methods
 #
 ##########################
+
+sub _build__segments {
+    my $self = shift;
+    my $object = $self->object;
+    my $class = $object->class;
+    return [ $self->gff_dsn->segment($class => $object) // () ];
+}
+
 =pod replace by the standard evidence method _get_evidence
 sub _get_evidence_names {
 	my $self = shift;
