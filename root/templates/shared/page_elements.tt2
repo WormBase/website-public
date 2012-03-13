@@ -726,12 +726,12 @@ END;
      # The Laboratory field
      # Expects the stash to contain the "laboratory" key.
      WRAPPER $field_block title="$title"||'Laboratory' key="laboratory";
-         tag2link(fields.laboratory.data.laboratory);
+         tag2link(fields.laboratory.data.0.laboratory);
  
          # Include the lab representative, if one exists         
-         IF fields.laboratory.data.representative;
+         IF fields.laboratory.data.0.representative;
               " (" ; 
-              tag2link(fields.laboratory.data.representative); 
+              tag2link(fields.laboratory.data.0.representative); 
               ")" ; 
          END;
      END;
@@ -833,7 +833,7 @@ END;
 
 [% MACRO wb_id_field BLOCK; 
    WRAPPER $field_block title="WormBase ID";
-          fields.name.data.id;
+          '<span class="ellipsis">' _ fields.name.data.id _ '</span>';
    END;
 END;
 %]

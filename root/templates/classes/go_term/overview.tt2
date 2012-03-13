@@ -2,20 +2,16 @@
 
 
 [% WRAPPER highlight_box %]
-
+  [% WRAPPER $field_block title="type"-%] 
+      [% fields.type.data %]
+  [% END %]
 [% END %]
 
-[% # WRAPPER $field_block title="term"-%] 
-	[% # tag2link(fields.term.data) %]
-[% # END %]
 
-[% WRAPPER $field_block title="definition"-%] 
+<div class="description">
 	[% fields.definition.data %]
-[% END %]
+</div>
 
-[% WRAPPER $field_block title="type"-%] 
-	[% fields.type.data %]
-[% END %]
 
 
 
