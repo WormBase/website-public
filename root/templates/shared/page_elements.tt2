@@ -861,7 +861,7 @@ END;
 
 [% MACRO wb_id_field BLOCK; 
    WRAPPER $field_block title="WormBase ID";
-          '<span class="ellipsis">' _ fields.name.data.id _ '</span>';
+          fields.name.data.id;
    END;
 END;
 %]
