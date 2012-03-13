@@ -1,11 +1,21 @@
 [% 
 
-    WRAPPER $field_block title="gene" key="gene";
-       tag2link(fields.gene.data);
+    WRAPPER $field_block title="Gene(s)" key="gene";
+	tags2link(fields.gene.data, '<br />', 'Genes');
     END;
 
-    WRAPPER $field_block title="cds" key="cds";
-       tag2link(fields.cds.data);
+    WRAPPER $field_block title="CDS" key="cds";
+	tags2link(fields.cds.data, '<br />', 'CDS');
     END;
+
+    WRAPPER $field_block title="Transcript(s)" key="transcript";
+	tags2link(fields.transcript.data, '<br />', 'Transcripts');
+    END;
+
+    WRAPPER $field_block title="Pseduogene(s)" key="pseudogene";
+	tags2link(fields.pseudogene.data, '<br />', 'Pseduogenes');
+    END;
+
+    remarks;
 
 %]
