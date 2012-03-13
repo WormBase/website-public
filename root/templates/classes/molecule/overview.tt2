@@ -1,16 +1,3 @@
-[% # Affected * belong in Phenotype widget? %]
-[% MACRO tag2linkAffected(affectedHash) BLOCK;
-   # TODO: handle phenotype; this is just a data dump
-   results = [];
-   FOR name IN affectedHash.sort;
-       item = affectedHash.$name;
-       results.push(tag2link(item.phenotype) _ ' (' _ tag2link(item.obj) _ ')');
-   END;
-   results.join(', ');
-END;
-%]
-
-
 <h2>[% fields.name.data.label %]</h2>
 
 [% 
@@ -19,43 +6,18 @@ WRAPPER highlight_box;
  
    taxonomy;
 
-   WRAPPER $field_block title="WormBase ID";
-           fields.name.data.id;
-   END;
-
 END;
 
 WRAPPER $field_block title=pluralize('Synonym', fields.synonyms.data.size) key="synonyms";
-    tags2link(fields.synonyms.data);
+    cell_content(fields.synonyms.data);
 END;
 
 WRAPPER $field_block title="Molecule Use" key="molecule_use";
-   fields.molecule_use.data.join('; ');
+    tags2link(fields.molecule_use.data);
 END;
 
 WRAPPER $field_block title="Gene Regulation Activity" key="gene_regulation";
 	tags2link(fields.gene_regulation.data);
-END;
-
-
-%]
-
-[% 
-
-WRAPPER $field_block title="Affected RNAi" key="affected_rnai";
-      tag2linkAffected(fields.affected_rnai.data);
-END;
-
-WRAPPER $field_block title="Affected Transgene" key="affected_transgene";
-      tag2linkAffected(fields.affected_transgene.data);
-END;
-
-WRAPPER $field_block title="Affected Variation" key="affected_variation";
-      tag2linkAffected(fields.affected_variation.data);
-END;
-
-WRAPPER $field_block title="Affected Strain" key="affected_strain";
-      tag2linkAffected(fields.affected_strain.data);
 END;
 
 remarks(no_toggle=1);
