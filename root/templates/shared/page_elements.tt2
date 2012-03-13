@@ -43,17 +43,22 @@
           <div style="padding:0.5em">
             You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature
           </div>
-          <script>
+        [% lighbox_js %]
+    [% END %]
+
+[% END %]
+
+[% MACRO lighbox_js BLOCK %]
+           <script>
 window.onload = getBox;
 function getBox(){
-  WB.getColorbox(function(){
+  WB.getPlugin("colorbox", function(){
     $jq(".lightbox").colorbox();
   });
 }
 
 getBox();
           </script>
-    [% END %]
 
 [% END %]
 
@@ -396,7 +401,7 @@ END;
   </table>
     [% END %]
     <script type="text/javascript" >
-        WB.getDataTables(function(){
+        WB.getPlugin("dataTables", function(){
           $jq('#[% table_name %]').dataTable({
             "bPaginate"        : [% paginate %],
             "bLengthChange"    : [% length   %],
@@ -871,7 +876,13 @@ END;
 END;
 %]
 
-
+[% MACRO generate_file_download(filename, content, cname) BLOCK;
+  '<div class="button ui-corner-all generate-file-download ' _ cname _ '"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span><span>download</span>'
+    _ '<div id="filename" class="ui-helper-hidden">' _ filename _ '</div>'
+    _ '<div id="content" class="ui-helper-hidden">' _ content  _ '</div>'
+_ '</div>';
+END;
+%]
 
 [% MACRO format_sequence(seq) BLOCK;
     format_seq = "";
@@ -905,13 +916,8 @@ END;
         title = obj.header || 'sequence';
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');
-        sequences.$obj.download = '<div class="sequence-download">'
-                                  _ '<form action="/rest/download/">'
-                                  _ '<input type="hidden" name="type" value="' _ object.name.data.id _ title_html _ '.fa" >'
-                                  _ '<input type="hidden" name="sequence" value="' _ seq_html  _ '" >'
-                                  _ '<input type="submit" value="download">'
-                                  _ '</form>'
-                            _ '</div>';
+        fname = object.name.data.id _ title_html _ '.fasta';
+        sequences.$obj.download = generate_file_download(fname, seq_html, "sequence-download");
 
         sequences.$obj.seq = format_seq | replace('\n', '<br />');
         sequences.$obj.title = 'view ' _ title;
@@ -923,7 +929,7 @@ END;
     IF sequences.keys.size > 0;
       WRAPPER $field_block title=(field_title.defined ?  field_title : "Sequence") key=field_key;
         FOREACH obj IN sequences.keys;
-          '<div style="position:relative;width:44em;">';
+          '<div class="seq-toggle">';
           sequences.$obj.download;
           IF sequences.$obj.seq;
             WRAPPER toggle title=sequences.$obj.title toggle_class="sequence-container" open=open_toggle;

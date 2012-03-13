@@ -1,19 +1,18 @@
-          <li onClick="WB.resetPageLayout()"><div id="fade">reset</div></li>
-          <li onClick="WB.resetLayout(['references'], ['my_library'], 70)"><div id="fade">citations</div></li>
-          [% FOREACH layout IN c.stash.layouts.keys.nsort %]
-            [% UNLESS layout; NEXT; END; %]
-         <li id="layout-[% layout %]">
-              <div class="ui-icon ui-icon-close" onClick="WB.deleteLayout('[% layout %]')"></div>
-              <div id="fade" onClick="WB.setLayout(escape('[% layout %]'))">[% c.stash.layouts.$layout %]</div></li>
-          [% END %]
-          <form onsubmit="WB.newLayout(this.layout.value);return false;"><input id="layout-input" type="text" name="layout" value="save layout">
-          </form>
+<li><a id="fade" onClick="WB.openAllWidgets(); return false;">open all</a></li>
+<li onClick="location.hash = '/'"><div id="fade">close all</div></li>
 
-<script>
-    $jq("#layout-input").focus(function(){
-      if($jq(this).attr("value") == "save layout") $jq(this).attr("value", "");
-    });
-  $jq("#layout-input").blur(function(){
-    if($jq(this).attr("value") == "") $jq(this).attr("value", "save layout");
-  });
-</script>
+[% FOREACH l IN c.config.sections.$section.$page_class.layout.keys %]
+    <li id="layout-[% l %]">
+    <div id="fade" onClick="location.hash ='[% c.config.sections.species.$page_class.layout.$l %]'">[% l %]</div></li>
+[% END %]
+
+[% FOREACH l IN c.stash.layouts.keys.nsort %]
+  [% UNLESS l; NEXT; END; %]
+    <li id="layout-[% l %]">
+    <div class="ui-icon ui-icon-close" onClick="WB.deleteLayout('[% l %]')"></div>
+    <div id="fade" onClick="WB.setLayout(escape('[% l %]'))">[% c.stash.layouts.$l %]</div></li>
+[% END %]
+
+<form onsubmit="WB.newLayout(this.layout.value);return false;">
+  <input placeholder="save layout" id="layout-input" type="text" name="layout">
+</form>

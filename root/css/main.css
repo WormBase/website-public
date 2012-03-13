@@ -1,14 +1,4 @@
-/* 
-
-  WormBase - primary stylesheet
-
-  Contents:
-
-  DOCUMENT - document level formatting
-
-*/  
-
-/*! normalize.css 2011-08-31T22:02 UTC · http://github.com/necolas/normalize.css */
+/*! normalize.css 2012-03-06T10:21 UTC - http://github.com/necolas/normalize.css */
 
 /* =============================================================================
    HTML5 display definitions
@@ -27,7 +17,8 @@ footer,
 header,
 hgroup,
 nav,
-section {
+section,
+summary {
     display: block;
 }
 
@@ -45,10 +36,12 @@ video {
 
 /*
  * Prevents modern browsers from displaying 'audio' without controls
+ * Remove excess height in iOS5 devices
  */
 
 audio:not([controls]) {
     display: none;
+    height: 0;
 }
 
 /*
@@ -68,16 +61,26 @@ audio:not([controls]) {
 /*
  * 1. Corrects text resizing oddly in IE6/7 when body font-size is set using em units
  *    http://clagnut.com/blog/348/#c790
- * 2. Keeps page centred in all browsers regardless of content height
- * 3. Prevents iOS text size adjust after orientation change, without disabling user zoom
+ * 2. Prevents iOS text size adjust after orientation change, without disabling user zoom
  *    www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/
  */
 
 html {
     font-size: 100%; /* 1 */
-    overflow-y: scroll; /* 2 */
-    -webkit-text-size-adjust: 100%; /* 3 */
-    -ms-text-size-adjust: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    -ms-text-size-adjust: 100%; /* 2 */
+}
+
+/*
+ * Addresses font-family inconsistency between 'textarea' and other form elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
 }
 
 /*
@@ -86,18 +89,6 @@ html {
 
 body {
     margin: 0;
-}
-
-/* 
- * Addresses font-family inconsistency between 'textarea' and other form elements.
- */
-
-body,
-button,
-input,
-select,
-textarea {
-    font-family: sans-serif;
 }
 
 
@@ -129,6 +120,41 @@ a:active {
    ========================================================================== */
 
 /*
+ * Addresses font sizes and margins set differently in IE6/7
+ * Addresses font sizes within 'section' and 'article' in FF4+, Chrome, S5
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.75em;
+    margin: 2.33em 0;
+}
+
+/*
  * Addresses styling not present in IE7/8/9, S5, Chrome
  */
 
@@ -137,12 +163,12 @@ abbr[title] {
 }
 
 /*
- * Addresses style set to 'bolder' in FF3/4, S4/5, Chrome
+ * Addresses style set to 'bolder' in FF3+, S4/5, Chrome
 */
 
-b, 
-strong { 
-    font-weight: bold; 
+b,
+strong {
+    font-weight: bold;
 }
 
 blockquote {
@@ -164,6 +190,15 @@ dfn {
 mark {
     background: #ff0;
     color: #000;
+}
+
+/*
+ * Addresses margins set differently in IE6/7
+ */
+
+p,
+pre {
+    margin: 1em 0;
 }
 
 /*
@@ -239,15 +274,34 @@ sub {
    Lists
    ========================================================================== */
 
-ul,
-ol {
+/*
+ * Addresses margins set differently in IE6/7
+ */
+
+dl,
+menu,
+ol,
+ul {
     margin: 1em 0;
-    padding: 0 0 0 40px;
 }
 
 dd {
     margin: 0 0 0 40px;
 }
+
+/*
+ * Addresses paddings set differently in IE6/7
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/*
+ * Corrects list images handled incorrectly in IE7
+ */
 
 nav ul,
 nav ol {
@@ -261,7 +315,7 @@ nav ol {
    ========================================================================== */
 
 /*
- * 1. Removes border when inside 'a' element in IE6/7/8/9, F3
+ * 1. Removes border when inside 'a' element in IE6/7/8/9, FF3
  * 2. Improves image quality when scaled in IE7
  *    code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/
  */
@@ -272,7 +326,7 @@ img {
 }
 
 /*
- * Corrects overflow displayed oddly in IE9 
+ * Corrects overflow displayed oddly in IE9
  */
 
 svg:not(:root) {
@@ -306,27 +360,31 @@ form {
 }
 
 /*
- * Define consistent margin and padding
+ * Define consistent border, margin, and padding
  */
 
 fieldset {
+    border: 1px solid #c0c0c0;
     margin: 0 2px;
     padding: 0.35em 0.625em 0.75em;
 }
 
 /*
  * 1. Corrects color not being inherited in IE6/7/8/9
- * 2. Corrects alignment displayed oddly in IE6/7
+ * 2. Corrects text not wrapping in FF3
+ * 3. Corrects alignment displayed oddly in IE6/7
  */
 
 legend {
     border: 0; /* 1 */
-    *margin-left: -7px; /* 2 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
 }
 
 /*
  * 1. Corrects font size not being inherited in all browsers
- * 2. Addresses margins set differently in IE6/7, F3/4, S5, Chrome
+ * 2. Addresses margins set differently in IE6/7, FF3+, S5, Chrome
  * 3. Improves appearance and consistency in all browsers
  */
 
@@ -341,53 +399,57 @@ textarea {
 }
 
 /*
- * 1. Addresses FF3/4 setting line-height using !important in the UA stylesheet
- * 2. Corrects inner spacing displayed oddly in IE6/7
+ * Addresses FF3/4 setting line-height on 'input' using !important in the UA stylesheet
  */
 
 button,
 input {
     line-height: normal; /* 1 */
-    *overflow: visible;  /* 2 */
-}
-
-/*
- * Corrects overlap and whitespace issue for buttons and inputs in IE6/7
- * Known issue: reintroduces inner spacing
- */
-
-table button,
-table input {
-    *overflow: auto;
 }
 
 /*
  * 1. Improves usability and consistency of cursor style between image-type 'input' and others
  * 2. Corrects inability to style clickable 'input' types in iOS
+ * 3. Removes inner spacing in IE7 without affecting normal text inputs
+ *    Known issue: inner spacing remains in IE6
  */
 
 button,
-html input[type="button"], 
-input[type="reset"], 
+input[type="button"],
+input[type="reset"],
 input[type="submit"] {
     cursor: pointer; /* 1 */
     -webkit-appearance: button; /* 2 */
+    *overflow: visible;  /* 3 */
+}
+
+/*
+ * Re-set default cursor for disabled elements
+ */
+
+button[disabled],
+input[disabled] {
+    cursor: default;
 }
 
 /*
  * 1. Addresses box sizing set to content-box in IE8/9
- * 2. Addresses excess padding in IE8/9
+ * 2. Removes excess padding in IE8/9
+ * 3. Removes excess padding in IE7
+      Known issue: excess padding remains in IE6
  */
 
 input[type="checkbox"],
 input[type="radio"] {
     box-sizing: border-box; /* 1 */
     padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
 }
 
 /*
  * 1. Addresses appearance set to searchfield in S5, Chrome
- * 2. Addresses box sizing set to border-box in S5, Chrome (include -moz to future-proof)
+ * 2. Addresses box-sizing set to border-box in S5, Chrome (include -moz to future-proof)
  */
 
 input[type="search"] {
@@ -398,15 +460,16 @@ input[type="search"] {
 }
 
 /*
- * Corrects inner padding displayed oddly in S5, Chrome on OSX
+ * Removes inner padding and search cancel button in S5, Chrome on OS X
  */
 
-input[type="search"]::-webkit-search-decoration {
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
 }
 
 /*
- * Corrects inner padding and border displayed oddly in FF3/4
+ * Removes inner padding and border in FF3+
  * www.sitepen.com/blog/2008/05/14/the-devils-in-the-details-fixing-dojos-toolbar-buttons/
  */
 
@@ -431,7 +494,7 @@ textarea {
    Tables
    ========================================================================== */
 
-/* 
+/*
  * Remove most spacing between table cells
  */
 
@@ -644,7 +707,7 @@ div#create-prompt {
   text-overflow: ellipsis;
 }
 
-.text-min:hover div.more, div.more:hover, .result:hover div.ev-more-text span, .result:hover .v {
+.text-min:hover div.more, div.more:hover, .result:hover div.ev-more-text span, .result:hover .v, div.columns div.ui-icon-close:hover {
   opacity:1;
   filter:alpha(opacity=100);
   -moz-opacity:1;
@@ -743,6 +806,10 @@ div.more .ui-icon {
 #fade {
    color: #999999;
    font-size: 0.8em;
+}
+
+a#fade:hover {
+  text-decoration:underline;
 }
 
 .result {
@@ -1259,7 +1326,7 @@ ul.nav-bar span.status-bar {
   padding:0;
 }
 
-ul.nav-bar span.status-bar li a {
+ul.nav-bar span.status-bar li>a {
   padding-right:1.5em;
 }
 
@@ -1311,7 +1378,6 @@ ul.nav-bar ul.dropdown {
 
 /* Login and registration styling  - header, home page, and login popup */
 #login-box ul.dropdown {
-  width:auto;
   left:auto;
   right:0;
   top:1.6em;
@@ -1320,7 +1386,7 @@ ul.nav-bar ul.dropdown {
 
 .login-holder{
   position:relative;
-  margin:0.5em 1em;
+  margin:0.5em 0 0.5em 1em;
 }
 
 span.holder {
@@ -1336,7 +1402,7 @@ span.holder {
   color:black;
   position:relative;
   border-bottom:none;
-  padding-right:1.5em;
+  border-right:none;
 }
 
 #login-form button{
@@ -1350,24 +1416,42 @@ span.holder {
   border-top:1px solid #CDCDCD;
   overflow:hidden;
   position:relative;
-  padding:0.5em 0 1em 1em;
+  padding:0.5em 1em 1em 1em;
 }
 
-#login-form > form {
-  width:14.5em;
+#login-form div.social>div {
+  float:left;
+  padding:0.5em;
+}
+
+#login-form input.email {
+  width:15em;
+}
+
+#login-form input.password {
+  width:10em;
+}
+
+#login-form input#login {
+  width:4.5em;
 }
 
 .login-form {
   padding:0.5em 0 0 !important;
   font-weight: normal !important;
   background: white !important;
-  width: 14em !important;
+  width: 17em !important;
 }
 
 .registration-form {
   padding: 1em !important;
   background: #E9EEF2 !important;
-  width: 21.5em !important;
+  width: 22em !important;
+}
+
+.registration-form .login-holder input{
+  width:12em;
+  margin-right:1em;
 }
 /* END of login and registration styling */
 
@@ -1666,7 +1750,7 @@ div.columns {
 }
 
 div.columns ul {
-  width:4.5em;
+  width:6em;
   position:absolute;
   z-index:999;
   top:100%;
@@ -1676,11 +1760,6 @@ div.columns ul {
   padding:0;
   border:1px solid #CDCDCD;
   display:none;
-}
-
-div.columns ul ul{
-  left:100%;
-  top:0;
 }
 
 div.columns ul li{
@@ -1696,18 +1775,17 @@ div.columns ul li:hover{
   background: #FFFFDF;
 }
 
-div.columns ul li div{
-  float:none;
-}
-
-div.columns div{
-  float:left;
+div.columns div.ui-icon-close{
+  float:right;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
 }
 
 div.columns ul div input#layout-input {
   width:100%;
   color: #999999;
-  font-size: 0.75em;
+/*   font-size: 0.75em; */
   margin:0;
   padding:0;
 }
@@ -2569,6 +2647,10 @@ table.venn tr.venn-data td {
   width:1em;
 }
 
+#issue-box span{
+  float:left;
+}
+
 #operator-box.minimize{
   background:#406F9C;
   background-image:url('/img/chat.png');
@@ -2631,6 +2713,8 @@ div.inline-columns img {
   float:left;
 }
 
+
+
 .button{
   float:left;
   border:1px solid #BBB;
@@ -2676,6 +2760,20 @@ div.title {
   margin-right:0.5em;
   padding:0.3em;
   float:left;
+}
+
+.button span:not(.ui-icon){
+  margin:0 0.5em 0 0;
+  font-size:0.9em;
+}
+
+.seq-toggle .toggle {
+  padding:0.25em;
+}
+
+.seq-toggle  {
+  position:relative;
+  width:44em;
 }
 
 
@@ -2742,6 +2840,7 @@ Use width:auto or a fixed width on the .social_buttons element
     outline: none;
     padding: 0;
     text-decoration: none !important;
+    margin:0.2em;
 }
 button::-moz-focus-inner { 
     border: 0;

@@ -19,7 +19,7 @@
                       _ species_name
                       _ '</a></span>');
           END;
-          UNLESS object;
+          UNLESS object.name.data.label;
             breadcrumbs.push('<span>'_ class_title  _ '</span>');
           ELSE;
             breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class) _ '">'

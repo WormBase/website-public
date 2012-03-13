@@ -35,6 +35,6 @@ remarks;
     PROCESS classes/expr_pattern/curated_images.tt2 curated_images= fields.curated_images;
 
 %]
-   <script type="text/javascript">
-  WB.getColorbox(function(){}); 
+<script type="text/javascript">
+  WB.getPlugin("colorbox", function(){}); 
 </script>

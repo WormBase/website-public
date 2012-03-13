@@ -1,28 +1,22 @@
 
 
-[% IF new == 1 %]New issue[% ELSE %]Issue Update[% END %] [% issue.issue_id %]: [% issue.title %]
-[% url=c.uri_for(c.controller('tool').action_for('issue'),issue.issue_id) %]
-<br><a href="[% url %]">[% url %]</a>
+New issue: [% issue.title %]
 
 [% USE date %]
-<p>[% IF new==1 ; obj= issue;  ELSE ; obj= new; END; %]
-[% username(obj.owner) %] on [% date.format(obj.timestamp, '%a, %d %b %y %H:%M:%S', 'en_GB') %]
-</p>
+<p>
+Reported by [% issue.reporter.username || name %] ([% email.header.cc %])
+<br />
+<span style="font-size: 0.9em;color: #999999;">[% date.format(issue.timestamp, '%d %b %y %H:%M', 'en_GB') %]
+</span></p>
 
-<p>Comment:
+<p>Question:
 <br>&nbsp;&nbsp;[% content %]
 </p>
 
-<p>
-Changes:
-[% FOREACH key IN change.keys.sort %]
-<br>&nbsp;&nbsp;[% key %]: 
-[% IF key == "assigned_to" %][% username(change.$key.old) %][% ELSE %][% change.$key.old %][% END %]
-->
-[% IF key == "assigned_to" %][% username(change.$key.new) %][% ELSE %][% change.$key.new %][% END %]
-[% END %]
+<p>Submitted From:
+<br>&nbsp;&nbsp;[% issue.page.title %] <span style="font-size: 0.9em;color: #999999;">([% issue.page.url %])</span>
 </p>
 
 <p><span style="font-size: 0.9em;color: #999999;">
-This is an issue notification from wormbase.org. You are receiving this either because you are the owner of the issue, or you are following the issue.
+This question was reported using the web interface from wormbase.org. You are receiving this either because you are the owner of the issue, or you are following the issue.
 </span></p> 

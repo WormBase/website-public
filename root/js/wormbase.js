@@ -24,12 +24,9 @@
   var WB = (function(){
     var timer,
         notifyTimer,
-        colTimer,
         cur_search_type = 'all',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
-        loadcount = 0,
-        plugins = new Array(),
-        loading = false;
+        loadcount = 0;
     
     function init(){
       var pageInfo = $jq("#header").data("page"),
@@ -169,27 +166,32 @@
       }
       
       
-      colDropdown.find("a, div.columns div.ui-icon, div.columns>ul>li>a").click(function() {
-        $jq("div.columns>ul").toggle();
-      });
-      
-      colDropdown.children("ul").children("li").hover(
-        function(){
-          if(colTimer){ 
-            clearTimeout(colTimer);
-            colTimer = undefined;
+      colDropdown.hover(function () {
+          if(timer){
+            $jq("#nav-bar").find("ul li .hover").removeClass("hover");
+            $jq("#nav-bar").find("ul.dropdown").hide();
+            clearTimeout(timer);
+            timer = undefined;
           }
-          $jq(this).children("ul").show();
-        },
-        function(){
-          var layout = $jq(this).children("ul");
-          if(colTimer){ 
-            clearTimeout(colTimer);
-            colTimer = undefined;
+          colDropdown.children("ul").show();
+        }, function () {
+          if(timer){
+            clearTimeout(timer);
+            timer = undefined;
           }
-          colTimer = setTimeout(function(){layout.hide();}, 500);
+          if(colDropdown.find("#layout-input:focus").size() == 0){
+            timer = setTimeout(function() {
+                  colDropdown.children("ul").hide();
+                }, 300)
+          }else{
+            colDropdown.find("#layout-input").blur(function(){
+              timer = setTimeout(function() {
+                  colDropdown.children("ul").hide();
+                }, 600)
+            });
+          }
         });
-      
+
       $jq("#nav-min").click(function() {
         var nav = $jq(".navigation-min").add("#navigation"),
             ptitle = $jq("#page-title"),
@@ -296,7 +298,7 @@
         Layout.openAllWidgets();
       }
       
-      if(listLayouts.size()>0){ajaxGet(listLayouts, "/rest/layout_list/" + listLayouts.attr("type"));}
+//       if(listLayouts.children().size()==0){ajaxGet(listLayouts, "/rest/layout_list/"  + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"));}
       
       // used in sidebar view, to open and close widgets when selected
       widgets.find(".module-load, .module-close").click(function() {
@@ -436,10 +438,11 @@
       
       content.delegate(".slink", 'mouseover', function(){
           var slink = $jq(this);
-          getColorbox(function(){
+          Plugin.getPlugin("colorbox", function(){
             slink.colorbox({data: slink.attr("href"), 
-                            width: "750px", 
+                            width: "800px", 
                             height: "550px",
+                            scrolling: false,
                             title: function(){ return slink.prev().text() + " " + slink.data("class"); }});
           });
       });
@@ -457,6 +460,19 @@
         });
         return false;
       });
+      
+      $jq("body").delegate(".generate-file-download", 'click', function(e){
+          var filename = $jq(this).find("#filename").text(),
+              content = $jq(this).find("#content").text();
+          Plugin.getPlugin("generateFile", function(){
+          $jq.generateFile({
+              filename    : filename,
+              content     : content,
+              script      : '/rest/download'
+          });
+        });
+      });     
+      
     }
     
     function moduleMin(button, hover, direction, callback) {
@@ -548,8 +564,8 @@
             ajaxGet($jq("#operator-box"), "/rest/livechat", 0);
             opLoaded = true;
           }
-          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}) : opBox.animate({width:"1.5em"});
-          opBox.toggleClass("minimize").children().toggle();
+          (opBox.hasClass("minimize")) ? opBox.animate({width:"9em"}).children().show() : opBox.animate({width:"1.5em"}).children().hide();
+          opBox.toggleClass("minimize");
         });
         
         $jq('#operator').click(function() { 
@@ -572,7 +588,7 @@
         $jq("#issue-box").click(function(){
           var isBox = $jq(this);
           isBox.toggleClass("minimize").children().toggle();
-          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "12em"})
+          isBox.animate({width: (isBox.hasClass("minimize")) ? "1em" : "14em"})
         });
     }
     
@@ -580,15 +596,15 @@
     var area = $jq(selector);
       
     if(area.attr("value") != ""){
-      area.siblings().fadeOut();
+      area.siblings(".holder").fadeOut();
     }
     area.focus(function(){
-      $jq(this).siblings().fadeOut();
+      $jq(this).siblings(".holder").fadeOut();
     });
 
     area.blur(function(){
       if($jq(this).attr("value") == ""){
-        $jq(this).siblings().fadeIn();
+        $jq(this).siblings(".holder").fadeIn();
       }
     });
   }
@@ -726,7 +742,7 @@
       formatExpand(div);
 
       if(queryList.length == 0) { return; }
-      getHighlight(function(){
+      Plugin.getPlugin("highlight", function(){
         for (var i=0; i<queryList.length; i++){
           if(queryList[i]) { div.highlight(queryList[i]); }
         }
@@ -890,7 +906,8 @@
 var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
-      maxWidth = (location.pathname == '/') ? 800 : 1300; //home page? allow narrower columns
+      wHolder = $jq("#widget-holder"),
+      maxWidth = (location.pathname == '/' || location.pathname == '/me') ? 800 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
       widgetList = this.wl || (function() {
@@ -911,8 +928,8 @@ var Layout = (function(){
     }
     
     function columns(leftWidth, rightWidth, noUpdate){
-      var sortable = $jq("#widget-holder").children(".sortable"),
-          tWidth = $jq("#widget-holder").innerWidth(),
+      var sortable = wHolder.children(".sortable"),
+          tWidth = wHolder.innerWidth(),
           leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
         sortable.removeClass('table-columns').addClass('one-column');
@@ -927,13 +944,13 @@ var Layout = (function(){
     }
 
     function deleteLayout(layout){
-      var $class = $jq("#widget-holder").attr("wclass");
+      var $class = wHolder.attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout + "?delete=1");
       $jq("div.columns ul div li#layout-" + layout).remove();
     }
 
     function setLayout(layout){
-      var $class = $jq("#widget-holder").attr("wclass");
+      var $class = wHolder.attr("wclass");
       $jq.get("/rest/layout/" + $class + "/" + layout, function(data) {
           var nodeList = data.childNodes[0].childNodes,
               len = nodeList.length;
@@ -947,7 +964,7 @@ var Layout = (function(){
     }
     
     function resetPageLayout(layout){
-      layout = layout || $jq("#widget-holder").data("layout");
+      layout = layout || wHolder.data("layout");
       if(layout['hash']){
           location.hash = layout['hash'];
       }else{
@@ -960,13 +977,20 @@ var Layout = (function(){
 
     function newLayout(layout){
       updateLayout(layout, undefined, function() {
-        $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").attr("type"), function(response, status, xhr) {
+        $jq(".list-layouts").load("/rest/layout_list/" + $jq(".list-layouts").data("class") + "?section=" + $jq(".list-layouts").data("section"), function(response, status, xhr) {
             if (status == "error") {
                 var msg = "Sorry but there was an error: ";
                 $jq(".list-layouts").html(msg + xhr.status + " " + xhr.statusText);
               }
             });
           });
+      if(timer){
+        clearTimeout(timer);
+        timer = undefined;
+      }
+      timer = setTimeout(function() {
+          $jq("#column-dropdown").children("ul").hide();
+       }, 700)
       return false;
     }
     
@@ -1023,9 +1047,8 @@ var Layout = (function(){
     }
 
     function updateLayout(layout, hash, callback){
-      var holder =  $jq("#widget-holder"),
-          $class = holder.attr("wclass"),
-          lstring = hash || readLayout(holder),
+      var $class = wHolder.attr("wclass"),
+          lstring = hash || readLayout(wHolder),
           l = ((typeof layout) == 'string') ? escape(layout) : 'default';
       $jq.post("/rest/layout/" + $class + "/" + l, { 'lstring':lstring }, function(){
       Layout.resize();
@@ -1132,7 +1155,8 @@ var Layout = (function(){
       readHash: readHash,
       getLeftWidth: getLeftWidth,
       updateLayout: updateLayout,
-      Breadcrumbs: Breadcrumbs
+      Breadcrumbs: Breadcrumbs,
+      newLayout: newLayout
   }
 })();
 
@@ -1214,9 +1238,12 @@ var Scrolling = (function(){
             }
           }
         }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
+
           //close lowest section. delay for animation. 
           count++; //Add counting semaphore to lock
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
+        }else{
+          sidebar.stop().css('position', 'relative').css('top', 0);
         }
       } 
     }
@@ -1364,12 +1391,18 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            is_private = feed.find("#isprivate:checked").size();
+            is_private = feed.find("#isprivate:checked").size(),
+            name = feed.find("#name"),
+            email = feed.find("#email");
+        if (!validate_fields(email, name))
+          return;
         $jq.ajax({
           type: 'POST',
           url: rel,
           data: {title:feed.find("#issue-title option:selected").val(), 
                 content: feed.find("#issue-content").val(), 
+                name: name.val(),
+                email: email.val(),
                 url: url || issue.url,
                 isprivate:is_private},
           success: function(data){
@@ -1511,7 +1544,7 @@ var Scrolling = (function(){
   
   function historyOn(action, value, callback){
     if(action == 'get'){
-        getColorbox(function(){
+        Plugin.getPlugin("colorBox", function(){
             $jq(".history-logging").colorbox();
             if(callback) callback();
         });
@@ -1525,7 +1558,7 @@ var Scrolling = (function(){
   function loadRSS(id, url){
     var container = $jq("#" + id);
     setLoading(container);
-    getFeed(function(){
+    Plugin.getPlugin("jGFeed", function(){
       $jq.jGFeed(url,
         function(feeds){
           // Check for errors
@@ -1586,38 +1619,6 @@ var Scrolling = (function(){
   
   
 
-  function getScript(name, url, stylesheet, callback) {
-    var head = document.documentElement,
-        script = document.createElement("script"),
-        done = false;
-    loading = true;
-    script.src = url;
-    
-    if(stylesheet){
-     var link = document.createElement("link");
-     link.href = stylesheet;
-     link.rel="stylesheet";
-     document.getElementsByTagName("head")[0].appendChild(link)
-    }
-    
-    script.onload = script.onreadystatechange = function() {
-     if(!done && (!this.readyState ||
-       this.readyState === "loaded" || this.readyState === "complete")){
-       done = true;
-       loading = false;
-       plugins[name] = true;
-       callback();
-     
-        script.onload = script.onreadystatechange = null;
-        if( head && script.parentNode){
-          head.removeChild( script );
-        }
-      }
-    };
-    
-    head.insertBefore( script, head.firstChild);
-    return undefined;
-  }
   
   function setupCytoscape(data, types){
           var edgeColor = ["#08298A","#B40431","#FF8000", "#04B404","#8000FF", "#191007", "#73c6cd", "#92d17b", "#cC87AB4", "#e4e870" ,"#696D09"],
@@ -1703,7 +1704,7 @@ var Scrolling = (function(){
           for(var i=-1, type; (type = types[++i]);){
             visual_style.edges.color.discreteMapper.entries[i] = { attrValue: type,  value: edgeColor[i] };
           }
-          WB.getCytoscape(function(){ 
+          Plugin.getPlugin("cytoscape_web", function(){ 
             // init and draw
             var vis = new org.cytoscapeweb.Visualization("cytoscapeweb", options);
             
@@ -1751,58 +1752,90 @@ var Scrolling = (function(){
             });
             $jq( "#resizable" ).resizable();
     }
-  
-
-    function getDataTables(callback){
-      getPlugin("dataTables", "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js", "/js/jquery/plugins/dataTables/media/css/demo_table.css", callback);
-      return;
-    }
-    function getHighlight(callback){
-      getPlugin("highlight", "/js/jquery/plugins/jquery.highlight-1.1.js", undefined, callback);
-      return;
-    }
 
     function getMarkItUp(callback){
-      getPlugin("markitup", "/js/jquery/plugins/markitup/jquery.markitup.js", "/js/jquery/plugins/markitup/skins/markitup/style.css", function(){
-      getPlugin("markitup-wiki", "/js/jquery/plugins/markitup/sets/wiki/set.js", "/js/jquery/plugins/markitup/sets/wiki/style.css", callback);
+      Plugin.getPlugin("markitup", function(){
+        Plugin.getPlugin("markitup-wiki", callback);
       });
       return;
     }
-    function getColorbox(callback){
-      getPlugin("colorbox", "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js", "/js/jquery/plugins/colorbox/colorbox/colorbox.css", callback);
-      return;
-    }
-    function getCytoscape(callback){
-      getPlugin("cytoscape_json", "/js/jquery/plugins/cytoscapeweb/js/min/json2.min.js", undefined, function(){ 
-      getPlugin("cytoscape_ac", "/js/jquery/plugins/cytoscapeweb/js/min/AC_OETags.min.js", undefined, function(){
-      getPlugin("cytoscape_web", "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb.min.js", undefined, callback);
-      })});
-      return;
-    }
     
-    function getFeed(callback){
-      getPlugin("jGFeed", "/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js", undefined, callback);
-      return;
-    }
-    
-    function getPfam(callback){
-      getPlugin("pfam", "/js/pfam/domain_graphics.min.js", undefined, callback);
-      return;
-    }
-  
-  
-    function getPlugin(name, url, stylesheet, callback){
-      if(!plugins[name]){
-        getScript(name, url, stylesheet, callback);
-      }else{
-        if(loading){
-          setTimeout(getPlugin(name, url, stylesheet, callback),1);
-          return;
+    var Plugin = (function(){
+      var plugins = new Array(),
+          loading = false,
+          pScripts = {  highlight: "/js/jquery/plugins/jquery.highlight-1.1.js",
+                        dataTables: "/js/jquery/plugins/dataTables/media/js/jquery.dataTables.min.js",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/jquery.colorbox-min.js",
+                        jGFeed:"/js/jquery/plugins/jGFeed/jquery.jgfeed-min.js",
+                        generateFile: "/js/jquery/plugins/generateFile.js",
+                        pfam: "/js/pfam/domain_graphics.min.js",
+                        markitup: "/js/jquery/plugins/markitup/jquery.markitup.js",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/set.js",
+                        cytoscape_web: "/js/jquery/plugins/cytoscapeweb/js/min/cytoscapeweb_all.min.js",
+          },
+          pStyle = {    dataTables: "/js/jquery/plugins/dataTables/media/css/demo_table.css",
+                        colorbox: "/js/jquery/plugins/colorbox/colorbox/colorbox.css",
+                        markitup: "/js/jquery/plugins/markitup/skins/markitup/style.css",
+                        "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
+          };
+          
+      function getScript(name, url, stylesheet, callback) {
+        var head = document.documentElement,
+            script = document.createElement("script"),
+            done = false;
+        loading = true;
+        script.src = url;
+        
+        if(stylesheet){
+          var link = document.createElement("link");
+          link.href = stylesheet;
+          link.rel="stylesheet";
+          document.getElementsByTagName("head")[0].appendChild(link)
         }
-        callback(); 
+        
+        script.onload = script.onreadystatechange = function() {
+        if(!done && (!this.readyState ||
+          this.readyState === "loaded" || this.readyState === "complete")){
+          done = true;
+          loading = false;
+          plugins[name] = true;
+          callback();
+        
+            script.onload = script.onreadystatechange = null;
+            if( head && script.parentNode){
+              head.removeChild( script );
+            }
+          }
+        };
+        
+        head.insertBefore( script, head.firstChild);
+        return undefined;
       }
-      return;
-    }
+      
+      function getPlugin(name, callback){
+        var script = pScripts[name],
+            css = pStyle[name];
+        loadPlugin(name, script, css, callback);
+        return;
+      }
+      
+      function loadPlugin(name, url, stylesheet, callback){
+        if(!plugins[name]){
+          getScript(name, url, stylesheet, callback);
+        }else{
+          if(loading){
+            setTimeout(getPlugin(name, url, stylesheet, callback),1);
+            return;
+          }
+          callback(); 
+        }
+        return;
+      }
+      
+      return {
+        getPlugin: getPlugin
+      };
+    })();
     
     return{
       init: init,
@@ -1825,17 +1858,15 @@ var Scrolling = (function(){
       recordOutboundLink: recordOutboundLink,
       comment: comment,
       issue: issue,
-      getDataTables: getDataTables,
       getMarkItUp: getMarkItUp,
-      getColorbox: getColorbox,
-      getCytoscape: getCytoscape,
-      getPfam: getPfam,
       checkSearch: checkSearch,
       scrollToTop: scrollToTop,
       historyOn: historyOn,
       allResults: allResults,
       loadRSS: loadRSS,
-      setupCytoscape: setupCytoscape
+      newLayout: Layout.newLayout,
+      setupCytoscape: setupCytoscape,
+      getPlugin: Plugin.getPlugin
     }
   })();
 

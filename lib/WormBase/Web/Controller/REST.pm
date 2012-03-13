@@ -19,7 +19,7 @@ __PACKAGE__->config(
     'stash_key'        => 'rest',
     'map'              => {
         'text/x-yaml'      => 'YAML',
-        'text/html'        => 'YAML::HTML',
+        'text/html'        => [ 'View', 'TT' ], #'YAML::HTML',
         'text/xml'         => 'XML::Simple',
         'application/json' => 'JSON',
     }
@@ -191,12 +191,15 @@ sub layout_list_GET {
   my @layouts = keys(%{$c->user_session->{'layout'}->{$class}});
   my %l;
   map {$l{$_} = $c->user_session->{'layout'}->{$class}->{$_}->{'name'};} @layouts;
-  $c->log->debug("layout list:" . join(',',@layouts));
+  $c->log->debug("$class layout list:" . join(',',@layouts));
   $c->stash->{layouts} = \%l;
   $c->stash->{template} = "boilerplate/layouts.tt2";
   $c->stash->{noboiler} = 1;
-$c->response->headers->expires(time);
-    $c->forward('WormBase::Web::View::TT');
+  $c->stash->{section} = $c->req->params->{section};
+  $c->stash->{class} = $class;
+  $c->stash->{object}{name}{data}{class} = $class; #hack... sorry
+  $c->response->headers->expires(time);
+  $c->forward('WormBase::Web::View::TT');
 }
 
 
@@ -337,15 +340,15 @@ sub update_role_POST {
 
 sub download : Path('/rest/download') :Args(0) :ActionClass('REST') {}
 
-sub download_GET {
+sub download_POST {
     my ($self,$c) = @_;
      
-    my $filename=$c->req->param("type");
+    my $filename=$c->req->body_parameters->{filename};
     $filename =~ s/\s/_/g;
+        my $csv = "test";
     $c->response->header('Content-Type' => 'text/html');
-    $c->response->header('Content-Disposition' => 'attachment; filename='.$filename);
-#     $c->response->header('Content-Description' => 'A test file.'); # Optional line
-    $c->response->body($c->req->param("sequence"));
+    $c->res->header('Content-Disposition', qq[attachment; filename="$filename"]);
+    $c->response->body($c->req->body_parameters->{content});
 }
 
 sub rest_link_wbid :Path('/rest/link_wbid') :Args(0) :ActionClass('REST') {}
@@ -554,7 +557,6 @@ sub feed_POST {
           $user = $c->model('Schema::User')->create({username=>$c->req->params->{name}, active=>0});
           $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, user_id=>$user->user_id});
         }
-
         my $commment = $c->model('Schema::Comment')->find_or_create({user_id=>$user->user_id, page_id=>$page->page_id, content=>$content,'timestamp'=>time()});
 
       }
@@ -574,6 +576,8 @@ sub feed_POST {
       my $content    = $c->req->params->{content};
       my $title      = $c->req->params->{title};
       my $is_private = $c->req->params->{isprivate};
+      my $name = $c->req->params->{name};
+      my $email = $c->req->params->{email};
       
       my $url = $c->req->params->{url};
       $c->log->debug(keys %{$c->req->params});
@@ -581,15 +585,15 @@ sub feed_POST {
       $c->log->debug("private: $is_private");
       my $user = $self->_check_user_info($c);
       return unless $user;
-      $c->log->debug("create new issue $content ",$user->user_id);
-      my $issue = $c->model('Schema::Issue')->find_or_create({reporter_id=>$user->user_id,
+      $c->log->debug("create new issue $content ", $user ? $user->user_id : $name);
+      my $issue = $c->model('Schema::Issue')->find_or_create({ reporter_id=>$user->user_id,
                                   title=>$title,
                                   page_id=>$page->page_id,
                                   content=>$content,
                                   state      =>"new",
                                   is_private => $is_private,
                                   'timestamp'=>time()});
-      $self->_issue_email($c,$issue,1,$content);
+      $self->_issue_email($c,$issue,1,$content, undef, $email, $name);
     }
     }elsif($type eq 'thread'){
     my $content= $c->req->params->{content};
@@ -1003,9 +1007,7 @@ sub widget_home_GET {
     my ($self,$c,$widget) = @_; 
     $c->response->headers->expires(time);
     $c->log->debug("getting home page widget");
-    if($widget eq 'issues') {
-      $c->stash->{issues} = $self->_issue_rss($c,2);
-    } elsif($widget eq 'activity') {
+    if($widget eq 'activity') {
       if ($c->user_session->{'history_on'} || 0 == 1){
         $c->stash->{popular} = $self->_most_popular($c,5);
       } 
@@ -1047,7 +1049,7 @@ sub widget_me_GET {
     if($widget eq 'my_library'){ $type = 'paper';} else { $type = 'all';}
 
     my $session = $self->_get_session($c);
-    my @reports = $session->user_saved->search({save_to => $widget});
+    my @reports = $session->user_saved->search({save_to => ($widget eq 'my_library') ? $widget : 'reports'});
 
     my @ret = map { $self->_get_search_result($c, $api, $_->page, "added " . ago((time() - $_->timestamp), 1) ) } @reports;
 
@@ -1088,11 +1090,10 @@ sub _check_user_info {
       $user->username($c->req->params->{username}) if($c->req->params->{username});
       $user->email_address($c->req->params->{email}) if($c->req->params->{email});
   }else{
-      if($user = $c->model('Schema::User')->find({email_address=>$c->req->params->{email},active =>1})){
-        $c->res->body(0) ;return 0 ;
-      }
-      $user=$c->model('Schema::User')->find_or_create({email_address=>$c->req->params->{email}}) ;
-      $user->username($c->req->params->{username}),
+      my $email = $c->model('Schema::Email')->find({email=>$c->req->params->{email},validated =>1});
+      return $email->user if $email;
+      $user=$c->model('Schema::User')->create({username=>$c->req->params->{name}});
+      $c->model('Schema::Email')->find_or_create({email=>$c->req->params->{email}, validated=>1, user_id=>$user->user_id, primary_email=>1});
   }
   $user->update();
   return $user;
@@ -1101,9 +1102,9 @@ sub _check_user_info {
 
 
 sub _issue_email{
-  my ($self,$c,$issue,$new,$content,$change) = @_;
+  my ($self,$c,$issue,$new,$content,$change,$email, $name) = @_;
   my $subject='New Issue';
-  my $bcc;
+  my $bcc = $email;
   $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
 
   unless($new == 1){
@@ -1113,20 +1114,22 @@ sub _issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
   }
-  $subject = '[WormBase Issues] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+  $subject = '[wormbase-help] '.$subject.' '.$issue->issue_id.': '.$issue->title;
 
   $c->stash->{issue}=$issue;
-
-  $c->stash->{new}=$new;
   $c->stash->{content}=$content;
   $c->stash->{change}=$change;
+  $c->stash->{name}=$name;
   $c->stash->{noboiler} = 1;
   $c->log->debug(" send out email to $bcc");
   $c->stash->{email} = {
+        header => [
           to      => $c->config->{issue_email},
           cc => $bcc,
+          "reply-to" => $bcc,
           from    => $c->config->{issue_email},
           subject => $subject, 
+        ],
           template => "feed/issue_email.tt2",
           };
    
@@ -1225,43 +1228,6 @@ sub _comment_rss {
  return \@rss;
 }
 
-sub _issue_rss {
-  my ($self,$c,$count) = @_;
-  my @issues = $c->model('Schema::Issue')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
-  my $threads= $c->model('Schema::IssueThread')->search(undef,{order_by=>'timestamp DESC'} )->slice(0, $count-1);
-    
-  my %seen;
-  my @rss;
-  while($_ = $threads->next) {
-    unless(exists $seen{$_->issue_id}) {
-    $seen{$_->issue_id} =1 ;
-    my $time = ago((time() - $_->timestamp), 1);
-    push @rss, {  time=>$_->timestamp,
-          time_lapse=>$time,
-          people=>$_->user,
-          title=>$_->issue->title,
-          page=>$_->issue->page,
-          id=>$_->issue->issue_id,
-          re=>1,
-          } ;
-    }
-    last if(scalar(keys %seen)>=$count)  ;
-  };
-
-  map {    
-    my $time = ago((time() - $_->timestamp), 1);
-      push @rss, {      time=>$_->timestamp,
-                        time_lapse=>$time,
-                        people=>$_->reporter,
-                        title=>$_->title,
-                        page=>$_->page,
-                id=>$_->id,
-          };
-  } @issues;
-
-  my @sort = sort {$b->{time} <=> $a->{time}} @rss;
-  return \@sort;
-}
 
 # Template assignment is a bit of a hack.
 # Maybe I should just maintain
