@@ -1,0 +1,12 @@
+[% 
+
+WRAPPER $field_block title="Contains" key='structure';
+        build_data_table(
+	order = ['gene_info', 'splice_info'],
+	columns = {
+	    gene_info   => 'Gene',
+	    splice_info => 'Evidence'
+	} key='structure');
+END;
+
+%]
