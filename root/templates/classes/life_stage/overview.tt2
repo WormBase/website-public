@@ -3,13 +3,7 @@
 [% 
 
 WRAPPER highlight_box;
-
     taxonomy;
-
-    WRAPPER $field_block title="Life Stage"; 
-          tag2link(fields.name.data,fields.name.data.name);
-    END;
-
 END;
 
 WRAPPER $field_block title="Definition" key="definition";
@@ -32,9 +26,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
           IF fields.preceded_by_life_stage.data.size > 0;
             '<div>';
               '<b>Preceded By</b><br />';
-                FOREACH item IN fields.preceded_by_life_stage.data;
-                   tag2link(item) _ '<br />';
-                END;
+                   tags2link(fields.preceded_by_life_stage.data, '<br />');
            '</div>';
            '<div>';
                '<img src="/img/arrows/right.gif">';
@@ -49,9 +41,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
             '</div> ';
             '<div>';
                 '<b>Followed by</b><br />';
-                FOREACH item IN fields.followed_by_life_stage.data;
-                    tag2link(item) _ '<br />';
-                END; 
+                tags2link(fields.followed_by_life_stage.data, '<br />'); 
            '</div>';
          END;
      '</div>';
@@ -59,17 +49,21 @@ IF (fields.followed_by_life_stage.data.size > 0)
 END;
 
 WRAPPER $field_block title="Contained in" key="contained_in_life_stage";
-      FOREACH item IN fields.contained_in_life_stage.data;
-        tag2link(item) _ '<br />'; 
-      END;
+	tags2link(fields.contained_in_life_stage.data, '<br />', 'Life Stages'); 
 END;
 
 WRAPPER $field_block title="Substages" key="substages";
-   FOREACH item IN fields.substages.data;
-     tag2link(item) _ '<br />';
-   END;
+	tags2link(fields.substages.data, '<br />', 'Substages');
 END;
 
-remarks(no_toggle=1);
+WRAPPER $field_block title="Cells" key="cells";
+	cell_content(fields.cells.data);
+END;
+
+WRAPPER $field_block title="Cell Groups" key="cell_group";
+	cell_content(fields.cell_group.data);
+END;
+
+remarks;
 
 %]

@@ -4,8 +4,9 @@
       '<p style="margin:1em">No items related to this paper</p>';
    ELSE;
        FOREACH reftype IN fields.refers_to.data.keys.sort;
-          WRAPPER $field_block title=pluralize(reftype.replace('_',' '),fields.refers_to.data.$reftype.size);
-   	       tags2link(fields.refers_to.data.$reftype);
+	  name = pluralize(reftype.replace('_',' '),fields.refers_to.data.$reftype.size);
+          WRAPPER $field_block title="$name";
+   	       tags2link(fields.refers_to.data.$reftype, '<br />', "$name");
           END;
        END;
    END;

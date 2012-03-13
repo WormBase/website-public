@@ -1,9 +1,9 @@
-<h2>[% tag2link(fields.name.data) %]</h2>
+<h2>[% fields.name.data.label %]</h2>
 
 [% 
 
      WRAPPER $field_block title="Title" key="title";
-         fields.title.date;
+         fields.title.data;
      END;
 
      WRAPPER $field_block title="gene_ontology" key="gene_ontology";
