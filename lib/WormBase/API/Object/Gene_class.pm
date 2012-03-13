@@ -457,9 +457,9 @@ sub _stash_former_member {
     my $locus_name    = $gene->Public_name;
     my %data = ( species     => $self->_pack_obj($gene->Species),
 		 former_name => "$old_gene",
-		 new_name    => $self->_pack_obj($gene,$gene->Public_name),
+		 new_name    => $self->_pack_obj($gene,"$locus_name"),
 		 sequence    => ($sequence_name) ? $self->_pack_obj($sequence_name) : undef,
-		 reason      => $reason );
+		 reason      => $reason ? "$reason" : undef);
     return \%data;
 }
 

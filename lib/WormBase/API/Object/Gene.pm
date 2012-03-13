@@ -106,8 +106,8 @@ sub _build__rnai_results {
 	for my $phtype (@phenotypes_nobs, @phenotypes){
 		$evidence{$phtype} = \{Paper => \@paper}; #formatted this way to be displayed by evidence MACRO, may need to be re-formatted/output differently
 	}
-	$results{$rnai}{phenotypes_observed} = $self->_pack_objects(\@phenotypes) if @phenotypes;
-	$results{$rnai}{phenotypes_not_observed} = $self->_pack_objects(\@phenotypes_nobs) if @phenotypes_nobs;
+	$results{$rnai}{Phenotype} = $self->_pack_objects(\@phenotypes) if @phenotypes;
+	$results{$rnai}{Phenotype_not_observed} = $self->_pack_objects(\@phenotypes_nobs) if @phenotypes_nobs;
 	$results{$rnai}{evidence} = \%evidence;
     }
 
@@ -126,44 +126,26 @@ sub _build__phenotypes {
 
     my %phenotypes;
 
-    # gather xgene info
-    for my $xgene ($object->Drives_Transgene, $object->Transgene_product) {
-        my $packed_xgene = $self->_pack_obj($xgene);
-	for my $obs (qw(observed not_observed)) {
-	    my $phentype = 'Phenotype';
-	    $phentype .= '_not_observed' if $obs eq 'not_observed';
-	    foreach ($xgene->$phentype) {
-		$phenotypes{$obs}{$_}{object}          //= $self->_pack_obj($_);
-		push @{$phenotypes{$obs}{$_}{evidence}{'Transgenes:'}}, { text=>$packed_xgene, evidence=>$self->_get_evidence($_)};
+    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele'){
+	my $type_name = $type =~ /Transgene/ ? 'Transgene:' : 'Allele:';
+	foreach my $obj ($object->$type){
+	    my $seq_status = eval { $obj->SeqStatus };
+	    my $packed_obj = $self->_pack_obj($obj, undef, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
+	    
+	    foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
+		foreach ($obj->$obs){
+		    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
+		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$self->_get_evidence($_) };
+		}
 	    }
 	}
-    }
-
-    # gather variation info
-    for my $allele ($object->Allele) {
-        my $seq_status = $allele->SeqStatus;
-
-        my $packed_allele = $self->_pack_obj(
-            $allele, undef,
-            style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,
-        );
-	for my $obs (qw(observed not_observed)) {
-	    my $phentype = 'Phenotype';
-	    $phentype .= '_not_observed' if $obs eq 'not_observed';
-	    foreach ($allele->$phentype) {
-		$phenotypes{$obs}{$_}{object}        //= $self->_pack_obj($_);
-		push @{$phenotypes{$obs}{$_}{evidence}{'Alleles:'}}, { text=>$packed_allele, evidence=>$self->_get_evidence($_)};
-	    }
-	}
-        # ?Variation /Rescued/ ...
     }
 
     # extract rnai info
     while (my ($rnai, $rnai_details) = each %{$self->_rnai_results}) {
-	for my $obs (qw(observed not_observed)) {
-	    my $phentype = 'phenotypes_' . $obs;
-	    next unless $rnai_details->{$phentype};
-	    while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$phentype}}) {
+	for my $obs ('Phenotype', 'Phenotype_not_observed') {
+	    next unless $rnai_details->{$obs};
+	    while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$obs}}) {
 		$phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
 		$rnai_details->{object}->{label} = $1 if $rnai_details->{object}->{label} =~ /WBRNAi0{0,3}(.*)/;
 		push @{$phenotypes{$obs}{$phenotype}{evidence}{'RNAi:'}}, {text=>$rnai_details->{object}, evidence=>$rnai_details->{evidence}->{$phenotype}};

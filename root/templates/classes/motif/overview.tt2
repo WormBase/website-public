@@ -6,7 +6,7 @@
          fields.title.data;
      END;
 
-     WRAPPER $field_block title="gene_ontology" key="gene_ontology";
+     WRAPPER $field_block title="Gene Ontology" key="gene_ontology";
            build_data_table (
 	    	   order=[
 			'go_term',
