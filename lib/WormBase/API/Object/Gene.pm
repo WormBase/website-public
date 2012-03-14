@@ -73,47 +73,6 @@ has 'tracks' => (
     }
 );
 
-has '_rnai_results' => (
-    is => 'ro',
-    lazy => 1,
-    builder => '_build__rnai_results',
-);
-
-sub _build__rnai_results {
-    my ($self) = @_;
-
-    my %results; # rnai_result -> phenotypes, genotypes/strain, reference
-
-    for my $rnai ($self->object->RNAi_result) {
-        $results{$rnai}{object} = $self->_pack_obj($rnai);
-
-        if (my $genotype = $rnai->Genotype || eval { $rnai->Strain->Genotype }) {
-            $results{$rnai}{genotype} = "$genotype";
-        }
-
-        # phenotype data
-        my @phenotypes = (
-            $rnai->Phenotype,
-            map { $_->right }
-                grep { $_ eq 'Interaction_phenotype' }
-                map  { $_->col }
-                map  { $_->Interaction_type }
-                $rnai->Interaction(-filltag => 'Interaction_type'),
-        );
-	my @paper = ($self->_pack_obj($rnai->Reference));
-        my @phenotypes_nobs = $rnai->Phenotype_not_observed;
-	my %evidence;
-	for my $phtype (@phenotypes_nobs, @phenotypes){
-		$evidence{$phtype} = \{Paper => \@paper}; #formatted this way to be displayed by evidence MACRO, may need to be re-formatted/output differently
-	}
-	$results{$rnai}{Phenotype} = $self->_pack_objects(\@phenotypes) if @phenotypes;
-	$results{$rnai}{Phenotype_not_observed} = $self->_pack_objects(\@phenotypes_nobs) if @phenotypes_nobs;
-	$results{$rnai}{evidence} = \%evidence;
-    }
-
-    return \%results;
-}
-
 has '_phenotypes' => (
     is      => 'ro',
     lazy    => 1,
@@ -126,32 +85,28 @@ sub _build__phenotypes {
 
     my %phenotypes;
 
-    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele'){
-	my $type_name = $type =~ /Transgene/ ? 'Transgene:' : 'Allele:';
+    foreach my $type ('Drives_Transgene', 'Transgene_product', 'Allele', 'RNAi_result'){
+	my $type_name; #label that shows in the evidence column above each list of that object type
+	if ($type =~ /Transgene/) { $type_name = 'Transgene:'; } 
+	elsif ($type eq 'RNAi_result') { $type_name = 'RNAi:'; }
+	else { $type_name = $type . ':'; }
+
 	foreach my $obj ($object->$type){
 	    my $seq_status = eval { $obj->SeqStatus };
-	    my $packed_obj = $self->_pack_obj($obj, undef, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
+	    my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
+	    my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
 	    
 	    foreach my $obs ('Phenotype', 'Phenotype_not_observed'){
 		foreach ($obj->$obs){
 		    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
-		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$self->_get_evidence($_) };
+		    my $evidence = $self->_get_evidence($_);
+		    $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ] if $type eq 'RNAi_result'; #adds paper info for RNAis
+		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
 		}
 	    }
 	}
     }
 
-    # extract rnai info
-    while (my ($rnai, $rnai_details) = each %{$self->_rnai_results}) {
-	for my $obs ('Phenotype', 'Phenotype_not_observed') {
-	    next unless $rnai_details->{$obs};
-	    while (my ($phenotype, $packed_pheno) = each %{$rnai_details->{$obs}}) {
-		$phenotypes{$obs}{$phenotype}{object}    //= $packed_pheno;
-		$rnai_details->{object}->{label} = $1 if $rnai_details->{object}->{label} =~ /WBRNAi0{0,3}(.*)/;
-		push @{$phenotypes{$obs}{$phenotype}{evidence}{'RNAi:'}}, {text=>$rnai_details->{object}, evidence=>$rnai_details->{evidence}->{$phenotype}};
-	    }
-	}
-    }
     return \%phenotypes;
 }
 
@@ -2938,34 +2893,6 @@ sub phenotype {
         description => 'The Phenotype summary of the gene',
         data        => $self->_phenotypes,
 	};
-}
-
-sub rnai {
-    my $self = shift;
-
-    my $data;
-
-    my $rnai_results = $self->_rnai_results;
-    my (@rnai_w_pheno, @rnai_wo_pheno);
-
-    while (my ($rnai, $rnai_details) = each %{$rnai_results}) {
-        if ($rnai_details->{phenotypes_observed}
-            and %{$rnai_details->{phenotypes_observed}}) {
-            push @{$data->{rnai_with_pheno}}, $rnai;
-        }
-        if ($rnai_details->{phenotypes_not_observed}
-            and %{$rnai_details->{phenotypes_not_observed}}) {
-            push @{$data->{rnai_without_pheno}}, $rnai;
-        }
-    }
-
-    # $data is autovivified when accessed above by push
-    $data->{rnai_results} = $rnai_results if ref $data;
-
-    return {
-        description => 'The RNAi summary of the gene',
-        data        => $data,
-    };
 }
 
 #######################################
