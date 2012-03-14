@@ -3,19 +3,15 @@
 [%
 
 WRAPPER highlight_box;
-
-END;
-
-WRAPPER $field_block title='Description' key='description';
-   markup(fields.description.data);
-END;
-
-
 WRAPPER $field_block title="Algorithm" key="algorithm";
      fields.algorithm.data;
 END;
-
-WRAPPER $field_block title="" key="remarks";
-   remarks(no_toggle=1);
 END;
+
+'<div class="description">';
+   markup(fields.description.data);
+
+   remarks(no_toggle=1);
+'</div>';
+
 %]

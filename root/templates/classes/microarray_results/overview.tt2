@@ -1,5 +1,10 @@
-[% 
+<h2>[% fields.name.data.label %] </h2>
 
+[% 
+WRAPPER highlight_box;
+END;
+
+'<div class="description">';
     WRAPPER $field_block title="Gene(s)" key="gene";
 	tags2link(fields.gene.data, '<br />', 'Genes');
     END;
@@ -17,5 +22,5 @@
     END;
 
     remarks;
-
+'</div>';
 %]

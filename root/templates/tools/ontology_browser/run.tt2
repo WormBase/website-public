@@ -24,7 +24,7 @@
 		    <br>[% padding %]<b>[% parent.type %]</b> [% tag2link(parent) %] 
 		    [% padding = padding _ '&nbsp;&nbsp;&nbsp;&nbsp;' %]
 		    [% IF parent.association_count || parent.association_count_total %]
-		      (association(s) - to term: [% parent.association_count %])
+		      ([% parent.association_count %] [% pluralize('association',parent.association_count) %] to term)
 		    [% END %]
 			[% IF loop.last %] 
 				<br>[% padding %]- [% tag2link(term) %]	

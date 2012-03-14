@@ -1,3 +1,4 @@
+<h2>[% fields.name.data.label %] </h2>
 [% gene_image = fields.expression_image.data %]
 [% IF gene_image %]
 <a href="[% gene_image %]" target="_blank" >[% image(gene_image)  %]</a>
