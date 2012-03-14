@@ -171,31 +171,90 @@ B<Response example>
 
 sub sequences {
     my ($self) = @_;
+    my @sequences = map { $self->_pack_obj($_) } @{$self ~~ '@Sequence'};
+    
+    return {
+        description => 'sequences associated with this clone',
+        data		=> @sequences ? \@sequences : undef,
+    }
+}
+
+=head3 genomic_positions
+
+This method will return a data structure containing
+genomic positions corresponding to the sequences for this clone.
+
+=over
+
+=item PERL API
+
+ $data = $model->genomic_positions();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+A clone id (eg JC8)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/clone/JC8/genomic_positions
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+sub genomic_positions {
+    my ($self) = @_;
     
     # this part looks suspiciously like it overlaps with _build__segments below...
-    my %sequences;
+    my @positions;
     foreach my $seq (@{$self ~~ '@Sequence'}) {
         my $chrom = $self->_pack_obj($seq->Interpolated_map_position);
         my $map   = $seq->Interpolated_map_position(2);
-	
+    
         my ($ref, $start, $end);
         if (my ($coords) = $self->_seq2coords($seq)) {
             ($ref, $start, $end) = @$coords;
         }
-	
-        $sequences{$seq} = $self->_pack_obj(
-            $seq, undef, # $seq and resolve label within _pack_obj
-            start => $start,
-            end   => $end,
-            ref   => $ref,
-            chrom => $chrom,
-            map   => $map && "$map",
-	    );
+        my $position = $self->_gbrowse_url(ref => $ref, start => $start, stop => $end);
+
+        push(@positions, {
+            label      => $position,
+            id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
+            class      => 'genomic_location',
+            pos_string => $position, # independent from label -- label may change in the future
+        });
     }
     
     return {
-        description => 'sequences associated with this clone',
-        data		=> %sequences ? \%sequences : undef,
+        description => 'genomic positions of the sequences associated with this clone',
+        data        => @positions ? \@positions : undef,
     }
 }
 
