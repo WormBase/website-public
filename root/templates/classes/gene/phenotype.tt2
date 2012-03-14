@@ -12,7 +12,7 @@
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_observed',
-			passed_data=fields.phenotype.data.observed.values);
+			passed_data=fields.phenotype.data.Phenotype.values);
 %]
     </div>
     <br />
@@ -22,7 +22,7 @@
 			columns={object  => 'Phenotype',
 				 evidence => 'Supporting Evidence',
 			}, key='phenotype_not_observed',
-			passed_data=fields.phenotype.data.not_observed.values);
+			passed_data=fields.phenotype.data.Phenotype_not_observed.values);
 %]
    [% END %]
 [% END %]

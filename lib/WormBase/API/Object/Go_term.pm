@@ -310,10 +310,11 @@ sub genes {
     my @data;
 
     foreach my $gene ($object->Gene) {
+	my $desc = $gene->Concise_description || $gene->Provisional_description || undef;
 	push @data, {
 	    gene          => $self->_pack_obj($gene),
 	    evidence_code => $self->_get_GO_evidence( $object, $gene ),
-	    description	  => $gene->Concise_description || $gene->Provisional_description || undef,
+	    description	  => "$desc",
 	};
     }
     return {
@@ -971,7 +972,7 @@ sub _get_tag_data {
           {
             'term'             => $self->_pack_obj($_),
             'description'      => "$desc",
-            'class'            => $tag,
+            'class'            => "$tag",
             'evidence_code'    => $self->_get_GO_evidence( $object, $_ ),
           };
     }
