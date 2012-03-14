@@ -144,14 +144,14 @@ sub pcr_data {
       ( $expr_map->X_coord, $expr_map->Y_coord, $expr_map->Mountain );
     my $radius = 4;
     return { data => {
-        primer     => "$primer",
-        seq        => "$seq",
+        primer     => $primer && "$primer",
+        seq        => $seq && "$seq",
         chromosome => $chromosome,
         start      => $start,
         stop       => $stop,
-        x_coord    => "$x_coord",
-        y_coord    => "$y_coord",
-        mountain   => "$mountain",
+        x_coord    => $x_coord && "$x_coord",
+        y_coord    => $y_coord && "$y_coord",
+        mountain   => $mountain && "$mountain",
         radius     => $radius
 	     },
 	    description => 'pcr data of the expression profile'
@@ -355,8 +355,7 @@ B<Response example>
 sub expression_map {
     my $self       = shift;
     my $object     = $self->object;
-    my $data       = $self->_pack_obj($object->Expr_map);
-    return { data        => $data || undef,
+    return { data        => $self->_pack_obj($object->Expr_map),
 	     description => 'expression map data for expr_profile'
     };
 }
@@ -422,7 +421,7 @@ sub rnai {
     	push @data, {
 	    rnai      => $self->_pack_obj($rnai),
 	    strain    => $strain,
-	    genotype  => "$genotype",
+	    genotype  => $genotype && "$genotype",
     	};
     }
     return { data => @data ? \@data : undef,

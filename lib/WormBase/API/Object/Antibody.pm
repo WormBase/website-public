@@ -177,7 +177,7 @@ sub corresponding_gene {
     my $object = $self->object;
     my $gene   = $object->Gene;
     return { description => 'the corresponding gene the antibody was generated against',
-	     data        => $gene ? $self->_pack_obj($gene) : undef };
+	     data        => $self->_pack_obj($gene)};
 }
 
 =head3 antigen
@@ -427,8 +427,9 @@ sub constructed_by {
     my $self      = shift;
     my $object    = $self->object;
     my $person    = $object->Person;
+    my $name      = $person->Standard_name;
     return { description => 'the person who constructed the antibody',
-	     data        => $person ? $self->_pack_obj($person,$person->Standard_name) : undef };
+	     data        => $self->_pack_obj($person,"$name")};
 }
 
 # sub remarks {}
