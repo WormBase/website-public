@@ -11,25 +11,14 @@ WRAPPER highlight_box;
 
 END;
 
-
+'<div class="description">';
 WRAPPER $field_block title=pluralize('Corresponding sequence', fields.sequences.data.size) key='sequences';
    tags2link(fields.sequences.data);
 END;
 
 # this looks suspiciously like Genomic position in the Location widget...
-WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='sequences';
-   links = [];
-   FOREACH seqname IN fields.sequences.data.sort;
-      seq = fields.sequences.data.$seqname;
-      IF seq.start && seq.end && seq.ref;
-         quarter_len = (seq.end - seq.start) div 4;
-         label = seq.ref _ ':' _ seq.start _ '..' _ seq.end;
-         external_link('genomic_location', label, 
-                          'c_elegans?ref=' _ seq.ref.replace('CHROMOSOME_','')  _
-                          '&start=' _ (seq.start - quarter_len) _
-                          '&stop='  _ (seq.end   + quarter_len));
-      END;
-   END;
+WRAPPER $field_block title=pluralize('Genomic position', fields.sequences.data.size) key='genomic_positions';
+  tags2link(fields.genomic_positions.data);
 END;
 
 expression_patterns;
@@ -92,6 +81,6 @@ WRAPPER $field_block title='Gridded on' key='gridded_on';
 END;
 
 remarks();
-
+'</div>';
 %]
 
