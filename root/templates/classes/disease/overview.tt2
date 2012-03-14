@@ -2,28 +2,23 @@
 
 [%
 
-
- 
-  
-
+WRAPPER highlight_box;
    WRAPPER $field_block title="OMIM ID" key="name";
-           text2link('omim',fields.name.data.id,fields.name.data.id);
+           text2link('omim',fields.name.data.id,'OMIM:' _ fields.name.data.id);
    END;
+END;
+ '<div class="description">';
+           fields.notes.data.join('<br>');
+        text2link('omim',fields.name.data.id,' more...');
+  '</div>';
+  
 
    WRAPPER $field_block title="related human genes" key="hs_genes";
            fields.hs_genes.data.join('<br>');
-	     
    END; 
 
    WRAPPER $field_block title="Synonym" key="synonym";
            fields.synonym.data.join('<br>');
-   END;
-
-   WRAPPER $field_block title="Description" key="notes";
-        '<div class="text-width">';
-           fields.notes.data.join('<br>');
-	    text2link('omim',fields.name.data.id,' more...');
-        '</div>';
    END;
 
    WRAPPER $field_block title="Orthologous worm genes" key="genes";

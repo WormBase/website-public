@@ -1,19 +1,18 @@
+<h2>[% fields.name.data.label %] </h2>
 [%
 
 WRAPPER highlight_box;
 
-    WRAPPER $field_block title="Name" key="name";
-          fields.name.data.label;
-    END;
+
         
 END;
 
 
-WRAPPER $field_block title="Description" key="description";
+'<div class="description">';
      # Turn uppercase into boldface
      desc = fields.description.data;
      desc.replace('([A-Z])','<b>$1</b>');
-END;
+'</div>';
 
 WRAPPER $field_block title="Other names" key="other_names";
 
