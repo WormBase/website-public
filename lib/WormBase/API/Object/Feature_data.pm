@@ -121,8 +121,8 @@ B<Response example>
 sub feature {
     my $self      = shift;
     my $object    = $self->object;
-    my $data      = $self->_pack_obj( $object->Feature ) if $object->Feature;
-    return { data        => $data,
+
+    return { data        => $self->_pack_obj($object->Feature),
 	     description => 'the sequence feature', };
 }
 
@@ -181,8 +181,7 @@ B<Response example>
 sub intron {
     my $self    = shift;
     my $object  = $self->object;
-    my $data    = $self->_pack_obj( $object->Confirmed_intron ) if $object->Confirmed_intron;
-    return { data        => $data,
+    return { data        => $self->_pack_obj($object->Confirmed_intron),
 	     description => 'introns associated with this object', };
 }
 
@@ -242,8 +241,7 @@ B<Response example>
 sub predicted_five_prime {
     my $self   = shift;
     my $object = $self->object;
-    my $data   = $self->_pack_obj( $object->Predicted_5 ) if $object->Predicted_5;
-    return { data        => $data,
+    return { data        => $self->_pack_obj($object->Predicted_5),
 	     description => 'predicted 5\' related object of the requested object' };
 }
 
@@ -303,8 +301,8 @@ B<Response example>
 sub predicted_three_prime {
     my $self    = shift;
     my $object  = $self->object;
-    my $data    = $self->_pack_obj( $object->Predicted_3 ) if $object->Predicted_3;
-    return { data        => $data,
+
+    return { data        => $self->_pack_obj($object->Predicted_3),
 	     description => 'predicted 3\' related object of requested feature', };
 }
 

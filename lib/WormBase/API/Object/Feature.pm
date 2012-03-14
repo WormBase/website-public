@@ -129,7 +129,7 @@ sub flanking_sequences {
         description => 'sequences flanking the feature',
         data        => $seq && {
             seq    => $seq,
-            flanks => \@flanks,
+            flanks => @flanks ? \@flanks : undef,
         },
     };
 }
@@ -396,13 +396,11 @@ sub defined_by {
 
     my @data;
     foreach my $definer ($object->Defined_by) {
-    	my @definer_objs = $definer->col;
-    	foreach my $definer_object (@definer_objs) {
-	    my $definer_data = $self->_pack_obj($definer_object);
+    	foreach my $definer_object ($definer->col) {
 	    (my $label = "$definer") =~ s/Defined_by_(.)/\u$1/;
 	    push @data, {
-		'object' 	=> $definer_data,
-		'label' 	=> "$label",
+		'object' 	=> $self->_pack_obj($definer_object),
+		'label' 	=> $label && "$label",
 	    };
     	}
     }
@@ -469,12 +467,10 @@ sub associations {
     my @association_types = $object->Associations;
     
     foreach my $assoc_type (@association_types) { # assoc_type is tag
-    	my @association_objs = $assoc_type->col;
-    	foreach my $association_object (@association_objs) {
-	    my $association = $self->_pack_obj($association_object);
+    	foreach my $association_object ($assoc_type->col) {
 	    (my $label = "$assoc_type") =~ s/Associated_with_(.)/\u$1/;
-	    push @data, { association 	=> $association,
-			  label 	=> $label       };
+	    push @data, { association 	=> $self->_pack_obj($association_object),
+			  label 	=> $label && "$label"      };
 	}
     }
     return { description => 'objects that define this feature',
@@ -598,9 +594,8 @@ sub transcription_factor {
     my $self   = shift;
     my $object = $self->object;
 
-    my $factor = $object->Transcription_factor;
     return { description => 'Transcription factor of the feature',
-	     data        => $factor && $self->_pack_obj($factor) };
+	     data        => $self->_pack_obj($object->Transcription_factor) };
 }
 
 
