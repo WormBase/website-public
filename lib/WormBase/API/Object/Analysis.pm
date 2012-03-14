@@ -299,13 +299,10 @@ B<Response example>
 
 sub project {
     my $self = shift;
-    my $object = $self->object;
-   
-    my $project = $object->Project;
-    my $data    = { description => 'the project that conducted the analysis',
-		    data        => $project ? $self->_pack_obj($project) : undef
+
+    return { description => 'the project that conducted the analysis',
+	     data        => $self->_pack_obj($self ~~ 'Project')
     };
-    return $data;
 }
 
 
@@ -362,13 +359,10 @@ B<Response example>
 
 sub subproject {
     my $self = shift;
-    my $object = $self->object;
    
-    my $project = $object->Subproject;
-    my $data    = { description => 'the subproject of the analysis if there is one',
-		    data        => $project ? $self->_pack_obj($project) : undef
+    return { description => 'the subproject of the analysis if there is one',
+	     data        => $self->_pack_obj($self ~~ 'Subproject')
     };
-    return $data;
 }
 
 =head3 conducted_by
