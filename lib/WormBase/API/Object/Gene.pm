@@ -101,7 +101,7 @@ sub _build__phenotypes {
 		    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
 		    my $evidence = $self->_get_evidence($_);
 		    $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ] if $type eq 'RNAi_result'; #adds paper info for RNAis
-		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence };
+		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
 		}
 	    }
 	}
