@@ -193,13 +193,10 @@ sub gene_ontology  {
     foreach my $go_term ($motif->GO_term) {
 	my $definition = $go_term->Definition;
 	my ($evidence) = $go_term->right;
-	my $term       = $go_term;
-	my $go_data;
-	my $term_data  = $self->_pack_obj($term);
 	
 	push @data,{		
-	    go_term  => $term_data,	
-	    definition => $definition,
+	    go_term  => $self->_pack_obj($go_term),	
+	    definition => "$definition",
 	    evidence   => $evidence? {text=>"$evidence",evidence=>$self->_get_evidence($evidence)}:undef,
 	};	
     }
@@ -283,11 +280,11 @@ sub homologies {
     
     foreach my $homology_type (qw/DNA_homol Pep_homol Motif_homol Homol_homol/) {
 	if (my @homol = $object->$homology_type) {
-	    foreach my $homologous_object (@homol) {	
-		my $homolog = $self->_pack_obj($homologous_object);
+	    foreach my $homologous_object (@homol) {
+		my $type = $types->{$homology_type};
 		push @data,	{
-		    homolog => $homolog,
-		    type => "$types->{$homology_type}",	    	
+		    homolog => $self->_pack_obj($homologous_object),
+		    type => "$type",	    	
 		}	
 	    }
 	}
