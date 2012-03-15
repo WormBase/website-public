@@ -429,7 +429,7 @@ sub constructed_by {
     my $person    = $object->Person;
     my $name      = $person->Standard_name if $person;
     return { description => 'the person who constructed the antibody',
-	     data        => $self->_pack_obj($person,"$name")};
+	     data        => $self->_pack_obj($person, $name && "$name")};
 }
 
 # sub remarks {}

@@ -196,7 +196,7 @@ sub gene_ontology  {
 	
 	push @data,{		
 	    go_term  => $self->_pack_obj($go_term),	
-	    definition => "$definition",
+	    definition => $definition && "$definition",
 	    evidence   => $evidence? {text=>"$evidence",evidence=>$self->_get_evidence($evidence)}:undef,
 	};	
     }
@@ -284,7 +284,7 @@ sub homologies {
 		my $type = $types->{$homology_type};
 		push @data,	{
 		    homolog => $self->_pack_obj($homologous_object),
-		    type => "$type",	    	
+		    type => "$type" || undef,	    	
 		}	
 	    }
 	}

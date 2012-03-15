@@ -12,15 +12,14 @@ WRAPPER $field_block title="Allele designation" key="allele_designation";
 END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
-      FOREACH gene_class IN fields.gene_classes.data;
-         tag2link(gene_class) _  '&nbsp;';
-      END;
+      tags2link(fields.gene_classes.data, '<br />');
 END;
 
 
 WRAPPER $field_block title="Previous affiliations" key="previous_laboratories";
       FOREACH item IN fields.previous_laboratories.data;
          tag2link(item.0) _ '(' _ tag2link(item.1) _ ')';
+	 UNLESS loop.last; ', '; END;
       END;
 END;
 
