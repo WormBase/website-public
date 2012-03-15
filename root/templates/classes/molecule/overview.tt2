@@ -3,14 +3,13 @@
 [% 
 
 WRAPPER highlight_box;
- 
-   taxonomy;
-
-END;
-
-WRAPPER $field_block title=pluralize('Synonym', fields.synonyms.data.size) key="synonyms";
+ WRAPPER $field_block title=pluralize('Synonym', fields.synonyms.data.size) key="synonyms";
     cell_content(fields.synonyms.data);
 END;
+
+END;
+
+
 
 WRAPPER $field_block title="Molecule Use" key="molecule_use";
     tags2link(fields.molecule_use.data);

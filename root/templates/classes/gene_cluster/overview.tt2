@@ -4,9 +4,6 @@
 
 WRAPPER highlight_box;
 
-   WRAPPER $field_block title="Name";
-        fields.name.data.id;
-   END;
 
 END;
 
@@ -20,9 +17,7 @@ WRAPPER $field_block title="Description" key="description";
 END;
 
 WRAPPER $field_block title="Genes" key="contains_genes"; 
-   FOREACH gene IN fields.contains_genes.data;
-	   tag2link(gene) _ '<br />';
-   END;  
+  tags2link(fields.contains_genes.data, '<br />', 'genes found');
 END;
 
 %]
