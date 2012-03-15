@@ -1,5 +1,6 @@
 [% IF edit %]
     To edit the widget, start typing in the box below<br />
+    For more sytax options, please visit the [% external_link("http://daringfireball.net/projects/markdown/syntax", "markdown syntax page") %].
     <textarea id="widget_content" 
               name="widget_content" 
               style="width:95%;min-height:30em;">[% widget.content.content; %]</textarea>
@@ -30,7 +31,7 @@
     title.html("<input onFocus=\"if(this.value=='Add new widget...'){this.value=''}\" style=\"margin-top:-3px;\" type=\"text\" id=\"widget_title\"  value=\"" + title.html() + "\" />");
     }
     var textarea = widget.find("textarea#widget_content");
-    WB.getMarkItUp(function(){ textarea.markItUp(mySettings);});
+    WB.getMarkItUp(function(){ console.log(mySettings); textarea.markItUp(mySettings);});
 //     textarea.style.height = (textarea.scrollHeight*2) + "px"; 
   </script>
 [% ELSIF widget %]

@@ -106,7 +106,7 @@ requires 'Template::Plugin::Time::Duration';                     #
 requires 'Test::YAML::Valid';                                    #
 requires 'Test::Pod::Coverage';                                  #
 requires 'Text::Glob';                                           #
-requires 'Text::WikiText';                                       #
+requires 'Text::MultiMarkdown';                                       #
 requires 'Time::Duration';                                       #
 requires 'WWW::Mechanize';                                       #
 requires 'XML::Simple';                                          #
