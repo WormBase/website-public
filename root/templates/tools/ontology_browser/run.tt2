@@ -3,12 +3,12 @@
 [% IF msg %]
    <div class="not-found">[% msg %]</div>
 [% ELSE %]
-<p>   <a name=top></a>
-      <h4>There is(are) [% path_count %] path(s) for [% tag2link(term) %] <br><br>
+<p>   <a id="ontology_top"></a>
+      <h4>[% path_count %] [% pluralize('path', path_count) %] found for [% tag2link(term) %] <br><br>
       Go to path:<br><br>
        
        [% FOREACH path IN parents %]
-	  <a href="#b[% loop.count %]">[% loop.count %]</a>
+	  <a href="javascript:void(0)" onClick="WB.goToAnchor('b[% loop.count %]')">[% loop.count %]</a>
 	  [% UNLESS loop.last %]&nbsp;&nbsp;[% END %]
 	  
       [% END %]
@@ -16,7 +16,7 @@
      
       
       [% FOREACH path IN parents %]
-	   <a name = b[% loop.count %]>&nbsp;&nbsp;</a><hr />
+	   <a id = "b[% loop.count %]">&nbsp;&nbsp;</a><hr />
 	    [% IF term_type == 'go_term' %] [% random=path.shift %] [% END %]
 	    path number:[% loop.count %]  
 	    [% padding = '&nbsp;&nbsp;&nbsp;&nbsp' %]
@@ -24,7 +24,7 @@
 		    <br>[% padding %]<b>[% parent.type %]</b> [% tag2link(parent) %] 
 		    [% padding = padding _ '&nbsp;&nbsp;&nbsp;&nbsp;' %]
 		    [% IF parent.association_count || parent.association_count_total %]
-		      (association(s) - to term: [% parent.association_count %])
+		      ([% parent.association_count %] [% pluralize('association',parent.association_count) %] to term)
 		    [% END %]
 			[% IF loop.last %] 
 				<br>[% padding %]- [% tag2link(term) %]	
@@ -39,7 +39,9 @@
 				[% END %]				
 			[% END %]
 	      [% END %]
-	    <br><a href=#top>Go to top</a> 
+	    <br>
+      <a href="javascript:void(0)" onClick="WB.goToAnchor('ontology_top')">Go to top</a>
+
 	[% END %]
 </p>	
 

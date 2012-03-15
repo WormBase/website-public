@@ -1,6 +1,11 @@
-[% 
+<h2>[% fields.name.data.label %] </h2>
 
-    WRAPPER $field_block title="Gene(s)" key="gene";
+[% 
+WRAPPER highlight_box;
+END;
+
+'<div class="description">';
+    WRAPPER $field_block title=pluralize("Gene", fields.gene.data.size) key="gene";
 	tags2link(fields.gene.data, '<br />', 'Genes');
     END;
 
@@ -8,14 +13,14 @@
 	tags2link(fields.cds.data, '<br />', 'CDS');
     END;
 
-    WRAPPER $field_block title="Transcript(s)" key="transcript";
+    WRAPPER $field_block title=pluralize("Transcript", fields.transcript.data.size) key="transcript";
 	tags2link(fields.transcript.data, '<br />', 'Transcripts');
     END;
 
-    WRAPPER $field_block title="Pseduogene(s)" key="pseudogene";
+    WRAPPER $field_block title=pluralize("Pseduogene",fields.pseudogene.data.size) key="pseudogene";
 	tags2link(fields.pseudogene.data, '<br />', 'Pseduogenes');
     END;
 
     remarks;
-
+'</div>';
 %]

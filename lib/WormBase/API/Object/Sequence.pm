@@ -38,10 +38,10 @@ sub _build_method {
     my $details = $method->Remark if $method;
     return {
         description => "the method used to describe the $class",
-        data => {
+        data => ($method || $details) ? { 
 	    method => $method && "$method",
 	    details => $details && "$details",
-	}
+	} : undef
     };
 }
 
