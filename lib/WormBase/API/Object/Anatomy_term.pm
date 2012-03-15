@@ -329,7 +329,7 @@ sub expression_clusters {
         push @data_pack,
           {
             'ec_data'     => $self->_pack_obj($expression_cluster),
-            'description' => "$ec_description"
+            'description' => $ec_description && "$ec_description",
           };
     }
     return {
@@ -573,10 +573,10 @@ sub _anatomy_function {
     my $object = $self->object;
     my @data_pack;
     foreach ($object->$tag){
-	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; "$term"}
+	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Involved;
-	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; "$term"}
+	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Not_involved;
 	push @data_pack, \{

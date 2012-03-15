@@ -449,8 +449,8 @@ sub cloned_by {
     if (my $cloned_by = $self->object->Cloned_by) {
         my ($tag,$source) = $cloned_by->row;
         $datapack->{data} = {
-            'cloned_by' => "$cloned_by",
-            'tag'       => "$tag",
+            'cloned_by' => $cloned_by && "$cloned_by",
+            'tag'       => $tag && "$tag",
             'source'    => $self->_pack_obj($source),
         };
     }
@@ -525,7 +525,7 @@ sub concise_description {
     
     return {
       description => "A manually curated description of the gene's function",
-      data        => { text => "$description", evidence => $evidence }
+      data        => { text => $description && "$description", evidence => $evidence }
     };
 }
 
@@ -586,11 +586,9 @@ sub gene_class {
     my $self   = shift;
     my $object = $self->object;  
     
-    my $gene_class = $self->_pack_obj($object->Gene_class);
-    
     return {
     description => "The gene class for this gene",
-    data        => $gene_class };
+    data        => $self->_pack_obj($object->Gene_class) };
 }
 
 
@@ -650,11 +648,9 @@ sub operon {
     my $self   = shift;
     my $object = $self->object;  
     
-    my $operon = $object->Contained_in_operon;
-    
     return {
     description => "Operon the gene is contained in",
-    data        => $operon ? $self->_pack_obj($operon) : undef};
+    data        => $self->_pack_obj($object->Contained_in_operon)};
 }
 
 
@@ -774,7 +770,7 @@ sub locus_name {
     my $object = $self->object;
     my $locus  = $object->CGC_name;
     return { description => 'the locus name (also known as the CGC name) of the gene',
-	     data        => $locus ? $self->_pack_obj($locus->CGC_name_for, "$locus") : undef }
+	     data        => $self->_pack_obj($locus->CGC_name_for, $locus && "$locus")}
 }
 
 
@@ -843,7 +839,7 @@ sub sequence_name {
     my $object   = $self->object;
     my $sequence = $object->Sequence_name;
     return { description => 'the primary corresponding sequence name of the gene, if known',
-	     data        => $sequence ? $self->_pack_obj($sequence->Sequence_name_for, "$sequence") : undef };
+	     data        => $self->_pack_obj($sequence->Sequence_name_for, $sequence && "$sequence") };
 }
 
 
@@ -1723,8 +1719,8 @@ sub _process_variation {
 
     my %data = (
         variation        => $self->_pack_obj($variation),
-        type             => "$type",
-        molecular_change => "$molecular_change",
+        type             => $type && "$type",
+        molecular_change => $molecular_change && "$molecular_change",
         sequence_known   => $sequence_known,
         effects          => @effect ? \@effect : undef,
 	locations	 => @location ? \@location : undef,

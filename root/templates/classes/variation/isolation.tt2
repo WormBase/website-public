@@ -23,16 +23,16 @@ WRAPPER $field_block title="Date Isolated" key="date_isolated";
 END;
 
 WRAPPER $field_block title="Mutagen" key="mutagen";
-      	fields.mutagen.data;
+      	cell_content(fields.mutagen.data);
 END;
 
 
 WRAPPER $field_block title="Isolated Via Forward Genetics" key="isolated_via_forward_genetics";
-      fields.isolated_via_forward_genetics.data;
+      cell_content(fields.isolated_via_forward_genetics.data);
 END;
 
 WRAPPER $field_block title="Isolated Via Reverse Genetics" key="isolated_via_reverse_genetics";
-      fields.isolated_via_reverse_genetics.data;
+      cell_content(fields.isolated_via_reverse_genetics.data);
 END;
 
 WRAPPER $field_block title="Transposon Excision" key="transposon_excision";

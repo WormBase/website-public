@@ -287,22 +287,12 @@ B<Response example>
 
 sub analysis {
     my ($self) = @_;
-    
-    my %so_data;
-    if (my $analysis = $self ~~ 'Analysis') {
-	$so_data{'Object'} = $analysis;
-	$so_data{'Description'} = $analysis->Description;
-	$so_data{'DB Info'} = $analysis->DB_info;
-	$so_data{'WB Release'} = $analysis->Based_on_WB_Release;
-	$so_data{'DB Release'} = $analysis->Based_on_DB_Release;
-	$so_data{'Sample'} = $analysis->Sample;
-	$so_data{'Paper'} = $analysis->Reference;
-	$so_data{'Conducted y'} = $analysis->Conducted_by;
-	$so_data{'Url'} = $analysis->URL;
-    }
-    
-    return { description => 'The Analysis info of the sequence',
-	     data        => %so_data ? \%so_data : undef  };
+    my $analysis = $self ~~ 'Analysis';
+
+    return {
+	description=> 'The Analysis info of the sequence',
+	data => $self->_pack_obj($analysis),
+    };
 }
 
 =head3 corresponding_all
@@ -403,8 +393,8 @@ sub corresponding_all {
     my $type = $sequences[0]->Method;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
-    $data{type} = "$type";
-    $data{model}   = \@sequences;
+    $data{type} = "$type" || undef;
+    $data{model}   = @sequences ? \@sequences : undef;
     $data{protein} = $self->_pack_obj($protein);
     $data{cds} = $cds ? $self->_pack_obj($cds, undef, style => ($cds == $object) ? 'font-weight:bold': 0 ) : '(no CDS)';
     $data{gene} = $self->_pack_obj($gene);
@@ -806,7 +796,7 @@ sub print_blast {
     
     return { description => 'links to BLAST analyses',
 	     data        =>  { source => $self ~~ 'name',
-			       target => \@target,
+			       target => @target ? \@target : undef,
 	     },
     };
 }
