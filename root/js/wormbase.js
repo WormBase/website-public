@@ -907,7 +907,7 @@ var Layout = (function(){
   var sColumns = false,
       ref = $jq("#references-content"),
       wHolder = $jq("#widget-holder"),
-      maxWidth = (location.pathname == '/' || location.pathname == '/me') ? 800 : 1300; //home page? allow narrower columns
+      maxWidth = (location.pathname == '/' || location.pathname == '/me') ? 900 : 1300; //home page? allow narrower columns
     //get an ordered list of all the widgets as they appear in the sidebar.
     //only generate once, save for future
       widgetList = this.wl || (function() {
@@ -923,7 +923,10 @@ var Layout = (function(){
     function resize(){
       if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
         sColumns ? columns(100, 100) : readHash();
-      if (wHolder.children(".sortable").hasClass("table-columns") && ((wHolder.children(".left").width() + wHolder.children(".right").width()) > wHolder.outerWidth()))
+      if ((maxWidth > 1000) && 
+          wHolder.children(".sortable").hasClass("table-columns") && 
+        ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
+        (wHolder.outerWidth() + 150)))
         columns(100, 100);
       if(ref && (ref.hasClass("widget-narrow") != (ref.innerWidth() < 845)))
         ref.toggleClass("widget-narrow");
@@ -1781,38 +1784,101 @@ var Scrolling = (function(){
                         "markitup-wiki": "/js/jquery/plugins/markitup/sets/wiki/style.css",
           };
           
+
+      
+      
       function getScript(name, url, stylesheet, callback) {
-        var head = document.documentElement,
-            script = document.createElement("script"),
-            done = false;
-        loading = true;
-        script.src = url;
         
-        if(stylesheet){
-          var link = document.createElement("link");
-          link.href = stylesheet;
-          link.rel="stylesheet";
-          document.getElementsByTagName("head")[0].appendChild(link)
+       function LoadJs(){
+           loadFile(url, true, function(){
+              plugins[name] = true;
+              callback();
+           });
         }
         
-        script.onload = script.onreadystatechange = function() {
-        if(!done && (!this.readyState ||
-          this.readyState === "loaded" || this.readyState === "complete")){
-          done = true;
-          loading = false;
-          plugins[name] = true;
-          callback();
+        if(stylesheet){
+         loadFile(stylesheet, false, LoadJs());
+        }else{
+           LoadJs();
+        }
+      }
+      
+      
+      function loadFile(url, js, callback) {
+        var head = document.documentElement,
+            script = document.createElement( js ? "script" : "link"),
+            done = false;
+        loading = true;
         
-            script.onload = script.onreadystatechange = null;
-            if( head && script.parentNode){
-              head.removeChild( script );
+        if(js){
+          script.src = url;
+        }else{
+          script.href = url;
+          script.rel="stylesheet";
+          script.type = "text/css";
+        }
+        
+        function doneLoad(){
+            done = true;
+            loading = false;
+            if(callback)
+              callback();   
+        }
+
+        if(js){
+          script.onload = script.onreadystatechange = function() {
+          if(!done && (!this.readyState ||
+            this.readyState === "loaded" || this.readyState === "complete")){
+            doneLoad();
+          
+              script.onload = script.onreadystatechange = null;
+              if( head && script.parentNode){
+                head.removeChild( script );
+              }
             }
+          };
+          
+          
+        }else{
+          script.onload = function () {
+            doneLoad();
           }
-        };
+          // #2
+          if (script.addEventListener) {
+            script.addEventListener('load', function() {
+            doneLoad();
+            }, false);
+          }
+          // #3
+          script.onreadystatechange = function() {
+            var state = script.readyState;
+            if (state === 'loaded' || state === 'complete') {
+              script.onreadystatechange = null;
+            doneLoad();
+            }
+          };
+
+          // #4
+          var cssnum = document.styleSheets.length;
+          var ti = setInterval(function() {
+            if (document.styleSheets.length > cssnum) {
+              // needs more work when you load a bunch of CSS files quickly
+              // e.g. loop from cssnum to the new length, looking
+              // for the document.styleSheets[n].href === url
+              // ...
+
+              // FF changes the length prematurely  )
+            doneLoad();
+              clearInterval(ti);
+
+            }
+          }, 10);
+        }
         
         head.insertBefore( script, head.firstChild);
         return undefined;
       }
+
       
       function getPlugin(name, callback){
         var script = pScripts[name],
