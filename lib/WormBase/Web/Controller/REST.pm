@@ -10,8 +10,7 @@ use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
 use URI::Escape;
-use Text::WikiText;
-use Text::WikiText::Output::HTML;
+use Text::MultiMarkdown 'markdown';
 use DateTime;
 
 __PACKAGE__->config(
@@ -862,22 +861,19 @@ sub widget_static_GET {
       $c->stash->{revisions} = \@revisions if @revisions;
       $c->stash->{widget_id} = $widget_id;
     } else { # getting actual widget
-      my $parser = Text::WikiText->new;
       my $widget = $c->model('Schema::Widgets')->find({widget_id=>$widget_id});
       $c->stash->{widget} = $widget;
       if($c->req->params->{rev}){ # getting a certain revision of the widget
         my $rev = $c->model('Schema::WidgetRevision')->find({widget_revision_id=>$c->req->params->{rev}});
         unless($rev->widget_revision_id == $widget->content->widget_revision_id){
           $c->stash->{rev} = $rev;
-          my $document = $parser->parse($rev->content);
-          $c->stash->{rev_content} = Text::WikiText::Output::HTML->new->dump($document);
+          $c->stash->{rev_content} = markdown($rev->content);
           my $time = DateTime->from_epoch( epoch => $rev->timestamp);
           $c->stash->{rev_date} =  $time->hms(':') . ', ' . $time->day . ' ' . $time->month_name . ' ' . $time->year;
         }
       }
       if(!($c->stash->{rev}) && $widget){
-        my $document = $parser->parse($widget->content->content);
-        $c->stash->{widget_content} = Text::WikiText::Output::HTML->new->dump($document);
+        $c->stash->{widget_content} = markdown($widget->content->content);
       }
       $c->stash->{timestamp} = ago(time()-($c->stash->{widget}->content->timestamp), 1) if($widget_id > 0);
       $c->stash->{path} = $c->request->params->{path};
