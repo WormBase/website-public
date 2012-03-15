@@ -250,7 +250,7 @@ sub movies {
     my $self        = shift;
     my $object      = $self->object;
     my @tag_objects = $object->Supporting_data->col if $object->Supporting_data;
-    my @data        = map { my $label = eval {$_->Remark} || "$_"; $_ = $self->_pack_obj($_,$label) } @tag_objects if @tag_objects;
+    my @data        = map { my $label = eval {$_->Remark}; $_ = $self->_pack_obj($_,"$label" || undef) } @tag_objects if @tag_objects;
     return { data        => @data ? \@data : undef,
 	     description => 'movies documenting effect of rnai' };
 }
@@ -326,10 +326,9 @@ B<Response example>
 sub reagent {
     my $self        = shift;
     my $object      = $self->object;
-    my @tag_objects = $object->PCR_product;
-    my @data        = map { $_ = $self->_pack_obj($_) } $object->PCR_product;
+    my @data        = map { $self->_pack_obj($_) } $object->PCR_product;
     return { data        => @data ? \@data : undef,
-	     description => 'prc products used to generate this RNAi'
+	     description => 'PCR products used to generate this RNAi'
     };
 }
 

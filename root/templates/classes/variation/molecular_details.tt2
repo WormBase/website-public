@@ -123,7 +123,7 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
   END;
 
   WRAPPER $field_block title="Deletion Verification" key="deletion_verification";
-    fields.deletion_verification.data;
+    cell_content(fields.deletion_verification.data);
   END;
 
    WRAPPER $field_block title="Features Affected" key="features_affected";

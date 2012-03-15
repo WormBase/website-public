@@ -397,7 +397,7 @@ sub author {
     my $name;
     if ($author) {
 	$person = $author->Possible_person;
-	$name = $person->Standard_name;
+	$name = $person->Standard_name if $person;
     }
     
     return { description => 'the person who created the transgene',

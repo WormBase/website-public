@@ -929,7 +929,7 @@ sub _variation {
 	{
             variation => $tag_info,
             #gene      => $gene_info,
-            type      => "$variation_type",
+            type      => $variation_type && "$variation_type",
             species   => $species_info
 	};
     }
@@ -969,8 +969,8 @@ sub _rnai {
 	    rnai     => $tag_info,
             sequence => $sequence_info,
             species  => $species_info,
-            genotype => "$genotype",
-            treatment => "$treatment",
+            genotype => $genotype && "$genotype",
+            treatment => $treatment && "$treatment",
 	    strain    => $strain,		
 	};
     }

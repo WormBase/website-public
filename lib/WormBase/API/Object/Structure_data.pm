@@ -273,7 +273,7 @@ sub status {
     my $object = $self->object;
 	my $data_pack = $object->Status;
 	my $data = {
-		'data'=> $data_pack,
+		'data'=> "$data_pack" || undef,
 		'description' => 'status of this structure'
 		};
 	return $data;

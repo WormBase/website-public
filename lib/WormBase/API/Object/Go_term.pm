@@ -114,9 +114,8 @@ sub term {
     my $self       = shift;
     my $object     = $self->object;
     my $tag_object = $object->Term;
-    my $data_pack  = $self->_pack_obj($object,"$tag_object");
     return {
-        'data'        => $data_pack,
+        'data'        => $self->_pack_obj($object, $tag_object && "$tag_object"),
         'description' => 'GO term'
     };
 }
@@ -178,7 +177,7 @@ sub definition {
     my $object    = $self->object;
     my $data_pack = $object->Definition;
     return {
-        'data'        => "$data_pack",
+        'data'        => $data_pack && "$data_pack",
         'description' => 'term definition'
     };
 }
@@ -314,7 +313,7 @@ sub genes {
 	push @data, {
 	    gene          => $self->_pack_obj($gene),
 	    evidence_code => $self->_get_GO_evidence( $object, $gene ),
-	    description	  => "$desc",
+	    description	  => $desc && "$desc",
 	};
     }
     return {
@@ -450,10 +449,10 @@ sub phenotype {
     my @data;
 
     foreach my $phenotype ($object->Phenotype) {
-        my $phenotype_desc = $phenotype->Description;
+        my $desc = $phenotype->Description;
         push @data, {
-            'phenotype_info'   => $self->_pack_obj($phenotype),
-            'description'      => "$phenotype_desc",
+            phenotype_info   => $self->_pack_obj($phenotype),
+            description      => $desc && "$desc",
         };
     }
     return {
@@ -971,8 +970,8 @@ sub _get_tag_data {
         push @data_pack,
           {
             'term'             => $self->_pack_obj($_),
-            'description'      => "$desc",
-            'class'            => "$tag",
+            'description'      => $desc && "$desc",
+            'class'            => $tag && "$tag",
             'evidence_code'    => $self->_get_GO_evidence( $object, $_ ),
           };
     }
@@ -981,14 +980,14 @@ sub _get_tag_data {
 
 sub _get_GO_evidence {
     my ( $self,$term, $gene ) = @_;
-    my ($evidence, $evidence_code, @evidence_details);
+    my $code;
 
     foreach my $go_term ($gene->GO_Term) {
         if ( $go_term eq $term ) {
-            $evidence_code = $go_term->right;
+            $code = $go_term->right;
         }
     }
-    return {text => "$evidence_code", evidence => $self->_get_evidence($evidence_code)};
+    return {text => $code && "$code", evidence => $self->_get_evidence($code)};
 }
 
 

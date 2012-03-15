@@ -974,10 +974,9 @@ B<Response example>
 sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = eval{$object->Laboratory};
+    my $lab    = $object->Laboratory;
 
-    my @gene_classes = $lab ? $lab->Gene_classes : undef;
-    @gene_classes = map { $self->_pack_obj($_) } @gene_classes if $lab;
+    my @gene_classes = map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
     
     my $data = { description => 'gene classes assigned to laboratory',
 		 data        => @gene_classes ? \@gene_classes : undef};
@@ -1428,11 +1427,11 @@ sub _get_lineage_data {
 	my $duration = "$start_date[2]\ \-\ $end_date[2]"; 
 	
 	push @data, {
-	    'name'       => $self->_pack_obj($relation, "$name"),
-	    'level'      => "$level",
-	    'start_date' => "$start",
-	    'end_date'   => "$end",
-	    'duration'   => "$duration"
+	    'name'       => $self->_pack_obj($relation, $name && "$name"),
+	    'level'      => $level && "$level",
+	    'start_date' => $start && "$start",
+	    'end_date'   => $end && "$end",
+	    'duration'   => $duration && "$duration"
 	};
     }	
     return @data ? \@data : undef;

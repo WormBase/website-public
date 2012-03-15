@@ -322,7 +322,7 @@ sub corresponding_all {
         my $type = $sequences[0]->Method;
         $type =~ s/_/ /g;
         @sequences =  map {$self->_pack_obj($_)} @sequences;
-        $data{type} = "$type";
+        $data{type} = $type && "$type";
         $data{model}   = \@sequences;
         $data{protein} = $self->_pack_obj($protein, undef, style => 'font-weight:bold');
         $data{cds} = $cds ? $self->_pack_obj($cds) : '(no CDS)';
@@ -755,7 +755,7 @@ sub amino_acid_composition {
     map { push @aminos, { aa=>$abbrev{$_}, comp=>$composition->{$_} }} keys %$composition;
 
     return { description => 'The amino acid composition of the protein',
-	     data        =>  \@aminos ,
+	     data        =>  @aminos ? \@aminos :undef,
     }; 
 }
 
@@ -1058,7 +1058,7 @@ sub motifs {
       my $title = $_->Title;
       my ($database,$description,$accession) = $_->Database->row if $_->Database;
       $title||=$_;
-      push @row,[("$database","$title",{ label=>"$_", id=>"$_", class=>$_->class})];
+      push @row,[($database && "$database", $title && "$title",{ label=>"$_", id=>"$_", class=>$_->class || undef})];
 #       $hash{database}{$_} = $database;
 #       $hash{description}{$_} = $title||$_;
 #       $hash{accession}{$_} = { label=>$_, id=>$_, class=>$_->class};
@@ -1339,22 +1339,22 @@ sub motif_details {
 	    if (@multiple > 1) {
 		foreach my $start (@multiple) {
 		    my $stop = $start->right;
-		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
-					    "$start",
-					    "$stop")
+		    push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type, $desc && "$desc",
+					$start && "$start",
+					$stop && "$stop")
 		    ];
 		}
 	    } else {
-		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type,"$desc",
-					"$start",
-					"$stop")
+		push @tot_positions,[  ({label=>$label,id=>$label,class=>$feature->class},$type, $desc && "$desc",
+					$start && "$start",
+					$stop && "$stop")
 		];
 	    }
 	}
 	
     }
     my $data = { description => 'The motif details of the protein',
-		 data        => \@tot_positions,
+		 data        => @tot_positions ? \@tot_positions : undef,
     }; 
     
 }
@@ -1540,9 +1540,9 @@ sub history {
     my @data;    
     foreach my $version ($object->History) {
 	my ($event,$prediction)  = $version->row(1);
-	push @data, { version    => "$version",
-		      event      => "$event",
-		      prediction => {id=>"$prediction", class=>'gene'}, };
+	push @data, { version    => "$version" || undef,
+		      event      => "$event" || undef,
+		      prediction => $prediction ? {id=>"$prediction", class=>'gene'} : undef, };
     }
     
     return { description => 'curatorial history of the protein',

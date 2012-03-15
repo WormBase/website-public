@@ -143,10 +143,9 @@ B<Response example>
 sub species {
     my $self       = shift;
     my $object     = $self->object;
-    my $tag_object = $object->Species;
-    my $data_pack  = $self->_pack_obj($tag_object);
+
     return {
-        'data'        => $data_pack,
+        'data'        => $self->_pack_obj($object->Species),
         'description' => 'species containing the operon'
     };
 }

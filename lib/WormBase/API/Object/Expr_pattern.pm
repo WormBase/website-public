@@ -570,7 +570,7 @@ sub experimental_details {
     }
 
     if (my $date = $self ~~ 'Date') {
-	my $name = $date->name;
+	my $name = $date->name if $date;
         $data{date} = $name && "$name";
     }
 

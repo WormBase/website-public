@@ -189,7 +189,7 @@ sub interaction_types {
     foreach my $type ($object->Interaction_type) {
 	my %info;
 
-	$info{Type} = "$type";
+	$info{Type} = $type && "$type";
 	foreach my $tag ('Effector', 'Effected', 'Non_directional', 'Interaction_phenotype', 'Interaction_RNAi'){
 	    my @vals = map {$self->_pack_obj($_)} $type->$tag;
 	    if ($tag =~ /Effect|Non_dir/) { $info{Interactors}{interaction}{$tag} = @vals ? \@vals : undef }

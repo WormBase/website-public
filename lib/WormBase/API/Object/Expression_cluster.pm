@@ -120,7 +120,7 @@ sub algorithm {
     my $object = $self->object;
     my $algorithm =  $object->Algorithm;
     return { description => 'Algorithm used to determine cluster',
-	     data        => "$algorithm" || undef,
+	     data        => $algorithm && "$algorithm",
     };
 }
 
