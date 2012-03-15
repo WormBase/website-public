@@ -173,10 +173,10 @@ B<Response example>
 sub type {
     my $self           = shift;
     my $object         = $self->object;
-    my $homology_group = $object->Group_type;
-    my $homology_code = $homology_group =~ /COG/ ? $object->COG_code : undef;
-    return {data        => { homology_group => "$homology_group",
-			     code       => "$homology_code" },
+    my $group = $object->Group_type;
+    my $code = $group =~ /COG/ ? $object->COG_code : undef;
+    return {data        => { homology_group => $group && "$group",
+			     code       => $code && "$code" },
 	    description => 'type of homology group' };
 }
 
@@ -239,7 +239,7 @@ sub gene_ontology_terms {
     	my $definition = $_->Definition;
     	push @data, {
 	    go_term   => $self->_pack_obj($_),
-	    definition => "$definition",
+	    definition => $definition && "$definition",
     	}
     } 	
 
@@ -303,12 +303,11 @@ sub proteins {
     my $object      = $self->object;
     my @data;
     foreach ($object->Protein) {
-    	my $species = $self->_pack_obj($_->Species) if $_->Species;
     	my $description = $_->Description;
     	push @data, {
 	    protein => $self->_pack_obj($_, "$_"),
-	    species => $species,
-	    description => "$description",
+	    species => $self->_pack_obj($_->Species),
+	    description => $description && "$description",
     	}
     }
     return { data        => @data ? \@data : undef,

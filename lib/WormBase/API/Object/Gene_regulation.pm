@@ -413,7 +413,7 @@ B<Response example>
 sub type_of_change {
     my ($self) = @_;
     
-    my @types = map {$_->name} @{$self ~~ '@Type'};    
+    my @types = map {"$_"} @{$self ~~ '@Type'};    
     return { description => 'types of change effected by the regulation',
 	     data	 => @types ? \@types : undef,
     };
@@ -473,8 +473,6 @@ sub molecule_regulators {
     my $object = $self->object;
     
     my @molecules = map { $self->_pack_obj($_) } $object->Molecule_regulator;
-    
-#    my $molecule_regs = $self->_pack_objects( [ $self ~~ '@Molecule_regulator' ] );
     return {
 	description => 'Molecule regulator',
 	data	=> @molecules ? \@molecules : undef,

@@ -934,7 +934,7 @@ sub _build_laboratory {
 	foreach my $lab ($object->$tag) {
 	    my $label = $lab->Mail || "$lab";
 	    my $representative = $lab->Representative;
-	    my $name           = $representative->Standard_name;
+	    my $name           = $representative->Standard_name if $representative;
 	    push @data, {
 		laboratory => $self->_pack_obj($lab, "$label"),
 		representative => $self->_pack_obj($representative, "$name"),

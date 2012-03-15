@@ -176,11 +176,9 @@ B<Response example>
 sub contains_genes {
     my $self   = shift;
     my $object = $self->object;
-    my @data;
-    foreach ($object->Contains_gene) {
-	push @data,$self->_pack_obj($_);
-    }
-    return { data => \@data,
+    my @data = map {$self->_pack_obj($_)} $object->Contains_gene;
+    
+    return { data => @data ? \@data : undef,
 	     description => 'genes that are found in this gene cluster' };
 }
 

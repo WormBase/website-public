@@ -1042,9 +1042,10 @@ sub mutagen {
     my ($self) = @_;
 
     my $mutagen = $self ~~ 'Mutagen';
+    my $evidence = $self->_get_evidence($mutagen);
     return {
         description => 'mutagen used to generate the variation',
-        data        => $mutagen && "$mutagen",,
+        data        => $evidence && %$evidence ? {text => "$mutagen", evidence => $evidence} : "$mutagen" || undef,
     };
 }
 
@@ -1102,10 +1103,11 @@ B<Response example>
 # Q: What are the contents of this tag?
 sub isolated_via_forward_genetics {
     my ($self) = @_;
-
+    my $forward = $self ~~ 'Forward_genetics';
+    my $evidence = $self->_get_evidence($forward);
     return {
         description => 'was the mutation isolated by forward genetics?',
-        data        => $self ~~ 'Forward_genetics',
+        data        => $evidence && %$evidence ? {text => "$forward", evidence => $evidence} : "$forward" || undef,
     };
 }
 
@@ -1160,13 +1162,14 @@ B<Response example>
 
 =cut 
 
-# Q: what are the contents of this tag?
+# Q: what are the contents of this tag? Text and evidence
 sub isolated_via_reverse_genetics {
     my ($self) = @_;
-
+    my $reverse = $self ~~ 'Reverse_genetics';
+    my $evidence = $self->_get_evidence($reverse);
     return {
         description => 'was the mutation isolated by reverse genetics?',
-        data        => $self ~~ 'Reverse_genetics',
+        data        => $evidence && %$evidence ? {text => "$reverse", evidence => $evidence} : "$reverse" || undef,
     };
 }
 
@@ -1913,10 +1916,11 @@ B<Response example>
 
 sub deletion_verification {
     my ($self) = @_;
-    
+    my $deletion = $self ~~ 'Deletion_verification';
+    my $evidence = $self->_get_evidence($deletion);
     return {
         description => 'the method used to verify deletion alleles',
-        data        => $self ~~ 'Deletion_verification',
+        data        => $evidence ? {text => "$deletion", evidence => $evidence } : "$deletion" || undef,
     };
 }
 

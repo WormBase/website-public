@@ -114,7 +114,7 @@ sub genotype {
     my $object   = $self->object;
     my $genotype = $object->Genotype;
     return { description => 'the genotype of the strain',
-	     data        => "$genotype" };
+	     data        => "$genotype" || undef };
 }
 
 =head3 genes
@@ -814,8 +814,9 @@ sub contact {
     my $self   = shift;
     my $object = $self->object;
     my $made_by = $object->Contact;
+    my $name = $made_by->Standard_name if $made_by;
     return { description => 'the person who built the strain, or who to contact about it',
-	     data        => $made_by ? $self->_pack_obj($made_by,$made_by->Standard_name) : undef };
+	     data        => $made_by ? $self->_pack_obj($made_by, "$name") : undef };
 }
 
 =head3 date_received
@@ -1417,8 +1418,9 @@ sub isolated_by {
     my $self    = shift;
     my $object  = $self->object;
     my $person  = $object->Isolated_by;
+    my $name = $person->Standard_name if $person;
     return { description => 'the person who isolated the strain',
-	     data        => $person ? $self->_pack_obj($person,$person->Standard_name) : undef };
+	     data        => $person ? $self->_pack_obj($person, "$name") : undef };
 }
 
 =head3 date_isolated
@@ -1560,14 +1562,14 @@ sub natural_isolates {
 	$landscape =~ s/_/ /g;
 	my $isolated  = $_->Isolated_by;
 	my $species   = $_->Species;
-	push @data,{ species     => "$species",
-		     place       => "$place",
+	push @data,{ species     => "$species" || undef,
+		     place       => "$place" || undef,
 		     strain      => $self->_pack_obj($_),
 		     latitude    => "$lat" || undef,
 		     longitude   => "$lon" || undef,
 		     isolated_by => $isolated ? $self->_pack_obj($isolated,$isolated->Standard_name) : undef,
-		     landscape   => "$landscape",
-		     substrate   => "$substrate",
+		     landscape   => "$landscape" || undef,
+		     substrate   => "$substrate" || undef,
 	};
     }
     
