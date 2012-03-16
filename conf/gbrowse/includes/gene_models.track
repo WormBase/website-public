@@ -17,11 +17,11 @@ height  = sub {
 balloon hover  = sub {my $f = shift;
 	                my $name = $f->name; 
                         my $class = $f->class;
-    		        "url:/db/misc/gbrowse_popup?name=$name;class=$class;type=CG";
+    		        "url:/gbrowse_popup?name=$name;class=$class;type=CG";
 	} 
 link = sub {
 	my $f = shift;
 	return if $f->method eq 'RNAz';
 	my $name = $f->attributes('Gene') || $f->name;
-	return "/db/get?name=$name;class=Gene";
+	return "/get?name=$name;class=Gene";
 	}
