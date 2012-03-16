@@ -1,4 +1,17 @@
 Futon (administrative interface to our couchdb instance):
 
+   <table>
+   <tr><th></th><th>server</th><th>registered dns</th><th>port</th></tr>
+   </table>
+
+  <h2>Production</h2>
   <a target="_blank" href="http://couchdb.wormbase.org/_utils">couchdb.wormbase.org/_utils</a>
 
+  <em>The production couchdb is running on wb-web6.oicr.on.ca, with a proxied domain name of couchdb.wormbase.org. The Couchdb forwards these requests....<br/>
+
+  <h2>Staging</h2>
+
+  http://206.108.125.164:5984/_utils/
+
+  Proxied: no
+  Site: http://staging.wormbase.org
