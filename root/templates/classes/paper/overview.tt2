@@ -77,12 +77,14 @@
 		  a meeting.
 	   [% END %]
 	[% ELSE %]
-	   [% fields.title.data %].
-	   [% IF fields.journal || fields.publication_type.data.grep('^Gazette_article$').size %]
-		  <i>[% fields.journal.data || 'Worm Breeder\'s Gazette' %]<!-- nospace
-		  -->[% IF fields.volume.data %], [% fields.volume.data %][% END %]</i><!-- nospace
-		  -->[% IF fields.pages.data %], [% fields.pages.data %][% END %].
+	   [% fields.title.data %].<i>
+       [% IF fields.publication_type.data.grep('^Gazette_article$').size %]
+          [% external_link('gazette', 'Worm Breeder\'s Gazette') %]<!-- nospace
+	   [% ELSIF fields.journal %]
+		  [% fields.journal.data %]<!-- nospace
 	   [% END %]
+          -->[% IF fields.volume.data %], [% fields.volume.data %][% END %]</i><!-- nospace
+          -->[% IF fields.pages.data %], [% fields.pages.data %][% END %].
 	[% END %]
 
 	[% IF fields.doi.data %]

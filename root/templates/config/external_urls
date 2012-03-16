@@ -382,6 +382,12 @@
 		search		= 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
 	}
 
+    gazette = {
+        description = 'The Worm Breeder\'s Gazette'
+        maintainer  = 'help@wormbook.org'
+        base        = 'http://www.wormbook.org/wbg/'
+    }
+
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
 		base		= 'http://www.wormbase.org'
