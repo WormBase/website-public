@@ -768,9 +768,10 @@ B<Response example>
 sub locus_name {
     my $self   = shift;
     my $object = $self->object;
-    my $locus  = $object->CGC_name;
+    my $locus  = $object->CGC_name;   
+    # Genes known only by sequence often lack a CGC (locus) name.
     return { description => 'the locus name (also known as the CGC name) of the gene',
-	     data        => $self->_pack_obj($locus->CGC_name_for, $locus && "$locus")}
+	     data        => $locus ? $self->_pack_obj($locus->CGC_name_for, $locus && "$locus") : 'not assigned'}
 }
 
 
