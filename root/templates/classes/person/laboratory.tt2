@@ -12,7 +12,7 @@ WRAPPER $field_block title="Allele designation" key="allele_designation";
 END;
 
 WRAPPER $field_block title="Gene classes" key="gene_classes";
-      tags2link(fields.gene_classes.data, '<br />');
+      tags2link(fields.gene_classes.data, "<br />", "gene classes found");
 END;
 
 
