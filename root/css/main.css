@@ -2388,6 +2388,7 @@ div.detail-box{
   margin:0.5em;
   max-width:25em;
   min-width:19em;
+  word-wrap: break-word;
 }
 
 div.description {
