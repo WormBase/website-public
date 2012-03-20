@@ -8,9 +8,11 @@ WRAPPER highlight_box;
         fields.sequence_name.data.label;
    END;
 
+IF 0; #Why do we have the public name here again?
    WRAPPER $field_block title="Public name" key="locus_name";
         markup_locus(fields.locus_name.data.label, "locus", 1);
    END;
+END;
 
    WRAPPER $field_block title=pluralize("Other name", fields.other_names.data.size) key="other_names";
         markup_locus(fields.other_names.data.join(', '), 1); 
