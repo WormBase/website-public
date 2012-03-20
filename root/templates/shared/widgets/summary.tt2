@@ -3,6 +3,7 @@
 
 <div id="summary">
 [% IF species == 'all'; %]
+      <p><i>This widget displays a count of all objects in WormBase for each species. Note that some species are maintained solely as Genome Browser instances and not integrated into WormBase directly.</i></p>
   [% FOREACH s IN c.config.sections.species_list.keys.sort %]
     [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
       <li><a href="[% c.uri_for('/species',s, class) %]" class="species">[% c.config.sections.species_list.$s.title %]</a>: 
