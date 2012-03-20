@@ -11,13 +11,13 @@ view the underlying data model, enter a class (eg Gene_class) and for class ente
 
 <p>
 Examples:<br />
-<a href="[% c.uri_for('tools','tree','run') %]?name=WBGene00006758;class=Gene">Browse the unc-20 gene</a>.<br />
-<a href="[% c.uri_for('tools','tree','run') %]?name=?Gene;class=Model">Browse the Gene class data model</a>.<br />
+<a href="[% c.uri_for('/tools','tree','run') %]?name=WBGene00006758;class=Gene">Browse the unc-20 gene</a>.<br />
+<a href="[% c.uri_for('/tools','tree','run') %]?name=?Gene;class=Model">Browse the Gene class data model</a>.<br />
 </p>
 
 
 <p>
-<form method="POST" action="[% c.uri_for('tools','tree','run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools','tree','run') %]"> 
   <table>
      <tr><th>Name</th>
          <td><input type="text" name="name" onchange="document.question.submit()" /></td>
