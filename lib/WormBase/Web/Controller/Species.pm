@@ -130,13 +130,13 @@ sub object_report :Path("/species") Args(3) {
         name   => $name,
     }); # error handling?
 
-    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
-
-
-    if($object){
+    if ($object == -1 ){
+      $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1", 307);
+      return;
+    } else {
       $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
       if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
-        $c->res->redirect("/species/$taxonomy/$class/$name", 307);
+        $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name), 307);
       }
     }
 
