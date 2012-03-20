@@ -32,7 +32,7 @@ use parent 'WormBase::Web::Controller';
 
 sub species_summary :Path('/species') :Args(0)   {
     my ($self,$c) = @_;
-    $c->res->redirect('/species/all', 307);
+    $c->res->redirect($c->uri_for('/species',"all"), 307);
     $c->go('species_index',['all']);
     return;
 }
