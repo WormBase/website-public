@@ -78,7 +78,7 @@ sub search :Path('/search') Args {
         my $o = @{$it->{struct}}[0];
         my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
         unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
-        $c->res->redirect($url, 307);  #should this be inside unless? -xq
+        $c->res->redirect($url, 307);
         return;
       }
     }

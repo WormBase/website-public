@@ -443,7 +443,7 @@
                             width: "800px", 
                             height: "550px",
                             scrolling: false,
-                            title: function(){ return slink.prev().text() + " " + slink.data("class"); }});
+                            title: function(){ return slink.next().text() + " " + slink.data("class"); }});
           });
       });
       
