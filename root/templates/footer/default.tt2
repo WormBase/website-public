@@ -57,7 +57,7 @@
        <div class="footer-title">Developer</div>
         <ul>
           <li><a target="_blank" href="">Amazon EC2 AMI</a></li>
-	  <li><a href="http://github.com/WormBase">Code Repositories (Github)</a></li>
+	  <li><a target="_blank" href="http://github.com/WormBase">Code Repositories (Github)</a></li>
           <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
@@ -66,7 +66,7 @@
     <div class="footer-column">
        <div class="footer-title">Downloads</div>
         <ul>
-          <li><a href="ftp://ftp.wormbase.org/pub/wormbase/">FTP site</a></li>
+          <li><a target="_blank" href="ftp://ftp.wormbase.org/pub/wormbase/">FTP site</a></li>
         </ul>
     </div>
 
