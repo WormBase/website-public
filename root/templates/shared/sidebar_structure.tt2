@@ -149,7 +149,7 @@
           [% IF (overview==1) %]
             data-layout='{"leftlist":["overview"]}'
           [% ELSIF (is_class_index && !is_static) %]
-            data-layout='{"leftlist": ["browse"], "rightlist": ["basic_search"], "leftwidth": "50"}'
+            data-layout='{"leftlist": ["browse", "summary"], "rightlist": ["basic_search"], "leftwidth": "50"}'
           [% END %]
         [% ELSE %]
             data-layout='{"leftlist": ["
