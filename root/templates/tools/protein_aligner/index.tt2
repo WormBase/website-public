@@ -2,10 +2,11 @@
 
 <p>This is the Wormbase protein aligner. To use it, enter a WormBase protein ID.</p>
 
+[% align_url = c.uri_for('/tools','protein_aligner','run') %]
 
-<form method="POST" action="[% c.uri_for('/tools','protein_aligner','run') %]">
+<form method="POST" action="[% align_url %]">
 
-Symbol: 
-<input type="text" name="sequence" value="[% c.stash.sequence %]" /> (e.g. <cite>WP:CE25115 or BP:CBP00571</cite>)
-<input type="submit" value ="Run" />
+<input type="text" name="sequence" value="[% c.stash.sequence %]" />
+<input type="submit" value ="Run" /> <br />
+ (e.g. <cite><a href="[% align_url _ '?sequence=WP:CE25115' %]">WP:CE25115</a> or <a href="[% align_url _ '?sequence=BP:CBP00571' %]">BP:CBP00571</a></cite>)
 </form>
