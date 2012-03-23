@@ -443,6 +443,7 @@
                             width: "800px", 
                             height: "550px",
                             scrolling: false,
+                           onComplete: function() {$jq.colorbox.resize(); },
                             title: function(){ return slink.next().text() + " " + slink.data("class"); }});
           });
       });
