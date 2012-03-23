@@ -940,7 +940,7 @@ END;
         END;
       END;
     ELSE;
-      '<br /><span class="caveat-emptor">No sequence data available for download</span>';
+      '<div class="caveat-emptor">No sequence data available for download</div>';
     END;
 END;
 %]
