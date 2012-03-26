@@ -1,4 +1,5 @@
 <div class="blast_container [% count %]" align="center">
+    <a name="blast_result_[% count %]"></a>
     <table border="0">
         <tr>
             <td colspan="2" align="center">
@@ -40,7 +41,11 @@
                     <img src="[% obj.alignment_image_url %]" usemap="#alignment"/>
                     <br/>
                     <font class="small">
-                    * Links to the Genome Browser and alignment image are limited to top hits.<br/>
+		    [% IF obj.result_file_content.size == 0 %]
+			No results found for this search. Please go <a href="[% c.uri_for('tools','blast_blat') %]" onClick="history.go(-1); return false;">back</a> and try another query.<br />
+		    [% ELSE %]
+			* Links to the Genome Browser and alignment image are limited to top hits.<br/>
+		    [% END %]
                     </font>
                     <map name="alignment">
                         [% FOREACH image_map_piece IN obj.image_map_pieces %]
@@ -57,20 +62,21 @@
 				[% IF line.link.defined %]
 				   
 				  [% IF re.type == "header" %]<font class="bold">[% tag2link(line.link.sequence_link) %][% line.line %]</font><br/>
-				  [% ELSIF line.link.hit_sequence_link %]<a name="hit_anchor_[% line.link.current_hit %]"></a> >[% tag2link(line.link.hit_sequence_link) %][% line.line %]
+				  [% ELSIF line.link.hit_sequence_link %]<a name="hit_anchor_[% line.link.current_hit _ '_' _ count %]"></a> >[% tag2link(line.link.hit_sequence_link) %][% line.line %]
 				  [% ELSE %][% line.line %]<br/><br/>
 				  [% END %]
 				  [% IF line.link.expand_link %]
-				     <img class="expand_button" expand_area_count="[% expand_area_counter %]" src="/img/blast_blat/blank.png"/>
+				     <img class="expand_button" expand_area_count="[% expand_area_counter _ count %]" src="/img/blast_blat/blank.png"/>
 				  [% END %]  
-				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link %]">[Alignment]</a>[% END %]
-				  [% tag2link(line.link.genome_link) %]
+				  [% IF re.type == "header" %]<a href="[% line.link.alignment_link _ '_' _ count %]">[Alignment]</a>[% END %]
+				  [% IF line.link.genome_link.id %] <a href="[% site.external_urls.gbrowse.base _ line.link.genome_link.id %]" target="_blank">[Genome View]</a>[% END %]
+				  [% # tag2link(line.link.genome_link) %]
 				  [% tag2link(line.link.gene_link) %]
 				  [% tag2link(line.link.protein_link) %]
 				  [% tag2link(line.link.corr_gene_link) %]
 				  
 				  [% IF line.link.expand_link %]
-				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter %]" expand_link="[% site.external_urls.gbrowse_image.base _ line.link.expand_link %]"></div>
+				    <br/><div class="expand_area"  expand_area_count="[% expand_area_counter _ count %]" expand_link="[% site.external_urls.gbrowse_image.base _ line.link.expand_link %]"></div>
 				    [% expand_area_counter = expand_area_counter+1 %]
 				   [% END %]  
 				    
@@ -97,4 +103,4 @@
         </tr>
     </table>
 </div>
-
+<hr />

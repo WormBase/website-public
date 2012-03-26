@@ -1,3 +1,5 @@
+
+
 <head>
     <link rel="stylesheet" type="text/css" href="/css/blast_pages.css" />  
 </head>
@@ -8,7 +10,6 @@
 <div class="form_container">
 
 <h1>BLAST/BLAT SEARCH</h1>
-
 
 <div class="spacer">
     &nbsp;
@@ -62,11 +63,11 @@
     <p/>
         
     <div class="indent_one italic">
-        <input type="checkbox" checked="1" name="process_query"> </input>
-        <select name="process_query_type">
+        <input type="checkbox" checked="1" name="process_query"> <b>Filter*</b></input>
+<!--        <select name="process_query_type">
             <option value="filter">Filter</option>
-<!--            <option value="mask">Mask</option> -->
-        </select>
+            <option value="mask">Mask</option>
+        </select>-->
 <!--
         by
         <select id="process_query_param" name="process_query_param">
@@ -86,30 +87,67 @@
 
     <font class="bold">3) Select a database:</font>
 
-   <select id="database" name="database">
+   <select id="version" name="version">
+[%
+      FOREACH data IN ['blast_databases', 'blat_databases'];
+	FOREACH version IN c.stash.$data.keys.sort;
+	  '<option dataType="' _ data _ '" value="' _ version _'"'; IF loop.last; ' selected="1" '; END; '>' _ version _ '</option>';
+	END;
+      END;
+%]
+   </select>
 
-        [% FOREACH database_type IN c.stash.blast_databases.keys;
-	     FOREACH species IN c.stash.blast_databases.$database_type.sort;
-  	         SWITCH database_type;
-
-                 CASE "genomic";
-                    IF species.name.match('c_elegans');
-		       '<option selected="1" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn">' _ species.symbolic _ '</option>';
-                    ELSE;
-                         '<option value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn">' _ species.symbolic _ '</option>';
-                    END;
-                    '<option value="' _ species.name _ '"  query-app="nucl:blat">' _ species.symbolic
-		          _ ' genome [BLAT]</option>';
-                 CASE "protein";
-   	               '<option value="' _ species.name _ '" query-app="prot:blastp nucl:blastx">' _ species.symbolic _ '</option>';
-                 CASE "genes";
-                       '<option value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn">' _ species.symbolic _ '</option>';
-                 CASE "ests";
-                      '<option value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn">' _ species.symbolic _ '</option>';
-                 END;
-
+   <select id="typeBox" name="typeBox">
+[%
+      FOREACH data IN ['blast_databases', 'blat_databases'];
+	FOREACH version IN c.stash.$data.keys.sort;
+	  FOREACH database_type IN c.stash.$data.$version.keys.sort;
+	    IF database_type == "Protein";
+		queryType = "prot";
+	    ELSE;
+		queryType = "nucl";
 	    END;
-        END %]
+	    '<option version="' _ version _ '" nucl_prot="' _ queryType _ '" dataType="' _ data _ '" value="' _ database_type _'">' _ database_type _ '</option>';
+	  END;
+	END;
+      END;
+%]
+   </select>
+
+   <select id="database" name="database">
+[%
+      FOREACH data IN ['blast_databases', 'blat_databases'];
+	FOREACH version IN c.stash.$data.keys.sort;
+	  FOREACH database_type IN c.stash.$data.$version.keys.sort;
+	    FOREACH specieskey IN c.stash.$data.$version.$database_type.keys.sort;
+	      species = c.stash.$data.$version.$database_type.$specieskey;
+	      SWITCH database_type;
+		CASE "Genome";
+		    IF data == "blast_databases";
+		      IF species.name.match('c_elegans');
+			'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		      ELSE;
+			'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		      END;
+		    ELSIF data == "blat_databases";
+		      IF species.name.match('c_elegans');
+			'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		      ELSE;
+			'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		      END;
+		    END;
+		CASE "Protein";
+		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		CASE "genes";
+		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+		CASE "ESTs";
+		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      END;
+	    END;
+	  END;
+	END;
+      END;
+%]
     </select>
 
     <div id="message" class="message">
@@ -137,13 +175,18 @@
 <div class="to_right">
 Documentation
 <hr>
-<a href="/blast_blat/about_blat.html" target="_blank">About the BLAT algorithm</a>.
+* The filter option preprocesses the sequence to facilitate the search.
+<br />For example, in a resulting hit protein alignment, you may notice that some amino acids are replaced by 'X's.
+<br /><br />
+<a href="[% c.uri_for('/tools', 'blast_blat', 'about_blat') %]" target="_blank">About the BLAT algorithm</a>.
 </div>
 
 
 </div>
 
 </form>
+
+
  
 <script src="/js/blast_blat/search_form.js"></script>
  
