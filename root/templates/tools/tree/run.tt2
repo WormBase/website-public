@@ -1,12 +1,21 @@
+[% target = "_blank" %]
 [% UNLESS noboiler %]
      <h1>WormBase Tree Display for [% data.object.class %]: [% data.object.name %]</h1>
+     [% target = "_self" %]
+[% END %]
+
+[% modelclass = data.object.class %]
+[% IF modelclass == 'Model' %]
+    [% modelclass = data.object.name %]
+[% ELSE %]
+    [% modelclass = "?$modelclass" %]
 [% END %]
 
 [% UNLESS data.msg %]
   <p>
-       <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %]&class=[% data.object.class %]&view=expand">expand all nodes</a> |  
-       <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %]&class=[% data.object.class %]&view=collapse">collapse all nodes</a> | 
-       <a href="[% c.uri_for('/tools','tree','run') %]?name=?[% data.object.class %]&class=Model&view=collapse">view schema</a>
+       <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %];class=[% data.object.class %]&view=expand" target="[% target %]">expand all nodes</a> |  
+       <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %];class=[% data.object.class %]&view=collapse" target="[% target %]">collapse all nodes</a> | 
+       <a href="[% c.uri_for('/tools','tree','run') %]?name=[% modelclass %];class=Model" target="[% target %]">view schema</a>
   </p>
 [% END %]
 
