@@ -1763,7 +1763,7 @@ sub _build_status {
 
     return {
         description => "current status of the $class:$object if not Live",
-        data        => ($status eq 'Live') ? undef : $status && "$status",
+        data        => $status && (($status eq 'Live') ? undef : "$status"),
     };
 }
 
