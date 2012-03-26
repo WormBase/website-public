@@ -1,6 +1,24 @@
+<div class="detail-box ui-corner-all">
+<h3>Legend</h3>
+<table>
+<tr class="align-default"><td>default</td><td><span class="sequence-container">*XZ</span></td></tr>
+<tr class="align-unknown"><td>unknown</td><td><span class="sequence-container">.</span></td></tr>
+<tr class="align-hydrophobic"><td>hydrophobic</td><td><span class="sequence-container">AGLMPV</span></td></tr>
+<tr class="align-lg-hydrophobic"><td>large hydrophobic</td><td><span class="sequence-container">FHWY</span></td></tr>
+<tr class="align-alcohol"><td>small alcohol</td><td><span class="sequence-container">ST</span></td></tr>
+<tr class="align-cysteine"><td>cysteine</td><td><span class="sequence-container">C</span></td></tr>
+<tr class="align-negative"><td>negative</td><td><span class="sequence-container">DE</span></td></tr>
+<tr class="align-polar"><td>polar</td><td><span class="sequence-container">NQ</span></td></tr>
+<tr class="align-positive"><td>positive charge</td><td><span class="sequence-container">KR</span></td></tr>
+</table>
+</div>
+
 [% INCLUDE tools/protein_aligner/index.tt2 UNLESS noboiler %] 
 
 [% msg %]
+
+
+
 <p>
 [% FOREACH row IN data %]
   [% count = count + 1  %]
@@ -8,5 +26,4 @@
       [% obj %]
   [% END %]
 [% END %]
-
 </p>

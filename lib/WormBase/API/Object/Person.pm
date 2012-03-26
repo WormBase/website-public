@@ -974,7 +974,7 @@ B<Response example>
 sub gene_classes {
     my $self   = shift;
     my $object = $self->object;
-    my $lab    = $object->Laboratory;
+    my $lab    = eval { $object->Laboratory };
 
     my @gene_classes = map { $self->_pack_obj($_) } $lab->Gene_classes if $lab;
     

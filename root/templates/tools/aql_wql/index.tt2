@@ -1,22 +1,47 @@
 [% IF error %]
 <pre>[% error %]</pre> <!-- should be styled -->
 [% END %]
+<h2>Query Language Search</h2>
+
+<div class="text-width">
+<p>
+This searches the underlying ACeDB database using either the old-style 
+<b>WormBase Query Language</b> (<b>WQL</b>) or the new <b>Ace Query Language</b> (<b>AQL</b>)
+
+
+[% WRAPPER toggle title="AQL examples" %]
+<ul><li>Example 1: Find loci between positions 5 and 10 on chromosome IV<pre>select l, pos from l in class Gene, 
+                    map in l-&gt;Map where map = "IV",
+                    pos in map[Position] where pos &gt; 5.0 and pos &lt; 10.0
+</pre></li> <li>Example 2: Find primer pairs, the genes they overlap and their overlapping oligos<pre>select l,l-&gt;Overlaps_CDS,l-&gt;Oligo-&gt;Sequence
+from l in class PCR_Product
+where exists l-&gt;Overlaps_CDS
+</pre></li> <li>See the Acedb web site for <a target="_blank" href="http://www.acedb.org/Software/whelp/AQL/">documentation</a> and <a target="_blank" href="http://www.acedb.org/Software/whelp/AQL/examples_worm.shtml">examples</a></li></ul>
+[% END %]
+
+[% WRAPPER toggle title="WQL examples" %]
+<ul><li>Type in a search term using the Ace query language. 
+                      Separate multiple statements with semicolons.</li> <li>Examples: <ul><li>find Author COUNT Paper &gt; 100</li> <li>find Author IS "Garvin*" ; &gt;Laboratory; &gt;Staff</li></ul></li> <li><a href="http://www.acedb.org/Cornell/acequery_examples.html">Examples for querying GrainGenes and MaizeDB databases [external link]</a></li> <li><a href="http://www.acedb.org/Cornell/#query">Documentation and more examples [external link]</a></li></ul>
+[% END %]
+
+</p>
+</div>
 <form method="POST" action="[% c.uri_for('/tools', 'aql_wql', 'run') %]">
       <input type="radio" name="query-type" value="AQL" id="qtype-aql" [% IF query_type != 'WQL' %]checked="checked"[% END %]/>
       <label for="qtype-aql">AQL</label>
       <input type="radio" name="query-type" value="WQL" id="qtype-wql" [% IF query_type == 'WQL' %]checked="checked"[% END %]/>
       <label for="qtype-wql">WQL</label>
-      <br />
-      <input type="radio" name="result-type" value="HTML" id="rtype-html" [% IF result_type != 'Text' %]checked="checked"[% END %]/>
-      <label for="rtype-html">HTML</label>
-      <input type="radio" name="result-type" value="Text" id="rtype-text" [% IF result_type == 'Text' %]checked="checked"[% END %]/>
-      <label for="rtype-text">Plain Text</label>
+
       <br />
 
-      <textarea name="ql-query">[%IF query; query; END;%]</textarea>
+      <textarea name="ql-query" cols="75" rows="10">[%IF query; query; END;%]</textarea>
       <br />
 
       <input type="submit" name="submit" value="Submit" />
+      <input type="radio" name="result-type" value="HTML" id="rtype-html" [% IF result_type != 'Text' %]checked="checked"[% END %]/>
+      <label for="rtype-html">HTML output</label>
+      <input type="radio" name="result-type" value="Text" id="rtype-text" [% IF result_type == 'Text' %]checked="checked"[% END %]/>
+      <label for="rtype-text">Plain Text output</label>
 </form>
 
 [% IF data %]

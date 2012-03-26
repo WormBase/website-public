@@ -11,6 +11,7 @@ if [ ! $APP ]; then
     export DAEMONIZE=true
     export PORT=5000
     export WORKERS=10
+    export MAX_REQUESTS=500
 
     # Configure our GBrowse App
     export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
