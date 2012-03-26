@@ -7,6 +7,8 @@
 var blastAppClone          = makeCloneArray('blast_app');
 // var processQueryParamClone = makeCloneArray('process_query_param');
 var databaseClone          = makeCloneArray('database');
+var versionClone          = makeCloneArray('version');
+var typeClone          = makeCloneArray('typeBox');
 
 // Other Global Vars
 var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
@@ -14,8 +16,9 @@ var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
 function updateAllOptions() {
     updateBlastAppOptions();
 //     updateProcessQueryOptions();
+    updateVersionOptions();
+    updateTypeOptions();
     updateDatabaseOptions();
-
     updateMessage();
 
     return 1;
@@ -48,21 +51,95 @@ function updateBlastAppOptions() {
 //     return 1;
 // }   
 
+function updateVersionOptions() {
+    var paramValues = getParamValues();
+    var queryType = paramValues[0];
+    var appType   = paramValues[1];
+    var queryApp  = paramValues[2];
+    var dataType  = paramValues[3];
+    
+    var copy = copyArray(versionClone);
+    var version = document.getElementById('version');
+    updateOneOption(copy, version, dataType, 'dataType');
+    
+    if(version.options.length == 1){
+	version.disabled = true;
+    } else {
+	version.disabled = false;
+    }
+    
+    return 1;
+}
+
+function updateTypeOptions() {
+    var paramValues = getParamValues();
+    var queryType = paramValues[0];
+    var appType   = paramValues[1];
+    var queryApp  = paramValues[2];
+    var dataType  = paramValues[3];
+    var version   = paramValues[4];
+    var type      = paramValues[5];
+    var dbType = paramValues[6];
+
+    var copy = copyArray(typeClone);
+    var typeBox = document.getElementById('typeBox');
+    updateOneOption(copy, typeBox, dataType, 'dataType');
+    copy = copyArray(typeBox);
+    updateOneOption(copy, typeBox, version, 'version');
+    copy = copyArray(typeBox);
+    updateOneOption(copy, typeBox, dbType, 'nucl_prot');
+    
+    if (!typeBox.options.length) {
+	var text;
+	if(queryType == "prot"){
+	    text = 'Protein';
+	} else {
+	    text = 'Genome/ESTs';
+	}
+	var newOption = new Option(text, 'not_selected', 0, 0);
+	newOption.selected = true;
+        
+        typeBox.options[0] = newOption;
+    }
+    
+    if(typeBox.options.length == 1){
+	typeBox.disabled = true;
+    } else {
+	typeBox.disabled = false;
+    }
+    
+    return 1;
+}
+
 function updateDatabaseOptions() {
     var paramValues = getParamValues();
     var queryType = paramValues[0];
     var appType   = paramValues[1];
     var queryApp  = paramValues[2];
+    var version   = paramValues[3];
+    var dataType  = paramValues[3];
+    var version   = paramValues[4];
+    var type      = paramValues[5];
 
     var copy = copyArray(databaseClone);
     var database = document.getElementById('database');
+    updateOneOption(copy, database, version, 'version');
+    copy = copyArray(database);
+    updateOneOption(copy, database, type , 'type');
+    copy = copyArray(database);
     updateOneOption(copy, database, queryApp, 'query-app');
-
+    
     if (!database.options.length) {
         var newOption = new Option('No database available', 'not_selected', 0, 0);
         newOption.selected = true;
         
         database.options[0] = newOption;
+    }
+    
+    if(database.options.length == 1){
+	database.disabled = true;
+    } else {
+	database.disabled = false;
     }
     
     return 1;
@@ -145,11 +222,14 @@ function resetAllOptions() {
     var queryType;
     var appType;
     var queryApp;
+    var version;
 
     updateOneOption(blastAppCopy,          blastApp,          queryType, 'query');
 //    updateOneOption(processQueryParamCopy, processQueryParam, queryType, 'query');
-    updateOneOption(databaseCopy,          database,          queryApp,  'query-app');
-
+    updateOneOption(databaseCopy, database, version, 'version');
+    databaseCopy = copyArray(database);
+    updateOneOption(databaseCopy, database, queryApp, 'query-app');
+    
     document.getElementById("message").innerHTML = "Please enter a query sequence ...";
 
     return 1;
@@ -170,7 +250,7 @@ function updateMessage() {
         document.getElementById("message").innerHTML = "At least 10 residues is required to perform a search!";
     }    
     
-    else if (document.getElementById('database').options.length < 2) {
+    else if (document.getElementById('database').options[0].value == "not_selected") {
         document.getElementById("message").innerHTML = "No database is available for this query-application pair!";
     }    
 
@@ -185,8 +265,14 @@ function updateMessage() {
 function getParamValues() {
     var querySequence = document.getElementById('query_sequence');
     var blastApp      = document.getElementById('blast_app');
+    var versionBox    = document.getElementById('version');
+    var typeBox       = document.getElementById('typeBox');
+    
+    var version       = versionBox.options[versionBox.selectedIndex].value;
+    var searchType    = typeBox.options[typeBox.selectedIndex].value;
 
     var queryType;
+    var dbType;
 
     if (queryDetermineType == 'sequence_entry') {
         queryType = typeSequence(querySequence.value);
@@ -212,14 +298,18 @@ function getParamValues() {
     var searchTypeBlat  = document.getElementById('search_type_blat').checked;
     if (searchTypeBlast) {
         appType = blastApp.options[blastApp.selectedIndex].value;
+	dbType = blastApp.options[blastApp.selectedIndex].getAttribute('db');
+	dataType= "blast_databases";
     }
     else if (searchTypeBlat) {
         appType = "blat";
+	dataType= "blat_databases";
+	dbType = queryType;
     }
     
     var queryApp = (queryType && appType) ? queryType + ":" + appType
                                         : null;
-    return new Array(queryType, appType, queryApp);
+    return new Array(queryType, appType, queryApp, dataType, version, searchType, dbType);
 }
 
 function typeSequence(sequence) {
@@ -254,12 +344,20 @@ function makeCloneArray(id) {
         var optionQuery = parentElement.options[i].getAttribute('query');
         var optionDb    = parentElement.options[i].getAttribute('db');
         var optionApp   = parentElement.options[i].getAttribute('query-app');
-
+        var optionVer   = parentElement.options[i].getAttribute('version');
+        var optionType  = parentElement.options[i].getAttribute('type');
+        var optionData  = parentElement.options[i].getAttribute('dataType');
+        var optionNuPro = parentElement.options[i].getAttribute('nucl_prot');
+	
         var newOption = new Option(optionText, optionValue, 0, 0);
         newOption.setAttribute('query',     optionQuery);
         newOption.setAttribute('db',        optionDb);
         newOption.setAttribute('query-app', optionApp);
-
+        newOption.setAttribute('version',   optionVer);
+        newOption.setAttribute('type',      optionType);
+        newOption.setAttribute('dataType',  optionData);	
+        newOption.setAttribute('nucl_prot', optionNuPro);
+	
         cloneArray.push(newOption);
     }
 
@@ -275,12 +373,20 @@ function copyArray(array) {
         var optionQuery = array[i].getAttribute('query');
         var optionDb    = array[i].getAttribute('db');
         var optionApp   = array[i].getAttribute('query-app');
-
+        var optionVer   = array[i].getAttribute('version');
+        var optionType  = array[i].getAttribute('type');
+        var optionData  = array[i].getAttribute('dataType');
+        var optionNuPro = array[i].getAttribute('nucl_prot');
+	
         var newOption = new Option(optionText, optionValue, 0, 0);
         newOption.setAttribute('query',     optionQuery);
         newOption.setAttribute('db',        optionDb);
         newOption.setAttribute('query-app', optionApp);
-
+        newOption.setAttribute('version',   optionVer);
+        newOption.setAttribute('type',      optionType);
+        newOption.setAttribute('dataType',  optionData);
+        newOption.setAttribute('nucl_prot', optionNuPro);	
+	
         copyArray.push(newOption);
     }
 
@@ -342,6 +448,10 @@ DOMhelp.addEvent(document.getElementById('query_type_prot'),    'click',
 
 DOMhelp.addEvent(document.getElementById('blast_app'),          'change', updateAllOptions,    false); 
 
+DOMhelp.addEvent(document.getElementById('version'),          'click', updateAllOptions,    false); 
+
+DOMhelp.addEvent(document.getElementById('typeBox'),          'click', updateAllOptions,    false);
+
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
                  function(){addSamplePeptide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
@@ -383,7 +493,34 @@ cagcagtggtaggactcccggtcttggcgagagtcaggtgttccaattcc \n\
 cgccggtctccgcattccaggccacaaatccgctgctaaacacattctcc \n\
 aaccttatcagcccgatggccccgtttatgatgcccccatcacagtcgag \n\
 tacctcgttcaagttcccatcgtcaacggattctttaaaaacacctacag \n\
-tacccataaaaatgccaactttgtag';
+tacccataaaaatgccaactttgtag                         \n\
+>FM864439                                          \n\
+tggcatttctacgggtgatgaggtggatggagtcgccgaggaggcacact \n\
+gcttgacggggagccacactatctgttggacttggtgtgctgacactgtg \n\
+cgtcgtcggtgaatccgtcccaagaaggctcagcgccgagaaatccgtgt \n\
+tgccacgtggattttgaggtggtggaggcggcggcggcggtgcttgtaat \n\
+gacgtcataaacgacggaatctcgtgtcgaatgtccttctcgtctttgac \n\
+ataacacatcttcatgttcatatttgaggaaaagtcggcggtcggcggag \n\
+cgtgggcgtcagtagttacaaagcgatatacgaactttttgccgatcacc \n\
+ttcttaataatattcttctcataataatatcgtaacgctctcgacagttt \n\
+atcataattcatatgcggtttcgccttccgttgtccccactttctcgcca \n\
+cggcttctgcatcaatcagtcggaattcgccgtccgttccgcgtgtccat \n\
+tcgattatatcaccattttggtcttgttgcagtagttctagaaggaattg \n\
+ccacagggttatgattgagtcgacggatgatgaggtcggaggtgtcgagg \n\
+atcgggtacacatcaagtctgagacgttcatctctttctctctaatttgc \n\
+gcaattaaatctatctactccttcagacattgttccgtgcccagcttctt \n\
+ccgaactctacggatgctcttttttgacctaaaattgtcaatgagattca \n\
+ttttcgtgtaatctgtagagggtccgcgctttgatatcctctctctactg \n\
+cgtaattcatcgttactactcattcagtcatggtcaatggtcaaantttt \n\
+tcncccttcttatttcctnacttccttcttctccctcacttttctttcta \n\
+tctatctattcatgattaaggagcaatttattcatagcctgatactctcc \n\
+ttctcccttccttatcctcctattcctccttccttcttccctttcttctt \n\
+cacttagttctcgttcccctacacactctgttctttccccgtgtgccgct \n\
+ggggctgttcccgctgtctgcttacgagttgtatggaccctttaacgtat \n\
+ctgtgttctgggcttcacgcgagagtacttctgctgtgttcgccgcacgt \n\
+attaacggatatcggcggccatgtcttgctttattctttgctaattggac \n\
+tgttgctgtgttactgactccactgtcgtcgtacagacttcgacaactcc \n\
+tgttatgccccatttacttgt';
 
 var samplePeptide = '>WP:CE31440            \n\
 MNHIDLLKVK KEPPSSSEEA EEEESPKHTI EGILDIRKKE \n\
