@@ -14,7 +14,7 @@ use constant MAXEXPAND   => 10;
 use constant CLOSEDCOLOR => "#909090";
 use constant OPENCOLOR   => "#FF0000";
 
-use vars qw/$request_name $request_class $view $dsn @expand @squash/;
+use vars qw/$request_name $request_class $view $dsn @expand @squash $inline/;
 
 use namespace::autoclean -except => 'meta';
 
@@ -34,6 +34,7 @@ sub run {
     $view       = $param->{'view'};
     @squash     = $param->{'squash'};
     @expand     = $param->{'expand'};
+    $inline	= $param->{'inline'};
     @squash = flatlist(@squash);
     @expand = flatlist(@expand);
 
@@ -87,7 +88,7 @@ sub generate_tree {
 
 sub to_href {
     my $obj = shift;
-    
+    my $target = $inline ? '_blank' : '_self';
     if ($obj->class eq 'txt') {
 	return $obj =~ /\n/ ? pre(escapeHTML($obj)) : escapeHTML($obj);
     }
@@ -155,12 +156,12 @@ sub to_href {
 	    my $to_expand = join('&expand=',map { CGI::escape($_) } (keys %expand,$name));
 #	    return (a({-href=>url(-relative=>1,-path_info=>1) 
 	    return (a({-href=>"/tools/tree/run" 
-			   . "?name=$pn&class=$pc"
+			   . "?name=$pn;class=$pc"
 			   . ($to_squash ? ";squash=$to_squash" : '') 
 			   . ($to_expand ? ";expand=$to_expand" : '')
 			   . "#$name",
 			   -name=>"$name",
-			   -target=>"_self"},
+			   -target=>$target},
 		      b(font({-color=>CLOSEDCOLOR},"$title ($cnt)"))),
 		    1);
 	} elsif (!$obj->isObject) {
@@ -168,12 +169,12 @@ sub to_href {
 	    my $to_expand = join('&expand=',map { CGI::escape($_) } grep $name ne $_,keys %expand);
 	    return (a({-href=>"/tools/tree/run" 
 #	    return (a({-href=>url(-relative=>1,-path_info=>1,-query=>1) 
-			   . "?name=$pn&class=$pc"
+			   . "?name=$pn;class=$pc"
 			   . ($to_squash ? "&squash=$to_squash" : '') 
 			   . ($to_expand ? "&expand=$to_expand" : '')
 			   . "#$name",
 			   -name=>"$name",
-			   -target=>"_self"},
+			   -target=>$target},
 		      b(font({-color=>OPENCOLOR},"$title"))),
 		    0);
 	}
@@ -183,7 +184,8 @@ sub to_href {
     
     if ($obj->isObject) {
 #	return (a({-href=>url(-relative=>1,-path_info=>1) 
-	return (a({-href=>"/tools/tree/run?name=$name;class=$class"},$title), 0);
+	$name =~ s/^#/?/ if $class eq 'Model';
+	return (a({-href=>"/tools/tree/run?name=$name;class=$class", -target=>$target},$title), 0);
     }
     
     if ($obj->isTag) {

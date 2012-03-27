@@ -69,7 +69,7 @@
 
 
         [% ELSE %]
-          [% FOREACH option IN c.config.sections.$title.sort() %]
+          [% FOREACH option IN c.config.sections.$title.keys.sort %]
             [% IF option == 'title'; NEXT; END; %]
 			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]

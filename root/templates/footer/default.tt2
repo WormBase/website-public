@@ -6,130 +6,108 @@
 <div id="footer">
     <div id="footer-nav">
 
-       <div class="footer-column">
-          <div class="footer-title">About</div>
-             <ul>
-               <li><span>Nematodes</span></li>
-               <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
-             </ul>                
-<!--	   </div> -->
-
-<!--       <div class="footer-column"> -->
-          
-           <ul>
-              <li><span>WormBase</span></li>
-              <li><a href="[% c.uri_for('/about') _ '#0--10' %]">Mission</a></li> 
-              <li><a href="[% c.uri_for('/about','advisory_board') _ '#01--10' %]">Advisory Board</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#1--10' %]">Privacy</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#0--10'    %]">Acceptable Use</a></li>
-              <li><a href="[% c.uri_for('/about','policies') _ '#2--10'         %]">Copyright</a></li>
-              <li><a href="[% c.uri_for('/about','citing_wormbase') _ '#012--10' %]">Citing</a></li>
-           </ul>                
-       
-       </div>
-
-
-       <div class="footer-column">
-          <div class="footer-title">Support</div>
-           <ul>
-<!--    	     <li><a href="http://wormbase.org/beta">Request Private Demo</a></li> -->
-             <li><a href="/tools/operator">Chat</a></li>
-              <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
-             <li><a href="mailto:help@wormbase.org">Email</a></li>
-             <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
-             <li><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
-           </ul>                
-         </div>
-
-    <div class="footer-column">
-       <div class="footer-title">Community</div>
+      <div class="footer-column">
+        <div class="footer-title">About</div>
         <ul>
-          <li><a target="_blank" href="http://www.wormbook.org/">WormBook</a></li>
-          <li><a target="_blank" href="http://forums.wormbase.org">Forum</a></li>
-          <li><a target="_blank" href="http://blog.wormbase.org">Blog</a></li>	  
-          <li><a target="_blank" href="http://twitter.com/wormbase">Twitter</a></li>
+          <li><span>Nematodes</span></li>
+          <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
+        </ul>                
+        
+        <ul>
+          <li><span>WormBase</span></li>
+          <li><a href="[% c.uri_for('/about') _ '#0--10' %]">Mission</a></li> 
+          <li><a href="[% c.uri_for('/about','advisory_board') _ '#01--10' %]">Advisory Board</a></li>
+          <li><a href="[% c.uri_for('/about','policies') _ '#1--10' %]">Privacy</a></li>
+          <li><a href="[% c.uri_for('/about','policies') _ '#0--10'    %]">Acceptable Use</a></li>
+          <li><a href="[% c.uri_for('/about','policies') _ '#2--10'         %]">Copyright</a></li>
+          <li><a href="[% c.uri_for('/about','citing_wormbase') _ '#012--10' %]">Citing</a></li>
+        </ul>  
+      </div>
+
+
+      <div class="footer-column">
+        <div class="footer-title">Support</div>
+        <ul>
+          <li><a href="/tools/operator">Chat</a></li>
+          <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
+          <li><a href="mailto:help@wormbase.org">Email</a></li>
+          <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
+          <li><a href="[% c.uri_for('/tools', 'issues', 'report') _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
+        </ul>                
+      </div>
+
+      <div class="footer-column">
+        <div class="footer-title">Community</div>
+        <ul>
+          <li>[% external_link("http://www.wormbook.org/", 'WormBook') %]</li>
+          <li>[% external_link("http://forums.wormbase.org", 'Forum') %]</li>
+          <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
+          <li>[% external_link("http://twitter.com/wormbase", 'Twitter') %]</li>
         </ul>
+      </div>
 
-    </div>
 
-
-    <div class="footer-column">
-       <div class="footer-title">Developer</div>
+      <div class="footer-column">
+        <div class="footer-title">Developer</div>
         <ul>
-          <li><a target="_blank" href="">Amazon EC2 AMI</a></li>
-	  <li><a href="http://github.com/WormBase">Code Repositories (Github)</a></li>
+          <li>[% external_link("", 'Amazon EC2 AMI') %]</li>
+          <li>[% external_link("http://github.com/WormBase", 'Code Repositories (Github)') %]</li>
           <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
           <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
-    </div>
+      </div>
 
-    <div class="footer-column">
-       <div class="footer-title">Downloads</div>
+      <div class="footer-column">
+        <div class="footer-title">Downloads</div>
         <ul>
           <li><a href="ftp://ftp.wormbase.org/pub/wormbase/">FTP site</a></li>
         </ul>
-    </div>
+      </div>
 
-<!--
-    <div class="footer-column">
-       <div class="footer-title">Beta Test</div>
+      <div class="footer-column">
+        <div class="footer-title">Data Freezes</div>
         <ul>
-          <li><a href="[% c.uri_for("/tools", "issues") %]">Issues</a></li>
-          <li><a target="_blank" href="https://spreadsheets.google.com/a/wormbase.org/spreadsheet/viewform?formkey=dDhYMkwySVhPNHRqeFlkbkFBZkZrQlE6MQ">Survey</a></li>
+          <li>
+            <select id="data-freezes"> 
+                <option selected="selected" value="--">--</option> 
+                <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
+                <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
+                <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option> 
+                <option value="http://ws204.wormbase.org">WS204 (13 Aug 2009)</option> 
+                <option value="http://ws200.wormbase.org">WS200 (16 Mar 2009)</option> 
+                <option value="http://ws190.wormbase.org">WS190 (07 May 2008)</option> 
+                <option value="http://ws180.wormbase.org">WS180 (07 Sep 2007)</option> 
+                <option value="http://ws170.wormbase.org">WS170 (09 Feb 2007)</option> 
+                <option value="http://ws160.wormbase.org">WS160 (31 Jul 2006)</option> 
+                <option value="http://ws150.wormbase.org">WS150 (30 Nov 2005)</option> 
+                <option value="http://ws140.wormbase.org">WS140 (26 Mar 2005)</option> 
+                <option value="http://ws130.wormbase.org">WS130 (16 Aug 2004)</option> 
+                <option value="http://ws120.wormbase.org">WS120 (07 Mar 2004)</option> 
+                <option value="http://ws110.wormbase.org">WS110 (01 Oct 2003)</option> 
+                <option value="http://ws100.wormbase.org">WS100 (10 May 2003)</option> 
+            </select>  
+          </li>
         </ul>
-    </div>
--->
+      </div>
 
-    <div class="footer-column">
-       <div class="footer-title">Data Freezes</div>
-        <ul>
-	  <li>
-                 <select id="data-freezes"> 
-                     <option selected="selected" value="--">--</option> 
-                     <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
-                     <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
-                     <option value="http://ws205.wormbase.org">WS205 (18 Sep 2009)</option> 
-                     <option value="http://ws204.wormbase.org">WS204 (13 Aug 2009)</option> 
-                     <option value="http://ws200.wormbase.org">WS200 (16 Mar 2009)</option> 
-                     <option value="http://ws190.wormbase.org">WS190 (07 May 2008)</option> 
-                     <option value="http://ws180.wormbase.org">WS180 (07 Sep 2007)</option> 
-                     <option value="http://ws170.wormbase.org">WS170 (09 Feb 2007)</option> 
-                     <option value="http://ws160.wormbase.org">WS160 (31 Jul 2006)</option> 
-                     <option value="http://ws150.wormbase.org">WS150 (30 Nov 2005)</option> 
-                     <option value="http://ws140.wormbase.org">WS140 (26 Mar 2005)</option> 
-                     <option value="http://ws130.wormbase.org">WS130 (16 Aug 2004)</option> 
-                     <option value="http://ws120.wormbase.org">WS120 (07 Mar 2004)</option> 
-                     <option value="http://ws110.wormbase.org">WS110 (01 Oct, 2003)</option> 
-                     <option value="http://ws100.wormbase.org">WS100 (10 May 2003)</option> 
-                 </select>  
-           </li>
-        </ul>
     </div>
 
-   </div>
+    <br clear="all" />
 
-   <br clear="all" />
-
-    <div id="footercredit">
-     <!--     Questions? Comments? <a href="mailto:feedback@wormbase.org">feedback@wormbase.org</a> or
-          <a href="https://groups.google.com/a/wormbase.org/group/help/post" target="_blank">web form</a>
-      -->     
-             <span>
-               WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a></span><br /><span>at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
-              </span>
-
-     </div>
+    <div id="footercredit"> 
+      <span>
+        WormBase is supported by grant #P41 HG02223 from the <a href="http://www.genome.gov/">National Human Genome Research Institute</a></span><br /><span>at the <a href="http://www.nih.gov/">US National Institutes of Health</a> and the <a href="http://www.mrc.ac.uk/">British Medical Research Council</a>.
+      </span>
+    </div>
 
     <div id="footermeta">
-<!--         <div id="footer-icons"> -->
-          <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
-          <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
-          <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
-<!--        </div> -->
+      <a id="footer-mail" href="mailto:help@wormbase.org"><div class="social-icons"></div></a>
+      <a id="footer-tweet" href="http://twitter.com/wormbase"><div class="social-icons"></div></a>
+      <a id="footer-rss"  href="http://feeds.feedburner.com/wormbase"><div class="social-icons"></div></a>
     </div>
 </div>
 
 
 <!-- end boilerplate/footer -->
 
-    </div><!--end wrap-->
+</div><!--end wrap-->
