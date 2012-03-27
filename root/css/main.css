@@ -2387,7 +2387,7 @@ div.detail-box{
   float:right;
   margin:0.5em;
   max-width:25em;
-  min-width:19em;
+/*   min-width:19em; */
   word-wrap: break-word;
 }
 
@@ -2998,4 +2998,44 @@ button::-moz-focus-inner {
 }
 .sb_48:active > span {
     line-height: 38px;
+}
+
+
+
+/* Markup for sequence alignments */
+
+.align-default {
+  color: #666666;
+}
+
+.align-unknown {
+  color: #999999;
+}
+
+.align-hydrophobic {
+  color: #33cc00;
+}
+
+.align-cysteine {
+  color: #2c5197;
+}
+
+.align-negative {
+  color: #0033ff;
+}
+
+.align-lg-hydrophobic {
+  color: #009900;
+}
+
+.align-positive {
+  color: #cc0000;
+}
+
+.align-polar {
+  color: #6600cc;
+}
+
+.align-alcohol {
+  color: #0099ff;
 }

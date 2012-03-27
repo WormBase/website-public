@@ -4,7 +4,7 @@
 
 WRAPPER highlight_box;
   
-   WRAPPER $field_block title="Experiment" key="name";
+   WRAPPER $field_block title="Experiment" key="historical_name";
         fields.historical_name.data;
    END;  
 

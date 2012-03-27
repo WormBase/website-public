@@ -206,7 +206,7 @@ sub structure {
     my @data;
 
     foreach my $gene ($operon->Contains_gene) {
-        my @spliced = map {text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}, $gene->col;
+        my @spliced = map {text => "$_", evidence => $self->_get_evidence($_)}, $gene->col;
         push @data,
           {
             gene_info   => $self->_pack_obj($gene),
