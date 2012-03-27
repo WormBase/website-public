@@ -1,6 +1,3 @@
-[% IF error %]
-<pre>[% error %]</pre> <!-- should be styled -->
-[% END %]
 <h2>Query Language Search</h2>
 
 <div class="text-width">
@@ -21,7 +18,12 @@ where exists l-&gt;Overlaps_CDS
 
 [% WRAPPER toggle title="WQL examples" %]
 <ul><li>Type in a search term using the Ace query language. 
-                      Separate multiple statements with semicolons.</li> <li>Examples: <ul><li>find Author COUNT Paper &gt; 100</li> <li>find Author IS "Garvin*" ; &gt;Laboratory; &gt;Staff</li></ul></li> <li><a href="http://www.acedb.org/Cornell/acequery_examples.html">Examples for querying GrainGenes and MaizeDB databases [external link]</a></li> <li><a href="http://www.acedb.org/Cornell/#query">Documentation and more examples [external link]</a></li></ul>
+                      Separate multiple statements with semicolons.</li> 
+<li>Examples: 
+<ul><li><pre>find Author COUNT Paper &gt; 100</pre></li> 
+<li><pre>find Author IS "Garvin*" ; &gt;Laboratory; &gt;Staff</pre></li></ul>
+</li> 
+<li><a href="http://www.acedb.org/Cornell/acequery_examples.html">Examples for querying GrainGenes and MaizeDB databases [external link]</a></li> <li><a href="http://www.acedb.org/Cornell/#query">Documentation and more examples [external link]</a></li></ul>
 [% END %]
 
 </p>
@@ -34,7 +36,7 @@ where exists l-&gt;Overlaps_CDS
 
       <br />
 
-      <textarea name="ql-query" cols="75" rows="10">[%IF query; query; END;%]</textarea>
+      <textarea class="sequence-container" name="ql-query" cols="75" rows="10">[%IF query; query; END;%]</textarea>
       <br />
 
       <input type="submit" name="submit" value="Submit" />
@@ -44,24 +46,36 @@ where exists l-&gt;Overlaps_CDS
       <label for="rtype-text">Plain Text output</label>
 </form>
 
-[% IF data %]
-   <table>
+[% IF data.size > 0 %]
    [% IF query_type == 'WQL' %]
+      [% results = [] %]
       [% obj = data.next %]
       [% WHILE obj %]
-         <tr><td>[% IF result_type == 'Text'; obj.label; ELSE; tag2link(obj) ; END %]</td></tr>
+         [% results.push(obj) %]
          [% obj = data.next %]
       [% END %]
+      [% PROCESS "search/results.tt2" no_count=1 type='all'%]
    [% ELSE %]
+   <br />
+   [% data.size _ ' ' _ pluralize("row", data.size) %] returned
+   <table>
+      <tr>
+      [% FOREACH t IN titles %]
+        <th>[% t %]</th>
+      [% END %]
+      </tr>
       [% FOREACH row IN data %]
          <tr>
         [% FOREACH obj IN row %]
-           <td>[% IF obj.size > 1; tag2link(obj); ELSE; obj; END %]</td>
+           <td>[%tag2link(obj) %]</td>
         [% END %]
         </tr>
       [% END %]
-   [% END %]
    </table>
-[% ELSIF data.exists %]
+
+   [% END %]
+[% ELSIF data %]
    <p>No Data found</p>   
 [% END %]
+
+[% error(message) %]
