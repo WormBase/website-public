@@ -170,8 +170,8 @@ sub to_href {
 	    return (a({-href=>"/tools/tree/run" 
 #	    return (a({-href=>url(-relative=>1,-path_info=>1,-query=>1) 
 			   . "?name=$pn;class=$pc"
-			   . ($to_squash ? "&squash=$to_squash" : '') 
-			   . ($to_expand ? "&expand=$to_expand" : '')
+			   . ($to_squash ? ";squash=$to_squash" : '') 
+			   . ($to_expand ? ";expand=$to_expand" : '')
 			   . "#$name",
 			   -name=>"$name",
 			   -target=>$target},
