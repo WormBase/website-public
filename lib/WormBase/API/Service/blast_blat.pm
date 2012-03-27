@@ -44,7 +44,7 @@ has 'blast_databases' => (
         # Discover available BLAST databases
 	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
 	foreach my $version (@versions) {
-	    my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast");
+	    my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast") if (-e "$base_dir/$version/blast");
 	    foreach my $species (@species) {
 		my ($g,$s)   = split('_',$species);
 		my $symbolic = uc($g) . ". $s";
@@ -170,7 +170,7 @@ has 'blat_databases' => (
         # Discover available BLAT databases
 	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
 	foreach my $version (@versions) {
-	    my @species = grep { -d "$base_dir/$version/blat/$_" } read_dir("$base_dir/$version/blat");
+	    my @species = grep { -d "$base_dir/$version/blat/$_" } read_dir("$base_dir/$version/blat") if (-e "$base_dir/$version/blat");
 	    foreach my $species (@species) {
 		my ($g,$s)   = split('_',$species);
 		my $symbolic = uc($g) . ". $s";
@@ -894,7 +894,7 @@ sub process_result_file {
 	
 	    my $result = $searchio->next_result;
 	    
-	    if (!$result && $search_type eq "blat"){    # Blat does not provide output when no hits
+	    if (!$result){    # Blat does not provide output when no hits
 		error("No hits were found!");
 	    } else {
 		my $hsp_counter = 0;
