@@ -390,7 +390,7 @@ sub type {
     my $self = shift;
     my $data = eval {$self->cds->[0]->Method};
     return { description => 'The type of the protein',
-	     data        =>  "$data" || 'None',
+	     data        =>  $data && "$data",
     }; 
 }
 
