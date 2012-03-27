@@ -448,9 +448,9 @@ DOMhelp.addEvent(document.getElementById('query_type_prot'),    'click',
 
 DOMhelp.addEvent(document.getElementById('blast_app'),          'change', updateAllOptions,    false); 
 
-DOMhelp.addEvent(document.getElementById('version'),          'click', updateAllOptions,    false); 
+DOMhelp.addEvent(document.getElementById('version'),          'change', updateAllOptions,    false); 
 
-DOMhelp.addEvent(document.getElementById('typeBox'),          'click', updateAllOptions,    false);
+DOMhelp.addEvent(document.getElementById('typeBox'),          'change', updateAllOptions,    false);
 
 // MS IE does not recognize change event on textarea if not done manually, using mouseout to supplement this
 DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
