@@ -41,10 +41,10 @@ has 'blast_databases' => (
         my $data;
 	my $base_dir = catfile($self->pre_compile->{base});
 	
-        # Discover available BLAST and BLAT databases
+        # Discover available BLAST databases
 	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
 	foreach my $version (@versions) {
-	    my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast");
+	    my @species = grep { -d "$base_dir/$version/blast/$_" } read_dir("$base_dir/$version/blast") if (-e "$base_dir/$version/blast");
 	    foreach my $species (@species) {
 		my ($g,$s)   = split('_',$species);
 		my $symbolic = uc($g) . ". $s";
@@ -53,15 +53,17 @@ has 'blast_databases' => (
 					$self->pre_compile->{blast},
 					$species);
 		if (-e "$blast_dir/genomic.fa") {
-		    push @{$data->{genomic}},{ name     => join('_',$version,$species,'genomic.fa'),
-					       symbolic => "$symbolic genome ($version)",
-					       location => catfile($blast_dir, $species, 'genomic.fa'),
+		    $data->{"$version"}{Genome}{"$species"} = {
+			name     => join('_',$version,$species,'genomic.fa'),
+			symbolic => "$symbolic genome ($version)",
+			location => catfile($blast_dir, $species, 'genomic.fa'),
 		    };
 		}
 		if (-e "$blast_dir/peptide.fa") {
-		    push @{$data->{protein}},{ name     => join('_',$version,$species,'peptide.fa'),
-					       symbolic => "$symbolic proteins ($version)",
-					       location => catfile($blast_dir, $species, 'peptide.fa'),
+		    $data->{"$version"}{Protein}{"$species"} = {
+			name     => join('_',$version,$species,'peptide.fa'),
+			symbolic => "$symbolic proteins ($version)",
+			location => catfile($blast_dir, $species, 'peptide.fa'),
 		    };
 		}
 		# These aren't actually genes but genomic clones. Removing for now.
@@ -72,9 +74,10 @@ has 'blast_databases' => (
 #		    };
 #		}
 		if (-e "$blast_dir/ests.fa") {
-		    push @{$data->{ests}},{ name     => join('_',$version,$species,'ests.fa'),
-					    symbolic => "$symbolic ($version) ESTs",
-					    location => catfile($blast_dir, 'ests.fa'),
+		    $data->{"$version"}{ESTs}{"$species"} = {
+			name     => join('_',$version,$species,'ests.fa'),
+			symbolic => "$symbolic ($version) ESTs",
+			location => catfile($blast_dir, 'ests.fa'),
 		    };
 		}
 	    }
@@ -154,6 +157,40 @@ has 'blast_databases' => (
     }
     );
 
+# A discoverable list of blat databases.
+has 'blat_databases' => (
+    is  => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        my $data;
+	my $base_dir = catfile($self->pre_compile->{base});
+	#my $count = "2008";
+
+        # Discover available BLAT databases
+	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
+	foreach my $version (@versions) {
+	    my @species = grep { -d "$base_dir/$version/blat/$_" } read_dir("$base_dir/$version/blat") if (-e "$base_dir/$version/blat");
+	    foreach my $species (@species) {
+		my ($g,$s)   = split('_',$species);
+		my $symbolic = uc($g) . ". $s";
+		my $blat_dir = catfile($self->pre_compile->{base}, $version, $self->pre_compile->{blat}, $species);
+		my $location = "$blat_dir/$species.$version.genomic.fa";
+		if(-e $location) {
+		    $data->{"$version"}{Genome}{"$species"} = {
+			name     => join('_',$version,$species),
+			#type     => "N", #will need to change this later if other search types are added
+			symbolic => "$symbolic ($version) [BLAT]",
+			location => $location,
+			#port     => $count++,
+		    };
+		}
+	    }
+	}
+	return $data;
+    }
+    );
+
 our %BLAST_APPLICATIONS = (
     blastn  => {query_type => "nucl", database_type => "nucl"},
     blastp  => {query_type => "prot", database_type => "prot"},
@@ -161,16 +198,16 @@ our %BLAST_APPLICATIONS = (
     tblastn => {query_type => "prot", database_type => "nucl"},
 );
 
-our %BLAT_DATABASES = (
-    elegans_genome       => {type => "N", port => "2008", location => "/"},
-    briggsae_genome   => {type => "N", port => "2009", location => "/"},
-    #brenneri_genome   => {type => "N", port => "2010", location => "/"},
-    #japonica_genome   => {type => "N", port => "2011", location => "/"},
-    #remanei_genome    => {type => "N", port => "2012", location => "/"},
-    #malayi_genome     => {type => "N", port => "2013", location => "/"},
-    #hapla_genome     => {type => "N", port => "2014", location => "/"},
-    #incognita_genome     => {type => "N", port => "2015", location => "/"}
-);
+# our %BLAT_DATABASES = (
+#     elegans_genome       => {type => "N", port => "2008", location => "/"},
+#     briggsae_genome   => {type => "N", port => "2009", location => "/"},
+#     #brenneri_genome   => {type => "N", port => "2010", location => "/"},
+#     #japonica_genome   => {type => "N", port => "2011", location => "/"},
+#     #remanei_genome    => {type => "N", port => "2012", location => "/"},
+#     #malayi_genome     => {type => "N", port => "2013", location => "/"},
+#     #hapla_genome     => {type => "N", port => "2014", location => "/"},
+#     #incognita_genome     => {type => "N", port => "2015", location => "/"}
+# );
 
 
 our %BLAST_FILTERS = ("filter" => "-F T",);
@@ -181,7 +218,11 @@ sub run {
     my ($query_file, $query_type, $result_file) = $self->process_input($param);
     return $self->display_results($param, $query_file, $query_type, $result_file);
 }
- 
+
+sub about_blat {
+  return undef;
+}
+
 sub error {
   return 0;
 
@@ -284,21 +325,29 @@ sub process_input {
     }
 
     elsif ($search_type eq "blat") {
-        if (!$BLAT_DATABASES{$database}) {
+	my @path_parts = split('_',$database);
+	my $species = $path_parts[1] . '_' . $path_parts[2];
+	my $version = $path_parts[0];
+	my $db_info;
+        unless ($db_info = $self->blat_databases->{$version}{Genome}{$species}) {
             error("Invalid BLAT database ($database)!");
         }
-        my $database_type     = $BLAT_DATABASES{$database}{type};
-        my $database_port     = $BLAT_DATABASES{$database}{port};
-        my $database_location = $BLAT_DATABASES{$database}{location};
+
+        #my $database_type     = $db_info{type};
+        #my $database_port     = $db_info->{port};
+        my $database_location = $db_info->{location};
+	my $blat_client = $self->pre_compile->{BLAT_CLIENT};
+	$blat_client = "/usr/local/wormbase/services/blat/bin/blat";
 
         #         if ($query_type ne $database_type) {
         #             error("Incompatible query($query_type)/database($database_type)");
         #         }
 
         # Currently only DNA searches are supported, if expanded adjust query and db types accordingly
-        $command_line =
-            $self->pre_compile->{BLAT_CLIENT}
-            . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
+	# see http://genome.ucsc.edu/goldenPath/help/blatSpec.html for param specs
+        $command_line = "$blat_client -out=blast -t=dna -q=dna $database_location $query_file $out_file >& $out_file.err ";
+#            $blat_client . qq[ -out=blast -t=dna -q=dna localhost $database_port $database_location $query_file $out_file >& $out_file.err];
+	    
     }
 
     else {
@@ -316,6 +365,7 @@ sub process_input {
         my @nr_err;
         
         foreach (@err) {
+	    warn($_, "\n");
             push @nr_err, $_ unless $seen{$_};
             $seen{$_}++;
         }    
@@ -647,7 +697,7 @@ sub result2html {
 
 sub make_links {
     my ($self,$hit) = @_;
-    
+    my $object;
     my ($id1,$id2,$id3,$discard) = split /\#/, $hit;
     # $id1 = 0;
     if ($id1){
@@ -703,29 +753,29 @@ sub make_links {
     }
     
     # wormpep
-    elsif ($hit =~ /\./i && $hit !~ /^yk/) {
-        $sequence_link = { class=>"sequence", id=>$hit, label=>$hit};
-        $gene_link = { class=>"gene", id=>$hit, label=>'[Gene Summary]'};
-        $protein_link = { class=>"protein", id=>$hit, label=>'[Protein Summary]'};
-	   
+    elsif ($object = $self->dsn->{acedb}->fetch('Transcript' => $hit) || $self->dsn->{acedb}->fetch('CDS' => $hit)) {
+	my $protein = $object->Corresponding_CDS ? $object->Corresponding_CDS->Corresponding_protein : $object->Corresponding_protein;
+	my $gene = $object->Corresponding_CDS ? $object->Corresponding_CDS->Gene : $object->Gene;
+	$sequence_link = $self->_pack_obj($object);
+	$gene_link = $self->_pack_obj($gene || undef, '[Gene Summary]');
+	$protein_link = $self->_pack_obj($protein || undef, '[Protein Summary]');
     }
     
     # est
-    else {
-        $sequence_link = { class=>"sequence", id=>$hit, label=>$hit};
-	
-        my ($object) = $self->dsn->{acedb}->fetch('Sequence' => $hit);
-        my ($corr_gene) = $object->Gene if $object;
-        if (!$corr_gene) {
-            my ($matching_cds) = $object->Matching_cds if $object;
-            ($corr_gene) = $matching_cds->Gene if $matching_cds;
-        }
-        my $corr_gene_name = $self->common_name($corr_gene) if $corr_gene;
-	
-        $corr_gene_link = { class=>"gene", id=>$corr_gene_name, label=>"[Corr. Gene: $corr_gene_name]"}	    
-	    if $corr_gene_name;
+    elsif($object = $self->dsn->{acedb}->fetch('Sequence' => $hit)){
+	$sequence_link = $self->_pack_obj($object);
+	my ($gene) = $object->Gene ? $object->Gene : $object->Matching_cds && $object->Matching_cds->Gene;
+	my $corr_gene_name = $gene && $self->_make_common_name($gene);
+	$corr_gene_link = $self->_pack_obj($gene || undef, $corr_gene_name && "[Corr. Gene: $corr_gene_name]");
     }
-    
+
+    elsif($object = $self->dsn->{acedb}->fetch('Protein' => $hit)){
+	$sequence_link = $self->_pack_obj($object);
+    }
+
+    else {
+	$sequence_link = {label => $hit} if !$sequence_link;
+    }
     return ($sequence_link, $gene_link, $protein_link, $corr_gene_link);
 }
 
@@ -844,132 +894,130 @@ sub process_result_file {
 	
 	    my $result = $searchio->next_result;
 	    
-	    if (!$result && $search_type eq "blat")
-	    {    # Blat does not provide output when no hits
+	    if (!$result){    # Blat does not provide output when no hits
 		error("No hits were found!");
-	    }
-	    
-	    my $hsp_counter = 0;
-	    
-	    $result->rewind;
-	    
-	    while (my $hit = $result->next_hit) {
+	    } else {
+		my $hsp_counter = 0;
 		
-		next
-		    if $hit->num_hsps < 1;  # Work-around, BLAT producing blank hits
+		$result->rewind;
 		
-		my @hsps_in_track;
-		my $clustered_plus_strand_hsps  = Bio::SeqFeature::Generic->new;
-		my $clustered_minus_strand_hsps = Bio::SeqFeature::Generic->new;
+		while (my $hit = $result->next_hit) {
+		    
+		    next
+			if $hit->num_hsps < 1;  # Work-around, BLAT producing blank hits
+		    
+		    my @hsps_in_track;
+		    my $clustered_plus_strand_hsps  = Bio::SeqFeature::Generic->new;
+		    my $clustered_minus_strand_hsps = Bio::SeqFeature::Generic->new;
 
-		my $name = $hit->name;
-		my ($formatted_name) = $name =~ /([^\/]+)$/;
+		    my $name = $hit->name;
+		    my ($formatted_name) = $name =~ /([^\/]+)$/;
 
-		if (length($formatted_name) > 20) {
-		    $formatted_name =~ s/^(.{16})(.*)/$1 .../;
-		}
-		$formatted_name = sprintf("%20s", $formatted_name);
-
-		my $description = $hit->description;
-		$description =~ s!^/!!;
-
-		my @formatted_parts;
-		foreach my $part (split(" /", $description)) {
-		    my ($key, $value) = split("=", $part);
-		    if ($key eq "id" or $key eq "tentative_id") {
-			push @formatted_parts, "/$key=$value";
+		    if (length($formatted_name) > 20) {
+			$formatted_name =~ s/^(.{16})(.*)/$1 .../;
 		    }
-		}
-		my $formatted_parts = join " ", @formatted_parts;
-		my $formatted_description =
-		  length($formatted_parts) < 96
-		  ? $formatted_parts
-		  : substr($formatted_parts, 0, 92) . " ...";
+		    $formatted_name = sprintf("%20s", $formatted_name);
 
-		# my $start = $hit->start;
-		# my $end = $hit->end;
+		    my $description = $hit->description;
+		    $description =~ s!^/!!;
 
-		my ($piece_refs_ref, $hit_genome_link, $hit_expand_link) =
-		  $self->extract_hit_info($hit, $query_name, $query_type);
-		push @piece_refs, @{$piece_refs_ref} if @{$piece_refs_ref};
+		    my @formatted_parts;
+		    foreach my $part (split(" /", $description)) {
+			my ($key, $value) = split("=", $part);
+			if ($key eq "id" or $key eq "tentative_id") {
+			    push @formatted_parts, "/$key=$value";
+			}
+		    }
+		    my $formatted_parts = join " ", @formatted_parts;
+		    my $formatted_description =
+		      length($formatted_parts) < 96
+		      ? $formatted_parts
+		      : substr($formatted_parts, 0, 92) . " ...";
 
-		$genome_links{$hit->name} = $hit_genome_link;
-		$expand_links{$hit->name} = $hit_expand_link;
+		    # my $start = $hit->start;
+		    # my $end = $hit->end;
 
-		$self->sort_hits($hit, $blast_app);    # Sort hits and add a cluster tag
+		    my ($piece_refs_ref, $hit_genome_link, $hit_expand_link) =
+		      $self->extract_hit_info($hit, $query_name, $query_type);
+		    push @piece_refs, @{$piece_refs_ref} if @{$piece_refs_ref};
 
-		my $hsp_count_per_hit = 0;
+		    $genome_links{$hit->name} = $hit_genome_link;
+		    $expand_links{$hit->name} = $hit_expand_link;
 
-		$hit->rewind;
-		while (my $hsp = $hit->next_hsp) {
-		    $hsp_counter++;
+		    $self->sort_hits($hit, $blast_app);    # Sort hits and add a cluster tag
 
-		    next if $hsp_count_per_hit > $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT};
-		    $hsp_count_per_hit++;
+		    my $hsp_count_per_hit = 0;
 
-		    my $hsp_strand =
-		      $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
+		    $hit->rewind;
+		    while (my $hsp = $hit->next_hsp) {
+			$hsp_counter++;
 
-		    $hsp_strand = $hsp->strand('hit')
-		      if $blast_app =~ /^tblastn/;    # Exception
-		    $hsp_strand = $hsp->strand('query')
-		      if $blast_app =~ /^blastx/;     # Exception
+			next if $hsp_count_per_hit > $self->pre_compile->{HSP_ALIGNMENT_IMAGE_LIMIT};
+			$hsp_count_per_hit++;
 
-		    my ($hsp_cluster) = $hsp->get_tag_values('cluster');
+			my $hsp_strand =
+			  $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-		    my $feature = Bio::SeqFeature::Generic->new(
-			-display_name => $hsp->hit->start . '..'
-			  . $hsp->hit->end,           # . '(' . $hsp->score . ')',
-			-score  => $hsp->bits,                      # $hsp->score,
-			-start  => $hsp->start,
-			-end    => $hsp->end,
-			-strand => $hsp_strand,
-			-tag    => {anchor => "anchor$hsp_counter"},
+			$hsp_strand = $hsp->strand('hit')
+			  if $blast_app =~ /^tblastn/;    # Exception
+			$hsp_strand = $hsp->strand('query')
+			  if $blast_app =~ /^blastx/;     # Exception
+
+			my ($hsp_cluster) = $hsp->get_tag_values('cluster');
+
+			my $feature = Bio::SeqFeature::Generic->new(
+			    -display_name => $hsp->hit->start . '..'
+			      . $hsp->hit->end,           # . '(' . $hsp->score . ')',
+			    -score  => $hsp->bits,                      # $hsp->score,
+			    -start  => $hsp->start,
+			    -end    => $hsp->end,
+			    -strand => $hsp_strand,
+			    -tag    => {anchor => "anchor$hsp_counter"},
+			);
+
+			if ($hsp_cluster && $hsp_strand eq '1') {
+			    $clustered_plus_strand_hsps->add_sub_SeqFeature(
+				$feature,
+				'EXPAND'
+			    );
+			    $clustered_plus_strand_hsps->score(
+				$clustered_plus_strand_hsps->score + $feature->score);
+			}
+			elsif ($hsp_cluster && $hsp_strand eq '-1') {
+			    $clustered_minus_strand_hsps->add_sub_SeqFeature(
+				$feature,
+				'EXPAND'
+			    );
+			    $clustered_minus_strand_hsps->score(
+				$clustered_minus_strand_hsps->score +
+				  $feature->score);
+			}
+			else {
+			    push @hsps_in_track, $feature;
+			}
+		    }
+
+		    my $track = $panel->add_track(
+			-glyph        => 'graded_segments',
+			-connector    => 'dashed',
+			-max_score    => 800,
+			-min_score    => 0,
+			-sort_order   => 'high_score',
+			-key          => "$formatted_name ",
+			-bgcolor      => 'blue',
+			-strand_arrow => 1,
+			-height       => 7,
+			-label        => 0,
+			-pad_bottom   => 3,
 		    );
 
-		    if ($hsp_cluster && $hsp_strand eq '1') {
-			$clustered_plus_strand_hsps->add_sub_SeqFeature(
-			    $feature,
-			    'EXPAND'
-			);
-			$clustered_plus_strand_hsps->score(
-			    $clustered_plus_strand_hsps->score + $feature->score);
-		    }
-		    elsif ($hsp_cluster && $hsp_strand eq '-1') {
-			$clustered_minus_strand_hsps->add_sub_SeqFeature(
-			    $feature,
-			    'EXPAND'
-			);
-			$clustered_minus_strand_hsps->score(
-			    $clustered_minus_strand_hsps->score +
-			      $feature->score);
-		    }
-		    else {
-			push @hsps_in_track, $feature;
-		    }
+		    $track->add_feature($clustered_plus_strand_hsps)
+		      if $clustered_plus_strand_hsps->start;
+		    $track->add_feature($clustered_minus_strand_hsps)
+		      if $clustered_minus_strand_hsps->start;
+		    $track->add_feature(@hsps_in_track) if @hsps_in_track;
 		}
-
-		my $track = $panel->add_track(
-		    -glyph        => 'graded_segments',
-		    -connector    => 'dashed',
-		    -max_score    => 800,
-		    -min_score    => 0,
-		    -sort_order   => 'high_score',
-		    -key          => "$formatted_name ",
-		    -bgcolor      => 'blue',
-		    -strand_arrow => 1,
-		    -height       => 7,
-		    -label        => 0,
-		    -pad_bottom   => 3,
-		);
-
-		$track->add_feature($clustered_plus_strand_hsps)
-		  if $clustered_plus_strand_hsps->start;
-		$track->add_feature($clustered_minus_strand_hsps)
-		  if $clustered_minus_strand_hsps->start;
-		$track->add_feature(@hsps_in_track) if @hsps_in_track;
 	    }
-	
       
 	# Write image to a temp file
 	my $temp_file = File::Temp->new(
@@ -1074,7 +1122,7 @@ sub extract_hit_info {
         $gbrowse_root_id = 'c_elegans';
     }
 
-    my $gbrowse_root = qq[$gbrowse_root_id/]
+    my $gbrowse_root = "$gbrowse_root_id/"
       if $gbrowse_root_id;
     my $expand_root =
       qq[$gbrowse_root_id/]
@@ -1099,25 +1147,16 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part = qq[add=]
-              . qq[${hit_name}+Hits+HSP($counter)+$hsp_start-$hsp_end];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
-
         }
 
-        $hit_genome_link =
-          $gbrowse_root . qq[?]
-          . join(";", qq[name=${hit_name}], @hsp_genome_link_parts)
-          if $gbrowse_root;
-        $hit_expand_link = $expand_root . qq[?]
-          . join(
-            ";",
-#             'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
-	    'width=450', qq[name=${hit_name}], @hsp_genome_link_parts
-          )
-          if $expand_root;
+	my $hit_ranges = qq[add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+
+        $hit_genome_link = $gbrowse_root . qq[?name=${hit_name};$hit_ranges] if $gbrowse_root;
+        $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
 
         my $piece_ref = {
             chr         => $chr,
@@ -1153,8 +1192,7 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part =
-              qq[add=] . qq[${chr}+Hits+HSP($counter)+$hsp_start..$hsp_end];
+            my $hsp_genome_link_part = qq[$hsp_start..$hsp_end];
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
@@ -1177,6 +1215,8 @@ sub extract_hit_info {
 
         }
 
+	my $hit_ranges = qq[add=${chr}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+
         my $view_start;
         my $view_end;
 
@@ -1190,22 +1230,8 @@ sub extract_hit_info {
             $view_end   = $top_hsp_end - 3000;
         }
 
-        $hit_genome_link = $gbrowse_root . qq[?]
-          . join(
-            ";",
-            qq[name=${chr}:${view_start}..${view_end}],
-            @hsp_genome_link_parts
-          )
-          if $gbrowse_root;
-        $hit_expand_link = $expand_root . qq[?]
-          . join(
-            ";",
-#             'type=CG;width=450',
-	    'width=450',
-            qq[name=${hit_name}:${view_start}..${view_end}],
-            @hsp_genome_link_parts
-          )
-          if $expand_root;
+        $hit_genome_link = $gbrowse_root . qq[?name=${chr}:${view_start}..${view_end};$hit_ranges] if $gbrowse_root;
+        $hit_expand_link = $expand_root . qq[?] . join( ";", 'width=450', qq[name=${hit_name}:${view_start}..${view_end};$hit_ranges]) if $expand_root;
 
     }
 
@@ -1228,8 +1254,7 @@ sub extract_hit_info {
             my $hsp_strand =
               $hsp->strand('hit') ne $hsp->strand('query') ? -1 : 1;
 
-            my $hsp_genome_link_part = qq[add=]
-              . qq[${hit_name}+Hits+HSP($counter)+$hsp_start-$hsp_end];
+            my $hsp_genome_link_part = qq[$hsp_start-$hsp_end];
 
             push @hsp_genome_link_parts, $hsp_genome_link_part
               if @hsp_genome_link_parts < $self->pre_compile->{HSP_GENOME_LINK_PART_LIMIT};
@@ -1252,6 +1277,8 @@ sub extract_hit_info {
 
         }
 
+	my $hit_ranges = qq[add=${hit_name}+Hits+Hits+] . join(',', @hsp_genome_link_parts);
+
         my $view_start;
         my $view_end;
 
@@ -1265,20 +1292,8 @@ sub extract_hit_info {
             $view_end   = $top_hsp_end - 3000;
         }
 
-        $hit_genome_link = $gbrowse_root . qq[?]
-          . join(
-            ";",
-            qq[name=${hit_name}:${view_start}..${view_end}],
-            @hsp_genome_link_parts
-          )
-          if $gbrowse_root;
-        $hit_expand_link = $expand_root . qq[?]
-          . join(
-            ";",
-            'width=450', qq[name=${hit_name}], @hsp_genome_link_parts
-# 	    'type=CG;width=450', qq[name=${hit_name}], @hsp_genome_link_parts
-          )
-          if $expand_root;
+        $hit_genome_link = $gbrowse_root . qq[?name=${hit_name}:${view_start}..${view_end};$hit_ranges] if $gbrowse_root;
+        $hit_expand_link = $expand_root . qq[?] . join(";", 'width=450', qq[name=${hit_name};$hit_ranges]) if $expand_root;
 
     }
     return (\@piece_refs, $hit_genome_link, $hit_expand_link);

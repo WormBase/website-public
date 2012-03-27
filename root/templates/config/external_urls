@@ -130,6 +130,27 @@
 		search		= 'http://www.flybase.net/cgi-bin/annot/basic.pl?qtype=batch&qpage=queryresults&format=detail&datatype=annotation&qid=%s'
 	}
 
+	gazette = {
+		description	= 'The Worm Breeder\'s Gazette'
+		maintainer	= 'help@wormbook.org'
+		base		= 'http://www.wormbook.org/wbg/'
+	}
+
+	gbrowse = {
+		description  = 'The WormBase Genome Browser Image'
+		maintainer   = ''
+		base = 'http://beta.wormbase.org/tools/genome/gbrowse/'
+		search = '/tools/genome/gbrowse_img/%s'
+	}
+
+	gbrowse_image = {
+		description  = 'The WormBase Genome Browser Image'
+		maintainer   = ''
+		#base = '/tools/genome/gbrowse_img/' redirect to beta until local installation of gbrowse is set-up
+		base = 'http://beta.wormbase.org/tools/genome/gbrowse_img/'
+		search = '/tools/genome/gbrowse_img/%s'
+	}
+
 	geo = {
 		description	= 'Gene Expression Omnibus: a public functional genomics data repository supporting MIAME-compliant data submissions. Array- and sequence-based data are accepted. Tools are provided to help users query and download experiments and curated gene expression profiles.'
 		base		= 'http://www.ncbi.nlm.nih.gov/geo/'
@@ -370,9 +391,9 @@
 	}
 
 	wormatlas = {
-		description = 'A C. elegans database of behavioral and structural anatomy'
-		base = 'http://wormatlas.org/'
-		search = 'http://wormatlas.org/%s'
+		description	= 'A C. elegans database of behavioral and structural anatomy'
+		base		= 'http://wormatlas.org/'
+		search		= 'http://wormatlas.org/%s'
 	}
 
 	wormbook = {
@@ -381,12 +402,6 @@
 		base		= 'http://www.wormbook.org/'
 		search		= 'http://www.wormbook.org/db/misc/search.cgi?search_html=on;search_preprints=on;query=%s'
 	}
-
-    gazette = {
-        description = 'The Worm Breeder\'s Gazette'
-        maintainer  = 'help@wormbook.org'
-        base        = 'http://www.wormbook.org/wbg/'
-    }
 
 	wormpep = {
 		description	= 'WORMPEP is the C.elegans protein set'
@@ -416,16 +431,6 @@ $DOI             = 'http://dx.doi.org/';
                 base         = '/tools/genome/gbrowse/'
             search      = '/tools/genome/gbrowse/%s'   
              }
-
-   gbrowse_image 
-           = { description  = 'The WormBase Genome Browser Image'
-			      maintainer   = ''
-
-base = '/tools/genome/gbrowse_img/'
-search = '/tools/genome/gbrowse_img/%s'
-	#		      base         = '/gb2/gbrowse_img/'
-	#		      search      = '/gb2/gbrowse_img/%s'   
-			    }
 
         ensembl = { base = 'http://www.ensembl.org/Homo_sapiens/protview?peptide=%s' }
 
