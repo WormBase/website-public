@@ -1,4 +1,4 @@
-package WormBase::API::Service::aql_wql;
+package WormBase::API::Service::queries;
 
 use Moose;
 use namespace::autoclean -except => 'meta';
