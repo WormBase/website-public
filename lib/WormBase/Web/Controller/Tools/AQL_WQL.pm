@@ -20,6 +20,7 @@ sub run :Path('run') :Args(0) {
 
     unless ($params->{'ql-query'}) {
         $stash->{error} = 'No query. Please enter a query';
+        $stash->{template} = 'tools/aql_wql/index.tt2';
         $c->detach;
     }
 
