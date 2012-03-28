@@ -865,7 +865,7 @@ END;
   <br />
   <div class="ui-state-error ui-corner-all description">
     <p>
-    <span class="ui-state-error-text">&nbsp&nbsp&nbsp&nbsp[% c.stash.error %]</span>
+    <span class="ui-state-error-text">[% c.stash.error %]</span>
     </p>
   </div>
   [% END %]
