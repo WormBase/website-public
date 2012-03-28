@@ -30,7 +30,7 @@
             "$ln";
           END;
         ELSE;
-          data.label;
+          data.label || data;
         END;
       END;
    END;

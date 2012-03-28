@@ -859,6 +859,19 @@ END;
 END;
 %]
 
+
+[% MACRO error(message) BLOCK; %]
+  [% IF message %]
+  <div class="ui-state-error ui-corner-all description">
+    <p>
+    <span class="ui-state-error-text">&nbsp&nbsp&nbsp&nbsp[% message %]</span>
+    </p>
+  </div>
+  [% END %]
+[% END;
+%]
+
+
 [% MACRO wb_id_field BLOCK; 
    WRAPPER $field_block title="WormBase ID";
           fields.name.data.id;
@@ -1163,7 +1176,7 @@ END;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
-    IF object; tool_list.unshift('tree'); END;
+    IF object.name.data.id; tool_list.unshift('tree'); END;
 
 
     IF tool_list.size > 0; 

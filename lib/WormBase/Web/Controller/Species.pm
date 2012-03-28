@@ -130,7 +130,7 @@ sub object_report :Path("/species") Args(3) {
         name   => $name,
     }); # error handling?
 
-    if ($object == -1 ){
+    if ( !$object || $object == -1 ){
       $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1", 307);
       return;
     } else {
