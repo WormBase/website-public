@@ -1,4 +1,4 @@
-package WormBase::Web::Controller::Tools::AQL_WQL;
+package WormBase::Web::Controller::Tools::Queries;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use parent 'WormBase::Web::Controller';
 
 sub index :Path Args(0) {
     my ($self, $c) = @_;
-    $c->stash->{template} = 'tools/aql_wql/index.tt2';
+    $c->stash->{template} = 'tools/queries/index.tt2';
 }
 
 sub run :Path('run') :Args(0) {
@@ -20,11 +20,11 @@ sub run :Path('run') :Args(0) {
 
     unless ($params->{'ql-query'}) {
         $stash->{error} = 'No query. Please enter a query';
-        $stash->{template} = 'tools/aql_wql/index.tt2';
+        $stash->{template} = 'tools/queries/index.tt2';
         $c->detach;
     }
 
-    my $qlserv = $c->model('WormBaseAPI')->_tools->{aql_wql};
+    my $qlserv = $c->model('WormBaseAPI')->_tools->{queries};
     my ($data, $error) = $params->{'query-type'} eq 'AQL'
              ? $qlserv->aql($c, $params->{'ql-query'})
              : $qlserv->wql($c, $params->{'ql-query'},
@@ -36,7 +36,7 @@ sub run :Path('run') :Args(0) {
             $stash->{titles} = \@titles;
             $qlserv->objs2pack($data);
         }
-        $stash->{template} = 'tools/aql_wql/index.tt2';
+        $stash->{template} = 'tools/queries/index.tt2';
         $stash->{data} = $data;
     }
     else {
