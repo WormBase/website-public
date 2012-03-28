@@ -9,6 +9,8 @@ sub index :Path :Args(0) {
     my ($self, $c) = @_;
     $c->stash->{template} = "tools/report.tt2";
     $c->stash->{section}  = "tools";
+    # get static widgets / layout info for this page
+    $self->_setup_page($c);
 }
 
 sub support :Path('support') :Args(0) {
