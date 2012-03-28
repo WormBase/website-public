@@ -1123,7 +1123,7 @@ sub _issue_email{
           to      => $c->config->{issue_email},
           cc => $bcc,
           "reply-to" => $bcc,
-          from    => $c->config->{issue_email},
+          from    => $c->config->{no_reply},
           subject => $subject, 
         ],
           template => "feed/issue_email.tt2",
