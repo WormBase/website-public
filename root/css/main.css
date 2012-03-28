@@ -1269,6 +1269,10 @@ div#error-box {
     font-size:1.0em;
 }
 
+div.ui-state-error.description {
+  padding:0 1em;
+}
+
 
 /* This is the ACTUAL error message */
 /* root/templates/status/404.tt2 */
