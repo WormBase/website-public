@@ -10,32 +10,8 @@
 
   '<div class="description">';
    WRAPPER $field_block title="Genotype";
-       # fields.genotype.data;
-       # Instead, let's mark up the genotype string.
-
-       genotype=fields.genotype.data;
-       linking=[fields.genes.data,
-		fields.alleles.data,
-		fields.rearrangements.data,
-	        fields.clones.data,
-	        fields.transgenes.data];
-
-       FOREACH array IN linking;           
-      	   FOREACH entry IN array;
-	       IF genotype.match(entry.label);
-	           genotype=genotype.replace(entry.label,tag2link(entry));
-	       END;
-           END;
-       END;
-    
-       genotype;
-   
+       tags2link(fields.genotype.data, ' ', '');
     END;
-
-%]
-
-
-[% 
 
    WRAPPER $field_block title="Reference strain" key="reference_strain";
         tag2link(fields.reference_strain.data);

@@ -1216,6 +1216,8 @@ var Scrolling = (function(){
   }
   
   function sidebarMove() {
+      if(!sidebar)
+        return;
       if(sidebar.offset()){
         var objSmallerThanWindow = sidebar.outerHeight() < ($window.height() - system_message),
             scrollTop = $window.scrollTop(),
