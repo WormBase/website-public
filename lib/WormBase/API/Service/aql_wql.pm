@@ -8,25 +8,25 @@ with 'WormBase::API::Role::Object';
 # TODO: error trap on malformed queries
 
 sub aql {
-    my ($self, $query) = @_;
+    my ($self, $c, $query) = @_;
     my $dbh = $self->dsn->{acedb}->dbh;
-
-    return [ $dbh->aql($query) ];
+    my @rows = $dbh->aql($query);
+    return (\@rows, $dbh->error);
 }
 
 # params: query, [return all instead of iter?]
 sub wql {
-    my ($self, $query, $ret_all) = @_;
+    my ($self, $c, $query, $ret_all) = @_;
     my $dbh = $self->dsn->{acedb}->dbh;
     # TODO: error trap on dbh
 
     if ($ret_all) {
         return [$dbh->fetch(-query => $query)];
     }
-
+    my $api = $c->model('WormBaseAPI');
     my $it = $dbh->fetch_many(-query => $query); # count, offset, total ?
 
-    return { next => sub { return $self->_pack_obj($it->next) } };
+    return { next => sub { my $i = $it->next; return $api->xapian->_get_tag_info($c, "$i", $i->class, 1) if $i } };
 }
 
 sub objs2text {
