@@ -922,8 +922,10 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth))){
         sColumns ? columns(100, 100) : readHash();
+        if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
+      }
       if ((maxWidth > 1000) && 
           wHolder.children(".sortable").hasClass("table-columns") && 
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
