@@ -10,7 +10,6 @@ sub index :Path Args(0) {
 
     my $api = $c->model('WormBaseAPI')->_tools->{blast_blat};
     $c->stash->{blast_databases} = $api->blast_databases;
-    $c->stash->{blat_databases} = $api->blat_databases;
 }
 
 

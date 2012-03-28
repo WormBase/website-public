@@ -89,64 +89,51 @@
 
    <select id="version" name="version">
 [%
-      FOREACH data IN ['blast_databases', 'blat_databases'];
-	FOREACH version IN c.stash.$data.keys.sort;
-	  '<option dataType="' _ data _ '" value="' _ version _'"'; IF loop.last; ' selected="1" '; END; '>' _ version _ '</option>';
-	END;
-      END;
+    FOREACH version IN c.stash.blast_databases.keys.sort;
+      '<option value="' _ version _'"'; IF loop.last; ' selected="1" '; END; '>' _ version _ '</option>';
+    END;
 %]
    </select>
 
    <select id="typeBox" name="typeBox">
 [%
-      FOREACH data IN ['blast_databases', 'blat_databases'];
-	FOREACH version IN c.stash.$data.keys.sort;
-	  FOREACH database_type IN c.stash.$data.$version.keys.sort;
-	    IF database_type == "Protein";
-		queryType = "prot";
-	    ELSE;
-		queryType = "nucl";
-	    END;
-	    '<option version="' _ version _ '" nucl_prot="' _ queryType _ '" dataType="' _ data _ '" value="' _ database_type _'">' _ database_type _ '</option>';
-	  END;
+    FOREACH version IN c.stash.blast_databases.keys.sort;
+      FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
+	IF database_type == "Protein";
+	    queryType = "prot";
+	ELSE;
+	    queryType = "nucl";
 	END;
+	'<option version="' _ version _ '" nucl_prot="' _ queryType _ '" value="' _ database_type _'">' _ database_type _ '</option>';
       END;
+    END;
 %]
    </select>
 
    <select id="database" name="database">
 [%
-      FOREACH data IN ['blast_databases', 'blat_databases'];
-	FOREACH version IN c.stash.$data.keys.sort;
-	  FOREACH database_type IN c.stash.$data.$version.keys.sort;
-	    FOREACH specieskey IN c.stash.$data.$version.$database_type.keys.sort;
-	      species = c.stash.$data.$version.$database_type.$specieskey;
-	      SWITCH database_type;
-		CASE "Genome";
-		    IF data == "blast_databases";
-		      IF species.name.match('c_elegans');
-			'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		      ELSE;
-			'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		      END;
-		    ELSIF data == "blat_databases";
-		      IF species.name.match('c_elegans');
-			'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		      ELSE;
-			'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		      END;
-		    END;
-		CASE "Protein";
-		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		CASE "genes";
-		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
-		CASE "ESTs";
-		  '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+    FOREACH version IN c.stash.blast_databases.keys.sort;
+      FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
+	FOREACH specieskey IN c.stash.blast_databases.$version.$database_type.keys.sort;
+	  species = c.stash.blast_databases.$version.$database_type.$specieskey;
+	  SWITCH database_type;
+	    CASE "Genome";
+	      IF species.name.match('c_elegans');
+		'<option selected="1" type="' _ database_type _ '" value="' _ species.name _ '_genome" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	      ELSE;
+		'<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	      END;
-	    END;
+	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blat" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	    CASE "Protein";
+	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="prot:blastp nucl:blastx" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	    CASE "genes";
+	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
+	    CASE "ESTs";
+	      '<option type="' _ database_type _ '" value="' _ species.name _ '" query-app="nucl:blastn prot:tblastn" version="' _ version _ '">' _ species.symbolic _ '</option>';
 	  END;
 	END;
       END;
+    END;
 %]
     </select>
 
@@ -162,7 +149,7 @@
 
     <div class="to_right">    
     <input type="submit" name="submit" value="Submit"/>
-    <input type="reset" id="reset" name="reset" value="Reset"/>
+    <input type="button" id="reset" name="reset" value="Reset"/>
     </div>
    
 </div>
