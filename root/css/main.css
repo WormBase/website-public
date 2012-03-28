@@ -1785,9 +1785,22 @@ div.columns div.ui-icon-close{
 div.columns ul div input#layout-input {
   width:100%;
   color: #999999;
-/*   font-size: 0.75em; */
   margin:0;
   padding:0;
+}
+
+div.columns ul li.multCol div#msg {
+  display:none;
+}
+
+div#column-dropdown ul li.multCol.ui-state-disabled div#msg {
+  display:block;
+  float:right;
+  font-size:0.8em;
+}
+
+div#column-dropdown ul li.ui-state-disabled:hover {
+  background:white;
 }
 
 /* END Formatting for column selection dropdown */
