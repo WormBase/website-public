@@ -5,7 +5,6 @@
 
 // Store dynamic options at load time
 var blastAppClone          = makeCloneArray('blast_app');
-// var processQueryParamClone = makeCloneArray('process_query_param');
 var databaseClone          = makeCloneArray('database');
 var versionClone          = makeCloneArray('version');
 var typeClone          = makeCloneArray('typeBox');
@@ -15,8 +14,6 @@ var queryDetermineType     = 'toggle_switch'; // OR 'sequence_entry'
 
 function updateAllOptions() {
     updateBlastAppOptions();
-//     updateProcessQueryOptions();
-    updateVersionOptions();
     updateTypeOptions();
     updateDatabaseOptions();
     updateMessage();
@@ -51,62 +48,29 @@ function updateBlastAppOptions() {
 //     return 1;
 // }   
 
-function updateVersionOptions() {
-    var paramValues = getParamValues();
-    var queryType = paramValues[0];
-    var appType   = paramValues[1];
-    var queryApp  = paramValues[2];
-    var dataType  = paramValues[3];
-    
-    var copy = copyArray(versionClone);
-    var version = document.getElementById('version');
-    updateOneOption(copy, version, dataType, 'dataType');
-    
-    if(version.options.length == 1){
-	version.disabled = true;
-    } else {
-	version.disabled = false;
-    }
-    
-    return 1;
-}
-
 function updateTypeOptions() {
     var paramValues = getParamValues();
     var queryType = paramValues[0];
-    var appType   = paramValues[1];
-    var queryApp  = paramValues[2];
-    var dataType  = paramValues[3];
-    var version   = paramValues[4];
-    var type      = paramValues[5];
-    var dbType = paramValues[6];
+    var version   = paramValues[3];
+    var dbType    = paramValues[5];
 
     var copy = copyArray(typeClone);
     var typeBox = document.getElementById('typeBox');
-    updateOneOption(copy, typeBox, dataType, 'dataType');
-    copy = copyArray(typeBox);
     updateOneOption(copy, typeBox, version, 'version');
     copy = copyArray(typeBox);
     updateOneOption(copy, typeBox, dbType, 'nucl_prot');
     
     if (!typeBox.options.length) {
 	var text;
-	if(queryType == "prot"){
-	    text = 'Protein';
-	} else {
-	    text = 'Genome/ESTs';
-	}
+	if(queryType == "prot"){ text = 'Protein'; }
+	else { text = 'Genome/ESTs'; }
 	var newOption = new Option(text, 'not_selected', 0, 0);
 	newOption.selected = true;
-        
         typeBox.options[0] = newOption;
     }
     
-    if(typeBox.options.length == 1){
-	typeBox.disabled = true;
-    } else {
-	typeBox.disabled = false;
-    }
+    if(typeBox.options.length == 1){ typeBox.disabled = true; }
+    else { typeBox.disabled = false; }
     
     return 1;
 }
@@ -117,9 +81,7 @@ function updateDatabaseOptions() {
     var appType   = paramValues[1];
     var queryApp  = paramValues[2];
     var version   = paramValues[3];
-    var dataType  = paramValues[3];
-    var version   = paramValues[4];
-    var type      = paramValues[5];
+    var type      = paramValues[4];
 
     var copy = copyArray(databaseClone);
     var database = document.getElementById('database');
@@ -134,12 +96,6 @@ function updateDatabaseOptions() {
         newOption.selected = true;
         
         database.options[0] = newOption;
-    }
-    
-    if(database.options.length == 1){
-	database.disabled = true;
-    } else {
-	database.disabled = false;
     }
     
     return 1;
@@ -211,27 +167,18 @@ function updateOneOption(cloneArray, parentElement, optionCriterion, criterion) 
 }
 
 function resetAllOptions() {
-    var blastAppCopy          = copyArray(blastAppClone);
-//    var processQueryParamCopy = copyArray(processQueryParamClone);
-    var databaseCopy          = copyArray(databaseClone);
+    var blastAppCopy = copyArray(blastAppClone);
 
-    var blastApp          = document.getElementById('blast_app');
-//    var processQueryParam = document.getElementById('process_query_param');
-    var database          = document.getElementById('database');
+    document.getElementById('query_sequence').value = '';
+    document.getElementById('search_type_blast').checked = 1;
+    document.getElementById('search_type_blat').checked = 0;
+    document.getElementById('query_type_prot').checked = 1;
+    document.getElementById('query_type_nucl').checked = 0;
     
-    var queryType;
-    var appType;
-    var queryApp;
-    var version;
+    var blastApp = document.getElementById('blast_app');
 
-    updateOneOption(blastAppCopy,          blastApp,          queryType, 'query');
-//    updateOneOption(processQueryParamCopy, processQueryParam, queryType, 'query');
-    updateOneOption(databaseCopy, database, version, 'version');
-    databaseCopy = copyArray(database);
-    updateOneOption(databaseCopy, database, queryApp, 'query-app');
-    
-    document.getElementById("message").innerHTML = "Please enter a query sequence ...";
-
+    updateOneOption(blastAppCopy, blastApp, "prot", 'query');
+    updateAllOptions();
     return 1;
 }   
 
@@ -282,7 +229,7 @@ function getParamValues() {
     }    
     else if (document.getElementById('query_type_prot').checked) {
         queryType = 'prot';
-    }    
+    }
 
     if (queryType == 'nucl') {
         document.getElementById('query_type_prot').checked = 0;
@@ -299,17 +246,15 @@ function getParamValues() {
     if (searchTypeBlast) {
         appType = blastApp.options[blastApp.selectedIndex].value;
 	dbType = blastApp.options[blastApp.selectedIndex].getAttribute('db');
-	dataType= "blast_databases";
     }
     else if (searchTypeBlat) {
         appType = "blat";
-	dataType= "blat_databases";
 	dbType = queryType;
     }
     
     var queryApp = (queryType && appType) ? queryType + ":" + appType
                                         : null;
-    return new Array(queryType, appType, queryApp, dataType, version, searchType, dbType);
+    return new Array(queryType, appType, queryApp, version, searchType, dbType);
 }
 
 function typeSequence(sequence) {
@@ -346,7 +291,6 @@ function makeCloneArray(id) {
         var optionApp   = parentElement.options[i].getAttribute('query-app');
         var optionVer   = parentElement.options[i].getAttribute('version');
         var optionType  = parentElement.options[i].getAttribute('type');
-        var optionData  = parentElement.options[i].getAttribute('dataType');
         var optionNuPro = parentElement.options[i].getAttribute('nucl_prot');
 	
         var newOption = new Option(optionText, optionValue, 0, 0);
@@ -354,8 +298,7 @@ function makeCloneArray(id) {
         newOption.setAttribute('db',        optionDb);
         newOption.setAttribute('query-app', optionApp);
         newOption.setAttribute('version',   optionVer);
-        newOption.setAttribute('type',      optionType);
-        newOption.setAttribute('dataType',  optionData);	
+        newOption.setAttribute('type',      optionType);	
         newOption.setAttribute('nucl_prot', optionNuPro);
 	
         cloneArray.push(newOption);
@@ -375,7 +318,6 @@ function copyArray(array) {
         var optionApp   = array[i].getAttribute('query-app');
         var optionVer   = array[i].getAttribute('version');
         var optionType  = array[i].getAttribute('type');
-        var optionData  = array[i].getAttribute('dataType');
         var optionNuPro = array[i].getAttribute('nucl_prot');
 	
         var newOption = new Option(optionText, optionValue, 0, 0);
@@ -384,7 +326,6 @@ function copyArray(array) {
         newOption.setAttribute('query-app', optionApp);
         newOption.setAttribute('version',   optionVer);
         newOption.setAttribute('type',      optionType);
-        newOption.setAttribute('dataType',  optionData);
         newOption.setAttribute('nucl_prot', optionNuPro);	
 	
         copyArray.push(newOption);
@@ -459,7 +400,7 @@ DOMhelp.addEvent(document.getElementById('sample_peptide'),     'click',
 DOMhelp.addEvent(document.getElementById('sample_nucleotide'),  'click',
                  function(){addSampleNucleotide(); queryDetermineType = 'sequence_entry'; updateAllOptions();},   false);
 
-DOMhelp.addEvent(document.forms[0], 'reset', resetAllOptions, false);
+DOMhelp.addEvent(document.getElementById('reset'), 'click', resetAllOptions, false);
 
 
 DOMhelp.addEvent(window, 'load',  updateAllOptions, false);
@@ -476,24 +417,6 @@ aatggacacgcggaacggacggcgaattccgactgattgatgcagaagcc \n\
 gtggcgagaaagtggggacaacggaaggcgaaaccgcatatgaattatga \n\
 taaactgtcgagagcgttacgatattattatgagaagaatattattaaga \n\
 aggtgatcggcaaaaagttcgtatatcgctttgtaactactgacgcccac \n\
-gctccgccgaccgccgacttttcctcaaatatgaacatgaagatgtgtta \n\
-tgtcaaagacgagaaggacattcgacacgagattccgtcgtttatgacgt \n\
-cattacaagcaccgccgccgccgcctccaccacctcaaaatccacgtggc \n\
-aacacggatttctcggcgctgagccttcttgggacggattcaccgacgac \n\
-gcacagtgtcagcacaccaagtccaacagatagtgtgtgctccccgtcaa \n\
-gcagtgtggcctcctcggcgactccatccacctcatcccctgtagatgag \n\
-tcccgacaatgccgaaaacgatccctatcgccctccacgacgtcatcgac \n\
-gactgcaccgccgccgccgccgcagccgccaacgaaaaaaggaatgaagc \n\
-cgaacccgctgaacctgacagcaacctcgaatttctccttacaaccgtca \n\
-atctcgtctccacttctgatgcttcagcaacaccatcaaaactccccgct \n\
-attccaagcacagatcagtcaactgtacacgtacgcagcgctggcgtctg \n\
-ccgggctttatggaccacaaatatcaccacatttggcgtcccagtcaccg \n\
-ttccgatcaccactggtaacaccgaaaaatttggggctcggcgagcttgg \n\
-cagcagtggtaggactcccggtcttggcgagagtcaggtgttccaattcc \n\
-cgccggtctccgcattccaggccacaaatccgctgctaaacacattctcc \n\
-aaccttatcagcccgatggccccgtttatgatgcccccatcacagtcgag \n\
-tacctcgttcaagttcccatcgtcaacggattctttaaaaacacctacag \n\
-tacccataaaaatgccaactttgtag                         \n\
 >FM864439                                          \n\
 tggcatttctacgggtgatgaggtggatggagtcgccgaggaggcacact \n\
 gcttgacggggagccacactatctgttggacttggtgtgctgacactgtg \n\
