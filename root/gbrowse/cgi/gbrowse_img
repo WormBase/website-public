@@ -6,6 +6,9 @@ eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
 eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
 # $Id: gbrowse_img,v 1.7 2009-08-31 19:46:38 lstein Exp $
 
 use strict;
@@ -108,7 +111,7 @@ sub run {
 	return;
     }
 
-    # $render->set_source() && exit;  # may cause a redirect and exit 
+    $render->set_source() && exit;  # may cause a redirect and exit 
     $render->init();
 
     if ($render->data_source->must_authenticate 
@@ -121,6 +124,9 @@ sub run {
 
     $render->add_user_tracks($render->data_source);
     $render->update_state();
+
+    # notice that there is no explicit flush() of the session/state, and therefore the
+    # changes to the session are not stored.
 
     warn join ' ',$render->potential_tracks if DEBUG;
 
