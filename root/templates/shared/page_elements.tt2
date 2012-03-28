@@ -860,11 +860,12 @@ END;
 %]
 
 
-[% MACRO error(message) BLOCK; %]
-  [% IF message %]
+[% MACRO error BLOCK; %]
+  [% IF c.stash.error %]
+  <br />
   <div class="ui-state-error ui-corner-all description">
     <p>
-    <span class="ui-state-error-text">&nbsp&nbsp&nbsp&nbsp[% message %]</span>
+    <span class="ui-state-error-text">&nbsp&nbsp&nbsp&nbsp[% c.stash.error %]</span>
     </p>
   </div>
   [% END %]
