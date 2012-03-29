@@ -547,7 +547,7 @@
         },
         error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
-          ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+          ajaxPanel.html('<div class="ui-state-error ui-corner-all description"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support">Let us know</a></p></div>');
           ajaxPanel.append(error.find(".error-message-technical").html());
         },
         complete:function(XMLHttpRequest, textStatus){
@@ -922,8 +922,10 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth))){
         sColumns ? columns(100, 100) : readHash();
+        if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
+      }
       if ((maxWidth > 1000) && 
           wHolder.children(".sortable").hasClass("table-columns") && 
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 

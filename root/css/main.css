@@ -521,10 +521,10 @@ div#splash-box{
   position:relative;
   background-image:url('/img/home.jpg');
   background-repeat:no-repeat;
-  padding:1.5em;
+  padding:35px;
   padding-left:2.5em;
   font-size:1.5em;
-  height:7em;
+  height:170px;
   z-index:6;
 }
 
@@ -539,8 +539,8 @@ div#tutorial-left{
   width:695px;
   height:225px;
   position:absolute;
-  left:1em;
-  top:0.5em;
+  left:20px;
+  top:10px;
   z-index:-1;
 }
 
@@ -548,11 +548,11 @@ div#tutorial-right{
   background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
   position:absolute;
-  right:1.5em;
-  top:0.5em;
+  right:30px;
+  top:10px;
   background-repeat:no-repeat;
   width:229px;
-  height:9em;
+  height:216px;
   z-index:-1;
 }
 
@@ -564,7 +564,7 @@ div.star-tutorial{
   height:110px;
   width:170px;
   position:absolute;
-  right:59px;
+  right:52px;
   bottom:16px;
   cursor:pointer;
 }
@@ -1269,6 +1269,10 @@ div#error-box {
     font-size:1.0em;
 }
 
+div.ui-state-error.description {
+  padding:0 1em;
+}
+
 
 /* This is the ACTUAL error message */
 /* root/templates/status/404.tt2 */
@@ -1785,9 +1789,22 @@ div.columns div.ui-icon-close{
 div.columns ul div input#layout-input {
   width:100%;
   color: #999999;
-/*   font-size: 0.75em; */
   margin:0;
   padding:0;
+}
+
+div.columns ul li.multCol div#msg {
+  display:none;
+}
+
+div#column-dropdown ul li.multCol.ui-state-disabled div#msg {
+  display:block;
+  float:right;
+  font-size:0.8em;
+}
+
+div#column-dropdown ul li.ui-state-disabled:hover {
+  background:white;
 }
 
 /* END Formatting for column selection dropdown */
