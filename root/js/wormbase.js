@@ -85,14 +85,14 @@
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
           if(timer){
-            navItem.siblings("li").children("ul.dropdown").hide();
+            navItem.siblings("li").children("ul.wb-dropdown").hide();
             navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("ul.dropdown").find("a").removeClass("hover");
-            navItem.children("ul.dropdown").find("ul.dropdown").hide();
+            navItem.children("ul.wb-dropdown").find("a").removeClass("hover");
+            navItem.children("ul.wb-dropdown").find("ul.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
-          navItem.children("ul.dropdown").show();
+          navItem.children("ul.wb-dropdown").show();
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
@@ -101,7 +101,7 @@
             timer = undefined;
           }
           timer = setTimeout(function() {
-                toHide.children("ul.dropdown").hide();
+                toHide.children("ul.wb-dropdown").hide();
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
@@ -169,7 +169,7 @@
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
-            $jq("#nav-bar").find("ul.dropdown").hide();
+            $jq("#nav-bar").find("ul.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
@@ -547,7 +547,7 @@
         },
         error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
-          ajaxPanel.html('<div class="ui-state-error ui-corner-all description"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support">Let us know</a></p></div>');
+          ajaxPanel.html('<div class="ui-state-error ui-corner-all description"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support?url=' + location.pathname + '">Let us know</a></p></div>');
           ajaxPanel.append(error.find(".error-message-technical").html());
         },
         complete:function(XMLHttpRequest, textStatus){
