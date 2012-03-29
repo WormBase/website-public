@@ -1,3 +1,81 @@
+[% IF (!species && (!type || type == 'all') && (query == '*')) %]
+
+      <div id="page-title" class="search-bg" style="margin:0;">
+      <h2>  
+
+   <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
+    <div id="searchBody" class="ui-corner-all">
+      <input class="text" id="Search" name="query" type="text" style="width:50%" placeholder="search..."> 
+
+
+      <ul id="searchSelect">
+        <li>
+          <span class="ui-icon ui-icon-triangle-1-s" style="float:right;margin-top:0.2em"></span>
+          <span>in </span><span class="current-species-search species">all species</span>
+          <ul>
+
+        [% FOREACH s IN c.config.sections.species_list.keys.sort %]
+          [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
+            <li value="[% s %]" onClick='WB.search_species_change("[% s %]");'><a class="species">[% c.config.sections.species_list.$s.title %]</a></option>
+          [% END %]
+        [% END %]
+          </ul>
+        </li>
+      </ul>
+
+
+      <ul id="searchSelect">
+        <li>
+          <span class="ui-icon ui-icon-triangle-1-s" style="float:right;margin-top:0.2em"></span>
+          <span class="current-search" style="float:right">for anything</span>
+          <ul>
+        [% FOREACH sec IN ['species', 'resources'] %]
+          [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
+              [% IF cls == 'title'; NEXT; END; %]
+              <li value="[% cls %]" onClick='WB.search_change("[% cls %]");'><a>[% c.config.sections.$sec.$cls.title %]</a></li>
+          [% END %]
+        [% END %]
+          </ul>
+        </li>
+      </ul>
+
+
+
+    </div>
+    <div class="searchIcon ui-corner-all" onclick="WB.search('SearchResult'); return false;">
+      <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
+    </div>
+  </form>
+
+<br style="clear:both" />
+
+      </h2>
+      </div>
+    <div style="height:25em; max-width:50em">
+
+<br /><br />
+<h3>Classes</h3>
+        [% FOREACH sec IN ['species', 'resources'] %]
+          [% FOREACH cls IN c.config.sections.$sec.keys.sort  %]
+              [% IF cls == 'title'; NEXT; END; %]
+              <a href="javascript:void(0)" onClick='WB.search_change("[% cls %]");' style="white-space:nowrap;">[% c.config.sections.$sec.$cls.title %]</a>&nbsp; &bull; &nbsp;
+          [% END %]
+        [% END %]
+
+<br /> <br />
+<h3>Species</h3>
+        [% FOREACH s IN c.config.sections.species_list.keys.sort %]
+          [% IF c.config.sections.species_list.$s.display_in_dropdown == 'yes' %]
+            <a class="species" href="javascript:void(0)" onClick='WB.search_species_change("[% s %]");' style="white-space:nowrap;">[% c.config.sections.species_list.$s.title %]</a>&nbsp; &bull; &nbsp;
+          [% END %]
+        [% END %]
+
+
+
+
+</div>
+  [% RETURN %]
+[% END %]
 
       <div id="page-title" class="search-bg">
       <h2>  
@@ -10,10 +88,11 @@
       <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
     </div>
   </form>
-
+<span id="search-more"><a href="[% c.uri_for("/search") %]">more options</a></span>
 <br style="clear:both" />
 
       </h2>
+
       </div>
 
 <div id="widgets">
