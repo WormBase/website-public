@@ -580,7 +580,7 @@ sub _anatomy_function {
 	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Not_involved;
-	push @data_pack, \{
+	push @data_pack, {
             af_data   => $self->_pack_obj($_),
             phenotype => $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),
