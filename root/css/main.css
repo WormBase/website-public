@@ -866,7 +866,7 @@ a#fade:hover {
   margin:0;
 }  
 
-#searchResultForm input.text{
+#searchResultForm input#SearchResult.text{
   width:97%;
   margin: 0;
 }
@@ -894,6 +894,11 @@ a#fade:hover {
   cursor:pointer;
 }
 
+#searchResultForm #searchSelect {
+  font-size:0.8em;
+  float:right;
+}
+
 #searchSelect {
   float:left;
   padding:0;
@@ -905,6 +910,14 @@ a#fade:hover {
   font-size:0.9em;
   position:relative;
   max-width:15em;
+  font-weight:normal;
+}
+
+#search-more{
+  font-weight:normal;
+  font-size:0.6em;
+  float:left;
+  margin-top:2em;
 }
 
 #searchSelect li:hover{
@@ -913,6 +926,10 @@ a#fade:hover {
 
 #searchSelect:hover {
   background:#C2D1DF;
+}
+
+#searchResultForm #searchSelect ul{
+  font-size:0.7em;
 }
 
 #searchSelect ul{
