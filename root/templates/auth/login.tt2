@@ -36,7 +36,7 @@
 <script> 
 [% IF reload || error_notice  %] 
    [% IF error_notice %]
-      alert("Login not successful!");
+      alert("Login not successful! [% error_notice %]");
       window.location = "/";
    [% ELSIF prompt_wbid %]
       opener.location.href="[% c.uri_for('/auth/wbid') %]?redirect=[% redirect %]";
