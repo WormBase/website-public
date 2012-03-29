@@ -162,9 +162,7 @@
 <div class="to_right">
 Documentation
 <hr>
-* The filter option preprocesses the sequence to facilitate the search.
-<br />For example, in a resulting hit protein alignment, you may notice that some amino acids are replaced by 'X's.
-<br /><br />
+* The filter option preprocesses the sequence to mask low-complexity regions<br /><br />
 <a href="[% c.uri_for('/tools', 'blast_blat', 'about_blat') %]" target="_blank">About the BLAT algorithm</a>.
 </div>
 
