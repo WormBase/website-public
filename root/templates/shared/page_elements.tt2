@@ -320,7 +320,7 @@ END;
       FOREACH o IN order; headers.push(columns.$o); END;
 
       # generate table
-      jquery_data_table_html(headers, local_data, "table_${key}_by", style, table_build, order);   
+      jquery_data_table_html(headers, local_data, "table_${key}_by" _ colorbox, style, table_build, order);   
 
     END; # END of MACRO
 %]
@@ -884,7 +884,7 @@ END;
    class = (ACE2WB_MAP.$class || class) FILTER lower;
    IF downloadable(class);
    WRAPPER $field_block title="Download";
-   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
    END;
   END;
 END;

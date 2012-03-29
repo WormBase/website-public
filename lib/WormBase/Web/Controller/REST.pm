@@ -699,7 +699,7 @@ sub widget_GET {
 
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
-
+    $c->stash->{colorbox} = $c->req->param('colorbox') if $c->req->param('colorbox');
 
     # references widget - no need for an object
     # only html
