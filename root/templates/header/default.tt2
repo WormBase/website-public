@@ -40,7 +40,7 @@
       <li><a href="/[% title %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% c.config.sections.$title.title %]</a>
-          <ul class="dropdown">
+          <ul class="wb-dropdown">
 
             [% IF (title == 'species') %]
            
@@ -55,7 +55,7 @@
             [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
 
             <li><a href="/[% title %]/[% option %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$option.title %]</a>
-              <ul class="dropdown">  
+              <ul class="wb-dropdown">  
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
               [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
