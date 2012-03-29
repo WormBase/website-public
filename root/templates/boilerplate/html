@@ -9,7 +9,7 @@
          : [% template.title or c.config.site_byline %]      
       [% END %]
     </title>
-
+<link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.min.css" rel="stylesheet" />
   </head>
