@@ -521,10 +521,10 @@ div#splash-box{
   position:relative;
   background-image:url('/img/home.jpg');
   background-repeat:no-repeat;
-  padding:1.5em;
+  padding:35px;
   padding-left:2.5em;
   font-size:1.5em;
-  height:7em;
+  height:170px;
   z-index:6;
 }
 
@@ -539,8 +539,8 @@ div#tutorial-left{
   width:695px;
   height:225px;
   position:absolute;
-  left:1em;
-  top:0.5em;
+  left:20px;
+  top:10px;
   z-index:-1;
 }
 
@@ -548,11 +548,11 @@ div#tutorial-right{
   background-image:url('/img/tutorial.png');
   background-repeat:no-repeat;
   position:absolute;
-  right:1.5em;
-  top:0.5em;
+  right:30px;
+  top:10px;
   background-repeat:no-repeat;
   width:229px;
-  height:9em;
+  height:216px;
   z-index:-1;
 }
 
@@ -564,7 +564,7 @@ div.star-tutorial{
   height:110px;
   width:170px;
   position:absolute;
-  right:59px;
+  right:52px;
   bottom:16px;
   cursor:pointer;
 }
