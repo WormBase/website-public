@@ -6,7 +6,7 @@ A:visited         { text-decoration: none;
                     color: #AA0088;
                     border:none;
                   }
-A:hover           { text-decoration: underline; 
+A:hover           { text-decoration: none; 
                     border:none;
                   }
 A.banner          { color  : #FFFFFF;
