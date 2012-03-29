@@ -67,8 +67,6 @@ function updateTypeOptions() {
 	var newOption = new Option(text, 'not_selected', 0, 0);
 	newOption.selected = true;
         typeBox.options[0] = newOption;
-    } else {
-	typeBox.options[typeBox.options.length - 1].selected = true;
     }
     
     if(typeBox.options.length == 1){ typeBox.disabled = true; }
