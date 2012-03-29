@@ -82,6 +82,8 @@
       class = (ACE2WB_MAP.$class || class) FILTER lower;
       IF site.external_urls.$class.defined; 
           external_link(class, text, id);
+      ELSIF id.match('CHROMOSOME');
+	  text;
        ELSE;
         url = get_url(class, id, taxonomy);
 
