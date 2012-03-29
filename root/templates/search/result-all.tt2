@@ -5,7 +5,7 @@
 
    <form method="post"  id="searchResultForm" action="" onsubmit="WB.search('SearchResult'); return false;">
     <div id="searchBody" class="ui-corner-all">
-      <input class="text" id="Search" name="query" type="text" style="width:50%" placeholder="search..."> 
+      <input class="text" id="SearchResult" name="query" type="text" style="width:50%" placeholder="search..."> 
 
 
       <ul id="searchSelect">
