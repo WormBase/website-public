@@ -98,7 +98,12 @@
    <select id="typeBox" name="typeBox">
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
-      FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
+      database_types = c.stash.blast_databases.$version.keys.sort;
+      IF c.stash.blast_databases.$version.Genome.defined;
+	database_types.unshift('Genome');
+	database_types = database_types.unique;
+      END;
+      FOREACH database_type IN database_types;
 	IF database_type == "Protein";
 	    queryType = "prot";
 	ELSE;
@@ -114,7 +119,12 @@
 [%
     FOREACH version IN c.stash.blast_databases.keys.sort;
       FOREACH database_type IN c.stash.blast_databases.$version.keys.sort;
-	FOREACH specieskey IN c.stash.blast_databases.$version.$database_type.keys.sort;
+	specieskeys = c.stash.blast_databases.$version.$database_type.keys.sort;
+	IF c.stash.blast_databases.$version.$database_type.c_elegans.defined;
+	  specieskeys.unshift('c_elegans');
+	  specieskeys = specieskeys.unique;
+	END;
+	FOREACH specieskey IN specieskeys;
 	  species = c.stash.blast_databases.$version.$database_type.$specieskey;
 	  SWITCH database_type;
 	    CASE "Genome";
