@@ -2,6 +2,9 @@
 
 . /lib/lsb/init-functions
 
+# Pull in our env file in production environments.
+source /usr/local/wormbase/website/production/wormbase.env
+
 # If the APP environment variable isn't set, 
 # assume we are running in production.
 if [ ! $APP ]; then
@@ -68,8 +71,40 @@ elif [ $APP == 'staging' ]; then
 # Used to override the location of the user database.
     export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
     
-fi
+# Caltech MUST be run as root since DNS points directly at it.
+elif [ $APP == 'caltech' ]; then
+    echo "   ---> APP is set to caltech"
+    export APP=production
+    export APP_ROOT=/usr/local/wormbase/website
+    export DAEMONIZE=true
+    export PORT=80
+    export WORKERS=10
+    export MAX_REQUESTS=500
 
+    # Configure our GBrowse App
+    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
+    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
+
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
+    export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
+    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
+    export PATH="/usr/local/wormbase/extlib/bin:$PATH"
+
+    # GBrowse ONLY production sites
+#    export MODULEBUILDRC="/usr/local/wormbase/extlib2/.modulebuildrc"
+#    export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib2"
+#    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
+#    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
+
+    
+# Set some configuration variables.
+    export WORMBASE_INSTALLATION_TYPE="production"
+    
+# Set my local configuration prefix so wormbase_staging.conf takes precedence.
+# Used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX="production"
+    
+fi
 
 # Fetch local defaults
 PIDDIR=/tmp
@@ -100,7 +135,7 @@ fi
 
 # Which starman are we running?
 STARMAN=`which starman`
-STARMAN_OPTS="-I$APPDIR/lib --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPDIR/wormbase.psgi"
+STARMAN_OPTS="-I$APPDIR/lib --errorlog $APPDIR/logs/starman_error.log --workers $WORKERS --pid $PIDFILE --port $PORT --max-request $MAX_REQUESTS --daemonize $APPDIR/wormbase.psgi"
 
 
 check_running() {
