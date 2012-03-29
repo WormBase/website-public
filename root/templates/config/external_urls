@@ -139,16 +139,15 @@
 	gbrowse = {
 		description  = 'The WormBase Genome Browser Image'
 		maintainer   = ''
-		base = 'http://beta.wormbase.org/tools/genome/gbrowse/'
-		search = '/tools/genome/gbrowse_img/%s'
+		base = c.uri_for('/tools', 'genome', 'gbrowse') _ '/'
+		search = c.uri_for('/tools', 'genome', 'gbrowse') _ '/%s'
 	}
 
 	gbrowse_image = {
 		description  = 'The WormBase Genome Browser Image'
 		maintainer   = ''
-		#base = '/tools/genome/gbrowse_img/' redirect to beta until local installation of gbrowse is set-up
-		base = 'http://beta.wormbase.org/tools/genome/gbrowse_img/'
-		search = '/tools/genome/gbrowse_img/%s'
+		base = c.uri_for('/tools', 'genome', 'gbrowse_img') _ '/'
+		search = c.uri_for('/tools', 'genome', 'gbrowse_img') _ '/%s'
 	}
 
 	geo = {
