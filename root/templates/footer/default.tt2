@@ -68,7 +68,7 @@
         <div class="footer-title">Data Freezes</div>
         <ul>
           <li>
-            <select id="data-freezes"> 
+            <select id="data-freezes" onchange="window.location.href = this.options[this.selectedIndex].value"> 
                 <option selected="selected" value="--">--</option> 
                 <option value="http://ws220.wormbase.org">WS220 (16 Dec 2010)</option> 
                 <option value="http://ws210.wormbase.org">WS210 (15 Jan 2010)</option> 
