@@ -75,7 +75,7 @@
       [% ELSE %]
         [% UNLESS c.req.action == 'me'; make_star(wbid); END %]
         <h4 class="ellipsis" onClick="WB.scrollToTop();return false;">
-          [% object ? tag2link(object.name.data) : title %]
+          [% object.name.data.id ? tag2link(object.name.data) : title %]
         </h4>
       [% END %]
     </div>
