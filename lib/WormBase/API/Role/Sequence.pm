@@ -728,8 +728,9 @@ sub source_clone {
     my ($self) = @_;
      
     my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
+    my @clones = $clone ? map {$self->_pack_obj($_)} $clone : undef;
     return { description => 'The Source clone of the sequence',
-	     data        => $clone ? map {$self->_pack_obj($_)} $clone : undef };
+	     data        =>  @clones ? \@clones : undef};
 }
 
 ############################################################
@@ -1180,10 +1181,10 @@ sub print_feature {
 			my $last = $ee;
 
 			push @rows, {   no=>$index++,
-							start=>$es,
-							end=>$ee,
-							ref_start=>$as,
-							ref_end=>=> $ae,
+							start=>$es && "$es",
+							end=>$ee && "$ee",
+							ref_start=>$as && "$as",
+							ref_end=>=> $ae && "$ae",
 						};
 		}
 		$hash{exons}={ rows=>\@rows, parent=>$parent, orientation=>$orientation} if @exons;
@@ -1197,11 +1198,15 @@ sub print_feature {
 			(my $label = $f) =~ s/(inverted|tandem)/$1 repeat/;
 			for my $i ($f->col) {
 				my @fields = $i->row;
+				my $start = $fields[0];
+				my $end = $fields[1];
+				my $score = $fields[2];
+				my $comment = $fields[3];
 				push @rows, {
-					start=>$fields[0],
-					end=>$fields[1],
-					score=>$fields[2],
-					comment=>=> $fields[3],
+					start=>$start && "$start",
+					end=>$end && "$end",
+					score=>$score && "$score",
+					comment=>=> $comment && "$comment",
 				};
 			}
 			$hash{features}={ rows=>\@rows, label =>$label} if @rows;

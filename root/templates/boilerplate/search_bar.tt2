@@ -2,10 +2,8 @@
    <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="WB.search(); return false;">
     [% val = "search..." %]
     [% IF query; val = query FILTER html; END; %]
-    <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
 
     <div id="searchBody">
-      <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
       <ul id="searchSelect">
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
@@ -17,6 +15,10 @@
           </ul>
         </li>
       </ul>
+      <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
+
     </div>
+    <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
+
   </form>
 

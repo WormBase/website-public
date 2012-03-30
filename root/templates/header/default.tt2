@@ -75,7 +75,7 @@
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
             <li>
               [% IF option == 'operator' %]
-                <a id="[% option %]" href="#"  
+                <a class="[% option %]" href="javascript:void(0)"  
                   [% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
                     rel="redirect" 
                   [%  END  %]

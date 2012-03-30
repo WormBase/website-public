@@ -10,7 +10,7 @@ my $bytes = shift;
 
 #die "Usage: $0 ram_limit_in_bytes\n" unless $bytes;
 
-# 500 MB limit for now
+# 500 MB limit for now, in bytes
 $bytes ||= '524288000';
 
 my $processes;
@@ -19,7 +19,6 @@ if (open ($processes, "/bin/ps -eo pid,rss,comm | grep starman | ")) {
 #if (open ($processes, "/bin/ps -o pid= -o vsz= -p `cat $ppid`|")) {
     my @memory_hogs;
     my %memory_hogs;
-
 
     while (<$processes>) {
 	chomp;
@@ -42,7 +41,7 @@ if (open ($processes, "/bin/ps -eo pid,rss,comm | grep starman | ")) {
 	print STDERR "HUPing memory hog $hog\n";
 #	kill 'HUP', $hog;
 	system("kill -9 $hog");
-	sleep 10;
+	sleep 10;	
     }
 } else {
     die "Can't get process list: $!\n";

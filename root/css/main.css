@@ -831,7 +831,7 @@ a#fade:hover {
 
 #searchBody {
   border-right:1px dotted gray;
-  float:right;
+  float:left;
   margin: 0.4em;
   position:relative;
   background:white;
@@ -855,7 +855,7 @@ a#fade:hover {
 }
 
 #searchForm input.text, #searchResultForm input.text{  
-  float:left;
+  float:right;
   width:8em;
   color: #565656;  
   border:none;
@@ -866,13 +866,9 @@ a#fade:hover {
   margin:0;
 }  
 
-#searchResultForm input#SearchResult.text{
-  width:97%;
-  margin: 0;
-}
 
 #searchForm input.ui-icon, #searchResultForm input.ui-icon{
-  float:right;
+  float:left;
   margin:0.3em 0.5em 0 0;
   padding:0;
   background-color:transparent;
@@ -900,7 +896,7 @@ a#fade:hover {
 }
 
 #searchSelect {
-  float:left;
+  float:right;
   padding:0;
   margin:0.2em 0.5em;
   list-style:none;
@@ -1286,7 +1282,7 @@ div#error-box {
     font-size:1.0em;
 }
 
-div.ui-state-error.description {
+div.ui-state-error {
   padding:0 1em;
 }
 
