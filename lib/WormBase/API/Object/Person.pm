@@ -845,7 +845,7 @@ sub allele_designation {
     my $self   = shift;
     my $object = $self->object;
     my $lab    = eval{$object->Laboratory};
-    my $allele_designation = ($lab) ? $lab->Allele_designation->name : undef;
+    my $allele_designation = ($lab && $lab->Allele_designation) ? $lab->Allele_designation->name : undef;
     my $data = { description => 'allele designation of the affiliated laboratory',
 		 data        => $allele_designation };
     return $data;
