@@ -820,6 +820,10 @@ a#fade:hover {
   background-color: #E9EEF2;
 }
 
+.search-bg #searchResultForm #SearchResult {
+  width:90%;
+  float:left;
+}
 
 /* The search bar form */
 #searchResultForm {
