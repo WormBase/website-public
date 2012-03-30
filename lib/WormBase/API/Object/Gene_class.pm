@@ -358,7 +358,7 @@ sub former_genes {
     my %data;
     foreach my $old_gene ($object->Old_member) {
 	my $gene = $old_gene->Other_name_for || $old_gene->Public_name_for;
-	
+	next unless $gene;
 	my $stashed = $self->_stash_former_member($gene,$old_gene,'reassigned to new class');
 	
 	my $species = $gene->Species;
@@ -452,7 +452,8 @@ sub reassigned_genes {
 ##############################
 sub _stash_former_member {
     my ($self,$gene,$old_gene,$reason) = @_;
-    
+    return unless $gene;
+
     my $sequence_name = $gene->Sequence_name;
     my $locus_name    = $gene->Public_name;
     my %data = ( species     => $self->_pack_obj($gene->Species),

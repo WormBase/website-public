@@ -1286,7 +1286,7 @@ div#error-box {
     font-size:1.0em;
 }
 
-div.ui-state-error.description {
+div.ui-state-error {
   padding:0 1em;
 }
 
