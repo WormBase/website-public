@@ -548,8 +548,8 @@
         },
         error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
-          ajaxPanel.html('<div class="ui-state-error ui-corner-all description"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support?url=' + location.pathname + '">Let us know</a></p></div>');
-          ajaxPanel.append(error.find(".error-message-technical").html());
+          ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support?url=' + location.pathname + '">Let us know</a></p></div>')
+                   .children().append('<p>' + error.find(".error-message-technical").html() + '</p>');
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
