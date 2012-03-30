@@ -1292,12 +1292,12 @@ sub predicted_units {
             #  undef $desc if $desc =~ /possible trans-splice site at \d+/;
             $desc ||= '&nbsp;';
             my ($start,$end)=$_->right->row;
-            push @rows, {   start=>$start,
-                            end=>$end,
+            push @rows, {   start=>$start && "$start",
+                            end=>$end && "$end",
                             name=>$self->_pack_obj($gene),
                             gene=>$locus ? $self->_pack_obj($locus) : '-',
                             predicted_type=>=> "$gene" || '?',
-                            comment=>$desc,
+                            comment=>$desc && "$desc",
                         };
         }
     }

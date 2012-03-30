@@ -9,7 +9,7 @@
       <ul id="searchSelect">
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
-          <span id="current-search" style="float:right">All</span>
+          <span class="current-search" style="float:right">All</span>
           <ul>
           [% FOREACH option IN c.config.search_dropdown.option %]
                   <li value="[%- option.id -%]" onClick='WB.search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
