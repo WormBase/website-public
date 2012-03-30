@@ -25,6 +25,7 @@
     var timer,
         notifyTimer,
         cur_search_type = 'all',
+        cur_search_species_type = '',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0;
     
@@ -668,7 +669,7 @@
 
     
     function search(box) {
-        if(!box){ box = "Search"; }else{ cur_search_type = 'all'; } 
+        if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
         var f = $jq("#" + box).attr("value");
         if(f == "search..." || !f){
           f = "*";
@@ -678,11 +679,12 @@
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
 
-        location.href = '/search/' + cur_search_type + '/' + f;
+        location.href = '/search/' + cur_search_type + '/' + f + (cur_search_species_type ? '?species=' + cur_search_species_type : '');
     }
 
-    function search_change(new_search, focus) {
-      if((!new_search) || (new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
+    function search_change(new_search) {
+      if(!new_search) { new_search = 'all';}
+      if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
       cur_search_type = new_search;
       if(new_search == "all"){
       new_search = "for anything";
@@ -694,7 +696,19 @@
         new_search = search_for + " " + new_search.replace(/[_]/, ' ');
       }
       
-      $jq("#current-search").text(new_search);
+      $jq(".current-search").text(new_search);
+    }
+    
+    
+    function search_species_change(new_search) {
+      cur_search_species_type = new_search;
+      if(new_search == "all"){
+      new_search = "all species";
+      }else{
+        new_search = new_search.charAt(0).toUpperCase() + new_search.slice(1);
+        new_search = new_search.replace(/[_]/, '. ');
+      }
+      $jq(".current-species-search").text(new_search);
     }
 
 
@@ -1925,6 +1939,7 @@ var Scrolling = (function(){
       resetPageLayout: Layout.resetPageLayout,
       search: search,
       search_change: search_change,
+      search_species_change: search_species_change,
       openid: openid,
       validate_fields: validate_fields,
       StaticWidgets: StaticWidgets,
