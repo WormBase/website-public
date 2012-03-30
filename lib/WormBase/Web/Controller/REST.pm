@@ -1122,7 +1122,7 @@ sub _issue_email{
         header => [
           to      => $c->config->{issue_email},
           cc => $bcc,
-          "reply-to" => $bcc,
+          "Reply-To" => "$bcc;" . $c->config->{issue_email},
           from    => $c->config->{no_reply},
           subject => $subject, 
         ],
