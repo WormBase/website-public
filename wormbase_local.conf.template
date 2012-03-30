@@ -30,7 +30,7 @@ google_api_key    = ABQIAAAAX6AZGEUlM28m4mzs0PsGkhRVfLFVmRFz44kSxZwC_XT2TLrxixTV
 enable_ssl        = 1
 
 # REQUIRED FOR PRODUCTION: Base URL
-#base = http://beta.wormbase.org/
+#base = http://www.wormbase.org/
 
 ######################################################
 #

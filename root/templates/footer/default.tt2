@@ -28,7 +28,7 @@
       <div class="footer-column">
         <div class="footer-title">Support</div>
         <ul>
-          <li><a href="/tools/operator">Chat</a></li>
+          <li class="operator"><a href="javascript:void(0)">Chat</a></li>
           <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
           <li><a href="mailto:help@wormbase.org">Email</a></li>
           <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
