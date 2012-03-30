@@ -570,7 +570,7 @@
           opBox.toggleClass("minimize");
         });
         
-        $jq('#operator').click(function() { 
+        $jq('.operator').click(function() { 
           if($jq(this).attr("rel")) {
             $jq.post("/rest/livechat?open=1",function() {
               location.href="/tools/operator";
