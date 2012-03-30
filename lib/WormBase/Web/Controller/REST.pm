@@ -985,7 +985,7 @@ sub widget_class_index_GET {
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
 
-    if($widget=~m/browse|basic_search|summary/){
+    if($widget=~m/browse|basic_search|summary|downloads/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
     }elsif($class eq 'all'){
       $c->stash->{template} = "species/$species/$widget.tt2";
@@ -1122,7 +1122,7 @@ sub _issue_email{
         header => [
           to      => $c->config->{issue_email},
           cc => $bcc,
-          "reply-to" => $bcc,
+          "Reply-To" => "$bcc;" . $c->config->{issue_email},
           from    => $c->config->{no_reply},
           subject => $subject, 
         ],
