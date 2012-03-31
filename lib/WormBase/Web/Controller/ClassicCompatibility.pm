@@ -1,8 +1,9 @@
 package WormBase::Web::Controller::ClassicCompatibility;
 
+use parent 'WormBase::Web::Controller';
+
 use strict;
 use warnings;
-use parent 'WormBase::Web::Controller';
 
 __PACKAGE__->config->{namespace} = 'db';
 
@@ -39,10 +40,13 @@ sub get :Local Args(0) {
 }
 
 
-# Capture other old URLs like /db/misc
+# Capture other old URLs like /db/misc, /db/gene, etc
 sub misc : LocalRegex('*') CaptureArgs(2) {
     my ($self, $c) = @_;
-    $c->stash->{template} = 'species/report.tt2';
+
+    $c->stash->{template} = 'shared/legacy.tt2';
+
+    $c->stash->{original_uri} = $c->req->uri;
 
     my $requested_class = $c->req->param('class');
     my $name            = $c->req->param('name');
@@ -78,17 +82,26 @@ sub misc : LocalRegex('*') CaptureArgs(2) {
             $object = $api->fetch({
                 class => $class,
                 name  => $name,
-            }) or die "Couldn't fetch an object: $!";
+				  }) or die "Couldn't fetch an object: $!"; 
         }
-
-        my $species = eval { $object->Species } || 'any';
-        $url = $c->uri_for('/species', $species, $normed_class, $name);
+	
+        my $species = eval { $object->{object}->Species } || 'any';
+	my ($g, $s) = $species =~ /(.).*[ _](.+)/o;
+	if ($g && $s) { $species = join('_',lc($g),$s); }
+	$c->stash->{request_object} = { id    => "$object",
+					class => $requested_class,
+					label => $c->uri_for('/species', $species, $normed_class, $name),
+					taxonomy => $species };
+	$c->stash->{new_uri} = $c->uri_for('/species', $species, $normed_class, $name);
+#        $url = $c->uri_for('/species', $species, $normed_class, $name);
     }
     else {                      # /report
-        $url = $c->uri_for('/resources', $normed_class, $name);
+	$c->stash->{new_uri} = $c->uri_for('/resources', $normed_class, $name);
+#        $url = $c->uri_for('/resources', $normed_class, $name);
     }
+    $c->forward('WormBase::Web::View::TT');
 
-    $c->res->redirect($url);
+    # $c->res->redirect($url);
 }
 
 
