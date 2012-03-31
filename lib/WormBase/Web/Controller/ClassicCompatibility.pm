@@ -88,7 +88,7 @@ sub misc : LocalRegex('*') CaptureArgs(2) {
         my $species = eval { $object->{object}->Species } || 'any';
 	my ($g, $s) = $species =~ /(.).*[ _](.+)/o;
 	if ($g && $s) { $species = join('_',lc($g),$s); }
-	$c->stash->{request_object} = { id    => "$object",
+	$c->stash->{request_object} = { id    => $name,
 					class => $requested_class,
 					label => $c->uri_for('/species', $species, $normed_class, $name),
 					taxonomy => $species };
