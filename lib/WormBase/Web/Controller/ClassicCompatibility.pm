@@ -92,13 +92,17 @@ sub misc : LocalRegex('*') CaptureArgs(2) {
 					class => $requested_class,
 					label => $c->uri_for('/species', $species, $normed_class, $name),
 					taxonomy => $species };
-	$c->stash->{new_uri} = $c->uri_for('/species', $species, $normed_class, $name);
-#        $url = $c->uri_for('/species', $species, $normed_class, $name);
+
+        $url = $c->uri_for('/species', $species, $normed_class, $name);
+	$c->res->status(301);
+	$c->res->redirect($url);
+
     }
     else {                      # /report
-	$c->stash->{new_uri} = $c->uri_for('/resources', $normed_class, $name);
-#        $url = $c->uri_for('/resources', $normed_class, $name);
+        $url = $c->uri_for('/resources', $normed_class, $name);
     }
+
+    $c->stash->{new_uri} = $url;
     $c->forward('WormBase::Web::View::TT');
 
     # $c->res->redirect($url);
