@@ -34,30 +34,13 @@ sub registered_users :Path("registered_users") {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'}='admin/registered_users.tt2';
-    my @array;
+    my @users;
     if($c->check_user_roles('admin')){
-#       my $iter=$c->model('Schema::User') ;
-#       while( my $user= $iter->next){
-# 	  my $hash = { username   => $user->username,
-# 		       email      => $user->valid_emails,
-# 		       id         => $user->user_id,
-# 	  };
-
-      my @users = $c->model('Schema::User')->search();
-      map { 
-        my @roles = $_->roles;
-        foreach my $role (@roles){
-          $_->{$role->role} = 1;
-        }
-      } @users;
-# 	  
-# 	  my @roles =$user->roles;
-# 	  
-# 	  map{$hash->{$_->role}=1;} @roles if(@roles);
-# 	  push @array,$hash;
-#       }
-#       
-      $c->stash->{users}=\@users;
+	foreach my $user ($c->model('Schema::User')->search()) {
+	    map { $user->{$_->role} = 1; } $user->roles;
+	    push @users, $user;
+	}
+	$c->stash->{users}= @users ? \@users : undef;
     }  
 } 
 

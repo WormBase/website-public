@@ -8,31 +8,32 @@
     [% 
       rows = [];
       FOREACH obj IN users;
-          admin = "<input type='checkbox' class='role-update' value='admin' id='" _ obj.id _ "'";
-          IF (obj.user_id == c.user.user_id); admin = admin _ " disabled=1 "; END;
-          admin = admin _ " />" ;
-      IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
+	row = {};
+	admin = "<input type='checkbox' class='role-update' value='admin' id='" _ obj.id _ "'";
+	IF (obj.user_id == c.user.user_id); admin = admin _ " disabled=1 "; END;
+	admin = admin _ " />" ;
+	IF obj.admin ; admin=admin.replace('id=','checked id='); END ;
 
-          curator = "<input type='checkbox' class='role-update' value='curator' id='" _ obj.id _ "' />" ;
-          IF obj.curator ;curator=curator.replace('id=','checked id=') ; END;
+	curator = "<input type='checkbox' class='role-update' value='curator' id='" _ obj.id _ "' />" ;
+	IF obj.curator ;curator=curator.replace('id=','checked id=') ; END;
 
-          operator = "<input type='checkbox' class='role-update' value='operator' id='" _ obj.id _ "' />" ;
-      IF obj.operator ; operator=operator.replace('id=','checked id='); END ;
+	operator = "<input type='checkbox' class='role-update' value='operator' id='" _ obj.id _ "' />" ;
+	IF obj.operator ; operator=operator.replace('id=','checked id='); END ;
 
-          editor = "<input type='checkbox' class='role-update' value='editor' id='" _ obj.id _ "' />" ;
-      IF obj.editor ; editor=editor.replace('id=','checked id='); END ;
+	editor = "<input type='checkbox' class='role-update' value='editor' id='" _ obj.id _ "' />" ;
+	IF obj.editor ; editor=editor.replace('id=','checked id='); END ;
 
-          active = "<input type='checkbox'  value='active' id='" _ obj.id _ "' disabled=1 />" ;
-      IF obj.active ; active=active.replace('id=','checked id='); END ;
+	active = "<input type='checkbox'  value='active' id='" _ obj.id _ "' disabled=1 />" ;
+	IF obj.active ; active=active.replace('id=','checked id='); END ;
 
-      obj.curator = curator;
-      obj.admin   = admin;
-      obj.operator = operator;
-      obj.editor = editor;
-      obj.activated = active;
-      obj.username = linkUser(obj);
-      obj.email = '<a href="mailto:' _ obj.primary_email.email _ '">' _ obj.primary_email.email _ '</a>';
-      rows.push(obj);
+	row.curator = curator;
+	row.admin   = admin;
+	row.operator = operator;
+	row.editor = editor;
+	row.activated = active;
+	row.username = linkUser(obj);
+	row.email = '<a href="mailto:' _ obj.primary_email.email _ '">' _ obj.primary_email.email _ '</a>';
+	rows.push(row);
       END 
     %]
 
