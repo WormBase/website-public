@@ -820,6 +820,10 @@ a#fade:hover {
   background-color: #E9EEF2;
 }
 
+.search-bg #searchResultForm #SearchResult {
+  width:90%;
+  float:left;
+}
 
 /* The search bar form */
 #searchResultForm {
@@ -1170,14 +1174,14 @@ div#header {
   border:none;
 }
 
-div#header h1 a, div#header h1 {
+div#header h1 a, div#header h1, div#header p a  {
   padding: 0.2em 0.2em 0.2em 0;
   margin:0;
   color:white;
   display:inline;
 }
 
-div#header h1:hover a{
+div#header h1:hover a, div#header p a:hover{
   color:#CCC;
 }
 
