@@ -7,6 +7,7 @@ use warnings;
 
 __PACKAGE__->config->{namespace} = 'db';
 
+
 =head1 NAME
 
 WormBase::Web::Controller::ClassicCompatibility - Compatibility Controller for WormBase
@@ -41,71 +42,39 @@ sub get :Local Args(0) {
 
 
 # Capture other old URLs like /db/misc, /db/gene, etc
-sub misc : LocalRegex('*') CaptureArgs(2) {
-    my ($self, $c) = @_;
-
+sub misc :Path('/db') :Args(2)  {
+    my ($self, $c, $type, $cls) = @_;
     $c->stash->{template} = 'shared/legacy.tt2';
 
-    $c->stash->{original_uri} = $c->req->uri;
-
-    my $requested_class = $c->req->param('class');
+    my $class = lc ($cls || $c->req->param('class'));
     my $name            = $c->req->param('name');
 
     my $api    = $c->model('WormBaseAPI');
-    my $ACE2WB = $api->modelmap->ACE2WB_MAP->{class};
-
-    # hack for locus (legacy):
-    $requested_class = 'Gene' if lc $requested_class eq 'locus';
-
-    # there may be input (perhaps external, hand-typed input or even automated
-    # input from a non-WB tool) which specifies a class in the incorrect casing
-    # but is otherwise legitimate (e.g. Go_term, which should be GO_term). this
-    # could be a problem in those kinds of input.
-    my $class = $ACE2WB->{$requested_class}
-             || $ACE2WB->{lc $requested_class} # canonical Ace class
-             or $c->detach('/soft_404');
-
-    my $normed_class = lc $class;
-
+    my $object = $api->fetch({ class => ucfirst $class, name => $name });
     my $url;
-    if (exists $c->config->{sections}->{species}->{$normed_class}) { # /species
-        # Fetch our external model
-        my $api = $c->model('WormBaseAPI');
 
-        my $object;
-
-        # Fetch a WormBase::API::Object::* object
-        if ($name eq '*' || $name eq 'all') {
-            $object = $api->instantiate_empty($class);
-        }
-        else {
-            $object = $api->fetch({
-                class => $class,
-                name  => $name,
-				  }) or die "Couldn't fetch an object: $!"; 
-        }
-	
-        my $species = eval { $object->{object}->Species } || 'any';
-	my ($g, $s) = $species =~ /(.).*[ _](.+)/o;
-	if ($g && $s) { $species = join('_',lc($g),$s); }
-	$c->stash->{request_object} = { id    => $name,
-					class => $requested_class,
-					label => $c->uri_for('/species', $species, $normed_class, $name),
-					taxonomy => $species };
-
-        $url = $c->uri_for('/species', $species, $normed_class, $name);
-	$c->res->status(301);
-	$c->res->redirect($url);
-
+    if ( !$object || $object == -1 ){
+      $c->log->debug("No mapping object found - running search");
+      my ($it,$res)= $api->xapian->search_exact($c, $name, $class);
+      if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
+        my $o = @{$it->{struct}}[0];
+        $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
+        unless($name=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$name";}
+      }
+      $url ||= $c->uri_for('/search',$class,"$name")."?redirect=1";
+    }else{
+      $c->log->debug("Mapping object found - getting redirect link");
+      my $object_name = $object->name; #to fetch species, correct class name, etc...
+      $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
     }
-    else {                      # /report
-        $url = $c->uri_for('/resources', $normed_class, $name);
-    }
+    $c->res->status(301);
+    $c->res->redirect($url);
+    return;
+}
 
-    $c->stash->{new_uri} = $url;
-    $c->forward('WormBase::Web::View::TT');
-
-    # $c->res->redirect($url);
+sub _get_url {
+  my ($self, $c, $class, $id, $species) = @_;
+  return (defined $c->config->{sections}{species}{$class}) ? $c->uri_for('/species',$species || 'all' ,$class,$id)->as_string : $c->uri_for('/resources',$class,$id)->as_string;
 }
 
 
