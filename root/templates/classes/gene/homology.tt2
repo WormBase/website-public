@@ -70,7 +70,8 @@
    WRAPPER $field_block title="TreeFam" key="treefam";
        USE url= format(site.external_urls.treefam.image);
        FOREACH obj IN fields.treefam.data;
-           'TreeFam ID: ' _ text2link('Treefam_report',obj,obj);
+	   href = FILTER format(site.external_urls.treefam.search); obj; END;
+           'TreeFam ID: ' _ external_link(href, obj, obj);
 	   '<br /><br />';
 
           WRAPPER toggle title="Treefam image";
