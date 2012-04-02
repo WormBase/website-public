@@ -54,6 +54,15 @@ has 'search' => (
     is => 'ro',
 );
 
+has modelmap => (
+    is => 'ro',
+    lazy => 1,
+    required => 1,
+    default => sub {
+        return WormBase::API::ModelMap->new; # just a blessed scalar ref
+    },
+);
+
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
     my $self = shift;
@@ -163,7 +172,7 @@ sub _make_common_name {
 
 	my $name;
 
-    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
+    my $WB2ACE_MAP = $self->modelmap->WB2ACE_MAP;
     if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
         $tag = [$tag] unless ref $tag;
         my $dbh = $self->ace_dsn->dbh;
@@ -174,7 +183,7 @@ sub _make_common_name {
     }
 
     if (!$name and
-        my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
+        my $wbclass = $self->modelmap->ACE2WB_MAP->{fullclass}->{$class}) {
         if ($wbclass->meta->get_method('_build__common_name')
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
@@ -925,7 +934,7 @@ sub _build_laboratory {
     my $object = $self->object;
     my $class  = $object->class;    # Ace::Object class, NOT ext. model class
 
-    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
+    my $WB2ACE_MAP = $self->modelmap->WB2ACE_MAP->{laboratory};
 
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my @data;
@@ -2041,7 +2050,7 @@ sub _pack_obj {
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
-        class    => $object->class,
+        class    => $self->modelmap->ACE2WB_MAP->{class}{$object->class},
         taxonomy => $self->_parsed_species($object),
         %args,
     };
