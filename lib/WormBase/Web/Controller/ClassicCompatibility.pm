@@ -59,16 +59,21 @@ sub misc :Path('/db') :Args(2)  {
       if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
         my $o = @{$it->{struct}}[0];
         $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
-        unless($name=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$name";}
+        unless($name=~m/$o->get_document->get_value(1)/){ $url = $url;}
       }
-      $url ||= $c->uri_for('/search',$class,"$name")."?redirect=1";
+      $url ||= $c->uri_for('/search',$class,"$name");
     }else{
       $c->log->debug("Mapping object found - getting redirect link");
       my $object_name = $object->name; #to fetch species, correct class name, etc...
       $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
     }
-    $c->res->status(301);
-    $c->res->redirect($url);
+    my $old_url = $c->req->uri->as_string;
+    unless($c->req->param('redirect') eq 'no'){
+      $c->res->status(301);
+      $c->res->redirect($url."?from=$old_url");
+    }
+    $c->stash->{url} = $url;
+    $c->stash->{old_url} = $old_url;
     return;
 }
 
