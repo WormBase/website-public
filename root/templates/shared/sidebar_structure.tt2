@@ -59,8 +59,10 @@
           [% make_star(wbid) %]
         [% ELSE; '>'; END; %]   
           [% title %]  
-     
+     [% IF c.request.param('from'); '<span class="note">(redirected from <a href="' _ c.request.param('from') _ '&redirect=no">' _ c.request.param('from') _ '</a>)</span>'; END;%]
+
       </h2>
+
       </div>
     [% END %]
 
