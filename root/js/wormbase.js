@@ -25,6 +25,7 @@
     var timer,
         notifyTimer,
         cur_search_type = 'all',
+        cur_search_species_type = '',
         reloadLayout = 0, //keeps track of whether or not to reload the layout on hash change
         loadcount = 0;
     
@@ -85,14 +86,14 @@
           var navItem = $jq(this);
           $jq("div.columns>ul").hide();
           if(timer){
-            navItem.siblings("li").children("ul.dropdown").hide();
+            navItem.siblings("li").children("ul.wb-dropdown").hide();
             navItem.siblings("li").children("a").removeClass("hover");
-            navItem.children("ul.dropdown").find("a").removeClass("hover");
-            navItem.children("ul.dropdown").find("ul.dropdown").hide();
+            navItem.children("ul.wb-dropdown").find("a").removeClass("hover");
+            navItem.children("ul.wb-dropdown").find("ul.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
-          navItem.children("ul.dropdown").show();
+          navItem.children("ul.wb-dropdown").show();
           navItem.children("a").addClass("hover");
         }, function () {
           var toHide = $jq(this);
@@ -101,7 +102,7 @@
             timer = undefined;
           }
           timer = setTimeout(function() {
-                toHide.children("ul.dropdown").hide();
+                toHide.children("ul.wb-dropdown").hide();
                 toHide.children("a").removeClass("hover");
               }, 300)
         });
@@ -169,7 +170,7 @@
       colDropdown.hover(function () {
           if(timer){
             $jq("#nav-bar").find("ul li .hover").removeClass("hover");
-            $jq("#nav-bar").find("ul.dropdown").hide();
+            $jq("#nav-bar").find("ul.wb-dropdown").hide();
             clearTimeout(timer);
             timer = undefined;
           }
@@ -547,8 +548,8 @@
         },
         error:function(xhr, textStatus, thrownError){
           var error = $jq(xhr.responseText);
-          ajaxPanel.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-          ajaxPanel.append(error.find(".error-message-technical").html());
+          ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support?url=' + location.pathname + '">Let us know</a></p></div>')
+                   .children().append('<p>' + error.find(".error-message-technical").html() + '</p>');
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
@@ -569,7 +570,7 @@
           opBox.toggleClass("minimize");
         });
         
-        $jq('#operator').click(function() { 
+        $jq('.operator').click(function() { 
           if($jq(this).attr("rel")) {
             $jq.post("/rest/livechat?open=1",function() {
               location.href="/tools/operator";
@@ -668,7 +669,7 @@
 
     
     function search(box) {
-        if(!box){ box = "Search"; }else{ cur_search_type = 'all'; } 
+        if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
         var f = $jq("#" + box).attr("value");
         if(f == "search..." || !f){
           f = "*";
@@ -678,11 +679,12 @@
         f = f.replace('%26', '&');
         f = f.replace('%2F', '/');
 
-        location.href = '/search/' + cur_search_type + '/' + f;
+        location.href = '/search/' + cur_search_type + '/' + f + (cur_search_species_type ? '?species=' + cur_search_species_type : '');
     }
 
-    function search_change(new_search, focus) {
-      if((!new_search) || (new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
+    function search_change(new_search) {
+      if(!new_search) { new_search = 'all';}
+      if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
       cur_search_type = new_search;
       if(new_search == "all"){
       new_search = "for anything";
@@ -694,7 +696,19 @@
         new_search = search_for + " " + new_search.replace(/[_]/, ' ');
       }
       
-      $jq("#current-search").text(new_search);
+      $jq(".current-search").text(new_search);
+    }
+    
+    
+    function search_species_change(new_search) {
+      cur_search_species_type = new_search;
+      if(new_search == "all"){
+      new_search = "all species";
+      }else{
+        new_search = new_search.charAt(0).toUpperCase() + new_search.slice(1);
+        new_search = new_search.replace(/[_]/, '. ');
+      }
+      $jq(".current-species-search").text(new_search);
     }
 
 
@@ -922,8 +936,10 @@ var Layout = (function(){
         })();
       
     function resize(){
-      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth)))
+      if(sColumns != (sColumns = (document.documentElement.clientWidth < maxWidth))){
         sColumns ? columns(100, 100) : readHash();
+        if(multCol = $jq("#column-dropdown").find(".multCol")) multCol.toggleClass("ui-state-disabled");
+      }
       if ((maxWidth > 1000) && 
           wHolder.children(".sortable").hasClass("table-columns") && 
         ((wHolder.children(".left").width() + wHolder.children(".right").width()) > 
@@ -1923,6 +1939,7 @@ var Scrolling = (function(){
       resetPageLayout: Layout.resetPageLayout,
       search: search,
       search_change: search_change,
+      search_species_change: search_species_change,
       openid: openid,
       validate_fields: validate_fields,
       StaticWidgets: StaticWidgets,

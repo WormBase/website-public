@@ -28,17 +28,13 @@
     IF fields.genomic_image.data;
              # setting vars up
 	     # Will need to have gbrowse installed and (perhaps) proxied by nginx for this URL to work.
-             img_url = '/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;
-	     # img_url = 'http://www.wormbase.org/db/gb2/gbrowse_img/' _ fields.genomic_image.data.id;
-	     # Or send all requests to production. Not ideal.
-	     # img_url = 'http://beta.wormbase.org/tools/genome/gbrowse_img/' _ fields.genomic_image.data.id;             
+             img_url = site.external_urls.gbrowse_image.base _ fields.genomic_image.data.id;
 
              IF fields.tracks.data;
                  img_url = img_url _ ';t=' _ fields.tracks.data.join(';t=');
              END;
              '<br><br>';
              tag2link(fields.genomic_image.data, image(img_url));
-             # tag2link(fields.genomic_picture.data, image(site.external_urls.gbrowse_image.base _ fields.genomic_picture.data.label)); 		     
      END;
      '</div>';
 %]

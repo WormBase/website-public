@@ -37,7 +37,7 @@ WRAPPER $field_block title="Institution" key="institution";
 END;
       
 WRAPPER $field_block title="Web Page" key="web_page";
-    '<a href="http://' _ fields.web_page.data _ '">' _ fields.web_page.data _ '</a><br>';
+    '<a href="' _ fields.web_page.data _ '">' _ fields.web_page.data _ '</a><br>';
 END;
 
 WRAPPER $field_block title="Updates";

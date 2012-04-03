@@ -28,8 +28,8 @@
   <div id="title">
        <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
      <p>  
-          [% # The current release of the software and its codename %]
-          Version: [% constants.acedb_version %]
+          [% # The current release of the software %]
+          Version: <a href="/about/release_notes_([%- constants.acedb_version -%])">[% constants.acedb_version %]</a>
       </p>
   </div>
 
@@ -40,7 +40,7 @@
       <li><a href="/[% title %]" id="section-[% title %]" class="[% IF(c.stash.section == title); 'selected'; END;%]">
           <span class="ui-icon ui-icon-triangle-1-s"></span>
           [% c.config.sections.$title.title %]</a>
-          <ul class="dropdown">
+          <ul class="wb-dropdown">
 
             [% IF (title == 'species') %]
            
@@ -55,7 +55,7 @@
             [% IF c.config.sections.species_list.$option.display_in_dropdown == 'yes' %]
 
             <li><a href="/[% title %]/[% option %]" class="species"> <span class="ui-icon ui-icon-triangle-1-e"></span>[% c.config.sections.species_list.$option.title %]</a>
-              <ul class="dropdown">  
+              <ul class="wb-dropdown">  
                 <li>[% text2link('genomic_location',option,'Browse Genome') %]</li>
 
               [% FOREACH class IN c.config.sections.species_list.$option.available_classes.class %]
@@ -75,7 +75,7 @@
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
             <li>
               [% IF option == 'operator' %]
-                <a id="[% option %]" href="#"  
+                <a class="[% option %]" href="javascript:void(0)"  
                   [% IF c.user_exists && !c.check_user_roles("operator") && c.check_any_user_role("admin", "curator")   %]
                     rel="redirect" 
                   [%  END  %]

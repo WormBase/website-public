@@ -1,15 +1,13 @@
 
    <form method="post" class="ui-corner-all" id="searchForm" action="" onsubmit="WB.search(); return false;">
     [% val = "search..." %]
-    [% IF query; val = query; END; %]
-    <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
+    [% IF query; val = query FILTER html; END; %]
 
     <div id="searchBody">
-      <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
       <ul id="searchSelect">
         <li>
           <span class="ui-icon ui-icon-triangle-1-s" style="float:right"></span>
-          <span id="current-search" style="float:right">All</span>
+          <span class="current-search" style="float:right">All</span>
           <ul>
           [% FOREACH option IN c.config.search_dropdown.option %]
                   <li value="[%- option.id -%]" onClick='WB.search_change("[% option.id %]",1);'><a>[%- option.title -%]</a></li>
@@ -17,6 +15,10 @@
           </ul>
         </li>
       </ul>
+      <input class="text" id="Search" name="query" type="text" value="[% val %]"> 
+
     </div>
+    <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search(); return false;" value="">
+
   </form>
 

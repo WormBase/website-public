@@ -474,8 +474,9 @@ B<Response example>
 sub anatomy_functions {
     my ($self) = @_;
 
+    my $data = $self->_anatomy_function('Anatomy_function');
     return {
-        data        => $self->_anatomy_function('Anatomy_function'),
+        data        => @$data ? $data : undef,
         description => 'anatomy_functions associatated with this anatomy_term',
     };
 }
@@ -535,9 +536,9 @@ B<Response example>
 sub anatomy_function_nots {
     my $self      = shift;
 
-    my $data_pack = $self->_anatomy_function('Anatomy_function_not');
+    my $data = $self->_anatomy_function('Anatomy_function_not');
     return {
-        'data'        => $data_pack,
+        'data'        => @$data ? $data : undef,
         'description' => 'anatomy_functions associatated with this anatomy_term'
     };
 }
@@ -579,7 +580,7 @@ sub _anatomy_function {
 	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
 			   else {$self->_pack_obj($_)}
 			  } $_->Not_involved;
-	push @data_pack, \{
+	push @data_pack, {
             af_data   => $self->_pack_obj($_),
             phenotype => $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),
@@ -589,7 +590,7 @@ sub _anatomy_function {
 	    };
     } # array of hashes -- note the comma
 
-    return @data_pack ? \@data_pack : undef;
+    return \@data_pack;
 }
 
 __PACKAGE__->meta->make_immutable;
