@@ -34,7 +34,6 @@
 				      'bp_inv'   => 'Body Parts<br />Involved',
 				      'bp_not_inv'   => 'Body Parts<br />Not Involved',
 				      'reference' => 'Reference'},
-			  passed_data = fields.anatomy_functions.data,
 			  key = 'anatomy_functions');
     END;
 
@@ -46,7 +45,6 @@
 				      'bp_inv'   => 'Body Parts<br />Involved',
 				      'bp_not_inv'   => 'Body Parts<br />Not Involved',
 				      'reference' => 'Reference'},
-			  passed_data = fields.anatomy_function_nots.data,
 			  key = 'anatomy_function_nots');
     END;
 

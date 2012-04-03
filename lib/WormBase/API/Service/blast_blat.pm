@@ -55,14 +55,14 @@ has 'blast_databases' => (
 		if (-e "$blast_dir/genomic.fa") {
 		    $data->{"$version"}{Genome}{"$species"} = {
 			name     => join('_',$version,$species,'genomic.fa'),
-			symbolic => "$symbolic genome ($version)",
+			symbolic => "$symbolic",
 			location => catfile($blast_dir, $species, 'genomic.fa'),
 		    };
 		}
 		if (-e "$blast_dir/peptide.fa") {
 		    $data->{"$version"}{Protein}{"$species"} = {
 			name     => join('_',$version,$species,'peptide.fa'),
-			symbolic => "$symbolic proteins ($version)",
+			symbolic => "$symbolic",
 			location => catfile($blast_dir, $species, 'peptide.fa'),
 		    };
 		}
@@ -76,113 +76,8 @@ has 'blast_databases' => (
 		if (-e "$blast_dir/ests.fa") {
 		    $data->{"$version"}{ESTs}{"$species"} = {
 			name     => join('_',$version,$species,'ests.fa'),
-			symbolic => "$symbolic ($version) ESTs",
+			symbolic => "$symbolic",
 			location => catfile($blast_dir, 'ests.fa'),
-		    };
-		}
-	    }
-	}
-
-
-	# Discover available BLAST and BLAT databases
-# distinct current and archive approach
-#        my $blast_dir = catfile($self->pre_compile->{base}, $self->ace_dsn->version,
-#                                $self->pre_compile->{blast});
-#	
-#	my @species =  grep { -d "$blast_dir/$_" } read_dir($blast_dir);
-#	foreach my $species (sort { $a cmp $b } @species) {
-#	    my ($g,$s)   = split('_',$species);
-#	    my $symbolic = uc($g) . ". $s";
-#	    $self->log->error($species);
-#	    # create hash keys of "gspecies_genome"
-#	    if (-e "$blast_dir/$species/genomic.fa") {
-#		push @{$data->{genomic}},{ name     => $species,
-#					   symbolic => $symbolic,
-#					   location => catfile($blast_dir, $species, 'genomic.fa'),
-#		};
-#	    }
-#	    
-#	    if (-e "$blast_dir/$species/peptide.fa") {
-#		push @{$data->{protein}},{ name     => $species,
-#					   symbolic => $symbolic,
-#					   location => catfile($blast_dir, $species, 'peptide.fa'),
-#		};
-#	    }
-#
-#	    if (-e "$blast_dir/$species/genes.fa") {
-#		push @{$data->{genes}},{ name     => $species,
-#					 symbolic => $symbolic,
-#					 location => catfile($blast_dir, $species, 'genes.fa'),
-#		};
-#	    }
-#
-#	    if (-e "$blast_dir/$species/ests.fa") {
-#		push @{$data->{ests}},{ name     => $species,
-#					symbolic => $symbolic,
-#					location => catfile($blast_dir, $species, 'ests.fa'),
-#		};
-#	    }	
-#        }
-#
-#        my $base_dir = catfile($self->pre_compile->{base});
-#
-#	# Check for archives, too.
-#	my @archives = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
-#	foreach my $archive (@archives) {
-#	    next if ($archive eq $self->ace_dsn->version);  # ignore the current version. We've already handled it.
-#	    # Discover available species for this archive
-#	    my @species = grep { -d "$base_dir/$archive/blast/$_" } read_dir("$base_dir/$archive/blast");
-#	    foreach my $species (@species) {
-#		my ($g,$s)   = split('_',$species);
-#		my $symbolic = uc($g) . ". $s";
-#		my $blast_dir = catfile($self->pre_compile->{base},
-#					$archive,
-#					$self->pre_compile->{blast},
-#					$species);
-#		if (-e "$blast_dir/genomic.fa") {
-#		    push @{$data->{genomic}},{ name     => $species,
-#					       symbolic => "$symbolic ($archive)",
-#					       location => catfile($blast_dir, $species, 'genomic.fa'),
-#		    };
-#		}
-#		if (-e "$blast_dir/peptide.fa") {
-#		    push @{$data->{protein}},{ name     => $species,
-#					       symbolic => "$symbolic ($archive)",
-#					       location => catfile($blast_dir, $species, 'peptide.fa'),
-#		    };
-#		}
-#	    }
-#	}
-	return $data;
-    }
-    );
-
-# A discoverable list of blat databases.
-has 'blat_databases' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $data;
-	my $base_dir = catfile($self->pre_compile->{base});
-	#my $count = "2008";
-
-        # Discover available BLAT databases
-	my @versions = grep { /^WS/ } grep { -d "$base_dir/$_" } read_dir($base_dir);
-	foreach my $version (@versions) {
-	    my @species = grep { -d "$base_dir/$version/blat/$_" } read_dir("$base_dir/$version/blat") if (-e "$base_dir/$version/blat");
-	    foreach my $species (@species) {
-		my ($g,$s)   = split('_',$species);
-		my $symbolic = uc($g) . ". $s";
-		my $blat_dir = catfile($self->pre_compile->{base}, $version, $self->pre_compile->{blat}, $species);
-		my $location = "$blat_dir/$species.$version.genomic.fa";
-		if(-e $location) {
-		    $data->{"$version"}{Genome}{"$species"} = {
-			name     => join('_',$version,$species),
-			#type     => "N", #will need to change this later if other search types are added
-			symbolic => "$symbolic ($version) [BLAT]",
-			location => $location,
-			#port     => $count++,
 		    };
 		}
 	    }
@@ -197,18 +92,6 @@ our %BLAST_APPLICATIONS = (
     blastx  => {query_type => "nucl", database_type => "prot"},
     tblastn => {query_type => "prot", database_type => "nucl"},
 );
-
-# our %BLAT_DATABASES = (
-#     elegans_genome       => {type => "N", port => "2008", location => "/"},
-#     briggsae_genome   => {type => "N", port => "2009", location => "/"},
-#     #brenneri_genome   => {type => "N", port => "2010", location => "/"},
-#     #japonica_genome   => {type => "N", port => "2011", location => "/"},
-#     #remanei_genome    => {type => "N", port => "2012", location => "/"},
-#     #malayi_genome     => {type => "N", port => "2013", location => "/"},
-#     #hapla_genome     => {type => "N", port => "2014", location => "/"},
-#     #incognita_genome     => {type => "N", port => "2015", location => "/"}
-# );
-
 
 our %BLAST_FILTERS = ("filter" => "-F T",);
 
@@ -273,6 +156,11 @@ sub process_input {
 
     my $command_line;
 
+    my @path_parts    = split('_',$database);
+    my $species = $path_parts[1] . '_' . $path_parts[2];
+    my $version = $path_parts[0];
+    my $database_location = catfile($self->pre_compile->{base}, $version, 'blast', $species, $path_parts[3]);
+
     if ($search_type eq "blast") {
         my $blast_app = $cgi->{"blast_app"};
         if (!$BLAST_APPLICATIONS{$blast_app}) {
@@ -287,12 +175,7 @@ sub process_input {
 	my $database_type = $self->_get_database_type($database);
 
 	# database option encodes its location as WSXXX_g_species_file.suffix
-	my @path_parts    = split('_',$database);
-	my $database_location = catfile($self->pre_compile->{base},
-					$path_parts[0],
-					'blast',
-					$path_parts[1] . '_' . $path_parts[2],
-					$path_parts[3]);
+
 	$self->log->error($database_location);
 					
         my $expected_query_type = $BLAST_APPLICATIONS{$blast_app}{query_type};
@@ -325,17 +208,10 @@ sub process_input {
     }
 
     elsif ($search_type eq "blat") {
-	my @path_parts = split('_',$database);
-	my $species = $path_parts[1] . '_' . $path_parts[2];
-	my $version = $path_parts[0];
 	my $db_info;
-        unless ($db_info = $self->blat_databases->{$version}{Genome}{$species}) {
-            error("Invalid BLAT database ($database)!");
-        }
 
         #my $database_type     = $db_info{type};
         #my $database_port     = $db_info->{port};
-        my $database_location = $db_info->{location};
 	my $blat_client = $self->pre_compile->{BLAT_CLIENT};
 	$blat_client = "/usr/local/wormbase/services/blat/bin/blat";
 

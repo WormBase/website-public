@@ -2,14 +2,14 @@
 
 [% 
       breadcrumbs = [];
-      
-      IF title;
-        breadcrumbs.push('<a href="' _ c.uri_for('/about') _ '">About</a>');
-        title = title FILTER ucfirst;
-        title = title.replace('_', ' ');
-        breadcrumbs.push('<span>' _ title _ '</span>');
-      ELSE;
-        breadcrumbs.push('<span>About</span>');
+
+      breadcrumbs.push('<a href="' _ c.uri_for('/about') _ '">About</a>');     
+      IF path_parts;
+         FOREACH path IN path_parts;
+            title = path FILTER ucfirst;
+            title = title.replace('_', ' ');
+            breadcrumbs.push('<span>' _ title _ '</span>');
+         END;
       END;
 
       title = breadcrumbs.join(' &raquo; ');
