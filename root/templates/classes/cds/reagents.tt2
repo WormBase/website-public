@@ -5,7 +5,7 @@ WRAPPER $field_block title="ORFeome Assays" key="orfeome_assays";
 END;
 
 WRAPPER $field_block title="Source Clone" key="source_clone";
-    tag2link(fields.source_clone.data);
+    tags2link(fields.source_clone.data);
 END;
 
 WRAPPER $field_block title="Microarray Assays" key="microarray_assays";
