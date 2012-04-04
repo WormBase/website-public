@@ -54,7 +54,6 @@ sub misc :Path('/db') :Args(2)  {
     my $url;
 
     if ( !$object || $object == -1 ){
-      $c->log->debug("No mapping object found - running search");
       my ($it,$res)= $api->xapian->search_exact($c, $name, $class);
       if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
         my $o = @{$it->{struct}}[0];
@@ -63,12 +62,11 @@ sub misc :Path('/db') :Args(2)  {
       }
       $url ||= $c->uri_for('/search',$class,"$name");
     }else{
-      $c->log->debug("Mapping object found - getting redirect link");
       my $object_name = $object->name; #to fetch species, correct class name, etc...
       $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
     }
     my $old_url = $c->req->uri->as_string;
-    unless($c->req->param('redirect') eq 'no'){
+    unless($c->req->param('redirect') || '' eq 'no'){
       $c->res->status(301);
       $c->res->redirect($url."?from=$old_url");
     }
