@@ -1,0 +1,25 @@
+[%
+
+WRAPPER $field_block title='Author' key='author';
+    cell_content(fields.author.data);
+END;
+
+WRAPPER $field_block title='Mutagen' key='mutagen';
+    cell_content(fields.mutagen.data);
+END;
+
+WRAPPER $field_block title='Date' key='date';
+    cell_content(fields.date.data);
+END;
+
+WRAPPER $field_block title='Source Rearrangements' key='source';
+    cell_content(fields.source.data);
+END;
+
+WRAPPER $field_block title='Derived Rearrangements' key='derived';
+    cell_content(fields.derived.data);
+END;
+
+laboratory;
+
+%]
