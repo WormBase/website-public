@@ -45,7 +45,7 @@ elif [ $APP == 'staging' ]; then
     export APP_ROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
     export PORT=5000
-    export WORKERS=10
+    export WORKERS=5
     export MAX_REQUESTS=500
 
     # Configure our GBrowse App
