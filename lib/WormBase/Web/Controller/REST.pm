@@ -1199,7 +1199,7 @@ sub _get_search_result {
   }
 
   return { 'name' => {  url => $page->url, 
-                                label => $page->title,
+                                label => $page->title || $page->url,
                                 id => $page->title,
                                 class => 'page' },
             footer => "$footer",

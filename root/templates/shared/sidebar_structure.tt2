@@ -55,7 +55,7 @@
       <h2
         [% UNLESS c.req.action == 'me' %]
           class="tip-simple star" tip="save">
-          [% wbid = get_star_id(this_object_id) %]
+          [% wbid = get_star_id(object.name.data.id || c.req.path) %]
           [% make_star(wbid) %]
         [% ELSE; '>'; END; %]   
           [% title %]  
