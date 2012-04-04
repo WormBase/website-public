@@ -1465,11 +1465,20 @@ sub _build_genomic_position {
 
 sub _build_tracks {
     my ($self) = @_;
+    my @tracks;
+    if ($self->_parsed_species eq 'c_elegans') {
+	@tracks = qw(CG Allele TRANSPOSONS);
+    } elsif ($self->_parsed_species eq 'c_briggsae') {
+	@tracks = qw(CG SNP);
+    } else {
+	@tracks = qw/WBG/;
+    }
+
     return {
         description => 'tracks displayed in GBrowse',
-        data => [ $self->_parsed_species eq 'c_elegans'
-                  ? qw(CG Allele TRANSPOSONS) : 'WBG' ],
+        data => \@tracks
     };
+
 }
 
 sub _build_genomic_image {
