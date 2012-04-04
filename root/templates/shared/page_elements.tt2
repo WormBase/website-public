@@ -455,6 +455,8 @@ END; %]
 	    evidence(cell.evidence,table_name _ index, cell.text, 'details');
 	ELSIF cell.interaction.defined;
 	    interaction_cell(cell);
+	ELSIF cell.genotype.defined;
+	    tags2link(cell.genotype, ' ', '');
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';
