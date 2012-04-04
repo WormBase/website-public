@@ -40,19 +40,23 @@ WRAPPER $field_block title='Reference Strain' key='reference_strain';
 END;
 
 WRAPPER $field_block title='Strains' key='strains';
-    cell_content(fields.strains.data);
+    build_data_table(
+	order=['strain', 'info'],
+	columns={
+	    strain	=> 'Strain',
+	    info	=> 'Genotype',
+	}, key='strains' );
 END;
 
 WRAPPER $field_block title='Mapping Data' key='mapping_data';
     build_data_table(
-	order=['class', 'name', 'position', 'type', 'genotype', 'result', 'remark', 'author'],
+	order=['class', 'name', 'position', 'type', 'genotype', 'remark', 'author'],
 	columns={
 	    type	=> 'Type',
 	    class	=> 'Class',
 	    name	=> 'Name',
 	    position	=> 'Position',
 	    genotype	=> 'Genotype',
-	    results	=> 'Results',
 	    remark	=> 'Remark',
 	    author	=> 'Author',
 	}, key='mapping_data' );

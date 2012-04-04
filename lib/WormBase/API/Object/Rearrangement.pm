@@ -466,8 +466,14 @@ B<Response example>
 sub strains {
     my $self = shift;
     my $object = $self->object;
+    my @data;
 
-    my @data = map {$self->_pack_obj($_)} $object->Strain;
+    foreach my $strain ($object->Strain){
+	push @data, {
+	    strain => $self->_pack_obj($strain),
+	    info => {genotype => $self->_get_genotype($strain)},
+	}
+    }
 
     return { description => 'Strains associated with the Rearrangement',
 	     data => @data ? \@data : undef,
