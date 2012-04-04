@@ -1065,7 +1065,7 @@ END;
       [% widgets.push(w) %]
     [% END %]
   [% END %]
-  [% IF c.check_user_roles('admin') %]
+  [% IF c.check_any_user_role('admin', 'curator') %]
     [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
             href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'
