@@ -11,7 +11,7 @@
     </title>
 <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="stylesheet" />
-    <link type="text/css" href="/css/main.min.css" rel="stylesheet" />
+    <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css" rel="stylesheet" />
   </head>
 
   <body>  
@@ -26,7 +26,7 @@
     </script>
     <script>
       var se = document.createElement('script');
-      se.src = "/js/wormbase.min.js";
+      se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js";
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(se, s);
       [% INCLUDE google_analytics %]
     </script>
