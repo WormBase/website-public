@@ -1853,6 +1853,15 @@ div#column-dropdown ul li.ui-state-disabled:hover {
   padding-top:5px;
 }
 
+#page-title h2 .note {
+  font-size:0.5em;
+  font-weight:normal;
+  position:absolute;
+  bottom:1.6em;
+  left:6em;
+  color:#333;
+}
+
 
 /*********************************
 

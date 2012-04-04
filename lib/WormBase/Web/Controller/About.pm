@@ -20,14 +20,15 @@ sub about :Path('/about') :Args(0)   {
     $self->_setup_page($c);
 }
 
-sub about_documentation :Path('/about') :Args(1)   {
-    my ($self,$c,$page) = @_;
+# Allow anything under /about to have an arbitrary number of path parts.
+# Helpful for organizing things like documentation.
+sub about_documentation :Path('/about') :Args   {
+    my ($self,$c,@path_parts) = @_;
     $self->_setup_page($c);
     $c->stash->{section} = 'resources';
-    $c->stash->{title} = $page;
+    $c->stash->{path_parts} = \@path_parts;
     $c->stash->{template} = 'about/report.tt2';
 }
-
 
 
 1;

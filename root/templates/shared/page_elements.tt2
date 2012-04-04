@@ -238,12 +238,12 @@ END;
   [% path = c.req.path %]
   [% url = c.req.uri.path %]
 
-  [% label = c.req.path %]
+  [% label = c.req.args.-1 %]
   [% IF (c.action.name == 'index'); label = 'home'; 
-    ELSIF c.action.name.match('me'); label = 'my wormbase'; 
+    ELSIF c.action.name == 'me'; label = 'my wormbase'; 
     END; %]
-  [% is_obj = object.defined %]
-  [% IF object; label = object.name.data.label; END; %]
+  [% is_obj = object.name.data.id.defined %]
+  [% IF object.name.data.id; label = object.name.data.label; END; %]
 [% END %]
 
 [% MACRO get_star_id(id) BLOCK;
@@ -1065,7 +1065,7 @@ END;
       [% widgets.push(w) %]
     [% END %]
   [% END %]
-  [% IF c.check_user_roles('admin') %]
+  [% IF c.check_any_user_role('admin', 'curator') %]
     [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
             href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'

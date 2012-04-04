@@ -1,4 +1,4 @@
-      <a href="[% item.name.url %]">[% item.name.label %]</a>
+      <a href="[% item.name.url %]">[% item.name.label || item.name.id || item.name.class %]</a>
     </li>
 [% IF item.name.label == 'example' %]
 Click on the star to add or remove this item from your saved reports<br />

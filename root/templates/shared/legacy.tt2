@@ -1,22 +1,16 @@
-<div id="error-box" class="ui-state-error ui-corner-all">  
+<div>  
 
-   <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
-   <h3>
-       You've followed an unsupported legacy URL.
-   </h3>
+   <h2>
+       Redirect Page
+   </h2>
 
    <p>
-      The corresponding URL on the current WormBase website is:
+      The page you are looking for can be found here:
    </p>
       <code>
-      [% tag2link(request_object) %]
+      <a href="[% url %]">[% url %]</a>
       </code>
-
-
-   <p>For the record, you requested:</p>
-      <code>
-        <nobr>[% original_uri %]</nobr>
-      </code>      
+  
 
       <p>Please update your links and bookmarks!</p>
 
