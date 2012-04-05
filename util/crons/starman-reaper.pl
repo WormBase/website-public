@@ -14,10 +14,8 @@ my $bytes = '524288000';
 
 my $processes;
 
-my $time = `date +%Y-%m-%d`;
+my $time = `date`;
 chomp $time;
-print "We're running... $time\n";
-
 
 kill_hogs('starman');
 kill_hogs('perl');
@@ -47,6 +45,10 @@ sub kill_hogs {
 	
 	# kill them slowly, so that all connection serving
 	# children don't suddenly die at once.	
+
+	if (@memory_hogs > 0) {
+	    print "We found some hogs at $time\n";
+	}
 
 	my $hostname = `hostname`;
 	foreach my $hog (@memory_hogs) {
