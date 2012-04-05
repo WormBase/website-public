@@ -3,17 +3,19 @@
 # Clean up starman processes that have grown too large.
 
 # Run as cron every 30 minutes:
-# */30 * * * * /usr/local/wormbase/admin/crons/starman-reaper.pl [104857600]
+# */30 * * * * /usr/local/wormbase/admin/crons/starman-reaper.pl
 
 use strict;
-my $bytes = shift;
 
 #die "Usage: $0 ram_limit_in_bytes\n" unless $bytes;
 
 # 500 MB limit for now, in bytes
-$bytes ||= '524288000';
+my $bytes = '524288000';
 
 my $processes;
+
+my $time = `date`;
+chomp $time;
 
 kill_hogs('starman');
 kill_hogs('perl');
@@ -24,18 +26,18 @@ sub kill_hogs {
     if (open ($processes, "/bin/ps -eo pid,rss,comm | grep $ps | ")) {
 #if (open ($processes, "/bin/ps -o pid= -o vsz= -p `cat $ppid`|")) {
 	my @memory_hogs;
-	my %memory_hogs;
 	
 	while (<$processes>) {
 	    chomp;
 	    my ($pid,$mem,$name) = split;
-	    
+
 	    # ps shows KB.  we want bytes.
-	    $mem *= 1024;
+	    my $mem_in_bytes  = $mem * 1024;
+	    my $mem_in_mbytes = $mem/1024;
 	    
-	    if ($mem >= $bytes) {
-		push @memory_hogs, $pid;
-		$memory_hogs{$pid} = ($mem/1024) / 1024;
+	    if ($mem_in_bytes >= $bytes) {
+#		push @memory_hogs, $pid;
+		push @memory_hogs, [$pid,$mem_in_mbytes];
 	    }
 	}
 	
@@ -43,10 +45,17 @@ sub kill_hogs {
 	
 	# kill them slowly, so that all connection serving
 	# children don't suddenly die at once.	
+
+	if (@memory_hogs > 0) {
+	    print "We found some hogs at $time; reaping:\n";
+	}
+
+	my $hostname = `hostname`;
 	foreach my $hog (@memory_hogs) {
-	    print STDERR "HUPing memory hog $hog\n";
+	    my ($pid,$mem) = @$hog;
+	    print "\tKilled $pid; it was using $mem MB memory\n";
 #	kill 'HUP', $hog;
-	    system("kill -9 $hog");
+	    system("kill -9 $pid");
 	    sleep 10;	
 	}
     } else {
