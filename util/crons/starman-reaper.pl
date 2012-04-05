@@ -32,7 +32,7 @@ sub kill_hogs {
 	    my ($pid,$mem,$name) = split;
 
 	    # ps shows KB.  we want bytes.
-	    my $mem_in_bytes *= 1024;
+	    my $mem_in_bytes  = $mem * 1024;
 	    my $mem_in_mbytes = $mem/1024;
 	    
 	    if ($mem_in_bytes >= $bytes) {
@@ -47,13 +47,13 @@ sub kill_hogs {
 	# children don't suddenly die at once.	
 
 	if (@memory_hogs > 0) {
-	    print "We found some hogs at $time\n";
+	    print "We found some hogs at $time; reaping:\n";
 	}
 
 	my $hostname = `hostname`;
 	foreach my $hog (@memory_hogs) {
 	    my ($pid,$mem) = @$hog;
-	    print "\tWe had to kill $pid; it was using $mem MB memory\n";
+	    print "\tKilled $pid; it was using $mem MB memory\n";
 #	kill 'HUP', $hog;
 	    system("kill -9 $pid");
 	    sleep 10;	
