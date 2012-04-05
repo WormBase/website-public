@@ -1,0 +1,67 @@
+<h2>[% fields.name.data.label %]</h2>
+
+[% 
+  
+WRAPPER highlight_box;
+    WRAPPER $field_block title='Type' key='type';
+	cell_content(fields.type.data);
+    END;
+    WRAPPER $field_block title='Chromosome' key='chromosome';
+	fields.chromosome.data;
+    END;
+END;
+
+WRAPPER $field_block title='Positive Markers' key='positive';
+    FOREACH tag IN fields.positive.data.keys;
+	WRAPPER $field_block title="$tag" key="positive";
+	    cell_content(fields.positive.data.$tag);
+	END;
+    END;
+END;
+
+WRAPPER $field_block title='Negative Markers' key='negative';
+    FOREACH tag IN fields.negative.data.keys;
+	WRAPPER $field_block title="$tag" key="negative";
+	    cell_content(fields.negative.data.$tag);
+	END;
+    END;
+END;
+
+WRAPPER $field_block title='Display' key='display';
+    FOREACH tag IN fields.display.data.keys;
+	WRAPPER $field_block title="$tag" key="display";
+	    cell_content(fields.display.data.$tag);
+	END;
+    END;
+END;
+
+WRAPPER $field_block title='Reference Strain' key='reference_strain';
+    cell_content(fields.reference_strain.data);
+END;
+
+WRAPPER $field_block title='Strains' key='strains';
+    build_data_table(
+	order=['strain', 'info'],
+	columns={
+	    strain	=> 'Strain',
+	    info	=> 'Genotype',
+	}, key='strains' );
+END;
+
+WRAPPER $field_block title='Mapping Data' key='mapping_data';
+    build_data_table(
+	order=['class', 'name', 'position', 'type', 'genotype', 'remark', 'author'],
+	columns={
+	    type	=> 'Type',
+	    class	=> 'Class',
+	    name	=> 'Name',
+	    position	=> 'Position',
+	    genotype	=> 'Genotype',
+	    remark	=> 'Remark',
+	    author	=> 'Author',
+	}, key='mapping_data' );
+END;
+
+remarks;
+
+%]
