@@ -35,7 +35,7 @@ sub kill_hogs {
 	    my $mem_in_bytes *= 1024;
 	    my $mem_in_mbytes = $mem/1024;
 	    
-	    if ($mem >= $bytes) {
+	    if ($mem_in_bytes >= $bytes) {
 #		push @memory_hogs, $pid;
 		push @memory_hogs, [$pid,$mem_in_mbytes];
 	    }
