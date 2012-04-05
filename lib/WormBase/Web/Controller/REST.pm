@@ -943,8 +943,8 @@ sub widget_static_POST {
         $widget->widget_order($widget_order);
         $widget->update();
 
-      #creating a widget - only admin
-      }elsif($c->check_user_roles("admin")){ 
+      #creating a widget - only admin & curator
+      }elsif($c->check_any_user_role("admin", "curator")){ 
           my $url = $c->request->body_parameters->{path};
           my $page = $c->model('Schema::Page')->find({url=>$url});
           $widget_revision->widget($c->model('Schema::Widgets')->create({ 
@@ -1199,7 +1199,7 @@ sub _get_search_result {
   }
 
   return { 'name' => {  url => $page->url, 
-                                label => $page->title,
+                                label => $page->title || $page->url,
                                 id => $page->title,
                                 class => 'page' },
             footer => "$footer",

@@ -54,15 +54,6 @@ has 'search' => (
     is => 'ro',
 );
 
-has modelmap => (
-    is => 'ro',
-    lazy => 1,
-    required => 1,
-    default => sub {
-        return WormBase::API::ModelMap->new; # just a blessed scalar ref
-    },
-);
-
 # Set up our temporary directory (typically outside of our application)
 sub tmp_dir {
     my $self = shift;
@@ -172,7 +163,7 @@ sub _make_common_name {
 
 	my $name;
 
-    my $WB2ACE_MAP = $self->modelmap->WB2ACE_MAP;
+    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP;
     if (my $tag = $WB2ACE_MAP->{common_name}->{$class}) {
         $tag = [$tag] unless ref $tag;
         my $dbh = $self->ace_dsn->dbh;
@@ -183,7 +174,7 @@ sub _make_common_name {
     }
 
     if (!$name and
-        my $wbclass = $self->modelmap->ACE2WB_MAP->{fullclass}->{$class}) {
+        my $wbclass = WormBase::API::ModelMap->ACE2WB_MAP->{fullclass}->{$class}) {
         if ($wbclass->meta->get_method('_build__common_name')
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
@@ -934,7 +925,7 @@ sub _build_laboratory {
     my $object = $self->object;
     my $class  = $object->class;    # Ace::Object class, NOT ext. model class
 
-    my $WB2ACE_MAP = $self->modelmap->WB2ACE_MAP->{laboratory};
+    my $WB2ACE_MAP = WormBase::API::ModelMap->WB2ACE_MAP->{laboratory};
 
     my $tag = $WB2ACE_MAP->{$class} || 'Laboratory';
     my @data;
@@ -2050,7 +2041,7 @@ sub _pack_obj {
     return {
         id       => "$object",
         label    => $label // $self->_make_common_name($object),
-        class    => $self->modelmap->ACE2WB_MAP->{class}{$object->class},
+        class    => $object->class,
         taxonomy => $self->_parsed_species($object),
         %args,
     };
@@ -2314,7 +2305,51 @@ sub wormbook_abstracts {
     return $result;
 }
 
+sub _get_genotype {
+    my ($self, $object) = @_;
+    my $genotype = $object->Genotype;
 
+    my @data;
+    my @matches;
+    my %elements;
+    foreach my $tag ($object->Contains) {
+	map {my $name = $self->_make_common_name($_); $elements{"$name"} = $self->_pack_obj($_)} $object->$tag;
+    }
+
+    warn("Keys: ", join (", ", keys %elements), "\n");
+
+    my @split = split('/', $genotype);
+    my $count = 0;
+    my @array;
+    foreach my $geno (@split) {
+	push @matches, [$1, $2, $3, $4, $5, $6, $7, $8] while $geno =~ /(\S+)\[(\S+)\]|(\(*)([IVX;.]+)(\)*)|(\S+)\((\S+)\)|(\S+)/g;
+	$array[7] = '/';
+	push @matches, \@array if $count < @split - 1;
+	$count++;
+    }
+
+    foreach my $match (@matches) {
+	my ($m1, $m2, $m3, $m4, $m5, $m6, $m7, $m8) = @$match;
+	warn("Match:\n");
+	warn( join(', ', @$match), "\n") if $match;
+	if ($m1){
+	    $m1 = $elements{$m1} || {label => "$m1"};
+	    $m2 = $elements{$m2} || {label => "$m2"};;
+	    push @data, $m1, {label => "["}, $m2, {label => "]"};
+	} elsif ($m4) {
+	    push @data, $m3 && {label => "$m3"}, $m4 && {label => "$m4"}, $m5 && {label => "$m5"};
+	} elsif ($m6) {
+	    $m6 = $elements{$m6} || {label => "$m6"};;
+	    $m7 = $elements{$m7} || {label => "$m7"};;
+	    push @data, $m6, {label => "("}, $m7, {label => ")"};
+	} elsif ($m8) {
+	    $m8 = $elements{$m8} || {label => "$m8"};;
+	    push @data, $m8;
+	}
+    }
+
+    return @data ? \@data : undef;
+}
 
 #########################################
 #
@@ -2346,5 +2381,7 @@ sub _fetch_gff_gene {
     ($trans) = $GFF->segment(Transcript => $transcript);
     return $trans;
 }
+
+
 
 1;
