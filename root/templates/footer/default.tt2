@@ -16,6 +16,7 @@
         <ul>
           <li><span>WormBase</span></li>
           <li><a href="[% c.uri_for('/about') _ '#0--10' %]">Mission</a></li> 
+          <li><a href="[% c.uri_for('/about','staff') _ '#01--10' %]">WormBase Staff</a></li>
           <li><a href="[% c.uri_for('/about','advisory_board') _ '#01--10' %]">Advisory Board</a></li>
           <li><a href="[% c.uri_for('/about','policies') _ '#1--10' %]">Privacy</a></li>
           <li><a href="[% c.uri_for('/about','policies') _ '#0--10'    %]">Acceptable Use</a></li>
@@ -30,9 +31,9 @@
         <div class="footer-title">Support</div>
         <ul>
           <li class="operator"><a href="javascript:void(0)">Chat</a></li>
-          <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
+          <li><a href="[% c.uri_for('/about','userguide') _ '#023-1-5'%]">Submit Data</a></li>
           <li><a href="mailto:help@wormbase.org">Email</a></li>
-          <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
+          <li><a href="[% c.uri_for('/about','userguide') %]">User Guide</a></li>
           <li><a href="[% c.uri_for('/tools', 'support') _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
         </ul>     
       </div>
@@ -52,9 +53,9 @@
         <div class="footer-title">Developer</div>
         <ul>
           <li>[% external_link("", 'Amazon EC2 AMI') %]</li>
+          <li><a href="[% c.uri_for('/about','userguide','developers') %]">Data Mining</a></li>
+          <li><a href="[% c.uri_for('/about','userguide','developers','api') %]">API</a></li>
           <li>[% external_link("http://github.com/WormBase", 'Code Repositories (Github)') %]</li>
-          <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
-          <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
       </div>
 
