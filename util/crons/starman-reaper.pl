@@ -5,12 +5,19 @@
 # Run as cron every 30 minutes:
 # */30 * * * * /usr/local/wormbase/admin/crons/starman-reaper.pl
 
+BEGIN {
+    push @INC,(
+        '/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi',
+        '/usr/local/wormbase/extlib/lib/perl5',
+    );
+}
+
 
 use strict;
-use IPC::Open3;
-use FindBin qw/$Bin/;
-use File::Spec;
-use Symbol qw(gensym);
+#use IPC::Open3;
+#use FindBin qw/$Bin/;
+#use File::Spec;
+#use Symbol qw(gensym);
 # Crap. Gmail doesn't use fixed width fonts.
 use MIME::Lite;
 
@@ -24,7 +31,7 @@ my $processes_killed = check_processes();
 # For ec2:
 my ($date,$external_ip,$hostname);
 if (@$processes_killed) {
-    $date = `date "+%a %d %h %Y - %l:%M%P %Z"`;
+    $date = `date "+%Y %d %h %Y (%a) - %l:%M%P %Z"`;
     chomp $date;
     $external_ip = `curl -S http://169.254.169.254/latest/meta-data/public-ipv4`;
     chomp $external_ip;
@@ -124,7 +131,7 @@ sub send_email {
 sub save_detailed_log {
     my $content = shift;
     my $sanitized_date = $date;
-    $sanitized_date =~ s/[ :-]/_/g;
+    $sanitized_date =~ s/[ :\-()]/_/g;
     
     open OUT,">/usr/local/wormbase/logs/cron_reports/starman_reaper/$sanitized_date.log";
     print OUT $content;
