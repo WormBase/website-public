@@ -14,21 +14,15 @@ BEGIN {
 
 
 use strict;
-#use IPC::Open3;
-#use FindBin qw/$Bin/;
-#use File::Spec;
-#use Symbol qw(gensym);
-# Crap. Gmail doesn't use fixed width fonts.
+# Gmail doesn't use fixed width fonts. Boo.
 use MIME::Lite;
-
 
 my $size_limit_in_bytes = '524288000';
 
 
-
 my $processes_killed = check_processes();
 
-# For ec2:
+# For ec2, we fetch hostnames and IPs via the rest API.
 my ($date,$external_ip,$hostname);
 if (@$processes_killed) {
     $date = `date "+%Y %d %h %Y (%a) - %l:%M%P %Z"`;
@@ -38,7 +32,7 @@ if (@$processes_killed) {
     $hostname    = `curl -S http://169.254.169.254/latest/meta-data/public-hostname`;
     chomp $hostname;
     
-    my $content     = prepare_content($processes_killed);
+    my $content = prepare_content($processes_killed);
     
     send_email($content);
     save_detailed_log($content);
@@ -106,7 +100,7 @@ END
 
     foreach my $ps (@$processes_killed) {
 	my ($process,$pid,$mem) = @$ps;
-        $content .= sprintf('%-28s %-8s %-8s',
+        $content .= sprintf('%28s %8s %8s',
                             $process,
                             $pid,
 			    $mem

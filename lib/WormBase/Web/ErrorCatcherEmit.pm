@@ -5,23 +5,14 @@ use warnings;
 
 sub emit {
     my ($class, $c, $output) = @_;
-
+    
     my $status=$c->config->{'response_status'};
     my $template  = "status/$status.tt2";
 
+    # This is a generic error.
     unless (-e $c->config->{root}."/templates/$template") {
         $template  = "status/error.tt2";
     }
-
-    # The following seems odd. -AD
-    # #trim out unwanted line
-    # my @errors;
-    # foreach (@{$c->error}) {
-    #     push @errors, split /\n/, $_;
-    #     last if $#errors >= 2 ;
-    # }
-    # $c->error(0);
-    # $c->error(@errors[0..2]);
 
     eval {
         $c->response->body($c->view('TT')->render($c,$template));
