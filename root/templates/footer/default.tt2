@@ -46,6 +46,14 @@
           <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
           <li>[% external_link("http://twitter.com/wormbase", 'Twitter') %]</li>
         </ul>
+
+        <ul>
+          <li><span>Friends</span></li>
+          <li><a href="http://www.wormatlas.org">WormAtlas</a></li> 
+          <li><a href="http://www.nematodes.org/">Nematodes.org</a></li>
+          <li><a href="http://www.ipm.ucdavis.edu/NEMABASE/">NEMABASE</a></li>
+          <li><a href="http://nematode.net/">Nematode.net</a></li>
+        </ul>  
       </div>
 
 
