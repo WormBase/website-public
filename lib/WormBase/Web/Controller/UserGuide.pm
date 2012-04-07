@@ -34,6 +34,7 @@ sub userguide : Chained('/') PathPart('userguide') :Args   {
     }
 }
 
+
 # Called by the REST action when the widget loads.
 sub _get_pod {
     my ($self,$c,$class) = @_;
