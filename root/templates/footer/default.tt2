@@ -10,7 +10,7 @@
         <div class="footer-title">About</div>
         <ul>
           <li><span>Nematodes</span></li>
-          <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
+          <li><a href="[% c.uri_for('/about','userguide', 'nomenclature') %]">Nomenclature</a></li>
         </ul>                
         
         <ul>

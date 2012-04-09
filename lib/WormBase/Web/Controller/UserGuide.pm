@@ -1,5 +1,7 @@
 package WormBase::Web::Controller::UserGuide;
 
+# THIS PACKAGE IS DEPRECATED - ALL ACTIONS MOVED UNDER /about
+
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
