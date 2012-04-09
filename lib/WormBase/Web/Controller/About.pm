@@ -89,7 +89,7 @@ sub _get_pod {
 sub _get_superclass_pod {
     my ($self,$c) = @_;
 
-    open (LIB2,"/usr/local/wormbase/website/tharris/lib/WormBase/API/Role/Object.pm")
+    open (LIB2,"$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Role/Object.pm")
 	or $c->log->debug("Couldn't open the Role file for fetching boilerplate POD");
     my %pod;
     my $in_stanza;
