@@ -1,0 +1,17 @@
+[%
+    breadcrumbs = [];
+    breadcrumbs.push('<a href="'_ c.uri_for('/about') _ '">About</a>');
+    breadcrumbs.push('<a href="'_ c.uri_for('/about','userguide') _ '">Userguide</a>');
+
+    breadcrumbs.push('<a href="'_ c.uri_for('/about','userguide','for_developers') _ '">Developers</a>');
+    breadcrumbs.push('<a href="'_ c.uri_for('/about','userguide','for_developers','api-rest') _ '">RESTful API</a>');
+    breadcrumbs.push('<span>' _ class _ '</span>');
+    title = breadcrumbs.join(" &raquo; ");
+
+    widget_list = [];
+
+    userguide_page(title = title,
+    		   widget_list => [ { $class    = "Interface" },
+				      ]);
+
+%]
