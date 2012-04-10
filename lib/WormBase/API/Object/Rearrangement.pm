@@ -980,14 +980,16 @@ sub _build_laboratory {
     my $object = $self->object;
 
     my @data;
-    my $lab = $object->Location;
-    my $label = $lab->Mail || "$lab";
-    my $representative = $lab->Representative;
-    my $name           = $representative->Standard_name if $representative;
-    push @data, {
-	laboratory => $self->_pack_obj($lab, "$label"),
-	representative => $self->_pack_obj($representative, "$name"),
-    };
+
+    if (my $lab = $object->Location) {    
+	my $label = $lab->Mail || "$lab";
+	my $representative = $lab->Representative;
+	my $name = $representative->Standard_name if $representative;
+	push @data, {
+	    laboratory => $self->_pack_obj($lab, "$label"),
+	    representative => $self->_pack_obj($representative, "$name"),
+	};
+    }
 
     return {
         description => 'The location associated with this rearrangement',

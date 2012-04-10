@@ -1908,16 +1908,9 @@ sub _build_xrefs {
 
     my @databases = $object->Database;
     my %dbs;
-    foreach my $db (@databases) {	
-        my $name            = $db->Name || "$db";
-        my $description     = $db->Description;
-        my $url             = $db->URL;
-        my $url_constructor = $db->URL_constructor;
-        my $email           = $db->Email;
-        my $remote_text     = $db->right(1);
-	$url_constructor =~ s/<Gene&RNAID>$/\%s/ ;
+    foreach my $db (@databases) {
         # Possibly multiple entries for a single DB
-	my @ids = map {
+	$dbs{$db}{ids} = \[map {
 	    my @types = $_->col;
 	    map { 
 		my $val = $_;
@@ -1925,21 +1918,8 @@ sub _build_xrefs {
 		elsif ($val =~ /GI:(.*)/){"$1"}
 		else { "$_" }
 	    } @types;
-	} $db->col;
-
-        $dbs{$db} = {
-            name            => $name            && "$name",
-            description     => $description     && "$description",
-            url             => $url             && "$url",
-            url_constructor => $url_constructor && "$url_constructor",
-            email           => $email           && "$email",
-            label           => $remote_text     && "$remote_text",
-            ids             => \@ids,
-        };
+	} $db->col];
     }
-
-    # ?Analysis has a separate URL tag.
-    #    my $url = $object->URL if eval { $object->URL } ;
 
     return {
         description => 'external databases and IDs containing additional information on the object',
