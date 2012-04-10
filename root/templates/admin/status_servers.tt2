@@ -8,7 +8,7 @@
 
       <fieldset id="server-status">
             <legend>Prodution Core 1: 50.19.229.229</legend>
-            <div id="core1"></div>
+            <pre><div id="core1"></div></pre>
 	    <script type="text/javascript">
                 WB.ajaxGet($jq("#core1"), 'http://www.wormbase.org/stats/starman/core1');
             </script>
@@ -16,7 +16,7 @@
 
       <fieldset id="server-status">
         <legend>Prodution Core 2: ec2-23-20-4-185.compute-1.amazonaws.com</legend>
-            <div id="core2"></div>
+            <pre><div id="core2"></div></pre>
 	    <script type="text/javascript">
                 WB.ajaxGet($jq("#core2"), 'http://www.wormbase.org/stats/starman/core2');
             </script>
