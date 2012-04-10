@@ -1,0 +1,44 @@
+[% UNLESS noboiler %]
+     <h1>WormBase ACeDB Graphic Display for [% data.object.class %]: [% data.object.name %]</h1>
+[% END %]
+
+<p>
+<form method="POST" action="[% c.uri_for('/tools','epic','run')%]" name"question">
+    <table>
+	<tr>
+	    <th>Name</th>
+	    <td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
+	    <th>Class</th> 
+	    <td><input type="text" name="class" value="[% data.object.class %]" size="15" onchange="document.question.submit()" /></td>
+	    <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
+	</tr>
+    </table>
+</form>
+</p>
+
+[% IF data.msg %]
+   <div class="not-found">[% data.msg %]</div>
+[% ELSE %]
+[% data.img.join(' ') %]
+[% data.img_map.join(' ') %]
+[% END %]
+
+<script type="text/javascript">
+    function send_click(e,url) {
+      if (e.offsetX)
+	  send_click_ie(e,url);
+      else
+	  send_click_ns(e,url);
+    }
+    function send_click_ns(e,url) {
+      window.location = url + (e.x-document.theMapImg.x) + '-' + (e.y-document.theMapImg.y);
+    }
+    function send_click_ie(e,url) {
+      window.location = url + e.offsetX + '-' + e.offsetY;
+    }
+    function toolTip(box,comment) {
+      if (box != null) box.title=comment;
+      window.status=comment;
+      return true;
+    }
+</script>
