@@ -37,7 +37,7 @@
 [% ELSE %]
 
  [% IF picture.data %]
-	[% tag2link(picture.data, image(site.external_urls.gbrowse_image.base _ picture.data.label)) %] 
+	[% tag2link(picture.data, image(site.external_urls.gbrowse_image.base _ 'c_elegans/?name=' _ picture.data.label _ 't=CG+ESTB')) %] 
       [% END %]
  
   <p>
