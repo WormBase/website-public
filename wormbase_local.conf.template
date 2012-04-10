@@ -51,8 +51,8 @@ timer                = 0
 </Plugin::ErrorCatcher>
 
 <Plugin::ErrorCatcher::Email>
-    to      oicr@wormbase.org   
-    from    oicr@wormbase.org 
+    to      you@yourdomain.com
+    from    you@yourdomain.com
     use_tags 1
   #  subject Error Report from: %h; %F, line %l
 </Plugin::ErrorCatcher::Email>
