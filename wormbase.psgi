@@ -90,6 +90,10 @@ else { # proxy (fallback)
 builder {
     # Typically running behind reverse proxy.
     enable "Plack::Middleware::ReverseProxy";
+    enable "Plack::Middleware::ServerStatus::Lite",
+        path => '/server-status',
+        allow => [ '65.219.130.69','50.19.112.56', '127.0.0.1' ],
+        scoreboard => "$app_path/server-status";
 
     # Add debug panels if we are a development environment.
     if ($ENV{PSGI_DEBUG_PANELS}) {
@@ -104,4 +108,3 @@ builder {
     # The core app.
     mount '/'    => $wormbase;
 };
-
