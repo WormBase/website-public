@@ -10,12 +10,13 @@
         <div class="footer-title">About</div>
         <ul>
           <li><span>Nematodes</span></li>
-          <li><a href="[% c.uri_for('/userguide', 'nomenclature') %]">Nomenclature</a></li>
+          <li><a href="[% c.uri_for('/about','userguide', 'nomenclature') %]">Nomenclature</a></li>
         </ul>                
         
         <ul>
           <li><span>WormBase</span></li>
           <li><a href="[% c.uri_for('/about') _ '#0--10' %]">Mission</a></li> 
+          <li><a href="[% c.uri_for('/about','staff') _ '#01--10' %]">WormBase Staff</a></li>
           <li><a href="[% c.uri_for('/about','advisory_board') _ '#01--10' %]">Advisory Board</a></li>
           <li><a href="[% c.uri_for('/about','policies') _ '#1--10' %]">Privacy</a></li>
           <li><a href="[% c.uri_for('/about','policies') _ '#0--10'    %]">Acceptable Use</a></li>
@@ -30,9 +31,9 @@
         <div class="footer-title">Support</div>
         <ul>
           <li class="operator"><a href="javascript:void(0)">Chat</a></li>
-          <li><a href="[% c.uri_for('/userguide') _ '#023-1-5'%]">Submit Data</a></li>
+          <li><a href="[% c.uri_for('/about','userguide') _ '#023-1-5'%]">Submit Data</a></li>
           <li><a href="mailto:help@wormbase.org">Email</a></li>
-          <li><a href="[% c.uri_for('/userguide') %]">User Guide</a></li>
+          <li><a href="[% c.uri_for('/about','userguide') %]">User Guide</a></li>
           <li><a href="[% c.uri_for('/tools', 'support') _ '?url=' _ c.req.uri.path %]">Contact Help</a></li>
         </ul>     
       </div>
@@ -45,6 +46,14 @@
           <li>[% external_link("http://blog.wormbase.org", 'Blog') %]</li>
           <li>[% external_link("http://twitter.com/wormbase", 'Twitter') %]</li>
         </ul>
+
+        <ul>
+          <li><span>Friends</span></li>
+          <li><a target="_blank" href="http://www.wormatlas.org">WormAtlas</a></li> 
+          <li><a target="_blank" href="http://www.nematodes.org/">Nematodes.org</a></li>
+          <li><a target="_blank" href="http://www.ipm.ucdavis.edu/NEMABASE/">NEMABASE</a></li>
+          <li><a target="_blank" href="http://nematode.net/">Nematode.net</a></li>
+        </ul>  
       </div>
 
 
@@ -52,9 +61,9 @@
         <div class="footer-title">Developer</div>
         <ul>
           <li>[% external_link("", 'Amazon EC2 AMI') %]</li>
+          <li><a href="[% c.uri_for('/about','userguide','for_developers') %]">Developer Documentation</a></li>
+          <li><a href="[% c.uri_for('/about','userguide','for_developers','api-rest') %]">RESTful API</a></li>
           <li>[% external_link("http://github.com/WormBase", 'Code Repositories (Github)') %]</li>
-          <li><a href=[% c.uri_for('/userguide','developers') %]>Data Mining</a></li>
-          <li><a href=[% c.uri_for('/userguide','developers','api') %]>API</a></li>
         </ul>
       </div>
 
