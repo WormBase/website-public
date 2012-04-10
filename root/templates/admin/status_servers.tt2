@@ -42,7 +42,7 @@
             <legend>Development: todd.wormbase.org</legend>
             <pre><div id="todd"></div></pre>
 	    <script type="text/javascript">
-                WB.ajaxGet($jq("#todd"), 'http://www.wormbase.org/stats/starman');
+                WB.ajaxGet($jq("#todd"), 'http://www.wormbase.org/stats/starman/todd');
             </script>
        </fieldset>
 
