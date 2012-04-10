@@ -116,6 +116,7 @@ requires 'YAML';                                                 #
 # The PSGI/Plack/Starman stack
 requires 'Plack::Test::Adopt::Catalyst';                         #
 requires 'Plack::App::Proxy';                                    #
+requires 'Plack::Middleware::ServerStatus::Lite';
 requires 'Task::Plack';                                          #
 requires 'Catalyst::Controller::Metal';                          #
 #requires 'Catalyst::Engine::PSGI';                               #
