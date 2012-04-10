@@ -26,7 +26,7 @@
             <legend>Development: staging.wormbase.org</legend>
             <pre><div id="staging"></div></pre>
 	    <script type="text/javascript">
-                WB.ajaxGet($jq("#staging"), 'http://staging.wormbase.org/server-status');
+                WB.ajaxGet($jq("#staging"), 'http://www.wormbase.org/stats/starman/staging');
             </script>
        </fieldset>
 
@@ -34,7 +34,7 @@
             <legend>Development: abby.wormbase.org</legend>
             <pre><div id="abby"></div></pre>
 	    <script type="text/javascript">
-                WB.ajaxGet($jq("#abby"), 'http://abby.wormbase.org/server-status');
+                WB.ajaxGet($jq("#abby"), 'http://www.wormbase.org/stats/starman/abby');
             </script>
        </fieldset>
 
@@ -42,7 +42,7 @@
             <legend>Development: todd.wormbase.org</legend>
             <pre><div id="todd"></div></pre>
 	    <script type="text/javascript">
-                WB.ajaxGet($jq("#todd"), 'http://todd.wormbase.org/server-status');
+                WB.ajaxGet($jq("#todd"), 'http://www.wormbase.org/stats/starman');
             </script>
        </fieldset>
 
