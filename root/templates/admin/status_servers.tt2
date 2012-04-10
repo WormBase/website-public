@@ -9,7 +9,7 @@
 	    <script type="text/javascript">
                 WB.ajaxGet($jq("#core1"), 'http://www.wormbase.org/stats/starman/core1');
             </script>
-       </fieldset>';
+       </fieldset>
 
       <fieldset id="server-status">
         <legend>Prodution Core 2: ec2-23-20-4-185.compute-1.amazonaws.com</legend>
