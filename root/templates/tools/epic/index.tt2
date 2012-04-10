@@ -1,0 +1,28 @@
+<h1>WormBase ACeDB Graphic Display</h1>
+
+<p>
+This is the WormBase ACeDB Graphic Display, useful for navigating the database through a graphical display.
+</p>
+
+<p>
+To browse, enter an object ID (eg C12H4) and a class (eg Clone).
+</p>
+
+<p>
+Examples:<br />
+<a href="[% c.uri_for('/tools','epic','run') %]?name=C12H4;class=Clone">View the C12H4 Clone Graphic Display</a>.<br />
+</p>
+
+
+<p>
+<form method="POST" action="[% c.uri_for('/tools','epic','run') %]"> 
+  <table>
+     <tr><th>Name</th>
+         <td><input type="text" name="name" onchange="document.question.submit()" /></td>
+         <th>Class</th> 
+         <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>
+         <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
+    </tr>
+  </table>
+</form>
+</p>
