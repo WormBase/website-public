@@ -2,8 +2,11 @@
 
    IF c.check_user_roles('admin');
 
-      '<em>Live stats for starman servers.</em>';
-      '<fieldset id="server-status">
+%]
+
+      <em>Live stats for starman servers.</em>
+
+      <fieldset id="server-status">
             <legend>Prodution Core 1: 50.19.229.229</legend>
             <div id="core1"></div>
 	    <script type="text/javascript">
@@ -44,12 +47,7 @@
        </fieldset>
 
 
-
-
-
 [%
-
-
 
    ELSE;
       # Should never happen - widget only loads for admins.
