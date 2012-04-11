@@ -193,6 +193,16 @@ sub synonyms {
 # Supplied by Role; POD will automatically be inserted here.
 # << include remarks >>
 
+#######################################
+#
+# The Assocations Widget
+#
+#######################################
+
+=head2 Association
+
+=cut
+
 =head3 transgenes
 
 This method will return a data structure of 
@@ -259,13 +269,6 @@ sub transgenes {
         'description' => 'transgenes annotated with this anatomy_term'
     };
 }
-
-
-#######################################
-#
-# The Expression patterns
-#
-#######################################
 
 =head3 expression_clusters
 
@@ -341,22 +344,6 @@ sub expression_clusters {
 # sub expression_patterns {}
 # Supplied by Role; POD will automatically be inserted here.
 # << include expression_patterns >>
-
-
-#####################
-## browser
-#####################
-
-#####################
-## term diagram
-#####################
-
-#####################
-## associations
-####################
-
-
-
 
 =head3 gene_ontology
 
@@ -542,7 +529,6 @@ sub anatomy_function_nots {
         'description' => 'anatomy_functions associatated with this anatomy_term'
     };
 }
-
 
 
 #######################################

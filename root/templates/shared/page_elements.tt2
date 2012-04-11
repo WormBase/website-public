@@ -1179,7 +1179,7 @@ END;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
-    IF object.name.data.id; tool_list.unshift('tree'); END;
+    IF object.name.data.id; tool_list.unshift('tree'); tool_list.unshift('schema'); tool_list.unshift('epic'); END;
 
 
     IF tool_list.size > 0; 

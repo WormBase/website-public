@@ -802,16 +802,16 @@ sub widget_GET {
 
 
 
-# Widgets specific to the Userguide.
+# Widgets specific to the Userguide (solely, about/userguide/for_developers/api-rest/)
 # The userguide has its own report to facilitate a deeper structure.
-sub widget_userguide :Path('/rest/widget/userguide') :ActionClass('REST') {}
+sub widget_restful_docs :Path('/rest/widget/about/userguide') :ActionClass('REST') {}
 
-sub widget_userguide_GET {
+sub widget_restful_docs_GET {
     my ($self,$c,@args) = @_; 
     my $path = join('/',@args);
 
     $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
-    $c->stash->{child_template} = "userguide/$path.tt2";
+    $c->stash->{child_template} = "about/userguide/$path.tt2";
     $c->stash->{noboiler}       = 1;
 
     # Get a list of available classes.
@@ -829,8 +829,8 @@ sub widget_userguide_GET {
     } elsif ($path =~ m{api-rest/class/(.*)}) {
 	my $class = $1;
 	$c->stash->{class} = $class;
-	WormBase::Web::Controller::UserGuide->_get_pod($c,$class);
-	$c->stash->{child_template} = "userguide/developers/api-rest/class_documentation_generic.tt2";
+	WormBase::Web::Controller::About->_get_pod($c,$class);
+	$c->stash->{child_template} = "about/userguide/for_developers/api-rest/class_documentation_generic.tt2";
     }
 	       
     # Forward to the view to render HTML
