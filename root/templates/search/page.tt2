@@ -1,7 +1,17 @@
-      <a href="[% item.name.url %]">[% item.name.label || item.name.id || item.name.class %]</a>
-    </li>
+[% page_url = item.name.url || item.name.id %]
+[% page_label = (item.name.label || item.name.id || item.name.class) _ (item.widget_title.0 ? ' - ' _ item.widget_title.0 : item.type.0 ? ' - comments' : '') %]
+[% page_url.match('(http(s?)|ftp)://') ? 
+      external_link(page_url, page_label) : 
+      '<a href="' _ page_url _ '">' _ page_label _ '</a>' %]
+      <span id="fade">([% page_url %])</span>
+   </li>
+
 [% IF item.name.label == 'example' %]
 Click on the star to add or remove this item from your saved reports<br />
 [% ELSE %]
-[% item.name.url %]<br />
+
+        <div class="text-min">
+           [% item.description.join('<br />') %]    
+        </div>
 [% END %]
+
