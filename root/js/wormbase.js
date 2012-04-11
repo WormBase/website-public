@@ -1568,7 +1568,7 @@ var Scrolling = (function(){
   
   function historyOn(action, value, callback){
     if(action == 'get'){
-        Plugin.getPlugin("colorBox", function(){
+        Plugin.getPlugin("colorbox", function(){
             $jq(".history-logging").colorbox();
             if(callback) callback();
         });
