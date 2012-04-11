@@ -893,7 +893,7 @@ sub print_sequence {
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{ 	header=>"FASTA Sequence",
+              push @data,{ 	header=>"Sequence",
                       sequence=>"$fasta",
                       length=>$len,
                             };
@@ -917,7 +917,7 @@ sub print_sequence {
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{  header=>"FASTA Sequence",
+              push @data,{  header=>"Sequence",
                       sequence=>"$fasta",
                       length=>$len,
                             };
