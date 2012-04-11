@@ -41,6 +41,11 @@ sub tools :Path Args {
     my $action= shift @args || "index";
     $c->log->debug("using $tool and running $action\n");
 
+    if ("$tool" eq 'schema' && "$action" eq "run") {
+	$tool = 'tree';
+	$c->req->params->{'name'} = 'all';
+    } #Since schema is identical to tree, use tree to generate content
+
     $c->stash->{section} = "tools";
     $c->stash->{template}="tools/$tool/$action.tt2";
     $c->stash->{noboiler} = 1 if($c->req->params->{inline});

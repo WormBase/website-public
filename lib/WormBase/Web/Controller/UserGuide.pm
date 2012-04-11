@@ -1,5 +1,7 @@
 package WormBase::Web::Controller::UserGuide;
 
+# THIS PACKAGE IS DEPRECATED - ALL ACTIONS MOVED UNDER /about
+
 use strict;
 use warnings;
 use parent 'WormBase::Web::Controller';
@@ -33,6 +35,7 @@ sub userguide : Chained('/') PathPart('userguide') :Args   {
 	$c->stash->{template} = "userguide/developers/api-rest/class_documentation_index.tt2";
     }
 }
+
 
 # Called by the REST action when the widget loads.
 sub _get_pod {

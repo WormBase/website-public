@@ -1,0 +1,113 @@
+# protein_match tracks
+
+
+[BLASTX]
+feature       = protein_match:brepepX protein_match:brigpepX protein_match:jappepX protein_match:ppapepX protein_match:remaneiX wormpepX
+key           = Protein Hits (nematodes; BLASTX)
+category      = Comparative Genomics
+glyph         = segments
+bgcolor       = sub { 
+	      my $f = shift;
+	      my $source = $f->source;
+	      if ($source eq 'brepepX') {
+	      	 return 'red';	      
+	      } elseif ($source eq 'brigpepX') {
+	         return 'yellow';
+              } elseif ($source eq 'jappepX') {
+                  return 'orange';
+	      } elseif ($source eq 'ppapepX') {
+	          return 'blue';
+		  } elsif ($source eq 'remaneiX') {
+		  return 'green';
+		  } elsif ($source eq 'wormpepX') {
+		  return 'purple';
+		  } else { return 'black'; }
+      }
+fgcolor       = black
+title       = sub { 
+	      my $f = shift;
+	      my $source = $f->source;
+	      my $title;
+	      my $name = $f->name;
+	      if ($source eq 'brepepX') {
+	      	 $title = 'C. brenneri';	      
+	      } elseif ($source eq 'brigpepX') {
+	         $title = 'C. briggsae';
+              } elseif ($source eq 'jappepX') {
+                 $title = 'C. japonica';
+	      } elseif ($source eq 'ppapepX') {
+	         $title = 'P. pacificus';
+		  } elsif ($source eq 'remaneiX') {
+		  $title = 'C. remanei';
+		  } elsif ($source eq 'wormpepX') {
+		  $title = 'C. elegans';
+		  } else { $title = 'BLASTX alignment'; }
+		  return "BLASTX alignment to $title: $name";
+      }
+height        = 5
+citation =  These are BLASTX (nucleotide to protein, via six-frame
+        translation) similarity hits against various nematodes.
+
+
+
+[BLASTX_YEAST]
+feature       = protein_match:yeastX
+key           = Protein Hits (yeast; BLASTX)
+category      = Comparative Genomics
+glyph         = segments
+bgcolor       = blue
+fgcolor       = black
+title         = BLASTX alignment to S. cerevisiae: $name
+height        = 5
+citation =  These are BLASTX (nucleotide to protein, via six-frame
+        translation) similarity hits to Saccharomyces cerevisiae.
+
+[BLASTX_FLY]
+feature       = protein_match:GadflyX
+key           = Protein Hits (fly; BLASTX)
+category      = Comparative Genomics
+glyph         = segments
+bgcolor       = blue
+fgcolor       = black
+title         = BLASTX alignment to D. melanogaster: $name
+height        = 5
+citation =  These are BLASTX (nucleotide to protein, via six-frame
+        translation) similarity hits to Drosphila melanogaster.
+
+[BLASTX_HUMAN]
+feature       = protein_match:ipi_humanX
+key           = Protein Hits (human; BLASTX)
+category      = Comparative Genomics
+glyph         = segments
+bgcolor       = blue
+fgcolor       = black
+title         = BLASTX alignment to H. sapiens: $name
+height        = 5
+citation =  These are BLASTX (nucleotide to protein, via six-frame
+        translation) similarity hits to Homo sapiens.
+
+
+
+[BLASTX_SWISSPROT]
+feature       = protein_match:slimswissprotX protein_match:slimtremblX
+key           = Protein Hits (SwissProt; BLASTX)
+category      = Comparative Genomics
+glyph         = segments
+bgcolor       = sub { 
+	      my $f = shift;
+	      my $source = $f->source;
+	      return 'red' if $source eq 'slimswissprotX';
+	      return 'green' if $source eq 'slimtremblX';
+	      return 'black';
+    }
+fgcolor       = black
+title       = sub { 
+	      my $f = shift;
+	      my $source = $f->source;
+	      my $name = $f->name;
+	      return "BLASTX to SwissProt: $name" if $source eq 'slimswissprotX';
+	      return "BLASTX to SwissProt Tremble: $name" if $source eq 'slimtremblX';	
+      }
+height        = 5
+citation =  These are BLASTX (nucleotide to protein, via six-frame
+        translation) similarity hits to SwissProt (in red) and SwissProt Trembl (in green).

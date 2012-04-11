@@ -29,7 +29,7 @@
        <h1><a href="/" title="WormBase Home">[% template.title or c.config.site_name %]</a></h1>
      <p>  
           [% # The current release of the software %]
-          Version: <a href="/about/release_notes_([%- constants.acedb_version -%])">[% constants.acedb_version %]</a>
+          Version: <a href="/about/wormbase_release_[%- constants.acedb_version -%]">[% constants.acedb_version %]</a>
       </p>
   </div>
 
