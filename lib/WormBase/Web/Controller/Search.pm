@@ -174,6 +174,8 @@ sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
   if(defined $c->config->{sections}{species}{$class}){
     return $c->uri_for('/species',$species || 'all' ,$class,$id)->as_string;
+  }elsif($class eq 'page'){
+    return $id;
   }
   return $c->uri_for('/resources',$class,$id)->as_string;
 }

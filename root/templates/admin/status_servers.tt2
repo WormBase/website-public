@@ -1,36 +1,57 @@
 [% 
 
    IF c.check_user_roles('admin');
-     
-      '<em>Recalculated on five minute interals. Values only valid when viewed on the production instance.</em>';
 
-      '<fieldset id="server-status">
-        <legend>Nginx Status</legend>
+%]
 
-            <h2>Load/connections per day</h2>
-                <img src="http://www.wormbase.org/stats/nginx/img/load-day.png">
-                <img src="http://www.wormbase.org/stats/nginx/img/connections-day.png">
+      <em>Live stats for starman servers.</em>
 
-            <h2>Load per week</h2>
-                <img src="http://www.wormbase.org/stats/nginx/img/load-week.png">
-                <img src="http://www.wormbase.org/stats/nginx/img/connections-week.png">
+      <fieldset id="server-status">
+            <legend>Prodution Core 1: 50.19.229.229</legend>
+            <pre><div id="core1"></div></pre>
+	    <script type="text/javascript">
+                WB.ajaxGet($jq("#core1"), 'http://www.wormbase.org/stats/starman/core1');
+            </script>
+       </fieldset>
 
-            <h2>Load per month</h2>
-                <img src="http://www.wormbase.org/stats/nginx/img/load-month.png">
-                <img src="http://www.wormbase.org/stats/nginx/img/connections-month.png">
+      <fieldset id="server-status">
+        <legend>Prodution Core 2: ec2-23-20-4-185.compute-1.amazonaws.com</legend>
+            <pre><div id="core2"></div></pre>
+	    <script type="text/javascript">
+                WB.ajaxGet($jq("#core2"), 'http://www.wormbase.org/stats/starman/core2');
+            </script>
+       </fieldset>
 
-            <h2>Load per year</h2>
-               <img src="http://www.wormbase.org/stats/nginx/img/load-year.png">
-               <img src="http://www.wormbase.org/stats/nginx/img/connections-year.png">
-       </fieldset>';
+      <fieldset id="server-status">
+            <legend>Development: staging.wormbase.org</legend>
+            <pre><div id="staging"></div></pre>
+	    <script type="text/javascript">
+                WB.ajaxGet($jq("#staging"), 'http://www.wormbase.org/stats/starman/staging');
+            </script>
+       </fieldset>
 
-      '<fieldset id="server-status">
-          <legend>Apache Status</legend>
-	   <a href="http://50.19.229.229/stats/apache-ec2">
-       </fieldset>';
+      <fieldset id="server-status">
+            <legend>Development: abby.wormbase.org</legend>
+            <pre><div id="abby"></div></pre>
+	    <script type="text/javascript">
+                WB.ajaxGet($jq("#abby"), 'http://www.wormbase.org/stats/starman/abby');
+            </script>
+       </fieldset>
+
+      <fieldset id="server-status">
+            <legend>Development: todd.wormbase.org</legend>
+            <pre><div id="todd"></div></pre>
+	    <script type="text/javascript">
+                WB.ajaxGet($jq("#todd"), 'http://www.wormbase.org/stats/starman/todd');
+            </script>
+       </fieldset>
+
+
+[%
 
    ELSE;
-      'This is the admin-only system status widget.';
+      # Should never happen - widget only loads for admins.
+      'You must be an administrator to view this widget.';
    END;
 
 %]

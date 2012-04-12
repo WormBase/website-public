@@ -2,7 +2,7 @@
 
    IF c.check_user_roles('admin');
      
-      'To do:
+    'To do:
 
 
     # Get the status of our server pool
@@ -11,7 +11,7 @@
     # Get a list of servers
     # For each server, check (possibly using capistrano)
     # - available disk space
-    # - starman status
+    # - DONE: starman status
     # - cpu load
     # - memory usage
     
@@ -19,14 +19,6 @@
     # Other items: analytics, clicktale, browsermob, webmaster tools, etc
 
    ';
-      '<fieldset id="server-status">
-       <legend>Apache Status</legend>
-     Other links:
-       webmaster tools
-       analytics
-
-
-       </fieldset>';
 
    ELSE;
       'This is the admin-only system status widget.';

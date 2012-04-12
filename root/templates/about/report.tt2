@@ -6,8 +6,7 @@
       breadcrumbs.push(path_parts ? '<a href="' _ c.uri_for('/about') _ '">About</a>' : 'About');     
       IF path_parts;
          FOREACH path IN path_parts;
-            title = path FILTER ucfirst;
-            title = title.replace('_', ' ');
+            title = path.replace('_', ' ') FILTER ucfirst;
             breadcrumbs.push(loop.last ? '<span>' _ title _ '</span>' : '<a href="' _ c.uri_for('/about', path_parts.slice(0, loop.count - 1).join('/')) _ '">' _ title _ '</a>');
          END;
       END;
