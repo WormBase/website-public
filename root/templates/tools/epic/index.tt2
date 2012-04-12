@@ -3,7 +3,7 @@
 <h1>WormBase Genetic Map Viewer</h1>
 
 <p>
-To browse, select a chromosome, or enter an object ID (eg WBGene0006763) and a class (eg Gene)..
+To browse, select a chromosome or enter a Gene/Rearragnement ID (eg WBGene0006763).
 </p>
 
 <p>
@@ -21,6 +21,23 @@ To browse, select a chromosome, or enter an object ID (eg WBGene0006763) and a c
     <input type="submit" name="Change" value="View" style="background: white" />
 </form>
 </p>
+
+<p>
+<form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
+  <table>
+     <tr><th>Name</th>
+         <td><input type="text" name="name" onchange="document.question.submit()" /></td>
+         <th>Class</th> 
+         <td><select name="class">
+	      <option value="Gene" selected="1">Gene</option>
+	      <option value="Rearrangement">Rearrangement</option>
+	 </select></td>
+         <td><input type="submit" name="Change" value="Search" style="background: white" /></td>
+    </tr>
+  </table>
+</form>
+</p>
+
 [% ELSE %]
 <h1>WormBase ACeDB Graphic Display</h1>
 
@@ -36,8 +53,6 @@ To browse, enter an object ID (eg C12H4) and a class (eg Clone).
 Examples:<br />
 <a href="[% c.uri_for('/tools','epic','run') %]?name=C12H4;class=Clone">View the C12H4 Clone Graphic Display</a>.<br />
 </p>
-
-[% END %]
 <p>
 <form method="POST" action="[% c.uri_for('/tools', "$tool" ,'run') %]"> 
   <table>
@@ -50,6 +65,8 @@ Examples:<br />
   </table>
 </form>
 </p>
+
+[% END %]
 
 
 
