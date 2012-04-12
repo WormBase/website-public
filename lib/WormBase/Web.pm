@@ -384,7 +384,6 @@ sub secure_uri_for {
 override 'uri_for' => sub {
     my ($self, @args) = @_;
     my $u = super(@args);
-    $self->log->debug("PATH? " . $u->path);
     return $u->path;
   };
 
