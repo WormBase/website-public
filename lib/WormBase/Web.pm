@@ -381,6 +381,12 @@ sub secure_uri_for {
     return $u;
 }
 
+override 'uri_for' => sub {
+    my ($self, @args) = @_;
+    my $u = super(@args);
+    return $u->path;
+  };
+
 # overloaded from Per_User plugin to move saved items
 sub merge_session_to_user {
    my $c = shift;

@@ -61,19 +61,19 @@
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
+          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id);
         ELSIF (class == 'bench');
-          c.uri_for('/me', id).path;
+          c.uri_for('/me', id);
         ELSIF (class == 'page');
           id;
         ELSIF (class == 'picture');
-           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
+           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
         ELSIF (class == 'genomic_location');
-           c.uri_for('/tools', 'genome', 'gbrowse').path _ '/' _ id;
+           c.uri_for('/tools', 'genome', 'gbrowse') _ '/' _ id;
         ELSIF !(c.config.sections.resources.$class.defined);
-          c.uri_for('/search', 'all', id).path;
+          c.uri_for('/search', 'all', id);
         ELSE;
-          c.uri_for('/resources', class, id).path;
+          c.uri_for('/resources', class, id);
         END;
    END;
 
