@@ -3,6 +3,7 @@ package WormBase::API::Role::Object;
 use Moose::Role;
 use File::Path 'mkpath';
 use WormBase::API::ModelMap;
+use Moose::Util::TypeConstraints;
 
 # I should have an abstract method for id():
 # provided with a class and a name, return the internal ID, if different.
@@ -26,9 +27,14 @@ use WormBase::API::ModelMap;
 #    default => 10,
 #);
 
+class_type 'Ace::Object';
+
 has 'object' => (
     is  => 'rw',
-    isa => 'Ace::Object',
+    isa => 'Maybe[Ace::Object]',
+    default => undef,
+#       isa => union([qw[ Ace::Object Undef ]]),
+#     isa => 'undef',
 );
 
 has 'dsn' => (

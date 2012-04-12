@@ -300,7 +300,6 @@ sub wrap {
 
         $class = $PREFIX . $class unless $class =~ $PACKRE;
 
-        # $class should already be loaded by ModelMap
         return $class->new(
             object      => $object,
             log         => $self->log,

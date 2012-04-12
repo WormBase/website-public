@@ -1145,7 +1145,7 @@ END;
 
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, this_object_id, widget_name)
+            href  = c.uri_for(base, arg1, is_class_index ? '*' : this_object_id, widget_name)
             type  = section == 'species' ? class : section
           };
 
