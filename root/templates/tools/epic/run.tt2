@@ -1,9 +1,31 @@
-[% UNLESS noboiler %]
-     <h1>WormBase ACeDB Graphic Display for [% data.object.class %]: [% data.object.name %]</h1>
+[% IF data.tool == 'gmap' || data.object.class == 'Map' %]
+    [% UNLESS noboiler %]
+	<h1>WormBase Genetic Map Viewer for [% data.object.class %]: [% data.object.name %]</h1>
+    [% END %]
+    <p>
+    <form method="POST" action="[% c.uri_for('/tools','gmap','run') %]"> 
+	Chromosome name:
+	<select name="name">
+	    <option value="I" selected="1">I</option>
+	    <option value="II">II</option>
+	    <option value="III">III</option>
+	    <option value="IV">IV</option>
+	    <option value="V">V</option>
+	    <option value="X">X</option>
+	</select>
+	&nbsp;
+	<input type="submit" name="Change" value="Change" style="background: white" />
+    </form>
+    </p>
+
+[% ELSE %]
+    [% UNLESS noboiler %]
+	<h1>WormBase ACeDB Graphic Display for [% data.object.class %]: [% data.object.name %]</h1>
+    [% END %]
 [% END %]
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools','epic','run')%]" name"question">
+<form method="POST" action="[% c.uri_for('/tools',data.tool,'run')%]" name"question">
     <table>
 	<tr>
 	    <th>Name</th>
@@ -16,11 +38,14 @@
 </form>
 </p>
 
+
+
 [% IF data.msg %]
-   <div class="not-found">[% data.msg %]</div>
+    <div class="not-found">[% data.msg %]</div>
 [% ELSE %]
-[% data.img.join(' ') %]
-[% data.img_map.join(' ') %]
+    [% data.img_panel.join(' ') %]
+    [% data.img.join(' ') %]
+    [% data.img_map.join(' ') %]
 [% END %]
 
 <script type="text/javascript">
