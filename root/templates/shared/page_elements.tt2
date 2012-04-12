@@ -900,10 +900,10 @@ _ '</div>';
 END;
 %]
 
-[% MACRO format_sequence(seq) BLOCK;
-    format_seq = "";
+[% MACRO format_sequence(seq, header) BLOCK;
+    format_seq = header ? ">$header\n" : "";
     FOREACH line IN seq.chunk(80);
-      format_seq = format_seq _ line.chunk(10).join(' ');
+      format_seq = format_seq _ line;
       UNLESS loop.last;
         format_seq = format_seq _ "\n";
       END;  
@@ -927,9 +927,10 @@ END;
       IF obj.sequence.defined;
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
-          
-        format_seq = seq.match('\s') ? seq : format_sequence(seq);
-        title = obj.header || 'sequence';
+
+      
+        format_seq = seq.match('\s') ? seq : format_sequence(seq, obj.header || object.name.data.label);
+        title = obj.header || 'sequence';    
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');
         fname = object.name.data.id _ title_html _ '.fasta';
