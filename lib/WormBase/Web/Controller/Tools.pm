@@ -45,6 +45,12 @@ sub tools :Path Args {
 	$tool = 'tree';
 	$c->req->params->{'name'} = 'all';
     } #Since schema is identical to tree, use tree to generate content
+    if ("$tool" eq 'gmap' || "$tool" eq 'epic') {
+	$c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
+	$c->req->params->{'tool'} = $tool;
+	$tool = 'epic';
+    } #Since gmap is identical to epic, use epic to load display
+
 
     $c->stash->{section} = "tools";
     $c->stash->{template}="tools/$tool/$action.tt2";
@@ -81,9 +87,7 @@ sub tools :Path Args {
 	     $c->res->redirect($url."?from=".$data->{redirect}."&query=".$data->{msg}, 307);
     }
 
-    if ($tool eq 'tree') {
-        $c->stash->{data} = $data;
-    }
+    if ($tool eq 'tree' || $tool eq 'epic') { $c->stash->{data} = $data; }
     else {
         for my $key (keys %$data) {
 	     $c->log->debug("save in stash key $key\n");
