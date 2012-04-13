@@ -82,7 +82,7 @@ sub run {
 	    } else {
 		$msg = 1;
 	    }
-	} else {
+	} elsif ($request_class ne 'Map') {
 	    $msg = 1; # should set off unless check for the call to display_object below
 	}
     }

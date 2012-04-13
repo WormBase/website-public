@@ -1916,7 +1916,7 @@ sub _build_xrefs {
     my %dbs;
     foreach my $db (@databases) {
         # Possibly multiple entries for a single DB
-	$dbs{$db}{ids} = \[map {
+	@{$dbs{$db}{ids}} = map {
 	    my @types = $_->col;
 	    map { 
 		my $val = $_;
@@ -1924,7 +1924,7 @@ sub _build_xrefs {
 		elsif ($val =~ /GI:(.*)/){"$1"}
 		else { "$_" }
 	    } @types;
-	} $db->col];
+	} $db->col;
     }
 
     return {

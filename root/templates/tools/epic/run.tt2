@@ -18,27 +18,40 @@
     </form>
     </p>
 
+    <p>
+    <form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
+      <table>
+	<tr><th>Name</th>
+	    <td><input type="text" name="name" onchange="document.question.submit()" /></td>
+	    <th>Class</th> 
+	    <td><select name="class">
+		  <option value="Gene" selected="1">Gene</option>
+		  <option value="Rearrangement">Rearrangement</option>
+	    </select></td>
+	    <td><input type="submit" name="Change" value="Search" style="background: white" /></td>
+	</tr>
+      </table>
+    </form>
+    </p>
 [% ELSE %]
     [% UNLESS noboiler %]
 	<h1>WormBase ACeDB Graphic Display for [% data.object.class %]: [% data.object.name %]</h1>
     [% END %]
+
+    <p>
+    <form method="POST" action="[% c.uri_for('/tools',data.tool,'run')%]" name"question">
+	<table>
+	    <tr>
+		<th>Name</th>
+		<td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
+		<th>Class</th> 
+		<td><input type="text" name="class" value="[% data.object.class %]" size="15" onchange="document.question.submit()" /></td>
+		<td><input type="submit" name="Change" value="Change" style="background: white" /></td>
+	    </tr>
+	</table>
+    </form>
+    </p>
 [% END %]
-
-<p>
-<form method="POST" action="[% c.uri_for('/tools',data.tool,'run')%]" name"question">
-    <table>
-	<tr>
-	    <th>Name</th>
-	    <td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
-	    <th>Class</th> 
-	    <td><input type="text" name="class" value="[% data.object.class %]" size="15" onchange="document.question.submit()" /></td>
-	    <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
-	</tr>
-    </table>
-</form>
-</p>
-
-
 
 [% IF data.msg %]
     <div class="not-found">[% data.msg %]</div>
