@@ -492,7 +492,7 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
-      if($widget=~m/^static-widget-([\d])/){
+      if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1);
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
