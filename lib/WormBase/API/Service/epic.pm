@@ -152,7 +152,7 @@ sub display_object {
 	    print F $gif;
 	    close F;
 	}
-	my $u = "/tools/epic/run?name=$request_name;class=$request_class";
+	my $u = "/tools/$request_tool/run?name=$request_name;class=$request_class";
 	$u .= $click ? "&click=$click," : '&click=';
 
 	$img = img({-src   => $image_path,
@@ -211,7 +211,7 @@ sub print_map {
 	    if ($box->{class} eq 'BUTTON') {
 		my ($c) = map { "$_->[0]-$_->[1]" } [ map { 2+$_ } @{$box->{coordinates}}[0..1]];
 		my $clicks = $old_clicks ? "$old_clicks,$c" : $c;
-		my $url = "/tools/epic/run?name=$request_name;class=$request_class&click=$clicks";
+		my $url = "/tools/$request_tool/run?name=$request_name;class=$request_class&click=$clicks";
 		push(@lines,qq(<AREA shape="rect"
 				     coords="$coords"
 				     onMouseOver="return toolTip(this,'$jcomment')"
@@ -223,7 +223,14 @@ sub print_map {
 	    my $full_name = $box->{'name'};
 	    my $n = $full_name =~ /(.*)\".*\".*/ ? $1 : $full_name;
 	    my $c = $box->{'class'};
-	    my $href = "$c" eq 'System' || "$c" eq 'Text' ? 'nohref' : 'href="/tools/epic/run?name=' . escape($n) . ";class=" . escape($c) . '"';
+	    my $href;
+	    if ("$c" eq 'System' || "$c" eq 'Text') {
+		$href = 'nohref';
+	    } elsif ($c =~ /gene|rearrangement/i) {
+		$href = 'href="' . "/tools/$request_tool/run?name=" . escape($n) . ";class=" . escape($c) . '"';
+	    } else {
+		$href = 'href="/tools/epic/run?name=' . escape($n) . ";class=" . escape($c) . '"';
+	    }
 	    push(@lines,qq(<AREA shape="rect"
 			         onMouseOver="return toolTip(this,'$jcomment')"
 			         coords="$coords"
@@ -232,7 +239,7 @@ sub print_map {
     }
 
     # Create default handling.  Bad use of javascript, but can't think of any other way.
-    my $url = "/tools/epic/run?name=$request_name;class=$request_class";
+    my $url = "/tools/$request_tool/run?name=$request_name;class=$request_class";
     my $simple_url = $url;
     $url .= "&click=$old_clicks";
     $url .= "," if $old_clicks;
