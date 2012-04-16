@@ -365,7 +365,7 @@ sub rest_link_wbid_POST {
       unless($confirm){
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id});
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
-        $c->stash->{message} = "<h2>Thank you!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
+        $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
       }else{
         $c->user->wb_link_confirm(1);
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
@@ -427,8 +427,8 @@ sub rest_register_POST {
       
       push(@emails, @wbemails);
       $c->stash->{template} = "shared/generic/message.tt2"; 
-      $c->stash->{message} = "<h2>Thank you!</h2> <p>Thank you for registering at <a href='" . $c->uri_for("/") . "'>wormbase.org</a>. An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . " to confirm your registration</p>" ; 
-      $c->stash->{redirect} = $c->req->params->{redirect};
+      $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . ".</p><p>In order to use this account at <a href='" . $c->uri_for("/") . "'>wormbase.org</a> you will need to activate it by following the activation link in your email.</p>" ; 
+#       $c->stash->{redirect} = $c->req->params->{redirect};
       $c->forward('WormBase::Web::View::TT');
 
     }
@@ -492,7 +492,7 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
-      if($widget=~m/^static-widget-([\d])/){
+      if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1);
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
