@@ -598,9 +598,9 @@ sub chromosome {
     my $object = $self->object;
     my $str;
     my ($tag) = grep {"$_" eq 'Map'} $object->tags;
-    my $map = $object->$tag;
+    my $map = $object->$tag if $tag;
     $str = $map ? "$map" : '';
-    my ($left, $right) = $tag->col(3);
+    my ($left, $right) = $tag->col(3) if $tag;
     $left = sprintf "%.2f", $left->at if $left;
     $right = sprintf "%.2f", $right->at if $right;
     $str .= $left && $right ? " $left to $right" : '';
