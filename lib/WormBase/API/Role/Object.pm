@@ -2302,39 +2302,10 @@ sub _get_genotype {
 	map {my $name = $self->_make_common_name($_); $elements{"$name"} = $self->_pack_obj($_)} $object->$tag;
     }
 
-    warn("Keys: ", join (", ", keys %elements), "\n");
-
-    my @split = split('/', $genotype);
-    my $count = 0;
-    my @array;
-    foreach my $geno (@split) {
-	push @matches, [$1, $2, $3, $4, $5, $6, $7, $8] while $geno =~ /(\S+)\[(\S+)\]|(\(*)([IVX;.]+)(\)*)|(\S+)\((\S+)\)|(\S+)/g;
-	$array[7] = '/';
-	push @matches, \@array if $count < @split - 1;
-	$count++;
-    }
-
-    foreach my $match (@matches) {
-	my ($m1, $m2, $m3, $m4, $m5, $m6, $m7, $m8) = @$match;
-	warn("Match:\n");
-	warn( join(', ', @$match), "\n") if $match;
-	if ($m1){
-	    $m1 = $elements{$m1} || {label => "$m1"};
-	    $m2 = $elements{$m2} || {label => "$m2"};;
-	    push @data, $m1, {label => "["}, $m2, {label => "]"};
-	} elsif ($m4) {
-	    push @data, $m3 && {label => "$m3"}, $m4 && {label => "$m4"}, $m5 && {label => "$m5"};
-	} elsif ($m6) {
-	    $m6 = $elements{$m6} || {label => "$m6"};;
-	    $m7 = $elements{$m7} || {label => "$m7"};;
-	    push @data, $m6, {label => "("}, $m7, {label => ")"};
-	} elsif ($m8) {
-	    $m8 = $elements{$m8} || {label => "$m8"};;
-	    push @data, $m8;
-	}
-    }
-
-    return @data ? \@data : undef;
+    return {
+	str => "$genotype" || undef,
+	data => %elements ? \%elements : undef,
+    };
 }
 
 #########################################
