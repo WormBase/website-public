@@ -442,6 +442,15 @@ END;
     '</table>';
 END; %]
 
+[% MACRO show_genotype(obj) BLOCK;
+	genstr = obj.str;
+	FOREACH key IN obj.data.keys;
+	    lnk = tag2link(obj.data.$key);
+	    genstr = genstr.replace(obj.data.$key.label, lnk);
+	END;
+	genstr;    
+END; %]
+
 [% MACRO cell_content(cell) BLOCK;
 	IF cell.species.defined;
 	    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -456,7 +465,7 @@ END; %]
 	ELSIF cell.interaction.defined;
 	    interaction_cell(cell);
 	ELSIF cell.genotype.defined;
-	    tags2link(cell.genotype, ' ', '');
+	    show_genotype(cell.genotype);
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';
