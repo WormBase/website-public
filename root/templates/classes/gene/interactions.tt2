@@ -37,3 +37,9 @@
 [% ELSE %]
   [% interaction_table %]
 [% END %]
+
+<a href="http://genemania.org/link?o=6239&g=[%
+FOREACH node IN fields.interactions.data.nodes.keys.sort;
+    name = FILTER upper; fields.interactions.data.nodes.$node.label; END;
+    "$name|";
+END; %]">View Interaction Network in GeneMANIA</a>
