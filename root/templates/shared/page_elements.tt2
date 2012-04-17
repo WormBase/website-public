@@ -938,7 +938,7 @@ END;
         NEXT IF seq.length == 0;
 
       
-        format_seq = seq.match('\s') ? seq : format_sequence(seq, obj.header || object.name.data.label);
+        format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ '<br />' _ seq  : format_sequence(seq, obj.header || object.name.data.label);
         title = obj.header || 'sequence';    
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');
