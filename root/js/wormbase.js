@@ -683,8 +683,7 @@
     }
 
     function search_change(new_search) {
-      if(!new_search) { new_search = 'all';}
-      if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
+      if(!new_search) { new_search = 'gene';}
       cur_search_type = new_search;
       if(new_search == "all"){
       new_search = "for anything";
