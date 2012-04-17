@@ -936,7 +936,7 @@ sub print_sequence {
 		$markup->add_style('cds1' => 'BGCOLOR orange');
 		$markup->add_style('uc'   => 'UPPERCASE');
 		$markup->add_style('newline' => "\n");
-		$markup->add_style('space'   => ' ');
+		$markup->add_style('space'   => '');
 		my %seenit;
 
 		my @features;
