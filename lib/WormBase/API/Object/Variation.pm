@@ -3227,10 +3227,10 @@ sub _do_markup {
     $markup->add_style('cds0'  => 'BGCOLOR yellow');
     $markup->add_style('cds1'  => 'BGCOLOR orange');
     $markup->add_style('space' => ' ');
-    $markup->add_style('substitution' => 'text-transform:uppercase; background-color: red;');
-    $markup->add_style('deletion'     => 'background-color:red; text-transform:uppercase;');
-    $markup->add_style('insertion'     => 'background-color:red; text-transform:uppercase;');
-    $markup->add_style('deletion_with_insertion'  => 'background-color: red; text-transform:uppercase');
+    $markup->add_style('substitution' => 'text-transform:uppercase; background-color: #FF8080;');
+    $markup->add_style('deletion'     => 'background-color:#FF8080; text-transform:uppercase;');
+    $markup->add_style('insertion'     => 'background-color:#FF8080; text-transform:uppercase;');
+    $markup->add_style('deletion_with_insertion'  => 'background-color: #FF8080; text-transform:uppercase');
     if ($object->Type_of_mutation eq 'Insertion') {
         $markup->add_style('flank' => 'background-color:yellow;font-weight:bold;text-transform:uppercase');
     }
