@@ -1,12 +1,10 @@
-
-
-New issue: [% issue.title %]
+<style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
 <p>
-Reported by [% issue.reporter.username || name %] ([% email.header.cc %])
+Reported by [% issue.reporter.username || name %] ([% issue.reporter.primary_email.email || email.header.cc %])
 <br />
-<span style="font-size: 0.9em;color: #999999;">[% date.format(issue.timestamp, '%d %b %y %H:%M', 'en_GB') %]
+<span class="fade">[% date.format(issue.timestamp, '%d %b %y %H:%M', 'en_GB') %]
 </span></p>
 
 <p>Question:
@@ -14,9 +12,10 @@ Reported by [% issue.reporter.username || name %] ([% email.header.cc %])
 </p>
 
 <p>Submitted From:
-<br>&nbsp;&nbsp;[% issue.page.title %] <span style="font-size: 0.9em;color: #999999;">([% issue.page.url %])</span>
+<br>&nbsp;&nbsp;[% issue.page.title %] <span class="fade">([% issue.page.url %])</span>
 </p>
 
-<p><span style="font-size: 0.9em;color: #999999;">
-This question was reported using the web interface from wormbase.org. You are receiving this either because you are the owner of the issue, or you are following the issue.
-</span></p> 
+<p class="fade">
+This question was reported using the web interface from wormbase.org. 
+<br />You can also <a href="mailto:help@wormbase.org">email us</a> directly or <a href="https://github.com/WormBase/website/issues">create an issue on github</a>
+</p> 

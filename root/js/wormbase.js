@@ -1432,7 +1432,9 @@ var Scrolling = (function(){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 
                 }else {
-                  window.location = url || issue.url;
+                  var content = $jq("#content");
+                  content.children().not("#spacer").remove();
+                  content.prepend(data);
                 }
               },
           error: function(request,status,error) {
