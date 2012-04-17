@@ -859,7 +859,7 @@ sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
     my @data;
-    my $gff = $self->gff || return;
+    my $gff = $self->gff || goto END;
     my $seq_obj;
     if ($self->_parsed_species =~ /briggsae/) {
 		($seq_obj) = sort {$b->length<=>$a->length}
