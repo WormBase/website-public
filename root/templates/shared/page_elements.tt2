@@ -444,9 +444,9 @@ END; %]
 
 [% MACRO show_genotype(obj) BLOCK;
 	genstr = obj.str;
-	FOREACH key IN obj.data.keys;
+	FOREACH key IN obj.data.keys.sort;
 	    lnk = tag2link(obj.data.$key);
-	    genstr = genstr.replace(obj.data.$key.label, lnk);
+	    genstr = genstr.replace(key.replace('\-', '\-'), lnk);
 	END;
 	genstr;    
 END; %]
