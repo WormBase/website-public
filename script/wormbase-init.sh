@@ -10,7 +10,7 @@ source /usr/local/wormbase/website/production/wormbase.env
 # If the APP environment variable isn't set, 
 # assume we are running in production.
 if [ ! $APP ]; then
-    echo "   ---> APP is not defined; assuming a production deployment"
+    echo "   ---> APP is not defined; assuming a production deployment using wormbase_production.conf"
     export APP=production
     export APP_ROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
@@ -41,7 +41,7 @@ if [ ! $APP ]; then
     export CATALYST_CONFIG_LOCAL_SUFFIX="production"
     
 elif [ $APP == 'staging' ]; then
-    echo "   ---> APP is set to staging"
+    echo "   ---> APP is set to staging: assuming we are host:staging.wormbase.org using wormbase_staging.conf"
 
 # Set some configuration variables.
     export WORMBASE_INSTALLATION_TYPE="staging"
@@ -182,7 +182,7 @@ _start() {
     for i in 1 2 3 4 ; do
 	sleep 1
 	if check_running ; then
-	    echo "     $APP is now starting up"
+	    echo "     WormBase app is now starting up..."
 	    return 0
 	fi
     done
