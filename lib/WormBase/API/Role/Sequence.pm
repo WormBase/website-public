@@ -859,7 +859,7 @@ sub print_sequence {
     my ($self) = @_;
     my $s = $self->object;
     my @data;
-    my $gff = $self->gff || return;
+    my $gff = $self->gff || goto END;
     my $seq_obj;
     if ($self->_parsed_species =~ /briggsae/) {
 		($seq_obj) = sort {$b->length<=>$a->length}
@@ -893,7 +893,7 @@ sub print_sequence {
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{ 	header=>"FASTA Sequence",
+              push @data,{ 	header=>"Sequence",
                       sequence=>"$fasta",
                       length=>$len,
                             };
@@ -917,7 +917,7 @@ sub print_sequence {
             $fasta =~ s/\s//g;
             my $len = length($fasta);
             if($len > 0){
-              push @data,{  header=>"FASTA Sequence",
+              push @data,{  header=>"Sequence",
                       sequence=>"$fasta",
                       length=>$len,
                             };
@@ -936,7 +936,7 @@ sub print_sequence {
 		$markup->add_style('cds1' => 'BGCOLOR orange');
 		$markup->add_style('uc'   => 'UPPERCASE');
 		$markup->add_style('newline' => "\n");
-		$markup->add_style('space'   => ' ');
+		$markup->add_style('space'   => '');
 		my %seenit;
 
 		my @features;

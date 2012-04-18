@@ -4,7 +4,7 @@ use Moose;
 with 'WormBase::API::Role::Object';
 
 use strict;
-use vars qw/$DB $dsn $request_name $request_class $click $map_start $map_stop/;
+use vars qw/$DB $request_name $request_class $request_tool $click $map_start $map_stop/;
 
 use Ace 1.51;
 use File::Path;
@@ -35,7 +35,10 @@ has 'image_dir' => (
 
 
 sub index {
-    my $data = {};
+    my ($self, $param) = @_;
+    my $data = {
+	tool => $param->{'tool'},
+    };
     return $data;
 }
 
@@ -43,44 +46,76 @@ sub run {
     my ($self, $param) = @_;
     $request_name = $param->{'name'};
     $request_class = $param->{'class'};
+    $request_tool = $param->{'tool'};
     $click = $param->{'click'};
     $map_start = $param->{'map_start'};
     $map_stop  = $param->{'map_stop'};
 
-    my ($obj, $bestname, $img, $map, $msg);
+    my ($objname, $objclass) = ($request_name, $request_class);
 
-    $dsn  = $self->ace_dsn->dbh;
-    if ($request_name && $request_class) { $obj = $dsn->fetch(-class => $request_class, -name  => $request_name, -fill => 1) }
+    my ($obj, $bestname, $img, $map, $panel, $msg);
 
-    if (DISABLED) {
-	$msg = "Sorry, but graphical displays have been disabled temporarily.";
-    } elsif (lc($request_class) eq 'sequence' && $request_name =~ /SUPERLINK|CHROMOSOME/) {
-	$msg = "This sequence is too large to display. Try a shorter segment.";
-    } elsif ($obj) {
-	($img, $map) = $self->display_object($param,$obj);
-	$msg    = "No graphical information about $request_name available in the database" unless $img;
-    } else {
-	$msg = "$request_class:$request_name could not be found in the database.";
+    $DB  = $self->ace_dsn->dbh;
+    if ($request_name && $request_class) { $obj = $DB->fetch(-class => $request_class, -name  => $request_name, -fill => 1) }
+
+    if ($obj && $request_tool eq 'gmap') {
+	if($request_class =~ /^gene|rearrangement$/i){
+	    my ($tag) = $request_class =~ /gene/i ? $obj->Map_info : grep {"$_" eq 'Map'} $obj->tags;
+	    my @row = $tag->row if $tag;
+	    if($row[0] eq 'Map') {
+		my $chromosome = $row[1] if @row;
+		if($chromosome) {
+		    my $type = $row[2];
+		    if ("$type" eq 'Position'){
+			my $position = $row[3] || 0;
+			$map_start = $position - 0.3;
+			$map_stop = $position + 0.3;
+		    } elsif ("$type" eq 'Ends') {
+			my ($left, $right) = $type->col;
+			$map_start = $left->at . '' if $left;
+			$map_stop = $right->at . '' if $right;
+		    }
+		    $request_class = 'Map';
+		    $request_name = "$chromosome";
+		    $obj = $obj->Map;
+		}
+	    } else {
+		$msg = 1;
+	    }
+	} elsif ($request_class ne 'Map') {
+	    $msg = 1; # should set off unless check for the call to display_object below
+	}
     }
 
-    return { data => { object => { class => $request_class,
-			  name  => $request_name,
-	      },
+    if (lc($request_class) eq 'sequence' && $request_name =~ /SUPERLINK|CHROMOSOME/) {
+	$msg = "This sequence is too large to display. Try a shorter segment.";
+    } elsif ($obj) {
+	($img, $map, $panel) = $self->display_object($param,$obj) unless $msg;
+	my $msgtype = $request_tool eq 'epic' ? 'graphical' : 'genetic map';
+	$msg = "No $msgtype information about $objname available in the database" unless $img;
+    } else {
+	$msg ="$objclass:$objname could not be found in the database.";
+    }
+
+    return { object => { class => $objclass,
+			  name  => $objname, },
 	      img   => $img,
 	      img_map   => $map,
+	      img_panel => $panel,
 	      msg    => $msg || undef,
-    }};
+	      tool => $request_tool,
+    };
 }
 
 sub display_object {
     my ($self, $param, $obj) = @_;
     my $has_coords = defined $map_start && defined $map_stop && $map_start =~ /^-?\d+(?:\.\d+)?$/ && $map_stop =~ /^-?\d+(?:\.\d+)?$/ && $map_start < $map_stop;
 
-    my $nav_panel = build_map_navigation_panel($obj,$param,$has_coords) if $request_class =~ /Map/i;
+    my $panel = build_map_navigation_panel($obj,$param,$has_coords) if $request_class =~ /Map/i;
 
     my $safe_name = $request_name;
     $safe_name=~tr/[a-zA-Z0-9._\-]/_/c;
-    my $db = $dsn->title;
+    my $db = $DB->title;
     $db=~s!^/!!;
     my $path = join('/',$db,$request_class);
 
@@ -117,7 +152,7 @@ sub display_object {
 	    print F $gif;
 	    close F;
 	}
-	my $u = "/tools/epic/run?name=$request_name;class=$request_class";
+	my $u = "/tools/$request_tool/run?name=$request_name;class=$request_class";
 	$u .= $click ? "&click=$click," : '&click=';
 
 	$img = img({-src   => $image_path,
@@ -131,7 +166,7 @@ sub display_object {
 	$map = $self->print_map($param, $boxes);
     }
 
-    return $img, $map;
+    return $img, $map, $panel;
 }
 
 sub print_map {
@@ -176,7 +211,7 @@ sub print_map {
 	    if ($box->{class} eq 'BUTTON') {
 		my ($c) = map { "$_->[0]-$_->[1]" } [ map { 2+$_ } @{$box->{coordinates}}[0..1]];
 		my $clicks = $old_clicks ? "$old_clicks,$c" : $c;
-		my $url = "/tools/epic/run?name=$request_name;class=$request_class&click=$clicks";
+		my $url = "/tools/$request_tool/run?name=$request_name;class=$request_class&click=$clicks";
 		push(@lines,qq(<AREA shape="rect"
 				     coords="$coords"
 				     onMouseOver="return toolTip(this,'$jcomment')"
@@ -188,7 +223,14 @@ sub print_map {
 	    my $full_name = $box->{'name'};
 	    my $n = $full_name =~ /(.*)\".*\".*/ ? $1 : $full_name;
 	    my $c = $box->{'class'};
-	    my $href = "$c" eq 'System' || "$c" eq 'Text' ? 'nohref' : 'href="/tools/epic/run?name=' . escape($n) . ";class=" . escape($c) . '"';
+	    my $href;
+	    if ("$c" eq 'System' || "$c" eq 'Text') {
+		$href = 'nohref';
+	    } elsif ($c =~ /gene|rearrangement/i) {
+		$href = 'href="' . "/tools/$request_tool/run?name=" . escape($n) . ";class=" . escape($c) . '"';
+	    } else {
+		$href = 'href="/tools/epic/run?name=' . escape($n) . ";class=" . escape($c) . '"';
+	    }
 	    push(@lines,qq(<AREA shape="rect"
 			         onMouseOver="return toolTip(this,'$jcomment')"
 			         coords="$coords"
@@ -197,7 +239,7 @@ sub print_map {
     }
 
     # Create default handling.  Bad use of javascript, but can't think of any other way.
-    my $url = "/tools/epic/run?name=$request_name;class=$request_class";
+    my $url = "/tools/$request_tool/run?name=$request_name;class=$request_class";
     my $simple_url = $url;
     $url .= "&click=$old_clicks";
     $url .= "," if $old_clicks;
@@ -234,7 +276,7 @@ sub build_map_navigation_panel {
       $map_stop  += $offset;
     }
 
-    my $url = "/tools/epic/run" ;
+    my $url = "/tools/gmap/run" ;
     my $half = ($map_stop - $map_start)/2;
     my $a1   = $map_start - $half;
     $a1      = $min if $min > $a1;
@@ -247,62 +289,62 @@ sub build_map_navigation_panel {
     my $m1   = $map_start + $half/2;
     my $m2   = $map_stop  - $half/2;
 
-    my $text = '';
-    $text .= start_table({-border=>1});
-    $text .= TR(td({-align=>'CENTER',-class=>'datatitle',-colspan=>2},'Map Control'));
-    $text .= start_TR();
-    $text .= td(
+    my @panel;
+    push @panel, start_table({-border=>1});
+    push @panel, TR(td({-align=>'CENTER',-class=>'datatitle',-colspan=>2},'Map Control'));
+    push @panel, start_TR();
+    push @panel, td(
 	    table({-border=>0},
 		  TR(td('&nbsp;'),
 		      td(
 			$map_start > $min ?
 			a({-href=>"$url?name=$request_name;class=$request_class;map_start=$a1;map_stop=$a2"},
-			  img({-src=>UP_ICON,-align=>'MIDDLE',-border=>0}),' Up')
+			  span({-class=>'ui-icon ui-icon-arrowthick-1-n ui-button'}, 'Up'),' Up')
 			:
-			font({-color=>'#A0A0A0'},img({-src=>UP_ICON,-align=>'MIDDLE',-border=>0}),' Up')
+			font({-color=>'#A0A0A0'},span({-class=>'ui-icon ui-icon-arrowthick-1-n ui-button'}, 'Up'),' Up')
 			),
 		      td('&nbsp;')
 		    ),
 		  TR(td({-valign=>'CENTER',-align=>'CENTER'},
 			a({-href=>"$url?name=$request_name;class=$request_class;map_start=$a1;map_stop=$b2"},
-			  img({-src=>ZOOMOUT_ICON,-align=>'MIDDLE',-border=>0}),' Shrink')
+			  span({-class=>'ui-icon ui-icon-zoomout ui-button'}, 'Shrink'),' Shrink')
 			),
 		      td({-valign=>'CENTER',-align=>'CENTER'},
 			a({-href=>"$url?name=$request_name;class=$request_class;map_start=$min;map_stop=$max"},'WHOLE')
 			),
 		      td({-valign=>'CENTER',-align=>'CENTER'},
 			a({-href=>"$url?name=$request_name;class=$request_class;map_start=$m1;map_stop=$m2"},
-			  img({-src=>ZOOMIN_ICON,-align=>'MIDDLE',-border=>0}),' Magnify')
+			  span({-class=>'ui-icon ui-icon-zoomin ui-button'}, 'Magnify'),' Magnify')
 			)
 		    ),
 		  TR(td('&nbsp;'),
 		      td(
 			$map_stop < $max ?
 			a({-href=>"$url?name=$request_name;class=$request_class;map_start=$b1;map_stop=$b2"},
-			  img({-src=>DOWN_ICON,-align=>'MIDDLE',-border=>0}),' Down')
+			  span({-class=>'ui-icon ui-icon-arrowthick-1-s ui-button'}, 'Down'),' Down')
 			:
-			font({-color=>'#A0A0A0'},img({-src=>DOWN_ICON,-align=>'MIDDLE',-border=>0}),' Down')
+			font({-color=>'#A0A0A0'},span({-class=>'ui-icon ui-icon-arrowthick-1-s ui-button'}, 'Down'),' Down')
 			),
 		      td('&nbsp;'))
 		  )
 
 	    );
-    $text .= start_td({-rowspan=>2});
+    push @panel, start_td();
 
-    $text .= start_form;
-    $text .= start_p;
-    $text .= hidden($_) foreach qw(class name);
-    $text .= 'Show region between: ' .
-      textfield(-name=>'map_start',-value=>sprintf("%.2f",$map_start),-size=>8,-override=>1) .
-	' and ' .
-	  textfield(-name=>'map_stop',- value=>sprintf("%.2f",$map_stop),-size=>8,-override=>1) .
+    push @panel, start_form({-action=>'/tools/gmap/run'});
+    push @panel, start_p;
+    push @panel, hidden({-name=>'name', -value=>$request_name});
+    push @panel, 'Show region between: ',
+      textfield(-name=>'map_start',-value=>sprintf("%.2f",$map_start),-size=>8,-override=>1),
+	' and ',
+	  textfield(-name=>'map_stop',- value=>sprintf("%.2f",$map_stop),-size=>8,-override=>1),
 	    ' ';
-    $text .= submit('Change');
-    $text .= end_p;
-    $text .= end_form;
-    $text .= end_td(),end_TR(),end_table();
+    push @panel, submit('Change');
+    push @panel, end_p;
+    push @panel, end_form;
+    push @panel, end_td(),end_TR(),end_table();
 
-    return $text;
+    return \@panel;
 }
 
 sub get_extremes {

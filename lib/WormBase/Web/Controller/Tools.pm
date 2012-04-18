@@ -45,6 +45,12 @@ sub tools :Path Args {
 	$tool = 'tree';
 	$c->req->params->{'name'} = 'all';
     } #Since schema is identical to tree, use tree to generate content
+    if ("$tool" eq 'gmap' || "$tool" eq 'epic') {
+	$c->req->params->{'class'} = 'Map' unless $c->req->params->{'class'} || "$tool" eq 'epic';
+	$c->req->params->{'tool'} = $tool;
+	$tool = 'epic';
+    } #Since gmap is identical to epic, use epic to load display
+
 
     $c->stash->{section} = "tools";
     $c->stash->{template}="tools/$tool/$action.tt2";
@@ -77,13 +83,11 @@ sub tools :Path Args {
     # Create different actions for different tools instead of using
     #   this single catch-all action? -AD
     if($data->{redirect}){
-	my $url = $c->uri_for('/search',$data->{class},$data->{name})->as_string;
+	my $url = $c->uri_for('/search',$data->{class},$data->{name});
 	     $c->res->redirect($url."?from=".$data->{redirect}."&query=".$data->{msg}, 307);
     }
 
-    if ($tool eq 'tree') {
-        $c->stash->{data} = $data;
-    }
+    if ($tool eq 'tree' || $tool eq 'epic') { $c->stash->{data} = $data; }
     else {
         for my $key (keys %$data) {
 	     $c->log->debug("save in stash key $key\n");

@@ -1,3 +1,44 @@
+[% tool = data.tool %]
+[% IF tool == 'gmap' %]
+<h1>WormBase Genetic Map Viewer</h1>
+
+<p>
+To browse, select a chromosome or enter a Gene/Rearragnement ID (eg WBGene0006763).
+</p>
+
+<p>
+<form method="POST" action="[% c.uri_for('/tools','gmap','run') %]">
+    Chromosome name:
+    <select name="name">
+	<option value="I" selected="1">I</option>
+	<option value="II">II</option>
+	<option value="III">III</option>
+	<option value="IV">IV</option>
+	<option value="V">V</option>
+	<option value="X">X</option>
+    </select>
+    &nbsp;
+    <input type="submit" name="Change" value="View" style="background: white" />
+</form>
+</p>
+
+<p>
+<form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
+  <table>
+     <tr><th>Name</th>
+         <td><input type="text" name="name" onchange="document.question.submit()" /></td>
+         <th>Class</th> 
+         <td><select name="class">
+	      <option value="Gene" selected="1">Gene</option>
+	      <option value="Rearrangement">Rearrangement</option>
+	 </select></td>
+         <td><input type="submit" name="Change" value="Search" style="background: white" /></td>
+    </tr>
+  </table>
+</form>
+</p>
+
+[% ELSE %]
 <h1>WormBase ACeDB Graphic Display</h1>
 
 <p>
@@ -12,17 +53,21 @@ To browse, enter an object ID (eg C12H4) and a class (eg Clone).
 Examples:<br />
 <a href="[% c.uri_for('/tools','epic','run') %]?name=C12H4;class=Clone">View the C12H4 Clone Graphic Display</a>.<br />
 </p>
-
-
 <p>
-<form method="POST" action="[% c.uri_for('/tools','epic','run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools', "$tool" ,'run') %]"> 
   <table>
      <tr><th>Name</th>
          <td><input type="text" name="name" onchange="document.question.submit()" /></td>
          <th>Class</th> 
          <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>
-         <td><input type="submit" name="Change" value="Change" style="background: white" /></td>
+         <td><input type="submit" name="Change" value="Search" style="background: white" /></td>
     </tr>
   </table>
 </form>
 </p>
+
+[% END %]
+
+
+
+

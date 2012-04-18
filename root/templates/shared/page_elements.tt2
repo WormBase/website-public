@@ -442,6 +442,15 @@ END;
     '</table>';
 END; %]
 
+[% MACRO show_genotype(obj) BLOCK;
+	genstr = obj.str;
+	FOREACH key IN obj.data.keys.sort;
+	    lnk = tag2link(obj.data.$key);
+	    genstr = genstr.replace(key.replace('\-', '\-'), lnk);
+	END;
+	genstr;    
+END; %]
+
 [% MACRO cell_content(cell) BLOCK;
 	IF cell.species.defined;
 	    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
@@ -456,7 +465,7 @@ END; %]
 	ELSIF cell.interaction.defined;
 	    interaction_cell(cell);
 	ELSIF cell.genotype.defined;
-	    tags2link(cell.genotype, ' ', '');
+	    show_genotype(cell.genotype);
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';
@@ -900,10 +909,10 @@ _ '</div>';
 END;
 %]
 
-[% MACRO format_sequence(seq) BLOCK;
-    format_seq = "";
+[% MACRO format_sequence(seq, header) BLOCK;
+    format_seq = header ? ">$header\n" : "";
     FOREACH line IN seq.chunk(80);
-      format_seq = format_seq _ line.chunk(10).join(' ');
+      format_seq = format_seq _ line;
       UNLESS loop.last;
         format_seq = format_seq _ "\n";
       END;  
@@ -927,9 +936,10 @@ END;
       IF obj.sequence.defined;
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
-          
-        format_seq = seq.match('\s') ? seq : format_sequence(seq);
-        title = obj.header || 'sequence';
+
+      
+        format_seq = seq.match('\s') ? '>' _ object.name.data.label _ ' ' _ obj.header  _ '<br />' _ seq  : format_sequence(seq, obj.header || object.name.data.label);
+        title = obj.header || 'sequence';    
         seq_html = format_seq | remove('(\<(/?[^\>]+)\>)');
         title_html = title | remove('(\<(/?[^\>]+)\>)');
         fname = object.name.data.id _ title_html _ '.fasta';
@@ -1144,7 +1154,7 @@ END;
 
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, this_object_id, widget_name)
+            href  = c.uri_for(base, arg1, is_class_index ? '*' : this_object_id, widget_name)
             type  = section == 'species' ? class : section
           };
 

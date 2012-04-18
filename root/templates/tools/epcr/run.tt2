@@ -1,0 +1,25 @@
+[% UNLESS noboiler %]
+     <h1>e-PCR Search Results</h1>
+[% END %]
+
+[% IF msg %]
+   <div class="not-found">[% msg %]</div>
+[% ELSE %]
+    [% IF type == 'html' %]
+	<p>
+	[% html_out = results.join(' ') %]
+	[% FOREACH key IN objects.keys.sort %]
+	    [% link = tag2link(objects.$key) %]
+	    [% link = link.replace('>', ' target="_blank">') %]
+	    [% search = key.replace('\.', '\.') %]
+	    [% search = '<a>' _ search _ '</a>' %]
+	    [% html_out = html_out.replace("$search", "$link") %]
+	[% END %]
+	[% html_out %]
+	</p>
+    [% ELSE %]
+	<pre>
+	[% results %]
+	</pre>
+    [% END %]
+[% END %]

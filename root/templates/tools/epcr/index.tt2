@@ -1,0 +1,63 @@
+<h1>e-PCR Search</h1>
+
+<p>This search uses Greg Schuler's 
+<a target="_blank" href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9149949&amp;dopt=Abstract">e-PCR</a>
+program to search for STSs in the current C. elegans genome. Enter a list of primer pairs to find using the following format:
+</p>
+
+<pre><b>Name     Left Oligo               Right Oligo              Length</b>
+assay_1  CGATAAACAATCAACGGCATAAT  TTTGAAACTGATATAGAGGGGCA  1188
+assay_2  AAGGTTATTTATGCGGTGGAAAT  AGCACTTTGAGCTTGATGAAATC  2191
+assay_3  AGATTGGAACGATAACGCAGATA  TTTGCCAATTTGCATTTTATTTT  1603
+</pre>
+
+<p>Alternatively, select <i>List of assay names</i> and enter a list of PCR product names already in WormBase to see what genes they intersect.</p>
+
+<p>You may also select <i>List of positions</i> and enter a list of positions in this format:</p>
+
+<pre><b>Name     Position</b>
+assay_1  II:4332211..4338292
+assay_2  IV:12089228..12091923
+</pre>
+
+<form method="POST" action="[% c.uri_for('/tools','epcr','run') %]">
+    <table class="searchbody" border="0">
+	<tr class="searchtitle"><th colspan="2">e-PCR Search</th></tr>
+	<tr>
+	    <td colspan="2"><textarea name="sts"  rows="15" cols="80" wrap="off"></textarea></td>
+	</tr>
+	<tr>
+	    <td colspan="2">
+		<b>This is a</b>
+		<label><input type="radio" name="entry_type" value="sts" checked="checked" />List of primer pairs</label>
+		<label><input type="radio" name="entry_type" value="id" />List of assay names</label>
+		<label><input type="radio" name="entry_type" value="pos" />List of positions</label>
+	    </td>
+	</tr>
+	<tr class="searchtitle">
+	    <td colspan="2">Allow product length difference of: <input type="text" name="M" value="50" size="4" /> bp&nbsp;&nbsp; Allow oligo mismatches of:
+		<select name="N" >
+		    <option selected="selected" value="0">0</option>
+		    <option value="1">1</option>
+		    <option value="2">2</option>
+		    <option value="3">3</option>
+		    <option value="4">4</option>
+		</select> bp
+	    </td>
+	</tr>
+	<tr class="searchtitle">
+	    <td><b>Results in:</b>
+		<label><input type="radio" name="format" value="text" checked="checked" />Text-only format</label>
+		<label><input type="radio" name="format" value="html" />HTML with hyperlinks</label>
+	    </td>
+	    <th><input type="submit" name="Run e-PCR" value="Run e-PCR" /></th>
+	</tr>
+    </table>
+
+    <div>
+	<input type="hidden" name=".cgifields" value="format"  />
+	<input type="hidden" name=".cgifields" value="entry_type"  />
+    </div>
+</form>
+
+<p><em>This may take several minutes to run.  Hit the stop or back buttons to abort.</em></p>
