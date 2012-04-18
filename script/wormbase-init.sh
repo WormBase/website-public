@@ -2,7 +2,9 @@
 
 . /lib/lsb/init-functions
 
-# Pull in our env file in production environments.
+# Pull in our local environment variables
+# Since wormbase.env isn't in our code repository,
+# production servers won't have it; staging servers do.
 source /usr/local/wormbase/website/production/wormbase.env
 
 # If the APP environment variable isn't set, 
@@ -31,7 +33,6 @@ if [ ! $APP ]; then
 #    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
 #    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
 
-    
 # Set some configuration variables.
     export WORMBASE_INSTALLATION_TYPE="production"
     
@@ -41,7 +42,16 @@ if [ ! $APP ]; then
     
 elif [ $APP == 'staging' ]; then
     echo "   ---> APP is set to staging"
-    export APP=staging
+
+# Set some configuration variables.
+    export WORMBASE_INSTALLATION_TYPE="staging"
+    
+# Set my local configuration prefix so wormbase_staging.conf takes precedence.
+# Used to override the location of the user database.
+    export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
+
+    # APP really just specifies directory on filesystem.
+    export APP=production
     export APP_ROOT=/usr/local/wormbase/website
     export DAEMONIZE=true
     export PORT=5000
@@ -49,10 +59,10 @@ elif [ $APP == 'staging' ]; then
     export MAX_REQUESTS=500
 
     # Configure our GBrowse App
-    export GBROWSE_CONF=$ENV{APP_ROOT}/$ENV{APP}/conf/gbrowse
-    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/$ENV{APP}/root/gbrowse
+    export GBROWSE_CONF=$ENV{APP_ROOT}/production/conf/gbrowse
+    export GBROWSE_HTDOCS=$ENV{APP_ROOT}/production/root/gbrowse
 
-    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/$ENV{APP}/lib:$PERL5LIB
+    export PERL5LIB=/usr/local/wormbase/extlib/lib/perl5:/usr/local/wormbase/extlib/lib/perl5/x86_64-linux-gnu-thread-multi:$ENV{APP_ROOT}/production/lib:$PERL5LIB
     export MODULEBUILDRC="/usr/local/wormbase/extlib/.modulebuildrc"
     export PERL_MM_OPT="INSTALL_BASE=/usr/local/wormbase/extlib"
     export PATH="/usr/local/wormbase/extlib/bin:$PATH"
@@ -63,14 +73,7 @@ elif [ $APP == 'staging' ]; then
 #    export PERL5LIB="/usr/local/wormbase/extlib2/lib/perl5:/usr/local/wormbase/extlib2/lib/perl5/x86_64-linux-gnu-thread-multi"
 #    export PATH="/usr/local/wormbase/extlib2/bin:$PATH"
 
-    
-# Set some configuration variables.
-    export WORMBASE_INSTALLATION_TYPE="staging"
-    
-# Set my local configuration prefix so wormbase_staging.conf takes precedence.
-# Used to override the location of the user database.
-    export CATALYST_CONFIG_LOCAL_SUFFIX="staging"
-    
+        
 # Caltech MUST be run as root since DNS points directly at it.
 elif [ $APP == 'caltech' ]; then
     echo "   ---> APP is set to caltech"

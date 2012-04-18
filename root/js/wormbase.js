@@ -683,8 +683,7 @@
     }
 
     function search_change(new_search) {
-      if(!new_search) { new_search = 'all';}
-      if((new_search == "home") || (new_search == "me") || (new_search == "bench")){ new_search = "gene"; }
+      if(!new_search) { new_search = 'gene';}
       cur_search_type = new_search;
       if(new_search == "all"){
       new_search = "for anything";
@@ -1433,7 +1432,9 @@ var Scrolling = (function(){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 
                 }else {
-                  window.location = url || issue.url;
+                  var content = $jq("#content");
+                  content.children().not("#spacer").remove();
+                  content.prepend(data);
                 }
               },
           error: function(request,status,error) {
