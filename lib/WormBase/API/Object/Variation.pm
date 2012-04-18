@@ -3243,7 +3243,10 @@ sub _do_markup {
     my $var_stop = length($variation) + $var_start;
 
     # Substitutions start and stop at the same position
-    $var_start = ($var_stop - $var_start == 0) ? $var_start - 1 : $var_start;
+    if ($var_stop == $var_start) {
+      $seq = substr($seq, 0, $var_start) . '-' . substr($seq, $var_stop);
+      $var_stop++;
+    }
 
     # Markup the variation as appropriate
     push (@markup,[lc($object->Type_of_mutation),$var_start,$var_stop]);
@@ -3469,7 +3472,6 @@ sub _build_sequence_strings {
 
     my $wt_full = $self->_do_markup($dna,$mutation_start,$wt_plus,length($reported_left_flank));
     my $mut_full = $self->_do_markup($mut_dna,$mutation_start,$mut_plus,length($reported_right_flank));
-
     # TO DO: This markup belongs as part of the view, not here.
     # Return the full sequence on the plus strand
     # if ($with_markup) {
