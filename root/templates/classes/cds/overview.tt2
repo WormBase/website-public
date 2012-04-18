@@ -11,7 +11,6 @@ WRAPPER highlight_box;
       END;
   END;
 
-  laboratory;
 END;
 
 '<div class="description">';

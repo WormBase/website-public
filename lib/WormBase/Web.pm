@@ -374,12 +374,18 @@ sub set_cache {
 sub secure_uri_for {
     my ($self, @args) = @_;
 
-    my $u = $self->uri_for(@args);
+    my $u = $self->SUPER::uri_for(@args);
     if($self->config->{enable_ssl}){
       $u->scheme('https');
     }
     return $u;
 }
+
+# override 'uri_for' => sub {
+#     my ($self, @args) = @_;
+#     my $u = super(@args);
+#     return $u->path;
+#   };
 
 # overloaded from Per_User plugin to move saved items
 sub merge_session_to_user {

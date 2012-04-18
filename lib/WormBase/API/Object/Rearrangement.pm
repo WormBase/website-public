@@ -181,7 +181,7 @@ sub mapping_data {
     foreach my $info ($object->Pos_neg_data) {
 	my $genotype = $info->Genotype;
 	my $results = $info->Results;
-	my @remarks = map {my $evidence = $self->_get_evidence($_); $evidence ? {text => $_, evidence => $evidence} : $_} $info->Remark;
+	my @remarks = map {my $evidence = $self->_get_evidence($_); $evidence ? {text => "$_", evidence => $evidence} : $_} $info->Remark;
 	my %hash = (
 	    type => $info->Calculation eq 'Positive' ? '+' : '-',
 	    author => $self->_pack_obj($info->Mapper),
@@ -597,15 +597,13 @@ sub chromosome {
     my $self = shift;
     my $object = $self->object;
     my $str;
-    foreach my $tag ($object->tags) {
-	next unless "$tag" eq 'Map';
-	my $map = $object->$tag;
-	$str = $map ? "$map" : '';
-	my ($left, $right) = $tag->col(3);
-	$left = sprintf "%.2f", $left->at if $left;
-	$right = sprintf "%.2f", $right->at if $right;
-	$str .= $left && $right ? " $left to $right" : '';
-    }
+    my ($tag) = grep {"$_" eq 'Map'} $object->tags;
+    my $map = $object->$tag if $tag;
+    $str = $map ? "$map" : '';
+    my ($left, $right) = $tag->col(3) if $tag;
+    $left = sprintf "%.2f", $left->at if $left;
+    $right = sprintf "%.2f", $right->at if $right;
+    $str .= $left && $right ? ": $left to $right" : '';
 
     return { description => 'Reference strains for the Rearrangement',
 	     data => "$str" || undef,

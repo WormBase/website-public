@@ -365,7 +365,7 @@ sub rest_link_wbid_POST {
       unless($confirm){
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id});
         $self->rest_register_email($c, $wbe, $username, $user_id, $wbid);
-        $c->stash->{message} = "<h2>Thank you!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
+        $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @wbemails) . " to confirm that you are $wbid</p>" ; 
       }else{
         $c->user->wb_link_confirm(1);
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
@@ -427,8 +427,8 @@ sub rest_register_POST {
       
       push(@emails, @wbemails);
       $c->stash->{template} = "shared/generic/message.tt2"; 
-      $c->stash->{message} = "<h2>Thank you!</h2> <p>Thank you for registering at <a href='" . $c->uri_for("/") . "'>wormbase.org</a>. An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . " to confirm your registration</p>" ; 
-      $c->stash->{redirect} = $c->req->params->{redirect};
+      $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . ".</p><p>In order to use this account at <a href='" . $c->uri_for("/") . "'>wormbase.org</a> you will need to activate it by following the activation link in your email.</p>" ; 
+#       $c->stash->{redirect} = $c->req->params->{redirect};
       $c->forward('WormBase::Web::View::TT');
 
     }
@@ -492,7 +492,7 @@ sub feed_GET {
       my $wbid = shift @args;
       my $widget = shift @args;
       my $name = shift @args;
-      if($widget=~m/^static-widget-([\d])/){
+      if($widget=~m/^static-widget-([\d]+)/){
         $c->stash->{url} = $c->uri_for('widget/static', $1);
       }else{
         $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
@@ -579,20 +579,23 @@ sub feed_POST {
       my $email = $c->req->params->{email};
       
       my $url = $c->req->params->{url};
-      $c->log->debug(keys %{$c->req->params});
       my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
-      $c->log->debug("private: $is_private");
       my $user = $self->_check_user_info($c);
       return unless $user;
       $c->log->debug("create new issue $content ", $user ? $user->user_id : $name);
       my $issue = $c->model('Schema::Issue')->find_or_create({ reporter_id=>$user->user_id,
                                   title=>$title,
-                                  page_id=>$page->page_id,
+                                  page_id=>$page ? $page->page_id : 1,
                                   content=>$content,
                                   state      =>"new",
                                   is_private => $is_private,
                                   'timestamp'=>time()});
       $self->_issue_email($c,$issue,1,$content, undef, $email, $name);
+      $c->stash->{message} = "<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p>" ; 
+      $c->stash->{template} = "shared/generic/message.tt2"; 
+      $c->stash->{redirect} = $url;
+      $c->stash->{noboiler} = 1;
+      $c->forward('WormBase::Web::View::TT');
     }
     }elsif($type eq 'thread'){
     my $content= $c->req->params->{content};
@@ -1110,7 +1113,7 @@ sub _issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
   }
-  $subject = '[wormbase-help] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+  $subject = '[wormbase-help] '. $issue->title . ' - ' . substr($content, 0, 15) . '...';
 
   $c->stash->{issue}=$issue;
   $c->stash->{content}=$content;
