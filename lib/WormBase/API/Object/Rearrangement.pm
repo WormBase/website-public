@@ -181,10 +181,14 @@ sub mapping_data {
     foreach my $info ($object->Pos_neg_data) {
 	my $genotype = $info->Genotype;
 	my $results = $info->Results;
-	my @remarks = map {my $evidence = $self->_get_evidence($_); $evidence ? {text => "$_", evidence => $evidence} : $_} $info->Remark;
+	my @remarks = map {
+	    my $evidence = $self->_get_evidence($_);
+	    $evidence ? {text => "$_", evidence => $evidence} : "$_"
+	} $info->Remark;
+	my @authors = map {$self->_pack_obj($_)} $info->Mapper;
 	my %hash = (
 	    type => $info->Calculation eq 'Positive' ? '+' : '-',
-	    author => $self->_pack_obj($info->Mapper),
+	    author => @authors ? \@authors : undef,
 	    genotype => $genotype && "$genotype",
 	    remark => @remarks ? \@remarks : undef,
 	    results => $results && "$results",
