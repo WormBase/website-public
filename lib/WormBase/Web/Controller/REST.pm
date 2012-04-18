@@ -579,20 +579,23 @@ sub feed_POST {
       my $email = $c->req->params->{email};
       
       my $url = $c->req->params->{url};
-      $c->log->debug(keys %{$c->req->params});
       my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
-      $c->log->debug("private: $is_private");
       my $user = $self->_check_user_info($c);
       return unless $user;
       $c->log->debug("create new issue $content ", $user ? $user->user_id : $name);
       my $issue = $c->model('Schema::Issue')->find_or_create({ reporter_id=>$user->user_id,
                                   title=>$title,
-                                  page_id=>$page->page_id,
+                                  page_id=>$page ? $page->page_id : 1,
                                   content=>$content,
                                   state      =>"new",
                                   is_private => $is_private,
                                   'timestamp'=>time()});
       $self->_issue_email($c,$issue,1,$content, undef, $email, $name);
+      $c->stash->{message} = "<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p>" ; 
+      $c->stash->{template} = "shared/generic/message.tt2"; 
+      $c->stash->{redirect} = $url;
+      $c->stash->{noboiler} = 1;
+      $c->forward('WormBase::Web::View::TT');
     }
     }elsif($type eq 'thread'){
     my $content= $c->req->params->{content};
@@ -1110,7 +1113,7 @@ sub _issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
   }
-  $subject = '[wormbase-help] '.$subject.' '.$issue->issue_id.': '.$issue->title;
+  $subject = '[wormbase-help] '. $issue->title . ' - ' . substr($content, 0, 15) . '...';
 
   $c->stash->{issue}=$issue;
   $c->stash->{content}=$content;

@@ -31,6 +31,8 @@ if (@$processes_killed) {
     chomp $external_ip;
     $hostname    = `curl -S http://169.254.169.254/latest/meta-data/public-hostname`;
     chomp $hostname;
+    $hostname ||= `hostname`;
+    chomp $hostname;
     
     my $content = prepare_content($processes_killed);
     
