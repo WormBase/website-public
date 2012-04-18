@@ -94,7 +94,7 @@ sub run {
 	my $msgtype = $request_tool eq 'epic' ? 'graphical' : 'genetic map';
 	$msg = "No $msgtype information about $objname available in the database" unless $img;
     } else {
-	$msg ="$objclass:$objname could not be found in the database.";
+	$msg = "$objclass:$objname could not be found in the database. Please verify that the WormBase ID specified was correct.";
     }
 
     return { object => { class => $objclass,

@@ -1327,6 +1327,22 @@ sub field_GET {
 }
 
 
+# Return the current version of acedb for the installation.
+# Just returns text.
+sub version :Path('/rest/version') :Args(0) :ActionClass('REST') {}
+
+sub version_GET {
+    my ( $self, $c ) = @_;
+    $c->log->debug("        ------> we're requesting the acedb version via rest");
+    my $api = $c->model('WormBaseAPI');
+    $self->status_ok(
+	$c,
+	entity => { 
+	    version => $api->version
+	}
+	);
+}
+
 =head1 AUTHOR
 
 Todd Harris
