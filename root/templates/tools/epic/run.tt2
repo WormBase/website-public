@@ -21,7 +21,7 @@
     <p>
     <form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
       <table>
-	<tr><th>Name</th>
+	<tr><th>WormBase ID</th>
 	    <td><input type="text" name="name" onchange="document.question.submit()" /></td>
 	    <th>Class</th> 
 	    <td><select name="class">
@@ -42,7 +42,7 @@
     <form method="POST" action="[% c.uri_for('/tools',data.tool,'run')%]" name"question">
 	<table>
 	    <tr>
-		<th>Name</th>
+		<th>WormBase ID</th>
 		<td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
 		<th>Class</th> 
 		<td><input type="text" name="class" value="[% data.object.class %]" size="15" onchange="document.question.submit()" /></td>
