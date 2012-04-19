@@ -45,6 +45,12 @@ WRAPPER $field_block title="Nucleotide Change" key="nucleotide_change";
        END;
    END;
 
+   WRAPPER $field_block title="Protein Change" key="amino_acid_change";
+       FOREACH change IN fields.amino_acid_change.data;
+            tag2link(change.transcript) _ ' (' _ change.amino_acid_change _ ')<br/>';
+       END;
+   END;
+
    WRAPPER $field_block title="Flanking PCR Products" key="flanking_pcr_products";
        tags2link(fields.flanking_pcr_products.data, ', ');
    END;

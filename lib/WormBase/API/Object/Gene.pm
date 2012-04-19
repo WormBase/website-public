@@ -1708,14 +1708,26 @@ sub _process_variation {
 
     my %effects;
     my %locations;
+    my ($aa_change,$aa_position);
     foreach my $type_affected ( $variation->Affects ) {
         foreach my $item_affected ( $type_affected->col ) {    # is a subtree
 	    foreach my $val ($item_affected->col){
 		if ($val =~ /utr|intron|exon/i) { $locations{$val}++; } 
-		else { $effects{$val}++; }
+		else { 
+		    $effects{$val}++;
+		    if ($val =~ /missense/i) {
+			my ($aa_position,$aa_change_string) = $val->right->row;
+			$aa_change_string =~ /(.*)\sto\s(.*)/;
+			$aa_change = "$1$aa_position$2";
+		    }  elsif ($val =~ /nonsense/i) {
+			# "Position" here really one of Amber, Ochre, etc.
+			($aa_position,$aa_change) = $val->right->row;
+		    }
+		}
 	    }
         }
     }
+
     $type = "transposon insertion" if $variation->Transposon_insertion;
     my @effect = keys %effects;
     my @location = keys %locations;
@@ -1724,6 +1736,7 @@ sub _process_variation {
         variation        => $self->_pack_obj($variation),
         type             => $type && "$type",
         molecular_change => $molecular_change && "$molecular_change",
+	aa_change        => $aa_change ? $aa_change : undef,
         sequence_known   => $sequence_known,
         effects          => @effect ? \@effect : undef,
 	locations	 => @location ? \@location : undef,
