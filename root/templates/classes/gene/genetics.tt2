@@ -9,25 +9,27 @@
 
    # Alleles
    WRAPPER $field_block title="Alleles" key="alleles";
-       build_data_table(order=['variation','sequence_known','molecular_change','effects','locations'],
+       build_data_table(order=['variation','sequence_known','molecular_change','effects','aa_change','locations'],
                         columns={ variation         => 'Allele',
 	  	                  molecular_change  => 'Molecular<br /> change',
 			          effects           => 'Protein<br /> effects',
 				  locations         => 'Locations',
 			          sequence_known    => 'Sequence<br /> known?',
+				   aa_change         => 'Protein<br /> change',
                                },
                          key='alleles');
    END;
 
    # Polymorphisms
    WRAPPER $field_block title="Polymorphisms & Natural variants" key="polymorphisms";
-        build_data_table(order=['variation','type','sequence_known','molecular_change','effects','locations'],
+        build_data_table(order=['variation','type','sequence_known','molecular_change','effects','aa_change','locations'],
                          columns={ variation         => 'Polymorphism',
 	   	                   type              => 'Type',
 		                   molecular_change  => 'Molecular<br /> change',
 			           effects           => 'Protein<br /> effects',
 			           locations         => 'Locations',
 			           sequence_known    => 'Sequence<br /> known?',
+				   aa_change         => 'Protein<br /> change',
                                  },
                          key='polymorphisms');
     END;
