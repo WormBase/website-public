@@ -49,10 +49,10 @@
 
         <ul>
           <li><span>Friends</span></li>
-          <li><a target="_blank" href="http://www.wormatlas.org">WormAtlas</a></li> 
-          <li><a target="_blank" href="http://www.nematodes.org/">Nematodes.org</a></li>
-          <li><a target="_blank" href="http://www.ipm.ucdavis.edu/NEMABASE/">NEMABASE</a></li>
-          <li><a target="_blank" href="http://nematode.net/">Nematode.net</a></li>
+          <li>[% external_link("http://www.wormatlas.org", 'WormAtlas') %]</li> 
+          <li>[% external_link("http://www.nematodes.org/", 'Nematodes.org') %]</li>
+          <li>[% external_link("http://www.ipm.ucdavis.edu/NEMABASE/", 'NEMABASE') %]</li>
+          <li>[% external_link("http://nematode.net/", 'Nematode.net') %]</li>
         </ul>  
       </div>
 
