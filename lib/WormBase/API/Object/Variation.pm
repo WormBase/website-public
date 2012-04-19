@@ -1662,6 +1662,70 @@ sub nucleotide_change {
     };
 }
 
+
+=head3 amino_change
+
+This method returns a data structure containing the amino
+acid change (and transcript IDs) for nonsense and missense
+alleles.
+
+=over
+
+=item PERL API
+
+ $data = $model->amino_acid_change();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a Variation public name or WBID (eg WBVar00143133)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/variation/WBVar00143133/amino_acid_change
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub amino_acid_change {
+    my ($self) = @_;
+    
+    # Amino acid changes (potentially) for each transcript.
+    my $variations = $self->_compile_amino_acid_changes($self->object);
+    return {
+        description => 'amino acid changes for this variation, if appropriate',
+        data        => @$variations ? $variations : undef,
+    };
+}
+
 =head3 flanking_sequences
 
 This method returns a data structure containing
@@ -3037,6 +3101,17 @@ sub _retrieve_molecular_changes {
         @change_data{@$keys, 'evidence_type', 'evidence'}
 	= map {"$_"} @raw_change_data;
 
+	# This should be handled by change_data above. Oh well.
+	if ($change_type eq 'Missense') {
+	    my ($aa_position,$aa_change_string) = $change_type->right->row;
+	    $aa_change_string =~ /(.*)\sto\s(.*)/;
+	    $change_data{aa_change} = "$1$aa_position$2";
+	}  elsif ($change_type eq 'Nonsense') {
+	    # "Position" here really one of Amber, Ochre, etc.
+	    my ($aa_position,$aa_change) = $change_type->right->row;
+	    $change_data{aa_change} = "$aa_change";
+	}
+
         if ($associated_meta{$change_type}) { # only protein effects have extra data
             $protein_effects{$change_type} = \%change_data;
         }
@@ -3048,6 +3123,37 @@ sub _retrieve_molecular_changes {
     return (\%protein_effects, \%location_effects, $do_translation);
 }
 } # end of _retrieve_molecular_changes block
+
+
+
+sub _compile_amino_acid_changes {
+    my ($self, $object) = @_;
+
+    my @data;
+    foreach my $type_affected ($object->Affects) {
+        foreach my $item_affected ($type_affected->col) { # is a subtree	    
+	    foreach my $change_type ($item_affected->col) {		
+		# This should be handled by change_data above. Oh well.
+		my $aa_change;
+		if ($change_type eq 'Missense') {
+		    my ($aa_position,$aa_change_string) = $change_type->right->row;
+		    $aa_change_string =~ /(.*)\sto\s(.*)/;
+		    $aa_change = "$1$aa_position$2";
+		}  elsif ($change_type eq 'Nonsense') {
+		    # "Position" here really one of Amber, Ochre, etc.
+		    my ($aa_position,$aa_change_string) = $change_type->right->row;
+		    $aa_change = "$aa_change";
+		}
+		if ($aa_change) {
+		    push @data,{ transcript => $self->_pack_obj($item_affected),
+				 amino_acid_change => "$aa_change" };
+		}
+	    }
+	}
+    }
+    return \@data;
+}
+
 
 
 # What is the length of the mutation?
