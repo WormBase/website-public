@@ -172,12 +172,14 @@ sub search_count :Path('/search/count') :Args(3) {
 
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
+  my $url;
   if(defined $c->config->{sections}{species}{$class}){
-    return $c->uri_for('/species',$species || 'all' ,$class,$id);
+    $url = $c->uri_for('/species',$species || 'all' ,$class,$id);
   }elsif($class eq 'page'){
-    return $id;
+    $url = $id;
   }
-  return $c->uri_for('/resources',$class,$id);
+  $url ||= $c->uri_for('/resources',$class,$id);
+  return "$url";
 }
 
 

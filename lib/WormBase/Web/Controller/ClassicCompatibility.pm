@@ -77,7 +77,8 @@ sub misc :Path('/db') :Args(2)  {
 
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
-  return (defined $c->config->{sections}{species}{$class}) ? $c->uri_for('/species',$species || 'all' ,$class,$id) : $c->uri_for('/resources',$class,$id);
+  my $url =  (defined $c->config->{sections}{species}{$class}) ? $c->uri_for('/species',$species || 'all' ,$class,$id) : $c->uri_for('/resources',$class,$id);
+  return "$url";
 }
 
 
