@@ -3,6 +3,7 @@ package WormBase::API::Service::queries;
 use Moose;
 use namespace::autoclean -except => 'meta';
 
+extends 'WormBase::API::Object';
 with 'WormBase::API::Role::Object';
 
 # TODO: error trap on malformed queries
