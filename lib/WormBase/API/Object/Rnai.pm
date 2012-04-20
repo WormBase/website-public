@@ -326,7 +326,17 @@ B<Response example>
 sub reagent {
     my $self        = shift;
     my $object      = $self->object;
-    my @data        = map { $self->_pack_obj($_) } $object->PCR_product;
+    my @data;
+    my @pcr_products = $object->PCR_product;
+    # Here we include a link to the MRC GeneService.
+    # This cuts against the grain of using External Links
+    # but these are important reagents.
+    foreach (@pcr_products) {
+	my $gene_service_id = eval { $_->Clone->Database(3); }
+	push @data, { reagent => $self->_pack_obj($_),
+		      mrc_id  => $gene_service_id ? "$gene_service_id" : undef,
+	};
+    }
     return { data        => @data ? \@data : undef,
 	     description => 'PCR products used to generate this RNAi'
     };
