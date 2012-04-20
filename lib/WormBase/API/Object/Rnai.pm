@@ -332,10 +332,10 @@ sub reagent {
     # This cuts against the grain of using External Links
     # but these are important reagents.
     foreach (@pcr_products) {
-	my $gene_service_id = eval { $_->Clone->Database(3); }
-	push @data, { reagent => $self->_pack_obj($_),
-		      mrc_id  => $gene_service_id ? "$gene_service_id" : undef,
-	};
+      my $gene_service_id = eval { $_->Clone->Database(3); };
+      push @data, { reagent => $self->_pack_obj($_),
+                mrc_id  => $gene_service_id ? "$gene_service_id" : undef,
+      };
     }
     return { data        => @data ? \@data : undef,
 	     description => 'PCR products used to generate this RNAi'
