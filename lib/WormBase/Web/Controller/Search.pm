@@ -33,6 +33,8 @@ sub search :Path('/search') Args {
     my $type = shift @args;
     my $query = shift @args;
     my $page_count = shift @args || 1;
+
+    $type = 'all' unless $query;
    
     # hack for references widget
     if($page_count =~ m/references/){

@@ -1113,7 +1113,7 @@ sub _issue_email{
     my %seen=();  
     $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
   }
-  $subject = '[wormbase-help] '. $issue->title . ' - ' . substr($content, 0, 15) . '...';
+  $subject = '[wormbase-help] '. $issue->title . ' (' . $name . ')';
 
   $c->stash->{issue}=$issue;
   $c->stash->{content}=$content;
