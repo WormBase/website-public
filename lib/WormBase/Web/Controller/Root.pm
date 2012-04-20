@@ -184,6 +184,7 @@ sub get :Local Args(0) {
 	if ($temp_object) {
 	    $name = $temp_object->Synonym_for_anatomy_term || $temp_object->Name_for_anatomy_term;
 	}
+	# Reset the class for Cell_group and Cell searches; unknown to API.
 	$requested_class = 'Anatomy_term';
     }
 
