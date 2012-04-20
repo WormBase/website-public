@@ -172,7 +172,10 @@ sub get :Local Args(0) {
     # /db/get?name=[Anatomy_name_object];class=Anatomy_term
     # so searches fail. We need to map the Anatomy_name object
     # to the correct Anatomy_term object.
-    if ($requested_class eq 'Anatomy_term' && $name !~ /^WBbt/) {
+
+    # Wow. Legacy of legacy of legacy. Incroyable.  The once mighty Cell_group class before
+    # all the confusion began.
+    if (($requested_class eq 'Anatomy_term' || $requested_class eq 'Cell_group' || $requested_class eq 'Cell') && $name !~ /^WBbt/) {
 	my $api = $c->model('WormBaseAPI');
 	my $temp_object = $api->fetch({
 	    class => 'Anatomy_name',
@@ -181,7 +184,9 @@ sub get :Local Args(0) {
 	if ($temp_object) {
 	    $name = $temp_object->Synonym_for_anatomy_term || $temp_object->Name_for_anatomy_term;
 	}
+	$requested_class = 'Anatomy_term';
     }
+
 
     # there may be input (perhaps external, hand-typed input or even automated
     # input from a non-WB tool) which specifies a class in the incorrect casing
