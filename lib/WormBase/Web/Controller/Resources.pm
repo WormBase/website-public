@@ -147,7 +147,7 @@ sub _get_report {
         name   => $name,
     }); # error handling?
 
-    $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1")  if($object == -1 );
+    $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  if($object == -1 );
 
     $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
 }

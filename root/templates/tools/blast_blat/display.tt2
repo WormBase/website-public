@@ -8,7 +8,7 @@
 
             <td>
             <div id="back_button">
-                <a href="[% c.uri_for('tools','blast_blat') %]" onClick="history.go(-1); return false;">Back</a>
+                <a href="[% c.uri_for('tools','blast_blat').path %]" onClick="history.go(-1); return false;">Back</a>
             </div>
             </td>
 
@@ -42,7 +42,7 @@
                     <br/>
                     <font class="small">
 		    [% IF obj.result_file_content.size == 0 %]
-			No results found for this search. Please go <a href="[% c.uri_for('tools','blast_blat') %]" onClick="history.go(-1); return false;">back</a> and try another query.<br />
+			No results found for this search. Please go <a href="[% c.uri_for('tools','blast_blat').path %]" onClick="history.go(-1); return false;">back</a> and try another query.<br />
 		    [% ELSE %]
 			* Links to the Genome Browser and alignment image are limited to top hits.<br/>
 		    [% END %]

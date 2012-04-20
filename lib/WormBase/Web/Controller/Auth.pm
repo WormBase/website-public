@@ -215,7 +215,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
 
 #                 $self->reload($c);
 
-                $c->res->redirect($c->uri_for('/'));
+                $c->res->redirect($c->uri_for('/')->path);
 
 #                 $c->res->redirect($c->uri_for($c->req->path));
             } else {
@@ -611,7 +611,7 @@ sub profile_update :Path("/profile_update") {
 
   $c->stash->{message} = $message; 
   $c->stash->{template} = "shared/generic/message.tt2"; 
-  $c->stash->{redirect} = $c->uri_for("me");
+  $c->stash->{redirect} = $c->uri_for("me")->path;
   $c->forward('WormBase::Web::View::TT');
 } 
 
@@ -627,7 +627,7 @@ sub add_operator :Path("/add_operator") {
       $c->model('Schema::UserRole')->find_or_create({user_id=>$c->user->user_id,role_id=>$role->role_id});
       $c->user->set_columns({"gtalk_key"=>$key});
       $c->user->update();
-      $c->res->redirect($c->uri_for("me"));
+      $c->res->redirect($c->uri_for("me")->path);
     }else {
 	 $c->stash->{error_msg} = "Adding Google Talk chatback badge not successful!";
     }

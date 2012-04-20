@@ -7,7 +7,7 @@
 
 <select class="blast_blat" onchange="location=this.options[this.selectedIndex].value">
     [% count = 0 %]
-    [% link = c.uri_for('/tools', 'blast_blat', 'run') %]
+    [% link = c.uri_for('/tools', 'blast_blat', 'run').path %]
     [% FOREACH obj IN data %]
 	[% count = count + 1  %]
 	<option id="[% count %]" value="#blast_result_[% count %]" [% IF count==1 %] selected="selected" [% END %]>[% count _ ":" _ obj.query_name %]</option>

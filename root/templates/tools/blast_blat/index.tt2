@@ -5,7 +5,7 @@
 </head>
  
 
-<form method="POST" action="[% c.uri_for('/tools','blast_blat','run') %]">
+<form method="POST" action="[% c.uri_for('/tools','blast_blat','run').path %]">
 
 <div class="form_container">
 
@@ -173,7 +173,7 @@
 Documentation
 <hr>
 * The filter option preprocesses the sequence to mask low-complexity regions<br /><br />
-<a href="[% c.uri_for('/tools', 'blast_blat', 'about_blat') %]" target="_blank">About the BLAT algorithm</a>.
+<a href="[% c.uri_for('/tools', 'blast_blat', 'about_blat').path %]" target="_blank">About the BLAT algorithm</a>.
 </div>
 
 

@@ -14,8 +14,8 @@
     </div>
     <div class="login-holder">
       <input type="checkbox" id="remember" name="remember" size="10"><span id="fade"> Remember me · </span></input>
-      <span id="fade"><a href="[% c.uri_for('/register') %]" onClick='$jq(this).closest(".login-form").load("[% c.uri_for("/register") %]?inline=1").toggleClass("registration-form login-form"); return false;'>register</a> · </span>
-      <a id="fade" href="[% c.uri_for('/password/index') %]">forgot login?</a>
+      <span id="fade"><a href="[% c.uri_for('/register').path %]" onClick='$jq(this).closest(".login-form").load("[% c.uri_for("/register") %]?inline=1").toggleClass("registration-form login-form"); return false;'>register</a> · </span>
+      <a id="fade" href="[% c.uri_for('/password/index').path %]">forgot login?</a>
     </div>
   </form>
 
@@ -39,12 +39,12 @@
       alert("Login not successful! [% error_notice %]");
       window.location = "/";
    [% ELSIF prompt_wbid %]
-      opener.location.href="[% c.uri_for('/auth/wbid') %]?redirect=[% redirect %]";
+      opener.location.href="[% c.uri_for('/auth/wbid').path %]?redirect=[% redirect %]";
    [% ELSIF logout || ! operator %]
       opener.location.reload(1);
    [% ELSE %]
       var answer= confirm("Would you like to continue the process of becoming an operator?") ; 
-      if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')) %]"; }
+      if(answer) { opener.location.href ="[% c.uri_for(c.controller('auth').action_for('operator')).path %]"; }
       else { opener.location.reload(1);}
   [% END %] 
   window.close();

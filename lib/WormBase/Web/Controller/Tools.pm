@@ -83,7 +83,7 @@ sub tools :Path Args {
     # Create different actions for different tools instead of using
     #   this single catch-all action? -AD
     if($data->{redirect}){
-	my $url = $c->uri_for('/search',$data->{class},$data->{name});
+	my $url = $c->uri_for('/search',$data->{class},$data->{name})->path;
 	     $c->res->redirect($url."?from=".$data->{redirect}."&query=".$data->{msg}, 307);
     }
 

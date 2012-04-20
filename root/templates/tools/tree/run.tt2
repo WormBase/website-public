@@ -21,17 +21,17 @@ END; %]
 
 [% UNLESS data.msg %]
       <p>
-	  <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %];class=[% data.object.class %]&view=expand" target="[% target %]">expand all nodes</a> |  
-	  <a href="[% c.uri_for('/tools','tree','run') %]?name=[% data.object.name %];class=[% data.object.class %]&view=collapse" target="[% target %]">collapse all nodes</a>
+	  <a href="[% c.uri_for('/tools','tree','run').path %]?name=[% data.object.name %];class=[% data.object.class %]&view=expand" target="[% target %]">expand all nodes</a> |  
+	  <a href="[% c.uri_for('/tools','tree','run').path %]?name=[% data.object.name %];class=[% data.object.class %]&view=collapse" target="[% target %]">collapse all nodes</a>
     [% IF !schema %]
-        | <a href="[% c.uri_for('/tools','schema','run') %]?class=[% data.object.class %]" target="[% target %]">view schema</a>
+        | <a href="[% c.uri_for('/tools','schema','run').path %]?class=[% data.object.class %]" target="[% target %]">view schema</a>
     [% END %]
       </p>
 [% END %]
 
 <p>
 [% IF schema %]
-  <form method="POST" action="[% c.uri_for('/tools','schema','run')%]" name"question"> 
+  <form method="POST" action="[% c.uri_for('/tools','schema','run').path %]" name"question"> 
     <table>
        <tr><th>Class</th> 
            <td><input type="text" name="class" value="[% name %]" size="15" onchange="document.question.submit()" /></td>
@@ -40,7 +40,7 @@ END; %]
     </table>
   </form>
 [% ELSE %]
-  <form method="POST" action="[% c.uri_for('/tools','tree','run')%]" name"question"> 
+  <form method="POST" action="[% c.uri_for('/tools','tree','run').path %]" name"question"> 
     <table>
        <tr><th>Name</th>
            <td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>

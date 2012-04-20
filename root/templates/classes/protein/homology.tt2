@@ -42,7 +42,7 @@
 
 
     <div id="motif_details">
-      [% WRAPPER toggle title="View full Motif Details" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'motif_details') id="blast_details_toggle"%]
+      [% WRAPPER toggle title="View full Motif Details" lazy=1 href=c.uri_for('/rest','field','protein',object.name.data.id,'motif_details').path  id="blast_details_toggle"%]
       [% END %]
     </div>
 [% END %]
