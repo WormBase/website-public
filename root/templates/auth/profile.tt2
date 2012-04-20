@@ -1,6 +1,6 @@
 [% IF c.user_exists  %]
 
-<form id="profile" action="[% c.uri_for('/profile_update') %]" method="post">
+<form id="profile" action="[% c.uri_for('/profile_update').path %]" method="post">
   <fieldset id="basicinfo-field">
     <legend>Basic Information</legend>
         <dl><dt>Full name <input size="50" type="text" name="username" value ="[% c.user.username %]" /> </dt></dl>            
@@ -27,7 +27,7 @@
           <span id="fade">unvalidated. <a href="#">(resend email)</a></span>
         [% END %]
       [% ELSE %]
-        <a href="[% c.uri_for('/auth/wbid') %]">none linked</a>
+        <a href="[% c.uri_for('/auth/wbid').path %]">none linked</a>
       [% END %]
     </dt></dl>
   <input type="submit" value="Update" />

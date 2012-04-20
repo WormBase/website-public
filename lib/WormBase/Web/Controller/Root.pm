@@ -218,10 +218,10 @@ sub get :Local Args(0) {
         }
 
         my $species = eval { $object->Species } || 'any';
-        $url = $c->uri_for('/species', $species, $normed_class, $name);
+        $url = $c->uri_for('/species', $species, $normed_class, $name)->path;
     }
     else {                      # /report
-        $url = $c->uri_for('/resources', $normed_class, $name);
+        $url = $c->uri_for('/resources', $normed_class, $name)->path;
     }
 
     $c->res->redirect($url);
