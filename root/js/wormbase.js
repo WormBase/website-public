@@ -834,6 +834,7 @@
         allSearch = $jq("#all-search-results");
     Scrolling.sidebarInit();
     allSearch.empty(); 
+    search_change(type);
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
       checkSearch(allSearch);
