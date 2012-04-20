@@ -1,9 +1,11 @@
 <table width="100%">
    <tr>
-     <th>Species</th>
-     <th width="20%">FASTA</th>
-     <th width="20%">GFF 2</th>
-     <th width="20%">GFF 3</th>
+     <th width="30%">Species</th>
+     <th width="20%">FTP Home</th>
+     <th width="20%">Genomic Sequence</th>
+     <th width="10%">GFF2</th>
+     <th width="10%">GFF3</th>
+     <th width="10%">Protein</th>
    </tr>
 
    [% s_list = (species != 'all') ? [species] : c.config.sections.species_list.keys.sort(); %]
@@ -11,15 +13,15 @@
    [% FOREACH option IN s_list %]
       [% NEXT IF (option == 'all'); %]
       <tr>
-           <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %]
-                               [% c.config.sections.species_list.$option.species %]
-               </a>
+           <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %] [% c.config.sections.species_list.$option.species %]</a></td>
+           <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">FTP home</a>
            </td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/genomic/[% option %].[% constants.acedb_version %].genomic.fa.gz">[% option %].fa.gz</td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% constants.acedb_version %].annotations.gff2.gz">[% option %].gff2.gz</td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% constants.acedb_version %].annotations.gff3.gz">[% option %].gff3.gz</td>
+       <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/protein/[% option %].[% constants.acedb_version %].protein.fa.gz">[% option %].fa.gz</td>
       </tr>
    [% END %]
 </table>
 <br />
-<div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on individual pages for each species.</div>
+<div class="caveat-emptor">Links point to the most current assemblies. Additional datasets and older versions are available on individual pages for each species. Visit the primary FTP Home for each species for supplementary materials not listed here.</div>
