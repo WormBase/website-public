@@ -762,15 +762,15 @@ B<Response example>
 =back
 
 =cut 
-
-sub rescues {    
-    my $self = shift;
-    my $object = $self->object;
-
-    my @genes = map {$self->pack_obj($_) } $object->Rescue;
-    return { description => 'genes that may be rescued by this transgene',
-	     data        => @genes ? \@genes : undef };
-}
+# This tag does not exists in the current ACeDB schema -AC
+# sub rescues {    
+#     my $self = shift;
+#     my $object = $self->object;
+# 
+#     my @genes = map {$self->pack_obj($_) } $object->Rescue;
+#     return { description => 'genes that may be rescued by this transgene',
+# 	     data        => @genes ? \@genes : undef };
+# }
 
 
 
