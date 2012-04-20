@@ -5,19 +5,19 @@
 <table border='1'>
 <tr><th>Types</th><th>Description</th><th>Examples</th></tr>
 <tr><th>Anatomy Ontology</th><td>provide standardized terms to describe cellular anatomy</td>
-<td>term name <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=GABAergic neuron;class=Anatomy_term">GABAergic neuron</a>
-<br />AO accession number <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=WBbt:0005784;class=Anatomy_term">WBbt:0005784</a>
+<td>term name <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=GABAergic neuron;class=Anatomy_term">GABAergic neuron</a>
+<br />AO accession number <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=WBbt:0005784;class=Anatomy_term">WBbt:0005784</a>
 </td>
 </tr><tr><th>Gene Ontology</th><td>aims to provide a controlled vocabulary to describe biology, falling into three areas:<br />
  biological process, cellular compartment, and molecular function</td>
-<td>brief text description <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=ubiquitin-dependent endocytosis;class=go_term">ubiquitin-dependent endocytosis</a>
+<td>brief text description <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=ubiquitin-dependent endocytosis;class=go_term">ubiquitin-dependent endocytosis</a>
 
-<br />gene ontology ID <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=GO:0004500;class=go_term">GO:0004500</a>
+<br />gene ontology ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=GO:0004500;class=go_term">GO:0004500</a>
 </td>
 </tr><tr><th>Phenotype</th><td>provides a simple mechanism to search the phenotype ontology</td>
 <td> 
-phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=embryonic lethal late emb;class=phenotype">embryonic lethal late emb</a>
-<br />phenotype ID <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
+phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=embryonic lethal late emb;class=phenotype">embryonic lethal late emb</a>
+<br />phenotype ID <a href="[% c.uri_for('/tools','ontology_browser','run').path %]?name=WBPhenotype:0000520;class=phenotype">WBPhenotype:0000520</a><br />
 </td>
 </tr>
 </table>
@@ -29,7 +29,7 @@ phenotype term <a href="[% c.uri_for('/tools','ontology_browser','run') %]?name=
 [% END %]
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools','ontology_browser','run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools','ontology_browser','run').path %]"> 
   <table>
      <tr> 
           

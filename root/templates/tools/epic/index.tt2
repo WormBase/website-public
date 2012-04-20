@@ -7,11 +7,11 @@ To browse, select a chromosome or enter a Gene/Rearrangement ID.
 </p>
 <p>
 Examples:<br />
-<a href="[% c.uri_for('/tools','gmap','run') %]?name=WBGene00006763;class=Gene">View the WBGene00006763 Genetic Map</a>.<br />
-<a href="[% c.uri_for('/tools','gmap','run') %]?name=yDf12;class=Rearrangement">View the Rearrangment yDf12 Genetic Map</a>.<br />
+<a href="[% c.uri_for('/tools','gmap','run').path %]?name=WBGene00006763;class=Gene">View the WBGene00006763 Genetic Map</a>.<br />
+<a href="[% c.uri_for('/tools','gmap','run').path %]?name=yDf12;class=Rearrangement">View the Rearrangment yDf12 Genetic Map</a>.<br />
 </p>
 <p>
-<form method="POST" action="[% c.uri_for('/tools','gmap','run') %]">
+<form method="POST" action="[% c.uri_for('/tools','gmap','run').path %]">
     Chromosome name:
     <select name="name">
 	<option value="I" selected="1">I</option>
@@ -27,7 +27,7 @@ Examples:<br />
 </p>
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run').path %]"> 
   <table>
      <tr><th>WormBase ID</th>
          <td><input type="text" name="name" onchange="document.question.submit()" /></td>
@@ -55,10 +55,10 @@ To browse, enter an object ID (eg C12H4) and a class (eg Clone).
 
 <p>
 Examples:<br />
-<a href="[% c.uri_for('/tools','epic','run') %]?name=C12H4;class=Clone">View the C12H4 Clone Graphic Display</a>.<br />
+<a href="[% c.uri_for('/tools','epic','run').path %]?name=C12H4;class=Clone">View the C12H4 Clone Graphic Display</a>.<br />
 </p>
 <p>
-<form method="POST" action="[% c.uri_for('/tools', "$tool" ,'run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools', "$tool" ,'run').path %]"> 
   <table>
      <tr><th>WormBase ID</th>
          <td><input type="text" name="name" onchange="document.question.submit()" /></td>

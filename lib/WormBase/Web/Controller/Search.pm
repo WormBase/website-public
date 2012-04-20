@@ -176,11 +176,11 @@ sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
   my $url;
   if(defined $c->config->{sections}{species}{$class}){
-    $url = $c->uri_for('/species',$species || 'all' ,$class,$id);
+    $url = $c->uri_for('/species',$species || 'all' ,$class,$id)->path;
   }elsif($class eq 'page'){
     $url = $id;
   }
-  $url ||= $c->uri_for('/resources',$class,$id);
+  $url ||= $c->uri_for('/resources',$class,$id)->path;
   return "$url";
 }
 

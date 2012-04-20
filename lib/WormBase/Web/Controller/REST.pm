@@ -369,7 +369,7 @@ sub rest_link_wbid_POST {
       }else{
         $c->user->wb_link_confirm(1);
         $c->model('Schema::Email')->find_or_create({email=>$wbe, user_id=>$user_id, validated=>1});
-        $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to <a href=\"" . $c->uri_for('/resources', 'person', $wbid) . "\">$wbid</a></p>" ; 
+        $c->stash->{message} = "<h2>Thank you!</h2> <p>Your account is now linked to <a href=\"" . $c->uri_for('/resources', 'person', $wbid)->path . "\">$wbid</a></p>" ; 
       }
       $c->user->update();
     }
@@ -427,7 +427,7 @@ sub rest_register_POST {
       
       push(@emails, @wbemails);
       $c->stash->{template} = "shared/generic/message.tt2"; 
-      $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . ".</p><p>In order to use this account at <a href='" . $c->uri_for("/") . "'>wormbase.org</a> you will need to activate it by following the activation link in your email.</p>" ; 
+      $c->stash->{message} = "<h2>You're almost done!</h2> <p>An email has been sent to " . join(', ', map {"<a href='mailto:$_'>$_</a>"} @emails) . ".</p><p>In order to use this account at <a href='" . $c->uri_for("/")->path . "'>wormbase.org</a> you will need to activate it by following the activation link in your email.</p>" ; 
 #       $c->stash->{redirect} = $c->req->params->{redirect};
       $c->forward('WormBase::Web::View::TT');
 
@@ -452,7 +452,7 @@ sub rest_register_email {
   my $digest = $csh->generate();
   $digest =~ s/^{SSHA}//;
   $digest =~ s/\+/\%2B/g;
-  my $url = $c->uri_for('/confirm')."?u=".$user_id."&code=".$digest;
+  my $url = $c->uri_for('/confirm')->path."?u=".$user_id."&code=".$digest;
 
   if($wbid){
     $c->stash->{info}->{wbid}=$wbid;
@@ -493,9 +493,9 @@ sub feed_GET {
       my $widget = shift @args;
       my $name = shift @args;
       if($widget=~m/^static-widget-([\d]+)/){
-        $c->stash->{url} = $c->uri_for('widget/static', $1);
+        $c->stash->{url} = $c->uri_for('widget/static', $1)->path;
       }else{
-        $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget);
+        $c->stash->{url} = $c->uri_for('widget', $class, $wbid, $widget)->path;
       }
     }else{
 
@@ -894,7 +894,7 @@ sub widget_static_GET {
       my $format = $headers->header('Content-Type') || $c->req->params->{'content-type'};
       $c->detach('WormBase::Web::View::TT') unless($format) ;
       
-      my $uri = $c->uri_for("/rest/widget",$widget_id);
+      my $uri = $c->uri_for("/rest/widget",$widget_id)->path;
       $self->status_ok($c, entity => {
       id   => $widget_id,
       name    => $widget->widget_title,
@@ -1304,7 +1304,7 @@ sub field_GET {
     # Include the full uri to the *requested* object.
     # IE the page on WormBase where this should go.
     # TODO: 2011.03.20 TH: THIS NEEDS TO BE UPDATED, TESTED, VERIFIED
-    my $uri = $c->uri_for( "/species", $class, $name );
+    my $uri = $c->uri_for( "/species", $class, $name )->path;
 
     $c->response->header( 'Content-Type' => $content_type );
     if ( $content_type eq 'text/html' ) {
