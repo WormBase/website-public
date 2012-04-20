@@ -8,7 +8,7 @@
     <table width="60%">               
             <tr>
                 <th>
-                <a class='lightbox' href="[% c.uri_for('/login') %]">Login</a>
+                <a class='lightbox' href="[% c.uri_for('/login').path  %]">Login</a>
                 </th>
                 <td>
                   or
@@ -41,7 +41,7 @@
         </div>
 
         <div id="issue-submit-box">
-          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue') %]" /> 	
+          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" /> 	
           <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
         </div>
       <br /><br />

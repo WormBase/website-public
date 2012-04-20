@@ -61,19 +61,19 @@
    MACRO get_url(class, id, taxonomy) BLOCK;
         class = (ACE2WB_MAP.$class || class) FILTER lower;
         IF c.config.sections.species.$class.defined;
-          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id);
+          c.uri_for('/species', taxonomy || 'c_elegans' ,class, id).path;
         ELSIF (class == 'bench');
-          c.uri_for('/me', id);
+          c.uri_for('/me', id).path;
         ELSIF (class == 'page');
           id;
         ELSIF (class == 'picture');
-           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox');
+           c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
         ELSIF (class == 'genomic_location');
-           c.uri_for('/tools', 'genome', 'gbrowse') _ '/' _ id;
+           c.uri_for('/tools', 'genome', 'gbrowse', id).path;
         ELSIF !(c.config.sections.resources.$class.defined);
-          c.uri_for('/search', 'all', id);
+          c.uri_for('/search', 'all', id).path;
         ELSE;
-          c.uri_for('/resources', class, id);
+          c.uri_for('/resources', class, id).path;
         END;
    END;
 
@@ -96,7 +96,7 @@
         END;
 
         IF downloadable(class);
-          "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences') _ '?colorbox=1' _ "' class='button ui-corner-all tip-simple slink' data-class='$class' tip='download'>";
+          "<a href='" _ c.uri_for('/rest/widget', class, id, 'sequences').path  _ '?colorbox=1' _ "' class='button ui-corner-all tip-simple slink' data-class='$class' tip='download'>";
             "<span class='ui-icon ui-icon-arrowthickstop-1-s ui-button'></span>";
           "</a>";
         END;
@@ -107,7 +107,7 @@
    END;
 
     MACRO searchlink(class, id, text) BLOCK;
-       url = c.uri_for('/search', class, id);
+       url = c.uri_for('/search', class, id).path ;
        "<a href=\"$url\" class=\"$class-link\">$text</a>";
     END;
 

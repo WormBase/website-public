@@ -37,7 +37,7 @@
 
 <div id="default-login" style="overflow:none">
   <input id="create-account" type="submit" style="visibility:hidden;font-weight:bold;width:7em;" class="ui-corner-large-all" value="sign up ›"/> 
-  <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login") %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login') %]">login</a></b></span>
+  <span> Already a member? <b><a id="login" onClick='$jq(this).parent().parent().parent().parent().parent().load("[% c.uri_for("/login").path %]").addClass("login-form").removeClass("registration-form"); return false;'  href="[% c.uri_for('/login').path %]">login</a></b></span>
 </div>
 
 </form>

@@ -44,8 +44,8 @@
   </span>
   [% ELSE %]
     <div class="ui-state-error" style="padding:0.5em;">
-      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id) %]?history=1' onClick='WB.StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the 
-      <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id) %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id) %]">current revision</a></span><br />
+      <span id="fade">This is an <a href='[% c.uri_for("/rest/widget/static", widget.widget_id).path %]?history=1' onClick='WB.StaticWidgets.history("static-widget-[% widget.widget_id %]");return false;'>old revision</a> of the widget as edited by [% linkUser(rev.user) %] at [% rev_date %]. It may differ from the 
+      <a onClick='$jq("div#static-widget-[% widget.widget_id %]-content").load("[% c.uri_for('/rest/widget/static', widget.widget_id).path %]");return false;' href="[% c.uri_for('/rest/widget/static', widget.widget_id).path %]">current revision</a></span><br />
     </div>
     <br />
     <div class="static-widget-content">
@@ -63,7 +63,7 @@
         [% IF rev == revisions.last; 'created by'; ELSE; 'edit by'; END; %] 
         [% linkUser(rev.user) %] – 
             <a onClick='WB.StaticWidgets.reload("[% widget_id %]", "[% rev.widget_revision_id %]");return false;' 
-               href="[% c.uri_for('/rest/widget/static', widget_id) %]?rev=[% rev.widget_revision_id %]">[% rev.time_lapse %]</a>
+               href="[% c.uri_for('/rest/widget/static', widget_id).path %]?rev=[% rev.widget_revision_id %]">[% rev.time_lapse %]</a>
         [% UNLESS first; ' – latest version'; first = 1; END; %] 
       </span><br />
     [% END %]

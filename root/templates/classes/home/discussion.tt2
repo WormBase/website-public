@@ -23,7 +23,7 @@
   [% END %]
   </ul>
 </div>
-  <a href="[% c.uri_for('/tools/comments') %]">View More ›</a>
+  <a href="[% c.uri_for('/tools/comments').path %]">View More ›</a>
 [% END %]
 
 <script>

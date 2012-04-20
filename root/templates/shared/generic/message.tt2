@@ -20,7 +20,7 @@
         setTimeout('location.replace("[% redirect %]");',3000);
       </script>
     [% ELSE %]
-      go to <a href='[% c.uri_for("/")%]'>WormBase home</a>
+      go to <a href='[% c.uri_for("/").path %]'>WormBase home</a>
     [% END %]
   </span></p>
     <div style="clear:both"></div>
