@@ -1,6 +1,6 @@
 <table width="100%">
    <tr>
-     <th width="30%">Species</th>
+     [% IF (species == 'all') %]<th width="30%">Species</th>[% END %]
      <th width="20%">FTP Home</th>
      <th width="20%">Genomic Sequence</th>
      <th width="10%">GFF2</th>
@@ -13,9 +13,10 @@
    [% FOREACH option IN s_list %]
       [% NEXT IF (option == 'all'); %]
       <tr>
+        [% IF (species == 'all') %]
            <td><a href="/species/[% option %]" class="species">[% c.config.sections.species_list.$option.genus %] [% c.config.sections.species_list.$option.species %]</a></td>
-           <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">FTP home</a>
-           </td>
+       [% END %]
+       <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]">[% (species == 'all') ? 'FTP home' : c.config.sections.species_list.$option.genus _ ' ' _ c.config.sections.species_list.$option.species %]</a></td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/sequence/genomic/[% option %].[% constants.acedb_version %].genomic.fa.gz">[% option %].fa.gz</td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% constants.acedb_version %].annotations.gff2.gz">[% option %].gff2.gz</td>
        <td><a href="ftp://ftp.wormbase.org/pub/wormbase/species/[% option %]/gff/[% option %].[% constants.acedb_version %].annotations.gff3.gz">[% option %].gff3.gz</td>
