@@ -50,7 +50,7 @@ sub misc :Path('/db') :Args(2)  {
     my $name            = $c->req->param('name');
 
     #hack for anatomy term objects
-    $class = $class . "_term" if ($class == 'anatomy');
+    $class = $class . "_term" if ($class eq 'anatomy');
 
     my $api    = $c->model('WormBaseAPI');
     my $object = $api->fetch({ class => ucfirst $class, name => $name });
