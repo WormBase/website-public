@@ -1,6 +1,7 @@
 package WormBase::API::Role::Interaction;
 
 use Moose::Role;
+use Data::Dumper;
 
 #######################################################
 #
@@ -16,67 +17,8 @@ has '_interactions' => (
 
 sub _build__interactions {
     my $self = shift;
-    my $object = $self->object;
-	my @interactions;
-	if ($object->class =~ /gene/i) { @interactions = $object->Interaction }
-	elsif ($object->class =~ /interaction/i) { @interactions = ($object) }
-    my ($nodes,$edges,$phenotypes,$types,$nodes_obj); #save packed objects improves the speed
-    my %data;
-    my $show_local = 0;
-    # find interacted genes with this $object
-    foreach my $interaction ( @interactions ) {
-
-	my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
-	next unless($effector);
-
-	$nodes->{"$effector"}= $self->_pack_obj($effector);
-	$nodes->{"$effected"}= $self->_pack_obj($effected);
-	$nodes_obj->{"$effector"}=$effector;
-	$nodes_obj->{"$effected"}=$effected;
-
-	$edges->{"$interaction"}=1;  
-	$types->{"$type"}=1;
-	if($phenotype) {
-	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"};
-	}
-	my $phenString = $phenotype ? $phenotype : "";
-	my $key = join(' ', "$effector", "$effected", "$type", $direction, $phenString);
-	my $altkey = join(' ', "$effected", "$effector", "$type", $direction, $phenString);
-
-	my $packInteraction = $self->_pack_obj($interaction);
-	my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
-	if (exists $data{$key}){
-		push @{$data{$key}{interactions}}, $packInteraction;
-		push @{$data{$key}{citations}}, @papers;
-	} elsif($direction ne 'Effector->Effected' && exists $data{$altkey}){
-		push @{$data{$altkey}{interactions}}, $packInteraction;
-		push @{$data{$altkey}{citations}}, @papers;
-	} else {
-	    my @interacArr = ($packInteraction);
-	    $data{$key} = {
-		interactions=> @interacArr ? \@interacArr : undef,
-		citations   => @papers ? \@papers : undef,
-		type        => "$type",
-		effector    => $nodes->{"$effector"},
-		effected    => $nodes->{"$effected"},
-		direction   => $direction,
-		phenotype   => $phenotype,
-		nearby	    => 0,
-	    };
-	}
-    }
-
-    if(scalar keys %data < 100){
-	$show_local = 1;
-    }
-
-    my @results = (\%data,$nodes,$edges,$phenotypes,$types,$nodes_obj);
-    my %result = (
-	showall => $show_local,
-	results => \@results,
-    );
-    return \%result;
+	my $data;
+    return $self->_get_interactions($data, 0);
 }
 
 #######################################
@@ -114,7 +56,7 @@ No
 
 B<Parameters>
 
-A gene ID (WBGene00006763)
+An object ID (WBGene00006763)
 
 B<Returns>
 
@@ -132,7 +74,7 @@ B<Returns>
 
 B<Request example>
 
-curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene000066763/interactions
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[class]/[object]/interactions
 
 B<Response example>
 
@@ -140,92 +82,75 @@ B<Response example>
 
 sub interactions  {
     my $self   = shift;
-    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
-    if($self->_interactions->{showall}){
-	$self->nearby_interactions($data, 1);
-    }
-    my @dataRet = (values %{$data});
+    my $results = $self->_interactions;
+	my $show_nearby = $results->{showall};
+	$results = $self->_get_interactions($results, 1) if $show_nearby;
+
+    @{$results->{edges}} = (values %{$results->{edgeVals}});
     return {
         description => 'genetic and predicted interactions',
-        data        => {edges=>\@dataRet,nodes=>$nodes,types=>$types,showall=>$self->_interactions->{showall}},
+        data        => $results,
     };
 }
 
-sub nearby_interactions {
-    #this method loads nearby interactions (i.e. interactions between nodes that interact with the current gene)
-    my ($self, $data, $show_local) = @_;
-    my ($old_data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
-    #find the interactions between all other genes
-    for my $key (sort keys %$nodes){
-	my $node = $nodes_obj->{$key};
-	foreach my $interaction ( $node->Interaction ) {
-	    next if(exists $edges->{"$interaction"});
-	    my $flag=0;
-	    foreach ($interaction->Interactor){
-	      next if($_ eq $node);
-	      unless ( exists $nodes->{$_}) { $flag=0; last;}
-	      $flag=1; 
-	    }
-	    next unless($flag == 1);
-	
-	    my ($type, $effector, $effected, $direction, $phenotype)= _get_interation_info($interaction);
-	    next unless($effector);
+=head3 interaction_details
 
-	    $edges->{"$interaction"}=1;
-	    $types->{"$type"}=1;
-	    if( $phenotype) {
-	      $phenotypes->{"$phenotype"}= $self->_pack_obj($phenotype) unless(exists $phenotypes->{"$phenotype"});
-	      $phenotype= $phenotypes->{"$phenotype"};
-	    }
+This method takes the interaction network built on first load and
+searches for additional interactions for the same set of nodes.
+Returns a data structure in the same format as the one taken in.
 
-	    my $phenString = $phenotype ? $phenotype : "";
-	    my $key = join(' ', "$effector", "$effected", "$type", $direction, "$phenString");
-	    my $altkey = join(' ', "$effected", "$effector", "$type", $direction, "$phenString");
+=over
 
-	    my $packInteraction = $self->_pack_obj($interaction);
-	    my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
-	    if (exists $data->{$key}){
-		my $interacArr = $data->{$key}{interactions};
-		push @$interacArr, $packInteraction;
-		if($show_local){
-		    my $paperArr = $data->{$key}{citations};
-		    push @$paperArr, @papers;
-		}
-	    } elsif($direction ne 'Effector->Effected' && exists $data->{$altkey}){
-		my $interacArr = $data->{$altkey}{interactions};
-		push @$interacArr, $packInteraction;
-		if($show_local){
-		    my $paperArr = $data->{$altkey}{citations};
-		    push @$paperArr, @papers;
-		}
-	    } else {
-		my @interacArr;
-		push @interacArr, $packInteraction;
-		$data->{$key} = {
-		    interactions=> @interacArr ? \@interacArr : undef,
-		    citations	=> @papers && $show_local ? \@papers : undef,
-		    type        => "$type",
-		    effector    => $nodes->{"$effector"},
-		    effected    => $nodes->{"$effected"},
-		    direction   => $direction,
-		    phenotype   => $phenotype,
-		    nearby	=> 1,
-		};
-	    }
-	 }
-    }
-}
+=item PERL API
+
+ $data = $model->interaction_details();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+An object ID (WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/[class]/[object]/interaction_details
+
+B<Response example>
+
+=cut
 
 sub interaction_details {
     my $self = shift;
-    my ($data,$nodes,$edges,$phenotypes,$types,$nodes_obj) = @{$self->_interactions->{results}};
+    my $results = $self->_interactions;
+    $results = $self->_get_interactions($results, 1);
 
-    $self->nearby_interactions($data, 0);
-
-    my @edges = (values %{$data});
+    @{$results->{edges}} = (values %{$results->{edgesVals}});
+	warn("Results:\n", Dumper($results));
     return {
-	description	=> 'addtional nearby interactions',
-	data		=> {edges=>\@edges, nodes => $nodes, types => $types},
+		description	=> 'addtional nearby interactions',
+		data		=> $results,
     };
 }
 
@@ -235,32 +160,115 @@ sub interaction_details {
 #
 ############################################################
 
-sub _get_interation_info {
-    my ($interaction) = @_;
-    # Filter low confidence predicted interactions.
+sub _get_interactions {
+    my ($self, $data, $nearby) = @_;
+	my $object = $self->object;
+	my @objects;
+	if ($data->{nodes_obj}){ @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} }
+	elsif ($object->class =~ /gene/i) { @objects = $object->Interaction }
+	elsif ($object->class =~ /interaction/i ) { @objects = ($object) }
+	warn("size: ", scalar @objects);
+	foreach my $interaction ( @objects ) {
+	    next if($data->{ids}{"$interaction"});
+		if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }		
+		my $edgeList = $self->_get_interaction_info($interaction);
+		foreach my $key (keys %{$edgeList}) {
+			my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
+			warn("effector: $effector, effected: $effected");
+			next unless($effector);
+			$data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, eval {$effector->Public_name} || undef);
+			$data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, eval {$effected->Public_name} || undef);
+			$data->{nodes_obj}{"$effector"} = $effector;
+			$data->{nodes_obj}{"$effected"} = $effected;
+			$data->{ids}{"$interaction"}=1;
+			$data->{types}{"$type"}=1;
+			
+			my $phenObj = $self->_pack_obj($phenotype);
+			my $key = "$effector $effected $type";
+
+			if ($phenotype) {
+				$data->{phenotypes}{"$phenotype"} ||= $phenObj;
+				$key .= " $phenotype" if $phenotype;
+			}
+			
+			my $packInteraction = $self->_pack_obj($interaction);
+			my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
+			
+			if (exists $data->{edgeVals}{$key}){
+				push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
+				push @{$data->{edgeVals}{$key}{citations}}, @papers;
+			} else {
+				my @interacArr = ($packInteraction);
+				$data->{edgeVals}{$key} = {
+					interactions=> @interacArr ? \@interacArr : undef,
+					citations	=> @papers ? \@papers : undef,
+					type		=> "$type",
+					effector	=> $data->{nodes}{"$effector"},
+					effected	=> $data->{nodes}{"$effected"},
+					direction	=> $direction,
+					phenotype	=> $phenObj,
+					nearby		=> $nearby,
+				};
+			}
+		}
+	}
+	$data->{showall} = scalar keys %{$data->{edgeVals}} < 100;
+    return $data;
+}
+
+sub _get_interaction_info {
+    my ($self, $interaction) = @_;
 	my $type = $interaction->Interaction_type;
-	return undef
-	    if ($interaction->Log_likelihood_score || 1000) <= 1.5
-                && $type =~ m/predicted/i; # what happens when no data?
+	$type = $type->right ? $type->right . '' : "$type";
+	$type =~ s/_/ /g;
+	if ($type eq 'Regulatory') {
+		my $reg_result = $interaction->Regulation_result;
+		if ("$reg_result" =~ /^(.*tive)_regulate$/) { $type = $1 . "ly Regulates" }
+		elsif ("$reg_result" eq 'Does_not_regulate') { $type = "Does Not Regulate" }
+	}
+    # Filter low confidence predicted interactions.
+	# what happens when no data?
+	return undef if ($interaction->Log_likelihood_score || 1000) <= 1.5 && $type =~ m/predicted/i;
+ 
+	my $phenotype = $interaction->Interaction_phenotype;
+	my ( @effectors, @effected, @others, $direction );
 
-	 
-	my $phenotype = eval {$type->Interaction_phenotype->right};
-
-        my ( $effector, $effected, $direction );
-
-        my @non_directional = eval { $type->Non_directional->col };
-        if (@non_directional) {
-            ( $effector, $effected ) = @non_directional;    # WBGenes
-            $direction = 'non-directional';
-        }
-        else {
-            $effector  = eval{$type->Effector->right} if $type->Effector;
-            $effected  = eval{$type->Effected->right};
-	    return undef unless(defined $effector && defined $effected);
-            $direction = 'Effector->Effected';
-        }    
-
-    return ($type, $effector, $effected, $direction, $phenotype);
+	foreach my $intertype ($interaction->Interactor) {
+		my $count = 0;
+		foreach my $interactor ($intertype->col) {
+			my @tags = eval { $intertype->right->down($count++)->col };
+			if ( @tags ) {
+				foreach my $tag (@tags) {
+					if ($tag eq 'Interactor_type') {
+						my $val = $tag->at;
+						if ($val =~ /Effector|.*regulator/) { push @effectors, $interactor }
+						elsif ($val =~ /Effected|.*regulated/)  { push @effected, $interactor }
+						else { push @others, $interactor }
+					}
+				}
+			} else { push @others, $interactor }
+		}
+    }
+	
+	my %results;
+	if (@effectors || @effected) {
+		foreach my $obj (@effectors, @others) {
+			foreach my $obj2 (@effected) {
+				next if $obj == $obj2;
+				@{$results{"$obj $obj2"}} = ($type, $obj, $obj2, 'Effector->Effected', $phenotype);
+			}
+		}
+	} else {
+		foreach my $obj (@others) {
+			foreach my $obj2 (@others) {
+				next if $obj == $obj2;
+				my @objs = ("$obj", "$obj2");
+				my $str = join(' ', sort @objs); 
+				@{$results{"$str"}} = ($type, $obj, $obj2, 'non-directional', $phenotype);
+			}
+		}
+	}
+    return \%results;
 }
 
 1;

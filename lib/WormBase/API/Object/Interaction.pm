@@ -2,7 +2,7 @@ package WormBase::API::Object::Interaction;
 use Moose;
 
 with 'WormBase::API::Role::Object';
-#with 'WormBase::API::Role::Interaction';
+with 'WormBase::API::Role::Interaction';
 extends 'WormBase::API::Object';
 
 =pod 
@@ -43,18 +43,17 @@ sub _build__interactors {
 
     my %interactors;
     foreach my $type ($object->Interactor) {
-	my $count = 0;
-	foreach my $interactor ($type->col) {
-	    my %info;
-	    my $name = eval {$interactor->Public_name} || "$interactor";
-	    foreach my $tag ($type->right->down($count++)->col) {
-		@{$interactors{$type}{"$name"}{"$tag"}} = map {
-							      if ($_->isTag) {"$_"}
-							      else { $self->_pack_obj($_) }
-							  } $tag->col;
-	    }
-	    $interactors{$type}{"$name"}{object} = $self->_pack_obj($interactor);
-	}
+		my $count = 0;
+		foreach my $interactor ($type->col) {
+			my $name = eval {$interactor->Public_name} || "$interactor";
+			foreach my $tag ($type->right->down($count++)->col) {
+			@{$interactors{$type}{"$name"}{"$tag"}} = map {
+									  if ($_->isTag) {"$_"}
+									  else { $self->_pack_obj($_) }
+								  } $tag->col;
+			}
+			$interactors{$type}{"$name"}{object} = $self->_pack_obj($interactor);
+		}
     }
     return %interactors ? \%interactors : undef;
 }

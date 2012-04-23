@@ -1659,6 +1659,17 @@ var Scrolling = (function(){
                 attrName: "direction",
                 entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
               },
+			  nodeShapeMapper = {
+                attrName: "ntype",
+                entries: [
+					{ attrValue: '(Sequence)', value: "TRIANGLE" },
+					{ attrValue: '(PCR product)', value: "HEXAGON" },
+					{ attrValue: '(CDS)', value: "DIAMOND" },
+					{ attrValue: '(Gene)', value: "OCTAGON" },
+					{ attrValue: '(Protein)', value: "RECTANGLE" },
+					{ attrValue: '(Molecule)', value: "PARALLELOGRAM" },
+					{ attrValue: '(Other)', value: "ELLIPSE" },]
+              },
               edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 },
               nodeColorMapper = { attrName: "number", minValue: "#04043D", maxValue: "#6FA2D9" },
               toolTipMapper = {
@@ -1671,6 +1682,7 @@ var Scrolling = (function(){
                   nodes: [{ name: "label", type: "string" },
                       { name: "number", type: "int" },
                       { name: "color", type: "string" },
+                      { name: "ntype", type: "string" },
                       { name: "link", type: "string" },
                   ],
                       
@@ -1697,8 +1709,9 @@ var Scrolling = (function(){
                 borderWidth: 0,
                 hoverGlowOpacity: 0.8,
                 size: 30,
-                tooltipText: "<b>${label}</b>",
+                tooltipText: "<b>${label} ${ntype}</b>",
                 tooltipBackgroundColor: "#fafafa",
+				shape: { discreteMapper: nodeShapeMapper },
                 color: { continuousMapper: nodeColorMapper },
                 hoverGlowColor: "#aae6ff",
                 labelGlowOpacity: 1,
