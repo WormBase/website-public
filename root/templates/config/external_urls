@@ -55,7 +55,7 @@
      }
 
  # Our spell resource in the cloud.
- spell
+ 'spell-wormbase'
    = { decription = 'WormBase Spell instance',
        maintainer = 'WormBase',
        base       = 'http://50.18.180.228:3000'
