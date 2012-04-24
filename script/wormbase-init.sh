@@ -5,7 +5,9 @@
 # Pull in our local environment variables
 # Since wormbase.env isn't in our code repository,
 # production servers won't have it; staging servers do.
-source /usr/local/wormbase/website/production/wormbase.env
+# We keep our env file outside of the repository to
+# so it doesn't have to be maintained across branches.
+source /usr/local/wormbase/website/wormbase.env
 
 # If the APP environment variable isn't set, 
 # assume we are running in production.

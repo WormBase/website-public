@@ -20,7 +20,7 @@
     [% widget = c.config.sections.me.widgets.$widget_name %]
     [% w = { id = widget_name
             title = widget.title
-            href =  c.uri_for('/rest','widget','me',widget_name)
+            href =  c.uri_for('/rest','widget','me',widget_name).path
             type = "me"
             };
     %]
@@ -105,14 +105,14 @@
       <li id="nav-user_history" 
           class="module-load me" 
           wname="user_history"
-          href="[% c.uri_for('/rest','widget','me','user_history') %]" 
+          href="[% c.uri_for('/rest','widget','me','user_history').path %]" 
           load=1>see more...</li>[% END %]</div>
       </div>
 [% UNLESS ((c.req.action == 'me') || (c.req.action == '/')) %]
       <li class="title module-load tools" 
           id="nav-comment" 
           wname="comment" 
-          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path %]">Comments <a class="comment-count"></a>
+          href="[%c.uri_for('/rest','feed','comment',class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path %]">Comments <a class="comment-count"></a>
       </li>
 [% END %]
     </ul>
