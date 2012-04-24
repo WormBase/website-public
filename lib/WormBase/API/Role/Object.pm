@@ -33,8 +33,6 @@ has 'object' => (
     is  => 'rw',
     isa => 'Maybe[Ace::Object]',
     default => undef,
-#       isa => union([qw[ Ace::Object Undef ]]),
-#     isa => 'undef',
 );
 
 has 'dsn' => (
@@ -185,7 +183,7 @@ sub _make_common_name {
             ->original_package_name ne __PACKAGE__) {
             # this has potential for circular dependency...
             $self->log->debug("$class has overridden _build_common_name");
-            $name = $self->_api->wrap($object)->_common_name;
+            $name = $self->_api->wrap($object)->_common_name; 
         }
     }
 

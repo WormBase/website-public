@@ -19,7 +19,7 @@
 
   WRAPPER $field_block title="Blast" key="print_blast";
         data= fields.print_blast.data;
-        '<form method="post" action="' _ c.uri_for('/tools','blast_blat') _ '">';
+        '<form method="post" action="' _ c.uri_for('/tools','blast_blat').path  _ '">';
 	FOREACH key IN data.target;
 	     '<input type="submit" name="autoload" value="Blast ' _ data.source _  ' against ' _ key _ '" />';
 	END;

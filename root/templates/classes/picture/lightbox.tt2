@@ -4,7 +4,7 @@
 [% MACRO img2link(img, label) BLOCK;
    UNLESS label; label = img.label || img.id; END;
    '<a href="';
-   c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox');
+   c.uri_for('/rest', 'widget', 'picture', img.id, 'lightbox').path ;
    '" target="lightbox">';
    label;
    '</a>';

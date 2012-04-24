@@ -10,12 +10,12 @@ To browse, enter a class (eg Gene_class).
 
 <p>
 Examples:<br />
-<a href="[% c.uri_for('/tools','schema','run') %]?class=Gene">Browse the Gene class data model</a>.<br />
+<a href="[% c.uri_for('/tools','schema','run').path %]?class=Gene">Browse the Gene class data model</a>.<br />
 </p>
 
 
 <p>
-<form method="POST" action="[% c.uri_for('/tools','schema','run') %]"> 
+<form method="POST" action="[% c.uri_for('/tools','schema','run').path %]"> 
   <table>
      <tr><th>Class</th> 
          <td><input type="text" name="class" size="15" onchange="document.question.submit()" /></td>

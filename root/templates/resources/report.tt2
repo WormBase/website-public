@@ -7,12 +7,12 @@
     IF (class=='all');
       breadcrumbs.push('<span>Resources</span>');
     ELSE;
-      breadcrumbs.push('<a href="'_ c.uri_for('/resources') _ '">Resources</a>');
+      breadcrumbs.push('<a href="'_ c.uri_for('/resources').path _ '">Resources</a>');
       UNLESS object.name.data.label;
         breadcrumbs.push('<span>' _ c.config.sections.$section.$class.title _ '</span>');
       ELSE;
         breadcrumbs.push('<a href="'
-            _ c.uri_for('/resources',class) _ '">'
+            _ c.uri_for('/resources',class).path _ '">'
             _ c.config.sections.$section.$class.title
             _ '</a>');
         breadcrumbs.push('<span>' _ object.name.data.label _ '</span>');

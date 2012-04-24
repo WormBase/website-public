@@ -6,7 +6,7 @@
       IF (species == 'all' && class=='all');
         breadcrumbs.push('<span>All Species</span>');
       ELSE;
-        breadcrumbs.push('<a href="' _ c.uri_for('/species','all') _ '">Species</a>');
+        breadcrumbs.push('<a href="' _ c.uri_for('/species','all').path _ '">Species</a>');
         species_name = species.replace('_', '. ') FILTER ucfirst;
         IF class == 'all';
           breadcrumbs.push('<span class="species">'
@@ -15,14 +15,14 @@
         ELSE;
           class_title = c.config.sections.species.$class.title || c.config.sections.resources.$class.title;
           IF species != 'all';
-            breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species) _ '">'
+            breadcrumbs.push('<span class="species"><a href="' _ c.uri_for('/species',species).path _ '">'
                       _ species_name
                       _ '</a></span>');
           END;
           UNLESS object.name.data.label;
             breadcrumbs.push('<span>'_ class_title  _ '</span>');
           ELSE;
-            breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class) _ '">'
+            breadcrumbs.push('<a href="' _ c.uri_for('/species',species,class).path _ '">'
                     _ class_title _ '</a>');
             breadcrumbs.push('<span>' _ markup(object.name.data.label, 0, 1, 1, 1) _ '</span>');
           END;

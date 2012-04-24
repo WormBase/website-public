@@ -86,7 +86,7 @@
       <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
     </div>
   </form>
-<span id="search-more"><a href="[% c.uri_for("/search") %]">more options</a></span>
+<span id="search-more"><a href="[% c.uri_for("/search").path %]">more options</a></span>
 <br style="clear:both" />
 
       </h2>

@@ -55,7 +55,7 @@
      }
 
  # Our spell resource in the cloud.
- 'spell_cloud'
+ 'spell-wormbase'
    = { decription = 'WormBase Spell instance',
        maintainer = 'WormBase',
        base       = 'http://50.18.180.228:3000'
@@ -139,15 +139,15 @@
 	gbrowse = {
 		description  = 'The WormBase Genome Browser Image'
 		maintainer   = ''
-		base = c.uri_for('/tools', 'genome', 'gbrowse') _ '/'
-		search = c.uri_for('/tools', 'genome', 'gbrowse') _ '/%s'
+		base = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/'
+		search = c.uri_for('/tools', 'genome', 'gbrowse').path  _ '/%s'
 	}
 
 	gbrowse_image = {
 		description  = 'The WormBase Genome Browser Image'
 		maintainer   = ''
-		base = c.uri_for('/tools', 'genome', 'gbrowse_img') _ '/'
-		search = c.uri_for('/tools', 'genome', 'gbrowse_img') _ '/%s'
+		base = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/'
+		search = c.uri_for('/tools', 'genome', 'gbrowse_img').path  _ '/%s'
 	}
 
 	geo = {

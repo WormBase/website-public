@@ -177,6 +177,7 @@ sub _build__tools {
             pre_compile => $self->tool->{$tool},
             log         => $self->log,
 	    search 	=> $self->xapian,
+            _api        => $self,
             dsn         => $self->_services, 
             tmp_base    => $self->tmp_base,
             # ($tool eq 'aligner' ? (search => $self->search) : ()),
