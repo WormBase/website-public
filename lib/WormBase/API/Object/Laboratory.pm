@@ -103,11 +103,11 @@ B<Response example>
                     {
                         lab                => $self->_pack_obj($_),
                         representative     => $self->_pack_obj(scalar $_->Representative)
-                                              // $_->name,
-                        email              => scalar eval { $_->E_mail->name },
-                        allele_designation => join('; ', $_->Allele_designation),
-                        url                => $url,
-                        affiliation        => scalar eval { ($_->Mail)[0] },
+			    // $_->name,
+			    email              => map { "$_" } scalar eval { $_->E_mail->name },
+			    allele_designation => $_->Allele_designation ? map { "$_" } $_->Allele_designation : '',
+			    url                => "$url",
+			    affiliation        => map { "$_" } scalar eval { ($_->Mail)[0] },
                     };
                 } $self->ace_dsn->dbh->fetch(-query => "find Laboratory")
             ],
