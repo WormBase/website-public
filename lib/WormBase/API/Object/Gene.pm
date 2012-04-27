@@ -458,6 +458,66 @@ sub cloned_by {
     return $datapack;
 }
 
+=head3 cloned_by
+
+This method will return a data structure containing
+the parent clone of the gene
+
+=over
+
+=item PERL API
+
+ $data = $model->clone();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+a WBGene ID (eg WBGene00006763)
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/gene/WBGene00006763/clone
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut 
+
+sub clone {
+    my $self      = shift;
+    my $object = $self->object;  
+    return {
+        description => 'parent clone of this gene',
+        data        => $self->_pack_obj($object->Positive_clone),
+    };
+}
+
 
 =head3 concise_desciption
 
