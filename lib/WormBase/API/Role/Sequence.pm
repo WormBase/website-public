@@ -868,10 +868,15 @@ sub print_sequence {
 	    : '';
     }
 	else {
-		($seq_obj) = sort {$b->length<=>$a->length}
-			grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
-# 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
 
+	    # Genomic clones need to be fetched a bit differently.	    
+	    if ($s->class =~ /Sequence|Clone/i) {
+		# We will fetch from acedb below
+	    } else {
+		($seq_obj) = sort {$b->length<=>$a->length}
+		grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => $s);
+# 		grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => $s);
+		
 		# BLECH!  If provided with a gene ID and alt splices are present just guess
 		# and fetch the first CDS or Transcript
 		# We really should display a list for all of these.
@@ -882,8 +887,9 @@ sub print_sequence {
 		($seq_obj) = $seq_obj ? ($seq_obj) : sort {$b->length<=>$a->length}
 		 	grep {$_->method eq 'full_transcript'} $gff->fetch_group(Transcript => "$s.1");
 # 		    grep {$_->method eq 'Transcript'} $gff->fetch_group(Transcript => "$s.1");
-    }
-
+	    }
+	}
+    
     ($seq_obj) ||= $gff->fetch_group(Pseudogene => $s);
     # Haven't fetched a GFF segment? Try Ace.
     if (!$seq_obj || eval{ length($seq_obj->dna) } < 2) { # miserable broken workaround
