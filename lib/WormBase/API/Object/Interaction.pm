@@ -154,11 +154,18 @@ sub interaction_summary {
     my $self   = shift;
     my $object = $self->object;
 
-    my $description = $object->Interaction_summary;
-    my $evidence = $self->_get_evidence($description);
+    my @data = map {
+	my $evidence = $self->_get_evidence($_);
+	$evidence ? { text => $_ && "$_", evidence => $evidence } : $_ && "$_"
+    } $object->Interaction_summary;
 
+    # Check if this interaction is valid. If not, add a warning to the description.
+    # This can be removed when these invalid interactions are cleared from the database
+    # See _ignored_interactions in the Interactions Role
+    push @data, '<b>Warning!</b> This Interaction object was <b>incorrectly</b> generated!' if $self->_ignored_interactions($object); 
+    
     return { description => 'Summary of this interaction',
-	     data        => $evidence ? { text => "$description" || undef, evidence => $evidence } : "$description" || undef,
+	     data        => @data ? \@data : undef,
     };
 }
 
@@ -344,7 +351,6 @@ B<Response example>
 =back
 
 =cut 
-use Data::Dumper;
 sub interactor {
     my $self   = shift;
     my $interactors = $self->_interactors;
@@ -353,8 +359,8 @@ sub interactor {
     foreach my $type (sort keys %{$interactors}) {
 	foreach my $interactor (sort keys %{$interactors->{$type}}) {
 	    my $info = $interactors->{$type}->{$interactor};
-		my $type_tag = $type;
-		$type_tag =~ s/_/ /g;
+	    my $type_tag = $type;
+	    $type_tag =~ s/_/ /g;
 	    push @data, {
 		interactor_type => $type_tag || undef,
 		interactor	=> $info->{object},
@@ -364,7 +370,6 @@ sub interactor {
 	    }
 	}
     }
-    warn(Dumper $interactors);
     return { description => 'interactors in this interaction',
 	     data        => @data ? \@data : undef,
     };
@@ -427,6 +432,7 @@ sub interaction_type {
 
     my $type_str = "$interaction_type";
     $type_str .= ': ' . $interaction_type->right if $interaction_type->right;
+    $type_str =~ s/_/ /g;
 
     return {
         data => "$type_str" || undef,
