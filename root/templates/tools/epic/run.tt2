@@ -3,7 +3,7 @@
 	<h1>WormBase Genetic Map Viewer for [% data.object.class %]: [% data.object.name %]</h1>
     [% END %]
     <p>
-    <form method="POST" action="[% c.uri_for('/tools','gmap','run') %]"> 
+    <form method="POST" action="[% c.uri_for('/tools','gmap','run').path %]"> 
 	Chromosome name:
 	<select name="name">
 	    <option value="I" selected="1">I</option>
@@ -19,7 +19,7 @@
     </p>
 
     <p>
-    <form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run') %]"> 
+    <form method="POST" action="[% c.uri_for('/tools', 'gmap' ,'run').path %]"> 
       <table>
 	<tr><th>WormBase ID</th>
 	    <td><input type="text" name="name" onchange="document.question.submit()" /></td>
@@ -39,7 +39,7 @@
     [% END %]
 
     <p>
-    <form method="POST" action="[% c.uri_for('/tools',data.tool,'run')%]" name"question">
+    <form method="POST" action="[% c.uri_for('/tools',data.tool,'run').path %]" name"question">
 	<table>
 	    <tr>
 		<th>WormBase ID</th>

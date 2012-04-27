@@ -1,5 +1,5 @@
 
-  [% path = c.uri_for('/me') %]
+  [% path = c.uri_for('/me').path %]
   [% title = "My WormBase"  %]
 
 
@@ -11,7 +11,7 @@
     [% IF ((widget.login) AND (NOT (c.user_exists))); NEXT; END; %]
     [% w = { id = widget_name
              title = widget.title
-             href =  c.uri_for('/rest','widget','me',widget.name)
+             href =  c.uri_for('/rest','widget','me',widget.name).path
              type = "me"
             };
     %]
@@ -22,27 +22,27 @@
   [% IF c.check_user_roles('admin') %]
     [% widgets.push({ id    = 'registered_users',
          	      title = 'Registered Users',
-                      href  =  c.uri_for('/admin','registered_users'),
+                      href  =  c.uri_for('/admin','registered_users').path,
                       type  = "me"
                     });
        widgets.push({ id    = 'status_overview',
          	      title = 'Status (Overview)',
-                      href  =  c.uri_for('/admin','status_overview'),
+                      href  =  c.uri_for('/admin','status_overview').path,
                       type  = "me"
                     });
        widgets.push({ id    = 'status_couchdb',
          	      title = 'Status (CouchDB)',
-                      href  =  c.uri_for('/admin','status_couchdb'),
+                      href  =  c.uri_for('/admin','status_couchdb').path,
                       type  = "me"
                     });
        widgets.push({ id    = 'status_proxy',
          	      title = 'Status (Proxy)',
-                      href  =  c.uri_for('/admin','status_proxy'),
+                      href  =  c.uri_for('/admin','status_proxy').path,
                       type  = "me"
                     });
        widgets.push({ id    = 'status_servers',
          	      title = 'Status (Servers)',
-                      href  =  c.uri_for('/admin','status_servers'),
+                      href  =  c.uri_for('/admin','status_servers').path,
                       type  = "me"
                     });
 

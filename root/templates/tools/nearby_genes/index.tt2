@@ -7,8 +7,8 @@ Provided with a gene, find nearby genes within a configurable distance.
 If on a gene page, just display the search and not the examples.
 <p>
 Examples:<br />
-<a href="[% c.uri_for('tools','nearby_genes','run') %]?name=WBGene00006758;class=Gene">Browse the unc-20 gene</a>.<br />
-<a href="[% c.uri_for('tools','nearby_genes','run') %]?name=?Gene;class=Model">Browse the Gene class data model</a>.<br />
+<a href="[% c.uri_for('tools','nearby_genes','run').path %]?name=WBGene00006758;class=Gene">Browse the unc-20 gene</a>.<br />
+<a href="[% c.uri_for('tools','nearby_genes','run').path %]?name=?Gene;class=Model">Browse the Gene class data model</a>.<br />
 </p>
 
 	  "Search in a window ",popup_menu(-name=>'window',-value=>[1,2,3,4,5,7,10],

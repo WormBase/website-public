@@ -41,7 +41,7 @@
 [% MACRO user_login_info BLOCK %]
     [% UNLESS c.user_exists %]  
           <div style="padding:0.5em">
-            You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login') %]" >Login</a></h3> to use this feature
+            You must <h3 style="display:inline"><a class='lightbox' href="[% c.uri_for('/login').path %]" >Login</a></h3> to use this feature
           </div>
         [% lighbox_js %]
     [% END %]
@@ -169,7 +169,7 @@ END;
       <th>Reported by</th>
       <th>Responsible</th>
       [% IF c.check_user_roles('admin') %]
-        <th><button class="issue-delete" onClick="WB.issue.isDelete($jq(this));return false;" rel="[% c.uri_for('/rest','feed','issue') %]">Delete</button></th>
+        <th><button class="issue-delete" onClick="WB.issue.isDelete($jq(this));return false;" rel="[% c.uri_for('/rest','feed','issue').path %]">Delete</button></th>
       [% END %]
     </tr>
     [% even = 1 %]
@@ -181,7 +181,7 @@ END;
       %]
 
 
-      [% url = c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]
+      [% url = c.uri_for(c.controller('Tools').action_for('issue'),IS.id).path %]
       <tr 
         [% IF (even == 1); 
 	     myclass='r0';
@@ -194,7 +194,7 @@ END;
 	class="[% myclass %] [% IS.severity %] [% IS.state %]">
 
         <td><a href="[% url %]">[% IS.id %]</a></td>
-        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id) %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
+        <td ><a href="[% c.uri_for(c.controller('Tools').action_for('issue'),IS.id).path %]">[% IS.title %]:</a> <i>[% txt = IS.content.chunk(30); txt.0; IF txt.1; '...'; END; %]</i></td> 
         <td>[% IF IS.is_private ; ' <em>private</em>' ; END %]</td>
         <td>[% IS.state %]</td>
         <td>[% IS.severity %]</td>
@@ -538,7 +538,7 @@ END; %]
          
                 <div id="widget-footer" class="ui-helper-hidden">
 [% UNLESS type.match('(tool)|(me)') %]
-                    <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label) %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
+                    <a  tip="download" onClick='$jq(this).toggleClass("ui-state-highlight");' class="button tip-simple tr feed ui-corner-all"  rel="[% c.uri_for('/rest','feed','download',class,this_object_id,w.id,this_object_label).path %]"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>
 [% END %] 
 [% IF id.match('(static-widget)') && (id != 'static-widget--1')  %]
     [% IF c.check_any_user_role("admin", "curator", "editor") %]
@@ -651,7 +651,7 @@ END;
                        passed_data=matches.hits,
                        style = '"aoColumns": [ null,null,null,{ "sType": "numeric" },null]');
            '<div id="blast_details">';
-    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details') id="blast_details_toggle";
+    WRAPPER toggle title="View full BLASTP List" lazy=1 href=c.uri_for('/rest','field','protein',"$matches.biggest",'blast_details').path id="blast_details_toggle";
     END;
          '</div>';
     END;
@@ -895,7 +895,7 @@ END;
    class = (ACE2WB_MAP.$class || class) FILTER lower;
    IF downloadable(class);
    WRAPPER $field_block title="Download";
-   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences') _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
+   '<a href="' _ c.uri_for('/rest/widget', class, fields.name.data.id, 'sequences').path _ '?colorbox=1" class="button ui-corner-all slink" data-class="protein"><span class="ui-icon ui-icon-arrowthickstop-1-s ui-button"></span></a>';
    END;
   END;
 END;
@@ -1064,7 +1064,7 @@ END;
     [% widget_name = widget.widget_title %]
     [% w = { id = 'static-widget-' _ widget.widget_id
             title = widget.widget_title
-            href =  c.uri_for('/rest','widget','static',widget.widget_id)
+            href =  c.uri_for('/rest','widget','static',widget.widget_id).path
             type = section == 'species' ? class : (section ? section : 'static')
             };
     %]
@@ -1080,7 +1080,7 @@ END;
   [% IF c.check_any_user_role('admin', 'curator') %]
     [% w = { id = 'static-widget-0'
             title = 'Add new widget...'
-            href =  c.uri_for('/rest','widget','static','0') _ '?path=' _ c.req.uri.path  _ '&edit=1'
+            href =  c.uri_for('/rest','widget','static','0').path _ '?path=' _ c.req.uri.path  _ '&edit=1'
             type = section == 'species' ? class : (section ? section : 'static')
             };
     %]
@@ -1154,7 +1154,7 @@ END;
 
     w = {  id    = widget_name
             title = widget.title
-            href  = c.uri_for(base, arg1, is_class_index ? '*' : this_object_id, widget_name)
+            href  = c.uri_for(base, arg1, is_class_index ? '*' : this_object_id, widget_name).path
             type  = section == 'species' ? class : section
           };
 
@@ -1175,7 +1175,7 @@ END;
       t = widget_name FILTER ucfirst;
       widgets.push({ id = widget_name
                 title = t.replace('_', ' ')
-                href  = c.uri_for('/rest','widget', 'index', species, class, widget_name),
+                href  = c.uri_for('/rest','widget', 'index', species, class, widget_name).path,
                 type = section == 'species' ? class : section
             });
     END;
@@ -1206,7 +1206,7 @@ END;
         
         w = { id = widget_name
               title = widget.title
-              href =  c.uri_for('/tools',widget.name, 'run') _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
+              href =  c.uri_for('/tools',widget.name, 'run').path _ '?inline=1&class=' _ class _ '&name=' _ this_object_id _ '&sequence=' _ this_object_id,
 
               type = 'tools'
               };
@@ -1247,9 +1247,9 @@ END;
      
       # No need to append the name for our final path for class documentation; HACK HACK HACK!
       IF path.match("api-rest/class");
-              myhref = c.uri_for('/rest','widget',path);
+              myhref = c.uri_for('/rest','widget',path).path;
       ELSE;
-              myhref = c.uri_for('/rest','widget',path,name);
+              myhref = c.uri_for('/rest','widget',path,name).path;
       END;
       
       w = { id    = name
@@ -1267,7 +1267,7 @@ END;
       t = widget_name FILTER ucfirst;
       w = { id = widget_name
             title = t _ 's ' _ '<a class="' _ widget_name _ '-count"></a>'
-            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label) _ '?url=' _ c.req.uri.path
+            href =  c.uri_for('/rest','feed',widget_name,class,this_object_id,'',this_object_label).path _ '?url=' _ c.req.uri.path
             type = 'tools'
           };
       widgets.push(w);

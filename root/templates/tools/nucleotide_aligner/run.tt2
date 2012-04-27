@@ -4,7 +4,7 @@
 
 [% UNLESS noboiler %]
   <p>
-  <form method="post" action="[% c.uri_for('/tools','nucleotide_aligner','run') %]" name="f">
+  <form method="post" action="[% c.uri_for('/tools','nucleotide_aligner','run').path %]" name="f">
 
   <p><b>Modify parameters for display: &nbsp</b> 
   <br> Gene <input type="text" name="sequence" value="[% c.stash.sequence %]" size="[% size %]"> from 
