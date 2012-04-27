@@ -452,7 +452,7 @@ sub rest_register_email {
   my $digest = $csh->generate();
   $digest =~ s/^{SSHA}//;
   $digest =~ s/\+/\%2B/g;
-  my $url = $c->uri_for('/confirm')->path."?u=".$user_id."&code=".$digest;
+  my $url = $c->uri_for('/confirm')."?u=".$user_id."&code=".$digest;
 
   if($wbid){
     $c->stash->{info}->{wbid}=$wbid;
