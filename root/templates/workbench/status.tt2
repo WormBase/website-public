@@ -1,6 +1,6 @@
 <a class="bench-update" 
     wbid="[% c.stash.star.wbid %]" 
-    ref="[% c.uri_for('/rest/workbench') %]" 
+    ref="[% c.uri_for('/rest/workbench').path %]" 
     name="[% c.stash.star.name %]" 
     is_obj="[% c.stash.star.is_obj %]" 
     save_to="[% c.stash.star.save_to %]" 

@@ -32,7 +32,7 @@ use parent 'WormBase::Web::Controller';
 
 sub species_summary :Path('/species') :Args(0)   {
     my ($self,$c) = @_;
-    $c->res->redirect($c->uri_for('/species',"all"), 307);
+    $c->res->redirect($c->uri_for('/species',"all")->path, 307);
     $c->go('species_index',['all']);
     return;
 }
@@ -131,12 +131,12 @@ sub object_report :Path("/species") Args(3) {
     }); # error handling?
 
     if ( !$object || $object == -1 ){
-      $c->res->redirect($c->uri_for('/search',$class,"$name")."?redirect=1", 307);
+      $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);
       return;
     } else {
       $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
       if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
-        $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name), 307);
+        $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name)->path, 307);
       }
     }
 

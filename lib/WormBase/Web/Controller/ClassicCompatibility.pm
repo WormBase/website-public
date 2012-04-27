@@ -50,7 +50,7 @@ sub misc :Path('/db') :Args(2)  {
     my $name            = $c->req->param('name');
 
     #hack for anatomy term objects
-    $class = $class . "_term" if ($class == 'anatomy');
+    $class = $class . "_term" if ($class eq 'anatomy');
 
     my $api    = $c->model('WormBaseAPI');
     my $object = $api->fetch({ class => ucfirst $class, name => $name });
@@ -63,7 +63,7 @@ sub misc :Path('/db') :Args(2)  {
         $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
         unless($name=~m/$o->get_document->get_value(1)/){ $url = $url;}
       }
-      $url ||= $c->uri_for('/search',$class,"$name");
+      $url ||= $c->uri_for('/search',$class,"$name")->path;
     }else{
       my $object_name = $object->name; #to fetch species, correct class name, etc...
       $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
@@ -81,7 +81,7 @@ sub misc :Path('/db') :Args(2)  {
 sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
   my $url =  (defined $c->config->{sections}{species}{$class}) ? $c->uri_for('/species',$species || 'all' ,$class,$id) : $c->uri_for('/resources',$class,$id);
-  return "$url";
+  return $url->path;
 }
 
 

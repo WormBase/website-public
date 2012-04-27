@@ -20,7 +20,7 @@ assay_1  II:4332211..4338292
 assay_2  IV:12089228..12091923
 </pre>
 
-<form method="POST" action="[% c.uri_for('/tools','epcr','run') %]">
+<form method="POST" action="[% c.uri_for('/tools','epcr','run').path %]">
     <table class="searchbody" border="0">
 	<tr class="searchtitle"><th colspan="2">e-PCR Search</th></tr>
 	<tr>

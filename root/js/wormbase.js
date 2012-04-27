@@ -200,11 +200,9 @@
             msg = "open sidebar",
             marginLeft = '-1em';
         if(w == 0){ w = '12em'; msg = "close sidebar"; marginLeft = 175; }else { w = 0;}
-        nav.animate({width: w}).show();
+        nav.animate({width: w}).show().children("#title").children("div").toggle();
         ptitle.animate({marginLeft: marginLeft}).show();
-        nav.children("#title").children("div").toggle();
-        $jq(this).attr("title", msg);
-        $jq(this).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
+        $jq(this).attr("title", msg).children("#nav-min-icon").toggleClass("ui-icon-triangle-1-w").toggleClass("ui-icon-triangle-1-e");
       });
       
       // Should be a user supplied site-wide option for this.
@@ -672,7 +670,7 @@
         if(!box){ box = "Search"; }else{ cur_search_type = cur_search_type || 'all'; } 
         var f = $jq("#" + box).attr("value");
         if(f == "search..." || !f){
-          f = "*";
+          f = "";
         }
 
         f = encodeURIComponent(f.trim());
@@ -836,6 +834,7 @@
         allSearch = $jq("#all-search-results");
     Scrolling.sidebarInit();
     allSearch.empty(); 
+    search_change(type);
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
       checkSearch(allSearch);

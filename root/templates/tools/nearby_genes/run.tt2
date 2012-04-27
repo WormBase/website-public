@@ -4,14 +4,14 @@
 
 [% UNLESS data.msg %]
   <p>
-       <a href="[% c.uri_for('tools','tree','run') %]?name=[% data.object.name %]&class=[% data.object.class %]&view=expand">expand all nodes</a> |  
-       <a href="[% c.uri_for('tools','tree','run') %]?name=[% data.object.name %]&class=[% data.object.class %]&view=collapse">collapse all nodes</a> | 
-       <a href="[% c.uri_for('tools','tree','run') %]?name=?[% data.object.class %]&class=Model&view=collapse">view schema</a>
+       <a href="[% c.uri_for('tools','tree','run').path %]?name=[% data.object.name %]&class=[% data.object.class %]&view=expand">expand all nodes</a> |  
+       <a href="[% c.uri_for('tools','tree','run').path %]?name=[% data.object.name %]&class=[% data.object.class %]&view=collapse">collapse all nodes</a> | 
+       <a href="[% c.uri_for('tools','tree','run').path %]?name=?[% data.object.class %]&class=Model&view=collapse">view schema</a>
   </p>
 [% END %]
 
 <p>
-  <form method="POST" action="[% c.uri_for('tools','tree','run')%]" name"question"> 
+  <form method="POST" action="[% c.uri_for('tools','tree','run').path %]" name"question"> 
     <table>
        <tr><th>Name</th>
            <td><input type="text" name="name" value="[% data.object.name %]" onchange="document.question.submit()" /></td>
