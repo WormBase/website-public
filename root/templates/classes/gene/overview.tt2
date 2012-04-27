@@ -35,7 +35,11 @@ END;
    status;
 
    WRAPPER $field_block title="Cloned By" key="cloned_by";
-           tag2link(fields.name.cloned_by.data.cloned_by);
+           tag2link(fields.cloned_by.data.cloned_by);
+   END;
+
+   WRAPPER $field_block title="Clone" key="clone";
+           tag2link(fields.clone.data);
    END;
 
 END;
