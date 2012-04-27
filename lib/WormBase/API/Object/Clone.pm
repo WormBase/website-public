@@ -182,7 +182,7 @@ sub sequences {
 =head3 genomic_positions
 
 This method will return a data structure containing
-genomic positions corresponding to the sequences for this clone.
+genomic positions for features on this clone.
 
 =over
 
@@ -845,7 +845,14 @@ sub _build_tracks {
 
 sub _build__segments {
     my ($self) = @_;
-    return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
+    # TH: I don't think it's correct to use the method "region" here.  
+    # It needs to be either Sequence or Clone.
+    # return [$self->gff_dsn->segment(-class => 'region', -name => $self->object)];
+
+    my $dsn = $self->gff_dsn;
+    my $object = $self->object;
+    my @segs = $dsn->segment(-name => "$object");
+    return \@segs;
 }
 
 
