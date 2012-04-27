@@ -1,6 +1,7 @@
 [% TYPES = TYPES || interaction_details.data.types %]
 [% NODES = NODES || interaction_details.data.nodes %]
-[% EDGES = EDGES || interaction_details.data.edges %]
+[% NTYPES = NTYPES || interaction_details.data.ntypes %]
+[% EDGES = EDGES || interaction_details.data.edgeVals.values %]
 
 <div id="cytoscapeweb_panel">
     Interaction Type <select class="cyto_panel" id="cyto_panel_type">
@@ -17,6 +18,12 @@
     Nearby Interactions <select class="cyto_panel" id="cyto_panel_nearby">
     <option value=0 >Show</option>
     <option>Hide</option>
+    </select>
+    Interactor Type <select class="cyto_panel" id="cyto_panel_nodetype">
+    <option value=0 >All</option>
+      [% FOREACH obj IN NTYPES.keys.sort %]
+    <option [% IF obj == 'Gene'; 'selected=1'; END; %]>[% val = obj.replace('_', ' '); IF val == 'Text'; val = 'Other'; END; val; %]</option>
+      [% END %]
     </select>
 </div>
         [% IF TYPES.keys %]
@@ -44,10 +51,10 @@
             nodes: [  [% FOREACH node IN NODES.keys.sort %]
                           { id: "[% NODES.$node.label %]", label: "[% NODES.$node.label %]", number:[% loop.index %],
                             ntype: "[%
-								class = '(' _ NODES.$node.class.replace('_', ' ') _ ')';
-								IF class == '(Text)'; class = '(Other)'; END;
-								class;
-							%]", link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
+				    class = NODES.$node.class.replace('_', ' ');
+				    IF class == 'Text'; class = 'Other'; END;
+				    class;
+			    %]", link:"[% get_url(NODES.$node.class, NODES.$node.id ,NODES.$node.taxonomy) %]",
                           },
                       [% END %]
                   ],
