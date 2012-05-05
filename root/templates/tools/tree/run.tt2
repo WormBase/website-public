@@ -19,12 +19,26 @@ END; %]
     [% modelclass = "?$modelclass" %]
 [% END %]
 
+[% 
+  MACRO tree_link(url, text) BLOCK;
+    IF noboiler; %]
+      <a href="javascript:void(0)" onClick='WB.reloadWidget("tree", undefined, "[% url %]&inline=1")'>[% text %]</a> 
+    [% ELSE;%]
+      <a href="[% url %]">[% text %]</a>
+    [% 
+    END;
+  END;
+
+%]
+
 [% UNLESS data.msg %]
       <p>
-	  <a href="[% c.uri_for('/tools','tree','run').path %]?name=[% data.object.name %];class=[% data.object.class %]&view=expand" target="[% target %]">expand all nodes</a> |  
-	  <a href="[% c.uri_for('/tools','tree','run').path %]?name=[% data.object.name %];class=[% data.object.class %]&view=collapse" target="[% target %]">collapse all nodes</a>
+      [% tree_link(c.uri_for('/tools','tree','run').path _ '?name=' _ data.object.name _ '&class=' _ data.object.class _ '&view=expand', 'expand all nodes') %] |
+      [% tree_link(c.uri_for('/tools','tree','run').path _ '?name=' _ data.object.name _ '&class=' _ data.object.class, 'collapse all nodes') %]
     [% IF !schema %]
-        | <a href="[% c.uri_for('/tools','schema','run').path %]?class=[% data.object.class %]" target="[% target %]">view schema</a>
+        | [% tree_link(c.uri_for('/tools','schema','run').path _ '?class=' _ data.object.class, 'view schema') %]
+    [% ELSIF noboiler %]
+        | <a href="javascript:void(0)" onClick='WB.reloadWidget("tree")'>return to tree view</a>
     [% END %]
       </p>
 [% END %]

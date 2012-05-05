@@ -1,0 +1,21 @@
+
+
+[% WRAPPER $field_block title=pluralize("Variation", fields.alleles.data.size) key="alleles" %]
+      [% tags2link(fields.alleles.data, '<br />', 'variations found') %]
+[% END %]
+
+[% WRAPPER $field_block title=pluralize("Gene", fields.genes.data.size) key="genes" %]
+      [% tags2link(fields.genes.data, '<br />', 'genes found') %]
+[% END %]
+
+[% WRAPPER $field_block title=pluralize("Rarrangement", fields.rearrangements.data.size) key="rearrangements" %]
+      [% tags2link(fields.rearrangements.data, '<br />', 'rearrangements found') %]
+[% END %]
+
+[% WRAPPER $field_block title=pluralize("Clone", fields.clones.data.size) key="clones" %]
+      [% tags2link(fields.clones.data, '<br />', 'clones found') %]
+[% END %]
+
+[% WRAPPER $field_block title=pluralize("Transgene", fields.transgenes.data.size) key="transgenes" %]
+      [% tags2link(fields.transgenes.data, '<br />', 'transgenes found') %]
+[% END %]
