@@ -51,22 +51,28 @@ sub misc :Path('/db') :Args(2)  {
 
     #hack for anatomy term objects
     $class = $class . "_term" if ($class eq 'anatomy');
-
-    my $api    = $c->model('WormBaseAPI');
-    my $object = $api->fetch({ class => ucfirst $class, name => $name });
     my $url;
 
-    if ( !$object || $object == -1 ){
-      my ($it,$res)= $api->xapian->search_exact($c, $name, $class);
-      if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
-        my $o = @{$it->{struct}}[0];
-        $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
-        unless($name=~m/$o->get_document->get_value(1)/){ $url = $url;}
-      }
-      $url ||= $c->uri_for('/search',$class,"$name")->path;
+    if($class eq 'gbrowse'){
+      my $species = $c->req->param('source');
+      $species = "c_$species" unless $species =~ m/_/;
+      $url = $c->uri_for('/tools', 'genome', $class, $species, $name)->path;
     }else{
-      my $object_name = $object->name; #to fetch species, correct class name, etc...
-      $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
+      my $api    = $c->model('WormBaseAPI');
+      my $object = $api->fetch({ class => ucfirst $class, name => $name });
+
+      if ( !$object || $object == -1 ){
+        my ($it,$res)= $api->xapian->search_exact($c, $name, $class);
+        if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
+          my $o = @{$it->{struct}}[0];
+          $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
+          unless($name=~m/$o->get_document->get_value(1)/){ $url = $url;}
+        }
+        $url ||= $c->uri_for('/search',$class,"$name")->path;
+      }else{
+        my $object_name = $object->name; #to fetch species, correct class name, etc...
+        $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
+      }
     }
     my $old_url = $c->req->uri->as_string;
     unless($c->req->param('redirect') || '' eq 'no'){

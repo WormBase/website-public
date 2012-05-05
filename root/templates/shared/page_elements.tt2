@@ -1185,12 +1185,11 @@ END;
   add_static_widgets;
 
   # Add tools.
-  #IF section_fetch.tools.keys.size || 0 > 0;
     tool_list = section_fetch.tools.keys.sort || [];
 
     # object pages automatically get the tree display
-    IF object.name.data.id; tool_list.unshift('tree'); tool_list.unshift('schema'); tool_list.unshift('epic'); END;
-
+    IF object.name.data.id; tool_list.unshift('tree'); tool_list.unshift('epic'); 
+    ELSIF (is_class_index && (class != 'all')); tool_list.unshift('schema'); END;
 
     IF tool_list.size > 0; 
       widgets.push({ title="Tools" type="title"}); 
@@ -1213,7 +1212,6 @@ END;
       
         widgets.push(w);
     END;
-  #END;
 
   PROCESS "shared/sidebar_structure.tt2" widgets=widgets overview=overview;
 %]

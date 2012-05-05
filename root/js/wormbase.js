@@ -889,10 +889,10 @@
         return false;
     }
     
-    function reloadWidget(widget_name, noLoad){
+    function reloadWidget(widget_name, noLoad, url){
         var con = $jq("#" + widget_name + "-content");
         if(con.text().length > 4)
-          ajaxGet(con, $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
+          ajaxGet(con, url || $jq("#nav-" + widget_name).attr("href"), noLoad, function(){ checkSearch(con); });
     }
     
       
@@ -1974,7 +1974,8 @@ var Scrolling = (function(){
       loadRSS: loadRSS,
       newLayout: Layout.newLayout,
       setupCytoscape: setupCytoscape,
-      getPlugin: Plugin.getPlugin
+      getPlugin: Plugin.getPlugin,
+      reloadWidget: reloadWidget
     }
   })();
 
