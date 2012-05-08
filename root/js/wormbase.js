@@ -829,12 +829,13 @@
     return undefined;
   }
   
-  function allResults(type, species, query){
+  function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
-    Scrolling.sidebarInit();
-    allSearch.empty(); 
-    search_change(type);
+    if(!widget){
+      Scrolling.sidebarInit();
+      search_change(type);
+    }
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
       checkSearch(allSearch);
