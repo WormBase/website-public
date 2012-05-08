@@ -1467,7 +1467,7 @@ sub _build_tracks {
     my ($self) = @_;
     my @tracks;
     if ($self->_parsed_species eq 'c_elegans') {
-	@tracks = qw(CG Allele TRANSPOSONS);
+	@tracks = qw(CG Allele TRANSPOSONS SNPs MILLION_MUTATION_PROJECT);
     } elsif ($self->_parsed_species eq 'c_briggsae') {
 	@tracks = qw(CG SNP);
     } else {
