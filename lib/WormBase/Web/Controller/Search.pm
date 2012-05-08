@@ -66,8 +66,9 @@ sub search :Path('/search') Args {
 
     my $tmp_query = $query;
     $tmp_query =~ s/-/_/g;
+    $tmp_query =~ s/\s/-/g;
     $tmp_query .= " $query" unless( ($query=~/^\*$/) || $tmp_query =~ /$query/ );
-    $c->log->debug("search $query");
+    $c->log->debug("search $tmp_query");
       
     my $search = $type unless($type=~/all/);
     $c->response->headers->expires(time);
