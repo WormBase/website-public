@@ -87,13 +87,6 @@ sub search :Path('/search') Args {
       return;
     }
 
-#     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $query, $page_count, $search);
-#     unless($it) {  
-#         $c->log->debug("conducting search -- not cached; $cache_id");
-#         my $it = $api->xapian->search($c, $tmp_query, $page_count, $search);
-#         $c->set_cache($cache_id, $it);
-#     }
-
     # this is the actual search
     my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
 

@@ -68,7 +68,7 @@
 </div>
 
 <script>
-  WB.allResults('paper', '', '[% query %]');
+  WB.allResults('paper', '', '[% query %]', 1);
 </script>
 [% END %]
 <!-- End result list -->
