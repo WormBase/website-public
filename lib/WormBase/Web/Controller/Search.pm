@@ -37,69 +37,56 @@ sub search :Path('/search') Args {
     $type = 'all' unless $query;
    
     # hack for references widget
-    if($page_count =~ m/references/){
-      $type = 'paper';
-      $page_count = 1;
-    }
-    if($page_count =~ m/disease/){
-      $type = 'disease';
+    if($page_count =~ m/\D/){
+      $type = $page_count =~ m/references/ ? 'paper' : $page_count;
       $page_count = 1;
     }
 
-    my $species = $c->req->param("species");
-    $c->stash->{widget} = $c->req->param("widget");
+    $c->stash->{species} = $c->req->param("species");
     $c->stash->{nostar} = $c->req->param("nostar");
-    $c->stash->{req_class} = $c->req->param("class");
-
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
 
-    $c->log->debug("$type search");
-    my $api = $c->model('WormBaseAPI');
-
-    $c->stash->{template} = "search/results.tt2";
-    if($page_count >1) {
-      $c->stash->{template} = "search/result_list.tt2";
-      $c->stash->{noboiler} = 1;
-    }elsif($c->req->param("inline")){
-      $c->stash->{noboiler} = 1;
-    }
-
-    my $tmp_query = $query;
-    $tmp_query =~ s/-/_/g;
-    $tmp_query =~ s/\s/-/g;
-    $tmp_query .= " $query" unless( ($query=~/^\*$/) || $tmp_query =~ /$query/ );
-    $c->log->debug("search $tmp_query");
-      
-    my $search = $type unless($type=~/all/);
     $c->response->headers->expires(time);
     $c->response->header('Content-Type' => 'text/html');
 
-    # if it finds an exact match, redirect to the page
-    if(( !($type=~/all/) || $c->req->param("redirect")) && !(($c->req->param("all"))||($c->stash->{noboiler})) && ($page_count < 2)){
-      my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
-      if($it->{pager}->{total_entries} == 1 ){
-        my $o = @{$it->{struct}}[0];
-        my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
-        unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
-        $c->res->redirect($url, 307);
-        return;
+    my $api = $c->model('WormBaseAPI');
+
+    my $tmp_query = $self->_prep_query($query);
+    $c->log->debug("search $tmp_query");
+      
+    my $search = $type unless($type=~/all/);
+
+    if($page_count>1) {
+      $c->stash->{template} = "search/result_list.tt2";
+      $c->stash->{noboiler} = 1;
+    }elsif($c->req->param("inline") || $c->req->param("widget")){
+      $c->stash->{template} = "search/results.tt2";
+      $c->stash->{noboiler} = 1;
+      $c->stash->{widget} = $c->req->param("widget");
+      $c->stash->{req_class} = $c->req->param("class");
+    }else{
+      if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
+      # if it finds an exact match, redirect to the page 
+        my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
+        if($it->{pager}->{total_entries} == 1 ){
+          my $o = @{$it->{struct}}[0];
+          my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
+          unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
+          $c->res->redirect($url, 307);
+          return;
+        }
       }
+
+      # if we're on a search page, setup the search first. Load results as ajax later.
+      #   - try to redirect to exact match first
+      $c->stash->{template} = "search/result-all.tt2";
+      $c->stash->{page} = $page_count;
+      $c->stash->{type} = $type;
+      $c->stash->{query} = $query || "*";
+      $c->forward('WormBase::Web::View::TT');
+      return;
     }
 
-
-    # if we're on a search page, setup the search first. Load results as ajax later.
-    if( !($c->stash->{noboiler}) ) {
-            $c->stash->{template} = "search/result-all.tt2";
-            $c->stash->{species} = $species;
-            $c->stash->{page} = $page_count;
-            $c->stash->{type} = $type;
-            $c->stash->{query} = $query || "*";
-            $c->forward('WormBase::Web::View::TT');
-            return;
-    }
-
-
-# 
 #     my ($cache_id,$it,$cache_server) = $c->check_cache('search', $query, $page_count, $search);
 #     unless($it) {  
 #         $c->log->debug("conducting search -- not cached; $cache_id");
@@ -108,9 +95,8 @@ sub search :Path('/search') Args {
 #     }
 
     # this is the actual search
-    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $species);
+    my $it= $api->xapian->search($c, $tmp_query, $page_count, $search, $c->stash->{species});
 
-    $c->stash->{species} = $species;
     $c->stash->{page} = $page_count;
     $c->stash->{type} = $type;
     $c->stash->{count} = $it->{pager}->{total_entries}; 
@@ -129,9 +115,8 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   $c->log->debug("autocomplete search: $q, $type");
   my $api = $c->model('WormBaseAPI');
 
- my $search = $type unless($type=~/all/);
- $q =~ s/-/_/g;
-  my $it = $api->xapian->search_autocomplete($c, $q, $search);
+  $q = $self->_prep_query($q, 1);
+  my $it = $api->xapian->search_autocomplete($c, $q, ($type=~/all/) ? undef : $type);
 
   my @ret;
   foreach my $o (@{$it->{struct}}){
@@ -162,13 +147,8 @@ sub search_count :Path('/search/count') :Args(3) {
   $c->stash->{noboiler} = 1;
   my $api = $c->model('WormBaseAPI');
 
-  my $search = $type unless($type=~/all/);
-
-  my $tmp_query = $q;
-  $tmp_query =~ s/-/_/g;
-  $tmp_query .= " $q" unless( $tmp_query eq $q );
-
-  my $count = $api->xapian->search_count($c, $tmp_query, $search, $species);
+  my $tmp_query = $self->_prep_query($q);
+  my $count = $api->xapian->search_count($c, $tmp_query, ($type=~/all/) ? undef : $type, $species);
   $c->response->body("$count");
   return;
 }
@@ -183,6 +163,15 @@ sub _get_url {
   }
   $url ||= $c->uri_for('/resources',$class,$id)->path;
   return "$url";
+}
+
+sub _prep_query {
+  my ($self, $q, $ac) = @_;
+  my $new_q = $q;
+  $new_q =~ s/-/_/g;
+  $new_q =~ s/\s/-/g;
+  $new_q .= " $q" unless( $new_q =~ /"$q"/ || $ac);
+  return $new_q;
 }
 
 

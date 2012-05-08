@@ -100,7 +100,7 @@ sub search_exact {
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
-    }elsif(!($q =~ m/\s/)){
+    }elsif(!($q =~ m/\s.*\s/)){
       $q .= " $type..$type" if $type;
       $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
