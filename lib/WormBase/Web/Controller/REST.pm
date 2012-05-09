@@ -102,7 +102,7 @@ sub workbench_GET {
       my $save_to = $c->req->params->{save_to} || 'reports';
       my $is_obj = $c->req->params->{is_obj} || 0;
       my $name = $c->req->params->{name};
-      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
+      my $page = $self->_get_page($c, $url) || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $saved = $page->user_saved->find({session_id=>$session->id});
       if($saved){
             $saved->delete();
@@ -309,7 +309,7 @@ sub history_POST {
       my $name = URI::Escape::uri_unescape($c->request->body_parameters->{'name'});
       my $is_obj = $c->request->body_parameters->{'is_obj'};
 
-      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
+      my $page = $self->_get_page($c, $url) || $c->model('Schema::Page')->create({url=>$url,title=>$name,is_obj=>$is_obj});
       my $hist = $c->model('Schema::History')->find_or_create({session_id=>$session->id,page_id=>$page->page_id});
       $hist->set_column(timestamp=>time());
       $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
@@ -500,7 +500,7 @@ sub feed_GET {
     }else{
 
       my $url = $c->req->params->{url};
-      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
+      my $page = $self->_get_page($c, $url);
       $c->stash->{url} = $url;
 
       if($type eq "comment"){
@@ -549,7 +549,7 @@ sub feed_POST {
         my $content= $c->req->params->{content};
 
         my $url = $c->req->params->{url};
-        my $page = $c->model('Schema::Page')->find({url=>$url});
+        my $page = $self->_get_page($c, $url);
 
         my $user = $c->user;
         unless($c->user_exists){
@@ -574,26 +574,19 @@ sub feed_POST {
     }else{
       my $content    = $c->req->params->{content};
       my $title      = $c->req->params->{title};
-      my $is_private = $c->req->params->{isprivate};
-      my $name = $c->req->params->{name};
-      my $email = $c->req->params->{email};
+      my $name = $c->req->params->{name} || $c->user->username;
+      my $email = $c->req->params->{email} || $c->user->primary_email->email;
       
       my $url = $c->req->params->{url};
-      my $page = $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
-      my $user = $self->_check_user_info($c);
-      return unless $user;
-      $c->log->debug("create new issue $content ", $user ? $user->user_id : $name);
-      my $issue = $c->model('Schema::Issue')->find_or_create({ reporter_id=>$user->user_id,
-                                  title=>$title,
-                                  page_id=>$page ? $page->page_id : 1,
-                                  content=>$content,
-                                  state      =>"new",
-                                  is_private => $is_private,
-                                  'timestamp'=>time()});
-      $self->_issue_email($c,$issue,1,$content, undef, $email, $name);
-      $c->stash->{message} = "<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p>" ; 
+      my $page = $self->_get_page($c, $url);
+
+      # stop saving issues in database
+
+      $content =~ s/\n/<br \/>/g;
+      $self->_issue_email($c,$page,1,$content, undef, $email, $name, $title);
+      $c->stash->{message} = $title ? "<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p>" : "<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p>" ; 
       $c->stash->{template} = "shared/generic/message.tt2"; 
-      $c->stash->{redirect} = $url;
+      $c->stash->{redirect} = $url if $title;
       $c->stash->{noboiler} = 1;
       $c->forward('WormBase::Web::View::TT');
     }
@@ -635,7 +628,7 @@ sub feed_POST {
         $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
       }  
       if($state || $assigned_to || $content){
-          $self->_issue_email($c,$issue,$thread,$content,$hash);
+          $self->_issue_email($c,$issue->page,$thread,$content,$hash);
       }
     }
     }
@@ -949,7 +942,7 @@ sub widget_static_POST {
       #creating a widget - only admin & curator
       }elsif($c->check_any_user_role("admin", "curator")){ 
           my $url = $c->request->body_parameters->{path};
-          my $page = $c->model('Schema::Page')->find({url=>$url});
+          my $page = $self->_get_page($c, $url);
           $widget_revision->widget($c->model('Schema::Widgets')->create({ 
                     page_id=>$page->page_id, 
                     widget_title=>$widget_title, 
@@ -1101,31 +1094,23 @@ sub _check_user_info {
 
 
 sub _issue_email{
-  my ($self,$c,$issue,$new,$content,$change,$email, $name) = @_;
+  my ($self,$c,$page,$new,$content,$change,$email, $name, $title) = @_;
   my $subject='New Issue';
   my $bcc = $email;
-  $bcc = $issue->reporter->primary_email->email if ($issue->reporter && $issue->reporter->primary_email);
+  $subject = '[wormbase-help] '. $title . ' (' . $name . ')';
 
-  unless($new == 1){
-    $subject='Issue Update';
-    my @threads= $issue->threads;
-    $bcc = "$bcc, " . $issue->responsible->primary_email->email if ($issue->responsible && $issue->responsible->primary_email);
-    my %seen=();  
-    $bcc = $bcc.",". join ",", grep { ! $seen{$_} ++ } map {$_->user->primary_email->email if ($_->user && $_->user->primary_email)} @threads;
-  }
-  $subject = '[wormbase-help] '. $issue->title . ' (' . $name . ')';
-
-  $c->stash->{issue}=$issue;
+  $c->stash->{page}=$page;
   $c->stash->{content}=$content;
-  $c->stash->{change}=$change;
-  $c->stash->{name}=$name;
+  $c->stash->{reporter_name}="$name";
+  $c->stash->{reporter_email}="$email";
   $c->stash->{noboiler} = 1;
+  $c->stash->{timestamp} = time();
   $c->log->debug(" send out email to $bcc");
   $c->stash->{email} = {
         header => [
           to      => $c->config->{issue_email},
           cc => $bcc,
-          "Reply-To" => "$bcc;" . $c->config->{issue_email},
+          "Reply-To" => "$bcc," . $c->config->{issue_email},
           from    => $c->config->{no_reply},
           subject => $subject, 
         ],
@@ -1341,6 +1326,12 @@ sub version_GET {
 	    version => $api->version
 	}
 	);
+}
+
+
+sub _get_page {
+    my ( $self, $c, $url ) = @_;
+    return $c->model('Schema::Page')->search({url=>$url}, {rows=>1})->next;
 }
 
 =head1 AUTHOR

@@ -1414,7 +1414,6 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            is_private = feed.find("#isprivate:checked").size(),
             name = feed.find("#name"),
             email = feed.find("#email");
         if (!validate_fields(email, name))
@@ -1426,8 +1425,7 @@ var Scrolling = (function(){
                 content: feed.find("#issue-content").val(), 
                 name: name.val(),
                 email: email.val(),
-                url: url || issue.url,
-                isprivate:is_private},
+                url: url || issue.url},
           success: function(data){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 
