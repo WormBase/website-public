@@ -14,7 +14,7 @@
                   or
                 </td>
                 <td>
-                Name <input id="name" type="text"   maxlength="30">
+                Name <input id="name" type="text"   maxlength="30" />
                   <div style="height: 0.4em; overflow: hidden;"> </div>
                 Email <input  id="email" maxlength="50" type="text"/> 
                 </td>
