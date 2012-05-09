@@ -57,7 +57,7 @@ sub misc :Path('/db') :Args(2)  {
       my $species = $c->req->param('source');
       $species = "c_$species" unless $species =~ m/_/;
       $url = $c->uri_for('/tools', 'genome', $class, $species, $name)->path;
-    }else{
+    }elsif($name){
       my $api    = $c->model('WormBaseAPI');
       my $object = $api->fetch({ class => ucfirst $class, name => $name });
 
@@ -73,6 +73,8 @@ sub misc :Path('/db') :Args(2)  {
         my $object_name = $object->name; #to fetch species, correct class name, etc...
         $url = $self->_get_url($c, lc $object_name->{data}->{class}, $object_name->{data}->{id}, $object_name->{data}->{taxonomy});
       }
+    }else{
+      $url = $self->_get_url($c, $class, "", 'all');
     }
     my $old_url = $c->req->uri->as_string;
     unless($c->req->param('redirect') || '' eq 'no'){
