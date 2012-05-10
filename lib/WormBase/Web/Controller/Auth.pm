@@ -11,7 +11,7 @@ use Data::GUID;
 __PACKAGE__->config->{namespace} = '';
  
  
-sub login :Path("/login") {
+sub login :Path("/login")  :Args(0){
      my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
     $c->stash->{'template'} = 'auth/login.tt2';
@@ -102,7 +102,7 @@ sub password_reset : Chained('password') PathPart('reset')  Args(0){
 }
  
 
-sub register :Path("/register") {
+sub register :Path("/register")  :Args(0){
   my ( $self, $c ) = @_;
   if($c->req->params->{inline}){
     $c->stash->{noboiler} = 1;
@@ -116,7 +116,7 @@ sub register :Path("/register") {
 #     $c->stash->{'continue'}=$c->req->params->{continue};
 }
 
-sub confirm :Path("/confirm") {
+sub confirm :Path("/confirm")  :Args(0){
     my ( $self, $c ) = @_;
     my $user=$c->model('Schema::User')->find($c->req->params->{u});
     my $wb = $c->req->params->{wb};
@@ -228,7 +228,7 @@ sub auth_login : Chained('auth') PathPart('login')  Args(0){
      }
 }
 
-sub auth_wbid :Path('/auth/wbid') {
+sub auth_wbid :Path('/auth/wbid')  :Args(0) {
      my ( $self, $c) = @_;
     $c->stash->{redirect} = $c->req->params->{redirect};
     $c->stash->{'template'}='auth/wbid.tt2';
@@ -542,7 +542,7 @@ sub reload {
 }
 
  
-sub logout :Path("/logout") {
+sub logout :Path("/logout") :Args(0){
     my ($self, $c) = @_;
     # Clear the user's state
     $c->logout;
@@ -556,7 +556,7 @@ sub logout :Path("/logout") {
 
 
 # This is the PRIVATE profile.
-sub profile :Path("/profile") {
+sub profile :Path("/profile") :Args(0) {
     my ( $self, $c ) = @_;
     $c->stash->{noboiler} = 1;
 
@@ -585,7 +585,7 @@ sub profile :Path("/profile") {
 } 
  
 
-sub profile_update :Path("/profile_update") {
+sub profile_update :Path("/profile_update")  :Args(0) {
   my ( $self, $c ) = @_;
   my $email    = $c->req->params->{email_address};
   my $username = $c->req->params->{username};
@@ -616,7 +616,7 @@ sub profile_update :Path("/profile_update") {
 } 
 
 
-sub add_operator :Path("/add_operator") {
+sub add_operator :Path("/add_operator")  :Args(0) {
     my ( $self, $c) = @_;
     $c->stash->{template} = "auth/operator.tt2";
     if($c->req->params->{content}){
