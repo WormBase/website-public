@@ -45,6 +45,7 @@ sub search :Path('/search') Args {
     $c->stash->{species} = $c->req->param("species");
     $c->stash->{nostar} = $c->req->param("nostar");
     $c->stash->{'search_guide'} = $query if($c->req->param("redirect"));
+    $c->stash->{opt_q} = $c->req->param("q");
 
     $c->response->headers->expires(time);
     $c->response->header('Content-Type' => 'text/html');
@@ -82,7 +83,7 @@ sub search :Path('/search') Args {
       $c->stash->{template} = "search/result-all.tt2";
       $c->stash->{page} = $page_count;
       $c->stash->{type} = $type;
-      $c->stash->{query} = $query || "*";
+      $c->stash->{query} = $query  || "*";
       $c->forward('WormBase::Web::View::TT');
       return;
     }
