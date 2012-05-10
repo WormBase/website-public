@@ -734,7 +734,7 @@ END;
 
           [% IF fields.central_dogma.data.transcripts.size > 0 %]
             <div>
-                 <img src="/img/arrows/right.gif">
+               <span class="rarrow"></span>
             </div>  
             <div>
                 <b>Transcripts</b><br />
@@ -746,7 +746,7 @@ END;
 
           [% IF fields.central_dogma.data.cds.size > 0 %]
             <div>
-                 <img src="/img/arrows/right.gif">
+               <span class="rarrow"></span>
             </div>  
             <div>
                 <b>CDS</b><br />

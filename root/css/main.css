@@ -2874,6 +2874,11 @@ p {
   padding:0;
 }
 
+.rarrow:before{
+  content: '→';
+  font-size:3em;
+}
+
 
 /*
 CSS Social Sign-in Buttons by Bloop [http://bloop.co] are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
