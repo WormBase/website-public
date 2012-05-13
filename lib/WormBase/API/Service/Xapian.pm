@@ -100,15 +100,16 @@ sub search_exact {
       $query=$class->qp->parse_query( "$type$q", 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
-    }else{
+    }elsif(!($q =~ m/\s.*\s/)){
       $q .= " $type..$type" if $type;
       $query=$class->syn_qp->parse_query( $q, 1|2 );
       $enq       = $class->syn_db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
     }
 
-    my $mset      = $enq->get_mset( 0,1 );
-    if($mset->empty()){
+    my $mset      = $enq->get_mset( 0,1 ) if $enq;
+    if(!$mset || $mset->empty()){
+      $q .= " $type..$type" if $type;
       $query=$class->qp->parse_query( $q, 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());

@@ -1,5 +1,5 @@
 [% IF (!species && (!type || type == 'all') && (query == '*')) %]
-
+      [% query = opt_q %]
       <div id="page-title" class="search-bg" style="margin:0;">
       <h2>  
 
@@ -39,7 +39,7 @@
         </li>
       </ul>
 
-      <input class="text" id="SearchResult" name="query" type="text" style="width:50%" placeholder="search..."> 
+      <input class="text" id="SearchResult" name="query" type="text" style="width:50%" placeholder="search..." value="[% query %]"> 
 
 
     </div>
@@ -86,7 +86,7 @@
       <input class="ui-icon ui-icon-search" type="submit" onclick="WB.search('SearchResult'); return false;" value="">
     </div>
   </form>
-<span id="search-more"><a href="[% c.uri_for("/search").path %]">more options</a></span>
+<span id="search-more"><a href="[% c.uri_for("/search").path %][% IF query; "?q=$query"; END; %]">more options</a></span>
 <br style="clear:both" />
 
       </h2>

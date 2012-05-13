@@ -135,8 +135,11 @@ sub end : ActionClass('RenderView') {
   }
 }
 
+
+# This kills our app if anyone visits this action...
 # /quit, used for profiling so that NYTProf can exit cleanly.
-sub quit :Global { exit(0) }
+# sub quit :Global { exit(0) }
+
 
 =head2 get
 

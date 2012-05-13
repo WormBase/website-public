@@ -1,24 +1,35 @@
 <div id="error-box" class="ui-state-error ui-corner-all">  
+   <div id="issues-new">
 
    <span class="ui-icon ui-icon-alert" style="float: left; margin:.4em;"></span> 
    <h3>
        Something's gone horribly wrong.
    </h3>
 
-   <p>      
-      The WormBase team has been notified of this problem and we are working to resolve the issue.
-   </p>
-
    <p>
-      If you'd like us to contact you when this is resolved, send us an 
-      <a href="mailto:feedback@wormbase.org">email</a> including this error report:
+       WormBase has encountered an error.
+    </p>
+   <h4>
+      Please send us an error report.
+   </h4>
+   <p>
+      We have created an error report to help us fix this issue:
    </p>
-
-   <div class="error-message-technical">
-      Expected URL: [% c.req.path %]<br />
-      Server Error: 500<br />
-      Error Message:<br />
+                <input id="name" value="anonymous error report" type="hidden"/>
+                <input  id="email" value="[% c.config.issue_email %]" type="hidden"/> 
+   <br />
+   <textarea id="issue-content" class="error-message-technical" rows="10" cols="80">
+      Expected URL: [% c.req.uri %]&#10;
+      Server Error: 500&#10;
+      Error Message:&#10;
              [% c.error.join('<br />').replace('\n','<br />') %]
+   </textarea>
+   <div id="issue-submit-box" style="float:right;margin:1em;">
+          <input onClick="history.back()" type='submit' value='Go Back' />   
+          <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send Report' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />     
    </div>
-
+  </div>
+   <p>
+      You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create an issue on github') %]
+    </p>
 </div>

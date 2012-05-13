@@ -23,8 +23,14 @@
   </li>
 </ul>
 <div id="all-search-results" class="[% widget %]" style="float:left;clear:left;">
-[% ELSIF widget && results.size == 0 && !no_count%]
-  <span class="caveat-emptor">No [% widget.replace('[/_]', ' ') %] associated with this [% req_class || 'class'%]</span>
+[% ELSIF widget && !widget.match('search') && results.size == 0 && !no_count%]
+  <span class="caveat-emptor">
+      [% IF widget == 'browse' %]
+        Nothing to browse
+      [% ELSE %]
+      No [% widget.replace('[/_]', ' ') %] associated with this [% req_class || 'class'%]
+      [% END %]
+  </span>
   [% RETURN %]
 [% END %]
 
@@ -68,7 +74,7 @@
 </div>
 
 <script>
-  WB.allResults('paper', '', '[% query %]');
+  WB.allResults('paper', '', '[% query %]', 1);
 </script>
 [% END %]
 <!-- End result list -->
