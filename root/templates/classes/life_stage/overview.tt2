@@ -28,7 +28,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
                    tags2link(fields.preceded_by_life_stage.data, '<br />');
            '</div>';
            '<div>';
-               '<img src="/img/arrows/right.gif">';
+               '<span class="rarrow"></span>';
            '</div>';
 	  END;
        '<div>';
@@ -36,7 +36,7 @@ IF (fields.followed_by_life_stage.data.size > 0)
       '</div>';
        IF fields.followed_by_life_stage.data.size > 0;
             '<div>';
-                 '<img src="/img/arrows/right.gif">';
+               '<span class="rarrow"></span>';
             '</div> ';
             '<div>';
                 '<b>Followed by</b><br />';

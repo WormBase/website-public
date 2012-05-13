@@ -1,6 +1,0 @@
-[%#
-   # The search-bar wrapper
-%]
-
-[% PROCESS "boilerplate/search_bar.tt2" %]
-[% content %]

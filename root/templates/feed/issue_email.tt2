@@ -2,9 +2,9 @@
 
 [% USE date %]
 <p>
-Reported by [% issue.reporter.username || name %] ([% issue.reporter.primary_email.email || email.header.cc %])
+Reported by [% reporter_name %] ([% reporter_email %])
 <br />
-<span class="fade">[% date.format(issue.timestamp, '%d %b %y %H:%M', 'en_GB') %]
+<span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
 </span></p>
 
 <p>Question:
@@ -12,7 +12,7 @@ Reported by [% issue.reporter.username || name %] ([% issue.reporter.primary_ema
 </p>
 
 <p>Submitted From:
-<br>&nbsp;&nbsp;[% issue.page.title %] <span class="fade">([% issue.page.url %])</span>
+<br>&nbsp;&nbsp;[% page.title %] <span class="fade">([% page.url %])</span>
 </p>
 
 <p class="fade">

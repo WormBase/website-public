@@ -829,12 +829,13 @@
     return undefined;
   }
   
-  function allResults(type, species, query){
+  function allResults(type, species, query, widget){
     var url = "/search/" + type + "/" + query + "/?inline=1",
         allSearch = $jq("#all-search-results");
-    Scrolling.sidebarInit();
-    allSearch.empty(); 
-    search_change(type);
+    if(!widget){
+      Scrolling.sidebarInit();
+      search_change(type);
+    }
     if(species) { url = url + "&species=" + species;} 
     ajaxGet(allSearch, url, undefined, function(){
       checkSearch(allSearch);
@@ -1413,7 +1414,6 @@ var Scrolling = (function(){
         var rel= is.attr("rel"),
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
-            is_private = feed.find("#isprivate:checked").size(),
             name = feed.find("#name"),
             email = feed.find("#email");
         if (!validate_fields(email, name))
@@ -1425,8 +1425,7 @@ var Scrolling = (function(){
                 content: feed.find("#issue-content").val(), 
                 name: name.val(),
                 email: email.val(),
-                url: url || issue.url,
-                isprivate:is_private},
+                url: url || issue.url},
           success: function(data){
                 if(data==0) {
                    alert("The email address has already been registered! Please sign in."); 

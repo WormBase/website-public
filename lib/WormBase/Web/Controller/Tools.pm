@@ -21,12 +21,12 @@ sub support :Path('support') :Args(0) {
     return;
 }
 
-sub operator :Path("operator") Args {
+sub operator :Path("operator") :Args(0) {
     my ($self, $c) = @_; 
     $c->stash->{template} = "auth/operator.tt2";
 }
 
-sub comment :Path("comments") Args {
+sub comment :Path("comments") :Args(0) {
     my ( $self, $c) = @_;
     $c->stash->{template} = "feed/comment_list.tt2";
     my @comments = $c->model('Schema::Comment')->search(undef);
