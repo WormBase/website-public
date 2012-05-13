@@ -14,8 +14,6 @@ __PACKAGE__->config({
 		     INCLUDE_PATH => [
 				      WormBase::Web->path_to( 'root', 'templates' ),
 				      WormBase::Web->path_to( 'root', 'templates' , 'config'),
-				      WormBase::Web->path_to( 'root', 'static',    'css'    ),
-				      WormBase::Web->path_to( 'root', 'static',    'css', 'flora'    ),			 
 				     ],
 		     PRE_PROCESS  => ['config/main','shared/page_elements.tt2'],
 		     WRAPPER      => 'wrapper.tt2',
