@@ -24,9 +24,10 @@
   [% NO_NEARBY = fields.interactions.data.edges.size > 450 %]
   [% IF fields.interactions.data.showall || NO_NEARBY %]
       [% TYPES = fields.interactions.data.types %]
+      [% NTYPES = fields.interactions.data.ntypes %]
       [% NODES = fields.interactions.data.nodes %]
       [% EDGES = fields.interactions.data.edges %]
-      [% WRAPPER classes/gene/interaction_details.tt2; 
+      [% WRAPPER shared/fields/interaction_details.tt2; 
            #this is in a wrapper so the js will execute at the bottom of the widget and prevent blocking
            interaction_table;
          END %]
@@ -40,6 +41,8 @@
 
 <a href="http://genemania.org/link?o=6239&g=[%
 FOREACH node IN fields.interactions.data.nodes.keys.sort;
-    name = FILTER upper; fields.interactions.data.nodes.$node.label; END;
-    "$name|";
-END; %]">View Interaction Network in GeneMANIA</a>
+    IF fields.interactions.data.nodes.$node.class == 'Gene';
+	name = FILTER upper; fields.interactions.data.nodes.$node.label; END;
+	"$name|";
+    END;
+END; %]" target="_blank">View Interaction Network in GeneMANIA</a>
