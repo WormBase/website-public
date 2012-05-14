@@ -814,6 +814,7 @@ a#fade:hover {
 
 .result {
   padding:0 0.5em 0.5em;
+  position:relative;
 }
 
 .result:hover {
@@ -2483,67 +2484,57 @@ div.detail-box div.field div.field-content{
   display:none;
 }
 
-.tip-simple {
-  position:relative;
+[tip]:before {
+    content: "";
+    position: absolute;
+    border-top: 5px solid #000;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    visibility: hidden;
+    top: -7px;
 }
 
-.tip {
-  position:absolute;
-  bottom:100%;
-  left:0;
-  background:black;
-  color:white;
-  font-size:9pt;
-  line-height:11pt;
-  padding:0.5em;
-  margin:0.5em 0;
+[tip].star:before {
+  top:15px;
+  right:30px;
+  border:none;
+  border-left: 5px solid #000;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
 }
 
-.tip span.ui-icon-triangle-1-s{
-  position:absolute;
-  top:100%;
-  left:0.3em;
-  height:6px;
-  background-position:-64px -23px;
+[tip]:after {
+    content: attr(tip);
+    position: absolute;
+    color: white;
+    font-size:9pt;
+    line-height:11pt;
+    padding:0.5em;
+    top: -33px;
+    right:0;
+    background: #000;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+    visibility: hidden;
 }
 
-.star>.tip{
-  left:auto;
-  top:0;
-  right:3em;
-  bottom:auto;
+[tip].tl:after {
+    left:0;
+    right:auto;
 }
 
-.star>.tip span.ui-icon-triangle-1-s{
-  position:absolute;
-  top:0.5em;
-  height:16px;
-  width:5px;
-  background-position: -40px -16px;
-  left:100%;
+[tip].star:after {
+  top:5px;
+  right:35px;
 }
 
-.tr>.tip{
-  left:auto;
-  right:0;
-}
-.tr>.tip span.ui-icon-triangle-1-s{
-  left:auto;
-  right:0.3em;
+[tip]:hover:before, [tip]:hover:after {
+    visibility: visible;
+    -moz-transition: visibility 0s linear .3s;
 }
 
-.br>.tip{
-  left:auto;
-  top:auto;
-  right:0;
-  bottom:100%;
-}
-.br>.tip span.ui-icon-triangle-1-s{
-  left:auto;
-  top:auto;
-  right:0.4em;
-  bottom:100%;
-}
 
 /*Strain table*/
 table tr.venn-a, table th.venn-a, table td.venn-a {
