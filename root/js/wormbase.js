@@ -425,16 +425,6 @@
         ev.children(".ev").toggle('fast');
       });
       
-      content.delegate(".tip-simple", 'mouseover', function(){ 
-        if(!($jq(this).children("div.tip-elem").show().children('span:not(".ui-icon")').text($jq(this).attr("tip")).size())){
-          var tip = $jq('<div class="tip-elem tip ui-corner-all" style="display:block"><span>' + $jq(this).attr("tip") + '</span><span class="tip-elem ui-icon ui-icon-triangle-1-s"></span></div>');
-          tip.appendTo($jq(this)).show();
-        }
-      });
-      content.delegate(".tip-simple", 'mouseout', function(){ 
-        $jq(this).children("div.tip-elem").hide();
-      });
-      
       content.delegate(".slink", 'mouseover', function(){
           var slink = $jq(this);
           Plugin.getPlugin("colorbox", function(){
@@ -1139,7 +1129,7 @@ var Layout = (function(){
       hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
       hiddenContainer.append(hidden).children().after(' &raquo; ');
 
-      bc.append('<span id="breadcrumbs-expand" class="tip-simple ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(hiddenContainer).append(shown);
+      bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(hiddenContainer).append(shown);
       bc.children(':last').addClass("page-title").before(" &raquo; ");
     
       expand = $jq("#breadcrumbs-expand");
