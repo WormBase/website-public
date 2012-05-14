@@ -2484,6 +2484,10 @@ div.detail-box div.field div.field-content{
   display:none;
 }
 
+[tip]{
+  position:relative;
+}
+
 [tip]:before {
     content: "";
     position: absolute;
@@ -2494,7 +2498,7 @@ div.detail-box div.field div.field-content{
     top: -7px;
 }
 
-[tip].star:before {
+.star[tip]:before {
   top:15px;
   right:30px;
   border:none;
@@ -2511,7 +2515,7 @@ div.detail-box div.field div.field-content{
     line-height:11pt;
     padding:0.5em;
     top: -33px;
-    right:0;
+    right:0px;
     background: #000;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -2520,12 +2524,12 @@ div.detail-box div.field div.field-content{
     visibility: hidden;
 }
 
-[tip].tl:after {
+.tl[tip]:after {
     left:0;
     right:auto;
 }
 
-[tip].star:after {
+.star[tip]:after {
   top:5px;
   right:35px;
 }
