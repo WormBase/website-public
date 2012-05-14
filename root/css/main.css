@@ -2507,6 +2507,10 @@ div.detail-box div.field div.field-content{
   border-bottom: 5px solid transparent;
 }
 
+.tl[tip]:before {
+  left:5px;
+}
+
 [tip]:after {
     content: attr(tip);
     position: absolute;
