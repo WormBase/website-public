@@ -1647,6 +1647,17 @@ var Scrolling = (function(){
                 attrName: "direction",
                 entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
               },
+		nodeShapeMapper = {
+                attrName: "ntype",
+                entries: [
+		    { attrValue: 'Sequence', value: "TRIANGLE" },
+		    { attrValue: 'PCR product', value: "HEXAGON" },
+		    { attrValue: 'CDS', value: "DIAMOND" },
+		    { attrValue: 'Gene', value: "OCTAGON" },
+		    { attrValue: 'Protein', value: "RECTANGLE" },
+		    { attrValue: 'Molecule', value: "PARALLELOGRAM" },
+		    { attrValue: 'Other', value: "ELLIPSE" },]
+              },
               edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 },
               nodeColorMapper = { attrName: "number", minValue: "#04043D", maxValue: "#6FA2D9" },
               toolTipMapper = {
@@ -1659,6 +1670,7 @@ var Scrolling = (function(){
                   nodes: [{ name: "label", type: "string" },
                       { name: "number", type: "int" },
                       { name: "color", type: "string" },
+                      { name: "ntype", type: "string" },
                       { name: "link", type: "string" },
                   ],
                       
@@ -1685,8 +1697,9 @@ var Scrolling = (function(){
                 borderWidth: 0,
                 hoverGlowOpacity: 0.8,
                 size: 30,
-                tooltipText: "<b>${label}</b>",
+                tooltipText: "<b>${label} (${ntype})</b>",
                 tooltipBackgroundColor: "#fafafa",
+				shape: { discreteMapper: nodeShapeMapper },
                 color: { continuousMapper: nodeColorMapper },
                 hoverGlowColor: "#aae6ff",
                 labelGlowOpacity: 1,
@@ -1723,7 +1736,7 @@ var Scrolling = (function(){
             
             vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
             vis.ready(function() {
-            
+		vis.filter("nodes", function(node) { return node.data.ntype == 'Gene' || node.data.ntype == 'Other' || node.data.ntype == 'Molecule'})
                 // add a listener for when nodes and edges are clicked
                 vis.addListener("click", "nodes", function(event) {
                 window.open(event.target.data.link);
@@ -1738,7 +1751,14 @@ var Scrolling = (function(){
                   var direction = $jq("#cyto_panel_direction option:selected").val();
                   var inter_type = $jq("#cyto_panel_type option:selected").val();
                   var nearby = $jq("#cyto_panel_nearby option:selected").val();
-
+		  var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
+		  
+		  if(nodetype ==0){
+		      vis.removeFilter("nodes", true);
+		  } else {
+		      vis.filter("nodes", function(node) { return node.data.ntype == nodetype });
+		  }
+		  
                   if(direction ==0 && inter_type==0 && nearby==0){
                     //vis.removeFilter("edges",true);
                     vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);

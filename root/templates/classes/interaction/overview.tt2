@@ -2,22 +2,65 @@
 
 [%
 
-WRAPPER highlight_box; END;
-
-WRAPPER $field_block title="Interactors" key="interactor";
-    tags2link(fields.interactor.data, ', ', 'Interactors');
+WRAPPER highlight_box;
+    WRAPPER $field_block title="Type" key="interaction_type";
+	fields.interaction_type.data;
+    END;
+    WRAPPER $field_block title="Regulation Level" key="regulation_level";
+	cell_content(fields.regulation_level.data);
+    END;
+    WRAPPER $field_block title="Confidence" key="confidence";
+	type = fields.confidence.data.keys.0;
+	"$type: " _ fields.confidence.data.$type;
+    END;
+    WRAPPER $field_block title="WBProcess" key="process";
+	cell_content(fields.process.data);
+    END;
 END;
 
-WRAPPER $field_block title=pluralize("Interaction", fields.interaction_types.data.size) key="interaction_types";
-    build_data_table (
-	order = ['Type', 'Interactors' , 'Interaction_phenotype', 'Interaction_RNAi'],
-	columns = {
-		Type			=> 'Type',
-		Interactors		=> 'Interactors',
-		Interaction_phenotype	=> 'Phenotypes',
-		Interaction_RNAi	=> 'RNAi',
-		},
-	key = 'interaction_types');
+'<div class="description">';
+    cell_content(fields.interaction_summary.data);
+'</div>';
+
+WRAPPER $field_block title="Detection Method" key="detection_method";
+    cell_content(fields.detection_method.data);
+END;
+
+WRAPPER $field_block title="Libraries Screened" key="libraries_screened";
+    cell_content(fields.libraries_screened.data);
+END;
+
+laboratory;
+
+WRAPPER $field_block title="Phenotypes" key="interaction_phenotype";
+    cell_content(fields.interaction_phenotype.data);
+END;
+
+WRAPPER $field_block title="RNAi" key="rnai";
+    cell_content(fields.rnai.data);
+END;
+
+WRAPPER $field_block title="Interactors" key="interactor";
+    build_data_table( order=['interactor_type', 'interactor', 'role', 'variation', 'transgene'],
+	columns={
+		interactor_type => 'Interactor Type',
+	    interactor	=> 'Interactor',
+	    role	=> 'Interaction Role',
+	    variation	=> 'Variation',
+	    transgene	=> 'Transgene',
+	},
+	key="interactor");
+END;
+
+WRAPPER $field_block title="Regulation Results" key="regulation_result";
+    build_data_table( order=['type', 'anatomy_term', 'life_stage', 'subcellular_localization'],
+	columns={
+	    type => 'Type',
+	    anatomy_term => 'Anatomy Terms',
+	    life_stage => 'Life Stages',
+	    subcellular_localization => 'Subcellular Localization',
+	},
+	key="regulation_result");
 END;
 
 remarks;
