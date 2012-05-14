@@ -57,7 +57,7 @@ sub misc :Path('/db') :Args(2)  {
       my $species = $c->req->param('source');
       $species = "c_$species" unless $species =~ m/_/;
       $url = $c->uri_for('/tools', 'genome', $class, $species, $name)->path;
-    }elsif($name){
+    }elsif($name && ($name ne '*')){
       my $api    = $c->model('WormBaseAPI');
       my $object = $api->fetch({ class => ucfirst $class, name => $name });
 
