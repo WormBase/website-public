@@ -56,15 +56,11 @@ sub species_index :Path('/species') :Args(1)   {
 
     $self->_setup_page($c);
 
-    if ($species eq 'all' || $self->_is_species($c,$species)) {
-      $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
-      $c->stash->{class}      = 'all';
-      $c->stash->{is_class_index} = 1;   # 0? 
-      $c->stash->{species}    = $species;           # Class is the subsection	
-      $c->stash->{template}   = 'species/report.tt2';
-    } else {
-      $c->detach('/soft_404');   # We are neither a supported class or proper species name. Error!
-    }
+    $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
+    $c->stash->{class}      = 'all';
+    $c->stash->{is_class_index} = 1;   
+    $c->stash->{species}    = $species;           # Class is the subsection	
+    $c->stash->{template}   = 'species/report.tt2';
 }
 
 
@@ -85,18 +81,12 @@ sub class_index :Path("/species") Args(2) {
     # get static widgets / layout info for this page
     $self->_setup_page($c);
 
-    # Is this a species known to WormBase?
-    if ($species eq 'all' || $self->_is_species($c,$species)) {
-        $c->stash->{template} = 'species/report.tt2';
-	    $c->stash->{section}     = 'species';
-	    $c->stash->{class}       = $class;
-	   
-	    $c->stash->{species}     = $species;  # Provided for formatting, limit searches
-	    $c->stash->{is_class_index} = 1;       # used by report_page macro as a flag that this is an index page.
-    } else {
-	# maybe search class names?
-      $c->detach;
-    }   
+    $c->stash->{template} = 'species/report.tt2';
+    $c->stash->{section}     = 'species';
+    $c->stash->{class}       = $class;
+    
+    $c->stash->{species}     = $species;  # Provided for formatting, limit searches
+    $c->stash->{is_class_index} = 1;       # used by report_page macro as a flag that this is an index page.
 }
 
 
@@ -166,14 +156,6 @@ sub _is_class {
     return 1 if (defined $c->config->{'sections'}->{'species'}->{$arg});
     return 0;
 }
-
-# Is the argument a species?
-sub _is_species {
-    my ($self,$c,$arg) = @_;
-    return 1 if (defined $c->config->{sections}->{'species_list'}->{$arg});
-    return 0;
-}
-
 
 
 
