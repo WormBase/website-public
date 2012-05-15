@@ -164,7 +164,7 @@ sub _prep_query {
   my $new_q = $q;
   $new_q =~ s/-/_/g;
   $new_q =~ s/\s/-/g;
-  $new_q .= " $q" unless( $new_q =~ /"$q"/ || $ac);
+  $new_q .= " $q" unless( $new_q eq $q || $ac);
   return $new_q;
 }
 
