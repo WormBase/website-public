@@ -535,9 +535,11 @@
           ajaxPanel.html(data);
         },
         error:function(xhr, textStatus, thrownError){
-          var error = $jq(xhr.responseText);
-          ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p><p><a href="/tools/support?url=' + location.pathname + '">Let us know</a></p></div>')
-                   .children().append('<p>' + (error.find(".error-message-technical").html() || '') + '</p>');
+          var error = $jq(xhr.responseText).find(".error-message-technical").html() || '';
+          ajaxPanel.html('<div class="ui-state-error ui-corner-all"><p><strong>Sorry!</strong> An error has occured.</p>'
+                  + '<p><a href="/tools/support?url=' + location.pathname 
+                  + (error ? '&msg=' + encodeURIComponent(error.trim()) : '')
+                  + '">Let us know</a></p><p>' + error + '</p></div>');
         },
         complete:function(XMLHttpRequest, textStatus){
           if(callback){ callback(); }
@@ -1633,7 +1635,7 @@ var Scrolling = (function(){
   
 
   
-  function setupCytoscape(data, types){
+function setupCytoscape(data, types){
           var edgeColor = ["#08298A","#B40431","#FF8000", "#04B404","#8000FF", "#191007", "#73c6cd", "#92d17b", "#cC87AB4", "#e4e870" ,"#696D09"],
               edgeColorMapper = {
                 attrName: "type",
@@ -1647,16 +1649,16 @@ var Scrolling = (function(){
                 attrName: "direction",
                 entries: [ { attrValue: "Effector->Effected", value: "ARROW" },]
               },
-		nodeShapeMapper = {
+        nodeShapeMapper = {
                 attrName: "ntype",
                 entries: [
-		    { attrValue: 'Sequence', value: "TRIANGLE" },
-		    { attrValue: 'PCR product', value: "HEXAGON" },
-		    { attrValue: 'CDS', value: "DIAMOND" },
-		    { attrValue: 'Gene', value: "OCTAGON" },
-		    { attrValue: 'Protein', value: "RECTANGLE" },
-		    { attrValue: 'Molecule', value: "PARALLELOGRAM" },
-		    { attrValue: 'Other', value: "ELLIPSE" },]
+            { attrValue: 'Sequence', value: "TRIANGLE" },
+            { attrValue: 'PCR product', value: "HEXAGON" },
+            { attrValue: 'CDS', value: "DIAMOND" },
+            { attrValue: 'Gene', value: "OCTAGON" },
+            { attrValue: 'Protein', value: "RECTANGLE" },
+            { attrValue: 'Molecule', value: "PARALLELOGRAM" },
+            { attrValue: 'Other', value: "ELLIPSE" },]
               },
               edgeWidthMapper = { attrName: "width",  minValue: 3, maxValue: 15, maxAttrValue: 15 },
               nodeColorMapper = { attrName: "number", minValue: "#04043D", maxValue: "#6FA2D9" },
@@ -1699,7 +1701,7 @@ var Scrolling = (function(){
                 size: 30,
                 tooltipText: "<b>${label} (${ntype})</b>",
                 tooltipBackgroundColor: "#fafafa",
-				shape: { discreteMapper: nodeShapeMapper },
+                shape: { discreteMapper: nodeShapeMapper },
                 color: { continuousMapper: nodeColorMapper },
                 hoverGlowColor: "#aae6ff",
                 labelGlowOpacity: 1,
@@ -1736,7 +1738,7 @@ var Scrolling = (function(){
             
             vis.draw({ network: networ_json, visualStyle: visual_style,  nodeTooltipsEnabled:true, edgeTooltipsEnabled:true, });
             vis.ready(function() {
-		vis.filter("nodes", function(node) { return node.data.ntype == 'Gene' || node.data.ntype == 'Other' || node.data.ntype == 'Molecule'})
+        vis.filter("nodes", function(node) { return node.data.ntype == 'Gene' || node.data.ntype == 'Other' || node.data.ntype == 'Molecule'})
                 // add a listener for when nodes and edges are clicked
                 vis.addListener("click", "nodes", function(event) {
                 window.open(event.target.data.link);
@@ -1751,14 +1753,14 @@ var Scrolling = (function(){
                   var direction = $jq("#cyto_panel_direction option:selected").val();
                   var inter_type = $jq("#cyto_panel_type option:selected").val();
                   var nearby = $jq("#cyto_panel_nearby option:selected").val();
-		  var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
-		  
-		  if(nodetype ==0){
-		      vis.removeFilter("nodes", true);
-		  } else {
-		      vis.filter("nodes", function(node) { return node.data.ntype == nodetype });
-		  }
-		  
+          var nodetype = $jq("#cyto_panel_nodetype option:selected").val();
+
+          if(nodetype ==0){
+              vis.removeFilter("nodes", true);
+          } else {
+              vis.filter("nodes", function(node) { return node.data.ntype == nodetype });
+          }
+
                   if(direction ==0 && inter_type==0 && nearby==0){
                     //vis.removeFilter("edges",true);
                     vis.filter("edges", function(edge){return edge.data.type != "No_interaction"}, true);
@@ -1785,6 +1787,7 @@ var Scrolling = (function(){
             });
             $jq( "#resizable" ).resizable();
     }
+
 
     function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
