@@ -1,0 +1,4 @@
+
+[% species_name = species.replace('_', '. ') FILTER ucfirst %]
+
+WormBase does not maintain [% IF !class.match('all'); class; END; %] data for <span class="species">[% species_name %]</species>
