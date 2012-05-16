@@ -171,60 +171,60 @@ sub _get_interactions {
 
     warn("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
-	next if($data->{ids}{"$interaction"});
-	if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
-	my $edgeList = $self->_get_interaction_info($interaction, $nearby);
-	foreach my $key (keys %{$edgeList}) {
-	    my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-	    warn("effector: $effector, effected: $effected");
-	    next unless($effector);
-	    my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
-	    my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
-	    $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
-	    $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, $effector_name || undef);
-	    $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, $effected_name || undef);
-	    $data->{nodes_obj}{"$effector"} = $effector;
-	    $data->{nodes_obj}{"$effected"} = $effected;
-	    $data->{ids}{"$interaction"}=1;
-	    $data->{types}{"$type"}=1;
-	    my $ntype1 = $data->{nodes}{"$effector"}->{class};
-	    my $ntype2 = $data->{nodes}{"$effected"}->{class};
-	    $data->{ntypes}{"$ntype1"}=1;
-	    $data->{ntypes}{"$ntype2"}=1;
-	    
-	    my $phenObj = $self->_pack_obj($phenotype);
-	    my $key = "$effector $effected $type";
-	    my $key2 = "$effected $effector $type";
+      next if($data->{ids}{"$interaction"});
+      if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
+      my $edgeList = $self->_get_interaction_info($interaction, $nearby);
+      foreach my $key (keys %{$edgeList}) {
+          my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
+          warn("effector: $effector, effected: $effected");
+          next unless($effector);
+          my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
+          my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
+          $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
+          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, $effector_name || undef);
+          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, $effected_name || undef);
+          $data->{nodes_obj}{"$effector"} = $effector;
+          $data->{nodes_obj}{"$effected"} = $effected;
+          $data->{ids}{"$interaction"}=1;
+          $data->{types}{"$type"}=1;
+          my $ntype1 = $data->{nodes}{"$effector"}->{class};
+          my $ntype2 = $data->{nodes}{"$effected"}->{class};
+          $data->{ntypes}{"$ntype1"}=1;
+          $data->{ntypes}{"$ntype2"}=1;
+          
+          my $phenObj = $self->_pack_obj($phenotype);
+          my $key = "$effector $effected $type";
+          my $key2 = "$effected $effector $type";
 
-	    if ($phenotype) {
-		$data->{phenotypes}{"$phenotype"} ||= $phenObj;
-		$key .= " $phenotype" if $phenotype;
-		$key2 .= " $phenotype" if $phenotype;
-	    }
-	    
-	    my $packInteraction = $self->_pack_obj($interaction);
-	    my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
-	    
-	    if (exists $data->{edgeVals}{$key}){
-		push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
-		push @{$data->{edgeVals}{$key}{citations}}, @papers;
-	    } elsif (exists $data->{edgeVals}{$key2}){
-		push @{$data->{edgeVals}{$key2}{interactions}}, $packInteraction;
-		push @{$data->{edgeVals}{$key2}{citations}}, @papers;
-	    } else {
-		my @interacArr = ($packInteraction);
-		$data->{edgeVals}{$key} = {
-		    interactions=> @interacArr ? \@interacArr : undef,
-		    citations	=> @papers ? \@papers : undef,
-		    type	=> "$type",
-		    effector	=> $data->{nodes}{"$effector"},
-		    effected	=> $data->{nodes}{"$effected"},
-		    direction	=> $direction,
-		    phenotype	=> $phenObj,
-		    nearby	=> $nearby,
-		};
-	    }
-	}
+          if ($phenotype) {
+          $data->{phenotypes}{"$phenotype"} ||= $phenObj;
+          $key .= " $phenotype" if $phenotype;
+          $key2 .= " $phenotype" if $phenotype;
+          }
+          
+          my $packInteraction = $self->_pack_obj($interaction);
+          my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
+          
+          if (exists $data->{edgeVals}{$key}){
+          push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
+          push @{$data->{edgeVals}{$key}{citations}}, @papers;
+          } elsif (exists $data->{edgeVals}{$key2}){
+          push @{$data->{edgeVals}{$key2}{interactions}}, $packInteraction;
+          push @{$data->{edgeVals}{$key2}{citations}}, @papers;
+          } else {
+          my @interacArr = ($packInteraction);
+          $data->{edgeVals}{$key} = {
+              interactions=> @interacArr ? \@interacArr : undef,
+              citations	=> @papers ? \@papers : undef,
+              type	=> "$type",
+              effector	=> $data->{nodes}{"$effector"},
+              effected	=> $data->{nodes}{"$effected"},
+              direction	=> $direction,
+              phenotype	=> $phenObj,
+              nearby	=> $nearby,
+          };
+          }
+      }
     }
     $data->{showall} = scalar keys %{$data->{edgeVals}} < 100 || $nearby;
     return $data;
