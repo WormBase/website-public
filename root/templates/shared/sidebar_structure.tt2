@@ -151,7 +151,11 @@
           [% IF (overview==1) %]
             data-layout='{"leftlist":["overview"]}'
           [% ELSIF (is_class_index && !is_static) %]
+            [% IF index_widgets.size > 1 %]
             data-layout='{"leftlist": ["browse", "summary"], "rightlist": ["basic_search"], "leftwidth": "50"}'
+            [% ELSE %]
+            data-layout = '{"hash": "0--10"}'
+            [% END %]
           [% END %]
         [% ELSE %]
             data-layout='{"leftlist": ["
@@ -161,7 +165,6 @@
       [% END %]
 
   >
-
     <div class="sortable left one-column">
       [% FOREACH w IN widgets -%]
           [% IF w.type == "title"; NEXT; END; %]

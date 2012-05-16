@@ -936,7 +936,7 @@ sub widget_class_index_GET {
     # No boiler since this is an XHR request.
     $c->stash->{noboiler} = 1;
 
-    if($widget=~m/browse|basic_search|summary|downloads/){
+    if($widget=~m/browse|basic_search|summary|downloads|data_unavailable/){
       $c->stash->{template}="shared/widgets/$widget.tt2";
     }elsif($class eq 'all'){
       $c->stash->{template} = "species/$species/$widget.tt2";
