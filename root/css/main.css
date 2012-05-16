@@ -2496,6 +2496,7 @@ div.detail-box div.field div.field-content{
     border-right: 5px solid transparent;
     visibility: hidden;
     top: -7px;
+    right: 8px;
 }
 
 .star[tip]:before {
@@ -2508,7 +2509,8 @@ div.detail-box div.field div.field-content{
 }
 
 .tl[tip]:before {
-  left:5px;
+  left:8px;
+  right:auto;
 }
 
 [tip]:after {
@@ -2517,7 +2519,7 @@ div.detail-box div.field div.field-content{
     color: white;
     font-size:9pt;
     line-height:11pt;
-    padding:0.5em;
+    padding:6px;
     top: -33px;
     right:0px;
     background: #000;
