@@ -247,7 +247,7 @@ END;
 [% END %]
 
 [% MACRO get_star_id(id) BLOCK;
-  id.remove('[:/ &\.\[\]]');
+  id.remove('[:/ &\.\[\]\+]');
   END %]
 
 [% MACRO make_star(wbid, href) BLOCK;
@@ -479,20 +479,20 @@ END; %]
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';
-		FOREACH item IN cell;
-		  cell_content(item);
-		  IF !item.evidence.defined && !loop.last;
-		      '<br />';
-		  END;
-		END;
+            FOREACH item IN cell;
+              cell_content(item);
+              IF !item.evidence.defined && !loop.last;
+                  '<br />';
+              END;
+            END;
 	      END;
 	  ELSE;
-	      FOREACH item IN cell;
-		cell_content(item);
-		IF !item.evidence.defined && !loop.last;
-		    '<br />';
-		END;
-	      END;
+        FOREACH item IN cell;
+          cell_content(item);
+          IF !item.evidence.defined && !loop.last;
+              '<br />';
+          END;
+        END;
 	  END;
 	ELSE;
 	   cell;
