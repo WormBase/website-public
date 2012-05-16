@@ -453,20 +453,29 @@ END; %]
 END; %]
 
 [% MACRO cell_content(cell) BLOCK;
-	IF cell.species.defined;
-	    '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
-	ELSIF cell.class.defined;
-	    IF cell.label.defined;
-	      tag2link(cell);
-	    ELSE;
-	      searchlink(cell.class, cell.id, cell.id);
-	    END;
-	ELSIF cell.evidence.defined;
-	    evidence(cell.evidence,table_name _ index, cell.text, 'details');
-	ELSIF cell.interaction.defined;
-	    interaction_cell(cell);
-	ELSIF cell.genotype.defined;
-	    show_genotype(cell.genotype);
+    IF ref(cell) == 'HASH';
+      IF cell.species.defined;
+          '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
+      ELSIF cell.class.defined;
+          IF cell.label.defined;
+            tag2link(cell);
+          ELSE;
+            searchlink(cell.class, cell.id, cell.id);
+          END;
+      ELSIF cell.evidence.defined;
+          evidence(cell.evidence,table_name _ index, cell.text, 'details');
+      ELSIF cell.interaction.defined;
+          interaction_cell(cell);
+      ELSIF cell.genotype.defined;
+          show_genotype(cell.genotype);
+      ELSE;
+      # assumes that hash passed to cell should be output as the key followed by its value
+      # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
+      FOREACH key IN cell.keys.sort;
+        "$key";
+        cell_content(cell.$key);
+      END;
+      END;
 	ELSIF ref(cell) == 'ARRAY';
 	  IF cell.size > 10;
 	      WRAPPER toggle title=cell.size _ ' Results';
@@ -484,13 +493,6 @@ END; %]
 		    '<br />';
 		END;
 	      END;
-	  END;
-	ELSIF ref(cell) == 'HASH';
-	  # assumes that hash passed to cell should be output as the key followed by its value
-	  # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
-	  FOREACH key IN cell.keys.sort;
-	    "$key";
-	    cell_content(cell.$key);
 	  END;
 	ELSE;
 	   cell;
