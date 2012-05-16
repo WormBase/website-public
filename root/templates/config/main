@@ -40,8 +40,12 @@
    MACRO tags2link(data, separator, expandable_title) BLOCK;
       result = [];
       IF data.keys;
-        FOREACH key IN data.sort;
-          result.push(tag2link(data.$key));
+        IF data.class.defined;
+          result.push(tag2link(data));
+        ELSE;
+          FOREACH key IN data.sort;
+            result.push(tag2link(data.$key));
+          END;
         END;
       ELSE;
         FOREACH item IN data;

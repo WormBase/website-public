@@ -728,9 +728,8 @@ sub source_clone {
     my ($self) = @_;
      
     my $clone = $self ~~ 'Clone' ||( $self->sequence ? $self->sequence->Clone : undef );
-    my @clones = $clone ? map {$self->_pack_obj($_)} $clone : undef;
     return { description => 'The Source clone of the sequence',
-	     data        =>  @clones ? \@clones : undef};
+	     data        =>  $clone ? map {$self->_pack_obj($_)} $clone : undef};
 }
 
 ############################################################
