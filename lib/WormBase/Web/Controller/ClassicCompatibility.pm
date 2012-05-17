@@ -42,8 +42,11 @@ sub get :Local Args(0) {
 
 
 # Capture other old URLs like /db/misc, /db/gene, etc
-sub misc :Path('/db') :Args(2)  {
-    my ($self, $c, $type, $cls) = @_;
+sub misc :Path('/db') Args  {
+    my ($self, $c, @args) = @_;
+    my $type = shift @args;
+    my $cls = shift @args;
+    my $species = shift @args;
     $c->stash->{template} = 'shared/legacy.tt2';
 
     my $class = lc ($cls || $c->req->param('class'));
@@ -54,7 +57,7 @@ sub misc :Path('/db') :Args(2)  {
     my $url;
 
     if($class eq 'gbrowse'){
-      my $species = $c->req->param('source');
+      $species ||= $c->req->param('source');
       $species = "c_$species" unless $species =~ m/_/;
       $url = $c->uri_for('/tools', 'genome', $class, $species, $name)->path;
     }elsif($name && ($name ne '*')){
