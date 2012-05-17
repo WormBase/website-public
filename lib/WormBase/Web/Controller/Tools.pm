@@ -59,7 +59,6 @@ sub tools :Path Args {
     my ($data, $cache_server);
 
     # Does the data already exist in the cache?
-
     if ($action eq 'run' && $tool =~/aligner/ && !(defined $c->req->params->{Change})) {
         my $cache_id ='tools_'.$tool.'_'.$c->req->params->{sequence};
         ($data, $cache_server) = $c->check_cache($cache_id, 'filecache');
@@ -72,8 +71,10 @@ sub tools :Path Args {
         else {
             $c->stash->{cache} = $cache_server if($cache_server);
         }
-    }
-    elsif ($tool =~/aligner/) {
+    }elsif ($action eq 'run' && (keys %{$c->req->params} < 1)){
+          $c->res->redirect($c->uri_for('/tools', $tool)->path, 307);
+          return;
+    }elsif ($tool =~/aligner/) {
         $data = $api->_tools->{$tool}->$action($c, $c->req->params);
     }
     else {
