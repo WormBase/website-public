@@ -469,6 +469,7 @@ END; %]
       ELSIF cell.genotype.defined;
           show_genotype(cell.genotype);
       ELSE;
+
       # assumes that hash passed to cell should be output as the key followed by its value
       # e.g. evidence column of phenotypes widget of gene unc-26 contains alleles, xgenes, and rnai lists in one cell
       FOREACH key IN cell.keys.sort;
@@ -1169,7 +1170,7 @@ END;
 
   # is_static refers to pages that don't handle objects (/resources/reagents)
   IF is_class_index && !is_static;
-    index_widgets = c.config.sections.species_list.$species ? ((species == 'all')||(class == 'all')) ? ['browse', 'basic_search', 'summary'] : ['browse', 'basic_search'] : ['data_unavailable'];
+    index_widgets = (c.config.sections.species_list.$species || !species) ? ((species == 'all')||(class == 'all')) ? ['browse', 'basic_search', 'summary'] : ['browse', 'basic_search'] : ['data_unavailable'];
 
 
     FOREACH widget_name IN index_widgets;
