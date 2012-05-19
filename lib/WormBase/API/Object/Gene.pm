@@ -1717,7 +1717,7 @@ sub _process_variation {
 			}
 		    }  elsif ($val =~ /nonsense/i) {
 			# "Position" here really one of Amber, Ochre, etc.
-			($aa_position,$aa_change) = $val->right->row;
+			($aa_position,$aa_change) = eval { $val->right->row; };
 		    }
 		}
 	    }
