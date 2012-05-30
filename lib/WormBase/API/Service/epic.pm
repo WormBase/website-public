@@ -43,7 +43,7 @@ sub index {
 }
 
 sub run {
-    my ($self, $param) = @_;
+    my ($self, $c, $param) = @_;
     $request_name = $param->{'name'};
     $request_class = $param->{'class'};
     $request_tool = $param->{'tool'};
@@ -56,6 +56,14 @@ sub run {
     my ($obj, $bestname, $img, $map, $panel, $msg);
 
     $DB  = $self->ace_dsn->dbh;
+
+    if ($request_class =~ /gene/i) {
+	my $api    = $c->model('WormBaseAPI');
+	$request_name =~ s/-/_/g;	
+	my $object = $api->xapian->_get_tag_info($c, $request_name, lc($request_class) ,1);
+	$request_name = $object->{name}->{id};
+    }
+
     if ($request_name && $request_class) { $obj = $DB->fetch(-class => $request_class, -name  => $request_name, -fill => 1) }
 
     if ($obj && $request_tool eq 'gmap') {

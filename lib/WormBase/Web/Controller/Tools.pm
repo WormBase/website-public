@@ -76,8 +76,9 @@ sub tools :Path Args {
           return;
     }elsif ($tool =~/aligner/) {
         $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-    }
-    else {
+    } elsif ($tool =~ /epic/) {
+        $data = $api->_tools->{$tool}->$action($c,$c->req->params);
+    } else {
         $data = $api->_tools->{$tool}->$action($c->req->params);
     }
  
