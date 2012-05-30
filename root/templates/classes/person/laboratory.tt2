@@ -18,7 +18,7 @@ END;
 
 WRAPPER $field_block title="Previous affiliations" key="previous_laboratories";
       FOREACH item IN fields.previous_laboratories.data;
-         tag2link(item.0) _ '(' _ tag2link(item.1) _ ')';
+         tag2link(item.0) _ ' (' _ tag2link(item.1) _ ')';
 	 UNLESS loop.last; ', '; END;
       END;
 END;
