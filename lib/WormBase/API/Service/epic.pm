@@ -35,7 +35,7 @@ has 'image_dir' => (
 
 
 sub index {
-    my ($self, $param) = @_;
+    my ($self, $c, $param) = @_;
     my $data = {
 	tool => $param->{'tool'},
     };
