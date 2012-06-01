@@ -76,7 +76,7 @@ sub tools :Path Args {
           return;
     }elsif ($tool =~/aligner/) {
         $data = $api->_tools->{$tool}->$action($c, $c->req->params);
-    } elsif ($tool =~ /epic/) {
+    } elsif ($tool =~ /epic/ || $tool =~ /gmap/) {
         $data = $api->_tools->{$tool}->$action($c,$c->req->params);
     } else {
         $data = $api->_tools->{$tool}->$action($c->req->params);
