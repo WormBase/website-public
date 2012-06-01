@@ -1,6 +1,5 @@
 [% 
 
-    'this is the lcoations widget';    
     class = object.name.data.class FILTER lower;
     # Transcripts lone class not placed on genetic map
     UNLESS class.match('transcript');
