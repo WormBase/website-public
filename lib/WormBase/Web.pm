@@ -3,7 +3,8 @@ package WormBase::Web;
 use Moose;
 use namespace::autoclean;
 use Hash::Merge;
-use Catalyst::Log::Log4perl;
+#use Catalyst::Log::Log4perl;
+use Log::Log4perl::Catalyst;
 use Log::Any::Adapter;
 use HTTP::Status qw(:constants :is status_message);
 
@@ -142,7 +143,8 @@ sub _setup_log4perl {
     my $c = shift;
     my $path = $c->path_to('conf', 'log4perl',
                            $c->config->{installation_type} . '.conf');
-    $c->log(Catalyst::Log::Log4perl->new($path->stringify));
+    $c->log(Log::Log4perl::Catalyst->new($path->stringify));
+#    $c->log(Catalyst::Log::Log4perl->new($path->stringify));
     Log::Any::Adapter->set({ category => qr/^CHI/ }, 'Log4perl');
 }
 
