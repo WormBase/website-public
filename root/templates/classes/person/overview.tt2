@@ -49,8 +49,7 @@ WRAPPER $field_block title="Updates";
 END;
 
 
-
-IF (fields.previous_addresses.data.defined);
+IF (fields.previous_addresses.data.defined && fields.previous_addresses.data.size > 0);
    WRAPPER toggle title="Previous Addresses";
 
      FOREACH address IN fields.previous_addresses.data;
