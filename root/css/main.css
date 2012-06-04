@@ -2542,7 +2542,6 @@ div.detail-box div.field div.field-content{
 
 [tip]:hover:before, [tip]:hover:after {
     visibility: visible;
-    -moz-transition: visibility 0s linear .3s;
 }
 
 

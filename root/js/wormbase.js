@@ -1131,7 +1131,7 @@ var Layout = (function(){
       hiddenContainer = $jq('<span id="breadcrumbs-hide"></span>');
       hiddenContainer.append(hidden).children().after(' &raquo; ');
 
-      bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e " tip="exapand"></span>').append(hiddenContainer).append(shown);
+      bc.append('<span id="breadcrumbs-expand" class="ui-icon-large ui-icon-triangle-1-e tl" tip="exapand"></span>').append(hiddenContainer).append(shown);
       bc.children(':last').addClass("page-title").before(" &raquo; ");
     
       expand = $jq("#breadcrumbs-expand");
@@ -1407,6 +1407,7 @@ var Scrolling = (function(){
             url = is.attr("url"),
             feed = is.closest('#issues-new'),
             name = feed.find("#name"),
+            dc = feed.find("#desc-content"),
             email = feed.find("#email");
         if (!validate_fields(email, name))
           return;
@@ -1414,7 +1415,7 @@ var Scrolling = (function(){
           type: 'POST',
           url: rel,
           data: {title:feed.find("#issue-title option:selected").val(), 
-                content: feed.find("#issue-content").val(), 
+                content: feed.find("#issue-content").val() + (dc.length > 0 ? '<br />What were you doing?: <br />&nbsp;&nbsp;' + dc.val() : ''), 
                 name: name.val(),
                 email: email.val(),
                 url: url || issue.url},

@@ -24,12 +24,22 @@
       Error Message:&#10;
              [% c.error.join('<br />').replace('\n','<br />') %]
    </textarea>
+   <br />
+   <br />
+   <p>
+      What were you doing? (optional):
+   </p>
+
+   <textarea id="desc-content" rows="3" cols="80">
+   </textarea>
+
    <div id="issue-submit-box" style="float:right;margin:1em;">
           <input onClick="history.back()" type='submit' value='Go Back' />   
           <input onClick="WB.issue.submit($jq(this));" type='submit' value='Send Report' class="issue-submit" page="[% page %]" url="[% url %]" rel="[% c.uri_for('/rest','feed','issue').path  %]" />     
    </div>
-  </div>
-   <p>
+
+   <p><br />
       You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create an issue on github') %]
     </p>
+  </div>
 </div>
