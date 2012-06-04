@@ -17,6 +17,14 @@ sub run :Path('run') :Args(0) {
     $stash->{result_type} = $params->{'result-type'};
     $stash->{query_type}  = $params->{'query-type'} || 'AQL';
     $stash->{query}       = $params->{'ql-query'};
+    
+    # Log queries for debugging reasons.
+    $c->log->info(
+	$stash->{query_type}
+	. ' submitted: "'
+	. $stash->{query}
+	. '" ; from '
+	. $c->req->address);
 
     unless ($params->{'ql-query'}) {
         $stash->{error} = 'No query. Please enter a query';

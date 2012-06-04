@@ -73,7 +73,10 @@
         ELSIF (class == 'picture');
            c.uri_for('/rest', 'widget', 'picture', id, 'lightbox').path;
         ELSIF (class == 'genomic_location');
-           c.uri_for('/tools', 'genome', 'gbrowse', id).path;
+	     # In this context, uri_for() is escaping the /? in id, breaking the URL.
+	     # Would be preferable to modify creation of id, then pass it in as a query parameter perhaps?
+#           c.uri_for('/tools', 'genome', 'gbrowse', id).path;
+	    '/tools/genome/gbrowse/' _ id;
         ELSIF !(c.config.sections.resources.$class.defined);
           c.uri_for('/search', 'all', id).path;
         ELSE;

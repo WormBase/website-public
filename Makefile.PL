@@ -23,7 +23,7 @@ requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::Controller::CGIBin';
 requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Model::Xapian::Result';
-requires 'Catalyst::Log::Log4perl';
+#requires 'Catalyst::Log::Log4perl';
 requires 'Catalyst::Plugin::Authentication';          
 requires 'Catalyst::Plugin::Authorization::Roles';          
 requires 'Catalyst::Plugin::Cache';                # Cache interface
@@ -72,12 +72,13 @@ requires 'Facebook::Graph';                                      #
 requires 'GD';                                                   #
 requires 'GD::SVG';                                              #
 requires 'Hash::Merge';
-#requires 'GO::Parser';                                           #
-#requires 'GO::Utils';                                            #
-#requires 'go-db-perl';                                           #
+#requires 'GO::Parser';                                          #
+#requires 'GO::Utils';                                           #
+#requires 'go-db-perl';                                          #
 requires 'JSON';                                                 #
 requires 'List::MoreUtils';                                      #
 requires 'Log::Log4perl';                                        #
+requires 'Log::Log4perl::Catalyst';                              #
 requires 'Math::BigInt::GMP';   # will need to install gmp.h header file first(on Debian/Ubuntu is the libgmp3-dev package)
 requires 'Memcached::libmemcached';                              #
 requires 'Module::Install';                                      #
