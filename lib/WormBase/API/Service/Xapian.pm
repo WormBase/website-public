@@ -218,12 +218,14 @@ sub _get_tag_info {
   my ($it,$res)= $self->search_exact($c, $id, $class);
   if($it->{pager}->{total_entries} > 0 ){
     my $doc = @{$it->{struct}}[0]->get_document();
-    if($doc->get_value(1) =~ m/$id/g){
+    # Removed with express permission from AC.  Don't blame me!
+#    if($doc->get_value(1) =~ m/$id/g || $doc->get_value(6) =~ m/$id/g){
+#   if($doc->get_value(1) =~ m/$id/g){
       if($fill){
         return $self->_get_obj($c, $doc, $footer);
       }
       return $self->_pack_search_obj($c, $doc);
-    }
+#   }
   }
   my $tag =  { id => $id,
            label => $id,

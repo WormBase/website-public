@@ -41,6 +41,35 @@ has 'address_data' => (
     }
     );
 
+
+has 'previous_address_data' => (
+    is   => 'ro',
+    isa  => 'ArrayRef',	
+    lazy => 1,
+    default => sub {	
+	my $self = shift;
+	my $object = $self->object;
+	my @entries;
+	foreach my $entry ($object->Old_address) {
+	    my %address;
+	    $address{date_modified} = "$entry";
+	    foreach my $tag ($entry->col) {
+		if ($tag =~ m/street|email|office/i) {		
+		    my @data = map { $_->name } $tag->col;
+		    $address{lc($tag)} = \@data;
+		} else {
+		    $address{lc($tag)} =  $tag->right->name;
+		}
+	    }
+	    push @entries,\%address
+	}
+#	return \%address;
+	return \@entries;
+    }
+    );
+
+
+
 has 'publication_data' => (
     is      => 'ro',
     isa     => 'HashRef',
@@ -469,7 +498,7 @@ other phone numbers of the person.
 
 =item PERL API
 
- $data = $model->street_other_phone();
+ $data = $model->other_phone();
 
 =item REST API
 
@@ -646,6 +675,68 @@ sub web_page {
 
 
 
+=head3 previous_addresses
+
+This method returns a data structure containing the 
+previous addresses of the person, if known, with keys
+of street address, country, institution, email, and date_modified.
+
+=over
+
+=item PERL API
+
+ $data = $model->previous_addresses();
+
+=item REST API
+
+B<Request Method>
+
+GET
+
+B<Requires Authentication>
+
+No
+
+B<Parameters>
+
+WBPerson ID
+
+B<Returns>
+
+=over 4
+
+=item *
+
+200 OK and JSON, HTML, or XML
+
+=item *
+
+404 Not Found
+
+=back
+
+B<Request example>
+
+curl -H content-type:application/json http://api.wormbase.org/rest/field/person/WBPerson242/previous_addresses
+
+B<Response example>
+
+<div class="response-example"></div>
+
+=back
+
+=cut
+
+sub previous_addresses {
+    my $self      = shift;
+    my $addresses = $self->previous_address_data;
+    return { data        => $addresses || undef,
+	     description => 'previous addresses of the person'}; 
+}
+
+
+
+
 #######################################
 #
 # The Laboratory Widget
@@ -724,6 +815,7 @@ sub previous_laboratories {
 		 data        => (@data > 0) ? \@data : undef};
     return $data;		     
 }
+
 
 =head3 strain_designation
 
