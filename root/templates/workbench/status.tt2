@@ -1,4 +1,4 @@
-<a class="bench-update" 
+<a class="bench-update star" 
     wbid="[% c.stash.star.wbid %]" 
     ref="[% c.uri_for('/rest/workbench').path %]" 
     name="[% c.stash.star.name %]" 
