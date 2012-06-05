@@ -509,7 +509,7 @@
      var systemMessage = $jq(".system-message"),
          notifications = $jq("#notifications");
       if(action == 'show'){
-        systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
+//         systemMessage.show().css("display", "block").animate({height:"20px"}, 'slow');
         notifications.css("top", "20px");
         Scrolling.set_system_message(20); 
       }else{

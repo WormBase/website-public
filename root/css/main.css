@@ -1249,10 +1249,10 @@ div#header .release_date { }
 }
 
 .system-message {
-  height:0px;
   width:100%;
   padding: 0.3em 0em 0.2em;
-  display:none;
+  height:20px;
+  display:block;
 }
 
 /* user warnings */
