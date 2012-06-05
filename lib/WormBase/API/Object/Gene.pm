@@ -830,12 +830,11 @@ B<Response example>
 
 sub sequence_name {
     my $self     = shift;
-    my $object   = $self->object;
-    my $sequence = $object->Sequence_name;
+    my $sequence = $self->object->Sequence_name;
     # Not all genes have a sequence name (sch as those known only by mutation.)
     # This check is MOSTLY to handle relatively rare genes that have been killed.
     return { description => 'the primary corresponding sequence name of the gene, if known',
-	     data        => $sequence ? $self->_pack_obj($sequence->Sequence_name_for, $sequence && "$sequence") : 'unknown'};
+         data        => $sequence ? $sequence && "$sequence" : 'unknown' };
 }
 
 
