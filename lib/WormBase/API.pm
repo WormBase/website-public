@@ -199,10 +199,13 @@ sub fetch {
     my ($object, $class, $aceclass, $name, $nowrap)
         = @{$args}{qw(object class aceclass name nowrap)};
 
+    $name =~ s/\?/\\\?/g; #escape question mark before fetch
+
     if ($object) {
         $class = $self->modelmap->ACE2WB_MAP->{fullclass}->{$object->class};
         $self->log->debug("[API::fetch()]", " object $object, inferred WB class $class");
     }
+
     else {
         my $service_dbh = $self->_services->{$self->default_datasource}->dbh || return 0;
 
