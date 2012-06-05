@@ -945,10 +945,10 @@ var Layout = (function(){
           tWidth = wHolder.innerWidth(),
           leftWidth = sColumns ? 100 : leftWidth;
       if(leftWidth>95){
-        sortable.removeClass('table-columns').addClass('one-column');
+        wHolder.removeClass('table-columns').addClass('one-column');
         rightWidth = leftWidth = 100;
       }else{
-        sortable.addClass('table-columns').removeClass('one-column');
+        wHolder.addClass('table-columns').removeClass('one-column');
       }
       sortable.filter(".left").css("width",leftWidth + "%");
       sortable.filter(".right").css("width",rightWidth + "%");

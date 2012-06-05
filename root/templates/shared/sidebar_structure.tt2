@@ -165,7 +165,7 @@
       [% END %]
 
   >
-    <div class="sortable left one-column">
+    <div class="sortable left">
       [% FOREACH w IN widgets -%]
           [% IF w.type == "title"; NEXT; END; %]
           <li id="[% w.id %]" class="widget">
@@ -186,7 +186,7 @@
           </li>
 [% END %]
     </div>
-    <div class="sortable right one-column"></div>
+    <div class="sortable right"></div>
 
   </div>
 <!--   </div> -->
