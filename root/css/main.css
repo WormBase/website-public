@@ -1949,6 +1949,7 @@ li.visible div.widget-container {
   width:100%;
   text-align:center;
   padding:1em 0 0;
+  height:150px;
 }
 
 /* colour changes for the different types of widgets */
@@ -2349,33 +2350,31 @@ div#google-map {
   border-left:1px solid #CCC;
   padding:1em 1.5em 0.5em 0.7em;
   table-layout:fixed;
-
+  display:table;
 }
 
-#outer-widget-holder{
-  overflow:hidden;
-  position:relative;
-  height:100%;
+#widget-holder.one-column {
+  display:block;
 }
 
-#widget-holder.title-padding{
+#widget-holder.title-padding {
   padding-top: 1.9em;
 }
 
-.sortable{
+.sortable {
   width:100%;
   min-width:15em;
   margin:0;
 }
 
-.one-column {
+.one-column .sortable {
   display:inline;
   float:left;
   position:relative;
   width:100%;
 }
 
-.table-columns {
+.table-columns .sortable{
   display:table-cell;
   table-layout:fixed;
   float:none;
