@@ -69,7 +69,7 @@ sub search :Path('/search') Args {
       if(( !($type=~/all/) || $c->req->param("redirect")) && !($c->req->param("all"))){
       # if it finds an exact match, redirect to the page 
         my ($it,$res)= $api->xapian->search_exact($c, $tmp_query, $search);
-        if($it->{pager}->{total_entries} == 1 ){
+        if(@{$it->{struct}} == 1 ){
           my $o = @{$it->{struct}}[0];
           my $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
           unless($query=~m/$o->get_document->get_value(1)/){ $url = $url . "?query=$query";}
