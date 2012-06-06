@@ -1115,7 +1115,7 @@ END;
       IF class == 'all';
         section_fetch = c.config.sections.species_list.$species;
       ELSE;
-        section_fetch = c.config.sections.species_list.$species.$class;
+        section_fetch = c.config.sections.species.$class;
       END;
     ELSE;
         section_fetch = c.config.sections.$section;
