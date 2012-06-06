@@ -1555,23 +1555,23 @@ sub natural_isolates {
     my @strains = $dsn->fetch(-query => "find Strain Wild_isolate");
     my @data;
     foreach (@strains) {
-	my ($lat,$lon) = $_->GPS->row;
-	my $place     = $_->Place;
-	my $landscape = $_->Landscape;
-	my $substrate = $_->Substrate;
-	$substrate =~ s/_/ /g;
-	$landscape =~ s/_/ /g;
-	my $isolated  = $_->Isolated_by;
-	my $species   = $_->Species;
-	push @data,{ species     => "$species" || undef,
-		     place       => "$place" || undef,
-		     strain      => $self->_pack_obj($_),
-		     latitude    => "$lat" || undef,
-		     longitude   => "$lon" || undef,
-		     isolated_by => $isolated ? $self->_pack_obj($isolated,$isolated->Standard_name) : undef,
-		     landscape   => "$landscape" || undef,
-		     substrate   => "$substrate" || undef,
-	};
+      my ($lat,$lon) = $_->GPS->row if $_->GPS;
+      my $place     = $_->Place;
+      my $landscape = $_->Landscape;
+      my $substrate = $_->Substrate;
+      $substrate =~ s/_/ /g;
+      $landscape =~ s/_/ /g;
+      my $isolated  = $_->Isolated_by;
+      my $species   = $_->Species;
+      push @data,{ species     => "$species" || undef,
+              place       => "$place" || undef,
+              strain      => $self->_pack_obj($_),
+              latitude    => "$lat" || undef,
+              longitude   => "$lon" || undef,
+              isolated_by => $isolated ? $self->_pack_obj($isolated,$isolated->Standard_name) : undef,
+              landscape   => "$landscape" || undef,
+              substrate   => "$substrate" || undef,
+      };
     }
     
     return { description => 'a list of wild isolates of strains contained in WormBase',
