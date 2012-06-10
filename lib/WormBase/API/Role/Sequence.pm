@@ -363,8 +363,8 @@ sub corresponding_all {
     my $len_spliced   = 0;
 
     for ( $gff->features('coding_exon') ) {
-
-        if ( $protein->Species =~ /elegans/ ) {
+	# Not all CDSs (history objects mainly) have proteins.
+        if ( $protein && $protein->Species =~ /elegans/ ) {
             next unless $_->source eq 'Coding_transcript';
         }
         else {
@@ -384,13 +384,13 @@ sub corresponding_all {
     $data{length_unspliced} = @lengths ? \@lengths : undef;
 
 
-    my $peplen = $protein->Peptide(2);
+    my $peplen = $protein->Peptide(2) if $protein;
     my $aa     = "$peplen";
     $data{length_protein} = $aa if $aa;
 
     my $gene = $cds->Gene;
 
-    my $type = $sequences[0]->Method;
+    my $type = $sequences[0]->Method if @sequences;
     $type =~ s/_/ /g;
     @sequences =  map {$self->_pack_obj($_, undef, style => ($_ == $object) ? 'font-weight:bold' : 0)} @sequences;
     $data{type} = "$type" || undef;
