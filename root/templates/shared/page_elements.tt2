@@ -889,8 +889,10 @@ END;
 
 
 [% MACRO wb_id_field BLOCK; 
+   IF fields.name.data;
    WRAPPER $field_block title="WormBase ID";
           fields.name.data.id;
+   END;
    END;
 END;
 %]
