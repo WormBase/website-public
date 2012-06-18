@@ -50,7 +50,7 @@ sub misc :Path('/db') Args  {
     $c->stash->{template} = 'shared/legacy.tt2';
 
     my $class = lc ($cls || $c->req->param('class'));
-    my $name            = $c->req->param('name');
+    my $name            = $c->req->param('name') || $c->req->param('query');
 
     #hack for anatomy term objects
     $class = $class . "_term" if ($class eq 'anatomy');
