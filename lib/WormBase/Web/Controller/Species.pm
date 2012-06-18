@@ -115,16 +115,14 @@ sub object_report :Path("/species") Args(3) {
     $c->stash->{query_name} = $name;
     $c->stash->{class}      = $class;
 
-    my $object = $c->model('WormBaseAPI')->fetch({
-        class  => ucfirst($class),
-        name   => $name,
-    }); # error handling?
+    my $api = $c->model('WormBaseAPI');
+    my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    if ( !$object || $object == -1 ){
+    if($object->{id} ne $name || $object->{class} ne lc($class)){
       $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);
       return;
     } else {
-      $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
+      $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
       if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
         $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name)->path, 307);
       }
