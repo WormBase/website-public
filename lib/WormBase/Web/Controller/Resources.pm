@@ -142,14 +142,12 @@ sub _get_report {
     # get static widgets/layout info for this page
     $self->_setup_page($c);
 
-    my $object = $c->model('WormBaseAPI')->fetch({
-        class  => ucfirst($class),
-        name   => $name,
-    }); # error handling?
+    my $api = $c->model('WormBaseAPI');
+    my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  if($object == -1 );
+    $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1")  if($object->{id} ne $name || $object->{class} ne lc($class));
 
-    $c->stash->{object}->{name} = $object->name; # a hack to avoid storing Ace objects...
+    $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
 }
 
 
