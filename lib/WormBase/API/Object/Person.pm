@@ -1478,16 +1478,15 @@ sub meeting_abstracts {
 #    return $data;
 #}
 #
-## Probably don't need to be packed, just displayed as strings
-#sub aka {
-#    my $self = shift;
-#    my $object = $self->object;
-#    my @aka = $object->Also_known_as;    
-#    @aka = map { $self->_pack_obj($_) } @aka;
-#    my $data = { description => 'aliases of the person',
-#		 data        => \@aka || undef };
-#    return $data;
-#}
+# # Probably don't need to be packed, just displayed as strings
+sub aka {
+   my $self = shift;
+   my $object = $self->object;
+   my @aka = map { "$_" } grep { "$_" ne $self->name->{data}{label} } $object->Also_known_as;
+   my $data = { description => 'known aliases',
+		        data        => @aka ? \@aka : undef };
+   return $data;
+}
 
 
 
