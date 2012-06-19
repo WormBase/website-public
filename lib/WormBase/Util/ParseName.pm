@@ -30,16 +30,7 @@ sub parse_name {
 
 sub _parse_name_author {
 	my ($author) = @_;
-	my @nameparts;
-
-	if (my $person = $author->Possible_person) {
-		@nameparts = _parse_name_person($person);
-	}
-
-	# skipping AKAs... will just try to directly parse from obj name
-	@nameparts = _parse_name("$author") unless @nameparts;
-
-	return @nameparts;
+	return _parse_name("$author");
 }
 
 sub _parse_name_person {
