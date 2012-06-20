@@ -228,7 +228,6 @@ sub _get_tag_info {
 #   }
   }
   my $tag =  { id => $id,
-           label => $id,
            class => $class
   };
   $tag = { name => $tag, footer => $footer } if $fill;
