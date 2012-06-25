@@ -1021,7 +1021,8 @@ var Layout = (function(){
     function readHash() {
       if(reloadLayout == 0){
         var hash = location.hash,
-            h = decodeURI(hash).match(/^[#](.*)$/)[1].split('-');
+            arr,
+            h = (arr = decodeURI(hash).match(/^[#](.*)$/)) ? arr[1].split('-') : undefined;
         if(!h){ return; }
         
         var l = h[0],
@@ -1924,7 +1925,7 @@ function setupCytoscape(data, types){
           getScript(name, url, stylesheet, callback);
         }else{
           if(loading){
-            setTimeout(getPlugin(name, url, stylesheet, callback),1);
+            setTimeout(getPlugin(name, url, stylesheet, callback),10);
             return;
           }
           callback(); 
