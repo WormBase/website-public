@@ -1925,8 +1925,7 @@ function setupCytoscape(data, types){
           getScript(name, url, stylesheet, callback);
         }else{
           if(loading){
-            setTimeout(getPlugin(name, url, stylesheet, callback),10);
-            return;
+            return setTimeout(getPlugin(name, url, stylesheet, callback),1);
           }
           callback(); 
         }
