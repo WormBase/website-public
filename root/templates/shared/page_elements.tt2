@@ -9,7 +9,7 @@
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
-    [% IF text.label.defined %]
+    [% IF text.defined('label') %]
 	[% tag2link(text) %]
     [% ELSE %]
 	[% markup("$text"); %]
@@ -30,7 +30,7 @@
 [% END %]
   </div>
   [% ELSE %]
-    [% IF text.label.defined %]
+    [% IF text.defined('label') %]
 	[% tag2link(text) %]
     [% ELSE %]
 	[% markup(text) %]
@@ -242,7 +242,7 @@ END;
   [% IF (c.action.name == 'index'); label = 'home'; 
     ELSIF c.action.name == 'me'; label = 'my wormbase'; 
     END; %]
-  [% is_obj = object.name.data.id.defined %]
+  [% is_obj = object.name.data.defined('id') %]
   [% IF object.name.data.id; label = object.name.data.label; END; %]
 [% END %]
 
@@ -263,7 +263,7 @@ END;
 
     <div class="field
     [%# Add a class to disable / hide empty fields %]
-    [% TRY; IF (key && !fields.$key.data.defined) || disabled; " disabled "; END; END;%]
+    [% TRY; IF (key && !fields.$key.defined('data')) || disabled; " disabled "; END; END;%]
 
         ">
          <div class="field-title">
@@ -454,19 +454,19 @@ END; %]
 
 [% MACRO cell_content(cell) BLOCK;
     IF ref(cell) == 'HASH';
-      IF cell.species.defined;
+      IF cell.defined('species');
           '<span class="species">' _ cell.genus.chunk(1).0 _ '. ' _ cell.species _ '</span>';
-      ELSIF cell.class.defined;
-          IF cell.label.defined;
+      ELSIF cell.defined('class');
+          IF cell.defined('label');
             tag2link(cell);
           ELSE;
             searchlink(cell.class, cell.id, cell.id);
           END;
-      ELSIF cell.evidence.defined;
+      ELSIF cell.defined('evidence');
           evidence(cell.evidence,table_name _ index, cell.text, 'details');
-      ELSIF cell.interaction.defined;
+      ELSIF cell.defined('interaction');
           interaction_cell(cell);
-      ELSIF cell.genotype.defined;
+      ELSIF cell.defined('genotype');
           show_genotype(cell.genotype);
       ELSE;
 
@@ -482,7 +482,7 @@ END; %]
 	      WRAPPER toggle title=cell.size _ ' Results';
             FOREACH item IN cell;
               cell_content(item);
-              IF !item.evidence.defined && !loop.last;
+              IF !item.defined('evidence') && !loop.last;
                   '<br />';
               END;
             END;
@@ -490,7 +490,7 @@ END; %]
 	  ELSE;
         FOREACH item IN cell;
           cell_content(item);
-          IF !item.evidence.defined && !loop.last;
+          IF !item.defined('evidence') && !loop.last;
               '<br />';
           END;
         END;
@@ -504,7 +504,7 @@ END; %]
 [% MACRO empty_widget_check BLOCK;
   not_empty;
   FOREACH field IN fields.keys;
-    IF fields.$field.data.defined;
+    IF fields.$field.defined('data');
       not_empty = 1;
       LAST;
     END;
@@ -824,7 +824,7 @@ END;
    # Presents field in a toggle by default; pass "no_toggle=1" to conceal.
 
    contents = '';
-   IF fields.remarks.data.0.text.defined;
+   IF fields.remarks.data.0.defined('text');
       FOREACH obj IN fields.remarks.data;
         contents = contents _ evidence(obj.evidence, '', obj.text);
       END;
@@ -932,14 +932,14 @@ END;
 
     IF fields.$field_key.data.defined;
       sequence_list = fields.$field_key.data.sequence.defined ? [fields.$field_key.data] : fields.$field_key.data;
-    ELSIF (field_key.sequence.defined || field_key.0.sequence.defined);
-      sequence_list = field_key.sequence.defined ? [field_key] : field_key;
+    ELSIF (field_key.defined('sequence') || field_key.0.defined('sequence'));
+      sequence_list = field_key.defined('sequence') ? [field_key] : field_key;
       field_key = '';
     END;
     sequences = {};
 
     FOREACH obj IN sequence_list;
-      IF obj.sequence.defined;
+      IF obj.defined('sequence');
         seq = obj.sequence;  
         NEXT IF seq.length == 0;
 
