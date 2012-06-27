@@ -51,10 +51,11 @@ END;
       [% IF match %]
         [% type = match.0 %] [% acc=match.1 %]
         "href":"[% site.external_urls.$type.search.replace("%s",acc) %]"
-      [% ELSE %][% line %][% END %]
+      [% ELSE %][%  line.replace('\'', '&rsquo;') %][% END %]
       [% UNLESS loop.last %],[% END %]
     [% END %]
-  '></div>
+  '>
+</div>
 [% END %]
 </div>
 
