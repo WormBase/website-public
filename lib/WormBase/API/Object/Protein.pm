@@ -100,6 +100,20 @@ has 'cds' => (
 # << include central_dogma >>
 
 
+sub _build__common_name {
+    my $self   = shift;
+    my $object = $self->object;
+    # More than one corresponding CDS? Can't be sure of which CDS we're looking at
+    # so to avoid ambiguity, use the actual object identifier.
+    my @corresponding_cds = $object->Corresponding_CDS;
+    if (@corresponding_cds >= 2) {
+	return "$object";
+    } else {
+	# Otherwise use the more human friendly Gene_name.
+	return $object->Gene_name;
+    }
+}
+
 =head3 corresponding_gene
 
 This method returns a data structure containing the 
