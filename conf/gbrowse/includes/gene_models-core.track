@@ -14,14 +14,14 @@ height  = sub {
 	my $feature = shift;
 	return $feature->method =~  /transcript|UTR|coding_exon/i ? 10 : 6;
 	}
-balloon hover  = sub {my $f = shift;
-	                my $name = $f->name; 
-                        my $class = $f->class;
-    		        "url:/gbrowse_popup?name=$name;class=$class;type=CG";
-	} 
-link = sub {
-	my $f = shift;
-	return if $f->method eq 'RNAz';
-	my $name = $f->attributes('Gene') || $f->name;
-	return "/get?name=$name;class=Gene";
-	}
+#balloon hover  = sub {my $f = shift;
+#	                my $name = $f->name; 
+#                        my $class = $f->class;
+#    		        "url:/gbrowse_popup?name=$name;class=$class;type=CG";
+#	} 
+#link = sub {
+#	my $f = shift;
+#	return if $f->method eq 'RNAz';
+#	my $name = $f->attributes('Gene') || $f->name;
+#	return "/get?name=$name;class=Gene";
+#	}

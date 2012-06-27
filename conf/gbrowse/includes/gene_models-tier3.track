@@ -1,4 +1,4 @@
-# Tier2/Tier3 species have slightly different labels and descriptions
+# Tier3 species have slightly different labels and descriptions
 label        = sub {
                	my $f = shift;
 	       	my $label = $f->name;
