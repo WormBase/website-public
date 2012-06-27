@@ -242,7 +242,8 @@ sub genomic_positions {
         if (my ($coords) = $self->_seq2coords($seq)) {
             ($ref, $start, $end) = @$coords;
         }
-        my $position = $self->_gbrowse_url(ref => $ref, start => $start, stop => $end);
+        my $label    = $self->_format_coordinates(ref => $ref, start => $start, stop => $end);
+        my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $end, pad_for_gbrowse => 1);
 
         push(@positions, {
             label      => $position,
