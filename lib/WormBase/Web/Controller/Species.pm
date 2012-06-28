@@ -102,7 +102,7 @@ sub class_index :Path("/species") Args(2) {
 
 sub object_report :Path("/species") Args(3) {
     my ($self,$c,$species,$class,$name) = @_;
-#    $self->_get_report($self, $c, $class, $name);
+
     $c->stash->{section}  = 'species';
     $c->stash->{species}  = $species,
     $c->stash->{class}    = $class;

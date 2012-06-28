@@ -395,8 +395,9 @@ var PfamGraphic =  {
     }
 
     // exit if canvas is not supported
-    if ( this._canvas.getContext === undefined ) {
+    if ( this._canvas.getContext == undefined ) {
       this._throw( "canvas is not supported" );
+      alert('test');
     }
 
     this._context = this._canvas.getContext( "2d" );
@@ -758,7 +759,7 @@ var PfamGraphic =  {
    * @returns {PfamGraphic} reference to this object
    */
   render: function( parent, sequence ) {
-
+    try {
     if ( sequence !== undefined ) {
       this.setSequence( sequence );
     }
@@ -806,6 +807,9 @@ var PfamGraphic =  {
 //     this._addListeners();
 
     return this;
+    } catch (e) {
+     $jq(parent).text(e.name + ': ' + e.message).addClass('ui-state-error');
+    }
   }, // end of "render"
 
   //----------------------------------------------------------------------------
