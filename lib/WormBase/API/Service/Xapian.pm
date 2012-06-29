@@ -214,18 +214,38 @@ sub _split_fields {
 }
 
 sub _get_tag_info {
-  my ($self, $c, $id, $class, $fill, $footer) = @_;
-  my ($it,$res)= $self->search_exact($c, $id, $class);
-  if($it->{pager}->{total_entries} > 0 ){
-    my $doc = @{$it->{struct}}[0]->get_document();
-    # Removed with express permission from AC.  Don't blame me!
-#    if($doc->get_value(1) =~ m/$id/g || $doc->get_value(6) =~ m/$id/g){
-#   if($doc->get_value(1) =~ m/$id/g){
-      if($fill){
-        return $self->_get_obj($c, $doc, $footer);
+  my ($self, $c, $id, $class, $fill, $footer, $aceclass) = @_;
+
+  my $api = $c->model('WormBaseAPI');
+  if ($class) { # WB class was provided
+      $aceclass = $api->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
+                || $api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
+      $aceclass = $class unless $aceclass;
+  }
+
+  if (ref $aceclass eq 'ARRAY') { # multiple Ace classes
+    foreach my $ace (@$aceclass) {
+      my ($it,$res)= $self->search_exact($c, $id, lc($ace));
+      if($it->{pager}->{total_entries} > 0 ){
+        my $doc = @{$it->{struct}}[0]->get_document();
+        my $ret;
+        if($fill){
+          $ret = $self->_get_obj($c, $doc, $footer);
+        }
+        $ret = $self->_pack_search_obj($c, $doc);
+        $ret->{class} = $class;
+        return $ret;
       }
-      return $self->_pack_search_obj($c, $doc);
-#   }
+    }
+  }else{
+    my ($it,$res)= $self->search_exact($c, $id, lc($aceclass));
+    if($it->{pager}->{total_entries} > 0 ){
+      my $doc = @{$it->{struct}}[0]->get_document();
+        if($fill){
+          return $self->_get_obj($c, $doc, $footer);
+        }
+        return $self->_pack_search_obj($c, $doc);
+    }
   }
   my $tag =  { id => $id,
            class => $class
@@ -237,6 +257,7 @@ sub _get_tag_info {
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
+  my $api = $c->model('WormBaseAPI');
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
             class => $doc->get_value(2),
