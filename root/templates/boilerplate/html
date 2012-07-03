@@ -10,7 +10,7 @@
       [% END %]
     </title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
-    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="/css/jquery-ui.css" rel="stylesheet" />
     <link type="text/css" href="/css/main[% c.config.installation_type == 'development' ? '' : '.min' %].css" rel="stylesheet" />
   </head>
 
@@ -29,11 +29,13 @@
         a.attachEvent("onload",d)})(window,document);
     </script>
 
-    <script type="text/javascript" src="https://www.google.com/jsapi?key=[% c.config.google_api_key %]"></script>
-    <script>
-      google.load("jquery", "1.6.2");
-      google.load("jqueryui", "1.8.16");
-    </script>
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.6.2.min.js"><\/script>')</script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+    <script>window.jQuery.ui || document.write('<script src="js/jquery-ui.min.js"><\/script>')</script>
+
     <script>
       var se = document.createElement('script');
       se.src = "/js/wormbase[% c.config.installation_type == 'development' ? '' : '.min' %].js";
