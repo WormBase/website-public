@@ -2,7 +2,7 @@
       [% tag2link(fields.made_by.data) %]
 [% END %]
 
-[% laboratory(title="Laboratory") %]
+[% laboratory(title="Available From") %]
 
 [% WRAPPER $field_block title="Contact" key="contact" %]
       [% tag2link(fields.contact.data) %]
