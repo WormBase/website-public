@@ -63,10 +63,9 @@ sub misc :Path('/db') Args  {
     }elsif($name && ($name ne '*')){
       my $api    = $c->model('WormBaseAPI');
       my $object = $api->fetch({ class => ucfirst $class, name => $name });
-
       if ( !$object || $object == -1 ){
-        my ($it,$res)= $api->xapian->search_exact($c, $name, $class);
-        if($name && ($it->{pager}->{total_entries} > 1 ) && ($name ne '*') && ($name ne 'all')){
+        my ($it,$res)= $api->xapian->search_exact($c, $self->_prep_query($name), $class);
+        if($name && ($it->{pager}->{total_entries} > 0 ) && ($name ne '*') && ($name ne 'all')){
           my $o = @{$it->{struct}}[0];
           $url = $self->_get_url($c, $o->get_document->get_value(2), $o->get_document->get_value(1), $o->get_document->get_value(5));
           unless($name=~m/$o->get_document->get_value(1)/){ $url = $url;}
@@ -93,6 +92,15 @@ sub _get_url {
   my ($self, $c, $class, $id, $species) = @_;
   my $url =  (defined $c->config->{sections}{species}{$class}) ? $c->uri_for('/species',$species || 'all' ,$class,$id) : $c->uri_for('/resources',$class,$id);
   return $url->path;
+}
+
+sub _prep_query {
+  my ($self, $q, $ac) = @_;
+  my $new_q = $q;
+  $new_q =~ s/-/_/g;
+  $new_q =~ s/\s/-/g;
+  $new_q .= " $q" unless( $new_q eq $q || $ac);
+  return $new_q;
 }
 
 
