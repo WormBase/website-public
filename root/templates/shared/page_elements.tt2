@@ -9,7 +9,7 @@
 [% MACRO evidence(data, id, text, label) BLOCK %]
   [% IF data %]
   <div class="evidence [% IF text %] result[% END %]">
-    [% IF text.defined('label') %]
+    [% IF text.exists('label') %]
 	[% tag2link(text) %]
     [% ELSE %]
 	[% markup("$text"); %]
@@ -30,7 +30,7 @@
 [% END %]
   </div>
   [% ELSE %]
-    [% IF text.defined('label') %]
+    [% IF text.exists('label') %]
 	[% tag2link(text) %]
     [% ELSE %]
 	[% markup(text) %]
