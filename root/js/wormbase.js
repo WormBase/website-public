@@ -1254,7 +1254,7 @@ var Scrolling = (function(){
                 if(scrollingDown == 1){body.stop(); scrollingDown = 0; }
             } 
           }
-        }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s"))){ 
+        }else if(count==0 && (titles = sidebar.find(".ui-icon-triangle-1-s:not(.pcontent)"))){ 
           count++; //Add counting semaphore to lock
           //close lowest section. delay for animation. 
           titles.last().parent().click().delay(250).queue(function(){ count--; Scrolling.sidebarMove();});
