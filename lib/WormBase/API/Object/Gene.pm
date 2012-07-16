@@ -577,11 +577,13 @@ B<Response example>
 
 sub gene_class {
     my $self   = shift;
-    my $object = $self->object;  
+    my $gene_class = $self->object->Gene_class;  
     
     return {
     description => "The gene class for this gene",
-    data        => $self->_pack_obj($object->Gene_class) };
+    data        => { tag => $self->_pack_obj($gene_class),
+                     description => $gene_class->Description
+    }};
 }
 
 
