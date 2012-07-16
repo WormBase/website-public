@@ -42,7 +42,7 @@ __PACKAGE__->config( 'Plugin::ConfigLoader' => {
 });
 
 __PACKAGE__->config('Plugin::Session', {
-    expires           => 3600,
+    expires           => 10000000000,
     dbi_dbh           => 'Schema',
     dbi_table         => 'sessions',
     dbi_id_field      => 'session_id',
