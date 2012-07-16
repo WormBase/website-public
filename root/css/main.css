@@ -2441,8 +2441,7 @@ div.description {
 }
 
 div.description div.result{
-  padding:0.5em;
-  margin:-0.5em;
+  display:inline;
 }
 
 #overview .content h2:first-child{
