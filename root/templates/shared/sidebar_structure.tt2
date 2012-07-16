@@ -86,7 +86,7 @@
     [% FOREACH w IN widgets -%]
       [% IF w.type == "title" %]
         </div>
-        <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s"></span>[% w.title %]</li>
+        <li class="title toggle"><span class="ui-icon ui-icon-triangle-1-s [% IF w.title == 'Page Content'; 'pcontent'; END; %]"></span>[% w.title %]</li>
         <div>
       [% ELSE %]
         <li id="nav-[% w.id %]" 
