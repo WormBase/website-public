@@ -216,7 +216,7 @@ sub _split_fields {
 sub _get_tag_info {
   my ($self, $c, $id, $class, $fill, $footer, $aceclass) = @_;
 
-  my $api = $c->model('WormBaseAPI');
+  my $api = (exists $c->{modelmap}) ? $c : $c->model('WormBaseAPI');
   if ($class) { # WB class was provided
       $aceclass = $api->modelmap->WB2ACE_MAP->{class}->{ucfirst($class)}
                 || $api->modelmap->WB2ACE_MAP->{fullclass}->{ucfirst($class)};
@@ -257,7 +257,6 @@ sub _get_tag_info {
 sub _pack_search_obj {
   my ($self, $c, $doc, $label) = @_;
   my $id = $doc->get_value(1);
-  my $api = $c->model('WormBaseAPI');
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
             class => $doc->get_value(2),
