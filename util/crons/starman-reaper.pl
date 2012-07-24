@@ -36,7 +36,7 @@ if (@$processes_killed) {
     
     my $content = prepare_content($processes_killed);
     
-    send_email($content);
+#    send_email($content);
     save_detailed_log($content);
     save_master_log();
 }
