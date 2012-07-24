@@ -73,6 +73,7 @@
             [% IF option == 'title'; NEXT; END; %]
 			[% UNLESS c.config.sections.$title.$option.title; NEXT; END; %]
             [% UNLESS c.config.sections.$title.$option.display_in_dropdown; NEXT; END; %]
+            [% IF ((option == 'epic') && (!c.check_any_user_role("admin", "curator"))); NEXT; END; %]
             <li>
               [% IF option == 'operator' %]
                 <a class="[% option %]" href="javascript:void(0)"  
