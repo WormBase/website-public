@@ -315,7 +315,44 @@ sub history_POST {
       $hist->set_column(visit_count=>(($hist->visit_count || 0) + 1));
       $hist->update;
     }
-    $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
+#     $c->user_session->{'history_on'} = $c->request->body_parameters->{'history_on'} // $c->user_session->{'history_on'};
+}
+
+
+
+sub vote :Path('/rest/vote') :Args(0) :ActionClass('REST') {}
+sub vote_POST {
+    my ($self,$c) = @_;
+
+    my $question_id = $c->request->body_parameters->{'q_id'};
+    my $answer_id = $c->request->body_parameters->{'a_id'};
+    my $session = $self->_get_session($c);
+    my $vote = $c->model('Schema::Votes')->find_or_create({session_id=>$session->id,question_id=>$question_id,answer_id=>$answer_id });
+
+
+    my %total_votes = map {$_->answer_id => $_->get_column('vote_count')} $c->model('Schema::Answers')->search(
+      { 'me.question_id' => $question_id },
+      {
+        join => 'votes', columns => 'answer_id',
+        select   => [ 'answer_id', { count => 'votes.answer_id' } ],
+        as       => [qw/ answer_id vote_count /],
+        group_by => [qw/ answer_id /]
+      }
+    );
+
+    my ($sum, $max);
+    $sum += $_ for (values %total_votes);
+    $max = (sort { $b <=> $a } (values %total_votes))[0];
+
+    $c->response->headers->expires(time);
+    $self->status_ok(
+        $c,
+        entity =>  {
+            total => "$sum",
+            max => "$max",
+            votes => \%total_votes,
+        },
+    );
 }
 
  
@@ -966,6 +1003,17 @@ sub widget_home_GET {
 
     } elsif($widget eq 'discussion') {
       $c->stash->{comments} = $self->_comment_rss($c,2);
+    } elsif($widget eq 'vote') {
+      my @not_questions = map {$_->question_id} $c->model('Schema::Questions')->search({ 'votes.session_id' => $self->_get_session($c)->id },
+                                                              { join => 'votes', columns => 'question_id'});
+      my @questions = $c->model('Schema::Questions')->search({'question_id' => { '-not_in' => \@not_questions }});
+      @questions = $c->model('Schema::Questions')->search() if (@questions == 0);
+
+      my $question = @questions[int(rand(@questions))];
+      my @answers = $question->answers;
+
+      $c->stash->{question} = $question;
+      $c->stash->{answers} = \@answers;
     }
     $c->stash->{template} = "classes/home/$widget.tt2";
     $c->stash->{noboiler} = 1;

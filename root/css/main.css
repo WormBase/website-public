@@ -2877,6 +2877,20 @@ p {
   font-size:3em;
 }
 
+#vote_form .result {
+  float:right; 
+  background:#C2D1DF; 
+  display: none;
+  height: 6px;
+  border:1px solid #999;
+}
+#vote_form .vote_results {
+  float:right;
+}
+
+#vote_form .vote_count {
+  padding: 0 5px;
+}
 
 /*
 CSS Social Sign-in Buttons by Bloop [http://bloop.co] are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
