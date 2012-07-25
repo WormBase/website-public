@@ -15,7 +15,14 @@ Reported by [% reporter_name %] ([% reporter_email %])
 <br>&nbsp;&nbsp;[% page.title %] <span class="fade">([% page.url %])</span>
 </p>
 
+<p>
+This issue has been assigned ticket number: #[% issue_number %]. Track progress on our <a href="[% issue_url %]">issue tracker</a>.
+<p>
+
 <p class="fade">
 This question was reported using the web interface from wormbase.org. 
-<br />You can also <a href="mailto:help@wormbase.org">email us</a> directly or <a href="https://github.com/WormBase/website/issues">create an issue on github</a>
+<p>
+
+<p>
+You can also <a href="mailto:help@wormbase.org">email us</a> directly.
 </p> 
