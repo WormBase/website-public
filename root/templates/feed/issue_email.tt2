@@ -1,12 +1,6 @@
 <style type="text/css">.fade{font-size:.9em;color:#999}</style>
 
 [% USE date %]
-<p>
-Reported by [% reporter_name %] ([% reporter_email %])
-<br />
-<span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
-</span></p>
-
 <p>Question:
 <br>&nbsp;&nbsp;[% content %]
 </p>
@@ -16,13 +10,15 @@ Reported by [% reporter_name %] ([% reporter_email %])
 </p>
 
 <p>
-This issue has been assigned ticket number: #[% issue_number %]. Track progress on our <a href="[% issue_url %]">issue tracker</a>.
+This issue has been assigned ticket number: #[% issue_number %]. Follow progress on our <a href="[% issue_url %]">issue tracker</a>.
 <p>
+
+<p>
+Reported by [% reporter_name %] ([% reporter_email %])
+<br />
+<span class="fade">[% date.format(timestamp, '%d %b %y %H:%M', 'en_GB') %]
+</span></p>
 
 <p class="fade">
-This question was reported using the web interface from wormbase.org. 
-<p>
-
-<p>
-You can also <a href="mailto:help@wormbase.org">email us</a> directly.
+This question was reported via the web interface at wormbase.org. You can also <a href="mailto:help@wormbase.org">email us</a> directly.
 </p> 
