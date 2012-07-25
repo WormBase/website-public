@@ -1113,7 +1113,7 @@ END
   my $json         = new JSON;
 
 # Create a more informative title
-  my $pseudo_title = substr($content,0,20) . '...';
+  my $pseudo_title = substr($content,0,35) . '...';
   my $data = { title => $title . ': ' . $pseudo_title,
 	       body  => $content };
 
