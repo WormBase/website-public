@@ -164,4 +164,27 @@ CREATE TABLE messages (
         timestamp INTEGER
 );
 
+
+DROP TABLE IF EXISTS questions;
+CREATE TABLE questions (
+        question_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        question TEXT
+);
+
+DROP TABLE IF EXISTS answers;
+CREATE TABLE answers (
+        answer_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        question_id INTEGER,
+        answer TEXT
+);
+
+DROP TABLE IF EXISTS votes;
+CREATE TABLE votes (
+        session_id char(72),
+        question_id INTEGER,
+        answer_id INTEGER,
+        PRIMARY KEY (session_id, question_id)
+);
+
+
 INSERT INTO `users_to_roles` VALUES ('1', '1');

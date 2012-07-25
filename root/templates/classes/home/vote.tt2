@@ -1,0 +1,53 @@
+
+<div class="how-to-star ui-corner-all">
+<form id="vote_form">
+<h4>[% question.question %]</h4>
+<br />
+
+[% FOREACH a = answers %]
+  <input type="radio" name="question" value="[% a.answer_id %]" onChange="Vote.vote()" /><span>[% a.answer %]</span><div class="vote_results" id="a_[% a.answer_id %]"><span class="vote_count"></span><span class="result"></span></div><br />
+[% END %]
+
+<br />
+<div id="vote_bottom">
+<input id="vote_submit" type="submit" value="Show results" disabled="1" onclick="return Vote.draw_results();"/>
+</div>
+</form>
+</div>
+
+<script>
+var Vote = (function(){
+  var vote_form = $jq("#vote_form");
+
+  function vote(){
+    vote_form.find("#vote_submit").attr("disabled", false);
+  }
+
+  function draw_results(){
+    var a = vote_form.find("input:radio[name=question]").attr("disabled", true).filter(":checked").val();
+
+    $jq.ajax({
+      type: 'POST',
+      url: '/rest/vote',
+      data: { q_id: [% question.question_id %], a_id: a},
+              dataType: 'json',
+      success: function(data){
+          var max = data.max,
+              votes = data.votes;
+          $jq("#vote_bottom").html('<span id="fade">Total responses: ' + data.total + '</span><br /><br /><a href="/">see the full survey &rarr;</a>');
+          },
+      error: function(request,status,error) {
+            alert(request + " " + status + " " + error);
+          }
+    });
+
+    return false;
+  }
+
+  return {
+    vote: vote,
+    draw_results: draw_results
+  }
+})();
+
+</script>
