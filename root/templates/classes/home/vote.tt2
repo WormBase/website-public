@@ -5,7 +5,10 @@
 <br />
 
 [% FOREACH a = answers %]
-  <input type="radio" name="question" value="[% a.answer_id %]" onChange="Vote.vote()" /><span>[% a.answer %]</span><div class="vote_results" id="a_[% a.answer_id %]"><span class="vote_count"></span><span class="result"></span></div><br />
+  <div style="clear:both">
+    <input type="radio" name="question" value="[% a.answer_id %]" onChange="Vote.vote()" /><span>[% a.answer %]</span>
+    <div class="vote_results" id="a_[% a.answer_id %]"><span class="vote_count"></span><span class="result"></span></div><br />
+  </div>
 [% END %]
 
 <br />
@@ -32,9 +35,16 @@ var Vote = (function(){
       data: { q_id: [% question.question_id %], a_id: a},
               dataType: 'json',
       success: function(data){
-          var max = data.max,
-              votes = data.votes;
-          $jq("#vote_bottom").html('<span id="fade">Total responses: ' + data.total + '</span><br /><br /><a href="/">see the full survey &rarr;</a>');
+            var max = data.max,
+                votes = data.votes,
+                keys = Object.keys(votes);
+            for(var i=-1, k; k = keys[++i];){ 
+              var r = vote_form.find("#a_" + k),
+                  v = votes[k];
+              r.find(".vote_count").html(v);
+              r.find(".result").show().css("width", (200 * (v/max)) + "px");
+            } 
+            $jq("#vote_bottom").html('<span id="fade">Total responses: ' + data.total + '</span><br /><br /><a href="/">see the full survey &rarr;</a>');
           },
       error: function(request,status,error) {
             alert(request + " " + status + " " + error);
