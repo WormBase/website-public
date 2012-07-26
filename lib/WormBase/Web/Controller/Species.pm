@@ -56,6 +56,33 @@ sub species_index :Path('/species') :Args(1)   {
 
     $self->_setup_page($c);
 
+    if ($species) {
+	# Awful portability breaking hack. Need actual species names.
+        my ($g,$s) = split('_',$species);
+	my $api = $c->model('WormBaseAPI');    
+	my $dsn = $api->_services->{'acedb'}->dbh || return 0; # OMG I am so sorry for this.
+	$g = uc($g);
+	my ($string) = $dsn->fetch(
+	    -query => "find Species $g*$s");
+	my ($object) = $dsn->fetch(-class=>'Species',-name=>"$string",-filled=>1);
+
+	if ($object) {	    
+	    my ($assembly) = $object->Assembly;
+	    if ($assembly) {
+		$c->log->warn($assembly);
+		# Pull out various information about the assmebly.
+		my $name = $assembly->Name;
+		my $strain = $assembly->Strain;
+		my $taxid  = $assembly->NCBITaxonomyID;
+		my $first_release = $assembly->First_WS_release;
+		$c->stash->{assembly_name}    = $name ? "$name" : undef;
+		$c->stash->{sequenced_strain} = $strain ? $self->_pack_obj($strain) : undef;
+		$c->stash->{ncbi_taxonomy_id} = $taxid  ? "$taxid" : undef;
+		$c->stash->{first_wormbase_release} = $first_release ? "$first_release" : undef;
+	    }
+	}
+    }
+
     $c->stash->{section}    = 'species';     # Section of the site we're in. Used in navigation.
     $c->stash->{class}      = 'all';
     $c->stash->{is_class_index} = 1;   
