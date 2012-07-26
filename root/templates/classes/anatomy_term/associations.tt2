@@ -6,18 +6,12 @@
     END;
 
     WRAPPER $field_block title="Expression patterns" key="expression_patterns";
-      numExPat = fields.expression_patterns.data.size;
-      IF numExPat > 5;
-	WRAPPER toggle title=fields.expression_patterns.data.size _ ' Expression Patterns';
-	    FOREACH data IN fields.expression_patterns.data;
-		tag2link(data.expression_pattern) _ '<br />';
-	    END;
-        END;
-      ELSE;
-	    FOREACH data IN fields.expression_patterns.data;
-		tag2link(data.expression_pattern) _ '<br />';
-	    END;
-      END;
+       build_data_table(order=['expression_pattern','gene','description'],
+                        columns={ expression_pattern     => 'Expression Pattern',
+	      	              gene      => 'Gene',
+		                 description   => 'Description',
+                               },
+                        key='expression_patterns');
     END;
 
     WRAPPER $field_block title="Gene ontology" key="gene_ontology";
