@@ -327,8 +327,9 @@ sub vote_POST {
     my $question_id = $c->request->body_parameters->{'q_id'};
     my $answer_id = $c->request->body_parameters->{'a_id'};
     my $session = $self->_get_session($c);
-    my $vote = $c->model('Schema::Votes')->find_or_create({session_id=>$session->id,question_id=>$question_id,answer_id=>$answer_id });
-
+    my $vote = $c->model('Schema::Votes')->find({session_id=>$session->id,question_id=>$question_id,answer_id=>$answer_id });
+    $vote->set_column(answer_id=>$answer_id);
+    $vote->update;
 
     my %total_votes = map {$_->answer_id => $_->get_column('vote_count')} $c->model('Schema::Answers')->search(
       { 'me.question_id' => $question_id },
