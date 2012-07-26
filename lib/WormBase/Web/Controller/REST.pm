@@ -9,6 +9,8 @@ use Crypt::SaltedHash;
 use List::Util qw(shuffle);
 use Badge::GoogleTalk;
 use WormBase::API::ModelMap;
+use LWP;
+use JSON;
 use URI::Escape;
 use Text::MultiMarkdown 'markdown';
 use DateTime;
@@ -599,76 +601,93 @@ sub feed_POST {
       }
     }
     elsif($type eq 'issue'){
-    if($c->req->params->{method} || '' eq 'delete'){
-      my $id = $c->req->params->{issues};
-      if($id){
-        foreach (split('_',$id) ) {
-          my $issue = $c->model('Schema::Issue')->find($_);
-          $c->log->debug("delete issue #",$issue->issue_id);
-          $issue->delete();
-          $issue->update();
-        }
-      }
-    }else{
-      my $content    = $c->req->params->{content};
-      my $title      = $c->req->params->{title};
-      my $name = $c->req->params->{name} || $c->user->username;
-      my $email = $c->req->params->{email} || $c->user->primary_email->email;
-      
-      my $url = $c->req->params->{url};
-      my $page = $self->_get_page($c, $url);
+	if($c->req->params->{method} || '' eq 'delete'){
+	    my $id = $c->req->params->{issues};
+	    if($id){
+		foreach (split('_',$id) ) {
+		    my $issue = $c->model('Schema::Issue')->find($_);
+		    $c->log->debug("delete issue #",$issue->issue_id);
+		    $issue->delete();
+		    $issue->update();
+		}
+	    }
+	}else{
+	    my $content    = $c->req->params->{content};
+	    my $title      = $c->req->params->{title};
+	    my $name = $c->req->params->{name} || $c->user->username;
+	    my $email = $c->req->params->{email} || $c->user->primary_email->email;
+	    
+	    my $url = $c->req->params->{url};
+	    my $page = $self->_get_page($c, $url);
+	    
+	    # stop saving issues in database
 
-      # stop saving issues in database
+	    $content =~ s/\n/<br \/>/g;
 
-      $content =~ s/\n/<br \/>/g;
-      $self->_issue_email($c,$page,1,$content, undef, $email, $name, $title);
-      $c->stash->{message} = $title ? "<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p>" : "<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p>" ; 
-      $c->stash->{template} = "shared/generic/message.tt2"; 
-      $c->stash->{redirect} = $url if $title;
-      $c->stash->{noboiler} = 1;
-      $c->forward('WormBase::Web::View::TT');
-    }
+	    my ($issue_url,$issue_title,$issue_number) =
+		$self->_post_to_github($content, $email, $name, $title);
+
+	    $self->_issue_email({ c       => $c,
+				  page    => $page,
+				  new     => 1,
+				  content => $content, 
+				  change  => undef,
+				  reporter_email   => $email, 
+				  reporter_name    => $name, 
+				  title   => $title,
+				  issue_url    => $issue_url,
+				  issue_title  => $issue_title,
+				  issue_number => $issue_number });
+	    
+	    $c->stash->{message} = $title 
+		? qq|<h2>Your question has been submitted</h2> <p>The WormBase helpdesk will get back to you shortly.</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|
+		: qq|<h2>Your report has been submitted</h2> <p>Thank you for helping WormBase improve the site!</p><p>You can track progress on this question on our <a href="$issue_url" target="_blank">issue tracker</a>.</p>|;
+	    $c->stash->{template} = "shared/generic/message.tt2"; 
+	    $c->stash->{redirect} = $url if $title;
+	    $c->stash->{noboiler} = 1;
+	    $c->forward('WormBase::Web::View::TT');
+	}
     }elsif($type eq 'thread'){
-    my $content= $c->req->params->{content};
-    my $issue_id = $c->req->params->{issue};
-    my $state    = $c->req->params->{state};
-    my $severity = $c->req->params->{severity};
-    my $assigned_to= $c->req->params->{assigned_to};
-    if($issue_id) { 
-       my $hash;
-       my $issue = $c->model('Schema::Issue')->find($issue_id);
-       if ($state) {
-          $hash->{status}={old=>$issue->state,new=>$state};
-          $issue->state($state) ;
-       }
-       if ($severity) {
-          $hash->{severity}={old=>$issue->severity,new=>$severity};
-          $issue->severity($severity);
-       }
-       if($assigned_to) {
-          my $people=$c->model('Schema::User')->find($assigned_to);
-          $hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
-          $issue->responsible_id($assigned_to);
+	my $content= $c->req->params->{content};
+	my $issue_id = $c->req->params->{issue};
+	my $state    = $c->req->params->{state};
+	my $severity = $c->req->params->{severity};
+	my $assigned_to= $c->req->params->{assigned_to};
+	if($issue_id) { 
+	    my $hash;
+	    my $issue = $c->model('Schema::Issue')->find($issue_id);
+	    if ($state) {
+		$hash->{status}={old=>$issue->state,new=>$state};
+		$issue->state($state) ;
+	    }
+	    if ($severity) {
+		$hash->{severity}={old=>$issue->severity,new=>$severity};
+		$issue->severity($severity);
+	    }
+	    if($assigned_to) {
+		my $people=$c->model('Schema::User')->find($assigned_to);
+		$hash->{assigned_to}={old=>$issue->responsible_id,new=>$people};
+		$issue->responsible_id($assigned_to);
 #         $c->model('Schema::UserIssue')->find_or_create({user_id=>$assigned_to,issue_id=>$issue_id}) ;
-       }
-       $issue->update();
-        
-       my $user = $self->_check_user_info($c);
-       return unless $user;
-       my $thread  = { owner=>$user,
-              timestamp=>time(),
-       };
-       if($content){
-        $c->log->debug("create new thread for issue #$issue_id!");
-        my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
-        my $thread_id=1;
-        $thread_id = $threads[0]->thread_id +1 if(@threads);
-        $thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
-      }  
-      if($state || $assigned_to || $content){
-          $self->_issue_email($c,$issue->page,$thread,$content,$hash);
-      }
-    }
+	    }
+	    $issue->update();
+	    
+	    my $user = $self->_check_user_info($c);
+	    return unless $user;
+	    my $thread  = { owner=>$user,
+			    timestamp=>time(),
+	    };
+	    if($content){
+		$c->log->debug("create new thread for issue #$issue_id!");
+		my @threads= $issue->threads(undef,{order_by=>'thread_id DESC' } ); 
+		my $thread_id=1;
+		$thread_id = $threads[0]->thread_id +1 if(@threads);
+		$thread= $c->model('Schema::IssueThread')->find_or_create({issue_id=>$issue_id,thread_id=>$thread_id,content=>$content,timestamp=>$thread->{timestamp},user_id=>$user->user_id});
+	    }  
+	    if($state || $assigned_to || $content){
+		$self->_issue_email($c,$issue->page,$thread,$content,$hash);
+	    }
+	}
     }
 }
 
@@ -1097,31 +1116,100 @@ sub _check_user_info {
 
 
 
-sub _issue_email{
-  my ($self,$c,$page,$new,$content,$change,$email, $name, $title) = @_;
-  my $subject='New Issue';
-  my $bcc = $email;
-  $subject = '[wormbase-help] '. $title . ' (' . $name . ')';
+sub _post_to_github {
+  my ($self,$content,$email, $name, $title) = @_;
+  
+  my $url     = 'https://api.github.com/repos/wormbase/website/issues';
+  
+  # Get a new authorization for the website repo,
+  # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
+  
+  # This only needs to be done once.
+  # Already have an OAuth token stored locally outside of our app.
+  #  my $response = $browser->post($url,
+  #				[
+  #				 'scopes' = [ "website" ],
+  #				 'note'   = "wormbase helpdesk cross-post" ]);
+  
+  
+  # Get github issues (not particularly useful)
+  # curl -H "Authorization: token OAUTH-TOKEN" https://api.github.com/repos/wormbase/website/issues
 
-  $c->stash->{page}=$page;
-  $c->stash->{content}=$content;
-  $c->stash->{reporter_name}="$name";
-  $c->stash->{reporter_email}="$email";
-  $c->stash->{noboiler} = 1;
-  $c->stash->{timestamp} = time();
-  $c->log->debug(" send out email to $bcc");
-  $c->stash->{email} = {
-        header => [
-          to      => $c->config->{issue_email},
-          cc => $bcc,
-          "Reply-To" => "$bcc," . $c->config->{issue_email},
-          from    => $c->config->{no_reply},
-          subject => $subject, 
-        ],
-          template => "feed/issue_email.tt2",
-          };
+  # Post a new issue
+  # Surely an easier way to do this.
+  my $path = WormBase::Web->path_to('/') . '/credentials';
+  my $token = `cat $path/github_token.txt`;
+  chomp $token;
+  return unless $token;
+        
+#      curl -H "Authorization: token TOKEN" -X POST -d '{ "title":"Test Issue","body":"this is the body of the issue","labels":["HelpDesk"]}' https://api.github.com/repos/wormbase/website/issues 
    
-  $c->forward( $c->view('Email::Template') );
+  my $req = HTTP::Request->new(POST => $url);
+  $req->content_type('application/json');
+  $req->header('Authorization' => "token $token");
+  
+# Obscure names and emails.
+  my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
+  my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
+        
+$content .= <<END;
+
+
+Reported by: $obscured_name ($obscured_email) (obscured for privacy)
+END
+;
+
+  my $json         = new JSON;
+
+# Create a more informative title
+  my $pseudo_title = substr($content,0,35) . '...';
+  my $data = { title => $title . ': ' . $pseudo_title,
+	       body  => $content };
+
+  my $request_json = $json->encode($data);
+  $req->content($request_json);
+  
+  # Send request, get response.
+  my $lwp       = LWP::UserAgent->new;
+  my $response  = $lwp->request($req);
+  my $response_json = $response->content;
+  my $parsed  = $json->allow_nonref->utf8->relaxed->decode($response_json);
+  
+  my $issue_url = $parsed->{html_url};
+  my $issue_title = $parsed->{title};
+  my $issue_number = $parsed->{number};
+  return ($issue_url,$issue_title,$issue_number);
+}
+
+sub _issue_email{
+#  my ($self,$c,$page,$new,$content,$change,$email, $name, $title) = @_;
+    my ($self,$params) = @_;
+
+    my $c       = $params->{c};
+
+    my $subject ='New Issue';
+    my $bcc     = $params->{repoerter_email};
+    $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
+
+    foreach (keys %$params) {	
+	next if $_ eq 'c';
+	$c->stash->{$_} = $params->{$_};
+    }
+    $c->stash->{noboiler} = 1;
+    $c->stash->{timestamp} = time();
+    $c->log->debug(" send out email to $bcc");
+    $c->stash->{email} = {
+        header => [
+	    to => $c->config->{issue_email},
+	    cc => $bcc,
+	    "Reply-To" => "$bcc," . $c->config->{issue_email},
+	    from    => $c->config->{no_reply},
+	    subject => $subject, 
+	    ],
+	    template => "feed/issue_email.tt2",
+    };
+    
+    $c->forward( $c->view('Email::Template') );
 }
 
 

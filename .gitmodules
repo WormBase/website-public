@@ -1,0 +1,3 @@
+[submodule "credentials"]
+	path = credentials
+	url = git@github.com:WormBase/website-credentials.git
