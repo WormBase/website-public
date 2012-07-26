@@ -45,7 +45,7 @@
           <input onClick="window.location = '[% url %]'" type='submit' value='Cancel' />   
         </div>
       <br /><br />
-      You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create an issue on github') %]
+      You can also <a href="mailto:help@wormbase.org">email us</a> or [% external_link("https://github.com/WormBase/website/issues", 'create and track an issue on Github') %]
       </div>
 
 [% UNLESS c.user_exists %]
