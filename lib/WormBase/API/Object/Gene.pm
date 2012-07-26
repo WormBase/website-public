@@ -93,6 +93,7 @@ sub _build__phenotypes {
 	else { $type_name = $type . ':'; }
 
 	foreach my $obj ($object->$type){
+
 	    my $seq_status = eval { $obj->SeqStatus };
 	    my $label = $obj =~ /WBRNAi0{0,3}(.*)/ ? $1 : undef;
 	    my $packed_obj = $self->_pack_obj($obj, $label, style => ($seq_status ? scalar($seq_status =~ /sequenced/i) : 0) ? 'font-weight:bold': 0,);
@@ -101,7 +102,12 @@ sub _build__phenotypes {
 		foreach ($obj->$obs){
 		    $phenotypes{$obs}{$_}{object} //= $self->_pack_obj($_);
 		    my $evidence = $self->_get_evidence($_);
-		    $evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ] if $type eq 'RNAi_result'; #adds paper info for RNAis
+		    # add some additional information for RNAis
+		    if ($type eq 'RNAi_result') {
+			$evidence->{Paper} = [ $self->_pack_obj($obj->Reference) ];
+			my $genotype = $obj->Genotype;
+			$evidence->{Genotype} = "$genotype" if $genotype;
+		    }
 		    push @{$phenotypes{$obs}{$_}{evidence}{$type_name}}, { text=>$packed_obj, evidence=>$evidence } if $evidence && %$evidence;
 		}
 	    }
