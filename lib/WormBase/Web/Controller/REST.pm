@@ -1188,7 +1188,7 @@ sub _issue_email{
     my $c       = $params->{c};
 
     my $subject ='New Issue';
-    my $bcc     = $params->{repoerter_email};
+    my $bcc     = $params->{reporter_email};
     $subject    = '[wormbase-help] ' . $params->{issue_title} . ' (' . $params->{reporter_name} . ')';
 
     foreach (keys %$params) {	
