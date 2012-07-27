@@ -44,7 +44,7 @@ var Vote = (function(){
               r.find(".vote_count").html(v);
               r.find(".result").show().css("width", (200 * (v/max)) + "px");
             } 
-            $jq("#vote_bottom").html('<span id="fade">Total responses: ' + data.total + '</span><br /><br /><a href="/">see the full survey &rarr;</a>');
+            $jq("#vote_bottom").html('<span id="fade">Total responses: ' + data.total + '</span><br /><br /><a href="[% c.config.survey_link %]">see the full survey &rarr;</a>');
           },
       error: function(request,status,error) {
             alert(request + " " + status + " " + error);
