@@ -1164,7 +1164,9 @@ END
 # Create a more informative title
   my $pseudo_title = substr($content,0,35) . '...';
   my $data = { title => $title . ': ' . $pseudo_title,
-	       body  => $content };
+	       body  => $content,
+	       labels => 'HelpDesk',
+  };
 
   my $request_json = $json->encode($data);
   $req->content($request_json);

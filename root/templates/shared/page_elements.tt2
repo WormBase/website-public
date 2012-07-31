@@ -1193,7 +1193,7 @@ END;
 
     # object pages automatically get the tree display
     IF object.name.data.id; tool_list.unshift('tree'); 
-      IF c.check_any_user_role('admin', 'curator'); tool_list.unshift('epic'); END;
+      IF c.check_any_user_role('admin'); tool_list.unshift('epic'); END;
     ELSIF (is_class_index && (class != 'all')); tool_list.unshift('schema'); END;
 
     IF tool_list.size > 0; 
