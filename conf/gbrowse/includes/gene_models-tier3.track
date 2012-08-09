@@ -1,4 +1,4 @@
-# Tier2/Tier3 species have slightly different labels and descriptions
+# Tier3 species have slightly different labels and descriptions
 label        = sub {
                	my $f = shift;
 	       	my $label = $f->name;
@@ -20,8 +20,9 @@ description = sub {
 	    push @values,$status if $status;
 	    return join("; ",@values); 
 	    }
-link = sub {
-	my $f = shift;
-	my $name = $f->attributes('Gene') || $f->name;
-	return "/get?name=$name;class=Gene";
-	}
+#link = sub {
+#	my $f = shift;
+#	return if $f->method eq 'RNAz';
+#	my $name = $f->attributes('Gene') || $f->name;
+#	return "/get?name=$name;class=Gene";
+#	}

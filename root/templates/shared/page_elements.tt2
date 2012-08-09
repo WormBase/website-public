@@ -777,6 +777,13 @@ END;
               tag2link(fields.laboratory.data.0.representative); 
               ")" ; 
          END;
+
+	 # HACK! On strain pages, link directly to the CGC
+	 IF title == "Available From";
+	     IF	fields.laboratory.data.0.laboratory.label.match('CGC');
+	        '<br /><a href="http://www.cbs.umn.edu/CGC/" target="_blank">Visit the CGC home page</a>.';
+             END;
+	 END;	 
      END;
   END;
 %]

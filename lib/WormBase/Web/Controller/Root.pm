@@ -163,6 +163,7 @@ sub get :Local Args(0) {
 
     my $requested_class = $c->req->param('class');
     my $name            = $c->req->param('name');
+    $name =~ s/^\s+|\s+$//g;
 
     my $api    = $c->model('WormBaseAPI');
     my $ACE2WB = $api->modelmap->ACE2WB_MAP->{class};
@@ -202,31 +203,7 @@ sub get :Local Args(0) {
 
     my $normed_class = lc $class;
 
-    my $url;
-    if (exists $c->config->{sections}->{species}->{$normed_class}) { # /species
-        # Fetch our external model
-        my $api = $c->model('WormBaseAPI');
-
-        my $object;
-
-        # Fetch a WormBase::API::Object::* object
-        if ($name eq '*' || $name eq 'all') {
-            $object = $api->instantiate_empty($class);
-        }
-        else {
-            $object = $api->fetch({
-                class => $class,
-                name  => $name,
-            }) or die "Couldn't fetch an object: $!";
-        }
-
-        my $species = eval { $object->Species } || 'any';
-        $url = $c->uri_for('/species', $species, $normed_class, $name)->path;
-    }
-    else {                      # /report
-        $url = $c->uri_for('/resources', $normed_class, $name)->path;
-    }
-
+    my $url = (exists $c->config->{sections}->{species}->{$normed_class}) ? $c->uri_for('/species', 'all', $normed_class, $name)->path : $c->uri_for('/resources', $normed_class, $name)->path;
     $c->res->redirect($url);
 }
 

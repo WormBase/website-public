@@ -96,32 +96,38 @@ sub _seg2posURLpart {
 
     ($start, $stop) = $adjust_coords->($start, $stop) if $adjust_coords;
 
-    my $position = $self->_gbrowse_url(ref => $ref, start => $start, stop => $stop);
+    # Create padded coordinates suitable for generating a GBrowse image
+    my $position = $self->_format_coordinates(ref => $ref, start => $start, stop => $stop, pad_for_gbrowse => 1);
 
+    # Use the ACTUAL feature coordinates for the label, not the GBrowse coordinates.
     return {
-        label      => $position,
+	label      => $self->_format_coordinates(ref => $ref, start => $start, stop => $stop),
         id         => $self->_parsed_species . '/?name=' . $position, # looks like a template thing...
         class      => 'genomic_location',
         pos_string => $position, # independent from label -- label may change in the future
     };
 }
 
-sub _gbrowse_url {       # should probably be called something else...
-    my ($self, %args) = @_;
-
-    my ($ref, $start, $stop)
-    = $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref abs_start abs_stop)
-    : @args{qw(ref start stop)};
-
+sub _format_coordinates {
+    my ($self,%args) = @_;
+    
+    my ($ref, $start, $stop, $pad_for_gbrowse)
+	= $args{sequence} ? map { $args{sequence}->$_ } qw(abs_ref abs_start abs_stop pad_for_gbrowse)
+	: @args{qw(ref start stop pad_for_gbrowse)};
+    
     if (defined $start && defined $stop && $ref) { # definedness sufficient?
         $ref =~ s/^CHROMOSOME_//;
         ($start, $stop) = ($stop, $start) if $start > $stop;
-        $start = int($start - 0.2*($stop-$start));
-        $stop  = int($stop  + 0.05*($stop-$start));
+	
+	if ($pad_for_gbrowse) {
+	    $start = int($start - 0.2*($stop-$start));
+	    $stop  = int($stop  + 0.05*($stop-$start));
+	}
         $ref .= ":$start..$stop";
     }
     return $ref;
 }
+
 
 =head3 genetic_position
 
