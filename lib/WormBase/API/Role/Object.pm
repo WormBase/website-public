@@ -481,7 +481,7 @@ sub _build_best_blastp_matches {
             hit      => $self->_pack_obj($hit),
             description => $description && "$description",
             evalue      => sprintf("%7.3g", 10**-$best{$_}{score}),
-            percent     => sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
+            percent     => $length == 0 ? '0' : sprintf("%2.1f%%", 100 * ($best{$_}{covered}) / $length),
         };
 
 #[$taxonomy,{label=>"$hit",id=>($id ? "$id" : "$hit"),class=>$class},"$description",

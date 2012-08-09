@@ -41,7 +41,9 @@ WRAPPER $field_block title="Institution" key="institution";
 END;
       
 WRAPPER $field_block title="Web Page" key="web_page";
-    '<a href="' _ fields.web_page.data _ '">' _ fields.web_page.data _ '</a><br>';
+    FOREACH url IN fields.web_page.data;
+       '<a href="' _ url _ '">' _ url _ '</a><br>';
+    END;
 END;
 
 WRAPPER $field_block title="Updates";
