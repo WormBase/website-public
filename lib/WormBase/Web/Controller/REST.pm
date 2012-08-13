@@ -625,7 +625,7 @@ sub feed_POST {
 	    $content =~ s/\n/<br \/>/g;
 
 	    my ($issue_url,$issue_title,$issue_number) =
-		$self->_post_to_github($content, $email, $name, $title);
+		$self->_post_to_github($c,$content, $email, $name, $title);
 
 	    $self->_issue_email({ c       => $c,
 				  page    => $page,
@@ -1117,7 +1117,7 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$content,$email, $name, $title) = @_;
+  my ($self,$c,$content,$email, $name, $title) = @_;
   
   my $url     = 'https://api.github.com/repos/wormbase/website/issues';
   
@@ -1147,7 +1147,7 @@ sub _post_to_github {
   my $req = HTTP::Request->new(POST => $url);
   $req->content_type('application/json');
   $req->header('Authorization' => "token $token");
-  
+
 # Obscure names and emails.
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
@@ -1164,16 +1164,18 @@ END
 # Create a more informative title
   my $pseudo_title = substr($content,0,35) . '...';
   my $data = { title => $title . ': ' . $pseudo_title,
-	       body  => $content };
+	       body  => $content,
+	       labels => [ 'HelpDesk' ],
+  };
 
   my $request_json = $json->encode($data);
   $req->content($request_json);
   
   # Send request, get response.
   my $lwp       = LWP::UserAgent->new;
-  my $response  = $lwp->request($req);
+  my $response  = $lwp->request($req) or $c->log->debug("Couldn't POST");
   my $response_json = $response->content;
-  my $parsed  = $json->allow_nonref->utf8->relaxed->decode($response_json);
+  my $parsed    = $json->allow_nonref->utf8->relaxed->decode($response_json);
   
   my $issue_url = $parsed->{html_url};
   my $issue_title = $parsed->{title};
