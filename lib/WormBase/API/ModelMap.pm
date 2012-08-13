@@ -57,7 +57,7 @@ BEGIN {
             Anatomy_term => 'Term',
             GO_term      => 'Term',
             Motif        => 'Title',
-            Protein      => 'Gene_name',
+#            Protein      => 'Gene_name',
             Rnai         => 'History_name',
         },
         laboratory => {

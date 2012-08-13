@@ -30,7 +30,7 @@ has 'address_data' => (
 	my %address;
 	
 	foreach my $tag ($object->Address) {
-	    if ($tag =~ m/street|email|office/i) {		
+	    if ($tag =~ m/street|email|office|web_page/i) {		
 		my @data = map { $_->name } $tag->col;
 		$address{lc($tag)} = \@data;
 	    } else {
@@ -664,11 +664,10 @@ B<Response example>
 sub web_page {
     my $self    = shift;
     my $address = $self->address_data;
-    my $url = $address->{web_page};
-    $url =~ s/HTTP\:\/\///;
+    my @urls = map { s/HTTP\:\/\///; } $address->{web_page};
     
     my $data = { description => 'web address of the person',
-		 data        => $url || undef };
+		 data        => \@urls || undef };
     return $data;   
 }
 
