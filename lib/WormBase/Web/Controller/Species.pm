@@ -145,12 +145,18 @@ sub object_report :Path("/species") Args(3) {
     my $api = $c->model('WormBaseAPI');
     my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    if((!($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class)) && (lc($class) ne 'cds')){
+    #temporary fix - remove when CDS indexed in xapian
+    if(lc($class) eq 'cds'){
+      $object->{label} = $object->{id};
+      $object->{taxonomy} = $species;
+    }
+
+    if(!($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class)){
       $c->res->redirect($c->uri_for('/search',$class,"$name")->path."?redirect=1", 307);
       return;
     } else {
       $c->stash->{object}->{name}{data} = $object; # a hack to avoid storing Ace objects...
-      if(((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species) && (lc($class) ne 'cds')){
+      if((my $taxonomy = $c->stash->{object}->{name}{data}{taxonomy}) ne $species){
         $c->res->redirect($c->uri_for("/species", $taxonomy, $class, $name)->path, 307);
       }
     }
