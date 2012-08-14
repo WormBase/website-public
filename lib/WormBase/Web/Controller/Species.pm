@@ -145,10 +145,13 @@ sub object_report :Path("/species") Args(3) {
     my $api = $c->model('WormBaseAPI');
     my $object = $api->xapian->_get_tag_info($c, $name, lc($class));
 
-    #temporary fix - remove when CDS indexed in xapian
-    if(lc($class) eq 'cds'){
+
+    #temporary fix
+    if((lc($class) eq 'pcr_oligo') && ($object->{id} ne $name)){
+      $object->{id} = $name;
       $object->{label} = $object->{id};
       $object->{taxonomy} = $species;
+      $object->{class} = lc($class);
     }
 
     if(!($object->{label}) || $object->{id} ne $name || $object->{class} ne lc($class)){
