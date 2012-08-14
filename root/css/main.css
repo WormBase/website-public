@@ -2146,7 +2146,7 @@ div#google-map {
   padding:0;
 }
 
-.expr_patterns a {
+.expr_patterns li a {
   float:left;
 }
 
