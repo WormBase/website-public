@@ -23,7 +23,7 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined;
-          ln = text2link(data.class, data.id, text, title, data.taxonomy);
+          ln = data.coord.defined('start') ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
@@ -129,9 +129,8 @@
     MACRO gbrowselink(data, label) BLOCK;
       valid_classes = ['gene', 'variation', 'sequence', 'transcript'];
       IF data.taxonomy && (valid_classes.grep(data.class).size > 0);
-        label = label || 'gbrowse';
-        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path _ '?name=' _ item.name.id;
-        "<span id='fade'>[<a href=\"$url\">$label</a>]</span>";
+        url = c.uri_for('/tools', 'genome', 'gbrowse', data.taxonomy).path _ '?name=' _ item.name.class _ ":" _ item.name.id;
+        label ? "<a href=\"$url\">$label</a>" : "<span id='fade'>[<a href=\"$url\">gbrowse</a>]</span>";
       END;
     END;
 

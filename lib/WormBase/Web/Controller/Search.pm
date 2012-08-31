@@ -116,7 +116,7 @@ sub search_autocomplete :Path('/search/autocomplete') :Args(1) {
   foreach my $o (@{$it->{struct}}){
     my $class = $o->get_document->get_value(2);
     my $id = $o->get_document->get_value(1);
-    my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5));
+    my $url = $self->_get_url($c, $class, $id, $o->get_document->get_value(5), $o->get_document->get_value(9));
     my $label = $o->get_document->get_value(6) || $id;
     my $objs = {    class   =>  $class,
                     id      =>  $id,
@@ -148,9 +148,11 @@ sub search_count :Path('/search/count') :Args(3) {
 }
 
 sub _get_url {
-  my ($self, $c, $class, $id, $species) = @_;
+  my ($self, $c, $class, $id, $species, $start) = @_;
   my $url;
-  if(defined $c->config->{sections}{species}{$class}){
+  if($start){
+    $url = $c->uri_for('/tools', 'genome', 'gbrowse', $species)->path . '?name=' . $class . ":" . $id;
+  }elsif(defined $c->config->{sections}{species}{$class}){
     $url = $c->uri_for('/species',$species || 'all' ,$class,$id)->path;
   }elsif($class eq 'page'){
     $url = $id;

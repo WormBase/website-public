@@ -26,14 +26,13 @@
   [% ELSIF item.ptype %]
     <span id="fade">[% item.ptype.replace('[/_]', ' '); %]:</span>
   [% END %]
-
   [% TRY %]
       [% file = "search/" _ class _ ".tt2" %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
   [% CATCH file %]
-     [% tag2link(item.name,item.label) %]      
-      [% gbrowselink(item.name) %]
+     [% !item.name.coord.defined('start') ? tag2link(item.name,item.label) : item.name.id %]   
+     [% gbrowselink(item.name); %]
      </li>
 
      [%# Always include the taxonomy if it exists %]
