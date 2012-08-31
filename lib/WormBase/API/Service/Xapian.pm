@@ -176,7 +176,7 @@ sub _get_obj {
     $ret{taxonomy}{genus} = $s->{genus} || uc($1) . '.';
     $ret{taxonomy}{species} = $s->{species} || $2;
   }
-  $ret{ptype} = $doc->get_value(7);
+  $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
   %ret = %{$self->_split_fields($c, \%ret, uri_unescape($doc->get_data()))};
   if($doc->get_value(4) =~ m/^(\d{4})/){
     $ret{year} = $1;
@@ -260,7 +260,10 @@ sub _pack_search_obj {
   return {  id => $id,
             label => $label || $doc->get_value(6) || $id,
             class => $doc->get_value(2),
-            taxonomy => $doc->get_value(5)
+            taxonomy => $doc->get_value(5),
+            coord => { start => $doc->get_value(9),
+                       end => $doc->get_value(10),
+                       strand => $doc->get_value(11)}
   }
 }
 

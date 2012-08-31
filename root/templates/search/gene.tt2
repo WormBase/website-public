@@ -1,5 +1,6 @@
       [% tag2link(item.name) %]
-      [% gbrowselink(item.name) %]
+      [% UNLESS item.name.data.coord.defined('start'); gbrowselink(item.name) END;%]
+
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 

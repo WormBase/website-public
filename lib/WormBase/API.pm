@@ -91,9 +91,12 @@ sub _build_xapian {
 
   my $service_instance = $self->_services->{$self->default_datasource};
 
-  my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+  my $path = File::Spec->catdir("/usr/local/wormbase/databases/tmp", "WS232", 'search');
   my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
   my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
+#   my $path = File::Spec->catdir($self->pre_compile->{base}, $self->version, 'search');
+#   my $db = Search::Xapian::Database->new(File::Spec->catfile($path, 'main'));
+#   my $syn_db = Search::Xapian::Database->new(File::Spec->catfile($path, 'syn'));
   my $qp = Search::Xapian::QueryParser->new($db);
   my $auto_qp = Search::Xapian::QueryParser->new($db);
   my $syn_qp = Search::Xapian::QueryParser->new($syn_db);
