@@ -1,10 +1,15 @@
-      [% tag2link(item.name) %]
-      [% UNLESS item.name.data.coord.defined('start'); gbrowselink(item.name) END;%]
-
+    [% !item.name.coord.start ? tag2link(item.name, item.name.label) : item.name.id %]   
+     [% gbrowselink(item.name); %]
     </li>
     <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]</span>
 
-[% desc = item.concise_description.join('<br />') %]
+     [% text = [ ];
+        text.push(item.concise_description.join("<br />"))               IF item.concise_description;
+        text.push(item.title.join(", "))                    IF item.title;
+        text.push(item.description.join("<br />"))          IF item.description;
+        text.push(item.remark.join("<br />"))               IF item.remark;
+     %]
+
 <div class="text-min">
-  [% markup(desc, 1, 1, 1, 0) %]    
+  [% markup(text.join("<br>"), 1, 1, 1, 0) %]    
 </div>
