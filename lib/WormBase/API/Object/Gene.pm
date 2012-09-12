@@ -588,7 +588,7 @@ sub gene_class {
     return {
     description => "The gene class for this gene",
     data        => { tag => $self->_pack_obj($gene_class),
-                     description => $gene_class->Description
+                     description => $gene_class ? $gene_class->Description : '',
     }};
 }
 
