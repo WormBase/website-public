@@ -147,10 +147,7 @@ sub layout_POST {
   $layout = 'default' unless $layout;
   my $i = 0;
   if($layout ne 'default'){
-    $c->log->debug("max: " . join(',', (sort {$b <=> $a} keys %{$c->user_session->{'layout'}->{$class}})));
-    
     $i = ((sort {$b <=> $a} keys %{$c->user_session->{'layout'}->{$class}})[0]) + 1;
-    $c->log->debug("not default: $i");
   }
 
   my $lstring = $c->request->body_parameters->{'lstring'};
@@ -619,13 +616,11 @@ sub feed_POST {
 	    
 	    my $url = $c->req->params->{url};
 	    my $page = $self->_get_page($c, $url);
-	    
-	    # stop saving issues in database
 
 	    $content =~ s/\n/<br \/>/g;
 
 	    my ($issue_url,$issue_title,$issue_number) =
-		$self->_post_to_github($c,$content, $email, $name, $title);
+		$self->_post_to_github($c,$content, $email, $name, $title, $page);
 
 	    $self->_issue_email({ c       => $c,
 				  page    => $page,
@@ -1117,10 +1112,10 @@ sub _check_user_info {
 
 
 sub _post_to_github {
-  my ($self,$c,$content,$email, $name, $title) = @_;
-  
+  my ($self,$c,$content,$email, $name, $title, $page) = @_;
+
   my $url     = 'https://api.github.com/repos/wormbase/website/issues';
-  
+
   # Get a new authorization for the website repo,
   # curl -H "Content-Type: application/json"  -u "tharris" -X POST https://api.github.com/authorizations -d '{"scopes": [ "website" ],"note": "wormbase helpdesk cross-post" }'
   
@@ -1152,10 +1147,15 @@ sub _post_to_github {
   my $obscured_name  = substr($name, 0, 4) .  '*' x ((length $name)  - 4);
   my $obscured_email = substr($email, 0, 4) . '*' x ((length $email) - 4);
         
+  my $ptitle = $page->title;
+  my $purl = $page->url;
+        
 $content .= <<END;
 
 
 Reported by: $obscured_name ($obscured_email) (obscured for privacy)
+Submitted From: $ptitle ($purl)
+
 END
 ;
 
