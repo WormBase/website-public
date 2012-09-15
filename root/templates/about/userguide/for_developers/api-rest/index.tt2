@@ -7,9 +7,7 @@
     breadcrumbs.push('<span>RESTful API</span>');
     title = breadcrumbs.join(" &raquo; ");
 
-    userguide_page(title = title,
-    		   widget_list => [ { overview    = 'Overview' },
-		   	            { all_classes = 'All Classes' },
-				      ]);
+    report_page("WormBase RESTful API Documentation");
+
 %]
 
