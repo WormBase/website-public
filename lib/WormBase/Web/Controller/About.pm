@@ -31,28 +31,6 @@ sub about_documentation :Path('/about') :Args   {
 }
 
 
-# Most actions under /about are editable widgets
-# except for the api documentation (which is generated dynamically from POD)
-sub api_rest : Path('/about/userguide/for_developers/api-rest') :Args   {
-    my ($self,$c,@args) = @_;
-
-    $c->stash->{section} = 'resources'; 
-       
-    my $path = join('/',@args);
-#    $c->log->warn("path is $path");
-#    $c->log->warn("args are " . join(",",@args));
-    $c->stash->{template} = "about/userguide/for_developers/api-rest/index.tt2";
-
-
-    # Kludge for documentation on individual classes.
-    # I don't want to have to create individual directories for
-    # these on the filesystem.
-    if ($path =~ m{class/(.*)}) {
-	$c->stash->{class} = $1;
-	$c->stash->{template} = "about/userguide/for_developers/api-rest/class_documentation_index.tt2";
-    }
-}
-
 
 # Called by the REST action when the widget loads.
 sub _get_pod {
