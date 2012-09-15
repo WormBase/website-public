@@ -560,16 +560,25 @@ sub _anatomy_function {
     my $object = $self->object;
     my @data_pack;
     foreach ($object->$tag){
-	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
-			   else {$self->_pack_obj($_)}
+	my @bp_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+			   else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
 			  } $_->Involved;
-	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; $term && "$term"}
-			   else {$self->_pack_obj($_)}
+	my @bp_not_inv = map { if ("$_" eq "$object") {my $term = $_->Term; { text => $term && "$term", evidence => $self->_get_evidence($_)}}
+               else { { text => $self->_pack_obj($_), evidence => $self->_get_evidence($_)}}
 			  } $_->Not_involved;
+    
+    my @assay = map { my $as = $_->right; my @geno = $as->Genotype; 
+                                     {evidence => { genotype => join('<br /> ', @geno) },
+                        text => "$_",}
+              } $_->Assay;
+    my $pev;
 	push @data_pack, {
-            af_data   => $self->_pack_obj($_),
-            phenotype => $self->_pack_obj(scalar $_->Phenotype),
+            af_data   => $_ && "$_",
+            phenotype => ($pev = $self->_get_evidence($_->Phenotype)) ? 
+                          { evidence => $pev,
+                           text => $self->_pack_obj(scalar $_->Phenotype)} : $self->_pack_obj(scalar $_->Phenotype),
             gene      => $self->_pack_obj(scalar $_->Gene),
+        assay    => @assay ? \@assay : undef,
 	    bp_inv    => @bp_inv ? \@bp_inv : undef,
 	    bp_not_inv=> @bp_not_inv ? \@bp_not_inv : undef,
 	    reference => $self->_pack_obj(scalar $_->Reference),
