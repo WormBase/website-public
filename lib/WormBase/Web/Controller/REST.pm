@@ -1074,51 +1074,6 @@ sub widget_me_GET {
 
 
 
-
-
-# Widgets specific to the Userguide (solely, about/userguide/for_developers/api-rest/)
-# The userguide has its own report to facilitate a deeper structure.
-sub widget_restful_docs :Path('/rest/widget/about/userguide') :ActionClass('REST') {}
-
-sub widget_restful_docs_GET {
-    my ($self,$c,@args) = @_; 
-    my $path = join('/',@args);
-
-    $c->stash->{template}       = 'shared/generic/rest_widget.tt2';
-    $c->stash->{child_template} = "about/userguide/$path.tt2";
-    $c->stash->{noboiler}       = 1;
-
-    # Get a list of available classes.
-    # The API index includes a list of available classes.
-    if ($path =~ m{all_classes}) {
-	my $dir = "$ENV{APP_ROOT}/$ENV{APP}/lib/WormBase/API/Object";
-	opendir(DIR,$dir) or $c->log->debug("Couldn't open $dir");
-	my @classes = grep { !/^\./ && !/\.orig/ && !/^\#/ && !/~$/} readdir(DIR);
-
-	$c->stash->{classes}  = \@classes;
-#$c->stash->{template} = 'userguide/developers/api-rest/all_classes.tt2';
-
-	# Kludge for individual classes.
-    # we don't really want each of these to have their own page.
-    } elsif ($path =~ m{api-rest/class/(.*)}) {
-my $class = $1;
-$c->stash->{class} = $class;
-WormBase::Web::Controller::About->_get_pod($c,$class);
-$c->stash->{child_template} = "about/userguide/for_developers/api-rest/class_documentation_generic.tt2";
-    }
-
-    # Forward to the view to render HTML
-    my $html = $c->view('TT')->render($c,$c->{stash}->{template}); 
-    
-    $c->response->status(200);
-    $c->response->header('Content-Type' => 'text/html');
-    $c->response->body($html);
-    $c->detach();
-    return;
-}
-
-
-
 ######################################################
 #
 #   Private methods
