@@ -107,13 +107,13 @@ sub search_exact {
       $c->log->debug("query:" . $query->get_description());
     }
 
-    my $mset      = $enq->get_mset( 0,1 ) if $enq;
+    my $mset      = $enq->get_mset( 0,2 ) if $enq;
     if(!$mset || $mset->empty()){
       $q .= " $type..$type" if $type;
       $query=$class->qp->parse_query( $q, 1|2 );
       $enq       = $class->db->enquire ( $query );
       $c->log->debug("query:" . $query->get_description());
-      $mset      = $enq->get_mset( 0,1 );
+      $mset      = $enq->get_mset( 0,2 );
     }
 
     return Catalyst::Model::Xapian::Result->new({ mset=>$mset,

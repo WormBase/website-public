@@ -21,12 +21,13 @@
     END;
 
     WRAPPER $field_block title="Anatomy functions" key="anatomy_functions";
-      build_data_table( order = ['af_data', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
+      build_data_table( order = ['af_data', 'assay', 'gene', 'phenotype', 'bp_inv', 'bp_not_inv', 'reference'],
 			  columns = { 'af_data' => 'WormBase ID',
+                       'assay' => 'Assay',
 				      'phenotype'   => 'Phenotype',
 				      'gene' => 'Gene',
-				      'bp_inv'   => 'Body Parts<br />Involved',
-				      'bp_not_inv'   => 'Body Parts<br />Not Involved',
+				      'bp_inv'   => 'Body Parts Involved',
+				      'bp_not_inv'   => 'Body Parts <br />Not Involved',
 				      'reference' => 'Reference'},
 			  key = 'anatomy_functions');
     END;
