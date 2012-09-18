@@ -82,10 +82,6 @@ B<Response example>
 
 sub interactions  {
     my $self   = shift;
-#     my $results = $self->_interactions;
-#     my $show_nearby = $results->{showall};
-#     if ($show_nearby) { $results = $self->_get_interactions($results, 1) }
-
     my @edges = values %{$self->_interactions->{edgeVals}};
 
     return {
@@ -144,15 +140,18 @@ B<Response example>
 
 sub interaction_details {
     my $self = shift;
-    my $results = $self->_interactions;
-    $results = $self->_get_interactions($results, 1);
+    my $results = $self->_get_interactions($self->_interactions, 1);
 
-    my @edges = values %{$self->_interactions->{edgeVals}};
-    $results->{edges} = \@edges;
+    my @edges = values %{$results->{edgeVals}};
 
     return {
 		description	=> 'addtional nearby interactions',
-		data		=> $results,
+		data		=> {    edges => \@edges,
+                            types => $results->{types},
+                            ntypes => $results->{ntypes},
+                            nodes => $results->{nodes},
+                            showall => $results->{showall},
+                       },
     };
 }
 
@@ -173,20 +172,20 @@ sub _get_interactions {
     elsif ($object->class =~ /gene/i) { @objects = $object->Interaction }
     elsif ($object->class =~ /interaction/i ) { @objects = ($object) }
 
-    $self->log->debug("nearby: $nearby, size: ", scalar @objects);
+#     $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
       if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
       my $edgeList = $self->_get_interaction_info($interaction, $nearby);
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-          $self->log->debug("     effector: $effector, effected: $effected");
+#           $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
           $effector_name .= ' (' . $effector->class . ')' if "$effector_name" eq "$effected_name";
-          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, $effector_name || undef);
-          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, $effected_name || undef);
+          $data->{nodes}{"$effector"} ||= $self->_pack_obj($effector, "$effector_name" || undef);
+          $data->{nodes}{"$effected"} ||= $self->_pack_obj($effected, "$effected_name" || undef);
           $data->{nodes_obj}{"$effector"} = $effector;
           $data->{nodes_obj}{"$effected"} = $effected;
           $data->{ids}{"$interaction"}=1;
