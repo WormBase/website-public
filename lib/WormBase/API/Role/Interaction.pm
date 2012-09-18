@@ -82,14 +82,15 @@ B<Response example>
 
 sub interactions  {
     my $self   = shift;
-    my $results = $self->_interactions;
-    my $show_nearby = $results->{showall};
-    if ($show_nearby) { $results = $self->_get_interactions($results, 1) }
+#     my $results = $self->_interactions;
+#     my $show_nearby = $results->{showall};
+#     if ($show_nearby) { $results = $self->_get_interactions($results, 1) }
 
-    push @{$results->{edges}}, values %{$results->{edgeVals}};
+    my @edges = values %{$self->_interactions->{edgeVals}};
+
     return {
         description => 'genetic and predicted interactions',
-        data        => $results,
+        data        => { edges => \@edges},
     };
 }
 
@@ -146,7 +147,9 @@ sub interaction_details {
     my $results = $self->_interactions;
     $results = $self->_get_interactions($results, 1);
 
-#    push @{$results->{edges}}, values %{$results->{edgesVals}};
+    my @edges = values %{$self->_interactions->{edgeVals}};
+    $results->{edges} = \@edges;
+
     return {
 		description	=> 'addtional nearby interactions',
 		data		=> $results,
@@ -166,17 +169,18 @@ sub _get_interactions {
 
     #determine object type and extract interactions accordingly
     if ($nearby){ @objects = map {$_->Interaction} grep {$_->class =~ /gene/i} values %{$data->{nodes_obj}} }
+
     elsif ($object->class =~ /gene/i) { @objects = $object->Interaction }
     elsif ($object->class =~ /interaction/i ) { @objects = ($object) }
 
-    warn("nearby: $nearby, size: ", scalar @objects);
+    $self->log->debug("nearby: $nearby, size: ", scalar @objects);
     foreach my $interaction ( @objects ) {
       next if($data->{ids}{"$interaction"});
       if ($nearby) { next if scalar grep {!defined $data->{nodes_obj}->{$_}} map {$_->col} $interaction->Interactor; }
       my $edgeList = $self->_get_interaction_info($interaction, $nearby);
       foreach my $key (keys %{$edgeList}) {
           my ($type, $effector, $effected, $direction, $phenotype)= @{$edgeList->{$key}};
-          warn("effector: $effector, effected: $effected");
+          $self->log->debug("     effector: $effector, effected: $effected");
           next unless($effector);
           my $effector_name = $effector->class =~ /gene/i ? $effector->Public_name : "$effector";
           my $effected_name = $effected->class =~ /gene/i ? $effected->Public_name : "$effected";
@@ -197,32 +201,32 @@ sub _get_interactions {
           my $key2 = "$effected $effector $type";
 
           if ($phenotype) {
-          $data->{phenotypes}{"$phenotype"} ||= $phenObj;
-          $key .= " $phenotype" if $phenotype;
-          $key2 .= " $phenotype" if $phenotype;
+            $data->{phenotypes}{"$phenotype"} ||= $phenObj;
+            $key .= " $phenotype" if $phenotype;
+            $key2 .= " $phenotype" if $phenotype;
           }
           
           my $packInteraction = $self->_pack_obj($interaction);
           my @papers = map { $self->_pack_obj($_) } $interaction->Paper;
           
           if (exists $data->{edgeVals}{$key}){
-          push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
-          push @{$data->{edgeVals}{$key}{citations}}, @papers;
+            push @{$data->{edgeVals}{$key}{interactions}}, $packInteraction;
+            push @{$data->{edgeVals}{$key}{citations}}, @papers;
           } elsif (exists $data->{edgeVals}{$key2}){
-          push @{$data->{edgeVals}{$key2}{interactions}}, $packInteraction;
-          push @{$data->{edgeVals}{$key2}{citations}}, @papers;
+            push @{$data->{edgeVals}{$key2}{interactions}}, $packInteraction;
+            push @{$data->{edgeVals}{$key2}{citations}}, @papers;
           } else {
-          my @interacArr = ($packInteraction);
-          $data->{edgeVals}{$key} = {
-              interactions=> @interacArr ? \@interacArr : undef,
-              citations	=> @papers ? \@papers : undef,
-              type	=> "$type",
-              effector	=> $data->{nodes}{"$effector"},
-              effected	=> $data->{nodes}{"$effected"},
-              direction	=> $direction,
-              phenotype	=> $phenObj,
-              nearby	=> $nearby,
-          };
+            my @interacArr = ($packInteraction);
+            $data->{edgeVals}{$key} = {
+                interactions=> @interacArr ? \@interacArr : undef,
+                citations	=> @papers ? \@papers : undef,
+                type	=> "$type",
+                effector	=> $data->{nodes}{"$effector"},
+                effected	=> $data->{nodes}{"$effected"},
+                direction	=> $direction,
+                phenotype	=> $phenObj,
+                nearby	=> $nearby,
+            };
           }
       }
     }
